@@ -43,6 +43,7 @@
  </objectgroup>
  <objectgroup id="6" name="Zones" offsetx="3744" offsety="-288">
   <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="power_up"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>

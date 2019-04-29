@@ -281,21 +281,26 @@ namespace death
 			return result;
 		}
 
-		bool TriggerSurfaceObject::IsCollisionWith(chaos::box2 const & other_box, PlayerAndTriggerCollisionRecord const * previous_collisions) const
+		bool TriggerSurfaceObject::IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const
 		{
 			chaos::box2 box = GetBoundingBox(true);
 
 			if (outside_box_factor > 1.0f) // the box is bigger when we want to go outside !
 			{
-				// search whether player was already colliding with
-				if (previous_collisions != nullptr)
-					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), this) != previous_collisions->triggers.end()) // we where already colliding the object
+				// search whether we were already colliding with
+				if (triggers != nullptr)
+					if (std::find(triggers->begin(), triggers->end(), this) != triggers->end()) // we where already colliding the object
 						box.half_size *= outside_box_factor;
 			}
 			return chaos::Collide(other_box, box);
 		}
 
 		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		{
+			return true; // continue other collisions
+		}
+
+		bool TriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			return true; // continue other collisions
 		}
@@ -429,6 +434,7 @@ namespace death
 
 			trigger_surfaces_enabled = layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", false);
 			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", false);
+			camera_collision_enabled = layer->FindPropertyBool("CAMERA_COLLISIONS_ENABLED", false);
 			tile_collisions_enabled  = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
 
 			infinite_bounding_box = layer->FindPropertyBool("INFINITE_BOUNDING_BOX", false);
@@ -749,34 +755,47 @@ namespace death
 			return true;
 		}
 
-		void LayerInstance::ComputePlayerCollision(double delta_time)
+		void LayerInstance::ComputePlayerAndCameraCollision(double delta_time)
 		{
-			// early exit
-			if (!ArePlayerCollisionEnabled())
-				return;
 			// get the game
 			Game * game = GetGame();
 			if (game == nullptr)
 				return;
-			// compute the collisions for all players
-			size_t player_count = game->GetPlayerCount();
-			for (size_t i = 0; i < player_count; ++i)
+
+			// check player collisions
+			if (ArePlayerCollisionEnabled())
 			{
-				Player * player = game->GetPlayer(i);
-				if (player == nullptr)
-					continue;
-				// get the player particle
-				chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
-				if (player_particle == nullptr)
-					continue;
-				// collision with surface triggers
-				if (AreTriggerSurfacesEnabled())
-					if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle))
+				// compute the collisions for all players
+				size_t player_count = game->GetPlayerCount();
+				for (size_t i = 0; i < player_count; ++i)
+				{
+					Player * player = game->GetPlayer(i);
+					if (player == nullptr)
 						continue;
-				// collision with tiles
-				if (AreTileCollisionsEnabled())
-					if (!ComputePlayerTileCollisions(delta_time, player, player_particle))
+					// get the player particle
+					chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
+					if (player_particle == nullptr)
 						continue;
+					// collision with surface triggers
+					if (AreTriggerSurfacesEnabled())
+						if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle))
+							continue;
+					// collision with tiles
+					if (AreTileCollisionsEnabled())
+						if (!ComputePlayerTileCollisions(delta_time, player, player_particle))
+							continue;
+				}									
+			}
+				
+			// compute collision with camera
+			if (AreCameraCollisionEnabled())
+			{
+				chaos::box2 camera_box = game->GetLevelInstance()->GetCameraBox();
+				if (!camera_box.IsEmpty())
+				{
+					if (AreTriggerSurfacesEnabled())
+						ComputeCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
+				}
 			}
 		}
 
@@ -795,6 +814,50 @@ namespace death
 		}
 
 
+		bool LayerInstance::ComputeCameraCollisionWithSurfaceTriggers(double delta_time, chaos::box2 const & camera_box)
+		{
+			// the new colliding triggers
+			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
+
+			// search all colliding triggers
+			size_t surfaces_count = trigger_surfaces.size();
+			for (size_t i = 0; i < surfaces_count; ++i)
+			{
+				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
+				if (trigger == nullptr || !trigger->IsEnabled())
+					continue;
+				// detect collision
+				if (trigger->IsCollisionWith(camera_box, &camera_collision_records))
+					triggers.push_back(trigger);
+			}
+
+			// triggers collisions 
+			size_t triggers_count = triggers.size();
+			for (size_t i = 0; i < triggers_count; ++i)
+			{
+				bool already_colliding = false;
+				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), triggers[i]) != camera_collision_records.end()) // search in previous frame data						
+					already_colliding = true;
+				if (!triggers[i]->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
+					return false;
+			}
+
+			// triggers end of collisions
+			size_t previous_count = camera_collision_records.size();
+			for (size_t i = 0; i < previous_count; ++i)
+			{
+				if (std::find(triggers.begin(), triggers.end(), camera_collision_records[i]) == triggers.end()) // no more colliding
+					if (!camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, TriggerSurfaceObject::COLLISION_FINISHED))
+						return false;
+			}
+
+			// store the new triggers
+			camera_collision_records = std::move(triggers);
+
+			return true;
+		
+		}
+
 		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			// the new colliding triggers
@@ -810,7 +873,7 @@ namespace death
 				if (trigger == nullptr || !trigger->IsEnabled())
 					continue;
 				// detect collision
-				if (trigger->IsCollisionWith(player_particle->bounding_box, previous_collisions))
+				if (trigger->IsCollisionWith(player_particle->bounding_box, (previous_collisions != nullptr)? &previous_collisions->triggers : nullptr))
 					triggers.push_back(trigger);
 			}
 
@@ -822,7 +885,6 @@ namespace death
 				if (previous_collisions != nullptr)
 					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), triggers[i]) != previous_collisions->triggers.end()) // search in previous frame data
 						already_colliding = true;
-				triggers.push_back(triggers[i]);
 				if (!triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
 					return false;
 			}
@@ -1012,11 +1074,11 @@ namespace death
 			return dynamic_cast<Level const *>(GetLevel());
 		}
 
-		void LevelInstance::ComputePlayerCollision(double delta_time)
+		void LevelInstance::ComputePlayerAndCameraCollision(double delta_time)
 		{
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
-				layer_instances[i]->ComputePlayerCollision(delta_time);
+				layer_instances[i]->ComputePlayerAndCameraCollision(delta_time);
 		}
 
 		bool LevelInstance::DoTick(double delta_time)
@@ -1031,7 +1093,7 @@ namespace death
 			for (size_t i = 0; i < count; ++i)
 				layer_instances[i]->Tick(delta_time);
 			// compute the collisions with the player
-			ComputePlayerCollision(delta_time);
+			ComputePlayerAndCameraCollision(delta_time);
 
 			return true;
 		}

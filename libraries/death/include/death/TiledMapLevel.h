@@ -186,7 +186,7 @@ namespace death
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
 			/** search whether there is a collision given box */
-			virtual bool IsCollisionWith(chaos::box2 const & other_box, PlayerAndTriggerCollisionRecord const * previous_collisions) const;
+			virtual bool IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const;
 
 		protected:
 
@@ -195,6 +195,8 @@ namespace death
 
 			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
 			virtual bool OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
+			/** called whenever a collision with camera is detected */
+			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type);
 
 		protected:
 
@@ -360,6 +362,11 @@ namespace death
 			/** change whether collisions with player are to be test on that layer */
 			void SetPlayerCollisionEnabled(bool in_player_collision_enabled){ player_collision_enabled = in_player_collision_enabled; }
 
+			/** get whether camera collisions are enabled on that layer */
+			bool AreCameraCollisionEnabled() const { return camera_collision_enabled; }
+			/** change whether collisions with camera are to be test on that layer */
+			void SetCameraCollisionEnabled(bool in_camera_collision_enabled){ camera_collision_enabled = in_camera_collision_enabled; }
+
 			/** get whether trigger surfaces are enabled on that layer */
 			bool AreTriggerSurfacesEnabled() const { return trigger_surfaces_enabled; }
 			/** change whether trigger surfaces are enabled on that layer */
@@ -431,9 +438,11 @@ namespace death
 			virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
-			virtual void ComputePlayerCollision(double delta_time);
+			virtual void ComputePlayerAndCameraCollision(double delta_time);
 			/** compute trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
 			virtual bool ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
+			/** compute trigger collisions with camera */
+			virtual bool ComputeCameraCollisionWithSurfaceTriggers(double delta_time, chaos::box2 const & camera_box);
 			/** compute collisions between players and tiles (returns false if if do not want to handle mode player collisions) */
 			virtual bool ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
 
@@ -487,6 +496,8 @@ namespace death
 
 			/** whether collision with player are to be tested with that layer */
 			bool player_collision_enabled = true;
+			/** whether collision with camera are to be tested with that layer */
+			bool camera_collision_enabled = true;
 			/** whether trigger surfaces are enabled on that layer */
 			bool trigger_surfaces_enabled = true;
 			/** whether collisions with tiles are enabled on that layer */
@@ -497,6 +508,8 @@ namespace death
 
 			/** the previous frame collision */
 			std::vector<PlayerAndTriggerCollisionRecord> collision_records;
+			/** the previous frame trigger collision with camera */
+			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> camera_collision_records;
 		};
 
 		// =====================================
@@ -561,7 +574,7 @@ namespace death
 			virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
-			virtual void ComputePlayerCollision(double delta_time);
+			virtual void ComputePlayerAndCameraCollision(double delta_time);
 
 			/** override */
 			virtual void OnLevelStarted() override;

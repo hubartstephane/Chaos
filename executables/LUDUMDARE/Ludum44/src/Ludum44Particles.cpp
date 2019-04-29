@@ -104,16 +104,8 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 		}
 	}
 
-
-
-
-
-
-	//
-
-
+	// displace the player
 	particle->bounding_box.position += delta_time * particle->velocity;
-
 
 	return false;
 }
@@ -285,7 +277,21 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	// apply velocity
 	particle->bounding_box.position += delta_time * particle->velocity;
 	// apply rotation
-	particle->rotation += delta_time * particle->rotation_speed;
+	
+	if (particle->rotation_following_player)
+	{
+		LudumPlayer * player = layer_trait->game->GetLudumPlayer(0);
+		if (player != nullptr)
+		{		
+			glm::vec2 delta_pos = player->GetPlayerPosition() - particle->bounding_box.position;
+			particle->rotation = atan2f(delta_pos.y, delta_pos.x);
+		}
+	}
+	else
+	{
+		particle->rotation += delta_time * particle->rotation_speed;	
+	}
+
 	// update blinking effect
 	if (particle->touched_count_down > 0)
 		--particle->touched_count_down;

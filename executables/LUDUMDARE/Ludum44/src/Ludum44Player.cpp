@@ -294,6 +294,14 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 
 void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 {
+#if _DEBUG
+	if (in_value < 0.0f && in_increment)
+	{
+		if (GetGame()->GetCheatMode())
+			return;	
+	}
+#endif
+
 	if (in_increment)
 		current_life += in_value;
 	else

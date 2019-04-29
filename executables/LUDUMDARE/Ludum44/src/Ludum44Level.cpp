@@ -241,36 +241,42 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	static int const SPAWN_ENEMY_LAST = 4;
 	spawn_enemy_type = (spawn_enemy_type % SPAWN_ENEMY_LAST);
 
-	static int const SPAWN_CURVE_RANDOM      = 0;
-	static int const SPAWN_CURVE_V           = 1;
-	static int const SPAWN_CURVE_INVERTED_V  = 2;
-	static int const SPAWN_CURVE_ALIGNED     = 3;
-	static int const SPAWN_CURVE_LAST        = 4;
+	static int const SPAWN_CURVE_RANDOM_STATIC = 0;
+	static int const SPAWN_CURVE_RANDOM        = 1;
+	static int const SPAWN_CURVE_V             = 2;
+	static int const SPAWN_CURVE_INVERTED_V    = 3;
+	static int const SPAWN_CURVE_ALIGNED       = 4;
+	static int const SPAWN_CURVE_LAST          = 5;
 	spawn_curve_type = (spawn_curve_type % SPAWN_CURVE_LAST);
 
 
 	int index_offset = (int)allocation->GetParticleCount();
 
+	chaos::BitmapAtlas::BitmapInfo const * enemy_info = nullptr; // so we can reuse among the loop existing random choice
 	if (allocation->AddParticles(count))
 	{
 		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor<ParticleEnemy>();
 		for (int i = 0 ; i < count ; ++i)
 		{
 			ParticleEnemy & p = particles[index_offset + i];
-
-			chaos::BitmapAtlas::BitmapInfo const * enemy_info = nullptr;
-
+		
 			// fill position & velocity			
-			if (spawn_curve_type == SPAWN_CURVE_RANDOM)
+			if (spawn_curve_type == SPAWN_CURVE_RANDOM_STATIC)
 			{
 				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
 				p.velocity = glm::vec2(0.0f, 0.0f);
+
+			}
+			else if (spawn_curve_type == SPAWN_CURVE_RANDOM)
+			{
+				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
+				p.velocity = glm::vec2(chaos::MathTools::RandFloat(-200.0f, +200.0f), chaos::MathTools::RandFloat(0.0f, -1000.0f));
 			
 			}
 			else if (spawn_curve_type == SPAWN_CURVE_V)
 			{
 				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
-				p.velocity = glm::vec2(0.0f, 0.0f);
+				
 
 			}
 			else if (spawn_curve_type == SPAWN_CURVE_INVERTED_V)
@@ -289,25 +295,30 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 			// fill enemy behavior
 			if (spawn_enemy_type == SPAWN_ENEMY_METEORS)
 			{
-				enemy_info = bitmap_set->GetBitmapInfo("Enemy2");
+				char const * enemy_names[] = {"meteor1", "meteor2", "meteor3", "meteor4"}; // one RANDOM for each enemy
+				int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);				
+				int rand_name = rand() % name_count;
+				enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
 
-
-
-
-
-
-
+				p.rotation_speed = chaos::MathTools::RandFloat(0.0f, -1.0f);
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_ALIEN)
 			{
-				enemy_info = bitmap_set->GetBitmapInfo("Enemy2");
+				char const * enemy_names[] = {"Enemy2", "Enemy3", "Enemy4", "Enemy5"}; // an single RANDOM for the whole set of enemies
+				if (enemy_info == nullptr)
+				{
+					int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);				
+					int rand_name = rand() % name_count;
 
+					enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
+				}			
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_FOUR_TURRETS)
 			{
-				enemy_info = bitmap_set->GetBitmapInfo("Enemy2");
+				enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
 				p.fire_frequency = fire_frequency;
 				p.rotation_following_player = false;
+				p.rotation_speed = 1.0f;
 
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_FOLLOWING_TURRET)

@@ -285,7 +285,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		if (player != nullptr)
 		{		
 			glm::vec2 delta_pos = player->GetPlayerPosition() - particle->bounding_box.position;
-			particle->rotation = atan2f(delta_pos.y, delta_pos.x);
+			particle->rotation = atan2f(delta_pos.y, delta_pos.x) - (float)M_PI_2; 
 		}
 	}
 	else

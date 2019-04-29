@@ -51,7 +51,7 @@
   </properties>
   <object id="1732" name="Spawner" gid="2" x="-12424" y="-6832" width="9800" height="2384">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="300"/>
+    <property name="ENEMY_COUNT" type="int" value="20"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>

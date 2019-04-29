@@ -9,11 +9,43 @@
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
+// ====================================================================
+// GameHUDLifeCountComponent
+// ====================================================================
 
+bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
+{
+	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	if (playing_hud != nullptr)
+	{
+		LudumPlayer const * ludum_player = playing_hud->GetLudumPlayer(0);
+		if (ludum_player == nullptr) 
+			destroy_allocation = true;
+		else
+		{
+			int current_life_count = ludum_player->GetLifeCount();
+			if (current_life_count != cached_value)
+			{
+				cached_value = current_life_count;
+				return true;
+			}
+		
+		}
+	}
+	return false;
+}
 
+void GameHUDLifeCountComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
+{
+	int hotpoint = chaos::Hotpoint::TOP_LEFT;
 
-
-
+	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+	params.hotpoint_type = hotpoint;
+	params.position.x = corner.x + 20.0f;
+	params.position.y = corner.y - 80.0f;
+	params.font_info_name = "normal"; // shuxxx
+	params.line_height = 60.0f;
+}
 
 
 // ====================================================================
@@ -218,6 +250,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
 	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new GameHUDLevelTitleComponent());
 	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
+	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
 	return true;
 }
 

@@ -284,6 +284,8 @@ namespace death
 		if (allocations == nullptr)
 		{
 			allocations = hud->GetGameParticleCreator().CreateParticles("life", current_life, GameHUDKeys::LIFE_LAYER_ID);
+			if (allocations == nullptr)
+				return;
 		}
 		else
 		{

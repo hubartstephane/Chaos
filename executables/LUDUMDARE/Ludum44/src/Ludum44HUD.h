@@ -15,7 +15,23 @@ namespace death
 	};
 };
 
+// ====================================================================
+// GameHUDLifeCountComponent
+// ====================================================================
 
+class GameHUDLifeCountComponent : public death::GameHUDCacheValueComponent<int>
+{
+public:
+
+	GameHUDLifeCountComponent() : death::GameHUDCacheValueComponent<int>("Life:%d", -1) {}
+
+protected:
+
+	/** override */
+	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+	/** override */
+	virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
+};
 
 // ====================================================================
 // GameHUDLifeBarComponent

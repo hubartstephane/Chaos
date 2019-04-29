@@ -35,7 +35,8 @@ namespace death
 
 		if (!InitializeParticles(allocation, bitmap_name, count))
 		{
-			delete(allocation); // shuxxx !!!
+			allocation->RemoveFromLayer();
+			//delete(allocation); // shuxxx !!!
 			return nullptr;
 		}
 		return allocation;

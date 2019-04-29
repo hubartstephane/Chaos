@@ -274,15 +274,15 @@ protected:
 		/** get the layer for this allocation */
 		ParticleLayerBase const * GetLayer() const { return layer; }
 
+		/** remove the allocation from its layer */
+		void RemoveFromLayer();
+
 	protected:
 
 		/** tick the allocation (returns true whether the allocation is to be destroyed) */
 		virtual bool TickAllocation(float delta_time, void const * layer_trait) { return false; }
 		/** transforms the particles into vertices in the buffer */
 		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const { return 0; }
-
-		/** remove the allocation from its layer */
-		void RemoveFromLayer();
 		/** called whenever the allocation is removed from the layer */
 		void OnRemovedFromLayer();
 		/** require the layer to update the GPU buffer */

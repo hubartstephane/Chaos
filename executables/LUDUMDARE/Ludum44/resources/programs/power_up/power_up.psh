@@ -26,7 +26,7 @@ void main()
 	vec2 texcoord = 10.0 * (gl_FragCoord.xy - ((window_size.xy - viewport_size.xy) * vec2(0.5, 0.5))) / viewport_size.xy;
 	texcoord.y *= viewport_size.y / viewport_size.x;
 
-	texcoord.y -= direction * scroll_speed * main_time;
+	texcoord.y -= direction * scroll_speed * game_time;
 
 	texcoord += vec2(1.0, 0.0) * camera_box.xy / viewport_size.xy;
 

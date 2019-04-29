@@ -363,18 +363,18 @@
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
   </properties>
  </objectgroup>
- <objectgroup name="PlayerAndCamera" locked="1">
+ <objectgroup name="PlayerAndCamera">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="57" name="TheCamera1" x="1624" y="8832" width="7120" height="4648">
+  <object id="57" name="TheCamera1" x="3432" y="8960" width="7120" height="4648">
    <properties>
     <property name="CAMERA" type="bool" value="true"/>
    </properties>
   </object>
   <object id="75" name="world_bounding_box" x="-1424" y="-141440" width="15424" height="155264"/>
-  <object id="1735" name="ThePlayerStart1" x="5216" y="12320" width="112" height="496">
+  <object id="1735" name="ThePlayerStart1" x="6880" y="12320" width="112" height="496">
    <properties>
     <property name="BITMAP_NAME" value="player"/>
     <property name="PLAYER_START" type="bool" value="true"/>

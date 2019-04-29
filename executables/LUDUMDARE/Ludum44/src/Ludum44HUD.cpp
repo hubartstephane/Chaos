@@ -234,24 +234,29 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 	part->texcoords.topright = glm::vec2(1.0f, 1.0f);
 	part->color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
+
+
 	part->color.x = ludum_player->GetCurrentLife();
 	part->color.y = ludum_player->GetCurrentMaxLife();
 	part->color.z = 0.0f;
-	part->color.w = 0.0f;	
-	if (ludum_game_instance->current_power_up != nullptr && ludum_game_instance->current_power_up_surface != nullptr)
-	{		
-		float s = 1.0f;
-		
-		bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
-		if (decreasing_power_up)
-		{
-		
-		
-		}
-			
+	part->color.w = 0.0f;
 
-		part->color.z = ludum_game_instance->current_power_up->GetLifeCost();
-		part->color.w = ludum_player->GetBuyTimer() / ludum_game->GetBuyUpgradeTime();
+	if (ludum_game_instance->current_power_up != nullptr && ludum_game_instance->current_power_up_surface != nullptr)
+	{
+		bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
+
+		float cost = ludum_game_instance->current_power_up->GetLifeCost();
+		float paid_cost_ratio = ludum_player->GetBuyTimer() / ludum_game->GetBuyUpgradeTime();
+
+		float sign1 = (decreasing_power_up) ? 1.0f : 0.0f;
+		float sign2 = (decreasing_power_up) ? 1.0f : -1.0f;
+
+		part->color.x += sign1 * cost * paid_cost_ratio;
+		part->color.y += sign2 * cost * paid_cost_ratio;
+		if (part->color.y > 1.0f)
+			part->color.y = 1.0f;
+		if (part->color.x > part->color.y)
+			part->color.x = part->color.y;
 	}
 	
 	return true;

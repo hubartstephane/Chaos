@@ -21,6 +21,20 @@ void main()
 		output_color = sold_life_color;
 	else
 	{
+		if (vs_texcoord.x > player_life)
+			output_color = lost_life_color;
+		else
+			output_color = full_life_color;
+
+
+	}
+
+
+	/*
+	if (vs_texcoord.x > player_max_life)
+		output_color = sold_life_color;
+	else
+	{
 		vec4 base_color;
 		if (vs_texcoord.x < player_life)
 			base_color = full_life_color;
@@ -42,4 +56,6 @@ void main()
 		}			
 		output_color = base_color; 	
 	}
+
+	*/
 }

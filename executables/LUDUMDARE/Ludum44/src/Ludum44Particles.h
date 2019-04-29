@@ -137,6 +137,8 @@ public:
 	float damage = 1.0f;
 	float rotation = 0.0f;
 
+	float lifetime = 10.0f;
+
 };
 
 class ParticleFireUpdateData

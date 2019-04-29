@@ -14,6 +14,9 @@
 
 static bool IsDefaultTileCreationEnabled()
 {
+
+	return false;
+
 #if _DEBUG
 	return true;
 #else 

@@ -240,7 +240,9 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 		return true;
 	// outside the camera
 
-
+	particle->lifetime -= delta_time;
+	if (particle->lifetime <= 0.0f)
+		return true;
 
 
 
@@ -299,6 +301,17 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
 		vertices[i].color = particle->color;
+
+	float alpha = 1.0f;
+	if (particle->lifetime < 1.0f)
+		alpha = particle->lifetime;
+
+	for (size_t i = 0; i < 6; ++i)
+	{
+		vertices[i].color = particle->color;
+		vertices[i].color.a = alpha;
+	}
+
 	return 6;
 }
 

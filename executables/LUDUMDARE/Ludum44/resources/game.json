@@ -31,5 +31,13 @@
   "fire_velocity": 10000.0,
   "enemy_fire_velocity": 2000.0,
   "enemy_fire_damage": 0.1,
-  "enemy_fire_rate": 1.0
+  "enemy_fire_rate": 1.0,
+  "meteor_life": 3.0,
+  "alien_life": 3.0,
+  "turret_life": 3.0,
+
+  "meteor_damage_for_player": 0.1,
+  "alien_damage_for_player": 0.1,
+  "turret_damage_for_player": 0.1
+
 }

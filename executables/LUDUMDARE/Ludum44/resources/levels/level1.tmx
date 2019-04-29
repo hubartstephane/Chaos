@@ -9,7 +9,7 @@
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
  <objectgroup id="1" name="Texts" locked="1" offsetx="54.0606" offsety="-145.212"/>
- <objectgroup id="2" name="planets" locked="1">
+ <objectgroup id="2" name="planets">
   <properties>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
@@ -52,6 +52,7 @@
   <object id="1732" name="Spawner" gid="2" x="-13064" y="-4976" width="9800" height="5008">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="5"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="3"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
@@ -59,7 +60,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1753" name="Finish" gid="2" x="-13860" y="-13432" width="10568" height="7664">
+  <object id="1753" name="Finish" gid="2" x="-5092" y="2888" width="10568" height="7664">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>

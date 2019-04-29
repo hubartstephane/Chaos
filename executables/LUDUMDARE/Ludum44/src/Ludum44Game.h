@@ -153,6 +153,15 @@ protected:
 	/** a scroll multiplier */
 	float scroll_factor = 1.0f;
 
+	float meteor_life = 3.0f;
+	float alien_life = 3.0f;
+	float turret_life = 3.0f;
+		
+	float meteor_damage_for_player = 0.5f;
+	float alien_damage_for_player = 0.5f;
+	float turret_damage_for_player = 0.5f;
+
+
 	/** the power ups */
 	std::vector<chaos::shared_ptr<LudumPowerUp>> power_ups;
 

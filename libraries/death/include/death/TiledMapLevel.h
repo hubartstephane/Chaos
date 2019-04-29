@@ -188,6 +188,9 @@ namespace death
 			/** search whether there is a collision given box */
 			virtual bool IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const;
 
+			/** enable the creation of tile for this trigger */
+			virtual bool IsTileCreationEnabled() const {return true;}
+
 		protected:
 
 			/** override */

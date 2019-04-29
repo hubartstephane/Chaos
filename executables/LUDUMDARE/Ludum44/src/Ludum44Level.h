@@ -42,6 +42,8 @@ public:
 	/** constructor */
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
+	virtual bool IsTileCreationEnabled() const override;
+
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
@@ -59,6 +61,8 @@ public:
 
 	/** constructor */
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
+
+	virtual bool IsTileCreationEnabled() const override;
 
 protected:
 
@@ -78,6 +82,9 @@ public:
 	/** constructor */
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
+	/** override */
+	virtual bool IsTileCreationEnabled() const override;
+
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
@@ -96,6 +103,9 @@ public:
 
 	/** constructor */
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
+
+	/** override */
+	virtual bool IsTileCreationEnabled() const override;
 
 protected:
 

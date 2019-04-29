@@ -549,7 +549,11 @@ namespace death
 					{
 						trigger_surface = level->CreateTriggerSurface(this, geometric_object);
 						if (trigger_surface != nullptr)
+						{
 							trigger_surfaces.push_back(trigger_surface);
+							if (!trigger_surface->IsTileCreationEnabled())
+								continue;
+						}
 					}
 
 #if 0

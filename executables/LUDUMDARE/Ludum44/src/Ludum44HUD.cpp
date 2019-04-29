@@ -81,14 +81,14 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 	// get box
 	chaos::box2 view_box = GetGame()->GetViewBox();		
 
-	int hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
+	int hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
 
 	// create the level title
 	chaos::ParticleTextGenerator::GeneratorParams params;
 	params.line_height = 40;
-	params.hotpoint_type = chaos::Hotpoint::BOTTOM_RIGHT;
-	params.position.x = corner.x - 40.0f;
+	params.hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
+	params.position.x = corner.x + 40.0f;
 	params.position.y = corner.y + 100.0f;
 	params.default_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	params.font_info_name = "normal";

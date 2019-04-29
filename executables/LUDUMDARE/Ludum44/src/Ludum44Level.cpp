@@ -9,6 +9,47 @@
 #include <chaos/GeometryFramework.h>
 
 // =============================================================
+// IsTileCreationEnabled
+// =============================================================
+
+bool FinishingTriggerSurfaceObject::IsTileCreationEnabled() const
+{
+#if _DEBUG
+	return true;
+#else 
+	return false;
+#endif	
+}
+
+bool CheckpointTriggerSurfaceObject::IsTileCreationEnabled() const
+{
+#if _DEBUG
+	return true;
+#else 
+	return false;
+#endif	
+}
+
+bool SpeedUpTriggerSurfaceObject::IsTileCreationEnabled() const
+{
+
+#if _DEBUG
+	return true;
+#else 
+	return false;
+#endif	
+}
+
+bool SpawnerTriggerSurfaceObject::IsTileCreationEnabled() const
+{
+#if _DEBUG
+	return true;
+#else 
+	return false;
+#endif	
+}
+
+// =============================================================
 // LudumLevel implementation
 // =============================================================
 
@@ -230,6 +271,7 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	
 	chaos::box2 surface_box = surface->GetBoundingBox(true);
 	float scale_factor     = surface->FindPropertyFloat("ENEMY_SCALE_FACTOR", 1.0f);
+	float life_factor     = surface->FindPropertyFloat("ENEMY_LIFE_FACTOR", 1.0f);
 	int   count            = surface->FindPropertyInt("ENEMY_COUNT", 10);
 	int   spawn_curve_type = surface->FindPropertyInt("SPAWN_CURVE_TYPE", 0);
 	int   spawn_enemy_type = surface->FindPropertyInt("SPAWN_ENEMY_TYPE", 0);
@@ -320,6 +362,10 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 				enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
 
 				p.rotation_speed = chaos::MathTools::RandFloat(0.0f, -1.0f);
+
+
+				p.life = ludum_game->meteor_life;
+				p.damage_for_player = ludum_game->meteor_damage_for_player;
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_ALIEN)
 			{
@@ -331,6 +377,9 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 
 					enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
 				}			
+
+				p.life = ludum_game->alien_life;
+				p.damage_for_player = ludum_game->alien_damage_for_player;
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_FOUR_TURRETS)
 			{
@@ -339,6 +388,9 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 				p.rotation_following_player = false;
 				p.rotation_speed = 1.0f;
 
+				p.life = ludum_game->turret_life;
+				p.damage_for_player = ludum_game->turret_damage_for_player;
+
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_FOLLOWING_TURRET)
 			{
@@ -346,6 +398,8 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 				p.fire_frequency = fire_frequency;
 				p.rotation_following_player = true;
 
+				p.life = ludum_game->turret_life;
+				p.damage_for_player = ludum_game->turret_damage_for_player;
 			}
 
 			// not found
@@ -361,56 +415,10 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 
 			p.bounding_box.half_size = 0.5f * scale_factor * glm::vec2((float)enemy_info->width, (float)enemy_info->height);	
 			p.texcoords = texcoords;
-			p.life = 5.0f;
-			p.damage_for_player = 0.5f;
 
-
-
-
-
-
+			p.life *= life_factor;
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-	// Fill the enemies
-#if 0
-
-	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*enemy_info, atlas->GetAtlasDimension());
-
-	if (allocation->AddParticles(count))
-	{
-		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor<ParticleEnemy>();
-		for (int i = 0 ; i < count ; ++i)
-		{
-			particles[i].bounding_box.half_size = 0.5f * scale_factor * glm::vec2((float)enemy_info->width, (float)enemy_info->height);	
-			particles[i].texcoords = texcoords;
-			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-			particles[i].rotation_speed = 1.0f;
-
-			particles[i].bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
-
-
-			particles[i].damage_for_player = 0.5f;
-
-			particles[i].fire_frequency = fire_frequency;
-			particles[i].life = 5.0f;
-
-		}	
-	}
-#endif
-
-
 
 	// auto delete allocation
 	allocation->SetDestroyWhenEmpty(true);

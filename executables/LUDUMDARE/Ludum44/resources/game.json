@@ -13,11 +13,11 @@
   "min_player_max_life": 0.1,
 
   "player_speeds" : [ 1.0, 1.5, 2.0, 2.5 ],
-  "player_damages": [ 1.0, 1.5, 2.0, 2.5 ],
+  "player_damages": [ 0.5, 1.0, 1.5, 2.0 ],
   "player_charged_damages": [ 10.0, 15.0, 20.0, 25.0 ],
   "player_fire_rates": [ 1, 3, 5, 7 ],
 
-  "player_speed_factor": 3000.0,
+  "player_speed_factor": 2500.0,
   "buy_upgrade_time":1.5,
   "charged_fire_time": 1.0,
   "normal_fire_time": 0.15,
@@ -32,9 +32,9 @@
   "enemy_fire_velocity": 2000.0,
   "enemy_fire_damage": 0.1,
   "enemy_fire_rate": 1.0,
-  "meteor_life": 2.0,
-  "alien_life": 3.0,
-  "turret_life": 3.0,
+  "meteor_life": 2.5,
+  "alien_life": 3.5,
+  "turret_life": 3.5,
 
   "meteor_damage_for_player": 0.2,
   "alien_damage_for_player": 0.3,

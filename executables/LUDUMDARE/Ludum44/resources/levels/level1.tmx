@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1888">
+<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1911">
  <properties>
   <property name="BACKGROUND_NAME" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -143,27 +143,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1809" name="Checkpoint" gid="2" x="-3864" y="-7544" width="20912" height="2416">
-   <properties>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1810" name="Checkpoint" gid="2" x="-3736" y="-30968" width="20912" height="2416">
-   <properties>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1811" name="Checkpoint" gid="2" x="-4056" y="-56824" width="20912" height="2416">
-   <properties>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1812" name="Checkpoint" gid="2" x="-4248" y="-80888" width="20912" height="2416">
-   <properties>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1813" name="Checkpoint" gid="2" x="-3672" y="-104312" width="20912" height="2416">
+  <object id="1809" name="Checkpoint" gid="2" x="-4312" y="-11128" width="20912" height="688">
    <properties>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
@@ -185,7 +165,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1872" name="Spawner" gid="2" x="-1432" y="5640" width="15344" height="12976">
+  <object id="1872" name="Spawner" gid="2" x="-1368" y="-44024" width="15344" height="12976">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -196,7 +176,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1873" name="Spawner" gid="2" x="18024" y="-16344" width="16048" height="13168">
+  <object id="1873" name="Spawner" gid="2" x="-1752" y="5928" width="16048" height="13168">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -207,67 +187,19 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1874" name="PowerUp" gid="11" x="7644" y="-10244" width="9456" height="5000">
+  <object id="1874" name="PowerUp" gid="11" x="7132" y="-12100" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1875" name="PowerUp" gid="2" x="-3788" y="-10244" width="10160" height="5000">
+  <object id="1875" name="PowerUp" gid="2" x="-4300" y="-12100" width="10160" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1876" name="PowerUp" gid="2" x="-3788" y="-33796" width="10160" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1877" name="PowerUp" gid="11" x="7324" y="-33796" width="9776" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1878" name="PowerUp" gid="2" x="-4172" y="-59652" width="10160" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1879" name="PowerUp" gid="11" x="6876" y="-59652" width="9840" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1880" name="PowerUp" gid="2" x="-4236" y="-83652" width="10160" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1881" name="PowerUp" gid="11" x="7196" y="-83652" width="9456" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1882" name="PowerUp" gid="2" x="-3660" y="-106948" width="10160" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1883" name="PowerUp" gid="11" x="7452" y="-106948" width="9776" height="5000">
-   <properties>
-    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
-    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
-   </properties>
-  </object>
-  <object id="1886" name="Spawner" gid="2" x="18440" y="6568" width="15344" height="12976">
+  <object id="1886" name="Spawner" gid="2" x="-1272" y="-17368" width="15344" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -278,7 +210,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1887" name="Spawner" gid="2" x="20744" y="-42456" width="15344" height="12976">
+  <object id="1887" name="Spawner" gid="2" x="-1272" y="-66904" width="15344" height="12976">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -286,6 +218,134 @@
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="2"/>
     <property name="SPAWN_MOVE_TYPE" type="int" value="0"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1891" name="PowerUp" gid="2" x="-4428" y="-36612" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1892" name="Checkpoint" gid="2" x="-4440" y="-35640" width="20912" height="688">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1893" name="PowerUp" gid="11" x="7004" y="-36612" width="9456" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1894" name="PowerUp" gid="2" x="-4364" y="-61508" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1895" name="Checkpoint" gid="2" x="-4376" y="-60536" width="20912" height="688">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1896" name="PowerUp" gid="11" x="7068" y="-61508" width="9456" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1897" name="PowerUp" gid="2" x="-4364" y="-84420" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1898" name="Checkpoint" gid="2" x="-4376" y="-83448" width="20912" height="688">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1899" name="PowerUp" gid="11" x="7068" y="-84420" width="9456" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1900" name="Spawner" gid="2" x="-1624" y="-91704" width="16048" height="9648">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="80"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1903" name="Spawner" gid="2" x="-1336" y="-21848" width="7408" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1904" name="Spawner" gid="2" x="-1272" y="-26392" width="7280" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1906" name="Spawner" gid="2" x="6536" y="-21784" width="7408" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1907" name="Spawner" gid="2" x="6664" y="-26328" width="7280" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1908" name="Spawner" gid="2" x="-1688" y="-102104" width="16048" height="9648">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="80"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1909" name="Spawner" gid="2" x="-1496" y="-112280" width="16048" height="9648">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="80"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>

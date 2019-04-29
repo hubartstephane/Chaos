@@ -95,6 +95,17 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 
 	current_power_up = nullptr;
 	current_power_up_surface = nullptr;
+
+	int player_count = GetPlayerCount();
+	for (int i = 0; i < player_count; ++i)
+	{
+		LudumPlayer * p = GetLudumPlayer(i);
+		if (p != nullptr)
+		{
+			p->current_life = p->current_max_life;
+		}
+	}
+
 }
 
 void LudumGameInstance::OnPlayerEntered(death::Player * player)

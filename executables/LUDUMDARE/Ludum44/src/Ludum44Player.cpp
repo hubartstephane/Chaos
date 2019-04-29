@@ -104,6 +104,7 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 
 void LudumPlayer::OnLevelChanged()
 {
+	current_life = current_max_life;
 
 
 }

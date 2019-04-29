@@ -12,41 +12,33 @@
 // IsTileCreationEnabled
 // =============================================================
 
-bool FinishingTriggerSurfaceObject::IsTileCreationEnabled() const
+static bool IsDefaultTileCreationEnabled()
 {
 #if _DEBUG
 	return true;
 #else 
 	return false;
 #endif	
+}
+
+bool FinishingTriggerSurfaceObject::IsTileCreationEnabled() const
+{
+	return IsDefaultTileCreationEnabled();
 }
 
 bool CheckpointTriggerSurfaceObject::IsTileCreationEnabled() const
 {
-#if _DEBUG
-	return true;
-#else 
-	return false;
-#endif	
+	return IsDefaultTileCreationEnabled();
 }
 
 bool SpeedUpTriggerSurfaceObject::IsTileCreationEnabled() const
 {
-
-#if _DEBUG
-	return true;
-#else 
-	return false;
-#endif	
+	return IsDefaultTileCreationEnabled();
 }
 
 bool SpawnerTriggerSurfaceObject::IsTileCreationEnabled() const
 {
-#if _DEBUG
-	return true;
-#else 
-	return false;
-#endif	
+	return IsDefaultTileCreationEnabled();
 }
 
 // =============================================================
@@ -404,7 +396,7 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_FOLLOWING_TURRET)
 			{
-				enemy_info = bitmap_set->GetBitmapInfo("Enemy2");
+				enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
 				p.fire_frequency = fire_frequency;
 				p.rotation_following_player = true;
 

@@ -25,6 +25,17 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 // ===========================================================================
 
 
+static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const & object_box)
+{
+	float cam_y = camera_box.position.y - camera_box.half_size.y;
+	float obj_y = object_box.position.y + object_box.half_size.y;
+	if (obj_y < cam_y)
+		return true;
+	return false;
+
+}
+
+
 static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & result)
 {
 	// get the enemies
@@ -212,7 +223,7 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	{
 		// get the camera box 
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
-		result.camera_box.half_size *= 3.0f;
+		//result.camera_box.half_size *= 3.0f;
 		// get the enemies
 		FindEnemiesOnMap(layer_trait->game, result.enemies);
 		// get the players
@@ -228,8 +239,18 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	if (particle->damage <= 0.0f)
 		return true;
 	// outside the camera
-	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
+
+
+
+
+
+	//shuxxx
+	if (particle->player_ownership && !chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
+
+	if (!particle->player_ownership && ObjectBesideCamera(update_data.camera_box, particle->bounding_box))
+		return true;
+
 	// search for collisions
 	if (particle->player_ownership)
 	{
@@ -291,7 +312,7 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	if (count > 0)
 	{
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
-		result.camera_box.half_size *= 3.0f;
+		//result.camera_box.half_size *= 3.0f;
 
 		// search some bitmap layout information
 		chaos::BitmapAtlas::FolderInfo const * bitmap_set = layer_trait->game->GetTextureAtlas()->GetFolderInfo("sprites");
@@ -325,8 +346,20 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	if (particle->life <= 0.0f)
 		return true;
 	// destroy the particle if outside a BIG camera box
-	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
-		return true;	
+
+
+
+
+
+
+
+
+	// shuxxx
+	//if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
+	//	return true;	
+
+	if (ObjectBesideCamera(update_data.camera_box, particle->bounding_box))
+		return true;
 
 	// apply velocity
 	particle->bounding_box.position += delta_time * particle->velocity;

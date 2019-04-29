@@ -651,6 +651,9 @@ protected:
 		/** returns the layer trait */
 		virtual void const * GetLayerTrait() const { return nullptr; }
 
+		/** clear all allocations */
+		void ClearAllAllocations();	
+
 	protected:
 
 		/** ticking the particle system */

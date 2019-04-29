@@ -387,5 +387,12 @@ namespace chaos
 		return particles_allocations[index].get();
 	}
 
+	void ParticleLayerBase::ClearAllAllocations()
+	{
+		size_t count = particles_allocations.size();
+		for (size_t i = count ; i > 0 ; --i)
+			particles_allocations[i - 1]->Resize(0);
+	}
+
 }; // namespace chaos
 

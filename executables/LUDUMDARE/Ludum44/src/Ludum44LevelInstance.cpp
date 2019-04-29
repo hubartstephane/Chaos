@@ -22,11 +22,7 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 
 glm::vec2 LudumLevelInstance::GetCameraSafeZone() const
 {
-	int scroll_direction = 1;
-	if (scroll_direction == 0)
-		return glm::vec2(0.7f, 0.9f);
-	else
-		return glm::vec2(0.9f, 0.9f);
+	return glm::vec2(0.7f, 0.7f);
 }
 
 bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const

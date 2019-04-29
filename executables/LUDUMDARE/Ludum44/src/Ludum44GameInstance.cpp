@@ -58,7 +58,7 @@ bool LudumGameInstance::OnRestartedFromCheckpoint(death::Player * player)
 		}	
 	}
 
-	return true;
+	return death::GameInstance::OnRestartedFromCheckpoint(player);
 }
 
 bool LudumGameInstance::DoTick(double delta_time)

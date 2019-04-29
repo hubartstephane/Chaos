@@ -214,14 +214,9 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	if (!particle->player_ownership && update_data.player != nullptr)
 	{
 		if (chaos::Collide(particle->bounding_box, update_data.player->GetPlayerBox())) // destroy the particle outside the camera frustum (works for empty camera)
-		{
-		
-		
-
-
-
-
-
+		{				
+			update_data.player->SetLifeBarValue(-particle->damage, true);
+			particle->damage = 0.0f;
 		}	
 	}
 

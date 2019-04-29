@@ -84,6 +84,8 @@ public:
 	float fire_frequency = 0.0f;
 	float current_fire_timer = 0.0f;
 
+	bool rotation_following_player = false;
+
 };
 
 class ParticleEnemyUpdateData

@@ -4,7 +4,7 @@
   <property name="BACKGROUND_NAME" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="1800"/>
-  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Tutorial]"/>
+  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Hello World]"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>

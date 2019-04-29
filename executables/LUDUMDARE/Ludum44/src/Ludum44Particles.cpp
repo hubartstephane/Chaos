@@ -143,10 +143,30 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 	int image_count = particle->explosion_info->GetAnimationImageCount();
 	float frame_time = (float)particle->explosion_info->GetFrameTime();
 
-	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(100, chaos::BitmapAtlas::GetBitmapLayoutFlag::none);
+	if (frame_time == 0)
+		frame_time = 1 / 16.0f;
+
+	int image_index = (int)(particle->age / frame_time);
+
+	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::BitmapAtlas::GetBitmapLayoutFlag::none);
 	if (bitmap_layout.bitmap_index < 0)
 		return true;
 
+	particle->age += delta_time;
+
+#if 0
+	particle->texcoords = bitmap_layout;
+
+	// compute the bounding box for all particles
+	chaos::box2 particle_box = ref_box;
+
+	particle_box.half_size = ratio_to_box * ref_box.half_size;
+	
+	particle_box.position = ref_box.position;
+
+	// compute texcoords for all particles
+#endif
+	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout, layer_trait->game->GetTextureAtlas()->GetAtlasDimension());
 	
 
 

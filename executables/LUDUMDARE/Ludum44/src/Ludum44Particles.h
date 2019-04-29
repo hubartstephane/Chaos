@@ -233,6 +233,8 @@ class ParticleExplosion : public chaos::ParticleDefault::Particle
 public:
 
 	chaos::BitmapAtlas::BitmapInfo const * explosion_info = nullptr;
+
+	float age = 0.0f;
 };
 
 class ParticleExplosionTrait : public chaos::ParticleAllocationTrait<ParticleExplosion, VertexBase>

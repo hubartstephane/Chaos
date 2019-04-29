@@ -130,7 +130,7 @@
   <object id="1807" name="earth" gid="3" x="2872" y="-21496" width="2500" height="2500"/>
   <object id="1828" name="star" gid="10" x="-44025" y="1945" width="30" height="30"/>
  </objectgroup>
- <objectgroup name="Zones" locked="1">
+ <objectgroup name="Zones">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="power_up"/>
@@ -165,7 +165,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1872" name="Spawner" gid="2" x="-1368" y="-44024" width="15344" height="12976">
+  <object id="1872" name="Spawner" gid="2" x="1832" y="-43704" width="9072" height="10096">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -201,7 +201,7 @@
   </object>
   <object id="1886" name="Spawner" gid="2" x="-1272" y="-17368" width="15344" height="4272">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
@@ -285,7 +285,7 @@
   </object>
   <object id="1903" name="Spawner" gid="2" x="-1336" y="-21848" width="7408" height="4272">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
@@ -296,7 +296,7 @@
   </object>
   <object id="1904" name="Spawner" gid="2" x="-1272" y="-26392" width="7280" height="4272">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
@@ -307,7 +307,7 @@
   </object>
   <object id="1906" name="Spawner" gid="2" x="6536" y="-21784" width="7408" height="4272">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
@@ -318,7 +318,7 @@
   </object>
   <object id="1907" name="Spawner" gid="2" x="6664" y="-26328" width="7280" height="4272">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="20"/>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
@@ -363,7 +363,7 @@
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
   </properties>
  </objectgroup>
- <objectgroup name="PlayerAndCamera">
+ <objectgroup name="PlayerAndCamera" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>

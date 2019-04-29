@@ -264,7 +264,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 	int const buy_key_buttons[] = {GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1};
 
 	bool buy_pressed = CheckButtonPressed(buy_key_buttons, chaos::MyGLFW::XBOX_BUTTON_Y);
-	if (buy_pressed)
+	if (buy_pressed && !buylocked)
 	{
 		buy_timer += (float)delta_time;
 		if (buy_timer >= ludum_game->buy_upgrade_time)
@@ -285,7 +285,8 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 			}
 
 			// reset the corresponding trigger surface
-			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this, decreasing_power_up);			
+			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this, decreasing_power_up);	
+			buylocked = true;
 			// shuxxx ludum_game_instance->current_power_up_surface->SetEnabled(false);
 
 			PowerUpTriggerSurfaceObject * power_up_trigger_surface = dynamic_cast<PowerUpTriggerSurfaceObject*>(ludum_game_instance->current_power_up_surface.get());
@@ -300,6 +301,9 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 	}
 	else
 		buy_timer = 0.0f;
+
+	if (!buy_pressed)
+		buylocked = false;
 }
 
 void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)

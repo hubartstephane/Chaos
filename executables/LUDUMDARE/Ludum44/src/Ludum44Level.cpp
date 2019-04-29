@@ -378,7 +378,8 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 			}
 			else if (spawn_enemy_type == SPAWN_ENEMY_ALIEN)
 			{
-				char const * enemy_names[] = {"Enemy2", "Enemy3", "Enemy4", "Enemy5"}; // an single RANDOM for the whole set of enemies
+				char const * enemy_names[] = { "Enemy2" }; // , "Enemy3", "Enemy4", "Enemy5"
+			  // an single RANDOM for the whole set of enemies
 				if (enemy_info == nullptr)
 				{
 					int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);				

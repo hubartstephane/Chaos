@@ -89,6 +89,8 @@ protected:
 	float fire_timer = 0.0f; // the fire_timer is a COOLDOWN !
 	float charged_fire_timer = 0.0f;
 
+	bool buylocked = false;
+
 	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
 
 	chaos::BitmapAtlas::BitmapLayout fire_bitmap_layout;

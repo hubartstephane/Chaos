@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="640" tileheight="640" tilecount="9" columns="0">
+<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="640" tileheight="640" tilecount="10" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1">
   <properties>
@@ -31,5 +31,8 @@
  </tile>
  <tile id="9">
   <image width="50" height="50" source="../sprites/Particles.png"/>
+ </tile>
+ <tile id="10">
+  <image width="64" height="64" source="../sprites/restoration_rectangle.png"/>
  </tile>
 </tileset>

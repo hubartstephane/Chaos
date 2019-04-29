@@ -593,11 +593,11 @@ namespace death
 
 							
 						// create a simple particle
-						chaos::box2 particle_box = tile->GetBoundingBox(false);
+						chaos::box2 particle_box = tile->GetBoundingBox(true);
 						if (trigger_surface != nullptr)
 						{
 							keep_aspect_ratio = false;
-							particle_box = trigger_surface->GetBoundingBox(false);
+							particle_box = trigger_surface->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 						}
 						particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, keep_aspect_ratio);
 						continue;
@@ -1306,7 +1306,7 @@ namespace death
 
 			chaos::TiledMap::GeometricObjectSurface const * object_surface = player_start->GetGeometricObject()->GetObjectSurface();
 			if (object_surface != nullptr)
-				player_bounding_box = object_surface->GetBoundingBox(false);
+				player_bounding_box = object_surface->GetBoundingBox(true);
 
 			particle_populator.AddParticle(bitmap_name->c_str(), player_bounding_box);
 			particle_populator.FlushParticles();

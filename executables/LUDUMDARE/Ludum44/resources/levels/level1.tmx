@@ -41,7 +41,7 @@
    <property name="MATERIAL" value="enemy"/>
   </properties>
  </objectgroup>
- <objectgroup id="6" name="Zones" offsetx="3744" offsety="-288">
+ <objectgroup id="6" name="Zones" offsetx="3744" offsety="-500">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="power_up"/>
@@ -49,9 +49,9 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" name="Spawner" gid="2" x="-13320" y="-15280" width="18568" height="22160">
+  <object id="1732" name="Spawner" gid="2" x="-12424" y="-6832" width="9800" height="2384">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="50"/>
+    <property name="ENEMY_COUNT" type="int" value="300"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
@@ -62,7 +62,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1758" name="Checkpoint" gid="2" x="-9508" y="-6008" width="10568" height="7664">
+  <object id="1758" name="Checkpoint" gid="2" x="-3300" y="-7096" width="3400" height="3120">
    <properties>
     <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>

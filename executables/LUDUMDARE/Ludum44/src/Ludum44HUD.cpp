@@ -238,8 +238,18 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 	part->color.y = ludum_player->GetCurrentMaxLife();
 	part->color.z = 0.0f;
 	part->color.w = 0.0f;	
-	if (ludum_game_instance->current_power_up != nullptr)
+	if (ludum_game_instance->current_power_up != nullptr && ludum_game_instance->current_power_up_surface != nullptr)
 	{		
+		float s = 1.0f;
+		
+		bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
+		if (decreasing_power_up)
+		{
+		
+		
+		}
+			
+
 		part->color.z = ludum_game_instance->current_power_up->GetLifeCost();
 		part->color.w = ludum_player->GetBuyTimer() / ludum_game->GetBuyUpgradeTime();
 	}

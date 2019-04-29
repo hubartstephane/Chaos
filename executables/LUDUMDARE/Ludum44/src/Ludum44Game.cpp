@@ -30,7 +30,7 @@ LudumGame::LudumGame()
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
 	[ButtonB] or [KEYBOARD CTRL]  : Charged fire
-	[ButtonY] or [KEYBOARD ALT]   : Buy power up with your life
+	[ButtonY] or [KEYBOARD ALT]   : Trade POWER-UP and LIFE
 	)INSTRUCTIONS";
 }
 

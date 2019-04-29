@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="18" nextobjectid="1870">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="18" nextobjectid="1872">
  <properties>
   <property name="BACKGROUND_NAME" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -227,6 +227,18 @@
    </properties>
   </object>
   <object id="1869" name="PowerUp" gid="11" x="7772" y="-107268" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1870" name="PowerUp" gid="2" x="-3020" y="11068" width="9264" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1871" name="PowerUp" gid="11" x="8604" y="11068" width="9264" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>

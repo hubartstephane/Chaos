@@ -14,6 +14,7 @@ uniform vec4 color1;
 uniform vec4 color2;
 
 uniform sampler2D background;
+uniform sampler2DArray material;
 
 void main()
 {
@@ -23,7 +24,33 @@ void main()
 	texcoord.y -= scroll_speed * game_time;
 	texcoord += vec2(1.0, 0.0) * camera_box.xy / viewport_size.xy;
 
-	vec4 c = texture(background, texcoord);
-	output_color.rgba = mix(color1, color2, c.g); // the initial texture is white and red : GREEN channel is a good indicator to select what we want
-	output_color.a *= vs_color.a;
+	vec4 c1 = texture(background, texcoord);	
+	vec4 c2 = texture(material, vs_texcoord);
+	vec4 tt  = mix(color1, color2, c1.g);
+
+
+	vec4 final;
+
+	final = vec4(c2.x, c2.y, c2.z, 0.2);
+
+	/*
+	final.r = c2.r;
+	final.g = c2.g;
+	final.b = c2.b;
+	
+	final.a = 1.0;
+
+
+	final.r = tt.r;
+	final.g = tt.g;
+	final.b = tt.b;
+	
+	final.a = tt.a;
+	vec4 tt  = mix(color1, color2, c1.g);
+	*/
+
+
+	output_color = final;
+
+
 };

@@ -27,6 +27,7 @@
     { "path": "sounds/start.ogg" , "category" :  "FX"},
     { "path": "sounds/pause.ogg" , "category" :  "FX"},
     { "path": "sounds/thrust.ogg" , "category" :  "FX"},
+    { "path": "sounds/player_touched.ogg" , "category" :  "FX"},
     { "path": "sounds/particle_removed.ogg" , "category" :  "FX"},
     { "path": "sounds/particle_add.ogg" , "category" :  "FX"},
     { "path": "sounds/next_level.ogg" , "category" :  "FX"},

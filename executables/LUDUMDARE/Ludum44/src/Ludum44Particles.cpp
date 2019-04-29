@@ -99,7 +99,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 			
 				LudumPlayer * player = layer_trait->game->GetLudumPlayer(0);
 				player->SetLifeBarValue(-life_lost, true);
-
 			}
 		}
 	}
@@ -204,12 +203,16 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 		}	
 	}
 	// enemy bullet
+	chaos::box2 player_box = update_data.player->GetPlayerBox();
+	player_box.half_size *= 0.7f;
 	if (!particle->player_ownership && update_data.player != nullptr)
 	{
-		if (chaos::Collide(particle->bounding_box, update_data.player->GetPlayerBox())) // destroy the particle outside the camera frustum (works for empty camera)
+		if (chaos::Collide(particle->bounding_box, player_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		{				
 			update_data.player->SetLifeBarValue(-particle->damage, true);
 			particle->damage = 0.0f;
+			
+			layer_trait->game->PlaySound("player_touched", false, false);
 		}	
 	}
 

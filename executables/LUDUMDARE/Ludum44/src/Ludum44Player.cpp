@@ -156,9 +156,9 @@ bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_b
 	return false;
 }
 
-ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation)
+ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity)
 {
-	return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true);
+	return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true, velocity, 0.0f);
 }
 
 ParticleFire * LudumPlayer::FireChargedProjectile()
@@ -169,7 +169,7 @@ ParticleFire * LudumPlayer::FireChargedProjectile()
 
 	int count = 1;
 
-	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 1.0f, count, "thrust", 0.1f);
+	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 1.0f, count, "thrust", 0.1f, ludum_game->fire_velocity);
 	if (p != nullptr)
 	{
 		for (int i = 0 ; i < count ; ++i)
@@ -189,7 +189,7 @@ ParticleFire * LudumPlayer::FireNormalProjectile()
 
 	int count = ludum_game->player_fire_rates[current_fire_rate_index];
 
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.3f, count, "fire", 0.1f);
+	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.3f, count, "fire", 0.1f, ludum_game->fire_velocity);
 	if (p != nullptr)
 	{
 		for (int i = 0 ; i < count ; ++i)

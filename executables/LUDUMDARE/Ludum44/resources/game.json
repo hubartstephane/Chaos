@@ -28,5 +28,8 @@
   "cost_fire_rate_up": 0.2,
 
   "scroll_factor": 1.0,
-  "fire_velocity": 10000.0
+  "fire_velocity": 10000.0,
+  "enemy_fire_velocity": 2000.0,
+  "enemy_fire_damage": 0.1,
+  "enemy_fire_rate": 1.0
 }

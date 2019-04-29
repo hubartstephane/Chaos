@@ -219,6 +219,13 @@ bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 	int   count        = surface->FindPropertyInt("ENEMY_COUNT", 10);
 
 	// Fill the enemies
+	float fire_frequency = 1.0f;
+
+	LudumGame * ludum_game = dynamic_cast<LudumGame*>(enemy_layer_instance->GetGame());
+	if (ludum_game != nullptr)
+		fire_frequency = ludum_game->enemy_fire_rate;
+
+
 	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*enemy_info, atlas->GetAtlasDimension());
 
 	if (allocation->AddParticles(count))
@@ -236,6 +243,8 @@ bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 
 			particles[i].damage_for_player = 0.5f;
+
+			particles[i].fire_frequency = fire_frequency;
 			particles[i].life = 5.0f;
 
 		}	

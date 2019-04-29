@@ -57,6 +57,9 @@ class LudumGame : public death::Game
 	friend class LudumDamageUp;
 	friend class LudumFireRateUp;
 
+	friend class ParticleEnemyTrait;
+	friend class SpawnerTriggerSurfaceObject;
+
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
@@ -139,6 +142,13 @@ protected:
 
 	/** bullet velocity */
 	float fire_velocity = 800.0f;
+	/** enemy bullet velocity */
+	float enemy_fire_velocity = 800.0f;
+
+	/** damaged cause by enemy fire */
+	float enemy_fire_damage = 0.1f;
+	/** enemy fire rate */
+	float enemy_fire_rate = 1.0f;
 
 	/** a scroll multiplier */
 	float scroll_factor = 1.0f;

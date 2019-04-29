@@ -151,7 +151,7 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 	}
 }
 
-ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase * allocation, chaos::box2 const & ref_box, chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_box, int count, char const * sound_name, float delta_rotation, bool player_ownership)
+ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase * allocation, chaos::box2 const & ref_box, chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_box, int count, char const * sound_name, float delta_rotation, bool player_ownership, float velocity, float offset_rotation)
 {
 	if (count <= 0)
 		return nullptr;
@@ -189,20 +189,13 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 		result[i].texcoords = texcoords;
 		result[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-
-#if SHUXXX_SCROLL_X
-		int scroll_direction = 0;
-		float particle_orientation = rotation - (float)M_PI_2;
-		float particle_velocity_orientation = rotation;
-#else
 		int scroll_direction = 1;
-		float particle_orientation = rotation;
-		float particle_velocity_orientation = rotation + (float)M_PI_2;
-#endif
+		float particle_orientation = rotation + offset_rotation;
+		float particle_velocity_orientation = offset_rotation + rotation + (float)M_PI_2;
 
 		glm::vec2 direction = glm::vec2(cosf(particle_velocity_orientation), sinf(particle_velocity_orientation));
-		result[i].velocity = ludum_game->fire_velocity * direction;
-		result[i].rotation = particle_orientation;
+		result[i].velocity  = velocity * direction;
+		result[i].rotation  = particle_orientation;
 
 		result[i].bounding_box.position += direction * ref_box.half_size[scroll_direction];
 

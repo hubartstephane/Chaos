@@ -22,12 +22,7 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 
 glm::vec2 LudumLevelInstance::GetCameraSafeZone() const
 {
-#if SHUXXX_SCROLL_X
-	int scroll_direction = 0;
-#else
 	int scroll_direction = 1;
-#endif
-
 	if (scroll_direction == 0)
 		return glm::vec2(0.7f, 0.9f);
 	else
@@ -74,12 +69,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	if (camera_after.IsEmpty())
 		return true;
 	// correct camera position
-
-#if SHUXXX_SCROLL_X
-	int scroll_direction = 0;
-#else
 	int scroll_direction = 1;
-#endif
 
 	float delta_camera = camera_before.position[scroll_direction] - camera_after.position[scroll_direction];
 

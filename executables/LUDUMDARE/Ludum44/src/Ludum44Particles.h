@@ -81,11 +81,18 @@ public:
 	int   score = 50;
 	float damage_for_player = 0.1f;
 
+	float fire_frequency = 0.0f;
+	float current_fire_timer = 0.0f;
+
 };
 
 class ParticleEnemyUpdateData
 {
 public:
+
+	chaos::BitmapAtlas::BitmapLayout fire_layout;
+
+	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
 
 	chaos::box2 camera_box;
 };

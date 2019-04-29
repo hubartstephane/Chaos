@@ -251,6 +251,29 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	{
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
 		result.camera_box.half_size *= 3.0f;
+
+		// search some bitmap layout information
+		chaos::BitmapAtlas::FolderInfo const * bitmap_set = layer_trait->game->GetTextureAtlas()->GetFolderInfo("sprites");
+		if (bitmap_set != nullptr)
+		{
+			chaos::BitmapAtlas::BitmapInfo const * fire_info = bitmap_set->GetBitmapInfo("fire");
+			if (fire_info != nullptr)
+				result.fire_layout = *fire_info;
+		}	
+
+		// get the layer of interrest
+		death::TiledMap::LayerInstance * layer_instance = layer_trait->game->GetLudumLevelInstance()->FindLayerInstance("fire");
+		if (layer_instance != nullptr)
+		{
+			chaos::ParticleLayerBase * fire_layer = layer_instance->GetParticleLayer();
+			if (fire_layer != nullptr)
+			{
+				if (fire_layer->GetAllocationCount() > 0)
+					result.fire_allocation = fire_layer->GetAllocation(0);
+				else
+					result.fire_allocation = fire_layer->SpawnParticles(0);
+			}
+		}
 	}
 	return result;
 }
@@ -271,6 +294,29 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	// update blinking effect
 	if (particle->touched_count_down > 0)
 		--particle->touched_count_down;
+
+
+
+	if (particle->fire_frequency > 0.0f)
+	{
+		particle->current_fire_timer += delta_time;
+		if (particle->current_fire_timer >= particle->fire_frequency)
+		{
+			
+			int count = 4;
+			float delta_angle = 2.0f * (float)M_PI / (float)count;
+			ParticleFire * p = layer_trait->game->GetLudumGameInstance()->FireProjectile(update_data.fire_allocation.get(), particle->bounding_box, update_data.fire_layout, 0.3f, count, nullptr, delta_angle, false, layer_trait->game->enemy_fire_velocity, particle->rotation);
+			if (p != nullptr)
+			{
+				for (int i = 0 ; i < count ; ++i)
+				{
+					p[i].damage = layer_trait->game->enemy_fire_damage;
+					p[i].trample = false;
+				}
+			}
+			particle->current_fire_timer = 0.0f;		
+		}
+	}
 
 	return false; // do not destroy the particle
 }

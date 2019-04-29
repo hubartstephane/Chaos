@@ -244,7 +244,7 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 		chaos::BitmapAtlas::FolderInfo const * bitmap_set = layer_trait->game->GetTextureAtlas()->GetFolderInfo("sprites");
 		if (bitmap_set != nullptr)
 		{
-			chaos::BitmapAtlas::BitmapInfo const * fire_info = bitmap_set->GetBitmapInfo("fire");
+			chaos::BitmapAtlas::BitmapInfo const * fire_info = bitmap_set->GetBitmapInfo("enemy_fire");
 			if (fire_info != nullptr)
 				result.fire_layout = *fire_info;
 		}	
@@ -304,10 +304,10 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		particle->current_fire_timer += delta_time;
 		if (particle->current_fire_timer >= particle->fire_frequency)
 		{
-			
+			float size_ratio = 0.2f;
 			int count = 4;
 			float delta_angle = 2.0f * (float)M_PI / (float)count;
-			ParticleFire * p = layer_trait->game->GetLudumGameInstance()->FireProjectile(update_data.fire_allocation.get(), particle->bounding_box, update_data.fire_layout, 0.3f, count, nullptr, delta_angle, false, layer_trait->game->enemy_fire_velocity, particle->rotation);
+			ParticleFire * p = layer_trait->game->GetLudumGameInstance()->FireProjectile(update_data.fire_allocation.get(), particle->bounding_box, update_data.fire_layout, size_ratio, count, nullptr, delta_angle, false, layer_trait->game->enemy_fire_velocity, particle->rotation);
 			if (p != nullptr)
 			{
 				for (int i = 0 ; i < count ; ++i)

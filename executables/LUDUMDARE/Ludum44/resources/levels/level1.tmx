@@ -53,6 +53,7 @@
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_TYPE" type="int" value="6"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>

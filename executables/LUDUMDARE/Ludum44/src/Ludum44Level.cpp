@@ -201,7 +201,7 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	if (bitmap_set == nullptr)
 		return true;
 	
-	chaos::BitmapAtlas::BitmapInfo const * enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
+	chaos::BitmapAtlas::BitmapInfo const * enemy_info = bitmap_set->GetBitmapInfo("Enemy2");
 	if (enemy_info == nullptr)
 		return true;
 
@@ -213,14 +213,24 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->CreateParticleAllocation();
 	if (allocation == nullptr)
 		return true;
-
+	
 	chaos::box2 surface_box = surface->GetBoundingBox(true);
 	float scale_factor = surface->FindPropertyFloat("ENEMY_SCALE_FACTOR", 1.0f);
 	int   count        = surface->FindPropertyInt("ENEMY_COUNT", 10);
+	int   spawn_type   = surface->FindPropertyInt("SPAWN_TYPE", 0);
+
+
+
+
+
+
+
+
+
+
 
 	// Fill the enemies
 	float fire_frequency = 1.0f;
-
 	LudumGame * ludum_game = dynamic_cast<LudumGame*>(enemy_layer_instance->GetGame());
 	if (ludum_game != nullptr)
 		fire_frequency = ludum_game->enemy_fire_rate;

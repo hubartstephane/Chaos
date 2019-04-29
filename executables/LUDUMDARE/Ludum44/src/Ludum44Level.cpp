@@ -168,8 +168,12 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 		if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
 			ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
+		else if (event_type == TriggerSurfaceObject::COLLISION_AGAIN && reset_trigger)
+			ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
 		else if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
 			ludum_game_instance->OnPowerUpZone(player, false, this, decrease_power);
+
+		reset_trigger = false;
 	}
 
 	return true; // continue other collisions

@@ -18,7 +18,7 @@
   "player_fire_rates": [ 1, 3, 5, 7 ],
 
   "player_speed_factor": 2500.0,
-  "buy_upgrade_time":1.5,
+  "buy_upgrade_time":2.0,
   "charged_fire_time": 1.0,
   "normal_fire_time": 0.15,
   

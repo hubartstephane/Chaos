@@ -201,8 +201,8 @@ bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesyste
 		return false;
 	if (!PopulatePowerOneUp(new LudumDamageUp("power_up", false), "damage_up", config, config_path))
 		return false;
-	if (!PopulatePowerOneUp(new LudumDamageUp("blast_improved", true), "charged_damage_up", config, config_path))
-		return false;
+	//if (!PopulatePowerOneUp(new LudumDamageUp("blast_improved", true), "charged_damage_up", config, config_path))
+	//	return false;
 	if (!PopulatePowerOneUp(new LudumFireRateUp("augmented_fire"), "fire_rate_up", config, config_path))
 		return false;
 	return true;

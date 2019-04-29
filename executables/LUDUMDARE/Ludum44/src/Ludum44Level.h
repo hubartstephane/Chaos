@@ -24,10 +24,16 @@ public:
 	/** constructor */
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
+	void ResetTrigger() { reset_trigger = true; }
+
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
 	virtual bool OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+
+protected:
+
+	bool reset_trigger = false;
 };
 
 // =================================================

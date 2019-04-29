@@ -287,6 +287,12 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 			// reset the corresponding trigger surface
 			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this, decreasing_power_up);			
 			// shuxxx ludum_game_instance->current_power_up_surface->SetEnabled(false);
+
+			PowerUpTriggerSurfaceObject * power_up_trigger_surface = dynamic_cast<PowerUpTriggerSurfaceObject*>(ludum_game_instance->current_power_up_surface.get());
+			if (power_up_trigger_surface != nullptr)
+				power_up_trigger_surface->ResetTrigger();
+
+
 			ludum_game_instance->current_power_up = nullptr;
 			ludum_game_instance->current_power_up_surface = nullptr;
 			buy_timer = 0.0f;

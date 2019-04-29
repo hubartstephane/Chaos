@@ -50,7 +50,7 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 	}
 }
 
-static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player) // returns the life damage produced by the enemy collision (its life)
+static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player, chaos::box2 const & ref_box) // returns the life damage produced by the enemy collision (its life)
 {
 	float result = collision_with_player? enemy->damage_for_player : enemy->life;
 
@@ -66,6 +66,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(enemy->score, true);
 		game->PlaySound("explosion", false, false);
+		game->GetLudumGameInstance()->FireExplosion(ref_box);
 	}
 	return result;
 }
@@ -95,7 +96,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 		{
 			if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
 			{
-				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, true); // destroy the enemy always
+				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, true, enemy->bounding_box); // destroy the enemy always
 			
 				LudumPlayer * player = layer_trait->game->GetLudumPlayer(0);
 				player->SetLifeBarValue(-life_lost, true);
@@ -136,12 +137,26 @@ bool TileParticleTraitExt::UpdateParticle(float delta_time, death::TiledMap::Til
 
 bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const
 {
+	if (particle->explosion_info == nullptr) // delete the particle
+		return true;
+
+	int image_count = particle->explosion_info->GetAnimationImageCount();
+	float frame_time = (float)particle->explosion_info->GetFrameTime();
+
+	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(100, chaos::BitmapAtlas::GetBitmapLayoutFlag::none);
+	if (bitmap_layout.bitmap_index < 0)
+		return true;
+
+	
+
 
 	return false;
 }
 
 size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
+
+
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
 
@@ -206,7 +221,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			{
 				if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
 				{
-					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, false);
+					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, false, enemy->bounding_box);
 
 					// kill bullet ?
 					if (particle->damage <= 0.0f)

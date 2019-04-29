@@ -7,6 +7,12 @@
 	== TODO
 	====================================================================
 
+		-- animated bitmap in atlas
+
+		explosion_4x4 est refernce dans JSON, pas "explosion" => a changer non ?
+
+
+
 		-- Mieux a  faire que d un coté
 		
 			chaos::ParticleDefault::ParticleTrait::ParticleToVertices

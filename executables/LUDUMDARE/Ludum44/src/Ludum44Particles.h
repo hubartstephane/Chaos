@@ -5,7 +5,7 @@
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
 #include <chaos/GPUVertexDeclaration.h> 
-
+#include <chaos/BitmapAtlas.h> 
 
 #include <death/TiledMapParticle.h> 
 
@@ -230,6 +230,9 @@ public:
 class ParticleExplosion : public chaos::ParticleDefault::Particle
 {
 
+public:
+
+	chaos::BitmapAtlas::BitmapInfo const * explosion_info = nullptr;
 };
 
 class ParticleExplosionTrait : public chaos::ParticleAllocationTrait<ParticleExplosion, VertexBase>
@@ -246,6 +249,9 @@ public:
 	bool UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const;
 
 	size_t ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+
+	
 };
 
 

@@ -9,53 +9,34 @@ uniform vec4 full_life_color;
 uniform vec4 lost_life_color;
 uniform vec4 sold_life_color;
 
-
 void main()
 {
 	float player_life = vs_color.x;
 	float player_max_life = vs_color.y;
-	float upgrade_cost = vs_color.z;
-	float buy_timer = vs_color.w;
 
+	bool compute_border_color = true;
 	if (vs_texcoord.x > player_max_life)
+	{
 		output_color = sold_life_color;
+		compute_border_color = false;
+	}
 	else
 	{
 		if (vs_texcoord.x > player_life)
 			output_color = lost_life_color;
 		else
 			output_color = full_life_color;
-
-
 	}
 
-
-	/*
-	if (vs_texcoord.x > player_max_life)
-		output_color = sold_life_color;
-	else
+	if (compute_border_color)
 	{
-		vec4 base_color;
-		if (vs_texcoord.x < player_life)
-			base_color = full_life_color;
-		else
-			base_color = lost_life_color;
+		float mx = 0.003;
+		float my = 0.08;
 
-		if (upgrade_cost > 0.0)
-		{
-			if (vs_texcoord.x > player_max_life - upgrade_cost)
-			{
-				base_color.a *= 0.7;
-
-				if (vs_texcoord.x > player_max_life - upgrade_cost * buy_timer)
-				{
-					base_color = sold_life_color;
-
-				}			
-			}			
-		}			
-		output_color = base_color; 	
+		vec4 border_color = vec4(1.0, 1.0, 1.0, 1.0);
+		if (vs_texcoord.x < mx || abs(vs_texcoord.x - player_max_life) < mx)
+			output_color = border_color;
+		else if (vs_texcoord.y < my || vs_texcoord.y >(1.0 - my))
+			output_color = border_color;
 	}
-
-	*/
 }

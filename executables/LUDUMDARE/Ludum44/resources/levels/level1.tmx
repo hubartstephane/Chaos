@@ -49,11 +49,12 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" name="Spawner" gid="2" x="-12424" y="-6832" width="9800" height="2384">
+  <object id="1732" name="Spawner" gid="2" x="-13064" y="-4976" width="9800" height="5008">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
-    <property name="SPAWN_TYPE" type="int" value="6"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="3"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>

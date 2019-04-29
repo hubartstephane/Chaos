@@ -121,7 +121,7 @@ class ParticleFire : public ParticleBase
 {
 public:
 
-	bool player_owner_ship = true;
+	bool player_ownership = true;
 	bool trample = false;
 	float damage = 1.0f;
 	float rotation = 0.0f;

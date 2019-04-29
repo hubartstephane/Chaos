@@ -150,3 +150,69 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 		}
 	}
 }
+
+ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase * allocation, chaos::box2 const & ref_box, chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_box, int count, char const * sound_name, float delta_rotation, bool player_ownership)
+{
+	if (count <= 0)
+		return nullptr;
+	if (allocation == nullptr)
+		return nullptr;
+
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return nullptr;
+
+	if (!allocation->AddParticles(count))
+		return nullptr;
+	chaos::ParticleAccessor<ParticleFire> particles = allocation->GetParticleAccessor<ParticleFire>();
+	if (particles.GetCount() == 0)
+		return nullptr;
+
+	ParticleFire * result = &particles[particles.GetCount() - count];
+
+	// compute the bounding box for all particles
+	chaos::box2 particle_box = ref_box;
+
+	particle_box.half_size = ratio_to_box * ref_box.half_size;
+	particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);	
+	particle_box.position = ref_box.position;
+
+	// compute texcoords for all particles
+	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, ludum_game->GetTextureAtlas()->GetAtlasDimension());
+
+
+	float rotation = 0.0f - delta_rotation * (float)(count / 2);
+
+	for (int i = 0 ; i < count ; ++i)
+	{
+		result[i].bounding_box = particle_box;	
+		result[i].texcoords = texcoords;
+		result[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+#if SHUXXX_SCROLL_X
+		int scroll_direction = 0;
+		float particle_orientation = rotation - (float)M_PI_2;
+		float particle_velocity_orientation = rotation;
+#else
+		int scroll_direction = 1;
+		float particle_orientation = rotation;
+		float particle_velocity_orientation = rotation + (float)M_PI_2;
+#endif
+
+		glm::vec2 direction = glm::vec2(cosf(particle_velocity_orientation), sinf(particle_velocity_orientation));
+		result[i].velocity = ludum_game->fire_velocity * direction;
+		result[i].rotation = particle_orientation;
+
+		result[i].bounding_box.position += direction * ref_box.half_size[scroll_direction];
+
+		result[i].player_ownership = player_ownership;
+
+		rotation += delta_rotation;
+	}
+
+	if (sound_name != nullptr)	
+		ludum_game->PlaySound(sound_name, false, false);
+
+	return result;
+}

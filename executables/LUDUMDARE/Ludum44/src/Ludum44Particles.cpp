@@ -189,7 +189,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
 	// search for collisions
-	if (particle->player_owner_ship)
+	if (particle->player_ownership)
 	{
 		size_t count = update_data.enemies.size();
 		for (size_t i = 0 ; i < count ; ++i)
@@ -211,7 +211,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 		}	
 	}
 	// enemy bullet
-	if (!particle->player_owner_ship && update_data.player != nullptr)
+	if (!particle->player_ownership && update_data.player != nullptr)
 	{
 		if (chaos::Collide(particle->bounding_box, update_data.player->GetPlayerBox())) // destroy the particle outside the camera frustum (works for empty camera)
 		{

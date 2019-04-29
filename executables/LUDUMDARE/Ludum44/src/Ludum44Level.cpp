@@ -146,7 +146,7 @@ bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, d
 
 	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(player->GetGameInstance());
 	if (ludum_game_instance != nullptr)
-		ludum_game_instance->SetCheckpointPosition(surface->GetBoundingBox(true).position, GetLayerInstance()->GetTiledLevelInstance());
+		ludum_game_instance->SetCheckpointPosition(surface->GetBoundingBox(false).position, GetLayerInstance()->GetTiledLevelInstance());
 
 	return true; // no more collisions
 }

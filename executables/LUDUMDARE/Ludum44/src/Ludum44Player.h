@@ -71,9 +71,9 @@ protected:
 	/** fire a charged projectile */
 	ParticleFire * FireChargedProjectile();	
 	/** fire a normal projectile */
-	ParticleFire *FireNormalProjectile();		
+	ParticleFire * FireNormalProjectile();		
 	/** fire generic projectile */
-	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name);
+	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation);
 
 protected:
 

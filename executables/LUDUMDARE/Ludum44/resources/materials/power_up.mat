@@ -3,13 +3,13 @@
 
   "textures": {
 
-    "background": { "name": "PowerUpZone" }
+    "powerup_texture": { "name": "PowerUpZone" }
   },
 
   "uniforms": {
 
-    "color1": [ 1.0, 1.0, 1.0, 0.05 ],
-    "color2": [ 1.0, 1.0, 1.0, 0.2 ],
+    "mycolor1": [ 1.0, 1.0, 1.0, 0.05 ],
+    "mycolor2": [ 1.0, 1.0, 1.0, 0.2 ],
     "scroll_speed": 0.5
   }
 }

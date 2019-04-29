@@ -10,10 +10,10 @@ uniform vec4 camera_box;
 uniform float game_time;
 uniform float scroll_speed;
 
-uniform vec4 color1;
-uniform vec4 color2;
+uniform vec4 mycolor1;
+uniform vec4 mycolor2;
 
-uniform sampler2D background;
+uniform sampler2D powerup_texture;
 uniform sampler2DArray material;
 
 void main()
@@ -24,30 +24,32 @@ void main()
 	texcoord.y -= scroll_speed * game_time;
 	texcoord += vec2(1.0, 0.0) * camera_box.xy / viewport_size.xy;
 
-	vec4 c1 = texture(background, texcoord);	
-	vec4 c2 = texture(material, vs_texcoord);
-	vec4 tt  = mix(color1, color2, c1.g);
+	vec4 c1 = texture(powerup_texture, texcoord);	// chevrons
+	vec4 tt = mix(mycolor1, mycolor2, c1.g); // tt.a
+
+	vec4 c2 = texture(material, vs_texcoord); // blue to buy, red to sell
+	
 
 
 	vec4 final;
 
-	final = vec4(c2.x, c2.y, c2.z, 0.2);
+	// ORI
+	//final = vec4(c2.r, c2.g, c2.b, 0.2); // blue ou rouge
 
-	/*
-	final.r = c2.r;
-	final.g = c2.g;
-	final.b = c2.b;
+
+	// WORK
+	//final = vec4(c1.r, c1.g, c1.b, 1.0); // chevrons
+	//final = vec4(c2.r, c2.g, c2.b, 1.0); // bleu ou rouge
+	//final = vec4(tt.r, tt.g, tt.b, tt.a);
+
+
+	final = vec4(c2.r, c2.g, c2.b, 1.0) * vec4(1.0, 1.0, 1.0, tt.a);
+
+	// TEST
+	//
+	//final = vec4(c2.x, c2.y, c2.z, 1.0) * vec4(1.0, 1.0, 1.0, tt.a);
+
 	
-	final.a = 1.0;
-
-
-	final.r = tt.r;
-	final.g = tt.g;
-	final.b = tt.b;
-	
-	final.a = tt.a;
-	vec4 tt  = mix(color1, color2, c1.g);
-	*/
 
 
 	output_color = final;

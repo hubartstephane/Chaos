@@ -133,7 +133,7 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 // CheckPointTriggerSurfaceObject implementation
 // =============================================================
 
-bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
 		return true;
@@ -144,9 +144,9 @@ bool CheckpointTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, d
 
 	SetEnabled(false);
 
-	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(player->GetGameInstance());
-	if (ludum_game_instance != nullptr)
-		ludum_game_instance->SetCheckpointPosition(surface->GetBoundingBox(false).position, GetLayerInstance()->GetTiledLevelInstance());
+	death::GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
+	if (game_instance != nullptr)
+		game_instance->SetCheckpointPosition(surface->GetBoundingBox(false).position, GetLayerInstance()->GetTiledLevelInstance());
 
 	return true;
 }
@@ -175,7 +175,7 @@ bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 // SpawnerTriggerSurfaceObject implementation
 // =============================================================
 
-bool SpawnerTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	// only the first time collision is detected
 	if (event_type != death::TiledMap::TriggerSurfaceObject::COLLISION_STARTED)

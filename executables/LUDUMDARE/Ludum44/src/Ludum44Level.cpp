@@ -233,6 +233,7 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	int   count            = surface->FindPropertyInt("ENEMY_COUNT", 10);
 	int   spawn_curve_type = surface->FindPropertyInt("SPAWN_CURVE_TYPE", 0);
 	int   spawn_enemy_type = surface->FindPropertyInt("SPAWN_ENEMY_TYPE", 0);
+	int   spawn_move_type  = surface->FindPropertyInt("SPAWN_MOVE_TYPE", 0);
 
 	static int const SPAWN_ENEMY_METEORS          = 0;
 	static int const SPAWN_ENEMY_ALIEN            = 1;
@@ -241,12 +242,17 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	static int const SPAWN_ENEMY_LAST = 4;
 	spawn_enemy_type = (spawn_enemy_type % SPAWN_ENEMY_LAST);
 
-	static int const SPAWN_CURVE_RANDOM_STATIC = 0;
-	static int const SPAWN_CURVE_RANDOM        = 1;
-	static int const SPAWN_CURVE_V             = 2;
-	static int const SPAWN_CURVE_INVERTED_V    = 3;
-	static int const SPAWN_CURVE_ALIGNED       = 4;
-	static int const SPAWN_CURVE_LAST          = 5;
+	static int const SPAWN_MOVE_STATIC  = 0;
+	static int const SPAWN_MOVE_FORWARD = 1;
+	static int const SPAWN_MOVE_RANDOM  = 2;	
+	static int const SPAWN_MOVE_LAST    = 3;
+	spawn_move_type = (spawn_move_type % SPAWN_MOVE_LAST);
+
+	static int const SPAWN_CURVE_RANDOM        = 0;
+	static int const SPAWN_CURVE_V             = 1;
+	static int const SPAWN_CURVE_INVERTED_V    = 2;
+	static int const SPAWN_CURVE_ALIGNED       = 3;
+	static int const SPAWN_CURVE_LAST          = 4;
 	spawn_curve_type = (spawn_curve_type % SPAWN_CURVE_LAST);
 
 
@@ -261,19 +267,11 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 			ParticleEnemy & p = particles[index_offset + i];
 		
 			// fill position & velocity			
-			if (spawn_curve_type == SPAWN_CURVE_RANDOM_STATIC)
+			if (spawn_curve_type == SPAWN_CURVE_RANDOM)
 			{
-				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
-				p.velocity = glm::vec2(0.0f, 0.0f);
-
+				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;			
 			}
-			else if (spawn_curve_type == SPAWN_CURVE_RANDOM)
-			{
-				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
-				p.velocity = glm::vec2(chaos::MathTools::RandFloat(-200.0f, +200.0f), chaos::MathTools::RandFloat(0.0f, -1000.0f));
-			
-			}
-			else if (spawn_curve_type == SPAWN_CURVE_V || spawn_curve_type == SPAWN_CURVE_INVERTED_V)
+			else if (spawn_curve_type == SPAWN_CURVE_V || spawn_curve_type == SPAWN_CURVE_INVERTED_V || spawn_curve_type == SPAWN_CURVE_ALIGNED)
 			{
 				float x = 0.5f; // by default center of the surface
 				if (count > 1)
@@ -282,22 +280,36 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 				float sx = surface_box.half_size.x;
 				float sy = surface_box.half_size.y;
 
-				p.bounding_box.position.x = surface_box.position.x - sx + 2.0f * x * sx;
+				p.bounding_box.position.x = surface_box.position.x - sx + 2.0f * x * sx;				
 
-				float renormalized_x = (x * 2.0f) - 1.0f;
+				if (spawn_curve_type == SPAWN_CURVE_ALIGNED)
+					p.bounding_box.position.y = surface_box.position.y;
+				else
+				{
+					float renormalized_x = (x * 2.0f) - 1.0f;
 
-				float y = (spawn_curve_type == SPAWN_CURVE_V)? 
-					(renormalized_x * renormalized_x) : 
-					(1.0f - renormalized_x * renormalized_x);
+					float y = (spawn_curve_type == SPAWN_CURVE_V)? 
+						(renormalized_x * renormalized_x) : 
+						(1.0f - renormalized_x * renormalized_x);
 
-				p.bounding_box.position.y = surface_box.position.y + sy * y;
+					p.bounding_box.position.y = surface_box.position.y + sy * y;
+				}
 			}
-			else if (spawn_curve_type == SPAWN_CURVE_ALIGNED)
+
+			// move type
+			if (spawn_move_type == SPAWN_MOVE_STATIC)
 			{
-				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
 				p.velocity = glm::vec2(0.0f, 0.0f);
-
 			}
+			else if (spawn_move_type == SPAWN_MOVE_FORWARD)
+			{
+				p.velocity = glm::vec2(0.0f, -1000.0f);
+			}
+			else if (spawn_move_type == SPAWN_MOVE_RANDOM)
+			{
+				p.velocity = glm::vec2(chaos::MathTools::RandFloat(-200.0f, +200.0f), chaos::MathTools::RandFloat(0.0f, -1000.0f));
+			}
+
 
 			// fill enemy behavior
 			if (spawn_enemy_type == SPAWN_ENEMY_METEORS)

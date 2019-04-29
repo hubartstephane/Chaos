@@ -55,6 +55,7 @@
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="3"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>

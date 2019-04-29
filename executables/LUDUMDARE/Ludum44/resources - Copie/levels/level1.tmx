@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="18" nextobjectid="1759">
+ <properties>
+  <property name="BACKGROUND_NAME" value="background4"/>
+  <property name="CAMERA_NAME" value="TheCamera1"/>
+  <property name="CAMERA_SPEED" type="float" value="800"/>
+  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Tutorial]"/>
+  <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
+ </properties>
+ <objectgroup id="1" name="Texts" locked="1"/>
+ <objectgroup id="2" name="Background9" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="10" name="Background8">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="11" name="Background7">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="12" name="Background6">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="13" name="Background5">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="14" name="Background4">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="15" name="Background3">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.7"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.7"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="16" name="Background2">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.8"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.8"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="17" name="Background1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.9"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.9"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="6" name="Zones" locked="1">
+  <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="MATERIAL" value="power_up"/>
+   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="8" name="Enemies" locked="1">
+  <properties>
+   <property name="MATERIAL" value="enemy"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="5" name="fire" locked="1">
+  <properties>
+   <property name="MATERIAL" value="fire"/>
+   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="4" name="PlayerAndCamera">
+  <properties>
+   <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
+   <property name="MATERIAL" value="player"/>
+  </properties>
+  <object id="57" name="TheCamera1" x="1624" y="9152" width="7376" height="4328">
+   <properties>
+    <property name="CAMERA" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="75" name="world_bounding_box" x="-1424" y="-141440" width="15424" height="155264"/>
+  <object id="1735" name="ThePlayerStart1" x="5216" y="12320" width="112" height="496">
+   <properties>
+    <property name="BITMAP_NAME" value="player"/>
+    <property name="PLAYER_START" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="9" name="Explosions" locked="1">
+  <properties>
+   <property name="MATERIAL" value="explosion"/>
+  </properties>
+ </objectgroup>
+</map>

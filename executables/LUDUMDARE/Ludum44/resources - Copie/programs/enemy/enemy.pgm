@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@enemy.psh"
+	],
+	"vertex_sources":
+	[
+		"@enemy.vsh"
+	]
+}

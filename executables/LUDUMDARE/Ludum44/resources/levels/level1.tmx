@@ -1,42 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="10" nextobjectid="1759">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="18" nextobjectid="1849">
  <properties>
   <property name="BACKGROUND_NAME" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="800"/>
+  <property name="CAMERA_SPEED" type="float" value="1800"/>
   <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Tutorial]"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tileset/tileset.tsx"/>
- <objectgroup id="1" name="Texts" locked="1" offsetx="54.0606" offsety="-145.212"/>
- <objectgroup id="2" name="planets">
+ <objectgroup id="1" name="Texts" visible="0" locked="1"/>
+ <objectgroup id="2" name="Background9" visible="0" locked="1">
   <properties>
-   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
-   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
-   <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="1711" gid="1" x="8832" y="4672" width="3168" height="3264"/>
-  <object id="1713" gid="1" x="-3072" y="-832" width="3168" height="3264"/>
-  <object id="1714" gid="1" x="-7504" y="3424" width="3168" height="3264"/>
-  <object id="1715" gid="1" x="-3344" y="3008" width="3168" height="3264"/>
-  <object id="1716" gid="1" x="-7504" y="8032" width="3168" height="3264"/>
-  <object id="1717" gid="1" x="-2736" y="8160" width="3168" height="3264"/>
-  <object id="1718" gid="1" x="-7984" y="13152" width="3168" height="3264"/>
-  <object id="1719" gid="1" x="976" y="13792" width="3168" height="3264"/>
-  <object id="1720" gid="1" x="-11792" y="-928" width="3168" height="3264"/>
-  <object id="1721" gid="1" x="-2320" y="-4640" width="3168" height="3264"/>
-  <object id="1741" gid="1" x="11032" y="-19776" width="3168" height="3264"/>
-  <object id="1742" gid="1" x="-872" y="-25280" width="3168" height="3264"/>
-  <object id="1743" gid="1" x="-5304" y="-21024" width="3168" height="3264"/>
-  <object id="1744" gid="1" x="-1144" y="-21440" width="3168" height="3264"/>
-  <object id="1745" gid="1" x="-5304" y="-16416" width="3168" height="3264"/>
-  <object id="1746" gid="1" x="-536" y="-16288" width="3168" height="3264"/>
-  <object id="1747" gid="1" x="-5784" y="-11296" width="3168" height="3264"/>
-  <object id="1748" gid="1" x="3176" y="-10656" width="3168" height="3264"/>
-  <object id="1749" gid="1" x="-9592" y="-25376" width="3168" height="3264"/>
-  <object id="1750" gid="1" x="-120" y="-29088" width="3168" height="3264"/>
+  <object id="1759" name="star" gid="10" x="2279" y="10169" width="40" height="40"/>
+  <object id="1760" name="star" gid="10" x="3559" y="10777" width="40" height="40"/>
+  <object id="1761" name="star" gid="10" x="5447" y="10777" width="40" height="40"/>
+  <object id="1762" name="star" gid="10" x="6727" y="9913" width="40" height="40"/>
+  <object id="1763" name="star" gid="10" x="7591" y="11129" width="40" height="40"/>
+  <object id="1764" name="star" gid="10" x="4391" y="10169" width="40" height="40"/>
+  <object id="1765" name="star" gid="10" x="2663" y="11865" width="40" height="40"/>
+  <object id="1766" name="star" gid="10" x="7751" y="12377" width="40" height="40"/>
  </objectgroup>
- <objectgroup id="6" name="Zones" offsetx="3744" offsety="-500">
+ <objectgroup id="10" name="Background8" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1767" name="star" gid="10" x="2860" y="4716" width="40" height="40"/>
+  <object id="1768" name="star" gid="10" x="7724" y="6572" width="40" height="40"/>
+  <object id="1769" name="star" gid="10" x="10348" y="4460" width="40" height="40"/>
+  <object id="1770" name="star" gid="10" x="10604" y="6956" width="40" height="40"/>
+  <object id="1772" name="star" gid="10" x="6892" y="2604" width="40" height="40"/>
+  <object id="1773" name="star" gid="10" x="4204" y="5868" width="40" height="40"/>
+  <object id="1774" name="star" gid="10" x="6956" y="3052" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="11" name="Background7" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1776" name="star" gid="10" x="7660" y="7212" width="40" height="40"/>
+  <object id="1778" name="star" gid="10" x="4460" y="9964" width="40" height="40"/>
+  <object id="1780" name="star" gid="10" x="4140" y="4588" width="40" height="40"/>
+  <object id="1783" name="star" gid="10" x="9580" y="7148" width="40" height="40"/>
+  <object id="1784" name="star" gid="10" x="5548" y="5996" width="40" height="40"/>
+  <object id="1785" name="star" gid="10" x="1772" y="7532" width="40" height="40"/>
+  <object id="1786" name="star" gid="10" x="1708" y="9964" width="40" height="40"/>
+  <object id="1787" name="star" gid="10" x="10860" y="9580" width="40" height="40"/>
+  <object id="1788" name="star" gid="10" x="21036" y="4012" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="12" name="Background6" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1789" name="star" gid="10" x="9644" y="7660" width="40" height="40"/>
+  <object id="1790" name="star" gid="10" x="10156" y="10220" width="40" height="40"/>
+  <object id="1791" name="star" gid="10" x="7404" y="7148" width="40" height="40"/>
+  <object id="1792" name="star" gid="10" x="4396" y="5228" width="40" height="40"/>
+  <object id="1793" name="star" gid="10" x="4908" y="8812" width="40" height="40"/>
+  <object id="1794" name="star" gid="10" x="7340" y="10476" width="40" height="40"/>
+  <object id="1795" name="star" gid="10" x="3948" y="10860" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="13" name="Background5" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1796" name="star" gid="10" x="10732" y="10924" width="40" height="40"/>
+  <object id="1797" name="star" gid="10" x="9772" y="8108" width="40" height="40"/>
+  <object id="1798" name="star" gid="10" x="6380" y="6956" width="40" height="40"/>
+  <object id="1799" name="star" gid="10" x="3564" y="6124" width="40" height="40"/>
+  <object id="1800" name="star" gid="10" x="2668" y="8108" width="40" height="40"/>
+  <object id="1801" name="star" gid="10" x="5804" y="10156" width="40" height="40"/>
+  <object id="1802" name="star" gid="10" x="10860" y="11948" width="40" height="40"/>
+  <object id="1803" name="star" gid="10" x="3372" y="10348" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="14" name="Background4" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1805" name="mercury" gid="5" x="4664" y="-5560" width="600" height="600"/>
+  <object id="1830" name="star" gid="10" x="-46809" y="21273" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="15" name="Background3" locked="1" offsetx="-9280" offsety="-640">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.7"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.7"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1833" name="uranus" gid="9" x="-11240" y="-23448" width="2000" height="2000"/>
+  <object id="1834" name="star" gid="10" x="-25561" y="-4967" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="16" name="Background2" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.8"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.8"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1831" name="mars" gid="6" x="-25408" y="-10048" width="6000" height="6000"/>
+  <object id="1832" name="star" gid="10" x="-8281" y="20889" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="17" name="Background1" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.9"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.9"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1829" name="moon" gid="8" x="6534" y="-21638" width="800" height="800"/>
+  <object id="1807" name="earth" gid="3" x="2872" y="-21496" width="2500" height="2500"/>
+  <object id="1828" name="star" gid="10" x="-44025" y="1945" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="6" name="Zones">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="power_up"/>
@@ -44,31 +137,73 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1732" name="Spawner" gid="2" x="-13064" y="-4976" width="9800" height="5008">
+  <object id="1808" name="Checkpoint" gid="2" x="-2912" y="13920" width="20912" height="2416">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="20"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="5"/>
-    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
-    <property name="SPAWN_CURVE_TYPE" type="int" value="3"/>
-    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
-    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1753" name="Finish" gid="2" x="-5092" y="2888" width="10568" height="7664">
+  <object id="1809" name="Checkpoint" gid="2" x="-3864" y="-7544" width="20912" height="2416">
    <properties>
-    <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1758" name="Checkpoint" gid="2" x="-3300" y="-7096" width="3400" height="3120">
+  <object id="1810" name="Checkpoint" gid="2" x="-3736" y="-30968" width="20912" height="2416">
    <properties>
-    <property name="KEEP_ASPECT_RATIO" type="bool" value="true"/>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1811" name="Checkpoint" gid="2" x="-4056" y="-56824" width="20912" height="2416">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1812" name="Checkpoint" gid="2" x="-4248" y="-80888" width="20912" height="2416">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1813" name="Checkpoint" gid="2" x="-3672" y="-104312" width="20912" height="2416">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1815" name="PowerUp" gid="2" x="-2648" y="11208" width="20592" height="5000">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1843" name="Finish" gid="2" x="-4504" y="-133560" width="20912" height="8752">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1844" name="PowerUp" gid="2" x="-3768" y="-10344" width="20592" height="5000">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1845" name="PowerUp" gid="2" x="-3640" y="-33704" width="20592" height="5000">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1846" name="PowerUp" gid="2" x="-3768" y="-59432" width="20592" height="5000">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1847" name="PowerUp" gid="2" x="-4024" y="-83752" width="20592" height="5000">
+   <properties>
+    <property name="TRIGGER_SURFACE" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1848" name="PowerUp" gid="2" x="-3640" y="-106984" width="20592" height="5000">
+   <properties>
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="8" name="Enemies">
+ <objectgroup id="8" name="Enemies" locked="1">
   <properties>
    <property name="MATERIAL" value="enemy"/>
   </properties>
@@ -86,20 +221,20 @@
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="57" name="TheCamera1" x="-9192" y="-4928" width="7184" height="5736">
+  <object id="57" name="TheCamera1" x="1624" y="9152" width="7376" height="4328">
    <properties>
     <property name="CAMERA" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="75" name="world_bounding_box" x="-11216" y="-41856" width="29824" height="57792"/>
-  <object id="1735" name="ThePlayerStart1" x="-5280" y="-3360" width="496" height="816">
+  <object id="75" name="world_bounding_box" x="-1424" y="-141440" width="15424" height="155264"/>
+  <object id="1735" name="ThePlayerStart1" x="5216" y="12320" width="112" height="496">
    <properties>
     <property name="BITMAP_NAME" value="player"/>
     <property name="PLAYER_START" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="9" name="Explosions">
+ <objectgroup id="9" name="Explosions" locked="1">
   <properties>
    <property name="MATERIAL" value="explosion"/>
   </properties>

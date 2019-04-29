@@ -1,0 +1,15 @@
+{
+  "program": "power_up",
+
+  "textures": {
+
+    "background": { "name": "PowerUpZone" }
+  },
+
+  "uniforms": {
+
+    "color1": [ 0.0, 0.0, 1.0, 0.05 ],
+    "color2": [ 0.0, 0.0, 1.0, 0.2 ],
+    "scroll_speed": 0.5
+  }
+}

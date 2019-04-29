@@ -129,6 +129,21 @@ bool TileParticleTraitExt::UpdateParticle(float delta_time, death::TiledMap::Til
 
 
 
+// ===========================================================================
+// ParticleExplosionTrait
+// ===========================================================================
+
+
+bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const
+{
+
+	return false;
+}
+
+size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+{
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+}
 
 
 

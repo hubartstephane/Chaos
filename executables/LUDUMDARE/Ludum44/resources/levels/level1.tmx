@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="9" nextobjectid="1759">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="10" nextobjectid="1759">
  <properties>
   <property name="BACKGROUND_NAME" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -36,11 +36,6 @@
   <object id="1749" gid="1" x="-9592" y="-25376" width="3168" height="3264"/>
   <object id="1750" gid="1" x="-120" y="-29088" width="3168" height="3264"/>
  </objectgroup>
- <objectgroup id="8" name="Enemies">
-  <properties>
-   <property name="MATERIAL" value="enemy"/>
-  </properties>
- </objectgroup>
  <objectgroup id="6" name="Zones" offsetx="3744" offsety="-500">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
@@ -73,6 +68,11 @@
    </properties>
   </object>
  </objectgroup>
+ <objectgroup id="8" name="Enemies">
+  <properties>
+   <property name="MATERIAL" value="enemy"/>
+  </properties>
+ </objectgroup>
  <objectgroup id="5" name="fire" locked="1">
   <properties>
    <property name="MATERIAL" value="fire"/>
@@ -98,5 +98,10 @@
     <property name="PLAYER_START" type="bool" value="true"/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup id="9" name="Explosions">
+  <properties>
+   <property name="MATERIAL" value="explosion"/>
+  </properties>
  </objectgroup>
 </map>

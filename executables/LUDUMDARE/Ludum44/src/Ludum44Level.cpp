@@ -96,6 +96,14 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticleFireTrait>(fire_trait);
 	}
 
+	bool is_explosion = (layer_name == "Explosions");
+	if (is_explosion)
+	{
+		ParticleExplosionTrait::LayerTrait explosion_trait;
+		explosion_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleExplosionTrait>(explosion_trait);
+	}
+
 	bool is_zone = (layer_name == "Zones");
 	if (is_zone)
 	{

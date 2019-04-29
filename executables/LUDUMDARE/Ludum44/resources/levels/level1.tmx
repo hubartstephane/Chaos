@@ -338,7 +338,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1909" name="Spawner" gid="2" x="-1496" y="-112280" width="16048" height="9648">
+  <object id="1909" name="Spawner" gid="2" x="-1496" y="-112280" width="16048" height="17776">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>

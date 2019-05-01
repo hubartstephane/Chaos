@@ -394,7 +394,7 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 			else if (spawn_enemy_type == SPAWN_ENEMY_FOUR_TURRETS)
 			{
 				enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
-				p.fire_frequency = fire_frequency;
+				p.fire_frequency = fire_frequency * 2.0f;         // x2 because 4 bullets in a row !!!
 				p.rotation_following_player = false;
 				p.rotation_speed = 1.0f;
 

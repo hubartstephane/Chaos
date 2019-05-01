@@ -31,6 +31,8 @@ local LUA_LIB_PATH = {
 DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "mylualibrary.lib")
 
   -- GLFW  
+--local GLFW_X32_PATH = "glfw-3.3.bin.WIN32"     
+--local GLFW_X64_PATH = "glfw-3.3.bin.WIN64"
 local GLFW_X32_PATH = "glfw-3.1.2.bin.WIN32"     
 local GLFW_X64_PATH = "glfw-3.1.2.bin.WIN64"
 local GLFW_INC_PATH = {

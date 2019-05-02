@@ -51,8 +51,62 @@ T max(T a, T b)
 	return (a >= b)? a : b;
 }
 
-  // not sure whether the entry point on windows must be _main, main, _tmain ... : create a macro to change this once for all
+/**
+ * a delayed dynamic_cast<>
+ *
+ *   avoid to have a repetition     MyClass * a = dynamic_cast<MyClass>(b)
+ */
 
+namespace chaos
+{
+	namespace details
+	{
+		template<typename T>
+		class Casted
+		{
+		public:
+
+			/** the constructor */
+			Casted(T * in_ptr) : ptr(in_ptr) {}
+			/** the conversion operator */
+			template<typename U>
+			operator U * () const { return dynamic_cast<U *>(ptr); }
+
+		protected:
+
+			/** the pointer */
+			T * ptr = nullptr;
+		};
+
+		template<typename T>
+		class ConstCasted
+		{
+		public:
+
+			/** the constructor */
+			ConstCasted(const T * in_ptr) : ptr(in_ptr) {}
+			/** the conversion operator */
+			template<typename U> 
+			operator U const * () const { return dynamic_cast<const U *>(ptr); }
+
+		protected:
+
+			/** the pointer */
+			T const * ptr = nullptr;
+		};
+
+	}; // details
+
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	details::Casted<T> cast(T * ptr) { return details::Casted<T>(ptr); }
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	details::ConstCasted<T> cast(T const * ptr) { return details::ConstCasted<T>(ptr); }
+
+}; // chaos
+
+  // not sure whether the entry point on windows must be _main, main, _tmain ... : create a macro to change this once for all
 #ifndef CHAOS_MAIN
 #  define CHAOS_MAIN main
 #endif
@@ -248,7 +302,6 @@ T max(T a, T b)
 #include <GL/GLU.h>
 
 // GLFW
-
 #include <GLFW/glfw3.h>
 
 #define GLFW_EXPOSE_NATIVE_WIN32

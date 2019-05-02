@@ -62,12 +62,12 @@ namespace chaos
 	namespace details
 	{
 		template<typename T>
-		class Casted
+		class AutoCasted
 		{
 		public:
 
 			/** the constructor */
-			Casted(T * in_ptr) : ptr(in_ptr) {}
+			AutoCasted(T * in_ptr) : ptr(in_ptr) {}
 			/** the conversion operator */
 			template<typename U>
 			operator U * () const { return dynamic_cast<U *>(ptr); }
@@ -79,12 +79,12 @@ namespace chaos
 		};
 
 		template<typename T>
-		class ConstCasted
+		class AutoConstCasted
 		{
 		public:
 
 			/** the constructor */
-			ConstCasted(const T * in_ptr) : ptr(in_ptr) {}
+			AutoConstCasted(const T * in_ptr) : ptr(in_ptr) {}
 			/** the conversion operator */
 			template<typename U> 
 			operator U const * () const { return dynamic_cast<const U *>(ptr); }
@@ -99,10 +99,10 @@ namespace chaos
 
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	details::Casted<T> cast(T * ptr) { return details::Casted<T>(ptr); }
+	details::AutoCasted<T> auto_cast(T * ptr) { return details::AutoCasted<T>(ptr); }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
-	details::ConstCasted<T> cast(T const * ptr) { return details::ConstCasted<T>(ptr); }
+	details::AutoConstCasted<T> auto_cast(T const * ptr) { return details::AutoConstCasted<T>(ptr); }
 
 }; // chaos
 

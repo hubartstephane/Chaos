@@ -17,7 +17,7 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
 bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
 {
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
 	{
 		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();

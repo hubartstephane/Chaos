@@ -20,7 +20,7 @@ bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
 {
 	loop_levels = true;
 
-	LudumLevel const * ludum_level = dynamic_cast<LudumLevel const *>(GetLevel());
+	LudumLevel const * ludum_level = auto_cast(GetLevel());
 	if (ludum_level == nullptr)
 		return false;
 

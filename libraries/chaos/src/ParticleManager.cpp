@@ -17,22 +17,22 @@ namespace chaos
 
 	ParticleLayerBase * ParticleManager::FindLayer(char const * name)
 	{
-		return dynamic_cast<ParticleLayerBase*>(layer_system.FindChildRenderable(name));
+		return auto_cast(layer_system.FindChildRenderable(name));
 	}
 
 	ParticleLayerBase const * ParticleManager::FindLayer(char const * name) const
 	{
-		return dynamic_cast<ParticleLayerBase const*>(layer_system.FindChildRenderable(name));
+		return auto_cast(layer_system.FindChildRenderable(name));
 	}
 
 	ParticleLayerBase * ParticleManager::FindLayer(TagType id)
 	{
-		return dynamic_cast<ParticleLayerBase*>(layer_system.FindChildRenderable(id));
+		return auto_cast(layer_system.FindChildRenderable(id));
 	}
 
 	ParticleLayerBase const * ParticleManager::FindLayer(TagType id) const
 	{
-		return dynamic_cast<ParticleLayerBase const*>(layer_system.FindChildRenderable(id));
+		return auto_cast(layer_system.FindChildRenderable(id));
 	}
 
 	void ParticleManager::DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id)
@@ -52,7 +52,7 @@ namespace chaos
 		size_t count = layer_system.GetChildCount();
 		for (size_t i = 0; i < count; ++i)
 		{
-			ParticleLayerBase * layer = dynamic_cast<ParticleLayerBase *>(layer_system.GetChildAt(i));
+			ParticleLayerBase * layer = auto_cast(layer_system.GetChildAt(i));
 			if (layer == nullptr)
 				continue;
 			layer->Tick(delta_time);

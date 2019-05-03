@@ -137,7 +137,7 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 {
 	death::TiledMap::LevelInstance::OnPlayerEntered(player);
 
-	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer*>(player);
+	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player == nullptr)
 		return;
 
@@ -154,7 +154,7 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 {
 	death::TiledMap::LevelInstance::OnPlayerLeaved(player);
 
-	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer*>(player);
+	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player == nullptr)
 		return;
 	ludum_player->fire_allocation = nullptr;

@@ -19,12 +19,12 @@ LudumLevel::LudumLevel()
 
 death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 {
-	return new LudumLevelInstance(dynamic_cast<LudumGame *>(in_game));
+	return new LudumLevelInstance(auto_cast(in_game));
 }
 
 chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
-	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
@@ -70,7 +70,7 @@ static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset
 
 bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
-	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;

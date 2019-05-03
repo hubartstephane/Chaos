@@ -39,7 +39,7 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 
 bool LudumGameInstance::OnRestartedFromCheckpoint(death::Player * player)
 {
-	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer*>(player);
+	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player != nullptr)
 	{
 		ludum_player->current_life = ludum_player->current_max_life;
@@ -116,7 +116,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	if (ludum_game == nullptr)
 		return;
 
-	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer *>(player);
+	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player == nullptr)
 		return;
 
@@ -151,7 +151,7 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 	if (ludum_game == nullptr)
 		return;
 
-	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer*>(player);
+	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player == nullptr)
 		return;
 

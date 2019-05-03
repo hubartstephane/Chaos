@@ -43,7 +43,7 @@ namespace chaos
 		{
 			assert(renderable != nullptr);
 			// check whether the typed object can be filtered out from its class
-			T const * typed_object = dynamic_cast<T const *>(renderable);
+			T const * typed_object = auto_cast(renderable);
 			if (typed_object == nullptr)
 				return true;
 			// check from name

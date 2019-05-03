@@ -55,7 +55,7 @@ LudumLevel::LudumLevel()
 
 death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 {
-	return new LudumLevelInstance(dynamic_cast<LudumGame *>(in_game));
+	return new LudumLevelInstance(auto_cast(in_game));
 }
 
 bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
@@ -71,7 +71,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
-	LudumGame * ludum_game = dynamic_cast<LudumGame*>(layer_instance->GetGame());
+	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
@@ -146,7 +146,7 @@ bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * 
 
 bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-	LudumLevelInstance * ludum_level_instance = dynamic_cast<LudumLevelInstance *>(GetLayerInstance()->GetTiledLevelInstance());
+	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
 	if (ludum_level_instance == nullptr)
 		return true;
 	ludum_level_instance->SetLevelCompleted(true);
@@ -161,7 +161,7 @@ bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, de
 
 bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(player->GetGameInstance());
+	LudumGameInstance * ludum_game_instance = auto_cast(player->GetGameInstance());
 	if (ludum_game_instance != nullptr)
 	{
 		bool decrease_power = geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
@@ -210,7 +210,7 @@ bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 	if (event_type != TriggerSurfaceObject::COLLISION_STARTED) // already handled
 		return true;
 
-	LudumLevelInstance * ludum_level_instance = dynamic_cast<LudumLevelInstance *>(GetLayerInstance()->GetTiledLevelInstance());
+	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
 	if (ludum_level_instance == nullptr)
 		return true;
 
@@ -264,7 +264,7 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	// get the frequencies
 
 	float fire_frequency = 1.0f;
-	LudumGame * ludum_game = dynamic_cast<LudumGame*>(enemy_layer_instance->GetGame());
+	LudumGame * ludum_game = auto_cast(enemy_layer_instance->GetGame());
 	if (ludum_game != nullptr)
 		fire_frequency = ludum_game->enemy_fire_rate;
 

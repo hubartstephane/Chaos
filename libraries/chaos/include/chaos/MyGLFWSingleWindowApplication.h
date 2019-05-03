@@ -47,9 +47,9 @@ namespace chaos
 			SingleWindowApplication(SingleWindowApplicationParams const & in_window_params);
 
 			/** getter of the singleton instance */
-			static inline SingleWindowApplication * GetGLFWApplicationInstance() { return dynamic_cast<SingleWindowApplication*>(singleton_instance); }
+			static inline SingleWindowApplication * GetGLFWApplicationInstance() { return auto_cast(singleton_instance); }
 			/** getter of the singleton instance */
-			static inline SingleWindowApplication const * GetGLFWApplicationConstInstance() { return dynamic_cast<SingleWindowApplication const*>(singleton_instance); }
+			static inline SingleWindowApplication const * GetGLFWApplicationConstInstance() { return auto_cast(singleton_instance); }
 
 			/** getter of the main clock */
 			static Clock * GetMainClockInstance();

@@ -429,7 +429,7 @@ namespace death
 			if (root == nullptr)\
 				return nullptr;\
 		}\
-		return dynamic_cast<result constness*>(root->FindChildRenderable(param));\
+		return auto_cast(root->FindChildRenderable(param));\
 	}
 #define DEATH_FIND_RENDERABLE_CHILD_ALL(result, funcname)\
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), char const *);\

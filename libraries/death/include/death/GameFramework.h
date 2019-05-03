@@ -22,16 +22,16 @@
 	prefix##type const * Get##prefix##type() const;
 
 #define DEATH_GAMEFRAMEWORK_IMPLEMENT_GETTER(prefix, classname, type)\
-	prefix##type * prefix##classname::Get##prefix##type(){ return dynamic_cast<prefix##type *>(Get##type());}\
-	prefix##type const * prefix##classname::Get##prefix##type() const { return dynamic_cast<prefix##type const *>(Get##type());}
+	prefix##type * prefix##classname::Get##prefix##type(){ return auto_cast(Get##type());}\
+	prefix##type const * prefix##classname::Get##prefix##type() const { return auto_cast(Get##type());}
 
 #define DEATH_GAMEFRAMEWORK_DECLARE_PLAYERGETTER(prefix)\
 	prefix##Player * Get##prefix##Player(int player_index);\
 	prefix##Player const * Get##prefix##Player(int player_index) const;
 
 #define DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYERGETTER(prefix, classname)\
-	prefix##Player * prefix##classname::Get##prefix##Player(int player_index){ return dynamic_cast<prefix##Player *>(GetPlayer(player_index));}\
-	prefix##Player const * prefix##classname::Get##prefix##Player(int player_index) const { return dynamic_cast<prefix##Player const*>(GetPlayer(player_index));}
+	prefix##Player * prefix##classname::Get##prefix##Player(int player_index){ return auto_cast(GetPlayer(player_index));}\
+	prefix##Player const * prefix##classname::Get##prefix##Player(int player_index) const { return auto_cast(GetPlayer(player_index));}
 
 // macro to be inserted in Game subclasses declaration
 #define DEATH_GAMEFRAMEWORK_DECLARE_GAME(prefix)\

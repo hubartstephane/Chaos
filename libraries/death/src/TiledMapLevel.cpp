@@ -1070,12 +1070,12 @@ namespace death
 
 		Level * LevelInstance::GetTiledLevel()
 		{
-			return dynamic_cast<Level*>(GetLevel());
+			return auto_cast(GetLevel());
 		}
 
 		Level const * LevelInstance::GetTiledLevel() const
 		{
-			return dynamic_cast<Level const *>(GetLevel());
+			return auto_cast(GetLevel());
 		}
 
 		void LevelInstance::ComputePlayerAndCameraCollision(double delta_time)

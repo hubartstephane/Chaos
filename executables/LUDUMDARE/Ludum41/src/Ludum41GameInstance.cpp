@@ -681,7 +681,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	particles->bounding_box.position = glm::vec2(0.0f, 0.0f);
 	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
 	// set the player length
-	LudumPlayer * ludum_player = dynamic_cast<LudumPlayer *>(player);
+	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player != nullptr)
 	{
 		LudumGame * ludum_game = GetLudumGame();

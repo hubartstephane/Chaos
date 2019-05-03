@@ -44,11 +44,11 @@ namespace chaos
 			T * GetOwner(bool recursive = true)
 			{
 				BaseObject * object = this;
-				T * result = dynamic_cast<T *>(object);
+				T * result = auto_cast(object);
 				while (result == nullptr && object->owner != nullptr && recursive)
 				{
 					object = object->owner;
-					result = dynamic_cast<T *>(object);
+					result = auto_cast(object);
 				}
 				return result;
 			}
@@ -58,11 +58,11 @@ namespace chaos
 			T const * GetOwner(bool recursive = true) const
 			{
 				BaseObject const * object = this;
-				T const * result = dynamic_cast<T const *>(object);
+				T const * result = auto_cast(object);
 				while (result == nullptr && object->owner != nullptr && recursive)
 				{
 					object = object->owner;
-					result = dynamic_cast<T const *>(object);
+					result = auto_cast(object);
 				}
 				return result;
 			}

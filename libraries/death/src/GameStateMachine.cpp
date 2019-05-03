@@ -23,7 +23,7 @@ namespace death
 
 	Game * GameState::GetGame(chaos::SM::StateMachineInstance * sm_instance)
 	{
-		GameStateMachineInstance * game_state_machine_instance = dynamic_cast<GameStateMachineInstance *>(sm_instance);
+		GameStateMachineInstance * game_state_machine_instance = auto_cast(sm_instance);
 		if (game_state_machine_instance != nullptr)
 			return game_state_machine_instance->GetGame();
 		return nullptr;
@@ -31,7 +31,7 @@ namespace death
 
 	Game const * GameState::GetGame(chaos::SM::StateMachineInstance const * sm_instance) const
 	{
-		GameStateMachineInstance const * game_state_machine_instance = dynamic_cast<GameStateMachineInstance const *>(sm_instance);
+		GameStateMachineInstance const * game_state_machine_instance = auto_cast(sm_instance);
 		if (game_state_machine_instance != nullptr)
 			return game_state_machine_instance->GetGame();
 		return nullptr;
@@ -43,7 +43,7 @@ namespace death
 
 	Game * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance)
 	{
-		GameStateMachineInstance * game_state_machine_instance = dynamic_cast<GameStateMachineInstance *>(sm_instance);
+		GameStateMachineInstance * game_state_machine_instance = auto_cast(sm_instance);
 		if (game_state_machine_instance != nullptr)
 			return game_state_machine_instance->GetGame();
 		return nullptr;
@@ -51,7 +51,7 @@ namespace death
 
 	Game const * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance) const
 	{
-		GameStateMachineInstance const * game_state_machine_instance = dynamic_cast<GameStateMachineInstance const *>(sm_instance);
+		GameStateMachineInstance const * game_state_machine_instance = auto_cast(sm_instance);
 		if (game_state_machine_instance != nullptr)
 			return game_state_machine_instance->GetGame();
 		return nullptr;
@@ -108,7 +108,7 @@ namespace death
 		if (game == nullptr)
 			return true;
 
-		PhysicalGamepadWrapper * wrapper = dynamic_cast<PhysicalGamepadWrapper*>(extra_data); 		// try get the physical gamepad
+		PhysicalGamepadWrapper * wrapper = auto_cast(extra_data); 		// try get the physical gamepad
 
 		game->OnEnterGame((wrapper == nullptr)? nullptr : wrapper->data);
 		return false;
@@ -163,7 +163,7 @@ namespace death
 	bool PlayingToGameOverTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data)
 	{
 		// wait until game over sound is finished
-		chaos::Sound * gameover_sound = dynamic_cast<chaos::Sound*>(sm_instance->GetContextData());
+		chaos::Sound * gameover_sound = auto_cast(sm_instance->GetContextData());
 		if (gameover_sound != nullptr)
 			if (!gameover_sound->IsFinished())
 				return false;

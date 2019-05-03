@@ -15,7 +15,7 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
 bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
 {
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
 	{
 		LudumPlayer const * ludum_player = playing_hud->GetLudumPlayer(0);
@@ -57,7 +57,7 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 {
 	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
 
-	LudumGameInstance * ludum_game_instance = dynamic_cast<LudumGameInstance*>(GetGameInstance());
+	LudumGameInstance * ludum_game_instance = auto_cast(GetGameInstance());
 	if (ludum_game_instance == nullptr)
 	{
 		cached_power_up = nullptr;
@@ -123,7 +123,7 @@ bool GameHUDLevelTitleComponent::DoTick(double delta_time)
 	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
 
 	// ensure we got a level
-	death::TiledMap::LevelInstance * level_instance = dynamic_cast<death::TiledMap::LevelInstance*>(GetLevelInstance());
+	death::TiledMap::LevelInstance * level_instance = auto_cast(GetLevelInstance());
 	if (level_instance == nullptr)
 	{
 		cached_level_title = std::string();
@@ -181,7 +181,7 @@ bool GameHUDLevelTitleComponent::DoTick(double delta_time)
 
 bool GameHUDLifeBarComponent::DoTick(double delta_time)
 {
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud == nullptr)
 		return true;
 

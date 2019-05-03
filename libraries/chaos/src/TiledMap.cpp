@@ -470,7 +470,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)
 			{
-				LayerBase const * parent_layer = dynamic_cast<LayerBase const *>(owner);
+				LayerBase const * parent_layer = auto_cast(owner);
 				if (parent_layer != nullptr)
 					result.position += parent_layer->offset;
 			}
@@ -491,7 +491,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)
 			{
-				LayerBase const * parent_layer = dynamic_cast<LayerBase const *>(owner);
+				LayerBase const * parent_layer = auto_cast(owner);
 				if (parent_layer != nullptr)
 					result.position += parent_layer->offset;			
 			}

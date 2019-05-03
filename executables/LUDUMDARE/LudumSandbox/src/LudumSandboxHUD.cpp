@@ -17,7 +17,7 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 
 bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
 {
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
 	{
 		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();
@@ -50,7 +50,7 @@ void GameHUDWakenParticleComponent::TweakTextGeneratorParams(chaos::ParticleText
 
 bool GameHUDLifeBarComponent::DoTick(double delta_time)
 {
-	LudumPlayingHUD const * playing_hud = dynamic_cast<LudumPlayingHUD const*>(hud);
+	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud == nullptr)
 		return true;
 

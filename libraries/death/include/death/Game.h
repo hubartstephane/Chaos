@@ -279,7 +279,7 @@ namespace death
 		/** initialize a mapping with button names / text generator joker */
 		virtual bool InitializeGamepadButtonInfo();
 		/** initialize the particle text generator */
-		virtual bool InitializeParticleTextGenerator();
+		virtual bool InitializeParticleTextGenerator(nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** initialize the particle manager */
 		virtual bool InitializeParticleManager();
 		/** initialize the GameParticleCreator */

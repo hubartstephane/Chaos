@@ -122,9 +122,9 @@ namespace death
 	// GameHUDTitleComponent
 	// ====================================================================
 
-	void GameHUDTitleComponent::OnInsertedInHUD(char const * game_name, bool normal, chaos::TagType layer_id)
+	void GameHUDTitleComponent::OnInsertedInHUD(char const * game_name, char const * font_name, chaos::TagType layer_id)
 	{
-		allocations = hud->GetGameParticleCreator().CreateTitle(game_name, normal, layer_id);
+		allocations = hud->GetGameParticleCreator().CreateTitle(game_name, font_name, layer_id);
 	}
 
 	// ====================================================================

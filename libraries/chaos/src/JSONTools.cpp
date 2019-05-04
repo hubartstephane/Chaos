@@ -5,7 +5,6 @@
 
 namespace chaos
 {
-
 	bool JSONTools::GetAttribute(nlohmann::json const & entry, char const * name, bool & result)
 	{
 		assert(name != nullptr);
@@ -140,7 +139,7 @@ namespace chaos
 	{
 		try
 		{
-			if (entry.is_array() && index < entry.size())
+			if (entry.is_array() && index < (size_t)entry.size())
 			{
 				nlohmann::json const & result = entry[index];
 				if (result.is_structured())

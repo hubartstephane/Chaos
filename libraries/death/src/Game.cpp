@@ -575,7 +575,7 @@ namespace death
 		if (!InitializeParticleManager())
 			return false;
 		// initialize the particle text generator manager
-		if (!InitializeParticleTextGenerator())
+		if (!InitializeParticleTextGenerator(config, config_path))
 			return false;
 		// initialize game particles creator
 		if (!InitializeGameParticleCreator())
@@ -849,17 +849,19 @@ namespace death
 		return true;
 	}
 
-	bool Game::InitializeParticleTextGenerator()
+	bool Game::InitializeParticleTextGenerator(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		// create the generator
 		particle_text_generator = new chaos::ParticleTextGenerator::Generator(*texture_atlas);
 		if (particle_text_generator == nullptr)
 			return false;
 
-		// for each bitmap, that correspond to a button, register a [NAME] in the generator	
+		// bitmaps in generator
 		chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
 		if (folder_info != nullptr)
 		{
+
+			// for each bitmap, that correspond to a button, register a [NAME] in the generator	
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{
 				std::string const & bitmap_name = it->second.first;
@@ -868,6 +870,36 @@ namespace death
 					continue;
 				std::string const & generator_alias = it->second.second;
 				particle_text_generator->AddBitmap(generator_alias.c_str(), info);
+			}
+			// embedded sprites
+			nlohmann::json const * fonts_json = chaos::JSONTools::GetStructure(config, "font_bitmaps");
+			if (fonts_json != nullptr && fonts_json->is_object())
+			{
+				for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
+				{
+					if (!it->is_string())
+						continue;
+					std::string bitmap_name = it.key();
+					std::string bitmap_path = it->get<std::string>();
+					chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_path.c_str());
+					if (info == nullptr)
+						continue;
+					particle_text_generator->AddBitmap(bitmap_name.c_str(), info);
+				}
+			}
+		}
+
+		// the colors
+		nlohmann::json const * fonts_json = chaos::JSONTools::GetStructure(config, "font_colors");
+		if (fonts_json != nullptr && fonts_json->is_object())
+		{
+			for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
+			{
+				glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
+				if (!chaos::JSONTools::GetVector(*it, color))
+					continue;
+				std::string color_name = it.key();
+				particle_text_generator->AddColor(color_name.c_str(), color);
 			}
 		}
 

@@ -76,17 +76,6 @@ static bool InitializeGameValueVector(char const * json_name, nlohmann::json con
 	return (result.size() > 0);
 }
 
-bool LudumGame::InitializeParticleTextGenerator()
-{
-	if (!death::Game::InitializeParticleTextGenerator())
-		return false;
-	particle_text_generator->AddColor("POWERUP", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	particle_text_generator->AddColor("KEYBOARD", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
-	particle_text_generator->AddColor("LEVELTITLE", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	return true;
-}
-
-
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))

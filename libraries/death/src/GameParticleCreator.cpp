@@ -91,7 +91,7 @@ namespace death
 		return allocation;
 	}
 
-	chaos::ParticleAllocationBase * GameParticleCreator::CreateTitle(char const * title, bool normal, chaos::TagType layer_id) const
+	chaos::ParticleAllocationBase * GameParticleCreator::CreateTitle(char const * title, char const * font_name, chaos::TagType layer_id) const
 	{
 		float title_size = 150.0f;
 		float title_placement_y = 0.0f;	
@@ -101,27 +101,9 @@ namespace death
 		params.hotpoint_type = chaos::Hotpoint::CENTER;
 		params.position.y = title_placement_y;
 
-		params.font_info_name = (normal) ? "normal" : "title";
+		params.font_info_name = (font_name == nullptr) ? "normal" : font_name;
 
 		return CreateTextParticles(title, params, layer_id);
-	}
-
-	chaos::ParticleAllocationBase * GameParticleCreator::CreateScoringText(char const * format, int value, float Y, chaos::box2 const & view, chaos::TagType layer_id) const
-	{
-		// get view size
-		std::pair<glm::vec2, glm::vec2> corners = view.GetCorners();
-
-		// set the values
-		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 30;
-		params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
-		params.position.x = corners.first.x + 20.0f;
-		params.position.y = corners.second.y - Y;
-		params.font_info_name = "normal";
-
-		// format text and create particles
-		std::string str = chaos::StringTools::Printf(format, value);
-		return CreateTextParticles(str.c_str(), params, layer_id);
 	}
 	
 }; // namespace death

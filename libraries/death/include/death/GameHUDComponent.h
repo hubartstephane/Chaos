@@ -91,7 +91,7 @@ namespace death
 
 	protected:
 
-		virtual void OnInsertedInHUD(char const * game_name, bool normal, chaos::TagType layer_id); // this is not an override !
+		virtual void OnInsertedInHUD(char const * game_name, char const * font_name, chaos::TagType layer_id); // this is not an override !
 	};
 
 	// ====================================================================

@@ -227,7 +227,7 @@ namespace death
 		// the title
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
-			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), game_name, false, GameHUDKeys::TEXT_LAYER_ID);
+			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), game_name, "title", GameHUDKeys::TEXT_LAYER_ID);
 		// the best score
 		if (game->GetBestScore() > 0)
 			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDBestScoreComponent(), game->GetBestScore());
@@ -249,7 +249,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Pause", false, GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Pause", "title", GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
 		return true;
 	}
 
@@ -263,7 +263,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Game Over", false, GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Game Over", "title", GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
 		return true;
 	}
 

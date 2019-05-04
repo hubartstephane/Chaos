@@ -25,9 +25,7 @@ namespace death
 		/** create a text particle system */
 		chaos::ParticleAllocationBase * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID) const; 		
 		/** create a title */
-		chaos::ParticleAllocationBase * CreateTitle(char const * title, bool normal, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID) const;
-		/** create a score text at the top left corner */
-		chaos::ParticleAllocationBase * CreateScoringText(char const * format, int value, float Y, chaos::box2 const & view, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID) const;
+		chaos::ParticleAllocationBase * CreateTitle(char const * title, char const * font_name, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID) const;
 
 		/** initialize the game objects texture coordinates (from the end of the array) */
 		bool InitializeParticles(chaos::ParticleAllocationBase * allocation, char const * bitmap_name, size_t last_count) const;

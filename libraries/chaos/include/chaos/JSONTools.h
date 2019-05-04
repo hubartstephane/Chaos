@@ -57,6 +57,18 @@ namespace chaos
 			return false;
 		}
 
+		/** reading a GLM vector */
+		template<typename VECTOR_TYPE>
+		static bool GetVector(nlohmann::json const & entry, VECTOR_TYPE & result)
+		{
+			if (!entry.is_array())
+				return false;
+			size_t count = entry.size();
+			for (size_t i = 0; (i < count) && (i < (size_t)result.length()) ; ++i)
+				result[i] = entry[i].get<VECTOR_TYPE::value_type>();
+			return true;
+		}
+
 		/** reading an attribute (catch exceptions) */
 		template<typename T>
 		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result)

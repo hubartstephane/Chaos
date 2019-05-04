@@ -6,6 +6,16 @@
 		"normal": "@fonts/overpass-mono-bold.otf",
 		"title":"@fonts/unispace bold italic.ttf"
 	},
+	"font_bitmaps":
+	{
+	"fire":"fire"	
+	},
+	"font_colors":
+	{
+		"POWERUP":[1.0, 0.0, 0.0],
+		"KEYBOARD":[1.0, 1.0, 0.0],
+		"LEVELTITLE":[1.0, 0.0, 0.0]
+	},
 
 	"initial_life":3,
 	"max_life":3,

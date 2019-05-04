@@ -283,26 +283,25 @@ namespace death
 
 	bool Game::FillAtlasGenerationInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
-		if (!FillAtlasGenerationInputOneFont("font_path", "normal", input, config, config_path))
-			return false;
-		if (!FillAtlasGenerationInputOneFont("title_font_path", "title", input, config, config_path))
-			return false;
-		return true;
-	}
+		nlohmann::json const * fonts_json = chaos::JSONTools::GetStructure(config, "fonts");
+		if (fonts_json != nullptr && fonts_json->is_object())
+		{
+			for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
+			{
+				if (!it->is_string())
+					continue;
+				// read information
+				std::string font_name = it.key();
+				std::string font_path = it->get<std::string>();
+				// Add the font
+				chaos::BitmapAtlas::FontInfoInputParams font_params;
+				font_params.max_character_width = 64;
+				font_params.max_character_height = 64;
 
-	bool Game::FillAtlasGenerationInputOneFont(char const * font_config_name, char const * font_name, chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
-	{
-		// get the path of the font
-		std::string font_path;
-		chaos::JSONTools::GetAttribute(config, font_config_name, font_path);
-		// Add the font
-		chaos::BitmapAtlas::FontInfoInputParams font_params;
-		font_params.max_character_width = 64;
-		font_params.max_character_height = 64;
-
-		if (input.AddFont(font_path.c_str(), nullptr, true, font_name, 0, font_params) == nullptr)
-			return false;
-
+			if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
+					return false;
+			}			
+		}
 		return true;
 	}
 

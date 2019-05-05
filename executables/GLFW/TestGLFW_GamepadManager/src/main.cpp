@@ -139,6 +139,28 @@ protected:
 
 		if (main_gamepad->IsPresent())
 		{
+
+#if 0
+			int button_count = main_gamepad->GetButtonCount();
+			for (int i = 0; i < button_count; ++i)
+			{
+				if (main_gamepad->IsButtonPressed(i))
+					debug_display.AddLine(chaos::StringTools::Printf("BUTTON [%d] PRESSED", i).c_str(), 1.0f);
+			}
+
+			int axis_count = main_gamepad->GetAxisCount();
+			for (int i = 0; i < axis_count; ++i)
+			{
+				float value = main_gamepad->GetAxisValue(i);
+				if (value != 0.0f) 
+					debug_display.AddLine(chaos::StringTools::Printf("AXIS [%d] = %f", i, value).c_str(), 1.0f);
+			}
+
+			if (main_gamepad->IsAnyAxisAction())
+				debug_display.AddLine("AXIS ACTION", 1.0f);
+
+#else
+			
 #define TEST_BUTTON(x) if (main_gamepad->IsButtonPressed(chaos::MyGLFW::x))\
 debug_display.AddLine("Pressed : " #x, 1.0f);
 
@@ -168,9 +190,14 @@ debug_display.AddLine("Pressed : " #x, 1.0f);
 			if (r.x != 0.0f || r.y != 0.0f)
 				debug_display.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
 
-			float trigger = main_gamepad->GetAxisValue(chaos::MyGLFW::XBOX_TRIGGER);
-			if (trigger)
-				debug_display.AddLine(chaos::StringTools::Printf("TRIGGER  %0.3f", trigger).c_str(), 1.0f);
+			float left_trigger = main_gamepad->GetAxisValue(chaos::MyGLFW::XBOX_LEFT_TRIGGER);
+			if (left_trigger)
+				debug_display.AddLine(chaos::StringTools::Printf("LEFT TRIGGER  %0.3f", left_trigger).c_str(), 1.0f);
+
+			float right_trigger = main_gamepad->GetAxisValue(chaos::MyGLFW::XBOX_RIGHT_TRIGGER);
+			if (right_trigger)
+				debug_display.AddLine(chaos::StringTools::Printf("RIGHT TRIGGER  %0.3f", right_trigger).c_str(), 1.0f);
+#endif
 		}
 
 		return true; // no redraw

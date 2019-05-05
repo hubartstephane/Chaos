@@ -38,10 +38,10 @@ public:
 
   virtual void OnGamepadDataUpdated(class chaos::MyGLFW::GamepadData & gamepad_data) override
   {
-    if (gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_Y))
+  //  if (gamepad_data.IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_Y))
     {
-      if (debug_display != nullptr)
-        debug_display->AddLine("Y");
+   //   if (debug_display != nullptr)
+    //    debug_display->AddLine("Y");
     }
   }
 
@@ -139,29 +139,38 @@ protected:
 
 		if (main_gamepad->IsPresent())
 		{
+#define TEST_BUTTON(x) if (main_gamepad->IsButtonPressed(chaos::MyGLFW::x))\
+debug_display.AddLine("Pressed : " #x, 1.0f);
 
-			int change = main_gamepad->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_B);
+			TEST_BUTTON(XBOX_BUTTON_A);
+			TEST_BUTTON(XBOX_BUTTON_B);
+			TEST_BUTTON(XBOX_BUTTON_X);
+			TEST_BUTTON(XBOX_BUTTON_Y);
 
-			//if (change == chaos::MyGLFW::BUTTON_STAY_RELEASED)
-			//	debug_display.AddLine("BUTTON_STAY_RELEASED", 1.0f);
-			//if (change == chaos::MyGLFW::BUTTON_STAY_PRESSED)
-			//	debug_display.AddLine("BUTTON_STAY_PRESSED", 1.0f);
-			if (change == chaos::MyGLFW::BUTTON_BECOME_RELEASED)
-				debug_display.AddLine("BUTTON_BECOME_RELEASED", 1.0f);
-			if (change == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
-				debug_display.AddLine("BUTTON_BECOME_PRESSED", 1.0f);
+			TEST_BUTTON(XBOX_BUTTON_LEFTBUT);
+			TEST_BUTTON(XBOX_BUTTON_RIGHTBUT);
+			TEST_BUTTON(XBOX_BUTTON_SELECT);
+			TEST_BUTTON(XBOX_BUTTON_START);
 
+			TEST_BUTTON(XBOX_BUTTON_LEFTSTICK);
+			TEST_BUTTON(XBOX_BUTTON_RIGHTSTICK);
 
-			if (main_gamepad->IsAnyAction())
-				debug_display.AddLine("IsAnyAction()", 1.0f);
+			TEST_BUTTON(XBOX_BUTTON_UP);
+			TEST_BUTTON(XBOX_BUTTON_DOWN);
+			TEST_BUTTON(XBOX_BUTTON_LEFT);
+			TEST_BUTTON(XBOX_BUTTON_RIGHT);
 
 			glm::vec2 l = main_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 			if (l.x != 0.0f || l.y != 0.0f)
-				debug_display.AddLine(chaos::StringTools::Printf("LEFT x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
+				debug_display.AddLine(chaos::StringTools::Printf("LEFT AXIS x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
 
 			glm::vec2 r = main_gamepad->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 			if (r.x != 0.0f || r.y != 0.0f)
-				debug_display.AddLine(chaos::StringTools::Printf("RIGHT x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
+				debug_display.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
+
+			float trigger = main_gamepad->GetAxisValue(chaos::MyGLFW::XBOX_TRIGGER);
+			if (trigger)
+				debug_display.AddLine(chaos::StringTools::Printf("TRIGGER  %0.3f", trigger).c_str(), 1.0f);
 		}
 
 		return true; // no redraw

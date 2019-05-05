@@ -273,63 +273,13 @@ namespace chaos
 
 		void Window::ToggleFullscreen()
 		{
-#if 0		
 			if (glfw_window == nullptr)
 				return;
 
-			static bool bbb = true;
+			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !glfwGetWindowAttrib(glfw_window, GLFW_DECORATED)); // shuxxx
 
-			HWND hWnd = glfwGetWin32Window(glfw_window);
-
-		//	LONG Style = GetWindowLongPtr(hWnd, GWL_STYLE);
-
-		//	SetWindowLongPtr(hWnd, GWL_STYLE, Style ^ (WS_CAPTION | WS_BORDER | WS_THICKFRAME ));
-			DWORD Style = WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
-
-			if (bbb)
-			{
-				Style = (Style | (WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME)) & ~WS_POPUP;
-			}
-			else
-
-				Style = (Style | WS_POPUP) & ~(WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME);
-
-			bbb = !bbb;
-
-			SetWindowLongPtr(hWnd, GWL_STYLE, Style);
-
-			RequireWindowRefresh();
-#if 0
-			static DWORD getWindowStyle(const _GLFWwindow* window)
-			{
-				DWORD style = WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-
-				if (window->monitor)
-					style |= WS_POPUP;
-				else
-				{
-					if (window->decorated)
-					{
-						style |= WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
-
-						if (window->resizable)
-							style |= WS_MAXIMIZEBOX | WS_THICKFRAME;
-					}
-					else
-						style |= WS_POPUP;
-				}
-
-				return style;
-			}
-#endif
-
-			//if (glfw_window != nullptr)
-			//	glfwIconifyWindow(glfw_window);
-			//glfwMaximizeWindow 	
-			//glfwRestoreWindow
-			//glfwSetWindowIconifyCallback
-			//glfwSwapInterval
-#endif
+			int i = 0;
+			++i;
 		}
 
 	}; // namespace MyGLFW

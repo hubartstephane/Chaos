@@ -6,6 +6,7 @@
 #include <chaos/ParticleTextGenerator.h>
 
 #include <death/GameFramework.h>
+#include <death/GameHUDKeys.h>
 
 namespace death
 {
@@ -80,6 +81,43 @@ namespace death
 		/** allocations for the title */
 		chaos::shared_ptr<chaos::ParticleAllocationBase> allocations;
 	};
+
+
+	// ====================================================================
+	// GameHUDTextComponent
+	// ====================================================================
+
+	class GameHUDTextComponent : public GameHUDSingleAllocationComponent
+	{
+
+	public:
+
+		GameHUDTextComponent(char const * in_text, chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+
+		GameHUDTextComponent(char const * in_text, char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+
+		virtual void OnInsertedInHUD(chaos::TagType layer_id); // this is not an override !
+
+	protected:
+
+		/** the text to display */
+		std::string text;
+		/** the layer owning the allocation */
+		chaos::TagType layer_id = 0;
+		/** the placement and aspect of the text */
+		chaos::ParticleTextGenerator::GeneratorParams params;
+	};
+
+
+
+
+
+
+
+
+
+
+
 
 	// ====================================================================
 	// GameHUDTitleComponent

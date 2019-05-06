@@ -118,6 +118,60 @@ namespace death
 		allocations = nullptr;
 	}
 
+
+	// ====================================================================
+	// GameHUDTextAllocationComponent
+	// ====================================================================
+
+	GameHUDTextComponent::GameHUDTextComponent(char const * in_text, chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id):
+		layer_id(in_layer_id)
+	{
+		if (in_text != nullptr)
+			text = in_text;
+		params = in_params;
+	}
+
+	GameHUDTextComponent::GameHUDTextComponent(char const * in_text, char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id):
+		layer_id(in_layer_id)
+	{
+		if (in_text != nullptr)
+			text = in_text;
+		params.line_height = line_height;
+		params.font_info_name = font_name;
+		params.position = position;
+		params.hotpoint_type = hotpoint_type;
+	}
+
+	void GameHUDTextComponent::OnInsertedInHUD(chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID)
+	{
+		if (text.empty())
+			allocations = nullptr;
+		else
+			allocations = hud->GetGameParticleCreator().CreateTextParticles(text.c_str(), params, layer_id);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// ====================================================================
 	// GameHUDTitleComponent
 	// ====================================================================

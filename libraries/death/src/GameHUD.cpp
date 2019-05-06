@@ -213,17 +213,17 @@ namespace death
 		// the title
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
-			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(game_name, "title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
+			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID), game_name);
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
-			std::string best_score = chaos::StringTools::Printf("Best score:%d", game->GetBestScore());
-			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent(best_score.c_str(), "normal", 60.0f, glm::vec2(0.0f, -110.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
+			std::string best_score = chaos::StringTools::Printf("Best score: %d", game->GetBestScore());
+			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent("normal", 60.0f, glm::vec2(0.0f, -110.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID), best_score.c_str());
 		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();
 		if (game_instructions != nullptr)
-			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent(game_instructions, "normal", 40.0f, glm::vec2(0.0f, 40.0f), chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::BOTTOM, GameHUDKeys::TEXT_LAYER_ID));
+			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent("normal", 40.0f, glm::vec2(0.0f, 40.0f), chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::BOTTOM, GameHUDKeys::TEXT_LAYER_ID), game_instructions);
 
 		return true;
 	}
@@ -238,7 +238,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent("Pause", "title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID), "Pause");
 		return true;
 	}
 
@@ -252,7 +252,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent("Game Over", "title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID), "Game Over");
 		return true;
 	}
 
@@ -265,9 +265,9 @@ namespace death
 		// call super method
 		if (!GameHUD::FillHUDContent())
 			return false;
-		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
+		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent("normal", 60.0f, glm::vec2(20.0f, -20.0f), chaos::Hotpoint::TOP_LEFT, GameHUDKeys::TEXT_LAYER_ID));
 #if _DEBUG
-		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
+		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent("normal", 60.0f, glm::vec2(-20.0f, -20.0f), chaos::Hotpoint::TOP_RIGHT, GameHUDKeys::TEXT_LAYER_ID));
 #endif
 		return true;
 	}

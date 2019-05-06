@@ -123,60 +123,45 @@ namespace death
 	// GameHUDTextAllocationComponent
 	// ====================================================================
 
-	GameHUDTextComponent::GameHUDTextComponent(char const * in_text, chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id):
-		layer_id(in_layer_id)
+	GameHUDTextComponent::GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id):
+		layer_id(in_layer_id),
+		params(in_params)
 	{
-		if (in_text != nullptr)
-			text = in_text;
-		params = in_params;
+		
 	}
 
-	GameHUDTextComponent::GameHUDTextComponent(char const * in_text, char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id):
+	GameHUDTextComponent::GameHUDTextComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id):
 		layer_id(in_layer_id)
 	{
-		if (in_text != nullptr)
-			text = in_text;
-
 		params.line_height = line_height;
 		params.font_info_name = font_name;
 		params.position = position;
 		params.hotpoint_type = hotpoint_type;
 	}
 
-	void GameHUDTextComponent::OnInsertedInHUD()
+	void GameHUDTextComponent::OnInsertedInHUD(char const * in_text)
 	{
-		if (text.empty())
+		UpdateTextAllocation(in_text);
+	}
+
+	void GameHUDTextComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const
+	{
+		chaos::box2 view_box = GetGame()->GetViewBox();
+		glm::vec2 corner = GetViewBoxCorner(view_box, final_params.hotpoint_type);
+		final_params.position += corner;
+	}
+
+	void GameHUDTextComponent::UpdateTextAllocation(char const * in_text)
+	{
+		if (in_text == nullptr)
 			allocations = nullptr;
 		else
 		{
 			chaos::ParticleTextGenerator::GeneratorParams other_params = params;
-
-			chaos::box2 view_box = GetGame()->GetViewBox();
-			glm::vec2 corner = GetViewBoxCorner(view_box, params.hotpoint_type);
-			other_params.position += corner;
-
-			allocations = hud->GetGameParticleCreator().CreateTextParticles(text.c_str(), other_params, layer_id);
+			TweakTextGeneratorParams(other_params);
+			allocations = hud->GetGameParticleCreator().CreateTextParticles(in_text, other_params, layer_id);
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	// ====================================================================
 	// GameHUDScoreComponent
@@ -199,18 +184,6 @@ namespace death
 		return false;
 	}
 
-	void GameHUDScoreComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
-	{		
-		int hotpoint = chaos::Hotpoint::TOP_LEFT;
-
-		glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
-		params.hotpoint_type = hotpoint;
-		params.position.x = corner.x + 20.0f;
-		params.position.y = corner.y - 20.0f;
-		params.font_info_name = "normal"; // shuxxx
-		params.line_height = 60.0f;
-	}
-
 	// ====================================================================
 	// GameHUDFramerateComponent
 	// ====================================================================
@@ -230,16 +203,35 @@ namespace death
 		}
 		return false;
 	}
-	
-	void GameHUDFramerateComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
-	{
-		int hotpoint = chaos::Hotpoint::TOP_RIGHT;
 
-		glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
-		params.line_height = 60;
-		params.hotpoint_type = hotpoint;
-		params.position.x = corner.x - 20.0f;
-		params.position.y = corner.y - 20.0f;
+	// ====================================================================
+	// GameHUDTimeoutComponent
+	// ====================================================================
+
+	bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
+	{
+		GameLevelInstance * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+		{
+			float level_timeout = level_instance->GetLevelTimeout();
+			// level without timer, hide it
+			if (level_timeout < 0.0f)
+			{
+				destroy_allocation = true;
+			}
+			else if (fabsf(level_timeout - cached_value) > 0.1f)
+			{
+				cached_value = level_timeout;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void GameHUDTimeoutComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const
+	{
+		GameHUDCacheValueComponent<float>::TweakTextGeneratorParams(final_params);
+		final_params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	
 	}
 
 	// ====================================================================
@@ -336,40 +328,5 @@ namespace death
 		cached_value = current_life;
 	}
 
-// ====================================================================
-// GameHUDTimeoutComponent
-// ====================================================================
-
-bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
-{
-	GameLevelInstance * level_instance = GetLevelInstance();
-	if (level_instance != nullptr)
-	{
-		float level_timeout = level_instance->GetLevelTimeout();
-		// level without timer, hide it
-		if (level_timeout < 0.0f)
-		{
-			destroy_allocation = true;
-		}
-		else if (fabsf(level_timeout - cached_value) > 0.1f)
-		{
-			cached_value = level_timeout;
-			return true;
-		}
-	}
-	return false;
-}
-
-void GameHUDTimeoutComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
-{
-	int hotpoint = chaos::Hotpoint::TOP;
-
-	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
-	params.hotpoint_type = hotpoint;
-	params.line_height = 60;
-	params.position.x = corner.x;
-	params.position.y = corner.y - 20.0f;
-	params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-}
 
 }; // namespace death

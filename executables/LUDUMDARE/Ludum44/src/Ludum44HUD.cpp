@@ -35,19 +35,6 @@ bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
 	return false;
 }
 
-void GameHUDLifeCountComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
-{
-	int hotpoint = chaos::Hotpoint::TOP_LEFT;
-
-	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
-	params.hotpoint_type = hotpoint;
-	params.position.x = corner.x + 20.0f;
-	params.position.y = corner.y - 80.0f;
-	params.font_info_name = "normal"; // shuxxx
-	params.line_height = 60.0f;
-}
-
-
 // ====================================================================
 // GameHUDPowerUpComponent
 // ====================================================================
@@ -269,14 +256,14 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!death::PlayingHUD::FillHUDContent())
-		return false;
-	RegisterComponent(death::GameHUDKeys::LEVEL_TIMEOUT_ID, new death::GameHUDTimeoutComponent());
+		return false;	
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
 	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new GameHUDLevelTitleComponent());
 	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
-	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
+	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent("normal", 60.0f, glm::vec2(20.0f, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
 	return true;
 }
+
 
 bool LudumPlayingHUD::CreateHUDLayers()
 {

@@ -23,14 +23,17 @@ class GameHUDLifeCountComponent : public death::GameHUDCacheValueComponent<int>
 {
 public:
 
-	GameHUDLifeCountComponent() : death::GameHUDCacheValueComponent<int>("Life:%d", -1) {}
+	/** constructor */
+	GameHUDLifeCountComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDCacheValueComponent<int>("Life: %d", -1, in_params, in_layer_id) {}
+	/** constructor */
+	GameHUDLifeCountComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDCacheValueComponent<int>("Life: %d", -1, font_name, line_height, position, hotpoint_type, in_layer_id) {}
 
 protected:
 
 	/** override */
 	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
-	/** override */
-	virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
 };
 
 // ====================================================================

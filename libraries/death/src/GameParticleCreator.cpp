@@ -90,20 +90,5 @@ namespace death
 
 		return allocation;
 	}
-
-	chaos::ParticleAllocationBase * GameParticleCreator::CreateTitle(char const * title, char const * font_name, chaos::TagType layer_id) const
-	{
-		float title_size = 150.0f;
-		float title_placement_y = 0.0f;	
-
-		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = title_size;
-		params.hotpoint_type = chaos::Hotpoint::CENTER;
-		params.position.y = title_placement_y;
-
-		params.font_info_name = (font_name == nullptr) ? "normal" : font_name;
-
-		return CreateTextParticles(title, params, layer_id);
-	}
 	
 }; // namespace death

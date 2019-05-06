@@ -96,7 +96,7 @@ namespace death
 
 		GameHUDTextComponent(char const * in_text, char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 
-		virtual void OnInsertedInHUD(chaos::TagType layer_id); // this is not an override !
+		virtual void OnInsertedInHUD(); // this is not an override !
 
 	protected:
 
@@ -112,51 +112,6 @@ namespace death
 
 
 
-
-
-
-
-
-
-
-	// ====================================================================
-	// GameHUDTitleComponent
-	// ====================================================================
-
-	class GameHUDTitleComponent : public GameHUDSingleAllocationComponent
-	{
-		friend class GameHUD;
-
-	protected:
-
-		virtual void OnInsertedInHUD(char const * game_name, char const * font_name, chaos::TagType layer_id); // this is not an override !
-	};
-
-	// ====================================================================
-	// GameHUDBestScoreComponent
-	// ====================================================================
-
-	class GameHUDBestScoreComponent : public GameHUDSingleAllocationComponent
-	{
-		friend class GameHUD;
-
-	protected:
-
-		virtual void OnInsertedInHUD(int score); // this is not an override !
-	};
-
-	// ====================================================================
-	// GameHUDInstructionComponent
-	// ====================================================================
-
-	class GameHUDInstructionComponent : public GameHUDSingleAllocationComponent
-	{
-		friend class GameHUD;
-
-	protected:
-
-		virtual void OnInsertedInHUD(char const * instructions); // this is not an override !
-	};
 
 	// ====================================================================
 	// GameHUDCacheValueComponent

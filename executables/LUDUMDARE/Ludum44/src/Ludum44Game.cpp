@@ -30,8 +30,7 @@ LudumGame::LudumGame()
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
 	[ButtonB] or [KEYBOARD CTRL]  : Charged fire
-	[ButtonY] or [KEYBOARD ALT]   : Trade POWER-UP and LIFE
-	)INSTRUCTIONS";
+	[ButtonY] or [KEYBOARD ALT]   : Trade POWER-UP and LIFE)INSTRUCTIONS";
 }
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)

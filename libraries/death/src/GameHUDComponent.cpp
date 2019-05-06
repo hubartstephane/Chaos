@@ -136,18 +136,27 @@ namespace death
 	{
 		if (in_text != nullptr)
 			text = in_text;
+
 		params.line_height = line_height;
 		params.font_info_name = font_name;
 		params.position = position;
 		params.hotpoint_type = hotpoint_type;
 	}
 
-	void GameHUDTextComponent::OnInsertedInHUD(chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID)
+	void GameHUDTextComponent::OnInsertedInHUD()
 	{
 		if (text.empty())
 			allocations = nullptr;
 		else
-			allocations = hud->GetGameParticleCreator().CreateTextParticles(text.c_str(), params, layer_id);
+		{
+			chaos::ParticleTextGenerator::GeneratorParams other_params = params;
+
+			chaos::box2 view_box = GetGame()->GetViewBox();
+			glm::vec2 corner = GetViewBoxCorner(view_box, params.hotpoint_type);
+			other_params.position += corner;
+
+			allocations = hud->GetGameParticleCreator().CreateTextParticles(text.c_str(), other_params, layer_id);
+		}
 	}
 
 
@@ -168,54 +177,6 @@ namespace death
 
 
 
-
-
-
-
-	// ====================================================================
-	// GameHUDTitleComponent
-	// ====================================================================
-
-	void GameHUDTitleComponent::OnInsertedInHUD(char const * game_name, char const * font_name, chaos::TagType layer_id)
-	{
-		allocations = hud->GetGameParticleCreator().CreateTitle(game_name, font_name, layer_id);
-	}
-
-	// ====================================================================
-	// GameHUDBestScoreComponent
-	// ====================================================================
-
-	void GameHUDBestScoreComponent::OnInsertedInHUD(int score)
-	{
-		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 80;
-		params.hotpoint_type = chaos::Hotpoint::CENTER;
-		params.position.x = 0.0f;
-		params.position.y = -130.0f;
-		params.font_info_name = "normal";
-
-		std::string str = chaos::StringTools::Printf("Best score:%d", score);
-		allocations = hud->GetGameParticleCreator().CreateTextParticles(str.c_str(), params, GameHUDKeys::TEXT_LAYER_ID);
-	}
-
-	// ====================================================================
-	// GameHUDInstructionComponent
-	// ====================================================================
-
-	void GameHUDInstructionComponent::OnInsertedInHUD(char const * instructions)
-	{
-		chaos::ParticleTextGenerator::GeneratorParams params;
-		params.line_height = 40;
-		params.hotpoint_type = chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::TOP;
-		params.position.x = 0.0f;
-		params.position.y = -230.0f;
-		params.bitmap_padding = glm::vec2(-3.0f, -3.0f);
-		params.character_spacing = 0.0f;
-		params.line_spacing = 5.0f;
-		params.font_info_name = "normal";
-
-		allocations = hud->GetGameParticleCreator().CreateTextParticles(instructions, params, GameHUDKeys::TEXT_LAYER_ID);
-	}
 
 	// ====================================================================
 	// GameHUDScoreComponent

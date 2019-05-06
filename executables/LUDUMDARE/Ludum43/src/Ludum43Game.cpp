@@ -31,8 +31,7 @@ LudumGame::LudumGame()
 Save particles to the level exit.
 Black holes and Shadows are dangerous.
 [ButtonA] Turbo
-[ButtonB] Ejects particles
-		)INSTRUCTIONS";
+[ButtonB] Ejects particles)INSTRUCTIONS";
 }
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)

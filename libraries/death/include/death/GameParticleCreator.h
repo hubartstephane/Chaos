@@ -24,8 +24,6 @@ namespace death
 		chaos::ParticleAllocationBase * CreateParticles(char const * bitmap_name, size_t count, chaos::TagType layer_id) const;
 		/** create a text particle system */
 		chaos::ParticleAllocationBase * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID) const; 		
-		/** create a title */
-		chaos::ParticleAllocationBase * CreateTitle(char const * title, char const * font_name, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID) const;
 
 		/** initialize the game objects texture coordinates (from the end of the array) */
 		bool InitializeParticles(chaos::ParticleAllocationBase * allocation, char const * bitmap_name, size_t last_count) const;

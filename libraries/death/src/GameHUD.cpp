@@ -120,13 +120,6 @@ namespace death
 		components.erase(it);
 	}
 
-
-
-
-
-
-
-
 	GameHUDComponent * GameHUD::FindComponent(chaos::TagType key)
 	{
 		auto it = components.find(key);
@@ -142,12 +135,6 @@ namespace death
 			return nullptr;
 		return it->second.get();
 	}
-
-
-
-
-
-
 
 	void GameHUD::RegisterParticles(chaos::TagType key, chaos::ParticleAllocationBase * allocation, bool remove_previous)
 	{
@@ -223,18 +210,20 @@ namespace death
 		// call super method
 		if (!GameHUD::FillHUDContent())
 			return false;
-
 		// the title
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
-			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), game_name, "title", GameHUDKeys::TEXT_LAYER_ID);
+			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(game_name, "title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
 		// the best score
 		if (game->GetBestScore() > 0)
-			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDBestScoreComponent(), game->GetBestScore());
+		{
+			std::string best_score = chaos::StringTools::Printf("Best score:%d", game->GetBestScore());
+			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent(best_score.c_str(), "normal", 60.0f, glm::vec2(0.0f, -110.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
+		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();
 		if (game_instructions != nullptr)
-			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDInstructionComponent(), game_instructions);
+			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent(game_instructions, "normal", 40.0f, glm::vec2(0.0f, 40.0f), chaos::Hotpoint::HMIDDLE | chaos::Hotpoint::BOTTOM, GameHUDKeys::TEXT_LAYER_ID));
 
 		return true;
 	}
@@ -249,7 +238,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Pause", "title", GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent("Pause", "title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
 		return true;
 	}
 
@@ -263,7 +252,7 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTitleComponent(), "Game Over", "title", GameHUDKeys::TEXT_LAYER_ID); // shuxxx ORI true for normal
+		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent("Game Over", "title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER, GameHUDKeys::TEXT_LAYER_ID));
 		return true;
 	}
 

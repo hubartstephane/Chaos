@@ -3,7 +3,7 @@
 
 	"fonts":
 	{
-		"normal": "@fonts/gomarice_katamari_serif.ttf",
+		"normal": "@fonts/overpass-mono-bold.otf",
 		"title":"@fonts/unispace bold italic.ttf"
 	},
 

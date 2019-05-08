@@ -74,7 +74,7 @@ namespace chaos
 
 			// load the face and set pixel size
 			FT_Face face;
-			FT_Error error = FT_New_Face(library, font_name, 0, &face);
+			FT_Error error = FT_New_Face(library, font_name, 0, &face); // shuxxx : no direct resource loading !!
 			if (error)
 			{
 				if (release_library)

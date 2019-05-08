@@ -602,6 +602,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 	params.hotpoint_type = chaos::Hotpoint::TOP | chaos::Hotpoint::HMIDDLE;
 	params.position.x = 0.0f;
 	params.position.y = CHALLENGE_PLACEMENT_Y;
+	params.font_info_name = "challenge";
 
 	if (keyboard)
 	{

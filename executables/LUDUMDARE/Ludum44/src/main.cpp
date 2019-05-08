@@ -71,40 +71,6 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	auto b2 = boost::mpl::bool_<has_acceleration<Particle2>::value>();
 
 
-	{
-		glm::vec2 m1(5.0f, 10.0f);
-		glm::vec2 m2(12.0f, 24.0f);
-
-		auto v1 = chaos::MathTools::RemapRanges(1.0f, 3.0f, m1, m2, 3.0f);
-		auto v2 = chaos::MathTools::RemapRanges(1.0f, 3.0f, m1, m2, 3.0f);
-		auto v3 = chaos::MathTools::RemapRanges(1.0f, 3.0f, m1, m2, 1.5f);
-
-
-		auto mapper = chaos::MathTools::MakeRangeRemapper(1.0f, 3.0f, m1, m2);
-		
-		auto w1 = mapper(1.0f);
-		auto w2 = mapper(3.0f);
-		auto w3 = mapper(1.5f);
-
-		v1 = v1;
-	}
-	
-
-
-
-
-
-
-
-
-
-
-
-
-	return 0;
-
-	//return 0;
-
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

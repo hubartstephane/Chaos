@@ -28,7 +28,7 @@ protected:
 	/** override */
 	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 	/** override */
-	virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
+	//virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box) override;
 };
 
 // ====================================================================

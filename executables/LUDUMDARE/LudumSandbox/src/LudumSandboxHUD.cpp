@@ -34,6 +34,7 @@ bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
 	return false;
 }
 
+/*
 void GameHUDWakenParticleComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
 {
 	int hotpoint = chaos::Hotpoint::TOP_LEFT;
@@ -43,6 +44,7 @@ void GameHUDWakenParticleComponent::TweakTextGeneratorParams(chaos::ParticleText
 	params.position.x = corner.x + 20.0f;
 	params.position.y = corner.y - 60.0f;
 }
+*/
 
 // ====================================================================
 // GameHUDWakenParticleComponent

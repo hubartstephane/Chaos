@@ -36,17 +36,6 @@ bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
 	return false;
 }
 
-void GameHUDComboComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & params, chaos::box2 const & view_box)
-{
-	int hotpoint = chaos::Hotpoint::TOP_LEFT;
-
-	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
-	params.hotpoint_type = hotpoint;
-	params.position.x = corner.x + 20.0f;
-	params.position.y = corner.y - 60.0f;
-}
-
-
 // ====================================================================
 // LudumPlayingHUD
 // ====================================================================
@@ -55,10 +44,8 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;
-
-	RegisterComponent(death::GameHUDKeys::COMBO_ID, new GameHUDComboComponent());
+	RegisterComponent(death::GameHUDKeys::COMBO_ID, new GameHUDComboComponent("normal", 60.0f, glm::vec2(20.0, -100.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new death::GameHUDLifeComponent());
-
 	return true;
 }
 

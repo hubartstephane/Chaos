@@ -49,6 +49,62 @@ namespace chaos
 			return r.sign;
 		}
 
+
+		/** a functor used to repeatly map a range to another */
+		template<typename T, typename U>
+		class RangeMapper
+		{
+		public:
+
+			/** constructor */
+			RangeMapper(std::pair<T, T> const & src_range, std::pair<U, U> const & dst_range)
+			{
+				factor = (dst_range.second - dst_range.first) / (src_range.second - src_range.first);
+				origin = dst_range.first - src_range.first * factor;
+			}
+
+			/** constructor */
+			RangeMapper(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max)
+			{
+				factor = (dst_range_max - dst_range_min) / (src_range_max - src_range_min);
+				origin = dst_range_min - src_range_min * factor;
+			}
+
+			/** the functor **/
+			U operator()(T src) const
+			{
+				return origin + src * factor;
+			}
+
+		protected:
+
+			/** internal */
+			U origin;
+			/** internal */
+			U factor;
+		};
+
+		/** remap a range to another */
+		template<typename T, typename U>
+		static U RemapRanges(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max, T src)
+		{
+			return dst_range_min + (src - src_range_min) * (dst_range_max - dst_range_min) / (src_range_max - src_range_min);
+		}
+
+		/** create a range remapper functor */
+		template<typename T, typename U>
+		static RangeMapper<T, U> MakeRangeRemapper(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max)
+		{
+			return RangeMapper<T, U>(src_range_min, src_range_max, dst_range_min, dst_range_max);
+		}
+
+		/** create a range remapper functor */
+		template<typename T, typename U>
+		static RangeMapper<T, U> MakeRangeRemapper(std::pair<T, T> const & src_range, std::pair<U, U> const & dst_range)
+		{
+			return RangeMapper<T, U>(src_range, dst_range);
+		}
+
 		/** a function to multiply to values and convert */
 		template<typename T, typename T1, typename T2>
 		static T CastAndMul(T1 src1, T2 src2)

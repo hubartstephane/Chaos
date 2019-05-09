@@ -276,7 +276,43 @@ namespace chaos
 			if (glfw_window == nullptr)
 				return;
 
-			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !glfwGetWindowAttrib(glfw_window, GLFW_DECORATED)); // shuxxx
+			bool decorated = (bool)glfwGetWindowAttrib(glfw_window, GLFW_DECORATED);
+			if (decorated)
+			{
+
+
+			}
+			else
+			{
+			
+			
+			}
+			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !decorated);
+
+			//glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !glfwGetWindowAttrib(glfw_window, GLFW_DECORATED)); // shuxxx
+
+
+			int left, top, right, bottom;
+			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
+			if (left != 0 || top != 0 || right != 0 || bottom != 0)
+			{
+#if 0
+				x += left;
+				y += top;
+				params.width = params.width - left - right;
+				params.height = params.height - top - bottom;
+				glfwSetWindowSize(glfw_window, params.width, params.height);
+#endif
+				left = left;
+			}
+
+
+
+
+
+			
+			glfwMaximizeWindow(glfw_window);
+			
 
 			int i = 0;
 			++i;

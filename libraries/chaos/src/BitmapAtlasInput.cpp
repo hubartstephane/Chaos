@@ -73,15 +73,18 @@ namespace chaos
 			}
 
 			// load the face and set pixel size
-			FT_Face face;
-			FT_Error error = FT_New_Face(library, font_name, 0, &face); // shuxxx : no direct resource loading !!
-			if (error)
+			FT_Face face = nullptr;
+
+			Buffer<char> buffer = FileTools::LoadFile(font_name, false); // for direct access to resource directory
+			if (buffer != nullptr)
+				FT_New_Memory_Face(library, (FT_Byte const *)buffer.data, buffer.bufsize, 0, &face);
+
+			if (face == nullptr)
 			{
 				if (release_library)
 					FT_Done_FreeType(library); // delete library if necessary
 				return nullptr;
-			}
-
+			}			
 			return AddFontImpl(library, face, release_library, true, name, tag, params);
 		}
 

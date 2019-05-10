@@ -183,7 +183,7 @@ namespace chaos
 			result = window->InitializeFromConfiguration(configuration, configuration_path);
 			if (result)
 			{
-				result->intial_creation_params = params;
+				//result->intial_creation_params = params;
 				
 				// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
 				int left, top, right, bottom;

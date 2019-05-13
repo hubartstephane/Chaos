@@ -18,6 +18,8 @@ namespace chaos
 			static std::vector<GLFWmonitor *> GetSortedMonitors();
 			/** Get monitor by its index (negative for LEFT, positive for RIGHT, 0 for primary */
 			static GLFWmonitor * GetMonitorByIndex(int monitor_index);
+			/** Get monitor nearest the given position (for example center of a window) */
+			static GLFWmonitor * GetNearestMonitor(glm::ivec2 position);
 		};
 
 	}; // namespace MyGLFW

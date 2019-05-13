@@ -67,6 +67,16 @@ namespace chaos
 			return result;
 		}
 
+		GLFWmonitor * Tools::GetNearestMonitor(glm::ivec2 position)
+		{
+			GLFWmonitor * result = nullptr;
+		
+
+
+
+			return result;
+		}
+
 	}; // namespace MyGLFW
 
 }; // namespace chaos

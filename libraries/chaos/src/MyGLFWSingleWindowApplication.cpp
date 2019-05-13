@@ -142,6 +142,10 @@ namespace chaos
 				y = monitor_y + (mode->height - params.height) / 2;
 			}
 
+			// is the initial window already fullscreen
+			if (!params.hints.decorated && params.width == mode->width && params.height == mode->height)
+				window->fullscreen = true;
+
 			// create window
 			if (params.title == nullptr) // title cannot be null
 				params.title = "";
@@ -182,9 +186,7 @@ namespace chaos
 			// prepare the window
 			result = window->InitializeFromConfiguration(configuration, configuration_path);
 			if (result)
-			{
-				//result->intial_creation_params = params;
-				
+			{		
 				// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
 				int left, top, right, bottom;
 				glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);

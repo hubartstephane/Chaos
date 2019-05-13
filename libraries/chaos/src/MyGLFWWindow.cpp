@@ -276,34 +276,50 @@ namespace chaos
 			if (glfw_window == nullptr)
 				return;
 
-			bool decorated = (bool)glfwGetWindowAttrib(glfw_window, GLFW_DECORATED);
-			if (decorated)
+			fullscreen = !fullscreen;
+			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !fullscreen);
+
+			if (fullscreen) 
 			{
 
+			
 
 			}
 			else
 			{
-			
+
+
+				int left, top, right, bottom;
+				glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
+				if (left != 0 || top != 0 || right != 0 || bottom != 0)
+				{
+
+					x += left;
+					y += top;
+					params.width = params.width - left - right;
+					params.height = params.height - top - bottom;
+					glfwSetWindowSize(glfw_window, params.width, params.height);
+					glfwSetWindowPos(glfw_window, x, y);
+				}
+
+
 			
 			}
-			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !decorated);
 
-			//glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !glfwGetWindowAttrib(glfw_window, GLFW_DECORATED)); // shuxxx
+			
 
+#if 0
 
 			int left, top, right, bottom;
 			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
 			if (left != 0 || top != 0 || right != 0 || bottom != 0)
 			{
-#if 0
+
 				x += left;
 				y += top;
 				params.width = params.width - left - right;
 				params.height = params.height - top - bottom;
 				glfwSetWindowSize(glfw_window, params.width, params.height);
-#endif
-				left = left;
 			}
 
 
@@ -316,6 +332,8 @@ namespace chaos
 
 			int i = 0;
 			++i;
+
+#endif
 		}
 
 	}; // namespace MyGLFW

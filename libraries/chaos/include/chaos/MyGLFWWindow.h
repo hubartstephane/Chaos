@@ -168,6 +168,11 @@ namespace chaos
 
 			/** previous mouse position */
 			glm::vec2 mouse_position;
+
+			/** fullscreen */
+			bool fullscreen = false;
+			/** the size of the window before fullscreen is set (-1, -1) for non initialized */
+			glm::ivec2 non_fullscreen_window_size = glm::ivec2(-1, -1);
 		};
 
 	}; // namespace MyGLFW

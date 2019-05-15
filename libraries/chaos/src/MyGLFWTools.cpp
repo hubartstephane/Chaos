@@ -67,14 +67,61 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * Tools::GetNearestMonitor(glm::ivec2 position)
-		{
-			GLFWmonitor * result = nullptr;
-		
+		GLFWmonitor * Tools::GetNearestMonitor(glm::ivec2 const & position)
+		{		
+			// return all monitors
+			std::vector<GLFWmonitor *> monitors = GetSortedMonitors();
+			if (monitors.size() == 0)
+				return nullptr;
 
+			GLFWmonitor * best_monitor   = nullptr;
+			int           best_distance2 = std::numeric_limits<int>::max();
+			// 1 - search the monitor for which position is fully inside
+			// 2 - search the monitor for which position.x is inside the range
+			// 3 - search the monitor for which position.y is inside the range
+			// 4 - search the nearest position center
+			for (int step = 0 ; step < 4 ; ++step)
+			{
+				for (GLFWmonitor * monitor : monitors)
+				{
+					GLFWvidmode const * mode = glfwGetVideoMode(monitor);
+					if (mode == nullptr)
+						continue;
 
+					glm::ivec2 monitor_position;
+					glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
 
-			return result;
+					bool x_inside = (position.x >= monitor_position.x && position.x < monitor_position.x + mode->width);
+					bool y_inside = (position.y >= monitor_position.y && position.y < monitor_position.y + mode->height);
+
+					if (step == 0)
+					{
+						if (x_inside && y_inside)
+							return monitor;
+					}
+					else if (step == 1)
+					{
+						if (x_inside)
+							return monitor;
+					}
+					else if (step == 2)
+					{
+						if (y_inside)
+							return monitor;
+					}
+					else if (step == 3)
+					{
+						glm::ivec2 monitor_center = monitor_position + glm::ivec2(mode->width, mode->height) / 2;
+						int distance2 = glm::distance2(position , monitor_center);
+						if (best_monitor == nullptr || distance2 < best_distance2)
+						{
+							best_distance2 = distance2;
+							best_monitor   = monitor;
+						}
+					}
+				}		
+			}
+			return best_monitor;
 		}
 
 	}; // namespace MyGLFW

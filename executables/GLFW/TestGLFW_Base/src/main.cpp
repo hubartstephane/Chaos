@@ -5,6 +5,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
+#include <chaos/MyGLFWTools.h> 
 #include <chaos/Application.h>
 
 class MyGLFWWindowTest : public chaos::MyGLFW::Window
@@ -59,6 +60,10 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+	glfwInit();
+	auto * m = chaos::MyGLFW::Tools::GetNearestMonitor(glm::ivec2(0, 0));
+	return 0;
+
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

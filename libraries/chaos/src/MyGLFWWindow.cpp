@@ -287,6 +287,8 @@ namespace chaos
 			}
 			else
 			{
+				
+#if 0
 
 
 				int left, top, right, bottom;
@@ -301,6 +303,7 @@ namespace chaos
 					glfwSetWindowSize(glfw_window, params.width, params.height);
 					glfwSetWindowPos(glfw_window, x, y);
 				}
+#endif
 
 
 			

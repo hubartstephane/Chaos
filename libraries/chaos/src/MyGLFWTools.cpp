@@ -112,7 +112,9 @@ namespace chaos
 					else if (step == 3)
 					{
 						glm::ivec2 monitor_center = monitor_position + glm::ivec2(mode->width, mode->height) / 2;
-						int distance2 = glm::distance2(position , monitor_center);
+						glm::ivec2 delta_pos = position - monitor_center;
+
+						int distance2 = delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y; // glm::dot(...) and glm::distance2(...) only work with floating values
 						if (best_monitor == nullptr || distance2 < best_distance2)
 						{
 							best_distance2 = distance2;

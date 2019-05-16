@@ -60,10 +60,6 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	glfwInit();
-	auto * m = chaos::MyGLFW::Tools::GetNearestMonitor(glm::ivec2(0, 0));
-	return 0;
-
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

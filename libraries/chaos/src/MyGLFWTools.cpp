@@ -69,9 +69,10 @@ namespace chaos
 
 		GLFWmonitor * Tools::GetNearestMonitor(glm::ivec2 const & position)
 		{		
-			// return all monitors
-			std::vector<GLFWmonitor *> monitors = GetSortedMonitors();
-			if (monitors.size() == 0)
+			// get all monitors
+			int monitor_count = 0;
+			GLFWmonitor ** monitors = glfwGetMonitors(&monitor_count);
+			if (monitors == nullptr || monitor_count == 0)
 				return nullptr;
 
 			GLFWmonitor * best_monitor   = nullptr;
@@ -82,8 +83,10 @@ namespace chaos
 			// 4 - search the nearest position center
 			for (int step = 0 ; step < 4 ; ++step)
 			{
-				for (GLFWmonitor * monitor : monitors)
+				for (int i = 0 ; i < monitor_count ; ++i)
 				{
+					GLFWmonitor * monitor = monitors[i];
+
 					GLFWvidmode const * mode = glfwGetVideoMode(monitor);
 					if (mode == nullptr)
 						continue;

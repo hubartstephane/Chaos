@@ -10,19 +10,17 @@ namespace chaos
 	{
 	public:
 
-#if 0
+
 
 		/** constructor */
-		GPUFence(GLuint in_id = 0, SurfaceDescription const & in_surface_description = SurfaceDescription());
+		GPUFence(GLsync in_fence = nullptr);
 		/** destructor */
 		virtual ~GPUFence();
 
+		/** wait until the fence is signaled */
+		bool WaitForCompletion(float timeout);
 		/** returns true whether the resource is valid */
-		bool IsValid() const { return glIsRenderbuffer(renderbuffer_id) == GL_TRUE; }
-		/** returns the GL name of the resource */
-		GLuint GetResourceID() const { return renderbuffer_id; }
-		/** get the description of the surface */
-		SurfaceDescription const & GetSurfaceDescription() const override { return surface_description; }
+		bool IsValid() const { return (fence != nullptr) && glIsSync(fence); }
 
 	protected:
 
@@ -31,10 +29,8 @@ namespace chaos
 
 	protected:
 
-		/** the resource id */
-		GLuint renderbuffer_id = 0;
-
-#endif
+		/** the fence object */
+		GLsync fence = nullptr;
 
 	};
 

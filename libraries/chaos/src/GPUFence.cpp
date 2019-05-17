@@ -3,12 +3,11 @@
 namespace chaos
 {
 
-#if 0
-
-	GPUFence::GPUFence(GLuint in_id, SurfaceDescription const & in_surface_description) :
-		renderbuffer_id(in_id),
-		surface_description(in_surface_description)
+	GPUFence::GPUFence(GLsync in_fence) :
+		fence(in_fence)
 	{
+		if (fence == nullptr)
+			fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); // a fence object is pushed inside the OpenGL command queue
 	}
 
 	GPUFence::~GPUFence()
@@ -16,14 +15,25 @@ namespace chaos
 		DoRelease();
 	}
 
+	bool GPUFence::WaitForCompletion(float timeout)
+	{
+		GLuint64   timeout64 = (GLuint64)(timeout * 10.0e9);
+		GLbitfield flags     = 0; 
+
+		GLenum result = glClientWaitSync(fence, flags, timeout64);
+		if (result == GL_ALREADY_SIGNALED || result == GL_CONDITION_SATISFIED)
+			return true;
+		return false; // GL_TIMEOUT_EXPIRED or GL_WAIT_FAILED
+	}
+
+
 	bool GPUFence::DoRelease()
 	{
-		if (renderbuffer_id == 0)
+		if (fence == nullptr)
 			return false;
-		glDeleteRenderbuffers(1, &renderbuffer_id);
-		renderbuffer_id = 0;
+		glDeleteSync(fence);
+		fence = nullptr;
 		return true;	
 	}
-#endif
 
 }; // namespace chaos

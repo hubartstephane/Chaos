@@ -142,10 +142,6 @@ namespace chaos
 				y = monitor_y + (mode->height - params.height) / 2;
 			}
 
-			// is the initial window already fullscreen
-			if (!params.hints.decorated && params.width == mode->width && params.height == mode->height)
-				window->fullscreen = true;
-
 			// create window
 			if (params.title == nullptr) // title cannot be null
 				params.title = "";

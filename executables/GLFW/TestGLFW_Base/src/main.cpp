@@ -42,7 +42,7 @@ protected:
 	{
 		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
-		hints.toplevel = 1;
+	//	hints.toplevel = 1;
 		hints.decorated = 0;
 		hints.resizable = 1;
 	}
@@ -62,8 +62,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
-	params.width = 500;
-	params.height = 500;
+	params.width = 0;
+	params.height = 0;
 	params.monitor_index = 0;
 	chaos::MyGLFW::RunWindowApplication<MyGLFWWindowTest>(argc, argv, env, params);
 

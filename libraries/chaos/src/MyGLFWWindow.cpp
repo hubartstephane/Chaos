@@ -360,12 +360,49 @@ namespace chaos
 
 			if (fullscreen_monitor != nullptr)
 			{
-				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 1);
+				// data properly initialized
+				if (non_fullscreen_window_size.x >= 0 && non_fullscreen_window_size.y >= 0)
+				{
+					glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, non_fullscreen_window_decorated != 0);
 
+					glfwSetWindowPos(glfw_window, non_fullscreen_window_position.x, non_fullscreen_window_position.y);
 
+					glfwSetWindowSize(glfw_window, non_fullscreen_window_size.x, non_fullscreen_window_size.y);
+				}
+				// window probably started fullscreen
+				else
+				{
+					glm::ivec2 window_center = GetWindowPosition() + GetWindowSize() / 2;
+
+					GLFWmonitor * nearest_monitor = MyGLFW::Tools::GetNearestMonitor(window_center);
+					if (nearest_monitor != nullptr)
+					{
+						GLFWvidmode const * mode = glfwGetVideoMode(nearest_monitor);
+						if (mode != nullptr)
+						{
+							glm::ivec2 monitor_position = glm::ivec2(0, 0);
+							glfwGetMonitorPos(nearest_monitor, &monitor_position.x, &monitor_position.y);
+
+							glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 1); // default choice
+
+							glm::ivec2 window_size = glm::ivec2(mode->width, mode->height) / 2;
+							SetWindowSize(window_size);
+
+							glm::ivec2 window_position = monitor_position + window_size / 2;
+							SetWindowPosition(window_position);
+						}
+					}
+				}
 			}
 			else
 			{
+				// store current information
+				non_fullscreen_window_decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED) != 0;
+
+				glfwGetWindowPos(glfw_window, &non_fullscreen_window_position.x, &non_fullscreen_window_position.y);
+
+				glfwGetWindowSize(glfw_window, &non_fullscreen_window_size.x, &non_fullscreen_window_size.y);
+
 				// remove decoration
 				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
 				// search the monitor that contains the center of the window
@@ -385,24 +422,6 @@ namespace chaos
 					}				
 				}
 			}
-
-
-#if 0
-
-			int left, top, right, bottom;
-			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-			if (left != 0 || top != 0 || right != 0 || bottom != 0)
-			{
-
-				x += left;
-				y += top;
-				params.width = params.width - left - right;
-				params.height = params.height - top - bottom;
-				glfwSetWindowSize(glfw_window, params.width, params.height);
-				glfwSetWindowPos(glfw_window, x, y);
-			}
-
-#endif
 		}
 
 	}; // namespace MyGLFW

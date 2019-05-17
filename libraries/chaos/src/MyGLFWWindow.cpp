@@ -2,6 +2,7 @@
 #include <chaos/MyGLFWWindow.h>
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
+#include <chaos/MyGLFWTools.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
 
 namespace chaos
@@ -42,6 +43,37 @@ namespace chaos
 		Window::Window()
 		{
 			mouse_position.x = mouse_position.y = std::numeric_limits<float>::max();		
+		}
+
+		glm::ivec2 Window::GetWindowPosition() const
+		{
+			glm::ivec2 result = glm::vec2(0, 0);
+			if (glfw_window != nullptr)
+				glfwGetWindowPos(glfw_window, &result.x, &result.y);
+			return result;
+		}
+
+		glm::ivec2 Window::GetWindowSize() const
+		{
+			glm::ivec2 result = glm::vec2(0, 0);
+			if (glfw_window != nullptr)
+				glfwGetWindowSize(glfw_window, &result.x, &result.y);
+			return result;
+		}
+		
+		void Window::SetWindowPosition(glm::ivec2 const & position)
+		{
+			if (glfw_window == nullptr)
+				return;
+			glfwSetWindowPos(glfw_window, position.x, position.y);
+		
+		}
+		
+		void Window::SetWindowSize(glm::ivec2 const & size)
+		{
+			if (glfw_window == nullptr)
+				return;
+			glfwSetWindowSize(glfw_window, size.x, size.y);
 		}
 
 		GLFWwindow * Window::GetGLFWHandler()
@@ -271,45 +303,89 @@ namespace chaos
 			}
 		}
 
+		GLFWmonitor * Window::GetFullscreenMonitor() const
+		{
+			if (glfw_window == nullptr)
+				return nullptr;
+
+			// fullscreen window is not decorated
+			int decorated = 0;
+			decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED);
+		//	if (decorated)
+		//		return nullptr;
+
+			// get the window information
+			glm::ivec2 window_position = GetWindowPosition();
+
+			glm::ivec2 window_size = GetWindowSize();
+
+			// search for all monitors if there is a match
+			int monitor_count = 0;
+			GLFWmonitor ** monitors = glfwGetMonitors(&monitor_count);
+			if (monitor_count > 0 && monitors != nullptr)
+			{
+				for (int i = 0 ; i < monitor_count ; ++i)
+				{
+					// get the monitor
+					GLFWmonitor * monitor = monitors[i];
+					if (monitor == nullptr)
+						continue;
+					// get the monitor position
+					glm::ivec2 monitor_position = glm::vec2(0, 0);
+					glfwGetMonitorPos(monitor, &monitor_position.x, &monitor_position.y);
+					// compare with the window position
+					if (window_position != monitor_position)
+						continue;
+					// get the monitor size
+					GLFWvidmode const * mode = glfwGetVideoMode(monitor);
+					if (mode == nullptr)
+						continue;
+					glm::ivec2 monitor_size = glm::ivec2(mode->width, mode->height);
+					// compare with the window size
+					if (window_size != monitor_size)
+						continue;
+
+					return monitor;
+				}
+			}
+			return nullptr;
+		}
+
 		void Window::ToggleFullscreen()
 		{
 			if (glfw_window == nullptr)
 				return;
 
-			fullscreen = !fullscreen;
-			glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, !fullscreen);
+			GLFWmonitor * fullscreen_monitor = GetFullscreenMonitor();
 
-			if (fullscreen) 
+			if (fullscreen_monitor != nullptr)
 			{
+				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 1);
 
-			
 
 			}
 			else
 			{
-				
-#if 0
+				// remove decoration
+				glfwSetWindowAttrib(glfw_window, GLFW_DECORATED, 0);
+				// search the monitor that contains the center of the window
+				glm::ivec2 window_center = GetWindowPosition() + GetWindowSize() / 2;
 
-
-				int left, top, right, bottom;
-				glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-				if (left != 0 || top != 0 || right != 0 || bottom != 0)
+				GLFWmonitor * nearest_monitor = MyGLFW::Tools::GetNearestMonitor(window_center);
+				if (nearest_monitor  != nullptr)
 				{
-
-					x += left;
-					y += top;
-					params.width = params.width - left - right;
-					params.height = params.height - top - bottom;
-					glfwSetWindowSize(glfw_window, params.width, params.height);
-					glfwSetWindowPos(glfw_window, x, y);
+					GLFWvidmode const * mode = glfwGetVideoMode(nearest_monitor);
+					if (mode != nullptr)
+					{
+						// change window size and position
+						glm::ivec2 monitor_position;
+						glfwGetMonitorPos(nearest_monitor, &monitor_position.x, &monitor_position.y);
+						SetWindowPosition(monitor_position);
+						SetWindowSize(glm::ivec2(mode->width, mode->height));
+					}				
 				}
-#endif
-
-
-			
 			}
 
-			
 
 #if 0
 
@@ -323,18 +399,8 @@ namespace chaos
 				params.width = params.width - left - right;
 				params.height = params.height - top - bottom;
 				glfwSetWindowSize(glfw_window, params.width, params.height);
+				glfwSetWindowPos(glfw_window, x, y);
 			}
-
-
-
-
-
-			
-			glfwMaximizeWindow(glfw_window);
-			
-
-			int i = 0;
-			++i;
 
 #endif
 		}

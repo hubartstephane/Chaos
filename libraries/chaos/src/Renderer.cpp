@@ -5,20 +5,31 @@ namespace chaos
 
 	void Renderer::BeginRenderingFrame()
 	{
-
+		// increment the timestamp
+		++rendering_timestamp;
+		// unreference the fence (users of this fence must have a reference on it)
+		rendering_fence = nullptr;
 	}
 
 	void Renderer::EndRenderingFrame()
 	{
 		// update the frame rate
 		framerate_counter.Accumulate(1.0f);
-		// increment the timestamp
-		++rendering_timestamp;
+		// push the frame fence in the command queue if required by some external users
+		if (rendering_fence != nullptr)
+			rendering_fence->CreateGPUFence();
 	}
 
 	float Renderer::GetFrameRate() const 
 	{ 
 		return framerate_counter.GetCurrentValue();
+	}
+
+	GPUFence * Renderer::GetCurrentFrameFence()
+	{
+		if (rendering_fence == nullptr)
+			rendering_fence = new GPUFence(nullptr); // does not create the OPENGL resource. It will be created at the end of frame
+		return rendering_fence.get();
 	}
 
 	uint64_t Renderer::GetTimestamp() const 

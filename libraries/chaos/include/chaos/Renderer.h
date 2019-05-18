@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/TimedAccumulator.h>
+#include <chaos/GPUFence.h>
 #include <chaos/Tickable.h>
 
 namespace chaos
@@ -25,6 +26,8 @@ namespace chaos
 		float GetFrameRate() const;
 		/** get the rendering timestamp */
 		uint64_t GetTimestamp() const;
+		/** get  a fence for the end of this frame */
+		GPUFence * GetCurrentFrameFence();
 
 	protected:
 
@@ -35,6 +38,8 @@ namespace chaos
 
 		/** a time stamp for rendering */
 		uint64_t rendering_timestamp = 0;
+		/** the fence for current frame */
+		shared_ptr<GPUFence> rendering_fence;
 		/** for counting frame per seconds */
 		TimedAccumulator<float> framerate_counter;
 		/** for counting drawcall per seconds */

@@ -5,9 +5,12 @@ namespace chaos
 
 	GPUFence::GPUFence(GLsync in_fence) :
 		fence(in_fence)
+	{		
+	}
+
+	GPUFence::GPUFence() // the GL object is not yet generated
 	{
-		if (fence == nullptr)
-			fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); // a fence object is pushed inside the OpenGL command queue
+		CreateGPUFence();
 	}
 
 	GPUFence::~GPUFence()
@@ -15,8 +18,19 @@ namespace chaos
 		DoRelease();
 	}
 
+	bool GPUFence::CreateGPUFence()
+	{
+		// resource already existing
+		if (IsValid())
+			return true;
+		fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); // a fence object is pushed inside the OpenGL command queue
+	}
+
 	bool GPUFence::WaitForCompletion(float timeout)
 	{
+		if (fence == nullptr) // fence not initialized yet
+			return false;
+
 		GLuint64   timeout64 = (GLuint64)(timeout * 10.0e9);
 		GLbitfield flags     = 0; 
 

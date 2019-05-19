@@ -199,6 +199,15 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				if (value_attribute == nullptr)
 					continue;
 
+
+
+
+
+				// shuxxx
+
+
+
+
 				tinyxml2::XMLAttribute const * type_attribute = node->FindAttribute("type"); // type is NOT mandatory (default is string)
 
 				char const * property_type = (type_attribute != nullptr) ? 

@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@player.psh"
+	],
+	"vertex_sources":
+	[
+		"@player.vsh"
+	]
+}

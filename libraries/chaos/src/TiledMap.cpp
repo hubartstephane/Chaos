@@ -195,18 +195,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				if (FindProperty(property_name) != nullptr) // and must be unique
 					continue;
 
-				tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is mandatory
-				if (value_attribute == nullptr)
-					continue;
-
-
-
-
-
-				// shuxxx
-
-
-
+				tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is NOT mandatory (for multiline strings, we use node->GetText())
 
 				tinyxml2::XMLAttribute const * type_attribute = node->FindAttribute("type"); // type is NOT mandatory (default is string)
 
@@ -215,20 +204,25 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 				if (property_type == nullptr || strcmp(property_type, "string") == 0)
 				{
-					DoInsertProperty(property_name, value_attribute->Value());
+					char const * value = (value_attribute != nullptr)? value_attribute->Value() : node->GetText();
+					if (value != nullptr)
+						DoInsertProperty(property_name, value);
 				}
-				else if (strcmp(property_type, "int") == 0)
+				else if (value_attribute != nullptr) // now, to this point, value_attribute becomes MANDATORY
 				{
-					DoInsertProperty(property_name, value_attribute->IntValue());
-				}
-				else if (strcmp(property_type, "float") == 0)
-				{
-					DoInsertProperty(property_name, value_attribute->FloatValue());
-				}
-				else if (strcmp(property_type, "bool") == 0)
-				{
-					DoInsertProperty(property_name, value_attribute->BoolValue());
-				}
+					if (strcmp(property_type, "int") == 0)
+					{
+						DoInsertProperty(property_name, value_attribute->IntValue());
+					}
+					else if (strcmp(property_type, "float") == 0)
+					{
+						DoInsertProperty(property_name, value_attribute->FloatValue());
+					}
+					else if (strcmp(property_type, "bool") == 0)
+					{
+						DoInsertProperty(property_name, value_attribute->BoolValue());
+					}
+				}								
 			}
 			return true;
 		}

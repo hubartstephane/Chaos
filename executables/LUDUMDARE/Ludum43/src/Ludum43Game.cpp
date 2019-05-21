@@ -25,7 +25,7 @@
 DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 
 LudumGame::LudumGame()
-{		
+{
 	game_name = "Quantic Paouf IV";
 	game_instructions = R"INSTRUCTIONS(
 Save particles to the level exit.
@@ -57,7 +57,8 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 	// II/ offscreen rendering + composition
 
 	// create the render targets or reuse olds
-	if (!GenerateFramebuffer(render_params.screen_size, framebuffer_other) || !GenerateFramebuffer(render_params.screen_size, framebuffer_worldlimits))
+	glm::ivec2 viewport_size = chaos::GLMTools::RecastVector<glm::ivec2>(render_params.viewport.half_size * 2.0f);
+	if (!GenerateFramebuffer(viewport_size, framebuffer_other) || !GenerateFramebuffer(viewport_size, framebuffer_worldlimits))
 		return;
 
 	// clear the color buffers
@@ -71,7 +72,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 	{
 		framebuffer_worldlimits->BeginRendering();
 
-		glViewport(0, 0, render_params.screen_size.x, render_params.screen_size.y);
+		glViewport(0, 0, viewport_size.x, viewport_size.y);
 
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
@@ -110,6 +111,9 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 	// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
 	{
 		framebuffer_other->BeginRendering();
+
+		glViewport(0, 0, viewport_size.x, viewport_size.y);
+
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
@@ -216,10 +220,10 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 
 	DEATHGAME_JSON_ATTRIBUTE(player_attraction_minradius);
 	DEATHGAME_JSON_ATTRIBUTE(player_attraction_maxradius);
-	DEATHGAME_JSON_ATTRIBUTE(player_tangent_force);		
-	DEATHGAME_JSON_ATTRIBUTE(player_attraction_force);	
-	DEATHGAME_JSON_ATTRIBUTE(player_repulsion_force);	
-	DEATHGAME_JSON_ATTRIBUTE(player_slowing_factor);		
+	DEATHGAME_JSON_ATTRIBUTE(player_tangent_force);
+	DEATHGAME_JSON_ATTRIBUTE(player_attraction_force);
+	DEATHGAME_JSON_ATTRIBUTE(player_repulsion_force);
+	DEATHGAME_JSON_ATTRIBUTE(player_slowing_factor);
 	DEATHGAME_JSON_ATTRIBUTE(player_max_velocity);
 	DEATHGAME_JSON_ATTRIBUTE(player_acceleration);
 
@@ -233,14 +237,14 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_minradius_factor);
 	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_maxradius_factor);
 
-	DEATHGAME_JSON_ATTRIBUTE(enemy_tangent_force);		
-	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_force);	
-	DEATHGAME_JSON_ATTRIBUTE(enemy_repulsion_force);	
+	DEATHGAME_JSON_ATTRIBUTE(enemy_tangent_force);
+	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_force);
+	DEATHGAME_JSON_ATTRIBUTE(enemy_repulsion_force);
 
-	DEATHGAME_JSON_ATTRIBUTE(particle_slowing_factor);		
+	DEATHGAME_JSON_ATTRIBUTE(particle_slowing_factor);
 	DEATHGAME_JSON_ATTRIBUTE(particle_min_radius_factor);
 	DEATHGAME_JSON_ATTRIBUTE(particle_max_radius_factor);
-	
+
 	DEATHGAME_JSON_ATTRIBUTE(particle_max_velocity);
 
 	DEATHGAME_JSON_ATTRIBUTE(world_clamp_radius);
@@ -276,7 +280,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 				float square_radius = radius * radius;
 
 				size_t count = particle_layer->GetAllocationCount();
-				for (size_t i = 0 ; i < count ; ++i)
+				for (size_t i = 0; i < count; ++i)
 				{
 					chaos::ParticleAllocationBase const * allocation = particle_layer->GetAllocation(i);
 					if (allocation == nullptr)
@@ -285,20 +289,20 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 					chaos::ParticleConstAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
 
 					size_t enemies_count = enemies.GetCount();
-					for (size_t j = 0 ; j < enemies_count ; ++j)
+					for (size_t j = 0; j < enemies_count; ++j)
 					{
 						ParticleEnemy const & enemy = enemies[j];
 						if (!take_all)
 						{
 							float l2 = glm::length2(enemy.bounding_box.position - center);
 							if (l2 > square_radius)
-								continue;						
+								continue;
 						}
-						enemy_particles.push_back(enemy);									
-					}				
+						enemy_particles.push_back(enemy);
+					}
 				}
-			}		
-		}	
+			}
+		}
 	}
 }
 
@@ -339,7 +343,7 @@ ParticlePlayer const * LudumGame::GetPlayerParticle(int player_index) const
 chaos::box2 LudumGame::GetWorldBox() const
 {
 	if (current_level_instance != nullptr)
-		 return current_level_instance->GetBoundingBox();
+		return current_level_instance->GetBoundingBox();
 	return chaos::box2();
 }
 
@@ -349,7 +353,7 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<c
 	if (in_framebuffer != nullptr)
 	{
 		if (size == in_framebuffer->GetSize())
-			return true;	
+			return true;
 	}
 
 	chaos::GPUFramebufferGenerator framebuffer_generator;

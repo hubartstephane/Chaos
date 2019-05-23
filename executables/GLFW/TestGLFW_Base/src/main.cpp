@@ -6,7 +6,13 @@
 #include <chaos/MyGLFWWindow.h> 
 #include <chaos/WinTools.h> 
 #include <chaos/MyGLFWTools.h> 
+#include <chaos/GPUFence.h> 
 #include <chaos/Application.h>
+
+
+uint64_t render_stamp = 0;
+
+chaos::shared_ptr<chaos::GPUFence> render_fence;
 
 class MyGLFWWindowTest : public chaos::MyGLFW::Window
 {
@@ -15,6 +21,25 @@ protected:
 
 	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
 	{
+		
+		uint64_t ts = renderer->GetTimestamp();
+
+		if (render_fence == nullptr)
+		{
+			render_fence = renderer->GetCurrentFrameFence();
+			render_stamp = ts;
+		}
+		else
+		{
+			if (render_fence->WaitForCompletion(0.0f))
+			{
+				uint64_t dt = ts - render_stamp;
+				render_fence = nullptr;
+				render_stamp = 0;
+
+			}
+		}
+
 		glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
@@ -62,8 +87,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
-	params.width = 0;
-	params.height = 0;
+	params.width = 300;
+	params.height = 300;
 	params.monitor_index = 0;
 	chaos::MyGLFW::RunWindowApplication<MyGLFWWindowTest>(argc, argv, env, params);
 

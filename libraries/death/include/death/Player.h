@@ -4,8 +4,8 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/ParticleManager.h>
-#include <chaos/Tickable.h>
 
+#include <death/GameInstanceEntity.h>
 #include <death/GameFramework.h>
 #include <death/Game.h>
 
@@ -16,7 +16,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::Tickable
+	class Player : public GameInstanceEntity
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;
@@ -25,26 +25,6 @@ namespace death
 
 		/** constructor */
 		Player(GameInstance * in_game_instance);
-
-		/** returns the game */
-		Game * GetGame();
-		/** returns the game */
-		Game const * GetGame() const;
-
-		/** returns the game instance */
-		GameInstance * GetGameInstance() { return game_instance; }
-		/** returns the game instance */
-		GameInstance const * GetGameInstance() const { return game_instance; }
-
-		/** returns the level */
-		GameLevel * GetLevel();
-		/** returns the level */
-		GameLevel const * GetLevel() const;
-
-		/** returns the level instance */
-		GameLevelInstance * GetLevelInstance();
-		/** returns the level */
-		GameLevelInstance const * GetLevelInstance() const;
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
@@ -90,7 +70,7 @@ namespace death
 	protected:
 
 		/** initialize the game instance */
-		virtual bool Initialize(death::GameInstance * in_game_instance);
+		virtual bool Initialize(death::GameInstance * in_game_instance) override;
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
@@ -120,8 +100,6 @@ namespace death
 
 	protected:
 
-		/** the game instance owning the player */
-		GameInstance * game_instance = nullptr;
 		/** a gamepad that can be given to the player */
 		chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad;
 

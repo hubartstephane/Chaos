@@ -7,7 +7,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/ClockManager.h>
 #include <chaos/ParticleManager.h>
-
+#include <death/Camera.h>
 #include <death/GameFramework.h>
 
 namespace death
@@ -134,6 +134,9 @@ namespace death
 
 		/** the level clock */
 		chaos::shared_ptr<chaos::Clock> level_clock;
+
+		/** the camera */
+		std::vector<chaos::shared_ptr<Camera>> cameras;
 	};
 
 }; // namespace death

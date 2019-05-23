@@ -10,55 +10,9 @@ namespace death
 	// =================================================
 
 	Player::Player(GameInstance * in_game_instance) :
-		game_instance(in_game_instance)
+		GameInstanceEntity(in_game_instance)
 	{
 		assert(in_game_instance != nullptr);
-	}
-
-	Game * Player::GetGame()
-	{
-		if (game_instance == nullptr)
-			return nullptr;
-		return game_instance->GetGame();
-	}
-
-	Game const * Player::GetGame() const
-	{
-		if (game_instance == nullptr)
-			return nullptr;
-		return game_instance->GetGame();
-	}
-
-	GameLevel * Player::GetLevel()
-	{
-		Game * game = GetGame();
-		if (game == nullptr)
-			return nullptr;
-		return game->GetLevel();
-	}
-	
-	GameLevel const * Player::GetLevel() const
-	{
-		Game const * game = GetGame();
-		if (game == nullptr)
-			return nullptr;
-		return game->GetLevel();
-	}
-	
-	GameLevelInstance * Player::GetLevelInstance()
-	{
-		Game * game = GetGame();
-		if (game == nullptr)
-			return nullptr;
-		return game->GetLevelInstance();
-	}
-	
-	GameLevelInstance const * Player::GetLevelInstance() const
-	{
-		Game const * game = GetGame();
-		if (game == nullptr)
-			return nullptr;
-		return game->GetLevelInstance();
 	}
 
 	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
@@ -88,6 +42,9 @@ namespace death
 
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
+		if (!GameInstanceEntity::Initialize(in_game_instance))
+			return false;
+
 		Game * game = GetGame();
 		if (game != nullptr)
 			life_count = game->initial_life;

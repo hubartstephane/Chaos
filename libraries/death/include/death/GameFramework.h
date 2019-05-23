@@ -6,6 +6,8 @@
 	friend class GameLevel;\
 	friend class GameLevelInstance;\
 	friend class Game;\
+	friend class Camera;\
+	friend class GameInstanceEntity;\
 	friend class GameInstance;\
 	friend class GameHUD;
 
@@ -15,6 +17,8 @@
 	friend class prefix##Level;\
 	friend class prefix##LevelInstance;\
 	friend class prefix##Game;\
+	friend class prefix##Camera;\
+	friend class prefix##GameInstanceEntity;\
 	friend class prefix##GameInstance;
 
 #define DEATH_GAMEFRAMEWORK_DECLARE_GETTER(prefix, type)\

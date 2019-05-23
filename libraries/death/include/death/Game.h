@@ -23,6 +23,7 @@
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
 #include <death/GameParticleCreator.h>
+#include <death/GameInstanceEntity.h>
 #include <death/Player.h>
 #include <death/GameInstance.h>
 

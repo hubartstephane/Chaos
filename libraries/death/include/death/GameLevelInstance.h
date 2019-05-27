@@ -43,15 +43,21 @@ namespace death
 		/** get a player */
 		Player const * GetPlayer(int player_index) const;
 
+		/** get the current camera */
+		Camera * GetCurrentCamera();
+		/** get the current camera */
+		Camera const * GetCurrentCamera() const;
+
 		/** the camera box getter */
-		chaos::box2 GetCameraBox() const { return camera_box; }
+		chaos::box2 GetCameraBox() const;
 		/** the camera box setter */
-		void SetCameraBox(chaos::box2 in_box) { camera_box = in_box; }
-		
-		/** the initial camera box getter */
-		chaos::box2 GetInitialCameraBox() const { return initial_camera_box; }
-		/** the initial camera box setter */
-		void SetInitialCameraBox(chaos::box2 in_box) { initial_camera_box = in_box; }
+		void SetCameraBox(chaos::box2 in_box);
+		/** the initial camera box getter */		
+		chaos::box2 GetInitialCameraBox() const;
+		/** the initial camera box setter */		
+		void SetInitialCameraBox(chaos::box2 in_box);
+		/** get the camera safe zone */
+		virtual glm::vec2 GetCameraSafeZone() const;
 
 		/** returns level clock */
 		chaos::Clock * GetLevelClock() { return level_clock.get();}
@@ -85,9 +91,6 @@ namespace death
 		/** get the current time out */
 		float GetLevelTimeout() const { return level_timeout; }
 
-		/** get the camera safe zone */
-		virtual glm::vec2 GetCameraSafeZone() const { return camera_safe_zone; }
-
 	protected:
 
 		/** override */
@@ -100,6 +103,11 @@ namespace death
 		virtual void OnPlayerEntered(Player * player);
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
+
+		/** called for each camera whenever a level is started */
+		virtual void OnCameraEntered(Camera * camera);
+		/** called for each camera whenever a level is ended */
+		virtual void OnCameraLeaved(Camera * camera);
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
@@ -121,6 +129,12 @@ namespace death
 		/** pointer on the game */
 		Game * game = nullptr;
 
+
+
+
+
+#if 0 // shuxxx
+
 		/** the safe zone of the camera */
 		glm::vec2 camera_safe_zone = glm::vec2(0.8f, 0.8f);
 
@@ -128,6 +142,12 @@ namespace death
 		chaos::box2 camera_box;
 		/** the initial camera bounding box (at level startup) */
 		chaos::box2 initial_camera_box;
+
+#endif
+
+
+
+
 
 		/** the time to run the level (no time out by default) */
 		float level_timeout = -1.0f;

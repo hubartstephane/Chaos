@@ -88,11 +88,22 @@ namespace death
 	
 	}
 
+	void GameLevelInstance::OnCameraEntered(Camera * camera)
+	{
+
+	}
+
+	void GameLevelInstance::OnCameraLeaved(Camera * camera)
+	{
+
+	}
+
 	void GameLevelInstance::OnLevelEnded()
 	{
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
 			return;
+		// player leaving the level
 		size_t count = game_instance->GetPlayerCount();
 		for (size_t i = 0; i < count; ++i)
 			OnPlayerLeaved(game_instance->GetPlayer(i));
@@ -103,6 +114,11 @@ namespace death
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
 			return;
+		// playering the level
+		size_t count = game_instance->GetPlayerCount();
+		for (size_t i = 0; i < count; ++i)
+			OnPlayerEntered(game_instance->GetPlayer(i));
+
 		size_t count = game_instance->GetPlayerCount();
 		for (size_t i = 0; i < count; ++i)
 			OnPlayerEntered(game_instance->GetPlayer(i));
@@ -230,6 +246,60 @@ namespace death
 				level_timeout = 0.0f;
 		}
 		return true;
+	}
+
+	Camera * GameLevelInstance::GetCurrentCamera()
+	{
+		if (cameras.size() == 0)
+			return false;
+		return cameras[0].get();
+	}
+
+	Camera const * GameLevelInstance::GetCurrentCamera() const
+	{
+		if (cameras.size() == 0)
+			return false;
+		return cameras[0].get();
+	}
+
+	chaos::box2 GameLevelInstance::GetCameraBox() const 
+	{ 
+		Camera const * camera = GetCurrentCamera();
+		if (camera == nullptr)
+			return chaos::box2();
+		return camera->GetCameraBox();
+	}
+
+	void GameLevelInstance::SetCameraBox(chaos::box2 in_box) 
+	{ 
+		Camera * camera = GetCurrentCamera();
+		if (camera == nullptr)
+			return;
+		camera->SetCameraBox(in_box);
+	}
+
+	chaos::box2 GameLevelInstance::GetInitialCameraBox() const 
+	{ 
+		Camera const * camera = GetCurrentCamera();
+		if (camera == nullptr)
+			return chaos::box2();
+		return camera->GetInitialCameraBox();
+	}
+
+	void GameLevelInstance::SetInitialCameraBox(chaos::box2 in_box) 
+	{ 
+		Camera * camera = GetCurrentCamera();
+		if (camera == nullptr)
+			return;
+		camera->SetInitialCameraBox(in_box);
+	}
+	
+	glm::vec2 GameLevelInstance::GetCameraSafeZone() const 
+	{
+		Camera const * camera = GetCurrentCamera();
+		if (camera == nullptr)
+			return glm::vec2(0.8f, 0.8f); // the default safe zone
+		return camera->GetSafeZone();
 	}
 
 

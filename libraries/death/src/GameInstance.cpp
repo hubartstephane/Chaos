@@ -31,8 +31,25 @@ namespace death
 		return game->GetLevelInstance();
 	}
 
+
+
+
+
+
+
+
 	Player * GameInstance::GetPlayer(int player_index)
 	{
+
+		// shuxxx check player_index is initialized (seems NOT)
+
+
+
+
+
+
+
+
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
 			if (players[i]->GetPlayerIndex() == player_index)
@@ -42,12 +59,24 @@ namespace death
 
 	Player const * GameInstance::GetPlayer(int player_index) const
 	{
+
+		// shuxxx check player_index is initialized (seems NOT)
+
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
 			if (players[i]->GetPlayerIndex() == player_index)
 				return players[i].get();
 		return nullptr;
 	}
+
+
+
+
+
+
+
+
+
 
 	int GameInstance::GetBestPlayerScore() const
 	{

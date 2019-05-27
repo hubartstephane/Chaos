@@ -29,9 +29,10 @@ namespace death
 		/** get the safe zone of the camera */
 		glm::vec2 const & GetSafeZone() const { return safe_zone; }
 
-
 		/** set the camera box */
-		void SetCameraBox(chaos::box2 const & in_camera_box) { camera_box = in_camera_box;}
+		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}
+		/** set the camera box */
+		void SetInitialCameraBox(chaos::box2 const & in_box) { initial_camera_box = in_box; }
 		/** set the safe zone of the camera */
 		void SetSafeZone(glm::vec2 const & in_safe_zone) { safe_zone = in_safe_zone; }
 

@@ -18,7 +18,14 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	game(in_game)
 {
 	assert(in_game != nullptr); 
-	camera_safe_zone = glm::vec2(0.2f, 0.2f);
+	
+}
+
+void LudumLevelInstance::OnCameraEntered(death::Camera * camera)
+{
+	death::TiledMap::LevelInstance::OnCameraEntered(camera);
+	camera->SetSafeZone(glm::vec2(0.2f, 0.2f));
+
 }
 
 bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const

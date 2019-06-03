@@ -48,19 +48,21 @@ namespace death
 		/** create cameras when the level is started */
 		virtual void CreateCameras();
 
-		/** get the current camera */
-		Camera * GetCurrentCamera();
-		/** get the current camera */
-		Camera const * GetCurrentCamera() const;
+		/** returns the number of cameras */
+		size_t GetCameraCount() const;
+		/** gets a camera by its index */
+		Camera * GetCamera(size_t index);
+		/** gets a camera by its index */
+		Camera const * GetCamera(size_t index) const;
 
 		/** the camera box getter */
-		chaos::box2 GetCameraBox() const;
+		chaos::box2 GetCameraBox(size_t index) const;
 		/** the camera box setter */
-		void SetCameraBox(chaos::box2 in_box);
+		void SetCameraBox(size_t index, chaos::box2 in_box);
 		/** the initial camera box getter */		
-		chaos::box2 GetInitialCameraBox() const;
+		chaos::box2 GetInitialCameraBox(size_t index) const;
 		/** get the camera safe zone */
-		virtual glm::vec2 GetCameraSafeZone() const;
+		virtual glm::vec2 GetCameraSafeZone(size_t index) const;
 
 		/** returns level clock */
 		chaos::Clock * GetLevelClock() { return level_clock.get();}
@@ -83,7 +85,7 @@ namespace death
 		virtual bool CanCompleteLevel() const;
 
 		/** update the player and the camera position so that they remains inside the world */
-		void RestrictCameraToPlayerAndWorld(int player_index);
+		void RestrictCameraToPlayerAndWorld(int player_index, size_t camera_index);
 		/** restrict an object to the world */
 		void RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index);
 		/** restrict an player to the world */
@@ -126,27 +128,6 @@ namespace death
 		GameLevel * level = nullptr;
 		/** pointer on the game */
 		Game * game = nullptr;
-
-
-
-
-
-#if 0 // shuxxx
-
-		/** the safe zone of the camera */
-		glm::vec2 camera_safe_zone = glm::vec2(0.8f, 0.8f);
-
-		/** the camera bounding box */
-		chaos::box2 camera_box;
-		/** the initial camera bounding box (at level startup) */
-		chaos::box2 initial_camera_box;
-
-#endif
-
-
-
-
-
 		/** the time to run the level (no time out by default) */
 		float level_timeout = -1.0f;
 		/** the level clock */

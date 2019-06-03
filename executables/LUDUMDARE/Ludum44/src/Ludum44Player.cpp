@@ -276,7 +276,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 				death::TiledMap::LayerInstance * layer_instance = ludum_level_instance->FindLayerInstance("Zones");
 				if (layer_instance != nullptr)
 				{
-					layer_instance->FindTileCollisions(ludum_level_instance->GetCameraBox(), [](death::TiledMap::TileParticle & particle)
+					layer_instance->FindTileCollisions(ludum_level_instance->GetCameraBox(0), [](death::TiledMap::TileParticle & particle)
 					{
 						// shuxxx particle.gid = 0;
 						return true;

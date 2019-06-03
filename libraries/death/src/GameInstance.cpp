@@ -309,7 +309,7 @@ namespace death
 		{
 			checkpoint_position = in_checkpoint_position;
 			checkpoint_level_instance = in_checkpoint_level_instance;
-			checkpoint_camera = in_checkpoint_level_instance->GetCameraBox();		
+			checkpoint_camera = in_checkpoint_level_instance->GetCameraBox(0);		
 		}
 	}
 
@@ -330,10 +330,9 @@ namespace death
 				player_particle->bounding_box.position = checkpoint_position;
 		}
 			
-
 		// update camera position
 		if (!checkpoint_camera.IsEmpty())
-			checkpoint_level_instance->SetCameraBox(checkpoint_camera);	
+			checkpoint_level_instance->SetCameraBox(0, checkpoint_camera);	
 
 		return OnRestartedFromCheckpoint(player);			
 	}
@@ -342,9 +341,7 @@ namespace death
 	{
 		GameLevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			level_instance->RestrictCameraToPlayerAndWorld(0);
-
-		
+			level_instance->RestrictCameraToPlayerAndWorld(0, 0);
 		return true;
 	}
 

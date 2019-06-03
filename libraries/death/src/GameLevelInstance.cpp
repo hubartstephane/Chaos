@@ -72,7 +72,7 @@ namespace death
 		double level_time = GetLevelClockTime();
 		main_uniform_provider.AddVariableValue("level_time", level_time);
 		// the main camera
-		chaos::box2 camera = GetCameraBox();
+		chaos::box2 camera = GetCameraBox(0);
 		if (camera.IsEmpty())
 			camera = game->GetViewBox();
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
@@ -175,36 +175,41 @@ namespace death
 
 	}
 
-	void GameLevelInstance::RestrictCameraToPlayerAndWorld(int player_index)
+	void GameLevelInstance::RestrictCameraToPlayerAndWorld(int player_index, size_t camera_index)
 	{
 		// get the wanted player
 		Player * player = GetPlayer(player_index);
 		if (player == nullptr)
 			return;
 
+		// get the camera
+		Camera * camera = GetCamera(camera_index);
+		if (camera == nullptr)
+			return;
+
 		// get camera, cannot continue if it is empty
-		chaos::box2 camera = GetCameraBox();
-		if (camera.IsEmpty())
+		chaos::box2 camera_box = camera->GetCameraBox();
+		if (camera_box.IsEmpty())
 			return;
 
 		// keep player inside camera safe zone
 		chaos::box2 player_box = player->GetPlayerBox();
 		if (!player_box.IsEmpty())
 		{
-			chaos::box2 safe_camera = camera;
-			safe_camera.half_size *= GetCameraSafeZone();
+			chaos::box2 safe_camera = camera_box;
+			safe_camera.half_size *= camera->GetSafeZone();
 
 			if (chaos::RestrictToInside(safe_camera, player_box, true)) // apply the safe_zone displacement to the real camera
-				camera.position = safe_camera.position;
+				camera_box.position = safe_camera.position;
 		}
 
 		// try to keep the camera in the world
 		chaos::box2 world = GetBoundingBox();
 		if (!world.IsEmpty())
-			chaos::RestrictToInside(world, camera, false);
+			chaos::RestrictToInside(world, camera_box, false);
 
 		// apply camera changes
-		SetCameraBox(camera);
+		camera->SetCameraBox(camera_box);
 	}
 
 	void GameLevelInstance::RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index)
@@ -256,47 +261,52 @@ namespace death
 		return true;
 	}
 
-	Camera * GameLevelInstance::GetCurrentCamera()
+	size_t GameLevelInstance::GetCameraCount() const
 	{
-		if (cameras.size() == 0)
-			return nullptr;
-		return cameras[0].get();
+		return cameras.size();
 	}
 
-	Camera const * GameLevelInstance::GetCurrentCamera() const
+	Camera * GameLevelInstance::GetCamera(size_t index)
 	{
-		if (cameras.size() == 0)
+		if (index >= cameras.size())
 			return nullptr;
-		return cameras[0].get();
+		return cameras[index].get();
 	}
 
-	chaos::box2 GameLevelInstance::GetCameraBox() const 
+	Camera const * GameLevelInstance::GetCamera(size_t index) const
+	{
+		if (index >= cameras.size())
+			return nullptr;
+		return cameras[index].get();
+	}
+
+	chaos::box2 GameLevelInstance::GetCameraBox(size_t index) const 
 	{ 
-		Camera const * camera = GetCurrentCamera();
+		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
 			return chaos::box2();
 		return camera->GetCameraBox();
 	}
 
-	void GameLevelInstance::SetCameraBox(chaos::box2 in_box) 
+	void GameLevelInstance::SetCameraBox(size_t index, chaos::box2 in_box)
 	{ 
-		Camera * camera = GetCurrentCamera();
+		Camera * camera = GetCamera(index);
 		if (camera == nullptr)
 			return;
 		camera->SetCameraBox(in_box);
 	}
 
-	chaos::box2 GameLevelInstance::GetInitialCameraBox() const 
+	chaos::box2 GameLevelInstance::GetInitialCameraBox(size_t index) const
 	{ 
-		Camera const * camera = GetCurrentCamera();
+		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
 			return chaos::box2();
 		return camera->GetInitialCameraBox();
 	}
 	
-	glm::vec2 GameLevelInstance::GetCameraSafeZone() const 
+	glm::vec2 GameLevelInstance::GetCameraSafeZone(size_t index) const 
 	{
-		Camera const * camera = GetCurrentCamera();
+		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
 			return glm::vec2(0.8f, 0.8f); // the default safe zone
 		return camera->GetSafeZone();

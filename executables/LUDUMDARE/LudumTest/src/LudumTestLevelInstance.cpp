@@ -59,7 +59,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	if (camera_before.IsEmpty())
 		return true;
 	// keep the player in camera view
-	RestrictCameraToPlayerAndWorld(0);
+	RestrictCameraToPlayerAndWorld(0, 0);
 	// get the camera AFTER modification
 	chaos::box2 camera_after = GetCameraBox();
 	if (camera_after.IsEmpty())

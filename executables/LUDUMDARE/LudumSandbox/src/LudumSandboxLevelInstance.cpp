@@ -55,7 +55,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 {
 	death::TiledMap::LevelInstance::DoTick(delta_time);
 	// keep camera, player inside the world
-	RestrictCameraToPlayerAndWorld(0);
+	RestrictCameraToPlayerAndWorld(0, 0);
 	return true;
 }
 

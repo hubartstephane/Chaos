@@ -794,7 +794,7 @@ namespace death
 			// compute collision with camera
 			if (AreCameraCollisionEnabled())
 			{
-				chaos::box2 camera_box = game->GetLevelInstance()->GetCameraBox();
+				chaos::box2 camera_box = game->GetLevelInstance()->GetCameraBox(0);
 				if (!camera_box.IsEmpty())
 				{
 					if (AreTriggerSurfacesEnabled())
@@ -951,8 +951,8 @@ namespace death
 
 			// camera is expressed in world, so is for layer
 			chaos::box2 layer_box  = GetBoundingBox(true);
-			chaos::box2 camera_box = GetTiledLevelInstance()->GetCameraBox();
-			chaos::box2 initial_camera_box = GetTiledLevelInstance()->GetInitialCameraBox();
+			chaos::box2 camera_box = GetTiledLevelInstance()->GetCameraBox(0);
+			chaos::box2 initial_camera_box = GetTiledLevelInstance()->GetInitialCameraBox(0);
 
 			// XXX : we want some layers to appear further or more near the camera
 			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.

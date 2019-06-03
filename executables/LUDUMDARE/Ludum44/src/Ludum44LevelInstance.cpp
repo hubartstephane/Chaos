@@ -20,9 +20,13 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	assert(in_game != nullptr); 
 }
 
-glm::vec2 LudumLevelInstance::GetCameraSafeZone() const
+void LudumLevelInstance::CreateCameras()
 {
-	return glm::vec2(0.6f, 0.8f);
+	death::TiledMap::LevelInstance::CreateCameras();
+
+	size_t camera_count = cameras.size();
+	for (size_t i = 0 ; i < camera_count ; ++i)
+		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.8f));
 }
 
 bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
@@ -55,13 +59,13 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	RestrictPlayerToWorld(0);
 
 	// get the camera BEFORE modification
-	chaos::box2 camera_before = GetCameraBox();
+	chaos::box2 camera_before = GetCameraBox(0);
 	if (camera_before.IsEmpty())
 		return true;
 	// keep the player in camera view
-	RestrictCameraToPlayerAndWorld(0);
+	RestrictCameraToPlayerAndWorld(0, 0);
 	// get the camera AFTER modification
-	chaos::box2 camera_after = GetCameraBox();
+	chaos::box2 camera_after = GetCameraBox(0);
 	if (camera_after.IsEmpty())
 		return true;
 	// correct camera position
@@ -81,7 +85,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	float scroll_displacement = scroll_factor * ludum_game->scroll_factor * camera_speed * (float)delta_time;
 
 	camera_after.position[scroll_direction] += scroll_displacement;
-	SetCameraBox(camera_after);
+	SetCameraBox(0, camera_after);
 
 	player_box.position[scroll_direction] += scroll_displacement;
 	player->SetPlayerBox(player_box);

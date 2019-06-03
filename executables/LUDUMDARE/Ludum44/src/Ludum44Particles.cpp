@@ -222,7 +222,7 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	if (count > 0)
 	{
 		// get the camera box 
-		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
+		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
 		//result.camera_box.half_size *= 3.0f;
 		// get the enemies
 		FindEnemiesOnMap(layer_trait->game, result.enemies);
@@ -324,7 +324,7 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	ParticleEnemyUpdateData result;
 	if (count > 0)
 	{
-		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox();
+		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
 		//result.camera_box.half_size *= 3.0f;
 
 		// search some bitmap layout information

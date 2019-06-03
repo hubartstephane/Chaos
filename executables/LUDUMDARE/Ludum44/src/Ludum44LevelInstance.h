@@ -50,7 +50,7 @@ protected:
 	/** override */
 	virtual void OnPlayerLeaved(death::Player * player) override;
 	/** override */
-	virtual glm::vec2 GetCameraSafeZone() const override;
+	virtual void CreateCameras() override;
 
 protected:
 

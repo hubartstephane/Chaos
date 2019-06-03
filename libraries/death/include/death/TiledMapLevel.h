@@ -580,18 +580,12 @@ namespace death
 			virtual void ComputePlayerAndCameraCollision(double delta_time);
 
 			/** override */
-			virtual void OnLevelStarted() override;
-			/** override */
-			virtual void OnLevelEnded() override;
-			/** override */
 			virtual void OnPlayerEntered(Player * player) override;
 			/** override */
 			virtual void OnPlayerLeaved(Player * player) override;
 
-			/** create the camera */
-			virtual void CreateCamera();
-			/** destroy the camera */
-			virtual void DestroyCamera();
+			/** create the cameras */
+			virtual void CreateCameras() override;
 
 			/** create the particle manager */
 			virtual bool CreateParticleManager(Game * in_game);

@@ -43,6 +43,11 @@ namespace death
 		/** get a player */
 		Player const * GetPlayer(int player_index) const;
 
+		/** destroy cameras when the level is finished */
+		virtual void DestroyCameras();
+		/** create cameras when the level is started */
+		virtual void CreateCameras();
+
 		/** get the current camera */
 		Camera * GetCurrentCamera();
 		/** get the current camera */
@@ -54,8 +59,6 @@ namespace death
 		void SetCameraBox(chaos::box2 in_box);
 		/** the initial camera box getter */		
 		chaos::box2 GetInitialCameraBox() const;
-		/** the initial camera box setter */		
-		void SetInitialCameraBox(chaos::box2 in_box);
 		/** get the camera safe zone */
 		virtual glm::vec2 GetCameraSafeZone() const;
 
@@ -104,11 +107,6 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
 
-		/** called for each camera whenever a level is started */
-		virtual void OnCameraEntered(Camera * camera);
-		/** called for each camera whenever a level is ended */
-		virtual void OnCameraLeaved(Camera * camera);
-
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
 
@@ -151,10 +149,8 @@ namespace death
 
 		/** the time to run the level (no time out by default) */
 		float level_timeout = -1.0f;
-
 		/** the level clock */
 		chaos::shared_ptr<chaos::Clock> level_clock;
-
 		/** the camera */
 		std::vector<chaos::shared_ptr<Camera>> cameras;
 	};

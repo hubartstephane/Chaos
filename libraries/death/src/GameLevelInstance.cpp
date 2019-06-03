@@ -88,14 +88,18 @@ namespace death
 	
 	}
 
-	void GameLevelInstance::OnCameraEntered(Camera * camera)
+	void GameLevelInstance::DestroyCameras()
 	{
-
+		cameras.clear(); // destroy all camera
 	}
 
-	void GameLevelInstance::OnCameraLeaved(Camera * camera)
+	void GameLevelInstance::CreateCameras()
 	{
-
+		// create a default camera
+		Camera * camera = new Camera(this);
+		if (camera == nullptr)
+			return;
+		cameras.push_back(camera);
 	}
 
 	void GameLevelInstance::OnLevelEnded()
@@ -103,10 +107,12 @@ namespace death
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
 			return;
-		// player leaving the level
-		size_t count = game_instance->GetPlayerCount();
-		for (size_t i = 0; i < count; ++i)
+		// players leaving the level
+		size_t player_count = game_instance->GetPlayerCount();
+		for (size_t i = 0; i < player_count; ++i)
 			OnPlayerLeaved(game_instance->GetPlayer(i));
+		// destroy cameras
+		DestroyCameras();
 	}
 	
 	void GameLevelInstance::OnLevelStarted()
@@ -114,14 +120,16 @@ namespace death
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
 			return;
-		// playering the level
-		size_t count = game_instance->GetPlayerCount();
-		for (size_t i = 0; i < count; ++i)
+		// players entering the level
+		size_t player_count = game_instance->GetPlayerCount();
+		for (size_t i = 0; i < player_count; ++i)
 			OnPlayerEntered(game_instance->GetPlayer(i));
-
-		size_t count = game_instance->GetPlayerCount();
-		for (size_t i = 0; i < count; ++i)
-			OnPlayerEntered(game_instance->GetPlayer(i));
+		// create cameras
+		CreateCameras();
+		// last initialization of camera
+		size_t camera_count = cameras.size();
+		for (size_t i = 0; i < camera_count; ++i)
+			cameras[i]->SetInitialCameraBox(cameras[i]->GetCameraBox());
 	}
 
 	bool GameLevelInstance::Initialize(Game * in_game, GameLevel * in_level)
@@ -251,14 +259,14 @@ namespace death
 	Camera * GameLevelInstance::GetCurrentCamera()
 	{
 		if (cameras.size() == 0)
-			return false;
+			return nullptr;
 		return cameras[0].get();
 	}
 
 	Camera const * GameLevelInstance::GetCurrentCamera() const
 	{
 		if (cameras.size() == 0)
-			return false;
+			return nullptr;
 		return cameras[0].get();
 	}
 
@@ -284,14 +292,6 @@ namespace death
 		if (camera == nullptr)
 			return chaos::box2();
 		return camera->GetInitialCameraBox();
-	}
-
-	void GameLevelInstance::SetInitialCameraBox(chaos::box2 in_box) 
-	{ 
-		Camera * camera = GetCurrentCamera();
-		if (camera == nullptr)
-			return;
-		camera->SetInitialCameraBox(in_box);
 	}
 	
 	glm::vec2 GameLevelInstance::GetCameraSafeZone() const 

@@ -21,10 +21,14 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	
 }
 
-void LudumLevelInstance::OnCameraEntered(death::Camera * camera)
+void LudumLevelInstance::CreateCameras()
 {
-	death::TiledMap::LevelInstance::OnCameraEntered(camera);
-	camera->SetSafeZone(glm::vec2(0.2f, 0.2f));
+	// create the cameras
+	death::TiledMap::LevelInstance::CreateCameras();
+	// tweak the cameras
+	size_t camera_count = cameras.size();
+	for (size_t i = 0 ; i < camera_count ; ++i)
+		cameras[i]->SetSafeZone(glm::vec2(0.2f, 0.2f));
 
 }
 

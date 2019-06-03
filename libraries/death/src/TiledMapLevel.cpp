@@ -1218,19 +1218,7 @@ namespace death
 			return NamedObject::FindNamedObject(layer_instances, name);
 		}
 
-		void LevelInstance::OnLevelEnded()
-		{
-			GameLevelInstance::OnLevelEnded();
-			DestroyCamera();
-		}
-
-		void LevelInstance::OnLevelStarted()
-		{
-			GameLevelInstance::OnLevelStarted();
-			CreateCamera();
-		}
-
-		void LevelInstance::CreateCamera()
+		void LevelInstance::CreateCameras()
 		{
 			Level * level = GetTiledLevel();
 
@@ -1238,31 +1226,32 @@ namespace death
 			std::string const * camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
 
 			// search the CAMERA
-			TiledMap::CameraObject * camera = nullptr;
+			TiledMap::CameraObject * camera_object = nullptr;
 			if (camera_name != nullptr)
 			{
-				camera = FindCamera(camera_name->c_str()); // first, if a name is given, use it
+				camera_object = FindCamera(camera_name->c_str()); // first, if a name is given, use it
 			}
-			if (camera == nullptr)
+			if (camera_object == nullptr)
 			{
-				camera = FindCamera(nullptr); // try to find the very first one otherwise
-				if (camera == nullptr)
+				camera_object = FindCamera(nullptr); // try to find the very first one otherwise
+				if (camera_object == nullptr)
 					return;
 			}
 
-			// create camera
-			chaos::TiledMap::GeometricObjectSurface * camera_surface = camera->GetGeometricObject()->GetObjectSurface();
+			// compute the surface
+			chaos::TiledMap::GeometricObjectSurface * camera_surface = camera_object->GetGeometricObject()->GetObjectSurface();
 			if (camera_surface == nullptr)
 				return;
-
 			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(true), 16.0f / 9.0f, true);
-			SetCameraBox(camera_box);
-			SetInitialCameraBox(camera_box);
-		}
 
-		void LevelInstance::DestroyCamera()
-		{
-			SetCameraBox(chaos::box2()); // reset the camera
+			// create the real camera
+			Camera * camera = new Camera(this);
+			if (camera == nullptr)
+				return;
+			cameras.push_back(camera);
+
+			// initialize the camera
+			camera->SetCameraBox(camera_box);
 		}
 
 		void LevelInstance::OnPlayerEntered(Player * player)

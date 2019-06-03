@@ -36,7 +36,7 @@ protected:
 	/** override */
 	virtual void OnLevelStarted() override;
 	/** override */
-	virtual void OnCameraEntered(death::Camera * camera) override;
+	virtual void CreateCameras() override;
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
 

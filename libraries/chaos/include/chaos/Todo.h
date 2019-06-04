@@ -100,18 +100,11 @@
 	- SHADER : faire un shader placeholder en cas d erreur ?
 
 
-
-
-
-	- HUD component
-
 	- PLAYER component
 
 	- test platformer
 
 	- ATLAS DYNAMIC
-
-	- FENCE OPENGL a chaque frame
 
 	- CHANGE MUSIC in game
 

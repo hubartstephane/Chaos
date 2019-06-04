@@ -178,10 +178,17 @@ namespace chaos
 				int height = 0;
 
 				glfwMakeContextCurrent(in_glfw_window);
+
+				// shuxxx
+
+				glfwSwapInterval(0); // no vsync ?
+
 				glfwGetFramebufferSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
-
-
 				glfwGetWindowSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
+
+
+				// shuxxx
+
 
 				int l, r, t, b;
 				glfwGetWindowFrameSize(in_glfw_window, &l, &t, &r, &b); // framebuffer size is in pixel ! (not glfwGetWindowSize)
@@ -200,8 +207,15 @@ namespace chaos
 					{
 						renderer->BeginRenderingFrame();
 						if (my_window->OnDraw(renderer, glm::ivec2(width, height)))
+						{
 							if (my_window->double_buffer)
 								glfwSwapBuffers(in_glfw_window);
+
+							// shuxxx
+
+							//else
+							//	glFlush();
+						}
 						renderer->EndRenderingFrame();
 					}
 				}

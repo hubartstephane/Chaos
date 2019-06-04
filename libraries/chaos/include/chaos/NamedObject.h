@@ -118,6 +118,35 @@ namespace chaos
 					return meta::get_raw_pointer(elements[i]);
 			return nullptr;
 		}
+
+
+
+
+		/** remove an element by name in a vector */
+		template<typename P>
+		static bool RemoveNamedObject(std::vector<P> & elements, char const * in_name)
+		{
+			// early exit
+			if (in_name == nullptr)
+				return false;
+			// search in the list
+			for (auto it = elements.begin() ; it != elements.end() ; ++it)
+			{
+				if (strcmp(meta::get_raw_pointer(*it)->GetName(), in_name) == 0)
+				{
+					elements.erase(it);
+					return true;
+				}
+			}
+			return false;
+		}
+
+
+
+
+
+
+
 	};
 
 	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */

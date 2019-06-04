@@ -6,6 +6,7 @@
 
 #include <death/CameraComponent.h>
 #include <death/GameFramework.h>
+#include <death/ComponentOwner.h>
 
 namespace death
 {
@@ -37,30 +38,8 @@ namespace death
 		/** set the safe zone of the camera */
 		void SetSafeZone(glm::vec2 const & in_safe_zone) { safe_zone = in_safe_zone; }
 
-
-		/** get the number of components */
-		size_t GetComponentCount() const;
-		/** get a component by index */
-		CameraComponent * GetComponent(size_t index);
-		/** get a component by index */
-		CameraComponent const * GetComponent(size_t index) const;
-		/** find a component by tag */
-		CameraComponent * FindComponent(chaos::TagType tag);
-		/** find a component by tag */
-		CameraComponent const * FindComponent(chaos::TagType tag) const;
-		/** find a component by name */
-		CameraComponent * FindComponent(char const * name);
-		/** find a component by name */
-		CameraComponent const * FindComponent(char const * name) const;
-
-		/** insert a component */
-		bool AddComponent(CameraComponent * component);
-		/** remove a component */
-		bool RemoveComponent(CameraComponent * component);
-		/** remove a component */
-		bool RemoveComponent(chaos::TagType tag);
-		/** remove a component */
-		bool RemoveComponent(char const * name);
+		/** Camera is a CameraComponent owner */
+		DEATH_DECLARE_COMPONENT_OWNER(CameraComponent, Component)
 
 	protected:
 

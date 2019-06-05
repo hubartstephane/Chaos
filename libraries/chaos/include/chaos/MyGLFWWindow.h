@@ -57,6 +57,8 @@ namespace chaos
 			int alpha_bits = 8;
 			/** self description */
 			int focused = 0;
+			/** whether we want the fps to be unlimited */
+			bool unlimited_fps = false;
 		};
 
 		/**

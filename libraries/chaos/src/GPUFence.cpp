@@ -24,6 +24,7 @@ namespace chaos
 		if (IsValid())
 			return true;
 		fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); // a fence object is pushed inside the OpenGL command queue
+		return IsValid();
 	}
 
 	bool GPUFence::WaitForCompletion(float timeout)

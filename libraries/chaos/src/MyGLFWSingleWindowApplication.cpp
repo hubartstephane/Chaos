@@ -32,6 +32,7 @@ namespace chaos
 			JSONTools::GetAttribute(in_config, "minor_version", hints.minor_version);
 			JSONTools::GetAttribute(in_config, "refresh_rate", hints.refresh_rate);
 			JSONTools::GetAttribute(in_config, "opengl_profile", hints.opengl_profile);
+			JSONTools::GetAttribute(in_config, "unlimited_fps", hints.unlimited_fps);
 #if 0 // probably no reason why this should be in config file
 			JSONTools::GetAttribute(in_config, "resizable", hints.resizable);
 			JSONTools::GetAttribute(in_config, "start_visible", hints.start_visible);
@@ -89,8 +90,6 @@ namespace chaos
 
 			// set an error callback
 			glfwSetErrorCallback(OnGLFWError);
-
-			// shuxxx, monitors
 
 			// compute the monitor upon which the window will be : use it for pixel format
 			if (params.monitor == nullptr)
@@ -151,6 +150,10 @@ namespace chaos
 			if (glfw_window == nullptr)
 				return false;
 			glfwMakeContextCurrent(glfw_window);
+
+			// vsync ?
+			if (params.hints.unlimited_fps)
+				glfwSwapInterval(0); 
 
 			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
 			//       see https://www.opengl.org/wiki/OpenGL_Loading_Library

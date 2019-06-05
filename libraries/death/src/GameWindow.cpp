@@ -125,6 +125,8 @@ namespace death
 		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 #if !_DEBUG
 		hints.toplevel = 1;
+#else 
+		hints.unlimited_fps = true;
 #endif
 		hints.decorated = 1;
 	}

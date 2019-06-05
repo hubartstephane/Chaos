@@ -174,27 +174,12 @@ namespace chaos
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
 			{
-				int width = 0;
-				int height = 0;
-
 				glfwMakeContextCurrent(in_glfw_window);
 
-				// shuxxx
-
-				glfwSwapInterval(0); // no vsync ?
-
-				glfwGetFramebufferSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
+				// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
+				int width = 0;
+				int height = 0;
 				glfwGetWindowSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
-
-
-				// shuxxx
-
-
-				int l, r, t, b;
-				glfwGetWindowFrameSize(in_glfw_window, &l, &t, &r, &b); // framebuffer size is in pixel ! (not glfwGetWindowSize)
-
-				auto ww = r - l;
-				auto hh = t - b;
 
 				if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
 					return;
@@ -207,14 +192,12 @@ namespace chaos
 					{
 						renderer->BeginRenderingFrame();
 						if (my_window->OnDraw(renderer, glm::ivec2(width, height)))
-						{
+						{					
 							if (my_window->double_buffer)
 								glfwSwapBuffers(in_glfw_window);
-
-							// shuxxx
-
+							// XXX : seems useless
 							//else
-							//	glFlush();
+							//	glFlush(); 
 						}
 						renderer->EndRenderingFrame();
 					}
@@ -323,10 +306,9 @@ namespace chaos
 				return nullptr;
 
 			// fullscreen window is not decorated
-			int decorated = 0;
-			decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED);
-		//	if (decorated)
-		//		return nullptr;
+			int decorated = glfwGetWindowAttrib(glfw_window, GLFW_DECORATED);
+			if (decorated)
+				return nullptr;
 
 			// get the window information
 			glm::ivec2 window_position = GetWindowPosition();

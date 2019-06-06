@@ -48,6 +48,19 @@ namespace chaos
 		/** change the tag of the object */
 		void SetTag(TagType in_tag) { tag = in_tag; }
 
+		/** test whether the object name/tag match */
+		template<typename T>
+		friend bool Match(T const & object, char const * in_name) // use template to use NamedObjectWrapper as well as NamedObject
+		{
+			return (StringTools::Strcmp(object.GetName(), in_name) == 0);
+		}
+		/** test whether the object name/tag match */
+		template<typename T>
+		friend bool Match(T const & object, TagType in_tag) // use template to use NamedObjectWrapper as well as NamedObject
+		{
+			return (object.GetTag() == in_tag);
+		}
+
 	public:
 
 		/** the name of the object */
@@ -65,13 +78,17 @@ namespace chaos
 			size_t count = elements.size();
 			if (tag >= 0 && (size_t)tag < count)
 			{
-				if (meta::get_raw_pointer(elements[tag])->GetTag() == tag)
-					return meta::get_raw_pointer(elements[tag]);
+				auto e = meta::get_raw_pointer(elements[tag]);
+				if (Match(*e, tag))
+					return e;
 			}
 			// search in the list
 			for (size_t i = 0; i < count; ++i)
-				if (meta::get_raw_pointer(elements[i])->GetTag() == tag)
-					return meta::get_raw_pointer(elements[i]);
+			{
+				auto e = meta::get_raw_pointer(elements[i]);
+				if (Match(*e, tag))
+					return e;
+			}
 			return nullptr;
 		}
 		/** search element in a vector */
@@ -82,13 +99,17 @@ namespace chaos
 			size_t count = elements.size();
 			if (tag >= 0 && (size_t)tag < count)
 			{
-				if (meta::get_raw_pointer(elements[tag])->GetTag() == tag)
-					return meta::get_raw_pointer(elements[tag]);
+				auto e = meta::get_raw_pointer(elements[tag]);
+				if (Match(*e, tag))
+					return e;
 			}
 			// search in the list
 			for (size_t i = 0; i < count; ++i)
-				if (meta::get_raw_pointer(elements[i])->GetTag() == tag)
-					return meta::get_raw_pointer(elements[i]);
+			{
+				auto e = meta::get_raw_pointer(elements[i]);
+				if (Match(*e, tag))
+					return e;
+			}
 			return nullptr;
 		}
 		/** search element in a vector */
@@ -101,8 +122,11 @@ namespace chaos
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
-				if (StringTools::Strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
-					return meta::get_raw_pointer(elements[i]);
+			{
+				auto e = meta::get_raw_pointer(elements[i]);
+				if (Match(*e, in_name))
+					return e;
+			}
 			return nullptr;
 		}
 		/** search element in a vector */
@@ -115,13 +139,13 @@ namespace chaos
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
-				if (StringTools::Strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
-					return meta::get_raw_pointer(elements[i]);
+			{
+				auto e = meta::get_raw_pointer(elements[i]);
+				if (Match(*e, in_name))
+					return e;
+			}
 			return nullptr;
 		}
-
-
-
 
 		/** remove an element by name in a vector */
 		template<typename P>
@@ -133,7 +157,7 @@ namespace chaos
 			// search in the list
 			for (auto it = elements.begin() ; it != elements.end() ; ++it)
 			{
-				if (StringTools::Strcmp(meta::get_raw_pointer(*it)->GetName(), in_name) == 0)
+				if (Match(*meta::get_raw_pointer(*it), in_name))
 				{
 					elements.erase(it);
 					return true;

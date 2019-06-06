@@ -124,7 +124,7 @@ namespace chaos
 		static auto DoLoadObjectsFromConfiguration(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, boost::mpl::true_ recurse_enabled, LOADER loader) -> typename LOADER::resource_type * // LOADER passed by copy is important to ensure reset for all loaded objects
 		{
 			// 1 - recurse over some directories
-			if (name != nullptr && _strcmpi(name, "[recurse]") == 0)
+			if (name != nullptr && StringTools::Stricmp(name, "[recurse]") == 0)
 			{
 				DoLoadObjectsRecurseDirectories(json, config_path, loader);
 				return nullptr;

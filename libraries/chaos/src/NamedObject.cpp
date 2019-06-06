@@ -37,7 +37,7 @@ namespace chaos
 		{
 			size_t c1 = forbidden_names.size();
 			for (size_t i = 0; i < c1; ++i)
-				if (_strcmpi(forbidden_names[i].c_str(), object_name) == 0)
+				if (StringTools::Stricmp(forbidden_names[i].c_str(), object_name) == 0)
 					return false;
 		}
 
@@ -56,7 +56,7 @@ namespace chaos
 			if (object_name != nullptr && strlen(object_name) > 0)
 			{
 				for (size_t i = 0; i < c3; ++i)
-					if (_strcmpi(enable_names[i].c_str(), object_name) == 0)
+					if (StringTools::Stricmp(enable_names[i], object_name) == 0)
 						return true;
 			}
 			for (size_t i = 0; i < c4; ++i)

@@ -209,7 +209,7 @@ namespace chaos
 	{
 		assert(flag_name != nullptr);
 		for (std::string const & arg : arguments)
-			if (_strcmpi(arg.c_str(), flag_name) == 0)
+			if (StringTools::Stricmp(arg, flag_name) == 0)
 				return true;
 		return false;	
 	}

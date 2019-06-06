@@ -67,6 +67,29 @@ namespace chaos
 				return (_stricmp(s1, s2) > 0);
 			}
 		};
+
+		/** some comparaison short cuts */
+		static int Strcmp(char const * src1, char const * src2);
+		/** some comparaison short cuts */
+		static int Strcmp(char const * src1, std::string const & src2);
+		/** some comparaison short cuts */
+		static int Strcmp(std::string const & src1, char const * src2);
+		/** some comparaison short cuts */
+		static int Strcmp(std::string const & src1, std::string const & src2);
+		/** some comparaison short cuts */
+		static int Stricmp(char const * src1, char const * src2);
+		/** some comparaison short cuts */
+		static int Stricmp(char const * src1, std::string const & src2);
+		/** some comparaison short cuts */
+		static int Stricmp(std::string const & src1, char const * src2);
+		/** some comparaison short cuts */
+		static int Stricmp(std::string const & src1, std::string const & src2);
+
+
+
+
+
+
 	}; // namespace StringTools
 
 }; // namespace chaos

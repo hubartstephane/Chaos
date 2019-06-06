@@ -143,7 +143,39 @@ namespace chaos
 			return std::string(&src[i], j - i + 1);
 		}
 
+		int Strcmp(char const * src1, char const * src2)
+		{
+			return strcmp(src1, src2);
+		}
+		int Strcmp(char const * src1, std::string const & src2)
+		{
+			return Strcmp(src1, src2.c_str());
+		}
+		int Strcmp(std::string const & src1, char const * src2)
+		{
+			return Strcmp(src1.c_str(), src2);
+		}
+		int Strcmp(std::string const & src1, std::string const & src2)
+		{
+			return Strcmp(src1.c_str(), src2.c_str());
+		}
 
+		int Stricmp(char const * src1, char const * src2)
+		{
+			return _strcmpi(src1, src2);
+		}
+		int Stricmp(char const * src1, std::string const & src2)
+		{
+			return Stricmp(src1, src2.c_str());
+		}
+		int Stricmp(std::string const & src1, char const * src2)
+		{
+			return Stricmp(src1.c_str(), src2);
+		}
+		int Stricmp(std::string const & src1, std::string const & src2)
+		{
+			return Stricmp(src1.c_str(), src2.c_str());
+		}
 
 	} // namespace StringTools
 

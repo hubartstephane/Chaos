@@ -1,5 +1,5 @@
 ﻿#include <chaos/GPURenderMaterial.h>
-
+#include <chaos/StringTools.h>
 
 namespace chaos
 {
@@ -105,7 +105,7 @@ namespace chaos
 	GPURenderMaterial * GPURenderMaterial::FindSubMaterial(char const * submaterial_name)
 	{
 		for (auto & it : sub_materials)
-			if (_stricmp(it.first.c_str(), submaterial_name) == 0)
+			if (StringTools::Stricmp(it.first, submaterial_name) == 0)
 				return it.second.get();
 		return nullptr;
 	}
@@ -113,7 +113,7 @@ namespace chaos
 	GPURenderMaterial const * GPURenderMaterial::FindSubMaterial(char const * submaterial_name) const
 	{
 		for (auto & it : sub_materials)
-			if (_stricmp(it.first.c_str(), submaterial_name) == 0)
+			if (StringTools::Stricmp(it.first, submaterial_name) == 0)
 				return it.second.get();
 		return nullptr;
 	}

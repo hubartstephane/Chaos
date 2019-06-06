@@ -3,6 +3,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/Buffer.h>
 #include <chaos/WinTools.h>
+#include <chaos/StringTools.h>
 #include <chaos/JSONTools.h>
 
 namespace chaos
@@ -151,7 +152,7 @@ namespace chaos
 	{
 		assert(key != nullptr);
 		for (auto e : environments)
-			if (_stricmp(e.first.c_str(), key) == 0)
+			if (StringTools::Stricmp(e.first, key) == 0)
 				return e.second.c_str();
 		return nullptr;
 	}

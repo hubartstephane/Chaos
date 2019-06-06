@@ -84,7 +84,7 @@ namespace chaos
 			assert(name != nullptr);
 			for (auto & property : properties)
 				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
-					if (strcmp(property->GetName(), name) == 0)
+					if (StringTools::Strcmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
 		}
@@ -94,7 +94,7 @@ namespace chaos
 			assert(name != nullptr);
 			for (auto & property : properties)
 				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
-					if (strcmp(property->GetName(), name) == 0)
+					if (StringTools::Strcmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
 		}
@@ -202,7 +202,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				char const * property_type = (type_attribute != nullptr) ? 
 					type_attribute->Value() : nullptr;
 
-				if (property_type == nullptr || strcmp(property_type, "string") == 0)
+				if (property_type == nullptr || StringTools::Strcmp(property_type, "string") == 0)
 				{
 					char const * value = (value_attribute != nullptr)? value_attribute->Value() : node->GetText();
 					if (value != nullptr)
@@ -210,15 +210,15 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				}
 				else if (value_attribute != nullptr) // now, to this point, value_attribute becomes MANDATORY
 				{
-					if (strcmp(property_type, "int") == 0)
+					if (StringTools::Strcmp(property_type, "int") == 0)
 					{
 						DoInsertProperty(property_name, value_attribute->IntValue());
 					}
-					else if (strcmp(property_type, "float") == 0)
+					else if (StringTools::Strcmp(property_type, "float") == 0)
 					{
 						DoInsertProperty(property_name, value_attribute->FloatValue());
 					}
-					else if (strcmp(property_type, "bool") == 0)
+					else if (StringTools::Strcmp(property_type, "bool") == 0)
 					{
 						DoInsertProperty(property_name, value_attribute->BoolValue());
 					}
@@ -613,7 +613,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			if (element == nullptr)
 				return false;
 
-			if (strcmp(element->Name(), GetXMLMarkupName()) != 0)
+			if (StringTools::Strcmp(element->Name(), GetXMLMarkupName()) != 0)
 				return false;
 
 			return DoLoad(element);
@@ -1130,11 +1130,11 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			for (; e != nullptr; e = e->PreviousSiblingElement())
 			{
 				char const * child_name = e->Name();
-				if (strcmp(child_name, "imagelayer") == 0)
+				if (StringTools::Strcmp(child_name, "imagelayer") == 0)
 					DoLoadObjectAndInserInList(e, image_layers, this);
-				else if (strcmp(child_name, "objectgroup") == 0)
+				else if (StringTools::Strcmp(child_name, "objectgroup") == 0)
 					DoLoadObjectAndInserInList(e, object_layers, this);
-				else if (strcmp(child_name, "layer") == 0)
+				else if (StringTools::Strcmp(child_name, "layer") == 0)
 					DoLoadObjectAndInserInList(e, tile_layers, this, tile_size);
 			}
 			// now fix the zorders

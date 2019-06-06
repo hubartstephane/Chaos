@@ -84,7 +84,7 @@ namespace chaos
 			++extension;
 
 		// compare the extension
-		return (_stricmp(expected_ext, extension) == 0);
+		return (StringTools::Stricmp(expected_ext, extension) == 0);
 	}
 
 	bool FileTools::IsTypedFile(FilePathParam const & path, char const * expected_ext)

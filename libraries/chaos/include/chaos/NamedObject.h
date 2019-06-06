@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/MetaProgramming.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/StringTools.h>
 
 // XXX : automatic TagType generation
 //
@@ -100,7 +101,7 @@ namespace chaos
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
-				if (strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
+				if (StringTools::Strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
 					return meta::get_raw_pointer(elements[i]);
 			return nullptr;
 		}
@@ -114,7 +115,7 @@ namespace chaos
 			// search in the list
 			size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
-				if (strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
+				if (StringTools::Strcmp(meta::get_raw_pointer(elements[i])->GetName(), in_name) == 0)
 					return meta::get_raw_pointer(elements[i]);
 			return nullptr;
 		}
@@ -132,7 +133,7 @@ namespace chaos
 			// search in the list
 			for (auto it = elements.begin() ; it != elements.end() ; ++it)
 			{
-				if (strcmp(meta::get_raw_pointer(*it)->GetName(), in_name) == 0)
+				if (StringTools::Strcmp(meta::get_raw_pointer(*it)->GetName(), in_name) == 0)
 				{
 					elements.erase(it);
 					return true;
@@ -140,12 +141,6 @@ namespace chaos
 			}
 			return false;
 		}
-
-
-
-
-
-
 
 	};
 

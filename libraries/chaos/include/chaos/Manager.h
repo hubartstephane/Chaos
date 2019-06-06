@@ -5,6 +5,7 @@
 #include <chaos/FilePath.h>
 #include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
+#include <chaos/StringTools.h>
 
 namespace chaos
 {
@@ -44,7 +45,7 @@ namespace chaos
 				auto object = objects[i].get();
 				if (object == nullptr)
 					continue;
-				if (strcmp(object->GetName(), name) == 0)
+				if (StringTools::Strcmp(object->GetName(), name) == 0)
 					return object;
 			}
 			return nullptr;

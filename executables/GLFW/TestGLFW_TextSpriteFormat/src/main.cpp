@@ -25,6 +25,7 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/ParticleTextGenerator.h>
 #include <chaos/ClassTools.h>
+#include <chaos/StringTools.h>
 
 // --------------------------------------------------------------------
 
@@ -59,7 +60,7 @@ protected:
 
 			virtual bool DoProcessAction(char const * name, chaos::GPUProgramAction & action, chaos::GPUProgramProviderBase const * top_level) const override
 			{
-				if (name != nullptr && strcmp("local_to_cam", name) == 0)
+				if (name != nullptr && chaos::StringTools::Strcmp("local_to_cam", name) == 0)
 				{
 					glm::mat4 translate_mat;
 					glm::mat4 scale_mat;

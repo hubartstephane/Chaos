@@ -40,17 +40,34 @@ namespace chaos
 		/** trim string to the left and to the right */
 		std::string TrimString(char const * src, bool trim_left, bool trim_right);
 
+		/** some comparaison short cuts */
+		int Strcmp(char const * src1, char const * src2);
+		/** some comparaison short cuts */
+		int Strcmp(char const * src1, std::string const & src2);
+		/** some comparaison short cuts */
+		int Strcmp(std::string const & src1, char const * src2);
+		/** some comparaison short cuts */
+		int Strcmp(std::string const & src1, std::string const & src2);
+		/** some comparaison short cuts */
+		int Stricmp(char const * src1, char const * src2);
+		/** some comparaison short cuts */
+		int Stricmp(char const * src1, std::string const & src2);
+		/** some comparaison short cuts */
+		int Stricmp(std::string const & src1, char const * src2);
+		/** some comparaison short cuts */
+		int Stricmp(std::string const & src1, std::string const & src2);
+
 		/** ci_less : a case insensitive comparator */
 		struct ci_less
 		{
 			bool operator ()(std::string const & s1, std::string const & s2) const
 			{		
-				return (_stricmp(s1.c_str(), s2.c_str()) < 0);
+				return (StringTools::Stricmp(s1, s2) < 0);
 			}
 
 			bool operator ()(char const * s1, char const * s2) const
 			{		
-				return (_stricmp(s1, s2) < 0);
+				return (StringTools::Stricmp(s1, s2) < 0);
 			}
 		};
 
@@ -59,36 +76,14 @@ namespace chaos
 		{
 			bool operator ()(std::string const & s1, std::string const & s2) const
 			{		
-				return (_stricmp(s1.c_str(), s2.c_str()) > 0);
+				return (StringTools::Stricmp(s1, s2) > 0);
 			}
 
 			bool operator ()(char const * s1, char const * s2) const
 			{		
-				return (_stricmp(s1, s2) > 0);
+				return (StringTools::Stricmp(s1, s2) > 0);
 			}
 		};
-
-		/** some comparaison short cuts */
-		static int Strcmp(char const * src1, char const * src2);
-		/** some comparaison short cuts */
-		static int Strcmp(char const * src1, std::string const & src2);
-		/** some comparaison short cuts */
-		static int Strcmp(std::string const & src1, char const * src2);
-		/** some comparaison short cuts */
-		static int Strcmp(std::string const & src1, std::string const & src2);
-		/** some comparaison short cuts */
-		static int Stricmp(char const * src1, char const * src2);
-		/** some comparaison short cuts */
-		static int Stricmp(char const * src1, std::string const & src2);
-		/** some comparaison short cuts */
-		static int Stricmp(std::string const & src1, char const * src2);
-		/** some comparaison short cuts */
-		static int Stricmp(std::string const & src1, std::string const & src2);
-
-
-
-
-
 
 	}; // namespace StringTools
 

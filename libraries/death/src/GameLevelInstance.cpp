@@ -247,6 +247,11 @@ namespace death
 	{
 		bool loop_levels = false; // unused
 
+		// update the cameras
+		size_t count = cameras.size();
+		for (size_t i = 0; i < count; ++i)
+			cameras[i]->Tick(delta_time);
+
 		// update the timeout
 		if (level_timeout > 0.0f 
 			&& !IsLevelCompleted(loop_levels) 

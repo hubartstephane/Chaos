@@ -1,4 +1,6 @@
 #include <death/CameraComponent.h>
+#include <death/Camera.h>
+#include <death/Player.h>
 
 namespace death
 {
@@ -27,7 +29,35 @@ namespace death
 
 	bool FollowPlayerCameraComponent::DoTick(double delta_time)
 	{
+		// get the wanted player
+		Player * player = camera->GetPlayer(player_index);
+		if (player == nullptr)
+			return true;
 
+		// get camera, cannot continue if it is empty
+		chaos::box2 camera_box = camera->GetCameraBox();
+		if (camera_box.IsEmpty())
+			return true;
+
+		// keep player inside camera safe zone
+		chaos::box2 player_box = player->GetPlayerBox();
+		if (!player_box.IsEmpty())
+		{
+			chaos::box2 safe_camera = camera_box;
+			safe_camera.half_size *= camera->GetSafeZone();
+
+			if (chaos::RestrictToInside(safe_camera, player_box, true)) // apply the safe_zone displacement to the real camera
+				camera_box.position = safe_camera.position;
+		}
+
+		// try to keep the camera in the world
+		chaos::box2 world = camera->GetLevelInstance()->GetBoundingBox();
+		if (!world.IsEmpty())
+			chaos::RestrictToInside(world, camera_box, false);
+
+		// apply camera changes
+		camera->SetCameraBox(camera_box);
+		
 		return true;
 	}
 

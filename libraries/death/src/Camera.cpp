@@ -1,6 +1,7 @@
 #include <death/Camera.h>
 #include <death/CameraComponent.h>
 #include <death/ComponentOwner.h>
+#include <death/GameLevelInstance.h>
 
 namespace death
 {
@@ -23,6 +24,67 @@ namespace death
 			components[i]->Tick(delta_time);
 		return true;
 	}
+	
+	Player * Camera::GetPlayer(int player_index)
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetPlayer(player_index);
+	}
+	
+	Player const * Camera::GetPlayer(int player_index) const
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetPlayer(player_index);
+	}
+
+	Game * Camera::GetGame()
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetGame();
+	}
+
+	Game const * Camera::GetGame() const
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetGame();
+	}
+
+	GameLevel * Camera::GetLevel()
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetLevel();
+	}
+
+	GameLevel const * Camera::GetLevel() const
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetLevel();
+	}
+
+	GameInstance * Camera::GetGameInstance()
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetGameInstance();
+	}
+
+	GameInstance const * Camera::GetGameInstance() const
+	{
+		if (game_level_instance == nullptr)
+			return nullptr;
+		return game_level_instance->GetGameInstance();
+	}
+
+
+
+
+
 
 	DEATH_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)
 

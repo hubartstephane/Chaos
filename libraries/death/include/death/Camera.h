@@ -24,6 +24,32 @@ namespace death
 		/** constructor */
 		Camera(GameLevelInstance * in_game_level_instance);
 
+		/** get the player by its index */
+		Player * GetPlayer(int player_index);
+		/** get the player by its index */
+		Player const * GetPlayer(int player_index) const;
+
+		/** returns the game */
+		Game * GetGame();
+		/** returns the game */
+		Game const * GetGame() const;
+
+		/** returns the game instance */
+		GameInstance * GetGameInstance();
+		/** returns the game instance */
+		GameInstance const * GetGameInstance() const;
+
+		/** returns the level */
+		GameLevel * GetLevel();
+		/** returns the level */
+		GameLevel const * GetLevel() const;
+
+		/** returns the level instance */
+		GameLevelInstance * GetLevelInstance() { return game_level_instance; }
+		/** returns the level */
+		GameLevelInstance const * GetLevelInstance() const { return game_level_instance; }
+
+
 		/** get the camera box */
 		chaos::box2 const & GetCameraBox() const { return camera_box;}
 		/** get the camera box when level instance is started */

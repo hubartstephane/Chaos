@@ -8,6 +8,8 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
 
+#include <death/CameraComponent.h>
+
 // =============================================================
 // LudumLevelInstance implementation
 // =============================================================
@@ -27,9 +29,11 @@ void LudumLevelInstance::CreateCameras()
 	death::TiledMap::LevelInstance::CreateCameras();
 	// tweak the cameras
 	size_t camera_count = cameras.size();
-	for (size_t i = 0 ; i < camera_count ; ++i)
+	for (size_t i = 0; i < camera_count; ++i)
+	{
 		cameras[i]->SetSafeZone(glm::vec2(0.2f, 0.2f));
-
+		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
+	}
 }
 
 bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
@@ -60,14 +64,6 @@ bool LudumLevelInstance::CanCompleteLevel() const
 		}
 	}
 	return false;
-}
-
-bool LudumLevelInstance::DoTick(double delta_time)
-{
-	death::TiledMap::LevelInstance::DoTick(delta_time);
-	// keep camera, player inside the world
-	RestrictCameraToPlayerAndWorld(0, 0);
-	return true;
 }
 
 void LudumLevelInstance::OnLevelStarted()

@@ -41,6 +41,12 @@ namespace death
 
 	class FollowPlayerCameraComponent : public CameraComponent
 	{
+	public:
+
+		/** constructor */
+		FollowPlayerCameraComponent(int in_player_index = 0) :
+			player_index(in_player_index) {}
+
 	protected:
 
 		/** override */

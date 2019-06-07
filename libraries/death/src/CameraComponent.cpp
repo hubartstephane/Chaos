@@ -21,4 +21,14 @@ namespace death
 		assert(in_camera != nullptr);		
 	}
 
+	// =============================================
+	// FollowPlayerCameraComponent
+	// =============================================
+
+	bool FollowPlayerCameraComponent::DoTick(double delta_time)
+	{
+
+		return true;
+	}
+
 }; // namespace death

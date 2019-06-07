@@ -33,7 +33,23 @@ namespace death
 
 		/** the owning camera */
 		Camera * camera = nullptr;
+	};
 
+	// =============================================
+	// FollowPlayerCameraComponent
+	// =============================================
+
+	class FollowPlayerCameraComponent : public CameraComponent
+	{
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+
+	protected:
+
+		/** the player index to follow */
+		int player_index = 0;
 	};
 
 }; // namespace death

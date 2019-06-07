@@ -43,6 +43,11 @@ namespace death
 
 	protected:
 
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+
+	protected:
+
 		/** the camera bounding box */
 		chaos::box2 camera_box;
 		/** the initial camera bounding box (at level startup) */

@@ -12,6 +12,21 @@ namespace death
 {
 
 	// =============================================
+	// CameraTransform
+	// =============================================
+
+	class CameraTransform
+	{
+	public:
+
+		/** world to camera matrix */
+		glm::mat4x4 transform;
+		/** the view size */
+		glm::vec2 view_size;
+	};
+
+
+	// =============================================
 	// Camera
 	// =============================================
 
@@ -48,6 +63,14 @@ namespace death
 		GameLevelInstance * GetLevelInstance() { return game_level_instance; }
 		/** returns the level */
 		GameLevelInstance const * GetLevelInstance() const { return game_level_instance; }
+
+
+
+		/** get the camera transformation */
+		CameraTransform GetCameraTransform() const;
+
+
+
 
 
 		/** get the camera box */

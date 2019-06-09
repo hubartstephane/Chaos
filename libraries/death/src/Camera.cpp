@@ -24,6 +24,17 @@ namespace death
 			components[i]->Tick(delta_time);
 		return true;
 	}
+
+	CameraTransform Camera::GetCameraTransform() const
+	{
+		chaos::box2 box = GetCameraBox();
+
+		CameraTransform result;
+		result.transform = glm::translate(glm::vec3(-box.position.x, -box.position.y, 0.0f));
+		result.view_size = box.half_size * 2.0f;
+		return result;
+	}
+
 	
 	Player * Camera::GetPlayer(int player_index)
 	{

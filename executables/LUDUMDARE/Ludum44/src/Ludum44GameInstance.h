@@ -38,8 +38,6 @@ protected:
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 
-	virtual bool DoTick(double delta_time) override;
-
 	virtual void OnPlayerEntered(death::Player * player) override;
 
 	virtual bool OnRestartedFromCheckpoint(death::Player * player) override;

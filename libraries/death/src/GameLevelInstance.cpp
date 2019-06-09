@@ -72,6 +72,14 @@ namespace death
 		double level_time = GetLevelClockTime();
 		main_uniform_provider.AddVariableValue("level_time", level_time);
 		// the main camera
+
+		CameraTransform camera_transform = GetCameraTransform(0);
+
+
+
+
+
+
 		chaos::box2 camera = GetCameraBox(0);
 		if (camera.IsEmpty())
 			camera = game->GetViewBox();
@@ -284,6 +292,20 @@ namespace death
 			return nullptr;
 		return cameras[index].get();
 	}
+
+	CameraTransform GameLevelInstance::GetCameraTransform(size_t index) const
+	{
+		// find a camera
+		Camera const * camera = GetCamera(index);
+		if (camera != nullptr)
+			return camera->GetCameraTransform();
+		// fallback code
+		CameraTransform result;
+		result.transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		result.view_size = GetGame()->GetViewSize();
+		return result;
+	}
+
 
 	chaos::box2 GameLevelInstance::GetCameraBox(size_t index) const 
 	{ 

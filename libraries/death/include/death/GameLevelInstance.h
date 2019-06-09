@@ -55,6 +55,10 @@ namespace death
 		/** gets a camera by its index */
 		Camera const * GetCamera(size_t index) const;
 
+		/** get the transformation world to camera */
+		CameraTransform GetCameraTransform(size_t index) const;
+
+
 		/** the camera box getter */
 		chaos::box2 GetCameraBox(size_t index) const;
 		/** the camera box setter */

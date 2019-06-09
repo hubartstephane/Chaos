@@ -203,7 +203,7 @@ namespace chaos
 				// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 				//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-				glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
+				glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);				
 
 				// now that the window is fully placed ... we can show it
 				if (params.hints.start_visible)

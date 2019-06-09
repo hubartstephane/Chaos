@@ -79,15 +79,6 @@ bool LudumGameInstance::OnRestartedFromCheckpoint(death::Player * player)
 	return death::GameInstance::OnRestartedFromCheckpoint(player);
 }
 
-bool LudumGameInstance::DoTick(double delta_time)
-{
-	death::GameInstance::DoTick(delta_time);
-
-
-	return true;
-}
-
-
 void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
 	// super method

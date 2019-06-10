@@ -57,6 +57,8 @@ namespace death
 
 		/** get the transformation world to camera */
 		CameraTransform GetCameraTransform(size_t index) const;
+		/** the camera transform whenever no camera exists */
+		CameraTransform GetDefaultCameraTransform() const;
 
 
 		/** the camera box getter */
@@ -65,8 +67,6 @@ namespace death
 		void SetCameraBox(size_t index, chaos::box2 in_box);
 		/** the initial camera box getter */		
 		chaos::box2 GetInitialCameraBox(size_t index) const;
-		/** get the camera safe zone */
-		virtual glm::vec2 GetCameraSafeZone(size_t index) const;
 
 		/** returns level clock */
 		chaos::Clock * GetLevelClock() { return level_clock.get();}

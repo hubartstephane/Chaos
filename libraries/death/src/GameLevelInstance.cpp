@@ -76,13 +76,18 @@ namespace death
 		CameraTransform camera_transform = GetCameraTransform(0);
 
 
-
-
-
-
+		main_uniform_provider.AddVariableValue("camera_transform", camera_transform.transform);
+		main_uniform_provider.AddVariableValue("view_half_size", camera_transform.view_half_size);
+		/*
+		chaos::box2 camera_box;
+		camera_box.position = camera_transform.transform.
+		*/
 		chaos::box2 camera = GetCameraBox(0);
 		if (camera.IsEmpty())
 			camera = game->GetViewBox();
+
+
+
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
 	}
 
@@ -103,11 +108,7 @@ namespace death
 
 	void GameLevelInstance::CreateCameras()
 	{
-		// create a default camera
-		Camera * camera = new Camera(this);
-		if (camera == nullptr)
-			return;
-		cameras.push_back(camera);
+
 	}
 
 	void GameLevelInstance::OnLevelEnded()
@@ -300,11 +301,17 @@ namespace death
 		if (camera != nullptr)
 			return camera->GetCameraTransform();
 		// fallback code
+		return GetDefaultCameraTransform();
+	}
+
+	CameraTransform GameLevelInstance::GetDefaultCameraTransform() const
+	{
 		CameraTransform result;
 		result.transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		result.view_size = GetGame()->GetViewSize();
+		result.view_half_size = GetGame()->GetViewSize() * 0.5f;
 		return result;
 	}
+
 
 
 	chaos::box2 GameLevelInstance::GetCameraBox(size_t index) const 
@@ -330,15 +337,6 @@ namespace death
 			return chaos::box2();
 		return camera->GetInitialCameraBox();
 	}
-	
-	glm::vec2 GameLevelInstance::GetCameraSafeZone(size_t index) const 
-	{
-		Camera const * camera = GetCamera(index);
-		if (camera == nullptr)
-			return glm::vec2(0.8f, 0.8f); // the default safe zone
-		return camera->GetSafeZone();
-	}
-
 
 }; // namespace death
 

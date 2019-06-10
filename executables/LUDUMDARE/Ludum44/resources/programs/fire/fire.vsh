@@ -1,8 +1,6 @@
 in vec2 position;
 in vec3 texcoord;
 in vec4 color;
-in vec2 userdata1;
-in vec2 userdata2;
 
 out vec2 vs_position;
 out vec3 vs_texcoord;

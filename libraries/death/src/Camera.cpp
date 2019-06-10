@@ -31,7 +31,7 @@ namespace death
 
 		CameraTransform result;
 		result.transform = glm::translate(glm::vec3(-box.position.x, -box.position.y, 0.0f));
-		result.view_size = box.half_size * 2.0f;
+		result.view_half_size = box.half_size;
 		return result;
 	}
 

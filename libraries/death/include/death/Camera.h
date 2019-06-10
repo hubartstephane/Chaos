@@ -22,7 +22,7 @@ namespace death
 		/** world to camera matrix */
 		glm::mat4x4 transform;
 		/** the view size */
-		glm::vec2 view_size;
+		glm::vec2 view_half_size;
 	};
 
 

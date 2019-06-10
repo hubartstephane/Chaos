@@ -141,7 +141,7 @@ namespace chaos
 		if (sprites.size() == 0)
 			return;
 
-		UpdateGPUVertexBuffer();
+		UpdateGPUBuffer();
 
 		// context states
 		glEnable(GL_BLEND);
@@ -169,7 +169,7 @@ namespace chaos
 		glBindVertexArray(0);
 	}
 
-	void SpriteManager::UpdateGPUVertexBuffer()
+	void SpriteManager::UpdateGPUBuffer()
 	{
 		// fill GPU buffer
 		size_t count = sprites.size();

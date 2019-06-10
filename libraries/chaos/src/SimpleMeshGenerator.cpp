@@ -101,11 +101,11 @@ namespace chaos
 		MeshGenerationRequirement requirement = GetRequirement();
 		if (requirement.IsValid())
 		{
-			shared_ptr<GPUVertexBuffer> vb_object;
-			shared_ptr<GPUIndexBuffer>  ib_object;
+			shared_ptr<GPUBuffer> vb_object;
+			shared_ptr<GPUBuffer>  ib_object;
 
-			shared_ptr<GPUVertexBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
-			shared_ptr<GPUIndexBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
+			shared_ptr<GPUBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
+			shared_ptr<GPUBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
 
 			if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr, false, false))  // vertex_buffer and index_buffer are static
 			{

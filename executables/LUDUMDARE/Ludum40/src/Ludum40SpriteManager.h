@@ -7,7 +7,7 @@
 #include <chaos/GPUTexture.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/GPUVertexArray.h>
-#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUBuffer.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/Hotpoint.h>
@@ -60,7 +60,7 @@ namespace chaos
     void Display(GPUProgramProviderBase * uniform_provider);
     /** get the number of sprites in the buffer */
     size_t GetSpriteCount() const { return sprites.size() / 6; }
-    /** remove the sprites (GPU buffer will be clean at next UpdateGPUVertexBuffer)*/
+    /** remove the sprites (GPU buffer will be clean at next UpdateGPUBuffer)*/
     void ClearSprites();
     /** get the program */
     GPUProgram * GetProgram() { return program.get(); }
@@ -70,7 +70,7 @@ namespace chaos
     /** initialize the manager */
     bool DoInitialize(SpriteManagerInitParams & params);
     /** internal method to send data to GPU */
-    void UpdateGPUVertexBuffer();
+    void UpdateGPUBuffer();
     /** internal method to insert a sprite in the buffer */
     void AddSpriteImpl(BitmapAtlas::BitmapLayout const * layout, ParticleCorners const & corners, glm::vec3 const & color);
 
@@ -81,7 +81,7 @@ namespace chaos
     /** the vertex array */
     chaos::shared_ptr<GPUVertexArray> vertex_array;
     /** the vertex buffer */
-    chaos::shared_ptr<GPUVertexBuffer> vertex_buffer;
+    chaos::shared_ptr<GPUBuffer> vertex_buffer;
     /** the declaration of the vertex buffer */
     GPUVertexDeclaration declaration;
     /** the texture atlas */

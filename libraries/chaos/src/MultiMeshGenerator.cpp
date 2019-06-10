@@ -47,11 +47,11 @@ namespace chaos
 		}
 
 		// create a vertex buffer and an index buffer to be shared among all meshes
-		shared_ptr<GPUVertexBuffer> vertex_buffer;
-		shared_ptr<GPUIndexBuffer>  index_buffer;
+		shared_ptr<GPUBuffer> vertex_buffer;
+		shared_ptr<GPUBuffer>  index_buffer;
 
-		shared_ptr<GPUVertexBuffer> * vb_ptr = (vb_size > 0) ? &vertex_buffer : nullptr;
-		shared_ptr<GPUIndexBuffer>  * ib_ptr = (ib_size > 0) ? &index_buffer : nullptr;
+		shared_ptr<GPUBuffer> * vb_ptr = (vb_size > 0) ? &vertex_buffer : nullptr;
+		shared_ptr<GPUBuffer>  * ib_ptr = (ib_size > 0) ? &index_buffer : nullptr;
 
 		if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr, false, false)) // vertex_buffer and index_buffer are static
 		{

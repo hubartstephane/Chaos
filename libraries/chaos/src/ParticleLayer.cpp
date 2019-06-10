@@ -236,7 +236,7 @@ namespace chaos
 		{
 			vertices_count = 0; // no vertices inside for the moment
 
-			vertex_buffer = new GPUVertexBuffer(dynamic_buffer);
+			vertex_buffer = new GPUBuffer(dynamic_buffer);
 			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
 			{
 				vertex_buffer = nullptr;

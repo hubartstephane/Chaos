@@ -7,8 +7,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUVertexArray.h>
-#include <chaos/GPUVertexBuffer.h>
-#include <chaos/GPUIndexBuffer.h>
+#include <chaos/GPUBuffer.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUResource.h>
 #include <chaos/DrawPrimitive.h>
@@ -56,9 +55,9 @@ namespace chaos
 		std::vector<DrawPrimitive> primitives;
 
 		/** self descriptive */
-		shared_ptr<GPUVertexBuffer> vertex_buffer;
+		shared_ptr<GPUBuffer> vertex_buffer;
 		/** self descriptive */
-		shared_ptr<GPUIndexBuffer> index_buffer;
+		shared_ptr<GPUBuffer> index_buffer;
 		/** in the vertex buffer (that may be shared by other simpled mesh), the offset from the begining given to it */
 		GLintptr vertex_buffer_offset = 0;
 

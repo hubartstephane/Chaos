@@ -6,7 +6,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUTexture.h>
 #include <chaos/GPUVertexArray.h>
-#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUBuffer.h>
 
 namespace chaos
 {
@@ -80,7 +80,7 @@ namespace chaos
 		/** the vertex array */
 		shared_ptr<GPUVertexArray> vertex_array;
 		/** the vertex buffer */
-		shared_ptr<GPUVertexBuffer> vertex_buffer;
+		shared_ptr<GPUBuffer> vertex_buffer;
 		/** the declaration of the vertex buffer */
 		GPUVertexDeclaration declaration;
 

@@ -132,12 +132,12 @@ namespace chaos
 		return true;
 	}
 
-	bool GLTools::GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUVertexBuffer> * vertex_buffer, shared_ptr<GPUIndexBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer)
+	bool GLTools::GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUBuffer> * vertex_buffer, shared_ptr<GPUBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer)
 	{
 		// release resource at destruction in case of failure 
 		shared_ptr<GPUVertexArray> va;
-		shared_ptr<GPUVertexBuffer> vb;
-		shared_ptr<GPUIndexBuffer> ib;
+		shared_ptr<GPUBuffer> vb;
+		shared_ptr<GPUBuffer> ib;
 
 		if (vertex_array != nullptr)
 		{
@@ -148,14 +148,14 @@ namespace chaos
 
 		if (vertex_buffer != nullptr)
 		{
-			vb = new GPUVertexBuffer(in_dynamic_vertex_buffer); // create a GL resource
+			vb = new GPUBuffer(in_dynamic_vertex_buffer); // create a GL resource
 			if (vb == nullptr || !vb->IsValid())
 				return false;		
 		}
 
 		if (index_buffer != nullptr)
 		{
-			ib = new GPUIndexBuffer(in_dynamic_index_buffer); // create a GL resource
+			ib = new GPUBuffer(in_dynamic_index_buffer); // create a GL resource
 			if (ib == nullptr || !ib->IsValid())
 				return false;		
 		}

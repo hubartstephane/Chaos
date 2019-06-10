@@ -70,7 +70,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUVertexBuffer const * vertex_buffer, GPUIndexBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset)
+	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset)
 	{
 		// early exit
 		if (program == nullptr)

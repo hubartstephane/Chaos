@@ -532,8 +532,8 @@ namespace chaos
 					result->primitives.push_back(primitive);
 
 					//result->vertex_array  = new GPUVertexArray(va);
-					result->vertex_buffer = new GPUVertexBuffer(vb, false); // static
-					result->index_buffer = new GPUIndexBuffer(ib, false);
+					result->vertex_buffer = new GPUBuffer(vb, false); // static
+					result->index_buffer = new GPUBuffer(ib, false);
 
 					// fill the buffers
 					glNamedBufferData(vb, vertices.bufsize, vertices.data, GL_STATIC_DRAW);

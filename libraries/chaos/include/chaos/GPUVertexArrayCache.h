@@ -5,9 +5,8 @@
 #include <chaos/GPUVertexArray.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUResource.h>
-#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUBuffer.h>
 #include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GPUIndexBuffer.h>
 
 
 namespace chaos
@@ -30,9 +29,9 @@ namespace chaos
 		/** the program concerned */
 		weak_ptr<GPUProgram const> program;
 		/** the vertex buffer concerned */
-		weak_ptr<GPUVertexBuffer const> vertex_buffer;
+		weak_ptr<GPUBuffer const> vertex_buffer;
 		/** the index buffer concerned */
-		weak_ptr<GPUIndexBuffer const> index_buffer;
+		weak_ptr<GPUBuffer const> index_buffer;
 		/** whether the initial vertex buffer was valid */
 		bool has_vertex_buffer = false;
 		/** whether the initial index buffer was valid */
@@ -53,7 +52,7 @@ namespace chaos
 		/** find vertex array for the program */
 		GPUVertexArray const * FindVertexArray(GPUProgram const * program) const;
 		/** create or return exisiting vertex array for a given program */
-		GPUVertexArray const * FindOrCreateVertexArray(GPUProgram const * program, GPUVertexBuffer const * vertex_buffer, GPUIndexBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset = 0);
+		GPUVertexArray const * FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset = 0);
 		/** reset the whole object */
 		void Clear();
 

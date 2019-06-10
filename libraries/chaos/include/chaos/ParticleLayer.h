@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GPURenderMaterial.h>
-#include <chaos/GPUVertexBuffer.h>
+#include <chaos/GPUBuffer.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUVertexArrayCache.h>
@@ -700,7 +700,7 @@ protected:
 		/** the vertex declaration */
 		mutable GPUVertexDeclaration vertex_declaration;
 		/** the vertex buffer for the rendering */
-		mutable shared_ptr<GPUVertexBuffer> vertex_buffer;
+		mutable shared_ptr<GPUBuffer> vertex_buffer;
 		/** the cache for vertex array */
 		mutable GPUVertexArrayCache vertex_array_cache;
 

@@ -12,6 +12,9 @@ namespace chaos
 		if (result != nullptr)
 			return result;
 	
+		// create a buffer
+
+
 
 		return result;
 	}
@@ -21,6 +24,25 @@ namespace chaos
 		assert(renderer != nullptr);
 
 		GPUBuffer * result = nullptr;
+
+
+		for (GPUBufferPoolEntry & entry : entries)
+		{
+			// still waiting for a fence ?
+			if (entry.fence != nullptr && !entry.fence->WaitForCompletion(0))
+				continue;
+			entry.fence = nullptr; // the fence is completed : no need to keep it
+			// test each buffers
+			size_t count = entry.buffers.size();
+			for (size_t i = 0 ; i < count ; ++i)
+			{
+				if (entry.buffers[i] == nullptr)
+					continue;
+				size_t buffer_size = entry.buffers[i]->GetBufferSize();
+
+			
+			}
+		}
 	
 
 

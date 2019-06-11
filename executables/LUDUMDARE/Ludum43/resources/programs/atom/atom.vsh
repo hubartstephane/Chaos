@@ -7,7 +7,6 @@ out vec3 vs_texcoord;
 out vec4 vs_color;
 
 uniform vec2 offset;
-
 uniform mat4 camera_transform;
 uniform vec2 view_half_size;
 

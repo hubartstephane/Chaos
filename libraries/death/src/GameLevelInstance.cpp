@@ -74,10 +74,13 @@ namespace death
 		// the main camera
 
 		CameraTransform camera_transform = GetCameraTransform(0);
-
-
 		main_uniform_provider.AddVariableValue("camera_transform", camera_transform.transform);
 		main_uniform_provider.AddVariableValue("view_half_size", camera_transform.view_half_size);
+
+
+
+		// shuxxx shuwww
+
 		/*
 		chaos::box2 camera_box;
 		camera_box.position = camera_transform.transform.

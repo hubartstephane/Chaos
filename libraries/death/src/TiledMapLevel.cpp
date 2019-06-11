@@ -169,7 +169,6 @@ namespace death
 			out vec4 vs_color;
 
 			uniform vec2 offset;
-
 			uniform mat4 camera_transform;
 			uniform vec2 view_half_size;
 
@@ -955,7 +954,25 @@ namespace death
 			if (particle_layer == nullptr)
 				return result;
 
+
+
+
+
+
+
+			
+	//	main_uniform_provider.AddVariableValue("camera_transform", camera_transform.transform);
+	//		main_uniform_provider.AddVariableValue("view_half_size", camera_transform.view_half_size);
+
+
+
+
+
+
 			// camera is expressed in world, so is for layer
+			CameraTransform camera_transform = GetTiledLevelInstance()->GetCameraTransform(0);
+			glm::vec3 initial_camera_position = camera_transform.transform[3];
+
 			chaos::box2 layer_box  = GetBoundingBox(true);
 			chaos::box2 camera_box = GetTiledLevelInstance()->GetCameraBox(0);
 			chaos::box2 initial_camera_box = GetTiledLevelInstance()->GetInitialCameraBox(0);
@@ -980,7 +997,20 @@ namespace death
 					final_ratio.y = displacement_ratio.y / level_instance->reference_layer->displacement_ratio.y;
 			}
 
+
+
+
+
+
 			final_camera_box.position = initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio;
+
+
+
+
+
+
+
+
 
 			// compute repetitions
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, final_camera_box, wrap_x, wrap_y);
@@ -1006,6 +1036,25 @@ namespace death
 					// override the camera box only if there is at least one draw call
 					if (draw_instance_count++ == 0)
 						main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(final_camera_box));
+
+
+					if (draw_instance_count++ == 0)
+					{
+					//	final_camera_box.position = initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio;
+
+
+					}
+
+
+
+
+
+
+
+
+
+
+
 					// new Provider to apply the offset for this 'instance'
 					chaos::GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
 					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)) + offset);

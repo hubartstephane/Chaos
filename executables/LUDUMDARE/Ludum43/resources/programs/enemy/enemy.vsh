@@ -11,7 +11,8 @@ out vec4 vs_color;
 out float distance_to_center;
 out vec2  particle_center;
 
-uniform vec4 camera_box;
+uniform mat4 camera_transform;
+uniform vec2 view_half_size;
 uniform vec2 offset;
 uniform float position_blend_ratio;
 
@@ -19,7 +20,7 @@ void main()
 {
 	
 
-  vec2 p = (position_blend_ratio * position0) + (1.0 - position_blend_ratio) * position1;
+  vec2 p = (position_blend_ratio * position0) + (1.0 - position_blend_ratio) * position1 + offset;
 
 
 	// For enlarged enemies, we want to compute the circle inside the particle box (instead of reading a texture)
@@ -32,11 +33,13 @@ void main()
 	particle_center = position2;
 	distance_to_center = length(p - particle_center) / 1.41; // the circle has a radius 1.41 time smaller than the quad
 
-	vs_position = p; // + offset;
+	vs_position = p;
 	vs_texcoord = texcoord;
 	vs_color    = color;
 
-	gl_Position.xy = (p + offset - camera_box.xy) / camera_box.zw;
+	vec4 transformed_pos = camera_transform * vec4(p.x, p.y, 0.0, 1.0);
+
+	gl_Position.xy = transformed_pos.xy / view_half_size;
 	gl_Position.z  = 0.0;
 	gl_Position.w  = 1.0;
 }			

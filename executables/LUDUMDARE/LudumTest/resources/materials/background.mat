@@ -1,8 +1,0 @@
-{
-  "program": "background",
-
-  "textures": 
-	{
-    "background": { "name": "background1" }		
-  }
-}

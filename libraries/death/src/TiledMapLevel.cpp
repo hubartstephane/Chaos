@@ -159,7 +159,7 @@ namespace death
 
 		chaos::GPUProgram * Level::GenDefaultRenderProgram()
 		{
-			char const * vertex_shader_source = R"SHADERCODE(
+			char const * vertex_shader_source = R"VERTEXSHADERCODE(
 			in vec2 position;
 			in vec3 texcoord;
 			in vec4 color;
@@ -168,22 +168,28 @@ namespace death
 			out vec3 vs_texcoord;
 			out vec4 vs_color;
 
-			uniform vec4 camera_box;
 			uniform vec2 offset;
 
-			void main() 
+			uniform mat4 camera_transform;
+			uniform vec2 view_half_size;
+
+			void main()
 			{
-				vs_position = position + offset;
+				vec2 pos = position + offset;
+
+				vs_position = pos;
 				vs_texcoord = texcoord;
-				vs_color    = color;
+				vs_color = color;
 
-				gl_Position.xy = (position + offset - camera_box.xy) / camera_box.zw;
-				gl_Position.z  = 0.0;
-				gl_Position.w  = 1.0;
-			}										
-		)SHADERCODE";
+				vec4 transformed_pos = camera_transform * vec4(pos.x, pos.y, 0.0, 1.0);
 
-			char const * pixel_shader_source = R"SHADERCODE(
+				gl_Position.xy = transformed_pos.xy / view_half_size;
+				gl_Position.z = 0.0;
+				gl_Position.w = 1.0;
+			}									
+		)VERTEXSHADERCODE";
+
+			char const * pixel_shader_source = R"PIXELSHADERCODE(
 			out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
 			in vec2 vs_position;
@@ -200,7 +206,7 @@ namespace death
 				output_color.xyz = color.xyz * vs_color.xyz;
 				output_color.a   = vs_color.a * color.a;
 			};
-		)SHADERCODE";
+		)PIXELSHADERCODE";
 
 			chaos::GPUProgramGenerator program_generator;
 			program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);

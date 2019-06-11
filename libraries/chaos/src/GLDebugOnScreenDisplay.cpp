@@ -10,7 +10,7 @@
 
 namespace chaos
 {
-	char const * GLDebugOnScreenDisplay::vertex_shader_source = R"SHADERCODE(
+	char const * GLDebugOnScreenDisplay::vertex_shader_source = R"VERTEXSHADERCODE(
 	in vec2 position;
 	in vec2 texcoord;
 	uniform vec2 position_factor;
@@ -21,11 +21,11 @@ namespace chaos
 		vec2 pos    = (position * position_factor) + vec2(-1.0, 1.0);
 		gl_Position = vec4(pos, 0.0, 1.0);
 	}
-	)SHADERCODE";
+	)VERTEXSHADERCODE";
 
 	// XXX : discarding pixels => the texture we use is WRITTEN in BLACK on a WHITE background
 	//       any pixel that is 'TOO' white is beeing discarded
-	char const * GLDebugOnScreenDisplay::pixel_shader_source = R"SHADERCODE(
+	char const * GLDebugOnScreenDisplay::pixel_shader_source = R"PIXELSHADERCODE(
 	out vec4 output_color;
 	in vec2 tex_coord;
 	uniform sampler2D material;
@@ -37,7 +37,7 @@ namespace chaos
 			discard;
 		output_color = vec4(1.0, 1.0, 1.0, alpha);
 	}
-	)SHADERCODE";
+	)PIXELSHADERCODE";
 
 	bool GLDebugOnScreenDisplay::Tick(double delta_time)
 	{

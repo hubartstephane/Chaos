@@ -7,7 +7,7 @@
 
 namespace chaos
 {
-	char const * SpriteManager::vertex_shader_source = R"SHADERCODE(
+	char const * SpriteManager::vertex_shader_source = R"VERTEXSHADERCODE(
     in vec2 position;
     in vec3 texcoord;
     in vec3 color;
@@ -23,9 +23,9 @@ namespace chaos
       vs_color    = color;
       gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
     };											
-	)SHADERCODE";
+	)VERTEXSHADERCODE";
 
-	char const * SpriteManager::pixel_shader_source = R"SHADERCODE(
+	char const * SpriteManager::pixel_shader_source = R"PIXELSHADERCODE(
     in vec3 vs_texcoord;
     in vec3 vs_color;
 
@@ -35,13 +35,13 @@ namespace chaos
 
     void main()
     {
-			vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
-				vec4(1.0, 1.0, 1.0, 1.0) : 
-				texture(material, vs_texcoord);
+	vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
+		vec4(1.0, 1.0, 1.0, 1.0) : 
+		texture(material, vs_texcoord);
       output_color.xyz = color.xyz * vs_color;
       output_color.a   = color.a;
     };
-	)SHADERCODE";
+	)PIXELSHADERCODE";
 
 	void SpriteManager::Finalize()
 	{

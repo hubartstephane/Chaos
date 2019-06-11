@@ -16,7 +16,7 @@ namespace chaos
 
 	GPUProgram * ParticleDefault::GenDefaultParticleProgram()
 	{
-		char const * vertex_shader_source = R"SHADERCODE(
+		char const * vertex_shader_source = R"VERTEXSHADERCODE(
 		in vec2 position;
 		in vec3 texcoord;
 		in vec4 color;
@@ -32,9 +32,9 @@ namespace chaos
 			vs_color    = color;
 			gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
 		};											
-		)SHADERCODE";
+		)VERTEXSHADERCODE";
 
-		char const * pixel_shader_source = R"SHADERCODE(
+		char const * pixel_shader_source = R"PIXELSHADERCODE(
 		in vec3 vs_texcoord;
 		in vec4 vs_color;
 
@@ -49,7 +49,7 @@ namespace chaos
 				texture(material, vs_texcoord);
 			output_color = color * vs_color;
 		};
-		)SHADERCODE";
+		)PIXELSHADERCODE";
 
 		GPUProgramGenerator program_generator;
 		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);

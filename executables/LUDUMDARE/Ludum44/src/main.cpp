@@ -64,6 +64,10 @@ BOOST_DECLARE_HAS_MEMBER(has_texcoord, texcoord);
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {	
 	
+	chaos::obox2 o2;
+	chaos::obox3 o3;
+
+
 	auto a1 = has_velocity<Particle1>::value;
 	auto a2 = has_velocity<Particle2>::value;
 

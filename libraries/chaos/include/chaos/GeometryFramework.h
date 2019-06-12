@@ -12,16 +12,16 @@ namespace chaos
 
 	template<typename T, int dimension> class type_ray;
 	template<typename T, int dimension> class type_box;
+	template<typename T, int dimension> class type_obox;
 	template<typename T, int dimension> class type_sphere;
 	template<typename T, int dimension> class type_triangle;
-	template<typename T, int dimension> class type_rotator;
 
 	template<typename T> using type_ray2      = type_ray<T, 2>;
 	template<typename T> using type_ray3      = type_ray<T, 3>;
 	template<typename T> using type_box2      = type_box<T, 2>;
 	template<typename T> using type_box3      = type_box<T, 3>;
-	//template<typename T> using type_obox2     = type_obox<T, 2>;
-	//template<typename T> using type_obox3     = type_obox<T, 3>;
+	template<typename T> using type_obox2     = type_obox<T, 2>;
+	template<typename T> using type_obox3     = type_obox<T, 3>;
 	template<typename T> using type_sphere2   = type_sphere<T, 2>;
 	template<typename T> using type_sphere3   = type_sphere<T, 3>;
 	template<typename T> using type_triangle2 = type_triangle<T, 2>;
@@ -31,8 +31,8 @@ namespace chaos
 	using ray3      = type_ray3<float>;
 	using box2      = type_box2<float>;
 	using box3      = type_box3<float>;
-	//using obox2     = type_obox2<float>;
-	//using obox3     = type_obox3<float>;
+	using obox2     = type_obox2<float>;
+	using obox3     = type_obox3<float>;
 	using sphere2   = type_sphere2<float>;
 	using sphere3   = type_sphere3<float>;
 	using triangle2 = type_triangle2<float>;
@@ -57,6 +57,11 @@ namespace chaos
 		using vec2_type = glm::tvec2<type>;
 		/** the type of 3D vectors */
 		using vec3_type = glm::tvec3<type>;
+
+		/** the type of rotation in 2D space (just an angle in RADIAN) */
+		using rotator2_type = type;
+		/** the type of rotation in 3D space (a quaternion) */
+		using rotator3_type = glm::tvec4<type>;
 	};
 
 	template<typename T, int dimension> class type_geometric;
@@ -74,6 +79,8 @@ namespace chaos
 		static int const dimension = 2;
 		/** the type of vector */
 		using vec_type = vec2_type;
+		/** the type of rotator */
+		using rotator_type = rotator2_type;
 	};
 
 	/**
@@ -89,6 +96,8 @@ namespace chaos
 		static int const dimension = 3;
 		/** the type of vector */
 		using vec_type = vec3_type;
+		/** the type of rotator */
+		using rotator_type = rotator3_type;
 	};
 
 
@@ -170,6 +179,52 @@ namespace chaos
 		/** the half size the box */
 		vec_type half_size;
 	};
+
+
+
+	// ==============================================================================================
+	// oriented boxes classes
+	// ==============================================================================================
+
+	template<typename T> struct make_rotator;
+
+	template<>
+	struct make_rotator<float>
+	{
+		static float value() { return 0.0f; }
+	};
+
+	template<>
+	struct make_rotator<glm::vec4>
+	{
+		static glm::vec4 value() { return glm::vec4(1.0f, 0.0f, 0.0f, 0.0f); }
+	};
+
+	template<typename T, int dimension>
+	class type_obox : public type_box<T, dimension>
+	{
+	public:
+
+		using rotator_type = typename type_geometric<T, dimension>::rotator_type;
+
+		
+
+	public:
+
+		rotator_type rotator = make_rotator<rotator_type>::value();
+	};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	// ==============================================================================================

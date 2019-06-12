@@ -14,12 +14,8 @@ namespace chaos
 
 	class InheritanceIntrospection
 	{
-
-
-
-
 		/** this does correspond to ClassRuntimeID whose const modifier has been removed (useful in DeclareInheritance(...) )*/
-		typedef std::pair<void *, void *> * ModifiableClassRuntimeID;
+		using ModifiableClassRuntimeID = std::pair<void *, void *> *;
 
 	public:
 
@@ -28,7 +24,7 @@ namespace chaos
 		*   first  = pointer on himself
 		*   second = pointer on parent class (must be manually set)
 		*/
-		typedef std::pair<void *, void *> const * ClassRuntimeID;
+		using ClassRuntimeID = std::pair<void *, void *> const *;
 
 		/** this function is used to get a node for inheritance chain (this that not initialize the second term of the chain) */
 		template<typename T>

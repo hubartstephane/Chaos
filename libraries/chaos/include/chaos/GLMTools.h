@@ -9,13 +9,13 @@ namespace chaos
 	// Some common typedefs (outside of 'namespace' GLMTools)
 	// ==============================================================================================
 
-	typedef glm::vec2 float2;
-	typedef glm::vec3 float3;
-	typedef glm::vec4 float4;
+	using float2 = glm::vec2;
+	using float3 = glm::vec3;
+	using float4 = glm::vec4;
 
-	typedef glm::ivec2 int2;
-	typedef glm::ivec3 int3;
-	typedef glm::ivec4 int4;
+	using int2 = glm::ivec2;
+	using int3 = glm::ivec3;
+	using int4 = glm::ivec4;
 
 	// ==============================================================================================
 	// GLMTools

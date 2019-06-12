@@ -23,8 +23,8 @@ namespace chaos
 	template<typename ALLOCATOR = ArrayAllocator<uintptr_t> >
 	class SparseWriteBuffer
 	{
-		typedef uintptr_t alloc_type;
-		typedef ALLOCATOR allocator_type;
+		using alloc_type = uintptr_t;
+		using allocator_type = ALLOCATOR;
 
 		static int const BLOCK_SIZE = 0;
 		static int const USED_SIZE  = 1;

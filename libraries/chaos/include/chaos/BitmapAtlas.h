@@ -182,9 +182,9 @@ namespace chaos
 		{
 		public:
 
-			typedef CHARACTER_INFO_TYPE character_type;
-			typedef META_WRAPPER_TYPE meta_wrapper_type;
-			typedef typename boost::mpl::apply<meta_wrapper_type, character_type>::type character_stored_type;
+			using character_type = CHARACTER_INFO_TYPE;
+			using meta_wrapper_type = META_WRAPPER_TYPE;
+			using character_stored_type = typename boost::mpl::apply<meta_wrapper_type, character_type>::type;
 
 			/** gets an info by its name */
 			character_type const * GetCharacterInfo(char const * name) const
@@ -232,14 +232,14 @@ namespace chaos
 		{
 		public:
 
-			typedef BITMAP_INFO_TYPE bitmap_type;
-			typedef FONT_INFO_TYPE font_type;
-			typedef FOLDER_INFO_TYPE folder_type;
-			typedef typename font_type::character_type character_type;
+			using bitmap_type    = BITMAP_INFO_TYPE;
+			using font_type      = FONT_INFO_TYPE;
+			using folder_type    = FOLDER_INFO_TYPE;
+			using character_type = typename font_type::character_type;
 
-			typedef META_WRAPPER_TYPE meta_wrapper_type;
-			typedef typename boost::mpl::apply<meta_wrapper_type, bitmap_type>::type bitmap_stored_type;
-			typedef typename boost::mpl::apply<meta_wrapper_type, font_type>::type font_stored_type;
+			using meta_wrapper_type  = META_WRAPPER_TYPE;
+			using bitmap_stored_type = typename boost::mpl::apply<meta_wrapper_type, bitmap_type>::type;
+			using font_stored_type   = typename boost::mpl::apply<meta_wrapper_type, font_type>::type;
 
 #define CHAOS_EMPTY_TOKEN
 #define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, param_type, constness)\
@@ -328,10 +328,10 @@ namespace chaos
 		{
 		public:
 
-			typedef BITMAP_INFO_TYPE bitmap_type;
-			typedef FONT_INFO_TYPE   font_type;
-			typedef FOLDER_INFO_TYPE folder_type;
-			typedef typename font_type::character_type character_type;
+			using bitmap_type    = BITMAP_INFO_TYPE;
+			using font_type      = FONT_INFO_TYPE;
+			using folder_type    = FOLDER_INFO_TYPE;
+			using character_type = typename font_type::character_type;
 
 			friend class ParticleTextGenerator::GeneratorData;
 

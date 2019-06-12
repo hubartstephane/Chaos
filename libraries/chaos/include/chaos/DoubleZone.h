@@ -18,9 +18,9 @@ namespace chaos
 	public:
 
 		/** the type of the zone */
-		typedef ZONE_TYPE zone_type;
+		using zone_type = ZONE_TYPE;
 		/** the type of the vector */
-		typedef typename ZONE_TYPE::vec_type vec_type;
+		using vec_type = typename ZONE_TYPE::vec_type;
 
 		/** point is inside inner zone */
 		static int const NEAR_ZONE   = 0;

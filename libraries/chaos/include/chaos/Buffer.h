@@ -187,7 +187,7 @@ namespace chaos
 	public:
 
 		/** the type of the element in the buffer */
-		typedef TYPE type;
+		using type = TYPE;
 
 		/** default constructor */    
 		Buffer() = default;

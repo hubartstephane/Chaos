@@ -55,7 +55,7 @@ namespace chaos
 	public:
 
 		/** the type of windows */
-		typedef WIN_CLASS window_type;
+		using window_type = WIN_CLASS;
 
 		/** constructor */
 		SimpleWin32Class(char const * in_window_classname) : SimpleWin32ClassBase(in_window_classname) {}

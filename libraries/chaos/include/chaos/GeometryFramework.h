@@ -14,11 +14,14 @@ namespace chaos
 	template<typename T, int dimension> class type_box;
 	template<typename T, int dimension> class type_sphere;
 	template<typename T, int dimension> class type_triangle;
+	template<typename T, int dimension> class type_rotator;
 
 	template<typename T> using type_ray2      = type_ray<T, 2>;
 	template<typename T> using type_ray3      = type_ray<T, 3>;
 	template<typename T> using type_box2      = type_box<T, 2>;
 	template<typename T> using type_box3      = type_box<T, 3>;
+	//template<typename T> using type_obox2     = type_obox<T, 2>;
+	//template<typename T> using type_obox3     = type_obox<T, 3>;
 	template<typename T> using type_sphere2   = type_sphere<T, 2>;
 	template<typename T> using type_sphere3   = type_sphere<T, 3>;
 	template<typename T> using type_triangle2 = type_triangle<T, 2>;
@@ -28,6 +31,8 @@ namespace chaos
 	using ray3      = type_ray3<float>;
 	using box2      = type_box2<float>;
 	using box3      = type_box3<float>;
+	//using obox2     = type_obox2<float>;
+	//using obox3     = type_obox3<float>;
 	using sphere2   = type_sphere2<float>;
 	using sphere3   = type_sphere3<float>;
 	using triangle2 = type_triangle2<float>;
@@ -47,11 +52,11 @@ namespace chaos
 	public:
 
 		/** the type of the components */
-		typedef T type;
+		using type = T;
 		/** the type of 2D vectors */
-		typedef glm::tvec2<type> vec2_type;
+		using vec2_type = glm::tvec2<type>;
 		/** the type of 3D vectors */
-		typedef glm::tvec3<type> vec3_type;
+		using vec3_type = glm::tvec3<type>;
 	};
 
 	template<typename T, int dimension> class type_geometric;
@@ -68,7 +73,7 @@ namespace chaos
 		/** the dimension of the space */
 		static int const dimension = 2;
 		/** the type of vector */
-		typedef vec2_type vec_type;
+		using vec_type = vec2_type;
 	};
 
 	/**
@@ -83,7 +88,7 @@ namespace chaos
 		/** the dimension of the space */
 		static int const dimension = 3;
 		/** the type of vector */
-		typedef vec3_type vec_type;
+		using vec_type = vec3_type;
 	};
 
 
@@ -96,7 +101,7 @@ namespace chaos
 	{
 	public:
 
-		typedef typename type_geometric<T, dimension>::vec_type vec_type;
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
 
 		/** constructor (empty box2) */
 		type_box() : half_size((T)-1.0f) {}
@@ -252,7 +257,7 @@ namespace chaos
 	template<typename T, int dimension>
 	type_box<T, dimension> operator & (const type_box<T, dimension> & b1, const type_box<T, dimension> & b2)
 	{
-		typedef typename type_box<T, dimension>::vec_type vec_type;
+		using vec_type = type_box<T, dimension>::vec_type;
 
 		if (b1.IsEmpty() || b2.IsEmpty()) // any of the 2 is empty, intersection is empty
 			return type_box<T, dimension>();
@@ -279,7 +284,7 @@ namespace chaos
 	template<typename T, int dimension>
 	type_box<T, dimension> operator | (const type_box<T, dimension> & b1, const type_box<T, dimension> & b2)
 	{
-		typedef typename type_box<T, dimension>::vec_type vec_type;
+		using vec_type = type_box<T, dimension>::vec_type;
 
 		if (b1.IsEmpty()) // if one is empty, returns other
 			return b2;
@@ -302,7 +307,7 @@ namespace chaos
 	template<typename T>
 	type_box2<T> GetSplitBox(type_box2<T> const & b, int i, int j)
 	{
-		typedef typename type_box2<T>::vec2_type vec2_type;
+		using vec2_type = type_box2<T>::vec2_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));
@@ -319,7 +324,7 @@ namespace chaos
 	template<typename T>
 	type_box3<T> GetSplitBox(type_box3<T> const & b, int i, int j, int k)
 	{
-		typedef typename type_box3<T>::vec3_type vec3_type;
+		using vec3_type = type_box3<T>::vec3_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));
@@ -343,7 +348,7 @@ namespace chaos
 	{
 	public:
 
-		typedef typename type_geometric<T, dimension>::vec_type vec_type;
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
 
 		/** default constructor */
 		type_triangle() {}
@@ -448,7 +453,7 @@ namespace chaos
 	{
 	public:
 
-		typedef typename type_geometric<T, dimension>::vec_type vec_type;
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
 
 		/** default constructor */
 		type_ray() {}
@@ -494,8 +499,8 @@ namespace chaos
 	{
 	public:
 
-		typedef typename type_geometric<T, dimension>::vec_type vec_type;
-		typedef typename type_geometric<T, dimension>::type     type;
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type     = typename type_geometric<T, dimension>::type;
 
 		/** constructor (empty circle) */
 		type_sphere() : radius((T)-1.0f) {}
@@ -582,7 +587,7 @@ namespace chaos
 	template<typename T>
 	type_box2<T> GetBoundingBox(type_sphere2<T> const & c)
 	{
-		typedef typename type_sphere2<T>::vec_type vec_type;
+		using vec_type = typename type_sphere2<T>::vec_type;
 
 		return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
 	}
@@ -591,7 +596,7 @@ namespace chaos
 	template<typename T>
 	type_box2<T> GetInnerBox(type_sphere2<T> const & c)
 	{
-		typedef typename type_sphere2<T>::vec_type vec_type;
+		using vec_type = typename type_sphere2<T>::vec_type;
 
 		static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
 
@@ -601,7 +606,7 @@ namespace chaos
 	template<typename T>
 	type_box3<T> GetBoundingBox(type_sphere3<T> const & s)
 	{
-		typedef typename type_sphere3<T>::vec_type vec_type;
+		using vec_type = typename type_sphere3<T>::vec_type;
 
 		return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
 	}
@@ -609,7 +614,7 @@ namespace chaos
 	template<typename T>
 	type_box3<T> GetInnerBox(type_sphere3<T> const & s)
 	{
-		typedef typename type_sphere3<T>::vec_type vec_type;
+		using vec_type = typename type_sphere3<T>::vec_type;
 
 		static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
 
@@ -620,7 +625,7 @@ namespace chaos
 	template<typename T, int dimension>
 	type_sphere<T, dimension> operator & (const type_sphere<T, dimension> & s1, const type_sphere<T, dimension> & s2) // intersection
 	{
-		typedef typename type_sphere<T, dimension>::vec_type vec_type;
+		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
 		if (s1.IsEmpty() || s2.IsEmpty())
 			return type_sphere<T, dimension>();
@@ -648,7 +653,7 @@ namespace chaos
 	template<typename T, int dimension>
 	type_sphere<T, dimension> operator | (const type_sphere<T, dimension> & s1, const type_sphere<T, dimension> & s2) // union
 	{
-		typedef typename type_sphere<T, dimension>::vec_type vec_type;
+		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
 		if (s1.IsEmpty())
 			return s2;

@@ -85,9 +85,9 @@ namespace chaos
 	class MyFbxImporter
 	{
 		/** information for skinning */
-		typedef std::vector<std::pair<int32_t, float>> SkinDataType;
+		using SkinDataType = std::vector<std::pair<int32_t, float>>;
 		/** a table that give an association CTRL_POINT => array of [BONE_INDEX, BONE_WEIGHT] */
-		typedef std::map<int, SkinDataType> BoneTableType;
+		using BoneTableType = std::map<int, SkinDataType>;
 
 	public:
 

@@ -15,7 +15,7 @@ namespace chaos
 	public:
 
 		/** the type of object to allocate */
-		typedef T type;   
+		using type = T;
 
 		/** a method to allocate a buffer of object */
 		type * Allocate(size_t count){ assert(count > 0); return new type[count]; }

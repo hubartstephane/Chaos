@@ -19,9 +19,9 @@ namespace chaos
 	{
 	public:
 
-		typedef std::vector<shared_ptr<GPUProgramSourceGenerator>> GeneratorSet;
+		using GeneratorSet = std::vector<shared_ptr<GPUProgramSourceGenerator>>;
 
-		typedef std::map<std::string, int> DefinitionSet;
+		using DefinitionSet = std::map<std::string, int>;
 
 		/** destructor */
 		virtual ~GPUProgramGenerator() = default;

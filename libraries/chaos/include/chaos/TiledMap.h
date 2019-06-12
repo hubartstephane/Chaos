@@ -184,7 +184,7 @@ namespace chaos
 			}
 
 			/** the type of the property */
-			typedef T property_type;
+			using property_type = T;
 
 			/** returns a pointer on the int property */
 			virtual int * GetIntProperty() { return CastPropertyTo(&value, boost::mpl::identity<int>()); }

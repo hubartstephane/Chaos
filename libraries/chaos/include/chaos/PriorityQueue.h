@@ -45,15 +45,15 @@ namespace chaos
 	public:
 
 		/** for STL compatibility */
-		typedef std::vector<T> _Container;
+		using _Container = std::vector<T>;
 		/** for STL compatibility */
-		typedef typename _Container::value_type value_type;
+		using value_type = typename _Container::value_type;
 		/** for STL compatibility */
-		typedef typename _Container::size_type size_type;
+		using size_type = typename _Container::size_type;
 		/** for STL compatibility */
-		typedef typename _Container::reference reference;
+		using reference = typename _Container::reference;
 		/** for STL compatibility */
-		typedef typename _Container::const_reference const_reference;
+		using const_reference = typename _Container::const_reference;
 
 		/** test if queue is empty */
 		bool empty() const { return (c.empty()); }

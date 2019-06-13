@@ -15,7 +15,7 @@ namespace chaos
 
 	ParticleCorners ParticleTools::BoxToParticleCorners(box2 const & box)
 	{	
-		std::pair<glm::vec2, glm::vec2> tmp = box.GetCorners();
+		std::pair<glm::vec2, glm::vec2> tmp = GetBoxCorners(box);
 
 		ParticleCorners result;
 		result.bottomleft = tmp.first;

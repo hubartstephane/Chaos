@@ -31,8 +31,8 @@ namespace chaos
 		if (IsGeometryEmpty(bigger) || IsGeometryEmpty(smaller))
 			return false;
 
-		auto big_corners = bigger.GetCorners();
-		auto small_corners = smaller.GetCorners();
+		auto big_corners = GetBoxCorners(bigger);
+		auto small_corners = GetBoxCorners(smaller);
 
 		int const count = dimension;
 		for (int i = 0; i < count; ++i)
@@ -88,8 +88,8 @@ namespace chaos
 		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return false;
 
-		auto src_corners = src.GetCorners();
-		auto target_corners = target.GetCorners();
+		auto src_corners = GetBoxCorners(src);
+		auto target_corners = GetBoxCorners(target);
 
 		if (glm::any(glm::lessThan(src_corners.second, target_corners.first)))
 			return false;
@@ -203,8 +203,8 @@ namespace chaos
 		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
 
-		auto src1_corners = src1.GetCorners();
-		auto src2_corners = src2.GetCorners();
+		auto src1_corners = GetBoxCorners(src1);
+		auto src2_corners = GetBoxCorners(src2);
 
 		if (glm::any(glm::lessThan(src1_corners.second, src2_corners.first)))
 			return false;
@@ -242,13 +242,13 @@ namespace chaos
 			return false;
 
 		// 2 : test whether the center of the sphere is inside the box
-		if (b.Contains(s.position))
+		if (IsPointInside(s.position, b))
 			return true;
 
 		// 3 : test distance from the sphere center to the 4 corners of the box
 		auto r2 = s.radius * s.radius;
 
-		auto corners = b.GetCorners();
+		auto corners = GetBoxCorners(b);
 		auto const & A = corners.first;
 		auto const & C = corners.second;
 
@@ -302,7 +302,7 @@ namespace chaos
 	{
 		if (IsTriangleReadyForCollision(t))
 			return t;
-		return t.GetInvertedTriangle();
+		return GetInvertedTriangle(t);
 	}
 
 	template<typename T>

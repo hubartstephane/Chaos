@@ -68,7 +68,7 @@ protected:
 		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
 	//	hints.toplevel = 1;
-		hints.decorated = 0;
+		hints.decorated = 1;
 		hints.resizable = 1;
 	}
 

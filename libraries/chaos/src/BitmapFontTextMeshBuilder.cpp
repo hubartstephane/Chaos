@@ -107,8 +107,8 @@ namespace chaos
 				InsertVertexComponent(vertices, v4, t4);
 				InsertVertexComponent(vertices, v3, t3);
 
-				result.Extend(v1);
-				result.Extend(v3);
+				ExtendBox(result, v1);
+				ExtendBox(result, v3);
 			}
 
 			// next character 

@@ -58,13 +58,10 @@ namespace chaos
 	struct make_rotator<glm::tvec4<double>>{ static glm::tvec4<double> value() { return glm::tvec4<double>(1.0, 0.0, 0.0, 0.0); } };
 
 	// ==============================================================================================
-	// geometry classes
+	// geometric class
 	// ==============================================================================================
 
-	/**
-	* base class for geometry objects that have some commons definitions
-	*/
-
+	/** base class for geometry objects that have some commons definitions */
 	template<typename T> 
 	class type_geometric_base
 	{
@@ -85,10 +82,7 @@ namespace chaos
 
 	template<typename T, int dimension> class type_geometric;
 
-	/**
-	* geometry class specialisation for 2 dimensions objects
-	*/
-
+	/** geometry class specialisation for 2 dimensions objects */
 	template<typename T> 
 	class type_geometric<T, 2> : public type_geometric_base<T>
 	{
@@ -102,10 +96,7 @@ namespace chaos
 		using rotator_type = rotator2_type;
 	};
 
-	/**
-	* geometry class specialisation for 3 dimensions objects
-	*/
-
+	/** geometry class specialisation for 3 dimensions objects */
 	template<typename T>
 	class type_geometric<T, 3> : public type_geometric_base<T>
 	{
@@ -119,24 +110,130 @@ namespace chaos
 		using rotator_type = rotator3_type;
 	};
 
-
 	// ==============================================================================================
-	// boxes classes
+	// box_base class
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	class type_box : public type_geometric<T, dimension>
+	class box_base : public type_geometric<T, dimension>
 	{
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
 
 		/** constructor (empty box) */
-		type_box() : half_size((T)-1.0f) {}
+		box_base() : half_size((T)-1.0f) {}
 		/** copy constructor */
-		type_box(type_box const & src) : position(src.position), half_size(src.half_size) {}
+		box_base(box_base const & src) : position(src.position), half_size(src.half_size) {}
 		/** other constructor */
-		type_box(vec_type const & in_position, vec_type const & in_half_size) : position(in_position), half_size(in_half_size) {}
+		box_base(vec_type const & in_position, vec_type const & in_half_size) : position(in_position), half_size(in_half_size) {}
+
+	public:
+
+		/** the center of the box */
+		vec_type position;
+		/** the half size the box */
+		vec_type half_size;
+	};
+
+	// ==============================================================================================
+	// box_base functions
+	// ==============================================================================================
+
+	/** returns true whether the box is empty */
+	template<typename T, int dimension>
+	bool IsGeometryEmpty(box_base<T, dimension> const & b)
+	{
+		return glm::any(glm::lessThan(b.half_size, box_base<T, dimension>::vec_type((T)0.0f)));
+	}
+
+	/** set the box has an empty box */
+	template<typename T, int dimension>
+	void SetGeometryEmpty(box_base<T, dimension> & b)
+	{
+		b.half_size = box_base<T, dimension>::vec_type((T)-1.0f);
+	}
+
+	/** returns the perimeter of the box */
+	template<typename T>
+	T GetPerimeter(box_base<T, 2> const & b)
+	{
+		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
+	}
+
+	/** returns the surface of the box */
+	template<typename T>
+	T GetSurface(box_base<T, 2> const & b)
+	{
+		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
+	}
+
+	/** return the volume of the box */
+	template<typename T>
+	T GetVolume(box_base<T, 3> const & b)
+	{
+		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
+	}
+
+	/** return the surface of the box */
+	template<typename T>
+	T GetSurface(box_base<T, 3> const & b)
+	{
+		return static_cast<T>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
+	};
+
+	/** returns the bounding circle for the box */
+	template<typename T>
+	type_sphere2<T> GetBoundingCircle(box_base<T, 2> const & b)
+	{
+		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
+	}
+
+	/** returns the inner circle for the box */
+	template<typename T>
+	type_sphere2<T> GetInnerCircle(box_base<T, 2> const & b)
+	{
+		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+	}
+
+	/** returns the bounding sphere for the box */
+	template<typename T>
+	type_sphere3<T> GetBoundingSphere(box_base<T, 3> const & b)
+	{
+		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
+	}
+
+	/** returns the inner sphere for the box */
+	template<typename T>
+	type_sphere3<T> GetInnerSphere(box_base<T, 3> const & b)
+	{
+		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+	}
+
+	/** returns the "aspect" of the box (width/height) */
+	template<typename T>
+	T GetBoxAspect(box_base<T, 2> const & b)
+	{
+		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
+	}
+
+	// ==============================================================================================
+	// box class
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	class type_box : public box_base<T, dimension>
+	{
+	public:
+
+		using vec_type = typename box_base<T, dimension>::vec_type;
+
+		/** constructor (empty box) */
+		type_box(){}
+		/** copy constructor */
+		type_box(type_box const & src) : box_base(src.position, src.half_size) {}
+		/** other constructor */
+		type_box(vec_type const & in_position, vec_type const & in_half_size) : box_base(in_position, in_half_size) {}
 		/** construct a box from 2 points */
 		type_box(std::pair<vec_type, vec_type> const & pts)
 		{
@@ -146,45 +243,6 @@ namespace chaos
 			position  = (b + a) / static_cast<T>(2);
 			half_size = (b - a) / static_cast<T>(2);
 		}
-
-		/** get the corners of the box */
-		std::pair<vec_type, vec_type> GetCorners() const
-		{
-			if (!IsGeometryEmpty(*this))
-				return std::make_pair(position - half_size, position + half_size);
-				
-			return std::make_pair(position, position);						
-		}
-
-		/** increase the box size with a single vertex */
-		void Extend(vec_type const & v)
-		{
-			if (IsGeometryEmpty(*this))
-			{
-				position = v;
-				half_size = vec_type((T)0.0f);
-			}
-			else
-			{
-				std::pair<vec_type, vec_type> corners = GetCorners();
-				corners.first  = glm::min(corners.first, v);
-				corners.second = glm::max(corners.second, v);
-				*this = type_box(corners);
-			}
-		}
-
-		/** returns true whether the point is contained in the box */
-		bool Contains(vec_type const & pt) const
-		{
-			return glm::all(glm::lessThanEqual(glm::abs(pt - position), half_size));
-		}
-
-	public:
-
-		/** the center of the box */
-		vec_type position;
-		/** the half size the box */
-		vec_type half_size;
 	};
 
 	// ==============================================================================================
@@ -207,7 +265,7 @@ namespace chaos
 
 	/** intersection of 2 boxes */
 	template<typename T, int dimension>
-	type_box<T, dimension> operator & (const type_box<T, dimension> & b1, const type_box<T, dimension> & b2)
+	type_box<T, dimension> operator & (type_box<T, dimension> const & b1, type_box<T, dimension> const & b2)
 	{
 		using vec_type = type_box<T, dimension>::vec_type;
 
@@ -234,7 +292,7 @@ namespace chaos
 
 	/** union of 2 boxes */
 	template<typename T, int dimension>
-	type_box<T, dimension> operator | (const type_box<T, dimension> & b1, const type_box<T, dimension> & b2)
+	type_box<T, dimension> operator | (type_box<T, dimension> const & b1, type_box<T, dimension> const & b2)
 	{
 		using vec_type = type_box<T, dimension>::vec_type;
 
@@ -291,6 +349,42 @@ namespace chaos
 			new_half_size);
 	}
 
+	/** get the corners of the box */
+	template<typename T, int dimension>
+	auto GetBoxCorners(type_box<T, dimension> const & b) // returns a std::pair<vec_type, vec_type>
+	{
+		if (!IsGeometryEmpty(b))
+			return std::make_pair(b.position - b.half_size, b.position + b.half_size);
+		return std::make_pair(b.position, b.position);
+	}
+
+	/** increase the box size with a single vertex */
+	template<typename T, int dimension>
+	void ExtendBox(type_box<T, dimension> & b, typename type_box<T, dimension>::vec_type const & v)
+	{
+		using vec_type = typename type_box<T, dimension>::vec_type;
+
+		if (IsGeometryEmpty(b))
+		{
+			b.position  = v;
+			b.half_size = vec_type((T)0.0f);
+		}
+		else
+		{
+			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
+			corners.first = glm::min(corners.first, v);
+			corners.second = glm::max(corners.second, v);
+			b = type_box<T, dimension>(corners);
+		}
+	}
+
+	/** returns true whether the point is contained in the box */
+	template<typename T, int dimension>
+	bool IsPointInside(typename type_box<T, dimension>::vec_type const & pt, type_box<T, dimension> const & b)
+	{
+		return glm::all(glm::lessThanEqual(glm::abs(pt - b.position), b.half_size));
+	}
+
 	/** reduce a rectangle with an aspect */
 	box2 ShrinkBoxToAspect(box2 src, float aspect);
 	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
@@ -300,45 +394,28 @@ namespace chaos
 
 
 	// ==============================================================================================
-	// oriented boxes classes
+	// obox class
 	// ==============================================================================================
 
 	/** an oriented bounding box */
 	template<typename T, int dimension>
-	class type_obox : public type_geometric<T, dimension>
+	class type_obox : public box_base<T, dimension>
 	{
 	public:
 
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using vec_type = typename box_base<T, dimension>::vec_type;
 
-		using rotator_type = typename type_geometric<T, dimension>::rotator_type;
-
+		using rotator_type = typename box_base<T, dimension>::rotator_type;
 
 		/** constructor (empty box) */
-		type_obox() : half_size((T)-1.0f) {}
+		type_obox(){}
 		/** copy constructor */
-		type_obox(type_obox const & src) : position(src.position), half_size(src.half_size), rotator(src.rotator) {}
+		type_obox(type_obox const & src) : box_base(src.position, src.half_size), rotator(src.rotator) {}
 		/** other constructor */
-		type_obox(vec_type const & in_position, vec_type const & in_half_size, rotator_type const & in_rotator) : position(in_position), half_size(in_half_size), rotator(in_rotator){}
-
-
-
-
-
-
-
-
-
-
-
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rotator_type const & in_rotator) : box_base(in_position, in_half_size), rotator(in_rotator){}
 
 	public:
 
-
-		/** the center of the box */
-		vec_type position;
-		/** the half size the box */
-		vec_type half_size;
 		/** the angle/quaternion of rotation to apply to a box to have this obox */
 		rotator_type rotator = make_rotator<rotator_type>::value();
 	};
@@ -347,94 +424,18 @@ namespace chaos
 	// obox functions
 	// ==============================================================================================
 
-
-
-
-
-	// ==============================================================================================
-	// box & obox functions
-	// ==============================================================================================
-
-	// XXX : i introduced 'int DIMENSION' in the BOX_TEMPLATE else when calling it seems to resolve to type_geometric !!
-	//       need some research to understand more clearly
-
-
-
-	/** returns true whether the box is empty */
-	template<typename T, int DIMENSION, template<typename, int> class BOX_TEMPLATE> 
-	bool IsGeometryEmpty(BOX_TEMPLATE<T, DIMENSION> const & b)
+	/** equality function for obox */
+	template<typename T, int dimension>
+	bool operator == (type_obox<T, dimension> const & b1, type_obox<T, dimension> const & b2)
 	{
-		return glm::any(glm::lessThan(b.half_size, BOX_TEMPLATE<T, DIMENSION>::vec_type((T)0.0f)));
+		return (b1.position == b1.position) && (b1.half_size == b2.half_size) && (b1.rotator == b2.rotator);
 	}
 
-	/** set the box has an empty box */
-	template<typename T, int DIMENSION, template<typename, int> class BOX_TEMPLATE> 
-	void SetGeometryEmpty(BOX_TEMPLATE<T, DIMENSION> & b)
+	/** difference function for obox */
+	template<typename T, int dimension>
+	bool operator != (type_obox<T, dimension> const & b1, type_obox<T, dimension> const & b2)
 	{
-		b.half_size = BOX_TEMPLATE<T, DIMENSION>::vec_type((T)-1.0f);
-	}
-
-	/** returns the perimeter of the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE> 
-	T GetPerimeter(BOX_TEMPLATE<T, 2> const & b)
-	{
-		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
-	}
-
-	/** returns the surface of the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	T GetSurface(BOX_TEMPLATE<T, 2> const & b)
-	{
-		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
-	}
-
-	/** return the volume of the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	T GetVolume(BOX_TEMPLATE<T, 3> const & b)
-	{
-		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
-	}
-
-	/** return the surface of the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	T GetSurface(BOX_TEMPLATE<T, 3> const & b)
-	{
-		return static_cast<T>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
-	};
-
-	/** returns the bounding circle for the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	type_sphere2<T> GetBoundingCircle(BOX_TEMPLATE<T, 2> const & b)
-	{
-		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
-	}
-
-	/** returns the inner circle for the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	type_sphere2<T> GetInnerCircle(BOX_TEMPLATE<T, 2> const & b)
-	{
-		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
-	}
-
-	/** returns the bounding sphere for the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	type_sphere3<T> GetBoundingSphere(BOX_TEMPLATE<T, 3> const & b)
-	{
-		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
-	}
-
-	/** returns the inner sphere for the box */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	type_sphere3<T> GetInnerSphere(BOX_TEMPLATE<T, 3> const & b)
-	{
-		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
-	}
-
-	/** returns the "aspect" of the box (width/height) */
-	template<typename T, template<typename, int> class BOX_TEMPLATE>
-	T GetBoxAspect(BOX_TEMPLATE<T, 2> const & b)
-	{
-		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
+		return !(b1 == b2);
 	}
 
 
@@ -461,44 +462,6 @@ namespace chaos
 		type_triangle(type_triangle const & src) : a(src.a), b(src.b), c(src.c) {}
 		/** constructor from points */
 		type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
-
-		/** returns true whether the triangle is empty */
-		bool IsGeometryEmpty() const
-		{
-			if (a == b || a == c || b == c)
-				return true;
-			return false;
-		}
-
-		/** get the reversed triangle */
-		type_triangle GetInvertedTriangle() const
-		{
-			return type_triangle(a, c, b);
-		}
-
-		/** returns true whether the point is contained in the triangle */
-		bool Contains(vec_type const & pt) const
-		{
-			// test whether the triangle is null
-			if (IsGeometryEmpty())
-				return false;
-
-			// test whether the point is inside the edges
-			vec_type const * V = &a;
-			for (int i = 0; i < 3; ++i)
-			{
-				vec_type const & e1 = V[i];
-				vec_type const & e2 = V[(i + 1) % 3];
-
-				vec_type e1_S = pt - e1;
-				vec_type normalized_edge = glm::normalize(e2 - e1);
-
-				auto d = GLMTools::Get2DCrossProductZ(normalized_edge, e1_S); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
-				if (d > 0.0f)
-					return false;
-			}
-			return true;    
-		}  
 
 	public:
 
@@ -547,6 +510,49 @@ namespace chaos
 	bool operator != (type_triangle<T, dimension> const & t1, type_triangle<T, dimension> const & t2)
 	{
 		return !(t1 == t2);
+	}
+
+	/** returns true whether the triangle is empty */
+	template<typename T, int dimension>
+	bool IsGeometryEmpty(type_triangle<T, dimension> const & t)
+	{
+		if (t.a == t.b || t.a == t.c || t.b == t.c)
+			return true;
+		return false;
+	}
+
+	/** get the reversed triangle */
+	template<typename T, int dimension>
+	type_triangle<T, dimension> GetInvertedTriangle(type_triangle<T, dimension> const & t)
+	{
+		return type_triangle<T, dimension>(t.a, t.c, t.b);
+	}
+
+	/** returns true whether the point is contained in the triangle */
+	template<typename T, int dimension>
+	bool IsPointInside(typename type_triangle<T, dimension>::vec_type const & pt, type_triangle<T, dimension> const & t)
+	{
+		using vec_type = typename type_triangle<T, dimension>::vec_type;
+
+		// test whether the triangle is null
+		if (IsGeometryEmpty(t))
+			return false;
+
+		// test whether the point is inside the edges
+		vec_type const * V = &t.a;
+		for (int i = 0; i < 3; ++i)
+		{
+			vec_type const & e1 = V[i];
+			vec_type const & e2 = V[(i + 1) % 3];
+
+			vec_type e1_S = pt - e1;
+			vec_type normalized_edge = glm::normalize(e2 - e1);
+
+			auto d = GLMTools::Get2DCrossProductZ(normalized_edge, e1_S); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
+			if (d > 0.0f)
+				return false;
+		}
+		return true;
 	}
 
 	// ==============================================================================================
@@ -614,14 +620,6 @@ namespace chaos
 		/** other constructor */
 		type_sphere(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
 
-
-
-		/** returns true whether the point is contained in the circle */
-		bool Contains(vec_type const & pt) const
-		{
-			return glm::length2(pt - position) <= radius * radius;
-		}
-
 	public:
 
 		/** the center of the circle */
@@ -647,6 +645,13 @@ namespace chaos
 	void SetGeometryEmpty(type_sphere<T, dimension> & c)
 	{
 		c.radius = (T)-1.0f;
+	}
+
+	/** returns true whether the point is contained in the circle */
+	template<typename T, int dimension>
+	bool IsPointInside(typename type_sphere<T, dimension>::vec_type const & pt, type_sphere<T, dimension> const & c)
+	{
+		return glm::length2(pt - c.position) <= c.radius * c.radius;
 	}
 
 	/** equality function for circle */
@@ -691,7 +696,6 @@ namespace chaos
 		return static_cast<T>(4.0 * M_PI) * s.radius * s.radius;
 	}
 
-
 	/** returns the bounding box of the circle */
 	template<typename T>
 	type_box2<T> GetBoundingBox(type_sphere2<T> const & c)
@@ -732,7 +736,7 @@ namespace chaos
 
 	/** returns intersection of 2 spheres */
 	template<typename T, int dimension>
-	type_sphere<T, dimension> operator & (const type_sphere<T, dimension> & s1, const type_sphere<T, dimension> & s2) // intersection
+	type_sphere<T, dimension> operator & (type_sphere<T, dimension> const & s1, type_sphere<T, dimension> const & s2) // intersection
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
@@ -760,7 +764,7 @@ namespace chaos
 
 	/** returns union of 2 spheres */
 	template<typename T, int dimension>
-	type_sphere<T, dimension> operator | (const type_sphere<T, dimension> & s1, const type_sphere<T, dimension> & s2) // union
+	type_sphere<T, dimension> operator | (type_sphere<T, dimension> const & s1, type_sphere<T, dimension> const & s2) // union
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 

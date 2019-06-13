@@ -458,7 +458,7 @@ protected:
 		p.x = 5.0f * (float)chaos::MathTools::Cos(realtime * M_2_PI);
 		p.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
 
-		bool collision = t2.Contains(p);
+		bool collision = IsPointInside(p, t2);
 		DrawPrimitive(ctx, t2, blue, collision);
 		DrawPoint(ctx, glm::vec3(p.x, 0.0f, p.y), white, collision);
 		
@@ -495,7 +495,7 @@ protected:
     pos.z = 0.0f;
 
     DrawPoint(ctx, pos, white, false);
-    DrawPrimitive(ctx, p, red, p.Contains(pos));
+    DrawPrimitive(ctx, p, red, IsPointInside(pos, p));
   }
 
   void DrawGeometryObjects(RenderingContext const & ctx)
@@ -521,7 +521,7 @@ protected:
 
       DrawPrimitive(ctx, b, red, false);
 
-      std::pair<glm::vec3, glm::vec3> corners = b.GetCorners();
+      std::pair<glm::vec3, glm::vec3> corners = GetBoxCorners(b);
       DrawPoint(ctx, corners.first, white, false);
       DrawPoint(ctx, corners.second, white, false);
     }

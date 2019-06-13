@@ -137,7 +137,7 @@ namespace chaos
 				continue;
 			box2 bounding = builder.BuildBuffer(l.first.c_str(), params, vertices);
 			if (!IsGeometryEmpty(bounding))
-				params.position = bounding.GetCorners().first; // maybe some degenerated case 
+				params.position = GetBoxCorners(bounding).first; // maybe some degenerated case 
 		}
 
 		// fill GPU buffer

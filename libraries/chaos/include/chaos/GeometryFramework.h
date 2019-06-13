@@ -39,6 +39,25 @@ namespace chaos
 	using triangle3 = type_triangle3<float>;
 
 	// ==============================================================================================
+	// rotator initializer
+	// ==============================================================================================
+
+	// XXX : depending whether we are in 2D or 3D a rotation can be described by a single float or a quaternion
+	//       this code is here to provide some common initialization interface
+
+	/** a meta structure for generalized rotator initialization (angle in RAD or quaternion) */
+	template<typename T> 
+	struct make_rotator; // main definition
+	template<>
+	struct make_rotator<float>{ static float value() { return 0.0f; } };
+	template<>
+	struct make_rotator<double>{ static double value() { return 0.0; } };
+	template<>
+	struct make_rotator<glm::vec4>{ static glm::vec4 value() { return glm::vec4(1.0f, 0.0f, 0.0f, 0.0f); } };
+	template<>
+	struct make_rotator<glm::tvec4<double>>{ static glm::tvec4<double> value() { return glm::tvec4<double>(1.0, 0.0, 0.0, 0.0); } };
+
+	// ==============================================================================================
 	// geometry classes
 	// ==============================================================================================
 
@@ -112,7 +131,7 @@ namespace chaos
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
 
-		/** constructor (empty box2) */
+		/** constructor (empty box) */
 		type_box() : half_size((T)-1.0f) {}
 		/** copy constructor */
 		type_box(type_box const & src) : position(src.position), half_size(src.half_size) {}
@@ -180,55 +199,8 @@ namespace chaos
 		vec_type half_size;
 	};
 
-
-
 	// ==============================================================================================
-	// oriented boxes classes
-	// ==============================================================================================
-
-	template<typename T> struct make_rotator;
-
-	template<>
-	struct make_rotator<float>
-	{
-		static float value() { return 0.0f; }
-	};
-
-	template<>
-	struct make_rotator<glm::vec4>
-	{
-		static glm::vec4 value() { return glm::vec4(1.0f, 0.0f, 0.0f, 0.0f); }
-	};
-
-	template<typename T, int dimension>
-	class type_obox : public type_box<T, dimension>
-	{
-	public:
-
-		using rotator_type = typename type_geometric<T, dimension>::rotator_type;
-
-		
-
-	public:
-
-		rotator_type rotator = make_rotator<rotator_type>::value();
-	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// ==============================================================================================
-	// boxes functions
+	// box functions
 	// ==============================================================================================
 
 	/** equality function for box */
@@ -243,69 +215,6 @@ namespace chaos
 	bool operator != (type_box<T, dimension> const & b1, type_box<T, dimension> const & b2)
 	{
 		return !(b1 == b2);
-	}
-
-	/** returns the perimeter of the box */
-	template<typename T> 
-	T GetPerimeter(type_box2<T> const & b)
-	{
-		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
-	}
-
-	/** returns the surface of the box */
-	template<typename T>
-	T GetSurface(type_box2<T> const & b)
-	{
-		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
-	}
-
-	/** return the volume of the box */
-	template<typename T>
-	T GetVolume(type_box3<T> const & b)
-	{
-		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
-	}
-
-	/** return the surface of the box */
-	template<typename T>
-	T GetSurface(type_box3<T> const & b)
-	{
-		return static_cast<T>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
-	};
-
-	/** returns the bounding circle for the box */
-	template<typename T>
-	type_sphere2<T> GetBoundingCircle(type_box2<T> const & b)
-	{
-		return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
-	}
-
-	/** returns the inner circle for the box */
-	template<typename T>
-	type_sphere2<T> GetInnerCircle(type_box2<T> const & b)
-	{
-		return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
-	}
-
-	/** returns the bounding sphere for the box */
-	template<typename T>
-	type_sphere3<T> GetBoundingSphere(type_box3<T> const & b)
-	{
-		return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
-	}
-
-	/** returns the inner sphere for the box */
-	template<typename T>
-	type_sphere3<T> GetInnerSphere(type_box3<T> const & b)
-	{
-		return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
-	}
-
-	/** returns the "aspect" of the box (width/height) */
-	template<typename T>
-	T GetBoxAspect(type_box2<T> const & b)
-	{
-		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
 	}
 
 	/** intersection of 2 boxes */
@@ -393,6 +302,147 @@ namespace chaos
 			b.position + new_half_size * vec3_type(static_cast<T>(i), static_cast<T>(j), static_cast<T>(k)),
 			new_half_size);
 	}
+
+
+	// ==============================================================================================
+	// oriented boxes classes
+	// ==============================================================================================
+
+	/** an oriented bounding box */
+	template<typename T, int dimension>
+	class type_obox : public type_geometric<T, dimension>
+	{
+	public:
+
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+
+		using rotator_type = typename type_geometric<T, dimension>::rotator_type;
+
+
+		/** constructor (empty box) */
+		type_obox() : half_size((T)-1.0f) {}
+		/** copy constructor */
+		type_obox(type_obox const & src) : position(src.position), half_size(src.half_size), rotator(src.rotator) {}
+		/** other constructor */
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rotator_type const & in_rotator) : position(in_position), half_size(in_half_size), rotator(in_rotator){}
+
+
+
+
+
+
+
+
+
+
+
+		/** returns true whether the box is empty */
+		bool IsEmpty() const
+		{
+			return glm::any(glm::lessThan(half_size, vec_type((T)0.0f)));
+		}
+
+		/** set the box has an empty box */
+		void SetEmpty()
+		{
+			half_size = vec_type((T)-1.0f);
+		}
+
+	public:
+
+
+		/** the center of the box */
+		vec_type position;
+		/** the half size the box */
+		vec_type half_size;
+		/** the angle/quaternion of rotation to apply to a box to have this obox */
+		rotator_type rotator = make_rotator<rotator_type>::value();
+	};
+
+	// ==============================================================================================
+	// obox functions
+	// ==============================================================================================
+
+
+
+
+
+	// ==============================================================================================
+	// box & obox functions
+	// ==============================================================================================
+
+	// XXX : i introduced 'int DIMENSION' in the BOX_TEMPLATE else when calling it seems to resolve to type_geometric !!
+	//       need some research to understand more clearly
+
+	/** returns the perimeter of the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE> 
+	T GetPerimeter(BOX_TEMPLATE<T, 2> const & b)
+	{
+		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
+	}
+
+	/** returns the surface of the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	T GetSurface(BOX_TEMPLATE<T, 2> const & b)
+	{
+		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
+	}
+
+	/** return the volume of the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	T GetVolume(BOX_TEMPLATE<T, 3> const & b)
+	{
+		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
+	}
+
+	/** return the surface of the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	T GetSurface(BOX_TEMPLATE<T, 3> const & b)
+	{
+		return static_cast<T>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
+	};
+
+	/** returns the bounding circle for the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	type_sphere2<T> GetBoundingCircle(BOX_TEMPLATE<T, 2> const & b)
+	{
+		return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
+	}
+
+	/** returns the inner circle for the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	type_sphere2<T> GetInnerCircle(BOX_TEMPLATE<T, 2> const & b)
+	{
+		return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+	}
+
+	/** returns the bounding sphere for the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	type_sphere3<T> GetBoundingSphere(BOX_TEMPLATE<T, 3> const & b)
+	{
+		return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
+	}
+
+	/** returns the inner sphere for the box */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	type_sphere3<T> GetInnerSphere(BOX_TEMPLATE<T, 3> const & b)
+	{
+		return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+	}
+
+	/** returns the "aspect" of the box (width/height) */
+	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	T GetBoxAspect(BOX_TEMPLATE<T, 2> const & b)
+	{
+		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
+	}
+
+
+
+
+
+
+
 
 	// ==============================================================================================
 	// triangle classes

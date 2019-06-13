@@ -150,28 +150,16 @@ namespace chaos
 		/** get the corners of the box */
 		std::pair<vec_type, vec_type> GetCorners() const
 		{
-			if (!IsEmpty())
+			if (!IsEmpty(*this))
 				return std::make_pair(position - half_size, position + half_size);
 				
 			return std::make_pair(position, position);						
 		}
 
-		/** returns true whether the box is empty */
-		bool IsEmpty() const
-		{
-			return glm::any(glm::lessThan(half_size, vec_type((T)0.0f)));
-		}
-
-		/** set the box has an empty box */
-		void SetEmpty()
-		{
-			half_size = vec_type((T)-1.0f);
-		}
-
 		/** increase the box size with a single vertex */
 		void Extend(vec_type const & v)
 		{
-			if (IsEmpty())
+			if (IsEmpty(*this))
 			{
 				position = v;
 				half_size = vec_type((T)0.0f);
@@ -223,7 +211,7 @@ namespace chaos
 	{
 		using vec_type = type_box<T, dimension>::vec_type;
 
-		if (b1.IsEmpty() || b2.IsEmpty()) // any of the 2 is empty, intersection is empty
+		if (IsEmpty(b1) || IsEmpty(b2)) // any of the 2 is empty, intersection is empty
 			return type_box<T, dimension>();
 
 		vec_type A1 = b1.position + b1.half_size;
@@ -250,9 +238,9 @@ namespace chaos
 	{
 		using vec_type = type_box<T, dimension>::vec_type;
 
-		if (b1.IsEmpty()) // if one is empty, returns other
+		if (IsEmpty(b1)) // if one is empty, returns other
 			return b2;
-		if (b2.IsEmpty())
+		if (IsEmpty(b2))
 			return b1;
 
 		vec_type A1 = b1.position + b1.half_size;
@@ -303,6 +291,13 @@ namespace chaos
 			new_half_size);
 	}
 
+	/** reduce a rectangle with an aspect */
+	box2 ShrinkBoxToAspect(box2 src, float aspect);
+	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
+	box2 AlterBoxToAspect(box2 src, float aspect, bool prefer_width_update = true);
+	/** encode a box2 into a vector4 */
+	glm::vec4 EncodeBoxToVector(chaos::box2 const & src);
+
 
 	// ==============================================================================================
 	// oriented boxes classes
@@ -336,17 +331,6 @@ namespace chaos
 
 
 
-		/** returns true whether the box is empty */
-		bool IsEmpty() const
-		{
-			return glm::any(glm::lessThan(half_size, vec_type((T)0.0f)));
-		}
-
-		/** set the box has an empty box */
-		void SetEmpty()
-		{
-			half_size = vec_type((T)-1.0f);
-		}
 
 	public:
 
@@ -374,64 +358,80 @@ namespace chaos
 	// XXX : i introduced 'int DIMENSION' in the BOX_TEMPLATE else when calling it seems to resolve to type_geometric !!
 	//       need some research to understand more clearly
 
+
+
+	/** returns true whether the box is empty */
+	template<typename T, int DIMENSION, template<typename, int> class BOX_TEMPLATE> 
+	bool IsEmpty(BOX_TEMPLATE<T, DIMENSION> const & b)
+	{
+		return glm::any(glm::lessThan(b.half_size, BOX_TEMPLATE<T, DIMENSION>::vec_type((T)0.0f)));
+	}
+
+	/** set the box has an empty box */
+	template<typename T, int DIMENSION, template<typename, int> class BOX_TEMPLATE> 
+	void SetEmpty(BOX_TEMPLATE<T, DIMENSION> & b)
+	{
+		b.half_size = BOX_TEMPLATE<T, DIMENSION>::vec_type((T)-1.0f);
+	}
+
 	/** returns the perimeter of the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE> 
+	template<typename T, template<typename, int> class BOX_TEMPLATE> 
 	T GetPerimeter(BOX_TEMPLATE<T, 2> const & b)
 	{
 		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
 	}
 
 	/** returns the surface of the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	T GetSurface(BOX_TEMPLATE<T, 2> const & b)
 	{
 		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
 	}
 
 	/** return the volume of the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	T GetVolume(BOX_TEMPLATE<T, 3> const & b)
 	{
 		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
 	}
 
 	/** return the surface of the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	T GetSurface(BOX_TEMPLATE<T, 3> const & b)
 	{
 		return static_cast<T>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
 	};
 
 	/** returns the bounding circle for the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere2<T> GetBoundingCircle(BOX_TEMPLATE<T, 2> const & b)
 	{
-		return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
+		return IsEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner circle for the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere2<T> GetInnerCircle(BOX_TEMPLATE<T, 2> const & b)
 	{
-		return b.IsEmpty() ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+		return IsEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the bounding sphere for the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere3<T> GetBoundingSphere(BOX_TEMPLATE<T, 3> const & b)
 	{
-		return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
+		return IsEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner sphere for the box */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere3<T> GetInnerSphere(BOX_TEMPLATE<T, 3> const & b)
 	{
-		return b.IsEmpty() ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+		return IsEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the "aspect" of the box (width/height) */
-	template<typename T, template<typename U, int DIMENSION> class BOX_TEMPLATE>
+	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	T GetBoxAspect(BOX_TEMPLATE<T, 2> const & b)
 	{
 		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
@@ -614,17 +614,7 @@ namespace chaos
 		/** other constructor */
 		type_sphere(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
 
-		/** returns true whether the circle is empty */
-		bool IsEmpty() const
-		{
-			return (radius < 0);
-		}
 
-		/** set the circle has an empty circle */
-		void SetEmpty()
-		{
-			radius = (T)-1.0f;
-		}
 
 		/** returns true whether the point is contained in the circle */
 		bool Contains(vec_type const & pt) const
@@ -644,6 +634,20 @@ namespace chaos
 	// ==============================================================================================
 	// sphere/circle functions
 	// ==============================================================================================
+
+	/** returns true whether the circle is empty */
+	template<typename T, int dimension>
+	bool IsEmpty(type_sphere<T, dimension> const & c)
+	{
+		return (c.radius < 0);
+	}
+
+	/** set the circle has an empty circle */
+	template<typename T, int dimension>
+	void SetEmpty(type_sphere<T, dimension> & c)
+	{
+		c.radius = (T)-1.0f;
+	}
 
 	/** equality function for circle */
 	template<typename T, int dimension>
@@ -694,7 +698,7 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere2<T>::vec_type;
 
-		return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
+		return IsEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
 	}
 
 	/** returns the bounding box of the circle (square) */
@@ -705,7 +709,7 @@ namespace chaos
 
 		static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
 
-		return c.IsEmpty() ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
+		return IsEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
 	}
 
 	template<typename T>
@@ -713,7 +717,7 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere3<T>::vec_type;
 
-		return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
+		return IsEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
 	}
 
 	template<typename T>
@@ -723,7 +727,7 @@ namespace chaos
 
 		static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
 
-		return s.IsEmpty() ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
+		return IsEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
 	}
 
 	/** returns intersection of 2 spheres */
@@ -732,7 +736,7 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
-		if (s1.IsEmpty() || s2.IsEmpty())
+		if (IsEmpty(s1) || IsEmpty(s2))
 			return type_sphere<T, dimension>();
 		if (s1.position == s2.position)
 			return type_sphere<T, dimension>(s1.position, glm::min(s1.radius, s2.radius));
@@ -760,9 +764,9 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
-		if (s1.IsEmpty())
+		if (IsEmpty(s1))
 			return s2;
-		if (s2.IsEmpty())
+		if (IsEmpty(s2))
 			return s1;
 		if (s1.position == s2.position)
 			return type_sphere<T, dimension>(s1.position, glm::max(s1.radius, s2.radius));
@@ -780,15 +784,6 @@ namespace chaos
 			s1.position + ((b + a) / static_cast<T>(2)) * delta_pos,
 			((b - a) / static_cast<T>(2)) * distance);
 	}
-
-	/** reduce a rectangle with an aspect */
-	box2 ShrinkBoxToAspect(box2 src, float aspect);
-	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
-	box2 AlterBoxToAspect(box2 src, float aspect, bool prefer_width_update = true);
-
-
-	/** encode a box2 into a vector4 */
-	glm::vec4 EncodeBoxToVector(chaos::box2 const & src);
 
 }; // namespace chaos
 

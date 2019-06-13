@@ -515,7 +515,7 @@ namespace death
 					 level_instance->has_explicit_bounding_box = true;
 				}
 				// explicit layer bounding box
-				if (explicit_bounding_box.IsEmpty() && chaos::TiledMapTools::IsLayerBoundingBox(geometric_object))
+				if (IsEmpty(explicit_bounding_box) && chaos::TiledMapTools::IsLayerBoundingBox(geometric_object))
 				{
 					chaos::TiledMapTools::GetExplicitLayerBoundingBox(geometric_object, explicit_bounding_box, false); // in layer coordinates				
 				}
@@ -648,7 +648,7 @@ namespace death
 			// final flush
 			particle_populator.FlushParticles();
 			// update the bounding box
-			if (!explicit_bounding_box.IsEmpty())
+			if (!IsEmpty(explicit_bounding_box))
 				bounding_box = explicit_bounding_box;
 			else
 				bounding_box = box | particle_populator.GetBoundingBox();
@@ -800,7 +800,7 @@ namespace death
 			if (AreCameraCollisionEnabled())
 			{
 				chaos::box2 camera_box = game->GetLevelInstance()->GetCameraBox(0);
-				if (!camera_box.IsEmpty())
+				if (!IsEmpty(camera_box))
 				{
 					if (AreTriggerSurfacesEnabled())
 						ComputeCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
@@ -1018,7 +1018,7 @@ namespace death
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
 			glm::ivec2 start_instance = scissor_result.start_instance;
 			glm::ivec2 last_instance  = scissor_result.last_instance;			
-			if (this == level_instance->reference_layer || layer_box.IsEmpty()) 
+			if (this == level_instance->reference_layer || IsEmpty(layer_box)) 
 			{
 				start_instance = glm::ivec2(0, 0);
 				last_instance  = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working

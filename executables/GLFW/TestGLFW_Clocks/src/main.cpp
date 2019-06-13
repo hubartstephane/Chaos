@@ -121,7 +121,7 @@ protected:
 
 	void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
 	{
-		if (b.IsEmpty())
+		if (IsEmpty(b))
 			return;
 
 		glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);

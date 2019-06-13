@@ -5,7 +5,7 @@
 void DisplaySkyboxInfo(chaos::SkyBoxImages const & skybox, char const * title)
 {
 	std::cout << title << " GetSkyBoxSize           : " << skybox.GetSkyBoxSize() << std::endl;
-	std::cout << title << " IsEmpty                 : " << skybox.IsEmpty() << std::endl;
+	std::cout << title << " IsGeometryEmpty                 : " << skybox.IsEmpty() << std::endl;
 	std::cout << title << " IsSingleImage           : " << skybox.IsSingleImage() << std::endl;
 	std::cout << title << " IsSingleImageHorizontal : " << skybox.IsSingleImageHorizontal() << std::endl;
 	std::cout << title << " IsSingleImageVertical   : " << skybox.IsSingleImageVertical() << std::endl;

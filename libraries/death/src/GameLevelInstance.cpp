@@ -86,7 +86,7 @@ namespace death
 		camera_box.position = camera_transform.transform.
 		*/
 		chaos::box2 camera = GetCameraBox(0);
-		if (IsEmpty(camera))
+		if (IsGeometryEmpty(camera))
 			camera = game->GetViewBox();
 
 
@@ -201,12 +201,12 @@ namespace death
 
 		// get camera, cannot continue if it is empty
 		chaos::box2 camera_box = camera->GetCameraBox();
-		if (IsEmpty(camera_box))
+		if (IsGeometryEmpty(camera_box))
 			return;
 
 		// keep player inside camera safe zone
 		chaos::box2 player_box = player->GetPlayerBox();
-		if (!IsEmpty(player_box))
+		if (!IsGeometryEmpty(player_box))
 		{
 			chaos::box2 safe_camera = camera_box;
 			safe_camera.half_size *= camera->GetSafeZone();
@@ -217,7 +217,7 @@ namespace death
 
 		// try to keep the camera in the world
 		chaos::box2 world = GetBoundingBox();
-		if (!IsEmpty(world))
+		if (!IsGeometryEmpty(world))
 			chaos::RestrictToInside(world, camera_box, false);
 
 		// apply camera changes
@@ -229,7 +229,7 @@ namespace death
 		if (allocation == nullptr)
 			return;
 		chaos::box2 world = GetBoundingBox();
-		if (IsEmpty(world))
+		if (IsGeometryEmpty(world))
 			return;
 		chaos::box2 box = chaos::ParticleDefault::GetParticleBox(allocation, index);		
 		chaos::RestrictToInside(world, box, false);

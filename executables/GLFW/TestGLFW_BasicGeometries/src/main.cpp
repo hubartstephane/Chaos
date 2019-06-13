@@ -245,7 +245,7 @@ protected:
 
   void DrawPrimitive(RenderingContext const & ctx, chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent)
   {
-    if (IsEmpty(s))
+    if (IsGeometryEmpty(s))
       return;
 
     glm::mat4 local_to_world = 
@@ -265,7 +265,7 @@ protected:
 
   void DrawPrimitive(RenderingContext const & ctx, chaos::sphere2 s, glm::vec4 const & color, bool is_translucent)
   {
-    if (IsEmpty(s))
+    if (IsGeometryEmpty(s))
       return;
 
     glm::mat4 local_to_world =
@@ -285,7 +285,7 @@ protected:
 
   void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color, bool is_translucent)
   {
-    if (IsEmpty(b))
+    if (IsGeometryEmpty(b))
       return;
 
     glm::mat4 local_to_world = 
@@ -305,7 +305,7 @@ protected:
 
   void DrawPrimitive(RenderingContext const & ctx, chaos::box2 b, glm::vec4 const & color, bool is_translucent)
   {
-    if (IsEmpty(b))
+    if (IsGeometryEmpty(b))
       return;
 
     glm::mat4 local_to_world = 

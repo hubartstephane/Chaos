@@ -136,7 +136,7 @@ namespace chaos
 			if (l.first.size() == 0)
 				continue;
 			box2 bounding = builder.BuildBuffer(l.first.c_str(), params, vertices);
-			if (!IsEmpty(bounding))
+			if (!IsGeometryEmpty(bounding))
 				params.position = bounding.GetCorners().first; // maybe some degenerated case 
 		}
 

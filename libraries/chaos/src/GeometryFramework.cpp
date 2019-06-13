@@ -5,7 +5,7 @@ namespace chaos
 	box2 ShrinkBoxToAspect(box2 src, float aspect)
 	{
 		// any negative component
-		if (IsEmpty(src))
+		if (IsGeometryEmpty(src))
 			return src;
 		// aspect already good
 		float effective_aspect = GetBoxAspect(src);
@@ -24,7 +24,7 @@ namespace chaos
 	box2 AlterBoxToAspect(box2 src, float aspect, bool prefer_width_update)
 	{
 		// any (non null) negative component
-		if (IsEmpty(src)) 
+		if (IsGeometryEmpty(src)) 
 			return src;
 		// cannot have no size
 		if (src.half_size.x == 0.0f && src.half_size.y == 0.0f) 

@@ -150,7 +150,7 @@ namespace chaos
 		/** get the corners of the box */
 		std::pair<vec_type, vec_type> GetCorners() const
 		{
-			if (!IsEmpty(*this))
+			if (!IsGeometryEmpty(*this))
 				return std::make_pair(position - half_size, position + half_size);
 				
 			return std::make_pair(position, position);						
@@ -159,7 +159,7 @@ namespace chaos
 		/** increase the box size with a single vertex */
 		void Extend(vec_type const & v)
 		{
-			if (IsEmpty(*this))
+			if (IsGeometryEmpty(*this))
 			{
 				position = v;
 				half_size = vec_type((T)0.0f);
@@ -211,7 +211,7 @@ namespace chaos
 	{
 		using vec_type = type_box<T, dimension>::vec_type;
 
-		if (IsEmpty(b1) || IsEmpty(b2)) // any of the 2 is empty, intersection is empty
+		if (IsGeometryEmpty(b1) || IsGeometryEmpty(b2)) // any of the 2 is empty, intersection is empty
 			return type_box<T, dimension>();
 
 		vec_type A1 = b1.position + b1.half_size;
@@ -238,9 +238,9 @@ namespace chaos
 	{
 		using vec_type = type_box<T, dimension>::vec_type;
 
-		if (IsEmpty(b1)) // if one is empty, returns other
+		if (IsGeometryEmpty(b1)) // if one is empty, returns other
 			return b2;
-		if (IsEmpty(b2))
+		if (IsGeometryEmpty(b2))
 			return b1;
 
 		vec_type A1 = b1.position + b1.half_size;
@@ -362,14 +362,14 @@ namespace chaos
 
 	/** returns true whether the box is empty */
 	template<typename T, int DIMENSION, template<typename, int> class BOX_TEMPLATE> 
-	bool IsEmpty(BOX_TEMPLATE<T, DIMENSION> const & b)
+	bool IsGeometryEmpty(BOX_TEMPLATE<T, DIMENSION> const & b)
 	{
 		return glm::any(glm::lessThan(b.half_size, BOX_TEMPLATE<T, DIMENSION>::vec_type((T)0.0f)));
 	}
 
 	/** set the box has an empty box */
 	template<typename T, int DIMENSION, template<typename, int> class BOX_TEMPLATE> 
-	void SetEmpty(BOX_TEMPLATE<T, DIMENSION> & b)
+	void SetGeometryEmpty(BOX_TEMPLATE<T, DIMENSION> & b)
 	{
 		b.half_size = BOX_TEMPLATE<T, DIMENSION>::vec_type((T)-1.0f);
 	}
@@ -406,28 +406,28 @@ namespace chaos
 	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere2<T> GetBoundingCircle(BOX_TEMPLATE<T, 2> const & b)
 	{
-		return IsEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner circle for the box */
 	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere2<T> GetInnerCircle(BOX_TEMPLATE<T, 2> const & b)
 	{
-		return IsEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the bounding sphere for the box */
 	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere3<T> GetBoundingSphere(BOX_TEMPLATE<T, 3> const & b)
 	{
-		return IsEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner sphere for the box */
 	template<typename T, template<typename, int> class BOX_TEMPLATE>
 	type_sphere3<T> GetInnerSphere(BOX_TEMPLATE<T, 3> const & b)
 	{
-		return IsEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the "aspect" of the box (width/height) */
@@ -463,7 +463,7 @@ namespace chaos
 		type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
 
 		/** returns true whether the triangle is empty */
-		bool IsEmpty() const
+		bool IsGeometryEmpty() const
 		{
 			if (a == b || a == c || b == c)
 				return true;
@@ -480,7 +480,7 @@ namespace chaos
 		bool Contains(vec_type const & pt) const
 		{
 			// test whether the triangle is null
-			if (IsEmpty())
+			if (IsGeometryEmpty())
 				return false;
 
 			// test whether the point is inside the edges
@@ -637,14 +637,14 @@ namespace chaos
 
 	/** returns true whether the circle is empty */
 	template<typename T, int dimension>
-	bool IsEmpty(type_sphere<T, dimension> const & c)
+	bool IsGeometryEmpty(type_sphere<T, dimension> const & c)
 	{
 		return (c.radius < 0);
 	}
 
 	/** set the circle has an empty circle */
 	template<typename T, int dimension>
-	void SetEmpty(type_sphere<T, dimension> & c)
+	void SetGeometryEmpty(type_sphere<T, dimension> & c)
 	{
 		c.radius = (T)-1.0f;
 	}
@@ -698,7 +698,7 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere2<T>::vec_type;
 
-		return IsEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
+		return IsGeometryEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
 	}
 
 	/** returns the bounding box of the circle (square) */
@@ -709,7 +709,7 @@ namespace chaos
 
 		static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
 
-		return IsEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
+		return IsGeometryEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
 	}
 
 	template<typename T>
@@ -717,7 +717,7 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere3<T>::vec_type;
 
-		return IsEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
+		return IsGeometryEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
 	}
 
 	template<typename T>
@@ -727,7 +727,7 @@ namespace chaos
 
 		static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
 
-		return IsEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
+		return IsGeometryEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
 	}
 
 	/** returns intersection of 2 spheres */
@@ -736,7 +736,7 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
-		if (IsEmpty(s1) || IsEmpty(s2))
+		if (IsGeometryEmpty(s1) || IsGeometryEmpty(s2))
 			return type_sphere<T, dimension>();
 		if (s1.position == s2.position)
 			return type_sphere<T, dimension>(s1.position, glm::min(s1.radius, s2.radius));
@@ -764,9 +764,9 @@ namespace chaos
 	{
 		using vec_type = typename type_sphere<T, dimension>::vec_type;
 
-		if (IsEmpty(s1))
+		if (IsGeometryEmpty(s1))
 			return s2;
-		if (IsEmpty(s2))
+		if (IsGeometryEmpty(s2))
 			return s1;
 		if (s1.position == s2.position)
 			return type_sphere<T, dimension>(s1.position, glm::max(s1.radius, s2.radius));

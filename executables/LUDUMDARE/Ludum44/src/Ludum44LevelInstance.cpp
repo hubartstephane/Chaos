@@ -60,13 +60,13 @@ bool LudumLevelInstance::DoTick(double delta_time)
 
 	// get the camera BEFORE modification
 	chaos::box2 camera_before = GetCameraBox(0);
-	if (IsEmpty(camera_before))
+	if (IsGeometryEmpty(camera_before))
 		return true;
 	// keep the player in camera view
 	RestrictCameraToPlayerAndWorld(0, 0);
 	// get the camera AFTER modification
 	chaos::box2 camera_after = GetCameraBox(0);
-	if (IsEmpty(camera_after))
+	if (IsGeometryEmpty(camera_after))
 		return true;
 	// correct camera position
 	int scroll_direction = 1;

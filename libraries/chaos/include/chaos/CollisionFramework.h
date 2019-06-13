@@ -28,7 +28,7 @@ namespace chaos
 		bool result = false;
 
 		// if one is empty, nothing to do
-		if (IsEmpty(bigger) || IsEmpty(smaller))
+		if (IsGeometryEmpty(bigger) || IsGeometryEmpty(smaller))
 			return false;
 
 		auto big_corners = bigger.GetCorners();
@@ -85,7 +85,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & target)
 	{
-		if (IsEmpty(src) || IsEmpty(target))
+		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return false;
 
 		auto src_corners = src.GetCorners();
@@ -138,7 +138,7 @@ namespace chaos
 	bool RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)
 	{
 		// if one is empty, nothing to do
-		if (IsEmpty(bigger) || IsEmpty(smaller))
+		if (IsGeometryEmpty(bigger) || IsGeometryEmpty(smaller))
 			return false;
 
 		// ensure smaller and bigger are coherent
@@ -165,7 +165,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool RestrictToOutside(type_sphere<T, dimension> & src, type_sphere<T, dimension> & target)
 	{
-		if (IsEmpty(src) || IsEmpty(target))
+		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
 			return false;
 
 		auto delta_pos = target.position - src.position;
@@ -200,7 +200,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(type_box<T, dimension> const & src1, type_box<T, dimension> const & src2)
 	{
-		if (IsEmpty(src1) || IsEmpty(src2))
+		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
 
 		auto src1_corners = src1.GetCorners();
@@ -217,7 +217,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(type_sphere<T, dimension> const & src1, type_sphere<T, dimension> const & src2)
 	{
-		if (IsEmpty(src1) || IsEmpty(src2))
+		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
 
 		return glm::length2(src1.position - src2.position) <= MathTools::Square(src1.radius + src2.radius);
@@ -236,9 +236,9 @@ namespace chaos
 		using vec_type = box_type::vec2_type;
 
 		// 1 : test whether any entry is null (sphere is faster call, first)
-		if (IsEmpty(s))
+		if (IsGeometryEmpty(s))
 			return false;
-		if (IsEmpty(b))
+		if (IsGeometryEmpty(b))
 			return false;
 
 		// 2 : test whether the center of the sphere is inside the box
@@ -309,9 +309,9 @@ namespace chaos
 	bool Collide(type_triangle<T, 2> const & t, type_sphere<T, 2> const & s)
 	{
 		// 1 : test whether any entry is null (sphere is faster call, first)
-		if (IsEmpty(s))
+		if (IsGeometryEmpty(s))
 			return false;
-		if (IsEmpty(t))
+		if (IsGeometryEmpty(t))
 			return false;
 
 		auto r2 = s.radius * s.radius;

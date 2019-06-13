@@ -324,14 +324,14 @@ namespace death
 		chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
 		if (player_particle != nullptr)
 		{
-			if (!IsEmpty(checkpoint_camera))
+			if (!IsGeometryEmpty(checkpoint_camera))
 				player_particle->bounding_box.position = checkpoint_camera.position;
 			else
 				player_particle->bounding_box.position = checkpoint_position;
 		}
 			
 		// update camera position
-		if (!IsEmpty(checkpoint_camera))
+		if (!IsGeometryEmpty(checkpoint_camera))
 			checkpoint_level_instance->SetCameraBox(0, checkpoint_camera);	
 
 		return OnRestartedFromCheckpoint(player);			

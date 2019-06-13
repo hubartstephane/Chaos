@@ -103,13 +103,13 @@ public:
 
 
 	/** returns true whether the box is empty */
-	bool IsEmpty() const
+	bool IsGeometryEmpty() const
 	{
 		return glm::any(glm::lessThan(half_size, vec_type((T)0.0f)));
 	}
 
 	/** set the box has an empty box */
-	void SetEmpty()
+	void SetGeometryEmpty()
 	{
 		half_size = vec_type((T)-1.0f);
 	}

@@ -66,7 +66,7 @@ namespace death
 				return false;
 
 			// compute the bounding box
-			if (IsEmpty(particle_box))
+			if (IsGeometryEmpty(particle_box))
 			{
 				particle_box.half_size = glm::vec2(bitmap_info->width, bitmap_info->height) * 0.5f;
 			}

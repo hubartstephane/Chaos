@@ -1231,7 +1231,7 @@ namespace death
 		if (current_level_instance != nullptr)
 		{
 			chaos::box2 result = current_level_instance->GetBoundingBox();
-			if (!IsEmpty(result))
+			if (!IsGeometryEmpty(result))
 				return result;
 		}
 		// by default, the world will be the same size than the screen

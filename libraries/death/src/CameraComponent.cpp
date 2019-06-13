@@ -36,12 +36,12 @@ namespace death
 
 		// get camera, cannot continue if it is empty
 		chaos::box2 camera_box = camera->GetCameraBox();
-		if (IsEmpty(camera_box))
+		if (IsGeometryEmpty(camera_box))
 			return true;
 
 		// keep player inside camera safe zone
 		chaos::box2 player_box = player->GetPlayerBox();
-		if (!IsEmpty(player_box))
+		if (!IsGeometryEmpty(player_box))
 		{
 			chaos::box2 safe_camera = camera_box;
 			safe_camera.half_size *= camera->GetSafeZone();
@@ -52,7 +52,7 @@ namespace death
 
 		// try to keep the camera in the world
 		chaos::box2 world = camera->GetLevelInstance()->GetBoundingBox();
-		if (!IsEmpty(world))
+		if (!IsGeometryEmpty(world))
 			chaos::RestrictToInside(world, camera_box, false);
 
 		// apply camera changes

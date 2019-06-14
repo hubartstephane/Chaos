@@ -69,9 +69,9 @@ namespace chaos
 		/** the lines of the log (string + lifetime */
 		std::vector<std::pair<std::string, float>> lines;
 		/** indicates whether the buffer as to be updated */
-		mutable bool rebuild_required{true};
+		mutable bool rebuild_required = true;
 		/** size of the screen (useful to know when lines have to change) */
-		mutable int screen_width{-1};
+		mutable int screen_width = -1;
 
 		/** the program to run */
 		shared_ptr<GPUProgram> program;

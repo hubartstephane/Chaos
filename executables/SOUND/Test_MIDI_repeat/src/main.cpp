@@ -67,7 +67,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 	int const SILENCE_TIMER = 0;
 	int const END_OF_TRACK_TIMER = 1;
 
-	double const SILENCE_DURATION{ 1.0 };
+	double const SILENCE_DURATION = 1.0;
 
 protected:
 
@@ -283,7 +283,7 @@ protected:
 	HMIDIIN hMidiInDevice = nullptr;
 	DWORD nMidiOutPort = 0;
 
-	int current_state{ STATE_NONE };
+	int current_state = STATE_NONE;
 
 	chaos::shared_ptr<chaos::Clock> track_clock;
 	chaos::shared_ptr<chaos::Clock> management_clock;

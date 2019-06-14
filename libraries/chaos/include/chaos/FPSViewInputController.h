@@ -15,23 +15,23 @@ namespace chaos
 	public:
 
 		/** mouse speed */
-		float mouse_sensibility{ 1.0f };
+		float mouse_sensibility = 1.0f;
 
 		/** some self descriptive speed */
-		float strafe{ 20.0f };
+		float strafe = 20.0f;
 		/** some self descriptive speed */
-		float forward{ 20.0f };
+		float forward = 20.0f;
 		/** some self descriptive speed */
-		float back{ 20.0f };
+		float back = 20.0f;
 		/** some self descriptive speed */
-		float up{ 20.0f };
+		float up = 20.0f;
 		/** some self descriptive speed */
-		float down{ 20.0f };
+		float down = 20.0f;
 
 		/** some self descriptive speed */
-		float yaw{ 90.0f };
+		float yaw = 90.0f;
 		/** some self descriptive speed */
-		float pitch{ 90.0f };
+		float pitch = 90.0f;
 	};
 
 	class FPSViewMovementKeyboardConfiguration
@@ -97,13 +97,13 @@ namespace chaos
 		static double const INVALID_MOUSE_VALUE;
 
 		/** whether the mouse is enabled or not */
-		bool mouse_enabled{ true };
+		bool mouse_enabled = true;
 		/** whether the mouse has been captured */
-		bool mouse_captured{ false };
+		bool mouse_captured = false;
 		/** position of the mouse once captured */
-		double previous_mouse_x{ INVALID_MOUSE_VALUE };
+		double previous_mouse_x = INVALID_MOUSE_VALUE;
 		/** position of the mouse once captured */
-		double previous_mouse_y{ INVALID_MOUSE_VALUE };
+		double previous_mouse_y = INVALID_MOUSE_VALUE;
 
 	public:
 
@@ -115,7 +115,7 @@ namespace chaos
 		FPSViewMovementKeyboardConfiguration keyboard_config;
 
 		/** whether we need to capture to move the camera */
-		bool must_click_to_rotate{ true };
+		bool must_click_to_rotate = true;
 	};
 
 }; // namespace chaos

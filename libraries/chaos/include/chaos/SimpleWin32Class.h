@@ -14,11 +14,11 @@ namespace chaos
 	public:
 
 		DWORD dwExStyle = 0;
-		DWORD dwStyle{ WS_OVERLAPPEDWINDOW };
-		int   x{ CW_USEDEFAULT };
-		int   y{ CW_USEDEFAULT };
-		int   nWidth{ CW_USEDEFAULT };
-		int   nHeight{ CW_USEDEFAULT };
+		DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+		int   x = CW_USEDEFAULT;
+		int   y = CW_USEDEFAULT;
+		int   nWidth = CW_USEDEFAULT;
+		int   nHeight = CW_USEDEFAULT;
 	};
 
 	/**

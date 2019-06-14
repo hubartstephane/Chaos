@@ -384,8 +384,8 @@ protected:
 
 	chaos::shared_ptr<chaos::ClockEvent> clock_event;
 
-	float time_line_box_size{0.0f};
-	float time_line_box_position{0.0f};
+	float time_line_box_size = 0.0f;
+	float time_line_box_position = 0.0f;
 
 	chaos::FPSViewInputController fps_view_controller;
 

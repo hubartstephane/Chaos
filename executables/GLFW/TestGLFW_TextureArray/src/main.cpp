@@ -256,8 +256,8 @@ protected:
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
-	int texture_slice{0};
-	int texture_slice_count{0};
+	int texture_slice = 0;
+	int texture_slice_count = 0;
 
 	chaos::FPSViewInputController fps_view_controller;
 

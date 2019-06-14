@@ -255,15 +255,15 @@ namespace chaos
 	protected:
 
 		/** the first buffer of the 'linked list' */
-		alloc_type * first_buffer{nullptr};
+		alloc_type * first_buffer = nullptr;
 		/** the current buffer of the 'linked list' */
-		alloc_type * current_buffer{nullptr};
+		alloc_type * current_buffer = nullptr;
 		/** the total size of data that has been written */
-		size_t       written_size{0};
+		size_t       written_size = 0;
 		/** the total size of data that has been reserved */
-		size_t       reserved_size{0};
+		size_t       reserved_size = 0;
 		/** the default size of chunk used for reservation */
-		size_t       default_chunk_size{0};
+		size_t       default_chunk_size = 0;
 		/** the allocator */
 		allocator_type allocator;
 	};

@@ -29,15 +29,15 @@ namespace chaos
 			/** the characters contained inside the font bitmap, in order */
 			std::string font_characters;
 			/** the number of characters on a line of the bitmap */
-			int         font_characters_per_line{0};
+			int         font_characters_per_line = 0;
 			/** the number of lines of the bitmap */
-			int         font_characters_line_count{0};
+			int         font_characters_line_count = 0;
 			/** character size in pixel */
-			int         character_width{20};
+			int         character_width = 20;
 			/** some space to add (or remove between each characters) in pixels */
-			glm::ivec2  spacing{0, 0};
+			glm::ivec2  spacing = glm::ivec2(0, 0);
 			/** some texels to remove in texture font grid to have pixels of interest */
-			glm::ivec2  crop_texture{0, 0};
+			glm::ivec2  crop_texture = glm::ivec2(0, 0);
 		};
 
 		/** display the debug text */
@@ -85,7 +85,7 @@ namespace chaos
 		GPUVertexDeclaration declaration;
 
 		/** number of element to draw */
-		mutable size_t draw_count{0};
+		mutable size_t draw_count = 0;
 
 		/** a copy of the parameters */
 		Params mesh_builder_params;

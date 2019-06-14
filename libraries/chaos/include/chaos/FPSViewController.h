@@ -44,13 +44,13 @@ namespace chaos
 	public:
 
 		/** the position of the camera in its parent system */
-		glm::vec3 position{0.0f, 0.0f, 0.0f};
+		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 		/** Yaw (expressed in degree) */
-		float yaw{0.0f};
+		float yaw = 0.0f;
 		/** Pitch (expressed in degree) */
-		float pitch{0.0f};
+		float pitch = 0.0f;
 		/** Roll (expressed in degree) */
-		float roll{0.0f};
+		float roll = 0.0f;
 	};
 
 }; // namespace chaos

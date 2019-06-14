@@ -880,7 +880,7 @@ protected:
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_sphere;
 	chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
 
-	chaos::Clock * clock{ nullptr };
+	chaos::Clock * clock = nullptr;
 
 	chaos::box3 bigger_box;
 	chaos::box3 smaller_box;
@@ -888,7 +888,7 @@ protected:
 	chaos::sphere3 bigger_sphere;
 	chaos::sphere3 smaller_sphere;
 
-	int    display_example{ 0 };
+	int    display_example = 0;
 
 	chaos::FPSViewInputController fps_view_controller;
 

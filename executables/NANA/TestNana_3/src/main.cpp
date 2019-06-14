@@ -23,8 +23,8 @@ struct stateinfo
 	enum class state { init, operated, assigned };
 	state          opstate{ state::init };
 	std::string    operation;
-	double         oprand{ 0 };
-	double         outcome{ 0 };
+	double         oprand = 0;
+	double         outcome = 0;
 	label        & procedure;
 	label        & result;
 	stateinfo(label& proc, label& resl)

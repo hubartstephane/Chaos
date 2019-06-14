@@ -45,7 +45,7 @@ namespace chaos
 	public:
 
 		/** the signature of the event */
-		unsigned char signature{ 0 };
+		unsigned char signature = 0;
 	};
 
 	/**
@@ -121,11 +121,11 @@ namespace chaos
 		static int16_t const FORMAT_MULTIPLE_SONG = 2;
 
 		/** the format of the MIDI file */
-		int16_t format{ 0 };
+		int16_t format = 0;
 		/** the number of track in MIDI file */
-		int16_t track_count{ 0 };
+		int16_t track_count = 0;
 		/** time description */
-		int16_t division{ 0 };
+		int16_t division = 0;
 	};
 
 	/**

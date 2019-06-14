@@ -13,7 +13,7 @@ namespace chaos
 	{
 	public:
 
-		DWORD dwExStyle{ 0 };
+		DWORD dwExStyle = 0;
 		DWORD dwStyle{ WS_OVERLAPPEDWINDOW };
 		int   x{ CW_USEDEFAULT };
 		int   y{ CW_USEDEFAULT };

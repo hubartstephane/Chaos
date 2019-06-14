@@ -125,7 +125,7 @@ namespace chaos
 			/** the generator that will request some slices */
 			shared_ptr<TextureArraySliceGenerator> generator;
 			/** optional where the slices are allocated */
-			SliceInfo * slice_info{ nullptr };
+			SliceInfo * slice_info = nullptr;
 		};
 
 		/** constructor */

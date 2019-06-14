@@ -368,7 +368,7 @@ protected:
   chaos::shared_ptr<chaos::SimpleMesh> mesh;
   chaos::shared_ptr<chaos::GPUTexture>    texture;
 
-  int font_index{ 0 };
+  int font_index = 0;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

@@ -101,7 +101,7 @@ namespace chaos
 				bitmap_glyph(in_bitmap_glyph) {}
 
 			/** the glyph */
-			FT_BitmapGlyph bitmap_glyph{ nullptr };
+			FT_BitmapGlyph bitmap_glyph = nullptr;
 		};
 
 		/** get an image description from a FT_Bitmap object */

@@ -146,8 +146,8 @@ protected:
 
 protected:
 
-	HMIDIIN hMidiInDevice{ nullptr };
-	DWORD nMidiInPort{ 0 };
+	HMIDIIN hMidiInDevice = nullptr;
+	DWORD nMidiInPort = 0;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

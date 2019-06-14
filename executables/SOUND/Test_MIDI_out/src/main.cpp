@@ -110,8 +110,8 @@ protected:
 
 protected:
 
-	HMIDIOUT hMidiOutDevice{ nullptr };
-	DWORD nMidiOutPort{ 0 };
+	HMIDIOUT hMidiOutDevice = nullptr;
+	DWORD nMidiOutPort = 0;
 };
 
 // ================================================================

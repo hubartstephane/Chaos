@@ -344,8 +344,8 @@ protected:
 	chaos::shared_ptr<chaos::SimpleMesh> mesh;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
-	int mipmap_level{ 0 };
-	int texture_index{ 0 };
+	int mipmap_level = 0;
+	int texture_index = 0;
 };
 
 

@@ -107,7 +107,7 @@ protected:
 
   chaos::GLDebugOnScreenDisplay debug_display;
 
-  int click_count{ 0 };
+  int click_count = 0;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

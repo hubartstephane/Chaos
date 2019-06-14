@@ -278,10 +278,10 @@ protected:
 
 protected:
 
-	HMIDIOUT hMidiOutDevice{ nullptr };
-	DWORD nMidiInPort{ 0 };
-	HMIDIIN hMidiInDevice{ nullptr };
-	DWORD nMidiOutPort{ 0 };
+	HMIDIOUT hMidiOutDevice = nullptr;
+	DWORD nMidiInPort = 0;
+	HMIDIIN hMidiInDevice = nullptr;
+	DWORD nMidiOutPort = 0;
 
 	int current_state{ STATE_NONE };
 

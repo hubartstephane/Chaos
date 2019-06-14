@@ -60,10 +60,10 @@ public:
 			type_start(ts),
 			type_end(te){}
 
-		int start{ 0 };
-		int end{ 0 };
-		int type_start{ 0 };
-		int type_end{ 0 };
+		int start = 0;
+		int end = 0;
+		int type_start = 0;
+		int type_end = 0;
 	};
 
 	/** the types for tokens */

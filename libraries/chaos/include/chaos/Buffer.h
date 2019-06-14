@@ -171,7 +171,7 @@ namespace chaos
 	protected:
 
 		/** the policy */
-		BufferPolicyBase * policy{ nullptr };
+		BufferPolicyBase * policy = nullptr;
 	};
 
 
@@ -267,9 +267,9 @@ namespace chaos
 	public:
 
 		/** the pointer on the data */
-		type * data{ nullptr };
+		type * data = nullptr;
 		/** the number of elements in the buffer */
-		size_t bufsize{ 0 };
+		size_t bufsize = 0;
 	};
 
 

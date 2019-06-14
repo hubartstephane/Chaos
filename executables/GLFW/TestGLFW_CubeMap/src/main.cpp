@@ -292,7 +292,7 @@ protected:
 
   chaos::GLDebugOnScreenDisplay debug_display;
 
-  int skybox_index{ 0 };
+  int skybox_index = 0;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

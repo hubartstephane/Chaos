@@ -45,7 +45,7 @@ namespace chaos
 	protected:
 
 		/** the position in the buffer */
-		size_t position{ 0 };
+		size_t position = 0;
 		/** the reference of the buffer where to stream data */
 		Buffer<char> const & buffer;
 	};

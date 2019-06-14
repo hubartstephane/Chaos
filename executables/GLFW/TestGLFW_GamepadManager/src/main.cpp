@@ -48,7 +48,7 @@ public:
 
 protected:
 
-  chaos::GLDebugOnScreenDisplay * debug_display{ nullptr };
+  chaos::GLDebugOnScreenDisplay * debug_display = nullptr;
 };
 
 
@@ -69,7 +69,7 @@ protected:
 
 protected:
 
-	chaos::GLDebugOnScreenDisplay * debug_display{ nullptr };
+	chaos::GLDebugOnScreenDisplay * debug_display = nullptr;
 };
 
 class MyGLFWWindowGamepadTest : public chaos::MyGLFW::Window

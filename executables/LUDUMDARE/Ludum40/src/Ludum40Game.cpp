@@ -649,7 +649,7 @@ void Game::DisplayFullscreen(chaos::Renderer * renderer, glm::ivec2 viewport_siz
   glm::vec2 min_texture_coord = glm::vec2(0.0f, 0.0f);
   glm::vec2 max_texture_coord = glm::vec2(1.0f, 1.0f);
 
-  auto texture_corners = GetBoxCorners(shrinked_texture_box);
+  auto texture_corners = GetBoxExtremums(shrinked_texture_box);
   min_texture_coord = texture_corners.first  / (2.0f * texture_box.half_size);
   max_texture_coord = texture_corners.second / (2.0f * texture_box.half_size);
 

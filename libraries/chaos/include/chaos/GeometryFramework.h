@@ -351,7 +351,7 @@ namespace chaos
 
 	/** get the corners of the box */
 	template<typename T, int dimension>
-	auto GetBoxCorners(type_box<T, dimension> const & b) // returns a std::pair<vec_type, vec_type>
+	auto GetBoxExtremums(type_box<T, dimension> const & b) // returns a std::pair<vec_type, vec_type>
 	{
 		if (!IsGeometryEmpty(b))
 			return std::make_pair(b.position - b.half_size, b.position + b.half_size);
@@ -371,7 +371,7 @@ namespace chaos
 		}
 		else
 		{
-			std::pair<vec_type, vec_type> corners = GetBoxCorners(b);
+			std::pair<vec_type, vec_type> corners = GetBoxExtremums(b);
 			corners.first = glm::min(corners.first, v);
 			corners.second = glm::max(corners.second, v);
 			b = type_box<T, dimension>(corners);

@@ -23,9 +23,6 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/ConvexPolygonSplitter.h>
 
-#include <glm/gtx/quaternion.hpp>
-
-
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
@@ -1118,7 +1115,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	chaos::GetBoxVertices(b2, v2);
 	chaos::GetBoxVertices(b3, v3);
 
-
+	chaos::rotator2 r2;
+	chaos::rotator3 r3;
 
 	chaos::obox2 ob2;
 	chaos::obox3 ob3;

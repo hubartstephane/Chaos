@@ -16,7 +16,7 @@ namespace chaos
 	template<typename T, int dimension> class type_obox;
 	template<typename T, int dimension> class type_sphere;
 	template<typename T, int dimension> class type_triangle;
-	template<typename T, int dimension> class type_rotator;
+	template<typename T, int dimension> class type_rotator; // this is not an object that describes a rotation, but a meta object that gives the rotation in a meta function
 	// remove the dimension from the template (keep type)
 	template<typename T> using type_ray2      = type_ray<T, 2>;
 	template<typename T> using type_ray3      = type_ray<T, 3>;
@@ -28,21 +28,8 @@ namespace chaos
 	template<typename T> using type_sphere3   = type_sphere<T, 3>;
 	template<typename T> using type_triangle2 = type_triangle<T, 2>;
 	template<typename T> using type_triangle3 = type_triangle<T, 3>;
-	template<typename T> using type_rotator2  = type_rotator<T, 2>;
-	template<typename T> using type_rotator3  = type_rotator<T, 3>;
-	// remove all arguments from template (the objects to use for real)
-	using ray2      = type_ray2<float>;
-	using ray3      = type_ray3<float>;
-	using box2      = type_box2<float>;
-	using box3      = type_box3<float>;
-	using obox2     = type_obox2<float>;
-	using obox3     = type_obox3<float>;
-	using sphere2   = type_sphere2<float>;
-	using sphere3   = type_sphere3<float>;
-	using triangle2 = type_triangle2<float>;
-	using triangle3 = type_triangle3<float>;
-	using rotator2  = type_rotator2<float>;
-	using rotator3  = type_rotator3<float>;
+	template<typename T> using type_rotator2  = type_rotator<T, 2>; // theses is not objects that describe a rotation, but meta objects that give the rotation in a meta function
+	template<typename T> using type_rotator3  = type_rotator<T, 3>; //
 
 	// ==============================================================================================
 	// rotator initializer
@@ -174,6 +161,162 @@ namespace chaos
 	};
 
 	// ==============================================================================================
+	// box class
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	class type_box : public box_base<T, dimension>
+	{
+	public:
+
+		using vec_type = typename box_base<T, dimension>::vec_type;
+
+		/** constructor (empty box) */
+		type_box() {}
+		/** copy constructor */
+		type_box(type_box const & src) : box_base(src.position, src.half_size) {}
+		/** other constructor */
+		type_box(vec_type const & in_position, vec_type const & in_half_size) : box_base(in_position, in_half_size) {}
+		/** construct a box from 2 points */
+		type_box(std::pair<vec_type, vec_type> const & pts)
+		{
+			vec_type a = glm::min(pts.first, pts.second);
+			vec_type b = glm::max(pts.first, pts.second);
+
+			position = (b + a) / static_cast<T>(2);
+			half_size = (b - a) / static_cast<T>(2);
+		}
+	};
+
+	// ==============================================================================================
+	// obox class
+	// ==============================================================================================
+
+	/** an oriented bounding box */
+	template<typename T, int dimension>
+	class type_obox : public box_base<T, dimension>
+	{
+	public:
+
+		using vec_type = typename box_base<T, dimension>::vec_type;
+
+		using rot_type = typename box_base<T, dimension>::rot_type;
+
+		/** constructor (empty box) */
+		type_obox() {}
+		/** copy constructor */
+		type_obox(type_obox const & src) : box_base(src.position, src.half_size), rotator(src.rotator) {}
+		/** other constructor */
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : box_base(in_position, in_half_size), rotator(in_rotator) {}
+
+	public:
+
+		/** the angle/quaternion of rotation to apply to a box to have this obox */
+		rot_type rotator = type_rotator<T, dimension>::zero_rotator();
+	};
+
+	// ==============================================================================================
+	// sphere/circle classes
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	class type_sphere : public type_geometric<T, dimension>
+	{
+	public:
+
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type = typename type_geometric<T, dimension>::type;
+
+		/** constructor (empty circle) */
+		type_sphere() : radius((T)-1.0f) {}
+		/** copy constructor */
+		type_sphere(type_sphere const & src) : position(src.position), radius(src.radius) {}
+		/** other constructor */
+		type_sphere(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
+
+	public:
+
+		/** the center of the circle */
+		vec_type position;
+		/** the radius of the circle */
+		type radius;
+	};
+
+	// ==============================================================================================
+	// triangle classes
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	class type_triangle : public type_geometric<T, dimension>
+	{
+	public:
+
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+
+		/** default constructor */
+		type_triangle() {}
+		/** copy constructor */
+		type_triangle(type_triangle const & src) : a(src.a), b(src.b), c(src.c) {}
+		/** constructor from points */
+		type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
+
+	public:
+
+		/** first point of the triangle */
+		vec_type a;
+		/** second point of the triangle */
+		vec_type b;
+		/** third point of the triangle */
+		vec_type c;
+	};
+
+	// ==============================================================================================
+	// ray classes
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	class type_ray : public type_geometric<T, dimension>
+	{
+	public:
+
+		using vec_type = typename type_geometric<T, dimension>::vec_type;
+
+		/** default constructor */
+		type_ray() {}
+		/** copy constructor */
+		type_ray(type_ray const & src) : position(src.position), direction(src.direction) {}
+		/** other constructor */
+		type_ray(vec_type const & in_position, vec_type const & in_direction) : position(in_position), direction(in_direction) {}
+		/** construct a ray from 2 points */
+		type_ray(std::pair<vec_type, vec_type> const & pts) : position(pts.first), direction(glm::normalize(pts.second - pts.first)) {}
+
+	public:
+
+		/** the starting position of the ray in space */
+		vec_type position;
+		/** the direction of the ray in space */
+		vec_type direction;
+	};
+
+	// ==============================================================================================
+	// The final objects
+	// ==============================================================================================
+
+	// remove all arguments from template (the objects to use for real)
+	using ray2 = type_ray2<float>;
+	using ray3 = type_ray3<float>;
+	using box2 = type_box2<float>;
+	using box3 = type_box3<float>;
+	using obox2 = type_obox2<float>;
+	using obox3 = type_obox3<float>;
+	using sphere2 = type_sphere2<float>;
+	using sphere3 = type_sphere3<float>;
+	using triangle2 = type_triangle2<float>;
+	using triangle3 = type_triangle3<float>;
+	using rotator2 = type_rotator2<float>::type; // this are ROTATION here (angle or quaternion)
+	using rotator3 = type_rotator3<float>::type; //
+
+	// ==============================================================================================
 	// box_base functions
 	// ==============================================================================================
 
@@ -253,34 +396,6 @@ namespace chaos
 	{
 		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
 	}
-
-	// ==============================================================================================
-	// box class
-	// ==============================================================================================
-
-	template<typename T, int dimension>
-	class type_box : public box_base<T, dimension>
-	{
-	public:
-
-		using vec_type = typename box_base<T, dimension>::vec_type;
-
-		/** constructor (empty box) */
-		type_box(){}
-		/** copy constructor */
-		type_box(type_box const & src) : box_base(src.position, src.half_size) {}
-		/** other constructor */
-		type_box(vec_type const & in_position, vec_type const & in_half_size) : box_base(in_position, in_half_size) {}
-		/** construct a box from 2 points */
-		type_box(std::pair<vec_type, vec_type> const & pts)
-		{
-			vec_type a = glm::min(pts.first, pts.second);
-			vec_type b = glm::max(pts.first, pts.second);
-
-			position  = (b + a) / static_cast<T>(2);
-			half_size = (b - a) / static_cast<T>(2);
-		}
-	};
 
 	// ==============================================================================================
 	// box functions
@@ -427,35 +542,7 @@ namespace chaos
 	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
 	box2 AlterBoxToAspect(box2 src, float aspect, bool prefer_width_update = true);
 	/** encode a box2 into a vector4 */
-	glm::vec4 EncodeBoxToVector(chaos::box2 const & src);
-
-
-	// ==============================================================================================
-	// obox class
-	// ==============================================================================================
-
-	/** an oriented bounding box */
-	template<typename T, int dimension>
-	class type_obox : public box_base<T, dimension>
-	{
-	public:
-
-		using vec_type = typename box_base<T, dimension>::vec_type;
-
-		using rot_type = typename box_base<T, dimension>::rot_type;
-
-		/** constructor (empty box) */
-		type_obox(){}
-		/** copy constructor */
-		type_obox(type_obox const & src) : box_base(src.position, src.half_size), rotator(src.rotator) {}
-		/** other constructor */
-		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : box_base(in_position, in_half_size), rotator(in_rotator){}
-
-	public:
-
-		/** the angle/quaternion of rotation to apply to a box to have this obox */
-		rot_type rotator = type_rotator<T, dimension>::zero_rotator();
-	};
+	glm::vec4 EncodeBoxToVector(box2 const & src);
 
 	// ==============================================================================================
 	// obox functions
@@ -474,42 +561,7 @@ namespace chaos
 	{
 		return !(b1 == b2);
 	}
-
-
-
-
-
-
-
-
-	// ==============================================================================================
-	// triangle classes
-	// ==============================================================================================
-
-	template<typename T, int dimension>
-	class type_triangle : public type_geometric<T, dimension>
-	{
-	public:
-
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
-
-		/** default constructor */
-		type_triangle() {}
-		/** copy constructor */
-		type_triangle(type_triangle const & src) : a(src.a), b(src.b), c(src.c) {}
-		/** constructor from points */
-		type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
-
-	public:
-
-		/** first point of the triangle */
-		vec_type a;
-		/** second point of the triangle */
-		vec_type b;
-		/** third point of the triangle */
-		vec_type c;
-	};
-
+	
 	// ==============================================================================================
 	// triangles functions
 	// ==============================================================================================
@@ -593,34 +645,6 @@ namespace chaos
 	}
 
 	// ==============================================================================================
-	// ray classes
-	// ==============================================================================================
-
-	template<typename T, int dimension>
-	class type_ray : public type_geometric<T, dimension>
-	{
-	public:
-
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
-
-		/** default constructor */
-		type_ray() {}
-		/** copy constructor */
-		type_ray(type_ray const & src) : position(src.position), direction(src.direction) {}
-		/** other constructor */
-		type_ray(vec_type const & in_position, vec_type const & in_direction) : position(in_position), direction(in_direction) {}
-		/** construct a ray from 2 points */
-		type_ray(std::pair<vec_type, vec_type> const & pts) : position(pts.first), direction(glm::normalize(pts.second - pts.first)) {}
-
-	public:
-
-		/** the starting position of the ray in space */
-		vec_type position;
-		/** the direction of the ray in space */
-		vec_type direction;
-	};
-
-	// ==============================================================================================
 	// ray functions
 	// ==============================================================================================
 
@@ -637,34 +661,6 @@ namespace chaos
 	{
 		return !(r1 == r2);
 	}
-
-	// ==============================================================================================
-	// sphere/circle classes
-	// ==============================================================================================
-
-	template<typename T, int dimension>
-	class type_sphere : public type_geometric<T, dimension>
-	{
-	public:
-
-		using vec_type = typename type_geometric<T, dimension>::vec_type;
-		using type     = typename type_geometric<T, dimension>::type;
-
-		/** constructor (empty circle) */
-		type_sphere() : radius((T)-1.0f) {}
-		/** copy constructor */
-		type_sphere(type_sphere const & src) : position(src.position), radius(src.radius) {}
-		/** other constructor */
-		type_sphere(vec_type const & in_position, type in_radius) : position(in_position), radius(in_radius) {}
-
-	public:
-
-		/** the center of the circle */
-		vec_type position;
-		/** the radius of the circle */
-		type radius;
-	};
-
 
 	// ==============================================================================================
 	// sphere/circle functions

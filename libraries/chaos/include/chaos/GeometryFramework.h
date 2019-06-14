@@ -10,12 +10,14 @@ namespace chaos
 	// Some common typedefs for geometry
 	// ==============================================================================================
 
+	// the base template (two arguments, type and dimension)
 	template<typename T, int dimension> class type_ray;
 	template<typename T, int dimension> class type_box;
 	template<typename T, int dimension> class type_obox;
 	template<typename T, int dimension> class type_sphere;
 	template<typename T, int dimension> class type_triangle;
-
+	template<typename T, int dimension> class type_rotator;
+	// remove the dimension from the template (keep type)
 	template<typename T> using type_ray2      = type_ray<T, 2>;
 	template<typename T> using type_ray3      = type_ray<T, 3>;
 	template<typename T> using type_box2      = type_box<T, 2>;
@@ -26,7 +28,9 @@ namespace chaos
 	template<typename T> using type_sphere3   = type_sphere<T, 3>;
 	template<typename T> using type_triangle2 = type_triangle<T, 2>;
 	template<typename T> using type_triangle3 = type_triangle<T, 3>;
-
+	template<typename T> using type_rotator2  = type_rotator<T, 2>;
+	template<typename T> using type_rotator3  = type_rotator<T, 3>;
+	// remove all arguments from template (the objects to use for real)
 	using ray2      = type_ray2<float>;
 	using ray3      = type_ray3<float>;
 	using box2      = type_box2<float>;
@@ -37,25 +41,58 @@ namespace chaos
 	using sphere3   = type_sphere3<float>;
 	using triangle2 = type_triangle2<float>;
 	using triangle3 = type_triangle3<float>;
+	using rotator2  = type_rotator2<float>;
+	using rotator3  = type_rotator3<float>;
 
 	// ==============================================================================================
 	// rotator initializer
 	// ==============================================================================================
 
 	// XXX : depending whether we are in 2D or 3D a rotation can be described by a single float or a quaternion
-	//       this code is here to provide some common initialization interface
+	//       this code is here to provide some common interface
 
-	/** a meta structure for generalized rotator initialization (angle in RAD or quaternion) */
-	template<typename T> 
-	struct make_rotator; // main definition
+	template<typename T, int dimension> // base template
+	class type_rotator;
+	// specialization
 	template<>
-	struct make_rotator<float>{ static float value() { return 0.0f; } };
+	class type_rotator<float, 2> 
+	{
+	public:
+
+		using type = float;
+
+		static float zero_rotator(){ return 0.0f; }
+	};
+	// specialization
 	template<>
-	struct make_rotator<double>{ static double value() { return 0.0; } };
+	class type_rotator<float, 3> 
+	{
+	public:
+
+		using type = glm::quat;
+
+		static glm::quat zero_rotator(){ return glm::quat(); }
+	};
+	// specialization
 	template<>
-	struct make_rotator<glm::vec4>{ static glm::vec4 value() { return glm::vec4(1.0f, 0.0f, 0.0f, 0.0f); } };
+	class type_rotator<double, 2> 
+	{
+	public:
+
+		using type = double;
+
+		static double zero_rotator(){ return 0.0; }
+	};
+	// specialization
 	template<>
-	struct make_rotator<glm::tvec4<double>>{ static glm::tvec4<double> value() { return glm::tvec4<double>(1.0, 0.0, 0.0, 0.0); } };
+	class type_rotator<double, 3> 
+	{
+	public:
+
+		using type = glm::dquat;
+
+		static glm::dquat zero_rotator(){ return glm::dquat(); }
+	};
 
 	// ==============================================================================================
 	// geometric class
@@ -75,9 +112,9 @@ namespace chaos
 		using vec3_type = glm::tvec3<type>;
 
 		/** the type of rotation in 2D space (just an angle in RADIAN) */
-		using rotator2_type = type;
+		using rot2_type = typename type_rotator2<T>::type;
 		/** the type of rotation in 3D space (a quaternion) */
-		using rotator3_type = glm::tvec4<type>;
+		using rot3_type = typename type_rotator3<T>::type;
 	};
 
 	template<typename T, int dimension> class type_geometric;
@@ -93,7 +130,7 @@ namespace chaos
 		/** the type of vector */
 		using vec_type = vec2_type;
 		/** the type of rotator */
-		using rotator_type = rotator2_type;
+		using rot_type = rot2_type;
 	};
 
 	/** geometry class specialisation for 3 dimensions objects */
@@ -107,7 +144,7 @@ namespace chaos
 		/** the type of vector */
 		using vec_type = vec3_type;
 		/** the type of rotator */
-		using rotator_type = rotator3_type;
+		using rot_type = rot3_type;
 	};
 
 	// ==============================================================================================
@@ -405,19 +442,19 @@ namespace chaos
 
 		using vec_type = typename box_base<T, dimension>::vec_type;
 
-		using rotator_type = typename box_base<T, dimension>::rotator_type;
+		using rot_type = typename box_base<T, dimension>::rot_type;
 
 		/** constructor (empty box) */
 		type_obox(){}
 		/** copy constructor */
 		type_obox(type_obox const & src) : box_base(src.position, src.half_size), rotator(src.rotator) {}
 		/** other constructor */
-		type_obox(vec_type const & in_position, vec_type const & in_half_size, rotator_type const & in_rotator) : box_base(in_position, in_half_size), rotator(in_rotator){}
+		type_obox(vec_type const & in_position, vec_type const & in_half_size, rot_type const & in_rotator) : box_base(in_position, in_half_size), rotator(in_rotator){}
 
 	public:
 
 		/** the angle/quaternion of rotation to apply to a box to have this obox */
-		rotator_type rotator = make_rotator<rotator_type>::value();
+		rot_type rotator = type_rotator<T, dimension>::zero_rotator();
 	};
 
 	// ==============================================================================================

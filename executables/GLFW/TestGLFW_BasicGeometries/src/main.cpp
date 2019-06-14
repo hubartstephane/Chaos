@@ -23,6 +23,8 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/ConvexPolygonSplitter.h>
 
+#include <glm/gtx/quaternion.hpp>
+
 
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -953,11 +955,68 @@ namespace chaos
 	}
 
 
+
+#if 0
+	glm::mat3x3 GetRotatorMatrix(float rotator)
+	{
+		return glm::rotate(rotator, glm::vec3(0.0f, 0.0f, 1.0f));
+	}
+
+	glm::mat3x3 GetRotatorMatrix(float rotator)
+	{
+		return glm::rotate(rotator, glm::vec3(0.0f, 0.0f, 1.0f));
+	}
+#endif
+
+
 	template<typename T>
 	auto GetBoxVertices(type_obox<T, 2> const & b, typename box_base<T, 2>::vec_type * result) // expect an array of 4 elements
 	{
+		//typename box_base<T, 2>::vec_type
+
 		GetBoxVertices((box_base<T, 2> const &)b, result);
 
+		{
+
+			glm::quat q;
+			glm::mat4x4 mm1 = glm::toMat4(q);
+			glm::mat3x3 mm2 = glm::toMat3(q);
+
+			q = q;
+		}
+
+		{
+
+			glm::quat q = glm::angleAxis(1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+			glm::mat4x4 mm1 = glm::toMat4(q);
+			glm::mat3x3 mm2 = glm::toMat3(q);
+
+			q = q;
+		}
+
+#if 0
+
+		auto rot = GetRotatorMatrix(b.rotator);
+
+		glm::mat3x3 m;
+
+		//glm::rotate()
+
+		/*
+		glm::dquat dq;
+		
+		glm::tquat q;
+
+		glm::mat4x4 mm1 = quaternion::toMat4(q);
+		*/
+
+		
+		
+		for (int i = 0; i < 4; ++i)
+		{
+			result[i] = m * glm::vec3(result[i], 1.0f);
+		}
+#endif
 
 
 		return result;
@@ -968,6 +1027,10 @@ namespace chaos
 	{
 		GetBoxVertices((box_base<T, 3> const &)b, result);
 
+
+		for (int i = 0; i < 8; ++i)
+		{
+		}
 
 
 

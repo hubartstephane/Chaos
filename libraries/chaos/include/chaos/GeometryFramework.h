@@ -37,49 +37,40 @@ namespace chaos
 
 	// XXX : depending whether we are in 2D or 3D a rotation can be described by a single float or a quaternion
 	//       this code is here to provide some common interface
+	//
+	// XXX : for 3D rotations we use a quaternion. quaternions have a constructor that make them valid (constructor = 0 rotator)
+	//       for 2D we simply use float/double. that means that this is NOT INITIALIZED by default !
+	//       (I could use a class to embedd a single scalar but the conversion/addition ... operators implementation would be too tedious
 
-	template<typename T, int dimension> // base template
+	class zero_rotator
+	{
+	public:
+
+		operator float() const { return 0.0f; }
+
+		operator double() const { return 0.0; }
+
+		operator glm::quat() const { return glm::quat(); }
+
+		operator glm::dquat() const { return glm::dquat(); }
+	};
+
+
+	// base template
+	template<typename T, int dimension> 
 	class type_rotator;
 	// specialization
 	template<>
-	class type_rotator<float, 2> 
-	{
-	public:
-
-		using type = float;
-
-		static float zero_rotator(){ return 0.0f; }
-	};
+	class type_rotator<float, 2> : public boost::mpl::identity<float> {};
 	// specialization
 	template<>
-	class type_rotator<float, 3> 
-	{
-	public:
-
-		using type = glm::quat;
-
-		static glm::quat zero_rotator(){ return glm::quat(); }
-	};
+	class type_rotator<double, 2> : public boost::mpl::identity<double> {};
 	// specialization
 	template<>
-	class type_rotator<double, 2> 
-	{
-	public:
-
-		using type = double;
-
-		static double zero_rotator(){ return 0.0; }
-	};
+	class type_rotator<float, 3> : public boost::mpl::identity<glm::quat> {};
 	// specialization
 	template<>
-	class type_rotator<double, 3> 
-	{
-	public:
-
-		using type = glm::dquat;
-
-		static glm::dquat zero_rotator(){ return glm::dquat(); }
-	};
+	class type_rotator<double, 3> : public boost::mpl::identity<glm::dquat> {};
 
 	// ==============================================================================================
 	// geometric class
@@ -212,7 +203,7 @@ namespace chaos
 	public:
 
 		/** the angle/quaternion of rotation to apply to a box to have this obox */
-		rot_type rotator = type_rotator<T, dimension>::zero_rotator();
+		rot_type rotator = zero_rotator();
 	};
 
 	// ==============================================================================================

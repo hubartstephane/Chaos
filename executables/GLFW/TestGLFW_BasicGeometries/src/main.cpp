@@ -1093,17 +1093,6 @@ namespace chaos
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::box2 b2;
@@ -1115,7 +1104,7 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	chaos::GetBoxVertices(b2, v2);
 	chaos::GetBoxVertices(b3, v3);
 
-	chaos::rotator2 r2;
+	chaos::rotator2 r2 = chaos::zero_rotator();
 	chaos::rotator3 r3;
 
 	chaos::obox2 ob2;

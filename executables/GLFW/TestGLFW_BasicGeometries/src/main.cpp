@@ -3,6 +3,7 @@
 #include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
 #include <chaos/StringTools.h> 
+#include <chaos/GLMTools.h> 
 #include <chaos/MyGLFWGamepadManager.h> 
 #include <chaos/MyGLFWSingleWindowApplication.h> 
 #include <chaos/MyGLFWWindow.h> 
@@ -951,6 +952,20 @@ namespace chaos
 		return result;
 	}
 
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #if 0
@@ -1095,6 +1110,34 @@ namespace chaos
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+	auto aa = glm::vec2(glm::vec3(1.0f, 2.0f, 3.0f));
+	aa = aa;
+
+	{
+		glm::mat4x4 m = glm::translate(glm::vec3(2.0f, 4.0f, 6.0f));
+		glm::vec2   v;
+
+		auto a = chaos::GLMTools::Mult(m, v);
+		auto b = chaos::GLMTools::MultWithTranslation(m, v);
+		a = a;
+
+		//v = m * v;
+	}
+
+	{
+		glm::mat4x4 m = glm::translate(glm::vec3(2.0f, 4.0f, 6.0f));
+		glm::vec3   v;
+
+		auto a = chaos::GLMTools::Mult(m, v);
+		auto b = chaos::GLMTools::MultWithTranslation(m, v);
+		a = a;
+	}
+
+
+
+
+
+
 	chaos::box2 b2;
 	chaos::box3 b3;
 

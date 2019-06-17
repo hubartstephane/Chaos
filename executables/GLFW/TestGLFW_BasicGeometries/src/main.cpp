@@ -911,7 +911,7 @@ namespace chaos
 
 
 
-#if 0
+#if 1
 
 
 
@@ -922,7 +922,7 @@ namespace chaos
 		if (IsGeometryEmpty(src))
 			return src;
 		// aspect already good
-		float effective_aspect = GetBoxAspect(src);
+		BOX_TYPE::type effective_aspect = GetBoxAspect(src);
 		if (effective_aspect == aspect)
 			return src;
 		// make the update
@@ -935,21 +935,24 @@ namespace chaos
 		return result;
 	}
 
-	box2 AlterBoxToAspect(box2 src, float aspect, bool update_width)
+	template<typename BOX_TYPE>
+	BOX_TYPE myAlterBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect, bool update_width)
 	{
+		using type = typename BOX_TYPE::type;
+
 		// any (non null) negative component
 		if (IsGeometryEmpty(src)) 
 			return src;
 		// cannot have no size
-		if (src.half_size.x == 0.0f && src.half_size.y == 0.0f) 
+		if (src.half_size.x == (type)0 && src.half_size.y == (type)0)
 			return src;
 		// width axis to update ?
-		if (src.half_size.x == 0.0f)
+		if (src.half_size.x == (type)0)
 			update_width = true;
-		else if (src.half_size.y == 0.0f)
+		else if (src.half_size.y == (type)0)
 			update_width = false;
 		// make the update
-		box2 result = src;
+		BOX_TYPE result = src;
 		if (update_width)
 			result.half_size.x = src.half_size.y * aspect;
 		else
@@ -1020,6 +1023,9 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 	chaos::GetBoxVertices(ob2, ov2);
 	chaos::GetBoxVertices(ob3, ov3);
+
+	auto ob2_aspect1 = myShrinkBoxToAspect(ob2, 1.5f);
+	auto ob2_aspect2 = myAlterBoxToAspect(ob2, 1.5f, true);
 
 
 

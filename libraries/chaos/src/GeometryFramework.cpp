@@ -55,4 +55,25 @@ namespace chaos
 		return result;
 	}
 
+	glm::mat4x4 GetRotatorMatrix(glm::quat const & rotator)
+	{
+		return glm::toMat4(rotator);
+	}
+	/** rotator to matrix */
+	glm::dmat4x4 GetRotatorMatrix(glm::dquat const & rotator)
+	{
+		return glm::toMat4(rotator);
+	}
+	/** rotator to matrix */
+	glm::mat4x4 GetRotatorMatrix(float rotator)
+	{
+		return glm::rotate(rotator, glm::vec3(0.0f, 0.0f, 1.0f));
+	}
+	/** rotator to matrix */
+	glm::dmat4x4 GetRotatorMatrix(double rotator)
+	{
+		return glm::rotate(rotator, glm::dvec3(0.0f, 0.0f, 1.0));
+	}
+
+
 }; // namespace chaos

@@ -74,25 +74,13 @@ namespace chaos
 
 
 	/** rotator to matrix */
-	glm::mat4x4 GetRotatorMatrix(glm::quat const & rotator)
-	{
-		return glm::toMat4(rotator);		
-	}
+	glm::mat4x4 GetRotatorMatrix(glm::quat const & rotator);
 	/** rotator to matrix */
-	glm::dmat4x4 GetRotatorMatrix(glm::dquat const & rotator)
-	{
-		return glm::toMat4(rotator);
-	}
+	glm::dmat4x4 GetRotatorMatrix(glm::dquat const & rotator);
 	/** rotator to matrix */
-	glm::mat4x4 GetRotatorMatrix(float rotator)
-	{
-		return glm::rotate(rotator, glm::vec3(0.0f, 0.0f, 1.0f));
-	}
+	glm::mat4x4 GetRotatorMatrix(float rotator);
 	/** rotator to matrix */
-	glm::dmat4x4 GetRotatorMatrix(double rotator)
-	{
-		return glm::rotate(rotator, glm::dvec3(0.0f, 0.0f, 1.0));
-	}
+	glm::dmat4x4 GetRotatorMatrix(double rotator);
 
 	// ==============================================================================================
 	// geometric class
@@ -550,6 +538,55 @@ namespace chaos
 		return glm::all(glm::lessThanEqual(glm::abs(pt - b.position), b.half_size));
 	}
 
+	template<typename T>
+	auto GetBoxVertices(box_base<T, 2> const & b, typename box_base<T, 2>::vec_type * result) // expect an array of 4 elements
+	{
+		assert(result != nullptr);
+
+		using vec_type = typename box_base<T, 2>::vec_type;
+
+		T NX = b.position.x - b.half_size.x;
+		T PX = b.position.x + b.half_size.x;
+
+		T NY = b.position.y - b.half_size.y;
+		T PY = b.position.y + b.half_size.y;
+
+		result[0] = vec_type(NX, NY);
+		result[1] = vec_type(PX, NY);
+		result[2] = vec_type(NX, PY);
+		result[3] = vec_type(PX, PY);
+
+		return result;
+	}
+
+	template<typename T>
+	auto GetBoxVertices(box_base<T, 3> const & b, typename box_base<T, 3>::vec_type * result) // expect an array of 8 elements
+	{
+		assert(result != nullptr);
+
+		using vec_type = typename box_base<T, 3>::vec_type;
+
+		T NX = b.position.x - b.half_size.x;
+		T PX = b.position.x + b.half_size.x;
+
+		T NY = b.position.y - b.half_size.y;
+		T PY = b.position.y + b.half_size.y;
+
+		T NZ = b.position.z - b.half_size.z;
+		T PZ = b.position.z + b.half_size.z;
+
+		result[0] = vec_type(NX, NY, NZ);
+		result[1] = vec_type(PX, NY, NZ);
+		result[2] = vec_type(NX, PY, NZ);
+		result[3] = vec_type(PX, PY, NZ);
+		result[4] = vec_type(NX, NY, PZ);
+		result[5] = vec_type(PX, NY, PZ);
+		result[6] = vec_type(NX, PY, PZ);
+		result[7] = vec_type(PX, PY, PZ);
+
+		return result;
+	}
+
 	/** reduce a rectangle with an aspect */
 	box2 ShrinkBoxToAspect(box2 src, float aspect);
 	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
@@ -573,6 +610,28 @@ namespace chaos
 	bool operator != (type_obox<T, dimension> const & b1, type_obox<T, dimension> const & b2)
 	{
 		return !(b1 == b2);
+	}
+
+	template<typename T>
+	auto GetBoxVertices(type_obox<T, 2> const & b, typename box_base<T, 2>::vec_type * result) // expect an array of 4 elements
+	{
+		GetBoxVertices((box_base<T, 2> const &)b, result);
+
+		auto transform = chaos::GetRotatorMatrix(b.rotator);
+		for (int i = 0; i < 4; ++i)
+			result[i] = chaos::GLMTools::Mult(transform, result[i]);
+		return result;
+	}
+
+	template<typename T>
+	auto GetBoxVertices(type_obox<T, 3> const & b, typename box_base<T, 3>::vec_type * result) // expect an array of 8 elements
+	{
+		GetBoxVertices((box_base<T, 3> const &)b, result);
+
+		auto transform = chaos::GetRotatorMatrix(b.rotator);
+		for (int i = 0; i < 8; ++i)
+			result[i] = chaos::GLMTools::Mult(transform, result[i]);
+		return result;
 	}
 	
 	// ==============================================================================================

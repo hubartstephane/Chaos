@@ -32,7 +32,7 @@ namespace chaos
 	template<typename T> using type_rotator3  = type_rotator<T, 3>; //
 
 	// ==============================================================================================
-	// rotator initializer
+	// rotators
 	// ==============================================================================================
 
 	// XXX : depending whether we are in 2D or 3D a rotation can be described by a single float or a quaternion
@@ -71,6 +71,28 @@ namespace chaos
 	// specialization
 	template<>
 	class type_rotator<double, 3> : public boost::mpl::identity<glm::dquat> {};
+
+
+	/** rotator to matrix */
+	glm::mat4x4 GetRotatorMatrix(glm::quat const & rotator)
+	{
+		return glm::toMat4(rotator);		
+	}
+	/** rotator to matrix */
+	glm::dmat4x4 GetRotatorMatrix(glm::dquat const & rotator)
+	{
+		return glm::toMat4(rotator);
+	}
+	/** rotator to matrix */
+	glm::mat4x4 GetRotatorMatrix(float rotator)
+	{
+		return glm::rotate(rotator, glm::vec3(0.0f, 0.0f, 1.0f));
+	}
+	/** rotator to matrix */
+	glm::dmat4x4 GetRotatorMatrix(double rotator)
+	{
+		return glm::rotate(rotator, glm::dvec3(0.0f, 0.0f, 1.0));
+	}
 
 	// ==============================================================================================
 	// geometric class

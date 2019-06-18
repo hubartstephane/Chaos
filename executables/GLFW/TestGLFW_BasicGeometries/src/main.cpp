@@ -910,62 +910,6 @@ namespace chaos
 
 
 
-
-#if 1
-
-
-
-	template<typename BOX_TYPE>
-	BOX_TYPE myShrinkBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect)
-	{
-		// any negative component
-		if (IsGeometryEmpty(src))
-			return src;
-		// aspect already good
-		BOX_TYPE::type effective_aspect = GetBoxAspect(src);
-		if (effective_aspect == aspect)
-			return src;
-		// make the update
-		BOX_TYPE result = src;
-		if (effective_aspect > aspect) // width too large
-			result.half_size.x = src.half_size.y * aspect;		
-		else if (effective_aspect < aspect) // height too large
-			result.half_size.y = src.half_size.x / aspect;
-
-		return result;
-	}
-
-	template<typename BOX_TYPE>
-	BOX_TYPE myAlterBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect, bool update_width)
-	{
-		using type = typename BOX_TYPE::type;
-
-		// any (non null) negative component
-		if (IsGeometryEmpty(src)) 
-			return src;
-		// cannot have no size
-		if (src.half_size.x == (type)0 && src.half_size.y == (type)0)
-			return src;
-		// width axis to update ?
-		if (src.half_size.x == (type)0)
-			update_width = true;
-		else if (src.half_size.y == (type)0)
-			update_width = false;
-		// make the update
-		BOX_TYPE result = src;
-		if (update_width)
-			result.half_size.x = src.half_size.y * aspect;
-		else
-			result.half_size.y = src.half_size.x / aspect;
-
-		return result;
-	}
-
-
-#endif
-
-
-
 };
 
 
@@ -1019,13 +963,21 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	glm::vec2 ov2[4];
 	glm::vec3 ov3[8];
 
+	ob2.half_size = glm::vec2(1.0f, 1.0f);
+	ob3.half_size = glm::vec3(1.0f, 1.0f, 1.0f);
+
 	ob2.rotator = 0.1f;
 
 	chaos::GetBoxVertices(ob2, ov2);
 	chaos::GetBoxVertices(ob3, ov3);
 
-	auto ob2_aspect1 = myShrinkBoxToAspect(ob2, 1.5f);
-	auto ob2_aspect2 = myAlterBoxToAspect(ob2, 1.5f, true);
+	auto a = chaos::ShrinkBoxToAspect(ob2, 1.5f);
+	auto b = chaos::AlterBoxToAspect(ob2, 1.5f, true);
+	auto c = chaos::AlterBoxToAspect(ob2, 1.5f, false);
+
+//	auto d = myShrinkBoxToAspect(ob3, 1.5f);
+//	auto e = myAlterBoxToAspect(ob3, 1.5f, true);
+//	auto f = myAlterBoxToAspect(ob3, 1.5f, false);
 
 
 

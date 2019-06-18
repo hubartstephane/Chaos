@@ -587,10 +587,63 @@ namespace chaos
 		return result;
 	}
 
+
 	/** reduce a rectangle with an aspect */
-	box2 ShrinkBoxToAspect(box2 src, float aspect);
+	template<typename BOX_TYPE>
+	BOX_TYPE ShrinkBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect)
+	{
+		// any negative component
+		if (IsGeometryEmpty(src))
+			return src;
+		// aspect already good
+		BOX_TYPE::type effective_aspect = GetBoxAspect(src);
+		if (effective_aspect == aspect)
+			return src;
+		// make the update
+		BOX_TYPE result = src;
+		if (effective_aspect > aspect) // width too large
+			result.half_size.x = src.half_size.y * aspect;
+		else if (effective_aspect < aspect) // height too large
+			result.half_size.y = src.half_size.x / aspect;
+
+		return result;
+	}
+
 	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
-	box2 AlterBoxToAspect(box2 src, float aspect, bool prefer_width_update = true);
+	template<typename BOX_TYPE>
+	BOX_TYPE AlterBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect, bool update_width)
+	{
+		using type = typename BOX_TYPE::type;
+
+		// any (non null) negative component
+		if (IsGeometryEmpty(src))
+			return src;
+		// cannot have no size
+		if (src.half_size.x == (type)0 && src.half_size.y == (type)0)
+			return src;
+		// width axis to update ?
+		if (src.half_size.x == (type)0)
+			update_width = true;
+		else if (src.half_size.y == (type)0)
+			update_width = false;
+		// make the update
+		BOX_TYPE result = src;
+		if (update_width)
+			result.half_size.x = src.half_size.y * aspect;
+		else
+			result.half_size.y = src.half_size.x / aspect;
+
+		return result;
+	}
+
+
+
+
+
+
+
+
+
 	/** encode a box2 into a vector4 */
 	glm::vec4 EncodeBoxToVector(box2 const & src);
 
@@ -617,9 +670,9 @@ namespace chaos
 	{
 		GetBoxVertices((box_base<T, 2> const &)b, result);
 
-		auto transform = chaos::GetRotatorMatrix(b.rotator);
+		auto transform = GetRotatorMatrix(b.rotator);
 		for (int i = 0; i < 4; ++i)
-			result[i] = chaos::GLMTools::Mult(transform, result[i]);
+			result[i] = GLMTools::Mult(transform, result[i]);
 		return result;
 	}
 
@@ -628,9 +681,9 @@ namespace chaos
 	{
 		GetBoxVertices((box_base<T, 3> const &)b, result);
 
-		auto transform = chaos::GetRotatorMatrix(b.rotator);
+		auto transform = GetRotatorMatrix(b.rotator);
 		for (int i = 0; i < 8; ++i)
-			result[i] = chaos::GLMTools::Mult(transform, result[i]);
+			result[i] = GLMTools::Mult(transform, result[i]);
 		return result;
 	}
 	

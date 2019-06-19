@@ -62,7 +62,13 @@ static int const COLLISION_SHERE2_BOX2_TEST    = EXAMPLE_COUNT++;
 static int const COLLISION_SHERE2_TRIANGLE_TEST = EXAMPLE_COUNT++;
 static int const COLLISION_POINT_TRIANGLE_TEST  = EXAMPLE_COUNT++;
 
-static int const COLLISION_POINT_OBOX  = EXAMPLE_COUNT++;
+static int const OBOX_DISPLAY_TEST  = EXAMPLE_COUNT++;
+static int const OBOX_CORNERS_TEST  = EXAMPLE_COUNT++;
+
+static int const OBOX_BOUNDING_SPHERE_TEST = EXAMPLE_COUNT++;
+static int const OBOX_BOUNDING_BOX_TEST    = EXAMPLE_COUNT++;
+
+
 
 static int const TEST_COUNT = EXAMPLE_COUNT;
 
@@ -153,7 +159,7 @@ protected:
 		if (example == COLLISION_SHERE2_BOX2_TEST)     return "collision sphere2/box2";
 		if (example == COLLISION_SHERE2_TRIANGLE_TEST) return "collision sphere2/triangle2";
 		if (example == COLLISION_POINT_TRIANGLE_TEST)  return "collision point2/triangle2";
-		if (example == COLLISION_POINT_OBOX)           return "collision point2/obox2";
+		if (example == OBOX_DISPLAY_TEST)              return "obox";
 
 		return nullptr;
 	}
@@ -324,6 +330,50 @@ protected:
 			is_translucent,
 			0.0f
 		);
+	}
+
+	void DrawPrimitive(RenderingContext const & ctx, chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent)
+	{
+		if (IsGeometryEmpty(b))
+			return;
+
+		glm::mat4 local_to_world = 
+			glm::translate(b.position) * 
+			chaos::GetRotatorMatrix(b.rotator) * 
+			glm::scale(b.half_size);
+
+		DrawPrimitiveImpl(
+			ctx,
+			mesh_box.get(),
+			program_box.get(),
+			color,
+			local_to_world,
+			is_translucent,
+			1.0f
+		);
+	}
+
+	void DrawPrimitive(RenderingContext const & ctx, chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent)
+	{
+		if (IsGeometryEmpty(b))
+			return;
+
+		glm::mat4 local_to_world = 
+			glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
+			chaos::GetRotatorMatrix(b.rotator) * 
+			glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
+
+		DrawPrimitiveImpl(
+			ctx,
+			mesh_box.get(),
+			program_box.get(),
+			color,
+			local_to_world,
+			is_translucent,
+			0.0f
+		);
+
+
 	}
 
 	void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color, bool is_translucent)
@@ -677,13 +727,53 @@ protected:
 		if (display_example == COLLISION_POINT_TRIANGLE_TEST)
 			DrawTrianglePointCollision(ctx);
 
-		if (display_example == COLLISION_POINT_OBOX)
+		if (display_example == OBOX_DISPLAY_TEST || display_example == OBOX_CORNERS_TEST || display_example == OBOX_BOUNDING_SPHERE_TEST || display_example == OBOX_BOUNDING_BOX_TEST)
 		{
+			float angle =(float)realtime;
+			glm::vec3 pos;
+			pos.x = 15.0f * (float)chaos::MathTools::Cos(2.5 * realtime * M_2_PI);
+			pos.y = 0.0f;
+			pos.z = 0.0f;
+
+			chaos::obox3 b(pos, glm::vec3(1.0f, 2.0f, 3.0f), glm::angleAxis(angle, glm::vec3(0.0f, 1.0f, 0.0f)));
+			DrawPrimitive(ctx, b, red, false);
+
+			if (display_example == OBOX_CORNERS_TEST)
+			{
+				glm::vec3 vertices[8];
+				GetBoxVertices(b, vertices);
+				for (int i = 0 ; i < 8 ; ++i)
+					DrawPoint(ctx, vertices[i], white, false);
+			}
+
+			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
+			{
+				chaos::sphere3 s = GetBoundingSphere(b);
+				DrawPrimitive(ctx, s, blue, true);
+
+			}
+
+			if (display_example == OBOX_BOUNDING_BOX_TEST)
+			{
+			}
 		}
+	
+#if 0
+		chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
+		chaos::sphere3 s = GetBoundingSphere(b);
 
+		DrawPrimitive(ctx, b, red, false);
 
+		// bounding box
+		if (display_example == BOUNDING_BOX_TEST)
+		{      
+			chaos::sphere3 s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
 
+			chaos::box3 b = GetBoundingBox(s);
 
+			DrawPrimitive(ctx, s, red, false);
+		}
+#endif		
 
 	}
 
@@ -901,17 +991,6 @@ protected:
 
 
 
-namespace chaos
-{
-
-
-	
-
-
-
-
-};
-
 
 
 
@@ -981,7 +1060,7 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 
 
-	return 0;
+	//return ;
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

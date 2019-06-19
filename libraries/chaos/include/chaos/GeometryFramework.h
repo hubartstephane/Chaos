@@ -539,41 +539,45 @@ namespace chaos
 	}
 
 	template<typename T>
-	auto GetBoxVertices(box_base<T, 2> const & b, typename box_base<T, 2>::vec_type * result) // expect an array of 4 elements
+	auto GetBoxVertices(box_base<T, 2> const & b, typename box_base<T, 2>::vec_type * result, bool global = true) // expect an array of 4 elements
 	{
 		assert(result != nullptr);
 
 		using vec_type = typename box_base<T, 2>::vec_type;
 
-		T NX = b.position.x - b.half_size.x;
-		T PX = b.position.x + b.half_size.x;
+		T NX = - b.half_size.x;
+		T PX = + b.half_size.x;
 
-		T NY = b.position.y - b.half_size.y;
-		T PY = b.position.y + b.half_size.y;
+		T NY = - b.half_size.y;
+		T PY = + b.half_size.y;
 
 		result[0] = vec_type(NX, NY);
 		result[1] = vec_type(PX, NY);
 		result[2] = vec_type(NX, PY);
 		result[3] = vec_type(PX, PY);
 
+		if (global)
+			for (int i = 0 ; i < 4 ; ++i)
+				result[i] += b.position;
+
 		return result;
 	}
 
 	template<typename T>
-	auto GetBoxVertices(box_base<T, 3> const & b, typename box_base<T, 3>::vec_type * result) // expect an array of 8 elements
+	auto GetBoxVertices(box_base<T, 3> const & b, typename box_base<T, 3>::vec_type * result, bool global = true) // expect an array of 8 elements
 	{
 		assert(result != nullptr);
 
 		using vec_type = typename box_base<T, 3>::vec_type;
 
-		T NX = b.position.x - b.half_size.x;
-		T PX = b.position.x + b.half_size.x;
+		T NX = - b.half_size.x;
+		T PX = + b.half_size.x;
 
-		T NY = b.position.y - b.half_size.y;
-		T PY = b.position.y + b.half_size.y;
+		T NY = - b.half_size.y;
+		T PY = + b.half_size.y;
 
-		T NZ = b.position.z - b.half_size.z;
-		T PZ = b.position.z + b.half_size.z;
+		T NZ = - b.half_size.z;
+		T PZ = + b.half_size.z;
 
 		result[0] = vec_type(NX, NY, NZ);
 		result[1] = vec_type(PX, NY, NZ);
@@ -583,6 +587,10 @@ namespace chaos
 		result[5] = vec_type(PX, NY, PZ);
 		result[6] = vec_type(NX, PY, PZ);
 		result[7] = vec_type(PX, PY, PZ);
+
+		if (global)
+			for (int i = 0 ; i < 8 ; ++i)
+				result[i] += b.position;
 
 		return result;
 	}
@@ -666,25 +674,38 @@ namespace chaos
 	}
 
 	template<typename T>
-	auto GetBoxVertices(type_obox<T, 2> const & b, typename box_base<T, 2>::vec_type * result) // expect an array of 4 elements
+	auto GetBoxVertices(type_obox<T, 2> const & b, typename box_base<T, 2>::vec_type * result, bool global = true) // expect an array of 4 elements
 	{
-		GetBoxVertices((box_base<T, 2> const &)b, result);
+		GetBoxVertices((box_base<T, 2> const &)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
 
-		auto transform = GetRotatorMatrix(b.rotator);
-		for (int i = 0; i < 4; ++i)
-			result[i] = GLMTools::Mult(transform, result[i]);
+		if (global)
+		{
+			auto transform = GetRotatorMatrix(b.rotator);
+			for (int i = 0; i < 4; ++i)
+			{
+				result[i] = GLMTools::Mult(transform, result[i]);		
+				result[i] += b.position;
+			}
+		}
+
+
 		return result;
 	}
 
 	template<typename T>
-	auto GetBoxVertices(type_obox<T, 3> const & b, typename box_base<T, 3>::vec_type * result) // expect an array of 8 elements
+	auto GetBoxVertices(type_obox<T, 3> const & b, typename box_base<T, 3>::vec_type * result, bool global = true) // expect an array of 8 elements
 	{
-		GetBoxVertices((box_base<T, 3> const &)b, result);
+		GetBoxVertices((box_base<T, 3> const &)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
 
-		auto transform = GetRotatorMatrix(b.rotator);
-		for (int i = 0; i < 8; ++i)
-			result[i] = GLMTools::Mult(transform, result[i]);
-		return result;
+		if (global)
+		{
+			auto transform = GetRotatorMatrix(b.rotator);
+			for (int i = 0; i < 8; ++i)
+			{
+				result[i] = GLMTools::Mult(transform, result[i]);		
+				result[i] += b.position;
+			}
+		}
 	}
 	
 	// ==============================================================================================

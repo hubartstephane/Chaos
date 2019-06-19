@@ -24,6 +24,36 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/ConvexPolygonSplitter.h>
 
+
+
+namespace chaos
+{
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 static glm::vec4 const red   = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
@@ -67,6 +97,12 @@ static int const OBOX_CORNERS_TEST  = EXAMPLE_COUNT++;
 
 static int const OBOX_BOUNDING_SPHERE_TEST = EXAMPLE_COUNT++;
 static int const OBOX_BOUNDING_BOX_TEST    = EXAMPLE_COUNT++;
+
+static int const OBOX_INNER_SPHERE_TEST = EXAMPLE_COUNT++;
+static int const POINT_INSIDE_OBOX_TEST = EXAMPLE_COUNT++;
+
+
+
 
 
 
@@ -160,6 +196,12 @@ protected:
 		if (example == COLLISION_SHERE2_TRIANGLE_TEST) return "collision sphere2/triangle2";
 		if (example == COLLISION_POINT_TRIANGLE_TEST)  return "collision point2/triangle2";
 		if (example == OBOX_DISPLAY_TEST)              return "obox";
+		if (example == OBOX_CORNERS_TEST)              return "obox corners";
+		if (example == OBOX_BOUNDING_SPHERE_TEST)      return "obox bounding sphere";
+		if (example == OBOX_BOUNDING_BOX_TEST)         return "obox bounding box";
+		if (example == OBOX_INNER_SPHERE_TEST)         return "obox inner sphere";
+		if (example == POINT_INSIDE_OBOX_TEST)         return "point inside obox";
+		
 
 		return nullptr;
 	}
@@ -727,16 +769,38 @@ protected:
 		if (display_example == COLLISION_POINT_TRIANGLE_TEST)
 			DrawTrianglePointCollision(ctx);
 
-		if (display_example == OBOX_DISPLAY_TEST || display_example == OBOX_CORNERS_TEST || display_example == OBOX_BOUNDING_SPHERE_TEST || display_example == OBOX_BOUNDING_BOX_TEST)
+
+		// Obox
+		if (display_example == OBOX_DISPLAY_TEST || display_example == OBOX_CORNERS_TEST || display_example == OBOX_BOUNDING_SPHERE_TEST || display_example == OBOX_BOUNDING_BOX_TEST || display_example == OBOX_INNER_SPHERE_TEST || display_example == POINT_INSIDE_OBOX_TEST)
 		{
-			float angle =(float)realtime;
+			glm::vec3 pt = glm::vec3(10.0f, 0.0f, 0.0f);
+
+
+
+			float speed = 0.3f;
+			float angle = speed * (float)realtime;
 			glm::vec3 pos;
-			pos.x = 15.0f * (float)chaos::MathTools::Cos(2.5 * realtime * M_2_PI);
+			pos.x = 15.0f * (float)chaos::MathTools::Cos(speed * 2.5 * realtime * M_2_PI);
 			pos.y = 0.0f;
 			pos.z = 0.0f;
 
-			chaos::obox3 b(pos, glm::vec3(1.0f, 2.0f, 3.0f), glm::angleAxis(angle, glm::vec3(0.0f, 1.0f, 0.0f)));
-			DrawPrimitive(ctx, b, red, false);
+			glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
+
+			chaos::obox3 b(pos, glm::vec3(1.0f, 2.0f, 3.0f), glm::angleAxis(angle, axis));
+
+
+
+			bool transparent_obox = false;
+			if (display_example == OBOX_INNER_SPHERE_TEST)
+				transparent_obox = true;
+			else if (display_example == POINT_INSIDE_OBOX_TEST && IsPointInside(pt, b))
+				transparent_obox = true;
+
+
+
+
+
+			DrawPrimitive(ctx, b, red, transparent_obox);
 
 			if (display_example == OBOX_CORNERS_TEST)
 			{
@@ -750,30 +814,31 @@ protected:
 			{
 				chaos::sphere3 s = GetBoundingSphere(b);
 				DrawPrimitive(ctx, s, blue, true);
-
 			}
 
 			if (display_example == OBOX_BOUNDING_BOX_TEST)
 			{
+				chaos::box3 box = GetBoundingBox(b);
+				DrawPrimitive(ctx, box, blue, true);
+			}
+
+			if (display_example == OBOX_INNER_SPHERE_TEST)
+			{
+				chaos::sphere3 s = GetInnerSphere(b);
+				DrawPrimitive(ctx, s, blue, false);
+			}
+
+			if (display_example == POINT_INSIDE_OBOX_TEST)
+			{
+				DrawPoint(ctx, pt, white, false);
 			}
 		}
-	
-#if 0
-		chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
-		chaos::sphere3 s = GetBoundingSphere(b);
 
-		DrawPrimitive(ctx, b, red, false);
 
-		// bounding box
-		if (display_example == BOUNDING_BOX_TEST)
-		{      
-			chaos::sphere3 s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
 
-			chaos::box3 b = GetBoundingBox(s);
 
-			DrawPrimitive(ctx, s, red, false);
-		}
-#endif		
+
+
 
 	}
 
@@ -985,83 +1050,8 @@ protected:
 	chaos::GLDebugOnScreenDisplay debug_display;
 };
 
-
-
-
-
-
-
-
-
-
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	auto aa = glm::vec2(glm::vec3(1.0f, 2.0f, 3.0f));
-	aa = aa;
-
-	{
-		glm::mat4x4 m = glm::translate(glm::vec3(2.0f, 4.0f, 6.0f));
-		glm::vec2   v;
-
-		auto a = chaos::GLMTools::Mult(m, v);
-		auto b = chaos::GLMTools::MultWithTranslation(m, v);
-		a = a;
-
-		//v = m * v;
-	}
-
-	{
-		glm::mat4x4 m = glm::translate(glm::vec3(2.0f, 4.0f, 6.0f));
-		glm::vec3   v;
-
-		auto a = chaos::GLMTools::Mult(m, v);
-		auto b = chaos::GLMTools::MultWithTranslation(m, v);
-		a = a;
-	}
-
-
-
-
-
-
-	chaos::box2 b2;
-	chaos::box3 b3;
-
-
-	glm::vec2 v2[4];
-	glm::vec3 v3[8];
-
-	chaos::GetBoxVertices(b2, v2);
-	chaos::GetBoxVertices(b3, v3);
-
-	chaos::rotator2 r2 = chaos::zero_rotator();
-	chaos::rotator3 r3;
-
-	chaos::obox2 ob2;
-	chaos::obox3 ob3;
-	glm::vec2 ov2[4];
-	glm::vec3 ov3[8];
-
-	ob2.half_size = glm::vec2(1.0f, 1.0f);
-	ob3.half_size = glm::vec3(1.0f, 1.0f, 1.0f);
-
-	ob2.rotator = 0.1f;
-
-	chaos::GetBoxVertices(ob2, ov2);
-	chaos::GetBoxVertices(ob3, ov3);
-
-	auto a = chaos::ShrinkBoxToAspect(ob2, 1.5f);
-	auto b = chaos::AlterBoxToAspect(ob2, 1.5f, true);
-	auto c = chaos::AlterBoxToAspect(ob2, 1.5f, false);
-
-//	auto d = myShrinkBoxToAspect(ob3, 1.5f);
-//	auto e = myAlterBoxToAspect(ob3, 1.5f, true);
-//	auto f = myAlterBoxToAspect(ob3, 1.5f, false);
-
-
-
-	//return ;
-
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

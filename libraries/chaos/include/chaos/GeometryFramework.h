@@ -398,6 +398,54 @@ namespace chaos
 		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
 	}
 
+	/** reduce a rectangle with an aspect (we do not use box_base<> because we want the result to be the exact type of the entry) */
+	template<typename BOX_TYPE>
+	BOX_TYPE ShrinkBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect)
+	{
+		// any negative component
+		if (IsGeometryEmpty(src))
+			return src;
+		// aspect already good
+		BOX_TYPE::type effective_aspect = GetBoxAspect(src);
+		if (effective_aspect == aspect)
+			return src;
+		// make the update
+		BOX_TYPE result = src;
+		if (effective_aspect > aspect) // width too large
+			result.half_size.x = src.half_size.y * aspect;
+		else if (effective_aspect < aspect) // height too large
+			result.half_size.y = src.half_size.x / aspect;
+
+		return result;
+	}
+
+	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
+	template<typename BOX_TYPE>
+	BOX_TYPE AlterBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect, bool update_width)
+	{
+		using type = typename BOX_TYPE::type;
+
+		// any (non null) negative component
+		if (IsGeometryEmpty(src))
+			return src;
+		// cannot have no size
+		if (src.half_size.x == (type)0 && src.half_size.y == (type)0)
+			return src;
+		// width axis to update ?
+		if (src.half_size.x == (type)0)
+			update_width = true;
+		else if (src.half_size.y == (type)0)
+			update_width = false;
+		// make the update
+		BOX_TYPE result = src;
+		if (update_width)
+			result.half_size.x = src.half_size.y * aspect;
+		else
+			result.half_size.y = src.half_size.x / aspect;
+
+		return result;
+	}
+
 	// ==============================================================================================
 	// box functions
 	// ==============================================================================================
@@ -595,63 +643,6 @@ namespace chaos
 		return result;
 	}
 
-
-	/** reduce a rectangle with an aspect */
-	template<typename BOX_TYPE>
-	BOX_TYPE ShrinkBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect)
-	{
-		// any negative component
-		if (IsGeometryEmpty(src))
-			return src;
-		// aspect already good
-		BOX_TYPE::type effective_aspect = GetBoxAspect(src);
-		if (effective_aspect == aspect)
-			return src;
-		// make the update
-		BOX_TYPE result = src;
-		if (effective_aspect > aspect) // width too large
-			result.half_size.x = src.half_size.y * aspect;
-		else if (effective_aspect < aspect) // height too large
-			result.half_size.y = src.half_size.x / aspect;
-
-		return result;
-	}
-
-	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
-	template<typename BOX_TYPE>
-	BOX_TYPE AlterBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect, bool update_width)
-	{
-		using type = typename BOX_TYPE::type;
-
-		// any (non null) negative component
-		if (IsGeometryEmpty(src))
-			return src;
-		// cannot have no size
-		if (src.half_size.x == (type)0 && src.half_size.y == (type)0)
-			return src;
-		// width axis to update ?
-		if (src.half_size.x == (type)0)
-			update_width = true;
-		else if (src.half_size.y == (type)0)
-			update_width = false;
-		// make the update
-		BOX_TYPE result = src;
-		if (update_width)
-			result.half_size.x = src.half_size.y * aspect;
-		else
-			result.half_size.y = src.half_size.x / aspect;
-
-		return result;
-	}
-
-
-
-
-
-
-
-
-
 	/** encode a box2 into a vector4 */
 	glm::vec4 EncodeBoxToVector(box2 const & src);
 
@@ -708,6 +699,69 @@ namespace chaos
 		}
 	}
 	
+	template<typename T>
+	type_box2<T> GetBoundingBox(type_obox2<T> const & b)
+	{
+		type_box2<T> result;
+
+		// copy position
+		result.position = b.position;
+		// get all vertices and compute max values
+		type_box2<T>::vec_type vertices[4];
+		GetBoxVertices(b, vertices, false);
+
+		type_box2<T>::vec_type max_vec = glm::tvec2<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
+
+		auto transform = GetRotatorMatrix(b.rotator);
+		for (int i = 0; i < 4; ++i)
+			max_vec = glm::max(max_vec, GLMTools::Mult(transform, vertices[i]));
+		result.half_size = max_vec;
+
+		return result;
+	}
+
+	template<typename T>
+	type_box3<T> GetBoundingBox(type_obox3<T> const & b)
+	{
+		type_box3<T> result;
+
+		// copy position
+		result.position = b.position;
+
+		// get all vertices and compute max values
+		type_box3<T>::vec_type vertices[8];
+		GetBoxVertices(b, vertices, false);
+
+		type_box3<T>::vec_type max_vec = glm::tvec3<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
+
+		auto transform = GetRotatorMatrix(b.rotator);
+		for (int i = 0; i < 8; ++i)
+			max_vec = glm::max(max_vec, GLMTools::Mult(transform, vertices[i]));
+		result.half_size = max_vec;
+
+		return result;
+	}
+
+	template<typename T, int dimension>
+	bool IsPointInside(typename type_obox<T, dimension>::vec_type const & pt, type_obox<T, dimension> const & b)
+	{
+		// set point from global to local system
+		auto transform = GetRotatorMatrix(-b.rotator); 
+		auto transformed_ptr = GLMTools::Mult(transform, pt - b.position);
+		// now we can considere we are in a standard BOX
+		return glm::all(glm::lessThanEqual(glm::abs(transformed_ptr), b.half_size));
+	}
+
+
+
+
+
+
+
+
+
+
+
 	// ==============================================================================================
 	// triangles functions
 	// ==============================================================================================

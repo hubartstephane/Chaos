@@ -346,5 +346,28 @@ namespace chaos
 		return true;
 	}
 
+#if 0
+
+	a faire
+
+	triangle box
+	triangle obox
+	box      obx
+	sphere   obox
+
+
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
 }; // namespace chaos
 

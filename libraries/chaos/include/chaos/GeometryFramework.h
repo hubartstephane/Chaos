@@ -579,13 +579,6 @@ namespace chaos
 		}
 	}
 
-	/** returns true whether the point is contained in the box */
-	template<typename T, int dimension>
-	bool IsPointInside(typename type_box<T, dimension>::vec_type const & pt, type_box<T, dimension> const & b)
-	{
-		return glm::all(glm::lessThanEqual(glm::abs(pt - b.position), b.half_size));
-	}
-
 	template<typename T>
 	auto GetBoxVertices(box_base<T, 2> const & b, typename box_base<T, 2>::vec_type * result, bool global = true) // expect an array of 4 elements
 	{
@@ -678,8 +671,6 @@ namespace chaos
 				result[i] += b.position;
 			}
 		}
-
-
 		return result;
 	}
 
@@ -742,26 +733,6 @@ namespace chaos
 		return result;
 	}
 
-	template<typename T, int dimension>
-	bool IsPointInside(typename type_obox<T, dimension>::vec_type const & pt, type_obox<T, dimension> const & b)
-	{
-		// set point from global to local system
-		auto transform = GetRotatorMatrix(-b.rotator); 
-		auto transformed_ptr = GLMTools::Mult(transform, pt - b.position);
-		// now we can considere we are in a standard BOX
-		return glm::all(glm::lessThanEqual(glm::abs(transformed_ptr), b.half_size));
-	}
-
-
-
-
-
-
-
-
-
-
-
 	// ==============================================================================================
 	// triangles functions
 	// ==============================================================================================
@@ -817,33 +788,6 @@ namespace chaos
 		return type_triangle<T, dimension>(t.a, t.c, t.b);
 	}
 
-	/** returns true whether the point is contained in the triangle */
-	template<typename T, int dimension>
-	bool IsPointInside(typename type_triangle<T, dimension>::vec_type const & pt, type_triangle<T, dimension> const & t)
-	{
-		using vec_type = typename type_triangle<T, dimension>::vec_type;
-
-		// test whether the triangle is null
-		if (IsGeometryEmpty(t))
-			return false;
-
-		// test whether the point is inside the edges
-		vec_type const * V = &t.a;
-		for (int i = 0; i < 3; ++i)
-		{
-			vec_type const & e1 = V[i];
-			vec_type const & e2 = V[(i + 1) % 3];
-
-			vec_type e1_S = pt - e1;
-			vec_type normalized_edge = glm::normalize(e2 - e1);
-
-			auto d = GLMTools::Get2DCrossProductZ(normalized_edge, e1_S); // cross product, in plane, the only valid coordinate is Z = (x.y') - (x'y)
-			if (d > 0.0f)
-				return false;
-		}
-		return true;
-	}
-
 	// ==============================================================================================
 	// ray functions
 	// ==============================================================================================
@@ -878,13 +822,6 @@ namespace chaos
 	void SetGeometryEmpty(type_sphere<T, dimension> & c)
 	{
 		c.radius = (T)-1.0f;
-	}
-
-	/** returns true whether the point is contained in the circle */
-	template<typename T, int dimension>
-	bool IsPointInside(typename type_sphere<T, dimension>::vec_type const & pt, type_sphere<T, dimension> const & c)
-	{
-		return glm::length2(pt - c.position) <= c.radius * c.radius;
 	}
 
 	/** equality function for circle */

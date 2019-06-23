@@ -139,18 +139,17 @@ size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject cons
 }
 
 
-void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(chaos::box2 const & ball_box, chaos::box2 const & new_ball_box, glm::vec2 & velocity) const
+void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
 {
-	if (ball_box.position.x > new_ball_box.position.x)
-		velocity.x = -abs(velocity.x);				
-	else if (ball_box.position.x < new_ball_box.position.x)
-		velocity.x = abs(velocity.x);
+	int dimension = velocity.length();
 
-	if (ball_box.position.y > new_ball_box.position.y)
-		velocity.y = -abs(velocity.y);				
-	else if (ball_box.position.y < new_ball_box.position.y)
-		velocity.y = abs(velocity.y);
-
+	for (int i = 0; i < dimension; ++i)
+	{
+		if (old_position[i] > new_position[i])
+			velocity[i] = -abs(velocity[i]);
+		else if (old_position[i] < new_position[i])
+			velocity[i] = abs(velocity[i]);
+	}
 }
 
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const
@@ -191,7 +190,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	{
 		glm::vec2 old_velocity = velocity;
 
-		UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
+		chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
 		ball_box.position = new_ball_box.position;
 
 		if (old_velocity.y < 0.0f && velocity.y > 0.0f)
@@ -213,7 +212,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
 		{
-			UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
+			chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
 			ball_box.position = new_ball_box.position;
 			game_instance->OnBallCollide(false);
 		}
@@ -236,7 +235,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 			{
 				if (bricks[i].indestructible || bricks[i].life >= game_instance->ball_power)
 				{
-					UpdateParticleVelocityFromCollision(ball_box, new_ball_box, velocity);
+					chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
 					ball_box.position = new_ball_box.position;					
 				}
 

@@ -336,12 +336,9 @@ namespace chaos
 		auto r2 = s.radius * s.radius;
 
 		// 2 : test whether any of the 3 vertices is inside the sphere
-		if (glm::length2(t.a - s.position) <= r2)
-			return true;
-		if (glm::length2(t.b - s.position) <= r2) // do not use sphere::Contains(...) to avoid multiple computation of R * R
-			return true;
-		if (glm::length2(t.c - s.position) <= r2)
-			return true;
+		for (int i = 0 ; i < 3 ; ++i)
+			if (glm::length2(t[i] - s.position) <= r2) // do not use sphere::Contains(...) to avoid multiple computation of R * R
+				return true;
 
 		// 3 : test whether the sphere center is too far from one side of any edge
 		//     the distance si given by
@@ -349,11 +346,10 @@ namespace chaos
 		//
 		//     we can use a simplified version of cross product while in 2D
 		//     => the cross will give a vector so that (X = 0, Y = 0)
-		auto const * V = &t.a;
 		for (int i = 0; i < 3; ++i)
 		{
-			auto const & e1 = V[i];
-			auto const & e2 = V[(i + 1) % 3];
+			auto const & e1 = t[i];
+			auto const & e2 = t[(i + 1) % 3];
 
 			auto e1_S = s.position - e1;
 			auto normalized_edge = glm::normalize(e2 - e1);
@@ -422,11 +418,10 @@ namespace chaos
 			return false;
 
 		// test whether the point is inside the edges
-		vec_type const * V = &t.a;
 		for (int i = 0; i < 3; ++i)
 		{
-			vec_type const & e1 = V[i];
-			vec_type const & e2 = V[(i + 1) % 3];
+			vec_type const & e1 = t[i];
+			vec_type const & e2 = t[(i + 1) % 3];
 
 			vec_type e1_S = pt - e1;
 			vec_type normalized_edge = glm::normalize(e2 - e1);

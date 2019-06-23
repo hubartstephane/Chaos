@@ -261,6 +261,20 @@ namespace chaos
 		/** constructor from points */
 		type_triangle(vec_type const & in_a, vec_type const & in_b, vec_type const & in_c) : a(in_a), b(in_b), c(in_c) {}
 
+		/** access to vertices */
+		vec_type & operator [] (int i)
+		{
+			assert(i >= 0 && i < 3);
+			return *(&a + i);
+		}
+
+		/** access to vertices */
+		vec_type const & operator [] (int i) const
+		{
+			assert(i >= 0 && i < 3);
+			return *(&a + i);
+		}
+
 	public:
 
 		/** first point of the triangle */

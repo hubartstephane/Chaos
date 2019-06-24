@@ -1,21 +1,9 @@
 #include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
 #include <chaos/GLTools.h> 
-#include <chaos/StringTools.h> 
 #include <chaos/GLMTools.h> 
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/Application.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
 #include <chaos/SimpleMeshGenerator.h>
-#include <chaos/SkyBoxTools.h>
-#include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/FPSViewInputController.h>
 #include <chaos/SimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
@@ -24,7 +12,289 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/ConvexPolygonSplitter.h>
 
-#include "DrawFunctions.h"
+
+class RenderingContext
+{
+public:
+
+	chaos::Renderer * renderer = nullptr;
+
+	glm::mat4 projection;
+	glm::mat4 world_to_camera;
+
+
+	// rendering for the box  
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUProgram>  program_box;
+
+	// rendering for the triangle  
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_triangle;
+	chaos::shared_ptr<chaos::GPUProgram>  program_triangle;
+
+	// rendering for the rect
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_sphere;
+	chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
+};
+
+class PrimitiveRenderingContext
+{
+public:
+
+	glm::mat4 local_to_world;
+	glm::vec4 color;
+};
+
+
+template<typename T, int dimension>
+chaos::type_box<T, dimension> SlightIncreaseSize(chaos::type_box<T, dimension> src) const
+{
+	src.half_size *= static_cast<T>(1.01);
+	return src;  
+}
+
+template<typename T>
+chaos::type_sphere3<T> SlightIncreaseSize(chaos::type_sphere3<T> src) const
+{
+	src.radius *= static_cast<T>(1.01);
+	return src;  
+}
+
+template<typename T, int dimension>
+chaos::type_box<T, dimension> SlightDecreaseSize(chaos::type_box<T, dimension> src) const
+{
+	src.half_size *= static_cast<T>(0.90);
+	return src;
+}
+
+template<typename T>
+chaos::type_sphere3<T> SlightDecreaseSize(chaos::type_sphere3<T> src) const
+{
+	src.radius *= static_cast<T>(0.90);
+	return src;
+}
+
+void DrawPrimitiveImpl(
+	RenderingContext const & ctx,
+	chaos::SimpleMesh * mesh,
+	chaos::GPUProgram  * program,
+	glm::vec4 const & color, 
+	glm::mat4 const & local_to_world, 
+	bool is_translucent,
+	float Y_Scale, 
+	chaos::GPUProgramProvider * next_provider = nullptr
+)
+{
+	glm::vec4 final_color = color;
+	if (is_translucent)
+	{
+		BeginTranslucency();
+		final_color *= translucent;
+	}
+
+	PrimitiveRenderingContext prim_ctx;
+	prim_ctx.local_to_world = local_to_world;
+	prim_ctx.color          = final_color;
+
+	chaos::GPUProgramProvider uniform_provider;
+	PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
+
+	chaos::RenderParams render_params;
+	mesh->Render(ctx.renderer, program, &uniform_provider, render_params);
+
+	if (is_translucent)
+		EndTranslucency();
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent)
+{
+	glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+	// cannot be on the stack. due to reference count
+	chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
+	uniform_provider->AddVariableValue("p1", t.a);
+	uniform_provider->AddVariableValue("p2", t.b);
+	uniform_provider->AddVariableValue("p3", t.c);
+
+	DrawPrimitiveImpl(
+		ctx,
+		mesh_triangle.get(),
+		program_triangle.get(),
+		color,
+		local_to_world,
+		is_translucent,
+		1.0f,
+		uniform_provider.get()
+	);
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent)
+{
+	chaos::triangle3 t3;
+	t3.a = glm::vec3(t.a.x, 0.0f, t.a.y);
+	t3.b = glm::vec3(t.b.x, 0.0f, t.b.y);
+	t3.c = glm::vec3(t.c.x, 0.0f, t.c.y);
+	DrawPrimitive(ctx, t3, color, is_translucent);
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent)
+{
+	if (IsGeometryEmpty(s))
+		return;
+
+	glm::mat4 local_to_world = 
+		glm::translate(s.position) * 
+		glm::scale(glm::vec3(s.radius, s.radius, s.radius));
+
+	DrawPrimitiveImpl(
+		ctx,
+		mesh_sphere.get(),
+		program_sphere.get(),
+		color,
+		local_to_world,
+		is_translucent,
+		1.0f
+	);
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::sphere2 s, glm::vec4 const & color, bool is_translucent)
+{
+	if (IsGeometryEmpty(s))
+		return;
+
+	glm::mat4 local_to_world =
+		glm::translate(glm::vec3(s.position.x, 0.0f, s.position.y)) *
+		glm::scale(glm::vec3(s.radius, s.radius, s.radius));
+
+	DrawPrimitiveImpl(
+		ctx,
+		mesh_sphere.get(),
+		program_sphere.get(),
+		color,
+		local_to_world,
+		is_translucent,
+		0.0f
+	);
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color, bool is_translucent)
+{
+	if (IsGeometryEmpty(b))
+		return;
+
+	glm::mat4 local_to_world = 
+		glm::translate(b.position) * 
+		glm::scale(b.half_size);
+
+	DrawPrimitiveImpl(
+		ctx,
+		mesh_box.get(),
+		program_box.get(),
+		color,
+		local_to_world,
+		is_translucent,
+		1.0f
+	);
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::box2 b, glm::vec4 const & color, bool is_translucent)
+{
+	if (IsGeometryEmpty(b))
+		return;
+
+	glm::mat4 local_to_world = 
+		glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
+		glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
+
+	DrawPrimitiveImpl(
+		ctx,
+		mesh_box.get(),
+		program_box.get(),
+		color,
+		local_to_world,
+		is_translucent,
+		0.0f
+	);
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent)
+{
+	if (IsGeometryEmpty(b))
+		return;
+
+	glm::mat4 local_to_world = 
+		glm::translate(b.position) * 
+		chaos::GetRotatorMatrix(b.rotator) * 
+		glm::scale(b.half_size);
+
+	DrawPrimitiveImpl(
+		ctx,
+		mesh_box.get(),
+		program_box.get(),
+		color,
+		local_to_world,
+		is_translucent,
+		1.0f
+	);
+}
+
+void DrawPrimitive(RenderingContext const & ctx, chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent)
+{
+	if (IsGeometryEmpty(b))
+		return;
+
+	glm::mat4 local_to_world = 
+		glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
+		chaos::GetRotatorMatrix(b.rotator) * 
+		glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
+
+	DrawPrimitiveImpl(
+		ctx,
+		mesh_box.get(),
+		program_box.get(),
+		color,
+		local_to_world,
+		is_translucent,
+		0.0f
+	);
+
+
+}
+
+void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color, bool is_translucent)
+{
+	glm::vec3 half_point_size(0.125f);
+	DrawPrimitive(ctx, chaos::box3(p, half_point_size), color, is_translucent);
+}
+
+void BeginTranslucency()
+{
+	glEnable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void EndTranslucency()
+{
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+}
+
+void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider = nullptr)
+{
+	uniform_provider.AddVariableValue("projection", ctx.projection);
+	uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
+	uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
+	uniform_provider.AddVariableValue("color", prim_ctx.color);
+	uniform_provider.AddVariableValue("Y_Scale", Y_Scale);
+
+	if (next_provider != nullptr)
+		uniform_provider.AddVariableProvider(next_provider);
+}
+
+
+
+
 
 
 
@@ -82,23 +352,6 @@ static int const POINT_INSIDE_OBOX_TEST = EXAMPLE_COUNT++;
 
 static int const TEST_COUNT = EXAMPLE_COUNT;
 
-class RenderingContext
-{
-public:
-
-	chaos::Renderer * renderer = nullptr;
-
-	glm::mat4 projection;
-	glm::mat4 world_to_camera;
-};
-
-class PrimitiveRenderingContext
-{
-public:
-
-	glm::mat4 local_to_world;
-	glm::vec4 color;
-};
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -112,33 +365,6 @@ public:
 
 protected:
 
-	template<typename T, int dimension>
-	chaos::type_box<T, dimension> SlightIncreaseSize(chaos::type_box<T, dimension> src) const
-	{
-		src.half_size *= static_cast<T>(1.01);
-		return src;  
-	}
-
-	template<typename T>
-	chaos::type_sphere3<T> SlightIncreaseSize(chaos::type_sphere3<T> src) const
-	{
-		src.radius *= static_cast<T>(1.01);
-		return src;  
-	}
-
-	template<typename T, int dimension>
-	chaos::type_box<T, dimension> SlightDecreaseSize(chaos::type_box<T, dimension> src) const
-	{
-		src.half_size *= static_cast<T>(0.90);
-		return src;
-	}
-
-	template<typename T>
-	chaos::type_sphere3<T> SlightDecreaseSize(chaos::type_sphere3<T> src) const
-	{
-		src.radius *= static_cast<T>(0.90);
-		return src;
-	}
 
 	char const * GetExampleTitle(int example)
 	{
@@ -192,224 +418,9 @@ protected:
 		debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
 	}
 
-	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider = nullptr)
-	{
-		uniform_provider.AddVariableValue("projection", ctx.projection);
-		uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
-		uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
-		uniform_provider.AddVariableValue("color", prim_ctx.color);
-		uniform_provider.AddVariableValue("Y_Scale", Y_Scale);
-
-		if (next_provider != nullptr)
-			uniform_provider.AddVariableProvider(next_provider);
-	}
-
-	void DrawPrimitiveImpl(
-		RenderingContext const & ctx,
-		chaos::SimpleMesh * mesh,
-		chaos::GPUProgram  * program,
-		glm::vec4 const & color, 
-		glm::mat4 const & local_to_world, 
-		bool is_translucent,
-		float Y_Scale, 
-		chaos::GPUProgramProvider * next_provider = nullptr
-	)
-	{
-		glm::vec4 final_color = color;
-		if (is_translucent)
-		{
-			BeginTranslucency();
-			final_color *= translucent;
-		}
-
-		PrimitiveRenderingContext prim_ctx;
-		prim_ctx.local_to_world = local_to_world;
-		prim_ctx.color          = final_color;
-
-		chaos::GPUProgramProvider uniform_provider;
-		PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
-
-		chaos::RenderParams render_params;
-		mesh->Render(ctx.renderer, program, &uniform_provider, render_params);
-
-		if (is_translucent)
-			EndTranslucency();
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent)
-	{
-		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 
-		// cannot be on the stack. due to reference count
-		chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
-		uniform_provider->AddVariableValue("p1", t.a);
-		uniform_provider->AddVariableValue("p2", t.b);
-		uniform_provider->AddVariableValue("p3", t.c);
 
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_triangle.get(),
-			program_triangle.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f,
-			uniform_provider.get()
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent)
-	{
-		chaos::triangle3 t3;
-		t3.a = glm::vec3(t.a.x, 0.0f, t.a.y);
-		t3.b = glm::vec3(t.b.x, 0.0f, t.b.y);
-		t3.c = glm::vec3(t.c.x, 0.0f, t.c.y);
-		DrawPrimitive(ctx, t3, color, is_translucent);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(s))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(s.position) * 
-			glm::scale(glm::vec3(s.radius, s.radius, s.radius));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_sphere.get(),
-			program_sphere.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::sphere2 s, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(s))
-			return;
-
-		glm::mat4 local_to_world =
-			glm::translate(glm::vec3(s.position.x, 0.0f, s.position.y)) *
-			glm::scale(glm::vec3(s.radius, s.radius, s.radius));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_sphere.get(),
-			program_sphere.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			0.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(b.position) * 
-			glm::scale(b.half_size);
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::box2 b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
-			glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			0.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(b.position) * 
-			chaos::GetRotatorMatrix(b.rotator) * 
-			glm::scale(b.half_size);
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
-			chaos::GetRotatorMatrix(b.rotator) * 
-			glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			0.0f
-		);
-
-
-	}
-
-	void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color, bool is_translucent)
-	{
-		glm::vec3 half_point_size(0.125f);
-		DrawPrimitive(ctx, chaos::box3(p, half_point_size), color, is_translucent);
-	}
-
-	void BeginTranslucency()
-	{
-		glEnable(GL_BLEND);
-		glDepthMask(GL_FALSE);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	void EndTranslucency()
-	{
-		glDepthMask(GL_TRUE);
-		glDisable(GL_BLEND);
-	}
 
 	template<typename T>
 	void DrawIntersectionOrUnion(RenderingContext const & ctx, T p1, T p2, bool intersection)
@@ -905,7 +916,6 @@ protected:
 								  // XXX : the scaling is used to avoid the near plane clipping
 		RenderingContext ctx;
 		ctx.renderer = renderer;
-		ctx.
 
 		static float FOV = 60.0f;
 		ctx.projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);

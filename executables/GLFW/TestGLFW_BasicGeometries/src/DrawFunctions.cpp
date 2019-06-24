@@ -24,7 +24,33 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/ConvexPolygonSplitter.h>
 
-#include "DrawFunctions.h"
+
+
+namespace chaos
+{
+
+
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -905,7 +931,6 @@ protected:
 								  // XXX : the scaling is used to avoid the near plane clipping
 		RenderingContext ctx;
 		ctx.renderer = renderer;
-		ctx.
 
 		static float FOV = 60.0f;
 		ctx.projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);

@@ -33,9 +33,6 @@ static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-static glm::vec4 const solid       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
-
 static int EXAMPLE_COUNT = 0;
 
 static int const RECTANGLE_DISPLAY_TEST        = EXAMPLE_COUNT++;
@@ -76,29 +73,7 @@ static int const OBOX_INNER_SPHERE_TEST = EXAMPLE_COUNT++;
 static int const POINT_INSIDE_OBOX_TEST = EXAMPLE_COUNT++;
 
 
-
-
-
-
 static int const TEST_COUNT = EXAMPLE_COUNT;
-
-class RenderingContext
-{
-public:
-
-	chaos::Renderer * renderer = nullptr;
-
-	glm::mat4 projection;
-	glm::mat4 world_to_camera;
-};
-
-class PrimitiveRenderingContext
-{
-public:
-
-	glm::mat4 local_to_world;
-	glm::vec4 color;
-};
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -111,34 +86,6 @@ public:
 	}
 
 protected:
-
-	template<typename T, int dimension>
-	chaos::type_box<T, dimension> SlightIncreaseSize(chaos::type_box<T, dimension> src) const
-	{
-		src.half_size *= static_cast<T>(1.01);
-		return src;  
-	}
-
-	template<typename T>
-	chaos::type_sphere3<T> SlightIncreaseSize(chaos::type_sphere3<T> src) const
-	{
-		src.radius *= static_cast<T>(1.01);
-		return src;  
-	}
-
-	template<typename T, int dimension>
-	chaos::type_box<T, dimension> SlightDecreaseSize(chaos::type_box<T, dimension> src) const
-	{
-		src.half_size *= static_cast<T>(0.90);
-		return src;
-	}
-
-	template<typename T>
-	chaos::type_sphere3<T> SlightDecreaseSize(chaos::type_sphere3<T> src) const
-	{
-		src.radius *= static_cast<T>(0.90);
-		return src;
-	}
 
 	char const * GetExampleTitle(int example)
 	{
@@ -176,7 +123,6 @@ protected:
 		if (example == OBOX_INNER_SPHERE_TEST)         return "obox inner sphere";
 		if (example == POINT_INSIDE_OBOX_TEST)         return "point inside obox";
 		
-
 		return nullptr;
 	}
 
@@ -192,225 +138,6 @@ protected:
 		debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
 	}
 
-	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, RenderingContext const & ctx, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider = nullptr)
-	{
-		uniform_provider.AddVariableValue("projection", ctx.projection);
-		uniform_provider.AddVariableValue("world_to_camera", ctx.world_to_camera);
-		uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
-		uniform_provider.AddVariableValue("color", prim_ctx.color);
-		uniform_provider.AddVariableValue("Y_Scale", Y_Scale);
-
-		if (next_provider != nullptr)
-			uniform_provider.AddVariableProvider(next_provider);
-	}
-
-	void DrawPrimitiveImpl(
-		RenderingContext const & ctx,
-		chaos::SimpleMesh * mesh,
-		chaos::GPUProgram  * program,
-		glm::vec4 const & color, 
-		glm::mat4 const & local_to_world, 
-		bool is_translucent,
-		float Y_Scale, 
-		chaos::GPUProgramProvider * next_provider = nullptr
-	)
-	{
-		glm::vec4 final_color = color;
-		if (is_translucent)
-		{
-			BeginTranslucency();
-			final_color *= translucent;
-		}
-
-		PrimitiveRenderingContext prim_ctx;
-		prim_ctx.local_to_world = local_to_world;
-		prim_ctx.color          = final_color;
-
-		chaos::GPUProgramProvider uniform_provider;
-		PrepareObjectProgram(uniform_provider, ctx, prim_ctx, Y_Scale, next_provider);
-
-		chaos::RenderParams render_params;
-		mesh->Render(ctx.renderer, program, &uniform_provider, render_params);
-
-		if (is_translucent)
-			EndTranslucency();
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent)
-	{
-		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-
-
-		// cannot be on the stack. due to reference count
-		chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
-		uniform_provider->AddVariableValue("p1", t.a);
-		uniform_provider->AddVariableValue("p2", t.b);
-		uniform_provider->AddVariableValue("p3", t.c);
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_triangle.get(),
-			program_triangle.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f,
-			uniform_provider.get()
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent)
-	{
-		chaos::triangle3 t3;
-		t3.a = glm::vec3(t.a.x, 0.0f, t.a.y);
-		t3.b = glm::vec3(t.b.x, 0.0f, t.b.y);
-		t3.c = glm::vec3(t.c.x, 0.0f, t.c.y);
-		DrawPrimitive(ctx, t3, color, is_translucent);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(s))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(s.position) * 
-			glm::scale(glm::vec3(s.radius, s.radius, s.radius));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_sphere.get(),
-			program_sphere.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::sphere2 s, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(s))
-			return;
-
-		glm::mat4 local_to_world =
-			glm::translate(glm::vec3(s.position.x, 0.0f, s.position.y)) *
-			glm::scale(glm::vec3(s.radius, s.radius, s.radius));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_sphere.get(),
-			program_sphere.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			0.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(b.position) * 
-			glm::scale(b.half_size);
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::box2 b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
-			glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			0.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(b.position) * 
-			chaos::GetRotatorMatrix(b.rotator) * 
-			glm::scale(b.half_size);
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			1.0f
-		);
-	}
-
-	void DrawPrimitive(RenderingContext const & ctx, chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent)
-	{
-		if (IsGeometryEmpty(b))
-			return;
-
-		glm::mat4 local_to_world = 
-			glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) * 
-			chaos::GetRotatorMatrix(b.rotator) * 
-			glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
-
-		DrawPrimitiveImpl(
-			ctx,
-			mesh_box.get(),
-			program_box.get(),
-			color,
-			local_to_world,
-			is_translucent,
-			0.0f
-		);
-
-
-	}
-
-	void DrawPoint(RenderingContext const & ctx, glm::vec3 const & p, glm::vec4 const & color, bool is_translucent)
-	{
-		glm::vec3 half_point_size(0.125f);
-		DrawPrimitive(ctx, chaos::box3(p, half_point_size), color, is_translucent);
-	}
-
-	void BeginTranslucency()
-	{
-		glEnable(GL_BLEND);
-		glDepthMask(GL_FALSE);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	void EndTranslucency()
-	{
-		glDepthMask(GL_TRUE);
-		glDisable(GL_BLEND);
-	}
-
 	template<typename T>
 	void DrawIntersectionOrUnion(RenderingContext const & ctx, T p1, T p2, bool intersection)
 	{
@@ -421,17 +148,17 @@ protected:
 
 		if (intersection)
 		{
-			DrawPrimitive(ctx, SlightIncreaseSize(p1 & p2), white, false);
+			ctx.DrawPrimitive(ctx.SlightIncreaseSize(p1 & p2), white, false);
 
-			DrawPrimitive(ctx, p1, red, true);
-			DrawPrimitive(ctx, p2, blue, true);
+			ctx.DrawPrimitive(p1, red, true);
+			ctx.DrawPrimitive(p2, blue, true);
 		}
 		else
 		{
-			DrawPrimitive(ctx, p1, red, false);
-			DrawPrimitive(ctx, p2, blue, false);
+			ctx.DrawPrimitive(p1, red, false);
+			ctx.DrawPrimitive(p2, blue, false);
 
-			DrawPrimitive(ctx, SlightIncreaseSize(p1 | p2), white, true);
+			ctx.DrawPrimitive(ctx.SlightIncreaseSize(p1 | p2), white, true);
 		}  
 	}
 
@@ -453,8 +180,8 @@ protected:
 
 		chaos::RestrictToInside(bigger, smaller, move_bigger);
 
-		DrawPrimitive(ctx, smaller, blue, false);
-		DrawPrimitive(ctx, SlightIncreaseSize(bigger), red, true);
+		ctx.DrawPrimitive(smaller, blue, false);
+		ctx.DrawPrimitive(ctx.SlightIncreaseSize(bigger), red, true);
 	}
 
 	template<typename T>
@@ -474,8 +201,8 @@ protected:
 
 		chaos::RestrictToOutside(src, target);
 
-		DrawPrimitive(ctx, src, blue, false);
-		DrawPrimitive(ctx, target, red, false);
+		ctx.DrawPrimitive(src, blue, false);
+		ctx.DrawPrimitive(target, red, false);
 	}
 
 	template<typename T>
@@ -490,8 +217,8 @@ protected:
 
 		bool collision = chaos::Collide(p1, p2);
 
-		DrawPrimitive(ctx, p1, blue, collision);
-		DrawPrimitive(ctx, p2, red, collision);
+		ctx.DrawPrimitive(p1, blue, collision);
+		ctx.DrawPrimitive(p2, red, collision);
 	}
 
 	void DrawSphereBox2Collision(RenderingContext const & ctx)
@@ -509,8 +236,8 @@ protected:
 		s2.radius = 3.0f;
 
 		bool collision = chaos::Collide(b2, s2);
-		DrawPrimitive(ctx, b2, blue, collision);
-		DrawPrimitive(ctx, s2, red, collision);
+		ctx.DrawPrimitive(b2, blue, collision);
+		ctx.DrawPrimitive(s2, red, collision);
 	}
 
 	void DrawTrianglePointCollision(RenderingContext const & ctx)
@@ -528,8 +255,8 @@ protected:
 		p.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
 
 		bool collision = IsPointInside(p, t2);
-		DrawPrimitive(ctx, t2, blue, collision);
-		DrawPoint(ctx, glm::vec3(p.x, 0.0f, p.y), white, collision);
+		ctx.DrawPrimitive(t2, blue, collision);
+		ctx.DrawPoint(glm::vec3(p.x, 0.0f, p.y), white, collision);
 
 	}
 
@@ -549,8 +276,8 @@ protected:
 		s2.radius = 0.25f;
 
 		bool collision = chaos::Collide(t2, s2);
-		DrawPrimitive(ctx, t2, blue, collision);
-		DrawPrimitive(ctx, s2, red, collision);
+		ctx.DrawPrimitive(t2, blue, collision);
+		ctx.DrawPrimitive(s2, red, collision);
 	}
 
 	template<typename T>
@@ -563,8 +290,8 @@ protected:
 		pos.y = 0.0f;
 		pos.z = 0.0f;
 
-		DrawPoint(ctx, pos, white, false);
-		DrawPrimitive(ctx, p, red, IsPointInside(pos, p));
+		ctx.DrawPoint(pos, white, false);
+		ctx.DrawPrimitive(p, red, IsPointInside(pos, p));
 	}
 
 	void DrawGeometryObjects(RenderingContext const & ctx)
@@ -578,9 +305,9 @@ protected:
 			chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 			chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-			DrawPrimitive(ctx, b1, red, false);
-			DrawPrimitive(ctx, b2, green, false);
-			DrawPrimitive(ctx, b3, blue, false);
+			ctx.DrawPrimitive(b1, red, false);
+			ctx.DrawPrimitive(b2, green, false);
+			ctx.DrawPrimitive(b3, blue, false);
 		}
 
 		// display box and corners
@@ -588,11 +315,11 @@ protected:
 		{
 			chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-			DrawPrimitive(ctx, b, red, false);
+			ctx.DrawPrimitive(b, red, false);
 
 			std::pair<glm::vec3, glm::vec3> corners = GetBoxExtremums(b);
-			DrawPoint(ctx, corners.first, white, false);
-			DrawPoint(ctx, corners.second, white, false);
+			ctx.DrawPoint(corners.first, white, false);
+			ctx.DrawPoint(corners.second, white, false);
 		}
 
 		// box construction from corners
@@ -603,9 +330,9 @@ protected:
 
 			chaos::box3 b(std::make_pair(p1, p2));
 
-			DrawPrimitive(ctx, b, red, false);
-			DrawPoint(ctx, p1, white, false);
-			DrawPoint(ctx, p2, white, false);
+			ctx.DrawPrimitive(b, red, false);
+			ctx.DrawPoint(p1, white, false);
+			ctx.DrawPoint(p2, white, false);
 		}
 
 		// box union or intersection
@@ -634,9 +361,9 @@ protected:
 			chaos::sphere3 s2(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
 			chaos::sphere3 s3(glm::vec3(0.0f, 0.0f, 2.0f), 1.0f);
 
-			DrawPrimitive(ctx, s1, red, false);
-			DrawPrimitive(ctx, s2, green, false);
-			DrawPrimitive(ctx, s3, blue, false);
+			ctx.DrawPrimitive(s1, red, false);
+			ctx.DrawPrimitive(s2, green, false);
+			ctx.DrawPrimitive(s3, blue, false);
 		}
 
 		// sphere union or intersection
@@ -653,8 +380,8 @@ protected:
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetInnerSphere(b);
 
-			DrawPrimitive(ctx, s, blue, false);
-			DrawPrimitive(ctx, b, red, true);
+			ctx.DrawPrimitive(s, blue, false);
+			ctx.DrawPrimitive(b, red, true);
 		}
 
 		// bounding sphere
@@ -663,8 +390,8 @@ protected:
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetBoundingSphere(b);
 
-			DrawPrimitive(ctx, b, red, false);
-			DrawPrimitive(ctx, s, blue, true);
+			ctx.DrawPrimitive(b, red, false);
+			ctx.DrawPrimitive(s, blue, true);
 		}
 		// bounding box
 		if (display_example == BOUNDING_BOX_TEST)
@@ -673,8 +400,8 @@ protected:
 
 			chaos::box3 b = GetBoundingBox(s);
 
-			DrawPrimitive(ctx, s, red, false);
-			DrawPrimitive(ctx, b, blue, true);
+			ctx.DrawPrimitive(s, red, false);
+			ctx.DrawPrimitive(b, blue, true);
 		}
 
 		// split box
@@ -689,12 +416,12 @@ protected:
 					for (int k = 0 ; k < 2 ; ++k)
 					{
 						chaos::box3 split_b = GetSplitBox(b, i, j, k);
-						DrawPrimitive(ctx, SlightDecreaseSize(split_b), red, false);
+						ctx.DrawPrimitive(ctx.SlightDecreaseSize(split_b), red, false);
 					}
 				}
 			}
 
-			DrawPrimitive(ctx, b, blue, true);
+			ctx.DrawPrimitive(b, blue, true);
 		}
 
 		// box collision
@@ -748,7 +475,7 @@ protected:
 		if (display_example == OBOX_DISPLAY_TEST || display_example == OBOX_CORNERS_TEST || display_example == OBOX_BOUNDING_SPHERE_TEST || display_example == OBOX_BOUNDING_BOX_TEST || display_example == OBOX_INNER_SPHERE_TEST || display_example == POINT_INSIDE_OBOX_TEST)
 		{
 
-#if 0
+#if 1
 			glm::vec3 pt = glm::vec3(10.0f, 0.0f, 0.0f);
 
 
@@ -776,37 +503,37 @@ protected:
 
 
 
-			DrawPrimitive(ctx, b, red, transparent_obox);
+			ctx.DrawPrimitive(b, red, transparent_obox);
 
 			if (display_example == OBOX_CORNERS_TEST)
 			{
 				glm::vec3 vertices[8];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					DrawPoint(ctx, vertices[i], white, false);
+					ctx.DrawPoint(vertices[i], white, false);
 			}
 
 			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetBoundingSphere(b);
-				DrawPrimitive(ctx, s, blue, true);
+				ctx.DrawPrimitive(s, blue, true);
 			}
 
 			if (display_example == OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box3 box = GetBoundingBox(b);
-				DrawPrimitive(ctx, box, blue, true);
+				ctx.DrawPrimitive(box, blue, true);
 			}
 
 			if (display_example == OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetInnerSphere(b);
-				DrawPrimitive(ctx, s, blue, false);
+				ctx.DrawPrimitive(s, blue, false);
 			}
 
 			if (display_example == POINT_INSIDE_OBOX_TEST)
 			{
-				DrawPoint(ctx, pt, white, false);
+				ctx.DrawPoint(pt, white, false);
 			}
 #else
 
@@ -831,37 +558,37 @@ protected:
 			else if (display_example == POINT_INSIDE_OBOX_TEST && IsPointInside(pt, b))
 				transparent_obox = true;
 
-			DrawPrimitive(ctx, b, red, transparent_obox);
+			ctx.DrawPrimitive(b, red, transparent_obox);
 
 			if (display_example == OBOX_CORNERS_TEST)
 			{
 				glm::vec2 vertices[4];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					DrawPoint(ctx, glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
+					ctx.DrawPoint(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
 			}
 
 			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingCircle(b);
-				DrawPrimitive(ctx, s, blue, true);
+				ctx.DrawPrimitive(s, blue, true);
 			}
 
 			if (display_example == OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box2 box = GetBoundingBox(b);
-				DrawPrimitive(ctx, box, blue, true);
+				ctx.DrawPrimitive(box, blue, true);
 			}
 
 			if (display_example == OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingCircle(b);
-				DrawPrimitive(ctx, s, blue, false);
+				ctx.DrawPrimitive(s, blue, false);
 			}
 
 			if (display_example == POINT_INSIDE_OBOX_TEST)
 			{
-				DrawPoint(ctx, glm::vec3(pt.x, 0.0f, pt.y), white, false);
+				ctx.DrawPoint(glm::vec3(pt.x, 0.0f, pt.y), white, false);
 			}
 
 
@@ -905,7 +632,13 @@ protected:
 								  // XXX : the scaling is used to avoid the near plane clipping
 		RenderingContext ctx;
 		ctx.renderer = renderer;
-		ctx.
+		ctx.mesh_box = mesh_box;
+		ctx.mesh_triangle = mesh_triangle;
+		ctx.mesh_sphere = mesh_sphere;
+
+		ctx.program_box = program_box;
+		ctx.program_triangle = program_triangle;
+		ctx.program_sphere = program_sphere;
 
 		static float FOV = 60.0f;
 		ctx.projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);

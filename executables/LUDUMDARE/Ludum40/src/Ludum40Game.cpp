@@ -233,7 +233,7 @@ bool Game::FindPlayerCollision()
   glm::vec2 phs = player_particle->half_size;
 
 	chaos::box2    player_box    = chaos::box2(pp, phs);
-	chaos::sphere2 player_sphere = chaos::GetInnerCircle(player_box);
+	chaos::sphere2 player_sphere = chaos::GetInnerSphere(player_box);
 
   chaos::triangle2 player_triangle;
   player_triangle.a = glm::vec2(pp.x, pp.y + phs.y);
@@ -256,7 +256,7 @@ bool Game::FindPlayerCollision()
 
 			if (chaos::Collide(player_box, particle_box)) // raw collision detection
 			{				
-				chaos::sphere2 particle_sphere = chaos::GetInnerCircle(particle_box);
+				chaos::sphere2 particle_sphere = chaos::GetInnerSphere(particle_box);
 
 				if (chaos::Collide(player_triangle, particle_sphere)) // more precise
 				{

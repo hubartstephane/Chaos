@@ -570,7 +570,7 @@ protected:
 
 			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
 			{
-				chaos::sphere2 s = GetBoundingCircle(b);
+				chaos::sphere2 s = GetBoundingSphere(b);
 				ctx.DrawPrimitive(s, blue, true);
 			}
 
@@ -582,7 +582,7 @@ protected:
 
 			if (display_example == OBOX_INNER_SPHERE_TEST)
 			{
-				chaos::sphere2 s = GetBoundingCircle(b);
+				chaos::sphere2 s = GetBoundingSphere(b);
 				ctx.DrawPrimitive(s, blue, false);
 			}
 

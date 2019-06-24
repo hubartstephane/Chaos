@@ -88,7 +88,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		{
 			ParticleAffector & p = particles[i];
 
-			float radius = chaos::GetInnerCircle(p.bounding_box).radius;
+			float radius = chaos::GetInnerSphere(p.bounding_box).radius;
 
 			p.attraction_minradius = radius + ludum_game->player_attraction_minradius;
 			p.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
@@ -109,7 +109,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 		{
 			ParticleEnemy & p = particles[i];
 
-			chaos::sphere2 c = chaos::GetInnerCircle(p.bounding_box);
+			chaos::sphere2 c = chaos::GetInnerSphere(p.bounding_box);
 
 			float & radius = c.radius;
 

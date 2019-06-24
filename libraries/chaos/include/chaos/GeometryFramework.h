@@ -379,14 +379,14 @@ namespace chaos
 
 	/** returns the bounding circle for the box */
 	template<typename T>
-	type_sphere2<T> GetBoundingCircle(box_base<T, 2> const & b)
+	type_sphere2<T> GetBoundingSphere(box_base<T, 2> const & b)
 	{
 		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner circle for the box */
 	template<typename T>
-	type_sphere2<T> GetInnerCircle(box_base<T, 2> const & b)
+	type_sphere2<T> GetInnerSphere(box_base<T, 2> const & b)
 	{
 		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}

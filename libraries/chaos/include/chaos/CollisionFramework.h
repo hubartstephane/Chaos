@@ -261,7 +261,7 @@ namespace chaos
 			return false;
 
 		// 2 : test whether the center of the sphere is inside the box
-		if (IsPointInside(s.position, b))
+		if (Collide(s.position, b))
 			return true;
 
 		// 3 : test distance from the sphere center to the 4 corners of the box
@@ -384,9 +384,15 @@ namespace chaos
 
 	/** returns true whether the point is contained in the box */
 	template<typename T, int dimension>
-	bool IsPointInside(typename type_box<T, dimension>::vec_type const & pt, type_box<T, dimension> const & b)
+	bool Collide(typename type_box<T, dimension>::vec_type const & pt, type_box<T, dimension> const & b)
 	{
 		return glm::all(glm::lessThanEqual(glm::abs(pt - b.position), b.half_size));
+	}
+
+	template<typename T, int dimension>
+	bool Collide(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const & pt)
+	{
+		return Collide(pt, b);
 	}
 
 	// ==============================================================================================
@@ -394,7 +400,7 @@ namespace chaos
 	// ==============================================================================================
 
 	template<typename T, int dimension>
-	bool IsPointInside(typename type_obox<T, dimension>::vec_type const & pt, type_obox<T, dimension> const & b)
+	bool Collide(typename type_obox<T, dimension>::vec_type const & pt, type_obox<T, dimension> const & b)
 	{
 		// set point from global to local system
 		auto transform = GetRotatorMatrix(-b.rotator); 
@@ -403,13 +409,19 @@ namespace chaos
 		return glm::all(glm::lessThanEqual(glm::abs(transformed_ptr), b.half_size));
 	}
 
+	template<typename T, int dimension>
+	bool Collide(type_obox<T, dimension> const & b, typename type_obox<T, dimension>::vec_type const & pt)
+	{
+		return Collide(pt, b);
+	}
+
 	// ==============================================================================================
 	// triangles functions
 	// ==============================================================================================
 
 	/** returns true whether the point is contained in the triangle */
 	template<typename T, int dimension>
-	bool IsPointInside(typename type_triangle<T, dimension>::vec_type const & pt, type_triangle<T, dimension> const & t)
+	bool Collide(typename type_triangle<T, dimension>::vec_type const & pt, type_triangle<T, dimension> const & t)
 	{
 		using vec_type = typename type_triangle<T, dimension>::vec_type;
 
@@ -433,15 +445,27 @@ namespace chaos
 		return true;
 	}
 
+	template<typename T, int dimension>
+	bool Collide(type_triangle<T, dimension> const & t, typename type_triangle<T, dimension>::vec_type const & pt)
+	{
+		return Collide(pt, t);
+	}
+
 	// ==============================================================================================
 	// sphere/circle functions
 	// ==============================================================================================
 
-	/** returns true whether the point is contained in the circle */
+	/** returns true whether the point is contained in the sphere */
 	template<typename T, int dimension>
-	bool IsPointInside(typename type_sphere<T, dimension>::vec_type const & pt, type_sphere<T, dimension> const & c)
+	bool Collide(typename type_sphere<T, dimension>::vec_type const & pt, type_sphere<T, dimension> const & s)
 	{
-		return glm::length2(pt - c.position) <= c.radius * c.radius;
+		return glm::length2(pt - s.position) <= s.radius * s.radius;
+	}
+
+	template<typename T, int dimension>
+	bool Collide(type_sphere<T, dimension> const & s, typename type_sphere<T, dimension>::vec_type const & pt)
+	{
+		return Collide(pt, s);
 	}
 
 

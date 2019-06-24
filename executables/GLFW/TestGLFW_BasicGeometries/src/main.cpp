@@ -205,6 +205,16 @@ protected:
 		ctx.DrawPrimitive(target, red, false);
 	}
 
+
+	template<typename T1, typename T2>
+	void DrawCollisionImpl(RenderingContext const & ctx, T1 const & p1, T2 const & p2)
+	{
+		bool collision = chaos::Collide(p1, p2);
+		ctx.DrawPrimitive(p1, blue, collision);
+		ctx.DrawPrimitive(p2, red, collision);
+	}
+
+
 	template<typename T>
 	void DrawCollision(RenderingContext const & ctx, T p1, T p2)
 	{
@@ -215,10 +225,7 @@ protected:
 		p2.position.x = 0.0;
 		p2.position.y = 10.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
 
-		bool collision = chaos::Collide(p1, p2);
-
-		ctx.DrawPrimitive(p1, blue, collision);
-		ctx.DrawPrimitive(p2, red, collision);
+		DrawCollisionImpl(ctx, p1, p2);
 	}
 
 	void DrawSphereBox2Collision(RenderingContext const & ctx)
@@ -235,9 +242,7 @@ protected:
 		s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
 		s2.radius = 3.0f;
 
-		bool collision = chaos::Collide(b2, s2);
-		ctx.DrawPrimitive(b2, blue, collision);
-		ctx.DrawPrimitive(s2, red, collision);
+		DrawCollisionImpl(ctx, b2, s2);
 	}
 
 	void DrawTrianglePointCollision(RenderingContext const & ctx)
@@ -254,10 +259,7 @@ protected:
 		p.x = 5.0f * (float)chaos::MathTools::Cos(realtime * M_2_PI);
 		p.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
 
-		bool collision = IsPointInside(p, t2);
-		ctx.DrawPrimitive(t2, blue, collision);
-		ctx.DrawPoint(glm::vec3(p.x, 0.0f, p.y), white, collision);
-
+		DrawCollisionImpl(ctx, glm::vec2(p.x, p.y), t2);
 	}
 
 	void DrawTriangleBox2Collision(RenderingContext const & ctx)
@@ -275,9 +277,7 @@ protected:
 		s2.position.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
 		s2.radius = 0.25f;
 
-		bool collision = chaos::Collide(t2, s2);
-		ctx.DrawPrimitive(t2, blue, collision);
-		ctx.DrawPrimitive(s2, red, collision);
+		DrawCollisionImpl(ctx, t2, s2);
 	}
 
 	template<typename T>
@@ -290,8 +290,7 @@ protected:
 		pos.y = 0.0f;
 		pos.z = 0.0f;
 
-		ctx.DrawPoint(pos, white, false);
-		ctx.DrawPrimitive(p, red, IsPointInside(pos, p));
+		DrawCollisionImpl(ctx, pos, p);
 	}
 
 	void DrawGeometryObjects(RenderingContext const & ctx)
@@ -318,8 +317,8 @@ protected:
 			ctx.DrawPrimitive(b, red, false);
 
 			std::pair<glm::vec3, glm::vec3> corners = GetBoxExtremums(b);
-			ctx.DrawPoint(corners.first, white, false);
-			ctx.DrawPoint(corners.second, white, false);
+			ctx.DrawPrimitive(corners.first, white, false);
+			ctx.DrawPrimitive(corners.second, white, false);
 		}
 
 		// box construction from corners
@@ -331,8 +330,8 @@ protected:
 			chaos::box3 b(std::make_pair(p1, p2));
 
 			ctx.DrawPrimitive(b, red, false);
-			ctx.DrawPoint(p1, white, false);
-			ctx.DrawPoint(p2, white, false);
+			ctx.DrawPrimitive(p1, white, false);
+			ctx.DrawPrimitive(p2, white, false);
 		}
 
 		// box union or intersection
@@ -496,7 +495,7 @@ protected:
 			bool transparent_obox = false;
 			if (display_example == OBOX_INNER_SPHERE_TEST)
 				transparent_obox = true;
-			else if (display_example == POINT_INSIDE_OBOX_TEST && IsPointInside(pt, b))
+			else if (display_example == POINT_INSIDE_OBOX_TEST && Collide(pt, b))
 				transparent_obox = true;
 
 
@@ -510,7 +509,7 @@ protected:
 				glm::vec3 vertices[8];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					ctx.DrawPoint(vertices[i], white, false);
+					ctx.DrawPrimitive(vertices[i], white, false);
 			}
 
 			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
@@ -533,7 +532,7 @@ protected:
 
 			if (display_example == POINT_INSIDE_OBOX_TEST)
 			{
-				ctx.DrawPoint(pt, white, false);
+				ctx.DrawPrimitive(pt, white, false);
 			}
 #else
 
@@ -555,7 +554,7 @@ protected:
 			bool transparent_obox = false;
 			if (display_example == OBOX_INNER_SPHERE_TEST)
 				transparent_obox = true;
-			else if (display_example == POINT_INSIDE_OBOX_TEST && IsPointInside(pt, b))
+			else if (display_example == POINT_INSIDE_OBOX_TEST && Collide(pt, b))
 				transparent_obox = true;
 
 			ctx.DrawPrimitive(b, red, transparent_obox);
@@ -565,7 +564,7 @@ protected:
 				glm::vec2 vertices[4];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					ctx.DrawPoint(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
+					ctx.DrawPrimitive(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
 			}
 
 			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
@@ -588,7 +587,7 @@ protected:
 
 			if (display_example == POINT_INSIDE_OBOX_TEST)
 			{
-				ctx.DrawPoint(glm::vec3(pt.x, 0.0f, pt.y), white, false);
+				ctx.DrawPrimitive(glm::vec3(pt.x, 0.0f, pt.y), white, false);
 			}
 
 

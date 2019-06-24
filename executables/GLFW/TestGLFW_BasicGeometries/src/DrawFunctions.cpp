@@ -221,10 +221,16 @@ void RenderingContext::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & c
 	);
 }
 
-void RenderingContext::DrawPoint(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const
+void RenderingContext::DrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const
 {
 	glm::vec3 half_point_size(0.125f);
 	DrawPrimitive(chaos::box3(p, half_point_size), color, is_translucent);
+}
+
+void RenderingContext::DrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const
+{
+	glm::vec2 half_point_size(0.125f);
+	DrawPrimitive(chaos::box2(p, half_point_size), color, is_translucent);
 }
 
 

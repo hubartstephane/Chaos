@@ -32,12 +32,20 @@ public:
 		return src;
 	}
 
-	template<typename T>
-	chaos::type_sphere3<T> SlightIncreaseSize(chaos::type_sphere3<T> src) const
+	template<typename T, int dimension>
+	chaos::type_obox<T, dimension> SlightIncreaseSize(chaos::type_obox<T, dimension> src) const
+	{
+		src.half_size *= static_cast<T>(1.01);
+		return src;
+	}
+
+	template<typename T, int dimension>
+	chaos::type_sphere<T, dimension> SlightIncreaseSize(chaos::type_sphere<T, dimension> src) const
 	{
 		src.radius *= static_cast<T>(1.01);
 		return src;
 	}
+
 
 	template<typename T, int dimension>
 	chaos::type_box<T, dimension> SlightDecreaseSize(chaos::type_box<T, dimension> src) const
@@ -46,8 +54,15 @@ public:
 		return src;
 	}
 
-	template<typename T>
-	chaos::type_sphere3<T> SlightDecreaseSize(chaos::type_sphere3<T> src) const
+	template<typename T, int dimension>
+	chaos::type_obox<T, dimension> SlightDecreaseSize(chaos::type_obox<T, dimension> src) const
+	{
+		src.half_size *= static_cast<T>(0.90);
+		return src;
+	}
+
+	template<typename T, int dimension>
+	chaos::type_sphere<T, dimension> SlightDecreaseSize(chaos::type_sphere<T, dimension> src) const
 	{
 		src.radius *= static_cast<T>(0.90);
 		return src;
@@ -85,7 +100,9 @@ public:
 
 	void DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const;
 
-	void DrawPoint(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const;
+	void DrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const;
+
+	void DrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const;
 
 public:
 

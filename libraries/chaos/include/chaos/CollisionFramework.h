@@ -14,7 +14,7 @@ namespace chaos
 
 	/** update the velocity by comparing position before and after collision */
 	template<typename T>
-	void UpdateVelocityFromCollision(T const & old_position, T const & new_position, T & velocity)
+	void UpdateVelocityFromCollision(T const & old_position, T const & new_position, T & velocity) 
 	{
 		int dimension = velocity.length();
 
@@ -213,7 +213,7 @@ namespace chaos
 	}
 
 	// ==============================================================================================
-	// Collision function
+	// Symetric Collisions
 	// ==============================================================================================
 
 	template<typename T, int dimension>
@@ -242,11 +242,38 @@ namespace chaos
 		return glm::length2(src1.position - src2.position) <= MathTools::Square(src1.radius + src2.radius);
 	}
 
-	template<typename T>
-	bool Collide(type_sphere<T, 2> const & s, type_box<T, 2> const & b)
+	template<typename T, int dimension>
+	bool Collide(type_obox<T, dimension> const & src1, type_obox<T, dimension> const & src2)
 	{
-		return Collide(b, s);
+		assert(0);
+
+
+
+
+
+
+		return false; // TODO COLLISION
 	}
+
+
+	template<typename T, int dimension>
+	bool Collide(type_triangle<T, dimension> const & src1, type_triangle<T, dimension> const & src2)
+	{
+		assert(0);
+
+
+
+
+
+
+		return false; // TODO COLLISION
+	}
+
+	// ==============================================================================================
+	// Collisions sphere/box
+	// ==============================================================================================
+
+	// TODO COLLISION       BOX 3 / SPHERE 3 ???
 
 	template<typename T>
 	bool Collide(type_box<T, 2> const & b, type_sphere<T, 2> const & s)
@@ -298,31 +325,19 @@ namespace chaos
 		return true;
 	}
 
-	template<typename T>
-	bool Collide(type_sphere<T, 2> const & s, type_triangle<T, 2> const & t)
+	template<typename T, int dimension>
+	bool Collide(type_sphere<T, dimension> const & s, type_box<T, dimension> const & b)
 	{
-		return Collide(t, s);
+		return Collide(b, s);
 	}
 
-	// check the orientation of the triangle for future collision detection
-	template<typename T>
-	bool IsTriangleReadyForCollision(type_triangle<T, 2> const & t)
-	{
-		auto e1 = t.b - t.a;
-		auto e2 = t.c - t.b;
-		if (GLMTools::Get2DCrossProductZ(e2, e1) >= 0)
-			return true;
-		return false;
-	}
+	// ==============================================================================================
+	// Collisions sphere/box
+	// ==============================================================================================
 
-	// ensure the orientation of the triangle is correct for further collision detection
-	template<typename T>
-	type_triangle<T, 2> PrepareTriangleForCollision(type_triangle<T, 2> const & t)
-	{
-		if (IsTriangleReadyForCollision(t))
-			return t;
-		return GetInvertedTriangle(t);
-	}
+	// TODO COLLISION       TRIANGLE 3 / SPHERE 3 ???
+
+
 
 	template<typename T>
 	bool Collide(type_triangle<T, 2> const & t, type_sphere<T, 2> const & s)
@@ -336,7 +351,7 @@ namespace chaos
 		auto r2 = s.radius * s.radius;
 
 		// 2 : test whether any of the 3 vertices is inside the sphere
-		for (int i = 0 ; i < 3 ; ++i)
+		for (int i = 0; i < 3; ++i)
 			if (glm::length2(t[i] - s.position) <= r2) // do not use sphere::Contains(...) to avoid multiple computation of R * R
 				return true;
 
@@ -361,25 +376,82 @@ namespace chaos
 		return true;
 	}
 
-#if 0
-
-	a faire
-
-	triangle box
-	triangle obox
-	box      obx
-	sphere   obox
-
-
-
-#endif
-
-
-
-
+	template<typename T, int dimension>
+	bool Collide(type_sphere<T, dimension> const & s, type_triangle<T, dimension> const & t)
+	{
+		return Collide(t, s);
+	}
 
 	// ==============================================================================================
-	// box functions
+	// Collisions box/triangle
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	bool Collide(type_box<T, dimension> const & b, type_triangle<T, dimension> const & t)
+	{
+		assert(0);
+		
+
+
+
+
+
+
+		return false; // TODO COLLISION
+	}
+
+	template<typename T, int dimension>
+	bool Collide(type_triangle<T, dimension> const & t, type_box<T, dimension> const & b)
+	{
+		return Collide(b, t);
+	}
+
+	// ==============================================================================================
+	// Collisions obox/triangle
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	bool Collide(type_obox<T, dimension> const & b, type_triangle<T, dimension> const & t)
+	{
+		assert(0);
+
+
+
+
+
+		return false;
+	}
+
+	template<typename T, int dimension>
+	bool Collide(type_triangle<T, dimension> const & t, type_obox<T, dimension> const & b)
+	{
+		return Collide(b, t);
+	}
+
+	// ==============================================================================================
+	// Collisions obox/sphere  
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	bool Collide(type_obox<T, dimension> const & b, type_sphere<T, dimension> const & s)
+	{
+		assert(0);
+
+
+
+
+
+		return false; // TODO COLLISION
+	}
+
+	template<typename T, int dimension>
+	bool Collide(type_sphere<T, dimension> const & s, type_obox<T, dimension> const & b)
+	{
+		return Collide(b, s);
+	}
+
+	// ==============================================================================================
+	// Collision point/box 
 	// ==============================================================================================
 
 	/** returns true whether the point is contained in the box */
@@ -396,7 +468,7 @@ namespace chaos
 	}
 
 	// ==============================================================================================
-	// obox functions
+	// Collision point/obox 
 	// ==============================================================================================
 
 	template<typename T, int dimension>
@@ -416,7 +488,7 @@ namespace chaos
 	}
 
 	// ==============================================================================================
-	// triangles functions
+	// Collision point/triangles
 	// ==============================================================================================
 
 	/** returns true whether the point is contained in the triangle */
@@ -452,7 +524,7 @@ namespace chaos
 	}
 
 	// ==============================================================================================
-	// sphere/circle functions
+	// Collision point/sphere
 	// ==============================================================================================
 
 	/** returns true whether the point is contained in the sphere */
@@ -468,6 +540,29 @@ namespace chaos
 		return Collide(pt, s);
 	}
 
+	// ==============================================================================================
+	// Triangle preparation functions
+	// ==============================================================================================
+
+	// check the orientation of the triangle for future collision detection
+	template<typename T>
+	bool IsTriangleReadyForCollision(type_triangle<T, 2> const & t)
+	{
+		auto e1 = t.b - t.a;
+		auto e2 = t.c - t.b;
+		if (GLMTools::Get2DCrossProductZ(e2, e1) >= 0)
+			return true;
+		return false;
+	}
+
+	// ensure the orientation of the triangle is correct for further collision detection
+	template<typename T>
+	type_triangle<T, 2> PrepareTriangleForCollision(type_triangle<T, 2> const & t)
+	{
+		if (IsTriangleReadyForCollision(t))
+			return t;
+		return GetInvertedTriangle(t);
+	}
 
 }; // namespace chaos
 

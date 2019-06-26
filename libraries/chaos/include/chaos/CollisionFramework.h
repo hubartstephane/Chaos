@@ -14,7 +14,7 @@ namespace chaos
 
 	/** update the velocity by comparing position before and after collision */
 	template<typename T>
-	void UpdateVelocityFromCollision(T const & old_position, T const & new_position, T & velocity) 
+	void UpdateVelocityFromCollision(T const & old_position, T const & new_position, T & velocity)
 	{
 		int dimension = velocity.length();
 
@@ -25,6 +25,50 @@ namespace chaos
 			else if (old_position[i] < new_position[i])
 				velocity[i] = abs(velocity[i]);
 		}
+	}
+
+	// ==============================================================================================
+	// Restriction functions
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	auto GetClosestPoint(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const & src)
+	{
+		// clamp X, Y, Z for all planes
+		return glm::min(glm::max(src, b.position - b.half_size), b.position + b.half_size);
+	}
+
+	template<typename T, int dimension>
+	auto GetClosestPoint(type_sphere<T, dimension> const & b, typename type_sphere<T, dimension>::vec_type const & src)
+	{
+		typename type_sphere<T, dimension>::vec_type result;
+
+
+
+
+
+
+
+
+
+
+
+		return result;
+	}
+
+	template<typename T, int dimension>
+	auto GetClosestPoint(type_triangle<T, dimension> const & b, typename type_sphere<T, dimension>::vec_type const & src)
+	{
+		typename type_triangle<T, dimension>::vec_type result;
+
+
+
+
+
+
+
+
+		return result;
 	}
 
 	// ==============================================================================================
@@ -68,14 +112,14 @@ namespace chaos
 			if (smaller.half_size[i] >= bigger.half_size[i])
 			{
 				T delta1 = small_corners.first[i] - big_corners.first[i];
-				
+
 				if (delta1 > 0)
-					result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta1);				
+					result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta1);
 				else
 				{
 					T delta2 = small_corners.second[i] - big_corners.second[i];
 					if (delta2 < 0)
-						result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta2);				
+						result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta2);
 				}
 			}
 			// normal case : smaller IS the smallest
@@ -95,8 +139,8 @@ namespace chaos
 					T delta2 = small_corners.second[i] - big_corners.second[i];
 					if (delta2 > 0)
 						result |= MoveValue(bigger.position[i], smaller.position[i], move_big, delta2);
-				}						
-			}		
+				}
+			}
 		}
 		return result;
 	}
@@ -161,7 +205,7 @@ namespace chaos
 			return false;
 
 		// ensure smaller and bigger are coherent
-		if (smaller.radius > bigger.radius) 
+		if (smaller.radius > bigger.radius)
 			return false;
 
 		auto delta_pos = smaller.position - bigger.position;
@@ -239,13 +283,92 @@ namespace chaos
 		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
 
-		return glm::length2(src1.position - src2.position) <= MathTools::Square(src1.radius + src2.radius);
+		return glm::distance2(src1.position, src2.position) <= MathTools::Square(src1.radius + src2.radius);
 	}
+
+
+#if 0
+
+	// SEARCH SEPARATING PLANE
+	//
+	//         4 = (1 << 2)
+	//               8 = (1 << 3)
+	//
+	//    5       1      9         
+	//         |     |
+	//  -------+-----+--------     1 = (1 << 0)
+	//         |     |
+	//    4    |  0  |   8
+	//         |     |
+	//  -------+-----+--------     2 = (1 << 1)
+	//         |     |  
+	//    6       2      10
+	//
+	//
+
+
+
+#endif
+
+
+	template<typename T, int dimension>
+	bool HasSeparatingPlane(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const * vertices, int count, bool & has_collision)
+	{
+		has_collision = false;
+
+		if (count == 0)
+			return false;
+
+		// the edge we are interresting in
+		int edge_of_interrests = 1 | 2 | 4 | 8;
+
+		// for each edge, we describe thhe tests to do 
+		int   edge_component[]  = { 0, 0, 1 , 1 };
+		float edge_multiplier[] = { -1.0f, 1.0f, -1.0f , 1.0f };
+		float edge_value[]      = { b.position.x - b.position.x, b.position.x + b.position.x, b.position.y - b.position.y, b.position.y + b.position.y };
+
+		// iterate over all vertices and eliminate some edges
+		for (int i = 0; i < count ; ++i)
+		{
+			// no possible edge separator ?
+			if (edge_of_interrests == 0) 
+				return false;
+			// iterate over all remaining edges
+			int edges = edge_of_interrests;
+			while (edges != 0)
+			{
+				// get the edge of interrest and remove it from current iteration
+				int edge_index = chaos::MathTools::bsf(edges);
+				edges &= ~(1 << edge_index);
+
+				int   c = edge_component[edge_index];
+				float m = edge_multiplier[edge_index];
+				float v = edge_value[edge_index];
+
+				// is edge still candidate => remove opposite edge
+				if (m * vertices[i][c] > m * v) 
+				{
+					edge_of_interrests &= ~(1 << (edge_index ^ 1));
+				}
+				// edge is not a good candidate : remove it
+				else 
+				{
+					edge_of_interrests &= ~(1 << edge_index);
+				}
+			}
+		
+			return false;
+		}
+
+
+
+
 
 	template<typename T, int dimension>
 	bool Collide(type_obox<T, dimension> const & src1, type_obox<T, dimension> const & src2)
 	{
 		assert(0);
+
 
 
 
@@ -273,7 +396,7 @@ namespace chaos
 	// Collisions sphere/box
 	// ==============================================================================================
 
-	// TODO COLLISION       BOX 3 / SPHERE 3 ???
+#if 0
 
 	template<typename T>
 	bool Collide(type_box<T, 2> const & b, type_sphere<T, 2> const & s)
@@ -298,7 +421,7 @@ namespace chaos
 		auto const & A = corners.first;
 		auto const & C = corners.second;
 
-		vec_type V[4] = 
+		vec_type V[4] =
 		{
 			A,
 			vec_type(A.x, C.y),
@@ -306,7 +429,7 @@ namespace chaos
 			vec_type(C.x, A.y)
 		};
 
-		for (int i = 0 ; i < 4; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
 			T dist = glm::distance2(V[i], s.position);
 			if (dist <= r2)
@@ -325,6 +448,19 @@ namespace chaos
 		return true;
 	}
 
+#endif
+
+
+	template<typename T, int dimension>
+	bool Collide(type_box<T, dimension> const & b, type_sphere<T, dimension> const & s)
+	{
+		if (IsGeometryEmpty(s) || IsGeometryEmpty(b))
+			return false;
+
+		auto pt = GetClosestPoint(b, s.position);
+		return glm::distance2(pt, s.position) <= (s.radius * s.radius);
+	}
+
 	template<typename T, int dimension>
 	bool Collide(type_sphere<T, dimension> const & s, type_box<T, dimension> const & b)
 	{
@@ -332,7 +468,7 @@ namespace chaos
 	}
 
 	// ==============================================================================================
-	// Collisions sphere/box
+	// Collisions sphere/triangle
 	// ==============================================================================================
 
 	// TODO COLLISION       TRIANGLE 3 / SPHERE 3 ???
@@ -342,11 +478,19 @@ namespace chaos
 	template<typename T>
 	bool Collide(type_triangle<T, 2> const & t, type_sphere<T, 2> const & s)
 	{
-		// 1 : test whether any entry is null (sphere is faster call, first)
-		if (IsGeometryEmpty(s))
+		if (IsGeometryEmpty(s) || IsGeometryEmpty(t))
 			return false;
-		if (IsGeometryEmpty(t))
-			return false;
+
+		auto pt = GetClosestPoint(t, s.position);
+		return glm::distance2(pt, s.position) <= (s.radius * s.radius);
+
+
+
+
+
+#if 0
+
+
 
 		auto r2 = s.radius * s.radius;
 
@@ -373,6 +517,7 @@ namespace chaos
 			if (d > s.radius)
 				return false;
 		}
+#endif
 		return true;
 	}
 
@@ -390,7 +535,7 @@ namespace chaos
 	bool Collide(type_box<T, dimension> const & b, type_triangle<T, dimension> const & t)
 	{
 		assert(0);
-		
+
 
 
 
@@ -475,7 +620,7 @@ namespace chaos
 	bool Collide(typename type_obox<T, dimension>::vec_type const & pt, type_obox<T, dimension> const & b)
 	{
 		// set point from global to local system
-		auto transform = GetRotatorMatrix(-b.rotator); 
+		auto transform = GetRotatorMatrix(-b.rotator);
 		auto transformed_ptr = GLMTools::Mult(transform, pt - b.position);
 		// now we can considere we are in a standard BOX
 		return glm::all(glm::lessThanEqual(glm::abs(transformed_ptr), b.half_size));
@@ -531,7 +676,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(typename type_sphere<T, dimension>::vec_type const & pt, type_sphere<T, dimension> const & s)
 	{
-		return glm::length2(pt - s.position) <= s.radius * s.radius;
+		return glm::distance2(pt, s.position) <= (s.radius * s.radius);
 	}
 
 	template<typename T, int dimension>

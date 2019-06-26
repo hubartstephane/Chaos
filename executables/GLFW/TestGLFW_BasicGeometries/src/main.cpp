@@ -833,6 +833,50 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+	chaos::triangle2 t2;
+	chaos::triangle3 t3;
+
+	chaos::box2 b2;
+	chaos::box3 b3;
+
+	chaos::sphere2 s2;
+	chaos::sphere3 s3;
+
+	glm::vec2 p2;
+	glm::vec3 p3;
+
+	auto a1 = chaos::GetClosestPoint(t2, p2);
+	auto a2 = chaos::GetClosestPoint(t3, p3);
+
+	auto a3 = chaos::GetClosestPoint(b2, p2);
+	auto a4 = chaos::GetClosestPoint(b3, p3);
+
+	auto a5 = chaos::GetClosestPoint(s2, p2);
+	auto a6 = chaos::GetClosestPoint(s3, p3);
+
+	{
+		auto p1 = chaos::MathTools::bsr(1);
+		auto p2 = chaos::MathTools::bsr(2);
+		auto p3 = chaos::MathTools::bsr(3);
+		auto p4 = chaos::MathTools::bsr(4);
+
+		p1 = p1;
+
+		int e = 19;
+		while (e != 0)
+		{
+			int edge_index = chaos::MathTools::bsf(e);
+			e &= ~(1 << edge_index);
+
+
+			e = e;
+		}
+
+	}
+
+
+
+
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

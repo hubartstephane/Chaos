@@ -312,11 +312,9 @@ namespace chaos
 
 
 	template<typename T, int dimension>
-	bool HasSeparatingPlane(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const * vertices, int count, bool & has_collision)
+	bool HasSeparatingPlane(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const * vertices, int count)
 	{
-		has_collision = false;
-
-		if (count == 0)
+		if (count == 0 || vertices == nullptr)
 			return false;
 
 		// the edge we are interresting in
@@ -330,10 +328,7 @@ namespace chaos
 		// iterate over all vertices and eliminate some edges
 		for (int i = 0; i < count ; ++i)
 		{
-			// no possible edge separator ?
-			if (edge_of_interrests == 0) 
-				return false;
-			// iterate over all remaining edges
+			// iterate over all remaining edges (work on a copy so we can iterate)
 			int edges = edge_of_interrests;
 			while (edges != 0)
 			{
@@ -357,9 +352,12 @@ namespace chaos
 					edge_of_interrests &= ~(1 << edge_index);
 					edges &= ~(1 << edge_index);
 				}
+				// no possible edge separator ?
+				if (edge_of_interrests == 0)
+					return false;
 			}
 		
-			return false;
+			return true; // there are still at least one separator edge
 		}
 
 

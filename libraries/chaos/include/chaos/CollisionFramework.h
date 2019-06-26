@@ -349,11 +349,13 @@ namespace chaos
 				if (m * vertices[i][c] > m * v) 
 				{
 					edge_of_interrests &= ~(1 << (edge_index ^ 1));
+					edges &= ~(1 << (edge_index ^ 1));
 				}
 				// edge is not a good candidate : remove it
 				else 
 				{
 					edge_of_interrests &= ~(1 << edge_index);
+					edges &= ~(1 << edge_index);
 				}
 			}
 		

@@ -263,6 +263,10 @@ namespace chaos
 	template<typename T, int dimension>
 	int GetIntersection(type_ray<T, dimension> const & r, typename type_ray<T, dimension>::plane_type const & p, typename type_ray<T, dimension>::vec_type & res)
 	{
+		
+	//	auto denum = glm::dot(r.direction, GLMTools::RecastVector<T, dimension>(p));
+
+//		GLMTools::RecastVector<glm::vec2>(size)		
 
 
 

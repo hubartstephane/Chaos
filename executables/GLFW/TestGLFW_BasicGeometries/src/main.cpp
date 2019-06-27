@@ -875,6 +875,11 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	}
 
 	{
+
+		chaos::ray2::ray_type rrr1;
+		chaos::triangle2::ray_type rrr2;
+
+
 		chaos::ray2 r2;
 		chaos::ray3 r3;
 
@@ -912,6 +917,35 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	
 	}
 
+	{
+		glm::vec2 v1(1.0f, 2.0f);
+		glm::vec3 v2(1.0f, 2.0f, 0.0f);
+		glm::vec3 v3(1.0f, 2.0f, 3.0f);
+		glm::vec4 v4(1.0f, 2.0f, 3.0f, 0.0f);
+		glm::vec4 v5(1.0f, 2.0f, 3.0f, 4.0f);
+
+		auto a = chaos::GLMTools::RecastVector<glm::vec3>(v1);
+		auto b = chaos::GLMTools::RecastVector<glm::vec4>(v1);
+
+		auto c = chaos::GLMTools::RecastVector<glm::vec2>(v2);
+		auto d = chaos::GLMTools::RecastVector<glm::vec4>(v2);
+
+		auto e = chaos::GLMTools::RecastVector<glm::vec2>(v3);
+		auto f = chaos::GLMTools::RecastVector<glm::vec4>(v3);
+
+
+		auto g = chaos::GLMTools::RecastVector<glm::vec2>(v4);
+		auto h = chaos::GLMTools::RecastVector<glm::vec3>(v4);
+
+		auto i = chaos::GLMTools::RecastVector<glm::vec2>(v5);
+		auto j = chaos::GLMTools::RecastVector<glm::vec3>(v5);
+	
+		a =a;
+	}
+
+	
+
+	return 0;
 
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;

@@ -109,40 +109,87 @@ namespace chaos
 		using rot2_type = typename type_rotator2<T>::type;
 		/** the type of rotation in 3D space (a quaternion) */
 		using rot3_type = typename type_rotator3<T>::type;
+
+		/** the type of 2D ray */
+		using ray2_type = type_ray2<type>;
+		/** the type of 3D ray */
+		using ray3_type = type_ray3<type>;
+
+		/** the type of 2D sphere */
+		using sphere2_type = type_sphere2<type>;
+		/** the type of 3D sphere */
+		using sphere3_type = type_sphere3<type>;
+
+		/** the type of 2D box */
+		using box2_type = type_box2<type>;
+		/** the type of 3D box */
+		using box3_type = type_box3<type>;
+
+		/** the type of 2D obox */
+		using obox2_type = type_obox2<type>;
+		/** the type of 3D obox */
+		using obox3_type = type_obox3<type>;
+
+		/** the type of 2D triangle */
+		using triangle2_type = type_triangle2<type>;
+		/** the type of 3D triangle */
+		using triangle3_type = type_triangle3<type>;
 	};
 
 	template<typename T, int dimension> class type_geometric;
 
 	/** geometry class specialisation for 2 dimensions objects */
 	template<typename T> 
-	class type_geometric<T, 2> : public type_geometric_base<T>
+	class type_geometric<T, 2> : protected type_geometric_base<T> // 'protected' because we don t want in 2D to have access to 3D data
 	{
 	public:
 
 		/** the dimension of the space */
 		static int const dimension = 2;
+
 		/** the type of vector */
 		using vec_type = vec2_type;
 		/** the type of plane */
 		using plane_type = plane2_type;
 		/** the type of rotator */
 		using rot_type = rot2_type;
+		/** the type of ray */
+		using ray_type = ray2_type;
+		/** the type of sphere */
+		using sphere_type = sphere2_type;
+		/** the type of box */
+		using box_type = box2_type;
+		/** the type of obox */
+		using obox_type = obox2_type;
+		/** the type of triangle */
+		using triangle_type = triangle2_type;
 	};
 
 	/** geometry class specialisation for 3 dimensions objects */
 	template<typename T>
-	class type_geometric<T, 3> : public type_geometric_base<T>
+	class type_geometric<T, 3> : protected type_geometric_base<T> // 'protected' because we don t want in 3D to have access to 2D data
 	{
 	public:
 
 		/** the dimension of the space */
 		static int const dimension = 3;
+
 		/** the type of vector */
 		using vec_type = vec3_type;
 		/** the type of plane */
 		using plane_type = plane3_type;
 		/** the type of rotator */
 		using rot_type = rot3_type;
+		/** the type of ray */
+		using ray_type = ray3_type;
+		/** the type of sphere */
+		using sphere_type = sphere3_type;
+		/** the type of box */
+		using box_type = box3_type;
+		/** the type of obox */
+		using obox_type = obox3_type;
+		/** the type of triangle */
+		using triangle_type = triangle3_type;
 	};
 
 	// ==============================================================================================

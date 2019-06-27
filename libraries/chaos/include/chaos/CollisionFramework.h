@@ -257,6 +257,55 @@ namespace chaos
 	}
 
 	// ==============================================================================================
+	// ray intersections
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	int GetIntersection(type_ray<T, dimension> const & r, typename type_ray<T, dimension>::plane_type const & p, typename type_ray<T, dimension>::vec_type & res)
+	{
+
+
+
+		return 0;
+	}
+
+	template<typename T, int dimension>
+	int GetIntersection(type_ray<T, dimension> const & r, type_triangle<T, dimension> const & t, typename type_ray<T, dimension>::vec_type & res)
+	{
+
+
+
+		return 0;
+	}
+
+	template<typename T, int dimension>
+	int GetIntersection(type_ray<T, dimension> const & r, type_sphere<T, dimension> const & s, typename type_ray<T, dimension>::vec_type & res1, typename type_ray<T, dimension>::vec_type & res2)
+	{
+
+
+
+		return 0;
+	}
+
+	template<typename T, int dimension>
+	int GetIntersection(type_ray<T, dimension> const & r, type_box<T, dimension> const & b, typename type_ray<T, dimension>::vec_type & res1, typename type_ray<T, dimension>::vec_type & res2)
+	{
+
+
+
+		return 0;
+	}
+
+	template<typename T, int dimension>
+	int GetIntersection(type_ray<T, dimension> const & r, type_obox<T, dimension> const & b, typename type_ray<T, dimension>::vec_type & res1, typename type_ray<T, dimension>::vec_type & res2)
+	{
+
+
+
+		return 0;
+	}
+
+	// ==============================================================================================
 	// Symetric Collisions
 	// ==============================================================================================
 
@@ -312,13 +361,13 @@ namespace chaos
 
 
 	template<typename T, int dimension>
-	bool HasSeparatingPlane(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const * vertices, int count)
+	bool HasSeparatingPlane(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const * vertices, size_t count)
 	{
 		if (count == 0 || vertices == nullptr)
 			return false;
 
 		// the edge we are interresting in
-		int edge_of_interrests = 1 | 2 | 4 | 8;
+		int edge_candidates = 1 | 2 | 4 | 8;
 
 		// for each edge, we describe thhe tests to do 
 		int   edge_component[]  = { 0, 0, 1 , 1 };
@@ -326,10 +375,10 @@ namespace chaos
 		float edge_value[]      = { b.position.x - b.position.x, b.position.x + b.position.x, b.position.y - b.position.y, b.position.y + b.position.y };
 
 		// iterate over all vertices and eliminate some edges
-		for (int i = 0; i < count ; ++i)
+		for (size_t i = 0; i < count ; ++i)
 		{
 			// iterate over all remaining edges (work on a copy so we can iterate)
-			int edges = edge_of_interrests;
+			int edges = edge_candidates;
 			while (edges != 0)
 			{
 				// get the edge of interrest and remove it from current iteration
@@ -343,22 +392,23 @@ namespace chaos
 				// is edge still candidate => remove opposite edge
 				if (m * vertices[i][c] > m * v) 
 				{
-					edge_of_interrests &= ~(1 << (edge_index ^ 1));
+					edge_candidates &= ~(1 << (edge_index ^ 1));
 					edges &= ~(1 << (edge_index ^ 1));
 				}
 				// edge is not a good candidate : remove it
 				else 
 				{
-					edge_of_interrests &= ~(1 << edge_index);
+					edge_candidates &= ~(1 << edge_index);
 					edges &= ~(1 << edge_index);
 				}
 				// no possible edge separator ?
-				if (edge_of_interrests == 0)
+				if (edge_candidates == 0)
 					return false;
 			}
-		
-			return true; // there are still at least one separator edge
+					
 		}
+		return true; // there are still at least one separator edge
+	}
 
 
 

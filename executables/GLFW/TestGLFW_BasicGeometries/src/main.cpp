@@ -874,6 +874,43 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 	}
 
+	{
+		chaos::ray2 r2;
+		chaos::ray3 r3;
+
+		chaos::triangle2 t2;
+		chaos::triangle3 t3;
+
+		chaos::box2 b2;
+		chaos::box3 b3;
+
+		chaos::obox2 o2;
+		chaos::obox3 o3;
+
+		chaos::sphere2 s2;
+		chaos::sphere3 s3;
+
+		glm::vec3 plane_2;
+		glm::vec4 plane_3;
+
+		glm::vec2 res2;
+		glm::vec3 res3;
+	
+		chaos::GetIntersection(r2, t2, res2);
+		chaos::GetIntersection(r2, plane_2, res2);
+		chaos::GetIntersection(r2, s2, res2, res2);
+		chaos::GetIntersection(r2, b2, res2, res2);
+		chaos::GetIntersection(r2, o2, res2, res2);
+
+
+		chaos::GetIntersection(r3, t3, res3);
+		chaos::GetIntersection(r3, plane_3, res3);
+		chaos::GetIntersection(r3, s3, res3, res3);
+		chaos::GetIntersection(r3, b3, res3, res3);
+		chaos::GetIntersection(r3, o3, res3, res3);
+	
+	
+	}
 
 
 

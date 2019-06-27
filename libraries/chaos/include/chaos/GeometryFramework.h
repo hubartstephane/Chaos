@@ -94,10 +94,16 @@ namespace chaos
 
 		/** the type of the components */
 		using type = T;
+
 		/** the type of 2D vectors */
 		using vec2_type = glm::tvec2<type>;
 		/** the type of 3D vectors */
 		using vec3_type = glm::tvec3<type>;
+
+		/** the type of 2D planes */
+		using plane2_type = glm::tvec3<type>;
+		/** the type of 3D planes */
+		using plane3_type = glm::tvec4<type>;
 
 		/** the type of rotation in 2D space (just an angle in RADIAN) */
 		using rot2_type = typename type_rotator2<T>::type;
@@ -117,6 +123,8 @@ namespace chaos
 		static int const dimension = 2;
 		/** the type of vector */
 		using vec_type = vec2_type;
+		/** the type of plane */
+		using plane_type = plane2_type;
 		/** the type of rotator */
 		using rot_type = rot2_type;
 	};
@@ -131,6 +139,8 @@ namespace chaos
 		static int const dimension = 3;
 		/** the type of vector */
 		using vec_type = vec3_type;
+		/** the type of plane */
+		using plane_type = plane3_type;
 		/** the type of rotator */
 		using rot_type = rot3_type;
 	};

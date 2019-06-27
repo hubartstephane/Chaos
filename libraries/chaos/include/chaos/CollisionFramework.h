@@ -39,6 +39,19 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
+	auto GetClosestPoint(type_obox<T, dimension> const & b, typename type_obox<T, dimension>::vec_type const & src)
+	{
+		typename type_sphere<T, dimension>::vec_type result;
+
+
+
+
+
+
+		return result;
+	}
+
+	template<typename T, int dimension>
 	auto GetClosestPoint(type_sphere<T, dimension> const & b, typename type_sphere<T, dimension>::vec_type const & src)
 	{
 		typename type_sphere<T, dimension>::vec_type result;
@@ -263,14 +276,20 @@ namespace chaos
 	template<typename T, int dimension>
 	int GetIntersection(type_ray<T, dimension> const & r, typename type_ray<T, dimension>::plane_type const & p, typename type_ray<T, dimension>::vec_type & res)
 	{
+		using vec_type = typename type_ray<T, dimension>::vec_type;
 		
-	//	auto denum = glm::dot(r.direction, GLMTools::RecastVector<T, dimension>(p));
+		auto normal = GetPlaneNormal(p);
 
-//		GLMTools::RecastVector<glm::vec2>(size)		
+		// no solution ?
+		auto denum = glm::dot(r.direction, normal);
+		if (denum == (T)0)
+			return false;
 
+		auto t = (-GetPlaneOffset(p) - glm::dot(r.position, normal)) / denum;
 
+		res = r.position + t * r.direction;
 
-		return 0;
+		return 1;
 	}
 
 	template<typename T, int dimension>

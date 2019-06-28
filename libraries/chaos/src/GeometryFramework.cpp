@@ -29,13 +29,13 @@ namespace chaos
 		glm::mat4x4 result = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 		auto c = MathTools::Cos(rotator);
-		auto s = MathTools::Cos(rotator);
+		auto s = MathTools::Sin(rotator);
 		result[0][0] =  c;
 		result[0][1] =  s;
 		result[1][0] = -s;
 		result[1][1] =  c;
 		return result;
-		//return glm::rotate(rotator, glm::vec3(0.0f, 0.0f, 1.0f));
+//		return glm::rotate(rotator, glm::vec3(0.0f, 0.0f, 1.0f));
 	}
 	/** rotator to matrix */
 	glm::dmat4x4 GetRotatorMatrix(double rotator)
@@ -44,7 +44,7 @@ namespace chaos
 		glm::dmat4x4 result = glm::scale(glm::dvec3(1.0, 1.0, 1.0));
 
 		auto c = MathTools::Cos(rotator);
-		auto s = MathTools::Cos(rotator);
+		auto s = MathTools::Sin(rotator);
 		result[0][0] =  c;
 		result[0][1] =  s;
 		result[1][0] = -s;

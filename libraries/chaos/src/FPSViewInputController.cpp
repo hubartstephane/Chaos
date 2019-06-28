@@ -94,7 +94,7 @@ namespace chaos
 
 	bool FPSViewInputController::CheckKeyInput(GLFWwindow * glfw_window, int key) const
 	{
-		return (key >= 0 && glfwGetKey(glfw_window, key) == GLFW_PRESS);
+		return (key >= 0 && glfwGetKey(glfw_window, key) == GLFW_PRESS); // GLFW_KEY_UNKNOWN = -1
 	}
 
 }; // namespace chaos

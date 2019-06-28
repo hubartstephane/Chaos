@@ -35,7 +35,18 @@ static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 static int EXAMPLE_COUNT = 0;
 
-static int const RECTANGLE_DISPLAY_TEST        = EXAMPLE_COUNT++;
+static int const BOX2_DISPLAY_TEST			= EXAMPLE_COUNT++;
+static int const OBOX2_DISPLAY_TEST			= EXAMPLE_COUNT++;
+static int const SPHERE2_DISPLAY_TEST		= EXAMPLE_COUNT++;
+static int const TRIANGLE2_DISPLAY_TEST = EXAMPLE_COUNT++;
+
+static int const BOX3_DISPLAY_TEST			= EXAMPLE_COUNT++;
+static int const OBOX3_DISPLAY_TEST     = EXAMPLE_COUNT++;
+static int const SPHERE3_DISPLAY_TEST		= EXAMPLE_COUNT++;
+static int const TRIANGLE3_DISPLAY_TEST	= EXAMPLE_COUNT++;
+
+
+#if 0
 static int const RECTANGLE_CORNERS_TEST        = EXAMPLE_COUNT++;
 static int const CORNERS_TO_RECTANGLE_TEST     = EXAMPLE_COUNT++;
 static int const BOX_INTERSECTION_TEST         = EXAMPLE_COUNT++;
@@ -46,22 +57,26 @@ static int const RESTRICT_BOX_INSIDE_3_TEST    = EXAMPLE_COUNT++;
 static int const RESTRICT_BOX_INSIDE_4_TEST    = EXAMPLE_COUNT++;
 static int const RESTRICT_SPHERE_INSIDE_1_TEST = EXAMPLE_COUNT++;
 static int const RESTRICT_SPHERE_INSIDE_2_TEST = EXAMPLE_COUNT++;
-static int const SPHERE_DISPLAY_TEST           = EXAMPLE_COUNT++;
+
 static int const SPHERE_INTERSECTION_TEST      = EXAMPLE_COUNT++;
 static int const SPHERE_UNION_TEST             = EXAMPLE_COUNT++;
 static int const INNER_SPHERE_TEST             = EXAMPLE_COUNT++;
 static int const BOUNDING_SPHERE_TEST          = EXAMPLE_COUNT++;
 static int const BOUNDING_BOX_TEST             = EXAMPLE_COUNT++;
 static int const SPLIT_BOX_TEST                = EXAMPLE_COUNT++;
-static int const BOX_COLLISION_TEST            = EXAMPLE_COUNT++;
-static int const SPHERE_COLLISION_TEST         = EXAMPLE_COUNT++;
 static int const RESTRICT_BOX_OUTSIDE_TEST     = EXAMPLE_COUNT++;
 static int const RESTRICT_SPHERE_OUTSIDE_TEST  = EXAMPLE_COUNT++;
-static int const POINT_INSIDE_BOX_TEST         = EXAMPLE_COUNT++;
-static int const POINT_INSIDE_SPHERE_TEST      = EXAMPLE_COUNT++;
+
+
+
+static int const POINT_INSIDE_BOX_TEST = EXAMPLE_COUNT++;
+static int const POINT_INSIDE_SPHERE_TEST = EXAMPLE_COUNT++;
 static int const COLLISION_SHERE2_BOX2_TEST    = EXAMPLE_COUNT++;
 static int const COLLISION_SHERE2_TRIANGLE_TEST = EXAMPLE_COUNT++;
 static int const COLLISION_POINT_TRIANGLE_TEST  = EXAMPLE_COUNT++;
+static int const BOX_COLLISION_TEST = EXAMPLE_COUNT++;
+static int const SPHERE_COLLISION_TEST = EXAMPLE_COUNT++;
+
 
 static int const OBOX_DISPLAY_TEST  = EXAMPLE_COUNT++;
 static int const OBOX_CORNERS_TEST  = EXAMPLE_COUNT++;
@@ -71,7 +86,7 @@ static int const OBOX_BOUNDING_BOX_TEST    = EXAMPLE_COUNT++;
 
 static int const OBOX_INNER_SPHERE_TEST = EXAMPLE_COUNT++;
 static int const POINT_INSIDE_OBOX_TEST = EXAMPLE_COUNT++;
-
+#endif
 
 static int const TEST_COUNT = EXAMPLE_COUNT;
 
@@ -89,7 +104,21 @@ protected:
 
 	char const * GetExampleTitle(int example)
 	{
-		if (example == RECTANGLE_DISPLAY_TEST)         return "boxes touch each others";
+		if (example == BOX2_DISPLAY_TEST)         return "box2 display tests";
+		if (example == OBOX2_DISPLAY_TEST)				return "obox2 display tests";
+		if (example == SPHERE2_DISPLAY_TEST)      return "sphere2 display tests";
+		if (example == TRIANGLE2_DISPLAY_TEST)    return "triangle2 display tests";
+
+		if (example == BOX3_DISPLAY_TEST)         return "box3 display tests";
+		if (example == OBOX3_DISPLAY_TEST)				return "obox3 display tests";
+		if (example == SPHERE3_DISPLAY_TEST)      return "sphere3 display tests";
+		if (example == TRIANGLE3_DISPLAY_TEST)    return "triangle3 display tests";
+		
+
+
+#if 0
+
+
 		if (example == RECTANGLE_CORNERS_TEST)         return "box.GetCorner(...)";
 		if (example == CORNERS_TO_RECTANGLE_TEST)      return "construct box from corners";
 		if (example == BOX_INTERSECTION_TEST)          return "box intersection";
@@ -100,7 +129,7 @@ protected:
 		if (example == RESTRICT_BOX_INSIDE_4_TEST)     return "restrict box displacement to inside : move smaller (smaller is REAL bigger)";
 		if (example == RESTRICT_SPHERE_INSIDE_1_TEST)  return "restrict sphere displacement to inside : move bigger";
 		if (example == RESTRICT_SPHERE_INSIDE_2_TEST)  return "restrict sphere displacement to inside : move smaller";
-		if (example == SPHERE_DISPLAY_TEST)            return "sphere touch each others";
+		
 		if (example == SPHERE_INTERSECTION_TEST)       return "sphere intersection";
 		if (example == SPHERE_UNION_TEST)              return "sphere union";
 		if (example == INNER_SPHERE_TEST)              return "inner sphere";
@@ -123,6 +152,8 @@ protected:
 		if (example == OBOX_INNER_SPHERE_TEST)         return "obox inner sphere";
 		if (example == POINT_INSIDE_OBOX_TEST)         return "point inside obox";
 		
+#endif
+
 		return nullptr;
 	}
 
@@ -293,21 +324,141 @@ protected:
 		DrawCollisionImpl(pos, p);
 	}
 
+
+
+
+
+
+	// ========================================================
+	glm::vec2 GetMovingPoint2() const
+	{
+		double realtime = clock->GetClockTime();
+
+		glm::vec2 pos;
+		pos.x = 5.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+		pos.y = 0.0f;
+		return pos;
+	}
+
+	glm::vec3 GetMovingPoint3() const
+	{
+		double realtime = clock->GetClockTime();
+
+		glm::vec3 pos;
+		pos.x = 5.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+		pos.y = 0.0f;
+		pos.z = 0.0f;
+		return pos;
+	}
+
+	chaos::box2 GetMovingBox2() const
+	{
+		return chaos::box2(GetMovingPoint2(), glm::vec3(1.0f, 2.0f, 3.0f));
+	}
+
+	chaos::box3 GetMovingBox3() const
+	{
+		return chaos::box3(GetMovingPoint3(), glm::vec3(1.0f, 2.0f, 3.0f));
+	}
+
+	chaos::obox2 GetMovingOBox2() const
+	{
+		double realtime = clock->GetClockTime();
+		float speed = 0.3f;
+		float angle = speed * (float)realtime;
+
+		return chaos::obox2(GetMovingPoint2(), glm::vec2(1.0f, 2.0f), angle);
+	}
+
+	chaos::obox3 GetMovingOBox3() const
+	{
+		double realtime = clock->GetClockTime();
+		float speed = 0.3f;
+		float angle = speed * (float)realtime;
+
+		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
+		return chaos::obox3(GetMovingPoint3(), glm::vec3(1.0f, 2.0f, 3.0f) , glm::angleAxis(angle, axis));
+	}
+
+	chaos::sphere2 GetMovingSphere2() const
+	{
+		return chaos::sphere2(GetMovingPoint2(), 1.0f);
+	}
+
+	chaos::sphere3 GetMovingSphere3() const
+	{
+		return chaos::sphere3(GetMovingPoint3(), 1.0f);
+	}
+
+	// ========================================================
+
 	void DrawGeometryObjects()
 	{
 		double realtime = clock->GetClockTime();
 
-		// ensure box touch alltogether
-		if (display_example == RECTANGLE_DISPLAY_TEST)
+		// base display 2D
+		if (display_example == BOX2_DISPLAY_TEST)
 		{
-			chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-			chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-			chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-
-			primitive_renderer->DrawPrimitive(b1, red, false);
-			primitive_renderer->DrawPrimitive(b2, green, false);
-			primitive_renderer->DrawPrimitive(b3, blue, false);
+			chaos::box2 b = GetMovingBox2();
+			primitive_renderer->DrawPrimitive(b, red, false);
 		}
+		if (display_example == OBOX2_DISPLAY_TEST)
+		{
+			chaos::obox2 b = GetMovingOBox2();
+			primitive_renderer->DrawPrimitive(b, red, false);
+		}
+		if (display_example == SPHERE2_DISPLAY_TEST)
+		{
+			chaos::sphere2 s = GetMovingSphere2();
+			primitive_renderer->DrawPrimitive(s, red, false);
+		}
+		if (display_example == TRIANGLE2_DISPLAY_TEST)
+		{
+			chaos::triangle2 t;
+			t.a = glm::vec2(5.0f, 0.0f);
+			t.c = glm::vec2(-5.0f, 0.0f);
+			t.b = glm::vec2(0.0f, 5.0f);
+			primitive_renderer->DrawPrimitive(t, red, false);
+		}
+
+		// base display 3D
+		if (display_example == BOX3_DISPLAY_TEST)
+		{
+			chaos::box3 b = GetMovingBox3();
+			primitive_renderer->DrawPrimitive(b, red, false);
+		}
+		if (display_example == OBOX3_DISPLAY_TEST)
+		{
+			chaos::obox3 b = GetMovingOBox3();
+			primitive_renderer->DrawPrimitive(b, red, false);
+		}
+		if (display_example == SPHERE3_DISPLAY_TEST)
+		{
+			chaos::sphere3 s = GetMovingSphere3();
+			primitive_renderer->DrawPrimitive(s, red, false);
+		}
+		if (display_example == TRIANGLE3_DISPLAY_TEST)
+		{
+			chaos::triangle3 t;
+			t.a = glm::vec3(5.0f, 7.0f, 0.0f);
+			t.c = glm::vec3(-5.0f, 6.0f, 0.0f);
+			t.b = glm::vec3(0.0f, 8.0f, 5.0f);
+			primitive_renderer->DrawPrimitive(t, red, false);
+		}
+
+
+
+
+
+
+
+
+
+
+#if  0
+
+
+
 
 		// display box and corners
 		if (display_example == RECTANGLE_CORNERS_TEST)
@@ -353,17 +504,7 @@ protected:
 		if (display_example == RESTRICT_SPHERE_INSIDE_1_TEST || display_example == RESTRICT_SPHERE_INSIDE_2_TEST)
 			DrawRestrictToInside(smaller_sphere, bigger_sphere, display_example == RESTRICT_SPHERE_INSIDE_1_TEST);
 
-		// ensure sphere touch alltogether
-		if (display_example == SPHERE_DISPLAY_TEST)
-		{
-			chaos::sphere3 s1(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-			chaos::sphere3 s2(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
-			chaos::sphere3 s3(glm::vec3(0.0f, 0.0f, 2.0f), 1.0f);
 
-			primitive_renderer->DrawPrimitive(s1, red, false);
-			primitive_renderer->DrawPrimitive(s2, green, false);
-			primitive_renderer->DrawPrimitive(s3, blue, false);
-		}
 
 		// sphere union or intersection
 		if (display_example == SPHERE_INTERSECTION_TEST || display_example == SPHERE_UNION_TEST)
@@ -608,7 +749,7 @@ protected:
 
 		}
 
-
+#endif
 
 
 
@@ -686,6 +827,10 @@ protected:
 		// place camera
 		fps_view_controller.fps_controller.position.y = 10.0f;
 		fps_view_controller.fps_controller.position.z = 30.0f;
+		fps_view_controller.keyboard_config.key_pitch_down = GLFW_KEY_UNKNOWN; // disable some inputs so they can be used else where
+		fps_view_controller.keyboard_config.key_pitch_up   = GLFW_KEY_UNKNOWN;
+		fps_view_controller.keyboard_config.key_yaw_left   = GLFW_KEY_UNKNOWN;
+		fps_view_controller.keyboard_config.key_yaw_right  = GLFW_KEY_UNKNOWN;
 
 		// initial display
 		DebugDisplayExampleTitle(true);
@@ -734,16 +879,31 @@ protected:
 			DebugDisplayExampleTitle(false);     
 			return true;
 		}
+		else if (key == GLFW_KEY_KP_4)
+		{
+
+			return true;
+		}
+
+
+
+
+
+
+
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
 	void SetExample(int new_display_example)
 	{
 		new_display_example = (new_display_example + EXAMPLE_COUNT) % EXAMPLE_COUNT;
+		display_example = new_display_example;
 
 		// reset the time
 		if (clock != nullptr)
 			clock->Reset();
+
+#if 0
 
 		// restore the box position each time example change
 		bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(5.0f, 6.0f, 7.0f));
@@ -754,8 +914,8 @@ protected:
 		// restore the sphere position each time example change
 		bigger_sphere  = chaos::sphere3(glm::vec3(3.0f, 0.0f, 0.0f), 7.0f);
 		smaller_sphere = chaos::sphere3(glm::vec3(-3.0f, 0.0f, 0.0f), 3.0f);
-
-		display_example = new_display_example;
+#endif
+		
 	}
 
 protected:
@@ -780,96 +940,6 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::triangle2 t2;
-	chaos::triangle3 t3;
-
-	chaos::box2 b2;
-	chaos::box3 b3;
-
-	chaos::sphere2 s2;
-	chaos::sphere3 s3;
-
-	glm::vec2 p2;
-	glm::vec3 p3;
-
-	auto a1 = chaos::GetClosestPoint(t2, p2);
-	auto a2 = chaos::GetClosestPoint(t3, p3);
-
-	auto a3 = chaos::GetClosestPoint(b2, p2);
-	auto a4 = chaos::GetClosestPoint(b3, p3);
-
-	auto a5 = chaos::GetClosestPoint(s2, p2);
-	auto a6 = chaos::GetClosestPoint(s3, p3);
-
-	{
-		auto p1 = chaos::MathTools::bsr(1);
-		auto p2 = chaos::MathTools::bsr(2);
-		auto p3 = chaos::MathTools::bsr(3);
-		auto p4 = chaos::MathTools::bsr(4);
-
-		p1 = p1;
-
-		int e = 19;
-		while (e != 0)
-		{
-			int edge_index = chaos::MathTools::bsf(e);
-			e &= ~(1 << edge_index);
-
-
-			e = e;
-		}
-
-	}
-
-	{
-
-		chaos::ray2::ray_type rrr1;
-		chaos::triangle2::ray_type rrr2;
-
-
-		chaos::ray2 r2;
-		chaos::ray3 r3;
-
-		chaos::triangle2 t2;
-		chaos::triangle3 t3;
-
-		chaos::box2 b2;
-		chaos::box3 b3;
-
-		chaos::obox2 o2;
-		chaos::obox3 o3;
-
-		chaos::sphere2 s2;
-		chaos::sphere3 s3;
-
-		glm::vec3 plane_2;
-		glm::vec4 plane_3;
-
-		glm::vec2 res2;
-		glm::vec3 res3;
-	
-		chaos::GetIntersection(r2, t2, res2);
-		chaos::GetIntersection(r2, plane_2, res2);
-		chaos::GetIntersection(r2, s2, res2, res2);
-		chaos::GetIntersection(r2, b2, res2, res2);
-		chaos::GetIntersection(r2, o2, res2, res2);
-
-
-		chaos::GetIntersection(r3, t3, res3);
-		chaos::GetIntersection(r3, plane_3, res3);
-		chaos::GetIntersection(r3, s3, res3, res3);
-		chaos::GetIntersection(r3, b3, res3, res3);
-		chaos::GetIntersection(r3, o3, res3, res3);
-	
-	
-
-	}
-
-
-
-	
-
-
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

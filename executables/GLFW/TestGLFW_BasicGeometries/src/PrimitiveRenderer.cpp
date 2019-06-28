@@ -129,6 +129,8 @@ void PrimitiveRenderer::DrawPrimitiveImpl(
 
 void PrimitiveRenderer::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const
 {
+	glDisable(GL_CULL_FACE); // XXX : the quad generation, produce a bad oriented quad in our case, fix the rendering with a hack
+
 	glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	// cannot be on the stack. due to reference count
@@ -146,10 +148,11 @@ void PrimitiveRenderer::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 cons
 		1.0f,
 		uniform_provider.get()
 	);
+	glEnable(GL_CULL_FACE);
 }
 	
 void PrimitiveRenderer::DrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const
-{
+{	
 	chaos::triangle3 t3;
 	t3.a = glm::vec3(t.a.x, 0.0f, t.a.y);
 	t3.b = glm::vec3(t.b.x, 0.0f, t.b.y);
@@ -182,7 +185,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const 
 		return;
 
 	glm::mat4 local_to_world =
-		glm::translate(glm::vec3(s.position.x, 0.0f, s.position.y)) *
+		glm::translate(glm::vec3(s.position.x, s.position.y, 0.0f)) *
 		glm::scale(glm::vec3(s.radius, s.radius, s.radius));
 
 	DrawPrimitiveImpl(
@@ -222,8 +225,8 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & c
 		return;
 
 	glm::mat4 local_to_world =
-		glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) *
-		glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
+		glm::translate(glm::vec3(b.position.x, b.position.y, 0.0f)) *
+		glm::scale(glm::vec3(b.half_size.x, b.half_size.y, 1.0f));
 
 	DrawPrimitiveImpl(
 		mesh_quad.get(),
@@ -254,18 +257,20 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & 
 		local_to_world,
 		is_translucent,
 		1.0f
-	);
+	);	
 }
 
 void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const
 {
+	glDisable(GL_CULL_FACE); // XXX : the quad generation, produce a bad oriented quad in our case, fix the rendering with a hack
+
 	if (IsGeometryEmpty(b))
 		return;
 
 	glm::mat4 local_to_world =
-		glm::translate(glm::vec3(b.position.x, 0.0f, b.position.y)) *
+		glm::translate(glm::vec3(b.position.x, b.position.y, 0.0f)) *
 		chaos::GetRotatorMatrix(b.rotator) *
-		glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
+		glm::scale(glm::vec3(b.half_size.x, b.half_size.y, 1.0f));
 
 	DrawPrimitiveImpl(
 		mesh_quad.get(),
@@ -275,6 +280,8 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & 
 		is_translucent,
 		0.0f
 	);
+
+	glEnable(GL_CULL_FACE);
 }
 
 void PrimitiveRenderer::DrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const

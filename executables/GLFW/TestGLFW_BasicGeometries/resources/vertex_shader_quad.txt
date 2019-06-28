@@ -10,12 +10,14 @@ out vec3 vs_normal;
 void main() 
 {
   vec3 p = position;
-	p.xyz = p.xzy;
+	
 
   vs_normal = normal;
 
   vec4 tmp = vec4(p, 1.0);
   tmp = local_to_world  * tmp;
+	tmp.xyz = tmp.xzy;
+
   tmp = world_to_camera * tmp;
   tmp = projection      * tmp;
 

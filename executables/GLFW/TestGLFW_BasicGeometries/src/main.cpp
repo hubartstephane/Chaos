@@ -93,13 +93,6 @@ static int const TEST_COUNT = EXAMPLE_COUNT;
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
-public:
-
-	MyGLFWWindowOpenGLTest1()
-	{
-		SetExample(0);
-	}
-
 protected:
 
 	char const * GetExampleTitle(int example)
@@ -390,6 +383,24 @@ protected:
 		return chaos::sphere3(GetMovingPoint3(), 1.0f);
 	}
 
+	chaos::triangle2 GetMovingTriangle2() const
+	{
+		chaos::triangle2 t;
+		t.a = glm::vec2(5.0f, 0.0f);
+		t.c = glm::vec2(-5.0f, 0.0f);
+		t.b = glm::vec2(0.0f, 5.0f);
+		return t;
+	}
+
+	chaos::triangle3 GetMovingTriangle3() const
+	{
+		chaos::triangle3 t;
+		t.a = glm::vec3(5.0f, 7.0f, 0.0f);
+		t.c = glm::vec3(-5.0f, 6.0f, 0.0f);
+		t.b = glm::vec3(0.0f, 8.0f, 5.0f);
+		return t;
+	}
+
 	// ========================================================
 
 	void DrawGeometryObjects()
@@ -414,10 +425,7 @@ protected:
 		}
 		if (display_example == TRIANGLE2_DISPLAY_TEST)
 		{
-			chaos::triangle2 t;
-			t.a = glm::vec2(5.0f, 0.0f);
-			t.c = glm::vec2(-5.0f, 0.0f);
-			t.b = glm::vec2(0.0f, 5.0f);
+			chaos::triangle2 t = GetMovingTriangle2();
 			primitive_renderer->DrawPrimitive(t, red, false);
 		}
 
@@ -439,10 +447,7 @@ protected:
 		}
 		if (display_example == TRIANGLE3_DISPLAY_TEST)
 		{
-			chaos::triangle3 t;
-			t.a = glm::vec3(5.0f, 7.0f, 0.0f);
-			t.c = glm::vec3(-5.0f, 6.0f, 0.0f);
-			t.b = glm::vec3(0.0f, 8.0f, 5.0f);
+			chaos::triangle3 t = GetMovingTriangle3();
 			primitive_renderer->DrawPrimitive(t, red, false);
 		}
 
@@ -832,6 +837,9 @@ protected:
 		fps_view_controller.keyboard_config.key_yaw_left   = GLFW_KEY_UNKNOWN;
 		fps_view_controller.keyboard_config.key_yaw_right  = GLFW_KEY_UNKNOWN;
 
+		// initialize the example
+		SetExample(0);
+
 		// initial display
 		DebugDisplayExampleTitle(true);
 
@@ -903,6 +911,19 @@ protected:
 		if (clock != nullptr)
 			clock->Reset();
 
+		// reset all collisions primitives
+		if (clock != nullptr)
+		{
+			col_box2 = GetMovingBox2();
+			col_box3 = GetMovingBox3();
+			col_obox2 = GetMovingOBox2();
+			col_obox3 = GetMovingOBox3();
+			col_sphere2 = GetMovingSphere2();
+			col_sphere3 = GetMovingSphere3();
+			col_triangle2 = GetMovingTriangle2();
+			col_triangle3 = GetMovingTriangle3();
+		}
+
 #if 0
 
 		// restore the box position each time example change
@@ -936,6 +957,16 @@ protected:
 	chaos::FPSViewInputController fps_view_controller;
 
 	chaos::GLDebugOnScreenDisplay debug_display;
+
+	// some objects for collisions tests
+	chaos::box2 col_box2;
+	chaos::box3 col_box3;
+	chaos::obox2 col_obox2;
+	chaos::obox3 col_obox3;
+	chaos::sphere2 col_sphere2;
+	chaos::sphere3 col_sphere3;
+	chaos::triangle2 col_triangle2;
+	chaos::triangle3 col_triangle3;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

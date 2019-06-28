@@ -1,0 +1,10 @@
+out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+
+in vec3 vs_normal;
+
+uniform vec4 color;
+
+void main()
+{
+	output_color = color;
+}

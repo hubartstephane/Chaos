@@ -117,21 +117,17 @@ public:
 	glm::mat4 projection;
 	glm::mat4 world_to_camera;
 
-	// rendering for the box  
+	// the meshes
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
-	chaos::shared_ptr<chaos::GPUProgram>  program_box;
-
-	// rendering for the triangle  
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_triangle;
-	chaos::shared_ptr<chaos::GPUProgram>  program_triangle;
-
-	// rendering for the rect
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_sphere;
-	chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
-
-	// rendering for the quad
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_quad;
+
+	// the programs
 	chaos::shared_ptr<chaos::GPUProgram>  program_quad;
+	chaos::shared_ptr<chaos::GPUProgram>  program_box;
+	chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
+	chaos::shared_ptr<chaos::GPUProgram>  program_triangle;
 };
 
 

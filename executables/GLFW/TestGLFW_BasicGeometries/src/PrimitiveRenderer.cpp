@@ -40,6 +40,10 @@ bool PrimitiveRenderer::Initialize()
 	if (program_sphere == nullptr)
 		return false;
 
+	program_quad = LoadProgram(resources_path, "pixel_shader_quad.txt", "vertex_shader_quad.txt");
+	if (program_quad == nullptr)
+		return false;
+
 	// create meshes
 	chaos::triangle3 t; // data will be initialized in vertex shader as uniform
 	chaos::box2      b2 = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
@@ -67,7 +71,6 @@ chaos::shared_ptr<chaos::GPUProgram> PrimitiveRenderer::LoadProgram(boost::files
 	return program_generator.GenProgramObject();
 }
 
-
 void PrimitiveRenderer::BeginTranslucency() const
 {
 	glEnable(GL_BLEND);
@@ -80,7 +83,6 @@ void PrimitiveRenderer::EndTranslucency() const
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 }
-
 
 void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider) const
 {
@@ -165,7 +167,6 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const 
 		glm::scale(glm::vec3(s.radius, s.radius, s.radius));
 
 	DrawPrimitiveImpl(
-
 		mesh_sphere.get(),
 		program_sphere.get(),
 		color,
@@ -215,6 +216,8 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & c
 
 void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const
 {
+	glDisable(GL_CULL_FACE); // XXX : the quad generation, produce a bad oriented quad in our case, fix the rendering with a hack
+
 	if (IsGeometryEmpty(b))
 		return;
 
@@ -223,13 +226,15 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & c
 		glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
 
 	DrawPrimitiveImpl(
-		mesh_box.get(),
-		program_box.get(),
+		mesh_quad.get(),
+		program_quad.get(),
 		color,
 		local_to_world,
 		is_translucent,
 		0.0f
 	);
+
+	glEnable(GL_CULL_FACE);
 }
 
 void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent) const
@@ -263,8 +268,8 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & 
 		glm::scale(glm::vec3(b.half_size.x, 1.0f, b.half_size.y));
 
 	DrawPrimitiveImpl(
-		mesh_box.get(),
-		program_box.get(),
+		mesh_quad.get(),
+		program_quad.get(),
 		color,
 		local_to_world,
 		is_translucent,

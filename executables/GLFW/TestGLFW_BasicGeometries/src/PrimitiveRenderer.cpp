@@ -11,27 +11,78 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/MyGLFWSingleWindowApplication.h>
 
-#include "DrawFunctions.h"
+#include "PrimitiveRenderer.h"
 
 static glm::vec4 const solid = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
-void RenderingContext::BeginTranslucency() const
+bool PrimitiveRenderer::Initialize()
+{
+	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+	if (application == nullptr)
+		return false;
+
+	// compute resource path
+	boost::filesystem::path resources_path = application->GetResourcesPath();
+
+	// load programs      
+	program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
+	if (program_box == nullptr)
+		return false;
+
+	program_triangle = LoadProgram(resources_path, "pixel_shader_triangle.txt", "vertex_shader_triangle.txt");
+	if (program_triangle == nullptr)
+		return false;
+
+	program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt");
+	if (program_sphere == nullptr)
+		return false;
+
+	// create meshes
+	chaos::triangle3 t; // data will be initialized in vertex shader as uniform
+	chaos::box2      b2 = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+	chaos::box3      b3 = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+
+	chaos::MultiMeshGenerator generators;
+	generators.AddGenerator(new chaos::SphereMeshGenerator(s, 10), mesh_sphere);
+	generators.AddGenerator(new chaos::QuadMeshGenerator(b2), mesh_quad);
+	generators.AddGenerator(new chaos::CubeMeshGenerator(b3), mesh_box);
+	generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
+
+	if (!generators.GenerateMeshes())
+		return false;
+
+	return true;
+}
+
+chaos::shared_ptr<chaos::GPUProgram> PrimitiveRenderer::LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
+{
+	chaos::GPUProgramGenerator program_generator;
+	program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
+	program_generator.AddShaderSourceFile(GL_VERTEX_SHADER, resources_path / vs_filename);
+
+	return program_generator.GenProgramObject();
+}
+
+
+void PrimitiveRenderer::BeginTranslucency() const
 {
 	glEnable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void RenderingContext::EndTranslucency() const
+void PrimitiveRenderer::EndTranslucency() const
 {
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
 }
 
 
-void RenderingContext::PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider) const
+void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider) const
 {
 	uniform_provider.AddVariableValue("projection", projection);
 	uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
@@ -43,7 +94,7 @@ void RenderingContext::PrepareObjectProgram(chaos::GPUProgramProvider & uniform_
 		uniform_provider.AddVariableProvider(next_provider);
 }
 
-void RenderingContext::DrawPrimitiveImpl(
+void PrimitiveRenderer::DrawPrimitiveImpl(
 	chaos::SimpleMesh * mesh,
 	chaos::GPUProgram  * program,
 	glm::vec4 const & color,
@@ -74,7 +125,7 @@ void RenderingContext::DrawPrimitiveImpl(
 		EndTranslucency();
 }
 
-void RenderingContext::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const
 {
 	glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -95,7 +146,7 @@ void RenderingContext::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 const
 	);
 }
 	
-void RenderingContext::DrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const
 {
 	chaos::triangle3 t3;
 	t3.a = glm::vec3(t.a.x, 0.0f, t.a.y);
@@ -104,7 +155,7 @@ void RenderingContext::DrawPrimitive(chaos::triangle2 const & t, glm::vec4 const
 	DrawPrimitive(t3, color, is_translucent);
 }
 
-void RenderingContext::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(s))
 		return;
@@ -124,7 +175,7 @@ void RenderingContext::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const &
 	);
 }
 
-void RenderingContext::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(s))
 		return;
@@ -143,7 +194,7 @@ void RenderingContext::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const &
 	);
 }
 
-void RenderingContext::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -162,7 +213,7 @@ void RenderingContext::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & co
 	);
 }
 
-void RenderingContext::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -181,7 +232,7 @@ void RenderingContext::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & co
 	);
 }
 
-void RenderingContext::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -201,7 +252,7 @@ void RenderingContext::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & c
 	);
 }
 
-void RenderingContext::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -221,13 +272,13 @@ void RenderingContext::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & c
 	);
 }
 
-void RenderingContext::DrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const
 {
 	glm::vec3 half_point_size(0.125f);
 	DrawPrimitive(chaos::box3(p, half_point_size), color, is_translucent);
 }
 
-void RenderingContext::DrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::DrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const
 {
 	glm::vec2 half_point_size(0.125f);
 	DrawPrimitive(chaos::box2(p, half_point_size), color, is_translucent);

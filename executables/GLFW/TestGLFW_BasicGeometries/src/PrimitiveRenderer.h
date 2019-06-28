@@ -21,9 +21,11 @@ public:
 	glm::vec4 color;
 };
 
-class RenderingContext
+class PrimitiveRenderer : public chaos::ReferencedObject
 {
 public:
+
+	bool Initialize();
 
 	template<typename T, int dimension>
 	chaos::type_box<T, dimension> SlightIncreaseSize(chaos::type_box<T, dimension> src) const
@@ -68,21 +70,9 @@ public:
 		return src;
 	}
 
-	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider = nullptr) const;
-
 	void BeginTranslucency() const;
 
 	void EndTranslucency() const;
-
-	void DrawPrimitiveImpl(
-		chaos::SimpleMesh * mesh,
-		chaos::GPUProgram  * program,
-		glm::vec4 const & color,
-		glm::mat4 const & local_to_world,
-		bool is_translucent,
-		float Y_Scale,
-		chaos::GPUProgramProvider * next_provider = nullptr
-	) const;
 
 	void DrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const;
 
@@ -104,6 +94,22 @@ public:
 
 	void DrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const;
 
+protected:
+
+	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename);
+
+	void DrawPrimitiveImpl(
+		chaos::SimpleMesh * mesh,
+		chaos::GPUProgram  * program,
+		glm::vec4 const & color,
+		glm::mat4 const & local_to_world,
+		bool is_translucent,
+		float Y_Scale,
+		chaos::GPUProgramProvider * next_provider = nullptr
+	) const;
+
+	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider = nullptr) const;
+
 public:
 
 	chaos::Renderer * renderer = nullptr;
@@ -122,6 +128,10 @@ public:
 	// rendering for the rect
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_sphere;
 	chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
+
+	// rendering for the quad
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_quad;
+	chaos::shared_ptr<chaos::GPUProgram>  program_quad;
 };
 
 

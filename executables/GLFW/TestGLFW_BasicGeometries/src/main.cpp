@@ -24,7 +24,7 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/ConvexPolygonSplitter.h>
 
-#include "DrawFunctions.h"
+#include "PrimitiveRenderer.h"
 
 
 
@@ -139,7 +139,7 @@ protected:
 	}
 
 	template<typename T>
-	void DrawIntersectionOrUnion(RenderingContext const & ctx, T p1, T p2, bool intersection)
+	void DrawIntersectionOrUnion(T p1, T p2, bool intersection)
 	{
 		double realtime = clock->GetClockTime();
 
@@ -148,22 +148,22 @@ protected:
 
 		if (intersection)
 		{
-			ctx.DrawPrimitive(ctx.SlightIncreaseSize(p1 & p2), white, false);
+			primitive_renderer->DrawPrimitive(primitive_renderer->SlightIncreaseSize(p1 & p2), white, false);
 
-			ctx.DrawPrimitive(p1, red, true);
-			ctx.DrawPrimitive(p2, blue, true);
+			primitive_renderer->DrawPrimitive(p1, red, true);
+			primitive_renderer->DrawPrimitive(p2, blue, true);
 		}
 		else
 		{
-			ctx.DrawPrimitive(p1, red, false);
-			ctx.DrawPrimitive(p2, blue, false);
+			primitive_renderer->DrawPrimitive(p1, red, false);
+			primitive_renderer->DrawPrimitive(p2, blue, false);
 
-			ctx.DrawPrimitive(ctx.SlightIncreaseSize(p1 | p2), white, true);
+			primitive_renderer->DrawPrimitive(primitive_renderer->SlightIncreaseSize(p1 | p2), white, true);
 		}  
 	}
 
 	template<typename T>
-	void DrawRestrictToInside(RenderingContext const & ctx, T & smaller, T & bigger, bool move_bigger)
+	void DrawRestrictToInside(T & smaller, T & bigger, bool move_bigger)
 	{
 		double realtime = clock->GetClockTime();
 
@@ -180,12 +180,12 @@ protected:
 
 		chaos::RestrictToInside(bigger, smaller, move_bigger);
 
-		ctx.DrawPrimitive(smaller, blue, false);
-		ctx.DrawPrimitive(ctx.SlightIncreaseSize(bigger), red, true);
+		primitive_renderer->DrawPrimitive(smaller, blue, false);
+		primitive_renderer->DrawPrimitive(primitive_renderer->SlightIncreaseSize(bigger), red, true);
 	}
 
 	template<typename T>
-	void DrawRestrictToOutside(RenderingContext const & ctx, T & src, T & target)
+	void DrawRestrictToOutside(T & src, T & target)
 	{
 		double realtime = clock->GetClockTime();
 
@@ -201,22 +201,22 @@ protected:
 
 		chaos::RestrictToOutside(src, target);
 
-		ctx.DrawPrimitive(src, blue, false);
-		ctx.DrawPrimitive(target, red, false);
+		primitive_renderer->DrawPrimitive(src, blue, false);
+		primitive_renderer->DrawPrimitive(target, red, false);
 	}
 
 
 	template<typename T1, typename T2>
-	void DrawCollisionImpl(RenderingContext const & ctx, T1 const & p1, T2 const & p2)
+	void DrawCollisionImpl(T1 const & p1, T2 const & p2)
 	{
 		bool collision = chaos::Collide(p1, p2);
-		ctx.DrawPrimitive(p1, blue, collision);
-		ctx.DrawPrimitive(p2, red, collision);
+		primitive_renderer->DrawPrimitive(p1, blue, collision);
+		primitive_renderer->DrawPrimitive(p2, red, collision);
 	}
 
 
 	template<typename T>
-	void DrawCollision(RenderingContext const & ctx, T p1, T p2)
+	void DrawCollision(T p1, T p2)
 	{
 		double realtime = clock->GetClockTime();
 
@@ -225,10 +225,10 @@ protected:
 		p2.position.x = 0.0;
 		p2.position.y = 10.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
 
-		DrawCollisionImpl(ctx, p1, p2);
+		DrawCollisionImpl(p1, p2);
 	}
 
-	void DrawSphereBox2Collision(RenderingContext const & ctx)
+	void DrawSphereBox2Collision()
 	{
 		double realtime = clock->GetClockTime();
 
@@ -242,10 +242,10 @@ protected:
 		s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
 		s2.radius = 3.0f;
 
-		DrawCollisionImpl(ctx, b2, s2);
+		DrawCollisionImpl(b2, s2);
 	}
 
-	void DrawTrianglePointCollision(RenderingContext const & ctx)
+	void DrawTrianglePointCollision()
 	{
 		double realtime = 0.2 * clock->GetClockTime();
 
@@ -259,10 +259,10 @@ protected:
 		p.x = 5.0f * (float)chaos::MathTools::Cos(realtime * M_2_PI);
 		p.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
 
-		DrawCollisionImpl(ctx, glm::vec2(p.x, p.y), t2);
+		DrawCollisionImpl(glm::vec2(p.x, p.y), t2);
 	}
 
-	void DrawTriangleBox2Collision(RenderingContext const & ctx)
+	void DrawTriangleBox2Collision()
 	{
 		double realtime = 0.2 * clock->GetClockTime();
 
@@ -277,11 +277,11 @@ protected:
 		s2.position.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
 		s2.radius = 0.25f;
 
-		DrawCollisionImpl(ctx, t2, s2);
+		DrawCollisionImpl(t2, s2);
 	}
 
 	template<typename T>
-	void DrawPointInside(RenderingContext const & ctx, T p)
+	void DrawPointInside(T p)
 	{
 		double realtime = clock->GetClockTime();
 
@@ -290,10 +290,10 @@ protected:
 		pos.y = 0.0f;
 		pos.z = 0.0f;
 
-		DrawCollisionImpl(ctx, pos, p);
+		DrawCollisionImpl(pos, p);
 	}
 
-	void DrawGeometryObjects(RenderingContext const & ctx)
+	void DrawGeometryObjects()
 	{
 		double realtime = clock->GetClockTime();
 
@@ -304,9 +304,9 @@ protected:
 			chaos::box3 b2(glm::vec3(2.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 			chaos::box3 b3(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-			ctx.DrawPrimitive(b1, red, false);
-			ctx.DrawPrimitive(b2, green, false);
-			ctx.DrawPrimitive(b3, blue, false);
+			primitive_renderer->DrawPrimitive(b1, red, false);
+			primitive_renderer->DrawPrimitive(b2, green, false);
+			primitive_renderer->DrawPrimitive(b3, blue, false);
 		}
 
 		// display box and corners
@@ -314,11 +314,11 @@ protected:
 		{
 			chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-			ctx.DrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
 
 			std::pair<glm::vec3, glm::vec3> corners = GetBoxExtremums(b);
-			ctx.DrawPrimitive(corners.first, white, false);
-			ctx.DrawPrimitive(corners.second, white, false);
+			primitive_renderer->DrawPrimitive(corners.first, white, false);
+			primitive_renderer->DrawPrimitive(corners.second, white, false);
 		}
 
 		// box construction from corners
@@ -329,9 +329,9 @@ protected:
 
 			chaos::box3 b(std::make_pair(p1, p2));
 
-			ctx.DrawPrimitive(b, red, false);
-			ctx.DrawPrimitive(p1, white, false);
-			ctx.DrawPrimitive(p2, white, false);
+			primitive_renderer->DrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(p1, white, false);
+			primitive_renderer->DrawPrimitive(p2, white, false);
 		}
 
 		// box union or intersection
@@ -339,7 +339,7 @@ protected:
 		{
 			chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::box3 b2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 1.0f, 2.0f));
-			DrawIntersectionOrUnion(ctx, b1, b2, display_example == BOX_INTERSECTION_TEST);
+			DrawIntersectionOrUnion(b1, b2, display_example == BOX_INTERSECTION_TEST);
 		}
 
 		// restrict displacement
@@ -348,10 +348,10 @@ protected:
 			display_example == RESTRICT_BOX_INSIDE_2_TEST ||
 			display_example == RESTRICT_BOX_INSIDE_3_TEST ||
 			display_example == RESTRICT_BOX_INSIDE_4_TEST )
-			DrawRestrictToInside(ctx, smaller_box, bigger_box, display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_3_TEST);
+			DrawRestrictToInside(smaller_box, bigger_box, display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_3_TEST);
 
 		if (display_example == RESTRICT_SPHERE_INSIDE_1_TEST || display_example == RESTRICT_SPHERE_INSIDE_2_TEST)
-			DrawRestrictToInside(ctx, smaller_sphere, bigger_sphere, display_example == RESTRICT_SPHERE_INSIDE_1_TEST);
+			DrawRestrictToInside(smaller_sphere, bigger_sphere, display_example == RESTRICT_SPHERE_INSIDE_1_TEST);
 
 		// ensure sphere touch alltogether
 		if (display_example == SPHERE_DISPLAY_TEST)
@@ -360,9 +360,9 @@ protected:
 			chaos::sphere3 s2(glm::vec3(2.0f, 0.0f, 0.0f), 1.0f);
 			chaos::sphere3 s3(glm::vec3(0.0f, 0.0f, 2.0f), 1.0f);
 
-			ctx.DrawPrimitive(s1, red, false);
-			ctx.DrawPrimitive(s2, green, false);
-			ctx.DrawPrimitive(s3, blue, false);
+			primitive_renderer->DrawPrimitive(s1, red, false);
+			primitive_renderer->DrawPrimitive(s2, green, false);
+			primitive_renderer->DrawPrimitive(s3, blue, false);
 		}
 
 		// sphere union or intersection
@@ -370,7 +370,7 @@ protected:
 		{
 			chaos::sphere3 s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
 			chaos::sphere3 s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
-			DrawIntersectionOrUnion(ctx, s1, s2, display_example == SPHERE_INTERSECTION_TEST);
+			DrawIntersectionOrUnion(s1, s2, display_example == SPHERE_INTERSECTION_TEST);
 		}
 
 		// inner sphere
@@ -379,8 +379,8 @@ protected:
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetInnerSphere(b);
 
-			ctx.DrawPrimitive(s, blue, false);
-			ctx.DrawPrimitive(b, red, true);
+			primitive_renderer->DrawPrimitive(s, blue, false);
+			primitive_renderer->DrawPrimitive(b, red, true);
 		}
 
 		// bounding sphere
@@ -389,8 +389,8 @@ protected:
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetBoundingSphere(b);
 
-			ctx.DrawPrimitive(b, red, false);
-			ctx.DrawPrimitive(s, blue, true);
+			primitive_renderer->DrawPrimitive(b, red, false);
+			primitive_renderer->DrawPrimitive(s, blue, true);
 		}
 		// bounding box
 		if (display_example == BOUNDING_BOX_TEST)
@@ -399,8 +399,8 @@ protected:
 
 			chaos::box3 b = GetBoundingBox(s);
 
-			ctx.DrawPrimitive(s, red, false);
-			ctx.DrawPrimitive(b, blue, true);
+			primitive_renderer->DrawPrimitive(s, red, false);
+			primitive_renderer->DrawPrimitive(b, blue, true);
 		}
 
 		// split box
@@ -415,12 +415,12 @@ protected:
 					for (int k = 0 ; k < 2 ; ++k)
 					{
 						chaos::box3 split_b = GetSplitBox(b, i, j, k);
-						ctx.DrawPrimitive(ctx.SlightDecreaseSize(split_b), red, false);
+						primitive_renderer->DrawPrimitive(primitive_renderer->SlightDecreaseSize(split_b), red, false);
 					}
 				}
 			}
 
-			ctx.DrawPrimitive(b, blue, true);
+			primitive_renderer->DrawPrimitive(b, blue, true);
 		}
 
 		// box collision
@@ -431,7 +431,7 @@ protected:
 
 			b1.half_size = glm::vec3(4.0f, 5.0f, 6.0f);
 			b2.half_size = glm::vec3(1.0f, 2.0f, 3.0f);
-			DrawCollision(ctx, b1, b2);
+			DrawCollision(b1, b2);
 		}
 
 		// sphere collision
@@ -442,32 +442,32 @@ protected:
 
 			s1.radius = 3.0f;
 			s2.radius = 2.0f;
-			DrawCollision(ctx, s1, s2);
+			DrawCollision(s1, s2);
 		}
 
 		// restrict displacement
 		if (display_example == RESTRICT_BOX_OUTSIDE_TEST)
-			DrawRestrictToOutside(ctx, smaller_box, bigger_box);
+			DrawRestrictToOutside(smaller_box, bigger_box);
 
 		if (display_example == RESTRICT_SPHERE_OUTSIDE_TEST)
-			DrawRestrictToOutside(ctx, smaller_sphere, bigger_sphere);
+			DrawRestrictToOutside(smaller_sphere, bigger_sphere);
 
 		if (display_example == POINT_INSIDE_BOX_TEST)
-			DrawPointInside(ctx, bigger_box);
+			DrawPointInside(bigger_box);
 
 		if (display_example == POINT_INSIDE_SPHERE_TEST)
-			DrawPointInside(ctx, bigger_sphere);
+			DrawPointInside(bigger_sphere);
 
 		// 2D collision
 		if (display_example == COLLISION_SHERE2_BOX2_TEST)
-			DrawSphereBox2Collision(ctx);
+			DrawSphereBox2Collision();
 
 		if (display_example == COLLISION_SHERE2_TRIANGLE_TEST)
-			DrawTriangleBox2Collision(ctx);
+			DrawTriangleBox2Collision();
 
 
 		if (display_example == COLLISION_POINT_TRIANGLE_TEST)
-			DrawTrianglePointCollision(ctx);
+			DrawTrianglePointCollision();
 
 
 		// Obox
@@ -502,37 +502,37 @@ protected:
 
 
 
-			ctx.DrawPrimitive(b, red, transparent_obox);
+			primitive_renderer->DrawPrimitive(b, red, transparent_obox);
 
 			if (display_example == OBOX_CORNERS_TEST)
 			{
 				glm::vec3 vertices[8];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					ctx.DrawPrimitive(vertices[i], white, false);
+					primitive_renderer->DrawPrimitive(vertices[i], white, false);
 			}
 
 			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetBoundingSphere(b);
-				ctx.DrawPrimitive(s, blue, true);
+				primitive_renderer->DrawPrimitive(s, blue, true);
 			}
 
 			if (display_example == OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box3 box = GetBoundingBox(b);
-				ctx.DrawPrimitive(box, blue, true);
+				primitive_renderer->DrawPrimitive(box, blue, true);
 			}
 
 			if (display_example == OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetInnerSphere(b);
-				ctx.DrawPrimitive(s, blue, false);
+				primitive_renderer->DrawPrimitive(s, blue, false);
 			}
 
 			if (display_example == POINT_INSIDE_OBOX_TEST)
 			{
-				ctx.DrawPrimitive(pt, white, false);
+				primitive_renderer->DrawPrimitive(pt, white, false);
 			}
 #else
 
@@ -557,37 +557,37 @@ protected:
 			else if (display_example == POINT_INSIDE_OBOX_TEST && Collide(pt, b))
 				transparent_obox = true;
 
-			ctx.DrawPrimitive(b, red, transparent_obox);
+			primitive_renderer->DrawPrimitive(b, red, transparent_obox);
 
 			if (display_example == OBOX_CORNERS_TEST)
 			{
 				glm::vec2 vertices[4];
 				GetBoxVertices(b, vertices);
 				for (int i = 0 ; i < 8 ; ++i)
-					ctx.DrawPrimitive(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
+					primitive_renderer->DrawPrimitive(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
 			}
 
 			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingSphere(b);
-				ctx.DrawPrimitive(s, blue, true);
+				primitive_renderer->DrawPrimitive(s, blue, true);
 			}
 
 			if (display_example == OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box2 box = GetBoundingBox(b);
-				ctx.DrawPrimitive(box, blue, true);
+				primitive_renderer->DrawPrimitive(box, blue, true);
 			}
 
 			if (display_example == OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingSphere(b);
-				ctx.DrawPrimitive(s, blue, false);
+				primitive_renderer->DrawPrimitive(s, blue, false);
 			}
 
 			if (display_example == POINT_INSIDE_OBOX_TEST)
 			{
-				ctx.DrawPrimitive(glm::vec3(pt.x, 0.0f, pt.y), white, false);
+				primitive_renderer->DrawPrimitive(glm::vec3(pt.x, 0.0f, pt.y), white, false);
 			}
 
 
@@ -628,22 +628,13 @@ protected:
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube
 
-								  // XXX : the scaling is used to avoid the near plane clipping
-		RenderingContext ctx;
-		ctx.renderer = renderer;
-		ctx.mesh_box = mesh_box;
-		ctx.mesh_triangle = mesh_triangle;
-		ctx.mesh_sphere = mesh_sphere;
-
-		ctx.program_box = program_box;
-		ctx.program_triangle = program_triangle;
-		ctx.program_sphere = program_sphere;
-
+		// XXX : the scaling is used to avoid the near plane clipping
 		static float FOV = 60.0f;
-		ctx.projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
-		ctx.world_to_camera = fps_view_controller.GlobalToLocal();
+		primitive_renderer->projection      = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
+		primitive_renderer->world_to_camera = fps_view_controller.GlobalToLocal();
+		primitive_renderer->renderer        = renderer;
 
-		DrawGeometryObjects(ctx);
+		DrawGeometryObjects();
 
 		debug_display.Display(size.x, size.y);
 
@@ -652,27 +643,12 @@ protected:
 
 	virtual void Finalize() override
 	{
-		mesh_box      = nullptr;
-		mesh_triangle = nullptr;
-		mesh_sphere   = nullptr;
-
-		program_box      = nullptr;
-		program_triangle = nullptr;
-		program_sphere   = nullptr;
+		primitive_renderer = nullptr;
 
 		debug_display.Finalize();
 
 		if (clock != nullptr)
 			clock->RemoveFromParent();
-	}
-
-	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
-	{
-		chaos::GPUProgramGenerator program_generator;
-		program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / ps_filename);
-		program_generator.AddShaderSourceFile(GL_VERTEX_SHADER,   resources_path / vs_filename);
-
-		return program_generator.GenProgramObject();
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
@@ -698,34 +674,14 @@ protected:
 		if (!debug_display.Initialize(debug_params))
 			return false;
 
-		// load programs      
-		program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
-		if (program_box == nullptr)
+		primitive_renderer = new PrimitiveRenderer();
+		if (primitive_renderer == nullptr)
 			return false;
-
-		program_triangle = LoadProgram(resources_path, "pixel_shader_triangle.txt", "vertex_shader_triangle.txt");
-		if (program_triangle == nullptr)
-			return false;
-
-		program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt");
-		if (program_sphere == nullptr)
+		if (!primitive_renderer->Initialize())
 			return false;
 
 		// create a timer
 		clock = application->GetMainClock()->CreateChildClock();
-
-		// create meshes
-		chaos::triangle3 t; // data will be initialized in vertex shader as uniform
-		chaos::box3      b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-
-		chaos::MultiMeshGenerator generators;    
-		generators.AddGenerator(new chaos::SphereMeshGenerator(s, 10), mesh_sphere);
-		generators.AddGenerator(new chaos::CubeMeshGenerator(b), mesh_box);
-		generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
-
-		if (!generators.GenerateMeshes())
-			return false;
 
 		// place camera
 		fps_view_controller.fps_controller.position.y = 10.0f;
@@ -804,17 +760,8 @@ protected:
 
 protected:
 
-	// rendering for the box  
-	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
-	chaos::shared_ptr<chaos::GPUProgram>  program_box;
-
-	// rendering for the triangle  
-	chaos::shared_ptr<chaos::SimpleMesh> mesh_triangle;
-	chaos::shared_ptr<chaos::GPUProgram>  program_triangle;
-
-	// rendering for the rect
-	chaos::shared_ptr<chaos::SimpleMesh> mesh_sphere;
-	chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
+	// an object for debug rendering
+	chaos::shared_ptr<PrimitiveRenderer> primitive_renderer;
 
 	chaos::Clock * clock = nullptr;
 
@@ -918,35 +865,9 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 	}
 
-	{
-		glm::vec2 v1(1.0f, 2.0f);
-		glm::vec3 v2(1.0f, 2.0f, 0.0f);
-		glm::vec3 v3(1.0f, 2.0f, 3.0f);
-		glm::vec4 v4(1.0f, 2.0f, 3.0f, 0.0f);
-		glm::vec4 v5(1.0f, 2.0f, 3.0f, 4.0f);
 
-		auto a = chaos::GLMTools::RecastVector<glm::vec3>(v1);
-		auto b = chaos::GLMTools::RecastVector<glm::vec4>(v1);
-
-		auto c = chaos::GLMTools::RecastVector<glm::vec2>(v2);
-		auto d = chaos::GLMTools::RecastVector<glm::vec4>(v2);
-
-		auto e = chaos::GLMTools::RecastVector<glm::vec2>(v3);
-		auto f = chaos::GLMTools::RecastVector<glm::vec4>(v3);
-
-
-		auto g = chaos::GLMTools::RecastVector<glm::vec2>(v4);
-		auto h = chaos::GLMTools::RecastVector<glm::vec3>(v4);
-
-		auto i = chaos::GLMTools::RecastVector<glm::vec2>(v5);
-		auto j = chaos::GLMTools::RecastVector<glm::vec3>(v5);
-	
-		a =a;
-	}
 
 	
-
-	return 0;
 
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;

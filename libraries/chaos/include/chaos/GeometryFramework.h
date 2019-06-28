@@ -1042,10 +1042,10 @@ namespace chaos
 	glm::dvec2 GetPlaneNormal(glm::dvec3 const & p);
 	glm::dvec3 GetPlaneNormal(glm::dvec4 const & p);
 
-	float GetPlaneOffset(glm::vec3  const & p);
-	float GetPlaneOffset(glm::vec4  const & p);
-	float GetPlaneOffset(glm::dvec3 const & p);
-	float GetPlaneOffset(glm::dvec4 const & p);
+	float  GetPlaneOffset(glm::vec3  const & p);
+	float  GetPlaneOffset(glm::vec4  const & p);
+	double GetPlaneOffset(glm::dvec3 const & p);
+	double GetPlaneOffset(glm::dvec4 const & p);
 
 }; // namespace chaos
 

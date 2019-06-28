@@ -83,12 +83,12 @@ namespace chaos
 		return p.w;	
 	}
 
-	float GetPlaneOffset(glm::dvec3 const & p)
+	double GetPlaneOffset(glm::dvec3 const & p)
 	{
 		return p.z;	
 	}
 
-	float GetPlaneOffset(glm::dvec4 const & p)
+	double GetPlaneOffset(glm::dvec4 const & p)
 	{
 		return p.w;	
 	}

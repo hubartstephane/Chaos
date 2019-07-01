@@ -45,8 +45,27 @@ static int const OBOX3_DISPLAY_TEST     = EXAMPLE_COUNT++;
 static int const SPHERE3_DISPLAY_TEST		= EXAMPLE_COUNT++;
 static int const TRIANGLE3_DISPLAY_TEST	= EXAMPLE_COUNT++;
 
+static int const COLLISION_2D_TEST = EXAMPLE_COUNT++;
+static int const COLLISION_3D_TEST = EXAMPLE_COUNT++;
+
 
 #if 0
+
+static int const COLLISION_BOX2_BOX2 = EXAMPLE_COUNT++;
+static int const COLLISION_BOX3_BOX3 = EXAMPLE_COUNT++;
+static int const COLLISION_SPHERE2_SPHERE2 = EXAMPLE_COUNT++;
+static int const COLLISION_SPHERE3_SPHERE3 = EXAMPLE_COUNT++;
+static int const COLLISION_TRIANGLE2_TRIANGLE2 = EXAMPLE_COUNT++;
+static int const COLLISION_TRIANGLE3_TRIANGLE3 = EXAMPLE_COUNT++;
+
+static int const COLLISION_BOX2_SPHERE2 = EXAMPLE_COUNT++;
+static int const COLLISION_BOX2_TRIANGLE2 = EXAMPLE_COUNT++;
+
+
+static int const COLLISION_BOX3_SPHERE3 = EXAMPLE_COUNT++;
+static int const COLLISION_BOX2_SPHERE2 = EXAMPLE_COUNT++;
+static int const COLLISION_BOX3_SPHERE3 = EXAMPLE_COUNT++;
+
 static int const RECTANGLE_CORNERS_TEST        = EXAMPLE_COUNT++;
 static int const CORNERS_TO_RECTANGLE_TEST     = EXAMPLE_COUNT++;
 static int const BOX_INTERSECTION_TEST         = EXAMPLE_COUNT++;
@@ -91,6 +110,13 @@ static int const POINT_INSIDE_OBOX_TEST = EXAMPLE_COUNT++;
 static int const TEST_COUNT = EXAMPLE_COUNT;
 
 
+
+static int PRIMITIVE_TYPE_BOX      = 0;
+static int PRIMITIVE_TYPE_OBOX     = 1;
+static int PRIMITIVE_TYPE_SPHERE   = 2;
+static int PRIMITIVE_TYPE_TRIANGLE = 3;
+static int PRIMITIVE_TYPE_COUNT    = 4;
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 protected:
@@ -106,6 +132,9 @@ protected:
 		if (example == OBOX3_DISPLAY_TEST)				return "obox3 display tests";
 		if (example == SPHERE3_DISPLAY_TEST)      return "sphere3 display tests";
 		if (example == TRIANGLE3_DISPLAY_TEST)    return "triangle3 display tests";
+
+		if (example == COLLISION_2D_TEST)					return "collision 2D tests";
+		if (example == COLLISION_3D_TEST)					return "collision 3D tests";
 		
 
 
@@ -401,6 +430,86 @@ protected:
 		return t;
 	}
 
+
+
+	// ========================================================
+
+	glm::vec2 Get2DVector(glm::vec3 const & src)
+	{
+		glm::vec2 res;
+		res.x = src.x;
+		res.y = src.z;
+		return src;
+	}
+
+	void GetCollisionPrimitive(chaos::box2 & res, glm::vec3 const & p, float r)
+	{
+		res.position = Get2DVector(p);
+		res.half_size = Get2DVector(glm::vec3(1.0f, 2.0f, 3.0f));
+	}
+
+	void GetCollisionPrimitive(chaos::box3 & res, glm::vec3 const & p, float r)
+	{
+		res.position  = p;
+		res.half_size = glm::vec3(1.0f, 2.0f, 3.0f);
+	}
+
+	void GetCollisionPrimitive(chaos::obox2 & res, glm::vec3 const & p, float r)
+	{
+		res.position = Get2DVector(p);
+		res.half_size = Get2DVector(glm::vec3(1.0f, 2.0f, 3.0f));
+		res.rotator = r;
+	}
+
+	void GetCollisionPrimitive(chaos::obox3 & res, glm::vec3 const & p, float r)
+	{
+		res.position = p;
+		res.half_size = glm::vec3(1.0f, 2.0f, 3.0f);
+
+		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
+		res.rotator = glm::angleAxis(r, axis);
+	}
+
+	void GetCollisionPrimitive(chaos::sphere2 & res, glm::vec3 const & p, float r)
+	{
+		res.position = Get2DVector(p); 
+		res.radius = r;
+	}
+
+	void GetCollisionPrimitive(chaos::sphere3 & res, glm::vec3 const & p, float r)
+	{
+		res.position = p;
+		res.radius = r;
+	}
+
+	void GetCollisionPrimitive(chaos::triangle2 & res, glm::vec3 const & p, float r)
+	{
+
+	}
+
+	void GetCollisionPrimitive(chaos::triangle3 & res, glm::vec3 const & p, float r)
+	{
+
+	}
+
+
+
+	template<typename PRIM1, typename PRIM2>
+	void DrawPrimitiveCollision(int type1, int type2)
+	{
+		if (prim_type_object1 != type1 || prim_type_object2 != type2)
+			return;
+
+		PRIM1 prim1;
+		PRIM2 prim2;
+		GetCollisionPrimitive(prim1, position_object1, rotation_object1);
+		GetCollisionPrimitive(prim2, position_object2, rotation_object2);
+
+		bool collision = chaos::Collide(prim1, prim2);
+		primitive_renderer->DrawPrimitive(prim1, blue, collision);
+		primitive_renderer->DrawPrimitive(prim2, red, collision);
+	}
+
 	// ========================================================
 
 	void DrawGeometryObjects()
@@ -451,6 +560,40 @@ protected:
 			primitive_renderer->DrawPrimitive(t, red, false);
 		}
 
+		// collisions
+		if (display_example == COLLISION_2D_TEST)
+		{
+			DrawPrimitiveCollision<chaos::box2, chaos::box2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_BOX);
+			DrawPrimitiveCollision<chaos::obox2, chaos::obox2>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::sphere2, chaos::sphere2>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::triangle2, chaos::triangle2>(PRIMITIVE_TYPE_TRIANGLE, PRIMITIVE_TYPE_TRIANGLE);
+
+			DrawPrimitiveCollision<chaos::box2, chaos::obox2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::box2, chaos::sphere2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::box2, chaos::triangle2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_TRIANGLE);
+
+			DrawPrimitiveCollision<chaos::obox2, chaos::sphere2>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::obox2, chaos::triangle2>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_TRIANGLE);
+
+			DrawPrimitiveCollision<chaos::sphere2, chaos::triangle2>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_TRIANGLE);
+		}
+
+		if (display_example == COLLISION_3D_TEST)
+		{
+			DrawPrimitiveCollision<chaos::box3, chaos::box3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_BOX);
+			DrawPrimitiveCollision<chaos::obox3, chaos::obox3>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::sphere3, chaos::sphere3>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::triangle3, chaos::triangle3>(PRIMITIVE_TYPE_TRIANGLE, PRIMITIVE_TYPE_TRIANGLE);
+
+			DrawPrimitiveCollision<chaos::box3, chaos::obox3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::box3, chaos::sphere3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::box3, chaos::triangle3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_TRIANGLE);
+
+			DrawPrimitiveCollision<chaos::obox3, chaos::sphere3>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::obox3, chaos::triangle3>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_TRIANGLE);
+
+			DrawPrimitiveCollision<chaos::sphere3, chaos::triangle3>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_TRIANGLE);
+		}
 
 
 
@@ -854,6 +997,43 @@ protected:
 		hints.decorated = 1;
 	}
 
+	void UpdateObjectPosition(int key, double delta_time, glm::vec3 const & factor)
+	{
+		static float SPEED = 5.0f;
+
+		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		{
+			if ((glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) || (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE))
+				position_object1 += SPEED * (float)(delta_time)* factor;
+			else
+				position_object2 += SPEED * (float)(delta_time)* factor;
+		}
+	}
+
+	void UpdateObjectRotation(int key, double delta_time, float factor)
+	{
+		static float SPEED = 1.0f;
+
+		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		{
+			if ((glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) || (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE))
+				rotation_object1 += SPEED * (float)(delta_time)* factor;
+			else
+				rotation_object2 += SPEED * (float)(delta_time)* factor;
+		}
+	}
+
+	void UpdateObjectType(int key)
+	{
+		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
+		{
+			if ((glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) || (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE))
+				prim_type_object1 = (prim_type_object1 + 1) % PRIMITIVE_TYPE_COUNT;
+			else
+				prim_type_object2 = (prim_type_object2 + 1) % PRIMITIVE_TYPE_COUNT;
+		}
+	}
+
 	virtual bool Tick(double delta_time) override
 	{
 		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -862,6 +1042,22 @@ protected:
 		fps_view_controller.Tick(glfw_window, delta_time);
 
 		debug_display.Tick(delta_time);
+
+		// update primitives
+		if (display_example == COLLISION_2D_TEST || display_example == COLLISION_3D_TEST)
+		{
+			UpdateObjectPosition(GLFW_KEY_KP_6, delta_time, glm::vec3( 1.0f,  0.0f,  0.0f));
+			UpdateObjectPosition(GLFW_KEY_KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
+			UpdateObjectPosition(GLFW_KEY_KP_8, delta_time, glm::vec3( 0.0f,  1.0f,  0.0f));
+			UpdateObjectPosition(GLFW_KEY_KP_2, delta_time, glm::vec3( 0.0f, -1.0f,  0.0f));
+			UpdateObjectPosition(GLFW_KEY_KP_7, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
+			UpdateObjectPosition(GLFW_KEY_KP_1, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
+
+			UpdateObjectRotation(GLFW_KEY_KP_9, delta_time,  1.0f);
+			UpdateObjectRotation(GLFW_KEY_KP_3, delta_time, -1.0f);
+
+			UpdateObjectType(GLFW_KEY_KP_5);
+		}
 
 		return true; // refresh
 	}
@@ -887,12 +1083,8 @@ protected:
 			DebugDisplayExampleTitle(false);     
 			return true;
 		}
-		else if (key == GLFW_KEY_KP_4)
-		{
 
-			return true;
-		}
-
+	
 
 
 
@@ -914,17 +1106,22 @@ protected:
 		// reset all collisions primitives
 		if (clock != nullptr)
 		{
-			col_box2 = GetMovingBox2();
-			col_box3 = GetMovingBox3();
-			col_obox2 = GetMovingOBox2();
-			col_obox3 = GetMovingOBox3();
-			col_sphere2 = GetMovingSphere2();
-			col_sphere3 = GetMovingSphere3();
-			col_triangle2 = GetMovingTriangle2();
-			col_triangle3 = GetMovingTriangle3();
+			position_object1 = glm::vec3(0.0f, 0.0f, 0.0f);
+			position_object2 = glm::vec3(0.0f, 0.0f, 0.0f);
+			rotation_object1 = 0.0f;
+			rotation_object2 = 0.0f;
 		}
 
 #if 0
+
+		col_box2 = GetMovingBox2();
+		col_box3 = GetMovingBox3();
+		col_obox2 = GetMovingOBox2();
+		col_obox3 = GetMovingOBox3();
+		col_sphere2 = GetMovingSphere2();
+		col_sphere3 = GetMovingSphere3();
+		col_triangle2 = GetMovingTriangle2();
+		col_triangle3 = GetMovingTriangle3();
 
 		// restore the box position each time example change
 		bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(5.0f, 6.0f, 7.0f));
@@ -959,6 +1156,17 @@ protected:
 	chaos::GLDebugOnScreenDisplay debug_display;
 
 	// some objects for collisions tests
+	glm::vec3 position_object1 = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 position_object2 = glm::vec3(0.0f, 0.0f, 0.0f);
+	float     rotation_object1 = 0.0f;
+	float     rotation_object2 = 0.0f;
+
+	int prim_type_object1 = PRIMITIVE_TYPE_BOX;
+	int prim_type_object2 = PRIMITIVE_TYPE_BOX;
+
+
+
+#if 0
 	chaos::box2 col_box2;
 	chaos::box3 col_box3;
 	chaos::obox2 col_obox2;
@@ -967,6 +1175,7 @@ protected:
 	chaos::sphere3 col_sphere3;
 	chaos::triangle2 col_triangle2;
 	chaos::triangle3 col_triangle3;
+#endif
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

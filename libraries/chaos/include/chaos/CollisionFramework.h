@@ -440,7 +440,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(type_obox<T, dimension> const & src1, type_obox<T, dimension> const & src2)
 	{
-		assert(0);
+		
 
 
 
@@ -455,7 +455,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(type_triangle<T, dimension> const & src1, type_triangle<T, dimension> const & src2)
 	{
-		assert(0);
+		
 
 
 
@@ -594,6 +594,14 @@ namespace chaos
 		return true;
 	}
 
+	template<typename T>
+	bool Collide(type_triangle<T, 3> const & t, type_sphere<T, 3> const & s)
+	{
+
+
+		return false;
+	}
+
 	template<typename T, int dimension>
 	bool Collide(type_sphere<T, dimension> const & s, type_triangle<T, dimension> const & t)
 	{
@@ -607,7 +615,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(type_box<T, dimension> const & b, type_triangle<T, dimension> const & t)
 	{
-		assert(0);
+		
 
 
 
@@ -631,13 +639,13 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(type_obox<T, dimension> const & b, type_triangle<T, dimension> const & t)
 	{
-		assert(0);
+		
 
 
 
 
 
-		return false;
+		return false; // TODO COLLISION
 	}
 
 	template<typename T, int dimension>
@@ -653,7 +661,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool Collide(type_obox<T, dimension> const & b, type_sphere<T, dimension> const & s)
 	{
-		assert(0);
+		
 
 
 
@@ -666,6 +674,28 @@ namespace chaos
 	bool Collide(type_sphere<T, dimension> const & s, type_obox<T, dimension> const & b)
 	{
 		return Collide(b, s);
+	}
+
+	// ==============================================================================================
+	// Collision obox/box 
+	// ==============================================================================================
+
+	template<typename T, int dimension>
+	bool Collide(type_obox<T, dimension> const & b, type_box<T, dimension> const & s)
+	{
+		
+
+
+
+
+
+		return false; // TODO COLLISION
+	}
+
+	template<typename T, int dimension>
+	bool Collide(type_box<T, dimension> const & b, type_obox<T, dimension> const & ob)
+	{
+		return Collide(ob, b);
 	}
 
 	// ==============================================================================================

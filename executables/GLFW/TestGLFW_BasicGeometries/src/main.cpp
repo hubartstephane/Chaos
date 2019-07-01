@@ -473,23 +473,41 @@ protected:
 	void GetCollisionPrimitive(chaos::sphere2 & res, glm::vec3 const & p, float r)
 	{
 		res.position = Get2DVector(p); 
-		res.radius = r;
+		res.radius = 1.0f;
 	}
 
 	void GetCollisionPrimitive(chaos::sphere3 & res, glm::vec3 const & p, float r)
 	{
 		res.position = p;
-		res.radius = r;
+		res.radius = 1.0f;
 	}
 
 	void GetCollisionPrimitive(chaos::triangle2 & res, glm::vec3 const & p, float r)
 	{
+		glm::vec3 a = glm::vec3(5.0f, 7.0f, 0.0f);
+		glm::vec3 b = glm::vec3(5.0f, 7.0f, 0.0f);
+		glm::vec3 c = glm::vec3(5.0f, 7.0f, 0.0f);
+
+
+
+
+
 
 	}
 
 	void GetCollisionPrimitive(chaos::triangle3 & res, glm::vec3 const & p, float r)
 	{
+		
+		res.a = glm::vec3(5.0f, 7.0f, 0.0f);
+		res.c = glm::vec3(-5.0f, 6.0f, 0.0f);
+		res.b = glm::vec3(0.0f, 8.0f, 5.0f);
 
+		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
+		glm::quat rot = glm::angleAxis(r, axis);
+
+		res.a = glm::rotate(rot, res.a) + p;
+		res.b = glm::rotate(rot, res.b) + p;
+		res.c = glm::rotate(rot, res.c) + p;
 	}
 
 
@@ -1000,10 +1018,9 @@ protected:
 	void UpdateObjectPosition(int key, double delta_time, glm::vec3 const & factor)
 	{
 		static float SPEED = 5.0f;
-
 		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
 		{
-			if ((glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) || (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE))
+			if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
 				position_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				position_object2 += SPEED * (float)(delta_time)* factor;
@@ -1016,7 +1033,7 @@ protected:
 
 		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
 		{
-			if ((glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) || (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE))
+			if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
 				rotation_object1 += SPEED * (float)(delta_time)* factor;
 			else
 				rotation_object2 += SPEED * (float)(delta_time)* factor;
@@ -1025,13 +1042,21 @@ protected:
 
 	void UpdateObjectType(int key)
 	{
+		static bool previous = false;
+
 		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
 		{
-			if ((glfwGetKey(glfw_window, GLFW_KEY_LEFT_SHIFT) != GLFW_RELEASE) || (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_SHIFT) != GLFW_RELEASE))
-				prim_type_object1 = (prim_type_object1 + 1) % PRIMITIVE_TYPE_COUNT;
-			else
-				prim_type_object2 = (prim_type_object2 + 1) % PRIMITIVE_TYPE_COUNT;
+			if (!previous)
+			{
+				if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
+					prim_type_object1 = (prim_type_object1 + 1) % PRIMITIVE_TYPE_COUNT;
+				else
+					prim_type_object2 = (prim_type_object2 + 1) % PRIMITIVE_TYPE_COUNT;
+			}
+			previous = true;
 		}
+		else
+			previous = false;
 	}
 
 	virtual bool Tick(double delta_time) override
@@ -1084,13 +1109,6 @@ protected:
 			return true;
 		}
 
-	
-
-
-
-
-
-
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
@@ -1106,34 +1124,11 @@ protected:
 		// reset all collisions primitives
 		if (clock != nullptr)
 		{
-			position_object1 = glm::vec3(0.0f, 0.0f, 0.0f);
-			position_object2 = glm::vec3(0.0f, 0.0f, 0.0f);
+			position_object1 = glm::vec3(-5.0f, 0.0f, 0.0f);
+			position_object2 = glm::vec3( 5.0f, 0.0f, 0.0f);
 			rotation_object1 = 0.0f;
 			rotation_object2 = 0.0f;
-		}
-
-#if 0
-
-		col_box2 = GetMovingBox2();
-		col_box3 = GetMovingBox3();
-		col_obox2 = GetMovingOBox2();
-		col_obox3 = GetMovingOBox3();
-		col_sphere2 = GetMovingSphere2();
-		col_sphere3 = GetMovingSphere3();
-		col_triangle2 = GetMovingTriangle2();
-		col_triangle3 = GetMovingTriangle3();
-
-		// restore the box position each time example change
-		bigger_box  = chaos::box3(glm::vec3(3.0f, 0.0f, 0.0f), glm::vec3(5.0f, 6.0f, 7.0f));
-		smaller_box = chaos::box3(glm::vec3(-3.0f, 0.0f, 0.0f), glm::vec3(2.0f, 3.0f, 4.0f));
-
-		if (new_display_example == RESTRICT_BOX_INSIDE_3_TEST || new_display_example == RESTRICT_BOX_INSIDE_4_TEST)
-			smaller_box.half_size.x *= 4.0f;
-		// restore the sphere position each time example change
-		bigger_sphere  = chaos::sphere3(glm::vec3(3.0f, 0.0f, 0.0f), 7.0f);
-		smaller_sphere = chaos::sphere3(glm::vec3(-3.0f, 0.0f, 0.0f), 3.0f);
-#endif
-		
+		}		
 	}
 
 protected:
@@ -1163,19 +1158,6 @@ protected:
 
 	int prim_type_object1 = PRIMITIVE_TYPE_BOX;
 	int prim_type_object2 = PRIMITIVE_TYPE_BOX;
-
-
-
-#if 0
-	chaos::box2 col_box2;
-	chaos::box3 col_box3;
-	chaos::obox2 col_obox2;
-	chaos::obox3 col_obox3;
-	chaos::sphere2 col_sphere2;
-	chaos::sphere3 col_sphere3;
-	chaos::triangle2 col_triangle2;
-	chaos::triangle3 col_triangle3;
-#endif
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

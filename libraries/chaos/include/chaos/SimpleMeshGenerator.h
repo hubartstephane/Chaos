@@ -67,7 +67,7 @@ namespace chaos
 		using primitive_type = T;
 
 		/** constructor */
-		PrimitiveMeshGenerator(primitive_type const & in_primitive, glm::mat4x4 const & in_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f))):
+		PrimitiveMeshGenerator(primitive_type const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4()):
 			primitive(in_primitive),
 			transform(in_transform){}
 
@@ -160,7 +160,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		CircleMeshGenerator(sphere2 const & in_primitive, glm::mat4x4 const & in_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f)), int in_subdivisions = 10) :
+		CircleMeshGenerator(sphere2 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
 			PrimitiveMeshGenerator<sphere2>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
@@ -188,7 +188,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		SphereMeshGenerator(sphere3 const & in_primitive, glm::mat4x4 const & in_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f)), int in_subdivisions = 10) :
+		SphereMeshGenerator(sphere3 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
 			PrimitiveMeshGenerator<sphere3>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 

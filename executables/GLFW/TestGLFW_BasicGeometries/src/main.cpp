@@ -117,6 +117,19 @@ static int PRIMITIVE_TYPE_SPHERE   = 2;
 static int PRIMITIVE_TYPE_TRIANGLE = 3;
 static int PRIMITIVE_TYPE_COUNT    = 4;
 
+char const * GetPrimitiveName(int type)
+{
+	if (type == PRIMITIVE_TYPE_BOX)
+		return "box";
+	if (type == PRIMITIVE_TYPE_OBOX)
+		return "obox";
+	if (type == PRIMITIVE_TYPE_SPHERE)
+		return "sphere";
+	if (type == PRIMITIVE_TYPE_TRIANGLE)
+		return "triangle";
+	return "unknown";
+}
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 protected:
@@ -133,8 +146,17 @@ protected:
 		if (example == SPHERE3_DISPLAY_TEST)      return "sphere3 display tests";
 		if (example == TRIANGLE3_DISPLAY_TEST)    return "triangle3 display tests";
 
-		if (example == COLLISION_2D_TEST)					return "collision 2D tests";
-		if (example == COLLISION_3D_TEST)					return "collision 3D tests";
+		if (example == COLLISION_2D_TEST || example == COLLISION_3D_TEST)
+		{
+			char const * type = (example == COLLISION_2D_TEST) ? "collision 2D" : "collision 3D";
+			char const * p1 = GetPrimitiveName(prim_type_object1);
+			char const * p2 = GetPrimitiveName(prim_type_object2);
+
+			static std::string result;
+			result = chaos::StringTools::Printf("%s: %s/%s", type, p1, p2);
+			return result.c_str();
+		}
+
 		
 
 
@@ -515,17 +537,30 @@ protected:
 	template<typename PRIM1, typename PRIM2>
 	void DrawPrimitiveCollision(int type1, int type2)
 	{
-		if (prim_type_object1 != type1 || prim_type_object2 != type2)
-			return;
+		if (prim_type_object1 == type1 && prim_type_object2 == type2)
+		{
+			PRIM1 prim1;
+			PRIM2 prim2;
+			GetCollisionPrimitive(prim1, position_object1, rotation_object1);
+			GetCollisionPrimitive(prim2, position_object2, rotation_object2);
 
-		PRIM1 prim1;
-		PRIM2 prim2;
-		GetCollisionPrimitive(prim1, position_object1, rotation_object1);
-		GetCollisionPrimitive(prim2, position_object2, rotation_object2);
+			bool collision = chaos::Collide(prim1, prim2);
+			primitive_renderer->DrawPrimitive(prim1, blue, collision);
+			primitive_renderer->DrawPrimitive(prim2, red, collision);
+		}
 
-		bool collision = chaos::Collide(prim1, prim2);
-		primitive_renderer->DrawPrimitive(prim1, blue, collision);
-		primitive_renderer->DrawPrimitive(prim2, red, collision);
+		if (prim_type_object1 == type2 && prim_type_object2 == type1)
+		{
+			PRIM2 prim1;
+			PRIM1 prim2;
+			GetCollisionPrimitive(prim1, position_object1, rotation_object1);
+			GetCollisionPrimitive(prim2, position_object2, rotation_object2);
+
+			bool collision = chaos::Collide(prim1, prim2);
+			primitive_renderer->DrawPrimitive(prim1, blue, collision);
+			primitive_renderer->DrawPrimitive(prim2, red, collision);
+		}
+
 	}
 
 	// ========================================================
@@ -1040,23 +1075,12 @@ protected:
 		}
 	}
 
-	void UpdateObjectType(int key)
+	void UpdateObjectType()
 	{
-		static bool previous = false;
-
-		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
-		{
-			if (!previous)
-			{
-				if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
-					prim_type_object1 = (prim_type_object1 + 1) % PRIMITIVE_TYPE_COUNT;
-				else
-					prim_type_object2 = (prim_type_object2 + 1) % PRIMITIVE_TYPE_COUNT;
-			}
-			previous = true;
-		}
+		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
+			prim_type_object1 = (prim_type_object1 + 1) % PRIMITIVE_TYPE_COUNT;
 		else
-			previous = false;
+			prim_type_object2 = (prim_type_object2 + 1) % PRIMITIVE_TYPE_COUNT;
 	}
 
 	virtual bool Tick(double delta_time) override
@@ -1075,13 +1099,13 @@ protected:
 			UpdateObjectPosition(GLFW_KEY_KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
 			UpdateObjectPosition(GLFW_KEY_KP_8, delta_time, glm::vec3( 0.0f,  1.0f,  0.0f));
 			UpdateObjectPosition(GLFW_KEY_KP_2, delta_time, glm::vec3( 0.0f, -1.0f,  0.0f));
-			UpdateObjectPosition(GLFW_KEY_KP_7, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
-			UpdateObjectPosition(GLFW_KEY_KP_1, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
+			UpdateObjectPosition(GLFW_KEY_KP_1, delta_time, glm::vec3( 0.0f,  0.0f,  1.0f));
+			UpdateObjectPosition(GLFW_KEY_KP_7, delta_time, glm::vec3( 0.0f,  0.0f, -1.0f));
 
 			UpdateObjectRotation(GLFW_KEY_KP_9, delta_time,  1.0f);
 			UpdateObjectRotation(GLFW_KEY_KP_3, delta_time, -1.0f);
 
-			UpdateObjectType(GLFW_KEY_KP_5);
+			//UpdateObjectType(GLFW_KEY_KP_5);
 		}
 
 		return true; // refresh
@@ -1108,6 +1132,13 @@ protected:
 			DebugDisplayExampleTitle(false);     
 			return true;
 		}
+
+		if (key == GLFW_KEY_KP_5 && action == GLFW_RELEASE)
+		{
+			UpdateObjectType();
+			DebugDisplayExampleTitle(false);
+		}
+
 
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}

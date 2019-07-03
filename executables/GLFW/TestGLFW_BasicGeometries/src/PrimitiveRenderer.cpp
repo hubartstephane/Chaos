@@ -48,10 +48,12 @@ bool PrimitiveRenderer::Initialize()
 	chaos::triangle3 t; // data will be initialized in vertex shader as uniform
 	chaos::box2      b2 = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 	chaos::box3      b3 = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	chaos::sphere2   c = chaos::sphere2(glm::vec2(0.0f, 0.0f), 1.0f);
 	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	chaos::MultiMeshGenerator generators;
 	generators.AddGenerator(new chaos::SphereMeshGenerator(s), mesh_sphere);
+	generators.AddGenerator(new chaos::CircleMeshGenerator(c), mesh_circle);
 	generators.AddGenerator(new chaos::QuadMeshGenerator(b2), mesh_quad);
 	generators.AddGenerator(new chaos::CubeMeshGenerator(b3), mesh_box);
 	generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
@@ -84,13 +86,14 @@ void PrimitiveRenderer::EndTranslucency() const
 	glDisable(GL_BLEND);
 }
 
-void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider) const
+void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, chaos::GPUProgramProvider * next_provider) const
 {
 	uniform_provider.AddVariableValue("projection", projection);
 	uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
 	uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
 	uniform_provider.AddVariableValue("color", prim_ctx.color);
-	uniform_provider.AddVariableValue("Y_Scale", Y_Scale);
+
+	uniform_provider.AddVariableValue("light_dir", glm::vec3(0.0f, 0.0f, 1.0f));
 
 	if (next_provider != nullptr)
 		uniform_provider.AddVariableProvider(next_provider);
@@ -102,7 +105,6 @@ void PrimitiveRenderer::DrawPrimitiveImpl(
 	glm::vec4 const & color,
 	glm::mat4 const & local_to_world,
 	bool is_translucent,
-	float Y_Scale,
 	chaos::GPUProgramProvider * next_provider
 ) const
 {
@@ -118,7 +120,7 @@ void PrimitiveRenderer::DrawPrimitiveImpl(
 	prim_ctx.color = final_color;
 
 	chaos::GPUProgramProvider uniform_provider;
-	PrepareObjectProgram(uniform_provider, prim_ctx, Y_Scale, next_provider);
+	PrepareObjectProgram(uniform_provider, prim_ctx, next_provider);
 
 	chaos::RenderParams render_params;
 	mesh->Render(renderer, program, &uniform_provider, render_params);
@@ -145,7 +147,6 @@ void PrimitiveRenderer::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 cons
 		color,
 		local_to_world,
 		is_translucent,
-		1.0f,
 		uniform_provider.get()
 	);
 	glEnable(GL_CULL_FACE);
@@ -174,8 +175,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const 
 		program_sphere.get(),
 		color,
 		local_to_world,
-		is_translucent,
-		1.0f
+		is_translucent
 	);
 }
 
@@ -193,8 +193,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const 
 		program_sphere.get(),
 		color,
 		local_to_world,
-		is_translucent,
-		0.0f
+		is_translucent
 	);
 }
 
@@ -212,8 +211,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & c
 		program_box.get(),
 		color,
 		local_to_world,
-		is_translucent,
-		1.0f
+		is_translucent
 	);
 }
 
@@ -233,8 +231,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & c
 		program_quad.get(),
 		color,
 		local_to_world,
-		is_translucent,
-		0.0f
+		is_translucent
 	);
 
 	glEnable(GL_CULL_FACE);
@@ -255,8 +252,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & 
 		program_box.get(),
 		color,
 		local_to_world,
-		is_translucent,
-		1.0f
+		is_translucent
 	);	
 }
 
@@ -277,8 +273,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & 
 		program_quad.get(),
 		color,
 		local_to_world,
-		is_translucent,
-		0.0f
+		is_translucent
 	);
 
 	glEnable(GL_CULL_FACE);

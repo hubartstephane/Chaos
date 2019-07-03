@@ -86,8 +86,23 @@ namespace chaos
 						if (requirement.indices_count > 0)
 							mesh->index_buffer = index_buffer;
 
+#if _DEBUG
+						size_t vc1 = vertices_writer.GetWrittenCount();
+						size_t ic1 = indices_writer.GetWrittenCount();
+#endif
+
 						it.first->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer); // generate the buffers and primitives and declaration
 						it.first->GenerateVertexDeclaration(mesh->vertex_declaration);
+
+#if _DEBUG
+						size_t vc2 = vertices_writer.GetWrittenCount();
+						size_t ic2 = indices_writer.GetWrittenCount();
+
+						auto ppp = vc2 - vc1;
+						auto uuu = requirement.vertices_count * requirement.vertex_size;
+
+						assert(vc2 - vc1 == requirement.vertices_count * requirement.vertex_size);
+#endif
 
 						assert(requirement.vertex_size == mesh->vertex_declaration.GetVertexSize());
 
@@ -98,6 +113,8 @@ namespace chaos
 						(*it.second) = mesh; // store the mesh as an output          
 					}
 				}
+
+				auto ppp = vertices_writer.GetRemainingBufferSize();
 
 				assert(vertices_writer.GetRemainingBufferSize() == 0);
 				assert(indices_writer.GetRemainingBufferSize() == 0);

@@ -104,11 +104,10 @@ protected:
 		glm::vec4 const & color,
 		glm::mat4 const & local_to_world,
 		bool is_translucent,
-		float Y_Scale,
 		chaos::GPUProgramProvider * next_provider = nullptr
 	) const;
 
-	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, float Y_Scale, chaos::GPUProgramProvider * next_provider = nullptr) const;
+	void PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, chaos::GPUProgramProvider * next_provider = nullptr) const;
 
 public:
 
@@ -121,6 +120,7 @@ public:
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_triangle;
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_sphere;
+	chaos::shared_ptr<chaos::SimpleMesh> mesh_circle;
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_quad;
 
 	// the programs

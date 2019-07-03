@@ -3,11 +3,13 @@ out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindF
 in vec3 vs_normal;
 
 uniform vec4 color;
+uniform vec3 light_dir;
 
 void main()
 {
-  vec3  light = normalize(vec3(1.0, 2.0, 3.0));
-  float modif = dot(light, normalize(vs_normal));           
+	vec3 normal = gl_FrontFacing? vs_normal : -vs_normal;
+
+  float modif = dot(light_dir, normalize(normal));           
 
   modif = modif * 0.5 + 0.5; // modif is a value [0..1] different for each face
 

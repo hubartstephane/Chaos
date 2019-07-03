@@ -328,6 +328,8 @@ namespace chaos
 		vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.position, 0.0f));
 		vertices_writer << normal;
 
+		int yyy = 0;
+
 		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions); 
 		for (int i = 0 ; i < subdivisions ; ++i)
 		{
@@ -337,6 +339,8 @@ namespace chaos
 
 			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.radius * normal + primitive.position, 0.0f));
 			vertices_writer << normal;
+
+			++yyy;
 		}
 
 		// generate the index buffer

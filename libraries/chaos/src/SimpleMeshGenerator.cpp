@@ -296,9 +296,55 @@ namespace chaos
 	// =====================================================================
 
 
+	MeshGenerationRequirement CircleMeshGenerator::GetRequirement() const 
+	{
+		MeshGenerationRequirement result;
+		result.vertex_size = sizeof(glm::vec3);
+		result.vertices_count = 1 + subdivisions;
+		result.indices_count  = 3 * subdivisions;
+		return result;	
+	}
 
+	void CircleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+	{
+		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+	}
 
+	void CircleMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
+	{
+	
+		// generate the vertices
+		vertices_writer << glm::vec3(primitive.position, 0.0f);
 
+		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions); 
+		for (int i = 0 ; i < subdivisions ; ++i)
+		{
+			float alpha = (float)i * delta_alpha;
+
+			glm::vec2 normal = glm::vec2(MathTools::Cos(alpha), MathTools::Sin(alpha));
+
+			vertices_writer << glm::vec3(primitive.radius * normal + primitive.position, 0.0f);
+		}
+
+		// generate the index buffer
+		for (int i = 0 ; i < subdivisions ; ++i)
+		{
+			indices_writer << 0;
+			indices_writer << i + 1;
+			indices_writer << ((i + 1) % subdivisions) + 1;		
+		}
+
+		// insert the primitive
+		int indices_count  = 3 * subdivisions;
+
+		DrawPrimitive draw_primitive;
+		draw_primitive.count = indices_count;
+		draw_primitive.indexed = true;
+		draw_primitive.primitive_type = GL_TRIANGLES;
+		draw_primitive.start = 0;
+		draw_primitive.base_vertex_index = 0;
+		primitives.push_back(draw_primitive);
+	}
 
 	// =====================================================================
 	// SphereMeshGenerator

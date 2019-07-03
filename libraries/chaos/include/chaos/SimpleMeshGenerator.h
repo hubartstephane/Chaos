@@ -166,11 +166,6 @@ namespace chaos
 
 	protected:
 
-		/** get a vertex on the sphere from polar angle */
-		void InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const;
-
-	protected:
-
 		/** the sphere to generate */
 		sphere2 primitive;
 		/** number of subdivisions */

@@ -177,7 +177,7 @@ namespace chaos
 	MeshGenerationRequirement TriangleMeshGenerator::GetRequirement() const
 	{
 		MeshGenerationRequirement result;
-		result.vertex_size = sizeof(glm::vec3);
+		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 3;
 		result.indices_count = 0;
 		return result;
@@ -186,6 +186,7 @@ namespace chaos
 	void TriangleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
 	void TriangleMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
@@ -199,9 +200,15 @@ namespace chaos
 		draw_primitive.base_vertex_index = 0;
 		primitives.push_back(draw_primitive);
 
+		glm::vec3 normal = glm::normalize(glm::cross(primitive.b - primitive.a, primitive.c - primitive.b));
+		normal = GLMTools::Mult(transform, normal);
+
 		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.a);
+		vertices_writer << normal;
 		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.b);
+		vertices_writer << normal;
 		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.c);
+		vertices_writer << normal;
 	}
 
 	// =====================================================================
@@ -211,7 +218,7 @@ namespace chaos
 	MeshGenerationRequirement QuadMeshGenerator::GetRequirement() const
 	{
 		MeshGenerationRequirement result;
-		result.vertex_size = sizeof(glm::vec3);
+		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = sizeof(vertices) / sizeof(vertices[0]);
 		result.indices_count = sizeof(triangles) / sizeof(triangles[0]);
 		return result;
@@ -220,6 +227,7 @@ namespace chaos
 	void QuadMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
 	void QuadMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
@@ -239,8 +247,12 @@ namespace chaos
 		// the vertices 
 		int const vertex_count = sizeof(vertices) / sizeof(vertices[0]);
 
+		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
 		for (int i = 0; i < vertex_count; ++i)
+		{
 			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(vertices[i] * primitive.half_size + primitive.position, 0.0f));
+			vertices_writer << normal;
+		}
 	}
 
 	// =====================================================================
@@ -296,7 +308,7 @@ namespace chaos
 	MeshGenerationRequirement CircleMeshGenerator::GetRequirement() const 
 	{
 		MeshGenerationRequirement result;
-		result.vertex_size = sizeof(glm::vec3);
+		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 1 + subdivisions;
 		result.indices_count  = 3 * subdivisions;
 		return result;	
@@ -305,13 +317,16 @@ namespace chaos
 	void CircleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
 	void CircleMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
 	{
+		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
 	
 		// generate the vertices
 		vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.position, 0.0f));
+		vertices_writer << normal;
 
 		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions); 
 		for (int i = 0 ; i < subdivisions ; ++i)
@@ -321,6 +336,7 @@ namespace chaos
 			glm::vec2 normal = glm::vec2(MathTools::Cos(alpha), MathTools::Sin(alpha));
 
 			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.radius * normal + primitive.position, 0.0f));
+			vertices_writer << normal;
 		}
 
 		// generate the index buffer

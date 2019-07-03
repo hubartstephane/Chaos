@@ -1104,8 +1104,6 @@ protected:
 
 			UpdateObjectRotation(GLFW_KEY_KP_9, delta_time,  1.0f);
 			UpdateObjectRotation(GLFW_KEY_KP_3, delta_time, -1.0f);
-
-			//UpdateObjectType(GLFW_KEY_KP_5);
 		}
 
 		return true; // refresh

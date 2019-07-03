@@ -83,6 +83,10 @@ namespace chaos
 		20, 23, 22
 	};
 
+	// =====================================================================
+	// MeshGenerationRequirement
+	// =====================================================================
+
 	bool MeshGenerationRequirement::IsValid() const
 	{
 		if (vertex_size <= 0)
@@ -93,6 +97,10 @@ namespace chaos
 			return false;
 		return true;
 	}
+
+	// =====================================================================
+	// SimpleMeshGenerator
+	// =====================================================================
 
 	bool SimpleMeshGenerator::FillMeshData(SimpleMesh * mesh) const
 	{
@@ -162,6 +170,10 @@ namespace chaos
 		return mesh;
 	}
 
+	// =====================================================================
+	// TriangleMeshGenerator
+	// =====================================================================
+
 	MeshGenerationRequirement TriangleMeshGenerator::GetRequirement() const
 	{
 		MeshGenerationRequirement result;
@@ -191,6 +203,10 @@ namespace chaos
 		vertices_writer << primitive.b;
 		vertices_writer << primitive.c;
 	}
+
+	// =====================================================================
+	// QuadMeshGenerator
+	// =====================================================================
 
 	MeshGenerationRequirement QuadMeshGenerator::GetRequirement() const
 	{
@@ -229,6 +245,10 @@ namespace chaos
 		for (int i = 0; i < vertex_count; ++i)
 			vertices_writer << (vertices[i] * hs + p);
 	}
+
+	// =====================================================================
+	// CubeMeshGenerator
+	// =====================================================================
 
 	MeshGenerationRequirement CubeMeshGenerator::GetRequirement() const
 	{
@@ -270,6 +290,19 @@ namespace chaos
 			vertices_writer << vertices[i * 2 + 1];      // copy normal
 		}
 	}
+
+	// =====================================================================
+	// CircleMeshGenerator
+	// =====================================================================
+
+
+
+
+
+
+	// =====================================================================
+	// SphereMeshGenerator
+	// =====================================================================
 
 	MeshGenerationRequirement SphereMeshGenerator::GetRequirement() const
 	{

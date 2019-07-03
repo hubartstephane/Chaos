@@ -144,6 +144,41 @@ namespace chaos
 	};
 
 	/**
+	* CircleMeshGenerator : help defines mesh as simple 2D circle
+	*/
+
+	class CircleMeshGenerator : public SimpleMeshGenerator
+	{
+
+	public:
+
+		/** constructor */
+		CircleMeshGenerator(sphere2 const & in_primitive, int in_subdivisions) :
+			primitive(in_primitive),
+			subdivisions(in_subdivisions) {}
+
+		/** get requirement */
+		virtual MeshGenerationRequirement GetRequirement() const override;
+		/** get the vertex declaration */
+		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
+		/** get the mesh data */
+		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+
+	protected:
+
+		/** get a vertex on the sphere from polar angle */
+		void InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const;
+
+	protected:
+
+		/** the sphere to generate */
+		sphere2 primitive;
+		/** number of subdivisions */
+		int subdivisions;
+	};
+
+
+	/**
 	* SphereMeshGenerator : help defines mesh as simple sphere
 	*/
 

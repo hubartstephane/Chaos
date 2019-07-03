@@ -81,7 +81,7 @@ namespace chaos
 		box2 primitive;
 
 		/** the vertices defining a face facing planes inside [-1, +1] */
-		static glm::vec3 const vertices[4];
+		static glm::vec2 const vertices[4];
 		/** the triangles indices defining a face facing planes */
 		static GLuint const triangles[6];
 	};

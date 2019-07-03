@@ -15,12 +15,12 @@
 namespace chaos
 {
 
-	glm::vec3 const QuadMeshGenerator::vertices[4] =
+	glm::vec2 const QuadMeshGenerator::vertices[4] =
 	{
-		glm::vec3(-1.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f, -1.0f, 0.0f),
-		glm::vec3(1.0f,  1.0f, 0.0f),
-		glm::vec3(-1.0f,  1.0f, 0.0f)
+		glm::vec2(-1.0f, -1.0f),
+		glm::vec2(1.0f, -1.0f),
+		glm::vec2(1.0f,  1.0f),
+		glm::vec2(-1.0f,  1.0f)
 	};
 
 	GLuint const QuadMeshGenerator::triangles[6] =
@@ -237,13 +237,10 @@ namespace chaos
 		indices_writer.Write(triangles, sizeof(triangles));
 
 		// the vertices 
-		glm::vec3 hs = glm::vec3(primitive.half_size.x, primitive.half_size.y, 1.0f);
-		glm::vec3 p = glm::vec3(primitive.position.x, primitive.position.y, 0.0f);
-
 		int const vertex_count = sizeof(vertices) / sizeof(vertices[0]);
 
 		for (int i = 0; i < vertex_count; ++i)
-			vertices_writer << (vertices[i] * hs + p);
+			vertices_writer << glm::vec3(vertices[i] * primitive.half_size + primitive.position, 0.0f);
 	}
 
 	// =====================================================================

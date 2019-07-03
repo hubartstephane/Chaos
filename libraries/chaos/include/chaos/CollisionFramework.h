@@ -554,14 +554,14 @@ namespace chaos
 		if (IsGeometryEmpty(s) || IsGeometryEmpty(t))
 			return false;
 
-		auto pt = GetClosestPoint(t, s.position);
-		return glm::distance2(pt, s.position) <= (s.radius * s.radius);
+	//	auto pt = GetClosestPoint(t, s.position);
+	//	return glm::distance2(pt, s.position) <= (s.radius * s.radius);
 
 
 
 
 
-#if 0
+#if 1
 
 
 

@@ -199,9 +199,9 @@ namespace chaos
 		draw_primitive.base_vertex_index = 0;
 		primitives.push_back(draw_primitive);
 
-		vertices_writer << primitive.a;
-		vertices_writer << primitive.b;
-		vertices_writer << primitive.c;
+		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.a);
+		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.b);
+		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.c);
 	}
 
 	// =====================================================================
@@ -240,7 +240,7 @@ namespace chaos
 		int const vertex_count = sizeof(vertices) / sizeof(vertices[0]);
 
 		for (int i = 0; i < vertex_count; ++i)
-			vertices_writer << glm::vec3(vertices[i] * primitive.half_size + primitive.position, 0.0f);
+			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(vertices[i] * primitive.half_size + primitive.position, 0.0f));
 	}
 
 	// =====================================================================
@@ -283,8 +283,8 @@ namespace chaos
 		int const count = sizeof(vertices) / sizeof(vertices[0]);
 		for (int i = 0; i < count / 2; ++i)
 		{
-			vertices_writer << vertices[i * 2] * hs + p; // resize position
-			vertices_writer << vertices[i * 2 + 1];      // copy normal
+			vertices_writer << GLMTools::MultWithTranslation(transform, vertices[i * 2] * hs + p); // resize position
+			vertices_writer << GLMTools::Mult(transform, vertices[i * 2 + 1]);      // copy normal
 		}
 	}
 
@@ -311,7 +311,7 @@ namespace chaos
 	{
 	
 		// generate the vertices
-		vertices_writer << glm::vec3(primitive.position, 0.0f);
+		vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.position, 0.0f));
 
 		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions); 
 		for (int i = 0 ; i < subdivisions ; ++i)
@@ -320,7 +320,7 @@ namespace chaos
 
 			glm::vec2 normal = glm::vec2(MathTools::Cos(alpha), MathTools::Sin(alpha));
 
-			vertices_writer << glm::vec3(primitive.radius * normal + primitive.position, 0.0f);
+			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.radius * normal + primitive.position, 0.0f));
 		}
 
 		// generate the index buffer
@@ -450,8 +450,8 @@ namespace chaos
 	void SphereMeshGenerator::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const
 	{
 		glm::vec3 normal = MathTools::PolarCoordToVector(alpha, beta);
-		vertices_writer << primitive.radius * normal + primitive.position;
-		vertices_writer << normal;
+		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.radius * normal + primitive.position);
+		vertices_writer << GLMTools::Mult(transform, normal);
 	}
 
 }; // namespace chaos

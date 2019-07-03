@@ -56,17 +56,39 @@ namespace chaos
 	};
 
 	/**
+	* PrimitiveMeshGenerator : a templated base class for primitives
+	*/
+
+	template<typename T>
+	class PrimitiveMeshGenerator : public SimpleMeshGenerator
+	{
+	public:
+
+		using primitive_type = T;
+
+		/** constructor */
+		PrimitiveMeshGenerator(primitive_type const & in_primitive, glm::mat4x4 const & in_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f))):
+			primitive(in_primitive),
+			transform(in_transform){}
+
+	protected:
+
+		/** the primitive that is been generated */
+		primitive_type primitive;
+		/** the transformation to apply to vertices */
+		glm::mat4x4 transform;
+	};
+
+	/**
 	* QuadMeshGenerator : help defines mesh as simple quad
 	*/
 
-	class QuadMeshGenerator : public SimpleMeshGenerator
+	class QuadMeshGenerator : public PrimitiveMeshGenerator<box2>
 	{
 
 	public:
 
-		/** constructor */
-		QuadMeshGenerator(box2 const & in_primitive) :
-			primitive(in_primitive) {}
+		using PrimitiveMeshGenerator::PrimitiveMeshGenerator;
 
 		/** get requirement */
 		virtual MeshGenerationRequirement GetRequirement() const override;
@@ -76,9 +98,6 @@ namespace chaos
 		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
-
-		/** the box to generate */
-		box2 primitive;
 
 		/** the vertices defining a face facing planes inside [-1, +1] */
 		static glm::vec2 const vertices[4];
@@ -90,14 +109,12 @@ namespace chaos
 	* TriangleMeshGenerator : help defines mesh as simple traingle
 	*/
 
-	class TriangleMeshGenerator : public SimpleMeshGenerator
+	class TriangleMeshGenerator : public PrimitiveMeshGenerator<triangle3>
 	{
 
 	public:
 
-		/** constructor */
-		TriangleMeshGenerator(triangle3 const & in_primitive) :
-			primitive(in_primitive) {}
+		using PrimitiveMeshGenerator::PrimitiveMeshGenerator;
 
 		/** get requirement */
 		virtual MeshGenerationRequirement GetRequirement() const override;
@@ -105,25 +122,18 @@ namespace chaos
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
-
-	protected:
-
-		/** the box to generate */
-		triangle3 primitive;
 	};
 
 	/**
 	* CubeMeshGenerator : help defines cube mesh
 	*/
 
-	class CubeMeshGenerator : public SimpleMeshGenerator
+	class CubeMeshGenerator : public PrimitiveMeshGenerator<box3>
 	{
 
 	public:
 
-		/** constructor */
-		CubeMeshGenerator(box3 const & in_primitive) :
-			primitive(in_primitive) {}
+		using PrimitiveMeshGenerator::PrimitiveMeshGenerator;
 
 		/** get requirement */
 		virtual MeshGenerationRequirement GetRequirement() const override;
@@ -133,9 +143,6 @@ namespace chaos
 		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
-
-		/** the box to generate */
-		box3 primitive;
 
 		/** the vertices defining a cube */
 		static glm::vec3 const vertices[24 * 2];
@@ -147,14 +154,14 @@ namespace chaos
 	* CircleMeshGenerator : help defines mesh as simple 2D circle
 	*/
 
-	class CircleMeshGenerator : public SimpleMeshGenerator
+	class CircleMeshGenerator : public PrimitiveMeshGenerator<sphere2>
 	{
 
 	public:
 
 		/** constructor */
-		CircleMeshGenerator(sphere2 const & in_primitive, int in_subdivisions) :
-			primitive(in_primitive),
+		CircleMeshGenerator(sphere2 const & in_primitive, glm::mat4x4 const & in_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f)), int in_subdivisions = 10) :
+			PrimitiveMeshGenerator<sphere2>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
 		/** get requirement */
@@ -166,10 +173,8 @@ namespace chaos
 
 	protected:
 
-		/** the sphere to generate */
-		sphere2 primitive;
 		/** number of subdivisions */
-		int subdivisions;
+		int subdivisions = 10;
 	};
 
 
@@ -177,14 +182,14 @@ namespace chaos
 	* SphereMeshGenerator : help defines mesh as simple sphere
 	*/
 
-	class SphereMeshGenerator : public SimpleMeshGenerator
+	class SphereMeshGenerator : public PrimitiveMeshGenerator<sphere3>
 	{
 
 	public:
 
 		/** constructor */
-		SphereMeshGenerator(sphere3 const & in_primitive, int in_subdivisions) :
-			primitive(in_primitive),
+		SphereMeshGenerator(sphere3 const & in_primitive, glm::mat4x4 const & in_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f)), int in_subdivisions = 10) :
+			PrimitiveMeshGenerator<sphere3>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
 		/** get requirement */
@@ -201,10 +206,8 @@ namespace chaos
 
 	protected:
 
-		/** the sphere to generate */
-		sphere3 primitive;
 		/** number of subdivisions */
-		int subdivisions;
+		int subdivisions = 10;
 	};
 
 }; // namespace chaos

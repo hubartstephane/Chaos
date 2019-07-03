@@ -4,14 +4,12 @@ in vec3 normal;
 uniform mat4 projection;
 uniform mat4 local_to_world;
 uniform mat4 world_to_camera;
-uniform float Y_Scale;
 
 out vec3 vs_normal;
 
 void main() 
 {
   vec3 p = position;
-  p.y *= Y_Scale;
 
   vs_normal = normal;
 

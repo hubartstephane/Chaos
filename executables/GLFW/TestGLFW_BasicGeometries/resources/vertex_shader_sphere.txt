@@ -9,14 +9,20 @@ out vec3 vs_normal;
 
 void main() 
 {
-  vec3 p = position;
+	// compute the normal
+	vec3 n = normal;
 
-  vs_normal = normal;
+  vec4 tmp_n = vec4(n, 0.0);
+  tmp_n = local_to_world * tmp_n;
+	vs_normal = tmp_n.xyz;
 
-  vec4 tmp = vec4(p, 1.0);
-  tmp = local_to_world  * tmp;
-  tmp = world_to_camera * tmp;
-  tmp = projection      * tmp;
+	// compute the position
+	vec3 p = position;
 
-  gl_Position = tmp;
+  vec4 tmp_p = vec4(p, 1.0);
+  tmp_p = local_to_world  * tmp_p;
+  tmp_p = world_to_camera * tmp_p;
+  tmp_p = projection      * tmp_p;
+
+  gl_Position = tmp_p;
 }

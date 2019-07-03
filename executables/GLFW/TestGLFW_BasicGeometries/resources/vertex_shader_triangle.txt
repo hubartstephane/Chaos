@@ -7,28 +7,32 @@ uniform vec3 p3;
 uniform mat4 projection;
 uniform mat4 local_to_world;
 uniform mat4 world_to_camera;
-uniform float Y_Scale;
 
 out vec3 vs_normal;
 
 void main() 
 {
+	// compute the normal
+	vec3 n = normalize(cross(p2 - p1, p3 - p2));
+
+  vec4 tmp_n = vec4(n, 0.0);
+  tmp_n = local_to_world * tmp_n;
+	vs_normal = tmp_n.xyz;
+
+	// compute the position
+	// HACK : for position, we use uniforms (bwaahhh)
   vec3 p;
   if (gl_VertexID == 0)
-	p = p1;
+		p = p1;
   else if (gl_VertexID == 1)
-	p = p2;
+		p = p2;
   else
-	p = p3;
+		p = p3;
 
-  p.y *= Y_Scale;
+  vec4 tmp_p = vec4(p, 1.0);
+  tmp_p = local_to_world  * tmp_p;
+  tmp_p = world_to_camera * tmp_p;
+  tmp_p = projection      * tmp_p;
 
-  vs_normal = normal;
-
-  vec4 tmp = vec4(p, 1.0);
-  tmp = local_to_world  * tmp;
-  tmp = world_to_camera * tmp;
-  tmp = projection      * tmp;
-
-  gl_Position = tmp;
+  gl_Position = tmp_p;
 }

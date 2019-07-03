@@ -11,7 +11,7 @@ void main()
 
   modif = modif * 0.5 + 0.5; // modif is a value [0..1] different for each face
 
-  output_color =  color * (0.5 + 0.5 * modif * modif);
+  output_color =  color * (0.2 + 0.8 * modif * modif);
 
   output_color.w = color.w; // keep alpha from incomming color
 }

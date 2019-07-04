@@ -44,8 +44,8 @@ bool PrimitiveRenderer::Initialize()
 	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	chaos::MultiMeshGenerator generators;
-	generators.AddGenerator(new chaos::SphereMeshGenerator(s), mesh_sphere);
-	generators.AddGenerator(new chaos::CircleMeshGenerator(c), mesh_circle);
+	generators.AddGenerator(new chaos::SphereMeshGenerator(s, glm::mat4x4(), 30), mesh_sphere);
+	generators.AddGenerator(new chaos::CircleMeshGenerator(c, glm::mat4x4(), 30), mesh_circle);
 	generators.AddGenerator(new chaos::QuadMeshGenerator(b2), mesh_quad);
 	generators.AddGenerator(new chaos::CubeMeshGenerator(b3), mesh_box);
 	generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
@@ -147,9 +147,9 @@ void PrimitiveRenderer::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 cons
 void PrimitiveRenderer::DrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const
 {	
 	chaos::triangle3 t3;
-	t3.a = glm::vec3(t.a.x, 0.0f, t.a.y);
-	t3.b = glm::vec3(t.b.x, 0.0f, t.b.y);
-	t3.c = glm::vec3(t.c.x, 0.0f, t.c.y);
+	t3.a = glm::vec3(t.a.x, t.a.y, 0.0f);
+	t3.b = glm::vec3(t.b.x, t.b.y, 0.0f);
+	t3.c = glm::vec3(t.c.x, t.c.y, 0.0f);
 	DrawPrimitive(t3, color, is_translucent);
 }
 
@@ -181,7 +181,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const 
 		glm::scale(glm::vec3(s.radius, s.radius, s.radius));
 
 	DrawPrimitiveImpl(
-		mesh_sphere.get(),
+		mesh_circle.get(),
 		program_common.get(),
 		color,
 		local_to_world,

@@ -514,23 +514,30 @@ protected:
 
 	void GetCollisionPrimitive(chaos::triangle2 & res, glm::vec3 const & p, float r)
 	{
-		glm::vec3 a = glm::vec3(5.0f, 7.0f, 0.0f);
-		glm::vec3 b = glm::vec3(5.0f, 7.0f, 0.0f);
-		glm::vec3 c = glm::vec3(5.0f, 7.0f, 0.0f);
+		glm::vec2 a = glm::vec2(2.0f, 0.0f);
+		glm::vec2 b = glm::vec2(-2.0f, 0.0f);
+		glm::vec2 c = glm::vec2(0.0f, 2.0f);
 
+		glm::vec2 o = (a + b + c) / 3.0f;
 
+		float cs = chaos::MathTools::Cos(r);
+		float sn = chaos::MathTools::Sin(r);
 
+		a = chaos::GLMTools::Rotate(a - o, cs, sn) + o;
+		b = chaos::GLMTools::Rotate(b - o, cs, sn) + o;
+		c = chaos::GLMTools::Rotate(c - o, cs, sn) + o;
 
-
-
+		res.a = a + glm::vec2(p);
+		res.b = b + glm::vec2(p);
+		res.c = c + glm::vec2(p);
 	}
 
 	void GetCollisionPrimitive(chaos::triangle3 & res, glm::vec3 const & p, float r)
 	{
 		
-		res.a = glm::vec3(5.0f, 7.0f, 0.0f);
-		res.c = glm::vec3(-5.0f, 6.0f, 0.0f);
-		res.b = glm::vec3(0.0f, 8.0f, 5.0f);
+		res.a = glm::vec3(5.0f, 7.0f, 0.0f);				
+		res.b = glm::vec3(-5.0f, 6.0f, 0.0f);
+		res.c = glm::vec3(0.0f, 8.0f, 5.0f);
 
 		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0f, 1.0f));
 		glm::quat rot = glm::angleAxis(r, axis);

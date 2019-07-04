@@ -201,16 +201,24 @@ protected:
 		return nullptr;
 	}
 
-	void DebugDisplayExampleTitle(bool display_commands)
+	void DebugDisplayExampleTitle()
 	{
 		debug_display.Clear();
-		if (display_commands)
-		{
-			debug_display.AddLine("=> Use +/- to change example");
-			debug_display.AddLine("=> Use T   to freeze time");
-			debug_display.AddLine("");
-		}
 		debug_display.AddLine(chaos::StringTools::Printf("=> Example %d : %s", display_example, GetExampleTitle(display_example)).c_str());
+
+		debug_display.AddLine("");
+		debug_display.AddLine("  +/-       : change example");
+		debug_display.AddLine("  T         : freeze time");
+
+		if (display_example == COLLISION_2D_TEST || display_example == COLLISION_3D_TEST)
+		{			
+			debug_display.AddLine("  LEFT CTRL : select object modified");
+			debug_display.AddLine("  NUM 5     : change primitive type");
+			debug_display.AddLine("  NUM 4-6   : move X");
+			debug_display.AddLine("  NUM 1-7   : move Y");
+			debug_display.AddLine("  NUM 2-8   : move Z");
+			debug_display.AddLine("  NUM 3-9   : rotation");
+		}		
 	}
 
 	template<typename T>
@@ -1037,7 +1045,7 @@ protected:
 		SetExample(0);
 
 		// initial display
-		DebugDisplayExampleTitle(true);
+		DebugDisplayExampleTitle();
 
 		return true;
 	}
@@ -1121,20 +1129,20 @@ protected:
 		else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
 		{
 			SetExample(display_example + 1);
-			DebugDisplayExampleTitle(false);
+			DebugDisplayExampleTitle();
 			return true;
 		}
 		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
 		{
 			SetExample(display_example - 1);
-			DebugDisplayExampleTitle(false);     
+			DebugDisplayExampleTitle();     
 			return true;
 		}
 
 		if (key == GLFW_KEY_KP_5 && action == GLFW_RELEASE)
 		{
 			UpdateObjectType();
-			DebugDisplayExampleTitle(false);
+			DebugDisplayExampleTitle();
 		}
 
 

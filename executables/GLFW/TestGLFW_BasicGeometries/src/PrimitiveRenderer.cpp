@@ -28,20 +28,12 @@ bool PrimitiveRenderer::Initialize()
 	boost::filesystem::path resources_path = application->GetResourcesPath();
 
 	// load programs      
-	program_box = LoadProgram(resources_path, "pixel_shader_box.txt", "vertex_shader_box.txt");
-	if (program_box == nullptr)
+	program_common = LoadProgram(resources_path, "pixel_shader.txt", "vertex_shader_common.txt");
+	if (program_common == nullptr)
 		return false;
 
-	program_triangle = LoadProgram(resources_path, "pixel_shader_triangle.txt", "vertex_shader_triangle.txt");
+	program_triangle = LoadProgram(resources_path, "pixel_shader.txt", "vertex_shader_triangle.txt");
 	if (program_triangle == nullptr)
-		return false;
-
-	program_sphere = LoadProgram(resources_path, "pixel_shader_sphere.txt", "vertex_shader_sphere.txt");
-	if (program_sphere == nullptr)
-		return false;
-
-	program_quad = LoadProgram(resources_path, "pixel_shader_quad.txt", "vertex_shader_quad.txt");
-	if (program_quad == nullptr)
 		return false;
 
 	// create meshes
@@ -172,7 +164,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const 
 
 	DrawPrimitiveImpl(
 		mesh_sphere.get(),
-		program_sphere.get(),
+		program_common.get(),
 		color,
 		local_to_world,
 		is_translucent
@@ -190,7 +182,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const 
 
 	DrawPrimitiveImpl(
 		mesh_sphere.get(),
-		program_sphere.get(),
+		program_common.get(),
 		color,
 		local_to_world,
 		is_translucent
@@ -208,7 +200,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & c
 
 	DrawPrimitiveImpl(
 		mesh_box.get(),
-		program_box.get(),
+		program_common.get(),
 		color,
 		local_to_world,
 		is_translucent
@@ -228,7 +220,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & c
 
 	DrawPrimitiveImpl(
 		mesh_quad.get(),
-		program_quad.get(),
+		program_common.get(),
 		color,
 		local_to_world,
 		is_translucent
@@ -249,7 +241,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & 
 
 	DrawPrimitiveImpl(
 		mesh_box.get(),
-		program_box.get(),
+		program_common.get(),
 		color,
 		local_to_world,
 		is_translucent
@@ -270,7 +262,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & 
 
 	DrawPrimitiveImpl(
 		mesh_quad.get(),
-		program_quad.get(),
+		program_common.get(),
 		color,
 		local_to_world,
 		is_translucent

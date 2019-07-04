@@ -124,9 +124,7 @@ public:
 	chaos::shared_ptr<chaos::SimpleMesh> mesh_quad;
 
 	// the programs
-	chaos::shared_ptr<chaos::GPUProgram>  program_quad;
-	chaos::shared_ptr<chaos::GPUProgram>  program_box;
-	chaos::shared_ptr<chaos::GPUProgram>  program_sphere;
+	chaos::shared_ptr<chaos::GPUProgram>  program_common;
 	chaos::shared_ptr<chaos::GPUProgram>  program_triangle;
 };
 

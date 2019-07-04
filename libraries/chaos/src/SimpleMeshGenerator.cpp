@@ -328,27 +328,23 @@ namespace chaos
 		vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.position, 0.0f));
 		vertices_writer << normal;
 
-		int yyy = 0;
-
 		float delta_alpha = ((float)M_PI * 2.0f) / ((float)subdivisions); 
 		for (int i = 0 ; i < subdivisions ; ++i)
 		{
 			float alpha = (float)i * delta_alpha;
 
-			glm::vec2 normal = glm::vec2(MathTools::Cos(alpha), MathTools::Sin(alpha));
+			glm::vec2 direction = glm::vec2(MathTools::Cos(alpha), MathTools::Sin(alpha));
 
-			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.radius * normal + primitive.position, 0.0f));
+			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.radius * direction + primitive.position, 0.0f));
 			vertices_writer << normal;
-
-			++yyy;
 		}
 
 		// generate the index buffer
 		for (int i = 0 ; i < subdivisions ; ++i)
 		{
-			indices_writer << 0;
-			indices_writer << i + 1;
-			indices_writer << ((i + 1) % subdivisions) + 1;		
+			indices_writer << (std::uint32_t)0;
+			indices_writer << (std::uint32_t)(i + 1);
+			indices_writer << (std::uint32_t)(((i + 1) % subdivisions) + 1);		
 		}
 
 		// insert the primitive
@@ -419,9 +415,9 @@ namespace chaos
 		// construct the index buffer
 		for (int i = 0; i < subdiv_alpha; ++i)   // the TOP-CAP
 		{
-			indices_writer << (GLuint)(1 + i);
-			indices_writer << (GLuint)0;
-			indices_writer << (GLuint)(1 + ((i + 1) % subdiv_alpha));
+			indices_writer << (std::uint32_t)(1 + i);
+			indices_writer << (std::uint32_t)(0);
+			indices_writer << (std::uint32_t)(1 + ((i + 1) % subdiv_alpha));
 		}
 
 		for (int i = 0; i < subdiv_beta - 1; ++i) // the middle part
@@ -430,12 +426,12 @@ namespace chaos
 			int next_line = start_line + subdiv_alpha;
 			for (int j = 0; j < subdiv_alpha; ++j)
 			{
-				GLint next_on_line = ((j + 1) % subdiv_alpha);
+				int next_on_line = ((j + 1) % subdiv_alpha);
 
-				GLint a = start_line + j;
-				GLint b = next_line + j;
-				GLint c = next_line + next_on_line;
-				GLint d = start_line + next_on_line;
+				std::uint32_t a = (std::uint32_t)(start_line + j);
+				std::uint32_t b = (std::uint32_t)(next_line + j);
+				std::uint32_t c = (std::uint32_t)(next_line + next_on_line);
+				std::uint32_t d = (std::uint32_t)(start_line + next_on_line);
 
 				indices_writer << b << a << c;
 				indices_writer << c << a << d;
@@ -447,9 +443,9 @@ namespace chaos
 		int last_vertex = vertex_count - 1;
 		for (int i = 0; i < subdiv_alpha; ++i) // the BOTTOM-CAP
 		{
-			indices_writer << (GLuint)(last_vertex);
-			indices_writer << (GLuint)(start_line + i);
-			indices_writer << (GLuint)(start_line + ((i + 1) % subdiv_alpha));
+			indices_writer << (std::uint32_t)(last_vertex);
+			indices_writer << (std::uint32_t)(start_line + i);
+			indices_writer << (std::uint32_t)(start_line + ((i + 1) % subdiv_alpha));
 		}
 
 		// the triangles

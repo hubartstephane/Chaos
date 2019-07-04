@@ -98,10 +98,8 @@ namespace chaos
 						size_t vc2 = vertices_writer.GetWrittenCount();
 						size_t ic2 = indices_writer.GetWrittenCount();
 
-						auto ppp = vc2 - vc1;
-						auto uuu = requirement.vertices_count * requirement.vertex_size;
-
 						assert(vc2 - vc1 == requirement.vertices_count * requirement.vertex_size);
+						assert(ic2 - ic1 == requirement.indices_count  * sizeof(std::uint32_t));
 #endif
 
 						assert(requirement.vertex_size == mesh->vertex_declaration.GetVertexSize());

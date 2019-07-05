@@ -332,6 +332,9 @@ namespace chaos
 	// Symetric Collisions
 	// ==============================================================================================
 
+
+
+
 	template<typename T, int dimension>
 	bool Collide(type_box<T, dimension> const & src1, type_box<T, dimension> const & src2)
 	{
@@ -348,6 +351,35 @@ namespace chaos
 
 		return true;
 	}
+
+
+	template<typename T>
+	bool Collide(type_box<T, 2> const & src1, type_box<T, 2> const & src2)
+	{
+		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
+			return false;
+
+
+		glm::vec2 v1[4];
+		glm::vec2 v2[4];
+
+		GetBoxVertices(src1, v1, true);
+		GetBoxVertices(src2, v2, true);
+
+		if (HasSeparatingPlane(src1, v2, 4))
+			return false;
+
+		
+		if (HasSeparatingPlane(src2, v1, 4))
+			return false;
+
+		return true;
+	}
+
+
+
+
+
 
 	template<typename T, int dimension>
 	bool Collide(type_sphere<T, dimension> const & src1, type_sphere<T, dimension> const & src2)
@@ -395,7 +427,7 @@ namespace chaos
 		// for each edge, we describe thhe tests to do 
 		int   edge_component[]  = { 0, 0, 1 , 1 };
 		float edge_multiplier[] = { -1.0f, 1.0f, -1.0f , 1.0f };
-		float edge_value[]      = { b.position.x - b.position.x, b.position.x + b.position.x, b.position.y - b.position.y, b.position.y + b.position.y };
+		float edge_value[]      = { b.position.x - b.half_size.x, b.position.x + b.half_size.x, b.position.y - b.half_size.y, b.position.y + b.half_size.y };
 
 		// iterate over all vertices and eliminate some edges
 		for (size_t i = 0; i < count ; ++i)

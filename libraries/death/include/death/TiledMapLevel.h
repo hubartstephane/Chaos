@@ -26,7 +26,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundGeometricObject)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -70,7 +70,7 @@ namespace death
 		// BaseObject : a base object for special game entities
 		// =====================================
 
-		class BaseObject : public chaos::ReferencedObject, public chaos::NamedObject
+		class BaseObject : public chaos::Tickable
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -155,6 +155,18 @@ namespace death
 
 			/** override */
 			virtual bool Initialize() override;
+		};
+
+		// =====================================
+		// SoundObject : an object that play a sound
+		// =====================================
+
+		class SoundGeometricObject : public GeometricObject
+		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		public:
+
 		};
 
 		// =====================================

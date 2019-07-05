@@ -341,6 +341,11 @@ namespace chaos
 		/** get whether the sound is looping */
 		bool IsLooping() const;
 
+		/** the distance after which the sound is no more heared */
+		void SetMaxDistance(float distance);
+		/** the distance below which the sound is at its max volume */
+		void SetMinDistance(float distance);
+
 		/** change the position of the sound track */
 		void SetSoundTrackPosition(int position);
 

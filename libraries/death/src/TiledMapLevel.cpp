@@ -942,6 +942,26 @@ namespace death
 
 		bool LayerInstance::DoTick(double delta_time)
 		{
+			// tick the game objects
+#if 1
+			size_t player_start_count = player_starts.size();
+			for (size_t i = 0; i < player_start_count; ++i)
+				player_starts[i]->Tick(delta_time);
+
+			size_t camera_count = cameras.size();
+			for (size_t i = 0; i < camera_count; ++i)
+				cameras[i]->Tick(delta_time);
+#endif
+
+			size_t trigger_count = trigger_surfaces.size();
+			for (size_t i = 0; i < trigger_count; ++i)
+				trigger_surfaces[i]->Tick(delta_time);
+
+			size_t typed_count = typed_objects.size();
+			for (size_t i = 0; i < typed_count; ++i)
+				typed_objects[i]->Tick(delta_time);
+
+			// tick the particles
 			if (particle_layer != nullptr)
 				particle_layer->Tick(delta_time);
 			return true;

@@ -306,6 +306,9 @@ namespace death
 		/** fill atlas generation input from the tiled map manager */
 		virtual bool FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
+		/** load tileset concerned by the game (if required) */
+		virtual bool GenerateTileSets();
+
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels();
 		/* load one level */

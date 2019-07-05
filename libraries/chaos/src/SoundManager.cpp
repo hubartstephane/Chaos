@@ -628,6 +628,15 @@ namespace chaos
 			irrklang_sound->setPlayPosition((irrklang::ik_u32)position);
 	}
 
+	void Sound::SetMaxDistance(float distance)
+	{
+		irrklang_sound->setMaxDistance((irrklang::ik_f32)distance);
+	}
+	void Sound::SetMinDistance(float distance)
+	{
+		irrklang_sound->setMinDistance((irrklang::ik_f32)distance);
+	}
+
 	// ==============================================================
 	// MANAGER
 	// ==============================================================

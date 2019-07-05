@@ -384,6 +384,41 @@ namespace death
 		return nullptr;
 	}
 
+	bool Game::GenerateTileSets()
+	{
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		if (application == nullptr)
+			return false;
+
+		// compute resource path
+		boost::filesystem::path resources_path = application->GetResourcesPath();
+		boost::filesystem::path tileset_path = resources_path / "tileset";
+
+		// iterate the files and load the tilesets
+		boost::filesystem::directory_iterator end;
+		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(tileset_path); it != end; ++it)
+		{
+			boost::filesystem::path p = it->path();
+
+			if (chaos::FileTools::IsTypedFile(p, "tsx"))
+			{
+				// create the tiledmap manager if necessary
+				if (tiled_map_manager == nullptr)
+				{
+					tiled_map_manager = new chaos::TiledMap::Manager;
+					if (tiled_map_manager == nullptr)
+						return false;
+				}
+				// load the tileset
+				if (!tiled_map_manager->LoadTileSet(p))
+					return false;
+			}
+		}
+
+
+		return true;
+	}
+
 	bool Game::LoadLevels()
 	{
 		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
@@ -562,12 +597,20 @@ namespace death
 		// initialize game values
 		if (!InitializeGameValues(config, config_path, false)) // false => not hot_reload
 			return false;
-		// load exisiting levels
-		if (!LoadLevels())
+		// loading tilemapset
+		if (!GenerateTileSets())
 			return false;
 		// the atlas
 		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
 			return false;
+		// load exisiting levels
+		if (!LoadLevels())
+			return false;
+
+
+
+
+
 		// initialize the root render system
 		if (!InitializeRootRenderLayer())
 			return false;

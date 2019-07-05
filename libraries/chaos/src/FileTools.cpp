@@ -54,12 +54,25 @@ namespace chaos
 		boost::filesystem::path redirected_path;
 		if (GetRedirectedPath(resolved_path, redirected_path))
 		{
-			boost::filesystem::directory_iterator result = boost::filesystem::directory_iterator(redirected_path);
-			if (result != boost::filesystem::directory_iterator())
-				return result;
+			try
+			{
+				boost::filesystem::directory_iterator result = boost::filesystem::directory_iterator(redirected_path);
+				if (result != boost::filesystem::directory_iterator())
+					return result;
+			}
+			catch (...)
+			{
+			}
 		}
 #endif // _DEBUG 
-		return boost::filesystem::directory_iterator(resolved_path);
+		try
+		{
+			return boost::filesystem::directory_iterator(resolved_path);
+		}
+		catch (...)
+		{
+		}		
+		return boost::filesystem::directory_iterator();
 	}
 
 	bool FileTools::DoIsTypedFile(char const * filename, char const * expected_ext)

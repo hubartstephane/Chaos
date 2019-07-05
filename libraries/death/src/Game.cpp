@@ -270,7 +270,8 @@ namespace death
 	{
 		// get the directory where the sprites are
 		std::string sprite_directory;
-		chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory);
+		if (!chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory))
+			return true;
 		// find or create folder
 		chaos::BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites", 0);
 		if (folder_info == nullptr)

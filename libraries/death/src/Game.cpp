@@ -384,19 +384,34 @@ namespace death
 		return nullptr;
 	}
 
-	bool Game::GenerateTileSets()
+	boost::filesystem::directory_iterator Game::GetResourceDirectoryIteratorFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return false;
+		// read in the config file the whole path
+		std::string directory;
+		if (chaos::JSONTools::GetAttribute(config, config_name, directory))
+			return chaos::FileTools::GetDirectoryIterator(directory);
+		// concat the argument path with 'resources'
+		if (default_path != nullptr)
+		{
+			// get the application
+			chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+			if (application != nullptr)
+			{
+				// compute resource path
+				boost::filesystem::path resources_path = application->GetResourcesPath();
+				boost::filesystem::path result_path = resources_path / default_path;
 
-		// compute resource path
-		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path tileset_path = resources_path / "tileset";
+				return chaos::FileTools::GetDirectoryIterator(result_path);
+			}
+		}
+		return boost::filesystem::directory_iterator();
+	}
 
+	bool Game::GenerateTileSets(nlohmann::json const & config)
+	{
 		// iterate the files and load the tilesets
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(tileset_path); it != end; ++it)
+		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, "tilesets_directory", "tilesets"); it != end; ++it)
 		{
 			boost::filesystem::path p = it->path();
 
@@ -414,24 +429,14 @@ namespace death
 					return false;
 			}
 		}
-
-
 		return true;
 	}
 
-	bool Game::LoadLevels()
+	bool Game::LoadLevels(nlohmann::json const & config)
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return false;
-
-		// compute resource path
-		boost::filesystem::path resources_path = application->GetResourcesPath();
-		boost::filesystem::path levels_path = resources_path / "levels";
-
 		// iterate the files and load the levels
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(levels_path); it != end; ++it)
+		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, "levels_directory", "levels"); it != end; ++it)
 		{
 			int level_index = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
 
@@ -598,13 +603,13 @@ namespace death
 		if (!InitializeGameValues(config, config_path, false)) // false => not hot_reload
 			return false;
 		// loading tilemapset
-		if (!GenerateTileSets())
+		if (!GenerateTileSets(config))
 			return false;
 		// the atlas
 		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
 			return false;
 		// load exisiting levels
-		if (!LoadLevels())
+		if (!LoadLevels(config))
 			return false;
 
 

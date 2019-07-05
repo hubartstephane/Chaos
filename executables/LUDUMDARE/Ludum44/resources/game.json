@@ -1,6 +1,4 @@
 {
-  "sprite_directory":"@sprites",
-
 	"fonts":
 	{
 		"normal": "@fonts/overpass-mono-bold.otf",
@@ -16,6 +14,10 @@
 		"KEYBOARD":[1.0, 1.0, 0.0],
 		"LEVELTITLE":[1.0, 0.0, 0.0]
 	},
+
+	"sprite_directory":"@sprites",
+	"levels_directory":"@levels",
+	"tilesets_directory":"@tilesets",
 
 	"initial_life":3,
 	"max_life":3,

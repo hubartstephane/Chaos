@@ -307,10 +307,13 @@ namespace death
 		virtual bool FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** load tileset concerned by the game (if required) */
-		virtual bool GenerateTileSets();
+		virtual bool GenerateTileSets(nlohmann::json const & config);
+
+		/** read in config file an entry and open in resource directory a directory iterator on that target */
+		boost::filesystem::directory_iterator GetResourceDirectoryIteratorFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const;
 
 		/** load all the levels from the game (can be simple data) */
-		virtual bool LoadLevels();
+		virtual bool LoadLevels(nlohmann::json const & config);
 		/* load one level */
 		virtual GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path);
 		/** create one tiled map level */

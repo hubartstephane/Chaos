@@ -6,7 +6,7 @@
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
- <tileset firstgid="1" source="../tileset/tileset.tsx"/>
+ <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <objectgroup name="WorldLimits" locked="1">
   <properties>
    <property name="MATERIAL" value="worldlimit"/>

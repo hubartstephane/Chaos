@@ -8,7 +8,7 @@
   <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Hello World]"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
- <tileset firstgid="1" source="../tileset/tileset.tsx"/>
+ <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <objectgroup name="Texts" visible="0" locked="1"/>
  <objectgroup name="Background9" visible="0" locked="1">
   <properties>

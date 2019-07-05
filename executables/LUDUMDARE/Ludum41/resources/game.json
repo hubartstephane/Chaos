@@ -1,6 +1,4 @@
 {
-  "sprite_directory":"@sprites",
-
 	"fonts":
 	{
 		"normal": "@fonts/overpass-mono-bold.otf",
@@ -13,7 +11,8 @@
   "french_dictionnary": "@dictionnary/french.txt",
   "english_dictionnary": "@dictionnary/english.txt",
 
-
+  "sprite_directory":"@sprites",
+	"levels_directory":"@levels",
   
   "min_word_size": 4,
   "max_word_size": 10,

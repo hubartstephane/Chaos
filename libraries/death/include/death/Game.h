@@ -17,6 +17,7 @@
 #include <chaos/TiledMap.h>
 #include <chaos/RenderableLayerSystem.h>
 #include <chaos/TimedAccumulator.h>
+#include <chaos/FileResource.h>
 
 #include <death/GameFramework.h>
 #include <death/GameHUD.h>
@@ -34,7 +35,7 @@ namespace death
 
 	using PhysicalGamepadWrapper = chaos::ReferencedObjectDataWrapper<chaos::MyGLFW::PhysicalGamepad*>;
 
-	class Game : public chaos::ReferencedObject
+	class Game : public chaos::ReferencedObject, public chaos::ResourceFriend
 	{
 		friend class GamepadManager;
 		friend class GameWindow;
@@ -317,7 +318,7 @@ namespace death
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels(nlohmann::json const & config);
 		/* load one level */
-		virtual GameLevel * DoLoadLevel(int level_index, chaos::FilePathParam const & path);
+		virtual GameLevel * DoLoadLevel(chaos::FilePathParam const & path);
 		/** create one tiled map level */
 		virtual death::TiledMap::Level * CreateTiledMapLevel();
 

@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/FileResource.h>
 
 #include <death/GameFramework.h>
 
@@ -11,7 +12,7 @@ namespace death
 	// GameLevel : a simple game level
 	// =====================================
 
-	class GameLevel : public chaos::ReferencedObject
+	class GameLevel : public chaos::ReferencedObject, public chaos::FileResource
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 

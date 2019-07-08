@@ -102,7 +102,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::GameLevel * LudumGame::DoLoadLevel(int level_index, chaos::FilePathParam const & path)
+death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 {
 	std::vector<std::string> level_content = chaos::FileTools::ReadFileLines(path);
 	if (level_content.size() == 0)

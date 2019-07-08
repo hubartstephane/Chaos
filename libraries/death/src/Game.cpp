@@ -357,7 +357,7 @@ namespace death
 		return nullptr;
 	}
 
-	death::GameLevel * Game::DoLoadLevel(int level_index, chaos::FilePathParam const & path)
+	death::GameLevel * Game::DoLoadLevel(chaos::FilePathParam const & path)
 	{
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
@@ -447,10 +447,11 @@ namespace death
 			int level_index = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
 
 			// create the level
-			death::GameLevel * level = DoLoadLevel(level_index, it->path());
+			death::GameLevel * level = DoLoadLevel(it->path());
 			if (level == nullptr)
 				continue;
 			// initialize it
+			level->SetPath(it->path());
 			level->level_index = level_index;
 			// store it
 			levels.push_back(level);
@@ -1464,9 +1465,27 @@ namespace death
 	{
 		if (current_level_instance == nullptr)
 			return false;
-	
-	
-	
+
+		chaos::shared_ptr<GameLevel> old_level = current_level_instance->GetLevel(); // keep a reference to prevent the destruction when it will be removed from the levels array
+		assert(old_level != nullptr);
+
+		// reload the level
+		chaos::shared_ptr<GameLevel> level = DoLoadLevel(old_level->GetPath()); 
+		if (level == nullptr)
+			return false;
+		// initialize it
+		level->SetPath(old_level->GetPath());
+		level->level_index = old_level->GetLevelIndex();
+		// the effective index of a level is not necessary its position in the array. search it
+		size_t index = 0;
+		while (index < levels.size() && levels[index].get() != old_level)
+			++index;
+		if (index == levels.size())
+			return false;
+		levels[index] = level; // replace the level in the array
+		// restart
+		SetCurrentLevel(level.get());
+
 		return true;
 	}
 

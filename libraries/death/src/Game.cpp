@@ -371,7 +371,7 @@ namespace death
 					return nullptr;
 			}
 			// load the resource
-			chaos::TiledMap::Map * tiled_map = tiled_map_manager->LoadMap(path);
+			chaos::TiledMap::Map * tiled_map = tiled_map_manager->LoadMap(path, false); // false : the map is not kept in the manager
 			if (tiled_map == nullptr)
 				return false;
 			// allocate a level

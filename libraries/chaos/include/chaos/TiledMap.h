@@ -1115,11 +1115,11 @@ namespace chaos
 			Manager() : BaseObject(nullptr) {}
 
 			/** load a tiled map set */
-			Map * LoadMap(FilePathParam const & path);
+			Map * LoadMap(FilePathParam const & path, bool store_map = true);
 			/** load a tiled map set */
-			Map * LoadMap(FilePathParam const & path, Buffer<char> buffer);
+			Map * LoadMap(FilePathParam const & path, Buffer<char> buffer, bool store_map = true);
 			/** load a tiled map set */
-			Map * LoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
+			Map * LoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc, bool store_map = true);
 
 			/** load a tiled map */
 			TileSet * LoadTileSet(FilePathParam const & path);
@@ -1138,11 +1138,11 @@ namespace chaos
 		protected:
 
 			/** internal method to load a tiled map set (with no search for exisiting items) */
-			Map * DoLoadMap(FilePathParam const & path);
+			Map * DoLoadMap(FilePathParam const & path, bool store_map);
 			/** internal method to load a tiled map set (with no search for exisiting items) */
-			Map * DoLoadMap(FilePathParam const & path, Buffer<char> buffer);
+			Map * DoLoadMap(FilePathParam const & path, Buffer<char> buffer, bool store_map);
 			/** internal method to load a tiled map set (with no search for exisiting items) */
-			Map * DoLoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
+			Map * DoLoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc, bool store_map);
 
 			/** internal method to load a tiled map (with no search for exisiting items) */
 			TileSet * DoLoadTileSet(FilePathParam const & path);

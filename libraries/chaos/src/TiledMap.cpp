@@ -1278,28 +1278,28 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 			return DoLoadTileSet(path, doc);
 		}
 
-		Map * Manager::LoadMap(FilePathParam const & path)
+		Map * Manager::LoadMap(FilePathParam const & path, bool store_map)
 		{
 			Map * result = FindMap(path);
 			if (result != nullptr)
 				return result;
-			return DoLoadMap(path);
+			return DoLoadMap(path, store_map);
 		}
 
-		Map * Manager::LoadMap(FilePathParam const & path, Buffer<char> buffer)
+		Map * Manager::LoadMap(FilePathParam const & path, Buffer<char> buffer, bool store_map)
 		{
 			Map * result = FindMap(path);
 			if (result != nullptr)
 				return result;
-			return DoLoadMap(path, buffer);
+			return DoLoadMap(path, buffer, store_map);
 		}
 
-		Map * Manager::LoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc)
+		Map * Manager::LoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc, bool store_map)
 		{
 			Map * result = FindMap(path);
 			if (result != nullptr)
 				return result;
-			return DoLoadMap(path, doc);
+			return DoLoadMap(path, doc, store_map);
 		}
 
 		Map * Manager::FindMap(FilePathParam const & path)
@@ -1379,15 +1379,15 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 			return result;
 		}
 
-		Map * Manager::DoLoadMap(FilePathParam const & path)
+		Map * Manager::DoLoadMap(FilePathParam const & path, bool store_map)
 		{
 			Buffer<char> buffer = FileTools::LoadFile(path, true);
 			if (buffer != nullptr)
-				return DoLoadMap(path, buffer);
+				return DoLoadMap(path, buffer, store_map);
 			return nullptr;
 		}
 
-		Map * Manager::DoLoadMap(FilePathParam const & path, Buffer<char> buffer)
+		Map * Manager::DoLoadMap(FilePathParam const & path, Buffer<char> buffer, bool store_map)
 		{
 			Map * result = nullptr;
 
@@ -1396,19 +1396,22 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 			{
 				tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);
 				if (error == tinyxml2::XML_SUCCESS)
-					result = DoLoadMap(path, doc);
+					result = DoLoadMap(path, doc, store_map);
 				delete(doc);
 			}
 			return result;
 		}
 
-		Map * Manager::DoLoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc)
+		Map * Manager::DoLoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc, bool store_map)
 		{
 			Map * result = new Map(this, path.GetResolvedPath());
 			if (result != nullptr)
 			{
 				if (result->DoLoadDocument(doc))
-					maps.push_back(result);
+				{
+					if (store_map)
+						maps.push_back(result);
+				}
 				else
 				{
 					delete(result);

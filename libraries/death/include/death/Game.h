@@ -187,6 +187,8 @@ namespace death
 		bool ReloadGameConfiguration();
 		/** reloading the GPU resources */
 		bool ReloadGPUResources();
+		/** reloading current level and restart it */
+		bool ReloadCurrentLevel();
 
 		/** getter on mouse sensitivity */
 		float GetMouseSensitivity() const { return mouse_sensitivity;}

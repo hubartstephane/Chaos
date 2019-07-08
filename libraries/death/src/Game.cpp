@@ -125,6 +125,11 @@ namespace death
 				ReloadGPUResources();
 				return true;
 			}
+			if (key == GLFW_KEY_F5)
+			{
+				ReloadCurrentLevel();
+				return true;
+			}
 #endif
 		}
 		return false;
@@ -1453,6 +1458,16 @@ namespace death
 		if (application == nullptr)
 			return false;
 		return application->ReloadGPUResources();
+	}
+
+	bool Game::ReloadCurrentLevel()
+	{
+		if (current_level_instance == nullptr)
+			return false;
+	
+	
+	
+		return true;
 	}
 
 	GameInstance * Game::CreateGameInstance()

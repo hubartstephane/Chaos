@@ -15,7 +15,6 @@
 
 namespace death
 {
-
 	int Game::GetBestPlayerScore() const
 	{
 		if (game_instance != nullptr)
@@ -46,6 +45,8 @@ namespace death
 
 	bool Game::GetCheatMode() const
 	{
+		if (chaos::Application::HasApplicationCommandLineFlag("-CheatMode"))
+			return true;
 		return cheat_mode;
 	}
 #endif // _DEBUG

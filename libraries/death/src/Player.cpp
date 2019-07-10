@@ -121,7 +121,7 @@ namespace death
 				simulated_stick.y -= 1.0f;
 
 			if (glm::length2(simulated_stick) > 0)
-				left_stick_position = game->GetGamepadSensitivity() * simulated_stick;
+				left_stick_position = simulated_stick;
 		}
 	}
 
@@ -157,26 +157,24 @@ namespace death
 		// cache the stick position (not in pause)
 		if (game->IsPlaying())
 		{
-			float gamepad_sensitivity = game->GetGamepadSensitivity();
-
 			glm::vec2 lsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 			if (glm::length2(lsp) > 0.0f)
-				left_stick_position = gamepad_sensitivity * lsp;
+				left_stick_position = lsp;
 			else
 			{
 				if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_LEFT, false))
-					left_stick_position.x = -gamepad_sensitivity * 1.0f;
+					left_stick_position.x = -1.0f;
 				else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_RIGHT, false))
-					left_stick_position.x = gamepad_sensitivity * 1.0f;
+					left_stick_position.x = 1.0f;
 
 				if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_UP, false))
-					left_stick_position.y = -gamepad_sensitivity * 1.0f;
+					left_stick_position.y = -1.0f;
 				else if (gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_DOWN, false))
-					left_stick_position.y = gamepad_sensitivity * 1.0f;
+					left_stick_position.y = 1.0f;
 			}
 			glm::vec2 rsp = gpd->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 			if (glm::length2(rsp) > 0.0f)
-				right_stick_position = gamepad_sensitivity * rsp;
+				right_stick_position = rsp;
 		}
 		// maybe a game/pause resume
 		if ((gpd->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) || 

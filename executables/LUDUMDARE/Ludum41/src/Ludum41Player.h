@@ -41,6 +41,9 @@ protected:
 	/** override */
 	virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
 
+	/** displace the racket from given quantity */
+	void DisplacePlayerRacket(float delta_x);
+
 protected:
 
 	/** current player length */

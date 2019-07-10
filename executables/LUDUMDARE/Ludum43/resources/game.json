@@ -1,9 +1,5 @@
 { 
-	"fonts":
-	{
-		"normal": "@fonts/overpass-mono-bold.otf",
-		"title":"@fonts/unispace bold italic.ttf"
-	},
+  "fonts":{ "@filename":"fonts.json"},  
 
 	"sprite_directory":"@sprites",
 	"levels_directory":"@levels",

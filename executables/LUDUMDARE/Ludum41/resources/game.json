@@ -1,19 +1,14 @@
 {
-	"fonts":
-	{
-		"normal": "@fonts/overpass-mono-bold.otf",
-		"challenge": "@fonts/gomarice_katamari_serif.ttf",
-		"title":"@fonts/unispace bold italic.ttf"
-	},
+  "fonts":{ "@filename":"fonts.json"},  
 
   "small_french_dictionnary": "@dictionnary/small_french.txt",
   "small_english_dictionnary": "@dictionnary/small_english.txt",
   "french_dictionnary": "@dictionnary/french.txt",
   "english_dictionnary": "@dictionnary/english.txt",
 
-  "sprite_directory":"@sprites",
-	"levels_directory":"@levels",
-  
+  "sprite_directory": "@sprites",
+  "levels_directory": "@levels",
+
   "min_word_size": 4,
   "max_word_size": 10,
 
@@ -29,32 +24,32 @@
 
   "points_per_challenge": 12,
   "points_per_brick": 5,
-	"split_angle":0.4,
-	"ball_angle_limit":0.4,
+  "split_angle": 0.4,
+  "ball_angle_limit": 0.4,
 
-	"max_brick_offset":200.0,
-	"brick_offset_speed":75.0,
-	"brick_offset_increment":80.0,
-  
+  "max_brick_offset": 200.0,
+  "brick_offset_speed": 75.0,
+  "brick_offset_increment": 80.0,
+
   "ball_max_speed": 1200.0,
   "ball_initial_speed": 200.0,
   "ball_speed_increment": 200.0,
 
   "ball_collision_speed_increment": 20,
-  "ball_collision_max_speed":600,
+  "ball_collision_max_speed": 600,
 
 
-  "delay_before_ball_move" :  0.5,
+  "delay_before_ball_move": 0.5,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 20.0,
   "challenge_time_dilation": 0.35,
   "challenge_frequency": 5.0,
 
-	"challenge_duration": 5.0,
+  "challenge_duration": 5.0,
 
   "min_brick_life": 1,
   "max_brick_life": 4,
 
-	"brick_per_line":20,
-	"brick_line_count": 6
+  "brick_per_line": 20,
+  "brick_line_count": 6
 }

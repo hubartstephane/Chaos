@@ -1,0 +1,7 @@
+{ 
+	"fonts":
+	{
+		"normal": "@fonts/overpass-mono-bold.otf",
+		"title":"@fonts/unispace bold italic.ttf"
+	}
+}

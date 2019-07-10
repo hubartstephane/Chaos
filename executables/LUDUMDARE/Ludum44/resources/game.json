@@ -1,43 +1,30 @@
 {
-	"fonts":
-	{
-		"normal": "@fonts/overpass-mono-bold.otf",
-		"title":"@fonts/unispace bold italic.ttf"
-	},
-	"font_bitmaps":
-	{
-	"fire":"fire"	
-	},
-	"font_colors":
-	{
-		"POWERUP":[1.0, 0.0, 0.0],
-		"KEYBOARD":[1.0, 1.0, 0.0],
-		"LEVELTITLE":[1.0, 0.0, 0.0]
-	},
 
-	"sprite_directory":"@sprites",
-	"levels_directory":"@levels",
-	"tilesets_directory":"@tilesets",
+  "fonts":{ "@filename":"fonts.json"},  
 
-	"initial_life":3,
-	"max_life":3,
+  "sprite_directory": "@sprites",
+  "levels_directory": "@levels",
+  "tilesets_directory": "@tilesets",
+
+  "initial_life": 3,
+  "max_life": 3,
 
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,
 
-	"initial_player_life":1.0,
+  "initial_player_life": 1.0,
   "min_player_max_life": 0.1,
 
-  "player_speeds" : [ 1.0, 1.5, 2.0, 2.5 ],
+  "player_speeds": [ 1.0, 1.5, 2.0, 2.5 ],
   "player_damages": [ 0.5, 1.0, 1.5, 2.0 ],
   "player_charged_damages": [ 10.0, 15.0, 20.0, 25.0 ],
   "player_fire_rates": [ 1, 3, 5, 7 ],
 
   "player_speed_factor": 2500.0,
-  "buy_upgrade_time":1.5,
+  "buy_upgrade_time": 1.5,
   "charged_fire_time": 1.0,
   "normal_fire_time": 0.15,
-  
+
   "cost_speed_up": 0.2,
   "cost_damage_up": 0.2,
   "cost_charged_damage_up": 0.2,

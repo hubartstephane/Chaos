@@ -118,6 +118,15 @@ namespace chaos
 		/** change whether the object can be ticked if hidden flag */
 		void SetCanTickIfHidden(bool in_tick_hidden);
 
+		/** add a name in the enabled list */
+		void AddEnabledRenderPass(char const * renderpass_name);
+		/** add a name in the disabled list */
+		void AddDisabledRenderPass(char const * renderpass_name);
+		/** remove a name in the enabled list */
+		void RemoveEnabledRenderPass(char const * renderpass_name);
+		/** remove a name in the disabled list */
+		void RemoveDisabledRenderPass(char const * renderpass_name);
+
 	protected:
 
 		/** override */
@@ -129,6 +138,14 @@ namespace chaos
 		/** called whenever object visibility has been changed */
 		virtual void OnVisibilityChanged(bool in_visible);
 
+		/** check whether the renderable can be displayed by the name */
+		bool IsRenderPassEnabled(char const * renderpass_name) const;
+
+		/** utility method to insert a name in the enabled/disabled array */
+		void AddRenderPassImpl(char const * renderpass_name, std::vector<std::string> & target_list);
+		/** utility method to remove a name in the enabled/disabled array */
+		void RemoveRenderPassImpl(char const * renderpass_name, std::vector<std::string> & target_list);
+
 	protected:
 
 		/** whether the object is hidden or visible */
@@ -137,6 +154,11 @@ namespace chaos
 		bool tick_hidden = false;
 		/** the last time the resource has been updated */
 		mutable uint64_t update_timestamp = 0;
+
+		/** the list of enabled renderpass names */
+		std::vector<std::string> enabled_renderpasses;
+		/** the list of disabled renderpass names */
+		std::vector<std::string> disabled_renderpasses;
 	};
 
 }; // namespace chaos

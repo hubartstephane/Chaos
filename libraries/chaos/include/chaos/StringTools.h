@@ -41,7 +41,7 @@ namespace chaos
 		std::string TrimString(char const * src, bool trim_left, bool trim_right);
 
 		/** split the input string in comma separated values */
-		std::vector<std::string> SplitCSV(char const * src);
+		std::vector<std::string> Split(char const * src, char delimiter);
 
 		/** some comparaison short cuts */
 		int Strcmp(char const * src1, char const * src2);

@@ -143,7 +143,7 @@ namespace chaos
 			return std::string(&src[i], j - i + 1);
 		}
 
-		std::vector<std::string> SplitCSV(char const * src)
+		std::vector<std::string> Split(char const * src, char delimiter)
 		{
 			std::vector<std::string> result;
 			if (src == nullptr)
@@ -151,7 +151,7 @@ namespace chaos
 
 			while (*src != 0)
 			{
-				char const * separator = strchr(src, ';');
+				char const * separator = strchr(src, delimiter);
 				if (separator == nullptr)
 				{
 					result.push_back(src); // last string

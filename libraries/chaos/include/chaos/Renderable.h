@@ -79,7 +79,7 @@ namespace chaos
 		/** some filters */
 		shared_ptr<RenderableObjectFilter> object_filter;
 		/** material specialization */
-		std::string submaterial_name;
+		std::string renderpass_name;
 		/** the instancing information */
 		InstancingInfo instancing;		
 	};

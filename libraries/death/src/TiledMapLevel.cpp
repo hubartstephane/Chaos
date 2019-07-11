@@ -7,6 +7,7 @@
 #include <chaos/TiledMapTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/GPUProgramGenerator.h>
+#include <chaos/StringTools.h>
 
 namespace death
 {
@@ -673,14 +674,15 @@ namespace death
 				
 			return true;
 		}
-		bool LayerInstance::InitializeParticleLayerNameAndTag(chaos::ParticleLayerBase * in_particle_layer)
+		bool LayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase * in_particle_layer)
 		{
+			// the name
 			std::string const * renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
 			if (renderable_name != nullptr)
 				in_particle_layer->SetName(renderable_name->c_str());
 			else
 				in_particle_layer->SetName(layer->name.c_str());
-
+			// the tag
 			std::string const * renderable_tag = layer->FindPropertyString("RENDERABLE_TAG");
 			if (renderable_tag != nullptr)
 				in_particle_layer->SetTag(chaos::MakeStaticTagType(renderable_tag->c_str()));
@@ -689,6 +691,22 @@ namespace death
 				int const * layer_tag = layer->FindPropertyInt("RENDERABLE_TAG");
 				if (layer_tag != nullptr)
 					in_particle_layer->SetTag((chaos::TagType)*layer_tag);
+			}
+			// enabled renderpasses
+			std::string const * enabled_renderpass = layer->FindPropertyString("ENABLED_RENDERPASS");
+			if (enabled_renderpass != nullptr)
+			{
+				std::vector<std::string> passes = chaos::StringTools::Split(enabled_renderpass->c_str(), ';');
+				for (std::string const & pass : passes)
+					in_particle_layer->AddEnabledRenderPass(pass.c_str());
+			}
+			// disabled renderpasses
+			std::string const * disabled_renderpass = layer->FindPropertyString("DISABLED_RENDERPASS");
+			if (disabled_renderpass != nullptr)
+			{
+				std::vector<std::string> passes = chaos::StringTools::Split(disabled_renderpass->c_str(), ';');
+				for (std::string const & pass : passes)
+					in_particle_layer->AddDisabledRenderPass(pass.c_str());
 			}
 
 			return true;
@@ -717,7 +735,7 @@ namespace death
 				if (particle_layer == nullptr)
 					return false;
 				// add name and tag to the particle_layer
-				InitializeParticleLayerNameAndTag(particle_layer.get());
+				InitializeParticleLayer(particle_layer.get());
 				// set the material
 				particle_layer->SetRenderMaterial(render_material);
 			}

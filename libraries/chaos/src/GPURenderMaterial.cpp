@@ -11,9 +11,9 @@ namespace chaos
 				return true;
 
 		// submaterials
-		if (render_params != nullptr && !render_params->submaterial_name.empty())
+		if (render_params != nullptr && !render_params->renderpass_name.empty())
 		{
-			GPURenderMaterial const * submaterial = render_material->FindSubMaterial(render_params->submaterial_name.c_str());
+			GPURenderMaterial const * submaterial = render_material->FindSubMaterial(render_params->renderpass_name.c_str());
 			if (submaterial != nullptr)
 			{
 				GPUProgramRenderMaterialProvider submaterial_provider(submaterial, nullptr, render_params); // no more other => it has already been called in this function
@@ -121,9 +121,9 @@ namespace chaos
 	GPUProgram const * GPURenderMaterial::DoGetEffectiveProgram(RenderParams const & render_params, bool submaterial_encoutered) const
 	{
 		// sub-materials
-		if (!render_params.submaterial_name.empty())
+		if (!render_params.renderpass_name.empty())
 		{
-			GPURenderMaterial const * submaterial = FindSubMaterial(render_params.submaterial_name.c_str());
+			GPURenderMaterial const * submaterial = FindSubMaterial(render_params.renderpass_name.c_str());
 			if (submaterial != nullptr)
 			{
 				if (submaterial->hidden_material) // do not render with this material (do not test for this->program & parent_material->program)
@@ -136,7 +136,7 @@ namespace chaos
 		// our own program ?
 		if (hidden_material) // do not render with this material (do not test for parent_material->program)
 			return nullptr;
-		if (submaterial_encoutered || !strict_submaterial || render_params.submaterial_name.empty())
+		if (submaterial_encoutered || !strict_submaterial || render_params.renderpass_name.empty())
 			if (program != nullptr)
 				return program.get();
 		// go through the hierarchy until we get the program

@@ -470,8 +470,8 @@ namespace death
 
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();
-			/** try to search a name and a tag in the chaos::layer,  give them to the particle layer */
-			virtual bool InitializeParticleLayerNameAndTag(chaos::ParticleLayerBase * in_particle_layer);
+			/** try to search a name and a tag in the chaos::layer,  give them to the particle layer (and some other data as well) */
+			virtual bool InitializeParticleLayer(chaos::ParticleLayerBase * in_particle_layer);
 
 			/** find the collision record for a player (clean all records for destroyed player) */
 			PlayerAndTriggerCollisionRecord * FindPlayerCollisionRecord(death::Player * player);

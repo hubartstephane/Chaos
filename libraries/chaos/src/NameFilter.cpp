@@ -11,13 +11,13 @@ namespace chaos
 			name = "";
 		// is this pass forbidden ?
 		for (std::string const & disabled : disabled_names)
-			if (StringTools::Stricmp(name, disabled))
+			if (StringTools::Stricmp(name, disabled) == 0)
 				return false;
 		// is this pass in the enabled list
 		if (enabled_names.size() > 0)
 		{
 			for (std::string const & enabled : enabled_names)
-				if (StringTools::Stricmp(name, enabled))
+				if (StringTools::Stricmp(name, enabled) == 0)
 					return true;
 			return false;
 		}

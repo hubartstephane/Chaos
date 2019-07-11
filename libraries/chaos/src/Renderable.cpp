@@ -32,7 +32,7 @@ namespace chaos
 		if (!IsVisible())
 			return 0;
 		// internal filters
-		if (!IsRenderPassEnabled(render_params.submaterial_name.c_str()))
+		if (!IsRenderPassEnabled(render_params.renderpass_name.c_str()))
 			return 0;
 		// filter object
 		if (render_params.object_filter != nullptr)

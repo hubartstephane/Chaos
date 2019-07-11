@@ -83,6 +83,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 
 			chaos::RenderParams other_render_params = render_params;
 			other_render_params.object_filter = &filter;
+			other_render_params.renderpass_name = "WORLD_LIMITS";
 
 			glColorMask(true, false, false, true);
 			ludum_level_instance->Display(renderer, uniform_provider, other_render_params);
@@ -96,6 +97,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 
 			chaos::RenderParams other_render_params = render_params;
 			other_render_params.object_filter = &filter;
+			other_render_params.renderpass_name = "ENEMIES";
 
 			chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
 			enlarged_provider.AddVariableValue("position_blend_ratio", 0.0f);
@@ -173,6 +175,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 
 		chaos::RenderParams other_rendering_params = render_params;
 		other_rendering_params.object_filter = &filter;
+		other_rendering_params.renderpass_name = "ENEMIES";
 
 		// draw particle system (the background)
 		current_level_instance->Display(renderer, uniform_provider, other_rendering_params);

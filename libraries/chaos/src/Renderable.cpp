@@ -98,73 +98,27 @@ namespace chaos
 
 	bool Renderable::IsRenderPassEnabled(char const * renderpass_name) const
 	{
-		// nullptr is equivalent to empty string
-		if (renderpass_name == nullptr)
-			renderpass_name = "";
-		// is this pass forbidden ?
-		for (std::string const & disabled : disabled_renderpasses)
-			if (StringTools::Stricmp(renderpass_name, disabled))
-				return false;
-		// is this pass in the enabled list
-		if (enabled_renderpasses.size() > 0)
-		{
-			for (std::string const & enabled : enabled_renderpasses)
-				if (StringTools::Stricmp(renderpass_name, enabled))
-					return true;
-			return false;
-		}
-		return true;
+		return renderpass_filter.IsNameEnabled(renderpass_name);
 	}
 	
 	void Renderable::AddEnabledRenderPass(char const * renderpass_name)
 	{
-		AddRenderPassImpl(renderpass_name, enabled_renderpasses);
+		renderpass_filter.AddEnabledName(renderpass_name);
 	}
 
 	void Renderable::AddDisabledRenderPass(char const * renderpass_name)
 	{
-		AddRenderPassImpl(renderpass_name, disabled_renderpasses);
+		renderpass_filter.AddDisabledName(renderpass_name);
 	}
 
 	void Renderable::RemoveEnabledRenderPass(char const * renderpass_name)
 	{
-		RemoveRenderPassImpl(renderpass_name, enabled_renderpasses);
+		renderpass_filter.RemoveEnabledName(renderpass_name);
 	}
 
 	void Renderable::RemoveDisabledRenderPass(char const * renderpass_name)
 	{
-		RemoveRenderPassImpl(renderpass_name, disabled_renderpasses);
+		renderpass_filter.RemoveDisabledName(renderpass_name);
 	}
-
-	void Renderable::AddRenderPassImpl(char const * renderpass_name, std::vector<std::string> & target_list)
-	{
-		// nullptr is equivalent to empty string
-		if (renderpass_name == nullptr)
-			renderpass_name = "";
-		// search if the name is already existing
-		for (std::string const & element : target_list)
-			if (StringTools::Stricmp(renderpass_name, element))
-				return;
-		// insert the element
-		target_list.push_back(renderpass_name);
-	}
-
-	void Renderable::RemoveRenderPassImpl(char const * renderpass_name, std::vector<std::string> & target_list)
-	{
-		// nullptr is equivalent to empty string
-		if (renderpass_name == nullptr)
-			renderpass_name = "";
-		// remove the element
-		size_t count = target_list.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			if (StringTools::Stricmp(renderpass_name, target_list[i]))
-			{
-				target_list.erase(target_list.begin() + i);
-				return;
-			}
-		}
-	}
-
 
 }; // namespace chaos

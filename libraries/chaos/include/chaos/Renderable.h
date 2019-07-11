@@ -6,7 +6,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/DrawPrimitive.h>
 #include <chaos/GPUProgramProvider.h>
-//#include <chaos/GPURenderMaterial.h>
+#include <chaos/NameFilter.h>
 #include <chaos/Renderer.h>
 
 namespace chaos
@@ -127,6 +127,9 @@ namespace chaos
 		/** remove a name in the disabled list */
 		void RemoveDisabledRenderPass(char const * renderpass_name);
 
+		/** check whether the renderable can be displayed by the name */
+		bool IsRenderPassEnabled(char const * renderpass_name) const;
+
 	protected:
 
 		/** override */
@@ -138,14 +141,6 @@ namespace chaos
 		/** called whenever object visibility has been changed */
 		virtual void OnVisibilityChanged(bool in_visible);
 
-		/** check whether the renderable can be displayed by the name */
-		bool IsRenderPassEnabled(char const * renderpass_name) const;
-
-		/** utility method to insert a name in the enabled/disabled array */
-		void AddRenderPassImpl(char const * renderpass_name, std::vector<std::string> & target_list);
-		/** utility method to remove a name in the enabled/disabled array */
-		void RemoveRenderPassImpl(char const * renderpass_name, std::vector<std::string> & target_list);
-
 	protected:
 
 		/** whether the object is hidden or visible */
@@ -156,9 +151,7 @@ namespace chaos
 		mutable uint64_t update_timestamp = 0;
 
 		/** the list of enabled renderpass names */
-		std::vector<std::string> enabled_renderpasses;
-		/** the list of disabled renderpass names */
-		std::vector<std::string> disabled_renderpasses;
+		NameFilter renderpass_filter;
 	};
 
 }; // namespace chaos

@@ -143,6 +143,31 @@ namespace chaos
 			return std::string(&src[i], j - i + 1);
 		}
 
+		std::vector<std::string> SplitCSV(char const * src)
+		{
+			std::vector<std::string> result;
+			if (src == nullptr)
+				return result;
+
+			while (*src != 0)
+			{
+				char const * separator = strchr(src, ';');
+				if (separator == nullptr)
+				{
+					result.push_back(src); // last string
+					break;
+				}
+				else
+				{
+					result.push_back(std::string(src, separator)); // last string
+					src = separator + 1;				
+				}			
+			}
+
+			//boost::split(result, src, [](char c){return c == ';';});		 // only works with std::string as src
+			return result;
+		}
+
 		int Strcmp(char const * src1, char const * src2)
 		{
 			return strcmp(src1, src2);

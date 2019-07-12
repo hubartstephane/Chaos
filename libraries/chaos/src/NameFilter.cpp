@@ -51,7 +51,7 @@ namespace chaos
 			name = "";
 		// search if the name is already existing
 		for (std::string const & element : target_list)
-			if (StringTools::Stricmp(name, element))
+			if (StringTools::Stricmp(name, element) == 0)
 				return;
 		// insert the element
 		target_list.push_back(name);
@@ -66,7 +66,7 @@ namespace chaos
 		size_t count = target_list.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			if (StringTools::Stricmp(name, target_list[i]))
+			if (StringTools::Stricmp(name, target_list[i]) == 0)
 			{
 				target_list.erase(target_list.begin() + i);
 				return;

@@ -76,29 +76,37 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
+		// ---------------------------------------------
 		// World limits on RED
+		// ---------------------------------------------
 		{
+			chaos::RenderParams other_render_params = render_params;
+			other_render_params.renderpass_name = "WORLD_LIMITS_ONLY";
+
+#if 0
 			chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 			filter.name_filter.enable_names.push_back("WorldLimits");
-
-			chaos::RenderParams other_render_params = render_params;
 			other_render_params.object_filter = &filter;
-			other_render_params.renderpass_name = "WORLD_LIMITS";
+#endif
 
 			glColorMask(true, false, false, true);
 			ludum_level_instance->Display(renderer, uniform_provider, other_render_params);
 		}
 
+		// ---------------------------------------------
 		// (enlarged) Enemies on GREEN  (position_blend_ratio => enlarged for enemies)
 		//  BLACK => greatest deformation, white => smallest deformation
+		// ---------------------------------------------
 		{
+			chaos::RenderParams other_render_params = render_params;
+			other_render_params.renderpass_name = "ENEMIES_ONLY";
+
+#if 0
 			chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 			filter.name_filter.enable_names.push_back("Enemies");
-
-			chaos::RenderParams other_render_params = render_params;
 			other_render_params.object_filter = &filter;
-			other_render_params.renderpass_name = "ENEMIES";
-
+#endif
+			
 			chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
 			enlarged_provider.AddVariableValue("position_blend_ratio", 0.0f);
 
@@ -110,7 +118,9 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 		framebuffer_worldlimits->EndRendering();
 	}
 
+	// ---------------------------------------------
 	// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
+	// ---------------------------------------------
 	{
 		framebuffer_other->BeginRendering();
 
@@ -118,15 +128,18 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
+		chaos::RenderParams other_render_params = render_params;
+		other_render_params.renderpass_name = "DEFORMED_OBJECT";
+
+#if 0
 		chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 		filter.name_filter.forbidden_names.push_back("Enemies");
 		filter.name_filter.forbidden_names.push_back("Atoms");
 		filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
 		filter.name_filter.forbidden_names.push_back("WorldLimits");
 		filter.name_filter.forbidden_names.push_back("Texts");
-
-		chaos::RenderParams other_render_params = render_params;
 		other_render_params.object_filter = &filter;
+#endif
 
 		// draw particle system (the background)
 		if (particle_manager != nullptr)
@@ -136,9 +149,14 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 		framebuffer_other->EndRendering();
 	}
 
+	// ---------------------------------------------
 	// COMBINE STEP 1 & STEP 2 (blend_backgrounds = 1 for default rendering, 0 for texture combining)
+	// ---------------------------------------------
 	{
-		chaos::GLTools::SetViewport(render_params.viewport);
+		chaos::RenderParams other_rendering_params = render_params;
+		//other_rendering_params.renderpass_name = "COMBINE_PASS";
+
+		chaos::GLTools::SetViewport(other_rendering_params.viewport);
 
 		chaos::GPUProgramProviderChain main_provider(uniform_provider);
 
@@ -161,21 +179,24 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
 
 		if (particle_manager != nullptr)
-			particle_manager->Display(renderer, &main_provider, render_params);
+			particle_manager->Display(renderer, &main_provider, other_rendering_params);
 	}
 
-
+	// ---------------------------------------------
 	// simply render player and ennemies
+	// ---------------------------------------------
 	{
+		chaos::RenderParams other_rendering_params = render_params;
+		other_rendering_params.renderpass_name = "UNDEFORMED_OBJECT";
+
+#if 0
 		chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
 		filter.name_filter.enable_names.push_back("Enemies");
 		filter.name_filter.enable_names.push_back("Atoms");
 		filter.name_filter.enable_names.push_back("PlayerAndCamera");
 		filter.name_filter.enable_names.push_back("Texts");
-
-		chaos::RenderParams other_rendering_params = render_params;
 		other_rendering_params.object_filter = &filter;
-		other_rendering_params.renderpass_name = "ENEMIES";
+#endif
 
 		// draw particle system (the background)
 		current_level_instance->Display(renderer, uniform_provider, other_rendering_params);

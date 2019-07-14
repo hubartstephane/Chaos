@@ -255,7 +255,8 @@ function DebugConf(plat)
   configuration {DEBUG, plat}
     defines { DEBUG }
     defines { "_DEBUG" }
-    flags { "Symbols" } 
+    symbols "On"
+--    flags { "Symbols" } 
 end
 
 -- =============================================================================
@@ -267,7 +268,8 @@ function ReleaseConf(plat)
     defines { "NDEBUG" }
     defines { RELEASE }
     defines { "_RELEASE" }
-    flags { "Optimize" }	   
+    optimize "On"
+--    flags { "Optimize" }	   
 end
 
 -- =============================================================================
@@ -730,11 +732,11 @@ solution "TestNewPremake"
   
   location (SOLUTION_PATH) -- where the visual studio project file is been created  
 
-  if os.get() == "windows" then
+  if os.target() == "windows" then
     defines { "WINDOWS" }
   end    
   
-  if os.get() == "linux" then
+  if os.target() == "linux" then
     defines { "LINUX" }
   end
    

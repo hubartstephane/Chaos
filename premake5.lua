@@ -569,6 +569,10 @@ end
 
 function DependOnStandardLib(libname)
 
+  if os.target() ~= "windows" then
+    return
+  end    
+
   local proj = FindProject()
   
   if (IsTable(libname)) then
@@ -787,7 +791,7 @@ if (DISPLAY_DEPENDENCIES) then
   Output("=======================================================================")
   for i in pairs(MYPROJECTS) do
     local proj = MYPROJECTS[i]
-    if (table.getn(proj.dependencies) > 0) then
+    if (#proj.dependencies > 0) then
       Output("Project ["..proj.name.."] :")
       for j in pairs(proj.dependencies) do
         Output ("  depends on ["..proj.dependencies[j].."]")    
@@ -817,7 +821,7 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf, proj_visible) -- dst_
         local full_filename = data[2]	       
         local dst_name      = path.join(dst_proj.targetdir[plat][conf], filename)
         
-		  if (proj_visible) then		                         
+	if (proj_visible) then		                         
           if (os.isfile(full_filename)) then
             files(full_filename)
           elseif (os.isdir(full_filename)) then

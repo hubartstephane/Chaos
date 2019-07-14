@@ -8,5 +8,5 @@ TARGET=codelite
 if [ $# -ge 1 ]; then
 	TARGET=$1
 fi
-premake5 $TARGET  --no-auto-doc --no-auto-resources
+premake5 $TARGET --os=linux --no-auto-doc --no-auto-resources
 

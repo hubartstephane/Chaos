@@ -23,6 +23,9 @@ else
 			DoInstall libglew-dev
 			DoInstall libassimp-dev
 			DoInstall libtinyxml2-dev
+			DoInstall clang
+			DoInstall gcc-multilib 
+			DoInstall g++-multilib
 			#OVR not found
 			#GLI not found
 			#NANA not found

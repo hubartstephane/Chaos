@@ -2,6 +2,11 @@
 -- ROOT_PATH/../external
 -- =============================================================================
 
+local WINDOWS = (os.target() == "windows")
+local LINUX = (os.target() == "linux")
+
+
+
   -- OPENGL
 local GL_INC_PATH = "openGL"
 DeclareExternalLib("OPENGL", GL_INC_PATH, nil, "OpenGL32")  
@@ -16,20 +21,24 @@ local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "vc140", "lib32"),
 DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
 
   -- LUA
-local LUA_PATH     = "lua-5.3.0"
-local LUA_INC_PATH = path.join(LUA_PATH, "src")
-local LUA_LIB_PATH = {
-  x32 = {
-    DEBUG   = path.join(LUA_PATH, "build", BUILD_TARGET, x32, DEBUG),   
-    RELEASE = path.join(LUA_PATH, "build", BUILD_TARGET, x32, RELEASE)
-  },
-  x64 = {
-    DEBUG   = path.join(LUA_PATH, "build", BUILD_TARGET, x64, DEBUG),   
-    RELEASE = path.join(LUA_PATH, "build", BUILD_TARGET, x64, RELEASE)  
-  },
-} 
-DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "mylualibrary.lib")
-
+if (LINUX) then
+	local LUA_INC_PATH = "/usr/include/lua5.3"
+	DeclareExternalLib("LUA", LUA_INC_PATH, nil, "lua5.3")
+elseif (WINDOWS) then
+	local LUA_PATH     = "lua-5.3.0"
+	local LUA_INC_PATH = path.join(LUA_PATH, "src")
+	local LUA_LIB_PATH = {
+	  x32 = {
+	    DEBUG   = path.join(LUA_PATH, "build", BUILD_TARGET, x32, DEBUG),   
+	    RELEASE = path.join(LUA_PATH, "build", BUILD_TARGET, x32, RELEASE)
+	  },
+	  x64 = {
+	    DEBUG   = path.join(LUA_PATH, "build", BUILD_TARGET, x64, DEBUG),   
+	    RELEASE = path.join(LUA_PATH, "build", BUILD_TARGET, x64, RELEASE)  
+	  },
+	} 
+	DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "mylualibrary.lib")
+end
   -- GLFW  
 --local GLFW_X32_PATH = "glfw-3.1.2.bin.WIN32"     
 --local GLFW_X64_PATH = "glfw-3.1.2.bin.WIN64"
@@ -121,7 +130,7 @@ local IRRKLANG_TOCOPY  = {   -- @ because this copies the file directly in
 DeclareExternalLib("IRRKLANG", IRRKLANG_INC_PATH, IRRKLANG_LIB_PATH, IRRKLANG_LIBNAME, IRRKLANG_TOCOPY)
 
   -- FBX 
-  
+ --[[
 local FBX_PATH = path.join("FBX SDK", "2015.1") 
 
 local FBX_INC_PATH = path.join(FBX_PATH, "include")  
@@ -154,8 +163,12 @@ local FBX_TOCOPY  = {   -- @ because this copies the file directly in
 }
 
 DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
+--]]
+
+
 
   -- FMODSTUDIO
+--[[
 local FMODSTUDIO_PATH     = path.join("FMOD SoundSystem", "FMOD Studio API Windows", "api")
 local FMODSTUDIO_INC_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "inc")
 local FMODSTUDIO_LIB_PATH = path.join(FMODSTUDIO_PATH, "lowlevel", "lib")
@@ -176,6 +189,10 @@ local FMOD_TOCOPY  = { -- @ because this copies the file directly in
 } 
 
 DeclareExternalLib("FMODSTUDIO", FMODSTUDIO_INC_PATH, FMODSTUDIO_LIB_PATH, FMODSTUDIO_LIBNAME, FMOD_TOCOPY)    
+--]]
+
+
+
 
   -- ZLIB    
 local ZLIB_PATH     = "zlib-1.2.8"
@@ -195,8 +212,13 @@ local ZLIB_LIBNAME = {
 }
 
 DeclareExternalLib("ZLIB", ZLIB_PATH, ZLIB_LIB_PATH, ZLIB_LIBNAME, nil)     
+
+
+
+
     
   -- ASSIMP
+--[[
 local ASSIMP_PATH      = "assimp-3.1.1"
 local ASSIMP_INC_PATH  = path.join(ASSIMP_PATH, "include")
 local ASSIMP_LIB_PATH  = {
@@ -226,6 +248,10 @@ local ASSIMP_TOCOPY  = { -- @ because this copies the file directly in
 } 
 
 DeclareExternalLib("ASSIMP", ASSIMP_INC_PATH, ASSIMP_LIB_PATH, ASSIMP_LIBNAME, ASSIMP_TOCOPY)
+--]]
+
+
+
 
   -- FREEIMAGE
 local FREEIMAGE_PATH       = path.join("FreeImage", "Dist")
@@ -279,8 +305,14 @@ local NANA_LIBNAME = {
 } 
 DeclareExternalLib("NANA", NANA_INC_PATH, NANA_LIB_PATH, NANA_LIBNAME)
 
-   -- OCULUS SDK (OVR)
 
+
+
+
+
+
+   -- OCULUS SDK (OVR)
+--[[
 local OVR_PATH = "OculusSDK"
 
 local OVR_INC_PATH = path.join(OVR_PATH, "LibOVR", "Include")
@@ -293,6 +325,11 @@ OVR_LIB_PATH = {
 } 
 
 DeclareExternalLib("OVR", OVR_INC_PATH, OVR_LIB_PATH, "LibOVR.lib", nil)
+--]]
+
+
+
+
 
   -- TRISTRIPPER
 local TRISTRIPPER_PATH     = "tristripper-master"
@@ -315,7 +352,13 @@ local JSON_INC_PATH = path.join(JSON_PATH, "src")
 
 DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)
 
+
+
+
+
+
   -- FFMPEG
+--[[
 local FFMPEG_PATH     = "ffmpeg"
 local FFMPEG_INC_PATH = {
   x32 = path.join(FFMPEG_PATH, "win32", "include"),
@@ -326,6 +369,12 @@ local FFMPEG_LIB_PATH = {
   x64 = path.join(FFMPEG_PATH, "win64", "lib")
 } 
 --DeclareExternalLib("FFMPEG", FFMPEG_INC_PATH, FFMPEG_LIB_PATH, {"avcodec.lib", "avdevice.lib", "avfilter.lib", "avformat.lib", "avutil.lib", "postproc.lib", "swresample.lib", "swscale.lib"}) 
+--]]
+
+
+
+
+
 
   -- OPENCV  
   

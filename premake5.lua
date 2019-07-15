@@ -407,9 +407,12 @@ function onConfig(in_kind, plat, conf, proj)
    
    proj.includedirs[plat][conf] = inc     
    
-   defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")     
-   defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
-   defines("CHAOS_PROJECT_BUILD_PATH=\"".. targ .. "\"")        
+   defines("CHAOS_PROJECT_PATH='".. PROJECT_PATH.."'")
+   defines("CHAOS_PROJECT_SRC_PATH='".. PROJECT_SRC_PATH.."'")     
+   defines("CHAOS_PROJECT_BUILD_PATH='".. targ .. "'")        
+--   defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")          
+   --defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
+   --defines("CHAOS_PROJECT_BUILD_PATH=\"".. targ .. "\"")        
       
 end
 

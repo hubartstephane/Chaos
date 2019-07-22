@@ -6,6 +6,83 @@
 	====================================================================
 	== TODO
 	====================================================================
+	
+	- SoundManager : multi-category
+	=> Pause -> BlendPause category=INGAME
+	  
+	=> travailler sur les musiques. MENU-PAUSE-IN GAME
+	  probablement mieux a faire
+	  
+	  
+	  
+	  
+	  
+	- HUD Component
+	
+	=> recuperer le titre du niveau courant
+	
+	=> faire HUD tutorial
+	
+	=> configuration des components par JSON ???
+	
+	
+	
+	
+	- MATERIAL
+	
+	=> Revoir SubMaterials. Utiliser ca dans LD43 (quantic paouf) pour le multipass
+	
+	
+	
+	- PROGRAMS
+	=> ajouter missing VERTEX SHADER si non specifié
+	=> Chargement d un program
+		-> on peut charger un fichier       'myprogram.pgm'
+		-> ou on peut charger le repertoire 'myprogram' (si le .pgm n'existe pas, le generer a la volée)
+		
+	
+	
+	- MANAGER
+	
+	[recurse] : a revoir. il devrait y avoir un niveau [files]: [...]
+	eventuellement PATH
+	
+	
+	
+	
+	- COLLISIONS
+	=>revoir box/obox pour fixer les soucis de camera dans TiledMapLevel
+	
+	
+	
+	- LEVELS
+	=>un fichier levels.json pour decrire les fichiers, eventuellement une map pour le menu
+	
+	
+	
+	
+	
+	
+	-ParticleSystem
+	=>utiliser des VERTEX_BUFFER tournant + GPUFence
+	
+	====================================================================
+	== TODO
+	====================================================================
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 		-- animated bitmap in atlas
 
@@ -13,7 +90,7 @@
 
 
 
-		-- Mieux a  faire que d un cot�
+		-- Mieux a  faire que d un coté
 		
 			chaos::ParticleDefault::ParticleTrait::ParticleToVertices
 

@@ -12,6 +12,22 @@ namespace death
 	{
 	}
 
+	Game * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance)
+	{
+		GameStateMachineInstance * game_state_machine_instance = auto_cast(sm_instance);
+		if (game_state_machine_instance != nullptr)
+			return game_state_machine_instance->GetGame();
+		return nullptr;
+	}
+
+	Game const * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance) const
+	{
+		GameStateMachineInstance const * game_state_machine_instance = auto_cast(sm_instance);
+		if (game_state_machine_instance != nullptr)
+			return game_state_machine_instance->GetGame();
+		return nullptr;
+	}
+
 	// =========================================================
 	// GameState
 	// =========================================================
@@ -30,26 +46,6 @@ namespace death
 	}
 
 	Game const * GameState::GetGame(chaos::SM::StateMachineInstance const * sm_instance) const
-	{
-		GameStateMachineInstance const * game_state_machine_instance = auto_cast(sm_instance);
-		if (game_state_machine_instance != nullptr)
-			return game_state_machine_instance->GetGame();
-		return nullptr;
-	}
-
-	// =========================================================
-	// GameTransition
-	// =========================================================
-
-	Game * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance)
-	{
-		GameStateMachineInstance * game_state_machine_instance = auto_cast(sm_instance);
-		if (game_state_machine_instance != nullptr)
-			return game_state_machine_instance->GetGame();
-		return nullptr;
-	}
-
-	Game const * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance) const
 	{
 		GameStateMachineInstance const * game_state_machine_instance = auto_cast(sm_instance);
 		if (game_state_machine_instance != nullptr)

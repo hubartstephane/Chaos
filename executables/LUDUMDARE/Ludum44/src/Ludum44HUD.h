@@ -66,24 +66,6 @@ protected:
 };
 
 // ====================================================================
-// GameHUDLevelTitleComponent
-// ====================================================================
-
-class GameHUDLevelTitleComponent : public death::GameHUDSingleAllocationComponent
-{
-	friend class death::GameHUD;
-
-protected:
-
-	/** override */
-	virtual bool DoTick(double delta_time) override;
-
-protected:
-
-	std::string cached_level_title;
-};
-
-// ====================================================================
 // LudumPlayingHUD
 // ====================================================================
 

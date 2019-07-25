@@ -328,5 +328,73 @@ namespace death
 		cached_value = current_life;
 	}
 
+	// ====================================================================
+	// GameHUDLevelTitleComponent
+	// ====================================================================
+
+	bool GameHUDLevelTitleComponent::DoTick(double delta_time)
+	{
+		GameHUDSingleAllocationComponent::DoTick(delta_time);
+
+		// ensure we got a level/level instance
+		GameLevel * level = GetLevel();
+		GameLevelInstance * level_instance = GetLevelInstance();
+		
+		if (level == nullptr || level_instance == nullptr)
+		{
+			cached_level_title = std::string();
+			allocations = nullptr;
+			return true;
+		}
+		// dont let the allocation more the 5 seconds visible
+		double clock_time = level_instance->GetLevelClockTime();
+		if (clock_time > 4.0)
+		{
+			cached_level_title = std::string();
+			allocations = nullptr;
+			return true;
+		}
+
+		// try to find a title
+		std::string const * lt = nullptr;
+		std::string placeholder_level_title;
+		
+		std::string const & level_title = level->GetLevelTitle();
+		if (level_title.empty())
+		{
+			placeholder_level_title = chaos::StringTools::Printf("Level %d", level_instance->GetLevel()->GetLevelIndex());
+			lt = &placeholder_level_title;	
+		}
+		else
+			lt = &level_title;
+
+		// ensure we do not have already cached this title
+		if (cached_level_title == *lt)
+			return true;
+
+		cached_level_title = *lt;
+
+		// get box
+		chaos::box2 view_box = GetGame()->GetViewBox();		
+
+		int hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
+		glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+
+		// create the level title
+		chaos::ParticleTextGenerator::GeneratorParams params;
+		params.line_height = 80;
+		params.hotpoint_type = chaos::Hotpoint::BOTTOM_RIGHT;
+		params.position.x = corner.x - 40.0f;
+		params.position.y = corner.y + 100.0f;
+		params.default_color = glm::vec4(1.0f, 1.0f, 1.0f, 0.6f);
+		params.font_info_name = "normal";
+
+		allocations = hud->GetGameParticleCreator().CreateTextParticles(cached_level_title.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+
+		return true;
+	}
+
+
+
 
 }; // namespace death

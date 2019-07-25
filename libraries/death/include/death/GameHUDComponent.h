@@ -277,5 +277,25 @@ namespace death
 		/** the heart warning period */
 		float heart_beat_speed = 1.0f;
 	};
+	
+
+	// ====================================================================
+	// GameHUDLevelTitleComponent
+	// ====================================================================
+
+	class GameHUDLevelTitleComponent : public GameHUDSingleAllocationComponent
+	{
+		friend class GameHUD;
+
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+
+	protected:
+
+		/** cache the title of the level */
+		std::string cached_level_title;
+	};	
 
 }; // namespace death

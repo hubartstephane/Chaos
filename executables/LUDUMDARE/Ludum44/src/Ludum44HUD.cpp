@@ -99,69 +99,6 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 	return true;
 }
 
-
-
-// ====================================================================
-// GameHUDLevelTitleComponent
-// ====================================================================
-
-bool GameHUDLevelTitleComponent::DoTick(double delta_time)
-{
-	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
-
-	// ensure we got a level
-	death::TiledMap::LevelInstance * level_instance = auto_cast(GetLevelInstance());
-	if (level_instance == nullptr)
-	{
-		cached_level_title = std::string();
-		allocations = nullptr;
-		return true;
-	}
-	// dont let the allocation more the 5 seconds visible
-	double clock_time = level_instance->GetLevelClockTime();
-	if (clock_time > 4.0)
-	{
-		cached_level_title = std::string();
-		allocations = nullptr;
-		return true;
-	}
-
-	// try to find a title
-	std::string final_level_title;
-	
-	std::string const * level_title = level_instance->GetTiledMap()->FindPropertyString("LEVEL_TITLE");
-	if (level_title == nullptr)
-	{
-		final_level_title = chaos::StringTools::Printf("Level %d", level_instance->GetLevel()->GetLevelIndex());
-		level_title = &final_level_title;	
-	}
-
-	// ensure we do not have already cached this title
-	if (cached_level_title == *level_title)
-		return true;
-
-	cached_level_title = *level_title;
-
-	// get box
-	chaos::box2 view_box = GetGame()->GetViewBox();		
-
-	int hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
-	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
-
-	// create the level title
-	chaos::ParticleTextGenerator::GeneratorParams params;
-	params.line_height = 80;
-	params.hotpoint_type = chaos::Hotpoint::BOTTOM_RIGHT;
-	params.position.x = corner.x - 40.0f;
-	params.position.y = corner.y + 100.0f;
-	params.default_color = glm::vec4(1.0f, 1.0f, 1.0f, 0.6f);
-	params.font_info_name = "normal";
-
-	allocations = hud->GetGameParticleCreator().CreateTextParticles(cached_level_title.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
-
-	return true;
-}
-
 // ====================================================================
 // GameHUDLifeBarComponent
 // ====================================================================
@@ -258,7 +195,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
-	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new GameHUDLevelTitleComponent());
+	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
 	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent("normal", 60.0f, glm::vec2(20.0f, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
 	return true;

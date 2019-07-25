@@ -104,7 +104,9 @@ namespace death
 			// get level title (if specified)
 			std::string const * in_level_title = in_tiled_map->FindPropertyString("LEVEL_TITLE");
 			if (in_level_title != nullptr)
-				level_title = *in_level_title;
+				level_title = *in_level_title;				
+			// get the level time	
+			level_timeout = in_tiled_map->FindPropertyFloat("LEVEL_TIMEOUT", -1);
 			
 			return true;
 		}

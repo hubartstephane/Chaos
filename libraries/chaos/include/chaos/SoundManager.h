@@ -274,14 +274,14 @@ namespace chaos
 		virtual Sound * GenerateSound();
 
 		/** loading from a JSON object */
-		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::vectorfilesystem::path const & config_path) override;
 
 	protected:
 
 		/** the irrklang source */
 		shared_ptr<irrklang::ISoundSource> irrklang_source;
 		/** the default category */
-		SoundCategory * default_category = nullptr;
+		std::vector<SoundCategory *> default_categories;
 	};
 
 	// ==============================================================
@@ -316,6 +316,9 @@ namespace chaos
 		CHAOS_SOUND_ALL_FRIENDS
 
 	public:
+	
+		/** returns true whether this sound belongs to given category */
+		bool IsOfCategory(SoundCategory const * category) const;
 
 		/** set the position of the sound */
 		void SetPosition(glm::vec3 const & in_position);
@@ -382,8 +385,8 @@ namespace chaos
 		/** the velocity of the sound in 3D */
 		glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 
-		/** the category of the sound */
-		SoundCategory * category = nullptr;
+		/** the categories of the sound */
+		std::vector<SoundCategory *> categories;
 		/** the source that generated this object */
 		SoundSource * source = nullptr;
 

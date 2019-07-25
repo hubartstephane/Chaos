@@ -430,6 +430,13 @@ namespace chaos
 	// ==============================================================
 	// SOUND
 	// ==============================================================
+	
+	bool Sound::IsOfCategory(SoundCategory const * category) const
+	{
+		assert(category != nullptr);
+		
+		return (std::find(categories.begin(), categories.end(), category) != categories.end());			
+	}
 
 	bool Sound::IsSound3D() const
 	{
@@ -470,8 +477,9 @@ namespace chaos
 	float Sound::GetEffectiveVolume() const
 	{
 		float result = SoundObject::GetEffectiveVolume();
-		if (category != nullptr)
-			result *= category->GetEffectiveVolume();
+		for (SoundCategory * category : categories)
+			if (category != nullptr)
+				result *= category->GetEffectiveVolume();
 		if (source != nullptr)
 			result *= source->GetEffectiveVolume();
 		return result;
@@ -481,8 +489,9 @@ namespace chaos
 	{
 		if (SoundObject::IsEffectivePaused())
 			return true;
-		if (category != nullptr && category->IsEffectivePaused())
-			return true;
+		for (SoundCategory * category : categories)
+			if (category != nullptr && category->IsEffectivePaused())
+				return true;
 		if (source != nullptr && source->IsEffectivePaused())
 			return true;
 		return false;
@@ -670,8 +679,8 @@ namespace chaos
 		// super method
 		Manager::DoStopManager();
 
-		// empty the managed objects list
-		RemoveAllObjectsFromList(sounds, &SoundManager::OnObjectRemovedFromManager); // destroy sounds first to make other list destructions faster
+		// empty the managed objects list (destroy sounds first to make other list destructions faster)
+		RemoveAllObjectsFromList(sounds, &SoundManager::OnObjectRemovedFromManager);
 		RemoveAllObjectsFromList(categories, &SoundManager::OnObjectRemovedFromManager);
 		RemoveAllObjectsFromList(sources, &SoundManager::OnObjectRemovedFromManager);
 

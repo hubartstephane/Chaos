@@ -7,6 +7,14 @@
 	== TODO
 	====================================================================
 	
+	
+	- revoir CreateBackgroundImage(...) : SetBackground(...) + SetBackgroundMaterial(...)
+	
+	  sortir ca du ParticleManager. Creer un renderable dedié "background_renderable"
+	
+	
+	
+	
 	- SoundManager : multi-category
 	=> Pause -> BlendPause category=INGAME
 	  

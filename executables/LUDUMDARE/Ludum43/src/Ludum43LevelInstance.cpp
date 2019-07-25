@@ -84,19 +84,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 {
 	if (!death::TiledMap::LevelInstance::Initialize(in_game, in_level))
 		return false;
-
 	// change the level timeout
-	static float DEFAULT_LEVEL_TIMEOUT = 50.0f;
-	static int   DEFAULT_LEVEL_PARTICLE_REQUIREMENT = 10;
-
-	level_timeout = DEFAULT_LEVEL_TIMEOUT;
-	level_particle_requirement = DEFAULT_LEVEL_PARTICLE_REQUIREMENT;
-
-	death::TiledMap::Level const * level = GetTiledLevel();
-	if (level != nullptr)
-	{
-		level_timeout = level->GetTiledMap()->FindPropertyFloat("LEVEL_TIME", DEFAULT_LEVEL_TIMEOUT);
-		level_particle_requirement = level->GetTiledMap()->FindPropertyInt("LEVEL_PARTICLE_REQUIREMENT", DEFAULT_LEVEL_PARTICLE_REQUIREMENT);
-	}
+	level_timeout = in_level->GetLevelTimeout();
 	return true;
 }

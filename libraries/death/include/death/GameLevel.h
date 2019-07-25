@@ -21,6 +21,10 @@ namespace death
 		/** create a level instance for that level */
 		GameLevelInstance * CreateLevelInstance(Game * in_game);
 
+		/** returns the level timeout */
+		float GetLevelTimeout() const { return level_timeout; }
+		/** returns the title for that level */
+		std::string const & GetLevelTitle() const { return level_title; }
 		/** the index of that level */
 		int GetLevelIndex() const { return level_index; }
 
@@ -31,6 +35,10 @@ namespace death
 
 	protected:
 
+		/** get the level timeout */
+		float level_timeout = -1.0f;
+		/** the title of the level*/
+		std::string level_title;
 		/** the index of the level (maybe a key or an ordered index) */
 		int level_index = 0;
 	};

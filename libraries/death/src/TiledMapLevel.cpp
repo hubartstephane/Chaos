@@ -99,7 +99,13 @@ namespace death
 		{
 			assert(in_tiled_map != nullptr);
 			assert(tiled_map == nullptr);
+			// keep a copy of the tiled object
 			tiled_map = in_tiled_map;
+			// get level title (if specified)
+			std::string const * in_level_title = in_tiled_map->FindPropertyString("LEVEL_TITLE");
+			if (in_level_title != nullptr)
+				level_title = *in_level_title;
+			
 			return true;
 		}
 

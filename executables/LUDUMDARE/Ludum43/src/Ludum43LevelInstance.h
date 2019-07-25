@@ -42,7 +42,4 @@ protected:
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;
-
-	/** the default level requirement */
-	int level_particle_requirement = 0;
 };

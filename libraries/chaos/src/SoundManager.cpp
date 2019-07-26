@@ -287,30 +287,31 @@ namespace chaos
 		if (!sound_manager->CanAddSound((desc.sound_name.length() > 0) ? desc.sound_name.c_str() : nullptr))
 			return nullptr;
 
-		// ensure (if a category is required) that is correct
-		SoundCategory * sound_category = desc.category;
-		if (sound_category == nullptr)
+		// compute required categories
+		std::vector<SoundCategory *> categories = default_categories;
+		
+		for (std::string const & category_name : desc.category_names)
 		{
-			if (desc.category_name.length() > 0)
+			if (category_name.length() > 0)
 			{
-				sound_category = sound_manager->FindCategory(desc.category_name.c_str());
-				if (sound_category == nullptr) // there is a category requirement by name that does not exist
-					return nullptr;
+				SoundCategory * category = sound_manager->FindCategory(category_name.c_str());
+				if (category != nullptr)
+					if (std::find(categories.begin(), categories.end(), category) == categories.end())
+						categories.push_back(category);
 			}
-			else
-				sound_category = default_category;
 		}
-
-		// test whether the category has the same manager as the source
-		if (sound_category != nullptr && sound_category->sound_manager != sound_manager)
-			return nullptr;
+		
+		for (SoundCategory * category : desc.categories)
+			if (category != nullptr && category->sound_manager == sound_manager)
+				if (std::find(categories.begin(), categories.end(), category) == categories.end())
+					categories.push_back(category);
 
 		// create the sound and initialize it
 		Sound * result = GenerateSound();
 		if (result != nullptr)
 		{
 			// initialize the newly created object (other values will be initialized in Sound::PlaySound(...)
-			result->category = sound_category;
+			result->categories = std::move(categories);
 			result->sound_manager = sound_manager;
 			result->source = this;
 			sound_manager->sounds.push_back(result);
@@ -814,8 +815,11 @@ namespace chaos
 			SoundSource * source = sources[i].get();
 			if (source == nullptr)
 				continue;
-			if (source->default_category == category) // notify the source that its default category is being destroyed
-				source->default_category = nullptr;
+				
+			// notify the source that its default category is being destroyed
+			auto it = std::find(source->default_categories.begin(), source->default_categories.end(), category);
+			if (it != source->default_categories.end())
+				source->default_categories.remove_at(it);
 		}
 	}
 
@@ -830,7 +834,7 @@ namespace chaos
 			Sound * sound = sounds[index].get();
 			if (sound == nullptr)
 				continue;
-			if (sound->category != category)
+			if (!sound->IsOfCategory(category))
 				continue;
 			RemoveSound(index);
 		}
@@ -895,14 +899,14 @@ namespace chaos
 	}
 
 	void SoundManager::UpdateAllSoundPausePerCategory(SoundCategory * category)
-	{
+	{			
 		size_t count = sounds.size();
 		for (size_t i = 0; i < count; ++i)
 		{
 			Sound * sound = sounds[i].get();
 			if (sound == nullptr)
 				continue;
-			if (category != nullptr && category != sound->category)
+			if (category != nullptr && !sound->IsOfCategory(category))
 				continue;
 			sound->DoUpdatePause();
 		}
@@ -916,7 +920,7 @@ namespace chaos
 			Sound * sound = sounds[i].get();
 			if (sound == nullptr)
 				continue;
-			if (category != nullptr && category != sound->category)
+			if (category != nullptr && !sound->IsOfCategory(category))
 				continue;
 			sound->DoUpdateVolume();
 		}

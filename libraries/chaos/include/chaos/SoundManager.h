@@ -138,10 +138,11 @@ namespace chaos
 
 		/** the name of the sound object to create */
 		std::string sound_name;
-		/** the name of the category ... */
-		std::string category_name;
+		
+		/** the names of the categories ... */
+		std:vector<std::string> category_names;
 		/** ... or a pointer on the category */
-		SoundCategory * category = nullptr;
+		std::vector<SoundCategory *> categories;
 	};
 
 	// ==============================================================

@@ -360,20 +360,23 @@ namespace chaos
 			GetManager()->UpdateAllSoundVolumePerSource(this);
 	}
 
-	bool SoundSource::SetDefaultCategory(SoundCategory * category)
+	bool SoundSource::SetDefaultCategories(std::vector<SoundCategory *> const & categories)
 	{
 		// a detached source cannot have a category
 		if (!IsAttachedToManager())
 			return false;
 		// a detached category cannot be used
-		if (category != nullptr)
+		for (SoundCategory * category : categories)
 		{
-			if (!category->IsAttachedToManager())
-				return false;
-			if (sound_manager != category->sound_manager) // source and category must have the same manager
-				return false;
+			if (category != nullptr)
+			{
+				if (!category->IsAttachedToManager())
+					return false;
+				if (sound_manager != category->sound_manager) // source and category must have the same manager
+					return false;
+			}				
 		}
-		default_category = category;
+		default_categories = categories;
 		return true;
 	}
 
@@ -382,12 +385,20 @@ namespace chaos
 		if (!SoundObject::InitializeFromJSON(json, config_path))
 			return false;
 		// update the default category
-		std::string category_name;
-		if (JSONTools::GetAttribute(json, "category", category_name))
+		std::vector<std::string> category_names;
+		if (JSONTools::GetAttributeArray(json, "categories", category_names))
 		{
-			SoundCategory * category = sound_manager->FindCategory(category_name.c_str());
-			if (category != nullptr)
-				SetDefaultCategory(category);
+			std::vector<SoundCategory *> categories;
+			for (std::string const & category_name : category_names)
+			{
+				SoundCategory * category = sound_manager->FindCategory(category_name.c_str());
+				if (category != nullptr)
+				{
+					if (std::find(categories.begin(), categories.end(), category) == categories.end()) // no duplicate
+						categories.push_back(category);					
+				}
+			}
+			default_categories = std::move(categories);
 		}
 		return true;
 	}

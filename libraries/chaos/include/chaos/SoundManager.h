@@ -256,13 +256,8 @@ namespace chaos
 		/** change the object volume */
 		virtual void SetVolume(float in_volume) override;
 
-		/** get the category */
-		SoundCategory * GetDefaultCategory() { return default_category; }
-		/** get the category */
-		SoundCategory const * GetDefaultCategory() const { return default_category; }
-
-		/** set the category */
-		bool SetDefaultCategory(SoundCategory * category);
+		/** set the categories */
+		bool SetDefaultCategories(std::vector<SoundCategory *> const & categories);
 
 	protected:
 

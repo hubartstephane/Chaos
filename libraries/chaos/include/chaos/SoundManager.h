@@ -358,8 +358,6 @@ namespace chaos
 		virtual void RemoveFromManager() override;
 		/** internal tick the sounds */
 		virtual void TickObject(float delta_time) override;
-		/** the method being called from exterior */
-		void PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 		/** get whether the sound is finished */
 		virtual bool ComputeFinishedState() override;

@@ -310,13 +310,26 @@ namespace chaos
 		Sound * result = GenerateSound();
 		if (result != nullptr)
 		{
-			// initialize the newly created object (other values will be initialized in Sound::PlaySound(...)
+			// initialize the newly created object
 			result->categories = std::move(categories);
 			result->sound_manager = sound_manager;
 			result->source = this;
+			
+			result->is_3D_sound = desc.IsSound3D();
+			result->position = desc.position;
+			result->velocity = desc.velocity;
+			result->paused = desc.paused;
+			result->looping = desc.looping;
+			result->callbacks = in_callbacks;
+
+			if (desc.sound_name.length() > 0)
+				result->name = desc.sound_name;
+
+			// store the sound
 			sound_manager->sounds.push_back(result);
+			
 			// play the sound
-			result->PlaySound(desc, in_callbacks);
+			result->DoPlaySound(desc);
 		}
 		return result;
 	}
@@ -533,24 +546,6 @@ namespace chaos
 			irrklang_sound = nullptr;
 		}
 		SoundObject::OnRemovedFromManager();
-	}
-
-	void Sound::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
-	{
-		// copy the data
-		is_3D_sound = desc.IsSound3D();
-		position = desc.position;
-		velocity = desc.velocity;
-		paused = desc.paused;
-		looping = desc.looping;
-
-		if (desc.sound_name.length() > 0)
-			name = desc.sound_name;
-
-		callbacks = in_callbacks;
-
-		// start the sound
-		DoPlaySound(desc);
 	}
 
 	bool Sound::DoPlaySound(PlaySoundDesc const & desc)

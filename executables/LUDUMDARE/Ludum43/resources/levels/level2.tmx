@@ -632,7 +632,7 @@
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="56" name="ThePlayerStart1" x="-4058" y="-1138">
+  <object id="56" name="ThePlayerStart1" x="-4058" y="-1138" width="350" height="350">
    <properties>
     <property name="BITMAP_NAME" value="player"/>
     <property name="PLAYER_START" type="bool" value="true"/>

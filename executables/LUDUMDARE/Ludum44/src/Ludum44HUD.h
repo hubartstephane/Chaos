@@ -11,7 +11,6 @@ namespace death
 	namespace GameHUDKeys
 	{
 		CHAOS_DECLARE_TAG(POWER_UP_ID);
-		CHAOS_DECLARE_TAG(LEVEL_TITLE_ID);
 	};
 };
 

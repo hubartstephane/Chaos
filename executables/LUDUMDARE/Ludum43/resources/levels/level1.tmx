@@ -419,17 +419,6 @@
   <object id="1636" gid="14" x="-4243" y="1176" width="167" height="176"/>
   <object id="1637" gid="14" x="9901" y="3224" width="167" height="176"/>
  </objectgroup>
- <objectgroup id="12" name="Texts" visible="0" locked="1" offsetx="54.0606" offsety="-145.212">
-  <properties>
-   <property name="ENABLED_RENDERPASS" value="UNDEFORMED_OBJECT"/>
-  </properties>
-  <object id="1710" name="Level 1" x="-5405.11" y="-142.106" width="1065.85" height="228.212">
-   <properties>
-    <property name="FONT_NAME" value="normal"/>
-   </properties>
-   <text fontfamily="MS Shell Dlg 2" pixelsize="200" wrap="1" color="#b4ffffff">LEVEL 1</text>
-  </object>
- </objectgroup>
  <objectgroup id="13" name="Finishing" visible="0" locked="1">
   <properties>
    <property name="ENABLED_RENDERPASS" value="UNDEFORMED_OBJECT"/>
@@ -503,7 +492,7 @@
   <object id="1703" gid="8" x="-3816" y="-7816" width="400" height="400"/>
   <object id="1704" gid="8" x="-1736" y="-10376" width="400" height="400"/>
  </objectgroup>
- <objectgroup id="16" name="PlayerAndCamera">
+ <objectgroup id="16" name="PlayerAndCamera" visible="0" locked="1">
   <properties>
    <property name="ENABLED_RENDERPASS" value="UNDEFORMED_OBJECT"/>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>

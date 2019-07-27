@@ -100,6 +100,9 @@ bool LudumPlayingHUD::FillHUDContent()
 	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent("normal", 60.0f, glm::vec2(20.0, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
 	RegisterComponent(death::GameHUDKeys::LEVEL_TIMEOUT_ID, new death::GameHUDTimeoutComponent("normal", 60.0f, glm::vec2(0.0f, -20.0f), chaos::Hotpoint::TOP, death::GameHUDKeys::TEXT_LAYER_ID));
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
+
+	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
+
 	return true;
 }
 

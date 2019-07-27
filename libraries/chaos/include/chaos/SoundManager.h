@@ -30,7 +30,7 @@ namespace chaos
 		// CALLBACKS
 		// ==============================================================
 
-		class SoundCallbacks : public ReferencedObject
+	class SoundCallbacks : public ReferencedObject
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -129,13 +129,17 @@ namespace chaos
 		/** the blend in time of the object */
 		float blend_time = 0.0f;
 
+		/** true whether the sound is in 3D */
+		bool is_3D_sound = false;
 		/** the position of the sound in 3D */
 		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 		/** the velocity of the sound in 3D */
 		glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-		/** true whether the sound is in 3D */
-		bool is_3D_sound = false;
-
+		/** the minimal distance for sound in 3D */
+		float min_distance = 0.0f;
+		/** the maximum distance for sound in 3D */
+		float max_distance = 0.0f;
+		
 		/** the name of the sound object to create */
 		std::string sound_name;
 		

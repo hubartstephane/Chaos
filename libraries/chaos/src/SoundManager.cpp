@@ -572,9 +572,13 @@ namespace chaos
 				IsEffectivePaused(),
 				track,
 				sound_effect);
+				
+			if (irrklang_sound == nullptr)				
+				return false;
 
-			if (irrklang_sound != nullptr)
-				irrklang_sound->setVelocity(IrrklangTools::ToIrrklangVector(velocity));
+			SetVelocity(velocity);
+			SetMinDistance(desc.min_distance);
+			SetMaxDistance(desc.max_distance);
 		}
 		else
 		{
@@ -584,6 +588,8 @@ namespace chaos
 				IsEffectivePaused(),
 				track,
 				sound_effect);
+			if (irrklang_sound == nullptr)				
+				return false;				
 		}
 
 		if (desc.blend_time > 0.0f)
@@ -594,9 +600,10 @@ namespace chaos
 			blend_value = 0.0f;
 			StartBlend(blend_desc);
 		}
+		
 		DoUpdateVolume();
 
-		return (irrklang_sound == nullptr);
+		return true;
 	}
 
 	void Sound::TickObject(float delta_time)
@@ -646,11 +653,13 @@ namespace chaos
 
 	void Sound::SetMaxDistance(float distance)
 	{
-		irrklang_sound->setMaxDistance((irrklang::ik_f32)distance);
+		if (irrklang_sound != nullptr)
+			irrklang_sound->setMaxDistance((irrklang::ik_f32)distance);
 	}
 	void Sound::SetMinDistance(float distance)
 	{
-		irrklang_sound->setMinDistance((irrklang::ik_f32)distance);
+		if (irrklang_sound != nullptr)
+			irrklang_sound->setMinDistance((irrklang::ik_f32)distance);
 	}
 
 	// ==============================================================

@@ -2,8 +2,11 @@
 -- ROOT_PATH/../external
 -- =============================================================================
 
-local WINDOWS = (os.target() == "windows")
-local LINUX = (os.target() == "linux")
+--local WINDOWS = (os.target() == "windows")
+--local LINUX = (os.target() == "linux")
+
+local WINDOWS = (os.get() == "windows")
+local LINUX = (os.get() == "linux")
 
 
 
@@ -130,7 +133,7 @@ local IRRKLANG_TOCOPY  = {   -- @ because this copies the file directly in
 DeclareExternalLib("IRRKLANG", IRRKLANG_INC_PATH, IRRKLANG_LIB_PATH, IRRKLANG_LIBNAME, IRRKLANG_TOCOPY)
 
   -- FBX 
- --[[
+
 local FBX_PATH = path.join("FBX SDK", "2015.1") 
 
 local FBX_INC_PATH = path.join(FBX_PATH, "include")  
@@ -163,9 +166,6 @@ local FBX_TOCOPY  = {   -- @ because this copies the file directly in
 }
 
 DeclareExternalLib("FBX", FBX_INC_PATH, FBX_LIB_PATH, FBX_LIBNAME, FBX_TOCOPY)
---]]
-
-
 
   -- FMODSTUDIO
 --[[
@@ -218,7 +218,6 @@ DeclareExternalLib("ZLIB", ZLIB_PATH, ZLIB_LIB_PATH, ZLIB_LIBNAME, nil)
 
     
   -- ASSIMP
---[[
 local ASSIMP_PATH      = "assimp-3.1.1"
 local ASSIMP_INC_PATH  = path.join(ASSIMP_PATH, "include")
 local ASSIMP_LIB_PATH  = {
@@ -248,9 +247,6 @@ local ASSIMP_TOCOPY  = { -- @ because this copies the file directly in
 } 
 
 DeclareExternalLib("ASSIMP", ASSIMP_INC_PATH, ASSIMP_LIB_PATH, ASSIMP_LIBNAME, ASSIMP_TOCOPY)
---]]
-
-
 
 
   -- FREEIMAGE

@@ -144,7 +144,7 @@ namespace chaos
 		std::string sound_name;
 		
 		/** the names of the categories ... */
-		std:vector<std::string> category_names;
+		std::vector<std::string> category_names;
 		/** ... or a pointer on the category */
 		std::vector<SoundCategory *> categories;
 	};
@@ -274,7 +274,7 @@ namespace chaos
 		virtual Sound * GenerateSound();
 
 		/** loading from a JSON object */
-		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::vectorfilesystem::path const & config_path) override;
+		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 
 	protected:
 

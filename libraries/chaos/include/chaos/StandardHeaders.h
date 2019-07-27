@@ -1,7 +1,5 @@
 #pragma once
 
-#define quot shuwww
-
 /**
 * Note on file redirection:
 *
@@ -145,7 +143,11 @@ namespace chaos
 #include <set>
 #include <cmath>
 #include <cfloat>
-// shuwww #include <io.h>
+
+#if _WIN32 || _WIN64
+	#include <io.h>
+#endif
+
 #include <fcntl.h>
 #include <thread>
 #include <chrono>

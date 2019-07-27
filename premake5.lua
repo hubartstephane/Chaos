@@ -255,8 +255,8 @@ function DebugConf(plat)
   configuration {DEBUG, plat}
     defines { DEBUG }
     defines { "_DEBUG" }
-    symbols "On"
---    flags { "Symbols" } 
+--    symbols "On"
+    flags { "Symbols" } 
 end
 
 -- =============================================================================
@@ -268,8 +268,8 @@ function ReleaseConf(plat)
     defines { "NDEBUG" }
     defines { RELEASE }
     defines { "_RELEASE" }
-    optimize "On"
---    flags { "Optimize" }	   
+--    optimize "On"
+    flags { "Optimize" }	   
 end
 
 -- =============================================================================
@@ -407,12 +407,14 @@ function onConfig(in_kind, plat, conf, proj)
    
    proj.includedirs[plat][conf] = inc     
    
-   defines("CHAOS_PROJECT_PATH='".. PROJECT_PATH.."'")
-   defines("CHAOS_PROJECT_SRC_PATH='".. PROJECT_SRC_PATH.."'")     
-   defines("CHAOS_PROJECT_BUILD_PATH='".. targ .. "'")        
---   defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")          
-   --defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
-   --defines("CHAOS_PROJECT_BUILD_PATH=\"".. targ .. "\"")        
+   --defines("CHAOS_PROJECT_PATH='".. PROJECT_PATH.."'")
+   --defines("CHAOS_PROJECT_SRC_PATH='".. PROJECT_SRC_PATH.."'")     
+   --defines("CHAOS_PROJECT_BUILD_PATH='".. targ .. "'")
+   
+           
+   defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")          
+   defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
+   defines("CHAOS_PROJECT_BUILD_PATH=\"".. targ .. "\"")        
       
 end
 
@@ -572,7 +574,8 @@ end
 
 function DependOnStandardLib(libname)
 
-  if os.target() ~= "windows" then
+  --if os.target() ~= "windows" then
+  if os.get() ~= "windows" then
     return
   end    
 
@@ -735,15 +738,16 @@ end
 solution "TestNewPremake"
   platforms { x32, x64 }
   configurations { DEBUG , RELEASE }
-  
-  
+
   location (SOLUTION_PATH) -- where the visual studio project file is been created  
 
-  if os.target() == "windows" then
+  --if os.target() == "windows" then
+  if os.get() == "windows" then  
     defines { "WINDOWS" }
   end    
   
-  if os.target() == "linux" then
+  --if os.target() == "linux" then
+  if os.get() == "linux" then
     defines { "LINUX" }
   end
    

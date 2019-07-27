@@ -823,7 +823,7 @@ namespace chaos
 			// notify the source that its default category is being destroyed
 			auto it = std::find(source->default_categories.begin(), source->default_categories.end(), category);
 			if (it != source->default_categories.end())
-				source->default_categories.remove_at(it);
+				source->default_categories.erase(it);
 		}
 	}
 

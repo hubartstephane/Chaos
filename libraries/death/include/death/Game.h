@@ -110,10 +110,6 @@ namespace death
 
 		// The clocks: 
 		//   - root  clock : the top level clock. never reseted, never paused
-		//   - main  clock : reseted whenever a new game starts/ends. never paused
-		//   - game  clock : reseted whenever a new game starts/ends. paused in MainMenu and Pause
-		//   - level clock : reseted whenever a new level starts/ends. paused in MainMenu and Pause
-		//   - pause clock : reseted whenever we enter/leave pause. only running during pause
 
 		/** returns the root time */
 		double GetRootClockTime() const;

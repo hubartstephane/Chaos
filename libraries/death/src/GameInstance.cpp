@@ -275,6 +275,14 @@ namespace death
 		}
 		if (game_clock != nullptr)
 			game_clock->SetPause(enter_pause);
+
+		GameLevelInstance * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+		{
+			chaos::Clock * level_clock = level_instance->GetLevelClock();
+			if (level_clock != nullptr)
+				level_clock->SetPause(enter_pause);		
+		}
 	}
 
 	bool GameInstance::DoCheckGameOverCondition()

@@ -56,6 +56,13 @@ namespace death
 		/** get the best score among players */
 		int GetBestPlayerScore() const;
 
+		// The clocks: 
+		//   - root  clock : the top level clock. never reseted, never paused
+		//   - main  clock : reseted whenever a new game starts/ends. never paused
+		//   - game  clock : reseted whenever a new game starts/ends. paused in MainMenu and Pause
+		//   - level clock : reseted whenever a new level starts/ends. paused in MainMenu and Pause
+		//   - pause clock : reseted whenever we enter/leave pause. only running during pause
+
 		/** returns main clock */
 		chaos::Clock * GetMainClock() { return main_clock.get(); }
 		/** returns main clock */

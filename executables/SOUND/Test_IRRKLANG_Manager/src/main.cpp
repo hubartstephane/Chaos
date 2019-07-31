@@ -49,7 +49,7 @@ protected:
       chaos::PlaySoundDesc desc;
       desc.category = category1.get();
       desc.looping = true;
-      sound1 = source1->PlaySound(desc);
+      sound1 = source1->Play(desc);
 			return true;
     }
     else if (button == 1 && action == GLFW_PRESS)

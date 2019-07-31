@@ -277,7 +277,7 @@ namespace chaos
 		return new Sound;
 	}
 
-	Sound * SoundSource::PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+	Sound * SoundSource::Play(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
 	{
 		// ensure we have access to manager
 		if (!IsAttachedToManager())

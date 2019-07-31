@@ -150,7 +150,7 @@ namespace death
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 		{
-			sm_instance->SetContextData(game->PlaySound("gameover", false, false));
+			sm_instance->SetContextData(game->Play("gameover", false, false));
 			game->OnGameOver();
 		}
 		return false;

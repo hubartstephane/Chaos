@@ -254,7 +254,7 @@ namespace chaos
 	public:
 
 		/** generating and playing a sound */
-		Sound * PlaySound(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+		Sound * Play(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
 
 		/** pause the object */
 		virtual void Pause(bool in_pause = true) override;

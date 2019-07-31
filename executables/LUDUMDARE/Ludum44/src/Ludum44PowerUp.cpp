@@ -37,11 +37,11 @@ bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool dec
 
 
 	if (decreasing_power_up)
-		game->PlaySound("life_restored", false, false);	
+		game->Play("life_restored", false, false);	
 	else
 	{
 		if (!sound_name.empty())
-			game->PlaySound(sound_name.c_str(), false, false);	
+			game->Play(sound_name.c_str(), false, false);	
 	}
 
 	return true;

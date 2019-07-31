@@ -53,7 +53,7 @@ void LudumChallenge::AdvanceChallenge()
 	++challenge_position;
 	if (challenge_position == gamepad_challenge.size())
 	{			
-		game->PlaySound("challenge_success", false, false);
+		game->Play("challenge_success", false, false);
 
 		game_instance->OnChallengeCompleted(this, true,  gamepad_challenge.size()); // remove the challenge from pending list
 	}
@@ -64,9 +64,9 @@ void LudumChallenge::OnChallengeError(bool out_of_time)
 	LudumGame * game = game_instance->GetLudumGame();
 
 	if (out_of_time)
-		game->PlaySound("challenge_timeout", false, false);
+		game->Play("challenge_timeout", false, false);
 	else
-		game->PlaySound("challenge_error", false, false);
+		game->Play("challenge_error", false, false);
 
 	game_instance->OnChallengeCompleted(this, false, gamepad_challenge.size()); // remove the challenge from pending list
 }
@@ -112,7 +112,7 @@ void LudumChallenge::Tick(double delta_time)
 		{
 			int time_sound_index2 = GetTimeSoundIndex(timeout);
 			if (time_sound_index1 != time_sound_index2)
-				game->PlaySound("challenge_bip", false, false);
+				game->Play("challenge_bip", false, false);
 		}			
 	}
 }

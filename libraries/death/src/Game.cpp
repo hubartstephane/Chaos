@@ -740,7 +740,7 @@ namespace death
 		}
 	}
 
-	chaos::Sound * Game::PlaySound(char const * name, bool paused, bool looping)
+	chaos::Sound * Game::Play(char const * name, bool paused, bool looping)
 	{
 		chaos::SoundManager * sound_manager = GetSoundManager();
 		if (sound_manager == nullptr)
@@ -753,7 +753,7 @@ namespace death
 		chaos::PlaySoundDesc play_desc;
 		play_desc.paused = paused;
 		play_desc.looping = looping;
-		return source->PlaySound(play_desc);
+		return source->Play(play_desc);
 	}
 
 	void Game::BlendMusic(chaos::Sound * music, bool blend_in)
@@ -800,11 +800,11 @@ namespace death
 	bool Game::CreateAllMusics()
 	{
 		if (menu_music == nullptr)
-			menu_music = PlaySound("menu_music", true, true);
+			menu_music = Play("menu_music", true, true);
 		if (pause_music == nullptr)
-			pause_music = PlaySound("pause_music", true, true);
+			pause_music = Play("pause_music", true, true);
 		if (game_music == nullptr)
-			game_music = PlaySound("game_music", true, true);
+			game_music = Play("game_music", true, true);
 		return true;
 	}
 

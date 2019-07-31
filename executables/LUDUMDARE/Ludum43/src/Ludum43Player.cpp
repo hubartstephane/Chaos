@@ -113,7 +113,7 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 			if (current_cooldown > 0.0f)
 				return;
 			current_cooldown = ludum_game->cooldown;
-			ludum_game->PlaySound("collision", false, false);
+			ludum_game->Play("collision", false, false);
 		}
 		player_particle->reversed = reversed_mode;
 	}
@@ -144,7 +144,7 @@ void LudumPlayer::SetDashMode(bool dash)
 				return;
 			current_dash_cooldown = ludum_game->dash_cooldown;
 			current_dash_duration = ludum_game->dash_duration;
-			ludum_game->PlaySound("thrust", false, false);
+			ludum_game->Play("thrust", false, false);
 		}
 		player_particle->dash = dash;
 	}

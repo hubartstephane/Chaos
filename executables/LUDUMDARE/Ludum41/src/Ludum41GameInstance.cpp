@@ -636,7 +636,7 @@ void LudumGameInstance::OnBallCollide(bool collide_brick)
 	LudumGame const * ludum_game = GetLudumGame();
 
 
-	game->PlaySound("ball", false, false);
+	game->Play("ball", false, false);
 
 	ball_collision_speed = min(ludum_game->ball_collision_max_speed, ball_collision_speed + ludum_game->ball_collision_speed_increment);
 
@@ -712,7 +712,7 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 			{
 				LudumGame * ludum_game = GetLudumGame();
 
-				ludum_game->PlaySound("balllost", false, false);
+				ludum_game->Play("balllost", false, false);
 				combo_multiplier = 1;
 				ball_collision_speed = 0.0f;
 				ball_power = 1.0f;

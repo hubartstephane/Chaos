@@ -103,7 +103,7 @@ protected:
     desc.looping = true;
     desc.SetPosition(GetBoxPosition());
 
-    sound = sound_source->PlaySound(desc);
+    sound = sound_source->Play(desc);
 
     chaos::GPUProgramGenerator program_generator;
     program_generator.AddShaderSourceFile(GL_FRAGMENT_SHADER, resources_path / "pixel_shader_cube.txt");

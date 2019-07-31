@@ -282,7 +282,7 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 	}
 
 	if (sound_name != nullptr)	
-		ludum_game->PlaySound(sound_name, false, false);
+		ludum_game->Play(sound_name, false, false);
 
 	return result;
 }

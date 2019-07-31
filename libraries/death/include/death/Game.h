@@ -159,7 +159,7 @@ namespace death
 		virtual chaos::box2 GetWorldBox() const;
 
 		/** play some sound */
-		chaos::Sound * PlaySound(char const * name, bool paused, bool looping);
+		chaos::Sound * Play(char const * name, bool paused, bool looping);
 
 #if _DEBUG	
 		/** declare we want to skip level */

@@ -262,7 +262,7 @@ namespace death
 			heart_warning -= heart_beat_speed * (float)delta_time;
 			if (heart_warning <= 0.0f)
 			{
-				game->PlaySound("heartbeat", false, false);
+				game->Play("heartbeat", false, false);
 
 				float fractionnal_part, integer_part;
 				fractionnal_part = modf(heart_warning, &integer_part);

@@ -37,7 +37,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 {
 	if (!death::Game::OnEnterGame(in_physical_gamepad))
 		return false;
-	PlaySound("start", false, false);
+	Play("start", false, false);
 	return true;
 }
 
@@ -132,7 +132,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 	// play a sound
 	if (new_level != nullptr && old_level != nullptr)
-		PlaySound("next_level", false, false);
+		Play("next_level", false, false);
 }
 
 ParticlePlayer * LudumGame::GetPlayerParticle(int player_index)

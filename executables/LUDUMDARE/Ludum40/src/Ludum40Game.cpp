@@ -294,26 +294,26 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 			else
 			{
 				if (collision_source != nullptr)
-					collision_source->PlaySound(chaos::PlaySoundDesc());				
+					collision_source->Play(chaos::PlaySoundDesc());				
 			}
 		}
 		else
 		{
 			if (collision_source != nullptr)
-				collision_source->PlaySound(chaos::PlaySoundDesc());		
+				collision_source->Play(chaos::PlaySoundDesc());		
 		}
 			
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_LEVELUP)
 	{
 		if (bonus1_source != nullptr)
-			bonus1_source->PlaySound(chaos::PlaySoundDesc());
+			bonus1_source->Play(chaos::PlaySoundDesc());
 		++level;
 	}
 	else if (layer.collision_type == SpriteLayer::COLLISION_SPEEDUP)
 	{
 		if (bonus2_source != nullptr)
-			bonus2_source->PlaySound(chaos::PlaySoundDesc());
+			bonus2_source->Play(chaos::PlaySoundDesc());
 		player_absolute_speed += delta_speed;
 	}
 	return true;
@@ -363,7 +363,7 @@ bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 
 	music_source = sound_manager->FindSource("music");
 	if (music_source != nullptr)
-		music_source->PlaySound(desc);
+		music_source->Play(desc);
 
 	gameover_source = sound_manager->FindSource("gameover");
 	bonus1_source = sound_manager->FindSource("bonus1");
@@ -779,7 +779,7 @@ bool Game::OnKeyEvent(int key, int action)
 void Game::GameOver()
 {
 	if (pending_gameover && gameover_source != nullptr)
-		gameover_source->PlaySound(chaos::PlaySoundDesc());
+		gameover_source->Play(chaos::PlaySoundDesc());
 
 	bool old_pending_gameover = pending_gameover;
 	bool old_pending_restart_game = pending_restart_game;
@@ -851,13 +851,13 @@ void Game::SetPause(bool in_paused)
 	SetLayerVisibility(PAUSED_OBJECT_LAYER, game_paused);
 
 	if (pause_source != nullptr)
-		pause_source->PlaySound(chaos::PlaySoundDesc());
+		pause_source->Play(chaos::PlaySoundDesc());
 }
 
 void Game::OnGameStarted()
 {
 	if (start_source != nullptr)
-		start_source->PlaySound(chaos::PlaySoundDesc());
+		start_source->Play(chaos::PlaySoundDesc());
 
 	game_started = true;
 	game_paused  = false;

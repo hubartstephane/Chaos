@@ -34,7 +34,7 @@ namespace chaos
 			/** spacing between characters */
 			float character_spacing = 0.0f;
 			/** padding for bitmaps */
-			glm::vec2 bitmap_padding = glm::vec2(-5.0f, -5.0f);
+			glm::vec2 bitmap_padding = glm::vec2(0.0f, 0.0f);
 			/** the text limits */
 			float max_text_width = 0.0f;
 			/** word wrap enabled */

@@ -232,6 +232,16 @@ namespace death
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
+		/** blend out a music */
+		void BlendMusic(chaos::Sound * music, bool blend_in);
+		/** start music[0], stop all others */
+		void ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first);
+
+		/** change the game music */
+		void StartMainMenuMusic(bool restart_first);
+		void StartGameMusic(bool restart_first);
+		void StartPauseMusic(bool restart_first);
+
 		/** test whether the current score is higher than best score and save it */
 		void ConditionnalSaveBestScore();
 		/** save the best score */
@@ -241,8 +251,8 @@ namespace death
 		/** data internal method serialization */
 		virtual bool SaveBestScore(std::ofstream & file);
 
-		/** initialization of the manager */
-		virtual bool InitializeSoundManager();
+		/** create all the music of the game */
+		virtual bool CreateAllMusics();
 		/** declare all particle types (for safety) */
 		virtual bool DeclareParticleClasses();
 		/** create the game state_machine */
@@ -393,6 +403,11 @@ namespace death
 
 		/** the text generator */
 		chaos::shared_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+
+		/** the sounds being played */
+		chaos::shared_ptr<chaos::Sound> menu_music;
+		chaos::shared_ptr<chaos::Sound> game_music;
+		chaos::shared_ptr<chaos::Sound> pause_music;
 
 		/** the HUDs */
 		chaos::shared_ptr<GameHUD> hud;

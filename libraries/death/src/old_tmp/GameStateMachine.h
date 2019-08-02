@@ -65,8 +65,6 @@ namespace death
 		MainMenuState(GameStateMachine * in_state_machine);
 		/** override */
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from_state, chaos::ReferencedObject * extra_data) override;
-		/** override */
-		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PlayingState : public GameState
@@ -85,10 +83,6 @@ namespace death
 
 		/** constructor */
 		PauseState(GameStateMachine * in_state_machine);
-		/** override */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from_state, chaos::ReferencedObject * extra_data) override;
-		/** override */
-		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data) override;
 	};
 
 	// =========================================================

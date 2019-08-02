@@ -742,10 +742,11 @@ namespace death
 
 	chaos::Sound * Game::Play(char const * name, bool paused, bool looping)
 	{
+		// search manager
 		chaos::SoundManager * sound_manager = GetSoundManager();
 		if (sound_manager == nullptr)
 			return nullptr;
-
+		// search source
 		chaos::SoundSource * source = sound_manager->FindSource(name);
 		if (source == nullptr)
 			return nullptr;
@@ -753,58 +754,27 @@ namespace death
 		chaos::PlaySoundDesc play_desc;
 		play_desc.paused = paused;
 		play_desc.looping = looping;
+
+		// sounds played during game have additionnal category "in_game"
+		if (IsPlaying())
+		{
+			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
+			if (category != nullptr && !category->IsPendingKill())
+				play_desc.categories.push_back(category);
+		}
+
 		return source->Play(play_desc);
 	}
 
-	void Game::BlendMusic(chaos::Sound * music, bool blend_in)
+	bool Game::InitializeSoundManager()
 	{
-		if (music == nullptr)
-			return;
+		// search manager
+		chaos::SoundManager * sound_manager = GetSoundManager();
+		if (sound_manager == nullptr)
+			return false;
+		// create the internal "in_game" category for our own purpose
+		sound_manager->AddCategory("in_game");
 
-		chaos::BlendVolumeDesc blend_desc;
-		blend_desc.blend_type = (blend_in) ?
-			chaos::BlendVolumeDesc::BLEND_IN :
-			chaos::BlendVolumeDesc::BLEND_OUT;
-		blend_desc.blend_time = 0.4f,
-			blend_desc.kill_at_end = false;
-		blend_desc.pause_at_end = !blend_in;
-
-		music->StartBlend(blend_desc, true, true);
-	}
-
-	void Game::ChangeMusic(chaos::Sound ** musics, size_t count, bool restart_first)
-	{
-		if (musics == nullptr || count == 0)
-			return;
-
-		// restore the main music
-		chaos::Sound * music1 = musics[0];
-		if (music1 != nullptr)
-		{
-			music1->Pause(false);
-			if (restart_first)
-				music1->SetSoundTrackPosition(0);
-			BlendMusic(music1, true);
-		}
-
-		// pause all other musics
-		for (size_t i = 1; i < count; ++i)
-		{
-			chaos::Sound * music = musics[i];
-			if (music == nullptr)
-				continue;
-			BlendMusic(music, false);
-		}
-	}
-
-	bool Game::CreateAllMusics()
-	{
-		if (menu_music == nullptr)
-			menu_music = Play("menu_music", true, true);
-		if (pause_music == nullptr)
-			pause_music = Play("pause_music", true, true);
-		if (game_music == nullptr)
-			game_music = Play("game_music", true, true);
 		return true;
 	}
 
@@ -845,20 +815,16 @@ namespace death
 		// initialize the window
 		assert(in_glfw_window != nullptr);
 		glfw_window = in_glfw_window;
-
 		// initialize the gamepad manager
 		gamepad_manager = new GamepadManager(this);
 		if (gamepad_manager == nullptr)
 			return false;
-
 		// create game state_machine
 		if (!CreateGameStateMachine())
 			return false;
-
-		// create the musics
-		if (!CreateAllMusics())
+		// create the sound manager
+		if (!InitializeSoundManager())
 			return false;
-
 		// initialize particle classes
 		if (!DeclareParticleClasses())
 			return false;
@@ -995,9 +961,6 @@ namespace death
 	{
 		// restore the background image
 		CreateBackgroundImage(nullptr, nullptr);
-		// start music
-		if (very_first)
-			StartMainMenuMusic(true);
 		// create the main menu HUD
 		CreateMainMenuHUD();
 	}
@@ -1016,7 +979,6 @@ namespace death
 	bool Game::OnEnterPause()
 	{
 		// internal code
-		StartPauseMusic(true);
 		CreatePauseMenuHUD();
 		// give opportunity to other game classes to respond
 		if (current_level_instance != nullptr)
@@ -1030,7 +992,6 @@ namespace death
 	bool Game::OnLeavePause()
 	{
 		// internal code
-		StartGameMusic(false);
 		CreatePlayingHUD();
 		// give opportunity to other game classes to respond
 		if (current_level_instance != nullptr)
@@ -1051,7 +1012,6 @@ namespace death
 			return false;
 		// create other resources
 		CreatePlayingHUD();
-		StartGameMusic(true);
 		// create a first player and insert it
 		game_instance->CreatePlayer(in_physical_gamepad);
 		// notify all players start the game instance
@@ -1070,7 +1030,6 @@ namespace death
 		ConditionnalSaveBestScore();
 		// restore main menu condition (level, music ...)
 		SetCurrentLevel(nullptr);	
-		StartMainMenuMusic(true);
 		// notify all players start the game instance
 		for (size_t i = 0; i < game_instance->players.size(); ++i)
 			if (game_instance->players[i] != nullptr)
@@ -1157,36 +1116,6 @@ namespace death
 		if (current_level_instance != nullptr)
 			current_level_instance->Tick(delta_time);
 		return true;
-	}
-	
-	void Game::StartMainMenuMusic(bool restart_first)
-	{
-		chaos::Sound * musics[] = {
-			menu_music.get(),
-			pause_music.get(),
-			game_music.get()
-		};
-		ChangeMusic(musics, 3, restart_first);
-	}
-
-	void Game::StartGameMusic(bool restart_first)
-	{
-		chaos::Sound * musics[] = {
-			game_music.get(),
-			pause_music.get(),
-			menu_music.get()
-		};
-		ChangeMusic(musics, 3, restart_first);
-	}
-
-	void Game::StartPauseMusic(bool restart_first)
-	{
-		chaos::Sound * musics[] = {
-			pause_music.get(),
-			menu_music.get(),
-			game_music.get()
-		};
-		ChangeMusic(musics, 3, restart_first);
 	}
 
 	int Game::GetCurrentStateTag() const

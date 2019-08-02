@@ -533,15 +533,16 @@ namespace chaos
 		void UpdateAllSourcesPerCategory(SoundCategory * category);
 
 		/** internal tick list of objects */
-		template<typename T>
-		void DoTickObjects(float delta_time, T & vector, void (SoundManager::*remove_func)(size_t))
+		template<typename T, typename REMOVE_FUNC>
+		void DoTickObjects(float delta_time, T & vector, REMOVE_FUNC remove_func)
 		{
-			for (size_t i = vector.size(); i > 0; --i) // in reverse order
-			{
-				size_t index = i - 1;
+			T objects = vector; // XXX: work on a copy because due to callbacks, the input vector is volatile
 
-				auto object = vector[index]; // copy the intrusive_ptr to prevent the destruction 
-				if (object == nullptr)
+			size_t count = objects.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				auto object = objects[i]; // copy the intrusive_ptr to prevent the destruction 
+				if (object == nullptr || !objects->IsAttachedToManager())
 					continue;
 
 				// test whether object was already finished before ticking
@@ -553,13 +554,13 @@ namespace chaos
 				if (!finished && !paused)
 				{
 					object->TickObject(delta_time);
-					should_remove = object->UpdateFinishedState();
+					should_remove = object->IsAttachedToManager() && object->UpdateFinishedState();
 				}
 				// remove the object if needed
 				if (should_remove)
 				{
 					object->OnObjectFinished();
-					(this->*remove_func)(index);
+					remove_func(object.get());
 				}
 			}
 		}

@@ -3,6 +3,9 @@
 namespace death
 {
 
+
+	static float BLEND_TIME = 3.0f;
+
 	// =========================================================
 	// GameTransition
 	// =========================================================
@@ -68,8 +71,59 @@ namespace death
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
+		{
 			game->OnEnterMainMenu(from == nullptr); // very first game ?
+
+			auto * s = game->Play("menu_music", false, true);
+
+
+			s->SetCallbacks(
+			
+			  new chaos::SoundAutoCallbacks(
+				  [](chaos::SoundObject *ss){
+			
+				int i = 0;
+				++i;
+
+			
+					},
+				  [](chaos::SoundObject * ss){
+
+						int i = 0;
+						++i;
+			
+			
+					}
+			  
+			  
+			  )
+			
+			);
+
+			sm_instance->SetContextData(s);
+		}
 		return false;
+	}
+
+	bool MainMenuState::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data)
+	{
+		// request a Blend and Kill
+
+		auto * cc = sm_instance->GetContextData();
+
+		chaos::Sound * menu_music = auto_cast(sm_instance->GetContextData());
+		if (menu_music != nullptr && !menu_music->IsPendingKill())
+		{
+			chaos::BlendVolumeDesc desc;
+			desc.blend_time = BLEND_TIME;
+			desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+			desc.kill_at_end = true;
+			menu_music->StartBlend(desc, true, false);
+		}
+		// destroy the sound object
+		sm_instance->SetContextData(nullptr);
+
+		return true;
 	}
 
 	PlayingState::PlayingState(GameStateMachine * in_state_machine) :
@@ -93,6 +147,34 @@ namespace death
 		SetTag(GameStateMachineKeys::STATE_PAUSE);
 		SetName("Pause");
 	}
+
+	bool PauseState::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data)
+	{
+		Game * game = GetGame(sm_instance);
+		if (game != nullptr)
+			sm_instance->SetContextData(game->Play("pause_music", false, true));
+
+		return false;
+	}
+
+	bool PauseState::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data)
+	{
+		// request a Blend and Kill
+		chaos::Sound * pause_music = auto_cast(sm_instance->GetContextData());
+		if (pause_music != nullptr && !pause_music->IsPendingKill())
+		{
+			chaos::BlendVolumeDesc desc;
+			desc.blend_time = BLEND_TIME;
+			desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+			desc.kill_at_end = true;
+			pause_music->StartBlend(desc, true, false);
+		}
+		// destroy the sound object
+		sm_instance->SetContextData(nullptr);
+
+		return true;
+	}
+
 
 	// =========================================================
 	// All transitions

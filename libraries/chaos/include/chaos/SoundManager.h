@@ -516,11 +516,11 @@ namespace chaos
 		void RemoveSource(SoundSource * source);
 
 		/** remove a category from the list */
-		void RemoveCategory(size_t index);
+		void RemoveCategoryByIndex(size_t index);
 		/** remove a sound from the list */
-		void RemoveSound(size_t index);
+		void RemoveSoundByIndex(size_t index);
 		/** remove a sound source from the list */
-		void RemoveSource(size_t index);
+		void RemoveSourceByIndex(size_t index);
 
 		/** called whenever an object is being removed */
 		static void OnObjectRemovedFromManager(SoundObject * object);
@@ -542,7 +542,7 @@ namespace chaos
 			for (size_t i = 0; i < count; ++i)
 			{
 				auto object = objects[i]; // copy the intrusive_ptr to prevent the destruction 
-				if (object == nullptr || !objects->IsAttachedToManager())
+				if (object == nullptr || !object->IsAttachedToManager())
 					continue;
 
 				// test whether object was already finished before ticking
@@ -560,7 +560,7 @@ namespace chaos
 				if (should_remove)
 				{
 					object->OnObjectFinished();
-					remove_func(object.get());
+					(this->*remove_func)(object.get());
 				}
 			}
 		}

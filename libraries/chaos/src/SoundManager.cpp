@@ -727,30 +727,30 @@ namespace chaos
 
 	void SoundManager::RemoveCategory(SoundCategory * category)
 	{
-		RemoveCategory(FindObjectIndexInVector(category, categories));
+		RemoveCategoryByIndex(FindObjectIndexInVector(category, categories));
 	}
 
-	void SoundManager::RemoveCategory(size_t index)
+	void SoundManager::RemoveCategoryByIndex(size_t index)
 	{
 		DoRemoveObject(index, categories, &SoundManager::OnObjectRemovedFromManager);
 	}
 
 	void SoundManager::RemoveSound(Sound * sound)
 	{
-		RemoveSound(FindObjectIndexInVector(sound, sounds));
+		RemoveSoundByIndex(FindObjectIndexInVector(sound, sounds));
 	}
 
-	void SoundManager::RemoveSound(size_t index)
+	void SoundManager::RemoveSoundByIndex(size_t index)
 	{
 		DoRemoveObject(index, sounds, &SoundManager::OnObjectRemovedFromManager);
 	}
 
 	void SoundManager::RemoveSource(SoundSource * source)
 	{
-		RemoveSource(FindObjectIndexInVector(source, sources));
+		RemoveSourceByIndex(FindObjectIndexInVector(source, sources));
 	}
 
-	void SoundManager::RemoveSource(size_t index)
+	void SoundManager::RemoveSourceByIndex(size_t index)
 	{
 		DoRemoveObject(index, sources, &SoundManager::OnObjectRemovedFromManager);
 	}
@@ -840,7 +840,7 @@ namespace chaos
 				continue;
 			if (!sound->IsOfCategory(category))
 				continue;
-			RemoveSound(index);
+			RemoveSoundByIndex(index);
 		}
 	}
 
@@ -857,7 +857,7 @@ namespace chaos
 				continue;
 			if (sound->source != source)
 				continue;
-			RemoveSound(index);
+			RemoveSoundByIndex(index);
 		}
 	}
 

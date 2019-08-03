@@ -68,22 +68,15 @@ namespace death
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
-		{
 			game->OnEnterMainMenu(from == nullptr); // very first game ?
-			sm_instance->SetContextData(game->Play("menu_music", false, true));
-		}
 		return false;
 	}
 
 	bool MainMenuState::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data)
 	{
-		// request a Blend and Kill
-		chaos::Sound * menu_music = auto_cast(sm_instance->GetContextData());
-		if (menu_music != nullptr)
-			menu_music->FadeOut(0.5f, true);
-		// destroy the sound object
-		sm_instance->SetContextData(nullptr);
-
+		Game * game = GetGame(sm_instance);
+		if (game != nullptr)
+			game->OnLeaveMainMenu();
 		return true;
 	}
 
@@ -113,26 +106,15 @@ namespace death
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
-			sm_instance->SetContextData(game->Play("pause_music", false, true));
-
-		game->OnEnterPause();
-
+			game->OnEnterPause();
 		return false;
 	}
 
 	bool PauseState::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data)
 	{
-		// request a Blend and Kill
-		chaos::Sound * pause_music = auto_cast(sm_instance->GetContextData());
-		if (pause_music != nullptr)
-			pause_music->FadeOut(0.5f, true);
-		// destroy the sound object
-		sm_instance->SetContextData(nullptr);
-
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 			game->OnLeavePause();
-
 		return true;
 	}
 

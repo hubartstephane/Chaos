@@ -319,6 +319,9 @@ namespace death
 
 		/** called on the very first time the game is started */
 		virtual void OnEnterMainMenu(bool very_first);
+		/** called whenever we leave the main menu */
+		virtual void OnLeaveMainMenu();
+
 		/** called whenever the game is lost */
 		virtual void OnGameOver();
 		/** called whenever we enter in pause mode */
@@ -393,6 +396,11 @@ namespace death
 
 		/** the text generator */
 		chaos::shared_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+
+		/** the sounds being played */
+		chaos::shared_ptr<chaos::Sound> menu_music;
+		chaos::shared_ptr<chaos::Sound> game_music;
+		chaos::shared_ptr<chaos::Sound> pause_music;
 
 		/** the HUDs */
 		chaos::shared_ptr<GameHUD> hud;

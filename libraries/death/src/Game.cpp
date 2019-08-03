@@ -959,10 +959,22 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
+		// start the music
+		menu_music = Play("menu_music", false, true);
 		// restore the background image
 		CreateBackgroundImage(nullptr, nullptr);
 		// create the main menu HUD
 		CreateMainMenuHUD();
+	}
+
+	void Game::OnLeaveMainMenu()
+	{
+		// stop the music
+		if (menu_music != nullptr)
+		{
+			menu_music->FadeOut(0.5f, true);
+			menu_music = nullptr;
+		}
 	}
 
 	void Game::OnGameOver()
@@ -978,6 +990,8 @@ namespace death
 
 	bool Game::OnEnterPause()
 	{
+		// start sound
+		pause_music = Play("pause_music", false, true);
 		// internal code
 		CreatePauseMenuHUD();
 		// give opportunity to other game classes to respond
@@ -991,6 +1005,12 @@ namespace death
 
 	bool Game::OnLeavePause()
 	{
+		// destroy the pause music
+		if (pause_music != nullptr)
+		{
+			pause_music->FadeOut(0.5f, true);
+			pause_music = nullptr;
+		}
 		// internal code
 		CreatePlayingHUD();
 		// give opportunity to other game classes to respond

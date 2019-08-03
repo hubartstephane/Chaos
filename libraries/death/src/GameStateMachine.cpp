@@ -115,6 +115,8 @@ namespace death
 		if (game != nullptr)
 			sm_instance->SetContextData(game->Play("pause_music", false, true));
 
+		game->OnEnterPause();
+
 		return false;
 	}
 
@@ -126,6 +128,10 @@ namespace death
 			pause_music->FadeOut(0.5f, true);
 		// destroy the sound object
 		sm_instance->SetContextData(nullptr);
+
+		Game * game = GetGame(sm_instance);
+		if (game != nullptr)
+			game->OnLeavePause();
 
 		return true;
 	}
@@ -155,28 +161,6 @@ namespace death
 		if (game == nullptr)
 			return true;
 		game->OnLeaveGame();
-		return false;
-	}
-
-	// ======
-
-	bool PlayingToPauseTransition::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data)
-	{
-		Game * game = GetGame(sm_instance);
-		if (game == nullptr)
-			return true;
-		game->OnEnterPause();
-		return false;
-	}
-
-	// ======
-
-	bool PauseToPlayingTransition::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data)
-	{
-		Game * game = GetGame(sm_instance);
-		if (game == nullptr)
-			return true;
-		game->OnLeavePause();
 		return false;
 	}
 
@@ -232,8 +216,8 @@ namespace death
 
 		main_menu_to_playing = new MainMenuToPlayingTransition(main_menu_state.get(), playing_state.get(), GameStateMachineKeys::EVENT_START_GAME);
 		playing_to_main_menu = new PlayingToMainMenuTransition(playing_state.get(), main_menu_state.get(), GameStateMachineKeys::EVENT_EXIT_GAME);
-		playing_to_pause = new PlayingToPauseTransition(playing_state.get(), pause_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
-		pause_to_playing = new PauseToPlayingTransition(pause_state.get(), playing_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
+		playing_to_pause = new GameTransition(playing_state.get(), pause_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
+		pause_to_playing = new GameTransition(pause_state.get(), playing_state.get(), GameStateMachineKeys::EVENT_TOGGLE_PAUSE);
 		playing_to_gameover = new PlayingToGameOverTransition(playing_state.get(), main_menu_state.get(), GameStateMachineKeys::EVENT_GAME_OVER);
 
 		SetInitialState(main_menu_state.get());

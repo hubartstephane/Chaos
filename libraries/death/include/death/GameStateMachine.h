@@ -119,34 +119,7 @@ namespace death
 		/** overriding */
 		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
 	};
-
-	class PlayingToPauseTransition : public GameTransition
-	{
-
-	public:
-
-		using GameTransition::GameTransition; // inherit constructor
-
-	protected:
-
-		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
-	};
-
-
-	class PauseToPlayingTransition : public GameTransition
-	{
-
-	public:
-
-		using GameTransition::GameTransition; // inherit constructor
-
-	protected:
-
-		/** overriding */
-		virtual bool OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data) override;
-	};
-
+	
 	class PlayingToGameOverTransition : public GameTransition
 	{
 

@@ -305,7 +305,7 @@ namespace death
 					desc.blend_type = chaos::BlendVolumeDesc::BLEND_IN;
 					category->Pause(false);
 				}
-				category->StartBlend(desc, true, false);
+				category->StartBlend(desc, true);
 			}
 		}
 	}

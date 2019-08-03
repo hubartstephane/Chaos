@@ -168,7 +168,10 @@ namespace chaos
 		SoundManager const * GetManager() const;
 
 		/** blend the volume */
-		bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false, bool change_blend_value = false);
+		bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false);
+
+		/** start a fade out and pause or kill */
+		bool FadeOut(float blend_time, bool kill = false);
 
 		/** change the blend value */
 		void SetBlendValue(float value) { blend_value = value; }
@@ -553,13 +556,14 @@ namespace chaos
 				if (!finished && !paused)
 				{
 					object->TickObject(delta_time);
-					finished = object->IsAttachedToManager() && object->UpdateFinishedState();
+					finished = object->IsAttachedToManager() && object->UpdateFinishedState(); // XXX : if not attached to manager, do not call OnObjectFinished(...) and there is no need to remove it from manager
 				}
 				// remove the object if needed
 				if (finished)
 				{
-					object->OnObjectFinished();
-					(this->*remove_func)(object.get());
+						object->OnObjectFinished();
+						if (object->IsAttachedToManager())
+							(this->*remove_func)(object.get());
 				}
 			}
 		}

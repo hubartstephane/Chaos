@@ -209,7 +209,25 @@ namespace chaos
 			RemoveFromManager();
 	}
 
-	bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older, bool change_blend_value)
+	bool SoundObject::FadeOut(float blend_time, bool kill)
+	{
+		if (IsPendingKill())
+			return false;
+
+		chaos::BlendVolumeDesc desc;
+		desc.blend_time = blend_time;
+		desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+
+		if (kill)
+			desc.kill_at_end = true;
+		else
+			desc.pause_at_end = true;
+
+		bool replace_previous = kill;
+		return StartBlend(desc, replace_previous); // replace previous only if killing
+	}
+
+	bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older)
 	{
 		// only if attached
 		if (!IsAttachedToManager())
@@ -235,13 +253,6 @@ namespace chaos
 		else
 		{
 			blend_desc = desc;
-			if (change_blend_value)
-			{
-				if (desc.blend_type == BlendVolumeDesc::BLEND_IN)
-					blend_value = 0.0f;
-				else if (desc.blend_type != BlendVolumeDesc::BLEND_OUT)
-					blend_value = 1.0f;
-			}
 		}
 
 		return true;

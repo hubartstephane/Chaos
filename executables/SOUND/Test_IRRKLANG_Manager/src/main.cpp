@@ -47,7 +47,7 @@ protected:
     if (button == 0 && action == GLFW_PRESS)
     {
       chaos::PlaySoundDesc desc;
-      desc.category = category1.get();
+      desc.categories.push_back(category1.get());
       desc.looping = true;
       sound1 = source1->Play(desc);
 			return true;

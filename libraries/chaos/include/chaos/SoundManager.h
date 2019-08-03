@@ -548,16 +548,15 @@ namespace chaos
 				// test whether object was already finished before ticking
 				bool finished = object->IsFinished();
 				bool paused = object->IsEffectivePaused();
-				bool should_remove = finished;
 
 				// call tick if required 
 				if (!finished && !paused)
 				{
 					object->TickObject(delta_time);
-					should_remove = object->IsAttachedToManager() && object->UpdateFinishedState();
+					finished = object->IsAttachedToManager() && object->UpdateFinishedState();
 				}
 				// remove the object if needed
-				if (should_remove)
+				if (finished)
 				{
 					object->OnObjectFinished();
 					(this->*remove_func)(object.get());

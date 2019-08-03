@@ -240,7 +240,9 @@ namespace chaos
 			return false;
 		if (desc.blend_type != BlendVolumeDesc::BLEND_IN && desc.blend_type != BlendVolumeDesc::BLEND_OUT)
 			return false;
-		// immediate blending (special case)
+		// copy the blend
+		blend_desc = desc;
+		// immediate blending (special case)		
 		if (desc.blend_time == 0.0f)
 		{
 			if (desc.blend_type == BlendVolumeDesc::BLEND_IN)
@@ -250,11 +252,6 @@ namespace chaos
 			if (desc.callbacks != nullptr)
 				desc.callbacks->OnFinished(this);
 		}
-		else
-		{
-			blend_desc = desc;
-		}
-
 		return true;
 	}
 

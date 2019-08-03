@@ -755,8 +755,13 @@ namespace death
 		play_desc.paused = paused;
 		play_desc.looping = looping;
 
-		// sounds played during game have additionnal category "in_game"
-		if (IsPlaying())
+		// Flag some sounds as "in_game"
+		//
+		// XXX : IsPlaying() is not the indicator we want because it only tests for one state (there are some Transitions that does not match)
+		//       Nevertheless the combinaison:
+		//             game_instance != nullptr && !IsPaused()
+		//       is exactly what we want
+		if (game_instance != nullptr && !IsPaused())
 		{
 			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
 			if (category != nullptr && !category->IsPendingKill())
@@ -961,6 +966,17 @@ namespace death
 	{
 		// start the music
 		menu_music = Play("menu_music", false, true);
+		// stop other musics
+		if (game_music != nullptr)
+		{
+			game_music->FadeOut(0.5f, true);
+			game_music = nullptr;
+		}
+		if (pause_music != nullptr)
+		{
+			pause_music->FadeOut(0.5f, true);
+			pause_music = nullptr;
+		}
 		// restore the background image
 		CreateBackgroundImage(nullptr, nullptr);
 		// create the main menu HUD
@@ -1030,6 +1046,8 @@ namespace death
 			return false;
 		if (!game_instance->Initialize(this))
 			return false;
+		// start the music
+		game_music = Play("game_music", false, true);
 		// create other resources
 		CreatePlayingHUD();
 		// create a first player and insert it

@@ -172,12 +172,6 @@ namespace chaos
 
 		/** start a fade out and pause or kill */
 		bool FadeOut(float blend_time, bool kill = false);
-
-		/** change the blend value */
-		void SetBlendValue(float value) { blend_value = value; }
-		/** get the blend value */
-		float GetBlendValue() const { return blend_value; }
-
 		/** stop the object */
 		void Stop();
 
@@ -189,18 +183,18 @@ namespace chaos
 		bool IsFinished() const { return is_finished; }
 
 		/** pause the object */
-		virtual void Pause(bool in_pause = true);
+		void Pause(bool in_pause = true);
+		/** get the own object pause state */
+		bool IsPaused() const;
 		/** get the final pause status for the object */
 		virtual bool IsEffectivePaused() const;
-		/** get whether the object is paused */
-		bool IsPaused() const;
 
 		/** change the object volume */
-		virtual void SetVolume(float in_volume);
-		/** get the final volume for the sound (category and blendings taken into account) */
-		virtual float GetEffectiveVolume() const;
+		void SetVolume(float in_volume);
 		/** get the own object volume */
 		float GetVolume() const;
+		/** get the final volume for the sound (category and blendings taken into account) */
+		virtual float GetEffectiveVolume() const;
 
 		/** returns true whether there is a blendout and waiting stop */
 		bool IsPendingKill() const;
@@ -224,6 +218,11 @@ namespace chaos
 		bool UpdateFinishedState();
 		/** called at blend terminaison */
 		void OnBlendFinished();
+
+		/** internal method called when effective volume has been changed */
+		virtual void DoUpdateEffectiveVolume(float effective_volume);
+		/** internal method called when effective paused state has been changed */
+		virtual void DoUpdateEffectivePause(bool effective_pause);
 
 		/** loading from a JSON object */
 		virtual bool InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path);
@@ -258,16 +257,15 @@ namespace chaos
 
 		/** generating and playing a sound */
 		Sound * Play(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
-
-		/** pause the object */
-		virtual void Pause(bool in_pause = true) override;
-		/** change the object volume */
-		virtual void SetVolume(float in_volume) override;
-
 		/** set the categories */
 		bool SetDefaultCategories(std::vector<SoundCategory *> const & categories);
 
 	protected:
+
+		/** override */
+		virtual void DoUpdateEffectiveVolume(float effective_volume);
+		/** override */
+		virtual void DoUpdateEffectivePause(bool effective_pause);
 
 		/** unbind from manager */
 		virtual void OnRemovedFromManager() override;
@@ -295,14 +293,12 @@ namespace chaos
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
-	public:
-
-		/** pause the object */
-		virtual void Pause(bool in_pause = true) override;
-		/** change the object volume */
-		virtual void SetVolume(float in_volume) override;
-
 	protected:
+
+		/** override */
+		virtual void DoUpdateEffectiveVolume(float effective_volume);
+		/** override */
+		virtual void DoUpdateEffectivePause(bool effective_pause);
 
 		/** unbind from manager */
 		virtual void OnRemovedFromManager() override;
@@ -328,11 +324,6 @@ namespace chaos
 		/** set the velocity of the sound */
 		void SetVelocity(glm::vec3 const & in_velocity);
 
-		/** pause the object */
-		virtual void Pause(bool in_pause = true) override;
-		/** change the object volume */
-		virtual void SetVolume(float in_volume) override;
-
 		/** returns whether the sound is effectively paused */
 		virtual bool IsEffectivePaused() const override;
 		/** returns the effective volume of the sound */
@@ -357,22 +348,25 @@ namespace chaos
 
 	protected:
 
+		/** override */
+		virtual void DoUpdateEffectiveVolume(float effective_volume);
+		/** override */
+		virtual void DoUpdateEffectivePause(bool effective_pause);
+
+		/** update irrklang state */
+		void DoUpdateIrrklangPause(bool effective_pause);
+		/** update irrklang state */
+		void DoUpdateIrrklangVolume(float effective_volume);
+
 		/** the sound method (returns true whether it is immediatly finished) */
 		virtual bool DoPlaySound(PlaySoundDesc const & desc);
 		/** unbind from manager */
 		virtual void OnRemovedFromManager() override;
 		/** remove element from manager list and detach it */
 		virtual void RemoveFromManager() override;
-		/** internal tick the sounds */
-		virtual void TickObject(float delta_time) override;
 
 		/** get whether the sound is finished */
 		virtual bool ComputeFinishedState() override;
-
-		/** internal method to force the sound to update its volume */
-		void DoUpdateVolume();
-		/** internal method to force the sound to update its pause state */
-		void DoUpdatePause();
 
 	protected:
 

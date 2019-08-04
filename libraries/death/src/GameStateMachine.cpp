@@ -128,9 +128,9 @@ namespace death
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;
-
-		PhysicalGamepadWrapper * wrapper = auto_cast(extra_data); 		// try get the physical gamepad
-
+		// try get the physical gamepad
+		PhysicalGamepadWrapper * wrapper = auto_cast(extra_data); 		
+		// enter the game
 		game->OnEnterGame((wrapper == nullptr)? nullptr : wrapper->data);
 		return false;
 	}

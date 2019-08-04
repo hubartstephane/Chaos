@@ -740,6 +740,19 @@ namespace death
 		}
 	}
 
+	chaos::Sound * Game::SetInGameMusic(char const * music_name)
+	{
+		// destroy previous music
+		if (game_music != nullptr)
+		{
+			game_music->FadeOut(0.5f, true);
+			game_music = nullptr;
+		}
+		// start new music
+		game_music = Play(music_name, false, true);
+		return game_music.get();
+	}
+
 	chaos::Sound * Game::Play(char const * name, bool paused, bool looping)
 	{
 		// search manager
@@ -761,7 +774,8 @@ namespace death
 		//       Nevertheless the combinaison:
 		//             game_instance != nullptr && !IsPaused()
 		//       is exactly what we want
-		if (game_instance != nullptr && !IsPaused())
+		//if (game_instance != nullptr && !IsPaused())
+		if (IsPlaying(true, true))
 		{
 			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
 			if (category != nullptr && !category->IsPendingKill())
@@ -964,7 +978,7 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
-		// fade out all sounds
+		// purge + fade out all sounds
 		chaos::SoundManager * sound_manager = GetSoundManager();
 		if (sound_manager != nullptr)
 		{
@@ -1080,7 +1094,7 @@ namespace death
 		if (!game_instance->Initialize(this))
 			return false;
 		// start the music
-		game_music = Play("game_music", false, true);
+		SetInGameMusic("game_music");
 		// create other resources
 		CreatePlayingHUD();
 		// create a first player and insert it
@@ -1189,26 +1203,28 @@ namespace death
 		return true;
 	}
 
-	int Game::GetCurrentStateTag() const
+	int Game::GetCurrentStateTag(bool strict_state, bool use_destination) const
 	{
 		if (game_state_machine_instance == nullptr)
 			return -1;
-		chaos::SM::StateBase const * current_state = game_state_machine_instance->GetCurrentState();
+		chaos::SM::StateBase const * current_state = (strict_state)?
+			game_state_machine_instance->GetCurrentStrictState(use_destination) :
+			game_state_machine_instance->GetCurrentState();
 		if (current_state == nullptr)
 			return -1;
 		return current_state->GetTag();
 	}
 
-	bool Game::IsPlaying() const
+	bool Game::IsPlaying(bool strict_state, bool use_destination) const
 	{
-		if (GetCurrentStateTag() == GameStateMachineKeys::STATE_PLAYING)
+		if (GetCurrentStateTag(strict_state, use_destination) == GameStateMachineKeys::STATE_PLAYING)
 			return true;
 		return false;
 	}
 
-	bool Game::IsPaused() const
+	bool Game::IsPaused(bool strict_state, bool use_destination) const
 	{
-		if (GetCurrentStateTag() == GameStateMachineKeys::STATE_PAUSE)
+		if (GetCurrentStateTag(strict_state, use_destination) == GameStateMachineKeys::STATE_PAUSE)
 			return true;
 		return false;
 	}

@@ -261,7 +261,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 	if (!ludum_game_instance->current_power_up->CanPowerUp(GetLudumGame(), this, decreasing_power_up))
 		return;
 
-	int const buy_key_buttons[] = {GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1};
+	int const buy_key_buttons[] = { GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1 };
 
 	bool buy_pressed = CheckButtonPressed(buy_key_buttons, chaos::MyGLFW::XBOX_BUTTON_Y);
 	if (buy_pressed && !buylocked)
@@ -280,12 +280,12 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 					{
 						// shuxxx particle.gid = 0;
 						return true;
-					});			
+					});
 				}
 			}
 
 			// reset the corresponding trigger surface
-			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this, decreasing_power_up);	
+			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this, decreasing_power_up);
 			buylocked = true;
 			// shuxxx ludum_game_instance->current_power_up_surface->SetEnabled(false);
 
@@ -297,10 +297,18 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 			ludum_game_instance->current_power_up = nullptr;
 			ludum_game_instance->current_power_up_surface = nullptr;
 			buy_timer = 0.0f;
-		}	
+		}
 	}
 	else
+	{
+		if (buy_timer > 0.0f)
+		{
+			PowerUpTriggerSurfaceObject * power_up_trigger_surface = auto_cast(ludum_game_instance->current_power_up_surface.get());
+			if (power_up_trigger_surface != nullptr)
+				power_up_trigger_surface->ResetTrigger();
+		}
 		buy_timer = 0.0f;
+	}
 
 	if (!buy_pressed)
 		buylocked = false;

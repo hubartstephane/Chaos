@@ -160,6 +160,8 @@ namespace death
 
 		/** play some sound */
 		chaos::Sound * Play(char const * name, bool paused, bool looping);
+		/** change the in game music (fadeout previous music) */
+		chaos::Sound * SetInGameMusic(char const * music_name);
 
 #if _DEBUG	
 		/** declare we want to skip level */
@@ -193,11 +195,11 @@ namespace death
 		float GetGamepadSensitivity() const { return gamepad_sensitivity; }
 
 		/** get current state ID */
-		int GetCurrentStateTag() const;
+		int GetCurrentStateTag(bool strict_state = false, bool use_destination = false) const;
 		/** returns whether were are in playing state */
-		bool IsPlaying() const;
+		bool IsPlaying(bool strict_state = false, bool use_destination = false) const;
 		/** returns whether were are in pause state */
-		bool IsPaused() const;
+		bool IsPaused(bool strict_state = false, bool use_destination = false) const;
 
 	protected:
 

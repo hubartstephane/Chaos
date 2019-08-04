@@ -212,6 +212,36 @@ namespace chaos
 			return current_state->SendEvent(this, event_tag, extra_data);
 		}
 
+		State * StateMachineInstance::GetCurrentStrictState(bool use_destination)
+		{
+			if (current_state == nullptr)
+				return nullptr;
+			// the effective state
+			State * result = auto_cast(current_state);
+			if (result != nullptr)
+				return result;
+			// if in transition gets the starting position
+			Transition * transition = auto_cast(current_state);
+			if (transition != nullptr)
+				return (use_destination) ? transition->to_state : transition->from_state;
+			return nullptr;
+		}
+
+		State const * StateMachineInstance::GetCurrentStrictState(bool use_destination) const
+		{
+			if (current_state == nullptr)
+				return nullptr;
+			// the effective state
+			State * result = auto_cast(current_state);
+			if (result != nullptr)
+				return result;
+			// if in transition gets the starting position
+			Transition * transition = auto_cast(current_state);
+			if (transition != nullptr)
+				return (use_destination)? transition->to_state : transition->from_state;
+			return nullptr;
+		}
+
 
 	}; // namespace StateMachine
 

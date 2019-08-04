@@ -168,10 +168,15 @@ namespace chaos
 			/** send an event to current state */
 			bool SendEvent(TagType event_tag, ReferencedObject * extra_data);
 
-			/** get the current state */
+			/** get the current state (this may return a transition) */
 			StateBase * GetCurrentState() { return current_state; }
-			/** get the current state */
+			/** get the current state (this may return a transition) */
 			StateBase const * GetCurrentState() const { return current_state; }
+
+			/** get the current state (if in transition, this returns previous state) */
+			State * GetCurrentStrictState(bool use_destination = false);
+			/** get the current state (if in transition, this returns previous state) */
+			State const * GetCurrentStrictState(bool use_destination = false) const;
 
 			/** get the context object */
 			ReferencedObject * GetContextData(){ return context_data.get(); }

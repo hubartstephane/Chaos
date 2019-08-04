@@ -285,29 +285,6 @@ namespace death
 			if (level_clock != nullptr)
 				level_clock->SetPause(enter_pause);		
 		}
-
-		// pause/resume in-game sounds
-		chaos::SoundManager * sound_manager = game->GetSoundManager();
-		if (sound_manager != nullptr)
-		{
-			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
-			if (category != nullptr && !category->IsPendingKill())
-			{
-				chaos::BlendVolumeDesc desc;
-				desc.blend_time = 0.5f;
-				if (enter_pause)
-				{
-					desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
-					desc.pause_at_end = true;
-				}
-				else
-				{
-					desc.blend_type = chaos::BlendVolumeDesc::BLEND_IN;
-					category->Pause(false);
-				}
-				category->StartBlend(desc, true);
-			}
-		}
 	}
 
 	bool GameInstance::DoCheckGameOverCondition()

@@ -964,19 +964,23 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
+		// fade out all sounds
+		chaos::SoundManager * sound_manager = GetSoundManager();
+		if (sound_manager != nullptr)
+		{
+			size_t sound_count = sound_manager->GetSoundCount();
+			for (size_t i = 0; i < sound_count; ++i)
+			{
+				chaos::Sound * sound = sound_manager->GetSound(i);
+				if (sound == nullptr || sound->IsPendingKill())
+					continue;
+				sound->FadeOut(0.5f, true);
+			}
+		}
 		// start the music
 		menu_music = Play("menu_music", false, true);
-		// stop other musics
-		if (game_music != nullptr)
-		{
-			game_music->FadeOut(0.5f, true);
-			game_music = nullptr;
-		}
-		if (pause_music != nullptr)
-		{
-			pause_music->FadeOut(0.5f, true);
-			pause_music = nullptr;
-		}
+		game_music = nullptr;
+		pause_music = nullptr;
 		// restore the background image
 		CreateBackgroundImage(nullptr, nullptr);
 		// create the main menu HUD
@@ -1015,7 +1019,8 @@ namespace death
 			current_level_instance->OnEnterPause();
 		if (game_instance != nullptr)
 			game_instance->OnEnterPause();
-
+		// pause in-game sounds
+		SetInGameSoundPause(true);
 		return true;
 	}
 
@@ -1034,8 +1039,36 @@ namespace death
 			current_level_instance->OnLeavePause();
 		if (game_instance != nullptr)
 			game_instance->OnLeavePause();
+		// resume in-game sounds
+		SetInGameSoundPause(false);
 
 		return true;
+	}
+
+	void Game::SetInGameSoundPause(bool in_paused)
+	{
+		// pause/resume in-game sounds
+		chaos::SoundManager * sound_manager = GetSoundManager();
+		if (sound_manager != nullptr)
+		{
+			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
+			if (category != nullptr && !category->IsPendingKill())
+			{
+				chaos::BlendVolumeDesc desc;
+				desc.blend_time = 0.5f;
+				if (in_paused)
+				{
+					desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+					desc.pause_at_end = true;
+				}
+				else
+				{
+					desc.blend_type = chaos::BlendVolumeDesc::BLEND_IN;
+					category->Pause(false);
+				}
+				category->StartBlend(desc, true);
+			}
+		}
 	}
 
 	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)

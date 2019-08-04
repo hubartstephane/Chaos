@@ -504,6 +504,22 @@ namespace chaos
 		/** initialize the manager from a configuration file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
+
+		/** getters on sound */
+		size_t GetSoundCount() const;
+		Sound * GetSound(size_t index);
+		Sound const * GetSound(size_t index) const;
+		
+		/** getters on category */
+		size_t GetCategoryCount() const;
+		SoundCategory * GetCategory(size_t index);
+		SoundCategory const * GetCategory(size_t index) const;
+
+		/** getters on sources */
+		size_t GetSourceCount() const;
+		SoundSource * GetSource(size_t index);
+		SoundSource const * GetSource(size_t index) const;
+
 	protected:
 
 		/** internally start the manager */

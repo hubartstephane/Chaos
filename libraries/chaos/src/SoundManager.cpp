@@ -211,6 +211,7 @@ namespace chaos
 
 	bool SoundObject::FadeOut(float blend_time, bool kill)
 	{
+		// already a fade out -> do nothing
 		if (IsPendingKill())
 			return false;
 
@@ -223,8 +224,7 @@ namespace chaos
 		else
 			desc.pause_at_end = true;
 
-		bool replace_previous = kill;
-		return StartBlend(desc, replace_previous); // replace previous only if killing
+		return StartBlend(desc, true); // always replace previous : maybe there is a FADE-IN, we want to FADE-OUT
 	}
 
 	bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older)
@@ -1016,6 +1016,62 @@ namespace chaos
 			SoundSourceLoader(this));
 	}
 
+	size_t SoundManager::GetSoundCount() const 
+	{ 
+		return sounds.size(); 
+	}
+
+	Sound * SoundManager::GetSound(size_t index)
+	{
+		if (index >= sounds.size())
+			return nullptr;
+		return sounds[index].get();
+	}
+
+	Sound const * SoundManager::GetSound(size_t index) const
+	{
+		if (index >= sounds.size())
+			return nullptr;
+		return sounds[index].get();
+	}
+
+	size_t SoundManager::GetCategoryCount() const 
+	{ 
+		return categories.size(); 
+	}
+
+	SoundCategory * SoundManager::GetCategory(size_t index)
+	{
+		if (index >= categories.size())
+			return nullptr;
+		return categories[index].get();
+	}
+
+	SoundCategory const * SoundManager::GetCategory(size_t index) const
+	{
+		if (index >= categories.size())
+			return nullptr;
+		return categories[index].get();
+	}
+
+	size_t SoundManager::GetSourceCount() const 
+	{ 
+		return sources.size(); 
+	}
+
+	SoundSource * SoundManager::GetSource(size_t index)
+	{
+		if (index >= sources.size())
+			return nullptr;
+		return sources[index].get();
+	}
+
+	SoundSource const * SoundManager::GetSource(size_t index) const
+	{
+		if (index >= sources.size())
+			return nullptr;
+		return sources[index].get();
+	}
 
 	// ==============================================================
 	// SOUND SOURCE LOADER

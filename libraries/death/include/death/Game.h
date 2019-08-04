@@ -378,6 +378,9 @@ namespace death
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();
 
+		/** all sounds flagged in game are set to pause */
+		void SetInGameSoundPause(bool in_paused);
+
 	protected:
 
 		/** the window in GLFW library */

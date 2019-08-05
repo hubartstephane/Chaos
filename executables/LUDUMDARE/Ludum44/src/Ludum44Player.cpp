@@ -238,8 +238,18 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 				bool fire_pressed = CheckButtonPressed(fire_key_buttons, chaos::MyGLFW::XBOX_BUTTON_A);
 				if (fire_pressed)
 				{
-					FireNormalProjectile();					
+			//		FireNormalProjectile();					
 					fire_timer = ludum_game->normal_fire_time;
+
+
+					char const * n[] = { "menu_music", "pause_music" };
+
+					static int k = 0;
+
+
+					GetGame()->SetInGameMusic(n[k++ & 1]);
+
+
 				}								
 			}			
 		}

@@ -742,25 +742,22 @@ namespace death
 
 	chaos::Sound * Game::SetInGameMusic(char const * music_name)
 	{
+		float blend_time = 2.0f;
 
-
-		// shuwww
-
+		bool previous_music = false;
 		// destroy previous music
 		if (game_music != nullptr)
 		{
-			game_music->FadeOut(0.5f, true);
+			game_music->FadeOut(blend_time, true);
 			game_music = nullptr;
+			previous_music = true;
 		}
 		// start new music
-		game_music = Play(music_name, false, true);
+		game_music = Play(music_name, false, true, (previous_music) ? blend_time : 0.0f);
 		return game_music.get();
-
-
-
 	}
 
-	chaos::Sound * Game::Play(char const * name, bool paused, bool looping)
+	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_time)
 	{
 		// search manager
 		chaos::SoundManager * sound_manager = GetSoundManager();
@@ -774,6 +771,7 @@ namespace death
 		chaos::PlaySoundDesc play_desc;
 		play_desc.paused = paused;
 		play_desc.looping = looping;
+		play_desc.blend_time = blend_time;
 
 		// Flag some sounds as "in_game"
 		//
@@ -1096,19 +1094,16 @@ namespace death
 		chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
 		if (category == nullptr || category->IsPendingKill())
 			return;
-		chaos::BlendVolumeDesc desc;
-		desc.blend_time = 0.5f;
+
 		if (in_paused)
 		{
-			desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
-			desc.pause_at_end = true;
+			category->StartBlend(chaos::BlendVolumeDesc::BlendOut(0.5f, true, false), true);
 		}
 		else
 		{
-			desc.blend_type = chaos::BlendVolumeDesc::BLEND_IN;
 			category->Pause(false);
+			category->StartBlend(chaos::BlendVolumeDesc::BlendIn(0.5f), true);
 		}
-		category->StartBlend(desc, true);
 	}
 
 	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)

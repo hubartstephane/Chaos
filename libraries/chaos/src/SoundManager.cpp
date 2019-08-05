@@ -63,6 +63,28 @@ namespace chaos
 	}
 
 	// ==============================================================
+	// BLEND VOLUME DESC
+	// ==============================================================
+
+	BlendVolumeDesc BlendVolumeDesc::BlendIn(float blend_time)
+	{
+		BlendVolumeDesc result;
+		result.blend_type = BLEND_IN;
+		result.blend_time = blend_time;
+		return result;
+	}
+
+	BlendVolumeDesc BlendVolumeDesc::BlendOut(float blend_time, bool pause_at_end, bool kill_at_end)
+	{
+		BlendVolumeDesc result;
+		result.blend_type = BLEND_OUT;
+		result.blend_time = blend_time;
+		result.pause_at_end = pause_at_end;
+		result.kill_at_end = kill_at_end;
+		return result;
+	}
+
+	// ==============================================================
 	// SOUND OBJECT
 	// ==============================================================
 
@@ -271,7 +293,7 @@ namespace chaos
 		return StartBlend(desc, true); // always replace previous : maybe there is a FADE-IN, we want to FADE-OUT
 	}
 
-	bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older)
+	bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older, bool update_blend_value)
 	{
 		// only if attached
 		if (!IsAttachedToManager())
@@ -298,7 +320,19 @@ namespace chaos
 				blend_value = 0.0f;
 			if (desc.callbacks != nullptr)
 				desc.callbacks->OnFinished(this);
+		} 
+		// update blend value
+		if (update_blend_value)
+		{
+			if (desc.blend_type == BlendVolumeDesc::BLEND_IN)
+				blend_value = 0.0f;
+			else if (desc.blend_type == BlendVolumeDesc::BLEND_OUT)
+				blend_value = 1.0f;
 		}
+
+		// update the sound volume (before the tick is processed to avoid sound artifact)
+		DoUpdateEffectiveVolume(GetEffectiveVolume());
+
 		return true;
 	}
 
@@ -375,6 +409,7 @@ namespace chaos
 			result->velocity = desc.velocity;
 			result->paused = desc.paused;
 			result->looping = desc.looping;
+			result->volume = MathTools::Clamp(desc.volume, 0.0f, 1.0f); ;
 			result->callbacks = in_callbacks;
 
 			if (desc.sound_name.length() > 0)
@@ -598,9 +633,26 @@ namespace chaos
 		if (irrklang_engine == nullptr)
 			return true;
 
+		// copy blend data
+		if (desc.blend_time > 0.0f)
+		{
+			blend_desc.blend_type = BlendVolumeDesc::BLEND_IN;
+			blend_desc.blend_time = desc.blend_time;
+			blend_value = 0.0f;
+		}
+
+		// compute effective expected values
+		bool  effective_pause  = IsEffectivePaused();
+		float effective_volume = GetEffectiveVolume();
+
 		// play sound
 		bool track = true;
 		bool sound_effect = true;
+
+		// if we have some additionnal initialization to do, we start the sound paused so we do not have sound volume artifact
+		bool some_initializations = (is_3D_sound) || (effective_volume != 1.0f);
+
+		bool start_paused = some_initializations || effective_pause;
 
 		if (is_3D_sound)
 		{
@@ -608,39 +660,37 @@ namespace chaos
 				source->irrklang_source.get(),
 				IrrklangTools::ToIrrklangVector(position),
 				looping,
-				IsEffectivePaused(),
+				start_paused,
 				track,
 				sound_effect);
-				
-			if (irrklang_sound == nullptr)				
-				return false;
-
-			SetVelocity(velocity);
-			SetMinDistance(desc.min_distance);
-			SetMaxDistance(desc.max_distance);
 		}
 		else
 		{
 			irrklang_sound = irrklang_engine->play2D(
 				source->irrklang_source.get(),
 				looping,
-				IsEffectivePaused(),
+				start_paused,
 				track,
 				sound_effect);
-			if (irrklang_sound == nullptr)				
-				return false;				
 		}
+							
+		if (irrklang_sound == nullptr)						
+			return false;
 
-		if (desc.blend_time > 0.0f)
+		// update volume
+		if (effective_volume != 1.0f)
+			DoUpdateIrrklangVolume(effective_volume);
+
+		// update 3D data
+		if (is_3D_sound)
 		{
-			BlendVolumeDesc blend_desc;
-			blend_desc.blend_type = BlendVolumeDesc::BLEND_IN;
-			blend_desc.blend_time = desc.blend_time;
-			blend_value = 0.0f;
-			StartBlend(blend_desc);
+			SetVelocity(velocity);
+			SetMinDistance(desc.min_distance);
+			SetMaxDistance(desc.max_distance);
 		}
-		
-		DoUpdateIrrklangVolume(GetEffectiveVolume());
+		// resume sound
+		if (some_initializations && !effective_pause)
+			DoUpdateIrrklangPause(effective_pause);
 
 		return true;
 	}

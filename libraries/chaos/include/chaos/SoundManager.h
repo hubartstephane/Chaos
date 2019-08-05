@@ -85,6 +85,13 @@ namespace chaos
 		static int const BLEND_IN = 1;
 		static int const BLEND_OUT = 2;
 
+		/** helper function to create a BLEND_IN effect */
+		static BlendVolumeDesc BlendIn(float blend_time);
+		/** helper function to create a BLEND_OUTeffect */
+		static BlendVolumeDesc BlendOut(float blend_time, bool pause_at_end = false, bool kill_at_end = false);
+
+	public:
+
 		/** the kind of blending */
 		int   blend_type = BLEND_NONE;
 		/** the time to blend from [0 to 1] or [1 to 0] => if current blend value is between, the time is renormalized */
@@ -168,7 +175,7 @@ namespace chaos
 		SoundManager const * GetManager() const;
 
 		/** blend the volume */
-		bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false);
+		bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false, bool update_blend_value = false);
 
 		/** start a fade out and pause or kill */
 		bool FadeOut(float blend_time, bool kill = false);

@@ -159,7 +159,7 @@ namespace death
 		virtual chaos::box2 GetWorldBox() const;
 
 		/** play some sound */
-		chaos::Sound * Play(char const * name, bool paused, bool looping);
+		chaos::Sound * Play(char const * name, bool paused, bool looping, float blend_time = 0.0f);
 		/** change the in game music (fadeout previous music) */
 		chaos::Sound * SetInGameMusic(char const * music_name);
 

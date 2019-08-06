@@ -66,18 +66,6 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
-void LudumLevelInstance::CreateBackgroundImage()
-{
-	// change the background image
-	std::string const * background_name = nullptr;
-
-	death::TiledMap::Level const * level = GetTiledLevel();
-	if (level != nullptr)
-		background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");
-
-	game->CreateBackgroundImage(nullptr, (background_name == nullptr) ? nullptr : background_name->c_str());
-}
-
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in_level)
 {
 	if (!death::TiledMap::LevelInstance::Initialize(in_game, in_level))

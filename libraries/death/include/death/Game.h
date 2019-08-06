@@ -201,6 +201,9 @@ namespace death
 		/** returns whether were are in pause state */
 		bool IsPaused(bool strict_state = false, bool use_destination = false) const;
 
+		/** create the background image */
+		virtual bool CreateBackgroundImage(char const * material_name, char const * texture_name);
+
 	protected:
 
 		/** the tick method */
@@ -281,8 +284,6 @@ namespace death
 
 		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
 		virtual int AddParticleLayers();
-		/** create the background image */
-		virtual bool CreateBackgroundImage(char const * material_name, char const * texture_name);
 		/** insert a rendering layering */
 		chaos::RenderableLayerSystem * AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order);
 

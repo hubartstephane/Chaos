@@ -32,8 +32,6 @@ protected:
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */
-	virtual void CreateBackgroundImage() override;
-	/** override */
 	virtual void CreateCameras() override;
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;

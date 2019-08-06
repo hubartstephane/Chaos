@@ -604,6 +604,11 @@ namespace death
 			/** create the layers instances */
 			virtual bool CreateLayerInstances(Game * in_game);
 
+			/** override */
+			virtual void CreateBackgroundImage() override;
+			/** override */
+			virtual void SetInGameMusic() override;
+
 			/** the default material when not specified */
 			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
 

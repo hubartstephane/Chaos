@@ -1432,6 +1432,24 @@ namespace death
 			player->SetPlayerAllocation(nullptr);
 		}
 
+		void LevelInstance::CreateBackgroundImage()
+		{
+			// change the background image
+			std::string const * background_name = nullptr;
+
+			death::TiledMap::Level const * level = GetTiledLevel();
+			if (level != nullptr)
+				background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");
+
+			game->CreateBackgroundImage(nullptr, (background_name == nullptr) ? nullptr : background_name->c_str());
+		}
+
+		void LevelInstance::SetInGameMusic()
+		{
+			GameLevelInstance::SetInGameMusic();
+		}
+
+
 	}; // namespace TiledMap
 
 }; // namespace death

@@ -742,7 +742,7 @@ namespace death
 
 	chaos::Sound * Game::SetInGameMusic(char const * music_name)
 	{
-		assert(music_name == nullptr);
+		assert(music_name != nullptr);
 		
 		// ensure there is a real music change
 		if (game_music != nullptr && !game_music->IsPendingKill())
@@ -773,7 +773,7 @@ namespace death
 		return game_music.get();
 	}
 
-	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_time)
+	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_in_time)
 	{
 		// search manager
 		chaos::SoundManager * sound_manager = GetSoundManager();
@@ -787,7 +787,7 @@ namespace death
 		chaos::PlaySoundDesc play_desc;
 		play_desc.paused = paused;
 		play_desc.looping = looping;
-		play_desc.blend_time = blend_time;
+		play_desc.blend_in_time = blend_in_time;
 
 		// Flag some sounds as "in_game"
 		//
@@ -1007,9 +1007,9 @@ namespace death
 			for (size_t i = 0; i < sound_count; ++i)
 			{
 				chaos::Sound * sound = sound_manager->GetSound(i);
-				if (sound == nullptr || sound->IsPendingKill())
+				if (sound == nullptr)
 					continue;
-				sound->FadeOut(0.5f, true);
+				sound->FadeOut(0.5f, true, true);
 			}
 		}
 		// start the music

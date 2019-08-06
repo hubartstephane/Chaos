@@ -74,13 +74,14 @@ namespace chaos
 		return result;
 	}
 
-	BlendVolumeDesc BlendVolumeDesc::BlendOut(float blend_time, bool pause_at_end, bool kill_at_end)
+	BlendVolumeDesc BlendVolumeDesc::BlendOut(float blend_time, bool pause_at_end, bool kill_at_end, bool kill_when_paused)
 	{
 		BlendVolumeDesc result;
 		result.blend_type = BLEND_OUT;
 		result.blend_time = blend_time;
 		result.pause_at_end = pause_at_end;
 		result.kill_at_end = kill_at_end;
+		result.kill_when_paused = kill_when_paused;
 		return result;
 	}
 
@@ -218,7 +219,8 @@ namespace chaos
 
 	void SoundObject::DoUpdateEffectivePause(bool effective_pause)
 	{
-
+		if (effective_pause && HasVolumeBlending() && blend_desc.kill_when_paused)
+			Stop();
 	}
 
 	bool SoundObject::IsPaused() const
@@ -275,32 +277,26 @@ namespace chaos
 			RemoveFromManager();
 	}
 
-	bool SoundObject::FadeOut(float blend_time, bool kill)
+	bool SoundObject::FadeOut(float blend_time, bool kill_at_end, bool kill_when_paused)
 	{
-		// already a fade out -> do nothing
-		if (IsPendingKill())
-			return false;
-
-		chaos::BlendVolumeDesc desc;
-		desc.blend_time = blend_time;
-		desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
-
-		if (kill)
-			desc.kill_at_end = true;
-		else
-			desc.pause_at_end = true;
+		chaos::BlendVolumeDesc desc = chaos::BlendVolumeDesc::BlendOut(blend_time, !kill_at_end, kill_at_end, kill_when_paused);
 
 		return StartBlend(desc, true); // always replace previous : maybe there is a FADE-IN, we want to FADE-OUT
 	}
 
-	bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older, bool update_blend_value)
+	bool SoundObject::StartBlend(BlendVolumeDesc const & desc, bool replace_older)
 	{
 		// only if attached
 		if (!IsAttachedToManager())
 			return false;
 		// do not override a kill
 		if (IsPendingKill())
+		{
+			blend_desc.kill_when_paused |= desc.kill_when_paused;
+			if (desc.kill_when_paused && IsEffectivePaused())
+				Stop();			
 			return false;
+		}
 		// do not start a blend if there is a blend
 		if (HasVolumeBlending() && !replace_older)
 			return false;
@@ -321,14 +317,6 @@ namespace chaos
 			if (desc.callbacks != nullptr)
 				desc.callbacks->OnFinished(this);
 		} 
-		// update blend value
-		if (update_blend_value)
-		{
-			if (desc.blend_type == BlendVolumeDesc::BLEND_IN)
-				blend_value = 0.0f;
-			else if (desc.blend_type == BlendVolumeDesc::BLEND_OUT)
-				blend_value = 1.0f;
-		}
 
 		// update the sound volume (before the tick is processed to avoid sound artifact)
 		DoUpdateEffectiveVolume(GetEffectiveVolume());
@@ -366,20 +354,20 @@ namespace chaos
 		return new Sound;
 	}
 
-	Sound * SoundSource::Play(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks)
+	Sound * SoundSource::Play(PlaySoundDesc const & play_desc, SoundCallbacks * in_callbacks)
 	{
 		// ensure we have access to manager
 		if (!IsAttachedToManager())
 			return nullptr;
 
 		// ensure there are no name collision
-		if (!sound_manager->CanAddSound((desc.sound_name.length() > 0) ? desc.sound_name.c_str() : nullptr))
+		if (!sound_manager->CanAddSound((play_desc.sound_name.length() > 0) ? play_desc.sound_name.c_str() : nullptr))
 			return nullptr;
 
 		// compute required categories
 		std::vector<SoundCategory *> categories = default_categories;
 		
-		for (std::string const & category_name : desc.category_names)
+		for (std::string const & category_name : play_desc.category_names)
 		{
 			if (category_name.length() > 0)
 			{
@@ -390,7 +378,7 @@ namespace chaos
 			}
 		}
 		
-		for (SoundCategory * category : desc.categories)
+		for (SoundCategory * category : play_desc.categories)
 			if (category != nullptr && category->sound_manager == sound_manager)
 				if (std::find(categories.begin(), categories.end(), category) == categories.end())
 					categories.push_back(category);
@@ -404,22 +392,22 @@ namespace chaos
 			result->sound_manager = sound_manager;
 			result->source = this;
 			
-			result->is_3D_sound = desc.IsSound3D();
-			result->position = desc.position;
-			result->velocity = desc.velocity;
-			result->paused = desc.paused;
-			result->looping = desc.looping;
-			result->volume = MathTools::Clamp(desc.volume, 0.0f, 1.0f); ;
+			result->is_3D_sound = play_desc.IsSound3D();
+			result->position = play_desc.position;
+			result->velocity = play_desc.velocity;
+			result->paused = play_desc.paused;
+			result->looping = play_desc.looping;
+			result->volume = MathTools::Clamp(play_desc.volume, 0.0f, 1.0f); ;
 			result->callbacks = in_callbacks;
 
-			if (desc.sound_name.length() > 0)
-				result->name = desc.sound_name;
+			if (play_desc.sound_name.length() > 0)
+				result->name = play_desc.sound_name;
 
 			// store the sound
 			sound_manager->sounds.push_back(result);
 			
 			// play the sound
-			result->DoPlaySound(desc);
+			result->DoPlaySound(play_desc);
 		}
 		return result;
 	}
@@ -448,6 +436,9 @@ namespace chaos
 
 	void SoundSource::DoUpdateEffectivePause(bool effective_pause)
 	{
+		SoundObject::DoUpdateEffectivePause(effective_pause);
+		if (!IsAttachedToManager())
+			return;
 		sound_manager->UpdateAllSoundPausePerSource(this);
 	}
 
@@ -518,6 +509,9 @@ namespace chaos
 
 	void SoundCategory::DoUpdateEffectivePause(bool effective_pause)
 	{
+		SoundObject::DoUpdateEffectivePause(effective_pause);
+		if (!IsAttachedToManager())
+			return;
 		sound_manager->UpdateAllSoundPausePerCategory(this);
 	}
 
@@ -622,7 +616,7 @@ namespace chaos
 		SoundObject::OnRemovedFromManager();
 	}
 
-	bool Sound::DoPlaySound(PlaySoundDesc const & desc)
+	bool Sound::DoPlaySound(PlaySoundDesc const & play_desc)
 	{
 		// test whether the sound may be played
 		// error => immediatly finished
@@ -634,10 +628,10 @@ namespace chaos
 			return true;
 
 		// copy blend data
-		if (desc.blend_time > 0.0f)
+		if (play_desc.blend_in_time > 0.0f)
 		{
 			blend_desc.blend_type = BlendVolumeDesc::BLEND_IN;
-			blend_desc.blend_time = desc.blend_time;
+			blend_desc.blend_time = play_desc.blend_in_time;
 			blend_value = 0.0f;
 		}
 
@@ -685,8 +679,8 @@ namespace chaos
 		if (is_3D_sound)
 		{
 			SetVelocity(velocity);
-			SetMinDistance(desc.min_distance);
-			SetMaxDistance(desc.max_distance);
+			SetMinDistance(play_desc.min_distance);
+			SetMaxDistance(play_desc.max_distance);
 		}
 		// resume sound
 		if (some_initializations && !effective_pause)
@@ -697,6 +691,9 @@ namespace chaos
 
 	void Sound::DoUpdateEffectivePause(bool effective_pause)
 	{
+		SoundObject::DoUpdateEffectivePause(effective_pause);
+		if (!IsAttachedToManager())
+			return;
 		DoUpdateIrrklangPause(effective_pause);
 	}
 
@@ -716,14 +713,6 @@ namespace chaos
 		if (irrklang_sound != nullptr)
 			irrklang_sound->setVolume((irrklang::ik_f32)effective_volume);
 	}
-
-
-
-
-
-
-
-
 
 	void Sound::SetSoundTrackPosition(int position)
 	{

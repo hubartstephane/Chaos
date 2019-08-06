@@ -242,9 +242,9 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 					fire_timer = ludum_game->normal_fire_time;
 
 #if 0
-					char const * n[] = { "menu_music", "pause_music" };
+					char const * n[] = { "menu_music", "pause_music", "pause_music" };
 					static int k = 0;
-					GetGame()->SetInGameMusic(n[k++ & 1]);
+					GetGame()->SetInGameMusic(n[k++ % 3]);
 #endif
 
 				}								

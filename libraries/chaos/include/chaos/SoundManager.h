@@ -88,7 +88,7 @@ namespace chaos
 		/** helper function to create a BLEND_IN effect */
 		static BlendVolumeDesc BlendIn(float blend_time);
 		/** helper function to create a BLEND_OUTeffect */
-		static BlendVolumeDesc BlendOut(float blend_time, bool pause_at_end = false, bool kill_at_end = false);
+		static BlendVolumeDesc BlendOut(float blend_time, bool pause_at_end = false, bool kill_at_end = false, bool kill_when_paused = false);
 
 	public:
 
@@ -100,6 +100,8 @@ namespace chaos
 		bool  pause_at_end = false;
 		/** whether the object should be killed at the end of blend */
 		bool  kill_at_end = false;
+		/** whether the object should be killed when paused */
+		bool  kill_when_paused = false;
 		/** some callbacks */
 		shared_ptr<SoundCallbacks> callbacks;
 	};
@@ -134,7 +136,7 @@ namespace chaos
 		/** the initial volume of the object */
 		float volume = 1.0f;
 		/** the blend in time of the object */
-		float blend_time = 0.0f;
+		float blend_in_time = 0.0f;
 
 		/** true whether the sound is in 3D */
 		bool is_3D_sound = false;
@@ -175,10 +177,9 @@ namespace chaos
 		SoundManager const * GetManager() const;
 
 		/** blend the volume */
-		bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false, bool update_blend_value = false);
-
+		bool StartBlend(BlendVolumeDesc const & desc, bool replace_older = false);
 		/** start a fade out and pause or kill */
-		bool FadeOut(float blend_time, bool kill = false);
+		bool FadeOut(float blend_time, bool kill_at_end = false, bool kill_when_paused = false);
 		/** stop the object */
 		void Stop();
 
@@ -263,7 +264,7 @@ namespace chaos
 	public:
 
 		/** generating and playing a sound */
-		Sound * Play(PlaySoundDesc const & desc, SoundCallbacks * in_callbacks = nullptr);
+		Sound * Play(PlaySoundDesc const & play_desc, SoundCallbacks * in_callbacks = nullptr);
 		/** set the categories */
 		bool SetDefaultCategories(std::vector<SoundCategory *> const & categories);
 
@@ -371,7 +372,7 @@ namespace chaos
 		void DoUpdateIrrklangVolume(float effective_volume);
 
 		/** the sound method (returns true whether it is immediatly finished) */
-		virtual bool DoPlaySound(PlaySoundDesc const & desc);
+		virtual bool DoPlaySound(PlaySoundDesc const & play_desc);
 		/** unbind from manager */
 		virtual void OnRemovedFromManager() override;
 		/** remove element from manager list and detach it */

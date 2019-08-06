@@ -32,7 +32,7 @@ protected:
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */
-	virtual void OnLevelStarted() override;
+	virtual void CreateBackgroundImage() override;
 	/** override */
 	virtual void CreateCameras() override;
 	/** override */

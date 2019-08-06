@@ -143,19 +143,19 @@ namespace death
 		for (size_t i = 0; i < camera_count; ++i)
 			cameras[i]->SetInitialCameraBox(cameras[i]->GetCameraBox());
 		// change background
-		CreateImageBackground();
+		CreateBackgroundImage();
 		// change music
 		SetInGameMusic();
 	}
 
-	void GameLevelInstance::CreateImageBackground()
+	void GameLevelInstance::CreateBackgroundImage()
 	{
 
 	}
 
 	void GameLevelInstance::SetInGameMusic()
 	{
-
+		game->SetInGameMusic("game_music");
 	}
 
 	bool GameLevelInstance::Initialize(Game * in_game, GameLevel * in_level)

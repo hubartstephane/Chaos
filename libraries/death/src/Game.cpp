@@ -624,11 +624,6 @@ namespace death
 		// load exisiting levels
 		if (!LoadLevels(config))
 			return false;
-
-
-
-
-
 		// initialize the root render system
 		if (!InitializeRootRenderLayer())
 			return false;
@@ -1117,8 +1112,6 @@ namespace death
 				game_instance->OnPlayerEntered(game_instance->players[i].get());
 		// select the very first level
 		SetNextLevel(true); 
-		// start the music
-		SetInGameMusic("game_music");
 
 		return true;
 	}

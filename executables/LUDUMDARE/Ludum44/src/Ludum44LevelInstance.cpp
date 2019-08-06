@@ -97,6 +97,17 @@ bool LudumLevelInstance::DoTick(double delta_time)
 
 void LudumLevelInstance::OnLevelStarted()
 {
+	// create the fire particle layer if necessary
+	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("fire");
+	if (layer_instance != nullptr)
+		layer_instance->CreateParticleLayer();
+
+	// super call
+	death::TiledMap::LevelInstance::OnLevelStarted();
+}
+
+void LudumLevelInstance::CreateBackgroundImage()
+{
 	// change the background image
 	std::string const * background_name = nullptr;
 
@@ -105,14 +116,6 @@ void LudumLevelInstance::OnLevelStarted()
 		background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");
 
 	game->CreateBackgroundImage(nullptr, (background_name == nullptr) ? nullptr : background_name->c_str());
-
-	// create the fire particle layer if necessary
-	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("fire");
-	if (layer_instance != nullptr)
-		layer_instance->CreateParticleLayer();
-
-	// super call
-	death::TiledMap::LevelInstance::OnLevelStarted();
 }
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in_level)

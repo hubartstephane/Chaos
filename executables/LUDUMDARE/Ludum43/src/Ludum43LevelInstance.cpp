@@ -66,10 +66,8 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
-void LudumLevelInstance::OnLevelStarted()
+void LudumLevelInstance::CreateBackgroundImage()
 {
-	death::TiledMap::LevelInstance::OnLevelStarted();
-
 	// change the background image
 	std::string const * background_name = nullptr;
 

@@ -126,7 +126,7 @@ namespace death
 		virtual bool DoCheckGameOverCondition();
 
 		/** change the background */
-		virtual void CreateImageBackground();
+		virtual void CreateBackgroundImage();
 		/** change the music */
 		virtual void SetInGameMusic();
 

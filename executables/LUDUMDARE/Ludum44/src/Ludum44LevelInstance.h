@@ -44,6 +44,8 @@ protected:
 	/** override */
 	virtual void OnLevelStarted() override;
 	/** override */
+	virtual void CreateBackgroundImage() override;
+	/** override */
 	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
 	/** override */
 	virtual void OnPlayerEntered(death::Player * player) override;

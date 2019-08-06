@@ -742,18 +742,34 @@ namespace death
 
 	chaos::Sound * Game::SetInGameMusic(char const * music_name)
 	{
-		float blend_time = 2.0f;
+		assert(music_name == nullptr);
+		
+		// ensure there is a real music change
+		if (game_music != nullptr && !game_music->IsPendingKill())
+		{
+			chaos::SoundManager * sound_manager = GetSoundManager();
+			if (sound_manager == nullptr)
+				return nullptr;
 
-		bool previous_music = false;
+			chaos::SoundSource * new_source = sound_manager->FindSource(music_name);
+
+			if (new_source == game_music->GetSource())
+				return game_music.get();
+		}
+
+		// effectively change the music
+		float BLEND_TIME = 2.0f;
+
 		// destroy previous music
+		bool previous_music = false;
 		if (game_music != nullptr)
 		{
-			game_music->FadeOut(blend_time, true);
+			game_music->FadeOut(BLEND_TIME, true);
 			game_music = nullptr;
 			previous_music = true;
 		}
 		// start new music
-		game_music = Play(music_name, false, true, (previous_music) ? blend_time : 0.0f);
+		game_music = Play(music_name, false, true, (previous_music) ? BLEND_TIME : 0.0f);
 		return game_music.get();
 	}
 

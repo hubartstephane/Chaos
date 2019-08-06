@@ -353,6 +353,11 @@ namespace chaos
 		/** change the position of the sound track */
 		void SetSoundTrackPosition(int position);
 
+		/** returns the source */
+		SoundSource * GetSource() { return source; }
+		/** returns the source */
+		SoundSource const * GetSource() const { return source; }
+
 	protected:
 
 		/** override */

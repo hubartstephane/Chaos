@@ -983,12 +983,6 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
-
-
-		// shuwww
-
-
-
 		// purge + fade out all sounds
 		chaos::SoundManager * sound_manager = GetSoundManager();
 		if (sound_manager != nullptr)
@@ -1002,10 +996,6 @@ namespace death
 				sound->FadeOut(0.5f, true);
 			}
 		}
-
-
-
-
 		// start the music
 		menu_music = Play("menu_music", false, true);
 		game_music = nullptr;
@@ -1076,17 +1066,6 @@ namespace death
 
 	void Game::SetInGameSoundPause(bool in_paused)
 	{
-
-
-
-
-
-
-
-		// shuwww
-
-
-
 		// pause/resume in-game sounds
 		chaos::SoundManager * sound_manager = GetSoundManager();
 		if (sound_manager == nullptr)
@@ -1096,13 +1075,11 @@ namespace death
 			return;
 
 		if (in_paused)
-		{
 			category->StartBlend(chaos::BlendVolumeDesc::BlendOut(0.5f, true, false), true);
-		}
 		else
 		{
-			category->Pause(false);
 			category->StartBlend(chaos::BlendVolumeDesc::BlendIn(0.5f), true);
+			category->Pause(false);
 		}
 	}
 
@@ -1114,8 +1091,6 @@ namespace death
 			return false;
 		if (!game_instance->Initialize(this))
 			return false;
-		// start the music
-		SetInGameMusic("game_music");
 		// create other resources
 		CreatePlayingHUD();
 		// create a first player and insert it
@@ -1126,6 +1101,8 @@ namespace death
 				game_instance->OnPlayerEntered(game_instance->players[i].get());
 		// select the very first level
 		SetNextLevel(true); 
+		// start the music
+		SetInGameMusic("game_music");
 
 		return true;
 	}

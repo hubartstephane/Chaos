@@ -60,7 +60,6 @@ namespace death
 		/** the camera transform whenever no camera exists */
 		CameraTransform GetDefaultCameraTransform() const;
 
-
 		/** the camera box getter */
 		chaos::box2 GetCameraBox(size_t index) const;
 		/** the camera box setter */
@@ -125,6 +124,11 @@ namespace death
 
 		/** check whether there is a game over */
 		virtual bool DoCheckGameOverCondition();
+
+		/** change the background */
+		virtual void CreateImageBackground();
+		/** change the music */
+		virtual void SetInGameMusic();
 
 	protected:
 

@@ -1,5 +1,5 @@
 {
-	"lines":[
+	"LINES":[
 		"                    "
 		"        2222        ",
 		"       222222       ",
@@ -7,5 +7,7 @@
 		"      11111111      ",
 		"      11133111      ",
 		"      11133111      "
-	]
+	],
+  "BACKGROUND_TEXTURE": "background1",
+  "MUSIC": "game_music"
 }

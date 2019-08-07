@@ -109,7 +109,7 @@ death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 		return nullptr;
 
 	std::vector<std::string> lines;
-	if (!chaos::JSONTools::GetAttributeArray(level_content, "lines", lines))
+	if (!chaos::JSONTools::GetAttributeArray(level_content, "LINES", lines))
 		return nullptr;
 
 	LudumLevel * result = new LudumLevel;

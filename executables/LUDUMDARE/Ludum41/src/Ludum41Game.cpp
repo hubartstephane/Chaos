@@ -104,20 +104,24 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 
 death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 {
-	std::vector<std::string> level_content = chaos::FileTools::ReadFileLines(path);
-	if (level_content.size() == 0)
+	nlohmann::json level_content;
+	if (!chaos::JSONTools::LoadJSONFile(path, level_content, false))
+		return nullptr;
+
+	std::vector<std::string> lines;
+	if (!chaos::JSONTools::GetAttributeArray(level_content, "lines", lines))
 		return nullptr;
 
 	LudumLevel * result = new LudumLevel;
 	if (result == nullptr)
 		return nullptr;
 
-	std::vector<int> line;
-	for (size_t i = 0; i < level_content.size(); ++i)
+	std::vector<int> brick_line;
+	for (size_t i = 0; i < lines.size(); ++i)
 	{
-		line.resize(0);
+		brick_line.resize(0);
 
-		char const * l = level_content[i].c_str();
+		char const * l = lines[i].c_str();
 		for (size_t j = 0; l[j] != 0; ++j)
 		{
 			char c = l[j];
@@ -125,21 +129,21 @@ death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 			// indestructible
 			if (c == 'B')
 			{
-				line.push_back(LudumLevel::INDESTRUCTIBLE);
+				brick_line.push_back(LudumLevel::INDESTRUCTIBLE);
 				result->indestructible_brick_count++;
 				continue;
 			}
 			// separator
 			if (!std::isdigit(c))
 			{
-				line.push_back(LudumLevel::NONE);
+				brick_line.push_back(LudumLevel::NONE);
 				continue;
 			}
 			// life
 			int brick_type = (int)(c - '0');
-			line.push_back(brick_type);
+			brick_line.push_back(brick_type);
 		}
-		result->bricks.push_back(std::move(line));
+		result->bricks.push_back(std::move(brick_line));
 	}
 
 	return result;

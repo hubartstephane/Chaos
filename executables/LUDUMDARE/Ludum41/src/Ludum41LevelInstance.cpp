@@ -175,9 +175,13 @@ void LudumLevelInstance::CreateBackgroundImage()
 	LudumLevel const * ludum_level = GetLudumLevel();
 	if (ludum_level != nullptr)
 	{
-
-
-
+		char const * background_material = (ludum_level->background_material.empty())? nullptr : ludum_level->background_material.c_str();
+		char const * background_texture = (ludum_level->background_texture.empty())? nullptr : ludum_level->background_texture.c_str();
+		if (background_material != nullptr || background_texture != nullptr)
+		{
+			game->CreateBackgroundImage(background_material, background_texture);
+			return;
+		}
 	}
 	death::GameLevelInstance::CreateBackgroundImage(); // fallback
 }

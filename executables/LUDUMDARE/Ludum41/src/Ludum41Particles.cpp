@@ -292,9 +292,6 @@ size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * part
 	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
 	bool keyboard = chaos::InputMode::IsPCMode(input_mode);
 
-
-	size_t challenge_position = particle->challenge->GetChallengePosition();
-
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 
@@ -304,6 +301,7 @@ size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * part
 
 	if (keyboard)
 	{
+		size_t challenge_position = particle->challenge->GetChallengePosition(false);
 		if (particle->index < challenge_position)
 			color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		else
@@ -311,13 +309,12 @@ size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * part
 	}
 	else
 	{
+		size_t challenge_position = particle->challenge->GetChallengePosition(true);
 		if (particle->index < challenge_position)
 			color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		else
 			color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
 	}
-
-
 
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = color;

@@ -524,8 +524,6 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 		}
 	}
 
-
-
 	// search a word with random length
 	size_t len = ludum_game->min_word_size + rand() % (ludum_game->max_word_size - ludum_game->min_word_size);
 
@@ -568,7 +566,13 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(std::string keyboard
 {
 	LudumGame const * ludum_game = GetLudumGame();
 
-	size_t len = keyboard_challenge.size();
+	// remove all spaces from the challenge
+	std::string nospace_keyboard_challenge = LudumChallenge::NoSpaceKeyboardChallenge(keyboard_challenge);
+
+	// the gamepad length is the same that the no space version
+	size_t len = nospace_keyboard_challenge.size();
+	if (len == 0)
+		return nullptr;
 
 	// compose a gamepad combinaison of the same length
 	std::vector<int> gamepad_challenge;
@@ -579,14 +583,18 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(std::string keyboard
 	LudumChallenge * result = new LudumChallenge;
 	if (result != nullptr)
 	{
+		// initialize the challenges
 		result->gamepad_challenge = std::move(gamepad_challenge);
 		result->keyboard_challenge = std::move(keyboard_challenge);
-
-		//result->keyboard_challenge = "toto titi";
+		// initialize the positions
+		result->gamepad_challenge_position = 0;
+		result->keyboard_challenge_position = 0;
+		while (result->keyboard_challenge[result->keyboard_challenge_position] == ' ')
+			++result->keyboard_challenge_position;
+		// initialize other values
 		result->game_instance = this;
 		result->particle_range = CreateChallengeParticles(result);
 		result->Show(game->IsPlaying());
-
 		result->SetTimeout(ludum_game->challenge_duration);
 
 		ball_time_dilation = ludum_game->challenge_time_dilation;

@@ -20,7 +20,7 @@ public:
 	void OnKeyboardButtonReceived(char c);
 
 	/** returns the position inside the challenge */
-	size_t GetChallengePosition() const { return challenge_position; }
+	size_t GetChallengePosition(bool gamepad) const;
 
 	/** challenge can be ticked */
 	void Tick(double delta_time);
@@ -30,6 +30,9 @@ public:
 
 	/** show / hide */
 	void Show(bool visible);
+
+	/** convert the keyboard_challenge into a string with no space */
+	static std::string NoSpaceKeyboardChallenge(std::string const & keyboard_challenge);
 
 protected:
 
@@ -49,7 +52,9 @@ protected:
 	std::string keyboard_challenge;
 
 	/** the position in the challenge */
-	size_t challenge_position = 0;
+	size_t gamepad_challenge_position = 0;
+	/** the position in the challenge */
+	size_t keyboard_challenge_position = 0;
 
 	/** time out (no time out by default) */
 	float timeout = -1.0f; 

@@ -4,10 +4,10 @@
 #include "Ludum41Game.h"
 #include "Ludum41GameInstance.h"
 
-
 void LudumChallenge::OnKeyboardButtonReceived(char c)
 {
-	if (keyboard_challenge[challenge_position] == c)
+	// test the challenge
+	if (keyboard_challenge[keyboard_challenge_position] == c)
 		AdvanceChallenge();
 	else
 		OnChallengeError(false);
@@ -23,7 +23,7 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * 
 {
 	LudumGame * game = game_instance->GetLudumGame();
 
-	int expected_key = gamepad_challenge[challenge_position];
+	int expected_key = gamepad_challenge[gamepad_challenge_position];
 
 	if (in_gamepad_data->GetButtonChanges(expected_key) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
 	{
@@ -50,8 +50,13 @@ void LudumChallenge::AdvanceChallenge()
 {
 	LudumGame * game = game_instance->GetLudumGame();
 
-	++challenge_position;
-	if (challenge_position == gamepad_challenge.size())
+	// update keyboard position
+	++keyboard_challenge_position;
+	while (keyboard_challenge_position < keyboard_challenge.size() && keyboard_challenge[keyboard_challenge_position] == ' ')
+		++keyboard_challenge_position;
+	// compute success for gamepad (much simpler)
+	++gamepad_challenge_position;
+	if (gamepad_challenge_position == gamepad_challenge.size())
 	{			
 		game->Play("challenge_success", false, false);
 
@@ -120,4 +125,18 @@ void LudumChallenge::Tick(double delta_time)
 LudumChallenge::~LudumChallenge()
 {
 	game_instance->ball_time_dilation = 1.0;
+}
+
+std::string LudumChallenge::NoSpaceKeyboardChallenge(std::string const & keyboard_challenge)
+{
+	std::string result = keyboard_challenge;
+	result.erase(std::remove(result.begin(), result.end(), ' '), result.end());
+	return result;
+}
+
+size_t LudumChallenge::GetChallengePosition(bool gamepad) const 
+{ 
+	return (gamepad)?
+		gamepad_challenge_position:
+		keyboard_challenge_position;
 }

@@ -1451,7 +1451,16 @@ namespace death
 
 		void LevelInstance::SetInGameMusic()
 		{
-			GameLevelInstance::SetInGameMusic();
+			std::string const * level_music = nullptr;
+
+			death::TiledMap::Level const * level = GetTiledLevel();
+			if (level != nullptr)
+				level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
+
+			if (level_music == nullptr)
+				GameLevelInstance::SetInGameMusic();
+			else
+				game->SetInGameMusic(level_music->c_str());
 		}
 
 

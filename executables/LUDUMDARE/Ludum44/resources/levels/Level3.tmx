@@ -2,7 +2,7 @@
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1911">
  <properties>
-  <property name="BACKGROUND_NAME" value="background3"/>
+  <property name="BACKGROUND_TEXTURE" value="background3"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="800"/>
   <property name="LEVEL_TITLE" value="Level 3 - [LEVELTITLE The END]"/>

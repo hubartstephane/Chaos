@@ -1434,14 +1434,19 @@ namespace death
 
 		void LevelInstance::CreateBackgroundImage()
 		{
-			// change the background image
-			std::string const * background_name = nullptr;
-
+			std::string const * background_material = nullptr;
+			std::string const * background_texture  = nullptr;
+			
 			death::TiledMap::Level const * level = GetTiledLevel();
 			if (level != nullptr)
-				background_name = level->GetTiledMap()->FindPropertyString("BACKGROUND_NAME");
-
-			game->CreateBackgroundImage(nullptr, (background_name == nullptr) ? nullptr : background_name->c_str());
+			{
+				background_material = level->GetTiledMap()->FindPropertyString("BACKGROUND_MATERIAL");
+				background_texture = level->GetTiledMap()->FindPropertyString("BACKGROUND_TEXTURE");
+			}
+				
+			game->CreateBackgroundImage(
+				(background_material == nullptr) ? nullptr : background_material->c_str(),
+				(background_texture == nullptr) ?  nullptr : background_texture->c_str());
 		}
 
 		void LevelInstance::SetInGameMusic()

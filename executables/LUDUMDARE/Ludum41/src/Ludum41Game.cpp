@@ -116,6 +116,7 @@ death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 	if (result == nullptr)
 		return nullptr;
 
+	// get the bricks
 	std::vector<int> brick_line;
 	for (size_t i = 0; i < lines.size(); ++i)
 	{
@@ -145,6 +146,18 @@ death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 		}
 		result->bricks.push_back(std::move(brick_line));
 	}
+
+	// get the music
+	chaos::JSONTools::GetAttribute(level_content, "MUSIC", result->music);
+	// get the background
+	chaos::JSONTools::GetAttribute(level_content, "BACKGROUND_MATERIAL", result->background_material);
+	chaos::JSONTools::GetAttribute(level_content, "BACKGROUND_TEXTURE", result->background_texture);
+	// get the "dictionnary"
+
+
+
+
+
 
 	return result;
 }

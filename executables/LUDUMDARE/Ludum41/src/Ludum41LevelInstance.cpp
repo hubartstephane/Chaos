@@ -169,3 +169,29 @@ ParticleBrick const * LudumLevelInstance::GetBricks() const
 		return nullptr;
 	return &p[0];
 }
+
+void LudumLevelInstance::CreateBackgroundImage()
+{
+	LudumLevel const * ludum_level = GetLudumLevel();
+	if (ludum_level != nullptr)
+	{
+
+
+
+	}
+	death::GameLevelInstance::CreateBackgroundImage(); // fallback
+}
+
+void LudumLevelInstance::SetInGameMusic()
+{
+	LudumLevel const * ludum_level = GetLudumLevel();
+	if (ludum_level != nullptr)
+	{
+		if (!ludum_level->music.empty())
+		{
+			game->SetInGameMusic(ludum_level->music.c_str());
+			return;
+		}
+	}
+	death::GameLevelInstance::SetInGameMusic(); // fallback
+}

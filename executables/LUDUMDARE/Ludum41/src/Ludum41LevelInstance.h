@@ -36,6 +36,12 @@ public:
 
 protected:
 
+	virtual void CreateBackgroundImage() override;
+
+	virtual void SetInGameMusic() override;
+
+protected:
+
 	chaos::ParticleAllocationBase * CreateBricks();
 	
 	/** get the bricks */

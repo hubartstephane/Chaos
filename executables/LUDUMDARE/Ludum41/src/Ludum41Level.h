@@ -33,4 +33,11 @@ public:
 	size_t indestructible_brick_count = 0;
 	/** the brick types */
 	std::vector<std::vector<int>> bricks;
+	/** music */
+	std::string music;
+	/** background */
+	std::string background_material;
+	std::string background_texture;
+	/** dictionnary */
+	std::vector<std::string> dictionnary;
 };

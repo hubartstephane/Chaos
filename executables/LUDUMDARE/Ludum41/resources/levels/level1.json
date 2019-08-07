@@ -6,8 +6,8 @@
     "22222222222222222222",
     "11111111111111111111"
   ],
-  "BACKGROUND_TEXTURE": "background1",
-  "MUSIC": "game_music",
+  "BACKGROUND_TEXTURE": "background2",
+  "MUSIC": "game_music2",
   "DICTIONNARY": [
     "worda wordb wordc",
     "wordd worde wordf"

@@ -8,6 +8,6 @@
 		"B2222222    2222222B",
 		"BBBB1111    1111BBBB"
 	],
-  "BACKGROUND_TEXTURE": "background2",
-  "MUSIC": "game_music2"
+  "BACKGROUND_TEXTURE": "background1",
+  "MUSIC": "game_music"
 }

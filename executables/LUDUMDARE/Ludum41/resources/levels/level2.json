@@ -6,6 +6,6 @@
 		"322222222  222222223",
 		"11111          11111"
 	],
-  "BACKGROUND_TEXTURE": "background2",
-  "MUSIC": "game_music2"
+  "BACKGROUND_TEXTURE": "background1",
+  "MUSIC": "game_music"
 }

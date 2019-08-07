@@ -57,5 +57,5 @@ public:
 	/** some sprites */	
 	chaos::shared_ptr<chaos::ParticleAllocationBase> bricks_allocations;	
 	/** the current word */
-	int word_index = 0;
+	size_t word_index = 0;
 };

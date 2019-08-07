@@ -46,7 +46,7 @@ void LudumGameInstance::TickChallenge(double delta_time)
 		challenge_timer = max(0.0f, challenge_timer - (float)delta_time);
 		if (challenge_timer <= 0.0f)
 			if (CanStartChallengeBallIndex(false) != std::numeric_limits<size_t>::max()) // any ball going up
-				sequence_challenge = CreateSequenceChallenge(0);
+				sequence_challenge = CreateSequenceChallenge();
 	}
 }
 
@@ -504,12 +504,30 @@ int LudumGameInstance::GetRandomButtonID() const
 }
 
 
-LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
+LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 {
 	LudumGame const * ludum_game = GetLudumGame();
+	LudumLevel const * ludum_level = GetLudumLevel();
+	LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();	
 
-	if (len == 0)
-		len = ludum_game->min_word_size + rand() % (ludum_game->max_word_size - ludum_game->min_word_size);
+	// if the level has a dedicated text, use it
+	if (ludum_level != nullptr && ludum_level_instance != nullptr)
+	{
+		size_t word_count = ludum_level->dictionnary.size();
+		if (word_count > 0)
+		{
+			size_t index = ludum_level_instance->word_index % word_count;
+
+			ludum_level_instance->word_index = (ludum_level_instance->word_index + 1) % word_count;
+
+			return CreateSequenceChallenge(ludum_level->dictionnary[index]);
+		}
+	}
+
+
+
+	// search a word with random length
+	size_t len = ludum_game->min_word_size + rand() % (ludum_game->max_word_size - ludum_game->min_word_size);
 
 	auto it = ludum_game->dictionnary.find(len);
 
@@ -542,8 +560,15 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
 	if (index >= words.size())
 		index = words.size() - 1; // should never happen
 
-	std::string keyboard_challenge = words[index];
-	len = keyboard_challenge.size();
+	std::string const & keyboard_challenge = words[index];
+	return CreateSequenceChallenge(keyboard_challenge);
+}
+
+LudumChallenge * LudumGameInstance::CreateSequenceChallenge(std::string keyboard_challenge)
+{
+	LudumGame const * ludum_game = GetLudumGame();
+
+	size_t len = keyboard_challenge.size();
 
 	// compose a gamepad combinaison of the same length
 	std::vector<int> gamepad_challenge;
@@ -556,6 +581,8 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
 	{
 		result->gamepad_challenge = std::move(gamepad_challenge);
 		result->keyboard_challenge = std::move(keyboard_challenge);
+
+		//result->keyboard_challenge = "toto titi";
 		result->game_instance = this;
 		result->particle_range = CreateChallengeParticles(result);
 		result->Show(game->IsPlaying());
@@ -566,7 +593,6 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(size_t len)
 	}
 	return result;
 }
-
 
 std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge)
 {

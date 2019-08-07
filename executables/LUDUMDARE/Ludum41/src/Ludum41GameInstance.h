@@ -86,8 +86,10 @@ public:
 	/** called whenever a challenge is completed */
 	void OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size);
 
-	/** create a challenge for a given name */
-	LudumChallenge * CreateSequenceChallenge(size_t len);
+	/** create a challenge  */
+	LudumChallenge * CreateSequenceChallenge();
+	/** create a challenge  */
+	LudumChallenge * CreateSequenceChallenge(std::string keyboard_challenge);
 
 protected:
 

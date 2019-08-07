@@ -154,7 +154,7 @@ death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 	chaos::JSONTools::GetAttribute(level_content, "BACKGROUND_TEXTURE", result->background_texture);
 	// get the "dictionnary"
 	std::vector<std::string> dictionnary;
-	if (!chaos::JSONTools::GetAttributeArray(level_content, "DICTIONNARY", dictionnary))
+	if (chaos::JSONTools::GetAttributeArray(level_content, "DICTIONNARY", dictionnary))
 	{
 		for (std::string const & dictionnary_line : dictionnary)
 		{

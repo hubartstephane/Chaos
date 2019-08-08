@@ -1019,11 +1019,16 @@ namespace death
 			chaos::obox2 camera_obox = GetTiledLevelInstance()->GetCameraOBox(0);
 			chaos::obox2 initial_camera_obox = GetTiledLevelInstance()->GetInitialCameraOBox(0);
 
+
+			auto xxx = GetTiledLevelInstance()->GetCameraBox(0);
+
+			auto yyy = chaos::GetBoundingBox(camera_obox);
+
 			glm::mat4x4 transform = CameraTransform::GetCameraTransform(camera_obox);
 			glm::mat4x4 initial_transform =  CameraTransform::GetCameraTransform(initial_camera_obox);
 
-			glm::vec3 camera_position = transform[3];
-			glm::vec3 initial_camera_position = initial_transform[3];
+			glm::vec2 camera_position = camera_obox.position;
+			glm::vec2 initial_camera_position = initial_camera_obox.position;
 
 			chaos::box2 layer_box  = GetBoundingBox(true);
 
@@ -1037,7 +1042,7 @@ namespace death
 
 			// apply the displacement to the camera
 
-			glm::vec3 final_ratio = glm::vec3(1.0f, 1.0f, 1.0f);
+			glm::vec2 final_ratio = glm::vec2(1.0f, 1.0f);
 			if (level_instance->reference_layer != nullptr && level_instance->reference_layer != this)
 			{
 				if (level_instance->reference_layer->displacement_ratio.x != 0.0f)
@@ -1046,11 +1051,11 @@ namespace death
 					final_ratio.y = displacement_ratio.y / level_instance->reference_layer->displacement_ratio.y;
 			}
 
-			glm::vec3 final_camera_position = initial_camera_position + (camera_position - initial_camera_position) * final_ratio;
+			glm::vec2 final_camera_position = initial_camera_position + (camera_position - initial_camera_position) * final_ratio;
 
 			// compute repetitions
 			chaos::obox2 final_camera_obox = camera_obox;
-			final_camera_obox.position  = glm::vec2(final_camera_position.x, final_camera_position.y);
+			final_camera_obox.position  = final_camera_position;
 			
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 
@@ -1100,7 +1105,8 @@ namespace death
 
 					// new Provider to apply the offset for this 'instance'
 					chaos::GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
-					instance_uniform_provider.AddVariableValue("offset", scissor_result.GetInstanceOffset(glm::ivec2(x, y)) + offset);
+					glm::vec2 instance_offset = scissor_result.GetInstanceOffset(glm::ivec2(x, y));
+					instance_uniform_provider.AddVariableValue("offset", instance_offset + offset);
 					// draw call
 					result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
 				}

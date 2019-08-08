@@ -1017,11 +1017,15 @@ namespace death
 
 			// camera is expressed in world, so is for layer
 			CameraTransform camera_transform = GetTiledLevelInstance()->GetCameraTransform(0);
-			glm::vec3 initial_camera_position = camera_transform.transform[3];
+
+			glm::mat4x4 transform = camera_transform.transform;
+			glm::mat4x4 initial_transform = GetTiledLevelInstance()->GetInitialCameraTransform(0);
+
+			glm::vec3 camera_position = transform[3];
+			glm::vec3 initial_camera_position = initial_transform[3];
 
 			chaos::box2 layer_box  = GetBoundingBox(true);
 			chaos::box2 camera_box = GetTiledLevelInstance()->GetCameraBox(0);
-			chaos::box2 initial_camera_box = GetTiledLevelInstance()->GetInitialCameraBox(0);
 
 			// XXX : we want some layers to appear further or more near the camera
 			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
@@ -1032,9 +1036,8 @@ namespace death
 			//       We only multiply 'true camera' distance from its initial position by a ratio value
 
 			// apply the displacement to the camera
-			chaos::box2 final_camera_box = camera_box;
 
-			glm::vec2 final_ratio = glm::vec2(1.0f, 1.0f);
+			glm::vec3 final_ratio = glm::vec3(1.0f, 1.0f, 1.0f);
 			if (level_instance->reference_layer != nullptr && level_instance->reference_layer != this)
 			{
 				if (level_instance->reference_layer->displacement_ratio.x != 0.0f)
@@ -1043,12 +1046,7 @@ namespace death
 					final_ratio.y = displacement_ratio.y / level_instance->reference_layer->displacement_ratio.y;
 			}
 
-
-
-
-
-
-			final_camera_box.position = initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio;
+			glm::vec3 final_camera_position = initial_camera_position + (camera_position - initial_camera_position) * final_ratio;
 
 
 
@@ -1059,6 +1057,10 @@ namespace death
 
 
 			// compute repetitions
+
+			chaos::box2 final_camera_box =
+			final_camera_box.
+
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, final_camera_box, wrap_x, wrap_y);
 
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden

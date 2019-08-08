@@ -141,7 +141,7 @@ namespace death
 		// last initialization of camera
 		size_t camera_count = cameras.size();
 		for (size_t i = 0; i < camera_count; ++i)
-			cameras[i]->SetInitialCameraBox(cameras[i]->GetCameraBox());
+			cameras[i]->SetInitialCameraTransform(cameras[i]->GetCameraTransform().transform);
 		// change background
 		CreateBackgroundImage();
 		// change music
@@ -347,12 +347,12 @@ namespace death
 		camera->SetCameraBox(in_box);
 	}
 
-	chaos::box2 GameLevelInstance::GetInitialCameraBox(size_t index) const
+	glm::mat4x4 GameLevelInstance::GetInitialCameraTransform(size_t index) const
 	{ 
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
-			return chaos::box2();
-		return camera->GetInitialCameraBox();
+			return glm::mat4x4();
+		return camera->GetInitialCameraTransform();
 	}
 
 }; // namespace death

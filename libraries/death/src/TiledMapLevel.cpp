@@ -1016,16 +1016,16 @@ namespace death
 
 
 			// camera is expressed in world, so is for layer
-			CameraTransform camera_transform = GetTiledLevelInstance()->GetCameraTransform(0);
+			chaos::obox2 camera_obox = GetTiledLevelInstance()->GetCameraOBox(0);
+			chaos::obox2 initial_camera_obox = GetTiledLevelInstance()->GetInitialCameraOBox(0);
 
-			glm::mat4x4 transform = camera_transform.transform;
-			glm::mat4x4 initial_transform = GetTiledLevelInstance()->GetInitialCameraTransform(0);
+			glm::mat4x4 transform = CameraTransform::GetCameraTransform(camera_obox);
+			glm::mat4x4 initial_transform =  CameraTransform::GetCameraTransform(initial_camera_obox);
 
 			glm::vec3 camera_position = transform[3];
 			glm::vec3 initial_camera_position = initial_transform[3];
 
 			chaos::box2 layer_box  = GetBoundingBox(true);
-			chaos::box2 camera_box = GetTiledLevelInstance()->GetCameraBox(0);
 
 			// XXX : we want some layers to appear further or more near the camera
 			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
@@ -1048,20 +1048,11 @@ namespace death
 
 			glm::vec3 final_camera_position = initial_camera_position + (camera_position - initial_camera_position) * final_ratio;
 
-
-
-
-
-
-
-
-
 			// compute repetitions
-
-			chaos::box2 final_camera_box =
-			final_camera_box.
-
-			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, final_camera_box, wrap_x, wrap_y);
+			chaos::obox2 final_camera_obox = camera_obox;
+			final_camera_obox.position  = glm::vec2(final_camera_position.x, final_camera_position.y);
+			
+			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
 			glm::ivec2 start_instance = scissor_result.start_instance;
@@ -1081,6 +1072,8 @@ namespace death
 			{
 				for (int y = start_instance.y; y < last_instance.y; ++y)
 				{
+
+#if 0
 					// override the camera box only if there is at least one draw call
 					if (draw_instance_count++ == 0)
 						main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(final_camera_box));
@@ -1092,6 +1085,8 @@ namespace death
 
 
 					}
+#endif
+			//final_camera_obox.position  = glm::vec2(initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio);
 
 
 

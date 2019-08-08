@@ -73,18 +73,11 @@ namespace death
 		main_uniform_provider.AddVariableValue("level_time", level_time);
 		// the main camera
 
-		CameraTransform camera_transform = GetCameraTransform(0);
-		main_uniform_provider.AddVariableValue("camera_transform", camera_transform.transform);
-		main_uniform_provider.AddVariableValue("view_half_size", camera_transform.view_half_size);
-
-
+		chaos::obox2 camera_obox = GetCameraOBox(0);
+		main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(camera_obox));
+		main_uniform_provider.AddVariableValue("view_half_size", camera_obox.half_size);
 
 		// shuxxx shuwww
-
-		/*
-		chaos::box2 camera_box;
-		camera_box.position = camera_transform.transform.
-		*/
 		chaos::box2 camera = GetCameraBox(0);
 		if (IsGeometryEmpty(camera))
 			camera = game->GetViewBox();
@@ -141,7 +134,7 @@ namespace death
 		// last initialization of camera
 		size_t camera_count = cameras.size();
 		for (size_t i = 0; i < camera_count; ++i)
-			cameras[i]->SetInitialCameraTransform(cameras[i]->GetCameraTransform().transform);
+			cameras[i]->SetInitialCameraOBox(cameras[i]->GetCameraOBox());
 		// change background
 		CreateBackgroundImage();
 		// change music
@@ -311,21 +304,30 @@ namespace death
 		return cameras[index].get();
 	}
 
-	CameraTransform GameLevelInstance::GetCameraTransform(size_t index) const
+	chaos::obox2 GameLevelInstance::GetInitialCameraOBox(size_t index) const
+	{ 
+		Camera const * camera = GetCamera(index);
+		if (camera == nullptr)
+			return chaos::obox2();
+		return camera->GetInitialCameraOBox();
+	}
+
+	chaos::obox2 GameLevelInstance::GetCameraOBox(size_t index) const
 	{
 		// find a camera
 		Camera const * camera = GetCamera(index);
 		if (camera != nullptr)
-			return camera->GetCameraTransform();
+			return camera->GetCameraOBox();
 		// fallback code
-		return GetDefaultCameraTransform();
+		return GetDefaultCameraOBox();
 	}
 
-	CameraTransform GameLevelInstance::GetDefaultCameraTransform() const
+	chaos::obox2 GameLevelInstance::GetDefaultCameraOBox() const
 	{
-		CameraTransform result;
-		result.transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		result.view_half_size = GetGame()->GetViewSize() * 0.5f;
+		chaos::obox2 result;
+		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
+		result.half_size = GetGame()->GetViewSize() * 0.5f;
+		result.rotator = 0.0f;
 		return result;
 	}
 
@@ -347,13 +349,6 @@ namespace death
 		camera->SetCameraBox(in_box);
 	}
 
-	glm::mat4x4 GameLevelInstance::GetInitialCameraTransform(size_t index) const
-	{ 
-		Camera const * camera = GetCamera(index);
-		if (camera == nullptr)
-			return glm::mat4x4();
-		return camera->GetInitialCameraTransform();
-	}
 
 }; // namespace death
 

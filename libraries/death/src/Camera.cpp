@@ -7,6 +7,17 @@ namespace death
 {
 
 	// =================================================
+	// CameraTransform
+	// =================================================
+
+	glm::mat4x4 CameraTransform::GetCameraTransform(chaos::obox2 const & obox)
+	{
+		glm::mat4x4 result;	
+		result = glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
+		return result;
+	}
+
+	// =================================================
 	// Camera
 	// =================================================
 
@@ -25,13 +36,14 @@ namespace death
 		return true;
 	}
 
-	CameraTransform Camera::GetCameraTransform() const
+	chaos::obox2 Camera::GetCameraOBox() const
 	{
 		chaos::box2 box = GetCameraBox();
 
-		CameraTransform result;
-		result.transform = glm::translate(glm::vec3(-box.position.x, -box.position.y, 0.0f));
-		result.view_half_size = box.half_size;
+		chaos::obox2 result;
+		result.position = box.position;
+		result.half_size = box.half_size;
+		result.rotator = 0.0f;
 		return result;
 	}
 

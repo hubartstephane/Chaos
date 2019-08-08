@@ -56,16 +56,16 @@ namespace death
 		Camera const * GetCamera(size_t index) const;
 
 		/** get the transformation world to camera */
-		CameraTransform GetCameraTransform(size_t index) const;
+		chaos::obox2 GetCameraOBox(size_t index) const;
 		/** the camera transform whenever no camera exists */
-		CameraTransform GetDefaultCameraTransform() const;
+		chaos::obox2 GetDefaultCameraOBox() const;
+		/** the initial camera box getter */		
+		chaos::obox2 GetInitialCameraOBox(size_t index) const;
 
 		/** the camera box getter */
 		chaos::box2 GetCameraBox(size_t index) const;
 		/** the camera box setter */
 		void SetCameraBox(size_t index, chaos::box2 in_box);
-		/** the initial camera box getter */		
-		glm::mat4x4 GetInitialCameraTransform(size_t index) const;
 
 		/** returns level clock */
 		chaos::Clock * GetLevelClock() { return level_clock.get();}

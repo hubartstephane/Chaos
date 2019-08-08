@@ -19,15 +19,8 @@ namespace death
 	{
 	public:
 
-		/** get the oriented box */
-		chaos::obox2 GetCameraOBox() const;
-
-	public:
-
-		/** world to camera matrix */
-		glm::mat4x4 transform;
-		/** the view size */
-		glm::vec2 view_half_size;
+	
+		static glm::mat4x4 GetCameraTransform(chaos::obox2 const & obox);
 	};
 
 
@@ -71,8 +64,8 @@ namespace death
 
 
 
-		/** get the camera transformation */
-		CameraTransform GetCameraTransform() const;
+		/** get the camera OBox */
+		chaos::obox2 GetCameraOBox() const;
 
 
 		/** set the camera box */
@@ -81,10 +74,10 @@ namespace death
 		chaos::box2 const & GetCameraBox() const { return camera_box;}
 
 
-		/** get the camera transform when level instance is started */
-		glm::mat4x4 const & GetInitialCameraTransform() const { return initial_camera_transform;}
-		/** set the camera initial transform */
-		void SetInitialCameraTransform(glm::mat4x4 const & in_transform) { initial_camera_transform = in_transform; }
+		/** get the camera OBox when level instance is started */
+		chaos::obox2 const & GetInitialCameraOBox() const { return initial_camera_obox;}
+		/** set the camera initial OBox */
+		void SetInitialCameraOBox(chaos::obox2 const & in_obox) { initial_camera_obox = in_obox; }
 
 		/** get the safe zone of the camera */
 		glm::vec2 const & GetSafeZone() const { return safe_zone; }
@@ -103,8 +96,8 @@ namespace death
 
 		/** the camera bounding box */
 		chaos::box2 camera_box;
-		/** the initial camera transform (at level startup) */
-		glm::mat4x4 initial_camera_transform;
+		/** the initial camera obox (at level startup) */
+		chaos::obox2 initial_camera_obox;
 		/** the safe zone of the camera */
 		glm::vec2 safe_zone = glm::vec2(0.8f, 0.8f);
 

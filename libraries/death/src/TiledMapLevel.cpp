@@ -1000,29 +1000,9 @@ namespace death
 			if (particle_layer == nullptr)
 				return result;
 
-
-
-
-
-
-
-			
-	//	main_uniform_provider.AddVariableValue("camera_transform", camera_transform.transform);
-	//		main_uniform_provider.AddVariableValue("view_half_size", camera_transform.view_half_size);
-
-
-
-
-
-
 			// camera is expressed in world, so is for layer
 			chaos::obox2 camera_obox = GetTiledLevelInstance()->GetCameraOBox(0);
 			chaos::obox2 initial_camera_obox = GetTiledLevelInstance()->GetInitialCameraOBox(0);
-
-
-			auto xxx = GetTiledLevelInstance()->GetCameraBox(0);
-
-			auto yyy = chaos::GetBoundingBox(camera_obox);
 
 			glm::mat4x4 transform = CameraTransform::GetCameraTransform(camera_obox);
 			glm::mat4x4 initial_transform =  CameraTransform::GetCameraTransform(initial_camera_obox);
@@ -1059,6 +1039,10 @@ namespace death
 			
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 
+			// new provider for camera override (will be fullfill only if necessary)
+			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+			main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(final_camera_obox));
+
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
 			glm::ivec2 start_instance = scissor_result.start_instance;
 			glm::ivec2 last_instance  = scissor_result.last_instance;			
@@ -1067,9 +1051,6 @@ namespace death
 				start_instance = glm::ivec2(0, 0);
 				last_instance  = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
 			}
-
-			// new provider for camera override (will be fullfill only if necessary)
-			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 			
 			// draw instances 
 			int draw_instance_count = 0;
@@ -1077,32 +1058,6 @@ namespace death
 			{
 				for (int y = start_instance.y; y < last_instance.y; ++y)
 				{
-
-#if 0
-					// override the camera box only if there is at least one draw call
-					if (draw_instance_count++ == 0)
-						main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(final_camera_box));
-
-
-					if (draw_instance_count++ == 0)
-					{
-					//	final_camera_box.position = initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio;
-
-
-					}
-#endif
-			//final_camera_obox.position  = glm::vec2(initial_camera_box.position + (camera_box.position - initial_camera_box.position) * final_ratio);
-
-
-
-
-
-
-
-
-
-
-
 					// new Provider to apply the offset for this 'instance'
 					chaos::GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
 					glm::vec2 instance_offset = scissor_result.GetInstanceOffset(glm::ivec2(x, y));

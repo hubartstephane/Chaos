@@ -87,10 +87,13 @@ namespace chaos
 		json_entry["tag"] = info.tag;
 	}
 
-	void LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info)
+	bool LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info)
 	{
+		if (!json_entry.is_object())
+			return false;
 		JSONTools::GetAttribute(json_entry, "name", info.name, "");
 		JSONTools::GetAttribute(json_entry, "tag", info.tag, 0);
+		return true;
 	}
 
 }; // namespace chaos

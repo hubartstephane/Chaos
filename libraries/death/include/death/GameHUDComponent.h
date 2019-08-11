@@ -118,7 +118,7 @@ namespace death
 		/** the layer owning the allocation */
 		chaos::TagType layer_id = 0;
 		/** the placement and aspect of the text */
-		chaos::ParticleTextGenerator::GeneratorParams params;
+		chaos::ParticleTextGenerator::GeneratorParams generator_params;
 	};
 
 	// ====================================================================

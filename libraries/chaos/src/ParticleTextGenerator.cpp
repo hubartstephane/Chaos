@@ -15,39 +15,25 @@ namespace chaos
 
 		}
 
-		void LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & params)
+		bool LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & params)
 		{
-			nlohmann::json entry;
-			auto a = entry.is_array();
-			auto b = entry.is_object();
-
-
-
-
+			if (!json_entry.is_object())
+				return false;
 			JSONTools::GetAttribute(json_entry, "line_height", params.line_height);
 			JSONTools::GetAttribute(json_entry, "line_spacing", params.line_spacing);
 			JSONTools::GetAttribute(json_entry, "character_spacing", params.character_spacing);
-			//JSONTools::GetAttribute(json_entry, "bitmap_padding", params.bitmap_padding);
-
-
-
+			JSONTools::GetAttribute(json_entry, "bitmap_padding", params.bitmap_padding);
 			JSONTools::GetAttribute(json_entry, "max_text_width", params.max_text_width);
 			JSONTools::GetAttribute(json_entry, "word_wrap", params.word_wrap);
-
 			JSONTools::GetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);
 			//JSONTools::GetAttribute(json_entry, "alignment", params.alignment);
 			
 			//nlohmann::json const * p = JSONTools::GetStructure(json_entry, "default_color");
 			
-			//JSONTools::GetAttribute(json_entry, "default_color", params.default_color);
-
-
-
+			JSONTools::GetAttribute(json_entry, "default_color", params.default_color);
 			JSONTools::GetAttribute(json_entry, "font_info_name", params.font_info_name);
 			JSONTools::GetAttribute(json_entry, "tab_size", params.tab_size);
-
-
-			//	JSONTools::GetAttribute(json_entry, "position", position);
+			JSONTools::GetAttribute(json_entry, "position", params.position);
 			//JSONTools::GetAttribute(json_entry, "hotpoint_type", hotpoint_type);
 
 
@@ -56,6 +42,7 @@ namespace chaos
 			///** the hotpoint */
 			//int hotpoint_type = Hotpoint::BOTTOM_LEFT;
 
+			return true;
 		}
 		
 #if 0

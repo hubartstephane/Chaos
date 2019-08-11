@@ -130,9 +130,9 @@ namespace death
 	// GameHUDTextAllocationComponent
 	// ====================================================================
 
-	GameHUDTextComponent::GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id):
+	GameHUDTextComponent::GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_generator_params, chaos::TagType in_layer_id):
 		layer_id(in_layer_id),
-		params(in_params)
+		generator_params(in_generator_params)
 	{
 		
 	}
@@ -140,10 +140,10 @@ namespace death
 	GameHUDTextComponent::GameHUDTextComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id):
 		layer_id(in_layer_id)
 	{
-		params.line_height = line_height;
-		params.font_info_name = font_name;
-		params.position = position;
-		params.hotpoint_type = hotpoint_type;
+		generator_params.line_height = line_height;
+		generator_params.font_info_name = font_name;
+		generator_params.position = position;
+		generator_params.hotpoint_type = hotpoint_type;
 	}
 
 	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
@@ -152,10 +152,10 @@ namespace death
 			return true;
 
 
-
+		chaos::JSONTools::GetAttribute(json, "generator_params", generator_params);
 
 	//	chaos::JSONTools::GetAttribute(json, "layer_id", layer_id);
-		LoadFromJSON(json, params);
+		//LoadFromJSON(json, generator_params);
 
 
 
@@ -194,7 +194,7 @@ namespace death
 			allocations = nullptr;
 		else
 		{
-			chaos::ParticleTextGenerator::GeneratorParams other_params = params;
+			chaos::ParticleTextGenerator::GeneratorParams other_params = generator_params;
 			TweakTextGeneratorParams(other_params);
 			allocations = hud->GetGameParticleCreator().CreateTextParticles(in_text, other_params, layer_id);
 		}

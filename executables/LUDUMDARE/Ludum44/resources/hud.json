@@ -7,6 +7,18 @@
 
 	"TITLE_ID":
 	{
+    "generator_params":
+    {
+      "line_height":20,
+      "default_color":[1.0, 2.0, 3.0, 4.0],
+      "default_colorx":{
+        "x":"1.0", 
+        "y":"2.0", 
+        "z":"3.0", 
+        "w":"4.0"
+      }    
+    }
+
 	
 	}
 }

@@ -217,6 +217,6 @@ namespace chaos
 	/** function to serialize into JSON */
 	void SaveIntoJSON(nlohmann::json & json_entry, NamedObject const & info);
 	/** function to serialize from JSON */
-	void LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info);
+	bool LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info);
 
 }; // namespace chaos

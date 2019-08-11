@@ -61,7 +61,7 @@ namespace chaos
 		/** json functions */
 		void SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params);
 		/** json functions */
-		void LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & params);
+		bool LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & params);
 
 		/**
 		* some parameters used during the final particle generation

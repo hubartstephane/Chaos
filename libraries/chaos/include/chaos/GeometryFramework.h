@@ -1061,8 +1061,22 @@ namespace chaos
 	}
 
 	template<typename T>
-	void LoadFromJSON(nlohmann::json const & json_entry, glm::tvec2<T> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec2<T> & src)
 	{
+		if (json_entry.is_object())
+		{
+			JSONTools::GetAttribute(json_entry, "x", src.x);
+			JSONTools::GetAttribute(json_entry, "y", src.y);
+			return true;
+		}
+		else if (json_entry.is_array())
+		{
+			size_t count = MathTools::Minimum(json_entry.size(), (size_t)src.length());
+			for (size_t i = 0; i < count; ++i)
+				src[i] = json_entry[i].get<T>();
+			return true;
+		}
+		return false;
 	}
 
 	template<typename T>
@@ -1072,8 +1086,23 @@ namespace chaos
 	}
 
 	template<typename T>
-	void LoadFromJSON(nlohmann::json const & json_entry, glm::tvec3<T> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec3<T> & src)
 	{
+		if (json_entry.is_object())
+		{
+			JSONTools::GetAttribute(json_entry, "x", src.x);
+			JSONTools::GetAttribute(json_entry, "y", src.y);
+			JSONTools::GetAttribute(json_entry, "z", src.z);
+			return true;
+		}
+		else if (json_entry.is_array())
+		{
+			size_t count = MathTools::Minimum(json_entry.size(), (size_t)src.length());
+			for (size_t i = 0; i < count; ++i)
+				src[i] = json_entry[i].get<T>();
+			return true;
+		}
+		return false;
 	}
 
 	template<typename T>
@@ -1083,8 +1112,24 @@ namespace chaos
 	}
 
 	template<typename T>
-	void LoadFromJSON(nlohmann::json const & json_entry, glm::tvec4<T> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec4<T> & src)
 	{
+		if (json_entry.is_object())
+		{
+			JSONTools::GetAttribute(json_entry, "x", src.x);
+			JSONTools::GetAttribute(json_entry, "y", src.y);
+			JSONTools::GetAttribute(json_entry, "z", src.z);
+			JSONTools::GetAttribute(json_entry, "w", src.w);
+			return true;
+		}
+		else if (json_entry.is_array())
+		{
+			size_t count = MathTools::Minimum(json_entry.size(), (size_t)src.length());
+			for (size_t i = 0; i < count ; ++i)
+				src[i] = json_entry[i].get<T>();
+			return true;
+		}
+		return false;
 	}
 #if 0
 
@@ -1098,7 +1143,7 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	void LoadFromJSON(nlohmann::json const & json_entry, type_ray<T, dimension> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, type_ray<T, dimension> & src)
 	{
 	}
 

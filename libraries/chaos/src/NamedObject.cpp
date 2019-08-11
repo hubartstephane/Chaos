@@ -81,13 +81,13 @@ namespace chaos
 		return true; // no requirement => OK
 	}
 
-	void SaveIntoJSON(NamedObject const & info, nlohmann::json & json_entry)
+	void SaveIntoJSON(nlohmann::json & json_entry, NamedObject const & info)
 	{
 		json_entry["name"] = info.name;
 		json_entry["tag"] = info.tag;
 	}
 
-	void LoadFromJSON(NamedObject & info, nlohmann::json const & json_entry)
+	void LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info)
 	{
 		JSONTools::GetAttribute(json_entry, "name", info.name, "");
 		JSONTools::GetAttribute(json_entry, "tag", info.tag, 0);

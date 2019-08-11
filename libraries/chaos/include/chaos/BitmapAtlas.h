@@ -546,33 +546,33 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
-		void SaveIntoJSON(BitmapAnimationInfo const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(nlohmann::json & json_entry, BitmapAnimationInfo const & info);
 
-		void LoadFromJSON(BitmapAnimationInfo & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(nlohmann::json const & json_entry, BitmapAnimationInfo & info);
 
-		void SaveIntoJSON(BitmapLayout const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(nlohmann::json & json_entry, BitmapLayout const & info);
 
-		void LoadFromJSON(BitmapLayout & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(nlohmann::json const & json_entry, BitmapLayout & info);
 
-		void SaveIntoJSON(CharacterLayout const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(nlohmann::json & json_entry, CharacterLayout const & info);
 
-		void LoadFromJSON(CharacterLayout & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(nlohmann::json const & json_entry, CharacterLayout & info);
 
-		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(nlohmann::json & json_entry, BitmapInfo const & info);
 
-		void LoadFromJSON(BitmapInfo & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(nlohmann::json const & json_entry, BitmapInfo & info);
 
-		void SaveIntoJSON(CharacterInfo const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(nlohmann::json & json_entry, CharacterInfo const & info);
 
-		void LoadFromJSON(CharacterInfo & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(nlohmann::json const & json_entry, CharacterInfo & info);
 
-		void SaveIntoJSON(FolderInfo const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(nlohmann::json & json_entry, FolderInfo const & info);
 
-		void LoadFromJSON(FolderInfo & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(nlohmann::json const & json_entry, FolderInfo & info);
 
-		void SaveIntoJSON(FontInfo const & info, nlohmann::json & json_entry);
+		void SaveIntoJSON(nlohmann::json & json_entry, FontInfo const & info);
 
-		void LoadFromJSON(FontInfo & info, nlohmann::json const & json_entry);
+		void LoadFromJSON(nlohmann::json const & json_entry, FontInfo & info);
 
 	}; // namespace BitmapAtlas
 

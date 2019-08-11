@@ -155,7 +155,7 @@ namespace death
 
 
 	//	chaos::JSONTools::GetAttribute(json, "layer_id", layer_id);
-		LoadFromJSON(params, json);
+		LoadFromJSON(json, params);
 
 
 

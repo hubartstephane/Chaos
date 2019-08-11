@@ -4,8 +4,30 @@
 #include <chaos/FilePath.h>
 #include <chaos/Buffer.h>
 
+
+// =================
+// EXTERNAL FUNCTION
+// =================
+
+
 namespace chaos
 {
+
+
+	/** specialization for bool (because we try to read an int as a fallback) */
+	bool LoadFromJSON(nlohmann::json const & entry, bool & result);
+	/** reading an attribute (catch exceptions) */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & entry, T & result)
+	{
+		result = entry.get<T>(); // may throw an exception (catched by caller)
+		return true;
+	}
+
+	// =================
+	// JSONTools
+	// =================
+
 	class JSONTools
 	{
 	public:
@@ -37,7 +59,7 @@ namespace chaos
 				return false;
 			try
 			{
-				return GetAttributeImpl(*it, result);
+				return LoadFromJSON(*it, result);
 			}
 			catch (...)
 			{
@@ -52,7 +74,7 @@ namespace chaos
 				return false;
 			try
 			{
-				return GetAttributeImpl(entry[index], result);
+				return LoadFromJSON(entry[index], result);
 			}
 			catch (...)
 			{
@@ -84,15 +106,7 @@ namespace chaos
 
 	protected:
 
-		/** specialization for bool (because we try to read an int as a fallback) */
-		static bool GetAttributeImpl(nlohmann::json const & entry, bool & result);
-		/** reading an attribute (catch exceptions) */
-		template<typename T>
-		static bool GetAttributeImpl(nlohmann::json const & entry, T & result)
-		{
-			result = entry.get<T>(); // may throw an exception (catched by caller)
-			return true;
-		}
+
 
 
 	public:
@@ -221,7 +235,7 @@ namespace chaos
 			for (auto const & element : elements)
 			{
 				auto json_entry = nlohmann::json();
-				SaveIntoJSON(element, json_entry);
+				SaveIntoJSON(json_entry, element);
 				json_entries.push_back(std::move(json_entry));
 			}
 		}
@@ -234,7 +248,7 @@ namespace chaos
 				if (element == nullptr)
 					continue;
 				auto json_entry = nlohmann::json();
-				SaveIntoJSON(*element, json_entry);
+				SaveIntoJSON(json_entry, *element);
 				json_entries.push_back(std::move(json_entry));
 			}
 		}
@@ -245,7 +259,7 @@ namespace chaos
 			for (auto & element : elements)
 			{
 				auto json_entry = nlohmann::json();
-				SaveIntoJSON(*element.get(), json_entry);
+				SaveIntoJSON(json_entry, *element.get());
 				json_entries.push_back(std::move(json_entry));
 			}
 		}
@@ -257,7 +271,7 @@ namespace chaos
 			for (auto const & json_entry : json_entries)
 			{
 				T element;
-				LoadFromJSON(element, json_entry);
+				LoadFromJSON(json_entry, element);
 				elements.push_back(std::move(element));
 			}
 		}
@@ -270,7 +284,7 @@ namespace chaos
 				T * element(new T);
 				if (element == nullptr)
 					continue;
-				LoadFromJSON(*element, json_entry);
+				LoadFromJSON(json_entry, *element);
 				elements.push_back(std::move(element));
 			}
 		}
@@ -283,7 +297,7 @@ namespace chaos
 				std::unique_ptr<T> element(new T);
 				if (element == nullptr)
 					continue;
-				LoadFromJSON(*element, json_entry);
+				LoadFromJSON(json_entry, *element);
 				elements.push_back(std::move(element));
 			}
 		}

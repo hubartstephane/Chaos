@@ -1055,35 +1055,35 @@ namespace chaos
 		// vectors
 
 	template<typename T>
-	void SaveIntoJSON(glm::tvec2<T> const & src, nlohmann::json & json_entry)
+	void SaveIntoJSON(nlohmann::json & json_entry, glm::tvec2<T> const & src)
 	{
 
 	}
 
 	template<typename T>
-	void LoadFromJSON(glm::tvec2<T> & src, nlohmann::json const & json_entry)
+	void LoadFromJSON(nlohmann::json const & json_entry, glm::tvec2<T> & src)
 	{
 	}
 
 	template<typename T>
-	void SaveIntoJSON(glm::tvec3<T> const & src, nlohmann::json & json_entry)
-	{
-
-	}
-
-	template<typename T>
-	void LoadFromJSON(glm::tvec3<T> & src, nlohmann::json const & json_entry)
-	{
-	}
-
-	template<typename T>
-	void SaveIntoJSON(glm::tvec4<T> const & src, nlohmann::json & json_entry)
+	void SaveIntoJSON(nlohmann::json & json_entry, glm::tvec3<T> const & src)
 	{
 
 	}
 
 	template<typename T>
-	void LoadFromJSON(glm::tvec4<T> & src, nlohmann::json const & json_entry)
+	void LoadFromJSON(nlohmann::json const & json_entry, glm::tvec3<T> & src)
+	{
+	}
+
+	template<typename T>
+	void SaveIntoJSON(nlohmann::json & json_entry, glm::tvec4<T> const & src)
+	{
+
+	}
+
+	template<typename T>
+	void LoadFromJSON(nlohmann::json const & json_entry, glm::tvec4<T> & src)
 	{
 	}
 #if 0
@@ -1092,13 +1092,13 @@ namespace chaos
 
 
 	template<typename T, int dimension>
-	void SaveIntoJSON(type_ray<T, dimension> const & src, nlohmann::json & json_entry)
+	void SaveIntoJSON(nlohmann::json & json_entry, type_ray<T, dimension> const & src)
 	{
 
 	}
 
 	template<typename T, int dimension>
-	void LoadFromJSON(type_ray<T, dimension> & src, nlohmann::json const & json_entry)
+	void LoadFromJSON(nlohmann::json const & json_entry, type_ray<T, dimension> & src)
 	{
 	}
 

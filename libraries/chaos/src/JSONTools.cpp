@@ -3,9 +3,21 @@
 #include <chaos/FileTools.h>
 #include <chaos/Application.h>
 
+// =================
+// EXTERNAL FUNCTION
+// =================
+
+
+// =================
+// JSONTools
+// =================
+
+
 namespace chaos
 {
-	bool JSONTools::GetAttributeImpl(nlohmann::json const & entry, bool & result)
+
+
+	bool LoadFromJSON(nlohmann::json const & entry, bool & result)
 	{
 		try
 		{
@@ -25,6 +37,14 @@ namespace chaos
 		}
 		return false;
 	}
+
+
+
+
+
+
+
+
 
 
 

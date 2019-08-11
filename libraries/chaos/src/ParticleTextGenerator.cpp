@@ -10,12 +10,12 @@ namespace chaos
 	namespace ParticleTextGenerator
 	{
 
-		void SaveIntoJSON(GeneratorParams const & params, nlohmann::json & json_entry)
+		void SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params)
 		{
 
 		}
 
-		void LoadFromJSON(GeneratorParams & params, nlohmann::json const & json_entry)
+		void LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & params)
 		{
 			nlohmann::json entry;
 			auto a = entry.is_array();

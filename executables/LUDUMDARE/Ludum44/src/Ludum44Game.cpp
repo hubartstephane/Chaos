@@ -195,12 +195,3 @@ bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesyste
 		return false;
 	return true;
 }
-
-int LudumGame::AddParticleLayers()
-{
-	int render_order = death::Game::AddParticleLayers();
-	if (render_order < 0)
-		return render_order;
-
-	return render_order;
-}

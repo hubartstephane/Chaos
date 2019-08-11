@@ -234,6 +234,18 @@ namespace death
 
 	void Game::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{		
+
+		// shuwww   root_render_layer ??
+
+
+
+
+
+
+
+
+
+
 		if (particle_manager != nullptr)
 			particle_manager->Display(renderer, uniform_provider, render_params);
 		if (current_level_instance != nullptr)
@@ -511,6 +523,13 @@ namespace death
 		root_render_layer = new chaos::RenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return false;
+
+
+
+		// shuwww
+
+
+
 		if (AddChildRenderLayer("GAME", death::GameHUDKeys::GAME_LAYER_ID, 1) == nullptr)
 			return false;
 		if (AddChildRenderLayer("PLAYER", death::GameHUDKeys::PLAYER_LAYER_ID, 2) == nullptr) // maybe the player will go in another layer
@@ -523,6 +542,10 @@ namespace death
 
 	bool Game::InitializeParticleManager()
 	{
+
+		// shuwww on pourrait faire CreateParticleManager(...) appelable depuis l exterieur
+
+
 		// create the manager
 		particle_manager = new chaos::ParticleManager();
 		if (particle_manager == nullptr)
@@ -536,7 +559,7 @@ namespace death
 	int Game::AddParticleLayers()
 	{
 		int render_order = 0;
-		particle_manager->AddLayer<death::ParticleBackgroundTrait>(render_order++, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background");
+		particle_manager->AddLayer<death::ParticleBackgroundTrait>(render_order++, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background"); // shuwww est ce que ca doit etre dans le particle_manager
 		return render_order;
 	}
 
@@ -979,6 +1002,9 @@ namespace death
 
 	bool Game::InitializeGameParticleCreator()
 	{
+
+		// shuwww
+
 		return particle_creator.Initialize(particle_manager.get(), particle_text_generator.get(), texture_atlas.get());
 	}
 

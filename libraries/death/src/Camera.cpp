@@ -13,7 +13,7 @@ namespace death
 	glm::mat4x4 CameraTransform::GetCameraTransform(chaos::obox2 const & obox)
 	{
 		glm::mat4x4 result;	
-		result = glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
+		result = chaos::GetRotatorMatrix(-obox.rotator) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
 		return result;
 	}
 
@@ -46,7 +46,6 @@ namespace death
 		result.rotator = 0.0f;
 		return result;
 	}
-
 	
 	Player * Camera::GetPlayer(int player_index)
 	{

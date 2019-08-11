@@ -95,6 +95,9 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
+	// shuwww
+
+
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;
 	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent("normal", 60.0f, glm::vec2(20.0, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
@@ -108,6 +111,10 @@ bool LudumPlayingHUD::FillHUDContent()
 
 bool LudumPlayingHUD::CreateHUDLayers()
 {
+
+	// shuwww
+
+
 	// call super method
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;

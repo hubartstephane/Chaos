@@ -108,9 +108,6 @@ protected:
 
 	virtual death::GameInstance * CreateGameInstance() override;
 
-	virtual int AddParticleLayers() override;
-
-
 	bool PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 	bool PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path);

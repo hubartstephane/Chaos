@@ -146,6 +146,19 @@ namespace death
 
 	void GameHUDTextComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const
 	{
+		// XXX : for text generation, we use a HOTPOINT that describe where is the origin of the set of particles (LEFT, RIGHT, TOP, BOTTOM, CENTER)
+		//       It makes sence to use the same HOTPOINT to give the position on SCREEN as a reference
+		//    0
+		//     +-------------------+
+		//     | 0                 |
+		//     |  +------+         |     for example, the relative coordinate of a TOP-LEFT text would be the
+		//     |  |TEXT  |         |     TOP-LEFT corner of the screen
+		//     |  +------+         |
+		//     |                   |
+		//
+		//      As a side effect the params.position is just a relative offset
+		//
+
 		chaos::box2 view_box = GetGame()->GetViewBox();
 		glm::vec2 corner = GetViewBoxCorner(view_box, final_params.hotpoint_type);
 		final_params.position += corner;

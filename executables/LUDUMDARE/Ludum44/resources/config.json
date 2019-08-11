@@ -8,5 +8,6 @@
 
   "gpu":{"@filename":"@gpu.json"},
   "game":{ "@filename":"game.json"},
-  "sounds": { "@filename": "sounds.json" }
+  "sounds": { "@filename": "sounds.json" },
+	"hud": { "@filename": "hud.json" }
 }

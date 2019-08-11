@@ -27,6 +27,8 @@ namespace chaos
 			static const int ALIGN_CENTER = 2;
 			static const int ALIGN_JUSTIFY = 3;
 
+		public:
+
 			/** the size to use for the line */
 			float line_height = 32.0f;
 			/** spacing between lines */
@@ -55,6 +57,11 @@ namespace chaos
 			/** the hotpoint */
 			int hotpoint_type = Hotpoint::BOTTOM_LEFT;
 		};
+
+		/** json functions */
+		void SaveIntoJSON(GeneratorParams const & params, nlohmann::json & json_entry);
+		/** json functions */
+		void LoadFromJSON(GeneratorParams & params, nlohmann::json const & json_entry);
 
 		/**
 		* some parameters used during the final particle generation

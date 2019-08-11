@@ -18,15 +18,118 @@ namespace chaos
 		/** Load a JSON file in a recursive whay */
 		static bool LoadJSONFile(FilePathParam const & path, nlohmann::json & result, bool recursive = false);
 
-		/** specialization for bool */
-		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result);
-		/** specialization for bool */
-		static bool GetAttribute(nlohmann::json const & entry, char const * name, bool & result, bool default_value);
 
-		/** specialization for bool */
-		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result);
-		/** specialization for bool */
-		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result, bool default_value);
+
+
+
+
+
+
+		/** reading an attribute from a JSON structure */
+		template<typename T>
+		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result)
+		{
+			assert(name != nullptr);
+			if (!entry.is_object())
+				return false;
+			nlohmann::json::const_iterator it = entry.find(name);
+			if (it == entry.end())
+				return false;
+			try
+			{
+				return GetAttributeImpl(*it, result);
+			}
+			catch (...)
+			{
+			}
+			return false;			
+		}
+		/** reading an attribute from a JSON array */
+		template<typename T>
+		static bool JSONTools::GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result)
+		{
+			if (!entry.is_array() || index >= entry.size())
+				return false;
+			try
+			{
+				return GetAttributeImpl(entry[index], result);
+			}
+			catch (...)
+			{
+			}
+			return false;
+		}
+		/** reading an attribute (catch exceptions) with default value */
+		template<typename T, typename Y>
+		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result, Y default_value)
+		{
+			if (GetAttribute(entry, name, result))
+				return true;
+			result = default_value;
+			return false;
+		}
+		/** reading an attribute (catch exceptions) with default value */
+		template<typename T, typename Y>
+		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result, Y default_value)
+		{
+			if (GetAttributeByIndex(entry, index, result))
+				return true;
+			result = default_value;
+			return false;
+		}
+
+
+
+
+
+	protected:
+
+		/** specialization for bool (because we try to read an int as a fallback) */
+		static bool GetAttributeImpl(nlohmann::json const & entry, bool & result);
+		/** reading an attribute (catch exceptions) */
+		template<typename T>
+		static bool GetAttributeImpl(nlohmann::json const & entry, T & result)
+		{
+			result = entry.get<T>(); // may throw an exception (catched by caller)
+			return true;
+		}
+
+
+	public:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		/** reading an array of elements */
 		template<typename T>
@@ -57,6 +160,22 @@ namespace chaos
 			return false;
 		}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		/** reading a GLM vector */
 		template<typename VECTOR_TYPE>
 		static bool GetVector(nlohmann::json const & entry, VECTOR_TYPE & result)
@@ -69,91 +188,9 @@ namespace chaos
 			return true;
 		}
 
-		/** reading an attribute (catch exceptions) */
-		template<typename T>
-		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result)
-		{
-			assert(name != nullptr);
-			try
-			{
-				if (entry.is_object())
-				{
-					nlohmann::json::const_iterator it = entry.find(name);
-					if (it != entry.end())
-					{
-						result = it->get<T>();
-						return true;
-					}
-				}
-			}
-			catch (...)
-			{
-			}
-			return false;
-		}
 
-		/** reading an attribute (catch exceptions) */
-		template<typename T>
-		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result)
-		{
-			try
-			{
-				if (entry.is_array() && index < entry.size())
-				{
-					result = entry[index].get<T>();
-					return true;
-				}
-			}
-			catch (...)
-			{
-			}
-			return false;
-		}
 
-		/** reading an attribute (catch exceptions) with default value */
-		template<typename T, typename Y>
-		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result, Y default_value)
-		{
-			assert(name != nullptr);
-			try
-			{
-				if (entry.is_object())
-				{
-					nlohmann::json::const_iterator it = entry.find(name);
-					if (it != entry.end())
-					{
-						result = it->get<T>();
-						return true;
-					}
-				}
-			}
-			catch (...)
-			{
 
-			}
-			result = default_value;
-			return false;
-		}
-		/** reading an attribute (catch exceptions) with default value */
-		template<typename T, typename Y>
-		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result, Y default_value)
-		{
-			assert(name != nullptr);
-			try
-			{
-				if (entry.is_array() && index < entry.size())
-				{
-					result = entry[index].get<T>();
-					return true;
-				}
-			}
-			catch (...)
-			{
-
-			}
-			result = default_value;
-			return false;
-		}
 
 		/** get a sub object from an object */
 		static nlohmann::json * GetStructure(nlohmann::json & entry, char const * name);
@@ -167,6 +204,15 @@ namespace chaos
 
 		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
 		static boost::filesystem::path DumpConfigFile(nlohmann::json const & json, char const * filename = "myconfig.json");
+
+
+
+
+
+
+
+
+
 
 		/** utility function */
 		template<typename T>
@@ -241,6 +287,19 @@ namespace chaos
 				elements.push_back(std::move(element));
 			}
 		}
+
+
+
+
+
+
+
+
+		//template<typename T>
+		//static void LoadObjectFromJSON(nlohmann::json & entry, char const * name)
+
+
+
 
 	};
 

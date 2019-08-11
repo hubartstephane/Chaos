@@ -1,5 +1,6 @@
 #include <chaos/ParticleTextGenerator.h>
 #include <chaos/MathTools.h>
+#include <chaos/JSONTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/ParticleDefault.h>
@@ -8,6 +9,64 @@ namespace chaos
 {
 	namespace ParticleTextGenerator
 	{
+
+		void SaveIntoJSON(GeneratorParams const & params, nlohmann::json & json_entry)
+		{
+
+		}
+
+		void LoadFromJSON(GeneratorParams & params, nlohmann::json const & json_entry)
+		{
+			nlohmann::json entry;
+			auto a = entry.is_array();
+			auto b = entry.is_object();
+
+
+
+
+			JSONTools::GetAttribute(json_entry, "line_height", params.line_height);
+			JSONTools::GetAttribute(json_entry, "line_spacing", params.line_spacing);
+			JSONTools::GetAttribute(json_entry, "character_spacing", params.character_spacing);
+			//JSONTools::GetAttribute(json_entry, "bitmap_padding", params.bitmap_padding);
+
+
+
+			JSONTools::GetAttribute(json_entry, "max_text_width", params.max_text_width);
+			JSONTools::GetAttribute(json_entry, "word_wrap", params.word_wrap);
+
+			JSONTools::GetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);
+			//JSONTools::GetAttribute(json_entry, "alignment", params.alignment);
+			
+			//nlohmann::json const * p = JSONTools::GetStructure(json_entry, "default_color");
+			
+			//JSONTools::GetAttribute(json_entry, "default_color", params.default_color);
+
+
+
+			JSONTools::GetAttribute(json_entry, "font_info_name", params.font_info_name);
+			JSONTools::GetAttribute(json_entry, "tab_size", params.tab_size);
+
+
+			//	JSONTools::GetAttribute(json_entry, "position", position);
+			//JSONTools::GetAttribute(json_entry, "hotpoint_type", hotpoint_type);
+
+
+			///** the position */
+			//glm::vec2 position = glm::vec2(0.0f, 0.0f);
+			///** the hotpoint */
+			//int hotpoint_type = Hotpoint::BOTTOM_LEFT;
+
+		}
+		
+#if 0
+		bool GeneratorParams::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+		{
+
+
+
+			return true;
+		}
+#endif
 		// ============================================================
 		// GeneratorResult methods
 		// ============================================================

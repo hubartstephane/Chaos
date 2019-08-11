@@ -57,6 +57,8 @@ namespace death
 		virtual void OnInsertedInHUD();
 		/** called whenever the hud is beeing removed into the hud */
 		virtual void OnRemovedFromHUD();
+		/** initialization method from JSON */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 	protected:
 
@@ -93,6 +95,8 @@ namespace death
 	public:
 
 		/** constructor */
+		GameHUDTextComponent();
+		/** constructor */
 		GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
 		GameHUDTextComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
@@ -106,6 +110,8 @@ namespace death
 		virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const;
 		/** create the text */
 		virtual void UpdateTextAllocation(char const * in_text);
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 
 	protected:
 
@@ -291,6 +297,8 @@ namespace death
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 
 	protected:
 

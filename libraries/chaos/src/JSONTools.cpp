@@ -5,149 +5,98 @@
 
 namespace chaos
 {
-	bool JSONTools::GetAttribute(nlohmann::json const & entry, char const * name, bool & result)
+	bool JSONTools::GetAttributeImpl(nlohmann::json const & entry, bool & result)
 	{
-		assert(name != nullptr);
 		try
 		{
-			if (entry.is_object())
-			{
-				result = (entry.value(name, 0) > 0);
-				return true;
-			}
+			result = entry.get<bool>(); // for bool type
+			return true;
 		}
 		catch (...)
-		{				
+		{
+			try
+			{
+				result = (entry.get<int>() != 0); // for int type (+ conversion to bool)
+				return true;
+			}
+			catch (...)
+			{
+			}
 		}
-		return false;			
+		return false;
 	}
 
-	bool JSONTools::GetAttribute(nlohmann::json const & entry, char const * name, bool & result, bool default_value) // specialization for bool
-	{			
-		assert(name != nullptr);
 
+
+
+
+
+
+
+	nlohmann::json * JSONTools::GetStructure(nlohmann::json & entry, char const * name)
+	{
 		if (entry.is_object())
 		{
 			try
 			{
-				result = entry.value(name, default_value); // for bool type
-				return true;
-
+				auto it = entry.find(name);
+				if (it != entry.end() && it->is_structured())
+					return &*it;
 			}
 			catch (...)
 			{
-				try
-				{
-					result = (entry.value(name, 0) > 0); // for int type (+ conversion to bool)
-					return true;
-
-				}
-				catch (...)
-				{
-				}
 			}
-		}
-		result = default_value;
-		return false;
-	}
-
-	bool JSONTools::GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result)
-	{
-		try
-		{
-			if (entry.is_array() && index < entry.size())
-			{
-				result = entry[index].get<bool>();
-				return true;
-			}
-		}
-		catch (...)
-		{				
-		}
-		return false;			
-	}
-
-	bool JSONTools::GetAttributeByIndex(nlohmann::json const & entry, size_t index, bool & result, bool default_value) // specialization for bool
-	{			
-		try
-		{
-			if (entry.is_array() && index < entry.size())
-			{
-				result = entry[index].get<bool>();
-				return true;
-			}
-		}
-		catch (...)
-		{
-		}
-		result = default_value;
-		return false;
-	}
-
-	nlohmann::json * JSONTools::GetStructure(nlohmann::json & entry, char const * name)
-	{
-		try
-		{
-			if (entry.is_object())
-			{
-				auto it = entry.find(name);
-				if (it != entry.end() && it->is_structured())
-					return &*it;				
-			}
-		}
-		catch (...)
-		{
 		}
 		return nullptr;				
 	}
 
 	nlohmann::json const * JSONTools::GetStructure(nlohmann::json const & entry, char const * name)
 	{
-		try
+		if (entry.is_object())
 		{
-			if (entry.is_object())
+			try
 			{
 				auto it = entry.find(name);
 				if (it != entry.end() && it->is_structured())
-					return &*it;					
+					return &*it;
 			}
-		}
-		catch (...)
-		{
+			catch (...)
+			{
+			}
 		}
 		return nullptr;				
 	}
 
 	nlohmann::json * JSONTools::GetStructureByIndex(nlohmann::json & entry, size_t index)
 	{
-		try
+		if (entry.is_array() && index < entry.size())
 		{
-			if (entry.is_array() && index < entry.size())
+			try
 			{
 				nlohmann::json & result = entry[index];
 				if (result.is_structured())
-					return &result;			
+					return &result;
 			}
-		}
-		catch (...)
-		{
+			catch (...)
+			{
+			}
 		}
 		return nullptr;				
 	}
 
 	nlohmann::json const * JSONTools::GetStructureByIndex(nlohmann::json const & entry, size_t index)
 	{
-		try
+		if (entry.is_array() && index < (size_t)entry.size())
 		{
-			if (entry.is_array() && index < (size_t)entry.size())
+			try
 			{
 				nlohmann::json const & result = entry[index];
 				if (result.is_structured())
-					return &result;			
+					return &result;
 			}
-		}
-		catch (...)
-		{
+			catch (...)
+			{
+			}
 		}
 		return nullptr;				
 	}

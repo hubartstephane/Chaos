@@ -54,6 +54,27 @@ namespace death
 		return game->GetPlayer(player_index);
 	}
 
+	void GameHUD::InitializeComponentFromConfiguration(chaos::TagType key, GameHUDComponent * component)
+	{
+		assert(component != nullptr);
+
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
+			return;
+
+		nlohmann::json const & config = application->GetConfiguration();
+		// get the hud config
+		nlohmann::json const * hud_config = chaos::JSONTools::GetStructure(config, "hud");
+		if (hud_config == nullptr)
+			return;
+		// get the component config (if existing)
+		nlohmann::json const * component_config = chaos::JSONTools::GetStructure(*hud_config, (char const *)key);
+		if (component_config == nullptr)
+			return;
+		// initialize the component from JSON
+		component->InitializeFromConfiguration(*component_config, application->GetConfigurationPath());
+	}
+
 	bool GameHUD::InitializeHUD()
 	{
 		// create the particle manager from the game texture atlas

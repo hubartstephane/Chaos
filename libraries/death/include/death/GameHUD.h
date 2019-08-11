@@ -72,7 +72,8 @@ namespace death
 			// register new component for that key
 			components.insert(std:: make_pair(key, component));
 			component->hud = this;
-			component->OnInsertedInHUD(params...);
+			InitializeComponentFromConfiguration(key, component); // this will override the component position from JSON file
+			component->OnInsertedInHUD(params...);			
 		}
 		/** remove a component from the HUD */
 		void UnregisterComponent(chaos::TagType key);
@@ -112,6 +113,8 @@ namespace death
 		virtual bool CreateHUDLayers();
 		/** create the particles */
 		virtual bool FillHUDContent();
+		/** try to find some information in JSON for configuring the component */
+		void InitializeComponentFromConfiguration(chaos::TagType key, GameHUDComponent * component);
 
 	protected:
 

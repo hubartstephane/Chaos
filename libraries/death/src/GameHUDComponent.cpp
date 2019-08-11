@@ -1,3 +1,5 @@
+#include <chaos/ParticleTextGenerator.h>
+
 #include <death/GameHUDComponent.h>
 #include <death/GameHUD.h>
 #include <death/Player.h>
@@ -109,6 +111,11 @@ namespace death
 		return result;
 	}
 
+	bool GameHUDComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	{
+		return true;
+	}
+
 	// ====================================================================
 	// GameHUDSingleAllocationComponent
 	// ====================================================================
@@ -137,6 +144,23 @@ namespace death
 		params.font_info_name = font_name;
 		params.position = position;
 		params.hotpoint_type = hotpoint_type;
+	}
+
+	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	{
+		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
+			return true;
+
+
+
+
+	//	chaos::JSONTools::GetAttribute(json, "layer_id", layer_id);
+		LoadFromJSON(params, json);
+
+
+
+
+		return true;
 	}
 
 	void GameHUDTextComponent::OnInsertedInHUD(char const * in_text)
@@ -407,7 +431,12 @@ namespace death
 		return true;
 	}
 
+	bool GameHUDLevelTitleComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	{
+		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
+			return true;
 
-
+		return true;
+	}
 
 }; // namespace death

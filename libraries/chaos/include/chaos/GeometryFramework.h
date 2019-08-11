@@ -1047,5 +1047,82 @@ namespace chaos
 	double GetPlaneOffset(glm::dvec3 const & p);
 	double GetPlaneOffset(glm::dvec4 const & p);
 
+
+	// ==============================================================================================
+	// JSON functions
+	// ==============================================================================================
+
+		// vectors
+
+	template<typename T>
+	void SaveIntoJSON(glm::tvec2<T> const & src, nlohmann::json & json_entry)
+	{
+
+	}
+
+	template<typename T>
+	void LoadFromJSON(glm::tvec2<T> & src, nlohmann::json const & json_entry)
+	{
+	}
+
+	template<typename T>
+	void SaveIntoJSON(glm::tvec3<T> const & src, nlohmann::json & json_entry)
+	{
+
+	}
+
+	template<typename T>
+	void LoadFromJSON(glm::tvec3<T> & src, nlohmann::json const & json_entry)
+	{
+	}
+
+	template<typename T>
+	void SaveIntoJSON(glm::tvec4<T> const & src, nlohmann::json & json_entry)
+	{
+
+	}
+
+	template<typename T>
+	void LoadFromJSON(glm::tvec4<T> & src, nlohmann::json const & json_entry)
+	{
+	}
+#if 0
+
+
+
+
+	template<typename T, int dimension>
+	void SaveIntoJSON(type_ray<T, dimension> const & src, nlohmann::json & json_entry)
+	{
+
+	}
+
+	template<typename T, int dimension>
+	void LoadFromJSON(type_ray<T, dimension> & src, nlohmann::json const & json_entry)
+	{
+	}
+
+
+
+	template<typename T> using type_ray2 = type_ray<T, 2>;
+	template<typename T> using type_ray3 = type_ray<T, 3>;
+	template<typename T> using type_box2 = type_box<T, 2>;
+	template<typename T> using type_box3 = type_box<T, 3>;
+	template<typename T> using type_obox2 = type_obox<T, 2>;
+	template<typename T> using type_obox3 = type_obox<T, 3>;
+	template<typename T> using type_sphere2 = type_sphere<T, 2>;
+	template<typename T> using type_sphere3 = type_sphere<T, 3>;
+	template<typename T> using type_triangle2 = type_triangle<T, 2>;
+	template<typename T> using type_triangle3 = type_triangle<T, 3>;
+	template<typename T> using type_rotator2 = type_rotator<T, 2>; // theses is not objects that describe a rotation, but meta objects that give the rotation in a meta function
+	template<typename T> using type_rotator3 = type_rotator<T, 3>; //
+
+
+
+
+
+
+#endif
+
 }; // namespace chaos
 

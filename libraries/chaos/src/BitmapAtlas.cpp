@@ -793,10 +793,10 @@ namespace chaos
 
 		void LoadFromJSON(BitmapAnimationInfo & info, nlohmann::json const & json_entry)
 		{
-			info.grid_data.grid_size.x = json_entry["grid_size_x"];
-			info.grid_data.grid_size.y = json_entry["grid_size_y"];
-			info.grid_data.skip_lasts  = json_entry["skip_lasts"];
-			info.child_frame_count     = json_entry["child_frame_count"];	
+			JSONTools::GetAttribute(json_entry, "grid_size_x", info.grid_data.grid_size.x);
+			JSONTools::GetAttribute(json_entry, "grid_size_y", info.grid_data.grid_size.y);
+			JSONTools::GetAttribute(json_entry, "skip_lasts", info.grid_data.skip_lasts);
+			JSONTools::GetAttribute(json_entry, "child_frame_count", info.child_frame_count);
 		}
 
 		void SaveIntoJSON(BitmapLayout const & info, nlohmann::json & json_entry)
@@ -810,11 +810,11 @@ namespace chaos
 
 		void LoadFromJSON(BitmapLayout & info, nlohmann::json const & json_entry)
 		{
-			JSONTools::GetAttribute(json_entry, "bitmap_index", info.bitmap_index, 0);
-			JSONTools::GetAttribute(json_entry, "x", info.x, 0);
-			JSONTools::GetAttribute(json_entry, "y", info.y, 0);
-			JSONTools::GetAttribute(json_entry, "width", info.width, 0);
-			JSONTools::GetAttribute(json_entry, "height", info.height, 0);		
+			JSONTools::GetAttribute(json_entry, "bitmap_index", info.bitmap_index);
+			JSONTools::GetAttribute(json_entry, "x", info.x);
+			JSONTools::GetAttribute(json_entry, "y", info.y);
+			JSONTools::GetAttribute(json_entry, "width", info.width);
+			JSONTools::GetAttribute(json_entry, "height", info.height);		
 		}
 
 		void SaveIntoJSON(CharacterLayout const & info, nlohmann::json & json_entry)
@@ -833,10 +833,10 @@ namespace chaos
 			BitmapLayout & bitmap_layout = info;
 			LoadFromJSON(bitmap_layout, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "advance_x", info.advance.x, 0);
-			JSONTools::GetAttribute(json_entry, "advance_y", info.advance.y, 0);
-			JSONTools::GetAttribute(json_entry, "bitmap_left", info.bitmap_left, 0);
-			JSONTools::GetAttribute(json_entry, "bitmap_top", info.bitmap_top, 0);		
+			JSONTools::GetAttribute(json_entry, "advance_x", info.advance.x);
+			JSONTools::GetAttribute(json_entry, "advance_y", info.advance.y);
+			JSONTools::GetAttribute(json_entry, "bitmap_left", info.bitmap_left);
+			JSONTools::GetAttribute(json_entry, "bitmap_top", info.bitmap_top);		
 		}
 
 		void SaveIntoJSON(BitmapInfo const & info, nlohmann::json & json_entry)
@@ -908,11 +908,11 @@ namespace chaos
 			NamedObject & named_info = info;
 			LoadFromJSON(named_info, json_entry); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "max_character_width", info.max_character_width, 0);
-			JSONTools::GetAttribute(json_entry, "max_character_height", info.max_character_height, 0);
-			JSONTools::GetAttribute(json_entry, "ascender", info.ascender, 0);
-			JSONTools::GetAttribute(json_entry, "descender", info.descender, 0);
-			JSONTools::GetAttribute(json_entry, "face_height", info.face_height, 0);
+			JSONTools::GetAttribute(json_entry, "max_character_width", info.max_character_width);
+			JSONTools::GetAttribute(json_entry, "max_character_height", info.max_character_height);
+			JSONTools::GetAttribute(json_entry, "ascender", info.ascender);
+			JSONTools::GetAttribute(json_entry, "descender", info.descender);
+			JSONTools::GetAttribute(json_entry, "face_height", info.face_height);
 
 			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
 			if (json_elements != nullptr)

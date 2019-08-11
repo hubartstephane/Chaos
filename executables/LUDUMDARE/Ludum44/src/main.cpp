@@ -71,7 +71,6 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	auto b1 = boost::mpl::bool_<has_velocity<Particle1>::value>();
 	auto b2 = boost::mpl::bool_<has_acceleration<Particle2>::value>();
 
-
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

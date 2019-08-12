@@ -26,6 +26,50 @@ namespace chaos
 		result = entry.get<T>(); // may throw an exception (catched by caller)
 		return true;
 	}
+	/** template for raw pointer */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & entry, T * & result)
+	{
+		result = new T;
+		if (result == nullptr)
+			return false;
+		if (!LoadFromJSON(entry, result))
+		{
+			delete(*result);
+			result = nullptr;
+			return false;		
+		}
+		return true;
+	}
+	/** template for unique_ptr */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & entry, std::unique_ptr<T> & result)
+	{
+		result = new T;
+		if (result == nullptr)
+			return false;
+		if (!LoadFromJSON(entry, *result))
+		{
+			result = nullptr;
+			return false;		
+		}
+		return true;
+	}
+	/** template for shared_ptr */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & entry, std::shared_ptr<T> & result)
+	{
+		result = new T;
+		if (result == nullptr)
+			return false;
+		if (!LoadFromJSON(entry, *result))
+		{
+			result = nullptr;
+			return false;		
+		}
+		return true;
+	}
+
 	/** loading specialization for vector */
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<T> & elements)
@@ -40,54 +84,6 @@ namespace chaos
 		}
 		return true;
 	}
-	/** loading specialization for vector of raw pointer */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<T*> & elements)
-	{
-		if (!json_entries.is_array())
-			return false;
-		for (auto const & json_entry : json_entries)
-		{
-			T * element(new T);
-			if (element == nullptr)
-				continue;
-			LoadFromJSON(json_entry, *element);
-			elements.push_back(std::move(element));
-		}
-		return true;
-	}
-	/** loading specialization for vector of unique_ptr */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<std::unique_ptr<T>> & elements)
-	{
-		if (!json_entries.is_array())
-			return false;
-		for (auto const & json_entry : json_entries)
-		{
-			std::unique_ptr<T> element(new T);
-			if (element == nullptr)
-				continue;
-			LoadFromJSON(json_entry, *element);
-			elements.push_back(std::move(element));
-		}
-		return true;
-	}
-	/** loading specialization for vector of shared_ptr */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<shared_ptr<T>> & elements)
-	{
-		if (!json_entries.is_array())
-			return false;
-		for (auto const & json_entry : json_entries)
-		{
-			shared_ptr<T> element(new T);
-			if (element == nullptr)
-				continue;
-			LoadFromJSON(json_entry, *element);
-			elements.push_back(std::move(element));
-		}
-		return true;
-	}
 
 
 
@@ -98,8 +94,9 @@ namespace chaos
 
 
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & entry, T & result)
+	bool SaveIntoJSON(nlohmann::json & entry, T const & result)
 	{
+		entry = result;
 		//result = entry.get<T>(); // may throw an exception (catched by caller)
 		return true;
 	}

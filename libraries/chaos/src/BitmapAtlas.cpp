@@ -826,8 +826,7 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, CharacterLayout const & info)
 		{
-			BitmapLayout const & bitmap_layout = info;
-			SaveIntoJSON(json_entry, bitmap_layout); // call 'super' method
+			SaveIntoJSON(json_entry, (BitmapLayout const & )info); // call 'super' method
 
 			JSONTools::SetAttribute(json_entry, "advance_x", info.advance.x);
 			JSONTools::SetAttribute(json_entry, "advance_y", info.advance.y);
@@ -852,11 +851,8 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfo const & info)
 		{
-			NamedObject const & named_info = info;
-			SaveIntoJSON(json_entry, named_info); // call 'super' method
-
-			BitmapLayout const & bitmap_layout = info;
-			SaveIntoJSON(json_entry, bitmap_layout); // call 'super' method
+			SaveIntoJSON(json_entry, (NamedObject const &)info); // call 'super' method
+			SaveIntoJSON(json_entry, (BitmapLayout const &)info); // call 'super' method
 
 			if (info.animation_info != nullptr)
 			{
@@ -886,11 +882,8 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, CharacterInfo const & info)
 		{
-			NamedObject const & named_info = info;
-			SaveIntoJSON(json_entry, named_info); // call 'super' method
-
-			CharacterLayout const & character_layout = info;
-			SaveIntoJSON(json_entry, character_layout); // call 'super' method
+			SaveIntoJSON(json_entry, (NamedObject const &)info); // call 'super' method
+			SaveIntoJSON(json_entry, (CharacterLayout const &)info); // call 'super' method
 
 			return true;
 		}
@@ -906,8 +899,7 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, FontInfo const & info)
 		{
-			NamedObject const & named_info = info;
-			SaveIntoJSON(json_entry, named_info); // call 'super' method
+			SaveIntoJSON(json_entry, (NamedObject const &)info); // call 'super' method
 
 			JSONTools::SetAttribute(json_entry, "max_character_width", info.max_character_width);
 			JSONTools::SetAttribute(json_entry, "max_character_height", info.max_character_height);
@@ -938,8 +930,7 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, FolderInfo const & info)
 		{
-			NamedObject const & named_info = info;
-			SaveIntoJSON(json_entry, named_info); // call 'super' method
+			SaveIntoJSON(json_entry, (NamedObject const &)info); // call 'super' method
 
 			if (info.bitmaps.size())
 			{

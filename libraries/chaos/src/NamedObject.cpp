@@ -92,6 +92,29 @@ namespace chaos
 
 	bool LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info)
 	{
+
+
+		nlohmann::json a = nlohmann::json::array();
+		a[0] = 3;
+
+		nlohmann::json b = nlohmann::json::object();
+		nlohmann::json & c = b["toto"];
+		b["a"];
+		b["b"];
+		b["c"];
+		b["d"];
+
+		c = 3;
+		c = "truc";
+		c = 2.5f;
+		c = std::string("truc");
+
+
+		auto truc = b.dump(2);
+
+
+
+
 		if (!json_entry.is_object())
 			return false;
 		JSONTools::GetAttribute(json_entry, "name", info.name, "");

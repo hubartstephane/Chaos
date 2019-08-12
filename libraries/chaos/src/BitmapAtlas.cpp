@@ -737,10 +737,7 @@ namespace chaos
 				// load the entries
 				if (result)
 				{
-					nlohmann::json const * root_folder_json = JSONTools::GetStructure(json, "root_folder");
-					if (root_folder_json != nullptr)
-						LoadFromJSON(*root_folder_json, root_folder);
-
+					JSONTools::GetAttribute(json, "root_folder", root_folder);
 					atlas_count = (int)bitmaps.size();
 				}			
 			}
@@ -935,11 +932,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "ascender", info.ascender);
 			JSONTools::GetAttribute(json_entry, "descender", info.descender);
 			JSONTools::GetAttribute(json_entry, "face_height", info.face_height);
-
-			nlohmann::json const * json_elements = JSONTools::GetStructure(json_entry, "elements");
-			if (json_elements != nullptr)
-				JSONTools::LoadVectorFromJSON(info.elements, *json_elements);
-
+			JSONTools::GetAttribute(json_entry, "elements", info.elements);
 			return true;
 		}
 
@@ -974,18 +967,9 @@ namespace chaos
 			NamedObject & named_info = info;
 			LoadFromJSON(json_entry, named_info); // call 'super' method
 
-			nlohmann::json const * bitmaps_elements = JSONTools::GetStructure(json_entry, "bitmaps");
-			if (bitmaps_elements != nullptr)
-				JSONTools::LoadVectorFromJSON(info.bitmaps, *bitmaps_elements);
-
-			nlohmann::json const * fonts_elements = JSONTools::GetStructure(json_entry, "fonts");
-			if (fonts_elements != nullptr)
-				JSONTools::LoadVectorFromJSON(info.fonts, *fonts_elements);
-
-			nlohmann::json const * folders_elements = JSONTools::GetStructure(json_entry, "folders");
-			if (folders_elements != nullptr)
-				JSONTools::LoadVectorFromJSON(info.folders, *folders_elements);
-
+			JSONTools::GetAttribute(json_entry, "bitmaps", info.bitmaps);
+			JSONTools::GetAttribute(json_entry, "fonts", info.fonts);
+			JSONTools::GetAttribute(json_entry, "folders", info.folders);
 			return true;
 		}
 

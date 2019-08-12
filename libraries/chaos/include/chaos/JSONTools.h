@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/FilePath.h>
 #include <chaos/Buffer.h>
+#include <chaos/SmartPointers.h>
 
 
 // =================
@@ -13,16 +14,90 @@
 namespace chaos
 {
 
-
-	/** specialization for bool (because we try to read an int as a fallback) */
+	/** loading a bool (because we try to read an int as a fallback) */
 	bool LoadFromJSON(nlohmann::json const & entry, bool & result);
-	/** reading an attribute (catch exceptions) */
+	/** default template loading (catch exceptions) */
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & entry, T & result)
 	{
 		result = entry.get<T>(); // may throw an exception (catched by caller)
 		return true;
 	}
+	/** loading specialization for vector */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<T> & elements)
+	{
+		if (!json_entries.is_array())
+			return false;
+		for (auto const & json_entry : json_entries)
+		{
+			T element;
+			LoadFromJSON(json_entry, element);
+			elements.push_back(std::move(element));
+		}
+		return true;
+	}
+	/** loading specialization for vector of raw pointer */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<T*> & elements)
+	{
+		if (!json_entries.is_array())
+			return false;
+		for (auto const & json_entry : json_entries)
+		{
+			T * element(new T);
+			if (element == nullptr)
+				continue;
+			LoadFromJSON(json_entry, *element);
+			elements.push_back(std::move(element));
+		}
+		return true;
+	}
+	/** loading specialization for vector of unique_ptr */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<std::unique_ptr<T>> & elements)
+	{
+		if (!json_entries.is_array())
+			return false;
+		for (auto const & json_entry : json_entries)
+		{
+			std::unique_ptr<T> element(new T);
+			if (element == nullptr)
+				continue;
+			LoadFromJSON(json_entry, *element);
+			elements.push_back(std::move(element));
+		}
+		return true;
+	}
+	/** loading specialization for vector of shared_ptr */
+	template<typename T>
+	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<shared_ptr<T>> & elements)
+	{
+		if (!json_entries.is_array())
+			return false;
+		for (auto const & json_entry : json_entries)
+		{
+			shared_ptr<T> element(new T);
+			if (element == nullptr)
+				continue;
+			LoadFromJSON(json_entry, *element);
+			elements.push_back(std::move(element));
+		}
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// =================
 	// JSONTools
@@ -104,29 +179,6 @@ namespace chaos
 
 
 
-	protected:
-
-
-
-
-	public:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -190,22 +242,6 @@ namespace chaos
 
 
 
-		/** reading a GLM vector */
-		template<typename VECTOR_TYPE>
-		static bool GetVector(nlohmann::json const & entry, VECTOR_TYPE & result)
-		{
-			if (!entry.is_array())
-				return false;
-			size_t count = entry.size();
-			for (size_t i = 0; (i < count) && (i < (size_t)result.length()) ; ++i)
-				result[i] = entry[i].get<VECTOR_TYPE::value_type>();
-			return true;
-		}
-
-
-
-
-
 		/** get a sub object from an object */
 		static nlohmann::json * GetStructure(nlohmann::json & entry, char const * name);
 		/** get a sub object from an object */
@@ -263,57 +299,6 @@ namespace chaos
 				json_entries.push_back(std::move(json_entry));
 			}
 		}
-
-		/** utility function */
-		template<typename T>
-		static void LoadVectorFromJSON(std::vector<T> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				T element;
-				LoadFromJSON(json_entry, element);
-				elements.push_back(std::move(element));
-			}
-		}
-		/** utility function */
-		template<typename T>
-		static void LoadVectorFromJSON(std::vector<T*> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				T * element(new T);
-				if (element == nullptr)
-					continue;
-				LoadFromJSON(json_entry, *element);
-				elements.push_back(std::move(element));
-			}
-		}
-		/** utility function */
-		template<typename T>
-		static void LoadVectorFromJSON(std::vector<std::unique_ptr<T>> & elements, nlohmann::json const & json_entries)
-		{
-			for (auto const & json_entry : json_entries)
-			{
-				std::unique_ptr<T> element(new T);
-				if (element == nullptr)
-					continue;
-				LoadFromJSON(json_entry, *element);
-				elements.push_back(std::move(element));
-			}
-		}
-
-
-
-
-
-
-
-
-		//template<typename T>
-		//static void LoadObjectFromJSON(nlohmann::json & entry, char const * name)
-
-
-
 
 	};
 

@@ -9,8 +9,8 @@
 	{
     "generator_params":
     {
-      "line_height":20,
-      "default_color":[1.0, 2.0, 3.0, 4.0],
+      "line_height":150,
+      "default_color":[1.0, 1.0, 1.0, 1.0],
       "default_colorx":{
         "x":"1.0", 
         "y":"2.0", 

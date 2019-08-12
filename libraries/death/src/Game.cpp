@@ -989,7 +989,7 @@ namespace death
 				for (nlohmann::json::const_iterator it = font_colors_json->begin(); it != font_colors_json->end(); ++it)
 				{
 					glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
-					if (!chaos::JSONTools::GetVector(*it, color))
+					if (!chaos::LoadFromJSON(*it, color))
 						continue;
 					std::string color_name = it.key();
 					particle_text_generator->AddColor(color_name.c_str(), color);

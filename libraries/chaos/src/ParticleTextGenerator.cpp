@@ -28,19 +28,13 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);
 			//JSONTools::GetAttribute(json_entry, "alignment", params.alignment);
 			
-			//nlohmann::json const * p = JSONTools::GetStructure(json_entry, "default_color");
-			
 			JSONTools::GetAttribute(json_entry, "default_color", params.default_color);
 			JSONTools::GetAttribute(json_entry, "font_info_name", params.font_info_name);
 			JSONTools::GetAttribute(json_entry, "tab_size", params.tab_size);
 			JSONTools::GetAttribute(json_entry, "position", params.position);
+
 			//JSONTools::GetAttribute(json_entry, "hotpoint_type", hotpoint_type);
 
-
-			///** the position */
-			//glm::vec2 position = glm::vec2(0.0f, 0.0f);
-			///** the hotpoint */
-			//int hotpoint_type = Hotpoint::BOTTOM_LEFT;
 
 			return true;
 		}

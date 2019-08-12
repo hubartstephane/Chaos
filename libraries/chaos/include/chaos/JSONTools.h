@@ -14,6 +14,9 @@
 namespace chaos
 {
 
+		// ====================================================================
+
+
 	/** loading a bool (because we try to read an int as a fallback) */
 	bool LoadFromJSON(nlohmann::json const & entry, bool & result);
 	/** default template loading (catch exceptions) */
@@ -32,8 +35,8 @@ namespace chaos
 		for (auto const & json_entry : json_entries)
 		{
 			T element;
-			LoadFromJSON(json_entry, element);
-			elements.push_back(std::move(element));
+			if (LoadFromJSON(json_entry, element))
+				elements.push_back(std::move(element));
 		}
 		return true;
 	}
@@ -91,10 +94,15 @@ namespace chaos
 
 
 
+	// ====================================================================
 
 
-
-
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json & entry, T & result)
+	{
+		//result = entry.get<T>(); // may throw an exception (catched by caller)
+		return true;
+	}
 
 
 
@@ -111,11 +119,41 @@ namespace chaos
 		static bool Parse(char const * buffer, nlohmann::json & result);
 		/** parsing a JSON file from a buffer (load any dependant files) */
 		static bool ParseRecursive(char const * buffer, boost::filesystem::path const & config_path, nlohmann::json & result);
-
 		/** Load a JSON file in a recursive whay */
 		static bool LoadJSONFile(FilePathParam const & path, nlohmann::json & result, bool recursive = false);
+		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
+		static boost::filesystem::path DumpConfigFile(nlohmann::json const & json, char const * filename = "myconfig.json");
+
+		/** get a sub object from an object */
+		static nlohmann::json * GetStructure(nlohmann::json & entry, char const * name);
+		/** get a sub object from an object */
+		static nlohmann::json const * GetStructure(nlohmann::json const & entry, char const * name);
+
+		/** get a sub object from an object */
+		static nlohmann::json * GetStructureByIndex(nlohmann::json & entry, size_t index);
+		/** get a sub object from an object */
+		static nlohmann::json const * GetStructureByIndex(nlohmann::json const & entry, size_t index);
+
+	public:
 
 
+		template<typename T>
+		static bool SetAttribute(nlohmann::json & entry, char const * name, T const & src)
+		{
+			assert(name != nullptr);
+			if (!entry.is_object())
+				return false;
+			entry[name] = nlohmann::json::array();
+			try
+			{
+
+
+			}
+			catch(...)
+			{
+			}
+			return false;	
+		}
 
 
 
@@ -242,18 +280,7 @@ namespace chaos
 
 
 
-		/** get a sub object from an object */
-		static nlohmann::json * GetStructure(nlohmann::json & entry, char const * name);
-		/** get a sub object from an object */
-		static nlohmann::json const * GetStructure(nlohmann::json const & entry, char const * name);
 
-		/** get a sub object from an object */
-		static nlohmann::json * GetStructureByIndex(nlohmann::json & entry, size_t index);
-		/** get a sub object from an object */
-		static nlohmann::json const * GetStructureByIndex(nlohmann::json const & entry, size_t index);
-
-		/** create a temporary directory to hold the configuration (returns the path of the directory where the file is) */
-		static boost::filesystem::path DumpConfigFile(nlohmann::json const & json, char const * filename = "myconfig.json");
 
 
 

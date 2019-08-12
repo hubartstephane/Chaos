@@ -1057,8 +1057,13 @@ namespace chaos
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec2<T> const & src)
 	{
-
-		return true;
+		if (json_entry.is_object())
+		{
+			JSONTools::SetAttribute(json_entry, "x", src.x);
+			JSONTools::SetAttribute(json_entry, "y", src.y);
+			return true;
+		}
+		return false;
 	}
 
 	template<typename T>
@@ -1083,8 +1088,14 @@ namespace chaos
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec3<T> const & src)
 	{
-
-		return true;
+		if (json_entry.is_object())
+		{
+			JSONTools::SetAttribute(json_entry, "x", src.x);
+			JSONTools::SetAttribute(json_entry, "y", src.y);
+			JSONTools::SetAttribute(json_entry, "z", src.z);
+			return true;
+		}
+		return false;
 	}
 
 	template<typename T>
@@ -1110,8 +1121,15 @@ namespace chaos
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec4<T> const & src)
 	{
-
-		return true;
+		if (json_entry.is_object())
+		{
+			JSONTools::SetAttribute(json_entry, "x", src.x);
+			JSONTools::SetAttribute(json_entry, "y", src.y);
+			JSONTools::SetAttribute(json_entry, "z", src.z);
+			JSONTools::SetAttribute(json_entry, "w", src.w);
+			return true;
+		}
+		return false;
 	}
 
 	template<typename T>

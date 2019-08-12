@@ -12,8 +12,24 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params)
 		{
+			if (!json_entry.is_object())
+				return false;
 
+			JSONTools::SetAttribute(json_entry, "line_height", params.line_height);
+			JSONTools::SetAttribute(json_entry, "line_spacing", params.line_spacing);
+			JSONTools::SetAttribute(json_entry, "character_spacing", params.character_spacing);
+			JSONTools::SetAttribute(json_entry, "bitmap_padding", params.bitmap_padding);
+			JSONTools::SetAttribute(json_entry, "max_text_width", params.max_text_width);
+			JSONTools::SetAttribute(json_entry, "word_wrap", params.word_wrap);
+			JSONTools::SetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);
+			//JSONTools::SetAttribute(json_entry, "alignment", params.alignment);
 
+			JSONTools::SetAttribute(json_entry, "default_color", params.default_color);
+			JSONTools::SetAttribute(json_entry, "font_info_name", params.font_info_name);
+			JSONTools::SetAttribute(json_entry, "tab_size", params.tab_size);
+			JSONTools::SetAttribute(json_entry, "position", params.position);
+
+			//JSONTools::SetAttribute(json_entry, "hotpoint_type", hotpoint_type);
 			return true;
 		}
 

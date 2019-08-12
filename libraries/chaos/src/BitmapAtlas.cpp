@@ -906,8 +906,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "ascender", info.ascender);
 			JSONTools::SetAttribute(json_entry, "descender", info.descender);
 			JSONTools::SetAttribute(json_entry, "face_height", info.face_height);
-			JSONTools::SetAttribute(json_entry, "elements", nlohmann::json::array());
-			JSONTools::SaveVectorIntoJSON(info.elements, json_entry["elements"]);
+			JSONTools::SetAttribute(json_entry, "elements", info.elements);
 
 			return true;
 		}
@@ -931,25 +930,12 @@ namespace chaos
 		bool SaveIntoJSON(nlohmann::json & json_entry, FolderInfo const & info)
 		{
 			SaveIntoJSON(json_entry, (NamedObject const &)info); // call 'super' method
-
 			if (info.bitmaps.size())
-			{
-				json_entry["bitmaps"] = nlohmann::json::array();
-				JSONTools::SaveVectorIntoJSON(info.bitmaps, json_entry["bitmaps"]);
-			}
-
+				JSONTools::SetAttribute(json_entry, "bitmaps", info.bitmaps);
 			if (info.fonts.size())
-			{
-				json_entry["fonts"] = nlohmann::json::array();
-				JSONTools::SaveVectorIntoJSON(info.fonts, json_entry["fonts"]);
-			}
-
+				JSONTools::SetAttribute(json_entry, "fonts", info.fonts);
 			if (info.folders.size())
-			{
-				json_entry["folders"] = nlohmann::json::array();
-				JSONTools::SaveVectorIntoJSON(info.folders, json_entry["folders"]);
-			}
-
+				JSONTools::SetAttribute(json_entry, "folders", info.folders);
 			return true;
 		}
 

@@ -57,14 +57,12 @@ namespace chaos
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & entry, chaos::shared_ptr<T> & result)
 	{
-		result = new T;
-		if (result == nullptr)
+		chaos::shared_ptr<T> other = new T;
+		if (other == nullptr)
 			return false;
-		if (!LoadFromJSON(entry, *result))
-		{
-			result = nullptr;
-			return false;		
-		}
+		if (!LoadFromJSON(entry, *other))
+			return false;
+		result = other;
 		return true;
 	}
 
@@ -95,9 +93,61 @@ namespace chaos
 	bool SaveIntoJSON(nlohmann::json & entry, T const & result)
 	{
 		entry = result;
-		//result = entry.get<T>(); // may throw an exception (catched by caller)
 		return true;
 	}
+	/** template for raw pointer */
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json & entry, T const * src)
+	{
+		if (src == nullptr)
+			return false;
+		return SaveIntoJSON(entry, *src);
+	}
+	/** template for unique_ptr */
+	template<typename T, typename DELETER>
+	bool SaveIntoJSON(nlohmann::json & entry, std::unique_ptr<T, DELETER> const & src)
+	{
+		if (src == nullptr)
+			return false;
+		return SaveIntoJSON(entry, *src);
+	}
+	/** template for shared_ptr */
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json & entry, chaos::shared_ptr<T> const & src)
+	{
+		if (src == nullptr)
+			return false;
+		return SaveIntoJSON(entry, *src);
+	}
+
+	/** specialization for vector */
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json & json_entries, std::vector<T> const & elements)
+	{
+		json_entries = nlohmann::json::array();
+		for (auto const & element : elements)
+		{
+			nlohmann::json j;
+			if (SaveIntoJSON(j, element))
+				json_entries.push_back(std::move(j));
+		}
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -138,11 +188,10 @@ namespace chaos
 			assert(name != nullptr);
 			if (!entry.is_object())
 				return false;
-			entry[name] = nlohmann::json::array();
+			entry[name] = nlohmann::json();
 			try
 			{
-
-
+				return SaveIntoJSON(entry[name], src);
 			}
 			catch(...)
 			{
@@ -151,6 +200,12 @@ namespace chaos
 		}
 
 
+		template<typename T>
+		static bool SetAttributeByIndex(nlohmann::json & entry, size_t index, T const & src)
+		{
+
+			return true;
+		}
 
 
 
@@ -263,64 +318,6 @@ namespace chaos
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/** utility function */
-		template<typename T>
-		static void SaveVectorIntoJSON(std::vector<T> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto const & element : elements)
-			{
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(json_entry, element);
-				json_entries.push_back(std::move(json_entry));
-			}
-		}
-		/** utility function */
-		template<typename T>
-		static void SaveVectorIntoJSON(std::vector<T*> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto const * element : elements)
-			{
-				if (element == nullptr)
-					continue;
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(json_entry, *element);
-				json_entries.push_back(std::move(json_entry));
-			}
-		}
-		/** utility function */
-		template<typename T>
-		static void SaveVectorIntoJSON(std::vector<std::unique_ptr<T>> const & elements, nlohmann::json & json_entries)
-		{
-			for (auto & element : elements)
-			{
-				auto json_entry = nlohmann::json();
-				SaveIntoJSON(json_entry, *element.get());
-				json_entries.push_back(std::move(json_entry));
-			}
-		}
 
 	};
 

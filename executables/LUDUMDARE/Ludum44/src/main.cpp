@@ -76,14 +76,24 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 
 
+	nlohmann::json a = nlohmann::json();
+	a = 1;
+	a = "toto";
 
 
+	nlohmann::json entry;
+	
+	entry = nlohmann::json::array();
 
-	nlohmann::json entry = nlohmann::json::array();
-	entry.push_back(nlohmann::json(3));
-	entry.push_back(nlohmann::json(3.5f));
-	entry.push_back(nlohmann::json("ttoto"));
+	entry[3] = 3;
+	entry[13] = 9;
 
+	//entry.push_back(nlohmann::json(3));
+	//entry.push_back(nlohmann::json());
+	//entry.push_back(nlohmann::json(3.5f));
+	//entry.push_back(a);
+
+	std::string aa = entry.dump(2);
 
 
 	return 0;

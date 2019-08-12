@@ -546,31 +546,31 @@ namespace chaos
 		* Some JSON utility functions
 		*/
 
-		void SaveIntoJSON(nlohmann::json & json_entry, BitmapAnimationInfo const & info);
+		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapAnimationInfo const & info);
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapAnimationInfo & info);
 
-		void SaveIntoJSON(nlohmann::json & json_entry, BitmapLayout const & info);
+		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapLayout const & info);
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapLayout & info);
 
-		void SaveIntoJSON(nlohmann::json & json_entry, CharacterLayout const & info);
+		bool SaveIntoJSON(nlohmann::json & json_entry, CharacterLayout const & info);
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, CharacterLayout & info);
 
-		void SaveIntoJSON(nlohmann::json & json_entry, BitmapInfo const & info);
+		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfo const & info);
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfo & info);
 
-		void SaveIntoJSON(nlohmann::json & json_entry, CharacterInfo const & info);
+		bool SaveIntoJSON(nlohmann::json & json_entry, CharacterInfo const & info);
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, CharacterInfo & info);
 
-		void SaveIntoJSON(nlohmann::json & json_entry, FolderInfo const & info);
+		bool SaveIntoJSON(nlohmann::json & json_entry, FolderInfo const & info);
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, FolderInfo & info);
 
-		void SaveIntoJSON(nlohmann::json & json_entry, FontInfo const & info);
+		bool SaveIntoJSON(nlohmann::json & json_entry, FontInfo const & info);
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, FontInfo & info);
 

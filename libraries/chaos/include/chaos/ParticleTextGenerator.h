@@ -59,7 +59,7 @@ namespace chaos
 		};
 
 		/** json functions */
-		void SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params);
+		bool SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params);
 		/** json functions */
 		bool LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & params);
 

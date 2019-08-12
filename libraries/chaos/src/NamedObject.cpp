@@ -81,10 +81,11 @@ namespace chaos
 		return true; // no requirement => OK
 	}
 
-	void SaveIntoJSON(nlohmann::json & json_entry, NamedObject const & info)
+	bool SaveIntoJSON(nlohmann::json & json_entry, NamedObject const & info)
 	{
 		json_entry["name"] = info.name;
 		json_entry["tag"] = info.tag;
+		return true;
 	}
 
 	bool LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info)

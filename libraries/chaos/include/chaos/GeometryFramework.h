@@ -1055,9 +1055,10 @@ namespace chaos
 		// vectors
 
 	template<typename T>
-	void SaveIntoJSON(nlohmann::json & json_entry, glm::tvec2<T> const & src)
+	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec2<T> const & src)
 	{
 
+		return true;
 	}
 
 	template<typename T>
@@ -1080,9 +1081,10 @@ namespace chaos
 	}
 
 	template<typename T>
-	void SaveIntoJSON(nlohmann::json & json_entry, glm::tvec3<T> const & src)
+	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec3<T> const & src)
 	{
 
+		return true;
 	}
 
 	template<typename T>
@@ -1106,9 +1108,10 @@ namespace chaos
 	}
 
 	template<typename T>
-	void SaveIntoJSON(nlohmann::json & json_entry, glm::tvec4<T> const & src)
+	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec4<T> const & src)
 	{
 
+		return true;
 	}
 
 	template<typename T>

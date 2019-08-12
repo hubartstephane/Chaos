@@ -278,8 +278,6 @@ namespace chaos
 				folders.clear();
 			}
 
-
-
 		public:
 
 			/** the sub folders contained in this folder */

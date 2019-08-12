@@ -10,6 +10,7 @@
 
 #include <chaos/GeometryFramework.h>
 
+#if 0
 
 class Particle1
 {
@@ -59,17 +60,33 @@ BOOST_DECLARE_HAS_MEMBER(has_texcoord, texcoord);
 // BOOST_DECLARE_HAS_MEMBER(has_color, color); // already defined in part
 
 
+auto a1 = has_velocity<Particle1>::value;
+auto a2 = has_velocity<Particle2>::value;
 
+auto b1 = boost::mpl::bool_<has_velocity<Particle1>::value>();
+auto b2 = boost::mpl::bool_<has_acceleration<Particle2>::value>();
 
+#endif
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {	
 
-	auto a1 = has_velocity<Particle1>::value;
-	auto a2 = has_velocity<Particle2>::value;
 
-	auto b1 = boost::mpl::bool_<has_velocity<Particle1>::value>();
-	auto b2 = boost::mpl::bool_<has_acceleration<Particle2>::value>();
+
+
+
+
+
+
+
+	nlohmann::json entry = nlohmann::json::array();
+	entry.push_back(nlohmann::json(3));
+	entry.push_back(nlohmann::json(3.5f));
+	entry.push_back(nlohmann::json("ttoto"));
+
+
+
+	return 0;
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

@@ -30,34 +30,32 @@ namespace chaos
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & entry, T * & result)
 	{
-		result = new T;
-		if (result == nullptr)
+		T * other = new T;
+		if (other == nullptr)
 			return false;
-		if (!LoadFromJSON(entry, result))
+		if (!LoadFromJSON(entry, *other))
 		{
-			delete(*result);
-			result = nullptr;
+			delete(other);
 			return false;		
 		}
+		result = other;
 		return true;
 	}
 	/** template for unique_ptr */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, std::unique_ptr<T> & result)
+	template<typename T, typename DELETER>
+	bool LoadFromJSON(nlohmann::json const & entry, std::unique_ptr<T, DELETER> & result)
 	{
-		result = new T;
-		if (result == nullptr)
+		std::unique_ptr<T, DELETER> other(new T); // force to use another smart pointer and swap due to lake of copy 
+		if (other == nullptr)
 			return false;
-		if (!LoadFromJSON(entry, *result))
-		{
-			result = nullptr;
-			return false;		
-		}
+		if (!LoadFromJSON(entry, *other))
+			return false;
+		std::swap(result, other);
 		return true;
 	}
 	/** template for shared_ptr */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, std::shared_ptr<T> & result)
+	bool LoadFromJSON(nlohmann::json const & entry, chaos::shared_ptr<T> & result)
 	{
 		result = new T;
 		if (result == nullptr)

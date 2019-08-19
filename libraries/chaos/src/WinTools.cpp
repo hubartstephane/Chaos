@@ -206,6 +206,38 @@ namespace chaos
 		return result;
 	}
 
+	bool WinTools::CopyStringToClipboard(char const * str)
+	{
+		assert(str != nullptr);
+
+		size_t len = strlen(str);
+		if (len == 0)
+			return false;
+
+		bool result = false;
+
+		HLOCAL hMem = LocalAlloc(LHND, len + 1);
+		if (hMem != NULL)
+		{
+			char * cptr = (char*)LocalLock(hMem);
+			if (cptr != nullptr)
+			{
+				strcpy_s(cptr, len + 1, str);
+
+				HANDLE handle = NULL;
+				OpenClipboard(NULL);
+				EmptyClipboard();
+				handle = SetClipboardData(CF_TEXT, hMem);
+				LocalUnlock(hMem);				
+				CloseClipboard();
+				result = (handle != NULL);
+			}
+			LocalFree(hMem);
+		}
+		return result;
+	}
+
+
 	bool WinTools::CopyBitmapToClipboard(HBITMAP hBitmap)
 	{
 		HANDLE handle = NULL;

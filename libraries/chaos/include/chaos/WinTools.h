@@ -45,6 +45,9 @@ namespace chaos
 		/** returns the current user Desktop path */
 		static boost::filesystem::path GetUserDesktopPath();
 
+		/** copies a string into the clipboard */
+		static bool CopyStringToClipboard(char const * str);
+
 		/** copies a HBITMAP into clipboard */
 		static bool CopyBitmapToClipboard(HBITMAP hbitmap);
 

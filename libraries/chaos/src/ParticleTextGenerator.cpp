@@ -10,6 +10,27 @@ namespace chaos
 	namespace ParticleTextGenerator
 	{
 
+		static std::vector<std::pair<int, char const *>> const alignment_encoding = 
+		{
+			{ GeneratorParams::ALIGN_LEFT, "left"},
+			{ GeneratorParams::ALIGN_RIGHT, "right" },
+			{ GeneratorParams::ALIGN_CENTER, "center" },
+			{ GeneratorParams::ALIGN_JUSTIFY, "justify" }
+		};
+
+		static std::vector<std::pair<int, char const *>> const hotpoint_encoding =
+		{
+			{ Hotpoint::TOP, "top" },
+			{ Hotpoint::BOTTOM, "bottom" },
+			{ Hotpoint::LEFT, "left" },
+			{ Hotpoint::RIGHT, "right" },
+			{ Hotpoint::TOP_LEFT, "top-left" },
+			{ Hotpoint::TOP_RIGHT, "top-right" },
+			{ Hotpoint::BOTTOM_LEFT, "bottom-left" },
+			{ Hotpoint::BOTTOM_RIGHT, "bottom-right" },
+			{ Hotpoint::CENTER, "center" }
+		};
+
 		bool SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params)
 		{
 			if (!json_entry.is_object())
@@ -21,15 +42,14 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "bitmap_padding", params.bitmap_padding);
 			JSONTools::SetAttribute(json_entry, "max_text_width", params.max_text_width);
 			JSONTools::SetAttribute(json_entry, "word_wrap", params.word_wrap);
-			JSONTools::SetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);
-			//JSONTools::SetAttribute(json_entry, "alignment", params.alignment);
-
+			JSONTools::SetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);		
+			JSONTools::SetEnumAttribute(json_entry, "alignment", alignment_encoding, params.alignment);
 			JSONTools::SetAttribute(json_entry, "default_color", params.default_color);
 			JSONTools::SetAttribute(json_entry, "font_info_name", params.font_info_name);
 			JSONTools::SetAttribute(json_entry, "tab_size", params.tab_size);
 			JSONTools::SetAttribute(json_entry, "position", params.position);
 
-			//JSONTools::SetAttribute(json_entry, "hotpoint_type", hotpoint_type);
+			JSONTools::SetEnumAttribute(json_entry, "hotpoint_type", hotpoint_encoding, params.hotpoint_type);
 			return true;
 		}
 
@@ -44,28 +64,15 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "max_text_width", params.max_text_width);
 			JSONTools::GetAttribute(json_entry, "word_wrap", params.word_wrap);
 			JSONTools::GetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);
-			//JSONTools::GetAttribute(json_entry, "alignment", params.alignment);
-			
+			JSONTools::GetEnumAttribute(json_entry, "alignment", alignment_encoding, params.alignment);
 			JSONTools::GetAttribute(json_entry, "default_color", params.default_color);
 			JSONTools::GetAttribute(json_entry, "font_info_name", params.font_info_name);
 			JSONTools::GetAttribute(json_entry, "tab_size", params.tab_size);
 			JSONTools::GetAttribute(json_entry, "position", params.position);
-
-			//JSONTools::GetAttribute(json_entry, "hotpoint_type", hotpoint_type);
-
-
+			JSONTools::GetEnumAttribute(json_entry, "hotpoint_type", hotpoint_encoding, params.hotpoint_type);
 			return true;
 		}
-		
-#if 0
-		bool GeneratorParams::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
-		{
 
-
-
-			return true;
-		}
-#endif
 		// ============================================================
 		// GeneratorResult methods
 		// ============================================================

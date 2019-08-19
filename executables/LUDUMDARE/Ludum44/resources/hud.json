@@ -16,7 +16,8 @@
         "y":"2.0", 
         "z":"3.0", 
         "w":"4.0"
-      }    
+      },
+			"hotpoint_type":"bottom-left"
     }
 
 	

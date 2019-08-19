@@ -172,6 +172,7 @@ namespace chaos
 
 	public:
 
+		/** set an attribute in a json structure */
 		template<typename T>
 		static bool SetAttribute(nlohmann::json & entry, char const * name, T const & src)
 		{
@@ -184,6 +185,7 @@ namespace chaos
 			return SaveIntoJSON(entry[name], src);
 		}
 
+		/** set an attribute in a json array */
 		template<typename T>
 		static bool SetAttributeByIndex(nlohmann::json & entry, size_t index, T const & src)
 		{
@@ -193,6 +195,26 @@ namespace chaos
 				return false;
 			entry[index] = nlohmann::json();
 			return SaveIntoJSON(entry[index], src);
+		}
+
+		/** set an attribute in a json structure with a lookup table */
+		template<typename T, typename ENCODE_TABLE>
+		static bool SetEnumAttribute(nlohmann::json & entry, char const * name, ENCODE_TABLE const & encode_table, T const & src)
+		{
+			std::string encoded_src;
+			if (!EncodeEnum(src, encode_table, encoded_src))
+				return false;
+			return SetAttribute(entry, name, encoded_src);
+		}
+
+		/** set an attribute in a json structure with a lookup table */
+		template<typename T, typename ENCODE_TABLE>
+		static bool SetEnumAttributeByIndex(nlohmann::json & entry, size_t index, ENCODE_TABLE const & encode_table, T const & src)
+		{
+			std::string encoded_src;
+			if (!EncodeEnum(src, encode_table, encoded_src))
+				return false;
+			return SetAttributeByIndex(entry, index, encoded_src);
 		}
 
 		/** reading an attribute from a JSON structure */
@@ -207,6 +229,7 @@ namespace chaos
 				return false;
 			return LoadFromJSON(*it, result);
 		}
+
 		/** reading an attribute from a JSON array */
 		template<typename T>
 		static bool JSONTools::GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result)
@@ -215,24 +238,101 @@ namespace chaos
 				return false;
 			return LoadFromJSON(entry[index], result);
 		}
-		/** reading an attribute (catch exceptions) with default value */
+
+		/** reading an attribute with default value */
 		template<typename T, typename Y>
 		static bool GetAttribute(nlohmann::json const & entry, char const * name, T & result, Y default_value)
 		{
 			if (GetAttribute(entry, name, result))
 				return true;
 			result = default_value;
-			return false;
+			return true;
 		}
-		/** reading an attribute (catch exceptions) with default value */
+
+		/** reading an attribute with default value */
 		template<typename T, typename Y>
 		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result, Y default_value)
 		{
 			if (GetAttributeByIndex(entry, index, result))
 				return true;
 			result = default_value;
+			return true;
+		}
+
+		/** reading an attribute and make a lookup on an encoding table */
+		template<typename T, typename ENCODE_TABLE>
+		static bool GetEnumAttribute(nlohmann::json const & entry, char const * name, ENCODE_TABLE const & encode_table, T & result)
+		{
+			std::string str_result;
+			if (!GetAttribute(entry, name, str_result))
+				return false;
+			return DecodeEnum(str_result.c_str(), encode_table, result);
+		}
+
+		/** reading an attribute and make a lookup on an encoding table */
+		template<typename T, typename ENCODE_TABLE>
+		static bool GetEnumAttributeByIndex(nlohmann::json const & entry, size_t index, ENCODE_TABLE const & encode_table, T & result)
+		{
+			std::string str_result;
+			if (!GetAttributeByIndex(entry, index, str_result))
+				return false;
+			return DecodeEnum(str_result.c_str(), encode_table, result);
+		}
+
+		/** reading an attribute and make a lookup on an encoding table with a default value */
+		template<typename T, typename ENCODE_TABLE, typename Y>
+		static bool GetEnumAttribute(nlohmann::json const & entry, char const * name, ENCODE_TABLE const & encode_table, T & result, Y default_value)
+		{
+			if (GetEnumAttribute(entry, name, encode_table, result))
+				return true;
+			result = default_value;
+			return true;
+		}
+
+		/** reading an attribute and make a lookup on an encoding table with a default value */
+		template<typename T, typename ENCODE_TABLE, typename Y>
+		static bool GetEnumAttributeByIndex(nlohmann::json const & entry, size_t index, ENCODE_TABLE const & encode_table, T & result, Y default_value)
+		{
+			if (GetEnumAttributeByIndex(entry, index, encode_table, result))
+				return true;
+			result = default_value;
+			return true;
+		}
+
+	protected:
+
+		/** decode a value with a conversion table */
+		template<typename T, typename ENCODE_TABLE>
+		static bool DecodeEnum(char const * str, ENCODE_TABLE const & encode_table, T & result)
+		{
+			for (auto const & encode : encode_table)
+			{
+				if (StringTools::Stricmp(str, encode.second) == 0)
+				{
+					result = encode.first;
+					return true;
+				}
+			}
 			return false;
 		}
+
+		/** encode a value with a conversion table */
+		template<typename T, typename ENCODE_TABLE>
+		static bool EncodeEnum(T const & src, ENCODE_TABLE const & encode_table, std::string & result)
+		{
+			for (auto const & encode : encode_table)
+			{
+				if (src == encode.first)
+				{
+					result = encode.second;
+					return true;
+				}
+			}
+			return false;
+		}
+
+
+
 	};
 
 }; // namespace chaos

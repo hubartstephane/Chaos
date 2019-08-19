@@ -3,11 +3,8 @@
 #include "Ludum44Game.h"
 
 #include <chaos/EmptyClass.h>
+#include <chaos/LogTools.h>
 #include <chaos/MetaProgramming.h>
-
-
-
-
 #include <chaos/GeometryFramework.h>
 
 #if 0

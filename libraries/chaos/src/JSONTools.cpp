@@ -15,8 +15,6 @@
 
 namespace chaos
 {
-
-
 	bool LoadFromJSON(nlohmann::json const & entry, bool & result)
 	{
 		try
@@ -38,34 +36,13 @@ namespace chaos
 		return false;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	nlohmann::json * JSONTools::GetStructure(nlohmann::json & entry, char const * name)
 	{
 		if (entry.is_object())
 		{
-			try
-			{
-				auto it = entry.find(name);
-				if (it != entry.end() && it->is_structured())
-					return &*it;
-			}
-			catch (...)
-			{
-			}
+			auto it = entry.find(name);
+			if (it != entry.end() && it->is_structured())
+				return &*it;
 		}
 		return nullptr;				
 	}
@@ -74,15 +51,9 @@ namespace chaos
 	{
 		if (entry.is_object())
 		{
-			try
-			{
-				auto it = entry.find(name);
-				if (it != entry.end() && it->is_structured())
-					return &*it;
-			}
-			catch (...)
-			{
-			}
+			auto it = entry.find(name);
+			if (it != entry.end() && it->is_structured())
+				return &*it;
 		}
 		return nullptr;				
 	}
@@ -91,15 +62,9 @@ namespace chaos
 	{
 		if (entry.is_array() && index < entry.size())
 		{
-			try
-			{
-				nlohmann::json & result = entry[index];
-				if (result.is_structured())
-					return &result;
-			}
-			catch (...)
-			{
-			}
+			nlohmann::json & result = entry[index];
+			if (result.is_structured())
+				return &result;
 		}
 		return nullptr;				
 	}
@@ -108,15 +73,9 @@ namespace chaos
 	{
 		if (entry.is_array() && index < (size_t)entry.size())
 		{
-			try
-			{
-				nlohmann::json const & result = entry[index];
-				if (result.is_structured())
-					return &result;
-			}
-			catch (...)
-			{
-			}
+			nlohmann::json const & result = entry[index];
+			if (result.is_structured())
+				return &result;
 		}
 		return nullptr;				
 	}

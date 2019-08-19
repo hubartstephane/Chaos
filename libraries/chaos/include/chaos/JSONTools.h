@@ -23,8 +23,15 @@ namespace chaos
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & entry, T & result)
 	{
-		result = entry.get<T>(); // may throw an exception (catched by caller)
-		return true;
+		try
+		{
+			result = entry.get<T>(); // may throw an exception
+			return true;
+		}
+		catch (...)
+		{
+		}
+		return false;
 	}
 	/** template for raw pointer */
 	template<typename T>
@@ -68,39 +75,49 @@ namespace chaos
 
 	/** loading specialization for vector */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entries, std::vector<T> & elements)
+	bool LoadFromJSON(nlohmann::json const & entry, std::vector<T> & elements)
 	{
-		if (!json_entries.is_array())
-			return false;
-		for (auto const & json_entry : json_entries)
+		// input is an array
+		if (entry.is_array())
 		{
-			T element;
-			if (LoadFromJSON(json_entry, element))
-				elements.push_back(std::move(element));
+			for (auto const & json_entry : entry)
+			{
+				T element;
+				if (LoadFromJSON(json_entry, element))
+					elements.push_back(std::move(element));
+			}
+			return true;
 		}
+		// considere input as an array of a single element
+		T element;
+		if (!LoadFromJSON(entry, element))
+			return false;
+		elements.push_back(std::move(element));
 		return true;
 	}
-
-
-
-
-
 
 	// ====================================================================
 
 
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & entry, T const & result)
+	bool SaveIntoJSON(nlohmann::json & entry, T result) // copy for basic types
 	{
-		entry = result;
-		return true;
+		try
+		{
+			entry = result;
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}		
 	}
 	/** template for raw pointer */
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json & entry, T const * src)
 	{
 		if (src == nullptr)
-			return false;
+			return true;
 		return SaveIntoJSON(entry, *src);
 	}
 	/** template for unique_ptr */
@@ -108,7 +125,7 @@ namespace chaos
 	bool SaveIntoJSON(nlohmann::json & entry, std::unique_ptr<T, DELETER> const & src)
 	{
 		if (src == nullptr)
-			return false;
+			return true;
 		return SaveIntoJSON(entry, *src);
 	}
 	/** template for shared_ptr */
@@ -116,20 +133,20 @@ namespace chaos
 	bool SaveIntoJSON(nlohmann::json & entry, chaos::shared_ptr<T> const & src)
 	{
 		if (src == nullptr)
-			return false;
+			return true;
 		return SaveIntoJSON(entry, *src);
 	}
 
 	/** specialization for vector */
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & json_entries, std::vector<T> const & elements)
+	bool SaveIntoJSON(nlohmann::json & entry, std::vector<T> const & elements)
 	{
-		json_entries = nlohmann::json::array();
+		entry = nlohmann::json::array();
 		for (auto const & element : elements)
 		{
 			nlohmann::json j;
 			if (SaveIntoJSON(j, element))
-				json_entries.push_back(std::move(j));
+				entry.push_back(std::move(j));
 		}
 		return true;
 	}
@@ -220,14 +237,7 @@ namespace chaos
 			nlohmann::json::const_iterator it = entry.find(name);
 			if (it == entry.end())
 				return false;
-			try
-			{
-				return LoadFromJSON(*it, result);
-			}
-			catch (...)
-			{
-			}
-			return false;			
+			return LoadFromJSON(*it, result);
 		}
 		/** reading an attribute from a JSON array */
 		template<typename T>
@@ -235,14 +245,7 @@ namespace chaos
 		{
 			if (!entry.is_array() || index >= entry.size())
 				return false;
-			try
-			{
-				return LoadFromJSON(entry[index], result);
-			}
-			catch (...)
-			{
-			}
-			return false;
+			return LoadFromJSON(entry[index], result);
 		}
 		/** reading an attribute (catch exceptions) with default value */
 		template<typename T, typename Y>
@@ -280,39 +283,6 @@ namespace chaos
 
 
 
-
-
-
-
-
-		/** reading an array of elements */
-		template<typename T>
-		static bool GetAttributeArray(nlohmann::json const & entry, char const * name, std::vector<T> & result)
-		{
-			nlohmann::json const * array_json = GetStructure(entry, name);
-			// read an array ?
-			if (array_json != nullptr && array_json->is_array())
-			{
-				for (size_t i = 0; i < array_json->size(); ++i)
-				{
-					T tmp;
-					if (JSONTools::GetAttributeByIndex(*array_json, i, tmp))
-						result.push_back(std::move(tmp));
-				}
-				return true;
-			}
-			// a single element ?
-			else
-			{
-				T tmp;
-				if (GetAttribute(entry, name, tmp))
-				{
-					result.push_back(std::move(tmp));
-					return true;
-				}
-			}
-			return false;
-		}
 
 
 

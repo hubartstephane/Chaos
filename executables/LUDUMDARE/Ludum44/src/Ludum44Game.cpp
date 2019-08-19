@@ -71,7 +71,7 @@ bool LudumGame::DeclareParticleClasses()
 template<typename T>
 static bool InitializeGameValueVector(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path, std::vector<T> & result)
 {
-	chaos::JSONTools::GetAttributeArray(config, json_name, result);
+	chaos::JSONTools::GetAttribute(config, json_name, result);
 	return (result.size() > 0);
 }
 

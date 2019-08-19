@@ -473,7 +473,7 @@ namespace chaos
 			return false;
 		// update the default category
 		std::vector<std::string> category_names;
-		if (JSONTools::GetAttributeArray(json, "categories", category_names))
+		if (JSONTools::GetAttribute(json, "categories", category_names))
 		{
 			std::vector<SoundCategory *> categories;
 			for (std::string const & category_name : category_names)

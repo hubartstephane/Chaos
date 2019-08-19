@@ -84,7 +84,8 @@ namespace chaos
 	bool SaveIntoJSON(nlohmann::json & json_entry, NamedObject const & info)
 	{
 		if (!json_entry.is_object())
-			return false;
+			json_entry = nlohmann::json::object(); 
+
 		JSONTools::SetAttribute(json_entry, "name", info.name);
 		JSONTools::SetAttribute(json_entry, "tag", info.tag);
 		return true;

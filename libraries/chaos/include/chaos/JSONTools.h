@@ -10,13 +10,8 @@
 // EXTERNAL FUNCTION
 // =================
 
-
 namespace chaos
 {
-
-		// ====================================================================
-
-
 	/** loading a bool (because we try to read an int as a fallback) */
 	bool LoadFromJSON(nlohmann::json const & entry, bool & result);
 	/** default template loading (catch exceptions) */
@@ -75,7 +70,7 @@ namespace chaos
 
 	/** loading specialization for vector */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, std::vector<T> & elements)
+	bool LoadFromJSON(nlohmann::json const & entry, std::vector<T> & result)
 	{
 		// input is an array
 		if (entry.is_array())
@@ -84,7 +79,7 @@ namespace chaos
 			{
 				T element;
 				if (LoadFromJSON(json_entry, element))
-					elements.push_back(std::move(element));
+					result.push_back(std::move(element));
 			}
 			return true;
 		}
@@ -92,25 +87,22 @@ namespace chaos
 		T element;
 		if (!LoadFromJSON(entry, element))
 			return false;
-		elements.push_back(std::move(element));
+		result.push_back(std::move(element));
 		return true;
 	}
 
-	// ====================================================================
-
-
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & entry, T result) // copy for basic types
+	bool SaveIntoJSON(nlohmann::json & entry, T src) // copy for basic types
 	{
 		try
 		{
-			entry = result;
+			entry = src;
 			return true;
 		}
 		catch (...)
-		{
-			return false;
-		}		
+		{			
+		}	
+		return false;
 	}
 	/** template for raw pointer */
 	template<typename T>
@@ -139,10 +131,10 @@ namespace chaos
 
 	/** specialization for vector */
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & entry, std::vector<T> const & elements)
+	bool SaveIntoJSON(nlohmann::json & entry, std::vector<T> const & src)
 	{
 		entry = nlohmann::json::array();
-		for (auto const & element : elements)
+		for (auto const & element : src)
 		{
 			nlohmann::json j;
 			if (SaveIntoJSON(j, element))
@@ -150,24 +142,6 @@ namespace chaos
 		}
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	// =================
 	// JSONTools
@@ -198,34 +172,28 @@ namespace chaos
 
 	public:
 
-
 		template<typename T>
 		static bool SetAttribute(nlohmann::json & entry, char const * name, T const & src)
 		{
 			assert(name != nullptr);
-			if (!entry.is_object())
+			if (entry.is_null())
+				entry = nlohmann::json::object();
+			else if (!entry.is_object())
 				return false;
 			entry[name] = nlohmann::json();
-			try
-			{
-				return SaveIntoJSON(entry[name], src);
-			}
-			catch(...)
-			{
-			}
-			return false;	
+			return SaveIntoJSON(entry[name], src);
 		}
-
 
 		template<typename T>
 		static bool SetAttributeByIndex(nlohmann::json & entry, size_t index, T const & src)
 		{
-
-			return true;
+			if (entry.is_null())
+				entry = nlohmann::json::array();
+			else if (!entry.is_array())
+				return false;
+			entry[index] = nlohmann::json();
+			return SaveIntoJSON(entry[index], src);
 		}
-
-
-
 
 		/** reading an attribute from a JSON structure */
 		template<typename T>
@@ -265,30 +233,6 @@ namespace chaos
 			result = default_value;
 			return false;
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	};
 
 }; // namespace chaos

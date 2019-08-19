@@ -70,34 +70,6 @@ auto b2 = boost::mpl::bool_<has_acceleration<Particle2>::value>();
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {	
-
-#if 0
-
-
-
-
-	nlohmann::json a = nlohmann::json();
-	a = 1;
-	a = "toto";
-
-
-	nlohmann::json entry;
-	
-	entry = nlohmann::json::array();
-
-	entry[3] = 3;
-	entry[13] = 9;
-
-	//entry.push_back(nlohmann::json(3));
-	//entry.push_back(nlohmann::json());
-	//entry.push_back(nlohmann::json(3.5f));
-	//entry.push_back(a);
-
-	std::string aa = entry.dump(2);
-
-
-	return 0;
-#endif
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

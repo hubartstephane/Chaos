@@ -13,7 +13,7 @@ namespace chaos
 		bool SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params)
 		{
 			if (!json_entry.is_object())
-				return false;
+				json_entry = nlohmann::json::object();
 
 			JSONTools::SetAttribute(json_entry, "line_height", params.line_height);
 			JSONTools::SetAttribute(json_entry, "line_spacing", params.line_spacing);

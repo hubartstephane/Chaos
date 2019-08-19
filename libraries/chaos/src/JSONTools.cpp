@@ -3,18 +3,12 @@
 #include <chaos/FileTools.h>
 #include <chaos/Application.h>
 
-// =================
-// EXTERNAL FUNCTION
-// =================
-
-
-// =================
-// JSONTools
-// =================
-
-
 namespace chaos
 {
+	// =================
+	// EXTERNAL FUNCTION
+	// =================
+
 	bool LoadFromJSON(nlohmann::json const & entry, bool & result)
 	{
 		try
@@ -35,6 +29,10 @@ namespace chaos
 		}
 		return false;
 	}
+
+	// =================
+	// JSONTools
+	// =================
 
 	nlohmann::json * JSONTools::GetStructure(nlohmann::json & entry, char const * name)
 	{

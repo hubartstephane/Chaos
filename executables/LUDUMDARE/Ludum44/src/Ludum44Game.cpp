@@ -124,14 +124,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 		return false;
 
 
-	bool bbb = false;
-	chaos::JSONTools::GetAttribute(config, "bbb", bbb);
-
-
-	bbb = bbb;
-
-	bool x = (bool)(-1);
-
 
 
 

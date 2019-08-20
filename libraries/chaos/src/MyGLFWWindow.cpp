@@ -3,7 +3,10 @@
 #include <chaos/Application.h>
 #include <chaos/InputMode.h>
 #include <chaos/MyGLFWTools.h>
+#include <chaos/GPUFramebufferGenerator.h>
+#include <chaos/GLTextureTools.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
+#include <chaos/GPUTextureLoader.h>
 
 namespace chaos
 {
@@ -418,6 +421,91 @@ namespace chaos
 					}				
 				}
 			}
+		}
+
+		bool Window::ScreenCapture()
+		{
+			// get renderer
+			MyGLFW::SingleWindowApplication * application = MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+			if (application == nullptr)
+				return false;
+
+			Renderer * renderer = application->GetRenderer();
+			if (renderer == nullptr)
+				return false;
+
+			// compute rendering size
+			int width = 512;
+			int height = 512;
+
+			glm::ivec2 framebuffer_size = glm::ivec2(width, height);
+
+			// generate a framebuffer
+			chaos::GPUFramebufferGenerator framebuffer_generator;
+			framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), framebuffer_size, "scene");
+			framebuffer_generator.AddDepthStencilAttachment(framebuffer_size, "depth");
+
+			chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);
+			if (framebuffer == nullptr)
+				return false;
+			if (!framebuffer->CheckCompletionStatus())
+				return false;
+
+			// render in the frame buffer
+			framebuffer->BeginRendering();
+			glViewport(0, 0, framebuffer_size.x, framebuffer_size.y);
+				
+			renderer->BeginRenderingFrame();					
+			OnDraw(renderer, framebuffer_size);
+			renderer->EndRenderingFrame();
+
+			framebuffer->EndRendering(false);
+
+			// extract the texture
+			chaos::GPUFramebufferAttachmentInfo const * attachment = framebuffer->GetColorAttachment(0);
+			if (attachment == nullptr || attachment->texture == nullptr)
+				return false;
+
+			chaos::ImageDescription desc;
+			char * pixels = chaos::GLTextureTools::GetTextureImage(attachment->texture->GetResourceID(), 0, desc);
+			if (pixels == nullptr)
+				return false;
+
+			bitmap_ptr img = bitmap_ptr(FreeImage_Allocate(width, height, 32));
+			if (img == nullptr)
+				return false;
+
+			BYTE * img_data = FreeImage_GetBits(img.get());
+			if (img_data == nullptr)
+				return false;
+
+			memcpy(img_data, pixels, width * height * 4);
+
+#if 0
+
+			boost::filesystem::path filepath = application->GetUserLocalTempPath() / "toto.png";
+
+			bool b = FreeImage_Save(FIF_PNG, img.get(), filepath.string().c_str(), 0);
+
+#else
+
+			boost::filesystem::path filepath = application->GetUserLocalTempPath() / "toto.gif";
+
+			bool b = FreeImage_Save(FIF_GIF, img.get(), filepath.string().c_str(), 0);
+
+#endif
+
+
+		//	chaos::GPUTextureLoader().GenTextureObject(desc);
+
+	
+
+
+
+
+			framebuffer_size = framebuffer_size;
+
+			return true;
 		}
 
 	}; // namespace MyGLFW

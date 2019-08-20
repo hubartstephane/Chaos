@@ -28,19 +28,28 @@ namespace death
 			if (game->OnKeyEvent(key, scan_code, action, modifier))
 				return true;
 		// kill the window
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		if (action == GLFW_PRESS)
 		{
-			if (modifier & GLFW_MOD_SHIFT)
+			if (key == GLFW_KEY_ESCAPE)
 			{
-				RequireWindowClosure();
+				if (modifier & GLFW_MOD_SHIFT)
+				{
+					RequireWindowClosure();
+					return true;
+				}
+			}
+			// screen capture
+			if (key == GLFW_KEY_F9)
+			{
+				ScreenCapture();
 				return true;
 			}
-		}
-		// try to go fullscreen
-		if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
-		{
-			ToggleFullscreen();
-			return true;
+			// try to go fullscreen
+			if (key == GLFW_KEY_F10)
+			{
+				ToggleFullscreen();
+				return true;
+			}
 		}
 		// super method
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);

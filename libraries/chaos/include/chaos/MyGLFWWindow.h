@@ -102,6 +102,9 @@ namespace chaos
 			/** change the window size */
 			void SetWindowSize(glm::ivec2 const & size);
 
+			/** require a screen capture */
+			bool ScreenCapture();
+
 		protected:
 
 			/** get the hints for new GLFW window */

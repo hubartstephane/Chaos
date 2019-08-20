@@ -102,7 +102,7 @@ namespace death
 		virtual bool DoTick(double delta_time) override;
 
 		/** handle keyboard input */
-		virtual bool OnKeyEvent(int key, int action);
+		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier);
 		/** handle keyboard input */
 		virtual bool OnCharEvent(unsigned int c);
 		/** handle mouse input */

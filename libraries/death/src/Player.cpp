@@ -20,7 +20,7 @@ namespace death
 		player_allocations = in_allocation;
 	}
 
-	bool Player::OnKeyEvent(int key, int action)
+	bool Player::OnKeyEvent(int key, int scan_code, int action, int modifier)
 	{
 		return false;
 	}

@@ -25,7 +25,7 @@ namespace death
 	{
 		// give inputs to the game
 		if (game != nullptr)
-			if (game->OnKeyEvent(key, action))
+			if (game->OnKeyEvent(key, scan_code, action, modifier))
 				return true;
 		// kill the window
 		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)

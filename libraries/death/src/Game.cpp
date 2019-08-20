@@ -83,11 +83,11 @@ namespace death
 			hud->Tick(delta_time);
 	}
 
-	bool Game::OnKeyEvent(int key, int action)
+	bool Game::OnKeyEvent(int key, int scan_code, int action, int modifier)
 	{
 		// give the game instance opportunity to capture the input
 		if (game_instance != nullptr)
-			if (game_instance->OnKeyEvent(key, action))
+			if (game_instance->OnKeyEvent(key, scan_code, action, modifier))
 				return true;
 
 		// only care for keys that are PRESSED (ignore RELEASE, ignore REPEAT)
@@ -102,8 +102,18 @@ namespace death
 					return true;
 			// QUIT GAME
 			if (key == GLFW_KEY_ESCAPE)
-				if (RequireExitGame())
-					return true;
+			{		
+				if (modifier & GLFW_MOD_CONTROL)
+				{
+					if (RequireExitGame())
+						return true;
+				}
+				else
+				{
+					if (RequireTogglePause())
+						return true;
+				}
+			}
 			// CHEAT CODE TO SKIP LEVEL
 #if _DEBUG
 			if (key == GLFW_KEY_F1)

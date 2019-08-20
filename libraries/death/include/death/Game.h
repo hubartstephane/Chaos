@@ -212,7 +212,7 @@ namespace death
 		virtual void TickGameInputs(double delta_time);
 
 		/** whenever a key event is received */
-		virtual bool OnKeyEvent(int key, int action);
+		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier);
 		/** whenever a char event is received */
 		virtual bool OnCharEvent(unsigned int c);
 		/** whenever a mouse event is received */

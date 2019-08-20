@@ -94,8 +94,9 @@ namespace death
 		if (action == GLFW_PRESS)
 		{
 			// MAIN MENU to PLAYING
-			if (RequireStartGame(nullptr))
-				return true;
+			if (key != GLFW_KEY_ESCAPE && key != GLFW_KEY_LEFT_SHIFT && key != GLFW_KEY_RIGHT_SHIFT)
+				if (RequireStartGame(nullptr))
+					return true;
 			// PLAYING to PAUSE
 			if (key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER)
 				if (RequireTogglePause())
@@ -103,7 +104,7 @@ namespace death
 			// QUIT GAME
 			if (key == GLFW_KEY_ESCAPE)
 			{		
-				if (modifier & GLFW_MOD_CONTROL)
+				if (modifier & GLFW_MOD_SHIFT)
 				{
 					if (RequireExitGame())
 						return true;

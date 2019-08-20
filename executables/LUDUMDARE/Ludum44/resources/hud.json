@@ -11,15 +11,7 @@
     {
       "line_height":150,
       "default_color":[1.0, 1.0, 1.0, 1.0],
-      "default_colorx":{
-        "x":"1.0", 
-        "y":"2.0", 
-        "z":"3.0", 
-        "w":"4.0"
-      },
-			"hotpoint_type":"bottom-left"
+			"hotpoint_type":"center"
     }
-
-	
 	}
 }

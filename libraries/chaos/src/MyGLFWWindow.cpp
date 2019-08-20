@@ -483,15 +483,23 @@ namespace chaos
 
 #if 0
 
+			
+
 			boost::filesystem::path filepath = application->GetUserLocalTempPath() / "toto.png";
 
 			bool b = FreeImage_Save(FIF_PNG, img.get(), filepath.string().c_str(), 0);
 
 #else
 
+		bitmap_ptr bb = bitmap_ptr(FreeImage_ConvertTo8Bits(img.get()));
+
+			//bitmap_ptr bb = bitmap_ptr(FreeImage_Pimg.get(), FIT_F_GIF));
+
 			boost::filesystem::path filepath = application->GetUserLocalTempPath() / "toto.gif";
 
-			bool b = FreeImage_Save(FIF_GIF, img.get(), filepath.string().c_str(), 0);
+			bool b = FreeImage_Save(FIF_GIF, bb.get(), filepath.string().c_str(), 0);
+
+			
 
 #endif
 

@@ -466,10 +466,14 @@ namespace chaos
 			if (attachment == nullptr || attachment->texture == nullptr)
 				return false;
 
+
+
 			chaos::ImageDescription desc;
 			char * pixels = chaos::GLTextureTools::GetTextureImage(attachment->texture->GetResourceID(), 0, desc);
 			if (pixels == nullptr)
 				return false;
+
+			delete[](pixels);
 
 			bitmap_ptr img = bitmap_ptr(FreeImage_Allocate(width, height, 32));
 			if (img == nullptr)
@@ -480,6 +484,17 @@ namespace chaos
 				return false;
 
 			memcpy(img_data, pixels, width * height * 4);
+
+			// create the directory
+			boost::filesystem::path capture_directory_path = application->GetUserLocalTempPath() / "Captures";
+			if (!boost::filesystem::is_directory(capture_directory_path))
+				if (!boost::filesystem::create_directories(capture_directory_path))
+					return false;
+
+			// save the image
+
+
+
 
 #if 0
 
@@ -503,15 +518,6 @@ namespace chaos
 
 #endif
 
-
-		//	chaos::GPUTextureLoader().GenTextureObject(desc);
-
-	
-
-
-
-
-			framebuffer_size = framebuffer_size;
 
 			return true;
 		}

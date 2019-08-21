@@ -466,24 +466,9 @@ namespace chaos
 			if (attachment == nullptr || attachment->texture == nullptr)
 				return false;
 
-
-
-			chaos::ImageDescription desc;
-			char * pixels = chaos::GLTextureTools::GetTextureImage(attachment->texture->GetResourceID(), 0, desc);
-			if (pixels == nullptr)
-				return false;
-
-			delete[](pixels);
-
-			bitmap_ptr img = bitmap_ptr(FreeImage_Allocate(width, height, 32));
+			bitmap_ptr img = bitmap_ptr(chaos::ImageTools::GenFreeImage(attachment->texture->GetResourceID(), 0));
 			if (img == nullptr)
 				return false;
-
-			BYTE * img_data = FreeImage_GetBits(img.get());
-			if (img_data == nullptr)
-				return false;
-
-			memcpy(img_data, pixels, width * height * 4);
 
 			// create the directory
 			boost::filesystem::path capture_directory_path = application->GetUserLocalTempPath() / "Captures";
@@ -496,17 +481,18 @@ namespace chaos
 
 
 
-#if 0
 
-			
+#if 1
 
-			boost::filesystem::path filepath = application->GetUserLocalTempPath() / "toto.png";
+
+
+			boost::filesystem::path filepath = capture_directory_path / "toto.png";
 
 			bool b = FreeImage_Save(FIF_PNG, img.get(), filepath.string().c_str(), 0);
 
 #else
 
-		bitmap_ptr bb = bitmap_ptr(FreeImage_ConvertTo8Bits(img.get()));
+			bitmap_ptr bb = bitmap_ptr(FreeImage_ConvertTo8Bits(img.get()));
 
 			//bitmap_ptr bb = bitmap_ptr(FreeImage_Pimg.get(), FIT_F_GIF));
 
@@ -514,10 +500,19 @@ namespace chaos
 
 			bool b = FreeImage_Save(FIF_GIF, bb.get(), filepath.string().c_str(), 0);
 
-			
+
 
 #endif
 
+
+			//	chaos::GPUTextureLoader().GenTextureObject(desc);
+
+
+
+
+
+
+			framebuffer_size = framebuffer_size;
 
 			return true;
 		}

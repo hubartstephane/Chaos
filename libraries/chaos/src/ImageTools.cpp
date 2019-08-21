@@ -1,6 +1,7 @@
 #include <chaos/ImageTools.h>
 #include <chaos/Buffer.h>
 #include <chaos/FileTools.h>
+#include <chaos/GLTextureTools.h>
 
 namespace chaos
 {
@@ -173,6 +174,42 @@ namespace chaos
 		// allocate the freeimage
 		return FreeImage_AllocateT(image_type, width, height, bpp);
 	}
+
+	FIBITMAP * ImageTools::GenFreeImage(ImageDescription const & src_desc)
+	{
+		// ensure the source is valid
+		if (!src_desc.IsValid(false))
+			return nullptr;
+		// check type and bpp
+		int bpp = 0;
+		FREE_IMAGE_TYPE image_type = GetFreeImageType(src_desc.pixel_format, &bpp);
+		if (image_type == FIT_UNKNOWN)
+			return nullptr;
+		// allocate the new texture
+		FIBITMAP * result = FreeImage_AllocateT(image_type, src_desc.width, src_desc.height, bpp);
+		if (result == nullptr)
+			return nullptr;
+		// fill the bitmap
+		ImageDescription dst_desc = GetImageDescription(result);
+		ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, 0, 0, src_desc.width, src_desc.height, false);
+
+		return result;
+	}
+
+	FIBITMAP * ImageTools::GenFreeImage(GLuint texture_id, GLint level)
+	{
+		FIBITMAP * result = nullptr;
+
+		ImageDescription desc;
+		char * pixels = GLTextureTools::GetTextureImage(texture_id, level, desc);
+		if (pixels != nullptr)
+		{
+			result = GenFreeImage(desc);
+			delete[] pixels;
+		}
+		return result;
+	}
+
 
 	FREE_IMAGE_FORMAT ImageTools::GetFreeImageFormat(PixelFormat const & pixel_format)
 	{

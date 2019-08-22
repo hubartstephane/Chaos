@@ -452,10 +452,12 @@ namespace chaos
 				return false;
 
 			// render in the frame buffer
+			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 			glViewport(0, 0, framebuffer_size.x, framebuffer_size.y);
 			OnDraw(renderer, framebuffer_size);
 			renderer->PopFramebufferRenderContext();
+			renderer->EndRenderingFrame();
 
 			// extract the texture
 			chaos::GPUFramebufferAttachmentInfo const * attachment = framebuffer->GetColorAttachment(0);

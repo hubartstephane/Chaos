@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/Tickable.h>
+#include <chaos/InputEventReceiver.h>
 
 #include <death/GameFramework.h>
 #include <death/Player.h>
@@ -15,7 +16,7 @@ namespace death
 	// GameInstance
 	// =============================================
 
-	class GameInstance : public chaos::Tickable
+	class GameInstance : public chaos::InputEventReceiver, public chaos::Tickable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -102,13 +103,13 @@ namespace death
 		virtual bool DoTick(double delta_time) override;
 
 		/** handle keyboard input */
-		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier);
+		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 		/** handle keyboard input */
-		virtual bool OnCharEvent(unsigned int c);
+		virtual bool OnCharEvent(unsigned int c) override;
 		/** handle mouse input */
-		virtual bool OnMouseButton(int button, int action, int modifier);
+		virtual bool OnMouseButton(int button, int action, int modifier) override;
 		/** handle mouse movement */
-		virtual bool OnMouseMove(double x, double y);
+		virtual bool OnMouseMove(double x, double y) override;
 
 		/** returns the maximum number of player */
 		virtual size_t GetMaxPlayerCount() const;

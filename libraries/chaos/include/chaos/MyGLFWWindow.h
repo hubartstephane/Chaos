@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/InputEventReceiver.h>
+#include <chaos/ReferencedObject.h>
 #include <chaos/Renderer.h>
 
 namespace chaos
@@ -65,7 +67,7 @@ namespace chaos
 		* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 		*/
 
-		class Window
+		class Window : public InputEventReceiver, public ReferencedObject
 		{
 			friend class SingleWindowApplication;
 
@@ -124,17 +126,6 @@ namespace chaos
 			virtual void OnWindowResize(glm::ivec2 size) {}
 			/** called whenever the window is redrawn */
 			virtual bool OnDraw(Renderer * in_renderer, glm::ivec2 size) { return true; }
-
-			/** called whenever the mouse is moved */
-			virtual bool OnMouseMove(double x, double y) { return false; }
-			/** called whenever the mouse button is down / up */
-			virtual bool OnMouseButton(int button, int action, int modifier) { return false; }
-			/** called whenever the mouse wheel is changed */
-			virtual bool OnMouseWheel(double scroll_x, double scroll_y) { return false; }
-			/** called whenever a key is pressed */
-			virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) { return false; }
-			/** called whenever a char is generated */
-			virtual bool OnCharEvent(unsigned int c) { return false; }
 
 			/** called whenever a file is dropped */
 			virtual void OnDropFile(int count, char const ** paths) {}

@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/ParticleManager.h>
+#include <chaos/InputEventReceiver.h>
 
 #include <death/GameInstanceEntity.h>
 #include <death/GameFramework.h>
@@ -16,7 +17,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public GameInstanceEntity
+	class Player : public chaos::InputEventReceiver, public GameInstanceEntity
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;
@@ -75,13 +76,13 @@ namespace death
 		/** override */
 		virtual bool DoTick(double delta_time) override;
 		/** handle keyboard input */
-		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier);
+		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 		/** handle keyboard input */
-		virtual bool OnCharEvent(unsigned int c);
+		virtual bool OnCharEvent(unsigned int c) override;
 		/** handle mouse input */
-		virtual bool OnMouseButton(int button, int action, int modifier);
+		virtual bool OnMouseButton(int button, int action, int modifier) override;
 		/** handle mouse movement */
-		virtual bool OnMouseMove(double x, double y);
+		virtual bool OnMouseMove(double x, double y) override;
 
 		/** handle the player input */
 		virtual void HandleKeyboardInputs(double delta_time);

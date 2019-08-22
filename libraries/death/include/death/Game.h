@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/InputEventReceiver.h>
 #include <chaos/MyGLFWwindow.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/Application.h>
@@ -35,7 +36,7 @@ namespace death
 
 	using PhysicalGamepadWrapper = chaos::ReferencedObjectDataWrapper<chaos::MyGLFW::PhysicalGamepad*>;
 
-	class Game : public chaos::ReferencedObject, public chaos::ResourceFriend
+	class Game : public chaos::InputEventReceiver, public chaos::ReferencedObject, public chaos::ResourceFriend
 	{
 		friend class GamepadManager;
 		friend class GameWindow;
@@ -212,13 +213,13 @@ namespace death
 		virtual void TickGameInputs(double delta_time);
 
 		/** whenever a key event is received */
-		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier);
+		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 		/** whenever a char event is received */
-		virtual bool OnCharEvent(unsigned int c);
+		virtual bool OnCharEvent(unsigned int c) override;
 		/** whenever a mouse event is received */
-		virtual bool OnMouseButton(int button, int action, int modifier);
+		virtual bool OnMouseButton(int button, int action, int modifier) override;
 		/** whenever mouse is displaced */
-		virtual bool OnMouseMove(double x, double y);
+		virtual bool OnMouseMove(double x, double y) override;
 
 		/** the rendering method */
 		virtual void Display(chaos::Renderer * renderer, glm::ivec2 const & size);

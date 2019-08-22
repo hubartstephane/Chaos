@@ -48,21 +48,6 @@ protected:
 		return true;
 	}
 
-	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
-	{
-		if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
-		{
-			ToggleFullscreen();
-			return true;
-		}
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		{
-			RequireWindowClosure();
-			return true;
-		}
-		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
-	}
-
 	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
 		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);

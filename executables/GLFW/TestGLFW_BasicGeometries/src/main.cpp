@@ -1100,9 +1100,6 @@ protected:
 
 	virtual bool Tick(double delta_time) override
 	{
-		if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-			RequireWindowClosure();
-
 		fps_view_controller.Tick(glfw_window, delta_time);
 
 		debug_display.Tick(delta_time);
@@ -1145,14 +1142,11 @@ protected:
 			DebugDisplayExampleTitle();     
 			return true;
 		}
-
 		if (key == GLFW_KEY_KP_5 && action == GLFW_RELEASE)
 		{
 			UpdateObjectType();
 			DebugDisplayExampleTitle();
 		}
-
-
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 

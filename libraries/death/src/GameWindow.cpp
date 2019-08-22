@@ -27,34 +27,9 @@ namespace death
 		if (game != nullptr)
 			if (game->OnKeyEvent(key, scan_code, action, modifier))
 				return true;
-		// kill the window
-		if (action == GLFW_PRESS)
-		{
-			if (key == GLFW_KEY_ESCAPE)
-			{
-				if (modifier & GLFW_MOD_SHIFT)
-				{
-					RequireWindowClosure();
-					return true;
-				}
-			}
-			// screen capture
-			if (key == GLFW_KEY_F9)
-			{
-				ScreenCapture();
-				return true;
-			}
-			// try to go fullscreen
-			if (key == GLFW_KEY_F10)
-			{
-				ToggleFullscreen();
-				return true;
-			}
-		}
 		// super method
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
-
 
 	bool GameWindow::OnMouseButton(int button, int action, int modifier)
 	{
@@ -72,10 +47,21 @@ namespace death
 		return chaos::MyGLFW::Window::OnMouseMove(x, y);
 	}
 
+	chaos::box2 GameWindow::GetRequiredViewport(glm::ivec2 const & size) const
+	{
+		if (game != nullptr)
+			game->GetRequiredViewport(size);
+		return chaos::MyGLFW::Window::GetRequiredViewport(size);
+	}
+
 	bool GameWindow::OnDraw(chaos::GPURenderer * in_renderer, glm::ivec2 size)
 	{
 		if (game != nullptr)
+		{
+			chaos::box2 viewport = GetRequiredViewport(size);
+			chaos::GLTools::SetViewport(viewport);
 			game->Display(in_renderer, size);
+		}
 		return true;
 	}
 

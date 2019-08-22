@@ -56,12 +56,7 @@ protected:
 
   virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
-      RequireWindowClosure();
-			return true;
-    }
-    else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
     {
       ChangeFont(font_index + 1);
 			return true;

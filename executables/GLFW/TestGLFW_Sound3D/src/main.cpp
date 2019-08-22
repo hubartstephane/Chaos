@@ -132,9 +132,6 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-    if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-      RequireWindowClosure();
-
     if (sound_manager != nullptr)
     {
     //  glm::mat4 view = fps_view_controller.GlobalToLocal();

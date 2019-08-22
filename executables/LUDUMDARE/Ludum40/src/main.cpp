@@ -40,15 +40,6 @@ protected:
 
 	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		{
-			if (modifier & GLFW_MOD_SHIFT)
-			{
-				RequireWindowClosure();
-				return true;
-			}						
-		}
-
 		if (game != nullptr)
 			if (game->OnKeyEvent(key, action))
 				return true;

@@ -260,9 +260,6 @@ protected:
 
   virtual bool Tick(double delta_time) override
   {
-    if (glfwGetKey(glfw_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-      RequireWindowClosure();
-
     fps_view_controller.Tick(glfw_window, delta_time);
 
     debug_display.Tick(delta_time);

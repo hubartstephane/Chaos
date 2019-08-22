@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/InputEventReceiver.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/GeometryFramework.h>
 #include <chaos/GPURenderer.h>
 
 namespace chaos
@@ -106,6 +107,12 @@ namespace chaos
 
 			/** require a screen capture */
 			bool ScreenCapture();
+
+			/** getting the required viewport for given window */
+			virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const;
+
+			/** override */
+			virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 
 		protected:
 

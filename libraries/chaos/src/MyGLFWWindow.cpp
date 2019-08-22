@@ -194,6 +194,8 @@ namespace chaos
 					if (renderer != nullptr)
 					{
 						renderer->BeginRenderingFrame();
+
+						// the full size (with no viewport clipping)
 						if (my_window->OnDraw(renderer, glm::ivec2(width, height)))
 						{					
 							if (my_window->double_buffer)
@@ -435,10 +437,10 @@ namespace chaos
 				return false;
 
 			// compute rendering size
-			int width = 512;
-			int height = 512;
-
-			glm::ivec2 framebuffer_size = glm::ivec2(width, height);
+			// in normal case, we work with the window_size then apply a viewport cropping
+			// here we want exactly to work with no cropping
+			chaos::box2 viewport = GetRequiredViewport(GetWindowSize());
+			glm::ivec2 framebuffer_size = viewport.half_size * 2.0f;
 
 			// generate a framebuffer
 			chaos::GPUFramebufferGenerator framebuffer_generator;
@@ -484,6 +486,45 @@ namespace chaos
 				return false;
 
 			return (FreeImage_Save(FIF_PNG, img.get(), file_path.string().c_str(), 0) != 0);
+		}
+
+		chaos::box2 Window::GetRequiredViewport(glm::ivec2 const & size) const
+		{
+			chaos::box2 viewport = chaos::box2(std::make_pair(
+				glm::vec2(0.0f, 0.0f),
+				chaos::GLMTools::RecastVector<glm::vec2>(size)
+			));
+			return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
+		}
+
+		bool Window::OnKeyEvent(int key, int scan_code, int action, int modifier)
+		{
+			// kill the window
+			if (action == GLFW_PRESS)
+			{
+				if (key == GLFW_KEY_ESCAPE)
+				{
+					if (modifier & GLFW_MOD_SHIFT)
+					{
+						RequireWindowClosure();
+						return true;
+					}
+				}
+				// screen capture
+				if (key == GLFW_KEY_F9)
+				{
+					ScreenCapture();
+					return true;
+				}
+				// try to go fullscreen
+				if (key == GLFW_KEY_F10)
+				{
+					ToggleFullscreen();
+					return true;
+				}
+			}
+			// super method
+			return InputEventReceiver::OnKeyEvent(key, scan_code, action, modifier);
 		}
 
 	}; // namespace MyGLFW

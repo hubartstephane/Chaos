@@ -221,6 +221,9 @@ namespace death
 		/** whenever mouse is displaced */
 		virtual bool OnMouseMove(double x, double y) override;
 
+		/** getting the required viewport for given window */
+		virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const;
+
 		/** the rendering method */
 		virtual void Display(chaos::GPURenderer * renderer, glm::ivec2 const & size);
 		/** the user defined rendering function */

@@ -41,6 +41,8 @@ namespace death
 		virtual void OnIconifiedStateChange(bool iconified) override;
 		/** override */
 		virtual void OnFocusStateChange(bool gain_focus) override;
+		/** override */
+		virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const override;
 
 	protected:
 

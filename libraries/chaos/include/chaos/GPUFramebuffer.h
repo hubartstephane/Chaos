@@ -100,7 +100,7 @@ namespace chaos
 	class GPUFramebuffer : public GPUResource, public GPUAttachmentOwner<GPUFramebufferAttachmentInfo>
 	{
 		friend class GPUFramebufferGenerator;
-		friend class Renderer;
+		friend class GPURenderer;
 
 	public:
 

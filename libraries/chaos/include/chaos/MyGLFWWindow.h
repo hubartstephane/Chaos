@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/InputEventReceiver.h>
 #include <chaos/ReferencedObject.h>
-#include <chaos/Renderer.h>
+#include <chaos/GPURenderer.h>
 
 namespace chaos
 {
@@ -125,7 +125,7 @@ namespace chaos
 			/** called whenever the window is resized */
 			virtual void OnWindowResize(glm::ivec2 size) {}
 			/** called whenever the window is redrawn */
-			virtual bool OnDraw(Renderer * in_renderer, glm::ivec2 size) { return true; }
+			virtual bool OnDraw(GPURenderer * in_renderer, glm::ivec2 size) { return true; }
 
 			/** called whenever a file is dropped */
 			virtual void OnDropFile(int count, char const ** paths) {}

@@ -42,7 +42,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 {
 	death::TiledMap::LevelInstance * ludum_level_instance = GetLudumLevelInstance();
 

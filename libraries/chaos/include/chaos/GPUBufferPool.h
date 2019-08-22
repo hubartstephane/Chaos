@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/Renderer.h>
+#include <chaos/GPURenderer.h>
 #include <chaos/GPUBuffer.h>
 #include <chaos/GPUFence.h>
 
@@ -23,12 +23,12 @@ namespace chaos
 	public:
 
 		/** allocate a buffer and bind it to a fence */
-		GPUBuffer * AllocateBuffer(Renderer * renderer, size_t min_buffer_size, size_t buffer_size);
+		GPUBuffer * AllocateBuffer(GPURenderer * renderer, size_t min_buffer_size, size_t buffer_size);
 
 	protected:
 
 		/** internal method to find an available buffer */
-		GPUBuffer * FindUnusedBuffer(Renderer * renderer, size_t min_buffer_size, size_t buffer_size);
+		GPUBuffer * FindUnusedBuffer(GPURenderer * renderer, size_t min_buffer_size, size_t buffer_size);
 		
 
 	protected:

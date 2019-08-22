@@ -3,7 +3,7 @@
 namespace chaos
 {
 
-	GPUBuffer * GPUBufferPool::AllocateBuffer(Renderer * renderer, size_t min_buffer_size, size_t buffer_size)
+	GPUBuffer * GPUBufferPool::AllocateBuffer(GPURenderer * renderer, size_t min_buffer_size, size_t buffer_size)
 	{
 		assert(renderer != nullptr);
 
@@ -19,7 +19,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUBuffer * GPUBufferPool::FindUnusedBuffer(Renderer * renderer, size_t min_buffer_size, size_t buffer_size)
+	GPUBuffer * GPUBufferPool::FindUnusedBuffer(GPURenderer * renderer, size_t min_buffer_size, size_t buffer_size)
 	{
 		assert(renderer != nullptr);
 

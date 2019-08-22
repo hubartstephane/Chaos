@@ -178,7 +178,7 @@ namespace death
 		return false;
 	}
 
-	void Game::Display(chaos::Renderer * renderer, glm::ivec2 const & size)
+	void Game::Display(chaos::GPURenderer * renderer, glm::ivec2 const & size)
 	{
 		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
 
@@ -216,7 +216,7 @@ namespace death
 			current_level_instance->FillUniformProvider(main_uniform_provider);
 	}
 
-	void Game::DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{
 		// clear the main render target
 		DoPreDisplay(renderer, uniform_provider, render_params);
@@ -227,7 +227,7 @@ namespace death
 	}
 
 
-	void Game::DoPreDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoPreDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -243,7 +243,7 @@ namespace death
 		glDisable(GL_CULL_FACE);
 	}
 
-	void Game::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{		
 
 		// shuwww   root_render_layer ??
@@ -263,7 +263,7 @@ namespace death
 			current_level_instance->Display(renderer, uniform_provider, render_params);
 	}
 
-	void Game::DoDisplayHUD(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{	
 		if (hud != nullptr)
 			hud->Display(renderer, uniform_provider, render_params);

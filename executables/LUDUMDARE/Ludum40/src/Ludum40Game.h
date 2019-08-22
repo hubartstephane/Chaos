@@ -68,7 +68,7 @@ public:
 
 	void Finalize();
 
-	void Display(chaos::Renderer * renderer, glm::ivec2 viewport_size);
+	void Display(chaos::GPURenderer * renderer, glm::ivec2 viewport_size);
 
 	void SetPause(bool in_paused);
 
@@ -86,11 +86,11 @@ protected:
 
 	void SpawnExtraParticles(GameInfo game_info, float delta_time);
 
-	void DisplaySprites(chaos::Renderer * renderer, glm::ivec2 viewport_size);
+	void DisplaySprites(chaos::GPURenderer * renderer, glm::ivec2 viewport_size);
 
-	void DisplayBackground(chaos::Renderer * renderer, glm::ivec2 viewport_size);
-	void DisplayControls(chaos::Renderer * renderer, glm::ivec2 viewport_size);
-	void DisplayFullscreen(chaos::Renderer * renderer, glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program);
+	void DisplayBackground(chaos::GPURenderer * renderer, glm::ivec2 viewport_size);
+	void DisplayControls(chaos::GPURenderer * renderer, glm::ivec2 viewport_size);
+	void DisplayFullscreen(chaos::GPURenderer * renderer, glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program);
 
 	void SetLayerVisibility(int layer, bool visible);
 

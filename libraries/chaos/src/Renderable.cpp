@@ -26,7 +26,7 @@ namespace chaos
 	// Renderable implementation
 	// ========================================================
 
-	int Renderable::Display(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int Renderable::Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		assert(renderer != nullptr);
 		if (!IsVisible())
@@ -49,12 +49,12 @@ namespace chaos
 		return DoDisplay(renderer, uniform_provider, render_params);
 	}
 
-	int Renderable::DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int Renderable::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		return 0;
 	}	
 
-	bool Renderable::DoUpdateGPUResources(Renderer * renderer) const
+	bool Renderable::DoUpdateGPUResources(GPURenderer * renderer) const
 	{
 		return true;
 	}

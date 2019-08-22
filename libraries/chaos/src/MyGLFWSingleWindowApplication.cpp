@@ -167,7 +167,7 @@ namespace chaos
 			}
 
 			// create the renderer
-			renderer = new Renderer;
+			renderer = new GPURenderer;
 			if (renderer == nullptr)
 				return false;
 

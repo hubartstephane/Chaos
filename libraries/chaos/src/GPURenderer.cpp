@@ -1,9 +1,9 @@
-#include <chaos/Renderer.h>
+#include <chaos/GPURenderer.h>
 
 namespace chaos
 {
 
-	bool Renderer::PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps)
+	bool GPURenderer::PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps)
 	{
 #if _DEBUG 
 		assert(rendering_started);
@@ -25,7 +25,7 @@ namespace chaos
 		return true;
 	}
 	
-	bool Renderer::PopFramebufferRenderContext()
+	bool GPURenderer::PopFramebufferRenderContext()
 	{
 #if _DEBUG 
 		assert(rendering_started);
@@ -58,7 +58,7 @@ namespace chaos
 		return true;
 	}
 
-	void Renderer::BeginRenderingFrame()
+	void GPURenderer::BeginRenderingFrame()
 	{
 #if _DEBUG 
 		assert(!rendering_started);
@@ -71,7 +71,7 @@ namespace chaos
 		rendering_fence = nullptr;
 	}
 
-	void Renderer::EndRenderingFrame()
+	void GPURenderer::EndRenderingFrame()
 	{
 #if _DEBUG 
 		assert(rendering_started);
@@ -89,24 +89,24 @@ namespace chaos
 			rendering_fence->CreateGPUFence();
 	}
 
-	float Renderer::GetFrameRate() const 
+	float GPURenderer::GetFrameRate() const 
 	{ 
 		return framerate_counter.GetCurrentValue();
 	}
 
-	GPUFence * Renderer::GetCurrentFrameFence()
+	GPUFence * GPURenderer::GetCurrentFrameFence()
 	{
 		if (rendering_fence == nullptr)
 			rendering_fence = new GPUFence(nullptr); // does not create the OPENGL resource. It will be created at the end of frame
 		return rendering_fence.get();
 	}
 
-	uint64_t Renderer::GetTimestamp() const 
+	uint64_t GPURenderer::GetTimestamp() const 
 	{ 
 		return rendering_timestamp; 
 	}
 
-	bool Renderer::DoTick(double delta_time)
+	bool GPURenderer::DoTick(double delta_time)
 	{
 		// update counters
 		framerate_counter.Tick((float)delta_time);
@@ -116,7 +116,7 @@ namespace chaos
 		return true;
 	}
 
-	void Renderer::Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing)
+	void GPURenderer::Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing)
 	{
 #if _DEBUG 
 		assert(rendering_started);

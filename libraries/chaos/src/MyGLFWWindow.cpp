@@ -190,7 +190,7 @@ namespace chaos
 				MyGLFW::SingleWindowApplication * application = MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
 				if (application != nullptr)
 				{
-					Renderer * renderer = application->GetRenderer();
+					GPURenderer * renderer = application->GetRenderer();
 					if (renderer != nullptr)
 					{
 						renderer->BeginRenderingFrame();
@@ -430,7 +430,7 @@ namespace chaos
 			if (application == nullptr)
 				return false;
 
-			Renderer * renderer = application->GetRenderer();
+			GPURenderer * renderer = application->GetRenderer();
 			if (renderer == nullptr)
 				return false;
 

@@ -83,7 +83,7 @@ namespace chaos
 			GPUResourceManager const * GetGPUResourceManager() const { return gpu_manager.get(); }
 
 			/** getting the renderer */
-			Renderer * GetRenderer() { return renderer.get(); }
+			GPURenderer * GetRenderer() { return renderer.get(); }
 
 
 			/** reload all GPU resources */
@@ -144,7 +144,7 @@ namespace chaos
 			Window * window = nullptr;
 
 			/** the renderer */
-			shared_ptr<Renderer> renderer;
+			shared_ptr<GPURenderer> renderer;
 
 			/** maximum time slice for tick */
 			double max_tick_duration = 0.0;

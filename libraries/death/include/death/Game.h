@@ -222,15 +222,15 @@ namespace death
 		virtual bool OnMouseMove(double x, double y) override;
 
 		/** the rendering method */
-		virtual void Display(chaos::Renderer * renderer, glm::ivec2 const & size);
+		virtual void Display(chaos::GPURenderer * renderer, glm::ivec2 const & size);
 		/** the user defined rendering function */
-		virtual void DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		virtual void DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 		/** internal method to prepare rendering */
-		virtual void DoPreDisplay(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);		
+		virtual void DoPreDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);		
 		/** internal  method to display the game content */
-		virtual void DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 		/** internal  method to display the HUD */
-		virtual void DoDisplayHUD(chaos::Renderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		virtual void DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);

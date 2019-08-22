@@ -22,7 +22,7 @@ namespace chaos
 		bool generate_mipmaps = false;
 	};
 
-	class Renderer : public Tickable
+	class GPURenderer : public Tickable
 	{
 	public:
 

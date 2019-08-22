@@ -225,7 +225,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual int DoDisplay(chaos::Renderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
 		/** override */
 		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 

@@ -6,7 +6,7 @@ namespace chaos
 	// RenderableLayerSystem implementation
 	// ========================================================	
 
-	int RenderableLayerSystem::DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int RenderableLayerSystem::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		int result = 0;
 		for (RenderableLayerInfo const & layer_info : layers)

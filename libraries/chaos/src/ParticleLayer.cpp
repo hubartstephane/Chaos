@@ -201,7 +201,7 @@ namespace chaos
 		return result;
 	}
 
-	int ParticleLayerBase::DoDisplay(Renderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		// early exit
 		if (vertices_count == 0)
@@ -221,7 +221,7 @@ namespace chaos
 		return result;
 	}
 
-	bool ParticleLayerBase::DoUpdateGPUResources(Renderer * renderer) const
+	bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer * renderer) const
 	{
 		// update the vertex declaration
 		UpdateVertexDeclaration();
@@ -277,7 +277,7 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleLayerBase::DoDisplayHelper(Renderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleLayerBase::DoDisplayHelper(GPURenderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
 	{
 		// no vertices, no rendering
 		if (vertex_count == 0)
@@ -357,7 +357,7 @@ namespace chaos
 		return result;
 	}
 
-	void ParticleLayerBase::UpdateRenderingStates(Renderer * renderer, bool begin) const
+	void ParticleLayerBase::UpdateRenderingStates(GPURenderer * renderer, bool begin) const
 	{
 		if (begin)
 		{

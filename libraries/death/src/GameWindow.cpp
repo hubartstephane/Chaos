@@ -72,7 +72,7 @@ namespace death
 		return chaos::MyGLFW::Window::OnMouseMove(x, y);
 	}
 
-	bool GameWindow::OnDraw(chaos::Renderer * in_renderer, glm::ivec2 size)
+	bool GameWindow::OnDraw(chaos::GPURenderer * in_renderer, glm::ivec2 size)
 	{
 		if (game != nullptr)
 			game->Display(in_renderer, size);

@@ -129,7 +129,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
 	{
 		// clear the buffers
 		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);

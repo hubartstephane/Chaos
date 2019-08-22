@@ -22,7 +22,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
 	{
 		float     far_plane = 1000.0f;
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);

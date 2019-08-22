@@ -111,7 +111,7 @@ protected:
 
 public:
 
-	chaos::Renderer * renderer = nullptr;
+	chaos::GPURenderer * renderer = nullptr;
 
 	glm::mat4 projection;
 	glm::mat4 world_to_camera;

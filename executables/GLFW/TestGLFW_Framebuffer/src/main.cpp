@@ -17,7 +17,7 @@
 #include <chaos/GPUFramebuffer.h>
 #include <chaos/GPUFramebufferGenerator.h>
 #include <chaos/DrawPrimitive.h>
-#include <chaos/Renderer.h>
+#include <chaos/GPURenderer.h>
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
@@ -25,7 +25,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 window_size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 window_size) override
 	{
 
 		for (int pass = 0; pass < 2; ++pass)
@@ -35,7 +35,7 @@ protected:
 				window_size;
 
 			if (pass == 0)
-				framebuffer->BeginRendering();
+				renderer->PushFramebufferRenderContext(framebuffer.get(), true);
 
 			float far_plane = 1000.0f;
 			glm::vec4 clear_color = (pass == 0)? 
@@ -92,7 +92,7 @@ protected:
 			mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 
 			if (pass == 0)
-				framebuffer->EndRendering(true);
+				renderer->PopFramebufferRenderContext();
 		}
 		return true;
 	}

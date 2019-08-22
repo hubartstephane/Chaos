@@ -19,7 +19,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
-#include <chaos/Renderer.h>
+#include <chaos/GPURenderer.h>
 
 class MyGLFWWindowOpenGLTest1;
 
@@ -62,7 +62,7 @@ class RenderingContext
 {
 public:
 
-	chaos::Renderer * renderer = nullptr;
+	chaos::GPURenderer * renderer = nullptr;
 
 	glm::mat4 projection;
 	glm::mat4 world_to_camera;
@@ -154,7 +154,7 @@ protected:
 			DrawPrimitive(ctx, b4, white);
 	}
 
-	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
 	{
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);

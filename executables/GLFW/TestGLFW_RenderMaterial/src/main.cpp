@@ -46,7 +46,7 @@ protected:
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
 	}
 
-	virtual bool OnDraw(chaos::Renderer * renderer, glm::ivec2 size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
 	{
 
 

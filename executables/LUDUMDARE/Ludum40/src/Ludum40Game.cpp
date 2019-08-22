@@ -613,7 +613,7 @@ bool Game::LoadObjectDefinition(nlohmann::json const & json_entry)
 	return true;
 }
 
-void Game::DisplayBackground(chaos::Renderer * renderer, glm::ivec2 viewport_size)
+void Game::DisplayBackground(chaos::GPURenderer * renderer, glm::ivec2 viewport_size)
 {
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
@@ -621,7 +621,7 @@ void Game::DisplayBackground(chaos::Renderer * renderer, glm::ivec2 viewport_siz
 	DisplayFullscreen(renderer, viewport_size, background_texture, background_program);
 }
 
-void Game::DisplayControls(chaos::Renderer * renderer, glm::ivec2 viewport_size)
+void Game::DisplayControls(chaos::GPURenderer * renderer, glm::ivec2 viewport_size)
 {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -630,7 +630,7 @@ void Game::DisplayControls(chaos::Renderer * renderer, glm::ivec2 viewport_size)
 	DisplayFullscreen(renderer, viewport_size, control_texture, control_program);	
 }
 
-void Game::DisplayFullscreen(chaos::Renderer * renderer, glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program)
+void Game::DisplayFullscreen(chaos::GPURenderer * renderer, glm::ivec2 viewport_size, chaos::shared_ptr<chaos::GPUTexture> texture, chaos::shared_ptr<chaos::GPUProgram> program)
 {
 	// compute the texture aspect, compare to world aspect so we can find correct texture coordinates
 	chaos::TextureDescription texture_description = texture->GetTextureDescription();
@@ -689,7 +689,7 @@ void Game::UpdateParticlesPosition(float delta_time, glm::vec2 delta_pos)
 	}
 }
 
-void Game::DisplaySprites(chaos::Renderer * renderer, glm::ivec2 viewport_size)
+void Game::DisplaySprites(chaos::GPURenderer * renderer, glm::ivec2 viewport_size)
 {
   chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
 
@@ -708,7 +708,7 @@ void Game::DisplaySprites(chaos::Renderer * renderer, glm::ivec2 viewport_size)
   }
 }
 
-void Game::Display(chaos::Renderer * renderer, glm::ivec2 viewport_size)
+void Game::Display(chaos::GPURenderer * renderer, glm::ivec2 viewport_size)
 {
 	// XXX : for screen,
 	//

@@ -477,44 +477,15 @@ namespace chaos
 					return false;
 
 			// save the image
+			std::string format = chaos::StringTools::Printf(
+				"capture_%s_%%d.png",
+				chaos::StringTools::TimeToString(true).c_str());
 
+			boost::filesystem::path file_path = chaos::FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
+			if (file_path.empty())
+				return false;
 
-
-
-
-#if 1
-
-
-
-			boost::filesystem::path filepath = capture_directory_path / "toto.png";
-
-			bool b = FreeImage_Save(FIF_PNG, img.get(), filepath.string().c_str(), 0);
-
-#else
-
-			bitmap_ptr bb = bitmap_ptr(FreeImage_ConvertTo8Bits(img.get()));
-
-			//bitmap_ptr bb = bitmap_ptr(FreeImage_Pimg.get(), FIT_F_GIF));
-
-			boost::filesystem::path filepath = application->GetUserLocalTempPath() / "toto.gif";
-
-			bool b = FreeImage_Save(FIF_GIF, bb.get(), filepath.string().c_str(), 0);
-
-
-
-#endif
-
-
-			//	chaos::GPUTextureLoader().GenTextureObject(desc);
-
-
-
-
-
-
-			framebuffer_size = framebuffer_size;
-
-			return true;
+			return (FreeImage_Save(FIF_PNG, img.get(), file_path.string().c_str(), 0) != 0);
 		}
 
 	}; // namespace MyGLFW

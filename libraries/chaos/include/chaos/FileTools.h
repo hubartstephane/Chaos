@@ -21,6 +21,8 @@ namespace chaos
 
 		/** returns an iterator over a directory (can use resource direct access) */
 		static boost::filesystem::directory_iterator GetDirectoryIterator(FilePathParam const & path);
+		/** returns a filepath that is unused */
+		static boost::filesystem::path GetUniquePath(FilePathParam const & path, char const * format, bool create_empty_file, int max_iterations = -1);
 
 		/** create a temporary directory */
 		static bool CreateTemporaryDirectory(char const * pattern, boost::filesystem::path & result);

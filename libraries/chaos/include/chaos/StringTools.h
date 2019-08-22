@@ -28,6 +28,11 @@ namespace chaos
 		/** returns a spaces made string */
 		std::string IndentString(size_t count);
 
+		/** returns a string representation of now  */
+		std::string TimeToString(bool full_string);
+		/** returns a string representation of a date */
+		std::string TimeToString(std::time_t t, bool full_string);
+
 		/** skip 0x prefix if existing */
 		char const * SkipHEXPrefix(char const * c);
 		/** get the value of a character in hexadeximal meaning (0-15) */

@@ -247,4 +247,50 @@ namespace chaos
 		return false;
 	}
 
+	boost::filesystem::path FileTools::GetUniquePath(FilePathParam const & path, char const * format, bool create_empty_file, int max_iterations)
+	{
+		boost::filesystem::path dir_path = path.GetResolvedPath();
+
+		int i = 0;
+		while (max_iterations != 0)
+		{
+			// max iterations reached ?
+			if (max_iterations > 0)
+				--max_iterations;
+
+			// compute the full path
+			boost::filesystem::path file_path = dir_path / StringTools::Printf(format, i);
+
+			if (!create_empty_file)
+			{
+				// path does not exits => returns
+				if (!boost::filesystem::exists(file_path))
+					return file_path;
+			}
+			else
+			{
+				// try to create the file (check if not already existing)
+				HANDLE hFile = CreateFile(
+					file_path.string().c_str(),
+					GENERIC_WRITE,
+					FILE_SHARE_READ | FILE_SHARE_WRITE,
+					NULL,
+					CREATE_NEW,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
+				// success ?
+				if (hFile != INVALID_HANDLE_VALUE)
+				{
+					CloseHandle(hFile);
+					return file_path;
+				}
+				// the only error supported is when the file already exist (an access error could produce an infinite loop)
+				if (GetLastError() != ERROR_FILE_EXISTS)
+					break;
+			}
+			++i;
+		}
+		return boost::filesystem::path();
+	}
+
 }; // namespace chaos

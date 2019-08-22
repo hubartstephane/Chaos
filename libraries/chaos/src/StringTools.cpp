@@ -5,6 +5,27 @@ namespace chaos
 {
 	namespace StringTools
 	{
+		std::string TimeToString(bool full_string)
+		{
+			return TimeToString(std::time(0), full_string);
+		}
+
+		std::string TimeToString(std::time_t t, bool full_string)
+		{
+			// decompose time
+			struct tm tm;
+			localtime_s(&tm, &t);
+			// format string
+			return chaos::StringTools::Printf(
+				(full_string)? "%04d%02d%02d_%02dh%02dm%02ds" : "%04d%02d%02d",
+				tm.tm_year + 1900, 
+				tm.tm_mon + 1, 
+				tm.tm_mday, 
+				tm.tm_hour, 
+				tm.tm_min, 
+				tm.tm_sec);
+		}
+
 		char const * SkipNumber(char const * c, bool reverse_condition)
 		{
 			while (*c != 0)

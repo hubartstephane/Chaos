@@ -11,7 +11,7 @@ namespace death
 	// GameInstanceEntity
 	// =============================================
 
-	class GameInstanceEntity : public chaos::Tickable
+	class GameInstanceEntity
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -19,6 +19,8 @@ namespace death
 
 		/** constructor */
 		GameInstanceEntity(GameInstance * in_game_instance);
+		/** destructor */
+		virtual ~GameInstanceEntity() = default;
 
 		/** returns the game */
 		Game * GetGame();

@@ -70,7 +70,8 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 
 	// RENDER TARGET 1 : SPECIAL WorldLimits (on red channel), Enlarged enemies (on blue channel)
 	{
-		framebuffer_worldlimits->BeginRendering();
+
+		renderer->PushFramebufferRenderContext(framebuffer_worldlimits.get(), true);
 
 		glViewport(0, 0, viewport_size.x, viewport_size.y);
 
@@ -115,14 +116,14 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 			glColorMask(true, true, true, true);
 		}
 
-		framebuffer_worldlimits->EndRendering();
+		renderer->PopFramebufferRenderContext();
 	}
 
 	// ---------------------------------------------
 	// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
 	// ---------------------------------------------
 	{
-		framebuffer_other->BeginRendering();
+		renderer->PushFramebufferRenderContext(framebuffer_other.get(), true);
 
 		glViewport(0, 0, viewport_size.x, viewport_size.y);
 
@@ -146,7 +147,7 @@ void LudumGame::DoDisplayGame(chaos::Renderer * renderer, chaos::GPUProgramProvi
 			particle_manager->Display(renderer, uniform_provider, other_render_params);
 		current_level_instance->Display(renderer, uniform_provider, other_render_params);
 
-		framebuffer_other->EndRendering();
+		renderer->PopFramebufferRenderContext();
 	}
 
 	// ---------------------------------------------

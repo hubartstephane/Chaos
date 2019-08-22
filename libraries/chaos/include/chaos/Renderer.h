@@ -3,12 +3,24 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/DrawPrimitive.h>
+#include <chaos/GPUFramebuffer.h>
 #include <chaos/TimedAccumulator.h>
 #include <chaos/GPUFence.h>
 #include <chaos/Tickable.h>
 
 namespace chaos
 {
+
+
+	class GPUFramebufferRenderData
+	{
+	public:
+
+		/** the concerned framebuffer */
+		shared_ptr<GPUFramebuffer> framebuffer;	
+		/** whether mipmaps should be generated at the end of rendering */
+		bool generate_mipmaps = false;
+	};
 
 	class Renderer : public Tickable
 	{
@@ -21,6 +33,12 @@ namespace chaos
 		virtual void BeginRenderingFrame();
 		/** called at the end of a new frame */
 		virtual void EndRenderingFrame();
+
+
+		/** called to start of rendering on a new Framebuffer */
+		virtual bool PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps);
+		/** called at the start of rendering on a framebuffer */ 
+		virtual bool PopFramebufferRenderContext();
 
 		/** get the current frame rate */
 		float GetFrameRate() const;
@@ -46,6 +64,14 @@ namespace chaos
 		TimedAccumulator<float> drawcall_counter;
 		/** for counting drawcall per seconds */
 		TimedAccumulator<float> vertices_counter;
+
+		/** the stack of framebuffer */
+		std::vector<GPUFramebufferRenderData> framebuffer_stack;
+
+		/** whether a rendering is in progress */
+#if _DEBUG
+		bool rendering_started = false;
+#endif
 	};
 
 }; // namespace chaos

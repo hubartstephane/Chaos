@@ -100,6 +100,7 @@ namespace chaos
 	class GPUFramebuffer : public GPUResource, public GPUAttachmentOwner<GPUFramebufferAttachmentInfo>
 	{
 		friend class GPUFramebufferGenerator;
+		friend class Renderer;
 
 	public:
 
@@ -112,11 +113,6 @@ namespace chaos
 		bool IsValid() const { return glIsFramebuffer(framebuffer_id) == GL_TRUE; }
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return framebuffer_id; }
-
-		/** start rendering inside the framebuffer */
-		bool BeginRendering();
-		/** end rendering inside the framebuffer */
-		bool EndRendering(bool generate_mipmaps = true);
 
 		/** get the completion status of the framebuffer */
 		bool CheckCompletionStatus() const;

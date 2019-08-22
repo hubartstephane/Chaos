@@ -3,8 +3,68 @@
 namespace chaos
 {
 
+	bool Renderer::PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps)
+	{
+#if _DEBUG 
+		assert(rendering_started);
+#endif 
+		// check parameter validity
+		if (framebuffer == nullptr || !framebuffer->IsValid())
+			return false;
+		// search whether the framebuffer is already on the stack
+		for (GPUFramebufferRenderData const & frd : framebuffer_stack)
+			if (frd.framebuffer == framebuffer)
+				return false;
+		// push the context on the stack
+		GPUFramebufferRenderData frd;
+		frd.framebuffer = framebuffer;
+		frd.generate_mipmaps = generate_mipmaps;
+		framebuffer_stack.push_back(frd);
+		// update GL state machine
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetResourceID());
+		return true;
+	}
+	
+	bool Renderer::PopFramebufferRenderContext()
+	{
+#if _DEBUG 
+		assert(rendering_started);
+#endif
+		assert(framebuffer_stack.size() > 0); // logic error 
+
+		// check for release version
+		if (framebuffer_stack.size() == 0)
+			return false;
+		// remove the element of the stack
+		GPUFramebufferRenderData frd = framebuffer_stack[framebuffer_stack.size() - 1];
+		framebuffer_stack.pop_back();
+		// check the framebuffer
+		if (!frd.framebuffer->IsValid())
+			return false;
+		// generate mipmaps
+		if (frd.generate_mipmaps)
+		{
+			for (GPUFramebufferAttachmentInfo & info : frd.framebuffer->attachment_info)
+				if (info.texture != nullptr)
+					glGenerateTextureMipmap(info.texture->GetResourceID());
+		}
+		// update GL state machine
+		GPUFramebuffer * previous_framebuffer = nullptr;
+		if (framebuffer_stack.size() > 0 && framebuffer_stack[framebuffer_stack.size() - 1].framebuffer->IsValid())
+			previous_framebuffer = framebuffer_stack[framebuffer_stack.size() - 1].framebuffer.get();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, (previous_framebuffer == nullptr)? 0 : previous_framebuffer->GetResourceID()); 
+
+		return true;
+	}
+
 	void Renderer::BeginRenderingFrame()
 	{
+#if _DEBUG 
+		assert(!rendering_started);
+		rendering_started = true;
+#endif
+
 		// increment the timestamp
 		++rendering_timestamp;
 		// unreference the fence (users of this fence must have a reference on it)
@@ -13,6 +73,15 @@ namespace chaos
 
 	void Renderer::EndRenderingFrame()
 	{
+#if _DEBUG 
+		assert(rendering_started);
+		rendering_started = false;
+#endif
+		assert(framebuffer_stack.size() == 0); // logic error 
+		// in release, pop all previous context
+		while(framebuffer_stack.size() > 0)
+			PopFramebufferRenderContext();
+
 		// update the frame rate
 		framerate_counter.Accumulate(1.0f);
 		// push the frame fence in the command queue if required by some external users
@@ -49,6 +118,10 @@ namespace chaos
 
 	void Renderer::Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing)
 	{
+#if _DEBUG 
+		assert(rendering_started);
+#endif
+
 		// This function is able to render : 
 		//   -normal primitives
 		//   -indexed primitives

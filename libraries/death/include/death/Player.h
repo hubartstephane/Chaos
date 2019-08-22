@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/ParticleManager.h>
+#include <chaos/Tickable.h>
 #include <chaos/InputEventReceiver.h>
 
 #include <death/GameInstanceEntity.h>
@@ -17,7 +18,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::InputEventReceiver, public GameInstanceEntity
+	class Player : public chaos::InputEventReceiver, public GameInstanceEntity, public chaos::Tickable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;

@@ -12,7 +12,7 @@ out float distance_to_center;
 out vec2  particle_center;
 
 uniform mat4 camera_transform;
-uniform vec2 view_half_size;
+uniform vec2 camera_half_size;
 uniform vec2 offset;
 uniform float position_blend_ratio;
 
@@ -39,7 +39,7 @@ void main()
 
 	vec4 transformed_pos = camera_transform * vec4(p.x, p.y, 0.0, 1.0);
 
-	gl_Position.xy = transformed_pos.xy / view_half_size;
+	gl_Position.xy = transformed_pos.xy / camera_half_size;
 	gl_Position.z  = 0.0;
 	gl_Position.w  = 1.0;
 }			

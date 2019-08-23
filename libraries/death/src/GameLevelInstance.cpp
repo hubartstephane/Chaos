@@ -75,7 +75,7 @@ namespace death
 
 		chaos::obox2 camera_obox = GetCameraOBox(0);
 		main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(camera_obox));
-		main_uniform_provider.AddVariableValue("view_half_size", camera_obox.half_size);
+		main_uniform_provider.AddVariableValue("camera_half_size", camera_obox.half_size);
 
 		// shuxxx shuwww
 		chaos::box2 camera = GetCameraBox(0);

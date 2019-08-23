@@ -80,7 +80,7 @@ namespace death
 		// shuxxx shuwww
 		chaos::box2 camera = GetCameraBox(0);
 		if (IsGeometryEmpty(camera))
-			camera = game->GetViewBox();
+			camera = game->GetCanvasBox();
 
 
 
@@ -326,7 +326,7 @@ namespace death
 	{
 		chaos::obox2 result;
 		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
-		result.half_size = GetGame()->GetViewSize() * 0.5f;
+		result.half_size = GetGame()->GetCanvasSize() * 0.5f;
 		result.rotator = 0.0f;
 		return result;
 	}

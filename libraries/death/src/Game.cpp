@@ -204,8 +204,8 @@ namespace death
 
 
 		// the view box
-		chaos::box2 view = GetViewBox();
-		main_uniform_provider.AddVariableValue("view_box", chaos::EncodeBoxToVector(view));
+		chaos::box2 view = GetCanvasBox();
+		main_uniform_provider.AddVariableValue("canvas_box", chaos::EncodeBoxToVector(view));
 		// the world
 		chaos::box2 world = GetWorldBox();
 		main_uniform_provider.AddVariableValue("world_box", chaos::EncodeBoxToVector(world));
@@ -1351,7 +1351,7 @@ namespace death
 		hud = nullptr;
 	}
 
-	glm::vec2 Game::GetViewSize() const
+	glm::vec2 Game::GetCanvasSize() const
 	{
 		glm::vec2 result;
 		result.x = 1600.0f;
@@ -1359,11 +1359,11 @@ namespace death
 		return result;
 	}
 
-	chaos::box2 Game::GetViewBox() const
+	chaos::box2 Game::GetCanvasBox() const
 	{
 		chaos::box2 result;
 		result.position = glm::vec2(0.0f, 0.0f);
-		result.half_size = GetViewSize() * 0.5f;
+		result.half_size = GetCanvasSize() * 0.5f;
 		return result;
 	}
 
@@ -1377,7 +1377,7 @@ namespace death
 				return result;
 		}
 		// by default, the world will be the same size than the screen
-		return GetViewBox();
+		return GetCanvasBox();
 	}
 
 	GameLevel * Game::GetLevel()

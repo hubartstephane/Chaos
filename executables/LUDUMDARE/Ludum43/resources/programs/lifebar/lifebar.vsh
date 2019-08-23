@@ -7,7 +7,7 @@ out vec3 vs_texcoord;
 out vec4 vs_color;
 
 uniform vec2 offset;
-uniform vec4 view_box;
+uniform vec4 canvas_box;
 
 void main()
 {
@@ -17,7 +17,7 @@ void main()
 	vs_texcoord = texcoord;
 	vs_color = color;
 
-	gl_Position.xy = pos.xy / view_box.zw;
+	gl_Position.xy = pos.xy / canvas_box.zw;
 	gl_Position.z = 0.0;
 	gl_Position.w = 1.0;
 }

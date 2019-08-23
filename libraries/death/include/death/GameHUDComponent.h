@@ -51,7 +51,7 @@ namespace death
 	protected:
 
 		/** returns the coordinate of the view corner corresponding to the given hotpoint */
-		static glm::vec2 GetViewBoxCorner(chaos::box2 const & view_box, int hotpoint);
+		static glm::vec2 GetCanvasBoxCorner(chaos::box2 const & canvas_box, int hotpoint);
 
 		/** MAYBE (!!!) called whenever the hud is beeing inserted into the hud (the HUD::RegisterComponent is template function. the function below is not necessaraly been called) */
 		virtual void OnInsertedInHUD();

@@ -43,7 +43,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 
 chaos::box2 LudumLevelInstance::GetBoundingBox() const
 {
-	return game->GetViewBox();
+	return game->GetCanvasBox();
 }
 
 bool LudumLevelInstance::DoTick(double delta_time)
@@ -86,10 +86,10 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	// compute the brick size
 	float BRICK_ASPECT = 16.0f / 9.0f;
 
-	glm::vec2 view_size = ludum_game->GetViewSize();
+	glm::vec2 canvas_size = ludum_game->GetCanvasSize();
 
 	glm::vec2 particle_size;
-	particle_size.x = view_size.x / (float)ludum_game->brick_per_line;
+	particle_size.x = canvas_size.x / (float)ludum_game->brick_per_line;
 	particle_size.y = particle_size.x / BRICK_ASPECT;
 
 	// fill the brick
@@ -127,8 +127,8 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 			// position
 			glm::vec2 position;
-			position.x = -view_size.x * 0.5f + particle_size.x * (float)j;
-			position.y = view_size.y * 0.5f - particle_size.y * (float)i;
+			position.x = -canvas_size.x * 0.5f + particle_size.x * (float)j;
+			position.y = canvas_size.y * 0.5f - particle_size.y * (float)i;
 
 			particles[k].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
 			particles[k].bounding_box.half_size = 0.5f * particle_size;

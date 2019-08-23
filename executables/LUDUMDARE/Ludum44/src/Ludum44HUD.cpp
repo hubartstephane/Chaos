@@ -68,10 +68,10 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 	cached_power_up = ludum_game_instance->current_power_up.get();
 
 	// get box
-	chaos::box2 view_box = GetGame()->GetViewBox();		
+	chaos::box2 canvas_box = GetGame()->GetCanvasBox();		
 
 	int hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
-	glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+	glm::vec2 corner = GetCanvasBoxCorner(canvas_box, hotpoint);
 
 	// create the level title
 	chaos::ParticleTextGenerator::GeneratorParams params;
@@ -144,14 +144,14 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 
 	ParticleLife * part = &particles[0];
 
-	glm::vec2 view_size = ludum_game->GetViewSize();
+	glm::vec2 canvas_size = ludum_game->GetCanvasSize();
 
 	glm::vec2 position1, position2;
-	position1.x = -view_size.x * 0.5f + 40.0f;
-	position1.y = -view_size.y * 0.5f + 40.0f;
+	position1.x = -canvas_size.x * 0.5f + 40.0f;
+	position1.y = -canvas_size.y * 0.5f + 40.0f;
 
-	position2.x = view_size.x * 0.5f - 40.0f;
-	position2.y = -view_size.y * 0.5f + 80.0f;
+	position2.x = canvas_size.x * 0.5f - 40.0f;
+	position2.y = -canvas_size.y * 0.5f + 80.0f;
 
 	part->bounding_box = chaos::box2(std::make_pair(position1, position2));
 	part->texcoords.bottomleft = glm::vec2(0.0f, 0.0f);

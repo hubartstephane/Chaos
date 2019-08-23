@@ -70,14 +70,14 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 		if (particles.GetCount() == 0)
 			return true;
 
-		glm::vec2 view_size = ludum_game->GetViewSize();
+		glm::vec2 canvas_size = ludum_game->GetCanvasSize();
 
 		glm::vec2 position1, position2;
-		position1.x = -view_size.x * 0.5f + 40.0f;
-		position1.y = -view_size.y * 0.5f + 40.0f;
+		position1.x = -canvas_size.x * 0.5f + 40.0f;
+		position1.y = -canvas_size.y * 0.5f + 40.0f;
 
-		position2.x = view_size.x * 0.5f - 40.0f;
-		position2.y = -view_size.y * 0.5f + 70.0f;
+		position2.x = canvas_size.x * 0.5f - 40.0f;
+		position2.y = -canvas_size.y * 0.5f + 70.0f;
 
 		particles->bounding_box = chaos::box2(std::make_pair(position1, position2));
 		particles->texcoords.bottomleft = glm::vec2(0.0f, 0.0f);

@@ -151,10 +151,10 @@ namespace death
 		/** get particle tools */
 		GameParticleCreator const & GetGameParticleCreator() const { return particle_creator; }
 
-		/** get the size of the world */
-		virtual glm::vec2 GetViewSize() const;
+		/** get the size of the canvas / world */
+		virtual glm::vec2 GetCanvasSize() const;
 		/** get the view */
-		chaos::box2 GetViewBox() const;
+		chaos::box2 GetCanvasBox() const;
 
 		/** getting the world boxes */
 		virtual chaos::box2 GetWorldBox() const;

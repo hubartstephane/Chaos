@@ -88,9 +88,9 @@ namespace death
 	{
 	}
 
-	glm::vec2 GameHUDComponent::GetViewBoxCorner(chaos::box2 const & view_box, int hotpoint)
+	glm::vec2 GameHUDComponent::GetCanvasBoxCorner(chaos::box2 const & canvas_box, int hotpoint)
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(view_box);
+		std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(canvas_box);
 
 		glm::vec2 result;
 		// search the X position
@@ -99,14 +99,14 @@ namespace death
 		else if (hotpoint & chaos::Hotpoint::RIGHT)
 			result.x = corners.second.x;
 		else
-			result.x = view_box.position.x;
+			result.x = canvas_box.position.x;
 		// search the Y position
 		if (hotpoint & chaos::Hotpoint::BOTTOM)
 			result.y = corners.first.y;
 		else if (hotpoint & chaos::Hotpoint::TOP)
 			result.y = corners.second.y;
 		else
-			result.y = view_box.position.y;
+			result.y = canvas_box.position.y;
 
 		return result;
 	}
@@ -183,8 +183,8 @@ namespace death
 		//      As a side effect the params.position is just a relative offset
 		//
 
-		chaos::box2 view_box = GetGame()->GetViewBox();
-		glm::vec2 corner = GetViewBoxCorner(view_box, final_params.hotpoint_type);
+		chaos::box2 canvas_box = GetGame()->GetCanvasBox();
+		glm::vec2 corner = GetCanvasBoxCorner(canvas_box, final_params.hotpoint_type);
 		final_params.position += corner;
 	}
 
@@ -341,7 +341,7 @@ namespace death
 		// set the color
 		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor<chaos::ParticleDefault::Particle>();
 
-		glm::vec2 corner = GetViewBoxCorner(GetGame()->GetViewBox(), chaos::Hotpoint::BOTTOM_LEFT);
+		glm::vec2 corner = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), chaos::Hotpoint::BOTTOM_LEFT);
 
 		glm::vec2 particle_size;
 		particle_size.x = 35.0f;
@@ -412,10 +412,10 @@ namespace death
 		cached_level_title = *lt;
 
 		// get box
-		chaos::box2 view_box = GetGame()->GetViewBox();		
+		chaos::box2 canvas_box = GetGame()->GetCanvasBox();		
 
 		int hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
-		glm::vec2 corner = GetViewBoxCorner(view_box, hotpoint);
+		glm::vec2 corner = GetCanvasBoxCorner(canvas_box, hotpoint);
 
 		// create the level title
 		chaos::ParticleTextGenerator::GeneratorParams params;

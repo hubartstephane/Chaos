@@ -17,7 +17,7 @@ void main()
 	vs_texcoord = texcoord;
 	vs_color = color;
 
-	gl_Position.xy = 2.0 * pos.xy / view_box.zw;
+	gl_Position.xy = pos.xy / view_box.zw;
 	gl_Position.z = 0.0;
 	gl_Position.w = 1.0;
 }

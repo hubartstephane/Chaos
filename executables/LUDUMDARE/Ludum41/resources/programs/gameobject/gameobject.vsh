@@ -8,7 +8,7 @@ out vec4 vs_color;
 
 uniform vec2 offset;
 uniform mat4 camera_transform;
-uniform vec2 view_half_size;
+uniform vec2 camera_half_size;
 
 void main()
 {

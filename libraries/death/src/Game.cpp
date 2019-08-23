@@ -192,18 +192,23 @@ namespace death
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
 		FillUniformProvider(main_uniform_provider);
+
+
+
+
 		// the window size
 		main_uniform_provider.AddVariableValue("window_size", chaos::GLMTools::RecastVector<glm::vec2>(window_size));
 		// the viewport
 		main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
-		// the related box
-		glm::vec2 view_size = GetViewSize();
-		main_uniform_provider.AddVariableValue("view_size", view_size);
-		// boxes
+
+
+
+		// the view box
+		chaos::box2 view = GetViewBox();
+		main_uniform_provider.AddVariableValue("view_box", chaos::EncodeBoxToVector(view));
+		// the world
 		chaos::box2 world = GetWorldBox();
 		main_uniform_provider.AddVariableValue("world_box", chaos::EncodeBoxToVector(world));
-		chaos::box2 view = GetViewBox();
-		main_uniform_provider.AddVariableValue("view_box", chaos::EncodeBoxToVector(world));
 		// the time
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);

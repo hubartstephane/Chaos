@@ -462,11 +462,11 @@ namespace death
 			virtual bool ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
 
 			/** specialized layer */
-			bool InitializeLayer(chaos::TiledMap::ImageLayer * image_layer);
+			bool InitializeImageLayer(chaos::TiledMap::ImageLayer * image_layer);
 			/** specialized layer */
-			bool InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer);
+			bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer * object_layer);
 			/** specialized layer */
-			bool InitializeLayer(chaos::TiledMap::TileLayer * tile_layer);
+			bool InitializeTileLayer(chaos::TiledMap::TileLayer * tile_layer);
 
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();

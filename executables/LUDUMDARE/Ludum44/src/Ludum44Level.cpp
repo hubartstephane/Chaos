@@ -102,7 +102,7 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 	bool is_zone = (layer_name == "Zones");
 	if (is_zone)
 	{
-		return new chaos::ParticleLayer<TileParticleTraitExt>();
+		return new chaos::ParticleLayer<PowerUpZoneParticleTrait>();
 	}
 
 	bool is_enemies = (layer_name == "Enemies");
@@ -122,7 +122,7 @@ death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death
 	if (in_geometric_object->name == "Finish")
 		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 	if (in_geometric_object->name == "PowerUp")
-		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsTileCreationEnabled() => true
 	if (in_geometric_object->name == "Checkpoint")
 		return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 	if (in_geometric_object->name == "SpeedUp")

@@ -124,20 +124,35 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 
 // =====================================
-// TileParticleTraitExt
+// PowerUpZoneParticleTrait
 // =====================================
 
-bool TileParticleTraitExt::UpdateParticle(float delta_time, death::TiledMap::TileParticle * particle)
+chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexPowerUpZone>)
+{
+	chaos::GPUVertexDeclaration result;
+	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	return result;
+}
+
+bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZone * particle)
 {
 	if (particle->gid == 0)
 	{
+		// XXX : this seems to never happen
+		assert(0);
 		particle->color.a -= delta_time;
 		if (particle->color.a <= 0.0f) // fade out the particle
 			return true;	
 	}
 	return false;
 }
+size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const * particle, VertexPowerUpZone * vertices, size_t vertices_per_particle)
+{
 
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+}
 
 
 

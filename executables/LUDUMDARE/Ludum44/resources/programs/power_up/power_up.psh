@@ -1,3 +1,13 @@
+
+
+
+
+
+
+
+
+
+
 out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
 in vec2 vs_position;
@@ -16,6 +26,12 @@ uniform vec4 mycolor2;
 
 uniform sampler2D powerup_texture;
 uniform sampler2DArray material;
+
+#if 0
+
+ccc
+
+#endif
 
 void main()
 {

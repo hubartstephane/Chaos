@@ -463,7 +463,7 @@ namespace death
 			chaos::TiledMap::ImageLayer * image_layer = layer->GetImageLayer();
 			if (image_layer != nullptr)
 			{
-				if (!InitializeLayer(image_layer))
+				if (!InitializeImageLayer(image_layer))
 					return false;
 				return FinalizeParticles();
 			}
@@ -471,7 +471,7 @@ namespace death
 			chaos::TiledMap::ObjectLayer * object_layer = layer->GetObjectLayer();
 			if (object_layer != nullptr)
 			{
-				if (!InitializeLayer(object_layer))
+				if (!InitializeObjectLayer(object_layer))
 					return false;
 				return FinalizeParticles();
 			}
@@ -479,7 +479,7 @@ namespace death
 			chaos::TiledMap::TileLayer * tile_layer = layer->GetTileLayer();
 			if (tile_layer != nullptr)
 			{
-				if (!InitializeLayer(tile_layer))
+				if (!InitializeTileLayer(tile_layer))
 					return false;
 				return FinalizeParticles();
 			}
@@ -487,13 +487,13 @@ namespace death
 			return false;
 		}
 
-		bool LayerInstance::InitializeLayer(chaos::TiledMap::ImageLayer * image_layer)
+		bool LayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer * image_layer)
 		{
 
 			return true;
 		}
 
-		bool LayerInstance::InitializeLayer(chaos::TiledMap::ObjectLayer * object_layer)
+		bool LayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer * object_layer)
 		{
 			Level * level = GetTiledLevel();
 
@@ -750,7 +750,7 @@ namespace death
 			return particle_layer.get();
 		}
 
-		bool LayerInstance::InitializeLayer(chaos::TiledMap::TileLayer * tile_layer)
+		bool LayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer * tile_layer)
 		{
 			Level * level = GetTiledLevel();
 

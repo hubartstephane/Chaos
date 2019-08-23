@@ -47,20 +47,43 @@ public:
 
 
 // =====================================
-// TileParticleTraitExt
+// PowerUpZoneParticleTrait
 // =====================================
 
-
-class TileParticleTraitExt : public chaos::ParticleAllocationTrait<death::TiledMap::TileParticle, chaos::ParticleDefault::Vertex, true, true> // shuxxx set to false = optimization 1
+class ParticlePowerUpZone : public death::TiledMap::TileParticle
 {
 public:
 
-	static size_t ParticleToVertices(death::TiledMap::TileParticle const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle)
+	ParticlePowerUpZone() 
 	{
-		return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+		int i = 0;
+		++i;
 	}
 
-	bool UpdateParticle(float delta_time, death::TiledMap::TileParticle * particle);
+};
+
+class VertexPowerUpZone : public VertexBase
+{
+public:
+
+	VertexPowerUpZone()
+	{
+		int i = 0;
+		++i;
+	}
+
+};
+
+chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexPowerUpZone>);
+
+
+class PowerUpZoneParticleTrait : public chaos::ParticleAllocationTrait<ParticlePowerUpZone, VertexPowerUpZone, true, true> // shuxxx set to false = optimization 1
+{
+public:
+
+	static size_t ParticleToVertices(death::TiledMap::TileParticle const * particle, VertexPowerUpZone * vertices, size_t vertices_per_particle);
+
+	bool UpdateParticle(float delta_time, ParticlePowerUpZone * particle);
 };
 
 

@@ -105,12 +105,8 @@ namespace chaos
 
 		/** insert an entry into the declaration */
 		void Push(int semantic, int semantic_index, int type);
-
 		/** reset the object */
-		inline void Clear()
-		{
-			entries.clear();
-		}
+		void Clear(){ entries.clear(); }
 
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
 		VertexDeclarationEntry const * GetEntry(int semantic, int semantic_index) const;

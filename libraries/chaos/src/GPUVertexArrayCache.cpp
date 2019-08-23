@@ -40,7 +40,7 @@ namespace chaos
 				if (i != count - 1)
 					std::swap(entry, entries[count - 1]);
 				entries.pop_back();
-				--count;			
+				--count;	
 				continue;
 			}
 			// check whether this is expected entry

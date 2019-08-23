@@ -71,20 +71,15 @@ namespace death
 		// the timers
 		double level_time = GetLevelClockTime();
 		main_uniform_provider.AddVariableValue("level_time", level_time);
-		// the main camera
 
+		// the main camera
 		chaos::obox2 camera_obox = GetCameraOBox(0);
 		main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(camera_obox));
-		main_uniform_provider.AddVariableValue("camera_half_size", camera_obox.half_size);
-
-		// shuxxx shuwww
-		chaos::box2 camera = GetCameraBox(0);
-		if (IsGeometryEmpty(camera))
-			camera = game->GetCanvasBox();
-
-
-
-		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera));
+		// convert OBOX into BOX
+		chaos::box2 camera_box;
+		camera_box.position  = camera_obox.position;
+		camera_box.half_size = camera_obox.half_size;
+		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera_box)); 
 	}
 
 	void GameLevelInstance::OnPlayerEntered(Player * player)

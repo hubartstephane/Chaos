@@ -11,7 +11,6 @@
 namespace chaos
 {
 
-
 	class GPUFramebufferRenderData
 	{
 	public:
@@ -20,6 +19,8 @@ namespace chaos
 		shared_ptr<GPUFramebuffer> framebuffer;	
 		/** whether mipmaps should be generated at the end of rendering */
 		bool generate_mipmaps = false;
+		/** the viewport to restore */
+		GLint viewport_to_restore[4];
 	};
 
 	class GPURenderer : public Tickable

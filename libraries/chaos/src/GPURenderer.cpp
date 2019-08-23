@@ -19,6 +19,7 @@ namespace chaos
 		GPUFramebufferRenderData frd;
 		frd.framebuffer = framebuffer;
 		frd.generate_mipmaps = generate_mipmaps;
+		glGetIntegerv(GL_VIEWPORT, frd.viewport_to_restore);
 		framebuffer_stack.push_back(frd);
 		// update GL state machine
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetResourceID());
@@ -54,6 +55,8 @@ namespace chaos
 			previous_framebuffer = framebuffer_stack[framebuffer_stack.size() - 1].framebuffer.get();
 
 		glBindFramebuffer(GL_FRAMEBUFFER, (previous_framebuffer == nullptr)? 0 : previous_framebuffer->GetResourceID()); 
+
+		glViewport(frd.viewport_to_restore[0], frd.viewport_to_restore[1], frd.viewport_to_restore[2], frd.viewport_to_restore[3]);
 
 		return true;
 	}

@@ -187,15 +187,13 @@ namespace death
 		return ShrinkBoxToAspect(viewport, viewport_wanted_aspect);
 	}
 
-	void Game::Display(chaos::GPURenderer * renderer, glm::ivec2 const & size)
+	void Game::Display(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 const & window_size)
 	{
-		chaos::box2 viewport = chaos::GLTools::SetViewportWithAspect(size, viewport_wanted_aspect);
-
 		// a variable provider
 		chaos::GPUProgramProvider main_uniform_provider;
 		FillUniformProvider(main_uniform_provider);
 		// the window size
-		main_uniform_provider.AddVariableValue("window_size", chaos::GLMTools::RecastVector<glm::vec2>(size));
+		main_uniform_provider.AddVariableValue("window_size", chaos::GLMTools::RecastVector<glm::vec2>(window_size));
 		// the viewport
 		main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
 		// the related box
@@ -213,7 +211,7 @@ namespace death
 		// rendering
 		chaos::RenderParams render_params;
 		render_params.viewport = viewport;
-		render_params.screen_size = size;
+		render_params.screen_size = window_size;
 		DoDisplay(renderer, &main_uniform_provider, render_params);
 	}
 

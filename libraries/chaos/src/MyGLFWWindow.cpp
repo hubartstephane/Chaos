@@ -194,9 +194,13 @@ namespace chaos
 					if (renderer != nullptr)
 					{
 						renderer->BeginRenderingFrame();
+						// compute viewport
+						glm::vec2 window_size = glm::ivec2(width, height);
 
-						// the full size (with no viewport clipping)
-						if (my_window->OnDraw(renderer, glm::ivec2(width, height)))
+						box2 viewport = my_window->GetRequiredViewport(window_size);
+						GLTools::SetViewport(viewport);
+						// render
+						if (my_window->OnDraw(renderer, viewport, window_size))
 						{					
 							if (my_window->double_buffer)
 								glfwSwapBuffers(in_glfw_window);
@@ -440,8 +444,8 @@ namespace chaos
 			// in normal case, we work with the window_size then apply a viewport cropping
 			// here we want exactly to work with no cropping
 			chaos::box2 viewport = GetRequiredViewport(GetWindowSize());
-			glm::ivec2 framebuffer_size = viewport.half_size * 2.0f;
-
+			glm::ivec2 framebuffer_size = chaos::GLMTools::RecastVector<glm::ivec2>(viewport.half_size * 2.0f);
+			
 			// generate a framebuffer
 			chaos::GPUFramebufferGenerator framebuffer_generator;
 			framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), framebuffer_size, "scene");
@@ -456,8 +460,8 @@ namespace chaos
 			// render in the frame buffer
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
-			glViewport(0, 0, framebuffer_size.x, framebuffer_size.y);
-			OnDraw(renderer, framebuffer_size);
+			chaos::GLTools::SetViewport(viewport);
+			OnDraw(renderer, viewport, framebuffer_size);
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
 

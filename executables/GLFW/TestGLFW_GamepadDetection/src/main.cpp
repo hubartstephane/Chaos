@@ -15,7 +15,7 @@ class MyGLFWWindowGamepadTest : public chaos::MyGLFW::Window
 
 protected:
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
   {
     glm::vec4 clear_color(0.1f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -23,9 +23,7 @@ protected:
     float far_plane = 1000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    glViewport(0, 0, size.x, size.y);
-
-    debug_display.Display(size.x, size.y);
+		debug_display.Display((int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 
     return true;
   }

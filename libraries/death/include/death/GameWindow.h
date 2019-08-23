@@ -26,7 +26,7 @@ namespace death
 		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 
 		/** override */
-		virtual bool OnDraw(chaos::GPURenderer * in_renderer, glm::ivec2 size) override;
+		virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override;
 		/** override */
 		virtual void Finalize() override;
 		/** override */

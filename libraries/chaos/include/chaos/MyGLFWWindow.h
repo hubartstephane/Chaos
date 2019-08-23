@@ -132,7 +132,7 @@ namespace chaos
 			/** called whenever the window is resized */
 			virtual void OnWindowResize(glm::ivec2 size) {}
 			/** called whenever the window is redrawn */
-			virtual bool OnDraw(GPURenderer * in_renderer, glm::ivec2 size) { return true; }
+			virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) { return true; }
 
 			/** called whenever a file is dropped */
 			virtual void OnDropFile(int count, char const ** paths) {}

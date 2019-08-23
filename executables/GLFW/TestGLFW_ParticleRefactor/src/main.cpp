@@ -129,7 +129,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
 	{
 		// clear the buffers
 		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
@@ -139,9 +139,6 @@ protected:
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 		
 		// change  the viewport 
-		chaos::GLTools::SetViewportWithAspect(size, VIEWPORT_WANTED_ASPECT);
-
-		//
 		chaos::DisableReferenceCount<chaos::GPUProgramProvider> uniform_provider;
 
 		glm::vec2 world_size     = glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);

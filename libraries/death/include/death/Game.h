@@ -225,7 +225,7 @@ namespace death
 		virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const;
 
 		/** the rendering method */
-		virtual void Display(chaos::GPURenderer * renderer, glm::ivec2 const & size);
+		virtual void Display(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 const & window_size);
 		/** the user defined rendering function */
 		virtual void DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
 		/** internal method to prepare rendering */

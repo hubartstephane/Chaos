@@ -22,20 +22,19 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
 	{
 		float     far_plane = 1000.0f;
 		glm::vec4 clear_color(0.0f, 0.0f, 0.0f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		glViewport(0, 0, size.x, size.y);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 
 		// XXX : the scaling is used to avoid the near plane clipping      
 		static float FOV = 60.0f;
-		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, (float)size.x, (float)size.y, 1.0f, far_plane);
+		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
 
 		glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
 

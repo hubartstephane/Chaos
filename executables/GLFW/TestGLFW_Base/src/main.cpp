@@ -19,7 +19,7 @@ class MyGLFWWindowTest : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
+	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
 	{
 		
 		uint64_t ts = renderer->GetTimestamp();
@@ -36,7 +36,6 @@ protected:
 				uint64_t dt = ts - render_stamp;
 				render_fence = nullptr;
 				render_stamp = 0;
-
 			}
 		}
 

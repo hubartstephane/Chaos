@@ -28,7 +28,7 @@ public:
 
 protected:
 
-  virtual void OnKeyEvent(int key, int scan_code, int action, int modifier)
+  virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
   {
     if (key == GLFW_KEY_F2 && action == GLFW_RELEASE)
     {
@@ -40,10 +40,12 @@ protected:
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
       else if (mode == GL_FILL)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);     
+			return true;
     }  
+		return false;
   }
 
-  virtual bool OnDraw(chaos::GPURenderer * renderer, glm::ivec2 size) override
+  virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
   {
     glm::vec4 clear_color(0.2f, 0.0f, 0.0f, 0.0f);
     glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
@@ -51,10 +53,8 @@ protected:
     float far_plane = 5000.0f;
     glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-    glViewport(0, 0, size.x, size.y);
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);   // when viewer is inside the cube
-   
     
     for (auto const & mesh : imported_data.meshes)
     {

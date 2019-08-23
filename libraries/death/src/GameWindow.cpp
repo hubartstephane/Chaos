@@ -54,14 +54,10 @@ namespace death
 		return chaos::MyGLFW::Window::GetRequiredViewport(size);
 	}
 
-	bool GameWindow::OnDraw(chaos::GPURenderer * in_renderer, glm::ivec2 size)
+	bool GameWindow::OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size)
 	{
 		if (game != nullptr)
-		{
-			chaos::box2 viewport = GetRequiredViewport(size);
-			chaos::GLTools::SetViewport(viewport);
-			game->Display(in_renderer, size);
-		}
+			game->Display(renderer, viewport, window_size);
 		return true;
 	}
 

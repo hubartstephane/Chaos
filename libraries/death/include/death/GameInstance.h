@@ -16,7 +16,7 @@ namespace death
 	// GameInstance
 	// =============================================
 
-	class GameInstance : public chaos::InputEventReceiver, public chaos::Tickable
+	class GameInstance : public chaos::Tickable, public chaos::InputEventReceiver
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 

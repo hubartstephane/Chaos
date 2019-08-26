@@ -18,7 +18,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::InputEventReceiver, public GameInstanceEntity, public chaos::Tickable
+	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public GameInstanceEntity
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;

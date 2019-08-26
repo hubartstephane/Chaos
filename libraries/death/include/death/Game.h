@@ -36,7 +36,7 @@ namespace death
 
 	using PhysicalGamepadWrapper = chaos::ReferencedObjectDataWrapper<chaos::MyGLFW::PhysicalGamepad*>;
 
-	class Game : public chaos::InputEventReceiver, public chaos::ReferencedObject, public chaos::ResourceFriend
+	class Game : public chaos::ReferencedObject, public chaos::InputEventReceiver, public chaos::ResourceFriend
 	{
 		friend class GamepadManager;
 		friend class GameWindow;

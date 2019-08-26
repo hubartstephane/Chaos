@@ -10,6 +10,38 @@ namespace chaos
 	* ReferencedObject is a base class that have a reference count (shared and weak)
 	*/
 
+	// XXX : due to memory allocation management (destruction is manually called with ->~destructor())
+	//       it is important that ReferencedObject is the very first object in hierarchy chain
+	//
+	//       the destructor operator calls   free(p) : p must point to the beginning of the allocated buffer
+	//
+	//
+	//   case 1 : BAD !!! 
+	//
+	//
+	//                  +--- this (from the point of view of ReferencedObject)
+	//                  v
+	//   +------------+----------------------+
+	//   |            | ReferencedObject     |
+	//   +------------+----------------------+
+	//   ^
+	//   +-- allocated buffer for the whole class
+	//
+	//   operator delete(this) <==> free(this)   ===> we call free with a BAD pointer
+	//
+	//
+	//   case 2 : GOOD !!!
+	//
+	//   +--- this (from the point of view of ReferencedObject)
+	//   v
+	//   +----------------------+------------+
+	//   | ReferencedObject     |            |
+	//   +----------------------+------------+
+	//   ^
+	//   +-- allocated buffer for the whole class
+	//
+	//   operator delete(this) <==> free(this)   ===> we call free with a GOOD pointer
+
 	class ReferencedObject
 	{
 		friend class SharedPointerPolicy;
@@ -19,17 +51,8 @@ namespace chaos
 
 		/** constructor */
 		ReferencedObject();
-
 		/** destructor */
-		//virtual ~ReferencedObject() = default;
-
-
-		void* operator new  (std::size_t count);
-
-		virtual ~ReferencedObject()
-		{
-
-		}
+		virtual ~ReferencedObject() = default;
 
 	public:
 

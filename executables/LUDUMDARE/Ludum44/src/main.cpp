@@ -65,8 +65,92 @@ auto b2 = boost::mpl::bool_<has_acceleration<Particle2>::value>();
 
 #endif
 
+class A : public chaos::ReferencedObject
+{
+
+public:
+
+	virtual ~A()
+	{
+
+	}
+
+	int64_t aa = 0x9999999999999999;
+
+};
+
+class B
+{
+public:
+
+	virtual ~B()
+	{
+
+	}
+
+	int64_t bb = 0x7777777777777777;
+
+
+};
+
+class C : public B, public A
+{
+
+public:
+	virtual ~C()
+	{
+		
+
+	}
+
+	int64_t cc = 0x3333333333333333;
+
+};
+
+
+
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {	
+
+	{
+
+		//delete(new C);
+
+#if 1
+
+	//	chaos::shared_ptr<chaos::ReferencedObject> o = new death::Player(nullptr);
+
+//	chaos::shared_ptr<chaos::ReferencedObject> o = new C();
+
+		chaos::shared_ptr<C> o = new C();
+
+		//chaos::shared_ptr<chaos::ReferencedObject> o = new chaos::GPUFramebuffer(0);
+
+		auto p = o.get();
+
+		A * a = o.get();
+		B * b = o.get();
+		C * c = o.get();
+
+		size_t sa = sizeof(A);
+		size_t sb = sizeof(B);
+		size_t sc = sizeof(C);
+		
+		;
+
+		argc = argc;
+#endif
+	}
+
+
+	argc = argc;
+
+
+
+
+
+	return 0;
+
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

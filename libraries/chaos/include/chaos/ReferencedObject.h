@@ -21,7 +21,15 @@ namespace chaos
 		ReferencedObject();
 
 		/** destructor */
-		virtual ~ReferencedObject() = default;
+		//virtual ~ReferencedObject() = default;
+
+
+		void* operator new  (std::size_t count);
+
+		virtual ~ReferencedObject()
+		{
+
+		}
 
 	public:
 

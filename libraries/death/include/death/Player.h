@@ -28,6 +28,13 @@ namespace death
 		/** constructor */
 		Player(GameInstance * in_game_instance);
 
+
+
+		virtual ~Player();
+
+
+
+
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
 

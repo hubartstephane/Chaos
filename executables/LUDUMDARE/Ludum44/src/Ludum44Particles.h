@@ -21,8 +21,6 @@ class VertexBase : public chaos::ParticleDefault::Vertex
 {
 public:
 
-	//glm::vec2 attraction_position;
-	//glm::vec2 particle_center;
 };
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
@@ -65,13 +63,11 @@ public:
 class VertexPowerUpZone : public VertexBase
 {
 public:
-
-	VertexPowerUpZone()
-	{
-		int i = 0;
-		++i;
-	}
-
+	// texcoord(1) is used for bottom_left corner or sprite in atlas.
+	// texcoord2   is used for top_left corner or sprite in atlas.
+	// texcoord3   is use to indicate in [0..1] where we are
+	glm::vec3 texcoord2; 
+	glm::vec2 texcoord3;
 };
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexPowerUpZone>);

@@ -31,7 +31,14 @@ namespace chaos
 		if (--shared_count <= 0)
 		{
 			shared_destroyed = true;
+
+
+
 			this->~ReferencedObject(); // destroy the object content, but only release memory if weak_count is 0 too
+
+
+
+
 			if (weak_count <= 0)
 				OnLastReferenceLost();
 		}
@@ -46,7 +53,17 @@ namespace chaos
 
 	void ReferencedObject::OnLastReferenceLost()
 	{
+
+		//delete(this);
+
+
 		free(this);
+	}
+
+	void* ReferencedObject::operator new  (std::size_t count)
+	{
+		return malloc(count);
+
 	}
 
 }; // namespace chaos

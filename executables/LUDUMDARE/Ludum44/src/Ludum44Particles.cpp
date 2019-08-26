@@ -131,17 +131,20 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 {
 	chaos::GPUVertexDeclaration result;
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
 	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3); // bottom-left of sprite in atlas
+	result.Push(chaos::SEMANTIC_TEXCOORD, 1, chaos::TYPE_FLOAT3); // top-right of sprite in atlas
+	result.Push(chaos::SEMANTIC_TEXCOORD, 2, chaos::TYPE_FLOAT2);
 	return result;
 }
 
 bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZone * particle)
 {
+	// XXX: see UpdatePlayerBuyingItem(...)	=> particle.gid = 0;
+	//          this was usefull to require a zone destruction
+	//          this is not used anymore
 	if (particle->gid == 0)
 	{
-		// XXX : this seems to never happen
-		assert(0);
 		particle->color.a -= delta_time;
 		if (particle->color.a <= 0.0f) // fade out the particle
 			return true;	
@@ -150,8 +153,31 @@ bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZ
 }
 size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const * particle, VertexPowerUpZone * vertices, size_t vertices_per_particle)
 {
+	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+	// get the texture coordinates in the atlas
+	glm::vec3 texture_bl = vertices[0].texcoord;
+	glm::vec3 texture_tr = vertices[2].texcoord;
+
+	glm::vec2 position_bl = vertices[0].position;
+	glm::vec2 position_tr = vertices[2].position;
+
+	// override the texture coordinates
+	for (size_t i = 0; i < 6; ++i)
+	{
+		vertices[i].texcoord  = texture_bl;
+		vertices[i].texcoord2 = texture_tr;
+	}
+
+	// compute repetition
+	glm::vec2 repetition = glm::vec2(5.0f, 5.0f);
+
+	vertices[0].texcoord3 = vertices[3].texcoord3 = repetition * glm::vec2(0.0f, 0.0f);
+	vertices[1].texcoord3 = repetition * glm::vec2(1.0f, 0.0f);
+	vertices[2].texcoord3 = vertices[4].texcoord3 = repetition * glm::vec2(1.0f, 1.0f);
+	vertices[5].texcoord3 = repetition * glm::vec2(0.0f, 1.0f);
+
+	return result;
 }
 
 

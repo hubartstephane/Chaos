@@ -12,7 +12,11 @@ namespace death
 	Player::Player(GameInstance * in_game_instance) :
 		GameInstanceEntity(in_game_instance)
 	{
-		assert(in_game_instance != nullptr);
+	}
+
+	Player::~Player()
+	{
+
 	}
 
 	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)

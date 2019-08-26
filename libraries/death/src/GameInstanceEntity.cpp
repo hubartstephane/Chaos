@@ -8,10 +8,22 @@ namespace death
 	// GameInstanceEntity
 	// =================================================
 
+	GameInstanceEntity::~GameInstanceEntity()
+	{
+
+
+
+	}
+
+
+
+
 	GameInstanceEntity::GameInstanceEntity(GameInstance * in_game_instance) :
 		game_instance(in_game_instance)
 	{
-		assert(in_game_instance != nullptr);
+		//assert(in_game_instance != nullptr);
+
+
 	}
 
 	Game * GameInstanceEntity::GetGame()

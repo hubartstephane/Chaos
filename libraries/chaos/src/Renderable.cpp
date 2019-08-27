@@ -101,24 +101,24 @@ namespace chaos
 		return renderpass_filter.IsNameEnabled(renderpass_name);
 	}
 	
-	void Renderable::AddEnabledRenderPass(char const * renderpass_name)
+	void Renderable::AddEnabledRenderPasses(char const * renderpass_names)
 	{
-		renderpass_filter.AddEnabledName(renderpass_name);
+		renderpass_filter.AddEnabledNames(renderpass_names);
 	}
 
-	void Renderable::AddDisabledRenderPass(char const * renderpass_name)
+	void Renderable::AddDisabledRenderPasses(char const * renderpass_names)
 	{
-		renderpass_filter.AddDisabledName(renderpass_name);
+		renderpass_filter.AddDisabledNames(renderpass_names);
 	}
 
-	void Renderable::RemoveEnabledRenderPass(char const * renderpass_name)
+	void Renderable::RemoveEnabledRenderPasses(char const * renderpass_names)
 	{
-		renderpass_filter.RemoveEnabledName(renderpass_name);
+		renderpass_filter.RemoveEnabledNames(renderpass_names);
 	}
 
-	void Renderable::RemoveDisabledRenderPass(char const * renderpass_name)
+	void Renderable::RemoveDisabledRenderPasses(char const * renderpass_names)
 	{
-		renderpass_filter.RemoveDisabledName(renderpass_name);
+		renderpass_filter.RemoveDisabledNames(renderpass_names);
 	}
 
 }; // namespace chaos

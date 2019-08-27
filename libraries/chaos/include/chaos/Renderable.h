@@ -118,14 +118,14 @@ namespace chaos
 		/** change whether the object can be ticked if hidden flag */
 		void SetCanTickIfHidden(bool in_tick_hidden);
 
-		/** add a name in the enabled list */
-		void AddEnabledRenderPass(char const * renderpass_name);
-		/** add a name in the disabled list */
-		void AddDisabledRenderPass(char const * renderpass_name);
-		/** remove a name in the enabled list */
-		void RemoveEnabledRenderPass(char const * renderpass_name);
-		/** remove a name in the disabled list */
-		void RemoveDisabledRenderPass(char const * renderpass_name);
+		/** add names in the enabled list */
+		void AddEnabledRenderPasses(char const * renderpass_names);
+		/** add names in the disabled list */
+		void AddDisabledRenderPasses(char const * renderpass_names);
+		/** remove names from the enabled list */
+		void RemoveEnabledRenderPasses(char const * renderpass_names);
+		/** remove names from the disabled list */
+		void RemoveDisabledRenderPasses(char const * renderpass_names);
 
 		/** check whether the renderable can be displayed by the name */
 		bool IsRenderPassEnabled(char const * renderpass_name) const;

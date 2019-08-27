@@ -12,24 +12,24 @@ namespace chaos
 	{
 	public:
 	
-		/** add a name in the enabled list */
-		void AddEnabledName(char const * name);
-		/** add a name in the disabled list */
-		void AddDisabledName(char const * name);
-		/** remove a name in the enabled list */
-		void RemoveEnabledName(char const * name);
-		/** remove a name in the disabled list */
-		void RemoveDisabledName(char const * name);	
+		/** add names in the enabled list (separated with ';') */
+		void AddEnabledNames(char const * names);
+		/** add names in the disabled list (separated with ';') */
+		void AddDisabledNames(char const * names);
+		/** remove names from the enabled list (separated with ';') */
+		void RemoveEnabledNames(char const * names);
+		/** remove names from the disabled list (separated with ';') */
+		void RemoveDisabledNames(char const * names);
 
 		/** check whether the name passes the filter */
 		bool IsNameEnabled(char const * name) const;
 
 	protected:
 
-		/** utility method to insert a name in the enabled/disabled array */
-		void AddNameImpl(char const * name, std::vector<std::string> & target_list);
-		/** utility method to remove a name in the enabled/disabled array */
-		void RemoveNameImpl(char const * name, std::vector<std::string> & target_list);
+		/** utility method to insert names in the enabled/disabled array  (separated with ';') */
+		void AddNamesImpl(char const * names, std::vector<std::string> & target_list);
+		/** utility method to remove names from the enabled/disabled array  (separated with ';') */
+		void RemoveNamesImpl(char const * names, std::vector<std::string> & target_list);
 
 	protected:
 

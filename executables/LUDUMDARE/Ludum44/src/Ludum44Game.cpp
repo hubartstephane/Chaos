@@ -169,15 +169,6 @@ death::GameInstance * LudumGame::CreateGameInstance()
 	return new LudumGameInstance(this);
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
-{
-
-//	chaos::RenderParams other_render_params = render_params;
-//	other_render_params.submaterial_name = "titi";
-//	death::Game::DoDisplayGame(renderer, uniform_provider, other_render_params);
-	death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
-}
-
 bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
 	if (!power_up->InitializeFromConfiguration(json_name, config, config_path))

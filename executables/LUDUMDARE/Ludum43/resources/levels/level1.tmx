@@ -10,7 +10,7 @@
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <objectgroup id="1" name="WorldLimits" visible="0" locked="1">
   <properties>
-   <property name="ENABLED_RENDERPASS" value="WORLD_LIMITS_ONLY"/>
+   <property name="ENABLED_RENDERPASSES" value="WORLD_LIMITS_ONLY"/>
    <property name="MATERIAL" value="worldlimit"/>
   </properties>
   <object id="491" gid="8" x="-4108" y="-1548" width="2000" height="2000"/>
@@ -40,7 +40,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="MATERIAL" value="background_particle"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
@@ -82,7 +82,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="MATERIAL" value="background_particle"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
@@ -126,7 +126,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="MATERIAL" value="background_particle"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
@@ -182,7 +182,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="MATERIAL" value="background_particle"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
@@ -221,7 +221,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="MATERIAL" value="background_particle"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
@@ -285,7 +285,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
@@ -319,7 +319,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
@@ -350,7 +350,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
@@ -370,7 +370,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
@@ -402,7 +402,7 @@
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.7"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.7"/>
-   <property name="ENABLED_RENDERPASS" value="DEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="DEFORMED_OBJECT"/>
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
@@ -421,7 +421,7 @@
  </objectgroup>
  <objectgroup id="13" name="Finishing" visible="0" locked="1">
   <properties>
-   <property name="ENABLED_RENDERPASS" value="UNDEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="UNDEFORMED_OBJECT"/>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="true"/>
@@ -437,7 +437,7 @@
  </objectgroup>
  <objectgroup id="14" name="Atoms" visible="0" locked="1">
   <properties>
-   <property name="ENABLED_RENDERPASS" value="UNDEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="UNDEFORMED_OBJECT"/>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="atom"/>
   </properties>
@@ -484,7 +484,7 @@
  </objectgroup>
  <objectgroup id="15" name="Enemies" visible="0" locked="1">
   <properties>
-   <property name="ENABLED_RENDERPASS" value="ENEMIES_ONLY;UNDEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="ENEMIES_ONLY;UNDEFORMED_OBJECT"/>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="enemy"/>
   </properties>
@@ -494,7 +494,7 @@
  </objectgroup>
  <objectgroup id="16" name="PlayerAndCamera" visible="0" locked="1">
   <properties>
-   <property name="ENABLED_RENDERPASS" value="UNDEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="UNDEFORMED_OBJECT"/>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="player"/>
   </properties>

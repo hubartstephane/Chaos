@@ -19,10 +19,9 @@ namespace death
 	{
 	public:
 
-	
+		/** returns the transformation matrix from a camera obox */	
 		static glm::mat4x4 GetCameraTransform(chaos::obox2 const & obox);
 	};
-
 
 	// =============================================
 	// Camera
@@ -62,11 +61,8 @@ namespace death
 		/** returns the level */
 		GameLevelInstance const * GetLevelInstance() const { return game_level_instance; }
 
-
-
 		/** get the camera OBox */
 		chaos::obox2 GetCameraOBox() const;
-
 
 		/** set the camera box */
 		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}

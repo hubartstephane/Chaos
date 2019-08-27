@@ -24,52 +24,61 @@ namespace chaos
 		return true;
 	}
 	
-	void NameFilter::AddEnabledName(char const * name)
+	void NameFilter::AddEnabledNames(char const * names)
 	{
-		AddNameImpl(name, enabled_names);
+		AddNamesImpl(names, enabled_names);
 	}
 
-	void NameFilter::AddDisabledName(char const * name)
+	void NameFilter::AddDisabledNames(char const * names)
 	{
-		AddNameImpl(name, disabled_names);
+		AddNamesImpl(names, disabled_names);
 	}
 
-	void NameFilter::RemoveEnabledName(char const * name)
+	void NameFilter::RemoveEnabledNames(char const * names)
 	{
-		RemoveNameImpl(name, enabled_names);
+		RemoveNamesImpl(names, enabled_names);
 	}
 
-	void NameFilter::RemoveDisabledName(char const * name)
+	void NameFilter::RemoveDisabledNames(char const * names)
 	{
-		RemoveNameImpl(name, disabled_names);
+		RemoveNamesImpl(names, disabled_names);
 	}
 
-	void NameFilter::AddNameImpl(char const * name, std::vector<std::string> & target_list)
+	void NameFilter::AddNamesImpl(char const * names, std::vector<std::string> & target_list)
 	{
 		// nullptr is equivalent to empty string
-		if (name == nullptr)
-			name = "";
-		// search if the name is already existing
-		for (std::string const & element : target_list)
-			if (StringTools::Stricmp(name, element) == 0)
-				return;
-		// insert the element
-		target_list.push_back(name);
-	}
-
-	void NameFilter::RemoveNameImpl(char const * name, std::vector<std::string> & target_list)
-	{
-		// nullptr is equivalent to empty string
-		if (name == nullptr)
-			name = "";
-		// remove the element
-		size_t count = target_list.size();
-		for (size_t i = 0; i < count; ++i)
+		if (names == nullptr)
+			names = "";
+		// split by separator
+		std::vector<std::string> name_array = chaos::StringTools::Split(names, ';');
+		for (std::string & name : name_array)
 		{
-			if (StringTools::Stricmp(name, target_list[i]) == 0)
+			// search if the name is already existing
+			for (std::string const & element : target_list)
+				if (StringTools::Stricmp(name, element) == 0)
+					continue;
+			// insert the element
+			target_list.push_back(std::move(name));
+		}
+	}
+
+	void NameFilter::RemoveNamesImpl(char const * names, std::vector<std::string> & target_list)
+	{
+		// nullptr is equivalent to empty string
+		if (names == nullptr)
+			names = "";
+		// split by separator
+		std::vector<std::string> name_array = chaos::StringTools::Split(names, ';');
+		for (std::string const & name : name_array)
+		{
+			size_t count = target_list.size();
+			for (size_t i = 0; i < count; ++i)
 			{
-				target_list.erase(target_list.begin() + i);
-				return;
+				if (StringTools::Stricmp(name, target_list[i]) == 0)
+				{
+					target_list.erase(target_list.begin() + i);
+					break;
+				}
 			}
 		}
 	}

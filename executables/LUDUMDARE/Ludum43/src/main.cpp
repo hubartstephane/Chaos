@@ -2,8 +2,7 @@
 #include <death/Death.h> 
 #include "Ludum43Game.h"
 
-#include <chaos/EmptyClass.h>
-#include <chaos/MetaProgramming.h>
+#include <chaos/NameFilter.h>
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {

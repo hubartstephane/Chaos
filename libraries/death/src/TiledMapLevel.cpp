@@ -701,22 +701,13 @@ namespace death
 					in_particle_layer->SetTag((chaos::TagType)*layer_tag);
 			}
 			// enabled renderpasses
-			std::string const * enabled_renderpass = layer->FindPropertyString("ENABLED_RENDERPASS");
-			if (enabled_renderpass != nullptr)
-			{
-				std::vector<std::string> passes = chaos::StringTools::Split(enabled_renderpass->c_str(), ';');
-				for (std::string const & pass : passes)
-					in_particle_layer->AddEnabledRenderPass(pass.c_str());
-			}
+			std::string const * enabled_renderpasses = layer->FindPropertyString("ENABLED_RENDERPASSES");
+			if (enabled_renderpasses != nullptr)
+				in_particle_layer->AddEnabledRenderPasses(enabled_renderpasses->c_str());
 			// disabled renderpasses
-			std::string const * disabled_renderpass = layer->FindPropertyString("DISABLED_RENDERPASS");
-			if (disabled_renderpass != nullptr)
-			{
-				std::vector<std::string> passes = chaos::StringTools::Split(disabled_renderpass->c_str(), ';');
-				for (std::string const & pass : passes)
-					in_particle_layer->AddDisabledRenderPass(pass.c_str());
-			}
-
+			std::string const * disabled_renderpasses = layer->FindPropertyString("DISABLED_RENDERPASSES");
+			if (disabled_renderpasses != nullptr)
+				in_particle_layer->AddDisabledRenderPasses(disabled_renderpasses->c_str());
 			return true;
 		}
 

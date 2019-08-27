@@ -8,6 +8,39 @@
 	====================================================================
 	
 	
+
+	- BUG FIX
+
+	1/ certains attributs dans les shaders peuvent disparaitre au moment du build si ils ne sont pas utiliser
+	2/ si on fait du HOT RELOAD de shader et que des attributs disparaissent/apparaissent, le systeme de cache de VertexArray par programme semble perdu
+	   (a verifier)
+	3/ pour que le HOT RELOAD refonctionne (contournement), on peut recharger le niveau
+		
+		F4->Resoure RELOAD
+		F5->Level RELOAD
+
+
+	   une solution pourrait etre de mettre le cache dans le GPUProgram (a verifier)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	- revoir CreateBackgroundImage(...) : SetBackground(...) + SetBackgroundMaterial(...)
 	
 	  sortir ca du ParticleManager. Creer un renderable dedié "background_renderable"

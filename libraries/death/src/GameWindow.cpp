@@ -57,7 +57,12 @@ namespace death
 	bool GameWindow::OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size)
 	{
 		if (game != nullptr)
-			game->Display(renderer, viewport, window_size);
+		{
+			chaos::RenderParams render_params;
+			render_params.viewport = viewport;
+			render_params.screen_size = window_size;
+			game->Display(renderer, nullptr, render_params);
+		}
 		return true;
 	}
 

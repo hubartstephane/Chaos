@@ -187,22 +187,11 @@ namespace death
 		return ShrinkBoxToAspect(viewport, viewport_wanted_aspect);
 	}
 
-	void Game::Display(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 const & window_size)
+	void Game::Display(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
 	{
 		// a variable provider
-		chaos::GPUProgramProvider main_uniform_provider;
-		FillUniformProvider(main_uniform_provider);
-
-
-
-
-		// the window size
-		main_uniform_provider.AddVariableValue("window_size", chaos::GLMTools::RecastVector<glm::vec2>(window_size));
-		// the viewport
-		main_uniform_provider.AddVariableValue("viewport_size", viewport.half_size * 2.0f);
-
-
-
+		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		
 		// the view box
 		chaos::box2 view = GetCanvasBox();
 		main_uniform_provider.AddVariableValue("canvas_box", chaos::EncodeBoxToVector(view));
@@ -213,10 +202,10 @@ namespace death
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);
 
+		// user values
+		FillUniformProvider(main_uniform_provider);
+
 		// rendering
-		chaos::RenderParams render_params;
-		render_params.viewport = viewport;
-		render_params.screen_size = window_size;
 		DoDisplay(renderer, &main_uniform_provider, render_params);
 	}
 

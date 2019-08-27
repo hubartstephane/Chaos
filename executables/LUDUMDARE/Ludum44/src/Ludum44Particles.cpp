@@ -131,8 +131,8 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 {
 	chaos::GPUVertexDeclaration result;
 	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
 	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3); // bottom-left of sprite in atlas
+	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);	
 	result.Push(chaos::SEMANTIC_TEXCOORD, 1, chaos::TYPE_FLOAT3); // top-right of sprite in atlas
 	result.Push(chaos::SEMANTIC_TEXCOORD, 2, chaos::TYPE_FLOAT2);
 	return result;
@@ -170,7 +170,7 @@ size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticl
 	}
 
 	// compute repetition
-	glm::vec2 repetition = glm::vec2(5.0f, 5.0f);
+	glm::vec2 repetition = glm::vec2(1.0f, 1.0f);
 
 	vertices[0].texcoord3 = vertices[3].texcoord3 = repetition * glm::vec2(0.0f, 0.0f);
 	vertices[1].texcoord3 = repetition * glm::vec2(1.0f, 0.0f);

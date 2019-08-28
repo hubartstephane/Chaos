@@ -57,9 +57,9 @@ namespace chaos
 
 		/** constructor */
 		GPURenderMaterial();
-
 		/** destructor */
 		virtual ~GPURenderMaterial();
+
 
 		/** prepare the rendering (find the program, use it, fills its uniforms and returns the program) */
 		GPUProgram const * UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const;

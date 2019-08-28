@@ -546,7 +546,7 @@ namespace chaos
 			}
 
 			// search in vertex declaration a matching semantic
-			VertexDeclarationEntry const * entry = declaration.GetEntry(attrib.semantic, attrib.semantic_index);
+			GPUVertexDeclarationEntry const * entry = declaration.GetEntry(attrib.semantic, attrib.semantic_index);
 			if (entry == nullptr)
 			{
 				entry = declaration.GetEntry(attrib.semantic, -1); // even if semantic_index must be ignored

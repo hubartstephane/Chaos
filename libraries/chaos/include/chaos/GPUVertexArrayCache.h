@@ -12,10 +12,10 @@
 namespace chaos
 {
 	// ==================================================================
-	// VertexArrayCacheEntry : an entry in the cache vertex array
+	// GPUVertexArrayCacheEntry : an entry in the cache vertex array
 	// ==================================================================
 
-	class VertexArrayCacheEntry
+	class GPUVertexArrayCacheEntry
 	{
 		friend class GPUVertexArrayCache;
 
@@ -59,7 +59,7 @@ namespace chaos
 	protected:
 
 		/** the cache content */
-		mutable std::vector<VertexArrayCacheEntry> entries;
+		mutable std::vector<GPUVertexArrayCacheEntry> entries;
 
 	};
 

@@ -57,7 +57,7 @@ namespace chaos
 	/**
 	* Declaration of one component of a vertex
 	*/
-	class VertexDeclarationEntry
+	class GPUVertexDeclarationEntry
 	{
 	public:
 
@@ -109,13 +109,13 @@ namespace chaos
 		void Clear(){ entries.clear(); }
 
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		VertexDeclarationEntry const * GetEntry(int semantic, int semantic_index) const;
+		GPUVertexDeclarationEntry const * GetEntry(int semantic, int semantic_index) const;
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		VertexDeclarationEntry * GetEntry(int semantic, int semantic_index);
+		GPUVertexDeclarationEntry * GetEntry(int semantic, int semantic_index);
 
 	public:
 
 		/** all the entries of the declaration */
-		std::vector<VertexDeclarationEntry> entries;
+		std::vector<GPUVertexDeclarationEntry> entries;
 	};
 }; // namespace chaos

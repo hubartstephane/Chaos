@@ -1,18 +1,13 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/GPUVertexArray.h>
-#include <chaos/GPUBuffer.h>
-#include <chaos/GPURenderMaterial.h>
+#include <chaos/GPUClasses.h>
 #include <chaos/GPUResource.h>
-#include <chaos/DrawPrimitive.h>
+
 #include <chaos/GPUVertexArrayCache.h>
-#include <chaos/GPURenderer.h>
+#include <chaos/GPUVertexDeclaration.h>
+#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUBuffer.h>
 
 namespace chaos
 {

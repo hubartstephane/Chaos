@@ -1,4 +1,5 @@
 #include <chaos/GPURenderer.h>
+#include <chaos/MultiMeshGenerator.h>
 
 namespace chaos
 {
@@ -175,6 +176,26 @@ namespace chaos
 		vertices_counter.Accumulate((float)primitive.count * instance_count);
 
 		drawcall_counter.Accumulate(1.0f);		
+	}
+
+	bool GPURenderer::Initialize()
+	{
+		MultiMeshGenerator generators;
+
+		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+		generators.AddGenerator(new chaos::QuadMeshGenerator(box), quad_mesh);
+
+		if (!generators.GenerateMeshes())
+			return false;
+
+		return true;
+	}
+
+	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params)
+	{
+		assert(material != nullptr);
+		if (quad_mesh != nullptr)
+			quad_mesh->Render(this, material, uniform_provider, render_params);
 	}
 
 }; // namespace chaos

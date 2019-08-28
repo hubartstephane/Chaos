@@ -1,12 +1,13 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
-#include <chaos/DrawPrimitive.h>
-#include <chaos/GPUFramebuffer.h>
-#include <chaos/TimedAccumulator.h>
-#include <chaos/GPUFence.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/Tickable.h>
+#include <chaos/GPUFramebuffer.h>
+#include <chaos/GPUFence.h>
+#include <chaos/TimedAccumulator.h>
+#include <chaos/SimpleMesh.h>
 
 namespace chaos
 {
@@ -27,19 +28,24 @@ namespace chaos
 	{
 	public:
 
+		/** initialization of the internal resources */
+		virtual bool Initialize();
+
+		/** render a full screen quad */
+		void DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params);
+
 		/** draw a primitive */
 		void Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing = InstancingInfo());
 
 		/** called at the start of a new frame */
-		virtual void BeginRenderingFrame();
+		void BeginRenderingFrame();
 		/** called at the end of a new frame */
-		virtual void EndRenderingFrame();
-
+		void EndRenderingFrame();
 
 		/** called to start of rendering on a new Framebuffer */
-		virtual bool PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps);
+		bool PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps);
 		/** called at the start of rendering on a framebuffer */ 
-		virtual bool PopFramebufferRenderContext();
+		bool PopFramebufferRenderContext();
 
 		/** get the current frame rate */
 		float GetFrameRate() const;
@@ -68,6 +74,10 @@ namespace chaos
 
 		/** the stack of framebuffer */
 		std::vector<GPUFramebufferRenderData> framebuffer_stack;
+
+		/** the fullscreen quad mesh */
+		chaos::shared_ptr<SimpleMesh> quad_mesh;
+
 
 		/** whether a rendering is in progress */
 #if _DEBUG

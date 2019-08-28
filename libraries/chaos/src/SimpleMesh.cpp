@@ -1,5 +1,7 @@
 #include <chaos/SimpleMesh.h>
+
 #include <chaos/GLTools.h>
+#include <chaos/GPURenderMaterial.h>
 
 namespace chaos
 {

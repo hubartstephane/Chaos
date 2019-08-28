@@ -140,7 +140,7 @@ namespace chaos
 			return false;
 		}
 
-		/** if element is valid, this function insert a new VertexDeclarationEntry in the declaration */
+		/** if element is valid, this function insert a new GPUVertexDeclarationEntry in the declaration */
 		template<typename T>
 		static void UpdateVertexDeclarationWithGeometryElement(T const * element, GPUVertexDeclaration & vertex_declaration, int semantic, int semantic_index, int type)
 		{

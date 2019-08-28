@@ -170,6 +170,8 @@ namespace chaos
 			renderer = new GPURenderer;
 			if (renderer == nullptr)
 				return false;
+			if (!renderer->Initialize())
+				return false;
 
 			// set the debug log hander
 			GLTools::SetDebugMessageHandler();

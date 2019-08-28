@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	bool VertexArrayCacheEntry::IsValid() const
+	bool GPUVertexArrayCacheEntry::IsValid() const
 	{
 		// should always have a program 
 		if (program.get() == nullptr)
@@ -34,7 +34,7 @@ namespace chaos
 		while ((i < count) && (result == nullptr))
 		{
 			// check whether entry is still valid (else swap/pop with last)
-			VertexArrayCacheEntry & entry = entries[i];
+			GPUVertexArrayCacheEntry & entry = entries[i];
 			if (!entry.IsValid())				
 			{
 				if (i != count - 1)
@@ -54,7 +54,7 @@ namespace chaos
 		while (i < count)
 		{
 			// check whether entry is still valid (else swap/pop with last)
-			VertexArrayCacheEntry & entry = entries[i];
+			GPUVertexArrayCacheEntry & entry = entries[i];
 			if (!entry.IsValid())				
 			{
 				if (i != count - 1)
@@ -104,7 +104,7 @@ namespace chaos
 		data.BindAttributes(va, declaration, nullptr);
 
 		// create the entry in the cache
-		VertexArrayCacheEntry new_entry;
+		GPUVertexArrayCacheEntry new_entry;
 		new_entry.program           = program;
 		new_entry.vertex_buffer     = vertex_buffer;
 		new_entry.index_buffer      = index_buffer;

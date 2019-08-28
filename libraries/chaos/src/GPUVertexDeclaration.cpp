@@ -3,13 +3,13 @@
 namespace chaos
 {
 
-	int VertexDeclarationEntry::GetComponentCount() const
+	int GPUVertexDeclarationEntry::GetComponentCount() const
 	{
 		int component_count = (type & 7);
 		return component_count; 
 	}
 
-	GLenum VertexDeclarationEntry::GetComponentType() const
+	GLenum GPUVertexDeclarationEntry::GetComponentType() const
 	{
 		int component_type = (type >> 3) & 7;
 		if (component_type == TYPE_FLOAT)
@@ -25,7 +25,7 @@ namespace chaos
 		return GL_INVALID_ENUM;
 	}
 
-	int VertexDeclarationEntry::GetEntrySize() const
+	int GPUVertexDeclarationEntry::GetEntrySize() const
 	{
 		int component_type = (type >> 3) & 7;
 
@@ -51,11 +51,11 @@ namespace chaos
 		int offset = 0;
 		if (entries.size() > 0)
 		{
-			VertexDeclarationEntry const & previous_entry = entries.back();
+			GPUVertexDeclarationEntry const & previous_entry = entries.back();
 			offset = previous_entry.offset + previous_entry.GetEntrySize();
 		}
 
-		VertexDeclarationEntry entry;
+		GPUVertexDeclarationEntry entry;
 		entry.semantic       = semantic;
 		entry.semantic_index = semantic_index;
 		entry.type           = type;
@@ -63,7 +63,7 @@ namespace chaos
 		entries.push_back(entry);
 	}
 
-	VertexDeclarationEntry * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index)
+	GPUVertexDeclarationEntry * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index)
 	{
 		for (auto & entry : entries)
 			if (entry.semantic == semantic && (entry.semantic_index < 0 || entry.semantic_index == semantic_index))
@@ -71,7 +71,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	VertexDeclarationEntry const * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index) const
+	GPUVertexDeclarationEntry const * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index) const
 	{
 		for (auto const & entry : entries)
 			if (entry.semantic == semantic && (entry.semantic_index < 0 || entry.semantic_index == semantic_index))

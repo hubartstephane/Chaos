@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 #include <chaos/Tickable.h>
 #include <chaos/ClockManager.h>
 #include <chaos/ParticleManager.h>
@@ -17,7 +17,7 @@ namespace death
 	// GameLevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class GameLevelInstance : public chaos::Renderable
+	class GameLevelInstance : public chaos::GPURenderable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 

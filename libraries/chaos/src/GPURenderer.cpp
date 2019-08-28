@@ -120,7 +120,7 @@ namespace chaos
 		return true;
 	}
 
-	void GPURenderer::Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing)
+	void GPURenderer::Draw(GPUDrawPrimitive const & primitive, GPUInstancingInfo const & instancing)
 	{
 #if _DEBUG 
 		assert(rendering_started);
@@ -191,7 +191,7 @@ namespace chaos
 		return true;
 	}
 
-	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params)
+	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(material != nullptr);
 		if (quad_mesh != nullptr)

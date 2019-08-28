@@ -1,6 +1,9 @@
 #include <chaos/ParticleManager.h>
+
+
+#include <chaos/GPURenderParams.h>
 #include <chaos/GLTools.h>
-#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUResourceManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/ParticleTools.h>
@@ -201,7 +204,7 @@ namespace chaos
 		return result;
 	}
 
-	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		// early exit
 		if (vertices_count == 0)
@@ -277,7 +280,7 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleLayerBase::DoDisplayHelper(GPURenderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleLayerBase::DoDisplayHelper(GPURenderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		// no vertices, no rendering
 		if (vertex_count == 0)
@@ -293,7 +296,7 @@ namespace chaos
 		// bind the vertex array
 		glBindVertexArray(vertex_array->GetResourceID());
 		// one draw call for the whole buffer
-		DrawPrimitive primitive;
+		GPUDrawPrimitive primitive;
 		primitive.primitive_type = GL_TRIANGLES;
 		primitive.indexed = false;
 		primitive.count = (int)vertex_count;

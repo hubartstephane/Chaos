@@ -4,7 +4,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/TiledMap.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 #include <chaos/Tickable.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>

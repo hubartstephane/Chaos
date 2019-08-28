@@ -16,7 +16,7 @@
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/StateMachine.h>
 #include <chaos/TiledMap.h>
-#include <chaos/RenderableLayerSystem.h>
+#include <chaos/GPURenderableLayerSystem.h>
 #include <chaos/TimedAccumulator.h>
 #include <chaos/FileResource.h>
 
@@ -119,13 +119,13 @@ namespace death
 		/** returns root clock */
 		chaos::Clock const * GetRootClock() const { return root_clock.get(); }
 
-		// Renderable layers
+		// GPURenderable layers
 #define DEATH_FIND_RENDERABLE_CHILD(result, funcname)\
-		result * funcname(char const * name, chaos::RenderableLayerSystem * root = nullptr);\
-		result const * funcname(char const * name, chaos::RenderableLayerSystem const * root = nullptr) const;\
-		result * funcname(chaos::TagType tag, chaos::RenderableLayerSystem * root = nullptr);\
-		result const * funcname(chaos::TagType tag, chaos::RenderableLayerSystem const * root = nullptr) const;
-		DEATH_FIND_RENDERABLE_CHILD(chaos::RenderableLayerSystem, FindRenderableLayer);
+		result * funcname(char const * name, chaos::GPURenderableLayerSystem * root = nullptr);\
+		result const * funcname(char const * name, chaos::GPURenderableLayerSystem const * root = nullptr) const;\
+		result * funcname(chaos::TagType tag, chaos::GPURenderableLayerSystem * root = nullptr);\
+		result const * funcname(chaos::TagType tag, chaos::GPURenderableLayerSystem const * root = nullptr) const;
+		DEATH_FIND_RENDERABLE_CHILD(chaos::GPURenderableLayerSystem, FindRenderableLayer);
 		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayerBase, FindParticleLayer);
 #undef DEATH_FIND_RENDERABLE_CHILD
 
@@ -225,15 +225,15 @@ namespace death
 		virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const;
 
 		/** the rendering method */
-		virtual void Display(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		virtual void Display(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params);
 		/** the user defined rendering function */
-		virtual void DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		virtual void DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params);
 		/** internal method to prepare rendering */
-		virtual void DoPreDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);		
+		virtual void DoPreDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params);		
 		/** internal  method to display the game content */
-		virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params);
 		/** internal  method to display the HUD */
-		virtual void DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params);
+		virtual void DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params);
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
@@ -289,7 +289,7 @@ namespace death
 		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
 		virtual int AddParticleLayers();
 		/** insert a rendering layering */
-		chaos::RenderableLayerSystem * AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order);
+		chaos::GPURenderableLayerSystem * AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order);
 
 		/** generate the atlas for the whole game */
 		virtual bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
@@ -402,7 +402,7 @@ namespace death
 		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 
 		/** the rendering layer system */
-		chaos::shared_ptr<chaos::RenderableLayerSystem> root_render_layer;
+		chaos::shared_ptr<chaos::GPURenderableLayerSystem> root_render_layer;
 
 		/** the text generator */
 		chaos::shared_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;

@@ -4,6 +4,8 @@
 #include <chaos/InputMode.h>
 #include <chaos/GeometryFramework.h>
 
+#include <chaos/GPURenderParams.h>
+
 namespace death
 {
 	void GameWindow::OnInputModeChanged(int new_mode, int old_mode)
@@ -58,7 +60,7 @@ namespace death
 	{
 		if (game != nullptr)
 		{
-			chaos::RenderParams render_params;
+			chaos::GPURenderParams render_params;
 			render_params.viewport = viewport;
 			render_params.screen_size = window_size;
 			game->Display(renderer, nullptr, render_params);

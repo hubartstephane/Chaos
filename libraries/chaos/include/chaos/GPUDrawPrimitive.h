@@ -5,30 +5,10 @@
 namespace chaos
 {
 	/**
-	* InstancingInfo
+	* GPUDrawPrimitive : a draw call
 	*/
 
-	class InstancingInfo
-	{
-	public:
-
-		/** constructor */
-		InstancingInfo(int in_instance_count = 0, int in_base_instance = 0):
-			instance_count(in_instance_count),
-			base_instance(in_base_instance)
-		{}
-
-		/** number of instance */
-		int instance_count = 0;
-		/** the starting index of instance */
-		int base_instance = 0;
-	};
-
-	/**
-	* DrawPrimitive : a draw call
-	*/
-
-	class DrawPrimitive
+	class GPUDrawPrimitive
 	{
 	public:
 

@@ -6,7 +6,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUFileResource.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 
 namespace chaos
 {
@@ -20,7 +20,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramRenderMaterialProvider(class GPURenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider, RenderParams const * in_render_params) :
+		GPUProgramRenderMaterialProvider(class GPURenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider, GPURenderParams const * in_render_params) :
 			render_material(in_render_material),
 			other_provider(in_other_provider),
 			render_params(in_render_params)
@@ -38,7 +38,7 @@ namespace chaos
 		/** another provider (use a non intrusive reference !!!) */
 		GPUProgramProviderBase const * other_provider = nullptr;
 		/** the render params used */
-		RenderParams const * render_params = nullptr;
+		GPURenderParams const * render_params = nullptr;
 	};
 
 	/**
@@ -62,7 +62,7 @@ namespace chaos
 
 
 		/** prepare the rendering (find the program, use it, fills its uniforms and returns the program) */
-		GPUProgram const * UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const;
+		GPUProgram const * UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const;
 
 		/** set the program */
 		bool SetProgram(GPUProgram * in_program);
@@ -72,10 +72,10 @@ namespace chaos
 		bool SetSubMaterial(char const * submaterial_name, GPURenderMaterial * submaterial);
 
 		/** go throw the hierary and search for the program */
-		GPUProgram const * GetEffectiveProgram(RenderParams const & render_params) const;
+		GPUProgram const * GetEffectiveProgram(GPURenderParams const & render_params) const;
 
 		/** returns whether the material is enabled for given submaterial_name */
-		bool IsMaterialEnabled(RenderParams const & render_params) const;
+		bool IsMaterialEnabled(GPURenderParams const & render_params) const;
 
 		/** get the uniform provider */
 		GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
@@ -98,7 +98,7 @@ namespace chaos
 		/** search some cycles throught parent_material and sub materials (returning true is an error) */
 		bool SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const;
 		/** returns the effective program for the material */
-		GPUProgram const * DoGetEffectiveProgram(RenderParams const & render_params, bool submaterial_encoutered) const;
+		GPUProgram const * DoGetEffectiveProgram(GPURenderParams const & render_params, bool submaterial_encoutered) const;
 
 	protected:
 

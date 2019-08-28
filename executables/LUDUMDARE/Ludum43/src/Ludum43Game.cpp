@@ -19,6 +19,7 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/GPUFramebufferGenerator.h>
 #include <chaos/GLTools.h>
+#include <chaos/GPURenderParams.h>
 
 #include <death/GameParticles.h>
 
@@ -42,7 +43,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
 	death::TiledMap::LevelInstance * ludum_level_instance = GetLudumLevelInstance();
 
@@ -81,11 +82,11 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		// World limits on RED
 		// ---------------------------------------------
 		{
-			chaos::RenderParams other_render_params = render_params;
+			chaos::GPURenderParams other_render_params = render_params;
 			other_render_params.renderpass_name = "WORLD_LIMITS_ONLY";
 
 #if 0
-			chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+			chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
 			filter.name_filter.enable_names.push_back("WorldLimits");
 			other_render_params.object_filter = &filter;
 #endif
@@ -99,11 +100,11 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		//  BLACK => greatest deformation, white => smallest deformation
 		// ---------------------------------------------
 		{
-			chaos::RenderParams other_render_params = render_params;
+			chaos::GPURenderParams other_render_params = render_params;
 			other_render_params.renderpass_name = "ENEMIES_ONLY";
 
 #if 0
-			chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+			chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
 			filter.name_filter.enable_names.push_back("Enemies");
 			other_render_params.object_filter = &filter;
 #endif
@@ -129,11 +130,11 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
-		chaos::RenderParams other_render_params = render_params;
+		chaos::GPURenderParams other_render_params = render_params;
 		other_render_params.renderpass_name = "DEFORMED_OBJECT";
 
 #if 0
-		chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+		chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
 		filter.name_filter.forbidden_names.push_back("Enemies");
 		filter.name_filter.forbidden_names.push_back("Atoms");
 		filter.name_filter.forbidden_names.push_back("PlayerAndCamera");
@@ -154,7 +155,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	// COMBINE STEP 1 & STEP 2 (blend_backgrounds = 1 for default rendering, 0 for texture combining)
 	// ---------------------------------------------
 	{
-		chaos::RenderParams other_rendering_params = render_params;
+		chaos::GPURenderParams other_rendering_params = render_params;
 		//other_rendering_params.renderpass_name = "COMBINE_PASS";
 
 		chaos::GLTools::SetViewport(other_rendering_params.viewport);
@@ -187,11 +188,11 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	// simply render player and ennemies
 	// ---------------------------------------------
 	{
-		chaos::RenderParams other_rendering_params = render_params;
+		chaos::GPURenderParams other_rendering_params = render_params;
 		other_rendering_params.renderpass_name = "UNDEFORMED_OBJECT";
 
 #if 0
-		chaos::DisableReferenceCount<chaos::ParticleLayerFilterList> filter;
+		chaos::DisableReferenceCount<chaos::GPUParticleLayerFilterList> filter;
 		filter.name_filter.enable_names.push_back("Enemies");
 		filter.name_filter.enable_names.push_back("Atoms");
 		filter.name_filter.enable_names.push_back("PlayerAndCamera");

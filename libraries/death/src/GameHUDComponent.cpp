@@ -225,7 +225,7 @@ namespace death
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	int GameHUDFramerateComponent::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const
+	int GameHUDFramerateComponent::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const
 	{
 		framerate = renderer->GetFrameRate();
 		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);

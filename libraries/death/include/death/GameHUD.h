@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/ParticleManager.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 #include <chaos/NamedObject.h>
 
 #include <death/GameHUDKeys.h>
@@ -18,7 +18,7 @@ namespace death
 	// GameHUD
 	// =============================================
 
-	class GameHUD : public chaos::Renderable
+	class GameHUD : public chaos::GPURenderable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -121,7 +121,7 @@ namespace death
 		/** override */
 		virtual bool DoTick(double delta_time) override;
 		/** override */
-		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const override;
 
 	protected:
 

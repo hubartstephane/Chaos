@@ -8,7 +8,7 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/MyAssimpImporter.h>

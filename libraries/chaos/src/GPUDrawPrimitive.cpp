@@ -1,4 +1,4 @@
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUDrawPrimitive.h>
 
 namespace chaos
 {
@@ -15,7 +15,7 @@ namespace chaos
 	//       
 	//      to create a shift, use glVertexArrayVertexBuffer(...offset ...) that helps create a view of buffer
 	//
-	void DrawPrimitive::ShiftIndexAndVertexPosition(int vb_offset, int ib_offset)
+	void GPUDrawPrimitive::ShiftIndexAndVertexPosition(int vb_offset, int ib_offset)
 	{
 		if (!indexed)
 			start += vb_offset;

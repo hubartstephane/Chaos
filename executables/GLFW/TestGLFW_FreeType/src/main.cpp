@@ -11,7 +11,7 @@
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/GPUProgram.h>
@@ -40,7 +40,7 @@ protected:
     chaos::GPUProgramProvider uniform_provider;
     uniform_provider.AddVariableTexture("material", texture);
 
-		chaos::RenderParams render_params;
+		chaos::GPURenderParams render_params;
     mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 
     return true;
@@ -359,7 +359,7 @@ protected:
 protected:
 
   chaos::shared_ptr<chaos::GPUProgram>  program;
-  chaos::shared_ptr<chaos::SimpleMesh> mesh;
+  chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
   chaos::shared_ptr<chaos::GPUTexture>    texture;
 
   int font_index = 0;

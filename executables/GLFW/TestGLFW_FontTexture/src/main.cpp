@@ -8,7 +8,7 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/BitmapFontTextMeshBuilder.h>
 #include <chaos/GLDebugOnScreenDisplay.h>

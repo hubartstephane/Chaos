@@ -2,10 +2,10 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/MemoryBufferWriter.h>
-#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUDrawPrimitive.h>
 
 namespace chaos
 {
@@ -32,27 +32,27 @@ namespace chaos
 	};
 
 	/**
-	* SimpleMeshGenerator : an object that is responsible for generating the mesh data
+	* GPUSimpleMeshGenerator : an object that is responsible for generating the mesh data
 	*/
 
-	class SimpleMeshGenerator : public ReferencedObject
+	class GPUSimpleMeshGenerator : public ReferencedObject
 	{
 	public:
 
 		/** the destructor */
-		virtual ~SimpleMeshGenerator() = default;
+		virtual ~GPUSimpleMeshGenerator() = default;
 
 		/** get requirement */
 		virtual MeshGenerationRequirement GetRequirement() const = 0;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const = 0;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
 
 		/** generation function */
-		shared_ptr<SimpleMesh> GenerateMesh() const;
+		shared_ptr<GPUSimpleMesh> GenerateMesh() const;
 		/** population function */
-		bool FillMeshData(SimpleMesh * mesh) const;
+		bool FillMeshData(GPUSimpleMesh * mesh) const;
 	};
 
 	/**
@@ -60,7 +60,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class PrimitiveMeshGenerator : public SimpleMeshGenerator
+	class PrimitiveMeshGenerator : public GPUSimpleMeshGenerator
 	{
 	public:
 
@@ -95,7 +95,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 
@@ -121,7 +121,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 	};
 
 	/**
@@ -140,7 +140,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 
@@ -169,7 +169,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 
@@ -197,7 +197,7 @@ namespace chaos
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
-		virtual void GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
+		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
 	protected:
 

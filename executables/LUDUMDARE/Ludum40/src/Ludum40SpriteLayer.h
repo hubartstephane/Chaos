@@ -12,9 +12,9 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUTexture.h>

@@ -6,29 +6,29 @@
 
 #include <chaos/GPUVertexArrayCache.h>
 #include <chaos/GPUVertexDeclaration.h>
-#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUBuffer.h>
 
 namespace chaos
 {
 
 	/**
-	* SimpleMesh : how it says
+	* GPUSimpleMesh : how it says
 	*/
 
-	class SimpleMesh : public GPUResource
+	class GPUSimpleMesh : public GPUResource
 	{
 	public:
 
 		/** constructor */
-		SimpleMesh() = default;
+		GPUSimpleMesh() = default;
 		/** destructor */
-		~SimpleMesh();
+		~GPUSimpleMesh();
 
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
+		void Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const;
+		void Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
 
 		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
 		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
@@ -40,14 +40,14 @@ namespace chaos
 		/** cleaning the object */
 		virtual bool DoRelease() override;
 		/** rendering internal method */
-		void DoRender(GPURenderer * renderer, GPUProgram const * program, RenderParams const & render_params) const;
+		void DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params) const;
 
 	public:
 
 		/** self descriptive */
 		GPUVertexDeclaration vertex_declaration;
 		/** the primitives to render */
-		std::vector<DrawPrimitive> primitives;
+		std::vector<GPUDrawPrimitive> primitives;
 
 		/** self descriptive */
 		shared_ptr<GPUBuffer> vertex_buffer;

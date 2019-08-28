@@ -8,7 +8,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/TiledMap.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 #include <chaos/Tickable.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
@@ -313,7 +313,7 @@ namespace death
 		// LayerInstance : instance of a Layer
 		// =====================================
 
-		class LayerInstance : public chaos::Renderable
+		class LayerInstance : public chaos::GPURenderable
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -450,7 +450,7 @@ namespace death
 			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */
-			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const override;
 
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
 			virtual void ComputePlayerAndCameraCollision(double delta_time);
@@ -586,7 +586,7 @@ namespace death
 			/** override */
 			virtual bool DoTick(double delta_time) override;
 			/** override */
-			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const override;
 
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
 			virtual void ComputePlayerAndCameraCollision(double delta_time);

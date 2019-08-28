@@ -11,11 +11,11 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/FPSViewInputController.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUTexture.h>
@@ -109,7 +109,7 @@ protected:
 		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
 		uniform_provider.AddVariableTexture("material", texture);
 
-		chaos::RenderParams render_params;
+		chaos::GPURenderParams render_params;
 		mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 
 		debug_display.Display((int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
@@ -276,7 +276,7 @@ protected:
 	chaos::SkyBoxImages skybox;
 			
 	chaos::shared_ptr<chaos::GPUProgram>  program;
-	chaos::shared_ptr<chaos::SimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
 	chaos::shared_ptr<chaos::GPUTexture>    texture;
 
 	chaos::FPSViewInputController fps_view_controller;

@@ -9,10 +9,10 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/FPSViewInputController.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
@@ -119,7 +119,7 @@ protected:
 		bool b15 = uniform_provider->GetValue("toto", v7);
 #endif
 
-		chaos::RenderParams render_params;
+		chaos::GPURenderParams render_params;
 		particle_manager->Display(renderer, uniform_provider.get(), render_params);
 
 		return true;

@@ -10,7 +10,7 @@
 #include <chaos/FPSViewInputController.h>
 #include <chaos/MyFbxImporter.h>
 #include <chaos/GPUProgramData.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 
 
 static int const MAX_BONE_COUNT = 10;

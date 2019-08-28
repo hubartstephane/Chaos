@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 
 namespace chaos
 {
@@ -19,7 +19,7 @@ namespace chaos
 		virtual ~MultiMeshGenerator();
 
 		/** the insertion method */
-		void AddGenerator(SimpleMeshGenerator * generator, shared_ptr<SimpleMesh> & target_ptr);
+		void AddGenerator(GPUSimpleMeshGenerator * generator, shared_ptr<GPUSimpleMesh> & target_ptr);
 		/** clean all generators */
 		void Clean();
 		/** generate all meshes */
@@ -28,7 +28,7 @@ namespace chaos
 	protected:
 
 		/** the registered element to generate */
-		std::vector<std::pair<shared_ptr<SimpleMeshGenerator>, shared_ptr<SimpleMesh> *>> generators;
+		std::vector<std::pair<shared_ptr<GPUSimpleMeshGenerator>, shared_ptr<GPUSimpleMesh> *>> generators;
 	};
 
 

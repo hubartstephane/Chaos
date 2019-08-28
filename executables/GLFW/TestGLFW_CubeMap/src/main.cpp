@@ -10,11 +10,11 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/FPSViewInputController.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUTexture.h>
@@ -178,7 +178,7 @@ protected:
     depth_pass = GL_KEEP;
     glStencilOp(stencil_fail, depth_fail, depth_pass); // do not modify the stencil anymore
 
-		chaos::RenderParams render_params;
+		chaos::GPURenderParams render_params;
 
     query->BeginQuery();		
     mesh->Render(renderer, program.get(), &uniform_provider, render_params);
@@ -277,7 +277,7 @@ protected:
 protected:
 
   chaos::shared_ptr<chaos::GPUProgram>  program;
-  chaos::shared_ptr<chaos::SimpleMesh> mesh;
+  chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
   chaos::shared_ptr<chaos::GPUTexture>    texture;
 
   chaos::shared_ptr<chaos::GPUQuery> query;

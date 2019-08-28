@@ -13,11 +13,11 @@ namespace chaos
 		Clean();
 	}
 
-	void MultiMeshGenerator::AddGenerator(SimpleMeshGenerator * generator, shared_ptr<SimpleMesh> & target_ptr)
+	void MultiMeshGenerator::AddGenerator(GPUSimpleMeshGenerator * generator, shared_ptr<GPUSimpleMesh> & target_ptr)
 	{
 		assert(generator != nullptr);
 
-		shared_ptr<SimpleMeshGenerator> generator_ptr = generator;
+		shared_ptr<GPUSimpleMeshGenerator> generator_ptr = generator;
 
 		generators.push_back(std::make_pair(generator_ptr, &target_ptr));
 	}
@@ -73,9 +73,9 @@ namespace chaos
 					size_t written_vertices_count = vertices_writer.GetWrittenCount();
 					size_t written_indices_count = indices_writer.GetWrittenCount();
 
-					shared_ptr<SimpleMesh> mesh = (*it.second);
+					shared_ptr<GPUSimpleMesh> mesh = (*it.second);
 					if (mesh == nullptr)
-						mesh = new SimpleMesh; // generate the mesh
+						mesh = new GPUSimpleMesh; // generate the mesh
 					else
 						mesh->Release(); // reuse existing mesh
 

@@ -1,11 +1,11 @@
 #include <chaos/MyFbxImporter.h>
 #include <chaos/LogTools.h>
 #include <chaos/SparseWriteBuffer.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/Buffer.h>
 #include <chaos/GLTools.h>
-#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUDrawPrimitive.h>
 
 namespace chaos
 {
@@ -496,7 +496,7 @@ namespace chaos
 
 			if (optimize_vertices.bufsize > 0 && index_buffer.size())
 			{
-				SimpleMesh * m = DoCreateMesh(vertex_declaration, optimize_vertices, index_buffer);
+				GPUSimpleMesh * m = DoCreateMesh(vertex_declaration, optimize_vertices, index_buffer);
 				if (m != nullptr)
 				{
 					output->meshes.push_back(m);
@@ -507,9 +507,9 @@ namespace chaos
 			return true;
 		}
 
-		SimpleMesh * MyFbxImporter::DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer)
+		GPUSimpleMesh * MyFbxImporter::DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer)
 		{
-			SimpleMesh * result = new SimpleMesh;
+			GPUSimpleMesh * result = new GPUSimpleMesh;
 			if (result != nullptr)
 			{
 				GLuint va = 0;
@@ -523,7 +523,7 @@ namespace chaos
 				{
 					result->vertex_declaration = vertex_declaration;
 
-					DrawPrimitive primitive;
+					GPUDrawPrimitive primitive;
 					primitive.count = (int)index_buffer.size();
 					primitive.indexed = true;
 					primitive.primitive_type = GL_TRIANGLES;

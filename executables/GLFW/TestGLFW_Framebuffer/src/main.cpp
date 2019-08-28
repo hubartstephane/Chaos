@@ -11,12 +11,12 @@
 #include <chaos/FPSViewInputController.h>
 #include <chaos/MyFbxImporter.h>
 #include <chaos/GPUProgramData.h>
-#include <chaos/SimpleMesh.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMesh.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUFramebuffer.h>
 #include <chaos/GPUFramebufferGenerator.h>
-#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPURenderer.h>
 
 
@@ -85,7 +85,7 @@ protected:
 				}
 			}
 
-			chaos::RenderParams render_params;
+			chaos::GPURenderParams render_params;
 			render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 			render_params.instancing.base_instance = 0;
 
@@ -168,7 +168,7 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer;
 
-	chaos::shared_ptr<chaos::SimpleMesh> mesh;
+	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
 
 	chaos::FPSViewInputController fps_view_controller;
 };

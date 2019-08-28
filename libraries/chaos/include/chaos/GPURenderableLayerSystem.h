@@ -3,20 +3,20 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/NamedObject.h>
 #include <chaos/ReferencedObject.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 
 namespace chaos
 {
 	// ========================================================
-	// RenderableLayerSystem : used as a sorted container for renderers
+	// GPURenderableLayerSystem : used as a sorted container for renderers
 	// ========================================================
 
-	class RenderableLayerSystem : public Renderable
+	class GPURenderableLayerSystem : public GPURenderable
 	{
 	protected:
 
-		/** an utility class to store a a Renderable with a render order */
-		class RenderableLayerInfo : public NamedObjectWrapper<Renderable>
+		/** an utility class to store a a GPURenderable with a render order */
+		class RenderableLayerInfo : public NamedObjectWrapper<GPURenderable>
 		{	
 		public:
 
@@ -29,33 +29,33 @@ namespace chaos
 	public:
 
 		/** Find a renderable by its name */
-		Renderable * FindChildRenderable(char const * name);
+		GPURenderable * FindChildRenderable(char const * name);
 		/** Find a renderable by its name */
-		Renderable const * FindChildRenderable(char const * name) const;
+		GPURenderable const * FindChildRenderable(char const * name) const;
 		/** Find a renderable by its tag */
-		Renderable * FindChildRenderable(TagType tag);
+		GPURenderable * FindChildRenderable(TagType tag);
 		/** Find a renderable by its tag */
-		Renderable const * FindChildRenderable(TagType tag) const;
+		GPURenderable const * FindChildRenderable(TagType tag) const;
 		/** insert a renderable */
-		bool AddChildRenderable(Renderable * renderable, int render_order);
+		bool AddChildRenderable(GPURenderable * renderable, int render_order);
 		/** remove a renderable */
-		bool RemoveChildRenderable(Renderable * renderable);
+		bool RemoveChildRenderable(GPURenderable * renderable);
 
 		/** get the number of children */
 		size_t GetChildCount() const;
 		/** get the child at a given position (not the rendering order) */
-		Renderable * GetChildAt(size_t index);
+		GPURenderable * GetChildAt(size_t index);
 		/** get the child at a given position (not the rendering order) */
-		Renderable const * GetChildAt(size_t index) const;
+		GPURenderable const * GetChildAt(size_t index) const;
 
 	protected:
 
 		/** the main rendering method */
-		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
+		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const override;
 		/** find a renderable */
-		RenderableLayerInfo * FindChildRenderableInfo(Renderable * renderable);
+		RenderableLayerInfo * FindChildRenderableInfo(GPURenderable * renderable);
 		/** find a renderable */
-		RenderableLayerInfo const * FindChildRenderableInfo(Renderable * renderable) const;
+		RenderableLayerInfo const * FindChildRenderableInfo(GPURenderable * renderable) const;
 
 	protected:
 

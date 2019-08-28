@@ -9,11 +9,11 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/FPSViewInputController.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
@@ -104,7 +104,7 @@ protected:
 		uniform_provider.AddVariableValue("color", prim_ctx.color);
 	}
 
-	void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::SimpleMesh * mesh, chaos::GPUProgram * program, glm::vec4 const & color, glm::mat4 const & local_to_world)
+	void DrawPrimitiveImpl(RenderingContext const & ctx, chaos::GPUSimpleMesh * mesh, chaos::GPUProgram * program, glm::vec4 const & color, glm::mat4 const & local_to_world)
 	{
 		glm::vec4 final_color = color;
 
@@ -115,11 +115,11 @@ protected:
     chaos::GPUProgramProvider uniform_provider;
 		PrepareObjectProgram(uniform_provider, ctx, prim_ctx);
 
-		chaos::RenderParams render_params;
+		chaos::GPURenderParams render_params;
 		mesh->Render(ctx.renderer, program, &uniform_provider, render_params);
 	}
 
-	void DrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
+	void GPUDrawPrimitive(RenderingContext const & ctx, chaos::box3 const & b, glm::vec4 const & color)
 	{
 		if (IsGeometryEmpty(b))
 			return;
@@ -147,11 +147,11 @@ protected:
 			glm::vec3(time_line_box_position + time_line_box_size - 10.0f, 10.0f, 2.0f)
 		));
 
-		DrawPrimitive(ctx, b1, red);
-		DrawPrimitive(ctx, b2, green);
-		DrawPrimitive(ctx, b3, blue);
+		GPUDrawPrimitive(ctx, b1, red);
+		GPUDrawPrimitive(ctx, b2, green);
+		GPUDrawPrimitive(ctx, b3, blue);
 		if (time_line_box_size > 0.0f)
-			DrawPrimitive(ctx, b4, white);
+			GPUDrawPrimitive(ctx, b4, white);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
@@ -371,7 +371,7 @@ protected:
 protected:
 
 	// rendering for the box  
-	chaos::shared_ptr<chaos::SimpleMesh> mesh_box;
+	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh_box;
 	chaos::shared_ptr<chaos::GPUProgram>  program_box;
 
 	chaos::shared_ptr<chaos::Clock> clock1;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/Buffer.h>
 #include <chaos/SkeletonHierarchyDef.h>
@@ -26,7 +26,7 @@ namespace chaos
 	public:
 
 		/** the meshes that have been read */
-		std::vector<SimpleMesh *> meshes;
+		std::vector<GPUSimpleMesh *> meshes;
 		/** the skeleton hierarchies that have been read */
 		std::vector<SkeletonHierarchyDef *> skeleton_defs;
 	};
@@ -147,7 +147,7 @@ namespace chaos
 		virtual bool DoImportLightNode(FbxLight * light, FbxNode * node, int level);
 
 		/** internal method to create a mesh */
-		SimpleMesh * DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer);
+		GPUSimpleMesh * DoCreateMesh(GPUVertexDeclaration const & vertex_declaration, Buffer<char> vertices, std::vector<int> const & index_buffer);
 
 		/** get assoication table, CTRL_POINT => BONE INFO */
 		static BoneTableType GetBoneData(FbxMesh * mesh);

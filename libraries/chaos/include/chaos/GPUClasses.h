@@ -10,9 +10,9 @@ namespace chaos
 	class GPUProgramSetAttributeAction;
 
 	class MeshGenerationRequirement;
-	class SimpleMeshGenerator;
-	class SimpleMesh;
-	class RenderParams;
+	class GPUSimpleMeshGenerator;
+	class GPUSimpleMesh;
+	class GPURenderParams;
 	class GPUFramebuffer;
 
 	class GPUProgramProviderBase;
@@ -38,9 +38,15 @@ namespace chaos
 	class GPURenderbuffer;
 	class GPUSurface;
 
-	class InstancingInfo;
+	class GPUInstancingInfo;
 
 	class GPUFramebufferRenderData;
+
+	class GPURenderable;
+	class GPUMaterialProvider;
+	class GPUDrawPrimitive;
+	class GPUInstancingInfo;
+	class GPURenderableFilter;
 
 
 }; // namespace chaos

@@ -187,7 +187,7 @@ namespace death
 		return ShrinkBoxToAspect(viewport, viewport_wanted_aspect);
 	}
 
-	void Game::Display(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::Display(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 	{
 		// a variable provider
 		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
@@ -217,7 +217,7 @@ namespace death
 			current_level_instance->FillUniformProvider(main_uniform_provider);
 	}
 
-	void Game::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 	{
 		// clear the main render target
 		DoPreDisplay(renderer, uniform_provider, render_params);
@@ -228,7 +228,7 @@ namespace death
 	}
 
 
-	void Game::DoPreDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoPreDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -244,7 +244,7 @@ namespace death
 		glDisable(GL_CULL_FACE);
 	}
 
-	void Game::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 	{		
 
 		// shuwww   root_render_layer ??
@@ -264,7 +264,7 @@ namespace death
 			current_level_instance->Display(renderer, uniform_provider, render_params);
 	}
 
-	void Game::DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::RenderParams const & render_params)
+	void Game::DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 	{	
 		if (hud != nullptr)
 			hud->Display(renderer, uniform_provider, render_params);
@@ -497,7 +497,7 @@ namespace death
 	}
 
 #define DEATH_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
-	result constness * Game::funcname(param_type param, chaos::RenderableLayerSystem constness * root) constness\
+	result constness * Game::funcname(param_type param, chaos::GPURenderableLayerSystem constness * root) constness\
 	{\
 		if (root == nullptr)\
 		{\
@@ -513,15 +513,15 @@ namespace death
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
 	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
 
-	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::RenderableLayerSystem, FindRenderableLayer);
+	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::GPURenderableLayerSystem, FindRenderableLayer);
 	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayerBase, FindParticleLayer);
 
 #undef DEATH_FIND_RENDERABLE_CHILD_ALL
 #undef DEATH_FIND_RENDERABLE_CHILD
 
-	chaos::RenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
+	chaos::GPURenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
 	{
-		chaos::RenderableLayerSystem * result = new chaos::RenderableLayerSystem();
+		chaos::GPURenderableLayerSystem * result = new chaos::GPURenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return result;
 		result->SetName(layer_name);
@@ -532,7 +532,7 @@ namespace death
 
 	bool Game::InitializeRootRenderLayer()
 	{
-		root_render_layer = new chaos::RenderableLayerSystem();
+		root_render_layer = new chaos::GPURenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return false;
 

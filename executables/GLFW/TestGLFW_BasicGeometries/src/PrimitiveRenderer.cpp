@@ -3,9 +3,9 @@
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/CollisionFramework.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/MultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
@@ -92,7 +92,7 @@ void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform
 }
 
 void PrimitiveRenderer::DrawPrimitiveImpl(
-	chaos::SimpleMesh * mesh,
+	chaos::GPUSimpleMesh * mesh,
 	chaos::GPUProgram  * program,
 	glm::vec4 const & color,
 	glm::mat4 const & local_to_world,
@@ -114,14 +114,14 @@ void PrimitiveRenderer::DrawPrimitiveImpl(
 	chaos::GPUProgramProvider uniform_provider;
 	PrepareObjectProgram(uniform_provider, prim_ctx, next_provider);
 
-	chaos::RenderParams render_params;
+	chaos::GPURenderParams render_params;
 	mesh->Render(renderer, program, &uniform_provider, render_params);
 
 	if (is_translucent)
 		EndTranslucency();
 }
 
-void PrimitiveRenderer::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::triangle3 const & t, glm::vec4 const & color, bool is_translucent) const
 {
 	glDisable(GL_CULL_FACE); // XXX : the quad generation, produce a bad oriented quad in our case, fix the rendering with a hack
 
@@ -144,16 +144,16 @@ void PrimitiveRenderer::DrawPrimitive(chaos::triangle3 const & t, glm::vec4 cons
 	glEnable(GL_CULL_FACE);
 }
 	
-void PrimitiveRenderer::DrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::triangle2 const & t, glm::vec4 const & color, bool is_translucent) const
 {	
 	chaos::triangle3 t3;
 	t3.a = glm::vec3(t.a.x, t.a.y, 0.0f);
 	t3.b = glm::vec3(t.b.x, t.b.y, 0.0f);
 	t3.c = glm::vec3(t.c.x, t.c.y, 0.0f);
-	DrawPrimitive(t3, color, is_translucent);
+	GPUDrawPrimitive(t3, color, is_translucent);
 }
 
-void PrimitiveRenderer::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::sphere3 const & s, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(s))
 		return;
@@ -171,7 +171,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere3 const & s, glm::vec4 const 
 	);
 }
 
-void PrimitiveRenderer::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::sphere2 const & s, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(s))
 		return;
@@ -189,7 +189,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::sphere2 const & s, glm::vec4 const 
 	);
 }
 
-void PrimitiveRenderer::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::box3 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -207,7 +207,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box3 const & b, glm::vec4 const & c
 	);
 }
 
-void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::box2 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	glDisable(GL_CULL_FACE); // XXX : the quad generation, produce a bad oriented quad in our case, fix the rendering with a hack
 
@@ -229,7 +229,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::box2 const & b, glm::vec4 const & c
 	glEnable(GL_CULL_FACE);
 }
 
-void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox3 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	if (IsGeometryEmpty(b))
 		return;
@@ -248,7 +248,7 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox3 const & b, glm::vec4 const & 
 	);	
 }
 
-void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(chaos::obox2 const & b, glm::vec4 const & color, bool is_translucent) const
 {
 	glDisable(GL_CULL_FACE); // XXX : the quad generation, produce a bad oriented quad in our case, fix the rendering with a hack
 
@@ -271,16 +271,16 @@ void PrimitiveRenderer::DrawPrimitive(chaos::obox2 const & b, glm::vec4 const & 
 	glEnable(GL_CULL_FACE);
 }
 
-void PrimitiveRenderer::DrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(glm::vec3 const & p, glm::vec4 const & color, bool is_translucent) const
 {
 	glm::vec3 half_point_size(0.125f);
-	DrawPrimitive(chaos::box3(p, half_point_size), color, is_translucent);
+	GPUDrawPrimitive(chaos::box3(p, half_point_size), color, is_translucent);
 }
 
-void PrimitiveRenderer::DrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const
+void PrimitiveRenderer::GPUDrawPrimitive(glm::vec2 const & p, glm::vec4 const & color, bool is_translucent) const
 {
 	glm::vec2 half_point_size(0.125f);
-	DrawPrimitive(chaos::box2(p, half_point_size), color, is_translucent);
+	GPUDrawPrimitive(chaos::box2(p, half_point_size), color, is_translucent);
 }
 
 

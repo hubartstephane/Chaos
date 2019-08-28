@@ -1,12 +1,12 @@
-﻿#include <chaos/RenderableLayerSystem.h>
+﻿#include <chaos/GPURenderableLayerSystem.h>
 
 namespace chaos
 {
 	// ========================================================
-	// RenderableLayerSystem implementation
+	// GPURenderableLayerSystem implementation
 	// ========================================================	
 
-	int RenderableLayerSystem::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int GPURenderableLayerSystem::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		int result = 0;
 		for (RenderableLayerInfo const & layer_info : layers)
@@ -14,7 +14,7 @@ namespace chaos
 		return result;
 	}
 
-	RenderableLayerSystem::RenderableLayerInfo * RenderableLayerSystem::FindChildRenderableInfo(Renderable * renderable)
+	GPURenderableLayerSystem::RenderableLayerInfo * GPURenderableLayerSystem::FindChildRenderableInfo(GPURenderable * renderable)
 	{
 		for (RenderableLayerInfo & info : layers)
 			if (info.object == renderable)
@@ -22,7 +22,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	RenderableLayerSystem::RenderableLayerInfo const * RenderableLayerSystem::FindChildRenderableInfo(Renderable * renderable) const
+	GPURenderableLayerSystem::RenderableLayerInfo const * GPURenderableLayerSystem::FindChildRenderableInfo(GPURenderable * renderable) const
 	{
 		for (RenderableLayerInfo const & info : layers)
 			if (info.object == renderable)
@@ -30,7 +30,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool RenderableLayerSystem::AddChildRenderable(Renderable * renderable, int render_order)
+	bool GPURenderableLayerSystem::AddChildRenderable(GPURenderable * renderable, int render_order)
 	{
 		if (FindChildRenderableInfo(renderable) != nullptr)
 			return false;
@@ -45,7 +45,7 @@ namespace chaos
 		return true;
 	}
 
-	bool RenderableLayerSystem::RemoveChildRenderable(Renderable * renderable)
+	bool GPURenderableLayerSystem::RemoveChildRenderable(GPURenderable * renderable)
 	{
 		RenderableLayerInfo * layer_info = FindChildRenderableInfo(renderable);
 		if (layer_info == nullptr)
@@ -54,7 +54,7 @@ namespace chaos
 		return true;
 	}
 
-	Renderable * RenderableLayerSystem::FindChildRenderable(char const * name)
+	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(char const * name)
 	{
 		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, name);
 		if (info == nullptr)
@@ -62,7 +62,7 @@ namespace chaos
 		return info->object.get();
 	}
 
-	Renderable const * RenderableLayerSystem::FindChildRenderable(char const * name) const
+	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(char const * name) const
 	{
 		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, name);
 		if (info == nullptr)
@@ -70,7 +70,7 @@ namespace chaos
 		return info->object.get();
 	}
 
-	Renderable * RenderableLayerSystem::FindChildRenderable(TagType tag)
+	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(TagType tag)
 	{
 		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, tag);
 		if (info == nullptr)
@@ -78,7 +78,7 @@ namespace chaos
 		return info->object.get();
 	}
 
-	Renderable const * RenderableLayerSystem::FindChildRenderable(TagType tag) const
+	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(TagType tag) const
 	{
 		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, tag);
 		if (info == nullptr)
@@ -86,16 +86,16 @@ namespace chaos
 		return info->object.get();
 	}	
 
-	size_t RenderableLayerSystem::GetChildCount() const
+	size_t GPURenderableLayerSystem::GetChildCount() const
 	{
 		return layers.size();
 	}
-	Renderable * RenderableLayerSystem::GetChildAt(size_t index)
+	GPURenderable * GPURenderableLayerSystem::GetChildAt(size_t index)
 	{
 		return layers[index].object.get();
 	}
 
-	Renderable const * RenderableLayerSystem::GetChildAt(size_t index) const
+	GPURenderable const * GPURenderableLayerSystem::GetChildAt(size_t index) const
 	{
 		return layers[index].object.get();
 	}

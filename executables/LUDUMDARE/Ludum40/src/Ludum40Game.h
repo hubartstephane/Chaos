@@ -12,9 +12,9 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUTexture.h>
@@ -200,7 +200,7 @@ protected:
 	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);
 
 	// background data
-	chaos::shared_ptr<chaos::SimpleMesh> fullscreen_mesh;
+	chaos::shared_ptr<chaos::GPUSimpleMesh> fullscreen_mesh;
 
 	chaos::shared_ptr<chaos::GPUProgram>  background_program;	
 	chaos::shared_ptr<chaos::GPUTexture>    background_texture;

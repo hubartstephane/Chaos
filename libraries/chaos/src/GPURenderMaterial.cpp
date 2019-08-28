@@ -1,4 +1,5 @@
 ﻿#include <chaos/GPURenderMaterial.h>
+#include <chaos/GPURenderParams.h>
 #include <chaos/StringTools.h>
 
 namespace chaos
@@ -118,7 +119,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	GPUProgram const * GPURenderMaterial::DoGetEffectiveProgram(RenderParams const & render_params, bool submaterial_encoutered) const
+	GPUProgram const * GPURenderMaterial::DoGetEffectiveProgram(GPURenderParams const & render_params, bool submaterial_encoutered) const
 	{
 		// sub-materials
 		if (!render_params.renderpass_name.empty())
@@ -146,19 +147,19 @@ namespace chaos
 		return nullptr;	
 	}
 
-	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(RenderParams const & render_params) const
+	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
 	{
 		if (!IsMaterialEnabled(render_params))
 			return nullptr;
 		return DoGetEffectiveProgram(render_params, false);
 	}
 
-	bool GPURenderMaterial::IsMaterialEnabled(RenderParams const & render_params) const
+	bool GPURenderMaterial::IsMaterialEnabled(GPURenderParams const & render_params) const
 	{	
 		return true;
 	}
 
-	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, RenderParams const & render_params) const
+	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const
 	{
 		// go through the hierarchy until we get the program
 		GPUProgram const * effective_program = GetEffectiveProgram(render_params);

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleTextGenerator.h>
 
@@ -15,7 +15,7 @@ namespace death
 	// GameHUDComponent
 	// ====================================================================
 
-	class GameHUDComponent : public chaos::Renderable
+	class GameHUDComponent : public chaos::GPURenderable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -225,7 +225,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::RenderParams const & render_params) const override;
+		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const override;
 		/** override */
 		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 

@@ -1,23 +1,25 @@
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 
 #include <chaos/GLTools.h>
 #include <chaos/GPURenderMaterial.h>
+#include <chaos/GPURenderer.h>
+#include <chaos/GPURenderParams.h>
 
 namespace chaos
 {
-	SimpleMesh::~SimpleMesh()
+	GPUSimpleMesh::~GPUSimpleMesh()
 	{
 		DoRelease();
 	}
 
-	void SimpleMesh::ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset)
+	void GPUSimpleMesh::ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset)
 	{
 		if (vb_offset != 0 || ib_offset != 0)
 			for (auto & primitive : primitives)
 				primitive.ShiftIndexAndVertexPosition(vb_offset, ib_offset);
 	}
 
-	bool SimpleMesh::DoRelease()
+	bool GPUSimpleMesh::DoRelease()
 	{
 		vertex_buffer = nullptr;
 		index_buffer = nullptr;
@@ -29,7 +31,7 @@ namespace chaos
 		return true;
 	}
 
-	void SimpleMesh::Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	void GPUSimpleMesh::Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		// early exit
 		if (program == nullptr)
@@ -40,7 +42,7 @@ namespace chaos
 		DoRender(renderer, program, render_params);
 	}
 
-	void SimpleMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	void GPUSimpleMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		// early exit
 		if (material == nullptr)
@@ -53,7 +55,7 @@ namespace chaos
 		DoRender(renderer, program, render_params);
 	}
 
-	void SimpleMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, RenderParams const & render_params) const
+	void GPUSimpleMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params) const
 	{
 		assert(program != nullptr);
 		// find the vertex array to use
@@ -69,7 +71,7 @@ namespace chaos
 		glBindVertexArray(0);
 	}
 
-	void SimpleMesh::SetVertexBufferOffset(GLintptr in_vertex_buffer_offset)
+	void GPUSimpleMesh::SetVertexBufferOffset(GLintptr in_vertex_buffer_offset)
 	{
 		vertex_buffer_offset = in_vertex_buffer_offset;
 	}

@@ -6,9 +6,9 @@
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GPUProgramProvider.h>
-#include <chaos/Renderable.h>
+#include <chaos/GPURenderable.h>
 #include <chaos/Tickable.h>
-#include <chaos/RenderableLayerSystem.h>
+#include <chaos/GPURenderableLayerSystem.h>
 #include <chaos/ParticleTools.h>
 
 namespace chaos
@@ -18,7 +18,7 @@ namespace chaos
 	// ParticleManager
 	// ==============================================================
 
-	class ParticleManager : public Renderable
+	class ParticleManager : public GPURenderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
@@ -75,7 +75,7 @@ namespace chaos
 		/** tick the manager */
 		virtual bool DoTick(double delta_time) override;
 		/** display all the particles */
-		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const override;
+		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const override;
 
 		/** insert layer with some initialization */
 		void DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id);
@@ -83,7 +83,7 @@ namespace chaos
 	protected:
 
 		/** the layer system */
-		RenderableLayerSystem layer_system;
+		GPURenderableLayerSystem layer_system;
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
 	};

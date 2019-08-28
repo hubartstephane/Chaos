@@ -1,5 +1,5 @@
 #include <chaos/ParticleManager.h>
-#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUResourceManager.h>
 #include <chaos/ParticleTools.h>
 
@@ -60,7 +60,7 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleManager::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params) const
+	int ParticleManager::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		return layer_system.Display(renderer, uniform_provider, render_params);
 	}

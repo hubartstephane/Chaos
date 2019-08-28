@@ -14,9 +14,9 @@
 #include <chaos/WinTools.h> 
 #include <chaos/GPUProgramLoader.h>
 #include <chaos/Application.h>
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUTexture.h>
@@ -30,7 +30,9 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/SoundManager.h>
 #include <chaos/JSONTools.h>
-#include <chaos/DrawPrimitive.h>
+#include <chaos/GPUDrawPrimitive.h>
+
+#include <chaos/GPURenderParams.h>
 
 #include "Ludum40SpriteManager.h"
 
@@ -669,7 +671,7 @@ void Game::DisplayFullscreen(chaos::GPURenderer * renderer, glm::ivec2 viewport_
 	uniform_provider.AddVariableValue("life_ratio", life_ratio);
 	uniform_provider.AddVariableValue("level_ratio", level_ratio);
 
-	chaos::RenderParams render_params;
+	chaos::GPURenderParams render_params;
 	fullscreen_mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 }
 

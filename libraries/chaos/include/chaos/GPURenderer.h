@@ -7,7 +7,8 @@
 #include <chaos/GPUFramebuffer.h>
 #include <chaos/GPUFence.h>
 #include <chaos/TimedAccumulator.h>
-#include <chaos/SimpleMesh.h>
+#include <chaos/GPUSimpleMesh.h>
+#include <chaos/GPUInstancingInfo.h>
 
 namespace chaos
 {
@@ -32,10 +33,10 @@ namespace chaos
 		virtual bool Initialize();
 
 		/** render a full screen quad */
-		void DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, RenderParams const & render_params);
+		void DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** draw a primitive */
-		void Draw(DrawPrimitive const & primitive, InstancingInfo const & instancing = InstancingInfo());
+		void Draw(GPUDrawPrimitive const & primitive, GPUInstancingInfo const & instancing = GPUInstancingInfo());
 
 		/** called at the start of a new frame */
 		void BeginRenderingFrame();
@@ -76,7 +77,7 @@ namespace chaos
 		std::vector<GPUFramebufferRenderData> framebuffer_stack;
 
 		/** the fullscreen quad mesh */
-		chaos::shared_ptr<SimpleMesh> quad_mesh;
+		chaos::shared_ptr<GPUSimpleMesh> quad_mesh;
 
 
 		/** whether a rendering is in progress */

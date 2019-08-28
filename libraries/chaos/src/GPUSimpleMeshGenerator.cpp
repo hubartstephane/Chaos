@@ -1,4 +1,4 @@
-#include <chaos/SimpleMeshGenerator.h>
+#include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/GLTools.h>
 #include <chaos/MathTools.h>
 
@@ -99,10 +99,10 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// SimpleMeshGenerator
+	// GPUSimpleMeshGenerator
 	// =====================================================================
 
-	bool SimpleMeshGenerator::FillMeshData(SimpleMesh * mesh) const
+	bool GPUSimpleMeshGenerator::FillMeshData(GPUSimpleMesh * mesh) const
 	{
 		assert(mesh != nullptr);
 
@@ -159,9 +159,9 @@ namespace chaos
 		return false;
 	}
 
-	shared_ptr<SimpleMesh> SimpleMeshGenerator::GenerateMesh() const
+	shared_ptr<GPUSimpleMesh> GPUSimpleMeshGenerator::GenerateMesh() const
 	{
-		shared_ptr<SimpleMesh> mesh = new SimpleMesh();
+		shared_ptr<GPUSimpleMesh> mesh = new GPUSimpleMesh();
 		if (mesh != nullptr)
 		{
 			if (!FillMeshData(mesh.get())) // automatic destruction in case of failure
@@ -189,10 +189,10 @@ namespace chaos
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void TriangleMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void TriangleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		// the primitives
-		DrawPrimitive draw_primitive;
+		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = 3;
 		draw_primitive.indexed = false;
 		draw_primitive.primitive_type = GL_TRIANGLES;
@@ -230,10 +230,10 @@ namespace chaos
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void QuadMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void QuadMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		// the primitives
-		DrawPrimitive draw_primitive;
+		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = sizeof(triangles) / sizeof(triangles[0]);
 		draw_primitive.indexed = true;
 		draw_primitive.primitive_type = GL_TRIANGLES;
@@ -274,10 +274,10 @@ namespace chaos
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void CubeMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void CubeMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		// the primitives
-		DrawPrimitive draw_primitive;
+		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = sizeof(triangles) / sizeof(triangles[0]); // number of triangles does not depends on NORMAL presence
 		draw_primitive.indexed = true;
 		draw_primitive.primitive_type = GL_TRIANGLES;
@@ -320,7 +320,7 @@ namespace chaos
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void CircleMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
+	void CircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
 	{
 		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
 	
@@ -350,7 +350,7 @@ namespace chaos
 		// insert the primitive
 		int indices_count  = 3 * subdivisions;
 
-		DrawPrimitive draw_primitive;
+		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = indices_count;
 		draw_primitive.indexed = true;
 		draw_primitive.primitive_type = GL_TRIANGLES;
@@ -384,7 +384,7 @@ namespace chaos
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void SphereMeshGenerator::GenerateMeshData(std::vector<DrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void SphereMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		int subdiv_beta = max(subdivisions, 3);
 		int subdiv_alpha = subdiv_beta * 2;
@@ -454,7 +454,7 @@ namespace chaos
 			subdiv_alpha * (subdiv_beta - 1) * 6 +
 			subdiv_alpha * 3;
 
-		DrawPrimitive draw_primitive;
+		GPUDrawPrimitive draw_primitive;
 		draw_primitive.count = indices_count;
 		draw_primitive.indexed = true;
 		draw_primitive.primitive_type = GL_TRIANGLES;

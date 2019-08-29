@@ -2,6 +2,8 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUResourceManager.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/FilePath.h>
 #include <chaos/ResourceManagerLoader.h>
@@ -118,3 +120,4 @@ namespace chaos
 	};
 
 }; // namespace chaos
+

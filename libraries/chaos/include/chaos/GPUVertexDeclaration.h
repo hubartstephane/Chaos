@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
 
 namespace chaos
 {
@@ -119,3 +120,4 @@ namespace chaos
 		std::vector<GPUVertexDeclarationEntry> entries;
 	};
 }; // namespace chaos
+

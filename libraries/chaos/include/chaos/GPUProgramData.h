@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUTexture.h>
 

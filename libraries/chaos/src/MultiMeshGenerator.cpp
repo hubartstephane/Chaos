@@ -112,8 +112,6 @@ namespace chaos
 					}
 				}
 
-				auto ppp = vertices_writer.GetRemainingBufferSize();
-
 				assert(vertices_writer.GetRemainingBufferSize() == 0);
 				assert(indices_writer.GetRemainingBufferSize() == 0);
 

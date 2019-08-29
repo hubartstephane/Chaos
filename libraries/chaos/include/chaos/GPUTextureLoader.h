@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/ImageTools.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GPUTexture.h>

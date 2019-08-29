@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/GPUResource.h>
 
 namespace chaos
@@ -92,3 +94,4 @@ namespace chaos
 	using GLTimeStampQuery = GLTypedQuery<GL_TIMESTAMP>;
 
 }; // namespace chaos
+

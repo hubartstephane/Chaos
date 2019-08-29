@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/GPUTexture.h>
 #include <chaos/GPURenderbuffer.h>
 #include <chaos/GPUFramebuffer.h>
@@ -76,3 +78,4 @@ namespace chaos
 	};
 
 }; // namespace chaos
+

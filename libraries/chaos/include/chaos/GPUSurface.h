@@ -1,12 +1,13 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/GPUFileResource.h>
 #include <chaos/TextureDescription.h>
 
 namespace chaos
 {
-
 	class GPUSurface : public GPUFileResource
 	{
 	public:
@@ -16,3 +17,4 @@ namespace chaos
 	};
 
 }; // namespace chaos
+

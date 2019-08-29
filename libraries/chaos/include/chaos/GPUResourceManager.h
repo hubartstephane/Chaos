@@ -1,6 +1,9 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
+
+
 #include <chaos/ReferencedObject.h>
 #include <chaos/Manager.h>
 #include <chaos/GPUTexture.h>
@@ -148,3 +151,4 @@ namespace chaos
 		std::vector<shared_ptr<GPURenderMaterial>> render_materials;
 	};
 }; // namespace chaos
+

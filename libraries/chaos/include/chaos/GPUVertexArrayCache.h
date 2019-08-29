@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
+
 #include <chaos/ReferencedObject.h>
 #include <chaos/GPUVertexArray.h>
 #include <chaos/GPUProgram.h>
@@ -64,3 +66,4 @@ namespace chaos
 	};
 
 }; // namespace chaos
+

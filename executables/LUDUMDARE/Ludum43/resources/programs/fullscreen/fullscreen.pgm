@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@fullscreen.psh"
+	],
+	"vertex_sources":
+	[
+		"@fullscreen.vsh"
+	]
+}

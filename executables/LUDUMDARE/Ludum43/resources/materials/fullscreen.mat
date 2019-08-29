@@ -1,0 +1,8 @@
+{
+  "program": "fullscreen",
+
+  "textures": 
+	{
+    "background": { "name": "background1" }		
+  }
+}

@@ -1,4 +1,5 @@
 {
+    "@fullscreen": {"path":"@materials/fullscreen.mat"},
 		"@background": {"path":"@materials/background.mat"},
 		"@lifebar" : {"path":"@materials/lifebar.mat"},
     "@player" : {"path":"@materials/player.mat"},

@@ -203,6 +203,34 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		// draw particle system (the background)
 		current_level_instance->Display(renderer, uniform_provider, other_rendering_params);
 	}
+
+
+
+
+
+
+
+#if 0
+	{
+
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (resource_manager == nullptr)
+			return;
+
+		chaos::GPURenderMaterial * material = resource_manager->FindRenderMaterial("fullscreen");
+		if (material == nullptr)
+			return;
+
+		renderer->DrawFullscreenQuad(material, nullptr, render_params);
+
+
+	}
+#endif
+
+
+
+
+
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

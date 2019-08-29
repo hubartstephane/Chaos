@@ -1,19 +1,19 @@
-#include <chaos/MultiMeshGenerator.h>
+#include <chaos/GPUMultiMeshGenerator.h>
 #include <chaos/GLTools.h>
 
 namespace chaos
 {
 
-	MultiMeshGenerator::MultiMeshGenerator()
+	GPUMultiMeshGenerator::GPUMultiMeshGenerator()
 	{
 	}
 
-	MultiMeshGenerator::~MultiMeshGenerator()
+	GPUMultiMeshGenerator::~GPUMultiMeshGenerator()
 	{
 		Clean();
 	}
 
-	void MultiMeshGenerator::AddGenerator(GPUSimpleMeshGenerator * generator, shared_ptr<GPUSimpleMesh> & target_ptr)
+	void GPUMultiMeshGenerator::AddGenerator(GPUSimpleMeshGenerator * generator, shared_ptr<GPUSimpleMesh> & target_ptr)
 	{
 		assert(generator != nullptr);
 
@@ -22,12 +22,12 @@ namespace chaos
 		generators.push_back(std::make_pair(generator_ptr, &target_ptr));
 	}
 
-	void MultiMeshGenerator::Clean()
+	void GPUMultiMeshGenerator::Clean()
 	{
 		generators.clear(); // destroy the intrusive_ptr
 	}
 
-	bool MultiMeshGenerator::GenerateMeshes() const
+	bool GPUMultiMeshGenerator::GenerateMeshes() const
 	{
 		if (generators.size() == 0)
 			return true;

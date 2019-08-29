@@ -6,7 +6,7 @@
 #include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/SkyBoxTools.h>
 #include <chaos/GPUSimpleMesh.h>
-#include <chaos/MultiMeshGenerator.h>
+#include <chaos/GPUMultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUVertexDeclaration.h>
@@ -43,7 +43,7 @@ bool PrimitiveRenderer::Initialize()
 	chaos::sphere2   c = chaos::sphere2(glm::vec2(0.0f, 0.0f), 1.0f);
 	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
-	chaos::MultiMeshGenerator generators;
+	chaos::GPUMultiMeshGenerator generators;
 	generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(), 30), mesh_sphere);
 	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(), 30), mesh_circle);
 	generators.AddGenerator(new chaos::GPUQuadMeshGenerator(b2), mesh_quad);

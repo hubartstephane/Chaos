@@ -17,7 +17,7 @@
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/GPUSimpleMesh.h>
-#include <chaos/MultiMeshGenerator.h>
+#include <chaos/GPUMultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUVertexDeclaration.h>

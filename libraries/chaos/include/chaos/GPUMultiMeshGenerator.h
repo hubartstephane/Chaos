@@ -6,17 +6,17 @@
 namespace chaos
 {
 	/**
-	* MultiMeshGenerator : this class is used to generator multiple mesh in a row, shared vertex and index buffer
+	* GPUMultiMeshGenerator : this class is used to generator multiple mesh in a row, shared vertex and index buffer
 	*/
 
-	class MultiMeshGenerator
+	class GPUMultiMeshGenerator
 	{
 	public:
 
 		/** constructor */
-		MultiMeshGenerator();
+		GPUMultiMeshGenerator();
 		/** destructor */
-		virtual ~MultiMeshGenerator();
+		virtual ~GPUMultiMeshGenerator();
 
 		/** the insertion method */
 		void AddGenerator(GPUSimpleMeshGenerator * generator, shared_ptr<GPUSimpleMesh> & target_ptr);

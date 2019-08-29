@@ -1,5 +1,5 @@
 #include <chaos/GPURenderer.h>
-#include <chaos/MultiMeshGenerator.h>
+#include <chaos/GPUMultiMeshGenerator.h>
 
 namespace chaos
 {
@@ -180,7 +180,7 @@ namespace chaos
 
 	bool GPURenderer::Initialize()
 	{
-		MultiMeshGenerator generators;
+		GPUMultiMeshGenerator generators;
 
 		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
 		generators.AddGenerator(new chaos::GPUQuadMeshGenerator(box), quad_mesh);

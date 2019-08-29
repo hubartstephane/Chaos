@@ -14,7 +14,7 @@
 #include <chaos/GLDebugOnScreenDisplay.h>
 #include <chaos/FPSViewInputController.h>
 #include <chaos/GPUSimpleMesh.h>
-#include <chaos/MultiMeshGenerator.h>
+#include <chaos/GPUMultiMeshGenerator.h>
 #include <chaos/GPUProgramData.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUVertexDeclaration.h>
@@ -121,7 +121,7 @@ protected:
 		// create meshes
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
-		chaos::MultiMeshGenerator generators;    
+		chaos::GPUMultiMeshGenerator generators;    
 		generators.AddGenerator(new chaos::GPUCubeMeshGenerator(b), mesh_box);
 
 		if (!generators.GenerateMeshes())

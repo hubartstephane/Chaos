@@ -14,7 +14,7 @@ namespace chaos
 	* A class to describe requirement for a mesh
 	*/
 
-	class MeshGenerationRequirement
+	class GPUMeshGenerationRequirement
 	{
 	public:
 
@@ -43,7 +43,7 @@ namespace chaos
 		virtual ~GPUSimpleMeshGenerator() = default;
 
 		/** get requirement */
-		virtual MeshGenerationRequirement GetRequirement() const = 0;
+		virtual GPUMeshGenerationRequirement GetRequirement() const = 0;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const = 0;
 		/** get the mesh data */
@@ -56,18 +56,18 @@ namespace chaos
 	};
 
 	/**
-	* PrimitiveMeshGenerator : a templated base class for primitives
+	* GPUPrimitiveMeshGenerator : a templated base class for primitives
 	*/
 
 	template<typename T>
-	class PrimitiveMeshGenerator : public GPUSimpleMeshGenerator
+	class GPUPrimitiveMeshGenerator : public GPUSimpleMeshGenerator
 	{
 	public:
 
 		using primitive_type = T;
 
 		/** constructor */
-		PrimitiveMeshGenerator(primitive_type const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4()):
+		GPUPrimitiveMeshGenerator(primitive_type const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4()):
 			primitive(in_primitive),
 			transform(in_transform){}
 
@@ -80,18 +80,18 @@ namespace chaos
 	};
 
 	/**
-	* QuadMeshGenerator : help defines mesh as simple quad
+	* GPUQuadMeshGenerator : help defines mesh as simple quad
 	*/
 
-	class QuadMeshGenerator : public PrimitiveMeshGenerator<box2>
+	class GPUQuadMeshGenerator : public GPUPrimitiveMeshGenerator<box2>
 	{
 
 	public:
 
-		using PrimitiveMeshGenerator::PrimitiveMeshGenerator;
+		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
 
 		/** get requirement */
-		virtual MeshGenerationRequirement GetRequirement() const override;
+		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
@@ -106,18 +106,18 @@ namespace chaos
 	};
 
 	/**
-	* TriangleMeshGenerator : help defines mesh as simple traingle
+	* GPUTriangleMeshGenerator : help defines mesh as simple traingle
 	*/
 
-	class TriangleMeshGenerator : public PrimitiveMeshGenerator<triangle3>
+	class GPUTriangleMeshGenerator : public GPUPrimitiveMeshGenerator<triangle3>
 	{
 
 	public:
 
-		using PrimitiveMeshGenerator::PrimitiveMeshGenerator;
+		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
 
 		/** get requirement */
-		virtual MeshGenerationRequirement GetRequirement() const override;
+		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
@@ -125,18 +125,18 @@ namespace chaos
 	};
 
 	/**
-	* CubeMeshGenerator : help defines cube mesh
+	* GPUCubeMeshGenerator : help defines cube mesh
 	*/
 
-	class CubeMeshGenerator : public PrimitiveMeshGenerator<box3>
+	class GPUCubeMeshGenerator : public GPUPrimitiveMeshGenerator<box3>
 	{
 
 	public:
 
-		using PrimitiveMeshGenerator::PrimitiveMeshGenerator;
+		using GPUPrimitiveMeshGenerator::GPUPrimitiveMeshGenerator;
 
 		/** get requirement */
-		virtual MeshGenerationRequirement GetRequirement() const override;
+		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
@@ -151,21 +151,21 @@ namespace chaos
 	};
 
 	/**
-	* CircleMeshGenerator : help defines mesh as simple 2D circle
+	* GPUCircleMeshGenerator : help defines mesh as simple 2D circle
 	*/
 
-	class CircleMeshGenerator : public PrimitiveMeshGenerator<sphere2>
+	class GPUCircleMeshGenerator : public GPUPrimitiveMeshGenerator<sphere2>
 	{
 
 	public:
 
 		/** constructor */
-		CircleMeshGenerator(sphere2 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
-			PrimitiveMeshGenerator<sphere2>(in_primitive, in_transform),
+		GPUCircleMeshGenerator(sphere2 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
+			GPUPrimitiveMeshGenerator<sphere2>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
 		/** get requirement */
-		virtual MeshGenerationRequirement GetRequirement() const override;
+		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */
@@ -179,21 +179,21 @@ namespace chaos
 
 
 	/**
-	* SphereMeshGenerator : help defines mesh as simple sphere
+	* GPUSphereMeshGenerator : help defines mesh as simple sphere
 	*/
 
-	class SphereMeshGenerator : public PrimitiveMeshGenerator<sphere3>
+	class GPUSphereMeshGenerator : public GPUPrimitiveMeshGenerator<sphere3>
 	{
 
 	public:
 
 		/** constructor */
-		SphereMeshGenerator(sphere3 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
-			PrimitiveMeshGenerator<sphere3>(in_primitive, in_transform),
+		GPUSphereMeshGenerator(sphere3 const & in_primitive, glm::mat4x4 const & in_transform = glm::mat4x4(), int in_subdivisions = 10) :
+			GPUPrimitiveMeshGenerator<sphere3>(in_primitive, in_transform),
 			subdivisions(in_subdivisions) {}
 
 		/** get requirement */
-		virtual MeshGenerationRequirement GetRequirement() const override;
+		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
 		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
 		/** get the mesh data */

@@ -52,7 +52,7 @@ namespace chaos
 		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, glm::ivec2 const & image_id);
 
 		/** fill the vertices array with 6 vertices corresponding to 3 triangles */
-		template<class VERTEX_TYPE>
+		template<typename VERTEX_TYPE>
 		void GenerateBoxParticle(ParticleCorners const & corners, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices, float rotation = 0.0f)
 		{
 			VERTEX_TYPE bl;
@@ -105,7 +105,7 @@ namespace chaos
 			vertices[5] = tl;
 		}
 
-		template<class VERTEX_TYPE>
+		template<typename VERTEX_TYPE>
 		void GenerateBoxParticle(chaos::box2 const & box, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices, float rotation = 0.0f)
 		{
 			std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);

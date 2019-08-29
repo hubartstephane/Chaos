@@ -2,16 +2,14 @@
 
 #include <chaos/StandardHeaders.h>
 
-
 namespace chaos
 {
 
-	class SkinnedMesh
+	class GPUSkinnedMeshAnimation
 	{
 
 
 
 	};
-
 
 }; // namespace chaos

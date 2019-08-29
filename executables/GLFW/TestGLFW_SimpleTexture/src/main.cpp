@@ -322,11 +322,11 @@ protected:
 
 		// create the mesh
 		//chaos::box2 b = chaos::box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
-		//mesh = chaos::QuadMeshGenerator(b).GenerateMesh();
+		//mesh = chaos::GPUQuadMeshGenerator(b).GenerateMesh();
 
 
 		chaos::sphere2 s(glm::vec2(0.0f, 0.0f), 1.0f);
-		mesh = chaos::CircleMeshGenerator(s, glm::mat4x4(), 30).GenerateMesh();
+		mesh = chaos::GPUCircleMeshGenerator(s, glm::mat4x4(), 30).GenerateMesh();
 		if (mesh == nullptr)
 			return false;
 

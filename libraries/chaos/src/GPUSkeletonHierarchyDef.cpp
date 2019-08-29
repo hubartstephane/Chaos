@@ -1,4 +1,4 @@
-#include <chaos/SkeletonHierarchyDef.h>
+#include <chaos/GPUSkeletonHierarchyDef.h>
 
 
 namespace chaos

@@ -44,11 +44,11 @@ bool PrimitiveRenderer::Initialize()
 	chaos::sphere3   s = chaos::sphere3(glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 
 	chaos::MultiMeshGenerator generators;
-	generators.AddGenerator(new chaos::SphereMeshGenerator(s, glm::mat4x4(), 30), mesh_sphere);
-	generators.AddGenerator(new chaos::CircleMeshGenerator(c, glm::mat4x4(), 30), mesh_circle);
-	generators.AddGenerator(new chaos::QuadMeshGenerator(b2), mesh_quad);
-	generators.AddGenerator(new chaos::CubeMeshGenerator(b3), mesh_box);
-	generators.AddGenerator(new chaos::TriangleMeshGenerator(t), mesh_triangle);
+	generators.AddGenerator(new chaos::GPUSphereMeshGenerator(s, glm::mat4x4(), 30), mesh_sphere);
+	generators.AddGenerator(new chaos::GPUCircleMeshGenerator(c, glm::mat4x4(), 30), mesh_circle);
+	generators.AddGenerator(new chaos::GPUQuadMeshGenerator(b2), mesh_quad);
+	generators.AddGenerator(new chaos::GPUCubeMeshGenerator(b3), mesh_box);
+	generators.AddGenerator(new chaos::GPUTriangleMeshGenerator(t), mesh_triangle);
 
 	if (!generators.GenerateMeshes())
 		return false;

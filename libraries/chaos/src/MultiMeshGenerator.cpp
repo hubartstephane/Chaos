@@ -38,7 +38,7 @@ namespace chaos
 
 		for (auto const it : generators)
 		{
-			MeshGenerationRequirement requirement = it.first->GetRequirement();
+			GPUMeshGenerationRequirement requirement = it.first->GetRequirement();
 			if (!requirement.IsValid())
 				return false;
 
@@ -68,7 +68,7 @@ namespace chaos
 
 				for (auto const it : generators)
 				{
-					MeshGenerationRequirement requirement = it.first->GetRequirement();
+					GPUMeshGenerationRequirement requirement = it.first->GetRequirement();
 
 					size_t written_vertices_count = vertices_writer.GetWrittenCount();
 					size_t written_indices_count = indices_writer.GetWrittenCount();

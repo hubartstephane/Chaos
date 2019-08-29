@@ -1,4 +1,4 @@
-#include <chaos/SkinnedMeshAnimation.h>
+#include <chaos/GPUSkinnedMesh.h>
 
 namespace chaos
 {

@@ -6,10 +6,10 @@ namespace chaos
 {
 
 	/**
-	* SkeletonHierarchyBoneDef : defines a bone in the hierarchy
+	* GPUSkeletonHierarchyBoneDef : defines a bone in the hierarchy
 	*/
 
-	class SkeletonHierarchyBoneDef
+	class GPUSkeletonHierarchyBoneDef
 	{
 	public:
 
@@ -24,10 +24,10 @@ namespace chaos
 	};
 
 	/**
-	* SkeletonHierarchyDef : defines the chaine of bones
+	* GPUSkeletonHierarchyDef : defines the chaine of bones
 	*/
 
-	class SkeletonHierarchyDef
+	class GPUSkeletonHierarchyDef
 	{
 	public:
 
@@ -36,7 +36,7 @@ namespace chaos
 		/** the name of all bones */
 		std::vector<std::string> bone_names;
 		/** the hierarchy itself */
-		std::vector<SkeletonHierarchyBoneDef> bone_data;
+		std::vector<GPUSkeletonHierarchyBoneDef> bone_data;
 	};
 
 }; // namespace chaos

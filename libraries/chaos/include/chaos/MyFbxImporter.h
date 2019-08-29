@@ -4,7 +4,7 @@
 #include <chaos/GPUSimpleMesh.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/Buffer.h>
-#include <chaos/SkeletonHierarchyDef.h>
+#include <chaos/GPUSkeletonHierarchyDef.h>
 
 namespace chaos
 {
@@ -28,7 +28,7 @@ namespace chaos
 		/** the meshes that have been read */
 		std::vector<GPUSimpleMesh *> meshes;
 		/** the skeleton hierarchies that have been read */
-		std::vector<SkeletonHierarchyDef *> skeleton_defs;
+		std::vector<GPUSkeletonHierarchyDef *> skeleton_defs;
 	};
 
 	/**

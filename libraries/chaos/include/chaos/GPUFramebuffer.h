@@ -23,7 +23,7 @@ namespace chaos
 		shared_ptr<GPURenderbuffer> renderbuffer;
 	};
 
-	template<class ATTACHMENT_TYPE>
+	template<typename ATTACHMENT_TYPE>
 	class GPUAttachmentOwner
 	{
 	public:

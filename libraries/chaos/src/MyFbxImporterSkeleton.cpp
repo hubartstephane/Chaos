@@ -48,7 +48,7 @@ namespace chaos
 			current_skeleton_index = output->skeleton_defs.size();
 			current_bone_index     = std::numeric_limits<size_t>::max();
 
-			SkeletonHierarchyDef * def = new SkeletonHierarchyDef;
+			GPUSkeletonHierarchyDef * def = new GPUSkeletonHierarchyDef;
 			def->name = skeleton->GetName();
 			output->skeleton_defs.push_back(def);    
 
@@ -57,9 +57,9 @@ namespace chaos
 
 		assert(current_skeleton_index != std::numeric_limits<size_t>::max());
 
-		SkeletonHierarchyDef * def = output->skeleton_defs[current_skeleton_index];
+		GPUSkeletonHierarchyDef * def = output->skeleton_defs[current_skeleton_index];
 
-		SkeletonHierarchyBoneDef bone_def;
+		GPUSkeletonHierarchyBoneDef bone_def;
 		bone_def.children_count =  0;
 		bone_def.first_child    = -1;
 		bone_def.bone_sibling   = -1; // no brother node for moment
@@ -72,7 +72,7 @@ namespace chaos
 		{
 			bone_def.parent_bone = (int)current_bone_index;
 
-			SkeletonHierarchyBoneDef & parent = def->bone_data[bone_def.parent_bone];
+			GPUSkeletonHierarchyBoneDef & parent = def->bone_data[bone_def.parent_bone];
 			parent.children_count++;
 			if (parent.first_child < 0)
 				parent.first_child = (int)def->bone_data.size(); // first child beeing inserted

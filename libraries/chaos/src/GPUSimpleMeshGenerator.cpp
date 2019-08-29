@@ -15,7 +15,7 @@
 namespace chaos
 {
 
-	glm::vec2 const QuadMeshGenerator::vertices[4] =
+	glm::vec2 const GPUQuadMeshGenerator::vertices[4] =
 	{
 		glm::vec2(-1.0f, -1.0f),
 		glm::vec2(1.0f, -1.0f),
@@ -23,13 +23,13 @@ namespace chaos
 		glm::vec2(-1.0f,  1.0f)
 	};
 
-	GLuint const QuadMeshGenerator::triangles[6] =
+	GLuint const GPUQuadMeshGenerator::triangles[6] =
 	{
 		0, 1, 2,
 		0, 2, 3
 	};
 
-	glm::vec3 const CubeMeshGenerator::vertices[24 * 2] = // position + normal
+	glm::vec3 const GPUCubeMeshGenerator::vertices[24 * 2] = // position + normal
 	{
 		glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
 		glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, -1.0f),
@@ -62,7 +62,7 @@ namespace chaos
 		glm::vec3(-1.0f, +1.0f,  1.0f), glm::vec3(0.0f, +1.0f, 0.0f),
 	};
 
-	GLuint const CubeMeshGenerator::triangles[36] =
+	GLuint const GPUCubeMeshGenerator::triangles[36] =
 	{
 		0, 2, 1,
 		0, 3, 2,
@@ -84,10 +84,10 @@ namespace chaos
 	};
 
 	// =====================================================================
-	// MeshGenerationRequirement
+	// GPUMeshGenerationRequirement
 	// =====================================================================
 
-	bool MeshGenerationRequirement::IsValid() const
+	bool GPUMeshGenerationRequirement::IsValid() const
 	{
 		if (vertex_size <= 0)
 			return false;
@@ -106,7 +106,7 @@ namespace chaos
 	{
 		assert(mesh != nullptr);
 
-		MeshGenerationRequirement requirement = GetRequirement();
+		GPUMeshGenerationRequirement requirement = GetRequirement();
 		if (requirement.IsValid())
 		{
 			shared_ptr<GPUBuffer> vb_object;
@@ -171,25 +171,25 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// TriangleMeshGenerator
+	// GPUTriangleMeshGenerator
 	// =====================================================================
 
-	MeshGenerationRequirement TriangleMeshGenerator::GetRequirement() const
+	GPUMeshGenerationRequirement GPUTriangleMeshGenerator::GetRequirement() const
 	{
-		MeshGenerationRequirement result;
+		GPUMeshGenerationRequirement result;
 		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 3;
 		result.indices_count = 0;
 		return result;
 	}
 
-	void TriangleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+	void GPUTriangleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void TriangleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUTriangleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
@@ -212,25 +212,25 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// QuadMeshGenerator
+	// GPUQuadMeshGenerator
 	// =====================================================================
 
-	MeshGenerationRequirement QuadMeshGenerator::GetRequirement() const
+	GPUMeshGenerationRequirement GPUQuadMeshGenerator::GetRequirement() const
 	{
-		MeshGenerationRequirement result;
+		GPUMeshGenerationRequirement result;
 		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = sizeof(vertices) / sizeof(vertices[0]);
 		result.indices_count = sizeof(triangles) / sizeof(triangles[0]);
 		return result;
 	}
 
-	void QuadMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+	void GPUQuadMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void QuadMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUQuadMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
@@ -256,25 +256,25 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// CubeMeshGenerator
+	// GPUCubeMeshGenerator
 	// =====================================================================
 
-	MeshGenerationRequirement CubeMeshGenerator::GetRequirement() const
+	GPUMeshGenerationRequirement GPUCubeMeshGenerator::GetRequirement() const
 	{
-		MeshGenerationRequirement result;
+		GPUMeshGenerationRequirement result;
 		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = (sizeof(vertices) / sizeof(vertices[0])) / 2; //  div by 2 because buffer contains POSITION + NORMAL
 		result.indices_count = (sizeof(triangles) / sizeof(triangles[0]));
 		return result;
 	}
 
-	void CubeMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+	void GPUCubeMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void CubeMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUCubeMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		// the primitives
 		GPUDrawPrimitive draw_primitive;
@@ -301,26 +301,26 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// CircleMeshGenerator
+	// GPUCircleMeshGenerator
 	// =====================================================================
 
 
-	MeshGenerationRequirement CircleMeshGenerator::GetRequirement() const 
+	GPUMeshGenerationRequirement GPUCircleMeshGenerator::GetRequirement() const 
 	{
-		MeshGenerationRequirement result;
+		GPUMeshGenerationRequirement result;
 		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 1 + subdivisions;
 		result.indices_count  = 3 * subdivisions;
 		return result;	
 	}
 
-	void CircleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+	void GPUCircleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void CircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
+	void GPUCircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
 	{
 		glm::vec3 normal = GLMTools::Mult(transform, glm::vec3(0.0f, 0.0f, 1.0f));
 	
@@ -360,15 +360,15 @@ namespace chaos
 	}
 
 	// =====================================================================
-	// SphereMeshGenerator
+	// GPUSphereMeshGenerator
 	// =====================================================================
 
-	MeshGenerationRequirement SphereMeshGenerator::GetRequirement() const
+	GPUMeshGenerationRequirement GPUSphereMeshGenerator::GetRequirement() const
 	{
 		int subdiv_beta = max(subdivisions, 3);
 		int subdiv_alpha = subdiv_beta * 2;
 
-		MeshGenerationRequirement result;
+		GPUMeshGenerationRequirement result;
 		result.vertex_size = 2 * sizeof(glm::vec3);
 		result.vertices_count = 2 + subdiv_beta * subdiv_alpha;
 		result.indices_count =
@@ -378,13 +378,13 @@ namespace chaos
 		return result;
 	}
 
-	void SphereMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+	void GPUSphereMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
 	{
 		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
 		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
 	}
 
-	void SphereMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
+	void GPUSphereMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
 		int subdiv_beta = max(subdivisions, 3);
 		int subdiv_alpha = subdiv_beta * 2;
@@ -463,7 +463,7 @@ namespace chaos
 		primitives.push_back(draw_primitive);
 	}
 
-	void SphereMeshGenerator::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const
+	void GPUSphereMeshGenerator::InsertVertex(MemoryBufferWriter & vertices_writer, float alpha, float beta) const
 	{
 		glm::vec3 normal = MathTools::PolarCoordToVector(alpha, beta);
 		vertices_writer << GLMTools::MultWithTranslation(transform, primitive.radius * normal + primitive.position);

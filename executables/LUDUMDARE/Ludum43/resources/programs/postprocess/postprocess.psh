@@ -1,12 +1,13 @@
 out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
-// for fullscreen, incomming position is in [-1, 1]
+// for fullscreen, incomming position is in [-1, 1], incomming texcoord is in [0, 1]
 
 in vec2 vs_position;
+in vec2 vs_texcoord;
 
 void main()
 {
-	output_color.xy = vs_position;
+	output_color.xy = vs_texcoord;
 	output_color.z = 0.0;
 	output_color.a = 1.0;
 }

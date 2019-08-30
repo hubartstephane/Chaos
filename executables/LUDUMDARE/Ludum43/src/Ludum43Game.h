@@ -105,7 +105,7 @@ protected:
 
 	/** the render buffers */
 	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_worldlimits;
-	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_other;
+	chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer_deformed;
 
 public:
 

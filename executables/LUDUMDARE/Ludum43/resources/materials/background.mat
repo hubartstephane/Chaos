@@ -3,15 +3,6 @@
 
   "textures": 
 	{
-    "background": { "name": "background1" },
-		"noise":{"name":"noise"}
-  },
-  "uniforms":
-  {
-    "blend_backgrounds":[1.0, 1.0, 1.0, 1.0],
-		"worldlimit_color":[0.0, 0.0, 0.0],
-		"enemy_color":[2.0, 0.0, 0.0],		
-		"decal_speed":[0.2],
-		"decal_ratio":[0.5]
+    "background": { "name": "background1" }
   }
 }

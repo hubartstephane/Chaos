@@ -47,7 +47,10 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 {
 	death::TiledMap::LevelInstance * ludum_level_instance = GetLudumLevelInstance();
 
+	// -------------------------------------
 	// I/ no level rendering like main menu (the background)
+	// -------------------------------------
+
 	if (ludum_level_instance == nullptr)
 	{
 		if (particle_manager != nullptr)
@@ -55,11 +58,21 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		return;
 	}
 
+	// -------------------------------------
 	// II/ offscreen rendering + composition
+	// -------------------------------------
+
+	chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+	if (resource_manager == nullptr)
+		return;
+
+	chaos::GPURenderMaterial * postprocess_material = resource_manager->FindRenderMaterial("postprocess");
+	if (postprocess_material == nullptr)
+		return;
 
 	// create the render targets or reuse olds
 	glm::ivec2 viewport_size = chaos::GLMTools::RecastVector<glm::ivec2>(render_params.viewport.half_size * 2.0f);
-	if (!GenerateFramebuffer(viewport_size, framebuffer_other) || !GenerateFramebuffer(viewport_size, framebuffer_worldlimits))
+	if (!GenerateFramebuffer(viewport_size, framebuffer_deformed) || !GenerateFramebuffer(viewport_size, framebuffer_worldlimits))
 		return;
 
 	// clear the color buffers
@@ -124,7 +137,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	// RENDER TARGET 2 : all objects that are to be deformed (except Enemies and Player and atoms)
 	// ---------------------------------------------
 	{
-		renderer->PushFramebufferRenderContext(framebuffer_other.get(), true);
+		renderer->PushFramebufferRenderContext(framebuffer_deformed.get(), true);
 
 		glViewport(0, 0, viewport_size.x, viewport_size.y);
 
@@ -156,7 +169,6 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	// ---------------------------------------------
 	{
 		chaos::GPURenderParams other_rendering_params = render_params;
-		//other_rendering_params.renderpass_name = "COMBINE_PASS";
 
 		chaos::GLTools::SetViewport(other_rendering_params.viewport);
 
@@ -167,21 +179,18 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		{
 			chaos::GPUTexture * texture = attachment_worldlimits->texture.get();
 			if (texture != nullptr)
-				main_provider.AddVariableValue("extra_background", texture);
+				main_provider.AddVariableValue("worldlimits", texture);
 		}
 
-		chaos::GPUFramebufferAttachmentInfo const * attachment_other = framebuffer_other->GetColorAttachment(0);
-		if (attachment_other != nullptr)
+		chaos::GPUFramebufferAttachmentInfo const * attachment_deformed = framebuffer_deformed->GetColorAttachment(0);
+		if (attachment_deformed != nullptr)
 		{
-			chaos::GPUTexture * texture = attachment_other->texture.get();
+			chaos::GPUTexture * texture = attachment_deformed->texture.get();
 			if (texture != nullptr)
-				main_provider.AddVariableValue("background", texture);
+				main_provider.AddVariableValue("deformed", texture);
 		}
 
-		main_provider.AddVariableValue("blend_backgrounds", glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-		if (particle_manager != nullptr)
-			particle_manager->Display(renderer, &main_provider, other_rendering_params);
+		renderer->DrawFullscreenQuad(postprocess_material, &main_provider, other_rendering_params);
 	}
 
 	// ---------------------------------------------
@@ -203,34 +212,6 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		// draw particle system (the background)
 		current_level_instance->Display(renderer, uniform_provider, other_rendering_params);
 	}
-
-
-
-
-
-
-
-#if 0
-	{
-
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
-		if (resource_manager == nullptr)
-			return;
-
-		chaos::GPURenderMaterial * material = resource_manager->FindRenderMaterial("fullscreen");
-		if (material == nullptr)
-			return;
-
-		renderer->DrawFullscreenQuad(material, nullptr, render_params);
-
-
-	}
-#endif
-
-
-
-
-
 }
 
 void LudumGame::OnInputModeChanged(int new_mode, int old_mode)

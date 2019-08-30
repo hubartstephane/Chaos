@@ -1,6 +1,11 @@
 {
   "program": "postprocess",
 
+  "textures": 
+	{
+		"noise":{"name":"noise"}
+  },
+
 	"uniforms":
   {
 		"worldlimit_color":[0.0, 0.0, 0.0],

@@ -1,5 +1,5 @@
 {
-  "@fullscreen" : { "path": "@programs/fullscreen/fullscreen.pgm" },
+  "@postprocess" : { "path": "@programs/postprocess/postprocess.pgm" },
   "@background" : { "path": "@programs/background/background.pgm" },
   "@lifebar"  : { "path": "@programs/lifebar/lifebar.pgm" },
   "@player"  : { "path": "@programs/player/player.pgm" },

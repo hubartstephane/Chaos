@@ -1,10 +1,10 @@
 {
 	"pixel_sources":
 	[
-		"@fullscreen.psh"
+		"@postprocess.psh"
 	],
 	"vertex_sources":
 	[
-		"@fullscreen.vsh"
+		"@postprocess.vsh"
 	]
 }

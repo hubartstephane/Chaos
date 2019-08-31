@@ -483,12 +483,16 @@ namespace chaos
 
 			// save the image
 			std::string format = chaos::StringTools::Printf(
-				"capture_%s_%%d.png",
+				"capture_%s_%%d.gif",
 				chaos::StringTools::TimeToString(true).c_str());
 
 			boost::filesystem::path file_path = chaos::FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
 			if (file_path.empty())
 				return false;
+
+			auto bb = FreeImage_Save(FIF_GIF, img.get(), file_path.string().c_str(), 0);
+
+			return bb;
 
 			return (FreeImage_Save(FIF_PNG, img.get(), file_path.string().c_str(), 0) != 0);
 		}

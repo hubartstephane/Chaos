@@ -90,11 +90,24 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 
 
 template<typename T>
-bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_time, float lifetime, bool player)
+bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_time, float lifetime, bool player, LudumGame * game)
 {
 	if (in_inner_radius)
 	{
 		particle->life = chaos::MathTools::Clamp(particle->life - delta_time, 0.0f, lifetime);
+
+		if (player)
+		{
+			death::Camera * camera = game->GetLevelInstance()->GetCamera(0);
+			if (camera != nullptr)
+			{
+				death::ShakeCameraComponent * shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
+				if (shake_component != nullptr)
+					shake_component->RestartModifier();
+			}
+		}
+
+
 		if (particle->life <= 0.0f)
 			return true; // destroy the particle
 	}
@@ -210,7 +223,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 #if _DEBUG
 		if (!layer_trait->game->GetCheatMode())
 #endif
-			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_player_life, true))
+			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_player_life, true, layer_trait->game))
 				return true;
 	}
 
@@ -234,21 +247,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	particle->acceleration = glm::vec2(0.0f, 0.0f);
 	return false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // ===========================================================================
 // ParticleEnemyTrait
@@ -291,10 +289,6 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	particle->bounding_box.position =
 		particle->rotation_center +
 		particle->rotation_radius * v;
-
-
-
-
 
 	return false;
 }
@@ -361,7 +355,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	particle->velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
 
 	// update life and color
-	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_particle_life, false))
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_particle_life, false, layer_trait->game))
 	{
 		if (particle->waken_up)
 			if (ludum_game_instance != nullptr)

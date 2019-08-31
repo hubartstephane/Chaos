@@ -4,7 +4,7 @@
 //       having some macros prevent code duplication
 
 /** a macro to help inserting code for component owning in class declaration */
-#define DEATH_DECLARE_COMPONENT_OWNER(COMPONENT_CLASS, FUNC_COMPONENT_NAME)\
+#define DEATH_DECLARE_COMPONENT_OWNER(COMPONENT_CLASS, FUNC_COMPONENT_NAME, VECTOR_NAME)\
 	size_t Get##FUNC_COMPONENT_NAME##Count() const;\
 	COMPONENT_CLASS * Get##FUNC_COMPONENT_NAME(size_t index);\
 	COMPONENT_CLASS const * Get##FUNC_COMPONENT_NAME(size_t index) const;\

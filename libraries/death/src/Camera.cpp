@@ -36,9 +36,26 @@ namespace death
 		return true;
 	}
 
-	chaos::obox2 Camera::GetCameraOBox() const
+	chaos::box2 Camera::GetCameraBox(bool apply_modifiers) const 
 	{
-		chaos::box2 box = GetCameraBox();
+		chaos::box2 result = camera_box;
+		if (apply_modifiers)
+		{
+			size_t count = components.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				CameraComponent * camera_component = components[i].get();
+				if (camera_component == nullptr)
+					continue;
+				result = camera_component->ApplyModifier(result);
+			}
+		}
+		return result; 
+	}
+
+	chaos::obox2 Camera::GetCameraOBox(bool apply_modifiers) const
+	{
+		chaos::box2 box = GetCameraBox(apply_modifiers);
 
 		chaos::obox2 result;
 		result.position = box.position;

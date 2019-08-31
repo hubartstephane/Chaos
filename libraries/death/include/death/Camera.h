@@ -61,13 +61,13 @@ namespace death
 		/** returns the level */
 		GameLevelInstance const * GetLevelInstance() const { return game_level_instance; }
 
-		/** get the camera OBox */
-		chaos::obox2 GetCameraOBox() const;
-
 		/** set the camera box */
 		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}
+
 		/** get the camera box */
-		chaos::box2 const & GetCameraBox() const { return camera_box;}
+		chaos::box2  GetCameraBox(bool apply_modifiers = true) const;
+		/** get the camera OBox */
+		chaos::obox2 GetCameraOBox(bool apply_modifiers = true) const;
 
 
 		/** get the camera OBox when level instance is started */
@@ -81,7 +81,7 @@ namespace death
 		void SetSafeZone(glm::vec2 const & in_safe_zone) { safe_zone = in_safe_zone; }
 
 		/** Camera is a CameraComponent owner */
-		DEATH_DECLARE_COMPONENT_OWNER(CameraComponent, Component)
+		DEATH_DECLARE_COMPONENT_OWNER(CameraComponent, Component, components)
 
 	protected:
 

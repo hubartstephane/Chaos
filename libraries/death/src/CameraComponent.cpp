@@ -13,6 +13,11 @@ namespace death
 	{	
 	}
 
+	chaos::box2 CameraComponent::ApplyModifier(chaos::box2 const & src) const
+	{
+		return src;
+	}
+
 	void CameraComponent::OnInsertedInto(Camera * in_camera)
 	{
 		assert(in_camera != nullptr);
@@ -21,6 +26,43 @@ namespace death
 	void CameraComponent::OnRemovedFrom(Camera * in_camera)
 	{
 		assert(in_camera != nullptr);		
+	}
+
+	// =================================================
+	// ShakeCameraComponent
+	// =================================================
+
+	void ShakeCameraComponent::RestartModifier()
+	{
+		current_range = modifier_range;
+	}
+
+	void ShakeCameraComponent::StopModifier()
+	{
+		current_range = 0.0f;
+		current_time = 0.0f;
+	}
+
+	chaos::box2 ShakeCameraComponent::ApplyModifier(chaos::box2 const & src) const
+	{
+		chaos::box2 result = src;
+		if (current_range >= 0.0f)
+			result.position.x += 
+				current_range * chaos::MathTools::Cos((float)(2.0 * M_PI) * (current_time / modifier_frequency));
+		return result;
+	}
+
+	bool ShakeCameraComponent::DoTick(double delta_time)
+	{
+		if (current_range >= 0.0f)
+		{
+			current_range -= (float)delta_time * (modifier_range / modifier_duration);
+			if (current_range <= 0.0f)
+				StopModifier();
+			else
+				current_time += (float)delta_time;
+		}
+		return true;
 	}
 
 	// =============================================

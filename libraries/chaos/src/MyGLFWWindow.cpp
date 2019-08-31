@@ -444,6 +444,7 @@ namespace chaos
 			// in normal case, we work with the window_size then apply a viewport cropping
 			// here we want exactly to work with no cropping
 			chaos::box2 viewport = GetRequiredViewport(GetWindowSize());
+			viewport.position = viewport.half_size;
 			glm::ivec2 framebuffer_size = chaos::GLMTools::RecastVector<glm::ivec2>(viewport.half_size * 2.0f);
 			
 			// generate a framebuffer

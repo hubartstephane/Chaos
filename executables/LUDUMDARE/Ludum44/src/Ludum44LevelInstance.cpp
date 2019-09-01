@@ -25,8 +25,11 @@ void LudumLevelInstance::CreateCameras()
 	death::TiledMap::LevelInstance::CreateCameras();
 
 	size_t camera_count = cameras.size();
-	for (size_t i = 0 ; i < camera_count ; ++i)
+	for (size_t i = 0; i < camera_count; ++i)
+	{
 		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.8f));
+		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.5f, 5.0f, 0.15f));
+	}
 }
 
 bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const

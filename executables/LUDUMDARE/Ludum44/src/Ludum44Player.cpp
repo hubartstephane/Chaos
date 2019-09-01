@@ -330,6 +330,8 @@ void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 			return;	
 	}
 #endif
+	 
+	float old_life = current_life;
 
 	if (in_increment)
 		current_life += in_value;
@@ -340,4 +342,17 @@ void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 		current_life = 0.0f;
 	else if (current_life > current_max_life)
 		current_life = current_max_life;
+
+	if (old_life > current_life)
+	{
+		death::Camera * camera = GetLevelInstance()->GetCamera(0);
+		if (camera != nullptr)
+		{
+			death::ShakeCameraComponent * shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
+			if (shake_component != nullptr)
+				shake_component->RestartModifier();
+		}
+	}
+	
+
 }

@@ -95,19 +95,6 @@ bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_
 	if (in_inner_radius)
 	{
 		particle->life = chaos::MathTools::Clamp(particle->life - delta_time, 0.0f, lifetime);
-
-		if (player)
-		{
-			death::Camera * camera = game->GetLevelInstance()->GetCamera(0);
-			if (camera != nullptr)
-			{
-				death::ShakeCameraComponent * shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
-				if (shake_component != nullptr)
-					shake_component->RestartModifier();
-			}
-		}
-
-
 		if (particle->life <= 0.0f)
 			return true; // destroy the particle
 	}

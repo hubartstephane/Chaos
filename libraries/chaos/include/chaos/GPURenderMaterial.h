@@ -8,6 +8,7 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUFileResource.h>
 #include <chaos/GPURenderable.h>
+#include <chaos/NameFilter.h>
 
 namespace chaos
 {
@@ -109,6 +110,16 @@ namespace chaos
 		shared_ptr<GPURenderMaterial> parent_material;
 		/** some rendering states */
 		GPUProgramProvider uniform_provider;
+
+
+		/** some enable/disable behavior */
+		NameFilter filter;
+
+
+		// shuyyy
+
+
+
 		/** whether the material is null (force to use no program => no rendering) */
 		bool hidden_material = false;
 		/** whether the flag is true, the material is ignored if render_params.submaterial_name is not empty */

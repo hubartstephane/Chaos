@@ -4,12 +4,18 @@
 
 namespace chaos
 {
+
 	// ============================================================
 	// NameFilter : an object that handles enabled/disabled name lists
 	// ============================================================
 
 	class NameFilter
 	{
+
+		friend bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & obj);
+
+		friend bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj);
+
 	public:
 	
 		/** add names in the enabled list (separated with ';') */
@@ -38,5 +44,15 @@ namespace chaos
 		/** the list of disabled names */
 		std::vector<std::string> disabled_names;
 	};
+
+#if 0
+	// ============================================================
+	// JSON methods
+	// ============================================================
+
+	bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & obj);
+
+	bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj);
+#endif
 
 }; // namespace chaos

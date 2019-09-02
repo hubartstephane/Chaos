@@ -1,8 +1,13 @@
 ﻿#include <chaos/NameFilter.h>
 #include <chaos/StringTools.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
+
+	// ============================================================
+	// NameFilter methods
+	// ============================================================
 
 	bool NameFilter::IsNameEnabled(char const * name) const
 	{
@@ -81,6 +86,28 @@ namespace chaos
 				}
 			}
 		}
+	}
+
+	// ============================================================
+	// JSON methods
+	// ============================================================
+
+	bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & obj)
+	{
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "enabled_names", obj.enabled_names);
+		JSONTools::SetAttribute(json_entry, "disabled_names", obj.disabled_names);
+		return true;
+	}
+
+	bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "enabled_names", obj.enabled_names);
+		JSONTools::GetAttribute(json_entry, "disabled_names", obj.disabled_names);
+		return true;
 	}
 
 }; // namespace chaos

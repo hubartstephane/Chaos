@@ -47,6 +47,20 @@ namespace chaos
 	* GPURenderMaterial : this is the combinaison of some uniforms and a program
 	*/
 
+	class GPUSubMaterialEntry
+	{
+	public:
+
+		/** filters for which this entry is valid */
+		NameFilter filter;
+		/** the material considerered */
+		shared_ptr<GPURenderMaterial> material;
+	};
+
+	/**
+	* GPURenderMaterial : this is the combinaison of some uniforms and a program
+	*/
+
 	class GPURenderMaterial : public GPUFileResource
 	{
 		friend class GPUProgramData;

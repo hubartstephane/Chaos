@@ -385,6 +385,11 @@ namespace chaos
 			std::swap(ori_object->sub_materials, other_object->sub_materials);
 			std::swap(ori_object->hidden_material, other_object->hidden_material);			
 			std::swap(ori_object->strict_submaterial, other_object->strict_submaterial);
+			std::swap(ori_object->filter, other_object->filter);
+
+			//shuyyy
+
+
 		});
 
 		// patching references (texures, programs, parent_materials)

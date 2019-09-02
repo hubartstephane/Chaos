@@ -302,6 +302,11 @@ namespace chaos
 
 	bool GPURenderMaterialLoader::InitializeSubMaterialsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
+
+		// shuyyy
+
+
+
 		// search the uniform object
 		nlohmann::json const * json_submaterials = JSONTools::GetStructure(json, "sub_materials");
 		if (json_submaterials == nullptr || !json_submaterials->is_object())
@@ -373,8 +378,18 @@ namespace chaos
 			std::string parent_name;
 			if (reference_solver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())
 				reference_solver->AddInheritance(result, std::move(parent_name));
+			
+			// read filter names
+			JSONTools::GetAttribute(json, "filter", result->filter);
+
+			// shuyyy
+			
+			
 			// search whether the material is hidden
 			JSONTools::GetAttribute(json, "hidden", result->hidden_material, false);
+
+
+
 			// search whether the material is strict
 			JSONTools::GetAttribute(json, "strict_submaterial", result->strict_submaterial, false);
 			// search program

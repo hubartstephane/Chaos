@@ -12,8 +12,9 @@ namespace chaos
 	class NameFilter
 	{
 
+		/** JSON saving method */
 		friend bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & obj);
-
+		/** JSON loading method */
 		friend bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj);
 
 	public:
@@ -44,15 +45,4 @@ namespace chaos
 		/** the list of disabled names */
 		std::vector<std::string> disabled_names;
 	};
-
-#if 0
-	// ============================================================
-	// JSON methods
-	// ============================================================
-
-	bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & obj);
-
-	bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj);
-#endif
-
 }; // namespace chaos

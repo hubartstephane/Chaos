@@ -6,6 +6,13 @@ namespace chaos
 {
 	bool GPUProgramRenderMaterialProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
 	{
+
+
+
+		 // shuyyy
+
+
+
 		// use extra provider
 		if (other_provider != nullptr)
 			if (other_provider->DoProcessAction(name, action, top_provider))
@@ -134,6 +141,17 @@ namespace chaos
 					return result;
 			}
 		}
+
+
+
+		// shuyyy
+
+
+
+
+
+
+
 		// our own program ?
 		if (hidden_material) // do not render with this material (do not test for parent_material->program)
 			return nullptr;

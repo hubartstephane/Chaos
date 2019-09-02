@@ -8,18 +8,41 @@ namespace chaos
 	{
 		// should always have a program 
 		if (program.get() == nullptr)
+		{
 			return false;
-		// check for vertex buffer
-		if (has_vertex_buffer && vertex_buffer.get() == nullptr)
-			return false;
-		// check for index buffer
-		if (has_index_buffer && index_buffer.get() == nullptr)
-			return false;
+		}
+		else
+		{
+			if (program_id != program->GetResourceID()) // the program OpenGL resource has changed. it is invalid
+				return false;
+		}
+		// check vertex buffer
+		if (vertex_buffer.get() == nullptr)
+		{
+			if (vertex_buffer_id != 0) // there was a vertex buffer. It has been deleted
+				return false;
+		}
+		else
+		{
+			if (vertex_buffer_id != vertex_buffer->GetResourceID()) // the vertex buffer OpenGL resource has changed. it is invalid
+				return false;
+		}
+		// check index buffer
+		if (index_buffer.get() == nullptr)
+		{
+			if (index_buffer_id != 0) // there was a vertex buffer. It has been deleted
+				return false;
+		}
+		else
+		{
+			if (index_buffer_id != index_buffer->GetResourceID()) // the index buffer OpenGL resource has changed. it is invalid
+				return false;
+		}
 		// OK
 		return true;
 	}
 
-	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPUProgram const * program) const
+	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const
 	{
 		// early exit
 		if (program == nullptr)
@@ -31,26 +54,6 @@ namespace chaos
 		size_t count = entries.size();
 
 		size_t i = 0;
-		while ((i < count) && (result == nullptr))
-		{
-			// check whether entry is still valid (else swap/pop with last)
-			GPUVertexArrayCacheEntry & entry = entries[i];
-			if (!entry.IsValid())				
-			{
-				if (i != count - 1)
-					std::swap(entry, entries[count - 1]);
-				entries.pop_back();
-				--count;	
-				continue;
-			}
-			// check whether this is expected entry
-			if (entry.program.get() == program)
-				result = entry.vertex_array.get();
-			// next element
-			++i;
-		}	
-
-		// complete the loop to purge invalid entries
 		while (i < count)
 		{
 			// check whether entry is still valid (else swap/pop with last)
@@ -60,24 +63,32 @@ namespace chaos
 				if (i != count - 1)
 					std::swap(entry, entries[count - 1]);
 				entries.pop_back();
-				--count;			
-				continue;
+				--count;	
 			}
-			// next element
-			++i;
+			// check whether this is expected entry
+			else
+			{				
+				if (result == nullptr && entry.program.get() == program && entry.vertex_buffer.get() == vertex_buffer && entry.index_buffer.get() == index_buffer)
+					result = entry.vertex_array.get();
+				// next element
+				++i;
+			}
 		}	
-
 		return result;
 	}
 
 	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset)
 	{
 		// early exit
-		if (program == nullptr)
+		if (program == nullptr || program->GetResourceID() == 0)
+			return nullptr;
+		if (vertex_buffer != nullptr && vertex_buffer->GetResourceID() == 0) // vertex buffer provided but empty => error
+			return nullptr;
+		if (index_buffer != nullptr && index_buffer->GetResourceID() == 0)   // index  buffer provided but empty => error
 			return nullptr;
 
 		// find exisiting data
-		GPUVertexArray const * result = FindVertexArray(program);
+		GPUVertexArray const * result = FindVertexArray(program, vertex_buffer, index_buffer);
 		if (result != nullptr)
 			return result;
 
@@ -109,8 +120,9 @@ namespace chaos
 		new_entry.vertex_buffer     = vertex_buffer;
 		new_entry.index_buffer      = index_buffer;
 		new_entry.vertex_array      = new_vertex_array;
-		new_entry.has_vertex_buffer = (vertex_buffer != nullptr);
-		new_entry.has_index_buffer  = (index_buffer != nullptr);
+		new_entry.program_id        = program->GetResourceID();
+		new_entry.vertex_buffer_id  = (vertex_buffer != nullptr)? vertex_buffer->GetResourceID() : 0;
+		new_entry.index_buffer_id   = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
 
 		entries.push_back(std::move(new_entry));
 

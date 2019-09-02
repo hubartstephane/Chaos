@@ -34,10 +34,13 @@ namespace chaos
 		weak_ptr<GPUBuffer const> vertex_buffer;
 		/** the index buffer concerned */
 		weak_ptr<GPUBuffer const> index_buffer;
-		/** whether the initial vertex buffer was valid */
-		bool has_vertex_buffer = false;
-		/** whether the initial index buffer was valid */
-		bool has_index_buffer = false;
+		/** the index of the program */
+		GLuint program_id = 0;
+		/** the vertex buffer */
+		GLuint vertex_buffer_id = 0;
+		/** the index buffer */
+		GLuint index_buffer_id = 0;
+
 		/** the vertex array */
 		shared_ptr<GPUVertexArray> vertex_array;
 	};
@@ -52,7 +55,7 @@ namespace chaos
 	public:
 
 		/** find vertex array for the program */
-		GPUVertexArray const * FindVertexArray(GPUProgram const * program) const;
+		GPUVertexArray const * FindVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const;
 		/** create or return exisiting vertex array for a given program */
 		GPUVertexArray const * FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset = 0);
 		/** reset the whole object */

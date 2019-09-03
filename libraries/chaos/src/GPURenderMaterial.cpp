@@ -73,13 +73,11 @@ namespace chaos
 
 	bool GPURenderMaterial::SetParentMaterial(GPURenderMaterial * in_parent)
 	{
-
 		// can access 'this' with parent about to be set ?
 		if (in_parent != nullptr && in_parent->SearchRenderMaterialCycle(this))
 			return false;
 		// set the parent
 		parent_material = in_parent;
-
 		return true;
 	}
 
@@ -92,37 +90,39 @@ namespace chaos
 			if (parent_material->SearchRenderMaterialCycle(searched_material))
 				return true;
 		// recursion with sub materials
-		for (auto const & sub : sub_materials)
-			if (sub.second->SearchRenderMaterialCycle(searched_material))
+		for (GPUSubMaterialEntry const & entry : sub_materials)
+			if (entry.material->SearchRenderMaterialCycle(searched_material))
 				return true;
 		return false;
 	}
 
-	bool GPURenderMaterial::SetSubMaterial(char const * submaterial_name, GPURenderMaterial * submaterial)
+	bool GPURenderMaterial::SetSubMaterial(NameFilter filter, GPURenderMaterial * submaterial)
 	{
 		assert(submaterial != nullptr);
-		assert(submaterial_name != nullptr);
 		// can access 'this' with element about to be inserted ?
 		if (submaterial->SearchRenderMaterialCycle(this))
 			return false;
 		// insertion as a sub material
-		sub_materials.push_back(std::make_pair(submaterial_name, submaterial));
+		GPUSubMaterialEntry entry;
+		entry.filter = std::move(filter);
+		entry.material = submaterial;
+		sub_materials.push_back(std::move(entry));
 		return true;
 	}
 
 	GPURenderMaterial * GPURenderMaterial::FindSubMaterial(char const * submaterial_name)
 	{
-		for (auto & it : sub_materials)
-			if (StringTools::Stricmp(it.first, submaterial_name) == 0)
-				return it.second.get();
+		for (GPUSubMaterialEntry const & entry : sub_materials)
+			if (entry.filter.IsNameEnabled(submaterial_name))
+				return entry.material.get();
 		return nullptr;
 	}
 
 	GPURenderMaterial const * GPURenderMaterial::FindSubMaterial(char const * submaterial_name) const
 	{
-		for (auto & it : sub_materials)
-			if (StringTools::Stricmp(it.first, submaterial_name) == 0)
-				return it.second.get();
+		for (GPUSubMaterialEntry const & entry : sub_materials)
+			if (entry.filter.IsNameEnabled(submaterial_name))
+				return entry.material.get();
 		return nullptr;
 	}
 
@@ -155,6 +155,15 @@ namespace chaos
 		// our own program ?
 		if (hidden_material) // do not render with this material (do not test for parent_material->program)
 			return nullptr;
+
+
+		if (!filter.IsNameEnabled(render_params.renderpass_name.c_str()))
+			return nullptr;
+
+
+
+
+
 		if (submaterial_encoutered || !strict_submaterial || render_params.renderpass_name.empty())
 			if (program != nullptr)
 				return program.get();
@@ -169,7 +178,7 @@ namespace chaos
 	{
 		if (!IsMaterialEnabled(render_params))
 			return nullptr;
-		return DoGetEffectiveProgram(render_params, false);
+		return DoGetEffectiveProgram(render_params, false); // false => required sub_material not yet encoutered
 	}
 
 	bool GPURenderMaterial::IsMaterialEnabled(GPURenderParams const & render_params) const

@@ -44,7 +44,7 @@ namespace chaos
 	};
 
 	/**
-	* GPURenderMaterial : this is the combinaison of some uniforms and a program
+	* GPUSubMaterialEntry : a 'pair' filter => material
 	*/
 
 	class GPUSubMaterialEntry
@@ -84,8 +84,10 @@ namespace chaos
 		bool SetProgram(GPUProgram * in_program);
 		/** set the parent material */
 		bool SetParentMaterial(GPURenderMaterial * in_parent);
+
+
 		/** set a sub material */
-		bool SetSubMaterial(char const * submaterial_name, GPURenderMaterial * submaterial);
+		bool SetSubMaterial(NameFilter filter , GPURenderMaterial * submaterial);
 
 		/** go throw the hierary and search for the program */
 		GPUProgram const * GetEffectiveProgram(GPURenderParams const & render_params) const;
@@ -124,22 +126,14 @@ namespace chaos
 		shared_ptr<GPURenderMaterial> parent_material;
 		/** some rendering states */
 		GPUProgramProvider uniform_provider;
-
-
 		/** some enable/disable behavior */
 		NameFilter filter;
-
-
-		// shuyyy
-
-
-
 		/** whether the material is null (force to use no program => no rendering) */
 		bool hidden_material = false;
 		/** whether the flag is true, the material is ignored if render_params.submaterial_name is not empty */
 		bool strict_submaterial = false;
-		/** children materials (pair submaterial_name / material) */
-		std::vector<std::pair<std::string, shared_ptr<GPURenderMaterial>>> sub_materials;
+		/** children materials (pair filter / material) */
+		std::vector<GPUSubMaterialEntry> sub_materials;
 	};
 
 

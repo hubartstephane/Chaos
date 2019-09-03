@@ -32,8 +32,8 @@ namespace chaos
 
 		/** the material we are searching for its parent */
 		chaos::shared_ptr<GPURenderMaterial> render_material;
-		/** the name of the submaterial */
-		std::string submaterial_name;
+		/** the filter used for this material */
+		NameFilter filter;
 		/** the name of the reference (name or path) */
 		std::string reference_name;
 		/** whether the reference is a name (other is path) */
@@ -49,7 +49,7 @@ namespace chaos
 		/** resolve all pending references */
 		bool ResolveReferences(GPUResourceManager * resource_manager);
 		/** add a sub material reference */
-		void AddSubMaterialReference(GPURenderMaterial * render_material, std::string submaterial_name, std::string reference_name, bool is_named_reference);
+		void AddSubMaterialReference(GPURenderMaterial * render_material, NameFilter filter, std::string reference_name, bool is_named_reference);
 
 	protected:
 

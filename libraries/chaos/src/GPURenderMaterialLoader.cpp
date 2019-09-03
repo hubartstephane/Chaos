@@ -28,16 +28,16 @@ namespace chaos
 	{
 		assert(resource_manager != nullptr);
 		// resolve parenting
-		for (GPURenderMaterialParentReference const & ref : parent_references)
+		for (GPURenderMaterialParentReference & ref : parent_references)
 			if (ref.render_material->parent_material == nullptr)
-				resource_manager->SetRenderMaterialParent(ref.render_material.get(), ref.parent_name);
+				resource_manager->SetRenderMaterialParent(ref.render_material.get(), ref.parent_name.c_str());
 		// resolve sub materials
-		for (GPURenderMaterialSubMaterialReference const & ref : submaterials_references)
+		for (GPURenderMaterialSubMaterialReference & ref : submaterials_references)
 		{
 			if (ref.is_named_reference)
-				resource_manager->SetRenderMaterialSubMaterial(ref.render_material.get(), ref.submaterial_name.c_str(), ref.reference_name.c_str());
+				resource_manager->SetRenderMaterialSubMaterial(ref.render_material.get(), std::move(ref.filter), ref.reference_name.c_str());
 			else
-				resource_manager->SetRenderMaterialSubMaterialByPath(ref.render_material.get(), ref.submaterial_name.c_str(), ref.reference_name.c_str());
+				resource_manager->SetRenderMaterialSubMaterialByPath(ref.render_material.get(), std::move(ref.filter), ref.reference_name.c_str());
 		}
 		// clear all
 		parent_references.clear();
@@ -46,15 +46,14 @@ namespace chaos
 		return true;
 	}
 
-	void GPURenderMaterialLoaderReferenceSolver::AddSubMaterialReference(GPURenderMaterial * render_material, std::string submaterial_name, std::string reference_name, bool is_named_reference)
+	void GPURenderMaterialLoaderReferenceSolver::AddSubMaterialReference(GPURenderMaterial * render_material, NameFilter filter, std::string reference_name, bool is_named_reference)
 	{
 		assert(render_material != nullptr);
-		assert(!submaterial_name.empty());
 		assert(!reference_name.empty());
 
 		GPURenderMaterialSubMaterialReference reference;
 		reference.render_material = render_material;
-		reference.submaterial_name = std::move(submaterial_name);
+		reference.filter = std::move(filter);
 		reference.reference_name = std::move(reference_name);
 		reference.is_named_reference = is_named_reference;
 		submaterials_references.push_back(std::move(reference));
@@ -303,9 +302,23 @@ namespace chaos
 	bool GPURenderMaterialLoader::InitializeSubMaterialsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 
+		// search the uniform object
+		nlohmann::json const * json_submaterials = JSONTools::GetStructure(json, "sub_materials");
+		if (json_submaterials == nullptr || !json_submaterials->is_array())
+			return false;
+
+
+
+
+
+
+
+
+
+
 		// shuyyy
 
-
+#if 0
 
 		// search the uniform object
 		nlohmann::json const * json_submaterials = JSONTools::GetStructure(json, "sub_materials");
@@ -347,6 +360,16 @@ namespace chaos
 				}
 			}		
 		}
+
+
+#endif
+
+
+
+
+
+
+
 		return true;
 	}
 
@@ -381,15 +404,8 @@ namespace chaos
 			
 			// read filter names
 			JSONTools::GetAttribute(json, "filter", result->filter);
-
-			// shuyyy
-			
-			
 			// search whether the material is hidden
 			JSONTools::GetAttribute(json, "hidden", result->hidden_material, false);
-
-
-
 			// search whether the material is strict
 			JSONTools::GetAttribute(json, "strict_submaterial", result->strict_submaterial, false);
 			// search program

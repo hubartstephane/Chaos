@@ -124,12 +124,11 @@ namespace chaos
 		virtual bool LoadMaterialsFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
 
 		/** search (if necessary the parent of the material) */
-		void SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name);
+		void SetRenderMaterialParent(GPURenderMaterial * render_material, char const * parent_name);
 		/** set a submaterial to a render material */
-		void SetRenderMaterialSubMaterial(GPURenderMaterial * render_material, char const * submaterial_name, char const * name);
+		void SetRenderMaterialSubMaterial(GPURenderMaterial * render_material, NameFilter filter, char const * name);
 		/** set a submaterial to a render material */
-		void SetRenderMaterialSubMaterialByPath(GPURenderMaterial * render_material, char const * submaterial_name, FilePathParam const & path);
-
+		void SetRenderMaterialSubMaterialByPath(GPURenderMaterial * render_material, NameFilter filter, FilePathParam const & path);
 
 		/** merge all resources with incomming manager */
 		virtual bool RefreshTextures(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data);

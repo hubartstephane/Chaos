@@ -160,31 +160,31 @@ namespace chaos
 		return result;
 	}
 
-	void GPUResourceManager::SetRenderMaterialParent(GPURenderMaterial * render_material, std::string const & parent_name)
+	void GPUResourceManager::SetRenderMaterialParent(GPURenderMaterial * render_material, char const * parent_name)
 	{
 		assert(render_material != nullptr);
 
-		if (parent_name.empty())
+		if (parent_name == nullptr || parent_name[0] == 0)
 			return;
-		GPURenderMaterial * parent = FindRenderMaterial(parent_name.c_str());
+		GPURenderMaterial * parent = FindRenderMaterial(parent_name);
 		if (parent != nullptr)
 			render_material->SetParentMaterial(parent); // some recursive verification here
 	}
 
-	void GPUResourceManager::SetRenderMaterialSubMaterial(GPURenderMaterial * render_material, char const * submaterial_name, char const * name)
+	void GPUResourceManager::SetRenderMaterialSubMaterial(GPURenderMaterial * render_material, NameFilter filter, char const * name)
 	{
 		assert(render_material != nullptr);
 		GPURenderMaterial * submaterial = FindRenderMaterial(name);
 		if (submaterial != nullptr)
-			render_material->SetSubMaterial(submaterial_name, submaterial); // some recursive verification here
+			render_material->SetSubMaterial(std::move(filter), submaterial); // some recursive verification here
 	}
 
-	void GPUResourceManager::SetRenderMaterialSubMaterialByPath(GPURenderMaterial * render_material, char const * submaterial_name, FilePathParam const & path)
+	void GPUResourceManager::SetRenderMaterialSubMaterialByPath(GPURenderMaterial * render_material, NameFilter filter, FilePathParam const & path)
 	{
 		assert(render_material != nullptr);
 		GPURenderMaterial * submaterial = FindRenderMaterialByPath(path);
 		if (submaterial != nullptr)
-			render_material->SetSubMaterial(submaterial_name, submaterial); // some recursive verification here
+			render_material->SetSubMaterial(std::move(filter), submaterial); // some recursive verification here
 	}
 
 	bool GPUResourceManager::RefreshGPUResources(GPUResourceManager * other_gpu_manager)
@@ -350,17 +350,17 @@ namespace chaos
 			render_material->parent_material = it_parent->second;
 
 		// patch submaterials
-		for (auto & it : render_material->sub_materials)
+		for (GPUSubMaterialEntry & entry : render_material->sub_materials)
 		{
-			auto it_submaterial = reload_data.render_material_map.find(it.second.get());
+			auto it_submaterial = reload_data.render_material_map.find(entry.material.get());
 			if (it_submaterial != reload_data.render_material_map.end())
-				it.second = it_submaterial->second;
+				entry.material = it_submaterial->second;
 		}
 
 		// recursive on parent and sub materials
 		PatchRenderMaterialRecursive(render_material->parent_material.get(), reload_data);
-		for (auto it : render_material->sub_materials)
-			PatchRenderMaterialRecursive(it.second.get(), reload_data);
+		for (GPUSubMaterialEntry & entry : render_material->sub_materials)
+			PatchRenderMaterialRecursive(entry.material.get(), reload_data);
 	}
 
 	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
@@ -386,10 +386,6 @@ namespace chaos
 			std::swap(ori_object->hidden_material, other_object->hidden_material);			
 			std::swap(ori_object->strict_submaterial, other_object->strict_submaterial);
 			std::swap(ori_object->filter, other_object->filter);
-
-			//shuyyy
-
-
 		});
 
 		// patching references (texures, programs, parent_materials)

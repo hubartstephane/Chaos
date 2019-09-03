@@ -301,75 +301,79 @@ namespace chaos
 
 	bool GPURenderMaterialLoader::InitializeSubMaterialsFromJSON(GPURenderMaterial * render_material, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
-
 		// search the uniform object
 		nlohmann::json const * json_submaterials = JSONTools::GetStructure(json, "sub_materials");
-		if (json_submaterials == nullptr || !json_submaterials->is_array())
+		if (json_submaterials == nullptr)
 			return false;
 
+		// 2 cases : 
+		//   -array  => a 'filter' property is expected (but not mandatory)
+		//   -object => the key correspond to enable filter list
 
-
-
-
-
-
-
-
-
-		// shuyyy
-
-#if 0
-
-		// search the uniform object
-		nlohmann::json const * json_submaterials = JSONTools::GetStructure(json, "sub_materials");
-		if (json_submaterials == nullptr || !json_submaterials->is_object())
+		bool is_array  = json_submaterials->is_array();
+		bool is_object = json_submaterials->is_object();
+		if (!is_array && !is_object)
 			return false;
+
 		// enumerate all sub materials
 		for (nlohmann::json::const_iterator it = json_submaterials->begin(); it != json_submaterials->end(); ++it)
-		{
-			std::string submaterial_name = it.key();
-			if (!submaterial_name.empty())
+		{	
+			nlohmann::json const & json_submat = it.value();
+
+			// each element of the structure has to be an object
+			if (!json_submat.is_object())
+				continue;
+
+			// search the filters
+			NameFilter filter;
+
+			if (is_object) // the key for an object is the enable list
 			{
-				nlohmann::json const & json_submat = it.value();
-				if (json_submat.is_object())
+				std::string filter_string = it.key();
+				filter.AddEnabledNames(filter_string.c_str());
+			}
+			else if (is_array)
+			{
+				JSONTools::GetAttribute(json_submat, "filter", filter); // try to read filter as a property
+			}
+
+			if (manager != nullptr && reference_solver != nullptr)
+			{
+				// try to find by path
+				std::string sub_path;
+				if (JSONTools::GetAttribute(json_submat, "path", sub_path))
 				{
-					if (manager != nullptr && reference_solver != nullptr)
-					{
-						// try to find by path
-						std::string sub_path;
-						if (JSONTools::GetAttribute(json_submat, "path", sub_path))
-						{
-							reference_solver->AddSubMaterialReference(render_material, std::move(submaterial_name), std::move(sub_path), false); // false => by path
-							continue;
-						}
-						// try to find by name
-						std::string sub_name;
-						if (JSONTools::GetAttribute(json_submat, "name", sub_name))
-						{
-							reference_solver->AddSubMaterialReference(render_material, std::move(submaterial_name), std::move(sub_name), true); // true => by name
-							continue;
-						}									
-					}
-					// independant material
-					GPURenderMaterialLoader other_loader = *this;
-					other_loader.insert_in_manager = false;
-
-					shared_ptr<GPURenderMaterial> submaterial = other_loader.LoadObject(nullptr, json_submat, config_path); // may be an error during SetSubMaterial(...) due to reference cycle
-					if (submaterial != nullptr)
-						render_material->SetSubMaterial(submaterial_name.c_str(), submaterial.get());
+					reference_solver->AddSubMaterialReference(render_material, std::move(filter), std::move(sub_path), false); // false => by path
+					continue;
 				}
-			}		
+				// try to find by name
+				std::string sub_name;
+				if (JSONTools::GetAttribute(json_submat, "name", sub_name))
+				{
+					reference_solver->AddSubMaterialReference(render_material, std::move(filter), std::move(sub_name), true); // true => by name
+					continue;
+				}
+			}
+
+			// XXX : 
+			//       - GPUSubMaterialEntry has a 'filter' property
+			//       - GPURenderMaterial   has a 'filter' property too
+			//
+			//  there must not be any confusion about that
+
+			// independant material
+			GPURenderMaterialLoader other_loader = *this;
+			other_loader.insert_in_manager = false;
+
+			shared_ptr<GPURenderMaterial> submaterial = other_loader.LoadObject(nullptr, json_submat, config_path); // may be an error during SetSubMaterial(...) due to reference cycle
+			if (submaterial != nullptr)
+			{
+				if (is_object)
+					render_material->SetSubMaterial(std::move(filter), submaterial.get()); // the filter of GPUSubMaterialEntry was given by the KEY
+				else if (is_array)
+					render_material->SetSubMaterial(NameFilter(), submaterial.get());      // the filter we may have encoutered previously is not for GPUSubMaterialEntry, but is read by the new independant GPURenderMaterial
+			}
 		}
-
-
-#endif
-
-
-
-
-
-
-
 		return true;
 	}
 

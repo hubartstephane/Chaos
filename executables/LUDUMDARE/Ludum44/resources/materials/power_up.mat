@@ -10,12 +10,21 @@
 
     "mycolor1": [ 1.0, 1.0, 1.0, 0.05 ],
     "mycolor2": [ 1.0, 1.0, 1.0, 0.2 ],
-		"texcoord_scale":[10,5],
-    "scroll_speed": [1.5, 0.5]
+    "texcoord_scale": [ 10, 5 ],
+    "scroll_speed": [ 1.5, 0.5 ]
   },
 
-	"sub_materials":
-	[
-		1,2,3
-	]
+  "hidden": false,
+
+  "filter": {
+
+    "enabled_names": "a;b;c",
+    "disabled_names": [ "truc", "much", "machin" ]
+  },
+
+  "sub_materials": [
+    1,
+    2,
+    3
+  ]
 }

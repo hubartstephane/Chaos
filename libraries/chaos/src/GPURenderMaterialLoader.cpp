@@ -407,11 +407,15 @@ namespace chaos
 				reference_solver->AddInheritance(result, std::move(parent_name));
 			
 			// read filter names
-			JSONTools::GetAttribute(json, "filter", result->filter);
+			result->filter_specified = JSONTools::GetAttribute(json, "filter", result->filter);
 			// search whether the material is hidden
-			JSONTools::GetAttribute(json, "hidden", result->hidden_material, false);
+			result->hidden_specified = JSONTools::GetAttribute(json, "hidden", result->hidden_material);
+			if (!result->hidden_specified)
+				result->hidden_material = false;
 			// search whether the material is strict
-			JSONTools::GetAttribute(json, "strict_submaterial", result->strict_submaterial, false);
+			result->strict_specified = JSONTools::GetAttribute(json, "strict_submaterial", result->strict_submaterial);
+			if (!result->strict_specified)
+				result->strict_submaterial = false;
 			// search program
 			InitializeProgramFromJSON(result, json, config_path);
 			// look at textures

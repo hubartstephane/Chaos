@@ -126,64 +126,98 @@ namespace chaos
 		return nullptr;
 	}
 
-	GPUProgram const * GPURenderMaterial::DoGetEffectiveProgram(GPURenderParams const & render_params, bool submaterial_encoutered) const
+
+
+
+
+	GPURenderMaterial const * GPURenderMaterial::GetParentMaterialValidityLimit(GPURenderParams const & render_params) const
 	{
-		// sub-materials
-		if (!render_params.renderpass_name.empty())
+		GPURenderMaterial const * result_hidden = nullptr; // to save whether theses values are specified and produce a visibility result
+		GPURenderMaterial const * result_filter = nullptr;
+
+		int result_hidden_counter = 0;
+		int result_filter_counter = 0;
+		int counter = 0;
+
+		GPURenderMaterial const * material = this;
+		while (material != nullptr)
 		{
-			GPURenderMaterial const * submaterial = FindSubMaterial(render_params.renderpass_name.c_str());
-			if (submaterial != nullptr)
+			++counter;
+
+			// check HIDDEN state
+			bool match_hidden = true;
+			if (material->hidden_specified)
 			{
-				if (submaterial->hidden_material) // do not render with this material (do not test for this->program & parent_material->program)
-					return nullptr;
-				GPUProgram const * result = submaterial->DoGetEffectiveProgram(render_params, true);
-				if (result != nullptr)
-					return result;
+				match_hidden = !material->hidden_material;
+				if (match_hidden) // save the last material that was known has NOT HIDDEN
+				{
+					result_hidden = material;
+					result_hidden_counter = counter;
+				}
 			}
+			// check FILTER
+			bool match_filter = true;
+			if (material->filter_specified)
+			{
+				match_filter = material->filter.IsNameEnabled(render_params.renderpass_name.c_str());
+				if (match_filter) // save the last material that match the FILTER criteria
+				{
+					result_filter = material;
+					result_filter_counter = counter;
+				}
+			}
+			// at this point one of the two tests is invalid, keep the very first on the chain
+			if (!match_hidden || !match_filter) 
+			{
+				GPURenderMaterial const * result = (result_hidden_counter < result_filter_counter) ? result_hidden : result_filter;
+				if (result != nullptr)
+					return result->parent_material.get(); // the parent is the first failing material
+				else
+					return this; // the very first material of thee chain was invalid
+			}
+			// parent
+			material = material->parent_material.get();
 		}
-
-
-
-		// shuyyy
-
-
-
-
-
-
-
-		// our own program ?
-		if (hidden_material) // do not render with this material (do not test for parent_material->program)
-			return nullptr;
-
-
-		if (!filter.IsNameEnabled(render_params.renderpass_name.c_str()))
-			return nullptr;
-
-
-
-
-
-		if (submaterial_encoutered || !strict_submaterial || render_params.renderpass_name.empty())
-			if (program != nullptr)
-				return program.get();
-		// go through the hierarchy until we get the program
-		if (parent_material != nullptr)
-			return parent_material->DoGetEffectiveProgram(render_params, submaterial_encoutered);
-		// not found
-		return nullptr;	
+		return nullptr; // all parents are visible
 	}
+
+
+
+
+
+
+	GPURenderMaterial const * GPURenderMaterial::GetEffectiveMaterial(GPURenderParams const & render_params) const
+	{
+		GPURenderMaterial const * validity_limit_material = GetParentMaterialValidityLimit(render_params);
+
+		GPURenderMaterial const * material = this;
+		while (material != validity_limit_material)
+		{
+			for (GPUSubMaterialEntry const & entry : material->sub_materials) // search in sub_material first
+			{
+				if (entry.filter.IsNameEnabled(render_params.renderpass_name.c_str()))
+				{
+					GPURenderMaterial const * result = entry.material->GetEffectiveMaterial(render_params);
+					if (result != nullptr)
+						return result;
+				}
+			}
+			material = material->parent_material.get();
+		}
+		return (this != validity_limit_material)? this : nullptr;
+	}
+
 
 	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
 	{
-		if (!IsMaterialEnabled(render_params))
-			return nullptr;
-		return DoGetEffectiveProgram(render_params, false); // false => required sub_material not yet encoutered
-	}
-
-	bool GPURenderMaterial::IsMaterialEnabled(GPURenderParams const & render_params) const
-	{	
-		return true;
+		GPURenderMaterial const * effective_material = GetEffectiveMaterial(render_params);
+		while (effective_material != nullptr)
+		{
+			if (effective_material->program != nullptr)
+				return effective_material->program.get();
+			effective_material = effective_material->parent_material.get();
+		}
+		return nullptr;
 	}
 
 	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const

@@ -89,11 +89,10 @@ namespace chaos
 		/** set a sub material */
 		bool SetSubMaterial(NameFilter filter , GPURenderMaterial * submaterial);
 
-		/** go throw the hierary and search for the program */
+		/** go through the hierarchy (parenting only) and search for the program */
 		GPUProgram const * GetEffectiveProgram(GPURenderParams const & render_params) const;
-
-		/** returns whether the material is enabled for given submaterial_name */
-		bool IsMaterialEnabled(GPURenderParams const & render_params) const;
+		/** go through the hierarchy (parenting + SUB_MATERIAL) and search for the final material to use */
+		GPURenderMaterial const * GetEffectiveMaterial(GPURenderParams const & render_params) const;
 
 		/** get the uniform provider */
 		GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
@@ -115,10 +114,15 @@ namespace chaos
 		virtual bool DoRelease() override;
 		/** search some cycles throught parent_material and sub materials (returning true is an error) */
 		bool SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const;
-		/** returns the effective program for the material */
-		GPUProgram const * DoGetEffectiveProgram(GPURenderParams const & render_params, bool submaterial_encoutered) const;
+
+		/** returns the first parent (or this) that is no more valid */
+		GPURenderMaterial const * GetParentMaterialValidityLimit(GPURenderParams const & render_params) const;
 
 	protected:
+
+
+
+	public: // shuyyy
 
 		/** the program */
 		shared_ptr<GPUProgram> program;

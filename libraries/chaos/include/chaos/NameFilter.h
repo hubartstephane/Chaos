@@ -18,6 +18,9 @@ namespace chaos
 		friend bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj);
 
 	public:
+
+		/** returns true whether the filter is empty */
+		bool IsEmpty() const;
 	
 		/** add names in the enabled list (separated with ';') */
 		void AddEnabledNames(char const * names);

@@ -9,6 +9,11 @@ namespace chaos
 	// NameFilter methods
 	// ============================================================
 
+	bool NameFilter::IsEmpty() const
+	{
+		return (enabled_names.size() + disabled_names.size() == 0);
+	}
+
 	bool NameFilter::IsNameEnabled(char const * name) const
 	{
 		// nullptr is equivalent to empty string

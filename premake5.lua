@@ -257,6 +257,7 @@ function DebugConf(plat)
     defines { "_DEBUG" }
 --    symbols "On"
     flags { "Symbols" } 
+    flags { "MultiProcessorCompile" } 
 end
 
 -- =============================================================================
@@ -270,6 +271,7 @@ function ReleaseConf(plat)
     defines { "_RELEASE" }
 --    optimize "On"
     flags { "Optimize" }	   
+    flags { "MultiProcessorCompile" } 
 end
 
 -- =============================================================================

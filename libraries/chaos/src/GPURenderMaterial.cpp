@@ -4,6 +4,12 @@
 
 namespace chaos
 {
+
+	
+
+
+
+
 	bool GPUProgramRenderMaterialProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
 	{
 

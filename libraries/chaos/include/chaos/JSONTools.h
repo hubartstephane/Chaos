@@ -246,7 +246,7 @@ namespace chaos
 			if (GetAttribute(entry, name, result))
 				return true;
 			result = default_value;
-			return true;
+			return false;
 		}
 
 		/** reading an attribute with default value */
@@ -256,7 +256,7 @@ namespace chaos
 			if (GetAttributeByIndex(entry, index, result))
 				return true;
 			result = default_value;
-			return true;
+			return false;
 		}
 
 		/** reading an attribute and make a lookup on an encoding table */
@@ -286,7 +286,7 @@ namespace chaos
 			if (GetEnumAttribute(entry, name, encode_table, result))
 				return true;
 			result = default_value;
-			return true;
+			return false;
 		}
 
 		/** reading an attribute and make a lookup on an encoding table with a default value */
@@ -296,7 +296,7 @@ namespace chaos
 			if (GetEnumAttributeByIndex(entry, index, encode_table, result))
 				return true;
 			result = default_value;
-			return true;
+			return false;
 		}
 
 	protected:

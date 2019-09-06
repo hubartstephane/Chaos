@@ -29,7 +29,7 @@ namespace chaos
 		assert(resource_manager != nullptr);
 		// resolve parenting
 		for (GPURenderMaterialParentReference & ref : parent_references)
-			if (ref.render_material->parent_material == nullptr)
+			if (ref.render_material->material_info.parent_material == nullptr)
 				resource_manager->SetRenderMaterialParent(ref.render_material.get(), ref.parent_name.c_str());
 		// resolve sub materials
 		for (GPURenderMaterialSubMaterialReference & ref : submaterials_references)
@@ -407,11 +407,11 @@ namespace chaos
 				reference_solver->AddInheritance(result, std::move(parent_name));
 			
 			// read filter names
-			result->filter_specified = JSONTools::GetAttribute(json, "filter", result->filter);
+			result->material_info.filter_specified = JSONTools::GetAttribute(json, "filter", result->material_info.filter);
 			// search whether the material is hidden
-			result->hidden_specified = JSONTools::GetAttribute(json, "hidden", result->hidden);
-			if (!result->hidden_specified)
-				result->hidden = false; // default value
+			result->material_info.hidden_specified = JSONTools::GetAttribute(json, "hidden", result->material_info.hidden);
+			if (!result->material_info.hidden_specified)
+				result->material_info.hidden = false; // default value
 			// search program
 			InitializeProgramFromJSON(result, json, config_path);
 			// look at textures

@@ -337,20 +337,20 @@ namespace chaos
 
 		// patch textures (uniforms)
 		GPUProgramReplaceTextureAction action(reload_data);
-		render_material->uniform_provider.ProcessAction(nullptr, action);
+		render_material->material_info.uniform_provider.ProcessAction(nullptr, action);
 
 		// patch program
-		auto it_program = reload_data.program_map.find(render_material->program.get());
+		auto it_program = reload_data.program_map.find(render_material->material_info.program.get());
 		if (it_program != reload_data.program_map.end())
-			render_material->program = it_program->second;
+			render_material->material_info.program = it_program->second;
 
 		// patch parent_material
-		auto it_parent = reload_data.render_material_map.find(render_material->parent_material.get());
+		auto it_parent = reload_data.render_material_map.find(render_material->material_info.parent_material.get());
 		if (it_parent != reload_data.render_material_map.end())
-			render_material->parent_material = it_parent->second;
+			render_material->material_info.parent_material = it_parent->second;
 
 		// patch submaterials
-		for (GPUSubMaterialEntry & entry : render_material->sub_materials)
+		for (GPUSubMaterialEntry & entry : render_material->material_info.sub_materials)
 		{
 			auto it_submaterial = reload_data.render_material_map.find(entry.material.get());
 			if (it_submaterial != reload_data.render_material_map.end())
@@ -358,8 +358,8 @@ namespace chaos
 		}
 
 		// recursive on parent and sub materials
-		PatchRenderMaterialRecursive(render_material->parent_material.get(), reload_data);
-		for (GPUSubMaterialEntry & entry : render_material->sub_materials)
+		PatchRenderMaterialRecursive(render_material->material_info.parent_material.get(), reload_data);
+		for (GPUSubMaterialEntry & entry : render_material->material_info.sub_materials)
 			PatchRenderMaterialRecursive(entry.material.get(), reload_data);
 	}
 
@@ -378,15 +378,16 @@ namespace chaos
 			// (while ori_object has capture other's data)
 			reload_data.render_material_map[other_object] = ori_object;
 
-			std::swap(ori_object->parent_material, other_object->parent_material);
-			std::swap(ori_object->program, other_object->program);
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
-			std::swap(ori_object->uniform_provider.children_providers, other_object->uniform_provider.children_providers);
-			std::swap(ori_object->sub_materials, other_object->sub_materials);
-			std::swap(ori_object->hidden, other_object->hidden);
-			std::swap(ori_object->filter, other_object->filter);
-			std::swap(ori_object->hidden_specified, other_object->hidden_specified);			
-			std::swap(ori_object->filter_specified, other_object->filter_specified);
+
+			std::swap(ori_object->material_info.parent_material, other_object->material_info.parent_material);
+			std::swap(ori_object->material_info.program, other_object->material_info.program);			
+			std::swap(ori_object->material_info.uniform_provider.children_providers, other_object->material_info.uniform_provider.children_providers);
+			std::swap(ori_object->material_info.sub_materials, other_object->material_info.sub_materials);
+			std::swap(ori_object->material_info.hidden, other_object->material_info.hidden);
+			std::swap(ori_object->material_info.filter, other_object->material_info.filter);
+			std::swap(ori_object->material_info.hidden_specified, other_object->material_info.hidden_specified);
+			std::swap(ori_object->material_info.filter_specified, other_object->material_info.filter_specified);
 		});
 
 		// patching references (texures, programs, parent_materials)

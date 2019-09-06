@@ -58,6 +58,42 @@ namespace chaos
 	};
 
 	/**
+	* GPURenderMaterialData : the data for a material
+	*/
+
+	class GPURenderMaterialInfo
+	{
+	public:
+
+		/** the program */
+		shared_ptr<GPUProgram> program;
+		/** parent material */
+		shared_ptr<GPURenderMaterial> parent_material;
+		/** some rendering states */
+		GPUProgramProvider uniform_provider;
+
+		/** some enable/disable behavior */
+		NameFilter filter;
+		/** whether the material is null (force to use no program => no rendering) */
+		bool hidden = false;
+		/** children materials (pair filter / material) */
+		std::vector<GPUSubMaterialEntry> sub_materials;
+
+		/** whether there was an explicit filter in the JSON file (or it is inherited from parent) */
+		bool filter_specified = false;
+		/** whether there was an explicit hidden in the JSON file (or it is inherited from parent) */
+		bool hidden_specified = false;
+
+	};
+
+
+
+
+
+
+
+
+	/**
 	* GPURenderMaterial : this is the combinaison of some uniforms and a program
 	*/
 
@@ -95,9 +131,9 @@ namespace chaos
 		GPURenderMaterial const * GetEffectiveMaterial(GPURenderParams const & render_params) const;
 
 		/** get the uniform provider */
-		GPUProgramProvider & GetUniformProvider() { return uniform_provider; }
+		GPUProgramProvider & GetUniformProvider();
 		/** get the uniform provider */
-		GPUProgramProvider const & GetUniformProvider() const { return uniform_provider; }
+		GPUProgramProvider const & GetUniformProvider() const;
 
 
 		/** search the submaterial by its submaterial_name */
@@ -124,25 +160,8 @@ namespace chaos
 
 	public: // shuyyy
 
-		/** the program */
-		shared_ptr<GPUProgram> program;
-		/** parent material */
-		shared_ptr<GPURenderMaterial> parent_material;
-		/** some rendering states */
-		GPUProgramProvider uniform_provider;
-
-		/** some enable/disable behavior */
-		NameFilter filter;
-		/** whether the material is null (force to use no program => no rendering) */
-		bool hidden = false;
-
-		/** whether there was an explicit filter in the JSON file (or it is inherited from parent) */
-		bool filter_specified = false;
-		/** whether there was an explicit hidden in the JSON file (or it is inherited from parent) */
-		bool hidden_specified = false;
-
-		/** children materials (pair filter / material) */
-		std::vector<GPUSubMaterialEntry> sub_materials;
+		/** all the information for the material */
+		GPURenderMaterialInfo material_info;
 	};
 
 

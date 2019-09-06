@@ -39,15 +39,15 @@ namespace chaos
 #endif
 
 		// search in the materials uniforms
-		if (render_material->uniform_provider.DoProcessAction(name, action, top_provider))
+		if (render_material->material_info.uniform_provider.DoProcessAction(name, action, top_provider))
 			return true;
 		// use variables inside this provider (should be empty)
 		if (GPUProgramProvider::DoProcessAction(name, action, top_provider))
 			return true;
 		// try parent 
-		if (render_material->parent_material != nullptr)
+		if (render_material->material_info.parent_material != nullptr)
 		{
-			GPUProgramRenderMaterialProvider parent_provider(render_material->parent_material.get(), nullptr, render_params); // no more other => it has already been called in this function
+			GPUProgramRenderMaterialProvider parent_provider(render_material->material_info.parent_material.get(), nullptr, render_params); // no more other => it has already been called in this function
 			if (parent_provider.DoProcessAction(name, action, top_provider))
 				return true;
 
@@ -67,16 +67,16 @@ namespace chaos
 
 	bool GPURenderMaterial::DoRelease()
 	{
-		program = nullptr;
-		parent_material = nullptr;
-		uniform_provider.Clear();
+		material_info.program = nullptr;
+		material_info.parent_material = nullptr;
+		material_info.uniform_provider.Clear();
 		return true;
 	}
 
 
 	bool GPURenderMaterial::SetProgram(GPUProgram * in_program)
 	{
-		program = in_program;
+		material_info.program = in_program;
 		return true;
 	}
 
@@ -86,7 +86,7 @@ namespace chaos
 		if (in_parent != nullptr && in_parent->SearchRenderMaterialCycle(this))
 			return false;
 		// set the parent
-		parent_material = in_parent;
+		material_info.parent_material = in_parent;
 		return true;
 	}
 
@@ -95,11 +95,11 @@ namespace chaos
 		if (this == searched_material)
 			return true;
 		// recursion with parents
-		if (parent_material != nullptr)
-			if (parent_material->SearchRenderMaterialCycle(searched_material))
+		if (material_info.parent_material != nullptr)
+			if (material_info.parent_material->SearchRenderMaterialCycle(searched_material))
 				return true;
 		// recursion with sub materials
-		for (GPUSubMaterialEntry const & entry : sub_materials)
+		for (GPUSubMaterialEntry const & entry : material_info.sub_materials)
 			if (entry.material->SearchRenderMaterialCycle(searched_material))
 				return true;
 		return false;
@@ -115,13 +115,13 @@ namespace chaos
 		GPUSubMaterialEntry entry;
 		entry.filter = std::move(filter);
 		entry.material = submaterial;
-		sub_materials.push_back(std::move(entry));
+		material_info.sub_materials.push_back(std::move(entry));
 		return true;
 	}
 
 	GPURenderMaterial * GPURenderMaterial::FindSubMaterial(char const * submaterial_name)
 	{
-		for (GPUSubMaterialEntry const & entry : sub_materials)
+		for (GPUSubMaterialEntry const & entry : material_info.sub_materials)
 			if (entry.filter.IsNameEnabled(submaterial_name))
 				return entry.material.get();
 		return nullptr;
@@ -129,15 +129,11 @@ namespace chaos
 
 	GPURenderMaterial const * GPURenderMaterial::FindSubMaterial(char const * submaterial_name) const
 	{
-		for (GPUSubMaterialEntry const & entry : sub_materials)
+		for (GPUSubMaterialEntry const & entry : material_info.sub_materials)
 			if (entry.filter.IsNameEnabled(submaterial_name))
 				return entry.material.get();
 		return nullptr;
 	}
-
-
-
-
 
 	GPURenderMaterial const * GPURenderMaterial::GetParentMaterialValidityLimit(GPURenderParams const & render_params) const
 	{
@@ -155,9 +151,9 @@ namespace chaos
 
 			// check HIDDEN state
 			bool match_hidden = true;
-			if (material->hidden_specified)
+			if (material->material_info.hidden_specified)
 			{
-				match_hidden = !material->hidden;
+				match_hidden = !material->material_info.hidden;
 				if (match_hidden) // save the last material that was known has NOT HIDDEN
 				{
 					result_hidden = material;
@@ -166,9 +162,9 @@ namespace chaos
 			}
 			// check FILTER
 			bool match_filter = true;
-			if (material->filter_specified)
+			if (material->material_info.filter_specified)
 			{
-				match_filter = material->filter.IsNameEnabled(render_params.renderpass_name.c_str());
+				match_filter = material->material_info.filter.IsNameEnabled(render_params.renderpass_name.c_str());
 				if (match_filter) // save the last material that match the FILTER criteria
 				{
 					result_filter = material;
@@ -180,12 +176,12 @@ namespace chaos
 			{
 				GPURenderMaterial const * result = (result_hidden_counter < result_filter_counter) ? result_hidden : result_filter;
 				if (result != nullptr)
-					return result->parent_material.get(); // the parent is the first failing material
+					return result->material_info.parent_material.get(); // the parent is the first failing material
 				else
 					return this; // the very first material of thee chain was invalid
 			}
 			// parent
-			material = material->parent_material.get();
+			material = material->material_info.parent_material.get();
 		}
 		return nullptr; // all parents are visible
 	}
@@ -202,7 +198,7 @@ namespace chaos
 		GPURenderMaterial const * material = this;
 		while (material != validity_limit_material)
 		{
-			for (GPUSubMaterialEntry const & entry : material->sub_materials) // search in sub_material first
+			for (GPUSubMaterialEntry const & entry : material->material_info.sub_materials) // search in sub_material first
 			{
 				if (entry.filter.IsNameEnabled(render_params.renderpass_name.c_str()))
 				{
@@ -211,20 +207,29 @@ namespace chaos
 						return result;
 				}
 			}
-			material = material->parent_material.get();
+			material = material->material_info.parent_material.get();
 		}
 		return (this != validity_limit_material)? this : nullptr;
 	}
-
+	
+	GPUProgramProvider & GPURenderMaterial::GetUniformProvider() 
+	{ 
+		return material_info.uniform_provider;
+	}
+	
+	GPUProgramProvider const & GPURenderMaterial::GetUniformProvider() const 
+	{ 
+		return material_info.uniform_provider;
+	}
 
 	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
 	{
 		GPURenderMaterial const * material = this;
 		while (material != nullptr)
 		{
-			if (material->program != nullptr)
-				return material->program.get();
-			material = material->parent_material.get();
+			if (material->material_info.program != nullptr)
+				return material->material_info.program.get();
+			material = material->material_info.parent_material.get();
 		}
 		return nullptr;
 	}

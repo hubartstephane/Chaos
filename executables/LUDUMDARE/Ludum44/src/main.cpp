@@ -65,8 +65,46 @@ auto b2 = boost::mpl::bool_<has_acceleration<Particle2>::value>();
 
 #endif
 
+void fff(int k)
+{
+
+	k = k;
+}
+
+template<typename T>
+class InheritedValue
+{
+public:
+
+	friend bool IsInherited(InheritedValue<T> const & src) {return src.inherited;}
+
+	operator T & () { return value; }
+
+	operator T const & () const { return value; }
+
+protected:
+
+	T value = 3;
+
+	bool inherited = true;
+};
+
+
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {	
+
+	InheritedValue<int> VALUE;
+
+	bool p = IsInherited(VALUE);
+
+	fff(VALUE);
+
+
+
+
+
+	return 0;
+
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;
 	params.width = 500;

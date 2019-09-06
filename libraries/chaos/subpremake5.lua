@@ -29,3 +29,6 @@
      
   DependOnStandardLib("Dbghelp.lib")  -- used on windows for call stack introspection 
   DependOnStandardLib("winmm.lib")    -- used for midi
+
+   pchheader "StandardHeaders.h"
+   pchsource "StandardHeaders.cpp"

@@ -409,13 +409,9 @@ namespace chaos
 			// read filter names
 			result->filter_specified = JSONTools::GetAttribute(json, "filter", result->filter);
 			// search whether the material is hidden
-			result->hidden_specified = JSONTools::GetAttribute(json, "hidden", result->hidden_material);
+			result->hidden_specified = JSONTools::GetAttribute(json, "hidden", result->hidden);
 			if (!result->hidden_specified)
-				result->hidden_material = false; // default value
-			// search whether the material is strict
-			result->strict_specified = JSONTools::GetAttribute(json, "strict_submaterial", result->strict_submaterial);
-			if (!result->strict_specified)
-				result->strict_submaterial = false; // default value
+				result->hidden = false; // default value
 			// search program
 			InitializeProgramFromJSON(result, json, config_path);
 			// look at textures

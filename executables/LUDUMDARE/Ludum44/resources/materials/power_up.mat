@@ -18,8 +18,8 @@
 
   "filter": {
 
-    "enabled_names": "a;b;c",
-    "disabled_names": [ "truc", "much", "machin" ]
+    "enabled_namesc": "a;b;c",
+    "disabled_namesc": [ "truc", "much", "machin" ]
   },
 
   "sub_materials": [

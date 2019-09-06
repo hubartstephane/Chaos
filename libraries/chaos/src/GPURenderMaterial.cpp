@@ -17,7 +17,7 @@ namespace chaos
 		if (other_provider != nullptr)
 			if (other_provider->DoProcessAction(name, action, top_provider))
 				return true;
-
+#if 0
 		// submaterials
 		if (render_params != nullptr && !render_params->renderpass_name.empty())
 		{
@@ -29,6 +29,9 @@ namespace chaos
 					return true;
 			}
 		}
+
+#endif
+
 		// search in the materials uniforms
 		if (render_material->uniform_provider.DoProcessAction(name, action, top_provider))
 			return true;
@@ -148,7 +151,7 @@ namespace chaos
 			bool match_hidden = true;
 			if (material->hidden_specified)
 			{
-				match_hidden = !material->hidden_material;
+				match_hidden = !material->hidden;
 				if (match_hidden) // save the last material that was known has NOT HIDDEN
 				{
 					result_hidden = material;
@@ -210,24 +213,28 @@ namespace chaos
 
 	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
 	{
-		GPURenderMaterial const * effective_material = GetEffectiveMaterial(render_params);
-		while (effective_material != nullptr)
+		GPURenderMaterial const * material = this;
+		while (material != nullptr)
 		{
-			if (effective_material->program != nullptr)
-				return effective_material->program.get();
-			effective_material = effective_material->parent_material.get();
+			if (material->program != nullptr)
+				return material->program.get();
+			material = material->parent_material.get();
 		}
 		return nullptr;
 	}
 
 	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const
 	{
+		// find the real material that is use throught sub_materials
+		GPURenderMaterial const * effective_material = GetEffectiveMaterial(render_params);
+		if (effective_material == nullptr)
+			return nullptr;
 		// go through the hierarchy until we get the program
-		GPUProgram const * effective_program = GetEffectiveProgram(render_params);
+		GPUProgram const * effective_program = effective_material->GetEffectiveProgram(render_params);
 		if (effective_program == nullptr)
 			return nullptr;
 		// use the program
-		GPUProgramRenderMaterialProvider provider(this, in_uniform_provider, &render_params);
+		GPUProgramRenderMaterialProvider provider(effective_material, in_uniform_provider, &render_params);
 		effective_program->UseProgram(&provider);
 
 		return effective_program;

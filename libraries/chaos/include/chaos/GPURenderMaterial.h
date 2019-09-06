@@ -134,17 +134,12 @@ namespace chaos
 		/** some enable/disable behavior */
 		NameFilter filter;
 		/** whether the material is null (force to use no program => no rendering) */
-		bool hidden_material = false;
-		/** whether the flag is true, the material is ignored if render_params.submaterial_name is not empty */
-		bool strict_submaterial = false;
+		bool hidden = false;
 
 		/** whether there was an explicit filter in the JSON file (or it is inherited from parent) */
 		bool filter_specified = false;
 		/** whether there was an explicit hidden in the JSON file (or it is inherited from parent) */
 		bool hidden_specified = false;
-		/** whether there was an explicit strict in the JSON file (or it is inherited from parent) */
-		bool strict_specified = false;
-
 
 		/** children materials (pair filter / material) */
 		std::vector<GPUSubMaterialEntry> sub_materials;

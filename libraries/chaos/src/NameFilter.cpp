@@ -60,9 +60,10 @@ namespace chaos
 		if (names == nullptr)
 			names = "";
 		// split by separator
-		std::vector<std::string> name_array = chaos::StringTools::Split(names, ';');
+		std::vector<std::string> name_array = chaos::StringTools::Split(names, separator);
 		for (std::string & name : name_array)
 		{
+			name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end()); // remove space 
 			// search if the name is already existing
 			for (std::string const & element : target_list)
 				if (StringTools::Stricmp(name, element) == 0)
@@ -78,7 +79,7 @@ namespace chaos
 		if (names == nullptr)
 			names = "";
 		// split by separator
-		std::vector<std::string> name_array = chaos::StringTools::Split(names, ';');
+		std::vector<std::string> name_array = chaos::StringTools::Split(names, separator);
 		for (std::string const & name : name_array)
 		{
 			size_t count = target_list.size();
@@ -108,7 +109,7 @@ namespace chaos
 
 	bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj)
 	{
-		// the simplest format is with string and ';' as separator 
+		// the simplest format is with string and ',' as separator 
 		if (json_entry.is_string())
 		{
 			obj.AddEnabledNames(json_entry.get<std::string>().c_str());		
@@ -126,7 +127,7 @@ namespace chaos
 					LoadFromJSON(*it_enabled, obj.enabled_names);
 			}
 
-			// "disabled_names" can be a string with ';' as separator or an array of string
+			// "disabled_names" can be a string with ',' as separator or an array of string
 			nlohmann::json::const_iterator it_disabled = json_entry.find("disabled_names");
 			if (it_disabled != json_entry.end())
 			{

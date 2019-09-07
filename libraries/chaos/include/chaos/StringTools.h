@@ -65,6 +65,23 @@ namespace chaos
 		/** some comparaison short cuts */
 		int Stricmp(std::string const & src1, std::string const & src2);
 
+		/** some comparaison short cuts */
+		int Strncmp(char const * src1, char const * src2, size_t count);
+		/** some comparaison short cuts */
+		int Strncmp(char const * src1, std::string const & src2, size_t count);
+		/** some comparaison short cuts */
+		int Strncmp(std::string const & src1, char const * src2, size_t count);
+		/** some comparaison short cuts */
+		int Strncmp(std::string const & src1, std::string const & src2, size_t count);
+		/** some comparaison short cuts */
+		int Strnicmp(char const * src1, char const * src2, size_t count);
+		/** some comparaison short cuts */
+		int Strnicmp(char const * src1, std::string const & src2, size_t count);
+		/** some comparaison short cuts */
+		int Strnicmp(std::string const & src1, char const * src2, size_t count);
+		/** some comparaison short cuts */
+		int Strnicmp(std::string const & src1, std::string const & src2, size_t count);
+
 		/** ci_less : a case insensitive comparator */
 		struct ci_less
 		{

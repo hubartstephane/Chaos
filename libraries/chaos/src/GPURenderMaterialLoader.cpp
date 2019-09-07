@@ -401,6 +401,58 @@ namespace chaos
 		GPURenderMaterial * result = new GPURenderMaterial;
 		if (result != nullptr)
 		{
+			// iterate over all properties
+			for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); it++)
+			{
+				std::string property_name = it.key();
+
+				// RENDERPASSES ?
+
+				if (property_name == "")
+				{
+
+				}
+				else if (StringTools::Strncmp(property_name, "renderpass:", 11) == 0)
+				{
+
+					NameFilter name_filter;
+					name_filter.AddEnabledNames(property_name.c_str() + 11);
+
+
+					property_name = property_name;
+
+				}
+
+				//strncmp()
+				
+				if (property_name == "renderpass:")
+				{
+
+					property_name = property_name;
+				}
+				property_name = property_name;
+
+
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			// search material parent
 			std::string parent_name;
 			if (reference_solver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())

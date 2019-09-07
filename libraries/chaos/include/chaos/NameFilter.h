@@ -12,6 +12,9 @@ namespace chaos
 	class NameFilter
 	{
 
+		/** the separator to use */
+		static char const separator = ',';
+
 		/** JSON saving method */
 		friend bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & obj);
 		/** JSON loading method */
@@ -22,13 +25,13 @@ namespace chaos
 		/** returns true whether the filter is empty */
 		bool IsEmpty() const;
 	
-		/** add names in the enabled list (separated with ';') */
+		/** add names in the enabled list (separated with ',') */
 		void AddEnabledNames(char const * names);
-		/** add names in the disabled list (separated with ';') */
+		/** add names in the disabled list (separated with ',') */
 		void AddDisabledNames(char const * names);
-		/** remove names from the enabled list (separated with ';') */
+		/** remove names from the enabled list (separated with ',') */
 		void RemoveEnabledNames(char const * names);
-		/** remove names from the disabled list (separated with ';') */
+		/** remove names from the disabled list (separated with ',') */
 		void RemoveDisabledNames(char const * names);
 
 		/** check whether the name passes the filter */
@@ -36,9 +39,9 @@ namespace chaos
 
 	protected:
 
-		/** utility method to insert names in the enabled/disabled array  (separated with ';') */
+		/** utility method to insert names in the enabled/disabled array  (separated with ',') */
 		void AddNamesImpl(char const * names, std::vector<std::string> & target_list);
-		/** utility method to remove names from the enabled/disabled array  (separated with ';') */
+		/** utility method to remove names from the enabled/disabled array  (separated with ',') */
 		void RemoveNamesImpl(char const * names, std::vector<std::string> & target_list);
 
 	protected:

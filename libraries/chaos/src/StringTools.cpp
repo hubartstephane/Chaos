@@ -223,6 +223,40 @@ namespace chaos
 			return Stricmp(src1.c_str(), src2.c_str());
 		}
 
+		int Strncmp(char const * src1, char const * src2, size_t count)
+		{
+			return strncmp(src1, src2, count);
+		}
+		int Strncmp(char const * src1, std::string const & src2, size_t count)
+		{
+			return Strncmp(src1, src2.c_str(), count);
+		}
+		int Strncmp(std::string const & src1, char const * src2, size_t count)
+		{
+			return Strncmp(src1.c_str(), src2, count);
+		}
+		int Strncmp(std::string const & src1, std::string const & src2, size_t count)
+		{
+			return Strncmp(src1.c_str(), src2.c_str(), count);
+		}
+
+		int Strnicmp(char const * src1, char const * src2, size_t count)
+		{
+			return _strnicmp(src1, src2, count);
+		}
+		int Strnicmp(char const * src1, std::string const & src2, size_t count)
+		{
+			return Strnicmp(src1, src2.c_str(), count);
+		}
+		int Strnicmp(std::string const & src1, char const * src2, size_t count)
+		{
+			return Strnicmp(src1.c_str(), src2, count);
+		}
+		int Strnicmp(std::string const & src1, std::string const & src2, size_t count)
+		{
+			return Strnicmp(src1.c_str(), src2.c_str(), count);
+		}
+
 	} // namespace StringTools
 
 }; // namespace chaos

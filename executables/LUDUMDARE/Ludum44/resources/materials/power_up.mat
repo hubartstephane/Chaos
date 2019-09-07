@@ -26,5 +26,10 @@
     1,
     2,
     3
-  ]
+  ],
+
+	"renderpass:   x, y,   z":
+	{
+		"texture":"toto"
+	}
 }

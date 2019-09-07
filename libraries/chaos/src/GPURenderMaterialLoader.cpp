@@ -13,23 +13,26 @@ namespace chaos
 	// GPURenderMaterialLoaderReferenceSolver
 	// ===========================================================================
 
-	void GPURenderMaterialLoaderReferenceSolver::AddInheritance(GPURenderMaterial * render_material, std::string parent_name)
+	void GPURenderMaterialLoaderReferenceSolver::AddInheritance(GPURenderMaterialInfo * material_info, std::string parent_name)
 	{
-		assert(render_material != nullptr);
+		assert(material_info != nullptr);
 		assert(!parent_name.empty());
 
 		GPURenderMaterialParentReference reference;
-		reference.render_material = render_material;
+		reference.material_info = material_info;
 		reference.parent_name = std::move(parent_name);
 		parent_references.push_back(std::move(reference));
 	}
 
 	bool GPURenderMaterialLoaderReferenceSolver::ResolveReferences(GPUResourceManager * resource_manager)
 	{
+
+#if 0
+
 		assert(resource_manager != nullptr);
 		// resolve parenting
 		for (GPURenderMaterialParentReference & ref : parent_references)
-			if (ref.render_material->material_info.parent_material == nullptr)
+			if (ref.render_material->material_info->parent_material == nullptr)
 				resource_manager->SetRenderMaterialParent(ref.render_material.get(), ref.parent_name.c_str());
 		// resolve sub materials
 		for (GPURenderMaterialSubMaterialReference & ref : submaterials_references)
@@ -43,16 +46,18 @@ namespace chaos
 		parent_references.clear();
 		submaterials_references.clear();
 
+#endif
+
 		return true;
 	}
 
-	void GPURenderMaterialLoaderReferenceSolver::AddSubMaterialReference(GPURenderMaterial * render_material, NameFilter filter, std::string reference_name, bool is_named_reference)
+	void GPURenderMaterialLoaderReferenceSolver::AddSubMaterialReference(GPURenderMaterialInfo * material_info, NameFilter filter, std::string reference_name, bool is_named_reference)
 	{
-		assert(render_material != nullptr);
+		assert(material_info != nullptr);
 		assert(!reference_name.empty());
 
 		GPURenderMaterialSubMaterialReference reference;
-		reference.render_material = render_material;
+		reference.material_info = material_info;
 		reference.filter = std::move(filter);
 		reference.reference_name = std::move(reference_name);
 		reference.is_named_reference = is_named_reference;
@@ -63,16 +68,16 @@ namespace chaos
 		// GPURenderMaterialLoader
 		// ===========================================================================
 
-	bool GPURenderMaterialLoader::InitializeProgramFromName(GPURenderMaterialInfo & material_info, char const * program_name) const
+	bool GPURenderMaterialLoader::InitializeProgramFromName(GPURenderMaterialInfo * material_info, char const * program_name) const
 	{
 		GPUProgram * program = manager->FindProgram(program_name);
 		if (program == nullptr)
 			return false;
-		material_info.program = program;
+		material_info->program = program;
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeProgramFromPath(GPURenderMaterialInfo & material_info, FilePathParam const & path) const
+	bool GPURenderMaterialLoader::InitializeProgramFromPath(GPURenderMaterialInfo * material_info, FilePathParam const & path) const
 	{
 		// take already loaded program, or try load it
 		GPUProgram * program = manager->FindProgramByPath(path.GetResolvedPath());
@@ -81,11 +86,11 @@ namespace chaos
 		// set the program
 		if (program == nullptr)
 			return false;
-		material_info.program = program;
+		material_info->program = program;
 		return true;
 	}
 	
-	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// does the JSON have a "program" string ?
 		std::string program_name;
@@ -118,21 +123,21 @@ namespace chaos
 			return false;
 
 		// initialize the program
-		material_info.program = program;
+		material_info->program = program;
 
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeTextureFromName(GPURenderMaterialInfo & material_info, char const * uniform_name, char const * texture_name) const
+	bool GPURenderMaterialLoader::InitializeTextureFromName(GPURenderMaterialInfo * material_info, char const * uniform_name, char const * texture_name) const
 	{
 		GPUTexture * texture = manager->FindTexture(texture_name);
 		if (texture == nullptr)
 			return false;
-		material_info.uniform_provider.AddVariableTexture(uniform_name, texture);
+		material_info->uniform_provider.AddVariableTexture(uniform_name, texture);
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeTextureFromPath(GPURenderMaterialInfo & material_info, char const * uniform_name, FilePathParam const & path) const
+	bool GPURenderMaterialLoader::InitializeTextureFromPath(GPURenderMaterialInfo * material_info, char const * uniform_name, FilePathParam const & path) const
 	{
 		// take already loaded texture, or try load it
 		GPUTexture * texture = manager->FindTextureByPath(path.GetResolvedPath());
@@ -141,11 +146,11 @@ namespace chaos
 		// set the texture
 		if (texture == nullptr)
 			return false;
-		material_info.uniform_provider.AddVariableTexture(uniform_name, texture);
+		material_info->uniform_provider.AddVariableTexture(uniform_name, texture);
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// search the texture object
 		nlohmann::json const * json_textures = JSONTools::GetStructure(json, "textures");
@@ -195,60 +200,60 @@ namespace chaos
 			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, texture_name.c_str());
 			if (texture == nullptr)
 				continue;
-			material_info.uniform_provider.AddVariableTexture(texture_uniform_name.c_str(), texture);
+			material_info->uniform_provider.AddVariableTexture(texture_uniform_name.c_str(), texture);
 		}
 		return true;
 	}
 
 	template<typename VECTOR_TYPE>
-	static bool DoAddUniformVectorToRenderMaterial(GPURenderMaterialInfo & material_info, char const * uniform_name, nlohmann::json const & json, VECTOR_TYPE & value)
+	static bool DoAddUniformVectorToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const & json, VECTOR_TYPE & value)
 	{
 		size_t count = json.size();
 		for (size_t i = 0; i < count; ++i)
 			value[i] = json[i].get<VECTOR_TYPE::value_type>();
-		material_info.uniform_provider.AddVariableValue(uniform_name, value);
+		material_info->uniform_provider.AddVariableValue(uniform_name, value);
 		return true;
 	}
 
 	template<typename SCALAR_TYPE>
-	static bool AddUniformVectorToRenderMaterial(GPURenderMaterialInfo & material_info, char const * uniform_name, nlohmann::json const & json)
+	static bool AddUniformVectorToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const & json)
 	{
 		size_t count = json.size();
 		if (count == 1)
 		{
-			material_info.uniform_provider.AddVariableValue(uniform_name, json[0].get<SCALAR_TYPE>());
+			material_info->uniform_provider.AddVariableValue(uniform_name, json[0].get<SCALAR_TYPE>());
 			return true;
 		}
 		if (count == 2)
 		{
 			glm::tvec2<SCALAR_TYPE> value;
-			return DoAddUniformVectorToRenderMaterial(render_material, uniform_name, json, value);
+			return DoAddUniformVectorToRenderMaterial(material_info, uniform_name, json, value);
 		}
 		if (count == 3)
 		{
 			glm::tvec3<SCALAR_TYPE> value;
-			return DoAddUniformVectorToRenderMaterial(render_material, uniform_name, json, value);
+			return DoAddUniformVectorToRenderMaterial(material_info, uniform_name, json, value);
 		}
 		if (count == 4)
 		{
 			glm::tvec4<SCALAR_TYPE> value;
-			return DoAddUniformVectorToRenderMaterial(render_material, uniform_name, json, value);
+			return DoAddUniformVectorToRenderMaterial(material_info, uniform_name, json, value);
 		}
 		return false;
 	}
 
-	bool GPURenderMaterialLoader::AddUniformToRenderMaterial(GPURenderMaterialInfo & material_info, char const * uniform_name, nlohmann::json const & json) const
+	bool GPURenderMaterialLoader::AddUniformToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const & json) const
 	{
 		// is the uniform a integer ?
 		if (json.is_number_integer())
 		{
-			material_info.uniform_provider.AddVariableValue(uniform_name, json.get<int>());
+			material_info->uniform_provider.AddVariableValue(uniform_name, json.get<int>());
 			return true;
 		}
 		// is the uniform a number ?
 		if (json.is_number())
 		{
-			material_info.uniform_provider.AddVariableValue(uniform_name, json.get<float>());
+			material_info->uniform_provider.AddVariableValue(uniform_name, json.get<float>());
 			return true;
 		}
 		// is the uniform an array of numbers
@@ -284,7 +289,7 @@ namespace chaos
 		return false;
 	}
 
-	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// search the uniform object
 		nlohmann::json const * json_uniforms = JSONTools::GetStructure(json, "uniforms");
@@ -300,204 +305,72 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeSubMaterialsFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+
+
+
+
+	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
-		// search the uniform object
-		nlohmann::json const * json_submaterials = JSONTools::GetStructure(json, "sub_materials");
-		if (json_submaterials == nullptr)
-			return false;
-
-		// 2 cases : 
-		//   -array  => a 'filter' property is expected (but not mandatory)
-		//   -object => the key correspond to enable filter list
-
-		bool is_array  = json_submaterials->is_array();
-		bool is_object = json_submaterials->is_object();
-		if (!is_array && !is_object)
-			return false;
-
-		// enumerate all sub materials
-		for (nlohmann::json::const_iterator it = json_submaterials->begin(); it != json_submaterials->end(); ++it)
-		{	
-			nlohmann::json const & json_submat = it.value();
-
-			// each element of the structure has to be an object
-			if (!json_submat.is_object())
+		// iterate over all properties
+		for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); it++)
+		{
+			// a renderpass must be an object
+			if (!it->is_object())
 				continue;
 
-			// search the filters
-			NameFilter filter;
+			// search whether property is a renderpass
+			std::string property_name = it.key();
+			if (StringTools::Strncmp(property_name, "renderpass:", 11) != 0)
+				continue;
 
-			if (is_object) // the key for an object is the enable list
+			// create a new material info
+			GPURenderMaterialInfo * other_material_info = new GPURenderMaterialInfo;
+			if (other_material_info == nullptr)
+				continue;
+			if (!InitializeMaterialInfoFromJSON(other_material_info, it.value(), config_path))
 			{
-				std::string filter_string = it.key();
-				filter.AddEnabledNames(filter_string.c_str());
-			}
-			else if (is_array)
-			{
-				JSONTools::GetAttribute(json_submat, "filter", filter); // try to read filter as a property
-			}
-
-			if (manager != nullptr && reference_solver != nullptr)
-			{
-				// try to find by path
-				std::string sub_path;
-				if (JSONTools::GetAttribute(json_submat, "path", sub_path))
-				{
-
-
-					// shuyyy
-					assert(0);
-
-				//	reference_solver->AddSubMaterialReference(render_material, std::move(filter), std::move(sub_path), false); // false => by path
-					continue;
-				}
-				// try to find by name
-				std::string sub_name;
-				if (JSONTools::GetAttribute(json_submat, "name", sub_name))
-				{
-
-					// shuyyy
-					assert(0);
-
-					//reference_solver->AddSubMaterialReference(render_material, std::move(filter), std::move(sub_name), true); // true => by name
-					continue;
-				}
+				delete (other_material_info);
+				continue;
 			}
 
-			// XXX : 
-			//       - GPUSubMaterialEntry has a 'filter' property
-			//       - GPURenderMaterial   has a 'filter' property too
-			//
-			//  there must not be any confusion about that
+			// register the child material info
+			NameFilter name_filter;
+			name_filter.AddEnabledNames(property_name.c_str() + 11);
 
-			// independant material
-			GPURenderMaterialLoader other_loader = *this;
-			other_loader.insert_in_manager = false;
-
-			// shuyyy
-			assert(0);
-
-#if 0
-
-			shared_ptr<GPURenderMaterial> submaterial = other_loader.LoadObject(nullptr, json_submat, config_path); // may be an error during SetSubMaterial(...) due to reference cycle
-			if (submaterial != nullptr)
-			{
-				if (is_object)
-					render_material->SetSubMaterial(std::move(filter), submaterial.get()); // the filter of GPUSubMaterialEntry was given by the KEY
-				else if (is_array)
-					render_material->SetSubMaterial(NameFilter(), submaterial.get());      // the filter we may have encoutered previously is not for GPUSubMaterialEntry, but is read by the new independant GPURenderMaterial
-			}
-#endif
+			GPURenderMaterialInfoEntry entry;
+			entry.material_info = other_material_info;
+			entry.filter = std::move(name_filter);
+			material_info->renderpasses.push_back(std::move(entry));
 		}
 		return true;
 	}
 
-
-
-
-
-
-
-
-
-
-	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
+		assert(material_info != nullptr);
 
+		if (!json.is_object())
+			return false;
 
+		// search material parent
+		std::string parent_name;
+		if (reference_solver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())
+			reference_solver->AddInheritance(material_info, std::move(parent_name));
+		// read filter names
+		material_info->filter_specified = JSONTools::GetAttribute(json, "filter", material_info->filter);
+		// search whether the material is hidden
+		material_info->hidden_specified = JSONTools::GetAttribute(json, "hidden", material_info->hidden, false);
+		// search program
+		InitializeProgramFromJSON(material_info, json, config_path);
+		// look at textures
+		InitializeTexturesFromJSON(material_info, json, config_path);
+		// look at uniforms
+		InitializeUniformsFromJSON(material_info, json, config_path);
+		// look at renderpasses
+		InitializeRenderPassesFromJSON(material_info, json, config_path);
 
-
-
-#if 0
-
-		// create a new material
-		GPURenderMaterial * result = new GPURenderMaterial;
-		if (result != nullptr)
-		{
-			// iterate over all properties
-			for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); it++)
-			{
-				std::string property_name = it.key();
-
-				// RENDERPASSES ?
-
-				if (property_name == "")
-				{
-
-				}
-				else if (StringTools::Strncmp(property_name, "renderpass:", 11) == 0)
-				{
-
-					NameFilter name_filter;
-					name_filter.AddEnabledNames(property_name.c_str() + 11);
-
-
-					property_name = property_name;
-
-				}
-
-				//strncmp()
-
-				if (property_name == "renderpass:")
-				{
-
-					property_name = property_name;
-				}
-				property_name = property_name;
-
-
-			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			// search material parent
-			std::string parent_name;
-			if (reference_solver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())
-				reference_solver->AddInheritance(result, std::move(parent_name));
-
-			// read filter names
-			result->material_info.filter_specified = JSONTools::GetAttribute(json, "filter", result->material_info.filter);
-			// search whether the material is hidden
-			result->material_info.hidden_specified = JSONTools::GetAttribute(json, "hidden", result->material_info.hidden);
-			if (!result->material_info.hidden_specified)
-				result->material_info.hidden = false; // default value
-																							// search program
-			InitializeProgramFromJSON(result->material_info, json, config_path);
-			// look at textures
-			InitializeTexturesFromJSON(result->material_info, json, config_path);
-			// look at uniforms
-			InitializeUniformsFromJSON(result->material_info, json, config_path);
-			// initialize sub materials
-			InitializeSubMaterialsFromJSON(result->material_info, json, config_path);
-
-
-
-
-#endif
-
-
-			return true;
-
+		return true;
 	}
-
-
 
 	bool GPURenderMaterialLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
@@ -525,7 +398,7 @@ namespace chaos
 			return nullptr;
 
 		// Initialize the material_info from JSON
-		InitializeMaterialInfoFromJSON(result->material_info, json, config_path);
+		InitializeMaterialInfoFromJSON(&result->material_info, json, config_path);
 
 		// finalize : give name / path to the new resource
 		ApplyNameToLoadedResource(result);

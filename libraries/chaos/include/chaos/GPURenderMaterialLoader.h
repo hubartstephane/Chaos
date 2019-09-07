@@ -19,23 +19,22 @@ namespace chaos
 	class GPURenderMaterialParentReference
 	{
 	public:
-
-		/** the material we are searching for its parent */
-		chaos::shared_ptr<GPURenderMaterial> render_material;
-		/** if renderpass == MAX, we are talking about the render_material->material_info itself */
-		size_t renderpass_index = std::numeric_limits<size_t>::max();
+		/** the material_info to resolve */
+		GPURenderMaterialInfo * material_info = nullptr;
 		/** the name of the parent */
 		std::string parent_name;
 	};
+
+
+
+
 
 	class GPURenderMaterialSubMaterialReference
 	{
 	public:
 
-		/** the material we are searching for its parent */
-		chaos::shared_ptr<GPURenderMaterial> render_material;
-		/** if renderpass == MAX, we are talking about the render_material->material_info itself */
-		size_t renderpass_index = std::numeric_limits<size_t>::max();
+		/** the material_info to resolve */
+		GPURenderMaterialInfo * material_info = nullptr;
 		/** the filter used for this material */
 		NameFilter filter;
 		/** the name of the reference (name or path) */
@@ -44,16 +43,20 @@ namespace chaos
 		bool is_named_reference = true;
 	};
 
+
+
+
+
 	class GPURenderMaterialLoaderReferenceSolver
 	{
 	public:
 
-		/** register a parenting (if renderpass == MAX, we are talking about the render_material->material_info itself) */
-		void AddInheritance(GPURenderMaterial * render_material, size_t renderpass_index, std::string parent_name);
+		/** register a parenting */
+		void AddInheritance(GPURenderMaterialInfo * material_info, std::string parent_name);
 		/** resolve all pending references */
 		bool ResolveReferences(GPUResourceManager * resource_manager);
-		/** add a sub material reference  (if renderpass == MAX, we are talking about the render_material->material_info itself) */
-		void AddSubMaterialReference(GPURenderMaterial * render_material, size_t renderpass_index, NameFilter filter, std::string reference_name, bool is_named_reference);
+		/** add a sub material reference */
+		void AddSubMaterialReference(GPURenderMaterialInfo * material_info, NameFilter filter, std::string reference_name, bool is_named_reference);
 
 	protected:
 
@@ -88,29 +91,28 @@ namespace chaos
 	protected:
 
 		/** initialize the material_info */
-		bool InitializeMaterialInfoFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		bool InitializeMaterialInfoFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** initialize a texture from its name */
-		bool InitializeTextureFromName(GPURenderMaterialInfo & material_info, char const * uniform_name, char const * texture_name) const;
+		bool InitializeTextureFromName(GPURenderMaterialInfo * material_info, char const * uniform_name, char const * texture_name) const;
 		/** initialize a texture from its path */
-		bool InitializeTextureFromPath(GPURenderMaterialInfo & material_info, char const * uniform_name, FilePathParam const & path) const;
+		bool InitializeTextureFromPath(GPURenderMaterialInfo * material_info, char const * uniform_name, FilePathParam const & path) const;
 
 		/** initialize the program from its name */
-		bool InitializeProgramFromName(GPURenderMaterialInfo & material_info, char const * program_name) const;
+		bool InitializeProgramFromName(GPURenderMaterialInfo * material_info, char const * program_name) const;
 		/** initialize the program from its path */
-		bool InitializeProgramFromPath(GPURenderMaterialInfo & material_info, FilePathParam const & path) const;
+		bool InitializeProgramFromPath(GPURenderMaterialInfo * material_info, FilePathParam const & path) const;
 
 		/** add a uniform in the render material */
-		bool AddUniformToRenderMaterial(GPURenderMaterialInfo & material_info, char const * uniform_name, nlohmann::json const & json) const;
+		bool AddUniformToRenderMaterial(GPURenderMaterialInfo * material_info, char const * uniform_name, nlohmann::json const & json) const;
 
 		/** get the program from JSON */
-		bool InitializeProgramFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		bool InitializeProgramFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** get the textures from JSON */
-		bool InitializeTexturesFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		bool InitializeTexturesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** get the uniforms from JSON */
-		bool InitializeUniformsFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
-		/** get the sub materials from JSON */
-		bool InitializeSubMaterialsFromJSON(GPURenderMaterialInfo & material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
-		
+		bool InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		/** get the renderpasses from JSON */
+		bool InitializeRenderPassesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;

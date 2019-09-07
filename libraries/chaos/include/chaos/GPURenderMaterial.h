@@ -52,7 +52,7 @@ namespace chaos
 	{
 	public:
 
-		~GPURenderMaterialInfoEntry() { if (material_info != nullptr) }
+		~GPURenderMaterialInfoEntry();
 
 	public:
 

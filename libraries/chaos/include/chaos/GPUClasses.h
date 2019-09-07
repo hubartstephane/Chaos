@@ -54,7 +54,6 @@ namespace chaos
 	class GPURenderMaterialInfo;
 	class GPURenderMaterialInfoEntry;
 	class GPURenderMaterialParentReference;
-	class GPURenderMaterialSubMaterialReference;
 	class GPURenderMaterialLoaderReferenceSolver;
 	class GPURenderMaterialLoader;
 	class GPURenderParams;

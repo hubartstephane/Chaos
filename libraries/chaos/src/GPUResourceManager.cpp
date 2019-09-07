@@ -288,8 +288,6 @@ namespace chaos
 		return true;
 	}
 
-
-
 	bool GPUProgramReplaceTextureAction::DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider)
 	{
 		// XXX : remove constness ! Maybe a better way to do so
@@ -303,42 +301,29 @@ namespace chaos
 		return false; // continue for all other textures
 	}
 
-
-#if 0
-	void GPUResourceManager::PatchRenderMaterialRecursive(GPURenderMaterial * render_material, GPUResourceManagerReloadData & reload_data)
+	void GPUResourceManager::PatchRenderMaterialRecursive(GPURenderMaterialInfo * material_info, GPUResourceManagerReloadData & reload_data)
 	{
-		if (render_material == nullptr)
+		if (material_info == nullptr)
 			return;
 
 		// patch textures (uniforms)
 		GPUProgramReplaceTextureAction action(reload_data);
-		render_material->material_info.uniform_provider.ProcessAction(nullptr, action);
+		material_info->uniform_provider.ProcessAction(nullptr, action);
 
 		// patch program
-		auto it_program = reload_data.program_map.find(render_material->material_info.program.get());
+		auto it_program = reload_data.program_map.find(material_info->program.get());
 		if (it_program != reload_data.program_map.end())
-			render_material->material_info.program = it_program->second;
+			material_info->program = it_program->second;
 
 		// patch parent_material
-		auto it_parent = reload_data.render_material_map.find(render_material->material_info.parent_material.get());
+		auto it_parent = reload_data.render_material_map.find(material_info->parent_material.get());
 		if (it_parent != reload_data.render_material_map.end())
-			render_material->material_info.parent_material = it_parent->second;
+			material_info->parent_material = it_parent->second;
 
-		// patch submaterials
-		for (GPUSubMaterialEntry & entry : render_material->material_info.sub_materials)
-		{
-			auto it_submaterial = reload_data.render_material_map.find(entry.material.get());
-			if (it_submaterial != reload_data.render_material_map.end())
-				entry.material = it_submaterial->second;
-		}
-
-		// recursive on parent and sub materials
-		PatchRenderMaterialRecursive(render_material->material_info.parent_material.get(), reload_data);
-		for (GPUSubMaterialEntry & entry : render_material->material_info.sub_materials)
-			PatchRenderMaterialRecursive(entry.material.get(), reload_data);
+		// recursively look at renderpasses
+		for (GPURenderMaterialInfoEntry & entry : material_info->renderpasses)
+			PatchRenderMaterialRecursive(entry.material_info, reload_data);
 	}
-	
-#endif
 
 	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
 	{
@@ -367,14 +352,10 @@ namespace chaos
 			std::swap(ori_object->material_info.filter_specified, other_object->material_info.filter_specified);
 		});
 
-#if 0
 		// patching references (texures, programs, parent_materials)
 		size_t count = render_materials.size();
 		for (size_t i = 0; i < count; ++i)
-		{
-			PatchRenderMaterialRecursive(render_materials[i].get(), reload_data);
-		}
-#endif
+			PatchRenderMaterialRecursive(&render_materials[i]->material_info, reload_data);
 		return true;
 	}
 

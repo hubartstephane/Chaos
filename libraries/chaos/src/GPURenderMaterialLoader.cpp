@@ -26,42 +26,21 @@ namespace chaos
 
 	bool GPURenderMaterialLoaderReferenceSolver::ResolveReferences(GPUResourceManager * resource_manager)
 	{
-
-#if 0
-
 		assert(resource_manager != nullptr);
 		// resolve parenting
 		for (GPURenderMaterialParentReference & ref : parent_references)
-			if (ref.render_material->material_info->parent_material == nullptr)
-				resource_manager->SetRenderMaterialParent(ref.render_material.get(), ref.parent_name.c_str());
-		// resolve sub materials
-		for (GPURenderMaterialSubMaterialReference & ref : submaterials_references)
 		{
-			if (ref.is_named_reference)
-				resource_manager->SetRenderMaterialSubMaterial(ref.render_material.get(), std::move(ref.filter), ref.reference_name.c_str());
-			else
-				resource_manager->SetRenderMaterialSubMaterialByPath(ref.render_material.get(), std::move(ref.filter), ref.reference_name.c_str());
+			if (ref.material_info->parent_material != nullptr) // reference already resolved
+				continue;
+			GPURenderMaterial * parent_material = resource_manager->FindRenderMaterial(ref.parent_name.c_str());
+			if (parent_material == nullptr)
+				continue;
+			ref.material_info->parent_material = parent_material;
 		}
 		// clear all
 		parent_references.clear();
-		submaterials_references.clear();
-
-#endif
 
 		return true;
-	}
-
-	void GPURenderMaterialLoaderReferenceSolver::AddSubMaterialReference(GPURenderMaterialInfo * material_info, NameFilter filter, std::string reference_name, bool is_named_reference)
-	{
-		assert(material_info != nullptr);
-		assert(!reference_name.empty());
-
-		GPURenderMaterialSubMaterialReference reference;
-		reference.material_info = material_info;
-		reference.filter = std::move(filter);
-		reference.reference_name = std::move(reference_name);
-		reference.is_named_reference = is_named_reference;
-		submaterials_references.push_back(std::move(reference));
 	}
 
 		// ===========================================================================
@@ -305,10 +284,6 @@ namespace chaos
 		return true;
 	}
 
-
-
-
-
 	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// iterate over all properties
@@ -381,6 +356,7 @@ namespace chaos
 	{
 		return (manager->FindRenderMaterial(in_name) != nullptr);
 	}
+
 	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// check for name

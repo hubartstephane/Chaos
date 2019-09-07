@@ -25,28 +25,6 @@ namespace chaos
 		std::string parent_name;
 	};
 
-
-
-
-
-	class GPURenderMaterialSubMaterialReference
-	{
-	public:
-
-		/** the material_info to resolve */
-		GPURenderMaterialInfo * material_info = nullptr;
-		/** the filter used for this material */
-		NameFilter filter;
-		/** the name of the reference (name or path) */
-		std::string reference_name;
-		/** whether the reference is a name (other is path) */
-		bool is_named_reference = true;
-	};
-
-
-
-
-
 	class GPURenderMaterialLoaderReferenceSolver
 	{
 	public:
@@ -55,16 +33,11 @@ namespace chaos
 		void AddInheritance(GPURenderMaterialInfo * material_info, std::string parent_name);
 		/** resolve all pending references */
 		bool ResolveReferences(GPUResourceManager * resource_manager);
-		/** add a sub material reference */
-		void AddSubMaterialReference(GPURenderMaterialInfo * material_info, NameFilter filter, std::string reference_name, bool is_named_reference);
 
 	protected:
 
 		/** the references for parents */
 		std::vector<GPURenderMaterialParentReference> parent_references;
-		/** the references for submaterials */
-		std::vector<GPURenderMaterialSubMaterialReference> submaterials_references;
-
 	};
 
 	// ===========================================================================

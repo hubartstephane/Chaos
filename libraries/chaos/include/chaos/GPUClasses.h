@@ -51,6 +51,8 @@ namespace chaos
 	class GPURenderer;
 	class GPUProgramRenderMaterialProvider;
 	class GPURenderMaterial;
+	class GPURenderMaterialInfo;
+	class GPURenderMaterialInfoEntry;
 	class GPURenderMaterialParentReference;
 	class GPURenderMaterialSubMaterialReference;
 	class GPURenderMaterialLoaderReferenceSolver;

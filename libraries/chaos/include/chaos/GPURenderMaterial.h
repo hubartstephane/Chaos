@@ -43,26 +43,33 @@ namespace chaos
 		GPURenderParams const * render_params = nullptr;
 	};
 
+
 	/**
-	* GPUSubMaterialEntry : a 'pair' filter => material
+	* GPURenderMaterialInfoEntry : a 'pair' filter => material_info
 	*/
 
-	class GPUSubMaterialEntry
+	class GPURenderMaterialInfoEntry
 	{
+	public:
+
+		~GPURenderMaterialInfoEntry() { if (material_info != nullptr) }
+
 	public:
 
 		/** filters for which this entry is valid */
 		NameFilter filter;
 		/** the material considerered */
-		shared_ptr<GPURenderMaterial> material;
+		GPURenderMaterialInfo * material_info = nullptr;
 	};
 
+
 	/**
-	* GPURenderMaterialData : the data for a material
+	* GPURenderMaterialInfo : the data for a material
 	*/
 
 	class GPURenderMaterialInfo
 	{
+
 	public:
 
 		/** the program */
@@ -76,22 +83,14 @@ namespace chaos
 		NameFilter filter;
 		/** whether the material is null (force to use no program => no rendering) */
 		bool hidden = false;
-		/** children materials (pair filter / material) */
-		std::vector<GPUSubMaterialEntry> sub_materials;
+		/** other renderpasses */
+		std::vector<GPURenderMaterialInfoEntry> renderpasses;
 
 		/** whether there was an explicit filter in the JSON file (or it is inherited from parent) */
 		bool filter_specified = false;
 		/** whether there was an explicit hidden in the JSON file (or it is inherited from parent) */
 		bool hidden_specified = false;
-
 	};
-
-
-
-
-
-
-
 
 	/**
 	* GPURenderMaterial : this is the combinaison of some uniforms and a program
@@ -121,10 +120,6 @@ namespace chaos
 		/** set the parent material */
 		bool SetParentMaterial(GPURenderMaterial * in_parent);
 
-
-		/** set a sub material */
-		bool SetSubMaterial(NameFilter filter , GPURenderMaterial * submaterial);
-
 		/** go through the hierarchy (parenting only) and search for the program */
 		GPUProgram const * GetEffectiveProgram(GPURenderParams const & render_params) const;
 		/** go through the hierarchy (parenting + SUB_MATERIAL) and search for the final material to use */
@@ -135,12 +130,6 @@ namespace chaos
 		/** get the uniform provider */
 		GPUProgramProvider const & GetUniformProvider() const;
 
-
-		/** search the submaterial by its submaterial_name */
-		GPURenderMaterial * FindSubMaterial(char const * submaterial_name);
-		/** search the submaterial by its submaterial_name */
-		GPURenderMaterial const * FindSubMaterial(char const * submaterial_name) const;
-
 		/** create a RenderMaterial from a simple program */
 		static GPURenderMaterial * GenRenderMaterialObject(GPUProgram * program);
 
@@ -148,17 +137,13 @@ namespace chaos
 
 		/** cleaning the resource */
 		virtual bool DoRelease() override;
-		/** search some cycles throught parent_material and sub materials (returning true is an error) */
+		/** search some cycles throught parent_material (returning true is an error) */
 		bool SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const;
 
 		/** returns the first parent (or this) that is no more valid */
 		GPURenderMaterial const * GetParentMaterialValidityLimit(GPURenderParams const & render_params) const;
 
 	protected:
-
-
-
-	public: // shuyyy
 
 		/** all the information for the material */
 		GPURenderMaterialInfo material_info;

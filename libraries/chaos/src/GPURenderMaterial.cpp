@@ -55,6 +55,13 @@ namespace chaos
 		return false;
 	}
 
+
+	GPURenderMaterialInfoEntry::~GPURenderMaterialInfoEntry() 
+	{ 
+		if (material_info != nullptr)
+			delete(material_info);
+	}
+
 	GPURenderMaterial::GPURenderMaterial()
 	{
 
@@ -98,42 +105,18 @@ namespace chaos
 		if (material_info.parent_material != nullptr)
 			if (material_info.parent_material->SearchRenderMaterialCycle(searched_material))
 				return true;
-		// recursion with sub materials
-		for (GPUSubMaterialEntry const & entry : material_info.sub_materials)
-			if (entry.material->SearchRenderMaterialCycle(searched_material))
-				return true;
 		return false;
 	}
 
-	bool GPURenderMaterial::SetSubMaterial(NameFilter filter, GPURenderMaterial * submaterial)
-	{
-		assert(submaterial != nullptr);
-		// can access 'this' with element about to be inserted ?
-		if (submaterial->SearchRenderMaterialCycle(this))
-			return false;
-		// insertion as a sub material
-		GPUSubMaterialEntry entry;
-		entry.filter = std::move(filter);
-		entry.material = submaterial;
-		material_info.sub_materials.push_back(std::move(entry));
-		return true;
-	}
 
-	GPURenderMaterial * GPURenderMaterial::FindSubMaterial(char const * submaterial_name)
-	{
-		for (GPUSubMaterialEntry const & entry : material_info.sub_materials)
-			if (entry.filter.IsNameEnabled(submaterial_name))
-				return entry.material.get();
-		return nullptr;
-	}
 
-	GPURenderMaterial const * GPURenderMaterial::FindSubMaterial(char const * submaterial_name) const
-	{
-		for (GPUSubMaterialEntry const & entry : material_info.sub_materials)
-			if (entry.filter.IsNameEnabled(submaterial_name))
-				return entry.material.get();
-		return nullptr;
-	}
+
+
+
+
+
+
+
 
 	GPURenderMaterial const * GPURenderMaterial::GetParentMaterialValidityLimit(GPURenderParams const & render_params) const
 	{
@@ -195,6 +178,15 @@ namespace chaos
 	{
 		GPURenderMaterial const * validity_limit_material = GetParentMaterialValidityLimit(render_params);
 
+
+
+
+		// shuyyy 
+
+#if 0
+
+
+
 		GPURenderMaterial const * material = this;
 		while (material != validity_limit_material)
 		{
@@ -209,6 +201,8 @@ namespace chaos
 			}
 			material = material->material_info.parent_material.get();
 		}
+#endif
+
 		return (this != validity_limit_material)? this : nullptr;
 	}
 	

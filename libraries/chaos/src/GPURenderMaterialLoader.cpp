@@ -40,7 +40,7 @@ namespace chaos
 			if (parent_material == nullptr)
 				continue;
 			// search cycle
-			if (GPURenderMaterial::SearchRenderMaterialCycle(&parent_material->material_info, ref.material.get()))
+			if (GPURenderMaterial::SearchRenderMaterialCycle(parent_material->material_info.get(), ref.material.get()))
 				return false;
 			// set the parent
 			ref.material_info->parent_material = parent_material;
@@ -321,8 +321,8 @@ namespace chaos
 			name_filter.AddEnabledNames(property_name.c_str() + 11);
 
 			GPURenderMaterialInfoEntry entry;
-			entry.material_info = other_material_info;
 			entry.filter = std::move(name_filter);
+			entry.material_info = other_material_info;
 			material_info->renderpasses.push_back(std::move(entry));
 		}
 		return true;
@@ -383,7 +383,7 @@ namespace chaos
 			return nullptr;
 
 		// Initialize the material_info from JSON
-		InitializeMaterialInfoFromJSON(result, &result->material_info, json, config_path);
+		InitializeMaterialInfoFromJSON(result, result->material_info.get(), json, config_path);
 
 		// finalize : give name / path to the new resource
 		ApplyNameToLoadedResource(result);

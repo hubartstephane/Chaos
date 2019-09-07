@@ -322,7 +322,7 @@ namespace chaos
 
 		// recursively look at renderpasses
 		for (GPURenderMaterialInfoEntry & entry : material_info->renderpasses)
-			PatchRenderMaterialRecursive(entry.material_info, reload_data);
+			PatchRenderMaterialRecursive(entry.material_info.get(), reload_data);
 	}
 
 	bool GPUResourceManager::RefreshMaterial(GPUResourceManager * other_gpu_manager, GPUResourceManagerReloadData & reload_data)
@@ -342,20 +342,23 @@ namespace chaos
 
 			std::swap(ori_object->file_timestamp, other_object->file_timestamp);
 
-			std::swap(ori_object->material_info.parent_material, other_object->material_info.parent_material);
-			std::swap(ori_object->material_info.program, other_object->material_info.program);			
-			std::swap(ori_object->material_info.uniform_provider.children_providers, other_object->material_info.uniform_provider.children_providers);
-			std::swap(ori_object->material_info.renderpasses, other_object->material_info.renderpasses);
-			std::swap(ori_object->material_info.hidden, other_object->material_info.hidden);
-			std::swap(ori_object->material_info.filter, other_object->material_info.filter);
-			std::swap(ori_object->material_info.hidden_specified, other_object->material_info.hidden_specified);
-			std::swap(ori_object->material_info.filter_specified, other_object->material_info.filter_specified);
+			std::swap(ori_object->material_info, other_object->material_info);
+#if 0
+			std::swap(ori_object->material_info->parent_material, other_object->material_info->parent_material);
+			std::swap(ori_object->material_info->program, other_object->material_info->program);			
+			std::swap(ori_object->material_info->uniform_provider.children_providers, other_object->material_info->uniform_provider.children_providers);
+			std::swap(ori_object->material_info->renderpasses, other_object->material_info->renderpasses);
+			std::swap(ori_object->material_info->hidden, other_object->material_info->hidden);
+			std::swap(ori_object->material_info->filter, other_object->material_info->filter);
+			std::swap(ori_object->material_info->hidden_specified, other_object->material_info->hidden_specified);
+			std::swap(ori_object->material_info->filter_specified, other_object->material_info->filter_specified);
+#endif
 		});
 
 		// patching references (texures, programs, parent_materials)
 		size_t count = render_materials.size();
 		for (size_t i = 0; i < count; ++i)
-			PatchRenderMaterialRecursive(&render_materials[i]->material_info, reload_data);
+			PatchRenderMaterialRecursive(render_materials[i]->material_info.get(), reload_data);
 		return true;
 	}
 

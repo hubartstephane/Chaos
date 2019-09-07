@@ -50,16 +50,13 @@ namespace chaos
 
 	class GPURenderMaterialInfoEntry
 	{
-	public:
-
-		~GPURenderMaterialInfoEntry();
 
 	public:
 
 		/** filters for which this entry is valid */
 		NameFilter filter;
 		/** the material considerered */
-		GPURenderMaterialInfo * material_info = nullptr;
+		shared_ptr<GPURenderMaterialInfo> material_info;
 	};
 
 
@@ -67,7 +64,7 @@ namespace chaos
 	* GPURenderMaterialInfo : the data for a material
 	*/
 
-	class GPURenderMaterialInfo
+	class GPURenderMaterialInfo : public ReferencedObject
 	{
 
 	public:
@@ -146,7 +143,7 @@ namespace chaos
 	protected:
 
 		/** all the information for the material */
-		GPURenderMaterialInfo material_info;
+		shared_ptr<GPURenderMaterialInfo> material_info;
 	};
 
 

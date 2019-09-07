@@ -89,34 +89,29 @@ namespace chaos
 
 	bool GPURenderMaterial::SetParentMaterial(GPURenderMaterial * in_parent)
 	{
-		// can access 'this' with parent about to be set ?
-		if (in_parent != nullptr && in_parent->SearchRenderMaterialCycle(this))
+		if (in_parent != nullptr && SearchRenderMaterialCycle(&in_parent->material_info, this))
 			return false;
-		// set the parent
 		material_info.parent_material = in_parent;
 		return true;
 	}
 
-	bool GPURenderMaterial::SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const
+	bool GPURenderMaterial::SearchRenderMaterialCycle(GPURenderMaterialInfo const * material_info, GPURenderMaterial const * searched_material)
 	{
-		if (this == searched_material)
-			return true;
-		// recursion with parents
-		if (material_info.parent_material != nullptr)
-			if (material_info.parent_material->SearchRenderMaterialCycle(searched_material))
+		// throught parent
+		GPURenderMaterial const * parent = material_info->parent_material.get();
+		if (parent != nullptr)
+		{
+			if (parent == searched_material)
+				return true;
+			if (SearchRenderMaterialCycle(&parent->material_info, searched_material))
+				return true;
+		}
+		// renderpasses
+		for (GPURenderMaterialInfoEntry const & entry : material_info->renderpasses)
+			if (SearchRenderMaterialCycle(entry.material_info, searched_material))
 				return true;
 		return false;
 	}
-
-
-
-
-
-
-
-
-
-
 
 	GPURenderMaterial const * GPURenderMaterial::GetParentMaterialValidityLimit(GPURenderParams const & render_params) const
 	{

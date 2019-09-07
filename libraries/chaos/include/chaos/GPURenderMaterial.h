@@ -138,7 +138,7 @@ namespace chaos
 		/** cleaning the resource */
 		virtual bool DoRelease() override;
 		/** search some cycles throught parent_material (returning true is an error) */
-		bool SearchRenderMaterialCycle(GPURenderMaterial const * searched_material) const;
+		static bool SearchRenderMaterialCycle(GPURenderMaterialInfo const * material_info, GPURenderMaterial const * searched_material);
 
 		/** returns the first parent (or this) that is no more valid */
 		GPURenderMaterial const * GetParentMaterialValidityLimit(GPURenderParams const & render_params) const;

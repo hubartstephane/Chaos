@@ -13,12 +13,14 @@ namespace chaos
 	// GPURenderMaterialLoaderReferenceSolver
 	// ===========================================================================
 
-	void GPURenderMaterialLoaderReferenceSolver::AddInheritance(GPURenderMaterialInfo * material_info, std::string parent_name)
+	void GPURenderMaterialLoaderReferenceSolver::AddInheritance(GPURenderMaterial * material, GPURenderMaterialInfo * material_info, std::string parent_name)
 	{
+		assert(material != nullptr);
 		assert(material_info != nullptr);
 		assert(!parent_name.empty());
 
 		GPURenderMaterialParentReference reference;
+		reference.material = material;
 		reference.material_info = material_info;
 		reference.parent_name = std::move(parent_name);
 		parent_references.push_back(std::move(reference));
@@ -30,11 +32,17 @@ namespace chaos
 		// resolve parenting
 		for (GPURenderMaterialParentReference & ref : parent_references)
 		{
-			if (ref.material_info->parent_material != nullptr) // reference already resolved
+			// reference already resolved
+			if (ref.material_info->parent_material != nullptr) 
 				continue;
+			// find parent
 			GPURenderMaterial * parent_material = resource_manager->FindRenderMaterial(ref.parent_name.c_str());
 			if (parent_material == nullptr)
 				continue;
+			// search cycle
+			if (GPURenderMaterial::SearchRenderMaterialCycle(&parent_material->material_info, ref.material.get()))
+				return false;
+			// set the parent
 			ref.material_info->parent_material = parent_material;
 		}
 		// clear all
@@ -284,7 +292,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// iterate over all properties
 		for (nlohmann::json::const_iterator it = json.begin(); it != json.end(); it++)
@@ -302,7 +310,7 @@ namespace chaos
 			GPURenderMaterialInfo * other_material_info = new GPURenderMaterialInfo;
 			if (other_material_info == nullptr)
 				continue;
-			if (!InitializeMaterialInfoFromJSON(other_material_info, it.value(), config_path))
+			if (!InitializeMaterialInfoFromJSON(render_material, other_material_info, it.value(), config_path))
 			{
 				delete (other_material_info);
 				continue;
@@ -320,8 +328,9 @@ namespace chaos
 		return true;
 	}
 
-	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
+	bool GPURenderMaterialLoader::InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
+		assert(render_material != nullptr);
 		assert(material_info != nullptr);
 
 		if (!json.is_object())
@@ -330,7 +339,7 @@ namespace chaos
 		// search material parent
 		std::string parent_name;
 		if (reference_solver != nullptr &&  JSONTools::GetAttribute(json, "parent_material", parent_name) && !parent_name.empty())
-			reference_solver->AddInheritance(material_info, std::move(parent_name));
+			reference_solver->AddInheritance(render_material, material_info, std::move(parent_name));
 		// read filter names
 		material_info->filter_specified = JSONTools::GetAttribute(json, "filter", material_info->filter);
 		// search whether the material is hidden
@@ -342,7 +351,7 @@ namespace chaos
 		// look at uniforms
 		InitializeUniformsFromJSON(material_info, json, config_path);
 		// look at renderpasses
-		InitializeRenderPassesFromJSON(material_info, json, config_path);
+		InitializeRenderPassesFromJSON(render_material, material_info, json, config_path);
 
 		return true;
 	}
@@ -374,7 +383,7 @@ namespace chaos
 			return nullptr;
 
 		// Initialize the material_info from JSON
-		InitializeMaterialInfoFromJSON(&result->material_info, json, config_path);
+		InitializeMaterialInfoFromJSON(result, &result->material_info, json, config_path);
 
 		// finalize : give name / path to the new resource
 		ApplyNameToLoadedResource(result);

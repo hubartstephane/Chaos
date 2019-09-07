@@ -19,6 +19,9 @@ namespace chaos
 	class GPURenderMaterialParentReference
 	{
 	public:
+
+		/** the material of concern (used to detected cyclic inheritance) */
+		shared_ptr<GPURenderMaterial> material;
 		/** the material_info to resolve */
 		GPURenderMaterialInfo * material_info = nullptr;
 		/** the name of the parent */
@@ -30,7 +33,7 @@ namespace chaos
 	public:
 
 		/** register a parenting */
-		void AddInheritance(GPURenderMaterialInfo * material_info, std::string parent_name);
+		void AddInheritance(GPURenderMaterial * material, GPURenderMaterialInfo * material_info, std::string parent_name);
 		/** resolve all pending references */
 		bool ResolveReferences(GPUResourceManager * resource_manager);
 
@@ -64,7 +67,7 @@ namespace chaos
 	protected:
 
 		/** initialize the material_info */
-		bool InitializeMaterialInfoFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		bool InitializeMaterialInfoFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** initialize a texture from its name */
 		bool InitializeTextureFromName(GPURenderMaterialInfo * material_info, char const * uniform_name, char const * texture_name) const;
 		/** initialize a texture from its path */
@@ -85,7 +88,7 @@ namespace chaos
 		/** get the uniforms from JSON */
 		bool InitializeUniformsFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** get the renderpasses from JSON */
-		bool InitializeRenderPassesFromJSON(GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
+		bool InitializeRenderPassesFromJSON(GPURenderMaterial * render_material, GPURenderMaterialInfo * material_info, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;

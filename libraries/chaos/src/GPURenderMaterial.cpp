@@ -55,6 +55,18 @@ namespace chaos
 		return false;
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
 	GPURenderMaterial::GPURenderMaterial()
 	{
 		material_info = new GPURenderMaterialInfo;
@@ -107,94 +119,6 @@ namespace chaos
 		return false;
 	}
 
-	GPURenderMaterial const * GPURenderMaterial::GetParentMaterialValidityLimit(GPURenderParams const & render_params) const
-	{
-		GPURenderMaterial const * result_hidden = nullptr; // to save whether theses values are specified and produce a visibility result
-		GPURenderMaterial const * result_filter = nullptr;
-
-		int result_hidden_counter = 0;
-		int result_filter_counter = 0;
-		int counter = 0;
-
-		GPURenderMaterial const * material = this;
-		while (material != nullptr)
-		{
-			++counter;
-
-			// check HIDDEN state
-			bool match_hidden = true;
-			if (material->material_info->hidden_specified)
-			{
-				match_hidden = !material->material_info->hidden;
-				if (match_hidden) // save the last material that was known has NOT HIDDEN
-				{
-					result_hidden = material;
-					result_hidden_counter = counter;
-				}
-			}
-			// check FILTER
-			bool match_filter = true;
-			if (material->material_info->filter_specified)
-			{
-				match_filter = material->material_info->filter.IsNameEnabled(render_params.renderpass_name.c_str());
-				if (match_filter) // save the last material that match the FILTER criteria
-				{
-					result_filter = material;
-					result_filter_counter = counter;
-				}
-			}
-			// at this point one of the two tests is invalid, keep the very first on the chain
-			if (!match_hidden || !match_filter) 
-			{
-				GPURenderMaterial const * result = (result_hidden_counter < result_filter_counter) ? result_hidden : result_filter;
-				if (result != nullptr)
-					return result->material_info->parent_material.get(); // the parent is the first failing material
-				else
-					return this; // the very first material of thee chain was invalid
-			}
-			// parent
-			material = material->material_info->parent_material.get();
-		}
-		return nullptr; // all parents are visible
-	}
-
-
-
-
-
-
-	GPURenderMaterial const * GPURenderMaterial::GetEffectiveMaterial(GPURenderParams const & render_params) const
-	{
-		GPURenderMaterial const * validity_limit_material = GetParentMaterialValidityLimit(render_params);
-
-
-
-
-		// shuyyy 
-
-#if 0
-
-
-
-		GPURenderMaterial const * material = this;
-		while (material != validity_limit_material)
-		{
-			for (GPUSubMaterialEntry const & entry : material->material_info->sub_materials) // search in sub_material first
-			{
-				if (entry.filter.IsNameEnabled(render_params.renderpass_name.c_str()))
-				{
-					GPURenderMaterial const * result = entry.material->GetEffectiveMaterial(render_params);
-					if (result != nullptr)
-						return result;
-				}
-			}
-			material = material->material_info->parent_material.get();
-		}
-#endif
-
-		return (this != validity_limit_material)? this : nullptr;
-	}
-	
 	GPUProgramProvider & GPURenderMaterial::GetUniformProvider() 
 	{ 
 		return material_info->uniform_provider;
@@ -205,6 +129,7 @@ namespace chaos
 		return material_info->uniform_provider;
 	}
 
+#if 0
 	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
 	{
 		GPURenderMaterial const * material = this;
@@ -216,19 +141,16 @@ namespace chaos
 		}
 		return nullptr;
 	}
+#endif
 
 	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const
 	{
-		// find the real material that is use throught sub_materials
-		GPURenderMaterial const * effective_material = GetEffectiveMaterial(render_params);
-		if (effective_material == nullptr)
-			return nullptr;
 		// go through the hierarchy until we get the program
-		GPUProgram const * effective_program = effective_material->GetEffectiveProgram(render_params);
+		GPUProgram const * effective_program = GetEffectiveProgram(render_params);
 		if (effective_program == nullptr)
 			return nullptr;
 		// use the program
-		GPUProgramRenderMaterialProvider provider(effective_material, in_uniform_provider, &render_params);
+		GPUProgramRenderMaterialProvider provider(this, in_uniform_provider, &render_params);
 		effective_program->UseProgram(&provider);
 
 		return effective_program;
@@ -246,5 +168,90 @@ namespace chaos
 		result->SetProgram(program);
 		return result;
 	}
+
+
+	bool GPURenderMaterial::Traverse(GPURenderMaterialInfoTraverseFunc & traverse_func, char const * renderpass_name) const
+	{
+		return TraverseImpl(this, material_info.get(), traverse_func, renderpass_name);
+	}
+
+	bool GPURenderMaterial::TraverseImpl(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, GPURenderMaterialInfoTraverseFunc & traverse_func, char const * renderpass_name)
+	{
+		assert(render_material != nullptr);
+		assert(material_info != nullptr);
+
+		// traverse renderpasses first (deep first)
+		for (GPURenderMaterialInfoEntry const & entry : material_info->renderpasses)
+		{
+			if (entry.filter.IsNameEnabled(renderpass_name))
+				if (TraverseImpl(render_material, entry.material_info.get(), traverse_func, renderpass_name))
+					return true;
+		}
+		// test current 'node'
+		if (traverse_func.OnRenderMaterial(render_material, material_info, renderpass_name))
+			return true;
+		// traverse parent
+		if (material_info->parent_material != nullptr)
+			if (TraverseImpl(material_info->parent_material.get(), material_info->parent_material->material_info.get(), traverse_func, renderpass_name))
+				return true;
+		return false; // continue recursion
+	}
+
+	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
+	{
+		class GPURenderMaterialInfoGetProgramTraverseFunc : public GPURenderMaterialInfoTraverseFunc
+		{
+		public:
+
+			virtual bool OnRenderMaterial(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, char const * renderpass_name) override
+			{
+				// use the traversal as an opportunity to know whether the object is visible (HIDDEN flag)
+				if (check_hidden_flag && material_info->hidden_specified)
+				{
+					check_hidden_flag = false; // no need to search HIDDEN anymore
+					if (material_info->hidden)
+					{
+						program = nullptr; // considere as if there is no program => invisible
+						return true;       // stop traversal
+					}
+					if (program != nullptr && !check_filter) // we already know the program => can stop traversal
+						return true;
+				}
+
+				// use the traversal as an opportunity to know whether the object is visible (FILTER data)
+				if (check_filter && material_info->filter_specified)
+				{
+					check_filter = false; // no need to search FILTER anymore
+					if (!material_info->filter.IsNameEnabled(renderpass_name))
+					{
+						program = nullptr; // considere as if there is no program => invisible
+						return true;       // stop traversal
+					}
+					if (program != nullptr && !check_hidden_flag) // we already know the program => can stop traversal
+						return true;
+				}
+				// search program
+				if (program == nullptr && material_info->program != nullptr)
+				{
+					program = material_info->program.get();
+					if (!check_hidden_flag && !check_filter)
+						return true; // Already know all what we need => stop traversal
+				}
+				return false; // continue traversal
+			}
+
+			/** result program */
+			shared_ptr<GPUProgram> program;
+			/** search whether the hidden state is known */
+			bool check_hidden_flag = true;
+			/** search whether we encoutered a filter */
+			bool check_filter = true;
+		};
+
+		GPURenderMaterialInfoGetProgramTraverseFunc traversal_func;
+		Traverse(traversal_func, render_params.renderpass_name.c_str()); // this may return TRUE or FALSE depending on the fact that HIDDEN may be specified or NOT
+		return traversal_func.program.get();
+	}
+
 
 }; // namespace chaos

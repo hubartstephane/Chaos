@@ -20,49 +20,5 @@
 
     "enabled_namesc": "a;b;c",
     "disabled_namesc": [ "truc", "much", "machin" ]
-  },
-
-
-
-	"renderpass:   x, y,   z":
-	{
-		
-	},
-	"renderpass:1":
-	{
-		
-	},
-	"renderpass:2":
-	{
-		
-	},
-	"renderpass:3":
-	{
-		
-	},
-	"renderpass:4":
-	{
-		
-	},
-	"renderpass:5":
-	{
-		
-	},
-	"renderpass:6":
-	{
-		
-	},
-	"renderpass:7":
-	{
-		
-	},
-	"renderpass:8":
-	{
-		
-	},
-	"renderpass:9":
-	{
-		
-	}
-
+  }
 }

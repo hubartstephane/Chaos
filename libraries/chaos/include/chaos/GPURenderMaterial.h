@@ -44,6 +44,32 @@ namespace chaos
 	};
 
 
+
+
+
+	class GPURenderMaterialInfoTraverseFunc
+	{
+	public:
+
+		virtual bool OnRenderMaterial(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, char const * renderpass_name)
+		{
+			return false; // continue traversal
+		}
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	* GPURenderMaterialInfoEntry : a 'pair' filter => material_info
 	*/
@@ -108,7 +134,6 @@ namespace chaos
 		/** destructor */
 		virtual ~GPURenderMaterial();
 
-
 		/** prepare the rendering (find the program, use it, fills its uniforms and returns the program) */
 		GPUProgram const * UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const;
 
@@ -117,28 +142,30 @@ namespace chaos
 		/** set the parent material */
 		bool SetParentMaterial(GPURenderMaterial * in_parent);
 
-		/** go through the hierarchy (parenting only) and search for the program */
+		/** go through the hierarchy and search for the program */
 		GPUProgram const * GetEffectiveProgram(GPURenderParams const & render_params) const;
-		/** go through the hierarchy (parenting + SUB_MATERIAL) and search for the final material to use */
-		GPURenderMaterial const * GetEffectiveMaterial(GPURenderParams const & render_params) const;
 
 		/** get the uniform provider */
 		GPUProgramProvider & GetUniformProvider();
 		/** get the uniform provider */
 		GPUProgramProvider const & GetUniformProvider() const;
 
+		/** traverse method entry point */
+		bool Traverse(GPURenderMaterialInfoTraverseFunc & traverse_func, char const * renderpass_name) const;
+
 		/** create a RenderMaterial from a simple program */
 		static GPURenderMaterial * GenRenderMaterialObject(GPUProgram * program);
 
 	protected:
+
+		/** traversal method implementation */
+		static bool TraverseImpl(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, GPURenderMaterialInfoTraverseFunc & traverse_func, char const * renderpass_name);
 
 		/** cleaning the resource */
 		virtual bool DoRelease() override;
 		/** search some cycles throught parent_material (returning true is an error) */
 		static bool SearchRenderMaterialCycle(GPURenderMaterialInfo const * material_info, GPURenderMaterial const * searched_material);
 
-		/** returns the first parent (or this) that is no more valid */
-		GPURenderMaterial const * GetParentMaterialValidityLimit(GPURenderParams const & render_params) const;
 
 	protected:
 

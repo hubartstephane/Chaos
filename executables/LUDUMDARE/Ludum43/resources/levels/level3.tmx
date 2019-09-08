@@ -575,7 +575,7 @@
  </objectgroup>
  <objectgroup id="15" name="Enemies">
   <properties>
-   <property name="ENABLED_RENDERPASSES" value="ENEMIES_ONLY;UNDEFORMED_OBJECT"/>
+   <property name="ENABLED_RENDERPASSES" value="ENEMIES_ONLY,UNDEFORMED_OBJECT"/>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="enemy"/>
   </properties>

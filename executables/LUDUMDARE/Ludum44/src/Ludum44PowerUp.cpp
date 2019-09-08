@@ -83,17 +83,15 @@ bool LudumSpeedUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decre
 
 	if (decreasing_power_up)
 	{
-		if (player->current_speed_index <= 0)
-			return false;	
+		if (player->current_speed_index > 0)
+			return true;	
 	}
 	else
 	{
-		if (player->current_speed_index >= game->player_speeds.size())
-			return false;		
+		if (player->current_speed_index < game->player_speeds.size() - 1)
+			return true;		
 	}
-
-
-	return true;
+	return false;
 }
 
 char const * LudumSpeedUp::GetPowerUpTitle() const
@@ -128,29 +126,29 @@ bool LudumDamageUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decr
 	{
 		if (decreasing_power_up)
 		{
-			if (player->current_damage_index <= 0)
-				return false;		
+			if (player->current_damage_index > 0)
+				return true;		
 		}
 		else
 		{
-			if (player->current_damage_index >= game->player_damages.size())
-				return false;		
+			if (player->current_damage_index < game->player_damages.size() - 1)
+				return true;
 		}
 	}
 	else
 	{
 		if (decreasing_power_up)
 		{
-			if (player->current_charged_damage_index <= 0)
-				return false;
+			if (player->current_charged_damage_index > 0)
+				return true;
 		}
 		else
 		{
-			if (player->current_charged_damage_index >= game->player_charged_damages.size())
-				return false;
+			if (player->current_charged_damage_index < game->player_charged_damages.size() - 1)
+				return true;
 		}
 	}
-	return true;
+	return false;
 }
 
 char const * LudumDamageUp::GetPowerUpTitle() const
@@ -177,15 +175,15 @@ bool LudumFireRateUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool de
 		return false;
 	if (decreasing_power_up)
 	{
-		if (player->current_fire_rate_index <= 0)
-			return false;	
+		if (player->current_fire_rate_index > 0)
+			return true;	
 	}
 	else
 	{
-		if (player->current_fire_rate_index >= game->player_fire_rates.size())
-			return false;	
+		if (player->current_fire_rate_index < game->player_fire_rates.size() - 1)
+			return true;	
 	}
-	return true;
+	return false;
 }
 
 char const * LudumFireRateUp::GetPowerUpTitle() const

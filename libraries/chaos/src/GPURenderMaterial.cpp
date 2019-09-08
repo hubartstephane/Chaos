@@ -4,68 +4,45 @@
 
 namespace chaos
 {
-
-
-
-
-
-
 	bool GPUProgramRenderMaterialProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
 	{
+		class GPURenderMaterialProviderTraverseFunc : public GPURenderMaterialInfoTraverseFunc
+		{
+		public:
 
+			virtual bool OnRenderMaterial(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, char const * renderpass_name) override
+			{
+				if (material_info->uniform_provider.DoProcessAction(name, *action, top_provider)) // search in the materials uniforms
+					return true;
+				return false;
+			}
 
+		public:
 
-		// shuyyy
+			char const * name = nullptr;
+			
+			GPUProgramAction * action = nullptr;
+			
+			GPUProgramProviderBase const * top_provider = nullptr;
+		};
 
-
-
-	 // use extra provider
+		// use extra provider
 		if (other_provider != nullptr)
 			if (other_provider->DoProcessAction(name, action, top_provider))
 				return true;
-#if 0
-		// submaterials
-		if (render_params != nullptr && !render_params->renderpass_name.empty())
-		{
-			GPURenderMaterial const * submaterial = render_material->FindSubMaterial(render_params->renderpass_name.c_str());
-			if (submaterial != nullptr)
-			{
-				GPUProgramRenderMaterialProvider submaterial_provider(submaterial, nullptr, render_params); // no more other => it has already been called in this function
-				if (submaterial_provider.DoProcessAction(name, action, top_provider))
-					return true;
-			}
-		}
-
-#endif
-
-		// search in the materials uniforms
-		if (render_material->material_info->uniform_provider.DoProcessAction(name, action, top_provider))
+		// traverse the material for finding uniform
+		GPURenderMaterialProviderTraverseFunc traversal_func;
+		traversal_func.name = name;
+		traversal_func.action = &action;
+		traversal_func.top_provider = top_provider;
+		if (render_material->Traverse(traversal_func, render_params->renderpass_name.c_str()))
 			return true;
 		// use variables inside this provider (should be empty)
 		if (GPUProgramProvider::DoProcessAction(name, action, top_provider))
 			return true;
-		// try parent 
-		if (render_material->material_info->parent_material != nullptr)
-		{
-			GPUProgramRenderMaterialProvider parent_provider(render_material->material_info->parent_material.get(), nullptr, render_params); // no more other => it has already been called in this function
-			if (parent_provider.DoProcessAction(name, action, top_provider))
-				return true;
 
-		}
 		return false;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 
 	GPURenderMaterial::GPURenderMaterial()
 	{
@@ -85,7 +62,6 @@ namespace chaos
 		material_info->renderpasses.clear();
 		return true;
 	}
-
 
 	bool GPURenderMaterial::SetProgram(GPUProgram * in_program)
 	{
@@ -129,20 +105,6 @@ namespace chaos
 		return material_info->uniform_provider;
 	}
 
-#if 0
-	GPUProgram const * GPURenderMaterial::GetEffectiveProgram(GPURenderParams const & render_params) const
-	{
-		GPURenderMaterial const * material = this;
-		while (material != nullptr)
-		{
-			if (material->material_info->program != nullptr)
-				return material->material_info->program.get();
-			material = material->material_info->parent_material.get();
-		}
-		return nullptr;
-	}
-#endif
-
 	GPUProgram const * GPURenderMaterial::UseMaterial(GPUProgramProviderBase const * in_uniform_provider, GPURenderParams const & render_params) const
 	{
 		// go through the hierarchy until we get the program
@@ -168,7 +130,6 @@ namespace chaos
 		result->SetProgram(program);
 		return result;
 	}
-
 
 	bool GPURenderMaterial::Traverse(GPURenderMaterialInfoTraverseFunc & traverse_func, char const * renderpass_name) const
 	{

@@ -188,18 +188,7 @@ ParticleFire * LudumPlayer::FireNormalProjectile()
 	if (ludum_game == nullptr)
 		return nullptr;
 
-	int count = ludum_game->player_fire_rates[current_fire_rate_index]; // crash ici shuyyy shuwww
-
-
-
-
-
-
-
-
-
-
-
+	int count = ludum_game->player_fire_rates[current_fire_rate_index]; 
 	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.3f, count, "fire", 0.1f, ludum_game->fire_velocity);
 	if (p != nullptr)
 	{

@@ -18,6 +18,7 @@
 #include <chaos/GPUTexture.h>
 #include <chaos/FontTools.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/GPURenderParams.h>
 
 static int const TESTS_PER_FONT = 4;
 

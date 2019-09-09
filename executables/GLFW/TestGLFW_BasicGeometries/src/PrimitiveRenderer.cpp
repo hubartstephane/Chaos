@@ -12,6 +12,7 @@
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
+#include <chaos/GPURenderParams.h>
 
 #include "PrimitiveRenderer.h"
 

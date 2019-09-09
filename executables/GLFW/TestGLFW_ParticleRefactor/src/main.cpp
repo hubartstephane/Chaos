@@ -24,6 +24,7 @@
 
 
 #include <chaos/ParticleManager.h>
+#include <chaos/GPURenderParams.h>
 
 
 static bool destroy_all_particles = false;

@@ -21,6 +21,7 @@
 #include <chaos/GPUTexture.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/GPURenderParams.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {

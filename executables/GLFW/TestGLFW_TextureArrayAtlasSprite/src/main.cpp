@@ -26,6 +26,7 @@
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/GPURenderParams.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -101,8 +102,8 @@ protected:
     glm::mat4 world_to_camera = fps_view_controller.GlobalToLocal();
     glm::mat4 local_to_world = glm::translate(b.position) * glm::scale(b.half_size);
 
-    float w = (float)size.x;
-    float h = (float)size.y;
+    float w = (float)window_size.x;
+    float h = (float)window_size.y;
 		GenerateParticles(w, h);
 
     glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);

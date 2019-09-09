@@ -17,6 +17,7 @@
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUTexture.h>
 #include <chaos/GPUProgramProvider.h>
+#include <chaos/GPURenderParams.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -282,7 +283,7 @@ protected:
 
 		chaos::GPUProgramProvider uniform_provider;
 		uniform_provider.AddVariableTexture("material", texture);
-		uniform_provider.AddVariableValue("screen_size", glm::vec2((float)size.x, (float)size.y));
+		uniform_provider.AddVariableValue("screen_size", glm::vec2((float)window_size.x, (float)window_size.y));
 		
 		chaos::GPURenderParams render_params;
 		mesh->Render(renderer, program.get(), &uniform_provider, render_params);

@@ -26,6 +26,7 @@
 #include <chaos/ParticleTextGenerator.h>
 #include <chaos/ClassTools.h>
 #include <chaos/StringTools.h>
+#include <chaos/GPURenderParams.h>
 
 // --------------------------------------------------------------------
 
@@ -72,8 +73,8 @@ protected:
 			}
 		};
 
-		float w = (float)size.x;
-		float h = (float)size.y;
+		float w = (float)window_size.x;
+		float h = (float)window_size.y;
 		glm::vec3 scale = glm::vec3(2.0f / w, 2.0f / h, 1.0f);
 		glm::vec3 tr = glm::vec3(-1.0f, -1.0f, 0.0f);
 

@@ -74,13 +74,21 @@ namespace chaos
 					tmp_name = BoostTools::PathToName(*in_path).c_str();
 				else if (json != nullptr)
 					JSONTools::GetAttribute(*json, "name", tmp_name);
-				if (tmp_name.empty()) // still no name, can not continue
-					return false;
+
+				// XXX : to test without 
+				//       this line of code prevent to have anymous object that can be declared inline
+				//       for example, a program discribed inplace by {...}
+				//       inside the material itself
+
+				// if (tmp_name.empty()) // still no name, can not continue
+				//	return false;
+
 				in_name = tmp_name.c_str();
 			}
-			// name already exising in manager : failure
-			if (manager != nullptr && IsNameAlreadyUsedInManager(in_name))
-				return false;
+			// name already exising in manager (or empty -> cannot insert anonymous object in manager): failure
+			if (manager != nullptr)
+				if (IsNameAlreadyUsedInManager(in_name))
+					return false;
 			// the currently loaded resource has now a name
 			if (!tmp_name.empty())
 				resource_name = std::move(tmp_name); // can steal resource
@@ -96,7 +104,7 @@ namespace chaos
 				if (!resource_name.empty())
 				{
 					char const * name = resource->GetName();
-					if (name == nullptr || name[0] == 0)
+					if (StringTools::IsEmpty(name))
 						SetResourceName(resource, resource_name.c_str());
 				}
 			}

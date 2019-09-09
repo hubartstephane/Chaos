@@ -99,8 +99,6 @@ namespace chaos
 
 		/** the reference resolver */
 		GPURenderMaterialLoaderReferenceSolver * reference_solver = nullptr;
-		/** whether the render_material is to be inserted into the resource_manager (or is a submaterial) */
-		bool insert_in_manager = true;
 	};
 
 }; // namespace chaos

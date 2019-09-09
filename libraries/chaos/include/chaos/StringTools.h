@@ -82,6 +82,11 @@ namespace chaos
 		/** some comparaison short cuts */
 		int Strnicmp(std::string const & src1, std::string const & src2, size_t count);
 
+		/** returns true whether the string is null or as 0 length */
+		bool IsEmpty(char const * src);
+		/** returns true whether the string is null or as 0 length */
+		bool IsEmpty(std::string const & src);
+
 		/** ci_less : a case insensitive comparator */
 		struct ci_less
 		{

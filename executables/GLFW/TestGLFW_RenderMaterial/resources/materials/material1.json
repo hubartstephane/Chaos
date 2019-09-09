@@ -2,28 +2,9 @@
   "name":"material1",
   "uniforms":
   {
-    "color":[1.0, 0.0, 0.0],
+    "color":[1.0, 1.0, 0.0],
     "fade":1.0			
   },
-  "textures":
-  {
-    "noise_texture":{"name":"texture1"},
-    "cube_texture":{"path":"@../textures/texture2.json"},
-		"cube_texture_inplace":
-		 {
-				"faces":[
-					"@../textures/nx.jpg",
-					"@../textures/px.jpg",
-					"@../textures/py.jpg",
-					"@../textures/ny.jpg",
-					"@../textures/pz.jpg",
-					"@../textures/nz.jpg"
-				]	 
-		 }
-  },
-	"program_hidden1":{"name":"prog1"},
-	"program_hidden2":{"path":"@../programs/program1.json"},
-	"program_hidden3":"prog1",
 	"program":
 	{
 		"pixel_sources":

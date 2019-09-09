@@ -1169,7 +1169,8 @@ namespace chaos
 			ApplyNameToLoadedResource(result);
 			ApplyPathToLoadedResource(result);
 			if (manager != nullptr)
-				manager->sources.push_back(result);
+				if (!StringTools::IsEmpty(result->GetName())) // would like to insert the resource in manager, but name is empty
+					manager->sources.push_back(result);
 		}
 		return result;
 	}

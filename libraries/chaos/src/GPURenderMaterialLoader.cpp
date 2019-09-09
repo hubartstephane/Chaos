@@ -105,7 +105,7 @@ namespace chaos
 
 		// inplace declared program 
 		GPUProgramLoader program_loader(manager);
-		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program, program_name.c_str());
+		GPUProgram * program = program_loader.LoadObject(nullptr, *json_program, config_path);
 		if (program == nullptr)
 			return false;
 
@@ -184,7 +184,7 @@ namespace chaos
 
 			// inplace declared texture 
 			GPUTextureLoader texture_loader(manager);
-			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, texture_name.c_str());
+			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, config_path);
 			if (texture == nullptr)
 				continue;
 			material_info->uniform_provider.AddVariableTexture(texture_uniform_name.c_str(), texture);
@@ -388,8 +388,9 @@ namespace chaos
 		// finalize : give name / path to the new resource
 		ApplyNameToLoadedResource(result);
 		ApplyPathToLoadedResource(result);
-		if (manager != nullptr && insert_in_manager)
-			manager->render_materials.push_back(result);
+		if (manager != nullptr)
+			if (!StringTools::IsEmpty(result->GetName()))
+				manager->render_materials.push_back(result);
 
 		return result;
 	}

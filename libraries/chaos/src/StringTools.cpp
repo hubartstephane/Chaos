@@ -257,6 +257,15 @@ namespace chaos
 			return Strnicmp(src1.c_str(), src2.c_str(), count);
 		}
 
+		bool IsEmpty(char const * src)
+		{
+			return (src == nullptr) || (src[0] == 0);
+		}
+		bool IsEmpty(std::string const & src)
+		{
+			return IsEmpty(src.c_str());
+		}
+
 	} // namespace StringTools
 
 }; // namespace chaos

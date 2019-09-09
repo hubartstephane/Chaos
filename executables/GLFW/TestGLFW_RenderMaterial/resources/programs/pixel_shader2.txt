@@ -1,8 +1,13 @@
+
 out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
 uniform vec4 color;
+uniform samplerCube cube_texture;
+uniform sampler2D noise_texture;
+
+in vec3 vs_position;
 
 void main()
 {
-	output_color = color;
+  output_color = texture(cube_texture, vs_position.xyz * vec3(1.0, -1.0, 1.0));
 }

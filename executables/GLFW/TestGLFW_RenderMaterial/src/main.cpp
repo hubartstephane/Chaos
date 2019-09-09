@@ -50,19 +50,19 @@ protected:
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
 	{
-		float     far_plane = 1000.0f;
+		float     far_plane = 10000.0f;
 		glm::vec4 clear_color(0.2f, 0.2f, 0.2f, 0.0f);
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
 
 		// XXX : the scaling is used to avoid the near plane clipping      
 		static float FOV = 60.0f;
 		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
 
-		glm::mat4 local_to_world_matrix = glm::mat4(10.0f);
+		glm::mat4 local_to_world_matrix = glm::mat4(1.0f);
 
 		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
@@ -83,8 +83,8 @@ protected:
 
 
 		chaos::GPURenderParams render_params;
-		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-		render_params.instancing.base_instance = 0;
+		//render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
+		//render_params.instancing.base_instance = 0;
 
 		chaos::GPURenderMaterial * materials[] = { render_material1.get(), render_material2.get() };
 
@@ -92,7 +92,7 @@ protected:
 		if (rm == nullptr)
 			rm = materials[1 - current_material];
 
-		if (rm != nullptr)
+		if (rm != nullptr && mesh != nullptr)
 			mesh->Render(renderer, rm, &uniform_provider, render_params);
 
 
@@ -124,8 +124,8 @@ protected:
 
 		render_material2 = resource_manager->FindRenderMaterial("mat2");
 
-		boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config);
-		chaos::WinTools::ShowFile(dir_path);
+	//	boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config);
+	//	chaos::WinTools::ShowFile(dir_path);
 
 
 		
@@ -139,8 +139,8 @@ protected:
 	{
 		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
-		hints.toplevel = 1;
-		hints.decorated = 0;
+		hints.toplevel = 0;
+		hints.decorated = 1;
 	}
 
 	virtual bool Tick(double delta_time) override

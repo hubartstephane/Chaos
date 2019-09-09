@@ -15,6 +15,8 @@
 #include <chaos/GPUSimpleMeshGenerator.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUDrawPrimitive.h>
+#include <chaos/GPUClasses.h>
+#include <chaos/GPURenderParams.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {

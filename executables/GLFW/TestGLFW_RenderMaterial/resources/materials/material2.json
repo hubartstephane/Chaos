@@ -1,36 +1,55 @@
 {
-    "name":"material2",
-    "parent_material":"mat1",
-		"program":
-		{
-			"pixel_sources":
-			[
-				"@../programs/pixel_shader2.txt"
-			],
-			"vertex_sources":
-			[
-				"@../programs/vertex_shader2.txt"
-			]	
-		},
-		"renderpass:renderpass1":
-		{
-			"hidden":true
-		
-		},
-		"renderpass:renderpass2, renderpass3":
-		{
-			"hidden": false,
+	"name":"material2",
+	"parent_material":"mat1",
+	"program":
+	{
+		"pixel_sources":
+		[
+			"@../programs/pixel_shader2.txt"
+		],
+		"vertex_sources":
+		[
+			"@../programs/vertex_shader2.txt"
+		]	
+	},
+	"renderpass:renderpass1":
+	{
+		"hidden":true		
+	},
+	"renderpass:renderpass2, renderpass3, renderpass4":
+	{
+		"hidden": false,
 
-			"filter":"renderpass2, renderpass3",
+		"filter":"renderpass2, renderpass3, renderpass4",
 
-			"textures":
+		"textures":
+		{
+			"cube_texture":{"name":"texture2"}
+		},
+
+		"renderpass:renderpass3":			
+		{
+			"parent_material":"mat3"
+		},
+
+		"renderpass:renderpass4":
+		{
+			"uniforms":
 			{
-				"cube_texture":{"name":"texture2"}
+				"color":[1.0, 0.0, 0.0]			
 			},
 
-			"renderpass:renderpass3":			
+			"program":
 			{
-				"parent_material":"mat3"
-			}
+				"pixel_sources":
+				[
+					"@../programs/pixel_shader3.txt"
+				],
+				"vertex_sources":
+				[
+					"@../programs/vertex_shader3.txt"
+				]					
+			}	
 		}
+	}
 }

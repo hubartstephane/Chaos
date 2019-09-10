@@ -17,6 +17,7 @@
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUClasses.h>
 #include <chaos/GPURenderParams.h>
+#include <chaos/GLDebugOnScreenDisplay.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -66,6 +67,14 @@ protected:
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (resource_manager == nullptr)
+			return true;
+		size_t count = resource_manager->GetRenderMaterialCount();
+		if (count == 0)
+			return true;
+
+
 		// XXX : the scaling is used to avoid the near plane clipping      
 		static float FOV = 60.0f;
 		glm::mat4 projection_matrix = glm::perspectiveFov(FOV * (float)M_PI / 180.0f, 2.0f * viewport.half_size.x, 2.0f * viewport.half_size.y, 1.0f, far_plane);
@@ -91,27 +100,47 @@ protected:
 
 
 		chaos::GPURenderParams render_params;
-		//render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
-		//render_params.instancing.base_instance = 0;
+		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
+		render_params.instancing.base_instance = 0;
 
-		chaos::GPURenderMaterial * materials[] = { render_material1.get(), render_material2.get() };
-
-		chaos::GPURenderMaterial * rm = materials[current_material];
+		chaos::GPURenderMaterial * rm = resource_manager->GetRenderMaterial(current_material);
 		if (rm == nullptr)
-			rm = materials[1 - current_material];
-
-		if (rm != nullptr && mesh != nullptr)
+			return true;
+		if (mesh != nullptr)
 			mesh->Render(renderer, rm, &uniform_provider, render_params);
 
+		debug_display.Display((int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 
 		return true;
 	}
 
 	virtual void Finalize() override
 	{
-		render_material1 = nullptr;
-		render_material2 = nullptr;
+		debug_display.Finalize();
 		mesh = nullptr;
+	}
+
+	bool InitializeDebugLogger()
+	{
+		chaos::Application * application = chaos::Application::GetInstance();
+		if (application == nullptr)
+			return false;
+
+		boost::filesystem::path resources_path = application->GetResourcesPath();
+		boost::filesystem::path image_path     = resources_path / "font.png";
+
+		chaos::GLDebugOnScreenDisplay::Params debug_params;
+		debug_params.texture_path               = image_path;
+		debug_params.font_characters            = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+		debug_params.font_characters_per_line   = 10;
+		debug_params.font_characters_line_count = 10;
+		debug_params.character_width            = 20;
+		debug_params.spacing                    = glm::ivec2( 0, 0);
+		debug_params.crop_texture               = glm::ivec2(15, 7);
+
+		if (!debug_display.Initialize(debug_params))
+			return false;	
+		return true;
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
@@ -120,6 +149,8 @@ protected:
 		if (resource_manager == nullptr)
 			return nullptr;
 
+		InitializeDebugLogger();
+
 		// create the mesh
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -127,14 +158,7 @@ protected:
 		if (mesh == nullptr)
 			return false;
 
-		// get the material
-		
-
-		render_material1 = resource_manager->FindRenderMaterial("mat1");
-
-		render_material2 = resource_manager->FindRenderMaterial("mat2");
-
-
+		// initialize FPS
 		fps_view_controller.fps_controller.position.z = 30.0f;
 
 		return true;
@@ -152,6 +176,8 @@ protected:
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
 
+		debug_display.Tick(delta_time);
+
 		return true; // refresh
 	}
 
@@ -159,12 +185,11 @@ protected:
 
 	int current_material = 0;
 
-	chaos::shared_ptr<chaos::GPURenderMaterial> render_material1;
-	chaos::shared_ptr<chaos::GPURenderMaterial> render_material2;
-
 	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
 
 	chaos::FPSViewInputController fps_view_controller;
+
+	chaos::GLDebugOnScreenDisplay debug_display;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

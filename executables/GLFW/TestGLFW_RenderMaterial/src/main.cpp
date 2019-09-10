@@ -24,6 +24,26 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
+	void ChangeRenderpass(int direction)
+	{
+		size_t count = renderpass_names.size();
+		if (count == 0)
+			return;
+
+		if (current_renderpass == 0 && direction < 0)
+			current_renderpass = count - 1;
+		else if (current_renderpass == count - 1 && direction > 0)
+			current_renderpass = 0;
+		else
+			current_renderpass += direction;
+
+
+
+
+
+
+	}
+
 	void ChangeMaterial(int direction)
 	{
 		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
@@ -40,18 +60,31 @@ protected:
 			current_material = 0;
 		else
 			current_material += direction;
+
+
+
+
+		
+
+
 	}
 
 	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS)
 		{
-			ChangeMaterial(+1);
+			if (modifier & GLFW_MOD_SHIFT)
+				ChangeRenderpass(+1);
+			else
+				ChangeMaterial(+1);
 			return true;
 		}
 		if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_PRESS)
 		{
-			ChangeMaterial(-1);
+			if (modifier & GLFW_MOD_SHIFT)
+				ChangeRenderpass(-1);
+			else
+				ChangeMaterial(-1);
 			return true;
 		}
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
@@ -67,6 +100,8 @@ protected:
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 
+		if (current_renderpass >= renderpass_names.size())
+			return true;
 		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
 			return true;
@@ -102,6 +137,7 @@ protected:
 		chaos::GPURenderParams render_params;
 		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;
 		render_params.instancing.base_instance = 0;
+		render_params.renderpass_name = renderpass_names[current_renderpass];
 
 		chaos::GPURenderMaterial * rm = resource_manager->GetRenderMaterial(current_material);
 		if (rm == nullptr)
@@ -183,7 +219,10 @@ protected:
 
 protected:
 
-	int current_material = 0;
+	size_t current_material   = 0;
+	size_t current_renderpass = 0;
+
+	std::vector<std::string> renderpass_names = {"", "renderpass1", "renderpass2", "renderpass3", "renderpass4"};
 
 	chaos::shared_ptr<chaos::GPUSimpleMesh> mesh;
 

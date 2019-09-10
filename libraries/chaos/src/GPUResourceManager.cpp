@@ -26,6 +26,21 @@ namespace chaos
 		render_materials.clear();
 	}
 
+	size_t GPUResourceManager::GetTextureCount() const
+	{
+		return textures.size();
+	}
+
+	GPUTexture * GPUResourceManager::GetTexture(size_t index)
+	{
+		return textures[index].get();
+	}
+
+	GPUTexture const * GPUResourceManager::GetTexture(size_t index) const
+	{
+		return textures[index].get();
+	}
+
 	GPUTexture * GPUResourceManager::FindTexture(char const * name)
 	{
 		return FindObjectByName(name, textures);
@@ -46,6 +61,21 @@ namespace chaos
 		return FindObjectByPath(path, textures);
 	}
 
+	size_t GPUResourceManager::GetProgramCount() const
+	{
+		return programs.size();
+	}
+
+	GPUProgram * GPUResourceManager::GetProgram(size_t index)
+	{
+		return programs[index].get();
+	}
+
+	GPUProgram const * GPUResourceManager::GetProgram(size_t index) const
+	{
+		return programs[index].get();
+	}
+
 	GPUProgram * GPUResourceManager::FindProgram(char const * name)
 	{
 		return FindObjectByName(name, programs);
@@ -64,6 +94,21 @@ namespace chaos
 	GPUProgram const * GPUResourceManager::FindProgramByPath(FilePathParam const & path) const
 	{
 		return FindObjectByPath(path, programs);
+	}
+
+	size_t GPUResourceManager::GetRenderMaterialCount() const
+	{
+		return render_materials.size();
+	}
+
+	GPURenderMaterial * GPUResourceManager::GetRenderMaterial(size_t index)
+	{
+		return render_materials[index].get();
+	}
+
+	GPURenderMaterial const * GPUResourceManager::GetRenderMaterial(size_t index) const
+	{
+		return render_materials[index].get();
 	}
 
 	GPURenderMaterial * GPUResourceManager::FindRenderMaterial(char const * name)

@@ -23,26 +23,34 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
+	void ChangeMaterial(int direction)
+	{
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (resource_manager == nullptr)
+			return;
+
+		size_t count = resource_manager->GetRenderMaterialCount();
+		if (count == 0)
+			return;
+
+		if (current_material == 0 && direction < 0)
+			current_material = count - 1;
+		else if (current_material == count - 1 && direction > 0)
+			current_material = 0;
+		else
+			current_material += direction;
+	}
+
 	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
 	{
-		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+		if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS)
 		{
-			current_material = 1 - current_material;
+			ChangeMaterial(+1);
 			return true;
 		}
-		if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+		if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_PRESS)
 		{
-			render_material1 = nullptr;
-			return true;
-		}
-		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
-		{
-			render_material2 = nullptr;
-			return true;
-		}
-		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
-		{
-			mesh = nullptr;
+			ChangeMaterial(-1);
 			return true;
 		}
 		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
@@ -120,15 +128,12 @@ protected:
 			return false;
 
 		// get the material
+		
+
 		render_material1 = resource_manager->FindRenderMaterial("mat1");
 
 		render_material2 = resource_manager->FindRenderMaterial("mat2");
 
-	//	boost::filesystem::path dir_path = chaos::JSONTools::DumpConfigFile(config);
-	//	chaos::WinTools::ShowFile(dir_path);
-
-
-		
 
 		fps_view_controller.fps_controller.position.z = 30.0f;
 

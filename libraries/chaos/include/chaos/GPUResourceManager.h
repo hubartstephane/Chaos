@@ -80,6 +80,12 @@ namespace chaos
 		/** load a material */
 		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name = nullptr);
 
+		/** get the number of textures */
+		size_t GetTextureCount() const;
+		/** get a texture by its index */
+		GPUTexture * GetTexture(size_t index);
+		/** get a texture by its index */
+		GPUTexture const * GetTexture(size_t index) const;
 		/** find a texture by its name */
 		GPUTexture * FindTexture(char const * name);
 		/** find a texture by its name */
@@ -89,6 +95,13 @@ namespace chaos
 		/** find a texture by its path */
 		GPUTexture const * FindTextureByPath(FilePathParam const & path) const;
 
+
+		/** get the number of programs */
+		size_t GetProgramCount() const;
+		/** get a program by its index */
+		GPUProgram * GetProgram(size_t index);
+		/** get a program by its index */
+		GPUProgram const * GetProgram(size_t index) const;
 		/** find a program by its name */
 		GPUProgram * FindProgram(char const * name);
 		/** find a program by its name */
@@ -98,6 +111,13 @@ namespace chaos
 		/** find a program by its path */
 		GPUProgram const * FindProgramByPath(FilePathParam const & path) const;
 
+
+		/** get the number of materials */
+		size_t GetRenderMaterialCount() const;
+		/** get a material by its index */
+		GPURenderMaterial * GetRenderMaterial(size_t index);
+		/** get a material by its index */
+		GPURenderMaterial const * GetRenderMaterial(size_t index) const;
 		/** find a render material by its name */
 		GPURenderMaterial * FindRenderMaterial(char const * name);
 		/** find a render material by its name */

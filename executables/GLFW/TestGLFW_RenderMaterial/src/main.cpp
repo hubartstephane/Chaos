@@ -104,8 +104,8 @@ protected:
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 		glClearBufferfi(GL_DEPTH_STENCIL, 0, far_plane, 0);
 
-		glDisable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
 
 		if (current_renderpass >= renderpass_names.size())
 			return true;
@@ -188,10 +188,6 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
-		if (resource_manager == nullptr)
-			return nullptr;
-
 		InitializeDebugLogger();
 		UpdateDebugDisplay();
 

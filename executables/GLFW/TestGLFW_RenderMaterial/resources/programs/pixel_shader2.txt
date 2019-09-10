@@ -3,7 +3,6 @@ out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindF
 
 uniform vec4 color;
 uniform samplerCube cube_texture;
-uniform sampler2D noise_texture;
 
 in vec3 vs_position;
 

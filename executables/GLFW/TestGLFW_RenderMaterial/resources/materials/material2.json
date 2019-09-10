@@ -11,5 +11,17 @@
 			[
 				"@../programs/vertex_shader2.txt"
 			]	
+		},
+		"renderpass:renderpass1":
+		{
+			"hidden":true
+		
+		},
+		"renderpass:renderpass2":
+		{
+			"textures":
+			{
+				"cube_texture":{"name":"texture2"}
+			}
 		}
 }

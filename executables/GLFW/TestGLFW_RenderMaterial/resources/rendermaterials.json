@@ -1,4 +1,5 @@
 {
 		"@mat1":{"path":"@materials/material1.json"},
-		"@mat2":{"path":"@materials/material2.json"}
+		"@mat2":{"path":"@materials/material2.json"},
+		"@mat3":{"path":"@materials/material3.json"}
 }

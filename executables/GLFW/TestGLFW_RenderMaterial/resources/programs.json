@@ -1,4 +1,5 @@
 {
 		"@prog1":{"path":"@programs/program1.json"},
-		"@prog2":{"path":"@programs/program2.json"}
+		"@prog2":{"path":"@programs/program2.json"},
+		"@prog3":{"path":"@programs/program3.json"}
 }

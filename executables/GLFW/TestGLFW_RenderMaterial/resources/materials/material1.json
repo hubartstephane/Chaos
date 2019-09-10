@@ -5,6 +5,9 @@
     "color":[1.0, 1.0, 0.0],
     "fade":1.0			
   },
+
+	"hidden":true,
+
 	"program":
 	{
 		"pixel_sources":

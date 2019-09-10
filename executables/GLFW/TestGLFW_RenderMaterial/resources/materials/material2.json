@@ -17,11 +17,20 @@
 			"hidden":true
 		
 		},
-		"renderpass:renderpass2":
+		"renderpass:renderpass2, renderpass3":
 		{
+			"hidden": false,
+
+			"filter":"renderpass2, renderpass3",
+
 			"textures":
 			{
 				"cube_texture":{"name":"texture2"}
+			},
+
+			"renderpass:renderpass3":			
+			{
+				"parent_material":"mat3"
 			}
 		}
 }

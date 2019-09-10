@@ -24,6 +24,22 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
+	void UpdateDebugDisplay()
+	{
+		debug_display.Clear();
+
+		if (renderpass_names.size() > 0)
+			debug_display.AddLine(chaos::StringTools::Printf("Renderpass [%s]", renderpass_names[current_renderpass].c_str()).c_str(), -1.0f);
+
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (resource_manager != nullptr)
+		{
+			size_t count = resource_manager->GetRenderMaterialCount();
+			if (count != 0)
+				debug_display.AddLine(chaos::StringTools::Printf("Material   [%s]", resource_manager->GetRenderMaterial(current_material)->GetName()).c_str(), -1.0f);
+		}
+	}
+
 	void ChangeRenderpass(int direction)
 	{
 		size_t count = renderpass_names.size();
@@ -37,11 +53,7 @@ protected:
 		else
 			current_renderpass += direction;
 
-
-
-
-
-
+		UpdateDebugDisplay();
 	}
 
 	void ChangeMaterial(int direction)
@@ -61,12 +73,7 @@ protected:
 		else
 			current_material += direction;
 
-
-
-
-		
-
-
+		UpdateDebugDisplay();
 	}
 
 	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
@@ -186,6 +193,7 @@ protected:
 			return nullptr;
 
 		InitializeDebugLogger();
+		UpdateDebugDisplay();
 
 		// create the mesh
 		chaos::box3 b = chaos::box3(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));

@@ -5,6 +5,7 @@
 #include <chaos/GLTools.h>
 #include <chaos/Application.h>
 #include <chaos/JSONTools.h>
+#include <chaos/WinTools.h>
 
 namespace chaos
 {

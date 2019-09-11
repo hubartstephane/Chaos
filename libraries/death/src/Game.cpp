@@ -1509,9 +1509,12 @@ namespace death
 
 	bool Game::ReloadGameConfiguration()
 	{
-		chaos::Application * application = chaos::Application::GetInstance();
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
 		if (application == nullptr)
 			return false;
+
+		// this call may take a while. Avoid Frame rate jump
+		application->FreezeNextFrameTickDuration();
 
 		nlohmann::json config;
 		if (!application->ReloadConfigurationFile(config))

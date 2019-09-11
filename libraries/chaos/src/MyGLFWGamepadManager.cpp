@@ -130,6 +130,18 @@ namespace chaos
 			return axis[axis_index].GetValue();
 		}
 
+		bool GamepadData::IsAnyButtonJustPressed() const
+		{
+			size_t count = GetButtonCount();
+			size_t start = 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
+			size_t end = start + count;
+
+			for (size_t i = start; i < end; ++i)
+				if (buttons[i] && !buttons[count + i]) // state change
+					return true;
+			return false;
+		}
+
 		bool GamepadData::IsAnyButtonPressed(bool previous_frame) const
 		{
 			size_t count = GetButtonCount();
@@ -310,6 +322,13 @@ namespace chaos
 			return gamepad_data.GetAxisValue(axis_index, previous_frame);
 		}
 
+		bool PhysicalGamepad::IsAnyButtonJustPressed() const
+		{
+			if (!IsPresent())
+				return false;
+			return gamepad_data.IsAnyButtonJustPressed();
+		}
+
 		bool PhysicalGamepad::IsAnyButtonPressed(bool previous_frame) const
 		{
 			if (!IsPresent())
@@ -408,6 +427,13 @@ namespace chaos
 			if (physical_device != nullptr)
 				return physical_device->GetAxisValue(axis_index, previous_frame);
 			return 0.0f;
+		}
+
+		bool Gamepad::IsAnyButtonJustPressed() const
+		{
+			if (physical_device != nullptr)
+				return physical_device->IsAnyButtonJustPressed();
+			return false;
 		}
 
 		bool Gamepad::IsAnyButtonPressed(bool previous_frame) const

@@ -174,6 +174,8 @@ namespace chaos
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
 			float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+			/** returns true whether there is a button that just has become pressed */
+			bool IsAnyButtonJustPressed() const;
 			/** returns true whether there is any pressed button */
 			bool IsAnyButtonPressed(bool previous_frame = false) const;
 			/** returns true whether there is any axis in use */
@@ -221,6 +223,8 @@ namespace chaos
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
 			float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+			/** returns true whether there is a button that just has become pressed */
+			bool IsAnyButtonJustPressed() const;
 			/** returns true whether there is any pressed button */
 			bool IsAnyButtonPressed(bool previous_frame = false) const;
 			/** returns true whether there is any axis in use */
@@ -299,6 +303,8 @@ namespace chaos
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
 			float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+			/** returns true whether there is a button that just has become pressed */
+			bool IsAnyButtonJustPressed() const;
 			/** returns true whether there is any pressed button */
 			bool IsAnyButtonPressed(bool previous_frame = false) const;
 			/** returns true whether there is any axis in use */

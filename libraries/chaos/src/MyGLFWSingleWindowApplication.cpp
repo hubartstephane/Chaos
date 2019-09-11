@@ -68,6 +68,7 @@ namespace chaos
 
 				double t2 = glfwGetTime();
 				double delta_time = t2 - t1;
+				double real_delta_time = delta_time;
 
 				if (forced_zero_tick_duration)
 				{
@@ -84,7 +85,7 @@ namespace chaos
 
 				// tick the renderer
 				if (renderer != nullptr)
-					renderer->Tick(delta_time);
+					renderer->Tick(real_delta_time); // renderer has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
 				// tick the manager
 				TickManagers(delta_time);
 				// tick the window

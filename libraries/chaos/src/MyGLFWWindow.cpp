@@ -7,6 +7,7 @@
 #include <chaos/GLTextureTools.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/GPUTextureLoader.h>
+#include <chaos/WinTools.h>
 
 namespace chaos
 {
@@ -529,7 +530,37 @@ namespace chaos
 				}
 			}
 			// super method
-			return InputEventReceiver::OnKeyEvent(key, scan_code, action, modifier);
+			if (InputEventReceiver::OnKeyEvent(key, scan_code, action, modifier))
+				return true;
+			// give opportunity to application
+			Application * application = Application::GetInstance();
+			if (application != nullptr)
+				if (application->OnKeyEvent(key, scan_code, action, modifier))
+					return true;
+			return false;
+
+		}
+
+		bool Window::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) 
+		{ 
+			// open user temp directory and dump the config file
+			chaos::Application * application = chaos::Application::GetInstance();
+
+			if (application != nullptr)
+			{
+				boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score				
+#if _DEBUG
+				// display the directories to help debugging
+				bool dump_config = application->HasCommandLineFlag("-DumpConfigFile");
+				if (dump_config)
+					chaos::JSONTools::DumpConfigFile(config);
+				if (dump_config || application->HasCommandLineFlag("-ShowDirectories") || application->HasCommandLineFlag("-ShowUserTempDirectory"))
+					chaos::WinTools::ShowFile(user_temp);
+				if (application->HasCommandLineFlag("-ShowDirectories") || application->HasCommandLineFlag("-ShowInstalledResourcesDirectory"))
+					chaos::WinTools::ShowFile(application->GetResourcesPath()); 			
+#endif
+			}
+			return true; 
 		}
 
 	}; // namespace MyGLFW

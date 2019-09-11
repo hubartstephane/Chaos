@@ -185,8 +185,6 @@ namespace death
 
 		/** reloading the configuration file */
 		bool ReloadGameConfiguration();
-		/** reloading the GPU resources */
-		bool ReloadGPUResources();
 		/** reloading current level and restart it */
 		bool ReloadCurrentLevel();
 

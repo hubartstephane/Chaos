@@ -89,6 +89,9 @@ namespace chaos
 			/** reload all GPU resources */
 			virtual bool ReloadGPUResources();
 
+			/** override */
+			virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
+
 		protected:
 
 			/** Main method */
@@ -146,8 +149,13 @@ namespace chaos
 			/** the renderer */
 			shared_ptr<GPURenderer> renderer;
 
+			
+			/** forced time slice for tick */
+			double forced_tick_duration = 0.0;
 			/** maximum time slice for tick */
 			double max_tick_duration = 0.0;
+			/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
+			bool   forced_zero_tick_duration = false;
 		};
 
 		/**

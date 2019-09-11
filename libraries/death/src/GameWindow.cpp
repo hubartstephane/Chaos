@@ -80,24 +80,8 @@ namespace death
 
 	bool GameWindow::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
-		// open user temp directory and dump the config file
-		chaos::Application * application = chaos::Application::GetInstance();
-
-		if (application != nullptr)
-		{
-			boost::filesystem::path user_temp = application->CreateUserLocalTempDirectory(); // XXX : this directory is necessary for Best score
-
-			// display the directories to help debugging
-#if _DEBUG
-			bool dump_config = application->HasCommandLineFlag("-DumpConfigFile");
-			if (dump_config)
-				chaos::JSONTools::DumpConfigFile(config);
-			if (dump_config || application->HasCommandLineFlag("-ShowDirectories") || application->HasCommandLineFlag("-ShowUserTempDirectory"))
-				chaos::WinTools::ShowFile(user_temp);
-			if (application->HasCommandLineFlag("-ShowDirectories") || application->HasCommandLineFlag("-ShowInstalledResourcesDirectory"))
-				chaos::WinTools::ShowFile(application->GetResourcesPath()); 			
-#endif
-		}
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
 
 		// create the game
 		game = CreateGame();

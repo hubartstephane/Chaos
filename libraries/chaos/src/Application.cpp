@@ -22,6 +22,11 @@ namespace chaos
 		singleton_instance = nullptr;
 	}
 
+	bool Application::OnKeyEvent(int key, int scan_code, int action, int modifier)
+	{	
+		return false;
+	}
+
 	bool Application::ReloadConfigurationFile(nlohmann::json & result) const
 	{
 		return JSONTools::LoadJSONFile(configuration_path, result, true);	

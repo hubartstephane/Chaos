@@ -3,13 +3,14 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/FileManager.h>
 #include <chaos/InputMode.h>
+#include <chaos/InputEventReceiver.h>
 
 namespace chaos
 {
 	/**
 	* Application : used to store generic application data
 	*/
-	class Application
+	class Application : public InputEventReceiver
 	{
 
 	public:
@@ -89,6 +90,9 @@ namespace chaos
 		/** get the redirected build directory */
 		boost::filesystem::path const & GetRedirectionBuildPath() const { return redirection_build_path; };
 #endif
+
+		/** override */
+		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 
 	protected:
 

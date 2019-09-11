@@ -62,8 +62,20 @@ namespace chaos
 
 				double t2 = glfwGetTime();
 				double delta_time = t2 - t1;
-				if (max_tick_duration > 0.0)
-					delta_time = min(delta_time, max_tick_duration);
+
+				if (forced_zero_tick_duration)
+				{
+					delta_time = 0.0f;
+					forced_zero_tick_duration = false;
+				}
+				else 
+				{
+					if (forced_tick_duration > 0.0)
+						delta_time = forced_tick_duration;
+					else if (max_tick_duration > 0.0)
+						delta_time = min(delta_time, max_tick_duration);				
+				}
+
 				// tick the renderer
 				if (renderer != nullptr)
 					renderer->Tick(delta_time);
@@ -289,6 +301,7 @@ namespace chaos
 
 			// update some internals
 			JSONTools::GetAttribute(configuration, "max_tick_duration", max_tick_duration);
+			JSONTools::GetAttribute(configuration, "forced_tick_duration", forced_tick_duration);
 
 			// initialize the clock
 			main_clock = new Clock("main_clock");
@@ -438,6 +451,17 @@ namespace chaos
 			if (application == nullptr)
 				return nullptr;
 			return application->GetGPUResourceManager();
+		}
+
+		bool SingleWindowApplication::OnKeyEvent(int key, int scan_code, int action, int modifier)
+		{	
+			// reloading GPU resources
+			if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
+			{
+				ReloadGPUResources();
+				return true;
+			}
+			return false;
 		}
 
 	}; // namespace MyGLFW

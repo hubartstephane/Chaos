@@ -123,7 +123,7 @@ namespace chaos
 			/** called every Tick (returns true whenever we want to redraw the window) */
 			virtual bool Tick(double delta_time) { return true; }
 			/** called at window creation (returns false if the window must be killed) */
-			virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) { return true; }
+			virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 			/** called at window destruction */
 			virtual void Finalize() { }
 

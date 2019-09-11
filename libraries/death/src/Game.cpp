@@ -134,11 +134,6 @@ namespace death
 			}
 			if (key == GLFW_KEY_F4)
 			{
-				ReloadGPUResources();
-				return true;
-			}
-			if (key == GLFW_KEY_F5)
-			{
 				ReloadCurrentLevel();
 				return true;
 			}
@@ -1527,14 +1522,6 @@ namespace death
 			return false;
 
 		return InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
-	}
-
-	bool Game::ReloadGPUResources()
-	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
-		if (application == nullptr)
-			return false;
-		return application->ReloadGPUResources();
 	}
 
 	bool Game::ReloadCurrentLevel()

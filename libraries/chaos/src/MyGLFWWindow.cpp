@@ -441,6 +441,9 @@ namespace chaos
 			if (renderer == nullptr)
 				return false;
 
+			// this call may take a while causing a jump in 'delta_time'
+			application->FreezeNextFrameTickDuration();
+
 			// compute rendering size
 			// in normal case, we work with the window_size then apply a viewport cropping
 			// here we want exactly to work with no cropping

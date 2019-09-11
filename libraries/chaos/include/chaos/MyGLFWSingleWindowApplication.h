@@ -85,10 +85,11 @@ namespace chaos
 			/** getting the renderer */
 			GPURenderer * GetRenderer() { return renderer.get(); }
 
+			/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
+			void FreezeNextFrameTickDuration();
 
 			/** reload all GPU resources */
 			virtual bool ReloadGPUResources();
-
 			/** override */
 			virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
 

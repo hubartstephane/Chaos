@@ -50,6 +50,11 @@ namespace chaos
 			JSONTools::GetAttribute(in_config, "focused", hints.focused);
 #endif
 		}
+		
+		void SingleWindowApplication::FreezeNextFrameTickDuration()
+		{
+			forced_zero_tick_duration = true;
+		}
 
 		bool SingleWindowApplication::MessageLoop()
 		{
@@ -263,6 +268,9 @@ namespace chaos
 
 		bool SingleWindowApplication::ReloadGPUResources()
 		{
+			// this call may block for too much time
+			FreezeNextFrameTickDuration();
+
 			// reload the configuration file
 			nlohmann::json config;
 			if (!ReloadConfigurationFile(config))
@@ -280,7 +288,7 @@ namespace chaos
 			// reload all resources ... (even unchanged)
 			if (other_gpu_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
 				gpu_manager->RefreshGPUResources(other_gpu_manager.get());
-			other_gpu_manager->StopManager();		
+			other_gpu_manager->StopManager();					
 			return true;
 		}
 

@@ -102,6 +102,7 @@ protected:
 		mesh_box    = nullptr;
 		program_box = nullptr;
 		atlas = nullptr;
+		chaos::MyGLFW::Window::Finalize();
 	}
 
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -130,6 +131,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;

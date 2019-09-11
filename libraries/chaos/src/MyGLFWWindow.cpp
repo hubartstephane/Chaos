@@ -538,7 +538,11 @@ namespace chaos
 				if (application->OnKeyEvent(key, scan_code, action, modifier))
 					return true;
 			return false;
+		}
 
+		bool Window::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+		{ 
+			return true; 
 		}
 
 	}; // namespace MyGLFW

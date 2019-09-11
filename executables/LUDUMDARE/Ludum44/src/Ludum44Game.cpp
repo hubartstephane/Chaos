@@ -124,10 +124,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	if (!PopulatePowerUps(config, config_path))
 		return false;
 
-
-
-
-
 	return true;
 }
 

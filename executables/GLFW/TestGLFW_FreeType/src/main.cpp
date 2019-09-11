@@ -52,6 +52,7 @@ protected:
     program = nullptr;
     mesh = nullptr;
     texture = nullptr;
+		chaos::MyGLFW::Window::Finalize();
   }
 
   virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
@@ -320,6 +321,9 @@ protected:
 
   virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
   {
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
     chaos::Application * application = chaos::Application::GetInstance();
     if (application == nullptr)
       return false;

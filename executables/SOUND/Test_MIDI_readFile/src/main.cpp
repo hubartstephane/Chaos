@@ -30,6 +30,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
@@ -43,13 +46,6 @@ protected:
 		chaos::MidiLoader loader;
 		return loader.LoadBuffer(buffer);	
 	}
-
-
-	virtual void Finalize() override
-	{
-
-	}
-
 
 	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{

@@ -120,6 +120,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
 		if (!InitializeMIDIIn())
 			return false;
 		return true;
@@ -135,6 +138,7 @@ protected:
 	virtual void Finalize() override
 	{
 		FinalizeMIDIIn();
+		chaos::MyGLFW::Window::Finalize();
 	}
 
 	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override

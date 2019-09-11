@@ -69,10 +69,14 @@ protected:
 	virtual void Finalize() override
 	{
 		game = nullptr;
+		chaos::MyGLFW::Window::Finalize();
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{   
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
 		// open user temp directory and dump the config file
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application != nullptr)

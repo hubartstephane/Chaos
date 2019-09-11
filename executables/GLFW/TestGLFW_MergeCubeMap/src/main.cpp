@@ -131,6 +131,7 @@ protected:
 		texture = nullptr;
 
 		debug_display.Finalize();
+		chaos::MyGLFW::Window::Finalize();
 	}
 
 	bool LoadSkyboxBitmaps(boost::filesystem::path const & resources_path)
@@ -197,6 +198,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{   
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;

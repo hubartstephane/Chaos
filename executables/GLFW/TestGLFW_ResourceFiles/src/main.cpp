@@ -28,11 +28,6 @@ protected:
 		return true;
 	}
 
-	virtual void Finalize() override
-	{
-
-	}
-
 	virtual bool Tick(double delta_time) override
 	{
 
@@ -46,6 +41,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
 		using TexturePtr = chaos::shared_ptr<chaos::GPUTexture>;
 		using ProgramPtr = chaos::shared_ptr<chaos::GPUProgram>;
 

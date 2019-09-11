@@ -292,14 +292,6 @@ death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
 	return new LudumLevel();
 }
 
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
-{
-	if (!death::Game::InitializeFromConfiguration(config, config_path))
-		return false;
-
-	return true;
-}
-
 void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all)
 {
 	// capture all Enemies in range

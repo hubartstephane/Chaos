@@ -462,7 +462,7 @@ namespace chaos
 				ReloadGPUResources();
 				return true;
 			}
-			return false;
+			return Application::OnKeyEvent(key, scan_code, action, modifier);
 		}
 
 	}; // namespace MyGLFW

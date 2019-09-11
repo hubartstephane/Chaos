@@ -132,6 +132,7 @@ protected:
 		atlas = nullptr;
 		material = nullptr;
 		particles_allocation = nullptr;
+		chaos::MyGLFW::Window::Finalize();
 	}
 
 	bool LoadAtlas(boost::filesystem::path const & resources_path)
@@ -203,6 +204,9 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
+		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+			return false;
+
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;

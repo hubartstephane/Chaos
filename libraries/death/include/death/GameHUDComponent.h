@@ -300,8 +300,11 @@ namespace death
 		/** the heart beat frequency */
 		float heart_beat_frequency = 1.0f;
 
+		/** the minimum alpha apply to particle when it is the last life */
+		float fadeout_warning_base = 0.4f;
+
 		/** the current heart warning timer value */
-		float heart_warning = 0.0f;
+		float warning_value = 0.0f;
 	};
 	
 

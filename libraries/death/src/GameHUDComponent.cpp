@@ -314,6 +314,8 @@ namespace death
 		chaos::JSONTools::GetAttribute(json, "particle_name", particle_name);
 		chaos::JSONTools::GetAttribute(json, "heart_beat_sound", heart_beat_sound);
 		chaos::JSONTools::GetAttribute(json, "heart_beat_frequency", heart_beat_frequency);
+
+		chaos::JSONTools::GetAttribute(json, "fadeout_warning_base", fadeout_warning_base);
 		
 		return true;
 	}
@@ -345,19 +347,19 @@ namespace death
 		int current_life = player->GetLifeCount();
 		if (current_life == 1)
 		{
-			heart_warning -= (float)delta_time / heart_beat_frequency;
-			if (heart_warning <= 0.0f)
+			warning_value -= (float)delta_time / heart_beat_frequency;
+			if (warning_value <= 0.0f)
 			{
 				game->Play(heart_beat_sound.c_str(), false, false);
 
 				float fractionnal_part, integer_part;
-				fractionnal_part = modf(heart_warning, &integer_part);
+				fractionnal_part = modf(warning_value, &integer_part);
 
-				heart_warning = (1.0f + fractionnal_part);
+				warning_value = (1.0f + fractionnal_part);
 			}
 		}
 		else
-			heart_warning = 1.0f;
+			warning_value = 1.0f;
 	}
 
 	void GameHUDLifeComponent::UpdateLifeParticles(double delta_time)
@@ -433,13 +435,11 @@ namespace death
 			particles[i].bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 			particles[i].bounding_box.half_size = 0.5f * particle_final_size;
 
-			//float blend_warning = 1.0f;
-			//if (heart_warning < 0.5f)
-			//	blend_warning = 0.4f + 0.6f * heart_warning / 0.5f;
+			float fadeout = 1.0f;
+			if (warning_value < 0.5f)
+				fadeout = fadeout_warning_base + (1.0f - fadeout_warning_base) * warning_value / 0.5f;
 
-			//particles[i].color = blend_warning * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, fadeout);			
 			particle_position += glm::abs(particle_offset);
 		}
 

@@ -130,6 +130,10 @@ namespace death
 	// GameHUDTextAllocationComponent
 	// ====================================================================
 
+	GameHUDTextComponent::GameHUDTextComponent()
+	{
+	}
+
 	GameHUDTextComponent::GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_generator_params, chaos::TagType in_layer_id):
 		layer_id(in_layer_id),
 		generator_params(in_generator_params)
@@ -369,6 +373,8 @@ namespace death
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
+#if 0
+
 	bool GameHUDLevelTitleComponent::DoTick(double delta_time)
 	{
 		GameHUDSingleAllocationComponent::DoTick(delta_time);
@@ -431,12 +437,53 @@ namespace death
 		return true;
 	}
 
-	bool GameHUDLevelTitleComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
-	{
-		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
-			return true;
+#endif
 
-		return true;
+	bool GameHUDLevelTitleComponent::UpdateCachedValue(bool & destroy_allocation) 
+	{ 
+		// ensure we got a level/level instance
+		GameLevel * level = GetLevel();
+		GameLevelInstance * level_instance = GetLevelInstance();
+
+		if (level == nullptr || level_instance == nullptr)
+		{
+			destroy_allocation = true;
+			cached_value = std::string();
+			return true;
+		}
+
+		// dont let the allocation more the 4 seconds visible
+		double clock_time = level_instance->GetLevelClockTime();
+		if (clock_time > 4.0)
+		{
+			destroy_allocation = true;
+			cached_value = std::string();
+			return true;
+		}
+
+		// try to find a title
+		std::string const * lt = nullptr;
+		std::string placeholder_level_title;
+
+		std::string const & level_title = level->GetLevelTitle();
+		if (level_title.empty())
+		{
+			placeholder_level_title = chaos::StringTools::Printf("Level %d", level_instance->GetLevel()->GetLevelIndex());
+			lt = &placeholder_level_title;	
+		}
+		else
+			lt = &level_title;
+
+		// ensure we do not have already cached this title
+		if (cached_value == *lt)
+			return false;
+		cached_value = *lt;
+		return true; 
+	}
+
+	std::string GameHUDLevelTitleComponent::FormatText() const 
+	{
+		return cached_value;	
 	}
 
 }; // namespace death

@@ -133,6 +133,10 @@ namespace death
 	protected:
 
 		/** constructor */
+		GameHUDCacheValueComponent(char const * in_format, type in_initial_value) :
+			cached_value(in_initial_value),
+			format(in_format) {}
+		/** constructor */
 		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			cached_value(in_initial_value),
 			format(in_format),
@@ -150,6 +154,12 @@ namespace death
 			return true;
 		}
 
+		/** format the text according to cached value */
+		virtual std::string FormatText() const
+		{
+			return chaos::StringTools::Printf(format.c_str(), cached_value);
+		}
+
 		/** override */
 		virtual void UpdateTextAllocation(char const * in_text) override
 		{
@@ -161,14 +171,9 @@ namespace death
 				bool update_required = UpdateCachedValue(destroy_allocation);
 				// destroy allocation
 				if (destroy_allocation)
-				{
 					GameHUDTextComponent::UpdateTextAllocation(nullptr);
-				}
 				else if (update_required)
-				{
-					std::string str = chaos::StringTools::Printf(format.c_str(), cached_value);
-					GameHUDTextComponent::UpdateTextAllocation(str.c_str());
-				}
+					GameHUDTextComponent::UpdateTextAllocation(FormatText().c_str());
 			}
 			else
 				GameHUDTextComponent::UpdateTextAllocation(in_text);
@@ -195,6 +200,9 @@ namespace death
 	public:
 
 		/** constructor */
+		GameHUDScoreComponent() :
+			GameHUDCacheValueComponent<int>("Score: %d", -1) {}
+		/** constructor */
 		GameHUDScoreComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<int>("Score: %d", -1, in_params, in_layer_id) {}
 		/** constructor */
@@ -215,6 +223,9 @@ namespace death
 	{
 	public:
 
+		/** constructor */
+		GameHUDFramerateComponent() :
+			GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f) {}
 		/** constructor */
 		GameHUDFramerateComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_params, in_layer_id) {}
@@ -243,6 +254,9 @@ namespace death
 	{
 	public:
 
+		/** constructor */
+		GameHUDTimeoutComponent() :
+			GameHUDCacheValueComponent<float>("%02.01f", -1.0f) {}
 		/** constructor */
 		GameHUDTimeoutComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_params, in_layer_id) {}
@@ -289,21 +303,28 @@ namespace death
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
-	class GameHUDLevelTitleComponent : public GameHUDSingleAllocationComponent
+	class GameHUDLevelTitleComponent : public GameHUDCacheValueComponent<std::string>
 	{
 		friend class GameHUD;
 
+	public:
+
+		/** constructor */
+		GameHUDLevelTitleComponent() :
+			GameHUDCacheValueComponent<std::string>("%s", std::string()) {}
+		/** constructor */
+		GameHUDLevelTitleComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
+			GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params, in_layer_id) {}
+		/** constructor */
+		GameHUDLevelTitleComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
+			GameHUDCacheValueComponent<std::string>("%s", std::string(), font_name, line_height, position, hotpoint_type, in_layer_id) {}
+
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual std::string FormatText() const override;
 		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
-
-	protected:
-
-		/** cache the title of the level */
-		std::string cached_level_title;
+		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 	};	
 
 }; // namespace death

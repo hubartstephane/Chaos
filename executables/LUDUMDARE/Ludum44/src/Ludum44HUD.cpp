@@ -213,10 +213,6 @@ bool LudumPlayingHUD::FillHUDContent()
 
 bool LudumPlayingHUD::CreateHUDLayers()
 {
-
-	// shuwww
-
-
 	// call super method
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;

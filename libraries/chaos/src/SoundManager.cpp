@@ -4,6 +4,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/JSONTools.h>
 #include <chaos/BoostTools.h>
+#include <chaos/Application.h>
 
 namespace chaos
 {
@@ -710,6 +711,11 @@ namespace chaos
 
 	void Sound::DoUpdateIrrklangVolume(float effective_volume)
 	{
+#if _DEBUG
+		if (Application::HasApplicationCommandLineFlag("-Mute"))
+			effective_volume = 0.0f;
+#endif
+
 		if (irrklang_sound != nullptr)
 			irrklang_sound->setVolume((irrklang::ik_f32)effective_volume);
 	}

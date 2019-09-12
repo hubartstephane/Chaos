@@ -343,9 +343,9 @@ namespace death
 
 
 
-		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent("normal", 60.0f, glm::vec2(20.0f, -20.0f), chaos::Hotpoint::TOP_LEFT, GameHUDKeys::TEXT_LAYER_ID));
+		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
 #if _DEBUG
-		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent("normal", 60.0f, glm::vec2(-20.0f, -20.0f), chaos::Hotpoint::TOP_RIGHT, GameHUDKeys::TEXT_LAYER_ID));
+		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 #endif
 		return true;
 	}

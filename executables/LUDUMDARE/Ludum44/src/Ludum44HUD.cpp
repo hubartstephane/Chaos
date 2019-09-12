@@ -198,7 +198,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
-	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent("normal", 60.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::TOP, death::GameHUDKeys::TEXT_LAYER_ID));
+	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
 	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent("normal", 60.0f, glm::vec2(20.0f, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
 	return true;

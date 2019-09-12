@@ -130,7 +130,8 @@ namespace death
 	// GameHUDTextAllocationComponent
 	// ====================================================================
 
-	GameHUDTextComponent::GameHUDTextComponent()
+	GameHUDTextComponent::GameHUDTextComponent(chaos::TagType in_layer_id):
+		layer_id(in_layer_id)
 	{
 	}
 
@@ -155,14 +156,10 @@ namespace death
 		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
 			return true;
 
-
 		chaos::JSONTools::GetAttribute(json, "generator_params", generator_params);
 
 	//	chaos::JSONTools::GetAttribute(json, "layer_id", layer_id);
 		//LoadFromJSON(json, generator_params);
-
-
-
 
 		return true;
 	}
@@ -208,6 +205,15 @@ namespace death
 	// GameHUDScoreComponent
 	// ====================================================================
 
+	GameHUDScoreComponent::GameHUDScoreComponent(chaos::TagType in_layer_id) :
+		GameHUDCacheValueComponent<int>("Score: %d", -1, in_layer_id) 
+	{
+		generator_params.line_height = 60.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(20.0f, -20.0f);
+		generator_params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
+	}
+
 	bool GameHUDScoreComponent::UpdateCachedValue(bool & destroy_allocation)
 	{
 		Player * player = GetPlayer(0);
@@ -229,6 +235,15 @@ namespace death
 	// GameHUDFramerateComponent
 	// ====================================================================
 
+	GameHUDFramerateComponent::GameHUDFramerateComponent(chaos::TagType in_layer_id):
+		GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_layer_id) 
+	{
+		generator_params.line_height = 60.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(-20.0f, -20.0f);
+		generator_params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
+	}
+
 	int GameHUDFramerateComponent::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const
 	{
 		framerate = renderer->GetFrameRate();
@@ -248,6 +263,15 @@ namespace death
 	// ====================================================================
 	// GameHUDTimeoutComponent
 	// ====================================================================
+
+	GameHUDTimeoutComponent::GameHUDTimeoutComponent(chaos::TagType in_layer_id) :
+		GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_layer_id) 
+	{
+		generator_params.line_height = 60.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(0.0f, -20.0f);
+		generator_params.hotpoint_type = chaos::Hotpoint::TOP;
+	}
 
 	bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
 	{
@@ -438,6 +462,15 @@ namespace death
 	}
 
 #endif
+
+	GameHUDLevelTitleComponent::GameHUDLevelTitleComponent(chaos::TagType in_layer_id) :
+		GameHUDCacheValueComponent<std::string>("%s", std::string(), in_layer_id) 
+	{
+		generator_params.line_height = 60.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(0.0f, 0.0f);
+		generator_params.hotpoint_type = chaos::Hotpoint::TOP;	
+	}
 
 	bool GameHUDLevelTitleComponent::UpdateCachedValue(bool & destroy_allocation) 
 	{ 

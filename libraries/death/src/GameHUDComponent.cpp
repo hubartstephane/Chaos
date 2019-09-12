@@ -313,7 +313,7 @@ namespace death
 
 		chaos::JSONTools::GetAttribute(json, "particle_name", particle_name);
 		chaos::JSONTools::GetAttribute(json, "heart_beat_sound", heart_beat_sound);
-		chaos::JSONTools::GetAttribute(json, "heart_beat_speed", heart_beat_speed);
+		chaos::JSONTools::GetAttribute(json, "heart_beat_frequency", heart_beat_frequency);
 		
 		return true;
 	}
@@ -329,7 +329,7 @@ namespace death
 	void GameHUDLifeComponent::TickHeartBeat(double delta_time)
 	{
 		// early exit
-		if (heart_beat_speed <= 0.0f || heart_beat_sound.empty())
+		if (heart_beat_frequency <= 0.0f || heart_beat_sound.empty())
 			return;
 
 		// get game instances
@@ -345,7 +345,7 @@ namespace death
 		int current_life = player->GetLifeCount();
 		if (current_life == 1)
 		{
-			heart_warning -= heart_beat_speed * (float)delta_time;
+			heart_warning -= (float)delta_time / heart_beat_frequency;
 			if (heart_warning <= 0.0f)
 			{
 				game->Play(heart_beat_sound.c_str(), false, false);
@@ -413,17 +413,24 @@ namespace death
 			}
 		}
 
+		// compute the size of the whole sprites with their offset
+		glm::vec2 whole_particle_size =
+			particle_final_size +
+			glm::abs(particle_offset) * (float)(current_life - 1);
+
+		// compute the reference point relative to the screen
+		glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
+
+		// compute the bottom-left corner of the whole sprite rectangle
+		glm::vec2 whole_particle_ref = chaos::Hotpoint::Convert(screen_ref + position, whole_particle_size, hotpoint_type, chaos::Hotpoint::BOTTOM_LEFT);
+
 		// update the particles members
 		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor<chaos::ParticleDefault::Particle>();
 
-		glm::vec2 corner = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
-
-
-		glm::vec2 particle_position = corner + position;
+		glm::vec2 particle_position = whole_particle_ref;
 		for (size_t i = 0; i < (size_t)current_life; ++i)
-		{
-			
-			particles[i].bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, hotpoint_type, chaos::Hotpoint::CENTER);
+		{			
+			particles[i].bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 			particles[i].bounding_box.half_size = 0.5f * particle_final_size;
 
 			//float blend_warning = 1.0f;
@@ -433,7 +440,7 @@ namespace death
 			//particles[i].color = blend_warning * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-			particle_position += particle_offset;
+			particle_position += glm::abs(particle_offset);
 		}
 
 		cached_value = current_life;

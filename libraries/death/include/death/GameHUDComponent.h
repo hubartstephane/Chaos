@@ -297,8 +297,8 @@ namespace death
 		std::string particle_name = "life";
 		/** the sound to play */
 		std::string heart_beat_sound = "heartbeat";
-		/** the heart warning period */
-		float heart_beat_speed = 1.0f;
+		/** the heart beat frequency */
+		float heart_beat_frequency = 1.0f;
 
 		/** the current heart warning timer value */
 		float heart_warning = 0.0f;

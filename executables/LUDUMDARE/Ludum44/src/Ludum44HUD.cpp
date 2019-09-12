@@ -201,9 +201,6 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-
-	// shuwww
-
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());

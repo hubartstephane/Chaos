@@ -26,6 +26,16 @@ namespace death
 		return layer->SpawnParticles(count);
 	}
 
+	chaos::BitmapAtlas::BitmapInfo const * GameParticleCreator::FindBitmapInfo(char const * bitmap_name) const
+	{
+		// find bitmap set
+		chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
+		if (bitmap_set == nullptr)
+			return nullptr;
+		// find bitmap info
+		return bitmap_set->GetBitmapInfo(bitmap_name);
+	}
+
 	chaos::ParticleAllocationBase * GameParticleCreator::CreateParticles(char const * bitmap_name, size_t count, chaos::TagType layer_id) const
 	{
 		// allocate the objects
@@ -44,13 +54,8 @@ namespace death
 
 	bool GameParticleCreator::InitializeParticles(chaos::ParticleAllocationBase * allocation, char const * bitmap_name, size_t last_count) const
 	{
-		// find bitmap set
-		chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
-		if (bitmap_set == nullptr)
-			return false;
-
 		// find bitmap info
-		chaos::BitmapAtlas::BitmapInfo const * info = bitmap_set->GetBitmapInfo(bitmap_name);
+		chaos::BitmapAtlas::BitmapInfo const * info = FindBitmapInfo(bitmap_name);
 		if (info == nullptr)
 			return false;
 

@@ -80,21 +80,6 @@ namespace death
 		// create the particle manager from the game texture atlas
 		if (!CreateInternalData(nullptr, game->GetTextGenerator(), game->GetTextureAtlas()))
 			return false;
-
-
-
-
-
-		// shuwww
-
-		//  1 - Register all components
-		//  2 - Require all layers
-		//  3 - Each component create its content
-
-		//  INSERT json initialization in the process
-
-
-
 		// Create the layers
 		if (!CreateHUDLayers())
 			return false;
@@ -107,10 +92,6 @@ namespace death
 
 	bool GameHUD::CreateInternalData(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
 	{
-
-		// shuwww
-
-
 		assert((in_particle_manager != nullptr) ^ (in_texture_atlas != nullptr)); // cannot have both creation protocole
 
 		// create the particle manager
@@ -135,16 +116,6 @@ namespace death
 		
 	bool GameHUD::CreateHUDLayers()
 	{
-
-
-
-
-
-
-
-		// shuwww
-
-
 		int render_order = 0;
 		particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
@@ -153,10 +124,6 @@ namespace death
 
 	bool GameHUD::FillHUDContent()
 	{
-
-		// shuwww
-
-
 		return true;
 	}
 
@@ -265,16 +232,6 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		// the title
-
-		// shuwww
-
-
-
-
-
-
-
-
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
 			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
@@ -334,12 +291,6 @@ namespace death
 		// call super method
 		if (!GameHUD::FillHUDContent())
 			return false;
-
-
-		// shuwww
-
-
-
 		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
 #if _DEBUG
 		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());

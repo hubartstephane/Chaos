@@ -1,15 +1,15 @@
 {
-	"LEVEL_TITLE_ID":
+	"LEVEL_TITLE_IDc":
 	{
 	
 	},
 
 
-	"TITLE_ID":
+	"TITLE_IDx":
 	{
-    "generator_params":
+    "generator_paramsv":
     {
-      "line_height":150,
+      "line_height":250,
       "default_color":[1.0, 1.0, 1.0, 1.0],
 			"hotpoint_type":"center"
     }

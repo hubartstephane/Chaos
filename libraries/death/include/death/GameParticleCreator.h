@@ -28,6 +28,9 @@ namespace death
 		/** initialize the game objects texture coordinates (from the end of the array) */
 		bool InitializeParticles(chaos::ParticleAllocationBase * allocation, char const * bitmap_name, size_t last_count) const;
 
+		/** get the bitmap info used for given bitmap_name */
+		chaos::BitmapAtlas::BitmapInfo const * FindBitmapInfo(char const * bitmap_name) const;
+
 	protected:
 
 		/** the particle manager */

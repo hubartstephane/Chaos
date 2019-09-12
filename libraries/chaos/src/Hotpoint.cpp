@@ -2,6 +2,20 @@
 
 namespace chaos
 {
+
+	std::vector<std::pair<int, char const *>> const Hotpoint::hotpoint_encoding =
+	{
+		{ Hotpoint::TOP, "top" },
+		{ Hotpoint::BOTTOM, "bottom" },
+		{ Hotpoint::LEFT, "left" },
+		{ Hotpoint::RIGHT, "right" },
+		{ Hotpoint::TOP_LEFT, "top-left" },
+		{ Hotpoint::TOP_RIGHT, "top-right" },
+		{ Hotpoint::BOTTOM_LEFT, "bottom-left" },
+		{ Hotpoint::BOTTOM_RIGHT, "bottom-right" },
+		{ Hotpoint::CENTER, "center" }
+	};
+
 	glm::vec2 Hotpoint::Convert(glm::vec2 const & hotpoint, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type)
 	{
 		if (initial_hotpoint_type == final_hotpoint_type)

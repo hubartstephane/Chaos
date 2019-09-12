@@ -261,6 +261,11 @@ namespace death
 
 	class GameHUDLifeComponent : public GameHUDSingleAllocationComponent
 	{
+	public:
+
+		/** constructor */
+		GameHUDLifeComponent(chaos::TagType in_layer_id = death::GameHUDKeys::LIFE_LAYER_ID);
+
 	protected:
 
 		/** override */
@@ -269,15 +274,34 @@ namespace death
 		void UpdateLifeParticles(double delta_time);
 		/** tick heart */
 		void TickHeartBeat(double delta_time);
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 
 	protected:
 
+		/** the layer owning the allocation */
+		chaos::TagType layer_id = 0;
 		/** caching the current life count */
 		int cached_value = -1;
-		/** the current heart warning timer value */
-		float heart_warning = 0.0f;
+
+		/** the hotpoint of the first particle */
+		int hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
+		/** the position of the very first particle */
+		glm::vec2 position = glm::vec2(0.0f, 0.0f);
+		/** the particle size of the particle (special meaning, see .cpp) */
+		glm::vec2 particle_size = glm::vec2(0.0f, 0.0f);
+		/** the offset to apply between each particles */
+		glm::vec2 particle_offset = glm::vec2(20.0f, 0.0f);
+
+		/** the name of the particle to render */
+		std::string particle_name = "life";
+		/** the sound to play */
+		std::string heart_beat_sound = "heartbeat";
 		/** the heart warning period */
 		float heart_beat_speed = 1.0f;
+
+		/** the current heart warning timer value */
+		float heart_warning = 0.0f;
 	};
 	
 

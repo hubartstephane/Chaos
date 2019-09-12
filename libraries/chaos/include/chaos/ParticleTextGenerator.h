@@ -34,6 +34,9 @@ namespace chaos
 			/** constructor */
 			GeneratorParams(char const * in_font_name, float in_line_height, glm::vec2 const & in_position, int in_hotpoint_type);
 
+			/** data for JSON encoding/decoding */
+			static std::vector<std::pair<int, char const *>> const alignment_encoding;
+
 		public:
 
 			/** the size to use for the line */

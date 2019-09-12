@@ -14,6 +14,10 @@ namespace chaos
 		/** given a hotpoint and a hotpoint_type, returns any other hotpoint_type position */
 		static glm::vec2 Convert(glm::vec2 const & hotpoint, glm::vec2 const & size, int initial_hotpoint_type, int final_hotpoint_type);
 
+		/** data for JSON encoding/decoding */
+		static std::vector<std::pair<int, char const *>> const hotpoint_encoding;
+
+		/** the values */
 		static int const LEFT = 1;
 		static int const RIGHT = 2;
 		static int const HMIDDLE = 0;
@@ -28,4 +32,7 @@ namespace chaos
 		static int const TOP_RIGHT = TOP | RIGHT;
 		static int const CENTER = VMIDDLE | HMIDDLE;
 	};
+
+
+
 }; // namespace chaos

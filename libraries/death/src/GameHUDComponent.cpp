@@ -1,4 +1,5 @@
 #include <chaos/ParticleTextGenerator.h>
+#include <chaos/Hotpoint.h>
 
 #include <death/GameHUDComponent.h>
 #include <death/GameHUD.h>
@@ -294,6 +295,29 @@ namespace death
 	// GameHUDLifeComponent
 	// ====================================================================
 
+	GameHUDLifeComponent::GameHUDLifeComponent(chaos::TagType in_layer_id):
+		layer_id(in_layer_id)
+	{
+
+	}
+
+	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	{
+		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
+			return true;
+		
+		chaos::JSONTools::GetEnumAttribute(json, "hotpoint_type", chaos::Hotpoint::hotpoint_encoding, hotpoint_type);
+		chaos::JSONTools::GetAttribute(json, "position", position);
+		chaos::JSONTools::GetAttribute(json, "particle_size", particle_size);
+		chaos::JSONTools::GetAttribute(json, "particle_offset", particle_offset);
+
+		chaos::JSONTools::GetAttribute(json, "particle_name", particle_name);
+		chaos::JSONTools::GetAttribute(json, "heart_beat_sound", heart_beat_sound);
+		chaos::JSONTools::GetAttribute(json, "heart_beat_speed", heart_beat_speed);
+		
+		return true;
+	}
+
 	bool GameHUDLifeComponent::DoTick(double delta_time)
 	{
 		GameHUDSingleAllocationComponent::DoTick(delta_time);
@@ -304,6 +328,11 @@ namespace death
 
 	void GameHUDLifeComponent::TickHeartBeat(double delta_time)
 	{
+		// early exit
+		if (heart_beat_speed <= 0.0f || heart_beat_sound.empty())
+			return;
+
+		// get game instances
 		Game * game = GetGame();
 		if (!game->IsPlaying())
 			return;
@@ -312,13 +341,14 @@ namespace death
 		if (player == nullptr)
 			return;
 
+		// update sound
 		int current_life = player->GetLifeCount();
 		if (current_life == 1)
 		{
 			heart_warning -= heart_beat_speed * (float)delta_time;
 			if (heart_warning <= 0.0f)
 			{
-				game->Play("heartbeat", false, false);
+				game->Play(heart_beat_sound.c_str(), false, false);
 
 				float fractionnal_part, integer_part;
 				fractionnal_part = modf(heart_warning, &integer_part);
@@ -332,6 +362,10 @@ namespace death
 
 	void GameHUDLifeComponent::UpdateLifeParticles(double delta_time)
 	{
+		// early exit
+		if (particle_name.empty())
+			return;
+
 		// get the player
 		Player const * player = GetGame()->GetPlayer(0);
 		if (player == nullptr)
@@ -346,7 +380,7 @@ namespace death
 		// create/ resize the allocation
 		if (allocations == nullptr)
 		{
-			allocations = hud->GetGameParticleCreator().CreateParticles("life", current_life, GameHUDKeys::LIFE_LAYER_ID);
+			allocations = hud->GetGameParticleCreator().CreateParticles(particle_name.c_str(), current_life, layer_id);
 			if (allocations == nullptr)
 				return;
 		}
@@ -354,33 +388,54 @@ namespace death
 		{
 			allocations->Resize(current_life);
 			if (current_life > cached_value)
-				hud->GetGameParticleCreator().InitializeParticles(allocations.get(), "life", current_life - cached_value);
+				hud->GetGameParticleCreator().InitializeParticles(allocations.get(), particle_name.c_str(), current_life - cached_value);
 		}
 
-		// set the color
+		// compute the final size of the particle
+		//
+		// XXX: explanation of 'particle_size' member usage
+		//      -if .x AND .y are 0     => use the particle size in the atlas
+		//      -if .x AND .y are not 0 => override particle size in the atlas
+		//      -if .x OR  .y is  0     => use the particle effective ratio to compute the 0 member value
+
+		glm::vec2 particle_final_size = particle_size;
+		if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
+		{
+			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = hud->GetGameParticleCreator().FindBitmapInfo(particle_name.c_str());
+			if (bitmap_info != nullptr)
+			{
+				if (particle_final_size.x <= 0.0f && particle_final_size.y <= 0.0f) // both are invalid
+					particle_final_size = glm::vec2(bitmap_info->width, bitmap_info->height);
+				else if (particle_final_size.x <= 0.0f)
+					particle_final_size.x = particle_final_size.y * bitmap_info->width / bitmap_info->height;
+				else
+					particle_final_size.y = particle_final_size.x * bitmap_info->height / bitmap_info->width;
+			}
+		}
+
+		// update the particles members
 		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor<chaos::ParticleDefault::Particle>();
 
-		glm::vec2 corner = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), chaos::Hotpoint::BOTTOM_LEFT);
+		glm::vec2 corner = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
 
-		glm::vec2 particle_size;
-		particle_size.x = 35.0f;
-		particle_size.y = 20.0f;
 
+		glm::vec2 particle_position = corner + position;
 		for (size_t i = 0; i < (size_t)current_life; ++i)
 		{
-			glm::vec2 position;
-			position.x = corner.x + 20.0f + (particle_size.x + 5.0f) * (float)i;
-			position.y = corner.y + 20.0f;
+			
+			particles[i].bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, hotpoint_type, chaos::Hotpoint::CENTER);
+			particles[i].bounding_box.half_size = 0.5f * particle_final_size;
 
-			particles[i].bounding_box.position = chaos::Hotpoint::Convert(position, particle_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-			particles[i].bounding_box.half_size = 0.5f * particle_size;
+			//float blend_warning = 1.0f;
+			//if (heart_warning < 0.5f)
+			//	blend_warning = 0.4f + 0.6f * heart_warning / 0.5f;
 
-			float blend_warning = 1.0f;
-			if (heart_warning < 0.5f)
-				blend_warning = 0.4f + 0.6f * heart_warning / 0.5f;
+			//particles[i].color = blend_warning * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-			particles[i].color = blend_warning * glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			particle_position += particle_offset;
 		}
+
 		cached_value = current_life;
 	}
 

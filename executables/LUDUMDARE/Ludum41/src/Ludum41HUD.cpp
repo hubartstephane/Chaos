@@ -51,10 +51,6 @@ bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-
-	// shuwww
-
-
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;
 	RegisterComponent(death::GameHUDKeys::COMBO_ID, new GameHUDComboComponent());
@@ -64,11 +60,6 @@ bool LudumPlayingHUD::FillHUDContent()
 
 bool LudumPlayingHUD::CreateHUDLayers()
 {
-
-
-	// shuwww
-
-
 	// call super method
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;

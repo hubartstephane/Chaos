@@ -98,8 +98,6 @@ namespace death
 		GameHUDTextComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
 		GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
-		/** constructor */
-		GameHUDTextComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 
 		/** called whenever it is inserted in HUD */
 		virtual void OnInsertedInHUD(char const * in_text = nullptr); // this is not an override !
@@ -140,11 +138,6 @@ namespace death
 		/** constructor */
 		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDTextComponent(in_params, in_layer_id) ,
-			cached_value(in_initial_value),
-			format(in_format){}
-		/** constructor */
-		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDTextComponent(font_name, line_height, position, hotpoint_type, in_layer_id) ,
 			cached_value(in_initial_value),
 			format(in_format){}
 
@@ -205,9 +198,6 @@ namespace death
 		/** constructor */
 		GameHUDScoreComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<int>("Score: %d", -1, in_params, in_layer_id) {}
-		/** constructor */
-		GameHUDScoreComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<int>("Score: %d", -1, font_name, line_height, position, hotpoint_type, in_layer_id) {}
 
 	protected:
 
@@ -228,9 +218,6 @@ namespace death
 		/** constructor */
 		GameHUDFramerateComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_params, in_layer_id) {}
-		/** constructor */
-		GameHUDFramerateComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, font_name, line_height, position, hotpoint_type, in_layer_id) {}
 
 	protected:
 
@@ -258,9 +245,6 @@ namespace death
 		/** constructor */
 		GameHUDTimeoutComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_params, in_layer_id) {}
-		/** constructor */
-		GameHUDTimeoutComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<float>("%02.01f", -1.0f, font_name, line_height, position, hotpoint_type, in_layer_id) {}
 
 	protected:
 
@@ -312,9 +296,6 @@ namespace death
 		/** constructor */
 		GameHUDLevelTitleComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params, in_layer_id) {}
-		/** constructor */
-		GameHUDLevelTitleComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<std::string>("%s", std::string(), font_name, line_height, position, hotpoint_type, in_layer_id) {}
 
 	protected:
 

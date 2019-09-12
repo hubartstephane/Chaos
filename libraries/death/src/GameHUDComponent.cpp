@@ -142,15 +142,6 @@ namespace death
 		
 	}
 
-	GameHUDTextComponent::GameHUDTextComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id):
-		layer_id(in_layer_id)
-	{
-		generator_params.line_height = line_height;
-		generator_params.font_info_name = font_name;
-		generator_params.position = position;
-		generator_params.hotpoint_type = hotpoint_type;
-	}
-
 	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
 		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))

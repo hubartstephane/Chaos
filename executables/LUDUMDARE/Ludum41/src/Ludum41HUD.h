@@ -28,11 +28,10 @@ class GameHUDComboComponent : public death::GameHUDCacheValueComponent<int>
 public:
 
 	/** constructor */
+	GameHUDComboComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+	/** constructor */
 	GameHUDComboComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
 		death::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_params, in_layer_id) {}
-	/** constructor */
-	GameHUDComboComponent(char const * font_name, float line_height, glm::vec2 const & position, int hotpoint_type, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-		death::GameHUDCacheValueComponent<int>("Combo: %d x", -1, font_name, line_height, position, hotpoint_type, in_layer_id) {}
 
 protected:
 

@@ -15,6 +15,15 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 // GameHUDWakenParticleComponent
 // ====================================================================
 
+GameHUDWakenParticleComponent::GameHUDWakenParticleComponent(chaos::TagType in_layer_id) :
+	death::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_layer_id) 
+{
+	generator_params.line_height = 60.0f;
+	generator_params.font_info_name = "normal";
+	generator_params.position = glm::vec2(20.0f, -80.0f);
+	generator_params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
+}
+
 bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
@@ -100,7 +109,7 @@ bool LudumPlayingHUD::FillHUDContent()
 
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent("normal", 60.0f, glm::vec2(20.0, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
+	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent());
 	RegisterComponent(death::GameHUDKeys::LEVEL_TIMEOUT_ID, new death::GameHUDTimeoutComponent());
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
 

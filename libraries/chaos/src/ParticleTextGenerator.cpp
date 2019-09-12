@@ -9,6 +9,14 @@ namespace chaos
 {
 	namespace ParticleTextGenerator
 	{
+		
+		GeneratorParams::GeneratorParams(char const * in_font_info_name, float in_line_height, glm::vec2 const & in_position, int in_hotpoint_type):
+			line_height(in_line_height),
+			font_info_name(in_font_info_name),
+			position(in_position),
+			hotpoint_type(in_hotpoint_type)
+		{
+		}
 
 		static std::vector<std::pair<int, char const *>> const alignment_encoding = 
 		{

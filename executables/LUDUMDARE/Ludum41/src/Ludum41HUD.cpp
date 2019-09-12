@@ -15,6 +15,15 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 // GameHUDComboComponent
 // ====================================================================
 
+GameHUDComboComponent::GameHUDComboComponent(chaos::TagType in_layer_id) :
+	death::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_layer_id) 
+{
+	generator_params.line_height = 60.0f;
+	generator_params.font_info_name = "normal";
+	generator_params.position = glm::vec2(20.0f, -80.0f);
+	generator_params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
+}
+
 bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
@@ -48,7 +57,7 @@ bool LudumPlayingHUD::FillHUDContent()
 
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(death::GameHUDKeys::COMBO_ID, new GameHUDComboComponent("normal", 60.0f, glm::vec2(20.0, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
+	RegisterComponent(death::GameHUDKeys::COMBO_ID, new GameHUDComboComponent());
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new death::GameHUDLifeComponent());
 	return true;
 }

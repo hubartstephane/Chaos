@@ -13,6 +13,15 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
 // GameHUDLifeCountComponent
 // ====================================================================
 
+GameHUDLifeCountComponent::GameHUDLifeCountComponent(chaos::TagType in_layer_id) :
+	GameHUDCacheValueComponent<int>("Life: %d", -1, in_layer_id) 
+{
+	generator_params.line_height = 60.0f;
+	generator_params.font_info_name = "normal";
+	generator_params.position = glm::vec2(20.0f, -80.0f);
+	generator_params.hotpoint_type = chaos::Hotpoint::TOP_LEFT;
+}
+
 bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
@@ -200,7 +209,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
 	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
 	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
-	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent("normal", 60.0f, glm::vec2(20.0f, -80.0f), chaos::Hotpoint::TOP_LEFT, death::GameHUDKeys::TEXT_LAYER_ID));
+	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
 	return true;
 }
 

@@ -29,6 +29,13 @@ namespace chaos
 
 		public:
 
+			/** constructor */
+			GeneratorParams() = default;
+			/** constructor */
+			GeneratorParams(char const * in_font_name, float in_line_height, glm::vec2 const & in_position, int in_hotpoint_type);
+
+		public:
+
 			/** the size to use for the line */
 			float line_height = 32.0f;
 			/** spacing between lines */

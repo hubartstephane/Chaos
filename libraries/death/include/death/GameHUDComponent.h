@@ -332,4 +332,24 @@ namespace death
 		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 	};	
 
+	// ====================================================================
+	// GameHUDFreeCameraComponent
+	// ====================================================================
+
+	class GameHUDFreeCameraComponent : public GameHUDTextComponent
+	{
+
+	public:
+
+		/** constructor */
+		GameHUDFreeCameraComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		/** constructor */
+		GameHUDFreeCameraComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+	};
+
 }; // namespace death

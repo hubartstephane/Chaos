@@ -506,4 +506,28 @@ namespace death
 		return cached_value;	
 	}
 
+	// ====================================================================
+	// GameHUDFreeCameraComponent
+	// ====================================================================
+
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(chaos::TagType in_layer_id) :
+		GameHUDTextComponent(in_layer_id)
+	{
+		tick_hidden = true;
+	}
+
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id) :
+		GameHUDTextComponent(in_params, in_layer_id)
+	{
+		tick_hidden = true;
+	}
+
+	bool GameHUDFreeCameraComponent::DoTick(double delta_time)
+	{
+		Game * game = GetGame();
+		if (game != nullptr)
+			Show(game->IsFreeCameraMode());
+		return true;
+	}
+
 }; // namespace death

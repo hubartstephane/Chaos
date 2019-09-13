@@ -1593,22 +1593,25 @@ namespace death
 		{
 			if (level_instance->GetCameraCount() > 0)
 			{
-				Camera const * first_camera = level_instance->GetCameraImpl(0); // XXX : beware, not 'GetCamera(...)' that would recursively call CreateFreeCamera(...) => 'GetCameraImpl(...)' instead
+				Camera const * first_camera = level_instance->DoGetCamera(0); // XXX : beware, not 'GetCamera(...)' that would recursively call CreateFreeCamera(...) => 'DoGetCamera(...)' instead
 				if (first_camera != nullptr)
-				{
-					Camera * result = new Camera((GameLevelInstance *)level_instance);
-					if (result != nullptr)
-					{
-						result->camera_box = first_camera->camera_box;
-						result->initial_camera_obox = first_camera->initial_camera_obox;
-						result->safe_zone = first_camera->safe_zone;
-						result->AddComponent(new FreeCameraComponent(0));
-					}
-					return result;
-				}
+					return DoCreateFreeCamera(first_camera, (GameLevelInstance *)level_instance);
 			}
 		}
 		return nullptr;
+	}
+
+	Camera * Game::DoCreateFreeCamera(Camera const * camera_to_copy, GameLevelInstance * level_instance) const
+	{
+		Camera * result = new Camera(level_instance);
+		if (result != nullptr)
+		{
+			result->camera_box = camera_to_copy->camera_box;
+			result->initial_camera_obox = camera_to_copy->initial_camera_obox;
+			result->safe_zone = camera_to_copy->safe_zone;
+			result->AddComponent(new FreeCameraComponent(0));
+		}
+		return result;
 	}
 
 }; // namespace death

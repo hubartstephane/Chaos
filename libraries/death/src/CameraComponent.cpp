@@ -125,7 +125,7 @@ namespace death
 		// update camera position
 		// XXX : -multiply by 'half_size' => the greater the view is, the faster we go
 		//       -screen Y coordinate and gamepad are inverted
-		camera_box.position += glm::vec2(1.0f, -1.0f) * left_stick_position * (float)delta_time * camera_box.half_size * 4.0f;
+		camera_box.position += glm::vec2(1.0f, -1.0f) * left_stick_position * (float)delta_time * camera_box.half_size * 3.0f;
 
 		// try to keep the camera in the world
 		chaos::box2 world = camera->GetLevelInstance()->GetBoundingBox();
@@ -134,7 +134,6 @@ namespace death
 
 		// apply camera changes
 		camera->SetCameraBox(camera_box);
-
 
 		return true;
 	}

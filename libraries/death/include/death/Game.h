@@ -396,6 +396,8 @@ namespace death
 
 		/** create a free camera for the current level instance */
 		Camera * CreateFreeCamera() const;
+		/** create a free camera for the current level instance */
+		Camera * DoCreateFreeCamera(Camera const * camera_to_copy, GameLevelInstance * level_instance) const;
 
 	protected:
 

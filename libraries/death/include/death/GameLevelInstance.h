@@ -102,9 +102,9 @@ namespace death
 	protected:
 
 		/** gets a camera by its index */
-		Camera * GetCameraImpl(size_t index);
+		Camera * DoGetCamera(size_t index);
 		/** gets a camera by its index */
-		Camera const * GetCameraImpl(size_t index) const;
+		Camera const * DoGetCamera(size_t index) const;
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;

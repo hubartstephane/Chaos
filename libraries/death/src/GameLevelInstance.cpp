@@ -301,10 +301,10 @@ namespace death
 				return result;
 		}
 		// level instance camera
-		return GetCameraImpl(index);
+		return DoGetCamera(index);
 	}
 
-	Camera * GameLevelInstance::GetCameraImpl(size_t index)
+	Camera * GameLevelInstance::DoGetCamera(size_t index)
 	{		
 		if (index >= cameras.size())
 			return nullptr;
@@ -321,10 +321,10 @@ namespace death
 				return result;		
 		}
 		// level instance camera
-		return GetCameraImpl(index);
+		return DoGetCamera(index);
 	}
 
-	Camera const * GameLevelInstance::GetCameraImpl(size_t index) const
+	Camera const * GameLevelInstance::DoGetCamera(size_t index) const
 	{
 		if (index >= cameras.size())
 			return nullptr;

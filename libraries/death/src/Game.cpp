@@ -47,22 +47,17 @@ namespace death
 	{
 		if (chaos::Application::HasApplicationCommandLineFlag("-CheatMode"))
 			return true;
+		if (IsFreeCameraMode())
+			return true;
 		return cheat_mode;
 	}
 #endif // _DEBUG
-
-	void Game::HandleKeyboardInputs()
-	{
-
-	}
 
 	void Game::TickGameInputs(double delta_time)
 	{
 		// catch all stick inputs
 		if (gamepad_manager != nullptr)
 			gamepad_manager->Tick((float)delta_time);
-		// handle keyboard inputs
-		HandleKeyboardInputs();
 	}
 
 	void Game::Tick(double delta_time)
@@ -135,6 +130,11 @@ namespace death
 			if (key == GLFW_KEY_F4)
 			{
 				ReloadCurrentLevel();
+				return true;
+			}
+			if (key == GLFW_KEY_F5)
+			{
+				SetFreeCameraMode(!IsFreeCameraMode());
 				return true;
 			}
 #endif
@@ -1558,6 +1558,34 @@ namespace death
 	GameInstance * Game::CreateGameInstance()
 	{
 		return new GameInstance(this);
+	}
+
+	bool Game::IsFreeCameraMode() const
+	{
+		return free_camera_mode;
+	}
+
+	void Game::SetFreeCameraMode(bool in_free_camera_mode)
+	{
+		if (free_camera_mode == in_free_camera_mode)
+			return;
+
+
+
+
+		free_camera_mode = in_free_camera_mode;
+	}
+
+	Camera * Game::GetFreeCamera()
+	{
+	
+		return nullptr;
+	}
+	
+	Camera const * Game::GetFreeCamera() const
+	{
+	
+		return nullptr;
 	}
 
 }; // namespace death

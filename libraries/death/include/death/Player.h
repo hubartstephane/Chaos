@@ -92,12 +92,16 @@ namespace death
 		/** handle mouse movement */
 		virtual bool OnMouseMove(double x, double y) override;
 
+		/** extract stick values from keyboard state */
+		virtual void CacheKeyboardPlayerDisplacementInputs();
+		/** extract stick values from gamepad state */
+		virtual void CacheGamepadPlayerDisplacementInputs();
 		/** handle the player input */
 		virtual void HandleKeyboardInputs(double delta_time);
 		/** handle the player input (top level function) */
 		virtual void HandleGamepadInputs(double delta_time);
 		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd);
+		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gamepad_data);
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 

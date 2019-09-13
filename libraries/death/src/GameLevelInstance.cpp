@@ -257,26 +257,32 @@ namespace death
 		return false;
 	}
 
-	bool GameLevelInstance::DoTick(double delta_time)
+	bool GameLevelInstance::CanTick()
 	{
-		bool loop_levels = false; // unused
+		if (game->IsFreeCameraMode()) // in Free camera mode, do not tick level any more
+			return false;
+		return true;
+	}
 
+	bool GameLevelInstance::DoTick(double delta_time)
+	{	
 		// update the cameras
 		size_t count = cameras.size();
 		for (size_t i = 0; i < count; ++i)
 			cameras[i]->Tick(delta_time);
 
+		bool loop_levels = false;
 		// update the timeout
 		if (level_timeout > 0.0f 
 			&& !IsLevelCompleted(loop_levels) 
 #if _DEBUG	
 			&& !game->GetCheatMode()
 #endif
-		){
+			){
 			level_timeout -= (float)delta_time;
 			if (level_timeout < 0.0f)
 				level_timeout = 0.0f;
-		}
+		}	
 		return true;
 	}
 
@@ -287,6 +293,14 @@ namespace death
 
 	Camera * GameLevelInstance::GetCamera(size_t index)
 	{
+		// try the free camera mode first
+		if (game->IsFreeCameraMode())
+		{
+			Camera * result = game->GetFreeCamera();
+			if (result != nullptr)
+				return result;		
+		}
+		// standard implementation
 		if (index >= cameras.size())
 			return nullptr;
 		return cameras[index].get();
@@ -294,6 +308,14 @@ namespace death
 
 	Camera const * GameLevelInstance::GetCamera(size_t index) const
 	{
+		// try the free camera mode first
+		if (game->IsFreeCameraMode())
+		{
+			Camera const * result = game->GetFreeCamera();
+			if (result != nullptr)
+				return result;		
+		}
+		// standard implementation
 		if (index >= cameras.size())
 			return nullptr;
 		return cameras[index].get();
@@ -301,6 +323,11 @@ namespace death
 
 	chaos::obox2 GameLevelInstance::GetInitialCameraOBox(size_t index) const
 	{ 
+
+
+
+
+
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
 			return chaos::obox2();

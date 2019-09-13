@@ -203,6 +203,17 @@ namespace death
 		/** create the background image */
 		virtual bool CreateBackgroundImage(char const * material_name, char const * texture_name);
 
+		/** returns whether we are in free camera mode */
+		bool IsFreeCameraMode() const;
+		/** change free camera mode */
+		void SetFreeCameraMode(bool free_camera_mode);
+
+		/** get the free camera */
+		Camera * GetFreeCamera();
+		/** get the free camera */
+		Camera const * GetFreeCamera() const;
+
+
 	protected:
 
 		/** the tick method */
@@ -259,8 +270,6 @@ namespace death
 		/** create the game state_machine instance */
 		virtual chaos::SM::StateMachineInstance * DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine);
 
-		/** handle keyboards input */
-		virtual void HandleKeyboardInputs();
 		/** special action on gamepad input reception */
 		virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 		/** called whenever a gamepad input is comming */
@@ -386,6 +395,8 @@ namespace death
 		/** all sounds flagged in game are set to pause */
 		void SetInGameSoundPause(bool in_paused);
 
+		/**
+
 	protected:
 
 		/** the window in GLFW library */
@@ -465,6 +476,10 @@ namespace death
 
 		/** the game instance */
 		chaos::shared_ptr<GameInstance> game_instance;
+
+
+		/** free camera mode */
+		bool free_camera_mode = false;
 	};
 
 }; // namespace death

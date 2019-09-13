@@ -124,6 +124,9 @@ namespace death
 
 	bool GameHUD::FillHUDContent()
 	{
+#if _DEBUG
+		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
+#endif
 		return true;
 	}
 
@@ -292,9 +295,6 @@ namespace death
 		if (!GameHUD::FillHUDContent())
 			return false;
 		RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
-#if _DEBUG
-		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
-#endif
 		return true;
 	}
 	

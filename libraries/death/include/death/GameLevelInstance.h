@@ -103,6 +103,8 @@ namespace death
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
+		/** override */
+		virtual bool CanTick() override;
 
 		/** additionnal initialization */
 		virtual bool Initialize(Game * in_game, GameLevel * in_level);

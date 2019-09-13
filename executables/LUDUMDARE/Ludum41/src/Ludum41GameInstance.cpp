@@ -205,11 +205,11 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 
 bool LudumGameInstance::DoTick(double delta_time)
 {
-	if (!death::GameInstance::DoTick(delta_time))
+	if (!death::GameInstance::DoTick(delta_time)) // ticking GameInstance, tick Players ... this is usefull to work with inputs
 		return false;
 
 	// some other calls
-	if (game->IsPlaying())
+	if (game->IsPlaying() && !game->IsFreeCameraMode())
 	{
 		TickBrickOffset(delta_time);
 		TickChallenge(delta_time);

@@ -159,7 +159,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		return false;
 
 	// do not update particles during pause
-	if (!layer_trait->game->IsPlaying())
+	if (!layer_trait->game->IsPlaying() || layer_trait->game->IsFreeCameraMode())
 		return false;
 
 	// delay before moving the particle

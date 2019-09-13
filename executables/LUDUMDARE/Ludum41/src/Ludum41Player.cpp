@@ -38,7 +38,7 @@ bool LudumPlayer::OnMouseMove(double x, double y)
 	death::Game const * game = GetGame();
 	if (game == nullptr)
 		return true;
-	if (game->IsPaused())
+	if (game->IsPaused() || game->IsFreeCameraMode())
 		return true;
 	DisplacePlayerRacket(game->GetMouseSensitivity() * (float)x);
 	return false;

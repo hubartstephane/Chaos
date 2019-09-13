@@ -6,6 +6,10 @@
 
 void LudumChallenge::OnKeyboardButtonReceived(char c)
 {
+	LudumGame * game = game_instance->GetLudumGame();
+	if (game->IsFreeCameraMode())
+		return;
+
 	// test the challenge
 	if (keyboard_challenge[keyboard_challenge_position] == c)
 		AdvanceChallenge();
@@ -22,6 +26,8 @@ void LudumChallenge::Show(bool visible)
 void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * in_gamepad_data)
 {
 	LudumGame * game = game_instance->GetLudumGame();
+	if (game->IsFreeCameraMode())
+		return;
 
 	int expected_key = gamepad_challenge[gamepad_challenge_position];
 

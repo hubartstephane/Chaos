@@ -43,13 +43,6 @@ namespace death
 
 		// shuxxx check player_index is initialized (seems NOT)
 
-
-
-
-
-
-
-
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
 			if (players[i]->GetPlayerIndex() == player_index)
@@ -68,15 +61,6 @@ namespace death
 				return players[i].get();
 		return nullptr;
 	}
-
-
-
-
-
-
-
-
-
 
 	int GameInstance::GetBestPlayerScore() const
 	{

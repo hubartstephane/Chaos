@@ -640,6 +640,10 @@ namespace chaos
 		bool  effective_pause  = IsEffectivePaused();
 		float effective_volume = GetEffectiveVolume();
 
+#if _DEBUG
+		if (Application::HasApplicationCommandLineFlag("-Mute"))
+			effective_volume = 0.0f;
+#endif
 		// play sound
 		bool track = true;
 		bool sound_effect = true;
@@ -715,7 +719,6 @@ namespace chaos
 		if (Application::HasApplicationCommandLineFlag("-Mute"))
 			effective_volume = 0.0f;
 #endif
-
 		if (irrklang_sound != nullptr)
 			irrklang_sound->setVolume((irrklang::ik_f32)effective_volume);
 	}

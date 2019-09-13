@@ -64,6 +64,9 @@ namespace death
 	{
 		// update player inputs
 		TickGameInputs(delta_time);
+		// tick the free camera
+		if (free_camera != nullptr)
+			free_camera->Tick(delta_time);
 		// update the game state_machine
 		if (game_state_machine_instance != nullptr)
 			game_state_machine_instance->Tick(delta_time, nullptr);
@@ -243,13 +246,6 @@ namespace death
 	{		
 
 		// shuwww   root_render_layer ??
-
-
-
-
-
-
-
 
 
 
@@ -1476,6 +1472,10 @@ namespace death
 
 	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance)
 	{
+		// free camera points an invalid 'level_instance'
+		if (free_camera != nullptr)
+			free_camera = nullptr;
+		// update the instance
 		if (game_instance != nullptr)
 			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);
 	}
@@ -1567,24 +1567,47 @@ namespace death
 
 	void Game::SetFreeCameraMode(bool in_free_camera_mode)
 	{
-		if (free_camera_mode == in_free_camera_mode)
-			return;
-
-
-
-
 		free_camera_mode = in_free_camera_mode;
+		if (!in_free_camera_mode)
+			free_camera = nullptr;
 	}
 
 	Camera * Game::GetFreeCamera()
-	{
-	
-		return nullptr;
+	{		
+		if (free_camera == nullptr)
+			free_camera = CreateFreeCamera();
+		return free_camera.get();
 	}
 	
 	Camera const * Game::GetFreeCamera() const
 	{
-	
+		if (free_camera == nullptr)
+			free_camera = CreateFreeCamera();
+		return free_camera.get();
+	}
+
+	Camera * Game::CreateFreeCamera() const
+	{
+		GameLevelInstance const * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+		{
+			if (level_instance->GetCameraCount() > 0)
+			{
+				Camera const * first_camera = level_instance->GetCameraImpl(0); // XXX : beware, not 'GetCamera(...)' that would recursively call CreateFreeCamera(...) => 'GetCameraImpl(...)' instead
+				if (first_camera != nullptr)
+				{
+					Camera * result = new Camera((GameLevelInstance *)level_instance);
+					if (result != nullptr)
+					{
+						result->camera_box = first_camera->camera_box;
+						result->initial_camera_obox = first_camera->initial_camera_obox;
+						result->safe_zone = first_camera->safe_zone;
+						result->AddComponent(new FreeCameraComponent(0));
+					}
+					return result;
+				}
+			}
+		}
 		return nullptr;
 	}
 

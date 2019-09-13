@@ -213,7 +213,6 @@ namespace death
 		/** get the free camera */
 		Camera const * GetFreeCamera() const;
 
-
 	protected:
 
 		/** the tick method */
@@ -395,7 +394,8 @@ namespace death
 		/** all sounds flagged in game are set to pause */
 		void SetInGameSoundPause(bool in_paused);
 
-		/**
+		/** create a free camera for the current level instance */
+		Camera * CreateFreeCamera() const;
 
 	protected:
 
@@ -477,7 +477,8 @@ namespace death
 		/** the game instance */
 		chaos::shared_ptr<GameInstance> game_instance;
 
-
+		/** the free camera */
+		mutable chaos::shared_ptr<Camera> free_camera;
 		/** free camera mode */
 		bool free_camera_mode = false;
 	};

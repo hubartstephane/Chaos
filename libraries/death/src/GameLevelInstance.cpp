@@ -298,9 +298,14 @@ namespace death
 		{
 			Camera * result = game->GetFreeCamera();
 			if (result != nullptr)
-				return result;		
+				return result;
 		}
-		// standard implementation
+		// level instance camera
+		return GetCameraImpl(index);
+	}
+
+	Camera * GameLevelInstance::GetCameraImpl(size_t index)
+	{		
 		if (index >= cameras.size())
 			return nullptr;
 		return cameras[index].get();
@@ -315,7 +320,12 @@ namespace death
 			if (result != nullptr)
 				return result;		
 		}
-		// standard implementation
+		// level instance camera
+		return GetCameraImpl(index);
+	}
+
+	Camera const * GameLevelInstance::GetCameraImpl(size_t index) const
+	{
 		if (index >= cameras.size())
 			return nullptr;
 		return cameras[index].get();
@@ -323,11 +333,6 @@ namespace death
 
 	chaos::obox2 GameLevelInstance::GetInitialCameraOBox(size_t index) const
 	{ 
-
-
-
-
-
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
 			return chaos::obox2();
@@ -352,8 +357,6 @@ namespace death
 		result.rotator = 0.0f;
 		return result;
 	}
-
-
 
 	chaos::box2 GameLevelInstance::GetCameraBox(size_t index) const 
 	{ 

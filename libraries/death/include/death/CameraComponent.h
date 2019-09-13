@@ -102,4 +102,27 @@ namespace death
 		int player_index = 0;
 	};
 
+	// =============================================
+	// FreeCameraComponent
+	// =============================================
+
+	class FreeCameraComponent : public CameraComponent
+	{
+	public:
+
+		/** constructor */
+		FreeCameraComponent(int in_player_index = 0) :
+			player_index(in_player_index) {}
+
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+
+	protected:
+
+		/** the player index to follow */
+		int player_index = 0;
+	};
+
 }; // namespace death

@@ -82,6 +82,8 @@ namespace death
 	{
 		Game * game = GetGame();
 
+		// remove previous frame cached input
+		ResetCachedInputs();
 		// cache values for stick displacement
 		CacheKeyboardPlayerDisplacementInputs();
 		// cache values for stick displacement
@@ -97,10 +99,6 @@ namespace death
 			// tick the player displacement
 			TickPlayerDisplacement(delta_time);
 		}
-
-		// remove previous frame cached input
-		ResetCachedInputs();
-
 		return true;
 	}
 

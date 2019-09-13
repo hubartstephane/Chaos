@@ -27,13 +27,8 @@ namespace death
 
 		/** constructor */
 		Player(GameInstance * in_game_instance);
-
-
-
+		/** destructor */
 		virtual ~Player();
-
-
-
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
@@ -75,6 +70,11 @@ namespace death
 		bool SetPlayerPosition(glm::vec2 const & position);
 		/** set the player box */
 		bool SetPlayerBox(chaos::box2 const & box);
+
+		/** gets the left stick position */
+		glm::vec2 GetLeftStickPosition() const { return left_stick_position; }
+		/** gets the right stick position */
+		glm::vec2 GeRightStickPosition() const { return right_stick_position; }
 
 	protected:
 

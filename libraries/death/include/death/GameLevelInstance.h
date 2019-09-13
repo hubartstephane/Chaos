@@ -50,9 +50,9 @@ namespace death
 
 		/** returns the number of cameras */
 		size_t GetCameraCount() const;
-		/** gets a camera by its index */
+		/** gets a camera by its index (or free camera) */
 		Camera * GetCamera(size_t index);
-		/** gets a camera by its index */
+		/** gets a camera by its index (or free camera) */
 		Camera const * GetCamera(size_t index) const;
 
 		/** get the transformation world to camera */
@@ -100,6 +100,11 @@ namespace death
 		float GetLevelTimeout() const { return level_timeout; }
 
 	protected:
+
+		/** gets a camera by its index */
+		Camera * GetCameraImpl(size_t index);
+		/** gets a camera by its index */
+		Camera const * GetCameraImpl(size_t index) const;
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;

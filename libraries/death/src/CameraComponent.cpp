@@ -103,4 +103,40 @@ namespace death
 		return true;
 	}
 
+	// =============================================
+	// FreeCameraComponent
+	// =============================================
+
+	bool FreeCameraComponent::DoTick(double delta_time)
+	{
+		// get the wanted player
+		Player * player = camera->GetPlayer(player_index);
+		if (player == nullptr)
+			return true;
+
+		// get camera, cannot continue if it is empty
+		chaos::box2 camera_box = camera->GetCameraBox();
+		if (IsGeometryEmpty(camera_box))
+			return true;
+
+		// get the left stick
+		glm::vec2 left_stick_position = player->GetLeftStickPosition();
+
+		// update camera position
+		// XXX : -multiply by 'half_size' => the greater the view is, the faster we go
+		//       -screen Y coordinate and gamepad are inverted
+		camera_box.position += glm::vec2(1.0f, -1.0f) * left_stick_position * (float)delta_time * camera_box.half_size * 4.0f;
+
+		// try to keep the camera in the world
+		chaos::box2 world = camera->GetLevelInstance()->GetBoundingBox();
+		if (!IsGeometryEmpty(world))
+			chaos::RestrictToInside(world, camera_box, false);
+
+		// apply camera changes
+		camera->SetCameraBox(camera_box);
+
+
+		return true;
+	}
+
 }; // namespace death

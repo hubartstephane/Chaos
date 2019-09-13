@@ -1474,7 +1474,12 @@ namespace death
 	{
 		// free camera points an invalid 'level_instance'
 		if (free_camera != nullptr)
-			free_camera = nullptr;
+		{
+			if (new_level->GetLevelIndex() == old_level->GetLevelIndex()) // level unchanged : want to keep free cam position
+				free_camera = DoCreateFreeCamera(free_camera.get(), new_level_instance);
+			else
+				free_camera = nullptr; // the camera will be created at next tick
+		}
 		// update the instance
 		if (game_instance != nullptr)
 			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);

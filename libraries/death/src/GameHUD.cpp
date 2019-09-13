@@ -126,7 +126,7 @@ namespace death
 	{
 #if _DEBUG
 		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
-		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent(GameHUDKeys::TEXT_LAYER_ID), "FreeCam Mode");
+		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent(), "FreeCam Mode");
 #endif
 		return true;
 	}

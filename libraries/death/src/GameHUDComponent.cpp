@@ -121,6 +121,12 @@ namespace death
 	// GameHUDSingleAllocationComponent
 	// ====================================================================
 
+	void GameHUDSingleAllocationComponent::ShowComponent(bool in_show)
+	{
+		if (allocations != nullptr)
+			allocations->Show(in_show);	
+	}
+
 	void GameHUDSingleAllocationComponent::OnRemovedFromHUD()
 	{
 		allocations = nullptr;
@@ -513,20 +519,23 @@ namespace death
 	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(chaos::TagType in_layer_id) :
 		GameHUDTextComponent(in_layer_id)
 	{
-		tick_hidden = true;
+		generator_params.line_height = 60.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(-20.0f, -80.0f);
+		generator_params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
+		generator_params.default_color = glm::vec4(0.0f, 0.45f, 1.0f, 1.0f); // light blue
 	}
 
 	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id) :
 		GameHUDTextComponent(in_params, in_layer_id)
 	{
-		tick_hidden = true;
 	}
 
 	bool GameHUDFreeCameraComponent::DoTick(double delta_time)
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
-			Show(game->IsFreeCameraMode());
+			ShowComponent(game->IsFreeCameraMode());
 		return true;
 	}
 

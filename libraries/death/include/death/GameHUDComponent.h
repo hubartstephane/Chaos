@@ -75,6 +75,8 @@ namespace death
 	{
 	protected:
 
+		/** show or hide the component */
+		virtual void ShowComponent(bool in_show);
 		/** override */
 		virtual void OnRemovedFromHUD() override;
 

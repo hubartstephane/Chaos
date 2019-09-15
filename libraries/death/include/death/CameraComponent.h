@@ -118,11 +118,15 @@ namespace death
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
+		/** override */
+		virtual chaos::box2 ApplyModifier(chaos::box2 const & src) const override;
 
 	protected:
 
 		/** the player index to follow */
 		int player_index = 0;
+		/** the value of zoom to apply */
+		float zoom_value = 1.0f;
 	};
 
 }; // namespace death

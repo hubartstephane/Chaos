@@ -76,6 +76,11 @@ namespace death
 		/** gets the right stick position */
 		glm::vec2 GeRightStickPosition() const { return right_stick_position; }
 
+		/** gets the left trigger */
+		float GetLeftTrigger() const { return left_trigger; }
+		/** gets the right trigger */
+		float GetRightTrigger() const { return right_trigger; }
+
 	protected:
 
 		/** initialize the game instance */
@@ -129,6 +134,8 @@ namespace death
 		/** the current stick position */
 		glm::vec2 left_stick_position = glm::vec2(0.0f, 0.0f);
 		glm::vec2 right_stick_position = glm::vec2(0.0f, 0.0f);
+		float left_trigger = 0.0f;
+		float right_trigger = 0.0f;
 	};
 
 

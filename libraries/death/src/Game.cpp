@@ -1614,7 +1614,7 @@ namespace death
 			result->camera_box = camera_to_copy->camera_box;
 			result->initial_camera_obox = camera_to_copy->initial_camera_obox;
 			result->safe_zone = camera_to_copy->safe_zone;
-			result->AddComponent(new FreeCameraComponent(0));
+			result->AddComponent(new FreeCameraComponent(0)); // player 0
 		}
 		return result;
 	}

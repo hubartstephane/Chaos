@@ -115,12 +115,30 @@ namespace death
 			return true;
 
 		// get camera, cannot continue if it is empty
-		chaos::box2 camera_box = camera->GetCameraBox();
+		chaos::box2 camera_box = camera->GetCameraBox(false); // no modifier
 		if (IsGeometryEmpty(camera_box))
 			return true;
 
 		// get the left stick
 		glm::vec2 left_stick_position = player->GetLeftStickPosition();
+
+		// prepare to zoom
+		float zoom_in  = player->GetLeftTrigger();
+		float zoom_out = player->GetRightTrigger();
+
+		if ((zoom_in == 0.0f) ^ (zoom_out == 0.0f))
+		{
+			if (zoom_in > 0.0f)
+			{
+				zoom_value -= 1.0f * zoom_in * (float)delta_time;				
+			}
+			else if (zoom_out > 0.0f)
+			{
+				zoom_value += 1.0f * zoom_value * (float)delta_time;
+			}
+		}
+
+		zoom_value = chaos::MathTools::Clamp(zoom_value, 1.0f, 4.0f);
 
 		// update camera position
 		// XXX : -multiply by 'half_size' => the greater the view is, the faster we go
@@ -136,6 +154,13 @@ namespace death
 		camera->SetCameraBox(camera_box);
 
 		return true;
+	}
+
+	chaos::box2 FreeCameraComponent::ApplyModifier(chaos::box2 const & src) const
+	{
+		chaos::box2 result = CameraComponent::ApplyModifier(src);
+		result.half_size *= zoom_value;
+		return result;
 	}
 
 }; // namespace death

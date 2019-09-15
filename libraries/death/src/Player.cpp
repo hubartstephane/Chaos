@@ -148,7 +148,7 @@ namespace death
 		if (gamepad_data->IsAnyAction())			
 			chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
 
-		// cache the stick position
+		// cache the LEFT stick position (it is aliases with the DPAD)
 		glm::vec2 lsp = gamepad_data->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
@@ -164,9 +164,15 @@ namespace death
 			else if (gamepad_data->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_DOWN, false))
 				left_stick_position.y = 1.0f;
 		}
+
+		// cache the RIGHT stick position
 		glm::vec2 rsp = gamepad_data->GetXBOXStickDirection(chaos::MyGLFW::XBOX_RIGHT_AXIS);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
+
+		// cache the TRIGGERS
+		left_trigger  = gamepad_data->GetAxisValue(chaos::MyGLFW::XBOX_LEFT_TRIGGER);
+		right_trigger = gamepad_data->GetAxisValue(chaos::MyGLFW::XBOX_RIGHT_TRIGGER);
 
 		// get data
 		Game * game = GetGame();
@@ -185,8 +191,10 @@ namespace death
 
 	void Player::ResetCachedInputs()
 	{
-		left_stick_position = glm::vec2(0.0f, 0.0f);
+		left_stick_position  = glm::vec2(0.0f, 0.0f);
 		right_stick_position = glm::vec2(0.0f, 0.0f);
+		left_trigger  = 0.0f;
+		right_trigger = 0.0f;
 	}
 
 	void Player::HandleGamepadInputs(double delta_time)

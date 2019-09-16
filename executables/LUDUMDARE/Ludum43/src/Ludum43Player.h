@@ -27,14 +27,13 @@ public:
 	ParticlePlayer * GetPlayerParticle();
 	ParticlePlayer const * GetPlayerParticle() const;
 
-	/** called whenever the level is being changed */
-	void OnLevelChanged();
-
 	/** override */
 	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
 protected:
 
+	/** override */
+	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 	/** override */
 	virtual void TickPlayerDisplacement(double delta_time) override;
 	/** override */

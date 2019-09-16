@@ -19,6 +19,11 @@ namespace death
 
 	}
 
+	void Player::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
+	{
+
+	}
+
 	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 	{
 		player_allocations = in_allocation;

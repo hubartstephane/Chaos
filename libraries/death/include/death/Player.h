@@ -86,6 +86,9 @@ namespace death
 		/** initialize the game instance */
 		virtual bool Initialize(death::GameInstance * in_game_instance) override;
 
+		/** called whenever the level is being changed */
+		virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance);
+
 		/** override */
 		virtual bool DoTick(double delta_time) override;
 		/** handle keyboard input */

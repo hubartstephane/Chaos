@@ -187,9 +187,9 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 	}
 }
 
-void LudumPlayer::OnLevelChanged()
+void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
-	// shuxxx death::Player::OnLevelChanged();
+	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
 
 

@@ -194,6 +194,8 @@ bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, c
 
 	SetEnabled(false);
 
+	// shuxxx checkpoint
+
 	death::GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
 	if (game_instance != nullptr)
 		game_instance->SetCheckpointPosition(surface->GetBoundingBox(true).position, GetLayerInstance()->GetTiledLevelInstance());

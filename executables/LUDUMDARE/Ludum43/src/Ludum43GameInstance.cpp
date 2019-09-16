@@ -72,7 +72,7 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 	if (player != nullptr)
 	{
 		player->SetScore(waken_up_particle_count, true);
-		player->OnLevelChanged();
+		player->OnLevelChanged(new_level, old_level, new_level_instance);
 	}
 	previous_frame_life = 0.0f;
 	waken_up_particle_count = 0;

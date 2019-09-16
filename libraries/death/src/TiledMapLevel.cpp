@@ -1369,6 +1369,9 @@ namespace death
 			layer_instance->FinalizeParticles();
 
 			// store the current player position as a checkpoint
+
+			// shuxxx checkpoint
+
 			death::GameInstance * game_instance = GetGameInstance();
 			if (game_instance != nullptr)
 				game_instance->SetCheckpointPosition(player_bounding_box.position, this);

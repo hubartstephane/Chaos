@@ -1611,10 +1611,22 @@ namespace death
 		Camera * result = new Camera(level_instance);
 		if (result != nullptr)
 		{
+			float zoom_value = 1.0f;
+
+			FreeCameraComponent const * other_free_camera_component = camera_to_copy->FindComponentByClass<FreeCameraComponent>();
+			if (other_free_camera_component != nullptr)
+				zoom_value = other_free_camera_component->GetZoomValue();
+
 			result->camera_box = camera_to_copy->camera_box;
 			result->initial_camera_obox = camera_to_copy->initial_camera_obox;
 			result->safe_zone = camera_to_copy->safe_zone;
-			result->AddComponent(new FreeCameraComponent(0)); // player 0
+
+			FreeCameraComponent * new_free_camera_component = new FreeCameraComponent(0); // player 0
+			if (new_free_camera_component != nullptr)
+			{
+				new_free_camera_component->SetZoomValue(zoom_value);
+				result->AddComponent(new_free_camera_component);
+			}			
 		}
 		return result;
 	}

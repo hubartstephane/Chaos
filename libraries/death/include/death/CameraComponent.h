@@ -114,6 +114,11 @@ namespace death
 		FreeCameraComponent(int in_player_index = 0) :
 			player_index(in_player_index) {}
 
+		/** returns the zoom value */
+		float GetZoomValue() const { return zoom_value; }
+		/** set the zoom value */
+		void SetZoomValue(float in_zoom_value){ zoom_value = in_zoom_value; }
+
 	protected:
 
 		/** override */

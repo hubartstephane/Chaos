@@ -129,13 +129,9 @@ namespace death
 		if ((zoom_in == 0.0f) ^ (zoom_out == 0.0f))
 		{
 			if (zoom_in > 0.0f)
-			{
 				zoom_value -= 1.0f * zoom_in * (float)delta_time;				
-			}
 			else if (zoom_out > 0.0f)
-			{
 				zoom_value += 1.0f * zoom_value * (float)delta_time;
-			}
 		}
 
 		zoom_value = chaos::MathTools::Clamp(zoom_value, 1.0f, 4.0f);

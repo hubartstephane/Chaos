@@ -141,6 +141,9 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
 
+		/** create a checkpoint */
+		virtual Checkpoint * CreateCheckpoint();
+
 		/** called whenver the player is restarted from checkpoint */
 		virtual bool OnRestartedFromCheckpoint(Player * player);
 

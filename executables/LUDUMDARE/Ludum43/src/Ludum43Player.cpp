@@ -189,6 +189,10 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 
 void LudumPlayer::OnLevelChanged()
 {
+	// shuxxx death::Player::OnLevelChanged();
+
+
+
 	current_cooldown = 0.0f;
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;

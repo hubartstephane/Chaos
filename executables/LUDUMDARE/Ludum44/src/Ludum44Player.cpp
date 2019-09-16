@@ -104,6 +104,9 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 
 void LudumPlayer::OnLevelChanged()
 {
+	death::Player::OnLevelChanged();
+	// shuxxx checkpoint OnLevelChanged()
+
 	current_life = current_max_life;
 
 

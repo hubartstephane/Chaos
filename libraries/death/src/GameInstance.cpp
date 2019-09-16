@@ -1,6 +1,7 @@
 #include <death/GameInstance.h>
 #include <death/GameLevel.h>
 #include <death/Player.h>
+#include <death/Checkpoint.h>
 
 namespace death
 {
@@ -299,6 +300,9 @@ namespace death
 
 	void GameInstance::SetCheckpointPosition(glm::vec2 const & in_checkpoint_position, GameLevelInstance * in_checkpoint_level_instance)
 	{
+
+		// shuxxx checkpoint SetCheckpointPosition()
+
 		if (in_checkpoint_level_instance != nullptr)
 		{
 			checkpoint_position = in_checkpoint_position;
@@ -309,11 +313,18 @@ namespace death
 
 	bool GameInstance::IsCheckpointValid() const
 	{
+
+		// shuxxx checkpoint IsCheckpointValid()
+
+
 		return checkpoint_level_instance.get() != nullptr; // checkpoint still valid ?	
 	}
 	
 	bool GameInstance::RestartFromCheckpoint(Player * player)
 	{
+
+		// shuxxx checkpoint RestartFromCheckpoint
+
 		// update player particle
 		chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
 		if (player_particle != nullptr)
@@ -333,10 +344,18 @@ namespace death
 
 	bool GameInstance::OnRestartedFromCheckpoint(Player * player)
 	{
+		// shuxxx checkpoint OnRestartedFromCheckpoint
+
+
 		GameLevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			level_instance->RestrictCameraToPlayerAndWorld(0, 0);
 		return true;
+	}
+
+	Checkpoint * GameInstance::CreateCheckpoint()
+	{
+		return new Checkpoint();
 	}
 
 }; // namespace death

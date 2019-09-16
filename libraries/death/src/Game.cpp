@@ -1467,6 +1467,21 @@ namespace death
 
 		// change the level
 		OnLevelChanged(new_level, old_level.get(), current_level_instance.get());
+
+
+
+		// create a checkpoint for the level
+		
+		// shuxxx checkpoint
+
+
+
+
+
+
+
+
+
 		return true;
 	}
 

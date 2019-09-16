@@ -39,6 +39,9 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 
 bool LudumGameInstance::OnRestartedFromCheckpoint(death::Player * player)
 {
+
+	// shuxxx checkpoint OnRestartedFromCheckpoint
+
 	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player != nullptr)
 	{

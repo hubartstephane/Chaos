@@ -468,6 +468,7 @@ namespace chaos
 			// reloading GPU resources
 			if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
 			{
+				// CMD GLFW_KEY_F8 : ReloadGPUResources(...)
 				ReloadGPUResources();
 				return true;
 			}

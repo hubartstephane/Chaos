@@ -520,12 +520,14 @@ namespace chaos
 					}
 				}
 				// screen capture
+				// CMD GLFW_KEY_F9 : ScreenCapture(...)
 				if (key == GLFW_KEY_F9)
 				{
 					ScreenCapture();
 					return true;
 				}
 				// try to go fullscreen
+				// CMD GLFW_KEY_F10 : ToggleFullscreen(...)
 				if (key == GLFW_KEY_F10)
 				{
 					ToggleFullscreen();

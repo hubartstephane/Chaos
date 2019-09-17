@@ -275,12 +275,11 @@ namespace death
 		bool TriggerSurfaceObject::Initialize()
 		{
 			if (!GeometricObject::Initialize())
-				return false;
-
-			enabled    = geometric_object->FindPropertyBool("ENABLED", true);
-			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", 0);
-			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", 1.0f);
-		
+				return false;			
+			enabled            = geometric_object->FindPropertyBool("ENABLED", true);
+			trigger_once			 = geometric_object->FindPropertyBool("TRIGGER_ONCE", false);
+			trigger_id         = geometric_object->FindPropertyInt("TRIGGER_ID", 0);
+			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", 1.0f);		
 			return true;
 		}
 
@@ -311,12 +310,12 @@ namespace death
 
 		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
-			return true; // continue other collisions
+			return true; // collisions handled successfully
 		}
 
 		bool TriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
-			return true; // continue other collisions
+			return true; // collisions handled successfully
 		}
 
 		// =====================================
@@ -765,12 +764,12 @@ namespace death
 				if (tile_info.tiledata == nullptr)
 					continue;
 				// create a simple particle
-				glm::ivec2  tile_coord   = tile_layer->GetTileCoordinate(i);
-				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
+glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(i);
+chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
 
-				bool horizontal_flip = false;
-				bool vertical_flip = false;
-				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip);
+bool horizontal_flip = false;
+bool vertical_flip = false;
+particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip);
 			}
 
 			// final flush
@@ -810,9 +809,9 @@ namespace death
 					if (AreTileCollisionsEnabled())
 						if (!ComputePlayerTileCollisions(delta_time, player, player_particle))
 							continue;
-				}									
+				}
 			}
-				
+
 			// compute collision with camera
 			if (AreCameraCollisionEnabled())
 			{
@@ -864,8 +863,11 @@ namespace death
 				bool already_colliding = false;
 				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), triggers[i]) != camera_collision_records.end()) // search in previous frame data						
 					already_colliding = true;
-				if (!triggers[i]->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
-					return false;
+				if (triggers[i]->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
+				{
+					if (triggers[i]->IsTriggerOnce())
+						triggers[i]->SetEnabled(false);
+				}
 			}
 
 			// triggers end of collisions
@@ -873,8 +875,7 @@ namespace death
 			for (size_t i = 0; i < previous_count; ++i)
 			{
 				if (std::find(triggers.begin(), triggers.end(), camera_collision_records[i]) == triggers.end()) // no more colliding
-					if (!camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, TriggerSurfaceObject::COLLISION_FINISHED))
-						return false;
+					camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, TriggerSurfaceObject::COLLISION_FINISHED);
 			}
 
 			// store the new triggers
@@ -911,8 +912,12 @@ namespace death
 				if (previous_collisions != nullptr)
 					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), triggers[i]) != previous_collisions->triggers.end()) // search in previous frame data
 						already_colliding = true;
-				if (!triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
-					return false;
+
+				if (triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
+				{
+					if (triggers[i]->IsTriggerOnce())
+						triggers[i]->SetEnabled(false);
+				}
 			}
 
 			// triggers end of collisions
@@ -922,8 +927,7 @@ namespace death
 				for (size_t i = 0; i < previous_count; ++i)
 				{
 					if (std::find(triggers.begin(), triggers.end(), previous_collisions->triggers[i]) == triggers.end()) // no more colliding
-						if (!previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, TriggerSurfaceObject::COLLISION_FINISHED))
-							return false;
+						previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, TriggerSurfaceObject::COLLISION_FINISHED);
 				}
 			}
 

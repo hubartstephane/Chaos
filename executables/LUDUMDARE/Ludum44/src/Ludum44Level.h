@@ -67,8 +67,10 @@ public:
 
 	/** constructor */
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
-
+	/** override */
 	virtual bool IsTileCreationEnabled() const override;
+	/** override */
+	virtual bool Initialize() override;
 
 protected:
 
@@ -112,6 +114,8 @@ public:
 
 	/** override */
 	virtual bool IsTileCreationEnabled() const override;
+	/** override */
+	virtual bool Initialize() override;
 
 protected:
 

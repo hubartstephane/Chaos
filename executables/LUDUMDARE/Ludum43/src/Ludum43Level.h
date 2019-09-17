@@ -24,6 +24,9 @@ public:
 	/** constructor */
 	FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
+	/** override */
+	virtual bool Initialize() override;
+
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */

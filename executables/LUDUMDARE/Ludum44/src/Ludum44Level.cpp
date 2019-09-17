@@ -14,9 +14,7 @@
 
 static bool IsDefaultTileCreationEnabled()
 {
-
 	return false;
-
 #if _DEBUG
 	return true;
 #else 
@@ -123,10 +121,18 @@ death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death
 		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 	if (in_geometric_object->name == "PowerUp")
 		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsTileCreationEnabled() => true
+
+	// shuxxx checkpoint
+
 	if (in_geometric_object->name == "Checkpoint")
 		return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+
+
+
 	if (in_geometric_object->name == "SpeedUp")
 		return new SpeedUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+
+
 	if (in_geometric_object->name == "Spawner")
 		return new SpawnerTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 
@@ -151,7 +157,7 @@ bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, de
 		return true;
 	ludum_level_instance->SetLevelCompleted(true);
 
-	return true; // continue other collisions
+	return true;// collisions handled successfully
 }
 
 
@@ -162,37 +168,45 @@ bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, de
 bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
 	LudumGameInstance * ludum_game_instance = auto_cast(player->GetGameInstance());
-	if (ludum_game_instance != nullptr)
-	{
-		bool decrease_power = geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
+	if (ludum_game_instance == nullptr)
+		return false;
 
-		if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
-			ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
-		else if (event_type == TriggerSurfaceObject::COLLISION_AGAIN && reset_trigger)
-			ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
-		else if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
-			ludum_game_instance->OnPowerUpZone(player, false, this, decrease_power);
+	bool decrease_power = geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
 
-		reset_trigger = false;
-	}
+	if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
+		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
+	else if (event_type == TriggerSurfaceObject::COLLISION_AGAIN && reset_trigger)
+		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
+	else if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
+		ludum_game_instance->OnPowerUpZone(player, false, this, decrease_power);
+	else
+		return false;
 
-	return true; // continue other collisions
+	reset_trigger = false;
+
+	return true; // collisions handled successfully
 }
 
 // =============================================================
 // CheckPointTriggerSurfaceObject implementation
 // =============================================================
 
+bool CheckpointTriggerSurfaceObject::Initialize()
+{
+	if (!death::TiledMap::TriggerSurfaceObject::Initialize())
+		return false;
+	trigger_once = true;
+	return true;
+}
+
 bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
-		return true;
+		return false;
 
 	chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
 	if (surface == nullptr)
 		return true;
-
-	SetEnabled(false);
 
 	// shuxxx checkpoint
 
@@ -200,7 +214,7 @@ bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, c
 	if (game_instance != nullptr)
 		game_instance->SetCheckpointPosition(surface->GetBoundingBox(true).position, GetLayerInstance()->GetTiledLevelInstance());
 
-	return true;
+	return true; // collisions handled successfully
 }
 
 // =============================================================
@@ -210,7 +224,7 @@ bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, c
 bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
 	if (event_type != TriggerSurfaceObject::COLLISION_STARTED) // already handled
-		return true;
+		return false;
 
 	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
 	if (ludum_level_instance == nullptr)
@@ -219,7 +233,7 @@ bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 	float scroll_speed = geometric_object->FindPropertyFloat("SCROLL_SPEED", 1.0f);
 	ludum_level_instance->SetScrollFactor(scroll_speed);
 
-	return true; // continue other collisions
+	return true; // collisions handled successfully
 }
 
 
@@ -228,11 +242,19 @@ bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 // =============================================================
 
 
+bool SpawnerTriggerSurfaceObject::Initialize()
+{
+	if (!death::TiledMap::TriggerSurfaceObject::Initialize())
+		return false;
+	trigger_once = true;
+	return true;
+}
+
 bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	// only the first time collision is detected
 	if (event_type != death::TiledMap::TriggerSurfaceObject::COLLISION_STARTED)
-		return true;
+		return false;
 
 	// search the layer for enemies
 	death::TiledMap::LayerInstance * enemy_layer_instance = GetLayerInstance()->GetTiledLevelInstance()->FindLayerInstance("Enemies");
@@ -269,14 +291,6 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	LudumGame * ludum_game = auto_cast(enemy_layer_instance->GetGame());
 	if (ludum_game != nullptr)
 		fire_frequency = ludum_game->enemy_fire_rate;
-
-
-
-
-
-
-
-
 
 	// extract zone parametes
 	
@@ -435,8 +449,5 @@ bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chao
 	// auto delete allocation
 	allocation->SetDestroyWhenEmpty(true);
 
-	// disable the surface
-	SetEnabled(false);
-
-	return true; // continue other collisions
+	return true; // collisions handled successfully
 }

@@ -190,6 +190,11 @@ namespace death
 			bool IsEnabled() const { return enabled; }
 			/** change whether the trigger is enabled or not */
 			void SetEnabled(bool in_enabled = true) { enabled = in_enabled;}
+
+			/** whether it should be triggered a single time */
+			bool IsTriggerOnce() const { return trigger_once; }
+			/** change whether the trigger once is enabled or not */
+			void SetTriggerOnce(bool in_trigger_once = true) { trigger_once = in_trigger_once; }
 		
 			/** get the trigger ID */
 			int GetTriggerID() const { return trigger_id; }
@@ -208,7 +213,7 @@ namespace death
 			/** override */
 			virtual bool Initialize() override;
 
-			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
+			/** called whenever a collision with player is detected (returns true, if collision is handled successfully) */
 			virtual bool OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
 			/** called whenever a collision with camera is detected */
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type);
@@ -217,6 +222,8 @@ namespace death
 
 			/** flag whether to object is enabled or not */
 			bool enabled = true;
+			/** flag whether to can only trigger once */
+			bool trigger_once = false;
 			/** an ID that helps make classification */
 			int trigger_id = 0;
 			/** outside box factor (a factor applyed to bounding box to detect whether the player is going outside of the range) */
@@ -297,14 +304,16 @@ namespace death
 		};
 
 		// =====================================
-		// LayerInstance : instance of a Layer
+		// PlayerAndTriggerCollisionRecord 
 		// =====================================
 
 		class PlayerAndTriggerCollisionRecord
 		{
 		public:
 
+			/** the player considered */
 			chaos::weak_ptr<death::Player> player;
+			/** all the triggers colliding */
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
 		};
 

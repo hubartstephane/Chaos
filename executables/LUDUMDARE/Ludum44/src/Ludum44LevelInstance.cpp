@@ -49,21 +49,6 @@ bool LudumLevelInstance::CanCompleteLevel() const
 
 bool LudumLevelInstance::DoTick(double delta_time)
 {
-
-
-
-
-
-
-	// NEW
-
-
-
-
-
-
-
-
 	death::TiledMap::LevelInstance::DoTick(delta_time);
 
 	// get the game

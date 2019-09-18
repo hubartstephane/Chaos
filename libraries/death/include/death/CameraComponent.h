@@ -45,10 +45,12 @@ namespace death
 	public:
 
 		/** constructor */
-		ShakeCameraComponent(float in_modifier_duration, float in_modifier_range, float in_modifier_frequency):
+		ShakeCameraComponent(float in_modifier_duration, float in_modifier_range, float in_modifier_frequency, bool in_use_damping, bool in_zoom_effect):
 			modifier_duration(in_modifier_duration),
 			modifier_range(in_modifier_range),
-			modifier_frequency(in_modifier_frequency){}
+			modifier_frequency(in_modifier_frequency),
+			use_damping(in_use_damping),
+			zoom_effect(in_zoom_effect){}
 
 		/** override */
 		virtual chaos::box2 ApplyModifier(chaos::box2 const & src) const override;
@@ -71,6 +73,10 @@ namespace death
 		float modifier_range = 1.0f;
 		/** the frequency of the shake effect */
 		float modifier_frequency = 0.1f;
+		/** whether there is a damping effect */
+		bool use_damping = true;
+		/** whether to modify zoom instead of position */
+		bool zoom_effect = true;
 
 		/** the time of the effect */
 		float current_time = -1.0f;

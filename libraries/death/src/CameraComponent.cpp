@@ -47,18 +47,13 @@ namespace death
 		chaos::box2 result = src;
 		if (current_time >= 0 && current_time < modifier_duration)
 		{
-			float damping = chaos::MathTools::Cos((float)(0.5 * M_PI) * (current_time / modifier_duration));
+			float damping = (use_damping)? chaos::MathTools::Cos((float)(0.5 * M_PI) * (current_time / modifier_duration)) : 1.0f;
 			float wave    = chaos::MathTools::Cos((float)(2.0 * M_PI) * (current_time / modifier_frequency));
-
-			result.half_size *= 1.0f + damping * modifier_range * (0.5f + 0.5f * wave);
+			if (zoom_effect)
+				result.half_size *= 1.0f + damping * modifier_range * (0.5f + 0.5f * wave);
+			else
+				result.position.x += damping * modifier_range * wave;
 		}
-
-#if 0
-		chaos::box2 result = src;
-		if (current_range >= 0.0f)
-			result.position.x += 
-				current_range * chaos::MathTools::Cos((float)(2.0 * M_PI) * (current_time / modifier_frequency));
-#endif
 		return result;
 	}
 

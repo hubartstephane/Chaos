@@ -28,7 +28,7 @@ void LudumLevelInstance::CreateCameras()
 	for (size_t i = 0; i < camera_count; ++i)
 	{
 		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.8f));
-		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.5f, 5.0f, 0.15f));
+		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f));
 	}
 }
 
@@ -62,13 +62,13 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	RestrictPlayerToWorld(0);
 
 	// get the camera BEFORE modification
-	chaos::box2 camera_before = GetCameraBox(0);
+	chaos::box2 camera_before = GetCameraBox(0, false);
 	if (IsGeometryEmpty(camera_before))
 		return true;
 	// keep the player in camera view
 	RestrictCameraToPlayerAndWorld(0, 0);
 	// get the camera AFTER modification
-	chaos::box2 camera_after = GetCameraBox(0);
+	chaos::box2 camera_after = GetCameraBox(0, false);
 	if (IsGeometryEmpty(camera_after))
 		return true;
 	// correct camera position

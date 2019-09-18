@@ -164,7 +164,9 @@ namespace death
 			{
 				// update the cache value if necessary
 				bool destroy_allocation = false;
-				bool update_required = UpdateCachedValue(destroy_allocation);
+				bool update_required = (update_cache_value_func)?
+					update_cache_value_func(cached_value, destroy_allocation):									
+					UpdateCachedValue(destroy_allocation);
 				// destroy allocation
 				if (destroy_allocation)
 					GameHUDTextComponent::UpdateTextAllocation(nullptr);
@@ -178,6 +180,11 @@ namespace death
 
 		/** update the cached value and returns true whether the particle system has to be regenerated */
 		virtual bool UpdateCachedValue(bool & destroy_allocation) { return false; }
+
+	public:
+
+		/** an alternate 'UpdateCachedValue' member */
+		std::function<bool(T & cached_value, bool & destroy_allocation)> update_cache_value_func;
 
 	protected:
 

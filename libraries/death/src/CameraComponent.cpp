@@ -34,33 +34,44 @@ namespace death
 
 	void ShakeCameraComponent::RestartModifier()
 	{
-		current_range = modifier_range;
+		current_time = 0.0f;
 	}
 
 	void ShakeCameraComponent::StopModifier()
 	{
-		current_range = 0.0f;
-		current_time = 0.0f;
+		current_time = -1.0f;
 	}
 
 	chaos::box2 ShakeCameraComponent::ApplyModifier(chaos::box2 const & src) const
 	{
 		chaos::box2 result = src;
+		if (current_time >= 0 && current_time < modifier_duration)
+		{
+			float damping = chaos::MathTools::Cos((float)(0.5 * M_PI) * (current_time / modifier_duration));
+			float wave    = chaos::MathTools::Cos((float)(2.0 * M_PI) * (current_time / modifier_frequency));
+
+			result.half_size *= 1.0f + damping * modifier_range * (0.5f + 0.5f * wave);
+		}
+
+#if 0
+		chaos::box2 result = src;
 		if (current_range >= 0.0f)
 			result.position.x += 
 				current_range * chaos::MathTools::Cos((float)(2.0 * M_PI) * (current_time / modifier_frequency));
+#endif
 		return result;
 	}
 
 	bool ShakeCameraComponent::DoTick(double delta_time)
 	{
-		if (current_range >= 0.0f)
+		if (current_time >= 0.0f)
 		{
-			current_range -= (float)delta_time * (modifier_range / modifier_duration);
-			if (current_range <= 0.0f)
+			current_time += (float)delta_time;
+			if (current_time >= modifier_duration)
+			{
+				current_time = modifier_duration;
 				StopModifier();
-			else
-				current_time += (float)delta_time;
+			}
 		}
 		return true;
 	}

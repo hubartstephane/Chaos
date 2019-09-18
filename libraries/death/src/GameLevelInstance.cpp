@@ -202,7 +202,7 @@ namespace death
 			return;
 
 		// get camera, cannot continue if it is empty
-		chaos::box2 camera_box = camera->GetCameraBox();
+		chaos::box2 camera_box = camera->GetCameraBox(false);
 		if (IsGeometryEmpty(camera_box))
 			return;
 
@@ -339,12 +339,12 @@ namespace death
 		return camera->GetInitialCameraOBox();
 	}
 
-	chaos::obox2 GameLevelInstance::GetCameraOBox(size_t index) const
+	chaos::obox2 GameLevelInstance::GetCameraOBox(size_t index, bool apply_modifiers) const
 	{
 		// find a camera
 		Camera const * camera = GetCamera(index);
 		if (camera != nullptr)
-			return camera->GetCameraOBox();
+			return camera->GetCameraOBox(apply_modifiers);
 		// fallback code
 		return GetDefaultCameraOBox();
 	}
@@ -358,12 +358,12 @@ namespace death
 		return result;
 	}
 
-	chaos::box2 GameLevelInstance::GetCameraBox(size_t index) const 
+	chaos::box2 GameLevelInstance::GetCameraBox(size_t index, bool apply_modifiers) const 
 	{ 
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
 			return chaos::box2();
-		return camera->GetCameraBox();
+		return camera->GetCameraBox(apply_modifiers);
 	}
 
 	void GameLevelInstance::SetCameraBox(size_t index, chaos::box2 in_box)

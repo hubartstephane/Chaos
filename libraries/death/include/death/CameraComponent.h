@@ -72,11 +72,8 @@ namespace death
 		/** the frequency of the shake effect */
 		float modifier_frequency = 0.1f;
 
-
 		/** the time of the effect */
 		float current_time = -1.0f;
-		/** the current range of the effect */
-		float current_range = 0.0f;
 	};
 
 	// =============================================

@@ -76,7 +76,12 @@ namespace death
 
 	public:
 
-
+		/** the current level index */
+		int level_index = 0;
+		/** the camera 0 box */
+		chaos::box2 camera_box;
+		/** the current time out */
+		float level_timeout = -1;
 	};
 
 	// =============================================

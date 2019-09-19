@@ -380,11 +380,11 @@ namespace death
 
 	bool GameLevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * result) const
 	{
+		result->level_index = GetLevel()->GetLevelIndex();
 
+		result->camera_box = GetCameraBox(0, false);
 
-
-
-
+		result->level_timeout = level_timeout;
 
 		return true;
 	}

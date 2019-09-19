@@ -1,7 +1,7 @@
 #include <death/GameInstance.h>
 #include <death/GameLevel.h>
 #include <death/Player.h>
-#include <death/Checkpoint.h>
+#include <death/GameCheckpoint.h>
 
 namespace death
 {
@@ -353,9 +353,46 @@ namespace death
 		return true;
 	}
 
-	Checkpoint * GameInstance::CreateCheckpoint()
+
+
+
+	GameCheckpoint * GameInstance::SaveIntoCheckpoint() const
 	{
-		return new Checkpoint();
+		GameCheckpoint * result = DoCreateCheckpoint();
+		if (result == nullptr)
+			return nullptr;
+		if (!DoSaveIntoCheckpoint(result))
+		{
+			delete(result);
+			return nullptr;
+		}
+		return result;
+	}
+
+	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * result) const
+	{
+		Player const * player = GetPlayer(0);
+		if (player != nullptr)
+			player->DoSaveIntoCheckpoint(result);
+
+		GameLevelInstance const * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+			level_instance->DoSaveIntoCheckpoint(result);
+		
+		return true;
+	}
+
+	bool GameInstance::LoadFromCheckpoint(GameCheckpoint const * checkpoint)
+	{
+	
+
+
+		return false;
+	}
+
+	GameCheckpoint * GameInstance::DoCreateCheckpoint() const
+	{
+		return new GameCheckpoint();
 	}
 
 }; // namespace death

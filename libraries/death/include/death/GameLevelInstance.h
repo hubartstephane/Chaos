@@ -137,6 +137,12 @@ namespace death
 		/** change the music */
 		virtual void SetInGameMusic();
 
+
+
+
+		/** save internal data into checkpoint */
+		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * result) const;
+
 	protected:
 
 		/** a pointer on the level that generated this */

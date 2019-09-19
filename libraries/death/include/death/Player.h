@@ -119,6 +119,10 @@ namespace death
 		/** tick the player displacement */
 		virtual void TickPlayerDisplacement(double delta_time);
 
+
+		/** save internal data into checkpoint */
+		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * result) const;
+
 	protected:
 
 		/** a gamepad that can be given to the player */

@@ -266,6 +266,17 @@ namespace death
 		return chaos::ParticleDefault::SetParticleBox(GetPlayerAllocation(), 0, box);
 	}
 
+	bool Player::DoSaveIntoCheckpoint(GameCheckpoint * result) const
+	{
+
+
+
+
+
+	
+		return true;
+	}
+
 	// =================================================
 	// PlayerGamepadCallbacks
 	// =================================================

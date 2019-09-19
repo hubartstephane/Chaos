@@ -2,7 +2,9 @@
 
 // declare all friendship for main game classes
 #define DEATH_GAMEFRAMEWORK_ALLFRIENDS()\
-	friend class Checkpoint;\
+	friend class PlayerCheckpoint;\
+	friend class LevelCheckpoint;\
+	friend class GameCheckpoint;\
 	friend class Player;\
 	friend class GameLevel;\
 	friend class GameLevelInstance;\
@@ -15,7 +17,9 @@
 
 // internal macros (do not use outside this file)
 #define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix)\
-	friend class prefix##Checkpoint;\
+	friend class prefix##PlayerCheckpoint;\
+	friend class prefix##LevelCheckpoint;\
+	friend class prefix##GameCheckpoint;\
 	friend class prefix##Player;\
 	friend class prefix##Level;\
 	friend class prefix##LevelInstance;\

@@ -374,6 +374,11 @@ namespace death
 		camera->SetCameraBox(in_box);
 	}
 
+	bool GameLevelInstance::DoSaveIntoCheckpoint(GameCheckpoint * result) const
+	{
+	
+		return true;
+	}
 
 }; // namespace death
 

@@ -94,6 +94,11 @@ namespace death
 		bool RestartFromCheckpoint(Player * player);
 
 
+		/** create a checkpoint from current situation */
+		GameCheckpoint * SaveIntoCheckpoint() const;
+		/** update the current game state using a given checkpoint */
+		bool LoadFromCheckpoint(GameCheckpoint const * checkpoint);
+
 	protected:
 
 		/** initialize the game instance */
@@ -141,11 +146,17 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
 
-		/** create a checkpoint */
-		virtual Checkpoint * CreateCheckpoint();
+
 
 		/** called whenver the player is restarted from checkpoint */
 		virtual bool OnRestartedFromCheckpoint(Player * player);
+
+
+
+		/** create a checkpoint */
+		virtual GameCheckpoint * DoCreateCheckpoint() const;
+		/** save internal data into checkpoint */
+		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * result) const;
 
 	protected:
 

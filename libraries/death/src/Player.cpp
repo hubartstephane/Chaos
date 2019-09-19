@@ -269,28 +269,14 @@ namespace death
 
 
 
-	PlayerCheckpoint * Player::SaveIntoCheckpoint() const
-	{
-		PlayerCheckpoint * result = DoCreateCheckpoint();
-		if (result == nullptr)
-			return nullptr;
-		if (!DoSaveIntoCheckpoint(result))
-		{
-			delete(result);
-			return nullptr;
-		}
-		return result;
-	}
-
-	PlayerCheckpoint * Player::DoCreateCheckpoint() const
-	{
-		return new PlayerCheckpoint();
-	}
 
 	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * result) const
 	{
+		result->life_count = life_count;
 
+		result->score = score;
 
+		result->player_box = GetPlayerBox();
 
 
 
@@ -315,3 +301,4 @@ namespace death
 	}
 
 }; // namespace death
+

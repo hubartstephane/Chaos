@@ -16,7 +16,7 @@ namespace death
 	// GameInstance
 	// =============================================
 
-	class GameInstance : public chaos::Tickable, public chaos::InputEventReceiver
+	class GameInstance : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<GameCheckpoint>
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -94,8 +94,6 @@ namespace death
 		bool RestartFromCheckpoint(Player * player);
 
 
-		/** create a checkpoint from current situation */
-		GameCheckpoint * SaveIntoCheckpoint() const;
 		/** update the current game state using a given checkpoint */
 		bool LoadFromCheckpoint(GameCheckpoint const * checkpoint);
 
@@ -153,10 +151,9 @@ namespace death
 
 
 
-		/** create a checkpoint */
-		virtual GameCheckpoint * DoCreateCheckpoint() const;
-		/** save internal data into checkpoint */
-		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * result) const;
+
+		/** override */
+		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * result) const override;
 
 	protected:
 

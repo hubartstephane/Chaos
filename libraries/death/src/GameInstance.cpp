@@ -355,25 +355,6 @@ namespace death
 
 
 
-
-	GameCheckpoint * GameInstance::SaveIntoCheckpoint() const
-	{
-		GameCheckpoint * result = DoCreateCheckpoint();
-		if (result == nullptr)
-			return nullptr;
-		if (!DoSaveIntoCheckpoint(result))
-		{
-			delete(result);
-			return nullptr;
-		}
-		return result;
-	}
-
-	GameCheckpoint * GameInstance::DoCreateCheckpoint() const
-	{
-		return new GameCheckpoint();
-	}
-
 	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * result) const
 	{
 		Player const * player = GetPlayer(0);

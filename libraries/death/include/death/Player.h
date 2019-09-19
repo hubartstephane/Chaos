@@ -18,7 +18,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public GameInstanceEntity
+	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public GameInstanceEntity, public CheckpointObject<PlayerCheckpoint>
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;
@@ -119,13 +119,8 @@ namespace death
 		/** tick the player displacement */
 		virtual void TickPlayerDisplacement(double delta_time);
 
-
-		/** entry point for saving into a checkpoint */
-		virtual PlayerCheckpoint * SaveIntoCheckpoint() const;
-		/** checkpoint instanciation method */
-		virtual PlayerCheckpoint * DoCreateCheckpoint() const;
-		/** custom data saving */
-		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * result) const;
+		/** override */
+		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * result) const override;
 
 	protected:
 

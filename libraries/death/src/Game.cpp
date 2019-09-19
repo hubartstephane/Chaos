@@ -139,12 +139,19 @@ namespace death
 				ReloadCurrentLevel();
 				return true;
 			}
-			// CMD GLFW_KEY_F4  : SetFreeCameraMode(...)
+			// CMD GLFW_KEY_F5  : SetFreeCameraMode(...)
 			if (key == GLFW_KEY_F5)
 			{
 				SetFreeCameraMode(!IsFreeCameraMode());
 				return true;
 			}
+			// CMD GLFW_KEY_F6  : SaveToCheckpoint(...)
+			if (key == GLFW_KEY_F6)
+			{
+				SaveIntoCheckpoint();
+				return true;
+			}
+
 #endif
 		}
 		return false;
@@ -1649,6 +1656,13 @@ namespace death
 			}			
 		}
 		return result;
+	}
+
+	GameCheckpoint * Game::SaveIntoCheckpoint()
+	{
+		if (game_instance == nullptr)
+			return nullptr;
+		return game_instance->SaveIntoCheckpoint();
 	}
 
 }; // namespace death

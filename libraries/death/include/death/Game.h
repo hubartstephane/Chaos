@@ -213,6 +213,9 @@ namespace death
 		/** get the free camera */
 		Camera const * GetFreeCamera() const;
 
+		/** save the game into a checkpoint */
+		GameCheckpoint * SaveIntoCheckpoint();
+
 	protected:
 
 		/** the tick method */

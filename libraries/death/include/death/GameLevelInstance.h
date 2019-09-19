@@ -10,6 +10,8 @@
 #include <death/Camera.h>
 #include <death/GameFramework.h>
 
+#include <death/GameCheckpoint.h>
+
 namespace death
 {
 
@@ -17,7 +19,7 @@ namespace death
 	// GameLevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class GameLevelInstance : public chaos::GPURenderable
+	class GameLevelInstance : public chaos::GPURenderable, public CheckpointObject<LevelCheckpoint>
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -138,12 +140,8 @@ namespace death
 		virtual void SetInGameMusic();
 
 
-		/** entry point for saving into a checkpoint */
-		virtual LevelCheckpoint * SaveIntoCheckpoint() const;
-		/** checkpoint instanciation method */
-		virtual LevelCheckpoint * DoCreateCheckpoint() const;
-		/** custom data saving */
-		virtual bool DoSaveIntoCheckpoint(LevelCheckpoint * result) const;
+		/** override */
+		virtual bool DoSaveIntoCheckpoint(LevelCheckpoint * result) const override;
 
 	protected:
 

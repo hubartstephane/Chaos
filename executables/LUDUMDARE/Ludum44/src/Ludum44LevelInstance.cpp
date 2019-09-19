@@ -86,7 +86,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 	camera_box.position.y = camera_y;
 	player_box.position.y += scroll_displacement;
 
-	// force the player Y to be in camera box (X will not change because already in correct range from previous restriction)
+	// force the player Y to be in camera box (X will not change because already in correct range from previous restrictionp)
 	safe_camera = camera_box;
 	safe_camera.half_size *= camera->GetSafeZone();
 	chaos::RestrictToInside(safe_camera, player_box, false);

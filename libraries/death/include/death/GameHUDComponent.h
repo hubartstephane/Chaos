@@ -171,7 +171,13 @@ namespace death
 				if (destroy_allocation)
 					GameHUDTextComponent::UpdateTextAllocation(nullptr);
 				else if (update_required)
-					GameHUDTextComponent::UpdateTextAllocation(FormatText().c_str());
+				{
+					if (format_func)
+						GameHUDTextComponent::UpdateTextAllocation(format_func(cached_value).c_str());
+					else
+						GameHUDTextComponent::UpdateTextAllocation(FormatText().c_str());
+				}
+					
 			}
 			else
 				GameHUDTextComponent::UpdateTextAllocation(in_text);
@@ -185,6 +191,8 @@ namespace death
 
 		/** an alternate 'UpdateCachedValue' member */
 		std::function<bool(T & cached_value, bool & destroy_allocation)> update_cache_value_func;
+		/** an alternate 'FormatText' member */
+		std::function<std::string(T const & cached_value)> format_func;
 
 	protected:
 
@@ -281,10 +289,18 @@ namespace death
 		virtual bool DoTick(double delta_time) override;
 		/** update all particles (count, alpha) */
 		void UpdateLifeParticles(double delta_time);
+		/** returns the number of life */
+		virtual int GetLifeCount() const;
 		/** tick heart */
 		void TickHeartBeat(double delta_time);
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+
+
+	public:
+
+		/** an alternate way to have life count */
+		std::function<int()> get_life_count_func;
 
 	protected:
 

@@ -345,13 +345,12 @@ namespace death
 		if (!game->IsPlaying())
 			return;
 
-		Player const * player = game->GetPlayer(0);
-		if (player == nullptr)
-			return;
-
 		// update sound
-		int current_life = player->GetLifeCount();
-		if (current_life == 1)
+		int count = (get_life_count_func)? 
+			get_life_count_func() : 
+			GetLifeCount();
+
+		if (count == 1)
 		{
 			warning_value -= (float)delta_time / heart_beat_frequency;
 			if (warning_value <= 0.0f)
@@ -368,19 +367,32 @@ namespace death
 			warning_value = 1.0f;
 	}
 
+	int GameHUDLifeComponent::GetLifeCount() const
+	{
+		// get the player
+		Player const * player = GetGame()->GetPlayer(0);
+		if (player == nullptr)
+			return -1;
+		// get player life, destroy the allocation if no more life
+		return player->GetLifeCount();
+	}
+
 	void GameHUDLifeComponent::UpdateLifeParticles(double delta_time)
 	{
 		// early exit
 		if (particle_name.empty())
 			return;
 
-		// get the player
-		Player const * player = GetGame()->GetPlayer(0);
-		if (player == nullptr)
+		// get the number of life
+		int count = (get_life_count_func)? 
+			get_life_count_func() : 
+			GetLifeCount();
+
+		if (count < 0)
 			return;
-		// get player life, destroy the allocation if no more life
-		int current_life = player->GetLifeCount();
-		if (current_life <= 0)
+
+		// destroy the allocation if no more life
+		if (count <= 0)
 		{
 			allocations = nullptr;
 			return;
@@ -388,15 +400,15 @@ namespace death
 		// create/ resize the allocation
 		if (allocations == nullptr)
 		{
-			allocations = hud->GetGameParticleCreator().CreateParticles(particle_name.c_str(), current_life, layer_id);
+			allocations = hud->GetGameParticleCreator().CreateParticles(particle_name.c_str(), count, layer_id);
 			if (allocations == nullptr)
 				return;
 		}
 		else
 		{
-			allocations->Resize(current_life);
-			if (current_life > cached_value)
-				hud->GetGameParticleCreator().InitializeParticles(allocations.get(), particle_name.c_str(), current_life - cached_value);
+			allocations->Resize(count);
+			if (count > cached_value)
+				hud->GetGameParticleCreator().InitializeParticles(allocations.get(), particle_name.c_str(), count - cached_value);
 		}
 
 		// compute the final size of the particle
@@ -424,7 +436,7 @@ namespace death
 		// compute the size of the whole sprites with their offset
 		glm::vec2 whole_particle_size =
 			particle_final_size +
-			glm::abs(particle_offset) * (float)(current_life - 1);
+			glm::abs(particle_offset) * (float)(count - 1);
 
 		// compute the reference point relative to the screen
 		glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
@@ -436,7 +448,7 @@ namespace death
 		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor<chaos::ParticleDefault::Particle>();
 
 		glm::vec2 particle_position = whole_particle_ref;
-		for (size_t i = 0; i < (size_t)current_life; ++i)
+		for (size_t i = 0; i < (size_t)count; ++i)
 		{			
 			particles[i].bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 			particles[i].bounding_box.half_size = 0.5f * particle_final_size;
@@ -449,7 +461,7 @@ namespace death
 			particle_position += glm::abs(particle_offset);
 		}
 
-		cached_value = current_life;
+		cached_value = count;
 	}
 
 	// ====================================================================

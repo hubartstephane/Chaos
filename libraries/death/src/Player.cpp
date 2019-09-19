@@ -1,4 +1,5 @@
 #include <death/Player.h>
+#include <death/GameCheckpoint.h>
 
 #include <chaos/ParticleDefault.h>
 
@@ -266,14 +267,34 @@ namespace death
 		return chaos::ParticleDefault::SetParticleBox(GetPlayerAllocation(), 0, box);
 	}
 
-	bool Player::DoSaveIntoCheckpoint(GameCheckpoint * result) const
+
+
+	PlayerCheckpoint * Player::SaveIntoCheckpoint() const
+	{
+		PlayerCheckpoint * result = DoCreateCheckpoint();
+		if (result == nullptr)
+			return nullptr;
+		if (!DoSaveIntoCheckpoint(result))
+		{
+			delete(result);
+			return nullptr;
+		}
+		return result;
+	}
+
+	PlayerCheckpoint * Player::DoCreateCheckpoint() const
+	{
+		return new PlayerCheckpoint();
+	}
+
+	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * result) const
 	{
 
 
 
 
 
-	
+
 		return true;
 	}
 

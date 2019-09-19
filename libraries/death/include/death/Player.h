@@ -120,8 +120,12 @@ namespace death
 		virtual void TickPlayerDisplacement(double delta_time);
 
 
-		/** save internal data into checkpoint */
-		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * result) const;
+		/** entry point for saving into a checkpoint */
+		virtual PlayerCheckpoint * SaveIntoCheckpoint() const;
+		/** checkpoint instanciation method */
+		virtual PlayerCheckpoint * DoCreateCheckpoint() const;
+		/** custom data saving */
+		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * result) const;
 
 	protected:
 

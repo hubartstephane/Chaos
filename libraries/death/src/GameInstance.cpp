@@ -369,15 +369,20 @@ namespace death
 		return result;
 	}
 
+	GameCheckpoint * GameInstance::DoCreateCheckpoint() const
+	{
+		return new GameCheckpoint();
+	}
+
 	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * result) const
 	{
 		Player const * player = GetPlayer(0);
 		if (player != nullptr)
-			player->DoSaveIntoCheckpoint(result);
+			result->player_checkpoint = player->SaveIntoCheckpoint();
 
 		GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			level_instance->DoSaveIntoCheckpoint(result);
+			result->level_checkpoint = level_instance->SaveIntoCheckpoint();
 		
 		return true;
 	}
@@ -390,9 +395,6 @@ namespace death
 		return false;
 	}
 
-	GameCheckpoint * GameInstance::DoCreateCheckpoint() const
-	{
-		return new GameCheckpoint();
-	}
+
 
 }; // namespace death

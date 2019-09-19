@@ -3,6 +3,7 @@
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/Player.h>
+#include <death/GameCheckpoint.h>
 
 #include <chaos/CollisionFramework.h>
 
@@ -374,9 +375,34 @@ namespace death
 		camera->SetCameraBox(in_box);
 	}
 
-	bool GameLevelInstance::DoSaveIntoCheckpoint(GameCheckpoint * result) const
+
+
+	LevelCheckpoint * GameLevelInstance::SaveIntoCheckpoint() const
 	{
-	
+		LevelCheckpoint * result = DoCreateCheckpoint();
+		if (result == nullptr)
+			return nullptr;
+		if (!DoSaveIntoCheckpoint(result))
+		{
+			delete(result);
+			return nullptr;
+		}
+		return result;
+	}
+
+	LevelCheckpoint * GameLevelInstance::DoCreateCheckpoint() const
+	{
+		return new LevelCheckpoint();
+	}
+
+	bool GameLevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * result) const
+	{
+
+
+
+
+
+
 		return true;
 	}
 

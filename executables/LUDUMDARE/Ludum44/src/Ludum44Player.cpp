@@ -318,27 +318,32 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 
 void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 {
-#if _DEBUG
-	if (in_value < 0.0f && in_increment)
-	{
-		if (GetGame()->GetCheatMode())
-			return;	
-	}
-#endif
-	 
+
+	// compute new life 
 	float old_life = current_life;
+	float new_life = current_life;
 
 	if (in_increment)
-		current_life += in_value;
+		new_life += in_value;
 	else
-		current_life = in_value;
+		new_life = in_value;
 
-	if (current_life < 0.0f)
-		current_life = 0.0f;
-	else if (current_life > current_max_life)
-		current_life = current_max_life;
+	if (new_life < 0.0f)
+		new_life = 0.0f;
+	else if (new_life > current_max_life)
+		new_life = current_max_life;
 
-	if (old_life > current_life)
+	// commit life lost
+	bool update_life = true;
+#if _DEBUG
+	if (old_life > new_life && GetGame()->GetCheatMode())
+		update_life = false;
+#endif
+	if (update_life)
+		current_life = new_life;
+
+	// special FX
+	if (old_life > new_life)
 	{
 		death::Camera * camera = GetLevelInstance()->GetCamera(0);
 		if (camera != nullptr)
@@ -348,6 +353,4 @@ void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 				shake_component->RestartModifier();
 		}
 	}
-	
-
 }

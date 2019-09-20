@@ -86,21 +86,10 @@ namespace death
 		/** returns the pause time */
 		double GetPauseClockTime() const;
 
-		/** store a checkpoint position */
-		void SetCheckpointPosition(glm::vec2 const & in_checkpoint_position, GameLevelInstance * in_checkpoint_level_instance);
-		/** returns whether the checkpoint is valid */
-		bool IsCheckpointValid() const;
-		/** restart from given checkpoint */
-		bool RestartFromCheckpoint(Player * player);
-
-
-
 		/** create a respawn checkpoint */
 		bool CreateRespawnCheckpoint();
 		/** restart from the respawn checkpoint */
 		bool RestartFromRespawnCheckpoint();
-
-
 
 	protected:
 
@@ -151,10 +140,6 @@ namespace death
 
 
 
-		/** called whenver the player is restarted from checkpoint */
-		virtual bool OnRestartedFromCheckpoint(Player * player);
-
-
 
 
 		/** override */
@@ -174,16 +159,6 @@ namespace death
 		chaos::shared_ptr<chaos::Clock> main_clock;
 		chaos::shared_ptr<chaos::Clock> game_clock;
 		chaos::shared_ptr<chaos::Clock> pause_clock;
-
-		/** the current checkpoint */
-		glm::vec2 checkpoint_position = glm::vec2(0.0f, 0.0f);
-		/** the current checkpoint camera */
-		chaos::box2 checkpoint_camera;
-		/** the current checkpoint level instance */
-		chaos::weak_ptr<GameLevelInstance> checkpoint_level_instance;
-
-
-
 
 		/** respawn checkpoint */
 		chaos::shared_ptr<GameCheckpoint> respawn_checkpoint;

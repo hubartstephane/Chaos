@@ -298,28 +298,6 @@ namespace death
 
 	}
 
-	void GameInstance::SetCheckpointPosition(glm::vec2 const & in_checkpoint_position, GameLevelInstance * in_checkpoint_level_instance)
-	{
-
-		// shuxxx checkpoint SetCheckpointPosition()
-
-		if (in_checkpoint_level_instance != nullptr)
-		{
-			checkpoint_position = in_checkpoint_position;
-			checkpoint_level_instance = in_checkpoint_level_instance;
-			checkpoint_camera = in_checkpoint_level_instance->GetCameraBox(0);		
-		}
-	}
-
-	bool GameInstance::IsCheckpointValid() const
-	{
-
-		// shuxxx checkpoint IsCheckpointValid()
-
-
-		return checkpoint_level_instance.get() != nullptr; // checkpoint still valid ?	
-	}
-
 	bool GameInstance::CreateRespawnCheckpoint()
 	{
 		respawn_checkpoint = SaveIntoCheckpoint();
@@ -350,39 +328,10 @@ namespace death
 
 
 
-	
-	bool GameInstance::RestartFromCheckpoint(Player * player)
-	{
-
-		// shuxxx checkpoint RestartFromCheckpoint
-
-		// update player particle
-		chaos::ParticleDefault::Particle * player_particle = player->GetPlayerParticle();
-		if (player_particle != nullptr)
-		{
-			if (!IsGeometryEmpty(checkpoint_camera))
-				player_particle->bounding_box.position = checkpoint_camera.position;
-			else
-				player_particle->bounding_box.position = checkpoint_position;
-		}
-			
-		// update camera position
-		if (!IsGeometryEmpty(checkpoint_camera))
-			checkpoint_level_instance->SetCameraBox(0, checkpoint_camera);	
-
-		return OnRestartedFromCheckpoint(player);			
-	}
-
-	bool GameInstance::OnRestartedFromCheckpoint(Player * player)
-	{
-		// shuxxx checkpoint OnRestartedFromCheckpoint
 
 
-		GameLevelInstance * level_instance = GetLevelInstance();
-		if (level_instance != nullptr)
-			level_instance->RestrictCameraToPlayerAndWorld(0, 0);
-		return true;
-	}
+
+
 
 
 
@@ -424,14 +373,7 @@ namespace death
 		// load level
 		GameLevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-		{
-
-
-
-
-			//checkpoint->level_index = game->GetLevel()->GetLevelIndex();
-			//checkpoint->level_checkpoint = level_instance->SaveIntoCheckpoint();
-		}
+			 level_instance->LoadFromCheckpoint(checkpoint->level_checkpoint.get());
 
 		// load player
 		Player * player = GetPlayer(0);

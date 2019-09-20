@@ -1375,10 +1375,11 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			// store the current player position as a checkpoint
 
 			// shuxxx checkpoint
-
+#if 0
 			death::GameInstance * game_instance = GetGameInstance();
 			if (game_instance != nullptr)
 				game_instance->SetCheckpointPosition(player_bounding_box.position, this);
+#endif
 		}
 
 		void LevelInstance::OnPlayerLeaved(Player * player)

@@ -94,8 +94,13 @@ namespace death
 		bool RestartFromCheckpoint(Player * player);
 
 
-		/** update the current game state using a given checkpoint */
-		bool LoadFromCheckpoint(GameCheckpoint const * checkpoint);
+
+		/** create a respawn checkpoint */
+		bool CreateRespawnCheckpoint();
+		/** restart from the respawn checkpoint */
+		bool RestartFromRespawnCheckpoint();
+
+
 
 	protected:
 
@@ -153,7 +158,9 @@ namespace death
 
 
 		/** override */
-		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * result) const override;
+		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const override;
+		/** override */
+		virtual bool DoLoadFromCheckpoint(GameCheckpoint const * checkpoint) override;
 
 	protected:
 
@@ -174,6 +181,12 @@ namespace death
 		chaos::box2 checkpoint_camera;
 		/** the current checkpoint level instance */
 		chaos::weak_ptr<GameLevelInstance> checkpoint_level_instance;
+
+
+
+
+		/** respawn checkpoint */
+		chaos::shared_ptr<GameCheckpoint> respawn_checkpoint;
 	};
 
 }; // namespace death

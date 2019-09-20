@@ -319,6 +319,37 @@ namespace death
 
 		return checkpoint_level_instance.get() != nullptr; // checkpoint still valid ?	
 	}
+
+	bool GameInstance::CreateRespawnCheckpoint()
+	{
+		respawn_checkpoint = SaveIntoCheckpoint();
+		return (respawn_checkpoint != nullptr);
+	}
+
+	bool GameInstance::RestartFromRespawnCheckpoint()
+	{
+		if (respawn_checkpoint == nullptr)
+			return false;		
+		return LoadFromCheckpoint(respawn_checkpoint.get());
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 	bool GameInstance::RestartFromCheckpoint(Player * player)
 	{
@@ -355,22 +386,63 @@ namespace death
 
 
 
-	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * result) const
+	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const
 	{
-		Player const * player = GetPlayer(0);
-		if (player != nullptr)
-			result->player_checkpoint = player->SaveIntoCheckpoint();
-
+		// save level data
 		GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			result->level_checkpoint = level_instance->SaveIntoCheckpoint();
-		
+		{
+			checkpoint->level_index      = game->GetLevel()->GetLevelIndex();
+			checkpoint->level_checkpoint = level_instance->SaveIntoCheckpoint();
+		}
+
+		// save player
+		Player const * player = GetPlayer(0);
+		if (player != nullptr)
+			checkpoint->player_checkpoint = player->SaveIntoCheckpoint();
+
+		// save the clocks
+		if (main_clock != nullptr)
+			checkpoint->main_clock_time = main_clock->GetClockTime();
+		if (game_clock != nullptr)
+			checkpoint->game_clock_time = game_clock->GetClockTime();
+
 		return true;
 	}
 
-	bool GameInstance::LoadFromCheckpoint(GameCheckpoint const * checkpoint)
+	bool GameInstance::DoLoadFromCheckpoint(GameCheckpoint const * checkpoint)
 	{
-	
+		// ensure the level is the good one : or load new level
+		if (game->GetLevel()->GetLevelIndex() != checkpoint->level_index)
+		{
+
+
+			return false;
+		}
+
+
+		// load level
+		GameLevelInstance * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+		{
+
+
+
+
+			//checkpoint->level_index = game->GetLevel()->GetLevelIndex();
+			//checkpoint->level_checkpoint = level_instance->SaveIntoCheckpoint();
+		}
+
+		// load player
+		Player * player = GetPlayer(0);
+		if (player != nullptr)
+			player->LoadFromCheckpoint(checkpoint->player_checkpoint.get());
+
+		// load the clocks
+		//if (main_clock != nullptr)
+		//	main_clock->SetClockTime(checkpoint->main_clock_time);
+		//if (game_clock != nullptr)
+		//	game_clock->SetClockTime(checkpoint->game_clock_time);
 
 
 		return false;

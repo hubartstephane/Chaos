@@ -162,3 +162,74 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 	ludum_player->fire_allocation = nullptr;
 }
 
+
+
+
+
+
+
+
+death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const
+{
+	return new LudumLevelCheckpoint();
+}
+
+bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * checkpoint)
+{
+	LudumLevelCheckpoint const * ludum_checkpoint = auto_cast(checkpoint);
+	if (ludum_checkpoint == nullptr)
+		return false;
+
+	if (!death::TiledMap::LevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
+		return false;
+
+	scroll_factor = ludum_checkpoint->scroll_factor;
+
+	// enable all triggers
+	death::TiledMap::LayerInstance * trigger_layer_instance = FindLayerInstance("Zones");
+	if (trigger_layer_instance != nullptr)
+	{
+		size_t count = trigger_layer_instance->GetTriggerSurfaceCount();
+		for (size_t i = 0; i < count; ++i)
+		{
+			death::TiledMap::TriggerSurfaceObject * trigger = trigger_layer_instance->GetTriggerSurface(i);
+			if (trigger != nullptr)
+				trigger->SetEnabled(true);
+		}
+	}
+	// destroy all bullets
+	death::TiledMap::LayerInstance * fire_layer_instance = FindLayerInstance("fire");
+	if (fire_layer_instance != nullptr)
+	{
+		chaos::ParticleLayerBase * particle_layer = fire_layer_instance->GetParticleLayer();
+		if (particle_layer != nullptr)
+			particle_layer->ClearAllAllocations();
+	}
+	// destroy all enemies
+	death::TiledMap::LayerInstance * enemies_layer_instance = FindLayerInstance("Enemies");
+	if (enemies_layer_instance != nullptr)
+	{
+		chaos::ParticleLayerBase * particle_layer = enemies_layer_instance->GetParticleLayer();
+		if (particle_layer != nullptr)
+			particle_layer->ClearAllAllocations();
+	}
+
+	return true;
+}
+
+bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoint) const
+{
+	LudumLevelCheckpoint * ludum_checkpoint = auto_cast(checkpoint);
+	if (ludum_checkpoint == nullptr)
+		return false;
+
+	if (!death::TiledMap::LevelInstance::DoSaveIntoCheckpoint(ludum_checkpoint))
+		return false;
+
+	ludum_checkpoint->scroll_factor = scroll_factor;
+
+
+	return true;
+}
+
+

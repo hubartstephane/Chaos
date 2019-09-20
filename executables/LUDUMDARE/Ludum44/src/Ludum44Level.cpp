@@ -146,6 +146,28 @@ bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * 
 	return true; // continue with other
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =============================================================
 // FinishingTriggerSurfaceObject implementation
 // =============================================================
@@ -208,11 +230,17 @@ bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, c
 	if (surface == nullptr)
 		return true;
 
-	// shuxxx checkpoint
+	death::GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
+	if (game_instance != nullptr)
+		game_instance->CreateRespawnCheckpoint();
 
+
+	// shuxxx checkpoint
+#if 0
 	death::GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
 	if (game_instance != nullptr)
 		game_instance->SetCheckpointPosition(surface->GetBoundingBox(true).position, GetLayerInstance()->GetTiledLevelInstance());
+#endif
 
 	return true; // collisions handled successfully
 }

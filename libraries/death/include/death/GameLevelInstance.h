@@ -141,7 +141,9 @@ namespace death
 
 
 		/** override */
-		virtual bool DoSaveIntoCheckpoint(LevelCheckpoint * result) const override;
+		virtual bool DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const override;
+		/** override */
+		virtual bool DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint) override;
 
 	protected:
 

@@ -378,13 +378,24 @@ namespace death
 
 
 
-	bool GameLevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * result) const
+	bool GameLevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
 	{
-		result->level_index = GetLevel()->GetLevelIndex();
+		checkpoint->camera_box    = GetCameraBox(0, false);
+		checkpoint->level_timeout = level_timeout;
 
-		result->camera_box = GetCameraBox(0, false);
+		//if (level_clock != nullptr)
+		//	checkpoint->level_clock_time = level_clock->GetClockTime();
 
-		result->level_timeout = level_timeout;
+		return true;
+	}
+
+	bool GameLevelInstance::DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint)
+	{
+		SetCameraBox(0, checkpoint->camera_box);
+		level_timeout = checkpoint->level_timeout;
+
+		//if (level_clock != nullptr)
+		//	level_clock->SetClockTime(checkpoint->level_clock_time);
 
 		return true;
 	}

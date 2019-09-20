@@ -32,6 +32,14 @@ namespace death
 			return result;
 		}
 
+		/** the loading entry point */
+		virtual bool LoadFromCheckpoint(T const * checkpoint) 
+		{
+			if (checkpoint == nullptr)
+				return false;
+			return DoLoadFromCheckpoint(checkpoint);
+		}
+
 	protected:
 
 		/** checkpoint instanciation method */
@@ -41,6 +49,11 @@ namespace death
 		}
 		/** internal method for saving */
 		virtual bool DoSaveIntoCheckpoint(T * result) const
+		{
+			return true;
+		}
+		/** internal method for loading */
+		virtual bool DoLoadFromCheckpoint(T const * result)
 		{
 			return true;
 		}
@@ -76,12 +89,12 @@ namespace death
 
 	public:
 
-		/** the current level index */
-		int level_index = 0;
 		/** the camera 0 box */
 		chaos::box2 camera_box;
 		/** the current time out */
 		float level_timeout = -1;
+		/** the level clock time */
+		double level_clock_time = 0.0;
 	};
 
 	// =============================================
@@ -93,6 +106,13 @@ namespace death
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
+
+		/** the current level index */
+		int level_index = 0;
+		/** the game clock value */
+		double game_clock_time = 0.0;
+		/** the game clock value */
+		double main_clock_time = 0.0;
 
 		/** the data for the player */
 		chaos::shared_ptr<PlayerCheckpoint> player_checkpoint;

@@ -50,6 +50,13 @@ public:
 protected:
 
 	/** override */
+	virtual death::PlayerCheckpoint * DoCreateCheckpoint() const override;
+	/** override */
+	virtual bool DoLoadFromCheckpoint(death::PlayerCheckpoint const * checkpoint) override;
+	/** override */
+	virtual bool DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const override;
+
+	/** override */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 	/** override */
 	virtual void TickPlayerDisplacement(double delta_time) override;

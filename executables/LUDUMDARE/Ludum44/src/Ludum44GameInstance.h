@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ludum44PowerUp.h"
+#include "Ludum44GameCheckpoint.h"
 
 #include <chaos/StandardHeaders.h> 
 
@@ -45,7 +46,9 @@ protected:
 	void OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerSurfaceObject * surface, bool decreasing_power_up);
 
 	
-
+	virtual bool DoSaveIntoCheckpoint(death::GameCheckpoint * checkpoint) const override;
+	
+	virtual bool DoLoadFromCheckpoint(death::GameCheckpoint const * checkpoint) override;
 	
 
 protected:

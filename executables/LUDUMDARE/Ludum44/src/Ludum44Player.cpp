@@ -4,6 +4,7 @@
 #include "Ludum44Game.h"
 #include "Ludum44GameInstance.h"
 #include "Ludum44Particles.h"
+#include "Ludum44GameCheckpoint.h"
 
 #include <chaos/MathTools.h>
 #include <chaos/ParticleLayer.h>
@@ -353,4 +354,48 @@ void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 				shake_component->RestartModifier();
 		}
 	}
+}
+
+
+death::PlayerCheckpoint * LudumPlayer::DoCreateCheckpoint() const
+{
+	return new LudumPlayerCheckpoint();
+}
+
+bool LudumPlayer::DoLoadFromCheckpoint(death::PlayerCheckpoint const * checkpoint)
+{
+	LudumPlayerCheckpoint const * ludum_checkpoint = auto_cast(checkpoint);
+	if (ludum_checkpoint == nullptr)
+		return false;
+
+	if (!death::Player::DoLoadFromCheckpoint(checkpoint))
+		return false;
+
+	current_life                 = ludum_checkpoint->current_life;
+	current_max_life             = ludum_checkpoint->current_max_life;
+	current_speed_index          = ludum_checkpoint->current_speed_index;
+	current_damage_index         = ludum_checkpoint->current_damage_index;
+	current_charged_damage_index = ludum_checkpoint->current_charged_damage_index;
+	current_fire_rate_index      = ludum_checkpoint->current_fire_rate_index;
+
+	return true;
+}
+
+bool LudumPlayer::DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const
+{
+	LudumPlayerCheckpoint * ludum_checkpoint = auto_cast(checkpoint);
+	if (ludum_checkpoint == nullptr)
+		return false;
+
+	if (!death::Player::DoSaveIntoCheckpoint(checkpoint))
+		return false;
+
+	ludum_checkpoint->current_life                 = current_life;
+	ludum_checkpoint->current_max_life             = current_max_life;
+	ludum_checkpoint->current_speed_index          = current_speed_index;
+	ludum_checkpoint->current_damage_index         = current_damage_index;
+	ludum_checkpoint->current_charged_damage_index = current_charged_damage_index;
+	ludum_checkpoint->current_fire_rate_index      = current_fire_rate_index;
+
+	return true;
 }

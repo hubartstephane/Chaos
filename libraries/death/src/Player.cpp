@@ -267,20 +267,19 @@ namespace death
 		return chaos::ParticleDefault::SetParticleBox(GetPlayerAllocation(), 0, box);
 	}
 
-
-
-
-	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * result) const
+	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const
 	{
-		result->life_count = life_count;
+		checkpoint->life_count = life_count;
+		checkpoint->score = score;
+		checkpoint->player_box = GetPlayerBox();
+		return true;
+	}
 
-		result->score = score;
-
-		result->player_box = GetPlayerBox();
-
-
-
-
+	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
+	{
+		life_count = checkpoint->life_count;
+		score      = checkpoint->score;
+		SetPlayerBox(checkpoint->player_box);
 		return true;
 	}
 

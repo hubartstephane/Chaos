@@ -120,7 +120,9 @@ namespace death
 		virtual void TickPlayerDisplacement(double delta_time);
 
 		/** override */
-		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * result) const override;
+		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const override;
+		/** override */
+		virtual bool DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint) override;
 
 	protected:
 

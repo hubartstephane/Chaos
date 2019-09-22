@@ -387,7 +387,7 @@ namespace death
 		//	game_clock->SetClockTime(checkpoint->game_clock_time);
 
 
-		return false;
+		return true;
 	}
 
 

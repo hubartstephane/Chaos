@@ -56,27 +56,7 @@ protected:
 	virtual bool OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
 };
 
-// =================================================
-// CheckpointTriggerSurfaceObject
-// =================================================
 
-class CheckpointTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
-{
-
-public:
-
-	/** constructor */
-	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
-	/** override */
-	virtual bool IsTileCreationEnabled() const override;
-	/** override */
-	virtual bool Initialize() override;
-
-protected:
-
-	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
-};
 
 // =================================================
 // SpeedUpTriggerSurfaceObject

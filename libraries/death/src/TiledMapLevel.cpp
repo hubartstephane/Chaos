@@ -136,14 +136,26 @@ namespace death
 
 		chaos::ParticleLayerBase * Level::CreateParticleLayer(LayerInstance * layer_instance)
 		{
-			return new chaos::ParticleLayer<death::TiledMap::TileParticleTrait>();
+			return new chaos::ParticleLayer<TiledMap::TileParticleTrait>();
 		}
 
-#define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
+		TriggerSurfaceObject * Level::DoCreateTriggerSurface(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+		{
+			if (in_geometric_object->name == "Checkpoint")
+				return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+
+
+
+			return new TriggerSurfaceObject(in_layer_instance, in_geometric_object);
+		}
+
+#define DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
 		result_type * Level::Do##func_name(declared_parameters)\
 		{\
 			return new result_type(constructor_parameters);\
-		}\
+		}
+
+#define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
 		result_type * Level::func_name(declared_parameters)\
 		{\
 			result_type * result = Do##func_name(constructor_parameters);\
@@ -157,14 +169,20 @@ namespace death
 			return result;\
 		}
 
-		DEATH_CREATE_OBJECT(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
-		DEATH_CREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
-		DEATH_CREATE_OBJECT(CameraObject, CreateCamera, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
-		DEATH_CREATE_OBJECT(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
-		DEATH_CREATE_OBJECT(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase * in_layer, in_level_instance BOOST_PP_COMMA() in_layer);
+#define DEATH_CREATE_OBJECT_FULL(result_type, func_name, declared_parameters, constructor_parameters)\
+	DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
+	DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)
 
-#undef DEATH_CREATE_OBJECT
+	DEATH_CREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+
+	DEATH_CREATE_OBJECT_FULL(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+	DEATH_CREATE_OBJECT_FULL(CameraObject, CreateCamera, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+	DEATH_CREATE_OBJECT_FULL(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+	DEATH_CREATE_OBJECT_FULL(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase * in_layer, in_level_instance BOOST_PP_COMMA() in_layer);
+
 #undef DEATH_DOCREATE_OBJECT
+#undef DEATH_CREATE_OBJECT
+#undef DEATH_CREATE_OBJECT_FULL
 
 		chaos::GPUProgram * Level::GenDefaultRenderProgram()
 		{
@@ -228,7 +246,7 @@ namespace death
 			return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 		}
 
-		bool Level::OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
+		bool Level::OnPlayerTileCollision(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
 		{
 
 			return true; // continue with other
@@ -308,7 +326,7 @@ namespace death
 			return chaos::Collide(other_box, box);
 		}
 
-		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
 			return true; // collisions handled successfully
 		}
@@ -316,6 +334,39 @@ namespace death
 		bool TriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			return true; // collisions handled successfully
+		}
+
+		// =============================================================
+		// CheckPointTriggerSurfaceObject implementation
+		// =============================================================
+
+		bool CheckpointTriggerSurfaceObject::Initialize()
+		{
+			if (!TriggerSurfaceObject::Initialize())
+				return false;
+			trigger_once = true;
+			return true;
+		}
+
+		bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		{
+			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+				return false;
+
+			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
+			if (surface == nullptr)
+				return true;
+
+			GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
+			if (game_instance != nullptr)
+				game_instance->CreateRespawnCheckpoint();
+
+			return true; // collisions handled successfully
+		}
+
+		bool CheckpointTriggerSurfaceObject::IsTileCreationEnabled() const
+		{
+			return false;
 		}
 
 		// =====================================
@@ -824,7 +875,7 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			}
 		}
 
-		PlayerAndTriggerCollisionRecord * LayerInstance::FindPlayerCollisionRecord(death::Player * player)
+		PlayerAndTriggerCollisionRecord * LayerInstance::FindPlayerCollisionRecord(Player * player)
 		{
 			size_t count = collision_records.size();
 			for (size_t i = count; i > 0; --i)
@@ -885,7 +936,7 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 		
 		}
 
-		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
+		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
@@ -944,9 +995,9 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			return true; // continue other collisions 
 		}
 
-		bool LayerInstance::ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle)
+		bool LayerInstance::ComputePlayerTileCollisions(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
-			death::TiledMap::Level * level = GetTiledLevel();
+			TiledMap::Level * level = GetTiledLevel();
 
 			return FindTileCollisions(player_particle->bounding_box, [this, delta_time, player, player_particle, level](TileParticle & tile_particle)
 			{
@@ -1141,7 +1192,7 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 
 		bool LevelInstance::DoTick(double delta_time)
 		{
-			death::GameLevelInstance::DoTick(delta_time);
+			GameLevelInstance::DoTick(delta_time);
 
 			// tick the particle manager
 			if (particle_manager != nullptr)
@@ -1371,15 +1422,6 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
 			//          call it twice as a fast fix
 			layer_instance->FinalizeParticles();
-
-			// store the current player position as a checkpoint
-
-			// shuxxx checkpoint
-#if 0
-			death::GameInstance * game_instance = GetGameInstance();
-			if (game_instance != nullptr)
-				game_instance->SetCheckpointPosition(player_bounding_box.position, this);
-#endif
 		}
 
 		void LevelInstance::OnPlayerLeaved(Player * player)
@@ -1394,7 +1436,7 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			std::string const * background_material = nullptr;
 			std::string const * background_texture  = nullptr;
 			
-			death::TiledMap::Level const * level = GetTiledLevel();
+			TiledMap::Level const * level = GetTiledLevel();
 			if (level != nullptr)
 			{
 				background_material = level->GetTiledMap()->FindPropertyString("BACKGROUND_MATERIAL");
@@ -1410,7 +1452,7 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 		{
 			std::string const * level_music = nullptr;
 
-			death::TiledMap::Level const * level = GetTiledLevel();
+			TiledMap::Level const * level = GetTiledLevel();
 			if (level != nullptr)
 				level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
 

@@ -27,11 +27,6 @@ bool FinishingTriggerSurfaceObject::IsTileCreationEnabled() const
 	return IsDefaultTileCreationEnabled();
 }
 
-bool CheckpointTriggerSurfaceObject::IsTileCreationEnabled() const
-{
-	return IsDefaultTileCreationEnabled();
-}
-
 bool SpeedUpTriggerSurfaceObject::IsTileCreationEnabled() const
 {
 	return IsDefaultTileCreationEnabled();
@@ -121,18 +116,8 @@ death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death
 		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 	if (in_geometric_object->name == "PowerUp")
 		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsTileCreationEnabled() => true
-
-	// shuxxx checkpoint
-
-	if (in_geometric_object->name == "Checkpoint")
-		return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-
-
-
 	if (in_geometric_object->name == "SpeedUp")
 		return new SpeedUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-
-
 	if (in_geometric_object->name == "Spawner")
 		return new SpawnerTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 
@@ -209,33 +194,6 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 	return true; // collisions handled successfully
 }
 
-// =============================================================
-// CheckPointTriggerSurfaceObject implementation
-// =============================================================
-
-bool CheckpointTriggerSurfaceObject::Initialize()
-{
-	if (!death::TiledMap::TriggerSurfaceObject::Initialize())
-		return false;
-	trigger_once = true;
-	return true;
-}
-
-bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
-{
-	if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
-		return false;
-
-	chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
-	if (surface == nullptr)
-		return true;
-
-	death::GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
-	if (game_instance != nullptr)
-		game_instance->CreateRespawnCheckpoint();
-
-	return true; // collisions handled successfully
-}
 
 // =============================================================
 // SpeedUpTriggerSurfaceObject implementation

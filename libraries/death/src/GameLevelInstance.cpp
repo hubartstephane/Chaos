@@ -135,6 +135,9 @@ namespace death
 		CreateBackgroundImage();
 		// change music
 		SetInGameMusic();
+		// create respawn checkpoint
+		if (player_count > 0)
+			game_instance->CreateRespawnCheckpoint();
 	}
 
 	void GameLevelInstance::CreateBackgroundImage()

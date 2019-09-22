@@ -26,7 +26,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundGeometricObject)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (CheckpointTriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundGeometricObject)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -214,7 +214,7 @@ namespace death
 			virtual bool Initialize() override;
 
 			/** called whenever a collision with player is detected (returns true, if collision is handled successfully) */
-			virtual bool OnPlayerCollisionEvent(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
+			virtual bool OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
 			/** called whenever a collision with camera is detected */
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type);
 
@@ -229,6 +229,45 @@ namespace death
 			/** outside box factor (a factor applyed to bounding box to detect whether the player is going outside of the range) */
 			float outside_box_factor = 1.0f;
 		};
+
+
+		// =================================================
+		// CheckpointTriggerSurfaceObject
+		// =================================================
+
+		class CheckpointTriggerSurfaceObject : public TriggerSurfaceObject
+		{
+
+		public:
+
+			/** constructor */
+			using TriggerSurfaceObject::TriggerSurfaceObject;
+			/** override */
+			virtual bool IsTileCreationEnabled() const override;
+			/** override */
+			virtual bool Initialize() override;
+
+		protected:
+
+			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
+			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+		};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// =====================================
 		// Level : a level described by a tiledmap
@@ -290,7 +329,7 @@ namespace death
 			virtual bool FinalizeLayerParticles(LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation){ return true; }
 
 			/** called whenever a collision between player and tile happens */
-			virtual bool OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
+			virtual bool OnPlayerTileCollision(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
 
 			/** the default program when not specified */
 			virtual chaos::GPUProgram * GenDefaultRenderProgram();
@@ -312,7 +351,7 @@ namespace death
 		public:
 
 			/** the player considered */
-			chaos::weak_ptr<death::Player> player;
+			chaos::weak_ptr<Player> player;
 			/** all the triggers colliding */
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
 		};
@@ -464,11 +503,11 @@ namespace death
 			/** search all collision with the player (tiles/TriggerSurfaceObject) */
 			virtual void ComputePlayerAndCameraCollision(double delta_time);
 			/** compute trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
-			virtual bool ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
+			virtual bool ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
 			/** compute trigger collisions with camera */
 			virtual bool ComputeCameraCollisionWithSurfaceTriggers(double delta_time, chaos::box2 const & camera_box);
 			/** compute collisions between players and tiles (returns false if if do not want to handle mode player collisions) */
-			virtual bool ComputePlayerTileCollisions(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle);
+			virtual bool ComputePlayerTileCollisions(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
 
 			/** specialized layer */
 			bool InitializeImageLayer(chaos::TiledMap::ImageLayer * image_layer);
@@ -483,7 +522,7 @@ namespace death
 			virtual bool InitializeParticleLayer(chaos::ParticleLayerBase * in_particle_layer);
 
 			/** find the collision record for a player (clean all records for destroyed player) */
-			PlayerAndTriggerCollisionRecord * FindPlayerCollisionRecord(death::Player * player);
+			PlayerAndTriggerCollisionRecord * FindPlayerCollisionRecord(Player * player);
 
 		protected:
 

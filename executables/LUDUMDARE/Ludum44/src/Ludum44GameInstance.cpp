@@ -24,7 +24,14 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 	{
 		if (ludum_player->GetCurrentLife() <= 0.0f) // no more energy => go to checkpoint
 		{
+
 			// shuxxx checkpoint
+
+
+
+
+
+
 
 			// game over mandatory (last life about to be removed)
 			if (ludum_player->GetLifeCount() <= 1)

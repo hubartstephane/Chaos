@@ -283,6 +283,11 @@ namespace death
 		return true;
 	}
 
+	void Player::OnLifeLost()
+	{
+
+	}
+
 	// =================================================
 	// PlayerGamepadCallbacks
 	// =================================================

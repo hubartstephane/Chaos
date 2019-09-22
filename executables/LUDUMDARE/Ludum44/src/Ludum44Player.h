@@ -50,6 +50,8 @@ public:
 protected:
 
 	/** override */
+	virtual void OnLifeLost() override;
+	/** override */
 	virtual death::PlayerCheckpoint * DoCreateCheckpoint() const override;
 	/** override */
 	virtual bool DoLoadFromCheckpoint(death::PlayerCheckpoint const * checkpoint) override;

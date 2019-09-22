@@ -758,6 +758,7 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 				challenge_timer = ludum_game->challenge_frequency;
 				ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
 				balls_allocations = CreateBalls(1, true);
+				ludum_player->OnLifeLost();
 				return false;
 			}			
 		}

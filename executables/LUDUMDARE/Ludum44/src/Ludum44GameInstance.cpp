@@ -24,23 +24,19 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 	{
 		if (ludum_player->GetCurrentLife() <= 0.0f) // no more energy => go to checkpoint
 		{
-
-			// shuxxx checkpoint
-
-
-
-
-
-
-
 			// game over mandatory (last life about to be removed)
-			if (ludum_player->GetLifeCount() <= 1)
+			int life_count = ludum_player->GetLifeCount();
+			if (life_count <= 1)
 				return true;
+			// keep some values to restore later
+			int score = ludum_player->GetScore();
 			// try to go to checkpoint
 			if (!RestartFromRespawnCheckpoint())
 				return true;
-			// remove one life
-			ludum_player->SetLifeCount(-1, true); // cannot respawn !
+			// update player values after death
+			ludum_player->SetScore(score, false);
+			ludum_player->SetLifeCount(life_count - 1, false); 
+			ludum_player->OnLifeLost();			
 		}
 	}
 	return false;

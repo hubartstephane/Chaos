@@ -119,6 +119,8 @@ namespace death
 		/** tick the player displacement */
 		virtual void TickPlayerDisplacement(double delta_time);
 
+		/** called whenever a life is lost */
+		virtual void OnLifeLost();
 		/** override */
 		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const override;
 		/** override */

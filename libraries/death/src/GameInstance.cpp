@@ -311,30 +311,6 @@ namespace death
 		return LoadFromCheckpoint(respawn_checkpoint.get());
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const
 	{
 		// save level data
@@ -364,6 +340,12 @@ namespace death
 		// ensure the level is the good one : or load new level
 		if (game->GetLevel()->GetLevelIndex() != checkpoint->level_index)
 		{
+
+
+
+
+
+
 
 
 			return false;

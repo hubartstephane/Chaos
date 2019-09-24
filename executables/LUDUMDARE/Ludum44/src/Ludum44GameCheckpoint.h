@@ -2,6 +2,8 @@
 
 #include <death/GameCheckpoint.h>
 
+#include <death/TiledMapLevel.h>
+
 
 
 class LudumPlayerCheckpoint : public death::PlayerCheckpoint
@@ -17,7 +19,7 @@ public:
 	size_t current_fire_rate_index = 0;
 };
 
-class LudumLevelCheckpoint : public death::LevelCheckpoint
+class LudumLevelCheckpoint : public death::TiledMap::TiledLevelCheckpoint
 {
 public:
 

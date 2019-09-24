@@ -3,6 +3,7 @@
 #include <death/GameLevel.h>
 #include <death/GameLevelInstance.h>
 #include <death/TiledMapParticle.h>
+#include <death/GameCheckpoint.h>
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
@@ -67,10 +68,20 @@ namespace death
 		};
 
 		// =====================================
+		// BaseObjectCheckpoint
+		// =====================================
+
+		class BaseObjectCheckpoint : public chaos::ReferencedObject
+		{
+		public:
+
+		};
+
+		// =====================================
 		// BaseObject : a base object for special game entities
 		// =====================================
 
-		class BaseObject : public chaos::Tickable
+		class BaseObject : public chaos::Tickable, public CheckpointObject<BaseObjectCheckpoint>
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -78,6 +89,11 @@ namespace death
 
 			/** constructor */
 			BaseObject(LayerInstance * in_layer_instance);
+
+			/** whether the object is modified */
+			bool IsModified() const { return modified; }
+			/** raise the modified flag */
+			void SetModified(bool in_modified = true) { modified = in_modified; }
 
 			/** get the layer instance owning this object */
 			LayerInstance * GetLayerInstance() { return layer_instance; }
@@ -88,6 +104,8 @@ namespace death
 
 			/** a reference to the layer instance */
 			LayerInstance * layer_instance = nullptr;
+			/** whether the object has been modified from the JSON base data (usefull for checkpoint serialization) */
+			bool modified = false;
 		};
 
 		// =====================================
@@ -170,6 +188,20 @@ namespace death
 		};
 
 		// =====================================
+		// TriggerSurfaceObjectCheckpoint
+		// =====================================
+
+		class TriggerSurfaceObjectCheckpoint : public BaseObjectCheckpoint
+		{
+		public:
+
+			/** flag whether to object is enabled or not */
+			bool enabled = true;
+			/** flag whether to can only trigger once */
+			bool trigger_once = false;
+		};
+		
+		// =====================================
 		// TriggerSurfaceObject : an object player can collide with (for moment, rectangle)
 		// =====================================
 
@@ -189,12 +221,12 @@ namespace death
 			/** whether it is enabled or not */
 			bool IsEnabled() const { return enabled; }
 			/** change whether the trigger is enabled or not */
-			void SetEnabled(bool in_enabled = true) { enabled = in_enabled;}
+			void SetEnabled(bool in_enabled = true);
 
 			/** whether it should be triggered a single time */
 			bool IsTriggerOnce() const { return trigger_once; }
 			/** change whether the trigger once is enabled or not */
-			void SetTriggerOnce(bool in_trigger_once = true) { trigger_once = in_trigger_once; }
+			void SetTriggerOnce(bool in_trigger_once = true);
 		
 			/** get the trigger ID */
 			int GetTriggerID() const { return trigger_id; }
@@ -212,6 +244,13 @@ namespace death
 
 			/** override */
 			virtual bool Initialize() override;
+
+			/** override */
+			virtual BaseObjectCheckpoint * DoCreateCheckpoint() const override;
+			/** override */
+			virtual bool DoSaveIntoCheckpoint(BaseObjectCheckpoint * checkpoint) const override;
+			/** override */
+			virtual bool DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint) override;
 
 			/** called whenever a collision with player is detected (returns true, if collision is handled successfully) */
 			virtual bool OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);

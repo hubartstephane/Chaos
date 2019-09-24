@@ -336,6 +336,55 @@ namespace death
 			return true; // collisions handled successfully
 		}
 
+		void TriggerSurfaceObject::SetEnabled(bool in_enabled) 
+		{ 
+			enabled = in_enabled; 
+			SetModified();
+		}
+
+		void TriggerSurfaceObject::SetTriggerOnce(bool in_trigger_once) 
+		{ 
+			trigger_once = in_trigger_once; 
+			SetModified();
+		}
+
+		/** override */
+		BaseObjectCheckpoint * TriggerSurfaceObject::DoCreateCheckpoint() const
+		{
+			return new TriggerSurfaceObjectCheckpoint();
+		}
+
+		bool TriggerSurfaceObject::DoSaveIntoCheckpoint(BaseObjectCheckpoint * checkpoint) const
+		{
+			TriggerSurfaceObjectCheckpoint * trigger_checkpoint = auto_cast(checkpoint);
+			if (trigger_checkpoint == nullptr)
+				return false;
+
+			if (!GeometricObject::DoSaveIntoCheckpoint(checkpoint))
+				return false;
+
+			trigger_checkpoint->enabled = enabled;
+			trigger_checkpoint->trigger_once = trigger_once;
+
+			return true;
+		}
+		
+		bool TriggerSurfaceObject::DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint)
+		{
+			TriggerSurfaceObjectCheckpoint const * trigger_checkpoint = auto_cast(checkpoint);
+			if (trigger_checkpoint == nullptr)
+				return false;
+
+			if (!GeometricObject::DoLoadFromCheckpoint(checkpoint))
+				return false;
+
+			enabled = trigger_checkpoint->enabled;
+			trigger_once = trigger_checkpoint->trigger_once;
+
+			return true;
+		}
+
+
 		// =============================================================
 		// CheckPointTriggerSurfaceObject implementation
 		// =============================================================

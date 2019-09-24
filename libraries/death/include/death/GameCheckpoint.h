@@ -48,12 +48,12 @@ namespace death
 			return new T();
 		}
 		/** internal method for saving */
-		virtual bool DoSaveIntoCheckpoint(T * result) const
+		virtual bool DoSaveIntoCheckpoint(T * checkpoint) const
 		{
 			return true;
 		}
 		/** internal method for loading */
-		virtual bool DoLoadFromCheckpoint(T const * result)
+		virtual bool DoLoadFromCheckpoint(T const * checkpoint)
 		{
 			return true;
 		}

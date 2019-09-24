@@ -396,7 +396,10 @@ namespace death
 		{
 			public:
 
-
+			// the checkpoint per BaseObject (see object_id)
+			std::map<int, chaos::shared_ptr<BaseObjectCheckpoint>> trigger_checkpoints;
+			// the checkpoint per BaseObject (see object_id)
+			std::map<int, chaos::shared_ptr<BaseObjectCheckpoint>> object_checkpoints;
 		};
 
 
@@ -627,21 +630,16 @@ namespace death
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> camera_collision_records;
 		};
 
-
-
-
-
-
-
-
-
 		// =====================================
 		// TiledLevelCheckpoint
 		// =====================================
 
 		class TiledLevelCheckpoint : public LevelCheckpoint
 		{
+		public:
 
+			// the checkpoint per LayerBase (see object_id)
+			std::map<int, chaos::shared_ptr<TiledLayerCheckpoint>> layer_checkpoints;
 		};
 
 		// =====================================

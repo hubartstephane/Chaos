@@ -741,6 +741,8 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 		bool ObjectLayer::DoLoadObjects(tinyxml2::XMLElement const * element)
 		{
+			int object_id = 0;
+
 			tinyxml2::XMLElement const * e = element->FirstChildElement("object");
 			for (; e != nullptr; e = e->NextSiblingElement("object"))
 			{
@@ -748,9 +750,12 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				if (object == nullptr)
 					continue;
 				if (!object->DoLoad(e))
+				{
 					delete(object);
-				else
-					geometric_objects.push_back(object);
+					continue;
+				}
+				geometric_objects.push_back(object);
+				object->object_id = object_id++; // give a unique ID to the layer according to the order of insertion
 			}
 			return true;
 		}
@@ -1123,19 +1128,27 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 
 		bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)		
 		{
+			int layer_id = 0;
+
 			// get all layers
 			// XXX : the very first encoutered layer, is the one that should be rendered last.
 			//       that why we proceed in reverse order
 			tinyxml2::XMLElement const * e = element->LastChildElement();
 			for (; e != nullptr; e = e->PreviousSiblingElement())
 			{
+				LayerBase * new_layer = nullptr;
+
 				char const * child_name = e->Name();
 				if (StringTools::Strcmp(child_name, "imagelayer") == 0)
-					DoLoadObjectAndInserInList(e, image_layers, this);
+					new_layer = DoLoadObjectAndInserInList(e, image_layers, this);
 				else if (StringTools::Strcmp(child_name, "objectgroup") == 0)
-					DoLoadObjectAndInserInList(e, object_layers, this);
+					new_layer = DoLoadObjectAndInserInList(e, object_layers, this);
 				else if (StringTools::Strcmp(child_name, "layer") == 0)
-					DoLoadObjectAndInserInList(e, tile_layers, this, tile_size);
+					new_layer = DoLoadObjectAndInserInList(e, tile_layers, this, tile_size);
+
+				// give a unique ID to the layer according to the order of insertion
+				if (new_layer != nullptr)
+					new_layer->object_id = layer_id++;
 			}
 			// now fix the zorders
 			if (!DoFixLayersZOrder()) 

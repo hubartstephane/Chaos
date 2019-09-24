@@ -357,7 +357,6 @@ namespace death
 			SetModified();
 		}
 
-		/** override */
 		BaseObjectCheckpoint * TriggerSurfaceObject::DoCreateCheckpoint() const
 		{
 			return new TriggerSurfaceObjectCheckpoint();
@@ -402,7 +401,7 @@ namespace death
 		{
 			if (!TriggerSurfaceObject::Initialize())
 				return false;
-			trigger_once = true;
+			trigger_once = true; // XXX : keep or not ? seems normal
 			return true;
 		}
 
@@ -1219,6 +1218,35 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 
 		bool LayerInstance::DoSaveIntoCheckpoint(TiledLayerCheckpoint * checkpoint) const
 		{
+			// the triggers
+			size_t trigger_count = trigger_surfaces.size();
+			for (size_t i = 0; i < trigger_count; ++i)
+			{
+				// object in death::TiledMap point of view
+				TriggerSurfaceObject const * trigger = trigger_surfaces[i].get();
+				if (trigger == nullptr || !trigger->IsModified()) // only modified objects
+					continue;
+				// object for chaos point of view
+				chaos::TiledMap::GeometricObject * geometric_object = trigger->geometric_object.get();
+				if (geometric_object == nullptr || geometric_object->GetObjectID() < 0)
+					continue;
+				// save the checkpoint
+				BaseObjectCheckpoint * trigger_checkpoint = trigger->SaveIntoCheckpoint();
+				if (trigger_checkpoint == nullptr)
+					continue;
+				checkpoint->trigger_checkpoints[geometric_object->GetObjectID()] = trigger_checkpoint;
+			}
+
+
+
+
+
+
+
+
+			auto & t = trigger_surfaces;
+			auto & o = typed_objects;
+
 
 
 
@@ -1228,6 +1256,37 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 
 		bool LayerInstance::DoLoadFromCheckpoint(TiledLayerCheckpoint const * checkpoint)
 		{
+			// the triggers
+			size_t trigger_count = trigger_surfaces.size();
+			for (size_t i = 0; i < trigger_count; ++i)
+			{
+				// object in death::TiledMap point of view
+				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
+				if (trigger == nullptr)
+					continue;
+				// object for chaos point of view
+				chaos::TiledMap::GeometricObject * geometric_object = trigger->geometric_object.get();
+				if (geometric_object == nullptr || geometric_object->GetObjectID() < 0)
+					continue;
+				// get checkpoint
+				BaseObjectCheckpoint * trigger_checkpoint = nullptr;
+
+				auto it = checkpoint->trigger_checkpoints.find(geometric_object->GetObjectID());
+				if (it != checkpoint->trigger_checkpoints.end())
+					trigger_checkpoint = it->second.get();
+
+				// -checkpoint found    => use it
+				// -no checkpoint point =>
+				//    -> object is currently modified, restore initial settings
+				if (trigger_checkpoint != nullptr)
+					trigger->LoadFromCheckpoint(trigger_checkpoint);
+				else if (trigger->IsModified())
+					trigger->Initialize();
+			}
+
+
+
+
 
 
 
@@ -1558,9 +1617,24 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			if (!GameLevelInstance::DoSaveIntoCheckpoint(checkpoint))
 				return false;
 
-
-
-
+			size_t count = layer_instances.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				// the layer (death::TiledMap point of view)
+				LayerInstance const * layer = layer_instances[i].get();
+				if (layer == nullptr)
+					continue;
+				// the layer (chaos point of view). If must have an 
+				chaos::TiledMap::LayerBase const * base_layer = layer->layer.get();
+				if (base_layer == nullptr || base_layer->GetObjectID() < 0)
+					continue;
+				// create the checkpoint 
+				TiledLayerCheckpoint * layer_checkpoint = layer_instances[i]->SaveIntoCheckpoint();
+				if (layer_checkpoint == nullptr)
+					continue;
+				// insert the layer_checkpoint in level_checkpoint
+				tiled_level_checkpoint->layer_checkpoints[base_layer->GetObjectID()] = layer_checkpoint;
+			}
 
 			return true;
 		}
@@ -1571,12 +1645,29 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			if (tiled_level_checkpoint == nullptr)
 				return false;
 
+			// super method
 			if (!GameLevelInstance::DoLoadFromCheckpoint(checkpoint))
 				return false;
 
-
-
-
+			// iterate over layers that have serialized a checkpoint
+			size_t count = layer_instances.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				// the layer (death::TiledMap point of view)
+				LayerInstance * layer = layer_instances[i].get();
+				if (layer == nullptr)
+					continue;
+				// the layer (chaos point of view). If must have an 
+				chaos::TiledMap::LayerBase * base_layer = layer->layer.get();
+				if (base_layer == nullptr || base_layer->GetObjectID() < 0)
+					continue;
+				// find the corresponding checkpoint
+				auto it = tiled_level_checkpoint->layer_checkpoints.find(base_layer->GetObjectID());
+				if (it == tiled_level_checkpoint->layer_checkpoints.end())
+					continue;
+				// load layer_chackpoint
+				layer->LoadFromCheckpoint(it->second.get());
+			}
 			return true;
 		}
 

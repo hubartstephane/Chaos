@@ -185,6 +185,7 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 
 	scroll_factor = ludum_checkpoint->scroll_factor;
 
+#if 0
 	// enable all triggers
 	death::TiledMap::LayerInstance * trigger_layer_instance = FindLayerInstance("Zones");
 	if (trigger_layer_instance != nullptr)
@@ -197,6 +198,7 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 				trigger->SetEnabled(true);
 		}
 	}
+#endif
 	// destroy all bullets
 	death::TiledMap::LayerInstance * fire_layer_instance = FindLayerInstance("fire");
 	if (fire_layer_instance != nullptr)

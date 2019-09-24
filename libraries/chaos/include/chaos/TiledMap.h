@@ -91,18 +91,18 @@ namespace chaos
 			}
 
 			template<typename T, typename ...PARAMS>
-			static bool DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<shared_ptr<T>> & result, PARAMS...params)
+			static T * DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<shared_ptr<T>> & result_vector, PARAMS...params)
 			{
-				T * object = new T(params...);
-				if (object == nullptr)
-					return false;
-				if (!object->DoLoad(element))
+				T * result = new T(params...);
+				if (result == nullptr)
+					return nullptr;
+				if (!result->DoLoad(element))
 				{
-					delete(object);
-					return false;
+					delete(result);
+					return nullptr;
 				}				
-				result.push_back(object);			
-				return true;
+				result_vector.push_back(result);
+				return result;
 			}
 
 		protected:
@@ -343,6 +343,9 @@ namespace chaos
 			/** cast method into its subtype */
 			virtual class GeometricObjectTile const * GetObjectTile() const { return nullptr; }
 
+			/** get the layer ID (used for Checkpoints) */
+			int GetObjectID() const { return object_id; }
+
 		protected:
 
 			/** constructor */
@@ -367,6 +370,9 @@ namespace chaos
 			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : bottomleft, but due to inverted axis Y, this is the point the greatest Y
 			/** object information */
 			float rotation = 0.0f; // clockwise rotation in degree
+
+			/** an ID deducted from the order in the source JSON */
+			int object_id = -1;
 		};
 
 		// ==========================================
@@ -704,6 +710,9 @@ namespace chaos
 			/** cast method into its subtype */
 			virtual class TileLayer const * GetTileLayer() const { return nullptr; }
 
+			/** get the layer ID (used for Checkpoints) */
+			int GetObjectID() const { return object_id; }
+
 		protected:
 
 			/** constructor */
@@ -726,6 +735,9 @@ namespace chaos
 			int zorder = 0;
 			/** the offset of the layer */
 			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
+
+			/** an ID deducted from the order in the source JSON */
+			int object_id = -1;
 		};
 
 		// ==========================================

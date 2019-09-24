@@ -546,7 +546,6 @@ namespace death
 			/** override */
 			virtual bool DoLoadFromCheckpoint(TiledLayerCheckpoint const * checkpoint) override;
 
-
 			/** find render material according to its name (or create the default) */
 			chaos::GPURenderMaterial * FindOrCreateRenderMaterial(char const * material_name);
 
@@ -578,6 +577,13 @@ namespace death
 
 			/** find the collision record for a player (clean all records for destroyed player) */
 			PlayerAndTriggerCollisionRecord * FindPlayerCollisionRecord(Player * player);
+
+			/** utility methods for loading objects in layer instances */
+			template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
+			bool DoLoadFromCheckpointHelper(ELEMENT_VECTOR & elements, CHECKPOINT_VECTOR const & checkpoints);
+			/** utility methods for saving objects in layer instances */
+			template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
+			bool DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const & elements, CHECKPOINT_VECTOR & checkpoints) const;
 
 		protected:
 

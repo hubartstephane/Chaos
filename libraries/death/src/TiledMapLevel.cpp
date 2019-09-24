@@ -1216,83 +1216,74 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			return new TiledLayerCheckpoint();
 		}
 
-		bool LayerInstance::DoSaveIntoCheckpoint(TiledLayerCheckpoint * checkpoint) const
+		template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
+		bool LayerInstance::DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const & elements, CHECKPOINT_VECTOR & checkpoints) const
 		{
-			// the triggers
-			size_t trigger_count = trigger_surfaces.size();
-			for (size_t i = 0; i < trigger_count; ++i)
+			size_t count = elements.size();
+			for (size_t i = 0; i < count; ++i)
 			{
 				// object in death::TiledMap point of view
-				TriggerSurfaceObject const * trigger = trigger_surfaces[i].get();
-				if (trigger == nullptr || !trigger->IsModified()) // only modified objects
+				auto const * obj = elements[i].get();
+				if (obj == nullptr || !obj->IsModified()) // only modified objects
 					continue;
 				// object for chaos point of view
-				chaos::TiledMap::GeometricObject * geometric_object = trigger->geometric_object.get();
+				chaos::TiledMap::GeometricObject * geometric_object = obj->geometric_object.get();
 				if (geometric_object == nullptr || geometric_object->GetObjectID() < 0)
 					continue;
 				// save the checkpoint
-				BaseObjectCheckpoint * trigger_checkpoint = trigger->SaveIntoCheckpoint();
-				if (trigger_checkpoint == nullptr)
+				BaseObjectCheckpoint * checkpoint = obj->SaveIntoCheckpoint();
+				if (checkpoint == nullptr)
 					continue;
-				checkpoint->trigger_checkpoints[geometric_object->GetObjectID()] = trigger_checkpoint;
+				checkpoints[geometric_object->GetObjectID()] = checkpoint;
 			}
+			return true;
+		}
 
+		bool LayerInstance::DoSaveIntoCheckpoint(TiledLayerCheckpoint * checkpoint) const
+		{
+			DoSaveIntoCheckpointHelper(trigger_surfaces, checkpoint->trigger_checkpoints);
+			DoSaveIntoCheckpointHelper(typed_objects, checkpoint->object_checkpoints);
+			return true;
+		}
 
+		template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
+		bool LayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR & elements, CHECKPOINT_VECTOR const & checkpoints)
+		{
+			size_t count = elements.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				// object in death::TiledMap point of view
+				auto * obj = elements[i].get();
+				if (obj == nullptr)
+					continue;
+				// object for chaos point of view
+				chaos::TiledMap::GeometricObject * geometric_object = obj->geometric_object.get();
+				if (geometric_object == nullptr || geometric_object->GetObjectID() < 0)
+					continue;
+				// get checkpoint
+				BaseObjectCheckpoint * obj_checkpoint = nullptr;
 
+				auto it = checkpoints.find(geometric_object->GetObjectID());
+				if (it != checkpoints.end())
+					obj_checkpoint = it->second.get();
 
-
-
-
-
-			auto & t = trigger_surfaces;
-			auto & o = typed_objects;
-
-
-
-
-
+				// -checkpoint found    => use it
+				// -no checkpoint point =>
+				//    -> object is currently modified, restore initial settings
+				if (obj_checkpoint != nullptr)
+					obj->LoadFromCheckpoint(obj_checkpoint);
+				else if (obj->IsModified())
+					obj->Initialize();
+			}
 			return true;
 		}
 
 		bool LayerInstance::DoLoadFromCheckpoint(TiledLayerCheckpoint const * checkpoint)
 		{
-			// the triggers
-			size_t trigger_count = trigger_surfaces.size();
-			for (size_t i = 0; i < trigger_count; ++i)
-			{
-				// object in death::TiledMap point of view
-				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
-				if (trigger == nullptr)
-					continue;
-				// object for chaos point of view
-				chaos::TiledMap::GeometricObject * geometric_object = trigger->geometric_object.get();
-				if (geometric_object == nullptr || geometric_object->GetObjectID() < 0)
-					continue;
-				// get checkpoint
-				BaseObjectCheckpoint * trigger_checkpoint = nullptr;
-
-				auto it = checkpoint->trigger_checkpoints.find(geometric_object->GetObjectID());
-				if (it != checkpoint->trigger_checkpoints.end())
-					trigger_checkpoint = it->second.get();
-
-				// -checkpoint found    => use it
-				// -no checkpoint point =>
-				//    -> object is currently modified, restore initial settings
-				if (trigger_checkpoint != nullptr)
-					trigger->LoadFromCheckpoint(trigger_checkpoint);
-				else if (trigger->IsModified())
-					trigger->Initialize();
-			}
-
-
-
-
-
-
-
+			DoLoadFromCheckpointHelper(trigger_surfaces, checkpoint->trigger_checkpoints);
+			DoLoadFromCheckpointHelper(typed_objects, checkpoint->object_checkpoints);
 			return true;
 		}
-
 
 		// =====================================
 		// LevelInstance implementation

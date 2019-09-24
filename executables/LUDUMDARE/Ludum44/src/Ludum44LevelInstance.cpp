@@ -185,35 +185,17 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 
 	scroll_factor = ludum_checkpoint->scroll_factor;
 
-#if 0
-	// enable all triggers
-	death::TiledMap::LayerInstance * trigger_layer_instance = FindLayerInstance("Zones");
-	if (trigger_layer_instance != nullptr)
+	// destroy all bullets and all enemies
+	char const * layer_names[] = { "fire", "Enemies", nullptr };
+	for (int i = 0; layer_names[i] != nullptr; ++i)
 	{
-		size_t count = trigger_layer_instance->GetTriggerSurfaceCount();
-		for (size_t i = 0; i < count; ++i)
+		death::TiledMap::LayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
+		if (layer_instance != nullptr)
 		{
-			death::TiledMap::TriggerSurfaceObject * trigger = trigger_layer_instance->GetTriggerSurface(i);
-			if (trigger != nullptr)
-				trigger->SetEnabled(true);
+			chaos::ParticleLayerBase * particle_layer = layer_instance->GetParticleLayer();
+			if (particle_layer != nullptr)
+				particle_layer->ClearAllAllocations();
 		}
-	}
-#endif
-	// destroy all bullets
-	death::TiledMap::LayerInstance * fire_layer_instance = FindLayerInstance("fire");
-	if (fire_layer_instance != nullptr)
-	{
-		chaos::ParticleLayerBase * particle_layer = fire_layer_instance->GetParticleLayer();
-		if (particle_layer != nullptr)
-			particle_layer->ClearAllAllocations();
-	}
-	// destroy all enemies
-	death::TiledMap::LayerInstance * enemies_layer_instance = FindLayerInstance("Enemies");
-	if (enemies_layer_instance != nullptr)
-	{
-		chaos::ParticleLayerBase * particle_layer = enemies_layer_instance->GetParticleLayer();
-		if (particle_layer != nullptr)
-			particle_layer->ClearAllAllocations();
 	}
 
 	return true;

@@ -292,22 +292,6 @@ namespace death
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
 		};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		// =====================================
 		// Level : a level described by a tiledmap
 		// =====================================
@@ -396,11 +380,31 @@ namespace death
 		};
 
 
+
+
+
+
+
+
+
+
+		// =====================================
+		// TiledLayerCheckpoint
+		// =====================================
+
+		class TiledLayerCheckpoint : public chaos::ReferencedObject
+		{
+			public:
+
+
+		};
+
+
 		// =====================================
 		// LayerInstance : instance of a Layer
 		// =====================================
 
-		class LayerInstance : public chaos::GPURenderable
+		class LayerInstance : public chaos::GPURenderable, public CheckpointObject<TiledLayerCheckpoint>
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -531,6 +535,15 @@ namespace death
 
 			/** initialization */
 			virtual bool Initialize();
+
+			/** override */
+			virtual TiledLayerCheckpoint * DoCreateCheckpoint() const override;
+			/** override */
+			virtual bool DoSaveIntoCheckpoint(TiledLayerCheckpoint * checkpoint) const override;
+			/** override */
+			virtual bool DoLoadFromCheckpoint(TiledLayerCheckpoint const * checkpoint) override;
+
+
 			/** find render material according to its name (or create the default) */
 			chaos::GPURenderMaterial * FindOrCreateRenderMaterial(char const * material_name);
 
@@ -612,6 +625,23 @@ namespace death
 			std::vector<PlayerAndTriggerCollisionRecord> collision_records;
 			/** the previous frame trigger collision with camera */
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> camera_collision_records;
+		};
+
+
+
+
+
+
+
+
+
+		// =====================================
+		// TiledLevelCheckpoint
+		// =====================================
+
+		class TiledLevelCheckpoint : public LevelCheckpoint
+		{
+
 		};
 
 		// =====================================
@@ -698,6 +728,14 @@ namespace death
 
 			/** the default material when not specified */
 			virtual chaos::GPURenderMaterial * GetDefaultRenderMaterial();
+
+			/** override */
+			virtual LevelCheckpoint * DoCreateCheckpoint() const override;
+			/** override */
+			virtual bool DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const override;
+			/** override */
+			virtual bool DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint) override;
+
 
 		protected:
 

@@ -252,6 +252,15 @@ namespace death
 			return true; // continue with other
 		}
 
+
+
+
+
+
+
+
+
+
 		// =====================================
 		// BaseObject implementation
 		// =====================================
@@ -1202,6 +1211,30 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 			return trigger_surfaces[index].get();				
 		}
 
+
+		TiledLayerCheckpoint * LayerInstance::DoCreateCheckpoint() const
+		{
+			return new TiledLayerCheckpoint();
+		}
+
+		bool LayerInstance::DoSaveIntoCheckpoint(TiledLayerCheckpoint * checkpoint) const
+		{
+
+
+
+
+			return true;
+		}
+
+		bool LayerInstance::DoLoadFromCheckpoint(TiledLayerCheckpoint const * checkpoint)
+		{
+
+
+
+			return true;
+		}
+
+
 		// =====================================
 		// LevelInstance implementation
 		// =====================================
@@ -1509,6 +1542,42 @@ particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_b
 				GameLevelInstance::SetInGameMusic();
 			else
 				game->SetInGameMusic(level_music->c_str());
+		}
+
+		LevelCheckpoint * LevelInstance::DoCreateCheckpoint() const
+		{
+			return new TiledLevelCheckpoint();
+		}
+
+		bool LevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
+		{
+			TiledLevelCheckpoint * tiled_level_checkpoint = auto_cast(checkpoint);
+			if (tiled_level_checkpoint == nullptr)
+				return false;
+
+			if (!GameLevelInstance::DoSaveIntoCheckpoint(checkpoint))
+				return false;
+
+
+
+
+
+			return true;
+		}
+
+		bool LevelInstance::DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint)
+		{
+			TiledLevelCheckpoint const * tiled_level_checkpoint = auto_cast(checkpoint);
+			if (tiled_level_checkpoint == nullptr)
+				return false;
+
+			if (!GameLevelInstance::DoLoadFromCheckpoint(checkpoint))
+				return false;
+
+
+
+
+			return true;
 		}
 
 

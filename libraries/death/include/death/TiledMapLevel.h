@@ -185,6 +185,29 @@ namespace death
 
 		public:
 
+			/** constructor */
+			SoundGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+
+		protected:
+
+			/** override */
+			virtual bool Initialize() override;
+			/** override */
+			virtual bool DoTick(double delta_time) override;
+
+		protected:
+
+			/** the name of the sound to play */
+			std::string sound_name;
+
+			/** the range below which the sound volume is the greater */
+			float min_range = 0.0f;
+			/** the range after which the sound volume is 0 */
+			float max_range = 0.0f;
+			/** the duration after which an out of range sound is to be stopped */
+			float stop_duration = 0.0f;
+			/** whether the sound is to be looping or play only once */
+			bool looping = true;
 		};
 
 		// =====================================

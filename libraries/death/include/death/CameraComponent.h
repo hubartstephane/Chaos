@@ -137,4 +137,16 @@ namespace death
 		float zoom_value = 1.0f;
 	};
 
+	// =============================================
+	// SoundListenerCameraComponent
+	// =============================================
+
+	class SoundListenerCameraComponent : public CameraComponent
+	{
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+	};
+
 }; // namespace death

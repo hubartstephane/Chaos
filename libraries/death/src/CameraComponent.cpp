@@ -59,6 +59,8 @@ namespace death
 
 	bool ShakeCameraComponent::DoTick(double delta_time)
 	{
+		CameraComponent::DoTick(delta_time);
+
 		if (current_time >= 0.0f)
 		{
 			current_time += (float)delta_time;
@@ -77,6 +79,8 @@ namespace death
 
 	bool FollowPlayerCameraComponent::DoTick(double delta_time)
 	{
+		CameraComponent::DoTick(delta_time);
+
 		// get the wanted player
 		Player * player = camera->GetPlayer(player_index);
 		if (player == nullptr)
@@ -115,6 +119,8 @@ namespace death
 
 	bool FreeCameraComponent::DoTick(double delta_time)
 	{
+		CameraComponent::DoTick(delta_time);
+
 		// get the wanted player
 		Player * player = camera->GetPlayer(player_index);
 		if (player == nullptr)
@@ -163,6 +169,20 @@ namespace death
 		chaos::box2 result = CameraComponent::ApplyModifier(src);
 		result.half_size *= zoom_value;
 		return result;
+	}
+
+
+	// =============================================
+	// SoundListenerCameraComponent
+	// =============================================
+
+	bool SoundListenerCameraComponent::DoTick(double delta_time)
+	{
+		CameraComponent::DoTick(delta_time);
+
+
+	
+		return true;
 	}
 
 }; // namespace death

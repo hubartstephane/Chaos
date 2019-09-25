@@ -442,6 +442,52 @@ namespace death
 			return true;
 		}
 
+
+
+		// =====================================
+		// SoundGeometricObject implementation
+		// =====================================
+
+		SoundGeometricObject::SoundGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object):
+			GeometricObject(in_layer_instance, in_geometric_object)
+		{
+
+		}
+		
+		bool SoundGeometricObject::Initialize()
+		{
+			if (!GeometricObject::Initialize())
+				return false;			
+			sound_name    = geometric_object->FindPropertyString("SOUND_NAME", nullptr);
+			min_range     = geometric_object->FindPropertyFloat("MIN_RANGE", 0.0f);
+			max_range     = geometric_object->FindPropertyFloat("MAX_RANGE", 0.0f);
+			stop_duration = geometric_object->FindPropertyFloat("STOP_DURATION", 0.0f);
+			looping       = geometric_object->FindPropertyBool("LOOPING", true);
+
+			return true;
+		}
+
+#if 0
+		virtual void setListenerPosition(const vec3df& pos,
+			const vec3df& lookdir,
+			const vec3df& velPerSecond = vec3df(0,0,0),
+			const vec3df& upVector = vec3df(0,1,0)) = 0;
+#endif
+		
+		bool SoundGeometricObject::DoTick(double delta_time)
+		{
+
+			return true;
+		}
+
+
+
+
+
+
+
+
+
 		// =====================================
 		// CameraObject implementation
 		// =====================================

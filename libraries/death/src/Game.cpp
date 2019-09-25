@@ -1640,6 +1640,8 @@ namespace death
 				new_free_camera_component->SetZoomValue(zoom_value);
 				result->AddComponent(new_free_camera_component);
 			}			
+
+			result->AddComponent(new SoundListenerCameraComponent());
 		}
 		return result;
 	}

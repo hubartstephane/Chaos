@@ -43,6 +43,9 @@ namespace chaos
 		/** returns true whether the object is a camera */
 		static bool IsCamera(TiledMap::GeometricObject const * object_geometric);
 
+		/** returns the type of an object */
+		static char const * GetObjectType(TiledMap::GeometricObject const * object_geometric);
+
 		/** try to read world bounding box from object if possible */
 		static bool GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system);
 		/** try to read layer bounding box from object if possible */

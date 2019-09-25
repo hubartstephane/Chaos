@@ -133,13 +133,22 @@ namespace chaos
 		return HasFlag(object_geometric, "layer_bounding_box", "layer_bounding_box", "LAYER_BOUNDING_BOX");
 	}
 
+	char const * TiledMapTools::GetObjectType(TiledMap::GeometricObject const * object_geometric)
+	{
+		assert(object_geometric != nullptr);
+		// the type of the object may be given by the field 'type'
+		if (object_geometric->type.length() > 0)
+			return object_geometric->type.c_str();
+		// or by a property 'OBJECT_TYPE'
+		std::string const * property_string = object_geometric->FindPropertyString("OBJECT_TYPE"); // whatever kind of property it is
+		if (property_string != nullptr && property_string->length() > 0)
+			return property_string->c_str();
+		return nullptr;
+	}
+
 	bool TiledMapTools::IsTypedObject(TiledMap::GeometricObject const * object_geometric)
 	{
-		// the type of the object may be given by the field 'type'
-		if (object_geometric != nullptr && object_geometric->type.length() > 0)
-			return true;
-		// or by a property 'OBJECT_TYPE'
-		return HasFlag(object_geometric, nullptr, nullptr, "OBJECT_TYPE");
+		return (GetObjectType(object_geometric) != nullptr);
 	}
 
 	bool TiledMapTools::IsTriggerSurface(TiledMap::GeometricObject const * object_geometric)

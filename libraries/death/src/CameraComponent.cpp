@@ -180,8 +180,21 @@ namespace death
 	{
 		CameraComponent::DoTick(delta_time);
 
-
-	
+		if (camera != nullptr)
+		{
+			Game * game = camera->GetGame();
+			if (game != nullptr)
+			{
+				chaos::SoundManager * sound_manager = game->GetSoundManager();
+				if (sound_manager != nullptr)					
+				{
+					glm::vec3 position = glm::vec3(camera->GetCameraBox().position, 0.0f);
+					glm::vec3 speed    = glm::vec3(0.0f, 0.0f, 0.0f);
+					glm::mat4 view     = glm::translate(position);					
+					sound_manager->SetListenerPosition(view, speed);
+				}
+			}
+		}
 		return true;
 	}
 

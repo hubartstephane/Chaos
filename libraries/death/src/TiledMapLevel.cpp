@@ -139,9 +139,19 @@ namespace death
 			return new chaos::ParticleLayer<TiledMap::TileParticleTrait>();
 		}
 
+		GeometricObject * Level::DoCreateTypedObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+		{
+			char const * type = chaos::TiledMapTools::GetObjectType(in_geometric_object);
+
+			if (chaos::StringTools::Stricmp(type, "Sound") == 0)
+				return new SoundGeometricObject(in_layer_instance, in_geometric_object);
+
+			return nullptr;
+		}
+
 		TriggerSurfaceObject * Level::DoCreateTriggerSurface(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 		{
-			if (in_geometric_object->name == "Checkpoint")
+			if (chaos::StringTools::Stricmp(in_geometric_object->name, "Checkpoint") == 0)
 				return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 
 
@@ -174,8 +184,8 @@ namespace death
 	DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)
 
 	DEATH_CREATE_OBJECT(TriggerSurfaceObject, CreateTriggerSurface, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
+	DEATH_CREATE_OBJECT(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
 
-	DEATH_CREATE_OBJECT_FULL(GeometricObject, CreateTypedObject, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
 	DEATH_CREATE_OBJECT_FULL(CameraObject, CreateCamera, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
 	DEATH_CREATE_OBJECT_FULL(PlayerStartObject, CreatePlayerStart, LayerInstance * in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject * in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
 	DEATH_CREATE_OBJECT_FULL(LayerInstance, CreateLayerInstance, LevelInstance * in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase * in_layer, in_level_instance BOOST_PP_COMMA() in_layer);
@@ -458,7 +468,7 @@ namespace death
 		{
 			if (!GeometricObject::Initialize())
 				return false;			
-			sound_name    = geometric_object->FindPropertyString("SOUND_NAME", nullptr);
+			sound_name    = geometric_object->FindPropertyString("SOUND_NAME", "");
 			min_range     = geometric_object->FindPropertyFloat("MIN_RANGE", 0.0f);
 			max_range     = geometric_object->FindPropertyFloat("MAX_RANGE", 0.0f);
 			stop_duration = geometric_object->FindPropertyFloat("STOP_DURATION", 0.0f);

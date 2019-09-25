@@ -270,10 +270,20 @@ namespace death
 
 	bool GameLevelInstance::DoTick(double delta_time)
 	{	
-		// update the cameras
+		// update the current camera
+		Camera * current_camera = GetCamera(0);
+		if (current_camera != nullptr)
+			current_camera->Tick(delta_time);
+
+#if 0
 		size_t count = cameras.size();
 		for (size_t i = 0; i < count; ++i)
 			cameras[i]->Tick(delta_time);
+#endif
+
+		// shuxxx
+
+
 
 		bool loop_levels = false;
 		// update the timeout

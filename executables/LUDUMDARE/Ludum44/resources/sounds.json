@@ -34,6 +34,7 @@
     { "path": "sounds/collision.ogg" , "categories" :  "FX"},
     { "path": "sounds/fire.ogg" , "categories" :  "FX"},
     { "path": "sounds/heartbeat.ogg" , "categories" :  "FX"},    
+		{ "path": "sounds/sound_zone.ogg" , "categories" :  "FX"},    
     { "path": "sounds/metallic.ogg" , "categories" :  "FX"},    
     { "path": "sounds/speed_up.ogg" , "categories" :  "Voices"},
     { "path": "sounds/power_up.ogg" , "categories" :  "Voices"},

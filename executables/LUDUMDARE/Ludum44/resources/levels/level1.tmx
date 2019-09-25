@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.0" tiledversion="2017.10.31" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextobjectid="1912">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1916">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -9,8 +9,8 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <objectgroup name="Texts" visible="0" locked="1"/>
- <objectgroup name="Background9" visible="0" locked="1">
+ <objectgroup id="1" name="Texts" visible="0" locked="1"/>
+ <objectgroup id="2" name="Background9" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
@@ -26,7 +26,7 @@
   <object id="1765" name="star" gid="10" x="2663" y="11865" width="40" height="40"/>
   <object id="1766" name="star" gid="10" x="7751" y="12377" width="40" height="40"/>
  </objectgroup>
- <objectgroup name="Background8" visible="0" locked="1">
+ <objectgroup id="3" name="Background8" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
@@ -41,7 +41,7 @@
   <object id="1773" name="star" gid="10" x="4204" y="5868" width="40" height="40"/>
   <object id="1774" name="star" gid="10" x="6956" y="3052" width="40" height="40"/>
  </objectgroup>
- <objectgroup name="Background7" visible="0" locked="1">
+ <objectgroup id="4" name="Background7" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -58,7 +58,7 @@
   <object id="1787" name="star" gid="10" x="10860" y="9580" width="40" height="40"/>
   <object id="1788" name="star" gid="10" x="21036" y="4012" width="40" height="40"/>
  </objectgroup>
- <objectgroup name="Background6" visible="0" locked="1">
+ <objectgroup id="5" name="Background6" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
@@ -73,7 +73,7 @@
   <object id="1794" name="star" gid="10" x="7340" y="10476" width="40" height="40"/>
   <object id="1795" name="star" gid="10" x="3948" y="10860" width="40" height="40"/>
  </objectgroup>
- <objectgroup name="Background5" visible="0" locked="1">
+ <objectgroup id="6" name="Background5" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
@@ -89,7 +89,7 @@
   <object id="1802" name="star" gid="10" x="10860" y="11948" width="40" height="40"/>
   <object id="1803" name="star" gid="10" x="3372" y="10348" width="40" height="40"/>
  </objectgroup>
- <objectgroup name="Background4" locked="1">
+ <objectgroup id="7" name="Background4" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
@@ -99,7 +99,7 @@
   <object id="1805" name="mercury" gid="5" x="4664" y="-5560" width="600" height="600"/>
   <object id="1830" name="star" gid="10" x="-46809" y="21273" width="30" height="30"/>
  </objectgroup>
- <objectgroup name="Background3" locked="1" offsetx="-9280" offsety="-640">
+ <objectgroup id="8" name="Background3" visible="0" locked="1" offsetx="-9280" offsety="-640">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.7"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.7"/>
@@ -109,7 +109,7 @@
   <object id="1833" name="uranus" gid="9" x="-11240" y="-23448" width="2000" height="2000"/>
   <object id="1834" name="star" gid="10" x="-25561" y="-4967" width="30" height="30"/>
  </objectgroup>
- <objectgroup name="Background2" locked="1">
+ <objectgroup id="9" name="Background2" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.8"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.8"/>
@@ -119,7 +119,7 @@
   <object id="1831" name="mars" gid="6" x="-25408" y="-10048" width="6000" height="6000"/>
   <object id="1832" name="star" gid="10" x="-8281" y="20889" width="30" height="30"/>
  </objectgroup>
- <objectgroup name="Background1" locked="1">
+ <objectgroup id="10" name="Background1" visible="0" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.9"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.9"/>
@@ -130,7 +130,7 @@
   <object id="1807" name="earth" gid="3" x="2872" y="-21496" width="2500" height="2500"/>
   <object id="1828" name="star" gid="10" x="-44025" y="1945" width="30" height="30"/>
  </objectgroup>
- <objectgroup name="Zones">
+ <objectgroup id="11" name="Zones">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="power_up"/>
@@ -360,13 +360,23 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
+  <object id="1915" name="SoundZone" x="-4544" y="-8576" width="22080" height="11392">
+   <properties>
+    <property name="OBJECT_TYPE" value="Sound"/>
+    <property name="looping" type="bool" value="true"/>
+    <property name="max_range" type="float" value="0"/>
+    <property name="min_range" type="float" value="0"/>
+    <property name="sound_name" value="sound_zone"/>
+    <property name="stop_duration" type="float" value="0"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup name="Enemies" locked="1">
+ <objectgroup id="12" name="Enemies" visible="0" locked="1">
   <properties>
    <property name="MATERIAL" value="enemy"/>
   </properties>
  </objectgroup>
- <objectgroup name="fire" locked="1">
+ <objectgroup id="13" name="fire" visible="0" locked="1">
   <properties>
    <property name="MATERIAL" value="fire"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>
@@ -374,7 +384,7 @@
    <property name="TRIGGER_SURFACES_ENABLED" type="bool" value="false"/>
   </properties>
  </objectgroup>
- <objectgroup name="PlayerAndCamera" locked="1">
+ <objectgroup id="14" name="PlayerAndCamera" visible="0" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
@@ -392,7 +402,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup name="Explosions" locked="1">
+ <objectgroup id="15" name="Explosions" visible="0" locked="1">
   <properties>
    <property name="MATERIAL" value="explosion"/>
   </properties>

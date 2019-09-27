@@ -52,7 +52,7 @@ namespace chaos
 		template<typename T>
 		friend bool Match(T const & object, char const * in_name) // use template to use NamedObjectWrapper as well as NamedObject
 		{
-			return (StringTools::Strcmp(object.GetName(), in_name) == 0);
+			return (StringTools::Stricmp(object.GetName(), in_name) == 0);
 		}
 		/** test whether the object name/tag match */
 		template<typename T>

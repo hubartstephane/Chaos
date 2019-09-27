@@ -84,7 +84,7 @@ namespace chaos
 			assert(name != nullptr);
 			for (auto & property : properties)
 				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
-					if (StringTools::Strcmp(property->GetName(), name) == 0)
+					if (StringTools::Stricmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
 		}
@@ -94,7 +94,7 @@ namespace chaos
 			assert(name != nullptr);
 			for (auto & property : properties)
 				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
-					if (StringTools::Strcmp(property->GetName(), name) == 0)
+					if (StringTools::Stricmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
 		}
@@ -202,7 +202,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				char const * property_type = (type_attribute != nullptr) ? 
 					type_attribute->Value() : nullptr;
 
-				if (property_type == nullptr || StringTools::Strcmp(property_type, "string") == 0)
+				if (property_type == nullptr || StringTools::Stricmp(property_type, "string") == 0)
 				{
 					char const * value = (value_attribute != nullptr)? value_attribute->Value() : node->GetText();
 					if (value != nullptr)
@@ -210,15 +210,15 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				}
 				else if (value_attribute != nullptr) // now, to this point, value_attribute becomes MANDATORY
 				{
-					if (StringTools::Strcmp(property_type, "int") == 0)
+					if (StringTools::Stricmp(property_type, "int") == 0)
 					{
 						DoInsertProperty(property_name, value_attribute->IntValue());
 					}
-					else if (StringTools::Strcmp(property_type, "float") == 0)
+					else if (StringTools::Stricmp(property_type, "float") == 0)
 					{
 						DoInsertProperty(property_name, value_attribute->FloatValue());
 					}
-					else if (StringTools::Strcmp(property_type, "bool") == 0)
+					else if (StringTools::Stricmp(property_type, "bool") == 0)
 					{
 						DoInsertProperty(property_name, value_attribute->BoolValue());
 					}
@@ -613,7 +613,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			if (element == nullptr)
 				return false;
 
-			if (StringTools::Strcmp(element->Name(), GetXMLMarkupName()) != 0)
+			if (StringTools::Stricmp(element->Name(), GetXMLMarkupName()) != 0)
 				return false;
 
 			return DoLoad(element);
@@ -1139,11 +1139,11 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 				LayerBase * new_layer = nullptr;
 
 				char const * child_name = e->Name();
-				if (StringTools::Strcmp(child_name, "imagelayer") == 0)
+				if (StringTools::Stricmp(child_name, "imagelayer") == 0)
 					new_layer = DoLoadObjectAndInserInList(e, image_layers, this);
-				else if (StringTools::Strcmp(child_name, "objectgroup") == 0)
+				else if (StringTools::Stricmp(child_name, "objectgroup") == 0)
 					new_layer = DoLoadObjectAndInserInList(e, object_layers, this);
-				else if (StringTools::Strcmp(child_name, "layer") == 0)
+				else if (StringTools::Stricmp(child_name, "layer") == 0)
 					new_layer = DoLoadObjectAndInserInList(e, tile_layers, this, tile_size);
 
 				// give a unique ID to the layer according to the order of insertion

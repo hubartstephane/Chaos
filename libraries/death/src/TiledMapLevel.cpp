@@ -154,8 +154,6 @@ namespace death
 			if (chaos::StringTools::Stricmp(in_geometric_object->name, "Checkpoint") == 0)
 				return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 
-
-
 			return new TriggerSurfaceObject(in_layer_instance, in_geometric_object);
 		}
 
@@ -486,6 +484,18 @@ namespace death
 		
 		bool SoundGeometricObject::DoTick(double delta_time)
 		{
+			// try to create the sound
+			if (sound == nullptr && sound_name.length() > 0)
+			{
+				Game * game = layer_instance->GetGame();
+				if (game != nullptr)
+				{
+					sound = game->Play(sound_name.c_str(), false, true);
+
+				}
+			}
+
+
 
 			return true;
 		}

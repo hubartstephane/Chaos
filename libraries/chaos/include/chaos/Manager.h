@@ -45,7 +45,7 @@ namespace chaos
 				auto object = objects[i].get();
 				if (object == nullptr)
 					continue;
-				if (StringTools::Strcmp(object->GetName(), name) == 0)
+				if (StringTools::Stricmp(object->GetName(), name) == 0)
 					return object;
 			}
 			return nullptr;

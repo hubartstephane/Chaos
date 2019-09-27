@@ -15,6 +15,7 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/CollisionFramework.h>
+#include <chaos/SoundManager.h>
 
 namespace death
 {
@@ -208,6 +209,9 @@ namespace death
 			float stop_duration = 0.0f;
 			/** whether the sound is to be looping or play only once */
 			bool looping = true;
+
+			/** the sound being played */
+			chaos::shared_ptr<chaos::Sound> sound;
 		};
 
 		// =====================================

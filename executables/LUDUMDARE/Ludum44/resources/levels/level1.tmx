@@ -363,6 +363,7 @@
   <object id="1915" name="SoundZone" x="-4544" y="-8576" width="22080" height="11392">
    <properties>
     <property name="OBJECT_TYPE" value="Sound"/>
+    <property name="SOUND_NAME" value="sound_zone"/>
     <property name="looping" type="bool" value="true"/>
     <property name="max_range" type="float" value="0"/>
     <property name="min_range" type="float" value="0"/>

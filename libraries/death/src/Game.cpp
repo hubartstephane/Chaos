@@ -776,6 +776,11 @@ namespace death
 	chaos::Sound * Game::SetInGameMusic(char const * music_name)
 	{
 		assert(music_name != nullptr);
+
+#if _DEBUG
+		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))
+			return nullptr;
+#endif
 		
 		// ensure there is a real music change
 		if (game_music != nullptr && !game_music->IsPendingKill())
@@ -1049,6 +1054,12 @@ namespace death
 			}
 		}
 		// start the music
+
+#if _DEBUG
+		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))
+			menu_music = nullptr;
+		else
+#endif
 		menu_music = Play("menu_music", false, true);
 		game_music = nullptr;
 		pause_music = nullptr;
@@ -1082,6 +1093,11 @@ namespace death
 	bool Game::OnEnterPause()
 	{
 		// start sound
+#if _DEBUG
+		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))
+			pause_music = nullptr;
+		else
+#endif
 		pause_music = Play("pause_music", false, true);
 		// internal code
 		CreatePauseMenuHUD();

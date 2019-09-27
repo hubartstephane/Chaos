@@ -490,11 +490,39 @@ namespace death
 				Game * game = layer_instance->GetGame();
 				if (game != nullptr)
 				{
-					sound = game->Play(sound_name.c_str(), false, true);
+					chaos::box2 box = geometric_object->GetObjectSurface()->GetBoundingBox(true);
+
+					chaos::PlaySoundDesc play_desc;
+					play_desc.paused = false;
+					play_desc.looping = true;
+					play_desc.blend_in_time = 0.0f;
+					play_desc.SetPosition(glm::vec3(box.position, 0.0f));
+
+					
+
+					//play_desc.min_distance = glm::length(box.half_size) * 0.5f;
+					//play_desc.max_distance = glm::length(box.half_size);
+
+					play_desc.max_distance = 500.0f;
+					play_desc.min_distance = 2000.0f;
+
+
+					sound = game->Play(sound_name.c_str(), play_desc);
 
 				}
 			}
 
+			if (sound != nullptr)
+			{
+				Game * game = layer_instance->GetGame();
+				if (game != nullptr)
+				{
+					auto manager = game->GetSoundManager();
+
+
+				}
+
+			}
 
 
 			return true;

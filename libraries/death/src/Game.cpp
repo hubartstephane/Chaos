@@ -811,7 +811,7 @@ namespace death
 		return game_music.get();
 	}
 
-	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_in_time)
+	chaos::Sound * Game::Play(char const * name, chaos::PlaySoundDesc play_desc)
 	{
 		// search manager
 		chaos::SoundManager * sound_manager = GetSoundManager();
@@ -821,11 +821,6 @@ namespace death
 		chaos::SoundSource * source = sound_manager->FindSource(name);
 		if (source == nullptr)
 			return nullptr;
-
-		chaos::PlaySoundDesc play_desc;
-		play_desc.paused = paused;
-		play_desc.looping = looping;
-		play_desc.blend_in_time = blend_in_time;
 
 		// Flag some sounds as "in_game"
 		//
@@ -840,9 +835,25 @@ namespace death
 			if (category != nullptr && !category->IsPendingKill())
 				play_desc.categories.push_back(category);
 		}
-
 		return source->Play(play_desc);
 	}
+
+	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_in_time)
+	{
+		chaos::PlaySoundDesc play_desc;
+		play_desc.paused = paused;
+		play_desc.looping = looping;
+		play_desc.blend_in_time = blend_in_time;
+
+		return Play(name, play_desc);
+	}
+
+
+
+
+
+
+
 
 	bool Game::InitializeSoundManager()
 	{
@@ -1504,7 +1515,7 @@ namespace death
 		// free camera points an invalid 'level_instance'
 		if (free_camera != nullptr)
 		{
-			if (new_level != nullptr && new_level->GetLevelIndex() == old_level->GetLevelIndex()) // level unchanged : want to keep free cam position
+			if (new_level != nullptr && old_level != nullptr && new_level->GetLevelIndex() == old_level->GetLevelIndex()) // level unchanged : want to keep free cam position
 				free_camera = DoCreateFreeCamera(free_camera.get(), new_level_instance);
 			else
 				free_camera = nullptr; // the camera will be created at next tick

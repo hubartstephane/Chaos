@@ -457,10 +457,10 @@ namespace death
 			/** find the trigger surface from its name */
 			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
 
-			/** find the typed object from its name */
-			GeometricObject * FindTypedObject(char const * name);
-			/** find the typed object surface from its name */
-			GeometricObject const * FindTypedObject(char const * name) const;
+			/** find the geometric object from its name */
+			GeometricObject * FindGeometricObject(char const * name);
+			/** find the geometric object surface from its name */
+			GeometricObject const * FindGeometricObject(char const * name) const;
 
 			/** get the bounding box for the level */
 			chaos::box2 GetBoundingBox(bool world_system) const;
@@ -627,7 +627,7 @@ namespace death
 			/** the trigger surface */
 			std::vector<chaos::shared_ptr<TriggerSurfaceObject>> trigger_surfaces;
 			/** the geometric objects */
-			std::vector<chaos::shared_ptr<GeometricObject>> typed_objects;
+			std::vector<chaos::shared_ptr<GeometricObject>> geometric_objects;
 
 			/** the bounding box of the layer */
 			chaos::box2 bounding_box;
@@ -704,9 +704,9 @@ namespace death
 			/** find the trigger surface from its name */
 			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
 			/** find the typed object from its name */
-			GeometricObject * FindTypedObject(char const * name);
+			GeometricObject * FindGeometricObject(char const * name);
 			/** find the typed object surface from its name */
-			GeometricObject const * FindTypedObject(char const * name) const;
+			GeometricObject const * FindGeometricObject(char const * name) const;
 
 			/** get the bounding box for the level (in worls system obviously) */
 			virtual chaos::box2 GetBoundingBox() const override;

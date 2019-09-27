@@ -571,6 +571,8 @@ namespace death
 		bool Level::OnPlayerTileCollision(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
 		{
 
+			// shucollision
+
 			return true; // continue with other
 		}
 
@@ -815,7 +817,7 @@ namespace death
 				if (trigger != nullptr)
 					trigger_surfaces.push_back(trigger);
 				else
-					typed_objects.push_back(object);
+					geometric_objects.push_back(object);
 				return object;
 			}
 			return nullptr;
@@ -1047,6 +1049,14 @@ namespace death
 
 		bool LayerInstance::ComputeCameraCollisionWithSurfaceTriggers(double delta_time, chaos::box2 const & camera_box)
 		{
+
+
+			// shucollision
+
+
+
+
+
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
 
@@ -1093,6 +1103,15 @@ namespace death
 
 		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
+
+
+			// shucollision
+
+
+
+
+
+
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
 			// the previous colliding triggers
@@ -1152,6 +1171,20 @@ namespace death
 
 		bool LayerInstance::ComputePlayerTileCollisions(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
+
+			// shucollision
+
+
+
+
+
+
+
+
+
+
+
+
 			TiledMap::Level * level = GetTiledLevel();
 
 			return FindTileCollisions(player_particle->bounding_box, [this, delta_time, player, player_particle, level](TileParticle & tile_particle)
@@ -1170,7 +1203,6 @@ namespace death
 		bool LayerInstance::DoTick(double delta_time)
 		{
 			// tick the game objects
-#if 1
 			size_t player_start_count = player_starts.size();
 			for (size_t i = 0; i < player_start_count; ++i)
 				player_starts[i]->Tick(delta_time);
@@ -1178,15 +1210,14 @@ namespace death
 			size_t camera_count = cameras.size();
 			for (size_t i = 0; i < camera_count; ++i)
 				cameras[i]->Tick(delta_time);
-#endif
 
 			size_t trigger_count = trigger_surfaces.size();
 			for (size_t i = 0; i < trigger_count; ++i)
 				trigger_surfaces[i]->Tick(delta_time);
 
-			size_t typed_count = typed_objects.size();
-			for (size_t i = 0; i < typed_count; ++i)
-				typed_objects[i]->Tick(delta_time);
+			size_t geometric_count = geometric_objects.size();
+			for (size_t i = 0; i < geometric_count; ++i)
+				geometric_objects[i]->Tick(delta_time);
 
 			// tick the particles
 			if (particle_layer != nullptr)
@@ -1277,8 +1308,8 @@ namespace death
 				return member_vector[0].get();\
 			return NamedObject::FindNamedObject(member_vector, name);\
 		}
-		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, typed_objects, BOOST_PP_EMPTY());
-		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, typed_objects, const);
+		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
+		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, const);
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, const);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, BOOST_PP_EMPTY());
@@ -1340,7 +1371,7 @@ namespace death
 		bool LayerInstance::DoSaveIntoCheckpoint(TiledLayerCheckpoint * checkpoint) const
 		{
 			DoSaveIntoCheckpointHelper(trigger_surfaces, checkpoint->trigger_checkpoints);
-			DoSaveIntoCheckpointHelper(typed_objects, checkpoint->object_checkpoints);
+			DoSaveIntoCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
 			return true;
 		}
 
@@ -1379,7 +1410,7 @@ namespace death
 		bool LayerInstance::DoLoadFromCheckpoint(TiledLayerCheckpoint const * checkpoint)
 		{
 			DoLoadFromCheckpointHelper(trigger_surfaces, checkpoint->trigger_checkpoints);
-			DoLoadFromCheckpointHelper(typed_objects, checkpoint->object_checkpoints);
+			DoLoadFromCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
 			return true;
 		}
 
@@ -1397,9 +1428,9 @@ namespace death
 			for (size_t i = 0; i < trigger_count; ++i)
 				trigger_surfaces[i]->OnLevelEnded();
 
-			size_t object_count = typed_objects.size();
+			size_t object_count = geometric_objects.size();
 			for (size_t i = 0; i < object_count; ++i)
-				typed_objects[i]->OnLevelEnded();
+				geometric_objects[i]->OnLevelEnded();
 		}
 
 		void LayerInstance::OnLevelStarted()
@@ -1416,9 +1447,9 @@ namespace death
 			for (size_t i = 0; i < trigger_count; ++i)
 				trigger_surfaces[i]->OnLevelStarted();
 
-			size_t object_count = typed_objects.size();
+			size_t object_count = geometric_objects.size();
 			for (size_t i = 0; i < object_count; ++i)
-				typed_objects[i]->OnLevelStarted();
+				geometric_objects[i]->OnLevelStarted();
 		}
 
 		// =====================================
@@ -1453,6 +1484,8 @@ namespace death
 
 		void LevelInstance::ComputePlayerAndCameraCollision(double delta_time)
 		{
+			// shucollision
+
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
 				layer_instances[i]->ComputePlayerAndCameraCollision(delta_time);
@@ -1567,8 +1600,8 @@ namespace death
 			}\
 			return nullptr;\
 		}
-		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, BOOST_PP_EMPTY());
-		DEATH_FIND_OBJECT(GeometricObject, FindTypedObject, const);
+		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, BOOST_PP_EMPTY());
+		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, const);
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, const);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, BOOST_PP_EMPTY());

@@ -571,6 +571,27 @@ namespace chaos
 				irrklang_sound->setVelocity(IrrklangTools::ToIrrklangVector(in_velocity));
 	}
 
+	float Sound::Get3DVolumeModifier() const
+	{
+		if (is_3D_sound && min_distance > 0.0f && max_distance >= min_distance)
+		{
+			glm::vec3 listener_position = sound_manager->listener_transform[3];
+
+			float distance = glm::distance(position, listener_position);
+
+			float distance_volume = 1.0f;
+			if (distance < min_distance)
+				distance_volume = 1.0f;
+			else if (distance > max_distance)
+				distance_volume = 0.0f;
+			else
+				distance_volume = 1.0f - ((distance - min_distance) / (max_distance - min_distance));
+
+			return distance_volume;
+		}
+		return 1.0f;
+	}
+
 	float Sound::GetEffectiveVolume() const
 	{
 		float result = SoundObject::GetEffectiveVolume();
@@ -584,25 +605,8 @@ namespace chaos
 			if (source != nullptr)
 				result *= source->GetEffectiveVolume();
 		// 3D volume affect
-		if (result > 0.0f && is_3D_sound)
-		{
-			if (min_distance > 0.0f && max_distance >= min_distance)
-			{
-				glm::vec3 listener_position = sound_manager->listener_transform[3];
-
-				float distance = glm::distance(position, listener_position);
-
-				float distance_volume = 1.0f;
-				if (distance < min_distance)
-					distance_volume = 1.0f;
-				else if (distance > max_distance)
-					distance_volume = 0.0f;
-				else
-					distance_volume = 1.0f - ((distance - min_distance) / (max_distance - min_distance));
-				
-				result *= distance_volume;
-			}
-		}
+		if (result > 0.0f)
+			result *= Get3DVolumeModifier();
 		return result;
 	}
 

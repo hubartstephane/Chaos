@@ -48,7 +48,7 @@ public:
 	/** constructor */
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
-	virtual bool IsTileCreationEnabled() const override;
+	virtual bool IsAdditionalParticlesCreationEnabled() const override;
 
 protected:
 
@@ -71,7 +71,7 @@ public:
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
 	/** override */
-	virtual bool IsTileCreationEnabled() const override;
+	virtual bool IsAdditionalParticlesCreationEnabled() const override;
 
 protected:
 
@@ -93,7 +93,7 @@ public:
 	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
 
 	/** override */
-	virtual bool IsTileCreationEnabled() const override;
+	virtual bool IsAdditionalParticlesCreationEnabled() const override;
 	/** override */
 	virtual bool Initialize() override;
 
@@ -127,7 +127,7 @@ protected:
 
 	virtual chaos::ParticleLayerBase * CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance) override;
 
-	virtual death::TiledMap::TriggerSurfaceObject * DoCreateTriggerSurface(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
+	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
 	virtual bool OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle) override;
 

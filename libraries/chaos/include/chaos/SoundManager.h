@@ -369,6 +369,9 @@ namespace chaos
 		/** override */
 		virtual void DoUpdateEffectivePause(bool effective_pause);
 
+		/** get volume modifier due to distance for 3D sounds */
+		float Get3DVolumeModifier() const;
+
 		/** update irrklang state */
 		void DoUpdateIrrklangPause(bool effective_pause);
 

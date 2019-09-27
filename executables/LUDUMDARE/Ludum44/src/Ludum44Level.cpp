@@ -9,7 +9,7 @@
 #include <chaos/GeometryFramework.h>
 
 // =============================================================
-// IsTileCreationEnabled
+// IsAdditionalParticlesCreationEnabled
 // =============================================================
 
 static bool IsDefaultTileCreationEnabled()
@@ -22,17 +22,17 @@ static bool IsDefaultTileCreationEnabled()
 #endif	
 }
 
-bool FinishingTriggerSurfaceObject::IsTileCreationEnabled() const
+bool FinishingTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
 {
 	return IsDefaultTileCreationEnabled();
 }
 
-bool SpeedUpTriggerSurfaceObject::IsTileCreationEnabled() const
+bool SpeedUpTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
 {
 	return IsDefaultTileCreationEnabled();
 }
 
-bool SpawnerTriggerSurfaceObject::IsTileCreationEnabled() const
+bool SpawnerTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
 {
 	return IsDefaultTileCreationEnabled();
 }
@@ -110,18 +110,18 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 }
 
 
-death::TiledMap::TriggerSurfaceObject * LudumLevel::DoCreateTriggerSurface(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
 	if (in_geometric_object->name == "Finish")
 		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 	if (in_geometric_object->name == "PowerUp")
-		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsTileCreationEnabled() => true
+		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsAdditionalParticlesCreationEnabled() => true
 	if (in_geometric_object->name == "SpeedUp")
 		return new SpeedUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 	if (in_geometric_object->name == "Spawner")
 		return new SpawnerTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 
-	return death::TiledMap::Level::DoCreateTriggerSurface(in_layer_instance, in_geometric_object);
+	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 
 

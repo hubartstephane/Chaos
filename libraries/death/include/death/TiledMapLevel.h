@@ -39,36 +39,6 @@ namespace death
 #define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
 
 		// =====================================
-		// BoxScissoringWithRepetitionResult : an utility object to compute instances in 2D of a box that collide a given scissor
-		// =====================================
-
-		class BoxScissoringWithRepetitionResult
-		{
-		public:
-
-			/** constructor */
-			BoxScissoringWithRepetitionResult(chaos::box2 const & in_target_box, chaos::box2 const & in_scissor_box, bool in_wrap_x, bool in_wrap_y);
-
-			/** offset of a given instance */
-			glm::vec2 GetInstanceOffset(glm::ivec2 const & index) const;
-
-		public:
-
-			/** the 'index' of the first instance to render/collide ... (included) */
-			glm::ivec2 start_instance = glm::ivec2(0, 0);
-			/** the 'index' of the last instance to render/collide ... (excluded) */
-			glm::ivec2 last_instance = glm::ivec2(0, 0);
-			/** copy of the construction parameters */
-			chaos::box2 target_box;;
-			/** copy of the construction parameters */
-			chaos::box2 scissor_box;
-			/** copy of the construction parameters */
-			bool wrap_x = false;
-			/** copy of the construction parameters */
-			bool wrap_y = false;
-		};
-
-		// =====================================
 		// BaseObjectCheckpoint
 		// =====================================
 
@@ -131,6 +101,8 @@ namespace death
 
 			/** additionnal initialization */
 			virtual bool Initialize();
+			/** enable the creation of additionnal particles */
+			virtual bool IsAdditionalParticlesCreationEnabled() const { return true; }
 
 		protected:
 
@@ -193,18 +165,15 @@ namespace death
 
 			/** override */
 			virtual bool Initialize() override;
-			/** override */
-			virtual bool DoTick(double delta_time) override;
+
+			/** the sound creation method */
+			chaos::Sound * CreateSound() const;
 
 		protected:
 
 			/** the name of the sound to play */
 			std::string sound_name;
 
-			/** the range below which the sound volume is the greater */
-			float min_range = 0.0f;
-			/** the range after which the sound volume is 0 */
-			float max_range = 0.0f;
 			/** the duration after which an out of range sound is to be stopped */
 			float stop_duration = 0.0f;
 			/** whether the sound is to be looping or play only once */
@@ -232,7 +201,7 @@ namespace death
 		// TriggerSurfaceObject : an object player can collide with (for moment, rectangle)
 		// =====================================
 
-		class TriggerSurfaceObject : public GeometricObject
+		class TriggerSurfaceObject : public GeometricObject // shuxxx
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -265,7 +234,7 @@ namespace death
 			virtual bool IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const;
 
 			/** enable the creation of tile for this trigger */
-			virtual bool IsTileCreationEnabled() const {return true;}
+			virtual bool IsAdditionalParticlesCreationEnabled() const {return true;}
 
 		protected:
 
@@ -309,7 +278,7 @@ namespace death
 			/** constructor */
 			using TriggerSurfaceObject::TriggerSurfaceObject;
 			/** override */
-			virtual bool IsTileCreationEnabled() const override;
+			virtual bool IsAdditionalParticlesCreationEnabled() const override;
 			/** override */
 			virtual bool Initialize() override;
 
@@ -318,6 +287,38 @@ namespace death
 			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
 		};
+
+		// =================================================
+		// SoundTriggerSurfaceObject
+		// =================================================
+
+		class SoundTriggerSurfaceObject : public TriggerSurfaceObject
+		{
+
+		public:
+
+			/** constructor */
+			using TriggerSurfaceObject::TriggerSurfaceObject;
+			/** override */
+			virtual bool IsAdditionalParticlesCreationEnabled() const override;
+			/** override */
+			virtual bool Initialize() override;
+
+		protected:
+
+			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
+			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+		};
+
+
+
+
+
+
+
+
+
+
 
 		// =====================================
 		// Level : a level described by a tiledmap
@@ -347,9 +348,7 @@ namespace death
 
 
 			/** create a typed object specializable method */
-			virtual GeometricObject * DoCreateTypedObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
-			/** create a TriggerSurface specializable method */
-			virtual TriggerSurfaceObject * DoCreateTriggerSurface(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+			virtual GeometricObject * DoCreateGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a Camera specializable method */
 			virtual CameraObject * DoCreateCamera(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a PlayerStartObject specializable method */
@@ -358,9 +357,7 @@ namespace death
 			virtual LayerInstance * DoCreateLayerInstance(LevelInstance * in_level_instance, chaos::TiledMap::LayerBase * in_layer);
 
 			/** create a typed object 'entry point' */
-			GeometricObject * CreateTypedObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
-			/** create a TriggerSurface 'entry point' */
-			TriggerSurfaceObject * CreateTriggerSurface(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+			GeometricObject * CreateGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a camera 'entry point' */
 			CameraObject * CreateCamera(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 			/** create a player start 'entry point' */
@@ -596,6 +593,11 @@ namespace death
 			bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer * object_layer);
 			/** specialized layer */
 			bool InitializeTileLayer(chaos::TiledMap::TileLayer * tile_layer);
+
+			/** create an object in an object layer */
+			GeometricObject * CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
+			/** create an object in an object layer */
+			void CreateAdditionalObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator & particle_populator);
 
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();

@@ -208,6 +208,12 @@ namespace chaos
 
 		int Stricmp(char const * src1, char const * src2)
 		{
+			// special cases
+			if (src1 == nullptr)
+				src1 = "";
+			if (src2 == nullptr)
+				src2 = "";
+			// standard
 			return _strcmpi(src1, src2);
 		}
 		int Stricmp(char const * src1, std::string const & src2)

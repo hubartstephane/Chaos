@@ -111,10 +111,10 @@ namespace chaos
 	{
 		assert(object_geometric != nullptr);
 		// name is an indicator
-		if (name != nullptr && object_geometric->name == name)
+		if (name != nullptr && chaos::StringTools::Stricmp(object_geometric->name, name) == 0)
 			return true;
 		// type is an indicator
-		if (type != nullptr && object_geometric->type == type)
+		if (type != nullptr && chaos::StringTools::Stricmp(object_geometric->type, type) == 0)
 			return true;
 		// search in properties
 		TiledMap::PropertyOwner const * property_owner = object_geometric;

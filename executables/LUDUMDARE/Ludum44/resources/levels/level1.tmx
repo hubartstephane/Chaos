@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1916">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1924">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -360,7 +360,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1915" name="SoundZone" x="-4544" y="-8576" width="22080" height="11392">
+  <object id="1915" name="SoundZone" x="960" y="448" width="10176" height="9728">
    <properties>
     <property name="OBJECT_TYPE" value="Sound"/>
     <property name="SOUND_NAME" value="sound_zone"/>

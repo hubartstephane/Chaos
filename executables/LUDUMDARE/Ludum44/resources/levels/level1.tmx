@@ -367,7 +367,6 @@
     <property name="looping" type="bool" value="true"/>
     <property name="max_range" type="float" value="0"/>
     <property name="min_range" type="float" value="0"/>
-    <property name="sound_name" value="sound_zone"/>
     <property name="stop_duration" type="float" value="0"/>
    </properties>
   </object>

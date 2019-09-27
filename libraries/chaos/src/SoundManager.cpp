@@ -763,7 +763,25 @@ namespace chaos
 		irrklang_engine = irrklang::createIrrKlangDevice();
 		if (irrklang_engine == nullptr)
 			return false;
-		irrklang_engine->drop(); // suppress the extra reference
+		// XXX : note on 3D sounds
+		//       3D sounds for irrklang have no finite limit (where the volume becomes 0.0f)
+		//       instead you have a MinDistance & MaxDistance
+		//       after MaxDistance the volume does not decrease any more and is greater than 0
+		//       for our purpose, we do not want to have infinite distance sound
+		//
+		//       we can use   setRolloffFactor(...) to indicate to irrklang how volume decrease with distance
+		//       (0 means that volume does not decrease at all => we can compute ourselves how to fixe the volume, 
+		//       and so we can choose a finite limite after which sound can not be heard anymore)
+		//
+		//       So, why still use 3D sounds ???
+		//       => because irrklang use your output devices to spacialize the sound
+		//          sounds on the left are played on the left device :) and so on
+		//
+		//       It's a shame but you cannot set a    setRolloffFactor(...) factor     per sound
+		//       It is for the whole engine !
+		irrklang_engine->setRolloffFactor(0.0f);
+		// suppress the extra reference
+		irrklang_engine->drop(); 
 
 		return true;
 	}

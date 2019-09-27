@@ -28,7 +28,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (CheckpointTriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundGeometricObject)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (CheckpointTriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundTriggerSurfaceObject)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -152,66 +152,12 @@ namespace death
 			/** override */
 			virtual bool Initialize() override;
 		};
-
-		// =====================================
-		// SoundObject : an object that play a sound
-		// =====================================
-
-		class SoundGeometricObject : public GeometricObject
-		{
-			DEATH_TILEDLEVEL_ALL_FRIENDS
-
-		public:
-
-			/** inherit constructor */
-			using GeometricObject::GeometricObject;
-
-		protected:
-
-			/** override */
-			virtual bool Initialize() override;
-			/** override */
-			virtual void OnLevelStarted() override;
-			/** override */
-			virtual void OnLevelEnded() override;
-			/** the sound creation method */
-			chaos::Sound * CreateSound() const;
-
-
-
-		protected:
-
-			/** the name of the sound to play */
-			std::string sound_name;
-
-			/** the duration after which an out of range sound is to be stopped */
-			float stop_duration = 0.0f;
-			/** whether the sound is to be looping or play only once */
-			bool looping = true;
-
-			/** the sound being played */
-			chaos::shared_ptr<chaos::Sound> sound;
-		};
-
-		// =====================================
-		// TriggerSurfaceObjectCheckpoint
-		// =====================================
-
-		class TriggerSurfaceObjectCheckpoint : public BaseObjectCheckpoint
-		{
-		public:
-
-			/** flag whether to object is enabled or not */
-			bool enabled = true;
-			/** flag whether to can only trigger once */
-			bool trigger_once = false;
-		};
 		
 		// =====================================
 		// TriggerSurfaceObject : an object player can collide with (for moment, rectangle)
 		// =====================================
 
-		class TriggerSurfaceObject : public GeometricObject // shuxxx
+		class TriggerSurfaceObject : public GeometricObject
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -275,6 +221,19 @@ namespace death
 			float outside_box_factor = 1.0f;
 		};
 
+		// =====================================
+		// TriggerSurfaceObjectCheckpoint
+		// =====================================
+
+		class TriggerSurfaceObjectCheckpoint : public BaseObjectCheckpoint
+		{
+		public:
+
+			/** flag whether to object is enabled or not */
+			bool enabled = true;
+			/** flag whether to can only trigger once */
+			bool trigger_once = false;
+		};
 
 		// =================================================
 		// CheckpointTriggerSurfaceObject
@@ -299,7 +258,7 @@ namespace death
 		};
 
 		// =================================================
-		// SoundTriggerSurfaceObject
+		// SoundTriggerSurfaceObject : an object that play a sound
 		// =================================================
 
 		class SoundTriggerSurfaceObject : public TriggerSurfaceObject
@@ -311,13 +270,33 @@ namespace death
 			using TriggerSurfaceObject::TriggerSurfaceObject;
 			/** override */
 			virtual bool IsAdditionalParticlesCreationEnabled() const override;
-			/** override */
-			virtual bool Initialize() override;
 
 		protected:
 
-			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
+			/** override */
+			virtual bool Initialize() override;
+			/** override */
+			virtual void OnLevelStarted() override;
+			/** override */
+			virtual void OnLevelEnded() override;
+			/** override */
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+
+			/** the sound creation method */
+			chaos::Sound * CreateSound() const;
+
+		protected:
+
+			/** the name of the sound to play */
+			std::string sound_name;
+
+			/** the duration after which an out of range sound is to be stopped */
+			float stop_duration = 0.0f;
+			/** whether the sound is to be looping or play only once */
+			bool looping = true;
+
+			/** the sound being played */
+			chaos::shared_ptr<chaos::Sound> sound;
 		};
 
 
@@ -412,15 +391,6 @@ namespace death
 			/** all the triggers colliding */
 			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
 		};
-
-
-
-
-
-
-
-
-
 
 		// =====================================
 		// TiledLayerCheckpoint

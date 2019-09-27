@@ -14,6 +14,298 @@ namespace death
 	namespace TiledMap
 	{
 		// =====================================
+		// BaseObject implementation
+		// =====================================
+
+		BaseObject::BaseObject(class LayerInstance * in_layer_instance) :
+			layer_instance(in_layer_instance)
+		{
+			assert(in_layer_instance != nullptr);
+		}
+
+		// =====================================
+		// GeometricObject implementation
+		// =====================================
+
+		GeometricObject::GeometricObject(class LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
+			BaseObject(in_layer_instance),
+			geometric_object(in_geometric_object)
+
+		{
+			assert(in_geometric_object != nullptr);
+		}
+
+		bool GeometricObject::Initialize()
+		{
+			name = geometric_object->name;
+			return true;
+		}
+
+
+		// =====================================
+		// TriggerSurfaceObject implementation
+		// =====================================
+
+		bool TriggerSurfaceObject::Initialize()
+		{
+			if (!GeometricObject::Initialize())
+				return false;
+			enabled = geometric_object->FindPropertyBool("ENABLED", true);
+			trigger_once = geometric_object->FindPropertyBool("TRIGGER_ONCE", false);
+			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", 0);
+			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", 1.0f);
+			return true;
+		}
+
+		chaos::box2 TriggerSurfaceObject::GetBoundingBox(bool world_system) const
+		{
+			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
+			if (surface == nullptr)
+				return chaos::box2();
+			chaos::box2 result = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
+			if (world_system)
+				result.position += layer_instance->GetLayerOffset();
+			return result;
+		}
+
+		bool TriggerSurfaceObject::IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const
+		{
+			chaos::box2 box = GetBoundingBox(true);
+
+			if (outside_box_factor > 1.0f) // the box is bigger when we want to go outside !
+			{
+				// search whether we were already colliding with
+				if (triggers != nullptr)
+					if (std::find(triggers->begin(), triggers->end(), this) != triggers->end()) // we where already colliding the object
+						box.half_size *= outside_box_factor;
+			}
+			return chaos::Collide(other_box, box);
+		}
+
+		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		{
+			return true; // collisions handled successfully
+		}
+
+		bool TriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		{
+			return true; // collisions handled successfully
+		}
+
+		void TriggerSurfaceObject::SetEnabled(bool in_enabled)
+		{
+			enabled = in_enabled;
+			SetModified();
+		}
+
+		void TriggerSurfaceObject::SetTriggerOnce(bool in_trigger_once)
+		{
+			trigger_once = in_trigger_once;
+			SetModified();
+		}
+
+		BaseObjectCheckpoint * TriggerSurfaceObject::DoCreateCheckpoint() const
+		{
+			return new TriggerSurfaceObjectCheckpoint();
+		}
+
+		bool TriggerSurfaceObject::DoSaveIntoCheckpoint(BaseObjectCheckpoint * checkpoint) const
+		{
+			TriggerSurfaceObjectCheckpoint * trigger_checkpoint = auto_cast(checkpoint);
+			if (trigger_checkpoint == nullptr)
+				return false;
+
+			if (!GeometricObject::DoSaveIntoCheckpoint(checkpoint))
+				return false;
+
+			trigger_checkpoint->enabled = enabled;
+			trigger_checkpoint->trigger_once = trigger_once;
+
+			return true;
+		}
+
+		bool TriggerSurfaceObject::DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint)
+		{
+			TriggerSurfaceObjectCheckpoint const * trigger_checkpoint = auto_cast(checkpoint);
+			if (trigger_checkpoint == nullptr)
+				return false;
+
+			if (!GeometricObject::DoLoadFromCheckpoint(checkpoint))
+				return false;
+
+			enabled = trigger_checkpoint->enabled;
+			trigger_once = trigger_checkpoint->trigger_once;
+
+			return true;
+		}
+
+		// =============================================================
+		// CheckPointTriggerSurfaceObject implementation
+		// =============================================================
+
+		bool CheckpointTriggerSurfaceObject::Initialize()
+		{
+			if (!TriggerSurfaceObject::Initialize())
+				return false;
+			trigger_once = true; // XXX : keep or not ? seems normal
+			return true;
+		}
+
+		bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		{
+			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+				return false;
+
+			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
+			if (surface == nullptr)
+				return true;
+
+			GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
+			if (game_instance != nullptr)
+				game_instance->CreateRespawnCheckpoint();
+
+			return true; // collisions handled successfully
+		}
+
+		bool CheckpointTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+		{
+			return false;
+		}
+
+		// =====================================
+		// PlayerStartObject implementation
+		// =====================================
+
+		bool PlayerStartObject::Initialize()
+		{
+			if (!GeometricObject::Initialize())
+				return false;
+			return true;
+		}
+
+		// =====================================
+		// SoundGeometricObject implementation
+		// =====================================
+
+		bool SoundTriggerSurfaceObject::Initialize()
+		{
+			if (!TriggerSurfaceObject::Initialize())
+				return false;
+			trigger_once = true; // XXX : keep or not ? seems normal
+
+			sound_name = geometric_object->FindPropertyString("SOUND_NAME", "");
+			//autopause_delay = geometric_object->FindPropertyFloat("AUTOPAUSE_DELAY", 0.0f);
+			//autopause = geometric_object->FindPropertyFloat("AUTOPAUSE", 0.0f);
+			looping = geometric_object->FindPropertyBool("LOOPING", true);
+
+			return true;
+		}
+
+		void SoundTriggerSurfaceObject::OnLevelStarted()
+		{
+			sound = CreateSound();
+		}
+
+		void SoundTriggerSurfaceObject::OnLevelEnded()
+		{
+			if (sound != nullptr)
+			{
+				sound->Stop();
+				sound = nullptr;
+			}
+		}
+
+		chaos::Sound * SoundTriggerSurfaceObject::CreateSound() const
+		{
+			// early exit
+			if (sound_name.length() == 0)
+				return nullptr;
+
+			// can only play sounds on point and surface			
+			chaos::TiledMap::GeometricObjectPoint   * point_object = nullptr;
+			chaos::TiledMap::GeometricObjectSurface * surface_object = geometric_object->GetObjectSurface();
+			if (surface_object == nullptr)
+			{
+				point_object = geometric_object->GetObjectPoint();
+				if (point_object == nullptr)
+					return nullptr;
+			}
+			// the sound if necessary
+			chaos::Sound * result = nullptr;
+
+			Game * game = layer_instance->GetGame();
+			if (game != nullptr)
+			{
+				chaos::box2 box;
+
+				glm::vec2 position = glm::vec2(0.0f, 0.0f);
+				if (point_object != nullptr)
+				{
+					position = point_object->position;
+				}
+				else if (surface_object != nullptr)
+				{
+					box = surface_object->GetBoundingBox(true);
+					position = box.position;
+				}
+
+				chaos::PlaySoundDesc play_desc;
+				play_desc.paused = false;
+				play_desc.looping = true;
+				play_desc.blend_in_time = 0.0f;
+				play_desc.SetPosition(glm::vec3(position, 0.0f));
+
+				if (surface_object != nullptr)
+				{
+					play_desc.max_distance = glm::length(box.half_size);
+					play_desc.min_distance = play_desc.max_distance * 0.3f;
+				}
+				result = game->Play(sound_name.c_str(), play_desc);
+			}
+
+			return result;
+		}
+
+		bool SoundTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		{
+			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+				return false;
+
+			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
+			if (surface == nullptr)
+				return true;
+
+
+
+
+
+
+
+
+
+
+			return true; // collisions handled successfully
+		}
+
+		bool SoundTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+		{
+			return false;
+		}
+
+		// =====================================
+		// CameraObject implementation
+		// =====================================
+
+		bool CameraObject::Initialize()
+		{
+			if (!GeometricObject::Initialize())
+				return false;
+			return true;
+		}
+
+
+
+		// =====================================
 		// BoxScissoringWithRepetitionResult : an utility object to compute instances in 2D of a box that collide a given scissor
 		// =====================================
 
@@ -169,28 +461,9 @@ namespace death
 			return new chaos::ParticleLayer<TiledMap::TileParticleTrait>();
 		}
 
-
-
-
-
-
-		// shuxxx
-
-
-
-
-
 		GeometricObject * Level::DoCreateGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 		{
 			char const * type = chaos::TiledMapTools::GetObjectType(in_geometric_object);
-
-			if (chaos::StringTools::Stricmp(type, "Sound") == 0)
-				return new SoundGeometricObject(in_layer_instance, in_geometric_object);
-
-
-
-
-
 
 			if (chaos::StringTools::Stricmp(in_geometric_object->name, "Checkpoint") == 0)
 				return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
@@ -199,16 +472,6 @@ namespace death
 
 			return nullptr;
 		}
-
-
-
-
-
-
-
-
-
-
 
 #define DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
 		result_type * Level::Do##func_name(declared_parameters)\
@@ -309,327 +572,6 @@ namespace death
 		{
 
 			return true; // continue with other
-		}
-
-
-
-
-
-
-
-
-
-
-		// =====================================
-		// BaseObject implementation
-		// =====================================
-
-		BaseObject::BaseObject(class LayerInstance * in_layer_instance) :
-			layer_instance(in_layer_instance)
-		{
-			assert(in_layer_instance != nullptr);
-		}
-
-		// =====================================
-		// GeometricObject implementation
-		// =====================================
-
-		GeometricObject::GeometricObject(class LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) :
-			BaseObject(in_layer_instance),
-			geometric_object(in_geometric_object)
-
-		{
-			assert(in_geometric_object != nullptr);
-		}
-
-		bool GeometricObject::Initialize()
-		{
-			name = geometric_object->name;
-			return true;
-		}
-
-
-		// =====================================
-		// TriggerSurfaceObject implementation
-		// =====================================
-
-		bool TriggerSurfaceObject::Initialize()
-		{
-			if (!GeometricObject::Initialize())
-				return false;
-			enabled = geometric_object->FindPropertyBool("ENABLED", true);
-			trigger_once = geometric_object->FindPropertyBool("TRIGGER_ONCE", false);
-			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", 0);
-			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", 1.0f);
-			return true;
-		}
-
-		chaos::box2 TriggerSurfaceObject::GetBoundingBox(bool world_system) const
-		{
-			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
-			if (surface == nullptr)
-				return chaos::box2();
-			chaos::box2 result = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
-			if (world_system)
-				result.position += layer_instance->GetLayerOffset();
-			return result;
-		}
-
-		bool TriggerSurfaceObject::IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const
-		{
-			chaos::box2 box = GetBoundingBox(true);
-
-			if (outside_box_factor > 1.0f) // the box is bigger when we want to go outside !
-			{
-				// search whether we were already colliding with
-				if (triggers != nullptr)
-					if (std::find(triggers->begin(), triggers->end(), this) != triggers->end()) // we where already colliding the object
-						box.half_size *= outside_box_factor;
-			}
-			return chaos::Collide(other_box, box);
-		}
-
-		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
-		{
-			return true; // collisions handled successfully
-		}
-
-		bool TriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
-		{
-			return true; // collisions handled successfully
-		}
-
-		void TriggerSurfaceObject::SetEnabled(bool in_enabled)
-		{
-			enabled = in_enabled;
-			SetModified();
-		}
-
-		void TriggerSurfaceObject::SetTriggerOnce(bool in_trigger_once)
-		{
-			trigger_once = in_trigger_once;
-			SetModified();
-		}
-
-		BaseObjectCheckpoint * TriggerSurfaceObject::DoCreateCheckpoint() const
-		{
-			return new TriggerSurfaceObjectCheckpoint();
-		}
-
-		bool TriggerSurfaceObject::DoSaveIntoCheckpoint(BaseObjectCheckpoint * checkpoint) const
-		{
-			TriggerSurfaceObjectCheckpoint * trigger_checkpoint = auto_cast(checkpoint);
-			if (trigger_checkpoint == nullptr)
-				return false;
-
-			if (!GeometricObject::DoSaveIntoCheckpoint(checkpoint))
-				return false;
-
-			trigger_checkpoint->enabled = enabled;
-			trigger_checkpoint->trigger_once = trigger_once;
-
-			return true;
-		}
-
-		bool TriggerSurfaceObject::DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint)
-		{
-			TriggerSurfaceObjectCheckpoint const * trigger_checkpoint = auto_cast(checkpoint);
-			if (trigger_checkpoint == nullptr)
-				return false;
-
-			if (!GeometricObject::DoLoadFromCheckpoint(checkpoint))
-				return false;
-
-			enabled = trigger_checkpoint->enabled;
-			trigger_once = trigger_checkpoint->trigger_once;
-
-			return true;
-		}
-
-
-		// =============================================================
-		// SoundTriggerSurfaceObject implementation
-		// =============================================================
-
-		bool SoundTriggerSurfaceObject::Initialize()
-		{
-			if (!TriggerSurfaceObject::Initialize())
-				return false;
-			trigger_once = true; // XXX : keep or not ? seems normal
-
-
-
-
-													 // shuxxx
-
-
-
-
-			return true;
-		}
-
-		bool SoundTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
-		{
-			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
-				return false;
-
-			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
-			if (surface == nullptr)
-				return true;
-
-
-
-
-
-
-
-
-
-
-			return true; // collisions handled successfully
-		}
-
-		bool SoundTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
-		{
-			return false;
-		}
-
-
-		// =============================================================
-		// CheckPointTriggerSurfaceObject implementation
-		// =============================================================
-
-		bool CheckpointTriggerSurfaceObject::Initialize()
-		{
-			if (!TriggerSurfaceObject::Initialize())
-				return false;
-			trigger_once = true; // XXX : keep or not ? seems normal
-			return true;
-		}
-
-		bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
-		{
-			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
-				return false;
-
-			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
-			if (surface == nullptr)
-				return true;
-
-			GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
-			if (game_instance != nullptr)
-				game_instance->CreateRespawnCheckpoint();
-
-			return true; // collisions handled successfully
-		}
-
-		bool CheckpointTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
-		{
-			return false;
-		}
-
-		// =====================================
-		// PlayerStartObject implementation
-		// =====================================
-
-		bool PlayerStartObject::Initialize()
-		{
-			if (!GeometricObject::Initialize())
-				return false;
-			return true;
-		}
-
-		// =====================================
-		// SoundGeometricObject implementation
-		// =====================================
-
-		bool SoundGeometricObject::Initialize()
-		{
-			if (!GeometricObject::Initialize())
-				return false;
-
-			sound_name = geometric_object->FindPropertyString("SOUND_NAME", "");
-			//autopause_delay = geometric_object->FindPropertyFloat("AUTOPAUSE_DELAY", 0.0f);
-			//autopause = geometric_object->FindPropertyFloat("AUTOPAUSE", 0.0f);
-			looping = geometric_object->FindPropertyBool("LOOPING", true);
-
-			return true;
-		}
-
-		void SoundGeometricObject::OnLevelStarted()
-		{
-			sound = CreateSound();
-		}
-
-		void SoundGeometricObject::OnLevelEnded()
-		{
-			if (sound != nullptr)
-			{
-				sound->Stop();
-				sound = nullptr; 
-			}
-		}
-
-		chaos::Sound * SoundGeometricObject::CreateSound() const
-		{
-			// early exit
-			if (sound_name.length() == 0)
-				return nullptr;
-
-			// can only play sounds on point and surface			
-			chaos::TiledMap::GeometricObjectPoint   * point_object = nullptr;
-			chaos::TiledMap::GeometricObjectSurface * surface_object = geometric_object->GetObjectSurface();
-			if (surface_object == nullptr)
-			{
-				point_object = geometric_object->GetObjectPoint();
-				if (point_object == nullptr)
-					return nullptr;
-			}
-			// the sound if necessary
-			chaos::Sound * result = nullptr;
-
-			Game * game = layer_instance->GetGame();
-			if (game != nullptr)
-			{
-				chaos::box2 box;
-
-				glm::vec2 position = glm::vec2(0.0f, 0.0f);
-				if (point_object != nullptr)
-				{
-					position = point_object->position;
-				}
-				else if (surface_object != nullptr)
-				{
-					box = surface_object->GetBoundingBox(true);
-					position = box.position;
-				}
-
-				chaos::PlaySoundDesc play_desc;
-				play_desc.paused = false;
-				play_desc.looping = true;
-				play_desc.blend_in_time = 0.0f;
-				play_desc.SetPosition(glm::vec3(position, 0.0f));
-
-				if (surface_object != nullptr)
-				{
-					play_desc.max_distance = glm::length(box.half_size);
-					play_desc.min_distance = play_desc.max_distance * 0.3f;
-				}
-				result = game->Play(sound_name.c_str(), play_desc);
-			}
-
-			return result;
-		}
-
-		// =====================================
-		// CameraObject implementation
-		// =====================================
-
-		bool CameraObject::Initialize()
-		{
-			if (!GeometricObject::Initialize())
-				return false;
-			return true;
 		}
 
 		// =====================================
@@ -870,7 +812,7 @@ namespace death
 			if (object != nullptr)
 			{
 				TriggerSurfaceObject * trigger = auto_cast(object);
-				if (trigger)
+				if (trigger != nullptr)
 					trigger_surfaces.push_back(trigger);
 				else
 					typed_objects.push_back(object);

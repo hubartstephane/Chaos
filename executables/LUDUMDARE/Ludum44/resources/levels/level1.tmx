@@ -360,7 +360,7 @@
     <property name="TRIGGER_SURFACE" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1915" name="SoundZone" x="960" y="448" width="10176" height="9728">
+  <object id="1915" name="Sound" x="960" y="448" width="10176" height="9728">
    <properties>
     <property name="OBJECT_TYPE" value="Sound"/>
     <property name="SOUND_NAME" value="sound_zone"/>

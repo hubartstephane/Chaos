@@ -71,6 +71,11 @@ namespace death
 			/** get the layer instance owning this object */
 			LayerInstance const * GetLayerInstance() const { return layer_instance; }
 
+			/** whenever the level is being started */
+			virtual void OnLevelStarted() {}
+			/** whenever the level is being stopped */
+			virtual void OnLevelEnded() {}
+
 		protected:
 
 			/** a reference to the layer instance */
@@ -120,8 +125,8 @@ namespace death
 
 		public:
 
-			/** constructor */
-			CameraObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+			/** inherit constructor */
+			using GeometricObject::GeometricObject;
 
 		protected:
 
@@ -139,8 +144,8 @@ namespace death
 
 		public:
 
-			/** constructor */
-			PlayerStartObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+			/** inherit constructor */
+			using GeometricObject::GeometricObject;
 
 		protected:
 
@@ -158,16 +163,21 @@ namespace death
 
 		public:
 
-			/** constructor */
-			SoundGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+			/** inherit constructor */
+			using GeometricObject::GeometricObject;
 
 		protected:
 
 			/** override */
 			virtual bool Initialize() override;
-
+			/** override */
+			virtual void OnLevelStarted() override;
+			/** override */
+			virtual void OnLevelEnded() override;
 			/** the sound creation method */
 			chaos::Sound * CreateSound() const;
+
+
 
 		protected:
 
@@ -211,8 +221,8 @@ namespace death
 			static int const COLLISION_STARTED  = 1;
 			static int const COLLISION_AGAIN    = 2;
 
-			/** constructor */
-			TriggerSurfaceObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+			/** inherit constructor */
+			using GeometricObject::GeometricObject;
 
 			/** whether it is enabled or not */
 			bool IsEnabled() const { return enabled; }
@@ -614,6 +624,11 @@ namespace death
 			template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
 			bool DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const & elements, CHECKPOINT_VECTOR & checkpoints) const;
 
+			/** some callbacks */
+			virtual void OnLevelEnded();
+			/** some callbacks */
+			virtual void OnLevelStarted();
+
 		protected:
 
 			/** displacement ratio relatively to the main layer */
@@ -745,6 +760,11 @@ namespace death
 			virtual void OnPlayerEntered(Player * player) override;
 			/** override */
 			virtual void OnPlayerLeaved(Player * player) override;
+
+			/** override */
+			virtual void OnLevelEnded() override;
+			/** override */
+			virtual void OnLevelStarted() override;
 
 			/** create the cameras */
 			virtual void CreateCameras() override;

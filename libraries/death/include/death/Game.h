@@ -331,9 +331,12 @@ namespace death
 		/** test whether there is a game over */
 		virtual bool CheckGameOverCondition();
 		/** check whether we must go to next level */
-		virtual bool CheckLevelCompleted(bool & loop_levels);
+		virtual bool CheckLevelCompleted();
 		/** check whether we can go to next level */
 		virtual bool CanCompleteLevel();
+
+		/** returns whether levels are to be looped */
+		bool AreLevelsLooping() const { return looping_levels; }
 
 		/** called on the very first time the game is started */
 		virtual void OnEnterMainMenu(bool very_first);
@@ -463,6 +466,9 @@ namespace death
 		char const * game_name = nullptr;
 		/** instructions displayed on may screen */
 		char const * game_instructions = nullptr;
+		
+		/** whether levels are looping */
+		bool looping_levels = true;
 
 		/** the clocks */
 		chaos::shared_ptr<chaos::Clock> root_clock;

@@ -290,6 +290,9 @@ namespace death
 			/** the name of the sound to play */
 			std::string sound_name;
 
+			/** a ratio applyed to max_distance to compute the min_distance of the sound*/
+			float min_distance_ratio = 0.3f;
+
 			/** the duration after which an out of range sound is to be stopped */
 			float stop_duration = 0.0f;
 			/** whether the sound is to be looping or play only once */

@@ -146,16 +146,6 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool TiledMapTools::IsTypedObject(TiledMap::GeometricObject const * object_geometric)
-	{
-		return (GetObjectType(object_geometric) != nullptr);
-	}
-
-	bool TiledMapTools::IsTriggerSurface(TiledMap::GeometricObject const * object_geometric)
-	{
-		return HasFlag(object_geometric, "trigger_surface", "trigger_surface", "TRIGGER_SURFACE");
-	}
-
 	bool TiledMapTools::IsPlayerStart(TiledMap::GeometricObject const * object_geometric)
 	{
 		return HasFlag(object_geometric, "player_start", "player_start", "PLAYER_START");

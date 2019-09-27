@@ -112,15 +112,17 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 
 death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
-	if (in_geometric_object->name == "Finish")
-		return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-	if (in_geometric_object->name == "PowerUp")
-		return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsAdditionalParticlesCreationEnabled() => true
-	if (in_geometric_object->name == "SpeedUp")
-		return new SpeedUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-	if (in_geometric_object->name == "Spawner")
-		return new SpawnerTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-
+	if (in_geometric_object->GetObjectSurface() != nullptr)
+	{
+		if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Finish", "Finish", "Finish"))
+			return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+		if (chaos::TiledMapTools::HasFlag(in_geometric_object, "PowerUp", "PowerUp", "PowerUp"))
+			return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsAdditionalParticlesCreationEnabled() => true
+		if (chaos::TiledMapTools::HasFlag(in_geometric_object, "SpeedUp", "SpeedUp", "SpeedUp"))
+			return new SpeedUpTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+		if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Spawner", "Spawner", "Spawner"))
+			return new SpawnerTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+	}
 	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 
@@ -162,7 +164,7 @@ bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, de
 	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
 	if (ludum_level_instance == nullptr)
 		return true;
-	ludum_level_instance->SetLevelCompleted(true);
+	ludum_level_instance->SetLevelCompletionFlag();
 
 	return true;// collisions handled successfully
 }

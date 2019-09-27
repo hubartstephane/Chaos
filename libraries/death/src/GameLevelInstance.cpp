@@ -168,8 +168,20 @@ namespace death
 		return true;
 	}
 
-	bool GameLevelInstance::IsLevelCompleted(bool & loop_levels) const
+	bool GameLevelInstance::GetLevelCompletionFlag() const
 	{
+		return level_completion_flag;
+	}
+
+	void GameLevelInstance::SetLevelCompletionFlag()
+	{
+		level_completion_flag = true;
+	}
+
+	bool GameLevelInstance::CheckLevelCompletion() const
+	{
+		if (level_completion_flag)
+			return true;
 		return false;
 	}
 
@@ -285,10 +297,8 @@ namespace death
 
 
 
-		bool loop_levels = false;
 		// update the timeout
-		if (level_timeout > 0.0f 
-			&& !IsLevelCompleted(loop_levels) 
+		if (level_timeout > 0.0f && !CheckLevelCompletion() 
 #if _DEBUG	
 			&& !game->GetCheatMode()
 #endif

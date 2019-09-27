@@ -34,13 +34,6 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
-bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
-{
-	loop_levels = false;
-
-	return level_completed;
-}
-
 bool LudumLevelInstance::CanCompleteLevel() const
 {
 

@@ -37,9 +37,10 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
-bool LudumLevelInstance::IsLevelCompleted(bool & loop_levels) const
+bool LudumLevelInstance::CheckLevelCompletion() const
 {
-	loop_levels = true;
+	if (death::TiledMap::LevelInstance::CheckLevelCompletion())
+		return true;
 
 	if (game != nullptr)
 	{

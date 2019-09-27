@@ -31,6 +31,8 @@ LudumGame::LudumGame()
 	[ButtonA] or [KEYBOARD SPACE] : Fire
 	[ButtonB] or [KEYBOARD CTRL]  : Charged fire
 	[ButtonY] or [KEYBOARD ALT]   : Trade POWER-UP and LIFE)INSTRUCTIONS";
+
+	looping_levels = false;
 }
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)

@@ -314,12 +314,6 @@
 	=> In GameFramework.h, the HUD is expected to be called PlayingHUD. We should remove any class difference and use HUDComponent instead
 		 This would make more reusable code
 
-	====================================================================
-	== NOTES
-	====================================================================
 
-		bool GameLevelInstance::CheckGameOverCondition();
-		bool GameLevelInstance::IsLevelCompleted(bool & loop_levels) const;
-		bool GameLevelInstance::CanCompleteLevel() const;
 
 #endif

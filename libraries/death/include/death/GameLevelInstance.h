@@ -85,7 +85,7 @@ namespace death
 		virtual void OnLevelStarted();
 
 		/** returns whether the level is completed */
-		virtual bool IsLevelCompleted(bool & loop_levels) const;
+		virtual bool CheckLevelCompletion() const;
 		/** returns whether we can go to next level */
 		virtual bool CanCompleteLevel() const;
 
@@ -100,6 +100,11 @@ namespace death
 
 		/** get the current time out */
 		float GetLevelTimeout() const { return level_timeout; }
+
+		/** flag the level as completed */
+		void SetLevelCompletionFlag();
+		/** get the completion flag */
+		bool GetLevelCompletionFlag() const;
 
 	protected:
 
@@ -139,7 +144,6 @@ namespace death
 		/** change the music */
 		virtual void SetInGameMusic();
 
-
 		/** override */
 		virtual bool DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const override;
 		/** override */
@@ -153,6 +157,9 @@ namespace death
 		Game * game = nullptr;
 		/** the time to run the level (no time out by default) */
 		float level_timeout = -1.0f;
+		/** the level completion flag */
+		bool level_completion_flag = false;
+
 		/** the level clock */
 		chaos::shared_ptr<chaos::Clock> level_clock;
 		/** the camera */

@@ -193,7 +193,10 @@ namespace death
 				return false;
 			trigger_once = true; // XXX : keep or not ? seems normal
 
-			sound_name = geometric_object->FindPropertyString("SOUND_NAME", "");
+			sound_name         = geometric_object->FindPropertyString("SOUND_NAME", "");
+			min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", 0.3f);
+			min_distance_ratio = chaos::MathTools::Clamp(min_distance_ratio);
+
 			//autopause_delay = geometric_object->FindPropertyFloat("AUTOPAUSE_DELAY", 0.0f);
 			//autopause = geometric_object->FindPropertyFloat("AUTOPAUSE", 0.0f);
 			looping = geometric_object->FindPropertyBool("LOOPING", true);
@@ -258,7 +261,7 @@ namespace death
 				if (surface_object != nullptr)
 				{
 					play_desc.max_distance = glm::length(box.half_size);
-					play_desc.min_distance = play_desc.max_distance * 0.3f;
+					play_desc.min_distance = play_desc.max_distance * min_distance_ratio;
 				}
 				result = game->Play(sound_name.c_str(), play_desc);
 			}
@@ -463,13 +466,13 @@ namespace death
 
 		GeometricObject * Level::DoCreateGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 		{
-			char const * type = chaos::TiledMapTools::GetObjectType(in_geometric_object);
-
-			if (chaos::StringTools::Stricmp(in_geometric_object->name, "Checkpoint") == 0)
-				return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-			if (chaos::StringTools::Stricmp(in_geometric_object->name, "Sound") == 0)
-				return new SoundTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-
+			if (in_geometric_object->GetObjectSurface() != nullptr)
+			{
+				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Checkpoint", "Checkpoint", "Checkpoint"))
+					return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Sound", "Sound", "Sound"))
+					return new SoundTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+			}
 			return nullptr;
 		}
 

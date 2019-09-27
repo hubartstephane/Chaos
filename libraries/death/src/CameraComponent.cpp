@@ -190,8 +190,7 @@ namespace death
 				{
 					glm::vec3 position = glm::vec3(camera->GetCameraBox().position, 0.0f);
 					glm::vec3 speed    = glm::vec3(0.0f, 0.0f, 0.0f);
-					glm::mat4 view     = glm::translate(position);					
-					sound_manager->SetListenerPosition(view, speed);
+					sound_manager->SetListenerPosition(position, speed);
 				}
 			}
 		}

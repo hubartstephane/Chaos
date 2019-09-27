@@ -475,66 +475,53 @@ namespace death
 			return true;
 		}
 
-#if 0
-		virtual void setListenerPosition(const vec3df& pos,
-			const vec3df& lookdir,
-			const vec3df& velPerSecond = vec3df(0,0,0),
-			const vec3df& upVector = vec3df(0,1,0)) = 0;
-#endif
-		
 		bool SoundGeometricObject::DoTick(double delta_time)
 		{
-			// try to create the sound
+			// can only play sounds on point and surface			
+			chaos::TiledMap::GeometricObjectPoint   * point_object   = nullptr;
+			chaos::TiledMap::GeometricObjectSurface * surface_object = geometric_object->GetObjectSurface();
+			if (surface_object == nullptr)
+			{
+				point_object = geometric_object->GetObjectPoint();
+				if (point_object == nullptr)
+					return true;
+			}
+
+			// create the sound if necessary
 			if (sound == nullptr && sound_name.length() > 0)
 			{
 				Game * game = layer_instance->GetGame();
 				if (game != nullptr)
 				{
-					chaos::box2 box = geometric_object->GetObjectSurface()->GetBoundingBox(false);
+					chaos::box2 box;
+
+					glm::vec2 position = glm::vec2(0.0f, 0.0f);
+					if (point_object != nullptr)
+					{
+						position = point_object->position;
+					}
+					else if (surface_object != nullptr)
+					{
+						box = surface_object->GetBoundingBox(true);
+						position = box.position;
+					}
 
 					chaos::PlaySoundDesc play_desc;
 					play_desc.paused = false;
 					play_desc.looping = true;
 					play_desc.blend_in_time = 0.0f;
-					play_desc.SetPosition(glm::vec3(box.position, 0.0f));
+					play_desc.SetPosition(glm::vec3(position, 0.0f));
 
-					game->GetSoundManager()->GetIrrklangEngine()->setRolloffFactor(0.0f);
-
-					//play_desc.min_distance = glm::length(box.half_size) * 0.5f;
-					//play_desc.max_distance = glm::length(box.half_size);
-
-		//			play_desc.max_distance = 24000.0f;
-					play_desc.min_distance = 12000.0f;
-
-
+					if (surface_object != nullptr)
+					{
+						play_desc.max_distance = glm::length(box.half_size);
+						play_desc.min_distance = play_desc.max_distance * 0.3f;					
+					}
 					sound = game->Play(sound_name.c_str(), play_desc);
-
 				}
 			}
-
-			if (sound != nullptr)
-			{
-				Game * game = layer_instance->GetGame();
-				if (game != nullptr)
-				{
-					auto manager = game->GetSoundManager();
-
-
-				}
-
-			}
-
-
 			return true;
 		}
-
-
-
-
-
-
-
-
 
 		// =====================================
 		// CameraObject implementation

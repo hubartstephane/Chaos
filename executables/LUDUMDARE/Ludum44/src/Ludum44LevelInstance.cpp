@@ -30,6 +30,7 @@ void LudumLevelInstance::CreateCameras()
 		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.8f));
 		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 		//cameras[i]->AddComponent(new death::ShakeCameraComponent(0.5f, 10.0f, 0.15f, false, false));
+		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
 	}
 }
 

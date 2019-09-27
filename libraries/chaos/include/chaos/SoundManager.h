@@ -346,10 +346,13 @@ namespace chaos
 		/** get whether the sound is looping */
 		bool IsLooping() const;
 
+		// XXX : while we want to manager ourself the sound volume depending on distance, remove this
+#if 0
 		/** the distance after which the sound is no more heared */
 		void SetMaxDistance(float distance);
 		/** the distance below which the sound is at its max volume */
 		void SetMinDistance(float distance);
+#endif
 
 		/** change the position of the sound track */
 		void SetSoundTrackPosition(int position);
@@ -368,8 +371,6 @@ namespace chaos
 
 		/** update irrklang state */
 		void DoUpdateIrrklangPause(bool effective_pause);
-		/** update irrklang state */
-		void DoUpdateIrrklangVolume(float effective_volume);
 
 		/** the sound method (returns true whether it is immediatly finished) */
 		virtual bool DoPlaySound(PlaySoundDesc const & play_desc);
@@ -385,6 +386,11 @@ namespace chaos
 
 		/** returns true whether the sound is in 3D */
 		bool is_3D_sound = false;
+		/** the min distance below which the sound volume is MAX (3D consideration only) */
+		float min_distance = 0.0f;
+		/** the max distance after which the sound volume is 0.0f (3D consideration only) (different from irrklang consideration) */
+		float max_distance = 0.0f;
+
 		/** whether the sound is looping */
 		bool looping = false;
 
@@ -506,11 +512,10 @@ namespace chaos
 		SoundSource * AddSource(FilePathParam const & path, char const * name = nullptr);
 
 		/** update the listener position */
-		bool SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed = glm::vec3(0.0f, 0.0f, 0.0f));
+		bool SetListenerPosition(glm::vec3 const & position, glm::vec3 const & velocity = glm::vec3(0.0f, 0.0f, 0.0f));
 
 		/** initialize the manager from a configuration file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-
 
 		/** getters on sound */
 		size_t GetSoundCount() const;
@@ -526,6 +531,11 @@ namespace chaos
 		size_t GetSourceCount() const;
 		SoundSource * GetSource(size_t index);
 		SoundSource const * GetSource(size_t index) const;
+
+		/** get the current listener position */
+		glm::vec3 GetListenerPosition() const;
+		/** get the current listener velocity */
+		glm::vec3 GetListenerVelocity() const;
 
 	protected:
 
@@ -628,6 +638,11 @@ namespace chaos
 		std::vector<shared_ptr<Sound>> sounds;
 		/** the categories */
 		std::vector<shared_ptr<SoundCategory>> categories;
+
+		/** the listener transform */
+		glm::mat4 listener_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		/** the listener velocity */
+		glm::vec3 listener_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	};
 
 	// undefine macros

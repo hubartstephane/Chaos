@@ -556,8 +556,11 @@ namespace chaos
 	{
 		position = in_position;
 		if (is_3D_sound)
+		{
 			if (irrklang_sound != nullptr)
 				irrklang_sound->setPosition(IrrklangTools::ToIrrklangVector(in_position));
+			DoUpdateEffectiveVolume(GetEffectiveVolume());
+		}
 	}
 
 	void Sound::SetVelocity(glm::vec3 const & in_velocity)
@@ -571,11 +574,35 @@ namespace chaos
 	float Sound::GetEffectiveVolume() const
 	{
 		float result = SoundObject::GetEffectiveVolume();
-		for (SoundCategory * category : categories)
-			if (category != nullptr)
-				result *= category->GetEffectiveVolume();
-		if (source != nullptr)
-			result *= source->GetEffectiveVolume();
+		// volume for all categories
+		if (result > 0.0f)
+			for (SoundCategory * category : categories)
+				if (category != nullptr)
+					result *= category->GetEffectiveVolume();
+		// volume for the sound
+		if (result > 0.0f)
+			if (source != nullptr)
+				result *= source->GetEffectiveVolume();
+		// 3D volume affect
+		if (result > 0.0f && is_3D_sound)
+		{
+			if (min_distance > 0.0f && max_distance >= min_distance)
+			{
+				glm::vec3 listener_position = sound_manager->listener_transform[3];
+
+				float distance = glm::distance(position, listener_position);
+
+				float distance_volume = 1.0f;
+				if (distance < min_distance)
+					distance_volume = 1.0f;
+				else if (distance > max_distance)
+					distance_volume = 0.0f;
+				else
+					distance_volume = 1.0f - ((distance - min_distance) / (max_distance - min_distance));
+				
+				result *= distance_volume;
+			}
+		}
 		return result;
 	}
 
@@ -636,6 +663,12 @@ namespace chaos
 			blend_value = 0.0f;
 		}
 
+		// copy some 3D sound data before computing effective colume
+		min_distance = play_desc.min_distance;
+		max_distance = play_desc.max_distance;
+		position = play_desc.position;
+		velocity = play_desc.velocity;
+
 		// compute effective expected values
 		bool  effective_pause  = IsEffectivePaused();
 		float effective_volume = GetEffectiveVolume();
@@ -678,15 +711,8 @@ namespace chaos
 
 		// update volume
 		if (effective_volume != 1.0f)
-			DoUpdateIrrklangVolume(effective_volume);
+			DoUpdateEffectiveVolume(effective_volume);
 
-		// update 3D data
-		if (is_3D_sound)
-		{
-			SetVelocity(velocity);
-			SetMinDistance(play_desc.min_distance);
-			SetMaxDistance(play_desc.max_distance);
-		}
 		// resume sound
 		if (some_initializations && !effective_pause)
 			DoUpdateIrrklangPause(effective_pause);
@@ -704,17 +730,6 @@ namespace chaos
 
 	void Sound::DoUpdateEffectiveVolume(float effective_volume)
 	{
-		DoUpdateIrrklangVolume(effective_volume);
-	}
-
-	void Sound::DoUpdateIrrklangPause(bool effective_pause)
-	{
-		if (irrklang_sound != nullptr)
-			irrklang_sound->setIsPaused(effective_pause);
-	}
-
-	void Sound::DoUpdateIrrklangVolume(float effective_volume)
-	{
 #if _DEBUG
 		if (Application::HasApplicationCommandLineFlag("-Mute"))
 			effective_volume = 0.0f;
@@ -723,12 +738,20 @@ namespace chaos
 			irrklang_sound->setVolume((irrklang::ik_f32)effective_volume);
 	}
 
+	void Sound::DoUpdateIrrklangPause(bool effective_pause)
+	{
+		if (irrklang_sound != nullptr)
+			irrklang_sound->setIsPaused(effective_pause);
+	}
+
 	void Sound::SetSoundTrackPosition(int position)
 	{
 		if (irrklang_sound != nullptr)
 			irrklang_sound->setPlayPosition((irrklang::ik_u32)position);
 	}
 
+
+#if 0
 	void Sound::SetMaxDistance(float distance)
 	{
 		if (irrklang_sound != nullptr)
@@ -739,6 +762,7 @@ namespace chaos
 		if (irrklang_sound != nullptr)
 			irrklang_sound->setMinDistance((irrklang::ik_f32)distance);
 	}
+#endif
 
 	// ==============================================================
 	// MANAGER
@@ -957,21 +981,46 @@ namespace chaos
 		}
 	}
 
-	bool SoundManager::SetListenerPosition(glm::mat4 const & view, glm::vec3 const & speed)
+	glm::vec3 SoundManager::GetListenerPosition() const
+	{
+		return listener_transform[3];
+	}
+
+	glm::vec3 SoundManager::GetListenerVelocity() const
+	{
+		return listener_velocity;
+	}
+
+	bool SoundManager::SetListenerPosition(glm::vec3 const & position, glm::vec3 const & velocity)
 	{
 		if (!IsManagerStarted())
 			return false;
 
-		glm::vec3 position = view[3];
-		glm::vec3 lookdir = view[2];
-		glm::vec3 up = view[1];
+		if (position != GetListenerPosition() || velocity != GetListenerVelocity())
+		{
+			// update the internal values
+			listener_transform = glm::translate(position);
+			listener_velocity = velocity;
 
-		irrklang_engine->setListenerPosition(
-			IrrklangTools::ToIrrklangVector(position),
-			IrrklangTools::ToIrrklangVector(lookdir),
-			IrrklangTools::ToIrrklangVector(speed),
-			IrrklangTools::ToIrrklangVector(up));
+			glm::vec3 pos = listener_transform[3];
+			glm::vec3 lookdir = listener_transform[2];
+			glm::vec3 up = listener_transform[1];
 
+			irrklang_engine->setListenerPosition(
+				IrrklangTools::ToIrrklangVector(pos),
+				IrrklangTools::ToIrrklangVector(lookdir),
+				IrrklangTools::ToIrrklangVector(velocity),
+				IrrklangTools::ToIrrklangVector(up));
+
+			// update all 3D sounds volume
+			size_t count = sounds.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				Sound * sound = sounds[i].get();
+				if (sound != nullptr && !sound->IsPendingKill() && sound->is_3D_sound)
+					sound->DoUpdateEffectiveVolume(sound->GetEffectiveVolume());
+			}
+		}
 		return true;
 	}
 
@@ -1022,7 +1071,7 @@ namespace chaos
 				continue;
 			if (category != nullptr && !sound->IsOfCategory(category))
 				continue;
-			sound->DoUpdateIrrklangVolume(sound->GetEffectiveVolume());
+			sound->DoUpdateEffectiveVolume(sound->GetEffectiveVolume());
 		}
 	}
 
@@ -1050,7 +1099,7 @@ namespace chaos
 				continue;
 			if (source != nullptr && source != sound->source)
 				continue;
-			sound->DoUpdateIrrklangVolume(sound->GetEffectiveVolume());
+			sound->DoUpdateEffectiveVolume(sound->GetEffectiveVolume());
 		}
 	}
 

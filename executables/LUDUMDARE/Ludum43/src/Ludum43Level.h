@@ -13,16 +13,16 @@
 #include "Ludum43Game.h"
 
 // =================================================
-// FinishingTriggerSurfaceObject
+// MyFinishingTriggerSurfaceObject
 // =================================================
 
-class FinishingTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
+class MyFinishingTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
 {
 
 public:
 
 	/** constructor */
-	FinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+	MyFinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
 
 	/** override */
 	virtual bool Initialize() override;

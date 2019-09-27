@@ -22,11 +22,6 @@ static bool IsDefaultTileCreationEnabled()
 #endif	
 }
 
-bool FinishingTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
-{
-	return IsDefaultTileCreationEnabled();
-}
-
 bool SpeedUpTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
 {
 	return IsDefaultTileCreationEnabled();
@@ -114,8 +109,7 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 {
 	if (in_geometric_object->GetObjectSurface() != nullptr)
 	{
-		if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Finish", "Finish", "Finish"))
-			return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+
 		if (chaos::TiledMapTools::HasFlag(in_geometric_object, "PowerUp", "PowerUp", "PowerUp"))
 			return new PowerUpTriggerSurfaceObject(in_layer_instance, in_geometric_object); // XXX : the power up, is the only object that has IsAdditionalParticlesCreationEnabled() => true
 		if (chaos::TiledMapTools::HasFlag(in_geometric_object, "SpeedUp", "SpeedUp", "SpeedUp"))
@@ -155,19 +149,6 @@ bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * 
 
 
 
-// =============================================================
-// FinishingTriggerSurfaceObject implementation
-// =============================================================
-
-bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
-{
-	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
-	if (ludum_level_instance == nullptr)
-		return true;
-	ludum_level_instance->SetLevelCompletionFlag();
-
-	return true;// collisions handled successfully
-}
 
 
 // =============================================================

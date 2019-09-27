@@ -295,6 +295,27 @@ namespace death
 			return false;
 		}
 
+		// =============================================================
+		// FinishingTriggerSurfaceObject implementation
+		// =============================================================
+
+		bool FinishingTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+		{
+			return false;
+		}
+
+		bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		{
+			Game * game = layer_instance->GetGame();
+			if (game != nullptr)
+			{
+				GameLevelInstance * level_instance = game->GetLevelInstance();
+				if (level_instance != nullptr)
+					level_instance->SetLevelCompletionFlag();
+			}
+			return true;// collisions handled successfully
+		}
+
 		// =====================================
 		// CameraObject implementation
 		// =====================================
@@ -468,6 +489,8 @@ namespace death
 		{
 			if (in_geometric_object->GetObjectSurface() != nullptr)
 			{
+				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Finish", "Finish", "Finish"))
+					return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Checkpoint", "Checkpoint", "Checkpoint"))
 					return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
 				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Sound", "Sound", "Sound"))

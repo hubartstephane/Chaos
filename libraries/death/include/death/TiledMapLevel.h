@@ -303,13 +303,25 @@ namespace death
 		};
 
 
+		// =================================================
+		// FinishingTriggerSurfaceObject
+		// =================================================
 
+		class FinishingTriggerSurfaceObject : public TriggerSurfaceObject
+		{
 
+		public:
 
+			/** inherit constructor */
+			using TriggerSurfaceObject::TriggerSurfaceObject;
 
+		protected:
 
-
-
+			/** override */
+			virtual bool IsAdditionalParticlesCreationEnabled() const override;
+			/** override */
+			virtual bool OnPlayerCollisionEvent(double delta_time, Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+		};
 
 
 		// =====================================

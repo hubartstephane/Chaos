@@ -834,6 +834,19 @@ namespace death
 			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
 			if (category != nullptr && !category->IsPendingKill())
 				play_desc.categories.push_back(category);
+
+
+
+
+			// shusound
+
+
+
+
+
+
+
+
 		}
 		return source->Play(play_desc);
 	}

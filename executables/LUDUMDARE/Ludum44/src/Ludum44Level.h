@@ -13,16 +13,16 @@
 #include "Ludum44Game.h"
 
 // =================================================
-// PowerUpTriggerSurfaceObject
+// PowerUpTriggerObject
 // =================================================
 
-class PowerUpTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
+class PowerUpTriggerObject : public death::TiledMap::TriggerObject
 {
 
 public:
 
 	/** constructor */
-	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
+	using death::TiledMap::TriggerObject::TriggerObject;
 
 	void ResetTrigger() { reset_trigger = true; }
 
@@ -37,16 +37,16 @@ protected:
 };
 
 // =================================================
-// SpeedUpTriggerSurfaceObject
+// SpeedUpTriggerObject
 // =================================================
 
-class SpeedUpTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
+class SpeedUpTriggerObject : public death::TiledMap::TriggerObject
 {
 
 public:
 
 	/** constructor */
-	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
+	using death::TiledMap::TriggerObject::TriggerObject;
 
 	/** override */
 	virtual bool IsAdditionalParticlesCreationEnabled() const override;
@@ -59,16 +59,16 @@ protected:
 
 
 // =================================================
-// SpawnerTriggerSurfaceObject
+// SpawnerTriggerObject
 // =================================================
 
-class SpawnerTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceObject
+class SpawnerTriggerObject : public death::TiledMap::TriggerObject
 {
 
 public:
 
 	/** constructor */
-	using death::TiledMap::TriggerSurfaceObject::TriggerSurfaceObject;
+	using death::TiledMap::TriggerObject::TriggerObject;
 
 	/** override */
 	virtual bool IsAdditionalParticlesCreationEnabled() const override;

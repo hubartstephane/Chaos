@@ -43,15 +43,15 @@ namespace death
 
 
 		// =====================================
-		// TriggerSurfaceObject implementation
+		// TriggerObject implementation
 		// =====================================
 
-		TriggerSurfaceObject::TriggerSurfaceObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
+		TriggerObject::TriggerObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
 			GeometricObject(in_layer_instance, in_surface_object)
 		{
 		}
 
-		bool TriggerSurfaceObject::Initialize()
+		bool TriggerObject::Initialize()
 		{
 			if (!GeometricObject::Initialize())
 				return false;
@@ -63,7 +63,7 @@ namespace death
 			return true;
 		}
 
-		chaos::box2 TriggerSurfaceObject::GetBoundingBox(bool world_system) const
+		chaos::box2 TriggerObject::GetBoundingBox(bool world_system) const
 		{
 			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
 			if (surface == nullptr)
@@ -74,7 +74,7 @@ namespace death
 			return result;
 		}
 
-		bool TriggerSurfaceObject::IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const
+		bool TriggerObject::IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerObject>> const * triggers) const
 		{
 			chaos::box2 box = GetBoundingBox(true);
 
@@ -88,36 +88,36 @@ namespace death
 			return chaos::Collide(other_box, box);
 		}
 
-		bool TriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		bool TriggerObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
 			return true; // collisions handled successfully
 		}
 
-		bool TriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		bool TriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			return true; // collisions handled successfully
 		}
 
-		void TriggerSurfaceObject::SetEnabled(bool in_enabled)
+		void TriggerObject::SetEnabled(bool in_enabled)
 		{
 			enabled = in_enabled;
 			SetModified();
 		}
 
-		void TriggerSurfaceObject::SetTriggerOnce(bool in_trigger_once)
+		void TriggerObject::SetTriggerOnce(bool in_trigger_once)
 		{
 			trigger_once = in_trigger_once;
 			SetModified();
 		}
 
-		BaseObjectCheckpoint * TriggerSurfaceObject::DoCreateCheckpoint() const
+		BaseObjectCheckpoint * TriggerObject::DoCreateCheckpoint() const
 		{
-			return new TriggerSurfaceObjectCheckpoint();
+			return new TriggerObjectCheckpoint();
 		}
 
-		bool TriggerSurfaceObject::DoSaveIntoCheckpoint(BaseObjectCheckpoint * checkpoint) const
+		bool TriggerObject::DoSaveIntoCheckpoint(BaseObjectCheckpoint * checkpoint) const
 		{
-			TriggerSurfaceObjectCheckpoint * trigger_checkpoint = auto_cast(checkpoint);
+			TriggerObjectCheckpoint * trigger_checkpoint = auto_cast(checkpoint);
 			if (trigger_checkpoint == nullptr)
 				return false;
 
@@ -130,9 +130,9 @@ namespace death
 			return true;
 		}
 
-		bool TriggerSurfaceObject::DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint)
+		bool TriggerObject::DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint)
 		{
-			TriggerSurfaceObjectCheckpoint const * trigger_checkpoint = auto_cast(checkpoint);
+			TriggerObjectCheckpoint const * trigger_checkpoint = auto_cast(checkpoint);
 			if (trigger_checkpoint == nullptr)
 				return false;
 
@@ -146,20 +146,20 @@ namespace death
 		}
 
 		// =============================================================
-		// CheckPointTriggerSurfaceObject implementation
+		// CheckPointTriggerObject implementation
 		// =============================================================
 
-		bool CheckpointTriggerSurfaceObject::Initialize()
+		bool CheckpointTriggerObject::Initialize()
 		{
-			if (!TriggerSurfaceObject::Initialize())
+			if (!TriggerObject::Initialize())
 				return false;
 			trigger_once = true; // force a trigger once for checkpoint
 			return true;
 		}
 
-		bool CheckpointTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		bool CheckpointTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
-			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+			if (event_type != TriggerObject::COLLISION_STARTED)
 				return false;
 
 			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
@@ -173,7 +173,7 @@ namespace death
 			return true; // collisions handled successfully
 		}
 
-		bool CheckpointTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+		bool CheckpointTriggerObject::IsAdditionalParticlesCreationEnabled() const
 		{
 			return false;
 		}
@@ -193,11 +193,11 @@ namespace death
 		// SoundGeometricObject implementation
 		// =====================================
 
-		bool SoundTriggerSurfaceObject::Initialize()
+		bool SoundTriggerObject::Initialize()
 		{
 			trigger_once = true; // set trigger once by default, by this can be overriden by the further initialization
 
-			if (!TriggerSurfaceObject::Initialize())
+			if (!TriggerObject::Initialize())
 				return false;
 			
 			sound_name         = geometric_object->FindPropertyString("SOUND_NAME", "");
@@ -211,12 +211,12 @@ namespace death
 			return true;
 		}
 
-		void SoundTriggerSurfaceObject::OnLevelStarted()
+		void SoundTriggerObject::OnLevelStarted()
 		{
 			//sound = CreateSound();
 		}
 
-		void SoundTriggerSurfaceObject::OnLevelEnded()
+		void SoundTriggerObject::OnLevelEnded()
 		{
 			if (sound != nullptr)
 			{
@@ -225,7 +225,7 @@ namespace death
 			}
 		}
 
-		chaos::Sound * SoundTriggerSurfaceObject::CreateSound() const
+		chaos::Sound * SoundTriggerObject::CreateSound() const
 		{
 			// early exit
 			if (sound_name.length() == 0)
@@ -292,12 +292,12 @@ namespace death
 			return result;
 		}
 
-		bool SoundTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		bool SoundTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
-			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+			if (event_type != TriggerObject::COLLISION_STARTED)
 				return false;
 
-			if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
+			if (event_type == TriggerObject::COLLISION_FINISHED)
 			{
 
 
@@ -310,21 +310,21 @@ namespace death
 			return true; // collisions handled successfully
 		}
 
-		bool SoundTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+		bool SoundTriggerObject::IsAdditionalParticlesCreationEnabled() const
 		{
 			return false;
 		}
 
 		// =============================================================
-		// FinishingTriggerSurfaceObject implementation
+		// FinishingTriggerObject implementation
 		// =============================================================
 
-		bool FinishingTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+		bool FinishingTriggerObject::IsAdditionalParticlesCreationEnabled() const
 		{
 			return false;
 		}
 
-		bool FinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		bool FinishingTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
 			Game * game = layer_instance->GetGame();
 			if (game != nullptr)
@@ -512,11 +512,11 @@ namespace death
 			if (surface_object != nullptr)
 			{
 				if (chaos::TiledMapTools::HasFlag(surface_object, "Finish", "Finish", "Finish"))
-					return new FinishingTriggerSurfaceObject(in_layer_instance, surface_object);
+					return new FinishingTriggerObject(in_layer_instance, surface_object);
 				if (chaos::TiledMapTools::HasFlag(surface_object, "Checkpoint", "Checkpoint", "Checkpoint"))
-					return new CheckpointTriggerSurfaceObject(in_layer_instance, surface_object);
+					return new CheckpointTriggerObject(in_layer_instance, surface_object);
 				if (chaos::TiledMapTools::HasFlag(surface_object, "Sound", "Sound", "Sound"))
-					return new SoundTriggerSurfaceObject(in_layer_instance, surface_object);
+					return new SoundTriggerObject(in_layer_instance, surface_object);
 			}
 			return nullptr;
 		}
@@ -719,7 +719,7 @@ namespace death
 			wrap_y = layer->FindPropertyBool("WRAP_Y", false);
 			material_name = layer->FindPropertyString("MATERIAL", "");
 
-			trigger_surfaces_enabled = layer->FindPropertyBool("TRIGGER_SURFACES_ENABLED", false);
+			triggers_enabled = layer->FindPropertyBool("TRIGGERS_ENABLED", false);
 			player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", false);
 			camera_collision_enabled = layer->FindPropertyBool("CAMERA_COLLISIONS_ENABLED", false);
 			tile_collisions_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
@@ -861,9 +861,9 @@ namespace death
 			GeometricObject * object = level->CreateGeometricObject(this, geometric_object);
 			if (object != nullptr)
 			{
-				TriggerSurfaceObject * trigger = auto_cast(object);
+				TriggerObject * trigger = auto_cast(object);
 				if (trigger != nullptr)
-					trigger_surfaces.push_back(trigger);
+					triggers.push_back(trigger);
 				else
 					geometric_objects.push_back(object);
 				return object;
@@ -1043,6 +1043,11 @@ namespace death
 			if (game == nullptr)
 				return;
 
+
+
+
+			// shucollision
+
 			// check player collisions
 			if (ArePlayerCollisionEnabled())
 			{
@@ -1058,7 +1063,7 @@ namespace death
 					if (player_particle == nullptr)
 						continue;
 					// collision with surface triggers
-					if (AreTriggerSurfacesEnabled())
+					if (AreTriggersEnabled())
 						if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle))
 							continue;
 					// collision with tiles
@@ -1074,7 +1079,7 @@ namespace death
 				chaos::box2 camera_box = game->GetLevelInstance()->GetCameraBox(0);
 				if (!IsGeometryEmpty(camera_box))
 				{
-					if (AreTriggerSurfacesEnabled())
+					if (AreTriggersEnabled())
 						ComputeCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
 				}
 			}
@@ -1106,31 +1111,31 @@ namespace death
 
 
 			// the new colliding triggers
-			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
+			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
 
 			// search all colliding triggers
-			size_t surfaces_count = trigger_surfaces.size();
-			for (size_t i = 0; i < surfaces_count; ++i)
+			size_t triggers_count = triggers.size();
+			for (size_t i = 0; i < triggers_count; ++i)
 			{
-				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
+				TriggerObject * trigger = triggers[i].get();
 				if (trigger == nullptr || !trigger->IsEnabled())
 					continue;
 				// detect collision
 				if (trigger->IsCollisionWith(camera_box, &camera_collision_records))
-					triggers.push_back(trigger);
+					new_triggers.push_back(trigger);
 			}
 
 			// triggers collisions 
-			size_t triggers_count = triggers.size();
-			for (size_t i = 0; i < triggers_count; ++i)
+			size_t new_triggers_count = new_triggers.size();
+			for (size_t i = 0; i < new_triggers_count; ++i)
 			{
 				bool already_colliding = false;
-				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), triggers[i]) != camera_collision_records.end()) // search in previous frame data						
+				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), new_triggers[i]) != camera_collision_records.end()) // search in previous frame data						
 					already_colliding = true;
-				if (triggers[i]->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
+				if (new_triggers[i]->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
 				{
-					if (triggers[i]->IsTriggerOnce())
-						triggers[i]->SetEnabled(false);
+					if (new_triggers[i]->IsTriggerOnce())
+						new_triggers[i]->SetEnabled(false);
 				}
 			}
 
@@ -1138,12 +1143,12 @@ namespace death
 			size_t previous_count = camera_collision_records.size();
 			for (size_t i = 0; i < previous_count; ++i)
 			{
-				if (std::find(triggers.begin(), triggers.end(), camera_collision_records[i]) == triggers.end()) // no more colliding
-					camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, TriggerSurfaceObject::COLLISION_FINISHED);
+				if (std::find(new_triggers.begin(), new_triggers.end(), camera_collision_records[i]) == new_triggers.end()) // no more colliding
+					camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, TriggerObject::COLLISION_FINISHED);
 			}
 
 			// store the new triggers
-			camera_collision_records = std::move(triggers);
+			camera_collision_records = std::move(new_triggers);
 
 			return true;
 
@@ -1161,35 +1166,35 @@ namespace death
 
 
 			// the new colliding triggers
-			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
+			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
 			// the previous colliding triggers
 			PlayerAndTriggerCollisionRecord * previous_collisions = FindPlayerCollisionRecord(player);
 
 			// search all colliding triggers
-			size_t surfaces_count = trigger_surfaces.size();
-			for (size_t i = 0; i < surfaces_count; ++i)
+			size_t triggers_count = triggers.size();
+			for (size_t i = 0; i < triggers_count; ++i)
 			{
-				TriggerSurfaceObject * trigger = trigger_surfaces[i].get();
+				TriggerObject * trigger = triggers[i].get();
 				if (trigger == nullptr || !trigger->IsEnabled())
 					continue;
 				// detect collision
 				if (trigger->IsCollisionWith(player_particle->bounding_box, (previous_collisions != nullptr) ? &previous_collisions->triggers : nullptr))
-					triggers.push_back(trigger);
+					new_triggers.push_back(trigger);
 			}
 
 			// triggers collisions 
-			size_t triggers_count = triggers.size();
-			for (size_t i = 0; i < triggers_count; ++i)
+			size_t new_triggers_count = new_triggers.size();
+			for (size_t i = 0; i < new_triggers_count; ++i)
 			{
 				bool already_colliding = false;
 				if (previous_collisions != nullptr)
-					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), triggers[i]) != previous_collisions->triggers.end()) // search in previous frame data
+					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), new_triggers[i]) != previous_collisions->triggers.end()) // search in previous frame data
 						already_colliding = true;
 
-				if (triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerSurfaceObject::COLLISION_AGAIN : TriggerSurfaceObject::COLLISION_STARTED))
+				if (new_triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
 				{
-					if (triggers[i]->IsTriggerOnce())
-						triggers[i]->SetEnabled(false);
+					if (new_triggers[i]->IsTriggerOnce())
+						new_triggers[i]->SetEnabled(false);
 				}
 			}
 
@@ -1199,19 +1204,19 @@ namespace death
 				size_t previous_count = previous_collisions->triggers.size();
 				for (size_t i = 0; i < previous_count; ++i)
 				{
-					if (std::find(triggers.begin(), triggers.end(), previous_collisions->triggers[i]) == triggers.end()) // no more colliding
-						previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, TriggerSurfaceObject::COLLISION_FINISHED);
+					if (std::find(new_triggers.begin(), new_triggers.end(), previous_collisions->triggers[i]) == new_triggers.end()) // no more colliding
+						previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, TriggerObject::COLLISION_FINISHED);
 				}
 			}
 
 			// store the record
 			if (previous_collisions != nullptr)
-				previous_collisions->triggers = std::move(triggers);
+				previous_collisions->triggers = std::move(new_triggers);
 			else
 			{
 				PlayerAndTriggerCollisionRecord new_record;
 				new_record.player = player;
-				new_record.triggers = std::move(triggers);
+				new_record.triggers = std::move(new_triggers);
 				collision_records.push_back(std::move(new_record));
 			}
 			return true; // continue other collisions 
@@ -1259,9 +1264,9 @@ namespace death
 			for (size_t i = 0; i < camera_count; ++i)
 				cameras[i]->Tick(delta_time);
 
-			size_t trigger_count = trigger_surfaces.size();
+			size_t trigger_count = triggers.size();
 			for (size_t i = 0; i < trigger_count; ++i)
-				trigger_surfaces[i]->Tick(delta_time);
+				triggers[i]->Tick(delta_time);
 
 			size_t geometric_count = geometric_objects.size();
 			for (size_t i = 0; i < geometric_count; ++i)
@@ -1358,8 +1363,8 @@ namespace death
 		}
 		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, const);
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, BOOST_PP_EMPTY());
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, trigger_surfaces, const);
+		DEATH_FIND_OBJECT(TriggerObject, FindTrigger, triggers, BOOST_PP_EMPTY());
+		DEATH_FIND_OBJECT(TriggerObject, FindTrigger, triggers, const);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
 		DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, BOOST_PP_EMPTY());
@@ -1368,23 +1373,23 @@ namespace death
 #undef DEATH_FIND_OBJECT
 
 
-		size_t LayerInstance::GetTriggerSurfaceCount() const
+		size_t LayerInstance::GetTriggerCount() const
 		{
-			return trigger_surfaces.size();
+			return triggers.size();
 		}
 
-		TriggerSurfaceObject * LayerInstance::GetTriggerSurface(size_t index)
+		TriggerObject * LayerInstance::GetTrigger(size_t index)
 		{
-			if (index >= trigger_surfaces.size())
+			if (index >= triggers.size())
 				return nullptr;
-			return trigger_surfaces[index].get();
+			return triggers[index].get();
 		}
 
-		TriggerSurfaceObject const * LayerInstance::GetTriggerSurface(size_t index) const
+		TriggerObject const * LayerInstance::GetTrigger(size_t index) const
 		{
-			if (index >= trigger_surfaces.size())
+			if (index >= triggers.size())
 				return nullptr;
-			return trigger_surfaces[index].get();
+			return triggers[index].get();
 		}
 
 
@@ -1418,7 +1423,7 @@ namespace death
 
 		bool LayerInstance::DoSaveIntoCheckpoint(TiledLayerCheckpoint * checkpoint) const
 		{
-			DoSaveIntoCheckpointHelper(trigger_surfaces, checkpoint->trigger_checkpoints);
+			DoSaveIntoCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
 			DoSaveIntoCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
 			return true;
 		}
@@ -1457,7 +1462,7 @@ namespace death
 
 		bool LayerInstance::DoLoadFromCheckpoint(TiledLayerCheckpoint const * checkpoint)
 		{
-			DoLoadFromCheckpointHelper(trigger_surfaces, checkpoint->trigger_checkpoints);
+			DoLoadFromCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
 			DoLoadFromCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
 			return true;
 		}
@@ -1472,9 +1477,9 @@ namespace death
 			for (size_t i = 0; i < camera_count; ++i)
 				cameras[i]->OnLevelEnded();
 
-			size_t trigger_count = trigger_surfaces.size();
+			size_t trigger_count = triggers.size();
 			for (size_t i = 0; i < trigger_count; ++i)
-				trigger_surfaces[i]->OnLevelEnded();
+				triggers[i]->OnLevelEnded();
 
 			size_t object_count = geometric_objects.size();
 			for (size_t i = 0; i < object_count; ++i)
@@ -1491,9 +1496,9 @@ namespace death
 			for (size_t i = 0; i < camera_count; ++i)
 				cameras[i]->OnLevelStarted();
 
-			size_t trigger_count = trigger_surfaces.size();
+			size_t trigger_count = triggers.size();
 			for (size_t i = 0; i < trigger_count; ++i)
-				trigger_surfaces[i]->OnLevelStarted();
+				triggers[i]->OnLevelStarted();
 
 			size_t object_count = geometric_objects.size();
 			for (size_t i = 0; i < object_count; ++i)
@@ -1650,8 +1655,8 @@ namespace death
 		}
 		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, const);
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, BOOST_PP_EMPTY());
-		DEATH_FIND_OBJECT(TriggerSurfaceObject, FindTriggerSurface, const);
+		DEATH_FIND_OBJECT(TriggerObject, FindTrigger, BOOST_PP_EMPTY());
+		DEATH_FIND_OBJECT(TriggerObject, FindTrigger, const);
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, const);
 		DEATH_FIND_OBJECT(CameraObject, FindCamera, BOOST_PP_EMPTY());

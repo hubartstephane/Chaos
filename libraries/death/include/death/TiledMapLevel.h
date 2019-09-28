@@ -28,7 +28,7 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerSurfaceObject) (CheckpointTriggerSurfaceObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundTriggerSurfaceObject)
+#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerObject) (CheckpointTriggerObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundTriggerObject)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -154,10 +154,10 @@ namespace death
 		};
 		
 		// =====================================
-		// TriggerSurfaceObject : an object player can collide with (for moment, rectangle)
+		// TriggerObject : an object player can collide with (for moment, rectangle)
 		// =====================================
 
-		class TriggerSurfaceObject : public GeometricObject
+		class TriggerObject : public GeometricObject
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -168,7 +168,7 @@ namespace death
 			static int const COLLISION_AGAIN    = 2;
 
 			/** constructor */
-			TriggerSurfaceObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object);
+			TriggerObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object);
 
 			/** whether it is enabled or not */
 			bool IsEnabled() const { return enabled; }
@@ -187,7 +187,7 @@ namespace death
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
 			/** search whether there is a collision given box */
-			virtual bool IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerSurfaceObject>> const * triggers) const;
+			virtual bool IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerObject>> const * triggers) const;
 
 			/** enable the creation of tile for this trigger */
 			virtual bool IsAdditionalParticlesCreationEnabled() const {return true;}
@@ -222,10 +222,10 @@ namespace death
 		};
 
 		// =====================================
-		// TriggerSurfaceObjectCheckpoint
+		// TriggerObjectCheckpoint
 		// =====================================
 
-		class TriggerSurfaceObjectCheckpoint : public BaseObjectCheckpoint
+		class TriggerObjectCheckpoint : public BaseObjectCheckpoint
 		{
 		public:
 
@@ -236,16 +236,16 @@ namespace death
 		};
 
 		// =================================================
-		// CheckpointTriggerSurfaceObject
+		// CheckpointTriggerObject
 		// =================================================
 
-		class CheckpointTriggerSurfaceObject : public TriggerSurfaceObject
+		class CheckpointTriggerObject : public TriggerObject
 		{
 
 		public:
 
 			/** constructor */
-			using TriggerSurfaceObject::TriggerSurfaceObject;
+			using TriggerObject::TriggerObject;
 			/** override */
 			virtual bool IsAdditionalParticlesCreationEnabled() const override;
 			/** override */
@@ -258,16 +258,16 @@ namespace death
 		};
 
 		// =================================================
-		// SoundTriggerSurfaceObject : an object that play a sound
+		// SoundTriggerObject : an object that play a sound
 		// =================================================
 
-		class SoundTriggerSurfaceObject : public TriggerSurfaceObject
+		class SoundTriggerObject : public TriggerObject
 		{
 
 		public:
 
 			/** constructor */
-			using TriggerSurfaceObject::TriggerSurfaceObject;
+			using TriggerObject::TriggerObject;
 			/** override */
 			virtual bool IsAdditionalParticlesCreationEnabled() const override;
 
@@ -316,16 +316,16 @@ namespace death
 
 
 		// =================================================
-		// FinishingTriggerSurfaceObject
+		// FinishingTriggerObject
 		// =================================================
 
-		class FinishingTriggerSurfaceObject : public TriggerSurfaceObject
+		class FinishingTriggerObject : public TriggerObject
 		{
 
 		public:
 
 			/** inherit constructor */
-			using TriggerSurfaceObject::TriggerSurfaceObject;
+			using TriggerObject::TriggerObject;
 
 		protected:
 
@@ -416,7 +416,7 @@ namespace death
 			/** the player considered */
 			chaos::weak_ptr<Player> player;
 			/** all the triggers colliding */
-			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> triggers;
+			std::vector<chaos::weak_ptr<TriggerObject>> triggers;
 		};
 
 		// =====================================
@@ -480,9 +480,9 @@ namespace death
 			CameraObject const * FindCamera(char const * name) const;
 
 			/** find the trigger surface from its name */
-			TriggerSurfaceObject * FindTriggerSurface(char const * name);
+			TriggerObject * FindTrigger(char const * name);
 			/** find the trigger surface from its name */
-			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
+			TriggerObject const * FindTrigger(char const * name) const;
 
 			/** find the geometric object from its name */
 			GeometricObject * FindGeometricObject(char const * name);
@@ -508,9 +508,9 @@ namespace death
 			void SetCameraCollisionEnabled(bool in_camera_collision_enabled){ camera_collision_enabled = in_camera_collision_enabled; }
 
 			/** get whether trigger surfaces are enabled on that layer */
-			bool AreTriggerSurfacesEnabled() const { return trigger_surfaces_enabled; }
+			bool AreTriggersEnabled() const { return triggers_enabled; }
 			/** change whether trigger surfaces are enabled on that layer */
-			void SetTriggerSurfacesEnabled(bool in_trigger_surfaces_enabled) { trigger_surfaces_enabled = in_trigger_surfaces_enabled; }
+			void SetTriggersEnabled(bool in_triggers_enabled) { triggers_enabled = in_triggers_enabled; }
 
 			/** get whether collisions with tiles are enabled on that layer */
 			bool AreTileCollisionsEnabled() const { return tile_collisions_enabled; }
@@ -558,11 +558,11 @@ namespace death
 			}
 
 			/** returns the number of trigger surfaces */
-			size_t GetTriggerSurfaceCount() const;
+			size_t GetTriggerCount() const;
 			/** returns a trigger surface by its index */
-			TriggerSurfaceObject * GetTriggerSurface(size_t index);
+			TriggerObject * GetTrigger(size_t index);
 			/** returns a trigger surface by its index */
-			TriggerSurfaceObject const * GetTriggerSurface(size_t index) const;
+			TriggerObject const * GetTrigger(size_t index) const;
 
 
 		protected:
@@ -585,7 +585,7 @@ namespace death
 			/** override */
 			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const override;
 
-			/** search all collision with the player (tiles/TriggerSurfaceObject) */
+			/** search all collision with the player (tiles/TriggerObject) */
 			virtual void ComputePlayerAndCameraCollision(double delta_time);
 			/** compute trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
 			virtual bool ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
@@ -652,7 +652,7 @@ namespace death
 			/** the player cameras */
 			std::vector<chaos::shared_ptr<CameraObject>> cameras;
 			/** the trigger surface */
-			std::vector<chaos::shared_ptr<TriggerSurfaceObject>> trigger_surfaces;
+			std::vector<chaos::shared_ptr<TriggerObject>> triggers;
 			/** the geometric objects */
 			std::vector<chaos::shared_ptr<GeometricObject>> geometric_objects;
 
@@ -664,7 +664,7 @@ namespace death
 			/** whether collision with camera are to be tested with that layer */
 			bool camera_collision_enabled = true;
 			/** whether trigger surfaces are enabled on that layer */
-			bool trigger_surfaces_enabled = true;
+			bool triggers_enabled = true;
 			/** whether collisions with tiles are enabled on that layer */
 			bool tile_collisions_enabled = true;
 
@@ -674,7 +674,7 @@ namespace death
 			/** the previous frame collision */
 			std::vector<PlayerAndTriggerCollisionRecord> collision_records;
 			/** the previous frame trigger collision with camera */
-			std::vector<chaos::weak_ptr<TriggerSurfaceObject>> camera_collision_records;
+			std::vector<chaos::weak_ptr<TriggerObject>> camera_collision_records;
 		};
 
 		// =====================================
@@ -727,9 +727,9 @@ namespace death
 			/** find the player start from its name */
 			PlayerStartObject const * FindPlayerStart(char const * name) const;
 			/** find the trigger surface from its name */
-			TriggerSurfaceObject * FindTriggerSurface(char const * name);
+			TriggerObject * FindTrigger(char const * name);
 			/** find the trigger surface from its name */
-			TriggerSurfaceObject const * FindTriggerSurface(char const * name) const;
+			TriggerObject const * FindTrigger(char const * name) const;
 			/** find the typed object from its name */
 			GeometricObject * FindGeometricObject(char const * name);
 			/** find the typed object surface from its name */
@@ -750,7 +750,7 @@ namespace death
 			/** override */
 			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const override;
 
-			/** search all collision with the player (tiles/TriggerSurfaceObject) */
+			/** search all collision with the player (tiles/TriggerObject) */
 			virtual void ComputePlayerAndCameraCollision(double delta_time);
 
 			/** override */

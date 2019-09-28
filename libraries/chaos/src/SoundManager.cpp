@@ -775,7 +775,7 @@ namespace chaos
 					pause_timer_value += delta_time;
 					if (pause_timer_value >= pause_timer_when_too_far) // timer reached the limit
 					{
-						pause_timer_value == pause_timer_when_too_far;
+						pause_timer_value = pause_timer_when_too_far;
 						DoUpdateEffectivePause(IsEffectivePaused()); // update pause state
 					}
 				}

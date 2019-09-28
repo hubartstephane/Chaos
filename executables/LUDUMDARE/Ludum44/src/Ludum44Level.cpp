@@ -22,12 +22,12 @@ static bool IsDefaultTileCreationEnabled()
 #endif	
 }
 
-bool SpeedUpTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+bool SpeedUpTriggerObject::IsAdditionalParticlesCreationEnabled() const
 {
 	return IsDefaultTileCreationEnabled();
 }
 
-bool SpawnerTriggerSurfaceObject::IsAdditionalParticlesCreationEnabled() const
+bool SpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
 {
 	return IsDefaultTileCreationEnabled();
 }
@@ -112,11 +112,11 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 	if (surface_object != nullptr)
 	{
 		if (chaos::TiledMapTools::HasFlag(surface_object, "PowerUp", "PowerUp", "PowerUp"))
-			return new PowerUpTriggerSurfaceObject(in_layer_instance, surface_object); // XXX : the power up, is the only object that has IsAdditionalParticlesCreationEnabled() => true
+			return new PowerUpTriggerObject(in_layer_instance, surface_object); // XXX : the power up, is the only object that has IsAdditionalParticlesCreationEnabled() => true
 		if (chaos::TiledMapTools::HasFlag(surface_object, "SpeedUp", "SpeedUp", "SpeedUp"))
-			return new SpeedUpTriggerSurfaceObject(in_layer_instance, surface_object);
+			return new SpeedUpTriggerObject(in_layer_instance, surface_object);
 		if (chaos::TiledMapTools::HasFlag(surface_object, "Spawner", "Spawner", "Spawner"))
-			return new SpawnerTriggerSurfaceObject(in_layer_instance, surface_object);
+			return new SpawnerTriggerObject(in_layer_instance, surface_object);
 	}
 	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
@@ -153,10 +153,10 @@ bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * 
 
 
 // =============================================================
-// PowerUpTriggerSurfaceObject implementation
+// PowerUpTriggerObject implementation
 // =============================================================
 
-bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+bool PowerUpTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
 	LudumGameInstance * ludum_game_instance = auto_cast(player->GetGameInstance());
 	if (ludum_game_instance == nullptr)
@@ -164,11 +164,11 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 	bool decrease_power = geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
 
-	if (event_type == TriggerSurfaceObject::COLLISION_STARTED)
+	if (event_type == TriggerObject::COLLISION_STARTED)
 		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
-	else if (event_type == TriggerSurfaceObject::COLLISION_AGAIN && reset_trigger)
+	else if (event_type == TriggerObject::COLLISION_AGAIN && reset_trigger)
 		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
-	else if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
+	else if (event_type == TriggerObject::COLLISION_FINISHED)
 		ludum_game_instance->OnPowerUpZone(player, false, this, decrease_power);
 	else
 		return false;
@@ -180,12 +180,12 @@ bool PowerUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 
 // =============================================================
-// SpeedUpTriggerSurfaceObject implementation
+// SpeedUpTriggerObject implementation
 // =============================================================
 
-bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+bool SpeedUpTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-	if (event_type != TriggerSurfaceObject::COLLISION_STARTED) // already handled
+	if (event_type != TriggerObject::COLLISION_STARTED) // already handled
 		return false;
 
 	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
@@ -200,22 +200,22 @@ bool SpeedUpTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, deat
 
 
 // =============================================================
-// SpawnerTriggerSurfaceObject implementation
+// SpawnerTriggerObject implementation
 // =============================================================
 
 
-bool SpawnerTriggerSurfaceObject::Initialize()
+bool SpawnerTriggerObject::Initialize()
 {
-	if (!death::TiledMap::TriggerSurfaceObject::Initialize())
+	if (!death::TiledMap::TriggerObject::Initialize())
 		return false;
 	trigger_once = true;
 	return true;
 }
 
-bool SpawnerTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	// only the first time collision is detected
-	if (event_type != death::TiledMap::TriggerSurfaceObject::COLLISION_STARTED)
+	if (event_type != death::TiledMap::TriggerObject::COLLISION_STARTED)
 		return false;
 
 	// search the layer for enemies

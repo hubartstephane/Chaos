@@ -58,7 +58,7 @@ class LudumGame : public death::Game
 	friend class LudumFireRateUp;
 
 	friend class ParticleEnemyTrait;
-	friend class SpawnerTriggerSurfaceObject;
+	friend class SpawnerTriggerObject;
 
 public:
 

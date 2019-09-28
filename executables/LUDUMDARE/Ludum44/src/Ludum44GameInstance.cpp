@@ -139,7 +139,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	}
 }
 
-void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerSurfaceObject * surface, bool decreasing_power_up)
+void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerObject * surface, bool decreasing_power_up)
 {
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)

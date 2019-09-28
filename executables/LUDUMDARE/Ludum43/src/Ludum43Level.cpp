@@ -176,33 +176,33 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 	if (surface_object != nullptr)
 	{
 		if (chaos::TiledMapTools::HasFlag(surface_object, "FinishSurface", "FinishSurface", "FINISHSURFACE"))
-			return new MyFinishingTriggerSurfaceObject(in_layer_instance, surface_object);
+			return new MyFinishingTriggerObject(in_layer_instance, surface_object);
 	}
 	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 
 // =============================================================
-// FinishingTriggerSurfaceObject implementation
+// FinishingTriggerObject implementation
 // =============================================================
 
-MyFinishingTriggerSurfaceObject::MyFinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
-	death::TiledMap::TriggerSurfaceObject(in_layer_instance, in_surface_object)
+MyFinishingTriggerObject::MyFinishingTriggerObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
+	death::TiledMap::TriggerObject(in_layer_instance, in_surface_object)
 {
 
 }
 
-bool MyFinishingTriggerSurfaceObject::Initialize()
+bool MyFinishingTriggerObject::Initialize()
 {
-	if (!death::TiledMap::TriggerSurfaceObject::Initialize())
+	if (!death::TiledMap::TriggerObject::Initialize())
 		return false;
 	trigger_once = true;
 	return true;
 }
 
 
-bool MyFinishingTriggerSurfaceObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+bool MyFinishingTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
-	if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
 
 	if (player_particle != nullptr)

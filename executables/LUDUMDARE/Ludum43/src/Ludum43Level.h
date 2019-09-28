@@ -22,7 +22,7 @@ class MyFinishingTriggerSurfaceObject : public death::TiledMap::TriggerSurfaceOb
 public:
 
 	/** constructor */
-	MyFinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object);
+	MyFinishingTriggerSurfaceObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object);
 
 	/** override */
 	virtual bool Initialize() override;

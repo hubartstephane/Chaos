@@ -46,6 +46,11 @@ namespace death
 		// TriggerSurfaceObject implementation
 		// =====================================
 
+		TriggerSurfaceObject::TriggerSurfaceObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
+			GeometricObject(in_layer_instance, in_surface_object)
+		{
+		}
+
 		bool TriggerSurfaceObject::Initialize()
 		{
 			if (!GeometricObject::Initialize())
@@ -190,59 +195,25 @@ namespace death
 
 		bool SoundTriggerSurfaceObject::Initialize()
 		{
+			trigger_once = true; // set trigger once by default, by this can be overriden by the further initialization
+
 			if (!TriggerSurfaceObject::Initialize())
 				return false;
-			trigger_once = true; // XXX : keep or not ? seems normal
-
+			
 			sound_name         = geometric_object->FindPropertyString("SOUND_NAME", "");
 			min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
 			min_distance_ratio = chaos::MathTools::Clamp(min_distance_ratio);
 
-
-
-#if 0
-
-
-			/** the initial volume of the object */
-			float volume = 1.0f;
-			/** the blend in time of the object */
-			float blend_in_time = 0.0f;
-
-			/** true whether the sound is in 3D */
-			bool is_3D_sound = false;
-			/** the position of the sound in 3D */
-			glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-			/** the velocity of the sound in 3D */
-			glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-			/** the minimal distance for sound in 3D */
-			float min_distance = 0.0f;
-			/** the maximum distance for sound in 3D */
-			float max_distance = 0.0f;
-			/** timer for far 3D sound before entering pause */
-			float pause_timer_when_too_far = 0.0f;
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-			//autopause_delay = geometric_object->FindPropertyFloat("AUTOPAUSE_DELAY", 0.0f);
-			//autopause = geometric_object->FindPropertyFloat("AUTOPAUSE", 0.0f);
-			looping = geometric_object->FindPropertyBool("LOOPING", looping);
+			is_3D_sound              = geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
+			looping                  = geometric_object->FindPropertyBool("LOOPING", looping);
+			pause_timer_when_too_far = geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
 
 			return true;
 		}
 
 		void SoundTriggerSurfaceObject::OnLevelStarted()
 		{
-			sound = CreateSound();
+			//sound = CreateSound();
 		}
 
 		void SoundTriggerSurfaceObject::OnLevelEnded()
@@ -290,9 +261,24 @@ namespace death
 
 				chaos::PlaySoundDesc play_desc;
 				play_desc.paused = false;
-				play_desc.looping = true;
+				play_desc.looping = looping;
 				play_desc.blend_in_time = 0.0f;
-				play_desc.pause_timer_when_too_far = 5.0f;
+				play_desc.pause_timer_when_too_far = pause_timer_when_too_far;
+
+
+
+
+
+/*
+				sound_name = geometric_object->FindPropertyString("SOUND_NAME", "");
+				min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
+				min_distance_ratio = chaos::MathTools::Clamp(min_distance_ratio);
+
+				is_3D_sound = geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
+				looping = geometric_object->FindPropertyBool("LOOPING", looping);
+				pause_timer_when_too_far = geometric_object->FindPropertyBool("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
+
+				*/
 				play_desc.SetPosition(glm::vec3(position, 0.0f));
 
 				if (surface_object != nullptr)
@@ -309,11 +295,14 @@ namespace death
 		bool SoundTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+				return false;
+
+			if (event_type == TriggerSurfaceObject::COLLISION_FINISHED)
 			{
 
-			}
 
-				return false;
+
+			}
 
 			if (sound != nullptr)
 				sound = CreateSound();
@@ -518,14 +507,16 @@ namespace death
 
 		GeometricObject * Level::DoCreateGeometricObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 		{
-			if (in_geometric_object->GetObjectSurface() != nullptr)
+			chaos::TiledMap::GeometricObjectSurface * surface_object = in_geometric_object->GetObjectSurface();
+
+			if (surface_object != nullptr)
 			{
-				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Finish", "Finish", "Finish"))
-					return new FinishingTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Checkpoint", "Checkpoint", "Checkpoint"))
-					return new CheckpointTriggerSurfaceObject(in_layer_instance, in_geometric_object);
-				if (chaos::TiledMapTools::HasFlag(in_geometric_object, "Sound", "Sound", "Sound"))
-					return new SoundTriggerSurfaceObject(in_layer_instance, in_geometric_object);
+				if (chaos::TiledMapTools::HasFlag(surface_object, "Finish", "Finish", "Finish"))
+					return new FinishingTriggerSurfaceObject(in_layer_instance, surface_object);
+				if (chaos::TiledMapTools::HasFlag(surface_object, "Checkpoint", "Checkpoint", "Checkpoint"))
+					return new CheckpointTriggerSurfaceObject(in_layer_instance, surface_object);
+				if (chaos::TiledMapTools::HasFlag(surface_object, "Sound", "Sound", "Sound"))
+					return new SoundTriggerSurfaceObject(in_layer_instance, surface_object);
 			}
 			return nullptr;
 		}

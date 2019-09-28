@@ -167,8 +167,8 @@ namespace death
 			static int const COLLISION_STARTED  = 1;
 			static int const COLLISION_AGAIN    = 2;
 
-			/** inherit constructor */
-			using GeometricObject::GeometricObject;
+			/** constructor */
+			TriggerSurfaceObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object);
 
 			/** whether it is enabled or not */
 			bool IsEnabled() const { return enabled; }
@@ -295,16 +295,20 @@ namespace death
 
 			/** a ratio applyed to max_distance to compute the min_distance of the sound (for 3D sounds) */
 			float min_distance_ratio = 0.3f;
+			/** 3D sound */
+			bool is_3D_sound = false;
+			/** whether the sound is to be looping or play only once */
+			bool looping = true;
+			/** timer for far 3D sound before entering pause */
+			float pause_timer_when_too_far = 0.0f;
 
 			/** the duration after which an out of range sound is to be stopped */
 			float stop_duration = 0.0f;
 
-			/** 3D sound */
-			bool is_3D_sound = false;
+
 			/** 3D sound */
 			bool stop_sound_when_leaved = false;
-			/** whether the sound is to be looping or play only once */
-			bool looping = true;
+
 
 			/** the sound being played */
 			chaos::shared_ptr<chaos::Sound> sound;

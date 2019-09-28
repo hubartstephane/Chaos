@@ -148,6 +148,8 @@ namespace chaos
 		float min_distance = 0.0f;
 		/** the maximum distance for sound in 3D */
 		float max_distance = 0.0f;
+		/** timer for far 3D sound before entering pause */
+		float pause_timer_when_too_far = 0.0f;
 		
 		/** the name of the sound object to create */
 		std::string sound_name;
@@ -365,6 +367,8 @@ namespace chaos
 	protected:
 
 		/** override */
+		virtual void TickObject(float delta_time);
+		/** override */
 		virtual void DoUpdateEffectiveVolume(float effective_volume);
 		/** override */
 		virtual void DoUpdateEffectivePause(bool effective_pause);
@@ -393,6 +397,10 @@ namespace chaos
 		float min_distance = 0.0f;
 		/** the max distance after which the sound volume is 0.0f (3D consideration only) (different from irrklang consideration) */
 		float max_distance = 0.0f;
+		/** timer for far 3D sound before entering pause */
+		float pause_timer_when_too_far = 0.0f;
+		/** value of the timer  */
+		float pause_timer_value = 0.0f;
 
 		/** whether the sound is looping */
 		bool looping = false;

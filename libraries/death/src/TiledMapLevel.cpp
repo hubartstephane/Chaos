@@ -50,10 +50,11 @@ namespace death
 		{
 			if (!GeometricObject::Initialize())
 				return false;
-			enabled = geometric_object->FindPropertyBool("ENABLED", true);
-			trigger_once = geometric_object->FindPropertyBool("TRIGGER_ONCE", false);
-			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", 0);
-			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", 1.0f);
+			// default values are set to the one defined by default in constructor
+			enabled = geometric_object->FindPropertyBool("ENABLED", enabled);
+			trigger_once = geometric_object->FindPropertyBool("TRIGGER_ONCE", trigger_once);
+			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", trigger_id);
+			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", outside_box_factor);
 			return true;
 		}
 
@@ -147,7 +148,7 @@ namespace death
 		{
 			if (!TriggerSurfaceObject::Initialize())
 				return false;
-			trigger_once = true; // XXX : keep or not ? seems normal
+			trigger_once = true; // force a trigger once for checkpoint
 			return true;
 		}
 
@@ -194,12 +195,47 @@ namespace death
 			trigger_once = true; // XXX : keep or not ? seems normal
 
 			sound_name         = geometric_object->FindPropertyString("SOUND_NAME", "");
-			min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", 0.3f);
+			min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
 			min_distance_ratio = chaos::MathTools::Clamp(min_distance_ratio);
+
+
+
+#if 0
+
+
+			/** the initial volume of the object */
+			float volume = 1.0f;
+			/** the blend in time of the object */
+			float blend_in_time = 0.0f;
+
+			/** true whether the sound is in 3D */
+			bool is_3D_sound = false;
+			/** the position of the sound in 3D */
+			glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+			/** the velocity of the sound in 3D */
+			glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+			/** the minimal distance for sound in 3D */
+			float min_distance = 0.0f;
+			/** the maximum distance for sound in 3D */
+			float max_distance = 0.0f;
+			/** timer for far 3D sound before entering pause */
+			float pause_timer_when_too_far = 0.0f;
+
+#endif
+
+
+
+
+
+
+
+
+
+
 
 			//autopause_delay = geometric_object->FindPropertyFloat("AUTOPAUSE_DELAY", 0.0f);
 			//autopause = geometric_object->FindPropertyFloat("AUTOPAUSE", 0.0f);
-			looping = geometric_object->FindPropertyBool("LOOPING", true);
+			looping = geometric_object->FindPropertyBool("LOOPING", looping);
 
 			return true;
 		}
@@ -256,6 +292,7 @@ namespace death
 				play_desc.paused = false;
 				play_desc.looping = true;
 				play_desc.blend_in_time = 0.0f;
+				play_desc.pause_timer_when_too_far = 5.0f;
 				play_desc.SetPosition(glm::vec3(position, 0.0f));
 
 				if (surface_object != nullptr)
@@ -272,20 +309,14 @@ namespace death
 		bool SoundTriggerSurfaceObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			if (event_type != TriggerSurfaceObject::COLLISION_STARTED)
+			{
+
+			}
+
 				return false;
 
-			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
-			if (surface == nullptr)
-				return true;
-
-
-
-
-
-
-
-
-
+			if (sound != nullptr)
+				sound = CreateSound();
 
 			return true; // collisions handled successfully
 		}

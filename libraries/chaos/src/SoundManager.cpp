@@ -612,12 +612,18 @@ namespace chaos
 
 	bool Sound::IsEffectivePaused() const
 	{
+		// standard pause
 		if (SoundObject::IsEffectivePaused())
 			return true;
+		// from categories
 		for (SoundCategory * category : categories)
 			if (category != nullptr && category->IsEffectivePaused())
 				return true;
+		// from sources
 		if (source != nullptr && source->IsEffectivePaused())
+			return true;
+		// from a too far 3D object
+		if (pause_timer_when_too_far >= 0 && pause_timer_value >= pause_timer_when_too_far && Get3DVolumeModifier() == 0.0f)
 			return true;
 		return false;
 	}
@@ -670,6 +676,7 @@ namespace chaos
 		// copy some 3D sound data before computing effective colume
 		min_distance = play_desc.min_distance;
 		max_distance = play_desc.max_distance;
+		pause_timer_when_too_far = play_desc.pause_timer_when_too_far;
 		position = play_desc.position;
 		velocity = play_desc.velocity;
 
@@ -752,6 +759,35 @@ namespace chaos
 	{
 		if (irrklang_sound != nullptr)
 			irrklang_sound->setPlayPosition((irrklang::ik_u32)position);
+	}
+
+	void Sound::TickObject(float delta_time)
+	{
+		SoundObject::TickObject(delta_time);
+		
+		// 3D object that wants to be paused
+		if (is_3D_sound && pause_timer_when_too_far >= 0.0f)
+		{
+			if (Get3DVolumeModifier() == 0.0f) // a 3D object too far to be listened
+			{
+				if (pause_timer_value < pause_timer_when_too_far)
+				{
+					pause_timer_value += delta_time;
+					if (pause_timer_value >= pause_timer_when_too_far) // timer reached the limit
+					{
+						pause_timer_value == pause_timer_when_too_far;
+						DoUpdateEffectivePause(IsEffectivePaused()); // update pause state
+					}
+				}
+			}
+			else 
+			{
+				// was in pause due to distance ?
+				if (pause_timer_value >= pause_timer_when_too_far)
+					DoUpdateEffectivePause(IsEffectivePaused());  // update pause state (resume if all other conditions are present)
+				pause_timer_value = 0.0f;
+			}
+		}
 	}
 
 

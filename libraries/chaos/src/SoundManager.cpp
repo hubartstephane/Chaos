@@ -764,28 +764,31 @@ namespace chaos
 	void Sound::TickObject(float delta_time)
 	{
 		SoundObject::TickObject(delta_time);
-		
+
 		// 3D object that wants to be paused
-		if (is_3D_sound && pause_timer_when_too_far >= 0.0f)
+		if (IsAttachedToManager())
 		{
-			if (Get3DVolumeModifier() == 0.0f) // a 3D object too far to be listened
+			if (is_3D_sound && pause_timer_when_too_far >= 0.0f)
 			{
-				if (pause_timer_value < pause_timer_when_too_far)
+				if (Get3DVolumeModifier() == 0.0f) // a 3D object too far to be listened
 				{
-					pause_timer_value += delta_time;
-					if (pause_timer_value >= pause_timer_when_too_far) // timer reached the limit
+					if (pause_timer_value < pause_timer_when_too_far)
 					{
-						pause_timer_value = pause_timer_when_too_far;
-						DoUpdateEffectivePause(IsEffectivePaused()); // update pause state
+						pause_timer_value += delta_time;
+						if (pause_timer_value >= pause_timer_when_too_far) // timer reached the limit
+						{
+							pause_timer_value = pause_timer_when_too_far;
+							DoUpdateEffectivePause(IsEffectivePaused()); // update pause state
+						}
 					}
 				}
-			}
-			else 
-			{
-				// was in pause due to distance ?
-				if (pause_timer_value >= pause_timer_when_too_far)
-					DoUpdateEffectivePause(IsEffectivePaused());  // update pause state (resume if all other conditions are present)
-				pause_timer_value = 0.0f;
+				else
+				{
+					// was in pause due to distance ?
+					if (pause_timer_value >= pause_timer_when_too_far)
+						DoUpdateEffectivePause(IsEffectivePaused());  // update pause state (resume if all other conditions are present)
+					pause_timer_value = 0.0f;
+				}
 			}
 		}
 	}

@@ -831,22 +831,19 @@ namespace death
 		//if (game_instance != nullptr && !IsPaused())
 		if (IsPlaying(true, true))
 		{
+			// shusound
+
 			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
 			if (category != nullptr && !category->IsPendingKill())
 				play_desc.categories.push_back(category);
 
+			if (game_instance != nullptr)
+				if (game_instance->sound_category != nullptr && !game_instance->sound_category->IsPendingKill())
+					play_desc.categories.push_back(game_instance->sound_category.get());
 
-
-
-			// shusound
-
-
-
-
-
-
-
-
+			if (current_level_instance != nullptr)
+				if (current_level_instance->sound_category != nullptr && !current_level_instance->sound_category->IsPendingKill())
+					play_desc.categories.push_back(current_level_instance->sound_category.get());
 		}
 		return source->Play(play_desc);
 	}
@@ -1064,6 +1061,10 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
+		// shusound
+
+#if 0
+
 		// purge + fade out all sounds
 		chaos::SoundManager * sound_manager = GetSoundManager();
 		if (sound_manager != nullptr)
@@ -1077,8 +1078,10 @@ namespace death
 				sound->FadeOut(0.5f, true, true);
 			}
 		}
-		// start the music
 
+#endif
+
+		// start the music
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))
 			menu_music = nullptr;
@@ -1191,6 +1194,8 @@ namespace death
 		for (size_t i = 0; i < game_instance->players.size(); ++i)
 			if (game_instance->players[i] != nullptr)
 				game_instance->OnPlayerEntered(game_instance->players[i].get());
+		// game entered
+		game_instance->OnEnterGame();
 		// select the very first level
 		SetNextLevel(true); 
 
@@ -1207,6 +1212,8 @@ namespace death
 		for (size_t i = 0; i < game_instance->players.size(); ++i)
 			if (game_instance->players[i] != nullptr)
 				game_instance->OnPlayerLeaved(game_instance->players[i].get());
+		// game instance stop
+		game_instance->OnLeaveGame();
 		// destroy the game instance 
 		game_instance = nullptr;
 		return true;

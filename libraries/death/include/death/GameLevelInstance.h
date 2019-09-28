@@ -7,9 +7,10 @@
 #include <chaos/Tickable.h>
 #include <chaos/ClockManager.h>
 #include <chaos/ParticleManager.h>
+#include <chaos/SoundManager.h>
+
 #include <death/Camera.h>
 #include <death/GameFramework.h>
-
 #include <death/GameCheckpoint.h>
 
 namespace death
@@ -159,6 +160,9 @@ namespace death
 		float level_timeout = -1.0f;
 		/** the level completion flag */
 		bool level_completion_flag = false;
+
+		/** a category for all sound started during that level */
+		chaos::shared_ptr<chaos::SoundCategory> sound_category;
 
 		/** the level clock */
 		chaos::shared_ptr<chaos::Clock> level_clock;

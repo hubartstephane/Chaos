@@ -231,6 +231,10 @@ namespace death
 			if (pause_clock == nullptr)
 				return false;
 		}
+		// create a sound category 
+		chaos::SoundManager * sound_manager = game->GetSoundManager();
+		if (sound_manager != nullptr)
+			sound_category = sound_manager->AddCategory("game_instance");
 
 		return true;
 	}
@@ -370,6 +374,20 @@ namespace death
 
 
 		return true;
+	}
+
+	void GameInstance::OnEnterGame()
+	{
+
+	}
+
+	void GameInstance::OnLeaveGame()
+	{
+		if (sound_category != nullptr)
+		{
+			sound_category->Stop();
+			sound_category = nullptr;
+		}
 	}
 
 

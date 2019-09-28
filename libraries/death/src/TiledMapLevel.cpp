@@ -190,7 +190,7 @@ namespace death
 		}
 
 		// =====================================
-		// SoundGeometricObject implementation
+		// SoundTriggerObject implementation
 		// =====================================
 
 		bool SoundTriggerObject::Initialize()
@@ -220,8 +220,8 @@ namespace death
 		{
 			if (sound != nullptr)
 			{
-				sound->Stop();
-				sound = nullptr;
+			//	sound->Stop();
+			//	sound = nullptr;
 			}
 		}
 
@@ -294,8 +294,13 @@ namespace death
 
 		bool SoundTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
-			if (event_type != TriggerObject::COLLISION_STARTED)
-				return false;
+			if (event_type == TriggerObject::COLLISION_STARTED)
+			{
+				//if (sound != nullptr)
+					CreateSound();
+
+				return true;
+			}
 
 			if (event_type == TriggerObject::COLLISION_FINISHED)
 			{
@@ -304,8 +309,8 @@ namespace death
 
 			}
 
-			if (sound != nullptr)
-				sound = CreateSound();
+		//	if (sound != nullptr)
+		//		sound = CreateSound();
 
 			return true; // collisions handled successfully
 		}

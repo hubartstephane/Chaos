@@ -114,6 +114,12 @@ namespace death
 			OnPlayerLeaved(game_instance->GetPlayer(i));
 		// destroy cameras
 		DestroyCameras();
+		// destroy all sounds for our category
+		if (sound_category != nullptr)
+		{
+			sound_category->Stop();
+			sound_category = nullptr;
+		}
 	}
 	
 	void GameLevelInstance::OnLevelStarted()
@@ -164,6 +170,10 @@ namespace death
 		level_clock = root_clock->CreateChildClock("level_clock"); 
 		if (level_clock == nullptr)
 			return false;
+		// create a sound category
+		chaos::SoundManager * sound_manager = GetGame()->GetSoundManager();
+		if (sound_manager != nullptr)
+			sound_category = sound_manager->AddCategory("level_instance");
 
 		return true;
 	}

@@ -4,6 +4,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/Tickable.h>
 #include <chaos/InputEventReceiver.h>
+#include <chaos/SoundManager.h>
 
 #include <death/GameFramework.h>
 #include <death/Player.h>
@@ -138,10 +139,11 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
 
-
-
-
-
+		/** called whenever the game is started */
+		virtual void OnEnterGame();
+		/** called whenever the game is finished */
+		virtual void OnLeaveGame();
+		
 		/** override */
 		virtual bool DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const override;
 		/** override */
@@ -159,6 +161,9 @@ namespace death
 		chaos::shared_ptr<chaos::Clock> main_clock;
 		chaos::shared_ptr<chaos::Clock> game_clock;
 		chaos::shared_ptr<chaos::Clock> pause_clock;
+
+		/** a sound category for the game instance */
+		chaos::shared_ptr<chaos::SoundCategory> sound_category;
 
 		/** respawn checkpoint */
 		chaos::shared_ptr<GameCheckpoint> respawn_checkpoint;

@@ -138,18 +138,9 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1808" name="Checkpoint" gid="2" x="-3680" y="14240" width="20912" height="2416">
-   <properties>
-   </properties>
-  </object>
-  <object id="1809" name="Checkpoint" gid="2" x="-4312" y="-11128" width="20912" height="688">
-   <properties>
-   </properties>
-  </object>
-  <object id="1843" name="Finish" gid="2" x="-2008" y="-133560" width="16432" height="8752">
-   <properties>
-   </properties>
-  </object>
+  <object id="1808" name="Checkpoint" gid="2" x="-3680" y="14240" width="20912" height="2416"/>
+  <object id="1809" name="Checkpoint" gid="2" x="-4312" y="-11128" width="20912" height="688"/>
+  <object id="1843" name="Finish" gid="2" x="-2008" y="-133560" width="16432" height="8752"/>
   <object id="1870" name="PowerUp" gid="2" x="-3788" y="11388" width="10160" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
@@ -215,10 +206,7 @@
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1892" name="Checkpoint" gid="2" x="-4440" y="-35640" width="20912" height="688">
-   <properties>
-   </properties>
-  </object>
+  <object id="1892" name="Checkpoint" gid="2" x="-4440" y="-35640" width="20912" height="688"/>
   <object id="1893" name="PowerUp" gid="11" x="7004" y="-36612" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
@@ -229,10 +217,7 @@
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1895" name="Checkpoint" gid="2" x="-4376" y="-60536" width="20912" height="688">
-   <properties>
-   </properties>
-  </object>
+  <object id="1895" name="Checkpoint" gid="2" x="-4376" y="-60536" width="20912" height="688"/>
   <object id="1896" name="PowerUp" gid="11" x="7068" y="-61508" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
@@ -243,10 +228,7 @@
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1898" name="Checkpoint" gid="2" x="-4376" y="-83448" width="20912" height="688">
-   <properties>
-   </properties>
-  </object>
+  <object id="1898" name="Checkpoint" gid="2" x="-4376" y="-83448" width="20912" height="688"/>
   <object id="1899" name="PowerUp" gid="11" x="7068" y="-84420" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
@@ -335,7 +317,7 @@
   <object id="1915" name="Sound" x="960" y="448" width="10176" height="9728">
    <properties>
     <property name="OBJECT_TYPE" value="Sound"/>
-    <property name="SOUND_NAME" value="sound_zone"/>
+    <property name="SOUND_NAME" value="thrust"/>
     <property name="looping" type="bool" value="true"/>
     <property name="max_range" type="float" value="0"/>
     <property name="min_range" type="float" value="0"/>

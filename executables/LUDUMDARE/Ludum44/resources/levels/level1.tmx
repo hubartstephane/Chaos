@@ -316,12 +316,13 @@
   </object>
   <object id="1915" name="Sound" x="960" y="448" width="10176" height="9728">
    <properties>
-    <property name="OBJECT_TYPE" value="Sound"/>
+    <property name="3D_SOUND" type="bool" value="true"/>
+    <property name="MIN_DISTANCE_RATIO" type="float" value="0.5"/>
+    <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" value="0"/>
     <property name="SOUND_NAME" value="thrust"/>
+    <property name="STOP_SOUND_WHEN_LEAVED" type="bool" value="true"/>
+    <property name="TRIGGER_ONCE" type="bool" value="true"/>
     <property name="looping" type="bool" value="true"/>
-    <property name="max_range" type="float" value="0"/>
-    <property name="min_range" type="float" value="0"/>
-    <property name="stop_duration" type="float" value="0"/>
    </properties>
   </object>
  </objectgroup>

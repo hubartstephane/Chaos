@@ -90,12 +90,12 @@ namespace death
 
 		bool TriggerObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
-			return true; // collisions handled successfully
+			return false; // do not do anything with collision
 		}
 
 		bool TriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 		{
-			return true; // collisions handled successfully
+			return false; // do not do anything with collision
 		}
 
 		void TriggerObject::SetEnabled(bool in_enabled)
@@ -126,6 +126,7 @@ namespace death
 
 			trigger_checkpoint->enabled = enabled;
 			trigger_checkpoint->trigger_once = trigger_once;
+			trigger_checkpoint->trigger_enter_count = trigger_enter_count;
 
 			return true;
 		}
@@ -141,6 +142,7 @@ namespace death
 
 			enabled = trigger_checkpoint->enabled;
 			trigger_once = trigger_checkpoint->trigger_once;
+			trigger_enter_count = trigger_checkpoint->trigger_enter_count;
 
 			return true;
 		}
@@ -161,10 +163,6 @@ namespace death
 		{
 			if (event_type != TriggerObject::COLLISION_STARTED)
 				return false;
-
-			chaos::TiledMap::GeometricObjectSurface * surface = geometric_object->GetObjectSurface();
-			if (surface == nullptr)
-				return true;
 
 			GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
 			if (game_instance != nullptr)
@@ -195,34 +193,19 @@ namespace death
 
 		bool SoundTriggerObject::Initialize()
 		{
-			trigger_once = true; // set trigger once by default, by this can be overriden by the further initialization
-
 			if (!TriggerObject::Initialize())
 				return false;
 			
 			sound_name         = geometric_object->FindPropertyString("SOUND_NAME", "");
 			min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
 			min_distance_ratio = chaos::MathTools::Clamp(min_distance_ratio);
-
+			
+			pause_timer_when_too_far = geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
 			is_3D_sound              = geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
 			looping                  = geometric_object->FindPropertyBool("LOOPING", looping);
-			pause_timer_when_too_far = geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
+			stop_sound_when_leaved   = geometric_object->FindPropertyBool("STOP_SOUND_WHEN_LEAVED", stop_sound_when_leaved);
 
 			return true;
-		}
-
-		void SoundTriggerObject::OnLevelStarted()
-		{
-			//sound = CreateSound();
-		}
-
-		void SoundTriggerObject::OnLevelEnded()
-		{
-			if (sound != nullptr)
-			{
-			//	sound->Stop();
-			//	sound = nullptr;
-			}
 		}
 
 		chaos::Sound * SoundTriggerObject::CreateSound() const
@@ -232,32 +215,18 @@ namespace death
 				return nullptr;
 
 			// can only play sounds on point and surface			
-			chaos::TiledMap::GeometricObjectPoint   * point_object = nullptr;
 			chaos::TiledMap::GeometricObjectSurface * surface_object = geometric_object->GetObjectSurface();
 			if (surface_object == nullptr)
-			{
-				point_object = geometric_object->GetObjectPoint();
-				if (point_object == nullptr)
-					return nullptr;
-			}
-			// the sound if necessary
+				return nullptr;
+
+			// create the sound
 			chaos::Sound * result = nullptr;
 
 			Game * game = layer_instance->GetGame();
 			if (game != nullptr)
 			{
-				chaos::box2 box;
-
-				glm::vec2 position = glm::vec2(0.0f, 0.0f);
-				if (point_object != nullptr)
-				{
-					position = point_object->position;
-				}
-				else if (surface_object != nullptr)
-				{
-					box = surface_object->GetBoundingBox(true);
-					position = box.position;
-				}
+				chaos::box2 box      = surface_object->GetBoundingBox(true);
+				glm::vec2   position = box.position;
 
 				chaos::PlaySoundDesc play_desc;
 				play_desc.paused = false;
@@ -265,27 +234,10 @@ namespace death
 				play_desc.blend_in_time = 0.0f;
 				play_desc.pause_timer_when_too_far = pause_timer_when_too_far;
 
+				play_desc.SetPosition(glm::vec3(position, 0.0f), is_3D_sound);
+				play_desc.max_distance = glm::length(box.half_size);
+				play_desc.min_distance = play_desc.max_distance * min_distance_ratio;
 
-
-
-
-/*
-				sound_name = geometric_object->FindPropertyString("SOUND_NAME", "");
-				min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
-				min_distance_ratio = chaos::MathTools::Clamp(min_distance_ratio);
-
-				is_3D_sound = geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
-				looping = geometric_object->FindPropertyBool("LOOPING", looping);
-				pause_timer_when_too_far = geometric_object->FindPropertyBool("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
-
-				*/
-				play_desc.SetPosition(glm::vec3(position, 0.0f));
-
-				if (surface_object != nullptr)
-				{
-					play_desc.max_distance = glm::length(box.half_size);
-					play_desc.min_distance = play_desc.max_distance * min_distance_ratio;
-				}
 				result = game->Play(sound_name.c_str(), play_desc);
 			}
 
@@ -296,23 +248,21 @@ namespace death
 		{
 			if (event_type == TriggerObject::COLLISION_STARTED)
 			{
-				//if (sound != nullptr)
-					CreateSound();
-
+				chaos::Sound * new_sound = CreateSound();
+				if (stop_sound_when_leaved)
+					sound = new_sound;
 				return true;
 			}
-
 			if (event_type == TriggerObject::COLLISION_FINISHED)
 			{
-
-
-
+				if (stop_sound_when_leaved && sound != nullptr)
+				{
+					sound->Stop();
+					sound = nullptr;
+				}
+				return true;
 			}
-
-		//	if (sound != nullptr)
-		//		sound = CreateSound();
-
-			return true; // collisions handled successfully
+			return false;
 		}
 
 		bool SoundTriggerObject::IsAdditionalParticlesCreationEnabled() const
@@ -331,6 +281,9 @@ namespace death
 
 		bool FinishingTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
+			if (event_type != TriggerObject::COLLISION_STARTED)
+				return false;
+
 			Game * game = layer_instance->GetGame();
 			if (game != nullptr)
 			{
@@ -338,7 +291,7 @@ namespace death
 				if (level_instance != nullptr)
 					level_instance->SetLevelCompletionFlag();
 			}
-			return true;// collisions handled successfully
+			return true;
 		}
 
 		// =====================================
@@ -1111,10 +1064,6 @@ namespace death
 
 			// shucollision
 
-
-
-
-
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
 
@@ -1134,13 +1083,23 @@ namespace death
 			size_t new_triggers_count = new_triggers.size();
 			for (size_t i = 0; i < new_triggers_count; ++i)
 			{
+				TriggerObject * trigger = new_triggers[i].get();
+
+				// search in previous frame data						
 				bool already_colliding = false;
-				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), new_triggers[i]) != camera_collision_records.end()) // search in previous frame data						
+				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), trigger) != camera_collision_records.end()) 
 					already_colliding = true;
-				if (new_triggers[i]->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
+				// trigger once : do not trigger anymore entering events
+				if (!already_colliding && trigger->IsTriggerOnce() && trigger->trigger_enter_count > 0)
+					continue;
+				// trigger event
+				if (trigger->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
 				{
-					if (new_triggers[i]->IsTriggerOnce())
-						new_triggers[i]->SetEnabled(false);
+					if (!already_colliding && trigger->IsTriggerOnce())
+					{
+						++trigger->trigger_enter_count;
+						trigger->SetModified();
+					}
 				}
 			}
 
@@ -1165,11 +1124,6 @@ namespace death
 
 			// shucollision
 
-
-
-
-
-
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
 			// the previous colliding triggers
@@ -1182,6 +1136,8 @@ namespace death
 				TriggerObject * trigger = triggers[i].get();
 				if (trigger == nullptr || !trigger->IsEnabled())
 					continue;
+				if (trigger->IsTriggerOnce() && trigger->trigger_enter_count > 0)
+					continue;
 				// detect collision
 				if (trigger->IsCollisionWith(player_particle->bounding_box, (previous_collisions != nullptr) ? &previous_collisions->triggers : nullptr))
 					new_triggers.push_back(trigger);
@@ -1191,15 +1147,24 @@ namespace death
 			size_t new_triggers_count = new_triggers.size();
 			for (size_t i = 0; i < new_triggers_count; ++i)
 			{
+				TriggerObject * trigger = new_triggers[i].get();
+
+				// search in previous frame data
 				bool already_colliding = false;
 				if (previous_collisions != nullptr)
-					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), new_triggers[i]) != previous_collisions->triggers.end()) // search in previous frame data
+					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), trigger) != previous_collisions->triggers.end())
 						already_colliding = true;
-
-				if (new_triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
+				// trigger once : do not trigger anymore entering events
+				if (!already_colliding && trigger->IsTriggerOnce() && trigger->trigger_enter_count > 0)
+					continue;
+				// trigger event
+				if (trigger->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
 				{
-					if (new_triggers[i]->IsTriggerOnce())
-						new_triggers[i]->SetEnabled(false);
+					if (!already_colliding && trigger->IsTriggerOnce())
+					{
+						++trigger->trigger_enter_count;
+						trigger->SetModified();
+					}
 				}
 			}
 
@@ -1231,17 +1196,6 @@ namespace death
 		{
 
 			// shucollision
-
-
-
-
-
-
-
-
-
-
-
 
 			TiledMap::Level * level = GetTiledLevel();
 

@@ -204,9 +204,9 @@ namespace death
 			/** override */
 			virtual bool DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint) override;
 
-			/** called whenever a collision with player is detected (returns true, if collision is handled successfully) */
+			/** called whenever a collision with player is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
 			virtual bool OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
-			/** called whenever a collision with camera is detected */
+			/** called whenever a collision with camera is detected (=> important for TriggerOnce) */
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type);
 
 		protected:
@@ -219,6 +219,9 @@ namespace death
 			int trigger_id = 0;
 			/** outside box factor (a factor applyed to bounding box to detect whether the player is going outside of the range) */
 			float outside_box_factor = 1.0f;
+
+			/** number of time the trigger-enter event happened */
+			int64_t trigger_enter_count = 0;
 		};
 
 		// =====================================
@@ -233,6 +236,8 @@ namespace death
 			bool enabled = true;
 			/** flag whether to can only trigger once */
 			bool trigger_once = false;
+			/** number of time the trigger-enter event happened */
+			int64_t trigger_enter_count = 0;
 		};
 
 		// =================================================
@@ -276,10 +281,6 @@ namespace death
 			/** override */
 			virtual bool Initialize() override;
 			/** override */
-			virtual void OnLevelStarted() override;
-			/** override */
-			virtual void OnLevelEnded() override;
-			/** override */
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
 
 			/** the sound creation method */
@@ -290,9 +291,6 @@ namespace death
 			/** the name of the sound to play */
 			std::string sound_name;
 
-
-
-
 			/** a ratio applyed to max_distance to compute the min_distance of the sound (for 3D sounds) */
 			float min_distance_ratio = 0.3f;
 			/** 3D sound */
@@ -301,14 +299,8 @@ namespace death
 			bool looping = true;
 			/** timer for far 3D sound before entering pause */
 			float pause_timer_when_too_far = 0.0f;
-
-			/** the duration after which an out of range sound is to be stopped */
-			float stop_duration = 0.0f;
-
-
 			/** 3D sound */
 			bool stop_sound_when_leaved = false;
-
 
 			/** the sound being played */
 			chaos::shared_ptr<chaos::Sound> sound;

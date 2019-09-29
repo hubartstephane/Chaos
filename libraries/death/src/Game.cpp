@@ -831,8 +831,6 @@ namespace death
 		//if (game_instance != nullptr && !IsPaused())
 		if (IsPlaying(true, true))
 		{
-			// shusound
-
 			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
 			if (category != nullptr && !category->IsPendingKill())
 				play_desc.categories.push_back(category);
@@ -1061,26 +1059,6 @@ namespace death
 
 	void Game::OnEnterMainMenu(bool very_first)
 	{
-		// shusound
-
-#if 0
-
-		// purge + fade out all sounds
-		chaos::SoundManager * sound_manager = GetSoundManager();
-		if (sound_manager != nullptr)
-		{
-			size_t sound_count = sound_manager->GetSoundCount();
-			for (size_t i = 0; i < sound_count; ++i)
-			{
-				chaos::Sound * sound = sound_manager->GetSound(i);
-				if (sound == nullptr)
-					continue;
-				sound->FadeOut(0.5f, true, true);
-			}
-		}
-
-#endif
-
 		// start the music
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))

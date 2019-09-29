@@ -126,7 +126,7 @@ namespace death
 
 			trigger_checkpoint->enabled = enabled;
 			trigger_checkpoint->trigger_once = trigger_once;
-			trigger_checkpoint->trigger_enter_count = trigger_enter_count;
+			trigger_checkpoint->enter_event_triggered = enter_event_triggered;
 
 			return true;
 		}
@@ -142,7 +142,7 @@ namespace death
 
 			enabled = trigger_checkpoint->enabled;
 			trigger_once = trigger_checkpoint->trigger_once;
-			trigger_enter_count = trigger_checkpoint->trigger_enter_count;
+			enter_event_triggered = trigger_checkpoint->enter_event_triggered;
 
 			return true;
 		}
@@ -576,9 +576,6 @@ namespace death
 
 		bool Level::OnPlayerTileCollision(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
 		{
-
-			// shucollision
-
 			return true; // continue with other
 		}
 
@@ -1001,10 +998,11 @@ namespace death
 			if (game == nullptr)
 				return;
 
-
-
-
-			// shucollision
+			// early exit
+			bool trigger_collision_enabled = AreTriggersEnabled();
+			bool tile_collision_enabled    = AreTileCollisionsEnabled();
+			if (!trigger_collision_enabled && !tile_collision_enabled)
+				return;
 
 			// check player collisions
 			if (ArePlayerCollisionEnabled())
@@ -1021,11 +1019,11 @@ namespace death
 					if (player_particle == nullptr)
 						continue;
 					// collision with surface triggers
-					if (AreTriggersEnabled())
+					if (trigger_collision_enabled)
 						if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle))
 							continue;
 					// collision with tiles
-					if (AreTileCollisionsEnabled())
+					if (tile_collision_enabled)
 						if (!ComputePlayerTileCollisions(delta_time, player, player_particle))
 							continue;
 				}
@@ -1037,7 +1035,7 @@ namespace death
 				chaos::box2 camera_box = game->GetLevelInstance()->GetCameraBox(0);
 				if (!IsGeometryEmpty(camera_box))
 				{
-					if (AreTriggersEnabled())
+					if (trigger_collision_enabled)
 						ComputeCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
 				}
 			}
@@ -1060,10 +1058,6 @@ namespace death
 
 		bool LayerInstance::ComputeCameraCollisionWithSurfaceTriggers(double delta_time, chaos::box2 const & camera_box)
 		{
-
-
-			// shucollision
-
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
 
@@ -1085,19 +1079,20 @@ namespace death
 			{
 				TriggerObject * trigger = new_triggers[i].get();
 
-				// search in previous frame data						
-				bool already_colliding = false;
+				// search in previous frame data	
+				int collision_type = TriggerObject::COLLISION_STARTED;
 				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), trigger) != camera_collision_records.end()) 
-					already_colliding = true;
+					collision_type = TriggerObject::COLLISION_AGAIN;
+
 				// trigger once : do not trigger anymore entering events
-				if (!already_colliding && trigger->IsTriggerOnce() && trigger->trigger_enter_count > 0)
+				if (collision_type == TriggerObject::COLLISION_STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
 					continue;
 				// trigger event
-				if (trigger->OnCameraCollisionEvent(delta_time, camera_box, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
+				if (trigger->OnCameraCollisionEvent(delta_time, camera_box, collision_type))
 				{
-					if (!already_colliding && trigger->IsTriggerOnce())
+					if (collision_type == TriggerObject::COLLISION_STARTED && trigger->IsTriggerOnce())
 					{
-						++trigger->trigger_enter_count;
+						trigger->enter_event_triggered = true;
 						trigger->SetModified();
 					}
 				}
@@ -1120,10 +1115,6 @@ namespace death
 
 		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
-
-
-			// shucollision
-
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
 			// the previous colliding triggers
@@ -1135,8 +1126,6 @@ namespace death
 			{
 				TriggerObject * trigger = triggers[i].get();
 				if (trigger == nullptr || !trigger->IsEnabled())
-					continue;
-				if (trigger->IsTriggerOnce() && trigger->trigger_enter_count > 0)
 					continue;
 				// detect collision
 				if (trigger->IsCollisionWith(player_particle->bounding_box, (previous_collisions != nullptr) ? &previous_collisions->triggers : nullptr))
@@ -1150,19 +1139,19 @@ namespace death
 				TriggerObject * trigger = new_triggers[i].get();
 
 				// search in previous frame data
-				bool already_colliding = false;
+				int collision_type = TriggerObject::COLLISION_STARTED;
 				if (previous_collisions != nullptr)
 					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), trigger) != previous_collisions->triggers.end())
-						already_colliding = true;
+						collision_type = TriggerObject::COLLISION_AGAIN;
 				// trigger once : do not trigger anymore entering events
-				if (!already_colliding && trigger->IsTriggerOnce() && trigger->trigger_enter_count > 0)
+				if (collision_type == TriggerObject::COLLISION_STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
 					continue;
 				// trigger event
-				if (trigger->OnPlayerCollisionEvent(delta_time, player, player_particle, (already_colliding) ? TriggerObject::COLLISION_AGAIN : TriggerObject::COLLISION_STARTED))
+				if (trigger->OnPlayerCollisionEvent(delta_time, player, player_particle, collision_type))
 				{
-					if (!already_colliding && trigger->IsTriggerOnce())
+					if (collision_type == TriggerObject::COLLISION_STARTED && trigger->IsTriggerOnce())
 					{
-						++trigger->trigger_enter_count;
+						trigger->enter_event_triggered = true;
 						trigger->SetModified();
 					}
 				}
@@ -1194,9 +1183,6 @@ namespace death
 
 		bool LayerInstance::ComputePlayerTileCollisions(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
-
-			// shucollision
-
 			TiledMap::Level * level = GetTiledLevel();
 
 			return FindTileCollisions(player_particle->bounding_box, [this, delta_time, player, player_particle, level](TileParticle & tile_particle)
@@ -1496,8 +1482,6 @@ namespace death
 
 		void LevelInstance::ComputePlayerAndCameraCollision(double delta_time)
 		{
-			// shucollision
-
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
 				layer_instances[i]->ComputePlayerAndCameraCollision(delta_time);

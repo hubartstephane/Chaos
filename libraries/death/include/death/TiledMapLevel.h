@@ -220,8 +220,8 @@ namespace death
 			/** outside box factor (a factor applyed to bounding box to detect whether the player is going outside of the range) */
 			float outside_box_factor = 1.0f;
 
-			/** number of time the trigger-enter event happened */
-			int64_t trigger_enter_count = 0;
+			/** whenever the trigger-enter event has happened */
+			bool enter_event_triggered = false;
 		};
 
 		// =====================================
@@ -237,7 +237,7 @@ namespace death
 			/** flag whether to can only trigger once */
 			bool trigger_once = false;
 			/** number of time the trigger-enter event happened */
-			int64_t trigger_enter_count = 0;
+			bool enter_event_triggered = false;
 		};
 
 		// =================================================

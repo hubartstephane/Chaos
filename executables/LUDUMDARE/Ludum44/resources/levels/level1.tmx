@@ -314,13 +314,13 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1915" name="Sound" x="960" y="448" width="10176" height="9728">
+  <object id="1915" name="Sound" x="22848" y="128" width="10176" height="9728">
    <properties>
     <property name="3D_SOUND" type="bool" value="true"/>
-    <property name="MIN_DISTANCE_RATIO" type="float" value="0.5"/>
-    <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" value="0"/>
+    <property name="MIN_DISTANCE_RATIO" type="float" value="0.3"/>
+    <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" value="5"/>
     <property name="SOUND_NAME" value="thrust"/>
-    <property name="STOP_SOUND_WHEN_LEAVED" type="bool" value="true"/>
+    <property name="STOP_SOUND_WHEN_LEAVED" type="bool" value="false"/>
     <property name="TRIGGER_ONCE" type="bool" value="true"/>
     <property name="looping" type="bool" value="true"/>
    </properties>

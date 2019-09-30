@@ -71,12 +71,14 @@ namespace death
 			UnregisterComponent(key);
 			// register new component for that key
 			components.insert(std:: make_pair(key, component));
-			component->hud = this;
+			component->SetHUD(this);
 			InitializeComponentFromConfiguration(key, component); // this will override the component position from JSON file
 			component->OnInsertedInHUD(params...);			
 		}
 		/** remove a component from the HUD */
 		void UnregisterComponent(chaos::TagType key);
+		/** remove a component from the HUD */
+		void UnregisterComponent(GameHUDComponent * in_component);
 
 		/** get the component from its ID */
 		GameHUDComponent * FindComponent(chaos::TagType key);

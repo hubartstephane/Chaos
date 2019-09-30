@@ -1263,9 +1263,32 @@ namespace death
 
 			glm::vec2 final_camera_position = initial_camera_position + (camera_position - initial_camera_position) * final_ratio;
 
+
+			glm::vec2 camera_scale = camera_obox.half_size / initial_camera_obox.half_size;
+
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
 			// compute repetitions
 			chaos::obox2 final_camera_obox = camera_obox;
 			final_camera_obox.position = final_camera_position;
+	//		final_camera_obox.half_size = initial_camera_obox.half_size * camera_scale * final_ratio;
+
+
+
+
 
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 

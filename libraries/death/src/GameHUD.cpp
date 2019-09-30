@@ -145,6 +145,22 @@ namespace death
 		components.erase(it);
 	}
 
+	void GameHUD::UnregisterComponent(GameHUDComponent * in_component)
+	{
+		auto it = components.begin();
+		for (; it != components.end(); ++it)
+		{
+			if (it->second == in_component)
+			{
+				in_component->OnRemovedFromHUD();
+				in_component->hud = nullptr;
+				components.erase(it);
+				return;
+			}
+		}
+	}
+
+
 	GameHUDComponent * GameHUD::FindComponent(chaos::TagType key)
 	{
 		auto it = components.find(key);

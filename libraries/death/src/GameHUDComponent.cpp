@@ -117,6 +117,12 @@ namespace death
 		return true;
 	}
 
+	void GameHUDComponent::SetHUD(GameHUD * in_hud)
+	{
+		assert(in_hud != nullptr);
+		hud = in_hud;
+	}
+
 	// ====================================================================
 	// GameHUDSingleAllocationComponent
 	// ====================================================================
@@ -550,5 +556,58 @@ namespace death
 			ShowComponent(game->IsFreeCameraMode());
 		return true;
 	}
+
+	// ====================================================================
+	// GameHUDTimedComponent
+	// ====================================================================
+
+#if 0
+
+	GameHUDTimedComponent::GameHUDTimedComponent(GameHUDComponent * in_child_component, float in_lifetime) :
+		child_component(in_child_component),
+		lifetime(in_lifetime)
+	{
+		assert(child_component != nullptr);
+		child_component->hud = hud;
+	}
+
+	bool GameHUDTimedComponent::DoTick(double delta_time)
+	{
+		// decrease hud lifetime
+		if (lifetime >= 0.0f) // well, child_components do not known their hud yet
+		{
+			current_time += (float)delta_time;
+			if (current_time >= lifetime)
+			{
+				hud->UnregisterComponent(this);
+				return true;
+			}
+		}
+		// tick the child component
+		if (child_component != nullptr)
+			child_component->Tick(delta_time);
+		return true;
+	}
+
+	void GameHUDTimedComponent::SetHUD(GameHUD * in_hud)
+	{
+		GameHUDComponent::SetHUD(in_hud);
+		if (child_component != nullptr)
+			child_component->SetHUD(in_hud);
+	}
+
+	void GameHUDTimedComponent::OnRemovedFromHUD()
+	{
+		if (child_component != nullptr)
+			child_component->OnRemovedFromHUD();
+	}
+
+	bool GameHUDTimedComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+	{
+		if (child_component != nullptr)
+			return child_component->InitializeFromConfiguration(json, config_path);
+		return true;
+	}
+#endif
 
 }; // namespace death

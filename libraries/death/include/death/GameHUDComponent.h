@@ -20,6 +20,7 @@ namespace death
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 		friend class GameHUD;
+		friend class GameHUDTimedComponent;
 
 	public:
 
@@ -52,13 +53,14 @@ namespace death
 
 		/** returns the coordinate of the view corner corresponding to the given hotpoint */
 		static glm::vec2 GetCanvasBoxCorner(chaos::box2 const & canvas_box, int hotpoint);
-
 		/** MAYBE (!!!) called whenever the hud is beeing inserted into the hud (the HUD::RegisterComponent is template function. the function below is not necessaraly been called) */
 		virtual void OnInsertedInHUD();
 		/** called whenever the hud is beeing removed into the hud */
 		virtual void OnRemovedFromHUD();
 		/** initialization method from JSON */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path);
+		/** set the HUD */
+		virtual void SetHUD(GameHUD * in_hud);
 
 	protected:
 
@@ -93,6 +95,7 @@ namespace death
 
 	class GameHUDTextComponent : public GameHUDSingleAllocationComponent
 	{
+		friend class GameHUD;
 
 	public:
 
@@ -100,9 +103,6 @@ namespace death
 		GameHUDTextComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
 		GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
-
-		/** called whenever it is inserted in HUD */
-		virtual void OnInsertedInHUD(char const * in_text = nullptr); // this is not an override !
 
 	protected:
 
@@ -112,6 +112,8 @@ namespace death
 		virtual void UpdateTextAllocation(char const * in_text);
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+		/** called whenever it is inserted in HUD */
+		virtual void OnInsertedInHUD(char const * in_text = nullptr); // this is not an override !
 
 	protected:
 
@@ -376,5 +378,45 @@ namespace death
 		/** override */
 		virtual bool DoTick(double delta_time) override;
 	};
+
+	// ====================================================================
+	// GameHUDTimedComponent
+	// ====================================================================
+
+#if 0
+
+	// SHU fixme : Tick -> RemoveFromHUD -> iterator KO
+
+	class GameHUDTimedComponent : public GameHUDComponent
+	{
+		friend class GameHUD;
+
+	public:
+
+		/** constructor */
+		GameHUDTimedComponent(GameHUDComponent * in_child_component, float in_lifetime);
+
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+		/** override */
+		virtual void OnRemovedFromHUD() override;
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+		/** override */
+		virtual void SetHUD(GameHUD * in_hud) override;
+
+	public:
+
+		/** the life of the component */
+		float lifetime = -1.0f;
+		/** the current time */
+		float current_time = 0.0f;
+		/** the inner component */
+		chaos::shared_ptr<GameHUDComponent> child_component;
+	};
+
+#endif
 
 }; // namespace death

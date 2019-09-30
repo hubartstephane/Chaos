@@ -730,9 +730,6 @@ namespace death
 			/** get the bounding box for the level (in worls system obviously) */
 			virtual chaos::box2 GetBoundingBox() const override;
 
-			/** get the reference displacement ratio (displacement ratio is a way to make so layer move faster than others) */
-			glm::vec2 GetReferenceDisplacementRatio() const { return reference_displacement_ratio; }
-
 		protected:
 
 			/** override */
@@ -780,9 +777,6 @@ namespace death
 
 
 		protected:
-
-			/** the displacement ratio of reference */
-			glm::vec2 reference_displacement_ratio = glm::vec2(1.0f, 1.0f);
 
 			/** explicit bounding box (else it is dynamic with LayerInstance evaluation) */
 			chaos::box2 explicit_bounding_box;

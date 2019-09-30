@@ -361,6 +361,25 @@ namespace death
 			glm::vec2 target_size = 2.0f * in_target_box.half_size;
 			glm::vec2 scissor_size = 2.0f * in_scissor_box.half_size;
 
+			// clamp out all non intersecting box when no WRAP
+			if (!wrap_x)
+			{
+				if ((target_bottomleft.x + target_size.x < scissor_bottomleft.x) || (target_bottomleft.x > scissor_bottomleft.x + scissor_size.x))
+				{
+					start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
+					return;
+				}
+			}
+
+			if (!wrap_y)
+			{
+				if ((target_bottomleft.y + target_size.y < scissor_bottomleft.y) || (target_bottomleft.y > scissor_bottomleft.y + scissor_size.y))
+				{
+					start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
+					return;
+				}
+			}
+
 			// number of time to decal the layer box, to be directly left of the scissor box
 			glm::ivec2 offset_count = glm::ivec2(
 				(int)chaos::MathTools::Ceil((scissor_bottomleft.x - target_bottomleft.x - target_size.x) / target_size.x),
@@ -370,32 +389,22 @@ namespace death
 			// the bottomleft corner of the decaled box
 			glm::vec2  virtual_target_bottomleft = target_bottomleft + chaos::GLMTools::RecastVector<glm::vec2>(offset_count) * target_size;
 			// competition of the number of repetition
-			glm::vec2  tmp = ((scissor_bottomleft + scissor_size - virtual_target_bottomleft) / target_size);
+			glm::vec2  tmp = ((scissor_bottomleft - virtual_target_bottomleft + scissor_size) / target_size);
 
 			glm::ivec2 repetition_count = glm::ivec2(
 				(int)chaos::MathTools::Ceil(tmp.x),
 				(int)chaos::MathTools::Ceil(tmp.y)
 			);
-			// test for unwrapped case X if no collision at all (the instance(0) is not in the visible range)
+
+			// unwrap case, then only visible instance is 0 (we previsously tested for visibility)
 			if (!wrap_x)
 			{
-				if (0 < offset_count.x || 0 >= offset_count.x + repetition_count.x)
-				{
-					start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
-					return;
-				}
 				offset_count.x = 0;
 				repetition_count.x = 1;
 			}
-
-			// test for unwrapped case X if no collision at all (the instance(0) is not in the visible range)
+			// unwrap case, then only visible instance is 0 (we previsously tested for visibility)
 			if (!wrap_y)
 			{
-				if (0 < offset_count.y || 0 >= offset_count.y + repetition_count.y)
-				{
-					start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
-					return;
-				}
 				offset_count.y = 0;
 				repetition_count.y = 1;
 			}
@@ -1234,8 +1243,12 @@ namespace death
 			chaos::obox2 camera_obox = GetTiledLevelInstance()->GetCameraOBox(0);
 			chaos::obox2 initial_camera_obox = GetTiledLevelInstance()->GetInitialCameraOBox(0);
 
+#if 0
+
 			glm::mat4x4 transform = CameraTransform::GetCameraTransform(camera_obox);
 			glm::mat4x4 initial_transform = CameraTransform::GetCameraTransform(initial_camera_obox);
+
+#endif
 
 			glm::vec2 camera_position = camera_obox.position;
 			glm::vec2 initial_camera_position = initial_camera_obox.position;
@@ -1253,12 +1266,14 @@ namespace death
 			// apply the displacement to the camera
 
 			glm::vec2 final_ratio = glm::vec2(1.0f, 1.0f);
-			if (level_instance->reference_layer != nullptr && level_instance->reference_layer != this)
+
+			LayerInstance const * reference_layer = level_instance->reference_layer.get();
+			if (reference_layer != nullptr)
 			{
-				if (level_instance->reference_layer->displacement_ratio.x != 0.0f)
-					final_ratio.x = displacement_ratio.x / level_instance->reference_layer->displacement_ratio.x;
-				if (level_instance->reference_layer->displacement_ratio.y != 0.0f)
-					final_ratio.y = displacement_ratio.y / level_instance->reference_layer->displacement_ratio.y;
+				if (reference_layer->displacement_ratio.x != 0.0f)
+					final_ratio.x = displacement_ratio.x / reference_layer->displacement_ratio.x;
+				if (reference_layer->displacement_ratio.y != 0.0f)
+					final_ratio.y = displacement_ratio.y / reference_layer->displacement_ratio.y;
 			}
 
 			glm::vec2 final_camera_position = initial_camera_position + (camera_position - initial_camera_position) * final_ratio;
@@ -1299,7 +1314,7 @@ namespace death
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
 			glm::ivec2 start_instance = scissor_result.start_instance;
 			glm::ivec2 last_instance = scissor_result.last_instance;
-			if (this == level_instance->reference_layer || IsGeometryEmpty(layer_box))
+			if (this == reference_layer || IsGeometryEmpty(layer_box))
 			{
 				start_instance = glm::ivec2(0, 0);
 				last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
@@ -1736,7 +1751,6 @@ namespace death
 			player->SetPlayerAllocation(player_allocation);
 
 			// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
-			reference_displacement_ratio = layer_instance->displacement_ratio;
 			reference_layer = layer_instance;
 
 			// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 

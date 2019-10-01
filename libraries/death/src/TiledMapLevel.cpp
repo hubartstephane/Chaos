@@ -1244,16 +1244,6 @@ namespace death
 			chaos::obox2 camera_obox = GetTiledLevelInstance()->GetCameraOBox(0);
 			chaos::obox2 initial_camera_obox = GetTiledLevelInstance()->GetInitialCameraOBox(0);
 
-#if 0
-
-			glm::mat4x4 transform = CameraTransform::GetCameraTransform(camera_obox);
-			glm::mat4x4 initial_transform = CameraTransform::GetCameraTransform(initial_camera_obox);
-
-#endif
-
-			glm::vec2 camera_position = camera_obox.position;
-			glm::vec2 initial_camera_position = initial_camera_obox.position;
-
 			chaos::box2 layer_box = GetBoundingBox(true);
 
 			// XXX : we want some layers to appear further or more near the camera
@@ -1277,37 +1267,11 @@ namespace death
 					final_ratio.y = displacement_ratio.y / reference_layer->displacement_ratio.y;
 			}
 
-			glm::vec2 final_camera_position = initial_camera_position + (camera_position - initial_camera_position) * final_ratio;
-
-
-			glm::vec2 camera_scale = camera_obox.half_size / initial_camera_obox.half_size;
-
-
-
-
-
-		
-
-
-
-
-
-
-
-
-
+			chaos::obox2 final_camera_obox;
+			final_camera_obox.position  = initial_camera_obox.position  + (camera_obox.position - initial_camera_obox.position) * final_ratio;
+			final_camera_obox.half_size = initial_camera_obox.half_size + (camera_obox.half_size - initial_camera_obox.half_size) * final_ratio;
 
 			// compute repetitions
-			chaos::obox2 final_camera_obox = camera_obox;
-			final_camera_obox.position = final_camera_position;
-		//	final_camera_obox.half_size = initial_camera_obox.half_size * camera_scale * final_ratio;
-
-		//	final_camera_obox.half_size = camera_obox.half_size * final_ratio;
-
-
-
-
-
 			BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 
 			// new provider for camera override (will be fullfill only if necessary)

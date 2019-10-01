@@ -52,6 +52,31 @@ namespace death
 		/** get the player */
 		Player const * GetPlayer(int player_index) const;
 
+		/** find a component by its class */
+		template<typename T>
+		T * FindComponentByClass()
+		{
+			for (auto it = components.begin(); it != components.end(); ++it)
+			{
+				T * result = auto_cast(it->second.get());
+				if (result != nullptr)
+					return result;
+			}
+			return nullptr;
+		}
+		/** find a component by its class */
+		template<typename T>
+		T const * FindComponentByClass() const
+		{
+			for (auto it = components.begin(); it != components.end(); ++it)
+			{
+				T * result = auto_cast(it->second.get());
+				if (result != nullptr)
+					return result;
+			}
+			return nullptr;
+		}
+
 		/** initialization of the HUD from the game values */
 		virtual bool InitializeHUD();
 

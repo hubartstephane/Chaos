@@ -205,6 +205,39 @@ namespace death
 	};
 
 	// ====================================================================
+	// GameHUDNotificationComponent
+	// ====================================================================
+
+	class GameHUDNotificationComponent : public GameHUDTextComponent
+	{
+		friend class GameHUD;
+
+	public:
+
+		/** constructor */
+		GameHUDNotificationComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+		/** constructor */
+		GameHUDNotificationComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+
+		/** show/initialize the notification */
+		void ShowNotification(char const * in_message, float in_lifetime);
+		/** hide the notification */
+		void HideNotification();
+
+	protected:
+
+		/** override */
+		virtual bool DoTick(double delta_time) override;
+
+	protected:
+
+		/** the life of the component */
+		float lifetime = -1.0f;
+		/** the current time */
+		float current_time = 0.0f;
+	};
+
+	// ====================================================================
 	// GameHUDScoreComponent
 	// ====================================================================
 

@@ -320,7 +320,7 @@
     <property name="MIN_DISTANCE_RATIO" type="float" value="0.3"/>
     <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" value="5"/>
     <property name="SOUND_NAME" value="thrust"/>
-    <property name="STOP_SOUND_WHEN_LEAVED" type="bool" value="false"/>
+    <property name="STOP_WHEN_COLLISION_OVER" type="bool" value="false"/>
     <property name="TRIGGER_ONCE" type="bool" value="true"/>
     <property name="looping" type="bool" value="true"/>
    </properties>

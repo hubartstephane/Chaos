@@ -241,6 +241,43 @@ namespace death
 		};
 
 		// =================================================
+		// NotificationTriggerObject
+		// =================================================
+
+		class NotificationTriggerObject : public TriggerObject
+		{
+
+		public:
+
+			/** constructor */
+			using TriggerObject::TriggerObject;
+			/** override */
+			virtual bool IsAdditionalParticlesCreationEnabled() const override;
+			/** override */
+			virtual bool Initialize() override;
+
+		protected:
+
+			/** generic method to handle both collision with player and camera */
+			virtual bool OnTriggerCollision(double delta_time, int event_type);
+			/** override */
+			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+			/** override */
+			virtual bool OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+
+		protected:
+
+			/** the notification to display */
+			std::string notification_string;
+			/** the notification lifetime */
+			float notification_lifetime = 5.0f;
+			/** destroy whenever collision is finished */
+			bool stop_when_collision_over = false;
+			/** collision with player instead of camera */
+			bool player_collision = true;
+		};
+
+		// =================================================
 		// CheckpointTriggerObject
 		// =================================================
 
@@ -258,7 +295,7 @@ namespace death
 
 		protected:
 
-			/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
+			/** override */
 			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
 		};
 
@@ -300,7 +337,7 @@ namespace death
 			/** timer for far 3D sound before entering pause */
 			float pause_timer_when_too_far = 0.0f;
 			/** 3D sound */
-			bool stop_sound_when_leaved = false;
+			bool stop_when_collision_over = false;
 
 			/** the sound being played */
 			chaos::shared_ptr<chaos::Sound> sound;

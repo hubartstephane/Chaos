@@ -206,6 +206,31 @@ namespace death
 		}
 	}
 
+
+
+
+
+	// ====================================================================
+	// GameHUDNotificationComponent
+	// ====================================================================
+
+	void GameHUDNotificationComponent::ShowNotification(char const * in_message, float in_lifetime)
+	{
+		current_time = 0.0f;
+		lifetime = in_lifetime;
+
+	}
+
+	void GameHUDNotificationComponent::HideNotification()
+	{
+	}
+
+	bool GameHUDNotificationComponent::DoTick(double delta_time)
+	{
+
+		return true;
+	}
+
 	// ====================================================================
 	// GameHUDScoreComponent
 	// ====================================================================

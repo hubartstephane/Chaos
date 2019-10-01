@@ -20,6 +20,7 @@ namespace death
 		CHAOS_DECLARE_TAG(FREECAMERA_ID);
 		CHAOS_DECLARE_TAG(LEVEL_TIMEOUT_ID);
 		CHAOS_DECLARE_TAG(LEVEL_TITLE_ID);
+		CHAOS_DECLARE_TAG(NOTIFICATION_ID);
 		// some layer ID's
 
 		// shuwww utilise dans root_render_layer mais c'est tout

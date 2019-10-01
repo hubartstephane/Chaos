@@ -207,6 +207,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
 	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
+	RegisterComponent(death::GameHUDKeys::NOTIFICATION_ID, new death::GameHUDNotificationComponent());
 	return true;
 }
 

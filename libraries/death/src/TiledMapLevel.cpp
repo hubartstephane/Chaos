@@ -188,6 +188,68 @@ namespace death
 			return true;
 		}
 
+		// =================================================
+		// NotificationTriggerObject
+		// =================================================
+
+		bool NotificationTriggerObject::IsAdditionalParticlesCreationEnabled() const
+		{
+			return false;
+		}
+
+		bool NotificationTriggerObject::Initialize()
+		{
+			if (!TriggerObject::Initialize())
+				return false;
+
+			notification_string      = geometric_object->FindPropertyString("NOTIFICATION", "");
+			notification_lifetime    = geometric_object->FindPropertyFloat("LIFETIME", notification_lifetime);
+			stop_when_collision_over = geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+			player_collision         = geometric_object->FindPropertyBool("PLAYER_COLLISION", player_collision);
+
+			return true;
+		}
+
+		bool NotificationTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		{
+			if (player_collision)
+				return false;
+			return OnTriggerCollision(delta_time, event_type);
+		}
+
+		bool NotificationTriggerObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		{
+			if (!player_collision)
+				return false;
+			return OnTriggerCollision(delta_time, event_type);
+		}
+
+		bool NotificationTriggerObject::OnTriggerCollision(double delta_time, int event_type)
+		{
+			// early exit
+			if (event_type != TriggerObject::COLLISION_STARTED && event_type != TriggerObject::COLLISION_FINISHED) // ignore AGAIN event
+				return false;
+			if (event_type == TriggerObject::COLLISION_FINISHED && !stop_when_collision_over) // ignore FINISHED if you do not want to kill the notification
+				return false;
+			// get some variables 
+			Game * game = layer_instance->GetGame();
+			if (game == nullptr)
+				return false;			
+			death::GameHUD * hud = game->GetCurrentHUD();
+			if (hud == nullptr)
+				return false;
+			GameHUDNotificationComponent * notification_component = hud->FindComponentByClass<GameHUDNotificationComponent>();
+			if (notification_component == nullptr)
+				return false;
+			// show notification
+			if (event_type == TriggerObject::COLLISION_STARTED)
+				notification_component->ShowNotification(notification_string.c_str(), notification_lifetime);
+			// hide notification
+			else if (event_type == TriggerObject::COLLISION_FINISHED) // XXX : 'stop_when_collision_over' has already be checked
+				notification_component->HideNotification();
+			return true;
+		}
+
 		// =====================================
 		// SoundTriggerObject implementation
 		// =====================================
@@ -204,7 +266,7 @@ namespace death
 			pause_timer_when_too_far = geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
 			is_3D_sound              = geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
 			looping                  = geometric_object->FindPropertyBool("LOOPING", looping);
-			stop_sound_when_leaved   = geometric_object->FindPropertyBool("STOP_SOUND_WHEN_LEAVED", stop_sound_when_leaved);
+			stop_when_collision_over   = geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 
 			return true;
 		}
@@ -250,13 +312,13 @@ namespace death
 			if (event_type == TriggerObject::COLLISION_STARTED)
 			{
 				chaos::Sound * new_sound = CreateSound();
-				if (stop_sound_when_leaved)
+				if (stop_when_collision_over)
 					sound = new_sound;
 				return true;
 			}
 			if (event_type == TriggerObject::COLLISION_FINISHED)
 			{
-				if (stop_sound_when_leaved && sound != nullptr)
+				if (stop_when_collision_over && sound != nullptr)
 				{
 					sound->Stop();
 					sound = nullptr;
@@ -483,6 +545,8 @@ namespace death
 					return new FinishingTriggerObject(in_layer_instance, surface_object);
 				if (chaos::TiledMapTools::HasFlag(surface_object, "Checkpoint", "Checkpoint", "Checkpoint"))
 					return new CheckpointTriggerObject(in_layer_instance, surface_object);
+				if (chaos::TiledMapTools::HasFlag(surface_object, "Notification", "Notification", "Notification"))
+					return new NotificationTriggerObject(in_layer_instance, surface_object);
 				if (chaos::TiledMapTools::HasFlag(surface_object, "Sound", "Sound", "Sound"))
 					return new SoundTriggerObject(in_layer_instance, surface_object);
 			}
@@ -1244,7 +1308,6 @@ namespace death
 			chaos::obox2 camera_obox = GetTiledLevelInstance()->GetCameraOBox(0);
 			chaos::obox2 initial_camera_obox = GetTiledLevelInstance()->GetInitialCameraOBox(0);
 
-			chaos::box2 layer_box = GetBoundingBox(true);
 
 			// XXX : we want some layers to appear further or more near the camera
 			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
@@ -1265,7 +1328,25 @@ namespace death
 					final_ratio.x = displacement_ratio.x / reference_layer->displacement_ratio.x;
 				if (reference_layer->displacement_ratio.y != 0.0f)
 					final_ratio.y = displacement_ratio.y / reference_layer->displacement_ratio.y;
+
 			}
+
+			// shulayer
+			chaos::box2 layer_box = GetBoundingBox(true);
+			chaos::box2 reference_box = reference_layer->GetBoundingBox(true);
+
+#if 0
+
+
+			if (!IsGeometryEmpty(layer_box) && !IsGeometryEmpty(reference_box))
+				final_ratio = layer_box.half_size / reference_box.half_size;
+#endif
+
+
+
+
+
+
 
 			chaos::obox2 final_camera_obox;
 			final_camera_obox.position  = initial_camera_obox.position  + (camera_obox.position - initial_camera_obox.position) * final_ratio;

@@ -3,6 +3,7 @@
 #include <death/GamepadManager.h>
 #include <death/GameLevel.h>
 #include <death/TiledMapLevel.h>
+#include <death/SoundContext.h>
 
 #include <chaos/InputMode.h>
 #include <chaos/FileTools.h>
@@ -807,11 +808,11 @@ namespace death
 			previous_music = true;
 		}
 		// start new music
-		game_music = Play(music_name, false, true, (previous_music) ? BLEND_TIME : 0.0f);
+		game_music = Play(music_name, false, true, (previous_music) ? BLEND_TIME : 0.0f, SoundContext::GAME);
 		return game_music.get();
 	}
 
-	chaos::Sound * Game::Play(char const * name, chaos::PlaySoundDesc play_desc)
+	chaos::Sound * Game::Play(char const * name, chaos::PlaySoundDesc play_desc, chaos::TagType category_tag)
 	{
 		// search manager
 		chaos::SoundManager * sound_manager = GetSoundManager();
@@ -822,55 +823,36 @@ namespace death
 		if (source == nullptr)
 			return nullptr;
 
-		// Flag some sounds as "in_game"
-		//
-		// XXX : IsPlaying() is not the indicator we want because it only tests for one state (there are some Transitions that does not match)
-		//       Nevertheless the combinaison:
-		//             game_instance != nullptr && !IsPaused()
-		//       is exactly what we want
-		//if (game_instance != nullptr && !IsPaused())
-		if (IsPlaying(true, true))
+		// Add some categories depending on the wanted sound context
+		if (category_tag == SoundContext::GAME || category_tag == SoundContext::LEVEL)
 		{
-			chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
-			if (category != nullptr && !category->IsPendingKill())
-				play_desc.categories.push_back(category);
-
 			if (game_instance != nullptr)
 				if (game_instance->sound_category != nullptr && !game_instance->sound_category->IsPendingKill())
 					play_desc.categories.push_back(game_instance->sound_category.get());
 
-			if (current_level_instance != nullptr)
-				if (current_level_instance->sound_category != nullptr && !current_level_instance->sound_category->IsPendingKill())
-					play_desc.categories.push_back(current_level_instance->sound_category.get());
+			if (category_tag == SoundContext::LEVEL)
+			{
+				if (current_level_instance != nullptr)
+					if (current_level_instance->sound_category != nullptr && !current_level_instance->sound_category->IsPendingKill())
+						play_desc.categories.push_back(current_level_instance->sound_category.get());
+			}
 		}
+
 		return source->Play(play_desc);
 	}
 
-	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_in_time)
+	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_in_time, chaos::TagType category_tag)
 	{
 		chaos::PlaySoundDesc play_desc;
 		play_desc.paused = paused;
 		play_desc.looping = looping;
 		play_desc.blend_in_time = blend_in_time;
 
-		return Play(name, play_desc);
+		return Play(name, play_desc, category_tag);
 	}
-
-
-
-
-
-
-
 
 	bool Game::InitializeSoundManager()
 	{
-		// search manager
-		chaos::SoundManager * sound_manager = GetSoundManager();
-		if (sound_manager == nullptr)
-			return false;
-		// create the internal "in_game" category for our own purpose
-		sound_manager->AddCategory("in_game");
 
 		return true;
 	}
@@ -1065,7 +1047,7 @@ namespace death
 			menu_music = nullptr;
 		else
 #endif
-		menu_music = Play("menu_music", false, true);
+		menu_music = Play("menu_music", false, true, 0.0f, SoundContext::MAINMENU);
 		game_music = nullptr;
 		pause_music = nullptr;
 		// restore the background image
@@ -1103,7 +1085,7 @@ namespace death
 			pause_music = nullptr;
 		else
 #endif
-		pause_music = Play("pause_music", false, true);
+		pause_music = Play("pause_music", false, true, 0.0f, SoundContext::PAUSEMENU);
 		// internal code
 		CreatePauseMenuHUD();
 		// give opportunity to other game classes to respond
@@ -1139,20 +1121,25 @@ namespace death
 
 	void Game::SetInGameSoundPause(bool in_paused)
 	{
-		// pause/resume in-game sounds
-		chaos::SoundManager * sound_manager = GetSoundManager();
-		if (sound_manager == nullptr)
-			return;
-		chaos::SoundCategory * category = sound_manager->FindCategory("in_game");
-		if (category == nullptr || category->IsPendingKill())
-			return;
+		chaos::SoundCategory * categories[2] = { nullptr, nullptr };
 
-		if (in_paused)
-			category->StartBlend(chaos::BlendVolumeDesc::BlendOut(0.5f, true, false), true);
-		else
+		if (game_instance != nullptr)
+			categories[0] = game_instance->GetSoundCategory();
+		if (current_level_instance != nullptr)
+			categories[1] = current_level_instance->GetSoundCategory();
+
+		for (int i = 0; i < 2; ++i)
 		{
-			category->StartBlend(chaos::BlendVolumeDesc::BlendIn(0.5f), true);
-			category->Pause(false);
+			chaos::SoundCategory * category = categories[i];
+			if (category == nullptr)
+				continue;
+			if (in_paused)
+				category->StartBlend(chaos::BlendVolumeDesc::BlendOut(0.5f, true, false), true);
+			else
+			{
+				category->StartBlend(chaos::BlendVolumeDesc::BlendIn(0.5f), true);
+				category->Pause(false);
+			}
 		}
 	}
 

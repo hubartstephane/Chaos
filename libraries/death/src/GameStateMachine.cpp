@@ -1,4 +1,5 @@
 #include <death/GameStateMachine.h>
+#include <death/SoundContext.h>
 
 namespace death
 {
@@ -153,7 +154,7 @@ namespace death
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
 		{
-			sm_instance->SetContextData(game->Play("gameover", false, false));
+			sm_instance->SetContextData(game->Play("gameover", false, false, 0.0f, SoundContext::GAME));
 			game->OnGameOver();
 		}
 		return false;

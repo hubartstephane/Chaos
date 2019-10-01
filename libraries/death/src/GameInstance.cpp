@@ -390,6 +390,16 @@ namespace death
 		}
 	}
 
+	chaos::SoundCategory * GameInstance::GetSoundCategory()
+	{
+		return sound_category.get();
+	}
+
+	chaos::SoundCategory const * GameInstance::GetSoundCategory() const
+	{
+		return sound_category.get();
+	}
+
 
 
 }; // namespace death

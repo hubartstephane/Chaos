@@ -2,6 +2,7 @@
 #include "Ludum44Player.h"
 #include "Ludum44Game.h"
 
+#include <death/SoundContext.h>
 
 // =================================================
 // LudumPowerUp
@@ -37,11 +38,11 @@ bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool dec
 
 
 	if (decreasing_power_up)
-		game->Play("life_restored", false, false);	
+		game->Play("life_restored", false, false, 0.0f, death::SoundContext::LEVEL);	
 	else
 	{
 		if (!sound_name.empty())
-			game->Play(sound_name.c_str(), false, false);	
+			game->Play(sound_name.c_str(), false, false, 0.0f, death::SoundContext::LEVEL);
 	}
 
 	return true;

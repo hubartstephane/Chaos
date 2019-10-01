@@ -408,8 +408,15 @@ namespace death
 		camera->SetCameraBox(in_box);
 	}
 
+	chaos::SoundCategory * GameLevelInstance::GetSoundCategory()
+	{
+		return sound_category.get();
+	}
 
-
+	chaos::SoundCategory const * GameLevelInstance::GetSoundCategory() const
+	{
+		return sound_category.get();
+	}
 
 	bool GameLevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
 	{

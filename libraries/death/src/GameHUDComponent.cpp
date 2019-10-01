@@ -4,6 +4,7 @@
 #include <death/GameHUDComponent.h>
 #include <death/GameHUD.h>
 #include <death/Player.h>
+#include <death/SoundContext.h>
 
 namespace death
 {
@@ -361,7 +362,7 @@ namespace death
 			warning_value -= (float)delta_time / heart_beat_frequency;
 			if (warning_value <= 0.0f)
 			{
-				game->Play(heart_beat_sound.c_str(), false, false);
+				game->Play(heart_beat_sound.c_str(), false, false, 0.0f, SoundContext::GAME);
 
 				float fractionnal_part, integer_part;
 				fractionnal_part = modf(warning_value, &integer_part);

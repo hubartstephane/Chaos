@@ -22,6 +22,7 @@
 #include <chaos/GPURenderParams.h>
 
 #include <death/GameParticles.h>
+#include <death/SoundContext.h>
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 
@@ -39,7 +40,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 {
 	if (!death::Game::OnEnterGame(in_physical_gamepad))
 		return false;
-	Play("start", false, false);
+	Play("start", false, false, 0.0f, death::SoundContext::GAME);
 	return true;
 }
 
@@ -340,7 +341,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
 
 	// play a sound
 	if (new_level != nullptr && old_level != nullptr)
-		Play("next_level", false, false);
+		Play("next_level", false, false, 0.0f, death::SoundContext::GAME);
 }
 
 float LudumGame::GetPlayerLife(int player_index) const

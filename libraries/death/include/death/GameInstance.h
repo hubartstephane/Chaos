@@ -92,6 +92,11 @@ namespace death
 		/** restart from the respawn checkpoint */
 		bool RestartFromRespawnCheckpoint();
 
+		/** returns the sound category */
+		chaos::SoundCategory * GetSoundCategory();
+		/** returns the sound category */
+		chaos::SoundCategory const * GetSoundCategory() const;
+
 	protected:
 
 		/** initialize the game instance */

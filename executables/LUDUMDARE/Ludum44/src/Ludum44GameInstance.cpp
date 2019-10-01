@@ -4,6 +4,8 @@
 #include "Ludum44LevelInstance.h"
 #include "Ludum44Player.h"
 
+#include <death/SoundContext.h>
+
 DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
 
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
@@ -285,7 +287,7 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 	}
 
 	if (sound_name != nullptr)	
-		ludum_game->Play(sound_name, false, false);
+		ludum_game->Play(sound_name, false, false, 0.0f, death::SoundContext::LEVEL);
 
 	return result;
 }

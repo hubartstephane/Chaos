@@ -107,6 +107,11 @@ namespace death
 		/** get the completion flag */
 		bool GetLevelCompletionFlag() const;
 
+		/** returns the sound category */
+		chaos::SoundCategory * GetSoundCategory();
+		/** returns the sound category */
+		chaos::SoundCategory const * GetSoundCategory() const;
+
 	protected:
 
 		/** gets a camera by its index */

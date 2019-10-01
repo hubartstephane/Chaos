@@ -2,6 +2,7 @@
 #include <death/Game.h>
 #include <death/LayerInstanceParticlePopulator.h>
 #include <death/Player.h>
+#include <death/SoundContext.h>
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/TiledMapTools.h>
@@ -238,7 +239,7 @@ namespace death
 				play_desc.max_distance = glm::length(box.half_size);
 				play_desc.min_distance = play_desc.max_distance * min_distance_ratio;
 
-				result = game->Play(sound_name.c_str(), play_desc);
+				result = game->Play(sound_name.c_str(), play_desc, SoundContext::LEVEL);
 			}
 
 			return result;
@@ -1299,7 +1300,7 @@ namespace death
 			// compute repetitions
 			chaos::obox2 final_camera_obox = camera_obox;
 			final_camera_obox.position = final_camera_position;
-	//		final_camera_obox.half_size = initial_camera_obox.half_size * camera_scale * final_ratio;
+			final_camera_obox.half_size = initial_camera_obox.half_size * camera_scale * final_ratio;
 
 
 

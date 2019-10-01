@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@power_up.psh"
+	],
+	"vertex_sources":
+	[
+		"@power_up.vsh"
+	]
+}

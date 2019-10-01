@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1924">
+ <properties>
+  <property name="BACKGROUND_TEXTURE" value="background4"/>
+  <property name="CAMERA_NAME" value="TheCamera1"/>
+  <property name="CAMERA_SPEED" type="float" value="800"/>
+  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Hello World]"/>
+  <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
+ </properties>
+ <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
+ <objectgroup id="1" name="Texts" visible="0" locked="1"/>
+ <objectgroup id="2" name="Background9" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.1"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.1"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1759" name="star" gid="10" x="2279" y="10169" width="40" height="40"/>
+  <object id="1760" name="star" gid="10" x="3559" y="10777" width="40" height="40"/>
+  <object id="1761" name="star" gid="10" x="5447" y="10777" width="40" height="40"/>
+  <object id="1762" name="star" gid="10" x="6727" y="9913" width="40" height="40"/>
+  <object id="1763" name="star" gid="10" x="7591" y="11129" width="40" height="40"/>
+  <object id="1764" name="star" gid="10" x="4391" y="10169" width="40" height="40"/>
+  <object id="1765" name="star" gid="10" x="2663" y="11865" width="40" height="40"/>
+  <object id="1766" name="star" gid="10" x="7751" y="12377" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="3" name="Background8" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.2"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.2"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1767" name="star" gid="10" x="2860" y="4716" width="40" height="40"/>
+  <object id="1768" name="star" gid="10" x="7724" y="6572" width="40" height="40"/>
+  <object id="1769" name="star" gid="10" x="10348" y="4460" width="40" height="40"/>
+  <object id="1770" name="star" gid="10" x="10604" y="6956" width="40" height="40"/>
+  <object id="1772" name="star" gid="10" x="6892" y="2604" width="40" height="40"/>
+  <object id="1773" name="star" gid="10" x="4204" y="5868" width="40" height="40"/>
+  <object id="1774" name="star" gid="10" x="6956" y="3052" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="4" name="Background7" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1776" name="star" gid="10" x="7660" y="7212" width="40" height="40"/>
+  <object id="1778" name="star" gid="10" x="4460" y="9964" width="40" height="40"/>
+  <object id="1780" name="star" gid="10" x="4140" y="4588" width="40" height="40"/>
+  <object id="1783" name="star" gid="10" x="9580" y="7148" width="40" height="40"/>
+  <object id="1784" name="star" gid="10" x="5548" y="5996" width="40" height="40"/>
+  <object id="1785" name="star" gid="10" x="1772" y="7532" width="40" height="40"/>
+  <object id="1786" name="star" gid="10" x="1708" y="9964" width="40" height="40"/>
+  <object id="1787" name="star" gid="10" x="10860" y="9580" width="40" height="40"/>
+  <object id="1788" name="star" gid="10" x="21036" y="4012" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="5" name="Background6" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.4"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.4"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1789" name="star" gid="10" x="9644" y="7660" width="40" height="40"/>
+  <object id="1790" name="star" gid="10" x="10156" y="10220" width="40" height="40"/>
+  <object id="1791" name="star" gid="10" x="7404" y="7148" width="40" height="40"/>
+  <object id="1792" name="star" gid="10" x="4396" y="5228" width="40" height="40"/>
+  <object id="1793" name="star" gid="10" x="4908" y="8812" width="40" height="40"/>
+  <object id="1794" name="star" gid="10" x="7340" y="10476" width="40" height="40"/>
+  <object id="1795" name="star" gid="10" x="3948" y="10860" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="6" name="Background5" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1796" name="star" gid="10" x="10732" y="10924" width="40" height="40"/>
+  <object id="1797" name="star" gid="10" x="9772" y="8108" width="40" height="40"/>
+  <object id="1798" name="star" gid="10" x="6380" y="6956" width="40" height="40"/>
+  <object id="1799" name="star" gid="10" x="3564" y="6124" width="40" height="40"/>
+  <object id="1800" name="star" gid="10" x="2668" y="8108" width="40" height="40"/>
+  <object id="1801" name="star" gid="10" x="5804" y="10156" width="40" height="40"/>
+  <object id="1802" name="star" gid="10" x="10860" y="11948" width="40" height="40"/>
+  <object id="1803" name="star" gid="10" x="3372" y="10348" width="40" height="40"/>
+ </objectgroup>
+ <objectgroup id="7" name="Background4" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1805" name="mercury" gid="5" x="4664" y="-5560" width="600" height="600"/>
+  <object id="1830" name="star" gid="10" x="-46809" y="21273" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="8" name="Background3" visible="0" locked="1" offsetx="-9280" offsety="-640">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.7"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.7"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1833" name="uranus" gid="9" x="-11240" y="-23448" width="2000" height="2000"/>
+  <object id="1834" name="star" gid="10" x="-25561" y="-4967" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="9" name="Background2" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.8"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.8"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1831" name="mars" gid="6" x="-25408" y="-10048" width="6000" height="6000"/>
+  <object id="1832" name="star" gid="10" x="-8281" y="20889" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="10" name="Background1" visible="0" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.9"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.9"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="1829" name="moon" gid="8" x="6534" y="-21638" width="800" height="800"/>
+  <object id="1807" name="earth" gid="3" x="2872" y="-21496" width="2500" height="2500"/>
+  <object id="1828" name="star" gid="10" x="-44025" y="1945" width="30" height="30"/>
+ </objectgroup>
+ <objectgroup id="11" name="Zones">
+  <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="MATERIAL" value="power_up"/>
+   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
+  </properties>
+  <object id="1808" name="Checkpoint" gid="2" x="-3680" y="14240" width="20912" height="2416"/>
+  <object id="1809" name="Checkpoint" gid="2" x="-4312" y="-11128" width="20912" height="688"/>
+  <object id="1843" name="Finish" gid="2" x="-2008" y="-133560" width="16432" height="8752"/>
+  <object id="1870" name="PowerUp" gid="2" x="-3788" y="11388" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1871" name="PowerUp" gid="11" x="7580" y="11388" width="9520" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1872" name="Spawner" gid="2" x="1832" y="-43704" width="9072" height="10096">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="3"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="1873" name="Spawner" gid="2" x="-1752" y="5928" width="16048" height="13168">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="80"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="1874" name="PowerUp" gid="11" x="7132" y="-12100" width="9456" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1875" name="PowerUp" gid="2" x="-4300" y="-12100" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1886" name="Spawner" gid="2" x="-1272" y="-17368" width="15344" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="1887" name="Spawner" gid="2" x="-1272" y="-66904" width="15344" height="12976">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="2"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="1891" name="PowerUp" gid="2" x="-4428" y="-36612" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1892" name="Checkpoint" gid="2" x="-4440" y="-35640" width="20912" height="688"/>
+  <object id="1893" name="PowerUp" gid="11" x="7004" y="-36612" width="9456" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1894" name="PowerUp" gid="2" x="-4364" y="-61508" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1895" name="Checkpoint" gid="2" x="-4376" y="-60536" width="20912" height="688"/>
+  <object id="1896" name="PowerUp" gid="11" x="7068" y="-61508" width="9456" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1897" name="PowerUp" gid="2" x="-4364" y="-84420" width="10160" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1898" name="Checkpoint" gid="2" x="-4376" y="-83448" width="20912" height="688"/>
+  <object id="1899" name="PowerUp" gid="11" x="7068" y="-84420" width="9456" height="5000">
+   <properties>
+    <property name="DECREASE_POWER_UP" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1900" name="Spawner" gid="2" x="-1624" y="-91704" width="16048" height="9648">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="80"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="1903" name="Spawner" gid="2" x="-1336" y="-21848" width="7408" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="1904" name="Spawner" gid="2" x="-1272" y="-27416" width="7280" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="1906" name="Spawner" gid="2" x="6536" y="-21784" width="7408" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="1907" name="Spawner" gid="2" x="6664" y="-27352" width="7280" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="1908" name="Spawner" gid="2" x="-1688" y="-102104" width="16048" height="9648">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="80"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="1909" name="Spawner" gid="2" x="-1496" y="-112280" width="16048" height="17776">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="80"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="1911" name="Spawner" gid="2" x="2696" y="-24024" width="7280" height="4272">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
+    <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
+    <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
+    <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="1915" name="Sound" x="2496" y="448" width="10176" height="9728">
+   <properties>
+    <property name="3D_SOUND" type="bool" value="true"/>
+    <property name="MIN_DISTANCE_RATIO" type="float" value="0.3"/>
+    <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" value="5"/>
+    <property name="SOUND_NAME" value="thrust"/>
+    <property name="STOP_SOUND_WHEN_LEAVED" type="bool" value="false"/>
+    <property name="TRIGGER_ONCE" type="bool" value="true"/>
+    <property name="looping" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="12" name="Enemies" visible="0" locked="1">
+  <properties>
+   <property name="MATERIAL" value="enemy"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="13" name="fire" visible="0" locked="1">
+  <properties>
+   <property name="MATERIAL" value="fire"/>
+   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
+   <property name="TRIGGERS_ENABLED" type="bool" value="false"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="14" name="PlayerAndCamera" visible="0" locked="1">
+  <properties>
+   <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
+   <property name="MATERIAL" value="player"/>
+  </properties>
+  <object id="57" name="TheCamera1" x="3432" y="8816" width="7120" height="4648">
+   <properties>
+    <property name="CAMERA" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="75" name="world_bounding_box" x="-1424" y="-141440" width="15424" height="155264"/>
+  <object id="1735" name="ThePlayerStart1" x="6896" y="12176" width="112" height="496">
+   <properties>
+    <property name="BITMAP_NAME" value="player"/>
+    <property name="PLAYER_START" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="15" name="Explosions" visible="0" locked="1">
+  <properties>
+   <property name="MATERIAL" value="explosion"/>
+  </properties>
+ </objectgroup>
+</map>

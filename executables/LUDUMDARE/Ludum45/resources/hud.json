@@ -1,0 +1,17 @@
+{
+	"LEVEL_TITLE_IDc":
+	{
+	
+	},
+
+
+	"TITLE_IDx":
+	{
+    "generator_paramsv":
+    {
+      "line_height":250,
+      "default_color":[1.0, 1.0, 1.0, 1.0],
+			"hotpoint_type":"center"
+    }
+	}
+}

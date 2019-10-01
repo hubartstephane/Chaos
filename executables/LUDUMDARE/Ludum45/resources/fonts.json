@@ -1,0 +1,17 @@
+{
+	"fonts":
+	{
+		"normal": "@fonts/overpass-mono-bold.otf",
+		"title":"@fonts/unispace bold italic.ttf"
+	},
+	"bitmaps":
+	{
+    "fire":"fire"	
+	},
+	"colors":
+	{
+		"POWERUP":[1.0, 0.0, 0.0],
+		"KEYBOARD":[1.0, 1.0, 0.0],
+		"LEVELTITLE":[1.0, 0.0, 0.0]
+	}
+}

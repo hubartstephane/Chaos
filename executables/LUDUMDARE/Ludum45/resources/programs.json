@@ -1,0 +1,10 @@
+{
+  "@background" : { "path": "@programs/background/background.pgm" },
+  "@player": { "path": "@programs/player/player.pgm" },
+  "@enemy": { "path": "@programs/enemy/enemy.pgm" },
+  "@lifebar"  : { "path": "@programs/lifebar/lifebar.pgm" },
+  "@fire": { "path": "@programs/fire/fire.pgm" },
+  "@explosion": { "path": "@programs/explosion/explosion.pgm" },
+  "@power_up": { "path": "@programs/power_up/power_up.pgm" },  
+  "@text"  : { "path": "@programs/text/text.pgm" }    
+}

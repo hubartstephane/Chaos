@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@explosion.psh"
+	],
+	"vertex_sources":
+	[
+		"@explosion.vsh"
+	]
+}

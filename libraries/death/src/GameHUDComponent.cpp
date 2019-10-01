@@ -206,28 +206,52 @@ namespace death
 		}
 	}
 
-
-
-
-
 	// ====================================================================
 	// GameHUDNotificationComponent
 	// ====================================================================
 
+	GameHUDNotificationComponent::GameHUDNotificationComponent(chaos::TagType in_layer_id) :
+		GameHUDTextComponent(in_layer_id)
+	{
+		generator_params.line_height = 80.0f;
+		generator_params.font_info_name = "normal";
+		generator_params.position = glm::vec2(-40.0f, 100.0f);
+		generator_params.hotpoint_type = chaos::Hotpoint::BOTTOM_RIGHT;
+	}
+
+	GameHUDNotificationComponent::GameHUDNotificationComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id) :
+		GameHUDTextComponent(in_params, in_layer_id)
+	{
+	}
+
 	void GameHUDNotificationComponent::ShowNotification(char const * in_message, float in_lifetime)
 	{
-		current_time = 0.0f;
-		lifetime = in_lifetime;
-
+		if (chaos::StringTools::IsEmpty(in_message))
+			HideNotification();
+		else
+		{
+			current_time = 0.0f;
+			lifetime = in_lifetime;
+			UpdateTextAllocation(in_message);
+		}
 	}
 
 	void GameHUDNotificationComponent::HideNotification()
 	{
+		current_time = 0.0f;
+		lifetime = 0.0f;
+		allocations = nullptr;
 	}
 
 	bool GameHUDNotificationComponent::DoTick(double delta_time)
 	{
-
+		GameHUDTextComponent::DoTick(delta_time);
+		if (lifetime >= 0.0f && current_time < lifetime)
+		{
+			current_time += (float)delta_time;
+			if (current_time >= lifetime)
+				HideNotification();
+		}
 		return true;
 	}
 

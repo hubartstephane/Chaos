@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1924">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1925">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -314,7 +314,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1915" name="Sound" x="2496" y="448" width="10176" height="9728">
+  <object id="1915" name="Sound" x="-18752" y="-3008" width="10176" height="9728">
    <properties>
     <property name="3D_SOUND" type="bool" value="true"/>
     <property name="MIN_DISTANCE_RATIO" type="float" value="0.3"/>
@@ -323,6 +323,15 @@
     <property name="STOP_WHEN_COLLISION_OVER" type="bool" value="false"/>
     <property name="TRIGGER_ONCE" type="bool" value="true"/>
     <property name="looping" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="1924" name="Notification" x="-18240" y="7936" width="10176" height="9728">
+   <properties>
+    <property name="LIFETIME" type="float" value="5"/>
+    <property name="NOTIFICATION" value="[ButtonA] [ButtonA]Hello World XXX[ButtonA]"/>
+    <property name="PLAYER_COLLISION" type="bool" value="true"/>
+    <property name="STOP_WHEN_COLLISION_OVER" type="bool" value="false"/>
+    <property name="TRIGGER_ONCE" type="bool" value="false"/>
    </properties>
   </object>
  </objectgroup>

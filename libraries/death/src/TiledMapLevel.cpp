@@ -1300,7 +1300,9 @@ namespace death
 			// compute repetitions
 			chaos::obox2 final_camera_obox = camera_obox;
 			final_camera_obox.position = final_camera_position;
-			final_camera_obox.half_size = initial_camera_obox.half_size * camera_scale * final_ratio;
+		//	final_camera_obox.half_size = initial_camera_obox.half_size * camera_scale * final_ratio;
+
+		//	final_camera_obox.half_size = camera_obox.half_size * final_ratio;
 
 
 
@@ -1311,6 +1313,12 @@ namespace death
 			// new provider for camera override (will be fullfill only if necessary)
 			chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 			main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(final_camera_obox));
+
+			chaos::box2 final_camera_box;
+			final_camera_box.position = final_camera_obox.position;
+			final_camera_box.half_size = final_camera_obox.half_size;
+			main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(final_camera_box));
+
 
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
 			glm::ivec2 start_instance = scissor_result.start_instance;

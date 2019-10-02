@@ -21,25 +21,8 @@
     { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
     { "path": "sounds/game_music.ogg" , "categories" :  "music"},
     { "path": "sounds/gameover.ogg" , "categories" :  "FX"},
-    { "path": "sounds/explosion.ogg" , "categories" :  "FX2"},
-    { "path": "sounds/bonus1.ogg" , "categories" :  "FX"},
-    { "path": "sounds/bonus2.ogg" , "categories" :  "FX"},
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
-    { "path": "sounds/pause.ogg" , "categories" :  "FX"},
-    { "path": "sounds/thrust.ogg" , "categories" :  "FX"},
-    { "path": "sounds/player_touched.ogg" , "categories" :  "FX"},
-    { "path": "sounds/particle_removed.ogg" , "categories" :  "FX"},
-    { "path": "sounds/particle_add.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},
-    { "path": "sounds/collision.ogg" , "categories" :  "FX"},
-    { "path": "sounds/fire.ogg" , "categories" :  "FX"},
-    { "path": "sounds/heartbeat.ogg" , "categories" :  "FX"},    
-		{ "path": "sounds/sound_zone.ogg" , "categories" :  "FX"},    
-    { "path": "sounds/metallic.ogg" , "categories" :  "FX"},    
-    { "path": "sounds/speed_up.ogg" , "categories" :  "Voices"},
-    { "path": "sounds/power_up.ogg" , "categories" :  "Voices"},
-    { "path": "sounds/augmented_fire.ogg" , "categories" :  "Voices"},
-    { "path": "sounds/life_restored.ogg" , "categories" :  "Voices"},
-    { "path": "sounds/blast_improved.ogg" , "categories" :  "Voices"}      
+    { "path": "sounds/heartbeat.ogg" , "categories" :  "FX"}
   ]
 }

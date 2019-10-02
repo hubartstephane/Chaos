@@ -26,10 +26,6 @@ public:
 	/** constructor */
 	LudumLevelInstance(class LudumGame * in_game);
 
-	/** Set current scroll factor */
-	void SetScrollFactor(float in_scroll_factor){ scroll_factor = in_scroll_factor;}
-	/** Get current scroll factor */
-	float GetScrollFactor() const { return scroll_factor; }
 
 protected:
 
@@ -61,8 +57,4 @@ protected:
 	/** pointer on game */
 	class LudumGame * game = nullptr;
 
-	/** the horizontal camera speed */
-	float camera_speed = 100.0f;
-	/** an additional factor that can be applyed on demand */
-	float scroll_factor = 1.0f;
 };

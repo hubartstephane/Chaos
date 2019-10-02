@@ -44,10 +44,6 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
-{
-
-}
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
@@ -63,54 +59,16 @@ bool LudumGame::DeclareParticleClasses()
 {
 	if (!Game::DeclareParticleClasses())
 		return false;
-	chaos::ClassTools::DeclareClass<ParticlePowerUpZone, chaos::ParticleDefault::Particle>("ParticlePowerUpZone");
 	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleBase>("ParticlePlayer");
-	chaos::ClassTools::DeclareClass<ParticleEnemy, ParticleBase>("ParticleEnemy");
-	chaos::ClassTools::DeclareClass<ParticleFire, ParticleBase>("ParticleFire");
-	chaos::ClassTools::DeclareClass<ParticleLife, chaos::ParticleDefault::Particle>("ParticleLife");
-	chaos::ClassTools::DeclareClass<ParticleExplosion, chaos::ParticleDefault::Particle>("ParticleExplosion");
 	return true;
-}
-
-template<typename T>
-static bool InitializeGameValueVector(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path, std::vector<T> & result)
-{
-	chaos::JSONTools::GetAttribute(config, json_name, result);
-	return (result.size() > 0);
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
-	if (!InitializeGameValueVector("player_speeds", config, config_path, player_speeds))
-		return false;
-	if (!InitializeGameValueVector("player_damages", config, config_path, player_damages))
-		return false;
-	if (!InitializeGameValueVector("player_charged_damages", config, config_path, player_charged_damages))
-		return false;
-	if (!InitializeGameValueVector("player_fire_rates", config, config_path, player_fire_rates))
-		return false;
-	
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
-	DEATHGAME_JSON_ATTRIBUTE(min_player_max_life);
-	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
-	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
-	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);
-	DEATHGAME_JSON_ATTRIBUTE(normal_fire_time);	
-	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
-	DEATHGAME_JSON_ATTRIBUTE(fire_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_damage);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_rate);
 
-	DEATHGAME_JSON_ATTRIBUTE(meteor_life);
-	DEATHGAME_JSON_ATTRIBUTE(alien_life);
-	DEATHGAME_JSON_ATTRIBUTE(turret_life);
 
-	DEATHGAME_JSON_ATTRIBUTE(meteor_damage_for_player);
-	DEATHGAME_JSON_ATTRIBUTE(alien_damage_for_player);
-	DEATHGAME_JSON_ATTRIBUTE(turret_damage_for_player);
 			
 	return true;
 }
@@ -124,8 +82,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 {
 	if (!death::Game::InitializeFromConfiguration(config, config_path))
 		return false;
-	if (!PopulatePowerUps(config, config_path))
-		return false;
+
 
 	return true;
 }
@@ -166,28 +123,4 @@ chaos::box2 LudumGame::GetWorldBox() const
 death::GameInstance * LudumGame::CreateGameInstance()
 {
 	return new LudumGameInstance(this);
-}
-
-bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path)
-{
-	if (!power_up->InitializeFromConfiguration(json_name, config, config_path))
-	{
-		delete(power_up);
-		return false;
-	}
-	power_ups.push_back(power_up);
-	return true;
-}
-
-bool LudumGame::PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path)
-{
-	if (!PopulatePowerOneUp(new LudumSpeedUp("speed_up"), "speed_up", config, config_path))
-		return false;
-	if (!PopulatePowerOneUp(new LudumDamageUp("power_up", false), "damage_up", config, config_path))
-		return false;
-	//if (!PopulatePowerOneUp(new LudumDamageUp("blast_improved", true), "charged_damage_up", config, config_path))
-	//	return false;
-	if (!PopulatePowerOneUp(new LudumFireRateUp("augmented_fire"), "fire_rate_up", config, config_path))
-		return false;
-	return true;
 }

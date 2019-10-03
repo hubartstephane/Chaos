@@ -955,8 +955,8 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		bool ObjectTypeSet::DoLoadObjectTypes(tinyxml2::XMLElement const * element)
 		{
 			// load the tiles
-			if (!DoLoadObjectListHelper(element, tiles, "objecttypes", nullptr, this))
-				return false;
+		//	if (!DoLoadObjectListHelper(element, object_types, "objecttypes", nullptr, this))
+		//		return false;
 			return true;
 		}
 
@@ -1007,7 +1007,6 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		{
 
 		}
-#define CHAOS_EMPTY_TOKEN
 #define CHAOS_IMPL_FIND_FILE_DATA(func_name, arg_type, member_name, constess)\
 		TileData constess * TileSet::func_name(arg_type arg_name) constess\
 		{\
@@ -1023,15 +1022,14 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			return nullptr;\
 		}
 
-CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY())
 CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, const)
-CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, BOOST_PP_EMPTY())
 CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, const)
-CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, BOOST_PP_EMPTY())
 CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, const)
 
 #undef CHAOS_IMPL_FIND_FILE_DATA
-#undef CHAOS_EMPTY_TOKEN
 
 
 		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
@@ -1310,7 +1308,6 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			return TileInfo();
 		}
 
-#define CHAOS_EMPTY_TOKEN
 #define CHAOS_IMPL_FIND_LAYER(func_name, member_name, arg_type, constess)\
 	LayerBase constess * Map::func_name(arg_type arg_name) constess\
 	{\
@@ -1326,9 +1323,9 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 		return nullptr;\
 	}
 
-CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, BOOST_PP_EMPTY())
 CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, const)
-CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, BOOST_PP_EMPTY())
 CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, const)
 #undef CHAOS_IMPL_FIND_LAYER
 
@@ -1349,13 +1346,11 @@ CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, const)
 			return TileInfo();\
 		}
 
-CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, BOOST_PP_EMPTY())
 CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, const)
-CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, CHAOS_EMPTY_TOKEN)
+CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, BOOST_PP_EMPTY())
 CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, const)
 #undef CHAOS_IMPL_FIND_FILE_INFO
-
-#undef CHAOS_EMPTY_TOKEN
 
 
 		// ==========================================

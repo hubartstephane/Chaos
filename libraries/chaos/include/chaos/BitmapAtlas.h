@@ -241,7 +241,6 @@ namespace chaos
 			using bitmap_stored_type = typename boost::mpl::apply<meta_wrapper_type, bitmap_type>::type;
 			using font_stored_type   = typename boost::mpl::apply<meta_wrapper_type, font_type>::type;
 
-#define CHAOS_EMPTY_TOKEN
 #define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, param_type, constness)\
 			result_type constness * funcname(param_type name, bool recursive = false) constness\
 			{\
@@ -253,22 +252,21 @@ namespace chaos
 					result = folders[i]->funcname(name, recursive);\
 				return result;\
 			}
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, char const *, BOOST_PP_EMPTY());
 			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, char const *, const);
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, TagType, BOOST_PP_EMPTY());
 			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, TagType, const);
 
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, char const *, BOOST_PP_EMPTY());
 			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, char const *, const);
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, TagType, BOOST_PP_EMPTY());
 			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, TagType, const);
 
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, char const *, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, char const *, BOOST_PP_EMPTY());
 			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, char const *, const);
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, TagType, CHAOS_EMPTY_TOKEN);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, TagType, BOOST_PP_EMPTY());
 			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, TagType, const);
 #undef CHAOS_IMPL_GETINFO
-#undef CHAOS_EMPTY_TOKEN
 
 			/** clear the content of the folder */
 			void Clear()

@@ -10,6 +10,47 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+
+		// ==============================================================
+		// FORWARD DECLARATION / FRIENDSHIP MACROS
+		// ==============================================================
+
+		// all classes in this file
+#define CHAOS_TILEDMAP_CLASSES \
+(BaseObject)\
+(Property)\
+(PropertyOwner)\
+(GeometricObject)\
+(GeometricObjectPoint)\
+(GeometricObjectSurface)\
+(GeometricObjectRectangle)\
+(GeometricObjectEllipse)\
+(GeometricObjectPolygon)\
+(GeometricObjectPolyline)\
+(GeometricObjectText)\
+(GeometricObjectTile)\
+(GroundData)\
+(TileData)\
+(LayerBase)\
+(ImageLayer)\
+(ObjectLayer)\
+(TileLayer)\
+(ManagerObject)\
+(ObjectTypeDefinition)\
+(ObjectTypeSet)\
+(TileSet)\
+(Map)\
+(Manager)
+
+		// forward declaration
+#define CHAOS_TILEDMAP_FORWARD_DECL(r, data, elem) class elem;
+		BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FORWARD_DECL, _, CHAOS_TILEDMAP_CLASSES)
+
+			// friendship macro
+#define CHAOS_TILEDMAP_FRIEND_DECL(r, data, elem) friend class elem;
+#define CHAOS_TILEDMAP_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FRIEND_DECL, _, CHAOS_TILEDMAP_CLASSES)
+
+
 		// TiledMap coordinate system
 		//
 		//
@@ -31,9 +72,10 @@ namespace chaos
 		//
 		// 
 
-
 		class BaseObject : public ReferencedObject
 		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
 		public:
 
 			/** get the path */
@@ -117,7 +159,7 @@ namespace chaos
 
 		class Property : public BaseObject
 		{
-			friend class PropertyOwner;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -174,6 +216,8 @@ namespace chaos
 		template<typename T, int TYPE_ID>
 		class PropertyTemplate : public Property
 		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
 		public:
 
 			/** constructor */
@@ -235,7 +279,7 @@ namespace chaos
 
 		class PropertyOwner : public BaseObject
 		{
-			friend class Manager;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -303,10 +347,7 @@ namespace chaos
 
 		class GeometricObject : public PropertyOwner
 		{
-			friend class Manager;
-			friend class BaseObject;
-			friend class TileSet;
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -381,7 +422,7 @@ namespace chaos
 
 		class GeometricObjectPoint : public GeometricObject
 		{
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -403,8 +444,7 @@ namespace chaos
 
 		class GeometricObjectSurface : public GeometricObject
 		{
-			friend class ObjectLayer;
-
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -435,7 +475,7 @@ namespace chaos
 
 		class GeometricObjectRectangle : public GeometricObjectSurface
 		{
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -458,7 +498,7 @@ namespace chaos
 
 		class GeometricObjectEllipse : public GeometricObjectSurface
 		{
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -481,7 +521,7 @@ namespace chaos
 
 		class GeometricObjectPolygon : public GeometricObject
 		{
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -509,7 +549,7 @@ namespace chaos
 
 		class GeometricObjectPolyline : public GeometricObject
 		{
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -536,7 +576,7 @@ namespace chaos
 
 		class GeometricObjectText : public GeometricObjectSurface
 		{
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -586,7 +626,7 @@ namespace chaos
 
 		class GeometricObjectTile : public GeometricObjectSurface
 		{
-			friend class ObjectLayer;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -620,9 +660,7 @@ namespace chaos
 
 		class GroundData : public PropertyOwner
 		{
-			friend class Manager;
-			friend class BaseObject;
-			friend class TileSet;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		protected:
 
@@ -646,9 +684,7 @@ namespace chaos
 
 		class TileData : public PropertyOwner
 		{
-			friend class Manager;
-			friend class BaseObject;
-			friend class TileSet;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		protected:
 
@@ -691,7 +727,7 @@ namespace chaos
 
 		class LayerBase : public PropertyOwner
 		{
-			friend class Map;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -746,8 +782,7 @@ namespace chaos
 
 		class ImageLayer : public LayerBase
 		{
-			friend class Map;
-			friend class BaseObject;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		protected:
 
@@ -778,8 +813,7 @@ namespace chaos
 
 		class ObjectLayer : public LayerBase
 		{
-			friend class Map;
-			friend class BaseObject;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 			static int const DRAW_ORDER_MANUAL = 0;
 			static int const DRAW_ORDER_TOPDOWN = 1;
@@ -822,8 +856,7 @@ namespace chaos
 		class TileLayer : public LayerBase
 		{
 
-			friend class Map;
-			friend class BaseObject;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -871,7 +904,7 @@ namespace chaos
 
 		class ManagerObject : public PropertyOwner
 		{
-			friend class Manager;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -906,6 +939,8 @@ namespace chaos
 		class ObjectTypeDefinition : public PropertyOwner
 		{
 
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
 		public:
 
 			/** object information */
@@ -920,7 +955,7 @@ namespace chaos
 
 		class ObjectTypeSet : public ManagerObject
 		{
-			friend class Manager;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -956,8 +991,7 @@ namespace chaos
 			static int const ORIENTATION_ORTHOGONAL = 0;
 			static int const ORIENTATION_ISOMETRIC = 1;
 
-			friend class Manager;
-			friend class Map;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		protected:
 
@@ -1031,6 +1065,8 @@ namespace chaos
 
 		class TileSetData
 		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
 		public:
 
 			/** the first gid for the tileset */
@@ -1041,6 +1077,8 @@ namespace chaos
 
 		class TileInfo
 		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
 		public:
 
 			/** default constructor */
@@ -1059,8 +1097,7 @@ namespace chaos
 
 		class Map : public ManagerObject
 		{
-			friend class Manager;
-			friend class TileSet;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 			static int const ORIENTATION_ORTHOGONAL = 0;
 			static int const ORIENTATION_ISOMETRIC = 1;
@@ -1166,8 +1203,7 @@ namespace chaos
 
 		class Manager : public BaseObject
 		{
-			friend class Map;
-			friend class TileSet;
+			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
 
@@ -1247,5 +1283,12 @@ namespace chaos
 		};
 
 	}; // namespace TiledMap
+
+
+	   // undefine macros
+#undef CHAOS_TILEDMAP_CLASSES
+#undef CHAOS_TILEDMAP_FORWARD_DECL
+#undef CHAOS_TILEDMAP_FRIEND_DECL
+#undef CHAOS_TILEDMAP_ALL_FRIENDS
 
 }; // namespace chaos

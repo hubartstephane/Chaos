@@ -900,6 +900,54 @@ namespace chaos
 		};
 
 		// ==========================================
+		// ObjectTypeSet
+		// ==========================================
+
+		class ObjectTypeDefinition : public PropertyOwner
+		{
+
+		public:
+
+			/** object information */
+			std::string name;
+			/** the color in the editor */
+			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		};
+
+		// ==========================================
+		// ObjectTypeSet
+		// ==========================================
+
+		class ObjectTypeSet : public ManagerObject
+		{
+			friend class Manager;
+
+		public:
+
+			/** find an object type */
+			ObjectTypeDefinition * FindObjectType(char const * name);
+			/** find an object type */
+			ObjectTypeDefinition const * FindObjectType(char const * name) const;
+
+		protected:
+
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** loading method from XML */
+			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
+
+			/** load all types */
+			bool DoLoadObjectTypes(tinyxml2::XMLElement const * element);
+
+		protected:
+
+			/** object set information */
+			std::string name;
+			/** all types of object */
+			std::vector<shared_ptr<ObjectTypeDefinition>> object_types;
+		};
+
+		// ==========================================
 		// TileSet
 		// ==========================================
 
@@ -1139,13 +1187,29 @@ namespace chaos
 			TileSet * LoadTileSet(FilePathParam const & path, Buffer<char> buffer);
 			/** load a tiled map */
 			TileSet * LoadTileSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
+#if 0
+
+			/** load a object type set */
+			ObjectTypeSet * LoadObjectTypeSet(FilePathParam const & path);
+			/** load a object type set */
+			ObjectTypeSet * LoadObjectTypeSet(FilePathParam const & path, Buffer<char> buffer);
+			/** load a object type set */
+			ObjectTypeSet * LoadObjectTypeSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
+#endif
 
 			/** find tiled map */
 			Map * FindMap(FilePathParam const & path);
 			Map const * FindMap(FilePathParam const & path) const;
+
 			/** find tiled map set */
 			TileSet * FindTileSet(FilePathParam const & path);
 			TileSet const * FindTileSet(FilePathParam const & path) const;
+
+#if 0
+			/** findobject type set */
+			ObjectTypeSet * FindObjectTypeSet(FilePathParam const & path);
+			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
+#endif
 
 		protected:
 
@@ -1163,12 +1227,23 @@ namespace chaos
 			/** internal method to load a tiled map (with no search for exisiting items) */
 			TileSet * DoLoadTileSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
 
+#if 0
+			/** internal method to load a object type set (with no search for exisiting items) */
+			ObjectTypeSet * DoLoadObjectTypeSet(FilePathParam const & path);
+			/** internal method to load a object type set (with no search for exisiting items) */
+			ObjectTypeSet * DoLoadObjectTypeSet(FilePathParam const & path, Buffer<char> buffer);
+			/** internal method to load a object type set (with no search for exisiting items) */
+			ObjectTypeSet * DoLoadObjectTypeSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
+#endif
+
 		public:
 
 			/** the maps */
 			std::vector<shared_ptr<Map>> maps;
 			/** the assets */
 			std::vector<shared_ptr<TileSet>> tile_sets;
+			/** the assets */
+			std::vector<shared_ptr<ObjectTypeSet>> object_type_sets;
 		};
 
 	}; // namespace TiledMap

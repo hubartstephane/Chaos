@@ -185,6 +185,14 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			if (properties_element == nullptr)
 				return true; // no properties is not an error
 
+
+
+
+
+
+
+
+
 			tinyxml2::XMLElement const * node = properties_element->FirstChildElement("property");
 			for (; node != nullptr ; node = node->NextSiblingElement("property"))
 			{
@@ -224,6 +232,9 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 					}
 				}								
 			}
+
+
+
 			return true;
 		}
 
@@ -903,6 +914,90 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			return glm::ivec2(index % size.x, index / size.x);		
 		}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// ==========================================
+		// ObjectTypeSet methods
+		// ==========================================
+
+
+
+		bool ObjectTypeSet::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (!ManagerObject::DoLoad(element))
+				return false;
+			if (!DoLoadObjectTypes(element))
+				return false;
+
+
+			return true;
+		}
+
+		bool ObjectTypeSet::DoLoadObjectTypes(tinyxml2::XMLElement const * element)
+		{
+			// load the tiles
+			if (!DoLoadObjectListHelper(element, tiles, "objecttypes", nullptr, this))
+				return false;
+			return true;
+		}
+
+		bool ObjectTypeSet::DoLoadMembers(tinyxml2::XMLElement const * element)
+		{
+
+
+
+			return true;
+		}
+
+
+
+		ObjectTypeDefinition * ObjectTypeSet::FindObjectType(char const * name)
+		{
+			size_t count = object_types.size();
+			for (size_t i = 0 ; i < count ; ++i)
+			{
+				ObjectTypeDefinition * definition = object_types[i].get();
+				if (definition == nullptr)
+					continue;
+				if (StringTools::Stricmp(definition->name, name) == 0)
+					return definition;
+			}		
+			return nullptr;
+		}
+
+		ObjectTypeDefinition const * ObjectTypeSet::FindObjectType(char const * name) const
+		{
+			size_t count = object_types.size();
+			for (size_t i = 0 ; i < count ; ++i)
+			{
+				ObjectTypeDefinition const * definition = object_types[i].get();
+				if (definition == nullptr)
+					continue;
+				if (StringTools::Stricmp(definition->name, name) == 0)
+					return definition;
+			}		
+			return nullptr;		
+		}
+
 		// ==========================================
 		// TileSet methods
 		// ==========================================
@@ -1267,6 +1362,12 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 		// Manager methods
 		// ==========================================
 
+
+#define CHAOS_IMPL_LOAD_INFO()
+
+#undef CHAOS_IMPL_LOAD_INFO
+
+
 		TileSet * Manager::LoadTileSet(FilePathParam const & path)
 		{
 			TileSet * result = FindTileSet(path);
@@ -1291,6 +1392,17 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 			return DoLoadTileSet(path, doc);
 		}
 
+
+
+
+
+
+
+
+
+
+
+
 		Map * Manager::LoadMap(FilePathParam const & path, bool store_map)
 		{
 			Map * result = FindMap(path);
@@ -1314,6 +1426,24 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 				return result;
 			return DoLoadMap(path, doc, store_map);
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		Map * Manager::FindMap(FilePathParam const & path)
 		{
@@ -1350,6 +1480,22 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 					return tile_sets[i].get();
 			return nullptr;
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		TileSet * Manager::DoLoadTileSet(FilePathParam const & path)
 		{

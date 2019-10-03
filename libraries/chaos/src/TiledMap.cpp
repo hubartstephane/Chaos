@@ -1358,74 +1358,23 @@ return_type * Manager::function_name(func_params)\
 	return Do##function_name(call_args);\
 }
 
+#define CHAOS_IMPL_LOAD_INFO_ALL(function_name, find_function_name, return_type)\
+	CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type, FilePathParam const & path, path)\
+	CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)\
+	CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)\
 
-	CHAOS_IMPL_LOAD_INFO(LoadTileSet, FindTileSet, TileSet, FilePathParam const & path, path)
-	CHAOS_IMPL_LOAD_INFO(LoadTileSet, FindTileSet, TileSet, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)
-	CHAOS_IMPL_LOAD_INFO(LoadTileSet, FindTileSet, TileSet,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)
+
+	CHAOS_IMPL_LOAD_INFO_ALL(LoadTileSet, FindTileSet, TileSet)
+
+
+	CHAOS_IMPL_LOAD_INFO(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() store_map)
+	CHAOS_IMPL_LOAD_INFO(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() buffer BOOST_PP_COMMA() store_map)
+	CHAOS_IMPL_LOAD_INFO(LoadMap, FindMap, Map,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() doc BOOST_PP_COMMA() store_map)
+//	CHAOS_IMPL_LOAD_INFO_ALL(LoadMap, FindMap, Map)
+	//CHAOS_IMPL_LOAD_INFO_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet)
+
+#undef CHAOS_IMPL_LOAD_INFO_ALL
 #undef CHAOS_IMPL_LOAD_INFO
-
-
-
-#if 0
-
-		TileSet * Manager::LoadTileSet(FilePathParam const & path)
-		{
-			TileSet * result = FindTileSet(path);
-			if (result != nullptr)
-				return result;
-			return DoLoadTileSet(path);
-		}
-
-		TileSet * Manager::LoadTileSet(FilePathParam const & path, Buffer<char> buffer)
-		{
-			TileSet * result = FindTileSet(path);
-			if (result != nullptr)
-				return result;
-			return DoLoadTileSet(path, buffer);
-		}
-
-		TileSet * Manager::LoadTileSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc)
-		{
-			TileSet * result = FindTileSet(path);
-			if (result != nullptr)
-				return result;
-			return DoLoadTileSet(path, doc);
-		}
-#endif
-
-
-
-
-
-
-
-
-
-
-
-		Map * Manager::LoadMap(FilePathParam const & path, bool store_map)
-		{
-			Map * result = FindMap(path);
-			if (result != nullptr)
-				return result;
-			return DoLoadMap(path, store_map);
-		}
-
-		Map * Manager::LoadMap(FilePathParam const & path, Buffer<char> buffer, bool store_map)
-		{
-			Map * result = FindMap(path);
-			if (result != nullptr)
-				return result;
-			return DoLoadMap(path, buffer, store_map);
-		}
-
-		Map * Manager::LoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc, bool store_map)
-		{
-			Map * result = FindMap(path);
-			if (result != nullptr)
-				return result;
-			return DoLoadMap(path, doc, store_map);
-		}
 
 
 

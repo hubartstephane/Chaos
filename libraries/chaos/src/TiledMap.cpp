@@ -1350,29 +1350,25 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 
 
 #define CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, func_params, call_args)\
-return_type * Manager::function_name(func_params)\
+return_type * Manager::function_name(func_params, bool store_object)\
 {\
 	return_type * result = find_function_name(path);\
 	if (result != nullptr)\
 		return result;\
-	return Do##function_name(call_args);\
+	return Do##function_name(call_args, store_object);\
 }
 
 #define CHAOS_IMPL_MANAGER_LOAD_ALL(function_name, find_function_name, return_type)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path, path)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)\
-	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)\
+	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)\
 
+	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadMap, FindMap, Map)
 	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet)
 	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet)
 
-	CHAOS_IMPL_MANAGER_LOAD(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() store_map)
-	CHAOS_IMPL_MANAGER_LOAD(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() buffer BOOST_PP_COMMA() store_map)
-	CHAOS_IMPL_MANAGER_LOAD(LoadMap, FindMap, Map,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() doc BOOST_PP_COMMA() store_map)
-
 #undef CHAOS_IMPL_MANAGER_LOAD_ALL
 #undef CHAOS_IMPL_MANAGER_LOAD
-
 
 #define CHAOS_IMPL_MANAGER_FIND(funcname, return_type, member_name, constness)\
 return_type constness * Manager::funcname(FilePathParam const & path) constness\
@@ -1392,16 +1388,15 @@ CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, BOOS
 CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, const)
 #undef CHAOS_IMPL_MANAGER_FIND
 
-
-#define CHAOS_IMPL_MANAGER_DOLOAD(funcname, return_type, extra_func_params, extra_call_args)\
-return_type * Manager::funcname(FilePathParam const & path extra_func_params)\
+#define CHAOS_IMPL_MANAGER_DOLOAD(funcname, return_type, member_name)\
+return_type * Manager::funcname(FilePathParam const & path, bool store_object)\
 {\
 	Buffer<char> buffer = FileTools::LoadFile(path, true);\
 	if (buffer != nullptr)\
-		return funcname(path, buffer extra_call_args);\
+		return funcname(path, buffer, store_object);\
 	return nullptr;\
 }\
-return_type * Manager::funcname(FilePathParam const & path, Buffer<char> buffer extra_func_params)\
+return_type * Manager::funcname(FilePathParam const & path, Buffer<char> buffer, bool store_object)\
 {\
 	return_type * result = nullptr;\
 	tinyxml2::XMLDocument * doc = new tinyxml2::XMLDocument();\
@@ -1409,126 +1404,33 @@ return_type * Manager::funcname(FilePathParam const & path, Buffer<char> buffer 
 	{\
 		tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);\
 		if (error == tinyxml2::XML_SUCCESS)\
-			result = funcname(path, doc extra_call_args);\
+			result = funcname(path, doc, store_object);\
 		delete(doc);\
+	}\
+	return result;\
+}\
+return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocument const * doc, bool store_object)\
+{\
+	assert(doc != nullptr);\
+	return_type * result = new return_type(this, path.GetResolvedPath());\
+	if (result != nullptr)\
+	{\
+		if (result->DoLoadDocument(doc))\
+			member_name.push_back(result);\
+		else\
+		{\
+			delete(result);\
+			result = nullptr;\
+		}\
 	}\
 	return result;\
 }
 
-CHAOS_IMPL_MANAGER_DOLOAD(DoLoadTileSet, TileSet, BOOST_PP_EMPTY(), BOOST_PP_EMPTY())
-CHAOS_IMPL_MANAGER_DOLOAD(DoLoadObjectTypeSet, ObjectTypeSet, BOOST_PP_EMPTY(), BOOST_PP_EMPTY())
-CHAOS_IMPL_MANAGER_DOLOAD(DoLoadMap, Map, bool BOOST_PP_COMMA() store_map, store_map)
+CHAOS_IMPL_MANAGER_DOLOAD(DoLoadTileSet, TileSet, tile_sets)
+CHAOS_IMPL_MANAGER_DOLOAD(DoLoadObjectTypeSet, ObjectTypeSet, object_type_sets)
+CHAOS_IMPL_MANAGER_DOLOAD(DoLoadMap, Map, maps)
 
 #undef CHAOS_IMPL_MANAGER_DOLOAD
-
-
-#if 0
-		TileSet * Manager::DoLoadTileSet(FilePathParam const & path)
-		{
-			Buffer<char> buffer = FileTools::LoadFile(path, true);
-			if (buffer != nullptr)
-				return DoLoadTileSet(path, buffer);
-			return nullptr;
-		}
-
-		TileSet * Manager::DoLoadTileSet(FilePathParam const & path, Buffer<char> buffer)
-		{
-			TileSet * result = nullptr;
-
-			tinyxml2::XMLDocument * doc = new tinyxml2::XMLDocument();
-			if (doc != nullptr)
-			{
-				tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);
-				if (error == tinyxml2::XML_SUCCESS)
-					result = DoLoadTileSet(path, doc);
-				delete(doc);
-			}
-			return result;
-
-		}
-#endif
-
-		TileSet * Manager::DoLoadTileSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc)
-		{
-			assert(doc != nullptr);
-			TileSet * result = new TileSet(this, path.GetResolvedPath());
-			if (result != nullptr)
-			{
-				if (result->DoLoadDocument(doc))
-					tile_sets.push_back(result);
-				else
-				{
-					delete(result);
-					result = nullptr;
-				}
-			}
-			return result;
-		}
-
-		ObjectTypeSet * Manager::DoLoadObjectTypeSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc)
-		{
-			assert(doc != nullptr);
-			ObjectTypeSet * result = new ObjectTypeSet(this, path.GetResolvedPath());
-			if (result != nullptr)
-			{
-				if (result->DoLoadDocument(doc))
-					object_type_sets.push_back(result);
-				else
-				{
-					delete(result);
-					result = nullptr;
-				}
-			}
-			return result;
-		}
-
-
-
-
-#if 0
-
-		Map * Manager::DoLoadMap(FilePathParam const & path, bool store_map)
-		{
-			Buffer<char> buffer = FileTools::LoadFile(path, true);
-			if (buffer != nullptr)
-				return DoLoadMap(path, buffer, store_map);
-			return nullptr;
-		}
-
-		Map * Manager::DoLoadMap(FilePathParam const & path, Buffer<char> buffer, bool store_map)
-		{
-			Map * result = nullptr;
-
-			tinyxml2::XMLDocument * doc = new tinyxml2::XMLDocument();
-			if (doc != nullptr)
-			{
-				tinyxml2::XMLError error = doc->Parse(buffer.data, buffer.bufsize);
-				if (error == tinyxml2::XML_SUCCESS)
-					result = DoLoadMap(path, doc, store_map);
-				delete(doc);
-			}
-			return result;
-		}
-#endif
-
-		Map * Manager::DoLoadMap(FilePathParam const & path, tinyxml2::XMLDocument const * doc, bool store_map)
-		{
-			Map * result = new Map(this, path.GetResolvedPath());
-			if (result != nullptr)
-			{
-				if (result->DoLoadDocument(doc))
-				{
-					if (store_map)
-						maps.push_back(result);
-				}
-				else
-				{
-					delete(result);
-					result = nullptr;
-				}
-			}
-			return result;
-		}
 
 	};  // namespace TiledMap
 

@@ -16,7 +16,17 @@ namespace chaos
 	// ==============================================================
 
 	// all classes in this file
-#define CHAOS_SOUND_CLASSES (PlaySoundDesc) (Sound) (SoundManager) (SoundCallbacks) (SoundAutoCallbacks) (SoundObject) (SoundSource) (SoundCategory) (SoundSourceLoader) (SoundCategoryLoader)
+#define CHAOS_SOUND_CLASSES \
+(PlaySoundDesc) \
+(Sound) \
+(SoundManager) \
+(SoundCallbacks) \
+(SoundAutoCallbacks) \
+(SoundObject) \
+(SoundSource) \
+(SoundCategory) \
+(SoundSourceLoader) \
+(SoundCategoryLoader)
 
 	// forward declaration
 #define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;

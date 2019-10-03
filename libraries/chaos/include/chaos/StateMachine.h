@@ -14,7 +14,12 @@ namespace chaos
 		// ==================================================
 
 		// all classes in this file
-#define CHAOS_STATEMACHINE_CLASSES (StateBase) (State) (Transition) (StateMachine) (StateMachineInstance)
+#define CHAOS_STATEMACHINE_CLASSES \
+(StateBase) \
+(State) \
+(Transition) \
+(StateMachine) \
+(StateMachineInstance)
 
 		// forward declaration
 #define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;		

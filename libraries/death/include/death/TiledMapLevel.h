@@ -28,7 +28,19 @@ namespace death
 		// ==============================================================
 
 		// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES (Level) (LevelInstance) (LayerInstance) (GeometricObject) (CameraObject) (PlayerStartObject) (TriggerObject) (CheckpointTriggerObject) (BaseObject) (LayerInstanceParticlePopulator) (PlayerAndTriggerCollisionRecord) (SoundTriggerObject)
+#define DEATH_TILEDLEVEL_CLASSES \
+(Level) \
+(LevelInstance) \
+(LayerInstance) \
+(GeometricObject) \
+(CameraObject) \
+(PlayerStartObject) \
+(TriggerObject) \
+(CheckpointTriggerObject) \
+(BaseObject) \
+(LayerInstanceParticlePopulator) \
+(PlayerAndTriggerCollisionRecord) \
+(SoundTriggerObject)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;

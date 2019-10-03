@@ -32,7 +32,10 @@ namespace chaos
 
 
 	// all classes in this file
-#define CHAOS_PARTICLE_CLASSES (ParticleAllocationBase) (ParticleLayerBase) (ParticleManager)
+#define CHAOS_PARTICLE_CLASSES \
+(ParticleAllocationBase) \
+(ParticleLayerBase) \
+(ParticleManager)
 
 	// forward declaration
 #define CHAOS_PARTICLE_FORWARD_DECL(r, data, elem) class elem;

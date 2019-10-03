@@ -17,29 +17,29 @@ namespace chaos
 
 		// all classes in this file
 #define CHAOS_TILEDMAP_CLASSES \
-(BaseObject)\
-(Property)\
-(PropertyOwner)\
-(GeometricObject)\
-(GeometricObjectPoint)\
-(GeometricObjectSurface)\
-(GeometricObjectRectangle)\
-(GeometricObjectEllipse)\
-(GeometricObjectPolygon)\
-(GeometricObjectPolyline)\
-(GeometricObjectText)\
-(GeometricObjectTile)\
-(GroundData)\
-(TileData)\
-(LayerBase)\
-(ImageLayer)\
-(ObjectLayer)\
-(TileLayer)\
-(ManagerObject)\
-(ObjectTypeDefinition)\
-(ObjectTypeSet)\
-(TileSet)\
-(Map)\
+(BaseObject) \
+(Property) \
+(PropertyOwner) \
+(GeometricObject) \
+(GeometricObjectPoint) \
+(GeometricObjectSurface) \
+(GeometricObjectRectangle) \
+(GeometricObjectEllipse) \
+(GeometricObjectPolygon) \
+(GeometricObjectPolyline) \
+(GeometricObjectText) \
+(GeometricObjectTile) \
+(GroundData) \
+(TileData) \
+(LayerBase) \
+(ImageLayer) \
+(ObjectLayer) \
+(TileLayer) \
+(ManagerObject) \
+(ObjectTypeDefinition) \
+(ObjectTypeSet) \
+(TileSet) \
+(Map) \
 (Manager)
 
 		// forward declaration

@@ -1349,10 +1349,24 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 		// ==========================================
 
 
-#define CHAOS_IMPL_LOAD_INFO()
+#define CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type, func_params, call_args)\
+return_type * Manager::function_name(func_params)\
+{\
+	return_type * result = find_function_name(path);\
+	if (result != nullptr)\
+		return result;\
+	return Do##function_name(call_args);\
+}
 
+
+	CHAOS_IMPL_LOAD_INFO(LoadTileSet, FindTileSet, TileSet, FilePathParam const & path, path)
+	CHAOS_IMPL_LOAD_INFO(LoadTileSet, FindTileSet, TileSet, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)
+	CHAOS_IMPL_LOAD_INFO(LoadTileSet, FindTileSet, TileSet,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)
 #undef CHAOS_IMPL_LOAD_INFO
 
+
+
+#if 0
 
 		TileSet * Manager::LoadTileSet(FilePathParam const & path)
 		{
@@ -1377,7 +1391,7 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 				return result;
 			return DoLoadTileSet(path, doc);
 		}
-
+#endif
 
 
 

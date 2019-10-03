@@ -1349,7 +1349,7 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 		// ==========================================
 
 
-#define CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type, func_params, call_args)\
+#define CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, func_params, call_args)\
 return_type * Manager::function_name(func_params)\
 {\
 	return_type * result = find_function_name(path);\
@@ -1358,26 +1358,23 @@ return_type * Manager::function_name(func_params)\
 	return Do##function_name(call_args);\
 }
 
-#define CHAOS_IMPL_LOAD_INFO_ALL(function_name, find_function_name, return_type)\
-	CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type, FilePathParam const & path, path)\
-	CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)\
-	CHAOS_IMPL_LOAD_INFO(function_name, find_function_name, return_type,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)\
+#define CHAOS_IMPL_MANAGER_LOAD_ALL(function_name, find_function_name, return_type)\
+	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path, path)\
+	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)\
+	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)\
 
 
-	CHAOS_IMPL_LOAD_INFO_ALL(LoadTileSet, FindTileSet, TileSet)
+	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet)
+	//CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjetTypeSet, FindObjetTypeSet, ObjetTypeSet)
 
+	CHAOS_IMPL_MANAGER_LOAD(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() store_map)
+	CHAOS_IMPL_MANAGER_LOAD(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() buffer BOOST_PP_COMMA() store_map)
+	CHAOS_IMPL_MANAGER_LOAD(LoadMap, FindMap, Map,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() doc BOOST_PP_COMMA() store_map)
+//	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadMap, FindMap, Map)
+	//CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet)
 
-	CHAOS_IMPL_LOAD_INFO(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() store_map)
-	CHAOS_IMPL_LOAD_INFO(LoadMap, FindMap, Map, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() buffer BOOST_PP_COMMA() store_map)
-	CHAOS_IMPL_LOAD_INFO(LoadMap, FindMap, Map,FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc BOOST_PP_COMMA() bool store_map, path BOOST_PP_COMMA() doc BOOST_PP_COMMA() store_map)
-//	CHAOS_IMPL_LOAD_INFO_ALL(LoadMap, FindMap, Map)
-	//CHAOS_IMPL_LOAD_INFO_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet)
-
-#undef CHAOS_IMPL_LOAD_INFO_ALL
-#undef CHAOS_IMPL_LOAD_INFO
-
-
-
+#undef CHAOS_IMPL_MANAGER_LOAD_ALL
+#undef CHAOS_IMPL_MANAGER_LOAD
 
 
 
@@ -1393,46 +1390,20 @@ return_type * Manager::function_name(func_params)\
 
 
 
+#define CHAOS_IMPL_MANAGER_FIND(funcname, return_type, member_name, constness)\
+return_type constness * Manager::funcname(FilePathParam const & path) constness\
+{\
+	size_t count = member_name.size();\
+	for (size_t i = 0; i < count; ++i)\
+		if (member_name[i]->IsMatchingName(path.GetResolvedPath()))\
+			return member_name[i].get();\
+	return nullptr;\
+}
 
-		Map * Manager::FindMap(FilePathParam const & path)
-		{
-			size_t count = maps.size();
-			for (size_t i = 0; i < count; ++i)
-				if (maps[i]->IsMatchingName(path.GetResolvedPath()))
-					return maps[i].get();
-			return nullptr;
-		}
-
-		Map const * Manager::FindMap(FilePathParam const & path) const
-		{
-			size_t count = maps.size();
-			for (size_t i = 0; i < count; ++i)
-				if (maps[i]->IsMatchingName(path.GetResolvedPath()))
-					return maps[i].get();
-			return nullptr;
-		}
-
-		TileSet * Manager::FindTileSet(FilePathParam const & path)
-		{
-			size_t count = tile_sets.size();
-			for (size_t i = 0; i < count; ++i)
-				if (tile_sets[i]->IsMatchingName(path.GetResolvedPath()))
-					return tile_sets[i].get();
-			return nullptr;
-		}
-
-		TileSet const * Manager::FindTileSet(FilePathParam const & path) const
-		{
-			size_t count = tile_sets.size();
-			for (size_t i = 0; i < count; ++i)
-				if (tile_sets[i]->IsMatchingName(path.GetResolvedPath()))
-					return tile_sets[i].get();
-			return nullptr;
-		}
-
-
-
-
+CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, BOOST_PP_EMPTY())
+CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, const)
+CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, BOOST_PP_EMPTY())
+CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, const)
 
 
 

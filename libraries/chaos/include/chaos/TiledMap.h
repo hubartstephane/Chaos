@@ -109,11 +109,15 @@ namespace chaos
 				return result;
 			}
 
+			/** get the manager */
+			Manager * GetManager();
+			/** get the manager */
+			Manager const * GetManager() const;
+
 		protected:
 
 			/** constructor */
-			BaseObject(BaseObject * in_owner) :
-				owner(in_owner) {}
+			BaseObject(BaseObject * in_owner);
 
 			/** utility function to load a layer */
 			template<typename T, typename ...PARAMS>
@@ -939,6 +943,9 @@ namespace chaos
 			/** constructor */
 			using PropertyOwner::PropertyOwner;
 
+			/** override */
+			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
 		public:
 
 			/** object information */
@@ -958,7 +965,9 @@ namespace chaos
 		public:
 
 			/** the constructor */
-			using ManagerObject::ManagerObject;
+			//using ManagerObject::ManagerObject;
+
+			ObjectTypeSet(BaseObject * in_owner, boost::filesystem::path in_path);
 
 			/** find an object type */
 			ObjectTypeDefinition * FindObjectType(char const * name);

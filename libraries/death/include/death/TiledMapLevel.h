@@ -87,7 +87,7 @@ namespace death
 
 			/** whenever the level is being started */
 			virtual void OnLevelStarted() {}
-			/** whenever the level is being stopped */
+			/** whenever the Level is being stopped */
 			virtual void OnLevelEnded() {}
 
 		protected:
@@ -452,6 +452,8 @@ namespace death
 
 			/** the tiled map corresponding to this level */
 			chaos::shared_ptr<chaos::TiledMap::Map> tiled_map;
+			/** the object type sets for this level */
+			chaos::shared_ptr<chaos::TiledMap::ObjectTypeSet> object_type_sets;
 		};
 
 		// =====================================

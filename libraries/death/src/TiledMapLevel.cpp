@@ -503,7 +503,22 @@ namespace death
 				level_title = *in_level_title;
 			// get the level time	
 			level_timeout = in_tiled_map->FindPropertyFloat("LEVEL_TIMEOUT", -1);
+			// the object types
+			std::string const * in_object_type_set = in_tiled_map->FindPropertyString("OBJECT_TYPE_SET");
+			if (in_object_type_set != nullptr)
+			{
 
+				// shuxxx
+
+				chaos::TiledMap::Manager * manager = in_tiled_map->GetManager();
+				if (manager != nullptr)
+				{
+					boost::filesystem::path object_type_set_path = chaos::BoostTools::FindAbsolutePath(in_tiled_map->GetPath(), in_object_type_set->c_str());
+					object_type_sets = manager->LoadObjectTypeSet(object_type_set_path);
+				}
+				in_object_type_set = in_object_type_set;
+		//		object_type_sets
+			}
 			return true;
 		}
 

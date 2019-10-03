@@ -58,6 +58,21 @@ namespace chaos
 		// BaseObject methods
 		// ==========================================
 
+		BaseObject::BaseObject(BaseObject * in_owner) :
+			owner(in_owner)
+		{
+		}
+
+		Manager * BaseObject::GetManager()
+		{
+			return GetOwner<Manager>(true);
+		}
+
+		Manager const * BaseObject::GetManager() const
+		{
+			return GetOwner<Manager>(true);
+		}
+
 		boost::filesystem::path BaseObject::GetOwnerPath() const
 		{
 			// XXX : order is important, because some tilesets are embedded inside a Map directly
@@ -188,7 +203,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 
 
-
+			// shuxxx
 
 
 
@@ -232,6 +247,12 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 					}
 				}								
 			}
+
+
+			//shuxxx
+
+
+
 
 
 
@@ -608,7 +629,6 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			PropertyOwner(in_owner),
 			path(std::move(in_path))
 		{
-
 		}
 
 		bool ManagerObject::IsMatchingName(boost::filesystem::path const & in_path) const
@@ -929,17 +949,32 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 
 
+		// ==========================================
+		// ObjectTypeDefinition methods
+		// ==========================================
 
+		bool ObjectTypeDefinition::DoLoad(tinyxml2::XMLElement const * element)
+		{
+			if (PropertyOwner::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "name", name);
+			ReadXMLColor(element, "color", color);
 
+			// shuxxx
 
-
-
+			return true;
+		}
 
 		// ==========================================
 		// ObjectTypeSet methods
 		// ==========================================
 
+		ObjectTypeSet::ObjectTypeSet(BaseObject * in_owner, boost::filesystem::path in_path):
+			ManagerObject(in_owner, in_path)
+		{
+			in_owner = in_owner;
 
+		}
 
 		bool ObjectTypeSet::DoLoad(tinyxml2::XMLElement const * element)
 		{
@@ -947,16 +982,11 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				return false;
 			if (!DoLoadObjectTypes(element))
 				return false;
-
-
 			return true;
 		}
 
 		bool ObjectTypeSet::DoLoadObjectTypes(tinyxml2::XMLElement const * element)
 		{
-			// load the tiles
-			//DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
-
 			if (!DoLoadObjectListHelper(element, object_types, "objecttypes", nullptr, this))
 				return false;
 			return true;

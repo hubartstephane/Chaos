@@ -171,8 +171,7 @@ namespace chaos
 			static int const PROPERTY_TYPEID_STRING = 4;
 
 			/** constructor */
-			Property(BaseObject * in_owner) :
-				BaseObject(in_owner) {}
+			using BaseObject::BaseObject;
 
 			/** returns a pointer on the int property */
 			virtual int * GetIntProperty() { return nullptr; }
@@ -284,8 +283,7 @@ namespace chaos
 		public:
 
 			/** constructor */
-			PropertyOwner(BaseObject * in_owner) :
-				BaseObject(in_owner) {}
+			using BaseObject::BaseObject;
 
 			/** find property by name */
 			Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
@@ -390,8 +388,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObject(BaseObject * in_owner) :
-				PropertyOwner(in_owner) {}
+			using PropertyOwner::PropertyOwner;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** loading method from XML */
@@ -432,8 +430,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectPoint(BaseObject * in_owner) :
-				GeometricObject(in_owner) {}
+			using GeometricObject::GeometricObject;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 		};
@@ -457,8 +455,7 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectSurface(BaseObject * in_owner) :
-				GeometricObject(in_owner) {}
+			using GeometricObject::GeometricObject;
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -485,8 +482,7 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectRectangle(BaseObject * in_owner) :
-				GeometricObjectSurface(in_owner) {}
+			using GeometricObjectSurface::GeometricObjectSurface;
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -508,8 +504,7 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectEllipse(BaseObject * in_owner) :
-				GeometricObjectSurface(in_owner) {}
+			using GeometricObjectSurface::GeometricObjectSurface;
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -531,8 +526,7 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectPolygon(BaseObject * in_owner) :
-				GeometricObject(in_owner) {}
+			using GeometricObject::GeometricObject;
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -559,8 +553,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectPolyline(BaseObject * in_owner) :
-				GeometricObject(in_owner) {}
+			using GeometricObject::GeometricObject;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
@@ -597,8 +591,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectText(BaseObject * in_owner) :
-				GeometricObjectSurface(in_owner) {}
+			using GeometricObjectSurface::GeometricObjectSurface;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
@@ -638,8 +632,7 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GeometricObjectTile(BaseObject * in_owner) :
-				GeometricObjectSurface(in_owner) {}
+			using GeometricObjectSurface::GeometricObjectSurface;
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -665,8 +658,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			GroundData(BaseObject * in_owner) :
-				PropertyOwner(in_owner) {}
+			using PropertyOwner::PropertyOwner;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
@@ -689,8 +682,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			TileData(BaseObject * in_owner) :
-				PropertyOwner(in_owner) {}
+			using PropertyOwner::PropertyOwner;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** initialize terrain indices from string */
@@ -752,8 +745,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			LayerBase(BaseObject * in_owner) :
-				PropertyOwner(in_owner) {}
+			using PropertyOwner::PropertyOwner;
+
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element);
 
@@ -787,8 +780,8 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			ImageLayer(BaseObject * in_owner) :
-				LayerBase(in_owner) {}
+			using LayerBase::LayerBase;
+
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
@@ -828,8 +821,7 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			ObjectLayer(BaseObject * in_owner) :
-				LayerBase(in_owner) {}
+			using LayerBase::LayerBase;
 
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
@@ -917,6 +909,7 @@ namespace chaos
 
 			/** the constructor */
 			ManagerObject(BaseObject * in_owner, boost::filesystem::path in_path);
+
 			/** loading method from XML */
 			virtual bool DoLoadDocument(tinyxml2::XMLDocument const * doc);
 			/** the method to override */
@@ -943,6 +936,11 @@ namespace chaos
 
 		public:
 
+			/** constructor */
+			using PropertyOwner::PropertyOwner;
+
+		public:
+
 			/** object information */
 			std::string name;
 			/** the color in the editor */
@@ -958,6 +956,9 @@ namespace chaos
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
+
+			/** the constructor */
+			using ManagerObject::ManagerObject;
 
 			/** find an object type */
 			ObjectTypeDefinition * FindObjectType(char const * name);
@@ -996,7 +997,8 @@ namespace chaos
 		protected:
 
 			/** the constructor */
-			TileSet(BaseObject * in_owner, boost::filesystem::path in_path);
+			using ManagerObject::ManagerObject;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** loading method from XML */
@@ -1118,7 +1120,8 @@ namespace chaos
 		protected:
 
 			/** the constructor */
-			Map(BaseObject * in_owner, boost::filesystem::path in_path);
+			using ManagerObject::ManagerObject;
+
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** get the name of the expected markup */

@@ -955,8 +955,10 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		bool ObjectTypeSet::DoLoadObjectTypes(tinyxml2::XMLElement const * element)
 		{
 			// load the tiles
-		//	if (!DoLoadObjectListHelper(element, object_types, "objecttypes", nullptr, this))
-		//		return false;
+			//DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
+
+			if (!DoLoadObjectListHelper(element, object_types, "objecttypes", nullptr, this))
+				return false;
 			return true;
 		}
 
@@ -1002,11 +1004,6 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		// TileSet methods
 		// ==========================================
 
-		TileSet::TileSet(BaseObject * in_owner, boost::filesystem::path in_path) :
-			ManagerObject(in_owner, in_path)
-		{
-
-		}
 #define CHAOS_IMPL_FIND_FILE_DATA(func_name, arg_type, member_name, constess)\
 		TileData constess * TileSet::func_name(arg_type arg_name) constess\
 		{\
@@ -1099,12 +1096,6 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 		// ==========================================
 		// Map methods
 		// ==========================================
-
-		Map::Map(BaseObject * in_owner, boost::filesystem::path in_path) :
-			ManagerObject(in_owner, in_path)
-		{
-
-		}
 
 		bool Map::DoLoadMembers(tinyxml2::XMLElement const * element)
 		{

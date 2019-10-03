@@ -56,6 +56,8 @@ namespace death
 
 		class BaseObjectCheckpoint : public chaos::ReferencedObject
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
 		public:
 
 		};
@@ -242,6 +244,8 @@ namespace death
 
 		class TriggerObjectCheckpoint : public BaseObjectCheckpoint
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
 		public:
 
 			/** flag whether to object is enabled or not */
@@ -258,6 +262,7 @@ namespace death
 
 		class NotificationTriggerObject : public TriggerObject
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
 
 		public:
 
@@ -295,6 +300,7 @@ namespace death
 
 		class CheckpointTriggerObject : public TriggerObject
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
 
 		public:
 
@@ -317,6 +323,7 @@ namespace death
 
 		class SoundTriggerObject : public TriggerObject
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
 
 		public:
 
@@ -362,6 +369,7 @@ namespace death
 
 		class FinishingTriggerObject : public TriggerObject
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
 
 		public:
 
@@ -452,6 +460,8 @@ namespace death
 
 		class PlayerAndTriggerCollisionRecord
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
 		public:
 
 			/** the player considered */
@@ -466,7 +476,9 @@ namespace death
 
 		class TiledLayerCheckpoint : public chaos::ReferencedObject
 		{
-			public:
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		public:
 
 			// the checkpoint per BaseObject (see object_id)
 			std::map<int, chaos::shared_ptr<BaseObjectCheckpoint>> trigger_checkpoints;
@@ -724,6 +736,8 @@ namespace death
 
 		class TiledLevelCheckpoint : public LevelCheckpoint
 		{
+			DEATH_TILEDLEVEL_ALL_FRIENDS
+
 		public:
 
 			// the checkpoint per LayerBase (see object_id)

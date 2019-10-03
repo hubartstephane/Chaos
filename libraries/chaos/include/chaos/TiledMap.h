@@ -337,6 +337,9 @@ namespace chaos
 			/** create property */
 			PropertyString * DoInsertProperty(char const * name, char const * value);
 
+			/** the name for the properties */
+			virtual char const * GetXMLPropertiesMarkupName() const { return "properties"; }
+
 		protected:
 
 			/** the properties of the object */
@@ -965,9 +968,7 @@ namespace chaos
 		public:
 
 			/** the constructor */
-			//using ManagerObject::ManagerObject;
-
-			ObjectTypeSet(BaseObject * in_owner, boost::filesystem::path in_path);
+			using ManagerObject::ManagerObject;
 
 			/** find an object type */
 			ObjectTypeDefinition * FindObjectType(char const * name);
@@ -976,10 +977,14 @@ namespace chaos
 
 		protected:
 
-			/** loading method from XML */
+			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-			/** loading method from XML */
+			/** override */
 			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
+			/** override */
+			virtual char const * GetXMLMarkupName() const override { return "objecttypes"; }
+			/** override */
+			virtual char const * GetXMLPropertiesMarkupName() const override { return "objecttype"; }
 
 			/** load all types */
 			bool DoLoadObjectTypes(tinyxml2::XMLElement const * element);
@@ -1252,7 +1257,6 @@ namespace chaos
 			/** findobject type set */
 			ObjectTypeSet * FindObjectTypeSet(FilePathParam const & path);
 			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
-
 
 		protected:
 

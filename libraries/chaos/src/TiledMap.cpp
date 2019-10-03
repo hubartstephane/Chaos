@@ -196,17 +196,9 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		{
 			assert(element != nullptr);
 
-			tinyxml2::XMLElement const * properties_element = element->FirstChildElement("properties");
+			tinyxml2::XMLElement const * properties_element = element->FirstChildElement(GetXMLPropertiesMarkupName());
 			if (properties_element == nullptr)
 				return true; // no properties is not an error
-
-
-
-
-			// shuxxx
-
-
-
 
 			tinyxml2::XMLElement const * node = properties_element->FirstChildElement("property");
 			for (; node != nullptr ; node = node->NextSiblingElement("property"))
@@ -247,15 +239,6 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 					}
 				}								
 			}
-
-
-			//shuxxx
-
-
-
-
-
-
 			return true;
 		}
 
@@ -969,13 +952,6 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		// ObjectTypeSet methods
 		// ==========================================
 
-		ObjectTypeSet::ObjectTypeSet(BaseObject * in_owner, boost::filesystem::path in_path):
-			ManagerObject(in_owner, in_path)
-		{
-			in_owner = in_owner;
-
-		}
-
 		bool ObjectTypeSet::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!ManagerObject::DoLoad(element))
@@ -994,13 +970,8 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 		bool ObjectTypeSet::DoLoadMembers(tinyxml2::XMLElement const * element)
 		{
-
-
-
 			return true;
 		}
-
-
 
 		ObjectTypeDefinition * ObjectTypeSet::FindObjectType(char const * name)
 		{
@@ -1377,7 +1348,6 @@ CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, ch
 		// ==========================================
 		// Manager methods
 		// ==========================================
-
 
 #define CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, func_params, call_args)\
 return_type * Manager::function_name(func_params, bool store_object)\

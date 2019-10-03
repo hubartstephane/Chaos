@@ -452,8 +452,6 @@ namespace death
 
 			/** the tiled map corresponding to this level */
 			chaos::shared_ptr<chaos::TiledMap::Map> tiled_map;
-			/** the object type sets for this level */
-			chaos::shared_ptr<chaos::TiledMap::ObjectTypeSet> object_type_sets;
 		};
 
 		// =====================================

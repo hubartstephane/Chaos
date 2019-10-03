@@ -447,15 +447,16 @@ namespace death
 		return boost::filesystem::directory_iterator();
 	}
 
-	bool Game::GenerateTileSets(nlohmann::json const & config)
+	template<typename FUNC>
+	bool Game::DoGenerateTiledMapEntity(nlohmann::json const & config, char const * property_name, char const * default_value, char const * extension, FUNC func)
 	{
 		// iterate the files and load the tilesets
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, "tilesets_directory", "tilesets"); it != end; ++it)
+		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, property_name, property_name); it != end; ++it)
 		{
 			boost::filesystem::path p = it->path();
 
-			if (chaos::FileTools::IsTypedFile(p, "tsx"))
+			if (chaos::FileTools::IsTypedFile(p, extension))
 			{
 				// create the tiledmap manager if necessary
 				if (tiled_map_manager == nullptr)
@@ -464,12 +465,29 @@ namespace death
 					if (tiled_map_manager == nullptr)
 						return false;
 				}
-				// load the tileset
-				if (!tiled_map_manager->LoadTileSet(p))
+				if (!func(tiled_map_manager.get(), p))
 					return false;
 			}
 		}
 		return true;
+	}
+
+	bool Game::GenerateObjectTypeSets(nlohmann::json const & config)
+	{
+		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](chaos::TiledMap::Manager * manager, boost::filesystem::path const & path) {
+			if (!manager->LoadObjectTypeSet(path))
+				return false; 
+			return true;
+		});
+	}
+
+	bool Game::GenerateTileSets(nlohmann::json const & config)
+	{
+		return DoGenerateTiledMapEntity(config, "tilesets_directory", "tilesets", "tsx", [](chaos::TiledMap::Manager * manager, boost::filesystem::path const & path) {
+			if (!manager->LoadTileSet(path))
+				return false;
+			return true;
+		});
 	}
 
 	bool Game::LoadLevels(nlohmann::json const & config)
@@ -653,6 +671,9 @@ namespace death
 			return false;
 		// initialize game values
 		if (!InitializeGameValues(config, config_path, false)) // false => not hot_reload
+			return false;
+		// loading object type sets
+		if (!GenerateObjectTypeSets(config))
 			return false;
 		// loading tilemapset
 		if (!GenerateTileSets(config))

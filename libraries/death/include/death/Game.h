@@ -313,8 +313,14 @@ namespace death
 		/** fill atlas generation input from the tiled map manager */
 		virtual bool FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
+		/** load object type sets concerned by the game (if required) */
+		virtual bool GenerateObjectTypeSets(nlohmann::json const & config);
 		/** load tileset concerned by the game (if required) */
 		virtual bool GenerateTileSets(nlohmann::json const & config);
+
+		/** a generic function to load some tiled map instances */
+		template<typename FUNC>
+		bool DoGenerateTiledMapEntity(nlohmann::json const & config, char const * property_name, char const * default_value, char const * extension, FUNC func);
 
 		/** read in config file an entry and open in resource directory a directory iterator on that target */
 		boost::filesystem::directory_iterator GetResourceDirectoryIteratorFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const;

@@ -1226,7 +1226,6 @@ namespace chaos
 			TileSet * LoadTileSet(FilePathParam const & path, Buffer<char> buffer);
 			/** load a tiled map */
 			TileSet * LoadTileSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
-#if 0
 
 			/** load a object type set */
 			ObjectTypeSet * LoadObjectTypeSet(FilePathParam const & path);
@@ -1234,21 +1233,17 @@ namespace chaos
 			ObjectTypeSet * LoadObjectTypeSet(FilePathParam const & path, Buffer<char> buffer);
 			/** load a object type set */
 			ObjectTypeSet * LoadObjectTypeSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
-#endif
 
 			/** find tiled map */
 			Map * FindMap(FilePathParam const & path);
 			Map const * FindMap(FilePathParam const & path) const;
-
 			/** find tiled map set */
 			TileSet * FindTileSet(FilePathParam const & path);
 			TileSet const * FindTileSet(FilePathParam const & path) const;
-
-#if 0
 			/** findobject type set */
 			ObjectTypeSet * FindObjectTypeSet(FilePathParam const & path);
 			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
-#endif
+
 
 		protected:
 
@@ -1266,14 +1261,12 @@ namespace chaos
 			/** internal method to load a tiled map (with no search for exisiting items) */
 			TileSet * DoLoadTileSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
 
-#if 0
 			/** internal method to load a object type set (with no search for exisiting items) */
 			ObjectTypeSet * DoLoadObjectTypeSet(FilePathParam const & path);
 			/** internal method to load a object type set (with no search for exisiting items) */
 			ObjectTypeSet * DoLoadObjectTypeSet(FilePathParam const & path, Buffer<char> buffer);
 			/** internal method to load a object type set (with no search for exisiting items) */
 			ObjectTypeSet * DoLoadObjectTypeSet(FilePathParam const & path, tinyxml2::XMLDocument const * doc);
-#endif
 
 		public:
 

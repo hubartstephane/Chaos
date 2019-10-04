@@ -73,6 +73,16 @@ namespace chaos
 			return GetOwner<Manager>(true);
 		}
 
+		Map * BaseObject::GetMap()
+		{
+			return GetOwner<Map>(true);
+		}
+
+		Map const * BaseObject::GetMap() const
+		{
+			return GetOwner<Map>(true);
+		}
+
 		boost::filesystem::path BaseObject::GetOwnerPath() const
 		{
 			// XXX : order is important, because some tilesets are embedded inside a Map directly
@@ -308,30 +318,25 @@ namespace chaos
 
 		Property * GeometricObject::FindProperty(char const * name, int type_id)
 		{
-
 			Property * result = PropertyOwner::FindProperty(name, type_id);
-#if 0
-			if (result == nullptr)
+			if (result == nullptr && !StringTools::IsEmpty(type))
 			{
 				Manager * manager = GetManager();
 				if (manager != nullptr)
-					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+					result = manager->FindObjectProperty(type.c_str(), name, type_id);
 			}
-#endif
 			return result;
 		}
 
 		Property const * GeometricObject::FindProperty(char const * name, int type_id) const
 		{
 			Property const * result = PropertyOwner::FindProperty(name, type_id);
-#if 0
-			if (result == nullptr)
+			if (result == nullptr && !StringTools::IsEmpty(type))
 			{
 				Manager const * manager = GetManager();
 				if (manager != nullptr)
-					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+					result = manager->FindObjectProperty(type.c_str(), name, type_id);
 			}
-#endif
 			return result;
 		}
 
@@ -557,6 +562,37 @@ namespace chaos
 			return result;
 		}
 
+		Property * GeometricObjectTile::FindProperty(char const * name, int type_id)
+		{
+			Property * result = GeometricObjectSurface::FindProperty(name, type_id);
+			if (result == nullptr && !StringTools::IsEmpty(type))
+			{
+				Map * tiled_map = GetMap();
+				if (tiled_map != nullptr)
+				{
+					chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+					if (tile_info.tiledata != nullptr)
+						result = tile_info.tiledata->FindProperty(name, type_id);
+				}
+			}
+			return result;
+		}
+
+		Property const * GeometricObjectTile::FindProperty(char const * name, int type_id) const 
+		{
+			Property const * result = GeometricObjectSurface::FindProperty(name, type_id);
+			if (result == nullptr && !StringTools::IsEmpty(type))
+			{
+				Map const * tiled_map = GetMap();
+				if (tiled_map != nullptr)
+				{
+					chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+					if (tile_info.tiledata != nullptr)
+						result = tile_info.tiledata->FindProperty(name, type_id);
+				}
+			}
+			return result;
+		}
 
 		// ==========================================
 		// GroundData methods
@@ -647,30 +683,25 @@ namespace chaos
 
 		Property * TileData::FindProperty(char const * name, int type_id)
 		{
-
 			Property * result = PropertyOwner::FindProperty(name, type_id);
-#if 0
-			if (result == nullptr)
+			if (result == nullptr && !StringTools::IsEmpty(type))
 			{
 				Manager * manager = GetManager();
 				if (manager != nullptr)
-					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+					result = manager->FindObjectProperty(type.c_str(), name, type_id);
 			}
-#endif
 			return result;
 		}
 
 		Property const * TileData::FindProperty(char const * name, int type_id) const
 		{
 			Property const * result = PropertyOwner::FindProperty(name, type_id);
-#if 0
-			if (result == nullptr)
+			if (result == nullptr && !StringTools::IsEmpty(type))
 			{
 				Manager const * manager = GetManager();
 				if (manager != nullptr)
-					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+					result = manager->FindObjectProperty(type.c_str(), name, type_id);
 			}
-#endif
 			return result;
 		}
 

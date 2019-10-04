@@ -113,6 +113,10 @@ namespace chaos
 			Manager * GetManager();
 			/** get the manager */
 			Manager const * GetManager() const;
+			/** get the map */
+			Map * GetMap();
+			/** get the map */
+			Map const * GetMap() const;
 
 		protected:
 
@@ -642,6 +646,11 @@ namespace chaos
 			virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
 
 			virtual box2 GetBoundingBox(bool world_system) const override;
+
+			/** override */
+			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) override;
+			/** override */
+			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const override;
 
 		protected:
 

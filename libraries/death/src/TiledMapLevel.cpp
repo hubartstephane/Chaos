@@ -845,8 +845,11 @@ namespace death
 				if (tile_info.tiledata == nullptr)
 					return;
 				// aspect ratio is to be maintained ??
-				bool keep_aspect_ratio = true;
 
+				bool keep_aspect_ratio = tile->FindPropertyBool("KEEP_ASPECT_RATIO", true);
+#if 0
+
+				bool keep_aspect_ratio = true;
 				bool * prop = tile->FindPropertyBool("KEEP_ASPECT_RATIO");
 				if (prop != nullptr)
 					keep_aspect_ratio = *prop;
@@ -856,6 +859,7 @@ namespace death
 					if (prop != nullptr)
 						keep_aspect_ratio = *prop;
 				}
+#endif
 
 
 

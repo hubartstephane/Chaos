@@ -4,5 +4,6 @@
 
   "sprite_directory": "@sprites",
   "levels_directory": "@levels",
-  "tilesets_directory": "@tilesets"
+  "tilesets_directory": "@tilesets",
+	"objecttypesets_directory": "@objecttypes"  
 }

@@ -306,6 +306,35 @@ namespace chaos
 		// GeometricObject methods
 		// ==========================================
 
+		Property * GeometricObject::FindProperty(char const * name, int type_id)
+		{
+
+			Property * result = PropertyOwner::FindProperty(name, type_id);
+#if 0
+			if (result == nullptr)
+			{
+				Manager * manager = GetManager();
+				if (manager != nullptr)
+					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+			}
+#endif
+			return result;
+		}
+
+		Property const * GeometricObject::FindProperty(char const * name, int type_id) const
+		{
+			Property const * result = PropertyOwner::FindProperty(name, type_id);
+#if 0
+			if (result == nullptr)
+			{
+				Manager const * manager = GetManager();
+				if (manager != nullptr)
+					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+			}
+#endif
+			return result;
+		}
+
 		std::vector<glm::vec2> GeometricObject::GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name)
 		{
 			std::vector<glm::vec2> result;
@@ -614,6 +643,35 @@ namespace chaos
 				}
 			}
 			return true;
+		}
+
+		Property * TileData::FindProperty(char const * name, int type_id)
+		{
+
+			Property * result = PropertyOwner::FindProperty(name, type_id);
+#if 0
+			if (result == nullptr)
+			{
+				Manager * manager = GetManager();
+				if (manager != nullptr)
+					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+			}
+#endif
+			return result;
+		}
+		
+		Property const * TileData::FindProperty(char const * name, int type_id) const
+		{
+			Property const * result = PropertyOwner::FindProperty(name, type_id);
+#if 0
+			if (result == nullptr)
+			{
+				Manager const * manager = GetManager();
+				if (manager != nullptr)
+					result = manager->FindObjectTypeSet(type.c_str(), name, type_id);
+			}
+#endif
+			return result;
 		}
 
 		// ==========================================

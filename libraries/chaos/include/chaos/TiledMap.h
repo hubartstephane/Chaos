@@ -290,9 +290,9 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** find property by name */
-			Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
+			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
 			/** find property by name */
-			Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
+			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
 
 			/** find a property of type int */
 			int * FindPropertyInt(char const * name);
@@ -399,8 +399,13 @@ namespace chaos
 			/** constructor */
 			using PropertyOwner::PropertyOwner;
 
-			/** loading method from XML */
+			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** override */
+			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) override;
+			/** override */
+			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const override;
+
 			/** loading method from XML */
 			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
 
@@ -693,8 +698,13 @@ namespace chaos
 			/** constructor */
 			using PropertyOwner::PropertyOwner;
 
-			/** loading method from XML */
+			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** override */
+			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) override;
+			/** override */
+			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const override;
+
 			/** initialize terrain indices from string */
 			bool ComputeTerrainIndices(char const * str);
 

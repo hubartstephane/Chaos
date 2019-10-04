@@ -186,22 +186,32 @@ namespace chaos
 				return default_value;\
 			return *result;\
 		}
-CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyInt, int, int)
-CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyFloat, float, float)
-CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyBool, bool, bool)
-CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyInt, int, int)
+			CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyFloat, float, float)
+			CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyBool, bool, bool)
+			CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 #undef CHAOS_FIND_PROPERTY_WITH_DEFAULT
 
-		bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)
+			bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			assert(element != nullptr);
 
-			tinyxml2::XMLElement const * properties_element = element->FirstChildElement(GetXMLPropertiesMarkupName());
+			return DoLoadProperties(GetPropertiesChildNode(element));
+		}
+
+		tinyxml2::XMLElement const * PropertyOwner::GetPropertiesChildNode(tinyxml2::XMLElement const * element) const
+		{
+			return element->FirstChildElement("properties");
+		}
+
+		bool PropertyOwner::DoLoadProperties(tinyxml2::XMLElement const * properties_element)
+		{
+			// no properties is not an error
 			if (properties_element == nullptr)
-				return true; // no properties is not an error
+				return true;
 
 			tinyxml2::XMLElement const * node = properties_element->FirstChildElement("property");
-			for (; node != nullptr ; node = node->NextSiblingElement("property"))
+			for (; node != nullptr; node = node->NextSiblingElement("property"))
 			{
 				tinyxml2::XMLAttribute const * name_attribute = node->FindAttribute("name"); // name is mandatory
 				if (name_attribute == nullptr)
@@ -211,15 +221,17 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 					continue;
 
 				tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is NOT mandatory (for multiline strings, we use node->GetText())
+				if (value_attribute == nullptr)
+					value_attribute = node->FindAttribute("default"); // for ObjectTypeSets, that use the keyword 'default' instead of 'value'
 
 				tinyxml2::XMLAttribute const * type_attribute = node->FindAttribute("type"); // type is NOT mandatory (default is string)
 
-				char const * property_type = (type_attribute != nullptr) ? 
+				char const * property_type = (type_attribute != nullptr) ?
 					type_attribute->Value() : nullptr;
 
 				if (property_type == nullptr || StringTools::Stricmp(property_type, "string") == 0)
 				{
-					char const * value = (value_attribute != nullptr)? value_attribute->Value() : node->GetText();
+					char const * value = (value_attribute != nullptr) ? value_attribute->Value() : node->GetText();
 					if (value != nullptr)
 						DoInsertProperty(property_name, value);
 				}
@@ -237,7 +249,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 					{
 						DoInsertProperty(property_name, value_attribute->BoolValue());
 					}
-				}								
+				}
 			}
 			return true;
 		}
@@ -306,7 +318,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				{
 					glm::vec2 p = glm::vec2(0.0f, 0.0f);
 
-					int coord = 0;         
+					int coord = 0;
 					int i = 0;
 					while (values[i] != 0)
 					{
@@ -361,7 +373,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			XMLTools::ReadAttribute(element, "x", position.x);
 			XMLTools::ReadAttribute(element, "y", position.y);
 			XMLTools::ReadAttribute(element, "rotation", rotation);
-			
+
 			// remove useless space in type
 			if (type.length() > 0)
 				type = StringTools::TrimString(type.c_str(), true, true);
@@ -492,7 +504,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				if (parent_layer != nullptr)
 					result.position += parent_layer->offset;
 			}
-			return result; 
+			return result;
 		}
 
 		box2 GeometricObjectTile::GetBoundingBox(bool world_system) const
@@ -500,7 +512,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			//CHAOS_REVERSE_Y_AXIS
 			glm::vec2 p1 = position;
 			glm::vec2 p2 = glm::vec2(position.x + size.x, position.y + size.y);
-			
+
 			//glm::vec2 p1 = position;
 			//glm::vec2 p2 = position;
 			//p2.x += size.x;
@@ -511,9 +523,9 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			{
 				LayerBase const * parent_layer = auto_cast(owner);
 				if (parent_layer != nullptr)
-					result.position += parent_layer->offset;			
+					result.position += parent_layer->offset;
 			}
-			return result; 
+			return result;
 		}
 
 
@@ -561,7 +573,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 					return false;
 
 				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
-				atlas_key  = chaos::BoostTools::PathToName(image_path);
+				atlas_key = chaos::BoostTools::PathToName(image_path);
 			}
 
 			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
@@ -746,7 +758,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 			// point ?
 			tinyxml2::XMLElement const * point_element = element->FirstChildElement("point");
-			if (point_element != nullptr)      
+			if (point_element != nullptr)
 				return new GeometricObjectPoint(this);
 
 			// rectangle ?
@@ -782,7 +794,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		{
 			//CHAOS_REVERSE_Y_AXIS
 			glm::vec2 p1 = glm::vec2(
-				(float)( tile_coord.x * tile_size.x),
+				(float)(tile_coord.x * tile_size.x),
 				(float)(-tile_coord.y * tile_size.y - tile_size.y));
 			glm::vec2 p2 = p1;
 			p2.x += image_size.x;
@@ -790,7 +802,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)
 				result.position += offset;
-			return result; 
+			return result;
 		}
 
 		bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)
@@ -817,7 +829,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			// transform the char buffer into tiles
 			for (size_t i = 0; i < count; ++i)
 			{
-				unsigned int a = (unsigned int)buffer[i * 4 + 0]; 
+				unsigned int a = (unsigned int)buffer[i * 4 + 0];
 				unsigned int b = (unsigned int)buffer[i * 4 + 1];
 				unsigned int c = (unsigned int)buffer[i * 4 + 2];
 				unsigned int d = (unsigned int)buffer[i * 4 + 3];
@@ -855,7 +867,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 				{
 					std::string content = StringTools::TrimBase64String(data->GetText());
 
-					Buffer<char> base64  = MyBase64().Decode(content.c_str()); 
+					Buffer<char> base64 = MyBase64().Decode(content.c_str());
 					Buffer<char> decoded = MyZLib().Decode(base64);
 
 					DoLoadTileBufferFromBase64(decoded);
@@ -906,7 +918,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		size_t TileLayer::GetNonEmptyTileCount() const
 		{
 			size_t result = 0;
-			for (size_t i = 0 ; i < tile_indices.size() ; ++i)
+			for (size_t i = 0; i < tile_indices.size(); ++i)
 				if (tile_indices[i] > 0)
 					++result;
 			return result;
@@ -914,7 +926,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 		glm::ivec2 TileLayer::GetTileCoordinate(int index) const
 		{
-			return glm::ivec2(index % size.x, index / size.x);		
+			return glm::ivec2(index % size.x, index / size.x);
 		}
 
 
@@ -938,13 +950,10 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 		bool ObjectTypeDefinition::DoLoad(tinyxml2::XMLElement const * element)
 		{
-			if (PropertyOwner::DoLoad(element))
+			if (!PropertyOwner::DoLoad(element))
 				return false;
 			XMLTools::ReadAttribute(element, "name", name);
 			ReadXMLColor(element, "color", color);
-
-			// shuxxx
-
 			return true;
 		}
 
@@ -963,7 +972,7 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 
 		bool ObjectTypeSet::DoLoadObjectTypes(tinyxml2::XMLElement const * element)
 		{
-			if (!DoLoadObjectListHelper(element, object_types, "objecttypes", nullptr, this))
+			if (!DoLoadObjectListHelper(element, object_types, "objecttype", nullptr, this))
 				return false;
 			return true;
 		}
@@ -976,29 +985,29 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 		ObjectTypeDefinition * ObjectTypeSet::FindObjectType(char const * name)
 		{
 			size_t count = object_types.size();
-			for (size_t i = 0 ; i < count ; ++i)
+			for (size_t i = 0; i < count; ++i)
 			{
 				ObjectTypeDefinition * definition = object_types[i].get();
 				if (definition == nullptr)
 					continue;
 				if (StringTools::Stricmp(definition->name, name) == 0)
 					return definition;
-			}		
+			}
 			return nullptr;
 		}
 
 		ObjectTypeDefinition const * ObjectTypeSet::FindObjectType(char const * name) const
 		{
 			size_t count = object_types.size();
-			for (size_t i = 0 ; i < count ; ++i)
+			for (size_t i = 0; i < count; ++i)
 			{
 				ObjectTypeDefinition const * definition = object_types[i].get();
 				if (definition == nullptr)
 					continue;
 				if (StringTools::Stricmp(definition->name, name) == 0)
 					return definition;
-			}		
-			return nullptr;		
+			}
+			return nullptr;
 		}
 
 		// ==========================================
@@ -1020,17 +1029,17 @@ CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
 			return nullptr;\
 		}
 
-CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY())
-CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, const)
-CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, BOOST_PP_EMPTY())
-CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, const)
-CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, BOOST_PP_EMPTY())
-CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, const)
+		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, const)
+			CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, const)
+			CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, const)
 
 #undef CHAOS_IMPL_FIND_FILE_DATA
 
 
-		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
+			bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{
 			return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes", this);
 		}
@@ -1105,7 +1114,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 				{ "isometric" , ORIENTATION_ISOMETRIC },
 				{ "staggered" , ORIENTATION_STAGGERED },
 				{ "hexagonal" , ORIENTATION_HEXAGONAL },
-				{ nullptr, 0}
+				{ nullptr, 0 }
 			};
 			XMLTools::ReadEnumAttribute(element, "orientation", orient_map, orientation);
 
@@ -1211,7 +1220,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			return (int)(image_layers.size() + tile_layers.size() + object_layers.size());
 		}
 
-		bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)		
+		bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)
 		{
 			int layer_id = 0;
 
@@ -1236,7 +1245,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 					new_layer->object_id = layer_id++;
 			}
 			// now fix the zorders
-			if (!DoFixLayersZOrder()) 
+			if (!DoFixLayersZOrder())
 				return false;
 			return true;
 		}
@@ -1254,7 +1263,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			for (auto layer : object_layers)
 				if (layer != nullptr)
 					layer->zorder = (layer_count - 1) - layer->zorder;
-		
+
 			return true;
 		}
 
@@ -1263,7 +1272,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			if (gid > 0)
 			{
 				size_t count = tilesets.size();
-				for (size_t i = count ; i > 0; --i)
+				for (size_t i = count; i > 0; --i)
 				{
 					size_t index = i - 1;
 
@@ -1284,7 +1293,7 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 			if (gid >= 0)
 			{
 				size_t count = tilesets.size();
-				for (size_t i = count ; i > 0; --i)
+				for (size_t i = count; i > 0; --i)
 				{
 					size_t index = i - 1;
 
@@ -1315,10 +1324,10 @@ CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, con
 		return nullptr;\
 	}
 
-CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, BOOST_PP_EMPTY())
-CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, const)
-CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, BOOST_PP_EMPTY())
-CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, const)
+		CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, const)
+			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, const)
 #undef CHAOS_IMPL_FIND_LAYER
 
 #define CHAOS_IMPL_FIND_FILE_INFO(func_name, sub_funcname, arg_type, constess)\
@@ -1338,16 +1347,16 @@ CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, const)
 			return TileInfo();\
 		}
 
-CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, BOOST_PP_EMPTY())
-CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, const)
-CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, BOOST_PP_EMPTY())
-CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, const)
+			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, const)
+			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, const)
 #undef CHAOS_IMPL_FIND_FILE_INFO
 
 
-		// ==========================================
-		// Manager methods
-		// ==========================================
+			// ==========================================
+			// Manager methods
+			// ==========================================
 
 #define CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, func_params, call_args)\
 return_type * Manager::function_name(func_params, bool store_object)\
@@ -1363,9 +1372,9 @@ return_type * Manager::function_name(func_params, bool store_object)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)\
 
-	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadMap, FindMap, Map)
-	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet)
-	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet)
+			CHAOS_IMPL_MANAGER_LOAD_ALL(LoadMap, FindMap, Map)
+			CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet)
+			CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet)
 
 #undef CHAOS_IMPL_MANAGER_LOAD_ALL
 #undef CHAOS_IMPL_MANAGER_LOAD
@@ -1380,12 +1389,12 @@ return_type constness * Manager::funcname(FilePathParam const & path) constness\
 	return nullptr;\
 }
 
-CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, BOOST_PP_EMPTY())
-CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, const)
-CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, BOOST_PP_EMPTY())
-CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, const)
-CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, BOOST_PP_EMPTY())
-CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, const)
+			CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, BOOST_PP_EMPTY())
+			CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, const)
+			CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, BOOST_PP_EMPTY())
+			CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, const)
+			CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, BOOST_PP_EMPTY())
+			CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, const)
 #undef CHAOS_IMPL_MANAGER_FIND
 
 #define CHAOS_IMPL_MANAGER_DOLOAD(funcname, return_type, member_name)\
@@ -1426,9 +1435,9 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 	return result;\
 }
 
-CHAOS_IMPL_MANAGER_DOLOAD(DoLoadTileSet, TileSet, tile_sets)
-CHAOS_IMPL_MANAGER_DOLOAD(DoLoadObjectTypeSet, ObjectTypeSet, object_type_sets)
-CHAOS_IMPL_MANAGER_DOLOAD(DoLoadMap, Map, maps)
+			CHAOS_IMPL_MANAGER_DOLOAD(DoLoadTileSet, TileSet, tile_sets)
+			CHAOS_IMPL_MANAGER_DOLOAD(DoLoadObjectTypeSet, ObjectTypeSet, object_type_sets)
+			CHAOS_IMPL_MANAGER_DOLOAD(DoLoadMap, Map, maps)
 
 #undef CHAOS_IMPL_MANAGER_DOLOAD
 

@@ -328,6 +328,11 @@ namespace chaos
 			/** the method to override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element);
 
+			/** load all properties */
+			virtual bool DoLoadProperties(tinyxml2::XMLElement const * element);
+			/** returns the container of properties */
+			virtual tinyxml2::XMLElement const * GetPropertiesChildNode(tinyxml2::XMLElement const * element) const;
+
 			/** create property */
 			PropertyInt * DoInsertProperty(char const * name, int value);
 			/** create property */
@@ -336,9 +341,6 @@ namespace chaos
 			PropertyBool * DoInsertProperty(char const * name, bool value);
 			/** create property */
 			PropertyString * DoInsertProperty(char const * name, char const * value);
-
-			/** the name for the properties */
-			virtual char const * GetXMLPropertiesMarkupName() const { return "properties"; }
 
 		protected:
 
@@ -946,8 +948,15 @@ namespace chaos
 			/** constructor */
 			using PropertyOwner::PropertyOwner;
 
+		protected:
+
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+			/** override */
+			virtual tinyxml2::XMLElement const * GetPropertiesChildNode(tinyxml2::XMLElement const * element) const override 
+			{ 
+				return element; // XXX: the properties are not contained by a 'properties' node
+			} 
 
 		public:
 
@@ -983,8 +992,6 @@ namespace chaos
 			virtual bool DoLoadMembers(tinyxml2::XMLElement const * element) override;
 			/** override */
 			virtual char const * GetXMLMarkupName() const override { return "objecttypes"; }
-			/** override */
-			virtual char const * GetXMLPropertiesMarkupName() const override { return "objecttype"; }
 
 			/** load all types */
 			bool DoLoadObjectTypes(tinyxml2::XMLElement const * element);

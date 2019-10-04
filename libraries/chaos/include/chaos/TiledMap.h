@@ -945,7 +945,7 @@ namespace chaos
 		};
 
 		// ==========================================
-		// ObjectTypeSet
+		// ObjectTypeDefinition
 		// ==========================================
 
 		class ObjectTypeDefinition : public PropertyOwner
@@ -993,6 +993,11 @@ namespace chaos
 			ObjectTypeDefinition * FindObjectType(char const * name);
 			/** find an object type */
 			ObjectTypeDefinition const * FindObjectType(char const * name) const;
+
+			/** find the property in an ObjectType */
+			Property * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
+			/** find the property in an ObjectType */
+			Property const * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
 
 		protected:
 
@@ -1274,6 +1279,11 @@ namespace chaos
 			/** findobject type set */
 			ObjectTypeSet * FindObjectTypeSet(FilePathParam const & path);
 			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
+
+			/** find the property in an ObjectTypeSet */
+			virtual Property * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
+			/** find the property in an ObjectTypeSet */
+			virtual Property const * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
 
 		protected:
 

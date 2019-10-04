@@ -659,7 +659,7 @@ namespace chaos
 #endif
 			return result;
 		}
-		
+
 		Property const * TileData::FindProperty(char const * name, int type_id) const
 		{
 			Property const * result = PropertyOwner::FindProperty(name, type_id);
@@ -987,21 +987,6 @@ namespace chaos
 			return glm::ivec2(index % size.x, index / size.x);
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		// ==========================================
 		// ObjectTypeDefinition methods
 		// ==========================================
@@ -1066,6 +1051,22 @@ namespace chaos
 					return definition;
 			}
 			return nullptr;
+		}
+
+		Property * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, int type_id)
+		{
+			ObjectTypeDefinition * definition = FindObjectType(type);
+			if (definition == nullptr)
+				return nullptr;
+			return definition->FindProperty(name, type_id);
+		}
+
+		Property const * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, int type_id) const
+		{
+			ObjectTypeDefinition const * definition = FindObjectType(type);
+			if (definition == nullptr)
+				return nullptr;
+			return definition->FindProperty(name, type_id);
 		}
 
 		// ==========================================
@@ -1498,6 +1499,36 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 			CHAOS_IMPL_MANAGER_DOLOAD(DoLoadMap, Map, maps)
 
 #undef CHAOS_IMPL_MANAGER_DOLOAD
+
+		Property * Manager::FindObjectProperty(char const * type, char const * name, int type_id)
+		{
+			size_t count = object_type_sets.size();
+			for (size_t i = 0 ; i < count ; ++i)
+			{
+				ObjectTypeSet * ots = object_type_sets[i].get();
+				if (ots == nullptr)
+					return false;
+				Property * result = ots->FindObjectProperty(type, name, type_id);
+				if (result != nullptr)
+					return result;		
+			}
+			return nullptr;
+		}
+
+		Property const * Manager::FindObjectProperty(char const * type, char const * name, int type_id) const
+		{
+			size_t count = object_type_sets.size();
+			for (size_t i = 0 ; i < count ; ++i)
+			{
+				ObjectTypeSet * ots = object_type_sets[i].get();
+				if (ots == nullptr)
+					return false;
+				Property * result = ots->FindObjectProperty(type, name, type_id);
+				if (result != nullptr)
+					return result;		
+			}
+			return nullptr;
+		}
 
 	};  // namespace TiledMap
 

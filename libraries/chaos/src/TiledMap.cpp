@@ -1055,6 +1055,8 @@ namespace chaos
 
 		Property * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, int type_id)
 		{
+			if (StringTools::IsEmpty(type))
+				return nullptr;
 			ObjectTypeDefinition * definition = FindObjectType(type);
 			if (definition == nullptr)
 				return nullptr;
@@ -1063,6 +1065,8 @@ namespace chaos
 
 		Property const * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, int type_id) const
 		{
+			if (StringTools::IsEmpty(type))
+				return nullptr;
 			ObjectTypeDefinition const * definition = FindObjectType(type);
 			if (definition == nullptr)
 				return nullptr;
@@ -1501,7 +1505,9 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 #undef CHAOS_IMPL_MANAGER_DOLOAD
 
 		Property * Manager::FindObjectProperty(char const * type, char const * name, int type_id)
-		{
+		{	
+			if (StringTools::IsEmpty(type))
+				return nullptr;
 			size_t count = object_type_sets.size();
 			for (size_t i = 0 ; i < count ; ++i)
 			{
@@ -1517,6 +1523,8 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 
 		Property const * Manager::FindObjectProperty(char const * type, char const * name, int type_id) const
 		{
+			if (StringTools::IsEmpty(type))
+				return nullptr;
 			size_t count = object_type_sets.size();
 			for (size_t i = 0 ; i < count ; ++i)
 			{

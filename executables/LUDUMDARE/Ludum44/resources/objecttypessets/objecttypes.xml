@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <objecttypes>
- <objecttype name="land1" color="#a41215">
-  <property name="hardness" type="int" default="12"/>
+ <objecttype name="Camera" color="#ff00ff">
+  <property name="CAMERA" type="bool" default="true"/>
  </objecttype>
- <objecttype name="Type" color="#49a422">
-  <property name="g" type="bool" default="false"/>
-  <property name="toto" type="float" default="0"/>
+ <objecttype name="Checkpoint" color="#a4970a"/>
+ <objecttype name="Notification" color="#34a404">
+  <property name="LIFETIME" type="float" default="5"/>
+  <property name="NOTIFICATION" type="string" default="toto"/>
+  <property name="PLAYER_COLLISION" type="bool" default="true"/>
+  <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
+  <property name="TRIGGER_ONCE" type="bool" default="true"/>
  </objecttype>
- <objecttype name="TypeObj1" color="#a0a0a4"/>
+ <objecttype name="PlayerStart" color="#a0a0a4">
+  <property name="BITMAP_NAME" type="string"/>
+  <property name="PLAYER_START" type="bool" default="true"/>
+ </objecttype>
+ <objecttype name="Sound" color="#a40002">
+  <property name="3D_SOUND" type="bool" default="true"/>
+  <property name="LOOPING" type="bool" default="false"/>
+  <property name="MIN_DISTANCE_RATIO" type="float" default="0.3"/>
+  <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" default="-1"/>
+  <property name="SOUND_NAME" type="string"/>
+  <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
+  <property name="TRIGGER_ONCE" type="bool" default="false"/>
+ </objecttype>
 </objecttypes>

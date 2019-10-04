@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1925">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background4"/>
@@ -139,7 +138,7 @@
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="1808" name="Checkpoint" gid="2" x="-3680" y="14240" width="20912" height="2416"/>
+  <object id="1808" name="Checkpoint" type="Checkpoint" gid="2" x="-3680" y="14240" width="20912" height="2416"/>
   <object id="1809" name="Checkpoint" gid="2" x="-4312" y="-11128" width="20912" height="688"/>
   <object id="1843" name="Finish" gid="2" x="-2008" y="-133560" width="16432" height="8752"/>
   <object id="1870" name="PowerUp" gid="2" x="-3788" y="11388" width="10160" height="5000">
@@ -315,26 +314,14 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1915" name="Sound" x="-18752" y="-3008" width="10176" height="9728">
+  <object id="1915" name="Sound" type="Sound" x="-22080" y="-4800" width="10176" height="9728">
    <properties>
-    <property name="3D_SOUND" type="bool" value="true"/>
-    <property name="MIN_DISTANCE_RATIO" type="float" value="0.3"/>
+    <property name="LOOPING" type="bool" value="true"/>
     <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" value="5"/>
     <property name="SOUND_NAME" value="thrust"/>
-    <property name="STOP_WHEN_COLLISION_OVER" type="bool" value="false"/>
-    <property name="TRIGGER_ONCE" type="bool" value="true"/>
-    <property name="looping" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1924" name="Notification" x="-18240" y="7936" width="10176" height="9728">
-   <properties>
-    <property name="LIFETIME" type="float" value="5"/>
-    <property name="NOTIFICATION" value="[ButtonA] [ButtonA]Hello World XXX[ButtonA]"/>
-    <property name="PLAYER_COLLISION" type="bool" value="true"/>
-    <property name="STOP_WHEN_COLLISION_OVER" type="bool" value="false"/>
-    <property name="TRIGGER_ONCE" type="bool" value="false"/>
-   </properties>
-  </object>
+  <object id="1924" name="Notification" type="Notification" x="-20160" y="7680" width="10176" height="9728"/>
  </objectgroup>
  <objectgroup id="12" name="Enemies" visible="0" locked="1">
   <properties>
@@ -354,16 +341,11 @@
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="57" name="TheCamera1" x="3432" y="8816" width="7120" height="4648">
-   <properties>
-    <property name="CAMERA" type="bool" value="true"/>
-   </properties>
-  </object>
+  <object id="57" name="TheCamera1" type="Camera" x="3432" y="8816" width="7120" height="4648"/>
   <object id="75" name="world_bounding_box" x="-1424" y="-141440" width="15424" height="155264"/>
-  <object id="1735" name="ThePlayerStart1" x="6896" y="12176" width="112" height="496">
+  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="6896" y="12176" width="112" height="496">
    <properties>
     <property name="BITMAP_NAME" value="player"/>
-    <property name="PLAYER_START" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>

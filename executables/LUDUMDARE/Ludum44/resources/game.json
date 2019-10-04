@@ -5,7 +5,7 @@
   "sprite_directory": "@sprites",
   "levels_directory": "@levels",
   "tilesets_directory": "@tilesets",
-	"objecttypesets_directory": "@objecttypes",
+	"objecttypesets_directory": "@objecttypessets",
 
   "initial_life": 3,
   "max_life": 3,

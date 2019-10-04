@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<objecttypes>
+ <objecttype name="land1" color="#a41215">
+  <property name="hardness" type="int" default="12"/>
+ </objecttype>
+ <objecttype name="Type" color="#49a422">
+  <property name="g" type="bool" default="false"/>
+  <property name="toto" type="float" default="0"/>
+ </objecttype>
+ <objecttype name="TypeObj1" color="#a0a0a4"/>
+</objecttypes>

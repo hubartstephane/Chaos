@@ -831,6 +831,15 @@ namespace death
 			if (tile != nullptr)
 			{
 				int gid = tile->gid;
+
+
+
+
+
+				// shu FindProperty
+
+
+
 				// search the tile information 
 				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 				if (tile_info.tiledata == nullptr)
@@ -847,6 +856,17 @@ namespace death
 					if (prop != nullptr)
 						keep_aspect_ratio = *prop;
 				}
+
+
+
+
+
+
+
+
+
+
+
 				// create a simple particle
 				chaos::box2 particle_box = tile->GetBoundingBox(true);
 				if (object != nullptr)

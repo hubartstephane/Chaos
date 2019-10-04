@@ -106,6 +106,17 @@ namespace chaos
 
 		Property * PropertyOwner::FindProperty(char const * name, int type_id)
 		{
+			return FindInternalProperty(name, type_id);
+		}
+
+		Property const * PropertyOwner::FindProperty(char const * name, int type_id) const
+		{
+			return FindInternalProperty(name, type_id);
+		}
+
+
+		Property * PropertyOwner::FindInternalProperty(char const * name, int type_id)
+		{
 			assert(name != nullptr);
 			for (auto & property : properties)
 				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
@@ -114,7 +125,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		Property const * PropertyOwner::FindProperty(char const * name, int type_id) const
+		Property const * PropertyOwner::FindInternalProperty(char const * name, int type_id) const
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
@@ -227,7 +238,7 @@ namespace chaos
 				if (name_attribute == nullptr)
 					continue;
 				char const * property_name = name_attribute->Value();
-				if (FindProperty(property_name) != nullptr) // and must be unique
+				if (FindInternalProperty(property_name, Property::PROPERTY_TYPEID_ANY) != nullptr) // and must be unique
 					continue;
 
 				tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is NOT mandatory (for multiline strings, we use node->GetText())

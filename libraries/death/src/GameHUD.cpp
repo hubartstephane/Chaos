@@ -123,7 +123,7 @@ namespace death
 	}
 
 	bool GameHUD::FillHUDContent()
-	{
+	{		
 #if _DEBUG
 		RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent(), "Free Camera Mode");

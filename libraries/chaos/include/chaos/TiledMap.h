@@ -298,6 +298,11 @@ namespace chaos
 			/** find property by name */
 			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
 
+			/** find property without looking elsewhere than our own table */
+			Property * FindInternalProperty(char const * name, int type_id);
+			/** find property without looking elsewhere than our own table */
+			Property const * FindInternalProperty(char const * name, int type_id) const;
+
 			/** find a property of type int */
 			int * FindPropertyInt(char const * name);
 			/** find a property of type int */

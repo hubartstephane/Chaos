@@ -41,8 +41,7 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
 
-	// displace the player
-	particle->bounding_box.position += delta_time * particle->velocity;
+
 
 
 	return false;

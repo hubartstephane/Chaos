@@ -88,6 +88,7 @@ protected:
 protected:
 
 	float player_speed_factor = 500.0f;
+	float player_speed_damping = 0.95f;
 
 	std::vector<float> player_speeds;
 	std::vector<float> player_damages;

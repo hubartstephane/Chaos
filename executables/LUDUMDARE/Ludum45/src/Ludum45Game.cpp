@@ -69,24 +69,12 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 		return false;
 
 	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
+	DEATHGAME_JSON_ATTRIBUTE(player_speed_damping);
 
-	chaos::JSONTools::GetAttribute(config, "player_speeds", player_speeds);
-	chaos::JSONTools::GetAttribute(config, "player_damages", player_damages);
-	chaos::JSONTools::GetAttribute(config, "player_charged_damages", player_charged_damages);
-	chaos::JSONTools::GetAttribute(config, "player_fire_rates", player_fire_rates);
-
-
-#if 0
-	if (!InitializeGameValueVector("player_speeds", config, config_path, player_speeds))
-		return false;
-	if (!InitializeGameValueVector("player_damages", config, config_path, player_damages))
-		return false;
-	if (!InitializeGameValueVector("player_charged_damages", config, config_path, player_charged_damages))
-		return false;
-	if (!InitializeGameValueVector("player_fire_rates", config, config_path, player_fire_rates))
-		return false;
-#endif
-
+	DEATHGAME_JSON_ATTRIBUTE(player_speeds);
+	DEATHGAME_JSON_ATTRIBUTE(player_damages);
+	DEATHGAME_JSON_ATTRIBUTE(player_charged_damages);
+	DEATHGAME_JSON_ATTRIBUTE(player_fire_rates);
 			
 	return true;
 }

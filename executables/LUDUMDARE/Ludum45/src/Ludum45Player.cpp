@@ -49,6 +49,8 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 
 void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 {
+	float dt = (float)delta_time;
+
 	LudumGame const * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
 		return;
@@ -56,7 +58,10 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	ParticlePlayer * player_particle = GetPlayerParticle();
 	if (player_particle == nullptr)
 		return;
-	player_particle->velocity = glm::vec2(0.0f, 0.0f);
+
+	player_particle->velocity *= powf(ludum_game->player_speed_damping, dt);
+
+	//player_particle->velocity = glm::vec2(0.0f, 0.0f);
 
 	float left_length_2 = glm::length2(left_stick_position);	
 	float right_length_2 = glm::length2(right_stick_position);
@@ -78,6 +83,11 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 
 	}
 #endif
+
+
+
+	// displace the player
+	player_particle->bounding_box.position += dt * player_particle->velocity;
 }
 
 

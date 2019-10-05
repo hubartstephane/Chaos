@@ -52,10 +52,10 @@ namespace chaos
 		bool IsVariableName(char const * name)
 		{
 			assert(name != nullptr);
-			if (!std::isalpha(name[0])) // an empty string is not a variable name !!
+			if (!std::isalpha(name[0]) && name[0] != '_') // an empty string is not a variable name !!
 				return false;
 			for (int i = 1 ; name[i] != 0 ; ++i)
-				if (!std::isalnum(name[i]) || name[i] == '_')
+				if (!std::isalnum(name[i]) && name[i] != '_')
 					return false;
 			return true;
 		}

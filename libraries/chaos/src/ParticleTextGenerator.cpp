@@ -186,7 +186,11 @@ namespace chaos
 			token.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 
-			token.color = style_stack.back().color; // shuludum
+			token.color = style_stack.back().color; // shuludum 
+
+
+			// shuludum   donot support  [1[VIEW] but support [1 [VIEW] <- to fixe
+			//             
 
 			InsertTokenInLine(token);
 		}
@@ -381,7 +385,7 @@ namespace chaos
 		{
 			assert(name != nullptr);
 			for (int i = 0 ; name[i] != 0 ; ++i)
-				if (!std::isalnum(name[i]) || name[i] == '_')
+				if (!std::isalnum(name[i]) && name[i] != '_')
 					return false;
 			return true;
 		}

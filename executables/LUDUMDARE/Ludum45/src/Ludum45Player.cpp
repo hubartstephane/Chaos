@@ -234,11 +234,11 @@ void LudumPlayer::OnDamagedReceived(float damage)
 
 void LudumPlayer::RegisterUpgrades()
 {
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::VIEW_ID, "upgrade_view"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::FIRE_ID, "upgrade_fire"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH_ID, "upgrade_dash"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALFIRE_ID, "upgrade_specialfire"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST_ID, "upgrade_ghost"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::VIEW_ID, "VIEW"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::FIRE_ID, "FIRE"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH_ID, "DASH"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALFIRE_ID, "SPECIALFIRE"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST_ID, "GHOST"));
 };
 
 
@@ -280,7 +280,7 @@ std::string LudumPlayer::GetPlayerUpgradeString() const
 		PlayerUpgrade const * upgrade = upgrades[i].get();
 		if (upgrade == nullptr || upgrade->level <= 0)
 			continue;
-		result += "[" + upgrade->GetBitmapName() + "]";
+		result += chaos::StringTools::Printf("[%d [%s]]", upgrade->level, upgrade->bitmap_name.c_str());
 	}
 	return result;
 }

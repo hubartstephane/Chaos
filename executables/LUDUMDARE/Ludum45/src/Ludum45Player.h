@@ -22,7 +22,7 @@ class LudumPlayer : public death::Player
 public:
 
 	friend class ParticleFireTrait;
-
+	friend class GameHUDUpgradeComponent;
 
 	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
 

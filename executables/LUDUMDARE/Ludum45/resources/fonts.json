@@ -4,8 +4,22 @@
 		"normal": "@fonts/overpass-mono-bold.otf",
 		"title":"@fonts/unispace bold italic.ttf"
 	},
-	"colors":
-	{
-		"LEVELTITLE":[1.0, 0.0, 0.0]
-	}
+  "colors": {
+    "LEVELTITLE": [ 1.0, 0.0, 0.0 ],
+    "1": [ 0.0, 0.58, 1.0 ],
+    "2": [ 0.0, 0.15, 1.0 ],
+    "3": [ 1.0, 0.41, 0.0 ],
+    "4": [ 1.0, 0.0, 0.0 ]
+  },
+  "bitmaps": 
+  {
+    "VIEW": "upgrade_view",
+    "FIRE": "upgrade_fire",
+    "GHOST": "upgrade_ghost",
+    "DASH": "upgrade_dash",
+    "SPECIALFIRE": "upgrade_specialfire"
+
+
+
+  }
 }

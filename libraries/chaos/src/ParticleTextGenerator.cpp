@@ -184,6 +184,10 @@ namespace chaos
 			Token token;
 			token.bitmap_layout = layout;
 			token.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+			token.color = style_stack.back().color; // shuludum
+
 			InsertTokenInLine(token);
 		}
 
@@ -372,14 +376,30 @@ namespace chaos
 			return it->second;
 		}
 
+
+		static bool MyIsVariableName(char const * name) // shuludum
+		{
+			assert(name != nullptr);
+			for (int i = 0 ; name[i] != 0 ; ++i)
+				if (!std::isalnum(name[i]) || name[i] == '_')
+					return false;
+			return true;
+		}
+
 		bool Generator::IsNameValid(char const * name) const
 		{
 			// ignore empty name
 			if (name == nullptr)
 				return false;
 			// ensure name is a valid variable name
-			if (!StringTools::IsVariableName(name))
+			//if (!StringTools::IsVariableName(name)) // shuludum : why refusing anything begining with a number ?
+			//	return false;
+
+			if (!MyIsVariableName(name)) 
 				return false;
+
+
+
 			// ensure name is not already used by a color
 			if (colors.find(name) != colors.end())
 				return false;

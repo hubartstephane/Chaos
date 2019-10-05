@@ -397,7 +397,7 @@ namespace chaos
 		protected:
 
 			/** the default dead zone value */
-			float dead_zone = 0.2f;
+			float dead_zone = 0.4f;
 			/** the logical gamepads */
 			std::vector<Gamepad *> user_gamepads;
 			/** the physical gamepads */

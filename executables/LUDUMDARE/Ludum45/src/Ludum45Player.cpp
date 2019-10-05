@@ -59,10 +59,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	if (player_particle == nullptr)
 		return;
 
-	
-
-	//player_particle->velocity = glm::vec2(0.0f, 0.0f);
-
 	float left_length_2 = glm::length2(left_stick_position);	
 	float right_length_2 = glm::length2(right_stick_position);
 	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
@@ -82,17 +78,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	}
 	else
 		player_particle->velocity *= powf(ludum_game->player_speed_damping, dt);
-
-#if 0
-	float right_length_2 = glm::length2(right_stick_position);
-	if (right_length_2 > 0.0f)
-	{
-		player_particle->orientation = -atan2f(right_stick_position.y, right_stick_position.x) - (float)M_PI * 0.5f;
-
-	}
-#endif
-
-
 
 	// displace the player
 	player_particle->bounding_box.position += dt * player_particle->velocity;

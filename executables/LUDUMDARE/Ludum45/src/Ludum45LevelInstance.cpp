@@ -28,6 +28,7 @@ void LudumLevelInstance::CreateCameras()
 	for (size_t i = 0; i < camera_count; ++i)
 	{
 		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.8f));
+		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
 		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
 	}
@@ -43,9 +44,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 bool LudumLevelInstance::DoTick(double delta_time)
 {
 	death::TiledMap::LevelInstance::DoTick(delta_time);
-
-
-
+	RestrictPlayerToWorld(0);
 	return true;
 }
 

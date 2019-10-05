@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1924">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
@@ -14,16 +13,11 @@
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="57" name="TheCamera1" x="3432" y="8816" width="7120" height="4648">
-   <properties>
-    <property name="CAMERA" type="bool" value="true"/>
-   </properties>
-  </object>
+  <object id="57" name="TheCamera1" type="Camera" x="3432" y="8816" width="7120" height="4648"/>
   <object id="75" name="world_bounding_box" x="-1424" y="-7616" width="15424" height="21440"/>
-  <object id="1735" name="ThePlayerStart1" x="6896" y="12176" width="112" height="496">
+  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="6896" y="12176" width="112" height="496">
    <properties>
     <property name="BITMAP_NAME" value="player"/>
-    <property name="PLAYER_START" type="bool" value="true"/>
    </properties>
   </object>
  </objectgroup>

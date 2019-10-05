@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="128" tileheight="128" tilecount="5" columns="0">
+<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="128" tileheight="128" tilecount="6" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="BonusSpawner">
   <properties>
@@ -30,5 +30,11 @@
    <property name="BONUS_TYPE" value="VIEW"/>
   </properties>
   <image width="128" height="128" source="../sprites/view.png"/>
+ </tile>
+ <tile id="5" type="BonusSpawner">
+  <properties>
+   <property name="BONUS_TYPE" value="SPEED"/>
+  </properties>
+  <image width="128" height="128" source="../sprites/speed.png"/>
  </tile>
 </tileset>

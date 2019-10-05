@@ -38,6 +38,25 @@ public:
 	/** override */
 	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
+	int GetUpgradeLevel(chaos::TagType upgrade_type) const;
+
+	int GetSpeedLevel() const; 
+	int GetPowerLevel() const; 
+	int GetSpecialPowerLevel() const; 
+	int GetDashLevel() const; 
+	int GetGhostLevel() const; 
+	int GetViewLevel() const;
+
+
+	float GetPlayerSpeed() const;
+	int GetPlayerPower() const;
+
+
+	template<typename T>
+	T GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T> const & values) const;
+
+
+
 protected:
 
 	/** override */
@@ -80,19 +99,22 @@ protected:
 
 	std::string GetPlayerUpgradeString() const;
 
+
+
 protected:
 
 	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
 
 
-
-	size_t current_speed_index = 0;
+#if 21
+	//size_t current_speed_index = 0;
 	size_t current_damage_index = 0;
 	size_t current_charged_damage_index = 0;
-	size_t current_fire_rate_index = 0;
+	//size_t current_fire_rate_index = 0;
 	size_t current_fire_cooldown_index = 0;
 	size_t current_dash_cooldown_index = 0;
 	size_t current_dash_distance_index = 0;
+#endif
 
 	float fire_timer = 0.0f; 
 	float dash_timer = 0.0f; 

@@ -1,8 +1,15 @@
 {
-	"LEVEL_TITLE_IDc":
-	{
-	
-	},
+  "LEVEL_TITLE_IDc": {
+
+  },
+
+  "TITLE_ID": {
+
+    "generator_params":
+    {
+      "alignment":"center"
+    }
+  },
 
 
 	"TITLE_IDx":

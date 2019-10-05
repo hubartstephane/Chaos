@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="1951">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="1956">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -44,6 +44,10 @@
   <object id="1948" gid="5" x="7240" y="11964" width="128" height="128"/>
   <object id="1949" gid="5" x="7624" y="11944" width="128" height="128"/>
   <object id="1950" gid="5" x="7624" y="12200" width="128" height="128"/>
+  <object id="1952" gid="6" x="3616" y="9563.52" width="385.576" height="379.515"/>
+  <object id="1953" gid="6" x="3522.36" y="8934.48" width="385.576" height="379.515"/>
+  <object id="1954" gid="6" x="2913.27" y="8995.09" width="385.576" height="379.515"/>
+  <object id="1955" gid="6" x="3419.33" y="7737.52" width="385.576" height="379.515"/>
  </objectgroup>
  <objectgroup id="18" name="Enemies">
   <properties>

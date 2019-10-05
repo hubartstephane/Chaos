@@ -137,11 +137,17 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 	glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
 	LudumPlayer const * player = layer_trait->game->GetLudumPlayer(0);
-	if (player != nullptr && player->dash_timer > 0.0f)
-		boost_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
+	{
+		float alpha = 1.0f;
 
+		if (layer_trait->game->player_dash_duration > 0.0f)
+			alpha = player->dash_timer / layer_trait->game->player_dash_duration;
+		
+		alpha = 0.0f;
 
-
+		boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - alpha);
+	}
 
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
@@ -153,6 +159,7 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
+	
 
 
 

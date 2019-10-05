@@ -113,10 +113,13 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 
 	if (dash_pressed)
 	{
-		if (dash_cooldown <= 0.0f && !dash_locked)
+		if (GetDashLevel() > 0)
 		{
-			dash_timer = ludum_game->player_dash_duration;
-			dash_cooldown = ludum_game->player_dash_cooldown;			
+			if (dash_cooldown <= 0.0f && !dash_locked)
+			{
+				dash_timer = ludum_game->player_dash_duration;
+				dash_cooldown = ludum_game->player_dash_cooldown;			
+			}		
 		}
 		dash_locked = true; // dash is locked until the key is released
 	}
@@ -126,7 +129,7 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	}
 
 	// compute max velocity and extra dash boost
-	float input_max_velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor;
+	float input_max_velocity = GetPlayerSpeed() * ludum_game->player_speed_factor;
 	float max_velocity       = input_max_velocity;
 
 	float dash_velocity_boost = 0.0f;
@@ -216,7 +219,7 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 	if (fire_timer <= 0.0f)
 	{
 		bool fire_pressed = CheckButtonPressed(fire_key_buttons, chaos::MyGLFW::XBOX_BUTTON_A);
-		if (fire_pressed)
+		if (fire_pressed && GetPowerLevel() > 0)
 		{
 			FireProjectile();					
 			fire_timer = ludum_game->player_fire_cooldowns[current_fire_cooldown_index];
@@ -230,7 +233,7 @@ ParticleFire * LudumPlayer::FireProjectile()
 	if (ludum_game == nullptr)
 		return nullptr;
 
-	int count = ludum_game->player_fire_rates[current_fire_rate_index]; 
+	int count = GetPlayerPower(); 
 	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.3f, count, "fire", 0.1f, ludum_game->fire_velocity);
 	if (p != nullptr)
 	{
@@ -321,6 +324,7 @@ void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
 
 void LudumPlayer::RegisterUpgrades()
 {
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, "SPEED"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::VIEW, "VIEW"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWER, "POWER"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, "DASH"));
@@ -372,7 +376,68 @@ std::string LudumPlayer::GetPlayerUpgradeString() const
 	return result;
 }
 
+int LudumPlayer::GetUpgradeLevel(chaos::TagType upgrade_type) const
+{
+	PlayerUpgrade const * upgrade = FindPlayerUpgrade(upgrade_type);
+	if (upgrade != nullptr)
+		return upgrade->level;
+	return 0;
+}
 
+template<typename T>
+T LudumPlayer::GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T> const & values) const
+{	
+	size_t count = values.size();
+	if (count == 0)
+		return T();
+	size_t level = (size_t)GetUpgradeLevel(upgrade_type);
+	if (level >= count)
+		return values.back();
+	return values[level];
+}
+
+
+
+float LudumPlayer::GetPlayerSpeed() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::SPEED, GetLudumGame()->player_speeds);
+}
+
+
+int LudumPlayer::GetPlayerPower() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::POWER, GetLudumGame()->player_fire_rates);
+}
+
+
+
+
+
+int LudumPlayer::GetSpeedLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::SPEED);
+}
+
+int LudumPlayer::GetPowerLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::POWER);
+}
+int LudumPlayer::GetSpecialPowerLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::SPECIALPOWER);
+}
+int LudumPlayer::GetDashLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::DASH);
+}
+int LudumPlayer::GetGhostLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::GHOST);
+}
+int LudumPlayer::GetViewLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::VIEW);
+}
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {

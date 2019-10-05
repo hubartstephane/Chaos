@@ -224,7 +224,10 @@ void LudumPlayer::OnDamagedReceived(float damage)
 	GetGame()->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 
+void LudumPlayer::RegisterUpgrades()
+{
 
+}
 
 
 

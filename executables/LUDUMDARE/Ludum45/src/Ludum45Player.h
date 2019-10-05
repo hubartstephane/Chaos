@@ -10,6 +10,7 @@
 
 
 #include "Ludum45Particles.h"
+#include "Ludum45Upgrades.h"
 
 // =========================================================
 // LudumPlayer
@@ -65,10 +66,11 @@ protected:
 	ParticleFire * FireProjectile();
 	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity);
 
+	void RegisterUpgrades();
 
 protected:
 
-	std::vector<shared_ptr<PlayerUpgrade>> upgrades;
+	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
 
 
 

@@ -30,6 +30,17 @@ public:
 
 };
 
+// ===========================================================================
+// ParticleLideTrait
+// ===========================================================================
+
+
+class ParticleLifeTrait : public chaos::ParticleAllocationTrait<chaos::ParticleDefault::Particle, chaos::ParticleDefault::Vertex>
+{
+public:
+
+};
+
 
 // ===========================================================================
 // ParticleBonus

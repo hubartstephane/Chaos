@@ -9,7 +9,6 @@
 #include <death/GameFramework.h>
 
 
-
 #include "Ludum45Particles.h"
 
 // =========================================================
@@ -54,12 +53,19 @@ protected:
 	virtual void HandleKeyboardInputs(double delta_time) override;
 
 
+
+	void UpdatePlayerAcceleration(double delta_time);
+
+
 	/** check whether some inputs are pressed */
 	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
 
 
 protected:
 
-
+	size_t current_speed_index = 0;
+	size_t current_damage_index = 0;
+	size_t current_charged_damage_index = 0;
+	size_t current_fire_rate_index = 0;
 
 };

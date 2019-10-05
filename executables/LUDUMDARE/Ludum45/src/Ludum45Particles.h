@@ -38,6 +38,7 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
+	float orientation = 0.0f;
 	
 
 };

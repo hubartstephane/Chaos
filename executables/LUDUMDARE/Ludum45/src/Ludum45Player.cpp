@@ -40,7 +40,44 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {
+	// displace the player
+	UpdatePlayerAcceleration(delta_time);
 
+
+
+}
+
+void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
+{
+	LudumGame const * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return;
+	player_particle->velocity = glm::vec2(0.0f, 0.0f);
+
+	float left_length_2 = glm::length2(left_stick_position);	
+	float right_length_2 = glm::length2(right_stick_position);
+	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
+	{
+		glm::vec2 direction = (left_length_2 > right_length_2) ?
+			left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
+			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
+
+		player_particle->velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor * glm::vec2(1.0f, -1.0f) * direction; // axis Y reversed
+		player_particle->orientation = -atan2f(direction.y, direction.x) - (float)M_PI * 0.5f;
+	}
+
+#if 0
+	float right_length_2 = glm::length2(right_stick_position);
+	if (right_length_2 > 0.0f)
+	{
+		player_particle->orientation = -atan2f(right_stick_position.y, right_stick_position.x) - (float)M_PI * 0.5f;
+
+	}
+#endif
 }
 
 

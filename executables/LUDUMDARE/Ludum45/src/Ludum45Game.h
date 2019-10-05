@@ -87,7 +87,12 @@ protected:
 
 protected:
 
+	float player_speed_factor = 500.0f;
 
+	std::vector<float> player_speeds;
+	std::vector<float> player_damages;
+	std::vector<float> player_charged_damages;
+	std::vector<int>   player_fire_rates;
 
 
 

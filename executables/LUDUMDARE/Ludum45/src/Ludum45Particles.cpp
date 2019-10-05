@@ -28,13 +28,21 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 
 size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices, p->orientation);
+	// copy the color in all triangles vertex
+	for (size_t i = 0 ; i < 6 ; ++i)
+		vertices[i].color = p->color;
+
+	return vertices_per_particle;
 }
 
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
 
+	// displace the player
+	particle->bounding_box.position += delta_time * particle->velocity;
 
 
 	return false;

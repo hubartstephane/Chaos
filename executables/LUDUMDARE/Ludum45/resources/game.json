@@ -13,10 +13,16 @@
   "player_charged_damages": [ 10.0, 15.0, 20.0, 25.0 ],
   "player_fire_rates": [ 1, 3, 5, 7 ],
   "player_fire_cooldowns": [ 1, 0.5, 0.3, 0.1 ],
+  "player_dash_cooldowns": [ 1, 0.5, 0.3, 0.1 ],
+  "player_dash_distances":  [ 1, 3, 5, 7 ],
 
-  "player_speed_factor": 2500.0,
-  "player_acceleration_factor": 250.0,
-  "player_speed_damping": 0.05,
+
+  "player_speed_factorc": 4500.0,
+  "player_speed_factor": 25000.0,
+  "player_acceleration_factor": 2500.0,
+  "player_acceleration_factorc": 1500.0,
+  "player_speed_damping": 0.15,
+  "player_tan_speed_damping": 0.9999,
   "fire_velocity": 10000
 
 }

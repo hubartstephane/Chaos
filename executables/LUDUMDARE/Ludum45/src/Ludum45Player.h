@@ -87,8 +87,11 @@ protected:
 	size_t current_charged_damage_index = 0;
 	size_t current_fire_rate_index = 0;
 	size_t current_fire_cooldown_index = 0;
+	size_t current_dash_cooldown_index = 0;
+	size_t current_dash_distance_index = 0;
 
 	float fire_timer = 0.0f; 
+	float dash_timer = 0.0f; 
 
 	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
 	chaos::BitmapAtlas::BitmapLayout fire_bitmap_layout;

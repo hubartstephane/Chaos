@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1911">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background3"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="800"/>
   <property name="LEVEL_TITLE" value="Level 3 - [LEVELTITLE The END]"/>
+  <property name="MUSIC" value="game_music3"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>

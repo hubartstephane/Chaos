@@ -17,9 +17,11 @@
 
   "sources": [
 
-    { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
+    { "path": "sounds/game_music1.ogg" , "categories" :  "music"},
+    { "path": "sounds/game_music2.ogg" , "categories" :  "music"},
+    { "path": "sounds/game_music3.ogg" , "categories" :  "music"},
     { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
-    { "path": "sounds/game_music.ogg" , "categories" :  "music"},
+    { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
     { "path": "sounds/gameover.ogg" , "categories" :  "FX"},
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
     { "path": "sounds/fire.ogg" , "categories" :  "FX"},

@@ -14,6 +14,7 @@
   "player_fire_rates": [ 1, 3, 5, 7 ],
 
   "player_speed_factor": 2500.0,
+  "player_acceleration_factor": 250.0,
   "player_speed_damping": 0.2
 
 }

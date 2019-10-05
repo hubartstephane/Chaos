@@ -218,6 +218,10 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 	if (event_type != death::TiledMap::TriggerObject::COLLISION_STARTED)
 		return false;
 
+
+
+	// shuludm : see if this can be refactored
+
 	// search the layer for enemies
 	death::TiledMap::LayerInstance * enemy_layer_instance = GetLayerInstance()->GetTiledLevelInstance()->FindLayerInstance("Enemies");
 	if (enemy_layer_instance == nullptr)
@@ -238,12 +242,8 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 	if (bitmap_set == nullptr)
 		return true;
 	
-	// create the particle layer if necessary
-	if (enemy_layer_instance->CreateParticleLayer() == nullptr)
-		return true;
-
 	// create an allocation for all enemies we are about to create
-	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->CreateParticleAllocation();
+	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->CreateParticleAllocation(0);
 	if (allocation == nullptr)
 		return true;
 

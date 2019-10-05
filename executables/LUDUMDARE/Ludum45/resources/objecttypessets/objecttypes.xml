@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objecttypes>
+ <objecttype name="BonusSpawner" color="#ffff00">
+  <property name="BONUS_SPAWNER" type="bool" default="true"/>
+  <property name="BONUS_TYPE" type="string" default=""/>
+ </objecttype>
  <objecttype name="Camera" color="#ff00ff">
   <property name="CAMERA" type="bool" default="true"/>
  </objecttype>
- <objecttype name="BonusSpawner" color="#ffff00">
-  <property name="BONUS_SPAWNER" type="bool" default="true"/>
-  <property name="BonusType" type="string" default=""/>
- </objecttype> 
+ <objecttype name="Checkpoint" color="#a4970a"/>
  <objecttype name="EnemySpawner" color="#5500ff">
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string"/>
- </objecttype> 
- <objecttype name="Checkpoint" color="#a4970a"/>
+ </objecttype>
  <objecttype name="Notification" color="#34a404">
   <property name="LIFETIME" type="float" default="5"/>
   <property name="NOTIFICATION" type="string" default="toto"/>

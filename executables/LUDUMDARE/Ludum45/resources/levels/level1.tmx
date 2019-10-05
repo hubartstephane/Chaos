@@ -8,7 +8,7 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <objectgroup id="19" name="Test">
+ <objectgroup id="19" name="Bonus">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>

@@ -25,12 +25,56 @@ bool BonusSpawnerTriggerObject::Initialize()
 {
 	if (!death::TiledMap::TriggerObject::Initialize())
 		return false;
+	trigger_once = true;
 
+	bonus_type = geometric_object->FindPropertyString("BONUS_TYPE", "");
 	return true;
 }
 
 bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 {
+	if (event_type != TriggerObject::COLLISION_STARTED)
+		return false;
+
+
+
+	// search the layer for bonus
+	death::TiledMap::LayerInstance * bonus_layer_instance = GetLayerInstance()->GetTiledLevelInstance()->FindLayerInstance("Bonus");
+	if (bonus_layer_instance == nullptr)
+		return true;
+
+	// search the atlas
+	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = bonus_layer_instance->GetGame()->GetTextureAtlas();
+	if (atlas == nullptr)
+		return true;
+
+	// cast in a surface
+	chaos::TiledMap::GeometricObjectSurface const * surface = geometric_object->GetObjectSurface();
+	if (surface == nullptr)
+		return true;
+
+	// search BitmapLayout for Enemy
+	chaos::BitmapAtlas::FolderInfo const * bitmap_set = atlas->GetFolderInfo("sprites");
+	if (bitmap_set == nullptr)
+		return true;
+
+	// create an allocation for all bonus we are about to create
+	chaos::ParticleAllocationBase * allocation = bonus_layer_instance->CreateParticleAllocation();
+	if (allocation == nullptr)
+		return true;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -85,6 +129,14 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		ParticleFireTrait::LayerTrait fire_trait;
 		fire_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticleFireTrait>(fire_trait);
+	}
+
+	bool is_bonus = (chaos::StringTools::Stricmp(layer_name, "bonus") == 0);
+	if (is_bonus)
+	{
+		ParticleBonusTrait::LayerTrait bonus_trait;
+		bonus_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleBonusTrait>(bonus_trait);
 	}
 
 #if 0

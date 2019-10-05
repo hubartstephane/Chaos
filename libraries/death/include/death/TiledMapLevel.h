@@ -546,7 +546,7 @@ namespace death
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
 			/** create a particle allocation for the layer */
-			chaos::ParticleAllocationBase * CreateParticleAllocation();
+			chaos::ParticleAllocationBase * CreateParticleAllocation(size_t count);
 			/** create the particle layer if required */
 			chaos::ParticleLayerBase * CreateParticleLayer();
 

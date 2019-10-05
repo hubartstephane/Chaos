@@ -34,6 +34,10 @@ protected:
 
 	/** override */
 	virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+
+protected:
+
+	std::string bonus_type;
 };
 
 

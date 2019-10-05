@@ -37,6 +37,35 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 }
 
 // ===========================================================================
+// ParticleBonusTrait
+// ===========================================================================
+
+size_t ParticleBonusTrait::ParticleToVertices(ParticleBonus const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+{
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices);
+	// copy the color in all triangles vertex
+	for (size_t i = 0 ; i < 6 ; ++i)
+		vertices[i].color =  p->color;
+
+	return vertices_per_particle;
+}
+
+
+bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, LayerTrait const * layer_trait) const
+{
+
+
+
+
+	return false;
+}
+
+
+
+
+
+// ===========================================================================
 // ParticlePlayerTrait
 // ===========================================================================
 

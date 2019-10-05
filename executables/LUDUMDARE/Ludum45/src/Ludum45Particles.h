@@ -30,6 +30,40 @@ public:
 
 };
 
+
+// ===========================================================================
+// ParticleBonus
+// ===========================================================================
+
+class ParticleBonus : public death::TiledMap::TileParticle
+{
+public:
+
+	
+
+
+};
+
+class ParticleBonusTrait : public chaos::ParticleAllocationTrait<ParticleBonus, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
+
+	bool UpdateParticle(float delta_time, ParticleBonus * particle, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleBonus const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+};
+
+
+
 // ===========================================================================
 // ParticlePlayer
 // ===========================================================================

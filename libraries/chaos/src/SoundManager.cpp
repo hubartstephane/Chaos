@@ -685,7 +685,7 @@ namespace chaos
 		float effective_volume = GetEffectiveVolume();
 
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-Mute"))
+		if (Application::HasApplicationCommandLineFlag("-Mute")) // CMDLINE
 			effective_volume = 0.0f;
 #endif
 		// play sound
@@ -742,7 +742,7 @@ namespace chaos
 	void Sound::DoUpdateEffectiveVolume(float effective_volume)
 	{
 #if _DEBUG
-		if (Application::HasApplicationCommandLineFlag("-Mute"))
+		if (Application::HasApplicationCommandLineFlag("-Mute")) // CMDLINE
 			effective_volume = 0.0f;
 #endif
 		if (irrklang_sound != nullptr)

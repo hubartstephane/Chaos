@@ -323,12 +323,12 @@
   </object>
   <object id="1924" name="Notification" type="Notification" x="-20160" y="7680" width="10176" height="9728"/>
  </objectgroup>
- <objectgroup id="12" name="Enemies" visible="0" locked="1">
+ <objectgroup id="12" name="Enemies" locked="1">
   <properties>
    <property name="MATERIAL" value="enemy"/>
   </properties>
  </objectgroup>
- <objectgroup id="13" name="fire" visible="0" locked="1">
+ <objectgroup id="13" name="fire" locked="1">
   <properties>
    <property name="MATERIAL" value="fire"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>

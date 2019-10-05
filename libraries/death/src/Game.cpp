@@ -46,7 +46,7 @@ namespace death
 
 	bool Game::GetCheatMode() const
 	{
-		if (chaos::Application::HasApplicationCommandLineFlag("-CheatMode"))
+		if (chaos::Application::HasApplicationCommandLineFlag("-CheatMode")) // CMDLINE
 			return true;
 		if (IsFreeCameraMode())
 			return true;
@@ -800,7 +800,7 @@ namespace death
 		assert(music_name != nullptr);
 
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))
+		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
 			return nullptr;
 #endif
 		
@@ -1064,7 +1064,7 @@ namespace death
 	{
 		// start the music
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))
+		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
 			menu_music = nullptr;
 		else
 #endif
@@ -1102,7 +1102,7 @@ namespace death
 	{
 		// start sound
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic"))
+		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
 			pause_music = nullptr;
 		else
 #endif

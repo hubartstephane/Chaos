@@ -63,7 +63,7 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
-	bool is_player_and_camera = (layer_name == "PlayerAndCamera");
+	bool is_player_and_camera = (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0);
 	if (is_player_and_camera)
 	{
 		ParticlePlayerTrait::LayerTrait layer_trait;
@@ -71,7 +71,7 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
 	}
 
-	bool is_fire = (layer_name == "fire");
+	bool is_fire = (chaos::StringTools::Stricmp(layer_name, "fire") == 0);
 	if (is_fire)
 	{
 		ParticleFireTrait::LayerTrait fire_trait;
@@ -79,7 +79,7 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticleFireTrait>(fire_trait);
 	}
 
-	bool is_explosion = (layer_name == "Explosions");
+	bool is_explosion = (chaos::StringTools::Stricmp(layer_name, "Explosions") == 0);
 	if (is_explosion)
 	{
 		ParticleExplosionTrait::LayerTrait explosion_trait;
@@ -87,13 +87,13 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticleExplosionTrait>(explosion_trait);
 	}
 
-	bool is_zone = (layer_name == "Zones");
+	bool is_zone = (chaos::StringTools::Stricmp(layer_name, "Zones") == 0);
 	if (is_zone)
 	{
 		return new chaos::ParticleLayer<PowerUpZoneParticleTrait>();
 	}
 
-	bool is_enemies = (layer_name == "Enemies");
+	bool is_enemies = (chaos::StringTools::Stricmp(layer_name, "Enemies") == 0);
 	if (is_enemies)
 	{
 		ParticleEnemyTrait::LayerTrait enemy_trait;

@@ -273,7 +273,7 @@ namespace chaos
 
 	void WINAPI GLTools::DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{
-		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Application::HasApplicationCommandLineFlag("-GLDebugNotifications"))
+		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Application::HasApplicationCommandLineFlag("-GLDebugNotifications")) // CMDLINE
 		{
 			char const * source_str = GLenumToString(source);
 			char const * type_str = GLenumToString(type);
@@ -288,7 +288,7 @@ namespace chaos
 			//DebugTools::DisplayCallStack(std::cout);
 
 #if _WIN32 || _WIN64
-			if (Application::HasApplicationCommandLineFlag("-GLDebugBreak"))
+			if (Application::HasApplicationCommandLineFlag("-GLDebugBreak")) // CMDLINE
 				DebugBreak();
 #endif
 		}

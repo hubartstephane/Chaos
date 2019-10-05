@@ -20,6 +20,9 @@ class LudumPlayer : public death::Player
 
 public:
 
+	friend class ParticleFireTrait;
+
+
 	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
 
 	/** constructor */
@@ -55,17 +58,29 @@ protected:
 
 
 	void UpdatePlayerAcceleration(double delta_time);
-
-
-	/** check whether some inputs are pressed */
+	void UpdatePlayerFire(double delta_time);
 	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
+	void OnDamagedReceived(float damage);
+
+	ParticleFire * FireProjectile();
+	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity);
 
 
 protected:
+
+	std::vector<shared_ptr<PlayerUpgrade>> upgrades;
+
+
 
 	size_t current_speed_index = 0;
 	size_t current_damage_index = 0;
 	size_t current_charged_damage_index = 0;
 	size_t current_fire_rate_index = 0;
+	size_t current_fire_cooldown_index = 0;
+
+	float fire_timer = 0.0f; 
+
+	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
+	chaos::BitmapAtlas::BitmapLayout fire_bitmap_layout;
 
 };

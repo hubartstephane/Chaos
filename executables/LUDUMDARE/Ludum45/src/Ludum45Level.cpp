@@ -41,13 +41,41 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
-	bool is_player_and_camera = (layer_name == "PlayerAndCamera");
+	bool is_player_and_camera = (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0);
 	if (is_player_and_camera)
 	{
 		ParticlePlayerTrait::LayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
 	}
+
+	bool is_fire = (chaos::StringTools::Stricmp(layer_name, "fire") == 0);
+	if (is_fire)
+	{
+		ParticleFireTrait::LayerTrait fire_trait;
+		fire_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleFireTrait>(fire_trait);
+	}
+
+#if 0
+	bool is_enemies = (layer_name == "Enemies");
+	if (is_enemies)
+	{
+		ParticleEnemyTrait::LayerTrait enemy_trait;
+		enemy_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
+	}
+#endif
+
+
+
+
+
+
+
+
+
+
 
 
 

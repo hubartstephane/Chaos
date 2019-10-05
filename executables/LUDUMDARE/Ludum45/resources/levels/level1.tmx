@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1924">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="19" nextobjectid="1924">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -8,6 +8,16 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
+ <objectgroup id="18" name="Enemies">
+  <properties>
+   <property name="MATERIAL" value="Enemy"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="16" name="Fire">
+  <properties>
+   <property name="MATERIAL" value="Fire"/>
+  </properties>
+ </objectgroup>
  <objectgroup id="14" name="PlayerAndCamera" locked="1">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>

@@ -53,12 +53,12 @@ namespace chaos
 		boost::filesystem::path user_temp = CreateUserLocalTempDirectory(); // XXX : this directory is necessary for some per application data
 #if _DEBUG
 		// display the directories to help debugging
-		bool dump_config = HasCommandLineFlag("-DumpConfigFile");
+		bool dump_config = HasCommandLineFlag("-DumpConfigFile"); // CMDLINE
 		if (dump_config)
 			JSONTools::DumpConfigFile(configuration);
-		if (dump_config || HasCommandLineFlag("-ShowDirectories") || HasCommandLineFlag("-ShowUserTempDirectory"))
+		if (dump_config || HasCommandLineFlag("-ShowDirectories") || HasCommandLineFlag("-ShowUserTempDirectory")) // CMDLINE
 			WinTools::ShowFile(user_temp);
-		if (HasCommandLineFlag("-ShowDirectories") || HasCommandLineFlag("-ShowInstalledResourcesDirectory"))
+		if (HasCommandLineFlag("-ShowDirectories") || HasCommandLineFlag("-ShowInstalledResourcesDirectory")) // CMDLINE
 			WinTools::ShowFile(GetResourcesPath()); 			
 #endif
 		return true;

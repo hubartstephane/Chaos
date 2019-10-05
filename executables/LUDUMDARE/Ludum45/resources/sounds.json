@@ -22,6 +22,7 @@
     { "path": "sounds/game_music.ogg" , "categories" :  "music"},
     { "path": "sounds/gameover.ogg" , "categories" :  "FX"},
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
+    { "path": "sounds/fire.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},
     { "path": "sounds/heartbeat.ogg" , "categories" :  "FX"}
   ]

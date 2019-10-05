@@ -12,9 +12,11 @@
   "player_damages": [ 0.5, 1.0, 1.5, 2.0 ],
   "player_charged_damages": [ 10.0, 15.0, 20.0, 25.0 ],
   "player_fire_rates": [ 1, 3, 5, 7 ],
+  "player_fire_cooldowns": [ 1, 0.5, 0.3, 0.1 ],
 
   "player_speed_factor": 2500.0,
   "player_acceleration_factor": 250.0,
-  "player_speed_damping": 0.2
+  "player_speed_damping": 0.05,
+  "fire_velocity": 10000
 
 }

@@ -13,6 +13,32 @@
 #include "Ludum45Game.h"
 
 
+// =================================================
+// BonusSpawnerTriggerObject
+// =================================================
+
+class BonusSpawnerTriggerObject : public death::TiledMap::TriggerObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using TriggerObject::TriggerObject;
+	/** override */
+	virtual bool IsAdditionalParticlesCreationEnabled() const override;
+	/** override */
+	virtual bool Initialize() override;
+
+protected:
+
+	/** override */
+	virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+};
+
+
+
+
 
 
 // =================================================

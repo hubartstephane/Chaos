@@ -9,6 +9,36 @@
 #include <chaos/GeometryFramework.h>
 
 
+// =============================================================
+// LudumLevel implementation
+// =============================================================
+
+
+bool BonusSpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
+{
+
+
+	return true;
+}
+
+bool BonusSpawnerTriggerObject::Initialize()
+{
+	if (!death::TiledMap::TriggerObject::Initialize())
+		return false;
+
+	return true;
+}
+
+bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+{
+
+
+
+
+	return true;
+}
+
+
 
 // =============================================================
 // LudumLevel implementation
@@ -91,11 +121,16 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 
 	if (surface_object != nullptr)
 	{
+		if (chaos::TiledMapTools::HasFlag(surface_object, nullptr, nullptr, "BONUS_SPAWNER")) // shuludum : it is better to rely on a type of an object that to rely on its name
+			return new BonusSpawnerTriggerObject(in_layer_instance, surface_object);          //            here we test for the property 'BONUS_SPAWNER' . Maybe the cleaner. Beware HasFlag method does not recurse like FindPropery(...)
+
+
+
+
 
 	}
 	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
-
 
 bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle)
 {

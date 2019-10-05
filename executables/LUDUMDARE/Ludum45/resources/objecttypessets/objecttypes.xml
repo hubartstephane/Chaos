@@ -3,6 +3,14 @@
  <objecttype name="Camera" color="#ff00ff">
   <property name="CAMERA" type="bool" default="true"/>
  </objecttype>
+ <objecttype name="BonusSpawner" color="#ffff00">
+  <property name="BONUS_SPAWNER" type="bool" default="true"/>
+  <property name="BonusType" type="string" default=""/>
+ </objecttype> 
+ <objecttype name="EnemySpawner" color="#5500ff">
+  <property name="ENEMY_SPAWNER" type="bool" default="true"/>
+  <property name="ENEMY_TYPE" type="string"/>
+ </objecttype> 
  <objecttype name="Checkpoint" color="#a4970a"/>
  <objecttype name="Notification" color="#34a404">
   <property name="LIFETIME" type="float" default="5"/>

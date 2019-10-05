@@ -118,7 +118,7 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			dash_timer = ludum_game->player_dash_duration;
 			dash_cooldown = ludum_game->player_dash_cooldown;			
 		}
-	//	dash_locked = true; // dash is locked until the key is released
+		dash_locked = true; // dash is locked until the key is released
 	}
 	else
 	{
@@ -185,8 +185,8 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			input_factor * input_max_velocity * direction 
 			+
 			dash_velocity_boost * direction
-			;//+ 
-			//tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
+			+ 
+			tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
 	}
 	else
 		player_velocity *= powf(ludum_game->player_speed_damping, dt);

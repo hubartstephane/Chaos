@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="19" nextobjectid="1924">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="1927">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -8,6 +8,15 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
+ <objectgroup id="19" name="Test">
+  <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
+  </properties>
+  <object id="1924" name="BonusSpawner" gid="1" x="4040" y="11548" width="1176" height="1244"/>
+  <object id="1925" gid="1" x="6272" y="10784" width="128" height="128"/>
+  <object id="1926" gid="1" x="8416" y="10976" width="128" height="128"/>
+ </objectgroup>
  <objectgroup id="18" name="Enemies">
   <properties>
    <property name="MATERIAL" value="Enemy"/>

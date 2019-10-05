@@ -576,7 +576,7 @@ namespace chaos
 		Property * GeometricObjectTile::FindProperty(char const * name, int type_id)
 		{
 			Property * result = GeometricObjectSurface::FindProperty(name, type_id);
-			if (result == nullptr && !StringTools::IsEmpty(type))
+			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
 			{
 				Map * tiled_map = GetMap();
 				if (tiled_map != nullptr)
@@ -592,7 +592,7 @@ namespace chaos
 		Property const * GeometricObjectTile::FindProperty(char const * name, int type_id) const 
 		{
 			Property const * result = GeometricObjectSurface::FindProperty(name, type_id);
-			if (result == nullptr && !StringTools::IsEmpty(type))
+			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
 			{
 				Map const * tiled_map = GetMap();
 				if (tiled_map != nullptr)

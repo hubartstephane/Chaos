@@ -40,6 +40,59 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 // ParticleBonusTrait
 // ===========================================================================
 
+#if 0
+
+static void FindBonusOnMap(LudumGame * game, std::vector<ParticleBonus*> & result)
+{
+	// get the enemies
+	death::TiledMap::LayerInstance * layer_instance = game->GetLudumLevelInstance()->FindLayerInstance("Bonus");
+	if (layer_instance != nullptr)
+	{
+		chaos::ParticleLayerBase * layer = layer_instance->GetParticleLayer();
+		if (layer != nullptr)
+		{
+			size_t allocation_count = layer->GetAllocationCount();
+			for (size_t i = 0 ; i < allocation_count ; ++i)
+			{
+				chaos::ParticleAllocationBase * allocation = layer->GetAllocation(i);
+				if (allocation != nullptr)
+				{
+					chaos::ParticleAccessor<ParticleBonus> bonus = allocation->GetParticleAccessor<ParticleBonus>();
+					size_t count = bonus.GetCount();
+					for (size_t j = 0 ; j < count ; ++j)
+						result.push_back(&bonus[j]);
+				}				
+			}			
+		}
+	}
+}
+
+#endif
+
+
+chaos::box2 ParticleBonusTrait::BeginUpdateParticles(float delta_time, ParticleBonus * particle, size_t count, LayerTrait const * layer_trait) const
+{
+	chaos::box2 result;
+
+	result = layer_trait->game->GetPlayer(0)->GetPlayerBox();
+
+#if 0
+	ParticleFireUpdateData result;
+	if (count > 0)
+	{
+		// get the camera box 
+		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
+		//result.camera_box.half_size *= 3.0f;
+		// get the enemies
+		FindEnemiesOnMap(layer_trait->game, result.enemies);
+		// get the players
+		result.player = layer_trait->game->GetLudumPlayer(0);
+	}
+#endif
+	return result;
+}
+
+
 size_t ParticleBonusTrait::ParticleToVertices(ParticleBonus const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
 	// generate particle corners and texcoords
@@ -52,12 +105,19 @@ size_t ParticleBonusTrait::ParticleToVertices(ParticleBonus const * p, VertexBas
 }
 
 
-bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, LayerTrait const * layer_trait) const
+bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
 {
+	chaos::box2 bb = particle->bounding_box;
+	bb.half_size *= 0.70f;
 
+	if (chaos::Collide(bb, player_box))
+	{
+		LudumPlayer * ludum_player = auto_cast(layer_trait->game->GetPlayer(0));
+		if (ludum_player != nullptr)
+			ludum_player->OnPlayerUpgrade(particle->bonus_type);
 
-
-
+		return true;
+	}
 	return false;
 }
 

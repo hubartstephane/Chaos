@@ -35,6 +35,7 @@ public:
 // ParticleBonus
 // ===========================================================================
 
+
 class ParticleBonus : public death::TiledMap::TileParticle
 {
 public:
@@ -55,8 +56,10 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
+	chaos::box2 BeginUpdateParticles(float delta_time, ParticleBonus * particle, size_t count, LayerTrait const * layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleBonus * particle, LayerTrait const * layer_trait) const;
+
+	bool UpdateParticle(float delta_time, ParticleBonus * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const;
 
 	size_t ParticleToVertices(ParticleBonus const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 

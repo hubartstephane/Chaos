@@ -150,7 +150,6 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	if (surface == nullptr)
 		return true;
 	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo(bonus_name.c_str());
-	//chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo("upgrade_view");
 	if (bitmap_info == nullptr)
 		return true;
 

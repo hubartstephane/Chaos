@@ -21,6 +21,7 @@ class LudumPlayer : public death::Player
 
 public:
 
+	friend class ParticleBonusTrait;
 	friend class ParticlePlayerTrait;
 	friend class ParticleFireTrait;
 	friend class GameHUDUpgradeComponent;

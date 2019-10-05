@@ -62,7 +62,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 GameHUDUpgradeComponent::GameHUDUpgradeComponent(chaos::TagType in_layer_id) :
 	death::GameHUDCacheValueComponent<std::string>("%s", std::string(), in_layer_id) 
 {
-	generator_params.line_height = 80.0f;
+	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(-40.0f, 100.0f);
 	generator_params.hotpoint_type = chaos::Hotpoint::BOTTOM_RIGHT;

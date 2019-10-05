@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="1927">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="1951">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="800"/>
-  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Hello World] [1 [VIEW]][2 [FIRE]][3 [GHOST]][4 [DASH]][SPECIALFIRE]"/>
+  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Hello World] [1 [VIEW]][2 [POWER]][3 [GHOST]][4 [DASH]][SPECIALPOWER]"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
@@ -15,7 +15,35 @@
   </properties>
   <object id="1924" name="BonusSpawner" gid="1" x="4040" y="11548" width="1176" height="1244"/>
   <object id="1925" gid="1" x="6272" y="10784" width="128" height="128"/>
-  <object id="1926" gid="1" x="8416" y="10976" width="128" height="128"/>
+  <object id="1926" gid="1" x="8416" y="10976" width="128" height="128" visible="0"/>
+  <object id="1927" gid="2" x="6190.42" y="10252.7" width="458.788" height="365.333">
+   <properties>
+    <property name="KEEP_ASPECT_RATIO" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="1928" gid="3" x="7563.27" y="11397.3" width="128" height="128"/>
+  <object id="1929" gid="4" x="7854.18" y="11657.9" width="128" height="128"/>
+  <object id="1930" gid="5" x="8205.7" y="11976.1" width="128" height="128"/>
+  <object id="1931" gid="1" x="7020" y="9704" width="128" height="128"/>
+  <object id="1932" gid="1" x="6968" y="9304" width="128" height="128"/>
+  <object id="1933" gid="1" x="7412" y="9312" width="128" height="128"/>
+  <object id="1934" gid="1" x="7800" y="9328" width="128" height="128"/>
+  <object id="1935" gid="2" x="6116" y="9512" width="128" height="128"/>
+  <object id="1936" gid="2" x="6032" y="9224" width="128" height="128"/>
+  <object id="1937" gid="2" x="5688" y="9220" width="128" height="128"/>
+  <object id="1938" gid="2" x="5396" y="9220" width="128" height="128"/>
+  <object id="1939" gid="3" x="5800" y="11664" width="128" height="128"/>
+  <object id="1940" gid="3" x="6084" y="11672" width="128" height="128"/>
+  <object id="1941" gid="3" x="6508" y="11656" width="128" height="128"/>
+  <object id="1942" gid="3" x="6540" y="11320" width="128" height="128"/>
+  <object id="1943" gid="4" x="7236" y="10468" width="128" height="128"/>
+  <object id="1944" gid="4" x="7300" y="10700" width="128" height="128"/>
+  <object id="1945" gid="4" x="7216" y="10960" width="128" height="128"/>
+  <object id="1946" gid="4" x="7472" y="10460" width="128" height="128"/>
+  <object id="1947" gid="5" x="7000" y="11948" width="128" height="128"/>
+  <object id="1948" gid="5" x="7240" y="11964" width="128" height="128"/>
+  <object id="1949" gid="5" x="7624" y="11944" width="128" height="128"/>
+  <object id="1950" gid="5" x="7624" y="12200" width="128" height="128"/>
  </objectgroup>
  <objectgroup id="18" name="Enemies">
   <properties>

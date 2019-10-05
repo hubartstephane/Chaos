@@ -22,6 +22,9 @@ namespace death
 		// LayerInstanceParticlePopulator : utility class to generate particles for a layer with a cache
 		// =====================================
 
+
+		// shuludum : can be templated ?
+
 		class LayerInstanceParticlePopulator
 		{
 			static size_t const PARTICLE_BUFFER_SIZE = 100;

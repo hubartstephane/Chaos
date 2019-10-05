@@ -8,6 +8,101 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
 
+#include <death/TiledMapLevel.h>
+
+
+
+
+// =============================================================
+// LayerParticleSpawnerBase
+// =============================================================
+
+
+class LayerParticleSpawnerBase // shuludum : to include natively inside death & chaos
+{
+
+public:
+
+	bool Initialize(death::TiledMap::LayerInstance * layer_instance, char const * layer_name, size_t count);
+
+public:
+
+
+	chaos::TiledMap::GeometricObjectSurface const * surface = nullptr;
+
+	death::TiledMap::LayerInstance * layer_instance = nullptr;
+
+	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = nullptr;
+
+	chaos::BitmapAtlas::FolderInfo const * bitmap_set = nullptr;
+
+	chaos::ParticleAllocationBase * allocation = nullptr;
+};
+
+bool LayerParticleSpawnerBase::Initialize(death::TiledMap::LayerInstance * in_layer_instance, char const * layer_name, size_t count)
+{
+	// get the final layer (by default, the same than the one in argument)
+	if (in_layer_instance != nullptr && layer_name != nullptr)
+		in_layer_instance = in_layer_instance->GetTiledLevelInstance()->FindLayerInstance(layer_name);
+	layer_instance = in_layer_instance;
+	if (layer_instance == nullptr)
+		return false;
+	// search the atlas
+	atlas = layer_instance->GetGame()->GetTextureAtlas();
+	if (atlas == nullptr)
+		return false;
+	// search the bitmap set
+	bitmap_set = atlas->GetFolderInfo("sprites");
+	if (bitmap_set == nullptr)
+		return false;
+	// create the allocation
+	allocation = layer_instance->CreateParticleAllocation(count);
+	if (allocation == nullptr)
+		return false;
+
+
+	return true;
+}
+
+
+// -------------------------------------------------------------------
+
+
+
+template<typename PARTICLE_TYPE>
+class LayerParticleSpawner : public LayerParticleSpawnerBase
+{
+
+public:
+
+	/** constructor */
+	using LayerParticleSpawnerBase::LayerParticleSpawnerBase;
+
+	/** getter for the accessor */
+	chaos::ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor()
+	{
+		if (allocation != nullptr)
+			return allocation->GetParticleAccessor<PARTICLE_TYPE>();
+		return chaos::ParticleAccessor<PARTICLE_TYPE>();
+	}
+};
+
+// -------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // =============================================================
 // LudumLevel implementation
@@ -18,7 +113,7 @@ bool BonusSpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
 {
 
 
-	return true;
+	return false;
 }
 
 bool BonusSpawnerTriggerObject::Initialize()
@@ -31,48 +126,44 @@ bool BonusSpawnerTriggerObject::Initialize()
 	return true;
 }
 
+
+// -------------------------------------------------------------------
+
+
+
+
+
+
 bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
 
-
-
-	// search the layer for bonus
-	death::TiledMap::LayerInstance * bonus_layer_instance = GetLayerInstance()->GetTiledLevelInstance()->FindLayerInstance("Bonus");
-	if (bonus_layer_instance == nullptr)
+	// prepare the spawner
+	LayerParticleSpawner<ParticleBonus> spawner;
+	if (!spawner.Initialize(GetLayerInstance(), "Bonus", 1))
 		return true;
-
-	// search the atlas
-	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = bonus_layer_instance->GetGame()->GetTextureAtlas();
-	if (atlas == nullptr)
-		return true;
-
 	// cast in a surface
 	chaos::TiledMap::GeometricObjectSurface const * surface = geometric_object->GetObjectSurface();
 	if (surface == nullptr)
 		return true;
-
-	// search BitmapLayout for Enemy
-	chaos::BitmapAtlas::FolderInfo const * bitmap_set = atlas->GetFolderInfo("sprites");
-	if (bitmap_set == nullptr)
+	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo("upgrade_view");
+	if (bitmap_info == nullptr)
 		return true;
 
-	// create an allocation for all bonus we are about to create
-	chaos::ParticleAllocationBase * allocation = bonus_layer_instance->CreateParticleAllocation();
-	if (allocation == nullptr)
-		return true;
+	// prepare the particles
+	chaos::ParticleAccessor<ParticleBonus> particles = spawner.GetParticleAccessor();
+
+
+	ParticleBonus & p = particles[0];
 
 
 
+	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
 
-
-
-
-
-
-
-
+	particles[0].bounding_box = surface->GetBoundingBox(false);
+	particles[0].texcoords = texcoords;
+	particles[0].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
 
 
 

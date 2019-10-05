@@ -20,5 +20,5 @@
 
   "player_dash_velocity_boost": 8000,
   "player_dash_cooldown": 0.5,
-  "player_dash_duration": 0.1
+  "player_dash_duration": 0.2
 }

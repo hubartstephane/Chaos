@@ -99,55 +99,50 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	if (player_particle == nullptr)
 		return;
 
+	// update dash timer
+	dash_timer -= dt;
+	if (dash_timer < 0.0f)
+		dash_timer = 0.0f;
+	dash_cooldown -= dt;
+	if (dash_cooldown < 0.0f)
+		dash_cooldown = 0.0f;
 
-	
-
-
-
+	// get the dash input 
 	int const dash_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
 	bool dash_pressed = CheckButtonPressed(dash_key_buttons, chaos::MyGLFW::XBOX_BUTTON_B);
 
-	float max_velocity = ludum_game->player_speed_factor;
+	if (dash_pressed)
+	{
+		if (dash_cooldown <= 0.0f && !dash_locked)
+		{
+			dash_timer = ludum_game->player_dash_duration;
+			dash_cooldown = ludum_game->player_dash_cooldown;			
+		}
+	//	dash_locked = true; // dash is locked until the key is released
+	}
+	else
+	{
+		dash_locked = false;	
+	}
+
+	// compute max velocity and extra dash boost
+	float input_max_velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor;
+	float max_velocity       = input_max_velocity;
+
 	float dash_velocity_boost = 0.0f;
 
-	bool dashing = false;
-	if (dash_pressed)
+	bool dashing = (dash_timer > 0.0f);
+	if (dashing)
 	{
 		max_velocity += ludum_game->player_dash_velocity_boost;
 		dash_velocity_boost = ludum_game->player_dash_velocity_boost;
-		dashing = true;
 	}
 
-	
-#if 0
-	
-
-	fire_timer -= (float)delta_time;
-	if (fire_timer < 0.0f)
-		fire_timer = 0.0f;
 
 
-#endif
+	glm::vec2 player_velocity = player_particle->velocity;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	// update the player
 	float left_length_2 = glm::length2(left_stick_position);	
 	float right_length_2 = glm::length2(right_stick_position);
 	if (left_length_2 > 0.0f || right_length_2 > 0.0f || dashing)
@@ -178,8 +173,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			
 	
 		// split current velocity into normal and its tangeantial
-		glm::vec2 player_velocity = player_particle->velocity;
-
 		glm::vec2 normal_velocity      = glm::vec2(0.0f, 0.0f);
 		glm::vec2 tangeantial_velocity = glm::vec2(0.0f, 0.0f);
 		if (glm::length2(player_velocity) > 0.0f)
@@ -189,37 +182,20 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 		}
 	
 		player_velocity = 
-			input_factor * ludum_game->player_speeds[current_speed_index] * ludum_game->player_acceleration_factor * direction 
+			input_factor * input_max_velocity * direction 
 			+
-			direction * dash_velocity_boost
-			+ 
-			tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
-
-		// clamp the final velocity		
-		float len = glm::length(player_velocity);
-		if (len > max_velocity)
-			player_velocity *= ludum_game->player_speed_factor / len;
-		player_particle->velocity = player_velocity;
-		
-
+			dash_velocity_boost * direction
+			;//+ 
+			//tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
 	}
 	else
-		player_particle->velocity *= powf(ludum_game->player_speed_damping, dt);
+		player_velocity *= powf(ludum_game->player_speed_damping, dt);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	// clamp the final velocity		
+	float len = glm::length(player_velocity);
+	if (len > max_velocity)
+		player_velocity *= max_velocity / len;
+	player_particle->velocity = player_velocity;
 
 	// displace the player
 	player_particle->bounding_box.position += dt * player_particle->velocity;

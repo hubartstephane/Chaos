@@ -21,6 +21,7 @@ class LudumPlayer : public death::Player
 
 public:
 
+	friend class ParticlePlayerTrait;
 	friend class ParticleFireTrait;
 	friend class GameHUDUpgradeComponent;
 
@@ -92,6 +93,9 @@ protected:
 
 	float fire_timer = 0.0f; 
 	float dash_timer = 0.0f; 
+	float dash_cooldown = 0.0f; 
+
+	bool  dash_locked = false; // locked until key is released
 
 	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
 	chaos::BitmapAtlas::BitmapLayout fire_bitmap_layout;

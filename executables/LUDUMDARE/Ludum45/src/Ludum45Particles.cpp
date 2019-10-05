@@ -44,9 +44,19 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices, p->orientation);
+
+	glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	LudumPlayer const * player = layer_trait->game->GetLudumPlayer(0);
+	if (player != nullptr && player->dash_timer > 0.0f)
+		boost_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+
+
+
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
-		vertices[i].color = p->color;
+		vertices[i].color = boost_color * p->color;
 
 	return vertices_per_particle;
 }

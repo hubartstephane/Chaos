@@ -60,7 +60,7 @@ bool LudumGame::DeclareParticleClasses()
 	if (!Game::DeclareParticleClasses())
 		return false;
 	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleBase>("ParticlePlayer");
-	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleBase>("ParticleFire");
+	chaos::ClassTools::DeclareClass<ParticleFire, ParticleBase>("ParticleFire");
 
 
 

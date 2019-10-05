@@ -19,6 +19,14 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 {
 }
 
+bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
+{
+	if (!death::Player::Initialize(in_game_instance))
+		return false;
+	RegisterUpgrades();
+	return true;
+}
+
 ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {
 	if (player_allocations == nullptr)
@@ -226,9 +234,56 @@ void LudumPlayer::OnDamagedReceived(float damage)
 
 void LudumPlayer::RegisterUpgrades()
 {
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::VIEW_ID, "upgrade_view"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::FIRE_ID, "upgrade_fire"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH_ID, "upgrade_dash"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALFIRE_ID, "upgrade_specialfire"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST_ID, "upgrade_ghost"));
+};
 
+
+PlayerUpgrade * LudumPlayer::FindPlayerUpgrade(chaos::TagType upgrade_type)
+{
+	size_t count = upgrades.size();
+	for (size_t i = 0 ; i < count ; ++i)
+	{
+		PlayerUpgrade * upgrade = upgrades[i].get();
+		if (upgrade == nullptr)
+			continue;
+		if (upgrade->type == upgrade_type)
+			return upgrade;	
+	}
+	return nullptr;
 }
 
+PlayerUpgrade const * LudumPlayer::FindPlayerUpgrade(chaos::TagType upgrade_type) const
+{
+	size_t count = upgrades.size();
+	for (size_t i = 0 ; i < count ; ++i)
+	{
+		PlayerUpgrade const * upgrade = upgrades[i].get();
+		if (upgrade == nullptr)
+			continue;
+		if (upgrade->type == upgrade_type)
+			return upgrade;	
+	}
+	return nullptr;
+}
+
+std::string LudumPlayer::GetPlayerUpgradeString() const
+{
+	std::string result;
+
+	size_t count = upgrades.size();
+	for (size_t i = 0 ; i < count ; ++i)
+	{
+		PlayerUpgrade const * upgrade = upgrades[i].get();
+		if (upgrade == nullptr || upgrade->level <= 0)
+			continue;
+		result += "[" + upgrade->GetBitmapName() + "]";
+	}
+	return result;
+}
 
 
 

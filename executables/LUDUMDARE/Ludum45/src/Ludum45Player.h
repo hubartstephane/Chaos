@@ -39,6 +39,8 @@ public:
 protected:
 
 	/** override */
+	virtual bool Initialize(death::GameInstance * in_game_instance);
+	/** override */
 	virtual void OnLifeLost() override;
 	/** override */
 	virtual death::PlayerCheckpoint * DoCreateCheckpoint() const override;
@@ -67,6 +69,12 @@ protected:
 	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity);
 
 	void RegisterUpgrades();
+
+	class PlayerUpgrade * FindPlayerUpgrade(chaos::TagType upgrade_type);
+
+	class PlayerUpgrade const * FindPlayerUpgrade(chaos::TagType upgrade_type) const;
+
+	std::string GetPlayerUpgradeString() const;
 
 protected:
 

@@ -100,13 +100,25 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 		return;
 
 
+	
+
+
+
+	int const dash_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
+	bool dash_pressed = CheckButtonPressed(dash_key_buttons, chaos::MyGLFW::XBOX_BUTTON_B);
+
 	float max_velocity = ludum_game->player_speed_factor;
-
-
-
-
+	float dash_velocity_boost = 0.0f;
 
 	bool dashing = false;
+	if (dash_pressed)
+	{
+		max_velocity += ludum_game->player_dash_velocity_boost;
+		dash_velocity_boost = ludum_game->player_dash_velocity_boost;
+		dashing = true;
+	}
+
+	
 #if 0
 	
 
@@ -114,15 +126,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	if (fire_timer < 0.0f)
 		fire_timer = 0.0f;
 
-	int const dash_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
-	bool dash_pressed = CheckButtonPressed(dash_key_buttons, chaos::MyGLFW::XBOX_BUTTON_B);
-	if (dash_pressed || )
-	{
-		if ()
-	
-	
-	
-	}
 
 #endif
 
@@ -149,14 +152,31 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	float right_length_2 = glm::length2(right_stick_position);
 	if (left_length_2 > 0.0f || right_length_2 > 0.0f || dashing)
 	{
-		
+
+		float input_factor = 1.0f;
+
+		glm::vec2 direction = glm::vec2(0.0f, 0.0f);
 		// compute the normalized direction
-		glm::vec2 direction = (left_length_2 > right_length_2) ?
-			left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
-			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
+		if (left_length_2 > 0.0f || left_length_2 > 0.0f)
+		{
+			direction = (left_length_2 > right_length_2) ?
+				left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
+				right_stick_position / chaos::MathTools::Sqrt(right_length_2);	
+		
+			// axis Y reversed
+			direction *= glm::vec2(1.0f, -1.0f);
+			// compute the orientation
+			player_particle->orientation = atan2f(direction.y, direction.x) - (float)M_PI * 0.5f;		
+		}
+		else
+		{
+			float angle = player_particle->orientation + (float)M_PI * 0.5f;
 
-		direction *= glm::vec2(1.0f, -1.0f);
-
+			direction = glm::vec2(cosf(angle), sinf(angle)) ; // direction comes from the one from previous frame
+			input_factor = 0.0f;
+		}
+			
+	
 		// split current velocity into normal and its tangeantial
 		glm::vec2 player_velocity = player_particle->velocity;
 
@@ -167,50 +187,20 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			normal_velocity      = player_velocity * glm::dot(glm::normalize(player_velocity), direction);
 			tangeantial_velocity = player_velocity - normal_velocity;				
 		}
-
-
-
-
-		auto t = tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
-
-
-
+	
 		player_velocity = 
-			ludum_game->player_speeds[current_speed_index] * ludum_game->player_acceleration_factor * direction 
-			
-			
-			+ tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
+			input_factor * ludum_game->player_speeds[current_speed_index] * ludum_game->player_acceleration_factor * direction 
+			+
+			direction * dash_velocity_boost
+			+ 
+			tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
 
-		//player_velocity += ludum_game->player_speeds[current_speed_index] * ludum_game->player_acceleration_factor * glm::vec2(1.0f, -1.0f) * direction * dt; // axis Y reversed
-
-	//	player_velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_acceleration_factor * glm::vec2(1.0f, -1.0f) * direction; // axis Y reversed
-
-
-
-
-
-
-
-
-
-
-		float l = glm::length(player_velocity);
-		if (l > max_velocity)
-			player_velocity *= ludum_game->player_speed_factor / l;
+		// clamp the final velocity		
+		float len = glm::length(player_velocity);
+		if (len > max_velocity)
+			player_velocity *= ludum_game->player_speed_factor / len;
 		player_particle->velocity = player_velocity;
 		
-		player_particle->orientation = atan2f(direction.y, direction.x) - (float)M_PI * 0.5f;
-
-		//player_particle->orientation = atan2f(-direction.y, direction.x);
-
-
-
-
-
-
-
-
-
 
 	}
 	else

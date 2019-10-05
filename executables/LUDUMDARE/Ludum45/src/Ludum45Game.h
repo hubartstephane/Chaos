@@ -91,6 +91,7 @@ protected:
 	float player_speed_damping = 0.95f;
 	float player_tan_speed_damping = 0.95f;
 	float player_acceleration_factor = 250.0f;
+	float player_dash_velocity_boost = 500.0f;
 
 	float fire_velocity = 800.0f;
 	

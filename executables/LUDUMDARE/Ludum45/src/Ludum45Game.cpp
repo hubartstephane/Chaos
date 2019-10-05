@@ -85,7 +85,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(player_fire_cooldowns);
 	DEATHGAME_JSON_ATTRIBUTE(player_dash_cooldowns);
 	DEATHGAME_JSON_ATTRIBUTE(player_dash_distances);	
-				
+
+	DEATHGAME_JSON_ATTRIBUTE(player_dash_velocity_boost);	
+					
 	return true;
 }
 

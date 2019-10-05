@@ -23,6 +23,7 @@
   "player_acceleration_factorc": 1500.0,
   "player_speed_damping": 0.15,
   "player_tan_speed_damping": 0.9999,
-  "fire_velocity": 10000
+  "fire_velocity": 10000,
 
+  "player_dash_velocity_boost": 5000
 }

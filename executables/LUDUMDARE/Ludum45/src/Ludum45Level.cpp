@@ -122,7 +122,9 @@ bool BonusSpawnerTriggerObject::Initialize()
 		return false;
 	trigger_once = true;
 
-	bonus_type = geometric_object->FindPropertyString("BONUS_TYPE", "");
+	bonus_name = geometric_object->FindPropertyString("BONUS_TYPE", "");
+	bonus_type = chaos::MakeStaticTagType(bonus_name.c_str());
+
 	return true;
 }
 
@@ -147,28 +149,20 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	chaos::TiledMap::GeometricObjectSurface const * surface = geometric_object->GetObjectSurface();
 	if (surface == nullptr)
 		return true;
-	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo("upgrade_view");
+	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo(bonus_name.c_str());
+	//chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo("upgrade_view");
 	if (bitmap_info == nullptr)
 		return true;
 
 	// prepare the particles
 	chaos::ParticleAccessor<ParticleBonus> particles = spawner.GetParticleAccessor();
 
-
-	ParticleBonus & p = particles[0];
-
-
-
 	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
 
 	particles[0].bounding_box = surface->GetBoundingBox(false);
 	particles[0].texcoords = texcoords;
 	particles[0].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-
-
-
-
-
+	particles[0].bonus_type = bonus_type; 
 
 	return true;
 }

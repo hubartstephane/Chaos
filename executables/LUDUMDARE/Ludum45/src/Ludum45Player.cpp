@@ -310,13 +310,22 @@ void LudumPlayer::OnDamagedReceived(float damage)
 	GetGame()->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 
+void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
+{
+	PlayerUpgrade * upgrade = FindPlayerUpgrade(upgrade_type);
+	if (upgrade != nullptr)
+		upgrade->Upgrade();
+
+
+}
+
 void LudumPlayer::RegisterUpgrades()
 {
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::VIEW_ID, "VIEW"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::FIRE_ID, "FIRE"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH_ID, "DASH"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALFIRE_ID, "SPECIALFIRE"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST_ID, "GHOST"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::VIEW, "VIEW"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWER, "POWER"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, "DASH"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALPOWER, "SPECIALPOWER"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST, "GHOST"));
 };
 
 

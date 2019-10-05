@@ -41,7 +41,7 @@ public:
 
 	
 
-
+	chaos::TagType bonus_type;
 };
 
 class ParticleBonusTrait : public chaos::ParticleAllocationTrait<ParticleBonus, VertexBase>

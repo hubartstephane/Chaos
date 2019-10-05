@@ -75,6 +75,8 @@ protected:
 
 	class PlayerUpgrade const * FindPlayerUpgrade(chaos::TagType upgrade_type) const;
 
+	void OnPlayerUpgrade(chaos::TagType upgrade_type);
+
 	std::string GetPlayerUpgradeString() const;
 
 protected:

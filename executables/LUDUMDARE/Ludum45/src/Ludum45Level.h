@@ -37,7 +37,8 @@ protected:
 
 protected:
 
-	std::string bonus_type;
+	std::string bonus_name;
+	chaos::TagType bonus_type;
 };
 
 

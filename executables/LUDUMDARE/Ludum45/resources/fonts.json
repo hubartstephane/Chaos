@@ -13,11 +13,11 @@
   },
   "bitmaps": 
   {
-    "VIEW": "upgrade_view",
-    "FIRE": "upgrade_fire",
-    "GHOST": "upgrade_ghost",
-    "DASH": "upgrade_dash",
-    "SPECIALFIRE": "upgrade_specialfire"
+    "VIEW": "view",
+    "POWER": "power",
+    "GHOST": "ghost",
+    "DASH": "dash",
+    "SPECIALPOWER": "specialpower"
 
 
 

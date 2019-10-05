@@ -3,32 +3,32 @@
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="BonusSpawner">
   <properties>
-   <property name="BonusType" value="DASH"/>
+   <property name="BONUS_TYPE" value="DASH"/>
   </properties>
-  <image width="128" height="128" source="../sprites/upgrade_dash.png"/>
+  <image width="128" height="128" source="../sprites/dash.png"/>
  </tile>
  <tile id="1" type="BonusSpawner">
   <properties>
-   <property name="BonusType" value="FIRE"/>
+   <property name="BONUS_TYPE" value="POWER"/>
   </properties>
-  <image width="128" height="128" source="../sprites/upgrade_fire.png"/>
+  <image width="128" height="128" source="../sprites/power.png"/>
  </tile>
  <tile id="2" type="BonusSpawner">
   <properties>
-   <property name="BonusType" value="GHOST"/>
+   <property name="BONUS_TYPE" value="GHOST"/>
   </properties>
-  <image width="128" height="128" source="../sprites/upgrade_ghost.png"/>
+  <image width="128" height="128" source="../sprites/ghost.png"/>
  </tile>
  <tile id="3" type="BonusSpawner">
   <properties>
-   <property name="BonusType" value="SPECIALFIRE"/>
+   <property name="BONUS_TYPE" value="SPECIALPOWER"/>
   </properties>
-  <image width="128" height="128" source="../sprites/upgrade_specialfire.png"/>
+  <image width="128" height="128" source="../sprites/specialpower.png"/>
  </tile>
  <tile id="4" type="BonusSpawner">
   <properties>
-   <property name="BonusType" value="VIEW"/>
+   <property name="BONUS_TYPE" value="VIEW"/>
   </properties>
-  <image width="128" height="128" source="../sprites/upgrade_view.png"/>
+  <image width="128" height="128" source="../sprites/view.png"/>
  </tile>
 </tileset>

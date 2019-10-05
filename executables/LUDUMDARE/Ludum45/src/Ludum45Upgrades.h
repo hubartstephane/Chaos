@@ -12,11 +12,11 @@
 
 namespace UpgradeKeys
 {
-	CHAOS_DECLARE_TAG(VIEW_ID);
-	CHAOS_DECLARE_TAG(FIRE_ID);
-	CHAOS_DECLARE_TAG(DASH_ID);
-	CHAOS_DECLARE_TAG(SPECIALFIRE_ID);
-	CHAOS_DECLARE_TAG(GHOST_ID);
+	CHAOS_DECLARE_TAG(VIEW);
+	CHAOS_DECLARE_TAG(POWER);
+	CHAOS_DECLARE_TAG(DASH);
+	CHAOS_DECLARE_TAG(SPECIALPOWER);
+	CHAOS_DECLARE_TAG(GHOST);
 };
 
 class PlayerUpgrade : public chaos::ReferencedObject
@@ -27,6 +27,10 @@ public:
 		type(in_type),
 		bitmap_name(in_bitmap_name)		
 	{}
+
+	void Upgrade();
+
+public:
 
 	chaos::TagType type = 0;
 

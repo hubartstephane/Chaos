@@ -249,6 +249,8 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 
 	chaos::box2 player_box = GetLayerInstance()->GetGame()->GetPlayer(0)->GetPlayerBox();
 
+
+
 	// generate
 
 
@@ -277,7 +279,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 		particles[i].pattern = pattern;
 		particles[i].spawner_surface = surface->GetBoundingBox(true);
 		particles[i].time = 0.0f;
-		pattern->UpdateParticle(0.0f, &particles[i], player_box);	
+		pattern->UpdateParticle(0.0f, &particles[i], player_box, camera_box);	
 	}
 
 	return true;

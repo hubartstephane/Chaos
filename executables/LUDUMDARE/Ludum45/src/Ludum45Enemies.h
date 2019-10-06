@@ -23,7 +23,7 @@ public:
 
 
 	
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box);
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, chaos::box2 const & camera_box);
 
 public:
 

@@ -11,16 +11,21 @@ bool EnemyPattern::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
 	return true;
 }
 
-bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box)
+bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, chaos::box2 const & camera_box)
 {
 	float base_offset = particle_initial_range * chaos::MathTools::CastAndDiv<float>(particle->enemy_index, particle->enemy_particle_count);
 
-	float R = glm::length(particle->spawner_surface.half_size);
-
+	float t = (base_offset + particle_speed * particle->time);
+	
 	glm::vec2 p = particle->spawner_surface.position;
 
-	float t = (base_offset + particle_speed * particle->time);
+	// destroy if outof screen for ever
+	if (p.x + particle->spawner_surface.half_size.x < camera_box.position.x - camera_box.half_size.x)
+		return true;
 
+
+
+	float R = glm::length(particle->spawner_surface.half_size);
 	p.x += R * cosf(t);
 	p.y += R * sin(t);
 

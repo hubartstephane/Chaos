@@ -92,10 +92,9 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		}
 	}
 
-
 	particle->time += delta_time;
 	if (particle->pattern != nullptr)
-		return particle->pattern->UpdateParticle(delta_time, particle, player_box);
+		return particle->pattern->UpdateParticle(delta_time, particle, player_box, layer_trait->game->GetLevelInstance()->GetCameraBox(0));
 
 
 	return false;

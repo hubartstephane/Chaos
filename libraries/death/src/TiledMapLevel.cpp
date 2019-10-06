@@ -1818,6 +1818,10 @@ namespace death
 			if (object_surface != nullptr)
 				player_bounding_box = object_surface->GetBoundingBox(true);
 
+
+			// shuludum
+
+
 			particle_populator.AddParticle(bitmap_name->c_str(), player_bounding_box);
 			particle_populator.FlushParticles();
 

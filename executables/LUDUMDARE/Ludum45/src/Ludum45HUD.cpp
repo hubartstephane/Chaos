@@ -112,6 +112,11 @@ std::string GameHUDUpgradeComponent::FormatText() const
 
 void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 {
+
+	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = hud->GetGameParticleCreator().FindBitmapInfo(bitmap_name);
+	if (bitmap_info == nullptr)
+		return;
+
 	if (allocations == nullptr)
 	{
 		allocations = hud->GetGameParticleCreator().CreateParticles(bitmap_name, 1, death::GameHUDKeys::SHROUDLIFE_ID);
@@ -120,9 +125,43 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 	}
 
 
-	chaos::TagType in_layer_id = death::GameHUDKeys::SHROUDLIFE_ID;
-	bitmap_name = bitmap_name;
 
+
+// shuludum : raw copy from GameHUDLifeComponent. Something better has to be found
+
+
+
+	glm::vec2 particle_final_size = particle_size;
+	if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
+	{
+		if (particle_final_size.x <= 0.0f && particle_final_size.y <= 0.0f) // both are invalid
+			particle_final_size = glm::vec2(bitmap_info->width, bitmap_info->height);
+		else if (particle_final_size.x <= 0.0f)
+			particle_final_size.x = particle_final_size.y * bitmap_info->width / bitmap_info->height;
+		else
+			particle_final_size.y = particle_final_size.x * bitmap_info->height / bitmap_info->width;
+	}
+
+
+	glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
+	glm::vec2 whole_particle_ref = chaos::Hotpoint::Convert(screen_ref + position, particle_final_size, hotpoint_type, chaos::Hotpoint::BOTTOM_LEFT);
+
+
+	glm::vec2 particle_position = whole_particle_ref;
+
+	// update the particles members
+	chaos::ParticleAccessor<ParticleShroudLife> particles = allocations->GetParticleAccessor<ParticleShroudLife>();
+	for (size_t i = 0 ; i < particles.GetCount() ; ++i)
+	{
+		ParticleShroudLife & p = particles[i];
+
+		p.bitmap_info = bitmap_info;
+		p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		p.bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+		p.bounding_box.half_size = 0.5f * particle_final_size;
+	
+	}
+	
 }
 
 bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)

@@ -416,7 +416,9 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 	float current_life = ludum_player->GetCurrentLife();
 	float max_life = ludum_player->GetCurrentMaxLife();
 
-	int index = (int)(current_life / max_life);
+	float image_count = (float)particle->bitmap_info->GetAnimationImageCount();
+
+	int index = (int)(image_count * (1.0 - (current_life / max_life)));
 
 	chaos::BitmapAtlas::BitmapLayout layout = particle->bitmap_info->GetAnimationLayout(index, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp);
 

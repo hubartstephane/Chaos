@@ -12,7 +12,7 @@
   "SHROUDLIFE_ID": {
     "hotpoint_type": "bottom",
     "position": [ 0.0, 20.0 ],
-    "particle_size": [0.0, 100]
+    "particle_size": [0.0, 200]
   },
 
   "TITLE_ID": {

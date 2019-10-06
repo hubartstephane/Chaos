@@ -30,6 +30,8 @@ public:
 	std::string name;
 
 	size_t enemy_count = 0;
+	float particle_initial_range = 0.0f;
+	float particle_speed = 0.0f;
 };
 
 

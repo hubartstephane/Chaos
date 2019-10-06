@@ -5,23 +5,24 @@
 bool EnemyPattern::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
 {
 	enemy_count = def->FindPropertyInt("ENEMY_COUNT", 0);
+	particle_initial_range = def->FindPropertyFloat("PARTICLE_INITIAL_RANGE", particle_initial_range);
+	particle_speed = def->FindPropertyFloat("PARTICLE_SPEED", 0);
 
 	return true;
 }
 
 bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box)
 {
-	float base_offset = chaos::MathTools::CastAndDiv<float>(particle->enemy_index, particle->enemy_particle_count);
-
+	float base_offset = particle_initial_range * chaos::MathTools::CastAndDiv<float>(particle->enemy_index, particle->enemy_particle_count);
 
 	float R = glm::length(particle->spawner_surface.half_size);
 
-	 glm::vec2 p = particle->spawner_surface.position;
+	glm::vec2 p = particle->spawner_surface.position;
 
-	 float alpha = 2.0f * (float)M_PI * (base_offset + particle->time);
+	float t = (base_offset + particle_speed * particle->time);
 
-	 p.x += R * cosf(alpha);
-	 p.y += R * sin(alpha);
+	p.x += R * cosf(t);
+	p.y += R * sin(t);
 
 
 
@@ -30,6 +31,20 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 
 	return false;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

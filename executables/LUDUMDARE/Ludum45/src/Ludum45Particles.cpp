@@ -72,12 +72,20 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	bb.half_size *= 0.50f;
 
 	// collision with player
+
+
+
 	if (chaos::Collide(bb, player_box))
 	{
 		LudumPlayer * ludum_player = auto_cast(layer_trait->game->GetPlayer(0));
-		if (ludum_player != nullptr)
-			ludum_player->OnDamagedReceived(particle->enemy_damage);
-		return true;
+		if (ludum_player != nullptr)			
+		{
+			if (ludum_player->dash_timer <= 0.0f ||! ludum_player->GetGhostLevel())
+			{
+				ludum_player->OnDamagedReceived(particle->enemy_damage);
+				return true;
+			}
+		}
 	}
 
 	// bitmap animation

@@ -63,7 +63,7 @@ void LudumPlayer::UpdateBrightSideOfLife(double delta_time)
 #endif
 	if (GetSpecialPowerLevel() > 0)
 	{
-		int const bright_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
+		int const bright_key_buttons[] = {GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1};
 		bool bright_key_pressed = CheckButtonPressed(bright_key_buttons, chaos::MyGLFW::XBOX_BUTTON_Y);
 		if (bright_key_pressed)
 		{
@@ -491,11 +491,12 @@ void LudumPlayer::RegisterUpgrades()
 
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, ludum_game->player_speeds.size() , "SPEED"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DAMAGE, ludum_game->player_damages.size(), "DAMAGE"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, ludum_game->player_dash_cooldowns.size(), "DASH"));
+	//upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, ludum_game->player_dash_cooldowns.size(), "DASH"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, 1, "DASH"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST, 1, "GHOST"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERRATE, ludum_game->player_power_rates.size(), "POWERRATE"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, ludum_game->player_power_spreads.size(), "POWERSPREAD"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALPOWER, ludum_game->player_specialpowers.size(), "SPECIALPOWER"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALPOWER, 1, "SPECIALPOWER"));
 };
 
 PlayerUpgrade * LudumPlayer::FindPlayerUpgrade(chaos::TagType upgrade_type)

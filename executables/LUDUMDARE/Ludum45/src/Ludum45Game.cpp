@@ -30,8 +30,8 @@ LudumGame::LudumGame()
 	game_name = "Jesaouf\nVI\nStrike Back";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
-	[ButtonB] or [KEYBOARD CTRL]  : Charged fire
-	[ButtonY] or [KEYBOARD ALT]   : Trade POWER-UP and LIFE)INSTRUCTIONS";
+	[ButtonB] or [KEYBOARD CTRL]  : Dash
+	[ButtonY] or [KEYBOARD ALT]   : Bright side of life)INSTRUCTIONS";
 
 	looping_levels = false;
 }
@@ -260,7 +260,22 @@ EnemyPattern const * LudumGame::FindEnemyPattern(char const * name) const
 }
 
 
+void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
+{
+	death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
 
+	if (true)
+	{
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (resource_manager == nullptr)
+			return;
+		chaos::GPURenderMaterial * postprocess_material = resource_manager->FindRenderMaterial("brightsideoflife");
+		if (postprocess_material == nullptr)
+			return;
+
+		renderer->DrawFullscreenQuad(postprocess_material, uniform_provider, render_params);	
+	}
+}
 
 
 

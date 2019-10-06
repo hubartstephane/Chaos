@@ -47,12 +47,31 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 	return &player_particles[0];
 }
 
+
+void LudumPlayer::UpdateBrightSideOfLife(double delta_time)
+{
+	if (GetSpecialPowerLevel() > 0)
+	{
+		int const bright_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
+		bool bright_key_pressed = CheckButtonPressed(bright_key_buttons, chaos::MyGLFW::XBOX_BUTTON_Y);
+		if (bright_key_pressed)
+		{
+		
+			bright_key_pressed = bright_key_pressed;
+
+			
+		}
+	}
+}
+
 void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
 	// player fire particles
 	UpdatePlayerFire(delta_time);
+	// player fire particles
+	UpdateBrightSideOfLife(delta_time);
 
 
 

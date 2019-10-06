@@ -96,6 +96,7 @@ protected:
 
 	void UpdatePlayerAcceleration(double delta_time);
 	void UpdatePlayerFire(double delta_time);
+	void UpdateBrightSideOfLife(double delta_time);
 	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
 	void OnDamagedReceived(float damage);
 

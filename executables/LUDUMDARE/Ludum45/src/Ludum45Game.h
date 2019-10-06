@@ -105,6 +105,8 @@ protected:
 
 	virtual death::GameInstance * CreateGameInstance() override;
 
+	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params) override;
+
 	
 
 	void RegisterEnemyTypes();

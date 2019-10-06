@@ -2,7 +2,7 @@
   "LEVEL_TITLE_ID": {
 
     "generator_params": {
-       "position": [ -40.0, 80.0 ]
+       "position": [ -40.0, 20.0 ]
     }
   },
 
@@ -23,8 +23,8 @@
 
   "FPS_ID": {
     "generator_params": {
-      "hotpoint_type": "bottom-right",
-      "position": [ -20.0, 20.0 ]
+      "hotpoint_type": "right",
+      "position": [ -20.0, 0.0 ]
     }
   },
 

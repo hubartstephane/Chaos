@@ -25,6 +25,7 @@ public:
 	friend class ParticlePlayerTrait;
 	friend class ParticleFireTrait;
 	friend class GameHUDUpgradeComponent;
+	friend class ParticleEnemyTrait;
 
 	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
 
@@ -59,6 +60,13 @@ public:
 	
 	template<typename T>
 	T GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T> const & values) const;
+
+
+
+	void SetLifeBarValue(float in_value, bool in_increment);
+
+	float GetCurrentLife() const { return current_life; }
+	float GetCurrentMaxLife() const { return current_max_life; }
 
 
 
@@ -108,18 +116,13 @@ protected:
 
 protected:
 
+	float current_life = 1.0f;
+	float current_max_life = 1.0f;
+
+
 	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
 
 
-#if 0
-	//size_t current_speed_index = 0;
-	size_t current_damage_index = 0;
-	size_t current_charged_damage_index = 0;
-	//size_t current_fire_rate_index = 0;
-	size_t current_fire_cooldown_index = 0;
-	size_t current_dash_cooldown_index = 0;
-	size_t current_dash_distance_index = 0;
-#endif
 
 	float fire_timer = 0.0f; 
 	float dash_timer = 0.0f; 

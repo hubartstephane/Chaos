@@ -76,6 +76,74 @@ public:
 
 };
 
+// ===========================================================================
+// ParticleEnemy
+// ===========================================================================
+
+
+class ParticleEnemy : public ParticleBase
+{
+public:
+
+
+	float enemy_life = 0.0f;
+
+	float enemy_damage = 10.0f;
+
+	bool  enemy_touched_last_frame = false;
+
+
+	float  orientation = 0.0f;
+	float  image_timer = 0.0f;
+	size_t current_frame = 0;
+
+
+	chaos::TagType enemy_type;
+};
+
+class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
+	chaos::box2 BeginUpdateParticles(float delta_time, ParticleEnemy * particle, size_t count, LayerTrait const * layer_trait) const;
+
+
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // ===========================================================================

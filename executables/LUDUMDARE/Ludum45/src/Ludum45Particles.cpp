@@ -33,8 +33,103 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 	if (obj_y < cam_y)
 		return true;
 	return false;
-
 }
+
+
+
+
+// ===========================================================================
+// ParticleEnemyTrait
+// ===========================================================================
+
+
+chaos::box2 ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particle, size_t count, LayerTrait const * layer_trait) const
+{
+	chaos::box2 result;
+
+	result = layer_trait->game->GetPlayer(0)->GetPlayerBox();
+
+	return result;
+}
+
+
+size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+{
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices);
+	// copy the color in all triangles vertex
+	for (size_t i = 0 ; i < 6 ; ++i)
+		vertices[i].color =  p->color;
+
+	return vertices_per_particle;
+}
+
+
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
+{
+	chaos::box2 bb = particle->bounding_box;
+	bb.half_size *= 0.50f;
+
+	if (chaos::Collide(bb, player_box))
+	{
+		LudumPlayer * ludum_player = auto_cast(layer_trait->game->GetPlayer(0));
+		if (ludum_player != nullptr)
+			ludum_player->OnDamagedReceived(particle->enemy_damage);
+		return true;
+	}
+
+
+	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
+	{
+		particle->image_timer += delta_time;
+		if (particle->image_timer > 0.3f)
+		{
+			particle->image_timer = 0.0f;
+			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())
+				particle->current_frame = 0;
+		}
+	}
+
+
+
+
+	return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ===========================================================================
 // ParticleBonusTrait

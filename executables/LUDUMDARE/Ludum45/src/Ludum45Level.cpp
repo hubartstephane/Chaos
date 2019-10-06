@@ -105,7 +105,7 @@ public:
 
 
 // =============================================================
-// LudumLevel implementation
+// BonusSpawnerTriggerObject implementation
 // =============================================================
 
 
@@ -130,9 +130,6 @@ bool BonusSpawnerTriggerObject::Initialize()
 
 
 // -------------------------------------------------------------------
-
-
-
 
 
 
@@ -165,6 +162,84 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 
 	return true;
 }
+
+
+
+
+
+
+
+
+
+// =============================================================
+// EnemySpawnerTriggerObject implementation
+// =============================================================
+
+
+bool EnemySpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
+{
+
+
+	return true;
+}
+
+bool EnemySpawnerTriggerObject::Initialize()
+{
+	if (!death::TiledMap::TriggerObject::Initialize())
+		return false;
+	trigger_once = true;
+
+	enemy_type = geometric_object->FindPropertyString("ENEMY_TYPE", "");
+	
+
+	return true;
+}
+
+
+// -------------------------------------------------------------------
+
+
+
+bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+{
+	if (event_type != TriggerObject::COLLISION_STARTED)
+		return false;
+
+	// prepare the spawner
+	LayerParticleSpawner<ParticleEnemy> spawner;
+	if (!spawner.Initialize(GetLayerInstance(), "Enemy", 1))
+		return true;
+	// cast in a surface
+	chaos::TiledMap::GeometricObjectSurface const * surface = geometric_object->GetObjectSurface();
+	if (surface == nullptr)
+		return true;
+	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo(enemy_type.c_str());
+	if (bitmap_info == nullptr)
+		return true;
+
+	// prepare the particles
+	chaos::ParticleAccessor<ParticleEnemy> particles = spawner.GetParticleAccessor();
+
+	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
+
+	particles[0].bounding_box = surface->GetBoundingBox(false);
+	particles[0].texcoords = texcoords;
+	particles[0].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+	//particles[0].enemy_type = bonus_type; 
+
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -223,7 +298,6 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticleBonusTrait>(bonus_trait);
 	}
 
-#if 0
 	bool is_enemies = (layer_name == "Enemies");
 	if (is_enemies)
 	{
@@ -231,7 +305,6 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		enemy_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
 	}
-#endif
 
 
 
@@ -259,6 +332,9 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 	{
 		if (chaos::TiledMapTools::HasFlag(surface_object, nullptr, nullptr, "BONUS_SPAWNER")) // shuludum : it is better to rely on a type of an object that to rely on its name
 			return new BonusSpawnerTriggerObject(in_layer_instance, surface_object);          //            here we test for the property 'BONUS_SPAWNER' . Maybe the cleaner. Beware HasFlag method does not recurse like FindPropery(...)
+
+		if (chaos::TiledMapTools::HasFlag(surface_object, nullptr, nullptr, "ENEMY_SPAWNER"))
+			return new EnemySpawnerTriggerObject(in_layer_instance, surface_object);
 
 
 

@@ -14,6 +14,34 @@
 
 
 // =================================================
+// EnemySpawnerTriggerObject
+// =================================================
+
+class EnemySpawnerTriggerObject : public death::TiledMap::TriggerObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using TriggerObject::TriggerObject;
+	/** override */
+	virtual bool IsAdditionalParticlesCreationEnabled() const override;
+	/** override */
+	virtual bool Initialize() override;
+
+protected:
+
+	/** override */
+	virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+
+protected:
+
+	std::string enemy_type;
+};
+
+
+// =================================================
 // BonusSpawnerTriggerObject
 // =================================================
 
@@ -40,7 +68,6 @@ protected:
 	std::string bonus_name;
 	chaos::TagType bonus_type;
 };
-
 
 
 

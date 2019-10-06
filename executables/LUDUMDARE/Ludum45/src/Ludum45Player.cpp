@@ -282,6 +282,7 @@ ParticleFire * LudumPlayer::FireProjectile()
 		for (int i = 0 ; i < count ; ++i)
 		{
 			p[i].damage = GetCurrentDamageValue();
+			p[i].player_ownership = true;
 			p[i].trample = false;
 		}
 	}
@@ -349,9 +350,51 @@ void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel 
 
 }
 
+
+void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
+{
+
+	// compute new life 
+	float old_life = current_life;
+	float new_life = current_life;
+
+	if (in_increment)
+		new_life += in_value;
+	else
+		new_life = in_value;
+
+	if (new_life < 0.0f)
+		new_life = 0.0f;
+	else if (new_life > current_max_life)
+		new_life = current_max_life;
+
+	// commit life lost
+	bool update_life = true;
+#if _DEBUG
+	if (old_life > new_life && GetGame()->GetCheatMode())
+		update_life = false;
+#endif
+	if (update_life)
+		current_life = new_life;
+
+	// special FX
+	if (old_life > new_life)
+	{
+		death::Camera * camera = GetLevelInstance()->GetCamera(0);
+		if (camera != nullptr)
+		{
+			death::ShakeCameraComponent * shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
+			if (shake_component != nullptr)
+				shake_component->RestartModifier();
+		}
+	}
+}
+
+
+
 void LudumPlayer::OnDamagedReceived(float damage)
 {
-	//SetLifeBarValue(-particle->damage, true);
+	SetLifeBarValue(-damage, true);
 
 
 	GetGame()->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);

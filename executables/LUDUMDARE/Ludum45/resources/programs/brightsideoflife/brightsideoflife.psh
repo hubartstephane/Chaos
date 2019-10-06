@@ -8,5 +8,8 @@ uniform sampler2D brightsideoflife;
 
 void main()
 {
-  output_color = texture(brightsideoflife, vs_texcoord);
+  vec4 c = texture(brightsideoflife, vs_texcoord);
+
+  output_color.xyz = c.xyz;
+  output_color.a = min(c.a, 0.5);
 }

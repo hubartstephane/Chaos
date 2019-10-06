@@ -53,6 +53,14 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 
 void LudumPlayer::UpdateBrightSideOfLife(double delta_time)
 {
+#if 0
+	if (brightsideoflife_timer > 0.0f)
+	{
+		brightsideoflife_timer -= (float)delta_time;
+		if (brightsideoflife_timer > 0.0f)
+			return;	
+	}
+#endif
 	if (GetSpecialPowerLevel() > 0)
 	{
 		int const bright_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
@@ -63,15 +71,28 @@ void LudumPlayer::UpdateBrightSideOfLife(double delta_time)
 			return;
 		}
 	}
+#if 0
 	DoUpdateBrightSideOfLife(false);
+#endif
 
 }
 
 void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 {
+
+	if (value && !brightsideoflife)
+	{
+		GetGame()->SetInGameMusic("brightsideoflife");
+
+	}	
+	brightsideoflife = value;
+
+#if 0
+
 	if (brightsideoflife == value)
 		return;
 	brightsideoflife = value;
+	brightsideoflife_timer = 2.0f;
 
 	if (value)
 	{
@@ -95,6 +116,7 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 		}
 		GetGame()->SetInGameMusic("game_music");
 	}
+#endif
 	
 }
 

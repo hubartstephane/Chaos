@@ -485,10 +485,15 @@ T LudumPlayer::GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T
 	size_t count = values.size();
 	if (count == 0)
 		return T();
+
+	T result;
+
 	size_t level = (size_t)GetUpgradeLevel(upgrade_type);
 	if (level >= count)
-		return values.back();
-	return values[level];
+		result = values[count - 1];
+	else
+		result = values[level];
+	return result;
 }
 
 

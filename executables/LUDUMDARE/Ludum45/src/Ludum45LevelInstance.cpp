@@ -176,6 +176,21 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 	chaos::ParticleLayerBase * fire_layer = layer_instance->GetParticleLayer();
 	if (fire_layer != nullptr)
 		ludum_player->fire_allocation = fire_layer->SpawnParticles(0);
+
+
+
+
+
+
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	ludum_player->current_life = ludum_game->initial_player_life; 
+	ludum_player->current_max_life = ludum_game->initial_player_life;
+
+
+
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)

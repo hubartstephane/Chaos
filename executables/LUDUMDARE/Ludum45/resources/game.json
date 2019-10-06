@@ -7,6 +7,8 @@
   "tilesets_directory": "@tilesets",
   "objecttypesets_directory": "@objecttypessets",
 
+  "initial_player_life": 1.0,
+
   "scroll_factor": 1.0,
 
   "player_speeds": [ 1.0, 1.3, 1.6, 2.0 ],

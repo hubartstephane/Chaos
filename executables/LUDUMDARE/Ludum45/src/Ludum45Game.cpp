@@ -262,9 +262,11 @@ EnemyPattern const * LudumGame::FindEnemyPattern(char const * name) const
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	//death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
+	death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
 
-	if (true)
+	LudumPlayer * ludum_player = GetLudumPlayer(0);
+
+	if (ludum_player != nullptr && ludum_player->brightsideoflife)
 	{
 		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
@@ -273,7 +275,9 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		if (postprocess_material == nullptr)
 			return;
 
+		glEnable(GL_BLEND);
 		renderer->DrawFullscreenQuad(postprocess_material, uniform_provider, render_params);	
+		glDisable(GL_BLEND);
 	}
 }
 

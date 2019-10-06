@@ -117,7 +117,7 @@ protected:
 
 
 
-
+	void DoUpdateBrightSideOfLife(bool value);
 
 
 
@@ -131,6 +131,9 @@ protected:
 	float current_life = 1.0f;
 	float current_max_life = 1.0f;
 
+	bool brightsideoflife = false;
+
+	chaos::shared_ptr<chaos::Sound> brightsideoflife_sound;
 
 	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
 

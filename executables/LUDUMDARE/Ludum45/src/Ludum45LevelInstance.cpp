@@ -197,7 +197,9 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 {
 	death::TiledMap::LevelInstance::OnPlayerLeaved(player);
 
-
+	LudumPlayer * ludum_player = auto_cast(player);
+	if (ludum_player != nullptr)	
+		ludum_player->DoUpdateBrightSideOfLife(false);
 }
 
 

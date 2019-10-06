@@ -12,6 +12,9 @@
 #include <death/GameLevel.h>
 #include <death/SoundContext.h>
 
+
+
+
 DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
@@ -56,12 +59,30 @@ void LudumPlayer::UpdateBrightSideOfLife(double delta_time)
 		bool bright_key_pressed = CheckButtonPressed(bright_key_buttons, chaos::MyGLFW::XBOX_BUTTON_Y);
 		if (bright_key_pressed)
 		{
-		
-			bright_key_pressed = bright_key_pressed;
-
-			
+			DoUpdateBrightSideOfLife(true);
+			return;
 		}
 	}
+	DoUpdateBrightSideOfLife(false);
+
+}
+
+void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
+{
+	if (value)
+	{
+		if (brightsideoflife_sound == nullptr)
+			brightsideoflife_sound = GetGame()->Play("brightsideoflife", false, true, 1.0f, death::SoundContext::LEVEL);			
+	}		
+	else
+	{
+		if (brightsideoflife_sound != nullptr)
+		{
+			brightsideoflife_sound->FadeOut(1.0f, true, true);		
+			brightsideoflife_sound = nullptr;
+		}	
+	}
+	brightsideoflife = value;
 }
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)
@@ -363,6 +384,7 @@ void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel 
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 	current_life = current_max_life;
+	DoUpdateBrightSideOfLife(false);
 }
 
 

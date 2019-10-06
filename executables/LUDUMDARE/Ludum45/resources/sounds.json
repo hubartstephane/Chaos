@@ -23,6 +23,7 @@
     { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
     { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
     { "path": "sounds/gameover.ogg" , "categories" :  "FX"},
+    { "path": "sounds/brightsideoflife.ogg" , "categories" :  "FX"},
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
     { "path": "sounds/fire.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},

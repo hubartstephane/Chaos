@@ -49,3 +49,37 @@ protected:
 	/** override */
 	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 };	
+
+
+
+
+
+
+
+
+
+// ====================================================================
+// GameHUDShroudLifeComponent
+// ====================================================================
+
+
+class GameHUDShroudLifeComponent : public death::GameHUDSingleAllocationComponent
+{
+	friend class GameHUD;
+
+public:
+
+	/** constructor */
+	void OnInsertedInHUD(char const * bitmap_name);
+
+	virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
+
+protected:
+
+	int hotpoint_type = chaos::Hotpoint::BOTTOM_LEFT;
+	glm::vec2 particle_size = glm::vec2(0.0f, 0.0f);
+	glm::vec2 position = glm::vec2(0.0f, 0.0f);
+
+};	
+
+

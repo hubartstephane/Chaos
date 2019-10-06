@@ -191,6 +191,38 @@ public:
 };
 
 // ===========================================================================
+// ParticleShroudLife
+// ===========================================================================
+
+class ParticleShroudLife : public ParticleBase
+{
+public:
+
+	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = nullptr;
+
+};
+
+class ParticleShroudLifeTrait : public chaos::ParticleAllocationTrait<ParticleShroudLife, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
+
+	bool UpdateParticle(float delta_time, ParticleShroudLife * particle, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleShroudLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+};
+
+
+
+// ===========================================================================
 // ParticlePlayer
 // ===========================================================================
 

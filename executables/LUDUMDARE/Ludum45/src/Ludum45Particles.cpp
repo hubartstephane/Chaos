@@ -247,7 +247,7 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 	{
 		chaos::BitmapAtlas::BitmapLayout layout = p->bitmap_info->GetAnimationLayout(p->current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
 
-		texcoords =  chaos::ParticleTools::GetParticleTexcoords(layout, glm::ivec2(1024, 1024)); // HARDCODED atlas_size !!!! shuludum
+		texcoords =  chaos::ParticleTools::GetParticleTexcoords(layout, glm::ivec2(2048, 2048)); // HARDCODED atlas_size !!!! shuludum => should we not store the coordinate in [0..1] instead (or both) ???
 
 	}
 
@@ -400,6 +400,38 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 
 	return 6;
 }
+
+// ===========================================================================
+// ParticleShroudLife
+// ===========================================================================
+
+bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLife * particle, LayerTrait const * layer_trait) const
+{
+	if (particle->bitmap_info == nullptr)
+		return false;
+	LudumPlayer * ludum_player = layer_trait->game->GetLudumPlayer(0);
+	if (ludum_player == nullptr)
+		return false;
+
+	float current_life = ludum_player->GetCurrentLife();
+	float max_life = ludum_player->GetCurrentMaxLife();
+
+	int index = (int)(current_life / max_life);
+
+	chaos::BitmapAtlas::BitmapLayout layout = particle->bitmap_info->GetAnimationLayout(index, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp);
+
+	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, glm::ivec2(2048, 2048));
+
+
+	return false; // never destroy it
+}
+
+size_t ParticleShroudLifeTrait::ParticleToVertices(ParticleShroudLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+{
+
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+}
+
 
 
 

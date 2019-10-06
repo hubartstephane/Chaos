@@ -503,20 +503,6 @@ namespace death
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		// compute the size of the whole sprites with their offset
 		glm::vec2 whole_particle_size =
 			particle_final_size +

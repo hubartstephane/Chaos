@@ -71,12 +71,12 @@
   <object id="2004" gid="10" x="6976" y="12352" width="2144" height="1888"/>
   <object id="2005" gid="10" x="8001" y="12704" width="1888" height="1888"/>
  </objectgroup>
- <objectgroup id="16" name="PlayerFire" locked="1">
+ <objectgroup id="16" name="PlayerFire">
   <properties>
    <property name="MATERIAL" value="Fire"/>
   </properties>
  </objectgroup>
- <objectgroup id="20" name="EnemyFire">
+ <objectgroup id="20" name="EnemyFire" locked="1">
   <properties>
    <property name="MATERIAL" value="Fire"/>
   </properties>
@@ -88,7 +88,7 @@
   </properties>
   <object id="57" name="TheCamera1" type="Camera" x="2088" y="10016" width="3504" height="2472"/>
   <object id="75" name="world_bounding_box" x="1136" y="2752" width="190400" height="11072"/>
-  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="2418" y="11760" width="206" height="446">
+  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="3058" y="11336" width="550" height="870">
    <properties>
     <property name="BITMAP_NAME" value="jesus_3x1"/>
    </properties>

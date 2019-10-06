@@ -15,6 +15,7 @@ namespace death
 	namespace GameHUDKeys
 	{
 		CHAOS_DECLARE_TAG(UPGRADE_ID);
+		CHAOS_DECLARE_TAG(SHROUDLIFE_ID);
 	};
 };
 
@@ -27,15 +28,11 @@ bool LudumPlayingHUD::FillHUDContent()
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
 
+	RegisterComponent(death::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent(), "LifeGrid_5x2");
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new death::GameHUDLifeComponent());
-
-
 	RegisterComponent(death::GameHUDKeys::UPGRADE_ID, new GameHUDUpgradeComponent());
-
-	//RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
 	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
-	//RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
-	//RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
+	
 	//RegisterComponent(death::GameHUDKeys::NOTIFICATION_ID, new death::GameHUDNotificationComponent());
 
 	return true;
@@ -48,32 +45,18 @@ bool LudumPlayingHUD::CreateHUDLayers()
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;
 
-#if 0
 
-	// create a layer for the life bar
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game != nullptr)
 	{
-
-	}
-#endif
-
-
-
-	// create a layer for the life bar
-	LudumGame * ludum_game = GetLudumGame();
-	if (ludum_game != nullptr)
-	{
+		// create a layer for the life bar
 		int render_order = 30;
-		//ParticleLifeObjectTrait::LayerTrait life_trait;
-		//life_trait.game = ludum_game;
-		auto x = particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject");
-
-
-		render_order = render_order;
+		particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject");
+		// create a layer for the shroudlife bar
+		ParticleShroudLifeTrait::LayerTrait shroud_trait;
+		shroud_trait.game = ludum_game;
+		particle_manager->AddLayer<ParticleShroudLifeTrait>(++render_order, death::GameHUDKeys::SHROUDLIFE_ID, "gameobject", shroud_trait);
 	}
-
-
 
 	return true;
 }
@@ -119,4 +102,39 @@ bool GameHUDUpgradeComponent::UpdateCachedValue(bool & destroy_allocation)
 std::string GameHUDUpgradeComponent::FormatText() const 
 {
 	return cached_value;	
+}
+
+
+
+// ====================================================================
+// GameHUDShroudLifeComponent
+// ====================================================================
+
+void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
+{
+	if (allocations == nullptr)
+	{
+		allocations = hud->GetGameParticleCreator().CreateParticles(bitmap_name, 1, death::GameHUDKeys::SHROUDLIFE_ID);
+		if (allocations == nullptr)
+			return;
+	}
+
+
+	chaos::TagType in_layer_id = death::GameHUDKeys::SHROUDLIFE_ID;
+	bitmap_name = bitmap_name;
+
+}
+
+bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
+{
+	if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
+		return true;
+
+
+	chaos::JSONTools::GetEnumAttribute(json, "hotpoint_type", chaos::Hotpoint::hotpoint_encoding, hotpoint_type);
+	chaos::JSONTools::GetAttribute(json, "position", position);
+	chaos::JSONTools::GetAttribute(json, "particle_size", particle_size);
+
+
+	return true;
 }

@@ -9,6 +9,12 @@
     }
   },
 
+  "SHROUDLIFE_ID": {
+    "hotpoint_type": "bottom",
+    "position": [ 0.0, 20.0 ],
+    "particle_size": [0.0, 100]
+  },
+
   "TITLE_ID": {
 
     "generator_params": {

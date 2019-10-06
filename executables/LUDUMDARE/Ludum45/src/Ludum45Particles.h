@@ -91,7 +91,7 @@ public:
 
 	float enemy_damage = 10.0f;
 
-	bool  enemy_touched_last_frame = false;
+	int touched_count_down = 0;
 
 
 	float  orientation = 0.0f;
@@ -245,10 +245,8 @@ public:
 
 	/** the camera box */
 	chaos::box2 camera_box;
-#if 0
 	/** all the enemies */
 	std::vector<ParticleEnemy*> enemies;
-#endif
 	/** the main player */
 	class LudumPlayer * player = nullptr;
 };

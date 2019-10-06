@@ -25,6 +25,38 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 }
 */
 
+
+
+
+
+
+static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & result)
+{
+	// get the enemies
+	death::TiledMap::LayerInstance * enemies_layer_instance = game->GetLudumLevelInstance()->FindLayerInstance("Enemies");
+	if (enemies_layer_instance != nullptr)
+	{
+		chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
+		if (layer != nullptr)
+		{
+			size_t allocation_count = layer->GetAllocationCount();
+			for (size_t i = 0 ; i < allocation_count ; ++i)
+			{
+				chaos::ParticleAllocationBase * allocation = layer->GetAllocation(i);
+				if (allocation != nullptr)
+				{
+					chaos::ParticleAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
+					size_t count = enemies.GetCount();
+					for (size_t j = 0 ; j < count ; ++j)
+						result.push_back(&enemies[j]);
+				}				
+			}			
+		}
+	}
+}
+
+
+
 // ===========================================================================
 // Utility
 // ===========================================================================
@@ -60,6 +92,16 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 {
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices);
+
+
+
+	glm::vec4 color = p->color;
+
+	if (p->touched_count_down > 0)
+		color.a = 0.0f;
+	else
+		color.a = 1.0f;
+
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color =  p->color;
@@ -70,10 +112,18 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 
 bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
 {
+	if (particle->enemy_life <= 0.0f)
+		return true;
+
 	chaos::box2 bb = particle->bounding_box;
 	bb.half_size *= 0.50f;
 
 	// collision with player
+
+	// update blinking effect
+	if (particle->touched_count_down > 0)
+		--particle->touched_count_down;
+
 
 
 
@@ -299,6 +349,26 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // ParticleFireTrait
 // ===========================================================================
 
+static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player, chaos::box2 const & ref_box) // returns the life damage produced by the enemy collision (its life)
+{
+	float result = collision_with_player? enemy->enemy_damage : enemy->enemy_life;
+
+	// update life from both size
+	enemy->enemy_life -= damage;
+	enemy->touched_count_down = 2;
+
+	// play sound
+	if (enemy->enemy_life > 0.0f)
+		game->Play("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
+	else 
+	{
+		if (!collision_with_player)
+			game->GetPlayer(0)->SetScore(10, true);
+		game->Play("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
+		//game->GetLudumGameInstance()->FireExplosion(ref_box);
+	}
+	return result;
+}
 
 ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const
 {
@@ -307,9 +377,9 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	{
 		// get the camera box 
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
-		//result.camera_box.half_size *= 3.0f;
+		result.camera_box.half_size *= 3.0f;
 		// get the enemies
-		//FindEnemiesOnMap(layer_trait->game, result.enemies);
+		FindEnemiesOnMap(layer_trait->game, result.enemies);
 		// get the players
 		result.player = layer_trait->game->GetLudumPlayer(0);
 	}
@@ -332,12 +402,6 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 		return true;	
 
 
-
-#if 0
-
-	if (!particle->player_ownership && chaos::Co(update_data.camera_box, particle->bounding_box))
-		return true;
-
 	// search for collisions
 	if (particle->player_ownership)
 	{
@@ -345,7 +409,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 		for (size_t i = 0 ; i < count ; ++i)
 		{
 			ParticleEnemy * enemy = update_data.enemies[i];
-			if (enemy->life > 0.0f)
+			if (enemy->enemy_life > 0.0f)
 			{
 				if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
 				{
@@ -360,7 +424,6 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			}
 		}	
 	}
-#endif
 
 
 	// enemy bullet
@@ -391,6 +454,7 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 	float alpha = 1.0f;
 	if (particle->lifetime < 1.0f)
 		alpha = particle->lifetime;
+
 
 	for (size_t i = 0; i < 6; ++i)
 	{

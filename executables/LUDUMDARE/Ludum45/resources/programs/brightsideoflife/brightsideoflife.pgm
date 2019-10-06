@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@brightsideoflife.psh"
+	],
+	"vertex_sources":
+	[
+		"@brightsideoflife.vsh"
+	]
+}

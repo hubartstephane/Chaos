@@ -1,0 +1,16 @@
+out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
+
+// for fullscreen, incomming position is in [-1, 1], incomming texcoord is in [0, 1]
+in vec2 vs_position;
+in vec2 vs_texcoord;
+
+
+//uniform sampler2D brightsideoflife;
+
+void main()
+{
+  //output_color = texture(brightsideoflife, vs_texcoord);
+  
+  output_color.xyzw = vec4(1.0, 0.0, 1.0, 1.0);
+
+}

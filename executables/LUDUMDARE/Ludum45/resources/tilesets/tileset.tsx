@@ -45,13 +45,15 @@
  </tile>
  <tile id="9" type="EnemySpawner">
   <properties>
-   <property name="ENEMY_TYPE" value="Enemy1"/>
+   <property name="ENEMY_TYPE" value="ET_Type1"/>
+   <property name="PATTERN_TYPE" value="EP_Pattern2"/>
   </properties>
   <image width="256" height="256" source="../sprites/ange1.png"/>
  </tile>
  <tile id="10" type="EnemySpawner">
   <properties>
-   <property name="ENEMY_TYPE" value="Enemy2"/>
+   <property name="ENEMY_TYPE" value="ET_Type2"/>
+   <property name="PATTERN_TYPE" value="EP_Pattern2"/>
   </properties>
   <image width="300" height="300" source="../sprites/ange2.png"/>
  </tile>

@@ -3,6 +3,7 @@
 #include "Ludum45StateMachine.h"
 #include "Ludum45Particles.h"
 #include "Ludum45Level.h"
+#include "Ludum45Enemies.h"
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/ReferencedObject.h>
@@ -64,6 +65,22 @@ public:
 
 	ParticlePlayer const * GetPlayerParticle(int player_index) const;
 
+
+
+
+
+
+
+	EnemyType * FindEnemyType(char const * name);
+	EnemyType const * FindEnemyType(char const * name) const;
+
+	EnemyPattern * FindEnemyPattern(char const * name);
+	EnemyPattern const * FindEnemyPattern(char const * name) const;
+
+
+
+
+
 protected:
 
 	/** override */
@@ -100,6 +117,9 @@ protected:
 	void RegisterObjectTypeDefinition(char const * prefix, FUNC func);
 
 protected:
+
+	std::vector<chaos::shared_ptr<EnemyPattern>> enemy_patterns;
+	std::vector<chaos::shared_ptr<EnemyType>> enemy_types;
 
 	float player_speed_factor = 500.0f;
 	float player_speed_damping = 0.95f;

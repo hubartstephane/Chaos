@@ -189,8 +189,15 @@ bool EnemySpawnerTriggerObject::Initialize()
 		return false;
 	trigger_once = true;
 
-	enemy_type = geometric_object->FindPropertyString("ENEMY_TYPE", "");
-	
+	enemy_type    = geometric_object->FindPropertyString("ENEMY_TYPE", "");
+	enemy_pattern = geometric_object->FindPropertyString("ENEMY_PATTERN", "");
+
+	LudumGame * ludum_game = auto_cast(GetLayerInstance()->GetGame());
+	if (ludum_game != nullptr)
+	{
+		type = ludum_game->FindEnemyType(enemy_type.c_str());
+		pattern = ludum_game->FindEnemyPattern(enemy_pattern.c_str());
+	}
 
 	return true;
 }

@@ -11,6 +11,7 @@
 #include <death/GameFramework.h>
 
 #include "Ludum45Game.h"
+#include "Ludum45Enemies.h"
 
 
 // =================================================
@@ -37,7 +38,11 @@ protected:
 
 protected:
 
+	EnemyPattern * pattern = nullptr;
+	EnemyType * type = nullptr;
+
 	std::string enemy_type;
+	std::string enemy_pattern;
 };
 
 

@@ -17,13 +17,13 @@
  <objecttype name="EP_Pattern3" color="#a0a0a4"/>
  <objecttype name="EP_Patterrn2" color="#a0a0a4"/>
  <objecttype name="ET_Type1" color="#a0a0a4">
-  <property name="SPRITE_NAME" type="string"/>
+  <property name="BITMAP_NAME" type="string" default="ange1"/>
  </objecttype>
  <objecttype name="ET_Type2" color="#a0a0a4">
-  <property name="SPRITE_NAME" type="string"/>
+  <property name="BITMAP_NAME" type="string" default="ange2"/>
  </objecttype>
  <objecttype name="ET_Type3" color="#a0a0a4">
-  <property name="SPRITE_NAME" type="string"/>
+  <property name="BITMAP_NAME" type="string" default="ange3"/>
  </objecttype>
  <objecttype name="Notification" color="#34a404">
   <property name="LIFETIME" type="float" default="5"/>

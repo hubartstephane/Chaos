@@ -1530,7 +1530,10 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 	if (result != nullptr)\
 	{\
 		if (result->DoLoadDocument(doc))\
-			member_name.push_back(result);\
+		{\
+			if (store_object)\
+				member_name.push_back(result);\
+		}\
 		else\
 		{\
 			delete(result);\

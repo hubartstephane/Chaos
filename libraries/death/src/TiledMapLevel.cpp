@@ -61,6 +61,9 @@ namespace death
 			trigger_once = geometric_object->FindPropertyBool("TRIGGER_ONCE", trigger_once);
 			trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", trigger_id);
 			outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", outside_box_factor);
+
+			// enable the possibility to trigger once again the object
+			enter_event_triggered = false;
 			return true;
 		}
 

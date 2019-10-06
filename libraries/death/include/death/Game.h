@@ -97,6 +97,10 @@ namespace death
 		/** returns the best score among existing players */
 		int GetBestPlayerScore() const;
 
+		/** getter on the tiled map manager */
+		chaos::TiledMap::Manager * GetTiledMapManager() { return tiled_map_manager.get(); }
+		chaos::TiledMap::Manager const * GetTiledMapManager() const { return tiled_map_manager.get(); }
+
 		/** getter on the particle manager */
 		chaos::ParticleManager * GetParticleManager() { return particle_manager.get(); }
 		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }

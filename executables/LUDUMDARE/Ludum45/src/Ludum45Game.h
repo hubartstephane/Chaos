@@ -90,6 +90,15 @@ protected:
 
 	
 
+	void RegisterEnemyTypes();
+	void RegisterEnemyPatterns();
+
+	void DoRegisterEnemyType(chaos::TiledMap::ObjectTypeDefinition const * def);
+	void DoRegisterEnemyPattern(chaos::TiledMap::ObjectTypeDefinition const * def);
+
+	template<typename FUNC>
+	void RegisterObjectTypeDefinition(char const * prefix, FUNC func);
+
 protected:
 
 	float player_speed_factor = 500.0f;

@@ -1013,6 +1013,14 @@ namespace chaos
 			/** find the property in an ObjectType */
 			Property const * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
 
+
+			/** returns the number of object type */
+			size_t GetObjectTypeDefinitionCount() const { return object_types.size(); }
+			/** returns the object type by its index */
+			ObjectTypeDefinition * GetObjectTypeDefinition(size_t index) { return object_types[index].get(); }
+			/** returns the object type by its index */
+			ObjectTypeDefinition const * GetObjectTypeDefinition(size_t index) const { return object_types[index].get(); }
+
 		protected:
 
 			/** override */
@@ -1298,6 +1306,29 @@ namespace chaos
 			virtual Property * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
 			/** find the property in an ObjectTypeSet */
 			virtual Property const * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
+
+			/** returns the number of map */
+			size_t GetMapCount() const { return maps.size();}
+			/** returns the number of tileset */
+			size_t GetTileSetCount() const { return tile_sets.size();}
+			/** returns the number of 'object type set' */
+			size_t GetObjectTypeSetCount() const { return object_type_sets.size();}
+
+
+			/** get a map by its index */
+			Map * GetMap(size_t index){ return maps[index].get();}
+			/** get a map by its index */
+			Map const * GetMap(size_t index) const { return maps[index].get();}
+
+			/** get a tile set by its index */
+			TileSet * GetTileSet(size_t index){ return tile_sets[index].get();}
+			/** get a tile set by its index */
+			TileSet const * GetTileSet(size_t index) const { return tile_sets[index].get();}
+
+			/** get a object type set by its index */
+			ObjectTypeSet * GetObjectTypeSet(size_t index){ return object_type_sets[index].get();}
+			/** get a object type set by its index */
+			ObjectTypeSet const * GetObjectTypeSet(size_t index) const { return object_type_sets[index].get();}
 
 		protected:
 

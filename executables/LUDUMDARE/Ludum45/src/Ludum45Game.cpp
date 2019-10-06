@@ -102,6 +102,8 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	if (!death::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 
+	RegisterEnemyPatterns();
+	RegisterEnemyTypes();
 
 	return true;
 }
@@ -143,3 +145,97 @@ death::GameInstance * LudumGame::CreateGameInstance()
 {
 	return new LudumGameInstance(this);
 }
+
+
+
+
+
+
+
+
+
+template<typename FUNC>
+void LudumGame::RegisterObjectTypeDefinition(char const * prefix, FUNC func)
+{
+	size_t prefix_length = strlen(prefix);
+
+	chaos::TiledMap::Manager const * manager = GetTiledMapManager();
+	if (manager == nullptr)
+		return;
+
+	size_t ots_count = manager->GetObjectTypeSetCount();
+	for (size_t i = 0 ; i < ots_count ; ++i)
+	{
+		chaos::TiledMap::ObjectTypeSet const * ots = manager->GetObjectTypeSet(i);
+		if (ots == nullptr)
+			continue;
+
+		size_t def_count = ots->GetObjectTypeDefinitionCount();
+		for (size_t j = 0 ; j < def_count ; ++j)
+		{
+			chaos::TiledMap::ObjectTypeDefinition const * def = ots->GetObjectTypeDefinition(j);
+			if (def != nullptr)
+				if (chaos::StringTools::Strnicmp(prefix, def->name, prefix_length) == 0)
+					func(def);				
+		}	
+	}
+}
+
+
+void LudumGame::DoRegisterEnemyPattern(chaos::TiledMap::ObjectTypeDefinition const * def)
+{
+
+	def = def;
+
+}
+
+void LudumGame::DoRegisterEnemyType(chaos::TiledMap::ObjectTypeDefinition const * def)
+{
+
+	def = def;
+
+
+
+}
+
+void LudumGame::RegisterEnemyPatterns()
+{
+	RegisterObjectTypeDefinition("EP_", [this](chaos::TiledMap::ObjectTypeDefinition const * def)
+	{
+		DoRegisterEnemyPattern(def);
+	});
+}
+
+
+void LudumGame::RegisterEnemyTypes()
+{
+	RegisterObjectTypeDefinition("ET_", [this](chaos::TiledMap::ObjectTypeDefinition const * def)
+	{
+		DoRegisterEnemyPattern(def);
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

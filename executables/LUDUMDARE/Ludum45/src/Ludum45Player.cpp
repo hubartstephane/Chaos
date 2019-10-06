@@ -409,6 +409,10 @@ void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
 
 }
 
+
+
+
+
 void LudumPlayer::RegisterUpgrades()
 {
 	LudumGame * ludum_game = GetLudumGame();

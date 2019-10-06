@@ -11,6 +11,19 @@
  <objecttype name="EnemySpawner" color="#5500ff">
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string"/>
+  <property name="PATTERN_TYPE" type="string"/>
+ </objecttype>
+ <objecttype name="EP_Pattern1" color="#a0a0a4"/>
+ <objecttype name="EP_Pattern3" color="#a0a0a4"/>
+ <objecttype name="EP_Patterrn2" color="#a0a0a4"/>
+ <objecttype name="ET_Type1" color="#a0a0a4">
+  <property name="SPRITE_NAME" type="string"/>
+ </objecttype>
+ <objecttype name="ET_Type2" color="#a0a0a4">
+  <property name="SPRITE_NAME" type="string"/>
+ </objecttype>
+ <objecttype name="ET_Type3" color="#a0a0a4">
+  <property name="SPRITE_NAME" type="string"/>
  </objecttype>
  <objecttype name="Notification" color="#34a404">
   <property name="LIFETIME" type="float" default="5"/>

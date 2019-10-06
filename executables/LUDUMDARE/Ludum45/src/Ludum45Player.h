@@ -114,15 +114,24 @@ protected:
 
 
 
+
+
+
+
+
+
+
+	
+
 protected:
+
+
 
 	float current_life = 1.0f;
 	float current_max_life = 1.0f;
 
 
 	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
-
-
 
 	float fire_timer = 0.0f; 
 	float dash_timer = 0.0f; 

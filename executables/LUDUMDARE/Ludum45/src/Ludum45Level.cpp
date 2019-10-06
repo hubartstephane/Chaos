@@ -180,7 +180,7 @@ bool EnemySpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
 {
 
 
-	return true;
+	return false;
 }
 
 bool EnemySpawnerTriggerObject::Initialize()
@@ -212,27 +212,46 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
 
+	if (type == nullptr || pattern == nullptr)
+		return true;
+
+	size_t enemy_count = pattern->enemy_count;
+	if (enemy_count == 0)
+		return true;
+
 	// prepare the spawner
 	LayerParticleSpawner<ParticleEnemy> spawner;
-	if (!spawner.Initialize(GetLayerInstance(), "Enemy", 1))
+	if (!spawner.Initialize(GetLayerInstance(), "Enemies", enemy_count))
 		return true;
 	// cast in a surface
 	chaos::TiledMap::GeometricObjectSurface const * surface = geometric_object->GetObjectSurface();
 	if (surface == nullptr)
 		return true;
-	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo(enemy_type.c_str());
+	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo(type->bitmap_name.c_str());
 	if (bitmap_info == nullptr)
 		return true;
 
+
+	// generate
+
+
+
+
+
+
 	// prepare the particles
 	chaos::ParticleAccessor<ParticleEnemy> particles = spawner.GetParticleAccessor();
+	for (size_t i = 0 ; i < particles.GetCount() ; ++i)
+	{
+		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
 
-	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
-
-	particles[0].bounding_box = surface->GetBoundingBox(false);
-	particles[0].texcoords = texcoords;
-	particles[0].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-	//particles[0].enemy_type = bonus_type; 
+		particles[i].bounding_box = surface->GetBoundingBox(false);
+		particles[i].texcoords = texcoords;
+		particles[i].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);	
+	
+		particles[i].enemy_damage = type->enemy_damage;
+		particles[i].enemy_life = type->enemy_life;
+	}
 
 	return true;
 }

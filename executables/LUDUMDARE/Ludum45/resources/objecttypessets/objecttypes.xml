@@ -9,21 +9,33 @@
  </objecttype>
  <objecttype name="Checkpoint" color="#a4970a"/>
  <objecttype name="EnemySpawner" color="#5500ff">
+  <property name="ENEMY_PATTERN" type="string"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string"/>
-  <property name="PATTERN_TYPE" type="string"/>
  </objecttype>
- <objecttype name="EP_Pattern1" color="#a0a0a4"/>
- <objecttype name="EP_Pattern3" color="#a0a0a4"/>
- <objecttype name="EP_Patterrn2" color="#a0a0a4"/>
+ <objecttype name="EP_Pattern1" color="#a0a0a4">
+  <property name="ENEMY_COUNT" type="int" default="5"/>
+ </objecttype>
+ <objecttype name="EP_Pattern2" color="#a0a0a4">
+  <property name="ENEMY_COUNT" type="int" default="2"/>
+ </objecttype>
+ <objecttype name="EP_Pattern3" color="#a0a0a4">
+  <property name="ENEMY_COUNT" type="int" default="3"/>
+ </objecttype>
  <objecttype name="ET_Type1" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="ange1"/>
+  <property name="ENEMY_DAMAGE" type="float" default="1"/>
+  <property name="ENEMY_LIFE" type="float" default="2"/>
  </objecttype>
  <objecttype name="ET_Type2" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="ange2"/>
+  <property name="ENEMY_DAMAGE" type="float" default="2"/>
+  <property name="ENEMY_LIFE" type="float" default="4"/>
  </objecttype>
  <objecttype name="ET_Type3" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="ange3"/>
+  <property name="ENEMY_DAMAGE" type="float" default="3"/>
+  <property name="ENEMY_LIFE" type="float" default="5"/>
  </objecttype>
  <objecttype name="Notification" color="#34a404">
   <property name="LIFETIME" type="float" default="5"/>

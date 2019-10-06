@@ -63,10 +63,12 @@
  </objectgroup>
  <objectgroup id="18" name="Enemies">
   <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="Enemy"/>
+   <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="2004" gid="10" x="13280" y="13024" width="6080" height="6144"/>
-  <object id="2005" gid="10" x="17249" y="8544" width="6080" height="6144"/>
+  <object id="2004" gid="10" x="5376" y="13216" width="6080" height="6144"/>
+  <object id="2005" gid="10" x="961" y="10432" width="6080" height="6144"/>
  </objectgroup>
  <objectgroup id="16" name="Fire" locked="1">
   <properties>

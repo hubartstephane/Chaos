@@ -21,6 +21,8 @@
     "x4": [ 1.0, 0.0, 0.0 ]
   },
   "bitmaps": {
+    "LEFTSCOREICON": "LeftScoreIcon",
+    "RIGHTSCOREICON": "RightScoreIcon",
     "SPEED": "speed",
     "DAMAGE": "damage",
     "DASH": "dash",

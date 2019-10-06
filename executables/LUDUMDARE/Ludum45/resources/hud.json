@@ -1,7 +1,12 @@
 {
   "SCORE_ID": {
 
-    "format": " xxx %d xxx"
+    "format": "[LEFTSCOREICON] %d [RIGHTSCOREICON]",
+    "generator_params": {
+      "hotpoint_type": "bottom",
+      "line_height": 100,
+      "position": [ 0.0, 20.0 ]
+    }
 
   },
   "LEVEL_TITLE_ID": {
@@ -15,9 +20,9 @@
   },
 
   "SHROUDLIFE_ID": {
-    "hotpoint_type": "bottom",
-    "position": [ 0.0, 20.0 ],
-    "particle_size": [ 0.0, 200 ]
+    "hotpoint_type": "top-left",
+    "position": [ 20.0, -20.0 ],
+    "particle_size": [ 0.0, 150 ]
   },
 
   "TITLE_ID": {

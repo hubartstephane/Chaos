@@ -3,7 +3,7 @@
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="800"/>
+  <property name="CAMERA_SPEED" type="float" value="200"/>
   <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Welcome Home]"/>
   <property name="MUSIC" value="game_music1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>

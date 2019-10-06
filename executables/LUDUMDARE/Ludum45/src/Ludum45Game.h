@@ -129,6 +129,8 @@ protected:
 
 	float fire_size_ratio = 0.3f;
 	float fire_velocity = 800.0f;
+
+	float scroll_factor = 1.0f;
 	
 	
 	std::vector<float> player_speeds;

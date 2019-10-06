@@ -62,6 +62,7 @@ bool LudumGame::DeclareParticleClasses()
 	chaos::ClassTools::DeclareClass<ParticlePlayer,ParticleBase>("ParticlePlayer");
 	chaos::ClassTools::DeclareClass<ParticleFire, ParticleBase>("ParticleFire");
 	chaos::ClassTools::DeclareClass<ParticleBonus, ParticleBase>("ParticleBonus");
+	chaos::ClassTools::DeclareClass<ParticleEnemy, ParticleBase>("ParticleEnemy");
 
 
 
@@ -82,6 +83,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(fire_size_ratio);	
 	DEATHGAME_JSON_ATTRIBUTE(fire_velocity);	
 	
+	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
+
 	DEATHGAME_JSON_ATTRIBUTE(player_speeds);
 	DEATHGAME_JSON_ATTRIBUTE(player_damages);
 	DEATHGAME_JSON_ATTRIBUTE(player_dash_cooldowns);

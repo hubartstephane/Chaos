@@ -87,6 +87,164 @@ bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_b
 	return false;
 }
 
+
+
+
+
+
+
+
+
+
+void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
+{
+	float dt = (float)delta_time;
+
+	LudumGame const * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return;
+
+	// update dash timer
+	dash_timer -= dt;
+	if (dash_timer < 0.0f)
+		dash_timer = 0.0f;
+	dash_cooldown -= dt;
+	if (dash_cooldown < 0.0f)
+		dash_cooldown = 0.0f;
+
+	// get the dash input 
+
+	float left_length_2 = glm::length2(left_stick_position);	
+	float right_length_2 = glm::length2(right_stick_position);
+
+	int const dash_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
+	bool dash_pressed = CheckButtonPressed(dash_key_buttons, chaos::MyGLFW::XBOX_BUTTON_B);
+
+	if (dash_pressed)
+	{
+
+		if (GetDashLevel() > 0 && (left_length_2 > 0.0f || right_length_2 > 0.0f))
+		{
+			if (GetDashLevel() > 0)
+			{
+				if (dash_cooldown <= 0.0f && !dash_locked)
+				{
+					dash_timer = ludum_game->player_dash_duration;
+					dash_cooldown = ludum_game->player_dash_cooldown;			
+				}		
+			}
+			dash_locked = true; // dash is locked until the key is released
+		}
+
+
+	}
+	else
+	{
+		dash_locked = false;	
+	}
+
+	// compute max velocity and extra dash boost
+	float input_max_velocity = GetPlayerSpeed() * ludum_game->player_speed_factor;
+	float max_velocity       = input_max_velocity;
+
+	float dash_velocity_boost = 0.0f;
+
+	bool dashing = (dash_timer > 0.0f);
+	if (dashing)
+	{
+		max_velocity += ludum_game->player_dash_velocity_boost;
+		dash_velocity_boost = ludum_game->player_dash_velocity_boost;
+	}
+
+
+
+	glm::vec2 player_velocity = player_particle->velocity;
+
+	// update the player
+	if (left_length_2 > 0.0f || right_length_2 > 0.0f || dashing)
+	{
+
+		float input_factor = 1.0f;
+
+		glm::vec2 direction = glm::vec2(0.0f, 0.0f);
+		// compute the normalized direction
+		if (left_length_2 > 0.0f || left_length_2 > 0.0f)
+		{
+			direction = (left_length_2 > right_length_2) ?
+				left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
+				right_stick_position / chaos::MathTools::Sqrt(right_length_2);	
+
+			// axis Y reversed
+			direction *= glm::vec2(1.0f, -1.0f);
+			// compute the orientation
+
+		// shuldum	player_particle->orientation = atan2f(direction.y, direction.x) - (float)M_PI * 0.5f;		
+
+
+
+
+		}
+		else
+		{
+// shuludm			float angle = player_particle->orientation + (float)M_PI * 0.5f;
+
+			float angle = player_particle->orientation;
+
+			direction = glm::vec2(cosf(angle), sinf(angle)) ; // direction comes from the one from previous frame
+			input_factor = 0.0f;
+		}
+
+
+		// split current velocity into normal and its tangeantial
+		glm::vec2 normal_velocity      = glm::vec2(0.0f, 0.0f);
+		glm::vec2 tangeantial_velocity = glm::vec2(0.0f, 0.0f);
+		if (glm::length2(player_velocity) > 0.0f)
+		{
+			normal_velocity      = player_velocity * glm::dot(glm::normalize(player_velocity), direction);
+			tangeantial_velocity = player_velocity - normal_velocity;				
+		}
+
+		player_velocity = 
+			input_factor * input_max_velocity * direction 
+			+
+			dash_velocity_boost * direction
+			+ 
+			tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
+	}
+	else
+		player_velocity *= powf(ludum_game->player_speed_damping, dt);
+
+	// clamp the final velocity		
+	float len = glm::length(player_velocity);
+	if (len > max_velocity)
+		player_velocity *= max_velocity / len;
+	player_particle->velocity = player_velocity;
+
+	// displace the player
+	player_particle->bounding_box.position += dt * player_particle->velocity;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0 // KEEP this ! the displacement was cool =======================================================
+
 void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 {
 	float dt = (float)delta_time;
@@ -204,6 +362,11 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	player_particle->bounding_box.position += dt * player_particle->velocity;
 }
 
+#endif // KEEP this ! the displacement was cool =======================================================
+
+
+
+
 void LudumPlayer::UpdatePlayerFire(double delta_time)
 {
 	// decrease normal fire cool down
@@ -222,7 +385,7 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 		if (fire_pressed && GetPowerLevel() > 0)
 		{
 			FireProjectile();					
-			fire_timer = ludum_game->player_fire_cooldowns[current_fire_cooldown_index];
+			fire_timer = GetPlayerPowerCooldown();
 		}								
 	}			
 }
@@ -239,7 +402,7 @@ ParticleFire * LudumPlayer::FireProjectile()
 	{
 		for (int i = 0 ; i < count ; ++i)
 		{
-			p[i].damage = ludum_game->player_damages[current_damage_index];
+			p[i].damage = 666; //GetPlayerPower(); 
 			p[i].trample = false;
 		}
 	}
@@ -252,7 +415,9 @@ ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout cons
 	if (player_particle == nullptr)
 		return nullptr;
 
-	return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true, velocity, player_particle->orientation);
+	return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true, velocity, -(float)M_PI_2);
+
+	//return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true, velocity, player_particle->orientation);
 }
 
 
@@ -394,6 +559,11 @@ T LudumPlayer::GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T
 	if (level >= count)
 		return values.back();
 	return values[level];
+}
+
+float LudumPlayer::GetPlayerPowerCooldown() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::POWER, GetLudumGame()->player_fire_cooldowns);
 }
 
 

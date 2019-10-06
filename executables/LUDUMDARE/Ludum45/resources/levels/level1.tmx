@@ -9,7 +9,7 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <objectgroup id="19" name="Bonus">
+ <objectgroup id="19" name="Bonus" locked="1">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
@@ -50,24 +50,24 @@
   <object id="1954" gid="6" x="2913.27" y="8995.09" width="385.576" height="379.515"/>
   <object id="1955" gid="6" x="3419.33" y="7737.52" width="385.576" height="379.515"/>
  </objectgroup>
- <objectgroup id="18" name="Enemies">
+ <objectgroup id="18" name="Enemies" locked="1">
   <properties>
    <property name="MATERIAL" value="Enemy"/>
   </properties>
  </objectgroup>
- <objectgroup id="16" name="Fire">
+ <objectgroup id="16" name="Fire" locked="1">
   <properties>
    <property name="MATERIAL" value="Fire"/>
   </properties>
  </objectgroup>
- <objectgroup id="14" name="PlayerAndCamera" locked="1">
+ <objectgroup id="14" name="PlayerAndCamera">
   <properties>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="57" name="TheCamera1" type="Camera" x="3432" y="8816" width="7120" height="4648"/>
-  <object id="75" name="world_bounding_box" x="-1424" y="-7616" width="15424" height="21440"/>
-  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="6306" y="11456" width="702" height="1166">
+  <object id="57" name="TheCamera1" type="Camera" x="3432" y="8816" width="7120" height="4648" visible="0"/>
+  <object id="75" name="world_bounding_box" x="-1424" y="-7616" width="15424" height="21440" visible="0"/>
+  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="2418" y="11040" width="702" height="1166">
    <properties>
     <property name="BITMAP_NAME" value="jesus_3x1"/>
    </properties>

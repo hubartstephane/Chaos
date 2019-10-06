@@ -48,6 +48,7 @@ public:
 	int GetViewLevel() const;
 
 
+	float GetPlayerPowerCooldown() const;
 	float GetPlayerSpeed() const;
 	int GetPlayerPower() const;
 
@@ -106,7 +107,7 @@ protected:
 	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
 
 
-#if 21
+#if 0
 	//size_t current_speed_index = 0;
 	size_t current_damage_index = 0;
 	size_t current_charged_damage_index = 0;

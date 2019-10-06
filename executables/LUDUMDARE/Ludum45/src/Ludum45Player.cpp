@@ -69,20 +69,33 @@ void LudumPlayer::UpdateBrightSideOfLife(double delta_time)
 
 void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 {
+	if (brightsideoflife == value)
+		return;
+	brightsideoflife = value;
+
 	if (value)
 	{
-		if (brightsideoflife_sound == nullptr)
-			brightsideoflife_sound = GetGame()->Play("brightsideoflife", false, true, 1.0f, death::SoundContext::LEVEL);			
+		GetGame()->SetInGameMusic("brightsideoflife");
 	}		
 	else
 	{
-		if (brightsideoflife_sound != nullptr)
+		death::TiledMap::Level * tiled_level = auto_cast(GetLevel());
+		if (tiled_level != nullptr)
 		{
-			brightsideoflife_sound->FadeOut(1.0f, true, true);		
-			brightsideoflife_sound = nullptr;
-		}	
+			chaos::TiledMap::Map * tiled_map = tiled_level->GetTiledMap();
+			if (tiled_map != nullptr)
+			{
+				std::string const * level_music = tiled_map->FindPropertyString("MUSIC");
+				if (level_music != nullptr && !chaos::StringTools::IsEmpty(*level_music))
+				{
+					GetGame()->SetInGameMusic(level_music->c_str());				
+					return;
+				}			
+			}					
+		}
+		GetGame()->SetInGameMusic("game_music");
 	}
-	brightsideoflife = value;
+	
 }
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)

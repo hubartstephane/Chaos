@@ -133,8 +133,6 @@ protected:
 
 	bool brightsideoflife = false;
 
-	chaos::shared_ptr<chaos::Sound> brightsideoflife_sound;
-
 	std::vector<chaos::shared_ptr<PlayerUpgrade>> upgrades;
 
 	float fire_timer = 0.0f; 

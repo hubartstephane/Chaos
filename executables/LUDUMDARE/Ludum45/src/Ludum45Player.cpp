@@ -419,7 +419,7 @@ std::string LudumPlayer::GetPlayerUpgradeString() const
 		PlayerUpgrade const * upgrade = upgrades[i].get();
 		if (upgrade == nullptr || upgrade->level <= 0)
 			continue;
-		result += chaos::StringTools::Printf("[%d [%s]]", upgrade->level, upgrade->bitmap_name.c_str());
+		result += chaos::StringTools::Printf("[%d [%s]] ", upgrade->level, upgrade->bitmap_name.c_str());
 	}
 	return result;
 }

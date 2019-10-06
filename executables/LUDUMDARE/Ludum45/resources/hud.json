@@ -1,6 +1,9 @@
 {
-  "LEVEL_TITLE_IDc": {
+  "LEVEL_TITLE_ID": {
 
+    "generator_params": {
+       "position": [ -40.0, 80.0 ]
+    }
   },
 
   "TITLE_ID": {
@@ -11,10 +14,18 @@
   },
 
   "UPGRADE_ID": {
-    "generator_params": 
-    {
+    "generator_params": {
+      "hotpoint_type": "top-right",
+      "position": [ -20.0, -20.0 ],
+      "line_height": 80.0
+    }
+  },
+
+  "FPS_ID": {
+    "generator_params": {
+      "hotpoint_type": "bottom-right",
       "position": [ -20.0, 20.0 ]
-    }  
+    }
   },
 
   "LIFE_ID": {

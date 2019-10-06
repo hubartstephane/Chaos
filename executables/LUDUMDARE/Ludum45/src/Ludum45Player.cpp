@@ -391,8 +391,6 @@ void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 void LudumPlayer::OnDamagedReceived(float damage)
 {
 	SetLifeBarValue(-damage, true);
-
-
 	GetGame()->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 

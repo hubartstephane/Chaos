@@ -125,10 +125,10 @@ void LudumLevelInstance::OnLevelStarted()
 {
 	// !!! Should be automatic no ??
 
-	// shuludum
+	// shuludum => not created whe no object inside ??
 
 	// create the fire particle layer if necessary
-	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("fire");
+	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("PlayerFire"); // 
 	if (layer_instance != nullptr)
 		layer_instance->CreateParticleLayer();
 
@@ -169,7 +169,7 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 	if (ludum_player == nullptr)
 		return;
 
-	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("fire");
+	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("PlayerFire"); // shuludum => not created when no object inside
 	if (layer_instance == nullptr)
 		return;
 
@@ -227,7 +227,7 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 
 
 	// destroy all bullets and all enemies
-	char const * layer_names[] = { "Fire", "Enemies", "Bonus", nullptr };
+	char const * layer_names[] = { "PlayerFire", "EnemyFire", "Enemies", "Bonus", nullptr };
 	for (int i = 0; layer_names[i] != nullptr; ++i)
 	{
 		death::TiledMap::LayerInstance * layer_instance = FindLayerInstance(layer_names[i]);

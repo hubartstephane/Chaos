@@ -14,6 +14,7 @@
 
 #include <death/SoundContext.h>
 
+/*
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
 	chaos::GPUVertexDeclaration result;
@@ -22,6 +23,7 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
 	return result;
 }
+*/
 
 // ===========================================================================
 // Utility
@@ -397,4 +399,26 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 	}
 
 	return 6;
+}
+
+
+
+
+// ===========================================================================
+// ParticleLifeTrait
+// ===========================================================================
+
+
+// shuludum .... duplication AGAIN !!!
+
+
+bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle) const
+{
+
+	return false;
+}
+
+size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const
+{
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }

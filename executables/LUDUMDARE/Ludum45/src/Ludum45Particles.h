@@ -14,13 +14,9 @@
 // VertexBase and ParticleBase
 // ===========================================================================
 
-class VertexBase : public chaos::ParticleDefault::Vertex
-{
-public:
+using VertexBase = chaos::ParticleDefault::Vertex;
 
-};
-
-chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
+//chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
 
 class ParticleBase : public  death::TiledMap::TileParticle
 {
@@ -31,13 +27,18 @@ public:
 };
 
 // ===========================================================================
-// ParticleLideTrait
+// ParticleLifeTrait
 // ===========================================================================
 
+using ParticleLife = chaos::ParticleDefault::Particle;
 
 class ParticleLifeTrait : public chaos::ParticleAllocationTrait<chaos::ParticleDefault::Particle, chaos::ParticleDefault::Vertex>
 {
 public:
+
+	bool UpdateParticle(float delta_time, ParticleLife * particle) const;
+
+	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 };
 

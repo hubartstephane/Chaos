@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="2006">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="21" nextobjectid="2006">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -70,7 +70,12 @@
   <object id="2004" gid="10" x="6976" y="12352" width="2144" height="1888"/>
   <object id="2005" gid="10" x="8001" y="12704" width="1888" height="1888"/>
  </objectgroup>
- <objectgroup id="16" name="Fire" locked="1">
+ <objectgroup id="16" name="PlayerFire" locked="1">
+  <properties>
+   <property name="MATERIAL" value="Fire"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="20" name="EnemyFire">
   <properties>
    <property name="MATERIAL" value="Fire"/>
   </properties>

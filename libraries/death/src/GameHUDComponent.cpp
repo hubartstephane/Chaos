@@ -474,6 +474,17 @@ namespace death
 		//      -if .x AND .y are not 0 => override particle size in the atlas
 		//      -if .x OR  .y is  0     => use the particle effective ratio to compute the 0 member value
 
+
+
+
+		// shuludum
+
+
+
+
+
+
+
 		glm::vec2 particle_final_size = particle_size;
 		if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
 		{
@@ -488,6 +499,23 @@ namespace death
 					particle_final_size.y = particle_final_size.x * bitmap_info->height / bitmap_info->width;
 			}
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// compute the size of the whole sprites with their offset
 		glm::vec2 whole_particle_size =
@@ -506,15 +534,19 @@ namespace death
 		glm::vec2 particle_position = whole_particle_ref;
 		for (size_t i = 0; i < (size_t)count; ++i)
 		{			
-			particles[i].bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
-			particles[i].bounding_box.half_size = 0.5f * particle_final_size;
+			chaos::ParticleDefault::Particle & p = particles[i];
+
+			p.bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+			p.bounding_box.half_size = 0.5f * particle_final_size;
 
 			float fadeout = 1.0f;
 			if (warning_value < 0.5f)
 				fadeout = fadeout_warning_base + (1.0f - fadeout_warning_base) * warning_value / 0.5f;
+			p.color = glm::vec4(1.0f, 1.0f, 1.0f, fadeout);			
 
-			particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, fadeout);			
 			particle_position += glm::abs(particle_offset);
+
+//			p.bounding_box.position = glm::vec2(0.0f, 0.0f);
 		}
 
 		cached_value = count;

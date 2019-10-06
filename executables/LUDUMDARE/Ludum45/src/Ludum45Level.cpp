@@ -337,7 +337,7 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
 	}
 
-	bool is_fire = (chaos::StringTools::Stricmp(layer_name, "fire") == 0);
+	bool is_fire = (chaos::StringTools::Stricmp(layer_name, "PlayerFire") == 0) || (chaos::StringTools::Stricmp(layer_name, "EnemyFire") == 0);
 	if (is_fire)
 	{
 		ParticleFireTrait::LayerTrait fire_trait;

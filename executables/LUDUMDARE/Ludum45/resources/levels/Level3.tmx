@@ -4,7 +4,8 @@
   <property name="BACKGROUND_TEXTURE" value="background3"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="800"/>
-  <property name="LEVEL_TITLE" value="Level 3 - [LEVELTITLE Fuck you Judas]"/>
+  <property name="LEVEL_TITLE">Level 3
+[LEVELTITLE Fuck you Judas]</property>
   <property name="MUSIC" value="game_music3"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>

@@ -96,26 +96,17 @@ protected:
 	float player_speed_damping = 0.95f;
 	float player_tan_speed_damping = 0.95f;
 	float player_dash_velocity_boost = 500.0f;
-	float player_dash_cooldown       = 3.0f;
 	float player_dash_duration       = 0.5f;
 
 	float fire_size_ratio = 0.3f;
 	float fire_velocity = 800.0f;
 	
 	
-
 	std::vector<float> player_speeds;
-
-
 	std::vector<float> player_damages;
-	std::vector<float> player_charged_damages;
-	std::vector<int>   player_fire_rates;
-	std::vector<float> player_fire_cooldowns;
-
-	
-	
-
-
-
+	std::vector<float> player_dash_cooldowns;
+	std::vector<float> player_power_rates;
+	std::vector<float> player_power_spreeds;	
+	std::vector<float> player_specialpowers;	
 };
 

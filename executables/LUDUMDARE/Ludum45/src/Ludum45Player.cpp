@@ -489,12 +489,17 @@ void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
 
 void LudumPlayer::RegisterUpgrades()
 {
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, "SPEED"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::VIEW, "VIEW"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWER, "POWER"));
+	LudumGame * ludum_game = GetLudumGame();
+	if (ludum_game == nullptr)
+		return;
+
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, ludum_game->  ,"SPEED"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DAMAGE, "DAMAGE"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, "DASH"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALPOWER, "SPECIALPOWER"));
 	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST, "GHOST"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERRATE, "POWERRATE"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, "POWERSPREAD"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, "SPECIALPOWER"));
 };
 
 

@@ -22,13 +22,11 @@
   },
   "bitmaps": {
     "SPEED": "speed",
-    "VIEW": "view",
-    "POWER": "power",
-    "GHOST": "ghost",
+    "DAMAGE": "damage",
     "DASH": "dash",
+    "GHOST": "ghost",
+    "POWERRATE": "powerrate",
+    "POWERSPREAD": "powerspread",
     "SPECIALPOWER": "specialpower"
-
-
-
   }
 }

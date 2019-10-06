@@ -22,7 +22,7 @@ public:
 
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
 
-class ParticleBase : public death::TiledMap::TileParticle
+class ParticleBase : public  death::TiledMap::TileParticle
 {
 public:
 
@@ -47,7 +47,7 @@ public:
 // ===========================================================================
 
 
-class ParticleBonus : public death::TiledMap::TileParticle
+class ParticleBonus : public ParticleBase
 {
 public:
 
@@ -86,7 +86,9 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
-	float orientation = 0.0f;
+	float  orientation = 0.0f;
+	float  image_timer = 0.0f;
+	size_t current_frame = 0;
 	
 
 };
@@ -106,6 +108,8 @@ public:
 	bool UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const;
 
 	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+
 
 };
 

@@ -20,6 +20,7 @@ namespace death
 		public:
 
 			int gid = 0;
+			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = nullptr; // shudum hai le hack
 		};
 
 		class TileParticleTrait : public chaos::ParticleAllocationTrait<TileParticle, chaos::ParticleDefault::Vertex, false, false> // shuxxx set to false = optimization 1

@@ -65,25 +65,43 @@ namespace death
 			if (bitmap_info == nullptr)
 				return false;
 
+			// shuludum
+
+			// get the real layout of the bitmap by removing animation
+			chaos::BitmapAtlas::BitmapLayout layout = *bitmap_info;
+			if (bitmap_info->HasAnimation())
+				layout = bitmap_info->GetAnimationLayout(0, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp); // take frame 0 by default
+
 			// compute the bounding box
 			if (IsGeometryEmpty(particle_box))
 			{
-				particle_box.half_size = glm::vec2(bitmap_info->width, bitmap_info->height) * 0.5f;
+				particle_box.half_size = glm::vec2(layout.width, layout.height) * 0.5f;
 			}
 			// maintain aspect ratio
 			else
 			{
 				if (keep_aspect_ratio)
-					particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(bitmap_info->width, bitmap_info->height), true);
+					particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 			}
 
 			// add the particle
 			TileParticle particle;
 			particle.bounding_box = particle_box;
-			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, texture_atlas->GetAtlasDimension());
+			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, texture_atlas->GetAtlasDimension());
 			particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
 			particle.color = color;
 			particle.gid = gid;
+
+
+			particle.bitmap_info = bitmap_info;
+
+			
+
+			// shuludum
+
+
+
+
 
 			particles[particle_count++] = particle;
 

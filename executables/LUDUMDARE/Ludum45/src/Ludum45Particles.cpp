@@ -131,8 +131,19 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * partic
 
 size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
+
+	chaos::ParticleTexcoords texcoords = p->texcoords;
+
+	if (p->bitmap_info != nullptr && p->bitmap_info->HasGridAnimation())
+	{
+		chaos::BitmapAtlas::BitmapLayout layout = p->bitmap_info->GetAnimationLayout(p->current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
+
+		texcoords =  chaos::ParticleTools::GetParticleTexcoords(layout, glm::ivec2(1024, 1024)); // HARDCODED atlas_size !!!! shuludum
+
+	}
+
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices, p->orientation);
+	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, texcoords, vertices, p->orientation);
 
 	glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -159,11 +170,16 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
-	
-
-
-
-
+	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
+	{
+		particle->image_timer += delta_time;
+		if (particle->image_timer > 0.3f)
+		{
+			particle->image_timer = 0.0f;
+			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())
+				particle->current_frame = 0;
+		}
+	}
 	return false;
 }
 

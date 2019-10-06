@@ -1,4 +1,9 @@
 {
+  "SCORE_ID": {
+
+    "format": " xxx %d xxx"
+
+  },
   "LEVEL_TITLE_ID": {
 
     "generator_params": {
@@ -12,7 +17,7 @@
   "SHROUDLIFE_ID": {
     "hotpoint_type": "bottom",
     "position": [ 0.0, 20.0 ],
-    "particle_size": [0.0, 200]
+    "particle_size": [ 0.0, 200 ]
   },
 
   "TITLE_ID": {

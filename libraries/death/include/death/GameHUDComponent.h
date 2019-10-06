@@ -152,6 +152,16 @@ namespace death
 			return true;
 		}
 
+		/** override */
+		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override
+		{
+			if (!GameHUDTextComponent::InitializeFromConfiguration(json, config_path))
+				return false;
+		
+			chaos::JSONTools::GetAttribute(json, "format", format);		
+			return true;
+		}
+
 		/** format the text according to cached value */
 		virtual std::string FormatText() const
 		{

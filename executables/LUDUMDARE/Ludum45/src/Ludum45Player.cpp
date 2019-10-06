@@ -493,15 +493,14 @@ void LudumPlayer::RegisterUpgrades()
 	if (ludum_game == nullptr)
 		return;
 
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, ludum_game->  ,"SPEED"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DAMAGE, "DAMAGE"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, "DASH"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST, "GHOST"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERRATE, "POWERRATE"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, "POWERSPREAD"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, "SPECIALPOWER"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, ludum_game->player_speeds.size() , "SPEED"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DAMAGE, ludum_game->player_damages.size(), "DAMAGE"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, ludum_game->player_dash_cooldowns.size(), "DASH"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST, 1, "GHOST"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERRATE, ludum_game->player_power_rates.size(), "POWERRATE"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, ludum_game->player_power_spreads.size(), "POWERSPREAD"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALPOWER, ludum_game->player_specialpowers.size(), "SPECIALPOWER"));
 };
-
 
 PlayerUpgrade * LudumPlayer::FindPlayerUpgrade(chaos::TagType upgrade_type)
 {
@@ -566,24 +565,6 @@ T LudumPlayer::GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T
 	return values[level];
 }
 
-float LudumPlayer::GetPlayerPowerCooldown() const
-{
-	return GetPlayerUpgradedValue(UpgradeKeys::POWER, GetLudumGame()->player_fire_cooldowns);
-}
-
-
-
-float LudumPlayer::GetPlayerSpeed() const
-{
-	return GetPlayerUpgradedValue(UpgradeKeys::SPEED, GetLudumGame()->player_speeds);
-}
-
-
-int LudumPlayer::GetPlayerPower() const
-{
-	return GetPlayerUpgradedValue(UpgradeKeys::POWER, GetLudumGame()->player_fire_rates);
-}
-
 
 
 
@@ -593,14 +574,11 @@ int LudumPlayer::GetSpeedLevel() const
 	return GetUpgradeLevel(UpgradeKeys::SPEED);
 }
 
-int LudumPlayer::GetPowerLevel() const
+int LudumPlayer::GetDamageLevel() const
 {
-	return GetUpgradeLevel(UpgradeKeys::POWER);
+	return GetUpgradeLevel(UpgradeKeys::DAMAGE);
 }
-int LudumPlayer::GetSpecialPowerLevel() const
-{
-	return GetUpgradeLevel(UpgradeKeys::SPECIALPOWER);
-}
+
 int LudumPlayer::GetDashLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::DASH);
@@ -609,10 +587,91 @@ int LudumPlayer::GetGhostLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::GHOST);
 }
-int LudumPlayer::GetViewLevel() const
+
+int LudumPlayer::GetPowerRateLevel() const
 {
-	return GetUpgradeLevel(UpgradeKeys::VIEW);
+	return GetUpgradeLevel(UpgradeKeys::POWERRATE);
 }
+
+int LudumPlayer::GetPowerSpreadLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::POWERSPREAD);
+}
+
+int LudumPlayer::GetSpecialPowerLevel() const
+{
+	return GetUpgradeLevel(UpgradeKeys::SPECIALPOWER);
+}
+
+
+
+
+
+
+
+
+float LudumPlayer::GetCurrentSpeedValue() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::SPEED, GetLudumGame()->player_speeds);
+}
+
+float LudumPlayer::GetCurrentDamageValue() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::DAMAGE, GetLudumGame()->player_damages);
+}
+
+float LudumPlayer::GetCurrentDashValue() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::DASH, GetLudumGame()->player_dash_cooldowns);
+}
+
+
+
+
+bool LudumPlayer::GetCurrentGhostValue() const
+{
+
+	return true;
+	//return GetPlayerUpgradedValue(UpgradeKeys::GHOST, GetLudumGame()->player_godash_cooldowns);
+}
+
+
+
+
+
+float LudumPlayer::GetCurrentPowerRateValue() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::POWERRATE, GetLudumGame()->player_power_rates);
+}
+
+int LudumPlayer::GetCurrentPowerSpreadValue() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::POWERSPREAD, GetLudumGame()->player_power_spreads);
+}
+
+float LudumPlayer::GetCurrentSpecialPowerValue() const
+{
+	return GetPlayerUpgradedValue(UpgradeKeys::SPECIALPOWER, GetLudumGame()->player_specialpowers);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {

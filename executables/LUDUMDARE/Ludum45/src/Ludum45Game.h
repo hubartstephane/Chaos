@@ -106,7 +106,7 @@ protected:
 	std::vector<float> player_damages;
 	std::vector<float> player_dash_cooldowns;
 	std::vector<float> player_power_rates;
-	std::vector<float> player_power_spreeds;	
+	std::vector<int>   player_power_spreads;	
 	std::vector<float> player_specialpowers;	
 };
 

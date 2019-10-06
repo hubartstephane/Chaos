@@ -41,18 +41,22 @@ public:
 	int GetUpgradeLevel(chaos::TagType upgrade_type) const;
 
 	int GetSpeedLevel() const; 
-	int GetPowerLevel() const; 
-	int GetSpecialPowerLevel() const; 
+	int GetDamageLevel() const; 
 	int GetDashLevel() const; 
 	int GetGhostLevel() const; 
-	int GetViewLevel() const;
+	int GetPowerRateLevel() const; 
+	int GetPowerSpreadLevel() const; 
+	int GetSpecialPowerLevel() const; 
 
 
-	float GetPlayerPowerCooldown() const;
-	float GetPlayerSpeed() const;
-	int GetPlayerPower() const;
-
-
+	float GetCurrentSpeedValue() const; 
+	float GetCurrentDamageValue() const; 
+	float GetCurrentDashValue() const; 
+	bool  GetCurrentGhostValue() const; 
+	float GetCurrentPowerRateValue() const; 
+	int   GetCurrentPowerSpreadValue() const; 
+	float GetCurrentSpecialPowerValue() const; 
+	
 	template<typename T>
 	T GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T> const & values) const;
 

@@ -39,7 +39,7 @@
  </tile>
  <tile id="8" type="BonusSpawner">
   <properties>
-   <property name="BONUS_TYPE" value="BONUSSPREAD"/>
+   <property name="BONUS_TYPE" value="POWERSPREAD"/>
   </properties>
   <image width="256" height="256" source="../sprites/powerspread.png"/>
  </tile>

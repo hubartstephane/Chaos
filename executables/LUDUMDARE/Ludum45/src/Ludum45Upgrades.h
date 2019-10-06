@@ -36,7 +36,7 @@ public:
 public:
 
 	chaos::TagType type = 0;
-	int level = -1;
+	int level = 0;
 	int max_level = 0;
 
 	std::string bitmap_name;

@@ -2,7 +2,8 @@
 
 void PlayerUpgrade::Upgrade()
 {
-	++level;
+	if (level < max_level)
+		++level;
 }
 
 

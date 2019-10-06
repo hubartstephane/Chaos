@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="512" tileheight="512" tilecount="7" columns="0">
+<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="300" tileheight="300" tilecount="9" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="BonusSpawner">
   <properties>
@@ -42,5 +42,17 @@
    <property name="BONUS_TYPE" value="POWERSPREAD"/>
   </properties>
   <image width="256" height="256" source="../sprites/powerspread.png"/>
+ </tile>
+ <tile id="9" type="EnemySpawner">
+  <properties>
+   <property name="ENEMY_TYPE" value="Enemy1"/>
+  </properties>
+  <image width="256" height="256" source="../sprites/ange1.png"/>
+ </tile>
+ <tile id="10" type="EnemySpawner">
+  <properties>
+   <property name="ENEMY_TYPE" value="Enemy2"/>
+  </properties>
+  <image width="300" height="300" source="../sprites/ange2.png"/>
  </tile>
 </tileset>

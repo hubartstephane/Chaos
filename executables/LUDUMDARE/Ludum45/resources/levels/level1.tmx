@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="2001">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="20" nextobjectid="2006">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -9,7 +9,7 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <objectgroup id="19" name="Bonus">
+ <objectgroup id="19" name="Bonus" locked="1">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
@@ -61,10 +61,12 @@
   <object id="1999" gid="8" x="10632" y="7632" width="512" height="512"/>
   <object id="2000" gid="9" x="10616" y="6912" width="512" height="512"/>
  </objectgroup>
- <objectgroup id="18" name="Enemies" locked="1">
+ <objectgroup id="18" name="Enemies">
   <properties>
    <property name="MATERIAL" value="Enemy"/>
   </properties>
+  <object id="2004" gid="10" x="13280" y="13024" width="6080" height="6144"/>
+  <object id="2005" gid="10" x="17248" y="8544" width="6080" height="6144"/>
  </objectgroup>
  <objectgroup id="16" name="Fire" locked="1">
   <properties>
@@ -76,9 +78,9 @@
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="57" name="TheCamera1" type="Camera" x="3432" y="8816" width="7120" height="4648" visible="0"/>
-  <object id="75" name="world_bounding_box" x="-1424" y="-7616" width="15424" height="21440" visible="0"/>
-  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="2418" y="11040" width="702" height="1166">
+  <object id="57" name="TheCamera1" type="Camera" x="2088" y="10016" width="3504" height="2472"/>
+  <object id="75" name="world_bounding_box" x="1136" y="2752" width="190400" height="11072"/>
+  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="2418" y="11760" width="206" height="446">
    <properties>
     <property name="BITMAP_NAME" value="jesus_3x1"/>
    </properties>

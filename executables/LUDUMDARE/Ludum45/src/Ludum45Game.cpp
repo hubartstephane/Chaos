@@ -27,7 +27,7 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 
 LudumGame::LudumGame()
 {		
-	game_name = "Jesaouf\nVI\nStrike Back";
+	game_name = "Jesaouf\nVI";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Fire
 	[ButtonB] or [KEYBOARD CTRL]  : Dash

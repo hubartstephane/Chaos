@@ -262,7 +262,7 @@ EnemyPattern const * LudumGame::FindEnemyPattern(char const * name) const
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
+	//death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
 
 	if (true)
 	{

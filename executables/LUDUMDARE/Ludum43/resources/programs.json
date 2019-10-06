@@ -1,6 +1,7 @@
 {
   "@postprocess" : { "path": "@programs/postprocess/postprocess.pgm" },
   "@background" : { "path": "@programs/background/background.pgm" },
+  "@brightsideoflife" : { "path": "@programs/brightsideoflife/brightsideoflife.pgm" },
   "@lifebar"  : { "path": "@programs/lifebar/lifebar.pgm" },
   "@player"  : { "path": "@programs/player/player.pgm" },
   "@atom"  : { "path": "@programs/atom/atom.pgm" },

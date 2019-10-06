@@ -535,9 +535,23 @@ std::string LudumPlayer::GetPlayerUpgradeString() const
 	for (size_t i = 0 ; i < count ; ++i)
 	{
 		PlayerUpgrade const * upgrade = upgrades[i].get();
+
+
+		float level     = (float)upgrade->level;
+		float max_level = (float)upgrade->max_level;
+
 		if (upgrade == nullptr || upgrade->level <= 0)
 			continue;
-		result += chaos::StringTools::Printf("[%d [%s]] ", upgrade->level, upgrade->bitmap_name.c_str());
+
+		int ratio = (int)(8.0f * level / max_level);
+		if (ratio < 1)
+			ratio = 1;
+		if (ratio > 8)
+			ratio = 8;
+
+		// 8 values for fonts
+
+		result += chaos::StringTools::Printf("[%d [%s]]", ratio, upgrade->bitmap_name.c_str());
 	}
 	return result;
 }

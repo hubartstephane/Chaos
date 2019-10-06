@@ -5,10 +5,16 @@
 
   "TITLE_ID": {
 
-    "generator_params":
-    {
-      "alignment":"center"
+    "generator_params": {
+      "alignment": "center"
     }
+  },
+
+  "UPGRADE_ID": {
+    "generator_params": 
+    {
+      "position": [ -20.0, 20.0 ]
+    }  
   },
 
   "LIFE_ID": {

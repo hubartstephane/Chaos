@@ -234,7 +234,7 @@ ParticleFire * LudumPlayer::FireProjectile()
 		return nullptr;
 
 	int count = GetPlayerPower(); 
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.8f, count, "fire", 0.1f, ludum_game->fire_velocity);
+	ParticleFire * p = FireProjectile(fire_bitmap_layout, ludum_game->fire_size_ratio, count, "fire", 0.1f, ludum_game->fire_velocity);
 	if (p != nullptr)
 	{
 		for (int i = 0 ; i < count ; ++i)

@@ -16,7 +16,8 @@
   "player_speed_factor": 2500.0,
   "player_speed_damping": 0.35,
   "player_tan_speed_damping": 1.0,
-  "fire_velocity": 10000,
+  "fire_velocity": 8000,
+  "fire_size_ratio": 0.3,
 
   "player_dash_velocity_boost": 8000,
   "player_dash_cooldown": 0.5,

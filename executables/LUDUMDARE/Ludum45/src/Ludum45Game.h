@@ -99,6 +99,7 @@ protected:
 	float player_dash_cooldown       = 3.0f;
 	float player_dash_duration       = 0.5f;
 
+	float fire_size_ratio = 0.3f;
 	float fire_velocity = 800.0f;
 	
 	

@@ -4,7 +4,7 @@
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="800"/>
-  <property name="LEVEL_TITLE" value="Level 1 - Welcome Home"/>
+  <property name="LEVEL_TITLE" value="Level 1 - [LEVELTITLE Welcome Home]"/>
   <property name="MUSIC" value="game_music1"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
@@ -67,7 +67,7 @@
   </properties>
   <object id="57" name="TheCamera1" type="Camera" x="3432" y="8816" width="7120" height="4648"/>
   <object id="75" name="world_bounding_box" x="-1424" y="-7616" width="15424" height="21440"/>
-  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="6896" y="12176" width="112" height="496">
+  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="6306" y="11456" width="702" height="1166">
    <properties>
     <property name="BITMAP_NAME" value="jesus_3x1"/>
    </properties>

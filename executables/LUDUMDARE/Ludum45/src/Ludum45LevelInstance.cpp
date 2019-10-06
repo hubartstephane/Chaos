@@ -222,6 +222,24 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 		return false;
 
 
+	// shuludum .... refactor the share this code ... hard copy of what is in LD44
+
+
+
+	// destroy all bullets and all enemies
+	char const * layer_names[] = { "Fire", "Enemies", "Bonus", nullptr };
+	for (int i = 0; layer_names[i] != nullptr; ++i)
+	{
+		death::TiledMap::LayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
+		if (layer_instance != nullptr)
+		{
+			chaos::ParticleLayerBase * particle_layer = layer_instance->GetParticleLayer();
+			if (particle_layer != nullptr)
+				particle_layer->ClearAllAllocations();
+		}
+	}
+
+
 	return true;
 }
 

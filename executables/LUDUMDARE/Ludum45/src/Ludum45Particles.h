@@ -97,8 +97,16 @@ public:
 	float  image_timer = 0.0f;
 	size_t current_frame = 0;
 
+	int enemy_particle_count = 0;
 
-	chaos::TagType enemy_type;
+
+
+	int         enemy_index = 0;
+	float       time = 0.0f;
+	chaos::box2 spawner_surface;
+
+	class EnemyPattern * pattern = nullptr;
+	
 };
 
 class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>

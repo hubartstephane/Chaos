@@ -14,13 +14,13 @@
   <property name="ENEMY_TYPE" type="string"/>
  </objecttype>
  <objecttype name="EP_Pattern1" color="#a0a0a4">
-  <property name="ENEMY_COUNT" type="int" default="5"/>
+  <property name="ENEMY_COUNT" type="int" default="20"/>
  </objecttype>
  <objecttype name="EP_Pattern2" color="#a0a0a4">
-  <property name="ENEMY_COUNT" type="int" default="2"/>
+  <property name="ENEMY_COUNT" type="int" default="30"/>
  </objecttype>
  <objecttype name="EP_Pattern3" color="#a0a0a4">
-  <property name="ENEMY_COUNT" type="int" default="3"/>
+  <property name="ENEMY_COUNT" type="int" default="50"/>
  </objecttype>
  <objecttype name="ET_Type1" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="ange1"/>

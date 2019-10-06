@@ -4,11 +4,14 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/NamedObject.h>
+#include <chaos/ParticleAccessor.h>
 
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/Player.h>
 #include <death/GameFramework.h>
+
+#include "Ludum45Particles.h"
 
 
 class EnemyPattern : public chaos::ReferencedObject
@@ -19,6 +22,8 @@ public:
 	virtual bool Initialize(chaos::TiledMap::ObjectTypeDefinition const * def);
 
 
+	
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box);
 
 public:
 

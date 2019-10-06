@@ -9,10 +9,27 @@ bool EnemyPattern::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
 	return true;
 }
 
+bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box)
+{
+	float base_offset = chaos::MathTools::CastAndDiv<float>(particle->enemy_index, particle->enemy_particle_count);
+
+
+	float R = glm::length(particle->spawner_surface.half_size);
+
+	 glm::vec2 p = particle->spawner_surface.position;
+
+	 float alpha = 2.0f * (float)M_PI * (base_offset + particle->time);
+
+	 p.x += R * cosf(alpha);
+	 p.y += R * sin(alpha);
 
 
 
+	particle->bounding_box.position = p;
 
+
+	return false;
+}
 
 
 

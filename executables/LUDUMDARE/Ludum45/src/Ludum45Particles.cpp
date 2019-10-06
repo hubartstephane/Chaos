@@ -6,6 +6,7 @@
 #include "Ludum45GameInstance.h"
 #include "Ludum45Player.h"
 #include "Ludum45LevelInstance.h"
+#include "Ludum45Enemies.h"
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
@@ -70,6 +71,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	chaos::box2 bb = particle->bounding_box;
 	bb.half_size *= 0.50f;
 
+	// collision with player
 	if (chaos::Collide(bb, player_box))
 	{
 		LudumPlayer * ludum_player = auto_cast(layer_trait->game->GetPlayer(0));
@@ -78,7 +80,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		return true;
 	}
 
-
+	// bitmap animation
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
 	{
 		particle->image_timer += delta_time;
@@ -91,6 +93,9 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	}
 
 
+	particle->time += delta_time;
+	if (particle->pattern != nullptr)
+		return particle->pattern->UpdateParticle(delta_time, particle, player_box);
 
 
 	return false;

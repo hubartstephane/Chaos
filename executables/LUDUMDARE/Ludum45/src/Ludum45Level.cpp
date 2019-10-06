@@ -18,6 +18,11 @@
 // =============================================================
 
 
+// SHULUDUM : study ParticleLayerPopulator & LayerParticleSpawnerBase
+//   => maybe some code to make in common except that 
+//      then popular spawn only ONE ALLOC
+
+
 class LayerParticleSpawnerBase // shuludum : to include natively inside death & chaos
 {
 
@@ -231,6 +236,18 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	if (bitmap_info == nullptr)
 		return true;
 
+	// initialize the allocation
+	chaos::ParticleAllocation<ParticleEnemyTrait> * typed_allocation = auto_cast(spawner.allocation);
+	if (typed_allocation != nullptr)
+	{
+		typed_allocation = nullptr;
+	
+	
+	
+	}
+
+
+	chaos::box2 player_box = GetLayerInstance()->GetGame()->GetPlayer(0)->GetPlayerBox();
 
 	// generate
 
@@ -245,12 +262,22 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	{
 		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
 
-		particles[i].bounding_box = surface->GetBoundingBox(false);
+		particles[i].bounding_box.half_size = 0.5f * glm::vec2(bitmap_info->width, bitmap_info->height);
+
+
+
 		particles[i].texcoords = texcoords;
 		particles[i].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);	
 	
 		particles[i].enemy_damage = type->enemy_damage;
 		particles[i].enemy_life = type->enemy_life;
+
+		particles[i].enemy_index = (int)i;	
+		particles[i].enemy_particle_count = (int)particles.GetCount();
+		particles[i].pattern = pattern;
+		particles[i].spawner_surface = surface->GetBoundingBox(true);
+		particles[i].time = 0.0f;
+		pattern->UpdateParticle(0.0f, &particles[i], player_box);	
 	}
 
 	return true;

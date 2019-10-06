@@ -67,8 +67,8 @@
    <property name="MATERIAL" value="Enemy"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="2004" gid="10" x="5376" y="13216" width="6080" height="6144"/>
-  <object id="2005" gid="10" x="961" y="10432" width="6080" height="6144"/>
+  <object id="2004" gid="10" x="5696" y="12704" width="2144" height="1888"/>
+  <object id="2005" gid="10" x="3649" y="11872" width="1888" height="1888"/>
  </objectgroup>
  <objectgroup id="16" name="Fire" locked="1">
   <properties>

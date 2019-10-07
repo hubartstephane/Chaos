@@ -114,11 +114,16 @@ public:
 // =============================================================
 
 
+#define BONUS_NORMAL 1
+
 bool BonusSpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
 {
 
-
-	return true; //false;
+#if BONUS_NORMAL
+	return false; //false;
+#else
+	return true;
+#endif
 }
 
 bool BonusSpawnerTriggerObject::Initialize()
@@ -143,7 +148,7 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
 
-#if 0
+#if BONUS_NORMAL
 
 	LudumGame * ludum_game = auto_cast(GetLayerInstance()->GetGame());
 	if (ludum_game != nullptr)

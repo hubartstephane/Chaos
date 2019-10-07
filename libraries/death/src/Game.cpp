@@ -117,42 +117,36 @@ namespace death
 			// CHEAT CODE TO SKIP LEVEL
 #if _DEBUG
 			// CMD GLFW_KEY_F1  : SetCheatSkipLevelRequired(...)
-			if (00)
 			if (key == GLFW_KEY_F1)
 			{
 				SetCheatSkipLevelRequired(true);
 				return true;
 			}
 			// CMD GLFW_KEY_F2  : SetCheatMode(...)
-			if (00)
 			if (key == GLFW_KEY_F2)
 			{
 				SetCheatMode(!GetCheatMode());
 				return true;
 			}
 			// CMD GLFW_KEY_F3  : ReloadGameConfiguration(...)
-			if (00)
 			if (key == GLFW_KEY_F3)
 			{
 				ReloadGameConfiguration();
 				return true;
 			}
 			// CMD GLFW_KEY_F4  : ReloadCurrentLevel(...)
-			if (00)
 			if (key == GLFW_KEY_F4)
 			{
 				ReloadCurrentLevel();
 				return true;
 			}
 			// CMD GLFW_KEY_F5  : SetFreeCameraMode(...)
-			if (00)
 			if (key == GLFW_KEY_F5)
 			{
 				SetFreeCameraMode(!IsFreeCameraMode());
 				return true;
 			}
 			// CMD GLFW_KEY_F6  : SaveToCheckpoint(...)
-			if (00)
 			if (key == GLFW_KEY_F6)
 			{
 				SaveIntoCheckpoint();

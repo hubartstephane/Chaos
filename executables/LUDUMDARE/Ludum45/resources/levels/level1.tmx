@@ -10,7 +10,6 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <tileset firstgid="21" source="../../../Ludum44/resources/tilesets/tileset.tsx"/>
  <objectgroup id="22" name="Background2" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>

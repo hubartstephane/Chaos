@@ -132,14 +132,14 @@
   <object id="2050" gid="8" x="16075" y="2424" width="512" height="512"/>
   <object id="2051" gid="9" x="16059" y="1704" width="512" height="512"/>
  </objectgroup>
- <objectgroup id="18" name="Enemies" locked="1">
+ <objectgroup id="18" name="Enemies">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="Enemy"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="2004" gid="10" x="6976" y="12352" width="2144" height="1888"/>
-  <object id="2005" gid="10" x="8001" y="12704" width="1888" height="1888">
+  <object id="2004" gid="10" x="4400" y="12656" width="2144" height="1888"/>
+  <object id="2005" gid="10" x="4417" y="11424" width="1888" height="1888">
    <properties>
     <property name="ENEMY_TYPE" value="ET_Type2"/>
    </properties>

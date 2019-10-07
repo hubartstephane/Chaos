@@ -210,6 +210,7 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 				{
 					dash_timer = ludum_game->player_dash_duration;
 					dash_cooldown = GetCurrentDashValue();			
+					GetGame()->Play("dash", false, false, 0.0f, death::SoundContext::LEVEL);
 				}		
 			}
 			dash_locked = true; // dash is locked until the key is released

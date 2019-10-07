@@ -28,7 +28,7 @@
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
     { "path": "sounds/fire.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},
-    
+    { "path": "sounds/dash.ogg" , "categories" :  "FX"},
     { "path": "sounds/explosion.ogg" , "categories" :  "FX2"},    
       { "path": "sounds/metallic.ogg" , "categories" :  "FX"},
 { "path": "sounds/player_touched.ogg" , "categories" :  "FX"},      

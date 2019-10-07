@@ -343,7 +343,7 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 		if (layer_trait->game->player_dash_duration > 0.0f)
 			alpha = player->dash_timer / layer_trait->game->player_dash_duration;
 		
-		alpha = 00.1f;
+		alpha = 0.8f;
 
 		boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - alpha);
 	}

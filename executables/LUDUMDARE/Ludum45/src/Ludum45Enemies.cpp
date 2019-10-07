@@ -1,6 +1,7 @@
 #include "Ludum45Enemies.h"
 
 #include <chaos/TiledMap.h>
+#include <chaos/GLMTools.h>
 
 bool EnemyPattern::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
 {
@@ -63,8 +64,6 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 	else if (pattern_index == 3)
 	{
 		// LIGNE VERTICAL qui avance
-
-
 		particle_position.y = spawner_position.y + spawner_half_size.y * (particle_ratio * 2.0f - 1.0f);
 		particle_position.x = spawner_position.x - t;
 
@@ -73,8 +72,24 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 	}
 	else if (pattern_index == 4)
 	{
+	
+		// RANDOM + droit devant
+		if (particle->time == 0.0f)
+		{
+			particle_position = spawner_position + (spawner_half_size - particle_half_size) * chaos::GLMTools::RandVec2();			
+			particle->velocity.x = -particle_speed;
+		}
 
+		result = particle_out;
+	}
+	else if (pattern_index == 5)
+	{
 
+		particle_position.x = spawner_position.x + spawner_half_size.x * (particle_ratio * 2.0f - 1.0f);
+		particle_position.y = spawner_position.y + spawner_half_size.y * (particle_ratio * 2.0f - 1.0f);
+		particle->velocity.x = -particle_speed;
+	
+		result = particle_out;
 	}
 
 

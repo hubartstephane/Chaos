@@ -314,7 +314,7 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 		if (layer_trait->game->player_dash_duration > 0.0f)
 			alpha = player->dash_timer / layer_trait->game->player_dash_duration;
 		
-		alpha = 00.3f;
+		alpha = 00.1f;
 
 		boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - alpha);
 	}
@@ -355,7 +355,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// update life from both size
 	enemy->enemy_life -= damage;
-	enemy->touched_count_down = 2;
+	enemy->touched_count_down = 20;
 
 	// play sound
 	if (enemy->enemy_life > 0.0f)

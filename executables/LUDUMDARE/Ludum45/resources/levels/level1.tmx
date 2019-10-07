@@ -10,59 +10,59 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <objectgroup id="19" name="Bonus" locked="1">
+ <objectgroup id="19" name="Bonus">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="1926" gid="1" x="8416" y="10976" width="128" height="128" visible="0"/>
-  <object id="1956" gid="1" x="3778.06" y="9346.18" width="500" height="500"/>
-  <object id="1957" gid="1" x="4834.06" y="9360.55" width="443.879" height="446.909"/>
-  <object id="1958" gid="1" x="5954.06" y="9392.55" width="443.879" height="446.909"/>
-  <object id="1959" gid="1" x="7202.06" y="9424.55" width="443.879" height="446.909"/>
-  <object id="1960" gid="1" x="8226.06" y="9408.55" width="443.879" height="446.909"/>
-  <object id="1961" gid="1" x="9330.06" y="9360.55" width="443.879" height="446.909"/>
-  <object id="1962" gid="1" x="10530.1" y="9392.55" width="443.879" height="446.909"/>
-  <object id="1963" gid="3" x="4128" y="10400" width="500" height="500"/>
-  <object id="1964" gid="3" x="5430" y="10470" width="500" height="500"/>
-  <object id="1965" gid="3" x="6566" y="10422" width="500" height="500"/>
-  <object id="1966" gid="3" x="7670" y="10422" width="500" height="500"/>
-  <object id="1967" gid="3" x="8758" y="10406" width="500" height="500"/>
-  <object id="1968" gid="3" x="9846" y="10406" width="500" height="500"/>
-  <object id="1969" gid="3" x="10902" y="10374" width="500" height="500"/>
-  <object id="1970" gid="4" x="4272" y="11200" width="512" height="512"/>
-  <object id="1971" gid="6" x="4256" y="12160" width="512" height="512"/>
-  <object id="1972" gid="7" x="3856" y="8432" width="512" height="512"/>
-  <object id="1973" gid="8" x="3840" y="7664" width="512" height="512"/>
-  <object id="1974" gid="9" x="3824" y="6944" width="512" height="512"/>
-  <object id="1975" gid="4" x="5488" y="11264" width="512" height="512"/>
-  <object id="1976" gid="4" x="7024" y="11296" width="512" height="512"/>
-  <object id="1977" gid="4" x="8624" y="11232" width="512" height="512"/>
-  <object id="1978" gid="4" x="10032" y="11232" width="512" height="512"/>
-  <object id="1979" gid="4" x="11280" y="11232" width="512" height="512"/>
-  <object id="1980" gid="6" x="5600" y="12208" width="512" height="512"/>
-  <object id="1981" gid="6" x="7040" y="12144" width="512" height="512"/>
-  <object id="1982" gid="6" x="8288" y="12144" width="512" height="512"/>
-  <object id="1983" gid="6" x="9504" y="12160" width="512" height="512"/>
-  <object id="1984" gid="6" x="10688" y="12144" width="512" height="512"/>
-  <object id="1985" gid="6" x="11904" y="12160" width="512" height="512"/>
-  <object id="1986" gid="7" x="5192" y="8408" width="512" height="512"/>
-  <object id="1987" gid="8" x="5176" y="7640" width="512" height="512"/>
-  <object id="1988" gid="9" x="5160" y="6920" width="512" height="512"/>
-  <object id="1989" gid="7" x="6448" y="8448" width="512" height="512"/>
-  <object id="1990" gid="8" x="6432" y="7680" width="512" height="512"/>
-  <object id="1991" gid="9" x="6416" y="6960" width="512" height="512"/>
-  <object id="1992" gid="7" x="7928" y="8480" width="512" height="512"/>
-  <object id="1993" gid="8" x="7912" y="7712" width="512" height="512"/>
-  <object id="1994" gid="9" x="7896" y="6992" width="512" height="512"/>
-  <object id="1995" gid="7" x="9344" y="8544" width="512" height="512"/>
-  <object id="1996" gid="8" x="9328" y="7776" width="512" height="512"/>
-  <object id="1997" gid="9" x="9312" y="7056" width="512" height="512"/>
-  <object id="1998" gid="7" x="10648" y="8400" width="512" height="512"/>
-  <object id="1999" gid="8" x="10632" y="7632" width="512" height="512"/>
-  <object id="2000" gid="9" x="10616" y="6912" width="512" height="512"/>
+  <object id="1956" gid="1" x="8562.06" y="14242.2" width="6036" height="7572"/>
+  <object id="1957" gid="1" x="16834.1" y="4464.55" width="443.879" height="446.909"/>
+  <object id="1958" gid="1" x="17954.1" y="4496.55" width="443.879" height="446.909"/>
+  <object id="1959" gid="1" x="19202.1" y="4528.55" width="443.879" height="446.909"/>
+  <object id="1960" gid="1" x="20226.1" y="4512.55" width="443.879" height="446.909"/>
+  <object id="1961" gid="1" x="21330.1" y="4464.55" width="443.879" height="446.909"/>
+  <object id="1962" gid="1" x="22530.1" y="4496.55" width="443.879" height="446.909"/>
+  <object id="1963" gid="3" x="16128" y="5504" width="500" height="500"/>
+  <object id="1964" gid="3" x="17430" y="5574" width="500" height="500"/>
+  <object id="1965" gid="3" x="18566" y="5526" width="500" height="500"/>
+  <object id="1966" gid="3" x="19670" y="5526" width="500" height="500"/>
+  <object id="1967" gid="3" x="20758" y="5510" width="500" height="500"/>
+  <object id="1968" gid="3" x="21846" y="5510" width="500" height="500"/>
+  <object id="1969" gid="3" x="22902" y="5478" width="500" height="500"/>
+  <object id="1970" gid="4" x="16272" y="6304" width="512" height="512"/>
+  <object id="1971" gid="6" x="16256" y="7264" width="512" height="512"/>
+  <object id="1972" gid="7" x="15856" y="3536" width="512" height="512"/>
+  <object id="1973" gid="8" x="15840" y="2768" width="512" height="512"/>
+  <object id="1974" gid="9" x="15824" y="2048" width="512" height="512"/>
+  <object id="1975" gid="4" x="17488" y="6368" width="512" height="512"/>
+  <object id="1976" gid="4" x="19024" y="6400" width="512" height="512"/>
+  <object id="1977" gid="4" x="20624" y="6336" width="512" height="512"/>
+  <object id="1978" gid="4" x="22032" y="6336" width="512" height="512"/>
+  <object id="1979" gid="4" x="23280" y="6336" width="512" height="512"/>
+  <object id="1980" gid="6" x="17600" y="7312" width="512" height="512"/>
+  <object id="1981" gid="6" x="19040" y="7248" width="512" height="512"/>
+  <object id="1982" gid="6" x="20288" y="7248" width="512" height="512"/>
+  <object id="1983" gid="6" x="21504" y="7264" width="512" height="512"/>
+  <object id="1984" gid="6" x="22688" y="7248" width="512" height="512"/>
+  <object id="1985" gid="6" x="23904" y="7264" width="512" height="512"/>
+  <object id="1986" gid="7" x="17192" y="3512" width="512" height="512"/>
+  <object id="1987" gid="8" x="17176" y="2744" width="512" height="512"/>
+  <object id="1988" gid="9" x="17160" y="2024" width="512" height="512"/>
+  <object id="1989" gid="7" x="18448" y="3552" width="512" height="512"/>
+  <object id="1990" gid="8" x="18432" y="2784" width="512" height="512"/>
+  <object id="1991" gid="9" x="18416" y="2064" width="512" height="512"/>
+  <object id="1992" gid="7" x="19928" y="3584" width="512" height="512"/>
+  <object id="1993" gid="8" x="19912" y="2816" width="512" height="512"/>
+  <object id="1994" gid="9" x="19896" y="2096" width="512" height="512"/>
+  <object id="1995" gid="7" x="21344" y="3648" width="512" height="512"/>
+  <object id="1996" gid="8" x="21328" y="2880" width="512" height="512"/>
+  <object id="1997" gid="9" x="21312" y="2160" width="512" height="512"/>
+  <object id="1998" gid="7" x="22648" y="3504" width="512" height="512"/>
+  <object id="1999" gid="8" x="22632" y="2736" width="512" height="512"/>
+  <object id="2000" gid="9" x="22616" y="2016" width="512" height="512"/>
  </objectgroup>
- <objectgroup id="18" name="Enemies">
+ <objectgroup id="18" name="Enemies" locked="1">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="Enemy"/>
@@ -77,7 +77,7 @@
   <object id="2006" gid="12" x="12090" y="12573" width="2301" height="1938"/>
   <object id="2007" gid="13" x="9329" y="11366" width="2607" height="2308"/>
  </objectgroup>
- <objectgroup id="16" name="PlayerFire">
+ <objectgroup id="16" name="PlayerFire" locked="1">
   <properties>
    <property name="MATERIAL" value="Fire"/>
   </properties>
@@ -93,7 +93,7 @@
    <property name="MATERIAL" value="player"/>
   </properties>
   <object id="57" name="TheCamera1" type="Camera" x="2088" y="10016" width="3504" height="2472"/>
-  <object id="75" name="world_bounding_box" x="1136" y="2752" width="190400" height="11072"/>
+  <object id="75" name="world_bounding_box" x="1136" y="7552" width="190400" height="6272"/>
   <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="3058" y="11336" width="550" height="870">
    <properties>
     <property name="BITMAP_NAME" value="jesus_3x1"/>

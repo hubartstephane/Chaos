@@ -27,6 +27,16 @@
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
     { "path": "sounds/fire.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},
+    
+    
+    { "path": "sounds/gods_power.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gods_speed.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gods_blast.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gods_dash.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gods_ghost.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gods_spread.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gods_sideoflife.ogg" , "categories" :  "FX"},
+
     { "path": "sounds/heartbeat.ogg" , "categories" :  "FX"}
   ]
 }

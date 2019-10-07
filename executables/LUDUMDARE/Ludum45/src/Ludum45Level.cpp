@@ -143,6 +143,20 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
 
+	LudumGame * ludum_game = auto_cast(GetLayerInstance()->GetGame());
+	if (ludum_game != nullptr)
+	{
+		LudumPlayer * ludum_player = auto_cast(ludum_game->GetPlayer(0));
+		if (ludum_player != nullptr)
+			ludum_player->OnPlayerUpgrade(bonus_type);	
+	}
+
+
+
+#if 0
+
+
+
 	// prepare the spawner
 	LayerParticleSpawner<ParticleBonus> spawner;
 	if (!spawner.Initialize(GetLayerInstance(), "Bonus", 1))
@@ -164,6 +178,9 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	particles[0].texcoords = texcoords;
 	particles[0].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
 	particles[0].bonus_type = bonus_type; 
+
+
+#endif
 
 	return true;
 }

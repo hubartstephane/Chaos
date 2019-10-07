@@ -2,7 +2,7 @@
 	"categories":{
 	
 		"@music":{
-			"volume":0.5
+			"volume":0.35
 		},
     "@FX": {
       "volume": 0.2
@@ -12,7 +12,7 @@
 		},
     
 		"@Voices":{
-			"volume":0.3
+			"volume":1.0
 		}    
 	},
 
@@ -23,24 +23,24 @@
     { "path": "sounds/game_music3.ogg" , "categories" :  "music"},
     { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
     { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
-    { "path": "sounds/gameover.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gameover.ogg" , "categories" :  "Voices"},
     { "path": "sounds/brightsideoflife.ogg" , "categories" :  "FX"},
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
     { "path": "sounds/fire.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},
-    { "path": "sounds/dash.ogg" , "categories" :  "FX"},
+    { "path": "sounds/dash.ogg" , "categories" :  "Voices"},
     { "path": "sounds/explosion.ogg" , "categories" :  "FX2"},    
       { "path": "sounds/metallic.ogg" , "categories" :  "FX"},
 { "path": "sounds/player_touched.ogg" , "categories" :  "FX"},      
     
-    { "path": "sounds/gods_power.ogg" , "categories" :  "FX"},
-    { "path": "sounds/gods_speed.ogg" , "categories" :  "FX"},
-    { "path": "sounds/gods_blast.ogg" , "categories" :  "FX"},
-    { "path": "sounds/gods_dash.ogg" , "categories" :  "FX"},
-    { "path": "sounds/gods_ghost.ogg" , "categories" :  "FX"},
-    { "path": "sounds/gods_spread.ogg" , "categories" :  "FX"},
-    { "path": "sounds/gods_sideoflife.ogg" , "categories" :  "FX"},
+    { "path": "sounds/gods_power.ogg" , "categories" :  "Voices"},
+    { "path": "sounds/gods_speed.ogg" , "categories" :  "Voices"},
+    { "path": "sounds/gods_blast.ogg" , "categories" :  "Voices"},
+    { "path": "sounds/gods_dash.ogg" , "categories" :  "Voices"},
+    { "path": "sounds/gods_ghost.ogg" , "categories" :  "Voices"},
+    { "path": "sounds/gods_spread.ogg" , "categories" :  "Voices"},
+    { "path": "sounds/gods_sideoflife.ogg" , "categories" :  "Voices"},
 
-    { "path": "sounds/heartbeat.ogg" , "categories" :  "FX"}
+    { "path": "sounds/heartbeat.ogg" , "categories" :  "Voices"}
   ]
 }

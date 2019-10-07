@@ -107,7 +107,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	if (!death::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 
-	RegisterEnemyPatterns();
 	RegisterEnemyTypes();
 
 	return true;
@@ -186,19 +185,6 @@ void LudumGame::RegisterObjectTypeDefinition(char const * prefix, FUNC func)
 	}
 }
 
-
-void LudumGame::DoRegisterEnemyPattern(chaos::TiledMap::ObjectTypeDefinition const * def)
-{
-	EnemyPattern * pattern = new EnemyPattern;
-	if (pattern == nullptr)
-		return;
-	pattern->name = def->name;
-	if (!pattern->Initialize(def))
-		delete(pattern);
-	else
-		enemy_patterns.push_back(pattern);
-}
-
 void LudumGame::DoRegisterEnemyType(chaos::TiledMap::ObjectTypeDefinition const * def)
 {
 	EnemyType * type = new EnemyType;
@@ -211,13 +197,6 @@ void LudumGame::DoRegisterEnemyType(chaos::TiledMap::ObjectTypeDefinition const 
 		enemy_types.push_back(type);
 }
 
-void LudumGame::RegisterEnemyPatterns()
-{
-	RegisterObjectTypeDefinition("EP_", [this](chaos::TiledMap::ObjectTypeDefinition const * def)
-	{
-		DoRegisterEnemyPattern(def);
-	});
-}
 
 
 void LudumGame::RegisterEnemyTypes()
@@ -239,22 +218,6 @@ EnemyType * LudumGame::FindEnemyType(char const * name)
 EnemyType const * LudumGame::FindEnemyType(char const * name) const
 {
 	for (auto const & t : enemy_types)
-		if (chaos::StringTools::Stricmp(t->name, name) == 0)
-			return t.get();
-	return nullptr;
-}
-
-EnemyPattern * LudumGame::FindEnemyPattern(char const * name)
-{
-	for (auto const & t : enemy_patterns)
-		if (chaos::StringTools::Stricmp(t->name, name) == 0)
-			return t.get();
-	return nullptr;
-}
-
-EnemyPattern const * LudumGame::FindEnemyPattern(char const * name) const
-{
-	for (auto const & t : enemy_patterns)
 		if (chaos::StringTools::Stricmp(t->name, name) == 0)
 			return t.get();
 	return nullptr;

@@ -43,32 +43,16 @@
   </properties>
   <image width="256" height="256" source="../sprites/powerspread.png"/>
  </tile>
- <tile id="9" type="EnemySpawner">
-  <properties>
-   <property name="ENEMY_PATTERN" value="EP_Pattern2"/>
-   <property name="ENEMY_TYPE" value="ET_Type1"/>
-  </properties>
+ <tile id="9" type="EnemySpawner1">
   <image width="256" height="256" source="../sprites/ange1.png"/>
  </tile>
- <tile id="10" type="EnemySpawner">
-  <properties>
-   <property name="ENEMY_PATTERN" value="EP_Pattern3"/>
-   <property name="ENEMY_TYPE" value="ET_Type2"/>
-  </properties>
+ <tile id="10" type="EnemySpawner2">
   <image width="300" height="300" source="../sprites/ange2.png"/>
  </tile>
- <tile id="11" type="EnemySpawner">
-  <properties>
-   <property name="ENEMY_PATTERN" value="EP_Pattern1"/>
-   <property name="ENEMY_TYPE" value="ET_Type3"/>
-  </properties>
+ <tile id="11" type="EnemySpawner3">
   <image width="269" height="170" source="../sprites/Bird2.png"/>
  </tile>
- <tile id="12" type="EnemySpawner">
-  <properties>
-   <property name="ENEMY_PATTERN" value="EP_Pattern3"/>
-   <property name="ENEMY_TYPE" value="ET_Type4"/>
-  </properties>
+ <tile id="12" type="EnemySpawner4">
   <image width="319" height="220" source="../sprites/bird1.png"/>
  </tile>
  <tile id="13">

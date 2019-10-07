@@ -3,7 +3,7 @@
 #include <chaos/TiledMap.h>
 #include <chaos/GLMTools.h>
 
-bool EnemyPattern::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
+bool EnemyPattern::Initialize(chaos::TiledMap::PropertyOwner const * def)
 {
 	enemy_count = def->FindPropertyInt("ENEMY_COUNT", 0);
 	particle_initial_range = def->FindPropertyFloat("PARTICLE_INITIAL_RANGE", particle_initial_range);

@@ -216,12 +216,15 @@ bool EnemySpawnerTriggerObject::Initialize()
 	enemy_type    = geometric_object->FindPropertyString("ENEMY_TYPE", "");
 	enemy_pattern = geometric_object->FindPropertyString("ENEMY_PATTERN", "");
 
+
+	// we possess the pattern
+	pattern = new EnemyPattern;
+	if (pattern != nullptr)
+		pattern->Initialize(geometric_object.get());
+
 	LudumGame * ludum_game = auto_cast(GetLayerInstance()->GetGame());
 	if (ludum_game != nullptr)
-	{
 		type = ludum_game->FindEnemyType(enemy_type.c_str());
-		pattern = ludum_game->FindEnemyPattern(enemy_pattern.c_str());
-	}
 
 	return true;
 }

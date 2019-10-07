@@ -19,7 +19,7 @@ class EnemyPattern : public chaos::ReferencedObject
 
 public:
 
-	virtual bool Initialize(chaos::TiledMap::ObjectTypeDefinition const * def);
+	virtual bool Initialize(chaos::TiledMap::PropertyOwner const * def);
 
 
 	

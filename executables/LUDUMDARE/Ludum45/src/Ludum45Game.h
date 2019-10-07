@@ -74,12 +74,6 @@ public:
 	EnemyType * FindEnemyType(char const * name);
 	EnemyType const * FindEnemyType(char const * name) const;
 
-	EnemyPattern * FindEnemyPattern(char const * name);
-	EnemyPattern const * FindEnemyPattern(char const * name) const;
-
-
-
-
 
 protected:
 
@@ -110,17 +104,14 @@ protected:
 	
 
 	void RegisterEnemyTypes();
-	void RegisterEnemyPatterns();
 
 	void DoRegisterEnemyType(chaos::TiledMap::ObjectTypeDefinition const * def);
-	void DoRegisterEnemyPattern(chaos::TiledMap::ObjectTypeDefinition const * def);
 
 	template<typename FUNC>
 	void RegisterObjectTypeDefinition(char const * prefix, FUNC func);
 
 protected:
 
-	std::vector<chaos::shared_ptr<EnemyPattern>> enemy_patterns;
 	std::vector<chaos::shared_ptr<EnemyType>> enemy_types;
 
 	float player_speed_factor = 500.0f;

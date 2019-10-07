@@ -471,7 +471,7 @@ namespace chaos
 			if (DoComputeResult(entries))
 			{
 #if _DEBUG
-				if (EnsureValidResults(entries))
+				if (0011 || EnsureValidResults(entries))
 #endif // _DEBUG
 				{
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);

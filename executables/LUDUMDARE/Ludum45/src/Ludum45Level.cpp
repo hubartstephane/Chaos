@@ -286,7 +286,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	{
 		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
 
-		particles[i].bounding_box.half_size = 0.5f * glm::vec2(bitmap_info->width, bitmap_info->height);
+		particles[i].bounding_box.half_size = 0.5f * glm::vec2(bitmap_info->width, bitmap_info->height) * type->scale;
 
 
 

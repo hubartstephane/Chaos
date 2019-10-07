@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2087">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2092">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -10,7 +10,7 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <tileset firstgid="16" source="../../../Ludum44/resources/tilesets/tileset.tsx"/>
+ <tileset firstgid="21" source="../../../Ludum44/resources/tilesets/tileset.tsx"/>
  <objectgroup id="22" name="Background2" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
@@ -138,14 +138,19 @@
    <property name="MATERIAL" value="Enemy"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="2083" gid="10" x="4048" y="10304" width="2272" height="2304"/>
-  <object id="2084" gid="11" x="6826" y="9558" width="2092" height="2220"/>
-  <object id="2085" gid="12" x="9482" y="12629" width="2349" height="2330"/>
-  <object id="2086" gid="13" x="6081" y="12174" width="2495" height="2556">
+  <object id="2083" gid="10" x="12640" y="22720" width="2272" height="2304"/>
+  <object id="2084" gid="11" x="15418" y="21974" width="2092" height="2220"/>
+  <object id="2085" gid="12" x="18074" y="25045" width="2349" height="2330"/>
+  <object id="2086" gid="13" x="14673" y="24590" width="2495" height="2556">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="666"/>
    </properties>
   </object>
+  <object id="2087" gid="16" x="5859" y="10092" width="2826" height="2905"/>
+  <object id="2088" gid="17" x="6267" y="13061" width="2778" height="2794"/>
+  <object id="2089" gid="18" x="9277" y="11347" width="3175" height="3063"/>
+  <object id="2090" gid="19" x="10665" y="13742" width="3310" height="3292"/>
+  <object id="2091" gid="20" x="13422" y="10738" width="3045" height="2757"/>
  </objectgroup>
  <objectgroup id="16" name="PlayerFire" locked="1">
   <properties>
@@ -172,8 +177,8 @@
     <property name="BITMAP_NAME" value="jesus_3x1"/>
    </properties>
   </object>
-  <object id="2008" name="Checkpoint" type="Checkpoint" gid="17" x="-8280" y="35560" width="6384" height="12272"/>
-  <object id="2009" name="Finish" gid="17" x="6056" y="28328" width="5936" height="8752"/>
+  <object id="2008" name="Checkpoint" type="Checkpoint" gid="22" x="-8280" y="35560" width="6384" height="12272"/>
+  <object id="2009" name="Finish" gid="22" x="6056" y="28328" width="5936" height="8752"/>
  </objectgroup>
  <objectgroup id="24" name="Explosions">
   <properties>

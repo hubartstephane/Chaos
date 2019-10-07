@@ -10,6 +10,7 @@ bool EnemyPattern::Initialize(chaos::TiledMap::PropertyOwner const * def)
 	particle_speed = def->FindPropertyFloat("PARTICLE_SPEED", 0);
 	pattern_index =  def->FindPropertyInt("PATTERN_INDEX", pattern_index);
 
+
 	return true;
 }
 
@@ -132,6 +133,7 @@ bool EnemyType::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
 	bitmap_name = def->FindPropertyString("BITMAP_NAME", "");
 	enemy_life  = def->FindPropertyFloat("ENEMY_LIFE", enemy_life);
 	enemy_damage  = def->FindPropertyFloat("ENEMY_DAMAGE", enemy_damage);
+	scale =  def->FindPropertyFloat("SCALE", scale);
 
 	return true;
 }

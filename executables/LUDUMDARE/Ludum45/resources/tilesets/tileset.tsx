@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="319" tileheight="300" tilecount="13" columns="0">
+<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="319" tileheight="300" tilecount="18" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="BonusSpawner">
   <properties>
@@ -60,5 +60,23 @@
  </tile>
  <tile id="14">
   <image width="270" height="201" source="../sprites/cloud2.png"/>
+ </tile>
+ <tile id="15" type="EnemySpawner5">
+  <properties>
+   <property name="ENEMY_TYPE" value="ET_Type5"/>
+  </properties>
+  <image width="282" height="249" source="../sprites/satan1.png"/>
+ </tile>
+ <tile id="16" type="EnemySpawner6">
+  <image width="138" height="170" source="../sprites/monster1.png"/>
+ </tile>
+ <tile id="17" type="EnemySpawner7">
+  <image width="167" height="135" source="../sprites/monster2.png"/>
+ </tile>
+ <tile id="18" type="EnemySpawner8">
+  <image width="206" height="220" source="../sprites/rabbit1.png"/>
+ </tile>
+ <tile id="19" type="EnemySpawner9">
+  <image width="165" height="165" source="../sprites/rabbit2.png"/>
  </tile>
 </tileset>

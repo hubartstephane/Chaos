@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2103">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2108">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -45,88 +45,20 @@
   </properties>
   <object id="1926" gid="1" x="8416" y="10976" width="128" height="128" visible="0"/>
   <object id="1956" gid="1" x="12498.1" y="14418.2" width="1556" height="6100"/>
-  <object id="1961" gid="1" x="29746.1" y="1936.55" width="443.879" height="446.909"/>
-  <object id="1962" gid="1" x="30946.1" y="1968.55" width="443.879" height="446.909"/>
-  <object id="1963" gid="3" x="34256" y="15280" width="500" height="7172"/>
-  <object id="1964" gid="3" x="25846" y="3046" width="500" height="500"/>
-  <object id="1965" gid="3" x="26982" y="2998" width="500" height="500"/>
-  <object id="1966" gid="3" x="28086" y="2998" width="500" height="500"/>
-  <object id="1967" gid="3" x="29174" y="2982" width="500" height="500"/>
-  <object id="1968" gid="3" x="30262" y="2982" width="500" height="500"/>
-  <object id="1969" gid="3" x="31318" y="2950" width="500" height="500"/>
+  <object id="1963" gid="3" x="32560" y="14800" width="500" height="7172"/>
   <object id="1970" gid="4" x="24688" y="3776" width="512" height="512"/>
   <object id="1971" gid="6" x="24672" y="4736" width="512" height="512"/>
   <object id="1972" gid="7" x="24272" y="1008" width="512" height="512"/>
   <object id="1973" gid="8" x="24256" y="240" width="512" height="512"/>
   <object id="1974" gid="9" x="20448" y="14560" width="1040" height="6064"/>
-  <object id="1975" gid="4" x="25904" y="3840" width="512" height="512"/>
-  <object id="1976" gid="4" x="27440" y="3872" width="512" height="512"/>
-  <object id="1977" gid="4" x="29040" y="3808" width="512" height="512"/>
-  <object id="1978" gid="4" x="30448" y="3808" width="512" height="512"/>
-  <object id="1979" gid="4" x="31696" y="3808" width="512" height="512"/>
-  <object id="1980" gid="6" x="26016" y="4784" width="512" height="512"/>
-  <object id="1981" gid="6" x="27456" y="4720" width="512" height="512"/>
-  <object id="1982" gid="6" x="34864" y="15264" width="512" height="7136"/>
-  <object id="1983" gid="6" x="29920" y="4736" width="512" height="512"/>
-  <object id="1984" gid="6" x="31104" y="4720" width="512" height="512"/>
-  <object id="1985" gid="6" x="32320" y="4736" width="512" height="512"/>
+  <object id="1982" gid="6" x="33232" y="14784" width="512" height="7136"/>
   <object id="1986" gid="7" x="25608" y="984" width="512" height="512"/>
   <object id="1987" gid="8" x="25592" y="216" width="512" height="512"/>
   <object id="1988" gid="9" x="25576" y="-504" width="512" height="512"/>
-  <object id="1989" gid="7" x="26864" y="1024" width="512" height="512"/>
-  <object id="1990" gid="8" x="26848" y="256" width="512" height="512"/>
-  <object id="1991" gid="9" x="26832" y="-464" width="512" height="512"/>
   <object id="1992" gid="7" x="24824" y="15312" width="1248" height="7392"/>
   <object id="1993" gid="8" x="28728" y="14976" width="688" height="7152"/>
-  <object id="1994" gid="9" x="28312" y="-432" width="512" height="512"/>
-  <object id="1995" gid="7" x="29760" y="1120" width="512" height="512"/>
-  <object id="1996" gid="8" x="29744" y="352" width="512" height="512"/>
-  <object id="1997" gid="9" x="29728" y="-368" width="512" height="512"/>
-  <object id="1998" gid="7" x="31064" y="976" width="512" height="512"/>
-  <object id="1999" gid="8" x="31048" y="208" width="512" height="512"/>
-  <object id="2000" gid="9" x="31032" y="-512" width="512" height="512"/>
-  <object id="2010" gid="1" x="33253.1" y="1688.55" width="443.879" height="446.909"/>
-  <object id="2011" gid="1" x="34373.1" y="1720.55" width="443.879" height="446.909"/>
-  <object id="2012" gid="1" x="35621.1" y="1752.55" width="443.879" height="446.909"/>
-  <object id="2013" gid="1" x="36645.1" y="1736.55" width="443.879" height="446.909"/>
-  <object id="2014" gid="1" x="37749.1" y="1688.55" width="443.879" height="446.909"/>
-  <object id="2015" gid="1" x="38949.1" y="1720.55" width="443.879" height="446.909"/>
-  <object id="2016" gid="3" x="32547" y="2728" width="500" height="500"/>
-  <object id="2017" gid="3" x="33849" y="2798" width="500" height="500"/>
-  <object id="2018" gid="3" x="34985" y="2750" width="500" height="500"/>
-  <object id="2019" gid="3" x="36089" y="2750" width="500" height="500"/>
-  <object id="2020" gid="3" x="37177" y="2734" width="500" height="500"/>
-  <object id="2021" gid="3" x="38265" y="2734" width="500" height="500"/>
-  <object id="2022" gid="3" x="39321" y="2702" width="500" height="500"/>
-  <object id="2023" gid="4" x="32691" y="3528" width="512" height="512"/>
-  <object id="2024" gid="6" x="32675" y="4488" width="512" height="512"/>
-  <object id="2025" gid="7" x="32275" y="760" width="512" height="512"/>
-  <object id="2026" gid="8" x="32259" y="-8" width="512" height="512"/>
-  <object id="2027" gid="9" x="32243" y="-728" width="512" height="512"/>
-  <object id="2028" gid="4" x="33907" y="3592" width="512" height="512"/>
-  <object id="2029" gid="4" x="35443" y="3624" width="512" height="512"/>
-  <object id="2030" gid="4" x="37043" y="3560" width="512" height="512"/>
-  <object id="2031" gid="4" x="38451" y="3560" width="512" height="512"/>
-  <object id="2032" gid="6" x="34019" y="4536" width="512" height="512"/>
-  <object id="2033" gid="6" x="35459" y="4472" width="512" height="512"/>
-  <object id="2034" gid="6" x="36707" y="4472" width="512" height="512"/>
-  <object id="2035" gid="6" x="37923" y="4488" width="512" height="512"/>
-  <object id="2036" gid="6" x="39107" y="4472" width="512" height="512"/>
-  <object id="2037" gid="7" x="33611" y="736" width="512" height="512"/>
-  <object id="2038" gid="8" x="33595" y="-32" width="512" height="512"/>
-  <object id="2039" gid="9" x="33579" y="-752" width="512" height="512"/>
-  <object id="2040" gid="7" x="34867" y="776" width="512" height="512"/>
-  <object id="2041" gid="8" x="34851" y="8" width="512" height="512"/>
-  <object id="2042" gid="9" x="34835" y="-712" width="512" height="512"/>
-  <object id="2043" gid="7" x="36347" y="808" width="512" height="512"/>
-  <object id="2044" gid="8" x="36331" y="40" width="512" height="512"/>
-  <object id="2045" gid="9" x="36315" y="-680" width="512" height="512"/>
-  <object id="2046" gid="7" x="37763" y="872" width="512" height="512"/>
-  <object id="2047" gid="8" x="37747" y="104" width="512" height="512"/>
-  <object id="2048" gid="9" x="37731" y="-616" width="512" height="512"/>
-  <object id="2049" gid="7" x="39067" y="728" width="512" height="512"/>
-  <object id="2050" gid="8" x="39051" y="-40" width="512" height="512"/>
-  <object id="2051" gid="9" x="42139" y="16872" width="6080" height="10816"/>
+  <object id="2043" gid="7" x="36347" y="808" width="512" height="512" visible="0"/>
+  <object id="2051" gid="9" x="40155" y="16872" width="896" height="10816"/>
  </objectgroup>
  <objectgroup id="18" name="Enemies">
   <properties>
@@ -134,16 +66,15 @@
    <property name="MATERIAL" value="Enemy"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="2083" gid="10" x="5728" y="11856" width="2272" height="2304">
+  <object id="2083" name="1" gid="10" x="5728" y="11856" width="2272" height="2304">
    <properties>
     <property name="PARTICLE_SPEED" type="float" value="0.6"/>
    </properties>
   </object>
-  <object id="2084" gid="11" x="15418" y="21974" width="2092" height="2220"/>
   <object id="2085" gid="12" x="26090" y="13653" width="2349" height="4698"/>
-  <object id="2086" gid="13" x="29009" y="13006" width="6655" height="3388">
+  <object id="2086" name="6" gid="13" x="26769" y="13006" width="6655" height="3388">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="666"/>
+    <property name="ENEMY_COUNT" type="int" value="30"/>
    </properties>
   </object>
   <object id="2087" gid="16" x="-4733" y="17516" width="2826" height="2905"/>
@@ -152,24 +83,53 @@
   <object id="2090" gid="19" x="73" y="21166" width="3310" height="3292"/>
   <object id="2091" gid="20" x="2830" y="18162" width="3045" height="2757"/>
   <object id="2096" gid="11" x="7466" y="7914" width="4588" height="5036"/>
-  <object id="2097" gid="11" x="13722" y="12986" width="7868" height="3468">
+  <object id="2097" name="4" gid="11" x="13722" y="12986" width="7868" height="3468">
    <properties>
-    <property name="ENEMY_COUNT" type="int" value="10"/>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="PARTICLE_SPEED" type="float" value="1"/>
    </properties>
   </object>
-  <object id="2098" gid="10" x="8176" y="12672" width="2272" height="2304">
+  <object id="2098" name="2" gid="10" x="8176" y="12672" width="2272" height="2304">
    <properties>
     <property name="PARTICLE_SPEED" type="float" value="0.6"/>
    </properties>
   </object>
-  <object id="2099" gid="10" x="10672" y="12064" width="2272" height="2304">
+  <object id="2099" name="3" gid="10" x="10672" y="12064" width="2272" height="2304">
    <properties>
     <property name="PARTICLE_INITIAL_RANGE" type="float" value="3.14"/>
     <property name="PARTICLE_SPEED" type="float" value="2"/>
    </properties>
   </object>
-  <object id="2101" gid="12" x="21657.5" y="13731" width="2349" height="4698"/>
+  <object id="2101" name="5" gid="12" x="21657.5" y="13731" width="2349" height="4698"/>
+  <object id="2103" name="8" gid="10" x="34480" y="11776" width="2272" height="2304">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="2104" name="9" gid="10" x="36560" y="13056" width="2272" height="2304">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="2105" name="10" gid="10" x="38352" y="11712" width="2272" height="2304">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="2106" name="7" gid="10" x="29168" y="13376" width="4416" height="4384">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="0.5"/>
+   </properties>
+  </object>
+  <object id="2107" name="1" gid="10" x="24080" y="12384" width="2272" height="2304">
+   <properties>
+    <property name="PARTICLE_SPEED" type="float" value="0.6"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="16" name="PlayerFire" locked="1">
   <properties>
@@ -190,18 +150,18 @@
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="57" name="TheCamera1" type="Camera" x="2088" y="10016" width="3504" height="2472"/>
-  <object id="75" name="world_bounding_box" x="1136" y="9440" width="190400" height="3616"/>
+  <object id="75" name="world_bounding_box" x="1136" y="9440" width="49440" height="3616"/>
   <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="3058" y="11696" width="326" height="510">
    <properties>
     <property name="BITMAP_NAME" value="jesus_3x1"/>
    </properties>
   </object>
   <object id="2008" name="Checkpoint" type="Checkpoint" gid="22" x="-8280" y="35560" width="2032" height="12272"/>
-  <object id="2009" name="Finish" gid="22" x="6056" y="28328" width="5936" height="8752"/>
+  <object id="2009" name="Finish" gid="22" x="40808" y="16168" width="2992" height="8752"/>
   <object id="2092" name="Checkpoint" type="Checkpoint" gid="22" x="12616" y="17768" width="1264" height="12272"/>
   <object id="2093" name="Checkpoint" type="Checkpoint" gid="22" x="25096" y="18632" width="704" height="12272"/>
-  <object id="2094" name="Checkpoint" type="Checkpoint" gid="22" x="58888" y="17096" width="2032" height="12272"/>
-  <object id="2102" name="Checkpoint" type="Checkpoint" gid="22" x="35408" y="18248" width="704" height="12272"/>
+  <object id="2094" name="Checkpoint" type="Checkpoint" gid="22" x="55336" y="9352" width="2032" height="12272"/>
+  <object id="2102" name="Checkpoint" type="Checkpoint" gid="22" x="33712" y="17640" width="704" height="12272"/>
  </objectgroup>
  <objectgroup id="24" name="Explosions">
   <properties>

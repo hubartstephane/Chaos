@@ -1,6 +1,7 @@
 {
   "@background" : { "path": "@programs/background/background.pgm" },
   "@player": { "path": "@programs/player/player.pgm" },
+  "@explosion": { "path": "@programs/explosion/explosion.pgm" },
   "@enemy": { "path": "@programs/enemy/enemy.pgm" },
   "@brightsideoflife": { "path": "@programs/brightsideoflife/brightsideoflife.pgm" },
   "@gameobject": { "path": "@programs/gameobject/gameobject.pgm" },

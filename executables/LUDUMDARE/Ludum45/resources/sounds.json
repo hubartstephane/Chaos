@@ -10,6 +10,7 @@
 		"@FX2":{
 			"volume":1.0
 		},
+    
 		"@Voices":{
 			"volume":0.3
 		}    
@@ -28,6 +29,9 @@
     { "path": "sounds/fire.ogg" , "categories" :  "FX"},
     { "path": "sounds/next_level.ogg" , "categories" :  "FX"},
     
+    { "path": "sounds/explosion.ogg" , "categories" :  "FX2"},    
+      { "path": "sounds/metallic.ogg" , "categories" :  "FX"},
+{ "path": "sounds/player_touched.ogg" , "categories" :  "FX"},      
     
     { "path": "sounds/gods_power.ogg" , "categories" :  "FX"},
     { "path": "sounds/gods_speed.ogg" , "categories" :  "FX"},

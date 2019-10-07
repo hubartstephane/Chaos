@@ -272,3 +272,44 @@ public:
 
 
 
+
+
+// ===========================================================================
+// ParticleExplosion
+// ===========================================================================
+
+class ParticleExplosion : public chaos::ParticleDefault::Particle
+{
+
+public:
+
+	chaos::BitmapAtlas::BitmapInfo const * explosion_info = nullptr;
+
+	float age = 0.0f;
+};
+
+class ParticleExplosionTrait : public chaos::ParticleAllocationTrait<ParticleExplosion, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame * game = nullptr;
+	};
+
+	bool UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const;
+
+	size_t ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+
+
+};
+
+
+
+
+
+
+

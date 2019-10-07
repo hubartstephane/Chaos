@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="24" nextobjectid="2078">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2078">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -174,5 +174,10 @@
   </object>
   <object id="2008" name="Checkpoint" type="Checkpoint" gid="17" x="-8280" y="35560" width="6384" height="12272"/>
   <object id="2009" name="Finish" gid="17" x="6056" y="28328" width="5936" height="8752"/>
+ </objectgroup>
+ <objectgroup id="24" name="Explosions">
+  <properties>
+   <property name="MATERIAL" value="explosion"/>
+  </properties>
  </objectgroup>
 </map>

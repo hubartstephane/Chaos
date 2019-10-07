@@ -365,7 +365,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(10, true);
 		game->Play("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
-		//game->GetLudumGameInstance()->FireExplosion(ref_box);
+		game->GetLudumGameInstance()->FireExplosion(ref_box);
 	}
 	return result;
 }
@@ -518,5 +518,57 @@ bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle
 
 size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+}
+
+
+
+// ===========================================================================
+// ParticleExplosionTrait
+// ===========================================================================
+
+
+bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const
+{
+	if (particle->explosion_info == nullptr) // delete the particle
+		return true;
+
+	int image_count = particle->explosion_info->GetAnimationImageCount();
+	float frame_time = (float)particle->explosion_info->GetFrameTime();
+
+	if (frame_time == 0)
+		frame_time = 1 / 16.0f;
+
+	int image_index = (int)(particle->age / frame_time);
+
+	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::BitmapAtlas::GetBitmapLayoutFlag::none);
+	if (bitmap_layout.bitmap_index < 0)
+		return true;
+
+	particle->age += delta_time;
+
+#if 0
+	particle->texcoords = bitmap_layout;
+
+	// compute the bounding box for all particles
+	chaos::box2 particle_box = ref_box;
+
+	particle_box.half_size = ratio_to_box * ref_box.half_size;
+
+	particle_box.position = ref_box.position;
+
+	// compute texcoords for all particles
+#endif
+	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout, layer_trait->game->GetTextureAtlas()->GetAtlasDimension());
+
+
+
+	return false;
+}
+
+size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+{
+
+
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }

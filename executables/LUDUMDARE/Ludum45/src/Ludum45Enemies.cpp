@@ -77,7 +77,7 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 		// RANDOM + droit devant
 		if (particle->time == 0.0f)
 		{
-			particle_position = spawner_position + (spawner_half_size - particle_half_size) * chaos::GLMTools::RandVec2();			
+			particle_position = spawner_position + (spawner_half_size - particle_half_size) * (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f));			
 			particle->velocity.x = -particle_speed;
 		}
 

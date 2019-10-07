@@ -50,7 +50,7 @@
   <property name="PATTERN_INDEX" type="int" default="4"/>
  </objecttype>
  <objecttype name="EnemySpawner5" color="#a0a0a4">
-  <property name="COMMENT" type="string" default="????"/>
+  <property name="COMMENT" type="string" default="cercle"/>
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type5"/>
@@ -59,7 +59,7 @@
   <property name="PATTERN_INDEX" type="int" default="1"/>
  </objecttype>
  <objecttype name="EnemySpawner6" color="#a0a0a4">
-  <property name="COMMENT" type="string" default="????"/>
+  <property name="COMMENT" type="string" default="sinusoide"/>
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type6"/>
@@ -68,7 +68,7 @@
   <property name="PATTERN_INDEX" type="int" default="2"/>
  </objecttype>
  <objecttype name="EnemySpawner7" color="#a0a0a4">
-  <property name="COMMENT" type="string" default="????"/>
+  <property name="COMMENT" type="string" default="VERTICAL + avance droit devant"/>
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type7"/>
@@ -77,7 +77,7 @@
   <property name="PATTERN_INDEX" type="int" default="3"/>
  </objecttype>
  <objecttype name="EnemySpawner8" color="#a0a0a4">
-  <property name="COMMENT" type="string" default="????"/>
+  <property name="COMMENT" type="string" default="RANDOM + avance droit devant"/>
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type8"/>
@@ -86,13 +86,13 @@
   <property name="PATTERN_INDEX" type="int" default="4"/>
  </objecttype>
  <objecttype name="EnemySpawner9" color="#a0a0a4">
-  <property name="COMMENT" type="string" default="????"/>
+  <property name="COMMENT" type="string" default="cercle"/>
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type9"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="1"/>
-  <property name="PATTERN_INDEX" type="int" default="5"/>
+  <property name="PATTERN_INDEX" type="int" default="1"/>
  </objecttype>
  <objecttype name="ET_Type1" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="ange1"/>

@@ -1,30 +1,176 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1913">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2113">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="800"/>
+  <property name="CAMERA_SPEED" type="float" value="200"/>
   <property name="LEVEL_TITLE">Level 2
-[LEVELTITLE Be carreful]</property>
+[LEVELTITLE Fuck you Judas]</property>
   <property name="MUSIC" value="game_music2"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <objectgroup id="14" name="PlayerAndCamera">
+ <tileset firstgid="21" source="../../../Ludum44/resources/tilesets/tileset.tsx"/>
+ <objectgroup id="22" name="Background2" locked="1">
   <properties>
-   <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
-   <property name="MATERIAL" value="player"/>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="57" name="TheCamera1" x="2912" y="8192" width="7120" height="4648">
+  <object id="2061" gid="15" x="3321" y="-9284" width="270" height="201"/>
+  <object id="2062" gid="15" x="8201" y="-7532" width="270" height="201"/>
+  <object id="2063" gid="15" x="4425" y="-7516" width="270" height="201"/>
+  <object id="2064" gid="14" x="6568" y="-9654" width="240" height="180"/>
+  <object id="2067" name="LAYER_BOUNDING_BOX" x="2552" y="-10584" width="7360" height="4216"/>
+ </objectgroup>
+ <objectgroup id="21" name="Background1" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="2052" gid="15" x="7097" y="-2268" width="710" height="401"/>
+  <object id="2054" gid="15" x="8497" y="-3188" width="270" height="201"/>
+  <object id="2056" gid="15" x="10073" y="-1604" width="270" height="201"/>
+  <object id="2057" gid="15" x="8769" y="-1500" width="270" height="201"/>
+  <object id="2059" gid="14" x="9312" y="-2270" width="552" height="300"/>
+  <object id="2065" name="LAYER_BOUNDING_BOX" x="6176" y="-3976" width="5584" height="3456"/>
+ </objectgroup>
+ <objectgroup id="19" name="Bonus">
+  <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
+  </properties>
+  <object id="1926" gid="1" x="8416" y="10976" width="128" height="128" visible="0"/>
+  <object id="1956" gid="1" x="12498.1" y="14418.2" width="1556" height="6100"/>
+  <object id="1963" gid="3" x="32560" y="14800" width="500" height="7172"/>
+  <object id="1970" gid="4" x="24688" y="3776" width="512" height="512"/>
+  <object id="1971" gid="6" x="24672" y="4736" width="512" height="512"/>
+  <object id="1972" gid="7" x="24272" y="1008" width="512" height="512"/>
+  <object id="1973" gid="8" x="24256" y="240" width="512" height="512"/>
+  <object id="1974" gid="9" x="20448" y="14560" width="1040" height="6064"/>
+  <object id="1982" gid="6" x="33232" y="14784" width="512" height="7136"/>
+  <object id="1986" gid="7" x="25608" y="984" width="512" height="512"/>
+  <object id="1987" gid="8" x="25592" y="216" width="512" height="512"/>
+  <object id="1988" gid="9" x="25576" y="-504" width="512" height="512"/>
+  <object id="1992" gid="7" x="24824" y="15312" width="1248" height="7392"/>
+  <object id="1993" gid="8" x="28728" y="14976" width="688" height="7152"/>
+  <object id="2043" gid="7" x="36347" y="808" width="512" height="512" visible="0"/>
+  <object id="2051" gid="9" x="40155" y="16872" width="896" height="10816"/>
+  <object id="2108" gid="7" x="4688" y="11528" width="512" height="512"/>
+  <object id="2109" gid="8" x="5360" y="11496" width="512" height="512"/>
+  <object id="2110" gid="9" x="4176" y="11560" width="512" height="512"/>
+ </objectgroup>
+ <objectgroup id="18" name="Enemies">
+  <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="MATERIAL" value="Enemy"/>
+   <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
+  </properties>
+  <object id="2083" name="1" gid="10" x="9056" y="22416" width="2272" height="2304">
    <properties>
-    <property name="CAMERA" type="bool" value="true"/>
+    <property name="PARTICLE_SPEED" type="float" value="0.6"/>
    </properties>
   </object>
-  <object id="75" name="world_bounding_box" x="-1424" y="-3072" width="15424" height="16896"/>
-  <object id="1912" name="ThePlayerStart1" type="PlayerStart" x="7457" y="10841" width="702" height="1166">
+  <object id="2085" gid="12" x="26090" y="13653" width="2349" height="4698"/>
+  <object id="2086" name="6" gid="13" x="26769" y="13006" width="6655" height="3388">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="30"/>
+   </properties>
+  </object>
+  <object id="2087" gid="16" x="5731" y="12364" width="2826" height="2905"/>
+  <object id="2088" gid="17" x="-4325" y="20485" width="2778" height="2794"/>
+  <object id="2089" gid="18" x="-1315" y="18771" width="3175" height="3063"/>
+  <object id="2090" gid="19" x="73" y="21166" width="3310" height="3292"/>
+  <object id="2091" gid="20" x="2830" y="18162" width="3045" height="2757"/>
+  <object id="2096" gid="11" x="7466" y="7914" width="4588" height="5036"/>
+  <object id="2097" name="4" gid="11" x="13722" y="12986" width="7868" height="3468">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="1"/>
+   </properties>
+  </object>
+  <object id="2098" name="2" gid="10" x="14736" y="22400" width="2272" height="2304">
+   <properties>
+    <property name="PARTICLE_SPEED" type="float" value="0.6"/>
+   </properties>
+  </object>
+  <object id="2099" name="3" gid="10" x="7280" y="18496" width="2272" height="2304">
+   <properties>
+    <property name="PARTICLE_INITIAL_RANGE" type="float" value="3.14"/>
+    <property name="PARTICLE_SPEED" type="float" value="2"/>
+   </properties>
+  </object>
+  <object id="2101" name="5" gid="12" x="21657.5" y="13731" width="2349" height="4698"/>
+  <object id="2103" name="8" gid="10" x="34480" y="11776" width="2272" height="2304">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="2104" name="9" gid="10" x="36560" y="13056" width="2272" height="2304">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="2105" name="10" gid="10" x="38352" y="11712" width="2272" height="2304">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="3"/>
+   </properties>
+  </object>
+  <object id="2106" name="7" gid="10" x="29168" y="13376" width="4416" height="4384">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+    <property name="PARTICLE_SPEED" type="float" value="0.5"/>
+   </properties>
+  </object>
+  <object id="2107" name="1" gid="10" x="24080" y="12384" width="2272" height="2304">
+   <properties>
+    <property name="PARTICLE_SPEED" type="float" value="0.6"/>
+   </properties>
+  </object>
+  <object id="2111" gid="16" x="7579" y="13075.5" width="2826" height="3033"/>
+  <object id="2112" gid="16" x="9723" y="12307.5" width="2826" height="2905"/>
+ </objectgroup>
+ <objectgroup id="16" name="PlayerFire" locked="1">
+  <properties>
+   <property name="MATERIAL" value="Fire"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="20" name="EnemyFire">
+  <properties>
+   <property name="MATERIAL" value="Fire"/>
+  </properties>
+ </objectgroup>
+ <objectgroup id="14" name="PlayerAndCamera" locked="1">
+  <properties>
+   <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
+   <property name="MATERIAL" value="player"/>
+   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
+  </properties>
+  <object id="57" name="TheCamera1" type="Camera" x="2088" y="10016" width="3504" height="2472"/>
+  <object id="75" name="world_bounding_box" x="1136" y="9440" width="49440" height="3616"/>
+  <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="3058" y="11696" width="326" height="510">
    <properties>
     <property name="BITMAP_NAME" value="jesus_3x1"/>
    </properties>
   </object>
+  <object id="2008" name="Checkpoint" type="Checkpoint" gid="22" x="-8280" y="35560" width="2032" height="12272"/>
+  <object id="2009" name="Finish" gid="22" x="40808" y="16168" width="2992" height="8752"/>
+  <object id="2092" name="Checkpoint" type="Checkpoint" gid="22" x="12616" y="17768" width="1264" height="12272"/>
+  <object id="2093" name="Checkpoint" type="Checkpoint" gid="22" x="25096" y="18632" width="704" height="12272"/>
+  <object id="2094" name="Checkpoint" type="Checkpoint" gid="22" x="55336" y="9352" width="2032" height="12272"/>
+  <object id="2102" name="Checkpoint" type="Checkpoint" gid="22" x="33712" y="17640" width="704" height="12272"/>
+ </objectgroup>
+ <objectgroup id="24" name="Explosions">
+  <properties>
+   <property name="MATERIAL" value="explosion"/>
+  </properties>
  </objectgroup>
 </map>

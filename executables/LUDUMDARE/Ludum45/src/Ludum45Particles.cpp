@@ -14,6 +14,9 @@
 
 #include <death/SoundContext.h>
 
+
+static float COLLISION_TWEAK = 0.50f;
+
 /*
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
@@ -32,7 +35,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// update life from both size
 	enemy->enemy_life -= damage;
-	enemy->touched_count_down = 20;
+	enemy->touched_count_down = 5;
 
 	// play sound
 	if (enemy->enemy_life > 0.0f)
@@ -128,7 +131,7 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
-		vertices[i].color =  p->color;
+		vertices[i].color =  color;
 
 	return vertices_per_particle;
 }
@@ -140,7 +143,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		return true;
 
 	chaos::box2 bb = particle->bounding_box;
-	bb.half_size *= 0.50f;
+	bb.half_size *= COLLISION_TWEAK;
 
 	// collision with player
 
@@ -182,8 +185,14 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	}
 
 	particle->time += delta_time;
+
+	particle->bounding_box.position += particle->velocity * delta_time;
+
+	
 	if (particle->pattern != nullptr)
 		return particle->pattern->UpdateParticle(delta_time, particle, player_box, layer_trait->game->GetLevelInstance()->GetCameraBox(0));
+
+	
 
 
 	return false;
@@ -420,8 +429,17 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			ParticleEnemy * enemy = update_data.enemies[i];
 			if (enemy->enemy_life > 0.0f)
 			{
-				if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
+				chaos::box2 b1 = particle->bounding_box;
+				chaos::box2 b2 = enemy->bounding_box;
+				
+				b1.half_size *= COLLISION_TWEAK;
+				b2.half_size *= COLLISION_TWEAK;
+				
+				
+				if (chaos::Collide(b1, b2))
 				{
+
+
 					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, false, enemy->bounding_box);
 
 					// kill bullet ?

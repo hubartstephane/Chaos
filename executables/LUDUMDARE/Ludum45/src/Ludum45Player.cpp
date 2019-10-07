@@ -122,6 +122,11 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {
+	invulnerability_timer -= (float)delta_time;
+	if (invulnerability_timer < 0.0f)
+		invulnerability_timer = 0.0f;
+
+
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
 	// player fire particles
@@ -433,6 +438,8 @@ void LudumPlayer::OnLifeLost()
 	death::Player::OnLifeLost();
 	current_life = current_max_life;
 
+
+
 }
 
 
@@ -487,7 +494,11 @@ void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 
 void LudumPlayer::OnDamagedReceived(float damage)
 {
-	SetLifeBarValue(-damage, true);
+	if (invulnerability_timer <= 0.0f)
+	{
+		SetLifeBarValue(-damage, true);	
+		invulnerability_timer = GetLudumGame()->player_invulnerability_duration;
+	}
 	GetGame()->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 

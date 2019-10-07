@@ -128,7 +128,7 @@ protected:
 
 protected:
 
-
+	float invulnerability_timer = 0.0f;
 
 	float current_life = 1.0f;
 	float current_max_life = 1.0f;

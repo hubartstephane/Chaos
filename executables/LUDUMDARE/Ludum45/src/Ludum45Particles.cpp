@@ -26,6 +26,30 @@ chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Verte
 */
 
 
+static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player, chaos::box2 const & ref_box) // returns the life damage produced by the enemy collision (its life)
+{
+	float result = collision_with_player? enemy->enemy_damage : enemy->enemy_life;
+
+	// update life from both size
+	enemy->enemy_life -= damage;
+	enemy->touched_count_down = 20;
+
+	// play sound
+	if (enemy->enemy_life > 0.0f)
+		game->Play("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
+	else 
+	{
+		if (!collision_with_player)
+			game->GetPlayer(0)->SetScore(10, true);
+		game->Play("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
+
+		chaos::box2 b = ref_box;
+		b.half_size *= 2.0f;
+
+		game->GetLudumGameInstance()->FireExplosion(b);
+	}
+	return result;
+}
 
 
 
@@ -134,7 +158,12 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		{
 			if (ludum_player->dash_timer <= 0.0f ||! ludum_player->GetGhostLevel())
 			{
-				ludum_player->OnDamagedReceived(particle->enemy_damage);
+				float life_lost = OnCollisionWithEnemy(particle, particle->enemy_life, layer_trait->game, true, particle->bounding_box); // destroy the enemy always
+
+
+
+				ludum_player->OnDamagedReceived(life_lost);
+				
 				return true;
 			}
 		}
@@ -349,26 +378,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // ParticleFireTrait
 // ===========================================================================
 
-static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player, chaos::box2 const & ref_box) // returns the life damage produced by the enemy collision (its life)
-{
-	float result = collision_with_player? enemy->enemy_damage : enemy->enemy_life;
-
-	// update life from both size
-	enemy->enemy_life -= damage;
-	enemy->touched_count_down = 20;
-
-	// play sound
-	if (enemy->enemy_life > 0.0f)
-		game->Play("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
-	else 
-	{
-		if (!collision_with_player)
-			game->GetPlayer(0)->SetScore(10, true);
-		game->Play("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
-		game->GetLudumGameInstance()->FireExplosion(ref_box);
-	}
-	return result;
-}
 
 ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const
 {

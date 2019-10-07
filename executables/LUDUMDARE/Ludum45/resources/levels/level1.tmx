@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="21" nextobjectid="2052">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="24" nextobjectid="2078">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -11,7 +11,34 @@
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <tileset firstgid="16" source="../../../Ludum44/resources/tilesets/tileset.tsx"/>
- <objectgroup id="19" name="Bonus">
+ <objectgroup id="22" name="Background2" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="2061" gid="15" x="3321" y="-9284" width="270" height="201"/>
+  <object id="2062" gid="15" x="8201" y="-7532" width="270" height="201"/>
+  <object id="2063" gid="15" x="4425" y="-7516" width="270" height="201"/>
+  <object id="2064" gid="14" x="6568" y="-9654" width="240" height="180"/>
+  <object id="2067" name="LAYER_BOUNDING_BOX" x="2552" y="-10584" width="7360" height="4216"/>
+ </objectgroup>
+ <objectgroup id="21" name="Background1" locked="1">
+  <properties>
+   <property name="DISPLACEMENT_RATIO_X" type="float" value="0.6"/>
+   <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.6"/>
+   <property name="WRAP_X" type="bool" value="true"/>
+   <property name="WRAP_Y" type="bool" value="true"/>
+  </properties>
+  <object id="2052" gid="15" x="7097" y="-2268" width="710" height="401"/>
+  <object id="2054" gid="15" x="8497" y="-3188" width="270" height="201"/>
+  <object id="2056" gid="15" x="10073" y="-1604" width="270" height="201"/>
+  <object id="2057" gid="15" x="8769" y="-1500" width="270" height="201"/>
+  <object id="2059" gid="14" x="9312" y="-2270" width="552" height="300"/>
+  <object id="2065" name="LAYER_BOUNDING_BOX" x="6176" y="-3976" width="5584" height="3456"/>
+ </objectgroup>
+ <objectgroup id="19" name="Bonus" locked="1">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>

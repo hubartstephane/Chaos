@@ -220,13 +220,6 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 	if (ludum_checkpoint == nullptr)
 		return false;
 
-	if (!death::TiledMap::LevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
-		return false;
-
-
-	// shuludum .... refactor the share this code ... hard copy of what is in LD44
-
-
 
 	// destroy all bullets and all enemies
 	char const * layer_names[] = { "PlayerFire", "EnemyFire", "Enemies", "Bonus", nullptr };
@@ -240,6 +233,18 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 				particle_layer->ClearAllAllocations();
 		}
 	}
+
+
+
+	if (!death::TiledMap::LevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
+		return false;
+
+
+	// shuludum .... refactor the share this code ... hard copy of what is in LD44
+
+
+
+
 
 
 	return true;

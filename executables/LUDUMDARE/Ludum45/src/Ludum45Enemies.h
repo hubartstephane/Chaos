@@ -32,7 +32,7 @@ public:
 	size_t enemy_count = 0;
 	float particle_initial_range = 0.0f;
 	float particle_speed = 0.0f;
-	int   pattern_index = 0;
+	int   pattern_index = 1;
 };
 
 

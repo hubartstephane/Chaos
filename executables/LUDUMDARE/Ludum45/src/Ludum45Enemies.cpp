@@ -34,37 +34,44 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 
 	float min_camera_x = camera_box.position.x - camera_box.half_size.x;
 
-
-	static int type = 0;
-
-	if (type == 0)
+	bool spawner_out = (spawner_position.x + spawner_half_size.x + particle_half_size.x < min_camera_x);
+	bool particle_out = (particle_position.x + particle_half_size.x < min_camera_x);
+		
+	bool result = false;
+	if (pattern_index == 1)
 	{
 
-
+		// CIRCLE
 		
-
 		float R = spawner_radius - particle_half_size.x;
 		particle_position = spawner_position;
 		particle_position.x += R * cosf(t);
 		particle_position.y += R * sin(t);		
-		
-		// destroy if out of screen for ever
-		if (spawner_position.x + spawner_half_size.x + particle_half_size.x < min_camera_x)
-			return true;
 
-
+		result = spawner_out;
 	}
-	else if (type == 1)
+	else if (pattern_index == 2)
 	{
+
+		// COS sur Y
+
+		particle_position.x = spawner_position.x + spawner_half_size.x * (particle_ratio * 2.0f - 1.0f);
+		particle_position.y = spawner_position.y + spawner_half_size.y * cosf(t);
+
+		result = particle_out;
+	}
+	else if (pattern_index == 3)
+	{
+		// LIGNE VERTICAL qui avance
+
 
 		particle_position.y = spawner_position.y + spawner_half_size.y * (particle_ratio * 2.0f - 1.0f);
-		particle_position.x = spawner_position.x;
+		particle_position.x = spawner_position.x - t;
 
-	// destroy if out of screen for ever
-		if (particle_position.x + particle_half_size.x < min_camera_x)
-			return true;
+		result = particle_out;
+
 	}
-	else if (type == 2)
+	else if (pattern_index == 4)
 	{
 
 
@@ -76,8 +83,8 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 
 
 
-
-
+	if (result)
+		result = result;
 
 
 
@@ -86,7 +93,7 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 	
 
 
-	return false;
+	return result;
 }
 
 

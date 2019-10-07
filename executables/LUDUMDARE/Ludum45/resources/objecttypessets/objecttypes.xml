@@ -14,19 +14,25 @@
   <property name="ENEMY_TYPE" type="string"/>
  </objecttype>
  <objecttype name="EP_Pattern1" color="#a0a0a4">
+  <property name="COMMENT" type="string" default="cercle"/>
   <property name="ENEMY_COUNT" type="int" default="10"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="0.3"/>
+  <property name="PATTERN_INDEX" type="int" default="1"/>
  </objecttype>
  <objecttype name="EP_Pattern2" color="#a0a0a4">
+  <property name="COMMENT" type="string" default="sinusoide"/>
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="0.3"/>
+  <property name="PATTERN_INDEX" type="int" default="2"/>
  </objecttype>
  <objecttype name="EP_Pattern3" color="#a0a0a4">
+  <property name="COMMENT" type="string" default="avance droit devant"/>
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
-  <property name="PARTICLE_SPEED" type="float" default="0.3"/>
+  <property name="PARTICLE_SPEED" type="float" default="1000"/>
+  <property name="PATTERN_INDEX" type="int" default="3"/>
  </objecttype>
  <objecttype name="ET_Type1" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="ange1"/>

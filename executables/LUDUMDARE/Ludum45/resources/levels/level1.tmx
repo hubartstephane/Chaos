@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2078">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2081">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -138,14 +138,30 @@
    <property name="MATERIAL" value="Enemy"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
-  <object id="2004" gid="10" x="4400" y="12656" width="2144" height="1888"/>
+  <object id="2004" gid="10" x="4400" y="12656" width="2144" height="1888">
+   <properties>
+    <property name="ENEMY_PATTERN" value="EP_Pattern3"/>
+   </properties>
+  </object>
   <object id="2005" gid="10" x="4417" y="11424" width="1888" height="1888">
    <properties>
+    <property name="ENEMY_PATTERN" value="EP_Pattern2"/>
     <property name="ENEMY_TYPE" value="ET_Type2"/>
    </properties>
   </object>
   <object id="2006" gid="12" x="12090" y="12573" width="2301" height="1938"/>
   <object id="2007" gid="13" x="9329" y="11366" width="2607" height="2308"/>
+  <object id="2078" gid="10" x="5760" y="17864" width="2144" height="1888"/>
+  <object id="2079" gid="10" x="5777" y="16632" width="1888" height="1888">
+   <properties>
+    <property name="ENEMY_TYPE" value="ET_Type2"/>
+   </properties>
+  </object>
+  <object id="2080" gid="10" x="4240" y="9616" width="2144" height="1888">
+   <properties>
+    <property name="ENEMY_PATTERN" value="EP_Pattern1"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="16" name="PlayerFire" locked="1">
   <properties>

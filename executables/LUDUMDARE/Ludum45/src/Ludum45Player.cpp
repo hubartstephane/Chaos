@@ -350,8 +350,28 @@ ParticleFire * LudumPlayer::FireProjectile()
 	if (ludum_game == nullptr)
 		return nullptr;
 
+	float power_ratio = 1.0f;
+
+	PlayerUpgrade * upgrade = FindPlayerUpgrade(UpgradeKeys::DAMAGE);
+	if (upgrade != nullptr)
+	{
+		float power_level = (float)GetCurrentDamageValue();
+		float power_max   = (float)upgrade->max_level;	
+	
+		power_ratio = power_level / power_max;
+	}
+
+	
+
+
+
+
+
+
+
+
 	int count = GetCurrentPowerSpreadValue(); 
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, ludum_game->fire_size_ratio, count, "fire", 0.1f, ludum_game->fire_velocity);
+	ParticleFire * p = FireProjectile(fire_bitmap_layout, ludum_game->fire_size_ratio * power_ratio, count, "fire", 0.1f, ludum_game->fire_velocity);
 	if (p != nullptr)
 	{
 		for (int i = 0 ; i < count ; ++i)

@@ -24,7 +24,7 @@
   "player_tan_speed_damping": 1.0,
   "player_dash_velocity_boost": 5000,
   "player_dash_duration": 0.25,
-  "fire_size_ratio": 0.3,
+  "fire_size_ratio": 2.0,
   "fire_velocity": 8000
   
 }

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
 <map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2128">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="200"/>
+  <property name="CAMERA_SPEED" type="float" value="300"/>
   <property name="LEVEL_TITLE">Level 2
 [LEVELTITLE Fuck you Judas]</property>
   <property name="MUSIC" value="game_music2"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
-  <objectgroup id="22" name="Background2" locked="1">
+ <objectgroup id="22" name="Background2" locked="1">
   <properties>
    <property name="DISPLACEMENT_RATIO_X" type="float" value="0.3"/>
    <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.3"/>
@@ -201,5 +202,5 @@
   <object id="2181" gid="21" x="6408" y="-13608" width="36" height="36"/>
   <object id="2182" gid="21" x="7496" y="-15464" width="36" height="36"/>
   <object id="2183" gid="21" x="11912" y="-16008" width="36" height="36"/>
- </objectgroup> 
+ </objectgroup>
 </map>

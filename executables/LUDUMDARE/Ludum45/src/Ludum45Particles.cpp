@@ -38,7 +38,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// update life from both size
 	enemy->enemy_life -= damage;
-	enemy->touched_count_down = 4;
+	enemy->touched_count_down = 0.05f;
 
 	// play sound
 	if (enemy->enemy_life > 0.0f)
@@ -127,7 +127,7 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 
 	glm::vec4 color = p->color;
 
-	if (p->touched_count_down > 0)
+	if (p->touched_count_down > 0.0f)
 		color.a = 0.0f;
 	else
 		color.a = 1.0f;
@@ -151,8 +151,9 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	// collision with player
 
 	// update blinking effect
-	if (particle->touched_count_down > 0)
-		--particle->touched_count_down;
+
+	if (particle->touched_count_down > 0.0f)
+		particle->touched_count_down -= delta_time;
 
 
 

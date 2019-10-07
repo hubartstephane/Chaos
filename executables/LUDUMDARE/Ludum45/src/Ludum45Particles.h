@@ -91,7 +91,7 @@ public:
 
 	float enemy_damage = 10.0f;
 
-	int touched_count_down = 0;
+	float touched_count_down = 0.0f;
 
 
 	float  orientation = 0.0f;

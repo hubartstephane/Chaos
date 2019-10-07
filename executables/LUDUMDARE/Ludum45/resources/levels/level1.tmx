@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="21" nextobjectid="2006">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="21" nextobjectid="2008">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -69,7 +69,13 @@
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="2004" gid="10" x="6976" y="12352" width="2144" height="1888"/>
-  <object id="2005" gid="10" x="8001" y="12704" width="1888" height="1888"/>
+  <object id="2005" gid="10" x="8001" y="12704" width="1888" height="1888">
+   <properties>
+    <property name="ENEMY_TYPE" value="ET_Type2"/>
+   </properties>
+  </object>
+  <object id="2006" gid="12" x="12090" y="12573" width="2301" height="1938"/>
+  <object id="2007" gid="13" x="9329" y="11366" width="2607" height="2308"/>
  </objectgroup>
  <objectgroup id="16" name="PlayerFire">
   <properties>

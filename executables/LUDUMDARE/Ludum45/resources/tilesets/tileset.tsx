@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="319" tileheight="300" tilecount="18" columns="0">
+<!DOCTYPE tileset SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<tileset version="1.2" tiledversion="1.2.3" name="tileset" tilewidth="319" tileheight="300" tilecount="19" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="BonusSpawner">
   <properties>
@@ -78,5 +79,8 @@
  </tile>
  <tile id="19" type="EnemySpawner9">
   <image width="165" height="165" source="../sprites/rabbit2.png"/>
+ </tile>
+ <tile id="20">
+  <image width="48" height="48" source="../sprites/flare.png"/>
  </tile>
 </tileset>

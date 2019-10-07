@@ -118,7 +118,7 @@ bool BonusSpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
 {
 
 
-	return false;
+	return true; //false;
 }
 
 bool BonusSpawnerTriggerObject::Initialize()
@@ -143,6 +143,8 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
 
+#if 0
+
 	LudumGame * ludum_game = auto_cast(GetLayerInstance()->GetGame());
 	if (ludum_game != nullptr)
 	{
@@ -151,9 +153,9 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 			ludum_player->OnPlayerUpgrade(bonus_type);	
 	}
 
+#else
 
 
-#if 0
 
 
 

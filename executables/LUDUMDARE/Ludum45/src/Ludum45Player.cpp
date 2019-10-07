@@ -474,7 +474,7 @@ void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
 {
 	PlayerUpgrade * upgrade = FindPlayerUpgrade(upgrade_type);
 	if (upgrade != nullptr)
-		upgrade->Upgrade();
+		upgrade->Upgrade(GetGame());
 
 
 }
@@ -489,14 +489,14 @@ void LudumPlayer::RegisterUpgrades()
 	if (ludum_game == nullptr)
 		return;
 
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, ludum_game->player_speeds.size() , "SPEED"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DAMAGE, ludum_game->player_damages.size(), "DAMAGE"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPEED, ludum_game->player_speeds.size() , "SPEED", "gods_speed"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DAMAGE, ludum_game->player_damages.size(), "DAMAGE", "gods_power"));
 	//upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, ludum_game->player_dash_cooldowns.size(), "DASH"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, 1, "DASH"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST, 1, "GHOST"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERRATE, ludum_game->player_power_rates.size(), "POWERRATE"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, ludum_game->player_power_spreads.size(), "POWERSPREAD"));
-	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALPOWER, 1, "SPECIALPOWER"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::DASH, 1, "DASH", "gods_dash"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::GHOST, 1, "GHOST", "gods_ghost"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERRATE, ludum_game->player_power_rates.size(), "POWERRATE", "gods_blast"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::POWERSPREAD, ludum_game->player_power_spreads.size(), "POWERSPREAD", "gods_spread"));
+	upgrades.push_back(new PlayerUpgrade(UpgradeKeys::SPECIALPOWER, 1, "SPECIALPOWER", "gods_sideoflife"));
 };
 
 PlayerUpgrade * LudumPlayer::FindPlayerUpgrade(chaos::TagType upgrade_type)

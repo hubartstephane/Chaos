@@ -25,13 +25,14 @@ class PlayerUpgrade : public chaos::ReferencedObject
 {
 public:
 
-	PlayerUpgrade(chaos::TagType in_type, int in_max_level, char const * in_bitmap_name):
+	PlayerUpgrade(chaos::TagType in_type, int in_max_level, char const * in_bitmap_name, char const * in_sound_name):
 		type(in_type),
 		max_level(in_max_level),
-		bitmap_name(in_bitmap_name)		
+		bitmap_name(in_bitmap_name),
+		sound_name(in_sound_name)
 	{}
 
-	void Upgrade();
+	void Upgrade(class death::Game * game);
 
 public:
 
@@ -40,4 +41,5 @@ public:
 	int max_level = 0;
 
 	std::string bitmap_name;
+	std::string sound_name;
 };

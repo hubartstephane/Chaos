@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2122">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2128">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -38,7 +38,7 @@
   <object id="2059" gid="14" x="9312" y="-2270" width="552" height="300"/>
   <object id="2065" name="LAYER_BOUNDING_BOX" x="6176" y="-3976" width="5584" height="3456"/>
  </objectgroup>
- <objectgroup id="19" name="Bonus">
+ <objectgroup id="19" name="Bonus" locked="1">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
@@ -68,7 +68,7 @@
   <object id="2120" gid="7" x="27520" y="10752" width="512" height="512"/>
   <object id="2121" gid="8" x="30768" y="11120" width="512" height="512"/>
  </objectgroup>
- <objectgroup id="18" name="Enemies" locked="1">
+ <objectgroup id="18" name="Enemies">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="Enemy"/>
@@ -85,7 +85,7 @@
    </properties>
   </object>
   <object id="2087" gid="16" x="5731" y="12364" width="2826" height="2905"/>
-  <object id="2088" gid="17" x="13659" y="13157" width="7290" height="3786">
+  <object id="2088" gid="17" x="13883" y="11813" width="7290" height="3786">
    <properties>
     <property name="PARTICLE_SPEED" type="float" value="1.2"/>
    </properties>
@@ -130,6 +130,20 @@
    </properties>
   </object>
   <object id="2117" gid="19" x="29641" y="14578" width="4910" height="3484">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="30"/>
+   </properties>
+  </object>
+  <object id="2122" gid="17" x="13859" y="14395" width="7290" height="3786">
+   <properties>
+    <property name="PARTICLE_SPEED" type="float" value="1.2"/>
+   </properties>
+  </object>
+  <object id="2123" gid="20" x="21933.5" y="11133.5" width="3045" height="2757"/>
+  <object id="2124" gid="20" x="21997.5" y="13693.5" width="3045" height="2757"/>
+  <object id="2125" gid="20" x="25005.5" y="13853.5" width="3045" height="2757"/>
+  <object id="2126" gid="20" x="25165.5" y="10717.5" width="3045" height="2757"/>
+  <object id="2127" gid="19" x="30345" y="11282" width="4910" height="3484">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="30"/>
    </properties>

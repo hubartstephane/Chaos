@@ -398,7 +398,7 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	{
 		// get the camera box 
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
-		result.camera_box.half_size *= 3.0f;
+		result.camera_box.half_size *= 1.1f;
 		// get the enemies
 		FindEnemiesOnMap(layer_trait->game, result.enemies);
 		// get the players

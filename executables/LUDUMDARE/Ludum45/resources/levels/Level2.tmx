@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2113">
+<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2122">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -46,7 +46,7 @@
   <object id="1926" gid="1" x="8416" y="10976" width="128" height="128" visible="0"/>
   <object id="1956" gid="1" x="12498.1" y="14418.2" width="1556" height="6100"/>
   <object id="1963" gid="3" x="32560" y="14800" width="500" height="7172"/>
-  <object id="1970" gid="4" x="24688" y="3776" width="512" height="512"/>
+  <object id="1970" gid="4" x="18032" y="11520" width="512" height="512"/>
   <object id="1971" gid="6" x="24672" y="4736" width="512" height="512"/>
   <object id="1972" gid="7" x="24272" y="1008" width="512" height="512"/>
   <object id="1973" gid="8" x="24256" y="240" width="512" height="512"/>
@@ -62,8 +62,13 @@
   <object id="2108" gid="7" x="4688" y="11528" width="512" height="512"/>
   <object id="2109" gid="8" x="5360" y="11496" width="512" height="512"/>
   <object id="2110" gid="9" x="4176" y="11560" width="512" height="512"/>
+  <object id="2113" gid="6" x="16928" y="11904" width="512" height="512"/>
+  <object id="2118" gid="7" x="32576" y="10624" width="512" height="512"/>
+  <object id="2119" gid="6" x="23392" y="10512" width="512" height="512"/>
+  <object id="2120" gid="7" x="27520" y="10752" width="512" height="512"/>
+  <object id="2121" gid="8" x="30768" y="11120" width="512" height="512"/>
  </objectgroup>
- <objectgroup id="18" name="Enemies">
+ <objectgroup id="18" name="Enemies" locked="1">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="Enemy"/>
@@ -74,19 +79,26 @@
     <property name="PARTICLE_SPEED" type="float" value="0.6"/>
    </properties>
   </object>
-  <object id="2085" gid="12" x="26090" y="13653" width="2349" height="4698"/>
-  <object id="2086" name="6" gid="13" x="26769" y="13006" width="6655" height="3388">
+  <object id="2086" name="6" gid="13" x="24977" y="27950" width="6655" height="3388">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="30"/>
    </properties>
   </object>
   <object id="2087" gid="16" x="5731" y="12364" width="2826" height="2905"/>
-  <object id="2088" gid="17" x="-4325" y="20485" width="2778" height="2794"/>
-  <object id="2089" gid="18" x="-1315" y="18771" width="3175" height="3063"/>
+  <object id="2088" gid="17" x="13659" y="13157" width="7290" height="3786">
+   <properties>
+    <property name="PARTICLE_SPEED" type="float" value="1.2"/>
+   </properties>
+  </object>
+  <object id="2089" gid="18" x="21565" y="12979" width="1959" height="3415">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="25"/>
+   </properties>
+  </object>
   <object id="2090" gid="19" x="73" y="21166" width="3310" height="3292"/>
   <object id="2091" gid="20" x="2830" y="18162" width="3045" height="2757"/>
   <object id="2096" gid="11" x="7466" y="7914" width="4588" height="5036"/>
-  <object id="2097" name="4" gid="11" x="13722" y="12986" width="7868" height="3468">
+  <object id="2097" name="4" gid="11" x="1786" y="27866" width="7868" height="3468">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="PARTICLE_SPEED" type="float" value="1"/>
@@ -103,45 +115,32 @@
     <property name="PARTICLE_SPEED" type="float" value="2"/>
    </properties>
   </object>
-  <object id="2101" name="5" gid="12" x="21657.5" y="13731" width="2349" height="4698"/>
-  <object id="2103" name="8" gid="10" x="34480" y="11776" width="2272" height="2304">
-   <properties>
-    <property name="ENEMY_COUNT" type="int" value="15"/>
-    <property name="PARTICLE_SPEED" type="float" value="3"/>
-   </properties>
-  </object>
-  <object id="2104" name="9" gid="10" x="36560" y="13056" width="2272" height="2304">
-   <properties>
-    <property name="ENEMY_COUNT" type="int" value="15"/>
-    <property name="PARTICLE_SPEED" type="float" value="3"/>
-   </properties>
-  </object>
-  <object id="2105" name="10" gid="10" x="38352" y="11712" width="2272" height="2304">
-   <properties>
-    <property name="ENEMY_COUNT" type="int" value="15"/>
-    <property name="PARTICLE_SPEED" type="float" value="3"/>
-   </properties>
-  </object>
-  <object id="2106" name="7" gid="10" x="29168" y="13376" width="4416" height="4384">
-   <properties>
-    <property name="ENEMY_COUNT" type="int" value="15"/>
-    <property name="PARTICLE_SPEED" type="float" value="0.5"/>
-   </properties>
-  </object>
-  <object id="2107" name="1" gid="10" x="24080" y="12384" width="2272" height="2304">
-   <properties>
-    <property name="PARTICLE_SPEED" type="float" value="0.6"/>
-   </properties>
-  </object>
+  <object id="2101" name="5" gid="12" x="18713.5" y="20899" width="2349" height="4698"/>
   <object id="2111" gid="16" x="7579" y="13075.5" width="2826" height="3033"/>
   <object id="2112" gid="16" x="9723" y="12307.5" width="2826" height="2905"/>
+  <object id="2114" gid="18" x="26028.5" y="12820.5" width="1959" height="3415">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="25"/>
+   </properties>
+  </object>
+  <object id="2115" gid="20" x="23117.5" y="12637.5" width="3045" height="2757"/>
+  <object id="2116" gid="19" x="27273" y="12242" width="4910" height="3484">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="30"/>
+   </properties>
+  </object>
+  <object id="2117" gid="19" x="29641" y="14578" width="4910" height="3484">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="30"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="16" name="PlayerFire" locked="1">
   <properties>
    <property name="MATERIAL" value="Fire"/>
   </properties>
  </objectgroup>
- <objectgroup id="20" name="EnemyFire">
+ <objectgroup id="20" name="EnemyFire" locked="1">
   <properties>
    <property name="MATERIAL" value="Fire"/>
   </properties>
@@ -162,11 +161,10 @@
    </properties>
   </object>
   <object id="2008" name="Checkpoint" type="Checkpoint" gid="22" x="-8280" y="35560" width="2032" height="12272"/>
-  <object id="2009" name="Finish" gid="22" x="40808" y="16168" width="2992" height="8752"/>
+  <object id="2009" name="Finish" gid="22" x="33448" y="16232" width="2992" height="8752"/>
   <object id="2092" name="Checkpoint" type="Checkpoint" gid="22" x="12616" y="17768" width="1264" height="12272"/>
   <object id="2093" name="Checkpoint" type="Checkpoint" gid="22" x="25096" y="18632" width="704" height="12272"/>
   <object id="2094" name="Checkpoint" type="Checkpoint" gid="22" x="55336" y="9352" width="2032" height="12272"/>
-  <object id="2102" name="Checkpoint" type="Checkpoint" gid="22" x="33712" y="17640" width="704" height="12272"/>
  </objectgroup>
  <objectgroup id="24" name="Explosions">
   <properties>

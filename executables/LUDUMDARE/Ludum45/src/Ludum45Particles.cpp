@@ -15,7 +15,10 @@
 #include <death/SoundContext.h>
 
 
-static float COLLISION_TWEAK = 0.50f;
+static float COLLISION_PLAYER_TWEAK = 0.50f;
+static float COLLISION_FIRE_TWEAK = 0.75f;
+
+
 
 /*
 chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
@@ -143,7 +146,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		return true;
 
 	chaos::box2 bb = particle->bounding_box;
-	bb.half_size *= COLLISION_TWEAK;
+	bb.half_size *= COLLISION_PLAYER_TWEAK;
 
 	// collision with player
 
@@ -432,8 +435,8 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 				chaos::box2 b1 = particle->bounding_box;
 				chaos::box2 b2 = enemy->bounding_box;
 				
-				b1.half_size *= COLLISION_TWEAK;
-				b2.half_size *= COLLISION_TWEAK;
+				b1.half_size *= COLLISION_FIRE_TWEAK;
+				b2.half_size *= COLLISION_FIRE_TWEAK;
 				
 				
 				if (chaos::Collide(b1, b2))

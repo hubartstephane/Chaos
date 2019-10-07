@@ -71,7 +71,11 @@
     <property name="PARTICLE_SPEED" type="float" value="0.6"/>
    </properties>
   </object>
-  <object id="2085" gid="12" x="26090" y="13653" width="2349" height="4698"/>
+  <object id="2085" gid="12" x="26090" y="13653" width="2349" height="4698">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+   </properties>
+  </object>
   <object id="2086" name="6" gid="13" x="26769" y="13006" width="6655" height="3388">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="30"/>
@@ -100,7 +104,11 @@
     <property name="PARTICLE_SPEED" type="float" value="2"/>
    </properties>
   </object>
-  <object id="2101" name="5" gid="12" x="21657.5" y="13731" width="2349" height="4698"/>
+  <object id="2101" name="5" gid="12" x="21657.5" y="13731" width="2349" height="4698">
+   <properties>
+    <property name="ENEMY_COUNT" type="int" value="15"/>
+   </properties>
+  </object>
   <object id="2103" name="8" gid="10" x="34480" y="11776" width="2272" height="2304">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>

@@ -38,7 +38,7 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// update life from both size
 	enemy->enemy_life -= damage;
-	enemy->touched_count_down = 5;
+	enemy->touched_count_down = 4;
 
 	// play sound
 	if (enemy->enemy_life > 0.0f)

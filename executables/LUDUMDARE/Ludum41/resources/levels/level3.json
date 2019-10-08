@@ -8,6 +8,6 @@
     "      11133111      ",
     "      11133111      "
   ],
-  "BACKGROUND_TEXTURE": "background2",
-  "MUSIC": "game_music2"
+  "xBACKGROUND_TEXTURE": "background2",
+  "xMUSIC": "game_music2"
 }

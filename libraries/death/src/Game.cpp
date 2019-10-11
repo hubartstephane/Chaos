@@ -349,19 +349,22 @@ namespace death
 	{
 		// Try to load already computed data (in debug only)
 #if _DEBUG
-		chaos::BitmapAtlas::TextureArrayAtlas * tmp_texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
-		if (tmp_texture_atlas != nullptr)
+		if (!chaos::Application::HasApplicationCommandLineFlag("-IgnoreCachedAtlas")) // CMDLINE
 		{
-			chaos::Application * application = chaos::Application::GetInstance();
-			if (application != nullptr)
+			chaos::BitmapAtlas::TextureArrayAtlas * tmp_texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+			if (tmp_texture_atlas != nullptr)
 			{
-				if (tmp_texture_atlas->LoadAtlas(application->GetUserLocalTempPath() / "LudumAtlas"))
+				chaos::Application * application = chaos::Application::GetInstance();
+				if (application != nullptr)
 				{
-					texture_atlas = tmp_texture_atlas;
-					return true;
+					if (tmp_texture_atlas->LoadAtlas(application->GetUserLocalTempPath() / "LudumAtlas"))
+					{
+						texture_atlas = tmp_texture_atlas;
+						return true;
+					}
+					delete(tmp_texture_atlas);
 				}
-				delete(tmp_texture_atlas);
-			}
+			}		
 		}
 #endif
 

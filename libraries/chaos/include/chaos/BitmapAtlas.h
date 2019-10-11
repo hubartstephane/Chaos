@@ -71,6 +71,11 @@ namespace chaos
 			int width = 0;
 			/** the size of the bitmap (beware, 2 x padding must be add for correct result) */
 			int height = 0;
+
+			/** the bottom-left texture coordinate */
+			glm::vec2 bottomleft_texcoord = glm::vec2(0.0f, 0.0f);
+			/** the top-right texture coordinate */
+			glm::vec2 topright_texcoord = glm::vec2(0.0f, 0.0f);
 		};
 
 		/**

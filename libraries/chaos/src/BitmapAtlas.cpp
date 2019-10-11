@@ -451,11 +451,15 @@ namespace chaos
 		void AtlasBase::DoOutputInfo(BitmapLayout const & info, std::ostream & stream, int indent)
 		{
 			StreamTools::OStreamIndent stream_indent(indent);
-			stream << stream_indent << "  bitmap_index : " << info.bitmap_index << std::endl;
-			stream << stream_indent << "  width        : " << info.width << std::endl;
-			stream << stream_indent << "  height       : " << info.height << std::endl;
-			stream << stream_indent << "  x            : " << info.x << std::endl;
-			stream << stream_indent << "  y            : " << info.y << std::endl;
+			stream << stream_indent << "  bitmap_index          : " << info.bitmap_index << std::endl;
+			stream << stream_indent << "  width                 : " << info.width << std::endl;
+			stream << stream_indent << "  height                : " << info.height << std::endl;
+			stream << stream_indent << "  x                     : " << info.x << std::endl;
+			stream << stream_indent << "  y                     : " << info.y << std::endl;
+			stream << stream_indent << "  bottomleft_texcoord.x : " << info.bottomleft_texcoord.x << std::endl;
+			stream << stream_indent << "  bottomleft_texcoord.y : " << info.bottomleft_texcoord.y << std::endl;
+			stream << stream_indent << "  topright_texcoord.x   : " << info.topright_texcoord.x << std::endl;
+			stream << stream_indent << "  topright_texcoord.y   : " << info.topright_texcoord.y << std::endl;
 		}
 
 		void AtlasBase::DoOutputInfo(CharacterLayout const & info, std::ostream & stream, int indent)
@@ -813,6 +817,8 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "y", info.y);
 			JSONTools::SetAttribute(json_entry, "width", info.width);
 			JSONTools::SetAttribute(json_entry, "height", info.height);
+			JSONTools::SetAttribute(json_entry, "bottomleft_texcoord", info.bottomleft_texcoord);
+			JSONTools::SetAttribute(json_entry, "topright_texcoord", info.topright_texcoord);
 			return true;
 		}
 
@@ -825,6 +831,8 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "y", info.y);
 			JSONTools::GetAttribute(json_entry, "width", info.width);
 			JSONTools::GetAttribute(json_entry, "height", info.height);		
+			JSONTools::GetAttribute(json_entry, "bottomleft_texcoord", info.bottomleft_texcoord);
+			JSONTools::GetAttribute(json_entry, "topright_texcoord", info.topright_texcoord);
 			return true;
 		}
 

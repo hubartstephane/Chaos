@@ -33,15 +33,9 @@ namespace chaos
 
 	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapLayout const & layout, glm::vec2 const & atlas_size)
 	{
-		// XXX : for OpenGL, texture Y = 0 is bottom
-		//       for bitmap,         Y = 0 is top
-		//       => explains why (1. - Y)
-
 		ParticleTexcoords result;
-		result.bottomleft.x  = MathTools::CastAndDiv<float>(layout.x, atlas_size.x);
-		result.bottomleft.y  = 1.0f - MathTools::CastAndDiv<float>(layout.y + layout.height, atlas_size.y);
-		result.topright.x    = MathTools::CastAndDiv<float>(layout.x + layout.width, atlas_size.x);
-		result.topright.y    = 1.0f - MathTools::CastAndDiv<float>(layout.y, atlas_size.y);
+		result.bottomleft = layout.bottomleft_texcoord;
+		result.topright = layout.topright_texcoord;
 		result.bitmap_index  = (float)layout.bitmap_index;
 		return result;
 	}

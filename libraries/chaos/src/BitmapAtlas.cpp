@@ -235,13 +235,30 @@ namespace chaos
 				}			
 			}
 
-			// compute the result
+			// XXX : for OpenGL, texture Y = 0 is bottom
+			//       for bitmap,         Y = 0 is top
+			//       => explains why (1. - Y)
+			//
+			// XXX : grid_index is top = 0 to bottom
+
 			BitmapLayout result;
 			result.bitmap_index = bitmap_index;
 			result.width = width / animation_info->grid_data.grid_size.x;
 			result.height = height / animation_info->grid_data.grid_size.y;
 			result.x = x + (grid_index.x * result.width);
 			result.y = y + (grid_index.y * result.height);
+
+			float w = (topright_texcoord.x - bottomleft_texcoord.x);
+			float h = (topright_texcoord.y - bottomleft_texcoord.y);
+
+			float dx = w / (float)animation_info->grid_data.grid_size.x;
+			float dy = h / (float)animation_info->grid_data.grid_size.y;
+
+			result.bottomleft_texcoord.x = bottomleft_texcoord.x + dx * (float)grid_index.x;
+			result.bottomleft_texcoord.y = (bottomleft_texcoord.y + h - dy * (float)grid_index.y) - dy;
+			result.topright_texcoord.x = result.bottomleft_texcoord.x + dx;
+			result.topright_texcoord.y = (result.bottomleft_texcoord.y + dy);
+
 			return result;
 		}
 

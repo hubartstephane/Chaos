@@ -715,6 +715,16 @@ namespace chaos
 			layout.x = x + params.atlas_padding;
 			layout.y = y + params.atlas_padding;
 
+			// XXX : for OpenGL, texture Y = 0 is bottom
+			//       for bitmap,         Y = 0 is top
+			//       => explains why (1. - Y)
+
+			// XXX : in image space, Y is top from bottom (0 is up)
+			layout.bottomleft_texcoord.x = MathTools::CastAndDiv<float>(layout.x, params.atlas_width);
+			layout.bottomleft_texcoord.y = 1.0f - MathTools::CastAndDiv<float>(layout.y + layout.height, params.atlas_height);
+			layout.topright_texcoord.x = MathTools::CastAndDiv<float>(layout.x + layout.width, params.atlas_width);
+			layout.topright_texcoord.y = 1.0f - MathTools::CastAndDiv<float>(layout.y, params.atlas_height);
+
 			InsertOrdered(atlas_def.split_x, x);
 			InsertOrdered(atlas_def.split_x, x + layout.width + 2 * params.atlas_padding);
 

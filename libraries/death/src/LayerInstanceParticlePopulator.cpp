@@ -87,7 +87,7 @@ namespace death
 			// add the particle
 			TileParticle particle;
 			particle.bounding_box = particle_box;
-			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, texture_atlas->GetAtlasDimension());
+			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
 			particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
 			particle.color = color;
 			particle.gid = gid;

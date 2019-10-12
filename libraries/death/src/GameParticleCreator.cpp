@@ -73,7 +73,7 @@ namespace death
 		for (size_t i = 0 ; i < count ; ++i)
 		{
 			chaos::ParticleDefault::Particle & particle = particles[start + i];
-			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info, texture_atlas->GetAtlasDimension());
+			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(*info);
 		}
 
 		return true;

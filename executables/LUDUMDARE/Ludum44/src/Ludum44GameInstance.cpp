@@ -260,7 +260,7 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 	particle_box.position = ref_box.position;
 
 	// compute texcoords for all particles
-	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, ludum_game->GetTextureAtlas()->GetAtlasDimension());
+	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
 
 
 	float rotation = 0.0f - delta_rotation * (float)(count / 2);

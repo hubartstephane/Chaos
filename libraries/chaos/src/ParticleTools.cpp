@@ -31,7 +31,7 @@ namespace chaos
 		return result;
 	}
 
-	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapLayout const & layout, glm::vec2 const & atlas_size)
+	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapLayout const & layout)
 	{
 		ParticleTexcoords result;
 		result.bottomleft = layout.bottomleft_texcoord;

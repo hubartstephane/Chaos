@@ -220,7 +220,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 	// compute texcoords for all particles
 #endif
-	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout, layer_trait->game->GetTextureAtlas()->GetAtlasDimension());
+	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout);
 	
 
 

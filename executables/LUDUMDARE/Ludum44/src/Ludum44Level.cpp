@@ -399,7 +399,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 
 
 			// common filling
-			chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*enemy_info, atlas->GetAtlasDimension());
+			chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*enemy_info);
 
 			p.bounding_box.half_size = 0.5f * scale_factor * glm::vec2((float)enemy_info->width, (float)enemy_info->height);	
 			p.texcoords = texcoords;

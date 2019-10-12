@@ -339,7 +339,7 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 	{
 		chaos::BitmapAtlas::BitmapLayout layout = p->bitmap_info->GetAnimationLayout(p->current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
 
-		texcoords =  chaos::ParticleTools::GetParticleTexcoords(layout, glm::ivec2(2048, 2048)); // HARDCODED atlas_size !!!! shuludum => should we not store the coordinate in [0..1] instead (or both) ???
+		texcoords =  chaos::ParticleTools::GetParticleTexcoords(layout);
 
 	}
 
@@ -517,7 +517,7 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 
 	chaos::BitmapAtlas::BitmapLayout layout = particle->bitmap_info->GetAnimationLayout(index, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp);
 
-	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(layout, glm::ivec2(2048, 2048));
+	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
 
 
 	return false; // never destroy it
@@ -590,7 +590,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 	// compute texcoords for all particles
 #endif
-	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout, layer_trait->game->GetTextureAtlas()->GetAtlasDimension());
+	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout);
 
 
 

@@ -122,7 +122,7 @@ namespace chaos
 
 	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapLayout const * layout, ParticleCorners const & corners, glm::vec3 const & color)
 	{
-		ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*layout, atlas->GetAtlasDimension());
+		ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*layout);
 
 		// extend the array
 		size_t count = sprites.size();

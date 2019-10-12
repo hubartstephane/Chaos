@@ -179,7 +179,7 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	// prepare the particles
 	chaos::ParticleAccessor<ParticleBonus> particles = spawner.GetParticleAccessor();
 
-	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
+	chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info);
 
 	particles[0].bounding_box = surface->GetBoundingBox(false);
 	particles[0].texcoords = texcoords;
@@ -289,7 +289,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	chaos::ParticleAccessor<ParticleEnemy> particles = spawner.GetParticleAccessor();
 	for (size_t i = 0 ; i < particles.GetCount() ; ++i)
 	{
-		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info, spawner.atlas->GetAtlasDimension());
+		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info);
 
 		particles[i].bounding_box.half_size = 0.5f * glm::vec2(bitmap_info->width, bitmap_info->height) * type->scale;
 

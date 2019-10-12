@@ -123,10 +123,7 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices);
 
-
-
 	glm::vec4 color = p->color;
-
 	if (p->touched_count_down > 0.0f)
 		color.a = 0.0f;
 	else

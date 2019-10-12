@@ -1,0 +1,8 @@
+{
+  "program": "enemy",
+
+  "uniforms": {
+    "touched_color_factor": [1.0, 1.0, 1.0],
+    "touched_color_offset": [1.0, 1.0, 1.0]
+  }
+}

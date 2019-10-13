@@ -140,7 +140,7 @@ protected:
 		atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
 		if (atlas == nullptr)
 			return false;
-		return atlas->LoadAtlas(resources_path / "MyAtlas.json");
+		return atlas->LoadAtlas(resources_path / "Atlas" / "MyAtlas.json");
 	}
 
 	bool InitializeParticleManager(boost::filesystem::path const & resources_path)

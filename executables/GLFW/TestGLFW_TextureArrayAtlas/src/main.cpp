@@ -109,7 +109,7 @@ protected:
 
 	bool LoadTextureArray(boost::filesystem::path const & resources_path)
 	{
-		return atlas.LoadAtlas(resources_path / "MyAtlas.json");
+		return atlas.LoadAtlas(resources_path / "Atlas" / "MyAtlas.json");
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override

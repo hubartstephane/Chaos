@@ -296,7 +296,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 
 
 		particles[i].texcoords = texcoords;
-		particles[i].color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);	
+		particles[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);	
 	
 		particles[i].enemy_damage = type->enemy_damage;
 		particles[i].enemy_life = type->enemy_life;

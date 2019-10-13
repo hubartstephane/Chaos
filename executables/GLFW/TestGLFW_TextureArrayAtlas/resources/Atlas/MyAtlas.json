@@ -1,0 +1,1071 @@
+{
+    "bitmaps": [
+        "MyAtlas_0.png",
+        "MyAtlas_1.png",
+        "MyAtlas_2.png",
+        "MyAtlas_3.png",
+        "MyAtlas_4.png",
+        "MyAtlas_5.png",
+        "MyAtlas_6.png",
+        "MyAtlas_7.png",
+        "MyAtlas_8.png",
+        "MyAtlas_9.png",
+        "MyAtlas_10.png",
+        "MyAtlas_11.png",
+        "MyAtlas_12.png",
+        "MyAtlas_13.png",
+        "MyAtlas_14.png"
+    ],
+    "root_folder": {
+        "folders": [
+            {
+                "bitmaps": [
+                    {
+                        "bitmap_index": 13,
+                        "bottomleft_texcoord": [
+                            0.76171875,
+                            0.453125
+                        ],
+                        "height": 100,
+                        "name": "failed_animated_png",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.95703125,
+                            0.6484375
+                        ],
+                        "width": 100,
+                        "x": 390,
+                        "y": 180
+                    },
+                    {
+                        "bitmap_index": 13,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.375
+                        ],
+                        "height": 140,
+                        "name": "logo_2",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.72265625,
+                            0.6484375
+                        ],
+                        "width": 140,
+                        "x": 230,
+                        "y": 180
+                    },
+                    {
+                        "bitmap_index": 14,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.833984375
+                        ],
+                        "height": 75,
+                        "name": "logo_3",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 13,
+                        "bottomleft_texcoord": [
+                            0.78125,
+                            0.78515625
+                        ],
+                        "height": 100,
+                        "name": "logo_4",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.9765625,
+                            0.98046875
+                        ],
+                        "width": 100,
+                        "x": 400,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 2,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.48046875
+                        ],
+                        "height": 256,
+                        "name": "logo_5",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.51953125,
+                            0.98046875
+                        ],
+                        "width": 256,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 14,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.658203125
+                        ],
+                        "height": 70,
+                        "name": "logo_6",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.263671875,
+                            0.794921875
+                        ],
+                        "width": 125,
+                        "x": 10,
+                        "y": 105
+                    },
+                    {
+                        "bitmap_index": 4,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "logo_7",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 13,
+                        "bottomleft_texcoord": [
+                            0.76953125,
+                            0.21875
+                        ],
+                        "height": 100,
+                        "name": "logo_8",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.96484375,
+                            0.4140625
+                        ],
+                        "width": 100,
+                        "x": 394,
+                        "y": 300
+                    },
+                    {
+                        "bitmap_index": 1,
+                        "bottomleft_texcoord": [
+                            0.64453125,
+                            0.73046875
+                        ],
+                        "height": 128,
+                        "name": "logo_9",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.89453125,
+                            0.98046875
+                        ],
+                        "width": 128,
+                        "x": 330,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 1,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.39453125
+                        ],
+                        "height": 300,
+                        "name": "logo_bmp",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.60546875,
+                            0.98046875
+                        ],
+                        "width": 300,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 13,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.0703125
+                        ],
+                        "height": 136,
+                        "name": "logo_jpg",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.73046875,
+                            0.3359375
+                        ],
+                        "width": 144,
+                        "x": 230,
+                        "y": 340
+                    },
+                    {
+                        "animation_info": {
+                            "child_frame_count": 43,
+                            "grid_size_x": 0,
+                            "grid_size_y": 0,
+                            "skip_lasts": 0
+                        },
+                        "bitmap_index": 3,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "moving_gif",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 4,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 5,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 5,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 5,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 5,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 6,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 6,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 6,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 6,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 7,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 7,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 7,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 7,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 8,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 8,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 8,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 8,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 9,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 9,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 9,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 9,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 10,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 10,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 10,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 10,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 11,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 11,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 11,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 11,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 12,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 2,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.05078125
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.44140625
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 286
+                    },
+                    {
+                        "bitmap_index": 12,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 12,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 12,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 13,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 13,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 2,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.05078125
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.44140625
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 286
+                    },
+                    {
+                        "bitmap_index": 4,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 2,
+                        "bottomleft_texcoord": [
+                            0.55859375,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.94921875,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 286,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 3,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.58984375
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.98046875
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "bitmap_index": 3,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 3,
+                        "bottomleft_texcoord": [
+                            0.44921875,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.83984375,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 230,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 4,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.16015625
+                        ],
+                        "height": 200,
+                        "name": "",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.41015625,
+                            0.55078125
+                        ],
+                        "width": 200,
+                        "x": 10,
+                        "y": 230
+                    },
+                    {
+                        "bitmap_index": 0,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.431640625
+                        ],
+                        "height": 281,
+                        "name": "static_gif",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.748046875,
+                            0.98046875
+                        ],
+                        "width": 373,
+                        "x": 10,
+                        "y": 10
+                    },
+                    {
+                        "animation_info": {
+                            "child_frame_count": 0,
+                            "grid_size_x": 5,
+                            "grid_size_y": 2,
+                            "skip_lasts": 0
+                        },
+                        "bitmap_index": 1,
+                        "bottomleft_texcoord": [
+                            0.01953125,
+                            0.03125
+                        ],
+                        "height": 166,
+                        "name": "walking_5x2s0",
+                        "tag": 0,
+                        "topright_texcoord": [
+                            0.60546875,
+                            0.35546875
+                        ],
+                        "width": 300,
+                        "x": 10,
+                        "y": 330
+                    }
+                ],
+                "folders": [
+                    {
+                        "bitmaps": [
+                            {
+                                "bitmap_index": 14,
+                                "bottomleft_texcoord": [
+                                    0.44921875,
+                                    0.78515625
+                                ],
+                                "height": 100,
+                                "name": "logo_1",
+                                "tag": 0,
+                                "topright_texcoord": [
+                                    0.64453125,
+                                    0.98046875
+                                ],
+                                "width": 100,
+                                "x": 230,
+                                "y": 10
+                            },
+                            {
+                                "bitmap_index": 0,
+                                "bottomleft_texcoord": [
+                                    0.01953125,
+                                    0.03515625
+                                ],
+                                "height": 183,
+                                "name": "logo_10",
+                                "tag": 0,
+                                "topright_texcoord": [
+                                    0.8359375,
+                                    0.392578125
+                                ],
+                                "width": 418,
+                                "x": 10,
+                                "y": 311
+                            },
+                            {
+                                "bitmap_index": 13,
+                                "bottomleft_texcoord": [
+                                    0.44921875,
+                                    0.6875
+                                ],
+                                "height": 150,
+                                "name": "logo_11",
+                                "tag": 0,
+                                "topright_texcoord": [
+                                    0.7421875,
+                                    0.98046875
+                                ],
+                                "width": 150,
+                                "x": 230,
+                                "y": 10
+                            }
+                        ],
+                        "name": "subdirectory",
+                        "tag": 0
+                    }
+                ],
+                "name": "files",
+                "tag": 0
+            }
+        ],
+        "name": "",
+        "tag": 0
+    }
+}

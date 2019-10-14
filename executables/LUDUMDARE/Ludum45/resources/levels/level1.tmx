@@ -173,7 +173,7 @@
   <object id="75" name="world_bounding_box" x="1136" y="9440" width="49440" height="3616"/>
   <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="3058" y="11696" width="326" height="510">
    <properties>
-    <property name="BITMAP_NAME" value="jesus_3x1"/>
+    <property name="BITMAP_NAME" value="jesus"/>
    </properties>
   </object>
   <object id="2009" name="Finish" gid="22" x="40808" y="16168" width="2992" height="8752"/>

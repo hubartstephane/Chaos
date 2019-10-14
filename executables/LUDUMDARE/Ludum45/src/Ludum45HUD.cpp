@@ -28,7 +28,7 @@ bool LudumPlayingHUD::FillHUDContent()
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
 
-	RegisterComponent(death::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent(), "LifeGrid_5x2");
+	RegisterComponent(death::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent(), "LifeGrid");
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new death::GameHUDLifeComponent());
 	RegisterComponent(death::GameHUDKeys::UPGRADE_ID, new GameHUDUpgradeComponent());
 	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());

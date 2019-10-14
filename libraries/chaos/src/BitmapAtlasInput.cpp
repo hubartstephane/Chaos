@@ -203,16 +203,32 @@ namespace chaos
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
+			// test whether there is a grid describing the animation
+			std::string animated_name;
+
+			BitmapGridAnimationInfo animation;
+			if (grid_animation_info == nullptr) // use the path to find the animation_info	by default		
+				if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, &animated_name))
+					grid_animation_info = &animation;
+
+			// search the name if not provided
 			std::string generated_name;
 			if (name == nullptr)
 			{
-				generated_name = BoostTools::PathToName(resolved_path);
+				if (!animated_name.empty())
+					generated_name = BoostTools::PathToName(animated_name);				
+				else
+					generated_name = BoostTools::PathToName(resolved_path);
 				name = generated_name.c_str();
 			}
 
 			// test whether the object already exists
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
+
+
+
+			// shuanimation
 
 			// load all pages for the bitmap
 			ImageAnimationDescription anim_description;
@@ -223,12 +239,6 @@ namespace chaos
 			for (size_t i = 0; i < count; ++i)
 				RegisterResource(pages[i], true);
 
-			// test whether there is a grid describing the animation
-			BitmapGridAnimationInfo animation;
-			if (grid_animation_info == nullptr) // use the path to find the animation_info	by default		
-				if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, nullptr))
-					grid_animation_info = &animation;
-			
 			// create the bitmap
 			result = AddBitmapImpl(
 				pages,
@@ -264,6 +274,10 @@ namespace chaos
 
 			// load all pages for the bitmap
 			ImageAnimationDescription anim_description;
+
+
+			// shuanimation
+
 
 			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap, &anim_description);
 

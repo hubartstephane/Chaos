@@ -185,7 +185,7 @@ ParticleExplosion * LudumGameInstance::FireExplosion(chaos::box2 const & ref_box
 	if (bitmap_set == nullptr)
 		return nullptr;
 
-	chaos::BitmapAtlas::BitmapInfo const * explosion_info = bitmap_set->GetBitmapInfo("explosion_4x4");
+	chaos::BitmapAtlas::BitmapInfo const * explosion_info = bitmap_set->GetBitmapInfo("explosion");
 	if (explosion_info == nullptr)
 		return nullptr;
 

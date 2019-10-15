@@ -6,6 +6,7 @@
 #include <chaos/BoostTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/Application.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
@@ -200,8 +201,29 @@ namespace chaos
 		{
 			BitmapInfoInput * result = nullptr;
 
+			// early exit
+			if (FileTools::IsTypedFile(path, "JSON"))
+				return nullptr;
+
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+			// search if there is a JSON file to describe an animation
+			boost::filesystem::path json_path = resolved_path;
+			json_path.replace_extension("json");
+
+			nlohmann::json json_file;
+			if (JSONTools::LoadJSONFile(json_path, json_file, false))
+			{
+
+
+				result = result;
+			}
+
+
+
+
+
 
 			// test whether there is a grid describing the animation
 			std::string animated_name;

@@ -342,8 +342,12 @@ namespace chaos
 						result->animation_info->animation_description = *anim_desc;
 
 					// use grid animation system only if we are not on a GIF
+
+					// shuanimation
+
+
 					if (page_count == 1 && grid_animation_info != nullptr && !grid_animation_info->IsEmpty())
-						animation_info->grid_data = *grid_animation_info;
+						animation_info->animation_description.grid_data = *grid_animation_info;
 
 					// animated images with frames						
 					if (page_count > 1)

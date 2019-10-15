@@ -4,6 +4,7 @@
 #include <chaos/ImageDescription.h>
 #include <chaos/Buffer.h>
 #include <chaos/FilePath.h>
+#include <chaos/ImageAnimationDescription.h>
 
 namespace chaos
 {

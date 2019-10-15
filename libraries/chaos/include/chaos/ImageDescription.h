@@ -44,17 +44,5 @@ namespace chaos
 		int    padding_size = 0;
 	};
 
-	/**
-	* ImageAnimationDescription : data to work with animation
-	*/
-
-	class ImageAnimationDescription
-	{
-	public:
-
-		/** the duration of a frame in seconds */
-		float frame_time = 0.0f;
-	};
-
 }; // namespace chaos
 

@@ -84,12 +84,10 @@ namespace chaos
 
 		public:
 
-			/** if the animation is stored inside a grid */
-			BitmapGridAnimationInfo grid_data;
-			/** the child frames of animated image (GIF) */
-			std::vector<class BitmapInfoInput *> child_frames;
 			/** the animation description */
 			ImageAnimationDescription animation_description;
+			/** the child frames of animated image (GIF) */
+			std::vector<class BitmapInfoInput *> child_frames;
 		};
 
 

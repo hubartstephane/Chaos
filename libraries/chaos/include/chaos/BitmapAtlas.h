@@ -112,7 +112,7 @@ namespace chaos
 			/** returns true whether the animation is of type grid */
 			bool IsGridAnimation() const;
 			/** get the duration of a frame in seconds */
-			double GetFrameTime() const { return (0.001 * (double)animation_description.frame_time_ms);	}
+			float GetFrameTime() const { return animation_description.frame_time;	}
 
 		public:
 
@@ -153,7 +153,7 @@ namespace chaos
 			/** returns the number of frames in the animation */
 			size_t GetAnimationImageCount() const;
 			/** returns the duration of a frame in seconds */
-			double GetFrameTime() const;
+			float GetFrameTime() const;
 
 		protected:
 

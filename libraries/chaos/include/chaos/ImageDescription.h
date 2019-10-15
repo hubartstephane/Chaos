@@ -52,8 +52,8 @@ namespace chaos
 	{
 	public:
 
-		/** the duration of a frame in ms */
-		int frame_time_ms = 0;
+		/** the duration of a frame in seconds */
+		float frame_time = 0.0f;
 	};
 
 }; // namespace chaos

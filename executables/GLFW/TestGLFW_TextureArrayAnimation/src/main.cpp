@@ -45,9 +45,9 @@ protected:
 		if (info == nullptr)
 			return true;
 
-		double frame_time = info->GetFrameTime();
-		if (frame_time <= 0.0)
-			frame_time = 1.0 / 10.0;
+		float frame_time = info->GetFrameTime();
+		if (frame_time <= 0.0f)
+			frame_time = 1.0f / 10.0f;
 
 		int image = (int)(time / frame_time);
 		

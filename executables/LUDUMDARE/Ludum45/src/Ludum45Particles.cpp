@@ -562,10 +562,10 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 		return true;
 
 	int image_count = particle->explosion_info->GetAnimationImageCount();
-	float frame_time = (float)particle->explosion_info->GetFrameTime();
+	float frame_time = particle->explosion_info->GetFrameTime();
 
 	if (frame_time == 0)
-		frame_time = 1 / 16.0f;
+		frame_time = 1.0f / 16.0f;
 
 	int image_index = (int)(particle->age / frame_time);
 

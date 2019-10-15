@@ -690,7 +690,14 @@ namespace chaos
 
 	bool ImageTools::GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result)
 	{
-		return ReadMetaData(image, FIMD_ANIMATION, "FrameTime", result.frame_time_ms);
+		int frame_time_ms = 0;		
+		if (ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_time_ms))
+		{
+			result.frame_time = 0.001f * (float)frame_time_ms;
+			return true;
+		}
+		return false;
+		
 
 		// Some metadata (GIF ?) FreeImage library read them
 #if 0 
@@ -718,7 +725,6 @@ namespace chaos
 		std::int32_t disposal_method = 0;
 		ReadMetaData(image, FIMD_ANIMATION, "DisposalMethod", disposal_method);
 #endif
-		return true;
 	}
 
 }; // namespace chaos

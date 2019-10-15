@@ -312,7 +312,7 @@ namespace chaos
 			return (size_t)MathTools::Maximum((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
 		}
 
-		double BitmapInfo::GetFrameTime() const
+		float BitmapInfo::GetFrameTime() const
 		{
 			if (animation_info == nullptr)
 				return 0;

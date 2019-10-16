@@ -219,17 +219,11 @@ namespace chaos
 
 				result = result;
 			}
-
-
-
-
-
 			
 			// test whether there is a grid describing the animation
-			ImageAnimationDescription animation_description;
-
 			std::string animated_name;
 
+			ImageAnimationDescription animation_description;	
 			BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation_description.grid_data, &animated_name);
 
 			// search the name if not provided
@@ -247,13 +241,8 @@ namespace chaos
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
 
-
-
-			// shuanimation
-
-
 			// load all pages for the bitmap
-			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // may update frame rate
+			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
 
 			size_t count = pages.size();
 			for (size_t i = 0; i < count; ++i)
@@ -294,11 +283,7 @@ namespace chaos
 			// load all pages for the bitmap
 			ImageAnimationDescription animation_description;
 
-
-			// shuanimation
-
-
-			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap, &animation_description);
+			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap, &animation_description); // extract frame_rate from META DATA
 
 			size_t count = pages.size();
 			for (size_t i = 0; i < count; ++i)
@@ -328,37 +313,17 @@ namespace chaos
 			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
 			result = bitmaps.back().get();
 
-
-
-
-
-
-
-
-
-			// shuanimation
-
-#if 1
-
-
 			// insert child animation frames
 			if ((animation_description != nullptr && !animation_description->grid_data.IsEmpty()) || page_count > 1)
 			{
 				BitmapAnimationInfoInput * animation_info = new BitmapAnimationInfoInput;
 				if (animation_info != nullptr)
 				{
-					result->animation_info = animation_info;
+					// give animation to the input
 					if (animation_description != nullptr)
-						result->animation_info->animation_description = *animation_description;
-
-					// use grid animation system only if we are not on a GIF
-
-					// shuanimation
-
-
-					//if (page_count == 1 && animation_description != nullptr && !animation_description->grid_data.IsEmpty())
-					//	animation_info->animation_description.grid_data = *grid_animation_info;
-
+						animation_info->animation_description = *animation_description;
+					result->animation_info = animation_info;
+		
 					// animated images with frames						
 					if (page_count > 1)
 					{
@@ -378,8 +343,6 @@ namespace chaos
 					}
 				}
 			}
-#endif
-
 			return result;
 		}
 

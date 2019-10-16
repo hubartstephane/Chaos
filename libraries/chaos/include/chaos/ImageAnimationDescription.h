@@ -21,7 +21,7 @@ namespace chaos
 	public:
 
 		/** returns whether the animation is valid */
-		bool IsEmpty() const { return (grid_size.x * grid_size.y - skip_lasts <= 0); }
+		bool IsEmpty() const;
 
 		/** parsing the the name to extract the grid numbers */
 		static bool ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);

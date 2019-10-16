@@ -84,9 +84,10 @@ namespace chaos
 	bool BitmapGridAnimationInfo::ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result)
 	{
 		// hack the structure to hold 'pointer' on the string that contains the values
-		result.grid_size.x = -1;
-		result.grid_size.y = -1;
-		result.skip_lasts = -1;
+		BitmapGridAnimationInfo tmp;
+		tmp.grid_size.x = -1;
+		tmp.grid_size.y = -1;
+		tmp.skip_lasts = -1;
 
 		// the format of an animated grid image can be
 		//   filename_1x4.png
@@ -118,10 +119,22 @@ namespace chaos
 			i = len - 1; // take the whole input
 		}
 		// parsing chain
-		if (!ParseFromNameReadGridSkip(name, i, result, name_result))
+		if (!ParseFromNameReadGridSkip(name, i, tmp, name_result))
 			return false;
 		// ensure the result is not empty
-		return !result.IsEmpty();
+		if (!tmp.IsEmpty())
+		{
+			result = tmp;
+			return true;
+		}
+		return false;
+	}
+
+	bool BitmapGridAnimationInfo::IsEmpty() const
+	{
+		if (grid_size.x <= 0 || grid_size.y <= 0)
+			return true;
+		return (grid_size.x * grid_size.y - skip_lasts <= 0); 
 	}
 
 	// ========================================================================

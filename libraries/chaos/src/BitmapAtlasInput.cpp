@@ -197,7 +197,7 @@ namespace chaos
 			return true;
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
 			BitmapInfoInput * result = nullptr;
 
@@ -224,14 +224,13 @@ namespace chaos
 
 
 
-
+			
 			// test whether there is a grid describing the animation
+			ImageAnimationDescription animation_description;
+
 			std::string animated_name;
 
-			BitmapGridAnimationInfo animation;
-			if (grid_animation_info == nullptr) // use the path to find the animation_info	by default		
-				if (BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation, &animated_name))
-					grid_animation_info = &animation;
+			BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation_description.grid_data, &animated_name);
 
 			// search the name if not provided
 			std::string generated_name;
@@ -252,10 +251,9 @@ namespace chaos
 
 			// shuanimation
 
-			// load all pages for the bitmap
-			ImageAnimationDescription anim_description;
 
-			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &anim_description);
+			// load all pages for the bitmap
+			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // may update frame rate
 
 			size_t count = pages.size();
 			for (size_t i = 0; i < count; ++i)
@@ -266,13 +264,12 @@ namespace chaos
 				pages,
 				name,
 				tag,
-				grid_animation_info,
-				&anim_description
+				&animation_description
 			);
 			return result;
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(bitmap, release_bitmap);
@@ -282,10 +279,10 @@ namespace chaos
 				return nullptr;
 
 			// make the insertion
-			return AddBitmapImpl({ bitmap }, name, tag, grid_animation_info, nullptr);
+			return AddBitmapImpl({ bitmap }, name, tag, nullptr);
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info)
+		BitmapInfoInput * FolderInfoInput::AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag)
 		{
 			// prepare resource for destruction (in case of failure, there will not be memory leak)
 			RegisterResource(animated_bitmap, release_animated_bitmap);
@@ -295,23 +292,23 @@ namespace chaos
 				return nullptr;
 
 			// load all pages for the bitmap
-			ImageAnimationDescription anim_description;
+			ImageAnimationDescription animation_description;
 
 
 			// shuanimation
 
 
-			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap, &anim_description);
+			std::vector<FIBITMAP *> pages = ImageTools::GetMultiImagePages(animated_bitmap, &animation_description);
 
 			size_t count = pages.size();
 			for (size_t i = 0; i < count; ++i)
 				RegisterResource(pages[i], true);
 
 			// make the insertion
-			return AddBitmapImpl(pages, name, tag, grid_animation_info, &anim_description);
+			return AddBitmapImpl(pages, name, tag, &animation_description);
 		}
 
-		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info, ImageAnimationDescription const * anim_desc)
+		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description)
 		{
 			// create the result
 			BitmapInfoInput * result = new BitmapInfoInput;
@@ -331,23 +328,36 @@ namespace chaos
 			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy
 			result = bitmaps.back().get();
 
+
+
+
+
+
+
+
+
+			// shuanimation
+
+#if 1
+
+
 			// insert child animation frames
-			if ((grid_animation_info != nullptr && !grid_animation_info->IsEmpty()) || page_count > 1)
+			if ((animation_description != nullptr && !animation_description->grid_data.IsEmpty()) || page_count > 1)
 			{
 				BitmapAnimationInfoInput * animation_info = new BitmapAnimationInfoInput;
 				if (animation_info != nullptr)
 				{
 					result->animation_info = animation_info;
-					if (anim_desc != nullptr)
-						result->animation_info->animation_description = *anim_desc;
+					if (animation_description != nullptr)
+						result->animation_info->animation_description = *animation_description;
 
 					// use grid animation system only if we are not on a GIF
 
 					// shuanimation
 
 
-					if (page_count == 1 && grid_animation_info != nullptr && !grid_animation_info->IsEmpty())
-						animation_info->animation_description.grid_data = *grid_animation_info;
+					//if (page_count == 1 && animation_description != nullptr && !animation_description->grid_data.IsEmpty())
+					//	animation_info->animation_description.grid_data = *grid_animation_info;
 
 					// animated images with frames						
 					if (page_count > 1)
@@ -368,6 +378,7 @@ namespace chaos
 					}
 				}
 			}
+#endif
 
 			return result;
 		}

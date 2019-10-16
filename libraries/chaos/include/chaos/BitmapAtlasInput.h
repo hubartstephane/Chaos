@@ -157,11 +157,11 @@ namespace chaos
 			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
+			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
+			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
 			/** insert an image inside the atlas */
-			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr);
+			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_animated_bitmap, char const * name, TagType tag);
 
 			/** Add a character set */
 			FontInfoInput * AddFont(				
@@ -183,7 +183,7 @@ namespace chaos
 		protected:
 
 			/** internal method to add a bitmap or a multi bitmap */
-			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, BitmapGridAnimationInfo const * grid_animation_info = nullptr, ImageAnimationDescription const * anim_desc = nullptr);
+			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description);
 
 			/** internal method to add a character set */
 			FontInfoInput * AddFontImpl(

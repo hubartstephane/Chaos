@@ -673,6 +673,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "grid_size_y", info.grid_data.grid_size.y);
 			JSONTools::SetAttribute(json_entry, "skip_lasts", info.grid_data.skip_lasts);
 			JSONTools::SetAttribute(json_entry, "child_frame_count", info.child_frame_count);
+			JSONTools::SetAttribute(json_entry, "frame_time", info.frame_time);
 			return true;
 		}
 
@@ -683,7 +684,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "grid_size_x", info.grid_data.grid_size.x);
 			JSONTools::GetAttribute(json_entry, "grid_size_y", info.grid_data.grid_size.y);
 			JSONTools::GetAttribute(json_entry, "skip_lasts", info.grid_data.skip_lasts);
-			JSONTools::GetAttribute(json_entry, "child_frame_count", info.child_frame_count);
+			JSONTools::GetAttribute(json_entry, "frame_time", info.frame_time);
 			return true;
 		}
 

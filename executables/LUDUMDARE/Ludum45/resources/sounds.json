@@ -10,10 +10,14 @@
 		"@FX2":{
 			"volume":1.0
 		},
-    
-		"@Voices":{
-			"volume":1.0
-		}    
+
+    "@Voices": {
+      "volume": 1.0
+    },
+
+		"@HeartBeat":{
+			"volume":0.3
+		}  
 	},
 
   "sources": [
@@ -41,6 +45,6 @@
     { "path": "sounds/gods_spread.ogg" , "categories" :  "Voices"},
     { "path": "sounds/gods_sideoflife.ogg" , "categories" :  "Voices"},
 
-    { "path": "sounds/heartbeat.ogg" , "categories" :  "Voices"}
+    { "path": "sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
   ]
 }

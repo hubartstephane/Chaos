@@ -17,8 +17,8 @@ namespace chaos
 		int SkipAndAtoi(char const * c);
 		/** returns true whether the character is valid for a variable name */
 		bool IsVariableCharacter(char c);
-		/** returns true whether the name is a standard variable name */
-		bool IsVariableName(char const * name);
+		/** returns true whether the name is a standard variable name (strict indicates that name cannot start with a figure) */
+		bool IsVariableName(char const * name, bool strict);
 		/** create a string from a format */
 		std::string Printf(char const * format, ...);
 		/** create a string from a format */

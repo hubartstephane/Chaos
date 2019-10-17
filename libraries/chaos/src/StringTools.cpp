@@ -49,12 +49,23 @@ namespace chaos
 			return (std::isalnum(c) || c == '_');
 		}
 
-		bool IsVariableName(char const * name)
+		bool IsVariableName(char const * name, bool strict) 
 		{
 			assert(name != nullptr);
-			if (!std::isalpha(name[0]) && name[0] != '_') // an empty string is not a variable name !!
+
+			// an empty string is not a variable name !!
+			if (name[0] == 0)
 				return false;
-			for (int i = 1 ; name[i] != 0 ; ++i)
+			// accept or not names starting with a number ?
+			int start_character = 0;
+			if (strict)
+			{
+				if (!std::isalpha(name[0]) && name[0] != '_') 
+					return false;
+				start_character = 1;
+			}
+			// other characters
+			for (int i = start_character ; name[i] != 0 ; ++i)
 				if (!std::isalnum(name[i]) && name[i] != '_')
 					return false;
 			return true;

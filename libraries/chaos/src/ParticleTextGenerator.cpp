@@ -380,30 +380,14 @@ namespace chaos
 			return it->second;
 		}
 
-
-		static bool MyIsVariableName(char const * name) // shuludum
-		{
-			assert(name != nullptr);
-			for (int i = 0 ; name[i] != 0 ; ++i)
-				if (!std::isalnum(name[i]) && name[i] != '_')
-					return false;
-			return true;
-		}
-
 		bool Generator::IsNameValid(char const * name) const
 		{
 			// ignore empty name
 			if (name == nullptr)
 				return false;
 			// ensure name is a valid variable name
-			//if (!StringTools::IsVariableName(name)) // shuludum : why refusing anything begining with a number ?
-			//	return false;
-
-			if (!MyIsVariableName(name)) 
+			if (!StringTools::IsVariableName(name, false)) // false => not strict => accept names starting with a figure
 				return false;
-
-
-
 			// ensure name is not already used by a color
 			if (colors.find(name) != colors.end())
 				return false;

@@ -98,26 +98,29 @@ namespace chaos
 		// GeneratorData methods
 		// ============================================================
 
-		Style & GeneratorData::PushDuplicate()
+		Style & GeneratorData::PushDuplicate(bool override_top_stack)
 		{
-			Style style = style_stack.back();
-			style_stack.push_back(style); // push a duplicate of previous style
+			if (!override_top_stack)
+			{
+				Style style = style_stack.back();
+				style_stack.push_back(style); // push a duplicate of previous style
+			}
 			return style_stack[style_stack.size() - 1];
 		}
 
-		Style & GeneratorData::PushFontInfo(BitmapAtlas::FontInfo const * font_info)
+		Style & GeneratorData::PushFontInfo(BitmapAtlas::FontInfo const * font_info, bool override_top_stack)
 		{
 			// push a copy of previous style, except the character set
-			Style & result = PushDuplicate();
+			Style & result = PushDuplicate(override_top_stack);
 			if (font_info != nullptr)
 				result.font_info = font_info;
 			return result;
 		}
 
-		Style & GeneratorData::PushColor(glm::vec4 const & color)
+		Style & GeneratorData::PushColor(glm::vec4 const & color, bool override_top_stack)
 		{
 			// push a copy of previous style, except the color
-			Style & result = PushDuplicate();
+			Style & result = PushDuplicate(override_top_stack);
 			result.color = color;
 			return result;
 		}
@@ -328,25 +331,26 @@ namespace chaos
 						return false; // ill-formed string
 					}
 					// if ']' is found, do nothing because, we are about to push a color/character set on the stack that is to be immediatly popped
+					bool override_top_stack = false;
 					if (c == ']')
-						return true;
+						override_top_stack = true;
 					// color markup found
 					auto color = generator.GetColor(markup.c_str());
 					if (color != nullptr)
 					{
-						PushColor(*color);
+						PushColor(*color, override_top_stack);
 						return true;
 					}
 					// character set markup found
 					auto font_info = generator.GetFontInfo(markup.c_str());
 					if (font_info != nullptr)
 					{
-						PushFontInfo(font_info);
+						PushFontInfo(font_info, override_top_stack);
 						return true;
 					}
 					// a markup has been detected but we don'k know to what it corresponds, so push a duplicate on the stack 
 					// because we expect a markup closure later
-					PushDuplicate();
+					PushDuplicate(override_top_stack);
 					return true;
 				}
 				++i;

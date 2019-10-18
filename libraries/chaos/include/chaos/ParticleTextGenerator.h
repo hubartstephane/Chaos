@@ -193,11 +193,11 @@ namespace chaos
 		public:
 
 			/** duplicate the last stack element */
-			Style & PushDuplicate();
+			Style & PushDuplicate(bool override_top_stack);
 			/** add an element on generator stack : keep color, but change current font_info */
-			Style & PushFontInfo(BitmapAtlas::FontInfo const * font_info);
+			Style & PushFontInfo(BitmapAtlas::FontInfo const * font_info, bool override_top_stack);
 			/** add an element on generator stack : keep font_info, but change current color */
-			Style & PushColor(glm::vec4 const & color);
+			Style & PushColor(glm::vec4 const & color, bool override_top_stack);
 			/** get a character set from its name */
 			BitmapAtlas::FontInfo const * GetFontInfoFromName(char const * font_info_name) const;
 			/** recursively search a font inside the folder */

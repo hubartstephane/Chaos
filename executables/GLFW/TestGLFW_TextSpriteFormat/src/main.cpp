@@ -163,7 +163,9 @@ protected:
 
 		// parse the text
 		chaos::ParticleTextGenerator::Generator generator(*atlas);
-		generator.AddColor("red", glm::vec4(1.0f, 0.0f, 0.0f, 0.5f));
+		generator.AddColor("red", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		generator.AddColor("blue", glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+		generator.AddColor("green", glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		chaos::BitmapAtlas::FolderInfo const * folder = atlas->GetFolderInfo("folder_input1");
 		if (folder != nullptr)
@@ -190,11 +192,12 @@ protected:
 		generator_params.max_text_width = 200.0f;
 		generator_params.word_wrap = true;
 
+		//std::string message = "Hi [RED Ben]\nHere is a first example\nof my own stuff with [button][button][button] embedded";
+
+		std::string message = "HELLO [GREEN Hi [RED] [C2] Ben [BLUE] truc] bidule";
+
 		chaos::ParticleTextGenerator::GeneratorResult generator_result;
-		generator.Generate(
-			"Hi [RED Ben]\nHere is a first example\nof my own stuff with [button][button][button] embedded",
-			generator_result,
-			generator_params);
+		generator.Generate(message.c_str(), generator_result, generator_params);
 
 		// create a text allocation
 		particles_allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, generator_result);

@@ -210,7 +210,7 @@ namespace chaos
 			/** utility method to emit character */
 			void EmitCharacter(char c, BitmapAtlas::CharacterLayout const * layout, BitmapAtlas::FontInfo const * font_info);
 			/** emit a bitmap */
-			void EmitBitmap(BitmapAtlas::BitmapLayout const * layout);
+			void EmitBitmap(BitmapAtlas::BitmapLayout const * layout, bool use_font_color);
 			/** end the current line */
 			void EndCurrentLine();
 			/** insert a token */

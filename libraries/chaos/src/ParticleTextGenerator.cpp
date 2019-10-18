@@ -179,19 +179,14 @@ namespace chaos
 			InsertTokenInLine(token);
 		}
 
-		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapLayout const * layout)
+		void GeneratorData::EmitBitmap(BitmapAtlas::BitmapLayout const * layout, bool use_font_color)
 		{
 			Token token;
 			token.bitmap_layout = layout;
-			token.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-
-			token.color = style_stack.back().color; // shuludum 
-
-
-			// shuludum   donot support  [1[VIEW] but support [1 [VIEW] <- to fixe
-			//             
-
+			if (use_font_color)
+				token.color = style_stack.back().color;
+			else
+				token.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			InsertTokenInLine(token);
 		}
 
@@ -313,15 +308,21 @@ namespace chaos
 					// no character : skip
 					if (i - j < 1)
 						return false; // ill-formed string								  
-									  // the markup
+					// the markup
 					std::string markup = std::string(&text[j], &text[i]);
 					// markup correspond to a bitmap, the current character MUST be ']'
 					auto bitmap = generator.GetBitmapInfo(markup.c_str());
 					if (bitmap != nullptr)
 					{
-						if (c == ']')
+						if (c == ']') // normal bitmap 
 						{
-							EmitBitmap(bitmap);
+							EmitBitmap(bitmap, false);
+							return true;
+						}
+						if (c == '*' &&  text[i + 1] == ']')  // bitmap that uses font color
+						{
+							++i;
+							EmitBitmap(bitmap, true);
 							return true;
 						}
 						return false; // ill-formed string

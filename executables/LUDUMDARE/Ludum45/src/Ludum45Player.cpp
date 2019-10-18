@@ -583,7 +583,7 @@ std::string LudumPlayer::GetPlayerUpgradeString() const
 
 		// 8 values for fonts
 
-		result += chaos::StringTools::Printf("[%d [%s]]", ratio, upgrade->bitmap_name.c_str());
+		result += chaos::StringTools::Printf("[%d [%s*]]", ratio, upgrade->bitmap_name.c_str());
 	}
 	return result;
 }

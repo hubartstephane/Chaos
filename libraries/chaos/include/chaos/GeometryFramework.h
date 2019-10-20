@@ -482,7 +482,7 @@ namespace chaos
 
 	/** transform rectangle to have desire aspect (if a component is 0, change it, otherwise take more prioritize aspect) */
 	template<typename BOX_TYPE>
-	BOX_TYPE AlterBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect, bool update_width)
+	BOX_TYPE AlterBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect, bool prefere_update_width)
 	{
 		using type = typename BOX_TYPE::type;
 
@@ -494,18 +494,61 @@ namespace chaos
 			return src;
 		// width axis to update ?
 		if (src.half_size.x == (type)0)
-			update_width = true;
+			prefere_update_width = true;
 		else if (src.half_size.y == (type)0)
-			update_width = false;
+			prefere_update_width = false;
 		// make the update
 		BOX_TYPE result = src;
-		if (update_width)
+		if (prefere_update_width)
 			result.half_size.x = src.half_size.y * aspect;
 		else
 			result.half_size.y = src.half_size.x / aspect;
 
 		return result;
 	}
+	
+	// shuvvf
+	
+	// compute the final size of the particle
+	//
+	// XXX: explanation of 'particle_size' member usage
+	//      -if .x AND .y are 0     => use the particle size in the atlas
+	//      -if .x AND .y are not 0 => override particle size in the atlas
+	//      -if .x OR  .y is  0     => use the particle effective ratio to compute the 0 member value
+	
+	template<typename BOX_TYPE>
+	BOX_TYPE MakeBoxMatchAspect(BOX_TYPE const & src, typename BOX_TYPE const & aspect_box, bool prefere_update_with)
+	{
+		// the reference box that gives the aspect may not be empty
+		assert(!IsGeometryEmpty(aspect_box));
+		
+		if (IsGeometryEmpty(src))
+			return aspect_box;
+			
+			
+			
+		
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	// ==============================================================================================
 	// box functions

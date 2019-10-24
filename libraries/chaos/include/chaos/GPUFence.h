@@ -29,6 +29,9 @@ namespace chaos
 		bool WaitForCompletion(float timeout);
 		/** returns true whether the resource is valid */
 		bool IsValid() const { return (fence != nullptr) && glIsSync(fence); }
+		
+		/** returns openGL resource itself */
+		GLsync GetGLFence() const { return fence; }
 
 	protected:
 

@@ -74,7 +74,7 @@ class A
 public:
 	
 	//int f(){ return 6;}
-	void f(int i){ }
+	void f(int * i){ }
 	
 	int * g(){return nullptr;}
 	

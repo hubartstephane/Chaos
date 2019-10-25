@@ -10,6 +10,10 @@ class GPURenderParams{};
 template<typename T>
 class shared_ptr{};
 
+	static int const PT_TRIANGLES      = 0;
+	static int const PT_QUAD           = 1;
+	static int const PT_TRIANGLE_STRIP = 2;
+	static int const PT_TRIANGLE_FAN   = 3;
 
 
 
@@ -71,7 +75,14 @@ protected:
 		BufferCacheEntries * entries = GetCacheEntryForFence(render_params.GetCurrentFrameFence());
 		if (entries == nullptr)
 			return nullptr;
+	
 		
+
+
+
+
+
+	
 		
 	}
 	
@@ -99,6 +110,10 @@ protected:
 	/** some GPUBuffers per GPUFence */
 	std::vector<BufferCacheEntries> entries;
 };
+
+
+
+
 
 
 template<typename VERTEX_TYPE>

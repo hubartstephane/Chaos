@@ -73,7 +73,18 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
 class ParticleTraitTools
 {
-public:
+
+	// shuxxx : there is no way YET to know whether the flags 'has_vertices_per_particle' ... are static or per instance
+	//			look at the following code, we use the   
+	//
+	//				has_vertices_per_particle<...>   
+	//
+	//			template in all cases
+	
+	
+	public:
+
+
 
 	/** returns the number of vertices require for one particle */
 	template<typename TRAIT_TYPE>
@@ -256,6 +267,13 @@ protected:
 		{
 			return GetParticleConstAccessor<PARTICLE_TYPE>();
 		}
+		
+		
+		// shuxxx GetParticleCheckedBuffer(...) maybe a good idea to remove
+		
+		
+		
+		
 
 		/** returns a pointer on the first particle with strict class checking */
 		template<typename PARTICLE_TYPE>
@@ -334,6 +352,11 @@ protected:
 		{
 			return sizeof(particle_type);
 		}
+		
+		
+		// shuxxx  GetParticleBuffer(...)  keep ?
+		
+		
 		/** override */
 		virtual void * GetParticleBuffer() override
 		{

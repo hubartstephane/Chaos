@@ -10,8 +10,8 @@ ProcessSubPremake("GLFW")
 --CURRENT_GROUP = BASE_GROUP .. "/LUA"
 --ProcessSubPremake("LUA")
 
---CURRENT_GROUP = BASE_GROUP .. "/MISC"
---ProcessSubPremake("MISC")
+CURRENT_GROUP = BASE_GROUP .. "/MISC"
+ProcessSubPremake("MISC")
 
 --CURRENT_GROUP = BASE_GROUP .. "/SOUND"
 --ProcessSubPremake("SOUND")

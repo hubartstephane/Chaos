@@ -1045,9 +1045,9 @@ namespace chaos
 			listener_transform = glm::translate(position);
 			listener_velocity = velocity;
 
-			glm::vec3 pos     =  listener_transform[3];
-			glm::vec3 lookdir =  listener_transform[2];
-			glm::vec3 up      = -listener_transform[1]; // XXX : shuxxx    because TiledMap position Y is reversed ? bad idea
+			glm::vec3 pos     = listener_transform[3];
+			glm::vec3 lookdir = listener_transform[2];
+			glm::vec3 up      = listener_transform[1];
 
 			irrklang_engine->setListenerPosition(
 				IrrklangTools::ToIrrklangVector(pos),

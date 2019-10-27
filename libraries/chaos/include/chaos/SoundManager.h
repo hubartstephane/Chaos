@@ -661,7 +661,7 @@ namespace chaos
 		std::vector<shared_ptr<SoundCategory>> categories;
 
 		/** the listener transform */
-		glm::mat4 listener_transform = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		glm::mat4 listener_transform = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
 		/** the listener velocity */
 		glm::vec3 listener_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	};

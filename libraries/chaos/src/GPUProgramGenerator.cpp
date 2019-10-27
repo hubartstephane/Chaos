@@ -9,110 +9,107 @@
 
 namespace chaos
 {
+
+	GLuint GPUProgramGenerator::DoGenerateShader(GLenum shader_type, std::vector<char const *> const & sources) const
+	{
+		// create a shader
+		GLuint result = glCreateShader(shader_type);
+		if (result == 0)
+			return 0;
+
+		// fill with sources
+		glShaderSource(result, (int)sources.size(), &sources[0], nullptr);
+
+		// compile the shader
+		glCompileShader(result);
+
+		// test whether the compilation is successfull
+		GLint compilation_result = 0;
+		glGetShaderiv(result, GL_COMPILE_STATUS, &compilation_result);
+
+		if (compilation_result)
+			return result;
+
+		// log error message and destroy GL failed resource
+		GLint log_len = 0;
+		glGetShaderiv(result, GL_INFO_LOG_LENGTH, &log_len);
+		if (log_len > 0)
+		{
+			GLchar log_buffer[4096];
+			glGetShaderInfoLog(result, sizeof(log_buffer) - 1, nullptr, log_buffer);
+
+			LogTools::Error("Shader compilation failure : %s", log_buffer);
+		}
+		glDeleteShader(result);
+		return 0;
+	}
+
 	GLuint GPUProgramGenerator::GenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
 	{
-		GLuint result = glCreateShader(shader_type); // create a shader
-		if (result != 0)
+		bool success = false;
+
+		// shared generators 
+		GeneratorSet const * global_generators = nullptr;
+
+		std::map<GLenum, GeneratorSet>::const_iterator global_generators_it = shaders.find(GL_NONE);
+		if (global_generators_it != shaders.cend())
+			global_generators = &global_generators_it->second;
+
+		// store the 'strings' in one array 
+		// store the 'buffers' in a second one
+		//  => we do not want the generated strings to becomes invalid due to buffer destruction
+		//     the second buffer helps us keep the string valid.
+
+		std::vector<char const *> sources;
+		std::vector<Buffer<char>> buffers; // this is important !!!! the GenerateSource(...) function returns Buffer<> whose lifetime is assured because of that
+
+		// XXX : this must be the very first line of the program. 
+		//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
+		sources.push_back("#version 450\n");
+
+		// add the definitions
+		if (definitions.size() > 0)
+			sources.push_back(definitions_string.c_str());
+
+		// shared sources
+		if (global_generators != nullptr)
 		{
-			bool success = false;
-
-			// shared generators 
-			GeneratorSet const * global_generators = nullptr;
-
-			std::map<GLenum, GeneratorSet>::const_iterator global_generators_it = shaders.find(GL_NONE);
-			if (global_generators_it != shaders.cend())
-				global_generators = &global_generators_it->second;
-
-			// give the sources to the shader
-			size_t count = generators.size() + 1;
-			if (global_generators != nullptr)
-				count += global_generators->size();
-			if (definitions.size() > 0)
-				count += 1;
-
-			// store the 'strings' in one array 
-			// store the 'buffers' in a second one
-			//  => we do not want the generated strings to becomes invalid due to buffer destruction
-			//     the second buffer helps us keep the string valid.
-
-			const int MAX_SOURCE_COUNT = 256;
-
-			int source_count = 0;
-			int buffer_count = 0;
-
-			char const * sources[MAX_SOURCE_COUNT];
-			Buffer<char> buffers[MAX_SOURCE_COUNT]; // this is important !!!! the GenerateSource(...) function returns Buffer<> whose lifetime is assured because of that
-
-			// XXX : this must be the very first line of the program. 
-			//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
-			sources[source_count++] = "#version 450\n";
-
-			// add the definitions
-			if (definitions.size() > 0)
-				sources[source_count++] = definitions_string.c_str();
-
-			// shared sources
-			if (global_generators != nullptr)
+			for (size_t i = 0; i < global_generators->size(); ++i)
 			{
-				for (size_t i = 0; i < global_generators->size(); ++i)
-				{
-					Buffer<char> buffer = global_generators->operator [] (i)->GenerateSource(definitions);
-					if (buffer == nullptr || buffer.size() == 0)
-						continue;
-					buffers[buffer_count++] = buffer;
-					sources[source_count++] = buffer.data;
-				}
-			}
-
-			// standard sources
-			for (size_t i = 0; i < generators.size(); ++i)
-			{
-				Buffer<char> buffer = generators[i]->GenerateSource(definitions);
+				Buffer<char> buffer = global_generators->operator [] (i)->GenerateSource(definitions);
 				if (buffer == nullptr || buffer.size() == 0)
 					continue;
-				buffers[buffer_count++] = buffer;
-				sources[source_count++] = buffer.data;
-			}
-
-
-			// only continue if there is at least one buffer
-			if (source_count > 0)
-			{
-				glShaderSource(result, (int)source_count, &sources[0], nullptr);
-
-				// compile the shader
-				glCompileShader(result);
-
-				// test whether the compilation is successfull
-				GLint compilation_result = 0;
-				glGetShaderiv(result, GL_COMPILE_STATUS, &compilation_result);
-				if (compilation_result)
-					success = true;
-				else
-				{
-					GLint log_len = 0;
-					glGetShaderiv(result, GL_INFO_LOG_LENGTH, &log_len);
-					if (log_len > 0)
-					{
-						GLchar log_buffer[4096];
-						glGetShaderInfoLog(result, sizeof(log_buffer) - 1, nullptr, log_buffer);
-
-						LogTools::Error("Shader compilation failure : %s", log_buffer);
-					}
-				}	  
-			}
-
-
-
-			// destroy the shader if necessary
-			if (!success)
-			{
-				glDeleteShader(result);
-				result = 0;
+				buffers.push_back(buffer);
+				sources.push_back(buffer.data);
 			}
 		}
 
-		return result;
+		// standard sources
+		size_t previous_source_size = sources.size();
+
+		for (size_t i = 0; i < generators.size(); ++i)
+		{
+			Buffer<char> buffer = generators[i]->GenerateSource(definitions);
+			if (buffer == nullptr || buffer.size() == 0)
+				continue;
+			buffers.push_back(buffer);
+			sources.push_back(buffer.data);
+		}
+
+		// no explicit source => early exit
+		if (previous_source_size == sources.size())
+			return 0;
+
+		// tweak the pixel shader source
+		if (shader_type == GL_FRAGMENT_SHADER)
+		{
+			shader_type = shader_type;
+
+
+
+		}
+
+		return DoGenerateShader(shader_type, sources);
 	}
 
 	bool GPUProgramGenerator::PreLinkProgram(GLuint program) const
@@ -166,9 +163,13 @@ namespace chaos
 			std::string definitions_string = DefinitionsToString(definitions);
 
 			// create all shaders
+			bool has_vertex_shader = false;
 			for (auto const & shader_generators : shaders)
 			{
 				GLenum shader_type = shader_generators.first;
+				if (shader_type == GL_VERTEX_SHADER)
+					has_vertex_shader = true;
+
 
 				if (shader_type == GL_NONE) // this type is a joker and does not deserve to generate a shader
 					continue;
@@ -185,6 +186,18 @@ namespace chaos
 					success = false;
 					break;
 				}
+			}
+
+			// complete the program with default vertex shader if not provided
+			if (!has_vertex_shader)
+			{
+
+
+
+
+				has_vertex_shader = has_vertex_shader;
+
+
 			}
 
 			// link program

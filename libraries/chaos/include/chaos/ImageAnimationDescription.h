@@ -53,6 +53,9 @@ namespace chaos
 		/** get the duration of a frame in seconds */
 		float GetFrameTime() const { return frame_time; }
 
+		/** returns true whether the object is null */
+		bool IsEmpty() const;
+
 	public:
 
 		/** if the animation is stored inside a grid */
@@ -62,6 +65,14 @@ namespace chaos
 		/** the duration of a frame in seconds */
 		float frame_time = 0.0f;
 	};
+
+	/**
+	* Some JSON utility functions
+	*/
+
+	bool SaveIntoJSON(nlohmann::json & json_entry, ImageAnimationDescription const & info);
+
+	bool LoadFromJSON(nlohmann::json const & json_entry, ImageAnimationDescription & info);
 
 }; // namespace chaos
 

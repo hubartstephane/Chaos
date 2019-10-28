@@ -666,26 +666,14 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapAnimationInfo const & info)
 		{
-			if (!json_entry.is_object())
-				json_entry = nlohmann::json::object();
-
-			JSONTools::SetAttribute(json_entry, "grid_size_x", info.grid_data.grid_size.x);
-			JSONTools::SetAttribute(json_entry, "grid_size_y", info.grid_data.grid_size.y);
-			JSONTools::SetAttribute(json_entry, "skip_lasts", info.grid_data.skip_lasts);
-			JSONTools::SetAttribute(json_entry, "child_frame_count", info.child_frame_count);
-			JSONTools::SetAttribute(json_entry, "frame_time", info.frame_time);
-			return true;
+			ImageAnimationDescription const & description = info;
+			return SaveIntoJSON(json_entry, description);
 		}
 
 		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapAnimationInfo & info)
 		{
-			if (!json_entry.is_object())
-				return false;
-			JSONTools::GetAttribute(json_entry, "grid_size_x", info.grid_data.grid_size.x);
-			JSONTools::GetAttribute(json_entry, "grid_size_y", info.grid_data.grid_size.y);
-			JSONTools::GetAttribute(json_entry, "skip_lasts", info.grid_data.skip_lasts);
-			JSONTools::GetAttribute(json_entry, "frame_time", info.frame_time);
-			return true;
+			ImageAnimationDescription & description = info;
+			return LoadFromJSON(json_entry, description);
 		}
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapLayout const & info)

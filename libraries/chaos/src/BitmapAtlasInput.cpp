@@ -187,102 +187,85 @@ namespace chaos
 			{
 				if (boost::filesystem::is_regular_file(*it))
 					files.push_back(it->path());
-				else if (recursive && boost::filesystem::is_directory(*it))
-						directories.push_back(it->path());
+				else if (recursive && boost::filesystem::is_directory(*it))						
+					directories.push_back(it->path());
 			}
+
+			std::vector<boost::filesystem::path> skipped_path;
 
 			// step 1 : the files
 			for (boost::filesystem::path const & p : files)
-				AddBitmap(p, nullptr, 0);
+			{
+				// skip already handled path
+				if (std::find(skipped_path.begin(), skipped_path.end(), p) != skipped_path.end())
+					continue;					
+				// add bitmap
+				AddBitmapImpl(p, nullptr, 0, &skipped_path); 
+			}
 
 			// step 2 : the directories
 			for (boost::filesystem::path const & p : directories)
 			{
+				// skip already handled path
+				if (std::find(skipped_path.begin(), skipped_path.end(), p) != skipped_path.end())
+					continue;
+				// recurse
 				FolderInfoInput * child_folder = AddFolder(BoostTools::PathToName(p).c_str(), 0);
 				if (child_folder == nullptr)
 					continue;
 				child_folder->AddBitmapFilesFromDirectory(p, recursive);
 			}
-
-
-
-#if 0
-
-			// enumerate the source directory
-			boost::filesystem::directory_iterator end;
-			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
-			{
-				if (recursive && boost::filesystem::is_directory(*it))
-				{
-					FolderInfoInput * child_folder = AddFolder(BoostTools::PathToName(it->path()).c_str(), 0);
-					if (child_folder == nullptr)
-						continue;
-					child_folder->AddBitmapFilesFromDirectory(it->path(), recursive);
-				}
-				else
-				{
-					// this will reject files that are not images .. not an error
-					AddBitmap(it->path(), nullptr, 0);
-				}
-			}
-#endif
-
-
-
-
-
-
 			return true;
 		}
 
-
-
-
-
-
-
-
-
-
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
+		{
+			return AddBitmapImpl(path, name, tag, nullptr);
+		}
+
+		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, std::vector<boost::filesystem::path> * skipped_path)
 		{
 			BitmapInfoInput * result = nullptr;
 
 			// early exit
 			if (FileTools::IsTypedFile(path, "JSON"))
-			{
-
-
-
-
-
-
-
-
-
 				return nullptr;
-			}
-		
 
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 			// search if there is a JSON file to describe an animation
+			ImageAnimationDescription animation_description;
+
 			boost::filesystem::path json_path = resolved_path;
 			json_path.replace_extension("json");
 
-			nlohmann::json json_file;
-			if (JSONTools::LoadJSONFile(json_path, json_file, false))
-			{
+			nlohmann::json json;
+			if (JSONTools::LoadJSONFile(json_path, json, false))
+				LoadFromJSON(json, animation_description);
 
 
-				result = result;
-			}
+
+			animation_description = animation_description;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			
 			// test whether there is a grid describing the animation
 			std::string animated_name;
 
-			ImageAnimationDescription animation_description;	
 			BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation_description.grid_data, &animated_name);
 
 			// search the name if not provided

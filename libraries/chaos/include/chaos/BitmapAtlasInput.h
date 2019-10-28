@@ -182,6 +182,8 @@ namespace chaos
 
 		protected:
 
+			/** insert a bitmap before computation */
+			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, std::vector<boost::filesystem::path> * skipped_path);
 			/** internal method to add a bitmap or a multi bitmap */
 			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description);
 

@@ -1,4 +1,5 @@
 #include <chaos/ImageAnimationDescription.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
@@ -153,5 +154,40 @@ namespace chaos
 		return !grid_data.IsEmpty();
 	}
 
+	bool ImageAnimationDescription::IsEmpty() const
+	{
+		return (grid_data.IsEmpty() && child_frame_count <= 0 && frame_time <= 0.0f);
+	}
+
+	// ========================================================================
+	// JSON functions
+	// ========================================================================
+
+	bool SaveIntoJSON(nlohmann::json & json_entry, ImageAnimationDescription const & description)
+	{
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
+
+		JSONTools::SetAttribute(json_entry, "grid_size_x", description.grid_data.grid_size.x);
+		JSONTools::SetAttribute(json_entry, "grid_size_y", description.grid_data.grid_size.y);
+		JSONTools::SetAttribute(json_entry, "skip_lasts", description.grid_data.skip_lasts);
+		JSONTools::SetAttribute(json_entry, "child_frame_count", description.child_frame_count);
+		JSONTools::SetAttribute(json_entry, "frame_time", description.frame_time);
+		return true;
+	}
+
+	bool LoadFromJSON(nlohmann::json const & json_entry, ImageAnimationDescription & description)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "grid_size_x", description.grid_data.grid_size.x);
+		JSONTools::GetAttribute(json_entry, "grid_size_y", description.grid_data.grid_size.y);
+		JSONTools::GetAttribute(json_entry, "skip_lasts", description.grid_data.skip_lasts);
+
+		// shuxxx JSONTools::GetAttribute(json_entry, "child_frame_count", description.child_frame_count);
+
+		JSONTools::GetAttribute(json_entry, "frame_time", description.frame_time);
+		return true;
+	}
 
 }; // namespace chaos

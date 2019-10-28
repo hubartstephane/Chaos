@@ -114,8 +114,9 @@ namespace chaos
 		GLuint result = DoGenerateShader(shader_type, generators, definitions, definitions_string);
 		if (result != 0)
 		{
+			// give program the responsability of shader lifetime
 			glAttachShader(program, result);
-			glDeleteShader(result); // mark for delete at program destruction
+			glDeleteShader(result);
 		}
 		return result;
 	}
@@ -192,14 +193,11 @@ namespace chaos
 				success = false;
 				break;
 			}
-			// give program the responsability of shader lifetime
-			glAttachShader(result, shader_id);
-			glDeleteShader(shader_id);
 		}
 
 
 		// complete the program with default vertex shader if not provided
-		if (!has_vertex_shader)
+		if (success && !has_vertex_shader)
 		{
 
 

@@ -177,6 +177,37 @@ namespace chaos
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
+
+			// store paths for files & directories
+			std::vector<boost::filesystem::path> files;
+			std::vector<boost::filesystem::path> directories;
+
+			boost::filesystem::directory_iterator end;
+			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
+			{
+				if (boost::filesystem::is_regular_file(*it))
+					files.push_back(it->path());
+				else if (recursive && boost::filesystem::is_directory(*it))
+						directories.push_back(it->path());
+			}
+
+			// step 1 : the files
+			for (boost::filesystem::path const & p : files)
+				AddBitmap(p, nullptr, 0);
+
+			// step 2 : the directories
+			for (boost::filesystem::path const & p : directories)
+			{
+				FolderInfoInput * child_folder = AddFolder(BoostTools::PathToName(p).c_str(), 0);
+				if (child_folder == nullptr)
+					continue;
+				child_folder->AddBitmapFilesFromDirectory(p, recursive);
+			}
+
+
+
+#if 0
+
 			// enumerate the source directory
 			boost::filesystem::directory_iterator end;
 			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
@@ -194,8 +225,24 @@ namespace chaos
 					AddBitmap(it->path(), nullptr, 0);
 				}
 			}
+#endif
+
+
+
+
+
+
 			return true;
 		}
+
+
+
+
+
+
+
+
+
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
@@ -203,7 +250,19 @@ namespace chaos
 
 			// early exit
 			if (FileTools::IsTypedFile(path, "JSON"))
+			{
+
+
+
+
+
+
+
+
+
 				return nullptr;
+			}
+		
 
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -257,6 +316,15 @@ namespace chaos
 			);
 			return result;
 		}
+
+
+
+
+
+
+
+
+
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
 		{

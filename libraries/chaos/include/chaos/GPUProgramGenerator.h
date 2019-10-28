@@ -50,8 +50,10 @@ namespace chaos
 
 		/** returns true whenever this is a valid shader type */
 		static bool IsShaderTypeValid(GLenum shader_type);
+		/** generate a shader for a set of sources and attach it to the program */
+		GLuint GenerateShader(GLuint program, GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const;
 		/** generate a shader for a set of sources */
-		GLuint GenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const;
+		GLuint DoGenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const;
 		/** generate a shader for a set of sources */
 		GLuint DoGenerateShader(GLenum shader_type, std::vector<char const *> const & sources) const;
 		/** called just before linkage */

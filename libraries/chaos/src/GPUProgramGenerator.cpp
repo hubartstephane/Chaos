@@ -15,21 +15,19 @@ namespace chaos
 		// create a shader
 		GLuint result = glCreateShader(shader_type);
 		if (result == 0)
+		{
+			LogTools::Error("glCreateShader failed");
 			return 0;
-
+		}
 		// fill with sources
 		glShaderSource(result, (int)sources.size(), &sources[0], nullptr);
-
 		// compile the shader
 		glCompileShader(result);
-
 		// test whether the compilation is successfull
 		GLint compilation_result = 0;
 		glGetShaderiv(result, GL_COMPILE_STATUS, &compilation_result);
-
 		if (compilation_result)
 			return result;
-
 		// log error message and destroy GL failed resource
 		GLint log_len = 0;
 		glGetShaderiv(result, GL_INFO_LOG_LENGTH, &log_len);
@@ -44,7 +42,7 @@ namespace chaos
 		return 0;
 	}
 
-	GLuint GPUProgramGenerator::GenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
+	GLuint GPUProgramGenerator::DoGenerateShader(GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
 	{
 		bool success = false;
 
@@ -103,13 +101,23 @@ namespace chaos
 		// tweak the pixel shader source
 		if (shader_type == GL_FRAGMENT_SHADER)
 		{
-			shader_type = shader_type;
 
 
 
 		}
 
 		return DoGenerateShader(shader_type, sources);
+	}
+
+	GLuint GPUProgramGenerator::GenerateShader(GLuint program, GLenum shader_type, GeneratorSet const & generators, DefinitionSet const & definitions, std::string const & definitions_string) const
+	{
+		GLuint result = DoGenerateShader(shader_type, generators, definitions, definitions_string);
+		if (result != 0)
+		{
+			glAttachShader(program, result);
+			glDeleteShader(result); // mark for delete at program destruction
+		}
+		return result;
 	}
 
 	bool GPUProgramGenerator::PreLinkProgram(GLuint program) const
@@ -155,75 +163,75 @@ namespace chaos
 	GLuint GPUProgramGenerator::GenProgram(DefinitionSet const & definitions) const
 	{
 		GLuint result = glCreateProgram();
-		if (result != 0)
+		if (result == 0)
 		{
-			bool success = true;
+			LogTools::Error("glCreateProgram failed");
+			return 0;
+		}
 
-			// create a string to contains all definitions
-			std::string definitions_string = DefinitionsToString(definitions);
+		// create a string to contains all definitions
+		std::string definitions_string = DefinitionsToString(definitions);
 
-			// create all shaders
-			bool has_vertex_shader = false;
-			for (auto const & shader_generators : shaders)
+		// create all shaders
+		bool success = true;
+
+		bool has_vertex_shader = false;
+		for (auto const & shader_generators : shaders)
+		{
+			GLenum shader_type = shader_generators.first;
+			if (shader_type == GL_VERTEX_SHADER)
+				has_vertex_shader = true;
+
+			// this type is a joker and does not deserve to generate a shader
+			if (shader_type == GL_NONE)
+				continue;
+
+			GLuint shader_id = GenerateShader(result, shader_type, shader_generators.second, definitions, definitions_string);
+			if (shader_id == 0)
 			{
-				GLenum shader_type = shader_generators.first;
-				if (shader_type == GL_VERTEX_SHADER)
-					has_vertex_shader = true;
-
-
-				if (shader_type == GL_NONE) // this type is a joker and does not deserve to generate a shader
-					continue;
-
-				GLuint shader_id = GenerateShader(shader_type, shader_generators.second, definitions, definitions_string);
-				if (shader_id != 0)
-				{
-					glAttachShader(result, shader_id);
-					glDeleteShader(shader_id); // mark for delete at program destruction
-				}
-				else
-				{
-					glDeleteShader(shader_id);
-					success = false;
-					break;
-				}
+				success = false;
+				break;
 			}
-
-			// complete the program with default vertex shader if not provided
-			if (!has_vertex_shader)
-			{
-
-
+			// give program the responsability of shader lifetime
+			glAttachShader(result, shader_id);
+			glDeleteShader(shader_id);
+		}
 
 
-				has_vertex_shader = has_vertex_shader;
+		// complete the program with default vertex shader if not provided
+		if (!has_vertex_shader)
+		{
 
 
-			}
 
-			// link program
+
+			has_vertex_shader = has_vertex_shader;
+
+
+		}
+
+		// link program
+		if (success)
+		{
+			success = PreLinkProgram(result);
 			if (success)
 			{
-				success = PreLinkProgram(result);
-				if (success)
-				{
-					glLinkProgram(result);
-					success = (GLShaderTools::CheckProgramStatus(result, GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
+				glLinkProgram(result);
+				success = (GLShaderTools::CheckProgramStatus(result, GL_LINK_STATUS, "Program link failure : %s") == GL_TRUE);
 
 #if 0 && _DEBUG
-					if (success)
-						GLShaderTools::DisplayProgramDiagnostic(result);
+				if (success)
+					GLShaderTools::DisplayProgramDiagnostic(result);
 #endif
-				}
-			}
-
-			// delete resources in case of error
-			if (!success)
-			{
-				glDeleteProgram(result);
-				result = 0;
 			}
 		}
 
+		// delete resources in case of error
+		if (!success)
+		{
+			glDeleteProgram(result);
+			result = 0;
+		}
 		return result;
 	}
 

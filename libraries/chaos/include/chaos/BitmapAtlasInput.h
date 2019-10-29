@@ -90,7 +90,6 @@ namespace chaos
 			std::vector<class BitmapInfoInput *> child_frames;
 		};
 
-
 		/**
 		* BitmapInfoInput : Will produced a BitmapInfo in the final Atlas
 		*/

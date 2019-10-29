@@ -13,6 +13,46 @@ namespace chaos
 	namespace BitmapAtlas
 	{
 
+
+		// ========================================================================
+		// BitmapInfoInputAnimationDescription : an utility class for JSON files coming as image descriptors
+		// ========================================================================
+
+		class BitmapInfoInputAnimationDescription
+		{
+		public:
+
+			/** if the animation is stored inside a grid */
+			BitmapGridAnimationInfo grid_data;
+			/** the duration of a frame in seconds */
+			float frame_time = 0.0f;
+			/** the directory path that contains the child images */
+			boost::filesystem::path images_path;
+		};
+
+		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfoInputAnimationDescription const & description)
+		{
+			if (!json_entry.is_object())
+				json_entry = nlohmann::json::object();
+
+			JSONTools::SetAttribute(json_entry, "grid_animation", description.grid_data);
+			JSONTools::SetAttribute(json_entry, "images_path", description.images_path);
+			JSONTools::SetAttribute(json_entry, "frame_time", description.frame_time);
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfoInputAnimationDescription & description)
+		{
+			if (!json_entry.is_object())
+				return false;
+			JSONTools::GetAttribute(json_entry, "grid_animation", description.grid_data);
+			JSONTools::GetAttribute(json_entry, "images_path", description.images_path);
+			JSONTools::GetAttribute(json_entry, "frame_time", description.frame_time);
+			return true;
+		}
+
+
+
 		// ========================================================================
 		// ObjectBaseInput implementation
 		// ========================================================================
@@ -223,6 +263,30 @@ namespace chaos
 			return AddBitmapImpl(path, name, tag, nullptr);
 		}
 
+
+
+#if 0
+
+		class ImageAnimationDescription
+		{
+		public:
+
+			/** if the animation is stored inside a grid */
+			BitmapGridAnimationInfo grid_data;
+			/** the duration of a frame in seconds */
+			float frame_time = 0.0f;
+			/** the directory path that contains the child images */
+			boost::filesystem::path images_path;
+		};
+
+#endif
+
+
+
+
+
+
+
 		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, std::vector<boost::filesystem::path> * skipped_path)
 		{
 			BitmapInfoInput * result = nullptr;
@@ -235,18 +299,18 @@ namespace chaos
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 			// search if there is a JSON file to describe an animation
-			ImageAnimationDescription animation_description;
+			ImageAnimationDescription json_animation_description;
 
 			boost::filesystem::path json_path = resolved_path;
 			json_path.replace_extension("json");
 
 			nlohmann::json json;
 			if (JSONTools::LoadJSONFile(json_path, json, false))
-				LoadFromJSON(json, animation_description);
+				LoadFromJSON(json, json_animation_description);
 
 
 
-			animation_description = animation_description;
+			json_animation_description = json_animation_description;
 
 
 
@@ -266,6 +330,7 @@ namespace chaos
 			// test whether there is a grid describing the animation
 			std::string animated_name;
 
+			ImageAnimationDescription animation_description;
 			BitmapGridAnimationInfo::ParseFromName(resolved_path.string().c_str(), animation_description.grid_data, &animated_name);
 
 			// search the name if not provided

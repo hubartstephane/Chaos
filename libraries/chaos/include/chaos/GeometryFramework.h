@@ -1192,7 +1192,7 @@ namespace chaos
 
 
 	template<typename T, int dimension>
-	void SaveIntoJSON(nlohmann::json & json_entry, type_ray<T, dimension> const & src)
+	bool SaveIntoJSON(nlohmann::json & json_entry, type_ray<T, dimension> const & src)
 	{
 
 	}

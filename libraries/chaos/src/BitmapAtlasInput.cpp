@@ -30,24 +30,24 @@ namespace chaos
 			boost::filesystem::path images_path;
 		};
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfoInputAnimationDescription const & description)
+		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfoInputAnimationDescription const & src)
 		{
 			if (!json_entry.is_object())
 				json_entry = nlohmann::json::object();
 
-			JSONTools::SetAttribute(json_entry, "grid_animation", description.grid_data);
-			JSONTools::SetAttribute(json_entry, "images_path", description.images_path);
-			JSONTools::SetAttribute(json_entry, "frame_time", description.frame_time);
+			JSONTools::SetAttribute(json_entry, "grid_animation", src.grid_data);
+			JSONTools::SetAttribute(json_entry, "images_path", src.images_path);
+			JSONTools::SetAttribute(json_entry, "frame_time", src.frame_time);
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfoInputAnimationDescription & description)
+		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfoInputAnimationDescription & dst)
 		{
 			if (!json_entry.is_object())
 				return false;
-			JSONTools::GetAttribute(json_entry, "grid_animation", description.grid_data);
-			JSONTools::GetAttribute(json_entry, "images_path", description.images_path);
-			JSONTools::GetAttribute(json_entry, "frame_time", description.frame_time);
+			JSONTools::GetAttribute(json_entry, "grid_animation", dst.grid_data);
+			JSONTools::GetAttribute(json_entry, "images_path", dst.images_path);
+			JSONTools::GetAttribute(json_entry, "frame_time", dst.frame_time);
 			return true;
 		}
 

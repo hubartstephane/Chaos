@@ -70,13 +70,13 @@ namespace chaos
 	* Some JSON utility functions
 	*/
 		
-	bool SaveIntoJSON(nlohmann::json & json_entry, BitmapGridAnimationInfo const & info);
+	bool SaveIntoJSON(nlohmann::json & json_entry, BitmapGridAnimationInfo const & src);
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, BitmapGridAnimationInfo & info);
+	bool LoadFromJSON(nlohmann::json const & json_entry, BitmapGridAnimationInfo & dst);
 
-	bool SaveIntoJSON(nlohmann::json & json_entry, ImageAnimationDescription const & info);
+	bool SaveIntoJSON(nlohmann::json & json_entry, ImageAnimationDescription const & src);
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, ImageAnimationDescription & info);
+	bool LoadFromJSON(nlohmann::json const & json_entry, ImageAnimationDescription & dst);
 
 }; // namespace chaos
 

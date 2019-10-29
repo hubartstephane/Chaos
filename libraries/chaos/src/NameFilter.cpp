@@ -98,21 +98,21 @@ namespace chaos
 	// JSON methods
 	// ============================================================
 
-	bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & obj)
+	bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & src)
 	{
 		if (!json_entry.is_object())
 			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "enabled_names", obj.enabled_names);
-		JSONTools::SetAttribute(json_entry, "disabled_names", obj.disabled_names);
+		JSONTools::SetAttribute(json_entry, "enabled_names", src.enabled_names);
+		JSONTools::SetAttribute(json_entry, "disabled_names", src.disabled_names);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & obj)
+	bool LoadFromJSON(nlohmann::json const & json_entry, NameFilter & dst)
 	{
 		// the simplest format is with string and ',' as separator 
 		if (json_entry.is_string())
 		{
-			obj.AddEnabledNames(json_entry.get<std::string>().c_str());		
+			dst.AddEnabledNames(json_entry.get<std::string>().c_str());
 			return true;
 		}
 		else if (json_entry.is_object())
@@ -122,9 +122,9 @@ namespace chaos
 			if (it_enabled != json_entry.end())
 			{
 				if (it_enabled->is_string())
-					obj.AddEnabledNames(it_enabled->get<std::string>().c_str());	
+					dst.AddEnabledNames(it_enabled->get<std::string>().c_str());
 				else
-					LoadFromJSON(*it_enabled, obj.enabled_names);
+					LoadFromJSON(*it_enabled, dst.enabled_names);
 			}
 
 			// "disabled_names" can be a string with ',' as separator or an array of string
@@ -132,9 +132,9 @@ namespace chaos
 			if (it_disabled != json_entry.end())
 			{
 				if (it_disabled->is_string())
-					obj.AddDisabledNames(it_disabled->get<std::string>().c_str());	
+					dst.AddDisabledNames(it_disabled->get<std::string>().c_str());
 				else
-					LoadFromJSON(*it_disabled, obj.disabled_names);
+					LoadFromJSON(*it_disabled, dst.disabled_names);
 			}
 			return true;		
 		}			

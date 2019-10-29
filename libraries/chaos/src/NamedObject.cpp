@@ -81,22 +81,22 @@ namespace chaos
 		return true; // no requirement => OK
 	}
 
-	bool SaveIntoJSON(nlohmann::json & json_entry, NamedObject const & info)
+	bool SaveIntoJSON(nlohmann::json & json_entry, NamedObject const & src)
 	{
 		if (!json_entry.is_object())
 			json_entry = nlohmann::json::object(); 
 
-		JSONTools::SetAttribute(json_entry, "name", info.name);
-		JSONTools::SetAttribute(json_entry, "tag", info.tag);
+		JSONTools::SetAttribute(json_entry, "name", src.name);
+		JSONTools::SetAttribute(json_entry, "tag", src.tag);
 		return true;
 	}
 
-	bool LoadFromJSON(nlohmann::json const & json_entry, NamedObject & info)
+	bool LoadFromJSON(nlohmann::json const & json_entry, NamedObject & dst)
 	{
 		if (!json_entry.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "name", info.name, "");
-		JSONTools::GetAttribute(json_entry, "tag", info.tag, 0);
+		JSONTools::GetAttribute(json_entry, "name", dst.name, "");
+		JSONTools::GetAttribute(json_entry, "tag", dst.tag, 0);
 		return true;
 	}
 

@@ -27,45 +27,45 @@ namespace chaos
 		{
 		}
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & params)
+		bool SaveIntoJSON(nlohmann::json & json_entry, GeneratorParams const & src)
 		{
 			if (!json_entry.is_object())
 				json_entry = nlohmann::json::object();
 
-			JSONTools::SetAttribute(json_entry, "line_height", params.line_height);
-			JSONTools::SetAttribute(json_entry, "line_spacing", params.line_spacing);
-			JSONTools::SetAttribute(json_entry, "character_spacing", params.character_spacing);
-			JSONTools::SetAttribute(json_entry, "bitmap_padding", params.bitmap_padding);
-			JSONTools::SetAttribute(json_entry, "max_text_width", params.max_text_width);
-			JSONTools::SetAttribute(json_entry, "word_wrap", params.word_wrap);
-			JSONTools::SetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);		
-			JSONTools::SetEnumAttribute(json_entry, "alignment", GeneratorParams::alignment_encoding, params.alignment);
-			JSONTools::SetAttribute(json_entry, "default_color", params.default_color);
-			JSONTools::SetAttribute(json_entry, "font_info_name", params.font_info_name);
-			JSONTools::SetAttribute(json_entry, "tab_size", params.tab_size);
-			JSONTools::SetAttribute(json_entry, "position", params.position);
+			JSONTools::SetAttribute(json_entry, "line_height", src.line_height);
+			JSONTools::SetAttribute(json_entry, "line_spacing", src.line_spacing);
+			JSONTools::SetAttribute(json_entry, "character_spacing", src.character_spacing);
+			JSONTools::SetAttribute(json_entry, "bitmap_padding", src.bitmap_padding);
+			JSONTools::SetAttribute(json_entry, "max_text_width", src.max_text_width);
+			JSONTools::SetAttribute(json_entry, "word_wrap", src.word_wrap);
+			JSONTools::SetAttribute(json_entry, "justify_space_factor", src.justify_space_factor);
+			JSONTools::SetEnumAttribute(json_entry, "alignment", GeneratorParams::alignment_encoding, src.alignment);
+			JSONTools::SetAttribute(json_entry, "default_color", src.default_color);
+			JSONTools::SetAttribute(json_entry, "font_info_name", src.font_info_name);
+			JSONTools::SetAttribute(json_entry, "tab_size", src.tab_size);
+			JSONTools::SetAttribute(json_entry, "position", src.position);
 
-			JSONTools::SetEnumAttribute(json_entry, "hotpoint_type", Hotpoint::hotpoint_encoding, params.hotpoint_type);
+			JSONTools::SetEnumAttribute(json_entry, "hotpoint_type", Hotpoint::hotpoint_encoding, src.hotpoint_type);
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & params)
+		bool LoadFromJSON(nlohmann::json const & json_entry, GeneratorParams & dst)
 		{
 			if (!json_entry.is_object())
 				return false;
-			JSONTools::GetAttribute(json_entry, "line_height", params.line_height);
-			JSONTools::GetAttribute(json_entry, "line_spacing", params.line_spacing);
-			JSONTools::GetAttribute(json_entry, "character_spacing", params.character_spacing);
-			JSONTools::GetAttribute(json_entry, "bitmap_padding", params.bitmap_padding);
-			JSONTools::GetAttribute(json_entry, "max_text_width", params.max_text_width);
-			JSONTools::GetAttribute(json_entry, "word_wrap", params.word_wrap);
-			JSONTools::GetAttribute(json_entry, "justify_space_factor", params.justify_space_factor);
-			JSONTools::GetEnumAttribute(json_entry, "alignment", GeneratorParams::alignment_encoding, params.alignment);
-			JSONTools::GetAttribute(json_entry, "default_color", params.default_color);
-			JSONTools::GetAttribute(json_entry, "font_info_name", params.font_info_name);
-			JSONTools::GetAttribute(json_entry, "tab_size", params.tab_size);
-			JSONTools::GetAttribute(json_entry, "position", params.position);
-			JSONTools::GetEnumAttribute(json_entry, "hotpoint_type", Hotpoint::hotpoint_encoding, params.hotpoint_type);
+			JSONTools::GetAttribute(json_entry, "line_height", dst.line_height);
+			JSONTools::GetAttribute(json_entry, "line_spacing", dst.line_spacing);
+			JSONTools::GetAttribute(json_entry, "character_spacing", dst.character_spacing);
+			JSONTools::GetAttribute(json_entry, "bitmap_padding", dst.bitmap_padding);
+			JSONTools::GetAttribute(json_entry, "max_text_width", dst.max_text_width);
+			JSONTools::GetAttribute(json_entry, "word_wrap", dst.word_wrap);
+			JSONTools::GetAttribute(json_entry, "justify_space_factor", dst.justify_space_factor);
+			JSONTools::GetEnumAttribute(json_entry, "alignment", GeneratorParams::alignment_encoding, dst.alignment);
+			JSONTools::GetAttribute(json_entry, "default_color", dst.default_color);
+			JSONTools::GetAttribute(json_entry, "font_info_name", dst.font_info_name);
+			JSONTools::GetAttribute(json_entry, "tab_size", dst.tab_size);
+			JSONTools::GetAttribute(json_entry, "position", dst.position);
+			JSONTools::GetEnumAttribute(json_entry, "hotpoint_type", Hotpoint::hotpoint_encoding, dst.hotpoint_type);
 			return true;
 		}
 

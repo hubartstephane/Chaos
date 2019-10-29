@@ -9,18 +9,18 @@ namespace chaos
 	// EXTERNAL FUNCTION
 	// =================
 
-	bool LoadFromJSON(nlohmann::json const & entry, bool & result)
+	bool LoadFromJSON(nlohmann::json const & entry, bool & dst)
 	{
 		try
 		{
-			result = entry.get<bool>(); // for bool type
+			dst = entry.get<bool>(); // for bool type
 			return true;
 		}
 		catch (...)
 		{
 			try
 			{
-				result = (entry.get<int>() != 0); // for int type (+ conversion to bool)
+				dst = (entry.get<int>() != 0); // for int type (+ conversion to bool)
 				return true;
 			}
 			catch (...)

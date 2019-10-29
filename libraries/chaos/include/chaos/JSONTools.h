@@ -13,14 +13,14 @@
 namespace chaos
 {
 	/** loading a bool (because we try to read an int as a fallback) */
-	bool LoadFromJSON(nlohmann::json const & entry, bool & result);
+	bool LoadFromJSON(nlohmann::json const & entry, bool & dst);
 	/** default template loading (catch exceptions) */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, T & result)
+	bool LoadFromJSON(nlohmann::json const & entry, T & dst)
 	{
 		try
 		{
-			result = entry.get<T>(); // may throw an exception
+			dst = entry.get<T>(); // may throw an exception
 			return true;
 		}
 		catch (...)
@@ -30,7 +30,7 @@ namespace chaos
 	}
 	/** template for raw pointer */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, T * & result)
+	bool LoadFromJSON(nlohmann::json const & entry, T * & dst)
 	{
 		T * other = new T;
 		if (other == nullptr)
@@ -40,37 +40,37 @@ namespace chaos
 			delete(other);
 			return false;		
 		}
-		result = other;
+		dst = other;
 		return true;
 	}
 	/** template for unique_ptr */
 	template<typename T, typename DELETER>
-	bool LoadFromJSON(nlohmann::json const & entry, std::unique_ptr<T, DELETER> & result)
+	bool LoadFromJSON(nlohmann::json const & entry, std::unique_ptr<T, DELETER> & dst)
 	{
 		std::unique_ptr<T, DELETER> other(new T); // force to use another smart pointer and swap due to lake of copy 
 		if (other == nullptr)
 			return false;
 		if (!LoadFromJSON(entry, *other))
 			return false;
-		std::swap(result, other);
+		std::swap(dst, other);
 		return true;
 	}
 	/** template for shared_ptr */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, chaos::shared_ptr<T> & result)
+	bool LoadFromJSON(nlohmann::json const & entry, chaos::shared_ptr<T> & dst)
 	{
 		chaos::shared_ptr<T> other = new T;
 		if (other == nullptr)
 			return false;
 		if (!LoadFromJSON(entry, *other))
 			return false;
-		result = other;
+		dst = other;
 		return true;
 	}
 
 	/** loading specialization for vector */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, std::vector<T> & result)
+	bool LoadFromJSON(nlohmann::json const & entry, std::vector<T> & dst)
 	{
 		// input is an array
 		if (entry.is_array())
@@ -79,7 +79,7 @@ namespace chaos
 			{
 				T element;
 				if (LoadFromJSON(json_entry, element))
-					result.push_back(std::move(element));
+					dst.push_back(std::move(element));
 			}
 			return true;
 		}
@@ -87,7 +87,7 @@ namespace chaos
 		T element;
 		if (!LoadFromJSON(entry, element))
 			return false;
-		result.push_back(std::move(element));
+		dst.push_back(std::move(element));
 		return true;
 	}
 

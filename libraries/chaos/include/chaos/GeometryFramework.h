@@ -1107,19 +1107,19 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec2<T> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec2<T> & dst)
 	{
 		if (json_entry.is_object())
 		{
-			JSONTools::GetAttribute(json_entry, "x", src.x);
-			JSONTools::GetAttribute(json_entry, "y", src.y);
+			JSONTools::GetAttribute(json_entry, "x", dst.x);
+			JSONTools::GetAttribute(json_entry, "y", dst.y);
 			return true;
 		}
 		else if (json_entry.is_array())
 		{
-			size_t count = MathTools::Minimum(json_entry.size(), (size_t)src.length());
+			size_t count = MathTools::Minimum(json_entry.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count; ++i)
-				src[i] = json_entry[i].get<T>();
+				dst[i] = json_entry[i].get<T>();
 			return true;
 		}
 		return false;
@@ -1136,20 +1136,20 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec3<T> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec3<T> & dst)
 	{
 		if (json_entry.is_object())
 		{
-			JSONTools::GetAttribute(json_entry, "x", src.x);
-			JSONTools::GetAttribute(json_entry, "y", src.y);
-			JSONTools::GetAttribute(json_entry, "z", src.z);
+			JSONTools::GetAttribute(json_entry, "x", dst.x);
+			JSONTools::GetAttribute(json_entry, "y", dst.y);
+			JSONTools::GetAttribute(json_entry, "z", dst.z);
 			return true;
 		}
 		else if (json_entry.is_array())
 		{
-			size_t count = MathTools::Minimum(json_entry.size(), (size_t)src.length());
+			size_t count = MathTools::Minimum(json_entry.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count; ++i)
-				src[i] = json_entry[i].get<T>();
+				dst[i] = json_entry[i].get<T>();
 			return true;
 		}
 		return false;
@@ -1167,21 +1167,21 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec4<T> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec4<T> & dst)
 	{
 		if (json_entry.is_object())
 		{
-			JSONTools::GetAttribute(json_entry, "x", src.x);
-			JSONTools::GetAttribute(json_entry, "y", src.y);
-			JSONTools::GetAttribute(json_entry, "z", src.z);
-			JSONTools::GetAttribute(json_entry, "w", src.w);
+			JSONTools::GetAttribute(json_entry, "x", dst.x);
+			JSONTools::GetAttribute(json_entry, "y", dst.y);
+			JSONTools::GetAttribute(json_entry, "z", dst.z);
+			JSONTools::GetAttribute(json_entry, "w", dst.w);
 			return true;
 		}
 		else if (json_entry.is_array())
 		{
-			size_t count = MathTools::Minimum(json_entry.size(), (size_t)src.length());
+			size_t count = MathTools::Minimum(json_entry.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count ; ++i)
-				src[i] = json_entry[i].get<T>();
+				dst[i] = json_entry[i].get<T>();
 			return true;
 		}
 		return false;
@@ -1198,7 +1198,7 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	bool LoadFromJSON(nlohmann::json const & json_entry, type_ray<T, dimension> & src)
+	bool LoadFromJSON(nlohmann::json const & json_entry, type_ray<T, dimension> & dst)
 	{
 	}
 

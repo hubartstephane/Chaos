@@ -34,7 +34,6 @@ namespace chaos
 		{
 			if (!json_entry.is_object())
 				json_entry = nlohmann::json::object();
-
 			JSONTools::SetAttribute(json_entry, "grid_animation", src.grid_data);
 			JSONTools::SetAttribute(json_entry, "images_path", src.images_path);
 			JSONTools::SetAttribute(json_entry, "frame_time", src.frame_time);
@@ -50,8 +49,6 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "frame_time", dst.frame_time);
 			return true;
 		}
-
-
 
 		// ========================================================================
 		// ObjectBaseInput implementation
@@ -263,30 +260,6 @@ namespace chaos
 			return AddBitmapImpl(path, name, tag, nullptr);
 		}
 
-
-
-#if 0
-
-		class ImageAnimationDescription
-		{
-		public:
-
-			/** if the animation is stored inside a grid */
-			BitmapGridAnimationInfo grid_data;
-			/** the duration of a frame in seconds */
-			float frame_time = 0.0f;
-			/** the directory path that contains the child images */
-			boost::filesystem::path images_path;
-		};
-
-#endif
-
-
-
-
-
-
-
 		BitmapInfoInput * FolderInfoInput::AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, std::vector<boost::filesystem::path> * skipped_path)
 		{
 			BitmapInfoInput * result = nullptr;
@@ -299,7 +272,7 @@ namespace chaos
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
 			// search if there is a JSON file to describe an animation
-			ImageAnimationDescription json_animation_description;
+			BitmapInfoInputAnimationDescription json_animation_description;
 
 			boost::filesystem::path json_path = resolved_path;
 			json_path.replace_extension("json");
@@ -308,9 +281,11 @@ namespace chaos
 			if (JSONTools::LoadJSONFile(json_path, json, false))
 				LoadFromJSON(json, json_animation_description);
 
+			if (!json_animation_description.images_path.empty())
+				if (skipped_path != nullptr)
+					skipped_path->push_back(std::move(json_animation_description.images_path));
 
 
-			json_animation_description = json_animation_description;
 
 
 
@@ -344,9 +319,31 @@ namespace chaos
 				name = generated_name.c_str();
 			}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			// test whether the object already exists
 			if (GetBitmapInfo(name) != nullptr)
 				return nullptr;
+
+
+
+
+
 
 			// load all pages for the bitmap
 			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA

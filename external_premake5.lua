@@ -19,8 +19,12 @@ local GLM_INC_PATH = "glm"
 DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
 
   -- BOOST
-local BOOST_PATH     = "boost_1_61_0"
-local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "vc140", "lib32"), x64 = path.join(BOOST_PATH, "stage", "vc140", "lib64")}
+--local BOOST_PATH     = "boost_1_61_0"
+--local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "vc140", "lib32"), x64 = path.join(BOOST_PATH, "stage", "vc140", "lib64")}
+--DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
+
+local BOOST_PATH     = "boost_1_71_0"
+local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "lib"), x64 = path.join(BOOST_PATH, "stage", "lib")}
 DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
 
   -- LUA

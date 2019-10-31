@@ -232,7 +232,7 @@ namespace chaos
 
 		/** reading an attribute from a JSON array */
 		template<typename T>
-		static bool JSONTools::GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result)
+		static bool GetAttributeByIndex(nlohmann::json const & entry, size_t index, T & result)
 		{
 			if (!entry.is_array() || index >= entry.size())
 				return false;

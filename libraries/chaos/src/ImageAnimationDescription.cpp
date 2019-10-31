@@ -1,5 +1,6 @@
 #include <chaos/ImageAnimationDescription.h>
 #include <chaos/JSONTools.h>
+#include <chaos/GeometryFramework.h>
 
 namespace chaos
 {
@@ -167,9 +168,7 @@ namespace chaos
 	{
 		if (!json_entry.is_object())
 			json_entry = nlohmann::json::object();
-
-		JSONTools::SetAttribute(json_entry, "grid_size_x", src.grid_size.x);
-		JSONTools::SetAttribute(json_entry, "grid_size_y", src.grid_size.y);
+		JSONTools::SetAttribute(json_entry, "grid_size", src.grid_size);
 		JSONTools::SetAttribute(json_entry, "skip_lasts", src.skip_lasts);
 		return true;
 	}
@@ -178,8 +177,7 @@ namespace chaos
 	{
 		if (!json_entry.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "grid_size_x", dst.grid_size.x);
-		JSONTools::GetAttribute(json_entry, "grid_size_y", dst.grid_size.y);
+		JSONTools::GetAttribute(json_entry, "grid_size", dst.grid_size);
 		JSONTools::GetAttribute(json_entry, "skip_lasts", dst.skip_lasts);
 		return true;
 	}
@@ -189,7 +187,7 @@ namespace chaos
 		if (!json_entry.is_object())
 			json_entry = nlohmann::json::object();
 
-		JSONTools::SetAttribute(json_entry, "grid_animation", src.grid_data);
+		JSONTools::SetAttribute(json_entry, "grid_data", src.grid_data);
 		JSONTools::SetAttribute(json_entry, "child_frame_count", src.child_frame_count);
 		JSONTools::SetAttribute(json_entry, "frame_time", src.frame_time);
 		return true;
@@ -199,7 +197,7 @@ namespace chaos
 	{
 		if (!json_entry.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "grid_animation", dst.grid_data);
+		JSONTools::GetAttribute(json_entry, "grid_data", dst.grid_data);
 		// shuxxx JSONTools::GetAttribute(json_entry, "child_frame_count", dst.child_frame_count);
 		JSONTools::GetAttribute(json_entry, "frame_time", dst.frame_time);
 		return true;

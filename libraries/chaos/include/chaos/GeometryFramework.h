@@ -1097,8 +1097,8 @@ namespace chaos
 
 		// vectors
 
-	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec2<T> const & src)
+	template<typename T, glm::precision P>
+	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec2<T, P> const & src)
 	{
 		json_entry = nlohmann::json::array();
 		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
@@ -1106,8 +1106,8 @@ namespace chaos
 		return true;
 	}
 
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec2<T> & dst)
+	template<typename T, glm::precision P>
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec2<T, P> & dst)
 	{
 		if (json_entry.is_object())
 		{
@@ -1125,8 +1125,8 @@ namespace chaos
 		return false;
 	}
 
-	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec3<T> const & src)
+	template<typename T, glm::precision P>
+	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec3<T, P> const & src)
 	{
 		json_entry = nlohmann::json::array();
 		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
@@ -1135,8 +1135,8 @@ namespace chaos
 		return true;
 	}
 
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec3<T> & dst)
+	template<typename T, glm::precision P>
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec3<T, P> & dst)
 	{
 		if (json_entry.is_object())
 		{
@@ -1155,8 +1155,8 @@ namespace chaos
 		return false;
 	}
 
-	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec4<T> const & src)
+	template<typename T, glm::precision P>
+	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec4<T, P> const & src)
 	{
 		json_entry = nlohmann::json::array();
 		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
@@ -1166,8 +1166,8 @@ namespace chaos
 		return true;
 	}
 
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec4<T> & dst)
+	template<typename T, glm::precision P>
+	bool LoadFromJSON(nlohmann::json const & json_entry, glm::tvec4<T, P> & dst)
 	{
 		if (json_entry.is_object())
 		{

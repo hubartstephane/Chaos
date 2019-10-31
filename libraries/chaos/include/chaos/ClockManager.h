@@ -279,7 +279,7 @@ namespace chaos
 	{
 	public:
 
-		bool operator ()(ClockEventTickRegistration const & src1, ClockEventTickRegistration const & src2)
+		bool operator ()(ClockEventTickRegistration const & src1, ClockEventTickRegistration const & src2) const
 		{
 			return src1.abs_time_to_start < src2.abs_time_to_start;
 		};

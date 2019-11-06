@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/GLFW/TestGLFW_RenderMaterial
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    

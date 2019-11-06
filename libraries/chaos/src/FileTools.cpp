@@ -270,7 +270,7 @@ namespace chaos
 			else
 			{
 				// try to create the file (check if not already existing)
-				HANDLE hFile = CreateFile(
+				HANDLE hFile = CreateFileA(
 					file_path.string().c_str(),
 					GENERIC_WRITE,
 					FILE_SHARE_READ | FILE_SHARE_WRITE,

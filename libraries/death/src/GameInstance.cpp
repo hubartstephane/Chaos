@@ -39,7 +39,7 @@ namespace death
 
 
 
-	Player * GameInstance::GetPlayer(int player_index)
+	Player * GameInstance::GetPlayer(size_t player_index)
 	{
 
 		// shuxxx check player_index is initialized (seems NOT)
@@ -51,7 +51,7 @@ namespace death
 		return nullptr;
 	}
 
-	Player const * GameInstance::GetPlayer(int player_index) const
+	Player const * GameInstance::GetPlayer(size_t player_index) const
 	{
 
 		// shuxxx check player_index is initialized (seems NOT)

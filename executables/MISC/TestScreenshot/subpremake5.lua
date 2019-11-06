@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestScreenshot
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")  
  
                        

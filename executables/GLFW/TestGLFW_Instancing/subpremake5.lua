@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/GLFW/TestGLFW_Instancing
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    
     

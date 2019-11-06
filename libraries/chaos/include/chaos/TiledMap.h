@@ -891,7 +891,7 @@ namespace chaos
 			/** get the number of tiles with something inside */
 			size_t GetNonEmptyTileCount() const;
 			/** get the position of the tile */
-			glm::ivec2 GetTileCoordinate(int index) const;
+			glm::ivec2 GetTileCoordinate(size_t index) const;
 
 			/** override */
 			virtual class TileLayer * GetTileLayer() override { return this; }
@@ -1218,9 +1218,9 @@ namespace chaos
 			/** find a layer by its name */
 			LayerBase const * FindLayerByName(char const * in_name) const;
 			/** find a layer by its zorder */
-			LayerBase * FindLayerByZOrder(int zorder);
+			LayerBase * FindLayerByZOrder(size_t zorder);
 			/** find a layer by its zorder */
-			LayerBase const * FindLayerByZOrder(int zorder) const;
+			LayerBase const * FindLayerByZOrder(size_t zorder) const;
 
 			/** returns the number of layers */
 			int GetLayerCount() const;

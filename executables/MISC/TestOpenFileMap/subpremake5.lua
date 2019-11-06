@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestOpenFileMap
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")
                        

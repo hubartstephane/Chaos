@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestTiledMapParticle
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")  
   DeclareResource("resources")    
                        

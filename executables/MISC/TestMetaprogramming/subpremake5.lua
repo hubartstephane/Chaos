@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestMetaprogramming
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS") 
   DeclareResource("resources")  
                        

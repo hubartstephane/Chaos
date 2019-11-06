@@ -46,7 +46,11 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
-		WinTools::AllocConsoleAndRedirectStdOutput();
+		//WinTools::AllocConsoleAndRedirectStdOutput();
+
+
+		// shu vs2019
+
 		if (!InitializeManagers())
 			return false;
 		// open user temp directory and dump the config file

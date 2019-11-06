@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/SkyBoxLoading
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")  
   DeclareResource("resources")    

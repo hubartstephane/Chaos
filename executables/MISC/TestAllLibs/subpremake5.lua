@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestAllLibs
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("BOOST")
   DependOnLib("FMODSTUDIO")  
   DependOnLib("GLM")  

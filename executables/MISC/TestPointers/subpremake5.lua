@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestPointers
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")  
   DeclareResource("resources")    
                        

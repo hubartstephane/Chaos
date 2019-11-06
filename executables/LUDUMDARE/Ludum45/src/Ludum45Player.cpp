@@ -588,7 +588,7 @@ std::string LudumPlayer::GetPlayerUpgradeString() const
 	return result;
 }
 
-int LudumPlayer::GetUpgradeLevel(chaos::TagType upgrade_type) const
+size_t LudumPlayer::GetUpgradeLevel(chaos::TagType upgrade_type) const
 {
 	PlayerUpgrade const * upgrade = FindPlayerUpgrade(upgrade_type);
 	if (upgrade != nullptr)
@@ -605,7 +605,7 @@ T LudumPlayer::GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T
 
 	T result;
 
-	size_t level = (size_t)GetUpgradeLevel(upgrade_type);
+	size_t level = GetUpgradeLevel(upgrade_type);
 	if (level >= count)
 		result = values[count - 1];
 	else
@@ -617,36 +617,36 @@ T LudumPlayer::GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T
 
 
 
-int LudumPlayer::GetSpeedLevel() const
+size_t LudumPlayer::GetSpeedLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::SPEED);
 }
 
-int LudumPlayer::GetDamageLevel() const
+size_t LudumPlayer::GetDamageLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::DAMAGE);
 }
 
-int LudumPlayer::GetDashLevel() const
+size_t LudumPlayer::GetDashLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::DASH);
 }
-int LudumPlayer::GetGhostLevel() const
+size_t LudumPlayer::GetGhostLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::GHOST);
 }
 
-int LudumPlayer::GetPowerRateLevel() const
+size_t LudumPlayer::GetPowerRateLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::POWERRATE);
 }
 
-int LudumPlayer::GetPowerSpreadLevel() const
+size_t LudumPlayer::GetPowerSpreadLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::POWERSPREAD);
 }
 
-int LudumPlayer::GetSpecialPowerLevel() const
+size_t LudumPlayer::GetSpecialPowerLevel() const
 {
 	return GetUpgradeLevel(UpgradeKeys::SPECIALPOWER);
 }

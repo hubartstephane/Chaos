@@ -169,25 +169,6 @@ if (_OPTIONS["no-auto-doc"]) then
 end
 
 -- =============================================================================
--- An option to gain time and avoiding copy of resources automatically
--- CMD : premake5.exe vs2012 --no-auto-resources
--- =============================================================================
-
-newoption {
-   trigger     = "no-auto-resources",
-   description = "Do not copy resources when project is being built (do it manually)"
-}
-
-local AUTO_RESOURCES_COPY = true 
-if (_OPTIONS["no-auto-resources"]) then
-  if (_OPTIONS["no-auto-resources"] == "") then
-    AUTO_RESOURCES_COPY = false
-  elseif (string.lower(_OPTIONS["no-auto-resources"]) == "true") then
-    AUTO_RESOURCES_COPY = false
-  end            
-end
-
--- =============================================================================
 -- Dependant project names
 -- =============================================================================
 
@@ -255,8 +236,7 @@ function DebugConf(plat)
   configuration {DEBUG, plat}
     defines { DEBUG }
     defines { "_DEBUG" }
---    symbols "On"
-    flags { "Symbols" } 
+    symbols "On"
     flags { "MultiProcessorCompile" } 
 end
 
@@ -269,8 +249,7 @@ function ReleaseConf(plat)
     defines { "NDEBUG" }
     defines { RELEASE }
     defines { "_RELEASE" }
---    optimize "On"
-    flags { "Optimize" }	   
+    optimize "On" 
     flags { "MultiProcessorCompile" } 
 end
 
@@ -418,6 +397,8 @@ function onConfig(in_kind, plat, conf, proj)
    defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
    defines("CHAOS_PROJECT_BUILD_PATH=\"".. targ .. "\"")        
       
+    
+    characterset("ASCII")  
 end
 
 -- =============================================================================
@@ -466,12 +447,11 @@ function CppProject(in_kind, proj_type)
   local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
   project (resource_proj_name)
     kind("Makefile")  
+    
   
   -- create the project it self
   project(PROJ_NAME)
-  
-
-  
+   
     local proj_location = path.join(SOLUTION_PATH, PROJECT_PATH)  
   
     location (proj_location)  
@@ -507,12 +487,7 @@ function CppProject(in_kind, proj_type)
     local src_c   = path.join(PROJECT_SRC_PATH, "**.c")
     local src_cpp = path.join(PROJECT_SRC_PATH, "**.cpp")              
     files {src_h, src_hpp, src_c, src_cpp}                      
-            
-    if (AUTO_RESOURCES_COPY) then
-      configuration("*")
-      links(resource_proj_name)
-    end                  
-            
+                        
     DebugConf(x32)
       onConfig(in_kind, x32, DEBUG, result)
         
@@ -571,13 +546,24 @@ function StaticLib()
 end
 
 -- =============================================================================
+-- SharedLib : entry point for libraries
+-- =============================================================================
+
+function SharedLib()
+  local result = CppProject("SharedLib", TYPE_LIBRARY)
+  result.libname = GetPlatConfArray(result.name)
+  DisplayEnvironment()
+  GenDoxygen()  
+  return result          
+end
+
+-- =============================================================================
 -- DependOnStandardLib : declare a dependency
 -- =============================================================================
 
 function DependOnStandardLib(libname)
 
-  --if os.target() ~= "windows" then
-  if os.get() ~= "windows" then
+  if os.target() ~= "windows" then
     return
   end    
 
@@ -737,19 +723,17 @@ end
 --  {TOUCH}
 -- =============================================================================
 
-solution "TestNewPremake"
+solution "DeathAndChaos"
   platforms { x32, x64 }
   configurations { DEBUG , RELEASE }
 
   location (SOLUTION_PATH) -- where the visual studio project file is been created  
 
-  --if os.target() == "windows" then
-  if os.get() == "windows" then  
+  if os.target() == "windows" then
     defines { "WINDOWS" }
   end    
   
-  --if os.target() == "linux" then
-  if os.get() == "linux" then
+  if os.target() == "linux" then
     defines { "LINUX" }
   end
    
@@ -830,7 +814,7 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf, proj_visible) -- dst_
         local full_filename = data[2]	       
         local dst_name      = path.join(dst_proj.targetdir[plat][conf], filename)
         
-	if (proj_visible) then		                         
+	      if (proj_visible) then		                         
           if (os.isfile(full_filename)) then
             files(full_filename)
           elseif (os.isdir(full_filename)) then
@@ -855,7 +839,7 @@ function ResolveDependency(proj, other_proj, plat, conf)
     if (inc_dir) then    
       includedirs(inc_dir)
       if (DISPLAY_DEPENDENCIES) then
-        Output("ResolveDependency [" .. proj.name .. "] xincludedirs [" .. inc_dir .. "] for " .. plat .. " " .. conf)
+        Output("ResolveDependency [" .. proj.name .. "] includedirs [" .. inc_dir .. "] for " .. plat .. " " .. conf)
       end          
     end
     
@@ -867,32 +851,38 @@ function ResolveDependency(proj, other_proj, plat, conf)
       end                  
     end
     
-    local additionnal_libs = other_proj.additionnal_libs[plat][conf] 
-    if (additionnal_libs) then
-      for i in pairs(additionnal_libs) do                  
-        links(additionnal_libs[i])
-      end               
-    end
-        
-    local libname = other_proj.libname[plat][conf] 
-    if (libname) then
-
-      if (IsTable(libname)) then
-        for i in pairs(libname) do
-          links(libname[i])
+    
+    if (proj.proj_type == TYPE_EXECUTABLE) then  
+    
+      local additionnal_libs = other_proj.additionnal_libs[plat][conf] 
+      if (additionnal_libs) then
+        for i in pairs(additionnal_libs) do                  
+          links(additionnal_libs[i])
           if (DISPLAY_DEPENDENCIES) then        
-            Output("ResolveDependency [" .. proj.name .. "] links       [" .. libname[i] .. "] for " .. plat .. " " .. conf)
+              Output("ResolveDependency [" .. proj.name .. "] links       [" .. additionnal_libs[i] .. "] for " .. plat .. " " .. conf)
+          end          
+        end               
+      end    
+      
+      local libname = other_proj.libname[plat][conf] 
+      if (libname) then
+        if (IsTable(libname)) then
+          for i in pairs(libname) do
+            links(libname[i])
+            if (DISPLAY_DEPENDENCIES) then        
+              Output("ResolveDependency [" .. proj.name .. "] links       [" .. libname[i] .. "] for " .. plat .. " " .. conf)
+            end
           end
-        end
-      else
-        links(libname)
-        if (DISPLAY_DEPENDENCIES) then        
-          Output("ResolveDependency [" .. proj.name .. "] links       [" .. libname .. "] for " .. plat .. " " .. conf)
-        end     
-      end
-                                       
+        else
+          links(libname)
+          if (DISPLAY_DEPENDENCIES) then        
+            Output("ResolveDependency [" .. proj.name .. "] links       [" .. libname .. "] for " .. plat .. " " .. conf)
+          end     
+        end                                       
+      end      
+  
     end
-            
+               
     CopyResourceFiles(proj, other_proj, plat, conf, false) -- resources from dependancies cannot be visible
               
   end
@@ -907,25 +897,27 @@ end
 -- Fully propagate dependencies
 -- =============================================================================
 
-for i in pairs(MYPROJECTS) do   
-  local proj = MYPROJECTS[i]
+function ResolveDependencyAndCopy(proj, plat, conf)
   if (proj.proj_type ~= TYPE_EXTERNAL_LIBRARY and proj.proj_type ~= TYPE_RESOURCES) then  -- external lib has not (and cannot be) resolved while it is not compiled    
     project(proj.name)    
     for j in pairs(proj.dependencies) do
       local other_proj = FindProject(proj.dependencies[j])
       if (other_proj) then    
-        ResolveDependency(proj, other_proj, x32, DEBUG)      
-        ResolveDependency(proj, other_proj, x64, DEBUG)
-        ResolveDependency(proj, other_proj, x32, RELEASE)
-        ResolveDependency(proj, other_proj, x64, RELEASE)
+        ResolveDependency(proj, other_proj, plat, conf)      
       end      
     end   
-    CopyResourceFiles(proj, proj, x32, DEBUG,   true) -- resources from executable himself must be visible       
-    CopyResourceFiles(proj, proj, x64, DEBUG,   true)
-    CopyResourceFiles(proj, proj, x32, RELEASE, true)
-    CopyResourceFiles(proj, proj, x64, RELEASE, true)
+    CopyResourceFiles(proj, proj, plat, conf,   true) -- resources from executable himself must be visible       
   end           
 end
+
+for i in pairs(MYPROJECTS) do   
+  local proj = MYPROJECTS[i]
+  ResolveDependencyAndCopy(proj, x32, DEBUG)      
+  ResolveDependencyAndCopy(proj, x64, DEBUG)
+  ResolveDependencyAndCopy(proj, x32, RELEASE)
+  ResolveDependencyAndCopy(proj, x64, RELEASE)
+end  
+
 
 -- =============================================================================
 -- Generate documentation

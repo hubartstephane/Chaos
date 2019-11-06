@@ -192,6 +192,7 @@ namespace chaos
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type     = typename type_geometric<T, dimension>::type;
 
 		/** constructor (empty box) */
 		box_base() : half_size((T)-1.0f) {}
@@ -218,6 +219,7 @@ namespace chaos
 	public:
 
 		using vec_type = typename box_base<T, dimension>::vec_type;
+		using type     = typename box_base<T, dimension>::type;
 
 		/** constructor (empty box) */
 		type_box() {}
@@ -247,7 +249,7 @@ namespace chaos
 	public:
 
 		using vec_type = typename box_base<T, dimension>::vec_type;
-
+		using type     = typename box_base<T, dimension>::type;
 		using rot_type = typename box_base<T, dimension>::rot_type;
 
 		/** constructor (empty box) */
@@ -300,6 +302,7 @@ namespace chaos
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type = typename type_geometric<T, dimension>::type;
 
 		/** default constructor */
 		type_triangle() {}
@@ -342,6 +345,7 @@ namespace chaos
 	public:
 
 		using vec_type = typename type_geometric<T, dimension>::vec_type;
+		using type = typename type_geometric<T, dimension>::type;
 
 		/** default constructor */
 		type_ray() {}

@@ -1024,9 +1024,10 @@ namespace chaos
 			return result;
 		}
 
-		glm::ivec2 TileLayer::GetTileCoordinate(int index) const
+		glm::ivec2 TileLayer::GetTileCoordinate(size_t index) const
 		{
-			return glm::ivec2(index % size.x, index / size.x);
+			int tmp = (int)index;
+			return glm::ivec2(tmp % size.x, tmp / size.x);
 		}
 
 		// ==========================================
@@ -1431,8 +1432,8 @@ namespace chaos
 
 		CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, BOOST_PP_EMPTY())
 			CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, const)
-			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, int, const)
+			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, size_t, BOOST_PP_EMPTY())
+			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, size_t, const)
 #undef CHAOS_IMPL_FIND_LAYER
 
 #define CHAOS_IMPL_FIND_FILE_INFO(func_name, sub_funcname, arg_type, constess)\

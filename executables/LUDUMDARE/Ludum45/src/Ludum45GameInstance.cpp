@@ -149,7 +149,7 @@ ParticleExplosion * LudumGameInstance::FireExplosion(chaos::box2 const & ref_box
 	if (explosion_info == nullptr)
 		return nullptr;
 
-	int count = explosion_info->GetAnimationImageCount();
+	size_t count = explosion_info->GetAnimationImageCount();
 	if (count == 0)
 		return nullptr;
 

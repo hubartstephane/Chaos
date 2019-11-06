@@ -115,7 +115,7 @@ namespace chaos
 
 			Buffer<char> buffer = FileTools::LoadFile(font_name, false); // for direct access to resource directory
 			if (buffer != nullptr)
-				FT_New_Memory_Face(library, (FT_Byte const *)buffer.data, buffer.bufsize, 0, &face);
+				FT_New_Memory_Face(library, (FT_Byte const *)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
 
 			if (face == nullptr)
 			{

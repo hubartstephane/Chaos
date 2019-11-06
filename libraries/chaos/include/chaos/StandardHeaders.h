@@ -212,6 +212,7 @@ namespace chaos
 #include <boost/preprocessor/facilities/empty.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
+#define GLM_FORCE_SIZE_T_LENGTH
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp> 
 #include <glm/gtc/constants.hpp>

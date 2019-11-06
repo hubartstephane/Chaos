@@ -92,8 +92,8 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 	current_power_up = nullptr;
 	current_power_up_surface = nullptr;
 
-	int player_count = GetPlayerCount();
-	for (int i = 0; i < player_count; ++i)
+	size_t player_count = GetPlayerCount();
+	for (size_t i = 0; i < player_count; ++i)
 	{
 		LudumPlayer * p = GetLudumPlayer(i);
 		if (p != nullptr)
@@ -151,7 +151,7 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 	if (ludum_player == nullptr)
 		return;
 
-	int count = ludum_game->power_ups.size();
+	int count = (int)ludum_game->power_ups.size();
 	if (count == 0)
 		return;
 
@@ -189,7 +189,7 @@ ParticleExplosion * LudumGameInstance::FireExplosion(chaos::box2 const & ref_box
 	if (explosion_info == nullptr)
 		return nullptr;
 
-	int count = explosion_info->GetAnimationImageCount();
+	size_t count = explosion_info->GetAnimationImageCount();
 	if (count == 0)
 		return nullptr;
 

@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/GLFW/TestGLFW_ParticleRefactor
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    
     

@@ -25,7 +25,7 @@ class PlayerUpgrade : public chaos::ReferencedObject
 {
 public:
 
-	PlayerUpgrade(chaos::TagType in_type, int in_max_level, char const * in_bitmap_name, char const * in_sound_name):
+	PlayerUpgrade(chaos::TagType in_type, size_t in_max_level, char const * in_bitmap_name, char const * in_sound_name):
 		type(in_type),
 		max_level(in_max_level),
 		bitmap_name(in_bitmap_name),
@@ -37,8 +37,8 @@ public:
 public:
 
 	chaos::TagType type = 0;
-	int level = 0;
-	int max_level = 0;
+	size_t level = 0;
+	size_t max_level = 0;
 
 	std::string bitmap_name;
 	std::string sound_name;

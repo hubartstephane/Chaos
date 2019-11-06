@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/SkyBoxConversion
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")  
   DeclareResource("resources")    

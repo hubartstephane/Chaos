@@ -14,6 +14,9 @@ namespace chaos
 
 	void LogTools::VLog(char const * format, va_list va)
 	{
+
+		return; // vs2019
+
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
 		std::cout << buffer << std::endl;
@@ -29,6 +32,8 @@ namespace chaos
 
 	void LogTools::VError(char const * format,va_list va)
 	{
+		return; // vs2019
+
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
 		std::cerr << buffer << std::endl; 
@@ -36,6 +41,8 @@ namespace chaos
 
 	void LogTools::DisplayTitle(char const * title)
 	{
+		return; // vs2019
+
 		assert(title != nullptr);
 
 		size_t l = 12 + strlen(title);

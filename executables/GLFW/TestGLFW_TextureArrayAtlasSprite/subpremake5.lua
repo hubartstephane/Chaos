@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/GLFW/TestGLFW_TextureArrayAtlasSprite
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    
     

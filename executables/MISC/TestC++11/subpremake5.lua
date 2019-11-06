@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestC++11
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")  
                        

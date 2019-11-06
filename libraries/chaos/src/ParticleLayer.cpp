@@ -194,13 +194,14 @@ namespace chaos
 	ParticleAllocationBase * ParticleLayerBase::SpawnParticles(size_t count)
 	{
 		// create an allocation
-		ParticleAllocationBase * result = DoSpawnParticles(count);
+		ParticleAllocationBase * result = DoSpawnParticles();
 		if (result == nullptr)
 			return nullptr;
 		// increase the particle count for that allocation
 		result->Resize(count);
 		// register the allocation
 		particles_allocations.push_back(result);
+
 		return result;
 	}
 

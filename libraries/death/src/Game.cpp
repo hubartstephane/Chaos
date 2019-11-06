@@ -596,6 +596,9 @@ namespace death
 	int Game::AddParticleLayers()
 	{
 		int render_order = 0;
+
+
+
 		particle_manager->AddLayer<death::ParticleBackgroundTrait>(render_order++, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background"); // shuwww est ce que ca doit etre dans le particle_manager
 		return render_order;
 	}
@@ -1278,7 +1281,7 @@ namespace death
 		return true;
 	}
 
-	int Game::GetCurrentStateTag(bool strict_state, bool use_destination) const
+	chaos::TagType Game::GetCurrentStateTag(bool strict_state, bool use_destination) const
 	{
 		if (game_state_machine_instance == nullptr)
 			return -1;
@@ -1525,7 +1528,7 @@ namespace death
 			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);
 	}
 
-	Player * Game::GetPlayer(int player_index)
+	Player * Game::GetPlayer(size_t player_index)
 	{
 		// game even not started : no player
 		if (game_instance == nullptr)
@@ -1534,7 +1537,7 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	Player const * Game::GetPlayer(int player_index) const
+	Player const * Game::GetPlayer(size_t player_index) const
 	{
 		// game even not started : no player
 		if (game_instance == nullptr)

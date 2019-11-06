@@ -41,15 +41,15 @@ public:
 	/** override */
 	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
-	int GetUpgradeLevel(chaos::TagType upgrade_type) const;
+	size_t GetUpgradeLevel(chaos::TagType upgrade_type) const;
 
-	int GetSpeedLevel() const; 
-	int GetDamageLevel() const; 
-	int GetDashLevel() const; 
-	int GetGhostLevel() const; 
-	int GetPowerRateLevel() const; 
-	int GetPowerSpreadLevel() const; 
-	int GetSpecialPowerLevel() const; 
+	size_t GetSpeedLevel() const;
+	size_t GetDamageLevel() const;
+	size_t GetDashLevel() const;
+	size_t GetGhostLevel() const;
+	size_t GetPowerRateLevel() const;
+	size_t GetPowerSpreadLevel() const;
+	size_t GetSpecialPowerLevel() const;
 
 
 	float GetCurrentSpeedValue() const; 

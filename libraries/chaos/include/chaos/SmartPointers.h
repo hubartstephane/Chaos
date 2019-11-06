@@ -75,7 +75,7 @@ namespace chaos
 		}
 #endif
 		/** move constructor */
-		SmartPointerBase(SmartPointerBase<T, POLICY> && src) :  // shuxxx to test
+		SmartPointerBase(SmartPointerBase<T, POLICY> && src) noexcept: // XXX : the noexcept is required to have move semantic used during resized
 			target(src.get())
 		{
 			src.target = nullptr; // necessary to capture the reference, else the move semantic would

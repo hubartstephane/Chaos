@@ -161,13 +161,16 @@ namespace chaos
 
 		std::string TrimString(char const * src, bool trim_left, bool trim_right)
 		{
+
+			// shu2019
+
 			assert(src != nullptr);
 
-			int i = 0;
+			size_t i = 0;
 			if (trim_left)
 				while (src[i] != 0 && std::isspace(src[i]))
 					++i;
-			int j = strlen(src) - 1;
+			size_t j = strlen(src) - 1;
 			if (trim_right)
 				while (j > i && std::isspace(src[j]))
 					--j;

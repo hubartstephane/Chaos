@@ -63,9 +63,9 @@ namespace death
 	public:
 
 		/** get the player by its index */
-		Player * GetPlayer(int player_index);
+		Player * GetPlayer(size_t player_index);
 		/** get the player by its index */
-		Player const * GetPlayer(int player_index) const;
+		Player const * GetPlayer(size_t player_index) const;
 		/** get the number of players */
 		size_t GetPlayerCount() const;
 
@@ -200,7 +200,7 @@ namespace death
 		float GetGamepadSensitivity() const { return gamepad_sensitivity; }
 
 		/** get current state ID */
-		int GetCurrentStateTag(bool strict_state = false, bool use_destination = false) const;
+		chaos::TagType GetCurrentStateTag(bool strict_state = false, bool use_destination = false) const;
 		/** returns whether were are in playing state */
 		bool IsPlaying(bool strict_state = false, bool use_destination = false) const;
 		/** returns whether were are in pause state */

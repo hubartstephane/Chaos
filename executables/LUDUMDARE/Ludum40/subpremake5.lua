@@ -1,8 +1,8 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUDUM/LUDUM_40
+-- ROOT_PATH/executables/LUDUM/Ludum40
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")
   DependOnLib("DEATH")
   DeclareResource("resources")    

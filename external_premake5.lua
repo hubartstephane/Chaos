@@ -2,13 +2,8 @@
 -- ROOT_PATH/../external
 -- =============================================================================
 
---local WINDOWS = (os.target() == "windows")
---local LINUX = (os.target() == "linux")
-
-local WINDOWS = (os.get() == "windows")
-local LINUX = (os.get() == "linux")
-
-
+local WINDOWS = (os.target() == "windows")
+local LINUX = (os.target() == "linux")
 
   -- OPENGL
 local GL_INC_PATH = "openGL"
@@ -19,10 +14,6 @@ local GLM_INC_PATH = "glm"
 DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
 
   -- BOOST
---local BOOST_PATH     = "boost_1_61_0"
---local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "vc140", "lib32"), x64 = path.join(BOOST_PATH, "stage", "vc140", "lib64")}
---DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
-
 local BOOST_PATH     = "boost_1_71_0"
 local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "lib"), x64 = path.join(BOOST_PATH, "stage", "lib")}
 DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
@@ -47,8 +38,6 @@ elseif (WINDOWS) then
 	DeclareExternalLib("LUA", LUA_INC_PATH, LUA_LIB_PATH, "mylualibrary.lib")
 end
   -- GLFW  
---local GLFW_X32_PATH = "glfw-3.1.2.bin.WIN32"     
---local GLFW_X64_PATH = "glfw-3.1.2.bin.WIN64"
 local GLFW_X32_PATH = "glfw-3.3.bin.WIN32"     
 local GLFW_X64_PATH = "glfw-3.3.bin.WIN64"
 local GLFW_INC_PATH = {
@@ -57,27 +46,25 @@ local GLFW_INC_PATH = {
 }
 
 local GLFW_LIB_PATH
-if (BUILD_TARGET == "vs2015") then
-  GLFW_LIB_PATH = {
-    x32 = path.join(GLFW_X32_PATH, "lib-vc2015"),   -- beware confusion vS2013 & vC2013 ('c' & 's')
-    x64 = path.join(GLFW_X64_PATH, "lib-vc2015") 
-  }
+
+local GLFW_LIB_VCPATH
+if (BUILD_TARGET == "vs2019") then 
+  GLFW_LIB_VCPATH = "lib-vc2019"      -- beware confusion vS2019 & vC2019 ('c' & 's')
+elseif (BUILD_TARGET == "vs2015") then
+  GLFW_LIB_VCPATH = "lib-vc2015"
 elseif (BUILD_TARGET == "vs2013") then
-  GLFW_LIB_PATH = {
-    x32 = path.join(GLFW_X32_PATH, "lib-vc2013"),   -- beware confusion vS2013 & vC2013 ('c' & 's')
-    x64 = path.join(GLFW_X64_PATH, "lib-vc2013") 
-  }
+  GLFW_LIB_VCPATH = "lib-vc2013"
 elseif (BUILD_TARGET == "vs2012") then
-  GLFW_LIB_PATH = {
-    x32 = path.join(GLFW_X32_PATH, "lib-vc2012"),   -- beware confusion vS2012 & vC2012 ('c' & 's')
-    x64 = path.join(GLFW_X64_PATH, "lib-vc2012")  
-  }
+  GLFW_LIB_VCPATH = "lib-vc2012"
 elseif (BUILD_TARGET == "vs2010") then
-  GLFW_LIB_PATH = {
-    x32 = path.join(GLFW_X32_PATH, "lib-vc2010"),   -- beware confusion vS2010 & vC20100       
-    x64 = path.join(GLFW_X64_PATH, "lib-vc2010")  
-  }
+  GLFW_LIB_VCPATH = "lib-vc2010"
 end  
+
+GLFW_LIB_PATH = {
+  x32 = path.join(GLFW_X32_PATH, GLFW_LIB_VCPATH),
+  x64 = path.join(GLFW_X64_PATH, GLFW_LIB_VCPATH) 
+}
+
 DeclareExternalLib("GLFW", GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
 
   -- GLI          
@@ -119,8 +106,8 @@ local FREETYPE2_LIBNAME = {
 DeclareExternalLib("FREETYPE2", FREETYPE2_INC_PATH, FREETYPE2_LIB_PATH, FREETYPE2_LIBNAME)
 
   -- IRRKLANG   
-local IRRKLANG_X32_PATH = "irrKlang-1.5.0.WIN32"
-local IRRKLANG_X64_PATH = "irrKlang-1.5.0.WIN64"
+local IRRKLANG_X32_PATH = "irrKlang-1.6.0.WIN32"
+local IRRKLANG_X64_PATH = "irrKlang-1.6.0.WIN64"
 local IRRKLANG_INC_PATH = {
   x32 = path.join(IRRKLANG_X32_PATH, "include"),
   x64 = path.join(IRRKLANG_X64_PATH, "include")  
@@ -138,12 +125,12 @@ DeclareExternalLib("IRRKLANG", IRRKLANG_INC_PATH, IRRKLANG_LIB_PATH, IRRKLANG_LI
 
   -- FBX 
 
-local FBX_PATH = path.join("FBX SDK", "2015.1") 
+local FBX_PATH = path.join("FBX SDK", "2019.0") 
 
 local FBX_INC_PATH = path.join(FBX_PATH, "include")  
         
-local FBX_X32_PATH = path.join(FBX_PATH, "lib", "vs2013", "x86")
-local FBX_X64_PATH = path.join(FBX_PATH, "lib", "vs2013", "x64")
+local FBX_X32_PATH = path.join(FBX_PATH, "lib", "vs2015", "x86")
+local FBX_X64_PATH = path.join(FBX_PATH, "lib", "vs2015", "x64")
 
 local FBX_LIB_PATH = {
   x32 = {

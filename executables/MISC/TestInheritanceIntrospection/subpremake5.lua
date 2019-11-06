@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestInheritanceIntrospection
 -- =============================================================================
 
-  WindowedApp()
+  ConsoleApp()
   DependOnLib("CHAOS")  
                        

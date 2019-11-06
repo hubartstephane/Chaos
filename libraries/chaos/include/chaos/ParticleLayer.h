@@ -336,7 +336,8 @@ protected:
 		using layer_trait_type = typename get_LayerTrait<allocation_trait_type>::type;
 
 		/** constructor */
-		ParticleAllocation(ParticleLayerBase * in_layer) : ParticleAllocationBase(in_layer) {}
+		ParticleAllocation(ParticleLayerBase* in_layer) : ParticleAllocationBase(in_layer) {}
+
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
 		{
@@ -671,7 +672,7 @@ protected:
 	public:
 
 		/** creation of an allocation */
-		virtual ParticleAllocationBase * DoSpawnParticles(size_t count) { return nullptr; }
+		virtual ParticleAllocationBase * DoSpawnParticles() { return nullptr; }
 		/** returns the layer trait */
 		virtual void * GetLayerTrait() { return nullptr; }
 		/** returns the layer trait */
@@ -789,7 +790,7 @@ protected:
 	protected:
 
 		/** override */
-		virtual ParticleAllocationBase * DoSpawnParticles(size_t count) override { return new ParticleAllocation<allocation_trait_type>(this); }
+		virtual ParticleAllocationBase * DoSpawnParticles() override { return new ParticleAllocation<allocation_trait_type>(this); }
 		/** override */
 		virtual void * GetLayerTrait() { return &layer_trait; }
 		/** override */

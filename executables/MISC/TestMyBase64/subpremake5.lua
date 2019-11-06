@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestMyBase64
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
                        

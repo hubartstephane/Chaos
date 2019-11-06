@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/GLFW/TestGLFW_SimpleTexture
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    
     

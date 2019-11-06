@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestDataSource
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS") 
   DeclareResource("resources")  
                        

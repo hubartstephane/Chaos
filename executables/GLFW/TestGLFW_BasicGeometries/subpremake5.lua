@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/GLFW/TestGLFW_BasicGeometries
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    
     

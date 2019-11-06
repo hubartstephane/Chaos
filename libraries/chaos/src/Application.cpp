@@ -46,10 +46,7 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
-		//WinTools::AllocConsoleAndRedirectStdOutput();
-
-
-		// shu vs2019
+		WinTools::AllocConsoleAndRedirectStdOutput();
 
 		if (!InitializeManagers())
 			return false;

@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestTristripper
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
                        

@@ -2,5 +2,5 @@
 -- ROOT_PATH/executables/GLFW/TestGLFW_Base
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")

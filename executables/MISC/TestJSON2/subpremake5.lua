@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestJSON2
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    
     

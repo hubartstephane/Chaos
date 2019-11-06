@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/LUDUM/Ludum43
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")
   DependOnLib("DEATH")
   DeclareResource("resources")    

@@ -474,8 +474,15 @@ function CppProject(in_kind, proj_type)
     result.additionnal_libs = GetPlatConfArray({});           
          
     kind(in_kind)
-
+    
     language "C++"
+    
+    -- change entry point for windows (avoid WinMain to main)
+    if (os.target() == "windows") then
+      if (proj_type == TYPE_EXECUTABLE) then
+        entrypoint "mainCRTStartup"
+       end    
+    end            
        
     local inc_path = path.join(PROJECT_SRC_PATH, "include")           
     local src_path = path.join(PROJECT_SRC_PATH, "src")
@@ -509,12 +516,12 @@ function CppProject(in_kind, proj_type)
 end
 
 -- =============================================================================
--- ConsoleApp : entry point ConsoleApp
+-- WindowedApp : entry point WindowedApp
 -- =============================================================================
 
-function ConsoleApp()
+function WindowedApp()
 
-  local result = CppProject("ConsoleApp", TYPE_EXECUTABLE)
+  local result = CppProject("WindowedApp", TYPE_EXECUTABLE)
   DeclareResource("config.lua")
   --DependOnLib("COMMON RESOURCES")       
   DisplayEnvironment()

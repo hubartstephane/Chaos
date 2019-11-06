@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestBoostOptions
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
                        

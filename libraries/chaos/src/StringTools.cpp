@@ -161,9 +161,6 @@ namespace chaos
 
 		std::string TrimString(char const * src, bool trim_left, bool trim_right)
 		{
-
-			// shu2019
-
 			assert(src != nullptr);
 
 			size_t i = 0;

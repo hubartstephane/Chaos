@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/Misc/TestFilePathParam
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")
   DeclareResource("resources")    
     

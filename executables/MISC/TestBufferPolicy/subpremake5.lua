@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestBufferPolicy
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
                        

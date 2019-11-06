@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestClientServer
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")    
   DeclareResource("testfile.txt")
   DeclareResource("resources")

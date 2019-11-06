@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/MISC/TestAtlas
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS") 
   DeclareResource("resources")  
                        

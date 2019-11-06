@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestWindowsApp
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
                        

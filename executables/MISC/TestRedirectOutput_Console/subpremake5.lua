@@ -2,7 +2,7 @@
 -- ROOT_PATH/executables/Misc/TestRedirectOutput_Console
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
   DeclareResource("resources")    
                        

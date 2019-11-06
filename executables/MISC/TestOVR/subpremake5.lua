@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestOVR
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
                        

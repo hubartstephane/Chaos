@@ -2,6 +2,6 @@
 -- ROOT_PATH/executables/MISC/TestCRC32
 -- =============================================================================
 
-  ConsoleApp()
+  WindowedApp()
   DependOnLib("CHAOS")  
                        

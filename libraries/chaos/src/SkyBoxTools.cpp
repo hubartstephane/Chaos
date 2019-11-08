@@ -55,7 +55,7 @@ namespace chaos
 		return image_position[image_type];
 	}
 
-	SkyBoxImages::SkyBoxImages(SkyBoxImages && other)
+	SkyBoxImages::SkyBoxImages(SkyBoxImages && other) noexcept
 	{
 		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
 		{
@@ -69,7 +69,7 @@ namespace chaos
 		Release();
 	}
 
-	SkyBoxImages & SkyBoxImages::operator = (SkyBoxImages && other)
+	SkyBoxImages & SkyBoxImages::operator = (SkyBoxImages && other) noexcept
 	{
 		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
 		{

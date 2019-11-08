@@ -83,7 +83,7 @@ namespace chaos
 		/** move constructor + conversion */
 #if 0
 		template<typename U>
-		SmartPointerBase(SmartPointerBase<U, POLICY> && src) :  // shuxxx to test
+		SmartPointerBase(SmartPointerBase<U, POLICY> && src) noexcept :  // shuxxx to test
 			target(src.target)
 		{
 			src.target = nullptr; // necessary to capture the reference, else the move semantic would
@@ -119,7 +119,7 @@ namespace chaos
 		}
 #endif
 		/** move */
-		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> && src) // shuxxx to test
+		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> && src) noexcept // shuxxx to test
 		{
 			assert(this != &src);
 			if (target != src.target)
@@ -139,7 +139,7 @@ namespace chaos
 		/** move */
 #if 0
 		template<typename U>
-		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> && src)
+		SmartPointerBase & operator = (SmartPointerBase<U, POLICY> && src) noexcept
 		{
 			assert(this != &src);
 			if (target != src.target)

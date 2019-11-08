@@ -212,7 +212,7 @@ namespace chaos
 		}
 
 		/** move constructor */
-		Buffer(Buffer<TYPE> && other)
+		Buffer(Buffer<TYPE> && other) noexcept
 		{
 			std::swap(policy,  other.policy);
 			std::swap(data,    other.data);
@@ -237,7 +237,7 @@ namespace chaos
 		}
 
 		/** copy operator */
-		Buffer<TYPE> & operator = (Buffer<TYPE> const & other)
+		Buffer<TYPE> & operator = (Buffer<TYPE> const & other) 
 		{
 			Buffer<TYPE> to_destroy(std::move(*this)); // to destroy at the end of call
 
@@ -256,7 +256,7 @@ namespace chaos
 		}
 
 		/** move operator */
-		Buffer<TYPE> & operator = (Buffer<TYPE> && other)
+		Buffer<TYPE> & operator = (Buffer<TYPE> && other) noexcept
 		{
 			std::swap(policy,  other.policy);
 			std::swap(data,    other.data);

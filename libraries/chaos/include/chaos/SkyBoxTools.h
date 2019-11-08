@@ -55,7 +55,7 @@ namespace chaos
 		/** copy constructor */
 		SkyBoxImages(SkyBoxImages const & other) = delete;
 		/** move constructor */
-		SkyBoxImages(SkyBoxImages && other);
+		SkyBoxImages(SkyBoxImages && other) noexcept;
 		/** destructor */
 		~SkyBoxImages();
 
@@ -107,7 +107,7 @@ namespace chaos
 		/** no copy */
 		SkyBoxImages & operator = (SkyBoxImages const & other) = delete;
 		/** move operator */
-		SkyBoxImages & operator = (SkyBoxImages && other);
+		SkyBoxImages & operator = (SkyBoxImages && other) noexcept;
 
 	protected:
 

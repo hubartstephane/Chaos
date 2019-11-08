@@ -532,7 +532,7 @@ namespace death
 			return texture_atlas->GetFolderInfo("sprites");
 		}
 
-		chaos::ParticleLayerBase * Level::CreateParticleLayer(LayerInstance * layer_instance)
+		chaos::ParticleLayerBase * Level::DoCreateParticleLayer(LayerInstance * layer_instance)
 		{
 			return new chaos::ParticleLayer<TiledMap::TileParticleTrait>();
 		}
@@ -1040,13 +1040,15 @@ namespace death
 				if (render_material == nullptr)
 					return nullptr;
 				// create a particle layer
-				particle_layer = GetTiledLevel()->CreateParticleLayer(this);
+				particle_layer = GetTiledLevel()->DoCreateParticleLayer(this);
 				if (particle_layer == nullptr)
 					return false;
 				// add name and tag to the particle_layer
 				InitializeParticleLayer(particle_layer.get());
 				// set the material
 				particle_layer->SetRenderMaterial(render_material);
+				// set the atlas			
+				particle_layer->SetTextureAtlas(GetGame()->GetTextureAtlas());
 			}
 			return particle_layer.get();
 		}
@@ -1359,20 +1361,12 @@ namespace death
 
 			// shulayer
 			chaos::box2 layer_box = GetBoundingBox(true);
-			chaos::box2 reference_box = reference_layer->GetBoundingBox(true);
-
+			
 #if 0
-
-
+			chaos::box2 reference_box = reference_layer->GetBoundingBox(true);
 			if (!IsGeometryEmpty(layer_box) && !IsGeometryEmpty(reference_box))
 				final_ratio = layer_box.half_size / reference_box.half_size;
 #endif
-
-
-
-
-
-
 
 			chaos::obox2 final_camera_obox;
 			final_camera_obox.position  = initial_camera_obox.position  + (camera_obox.position - initial_camera_obox.position) * final_ratio;

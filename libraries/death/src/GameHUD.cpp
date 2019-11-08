@@ -77,9 +77,6 @@ namespace death
 
 	bool GameHUD::InitializeHUD()
 	{
-
-	//	return true; // shu vs2019
-
 		// create the particle manager from the game texture atlas
 		if (!CreateInternalData(nullptr, game->GetTextGenerator(), game->GetTextureAtlas()))
 			return false;
@@ -87,13 +84,6 @@ namespace death
 		if (!CreateHUDLayers())
 			return false;
 		// create the particles
-
-
-
-
-
-
-
 		if (!FillHUDContent())
 			return false;
 

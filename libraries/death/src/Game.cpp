@@ -259,9 +259,6 @@ namespace death
 	{		
 
 		// shuwww   root_render_layer ??
-
-
-
 		if (particle_manager != nullptr)
 			particle_manager->Display(renderer, uniform_provider, render_params);
 		if (current_level_instance != nullptr)

@@ -435,7 +435,7 @@ namespace death
 			/** get the atlas to use for the rendering */
 			virtual chaos::BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas(LayerInstance * layer_instance) const;
 			/** create a particle layer */
-			virtual chaos::ParticleLayerBase * CreateParticleLayer(LayerInstance * layer_instance);
+			virtual chaos::ParticleLayerBase * DoCreateParticleLayer(LayerInstance * layer_instance);
 
 			/** called after all particles of a layers has been created, so we can plug additionnal data */
 			virtual bool FinalizeLayerParticles(LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation){ return true; }

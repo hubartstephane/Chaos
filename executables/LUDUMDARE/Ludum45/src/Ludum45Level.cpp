@@ -350,7 +350,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 }
 
 
-chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
@@ -411,7 +411,7 @@ chaos::ParticleLayerBase * LudumLevel::CreateParticleLayer(death::TiledMap::Laye
 
 
 
-	return death::TiledMap::Level::CreateParticleLayer(layer_instance);
+	return death::TiledMap::Level::DoCreateParticleLayer(layer_instance);
 }
 
 

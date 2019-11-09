@@ -2,6 +2,8 @@
 -- ROOT_PATH/executables/MISC
 -- =============================================================================
 
+ProcessSubPremake("TestC++11")
+ProcessSubPremake("TestC++17")
 ProcessSubPremake("TestAllLibs")
 ProcessSubPremake("TestMyZLib")
 ProcessSubPremake("TestMyBase64")
@@ -25,7 +27,6 @@ ProcessSubPremake("TestDataSource")
 ProcessSubPremake("TestMetaprogramming")
 ProcessSubPremake("TestSparseBuffer")
 ProcessSubPremake("TestApplication")
-ProcessSubPremake("TestC++11")
 ProcessSubPremake("TestInheritanceIntrospection")
 ProcessSubPremake("TestSkyBoxLoading")
 ProcessSubPremake("TestSkyBoxConversion")

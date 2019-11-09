@@ -178,6 +178,10 @@ bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_b
 
 void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 {
+
+	// shufixme
+
+
 	float dt = (float)delta_time;
 
 	LudumGame const * ludum_game = GetLudumGame();
@@ -220,8 +224,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			}
 			dash_locked = true; // dash is locked until the key is released
 		}
-
-
 	}
 	else
 	{
@@ -241,8 +243,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 		dash_velocity_boost = ludum_game->player_dash_velocity_boost;
 	}
 
-
-
 	glm::vec2 player_velocity = player_particle->velocity;
 
 	// update the player
@@ -253,7 +253,7 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 
 		glm::vec2 direction = glm::vec2(0.0f, 0.0f);
 		// compute the normalized direction
-		if (left_length_2 > 0.0f || left_length_2 > 0.0f)
+		if (left_length_2 > 0.0f || right_length_2 > 0.0f)
 		{
 			direction = (left_length_2 > right_length_2) ?
 				left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
@@ -261,24 +261,17 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 
 			// axis Y reversed
 			direction *= glm::vec2(1.0f, -1.0f);
-			// compute the orientation
-
-		// shuldum	player_particle->orientation = atan2f(direction.y, direction.x) - (float)M_PI * 0.5f;		
-
-
-
-
 		}
 		else
 		{
-// shuludm			float angle = player_particle->orientation + (float)M_PI * 0.5f;
+			float l = glm::length(player_velocity);
+			if (l)
+				direction = glm::normalize(player_velocity);
+			else
+				direction = glm::vec2(0.0f, 0.0f);
 
-			float angle = player_particle->orientation;
-
-			direction = glm::vec2(cosf(angle), sinf(angle)) ; // direction comes from the one from previous frame
 			input_factor = 0.0f;
 		}
-
 
 		// split current velocity into normal and its tangeantial
 		glm::vec2 normal_velocity      = glm::vec2(0.0f, 0.0f);

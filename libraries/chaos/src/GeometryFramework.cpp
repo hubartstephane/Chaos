@@ -28,8 +28,8 @@ namespace chaos
 		// hand made rotation for 2D to avoid the usage of a quaternion
 		glm::mat4x4 result = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
-		auto c = MathTools::Cos(rotator);
-		auto s = MathTools::Sin(rotator);
+		auto c = std::cos(rotator);
+		auto s = std::sin(rotator);
 		result[0][0] =  c;
 		result[0][1] =  s;
 		result[1][0] = -s;
@@ -43,8 +43,8 @@ namespace chaos
 		// hand made rotation for 2D to avoid the usage of a quaternion
 		glm::dmat4x4 result = glm::scale(glm::dvec3(1.0, 1.0, 1.0));
 
-		auto c = MathTools::Cos(rotator);
-		auto s = MathTools::Sin(rotator);
+		auto c = std::cos(rotator);
+		auto s = std::sin(rotator);
 		result[0][0] =  c;
 		result[0][1] =  s;
 		result[1][0] = -s;

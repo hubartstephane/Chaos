@@ -122,7 +122,7 @@ namespace chaos
 		params.font_characters = mesh_builder_params.font_characters.c_str();
 		params.font_characters_per_line = cpl;
 		params.font_characters_line_count = mesh_builder_params.font_characters_line_count;
-		params.line_limit = max(width / (csw + sx), 1);
+		params.line_limit = std::max(width / (csw + sx), 1);
 		params.character_size = glm::vec2(1.0f, 1.0f);
 		params.spacing = glm::vec2(((float)sx) / ((float)csw), ((float)sy) / ((float)csh));
 		params.crop_texture = glm::vec2(((float)cx) / ((float)tw), ((float)cy) / ((float)th));

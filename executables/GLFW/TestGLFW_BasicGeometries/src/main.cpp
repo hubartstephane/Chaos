@@ -226,8 +226,8 @@ protected:
 	{
 		double realtime = clock->GetClockTime();
 
-		p1.position.x = 5.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
-		p2.position.y = 5.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
+		p1.position.x = 5.0f * (float)std::cos(1.5 * realtime * M_2_PI);
+		p2.position.y = 5.0f * (float)std::cos(2.0 * realtime * M_2_PI);
 
 		if (intersection)
 		{
@@ -252,13 +252,13 @@ protected:
 
 		if (move_bigger) // bigger should follow smaller
 		{
-			smaller.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
-			smaller.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+			smaller.position.x = 20.0f * (float)std::cos(0.5 * realtime * M_2_PI);
+			smaller.position.y =  5.0f * (float)std::sin(2.0 * realtime * M_2_PI);
 		}
 		else // smaller should follow bigger
 		{
-			bigger.position.x = 20.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
-			bigger.position.y =  5.0f * (float)chaos::MathTools::Sin(2.0 * realtime * M_2_PI);
+			bigger.position.x = 20.0f * (float)std::cos(0.5 * realtime * M_2_PI);
+			bigger.position.y =  5.0f * (float)std::sin(2.0 * realtime * M_2_PI);
 		}
 
 		chaos::RestrictToInside(bigger, smaller, move_bigger);
@@ -272,11 +272,11 @@ protected:
 	{
 		double realtime = clock->GetClockTime();
 
-		float x = (float)chaos::MathTools::Fmod(realtime, 2.0) - 1; // x in [-1 ... +1]
+		float x = (float)std::fmod(realtime, 2.0) - 1; // x in [-1 ... +1]
 
 		float t = (x < 0) ? -x : x - 1.0f;
 
-		int k = (int)chaos::MathTools::Fmod(realtime * 0.3, 3.0);
+		int k = (int)std::fmod(realtime * 0.3, 3.0);
 
 		src.position[(k + 0) % 3] = 20.0f * t;
 		src.position[(k + 1) % 3] = 0.0f;
@@ -303,10 +303,10 @@ protected:
 	{
 		double realtime = clock->GetClockTime();
 
-		p1.position.x = 10.0f * (float)chaos::MathTools::Cos(1.5 * realtime * M_2_PI);
+		p1.position.x = 10.0f * (float)std::cos(1.5 * realtime * M_2_PI);
 		p1.position.y = 0.0;
 		p2.position.x = 0.0;
-		p2.position.y = 10.0f * (float)chaos::MathTools::Cos(2.0 * realtime * M_2_PI);
+		p2.position.y = 10.0f * (float)std::cos(2.0 * realtime * M_2_PI);
 
 		DrawCollisionImpl(p1, p2);
 	}
@@ -317,12 +317,12 @@ protected:
 
 		chaos::box2 b2;
 		b2.position.x = 0.0;
-		b2.position.y = 20.0f * (float)chaos::MathTools::Cos(0.8 * realtime * M_2_PI);
+		b2.position.y = 20.0f * (float)std::cos(0.8 * realtime * M_2_PI);
 		b2.half_size = glm::vec2(5.0f, 7.0f);
 
 		chaos::sphere2 s2;
-		s2.position.x = 10.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
-		s2.position.y = 10.0f * (float)chaos::MathTools::Sin(0.5 * realtime * M_2_PI);
+		s2.position.x = 10.0f * (float)std::cos(0.5 * realtime * M_2_PI);
+		s2.position.y = 10.0f * (float)std::sin(0.5 * realtime * M_2_PI);
 		s2.radius = 3.0f;
 
 		DrawCollisionImpl(b2, s2);
@@ -339,8 +339,8 @@ protected:
 		t2 = chaos::PrepareTriangleForCollision(t2); // ensure the triangle order is good for collision function
 
 		glm::vec2 p = glm::vec2(0.0f, 0.0f);
-		p.x = 5.0f * (float)chaos::MathTools::Cos(realtime * M_2_PI);
-		p.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
+		p.x = 5.0f * (float)std::cos(realtime * M_2_PI);
+		p.y = 5.0f * (float)std::sin(10.0f * realtime * M_2_PI);
 
 		DrawCollisionImpl(glm::vec2(p.x, p.y), t2);
 	}
@@ -356,8 +356,8 @@ protected:
 		t2 = chaos::PrepareTriangleForCollision(t2); // ensure the triangle order is good for collision function
 
 		chaos::sphere2 s2;
-		s2.position.x = 5.0f * (float)chaos::MathTools::Cos(realtime * M_2_PI);
-		s2.position.y = 5.0f * (float)chaos::MathTools::Sin(10.0f * realtime * M_2_PI);
+		s2.position.x = 5.0f * (float)std::cos(realtime * M_2_PI);
+		s2.position.y = 5.0f * (float)std::sin(10.0f * realtime * M_2_PI);
 		s2.radius = 0.25f;
 
 		DrawCollisionImpl(t2, s2);
@@ -369,7 +369,7 @@ protected:
 		double realtime = clock->GetClockTime();
 
 		glm::vec3 pos;
-		pos.x = 15.0f * (float)chaos::MathTools::Cos(2.5 * realtime * M_2_PI);
+		pos.x = 15.0f * (float)std::cos(2.5 * realtime * M_2_PI);
 		pos.y = 0.0f;
 		pos.z = 0.0f;
 
@@ -387,7 +387,7 @@ protected:
 		double realtime = clock->GetClockTime();
 
 		glm::vec2 pos;
-		pos.x = 5.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+		pos.x = 5.0f * (float)std::cos(0.5 * realtime * M_2_PI);
 		pos.y = 0.0f;
 		return pos;
 	}
@@ -397,7 +397,7 @@ protected:
 		double realtime = clock->GetClockTime();
 
 		glm::vec3 pos;
-		pos.x = 5.0f * (float)chaos::MathTools::Cos(0.5 * realtime * M_2_PI);
+		pos.x = 5.0f * (float)std::cos(0.5 * realtime * M_2_PI);
 		pos.y = 0.0f;
 		pos.z = 0.0f;
 		return pos;
@@ -520,8 +520,8 @@ protected:
 
 		glm::vec2 o = (a + b + c) / 3.0f;
 
-		float cs = chaos::MathTools::Cos(r);
-		float sn = chaos::MathTools::Sin(r);
+		float cs = std::cos(r);
+		float sn = std::sin(r);
 
 		a = chaos::GLMTools::Rotate(a - o, cs, sn) + o;
 		b = chaos::GLMTools::Rotate(b - o, cs, sn) + o;
@@ -839,7 +839,7 @@ protected:
 			float speed = 0.3f;
 			float angle = speed * (float)realtime;
 			glm::vec3 pos;
-			pos.x = 15.0f * (float)chaos::MathTools::Cos(speed * 2.5 * realtime * M_2_PI);
+			pos.x = 15.0f * (float)std::cos(speed * 2.5 * realtime * M_2_PI);
 			pos.y = 0.0f;
 			pos.z = 0.0f;
 
@@ -901,7 +901,7 @@ protected:
 			float speed = 0.3f;
 			float angle = speed * (float)realtime;
 			glm::vec2 pos;
-			pos.x = 15.0f * (float)chaos::MathTools::Cos(speed * 2.5 * realtime * M_2_PI);
+			pos.x = 15.0f * (float)std::cos(speed * 2.5 * realtime * M_2_PI);
 			pos.y = 0.0f;
 
 			chaos::obox2 b(pos, glm::vec3(1.0f, 2.0f, 3.0f), angle);

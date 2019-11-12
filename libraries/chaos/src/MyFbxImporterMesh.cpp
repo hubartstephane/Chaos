@@ -99,7 +99,7 @@ namespace chaos
 		{
 			size_t result = 0;
 			for (auto const & entry : table)
-				result = max(result, entry.second.size());
+				result = std::max(result, entry.second.size());
 			return result;
 		}
 

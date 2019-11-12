@@ -87,8 +87,8 @@ namespace chaos
 			{
 				glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
 
-				float c = MathTools::Cos(rotation);
-				float s = MathTools::Sin(rotation);
+				float c = std::cos(rotation);
+				float s = std::sin(rotation);
 
 				bl.position = GLMTools::Rotate(bl.position - center_position, c, s) + center_position;
 				br.position = GLMTools::Rotate(br.position - center_position, c, s) + center_position;

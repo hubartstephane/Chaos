@@ -19,12 +19,12 @@ namespace chaos
 				in_raw_value = 0.0f;
 
 			// clamp the raw value to -1 .. +1
-			in_raw_value = MathTools::Clamp(in_raw_value, -1.0f, +1.0f);
+			in_raw_value = std::clamp(in_raw_value, -1.0f, +1.0f);
 
 			// store raw value
 			raw_value = in_raw_value;
-			max_value = max(max_value, in_raw_value);
-			min_value = min(min_value, in_raw_value);
+			max_value = std::max(max_value, in_raw_value);
+			min_value = std::min(min_value, in_raw_value);
 
 			// apply dead zone and normalization
 			final_value = 0.0f;
@@ -191,7 +191,7 @@ namespace chaos
 			float sqr_len = result.x * result.x + result.y * result.y;
 			if (sqr_len > 1.0f)
 			{
-				float len = MathTools::Sqrt(sqr_len);
+				float len = std::sqrt(sqr_len);
 				result.x /= len;
 				result.y /= len;
 			}

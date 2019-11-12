@@ -136,9 +136,9 @@ protected:
 		double realtime2 = clock2->GetClockTime();
 		double realtime3 = clock3->GetClockTime();
 
-		float Y1 = 5.0f * (float)chaos::MathTools::Cos(realtime1);
-		float Y2 = 5.0f * (float)chaos::MathTools::Cos(realtime2);
-		float Y3 = 5.0f * (float)chaos::MathTools::Cos(realtime3);
+		float Y1 = 5.0f * (float)std::cos(realtime1);
+		float Y2 = 5.0f * (float)std::cos(realtime2);
+		float Y3 = 5.0f * (float)std::cos(realtime3);
 
 		chaos::box3 b1(glm::vec3(0.0f, Y1, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 		chaos::box3 b2(glm::vec3(2.0f, Y2, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));

@@ -209,11 +209,11 @@ namespace chaos
 					float t2_1 = MathTools::GetSign(glm::dot(CA, CD)) * glm::length(CA) / CD_length;
 					float t2_2 = MathTools::GetSign(glm::dot(CB, CD)) * glm::length(CB) / CD_length;
 
-					result.t1_infinite_min = MathTools::Minimum(t1_1, t1_2);
-					result.t1_infinite_max = MathTools::Maximum(t1_1, t1_2);
+					result.t1_infinite_min = std::min(t1_1, t1_2);
+					result.t1_infinite_max = std::max(t1_1, t1_2);
 
-					result.t2_infinite_min = MathTools::Minimum(t2_1, t2_2);
-					result.t2_infinite_max = MathTools::Maximum(t2_1, t2_2);
+					result.t2_infinite_min = std::min(t2_1, t2_2);
+					result.t2_infinite_max = std::max(t2_1, t2_2);
 
 					return result; // infinity of solutions
 				}

@@ -459,7 +459,7 @@ namespace chaos
 			}
 
 			if (params.force_square)
-				params.atlas_width = params.atlas_height = max(params.atlas_width, params.atlas_height);
+				params.atlas_width = params.atlas_height = std::max(params.atlas_width, params.atlas_height);
 
 			// test the validity of size
 			if (params.atlas_max_width > 0 && params.atlas_max_width < params.atlas_width)

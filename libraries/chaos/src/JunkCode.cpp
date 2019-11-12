@@ -50,8 +50,8 @@ void Clock::FindUnusedIDStep1(int & smaller_id, int & bigger_id, bool recursive)
 		Clock const * clock = children_clocks[i].get(); // ignore clock with "NO" id
 		if (clock->clock_id > 0)
 		{
-			smaller_id = min(smaller_id, clock->clock_id);
-			bigger_id = max(bigger_id, clock->clock_id);
+			smaller_id = std::min(smaller_id, clock->clock_id);
+			bigger_id = std::max(bigger_id, clock->clock_id);
 		}
 		if (recursive)
 		{

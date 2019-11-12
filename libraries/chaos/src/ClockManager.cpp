@@ -35,7 +35,7 @@ namespace chaos
 		{
 			result.execution_range.first = start_time;
 			result.execution_range.second = std::numeric_limits<double>::max();
-			result.tick_range.first = max(start_time, t1);
+			result.tick_range.first = std::max(start_time, t1);
 			result.tick_range.second = t2;
 		}
 		// event without REPETITION
@@ -43,8 +43,8 @@ namespace chaos
 		{
 			result.execution_range.first = start_time;
 			result.execution_range.second = start_time + duration;
-			result.tick_range.first = max(start_time, t1);
-			result.tick_range.second = min(start_time + duration, t2);
+			result.tick_range.first = std::max(start_time, t1);
+			result.tick_range.second = std::min(start_time + duration, t2);
 		}
 		// event with limited duration (0 or finite) + REPETITION
 		else
@@ -55,26 +55,26 @@ namespace chaos
 
 			double tmp = (t1 - start_time) / (duration + repetition_delay);
 
-			double k1 = MathTools::Floor(tmp);
+			double k1 = std::floor(tmp);
 			double s1 = start_time + k1 * (duration + repetition_delay);
 
 			if (s1 <= t2 && s1 + duration >= t1)
 			{
 				result.execution_range.first = s1;
 				result.execution_range.second = s1 + duration;
-				result.tick_range.first = max(s1, t1);
-				result.tick_range.second = min(s1 + duration, t2);
+				result.tick_range.first = std::max(s1, t1);
+				result.tick_range.second = std::min(s1 + duration, t2);
 			}
 			else
 			{
-				double k2 = MathTools::Ceil(tmp);
+				double k2 = std::ceil(tmp);
 				double s2 = start_time + k2 * (duration + repetition_delay);
 				if (s2 <= t2 && s2 + duration >= t1)
 				{
 					result.execution_range.first = s2;
 					result.execution_range.second = s2 + duration;
-					result.tick_range.first = max(s2, t1);
-					result.tick_range.second = min(s2 + duration, t2);
+					result.tick_range.first = std::max(s2, t1);
+					result.tick_range.second = std::min(s2 + duration, t2);
 				}
 			}
 		}
@@ -236,7 +236,7 @@ namespace chaos
 				}
 				// do the repetition
 				event_info.start_time =
-					min(tick_data.tick_range.second, tick_data.time_slice.second) +
+					std::min(tick_data.tick_range.second, tick_data.time_slice.second) +
 					event_info.repetition_delay;
 
 				clock_event->tick_count = 0;

@@ -256,8 +256,8 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 		if (left_length_2 > 0.0f || right_length_2 > 0.0f)
 		{
 			direction = (left_length_2 > right_length_2) ?
-				left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
-				right_stick_position / chaos::MathTools::Sqrt(right_length_2);	
+				left_stick_position / std::sqrt(left_length_2) :
+				right_stick_position / std::sqrt(right_length_2);	
 
 			// axis Y reversed
 			direction *= glm::vec2(1.0f, -1.0f);

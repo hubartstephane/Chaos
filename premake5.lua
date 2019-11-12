@@ -476,6 +476,7 @@ function CppProject(in_kind, proj_type)
     kind(in_kind)
     
     language "C++"
+    cppdialect "C++17"
     
     -- change entry point for windows (avoid WinMain to main)
     if (os.target() == "windows") then

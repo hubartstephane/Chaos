@@ -264,7 +264,7 @@ namespace death
 			
 			sound_name         = geometric_object->FindPropertyString("SOUND_NAME", "");
 			min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
-			min_distance_ratio = chaos::MathTools::Clamp(min_distance_ratio);
+			min_distance_ratio = std::clamp(min_distance_ratio, 0.0f, 1.0f);
 			
 			pause_timer_when_too_far = geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
 			is_3D_sound              = geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
@@ -448,8 +448,8 @@ namespace death
 
 			// number of time to decal the layer box, to be directly left of the scissor box
 			glm::ivec2 offset_count = glm::ivec2(
-				(int)chaos::MathTools::Ceil((scissor_bottomleft.x - target_bottomleft.x - target_size.x) / target_size.x),
-				(int)chaos::MathTools::Ceil((scissor_bottomleft.y - target_bottomleft.y - target_size.y) / target_size.y)
+				(int)std::ceil((scissor_bottomleft.x - target_bottomleft.x - target_size.x) / target_size.x),
+				(int)std::ceil((scissor_bottomleft.y - target_bottomleft.y - target_size.y) / target_size.y)
 			);
 
 			// the bottomleft corner of the decaled box
@@ -458,8 +458,8 @@ namespace death
 			glm::vec2  tmp = ((scissor_bottomleft - virtual_target_bottomleft + scissor_size) / target_size);
 
 			glm::ivec2 repetition_count = glm::ivec2(
-				(int)chaos::MathTools::Ceil(tmp.x),
-				(int)chaos::MathTools::Ceil(tmp.y)
+				(int)std::ceil(tmp.x),
+				(int)std::ceil(tmp.y)
 			);
 
 			// unwrap case, then only visible instance is 0 (we previsously tested for visibility)

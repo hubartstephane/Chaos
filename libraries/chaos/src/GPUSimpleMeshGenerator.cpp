@@ -333,7 +333,7 @@ namespace chaos
 		{
 			float alpha = (float)i * delta_alpha;
 
-			glm::vec2 direction = glm::vec2(MathTools::Cos(alpha), MathTools::Sin(alpha));
+			glm::vec2 direction = glm::vec2(std::cos(alpha), std::sin(alpha));
 
 			vertices_writer << GLMTools::MultWithTranslation(transform, glm::vec3(primitive.radius * direction + primitive.position, 0.0f));
 			vertices_writer << normal;
@@ -365,7 +365,7 @@ namespace chaos
 
 	GPUMeshGenerationRequirement GPUSphereMeshGenerator::GetRequirement() const
 	{
-		int subdiv_beta = max(subdivisions, 3);
+		int subdiv_beta = std::max(subdivisions, 3);
 		int subdiv_alpha = subdiv_beta * 2;
 
 		GPUMeshGenerationRequirement result;
@@ -386,7 +386,7 @@ namespace chaos
 
 	void GPUSphereMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
 	{
-		int subdiv_beta = max(subdivisions, 3);
+		int subdiv_beta = std::max(subdivisions, 3);
 		int subdiv_alpha = subdiv_beta * 2;
 
 		glm::vec3 position = primitive.position;

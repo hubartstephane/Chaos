@@ -404,7 +404,7 @@ namespace chaos
 		glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_uniform_length);
 		glGetProgramiv(program, GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH, &max_block_length);
 
-		GLint max_length = max(max_attrib_length, max(max_uniform_length, max_block_length));
+		GLint max_length = std::max(max_attrib_length, std::max(max_uniform_length, max_block_length));
 
 		// allocate a buffer for the names
 		char buffer[256];

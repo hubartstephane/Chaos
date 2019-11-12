@@ -63,7 +63,7 @@ namespace chaos
 		static VECTOR_TYPE1 RecastVector(VECTOR_TYPE2 const & value)
 		{
 			VECTOR_TYPE1 result(0);
-			size_t count = min(result.length(), value.length());
+			size_t count = std::min(result.length(), value.length());
 			for (size_t i = 0; i < count; ++i)
 				result[i] = static_cast<VECTOR_TYPE1::value_type>(value[i]);
 

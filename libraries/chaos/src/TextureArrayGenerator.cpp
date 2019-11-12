@@ -130,8 +130,8 @@ namespace chaos
 		int height = 0;
 		for (TextureArraySliceRegistryEntry const & entry : slice_registry.slices)
 		{
-			width = max(width, entry.description.width);
-			height = max(height, entry.description.height);
+			width = std::max(width, entry.description.width);
+			height = std::max(height, entry.description.height);
 			pixel_format_merger.Merge(entry.description.pixel_format);
 		}
 
@@ -195,7 +195,7 @@ namespace chaos
 			{
 				ImageDescription const & desc = slice_registry.slices[i].description;
 				if (desc.pixel_format.component_count == 1)
-					required_allocation = max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, desc.width, desc.height)); // slice is GRAY
+					required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, desc.width, desc.height)); // slice is GRAY
 			}
 			if (required_allocation > 0)
 			{

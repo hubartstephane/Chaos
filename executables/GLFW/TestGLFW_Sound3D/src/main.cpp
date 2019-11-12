@@ -175,9 +175,9 @@ protected:
   glm::vec3 GetBoxPosition() const
   {
     return glm::vec3(
-      radius * chaos::MathTools::Cos(-box_alpha),
+      radius * std::cos(-box_alpha),
       0.0f,
-      radius * chaos::MathTools::Sin(-box_alpha)
+      radius * std::sin(-box_alpha)
     );
   }
 

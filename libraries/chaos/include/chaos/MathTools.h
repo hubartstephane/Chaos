@@ -143,67 +143,21 @@ namespace chaos
 			return value * value;
 		}
 
-		/** returns the minimum of 2 values */
-		template<typename T> 
-		static T Minimum(T x,T y)
-		{
-			return (x < y)? x : y;
-		}
-
-		/** returns the maximum of 2 values */
-		template<typename T> 
-		static T Maximum(T x,T y)
-		{
-			return (x > y)? x : y;
-		}
-
-		/** clamp a value between 2 bounds */
-		template<typename T>
-		static T Clamp(T value, T minvalue = 0, T maxvalue = static_cast<T>(1))
-		{
-			return Maximum(Minimum(value, maxvalue), minvalue);
-		}
-
 		/** Saturate a value to 1 */
 		template<typename T>
 		static T Saturate(T x)
 		{
-			return Minimum(x, static_cast<T>(1));
+			return std::min(x, static_cast<T>(1));
 		}
 
 		/** compute a vector from polar coordinates */
 		template<typename T> 
 		static glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
 		{
-			T c = Cos(beta);
+			T c = std::cos (beta);
 
-			return glm::tvec3<T>(Cos(alpha) * c, Sin(beta), Sin(alpha) * c);
+			return glm::tvec3<T>(std::cos(alpha) * c, std::sin(beta), std::sin(alpha) * c);
 		}
-
-		/** mathematic function wrapper for meta programming for Cos */
-		static float Cos(float f){ return cosf(f); }
-		/** mathematic function wrapper for meta programming for Cos */
-		static double Cos(double f){ return cos(f); }
-		/** mathematic function wrapper for meta programming for Sin */
-		static float Sin(float f){ return sinf(f); }
-		/** mathematic function wrapper for meta programming for Sin */
-		static double Sin(double f){ return sin(f); }
-		/** mathematic function wrapper for meta programming for SquareRoot */
-		static float Sqrt(float f){ return sqrtf(f); }
-		/** mathematic function wrapper for meta programming for SquareRoot */
-		static double Sqrt(double f){ return sqrt(f); }
-		/** mathematic function wrapper for meta programming for fmod */
-		static float Fmod(float numer, float denom){ return fmodf(numer, denom); }
-		/** mathematic function wrapper for meta programming for fmod */
-		static double Fmod(double  numer, double  denom){ return fmod(numer, denom); }
-		/** mathematic function wrapper for meta programming for ceil */
-		static float Ceil(float f){ return ceilf(f); }
-		/** mathematic function wrapper for meta programming for ceil */
-		static double Ceil(double f){ return ceil(f); }
-		/** mathematic function wrapper for meta programming for floor */
-		static float Floor(float f){ return floorf(f); }
-		/** mathematic function wrapper for meta programming for floor */
-		static double Floor(double f){ return floor(f); }
 
 		/** returns the linear interpolation between 2 values */
 		template<typename T> 
@@ -216,7 +170,7 @@ namespace chaos
 		template<typename T> 
 		static T Coserp(T t, T a, T b)
 		{
-			T f = (static_cast<T>(1) - Cos(t * static_cast<T>(M_PI)) / static_cast<T>(2));
+			T f = (static_cast<T>(1) - std::cos(t * static_cast<T>(M_PI)) / static_cast<T>(2));
 
 			//
 			//               t   -->  [ 0 ..  1]  

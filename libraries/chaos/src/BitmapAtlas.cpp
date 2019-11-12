@@ -46,7 +46,7 @@ namespace chaos
 				if (flag == GetBitmapLayoutFlag::none)
 					return BitmapLayout();
 				if (flag == GetBitmapLayoutFlag::clamp)
-					index = MathTools::Clamp(index, 0, animation_info->child_frame_count - 1);
+					index = std::clamp(index, 0, animation_info->child_frame_count - 1);
 				else if (flag == GetBitmapLayoutFlag::wrap)
 					index = index % animation_info->child_frame_count;
 			}
@@ -64,7 +64,7 @@ namespace chaos
 				if (flag == GetBitmapLayoutFlag::none)
 					return BitmapLayout();
 				if (flag == GetBitmapLayoutFlag::clamp)
-					grid_index.x = MathTools::Clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
+					grid_index.x = std::clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
 				else if (flag == GetBitmapLayoutFlag::wrap)
 					grid_index.x = grid_index.x % grid_data.grid_size.x;
 			}
@@ -74,7 +74,7 @@ namespace chaos
 				if (flag == GetBitmapLayoutFlag::none)
 					return BitmapLayout();
 				if (flag == GetBitmapLayoutFlag::clamp)
-					grid_index.y = MathTools::Clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
+					grid_index.y = std::clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
 				else if (flag == GetBitmapLayoutFlag::wrap)
 					grid_index.y = grid_index.y % grid_data.grid_size.y;
 			}
@@ -172,7 +172,7 @@ namespace chaos
 				return animation_info->child_frame_count;
 
 			assert(animation_info->IsGridAnimation());
-			return (size_t)MathTools::Maximum((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
+			return (size_t)std::max((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
 		}
 
 		float BitmapInfo::GetFrameTime() const

@@ -53,7 +53,7 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 		}
 		else
 		{
-			l = chaos::MathTools::Sqrt(l2);
+			l = std::sqrt(l2);
 		}
 
 		// whether the particle is inside the inner radius
@@ -62,7 +62,7 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 			in_inner_radius = true;
 
 		float distance_ratio = 1.0f;
-		distance_ratio = chaos::MathTools::Clamp(1.0f - (l - attraction_minradius) / (attraction_maxradius - attraction_minradius));
+		distance_ratio = std::clamp(1.0f - (l - attraction_minradius) / (attraction_maxradius - attraction_minradius), 0.0f, 1.0f);
 
 		// create a tangent force
 		if (glm::length2(particle_velocity) > 0.0f)
@@ -94,13 +94,13 @@ bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_
 {
 	if (in_inner_radius)
 	{
-		particle->life = chaos::MathTools::Clamp(particle->life - delta_time, 0.0f, lifetime);
+		particle->life = std::clamp(particle->life - delta_time, 0.0f, lifetime);
 		if (particle->life <= 0.0f)
 			return true; // destroy the particle
 	}
 	else
 	{
-		particle->life = chaos::MathTools::Clamp(particle->life + delta_time, 0.0f, lifetime);
+		particle->life = std::clamp(particle->life + delta_time, 0.0f, lifetime);
 	}
 
 	if (player)
@@ -201,7 +201,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 	if (particle->level_end_reached)
 	{
-		particle->level_end_timer = chaos::MathTools::Maximum(0.0f, particle->level_end_timer - delta_time);
+		particle->level_end_timer = std::max(0.0f, particle->level_end_timer - delta_time);
 		particle->color.a = particle->level_end_timer / 2.0f;
 	}
 	else

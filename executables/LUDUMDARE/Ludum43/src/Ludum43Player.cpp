@@ -64,8 +64,8 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
 	{
 		glm::vec2 acceleration = (left_length_2 > right_length_2) ?
-			left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
-			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
+			left_stick_position / std::sqrt(left_length_2) :
+			right_stick_position / std::sqrt(right_length_2);
 
 		player_particle->acceleration = ludum_game->player_acceleration * glm::vec2(1.0f, -1.0f) * acceleration; // axis Y reversed
 	}
@@ -73,17 +73,17 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 
 void LudumPlayer::TickCooldown(double delta_time)
 {
-	current_cooldown = chaos::MathTools::Maximum(0.0f, current_cooldown - (float)delta_time);
+	current_cooldown = std::max(0.0f, current_cooldown - (float)delta_time);
 }
 
 void LudumPlayer::TickDashValues(double delta_time)
 {
 	// cooldow in progress
 	if (current_dash_cooldown > 0.0f)
-		current_dash_cooldown = chaos::MathTools::Maximum(0.0f, current_dash_cooldown - (float)delta_time);
+		current_dash_cooldown = std::max(0.0f, current_dash_cooldown - (float)delta_time);
 	if (current_dash_duration > 0.0f)
 	{
-		current_dash_duration = chaos::MathTools::Maximum(0.0f, current_dash_duration - (float)delta_time);
+		current_dash_duration = std::max(0.0f, current_dash_duration - (float)delta_time);
 		if (current_dash_duration == 0.0f)
 			SetDashMode(false);
 	}

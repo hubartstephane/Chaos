@@ -155,8 +155,8 @@ namespace chaos
 		}
 		else if (params.upgrade_pixel_format)
 		{
-			result.component_type = max(result.component_type, src.component_type);
-			result.component_count = max(result.component_count, src.component_count);		
+			result.component_type = std::max(result.component_type, src.component_type);
+			result.component_count = std::max(result.component_count, src.component_count);
 		}
 	}
 

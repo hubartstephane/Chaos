@@ -231,42 +231,42 @@ namespace chaos
 		/// utility fonctions for blending pixels
 		static void BlendPixel(PixelGray & dst, PixelGray const & src)
 		{
-			dst = max(dst, src);
+			dst = std::max(dst, src);
 		}
 		/// utility fonctions for blending pixels
 		static void BlendPixel(PixelBGR & dst, PixelBGR const & src)
 		{
-			dst.R = max(dst.R, src.R);
-			dst.G = max(dst.G, src.G);
-			dst.B = max(dst.B, src.B);
+			dst.R = std::max(dst.R, src.R);
+			dst.G = std::max(dst.G, src.G);
+			dst.B = std::max(dst.B, src.B);
 		}
 		/// utility fonctions for blending pixels
 		static void BlendPixel(PixelBGRA & dst, PixelBGRA const & src)
 		{
-			dst.R = max(dst.R, src.R);
-			dst.G = max(dst.G, src.G);
-			dst.B = max(dst.B, src.B);
-			dst.A = max(dst.A, src.A);
+			dst.R = std::max(dst.R, src.R);
+			dst.G = std::max(dst.G, src.G);
+			dst.B = std::max(dst.B, src.B);
+			dst.A = std::max(dst.A, src.A);
 		}
 		/// utility fonctions for blending pixels
 		static void BlendPixel(PixelGrayFloat & dst, PixelGrayFloat const & src)
 		{
-			dst = max(dst, src);
+			dst = std::max(dst, src);
 		}
 		/// utility fonctions for blending pixels
 		static void BlendPixel(PixelRGBFloat & dst, PixelRGBFloat const & src)
 		{
-			dst.R = max(dst.R, src.R);
-			dst.G = max(dst.G, src.G);
-			dst.B = max(dst.B, src.B);
+			dst.R = std::max(dst.R, src.R);
+			dst.G = std::max(dst.G, src.G);
+			dst.B = std::max(dst.B, src.B);
 		}
 		/// utility fonctions for blending pixels
 		static void BlendPixel(PixelRGBAFloat & dst, PixelRGBAFloat const & src)
 		{
-			dst.R = max(dst.R, src.R);
-			dst.G = max(dst.G, src.G);
-			dst.B = max(dst.B, src.B);
-			dst.A = max(dst.A, src.A);
+			dst.R = std::max(dst.R, src.R);
+			dst.G = std::max(dst.G, src.G);
+			dst.B = std::max(dst.B, src.B);
+			dst.A = std::max(dst.A, src.A);
 		}
 		/// utility fonctions for blending pixels
 		static void BlendPixel(PixelDepthStencil & dst, PixelDepthStencil const & src)
@@ -407,10 +407,10 @@ namespace chaos
 			int y2 = pos_y + bt + h;
 
 			// update min/max X,Y
-			min_x = min(min_x, min(x1, x2));
-			min_y = min(min_y, min(y1, y2));
-			max_x = max(max_x, max(x1, x2));
-			max_y = max(max_y, max(y1, y2));
+			min_x = std::min(min_x, std::min(x1, x2));
+			min_y = std::min(min_y, std::min(y1, y2));
+			max_x = std::max(max_x, std::max(x1, x2));
+			max_y = std::max(max_y, std::max(y1, y2));
 
 			// advance the cursor
 			pos_x += avx;

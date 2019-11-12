@@ -92,7 +92,7 @@ namespace chaos
 		int result = -1;
 		for (auto const & entry : entries)
 			if (entry.semantic == semantic)
-				result = max(result, entry.semantic_index);
+				result = std::max(result, entry.semantic_index);
 		return result + 1;
 	}
 
@@ -113,7 +113,7 @@ namespace chaos
 
 	int GPUVertexDeclaration::GetBoneCount() const
 	{
-		return min(GetSemanticCount(SEMANTIC_BONEINDEX), GetSemanticCount(SEMANTIC_BONEWEIGHT));
+		return std::min(GetSemanticCount(SEMANTIC_BONEINDEX), GetSemanticCount(SEMANTIC_BONEWEIGHT));
 	}
 
 

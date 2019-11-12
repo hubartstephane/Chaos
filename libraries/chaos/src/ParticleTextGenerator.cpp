@@ -516,7 +516,7 @@ namespace chaos
 				// tabulation : no different handling if previous character was an escape character
 				else if (c == '\t')
 				{
-					int tab_size = min(generator_data.params.tab_size, 1);
+					int tab_size = std::min(generator_data.params.tab_size, 1);
 					generator_data.EmitCharacters(' ', tab_size);
 				}
 				// if escape is set, simply display the incoming character no matter what it is (except \n \r \t)

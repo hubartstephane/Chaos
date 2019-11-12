@@ -225,7 +225,7 @@ ParticleExplosion * LudumGameInstance::FireExplosion(chaos::box2 const & ref_box
 	ParticleExplosion * p = &particle[particle.GetCount() - 1];
 
 	p->bounding_box = ref_box; 
-	p->bounding_box.half_size.x = p->bounding_box.half_size.y = 1.3f * chaos::MathTools::Maximum(ref_box.half_size.x, ref_box.half_size.y);
+	p->bounding_box.half_size.x = p->bounding_box.half_size.y = 1.3f * std::max(ref_box.half_size.x, ref_box.half_size.y);
 
 	p->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); 
 	p->explosion_info = explosion_info;

@@ -72,7 +72,7 @@ namespace death
 			velocity.y = impulse;
 		// clamp the vertical velocity
 		if (max_velocity.y >= 0.0f)
-			velocity.y = chaos::MathTools::Clamp(velocity.y, -max_velocity.y, +max_velocity.y);
+			velocity.y = std::clamp(velocity.y, -max_velocity.y, +max_velocity.y);
 	}
 
 	float PlayerMovement::UpdateVerticalImpulse(double delta_time, bool & jump_stopped_thrown)

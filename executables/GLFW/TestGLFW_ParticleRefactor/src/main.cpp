@@ -104,7 +104,7 @@ public:
 		{
 			vertices[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
 
-			vertices[i].position.y += 50 * chaos::MathTools::Cos(time);
+			vertices[i].position.y += 50 * std::cos(time);
 		}
 
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
@@ -287,8 +287,8 @@ protected:
 			particles[i].box.position = center;
 			particles[i].box.half_size = 0.5f * glm::vec2(size, size);
 			particles[i].velocity = glm::vec2(
-				speed * chaos::MathTools::Cos(alpha),
-				speed * chaos::MathTools::Sin(alpha));			
+				speed * std::cos(alpha),
+				speed * std::sin(alpha));			
 			particles[i].lifetime = lifetime;
 			particles[i].remaining_time = lifetime;			
 		}

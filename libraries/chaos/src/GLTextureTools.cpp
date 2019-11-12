@@ -189,7 +189,7 @@ namespace chaos
 
 	int GLTextureTools::GetMipmapLevelCount(int width, int height)
 	{
-		return GetMipmapLevelCount(max(width, height));
+		return GetMipmapLevelCount(std::max(width, height));
 	}
 
 	int GLTextureTools::GetMipmapLevelCount(int width)

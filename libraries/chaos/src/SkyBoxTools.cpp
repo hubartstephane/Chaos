@@ -109,10 +109,10 @@ namespace chaos
 		if (width > 0 && height > 0)
 		{
 			// image should be 4/3
-			int min_size = min(width, height);    
+			int min_size = std::min(width, height);
 			if (min_size % 3 != 0)
 				return -1;
-			int max_size = max(width, height);
+			int max_size = std::max(width, height);
 			if (max_size % 4 != 0)
 				return -1;
 			// each sub image should be square

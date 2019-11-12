@@ -80,7 +80,7 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 	else
 		player_length = in_length;
 
-	player_length = chaos::MathTools::Clamp(player_length, ludum_game->player_min_length, ludum_game->player_max_length);
+	player_length = std::clamp(player_length, ludum_game->player_min_length, ludum_game->player_max_length);
 
 	chaos::box2 box = GetPlayerBox();
 	box.half_size = glm::vec2(player_length * 0.5f, PLAYER_HEIGHT * 0.5f);

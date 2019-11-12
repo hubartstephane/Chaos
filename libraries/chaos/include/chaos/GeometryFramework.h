@@ -1121,7 +1121,7 @@ namespace chaos
 		}
 		else if (json_entry.is_array())
 		{
-			size_t count = MathTools::Minimum(json_entry.size(), (size_t)dst.length());
+			size_t count = std::min(json_entry.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count; ++i)
 				dst[i] = json_entry[i].get<T>();
 			return true;
@@ -1151,7 +1151,7 @@ namespace chaos
 		}
 		else if (json_entry.is_array())
 		{
-			size_t count = MathTools::Minimum(json_entry.size(), (size_t)dst.length());
+			size_t count = std::min(json_entry.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count; ++i)
 				dst[i] = json_entry[i].get<T>();
 			return true;
@@ -1183,7 +1183,7 @@ namespace chaos
 		}
 		else if (json_entry.is_array())
 		{
-			size_t count = MathTools::Minimum(json_entry.size(), (size_t)dst.length());
+			size_t count = std::min(json_entry.size(), (size_t)dst.length());
 			for (size_t i = 0; i < count ; ++i)
 				dst[i] = json_entry[i].get<T>();
 			return true;

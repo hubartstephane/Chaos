@@ -23,7 +23,7 @@ namespace chaos
 	void FPSViewController::GoBackward(float speed)
 	{
 		float angle = MathTools::DegreeToRadian(yaw);
-		position += speed * glm::vec3(MathTools::Sin(angle), 0.0f, MathTools::Cos(angle));
+		position += speed * glm::vec3(std::sin(angle), 0.0f, std::cos(angle));
 	}
 
 	void FPSViewController::GoForward(float speed)
@@ -33,13 +33,13 @@ namespace chaos
 
 	// use :
 	//   float angle = MathTools::DegreeToRadian(yaw + 90.0f);
-	//   position += speed * glm::vec3(MathTools::Sin(angle), 0.0f, MathTools::Cos(angle));
+	//   position += speed * glm::vec3(std::sin(angle), 0.0f, std::cos(angle));
 	// apply :
 	//   cos(PI/2 + x) = -sin(x)     sin(PI/2 + x) = cos(x)
 	void FPSViewController::StrafeRight(float speed)
 	{
 		float angle = MathTools::DegreeToRadian(yaw);
-		position += speed * glm::vec3(MathTools::Cos(angle), 0.0f, -MathTools::Sin(angle));
+		position += speed * glm::vec3(std::cos(angle), 0.0f, -std::sin(angle));
 	}
 
 	void FPSViewController::StrafeLeft(float speed)
@@ -49,17 +49,17 @@ namespace chaos
 
 	void FPSViewController::SetPitch(float value)
 	{
-		pitch = MathTools::Clamp(value, -90.0f, 90.0f);
+		pitch = std::clamp(value, -90.0f, 90.0f);
 	}
 
 	void FPSViewController::SetYaw(float value)
 	{
-		yaw = MathTools::Fmod(value, 360.0f);
+		yaw = std::fmod(value, 360.0f);
 	}
 
 	void FPSViewController::SetRoll(float value)
 	{
-		roll = MathTools::Fmod(value, 360.0f);
+		roll = std::fmod(value, 360.0f);
 	}
 
 	void FPSViewController::IncrementPitch(float value)

@@ -64,8 +64,8 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	if (left_length_2 > 0.0f || right_length_2 > 0.0f)
 	{
 		glm::vec2 speed = (left_length_2 > right_length_2) ?
-			left_stick_position / chaos::MathTools::Sqrt(left_length_2) :
-			right_stick_position / chaos::MathTools::Sqrt(right_length_2);
+			left_stick_position / std::sqrt(left_length_2) :
+			right_stick_position / std::sqrt(right_length_2);
 
 		player_particle->velocity = ludum_game->player_speeds[current_speed_index] * ludum_game->player_speed_factor * glm::vec2(1.0f, -1.0f) * speed; // axis Y reversed
 	}

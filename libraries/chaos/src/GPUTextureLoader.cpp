@@ -316,7 +316,7 @@ namespace chaos
 			}
 			// compute memory required
 			if (conversion_required[i])
-				required_allocation = max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, size, size));
+				required_allocation = std::max(required_allocation, (size_t)ImageTools::GetMemoryRequirementForAlignedTexture(final_pixel_format, size, size));
 		}
 
 		// allocate the buffer

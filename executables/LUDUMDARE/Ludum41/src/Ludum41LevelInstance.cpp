@@ -119,7 +119,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 			{
 				particles[k].indestructible = false;
 
-				size_t color_index = min((size_t)b, color_count - 1);
+				size_t color_index = std::min((size_t)b, color_count - 1);
 				particles[k].color = colors[color_index];
 				particles[k].life = (float)b;
 			}

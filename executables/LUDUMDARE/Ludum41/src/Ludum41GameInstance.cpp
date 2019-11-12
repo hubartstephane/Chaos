@@ -45,7 +45,7 @@ void LudumGameInstance::TickChallenge(double delta_time)
 	else
 	{
 		// start a challenge (only if one ball is going upward)
-		challenge_timer = max(0.0f, challenge_timer - (float)delta_time);
+		challenge_timer = std::max(0.0f, challenge_timer - (float)delta_time);
 		if (challenge_timer <= 0.0f)
 			if (CanStartChallengeBallIndex(false) != std::numeric_limits<size_t>::max()) // any ball going up
 				sequence_challenge = CreateSequenceChallenge();
@@ -326,7 +326,7 @@ void LudumGameInstance::OnBallSpeedChallenge(bool success)
 	else
 		ball_speed = ball_speed + ludum_game->ball_speed_increment;
 
-	ball_speed = chaos::MathTools::Clamp(ball_speed, ludum_game->ball_initial_speed, ludum_game->ball_max_speed);
+	ball_speed = std::clamp(ball_speed, ludum_game->ball_initial_speed, ludum_game->ball_max_speed);
 }
 
 void LudumGameInstance::OnBrickOffsetChallenge(bool success)
@@ -338,7 +338,7 @@ void LudumGameInstance::OnBrickOffsetChallenge(bool success)
 	else
 		target_brick_offset += ludum_game->brick_offset_increment;
 
-	target_brick_offset = chaos::MathTools::Clamp(target_brick_offset, 0.0f, ludum_game->max_brick_offset);
+	target_brick_offset = std::clamp(target_brick_offset, 0.0f, ludum_game->max_brick_offset);
 }
 
 bool LudumGameInstance::IsBrickOffsetChallengeValid(bool success)
@@ -365,7 +365,7 @@ void LudumGameInstance::OnBallPowerChallenge(bool success)
 		ball_power = (ball_power == 0.5f) ? 1.0f : (ball_power + 1.0f);
 	else
 		ball_power = (ball_power == 1.0f) ? 0.5f : (ball_power - 1.0f);
-	ball_power = chaos::MathTools::Clamp(ball_power, 0.5f, 3.0f);
+	ball_power = std::clamp(ball_power, 0.5f, 3.0f);
 }
 
 bool LudumGameInstance::IsExtraBallChallengeValid(bool success)
@@ -431,8 +431,8 @@ glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
 		direction * chaos::MathTools::RandFloat(0, 3.14f * 0.125f); // final adjustement
 
 	return glm::vec2(
-		chaos::MathTools::Cos(angle),
-		chaos::MathTools::Sin(angle));
+		std::cos(angle),
+		std::sin(angle));
 }
 
 
@@ -674,7 +674,7 @@ void LudumGameInstance::OnBallCollide(bool collide_brick)
 
 	game->Play("ball", false, false, 0.0f, death::SoundContext::GAME);
 
-	ball_collision_speed = min(ludum_game->ball_collision_max_speed, ball_collision_speed + ludum_game->ball_collision_speed_increment);
+	ball_collision_speed = std::min(ludum_game->ball_collision_max_speed, ball_collision_speed + ludum_game->ball_collision_speed_increment);
 
 	if (collide_brick)
 		IncrementScore(ludum_game->points_per_brick);

@@ -80,7 +80,7 @@ namespace chaos
 					if (forced_tick_duration > 0.0)
 						delta_time = forced_tick_duration;
 					else if (max_tick_duration > 0.0)
-						delta_time = min(delta_time, max_tick_duration);				
+						delta_time = std::min(delta_time, max_tick_duration);
 				}
 
 				// tick the renderer
@@ -149,12 +149,12 @@ namespace chaos
 				if (params.width <= 0)
 					params.width = mode->width;
 				else
-					params.width = min(mode->width, params.width);
+					params.width = std::min(mode->width, params.width);
 
 				if (params.height <= 0)
 					params.height = mode->height;
 				else
-					params.height = min(mode->height, params.height);
+					params.height = std::min(mode->height, params.height);
 
 				x = monitor_x + (mode->width - params.width) / 2;
 				y = monitor_y + (mode->height - params.height) / 2;

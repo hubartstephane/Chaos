@@ -51,10 +51,10 @@ glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const
 	float S2 = 1.0f;
 	float BASE_R = 50.0f;
 
-	float R = (2.0f + chaos::MathTools::Cos(S1 * allocation_data.rotation_time));
+	float R = (2.0f + std::cos(S1 * allocation_data.rotation_time));
 
-	result.x = BASE_R * R * chaos::MathTools::Cos(S2 * allocation_data.rotation_time);
-	result.y = BASE_R * R * chaos::MathTools::Sin(S2 * allocation_data.rotation_time);
+	result.x = BASE_R * R * std::cos(S2 * allocation_data.rotation_time);
+	result.y = BASE_R * R * std::sin(S2 * allocation_data.rotation_time);
 #endif
 	return result;
 }

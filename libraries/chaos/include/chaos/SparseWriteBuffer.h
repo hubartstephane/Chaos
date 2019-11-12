@@ -88,7 +88,7 @@ namespace chaos
 				if (block_size == used_size)
 					break;
 
-				size_t to_write = min(size, block_size - used_size);
+				size_t to_write = std::min(size, block_size - used_size);
 
 				DoWriteToBuffer(block, data, to_write);
 

@@ -122,13 +122,13 @@ namespace chaos
 		// update the blend data
 		if (blend_desc.blend_type == BlendVolumeDesc::BLEND_IN)
 		{
-			blend_value = MathTools::Clamp(blend_value + delta_blend, 0.0f, 1.0f);
+			blend_value = std::clamp(blend_value + delta_blend, 0.0f, 1.0f);
 			if (blend_value >= 1.0f)
 				OnBlendFinished();
 		}
 		else if (blend_desc.blend_type == BlendVolumeDesc::BLEND_OUT)
 		{
-			blend_value = MathTools::Clamp(blend_value - delta_blend, 0.0f, 1.0f);
+			blend_value = std::clamp(blend_value - delta_blend, 0.0f, 1.0f);
 			if (blend_value <= 0.0f)
 				OnBlendFinished();
 		}
@@ -238,7 +238,7 @@ namespace chaos
 
 	void SoundObject::SetVolume(float in_volume)
 	{
-		in_volume = MathTools::Clamp(in_volume, 0.0f, 1.0f);
+		in_volume = std::clamp(in_volume, 0.0f, 1.0f);
 		// early exit
 		if (!IsAttachedToManager())
 			return;		
@@ -398,7 +398,7 @@ namespace chaos
 			result->velocity = play_desc.velocity;
 			result->paused = play_desc.paused;
 			result->looping = play_desc.looping;
-			result->volume = MathTools::Clamp(play_desc.volume, 0.0f, 1.0f); ;
+			result->volume = std::clamp(play_desc.volume, 0.0f, 1.0f); ;
 			result->callbacks = in_callbacks;
 
 			if (play_desc.sound_name.length() > 0)

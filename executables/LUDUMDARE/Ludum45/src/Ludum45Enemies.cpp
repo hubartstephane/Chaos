@@ -47,8 +47,8 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 		
 		float R = spawner_radius - particle_half_size.x;
 		particle_position = spawner_position;
-		particle_position.x += R * cosf(t);
-		particle_position.y += R * sin(t);		
+		particle_position.x += R * std::cos(t);
+		particle_position.y += R * std::sin(t);
 
 		result = spawner_out;
 	}
@@ -58,7 +58,7 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 		// COS sur Y
 
 		particle_position.x = spawner_position.x + spawner_half_size.x * (particle_ratio * 2.0f - 1.0f);
-		particle_position.y = spawner_position.y + spawner_half_size.y * cosf(t);
+		particle_position.y = spawner_position.y + spawner_half_size.y * std::cos(t);
 
 		result = particle_out;
 	}

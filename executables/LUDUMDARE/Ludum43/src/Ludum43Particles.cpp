@@ -270,7 +270,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		particle->rotation_alpha -= 2.0f * (float)M_PI;
 
 
-	glm::vec2 v = glm::vec2(cosf(particle->rotation_alpha), sinf(particle->rotation_alpha));
+	glm::vec2 v = glm::vec2(std::cos(particle->rotation_alpha), std::sin(particle->rotation_alpha));
 
 
 	particle->bounding_box.position =

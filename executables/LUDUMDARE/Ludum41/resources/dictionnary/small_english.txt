@@ -6184,7 +6184,7 @@ autolyze
 autolyzed
 autolyzes
 autolyzing
-state_machine
+automata
 automate
 automateable
 automated

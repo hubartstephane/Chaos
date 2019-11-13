@@ -275,7 +275,7 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 		float particle_orientation = rotation + offset_rotation;
 		float particle_velocity_orientation = offset_rotation + rotation + (float)M_PI_2;
 
-		glm::vec2 direction = glm::vec2(cosf(particle_velocity_orientation), sinf(particle_velocity_orientation));
+		glm::vec2 direction = glm::vec2(std::cos(particle_velocity_orientation), std::sin(particle_velocity_orientation));
 		result[i].velocity  = velocity * direction;
 		result[i].rotation  = particle_orientation;
 

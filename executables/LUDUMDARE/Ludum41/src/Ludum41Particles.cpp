@@ -256,7 +256,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 glm::vec2 MakeVelocityFromAngle(float angle)
 {
-	return glm::vec2(cosf(angle), sinf(angle));
+	return glm::vec2(std::cos(angle), std::sin(angle));
 }
 
 glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const

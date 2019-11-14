@@ -5,18 +5,56 @@
 #include <chaos/ImageTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/WinTools.h>
+#include <chaos/GLMTools.h>
 #include <chaos/MathTools.h>
 
 class MyApplication : public chaos::Application
 {
 protected:
 
-	static float GetPixelAlpha(glm::ivec2 const & p, glm::ivec2 const & image_size, glm::ivec2 const& cell_size, float ratio)
+	static int GetLayerCount(glm::ivec2 const & cell_count)
 	{
-		float X = chaos::MathTools::CastAndDiv<float>(p.x, image_size.x);
-		float Y = chaos::MathTools::CastAndDiv<float>(p.y, image_size.y);
+		assert(cell_count.x > 0);
+		assert(cell_count.y > 0);
 
-		return ratio * X * Y;
+		int m = std::min(cell_count.x, cell_count.y);
+		return (m / 2) + (m & 1);
+	}
+
+
+
+
+
+	static int GetCellLayer(glm::ivec2 const & cell, glm::ivec2 const& cell_count)
+	{
+		// which border is the cell the more nearby
+		return std::min(
+			std::min(cell.x, cell_count.x - cell.x - 1),
+			std::min(cell.y, cell_count.y - cell.y - 1)
+		);
+	}
+
+	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& cell_count, float ratio)
+	{
+		assert(cell_count.x > 0 && cell_count.y > 0);
+
+		// size of a cell
+		glm::vec2 cell_size = image_size / chaos::GLMTools::RecastVector<glm::vec2>(cell_count);
+		// the cell containing the point considered
+		glm::ivec2 cell = chaos::GLMTools::RecastVector<glm::ivec2>(pos / cell_size);
+
+
+		int layer_count = GetLayerCount(cell_count);
+		int cell_layer  = GetCellLayer(cell, cell_count);
+
+		return (float)cell_layer / (float)layer_count;
+
+		//return cell.x / (float)cell_count.x;
+
+	//	float X = chaos::MathTools::CastAndDiv<float>(p.x, image_size.x);
+	//	float Y = chaos::MathTools::CastAndDiv<float>(p.y, image_size.y);
+
+	//	return ratio * X * Y;
 
 
 
@@ -31,21 +69,7 @@ protected:
 		return 0.0f;
 	}
 
-	static float GetPixelAlpha(glm::ivec2 const& p, int w0, int h0)
-	{
-		assert(p.x >= 0 && p.x <= w0 - 1);
-		assert(p.y >= 0 && p.y <= h0 - 1);
-
-
-		int layer_index = std::min(
-			std::min(p.x, w0 - p.x - 1),
-			std::min(p.y, h0 - p.y - 1));
-
-
-
-
-		return 0.0f;
-	}
+#if 0
 
 	static int GetDimension(int s0, int layer_index)
 	{
@@ -69,22 +93,15 @@ protected:
 			return w0 + h0 - 2 - 4 * layer_index;
 	}
 
-	static int GetLayerCount(int w0, int h0)
+
+
+
+#endif
+
+
+	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_count, float ratio, boost::filesystem::path const & dst_directory_path)
 	{
-		assert(w0 > 0);
-		assert(h0 > 0);
-
-		int s0 = std::min(w0, h0);
-		return (s0 / 2) + (s0 & 1);
-	}
-
-
-
-
-
-	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_size, float ratio, boost::filesystem::path const & dst_directory_path)
-	{
-		FIBITMAP* img = chaos::ImageTools::GenFreeImage<chaos::PixelBGRA>(image_size.x, image_size.y, [image_size, cell_size, ratio](chaos::ImageDescription & desc) {
+		FIBITMAP* img = chaos::ImageTools::GenFreeImage<chaos::PixelBGRA>(image_size.x, image_size.y, [image_size, cell_count, ratio](chaos::ImageDescription & desc) {
 					
 			for (int j = 0; j < desc.height; ++j)
 			{
@@ -92,7 +109,7 @@ protected:
 				
 				for (int i = 0; i < desc.width; ++i)
 				{
-					float alpha = GetPixelAlpha(glm::ivec2(i, j), image_size, cell_size, ratio);
+					float alpha = GetPixelAlpha(glm::vec2((float)i, (float)j), glm::vec2((float)image_size.x, (float)image_size.y), cell_count, ratio);
 
 					bgra[i].R = (char)(alpha * 255.0f);
 					bgra[i].G = (char)(alpha * 255.0f);
@@ -129,7 +146,7 @@ protected:
 		for (int i = 0; i < texture_count; ++i)
 		{
 			float ratio = chaos::MathTools::CastAndDiv<float>(i, texture_count - 1);
-			GenerateTexture(i, glm::ivec2(160, 90), glm::ivec2(10, 10), ratio, dst_directory_path);
+			GenerateTexture(i, glm::ivec2(160, 90), glm::ivec2(16, 9), ratio, dst_directory_path);
 		}
 			
 		chaos::WinTools::ShowFile(dst_directory_path);

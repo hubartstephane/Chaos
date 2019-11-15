@@ -2,6 +2,7 @@
 -- ROOT_PATH/executables/MISC
 -- =============================================================================
 
+ProcessSubPremake("TestFadeVortexImage")
 ProcessSubPremake("TestC++11")
 ProcessSubPremake("TestC++17")
 ProcessSubPremake("TestAllLibs")

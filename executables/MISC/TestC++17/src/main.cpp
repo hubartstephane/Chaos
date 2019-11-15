@@ -12,6 +12,25 @@ class MyApplication : public chaos::Application
 {
 protected:
 
+	// The image is split per layers
+	// The elements on those layers fade in order (A first, C last)
+	//
+	// A A A A A A
+	// A B B B B A
+	// A B C C B A
+	// A B B B B A
+	// A A A A A A
+	// 	
+	// for a given the layer the element fade according to their category
+	// this create a smooth animation
+	//
+	// 1 2 3 4 5 6 7
+	// 9           8
+	// 8           9
+	// 7 6 5 4 3 2 1
+	//
+
+	// the number of layers
 	static int GetLayerCount(glm::ivec2 const & cell_count)
 	{
 		assert(cell_count.x > 0);
@@ -21,10 +40,45 @@ protected:
 		return (m / 2) + (m & 1);
 	}
 
+	// the cell count for a given sub layer
+	static glm::ivec2 GetLayerCellCount(glm::ivec2 const& cell_count, int layer_index)
+	{
+		assert(cell_count.x > 0);
+		assert(cell_count.y > 0);
+
+		return glm::ivec2(
+			cell_count.x - 2 * layer_index,
+			cell_count.y - 2 * layer_index);
+	}
 
 
+	// the number of cell categories in a layer
+	static int GetCellCategoryOnLayer(glm::ivec2 const & cell_count, int layer_index)
+	{
+		assert(cell_count.x > 0);
+		assert(cell_count.y > 0);
 
+		glm::ivec2 layer_cell_count = GetLayerCellCount(cell_count, layer_index);
 
+		if (layer_cell_count.x == 1)
+			return (layer_cell_count.y / 2) + (layer_cell_count.y & 1);
+		else if (layer_cell_count.y == 1)
+			return (layer_cell_count.x / 2) + (layer_cell_count.x & 1);
+		else
+			return layer_cell_count.x + layer_cell_count.y - 2;
+	}
+
+	// the sum of all categories on all previous layers
+	static int GetSumCellCategoryForPreviousLayers(glm::ivec2 const& cell_count, int layer_index)
+	{
+		if (layer_index == 0)
+			return 0;
+
+		int base_category = cell_count.x + cell_count.y - 2; // number of categories for layer 0
+
+		return layer_index * base_category - 4 * (layer_index - 1) * (layer_index) / 2;
+	}
+	// the layer the cell is on
 	static int GetCellLayer(glm::ivec2 const & cell, glm::ivec2 const& cell_count)
 	{
 		// which border is the cell the more nearby
@@ -43,11 +97,28 @@ protected:
 		// the cell containing the point considered
 		glm::ivec2 cell = chaos::GLMTools::RecastVector<glm::ivec2>(pos / cell_size);
 
-
+		// the total number of layers
 		int layer_count = GetLayerCount(cell_count);
+		// the current layer for given cell
 		int cell_layer  = GetCellLayer(cell, cell_count);
+		// number of categories for that layer
+		int category_count = GetCellCategoryOnLayer(cell_count, cell_layer);
+		// number of categories in all previous layers
+		int previous_category_count = GetSumCellCategoryForPreviousLayers(cell_count, cell_layer);
 
-		return (float)cell_layer / (float)layer_count;
+
+
+
+
+
+
+
+	//	return (float)category_count / (float)(cell_count.x * cell_count.y);
+
+	//	return (float)cell_layer / (float)layer_count;
+
+
+//		return (float)cell_layer / (float)layer_count;
 
 		//return cell.x / (float)cell_count.x;
 
@@ -61,7 +132,14 @@ protected:
 
 
 
-
+#if 0
+		if (cell_layer == 0)
+			cell_layer = cell_layer;
+		if (cell_layer == 1)
+			cell_layer = cell_layer;
+		if (cell_layer == 2)
+			cell_layer = cell_layer;
+#endif 
 
 
 
@@ -71,27 +149,6 @@ protected:
 
 #if 0
 
-	static int GetDimension(int s0, int layer_index)
-	{
-		return s0 - 2 * layer_index;
-	}
-
-
-	static int GetElementPerLayer(int w0, int h0, int layer_index)
-	{
-		assert(w0 > 0);
-		assert(h0 > 0);
-
-		int wn = GetDimension(w0, layer_index);
-		int hn = GetDimension(h0, layer_index);
-
-		if (w0 == 1)
-			return (h0 / 2) + (h0 & 1); 
-		else if (h0 == 1)
-			return (w0 / 2) + (w0 & 1);
-		else
-			return w0 + h0 - 2 - 4 * layer_index;
-	}
 
 
 
@@ -142,11 +199,14 @@ protected:
 			if (!boost::filesystem::create_directories(dst_directory_path))
 				return false;
 
-		int texture_count = 20;
+		glm::ivec2 image_size = glm::ivec2(16, 9);
+		glm::ivec2 cell_count = glm::ivec2(16, 9);
+
+		int texture_count = 1;
 		for (int i = 0; i < texture_count; ++i)
 		{
 			float ratio = chaos::MathTools::CastAndDiv<float>(i, texture_count - 1);
-			GenerateTexture(i, glm::ivec2(160, 90), glm::ivec2(16, 9), ratio, dst_directory_path);
+			GenerateTexture(i, image_size, cell_count, ratio, dst_directory_path);
 		}
 			
 		chaos::WinTools::ShowFile(dst_directory_path);

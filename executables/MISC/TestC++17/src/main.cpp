@@ -31,85 +31,135 @@ protected:
 	//
 
 	// the number of layers
-	static int GetLayerCount(glm::ivec2 const & cell_count)
+	static int GetLayerCount(glm::ivec2 const & grid_size)
 	{
-		assert(cell_count.x > 0);
-		assert(cell_count.y > 0);
+		assert(grid_size.x > 0);
+		assert(grid_size.y > 0);
 
-		int m = std::min(cell_count.x, cell_count.y);
+		int m = std::min(grid_size.x, grid_size.y);
 		return (m / 2) + (m & 1);
 	}
 
-	// the cell count for a given sub layer
-	static glm::ivec2 GetLayerCellCount(glm::ivec2 const& cell_count, int layer_index)
+	// the grid size for a given sub layer
+	static glm::ivec2 GetLayerGridSize(glm::ivec2 const& grid_size, int layer_index)
 	{
-		assert(cell_count.x > 0);
-		assert(cell_count.y > 0);
+		assert(grid_size.x > 0);
+		assert(grid_size.y > 0);
 
 		return glm::ivec2(
-			cell_count.x - 2 * layer_index,
-			cell_count.y - 2 * layer_index);
+			grid_size.x - 2 * layer_index,
+			grid_size.y - 2 * layer_index);
 	}
 
 
 	// the number of cell categories in a layer
-	static int GetCellCategoryOnLayer(glm::ivec2 const & cell_count, int layer_index)
+	static int GetCategoryCountOnLayer(glm::ivec2 const & grid_size, int layer_index)
 	{
-		assert(cell_count.x > 0);
-		assert(cell_count.y > 0);
+		assert(grid_size.x > 0);
+		assert(grid_size.y > 0);
 
-		glm::ivec2 layer_cell_count = GetLayerCellCount(cell_count, layer_index);
+		glm::ivec2 layer_grid_size = GetLayerGridSize(grid_size, layer_index);
 
-		if (layer_cell_count.x == 1)
-			return (layer_cell_count.y / 2) + (layer_cell_count.y & 1);
-		else if (layer_cell_count.y == 1)
-			return (layer_cell_count.x / 2) + (layer_cell_count.x & 1);
+		if (layer_grid_size.x == 1)
+			return (layer_grid_size.y / 2) + (layer_grid_size.y & 1);
+		else if (layer_grid_size.y == 1)
+			return (layer_grid_size.x / 2) + (layer_grid_size.x & 1);
 		else
-			return layer_cell_count.x + layer_cell_count.y - 2;
+			return layer_grid_size.x + layer_grid_size.y - 2;
 	}
 
 	// the sum of all categories on all previous layers
-	static int GetSumCellCategoryForPreviousLayers(glm::ivec2 const& cell_count, int layer_index)
+	static int GetSumCategoryForPreviousLayers(glm::ivec2 const& grid_size, int layer_index)
 	{
 		if (layer_index == 0)
 			return 0;
 
-		int base_category = cell_count.x + cell_count.y - 2; // number of categories for layer 0
+		int base_category = grid_size.x + grid_size.y - 2; // number of categories for layer 0
 
 		return layer_index * base_category - 4 * (layer_index - 1) * (layer_index) / 2;
 	}
 	// the layer the cell is on
-	static int GetCellLayer(glm::ivec2 const & cell, glm::ivec2 const& cell_count)
+	static int GetCellLayer(glm::ivec2 const & cell, glm::ivec2 const& grid_size)
 	{
 		// which border is the cell the more nearby
 		return std::min(
-			std::min(cell.x, cell_count.x - cell.x - 1),
-			std::min(cell.y, cell_count.y - cell.y - 1)
+			std::min(cell.x, grid_size.x - cell.x - 1),
+			std::min(cell.y, grid_size.y - cell.y - 1)
 		);
 	}
 
-	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& cell_count, float ratio)
+	static int GetCellCategory(glm::ivec2 const& cell, glm::ivec2 const& grid_size, int layer_index)
 	{
-		assert(cell_count.x > 0 && cell_count.y > 0);
+		// get the grid size for required layer
+		glm::ivec2 layer_grid_size = GetLayerGridSize(grid_size, layer_index);
+		// move the cell to the origin of the considered layer grid
+		glm::ivec2 c = cell - glm::ivec2(layer_index, layer_index);
+		// degenerated cases for WIDTH = 0
+		if (layer_grid_size.x == 1)
+		{
+			if (c.y < layer_grid_size.y / 2)
+				return c.y;
+			else
+				return layer_grid_size.y - 1 - c.y;
+		}
+		// degenerated cases for HEIGHT = 0
+		else if (layer_grid_size.y == 1)
+		{
+			if (c.x < layer_grid_size.x / 2)
+				return c.x;
+			else
+				return layer_grid_size.x - 1 - c.x;
+		}
+		// normal cases (test for each borders of the grid)
+		else
+		{
+			if (c.y == 0)
+				return c.x;
+			else if (c.y == layer_grid_size.y - 1)
+				return layer_grid_size.x - 1 - c.x;
+			else if (c.x == 0)
+				return layer_grid_size.x + (layer_grid_size.y - 1 - c.y - 1);
+			else if (c.x == layer_grid_size.x - 1)
+				return layer_grid_size.x + c.y - 1;
+		}
+		return 0;
+	}
+
+	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio)
+	{
+		assert(grid_size.x > 0 && grid_size.y > 0);
 
 		// size of a cell
-		glm::vec2 cell_size = image_size / chaos::GLMTools::RecastVector<glm::vec2>(cell_count);
+		glm::vec2 cell_size = image_size / chaos::GLMTools::RecastVector<glm::vec2>(grid_size);
 		// the cell containing the point considered
 		glm::ivec2 cell = chaos::GLMTools::RecastVector<glm::ivec2>(pos / cell_size);
 
 		// the total number of layers
-		int layer_count = GetLayerCount(cell_count);
+		int layer_count = GetLayerCount(grid_size);
 		// the current layer for given cell
-		int cell_layer  = GetCellLayer(cell, cell_count);
+		int cell_layer  = GetCellLayer(cell, grid_size);
 		// number of categories for that layer
-		int category_count = GetCellCategoryOnLayer(cell_count, cell_layer);
+		int category_count = GetCategoryCountOnLayer(grid_size, cell_layer);
 		// number of categories in all previous layers
-		int previous_category_count = GetSumCellCategoryForPreviousLayers(cell_count, cell_layer);
+		int sum_previous_category_count = GetSumCategoryForPreviousLayers(grid_size, cell_layer);
+		// total number of categories
+		int sum_category_count = GetSumCategoryForPreviousLayers(grid_size, layer_count - 1) + GetCategoryCountOnLayer(grid_size, layer_count - 1);
+		// category of cell according to its layer
+		int cell_category = GetCellCategory(cell, grid_size, cell_layer);
+
+
+		
 
 
 
 
 
+		// final category for layer
+		int absolute_cell_category = cell_category + sum_previous_category_count;
+
+
+
+		return (float)absolute_cell_category / (float)sum_category_count;
 
 
 
@@ -132,28 +182,10 @@ protected:
 
 
 
-#if 0
-		if (cell_layer == 0)
-			cell_layer = cell_layer;
-		if (cell_layer == 1)
-			cell_layer = cell_layer;
-		if (cell_layer == 2)
-			cell_layer = cell_layer;
-#endif 
-
-
-
 
 		return 0.0f;
 	}
 
-#if 0
-
-
-
-
-
-#endif
 
 
 	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_count, float ratio, boost::filesystem::path const & dst_directory_path)
@@ -199,10 +231,13 @@ protected:
 			if (!boost::filesystem::create_directories(dst_directory_path))
 				return false;
 
-		glm::ivec2 image_size = glm::ivec2(16, 9);
-		glm::ivec2 cell_count = glm::ivec2(16, 9);
+		//glm::ivec2 image_size = glm::ivec2(160, 90);
+		//glm::ivec2 cell_count = glm::ivec2(16, 9);
 
-		int texture_count = 1;
+		glm::ivec2 image_size = glm::ivec2(90, 160);
+		glm::ivec2 cell_count = glm::ivec2(9, 16);
+
+		int texture_count = 20;
 		for (int i = 0; i < texture_count; ++i)
 		{
 			float ratio = chaos::MathTools::CastAndDiv<float>(i, texture_count - 1);

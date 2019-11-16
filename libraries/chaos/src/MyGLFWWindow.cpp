@@ -449,7 +449,7 @@ namespace chaos
 			// here we want exactly to work with no cropping
 			chaos::box2 viewport = GetRequiredViewport(GetWindowSize());
 			viewport.position = viewport.half_size;
-			glm::ivec2 framebuffer_size = chaos::GLMTools::RecastVector<glm::ivec2>(viewport.half_size * 2.0f);
+			glm::ivec2 framebuffer_size = chaos::RecastVector<glm::ivec2>(viewport.half_size * 2.0f);
 			
 			// generate a framebuffer
 			chaos::GPUFramebufferGenerator framebuffer_generator;
@@ -501,7 +501,7 @@ namespace chaos
 		{
 			chaos::box2 viewport = chaos::box2(std::make_pair(
 				glm::vec2(0.0f, 0.0f),
-				chaos::GLMTools::RecastVector<glm::vec2>(size)
+				chaos::RecastVector<glm::vec2>(size)
 			));
 			return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
 		}

@@ -38,12 +38,12 @@
 	prefix##type const * prefix##classname::Get##prefix##type() const { return auto_cast(Get##type());}
 
 #define DEATH_GAMEFRAMEWORK_DECLARE_PLAYERGETTER(prefix)\
-	prefix##Player * Get##prefix##Player(int player_index);\
-	prefix##Player const * Get##prefix##Player(int player_index) const;
+	prefix##Player * Get##prefix##Player(size_t player_index);\
+	prefix##Player const * Get##prefix##Player(size_t player_index) const;
 
 #define DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYERGETTER(prefix, classname)\
-	prefix##Player * prefix##classname::Get##prefix##Player(int player_index){ return auto_cast(GetPlayer(player_index));}\
-	prefix##Player const * prefix##classname::Get##prefix##Player(int player_index) const { return auto_cast(GetPlayer(player_index));}
+	prefix##Player * prefix##classname::Get##prefix##Player(size_t player_index){ return auto_cast(GetPlayer(player_index));}\
+	prefix##Player const * prefix##classname::Get##prefix##Player(size_t player_index) const { return auto_cast(GetPlayer(player_index));}
 
 // macro to be inserted in Game subclasses declaration
 #define DEATH_GAMEFRAMEWORK_DECLARE_GAME(prefix)\

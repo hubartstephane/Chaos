@@ -194,7 +194,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 	if (particle->explosion_info == nullptr) // delete the particle
 		return true;
 
-	int image_count = particle->explosion_info->GetAnimationImageCount();
+	size_t image_count = particle->explosion_info->GetAnimationImageCount();
 	float frame_time = particle->explosion_info->GetFrameTime();
 
 	if (frame_time == 0)

@@ -31,19 +31,19 @@ namespace chaos
 		/** processing vector types */
 		template<typename T> bool Process(char const * name, glm::tvec1<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
+			return DoProcess(name, RecastVector<glm::tvec4<T>>(value), provider);
 		}
 		template<typename T> bool Process(char const * name, glm::tvec2<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
+			return DoProcess(name, RecastVector<glm::tvec4<T>>(value), provider);
 		}
 		template<typename T> bool Process(char const * name, glm::tvec3<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
+			return DoProcess(name, RecastVector<glm::tvec4<T>>(value), provider);
 		}
 		template<typename T> bool Process(char const * name, glm::tvec4<T> const & value, GPUProgramProviderBase const * provider)
 		{
-			return DoProcess(name, GLMTools::RecastVector<glm::tvec4<T>>(value), provider);
+			return DoProcess(name, RecastVector<glm::tvec4<T>>(value), provider);
 		}
 
 		/** processing matrix types */
@@ -185,7 +185,7 @@ namespace chaos
 		template<typename U>
 		bool DoConvertAndGetVector(U const & value, boost::mpl::true_, boost::mpl::true_) // the type expected, and the type of the incomming value are both vector !!
 		{
-			result = GLMTools::RecastVector<T>(value);
+			result = RecastVector<T>(value);
 			return true;
 		}
 

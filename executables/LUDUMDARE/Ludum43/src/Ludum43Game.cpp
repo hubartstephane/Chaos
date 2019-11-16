@@ -72,7 +72,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		return;
 
 	// create the render targets or reuse olds
-	glm::ivec2 viewport_size = chaos::GLMTools::RecastVector<glm::ivec2>(render_params.viewport.half_size * 2.0f);
+	glm::ivec2 viewport_size = chaos::RecastVector<glm::ivec2>(render_params.viewport.half_size * 2.0f);
 	if (!GenerateFramebuffer(viewport_size, framebuffer_deformed) || !GenerateFramebuffer(viewport_size, framebuffer_worldlimits))
 		return;
 

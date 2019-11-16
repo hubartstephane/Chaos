@@ -12,7 +12,7 @@ namespace chaos
 	{
 		box2 viewport = box2(std::make_pair(
 			glm::vec2(0.0f, 0.0f),
-			GLMTools::RecastVector<glm::vec2>(size)		
+			RecastVector<glm::vec2>(size)		
 		));
 
 		viewport = ShrinkBoxToAspect(viewport, aspect);

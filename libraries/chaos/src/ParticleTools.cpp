@@ -53,7 +53,7 @@ namespace chaos
 				(float)(image_id / atlas_dimension.x)
 			);
 
-			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::GLMTools::RecastVector<glm::vec2>(atlas_dimension);
+			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::RecastVector<glm::vec2>(atlas_dimension);
 
 			texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
 			texcoords.topright = texcoords.bottomleft + atlas_size;
@@ -72,7 +72,7 @@ namespace chaos
 				(float)(image_id.y % atlas_dimension.y)
 			);
 
-			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::GLMTools::RecastVector<glm::vec2>(atlas_dimension);
+			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::RecastVector<glm::vec2>(atlas_dimension);
 
 			texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
 			texcoords.topright = texcoords.bottomleft + atlas_size;

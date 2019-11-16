@@ -55,22 +55,22 @@ namespace chaos
 
 	glm::vec2 GetPlaneNormal(glm::vec3  const & p)
 	{
-		return GLMTools::RecastVector<glm::vec2>(p);
+		return RecastVector<glm::vec2>(p);
 	}
 
 	glm::vec3 GetPlaneNormal(glm::vec4  const & p)
 	{
-		return GLMTools::RecastVector<glm::vec3>(p);
+		return RecastVector<glm::vec3>(p);
 	}
 
 	glm::dvec2 GetPlaneNormal(glm::dvec3 const & p)
 	{
-		return GLMTools::RecastVector<glm::dvec2>(p);
+		return RecastVector<glm::dvec2>(p);
 	}
 
 	glm::dvec3 GetPlaneNormal(glm::dvec4 const & p)
 	{
-		return GLMTools::RecastVector<glm::dvec3>(p);
+		return RecastVector<glm::dvec3>(p);
 	}
 
 	float GetPlaneOffset(glm::vec3  const & p)

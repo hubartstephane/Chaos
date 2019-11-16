@@ -15,13 +15,13 @@ namespace chaos
 			return false;
 
 		if (arity == 1)
-			GLTools::SetUniform(uniform.location, GLMTools::RecastVector<glm::tvec1<T1>>(GLMTools::ConvertIntoVector(value))); // when the arity is 1, we force the usage of vec1 because it is simpler than a scalar value
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec1<T1>>(GLMTools::ConvertIntoVector(value))); // when the arity is 1, we force the usage of vec1 because it is simpler than a scalar value
 		else if (arity == 2)
-			GLTools::SetUniform(uniform.location, GLMTools::RecastVector<glm::tvec2<T1>>(GLMTools::ConvertIntoVector(value)));
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec2<T1>>(GLMTools::ConvertIntoVector(value)));
 		else if (arity == 3)
-			GLTools::SetUniform(uniform.location, GLMTools::RecastVector<glm::tvec3<T1>>(GLMTools::ConvertIntoVector(value)));
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec3<T1>>(GLMTools::ConvertIntoVector(value)));
 		else if (arity == 4)
-			GLTools::SetUniform(uniform.location, GLMTools::RecastVector<glm::tvec4<T1>>(GLMTools::ConvertIntoVector(value)));
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec4<T1>>(GLMTools::ConvertIntoVector(value)));
 
 		return true;
 	}

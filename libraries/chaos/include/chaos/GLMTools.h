@@ -58,18 +58,6 @@ namespace chaos
 
 	public:
 
-		/** cast a vector into another vector (arity and type may change) */
-		template<typename VECTOR_TYPE1, typename VECTOR_TYPE2>
-		static VECTOR_TYPE1 RecastVector(VECTOR_TYPE2 const & value)
-		{
-			VECTOR_TYPE1 result(0);
-			size_t count = std::min(result.length(), value.length());
-			for (size_t i = 0; i < count; ++i)
-				result[i] = static_cast<VECTOR_TYPE1::value_type>(value[i]);
-
-			return result;
-		}
-
 		/** returns the min component of a vector */
 		template<typename T>
 		static T GetMinComponent(glm::tvec1<T> const & src)

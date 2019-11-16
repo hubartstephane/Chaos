@@ -193,7 +193,7 @@ namespace death
 	{
 		chaos::box2 viewport = chaos::box2(std::make_pair(
 			glm::vec2(0.0f, 0.0f),
-			chaos::GLMTools::RecastVector<glm::vec2>(size)
+			chaos::RecastVector<glm::vec2>(size)
 		));
 		return ShrinkBoxToAspect(viewport, viewport_wanted_aspect);
 	}

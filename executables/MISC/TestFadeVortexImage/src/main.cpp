@@ -5,8 +5,52 @@
 #include <chaos/ImageTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/WinTools.h>
-#include <chaos/GLMTools.h>
+#include <chaos/GeometryFramework.h>
 #include <chaos/MathTools.h>
+
+
+
+template<typename VECTOR_TYPE>
+class RecastVectorData
+{
+public:
+
+	RecastVectorData(VECTOR_TYPE const& in_value) : value(in_value) {}
+
+	template<typename DST_VECTOR_TYPE>
+	operator DST_VECTOR_TYPE () const
+	{
+		DST_VECTOR_TYPE result(0);
+		size_t count = std::min(result.length(), value.length());
+		for (size_t i = 0; i < count; ++i)
+			result[i] = static_cast<typename DST_VECTOR_TYPE::value_type>(value[i]);
+		return result;
+	}
+
+public:
+
+	VECTOR_TYPE value;
+};
+
+template<typename T>
+RecastVectorData<T> RecastVector(T const & in_value)
+{
+	return RecastVectorData<T>(in_value);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class MyApplication : public chaos::Application
 {
@@ -165,15 +209,59 @@ protected:
 	{
 		assert(grid_size.x > 0 && grid_size.y > 0);
 
-		if (recurse_count == 0)
-			return 1.0f;
-
 		// size of a cell
-		glm::vec2 cell_size = image_size / chaos::GLMTools::RecastVector<glm::vec2>(grid_size);
+		glm::vec2 cell_size = image_size / chaos::RecastVector<glm::vec2>(grid_size);
 		// the cell containing the point considered
-		glm::ivec2 cell = chaos::GLMTools::RecastVector<glm::ivec2>(pos / cell_size);
+		glm::ivec2 cell = chaos::RecastVector<glm::vec2>(pos / cell_size);
 
+		
+#if 0		
+		std::array<float, 9> distances;
+		std::array<float, 9> values;
+
+		for (int j = -1; j <= 1; ++j)
+		{
+			for (int i = -1; i <= 1; ++i)
+			{
+				glm::ivec2 neighboor_cell = cell;
+				neighboor_cell.x += i;
+				neighboor_cell.y += j;
+				if (neighboor_cell.x < 0 || neighboor_cell.y < 0)
+					continue;
+				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
+					continue;
+
+				int index = 1 + i + (j + 1) * 3;
+
+				float neighboor_value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+
+				glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
+
+				float d = glm::distance(pos, neighboor_center);
+				if (d == 0.0f)
+					return neighboor_value;
+
+
+
+
+			}
+		}
+		
+		
+		
+#endif		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		std::array<float, 9> neighboor_factors { 0.25f, 0.5f, 0.25f, 0.5f, 1.0f, 0.5f, 0.25f, 0.5f, 0.25f };
+
+		float cell_value = 0.0f;
 
 		float sum_factor = 0.0f;
 		float sum_ratio  = 0.0f;
@@ -189,63 +277,49 @@ protected:
 				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
 					continue;
 
+#if 0
+
 				int index = 1 + i + (j + 1) * 3;
 				float factor = neighboor_factors[index];
-				sum_ratio  += factor * GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+				float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+				if (i == 0 && j == 0)
+					cell_value = value;
+				sum_ratio += factor * value;
 				sum_factor += factor;
+
+
+#elif 1
+				float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+
+				glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
+
+				float d = glm::distance(pos, neighboor_center);
+				if (d == 0.0f)
+				{
+					sum_ratio = value;
+					sum_factor = 1.0f;
+					break;
+				}
+				else
+				{
+
+				}
+
+
+#endif
+
+	//			if (i == 0 && j == 0)
+	//				cell_value = value;
+	//			sum_ratio += factor * value;
+	//			sum_factor += factor;
 			}
 		}
 
-		return sum_ratio / sum_factor;
-
-
-
-
-
-		return GetPixelAlphaForCell(cell, grid_size, ratio);
-
-		// the total number of layers
-		int layer_count = GetLayerCount(grid_size);
-		// the current layer for given cell
-		int cell_layer  = GetCellLayer(cell, grid_size);
-		// number of categories for that layer
-		int category_count = GetCategoryCountOnLayer(grid_size, cell_layer);
-		// number of categories in all previous layers
-		int sum_previous_category_count = GetSumCategoryForPreviousLayers(grid_size, cell_layer);
-		// total number of categories
-		int sum_category_count = GetSumCategoryForPreviousLayers(grid_size, layer_count - 1) + GetCategoryCountOnLayer(grid_size, layer_count - 1);
-		// category of cell according to its layer
-		int cell_category = GetCellCategory(cell, grid_size, cell_layer);
-		// final category for layer
-		int absolute_cell_category = cell_category + sum_previous_category_count;
+		float result = sum_ratio / sum_factor;
 
 #if 0
 
-		return (float)absolute_cell_category / (float)sum_category_count;
-
-#elif 1
-
-		// this cell change its alpha when it is between the following categories
-		float a1 = (float)absolute_cell_category / (float)sum_category_count;
-		float a2 = a1 + 1.0f / (float)sum_category_count;
-
-		assert(a1 >= 0.0f && a1 <= 1.0f);
-		assert(a2 >= 0.0f && a2 <= 1.0f);
-
-		float result = 0.0f;
-		if (ratio <= a1)
-			result = 1.0f;
-		else if (ratio >= a2)
-			result = 0.0f;
-		else
-			result = 1.0f - ((ratio - a1) / (a2 - a1));
-
-
-
-
-
-
-		if (0 && --recurse_count > 0 && result > 0.0f && result < 1.0f) // 
+		if (recurse_count-- > 0 && cell_value > 0.0f && cell_value < 1.0f) // 
 		{
 			int s = std::min(grid_size.x, grid_size.y);
 
@@ -255,16 +329,17 @@ protected:
 
 			glm::vec2 cell_pos = cell_size * glm::vec2((float)cell.x, (float)cell.y);
 			glm::vec2 child_pos = pos - cell_pos;
-						
-			float child_ratio = 1.0f - result;
 
-			result = result * GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
+			float child_ratio = 1.0f - cell_value;
+
+			float alpha_child = GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
+
+			result = result + alpha_child * (cell_value - result);
 		}
 
+#endif
 
 		return result;
-
-#endif
 	}
 
 	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_count, float ratio, int recurse_count, boost::filesystem::path const & dst_directory_path)
@@ -314,7 +389,7 @@ protected:
 		glm::ivec2 cell_count = glm::ivec2(8, 5);
 
 		int texture_count = 160;
-		int recurse_count = 3;
+		int recurse_count = 1;
 
 		for (int i = 0; i < texture_count; ++i)
 		{
@@ -330,6 +405,12 @@ protected:
 
 int CHAOS_MAIN(int argc, char** argv, char** env)
 {
+	glm::vec3 a = { 1.5f, 2.0f , -3.6f };
+
+	glm::ivec4 b = RecastVector(a);
+
+	glm::vec2 c = RecastVector(b);
+
 	chaos::RunApplication<MyApplication>(argc, argv, env);
 
 	return 0;

@@ -453,7 +453,7 @@ namespace death
 			);
 
 			// the bottomleft corner of the decaled box
-			glm::vec2  virtual_target_bottomleft = target_bottomleft + chaos::GLMTools::RecastVector<glm::vec2>(offset_count) * target_size;
+			glm::vec2  virtual_target_bottomleft = target_bottomleft + chaos::RecastVector<glm::vec2>(offset_count) * target_size;
 			// competition of the number of repetition
 			glm::vec2  tmp = ((scissor_bottomleft - virtual_target_bottomleft + scissor_size) / target_size);
 
@@ -482,7 +482,7 @@ namespace death
 
 		glm::vec2 BoxScissoringWithRepetitionResult::GetInstanceOffset(glm::ivec2 const & index) const
 		{
-			return 2.0f * target_box.half_size * chaos::GLMTools::RecastVector<glm::vec2>(index);
+			return 2.0f * target_box.half_size * chaos::RecastVector<glm::vec2>(index);
 		}
 
 		// =====================================

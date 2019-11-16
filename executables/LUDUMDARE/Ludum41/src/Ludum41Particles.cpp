@@ -36,34 +36,18 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 
 int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, LayerTrait const * layer_trait) const
 {
-
-
-	return count;
+	return 0;
 }
 
 glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, LayerTrait const * layer_trait) const
 {
-	glm::vec2 result = glm::vec2(0.0f, 0.0f);
-
-
-#if 0
-	float S1 = 0.5f;
-	float S2 = 1.0f;
-	float BASE_R = 50.0f;
-
-	float R = (2.0f + std::cos(S1 * allocation_data.rotation_time));
-
-	result.x = BASE_R * R * std::cos(S2 * allocation_data.rotation_time);
-	result.y = BASE_R * R * std::sin(S2 * allocation_data.rotation_time);
-#endif
-	return result;
+	return glm::vec2(0.0f, 0.0f);
 }
 
 bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, int extra_param, LayerTrait const * layer_trait) const
 {
 	return false;
 }
-
 
 size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, glm::vec2 const & extra_param, LayerTrait const * layer_trait) const
 {
@@ -141,9 +125,9 @@ size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject cons
 
 void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
 {
-	int dimension = velocity.length();
+	size_t dimension = velocity.length();
 
-	for (int i = 0; i < dimension; ++i)
+	for (size_t i = 0; i < dimension; ++i)
 	{
 		if (old_position[i] > new_position[i])
 			velocity[i] = -abs(velocity[i]);

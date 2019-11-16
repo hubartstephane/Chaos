@@ -16,9 +16,9 @@ namespace chaos
 	template<typename T>
 	void UpdateVelocityFromCollision(T const & old_position, T const & new_position, T & velocity)
 	{
-		int dimension = velocity.length();
+		size_t dimension = velocity.length();
 
-		for (int i = 0; i < dimension; ++i)
+		for (size_t i = 0; i < dimension; ++i)
 		{
 			if (old_position[i] > new_position[i])
 				velocity[i] = -abs(velocity[i]);

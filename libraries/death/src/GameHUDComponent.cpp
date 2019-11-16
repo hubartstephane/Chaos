@@ -68,14 +68,14 @@ namespace death
 		return hud->GetLevelInstance();
 	}
 
-	Player * GameHUDComponent::GetPlayer(int player_index)
+	Player * GameHUDComponent::GetPlayer(size_t player_index)
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetPlayer(player_index);
 	}
 
-	Player const * GameHUDComponent::GetPlayer(int player_index) const
+	Player const * GameHUDComponent::GetPlayer(size_t player_index) const
 	{
 		if (hud == nullptr)
 			return nullptr;

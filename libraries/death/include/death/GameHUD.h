@@ -48,9 +48,9 @@ namespace death
 		GameLevelInstance const * GetLevelInstance() const;
 
 		/** get the player */
-		Player * GetPlayer(int player_index);
+		Player * GetPlayer(size_t player_index);
 		/** get the player */
-		Player const * GetPlayer(int player_index) const;
+		Player const * GetPlayer(size_t player_index) const;
 
 		/** find a component by its class */
 		template<typename T>

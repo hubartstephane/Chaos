@@ -44,12 +44,12 @@ namespace death
 		return game->GetLevelInstance();
 	}
 
-	Player * GameHUD::GetPlayer(int player_index)
+	Player * GameHUD::GetPlayer(size_t player_index)
 	{
 		return game->GetPlayer(player_index);
 	}
 
-	Player const * GameHUD::GetPlayer(int player_index) const
+	Player const * GameHUD::GetPlayer(size_t player_index) const
 	{
 		return game->GetPlayer(player_index);
 	}

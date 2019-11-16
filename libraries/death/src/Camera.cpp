@@ -64,14 +64,14 @@ namespace death
 		return result;
 	}
 	
-	Player * Camera::GetPlayer(int player_index)
+	Player * Camera::GetPlayer(size_t player_index)
 	{
 		if (game_level_instance == nullptr)
 			return nullptr;
 		return game_level_instance->GetPlayer(player_index);
 	}
 	
-	Player const * Camera::GetPlayer(int player_index) const
+	Player const * Camera::GetPlayer(size_t player_index) const
 	{
 		if (game_level_instance == nullptr)
 			return nullptr;

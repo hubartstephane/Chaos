@@ -174,7 +174,7 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	// update the score
 	if (success)
 	{
-		IncrementScore(ludum_game->points_per_challenge * challenge_size);
+		IncrementScore(ludum_game->points_per_challenge * (int)challenge_size);
 		++combo_multiplier;
 	}
 	else
@@ -296,7 +296,7 @@ bool LudumGameInstance::IsSplitBallChallengeValid(bool success)
 {
 	LudumGame const * ludum_game = GetLudumGame();
 
-	int ball_count = GetBallCount();
+	size_t ball_count = GetBallCount();
 	return (ball_count < ludum_game->max_ball_count);
 }
 

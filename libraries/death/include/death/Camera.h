@@ -37,9 +37,9 @@ namespace death
 		Camera(GameLevelInstance * in_game_level_instance);
 
 		/** get the player by its index */
-		Player * GetPlayer(int player_index);
+		Player * GetPlayer(size_t player_index);
 		/** get the player by its index */
-		Player const * GetPlayer(int player_index) const;
+		Player const * GetPlayer(size_t player_index) const;
 
 		/** returns the game */
 		Game * GetGame();

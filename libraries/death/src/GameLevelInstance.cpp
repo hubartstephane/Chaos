@@ -39,7 +39,7 @@ namespace death
 		return game->GetGameInstance(); 
 	}
 
-	Player * GameLevelInstance::GetPlayer(int player_index)
+	Player * GameLevelInstance::GetPlayer(size_t player_index)
 	{
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
@@ -47,7 +47,7 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	Player const * GameLevelInstance::GetPlayer(int player_index) const
+	Player const * GameLevelInstance::GetPlayer(size_t player_index) const
 	{
 		GameInstance const * game_instance = GetGameInstance();
 		if (game_instance == nullptr)

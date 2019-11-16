@@ -42,9 +42,9 @@ namespace death
 		GameInstance const * GetGameInstance() const;
 
 		/** get a player */
-		Player * GetPlayer(int player_index);
+		Player * GetPlayer(size_t player_index);
 		/** get a player */
-		Player const * GetPlayer(int player_index) const;
+		Player const * GetPlayer(size_t player_index) const;
 
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();

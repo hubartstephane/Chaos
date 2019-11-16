@@ -170,6 +170,9 @@ protected:
 	}
 
 
+
+
+
 	static float GetPixelAlphaForCell(glm::vec2 const& cell, glm::vec2 const& grid_size, float ratio)
 	{
 		// the total number of layers
@@ -205,6 +208,115 @@ protected:
 		return result;
 	}
 
+
+
+
+	/////////////////////////////////////////
+
+#if 0
+
+	std::array<float, 9> neighboor_factors{ 0.25f, 0.5f, 0.25f, 0.5f, 1.0f, 0.5f, 0.25f, 0.5f, 0.25f };
+
+	float cell_value = 0.0f;
+
+	float sum_factor = 0.0f;
+	float sum_ratio = 0.0f;
+	for (int j = -1; j <= 1; ++j)
+	{
+		for (int i = -1; i <= 1; ++i)
+		{
+			glm::ivec2 neighboor_cell = cell;
+			neighboor_cell.x += i;
+			neighboor_cell.y += j;
+			if (neighboor_cell.x < 0 || neighboor_cell.y < 0)
+				continue;
+			if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
+				continue;
+
+
+
+			int index = 1 + i + (j + 1) * 3;
+			float factor = neighboor_factors[index];
+			float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+			if (i == 0 && j == 0)
+				cell_value = value;
+			sum_ratio += factor * value;
+			sum_factor += factor;
+
+
+			float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+
+			glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
+
+			float d = glm::distance(pos, neighboor_center);
+			if (d == 0.0f)
+			{
+				sum_ratio = value;
+				sum_factor = 1.0f;
+				break;
+			}
+			else
+			{
+
+			}
+
+
+
+
+			//			if (i == 0 && j == 0)
+			//				cell_value = value;
+			//			sum_ratio += factor * value;
+			//			sum_factor += factor;
+		}
+	}
+
+	float result = sum_ratio / sum_factor;
+
+
+	if (recurse_count-- > 0 && cell_value > 0.0f && cell_value < 1.0f) // 
+	{
+		int s = std::min(grid_size.x, grid_size.y);
+
+		glm::ivec2 child_grid_size = glm::ivec2(s, s);
+
+		glm::vec2 child_image_size = cell_size;
+
+		glm::vec2 cell_pos = cell_size * glm::vec2((float)cell.x, (float)cell.y);
+		glm::vec2 child_pos = pos - cell_pos;
+
+		float child_ratio = 1.0f - cell_value;
+
+		float alpha_child = GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
+
+		result = result + alpha_child * (cell_value - result);
+	}
+
+
+
+#endif
+	/////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
 	{
 		assert(grid_size.x > 0 && grid_size.y > 0);
@@ -214,15 +326,35 @@ protected:
 		// the cell containing the point considered
 		glm::ivec2 cell = chaos::RecastVector<glm::vec2>(pos / cell_size);
 
-		
-#if 0		
-		std::array<float, 9> distances;
-		std::array<float, 9> values;
+		// 9 adjacent cells -> 9 values considered -> 9 distances with the center of the cells
+		//		 
+		// the value of the point is an 'average' of all the 9 values
+		// => the difficulty for this is that whenever a point is exactly at the center, the distance is the smallest and the influence must be the greatest (unlike normal average)
+		//
+		// => solution with an example (for a 4 cells)
+		//
+		// VALUE = 
+		//   v1.(d2.d3.d4)/SUM + 
+		//   V2.(d1.d3.d4)/SUM +   where SUM = (d2.d3.d4) + (d1.d3.d4) + (d1.d2.d3) + (d2.d3.d4)
+		//   V3.(d1.d2.d4)/SUM +
+		//   V4.(d1.d2.d3)/SUM
+		//
+		// With such a solution, whenever on distance is 0, all other factors are zeroed 
+		// => the only cell value considered is the one for which the distance is 0
+		// => the sum of all coefficients are 0
+		//
+		// XXX : in fact, the only distance that may be 0, is the one of the central grid (maybe some opimization to do later)
+
+		std::array<float, 9> distances = { -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f };		// -1.0f for invalid values
+		std::array<float, 9> values    = {  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f };
+
+		float distance_product = 1.0f; // utility value to simplify the computation of SUM
 
 		for (int j = -1; j <= 1; ++j)
 		{
 			for (int i = -1; i <= 1; ++i)
 			{
+				// test whether the neighboor cell is still in the grid
 				glm::ivec2 neighboor_cell = cell;
 				neighboor_cell.x += i;
 				neighboor_cell.y += j;
@@ -231,114 +363,56 @@ protected:
 				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
 					continue;
 
-				int index = 1 + i + (j + 1) * 3;
+				if (i != 0 && j != 0)
+					continue;
 
+				// compute value of that neighboor
+				int index = 1 + i + (j + 1) * 3;								
 				float neighboor_value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
 
+				// compute distance of that neighboor => distance = 0 bring early exit
 				glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
 
 				float d = glm::distance(pos, neighboor_center);
 				if (d == 0.0f)
-					return neighboor_value;
+					return neighboor_value; // early exit
+
+#if 0
+				if (pos.x >= neighboor_cell.x && i < 0)
+					continue;
+				if (pos.x <= neighboor_cell.x && i > 0)
+					continue;
+				if (pos.y >= neighboor_cell.y && j < 0)
+					continue;
+				if (pos.y <= neighboor_cell.y && j > 0)
+					continue;
+#endif
 
 
 
 
+				// store the values
+				distances[index] = d;
+				values[index] = neighboor_value;				
+				distance_product *= d;
 			}
 		}
 		
-		
-		
-#endif		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		std::array<float, 9> neighboor_factors { 0.25f, 0.5f, 0.25f, 0.5f, 1.0f, 0.5f, 0.25f, 0.5f, 0.25f };
+		// computation of SUM
+		float sum = 0.0f;
+		for (int i = 0; i < 9; ++i)
+			if (distances[i] > 0.0f) // should never be 0
+				sum += distance_product / distances[i]; // (d2.d3.d4) = (d1.d2.d3.d4)/d1
 
-		float cell_value = 0.0f;
-
-		float sum_factor = 0.0f;
-		float sum_ratio  = 0.0f;
-		for (int j = -1; j <= 1; ++j)
+		// computation of the 'average'
+		float result = 0.0f;
+		for (int i = 0; i < 9; ++i)
 		{
-			for (int i = -1; i <= 1; ++i)
-			{
-				glm::ivec2 neighboor_cell = cell;
-				neighboor_cell.x += i;
-				neighboor_cell.y += j;
-				if (neighboor_cell.x < 0 || neighboor_cell.y < 0)
-					continue;
-				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
-					continue;
-
-#if 0
-
-				int index = 1 + i + (j + 1) * 3;
-				float factor = neighboor_factors[index];
-				float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
-				if (i == 0 && j == 0)
-					cell_value = value;
-				sum_ratio += factor * value;
-				sum_factor += factor;
-
-
-#elif 1
-				float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
-
-				glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
-
-				float d = glm::distance(pos, neighboor_center);
-				if (d == 0.0f)
-				{
-					sum_ratio = value;
-					sum_factor = 1.0f;
-					break;
-				}
-				else
-				{
-
-				}
-
-
-#endif
-
-	//			if (i == 0 && j == 0)
-	//				cell_value = value;
-	//			sum_ratio += factor * value;
-	//			sum_factor += factor;
-			}
+			float d = distances[i];
+			if (d <= 0.0f)
+				continue;
+			result += values[i] * (distance_product / distances[i]) / sum;
 		}
-
-		float result = sum_ratio / sum_factor;
-
-#if 0
-
-		if (recurse_count-- > 0 && cell_value > 0.0f && cell_value < 1.0f) // 
-		{
-			int s = std::min(grid_size.x, grid_size.y);
-
-			glm::ivec2 child_grid_size = glm::ivec2(s, s);
-
-			glm::vec2 child_image_size = cell_size;
-
-			glm::vec2 cell_pos = cell_size * glm::vec2((float)cell.x, (float)cell.y);
-			glm::vec2 child_pos = pos - cell_pos;
-
-			float child_ratio = 1.0f - cell_value;
-
-			float alpha_child = GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
-
-			result = result + alpha_child * (cell_value - result);
-		}
-
-#endif
-
 		return result;
 	}
 
@@ -385,7 +459,7 @@ protected:
 			if (!boost::filesystem::create_directories(dst_directory_path))
 				return false;
 
-		glm::ivec2 image_size = glm::ivec2(640, 400);
+		glm::ivec2 image_size = glm::ivec2(320, 200);
 		glm::ivec2 cell_count = glm::ivec2(8, 5);
 
 		int texture_count = 160;
@@ -405,14 +479,7 @@ protected:
 
 int CHAOS_MAIN(int argc, char** argv, char** env)
 {
-	glm::vec3 a = { 1.5f, 2.0f , -3.6f };
-
-	glm::ivec4 b = RecastVector(a);
-
-	glm::vec2 c = RecastVector(b);
-
 	chaos::RunApplication<MyApplication>(argc, argv, env);
-
 	return 0;
 }
 

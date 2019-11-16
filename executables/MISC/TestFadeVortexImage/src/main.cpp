@@ -125,9 +125,12 @@ protected:
 		return 0;
 	}
 
-	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio)
+	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
 	{
 		assert(grid_size.x > 0 && grid_size.y > 0);
+
+		if (recurse_count == 0)
+			return 1.0f;
 
 		// size of a cell
 		glm::vec2 cell_size = image_size / chaos::GLMTools::RecastVector<glm::vec2>(grid_size);
@@ -162,19 +165,39 @@ protected:
 		assert(a1 >= 0.0f && a1 <= 1.0f);
 		assert(a2 >= 0.0f && a2 <= 1.0f);
 
+		float result = 0.0f;
 		if (ratio <= a1)
-			return 0.0f;
-		if (ratio >= a2)
-			return 1.0f;
+			result = 1.0f;
+		else if (ratio >= a2)
+			result = 0.0f;
+		else
+			result = 1.0f - ((ratio - a1) / (a2 - a1));
 
-		return (ratio - a1) / (a2 - a1);
+		if (--recurse_count > 0 && result > 0.0f && result < 1.0f) // 
+		{
+			int s = std::min(grid_size.x, grid_size.y);
+
+			glm::ivec2 child_grid_size = glm::ivec2(s, s);
+
+			glm::vec2 child_image_size = cell_size;
+
+			glm::vec2 cell_pos = cell_size * glm::vec2((float)cell.x, (float)cell.y);
+			glm::vec2 child_pos = pos - cell_pos;
+						
+			float child_ratio = 1.0f - result;
+
+			result = GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
+		}
+
+
+		return result;
 
 #endif
 	}
 
-	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_count, float ratio, boost::filesystem::path const & dst_directory_path)
+	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_count, float ratio, int recurse_count, boost::filesystem::path const & dst_directory_path)
 	{
-		FIBITMAP* img = chaos::ImageTools::GenFreeImage<chaos::PixelBGRA>(image_size.x, image_size.y, [image_size, cell_count, ratio](chaos::ImageDescription & desc) {
+		FIBITMAP* img = chaos::ImageTools::GenFreeImage<chaos::PixelBGRA>(image_size.x, image_size.y, [image_size, cell_count, ratio, recurse_count](chaos::ImageDescription & desc) {
 					
 			for (int j = 0; j < desc.height; ++j)
 			{
@@ -182,7 +205,7 @@ protected:
 				
 				for (int i = 0; i < desc.width; ++i)
 				{
-					float alpha = GetPixelAlpha(glm::vec2((float)i, (float)j), glm::vec2((float)image_size.x, (float)image_size.y), cell_count, ratio);
+					float alpha = GetPixelAlpha(glm::vec2((float)i, (float)j), glm::vec2((float)image_size.x, (float)image_size.y), cell_count, ratio, recurse_count);
 
 					bgra[i].R = (char)(alpha * 255.0f);
 					bgra[i].G = (char)(alpha * 255.0f);
@@ -215,14 +238,16 @@ protected:
 			if (!boost::filesystem::create_directories(dst_directory_path))
 				return false;
 
-		glm::ivec2 image_size = glm::ivec2(160, 90);
+		glm::ivec2 image_size = glm::ivec2(640, 400);
 		glm::ivec2 cell_count = glm::ivec2(8, 5);
 
-		int texture_count = 60;
+		int texture_count = 320;
+		int recurse_count = 3;
+
 		for (int i = 0; i < texture_count; ++i)
 		{
 			float ratio = chaos::MathTools::CastAndDiv<float>(i, texture_count - 1);
-			GenerateTexture(i, image_size, cell_count, ratio, dst_directory_path);
+			GenerateTexture(i, image_size, cell_count, ratio, recurse_count, dst_directory_path);
 		}
 			
 		chaos::WinTools::ShowFile(dst_directory_path);

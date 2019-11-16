@@ -125,6 +125,42 @@ protected:
 		return 0;
 	}
 
+
+	static float GetPixelAlphaForCell(glm::vec2 const& cell, glm::vec2 const& grid_size, float ratio)
+	{
+		// the total number of layers
+		int layer_count = GetLayerCount(grid_size);
+		// the current layer for given cell
+		int cell_layer = GetCellLayer(cell, grid_size);
+		// number of categories for that layer
+		int category_count = GetCategoryCountOnLayer(grid_size, cell_layer);
+		// number of categories in all previous layers
+		int sum_previous_category_count = GetSumCategoryForPreviousLayers(grid_size, cell_layer);
+		// total number of categories
+		int sum_category_count = GetSumCategoryForPreviousLayers(grid_size, layer_count - 1) + GetCategoryCountOnLayer(grid_size, layer_count - 1);
+		// category of cell according to its layer
+		int cell_category = GetCellCategory(cell, grid_size, cell_layer);
+		// final category for layer
+		int absolute_cell_category = cell_category + sum_previous_category_count;
+
+		// this cell change its alpha when it is between the following categories
+		float a1 = (float)absolute_cell_category / (float)sum_category_count;
+		float a2 = a1 + 1.0f / (float)sum_category_count;
+
+		assert(a1 >= 0.0f && a1 <= 1.0f);
+		assert(a2 >= 0.0f && a2 <= 1.0f);
+
+		float result = 0.0f;
+		if (ratio <= a1)
+			result = 1.0f;
+		else if (ratio >= a2)
+			result = 0.0f;
+		else
+			result = 1.0f - ((ratio - a1) / (a2 - a1));
+
+		return result;
+	}
+
 	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
 	{
 		assert(grid_size.x > 0 && grid_size.y > 0);
@@ -136,6 +172,37 @@ protected:
 		glm::vec2 cell_size = image_size / chaos::GLMTools::RecastVector<glm::vec2>(grid_size);
 		// the cell containing the point considered
 		glm::ivec2 cell = chaos::GLMTools::RecastVector<glm::ivec2>(pos / cell_size);
+
+		std::array<float, 9> neighboor_factors { 0.25f, 0.5f, 0.25f, 0.5f, 1.0f, 0.5f, 0.25f, 0.5f, 0.25f };
+
+		float sum_factor = 0.0f;
+		float sum_ratio  = 0.0f;
+		for (int j = -1; j <= 1; ++j)
+		{
+			for (int i = -1; i <= 1; ++i)
+			{
+				glm::ivec2 neighboor_cell = cell;
+				neighboor_cell.x += i;
+				neighboor_cell.y += j;
+				if (neighboor_cell.x < 0 || neighboor_cell.y < 0)
+					continue;
+				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
+					continue;
+
+				int index = 1 + i + (j + 1) * 3;
+				float factor = neighboor_factors[index];
+				sum_ratio  += factor * GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+				sum_factor += factor;
+			}
+		}
+
+		return sum_ratio / sum_factor;
+
+
+
+
+
+		return GetPixelAlphaForCell(cell, grid_size, ratio);
 
 		// the total number of layers
 		int layer_count = GetLayerCount(grid_size);
@@ -173,7 +240,12 @@ protected:
 		else
 			result = 1.0f - ((ratio - a1) / (a2 - a1));
 
-		if (--recurse_count > 0 && result > 0.0f && result < 1.0f) // 
+
+
+
+
+
+		if (0 && --recurse_count > 0 && result > 0.0f && result < 1.0f) // 
 		{
 			int s = std::min(grid_size.x, grid_size.y);
 
@@ -186,7 +258,7 @@ protected:
 						
 			float child_ratio = 1.0f - result;
 
-			result = GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
+			result = result * GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
 		}
 
 
@@ -241,7 +313,7 @@ protected:
 		glm::ivec2 image_size = glm::ivec2(640, 400);
 		glm::ivec2 cell_count = glm::ivec2(8, 5);
 
-		int texture_count = 320;
+		int texture_count = 160;
 		int recurse_count = 3;
 
 		for (int i = 0; i < texture_count; ++i)

@@ -173,7 +173,7 @@ protected:
 
 
 
-	static float GetPixelAlphaForCell(glm::vec2 const& cell, glm::vec2 const& grid_size, float ratio)
+	static glm::vec4 GetPixelColorForCell(glm::vec2 const& cell, glm::vec2 const& grid_size, float ratio)
 	{
 		// the total number of layers
 		int layer_count = GetLayerCount(grid_size);
@@ -205,7 +205,7 @@ protected:
 		else
 			result = 1.0f - ((ratio - a1) / (a2 - a1));
 
-		return result;
+		return glm::vec4(result, result, result, 1.0f);
 	}
 
 
@@ -237,14 +237,14 @@ protected:
 
 			int index = 1 + i + (j + 1) * 3;
 			float factor = neighboor_factors[index];
-			float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+			float value = GetPixelColorForCell(neighboor_cell, grid_size, ratio);
 			if (i == 0 && j == 0)
 				cell_value = value;
 			sum_ratio += factor * value;
 			sum_factor += factor;
 
 
-			float value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+			float value = GetPixelColorForCell(neighboor_cell, grid_size, ratio);
 
 			glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
 
@@ -286,7 +286,7 @@ protected:
 
 		float child_ratio = 1.0f - cell_value;
 
-		float alpha_child = GetPixelAlpha(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
+		float alpha_child = GetPixelColor(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
 
 		result = result + alpha_child * (cell_value - result);
 	}
@@ -317,7 +317,7 @@ protected:
 
 
 
-	static float GetPixelAlpha(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
+	static glm::vec4 GetPixelColor(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
 	{
 		assert(grid_size.x > 0 && grid_size.y > 0);
 
@@ -346,7 +346,7 @@ protected:
 		// XXX : in fact, the only distance that may be 0, is the one of the central grid (maybe some opimization to do later)
 
 		std::array<float, 9> distances = { -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f };		// -1.0f for invalid values
-		std::array<float, 9> values    = {  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f,  0.0f };
+		std::array<glm::vec4, 9> values;
 
 		float distance_product = 1.0f; // utility value to simplify the computation of SUM
 
@@ -363,12 +363,12 @@ protected:
 				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
 					continue;
 
-				if (i != 0 && j != 0)
-					continue;
+	//		if (i != 0 && j != 0)
+	//				continue;
 
 				// compute value of that neighboor
 				int index = 1 + i + (j + 1) * 3;								
-				float neighboor_value = GetPixelAlphaForCell(neighboor_cell, grid_size, ratio);
+				glm::vec4 neighboor_value = GetPixelColorForCell(neighboor_cell, grid_size, ratio);
 
 				// compute distance of that neighboor => distance = 0 bring early exit
 				glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
@@ -378,13 +378,13 @@ protected:
 					return neighboor_value; // early exit
 
 #if 0
-				if (pos.x >= neighboor_cell.x && i < 0)
+				if (pos.x >= neighboor_cell.x && i > 0)
 					continue;
-				if (pos.x <= neighboor_cell.x && i > 0)
+				if (pos.x <= neighboor_cell.x && i < 0)
 					continue;
-				if (pos.y >= neighboor_cell.y && j < 0)
+				if (pos.y >= neighboor_cell.y && j > 0)
 					continue;
-				if (pos.y <= neighboor_cell.y && j > 0)
+				if (pos.y <= neighboor_cell.y && j < 0)
 					continue;
 #endif
 
@@ -405,7 +405,7 @@ protected:
 				sum += distance_product / distances[i]; // (d2.d3.d4) = (d1.d2.d3.d4)/d1
 
 		// computation of the 'average'
-		float result = 0.0f;
+		glm::vec4 result = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		for (int i = 0; i < 9; ++i)
 		{
 			float d = distances[i];
@@ -426,11 +426,11 @@ protected:
 				
 				for (int i = 0; i < desc.width; ++i)
 				{
-					float alpha = GetPixelAlpha(glm::vec2((float)i, (float)j), glm::vec2((float)image_size.x, (float)image_size.y), cell_count, ratio, recurse_count);
+					glm::vec4 color = GetPixelColor(glm::vec2((float)i, (float)j), glm::vec2((float)image_size.x, (float)image_size.y), cell_count, ratio, recurse_count);
 
-					bgra[i].R = (char)(alpha * 255.0f);
-					bgra[i].G = (char)(alpha * 255.0f);
-					bgra[i].B = (char)(alpha * 255.0f);
+					bgra[i].R = (char)(color.x * 255.0f);
+					bgra[i].G = (char)(color.y * 255.0f);
+					bgra[i].B = (char)(color.z * 255.0f);
 					bgra[i].A = 255;
 				}
 			}

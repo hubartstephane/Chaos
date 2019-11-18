@@ -194,6 +194,29 @@ protected:
 		float a1 = (float)absolute_cell_category / (float)sum_category_count;
 		float a2 = a1 + 1.0f / (float)sum_category_count;
 
+		static bool init = false;
+		
+		int constexpr color_count = 4;
+
+		static glm::vec4 values[color_count];
+		if (!init)
+		{
+			init = true;
+			for (int i = 0; i < color_count; ++i)
+				values[i] = chaos::GLMTools::RandVec4();
+
+			values[0] = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			values[1] = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+			values[2] = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+			values[3] = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+
+
+		}
+
+		int index = (int)(cell.x + cell.y * grid_size.x);
+
+	//	return values[index % color_count];
+
 		assert(a1 >= 0.0f && a1 <= 1.0f);
 		assert(a2 >= 0.0f && a2 <= 1.0f);
 
@@ -205,116 +228,9 @@ protected:
 		else
 			result = 1.0f - ((ratio - a1) / (a2 - a1));
 
+
 		return glm::vec4(result, result, result, 1.0f);
 	}
-
-
-
-
-	/////////////////////////////////////////
-
-#if 0
-
-	std::array<float, 9> neighboor_factors{ 0.25f, 0.5f, 0.25f, 0.5f, 1.0f, 0.5f, 0.25f, 0.5f, 0.25f };
-
-	float cell_value = 0.0f;
-
-	float sum_factor = 0.0f;
-	float sum_ratio = 0.0f;
-	for (int j = -1; j <= 1; ++j)
-	{
-		for (int i = -1; i <= 1; ++i)
-		{
-			glm::ivec2 neighboor_cell = cell;
-			neighboor_cell.x += i;
-			neighboor_cell.y += j;
-			if (neighboor_cell.x < 0 || neighboor_cell.y < 0)
-				continue;
-			if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
-				continue;
-
-
-
-			int index = 1 + i + (j + 1) * 3;
-			float factor = neighboor_factors[index];
-			float value = GetPixelColorForCell(neighboor_cell, grid_size, ratio);
-			if (i == 0 && j == 0)
-				cell_value = value;
-			sum_ratio += factor * value;
-			sum_factor += factor;
-
-
-			float value = GetPixelColorForCell(neighboor_cell, grid_size, ratio);
-
-			glm::vec2 neighboor_center = cell_size * chaos::RecastVector<glm::vec2>(neighboor_cell) + cell_size * 0.5f;
-
-			float d = glm::distance(pos, neighboor_center);
-			if (d == 0.0f)
-			{
-				sum_ratio = value;
-				sum_factor = 1.0f;
-				break;
-			}
-			else
-			{
-
-			}
-
-
-
-
-			//			if (i == 0 && j == 0)
-			//				cell_value = value;
-			//			sum_ratio += factor * value;
-			//			sum_factor += factor;
-		}
-	}
-
-	float result = sum_ratio / sum_factor;
-
-
-	if (recurse_count-- > 0 && cell_value > 0.0f && cell_value < 1.0f) // 
-	{
-		int s = std::min(grid_size.x, grid_size.y);
-
-		glm::ivec2 child_grid_size = glm::ivec2(s, s);
-
-		glm::vec2 child_image_size = cell_size;
-
-		glm::vec2 cell_pos = cell_size * glm::vec2((float)cell.x, (float)cell.y);
-		glm::vec2 child_pos = pos - cell_pos;
-
-		float child_ratio = 1.0f - cell_value;
-
-		float alpha_child = GetPixelColor(child_pos, child_image_size, child_grid_size, child_ratio, recurse_count);
-
-		result = result + alpha_child * (cell_value - result);
-	}
-
-
-
-#endif
-	/////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	static glm::vec4 GetPixelColor(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
@@ -363,8 +279,8 @@ protected:
 				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
 					continue;
 
-	//		if (i != 0 && j != 0)
-	//				continue;
+			//if (i != 0 || j != 0)
+			//		continue;
 
 				// compute value of that neighboor
 				int index = 1 + i + (j + 1) * 3;								
@@ -378,13 +294,13 @@ protected:
 					return neighboor_value; // early exit
 
 #if 0
-				if (pos.x >= neighboor_cell.x && i > 0)
+				if (pos.x >= neighboor_cell.x && i < 0)
 					continue;
-				if (pos.x <= neighboor_cell.x && i < 0)
+				if (pos.x <= neighboor_cell.x && i > 0)
 					continue;
-				if (pos.y >= neighboor_cell.y && j > 0)
+				if (pos.y >= neighboor_cell.y && j < 0)
 					continue;
-				if (pos.y <= neighboor_cell.y && j < 0)
+				if (pos.y <= neighboor_cell.y && j > 0)
 					continue;
 #endif
 
@@ -416,6 +332,45 @@ protected:
 		return result;
 	}
 
+
+
+
+	static glm::vec4 GetPixelColor2(glm::vec2 const& pos, glm::vec2 const& image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
+	{
+		assert(image_size.x > 0);
+		assert(image_size.y > 0);
+
+		// we are drawing an ellipsis that encouters the diagonal of the rectangle (Rx.cos(t) , Ry.sin(t))
+		glm::vec2 diag        = image_size * 0.5f;
+		float     diag_length = glm::length(diag);
+
+		float beta = std::atan2(diag.y, diag.x);
+
+		float Rx = diag.x / std::cos(beta);
+		float Ry = diag.y / std::sin(beta);
+
+		// compute for the considered point the angle with X axis
+		glm::vec2 center = image_size * 0.5f;
+
+		glm::vec2 dp = pos - center;
+
+		float alpha = (dp == glm::vec2(0.0f, 0.0f))? 0.0f : std::atan2(dp.y, dp.x);
+
+
+
+
+
+		glm::vec4 result = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+
+
+		
+
+
+		return result;
+	}
+
+
+
 	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_count, float ratio, int recurse_count, boost::filesystem::path const & dst_directory_path)
 	{
 		FIBITMAP* img = chaos::ImageTools::GenFreeImage<chaos::PixelBGRA>(image_size.x, image_size.y, [image_size, cell_count, ratio, recurse_count](chaos::ImageDescription & desc) {
@@ -426,7 +381,11 @@ protected:
 				
 				for (int i = 0; i < desc.width; ++i)
 				{
-					glm::vec4 color = GetPixelColor(glm::vec2((float)i, (float)j), glm::vec2((float)image_size.x, (float)image_size.y), cell_count, ratio, recurse_count);
+
+
+					glm::vec4 color = GetPixelColor2(glm::vec2((float)i, (float)j), glm::vec2((float)image_size.x, (float)image_size.y), cell_count, ratio, recurse_count);
+
+
 
 					bgra[i].R = (char)(color.x * 255.0f);
 					bgra[i].G = (char)(color.y * 255.0f);

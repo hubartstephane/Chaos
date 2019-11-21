@@ -340,33 +340,63 @@ protected:
 		assert(image_size.x > 0);
 		assert(image_size.y > 0);
 
-		// we are drawing an ellipsis that encouters the diagonal of the rectangle (Rx.cos(t) , Ry.sin(t))
+		// compute the diagonale of the rectangle and the angle beta to the X Axis
 		glm::vec2 diag        = image_size * 0.5f;
 		float     diag_length = glm::length(diag);
 
 		float beta = std::atan2(diag.y, diag.x);
 
-		float Rx = diag.x / std::cos(beta);
-		float Ry = diag.y / std::sin(beta);
+		// considering the ellipsis contained by the rectangle
+		// it is described by 
+		//
+		// | cos(t). W/2
+		// | 
+		// | sin(t). H/2
+		// 
+		// for t = beta, its length is				
+		glm::vec2 d = diag * glm::vec2(std::cos(beta), std::sin(beta));
+
+		float d_length = glm::length(d);
+
+		// the factor to apply to the ellipsis so it fully contains the rectangle is
+		float scale_factor = diag_length / d_length;
+
+		// the radius = (Rx, Ry) is (start of the blend-out zone)
+		glm::vec2 min_radius = scale_factor * diag;
+
+		// the radius for the end of the blend-out zone is (+10% radius)
+		glm::vec2 max_radius = scale_factor * (diag * 1.25f);
 
 		// compute for the considered point the angle with X axis
 		glm::vec2 center = image_size * 0.5f;
 
 		glm::vec2 dp = pos - center;
 
-		float alpha = (dp == glm::vec2(0.0f, 0.0f))? 0.0f : std::atan2(dp.y, dp.x);
+		float alpha = (dp == glm::vec2(0.0f, 0.0f)) ? 0.0f : std::atan2(dp.y, dp.x);
 
+		// compute the distant point on the ellipsis
+		glm::vec2 a = glm::vec2(std::cos(alpha), std::sin(alpha));
 
+		glm::vec2 min_limit = min_radius * a;
+		glm::vec2 max_limit = max_radius * a;
 
+		// compute the distance from center to the 2 limits
+		float min_distance = glm::length(min_limit);
+		float max_distance = glm::length(max_limit);
+		float p_distance   = glm::length(dp);
 
+		p_distance += ratio * max_distance;
 
-		glm::vec4 result = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+		float value = 0.0f;
 
+		if (p_distance <= min_distance)
+			value = 1.0f;
+		else if (p_distance >= max_distance)
+			value = 0.0f;
+		else
+			value = 1.0f - (p_distance - min_distance) / (max_distance - min_distance);
 
-		
-
-
-		return result;
+		return glm::vec4(value, value, value, value);
 	}
 
 

@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@background.psh"
+	],
+	"vertex_sources":
+	[
+		"@background.vsh"
+	]
+}

@@ -1,0 +1,7 @@
+{
+  "@background" : { "path": "@programs/background/background.pgm" },
+  "@challenge"  : { "path": "@programs/challenge/challenge.pgm" },
+  "@gameobject"  : { "path": "@programs/gameobject/gameobject.pgm" },
+  "@text"  : { "path": "@programs/text/text.pgm" }    
+
+}

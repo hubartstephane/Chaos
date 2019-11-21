@@ -1,0 +1,15 @@
+{
+  "LINES": [
+    "11111111111111111111",
+    "22222222222222222222",
+    "11111111111111111111",
+    "22222222222222222222",
+    "11111111111111111111"
+  ],
+  "xBACKGROUND_TEXTURE": "background2",
+  "xMUSIC": "game_music2",
+  "xDICTIONNARY": [
+    "worda wordb wordc",
+    "wordd worde wordf"
+  ]
+}

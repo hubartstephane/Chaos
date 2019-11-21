@@ -2,9 +2,15 @@
   "program": "background",
 
   "textures": {
-    
+
     "background": { "name": "background1" }
 
+  },
+
+  "uniforms": {
+
+    "fill_ratio": 0.5,
+    "blendzone_ratio": 1.25
   }
 
 }

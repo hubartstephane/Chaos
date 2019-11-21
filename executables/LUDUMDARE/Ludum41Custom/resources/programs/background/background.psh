@@ -1,12 +1,25 @@
 out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
 uniform sampler2D background;
+uniform float fill_ratio;
+uniform float blendzone_ratio;
+uniform vec2  canvas_box;
 
 in vec2 vs_position;
 in vec2 vs_texcoord;
 in vec4 vs_color;
 
 void main()
-{ 
-  output_color = texture(background, vs_texcoord);
+{
+
+
+
+
+
+	
+
+  output_color = fill_ratio * texture(background, vs_texcoord);
+
+  output_color.xy = vs_position.xy;
+  output_color.z = 0.0;
 }

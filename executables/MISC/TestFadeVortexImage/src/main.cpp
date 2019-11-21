@@ -346,7 +346,7 @@ protected:
 
 		float beta = std::atan2(diag.y, diag.x);
 
-		// considering the ellipsis contained by the rectangle
+		// considering the ellipse contained by the rectangle
 		// it is described by 
 		//
 		// | cos(t). W/2
@@ -358,7 +358,7 @@ protected:
 
 		float d_length = glm::length(d);
 
-		// the factor to apply to the ellipsis so it fully contains the rectangle is
+		// the factor to apply to the ellipse so it fully contains the rectangle is
 		float scale_factor = diag_length / d_length;
 
 		// the radius = (Rx, Ry) is (start of the blend-out zone)
@@ -374,7 +374,7 @@ protected:
 
 		float alpha = (dp == glm::vec2(0.0f, 0.0f)) ? 0.0f : std::atan2(dp.y, dp.x);
 
-		// compute the distant point on the ellipsis
+		// compute the distant point on the ellipse
 		glm::vec2 a = glm::vec2(std::cos(alpha), std::sin(alpha));
 
 		glm::vec2 min_limit = min_radius * a;

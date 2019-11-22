@@ -31,6 +31,8 @@ public:
 
 	/** indestructible brick count */
 	size_t indestructible_brick_count = 0;
+	/** destructible brick count */
+	size_t destructible_brick_count = 0;
 	/** the brick types */
 	std::vector<std::vector<int>> bricks;
 	/** music */

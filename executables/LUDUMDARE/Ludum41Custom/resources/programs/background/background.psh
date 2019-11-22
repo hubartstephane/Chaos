@@ -9,14 +9,6 @@ in vec2 vs_position;
 in vec2 vs_texcoord;
 in vec4 vs_color;
 
-
-
-
-
-
-uniform float game_time;
-
-
 void main()
 {
 	vec2 pos = 2.0 * canvas_box.zw * ((vs_position * 0.5) + vec2(0.5, 0.5));
@@ -68,20 +60,9 @@ void main()
 	float max_distance = length(max_limit);
 	float p_distance = length(dp);
 
-	float ratio = fract(game_time * 0.5);
 
+	float ratio = fill_ratio;
 	p_distance += ratio * max_distance;
-
-
-
-
-
-
-
-
-
-
-
 
 	float value = 0.0;
 
@@ -93,12 +74,4 @@ void main()
 		value = 1.0 - (p_distance - min_distance) / (max_distance - min_distance);
 
 	output_color = vec4(value, value, value, 1.0);
-	
-
-#if 0
-  output_color = fill_ratio * texture(background, vs_texcoord);
-
-  output_color.xy = vs_position.xy;
-  output_color.z = 0.0;
-#endif
 }

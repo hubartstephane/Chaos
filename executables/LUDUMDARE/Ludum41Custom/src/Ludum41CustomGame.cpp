@@ -143,6 +143,7 @@ death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 			// life
 			int brick_type = (int)(c - '0');
 			brick_line.push_back(brick_type);
+			result->destructible_brick_count++;
 		}
 		result->bricks.push_back(std::move(brick_line));
 	}

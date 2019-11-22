@@ -200,3 +200,19 @@ void LudumLevelInstance::SetInGameMusic()
 	}
 	death::GameLevelInstance::SetInGameMusic(); // fallback
 }
+
+void LudumLevelInstance::FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider)
+{
+	death::GameLevelInstance::FillUniformProvider(main_uniform_provider);
+
+	LudumLevel const* level = GetLudumLevel();
+	if (level == nullptr)
+		return;
+
+	size_t brick_count = GetBrickCount();
+	size_t indestructible_brick_count = level->indestructible_brick_count;
+	size_t destructible_brick_count = level->destructible_brick_count;
+	
+	float fill_ratio = 1.0f - (float)(brick_count - indestructible_brick_count) / (float)(destructible_brick_count);
+	main_uniform_provider.AddVariableValue("fill_ratio", fill_ratio);
+}

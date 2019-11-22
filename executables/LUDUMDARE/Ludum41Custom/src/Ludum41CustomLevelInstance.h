@@ -33,6 +33,8 @@ public:
 	virtual bool DoTick(double delta_time) override;
 	/** override */
 	virtual chaos::box2 GetBoundingBox() const override;
+	/** override */
+	virtual void FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider) override;
 
 protected:
 

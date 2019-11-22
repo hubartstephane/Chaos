@@ -9,13 +9,19 @@ in vec2 vs_position;
 in vec2 vs_texcoord;
 in vec4 vs_color;
 
+
+
+
+
+
+uniform float game_time;
+
+
 void main()
 {
-	//vec2 pos = canvas_box.zw * ((vs_position * 2.0) - 1.0);
-	vec2 pos = canvas_box.zw * ((vs_position * 0.5) + vec2(0.5, 0.5));
+	vec2 pos = 2.0 * canvas_box.zw * ((vs_position * 0.5) + vec2(0.5, 0.5));
 
 	vec2 image_size = 2.0 * canvas_box.zw;
-
 
 	// compute the diagonale of the rectangle and the angle beta to the X Axis
 	vec2 diag = image_size * 0.5;
@@ -62,9 +68,20 @@ void main()
 	float max_distance = length(max_limit);
 	float p_distance = length(dp);
 
-	float ratio = 0.5;
+	float ratio = fract(game_time * 0.5);
 
 	p_distance += ratio * max_distance;
+
+
+
+
+
+
+
+
+
+
+
 
 	float value = 0.0;
 

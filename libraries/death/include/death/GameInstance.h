@@ -130,6 +130,9 @@ namespace death
 		/** state changes */
 		virtual void OnGameOver();
 
+		/* returns true whether we can change level */
+		virtual bool CanCompleteLevel() const;
+
 		/** pause/resume pause/game clocks */
 		void OnPauseStateUpdateClocks(bool enter_pause);
 

@@ -30,8 +30,6 @@ public:
 protected:
 
 	/** override */
-	virtual bool CanCompleteLevel() const override;
-	/** override */
 	virtual bool DoTick(double delta_time) override;
 	/** override */
 	virtual void OnLevelStarted() override;

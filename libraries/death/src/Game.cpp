@@ -1241,17 +1241,17 @@ namespace death
 
 	bool Game::CanCompleteLevel()
 	{
-		// cheat code
-#if _DEBUG
-		if (GetCheatSkipLevelRequired())
-			return true;
-#endif
+		// game instance knows about that
+		death::GameInstance const* game_instance = GetGameInstance();
+		if (game_instance != nullptr)
+			if (!game_instance->CanCompleteLevel())
+				return false;
 		// level knows about that
 		death::GameLevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			if (level_instance->CanCompleteLevel())
-				return true;
-		return false;
+			if (!level_instance->CanCompleteLevel())
+				return false;
+		return true;
 	}
 
 	bool Game::TickGameLoop(double delta_time)
@@ -1259,7 +1259,13 @@ namespace death
 		// level finished
 		if (CheckLevelCompleted())
 		{
-			if (CanCompleteLevel()) // maybe there is a small delay for an animation or a sound
+			bool can_complete = 
+#if _DEBUG
+				GetCheatSkipLevelRequired() ||
+#endif
+				CanCompleteLevel();
+
+			if (can_complete) // maybe there is a small delay for an animation or a sound
 			{
 				if (!SetNextLevel(looping_levels))
 					RequireExitGame();
@@ -1267,7 +1273,7 @@ namespace death
 			}
 		}
 		// game over ? (not if level is finished and wait for completion)
-		else if (CheckGameOverCondition())
+		if (CheckGameOverCondition())
 		{
 			RequireGameOver();
 			return false;

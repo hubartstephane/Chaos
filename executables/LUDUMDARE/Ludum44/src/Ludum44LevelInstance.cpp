@@ -34,13 +34,6 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
-bool LudumLevelInstance::CanCompleteLevel() const
-{
-
-
-	return true;
-}
-
 bool LudumLevelInstance::DoTick(double delta_time)
 {
 	death::TiledMap::LevelInstance::DoTick(delta_time);

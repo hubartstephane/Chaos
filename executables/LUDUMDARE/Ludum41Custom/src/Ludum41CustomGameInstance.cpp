@@ -47,8 +47,9 @@ void LudumGameInstance::TickChallenge(double delta_time)
 		// start a challenge (only if one ball is going upward)
 		challenge_timer = std::max(0.0f, challenge_timer - (float)delta_time);
 		if (challenge_timer <= 0.0f)
-			if (CanStartChallengeBallIndex(false) != std::numeric_limits<size_t>::max()) // any ball going up
-				sequence_challenge = CreateSequenceChallenge();
+			if (current_background_fillratio > 0.0f) // no challenge when waiting for level change
+				if (CanStartChallengeBallIndex(false) != std::numeric_limits<size_t>::max()) // any ball going up
+					sequence_challenge = CreateSequenceChallenge();
 	}
 }
 
@@ -101,6 +102,10 @@ void LudumGameInstance::TickBackgroundFillRatio(double delta_time)
 		current_background_fillratio -= game->background_fillratio_changespeed * (float)delta_time;
 		current_background_fillratio = std::max(current_background_fillratio, target_fillratio);
 	}
+
+	// tick for completion timer
+	if (current_background_fillratio == 0.0f)
+		complete_episode_timer += (float)delta_time;
 }
 
 void LudumGameInstance::FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider)
@@ -108,19 +113,6 @@ void LudumGameInstance::FillUniformProvider(chaos::GPUProgramProvider& main_unif
 	death::GameInstance::FillUniformProvider(main_uniform_provider);
 
 	main_uniform_provider.AddVariableValue("fill_ratio", current_background_fillratio);
-
-#if 0
-	LudumLevel const* level = GetLudumLevel();
-	if (level == nullptr)
-		return;
-
-	size_t brick_count = GetBrickCount();
-	size_t indestructible_brick_count = level->indestructible_brick_count;
-	size_t destructible_brick_count = level->destructible_brick_count;
-
-	float fill_ratio = 1.0f - (float)(brick_count - indestructible_brick_count) / (float)(destructible_brick_count);
-	main_uniform_provider.AddVariableValue("fill_ratio", current_background_fillratio);
-#endif
 }
 
 
@@ -251,8 +243,20 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 	target_brick_offset = 0.0f;
 	brick_offset = 0.0f;
 	current_background_fillratio = 1.0f;
+	complete_episode_timer = 0.0f;
 }
 
+bool LudumGameInstance::CanCompleteLevel() const
+{
+	if (!death::GameInstance::CanCompleteLevel())
+		return false;
+	if (current_background_fillratio > 0.0f)
+		return false;
+	LudumGame const* ludum_game = GetLudumGame();
+	if (ludum_game != nullptr && complete_episode_timer < ludum_game->delay_before_next_level)
+		return false;
+	return true;
+}
 
 bool LudumGameInstance::DoTick(double delta_time)
 {

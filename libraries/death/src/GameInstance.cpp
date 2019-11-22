@@ -376,6 +376,11 @@ namespace death
 		return true;
 	}
 
+	bool GameInstance::CanCompleteLevel() const
+	{
+		return true;
+	}
+
 	void GameInstance::OnEnterGame()
 	{
 

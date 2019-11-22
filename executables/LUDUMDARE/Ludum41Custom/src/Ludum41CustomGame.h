@@ -122,6 +122,10 @@ protected:
 	
 	float delay_before_ball_move = 2.0f;
 
+	float background_fillratio_changespeed = 0.01f;
+
+	float delay_before_next_level = 3.0f;
+
 	int min_brick_life = 1;
 	float max_brick_life = 5.0f;
 

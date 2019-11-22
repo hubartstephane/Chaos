@@ -61,7 +61,7 @@ void main()
 	float p_distance = length(dp);
 
 
-	float ratio = fill_ratio;
+	float ratio = 1.0 - fill_ratio;
 	p_distance += ratio * max_distance;
 
 	float value = 0.0;

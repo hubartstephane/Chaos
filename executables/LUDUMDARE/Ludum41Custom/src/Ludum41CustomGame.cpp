@@ -99,6 +99,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(brick_offset_speed);
 	DEATHGAME_JSON_ATTRIBUTE(brick_offset_increment);
 
+	DEATHGAME_JSON_ATTRIBUTE(background_fillratio_changespeed);
+	DEATHGAME_JSON_ATTRIBUTE(delay_before_next_level);
+
 	return true;
 }
 

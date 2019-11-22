@@ -76,6 +76,54 @@ static void RotateVelocity(glm::vec2 & src, float angle)
 }
 
 
+void LudumGameInstance::TickBackgroundFillRatio(double delta_time)
+{
+	LudumGame const* game = GetLudumGame();
+	if (game == nullptr)
+		return;
+
+	LudumLevelInstance const* level_instance = GetLudumLevelInstance();
+	if (level_instance == nullptr)
+		return;
+
+	LudumLevel const* level = GetLudumLevel();
+	if (level == nullptr)
+		return;
+
+	size_t brick_count = level_instance->GetBrickCount();
+	size_t indestructible_brick_count = level->indestructible_brick_count;
+	size_t destructible_brick_count = level->destructible_brick_count;
+
+	float target_fillratio = (float)(brick_count - indestructible_brick_count) / (float)(destructible_brick_count);
+
+	if (target_fillratio < current_background_fillratio)
+	{
+		current_background_fillratio -= game->background_fillratio_changespeed * (float)delta_time;
+		current_background_fillratio = std::max(current_background_fillratio, target_fillratio);
+	}
+}
+
+void LudumGameInstance::FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider)
+{
+	death::GameInstance::FillUniformProvider(main_uniform_provider);
+
+	main_uniform_provider.AddVariableValue("fill_ratio", current_background_fillratio);
+
+#if 0
+	LudumLevel const* level = GetLudumLevel();
+	if (level == nullptr)
+		return;
+
+	size_t brick_count = GetBrickCount();
+	size_t indestructible_brick_count = level->indestructible_brick_count;
+	size_t destructible_brick_count = level->destructible_brick_count;
+
+	float fill_ratio = 1.0f - (float)(brick_count - indestructible_brick_count) / (float)(destructible_brick_count);
+	main_uniform_provider.AddVariableValue("fill_ratio", current_background_fillratio);
+#endif
+}
+
+
 void LudumGameInstance::TickBallSplit(double delta_time)
 {
 	LudumGame const * ludum_game = GetLudumGame();
@@ -202,6 +250,7 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
 	target_brick_offset = 0.0f;
 	brick_offset = 0.0f;
+	current_background_fillratio = 1.0f;
 }
 
 
@@ -216,6 +265,7 @@ bool LudumGameInstance::DoTick(double delta_time)
 		TickBrickOffset(delta_time);
 		TickChallenge(delta_time);
 		TickBallSplit(delta_time);
+		TickBackgroundFillRatio(delta_time);
 	}
 	return true;
 }

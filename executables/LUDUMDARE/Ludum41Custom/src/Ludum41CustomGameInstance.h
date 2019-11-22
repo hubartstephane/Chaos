@@ -79,6 +79,10 @@ public:
 
 	void TickBallSplit(double delta_time);
 
+	void TickBackgroundFillRatio(double delta_time);
+
+	virtual void FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider) override;
+
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
 	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data);
 	/** test whether a key is being pressed and whether it correspond to the current challenge */
@@ -152,6 +156,8 @@ protected:
 	float ball_collision_speed    = 0.5f;
 	float ball_power         = 1.0f;
 	float ball_speed         = 5.0f;	
+
+	float current_background_fillratio = 1.0f;
 
 	int pending_split_count = 0;
 	

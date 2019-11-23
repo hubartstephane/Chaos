@@ -1,7 +1,8 @@
 {
-  "@background" : { "path": "@programs/background/background.pgm" },
-  "@challenge"  : { "path": "@programs/challenge/challenge.pgm" },
-  "@gameobject"  : { "path": "@programs/gameobject/gameobject.pgm" },
-  "@text"  : { "path": "@programs/text/text.pgm" }    
+  "@background": { "path": "@programs/background/background.pgm" },
+  "@background_level_base": { "path": "@programs/background_level_base/background_level_base.pgm" },
+  "@challenge": { "path": "@programs/challenge/challenge.pgm" },
+  "@gameobject": { "path": "@programs/gameobject/gameobject.pgm" },
+  "@text": { "path": "@programs/text/text.pgm" }
 
 }

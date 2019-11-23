@@ -4,7 +4,6 @@
   "textures": {
 
     "background": { "name": "background1" }
-
   },
 
   "uniforms": {

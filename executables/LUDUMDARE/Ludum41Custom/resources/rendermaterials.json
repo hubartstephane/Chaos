@@ -1,6 +1,3 @@
 {
-		"@background": {"path":"@materials/background.mat"},
-		"@challenge" : {"path":"@materials/challenge.mat"},
-		"@gameobject" : {"path":"@materials/gameobject.mat"},
-		"@text" : {"path":"@materials/text.mat"}    
+  "[recurse]": [ "@materials" ]
 }

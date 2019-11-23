@@ -1,0 +1,8 @@
+{
+  "program": "background_level_base",
+
+  "uniforms": {
+
+    "blendzone_ratio": 1.25
+  }
+}

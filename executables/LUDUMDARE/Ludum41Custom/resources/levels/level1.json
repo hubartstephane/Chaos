@@ -6,7 +6,7 @@
     "22222222222222222222",
     "11111111111111111111"
   ],
-  "xBACKGROUND_TEXTURE": "background2",
+  "BACKGROUND_MATERIAL": "background_level1",
   "xMUSIC": "game_music2",
   "xDICTIONNARY": [
     "worda wordb wordc",

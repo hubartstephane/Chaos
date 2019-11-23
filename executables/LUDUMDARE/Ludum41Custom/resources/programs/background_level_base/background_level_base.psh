@@ -1,6 +1,9 @@
 out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
-uniform sampler2D background;
+uniform sampler2D background_clear;
+uniform sampler2D background_hidden;
+uniform sampler2D noise;
+
 uniform float fill_ratio;
 uniform float blendzone_ratio;
 uniform vec4  canvas_box;

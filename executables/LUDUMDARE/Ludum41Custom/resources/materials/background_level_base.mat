@@ -4,5 +4,10 @@
   "uniforms": {
 
     "blendzone_ratio": 1.25
+  },
+
+  "textures": {
+
+    "noise": { "name": "noise" }
   }
 }

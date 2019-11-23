@@ -77,4 +77,11 @@ void main()
 		value = 1.0 - (p_distance - min_distance) / (max_distance - min_distance);
 
 	output_color = vec4(value, value, value, 1.0);
+
+	vec2 texcoord = (vs_position.xy + vec2(1.0, 1.0)) * 0.5;
+
+	vec4 clear_color  = texture(background_clear, texcoord);
+	vec4 hidden_color = texture(background_hidden, texcoord);
+
+	output_color = clear_color * value + hidden_color * (1.0 - value);
 }

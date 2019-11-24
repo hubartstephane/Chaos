@@ -7,7 +7,7 @@
   "english_dictionnary": "@dictionnary/english.txt",
 
   "background_fillratio_changespeed": 0.05,
-  "delay_before_next_level": 3.0,
+  "delay_before_next_level": 6.0,
 
   "sprite_directory": "@sprites",
   "levels_directory": "@levels",

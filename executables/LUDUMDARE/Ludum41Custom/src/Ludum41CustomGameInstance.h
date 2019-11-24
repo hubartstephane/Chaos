@@ -161,7 +161,7 @@ protected:
 	float ball_speed         = 5.0f;	
 
 	float current_background_fillratio = 1.0f;
-	float complete_episode_timer = 0.0f;
+	float complete_level_timer = 0.0f;
 
 	int pending_split_count = 0;
 	

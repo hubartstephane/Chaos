@@ -12,8 +12,16 @@ in vec2 vs_position;
 in vec2 vs_texcoord;
 in vec4 vs_color;
 
+uniform float decal_speed;
+uniform float decal_ratio;
+
+uniform float game_time;
+
 void main()
 {
+
+
+
 	vec2 pos = 2.0 * canvas_box.zw * ((vs_position * 0.5) + vec2(0.5, 0.5));
 
 	vec2 image_size = 2.0 * canvas_box.zw;
@@ -63,7 +71,18 @@ void main()
 	float max_distance = length(max_limit);
 	float p_distance = length(dp);
 
+    // compute the decal 
+    vec2 tex1 = 2.0 * vs_texcoord;
+    vec2 tex2 = 2.0 * vs_texcoord;
+    tex1.y += game_time * decal_speed;
+    tex2.x += game_time * decal_speed;
 
+    vec4 decal1 = texture(noise, tex1);
+    vec4 decal2 = texture(noise, tex2);
+
+    vec2 decal = -vec2(1.0, 1.0) + (decal1.xy + decal2.xy);
+
+    // compute the blend value
 	float ratio = 1.0 - fill_ratio;
 	p_distance += ratio * max_distance;
 
@@ -76,12 +95,11 @@ void main()
 	else
 		value = 1.0 - (p_distance - min_distance) / (max_distance - min_distance);
 
-	output_color = vec4(value, value, value, 1.0);
-
+    // apply texture1 + texture2 + blend + noise
 	vec2 texcoord = (vs_position.xy + vec2(1.0, 1.0)) * 0.5;
 
-	vec4 clear_color  = texture(background_clear, texcoord);
-	vec4 hidden_color = texture(background_hidden, texcoord);
+	vec4 clear_color  = texture(background_clear, texcoord + decal * (1.0 - value));
+	vec4 hidden_color = texture(background_hidden, texcoord + decal * value);
 
 	output_color = clear_color * value + hidden_color * (1.0 - value);
 }

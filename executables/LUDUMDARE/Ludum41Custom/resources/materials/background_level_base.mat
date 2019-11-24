@@ -3,7 +3,9 @@
 
   "uniforms": {
 
-    "blendzone_ratio": 1.25
+    "blendzone_ratio": 1.3,
+    "decal_speed": [ 0.2 ],
+    "decal_ratio": [ 0.3 ]
   },
 
   "textures": {

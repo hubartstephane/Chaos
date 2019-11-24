@@ -1,6 +1,6 @@
 {
   "LINES": [
-    "                    "
+    "                    ",
     "        2222        ",
     "       222222       ",
     "      11111111      ",
@@ -8,6 +8,6 @@
     "      11133111      ",
     "      11133111      "
   ],
-  "xBACKGROUND_TEXTURE": "background2",
+  "BACKGROUND_MATERIAL": "background_level3",
   "xMUSIC": "game_music2"
 }

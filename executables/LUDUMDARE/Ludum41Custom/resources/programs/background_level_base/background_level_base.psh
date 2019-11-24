@@ -98,8 +98,11 @@ void main()
     // apply texture1 + texture2 + blend + noise
 	vec2 texcoord = (vs_position.xy + vec2(1.0, 1.0)) * 0.5;
 
-	vec4 clear_color  = texture(background_clear, texcoord + decal * (1.0 - value));
-	vec4 hidden_color = texture(background_hidden, texcoord + decal * value);
+    float v1 = (1.0 - value);
+    float v2 = value;
 
-	output_color = clear_color * value + hidden_color * (1.0 - value);
+	vec4 clear_color  = texture(background_clear, texcoord + decal * v1 * v1);
+	vec4 hidden_color = texture(background_hidden, texcoord + decal * v2 * v2);
+
+	output_color = clear_color * v2 + hidden_color * v1;
 }

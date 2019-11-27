@@ -144,6 +144,21 @@ namespace chaos
 			friend class AtlasInput;
 			friend class AtlasGenerator;
 
+        protected:
+
+            class AddBitmapFilesFromDirectoryRegistry
+            {
+            public:
+
+                // a file correspondance to a json mainfest
+                std::map<boost::filesystem::path, nlohmann::json> manifests;
+
+                // the directories to ignore due to JSON manifest
+                std::vector<boost::filesystem::path> ignore_directories;
+                // the files to ignore due to JSON manifest
+                std::vector<boost::filesystem::path> ignore_files;
+            };
+
 		public:
 
 			/** constructor */
@@ -182,7 +197,9 @@ namespace chaos
 		protected:
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, std::vector<boost::filesystem::path> * skipped_path);
+			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, AddBitmapFilesFromDirectoryRegistry & registry);
+            /** internal method to add a bitmap whose manifest (or not) is known */
+            BitmapInfoInput * AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesFromDirectoryRegistry & registry, nlohmann::json const* json_manifest);
 			/** internal method to add a bitmap or a multi bitmap */
 			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description);
 

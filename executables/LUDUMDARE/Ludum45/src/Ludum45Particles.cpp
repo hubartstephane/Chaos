@@ -176,8 +176,10 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	// bitmap animation
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
 	{
+        float frame_time = particle->bitmap_info->animation_info->frame_time;
+
 		particle->image_timer += delta_time;
-		if (particle->image_timer > 0.3f)
+		if (particle->image_timer > frame_time)
 		{
 			particle->image_timer = 0.0f;
 			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())
@@ -370,8 +372,10 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 {
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
 	{
+        float frame_time = particle->bitmap_info->animation_info->frame_time;
+
 		particle->image_timer += delta_time;
-		if (particle->image_timer > 0.3f)
+		if (particle->image_timer > frame_time)
 		{
 			particle->image_timer = 0.0f;
 			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())

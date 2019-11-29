@@ -19,11 +19,12 @@ namespace chaos
 			{
 				return (reference_path / path).lexically_normal().make_preferred();
 			}
-			else
+			else if (boost::filesystem::is_regular_file(reference_path))
 			{
 				boost::filesystem::path p = reference_path.parent_path();
 				return (p / path).lexically_normal().make_preferred();
 			}
+            return boost::filesystem::path();
 		}
 
 	}; // namespace BoostTools

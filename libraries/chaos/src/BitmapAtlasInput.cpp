@@ -211,6 +211,13 @@ namespace chaos
 			return result;
 		}
 
+
+
+
+
+
+
+
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -228,23 +235,23 @@ namespace chaos
 					directories.push_back(it->path());
 			}
 
-            AddBitmapFilesFromDirectoryRegistry registry;
+            AddBitmapFilesData add_data;
 
 			// step 1 : the files
 			for (boost::filesystem::path const & p : files)
 			{
 				// skip already handled path
-				if (std::find(registry.ignore_files.begin(), registry.ignore_files.end(), p) != registry.ignore_files.end())
+				if (std::find(add_data.ignore_files.begin(), add_data.ignore_files.end(), p) != add_data.ignore_files.end())
 					continue;					
 				// add bitmap
-				AddBitmapImpl(p, nullptr, 0, registry);
+				AddBitmapImpl(p, nullptr, 0, add_data);
 			}
 
 			// step 2 : the directories
 			for (boost::filesystem::path const & p : directories)
 			{
 				// skip already handled path
-				if (std::find(registry.ignore_directories.begin(), registry.ignore_directories.end(), p) != registry.ignore_directories.end())
+				if (std::find(add_data.ignore_directories.begin(), add_data.ignore_directories.end(), p) != add_data.ignore_directories.end())
 					continue;
 				// recurse
 				FolderInfoInput * child_folder = AddFolder(BoostTools::PathToName(p).c_str(), 0);
@@ -257,10 +264,44 @@ namespace chaos
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
-			return AddBitmapImpl(path, name, tag, AddBitmapFilesFromDirectoryRegistry());
+			return AddBitmapImpl(path, name, tag, AddBitmapFilesData());
 		}
 
-        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesFromDirectoryRegistry & registry)
+
+#if 0
+        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path)
+        {
+
+
+
+
+        }
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData& add_data)
         {
             // compute a name from the path if necessary
             boost::filesystem::path const& resolved_path = path.GetResolvedPath();
@@ -279,9 +320,23 @@ namespace chaos
 
                 if (boost::filesystem::is_directory(short_path))
                 {
-                    registry.ignore_directories.push_back(short_path); // the directory is consumed for other recursive calls
+                    add_data.ignore_directories.push_back(short_path); // the directory is consumed for other recursive calls
 
 
+
+
+
+
+
+#if 0
+
+                    boost::filesystem::directory_iterator end;
+                    for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(short_path); it != end; ++it)
+                    {
+                        if (boost::filesystem::is_regular_file(*it))
+                            files.push_back(it->path());
+                    }
+#endif
 
 
 
@@ -290,7 +345,7 @@ namespace chaos
                 }
                 else
                 {
-                    registry.manifests[short_path] = manifest_json; // register manifest for other image files
+                    add_data.manifests[short_path] = manifest_json; // register manifest for other image files
                     return nullptr;
                 }
             }
@@ -301,10 +356,10 @@ namespace chaos
                 short_path.replace_extension("");
 
                 // search already found manifest
-                auto it = registry.manifests.find(short_path);
-                if (it != registry.manifests.end())
+                auto it = add_data.manifests.find(short_path);
+                if (it != add_data.manifests.end())
                 {
-                    return AddBitmapWithManifestImpl(path, name, tag, registry, &it->second);
+                    return AddBitmapWithManifestImpl(path, name, tag, add_data, &it->second);
                 }
                 // try to find the manifest by replacing the extension
                 else
@@ -314,13 +369,13 @@ namespace chaos
                     boost::filesystem::path json_path = resolved_path;
                     json_path.replace_extension("json");
                     if (JSONTools::LoadJSONFile(short_path, manifest_json, false))
-                        return AddBitmapWithManifestImpl(path, name, tag, registry, &manifest_json);
+                        return AddBitmapWithManifestImpl(path, name, tag, add_data, &manifest_json);
                 }
             }
-            return AddBitmapWithManifestImpl(path, name, tag, registry, nullptr);
+            return AddBitmapWithManifestImpl(path, name, tag, add_data, nullptr);
         }
 
-        BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesFromDirectoryRegistry & registry, nlohmann::json const * json_manifest)
+        BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData & add_data, nlohmann::json const * json_manifest)
         {
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -351,15 +406,18 @@ namespace chaos
             if (json_manifest != nullptr)
                 LoadFromJSON(*json_manifest, manifest_animation_description);
 
-            // prefere JSON settings to name encoded values or GIF meta data for frame rate
+  
+
+			// load all pages for the bitmap
+			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
+
+          // prefere JSON settings to name encoded values or GIF meta data for frame rate
             if (manifest_animation_description.frame_time > 0.0f)
                 animation_description.frame_time = manifest_animation_description.frame_time;
             if (!manifest_animation_description.grid_data.IsEmpty())
                 animation_description.grid_data = manifest_animation_description.grid_data;
 
-			// load all pages for the bitmap
-			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
-
+            // register resources for destructions
 			size_t count = pages.size();
 			for (size_t i = 0; i < count; ++i)
 				RegisterResource(pages[i], true);

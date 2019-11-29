@@ -146,7 +146,7 @@ namespace chaos
 
         protected:
 
-            class AddBitmapFilesFromDirectoryRegistry
+            class AddBitmapFilesData
             {
             public:
 
@@ -197,9 +197,9 @@ namespace chaos
 		protected:
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, AddBitmapFilesFromDirectoryRegistry & registry);
+			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, AddBitmapFilesData& add_data);
             /** internal method to add a bitmap whose manifest (or not) is known */
-            BitmapInfoInput * AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesFromDirectoryRegistry & registry, nlohmann::json const* json_manifest);
+            BitmapInfoInput * AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData& add_data, nlohmann::json const* json_manifest);
 			/** internal method to add a bitmap or a multi bitmap */
 			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description);
 

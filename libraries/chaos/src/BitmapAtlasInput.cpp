@@ -212,33 +212,38 @@ namespace chaos
 		}
 
 
+        void FolderInfoInput::AddBitmapFilesData::SearchDirectoryEntries(FilePathParam const& path, bool search_files, bool search_directories)
+        {
+            // nothing more to search
+            if ((files_searched || !search_files) && (directories_searched || !search_directories))
+                return;
 
+            // iterate over wanted directory
+            boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 
+            boost::filesystem::directory_iterator end;
+            for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
+            {
+                boost::filesystem::path const & p = it->path();
 
+                boost::filesystem::file_status status = boost::filesystem::status(p);
 
-
+                if (!files_searched && search_files && (status.type() == boost::filesystem::file_type::regular_file))
+                    files.push_back(p);
+                else if (!directories_searched && search_directories && (status.type() == boost::filesystem::file_type::directory_file))
+                    directories.push_back(p);
+            }
+            files_searched |= search_files;
+            directories_searched |= search_directories;
+        }
 
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
-			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
-
-			// store paths for files & directories
-			std::vector<boost::filesystem::path> files;
-			std::vector<boost::filesystem::path> directories;
-
-			boost::filesystem::directory_iterator end;
-			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
-			{
-				if (boost::filesystem::is_regular_file(*it))
-					files.push_back(it->path());
-				else if (recursive && boost::filesystem::is_directory(*it))						
-					directories.push_back(it->path());
-			}
-
             AddBitmapFilesData add_data;
+            add_data.SearchDirectoryEntries(path, true, recursive);
 
 			// step 1 : the files
-			for (boost::filesystem::path const & p : files)
+			for (boost::filesystem::path const & p : add_data.files)
 			{
 				// skip already handled path
 				if (std::find(add_data.ignore_files.begin(), add_data.ignore_files.end(), p) != add_data.ignore_files.end())
@@ -248,7 +253,7 @@ namespace chaos
 			}
 
 			// step 2 : the directories
-			for (boost::filesystem::path const & p : directories)
+			for (boost::filesystem::path const & p : add_data.directories)
 			{
 				// skip already handled path
 				if (std::find(add_data.ignore_directories.begin(), add_data.ignore_directories.end(), p) != add_data.ignore_directories.end())
@@ -267,31 +272,80 @@ namespace chaos
 			return AddBitmapImpl(path, name, tag, AddBitmapFilesData());
 		}
 
-
 #if 0
-        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path)
+        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData& add_data)
         {
+            // compute a name from the path if necessary
+            boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+
+            // JSON manifest for a file or a directory
+            if (FileTools::IsTypedFile(path, "json"))
+            {
+                // load the manifest
+                nlohmann::json manifest_json;
+                if (!JSONTools::LoadJSONFile(path, manifest_json, false))
+                    return nullptr;
+
+                // search whether a related file/directory exists
+                add_data.SearchDirectoryEntries(path, true);
 
 
 
 
+
+
+
+
+
+
+            }
+            // normal file
+            else            
+            {
+                // search whether a manifest for the file exists
+                nlohmann::json manifest_json;
+
+                boost::filesystem::path json_path = resolved_path;
+                json_path.replace_extension("json");
+                JSONTools::LoadJSONFile(json_path, manifest_json, false);
+
+                return AddBitmapWithManifestImpl(path, name, tag, manifest_json.empty() ? nullptr : &manifest_json);
+
+
+
+
+
+
+
+                boost::filesystem::path short_path = resolved_path;
+                short_path.replace_extension("");
+
+                // search already found manifest
+                auto it = add_data.manifests.find(short_path);
+                if (it != add_data.manifests.end())
+                {
+                    return AddBitmapWithManifestImpl(path, name, tag, &it->second);
+                }
+                // try to find the manifest by replacing the extension
+                else
+                {
+                    nlohmann::json manifest_json;
+
+                    boost::filesystem::path json_path = resolved_path;
+                    json_path.replace_extension("json");
+                    if (JSONTools::LoadJSONFile(short_path, manifest_json, false))
+                        return AddBitmapWithManifestImpl(path, name, tag, &manifest_json);
+                }
+
+
+
+
+
+
+
+            }
         }
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -359,7 +413,7 @@ namespace chaos
                 auto it = add_data.manifests.find(short_path);
                 if (it != add_data.manifests.end())
                 {
-                    return AddBitmapWithManifestImpl(path, name, tag, add_data, &it->second);
+                    return AddBitmapWithManifestImpl(path, name, tag, &it->second);
                 }
                 // try to find the manifest by replacing the extension
                 else
@@ -369,13 +423,39 @@ namespace chaos
                     boost::filesystem::path json_path = resolved_path;
                     json_path.replace_extension("json");
                     if (JSONTools::LoadJSONFile(short_path, manifest_json, false))
-                        return AddBitmapWithManifestImpl(path, name, tag, add_data, &manifest_json);
+                        return AddBitmapWithManifestImpl(path, name, tag, &manifest_json);
                 }
             }
-            return AddBitmapWithManifestImpl(path, name, tag, add_data, nullptr);
+            return AddBitmapWithManifestImpl(path, name, tag, nullptr);
         }
 
-        BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData & add_data, nlohmann::json const * json_manifest)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest)
         {
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -405,8 +485,6 @@ namespace chaos
             BitmapInfoInputAnimationDescription manifest_animation_description;
             if (json_manifest != nullptr)
                 LoadFromJSON(*json_manifest, manifest_animation_description);
-
-  
 
 			// load all pages for the bitmap
 			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA

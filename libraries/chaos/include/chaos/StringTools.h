@@ -11,6 +11,10 @@ namespace chaos
 
 	namespace StringTools
 	{
+
+        /** get the numerical suffix of the input string (ex. toto_123 => 123) */
+        size_t GetStringNumSuffix(std::string_view s);
+
 		/** skip numerics characters (or not) */
 		char const * SkipNumber(char const * c, bool reverse_condition = false);
 		/** skip non numerics characters and call atoi */

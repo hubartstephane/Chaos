@@ -8,11 +8,12 @@
 #include <chaos/Application.h>
 #include <chaos/JSONTools.h>
 
+
+
 namespace chaos
 {
 	namespace BitmapAtlas
 	{
-
 
 		// ========================================================================
 		// BitmapInfoInputAnimationDescription : an utility class for JSON files coming as image descriptors
@@ -272,7 +273,49 @@ namespace chaos
 			return AddBitmapImpl(path, name, tag, AddBitmapFilesData());
 		}
 
-#if 0
+        static std::vector<FIBITMAP*> FindManifestChildImages(boost::filesystem::path const& directory_path)
+        {
+            std::vector<FIBITMAP*> child_images;
+            std::vector<size_t> child_path_index;
+
+            // search the images (and their path)
+            boost::filesystem::directory_iterator end;
+            for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_path); it != end; ++it)
+            {
+                boost::filesystem::path const& p = it->path();
+
+                FIBITMAP* image = ImageTools::LoadImageFromFile(p);
+                if (image != nullptr)
+                {
+                    child_images.push_back(image);
+
+                    boost::filesystem::path noext_path = p;
+                    noext_path.replace_extension();
+                    child_path_index.push_back(StringTools::GetStringNumSuffix(noext_path.string())); // only store the filename without the extension
+                }
+            }
+
+            // sort the images by path
+            if (child_images.size() > 0)
+            {
+                // create an indirection vector (sort by file suffix myimage_123)
+                boost::integer_range<size_t> range = boost::integer_range<size_t>(0, child_images.size());
+                std::vector<size_t> indirection = std::vector<size_t>(range.begin(), range.end());
+
+                std::sort(indirection.begin(), indirection.end(), [&child_path_index](size_t i1, size_t i2) {
+
+                    return child_path_index[i1] < child_path_index[i2];
+                });
+
+                // reorder the images according to the indirection array
+                std::vector<FIBITMAP*> result = child_images;
+                for (size_t i = 0; i < result.size(); ++i)
+                    result[i] = child_images[indirection[i]];
+                return result;
+            }
+            return child_images;
+        }
+
         BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData& add_data)
         {
             // compute a name from the path if necessary
@@ -282,180 +325,60 @@ namespace chaos
             if (FileTools::IsTypedFile(path, "json"))
             {
                 // load the manifest
-                nlohmann::json manifest_json;
-                if (!JSONTools::LoadJSONFile(path, manifest_json, false))
+                nlohmann::json json_manifest;
+                if (!JSONTools::LoadJSONFile(path, json_manifest, false))
                     return nullptr;
 
                 // search whether a related file/directory exists
-                add_data.SearchDirectoryEntries(path, true);
+                add_data.SearchDirectoryEntries(path, true, true);
 
+                // search whether there is a corresponding directory for the manifest
+                boost::filesystem::path noext_path = resolved_path;
+                noext_path.replace_extension();
+                if (std::find(add_data.directories.begin(), add_data.directories.end(), noext_path) != add_data.directories.end())
+                {
+                    add_data.ignore_directories.push_back(noext_path);
 
-
-
-
-
-
-
-
-
+                    std::vector<FIBITMAP*> child_images = FindManifestChildImages(noext_path);
+                    if (child_images.size() > 0)
+                        return AddBitmapWithManifestImpl(path, name, tag, &json_manifest, &child_images);
+                }
+                // search whether there is a corresponding file for the manifest
+                else
+                {
+                    for (boost::filesystem::path const& p : add_data.files)
+                    {
+                        if (p == resolved_path) // ignore the manifest itself
+                            continue;
+                        boost::filesystem::path other_path = p;
+                        other_path.replace_extension();
+                        if (other_path == noext_path) // other file has same name (without extension)
+                        {
+                            add_data.ignore_files.push_back(p);
+                            return AddBitmapWithManifestImpl(p, name, tag, &json_manifest, nullptr);
+                        }
+                    }
+                }
+                return nullptr;
             }
             // normal file
             else            
             {
                 // search whether a manifest for the file exists
-                nlohmann::json manifest_json;
+                nlohmann::json json_manifest;
 
                 boost::filesystem::path json_path = resolved_path;
                 json_path.replace_extension("json");
-                JSONTools::LoadJSONFile(json_path, manifest_json, false);
+                JSONTools::LoadJSONFile(json_path, json_manifest, false);
 
-                return AddBitmapWithManifestImpl(path, name, tag, manifest_json.empty() ? nullptr : &manifest_json);
+                // do not individually load the manifest in recursive calls
+                add_data.ignore_files.push_back(json_path);
 
-
-
-
-
-
-
-                boost::filesystem::path short_path = resolved_path;
-                short_path.replace_extension("");
-
-                // search already found manifest
-                auto it = add_data.manifests.find(short_path);
-                if (it != add_data.manifests.end())
-                {
-                    return AddBitmapWithManifestImpl(path, name, tag, &it->second);
-                }
-                // try to find the manifest by replacing the extension
-                else
-                {
-                    nlohmann::json manifest_json;
-
-                    boost::filesystem::path json_path = resolved_path;
-                    json_path.replace_extension("json");
-                    if (JSONTools::LoadJSONFile(short_path, manifest_json, false))
-                        return AddBitmapWithManifestImpl(path, name, tag, &manifest_json);
-                }
-
-
-
-
-
-
-
+                return AddBitmapWithManifestImpl(path, name, tag, json_manifest.empty() ? nullptr : &json_manifest, nullptr);
             }
         }
-#endif
 
-
-
-
-
-
-
-
-
-        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData& add_data)
-        {
-            // compute a name from the path if necessary
-            boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-
-            // JSON manifest for a file or a directory
-            if (FileTools::IsTypedFile(path, "json"))
-            {
-                // load the manifest
-                nlohmann::json manifest_json;
-                if (!JSONTools::LoadJSONFile(path, manifest_json, false))
-                    return nullptr;
-
-                // manifest for a file or manifest for a directory ? remove extension
-                boost::filesystem::path short_path = resolved_path;
-                short_path.replace_extension("");
-
-                if (boost::filesystem::is_directory(short_path))
-                {
-                    add_data.ignore_directories.push_back(short_path); // the directory is consumed for other recursive calls
-
-
-
-
-
-
-
-#if 0
-
-                    boost::filesystem::directory_iterator end;
-                    for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(short_path); it != end; ++it)
-                    {
-                        if (boost::filesystem::is_regular_file(*it))
-                            files.push_back(it->path());
-                    }
-#endif
-
-
-
-
-                    return nullptr;
-                }
-                else
-                {
-                    add_data.manifests[short_path] = manifest_json; // register manifest for other image files
-                    return nullptr;
-                }
-            }
-            // standard file. maybe it as a JSON manifest
-            else
-            {
-                boost::filesystem::path short_path = resolved_path;
-                short_path.replace_extension("");
-
-                // search already found manifest
-                auto it = add_data.manifests.find(short_path);
-                if (it != add_data.manifests.end())
-                {
-                    return AddBitmapWithManifestImpl(path, name, tag, &it->second);
-                }
-                // try to find the manifest by replacing the extension
-                else
-                {
-                    nlohmann::json manifest_json;
-
-                    boost::filesystem::path json_path = resolved_path;
-                    json_path.replace_extension("json");
-                    if (JSONTools::LoadJSONFile(short_path, manifest_json, false))
-                        return AddBitmapWithManifestImpl(path, name, tag, &manifest_json);
-                }
-            }
-            return AddBitmapWithManifestImpl(path, name, tag, nullptr);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest)
+        BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest, std::vector<FIBITMAP*>* images)
         {
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -487,7 +410,12 @@ namespace chaos
                 LoadFromJSON(*json_manifest, manifest_animation_description);
 
 			// load all pages for the bitmap
-			std::vector<FIBITMAP *> pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
+            std::vector<FIBITMAP*> pages;            
+            if (images == nullptr)
+            {
+                pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
+                images = &pages;
+            }
 
           // prefere JSON settings to name encoded values or GIF meta data for frame rate
             if (manifest_animation_description.frame_time > 0.0f)
@@ -496,12 +424,12 @@ namespace chaos
                 animation_description.grid_data = manifest_animation_description.grid_data;
 
             // register resources for destructions
-			size_t count = pages.size();
+			size_t count = images->size();
 			for (size_t i = 0; i < count; ++i)
-				RegisterResource(pages[i], true);
+				RegisterResource(images->operator[](i), true);
 
 			// create the bitmap
-			return AddBitmapImpl(pages, name, tag, &animation_description);
+			return AddBitmapImpl(*images, name, tag, &animation_description);
 		}
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)

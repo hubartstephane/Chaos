@@ -156,6 +156,8 @@ namespace chaos
 #include <boost/type_traits.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <boost/range/irange.hpp>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 #include <boost/intrusive_ptr.hpp>

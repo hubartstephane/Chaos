@@ -5,6 +5,23 @@ namespace chaos
 {
 	namespace StringTools
 	{
+        size_t GetStringNumSuffix(std::string_view s)
+        {
+            size_t result = 0;
+            size_t rank = 1;
+
+            auto it = s.rbegin();
+            while (it != s.rend())
+            {
+                if (!std::isalnum(*it))
+                    break;
+                result += ((*it) - '0') * rank;
+                rank *= 10;
+                ++it;
+            }
+            return result;
+        }
+
 		std::string TimeToString(bool full_string)
 		{
 			return TimeToString(std::time(0), full_string);

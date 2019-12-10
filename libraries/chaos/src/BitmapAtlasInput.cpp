@@ -35,7 +35,7 @@ namespace chaos
 		{
 			if (!json_entry.is_object())
 				json_entry = nlohmann::json::object();
-			JSONTools::SetAttribute(json_entry, "grid_animation", src.grid_data);
+			JSONTools::SetAttribute(json_entry, "grid_data", src.grid_data);
 			JSONTools::SetAttribute(json_entry, "images_path", src.images_path);
 			JSONTools::SetAttribute(json_entry, "frame_time", src.frame_time);
 			return true;
@@ -45,7 +45,7 @@ namespace chaos
 		{
 			if (!json_entry.is_object())
 				return false;
-			JSONTools::GetAttribute(json_entry, "grid_animation", dst.grid_data);
+			JSONTools::GetAttribute(json_entry, "grid_data", dst.grid_data);
 			JSONTools::GetAttribute(json_entry, "images_path", dst.images_path);
 			JSONTools::GetAttribute(json_entry, "frame_time", dst.frame_time);
 			return true;

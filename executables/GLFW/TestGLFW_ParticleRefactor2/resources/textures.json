@@ -1,0 +1,4 @@
+{
+		"@tex1":{ "path":"@textures/texture1.json"},
+		"@tex2":{ "path":"@textures/texture2.json"}
+}

@@ -1,0 +1,5 @@
+{
+		"@prog1":{"@filename":"@programs/program1.json"},
+		"@prog2":{"@filename":"@programs/program2.json"},
+		"@prog3":{"@filename":"@programs/program3.json"}
+}

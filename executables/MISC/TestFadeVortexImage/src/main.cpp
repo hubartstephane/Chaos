@@ -342,7 +342,7 @@ protected:
 
 		// compute the diagonale of the rectangle and the angle beta to the X Axis
 		glm::vec2 diag        = image_size * 0.5f;
-		float     diag_length = glm::length(diag);e	
+		float     diag_length = glm::length(diag);	
 
 		float beta = std::atan2(diag.y, diag.x);
 

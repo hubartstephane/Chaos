@@ -1,0 +1,16 @@
+    in vec3 vs_texcoord;
+    in vec4 vs_color;
+
+    out vec4 output_color;
+
+    uniform sampler2DArray material;
+
+    void main()
+    {
+      //vec4 color = texture(material, vs_texcoord);
+      //output_color.xyz = color.xyz * vs_color;
+	  //output_color.a   = color.a;
+
+	  output_color = vs_color; //vec4(1.0, 0.0, 0.0, 1.0);
+
+    };

@@ -4,7 +4,7 @@
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background3"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
-  <property name="CAMERA_SPEED" type="float" value="400"/>
+  <property name="CAMERA_SPEED" type="float" value="500"/>
   <property name="LEVEL_TITLE">Level 3
 [LEVELTITLE The bright side 
 of Life]</property>

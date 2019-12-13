@@ -24,6 +24,7 @@
 
 
 #include <chaos/ParticleManager.h>
+#include <chaos/ParticleAccessor.h>
 #include <chaos/GPURenderParams.h>
 
 
@@ -312,45 +313,20 @@ protected:
 
 
 
+// ==============================================================================
 
 
-template<typename PARTICLE_TYPE>
-class ParticleConstAccessor
-{
-public:
 
-    ParticleConstAccessor() = default;
-#if 0
-    template<typename OTHER_PARTICLE_TYPE>
-    ParticleConstAccessor(std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, ParticleConstAccessor<OTHER_PARTICLE_TYPE>> const & src)
-    {
-    }
 
-    template<typename OTHER_PARTICLE_TYPE>    
-    operator std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, ParticleConstAccessor<OTHER_PARTICLE_TYPE>> () const
-    {
-        return ParticleConstAccessor<OTHER_PARTICLE_TYPE>();
-    }
-#endif
 
-    template<typename OTHER_PARTICLE_TYPE>
-  //  ParticleConstAccessor(typename std::enable_if_t<true, class ParticleConstAccessor<OTHER_PARTICLE_TYPE>>::type const& src)
 
-        ParticleConstAccessor(ParticleConstAccessor<OTHER_PARTICLE_TYPE> const& src)
-    {
-    }
 
-   // template<typename OTHER_PARTICLE_TYPE>
-   // operator typename std::enable_if_t<true, ParticleConstAccessor<OTHER_PARTICLE_TYPE>>() const
-   // {
-    //    return ParticleConstAccessor<OTHER_PARTICLE_TYPE>();
-   // }
-};
+
+
 
 
 class A
 {
-
 
 };
 
@@ -360,29 +336,15 @@ class B : public A
 };
 
 
-
-
-
-std::enable_if_t<true, int>  F(ParticleConstAccessor<A> const & ac)
-{
-
-    return 666;
-}
-
-
-
-
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
- //   std::enable_if_t<false, int> uu = 666;
+    chaos::ParticleAccessor<B> b;
+    chaos::ParticleAccessor<A> a = b;
 
-    ParticleConstAccessor<B> acc1;
-    ParticleConstAccessor<A> acc2 = acc1;
+    chaos::ParticleConstAccessor<B> cb = b;
 
-   // F(acc1);
 
-    std::true_type t;
-
+    return 0;
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

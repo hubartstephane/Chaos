@@ -103,104 +103,51 @@ class ParticleTraitTools
 	
 	public:
 
-
-
 	/** returns the number of vertices require for one particle */
 	template<typename TRAIT_TYPE>
 	static size_t GetVerticesPerParticle(TRAIT_TYPE const & trait)
 	{ 
-		return DoGetVerticesPerParticle(trait, has_vertices_per_particle_t<TRAIT_TYPE>());
+        if constexpr (has_vertices_per_particle_t<TRAIT_TYPE>::value)
+            return trait.vertices_per_particle;
+        else
+            return 2 * 3; // default value (2 triangles to render a quad)
 	}
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
-	{ 
-		return DoAreVerticesDynamic(trait, has_dynamic_vertices_t<TRAIT_TYPE>());
+	{
+        if constexpr (has_dynamic_vertices_t<TRAIT_TYPE>::value)
+            return trait.dynamic_vertices;
+        else
+            return true;
 	}
 	/** returns whether the particles are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamic(TRAIT_TYPE const & trait)
-	{ 
-		return DoAreParticlesDynamic(trait, has_dynamic_particles_t<TRAIT_TYPE>());
+	{
+        if constexpr (has_dynamic_particles_t<TRAIT_TYPE>::value)
+            return trait.dynamic_particles;
+        else
+            return true;
 	}
 
 	/** returns whether the vertices are dynamic (without an instance to read) */
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamicStatic()
 	{
-		return DoAreVerticesDynamicStatic<TRAIT_TYPE>(has_dynamic_vertices_t<TRAIT_TYPE>());
-	}
+        if constexpr (has_dynamic_vertices_t<TRAIT_TYPE>::value)
+            return TRAIT_TYPE::dynamic_vertices;
+        else
+            return true;
+    }
 	/** returns whether the particles are dynamic (without an instance to read) */
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamicStatic()
 	{
-		return DoAreParticlesDynamicStatic<TRAIT_TYPE>(has_dynamic_particles_t<TRAIT_TYPE>());
-	}
-
-protected:
-
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreVerticesDynamic(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_DYNAMIC_VERTICES) 
-	{ 
-		return true; // default value
-	} 
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreVerticesDynamic(TRAIT_TYPE const & trait, boost::mpl::true_ HAS_DYNAMIC_VERTICES) 
-	{ 
-		return trait.dynamic_vertices; 
-	}
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreParticlesDynamic(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_DYNAMIC_PARTICLES) 
-	{ 
-		return true; // default value																																																											 
-	} 
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreParticlesDynamic(TRAIT_TYPE const & trait, boost::mpl::true_ HAS_DYNAMIC_PARTICLES) 
-	{ 
-		return trait.dynamic_particles; 
-	}
-
-
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreVerticesDynamicStatic(boost::mpl::false_ HAS_DYNAMIC_VERTICES)
-	{
-		return true; // default value
-	}
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreVerticesDynamicStatic(boost::mpl::true_ HAS_DYNAMIC_VERTICES)
-	{
-		return TRAIT_TYPE::dynamic_vertices;
-	}
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreParticlesDynamicStatic(boost::mpl::false_ HAS_DYNAMIC_PARTICLES)
-	{
-		return true; // default value																																																											 
-	}
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static bool DoAreParticlesDynamicStatic(boost::mpl::true_ HAS_DYNAMIC_PARTICLES)
-	{
-		return TRAIT_TYPE::dynamic_particles;
-	}
-
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static size_t DoGetVerticesPerParticle(TRAIT_TYPE const & trait, boost::mpl::false_ HAS_VERTICES_PER_PARTICLE)
-	{ 
-		return 2 * 3; // default value (2 triangles to render a quad)
-	} 
-	/** internal method */
-	template<typename TRAIT_TYPE>
-	static size_t DoGetVerticesPerParticle(TRAIT_TYPE const & trait, boost::mpl::true_ HAS_VERTICES_PER_PARTICLE)
-	{ 
-		return trait.vertices_per_particle; 
+        if constexpr (has_dynamic_particles_t<TRAIT_TYPE>::value)
+            return TRAIT_TYPE::dynamic_particles;
+        else
+            return true;
 	}
 };
 

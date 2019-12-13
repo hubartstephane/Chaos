@@ -49,6 +49,25 @@ namespace chaos
 BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
 BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
 BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
+
+template<typename T>
+using has_dynamic_particles_t = boost::mpl::bool_<has_dynamic_particles<T>::value>;
+template<typename T>
+using has_dynamic_vertices_t = boost::mpl::bool_<has_dynamic_vertices<T>::value>;
+template<typename T>
+using has_vertices_per_particle_t = boost::mpl::bool_<has_vertices_per_particle<T>::value>;
+
+
+
+
+
+
+
+
+
+
+
+
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(Tick);
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(UpdateParticle);
@@ -90,32 +109,32 @@ class ParticleTraitTools
 	template<typename TRAIT_TYPE>
 	static size_t GetVerticesPerParticle(TRAIT_TYPE const & trait)
 	{ 
-		return DoGetVerticesPerParticle(trait, boost::mpl::bool_<has_vertices_per_particle<TRAIT_TYPE>::value>());
+		return DoGetVerticesPerParticle(trait, has_vertices_per_particle_t<TRAIT_TYPE>());
 	}
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
 	{ 
-		return DoAreVerticesDynamic(trait, boost::mpl::bool_<has_dynamic_vertices<TRAIT_TYPE>::value>());
+		return DoAreVerticesDynamic(trait, has_dynamic_vertices_t<TRAIT_TYPE>());
 	}
 	/** returns whether the particles are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamic(TRAIT_TYPE const & trait)
 	{ 
-		return DoAreParticlesDynamic(trait, boost::mpl::bool_<has_dynamic_particles<TRAIT_TYPE>::value>());
+		return DoAreParticlesDynamic(trait, has_dynamic_particles_t<TRAIT_TYPE>());
 	}
 
 	/** returns whether the vertices are dynamic (without an instance to read) */
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamicStatic()
 	{
-		return DoAreVerticesDynamicStatic<TRAIT_TYPE>(boost::mpl::bool_<has_dynamic_vertices<TRAIT_TYPE>::value>());
+		return DoAreVerticesDynamicStatic<TRAIT_TYPE>(has_dynamic_vertices_t<TRAIT_TYPE>());
 	}
 	/** returns whether the particles are dynamic (without an instance to read) */
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamicStatic()
 	{
-		return DoAreParticlesDynamicStatic<TRAIT_TYPE>(boost::mpl::bool_<has_dynamic_particles<TRAIT_TYPE>::value>());
+		return DoAreParticlesDynamicStatic<TRAIT_TYPE>(has_dynamic_particles_t<TRAIT_TYPE>());
 	}
 
 protected:

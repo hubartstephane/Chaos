@@ -325,23 +325,16 @@ protected:
 
 
 
-class A
-{
-
-};
-
-class B : public A
-{
-
-};
-
-
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-    chaos::ParticleAccessor<B> b;
-    chaos::ParticleAccessor<A> a = b;
 
-    chaos::ParticleConstAccessor<B> cb = b;
+
+
+
+
+
+
+
 
 
     return 0;

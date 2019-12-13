@@ -140,7 +140,7 @@ namespace chaos
 				BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
 				glm::ivec2 grid_index;
-				grid_index.x = ((int)index) % grid_data.grid_size.x;
+ 				grid_index.x = ((int)index) % grid_data.grid_size.x;
 				grid_index.y = ((int)index) / grid_data.grid_size.x;
 				return DoGetGridAnimationLayout(grid_index, flag);
 			}

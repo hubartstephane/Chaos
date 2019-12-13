@@ -198,7 +198,7 @@ namespace chaos
 		if (!json_entry.is_object())
 			return false;
 		JSONTools::GetAttribute(json_entry, "grid_data", dst.grid_data);
-		// shuxxx JSONTools::GetAttribute(json_entry, "child_frame_count", dst.child_frame_count);
+		JSONTools::GetAttribute(json_entry, "child_frame_count", dst.child_frame_count);
 		JSONTools::GetAttribute(json_entry, "frame_time", dst.frame_time);
 		return true;
 	}

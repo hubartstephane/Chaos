@@ -57,17 +57,6 @@ using has_dynamic_vertices_t = boost::mpl::bool_<has_dynamic_vertices<T>::value>
 template<typename T>
 using has_vertices_per_particle_t = boost::mpl::bool_<has_vertices_per_particle<T>::value>;
 
-
-
-
-
-
-
-
-
-
-
-
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(Tick);
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(UpdateParticle);
@@ -78,13 +67,33 @@ CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(BeginParticlesToVertices);
 
 
 
+
+
+
+
+// detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
-//CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
-//CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
+
+template<typename T>
+using has_function_Tick_t = boost::mpl::bool_<has_function_Tick<T>::value>;
+template<typename T>
+using has_function_UpdateParticle_t = boost::mpl::bool_<has_function_UpdateParticle<T>::value>;
+template<typename T>
+using has_function_ParticleToVertices_t = boost::mpl::bool_<has_function_ParticleToVertices<T>::value>;
+template<typename T>
+using has_function_BeginUpdateParticles_t = boost::mpl::bool_<has_function_BeginUpdateParticles<T>::value>;
+template<typename T>
+using has_function_BeginParticlesToVertices_t = boost::mpl::bool_<has_function_BeginParticlesToVertices<T>::value>;
+
 // detect whether class have a nested class
 CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
+
+template<typename T>
+using has_LayerTrait_t = boost::mpl::bool_<has_LayerTrait<T>::value>;
 
 // ==============================================================
 // ParticleTraitTools
@@ -234,28 +243,6 @@ class ParticleTraitTools
 			return GetParticleConstAccessor<PARTICLE_TYPE>();
 		}
 		
-		
-		// shuxxx GetParticleCheckedBuffer(...) maybe a good idea to remove
-		
-		
-		
-		
-
-		/** returns a pointer on the first particle with strict class checking */
-		template<typename PARTICLE_TYPE>
-		PARTICLE_TYPE * GetParticleCheckedBuffer()
-		{
-			assert(IsParticleClassCompatible<PARTICLE_TYPE>(false));
-			return (PARTICLE_TYPE*)GetParticleBuffer();
-		}
-		/** returns a pointer on the first particle with strict class checking */
-		template<typename PARTICLE_TYPE>
-		PARTICLE_TYPE const * GetParticleCheckedBuffer() const
-		{
-			assert(IsParticleClassCompatible<PARTICLE_TYPE>(false));
-			return (PARTICLE_TYPE const*)GetParticleBuffer();
-		}
-
 		/** get the layer for this allocation */
 		ParticleLayerBase * GetLayer() { return layer; }
 		/** get the layer for this allocation */
@@ -309,6 +296,17 @@ class ParticleTraitTools
 		{
 			return ClassTools::GetClassRegistration<particle_type>();
 		}
+
+        /** override */
+        virtual void* GetParticleBuffer() override
+        { 
+            return (particles.size() == 0) ? nullptr : &particles[0];
+        }
+        /** override */
+        virtual void const* GetParticleBuffer() const override
+        { 
+            return (particles.size() == 0) ? nullptr : &particles[0];
+        }
 		/** override */
 		virtual size_t GetParticleCount() const override
 		{
@@ -320,24 +318,6 @@ class ParticleTraitTools
 			return sizeof(particle_type);
 		}
 		
-		
-		// shuxxx  GetParticleBuffer(...)  keep ?
-		
-		
-		/** override */
-		virtual void * GetParticleBuffer() override
-		{
-			if (particles.size() == 0)
-				return nullptr;
-			return &particles[0];
-		}
-		/** override */
-		virtual void const * GetParticleBuffer() const override
-		{
-			if (particles.size() == 0)
-				return nullptr;
-			return &particles[0];
-		}
 		/** override */
 		virtual bool Resize(size_t new_count) override
 		{
@@ -357,59 +337,81 @@ class ParticleTraitTools
 	protected:
 
 		/** override */
-		virtual bool TickAllocation(float delta_time, void const * layer_trait) 
+		virtual bool TickAllocation(float delta_time, void const * layer_trait) override
 		{ 
-			layer_trait_type const * typed_layer_trait = (layer_trait_type const *)layer_trait;
+            layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
 
-			bool destroy_allocation = TickAllocationTrait(
-				delta_time, 
-				typed_layer_trait, 
-				has_function_Tick<allocation_trait_type>::type(), 
-				has_LayerTrait<allocation_trait_type>::type());
-			if (!destroy_allocation)
-			{
-				destroy_allocation = UpdateParticles(
-					delta_time,
-					typed_layer_trait,
-					boost::mpl::true_() /*has_function_UpdateParticle<allocation_trait_type>::type()*/); // shuxxx FIXME : this template does not detect template function ! => see ParticleDefault that require a template
-			}
-			return destroy_allocation;
+            bool destroy_allocation = false;
+
+            if constexpr (has_function_Tick_t<allocation_trait_type>::value)
+            {
+                if constexpr (has_LayerTrait_t<allocation_trait_type>::value)
+                {
+                    destroy_allocation = allocation_trait.Tick(delta_time, this, layer_trait); // let the trait decide whether the allocation is to be destroyed
+                }
+                else
+                {
+                    destroy_allocation = allocation_trait.Tick(delta_time, this); // let the trait decide whether the allocation is to be destroyed
+                }
+            }
+            else
+            {
+                destroy_allocation = false; // no Tick(...), no destruction
+            }
+
+            if (!destroy_allocation)      
+            {
+                // XXX : SHU whether particles can be ticked
+
+                //has_function_UpdateParticle<allocation_trait_type>::type()); // shuxxx FIXME : this template does not detect template function ! => see ParticleDefault that require a template
+
+                if constexpr (boost::mpl::true_().value)
+                {
+                    if (particles.size() > 0)
+                        destroy_allocation = UpdateParticles(delta_time, typed_layer_trait);
+                }
+            }
+            return destroy_allocation;
 		}
 
-		/** internal method to tick the AllocationTrait */
-		template<typename T>
-		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_TICK, T HAS_LAYER_TRAIT)
-		{
-			return false; // do not destroy the allocation
-		}
-
-		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::false_ HAS_LAYER_TRAIT)
-		{
-			return allocation_trait.Tick(delta_time, this); // let the trait decide whether the allocation is to be destroyed
-		}
-
-		bool TickAllocationTrait(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_TICK, boost::mpl::true_ HAS_LAYER_TRAIT)
-		{
-			return allocation_trait.Tick(delta_time, this, layer_trait); // let the trait decide whether the allocation is to be destroyed
-		}
-
-		/** internal methods to update the particles */
-		bool UpdateParticles(float delta_time, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_UPDATE_PARTICLE)
-		{
-			return false; // do not destroy the allocation
-		}
-
-		bool UpdateParticles(float delta_time, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_UPDATE_PARTICLE)
+		bool UpdateParticles(float delta_time, layer_trait_type const * layer_trait)
 		{
 			size_t particle_count = GetParticleCount();
 
-			size_t remaining_particles = DoUpdateParticles(
-				delta_time, 
-				(particle_type *)GetParticleBuffer(), 
-				particle_count, 
-				layer_trait, 
-				has_function_BeginUpdateParticles<allocation_trait_type>::type(), 
-				has_LayerTrait<allocation_trait_type>::type());
+            size_t remaining_particles = 0;
+
+            ParticleAccessor<particle_type> particle_accessor = GetParticleAccessor<particle_type>();
+
+            if constexpr (has_function_BeginUpdateParticles<allocation_trait_type>::type())
+            {
+                if constexpr (has_LayerTrait<allocation_trait_type>::type())
+                {
+                    remaining_particles = DoUpdateParticlesLoop(
+                        delta_time,
+                        particle_accessor,
+                        allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait), // do not use a temp variable, so it can be a left-value reference
+                        layer_trait);
+                }
+                else
+                {
+                    remaining_particles = DoUpdateParticlesLoop(
+                        delta_time,
+                        particle_accessor,
+                        allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait)); // do not use a temp variable, so it can be a left-value reference
+                }
+            }
+            else
+            {
+                if constexpr (has_LayerTrait<allocation_trait_type>::type())
+                {
+                    remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor, layer_trait);
+                }
+                else
+                {
+                    remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor);
+                }
+            }
+
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
 				return true; // destroy allocation
 			else if (remaining_particles != particle_count) // clean buffer of all particles that have been destroyed
@@ -417,58 +419,43 @@ class ParticleTraitTools
 			return false; // do not destroy allocation
 		}
 
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
-		{
-			return DoUpdateParticlesLoop(
-				delta_time, 
-				particles, 
-				particle_count);
-		}
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
-		{
-			return DoUpdateParticlesLoop(
-				delta_time, 
-				particles, 
-				particle_count, 
-				layer_trait);
-		}
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::false_ HAS_LAYER_TRAIT)
-		{
-			return DoUpdateParticlesLoop(
-				delta_time, 
-				particles, 
-				particle_count, 
-				allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count)); // do not use a temp variable, so it can be a left-value reference
-		}
-
-		size_t DoUpdateParticles(float delta_time, particle_type * particles, size_t particle_count, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_UPDATE_PARTICLES, boost::mpl::true_ HAS_LAYER_TRAIT)
-		{
-			return DoUpdateParticlesLoop(
-				delta_time, 
-				particles, 
-				particle_count, 
-				allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait), // do not use a temp variable, so it can be a left-value reference
-				layer_trait);
-		}
-
 		template<typename ...PARAMS>
-		size_t DoUpdateParticlesLoop(float delta_time, particle_type * particles, size_t particle_count, PARAMS... params)
+		size_t DoUpdateParticlesLoop(float delta_time, ParticleAccessor<particle_type> particle_accessor, PARAMS... params)
 		{
+            size_t particle_count = particle_accessor.GetCount();
+
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				if (!allocation_trait.UpdateParticle(delta_time, &particles[i], params...)) // particle not destroyed ?
+				if (!allocation_trait.UpdateParticle(delta_time, &particle_accessor[i], params...)) // particle not destroyed ?
 				{
 					if (i != j)
-						particles[j] = particles[i];
+                        particle_accessor[j] = particle_accessor[i];
 					++j;
 				}
 			}
 			return j; // final number of particles
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 		/** override */

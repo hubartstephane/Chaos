@@ -195,20 +195,12 @@ protected:
 
 				//particle_allocations.push_back(allocation);
 
-				size_t pc = allocation->GetParticleCount();
+                chaos::ParticleAccessor<ParticleExample> particles = allocation->GetParticleAccessor<ParticleExample>();
 
-				ParticleExample * particles = allocation->GetParticleCheckedBuffer<ParticleExample>();
-				if (particles != nullptr)
-				{
-					glm::vec2 center = 
-						(2.0f * (chaos::GLMTools::RandVec2() - glm::vec2(0.5f, 0.5f))) * 0.5f * glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
-					
-				//	glm::vec2 center;
-				//	center.x = (float)mouse_x;
-				//	center.y = (float)mouse_y;
-					
-					InitializeParticles(particles, pc, center);
-				}
+                glm::vec2 center = (2.0f * (chaos::GLMTools::RandVec2() - glm::vec2(0.5f, 0.5f))) * 0.5f * glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
+
+                for (int i = 0; i < particles.GetCount(); ++i)
+                    InitializeParticles(particles[i], center);
 			}
 			return true;
 		}
@@ -273,27 +265,23 @@ protected:
 		return true;
 	}
 
-	void InitializeParticles(ParticleExample * particles, size_t count, glm::vec2 const & center)
+	void InitializeParticles(ParticleExample & particle, glm::vec2 const & center)
 	{
 		
 		float WORLD_HEIGHT = 0.5f * WORLD_X / VIEWPORT_WANTED_ASPECT;
 
-		for (size_t i = 0; i < count; ++i)
-		{		
-			float size  = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.04f;
-			float alpha = chaos::MathTools::RandFloat() * 6.28f;
-			float speed = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.1f;
-			float lifetime = 4.0f + chaos::MathTools::RandFloat() * 2.0f;
+        float size = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.04f;
+        float alpha = chaos::MathTools::RandFloat() * 6.28f;
+        float speed = WORLD_HEIGHT * chaos::MathTools::RandFloat() * 0.1f;
+        float lifetime = 4.0f + chaos::MathTools::RandFloat() * 2.0f;
 
-			particles[i].box.position = center;
-			particles[i].box.half_size = 0.5f * glm::vec2(size, size);
-			particles[i].velocity = glm::vec2(
-				speed * std::cos(alpha),
-				speed * std::sin(alpha));			
-			particles[i].lifetime = lifetime;
-			particles[i].remaining_time = lifetime;			
-		}
-
+        particle.box.position = center;
+        particle.box.half_size = 0.5f * glm::vec2(size, size);
+        particle.velocity = glm::vec2(
+            speed * std::cos(alpha),
+            speed * std::sin(alpha));
+        particle.lifetime = lifetime;
+        particle.remaining_time = lifetime;
 	}
 
 	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override

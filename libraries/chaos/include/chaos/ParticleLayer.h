@@ -319,7 +319,7 @@ class ParticleTraitTools
             {
                 if constexpr (has_LayerTrait_v<allocation_trait_type>)
                 {
-                    destroy_allocation = allocation_trait.Tick(delta_time, this, layer_trait); // let the trait decide whether the allocation is to be destroyed
+                    destroy_allocation = allocation_trait.Tick(delta_time, this, typed_layer_trait); // let the trait decide whether the allocation is to be destroyed
                 }
                 else
                 {
@@ -357,7 +357,7 @@ class ParticleTraitTools
 
             if constexpr (has_function_BeginUpdateParticles<allocation_trait_type>::type())
             {
-                if constexpr (has_LayerTrait<allocation_trait_type>::type())
+                if constexpr (has_LayerTrait_v<allocation_trait_type>)
                 {
                     remaining_particles = DoUpdateParticlesLoop(
                         delta_time,
@@ -375,7 +375,7 @@ class ParticleTraitTools
             }
             else
             {
-                if constexpr (has_LayerTrait<allocation_trait_type>::type())
+                if constexpr (has_LayerTrait_v<allocation_trait_type>)
                 {
                     remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor, layer_trait);
                 }

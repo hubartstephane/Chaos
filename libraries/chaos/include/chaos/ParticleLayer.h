@@ -25,7 +25,6 @@ namespace chaos
 	//         The ParticleAllocation life time is special. see ReferenceCount remark in .cpp !!! 
 	// ==============================================================
 
-
 	// ==============================================================
 	// FORWARD DECLARATION / FRIENDSHIP MACROS
 	// ==============================================================
@@ -46,16 +45,9 @@ namespace chaos
 #define CHAOS_PARTICLE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FRIEND_DECL, _, CHAOS_PARTICLE_CLASSES)
 
 // detect whether class has a member named XXX (use has_XXX<T>::value => bool => convert into boost::mpl::bool_)
-BOOST_DECLARE_HAS_MEMBER(has_dynamic_particles, dynamic_particles);
-BOOST_DECLARE_HAS_MEMBER(has_dynamic_vertices, dynamic_vertices);
-BOOST_DECLARE_HAS_MEMBER(has_vertices_per_particle, vertices_per_particle);
-
-template<typename T>
-using has_dynamic_particles_t = boost::mpl::bool_<has_dynamic_particles<T>::value>;
-template<typename T>
-using has_dynamic_vertices_t = boost::mpl::bool_<has_dynamic_vertices<T>::value>;
-template<typename T>
-using has_vertices_per_particle_t = boost::mpl::bool_<has_vertices_per_particle<T>::value>;
+CHAOS_GENERATE_HAS_MEMBER(dynamic_particles);
+CHAOS_GENERATE_HAS_MEMBER(dynamic_vertices);
+CHAOS_GENERATE_HAS_MEMBER(vertices_per_particle);
 
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(Tick);
@@ -64,13 +56,6 @@ CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(ParticleToVertices);
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(BeginUpdateParticles);
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(BeginParticlesToVertices);
 
-
-
-
-
-
-
-
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
@@ -78,22 +63,8 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
 
-template<typename T>
-using has_function_Tick_t = boost::mpl::bool_<has_function_Tick<T>::value>;
-template<typename T>
-using has_function_UpdateParticle_t = boost::mpl::bool_<has_function_UpdateParticle<T>::value>;
-template<typename T>
-using has_function_ParticleToVertices_t = boost::mpl::bool_<has_function_ParticleToVertices<T>::value>;
-template<typename T>
-using has_function_BeginUpdateParticles_t = boost::mpl::bool_<has_function_BeginUpdateParticles<T>::value>;
-template<typename T>
-using has_function_BeginParticlesToVertices_t = boost::mpl::bool_<has_function_BeginParticlesToVertices<T>::value>;
-
 // detect whether class have a nested class
 CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
-
-template<typename T>
-using has_LayerTrait_t = boost::mpl::bool_<has_LayerTrait<T>::value>;
 
 // ==============================================================
 // ParticleTraitTools
@@ -116,7 +87,7 @@ class ParticleTraitTools
 	template<typename TRAIT_TYPE>
 	static size_t GetVerticesPerParticle(TRAIT_TYPE const & trait)
 	{ 
-        if constexpr (has_vertices_per_particle_t<TRAIT_TYPE>::value)
+        if constexpr (has_vertices_per_particle_v<TRAIT_TYPE>)
             return trait.vertices_per_particle;
         else
             return 2 * 3; // default value (2 triangles to render a quad)
@@ -125,7 +96,7 @@ class ParticleTraitTools
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
 	{
-        if constexpr (has_dynamic_vertices_t<TRAIT_TYPE>::value)
+        if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
             return trait.dynamic_vertices;
         else
             return true;
@@ -134,7 +105,7 @@ class ParticleTraitTools
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamic(TRAIT_TYPE const & trait)
 	{
-        if constexpr (has_dynamic_particles_t<TRAIT_TYPE>::value)
+        if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
             return trait.dynamic_particles;
         else
             return true;
@@ -144,7 +115,7 @@ class ParticleTraitTools
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamicStatic()
 	{
-        if constexpr (has_dynamic_vertices_t<TRAIT_TYPE>::value)
+        if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
             return TRAIT_TYPE::dynamic_vertices;
         else
             return true;
@@ -153,7 +124,7 @@ class ParticleTraitTools
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamicStatic()
 	{
-        if constexpr (has_dynamic_particles_t<TRAIT_TYPE>::value)
+        if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
             return TRAIT_TYPE::dynamic_particles;
         else
             return true;
@@ -343,9 +314,10 @@ class ParticleTraitTools
 
             bool destroy_allocation = false;
 
-            if constexpr (has_function_Tick_t<allocation_trait_type>::value)
+            // tick the allocation (if the trait has a Tick(...) function)
+            if constexpr (has_function_Tick_v<allocation_trait_type>)
             {
-                if constexpr (has_LayerTrait_t<allocation_trait_type>::value)
+                if constexpr (has_LayerTrait_v<allocation_trait_type>)
                 {
                     destroy_allocation = allocation_trait.Tick(delta_time, this, layer_trait); // let the trait decide whether the allocation is to be destroyed
                 }
@@ -359,6 +331,7 @@ class ParticleTraitTools
                 destroy_allocation = false; // no Tick(...), no destruction
             }
 
+            // Tick the particles
             if (!destroy_allocation)      
             {
                 // XXX : SHU whether particles can be ticked

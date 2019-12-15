@@ -15,6 +15,8 @@ namespace chaos
 
 #define CHAOS_GENERATE_HAS_TRAIT(name)\
 BOOST_MPL_HAS_XXX_TRAIT_DEF(name)\
+template<typename T>\
+auto constexpr has_##name##_v = has_##name<T>::value;\
 template<typename T, typename B = typename has_##name<T>::type>\
 class get_##name;\
 template<typename T>\
@@ -24,6 +26,12 @@ template<typename T>\
 class get_##name<T, boost::mpl::false_> : public boost::mpl::identity<chaos::EmptyClass>\
 {};
 
+
+#define CHAOS_GENERATE_HAS_MEMBER(member_name)\
+BOOST_DECLARE_HAS_MEMBER(has_##member_name, member_name);\
+template<typename T>\
+auto constexpr has_##member_name##_v = has_##member_name<T>::value;
+          
 	// create some meta class : has_function_NAME<A> => boost::mpl::bool_
 	// XXX : it just test whether the T parameter has a member of given name, not (yet) if this is a function
 #define CHAOS_GENERATE_HAS_FUNCTION_METACLASS(function_name)\
@@ -36,7 +44,10 @@ auto has_function_helper_##function_name(T const & t) -> decltype(&T::function_n
 template<typename T>\
 using has_function_##function_name = boost::mpl::bool_<\
 	sizeof(details::has_function_helper_##function_name(chaos::meta::GenerateFakeInstance<T>())) != 1\
->;
+>;\
+template<typename T>\
+auto constexpr has_function_##function_name##_v = has_function_##function_name<T>::value;
+
 
 	// SFINAE
 	// ------

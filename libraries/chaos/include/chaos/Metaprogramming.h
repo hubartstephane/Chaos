@@ -7,11 +7,14 @@
 namespace chaos
 {
 
-	// create 2 metaclasses
+	// creates 2 metaclasses
 	//
 	//   - has_TRAITNAME<...> => boost::mpl::bool_
 	//   - get_TRAITNAME<...> => the TRAIT if it exists
 	//                           EmptyClass elsewhere
+    // create 1 CONSTEXP bool 
+    //
+    //   - has_TRAITNAME_t<...> => true/false
 
 #define CHAOS_GENERATE_HAS_TRAIT(name)\
 BOOST_MPL_HAS_XXX_TRAIT_DEF(name)\
@@ -26,13 +29,27 @@ template<typename T>\
 class get_##name<T, boost::mpl::false_> : public boost::mpl::identity<chaos::EmptyClass>\
 {};
 
-
+    // creates 1 metaclass
+    //
+    //   - has_MEMBERNAME<...> => boost::mpl::bool_
+    //
+    // creates 1 CONSPEXP bool
+    //
+    //   - has_MEMBERNAME_v<...> => true/false
+    
 #define CHAOS_GENERATE_HAS_MEMBER(member_name)\
 BOOST_DECLARE_HAS_MEMBER(has_##member_name, member_name);\
 template<typename T>\
 auto constexpr has_##member_name##_v = has_##member_name<T>::value;
           
-	// create some meta class : has_function_NAME<A> => boost::mpl::bool_
+	// creates 1 metaclass 
+    //
+    //  - has_FUNCTIONNAME<...> => boost::mpl::bool_
+    //
+    // creates 1 CONSTEXP bool
+    //
+    //  - has_FUNCTIONNAME_v<...> => true/false
+    //
 	// XXX : it just test whether the T parameter has a member of given name, not (yet) if this is a function
 #define CHAOS_GENERATE_HAS_FUNCTION_METACLASS(function_name)\
 namespace details\

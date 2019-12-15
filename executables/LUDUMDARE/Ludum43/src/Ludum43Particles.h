@@ -99,7 +99,7 @@ public:
 
 	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdateEnemyData BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, LayerTrait const * layer_trait) const;
+	UpdateEnemyData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;
 };
 
 // ===========================================================================
@@ -143,7 +143,7 @@ public:
 
 	size_t ParticleToVertices(ParticlePlayer const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdatePlayerData BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, LayerTrait const * layer_trait) const;
+	UpdatePlayerData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer> & particle_accessor, LayerTrait const * layer_trait) const;
 };
 
 
@@ -189,7 +189,7 @@ public:
 
 	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-	UpdateAtomData BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, LayerTrait const * layer_trait) const;
+	UpdateAtomData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleAtom> & particle_accessor, LayerTrait const * layer_trait) const;
 };
 
 

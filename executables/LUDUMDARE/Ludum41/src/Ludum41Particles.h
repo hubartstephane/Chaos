@@ -47,7 +47,7 @@ public:
 
 
 	// called once for the whole allocation
-	int BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, LayerTrait const * layer_trait) const;
+	int BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject> & particle_accessor, LayerTrait const * layer_trait) const;
 	// called once for the whole allocation
 	glm::vec2 BeginParticlesToVertices(ParticleObject const * particles, size_t count, LayerTrait const * layer_trait) const;
 

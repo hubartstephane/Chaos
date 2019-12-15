@@ -68,7 +68,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	chaos::box2 BeginUpdateParticles(float delta_time, ParticleBonus * particle, size_t count, LayerTrait const * layer_trait) const;
+	chaos::box2 BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const;
 
 
 	bool UpdateParticle(float delta_time, ParticleBonus * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const;
@@ -121,7 +121,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	chaos::box2 BeginUpdateParticles(float delta_time, ParticleEnemy * particle, size_t count, LayerTrait const * layer_trait) const;
+	chaos::box2 BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;
 
 
 	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const;
@@ -263,7 +263,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	ParticleFireUpdateData BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const;
+	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire> & particle_accessor, LayerTrait const * layer_trait) const;
 
 	bool UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
 

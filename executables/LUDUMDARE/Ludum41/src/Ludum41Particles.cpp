@@ -34,7 +34,7 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * part
 // Life particle system
 // ===========================================================================
 
-int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, ParticleObject * particles, size_t count, LayerTrait const * layer_trait) const
+int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject>& particle_accessor, LayerTrait const * layer_trait) const
 {
 	return 0;
 }

@@ -259,10 +259,10 @@ size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, Vert
 // ===========================================================================
 
 
-ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const
+ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire> & particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleFireUpdateData result;
-	if (count > 0)
+	if (particle_accessor.GetCount() > 0)
 	{
 		// get the camera box 
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
@@ -359,10 +359,10 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 // ParticleEnemyTrait
 // ===========================================================================
 
-ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particle, size_t count, LayerTrait const * layer_trait) const
+ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleEnemyUpdateData result;
-	if (count > 0)
+	if (particle_accessor.GetCount() > 0)
 	{
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
 		//result.camera_box.half_size *= 3.0f;

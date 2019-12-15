@@ -389,7 +389,7 @@ class ParticleTraitTools
                     remaining_particles = DoUpdateParticlesLoop(
                         delta_time,
                         particle_accessor,
-                        allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait), // do not use a temp variable, so it can be a left-value reference
+                        allocation_trait.BeginUpdateParticles(delta_time, particle_accessor, layer_trait), // do not use a temp variable, so it can be a left-value reference
                         layer_trait);
                 }
                 else
@@ -397,7 +397,7 @@ class ParticleTraitTools
                     remaining_particles = DoUpdateParticlesLoop(
                         delta_time,
                         particle_accessor,
-                        allocation_trait.BeginUpdateParticles(delta_time, particles, particle_count, layer_trait)); // do not use a temp variable, so it can be a left-value reference
+                        allocation_trait.BeginUpdateParticles(delta_time, particle_accessor, layer_trait)); // do not use a temp variable, so it can be a left-value reference
                 }
             }
             else

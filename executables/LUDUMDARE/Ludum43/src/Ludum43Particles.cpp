@@ -142,7 +142,7 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 	return result;
 }
 
-ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, ParticlePlayer * particles, size_t count, LayerTrait const * layer_trait) const
+ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer>& particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticlePlayerTrait::UpdatePlayerData result;
 
@@ -255,7 +255,7 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 	return result;
 }
 
-ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particles, size_t count, LayerTrait const * layer_trait) const
+ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleEnemyTrait::UpdateEnemyData result;
 
@@ -356,7 +356,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	return false;
 }
 
-ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float delta_time, ParticleAtom * particles, size_t count, LayerTrait const * layer_trait) const
+ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleAtom> & particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleAtomTrait::UpdateAtomData result;
 

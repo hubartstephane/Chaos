@@ -108,7 +108,7 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 // ===========================================================================
 
 
-chaos::box2 ParticleEnemyTrait::BeginUpdateParticles(float delta_time, ParticleEnemy * particle, size_t count, LayerTrait const * layer_trait) const
+chaos::box2 ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
 {
 	chaos::box2 result;
 
@@ -270,7 +270,7 @@ static void FindBonusOnMap(LudumGame * game, std::vector<ParticleBonus*> & resul
 #endif
 
 
-chaos::box2 ParticleBonusTrait::BeginUpdateParticles(float delta_time, ParticleBonus * particle, size_t count, LayerTrait const * layer_trait) const
+chaos::box2 ParticleBonusTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const
 {
 	chaos::box2 result;
 
@@ -393,10 +393,10 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // ===========================================================================
 
 
-ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, ParticleFire * particle, size_t count, LayerTrait const * layer_trait) const
+ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleFireUpdateData result;
-	if (count > 0)
+	if (particle_accessor.GetCount() > 0)
 	{
 		// get the camera box 
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);

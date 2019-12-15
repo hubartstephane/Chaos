@@ -39,7 +39,7 @@ int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, chaos::Parti
 	return 0;
 }
 
-glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(ParticleObject const * particles, size_t count, LayerTrait const * layer_trait) const
+glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const
 {
 	return glm::vec2(0.0f, 0.0f);
 }

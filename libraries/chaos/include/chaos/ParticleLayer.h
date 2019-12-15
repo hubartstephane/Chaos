@@ -432,85 +432,68 @@ class ParticleTraitTools
 
 
 		/** override */
-		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const override
+		virtual size_t ParticlesToVertices(void * v, void const * layer_trait) const override
 		{ 
 			layer_trait_type const * typed_layer_trait = (layer_trait_type const *)layer_trait;
 
-			return ParticlesToVertices(
-				(particle_type*)GetParticleBuffer(), 
-				GetParticleCount(), 
-				(vertex_type*)vertices, 
-				ParticleTraitTools::GetVerticesPerParticle(*typed_layer_trait), 
-				typed_layer_trait, 
-				boost::mpl::true_() /*has_function_ParticleToVertices<allocation_trait_type>::type()*/); //  shuxxx FIXME : this template does not detect template function => see ParticleDefault
-		}
 
-		size_t ParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_PARTICLE_TO_VERTICES) const 
-		{
-			return 0;		
-		}
+            // XXX : has_function_ParticleToVertices<allocation_trait_type>::type()*/); //  shuxxx FIXME : this template does not detect template function => see ParticleDefault
 
-		size_t ParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_PARTICLE_TO_VERTICES) const 
-		{ 
-			return DoParticlesToVertices(
-				particles, 
-				particle_count, 
-				vertices, 
-				vertices_per_particle, 
-				layer_trait, 
-				has_function_BeginParticlesToVertices<allocation_trait_type>::type(), 
-				has_LayerTrait<allocation_trait_type>::type());	
-		}
+            vertex_type* vertices = (vertex_type*)v;
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::false_ HAS_LAYER_TRAIT) const 
-		{
-			return DoParticlesToVerticesLoop(
-				particles, 
-				particle_count, 
-				vertices, 
-				vertices_per_particle);
-		}
+            size_t vertices_per_particle = ParticleTraitTools::GetVerticesPerParticle(allocation_trait);
 
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::false_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::true_ HAS_LAYER_TRAIT) const 
-		{
-			return DoParticlesToVerticesLoop(
-				particles, 
-				particle_count, 
-				vertices, 
-				vertices_per_particle, 
-				layer_trait);
-		}
-
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::false_ HAS_LAYER_TRAIT) const 
-		{
-			return DoParticlesToVerticesLoop(
-				particles, 
-				particle_count, 
-				vertices, 
-				vertices_per_particle, 
-				allocation_trait.BeginParticlesToVertices(particles, particle_count)); // do not use a temp variable, so it can be a left-value reference
-		}
-
-		size_t DoParticlesToVertices(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, layer_trait_type const * layer_trait, boost::mpl::true_ HAS_BEGIN_PARTICLES_TO_VERTICES, boost::mpl::true_ HAS_LAYER_TRAIT) const 
-		{
-			return DoParticlesToVerticesLoop(
-				particles, 
-				particle_count, 
-				vertices, 
-				vertices_per_particle, 
-				allocation_trait.BeginParticlesToVertices(particles, particle_count, layer_trait), 
-				layer_trait); // do not use a temp variable, so it can be a left-value reference
+            size_t result = 0;
+            if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
+            {
+                if constexpr (has_LayerTrait_v<allocation_trait_type>)
+                {
+                    result = DoParticlesToVerticesLoop(
+                        vertices,
+                        vertices_per_particle,
+                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
+                        typed_layer_trait);
+                }
+                else
+                {
+                    result = DoParticlesToVerticesLoop(
+                        vertices,
+                        vertices_per_particle,
+                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>())); // do not use a temp variable, so it can be a left-value reference
+                }
+            }
+            else
+            {
+                if constexpr (has_LayerTrait_v<allocation_trait_type>)
+                {
+                    result = DoParticlesToVerticesLoop(
+                        vertices,
+                        vertices_per_particle,
+                        typed_layer_trait);
+                }
+                else
+                {
+                    result = DoParticlesToVerticesLoop(
+                        vertices,
+                        vertices_per_particle);
+                }
+            }            
+            return result;
 		}
 
 		template<typename ...PARAMS>
-		size_t DoParticlesToVerticesLoop(particle_type const * particles, size_t particle_count, vertex_type * vertices, size_t vertices_per_particle, PARAMS... params) const
+		size_t DoParticlesToVerticesLoop(vertex_type * vertices, size_t vertices_per_particle, PARAMS... params) const
 		{
+            ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor<particle_type>();
+
+            size_t particle_count = particle_accessor.GetCount();
 			size_t result = 0;
 			// transforms particles to vertices
 			vertex_type * v = vertices;
+
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				size_t new_vertices = allocation_trait.ParticleToVertices(&particles[i], v, vertices_per_particle, params...);
+				size_t new_vertices = allocation_trait.ParticleToVertices(&particle_accessor[i], v, vertices_per_particle, params...);
 				assert(new_vertices <= vertices_per_particle);
 				result += new_vertices;
 				v += new_vertices;

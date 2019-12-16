@@ -190,7 +190,21 @@ class ParticleTraitTools
 		{
 			return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
 		}
-
+        /** get an AutoCasting particle accessor */
+        AutoCastedParticleAccessor GetParticleAccessor()
+        {
+            return AutoCastedParticleAccessor(this);
+        }
+        /** get an AutoCasting particle accessor */
+        AutoCastedParticleConstAccessor GetParticleAccessor() const
+        {
+            return AutoCastedParticleConstAccessor(this);
+        }
+        /** get an AutoCasting particle accessor */
+        AutoCastedParticleConstAccessor GetParticleConstAccessor() const
+        {
+            return AutoCastedParticleConstAccessor(this);
+        }
 		/** get an accessor for the particles */
 		template<typename PARTICLE_TYPE>
 		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor()

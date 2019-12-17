@@ -88,7 +88,7 @@ namespace chaos
         ParticleAccessor() = default;
         /** copy (+downcast operator) */
         template<typename OTHER_PARTICLE_TYPE>
-        ParticleAccessor(ParticleAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<PARTICLE_TYPE, OTHER_PARTICLE_TYPE>, int> = 0) :
+        ParticleAccessor(ParticleAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, int> = 0) :
             ParticleAccessorBase(src.GetBuffer(), src.GetCount(), src.GetParticleSize())
         {
         }
@@ -108,13 +108,13 @@ namespace chaos
         ParticleConstAccessor() = default;
         /** copy (+downcast operator) */
         template<typename OTHER_PARTICLE_TYPE>
-        ParticleConstAccessor(ParticleConstAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<PARTICLE_TYPE, OTHER_PARTICLE_TYPE>, int> = 0) :
+        ParticleConstAccessor(ParticleConstAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, int> = 0) :
             ParticleAccessorBase(src.GetBuffer(), src.GetCount(), src.GetParticleSize())
         {
         }
         /** copy from non const (+downcast operator) */
         template<typename OTHER_PARTICLE_TYPE>
-        ParticleConstAccessor(ParticleAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<PARTICLE_TYPE, OTHER_PARTICLE_TYPE>, int> = 0) :
+        ParticleConstAccessor(ParticleAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, int> = 0) :
             ParticleAccessorBase(src.GetBuffer(), src.GetCount(), src.GetParticleSize())
         {
         }
@@ -123,43 +123,6 @@ namespace chaos
             ParticleAccessorBase(in_buffer, in_count, in_particle_size)
         {
         }
-    };
-
-
-
-    // ==============================================================
-    // AutoCastedParticleConstAccessor
-    // ==============================================================
-
-    class AutoCastedParticleConstAccessor
-    {
-    public:
-
-        /** constructor */
-        AutoCastedParticleConstAccessor() = default;
-        /** copy constructor */
-        AutoCastedParticleConstAccessor(AutoCastedParticleConstAccessor const& src) = default;
-        /** initialization contructor */
-        AutoCastedParticleConstAccessor(class ParticleAllocationBase const* in_allocation_base) : allocation_base(in_allocation_base)
-        {
-            assert(in_allocation_base != nullptr);
-        }
-        /** copy from non const instance */
-      //  AutoCastedParticleConstAccessor(AutoCastedParticleAccessor const & src) : allocation_base(src.allocation_base) {}
-
-        /** the conversion method */
-        template<typename PARTICLE_TYPE>
-        operator ParticleConstAccessor<PARTICLE_TYPE>() const
-        {
-            return (allocation_base != nullptr) ?
-                allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>() :
-                ParticleConstAccessor<PARTICLE_TYPE>();
-        }
-
-    protected:
-
-        /** the allocation we are using */
-        ParticleAllocationBase const * allocation_base = nullptr;
     };
 
     // ==============================================================
@@ -189,10 +152,13 @@ namespace chaos
                 allocation_base->GetParticleAccessor<PARTICLE_TYPE>() :
                 ParticleAccessor<PARTICLE_TYPE>();
         }
-
-        operator AutoCastedParticleConstAccessor () const
+        /** the conversion method */
+        template<typename PARTICLE_TYPE>
+        operator ParticleConstAccessor<PARTICLE_TYPE>() const
         {
-            return AutoCastedParticleConstAccessor(allocation_base);
+            return (allocation_base != nullptr) ?
+                allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>() :
+                ParticleConstAccessor<PARTICLE_TYPE>();
         }
 
     protected:
@@ -200,6 +166,43 @@ namespace chaos
         /** the allocation we are using */
         ParticleAllocationBase* allocation_base = nullptr;
     };
+
+    // ==============================================================
+    // AutoCastedParticleConstAccessor
+    // ==============================================================
+
+    class AutoCastedParticleConstAccessor
+    {
+    public:
+
+        /** constructor */
+        AutoCastedParticleConstAccessor() = default;
+        /** copy constructor */
+        AutoCastedParticleConstAccessor(AutoCastedParticleConstAccessor const& src) = default;
+        /** initialization contructor */
+        AutoCastedParticleConstAccessor(class ParticleAllocationBase const* in_allocation_base) : allocation_base(in_allocation_base)
+        {
+            assert(in_allocation_base != nullptr);
+        }
+        /** copy from non const instance */
+        AutoCastedParticleConstAccessor(AutoCastedParticleAccessor const& src) : allocation_base(src.allocation_base) {}
+
+        /** the conversion method */
+        template<typename PARTICLE_TYPE>
+        operator ParticleConstAccessor<PARTICLE_TYPE>() const
+        {
+            return (allocation_base != nullptr) ?
+                allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>() :
+                ParticleConstAccessor<PARTICLE_TYPE>();
+        }
+
+    protected:
+
+        /** the allocation we are using */
+        ParticleAllocationBase const* allocation_base = nullptr;
+    };
+
+
 
 }; // namespace chaos
 

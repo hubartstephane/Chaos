@@ -480,11 +480,10 @@ ParticleMovableObject const * LudumGameInstance::GetBallParticles() const
 {
 	if (balls_allocations == nullptr)
 		return nullptr;
-	chaos::ParticleConstAccessor<ParticleMovableObject> p = balls_allocations->GetParticleAccessor();
-	if (p.GetCount() == 0)
+    chaos::ParticleConstAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor();
+	if (particles.GetCount() == 0)
 		return nullptr;
-
-	return &p[0];
+	return &particles[0];
 }
 
 size_t LudumGameInstance::GetBallCount() const

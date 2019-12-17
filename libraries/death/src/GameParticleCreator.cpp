@@ -59,7 +59,7 @@ namespace death
 		if (info == nullptr)
 			return false;
 
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor();
 
 		size_t particles_count = particles.GetCount();
 		size_t start = 0;

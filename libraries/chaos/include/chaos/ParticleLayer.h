@@ -367,7 +367,7 @@ class ParticleTraitTools
 
             size_t remaining_particles = 0;
 
-            ParticleAccessor<particle_type> particle_accessor = GetParticleAccessor<particle_type>();
+            ParticleAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
             if constexpr (has_function_BeginUpdateParticles<allocation_trait_type>::type())
             {
@@ -498,7 +498,7 @@ class ParticleTraitTools
 		template<typename ...PARAMS>
 		size_t DoParticlesToVerticesLoop(vertex_type * vertices, size_t vertices_per_particle, PARAMS... params) const
 		{
-            ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor<particle_type>();
+            ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
             size_t particle_count = particle_accessor.GetCount();
 			size_t result = 0;

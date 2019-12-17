@@ -447,7 +447,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 		return nullptr;
 
 	// set the color
-	chaos::ParticleAccessor<ParticleMovableObject> particles = result->GetParticleAccessor<ParticleMovableObject>();
+	chaos::ParticleAccessor<ParticleMovableObject> particles = result->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return nullptr;
 
@@ -470,7 +470,7 @@ ParticleMovableObject * LudumGameInstance::GetBallParticles()
 {
 	if (balls_allocations == nullptr)
 		return nullptr;	
-	chaos::ParticleAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+	chaos::ParticleAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return nullptr;
 	return &particles[0];
@@ -480,7 +480,7 @@ ParticleMovableObject const * LudumGameInstance::GetBallParticles() const
 {
 	if (balls_allocations == nullptr)
 		return nullptr;
-	chaos::ParticleConstAccessor<ParticleMovableObject> p = balls_allocations->GetParticleAccessor<ParticleMovableObject>();
+	chaos::ParticleConstAccessor<ParticleMovableObject> p = balls_allocations->GetParticleAccessor();
 	if (p.GetCount() == 0)
 		return nullptr;
 
@@ -655,7 +655,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 	// and initialize additionnal data
 	if (allocation != nullptr)
 	{
-		chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor<ParticleChallenge>();
+		chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor();
 		for (size_t i = 0; i < particles.GetCount(); ++i)
 		{
 			ParticleChallenge & p = particles[i];
@@ -711,7 +711,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 		return;
 	player->SetPlayerAllocation(player_allocation);
 	// initialize the player particle
-	chaos::ParticleAccessor<ParticleObject> particles = player_allocation->GetParticleAccessor<ParticleObject>();
+	chaos::ParticleAccessor<ParticleObject> particles = player_allocation->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return;
 	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

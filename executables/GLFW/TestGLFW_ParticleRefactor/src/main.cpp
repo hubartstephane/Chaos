@@ -194,7 +194,7 @@ protected:
 
 				//particle_allocations.push_back(allocation);
 
-                chaos::ParticleAccessor<ParticleExample> particle_accessor = allocation->GetParticleAccessor<ParticleExample>();
+                chaos::ParticleAccessor<ParticleExample> particle_accessor = allocation->GetParticleAccessor();
 				if (particle_accessor.GetCount())
 				{
 					glm::vec2 center = 

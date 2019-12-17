@@ -314,7 +314,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 					if (allocation == nullptr)
 						continue;
 
-					chaos::ParticleConstAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
+					chaos::ParticleConstAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor();
 
 					size_t enemies_count = enemies.GetCount();
 					for (size_t j = 0; j < enemies_count; ++j)

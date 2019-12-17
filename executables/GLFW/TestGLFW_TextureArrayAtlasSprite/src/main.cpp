@@ -62,7 +62,7 @@ protected:
 
 		// initialize the particles
 
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particle_accessor = particles_allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particle_accessor = particles_allocation->GetParticleAccessor();
 		for (size_t i = 0; i < bitmap_count; ++i)
 		{
 			chaos::ParticleDefault::Particle & p = particle_accessor[i];

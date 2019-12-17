@@ -290,7 +290,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 	chaos::BitmapAtlas::BitmapInfo const * enemy_info = nullptr; // so we can reuse among the loop existing random choice
 	if (allocation->AddParticles(count))
 	{
-		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor<ParticleEnemy>();
+		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor();
 		for (int i = 0 ; i < count ; ++i)
 		{
 			ParticleEnemy & p = particles[index_offset + i];

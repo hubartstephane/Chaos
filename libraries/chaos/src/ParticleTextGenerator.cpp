@@ -749,7 +749,7 @@ namespace chaos
 				return nullptr;
 
 			// spawn the particles
-			ParticleAccessor<ParticleDefault::Particle> particles = result->GetParticleAccessor<ParticleDefault::Particle>();
+			ParticleAccessor<ParticleDefault::Particle> particles = result->GetParticleAccessor();
 			if (particles.GetCount() == 0)
 			{
 				result->SubReference(SharedPointerPolicy()); // error => destroy the allocation

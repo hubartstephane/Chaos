@@ -515,7 +515,7 @@ namespace death
 		glm::vec2 whole_particle_ref = chaos::Hotpoint::Convert(screen_ref + position, whole_particle_size, hotpoint_type, chaos::Hotpoint::BOTTOM_LEFT);
 
 		// update the particles members
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor();
 
 		glm::vec2 particle_position = whole_particle_ref;
 		for (size_t i = 0; i < (size_t)count; ++i)

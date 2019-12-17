@@ -195,7 +195,7 @@ protected:
 
 				//particle_allocations.push_back(allocation);
 
-                chaos::ParticleAccessor<ParticleExample> particles = allocation->GetParticleAccessor<ParticleExample>();
+                chaos::ParticleAccessor<ParticleExample> particles = allocation->GetParticleAccessor();
 
                 glm::vec2 center = (2.0f * (chaos::GLMTools::RandVec2() - glm::vec2(0.5f, 0.5f))) * 0.5f * glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
 
@@ -325,7 +325,6 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 
 
-    return 0;
 
 	chaos::MyGLFW::SingleWindowApplicationParams params;
 	params.monitor = nullptr;

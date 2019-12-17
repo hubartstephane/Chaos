@@ -50,7 +50,7 @@ namespace death
 			// reserve memory
 			allocation->AddParticles(particle_count);
 			// an accessor to flush
-			chaos::ParticleAccessor<TileParticle> p = allocation->GetParticleAccessor<TileParticle>();
+			chaos::ParticleAccessor<TileParticle> p = allocation->GetParticleAccessor();
 			for (size_t i = 0; i < particle_count; ++i)
 				p[old_count + i] = particles[i];
 

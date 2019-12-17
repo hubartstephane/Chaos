@@ -147,7 +147,7 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 		allocations->Resize(1);
 	}
 	// fill the particle
-	chaos::ParticleAccessor<ParticleLife> particles = allocations->GetParticleAccessor<ParticleLife>();
+	chaos::ParticleAccessor<ParticleLife> particles = allocations->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return true;
 

@@ -79,7 +79,7 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 		return nullptr;
 	if (!allocation->AddParticles(count))
 		return nullptr;
-	chaos::ParticleAccessor<ParticleFire> particles = allocation->GetParticleAccessor<ParticleFire>();
+	chaos::ParticleAccessor<ParticleFire> particles = allocation->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return nullptr;
 
@@ -178,7 +178,7 @@ ParticleExplosion * LudumGameInstance::FireExplosion(chaos::box2 const & ref_box
 	if (!allocation->AddParticles(1))
 		return nullptr;
 
-	chaos::ParticleAccessor<ParticleExplosion> particle = allocation->GetParticleAccessor<ParticleExplosion>();
+	chaos::ParticleAccessor<ParticleExplosion> particle = allocation->GetParticleAccessor();
 	if (particle.GetCount() == 0)
 		return nullptr;
 

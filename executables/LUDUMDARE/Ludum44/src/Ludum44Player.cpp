@@ -22,7 +22,7 @@ ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {
 	if (player_allocations == nullptr)
 		return nullptr;
-	chaos::ParticleAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
+	chaos::ParticleAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
 	if (player_particles.GetCount() == 0)
 		return nullptr;
 	return &player_particles[0];
@@ -32,7 +32,7 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 {
 	if (player_allocations == nullptr)
 		return nullptr;
-	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor<ParticlePlayer>();
+	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
 	if (player_particles.GetCount() == 0)
 		return nullptr;
 	return &player_particles[0];
@@ -128,7 +128,7 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 #if 0
 	if (in_allocation != nullptr)
 	{
-		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor<ParticlePlayer>();
+		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor();
 		size_t count = player_particles.GetCount();
 		for (size_t i = 0 ; i < count ; ++i)
 			player_particles[i].life = ludum_game->player_life.initial_value;

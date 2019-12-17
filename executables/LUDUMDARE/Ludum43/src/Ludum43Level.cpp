@@ -81,7 +81,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 	if (is_player)
 	{
-		chaos::ParticleAccessor<ParticleAffector> particles = allocation->GetParticleAccessor<ParticleAffector>();
+		chaos::ParticleAccessor<ParticleAffector> particles = allocation->GetParticleAccessor();
 
 		size_t count = particles.GetCount();
 		for (size_t i = 0; i < count; ++i)
@@ -102,7 +102,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 	if (is_enemy || is_world_limits)
 	{
-		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor<ParticleEnemy>();
+		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor();
 
 		size_t count = particles.GetCount();
 		for (size_t i = 0; i < count; ++i)
@@ -153,7 +153,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 	bool is_atoms = (layer_name == "Atoms");
 	if (is_atoms)
 	{
-		chaos::ParticleAccessor<ParticleAtom> particles = allocation->GetParticleAccessor<ParticleAtom>();
+		chaos::ParticleAccessor<ParticleAtom> particles = allocation->GetParticleAccessor();
 
 		size_t count = particles.GetCount();
 		for (size_t i = 0; i < count; ++i)

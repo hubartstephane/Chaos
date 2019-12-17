@@ -596,7 +596,7 @@ namespace death
 					if (particle_allocation == nullptr)
 						continue;
 
-					chaos::ParticleAccessor<TileParticle> particles = particle_allocation->GetParticleAccessor<TileParticle>();
+					chaos::ParticleAccessor<TileParticle> particles = particle_allocation->GetParticleAccessor();
 
 					size_t particle_count = particles.GetCount();
 					for (size_t j = 0; j < particle_count; ++j)

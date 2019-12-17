@@ -53,7 +53,7 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 				chaos::ParticleAllocationBase * allocation = layer->GetAllocation(i);
 				if (allocation != nullptr)
 				{
-					chaos::ParticleAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor<ParticleEnemy>();
+					chaos::ParticleAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor();
 					size_t count = enemies.GetCount();
 					for (size_t j = 0 ; j < count ; ++j)
 						result.push_back(&enemies[j]);

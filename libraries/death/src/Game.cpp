@@ -612,7 +612,7 @@ namespace death
 			if (background_allocations == nullptr)
 				return false;
 
-			chaos::ParticleAccessor<death::ParticleBackground> particles = background_allocations->GetParticleAccessor<death::ParticleBackground>();
+			chaos::ParticleAccessor<death::ParticleBackground> particles = background_allocations->GetParticleAccessor();
 			if (particles.GetCount() == 0)
 				return false;
 

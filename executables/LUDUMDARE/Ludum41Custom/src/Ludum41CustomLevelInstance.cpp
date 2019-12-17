@@ -80,7 +80,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	if (result == nullptr)
 		return nullptr;
 
-	chaos::ParticleAccessor<ParticleBrick> particles = result->GetParticleAccessor<ParticleBrick>();
+	chaos::ParticleAccessor<ParticleBrick> particles = result->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return nullptr;
 
@@ -153,7 +153,7 @@ ParticleBrick * LudumLevelInstance::GetBricks()
 	if (bricks_allocations == nullptr)
 		return nullptr;
 
-	chaos::ParticleAccessor<ParticleBrick> particles = bricks_allocations->GetParticleAccessor<ParticleBrick>();
+	chaos::ParticleAccessor<ParticleBrick> particles = bricks_allocations->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return nullptr;
 

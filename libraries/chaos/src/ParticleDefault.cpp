@@ -70,7 +70,7 @@ namespace chaos
 		if (index >= allocation->GetParticleCount())
 			return nullptr;
 
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor();
 		if (particles.GetCount() == 0)
 			return nullptr;
 		return &particles[index];
@@ -83,7 +83,7 @@ namespace chaos
 		if (index >= allocation->GetParticleCount())
 			return nullptr;
 
-		chaos::ParticleConstAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor<chaos::ParticleDefault::Particle>();
+		chaos::ParticleConstAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor();
 		if (particles.GetCount() == 0)
 			return nullptr;
 		return &particles[index];

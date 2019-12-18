@@ -777,9 +777,9 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	chaos::ParticleAccessor<ParticleObject> particles = player_allocation->GetParticleAccessor();
 	if (particles.GetCount() == 0)
 		return;
-	particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	particles->bounding_box.position = glm::vec2(0.0f, 0.0f);
-	particles->bounding_box.half_size = glm::vec2(0.0f, 0.0f);
+	particles[0].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	particles[0].bounding_box.position = glm::vec2(0.0f, 0.0f);
+	particles[0].bounding_box.half_size = glm::vec2(0.0f, 0.0f);
 	// set the player length
 	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player != nullptr)

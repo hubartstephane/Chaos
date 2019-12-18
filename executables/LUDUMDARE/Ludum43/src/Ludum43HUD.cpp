@@ -88,10 +88,10 @@ bool GameHUDLifeBarComponent::DoTick(double delta_time)
 		position2.x = canvas_size.x * 0.5f - 40.0f;
 		position2.y = -canvas_size.y * 0.5f + 70.0f;
 
-		particles->bounding_box = chaos::box2(std::make_pair(position1, position2));
-		particles->texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
-		particles->texcoords.topright = glm::vec2(ludum_game->initial_player_life, 1.0f);
-		particles->color = glm::vec4(life, life, life, life);
+		particles[0].bounding_box = chaos::box2(std::make_pair(position1, position2));
+		particles[0].texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
+		particles[0].texcoords.topright = glm::vec2(ludum_game->initial_player_life, 1.0f);
+		particles[0].color = glm::vec4(life, life, life, life);
 
 		cached_value = life;
 	}

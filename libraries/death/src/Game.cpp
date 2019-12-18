@@ -616,7 +616,7 @@ namespace death
 			if (particles.GetCount() == 0)
 				return false;
 
-			particles->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			particles[0].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 
 		// create a material

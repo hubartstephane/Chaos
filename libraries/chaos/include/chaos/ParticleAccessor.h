@@ -76,6 +76,105 @@ namespace chaos
     };
 
     // ==============================================================
+    // ParticleAccessorIteratorBase
+    // ==============================================================
+
+    template<typename PARTICLE_TYPE, int DIRECTION>
+    class ParticleAccessorIteratorBase
+    {
+        using type = PARTICLE_TYPE;
+
+    public:
+
+        /** default constructor */
+        ParticleAccessorIteratorBase() = default;
+        /** copy constructor */
+        ParticleAccessorIteratorBase(ParticleAccessorIteratorBase const & src) = default;
+
+
+        /** reference operator */
+        PARTICLE_TYPE & operator * ()
+        {
+            return *(PARTICLE_TYPE*)buffer;
+        }
+        /** reference operator */
+        PARTICLE_TYPE const & operator * () const
+        {
+            return *(PARTICLE_TYPE const*)buffer;
+        }
+        /** iterator unreferencing */
+        PARTICLE_TYPE* operator -> ()
+        {
+            return (PARTICLE_TYPE*)buffer;
+
+        }
+        /** iterator unreferencing */
+        PARTICLE_TYPE const * operator -> () const
+        {
+            return (PARTICLE_TYPE const*)buffer;
+        }
+
+
+
+        /** pre-increment */
+        ParticleAccessorIteratorBase& operator ++()
+        {
+            buffer = ((char*)buffer) + DIRECTION * particle_size;
+            return *this;
+        }
+        /** post-increment */
+        ParticleAccessorIteratorBase operator ++(int)
+        {
+            ParticleAccessorIteratorBase result = *this;
+            buffer = ((char*)buffer) + DIRECTION * particle_size;
+            return result;
+        }
+        /** pre-decrement */
+        ParticleAccessorIteratorBase& operator --()
+        {
+            buffer = ((char*)buffer) - DIRECTION * particle_size;
+            return *this;
+        }
+        /** post-decrement */
+        ParticleAccessorIteratorBase operator --(int)
+        {
+            ParticleAccessorIteratorBase result = *this;
+            buffer = ((char*)buffer) - DIRECTION * particle_size;
+            return result;
+        }
+
+
+
+    protected:
+
+        /** the start of the buffer */
+        void * buffer = nullptr;
+#if _DEBUG
+        /** the number of particles in that buffer */
+        size_t count = 0;
+#endif
+        /** the real particle size (not PARTICLE_TYPE) */
+        size_t particle_size = 0;
+    };
+
+    template<typename PARTICLE_TYPE, int DIRECTION>
+    bool operator == (ParticleAccessorIteratorBase<PARTICLE_TYPE, DIRECTION> const& src1, ParticleAccessorIteratorBase<PARTICLE_TYPE, DIRECTION> const& src2)
+    {
+        return (src1.buffer == src2.buffer);
+    }
+
+    template<typename PARTICLE_TYPE, int DIRECTION>
+    bool operator != (ParticleAccessorIteratorBase<PARTICLE_TYPE, DIRECTION> const& src1, ParticleAccessorIteratorBase<PARTICLE_TYPE, DIRECTION> const& src2)
+    {
+        return !(src1 == src2);
+    }
+
+    template<typename PARTICLE_TYPE>
+    using ParticleAccessorIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE, 1>;
+    template<typename PARTICLE_TYPE>
+    using ParticleAccessorReverseIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE, -1>;
+
+    // ==============================================================
     // ParticleAccessor / ParticleConstAccessor
     // ==============================================================
 
@@ -97,6 +196,24 @@ namespace chaos
             ParticleAccessorBase(in_buffer, in_count, in_particle_size)
         {
         }
+
+        /** begin iterator */
+        auto begin()
+        {
+            if (count == 0)
+                return ParticleAccessorIterator<PARTICLE_TYPE>();
+            return ParticleAccessorIterator<PARTICLE_TYPE>(buffer, particle_size);
+        }
+
+        /** end iterator */
+       auto end()
+        {
+            if (count == 0)
+                return ParticleAccessorIterator<PARTICLE_TYPE>();
+            return ParticleAccessorIterator<PARTICLE_TYPE>(((char *)buffer) + count * particle_size, particle_size);
+        }
+
+
     };
 
     template<typename PARTICLE_TYPE>

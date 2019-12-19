@@ -84,7 +84,19 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	if (particles.GetCount() == 0)
 		return nullptr;
 
+
+    chaos::ParticleAccessor <ParticleObject> pppp = particles;
+
     {
+
+        std::vector vv = { 1,2,4,9, 10 };
+
+        auto u = vv.begin() - vv.end();
+        auto h = vv.end() - vv.begin();
+
+        auto u2 = vv.rbegin() - vv.rend();
+        auto h2 = vv.rend() - vv.rbegin();
+
 
         auto cc = particles.GetCount();
 
@@ -93,6 +105,9 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
         auto it1 = particles.begin();
         auto it2 = particles.rbegin();
+
+//        auto xxx = particles.begin() - particles.end();
+
         for (ParticleBrick & b : particles)
         {
 
@@ -105,7 +120,11 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
         k = k;
 
         int kk = 0;
-        for (auto it = particles.rbegin(); it != particles.rend(); ++it)
+        auto it = particles.rbegin();
+
+        it += 49;
+
+        for (; it != particles.rend(); ++it)
         {
             ++kk;
 

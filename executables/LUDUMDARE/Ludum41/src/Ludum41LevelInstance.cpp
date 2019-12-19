@@ -85,7 +85,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 		return nullptr;
 
 
-    chaos::ParticleAccessor <ParticleObject> pppp = particles;
+    chaos::ParticleAccessor<ParticleObject> pppp = particles;
 
     {
 

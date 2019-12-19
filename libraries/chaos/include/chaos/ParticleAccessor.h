@@ -41,9 +41,9 @@ namespace chaos
         ParticleAccessorIteratorBase& operator ++()
         {
             if constexpr (DIRECTION > 0)
-                buffer = buffer + particle_size;
+                buffer_start = buffer_start + particle_size;
             else if constexpr (DIRECTION < 0)
-                buffer = buffer - particle_size;
+                buffer_start = buffer_start - particle_size;
             return *this;
         }
         /** post-increment */
@@ -51,18 +51,18 @@ namespace chaos
         {
             ParticleAccessorIteratorBase result = *this;
             if constexpr (DIRECTION > 0)
-                buffer = buffer + particle_size;
+                buffer_start = buffer_start + particle_size;
             else if constexpr (DIRECTION < 0)
-                buffer = buffer - particle_size;
+                buffer_start = buffer_start - particle_size;
             return result;
         }
         /** pre-decrement */
         ParticleAccessorIteratorBase& operator --()
         {
             if constexpr (DIRECTION > 0)
-                buffer = buffer - particle_size;
+                buffer_start = buffer_start - particle_size;
             else if constexpr (DIRECTION < 0)
-                buffer = buffer + particle_size;
+                buffer_start = buffer_start + particle_size;
             return *this;
         }
         /** post-decrement */
@@ -70,34 +70,44 @@ namespace chaos
         {
             ParticleAccessorIteratorBase result = *this;
             if constexpr (DIRECTION > 0)
-                buffer = buffer - particle_size;
+                buffer_start = buffer_start - particle_size;
             else if constexpr (DIRECTION < 0)
-                buffer = buffer + particle_size;
+                buffer_start = buffer_start + particle_size;
             return result;
         }
         /** increment and set */
         ParticleAccessorIteratorBase& operator += (size_t count)
         {
             if constexpr (DIRECTION > 0)
-                buffer = buffer + count * particle_size;
+                buffer_start = buffer_start + count * particle_size;
             else if constexpr (DIRECTION < 0)
-                buffer = buffer - count * particle_size;
+                buffer_start = buffer_start - count * particle_size;
             return *this;
         }
         /** decrement and set */
         ParticleAccessorIteratorBase& operator -= (size_t count)
         {
             if constexpr (DIRECTION > 0)
-                buffer = buffer - count * particle_size;
+                buffer_start = buffer_start - count * particle_size;
             else if constexpr (DIRECTION < 0)
-                buffer = buffer + count * particle_size;
+                buffer_start = buffer_start + count * particle_size;
             return *this;
         }
 
     protected:
 
+        void CheckEndOfIterator()
+        {
+            if (buffer_start)
+
+        }
+
+    protected:
+
         /** the start of the buffer */
-        buffer_type buffer = nullptr;
+        buffer_type buffer_start = nullptr;
+        /** the start of the buffer */
+        buffer_type buffer_end = nullptr;
         /** the real particle size (not PARTICLE_TYPE) */
         size_t particle_size = 0;
     };
@@ -132,11 +142,6 @@ namespace chaos
     using ParticleAccessorIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE, 1>;
     template<typename PARTICLE_TYPE>
     using ParticleAccessorReverseIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE, -1>;
-    template<typename PARTICLE_TYPE>
-    using ParticleAccessorConstIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE const, 1>;
-    template<typename PARTICLE_TYPE>
-    using ParticleAccessorConstReverseIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE const, -1>;
-
 
 		// ==============================================================
 		// ParticleAccessorBase
@@ -154,10 +159,10 @@ namespace chaos
         /** copy constructor */
         ParticleAccessorBase(ParticleAccessorBase const& src) = default;
         /** constructor */
-        ParticleAccessorBase(BUFFER_TYPE in_buffer, size_t in_count, size_t in_particle_size) :
-            buffer(in_buffer), count(in_count), particle_size(in_particle_size)
+        ParticleAccessorBase(BUFFER_TYPE in_buffer, size_t in_particle_count, size_t in_particle_size) :
+            buffer(in_buffer), particle_count(in_particle_count), particle_size(in_particle_size)
         {
-            assert((count > 0) ^ (buffer == nullptr));
+            assert((in_particle_count > 0) ^ (in_buffer == nullptr));
         }
 
         /** array accessor */
@@ -177,32 +182,40 @@ namespace chaos
         {
             return particle_size;
         }
+        /** get the begining of the buffer */
+        auto begin() const
+        {
+            if (count == 0)
+                return ParticleAccessorIterator<type>();
+            return ParticleAccessorIterator<type>(buffer, particle_count, particle_size);
+        }
+        /** get the end of the buffer */
+        auto end() const
+        {
+            return ParticleAccessorIterator<type>();
+        }
+        /** get the beginning of the buffer in reverse direction */
+        auto rbegin() const
+        {
+            if (count == 0)
+                return ParticleAccessorReverseIterator<type>();
 
 
+           
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        }
+        /** get the end of the buffer in reverse direction */
+        auto rend() const
+        {
+            return ParticleAccessorReverseIterator<type>();
+        }
 
     protected:
 
         /** the start of the buffer */
         BUFFER_TYPE buffer = nullptr;
         /** the number of particles in that buffer */
-        size_t count = 0;
+        size_t particle_count = 0;
         /** the real particle size (not PARTICLE_TYPE) */
         size_t particle_size = 0;
     };

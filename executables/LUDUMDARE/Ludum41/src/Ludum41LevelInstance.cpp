@@ -84,6 +84,44 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	if (particles.GetCount() == 0)
 		return nullptr;
 
+    {
+
+        auto cc = particles.GetCount();
+
+
+        int k = 0;
+
+        auto it1 = particles.begin();
+        auto it2 = particles.rbegin();
+        for (ParticleBrick & b : particles)
+        {
+
+
+            b.life = (float)k;
+            int pp = 0;
+            ++k;
+        }
+
+        k = k;
+
+        int kk = 0;
+        for (auto it = particles.rbegin(); it != particles.rend(); ++it)
+        {
+            ++kk;
+
+            ParticleBrick b = *it;
+
+            auto jk = it->color;
+
+            b = b;
+        }
+
+
+
+        kk = kk;
+
+    }
+
 	// compute the brick size
 	float BRICK_ASPECT = 16.0f / 9.0f;
 

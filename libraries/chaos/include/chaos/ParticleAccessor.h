@@ -9,10 +9,15 @@ namespace chaos
     // ParticleAccessorIteratorBase
     // ==============================================================
 
+    // XXX : use CONST/NON CONST for PARTICLE_TYPE for const_iterator/non_const_iterator
+
     template<typename PARTICLE_TYPE, int DIRECTION>
     class ParticleAccessorIteratorBase
     {
         using type = PARTICLE_TYPE;
+
+        using buffer_type = std::conditional_t<
+            std::is_const_v<PARTICLE_TYPE>, const char*, char*>;
 
     public:
 
@@ -21,68 +26,78 @@ namespace chaos
         /** copy constructor */
         ParticleAccessorIteratorBase(ParticleAccessorIteratorBase const& src) = default;
 
-
         /** reference operator */
-        PARTICLE_TYPE& operator * ()
+        type& operator * () const
         {
-            return *(PARTICLE_TYPE*)buffer;
-        }
-        /** reference operator */
-        PARTICLE_TYPE const& operator * () const
-        {
-            return *(PARTICLE_TYPE const*)buffer;
+            return *(type*)buffer;
         }
         /** iterator unreferencing */
-        PARTICLE_TYPE* operator -> ()
+        type* operator -> () const
         {
-            return (PARTICLE_TYPE*)buffer;
+            return (type*)buffer;
 
         }
-        /** iterator unreferencing */
-        PARTICLE_TYPE const* operator -> () const
-        {
-            return (PARTICLE_TYPE const*)buffer;
-        }
-
-
-
         /** pre-increment */
         ParticleAccessorIteratorBase& operator ++()
         {
-            buffer = ((char*)buffer) + DIRECTION * particle_size;
+            if constexpr (DIRECTION > 0)
+                buffer = buffer + particle_size;
+            else if constexpr (DIRECTION < 0)
+                buffer = buffer - particle_size;
             return *this;
         }
         /** post-increment */
         ParticleAccessorIteratorBase operator ++(int)
         {
             ParticleAccessorIteratorBase result = *this;
-            buffer = ((char*)buffer) + DIRECTION * particle_size;
+            if constexpr (DIRECTION > 0)
+                buffer = buffer + particle_size;
+            else if constexpr (DIRECTION < 0)
+                buffer = buffer - particle_size;
             return result;
         }
         /** pre-decrement */
         ParticleAccessorIteratorBase& operator --()
         {
-            buffer = ((char*)buffer) - DIRECTION * particle_size;
+            if constexpr (DIRECTION > 0)
+                buffer = buffer - particle_size;
+            else if constexpr (DIRECTION < 0)
+                buffer = buffer + particle_size;
             return *this;
         }
         /** post-decrement */
         ParticleAccessorIteratorBase operator --(int)
         {
             ParticleAccessorIteratorBase result = *this;
-            buffer = ((char*)buffer) - DIRECTION * particle_size;
+            if constexpr (DIRECTION > 0)
+                buffer = buffer - particle_size;
+            else if constexpr (DIRECTION < 0)
+                buffer = buffer + particle_size;
             return result;
         }
-
-
+        /** increment and set */
+        ParticleAccessorIteratorBase& operator += (size_t count)
+        {
+            if constexpr (DIRECTION > 0)
+                buffer = buffer + count * particle_size;
+            else if constexpr (DIRECTION < 0)
+                buffer = buffer - count * particle_size;
+            return *this;
+        }
+        /** decrement and set */
+        ParticleAccessorIteratorBase& operator -= (size_t count)
+        {
+            if constexpr (DIRECTION > 0)
+                buffer = buffer - count * particle_size;
+            else if constexpr (DIRECTION < 0)
+                buffer = buffer + count * particle_size;
+            return *this;
+        }
 
     protected:
 
         /** the start of the buffer */
-        void* buffer = nullptr;
-#if _DEBUG
-        /** the number of particles in that buffer */
-        size_t count = 0;
-#endif
+        buffer_type buffer = nullptr;
         /** the real particle size (not PARTICLE_TYPE) */
         size_t particle_size = 0;
     };
@@ -117,16 +132,10 @@ namespace chaos
     using ParticleAccessorIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE, 1>;
     template<typename PARTICLE_TYPE>
     using ParticleAccessorReverseIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE, -1>;
-
-
-
-
-
-
-
-
-
-
+    template<typename PARTICLE_TYPE>
+    using ParticleAccessorConstIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE const, 1>;
+    template<typename PARTICLE_TYPE>
+    using ParticleAccessorConstReverseIterator = ParticleAccessorIteratorBase<PARTICLE_TYPE const, -1>;
 
 
 		// ==============================================================
@@ -145,32 +154,18 @@ namespace chaos
         /** copy constructor */
         ParticleAccessorBase(ParticleAccessorBase const& src) = default;
         /** constructor */
-        ParticleAccessorBase(BUFFER_TYPE* in_buffer, size_t in_count, size_t in_particle_size) :
+        ParticleAccessorBase(BUFFER_TYPE in_buffer, size_t in_count, size_t in_particle_size) :
             buffer(in_buffer), count(in_count), particle_size(in_particle_size)
         {
             assert((count > 0) ^ (buffer == nullptr));
         }
 
         /** array accessor */
-        type const & operator [](size_t index) const
+        type & operator [](size_t index) const
         {
             assert(index < count);
             char const * b = (char const *)buffer;
             return *((type*)(b + index * particle_size));
-        }
-
-        /** array accessor */
-        type & operator [](size_t index)
-        {
-            assert(index < count);
-            char* b = (char*)buffer;
-            return *((type*)(b + index * particle_size));
-        }
-
-        /** returns the raw buffer of the accessor */
-        BUFFER_TYPE* GetBuffer() const
-        {
-            return buffer;
         }
         /** gets the number of particle */
         size_t GetCount() const
@@ -183,101 +178,40 @@ namespace chaos
             return particle_size;
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     protected:
 
         /** the start of the buffer */
-        BUFFER_TYPE* buffer = nullptr;
+        BUFFER_TYPE buffer = nullptr;
         /** the number of particles in that buffer */
         size_t count = 0;
         /** the real particle size (not PARTICLE_TYPE) */
         size_t particle_size = 0;
     };
 
-
-
-    // ==============================================================
-    // ParticleAccessor / ParticleConstAccessor
-    // ==============================================================
-
     template<typename PARTICLE_TYPE>
-    class ParticleAccessor : public ParticleAccessorBase<PARTICLE_TYPE, void>
-    {
-    public:
-
-        /** default constructor */
-        ParticleAccessor() = default;
-        /** copy (+downcast operator) */
-        template<typename OTHER_PARTICLE_TYPE>
-        ParticleAccessor(ParticleAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, int> = 0) :
-            ParticleAccessorBase(src.GetBuffer(), src.GetCount(), src.GetParticleSize())
-        {
-        }
-        /** constructor */
-        ParticleAccessor(void* in_buffer, size_t in_count, size_t in_particle_size) :
-            ParticleAccessorBase(in_buffer, in_count, in_particle_size)
-        {
-        }
-
-        /** begin iterator */
-        auto begin()
-        {
-            if (count == 0)
-                return ParticleAccessorIterator<PARTICLE_TYPE>();
-            return ParticleAccessorIterator<PARTICLE_TYPE>(
-                buffer, 
-#if _DEBUG
-                count,
-#endif
-                particle_size);
-        }
-
-        /** end iterator */
-       auto end()
-        {
-            if (count == 0)
-                return ParticleAccessorIterator<PARTICLE_TYPE>();
-            return ParticleAccessorIterator<PARTICLE_TYPE>(
-                ((char *)buffer) + count * particle_size, 
-#if _DEBUG
-                count,
-#endif                
-                particle_size);
-        }
-    };
-
+    using ParticleAccessor = ParticleAccessorBase<PARTICLE_TYPE, void *>;
     template<typename PARTICLE_TYPE>
-    class ParticleConstAccessor : public ParticleAccessorBase<PARTICLE_TYPE const, void const>
-    {
-    public:
+    using ParticleConstAccessor = ParticleAccessorBase<PARTICLE_TYPE const, void const *>;
 
-        /** default constructor */
-        ParticleConstAccessor() = default;
-        /** copy (+downcast operator) */
-        template<typename OTHER_PARTICLE_TYPE>
-        ParticleConstAccessor(ParticleConstAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, int> = 0) :
-            ParticleAccessorBase(src.GetBuffer(), src.GetCount(), src.GetParticleSize())
-        {
-        }
-        /** copy from non const (+downcast operator) */
-        template<typename OTHER_PARTICLE_TYPE>
-        ParticleConstAccessor(ParticleAccessor<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<OTHER_PARTICLE_TYPE, PARTICLE_TYPE>, int> = 0) :
-            ParticleAccessorBase(src.GetBuffer(), src.GetCount(), src.GetParticleSize())
-        {
-        }
-        /** constructor */
-        ParticleConstAccessor(void const* in_buffer, size_t in_count, size_t in_particle_size) :
-            ParticleAccessorBase(in_buffer, in_count, in_particle_size)
-        {
-        }
-
-
-
-
-
-
-
-
-    };
 
     // ==============================================================
     // AutoCastedParticleAccessor

@@ -182,22 +182,35 @@ namespace chaos
 		// ParticleAccessorBase
 		// ==============================================================
 
-    template<typename PARTICLE_TYPE, typename BUFFER_TYPE>
+    template<typename PARTICLE_TYPE>
     class ParticleAccessorBase
     {
     public:
 
         using type = PARTICLE_TYPE;
 
+        using buffer_type = std::conditional_t<
+            std::is_const_v<type>, const void*, void*>;
+
         /** default constructor */
         ParticleAccessorBase() = default;
         /** copy constructor */
         ParticleAccessorBase(ParticleAccessorBase const& src) = default;
+
+        template<typename OTHER_PARTICLE_TYPE>
+        ParticleAccessorBase(ParticleAccessorBase<OTHER_PARTICLE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<PARTICLE_TYPE, OTHER_PARTICLE_TYPE>, int> = 0) :
+            buffer(src.GetBuffer()), particle_count(src.GetCount()), particle_size(src.GetParticleSize())
+        {
+            assert((particle_count > 0) ^ (buffer == nullptr));
+            assert(particle_size > 0);
+        }
+
         /** constructor */
-        ParticleAccessorBase(BUFFER_TYPE in_buffer, size_t in_particle_count, size_t in_particle_size) :
+        ParticleAccessorBase(buffer_type in_buffer, size_t in_particle_count, size_t in_particle_size) :
             buffer(in_buffer), particle_count(in_particle_count), particle_size(in_particle_size)
         {
-            assert((in_particle_count > 0) ^ (in_buffer == nullptr));
+            assert((particle_count > 0) ^ (buffer == nullptr));
+            assert(particle_size > 0);
         }
 
         /** array accessor */
@@ -212,10 +225,15 @@ namespace chaos
         {
             return particle_count;
         }
-        /** get the particle size */
+        /** gets the particle size */
         size_t GetParticleSize() const
         {
             return particle_size;
+        }
+        /** gets the buffer */
+        buffer_type GetBuffer() const
+        {
+            return buffer;
         }
         /** get the begining of the buffer */
         auto begin() const
@@ -245,7 +263,7 @@ namespace chaos
     protected:
 
         /** the start of the buffer */
-        BUFFER_TYPE buffer = nullptr;
+        buffer_type buffer = nullptr;
         /** the number of particles in that buffer */
         size_t particle_count = 0;
         /** the real particle size (not PARTICLE_TYPE) */
@@ -253,9 +271,9 @@ namespace chaos
     };
 
     template<typename PARTICLE_TYPE>
-    using ParticleAccessor = ParticleAccessorBase<PARTICLE_TYPE, void *>;
+    using ParticleAccessor = ParticleAccessorBase<PARTICLE_TYPE>;
     template<typename PARTICLE_TYPE>
-    using ParticleConstAccessor = ParticleAccessorBase<PARTICLE_TYPE const, void const *>;
+    using ParticleConstAccessor = ParticleAccessorBase<PARTICLE_TYPE const>;
 
 
     // ==============================================================

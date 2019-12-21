@@ -534,7 +534,7 @@ class ParticleTraitTools
 	public:
 
 		/** constructor */
-		ParticleLayerBase();
+        ParticleLayerBase() = default;
 		/** destructor */
 		virtual ~ParticleLayerBase();
 

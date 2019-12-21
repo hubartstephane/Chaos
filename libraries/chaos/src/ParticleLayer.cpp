@@ -110,10 +110,6 @@ namespace chaos
 	// ParticleLayerBase
 	// ==============================================================
 
-	ParticleLayerBase::ParticleLayerBase()
-	{
-	}
-
 	ParticleLayerBase::~ParticleLayerBase()
 	{
 		DetachAllParticleAllocations();
@@ -131,7 +127,7 @@ namespace chaos
 		assert(allocation != nullptr);
 		assert(allocation->layer == this);
 
-		for (size_t i = particles_allocations.size(); i > 0; --i)
+		for (size_t i = particles_allocations.size(); i > 0; --i) // from end to beginning because DetachAllParticleAllocations(...) is from end to the beginning => make the code much faster
 		{
 			size_t index = i - 1;
 			if (particles_allocations[index] == allocation)
@@ -205,6 +201,17 @@ namespace chaos
 		return result;
 	}
 
+
+
+
+
+
+
+
+
+
+
+
 	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
 		// early exit
@@ -231,6 +238,15 @@ namespace chaos
 		// return the number of vertices from the previous call
 		if (!require_GPU_update && !AreVerticesDynamic())
 			return true;
+
+
+        
+
+
+
+
+
+
 
 		// create the vertex buffer if necessary
 		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
@@ -276,12 +292,13 @@ namespace chaos
 
 		// no more update required
 		require_GPU_update = false;
-
+#endif
 		return true;
 	}
 
 	int ParticleLayerBase::DoDisplayHelper(GPURenderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
+
 		// no vertices, no rendering
 		if (vertex_count == 0)
 			return 0;
@@ -304,6 +321,11 @@ namespace chaos
 		primitive.base_vertex_index = 0;
 		renderer->Draw(primitive, render_params.instancing);
 		glBindVertexArray(0);
+
+
+
+
+
 		return 1; // 1 DrawCall
 	}
 
@@ -315,6 +337,12 @@ namespace chaos
 		// fill the vertex declaration
 		vertex_declaration = GetVertexDeclaration();
 	}
+
+
+
+
+
+
 
 	size_t ParticleLayerBase::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const
 	{
@@ -339,6 +367,15 @@ namespace chaos
 		return result;
 	}
 
+
+
+
+
+
+
+
+
+
 	size_t ParticleLayerBase::ComputeMaxParticleCount() const
 	{
 		size_t result = 0;
@@ -359,6 +396,14 @@ namespace chaos
 		}
 		return result;
 	}
+
+
+
+
+
+
+
+
 
 	void ParticleLayerBase::UpdateRenderingStates(GPURenderer * renderer, bool begin) const
 	{

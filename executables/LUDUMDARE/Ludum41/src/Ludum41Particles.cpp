@@ -22,9 +22,6 @@ size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, 
 	for (size_t i = 0 ; i < 6 ; ++i)
 		vertices[i].color = particle->color;
 
-    for (size_t i = 0 ; i < 4 ; ++i)
-        output[i].color = particle->color;
-
 	return vertices_per_particle;
 }
 

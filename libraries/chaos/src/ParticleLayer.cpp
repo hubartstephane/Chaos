@@ -292,7 +292,7 @@ namespace chaos
 
 		// no more update required
 		require_GPU_update = false;
-#endif
+
 		return true;
 	}
 

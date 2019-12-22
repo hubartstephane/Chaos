@@ -65,5 +65,13 @@ namespace chaos
 		return layer_system.Display(renderer, uniform_provider, render_params);
 	}
 
+    GPUBuffer* ParticleManager::AllocateGPUBuffer(size_t buffer_size)
+    {
+
+
+
+        return nullptr;
+    }
+
 }; // namespace chaos
 

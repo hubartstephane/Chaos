@@ -7,6 +7,7 @@
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPURenderable.h>
+#include <chaos/GPUBuffer.h>
 #include <chaos/Tickable.h>
 #include <chaos/GPURenderableLayerSystem.h>
 #include <chaos/ParticleTools.h>
@@ -79,6 +80,9 @@ namespace chaos
 
 		/** insert layer with some initialization */
 		void DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id);
+
+        /** allocate a GPUBuffer for the VertexOutput */
+        GPUBuffer* AllocateGPUBuffer(size_t buffer_size);
 
 	protected:
 

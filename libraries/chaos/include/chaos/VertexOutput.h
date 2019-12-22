@@ -37,6 +37,16 @@ namespace chaos
         {
             return max_vertex_index;
         }
+        /** the particle manager */
+        class ParticleManager* GetParticleManager() const
+        {
+            return particle_manager;
+        }
+        /** the particle layer */
+        class ParticleLayerBase* GetParticleLayer() const
+        {
+            return particle_layer;
+        }
 
     protected:
 
@@ -50,6 +60,11 @@ namespace chaos
         size_t position = 0;
         /** the maximum vertex index implied for the current particle */
         size_t max_vertex_index = std::numeric_limits<size_t>::max();
+
+        /** the particle manager in use (for buffer allocation) */
+        class ParticleManager * particle_manager = nullptr;
+        /** the particle layer in use (to store primitives to render) */
+        class ParticleLayerBase * particle_layer = nullptr;
     };
 
     // ==================================================
@@ -72,7 +87,9 @@ namespace chaos
             buffer_size(src.GetBufferSize()),
             particle_size(src.GetParticleSize()),
             position(src.GetPosition()),
-            max_vertex_index(src.GetMaxVertexIndex()) {}
+            max_vertex_index(src.GetMaxVertexIndex()),
+            particle_manager(src.GetParticleManager()),
+            particle_Layer(src.GetParticleLayer()){}
 
         /** constructor with data */
         VertexOutput(void* in_buffer, size_t in_buffer_size, size_t in_particle_size) :

@@ -10,6 +10,7 @@ namespace chaos
 	class GPUBuffer;
 	class GPUBufferPoolEntry;
 	class GPUBufferPool;
+    class GPUBufferCache;
 	class GPUDrawPrimitive;
 	class GPUFence;
 	class GPUFileResource;

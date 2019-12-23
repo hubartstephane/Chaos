@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/ParticleLayer.h>
+#include <chaos/GPUClasses.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/GPUProgramProvider.h>
@@ -11,6 +12,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/GPURenderableLayerSystem.h>
 #include <chaos/ParticleTools.h>
+#include <chaos/GPUBufferCache.h>
 
 namespace chaos
 {
@@ -82,7 +84,7 @@ namespace chaos
 		void DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id);
 
         /** allocate a GPUBuffer for the VertexOutput */
-        GPUBuffer* AllocateGPUBuffer(size_t buffer_size);
+        bool AllocateGPUBuffer(size_t required_size, GPURenderParams& render_params, shared_ptr<GPUBuffer>& result);
 
 	protected:
 
@@ -90,6 +92,8 @@ namespace chaos
 		GPURenderableLayerSystem layer_system;
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
+        /** a cache for GPUBuffer */
+        GPUBufferCache buffer_cache;
 	};
 
 }; // namespace chaos

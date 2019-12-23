@@ -1,6 +1,7 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUResourceManager.h>
+#include <chaos/GPUBufferCache.h>
 #include <chaos/ParticleTools.h>
 
 namespace chaos
@@ -65,12 +66,9 @@ namespace chaos
 		return layer_system.Display(renderer, uniform_provider, render_params);
 	}
 
-    GPUBuffer* ParticleManager::AllocateGPUBuffer(size_t buffer_size)
+    bool ParticleManager::AllocateGPUBuffer(size_t required_size, GPURenderParams& render_params, shared_ptr<GPUBuffer>& result)
     {
-
-
-
-        return nullptr;
+        return buffer_cache.GetBuffer(required_size, render_params, result);
     }
 
 }; // namespace chaos

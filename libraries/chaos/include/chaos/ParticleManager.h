@@ -84,7 +84,7 @@ namespace chaos
 		void DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id);
 
         /** allocate a GPUBuffer for the VertexOutput */
-        bool AllocateGPUBuffer(size_t required_size, GPURenderParams& render_params, shared_ptr<GPUBuffer>& result);
+        bool AllocateGPUBuffer(size_t required_size, GPURenderer * renderer, shared_ptr<GPUBuffer>& result);
 
 	protected:
 

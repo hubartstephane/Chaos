@@ -66,9 +66,9 @@ namespace chaos
 		return layer_system.Display(renderer, uniform_provider, render_params);
 	}
 
-    bool ParticleManager::AllocateGPUBuffer(size_t required_size, GPURenderParams& render_params, shared_ptr<GPUBuffer>& result)
+    bool ParticleManager::AllocateGPUBuffer(size_t required_size, GPURenderer * renderer, shared_ptr<GPUBuffer>& result)
     {
-        return buffer_cache.GetBuffer(required_size, render_params, result);
+        return buffer_cache.GetBuffer(required_size, renderer, result);
     }
 
 }; // namespace chaos

@@ -5,6 +5,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/ClassTools.h>
 #include <chaos/NamedObject.h>
+#include <chaos/VertexOutput.h>
 
 namespace chaos
 {
@@ -115,6 +116,86 @@ namespace chaos
 			particle_corners.topright   = corners.second;
 			GenerateBoxParticle(particle_corners, texcoords, vertices, rotation);
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+        /** fill the vertices array with 6 vertices corresponding to 3 triangles */
+        template<typename VERTEX_TYPE>
+        void GenerateBoxQUADParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, VertexOutput<VERTEX_TYPE> & vertices, float rotation = 0.0f)
+        {
+            VERTEX_TYPE bl;
+            bl.position.x = corners.bottomleft.x;
+            bl.position.y = corners.bottomleft.y;
+            bl.texcoord.x = texcoords.bottomleft.x;
+            bl.texcoord.y = texcoords.bottomleft.y;
+            bl.texcoord.z = texcoords.bitmap_index;
+
+            VERTEX_TYPE tr;
+            tr.position.x = corners.topright.x;
+            tr.position.y = corners.topright.y;
+            tr.texcoord.x = texcoords.topright.x;
+            tr.texcoord.y = texcoords.topright.y;
+            tr.texcoord.z = texcoords.bitmap_index;
+
+            VERTEX_TYPE tl;
+            tl.position.x = corners.bottomleft.x;
+            tl.position.y = corners.topright.y;
+            tl.texcoord.x = texcoords.bottomleft.x;
+            tl.texcoord.y = texcoords.topright.y;
+            tl.texcoord.z = texcoords.bitmap_index;
+
+            VERTEX_TYPE br;
+            br.position.x = corners.topright.x;
+            br.position.y = corners.bottomleft.y;
+            br.texcoord.x = texcoords.topright.x;
+            br.texcoord.y = texcoords.bottomleft.y;
+            br.texcoord.z = texcoords.bitmap_index;
+
+            if (rotation != 0.0f)
+            {
+                glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
+
+                float c = std::cos(rotation);
+                float s = std::sin(rotation);
+
+                bl.position = GLMTools::Rotate(bl.position - center_position, c, s) + center_position;
+                br.position = GLMTools::Rotate(br.position - center_position, c, s) + center_position;
+                tr.position = GLMTools::Rotate(tr.position - center_position, c, s) + center_position;
+                tl.position = GLMTools::Rotate(tl.position - center_position, c, s) + center_position;
+            }
+
+            vertices[0] = bl;
+            vertices[1] = br;
+            vertices[2] = tr;
+            vertices[3] = tl;
+        }
+
+        template<typename VERTEX_TYPE>
+        void GenerateBoxQUADParticle(chaos::box2 const& box, ParticleTexcoords const& texcoords, VertexOutput<VERTEX_TYPE> & vertices, float rotation = 0.0f)
+        {
+            std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
+
+            ParticleCorners particle_corners;
+            particle_corners.bottomleft = corners.first;
+            particle_corners.topright = corners.second;
+            GenerateBoxQUADParticle(particle_corners, texcoords, vertices, rotation);
+        }
+
+
+
+
+
+
+
 
 		/** returns true whether the particle can be casted into a given class */
 		template<typename PARTICLE_TYPE>

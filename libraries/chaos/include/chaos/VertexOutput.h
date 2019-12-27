@@ -102,6 +102,11 @@ namespace chaos
                 index : std::max(max_vertex_index, index);
 
             // the index is out of bound
+            if (particle_size * (position + index + 1) > buffer_size) // +1 to be sure the END of the vertex is in the reserve buffer
+            {
+
+
+            }
 
 
             // return the particle
@@ -113,11 +118,6 @@ namespace chaos
             // no particle inserted
             if (max_vertex_index == std::numeric_limits<size_t>::max())
                 return;
-            // not enough memory to start a new particle with the same GPU buffer ?
-
-
-
-
             // change the current writing position in the whole buffer
             position += max_vertex_index;
             // no particles inserted yet

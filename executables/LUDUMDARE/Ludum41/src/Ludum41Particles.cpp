@@ -9,10 +9,27 @@
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
+#include <chaos/VertexOutput.h>
 
 // ===========================================================================
 // Object particle system
 // ===========================================================================
+
+void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase>& vertices) const
+{
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 4; ++i)
+        vertices[i].color = particle->color;
+}
+
+
+
+
+
+
+
 
 size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {

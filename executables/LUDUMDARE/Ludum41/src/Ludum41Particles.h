@@ -4,6 +4,7 @@
 #include <chaos/ParticleTools.h> 
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
+#include <chaos/VertexOutput.h> 
 
 #include <death/Game.h> 
 
@@ -23,6 +24,12 @@ using ParticleObject = chaos::ParticleDefault::Particle;
 class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject, VertexBase>
 {
 public:
+
+
+    void ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase>& vertices) const;
+
+
+
 
 	bool UpdateParticle(float delta_time, ParticleObject * particle) const;
 

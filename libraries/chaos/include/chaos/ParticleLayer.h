@@ -18,6 +18,8 @@
 #include <chaos/EmptyClass.h>
 #include <chaos/ParticleAccessor.h>
 
+#define OLD_RENDERING 1
+
 namespace chaos
 {
 	// ==============================================================
@@ -237,12 +239,32 @@ class ParticleTraitTools
 		/** remove the allocation from its layer */
 		void RemoveFromLayer();
 
+#if !OLD_RENDERING
+        /** transforms the particles into vertices in the buffer */
+        virtual void ParticlesToVertices(VertexOutputBase& vertices, void const* layer_trait) const { }
+#endif
+
 	protected:
 
 		/** tick the allocation (returns true whether the allocation is to be destroyed) */
 		virtual bool TickAllocation(float delta_time, void const * layer_trait) { return false; }
+
+
+
+
+
+
+
 		/** transforms the particles into vertices in the buffer */
 		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const { return 0; }
+
+        
+
+        
+
+
+
+
 		/** called whenever the allocation is removed from the layer */
 		void OnRemovedFromLayer();
 		/** require the layer to update the GPU buffer */
@@ -647,8 +669,10 @@ class ParticleTraitTools
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool TickAllocations(double delta_time);
 
+#if OLD_RENDERING
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;
+#endif
 
 	protected:
 
@@ -744,6 +768,38 @@ class ParticleTraitTools
 		virtual void * GetLayerTrait() { return &layer_trait; }
 		/** override */
 		virtual void const * GetLayerTrait() const { return &layer_trait; }
+
+#if !OLD_RENDERING
+        /** override */
+        virtual bool DoUpdateGPUResources(GPURenderer* renderer) override
+        {
+            // update the vertex declaration
+            UpdateVertexDeclaration();
+            // ensure their is some reason to update the rendering data
+            if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
+                return true;
+            // prepare the data
+            VertexOutputInterface vertex_output_interface(this, renderer);
+
+            VertexOutput<vertex_type> vertex_output(vertex_output_interface);
+
+            // convert particles into vertices
+            size_t count = particles_allocations.size();
+            for (size_t i = 0; i < count; ++i)
+            {
+                // get the allocation, ignore if invisible
+                ParticleAllocationBase* allocation = particles_allocations[i].get();
+                if (!allocation->IsVisible())
+                    continue;
+                // transform particles into vertices
+                allocation->ParticlesToVertices(vertex_output, GetLayerTrait());
+            }
+            // mark as up to date
+            require_GPU_update = false;
+
+            return true;
+        }
+#endif
 
 	protected:
 

@@ -11,9 +11,7 @@
 
 
 
-#include <chaos/ParticleDefault.h>
-
-#define OLD_RENDERING 1
+#include <chaos/ParticleDefault.h> // to remove ?? shuxxx
 
 namespace chaos
 {
@@ -267,7 +265,7 @@ namespace chaos
         int result = 0;
 
         GPUProgram const* program = nullptr;
-        for (ParticleLayerBaseRenderData const& rd : render_data)
+        for (ParticleLayerBaseRenderData & rd : render_data)
         {
             // really rendering something
             if (rd.vertices_count == 0)
@@ -280,7 +278,7 @@ namespace chaos
                     return 0;
             }
             // get the vertex array
-            GPUVertexArray const* vertex_array = rd.vertex_array_cache.FindOrCreateVertexArray(program, rd.vertex_buffer.get(), nullptr, vertex_declaration, 0);
+            GPUVertexArray const * vertex_array = rd.vertex_array_cache.FindOrCreateVertexArray(program, rd.vertex_buffer.get(), nullptr, vertex_declaration, 0);
             if (vertex_array == nullptr)
                 continue;
 
@@ -303,6 +301,14 @@ namespace chaos
 #endif
     }
 
+    void ParticleLayerBase::UpdateVertexDeclaration()
+    {
+        // is the vertex declaration already filled
+        if (vertex_declaration.entries.size() > 0)
+            return;
+        // fill the vertex declaration
+        vertex_declaration = GetVertexDeclaration();
+    }
 
 
 
@@ -315,7 +321,7 @@ namespace chaos
 
 
 
-
+#if OLD_RENDERING
 	bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer * renderer)
 	{
 		// update the vertex declaration
@@ -323,15 +329,6 @@ namespace chaos
 		// return the number of vertices from the previous call
 		if (!require_GPU_update && !AreVerticesDynamic())
 			return true;
-
-
-        
-
-
-
-
-
-
 
 		// create the vertex buffer if necessary
 		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
@@ -378,19 +375,16 @@ namespace chaos
 		// no more update required
 		require_GPU_update = false;
 
-		return true;
-	}
+        return true;
+    }
+
+
+#endif
 
 
 
-	void ParticleLayerBase::UpdateVertexDeclaration()
-	{
-		// is the vertex declaration already filled
-		if (vertex_declaration.entries.size() > 0)
-			return;
-		// fill the vertex declaration
-		vertex_declaration = GetVertexDeclaration();
-	}
+
+
 
 
 
@@ -401,7 +395,6 @@ namespace chaos
 	size_t ParticleLayerBase::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size)
 	{
 
-        VertexOutput<ParticleDefault::Vertex> vertex_output(this);
 
 		size_t result = 0;
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUBuffer.h>
@@ -532,11 +533,11 @@ class ParticleTraitTools
     public:
 
         /** the vertex buffer for the rendering */
-        mutable shared_ptr<GPUBuffer> vertex_buffer;
+        shared_ptr<GPUBuffer> vertex_buffer;
         /** the cache for vertex array */
-        mutable GPUVertexArrayCache vertex_array_cache;
+        GPUVertexArrayCache vertex_array_cache;
         /** number of used vertices in the vertex buffer */
-        mutable size_t vertices_count = 0;
+        size_t vertices_count = 0;
     };
 
 	// ==============================================================
@@ -585,8 +586,8 @@ class ParticleTraitTools
 			return (GetParticleClass() == ClassTools::GetClassRegistration<T>());
 		}
 
-		/** change the atlas */
-		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas) { atlas = in_atlas; }
+        /** change the atlas */
+        void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas) { atlas = in_atlas; }
 		/** change the material */
 		void SetRenderMaterial(GPURenderMaterial * in_render_material) { render_material = in_render_material; }
 
@@ -625,7 +626,7 @@ class ParticleTraitTools
 		/** ticking the particle system */
 		virtual bool DoTick(double delta_time) override;
 		/** draw the layer */
-		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const override;
+		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 
 		/** change the GL rendering state */
 		void UpdateRenderingStates(GPURenderer * renderer, bool begin) const;
@@ -636,21 +637,23 @@ class ParticleTraitTools
 		void RemoveParticleAllocation(ParticleAllocationBase * allocation);
 
 		/** internal method to update the GPU buffers */
-		size_t DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const;
+		size_t DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size);
 
 		/** update the vertex declaration */
-		void UpdateVertexDeclaration() const;
+		void UpdateVertexDeclaration();
 		/** the effective rendering */
-		int DoDisplayHelper(GPURenderer * renderer, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
+		int DoDisplayHelper(GPURenderer * renderer, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool TickAllocations(double delta_time);
 
 		/** override */
-		virtual bool DoUpdateGPUResources(GPURenderer * renderer) const override;
+		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;
 
 	protected:
 
+        /** the manager */
+        ParticleManager * particle_manager = nullptr;
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
         /** particles allocations */
@@ -659,10 +662,10 @@ class ParticleTraitTools
 		/** the material used to render the layer */
 		shared_ptr<GPURenderMaterial> render_material;
         /** the vertex declaration */
-        mutable GPUVertexDeclaration vertex_declaration;
+        GPUVertexDeclaration vertex_declaration;
 
         /** whether there was changes in particles, and a vertex array need to be recomputed */
-        mutable bool require_GPU_update = false;
+        bool require_GPU_update = false;
 
         /** the rendering data */
         std::vector<ParticleLayerBaseRenderData> render_data;
@@ -673,12 +676,12 @@ class ParticleTraitTools
 
 
 		/** the vertex buffer for the rendering */
-		mutable shared_ptr<GPUBuffer> vertex_buffer;
+		shared_ptr<GPUBuffer> vertex_buffer;
 		/** the cache for vertex array */
-		mutable GPUVertexArrayCache vertex_array_cache;
+		GPUVertexArrayCache vertex_array_cache;
 
 		/** number of used vertices in the vertex buffer */
-		mutable size_t vertices_count = 0;
+		size_t vertices_count = 0;
 	};
 
 	// ==============================================================

@@ -37,9 +37,10 @@ namespace chaos
 	}
 
 	void ParticleManager::DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id)
-	{
-		layer->SetTag(layer_id);
-		layer->SetTextureAtlas(atlas.get());
+	{        		
+        layer->particle_manager = this;
+        layer->SetTag(layer_id);
+        layer->SetTextureAtlas(atlas.get());
 		layer_system.AddChildRenderable(layer, render_order);
 	}
 
@@ -61,7 +62,7 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleManager::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
+	int ParticleManager::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		return layer_system.Display(renderer, uniform_provider, render_params);
 	}

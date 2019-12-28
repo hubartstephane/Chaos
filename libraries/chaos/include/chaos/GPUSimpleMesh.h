@@ -26,9 +26,9 @@ namespace chaos
 		~GPUSimpleMesh();
 
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
+		void Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** render the primitive (base_instance is an offset applyed to gl_InstanceID) */
-		void Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
+		void Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** should bind index buffer and vertex buffer, as musch as for the vertex declaration */
 		void SetVertexBufferOffset(GLintptr vertex_buffer_offset);
@@ -40,7 +40,7 @@ namespace chaos
 		/** cleaning the object */
 		virtual bool DoRelease() override;
 		/** rendering internal method */
-		void DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params) const;
+		void DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params);
 
 	public:
 
@@ -59,7 +59,7 @@ namespace chaos
 	protected:
 
 		/** the cache for all vertex arrays */
-		mutable GPUVertexArrayCache vertex_array_cache;
+		GPUVertexArrayCache vertex_array_cache;
 	};
 
 }; // namespace chaos

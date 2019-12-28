@@ -18,7 +18,7 @@ namespace chaos
 	public:
 
 		/** public method to render the object */
-		int Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
+		int Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** show or hide the object */
 		void Show(bool in_visible = true);
@@ -47,9 +47,9 @@ namespace chaos
 		/** override */
 		virtual bool CanTick() override;
 		/** the user defined method to display the object */
-		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
+		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** called to update the graphic resource */
-		virtual bool DoUpdateGPUResources(GPURenderer * renderer) const;
+		virtual bool DoUpdateGPUResources(GPURenderer * renderer);
 		/** called whenever object visibility has been changed */
 		virtual void OnVisibilityChanged(bool in_visible);
 
@@ -60,7 +60,7 @@ namespace chaos
 		/** whether the object must be ticked if hidden */
 		bool tick_hidden = false;
 		/** the last time the resource has been updated */
-		mutable uint64_t update_timestamp = 0;
+		uint64_t update_timestamp = 0;
 
 		/** the list of enabled renderpass names */
 		NameFilter renderpass_filter;

@@ -10,7 +10,7 @@ namespace chaos
 	// GPURenderable implementation
 	// ========================================================
 
-	int GPURenderable::Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
+	int GPURenderable::Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(renderer != nullptr);
 		if (!IsVisible())
@@ -33,12 +33,12 @@ namespace chaos
 		return DoDisplay(renderer, uniform_provider, render_params);
 	}
 
-	int GPURenderable::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
+	int GPURenderable::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		return 0;
 	}	
 
-	bool GPURenderable::DoUpdateGPUResources(GPURenderer * renderer) const
+	bool GPURenderable::DoUpdateGPUResources(GPURenderer * renderer)
 	{
 		return true;
 	}

@@ -1325,7 +1325,7 @@ namespace death
 			return true;
 		}
 
-		int LayerInstance::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const
+		int LayerInstance::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
 		{
 			// early exit
 			int result = 0;
@@ -1616,7 +1616,7 @@ namespace death
 			return true;
 		}
 
-		int LevelInstance::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const
+		int LevelInstance::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
 		{
 			int result = 0;
 

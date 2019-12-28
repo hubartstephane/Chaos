@@ -8,6 +8,11 @@
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/ParticleTools.h>
 
+
+
+
+#include <chaos/ParticleDefault.h>
+
 #define OLD_RENDERING 1
 
 namespace chaos
@@ -203,7 +208,7 @@ namespace chaos
 		return result;
 	}
 
-	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
+	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 #if OLD_RENDERING
 		// early exit
@@ -227,7 +232,7 @@ namespace chaos
 		return result;
 	}
 
-    int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) const
+    int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
 #if OLD_RENDERING
 
@@ -311,7 +316,7 @@ namespace chaos
 
 
 
-	bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer * renderer) const
+	bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer * renderer)
 	{
 		// update the vertex declaration
 		UpdateVertexDeclaration();
@@ -378,7 +383,7 @@ namespace chaos
 
 
 
-	void ParticleLayerBase::UpdateVertexDeclaration() const
+	void ParticleLayerBase::UpdateVertexDeclaration()
 	{
 		// is the vertex declaration already filled
 		if (vertex_declaration.entries.size() > 0)
@@ -393,8 +398,11 @@ namespace chaos
 
 
 
-	size_t ParticleLayerBase::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size) const
+	size_t ParticleLayerBase::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size)
 	{
+
+        VertexOutput<ParticleDefault::Vertex> vertex_output(this);
+
 		size_t result = 0;
 
 		size_t vertex_size = GetVertexSize();

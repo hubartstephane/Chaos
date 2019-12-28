@@ -284,14 +284,14 @@ namespace death
 	protected:
 
 		/** override */
-		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const override;
+		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
 		/** override */
 		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 
 	protected:
 
 		/** the framerate of the last rendering */
-		mutable float framerate = 0.0f;
+		float framerate = 0.0f;
 	};
 
 	// ====================================================================

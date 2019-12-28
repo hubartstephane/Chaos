@@ -229,7 +229,7 @@ namespace death
 		return true;
 	}
 
-	int GameHUD::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const
+	int GameHUD::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
 	{
 		int result = 0; 
 		// display components (most of them should do nothing while they re using the particle_manager

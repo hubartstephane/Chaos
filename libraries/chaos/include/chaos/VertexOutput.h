@@ -2,6 +2,8 @@
 
 #include <chaos/StandardHeaders.h>
 
+#include <chaos/GPUClasses.h>
+
 namespace chaos
 {
     // ==================================================
@@ -11,6 +13,17 @@ namespace chaos
     class VertexOutputBase
     {
     public:
+
+        /** default constructor */
+        VertexOutputBase() = default;
+        /** copy constructor */
+        VertexOutputBase(VertexOutputBase const & src) = default;
+        /** constructor for dynamic GPU buffer allocation */
+        VertexOutputBase(ParticleLayerBase * in_particle_layer) :
+            particle_layer(in_particle_layer)
+        {
+            assert(in_particle_layer != nullptr);
+        }
 
         /** gets current buffer */
         void* GetBuffer() const
@@ -37,11 +50,6 @@ namespace chaos
         {
             return max_vertex_index;
         }
-        /** the particle manager */
-        class ParticleManager* GetParticleManager() const
-        {
-            return particle_manager;
-        }
         /** the particle layer */
         class ParticleLayerBase* GetParticleLayer() const
         {
@@ -49,6 +57,9 @@ namespace chaos
         }
 
     protected:
+
+        /** the particle layer in use (to store primitives to render) */
+        ParticleLayerBase* particle_layer = nullptr;
 
         /** the buffer where we write buffer */
         void* buffer = nullptr;
@@ -60,11 +71,6 @@ namespace chaos
         size_t position = 0;
         /** the maximum vertex index implied for the current particle */
         size_t max_vertex_index = std::numeric_limits<size_t>::max();
-
-        /** the particle manager in use (for buffer allocation) */
-        class ParticleManager * particle_manager = nullptr;
-        /** the particle layer in use (to store primitives to render) */
-        class ParticleLayerBase * particle_layer = nullptr;
     };
 
     // ==================================================
@@ -88,12 +94,11 @@ namespace chaos
             particle_size(src.GetParticleSize()),
             position(src.GetPosition()),
             max_vertex_index(src.GetMaxVertexIndex()),
-            particle_manager(src.GetParticleManager()),
             particle_Layer(src.GetParticleLayer()){}
 
-        /** constructor with data */
-        VertexOutput(void* in_buffer, size_t in_buffer_size, size_t in_particle_size) :
-            buffer(in_buffer), buffer_size(in_buffer_size), particle_size(in_particle_size) {}
+        /** constructor for dynamic GPU buffer allocation */
+        VertexOutput(ParticleLayerBase * in_particle_layer) :
+            VertexOutputBase(in_particle_layer){}
 
         VERTEX_TYPE& operator [](size_t index)
         {

@@ -298,7 +298,7 @@ namespace death
 		generator_params.hotpoint_type = chaos::Hotpoint::TOP_RIGHT;
 	}
 
-	int GameHUDFramerateComponent::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) const
+	int GameHUDFramerateComponent::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
 	{
 		framerate = renderer->GetFrameRate();
 		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);

@@ -31,7 +31,7 @@ namespace chaos
 		return true;
 	}
 
-	void GPUSimpleMesh::Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
+	void GPUSimpleMesh::Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// early exit
 		if (program == nullptr)
@@ -42,7 +42,7 @@ namespace chaos
 		DoRender(renderer, program, render_params);
 	}
 
-	void GPUSimpleMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
+	void GPUSimpleMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// early exit
 		if (material == nullptr)
@@ -55,7 +55,7 @@ namespace chaos
 		DoRender(renderer, program, render_params);
 	}
 
-	void GPUSimpleMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params) const
+	void GPUSimpleMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params)
 	{
 		assert(program != nullptr);
 		// find the vertex array to use

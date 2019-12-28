@@ -86,5 +86,10 @@ namespace chaos
 	class GPUVertexDeclarationEntry;
 	class GPUVertexDeclaration;
 
+
+    class ParticleManager;
+    class ParticleAllocationBase;
+    class ParticleLayerBase;
+
 }; // namespace chaos
 

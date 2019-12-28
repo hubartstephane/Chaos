@@ -7,37 +7,26 @@ namespace chaos
 	bool GPUVertexArrayCacheEntry::IsValid() const
 	{
 		// should always have a program 
-		if (program.get() == nullptr)
-		{
+		if (program == nullptr)
 			return false;
-		}
-		else
-		{
-			if (program_id != program->GetResourceID()) // the program OpenGL resource has changed. it is invalid
-				return false;
-		}
+		else if (program_id != program->GetResourceID()) // the program OpenGL resource has changed. it is invalid
+            return false;
 		// check vertex buffer
-		if (vertex_buffer.get() == nullptr)
+		if (vertex_buffer == nullptr)
 		{
 			if (vertex_buffer_id != 0) // there was a vertex buffer. It has been deleted
 				return false;
 		}
-		else
-		{
-			if (vertex_buffer_id != vertex_buffer->GetResourceID()) // the vertex buffer OpenGL resource has changed. it is invalid
-				return false;
-		}
+		else if (vertex_buffer_id != vertex_buffer->GetResourceID()) // the vertex buffer OpenGL resource has changed. it is invalid
+			return false;
 		// check index buffer
-		if (index_buffer.get() == nullptr)
+		if (index_buffer == nullptr)
 		{
 			if (index_buffer_id != 0) // there was a vertex buffer. It has been deleted
 				return false;
 		}
-		else
-		{
-			if (index_buffer_id != index_buffer->GetResourceID()) // the index buffer OpenGL resource has changed. it is invalid
-				return false;
-		}
+		else if (index_buffer_id != index_buffer->GetResourceID()) // the index buffer OpenGL resource has changed. it is invalid
+			return false;
 		// OK
 		return true;
 	}
@@ -68,7 +57,7 @@ namespace chaos
 			// check whether this is expected entry
 			else
 			{				
-				if (result == nullptr && entry.program.get() == program && entry.vertex_buffer.get() == vertex_buffer && entry.index_buffer.get() == index_buffer)
+				if (result == nullptr && entry.program == program && entry.vertex_buffer == vertex_buffer && entry.index_buffer == index_buffer)
 					result = entry.vertex_array.get();
 				// next element
 				++i;

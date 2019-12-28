@@ -523,6 +523,22 @@ class ParticleTraitTools
 		allocation_trait_type allocation_trait;
 	};
 
+    // ==============================================================
+    // ParticleLayerBaseRenderData
+    // ==============================================================
+
+    class ParticleLayerBaseRenderData
+    {
+    public:
+
+        /** the vertex buffer for the rendering */
+        mutable shared_ptr<GPUBuffer> vertex_buffer;
+        /** the cache for vertex array */
+        mutable GPUVertexArrayCache vertex_array_cache;
+        /** number of used vertices in the vertex buffer */
+        mutable size_t vertices_count = 0;
+    };
+
 	// ==============================================================
 	// ParticleLayerBase
 	// ==============================================================
@@ -625,7 +641,7 @@ class ParticleTraitTools
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration() const;
 		/** the effective rendering */
-		int DoDisplayHelper(GPURenderer * renderer, size_t vcount, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
+		int DoDisplayHelper(GPURenderer * renderer, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const;
 
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool TickAllocations(double delta_time);
@@ -637,18 +653,25 @@ class ParticleTraitTools
 
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
-
-		/** whether there was changes in particles, and a vertex array need to be recomputed */
-		mutable bool require_GPU_update = false;
+        /** particles allocations */
+        std::vector<shared_ptr<ParticleAllocationBase>> particles_allocations;
 
 		/** the material used to render the layer */
 		shared_ptr<GPURenderMaterial> render_material;
+        /** the vertex declaration */
+        mutable GPUVertexDeclaration vertex_declaration;
 
-		/** particles allocations */
-		std::vector<shared_ptr<ParticleAllocationBase>> particles_allocations;
+        /** whether there was changes in particles, and a vertex array need to be recomputed */
+        mutable bool require_GPU_update = false;
 
-		/** the vertex declaration */
-		mutable GPUVertexDeclaration vertex_declaration;
+        /** the rendering data */
+        std::vector<ParticleLayerBaseRenderData> render_data;
+
+
+
+
+
+
 		/** the vertex buffer for the rendering */
 		mutable shared_ptr<GPUBuffer> vertex_buffer;
 		/** the cache for vertex array */

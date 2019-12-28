@@ -8,6 +8,8 @@
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/ParticleTools.h>
 
+#define OLD_RENDERING 1
+
 namespace chaos
 {
 
@@ -201,22 +203,16 @@ namespace chaos
 		return result;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
 	{
+#if OLD_RENDERING
 		// early exit
 		if (vertices_count == 0)
 			return 0;
+#else
+        if (render_data.size() == 0)
+            return 0;
+#endif
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
 		// prepare rendering state
@@ -225,11 +221,95 @@ namespace chaos
 		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		if (atlas != nullptr)
 			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
-		int result = DoDisplayHelper(renderer, vertices_count, final_material, (atlas == nullptr) ? uniform_provider : &main_uniform_provider, render_params);
+		int result = DoDisplayHelper(renderer, final_material, (atlas == nullptr) ? uniform_provider : &main_uniform_provider, render_params);
 		// restore rendering states
 		UpdateRenderingStates(renderer, false);
 		return result;
 	}
+
+    int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) const
+    {
+#if OLD_RENDERING
+
+        // no vertices, no rendering
+        if (vertices_count == 0)
+            return 0;
+
+        // use the material : search the program to use
+        GPUProgram const* program = final_material->UseMaterial(uniform_provider, render_params);
+        if (program == nullptr)
+            return 0;
+
+        // get the vertex array
+        GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), nullptr, vertex_declaration, 0);
+        if (vertex_array == nullptr)
+            return 0;
+        // bind the vertex array
+        glBindVertexArray(vertex_array->GetResourceID());
+        // one draw call for the whole buffer
+        GPUDrawPrimitive primitive;
+        primitive.primitive_type = GL_TRIANGLES;
+        primitive.indexed = false;
+        primitive.count = (int)vertices_count;
+        primitive.start = 0;
+        primitive.base_vertex_index = 0;
+        renderer->Draw(primitive, render_params.instancing);
+        glBindVertexArray(0);
+
+        return 1; // 1 DrawCall
+
+#else
+        int result = 0;
+
+        GPUProgram const* program = nullptr;
+        for (ParticleLayerBaseRenderData const& rd : render_data)
+        {
+            // really rendering something
+            if (rd.vertices_count == 0)
+                continue;
+            // search the program
+            if (program == nullptr)
+            {
+                program = final_material->UseMaterial(uniform_provider, render_params);
+                if (program == nullptr)
+                    return 0;
+            }
+            // get the vertex array
+            GPUVertexArray const* vertex_array = rd.vertex_array_cache.FindOrCreateVertexArray(program, rd.vertex_buffer.get(), nullptr, vertex_declaration, 0);
+            if (vertex_array == nullptr)
+                continue;
+
+            glBindVertexArray(vertex_array->GetResourceID());
+            // one draw call for the whole buffer
+            GPUDrawPrimitive primitive;
+            primitive.primitive_type = GL_TRIANGLES;
+            primitive.indexed = false;
+            primitive.count = (int)rd.vertices_count;
+            primitive.start = 0;
+            primitive.base_vertex_index = 0;
+            renderer->Draw(primitive, render_params.instancing);
+
+            ++result;
+        }
+        // restore previous state (only if anyone changed it)
+        if (result > 0)
+            glBindVertexArray(0);
+        return result;
+#endif
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer * renderer) const
 	{
@@ -296,38 +376,7 @@ namespace chaos
 		return true;
 	}
 
-	int ParticleLayerBase::DoDisplayHelper(GPURenderer * renderer, size_t vertex_count, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) const
-	{
 
-		// no vertices, no rendering
-		if (vertex_count == 0)
-			return 0;
-		// use the material : search the program to use
-		GPUProgram const * program = final_material->UseMaterial(uniform_provider, render_params);
-		if (program == nullptr)
-			return 0;
-		// get the vertex array
-		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), nullptr, vertex_declaration, 0);
-		if (vertex_array == nullptr)
-			return 0;
-		// bind the vertex array
-		glBindVertexArray(vertex_array->GetResourceID());
-		// one draw call for the whole buffer
-		GPUDrawPrimitive primitive;
-		primitive.primitive_type = GL_TRIANGLES;
-		primitive.indexed = false;
-		primitive.count = (int)vertex_count;
-		primitive.start = 0;
-		primitive.base_vertex_index = 0;
-		renderer->Draw(primitive, render_params.instancing);
-		glBindVertexArray(0);
-
-
-
-
-
-		return 1; // 1 DrawCall
-	}
 
 	void ParticleLayerBase::UpdateVertexDeclaration() const
 	{

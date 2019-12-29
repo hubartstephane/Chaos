@@ -1,13 +1,42 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleTools.h>
+
+#include <chaos/GPUClasses.h>
+#include <chaos/VertexOutput.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/GPUProgram.h>
+#include <chaos/ParticleAllocationTrait.h>
 
 namespace chaos
 {
+
+    /**
+    * ParticleCorners : represents 2 corners of a particle
+    */
+
+    class ParticleCorners
+    {
+    public:
+
+        glm::vec2 bottomleft;
+        glm::vec2 topright;
+    };
+
+    /**
+    * ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
+    */
+
+    class ParticleTexcoords : public ParticleCorners
+    {
+    public:
+
+        float bitmap_index;
+    };
+
+
+
+
+
 	namespace ParticleDefault
 	{
 		/** Particle : a default particle, with simpler data */
@@ -31,39 +60,32 @@ namespace chaos
 		};
 
 
-		/** get particle by index */
-		chaos::ParticleDefault::Particle * GetParticle(chaos::ParticleAllocationBase * allocation, size_t index);
-		chaos::ParticleDefault::Particle const * GetParticle(chaos::ParticleAllocationBase const * allocation, size_t index);
-		/** get particle position */
-		glm::vec2 GetParticlePosition(chaos::ParticleAllocationBase const * allocation, size_t index);
-		/** get particle box */
-		chaos::box2 GetParticleBox(chaos::ParticleAllocationBase const * allocation, size_t index);
-		/** set the particle position */
-		bool SetParticlePosition(chaos::ParticleAllocationBase * allocation, size_t index, glm::vec2 const & position);
-		/** set the particle box */
-		bool SetParticleBox(chaos::ParticleAllocationBase * allocation, size_t index, chaos::box2 const & box);
-
+	
 		/** ParticleVertexDefault : vertex for default particle */
 		class ParticleTrait : public ParticleAllocationTrait<Particle, Vertex>
 		{
 		public:
 
+            static void ParticleToVertices(Particle const* particle, VertexOutput<Vertex> vertices);
+
+
 			template<typename VERTEX_TYPE>
 			static size_t ParticleToVertices(Particle const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle)
 			{
+#if 0
 				// generate particle corners and texcoords
-				chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
+				ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 				// copy the color in all triangles vertex
 				for (size_t i = 0; i < 6; ++i)
 					vertices[i].color = particle->color;
-
+#endif
 				return vertices_per_particle;
 			}
+
 		};
 
 		/** the default vertex declaration */
-		chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Vertex>);
-
+		GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<Vertex>);
 		/** generate a default shader */
 		GPUProgram * GenDefaultParticleProgram();
 		/** generate a default material */

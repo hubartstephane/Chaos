@@ -26,7 +26,7 @@ class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject
 public:
 
 
-    void ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase>& vertices) const;
+    void ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase> & vertices) const;
 
 
 

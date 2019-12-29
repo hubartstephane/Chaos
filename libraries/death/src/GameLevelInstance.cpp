@@ -259,9 +259,9 @@ namespace death
 		chaos::box2 world = GetBoundingBox();
 		if (IsGeometryEmpty(world))
 			return;
-		chaos::box2 box = chaos::ParticleDefault::GetParticleBox(allocation, index);		
+		chaos::box2 box = chaos::ParticleTools::GetParticleBox(allocation, index);		
 		chaos::RestrictToInside(world, box, false);
-		chaos::ParticleDefault::SetParticleBox(allocation, index, box);
+		chaos::ParticleTools::SetParticleBox(allocation, index, box);
 	}
 
 	void GameLevelInstance::RestrictPlayerToWorld(int player_index)

@@ -6,6 +6,13 @@
 
 namespace chaos
 {
+    // XXX : VertexOutput is the object used to stream out vertices with operator []
+    //
+    //       Due to downcasting and copies of data, we want the pointers/data used is shared among the whole chain of calls
+    //       That's why i use VertexOutputInterface
+    //
+    //       VertexOutputInterface is the class that is used to store buffers and other pointers
+
     // ==================================================
     // VertexOutputInterface
     // ==================================================
@@ -97,6 +104,7 @@ namespace chaos
         /** constructor for dynamic GPU buffer allocation */
         VertexOutput(VertexOutputInterface & in_output_interface) :
             VertexOutputBase(in_output_interface, sizeof(VERTEX_TYPE)){}
+
 
         /** accessor */
         VERTEX_TYPE& operator [](size_t index)

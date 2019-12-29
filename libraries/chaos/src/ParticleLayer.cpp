@@ -100,15 +100,12 @@ namespace chaos
 	//
 	void ParticleAllocationBase::SubReference(SharedPointerPolicy policy)
 	{
+        // the ParticleAllocation is handled as usual
 		if (layer == nullptr)
-		{
-			ReferencedObject::SubReference(policy); // the ParticleAllocation is handled as usual
-		}
-		else
-		{
-			if (--shared_count == 1) // the last reference is the one from the layer. Destroy it
-				RemoveFromLayer();
-		}
+			ReferencedObject::SubReference(policy); 
+        // the last reference is the one from the layer. Destroy it
+		else if (--shared_count == 1) 
+            RemoveFromLayer();
 	}
 
 	// ==============================================================

@@ -1,22 +1,37 @@
 #include <chaos/ParticleDefault.h>
+
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/GPUVertexDeclaration.h>
+#include <chaos/GPUProgram.h>
+#include <chaos/GPURenderMaterial.h>
 #include <chaos/GPURenderMaterialLoader.h>
+#include <chaos/ParticleTools.h>
 
 namespace chaos
 {
-	GPUVertexDeclaration ParticleDefault::GetTypedVertexDeclaration(boost::mpl::identity<ParticleDefault::Vertex>)
-	{
-		chaos::GPUVertexDeclaration result;
-		result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-		result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-		result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-		return result;
-	}
+    namespace ParticleDefault
+    {
+        void ParticleTrait::ParticleToVertices(Particle const* particle, VertexOutput<Vertex> vertices)
+        {
+            // generate particle corners and texcoords
+            ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
+            // copy the color in all triangles vertex
+            for (size_t i = 0; i < 4; ++i)
+                vertices[i].color = particle->color;
+        }
 
-	GPUProgram * ParticleDefault::GenDefaultParticleProgram()
-	{
-		char const * vertex_shader_source = R"VERTEXSHADERCODE(
+        GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<ParticleDefault::Vertex>)
+        {
+            chaos::GPUVertexDeclaration result;
+            result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+            result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+            result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+            return result;
+        }
+
+        GPUProgram* GenDefaultParticleProgram()
+        {
+            char const* vertex_shader_source = R"VERTEXSHADERCODE(
 		in vec2 position;
 		in vec3 texcoord;
 		in vec4 color;
@@ -34,7 +49,7 @@ namespace chaos
 		};											
 		)VERTEXSHADERCODE";
 
-		char const * pixel_shader_source = R"PIXELSHADERCODE(
+            char const* pixel_shader_source = R"PIXELSHADERCODE(
 		in vec3 vs_texcoord;
 		in vec4 vs_color;
 
@@ -51,74 +66,19 @@ namespace chaos
 		};
 		)PIXELSHADERCODE";
 
-		GPUProgramGenerator program_generator;
-		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-		program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
-		return program_generator.GenProgramObject();
-	}
+            GPUProgramGenerator program_generator;
+            program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+            program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+            return program_generator.GenProgramObject();
+        }
 
-	GPURenderMaterial * ParticleDefault::GenDefaultParticleMaterial()
-	{
-		shared_ptr<GPUProgram> program = GenDefaultParticleProgram(); // store a temporary object for lifetime management
-		return GPURenderMaterial::GenRenderMaterialObject(program.get());
-	}
+        GPURenderMaterial* GenDefaultParticleMaterial()
+        {
+            shared_ptr<GPUProgram> program = GenDefaultParticleProgram(); // store a temporary object for lifetime management
+            return GPURenderMaterial::GenRenderMaterialObject(program.get());
+        }
 
-	chaos::ParticleDefault::Particle * ParticleDefault::GetParticle(chaos::ParticleAllocationBase * allocation, size_t index)
-	{
-		if (allocation == nullptr)
-			return nullptr;
-		if (index >= allocation->GetParticleCount())
-			return nullptr;
-
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor();
-		if (particles.GetCount() == 0)
-			return nullptr;
-		return &particles[index];
-	}
-
-	chaos::ParticleDefault::Particle const * ParticleDefault::GetParticle(chaos::ParticleAllocationBase const * allocation, size_t index)
-	{
-		if (allocation == nullptr)
-			return nullptr;
-		if (index >= allocation->GetParticleCount())
-			return nullptr;
-
-		chaos::ParticleConstAccessor<chaos::ParticleDefault::Particle> particles = allocation->GetParticleAccessor();
-		if (particles.GetCount() == 0)
-			return nullptr;
-		return &particles[index];
-	}
-
-	glm::vec2 ParticleDefault::GetParticlePosition(chaos::ParticleAllocationBase const * allocation, size_t index)
-	{
-		return GetParticleBox(allocation, index).position;
-	}
-
-	chaos::box2 ParticleDefault::GetParticleBox(chaos::ParticleAllocationBase const * allocation, size_t index)
-	{
-		chaos::ParticleDefault::Particle const * particle = GetParticle(allocation, index);
-		if (particle == nullptr)
-			return chaos::box2();
-		return particle->bounding_box;
-	}
-
-	bool ParticleDefault::SetParticlePosition(chaos::ParticleAllocationBase * allocation, size_t index, glm::vec2 const & position)
-	{
-		chaos::ParticleDefault::Particle * particle = GetParticle(allocation, index);
-		if (particle == nullptr)
-			return false;
-		particle->bounding_box.position = position;
-		return true;
-	}
-
-	bool ParticleDefault::SetParticleBox(chaos::ParticleAllocationBase * allocation, size_t index, chaos::box2 const & box)
-	{
-		chaos::ParticleDefault::Particle * particle = GetParticle(allocation, index);
-		if (particle == nullptr)
-			return false;
-		particle->bounding_box = box;
-		return true;
-	}
+    }; // namespace ParticleDefault
 
 }; // namespace chaos
 

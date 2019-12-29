@@ -240,31 +240,31 @@ namespace death
 
 	chaos::ParticleDefault::Particle * Player::GetPlayerParticle()
 	{
-		return chaos::ParticleDefault::GetParticle(GetPlayerAllocation(), 0);
+		return chaos::ParticleTools::GetParticle(GetPlayerAllocation(), 0);
 	}
 
 	chaos::ParticleDefault::Particle const * Player::GetPlayerParticle() const
 	{
-		return chaos::ParticleDefault::GetParticle(GetPlayerAllocation(), 0);
+		return chaos::ParticleTools::GetParticle(GetPlayerAllocation(), 0);
 	}
 
 	glm::vec2 Player::GetPlayerPosition() const
 	{
-		return chaos::ParticleDefault::GetParticlePosition(GetPlayerAllocation(), 0);
+		return chaos::ParticleTools::GetParticlePosition(GetPlayerAllocation(), 0);
 	}
 
 	chaos::box2 Player::GetPlayerBox() const
 	{
-		return chaos::ParticleDefault::GetParticleBox(GetPlayerAllocation(), 0);
+		return chaos::ParticleTools::GetParticleBox(GetPlayerAllocation(), 0);
 	}
 
 	bool Player::SetPlayerPosition(glm::vec2 const & position)
 	{
-		return chaos::ParticleDefault::SetParticlePosition(GetPlayerAllocation(), 0, position);
+		return chaos::ParticleTools::SetParticlePosition(GetPlayerAllocation(), 0, position);
 	}
 	bool Player::SetPlayerBox(chaos::box2 const & box)
 	{
-		return chaos::ParticleDefault::SetParticleBox(GetPlayerAllocation(), 0, box);
+		return chaos::ParticleTools::SetParticleBox(GetPlayerAllocation(), 0, box);
 	}
 
 	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const

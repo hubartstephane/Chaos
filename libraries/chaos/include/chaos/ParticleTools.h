@@ -4,33 +4,12 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/ClassTools.h>
-#include <chaos/NamedObject.h>
 #include <chaos/VertexOutput.h>
+#include <chaos/ParticleDefault.h>
 
 namespace chaos
 {
-	/**
-	* ParticleCorners : represents 2 corners of a particle
-	*/
 
-	class ParticleCorners
-	{
-	public:
-
-		glm::vec2 bottomleft;
-		glm::vec2 topright;
-	};
-
-	/**
-	* ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
-	*/
-
-	class ParticleTexcoords : public ParticleCorners
-	{
-	public:
-
-		float bitmap_index;
-	};
 
 	/**
 	* ParticleTools : an utility class that deserve to bring some services for particles system
@@ -38,6 +17,18 @@ namespace chaos
 
 	namespace ParticleTools
 	{
+        /** get particle by index */
+        ParticleDefault::Particle* GetParticle(ParticleAllocationBase* allocation, size_t index);
+        ParticleDefault::Particle const* GetParticle(ParticleAllocationBase const* allocation, size_t index);
+        /** get particle position */
+        glm::vec2 GetParticlePosition(ParticleAllocationBase const* allocation, size_t index);
+        /** get particle box */
+        box2 GetParticleBox(ParticleAllocationBase const* allocation, size_t index);
+        /** set the particle position */
+        bool SetParticlePosition(ParticleAllocationBase* allocation, size_t index, glm::vec2 const& position);
+        /** set the particle box */
+        bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& box);
+
 		/** conversion methods */
 		box2 ParticleCornersToBox(ParticleCorners const & corners);
 		/** conversion methods */
@@ -107,7 +98,7 @@ namespace chaos
 		}
 
 		template<typename VERTEX_TYPE>
-		void GenerateBoxParticle(chaos::box2 const & box, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices, float rotation = 0.0f)
+		void GenerateBoxParticle(box2 const & box, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices, float rotation = 0.0f)
 		{
 			std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
 
@@ -117,89 +108,13 @@ namespace chaos
 			GenerateBoxParticle(particle_corners, texcoords, vertices, rotation);
 		}
 
+        /** fill the vertices array with 4 vertices corresponding to 1 QUAD */
+        void GenerateBoxQUADParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, VertexOutput<ParticleDefault::Vertex> & vertices, float rotation = 0.0f);
 
+        void GenerateBoxQUADParticle(box2 const& box, ParticleTexcoords const& texcoords, VertexOutput<ParticleDefault::Vertex> & vertices, float rotation = 0.0f);
 
-
-
-
-
-
-
-
-
-
-        /** fill the vertices array with 6 vertices corresponding to 3 triangles */
-        template<typename VERTEX_TYPE>
-        void GenerateBoxQUADParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, VertexOutput<VERTEX_TYPE> & vertices, float rotation = 0.0f)
-        {
-            VERTEX_TYPE bl;
-            bl.position.x = corners.bottomleft.x;
-            bl.position.y = corners.bottomleft.y;
-            bl.texcoord.x = texcoords.bottomleft.x;
-            bl.texcoord.y = texcoords.bottomleft.y;
-            bl.texcoord.z = texcoords.bitmap_index;
-
-            VERTEX_TYPE tr;
-            tr.position.x = corners.topright.x;
-            tr.position.y = corners.topright.y;
-            tr.texcoord.x = texcoords.topright.x;
-            tr.texcoord.y = texcoords.topright.y;
-            tr.texcoord.z = texcoords.bitmap_index;
-
-            VERTEX_TYPE tl;
-            tl.position.x = corners.bottomleft.x;
-            tl.position.y = corners.topright.y;
-            tl.texcoord.x = texcoords.bottomleft.x;
-            tl.texcoord.y = texcoords.topright.y;
-            tl.texcoord.z = texcoords.bitmap_index;
-
-            VERTEX_TYPE br;
-            br.position.x = corners.topright.x;
-            br.position.y = corners.bottomleft.y;
-            br.texcoord.x = texcoords.topright.x;
-            br.texcoord.y = texcoords.bottomleft.y;
-            br.texcoord.z = texcoords.bitmap_index;
-
-            if (rotation != 0.0f)
-            {
-                glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
-
-                float c = std::cos(rotation);
-                float s = std::sin(rotation);
-
-                bl.position = GLMTools::Rotate(bl.position - center_position, c, s) + center_position;
-                br.position = GLMTools::Rotate(br.position - center_position, c, s) + center_position;
-                tr.position = GLMTools::Rotate(tr.position - center_position, c, s) + center_position;
-                tl.position = GLMTools::Rotate(tl.position - center_position, c, s) + center_position;
-            }
-
-            vertices[0] = bl;
-            vertices[1] = br;
-            vertices[2] = tr;
-            vertices[3] = tl;
-        }
-
-        template<typename VERTEX_TYPE>
-        void GenerateBoxQUADParticle(chaos::box2 const& box, ParticleTexcoords const& texcoords, VertexOutput<VERTEX_TYPE> & vertices, float rotation = 0.0f)
-        {
-            std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
-
-            ParticleCorners particle_corners;
-            particle_corners.bottomleft = corners.first;
-            particle_corners.topright = corners.second;
-            GenerateBoxQUADParticle(particle_corners, texcoords, vertices, rotation);
-        }
-
-
-
-
-
-
-
-
-		/** returns true whether the particle can be casted into a given class */
 		template<typename PARTICLE_TYPE>
-		static bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
+		bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
 		{
 			ClassTools::ClassRegistration const * wanted_class = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
 

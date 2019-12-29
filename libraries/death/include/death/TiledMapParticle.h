@@ -4,6 +4,7 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/EmptyClass.h>
+#include <chaos/VertexOutput.h>
 
 namespace death
 {
@@ -26,6 +27,12 @@ namespace death
 		class TileParticleTrait : public chaos::ParticleAllocationTrait<TileParticle, chaos::ParticleDefault::Vertex, false, false> // shuxxx set to false = optimization 1
 		{
 		public:
+
+            static void ParticleToVertices(TileParticle const* particle, chaos::VertexOutput<chaos::ParticleDefault::Vertex> & vertices)
+            {
+                chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices);
+            }
+
 
 			static size_t ParticleToVertices(TileParticle const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle)
 			{

@@ -8,77 +8,192 @@
 
 namespace chaos
 {
-	box2 ParticleTools::ParticleCornersToBox(ParticleCorners const & corners)
-	{
-		return box2(std::make_pair(corners.bottomleft, corners.topright));	
-	}
+    namespace ParticleTools
+    {
+        ParticleDefault::Particle* GetParticle(ParticleAllocationBase* allocation, size_t index)
+        {
+            if (allocation == nullptr)
+                return nullptr;
+            if (index >= allocation->GetParticleCount())
+                return nullptr;
 
-	ParticleCorners ParticleTools::BoxToParticleCorners(box2 const & box)
-	{	
-		std::pair<glm::vec2, glm::vec2> tmp = GetBoxExtremums(box);
+            ParticleAccessor<ParticleDefault::Particle> particles = allocation->GetParticleAccessor();
+            if (particles.GetCount() == 0)
+                return nullptr;
+            return &particles[index];
+        }
 
-		ParticleCorners result;
-		result.bottomleft = tmp.first;
-		result.topright   = tmp.second;
-		return result;
-	}
+        ParticleDefault::Particle const* GetParticle(ParticleAllocationBase const* allocation, size_t index)
+        {
+            if (allocation == nullptr)
+                return nullptr;
+            if (index >= allocation->GetParticleCount())
+                return nullptr;
 
-	ParticleCorners ParticleTools::GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type)
-	{
-		ParticleCorners result;
-		result.bottomleft = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
-		result.topright   = result.bottomleft + size;
-		return result;
-	}
+            ParticleConstAccessor<ParticleDefault::Particle> particles = allocation->GetParticleAccessor();
+            if (particles.GetCount() == 0)
+                return nullptr;
+            return &particles[index];
+        }
 
-	ParticleTexcoords ParticleTools::GetParticleTexcoords(BitmapAtlas::BitmapLayout const & layout)
-	{
-		ParticleTexcoords result;
-		result.bottomleft = layout.bottomleft_texcoord;
-		result.topright = layout.topright_texcoord;
-		result.bitmap_index  = (float)layout.bitmap_index;
-		return result;
-	}
+        glm::vec2 GetParticlePosition(ParticleAllocationBase const* allocation, size_t index)
+        {
+            return GetParticleBox(allocation, index).position;
+        }
 
-	ParticleTexcoords ParticleTools::MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, int skip_last, int image_id)
-	{
-		// tweak particle texcoords to have a sub image
-		int image_count = (atlas_dimension.x * atlas_dimension.y) - skip_last;
-		if (image_count > 0)
-		{
-			image_id = image_id % image_count;
+        box2 GetParticleBox(ParticleAllocationBase const* allocation, size_t index)
+        {
+            ParticleDefault::Particle const* particle = GetParticle(allocation, index);
+            if (particle == nullptr)
+                return box2();
+            return particle->bounding_box;
+        }
 
-			glm::vec2 atlas_coord = glm::vec2(
-				(float)(image_id % atlas_dimension.x),
-				(float)(image_id / atlas_dimension.x)
-			);
+        bool SetParticlePosition(ParticleAllocationBase* allocation, size_t index, glm::vec2 const& position)
+        {
+            ParticleDefault::Particle* particle = GetParticle(allocation, index);
+            if (particle == nullptr)
+                return false;
+            particle->bounding_box.position = position;
+            return true;
+        }
 
-			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::RecastVector<glm::vec2>(atlas_dimension);
+        bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& box)
+        {
+            ParticleDefault::Particle* particle = GetParticle(allocation, index);
+            if (particle == nullptr)
+                return false;
+            particle->bounding_box = box;
+            return true;
+        }
 
-			texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
-			texcoords.topright = texcoords.bottomleft + atlas_size;
-		}	
-		return texcoords;
-	}
+        box2 ParticleCornersToBox(ParticleCorners const& corners)
+        {
+            return box2(std::make_pair(corners.bottomleft, corners.topright));
+        }
 
-	ParticleTexcoords ParticleTools::MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, glm::ivec2 const & image_id)
-	{
-		// tweak particle texcoords to have a sub image
-		int image_count = (atlas_dimension.x * atlas_dimension.y);
-		if (image_count > 0)
-		{
-			glm::vec2 atlas_coord = glm::vec2(
-				(float)(image_id.x % atlas_dimension.x),
-				(float)(image_id.y % atlas_dimension.y)
-			);
+        ParticleCorners BoxToParticleCorners(box2 const& box)
+        {
+            std::pair<glm::vec2, glm::vec2> tmp = GetBoxExtremums(box);
 
-			glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / chaos::RecastVector<glm::vec2>(atlas_dimension);
+            ParticleCorners result;
+            result.bottomleft = tmp.first;
+            result.topright = tmp.second;
+            return result;
+        }
 
-			texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
-			texcoords.topright = texcoords.bottomleft + atlas_size;
-		}	
-		return texcoords;
-	}
+        ParticleCorners GetParticleCorners(glm::vec2 const& position, glm::vec2 const& size, int hotpoint_type)
+        {
+            ParticleCorners result;
+            result.bottomleft = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);
+            result.topright = result.bottomleft + size;
+            return result;
+        }
+
+        ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapLayout const& layout)
+        {
+            ParticleTexcoords result;
+            result.bottomleft = layout.bottomleft_texcoord;
+            result.topright = layout.topright_texcoord;
+            result.bitmap_index = (float)layout.bitmap_index;
+            return result;
+        }
+
+        ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const& atlas_dimension, int skip_last, int image_id)
+        {
+            // tweak particle texcoords to have a sub image
+            int image_count = (atlas_dimension.x * atlas_dimension.y) - skip_last;
+            if (image_count > 0)
+            {
+                image_id = image_id % image_count;
+
+                glm::vec2 atlas_coord = glm::vec2(
+                    (float)(image_id % atlas_dimension.x),
+                    (float)(image_id / atlas_dimension.x)
+                );
+
+                glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / RecastVector<glm::vec2>(atlas_dimension);
+
+                texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
+                texcoords.topright = texcoords.bottomleft + atlas_size;
+            }
+            return texcoords;
+        }
+
+        ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const& atlas_dimension, glm::ivec2 const& image_id)
+        {
+            // tweak particle texcoords to have a sub image
+            int image_count = (atlas_dimension.x * atlas_dimension.y);
+            if (image_count > 0)
+            {
+                glm::vec2 atlas_coord = glm::vec2(
+                    (float)(image_id.x % atlas_dimension.x),
+                    (float)(image_id.y % atlas_dimension.y)
+                );
+
+                glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / RecastVector<glm::vec2>(atlas_dimension);
+
+                texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
+                texcoords.topright = texcoords.bottomleft + atlas_size;
+            }
+            return texcoords;
+        }
+
+        void GenerateBoxQUADParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, VertexOutput<ParticleDefault::Vertex>& vertices, float rotation)
+        {
+            ParticleDefault::Vertex & bl = vertices[0];
+            bl.position.x = corners.bottomleft.x;
+            bl.position.y = corners.bottomleft.y;
+            bl.texcoord.x = texcoords.bottomleft.x;
+            bl.texcoord.y = texcoords.bottomleft.y;
+            bl.texcoord.z = texcoords.bitmap_index;
+
+            ParticleDefault::Vertex& br = vertices[1];
+            br.position.x = corners.topright.x;
+            br.position.y = corners.bottomleft.y;
+            br.texcoord.x = texcoords.topright.x;
+            br.texcoord.y = texcoords.bottomleft.y;
+            br.texcoord.z = texcoords.bitmap_index;
+
+            ParticleDefault::Vertex & tr = vertices[2];
+            tr.position.x = corners.topright.x;
+            tr.position.y = corners.topright.y;
+            tr.texcoord.x = texcoords.topright.x;
+            tr.texcoord.y = texcoords.topright.y;
+            tr.texcoord.z = texcoords.bitmap_index;
+
+            ParticleDefault::Vertex & tl = vertices[3];
+            tl.position.x = corners.bottomleft.x;
+            tl.position.y = corners.topright.y;
+            tl.texcoord.x = texcoords.bottomleft.x;
+            tl.texcoord.y = texcoords.topright.y;
+            tl.texcoord.z = texcoords.bitmap_index;
+
+            if (rotation != 0.0f)
+            {
+                glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
+
+                float c = std::cos(rotation);
+                float s = std::sin(rotation);
+
+                bl.position = GLMTools::Rotate(bl.position - center_position, c, s) + center_position;
+                br.position = GLMTools::Rotate(br.position - center_position, c, s) + center_position;
+                tr.position = GLMTools::Rotate(tr.position - center_position, c, s) + center_position;
+                tl.position = GLMTools::Rotate(tl.position - center_position, c, s) + center_position;
+            }
+        }
+
+        void GenerateBoxQUADParticle(box2 const& box, ParticleTexcoords const& texcoords, VertexOutput<ParticleDefault::Vertex>& vertices, float rotation)
+        {
+            std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
+
+            ParticleCorners particle_corners;
+            particle_corners.bottomleft = corners.first;
+            particle_corners.topright = corners.second;
+            GenerateBoxQUADParticle(particle_corners, texcoords, vertices, rotation);
+        }
+
+    }; // namespace ParticleTools
 
 }; // namespace chaos
 

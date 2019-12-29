@@ -15,7 +15,7 @@
 // Object particle system
 // ===========================================================================
 
-void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase>& vertices) const
+void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase> & vertices) const
 {
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);

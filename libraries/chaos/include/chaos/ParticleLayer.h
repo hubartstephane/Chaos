@@ -17,6 +17,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/EmptyClass.h>
 #include <chaos/ParticleAccessor.h>
+#include <chaos/ParticleAllocationTrait.h>
 
 #define OLD_RENDERING 1
 
@@ -241,7 +242,7 @@ class ParticleTraitTools
 
 #if !OLD_RENDERING
         /** transforms the particles into vertices in the buffer */
-        virtual void ParticlesToVertices(VertexOutputBase& vertices, void const* layer_trait) const { }
+        virtual void ParticlesToVertices(VertexOutputInterface & vertex_output_interface, void const* layer_trait) const { }
 #endif
 
 	protected:
@@ -355,13 +356,9 @@ class ParticleTraitTools
             if constexpr (has_function_Tick_v<allocation_trait_type>)
             {
                 if constexpr (has_LayerTrait_v<allocation_trait_type>)
-                {
                     destroy_allocation = allocation_trait.Tick(delta_time, this, typed_layer_trait); // let the trait decide whether the allocation is to be destroyed
-                }
                 else
-                {
                     destroy_allocation = allocation_trait.Tick(delta_time, this); // let the trait decide whether the allocation is to be destroyed
-                }
             }
             else
             {
@@ -371,9 +368,7 @@ class ParticleTraitTools
             // Tick the particles
             if (!destroy_allocation)      
             {
-                // XXX : SHU whether particles can be ticked
-
-                //has_function_UpdateParticle<allocation_trait_type>::type()); // shuxxx FIXME : this template does not detect template function ! => see ParticleDefault that require a template
+                // has_function_UpdateParticle<allocation_trait_type>::type()); // shuxxx FIXME : this template does not detect template function ! => see ParticleDefault that require a template
 
                 if constexpr (boost::mpl::true_().value)
                 {
@@ -413,13 +408,9 @@ class ParticleTraitTools
             else
             {
                 if constexpr (has_LayerTrait_v<allocation_trait_type>)
-                {
                     remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor, layer_trait);
-                }
                 else
-                {
                     remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor);
-                }
             }
 
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
@@ -464,7 +455,61 @@ class ParticleTraitTools
 
 
 
+#if !OLD_RENDERING
+        /** transforms the particles into vertices in the buffer */
+        virtual void ParticlesToVertices(VertexOutputInterface& vertex_output_interface, void const* layer_trait) const override
+        {
+            VertexOutput<vertex_type> vertex_output(vertex_output_interface);
+           
+            if constexpr (has_LayerTrait_v<allocation_trait_type>)
+            {
+                layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
 
+                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
+                {
+                    DoParticlesToVerticesLoop(
+                        vertex_output,
+                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
+                        typed_layer_trait);
+                }
+                else
+                {
+                    DoParticlesToVerticesLoop(
+                        vertex_output,
+                        typed_layer_trait);
+                }
+            }
+            else
+            {
+                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
+                {
+                    DoParticlesToVerticesLoop(
+                        vertex_output,
+                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait)); // do not use a temp variable, so it can be a left-value reference
+                }
+                else
+                {
+                    DoParticlesToVerticesLoop(vertex_output);
+                }
+            }     
+        }
+
+        template<typename ...PARAMS>
+        void DoParticlesToVerticesLoop(VertexOutput<vertex_type> & vertices, PARAMS... params) const
+        {
+            ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
+
+            size_t particle_count = particle_accessor.GetCount();
+            for (size_t i = 0; i < particle_count; ++i)
+            {
+                allocation_trait.ParticleToVertices(&particle_accessor[i], vertices, params...);
+            }
+        }
+
+
+
+
+#endif
 
 
 
@@ -537,6 +582,23 @@ class ParticleTraitTools
 			}
 			return result;
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	protected:
 
@@ -781,8 +843,6 @@ class ParticleTraitTools
             // prepare the data
             VertexOutputInterface vertex_output_interface(this, renderer);
 
-            VertexOutput<vertex_type> vertex_output(vertex_output_interface);
-
             // convert particles into vertices
             size_t count = particles_allocations.size();
             for (size_t i = 0; i < count; ++i)
@@ -792,7 +852,7 @@ class ParticleTraitTools
                 if (!allocation->IsVisible())
                     continue;
                 // transform particles into vertices
-                allocation->ParticlesToVertices(vertex_output, GetLayerTrait());
+                allocation->ParticlesToVertices(vertex_output_interface, GetLayerTrait());
             }
             // mark as up to date
             require_GPU_update = false;
@@ -806,44 +866,6 @@ class ParticleTraitTools
 		/** the trait of the layer */
 		layer_trait_type layer_trait;
 	};
-
-	// ==============================================================
-	// ParticleAllocationTrait
-	// ==============================================================
-
-	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, bool DYNAMIC_PARTICLES = true, bool DYNAMIC_VERTICES = true>
-	class ParticleAllocationTrait
-	{
-	public:
-
-		/** the type for one particle */
-		using particle_type = PARTICLE_TYPE;
-		/** the type for one vertex */
-		using vertex_type = VERTEX_TYPE;
-
-		size_t ParticleToVertices(PARTICLE_TYPE const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle) const
-		{
-			return 0; // default implementation
-		}
-
-		bool UpdateParticle(float delta_time, PARTICLE_TYPE * particle) const
-		{
-			return false; // default implementation => do not destroy particle
-		}
-
-		/** whether the particles are dynamic */
-		static bool const dynamic_particles = DYNAMIC_PARTICLES;
-		/** whether the vertices are dynamic */
-		static bool const dynamic_vertices = DYNAMIC_VERTICES;
-	};
-
-
-
-
-
-
-
-
 
 	// ==============================================================
 	// PARTICLE LAYER DESC

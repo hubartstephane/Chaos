@@ -30,5 +30,30 @@ namespace chaos
 		int    base_vertex_index = 0;
 	};
 
+    // For indirect rendering. 
+    //
+    // https://www.khronos.org/opengl/wiki/Vertex_Rendering
+
+    class GPUIndirectDrawArraysCommand
+    {
+    public:
+
+        GLuint  Count;
+        GLuint  InstanceCount;
+        GLuint  First;
+        GLuint  BaseInstance;
+    };
+
+    class GPUIndirectDrawElementsCommand
+    {
+    public:
+
+        GLuint  Count;
+        GLuint  InstanceCount;
+        GLuint  FirstIndex;
+        GLuint  BaseVertex;
+        GLuint  BaseInstance;
+    };
+
 }; // namespace chaos
 

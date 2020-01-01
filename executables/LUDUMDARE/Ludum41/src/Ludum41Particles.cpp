@@ -17,6 +17,18 @@
 
 void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase> & vertices) const
 {
+    chaos::QuadOutput<VertexBase> output(nullptr, nullptr);
+
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    auto& p1 = primitive[0];
+    auto& p2 = primitive[1];
+    auto& p3 = primitive[2];
+    auto& p4 = primitive[3];
+    auto& p5 = primitive[4];
+
+
+
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
     // copy the color in all triangles vertex
@@ -33,6 +45,24 @@ void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, cha
 
 size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
+    chaos::QuadOutput<VertexBase> output(nullptr, nullptr);
+
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    auto& p1 = primitive[0];
+    auto& p2 = primitive[1];
+    auto& p3 = primitive[2];
+    auto& p4 = primitive[3];
+    auto& p5 = primitive[4];
+
+
+
+
+
+
+
+
+
  	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex

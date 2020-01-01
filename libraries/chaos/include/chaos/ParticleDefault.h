@@ -66,7 +66,8 @@ namespace chaos
 		{
 		public:
 
-            static void ParticleToVertices(Particle const* particle, VertexOutput<Vertex> vertices);
+            static void ParticleToVertices(Particle const* particle, QuadOutput<Vertex> & output);
+            static void ParticleToVertices(Particle const* particle, TrianglePairOutput<Vertex>& output);
 
 
 			template<typename VERTEX_TYPE>

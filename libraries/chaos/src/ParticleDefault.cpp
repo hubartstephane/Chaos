@@ -11,13 +11,26 @@ namespace chaos
 {
     namespace ParticleDefault
     {
-        void ParticleTrait::ParticleToVertices(Particle const* particle, VertexOutput<Vertex> vertices)
+        void ParticleTrait::ParticleToVertices(Particle const* particle, TrianglePairOutput<Vertex>& output)
         {
+            TrianglePairPrimitive<Vertex> primitive = output.AddPrimitive();
+
             // generate particle corners and texcoords
-            ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
+            ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, primitive);
+            // copy the color in all triangles vertex
+            for (size_t i = 0; i < 6; ++i)
+                primitive[i].color = particle->color;
+        }
+
+        void ParticleTrait::ParticleToVertices(Particle const* particle, QuadOutput<Vertex> & output)
+        {
+            QuadPrimitive<Vertex> primitive = output.AddPrimitive();
+
+            // generate particle corners and texcoords
+            ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, primitive);
             // copy the color in all triangles vertex
             for (size_t i = 0; i < 4; ++i)
-                vertices[i].color = particle->color;
+                primitive[i].color = particle->color;
         }
 
         GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<ParticleDefault::Vertex>)

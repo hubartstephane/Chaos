@@ -15,25 +15,15 @@
 // Object particle system
 // ===========================================================================
 
-void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase> & vertices) const
+void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::QuadOutput<VertexBase>& output) const
 {
-    chaos::QuadOutput<VertexBase> output(nullptr, nullptr);
-
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
-    auto& p1 = primitive[0];
-    auto& p2 = primitive[1];
-    auto& p3 = primitive[2];
-    auto& p4 = primitive[3];
-    auto& p5 = primitive[4];
-
-
-
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
+    chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, primitive);
     // copy the color in all triangles vertex
     for (size_t i = 0; i < 4; ++i)
-        vertices[i].color = particle->color;
+        primitive[i].color = particle->color;
 }
 
 
@@ -45,24 +35,6 @@ void ParticleObjectTrait::ParticleToVertices(ParticleObject const* particle, cha
 
 size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
-    chaos::QuadOutput<VertexBase> output(nullptr, nullptr);
-
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    auto& p1 = primitive[0];
-    auto& p2 = primitive[1];
-    auto& p3 = primitive[2];
-    auto& p4 = primitive[3];
-    auto& p5 = primitive[4];
-
-
-
-
-
-
-
-
-
  	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
@@ -114,13 +86,15 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 
 
 
-void ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase> & vertices, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
+void ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const* particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
 {
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
+    chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, primitive);
     // copy the color in all triangles vertex
     for (size_t i = 0; i < 4; ++i)
-        vertices[i].color = particle->color;
+        primitive[i].color = particle->color;
 }
 
 
@@ -165,24 +139,24 @@ size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, Ve
 
 
 
-void ParticleBrickTrait::ParticleToVertices(ParticleBrick const* particle, chaos::VertexOutput<VertexBase> & vertices, LayerTrait const* layer_trait) const
+void ParticleBrickTrait::ParticleToVertices(ParticleBrick const* particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
     // generate particle corners and texcoords
     chaos::box2 bounding_box = particle->bounding_box;
     bounding_box.position.y -= ludum_game_instance->brick_offset;
-
-    chaos::ParticleTools::GenerateBoxQUADParticle(bounding_box, particle->texcoords, vertices);
-
-    float extra = 2;
-    float ratio = (extra + particle->life) / (extra + particle->starting_life);
-
-    glm::vec4 color = ratio * particle->color;
+    chaos::ParticleTools::GenerateBoxParticle(bounding_box, particle->texcoords, primitive);
 
     // copy the color in all triangles vertex
+    float extra = 2;
+    float ratio = (extra + particle->life) / (extra + particle->starting_life);
+    glm::vec4 color = ratio * particle->color;
+    
     for (size_t i = 0; i < 4; ++i)
-        vertices[i].color = color;
+        primitive[i].color = color;
 }
 
 
@@ -218,12 +192,13 @@ size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject cons
 
 
 
-void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const* particle, chaos::VertexOutput<VertexBase> & vertices, LayerTrait const* layer_trait) const
+void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const* particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
+    chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, primitive);
     // copy the color in all triangles vertex
 
     glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -235,7 +210,7 @@ void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const*
         power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
     for (size_t i = 0; i < 4; ++i)
-        vertices[i].color = particle->color * power_color;
+        primitive[i].color = particle->color * power_color;
 }
 
 
@@ -433,13 +408,19 @@ size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * part
 
 
 
-void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const* particle, chaos::VertexOutput<VertexBase> & vertices) const
+void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const* particle, chaos::QuadOutput<VertexBase>& output) const
 {
     int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
     bool keyboard = chaos::InputMode::IsPCMode(input_mode);
 
+
+    
+
+
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxQUADParticle(particle->bounding_box, particle->texcoords, vertices);
+    chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, primitive);
 
     // copy the color in all triangles vertex
 
@@ -463,5 +444,5 @@ void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const* particl
     }
 
     for (size_t i = 0; i < 4; ++i)
-        vertices[i].color = color;
+        primitive[i].color = color;
 }

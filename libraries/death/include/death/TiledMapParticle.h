@@ -24,15 +24,23 @@ namespace death
 			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = nullptr; // shudum hai le hack
 		};
 
+        // =====================================
+        // TileParticleTrait
+        // =====================================
+
 		class TileParticleTrait : public chaos::ParticleAllocationTrait<TileParticle, chaos::ParticleDefault::Vertex, false, false> // shuxxx set to false = optimization 1
 		{
 		public:
 
-            static void ParticleToVertices(TileParticle const* particle, chaos::VertexOutput<chaos::ParticleDefault::Vertex> & vertices)
+            static void ParticleToVertices(TileParticle const* particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output)
             {
-                chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices);
+                chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
             }
 
+            static void ParticleToVertices(TileParticle const* particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output)
+            {
+                chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+            }
 
 			static size_t ParticleToVertices(TileParticle const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle)
 			{

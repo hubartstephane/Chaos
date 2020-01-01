@@ -139,30 +139,46 @@ namespace chaos
             return texcoords;
         }
 
-        void GenerateBoxQUADParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, VertexOutput<ParticleDefault::Vertex>& vertices, float rotation)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        void GenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, QuadPrimitive<ParticleDefault::Vertex>& primitive, float rotation)
         {
-            ParticleDefault::Vertex & bl = vertices[0];
+            ParticleDefault::Vertex & bl = primitive[0];
             bl.position.x = corners.bottomleft.x;
             bl.position.y = corners.bottomleft.y;
             bl.texcoord.x = texcoords.bottomleft.x;
             bl.texcoord.y = texcoords.bottomleft.y;
             bl.texcoord.z = texcoords.bitmap_index;
 
-            ParticleDefault::Vertex& br = vertices[1];
+            ParticleDefault::Vertex& br = primitive[1];
             br.position.x = corners.topright.x;
             br.position.y = corners.bottomleft.y;
             br.texcoord.x = texcoords.topright.x;
             br.texcoord.y = texcoords.bottomleft.y;
             br.texcoord.z = texcoords.bitmap_index;
 
-            ParticleDefault::Vertex & tr = vertices[2];
+            ParticleDefault::Vertex & tr = primitive[2];
             tr.position.x = corners.topright.x;
             tr.position.y = corners.topright.y;
             tr.texcoord.x = texcoords.topright.x;
             tr.texcoord.y = texcoords.topright.y;
             tr.texcoord.z = texcoords.bitmap_index;
 
-            ParticleDefault::Vertex & tl = vertices[3];
+            ParticleDefault::Vertex & tl = primitive[3];
             tl.position.x = corners.bottomleft.x;
             tl.position.y = corners.topright.y;
             tl.texcoord.x = texcoords.bottomleft.x;
@@ -183,14 +199,14 @@ namespace chaos
             }
         }
 
-        void GenerateBoxQUADParticle(box2 const& box, ParticleTexcoords const& texcoords, VertexOutput<ParticleDefault::Vertex>& vertices, float rotation)
+        void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, QuadPrimitive<ParticleDefault::Vertex>& primitive, float rotation)
         {
             std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
 
             ParticleCorners particle_corners;
             particle_corners.bottomleft = corners.first;
             particle_corners.topright = corners.second;
-            GenerateBoxQUADParticle(particle_corners, texcoords, vertices, rotation);
+            GenerateBoxParticle(particle_corners, texcoords, primitive, rotation);
         }
 
     }; // namespace ParticleTools

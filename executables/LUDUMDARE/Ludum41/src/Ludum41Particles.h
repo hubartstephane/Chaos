@@ -26,7 +26,7 @@ class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject
 public:
 
 
-    void ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase> & vertices) const;
+    void ParticleToVertices(ParticleObject const* particle, chaos::QuadOutput<VertexBase> & output) const;
 
 
 
@@ -65,7 +65,7 @@ public:
 
 
     // called for every particles
-    void ParticleToVertices(ParticleObject const* particle, chaos::VertexOutput<VertexBase> & vertices, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleObject const* particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
 };
 
 
@@ -102,7 +102,7 @@ public:
 
 	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
-    void ParticleToVertices(ParticleBrick const* particle, chaos::VertexOutput<VertexBase> & vertices, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleBrick const* particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 
@@ -135,7 +135,7 @@ public:
 	size_t ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
 
-    void ParticleToVertices(ParticleMovableObject const* particle, chaos::VertexOutput<VertexBase> & vertices, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleMovableObject const* particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 
 
 
@@ -172,7 +172,7 @@ public:
 	size_t ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
 
 
-    void ParticleToVertices(ParticleChallenge const* particle, chaos::VertexOutput<VertexBase> & vertices) const;
+    void ParticleToVertices(ParticleChallenge const* particle, chaos::QuadOutput<VertexBase>& output) const;
 };
 
 

@@ -2,32 +2,66 @@
 
 namespace death
 {
-    void ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const* particle, chaos::VertexOutput<chaos::ParticleDefault::Vertex> & vertices) const
+    void ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const* particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output) const
     {
-        chaos::ParticleDefault::Vertex& bl = vertices[0];
-        chaos::ParticleDefault::Vertex& br = vertices[1];
-        chaos::ParticleDefault::Vertex& tr = vertices[2];
-        chaos::ParticleDefault::Vertex& tl = vertices[3];
+        chaos::QuadPrimitive<chaos::ParticleDefault::Vertex> primitive = output.AddPrimitive();
 
-        bl.position = glm::vec2(-1.0f, -1.0f);
-        br.position = glm::vec2(+1.0f, -1.0f);
-        tr.position = glm::vec2(+1.0f, +1.0f);
-        tl.position = glm::vec2(-1.0f, +1.0f);
+        primitive[0].position = glm::vec2(-1.0f, -1.0f);
+        primitive[1].position = glm::vec2(+1.0f, -1.0f);
+        primitive[2].position = glm::vec2(+1.0f, +1.0f);
+        primitive[3].position = glm::vec2(-1.0f, +1.0f);
 
+        for (size_t i = 0; i < 4; ++i)
+        {
+            chaos::ParticleDefault::Vertex& vertex = primitive[i];
 
-      
-        // copy the vertices in all triangles vertex
+            glm::vec2 texcoord = vertex.position * 0.5f + glm::vec2(0.5f, 0.5f);
+
+            vertex.texcoord.x = texcoord.x;
+            vertex.texcoord.y = texcoord.y;
+            vertex.texcoord.z = 0.0f;
+            vertex.color = particle->color;
+        }
+    }
+
+    void ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const* particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output) const
+    {
+        chaos::TrianglePairPrimitive<chaos::ParticleDefault::Vertex> primitive = output.AddPrimitive();
+
+        primitive[0].position = glm::vec2(-1.0f, -1.0f);
+        primitive[1].position = glm::vec2(+1.0f, -1.0f);
+        primitive[2].position = glm::vec2(-1.0f, +1.0f);
+
+        primitive[3].position = glm::vec2(-1.0f, +1.0f);
+        primitive[4].position = glm::vec2(+1.0f, -1.0f);
+        primitive[5].position = glm::vec2(+1.0f, +1.0f);
+
         for (size_t i = 0; i < 6; ++i)
         {
-            glm::vec2 texcoord = vertices[i].position * 0.5f + glm::vec2(0.5, 0.5);
+            chaos::ParticleDefault::Vertex& vertex = primitive[i];
 
-            vertices[i].texcoord.x = texcoord.x;
-            vertices[i].texcoord.y = texcoord.y;
-            vertices[i].texcoord.z = 0.0f;
-            vertices[i].color = particle->color;
+            glm::vec2 texcoord = vertex.position * 0.5f + glm::vec2(0.5f, 0.5f);
+
+            vertex.texcoord.x = texcoord.x;
+            vertex.texcoord.y = texcoord.y;
+            vertex.texcoord.z = 0.0f;
+            vertex.color = particle->color;
         }
-
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	size_t ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle) const
 	{

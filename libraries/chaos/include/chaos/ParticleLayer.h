@@ -19,7 +19,7 @@
 #include <chaos/ParticleAccessor.h>
 #include <chaos/ParticleAllocationTrait.h>
 
-#define OLD_RENDERING 1
+#define OLD_RENDERING 0
 
 namespace chaos
 {
@@ -52,6 +52,7 @@ namespace chaos
 CHAOS_GENERATE_HAS_MEMBER(dynamic_particles);
 CHAOS_GENERATE_HAS_MEMBER(dynamic_vertices);
 CHAOS_GENERATE_HAS_MEMBER(vertices_per_particle);
+CHAOS_GENERATE_HAS_MEMBER(primitive_type);
 
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(Tick);
@@ -133,6 +134,15 @@ class ParticleTraitTools
         else
             return true;
 	}
+
+    template<typename TRAIT_TYPE>
+    static PrimitiveType GetPrimitiveType()
+    {
+        if constexpr (has_primitive_type_v<TRAIT_TYPE>)
+            return TRAIT_TYPE::primitive_type;
+        else
+            return PrimitiveType::triangle_pair;
+    }
 };
 
 		// ==============================================================
@@ -241,8 +251,15 @@ class ParticleTraitTools
 		void RemoveFromLayer();
 
 #if !OLD_RENDERING
+
+
         /** transforms the particles into vertices in the buffer */
         virtual void ParticlesToVertices(VertexOutputInterface & vertex_output_interface, void const* layer_trait) const { }
+
+
+
+
+
 #endif
 
 	protected:
@@ -495,22 +512,22 @@ class ParticleTraitTools
         }
 
         template<typename ...PARAMS>
-        void DoParticlesToVerticesLoop(VertexOutput<vertex_type> & vertices, PARAMS... params) const
+        void DoParticlesToVerticesLoop(VertexOutput<vertex_type> & output, PARAMS... params) const
         {
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
             size_t particle_count = particle_accessor.GetCount();
             for (size_t i = 0; i < particle_count; ++i)
             {
-                allocation_trait.ParticleToVertices(&particle_accessor[i], vertices, params...);
+                allocation_trait.ParticleToVertices(&particle_accessor[i], output, params...);
             }
         }
 
 
 
 
-#endif
 
+#else
 
 
 		/** override */
@@ -591,7 +608,7 @@ class ParticleTraitTools
 
 
 
-
+#endif
 
 
 
@@ -840,6 +857,33 @@ class ParticleTraitTools
             // ensure their is some reason to update the rendering data
             if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
                 return true;
+
+            if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
+            {
+
+
+            }
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
+            {
+
+            }
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
+            {
+
+            }
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
+            {
+
+            }
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
+            {
+
+            }
+
+
+
+
+#if 0
             // prepare the data
             VertexOutputInterface vertex_output_interface(this, renderer);
 
@@ -854,6 +898,13 @@ class ParticleTraitTools
                 // transform particles into vertices
                 allocation->ParticlesToVertices(vertex_output_interface, GetLayerTrait());
             }
+
+#endif
+
+
+
+
+
             // mark as up to date
             require_GPU_update = false;
 

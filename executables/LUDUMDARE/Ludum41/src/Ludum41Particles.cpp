@@ -9,7 +9,7 @@
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
-#include <chaos/VertexOutput.h>
+#include <chaos/PrimitiveOutput.h>
 
 // ===========================================================================
 // Object particle system

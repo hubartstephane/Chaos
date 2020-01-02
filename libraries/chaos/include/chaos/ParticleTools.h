@@ -4,7 +4,7 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/ClassTools.h>
-#include <chaos/VertexOutput.h>
+#include <chaos/PrimitiveOutput.h>
 #include <chaos/ParticleDefault.h>
 
 namespace chaos

@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 
 #include <chaos/GPUClasses.h>
-#include <chaos/VertexOutput.h>
+#include <chaos/PrimitiveOutput.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/ParticleAllocationTrait.h>
 

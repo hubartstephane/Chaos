@@ -4,7 +4,7 @@
 #include <chaos/ParticleTools.h> 
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
-#include <chaos/VertexOutput.h> 
+#include <chaos/PrimitiveOutput.h> 
 
 #include <death/Game.h> 
 

@@ -4,7 +4,7 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/EmptyClass.h>
-#include <chaos/VertexOutput.h>
+#include <chaos/PrimitiveOutput.h>
 
 namespace death
 {

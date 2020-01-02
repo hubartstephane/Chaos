@@ -1,4 +1,4 @@
-#include <chaos/VertexOutput.h>
+#include <chaos/PrimitiveOutput.h>
 
 namespace chaos
 {

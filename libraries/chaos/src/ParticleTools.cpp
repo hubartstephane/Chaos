@@ -209,6 +209,69 @@ namespace chaos
             GenerateBoxParticle(particle_corners, texcoords, primitive, rotation);
         }
 
+        void GenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation)
+        {
+            glm::vec2 bl_position = glm::vec2(corners.bottomleft.x, corners.bottomleft.y);
+            glm::vec3 bl_texcoord = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, texcoords.bitmap_index);
+
+            glm::vec2 tr_position = glm::vec2(corners.topright.x, corners.topright.y);
+            glm::vec3 tr_texcoord = glm::vec3(texcoords.topright.x, texcoords.topright.y, texcoords.bitmap_index);
+
+            glm::vec2 tl_position = glm::vec2(corners.bottomleft.x, corners.topright.y);
+            glm::vec3 tl_texcoord = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, texcoords.bitmap_index);
+
+            glm::vec2 br_position = glm::vec2(corners.topright.x, corners.bottomleft.y);
+            glm::vec3 br_texcoord = glm::vec3(texcoords.topright.x, texcoords.bottomleft.y, texcoords.bitmap_index);
+
+            if (rotation != 0.0f)
+            {
+                glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
+
+                float c = std::cos(rotation);
+                float s = std::sin(rotation);
+
+                bl_position = GLMTools::Rotate(bl_position - center_position, c, s) + center_position;
+                tr_position = GLMTools::Rotate(tr_position - center_position, c, s) + center_position;
+                tl_position = GLMTools::Rotate(tl_position - center_position, c, s) + center_position;
+                br_position = GLMTools::Rotate(br_position - center_position, c, s) + center_position;
+            }
+
+            ParticleDefault::Vertex& v0 = primitive[0];
+            ParticleDefault::Vertex& v1 = primitive[1];
+            ParticleDefault::Vertex& v2 = primitive[2];
+            ParticleDefault::Vertex& v3 = primitive[3];
+            ParticleDefault::Vertex& v4 = primitive[4];
+            ParticleDefault::Vertex& v5 = primitive[5];
+
+            v0.position = bl_position;
+            v0.texcoord = bl_texcoord;
+
+            v1.position = br_position;
+            v1.texcoord = br_texcoord;
+
+            v2.position = tl_position;
+            v2.texcoord = tl_texcoord;
+
+            v3.position = tl_position;
+            v3.texcoord = tl_texcoord;
+
+            v4.position = br_position;
+            v4.texcoord = br_texcoord;
+
+            v5.position = tr_position;
+            v5.texcoord = tr_texcoord;
+        }
+
+        void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation)
+        {
+            std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
+
+            ParticleCorners particle_corners;
+            particle_corners.bottomleft = corners.first;
+            particle_corners.topright = corners.second;
+            GenerateBoxParticle(particle_corners, texcoords, primitive, rotation);
+        }
+
     }; // namespace ParticleTools
 
 }; // namespace chaos

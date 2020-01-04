@@ -24,9 +24,9 @@ namespace death
 	{
 	public:
 
-        void ParticleToVertices(ParticleBackground const* particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output) const;
+        void ParticleToVertices(ParticleBackground const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output) const;
 
-        void ParticleToVertices(ParticleBackground const* particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output) const;
+        void ParticleToVertices(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output) const;
 
 		size_t ParticleToVertices(ParticleBackground const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle) const;
 	};

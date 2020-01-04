@@ -531,7 +531,7 @@ class ParticleTraitTools
             size_t particle_count = particle_accessor.GetCount();
             for (size_t i = 0; i < particle_count; ++i)
             {
-                allocation_trait.ParticleToVertices(&particle_accessor[i], output, params...);
+                allocation_trait.ParticleToVertices(particle_accessor[i], output, params...);
             }
         }
 

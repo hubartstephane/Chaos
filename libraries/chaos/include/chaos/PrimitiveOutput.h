@@ -116,6 +116,7 @@ namespace chaos
 
     class PrimitiveOutputBase
     {
+
     public:
 
         /** constructor */
@@ -123,8 +124,8 @@ namespace chaos
             particle_layer(in_particle_layer),
             renderer(in_renderer)
         {
-          //  assert(in_particle_layer != nullptr);
-           // assert(in_renderer != nullptr);
+            assert(in_particle_layer != nullptr);
+            assert(in_renderer != nullptr);
         }
 
     protected:

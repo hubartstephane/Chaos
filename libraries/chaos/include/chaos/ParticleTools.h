@@ -115,74 +115,9 @@ namespace chaos
         void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, QuadPrimitive<ParticleDefault::Vertex>& primitive, float rotation = 0.0f);
 
         /** fill the vertices array with 6 vertices corresponding to 1 TRIANGLE PAIR */
-        template<typename VERTEX_TYPE>
-        void GenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, TrianglePairPrimitive<VERTEX_TYPE> & primitive, float rotation = 0.0f)
-        {
-            VERTEX_TYPE bl;
-            bl.position.x = corners.bottomleft.x;
-            bl.position.y = corners.bottomleft.y;
-            bl.texcoord.x = texcoords.bottomleft.x;
-            bl.texcoord.y = texcoords.bottomleft.y;
-            bl.texcoord.z = texcoords.bitmap_index;
+        void GenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation = 0.0f);
 
-            VERTEX_TYPE tr;
-            tr.position.x = corners.topright.x;
-            tr.position.y = corners.topright.y;
-            tr.texcoord.x = texcoords.topright.x;
-            tr.texcoord.y = texcoords.topright.y;
-            tr.texcoord.z = texcoords.bitmap_index;
-
-            VERTEX_TYPE tl;
-            tl.position.x = corners.bottomleft.x;
-            tl.position.y = corners.topright.y;
-            tl.texcoord.x = texcoords.bottomleft.x;
-            tl.texcoord.y = texcoords.topright.y;
-            tl.texcoord.z = texcoords.bitmap_index;
-
-            VERTEX_TYPE br;
-            br.position.x = corners.topright.x;
-            br.position.y = corners.bottomleft.y;
-            br.texcoord.x = texcoords.topright.x;
-            br.texcoord.y = texcoords.bottomleft.y;
-            br.texcoord.z = texcoords.bitmap_index;
-
-            if (rotation != 0.0f)
-            {
-                glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
-
-                float c = std::cos(rotation);
-                float s = std::sin(rotation);
-
-                bl.position = GLMTools::Rotate(bl.position - center_position, c, s) + center_position;
-                br.position = GLMTools::Rotate(br.position - center_position, c, s) + center_position;
-                tr.position = GLMTools::Rotate(tr.position - center_position, c, s) + center_position;
-                tl.position = GLMTools::Rotate(tl.position - center_position, c, s) + center_position;
-            }
-
-            primitive[0] = bl;
-            primitive[1] = br;
-            primitive[2] = tr;
-
-            primitive[3] = bl;
-            primitive[4] = tr;
-            primitive[5] = tl;
-        }
-
-        template<typename VERTEX_TYPE>
-        void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, TrianglePairPrimitive<VERTEX_TYPE> & primitive, float rotation = 0.0f)
-        {
-            std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
-
-            ParticleCorners particle_corners;
-            particle_corners.bottomleft = corners.first;
-            particle_corners.topright = corners.second;
-            GenerateBoxParticle(particle_corners, texcoords, primitive, rotation);
-        }
-
-
-
-
-
+        void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation = 0.0f);
 
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)

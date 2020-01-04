@@ -32,12 +32,12 @@ namespace death
 		{
 		public:
 
-            static void ParticleToVertices(TileParticle const* particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output)
+            static void ParticleToVertices(TileParticle const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output)
             {
                 chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
             }
 
-            static void ParticleToVertices(TileParticle const* particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output)
+            static void ParticleToVertices(TileParticle const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output)
             {
                 chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
             }

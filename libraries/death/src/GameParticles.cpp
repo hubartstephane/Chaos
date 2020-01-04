@@ -2,7 +2,7 @@
 
 namespace death
 {
-    void ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const* particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output) const
+    void ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output) const
     {
         chaos::QuadPrimitive<chaos::ParticleDefault::Vertex> primitive = output.AddPrimitive();
 
@@ -20,11 +20,11 @@ namespace death
             vertex.texcoord.x = texcoord.x;
             vertex.texcoord.y = texcoord.y;
             vertex.texcoord.z = 0.0f;
-            vertex.color = particle->color;
+            vertex.color = particle.color;
         }
     }
 
-    void ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const* particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output) const
+    void ParticleBackgroundTrait::ParticleToVertices(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output) const
     {
         chaos::TrianglePairPrimitive<chaos::ParticleDefault::Vertex> primitive = output.AddPrimitive();
 
@@ -45,7 +45,7 @@ namespace death
             vertex.texcoord.x = texcoord.x;
             vertex.texcoord.y = texcoord.y;
             vertex.texcoord.z = 0.0f;
-            vertex.color = particle->color;
+            vertex.color = particle.color;
         }
     }
 

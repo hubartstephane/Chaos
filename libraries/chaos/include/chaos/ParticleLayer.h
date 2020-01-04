@@ -136,12 +136,12 @@ class ParticleTraitTools
 	}
 
     template<typename TRAIT_TYPE>
-    static PrimitiveType GetPrimitiveType()
+    static constexpr PrimitiveType GetPrimitiveType()
     {
         if constexpr (has_primitive_type_v<TRAIT_TYPE>)
             return TRAIT_TYPE::primitive_type;
         else
-            return PrimitiveType::triangle_pair;
+            return PrimitiveType::quad;
     }
 };
 
@@ -254,7 +254,7 @@ class ParticleTraitTools
 
 
         /** transforms the particles into vertices in the buffer */
-        virtual void ParticlesToVertices(VertexOutputInterface & vertex_output_interface, void const* layer_trait) const { }
+     //   virtual void ParticlesToVertices(PrimitiveOutputBase & output, void const* layer_trait) const { }
 
 
 
@@ -359,6 +359,45 @@ class ParticleTraitTools
 			ConditionalRequireGPUUpdate(true, false);
 			return true;
 		}
+
+#if !OLD_RENDERING
+        /** transforms the particles into vertices in the buffer */
+        template<typename PRIMITIVE_OUTPUT_TYPE>
+        void ParticlesToVertices(PRIMITIVE_OUTPUT_TYPE& output, void const* layer_trait) const
+        {
+            if constexpr (has_LayerTrait_v<allocation_trait_type>)
+            {
+                layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
+
+                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
+                {
+                    DoParticlesToVerticesLoop(
+                        output,
+                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
+                        typed_layer_trait);
+                }
+                else
+                {
+                    DoParticlesToVerticesLoop(
+                        output,
+                        typed_layer_trait);
+                }
+            }
+            else
+            {
+                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
+                {
+                    DoParticlesToVerticesLoop(
+                        output,
+                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait)); // do not use a temp variable, so it can be a left-value reference
+                }
+                else
+                {
+                    DoParticlesToVerticesLoop(output);
+                }
+            }
+        }
+#endif
 
 	protected:
 
@@ -470,49 +509,22 @@ class ParticleTraitTools
 
 
 
+#if 0
 
+        // XXX : due to a REINTERPRET CAST in code, we need     PrimitiveOutputBase  &   TypedPrimitiveOutputBase<...>  to be equivalent
+        static_assert(!std::is_polymorphic_v<PrimitiveOutputBase>, "PrimitiveOutputBase cannot have virtual functions");
+        // XXX : due to a REINTERPRET CAST in code, we need     PrimitiveOutputBase  &   TypedPrimitiveOutputBase<...>  to be equivalent
+        static_assert(!std::is_polymorphic_v<TypedPrimitiveOutputBase<VERTEX_TYPE, VERTICES_COUNT>>, "TypedPrimitiveOutputBase<...> cannot have virtual functions");
+
+        static_assert(sizeof(TypedPrimitiveOutputBase<VERTEX_TYPE, VERTICES_COUNT>) == sizeof(PrimitiveOutputBase), "TypedPrimitiveOutputBase<...> cannot have extra data from its parent : PrimitiveOutputBase");
+
+#endif
 
 #if !OLD_RENDERING
-        /** transforms the particles into vertices in the buffer */
-        virtual void ParticlesToVertices(VertexOutputInterface& vertex_output_interface, void const* layer_trait) const override
-        {
-            VertexOutput<vertex_type> vertex_output(vertex_output_interface);
-           
-            if constexpr (has_LayerTrait_v<allocation_trait_type>)
-            {
-                layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
+  
 
-                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
-                {
-                    DoParticlesToVerticesLoop(
-                        vertex_output,
-                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
-                        typed_layer_trait);
-                }
-                else
-                {
-                    DoParticlesToVerticesLoop(
-                        vertex_output,
-                        typed_layer_trait);
-                }
-            }
-            else
-            {
-                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
-                {
-                    DoParticlesToVerticesLoop(
-                        vertex_output,
-                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait)); // do not use a temp variable, so it can be a left-value reference
-                }
-                else
-                {
-                    DoParticlesToVerticesLoop(vertex_output);
-                }
-            }     
-        }
-
-        template<typename ...PARAMS>
-        void DoParticlesToVerticesLoop(VertexOutput<vertex_type> & output, PARAMS... params) const
+        template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
+        void DoParticlesToVerticesLoop(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
         {
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
@@ -860,55 +872,50 @@ class ParticleTraitTools
 
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
-
-
+                TriangleOutput<vertex_type> output(this, renderer);
+                ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
             {
-
+                TrianglePairOutput<vertex_type> output(this, renderer);
+                ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
             {
-
+                QuadOutput<vertex_type> output(this, renderer);
+                ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
             {
-
+                TriangleStripOutput<vertex_type> output(this, renderer);
+                ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
             {
-
+                TriangleFanOutput<vertex_type> output(this, renderer);
+                ParticlesToVerticesLoop(output);
             }
-
-
-
-
-#if 0
-            // prepare the data
-            VertexOutputInterface vertex_output_interface(this, renderer);
-
-            // convert particles into vertices
-            size_t count = particles_allocations.size();
-            for (size_t i = 0; i < count; ++i)
-            {
-                // get the allocation, ignore if invisible
-                ParticleAllocationBase* allocation = particles_allocations[i].get();
-                if (!allocation->IsVisible())
-                    continue;
-                // transform particles into vertices
-                allocation->ParticlesToVertices(vertex_output_interface, GetLayerTrait());
-            }
-
-#endif
-
-
-
-
 
             // mark as up to date
             require_GPU_update = false;
 
             return true;
+        }
+
+        // convert particles into vertices
+        template<typename PRIMITIVE_OUTPUT_TYPE>
+        void ParticlesToVerticesLoop(PRIMITIVE_OUTPUT_TYPE& output)
+        {
+            size_t count = particles_allocations.size();
+            for (size_t i = 0; i < count; ++i)
+            {
+                // get the allocation, ignore if invisible
+                ParticleAllocation<allocation_trait_type> * allocation = auto_cast(particles_allocations[i].get());
+                if (!allocation->IsVisible())
+                    continue;
+                // transform particles into vertices
+                allocation->ParticlesToVertices(output, GetLayerTrait());
+            }
         }
 #endif
 

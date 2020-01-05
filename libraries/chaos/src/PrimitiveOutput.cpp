@@ -3,14 +3,26 @@
 namespace chaos
 {
 
-    void* PrimitiveOutputBase::GeneratePrimitive(size_t buffer_size, size_t vertices_count)
+    char* PrimitiveOutputBase::GeneratePrimitive(size_t required_size)
     {
+        assert(required_size > 0);
+
+        // enought memory reserved for this primitive
+        if (buffer_start + required_size <= buffer_end)
+        {
+            char* result = buffer_start;
+            buffer_start += required_size;
+            return result;
+        }
 
 
 
 
 
-        return new char[buffer_size];
+
+
+
+        return new char[required_size];
     }
 
 }; // namespace chaos

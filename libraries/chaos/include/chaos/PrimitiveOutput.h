@@ -33,7 +33,7 @@ namespace chaos
         /** copy constructor */
         PrimitiveBase(PrimitiveBase const& src) = default;
         /** initialization constructor */
-        PrimitiveBase(void* in_buffer, size_t in_vertex_size, size_t in_vertices_count) :
+        PrimitiveBase(char* in_buffer, size_t in_vertex_size, size_t in_vertices_count) :
             buffer(in_buffer),
             vertex_size(in_vertex_size),
             vertices_count(in_vertices_count)
@@ -44,7 +44,7 @@ namespace chaos
         }
 
         /** gets the buffer for this primitive */
-        void* GetBuffer() const { return buffer; }
+        char* GetBuffer() const { return buffer; }
         /** gets the size of one vertice of this primitive */
         size_t GetVertexSize() const { return vertex_size; }
         /** gets the number of vertices for this primitive */
@@ -53,7 +53,7 @@ namespace chaos
     protected:
 
         /** the buffer where we write buffer */
-        void* buffer = nullptr;
+        char* buffer = nullptr;
         /** the size of a vertex for this primitive */
         size_t vertex_size = 0;
         /** the number of vertices for this primitive */
@@ -80,21 +80,21 @@ namespace chaos
         TypedPrimitiveBase(TypedPrimitiveBase<OTHER_VERTEX_TYPE> const& src, std::enable_if_t<std::is_base_of_v<VERTEX_TYPE, OTHER_VERTEX_TYPE>, int> = 0) :
             TypedPrimitiveBase(src.GetBuffer(), src.GetVertexSize(), src.GetVerticesCount()) {}
         /** constructor */
-        TypedPrimitiveBase(void* in_buffer, size_t in_vertex_size, size_t in_vertices_count) :
+        TypedPrimitiveBase(char* in_buffer, size_t in_vertex_size, size_t in_vertices_count) :
             PrimitiveBase(in_buffer, in_vertex_size, in_vertices_count) {}
 
         /** accessor */
         vertex_type & operator [](size_t index)
         {
             assert(index < vertices_count);
-            return *((vertex_type*)(((char*)buffer) + vertex_size * index));
+            return *((vertex_type*)(buffer + vertex_size * index));
         }
 
         /** const accessor */
         vertex_type const & operator [](size_t index) const
         {
             assert(index < vertices_count);
-            return *((vertex_type const*)(((char const*)buffer) + vertex_size * index));
+            return *((vertex_type const*)(buffer + vertex_size * index));
         }
     };
 
@@ -128,10 +128,13 @@ namespace chaos
             assert(in_renderer != nullptr);
         }
 
+        /** gets the size of one vertice of the generated primitive */
+        size_t GetVertexSize() const { return vertex_size; }
+
     protected:
 
         /** allocate a buffer for the primitive and register a new primitive */
-        void* GeneratePrimitive(size_t buffer_size, size_t vertices_count);
+        char* GeneratePrimitive(size_t required_size);
 
     protected:
 
@@ -139,6 +142,13 @@ namespace chaos
         ParticleLayerBase* particle_layer = nullptr;
         /** the renderer used fence requests */
         GPURenderer* renderer = nullptr;
+
+        /** start of currently allocated buffer */
+        char* buffer_start = nullptr;
+        /** end of currently allocated buffer */
+        char* buffer_end = nullptr;
+        /** size of a vertex */
+        size_t vertex_size = 0;
     };
 
     /**
@@ -150,23 +160,28 @@ namespace chaos
     {
     public:
 
+        static constexpr size_t vertices_count = VERTICES_COUNT; // should be 0 for STRIPS & FANS
+
         using vertex_type = VERTEX_TYPE;
 
-        using primitive_type = TypedPrimitiveBase<VERTEX_TYPE, VERTICES_COUNT>;
+        using primitive_type = TypedPrimitiveBase<VERTEX_TYPE, vertices_count>;
 
         /** constructor */
         TypedPrimitiveOutputBase(ParticleLayerBase* in_particle_layer, GPURenderer* in_renderer) :
-            PrimitiveOutputBase(in_particle_layer, in_renderer) {}
+            PrimitiveOutputBase(in_particle_layer, in_renderer) 
+        {
+            vertex_size = sizeof(vertex_type);
+        }
 
         /** add a primitive */
-        primitive_type AddPrimitive(size_t vertices_count = 0)
+        primitive_type AddPrimitive(size_t custom_vertices_count = 0)
         {
-            assert((VERTICES_COUNT == 0) ^ (vertices_count == 0));
+            assert((vertices_count == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
 
 
 
             // implementation for STRIPS or FANS
-            if constexpr (VERTICES_COUNT == 0)
+            if constexpr (vertices_count == 0)
             {
                 primitive_type result;
 
@@ -182,15 +197,14 @@ namespace chaos
             else
             {
                 return primitive_type(
-                    GeneratePrimitive(GetVertexSize() * VERTICES_COUNT, VERTICES_COUNT),
-                    GetVertexSize(),
-                    VERTICES_COUNT
+                    GeneratePrimitive(vertex_size * vertices_count),
+                    vertex_size,
+                    vertices_count
                 );
             }
         }
 
-        /** gets the size of one vertice of the generated primitive */
-        size_t GetVertexSize() const { return sizeof(VERTEX_TYPE); }
+
     };
 
     /**

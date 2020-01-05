@@ -259,6 +259,11 @@ namespace chaos
         return 1; // 1 DrawCall
 
 #else
+
+        GPUFence* fence = nullptr; 
+
+        GLenum gl_primitive_type = GetGLPrimitiveType();
+        
         int result = 0;
 
         GPUProgram const* program = nullptr;
@@ -280,14 +285,20 @@ namespace chaos
                 continue;
 
             glBindVertexArray(vertex_array->GetResourceID());
+
             // one draw call for the whole buffer
             GPUDrawPrimitive primitive;
-            primitive.primitive_type = GL_TRIANGLES;
+            primitive.primitive_type = gl_primitive_type;
             primitive.indexed = false;
             primitive.count = (int)rd.vertices_count;
             primitive.start = 0;
             primitive.base_vertex_index = 0;
             renderer->Draw(primitive, render_params.instancing);
+
+            // mark the re buffer as used until the current fence is over
+            if (fence == nullptr)
+                fence = renderer->GetCurrentFrameFence();
+            rd.fence = fence;
 
             ++result;
         }

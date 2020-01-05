@@ -134,7 +134,7 @@ class ParticleTraitTools
         else
             return true;
 	}
-
+    /** returns the primitive type used for the rendering */
     template<typename TRAIT_TYPE>
     static constexpr PrimitiveType GetPrimitiveType()
     {
@@ -143,6 +143,24 @@ class ParticleTraitTools
         else
             return PrimitiveType::quad;
     }
+    /** returns the primitive type used for rendering (OpenGL point of view) */
+    template<typename TRAIT_TYPE>
+    static constexpr GLenum GetGLPrimitiveType()
+    {
+        constexpr PrimitiveType primitive_type = GetPrimitiveType<TRAIT_TYPE>();
+        if constexpr (primitive_type == PrimitiveType::triangle)
+            return GL_TRIANGLES;
+        if constexpr (primitive_type == PrimitiveType::triangle_pair)
+            return GL_TRIANGLES;
+        if constexpr (primitive_type == PrimitiveType::quad)
+            return GL_QUADS;
+        if constexpr (primitive_type == PrimitiveType::triangle_strip)
+            return GL_TRIANGLE_STRIP;
+        if constexpr (primitive_type == PrimitiveType::triangle_fan)
+            return GL_TRIANGLE_FAN;
+        return GL_NONE;
+    }
+
 };
 
 		// ==============================================================
@@ -509,17 +527,6 @@ class ParticleTraitTools
 
 
 
-#if 0
-
-        // XXX : due to a REINTERPRET CAST in code, we need     PrimitiveOutputBase  &   TypedPrimitiveOutputBase<...>  to be equivalent
-        static_assert(!std::is_polymorphic_v<PrimitiveOutputBase>, "PrimitiveOutputBase cannot have virtual functions");
-        // XXX : due to a REINTERPRET CAST in code, we need     PrimitiveOutputBase  &   TypedPrimitiveOutputBase<...>  to be equivalent
-        static_assert(!std::is_polymorphic_v<TypedPrimitiveOutputBase<VERTEX_TYPE, VERTICES_COUNT>>, "TypedPrimitiveOutputBase<...> cannot have virtual functions");
-
-        static_assert(sizeof(TypedPrimitiveOutputBase<VERTEX_TYPE, VERTICES_COUNT>) == sizeof(PrimitiveOutputBase), "TypedPrimitiveOutputBase<...> cannot have extra data from its parent : PrimitiveOutputBase");
-
-#endif
-
 #if !OLD_RENDERING
   
 
@@ -651,6 +658,8 @@ class ParticleTraitTools
         GPUVertexArrayCache vertex_array_cache;
         /** number of used vertices in the vertex buffer */
         size_t vertices_count = 0;
+        /** the fence for the last time the buffer as been used in rendering */
+        shared_ptr<GPUFence> fence;
     };
 
 	// ==============================================================
@@ -721,6 +730,9 @@ class ParticleTraitTools
 
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration GetVertexDeclaration() const { return GPUVertexDeclaration(); }
+
+        /** returns the OpenGL primitive type */
+        virtual GLenum GetGLPrimitiveType() const { return GL_NONE; }
 
 	public:
 
@@ -849,7 +861,9 @@ class ParticleTraitTools
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
 		/** override */
-		virtual GPUVertexDeclaration GetVertexDeclaration() const { return GetTypedVertexDeclaration(boost::mpl::identity<vertex_type>()); }
+		virtual GPUVertexDeclaration GetVertexDeclaration() const override { return GetTypedVertexDeclaration(boost::mpl::identity<vertex_type>()); }
+        /** override */
+        virtual GLenum GetGLPrimitiveType() const override { return ParticleTraitTools::GetGLPrimitiveType<allocation_trait_type>(); }
 
 	protected:
 
@@ -869,7 +883,12 @@ class ParticleTraitTools
             // ensure their is some reason to update the rendering data
             if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
                 return true;
+            // get
 
+            // release all previous rendering information
+
+
+            //
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
                 TriangleOutput<vertex_type> output(this, renderer);

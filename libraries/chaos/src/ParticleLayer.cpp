@@ -329,7 +329,33 @@ namespace chaos
 
 
 
-#if OLD_RENDERING
+#if !OLD_RENDERING
+
+    bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer* renderer)
+    {
+        // update the vertex declaration
+        UpdateVertexDeclaration();
+        // ensure their is some reason to update the rendering data
+        if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
+            return true;
+        // get the previous number of required vertices & release all previous rendering information
+        size_t previous_vertices_count = 0;
+        for (ParticleLayerBaseRenderData const& rd : render_data)
+        {
+            previous_vertices_count += rd.vertices_count;
+            particle_manager->AddAvailableGPUBuffer(rd.vertex_buffer.get(), rd.fence.get());
+        }
+        render_data.clear();
+        // select PrimitiveOutput and collect vertices
+        DoUpdateGPUBuffers(renderer, previous_vertices_count);
+        // mark as up to date
+        require_GPU_update = false;
+
+        return true;
+    }
+
+#else
+
 	bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer * renderer)
 	{
 		// update the vertex declaration
@@ -385,7 +411,6 @@ namespace chaos
 
         return true;
     }
-
 
 #endif
 

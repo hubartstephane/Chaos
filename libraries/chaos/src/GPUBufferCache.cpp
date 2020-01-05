@@ -29,6 +29,15 @@ namespace chaos
         return false;
     }
 
+    bool GPUBufferCache::GiveBuffer(GPUBufferCacheEntry& entry, GPUFence* fence)
+    {
+        GPUBufferCacheEntries* cache_entry = GetCacheEntryForFence(fence);
+        if (cache_entry == nullptr)
+            return false;
+        cache_entry->buffers.push_back(entry);
+        return true;
+    }
+
     bool GPUBufferCache::GetBuffer(size_t required_size, GPUBufferCacheEntry & result)
     {
         assert(required_size > 0);
@@ -63,15 +72,10 @@ namespace chaos
 
     GPUBufferCacheEntries* GPUBufferCache::GetCacheEntryForFence(GPUFence* fence)
     {
-        assert(fence != nullptr);
-
-        // maybe an entry for this fence already exists : in that case it's necesseraly on top of the stack
-        if (entries.size() > 0)
-        {
-            GPUBufferCacheEntries& last_entry = entries[entries.size() - 1];
-            if (last_entry.fence == fence)
-                return &last_entry;
-        }
+        // maybe an entry for this fence already exists
+        for (GPUBufferCacheEntries &entry : entries)
+            if (entry.fence == fence)
+                return &entry;
         // create a new entry for incomming fence
         GPUBufferCacheEntries new_entry;
         new_entry.fence = fence;

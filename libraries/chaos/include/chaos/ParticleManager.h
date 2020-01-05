@@ -73,6 +73,8 @@ namespace chaos
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayerBase * layer);
 
+
+
 	protected:
 		
 		/** tick the manager */
@@ -85,6 +87,8 @@ namespace chaos
 
         /** allocate a GPUBuffer for the VertexOutput (if renderer is not null, the GPUBuffer will be given back for other once the frame is over) */
         bool AllocateGPUBuffer(size_t required_size, GPURenderer * renderer, shared_ptr<GPUBuffer>& result);
+        /** give a buffer to the manager that will be able to give it back later for customers */
+        void AddAvailableGPUBuffer(GPUBuffer* buffer, GPUFence* fence);
 
 	protected:
 

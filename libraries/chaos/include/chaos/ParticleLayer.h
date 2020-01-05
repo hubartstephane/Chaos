@@ -772,9 +772,12 @@ class ParticleTraitTools
 		/** internal method to update particles (returns true whether there was real changes) */
 		virtual bool TickAllocations(double delta_time);
 
-#if OLD_RENDERING
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;
+
+#if !OLD_RENDERING
+        /** select the PrimitiveOutput and update the rendering GPU resources */
+        virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t previous_frame_vertices_count) {}
 #endif
 
 	protected:
@@ -876,19 +879,9 @@ class ParticleTraitTools
 
 #if !OLD_RENDERING
         /** override */
-        virtual bool DoUpdateGPUResources(GPURenderer* renderer) override
+        virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t previous_frame_vertices_count) override
         {
-            // update the vertex declaration
-            UpdateVertexDeclaration();
-            // ensure their is some reason to update the rendering data
-            if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
-                return true;
-            // get
-
-            // release all previous rendering information
-
-
-            //
+            // select PrimitiveOutput and collect vertices
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
                 TriangleOutput<vertex_type> output(this, renderer);
@@ -914,11 +907,6 @@ class ParticleTraitTools
                 TriangleFanOutput<vertex_type> output(this, renderer);
                 ParticlesToVerticesLoop(output);
             }
-
-            // mark as up to date
-            require_GPU_update = false;
-
-            return true;
         }
 
         // convert particles into vertices

@@ -280,7 +280,7 @@ namespace chaos
                     return 0;
             }
             // get the vertex array
-            GPUVertexArray const * vertex_array = rd.vertex_array_cache.FindOrCreateVertexArray(program, rd.vertex_buffer.get(), nullptr, vertex_declaration, 0);
+            GPUVertexArray const * vertex_array = rd.vertex_array_cache.FindOrCreateVertexArray(program, rd.cached_vertex_buffer.buffer.get(), nullptr, vertex_declaration, 0);
             if (vertex_array == nullptr)
                 continue;
 
@@ -338,6 +338,14 @@ namespace chaos
         // ensure their is some reason to update the rendering data
         if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
             return true;
+
+        //
+
+
+
+#if 0
+
+
         // get the previous number of required vertices & release all previous rendering information
         size_t previous_vertices_count = 0;
         for (ParticleLayerBaseRenderData const& rd : render_data)
@@ -346,6 +354,10 @@ namespace chaos
             particle_manager->AddAvailableGPUBuffer(rd.vertex_buffer.get(), rd.fence.get());
         }
         render_data.clear();
+#endif
+
+        size_t previous_vertices_count = 0;
+
         // select PrimitiveOutput and collect vertices
         DoUpdateGPUBuffers(renderer, previous_vertices_count);
         // mark as up to date

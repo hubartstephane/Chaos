@@ -5,6 +5,7 @@
 #include <chaos/ReferencedObject.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUBuffer.h>
+#include <chaos/GPUBufferCache.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUVertexArrayCache.h>
@@ -14,8 +15,6 @@
 #include <chaos/ClassTools.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/GPURenderable.h>
-#include <chaos/Tickable.h>
-#include <chaos/EmptyClass.h>
 #include <chaos/ParticleAccessor.h>
 #include <chaos/ParticleAllocationTrait.h>
 
@@ -651,9 +650,9 @@ class ParticleTraitTools
     class ParticleLayerBaseRenderData
     {
     public:
-
-        /** the vertex buffer for the rendering */
-        shared_ptr<GPUBuffer> vertex_buffer;
+        
+        /** the 'vertex buffer' for the rendering (+mapping data) */
+        GPUBufferCacheEntry cached_vertex_buffer;
         /** the cache for vertex array */
         GPUVertexArrayCache vertex_array_cache;
         /** number of used vertices in the vertex buffer */

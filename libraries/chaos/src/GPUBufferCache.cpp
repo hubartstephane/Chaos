@@ -6,7 +6,7 @@
 namespace chaos
 {
 
-    bool GPUBufferCacheEntries::GetBuffer(size_t required_size, shared_ptr<GPUBuffer> & result)
+    bool GPUBufferCacheEntries::GetBuffer(size_t required_size, GPUBufferCacheEntry& result)
     {
         assert(required_size > 0);
 
@@ -15,20 +15,21 @@ namespace chaos
         size_t count = buffers.size();
         for (size_t i = 0; i < count; ++i)
         {
-            GPUBuffer* buffer = buffers[i].get();
+            GPUBufferCacheEntry& entry = buffers[i];
+
             // buffer too small ? or too big ?
-            size_t buffer_size = buffer->GetBufferSize();
+            size_t buffer_size = entry.buffer->GetBufferSize();
             if (buffer_size < required_size || buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
                 continue;
             // buffer found            
-            result = buffer;
+            result = entry;
             buffers.erase(buffers.begin() + i);
             return true;
         }
         return false;
     }
 
-    bool GPUBufferCache::GetBuffer(size_t required_size, GPURenderer* renderer, shared_ptr<GPUBuffer>& result)
+    bool GPUBufferCache::GetBuffer(size_t required_size, GPUBufferCacheEntry & result)
     {
         assert(required_size > 0);
 
@@ -54,18 +55,10 @@ namespace chaos
                 --i;
             }
             // return the buffer if OK
-            if (result != nullptr)
-            {
-                if (renderer != nullptr) // renderer not null => buffer is given back once frame is finished
-                {
-                    GPUBufferCacheEntries* entries = GetCacheEntryForFence(renderer->GetCurrentFrameFence()); // as soon as current frame is rendered, the GPUBuffer will be available for others
-                    if (entries != nullptr)
-                        entries->buffers.push_back(result);
-                }
+            if (result.buffer != nullptr)
                 return true;
-            }                
         }
-        return CreateBuffer(required_size, renderer, result);
+        return CreateBuffer(required_size, result);
     }
 
     GPUBufferCacheEntries* GPUBufferCache::GetCacheEntryForFence(GPUFence* fence)
@@ -86,23 +79,13 @@ namespace chaos
         return &entries[entries.size() - 1];
     }
 
-    bool GPUBufferCache::CreateBuffer(size_t required_size, GPURenderer * renderer, shared_ptr<GPUBuffer>& result)
+    bool GPUBufferCache::CreateBuffer(size_t required_size, GPUBufferCacheEntry & result)
     {
-        // create an entry for current fence (or get existing one)
-        GPUBufferCacheEntries* entries = nullptr;
-        if (renderer != nullptr)
-        {
-            entries = GetCacheEntryForFence(renderer->GetCurrentFrameFence());
-            if (entries == nullptr)
-                return nullptr;
-        }
         // create a dynamic buffer
-        result = new GPUBuffer(true);
-        if (result == nullptr)
+        result.buffer = new GPUBuffer(true);
+        if (result.buffer == nullptr)
             return false;
-        result->SetBufferData(nullptr, required_size); // no allocation, but set buffer size forever
-        if (entries != nullptr)
-            entries->buffers.push_back(result); // the buffer will be available as soon as current frame is over
+        result.buffer->SetBufferData(nullptr, required_size); // no allocation, but set buffer size forever
         return true;
     }
 

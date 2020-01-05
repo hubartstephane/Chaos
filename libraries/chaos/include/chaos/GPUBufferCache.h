@@ -52,6 +52,8 @@ namespace chaos
 
         /** get a buffer of required size (looking for cached resources first) */
         bool GetBuffer(size_t required_size, GPUBufferCacheEntry & result);
+        /** give back a buffer to this cache to be used later */
+        bool GiveBuffer(GPUBufferCacheEntry& entry, GPUFence* fence);
 
     protected:
 

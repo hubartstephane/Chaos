@@ -11,6 +11,7 @@
 #include <chaos/GPUVertexArrayCache.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUDrawPrimitive.h>
+#include <chaos/GPUDynamicMesh.h>
 #include <chaos/TextureArrayAtlas.h>
 #include <chaos/ClassTools.h>
 #include <chaos/ParticleTools.h>
@@ -795,6 +796,13 @@ class ParticleTraitTools
 
         /** whether there was changes in particles, and a vertex array need to be recomputed */
         bool require_GPU_update = false;
+
+
+        /** the corresponding dynamic mesh */
+        GPUDynamicMesh dynamic_mesh;
+
+
+
 
         /** the rendering data */
         std::vector<ParticleLayerBaseRenderData> render_data;

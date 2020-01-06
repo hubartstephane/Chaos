@@ -891,27 +891,27 @@ class ParticleTraitTools
             // select PrimitiveOutput and collect vertices
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
-                TriangleOutput<vertex_type> output(this, renderer);
+                TriangleOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
             {
-                TrianglePairOutput<vertex_type> output(this, renderer);
+                TrianglePairOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
             {
-                QuadOutput<vertex_type> output(this, renderer);
+                QuadOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
             {
-                TriangleStripOutput<vertex_type> output(this, renderer);
+                TriangleStripOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
             {
-                TriangleFanOutput<vertex_type> output(this, renderer);
+                TriangleFanOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
                 ParticlesToVerticesLoop(output);
             }
         }

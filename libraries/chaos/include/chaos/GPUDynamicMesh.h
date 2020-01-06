@@ -5,6 +5,7 @@
 #include <chaos/GPUClasses.h>
 #include <chaos/GPURenderable.h>
 #include <chaos/GPUBufferCache.h>
+#include <chaos/GPUFence.h>
 
 
 namespace chaos
@@ -32,7 +33,7 @@ namespace chaos
     public:
 
         /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferCache) */
-        void Clear(GPUBufferCache* buffer_cache, GPUFence * fence);
+        void Clear(GPUBufferCache* buffer_cache);
 
     protected:
 
@@ -43,6 +44,8 @@ namespace chaos
 
         /** the element to render */
         std::vector<GPUDynamicMeshElement> elements;
+        /** the last time the dynamic mesh was rendered with current elements */
+        shared_ptr<GPUFence> last_rendered_fence;
     };
 
 }; // namespace chaos

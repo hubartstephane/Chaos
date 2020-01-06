@@ -73,7 +73,10 @@ namespace chaos
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayerBase * layer);
 
-
+        /** gets the buffer cache */
+        GPUBufferCache& GetBufferCache() { return buffer_cache; }
+        /** gets the buffer cache */
+        GPUBufferCache const& GetBufferCache() const { return buffer_cache; }
 
 	protected:
 		

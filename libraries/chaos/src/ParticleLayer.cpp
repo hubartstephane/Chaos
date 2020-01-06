@@ -338,27 +338,10 @@ namespace chaos
         // ensure their is some reason to update the rendering data
         if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
             return true;
-
-        //
-
-
-
-#if 0
-
-
-        // get the previous number of required vertices & release all previous rendering information
-        size_t previous_vertices_count = 0;
-        for (ParticleLayerBaseRenderData const& rd : render_data)
-        {
-            previous_vertices_count += rd.vertices_count;
-            particle_manager->AddAvailableGPUBuffer(rd.vertex_buffer.get(), rd.fence.get());
-        }
-        render_data.clear();
-#endif
-
-        size_t previous_vertices_count = 0;
-
+        // clear previous dynamic mesh (and give buffers back for further usage)
+        dynamic_mesh.Clear(particle_manager->GetBufferCache());
         // select PrimitiveOutput and collect vertices
+        size_t previous_vertices_count = 0;
         DoUpdateGPUBuffers(renderer, previous_vertices_count);
         // mark as up to date
         require_GPU_update = false;

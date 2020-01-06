@@ -12,6 +12,7 @@ namespace chaos
 	class GPUBufferPool;
     class GPUBufferCache;
 	class GPUDrawPrimitive;
+    class GPUDynamicMesh;
 	class GPUFence;
 	class GPUFileResource;
 	class GPUFramebufferAttachmentInfo;

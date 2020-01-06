@@ -120,11 +120,12 @@ namespace chaos
     public:
 
         /** constructor */
-        PrimitiveOutputBase(ParticleLayerBase* in_particle_layer, GPURenderer* in_renderer) :
-            particle_layer(in_particle_layer),
+        PrimitiveOutputBase(GPUDynamicMesh * in_dynamic_mesh, GPUBufferCache * in_buffer_cache, GPURenderer* in_renderer) :
+            dynamic_mesh(in_dynamic_mesh),
+            buffer_cache(in_buffer_cache),
             renderer(in_renderer)
         {
-            assert(in_particle_layer != nullptr);
+            assert(in_dynamic_mesh != nullptr);
             assert(in_renderer != nullptr);
         }
 
@@ -138,8 +139,10 @@ namespace chaos
 
     protected:
 
-        /** the particle layer in use (to store primitives to render) */
-        ParticleLayerBase* particle_layer = nullptr;
+        /** the dynamic mesh we are working on (to store primitives to render) */
+        GPUDynamicMesh * dynamic_mesh = nullptr;
+        /** a buffer cache */
+        GPUBufferCache* buffer_cache = nullptr;
         /** the renderer used fence requests */
         GPURenderer* renderer = nullptr;
 
@@ -167,8 +170,8 @@ namespace chaos
         using primitive_type = TypedPrimitiveBase<VERTEX_TYPE, vertices_count>;
 
         /** constructor */
-        TypedPrimitiveOutputBase(ParticleLayerBase* in_particle_layer, GPURenderer* in_renderer) :
-            PrimitiveOutputBase(in_particle_layer, in_renderer) 
+        TypedPrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPURenderer* in_renderer) :
+            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_renderer)
         {
             vertex_size = sizeof(vertex_type);
         }

@@ -339,7 +339,7 @@ namespace chaos
         if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
             return true;
         // clear previous dynamic mesh (and give buffers back for further usage)
-        dynamic_mesh.Clear(particle_manager->GetBufferCache());
+        dynamic_mesh.Clear(&particle_manager->GetBufferCache());
         // select PrimitiveOutput and collect vertices
         size_t previous_vertices_count = 0;
         DoUpdateGPUBuffers(renderer, previous_vertices_count);

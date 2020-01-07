@@ -6,6 +6,9 @@
 #include <chaos/GPURenderable.h>
 #include <chaos/GPUBufferCache.h>
 #include <chaos/GPUFence.h>
+#include <chaos/GPUDrawPrimitive.h>
+#include <chaos/GPUVertexArrayCache.h>
+#include <chaos/GPURenderMaterial.h>
 
 
 namespace chaos
@@ -16,11 +19,21 @@ namespace chaos
 
     class GPUDynamicMeshElement
     {
+        friend class GPUDynamicMesh;
+
     public:
 
-
+        /** the material to use for this rendering */
+        shared_ptr<GPURenderMaterial> render_material;
         /** the 'vertex buffer' (+ mapping data) */
         GPUBufferCacheEntry cached_buffer;
+        /** the primitive to render */
+        std::vector<GPUDrawPrimitive> primitives;
+
+    protected:
+
+        /** the vertex array cache to use this rendering */
+        GPUVertexArrayCache vertex_array_cache;
     };
 
     /**
@@ -32,6 +45,8 @@ namespace chaos
 
     public:
 
+        /** returns whether there is nothing to render */
+        bool IsEmpty() const { return (elements.size() > 0); }
         /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferCache) */
         void Clear(GPUBufferCache* buffer_cache);
 

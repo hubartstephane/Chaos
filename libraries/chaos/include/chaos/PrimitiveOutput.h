@@ -132,6 +132,9 @@ namespace chaos
         /** gets the size of one vertice of the generated primitive */
         size_t GetVertexSize() const { return vertex_size; }
 
+        /** flush all pending Draws into the GPUDynamicMesh */
+        void Flush();
+
     protected:
 
         /** allocate a buffer for the primitive and register a new primitive */
@@ -181,19 +184,12 @@ namespace chaos
         {
             assert((vertices_count == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
 
-
-
             // implementation for STRIPS or FANS
             if constexpr (vertices_count == 0)
             {
-                primitive_type result;
-
-                
-
                 // TODO : implement fans and strips 
+                primitive_type result;                
                 assert(0);
-
-
                 return result;
             }
             // implementation for fixed length primitives
@@ -206,8 +202,6 @@ namespace chaos
                 );
             }
         }
-
-
     };
 
     /**

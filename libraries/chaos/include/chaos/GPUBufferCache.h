@@ -18,8 +18,6 @@ namespace chaos
 
         /** the vertex buffer to use for all rendering elements */
         shared_ptr<GPUBuffer> buffer;
-        /** the vertex array to use for this buffer */
-        shared_ptr<GPUVertexArray> vertex_array;
     };
 
 

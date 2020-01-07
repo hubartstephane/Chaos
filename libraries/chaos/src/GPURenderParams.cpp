@@ -8,9 +8,13 @@ namespace chaos
 
 	GPURenderMaterial const * GPURenderParams::GetMaterial(GPURenderable const * renderable, GPURenderMaterial const * default_material) const
 	{
-		if (material_provider == nullptr)
-			return default_material;
-		return material_provider->GetMaterial(renderable, default_material, *this);
+        if (material_provider != nullptr)
+        {
+            GPURenderMaterial const* result = material_provider->GetMaterial(renderable, default_material, *this);
+            if (result != nullptr)
+                return result;
+        }
+        return default_material;
 	}
 
 }; // namespace chaos

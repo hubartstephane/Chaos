@@ -209,12 +209,17 @@ namespace chaos
 		// early exit
 		if (vertices_count == 0)
 			return 0;
+
 #else
-        if (render_data.size() == 0)
+        // early exit
+        if (dynamic_mesh.IsEmpty())
             return 0;
+
 #endif
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
+        if (final_material == nullptr)
+            return 0;
 		// prepare rendering state
 		UpdateRenderingStates(renderer, true);
 		// update uniform provider with atlas, and do the rendering
@@ -225,6 +230,19 @@ namespace chaos
 		// restore rendering states
 		UpdateRenderingStates(renderer, false);
 		return result;
+
+
+
+
+
+
+
+
+
+
+
+
+
 	}
 
     int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
@@ -259,53 +277,13 @@ namespace chaos
         return 1; // 1 DrawCall
 
 #else
+        // create a new GPURenderParams that override the Material for inside the GPUDynamicMesh
+        DisableReferenceCount<GPUConstantMaterialProvider> material_provider(final_material);
 
-        GPUFence* fence = nullptr; 
-
-        GLenum gl_primitive_type = GetGLPrimitiveType();
-        
-        int result = 0;
-
-        GPUProgram const* program = nullptr;
-        for (ParticleLayerBaseRenderData & rd : render_data)
-        {
-            // really rendering something
-            if (rd.vertices_count == 0)
-                continue;
-            // search the program
-            if (program == nullptr)
-            {
-                program = final_material->UseMaterial(uniform_provider, render_params);
-                if (program == nullptr)
-                    return 0;
-            }
-            // get the vertex array
-            GPUVertexArray const * vertex_array = rd.vertex_array_cache.FindOrCreateVertexArray(program, rd.cached_vertex_buffer.buffer.get(), nullptr, vertex_declaration, 0);
-            if (vertex_array == nullptr)
-                continue;
-
-            glBindVertexArray(vertex_array->GetResourceID());
-
-            // one draw call for the whole buffer
-            GPUDrawPrimitive primitive;
-            primitive.primitive_type = gl_primitive_type;
-            primitive.indexed = false;
-            primitive.count = (int)rd.vertices_count;
-            primitive.start = 0;
-            primitive.base_vertex_index = 0;
-            renderer->Draw(primitive, render_params.instancing);
-
-            // mark the re buffer as used until the current fence is over
-            if (fence == nullptr)
-                fence = renderer->GetCurrentFrameFence();
-            rd.fence = fence;
-
-            ++result;
-        }
-        // restore previous state (only if anyone changed it)
-        if (result > 0)
-            glBindVertexArray(0);
-        return result;
+        GPURenderParams other_render_params = render_params;
+        other_render_params.material_provider = &material_provider;
+        // let the dynamic mesh render itself
+        return dynamic_mesh.Display(renderer, uniform_provider, other_render_params);
 #endif
     }
 

@@ -278,7 +278,7 @@ namespace chaos
 
 #else
         // create a new GPURenderParams that override the Material for inside the GPUDynamicMesh
-        DisableReferenceCount<GPUConstantMaterialProvider> material_provider(final_material);
+        DisableReferenceCount<GPUConstantMaterialProvider> material_provider(final_material);  // while on stack, use DisableReferenceCount<...>
 
         GPURenderParams other_render_params = render_params;
         other_render_params.material_provider = &material_provider;

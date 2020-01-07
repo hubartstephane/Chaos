@@ -8,6 +8,7 @@
 #include <chaos/GPUFence.h>
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUVertexArrayCache.h>
+#include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPURenderMaterial.h>
 
 
@@ -23,6 +24,8 @@ namespace chaos
 
     public:
 
+        /** the vertex declaration for this element */
+        GPUVertexDeclaration vertex_declaration;
         /** the material to use for this rendering */
         shared_ptr<GPURenderMaterial> render_material;
         /** the 'vertex buffer' (+ mapping data) */

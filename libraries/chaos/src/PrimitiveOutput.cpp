@@ -3,6 +3,11 @@
 namespace chaos
 {
 
+    void PrimitiveOutputBase::Flush()
+    {
+
+    }
+
     char* PrimitiveOutputBase::GeneratePrimitive(size_t required_size)
     {
         assert(required_size > 0);

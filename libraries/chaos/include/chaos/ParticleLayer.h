@@ -644,24 +644,6 @@ class ParticleTraitTools
 		allocation_trait_type allocation_trait;
 	};
 
-    // ==============================================================
-    // ParticleLayerBaseRenderData
-    // ==============================================================
-
-    class ParticleLayerBaseRenderData
-    {
-    public:
-        
-        /** the 'vertex buffer' for the rendering (+mapping data) */
-        GPUBufferCacheEntry cached_vertex_buffer;
-        /** the cache for vertex array */
-        GPUVertexArrayCache vertex_array_cache;
-        /** number of used vertices in the vertex buffer */
-        size_t vertices_count = 0;
-        /** the fence for the last time the buffer as been used in rendering */
-        shared_ptr<GPUFence> fence;
-    };
-
 	// ==============================================================
 	// ParticleLayerBase
 	// ==============================================================
@@ -802,16 +784,6 @@ class ParticleTraitTools
         GPUDynamicMesh dynamic_mesh;
 
 
-
-
-        /** the rendering data */
-        std::vector<ParticleLayerBaseRenderData> render_data;
-
-
-
-
-
-
 		/** the vertex buffer for the rendering */
 		shared_ptr<GPUBuffer> vertex_buffer;
 		/** the cache for vertex array */
@@ -930,6 +902,7 @@ class ParticleTraitTools
                 // transform particles into vertices
                 allocation->ParticlesToVertices(output, GetLayerTrait());
             }
+            output.Flush();
         }
 #endif
 

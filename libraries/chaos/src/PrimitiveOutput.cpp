@@ -9,10 +9,12 @@ namespace chaos
     void PrimitiveOutputBase::Flush()
     {
         // skip empty primitive
-        if (pending_vertices_count <= 0)
+        if (pending_vertices_count <= 0 || buffer_start == nullptr)
             return;
         // one new GPU buffer each time so primitives need to be flushed => one GPUDynamicMeshElement each time
         GPUDynamicMeshElement& new_element = dynamic_mesh->AddMeshElement();
+
+        //new_element.
 
 
         // insert the primitive into the element
@@ -23,7 +25,9 @@ namespace chaos
         primitive.start = 0;
         primitive.base_vertex_index = 0;
         new_element.primitives.push_back(primitive);
-        // clear the pending number of elements
+        // clear internals
+        buffer_start = nullptr;
+        buffer_end = nullptr;
         pending_vertices_count = 0;
     }
 
@@ -31,28 +35,28 @@ namespace chaos
     {
         assert(required_size > 0);
 
-        // enought memory reserved for this primitive
-        if (buffer_start + required_size <= buffer_end)
+        // flush primitive and allocate memory if necessary
+        if (buffer_start == nullptr || buffer_start + required_size >= buffer_end)
         {
-            char* result = buffer_start;
-            buffer_start += required_size;
-            pending_vertices_count += primitive_vertices_count;
-            return result;
+            if (buffer_start != nullptr)
+                Flush();
+            if (ReserveBuffer(required_size) == nullptr)
+                return nullptr;
         }
 
-#if 0
-        GPUDrawPrimitive primitive;
-        primitive.primitive_type = GL_TRIANGLES;
-        primitive.indexed = false;
-        primitive.count = (int)vertices_count;
-        primitive.start = 0;
-        primitive.base_vertex_index = 0;
-#endif
+        // make buffer progress and update pending_vertices_count
+        char* result = buffer_start;
+        buffer_start += required_size;
+        pending_vertices_count += primitive_vertices_count;
+        return result;
+    }
+
+    char* PrimitiveOutputBase::ReserveBuffer(size_t required_size)
+    {
 
 
 
-
-        return new char[required_size];
+        return nullptr;
     }
 
 }; // namespace chaos

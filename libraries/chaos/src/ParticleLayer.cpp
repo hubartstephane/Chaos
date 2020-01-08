@@ -11,7 +11,7 @@
 
 
 
-#include <chaos/ParticleDefault.h> // to remove ?? shuxxx
+//#include <chaos/ParticleDefault.h> // to remove ?? shuxxx
 
 namespace chaos
 {
@@ -309,6 +309,20 @@ namespace chaos
 
 #if !OLD_RENDERING
 
+    size_t ParticleLayerBase::EvaluateGPUVertexMemoryRequirement() const
+    {
+        size_t result = GetDynamicMeshVertexCount(dynamic_mesh);
+        if (result == 0)
+        {
+            // XXX : for strip and fans, we take 6 as an empiric value
+            size_t vertices_per_particle = GetVerticesPerParticle();
+            if (vertices_per_particle == 0)
+                vertices_per_particle = 6;
+            result = GetParticleCount() * vertices_per_particle;
+        }
+        return result;
+    }
+
     bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer* renderer)
     {
         // update the vertex declaration
@@ -316,11 +330,12 @@ namespace chaos
         // ensure their is some reason to update the rendering data
         if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
             return true;
-        // clear previous dynamic mesh (and give buffers back for further usage)
+        // evaluate how much memory should be allocated for buffers (count in vertices)
+        size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement();
+        // clear previous dynamic mesh (and give buffers back for further usage)       
         dynamic_mesh.Clear(&particle_manager->GetBufferCache());
-        // select PrimitiveOutput and collect vertices
-        size_t previous_vertices_count = 0;
-        DoUpdateGPUBuffers(renderer, previous_vertices_count);
+        // select PrimitiveOutput and collect vertices        
+        DoUpdateGPUBuffers(renderer, vertex_requirement_evaluation);
         // mark as up to date
         require_GPU_update = false;
 
@@ -497,6 +512,20 @@ namespace chaos
 		for (size_t i = count ; i > 0 ; --i)
 			particles_allocations[i - 1]->Resize(0);
 	}
+
+    size_t ParticleLayerBase::GetDynamicMeshVertexCount(GPUDynamicMesh const& mesh) const
+    {
+        size_t result = 0;
+
+        size_t count = mesh.GetMeshElementCount();
+        for (size_t i = 0 ; i < count; ++i)
+        {
+            GPUDynamicMeshElement const& element = mesh.GetMeshElement(i);
+            for (GPUDrawPrimitive const& primitive : element.primitives)
+                result += primitive.count;
+        }
+        return result;
+    }
 
 }; // namespace chaos
 

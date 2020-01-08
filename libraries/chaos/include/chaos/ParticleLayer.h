@@ -322,9 +322,15 @@ class ParticleTraitTools
 	// ParticleAllocation
 	// ==============================================================
 
+    // forward declaration (required for friendship)
+    template<typename ALLOCATION_TRAIT>
+    class ParticleLayer;
+
 	template<typename ALLOCATION_TRAIT>
 	class ParticleAllocation : public ParticleAllocationBase
 	{
+        friend class ParticleLayer<ALLOCATION_TRAIT>;
+
 	public:
 
 		using allocation_trait_type = ALLOCATION_TRAIT;
@@ -671,10 +677,20 @@ class ParticleTraitTools
 
 		/** returns the size in memory of a particle */
 		virtual size_t GetParticleSize() const { return 0; }
+        /** returns the number of particles */
+        virtual size_t GetParticleCount() const { return 0; }
 		/** returns the size in memory of a vertex */
 		virtual size_t GetVertexSize() const { return 0; }
 		/** returns the number of vertices required for each particles */
+
+#if OLD_RENDERING
 		virtual size_t GetVerticesPerParticle() const { return 2 * 3; } // 2 triangles per particles to have a square = 6 vertices
+#else
+        virtual size_t GetVerticesPerParticle() const { return 0; }
+#endif
+
+
+
 		/** returns true whether vertices need to be updated */
 		virtual bool AreVerticesDynamic() const { return true; }
 		/** returns true whether particles need to be updated */
@@ -762,6 +778,11 @@ class ParticleTraitTools
         virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t previous_frame_vertices_count) {}
 #endif
 
+        /** returns the number of vertices used in a dynamic mesh */
+        size_t GetDynamicMeshVertexCount(GPUDynamicMesh const& mesh) const;
+        /** evaluate how much memory will be required for GPUDynamicMesh (returns number of vertices) */
+        size_t EvaluateGPUVertexMemoryRequirement() const;
+
 	protected:
 
         /** the manager */
@@ -814,10 +835,43 @@ class ParticleTraitTools
 
 		/** returns the size in memory of a particle */
 		virtual size_t GetParticleSize() const override { return sizeof(particle_type); }
-		/** override */
+        /** override */        
+        virtual size_t GetParticleCount() const override
+        { 
+            size_t result = 0;
+            size_t count = particles_allocations.size();
+            for (size_t i = 0; i < count; ++i)
+            {
+                ParticleAllocation<allocation_trait_type> const* allocation = auto_cast(particles_allocations[i].get());
+                if (allocation == nullptr)
+                    continue;
+                result += allocation->particles.size();
+            }
+            return result;
+        }
+        /** override */
 		virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
 		/** override */
-		virtual size_t GetVerticesPerParticle() const override { return ParticleTraitTools::GetVerticesPerParticle(layer_trait); }
+#if OLD_RENDERING
+		virtual size_t GetVerticesPerParticle() const override 
+        { 
+            return ParticleTraitTools::GetVerticesPerParticle(layer_trait); 
+        }
+#else
+        virtual size_t GetVerticesPerParticle() const override
+        {
+            PrimitiveType primitive_type = ParticleTraitTools::GetPrimitiveType<allocation_trait_type>();
+
+            if (primitive_type == PrimitiveType::triangle)
+                return 3;
+            if (primitive_type == PrimitiveType::triangle_pair)
+                return 6;
+            if (primitive_type == PrimitiveType::quad)
+                return 4;
+            return 0; // strip and fans have no defined values for this
+        }
+
+#endif
 		/** override */
 		virtual bool AreVerticesDynamic() const override 
 		{ 
@@ -858,32 +912,32 @@ class ParticleTraitTools
 
 #if !OLD_RENDERING
         /** override */
-        virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t previous_frame_vertices_count) override
+        virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t vertex_requirement_evaluation) override
         {
             // select PrimitiveOutput and collect vertices
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
-                TriangleOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
+                TriangleOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
             {
-                TrianglePairOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
+                TrianglePairOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
             {
-                QuadOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
+                QuadOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
             {
-                TriangleStripOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
+                TriangleStripOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
             {
-                TriangleFanOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), renderer);
+                TriangleFanOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration, renderer);
                 ParticlesToVerticesLoop(output);
             }
         }

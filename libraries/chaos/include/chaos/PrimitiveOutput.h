@@ -121,9 +121,10 @@ namespace chaos
     public:
 
         /** constructor */
-        PrimitiveOutputBase(GPUDynamicMesh * in_dynamic_mesh, GPUBufferCache * in_buffer_cache, GPURenderer* in_renderer) :
+        PrimitiveOutputBase(GPUDynamicMesh * in_dynamic_mesh, GPUBufferCache * in_buffer_cache, GPUVertexDeclaration const * in_vertex_declaration, GPURenderer* in_renderer) :
             dynamic_mesh(in_dynamic_mesh),
             buffer_cache(in_buffer_cache),
+            vertex_declaration(in_vertex_declaration),
             renderer(in_renderer)
         {
             assert(in_dynamic_mesh != nullptr);
@@ -132,14 +133,15 @@ namespace chaos
 
         /** gets the size of one vertice of the generated primitive */
         size_t GetVertexSize() const { return vertex_size; }
-
         /** flush all pending Draws into the GPUDynamicMesh */
         void Flush();
 
     protected:
 
-        /** allocate a buffer for the primitive and register a new primitive */
+        /** register a new primitive */
         char* GeneratePrimitive(size_t required_size);
+        /** allocate a buffer for the primitive and register a new primitive */
+        char* ReserveBuffer(size_t required_size);
 
     protected:
 
@@ -147,6 +149,8 @@ namespace chaos
         GPUDynamicMesh * dynamic_mesh = nullptr;
         /** a buffer cache */
         GPUBufferCache* buffer_cache = nullptr;
+        /** the vertex declaration for all buffers */
+        GPUVertexDeclaration const* vertex_declaration = nullptr;
         /** the renderer used fence requests */
         GPURenderer* renderer = nullptr;
        
@@ -180,8 +184,8 @@ namespace chaos
         using primitive_type = TypedPrimitiveBase<vertex_type, PRIMITIVE_VERTICES_COUNT>;
 
         /** constructor */
-        TypedPrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPURenderer* in_renderer) :
-            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_renderer)
+        TypedPrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration const* in_vertex_declaration, GPURenderer* in_renderer) :
+            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_renderer)
         {
             vertex_size = sizeof(vertex_type);
             primitive_vertices_count = PRIMITIVE_VERTICES_COUNT;

@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 
 #include <chaos/GPUClasses.h>
+#include <chaos/GPUDrawPrimitive.h>
 
 namespace chaos
 {
@@ -148,44 +149,52 @@ namespace chaos
         GPUBufferCache* buffer_cache = nullptr;
         /** the renderer used fence requests */
         GPURenderer* renderer = nullptr;
-
+       
         /** start of currently allocated buffer */
         char* buffer_start = nullptr;
         /** end of currently allocated buffer */
         char* buffer_end = nullptr;
         /** size of a vertex */
         size_t vertex_size = 0;
+
+        /** the number of vertices per primitive */
+        size_t primitive_vertices_count = 0;
+        /** the primitive type */
+        GLenum primitive_gl_type = GL_NONE;
+
+        /** number of vertices inserted into the GPU buffer and waiting for a flush */
+        size_t pending_vertices_count = 0;
     };
 
     /**
      * TypedPrimitiveOutputBase : generic primitive generator
      */
 
-    template<typename VERTEX_TYPE, size_t VERTICES_COUNT = 0>
+    template<typename VERTEX_TYPE, size_t PRIMITIVE_VERTICES_COUNT, GLenum PRIMITIVE_TYPE> // PRIMITIVE_VERTICES_COUNT : should be 0 for STRIPS & FANS
     class TypedPrimitiveOutputBase : public PrimitiveOutputBase
     {
     public:
 
-        static constexpr size_t vertices_count = VERTICES_COUNT; // should be 0 for STRIPS & FANS
-
         using vertex_type = VERTEX_TYPE;
 
-        using primitive_type = TypedPrimitiveBase<VERTEX_TYPE, vertices_count>;
+        using primitive_type = TypedPrimitiveBase<vertex_type, PRIMITIVE_VERTICES_COUNT>;
 
         /** constructor */
         TypedPrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPURenderer* in_renderer) :
             PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_renderer)
         {
             vertex_size = sizeof(vertex_type);
+            primitive_vertices_count = PRIMITIVE_VERTICES_COUNT;
+            primitive_gl_type = PRIMITIVE_TYPE;
         }
 
         /** add a primitive */
         primitive_type AddPrimitive(size_t custom_vertices_count = 0)
         {
-            assert((vertices_count == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
+            assert((primitive_vertices_count == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
 
             // implementation for STRIPS or FANS
-            if constexpr (vertices_count == 0)
+            if constexpr (PRIMITIVE_VERTICES_COUNT == 0)
             {
                 // TODO : implement fans and strips 
                 primitive_type result;                
@@ -196,9 +205,9 @@ namespace chaos
             else
             {
                 return primitive_type(
-                    GeneratePrimitive(vertex_size * vertices_count),
+                    GeneratePrimitive(vertex_size * primitive_vertices_count),
                     vertex_size,
-                    vertices_count
+                    primitive_vertices_count
                 );
             }
         }
@@ -209,12 +218,12 @@ namespace chaos
       */
 
     // fixed length primitive
-    template<typename VERTEX_TYPE> using TriangleOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 3>;
-    template<typename VERTEX_TYPE> using TrianglePairOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 6>;
-    template<typename VERTEX_TYPE> using QuadOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 4>;
+    template<typename VERTEX_TYPE> using TriangleOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 3, GL_TRIANGLES>;
+    template<typename VERTEX_TYPE> using TrianglePairOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 6, GL_TRIANGLES>;
+    template<typename VERTEX_TYPE> using QuadOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 4, GL_QUADS>;
     // 0 for non-fixed vertices count
-    template<typename VERTEX_TYPE> using TriangleFanOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 0>;   
-    template<typename VERTEX_TYPE> using TriangleStripOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 0>;
+    template<typename VERTEX_TYPE> using TriangleFanOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 0, GL_TRIANGLE_FAN>;
+    template<typename VERTEX_TYPE> using TriangleStripOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, 0, GL_TRIANGLE_STRIP>;
 
 
 }; // namespace chaos

@@ -24,6 +24,15 @@ namespace chaos
 
     public:
 
+        /** constructor */
+        GPUDynamicMeshElement() = default;
+        /** copy constructor */
+        GPUDynamicMeshElement(GPUDynamicMeshElement const& src) : // XXX : do not copy GPUVertexArrayCache
+            vertex_declaration(src.vertex_declaration),
+            render_material(src.render_material),
+            cached_buffer(src.cached_buffer),
+            primitives(src.primitives) {}
+
         /** the vertex declaration for this element */
         GPUVertexDeclaration vertex_declaration;
         /** the material to use for this rendering */
@@ -52,6 +61,15 @@ namespace chaos
         bool IsEmpty() const { return (elements.size() > 0); }
         /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferCache) */
         void Clear(GPUBufferCache* buffer_cache);
+        /** gets the number of mesh element */
+        size_t GetMeshElementCount() const { return elements.size(); }
+        /** access any mesh element */
+        GPUDynamicMeshElement& GetMeshElement(size_t index) { return elements[index]; }
+        /** access any mesh element */
+        GPUDynamicMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
+        /** add an rendering element */
+        GPUDynamicMeshElement & AddMeshElement();
+
 
     protected:
 

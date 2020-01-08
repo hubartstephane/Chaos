@@ -8,6 +8,11 @@
 
 namespace chaos
 {
+    GPUDynamicMeshElement & GPUDynamicMesh::AddMeshElement()
+    {
+        elements.resize(elements.size() + 1);
+        return elements[elements.size() - 1];
+    }
 
     void GPUDynamicMesh::Clear(GPUBufferCache* buffer_cache)
     {
@@ -46,6 +51,7 @@ namespace chaos
                 if (primitive.count <= 0)
                     continue;
                 renderer->Draw(primitive, render_params.instancing);
+                ++result;
             }
         }
         // store fence for this last rendering time (only if some draw call has been made)

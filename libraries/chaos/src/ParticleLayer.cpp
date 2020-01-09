@@ -1,17 +1,11 @@
 #include <chaos/ParticleManager.h>
 
-
 #include <chaos/GPURenderParams.h>
 #include <chaos/GLTools.h>
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUResourceManager.h>
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/ParticleTools.h>
-
-
-
-
-//#include <chaos/ParticleDefault.h> // to remove ?? shuxxx
 
 namespace chaos
 {

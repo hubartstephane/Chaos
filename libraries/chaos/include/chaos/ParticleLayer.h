@@ -20,7 +20,7 @@
 #include <chaos/ParticleAllocationTrait.h>
 #include <chaos/PrimitiveOutput.h>
 
-#define OLD_RENDERING 1
+#define OLD_RENDERING 0
 
 namespace chaos
 {

@@ -18,6 +18,7 @@
 #include <chaos/GPURenderable.h>
 #include <chaos/ParticleAccessor.h>
 #include <chaos/ParticleAllocationTrait.h>
+#include <chaos/PrimitiveOutput.h>
 
 #define OLD_RENDERING 0
 
@@ -147,18 +148,7 @@ class ParticleTraitTools
     template<typename TRAIT_TYPE>
     static constexpr GLenum GetGLPrimitiveType()
     {
-        constexpr PrimitiveType primitive_type = GetPrimitiveType<TRAIT_TYPE>();
-        if constexpr (primitive_type == PrimitiveType::triangle)
-            return GL_TRIANGLES;
-        if constexpr (primitive_type == PrimitiveType::triangle_pair)
-            return GL_TRIANGLES;
-        if constexpr (primitive_type == PrimitiveType::quad)
-            return GL_QUADS;
-        if constexpr (primitive_type == PrimitiveType::triangle_strip)
-            return GL_TRIANGLE_STRIP;
-        if constexpr (primitive_type == PrimitiveType::triangle_fan)
-            return GL_TRIANGLE_FAN;
-        return GL_NONE;
+        return chaos::GetGLPrimitiveType(GetPrimitiveType<TRAIT_TYPE>()); // see PrimitiveOutput.h
     }
 
 };
@@ -860,15 +850,7 @@ class ParticleTraitTools
 #else
         virtual size_t GetVerticesPerParticle() const override
         {
-            PrimitiveType primitive_type = ParticleTraitTools::GetPrimitiveType<allocation_trait_type>();
-
-            if (primitive_type == PrimitiveType::triangle)
-                return 3;
-            if (primitive_type == PrimitiveType::triangle_pair)
-                return 6;
-            if (primitive_type == PrimitiveType::quad)
-                return 4;
-            return 0; // strip and fans have no defined values for this
+            return chaos::GetVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<allocation_trait_type>()); // see PrimitiveOutput.h
         }
 
 #endif
@@ -917,27 +899,27 @@ class ParticleTraitTools
             // select PrimitiveOutput and collect vertices
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
-                TriangleOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
+                TriangleOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
             {
-                TrianglePairOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
+                TrianglePairOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
             {
-                QuadOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
+                QuadOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
             {
-                TriangleStripOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer);
+                TriangleStripOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), &vertex_declaration, renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
             {
-                TriangleFanOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration, renderer);
+                TriangleFanOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration, renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
         }

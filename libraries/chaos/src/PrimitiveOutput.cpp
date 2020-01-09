@@ -5,7 +5,6 @@
 
 namespace chaos
 {
-
     void PrimitiveOutputBase::Flush()
     {
         // skip empty primitive
@@ -13,9 +12,10 @@ namespace chaos
             return;
         // one new GPU buffer each time so primitives need to be flushed => one GPUDynamicMeshElement each time
         GPUDynamicMeshElement& new_element = dynamic_mesh->AddMeshElement();
-
-        //new_element.
-
+        
+        new_element.cached_buffer = cached_buffer;
+        new_element.vertex_declaration = *vertex_declaration;        
+        new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
 
         // insert the primitive into the element
         GPUDrawPrimitive primitive;
@@ -29,6 +29,7 @@ namespace chaos
         buffer_start = nullptr;
         buffer_end = nullptr;
         pending_vertices_count = 0;
+        cached_buffer = GPUBufferCacheEntry();
     }
 
     char* PrimitiveOutputBase::GeneratePrimitive(size_t required_size)
@@ -47,16 +48,26 @@ namespace chaos
         // make buffer progress and update pending_vertices_count
         char* result = buffer_start;
         buffer_start += required_size;
-        pending_vertices_count += primitive_vertices_count;
+        pending_vertices_count += vertices_per_primitive;
         return result;
     }
 
     char* PrimitiveOutputBase::ReserveBuffer(size_t required_size)
     {
+        // compute the real size to allocate
+        size_t count = std::max(vertex_requirement_evaluation, required_size / vertex_size);
+        if (count == 0)
+            count = 100 * vertices_per_primitive; // a default buffer of 100 primitives
 
+        size_t bufsize = count * vertex_size;
 
+        assert(buffer_cache != nullptr);
+        buffer_cache->GetBuffer(bufsize, cached_buffer);
 
-        return nullptr;
+        buffer_start = cached_buffer.buffer->MapBuffer(0, 0, false, true);
+        buffer_end = buffer_start + bufsize;
+
+        return buffer_start;
     }
 
 }; // namespace chaos

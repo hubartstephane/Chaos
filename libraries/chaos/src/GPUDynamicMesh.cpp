@@ -10,8 +10,7 @@ namespace chaos
 {
     GPUDynamicMeshElement & GPUDynamicMesh::AddMeshElement()
     {
-        elements.resize(elements.size() + 1);
-        return elements[elements.size() - 1];
+        return elements.emplace_back();
     }
 
     void GPUDynamicMesh::Clear(GPUBufferCache* buffer_cache)

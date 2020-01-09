@@ -70,7 +70,6 @@ namespace chaos
         /** add an rendering element */
         GPUDynamicMeshElement & AddMeshElement();
 
-
     protected:
 
         /** override */

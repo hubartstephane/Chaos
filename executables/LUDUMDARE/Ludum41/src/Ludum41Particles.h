@@ -27,6 +27,7 @@ public:
 
 
     void ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase> & output) const;
+    void ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 
 
 
@@ -66,6 +67,7 @@ public:
 
     // called for every particles
     void ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
 };
 
 
@@ -103,6 +105,7 @@ public:
 	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
     void ParticleToVertices(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 
@@ -136,6 +139,7 @@ public:
 
 
     void ParticleToVertices(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 
 
 
@@ -173,6 +177,7 @@ public:
 
 
     void ParticleToVertices(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const;
+    void ParticleToVertices(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 };
 
 

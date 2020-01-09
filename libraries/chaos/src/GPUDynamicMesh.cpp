@@ -10,6 +10,10 @@ namespace chaos
 {
     GPUDynamicMeshElement & GPUDynamicMesh::AddMeshElement()
     {
+        GPUDynamicMeshElement&result = elements.emplace_back();
+
+
+        return result;
         return elements.emplace_back();
     }
 
@@ -26,7 +30,7 @@ namespace chaos
     {
         // display the elements
         int result = 0;       
-        for (GPUDynamicMeshElement& element : elements)
+        for (GPUDynamicMeshElement & element : elements)
         {
             // early skip
             if (element.primitives.size() == 0)

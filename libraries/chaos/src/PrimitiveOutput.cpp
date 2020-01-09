@@ -17,6 +17,10 @@ namespace chaos
         new_element.vertex_declaration = *vertex_declaration;        
         new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
 
+
+        new_element.cached_buffer.buffer->UnMapBuffer();
+
+
         // insert the primitive into the element
         GPUDrawPrimitive primitive;
         primitive.primitive_type = primitive_gl_type;
@@ -44,6 +48,8 @@ namespace chaos
             if (ReserveBuffer(required_size) == nullptr)
                 return nullptr;
         }
+
+        assert(buffer_start != nullptr);
 
         // make buffer progress and update pending_vertices_count
         char* result = buffer_start;

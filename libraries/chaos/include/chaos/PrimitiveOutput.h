@@ -4,6 +4,7 @@
 
 #include <chaos/GPUClasses.h>
 #include <chaos/GPUDrawPrimitive.h>
+#include <chaos/GPUBufferCache.h>
 
 namespace chaos
 {
@@ -19,6 +20,33 @@ namespace chaos
         triangle_strip = 3,
         triangle_fan = 4,
     };
+
+    /** returns the number of element per primitive */
+    constexpr size_t GetVerticesPerParticle(PrimitiveType primitive_type)
+    {
+        if (primitive_type == PrimitiveType::triangle)
+            return 3;
+        if (primitive_type == PrimitiveType::triangle_pair)
+            return 6;
+        if (primitive_type == PrimitiveType::quad)
+            return 4;
+        return 0; // strip and fans have no defined values for this
+    }
+
+    constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
+    {
+        if (primitive_type == PrimitiveType::triangle)
+            return GL_TRIANGLES;
+        if (primitive_type == PrimitiveType::triangle_pair)
+            return GL_TRIANGLES;
+        if (primitive_type == PrimitiveType::quad)
+            return GL_QUADS;
+        if (primitive_type == PrimitiveType::triangle_strip)
+            return GL_TRIANGLE_STRIP;
+        if (primitive_type == PrimitiveType::triangle_fan)
+            return GL_TRIANGLE_FAN;
+        return GL_NONE;
+    }
 
     /**
      * PrimitiveBase : base object for writing GPU primitives into memory (GPU mapped memory for the usage) 
@@ -121,11 +149,12 @@ namespace chaos
     public:
 
         /** constructor */
-        PrimitiveOutputBase(GPUDynamicMesh * in_dynamic_mesh, GPUBufferCache * in_buffer_cache, GPUVertexDeclaration const * in_vertex_declaration, GPURenderer* in_renderer) :
+        PrimitiveOutputBase(GPUDynamicMesh * in_dynamic_mesh, GPUBufferCache * in_buffer_cache, GPUVertexDeclaration const * in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation) :
             dynamic_mesh(in_dynamic_mesh),
             buffer_cache(in_buffer_cache),
             vertex_declaration(in_vertex_declaration),
-            renderer(in_renderer)
+            renderer(in_renderer),
+            vertex_requirement_evaluation(in_vertex_requirement_evaluation)
         {
             assert(in_dynamic_mesh != nullptr);
             assert(in_renderer != nullptr);
@@ -153,52 +182,56 @@ namespace chaos
         GPUVertexDeclaration const* vertex_declaration = nullptr;
         /** the renderer used fence requests */
         GPURenderer* renderer = nullptr;
+        /** the buffer where we are writting vertices */
+        GPUBufferCacheEntry cached_buffer;
+
+        /** an evaluation of how many vertices could be used */
+        size_t vertex_requirement_evaluation = 0;
        
         /** start of currently allocated buffer */
         char* buffer_start = nullptr;
         /** end of currently allocated buffer */
         char* buffer_end = nullptr;
-        /** size of a vertex */
-        size_t vertex_size = 0;
-
-        /** the number of vertices per primitive */
-        size_t primitive_vertices_count = 0;
-        /** the primitive type */
-        GLenum primitive_gl_type = GL_NONE;
-
         /** number of vertices inserted into the GPU buffer and waiting for a flush */
         size_t pending_vertices_count = 0;
+
+        /** size of a vertex */
+        size_t vertex_size = 0;
+        /** the number of vertices per primitive */
+        size_t vertices_per_primitive = 0;
+        /** the primitive type */
+        GLenum primitive_gl_type = GL_NONE;
     };
 
     /**
      * TypedPrimitiveOutputBase : generic primitive generator
      */
 
-    template<typename VERTEX_TYPE, size_t PRIMITIVE_VERTICES_COUNT, GLenum PRIMITIVE_TYPE> // PRIMITIVE_VERTICES_COUNT : should be 0 for STRIPS & FANS
+    template<typename VERTEX_TYPE, size_t VERTICES_PER_PRIMITIVE, GLenum GL_PRIMITIVE_TYPE> // PRIMITIVE_VERTICES_COUNT : should be 0 for STRIPS & FANS
     class TypedPrimitiveOutputBase : public PrimitiveOutputBase
     {
     public:
 
         using vertex_type = VERTEX_TYPE;
 
-        using primitive_type = TypedPrimitiveBase<vertex_type, PRIMITIVE_VERTICES_COUNT>;
+        using primitive_type = TypedPrimitiveBase<vertex_type, VERTICES_PER_PRIMITIVE>;
 
         /** constructor */
-        TypedPrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration const* in_vertex_declaration, GPURenderer* in_renderer) :
-            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_renderer)
+        TypedPrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration const* in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation) :
+            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_renderer, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
-            primitive_vertices_count = PRIMITIVE_VERTICES_COUNT;
-            primitive_gl_type = PRIMITIVE_TYPE;
+            vertices_per_primitive = VERTICES_PER_PRIMITIVE;
+            primitive_gl_type = GL_PRIMITIVE_TYPE;
         }
 
         /** add a primitive */
         primitive_type AddPrimitive(size_t custom_vertices_count = 0)
         {
-            assert((primitive_vertices_count == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
+            assert((vertices_per_primitive == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
 
             // implementation for STRIPS or FANS
-            if constexpr (PRIMITIVE_VERTICES_COUNT == 0)
+            if constexpr (VERTICES_PER_PRIMITIVE == 0)
             {
                 // TODO : implement fans and strips 
                 primitive_type result;                
@@ -209,9 +242,9 @@ namespace chaos
             else
             {
                 return primitive_type(
-                    GeneratePrimitive(vertex_size * primitive_vertices_count),
+                    GeneratePrimitive(vertex_size * vertices_per_primitive),
                     vertex_size,
-                    primitive_vertices_count
+                    vertices_per_primitive
                 );
             }
         }

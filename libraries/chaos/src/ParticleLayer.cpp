@@ -311,7 +311,7 @@ namespace chaos
 
     size_t ParticleLayerBase::EvaluateGPUVertexMemoryRequirement() const
     {
-        size_t result = GetDynamicMeshVertexCount(dynamic_mesh);
+        size_t result = GetDynamicMeshVertexCount(dynamic_mesh); 
         if (result == 0)
         {
             // XXX : for strip and fans, we take 6 as an empiric value

@@ -3,32 +3,6 @@
 
 namespace chaos
 {
-	size_t GPUBufferResizePolicy::GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const
-	{
-		return in_size; // the normal policy
-	}
-
-	size_t GPUBufferDoublingResizePolicy::GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const // slighty improve performance, but not incredible
-	{
-		size_t current_buffer_size = in_buffer.GetBufferSize();
-		// want to shrink
-		if (in_size < current_buffer_size)
-		{
-			if (in_size < current_buffer_size / 2) // only shrink if the size goes below a range
-				return in_size;
-			return current_buffer_size;
-		}
-		// want to grow
-		else if (in_size > current_buffer_size)
-		{
-			if (in_size > current_buffer_size * 2) 
-				return in_size;
-			return current_buffer_size * 2; // double the required size to avoid further reallocation
-		}
-		// size does not change
-		return in_size;
-	}
-
 	GPUBuffer::GPUBuffer(bool in_dynamic)
 	{
 		CreateResource(in_dynamic);
@@ -125,9 +99,15 @@ namespace chaos
 		// buffer_type = GL_DYNAMIC_DRAW; // !!! avoid some OpenGL warnings
 
 		// compute the real size we want
+
+#if 0
+
 		size_t effective_size = (dynamic) ?
 			GPUBufferDoublingResizePolicy().GetReservedSize(*this, in_size):
 			GPUBufferResizePolicy().GetReservedSize(*this, in_size);
+#endif
+
+        size_t effective_size = in_size;
 
 		// just want to transfert some data
 		if (in_data != nullptr)

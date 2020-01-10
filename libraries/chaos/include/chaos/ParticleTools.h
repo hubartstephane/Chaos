@@ -108,7 +108,6 @@ namespace chaos
 			GenerateBoxParticle(particle_corners, texcoords, vertices, rotation);
 		}
 
-
         /** fill the vertices array with 4 vertices corresponding to 1 QUAD */
         void GenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, QuadPrimitive<ParticleDefault::Vertex>& primitive, float rotation = 0.0f);
 
@@ -118,6 +117,8 @@ namespace chaos
         void GenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation = 0.0f);
 
         void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation = 0.0f);
+
+
 
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)

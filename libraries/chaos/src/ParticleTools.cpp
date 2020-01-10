@@ -139,22 +139,6 @@ namespace chaos
             return texcoords;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         void GenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, QuadPrimitive<ParticleDefault::Vertex>& primitive, float rotation)
         {
             ParticleDefault::Vertex & bl = primitive[0];

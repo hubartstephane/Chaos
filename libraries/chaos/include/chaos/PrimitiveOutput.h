@@ -64,9 +64,15 @@ namespace chaos
         /** copy constructor */
         inline PrimitiveBase(PrimitiveBase const & src) = default;
         /** downcast constructor */
+
+#if 0
+
         template<typename OTHER_VERTEX_TYPE>
         inline PrimitiveBase(PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<VERTEX_TYPE, OTHER_VERTEX_TYPE>, int> = 0) :
             PrimitiveBase(src.GetBuffer(), src.GetVertexSize()) {}
+#endif
+
+
         /** constructor */
         inline PrimitiveBase(char* in_buffer, size_t in_vertex_size) :
             buffer(in_buffer), 
@@ -76,16 +82,29 @@ namespace chaos
             assert(in_vertex_size > 0);
         }
 
+
+        template<typename OTHER_VERTEX_TYPE> 
+        operator PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>& () 
+        {
+            return *(PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+        }
+
+        template<typename OTHER_VERTEX_TYPE>
+        operator PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const & () const
+        {
+            return *(PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+        }
+
         /** accessor */
         inline vertex_type & operator [](size_t index)
         {
-            assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
+           // assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
             return *((vertex_type*)(buffer + vertex_size * index));
         }
         /** const accessor */
         inline vertex_type const & operator [](size_t index) const
         {
-            assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
+            //assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
             return *((vertex_type const*)(buffer + vertex_size * index));
         }
 
@@ -205,7 +224,7 @@ namespace chaos
         /** add a primitive */
         inline primitive_type AddPrimitive(size_t custom_vertices_count = 0)
         {
-            assert((vertices_per_primitive == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
+          //  assert((vertices_per_primitive == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
 
             // implementation for STRIPS or FANS
             if constexpr (chaos::GetVerticesPerParticle(PRIMITIVE_TYPE) == 0)

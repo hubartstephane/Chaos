@@ -4,9 +4,6 @@
 
 namespace chaos
 {
-
-	class GPUBufferResizePolicy;
-	class GPUBufferDoublingResizePolicy;
 	class GPUBuffer;
 	class GPUBufferPoolEntry;
 	class GPUBufferPool;

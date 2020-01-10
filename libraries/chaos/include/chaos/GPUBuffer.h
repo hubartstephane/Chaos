@@ -8,22 +8,6 @@
 
 namespace chaos
 {
-
-	/** GPUBufferResizePolicy : class used to make amortized allocations (avoid to much allocation/deallocation) */
-	class GPUBufferResizePolicy : public ReferencedObject
-	{
-	public:
-
-		virtual size_t GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const;
-	};
-
-	class GPUBufferDoublingResizePolicy : public GPUBufferResizePolicy
-	{
-	public:
-
-		virtual size_t GetReservedSize(class GPUBuffer const & in_buffer, size_t in_size) const override;
-	};
-
 	/** GPUBuffer : self explaning */
 	class GPUBuffer : public GPUResource
 	{

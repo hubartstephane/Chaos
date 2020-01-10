@@ -52,24 +52,41 @@ namespace chaos
      * PrimitiveBase : base object for writing GPU primitives into memory (GPU mapped memory for the usage) 
      */
 
-    template<size_t VERTICES_COUNT = 0>
+    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
     class PrimitiveBase
     {
     public:
 
+        using vertex_type = VERTEX_TYPE;
+
         /** base constructor */
-        PrimitiveBase() = default;
+        inline PrimitiveBase() = default;
         /** copy constructor */
-        PrimitiveBase(PrimitiveBase const& src) = default;
-        /** initialization constructor */
-        PrimitiveBase(char* in_buffer, size_t in_vertex_size, size_t in_vertices_count) :
-            buffer(in_buffer),
-            vertex_size(in_vertex_size),
-            vertices_count(in_vertices_count)
+        inline PrimitiveBase(PrimitiveBase const & src) = default;
+        /** downcast constructor */
+        template<typename OTHER_VERTEX_TYPE>
+        inline PrimitiveBase(PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<VERTEX_TYPE, OTHER_VERTEX_TYPE>, int> = 0) :
+            PrimitiveBase(src.GetBuffer(), src.GetVertexSize()) {}
+        /** constructor */
+        inline PrimitiveBase(char* in_buffer, size_t in_vertex_size) :
+            buffer(in_buffer), 
+            vertex_size(in_vertex_size) 
         {
             assert(in_buffer != nullptr);
             assert(in_vertex_size > 0);
-            // xxx : do not test for vertices_count. At this point 0, is a valid value for Fans and Strips
+        }
+
+        /** accessor */
+        inline vertex_type & operator [](size_t index)
+        {
+            assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
+            return *((vertex_type*)(buffer + vertex_size * index));
+        }
+        /** const accessor */
+        inline vertex_type const & operator [](size_t index) const
+        {
+            assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
+            return *((vertex_type const*)(buffer + vertex_size * index));
         }
 
         /** gets the buffer for this primitive */
@@ -85,46 +102,6 @@ namespace chaos
         char* buffer = nullptr;
         /** the size of a vertex for this primitive */
         size_t vertex_size = 0;
-        /** the number of vertices for this primitive */
-        size_t vertices_count = VERTICES_COUNT;
-    };
-
-    /**
-      * TypedPrimitiveBase : base object for writing GPU primitives into memory (vertex type is known)
-      */
-
-    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
-    class TypedPrimitiveBase : public PrimitiveBase<chaos::GetVerticesPerParticle(PRIMITIVE_TYPE)>
-    {
-    public:
-
-        using vertex_type = VERTEX_TYPE;
-
-        /** base constructor */
-        inline TypedPrimitiveBase() = default;
-        /** copy constructor */
-        inline TypedPrimitiveBase(TypedPrimitiveBase const & src) = default;
-        /** downcast constructor */
-        template<typename OTHER_VERTEX_TYPE>
-        inline TypedPrimitiveBase(TypedPrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const& src, std::enable_if_t<std::is_base_of_v<VERTEX_TYPE, OTHER_VERTEX_TYPE>, int> = 0) :
-            TypedPrimitiveBase(src.GetBuffer(), src.GetVertexSize(), src.GetVerticesCount()) {}
-        /** constructor */
-        inline TypedPrimitiveBase(char* in_buffer, size_t in_vertex_size, size_t in_vertices_count) :
-            PrimitiveBase(in_buffer, in_vertex_size, in_vertices_count) {}
-
-        /** accessor */
-        inline vertex_type & operator [](size_t index)
-        {
-            assert(index < vertices_count);
-            return *((vertex_type*)(buffer + vertex_size * index));
-        }
-
-        /** const accessor */
-        inline vertex_type const & operator [](size_t index) const
-        {
-            assert(index < vertices_count);
-            return *((vertex_type const*)(buffer + vertex_size * index));
-        }
     };
 
     /**
@@ -132,12 +109,12 @@ namespace chaos
       */
 
     // fixed length primitives
-    template<typename VERTEX_TYPE> using TrianglePrimitive = TypedPrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle>;
-    template<typename VERTEX_TYPE> using TrianglePairPrimitive = TypedPrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_pair>;
-    template<typename VERTEX_TYPE> using QuadPrimitive = TypedPrimitiveBase<VERTEX_TYPE, PrimitiveType::quad>;
+    template<typename VERTEX_TYPE> using TrianglePrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle>;
+    template<typename VERTEX_TYPE> using TrianglePairPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_pair>;
+    template<typename VERTEX_TYPE> using QuadPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::quad>;
     // non-fixed length vertices count
-    template<typename VERTEX_TYPE> using TriangleStripPrimitive = TypedPrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_strip>;
-    template<typename VERTEX_TYPE> using TriangleFanPrimitive = TypedPrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_fan>;
+    template<typename VERTEX_TYPE> using TriangleStripPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_strip>;
+    template<typename VERTEX_TYPE> using TriangleFanPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_fan>;
 
     /**
      * PrimitiveOutputBase : a primitive generator (the base class)
@@ -214,7 +191,7 @@ namespace chaos
 
         using vertex_type = VERTEX_TYPE;
 
-        using primitive_type = TypedPrimitiveBase<vertex_type, PRIMITIVE_TYPE>;
+        using primitive_type = PrimitiveBase<vertex_type, PRIMITIVE_TYPE>;
 
         /** constructor */
         TypedPrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration const* in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation) :
@@ -226,7 +203,7 @@ namespace chaos
         }
 
         /** add a primitive */
-        primitive_type AddPrimitive(size_t custom_vertices_count = 0)
+        inline primitive_type AddPrimitive(size_t custom_vertices_count = 0)
         {
             assert((vertices_per_primitive == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
 
@@ -241,11 +218,7 @@ namespace chaos
             // implementation for fixed length primitives
             else
             {
-                return primitive_type(
-                    GeneratePrimitive(vertex_size * vertices_per_primitive),
-                    vertex_size,
-                    vertices_per_primitive
-                );
+                return primitive_type(GeneratePrimitive(vertex_size * vertices_per_primitive), vertex_size);
             }
         }
     };

@@ -253,7 +253,7 @@ namespace chaos
             return 0;
 
         // get the vertex array
-        GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), nullptr, vertex_declaration, 0);
+        GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), nullptr, vertex_declaration.get(), 0);
         if (vertex_array == nullptr)
             return 0;
         // bind the vertex array
@@ -284,7 +284,7 @@ namespace chaos
     void ParticleLayerBase::UpdateVertexDeclaration()
     {
         // is the vertex declaration already filled
-        if (vertex_declaration.entries.size() > 0)
+        if (vertex_declaration != nullptr)
             return;
         // fill the vertex declaration
         vertex_declaration = GetVertexDeclaration();

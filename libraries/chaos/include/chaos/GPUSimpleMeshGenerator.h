@@ -47,7 +47,7 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const = 0;
 		/** get the vertex declaration */
-		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const = 0;
+		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const = 0;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const = 0;
 
@@ -95,7 +95,7 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
+		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
@@ -121,7 +121,7 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
+		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 	};
@@ -140,7 +140,7 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
+		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
@@ -169,7 +169,7 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
+		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 
@@ -197,7 +197,7 @@ namespace chaos
 		/** get requirement */
 		virtual GPUMeshGenerationRequirement GetRequirement() const override;
 		/** get the vertex declaration */
-		virtual void GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const override;
+		virtual GPUVertexDeclaration * GenerateVertexDeclaration() const override;
 		/** get the mesh data */
 		virtual void GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const override;
 

@@ -14,8 +14,6 @@ namespace chaos
     {
     public:
 
-
-
         /** the vertex buffer to use for all rendering elements */
         shared_ptr<GPUBuffer> buffer;
     };

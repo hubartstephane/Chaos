@@ -34,7 +34,7 @@ namespace chaos
             primitives(src.primitives) {}
 
         /** the vertex declaration for this element */
-        GPUVertexDeclaration vertex_declaration;
+        shared_ptr<GPUVertexDeclaration> vertex_declaration;
         /** the material to use for this rendering */
         shared_ptr<GPURenderMaterial> render_material;
         /** the 'vertex buffer' (+ mapping data) */

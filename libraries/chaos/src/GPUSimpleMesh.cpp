@@ -24,7 +24,7 @@ namespace chaos
 		vertex_buffer = nullptr;
 		index_buffer = nullptr;
 
-		vertex_declaration.Clear();
+		vertex_declaration->Clear();
 		primitives.clear();
 
 		vertex_array_cache.Clear();
@@ -59,7 +59,7 @@ namespace chaos
 	{
 		assert(program != nullptr);
 		// find the vertex array to use
-		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration, vertex_buffer_offset);
+		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration.get(), vertex_buffer_offset);
 		if (vertex_array == nullptr)
 			return;
 		// bind the vertex array

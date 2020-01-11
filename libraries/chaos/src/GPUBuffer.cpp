@@ -170,6 +170,9 @@ namespace chaos
 		if (write)
 			map_type |= GL_MAP_WRITE_BIT;
 
+        map_type |= GL_MAP_UNSYNCHRONIZED_BIT;
+
+
 		// check for map range
 		if (start >= buffer_size)
 			return nullptr;

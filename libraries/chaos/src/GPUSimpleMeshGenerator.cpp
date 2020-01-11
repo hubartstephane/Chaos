@@ -141,8 +141,8 @@ namespace chaos
 					assert(indices_writer.GetRemainingBufferSize() == 0);
 
 					// get the vertex declaration
-					GenerateVertexDeclaration(mesh->vertex_declaration);
-					assert(mesh->vertex_declaration.GetVertexSize() == requirement.vertex_size);
+                    mesh->vertex_declaration = GenerateVertexDeclaration();
+					assert(mesh->vertex_declaration->GetVertexSize() == requirement.vertex_size);
 
 					// initialize the vertex array and validate
 					mesh->SetVertexBufferOffset(0);
@@ -183,10 +183,15 @@ namespace chaos
 		return result;
 	}
 
-	void GPUTriangleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+    GPUVertexDeclaration * GPUTriangleMeshGenerator::GenerateVertexDeclaration() const
 	{
-		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        GPUVertexDeclaration* result = new GPUVertexDeclaration();
+        if (result != nullptr)
+        {
+            result->Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+            result->Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        }
+        return result;
 	}
 
 	void GPUTriangleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
@@ -224,10 +229,15 @@ namespace chaos
 		return result;
 	}
 
-	void GPUQuadMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+    GPUVertexDeclaration * GPUQuadMeshGenerator::GenerateVertexDeclaration() const
 	{
-		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        GPUVertexDeclaration* result = new GPUVertexDeclaration();
+        if (result != nullptr)
+        {
+            result->Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+            result->Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        }
+        return result;
 	}
 
 	void GPUQuadMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
@@ -268,10 +278,15 @@ namespace chaos
 		return result;
 	}
 
-	void GPUCubeMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+    GPUVertexDeclaration * GPUCubeMeshGenerator::GenerateVertexDeclaration() const
 	{
-		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        GPUVertexDeclaration* result = new GPUVertexDeclaration();
+        if (result != nullptr)
+        {
+            result->Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+            result->Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        }
+        return result;
 	}
 
 	void GPUCubeMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const
@@ -314,10 +329,15 @@ namespace chaos
 		return result;	
 	}
 
-	void GPUCircleMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+    GPUVertexDeclaration * GPUCircleMeshGenerator::GenerateVertexDeclaration() const
 	{
-		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        GPUVertexDeclaration* result = new GPUVertexDeclaration();
+        if (result != nullptr)
+        {
+            result->Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+            result->Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        }
+        return result;
 	}
 
 	void GPUCircleMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const 
@@ -378,10 +398,15 @@ namespace chaos
 		return result;
 	}
 
-	void GPUSphereMeshGenerator::GenerateVertexDeclaration(GPUVertexDeclaration & declaration) const
+    GPUVertexDeclaration * GPUSphereMeshGenerator::GenerateVertexDeclaration() const
 	{
-		declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-		declaration.Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        GPUVertexDeclaration* result = new GPUVertexDeclaration();
+        if (result != nullptr)
+        {
+            result->Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3);
+            result->Push(SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+        }
+        return result;
 	}
 
 	void GPUSphereMeshGenerator::GenerateMeshData(std::vector<GPUDrawPrimitive> & primitives, MemoryBufferWriter & vertices_writer, MemoryBufferWriter & indices_writer) const

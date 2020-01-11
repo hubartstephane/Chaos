@@ -7,19 +7,6 @@
 namespace chaos
 {
     /**
-     * GPUBufferCacheEntry
-     */
-
-    class GPUBufferCacheEntry
-    {
-    public:
-
-        /** the vertex buffer to use for all rendering elements */
-        shared_ptr<GPUBuffer> buffer;
-    };
-
-
-    /**
      * GPUBufferCacheEntries : an entry that match several GPUBuffers to a GPUFence
      */
 
@@ -32,14 +19,14 @@ namespace chaos
     protected:
 
         /** returns the best cached buffer for the given size (returns true whether their is no need to search for another buffer) */
-        bool GetBuffer(size_t required_size, GPUBufferCacheEntry & result);
+         bool GetBuffer(size_t required_size, shared_ptr<GPUBuffer> & result);
 
     protected:
 
         /** the fence until which the buffers are in used */
         shared_ptr<GPUFence> fence;
         /** the buffers attached to the fence */
-        std::vector<GPUBufferCacheEntry> buffers;
+        std::vector<shared_ptr<GPUBuffer>> buffers;
     };
 
     /**
@@ -51,16 +38,16 @@ namespace chaos
     public:
 
         /** get a buffer of required size (looking for cached resources first) */
-        bool GetBuffer(size_t required_size, GPUBufferCacheEntry & result);
+        bool GetBuffer(size_t required_size, shared_ptr<GPUBuffer>& result);
         /** give back a buffer to this cache to be used later */
-        bool GiveBuffer(GPUBufferCacheEntry& entry, GPUFence* fence);
+        bool GiveBuffer(shared_ptr<GPUBuffer>& buffer, GPUFence* fence);
 
     protected:
 
         /** get the cache entry for given fence */
         GPUBufferCacheEntries* GetCacheEntryForFence(GPUFence* fence);
         /** create a buffer and register it for a given fence */
-        bool CreateBuffer(size_t required_size, GPUBufferCacheEntry & result);
+        bool CreateBuffer(size_t required_size, shared_ptr<GPUBuffer>& result);
 
     protected:
 

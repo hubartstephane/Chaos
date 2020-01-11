@@ -45,7 +45,7 @@ namespace chaos
 	public:
 
 		/** self descriptive */
-		GPUVertexDeclaration vertex_declaration;
+        shared_ptr<GPUVertexDeclaration> vertex_declaration;
 		/** the primitives to render */
 		std::vector<GPUDrawPrimitive> primitives;
 

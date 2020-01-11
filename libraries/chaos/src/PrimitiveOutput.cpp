@@ -14,12 +14,10 @@ namespace chaos
         GPUDynamicMeshElement& new_element = dynamic_mesh->AddMeshElement();
         
         new_element.cached_buffer = cached_buffer;
-        new_element.vertex_declaration = *vertex_declaration;        
+        new_element.vertex_declaration = vertex_declaration;        
         new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
-
-
+      
         new_element.cached_buffer.buffer->UnMapBuffer();
-
 
         // insert the primitive into the element
         GPUDrawPrimitive primitive;

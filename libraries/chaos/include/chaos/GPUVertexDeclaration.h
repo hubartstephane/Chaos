@@ -3,6 +3,8 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
+#include <chaos/ReferencedObject.h>
+
 namespace chaos
 {
 	/** the possible semantics */
@@ -72,19 +74,19 @@ namespace chaos
 	public:
 
 		/** the semantic of the vertex component */
-		int semantic;
+		int semantic = 0;
 		/** for repetition of the same semantic */
-		int semantic_index;
+		int semantic_index = 0;
 		/** the type of the vertex component */
-		int type;
+		int type = 0;
 		/** offset of this entry from the beginning of the vertex */
-		int offset;
+		int offset = 0;
 	};
 
 	/**
 	* Declaration of a full vertex
 	*/
-	class GPUVertexDeclaration
+	class GPUVertexDeclaration : public ReferencedObject
 	{
 	public:
 

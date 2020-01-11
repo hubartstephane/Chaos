@@ -66,8 +66,10 @@ namespace chaos
 		return result;
 	}
 
-	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const & declaration, GLintptr offset)
+	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset)
 	{
+        assert(declaration != nullptr);
+
 		// early exit
 		if (program == nullptr || program->GetResourceID() == 0)
 			return nullptr;
@@ -92,7 +94,7 @@ namespace chaos
 		if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
 		{
 			GLuint binding_index = 0;
-			glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), offset, declaration.GetVertexSize());
+			glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), offset, declaration->GetVertexSize());
 		}
 
 		// set the index buffer
@@ -101,7 +103,7 @@ namespace chaos
 
 		// bind attributes
 		GPUProgramData const & data = program->GetProgramData();
-		data.BindAttributes(va, declaration, nullptr);
+		data.BindAttributes(va, *declaration, nullptr);
 
 		// create the entry in the cache
 		GPUVertexArrayCacheEntry new_entry;

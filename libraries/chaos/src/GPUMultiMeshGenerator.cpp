@@ -92,7 +92,7 @@ namespace chaos
 #endif
 
 						it.first->GenerateMeshData(mesh->primitives, vertices_writer, indices_writer); // generate the buffers and primitives and declaration
-						it.first->GenerateVertexDeclaration(mesh->vertex_declaration);
+                        mesh->vertex_declaration = it.first->GenerateVertexDeclaration();
 
 #if _DEBUG
 						size_t vc2 = vertices_writer.GetWrittenCount();
@@ -102,7 +102,7 @@ namespace chaos
 						assert(ic2 - ic1 == requirement.indices_count  * sizeof(std::uint32_t));
 #endif
 
-						assert(requirement.vertex_size == mesh->vertex_declaration.GetVertexSize());
+						assert(requirement.vertex_size == mesh->vertex_declaration->GetVertexSize());
 
 						mesh->ShiftPrimitivesIndexAndVertexPosition(0, (int)(written_indices_count / sizeof(GLuint)));  // shift the position of vertices/indices for this mesh
 

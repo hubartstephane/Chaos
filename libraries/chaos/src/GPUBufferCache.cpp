@@ -6,7 +6,7 @@
 namespace chaos
 {
 
-    bool GPUBufferCacheEntries::GetBuffer(size_t required_size, GPUBufferCacheEntry& result)
+    bool GPUBufferCacheEntries::GetBuffer(size_t required_size, shared_ptr<GPUBuffer>& result) // use shared pointer to avoid the buffer destruction when removed from vector<>
     {
         assert(required_size > 0);
 
@@ -15,30 +15,30 @@ namespace chaos
         size_t count = buffers.size();
         for (size_t i = 0; i < count; ++i)
         {
-            GPUBufferCacheEntry& entry = buffers[i];
+            GPUBuffer * buffer = buffers[i].get();
 
             // buffer too small ? or too big ?
-            size_t buffer_size = entry.buffer->GetBufferSize();
+            size_t buffer_size = buffer->GetBufferSize();
             if (buffer_size < required_size || buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
                 continue;
             // buffer found            
-            result = entry;
+            result = buffer;
             buffers.erase(buffers.begin() + i);
             return true;
         }
         return false;
     }
 
-    bool GPUBufferCache::GiveBuffer(GPUBufferCacheEntry& entry, GPUFence* fence)
+    bool GPUBufferCache::GiveBuffer(shared_ptr<GPUBuffer> & buffer, GPUFence* fence)
     {
         GPUBufferCacheEntries* cache_entry = GetCacheEntryForFence(fence);
         if (cache_entry == nullptr)
             return false;
-        cache_entry->buffers.push_back(entry);
+        cache_entry->buffers.push_back(buffer);
         return true;
     }
 
-    bool GPUBufferCache::GetBuffer(size_t required_size, GPUBufferCacheEntry & result)
+    bool GPUBufferCache::GetBuffer(size_t required_size, shared_ptr<GPUBuffer> & result)
     {
         assert(required_size > 0);
 
@@ -64,7 +64,7 @@ namespace chaos
                 --i;
             }
             // return the buffer if OK
-            if (result.buffer != nullptr)
+            if (result != nullptr)
                 return true;
         }
         return CreateBuffer(required_size, result);
@@ -83,13 +83,13 @@ namespace chaos
         return &entries[entries.size() - 1];
     }
 
-    bool GPUBufferCache::CreateBuffer(size_t required_size, GPUBufferCacheEntry & result)
+    bool GPUBufferCache::CreateBuffer(size_t required_size, shared_ptr<GPUBuffer> & result)
     {
         // create a dynamic buffer
-        result.buffer = new GPUBuffer(true);
-        if (result.buffer == nullptr)
+        result = new GPUBuffer(true);
+        if (result == nullptr)
             return false;
-        result.buffer->SetBufferData(nullptr, required_size); // no allocation, but set buffer size forever
+        result->SetBufferData(nullptr, required_size); // no allocation, but set buffer size forever
         return true;
     }
 

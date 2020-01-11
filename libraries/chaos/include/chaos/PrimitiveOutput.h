@@ -179,7 +179,7 @@ namespace chaos
         /** the renderer used fence requests */
         GPURenderer* renderer = nullptr;
         /** the buffer where we are writting vertices */
-        GPUBufferCacheEntry cached_buffer;
+        shared_ptr<GPUBuffer> vertex_buffer = nullptr;
 
         /** an evaluation of how many vertices could be used */
         size_t vertex_requirement_evaluation = 0;

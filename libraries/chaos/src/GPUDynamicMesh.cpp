@@ -21,7 +21,7 @@ namespace chaos
     {
         if (buffer_cache != nullptr) // give buffers to cache if we want that
             for (GPUDynamicMeshElement& element : elements)
-                buffer_cache->GiveBuffer(element.cached_buffer, last_rendered_fence.get());
+                buffer_cache->GiveBuffer(element.vertex_buffer, last_rendered_fence.get());
         elements.clear();
         last_rendered_fence = nullptr;
     }
@@ -42,7 +42,7 @@ namespace chaos
             GPUProgram const * program = final_material->UseMaterial(uniform_provider, render_params);
             if (program == nullptr)
                 continue;
-            GPUVertexArray const * vertex_array = element.vertex_array_cache.FindOrCreateVertexArray(program, element.cached_buffer.buffer.get(), nullptr, element.vertex_declaration.get(), 0);
+            GPUVertexArray const * vertex_array = element.vertex_array_cache.FindOrCreateVertexArray(program, element.vertex_buffer.get(), nullptr, element.vertex_declaration.get(), 0);
             if (vertex_array == nullptr)
                 continue;
 

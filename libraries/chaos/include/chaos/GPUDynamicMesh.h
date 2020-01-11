@@ -30,15 +30,15 @@ namespace chaos
         GPUDynamicMeshElement(GPUDynamicMeshElement const& src) : // XXX : do not copy GPUVertexArrayCache
             vertex_declaration(src.vertex_declaration),
             render_material(src.render_material),
-            cached_buffer(src.cached_buffer),
+            vertex_buffer(src.vertex_buffer),
             primitives(src.primitives) {}
 
         /** the vertex declaration for this element */
         shared_ptr<GPUVertexDeclaration> vertex_declaration;
         /** the material to use for this rendering */
         shared_ptr<GPURenderMaterial> render_material;
-        /** the 'vertex buffer' (+ mapping data) */
-        GPUBufferCacheEntry cached_buffer;
+        /** the vertex buffer */
+        shared_ptr<GPUBuffer> vertex_buffer;
         /** the primitive to render */
         std::vector<GPUDrawPrimitive> primitives;
 

@@ -18,7 +18,7 @@ namespace chaos
         new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
       
         new_element.vertex_buffer->UnMapBuffer();
-        new_element.vertex_buffer->SetBufferData(nullptr, new_element.vertex_buffer->GetBufferSize());
+        new_element.vertex_buffer->SetBufferData(nullptr, new_element.vertex_buffer->GetBufferSize()); // orphan the buffer
 
         // insert the primitive into the element
         GPUDrawPrimitive primitive;

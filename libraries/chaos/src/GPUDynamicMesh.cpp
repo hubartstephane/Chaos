@@ -24,6 +24,9 @@ namespace chaos
 
     int GPUDynamicMesh::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
+        // create a vertex array cache if necessary
+        if (vertex_array_cache == nullptr)
+            vertex_array_cache = new GPUVertexArrayCache;
         // display the elements
         int result = 0;       
         for (GPUDynamicMeshElement & element : elements)
@@ -38,7 +41,7 @@ namespace chaos
             GPUProgram const * program = final_material->UseMaterial(uniform_provider, render_params);
             if (program == nullptr)
                 continue;
-            GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, element.vertex_buffer.get(), nullptr, element.vertex_declaration.get(), 0);
+            GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(program, element.vertex_buffer.get(), nullptr, element.vertex_declaration.get(), 0);
             if (vertex_array == nullptr)
                 continue;
 
@@ -56,7 +59,7 @@ namespace chaos
         // store fence for this last rendering time (only if some draw call has been made)
         if (result > 0)
         {
-            last_rendered_fence = renderer->GetCurrentFrameFence();
+            // XXX : make code slower : last_rendered_fence = renderer->GetCurrentFrameFence();
             glBindVertexArray(0);
         }
         return result;

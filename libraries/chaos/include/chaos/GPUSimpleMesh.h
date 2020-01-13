@@ -59,7 +59,7 @@ namespace chaos
 	protected:
 
 		/** the cache for all vertex arrays */
-		GPUVertexArrayCache vertex_array_cache;
+        shared_ptr<GPUVertexArrayCache> vertex_array_cache;
 	};
 
 }; // namespace chaos

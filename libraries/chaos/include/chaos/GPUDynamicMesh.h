@@ -64,6 +64,8 @@ namespace chaos
         GPUDynamicMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
         GPUDynamicMeshElement & AddMeshElement();
+        /** set the vertex array manager */
+        void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache) {vertex_array_cache = in_vertex_array_cache;}
 
     protected:
 
@@ -77,7 +79,7 @@ namespace chaos
         /** the last time the dynamic mesh was rendered with current elements */
         shared_ptr<GPUFence> last_rendered_fence;
         /** the vertex array cache */
-        GPUVertexArrayCache vertex_array_cache;
+        shared_ptr<GPUVertexArrayCache> vertex_array_cache;
     };
 
 }; // namespace chaos

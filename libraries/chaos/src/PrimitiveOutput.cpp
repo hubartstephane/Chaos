@@ -18,6 +18,7 @@ namespace chaos
         new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
       
         new_element.vertex_buffer->UnMapBuffer();
+        new_element.vertex_buffer->SetBufferData(nullptr, new_element.vertex_buffer->GetBufferSize());
 
         // insert the primitive into the element
         GPUDrawPrimitive primitive;
@@ -53,12 +54,15 @@ namespace chaos
     char* PrimitiveOutputBase::ReserveBuffer(size_t required_size)
     {
         // compute/evaluate number of vertices to use for the buffer
-        size_t count = std::max(vertex_requirement_evaluation, required_size / vertex_size);
-        if (count == 0)
-            count = 100 * vertices_per_primitive; // a default buffer of 100 primitives
+        size_t count = 0;        
+        if (vertex_requirement_evaluation != 0)
+            count = std::max(vertex_requirement_evaluation, required_size / vertex_size);
+        else
+            count = std::max(100 * vertices_per_primitive, required_size / vertex_size); // a default buffer of 100 primitives
         // compute buffer size and allocate a buffer
-        size_t bufsize = count * vertex_size;
-        buffer_cache->GetBuffer(bufsize, vertex_buffer);
+        size_t bufsize = count * vertex_size;         
+        if (!buffer_cache->GetBuffer(bufsize, vertex_buffer))
+            return nullptr;
         // map the buffer
         buffer_start = vertex_buffer->MapBuffer(0, 0, false, true);
         buffer_end = buffer_start + vertex_buffer->GetBufferSize();

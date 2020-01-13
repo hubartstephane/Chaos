@@ -10,10 +10,6 @@ namespace chaos
 {
     GPUDynamicMeshElement & GPUDynamicMesh::AddMeshElement()
     {
-        GPUDynamicMeshElement&result = elements.emplace_back();
-
-
-        return result;
         return elements.emplace_back();
     }
 
@@ -42,7 +38,7 @@ namespace chaos
             GPUProgram const * program = final_material->UseMaterial(uniform_provider, render_params);
             if (program == nullptr)
                 continue;
-            GPUVertexArray const * vertex_array = element.vertex_array_cache.FindOrCreateVertexArray(program, element.vertex_buffer.get(), nullptr, element.vertex_declaration.get(), 0);
+            GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, element.vertex_buffer.get(), nullptr, element.vertex_declaration.get(), 0);
             if (vertex_array == nullptr)
                 continue;
 

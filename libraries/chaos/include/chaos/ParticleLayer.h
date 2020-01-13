@@ -318,6 +318,16 @@ class ParticleTraitTools
 		bool visible = true;
 		/** a callback called whenever the allocation becomes empty */
 		bool destroy_when_empty = false;
+
+
+
+
+
+
+   
+
+
+
 	};
 
 	// ==============================================================
@@ -802,14 +812,8 @@ class ParticleTraitTools
         /** whether there was changes in particles, and a vertex array need to be recomputed */
         bool require_GPU_update = false;
 
-
         /** the corresponding dynamic mesh */
         GPUDynamicMesh dynamic_mesh;
-
-
-
-
-
 
 		/** the vertex buffer for the rendering */
 		shared_ptr<GPUBuffer> vertex_buffer;

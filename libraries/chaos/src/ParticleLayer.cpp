@@ -322,7 +322,7 @@ namespace chaos
         // update the vertex declaration
         UpdateVertexDeclaration();
         // ensure their is some reason to update the rendering data
-        if (!require_GPU_update && !AreVerticesDynamic() && !AreParticlesDynamic())
+        if (!require_GPU_update && !AreVerticesDynamic())
             return true;
         // evaluate how much memory should be allocated for buffers (count in vertices)
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement();

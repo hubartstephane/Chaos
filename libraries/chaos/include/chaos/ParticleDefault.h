@@ -73,13 +73,11 @@ namespace chaos
 			template<typename VERTEX_TYPE>
 			static size_t ParticleToVertices(Particle const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle)
 			{
-#if 1
 				// generate particle corners and texcoords
 				ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 				// copy the color in all triangles vertex
 				for (size_t i = 0; i < 6; ++i)
 					vertices[i].color = particle->color;
-#endif
 				return vertices_per_particle;
 			}
 

@@ -41,11 +41,6 @@ namespace chaos
         shared_ptr<GPUBuffer> vertex_buffer;
         /** the primitive to render */
         std::vector<GPUDrawPrimitive> primitives;
-
-    protected:
-
-        /** the vertex array cache to use this rendering */
-        GPUVertexArrayCache vertex_array_cache;
     };
 
     /**
@@ -62,7 +57,7 @@ namespace chaos
         /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferCache) */
         void Clear(GPUBufferCache* buffer_cache);
         /** gets the number of mesh element */
-        size_t GetMeshElementCount() const { return elements.size(); }
+        size_t GetMeshElementCount() const { return elements.size();}
         /** access any mesh element */
         GPUDynamicMeshElement& GetMeshElement(size_t index) { return elements[index]; }
         /** access any mesh element */
@@ -81,6 +76,8 @@ namespace chaos
         std::vector<GPUDynamicMeshElement> elements;
         /** the last time the dynamic mesh was rendered with current elements */
         shared_ptr<GPUFence> last_rendered_fence;
+        /** the vertex array cache */
+        GPUVertexArrayCache vertex_array_cache;
     };
 
 }; // namespace chaos

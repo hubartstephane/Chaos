@@ -328,6 +328,7 @@ namespace chaos
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement();
         // clear previous dynamic mesh (and give buffers back for further usage)       
         dynamic_mesh.Clear(&particle_manager->GetBufferCache());
+        dynamic_mesh.SetVertexArrayCache(particle_manager->GetVertexArrayCache());
         // select PrimitiveOutput and collect vertices        
         DoUpdateGPUBuffers(renderer, vertex_requirement_evaluation);
         // mark as up to date
@@ -347,7 +348,7 @@ namespace chaos
 			return true;
 
 		// create the vertex buffer if necessary
-		bool dynamic_buffer = (AreVerticesDynamic() || AreParticlesDynamic());
+        bool dynamic_buffer = true; // (AreVerticesDynamic() || AreParticlesDynamic());
 
 		if (vertex_buffer == nullptr)
 		{

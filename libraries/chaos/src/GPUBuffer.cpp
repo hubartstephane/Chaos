@@ -96,17 +96,6 @@ namespace chaos
 		//      static buffers should use glBufferData(...)
 		//      test what happens with glBufferStorage(...)
 
-		// buffer_type = GL_DYNAMIC_DRAW; // !!! avoid some OpenGL warnings
-
-		// compute the real size we want
-
-#if 0
-
-		size_t effective_size = (dynamic) ?
-			GPUBufferDoublingResizePolicy().GetReservedSize(*this, in_size):
-			GPUBufferResizePolicy().GetReservedSize(*this, in_size);
-#endif
-
         size_t effective_size = in_size;
 
 		// just want to transfert some data
@@ -170,7 +159,7 @@ namespace chaos
 		if (write)
 			map_type |= GL_MAP_WRITE_BIT;
 
-        map_type |= GL_MAP_UNSYNCHRONIZED_BIT;
+       // map_type |= GL_MAP_UNSYNCHRONIZED_BIT;
 
 
 		// check for map range
@@ -195,26 +184,5 @@ namespace chaos
 			return;			
 		glUnmapNamedBuffer(buffer_id);
 	}
-
-
-#if 0
-
-		GL_BUFFER_ACCESS
-		GL_BUFFER_ACCESS_FLAGS
-		GL_BUFFER_IMMUTABLE_STORAGE
-		GL_BUFFER_MAPPED
-		GL_BUFFER_MAP_LENGTH
-		GL_BUFFER_MAP_OFFSET
-		GL_BUFFER_SIZE
-		GL_BUFFER_STORAGE_FLAGS
-		GL_MAP_READ_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT 
-		GL_BUFFER_USAGE
-		GL_BUFFER_USAGE
-#define glGetNamedBufferParameteri64v GLEW_GET_FUN(__glewGetNamedBufferParameteri64v)
-#define glGetNamedBufferParameteriv GLEW_GET_FUN(__glewGetNamedBufferParameteriv)
-#define glGetNamedBufferPointerv GLEW_GET_FUN(__glewGetNamedBufferPointerv)
-#define glGetNamedBufferSubData GLEW_GET_FUN(__glewGetNamedBufferSubData)
-#endif
-
 
 }; // namespace chaos

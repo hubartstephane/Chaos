@@ -23,11 +23,11 @@ namespace chaos
 	{
 		vertex_buffer = nullptr;
 		index_buffer = nullptr;
+        vertex_array_cache = nullptr;
+		vertex_declaration = nullptr;
 
-		vertex_declaration->Clear();
 		primitives.clear();
-
-		vertex_array_cache.Clear();
+        
 		return true;
 	}
 
@@ -45,8 +45,13 @@ namespace chaos
 	void GPUSimpleMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// early exit
+        if (vertex_declaration == nullptr)
+            return;
 		if (material == nullptr)
 			return;
+        // create a vertex array cache if necessary
+        if (vertex_array_cache == nullptr)
+            vertex_array_cache = new GPUVertexArrayCache;
 		// get the program for the material, use it and bind its uniforms
 		GPUProgram const * program = material->UseMaterial(uniform_provider, render_params);
 		if (program == nullptr)
@@ -59,7 +64,7 @@ namespace chaos
 	{
 		assert(program != nullptr);
 		// find the vertex array to use
-		GPUVertexArray const * vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration.get(), vertex_buffer_offset);
+		GPUVertexArray const * vertex_array = vertex_array_cache->FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration.get(), vertex_buffer_offset);
 		if (vertex_array == nullptr)
 			return;
 		// bind the vertex array

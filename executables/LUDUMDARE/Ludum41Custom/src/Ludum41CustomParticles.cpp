@@ -9,14 +9,42 @@
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
+#include <chaos/PrimitiveOutput.h>
 
 // ===========================================================================
 // Object particle system
 // ===========================================================================
 
+void ParticleObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output) const
+{
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = particle.color;
+}
+
+void ParticleObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
+{
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = particle.color;
+}
+
+
+
+
+
+
 size_t ParticleObjectTrait::ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle) const
 {
-	// generate particle corners and texcoords
+ 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
 	// copy the color in all triangles vertex
 	for (size_t i = 0 ; i < 6 ; ++i)
@@ -60,6 +88,39 @@ size_t ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const * partic
 	return vertices_per_particle;
 }
 
+
+
+
+
+
+
+
+void ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
+{
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = particle.color;
+}
+
+void ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
+{
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = particle.color;
+}
+
+
+
+
+
 // ===========================================================================
 // Brick particle system
 // ===========================================================================
@@ -96,6 +157,50 @@ size_t ParticleBrickTrait::ParticleToVertices(ParticleBrick const * particle, Ve
 }
 
 
+
+
+void ParticleBrickTrait::ParticleToVertices(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::box2 bounding_box = particle.bounding_box;
+    bounding_box.position.y -= ludum_game_instance->brick_offset;
+    chaos::ParticleTools::GenerateBoxParticle(bounding_box, particle.texcoords, primitive);
+
+    // copy the color in all triangles vertex
+    float extra = 2;
+    float ratio = (extra + particle.life) / (extra + particle.starting_life);
+    glm::vec4 color = ratio * particle.color;
+    
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = color;
+}
+
+void ParticleBrickTrait::ParticleToVertices(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::box2 bounding_box = particle.bounding_box;
+    bounding_box.position.y -= ludum_game_instance->brick_offset;
+    chaos::ParticleTools::GenerateBoxParticle(bounding_box, particle.texcoords, primitive);
+
+    // copy the color in all triangles vertex
+    float extra = 2;
+    float ratio = (extra + particle.life) / (extra + particle.starting_life);
+    glm::vec4 color = ratio * particle.color;
+
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = color;
+}
+
+
+
 // ===========================================================================
 // Object Movable particle system
 // ===========================================================================
@@ -121,6 +226,58 @@ size_t ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject cons
 
 	return vertices_per_particle;
 }
+
+
+
+
+void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+
+    glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    if (ludum_game_instance->ball_power == 0.5f)
+        power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
+    else if (ludum_game_instance->ball_power == 2.0f)
+        power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
+    else if (ludum_game_instance->ball_power == 3.0f)
+        power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = particle.color * power_color;
+}
+
+void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+
+    glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    if (ludum_game_instance->ball_power == 0.5f)
+        power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
+    else if (ludum_game_instance->ball_power == 2.0f)
+        power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
+    else if (ludum_game_instance->ball_power == 3.0f)
+        power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = particle.color * power_color;
+}
+
+
+
+
+
+
+
 
 
 void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
@@ -305,3 +462,86 @@ size_t ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const * part
 
 	return vertices_per_particle;
 }
+
+
+
+void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
+{
+    int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+    bool keyboard = chaos::InputMode::IsPCMode(input_mode);
+
+
+    
+
+
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+
+    // copy the color in all triangles vertex
+
+    glm::vec4 color = particle.color;
+
+    if (keyboard)
+    {
+        size_t challenge_position = particle.challenge->GetChallengePosition(false);
+        if (particle.index < challenge_position)
+            color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        else
+            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+    else
+    {
+        size_t challenge_position = particle.challenge->GetChallengePosition(true);
+        if (particle.index < challenge_position)
+            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        else
+            color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
+    }
+
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = color;
+}
+
+
+void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
+{
+    int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+    bool keyboard = chaos::InputMode::IsPCMode(input_mode);
+
+
+
+
+
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+
+    // copy the color in all triangles vertex
+
+    glm::vec4 color = particle.color;
+
+    if (keyboard)
+    {
+        size_t challenge_position = particle.challenge->GetChallengePosition(false);
+        if (particle.index < challenge_position)
+            color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+        else
+            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    }
+    else
+    {
+        size_t challenge_position = particle.challenge->GetChallengePosition(true);
+        if (particle.index < challenge_position)
+            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+        else
+            color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
+    }
+
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = color;
+}
+
+

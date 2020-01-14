@@ -4,6 +4,7 @@
 #include <chaos/ParticleTools.h> 
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
+#include <chaos/PrimitiveOutput.h> 
 
 #include <death/Game.h> 
 
@@ -23,6 +24,13 @@ using ParticleObject = chaos::ParticleDefault::Particle;
 class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject, VertexBase>
 {
 public:
+
+
+    void ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase> & output) const;
+    void ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
+
+
+
 
 	bool UpdateParticle(float delta_time, ParticleObject * particle) const;
 
@@ -48,13 +56,18 @@ public:
 
 	// called once for the whole allocation
 	int BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject> & particle_accessor, LayerTrait const * layer_trait) const;
+    // called for every particles
+    bool UpdateParticle(float delta_time, ParticleObject* particle, int extra_param, LayerTrait const* layer_trait) const;
+
 	// called once for the whole allocation
 	glm::vec2 BeginParticlesToVertices(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const;
-
-	// called for every particles
-	bool UpdateParticle(float delta_time, ParticleObject * particle, int extra_param, LayerTrait const * layer_trait) const;
 	// called for every particles
 	size_t ParticleToVertices(ParticleObject const * particle, VertexBase * vertices, size_t vertices_per_particle, glm::vec2 const & extra_data, LayerTrait const * layer_trait) const;
+
+
+    // called for every particles
+    void ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
 };
 
 
@@ -90,6 +103,9 @@ public:
 	bool UpdateParticle(float delta_time, ParticleBrick * particle, LayerTrait const * layer_trait) const;
 
 	size_t ParticleToVertices(ParticleBrick const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+    void ParticleToVertices(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 
@@ -121,6 +137,13 @@ public:
 
 	size_t ParticleToVertices(ParticleMovableObject const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
+
+    void ParticleToVertices(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+
+
+
+
 	void UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const;
 
 	glm::vec2 RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const;
@@ -151,6 +174,10 @@ class ParticleChallengeTrait : public chaos::ParticleAllocationTrait<ParticleCha
 public:
 
 	size_t ParticleToVertices(ParticleChallenge const * particle, VertexBase * vertices, size_t vertices_per_particle) const;
+
+
+    void ParticleToVertices(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const;
+    void ParticleToVertices(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 };
 
 

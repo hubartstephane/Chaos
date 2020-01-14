@@ -360,7 +360,7 @@ bool LudumGameInstance::IsSplitBallChallengeValid(bool success)
 	LudumGame const * ludum_game = GetLudumGame();
 
 	size_t ball_count = GetBallCount();
-	return (ball_count < ludum_game->max_ball_count);
+	return (ball_count < (size_t)ludum_game->max_ball_count);
 }
 
 void LudumGameInstance::OnSplitBallChallenge(bool success)

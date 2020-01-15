@@ -921,30 +921,33 @@ class ParticleTraitTools
         /** override */
         virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t vertex_requirement_evaluation) override
         {
+            // some layers are in a manager, some not (see TiledMap)
+            GPUBufferCache* cache = (particle_manager == nullptr) ? &buffer_cache : &particle_manager->GetBufferCache();
+
             // select PrimitiveOutput and collect vertices
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
-                TriangleOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TriangleOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
             {
-                TrianglePairOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TrianglePairOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
             {
-                QuadOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                QuadOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
             {
-                TriangleStripOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TriangleStripOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
             {
-                TriangleFanOutput<vertex_type> output(&dynamic_mesh, &particle_manager->GetBufferCache(), vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TriangleFanOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToVerticesLoop(output);
             }
         }

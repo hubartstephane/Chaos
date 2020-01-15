@@ -53,12 +53,15 @@ public:
 	glm::vec4 color;
 };
 
-chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>)
+chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>)
 {
-	chaos::GPUVertexDeclaration result;
-	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-	result.Push(chaos::SEMANTIC_COLOR,    0, chaos::TYPE_FLOAT4);
+    chaos::GPUVertexDeclaration* result = new chaos::GPUVertexDeclaration;
+    if (result != nullptr)
+    {
+        result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+        result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+        result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+    }
 	return result;
 }
 

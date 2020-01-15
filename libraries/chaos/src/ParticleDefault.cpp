@@ -13,23 +13,29 @@ namespace chaos
     {
         void ParticleTrait::ParticleToVertices(Particle const& particle, TrianglePairOutput<Vertex>& output)
         {
-            TrianglePairPrimitive<Vertex> primitive = output.AddPrimitive();
-
-            // generate particle corners and texcoords
-            ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-            // copy the color in all triangles vertex
-            for (size_t i = 0; i < 6; ++i)
-                primitive[i].color = particle.color;
+            ParticleToPrimitive(particle, output.AddPrimitive());
         }
 
-        void ParticleTrait::ParticleToVertices(Particle const& particle, QuadOutput<Vertex> & output)
+        void ParticleTrait::ParticleToVertices(Particle const& particle, QuadOutput<Vertex>& output)
         {
-            QuadPrimitive<Vertex> primitive = output.AddPrimitive();
+            ParticleToPrimitive(particle, output.AddPrimitive());
+        }
 
+        void ParticleTrait::ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive)
+        {
             // generate particle corners and texcoords
             ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
             // copy the color in all triangles vertex
             for (size_t i = 0; i < 4; ++i)
+                primitive[i].color = particle.color;
+        }
+
+        void ParticleTrait::ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive)
+        {
+            // generate particle corners and texcoords
+            ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+            // copy the color in all triangles vertex
+            for (size_t i = 0; i < 6; ++i)
                 primitive[i].color = particle.color;
         }
 

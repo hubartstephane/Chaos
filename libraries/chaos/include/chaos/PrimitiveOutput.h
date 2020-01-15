@@ -213,6 +213,21 @@ namespace chaos
             primitive_gl_type = chaos::GetGLPrimitiveType(PRIMITIVE_TYPE);
         }
 
+        /** cast operator to child vertex type */
+        template<typename OTHER_VERTEX_TYPE>
+        operator TypedPrimitiveOutputBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>& ()
+        {
+            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
+            return *(TypedPrimitiveOutputBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+        }
+        /** cast operator to child vertex type */
+        template<typename OTHER_VERTEX_TYPE>
+        operator TypedPrimitiveOutputBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const& () const
+        {
+            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
+            return *(TypedPrimitiveOutputBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+        }
+
         /** add a primitive */
         inline primitive_type AddPrimitive(size_t custom_vertices_count = 0)
         {

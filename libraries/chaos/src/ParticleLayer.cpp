@@ -253,7 +253,7 @@ namespace chaos
             return 0;
 
         // get the vertex array
-        GPUVertexArray const* vertex_array = vertex_array_cache.FindOrCreateVertexArray(program, vertex_buffer.get(), nullptr, vertex_declaration.get(), 0);
+        GPUVertexArray const* vertex_array = old_vertex_array_cache.FindOrCreateVertexArray(program, old_vertex_buffer.get(), nullptr, vertex_declaration.get(), 0);
         if (vertex_array == nullptr)
             return 0;
         // bind the vertex array
@@ -327,8 +327,18 @@ namespace chaos
         // evaluate how much memory should be allocated for buffers (count in vertices)
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement();
         // clear previous dynamic mesh (and give buffers back for further usage)       
-        dynamic_mesh.Clear(&particle_manager->GetBufferCache());
-        dynamic_mesh.SetVertexArrayCache(particle_manager->GetVertexArrayCache());
+        if (particle_manager != nullptr)
+        {
+            dynamic_mesh.Clear(&particle_manager->GetBufferCache());
+            dynamic_mesh.SetVertexArrayCache(particle_manager->GetVertexArrayCache());
+        }
+        else
+        {
+            if (vertex_array_cache == nullptr)
+                vertex_array_cache = new GPUVertexArrayCache;
+            dynamic_mesh.Clear(&buffer_cache);
+            dynamic_mesh.SetVertexArrayCache(vertex_array_cache.get());
+        }
         // select PrimitiveOutput and collect vertices        
         DoUpdateGPUBuffers(renderer, vertex_requirement_evaluation);
         // mark as up to date
@@ -350,14 +360,14 @@ namespace chaos
 		// create the vertex buffer if necessary
         bool dynamic_buffer = true; // (AreVerticesDynamic() || AreParticlesDynamic());
 
-		if (vertex_buffer == nullptr)
+		if (old_vertex_buffer == nullptr)
 		{
 			vertices_count = 0; // no vertices inside for the moment
 
-			vertex_buffer = new GPUBuffer(dynamic_buffer);
-			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
+			old_vertex_buffer = new GPUBuffer(dynamic_buffer);
+			if (old_vertex_buffer == nullptr || !old_vertex_buffer->IsValid())
 			{
-				vertex_buffer = nullptr;
+                old_vertex_buffer = nullptr;
 				return false;
 			}
 		}
@@ -366,19 +376,19 @@ namespace chaos
 		size_t vertex_buffer_size = GetVertexSize() * GetVerticesPerParticle() * ComputeMaxParticleCount();
 		if (vertex_buffer_size == 0)
 		{
-			vertex_buffer->SetBufferData(nullptr, 0); // empty the buffer : for some reason, we cannot just kill the buffer
+            old_vertex_buffer->SetBufferData(nullptr, 0); // empty the buffer : for some reason, we cannot just kill the buffer
 			vertices_count = 0;
 			return true;
 		}
 
 		// reserve memory (for the maximum number of vertices possible)
-		if (!vertex_buffer->SetBufferData(nullptr, vertex_buffer_size))
+		if (!old_vertex_buffer->SetBufferData(nullptr, vertex_buffer_size))
 		{
 			vertices_count = 0;
 			return false;
 		}
 		// map the vertex buffer
-		char * buffer = vertex_buffer->MapBuffer(0, vertex_buffer_size, false, true);
+		char * buffer = old_vertex_buffer->MapBuffer(0, vertex_buffer_size, false, true);
 		if (buffer == nullptr)
 		{
 			vertices_count = 0;
@@ -387,7 +397,7 @@ namespace chaos
 		// fill the buffer with data
 		vertices_count = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
 		// unmap the buffer
-		vertex_buffer->UnMapBuffer();
+        old_vertex_buffer->UnMapBuffer();
 
 		// no more update required
 		require_GPU_update = false;

@@ -25,7 +25,7 @@ public:
 	glm::vec2 particle_center;
 };
 
-chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
+chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
 
 class ParticleBase : public death::TiledMap::TileParticle
 {
@@ -65,13 +65,7 @@ public:
 
 	float rotation_radius = 0.0f;
 	float rotation_alpha = 0.0f;
-
-
-
-
 };
-
-
 
 class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>
 {
@@ -92,12 +86,17 @@ public:
 	{
 	public:
 
-
 	};
+
 
 	bool UpdateParticle(float delta_time, ParticleEnemy * particle, UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const;
 
 	size_t ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+    void ParticleToVertices(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+
+
 
 	UpdateEnemyData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;
 };
@@ -137,6 +136,9 @@ public:
 
 		std::vector<ParticleEnemy> enemy_particles;
 	};
+
+    void ParticleToVertices(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 
 
 	bool UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const;
@@ -189,6 +191,9 @@ public:
 
 	size_t ParticleToVertices(ParticleAtom const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
 
+    void ParticleToVertices(ParticleAtom const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleAtom const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+
 	UpdateAtomData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleAtom> & particle_accessor, LayerTrait const * layer_trait) const;
 };
 
@@ -219,7 +224,13 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const;
 
+
+
 	size_t ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const;
+
+    void ParticleToVertices(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToVertices(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+
 };
 
 

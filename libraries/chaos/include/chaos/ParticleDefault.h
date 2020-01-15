@@ -33,10 +33,6 @@ namespace chaos
         float bitmap_index;
     };
 
-
-
-
-
 	namespace ParticleDefault
 	{
 		/** Particle : a default particle, with simpler data */
@@ -59,17 +55,24 @@ namespace chaos
 			glm::vec4 color;
 		};
 
-
-	
 		/** ParticleVertexDefault : vertex for default particle */
 		class ParticleTrait : public ParticleAllocationTrait<Particle, Vertex>
 		{
 		public:
 
+            /** generates 1 quad from one particle */
             static void ParticleToVertices(Particle const& particle, QuadOutput<Vertex> & output);
+            /** generates 1 triangle pair from one particle */
             static void ParticleToVertices(Particle const& particle, TrianglePairOutput<Vertex>& output);
 
+            /** generates 1 quad from one particle */
+            static void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive);
+            /** generates 1 triangle pair from one particle */
+            static void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive);
 
+
+
+            // obsolete
 			template<typename VERTEX_TYPE>
 			static size_t ParticleToVertices(Particle const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle)
 			{

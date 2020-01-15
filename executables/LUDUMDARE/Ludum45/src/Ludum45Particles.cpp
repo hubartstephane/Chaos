@@ -18,15 +18,16 @@
 static float COLLISION_PLAYER_TWEAK = 0.50f;
 static float COLLISION_FIRE_TWEAK = 0.75f;
 
-
-
 /*
-chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
+chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
-	chaos::GPUVertexDeclaration result;
-	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	chaos::GPUVertexDeclaration * result = new chaos::GPUVertexDeclaration;
+    if (result != nullptr)
+    {
+        result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+        result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+        result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+    }
 	return result;
 }
 */
@@ -135,6 +136,33 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBas
 
 	return vertices_per_particle;
 }
+
+void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+    color.a = (particle.touched_count_down > 0.0f) ? 0.0f : 1.0f;
+    
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = color;
+}
+
+void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+    color.a = (particle.touched_count_down > 0.0f) ? 0.0f : 1.0f;
+
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = color;
+}
+
 
 
 bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
@@ -305,6 +333,30 @@ size_t ParticleBonusTrait::ParticleToVertices(ParticleBonus const * p, VertexBas
 }
 
 
+void ParticleBonusTrait::ParticleToVertices(ParticleBonus const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = particle.color;
+}
+
+void ParticleBonusTrait::ParticleToVertices(ParticleBonus const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = particle.color;
+}
+
+
+
 bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
 {
 	chaos::box2 bb = particle->bounding_box;
@@ -368,6 +420,81 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 }
 
 
+
+void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    chaos::ParticleTexcoords texcoords = particle.texcoords;
+
+    if (particle.bitmap_info != nullptr && particle.bitmap_info->HasGridAnimation())
+    {
+        chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
+
+        texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+
+    }
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive, particle.orientation);
+
+    glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    LudumPlayer const* player = layer_trait->game->GetLudumPlayer(0);
+    if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
+    {
+        float alpha = 1.0f;
+
+        if (layer_trait->game->player_dash_duration > 0.0f)
+            alpha = player->dash_timer / layer_trait->game->player_dash_duration;
+
+        alpha = 0.8f;
+
+        boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - alpha);
+    }
+
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = boost_color * particle.color;
+}
+
+void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    chaos::ParticleTexcoords texcoords = particle.texcoords;
+
+    if (particle.bitmap_info != nullptr && particle.bitmap_info->HasGridAnimation())
+    {
+        chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
+
+        texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+
+    }
+
+    // generate particle corners and texcoords
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive, particle.orientation);
+
+    glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+    LudumPlayer const* player = layer_trait->game->GetLudumPlayer(0);
+    if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
+    {
+        float alpha = 1.0f;
+
+        if (layer_trait->game->player_dash_duration > 0.0f)
+            alpha = player->dash_timer / layer_trait->game->player_dash_duration;
+
+        alpha = 0.8f;
+
+        boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - alpha);
+    }
+
+    // copy the color in all triangles vertex
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = boost_color * particle.color;
+}
+
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
@@ -384,9 +511,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	}
 	return false;
 }
-
-
-
 
 // ===========================================================================
 // ParticleFireTrait
@@ -480,9 +604,6 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 {
 	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
 	// copy the color in all triangles vertex
-	for (size_t i = 0; i < 6; ++i)
-		vertices[i].color = particle->color;
-
 	float alpha = 1.0f;
 	if (particle->lifetime < 1.0f)
 		alpha = particle->lifetime;
@@ -493,9 +614,35 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 		vertices[i].color = particle->color;
 		vertices[i].color.a = alpha;
 	}
-
 	return 6;
 }
+
+void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
+
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+
+    color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = particle.color;
+}
+
+void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
+
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+
+    color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = particle.color;
+}
+
 
 // ===========================================================================
 // ParticleShroudLife
@@ -526,13 +673,18 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 
 size_t ParticleShroudLifeTrait::ParticleToVertices(ParticleShroudLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
 
+void ParticleShroudLifeTrait::ParticleToVertices(ParticleShroudLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
 
-
-
+void ParticleShroudLifeTrait::ParticleToVertices(ParticleShroudLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
 
 // ===========================================================================
 // ParticleLifeTrait
@@ -552,6 +704,18 @@ size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, Vert
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
+
+
+void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
 
 
 
@@ -604,3 +768,16 @@ size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * part
 
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
+
+void ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+
+}
+
+

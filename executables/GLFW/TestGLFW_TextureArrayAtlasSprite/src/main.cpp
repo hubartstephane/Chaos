@@ -58,7 +58,7 @@ protected:
 			return;
 
 		glm::vec2 screen_size = glm::vec2(w, h);
-		float     particle_size = max(w, h);
+		float     particle_size = std::max(w, h);
 
 		// initialize the particles
 

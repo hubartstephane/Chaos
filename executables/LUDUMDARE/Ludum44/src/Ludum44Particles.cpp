@@ -12,12 +12,15 @@
 
 #include <death/SoundContext.h>
 
-chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
+chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
-	chaos::GPUVertexDeclaration result;
-	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+    chaos::GPUVertexDeclaration* result = new chaos::GPUVertexDeclaration;
+    if (result != nullptr)
+    {
+        result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+        result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+        result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+    }
 	return result;
 }
 
@@ -94,6 +97,22 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 }
 
 
+
+void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+
+
+
+
+
+
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
 	// find all enemies
@@ -129,14 +148,17 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // PowerUpZoneParticleTrait
 // =====================================
 
-chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexPowerUpZone>)
+chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexPowerUpZone>)
 {
-	chaos::GPUVertexDeclaration result;
-	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3); // bottom-left of sprite in atlas
-	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);	
-	result.Push(chaos::SEMANTIC_TEXCOORD, 1, chaos::TYPE_FLOAT3); // top-right of sprite in atlas
-	result.Push(chaos::SEMANTIC_TEXCOORD, 2, chaos::TYPE_FLOAT2);
+    chaos::GPUVertexDeclaration* result = new chaos::GPUVertexDeclaration;
+    if (result != nullptr)
+    {
+        result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+        result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3); // bottom-left of sprite in atlas
+        result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+        result->Push(chaos::SEMANTIC_TEXCOORD, 1, chaos::TYPE_FLOAT3); // top-right of sprite in atlas
+        result->Push(chaos::SEMANTIC_TEXCOORD, 2, chaos::TYPE_FLOAT2);
+    }
 	return result;
 }
 
@@ -153,7 +175,7 @@ bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZ
 	}
 	return false;
 }
-size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const * particle, VertexPowerUpZone * vertices, size_t vertices_per_particle)
+size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const * particle, VertexPowerUpZone * vertices, size_t vertices_per_particle) const
 {
 	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 
@@ -181,6 +203,27 @@ size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticl
 
 	return result;
 }
+
+
+void PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const& particle, chaos::TrianglePairOutput<VertexPowerUpZone>& output) const
+{
+
+
+
+
+    // shuxxx
+
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+void PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
+{
+
+
+    // shuxxx
+
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
 
 
 
@@ -235,6 +278,15 @@ size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * part
 }
 
 
+void ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
 
 
 // ===========================================================================
@@ -252,6 +304,18 @@ size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, Vert
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
+
+void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+
 
 
 // ===========================================================================
@@ -354,6 +418,28 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 
 	return 6;
 }
+
+
+
+void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    // shuxxx
+
+
+
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+
+    // shuxxx
+
+
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+
 
 // ===========================================================================
 // ParticleEnemyTrait
@@ -477,5 +563,24 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * particle, Ve
 	for (size_t i = 0; i < 6; ++i)
 		vertices[i].color = color;
 	return 6;
+}
+
+
+void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    // shuxxx
+
+
+
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+
+    // shuxxx
+
+
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
 }
 

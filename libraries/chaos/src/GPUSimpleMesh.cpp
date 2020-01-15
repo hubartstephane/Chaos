@@ -49,9 +49,6 @@ namespace chaos
             return;
 		if (material == nullptr)
 			return;
-        // create a vertex array cache if necessary
-        if (vertex_array_cache == nullptr)
-            vertex_array_cache = new GPUVertexArrayCache;
 		// get the program for the material, use it and bind its uniforms
 		GPUProgram const * program = material->UseMaterial(uniform_provider, render_params);
 		if (program == nullptr)
@@ -63,6 +60,9 @@ namespace chaos
 	void GPUSimpleMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params)
 	{
 		assert(program != nullptr);
+        // create a vertex array cache if necessary
+        if (vertex_array_cache == nullptr)
+            vertex_array_cache = new GPUVertexArrayCache;
 		// find the vertex array to use
 		GPUVertexArray const * vertex_array = vertex_array_cache->FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration.get(), vertex_buffer_offset);
 		if (vertex_array == nullptr)

@@ -809,6 +809,11 @@ class ParticleTraitTools
         /** the vertex declaration */
         shared_ptr<GPUVertexDeclaration> vertex_declaration;
 
+        /** the vertex cache (used when the layer is NOT in a manager) */
+        shared_ptr<GPUVertexArrayCache> vertex_array_cache;
+        /** the vertex cache (used when the layer is NOT in a manager) */
+        GPUBufferCache buffer_cache;
+
         /** whether there was changes in particles, and a vertex array need to be recomputed */
         bool require_GPU_update = false;
 
@@ -816,9 +821,9 @@ class ParticleTraitTools
         GPUDynamicMesh dynamic_mesh;
 
 		/** the vertex buffer for the rendering */
-		shared_ptr<GPUBuffer> vertex_buffer;
+		shared_ptr<GPUBuffer> old_vertex_buffer;
 		/** the cache for vertex array */
-		GPUVertexArrayCache vertex_array_cache;
+		GPUVertexArrayCache old_vertex_array_cache;
 
 		/** number of used vertices in the vertex buffer */
 		size_t vertices_count = 0;

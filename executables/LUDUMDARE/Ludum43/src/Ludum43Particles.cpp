@@ -8,14 +8,17 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 
-chaos::GPUVertexDeclaration GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
+chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
 {
-	chaos::GPUVertexDeclaration result;
-	result.Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-	result.Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-	result.Push(chaos::SEMANTIC_POSITION, 1, chaos::TYPE_FLOAT2);
-	result.Push(chaos::SEMANTIC_POSITION, 2, chaos::TYPE_FLOAT2); // center of the particle
+    chaos::GPUVertexDeclaration* result = new chaos::GPUVertexDeclaration;
+    if (result != nullptr)
+    {
+        result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+        result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+        result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+        result->Push(chaos::SEMANTIC_POSITION, 1, chaos::TYPE_FLOAT2);
+        result->Push(chaos::SEMANTIC_POSITION, 2, chaos::TYPE_FLOAT2); // center of the particle
+    }
 	return result;
 }
 
@@ -138,9 +141,19 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool a
 
 size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
-	return result;
+	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 }
+
+void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
 
 ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer>& particle_accessor, LayerTrait const * layer_trait) const
 {
@@ -239,21 +252,63 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // ParticleEnemyTrait
 // ===========================================================================
 
-size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
+
+size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const* p, VertexBase* vertices, size_t vertices_per_particle, LayerTrait const* layer_trait) const
 {
-	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
+    size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 
-	for (size_t i = 0; i < result; ++i)
-	{
-		vertices[i].attraction_position =
-			p->bounding_box.position +
-			2.0f * p->attraction_maxradius * glm::normalize(vertices[i].position - p->bounding_box.position);
+    for (size_t i = 0; i < result; ++i)
+    {
+        vertices[i].attraction_position =
+            p->bounding_box.position +
+            2.0f * p->attraction_maxradius * glm::normalize(vertices[i].position - p->bounding_box.position);
 
-		vertices[i].particle_center = p->bounding_box.position;
-	}
+        vertices[i].particle_center = p->bounding_box.position;
+    }
 
-	return result;
+    return result;
 }
+
+
+
+
+void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const * layer_trait) const
+{
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
+
+	for (size_t i = 0; i < 4; ++i)
+	{
+        primitive[i].attraction_position =
+			particle.bounding_box.position +
+			2.0f * particle.attraction_maxradius * glm::normalize(primitive[i].position - particle.bounding_box.position);
+        primitive[i].particle_center = particle.bounding_box.position;
+	}
+}
+
+void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
+
+    for (size_t i = 0; i < 6; ++i)
+    {
+        primitive[i].attraction_position =
+            particle.bounding_box.position +
+            2.0f * particle.attraction_maxradius * glm::normalize(primitive[i].position - particle.bounding_box.position);
+        primitive[i].particle_center = particle.bounding_box.position;
+    }
+}
+
+
+
+
+
+
+
+
 
 ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const
 {
@@ -289,6 +344,19 @@ size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase 
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 }
+
+void ParticleAtomTrait::ParticleToVertices(ParticleAtom const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+void ParticleAtomTrait::ParticleToVertices(ParticleAtom const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+
+
+
 bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
 {
 	LudumGameInstance * ludum_game_instance = layer_trait->game->GetLudumGameInstance();
@@ -389,6 +457,15 @@ bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle
 size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+}
+
+void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+}
+void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
 }
 
 

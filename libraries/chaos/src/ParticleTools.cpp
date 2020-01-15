@@ -233,17 +233,17 @@ namespace chaos
             v1.position = br_position;
             v1.texcoord = br_texcoord;
 
-            v2.position = tl_position;
-            v2.texcoord = tl_texcoord;
+            v2.position = tr_position;
+            v2.texcoord = tr_texcoord;
 
-            v3.position = tl_position;
-            v3.texcoord = tl_texcoord;
+            v3.position = bl_position;
+            v3.texcoord = bl_texcoord;
 
-            v4.position = br_position;
-            v4.texcoord = br_texcoord;
+            v4.position = tr_position;
+            v4.texcoord = tr_texcoord;
 
-            v5.position = tr_position;
-            v5.texcoord = tr_texcoord;
+            v5.position = tl_position;
+            v5.texcoord = tl_texcoord;
         }
 
         void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation)

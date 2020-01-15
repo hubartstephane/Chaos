@@ -8,6 +8,26 @@
 
 namespace chaos
 {
+    // QUAD
+    // ----
+    //     3      2
+    //     +------+
+    //     |      |
+    //     |      |
+    //     +------+
+    //     0      1
+    // 
+    // TRIANGLE PAIR
+    // -------------
+    //
+    //     5     2,4
+    //     +------+
+    //     |    / |
+    //     | /    |
+    //     +------+
+    //    0,3     1
+    // 
+
     /**
      * PrimitiveType : the type of primitives that can be rendered
      */

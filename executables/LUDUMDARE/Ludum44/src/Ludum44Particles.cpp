@@ -96,8 +96,6 @@ size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexB
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
 }
 
-
-
 void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
@@ -106,12 +104,6 @@ void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, cha
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
 }
-
-
-
-
-
-
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
 {
@@ -207,21 +199,72 @@ size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticl
 
 void PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const& particle, chaos::TrianglePairOutput<VertexPowerUpZone>& output) const
 {
+    chaos::TrianglePairPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
 
+    VertexPowerUpZone& v0 = primitive[0];
+    VertexPowerUpZone& v1 = primitive[1];
+    VertexPowerUpZone& v2 = primitive[2];
+    VertexPowerUpZone& v3 = primitive[3];
+    VertexPowerUpZone& v4 = primitive[4];
+    VertexPowerUpZone& v5 = primitive[5];
 
+    glm::vec3 texture_bl = v0.texcoord;
+    glm::vec3 texture_tr = v2.texcoord;
 
-    // shuxxx
+    glm::vec2 position_bl = v0.position;
+    glm::vec2 position_tr = v2.position;
 
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    // override the texture coordinates
+    for (size_t i = 0; i < 6; ++i)
+    {
+        VertexPowerUpZone& vertex = primitive[i];
+        vertex.texcoord = texture_bl;
+        vertex.texcoord2 = texture_tr;
+    }
+
+    // compute repetition
+    glm::vec2 repetition = glm::vec2(1.0f, 1.0f);
+
+    v0.texcoord3 = v3.texcoord3 = repetition * glm::vec2(0.0f, 0.0f);
+    v1.texcoord3 = repetition * glm::vec2(1.0f, 0.0f);
+    v2.texcoord3 = v4.texcoord3 = repetition * glm::vec2(1.0f, 1.0f);
+    v5.texcoord3 = repetition * glm::vec2(0.0f, 1.0f);
 }
 void PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
 {
+    chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
 
-    // shuxxx
+    VertexPowerUpZone& v0 = primitive[0];
+    VertexPowerUpZone& v1 = primitive[1];
+    VertexPowerUpZone& v2 = primitive[2];
+    VertexPowerUpZone& v3 = primitive[3];
 
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    glm::vec3 texture_bl = v0.texcoord;
+    glm::vec3 texture_tr = v2.texcoord;
+
+    glm::vec2 position_bl = v0.position;
+    glm::vec2 position_tr = v2.position;
+
+    // override the texture coordinates
+    for (size_t i = 0; i < 4; ++i)
+    {
+        VertexPowerUpZone& vertex = primitive[i];
+        vertex.texcoord = texture_bl;
+        vertex.texcoord2 = texture_tr;
+    }
+
+    // compute repetition
+    glm::vec2 repetition = glm::vec2(1.0f, 1.0f);
+
+    v0.texcoord3 = repetition * glm::vec2(0.0f, 0.0f);
+    v1.texcoord3 = repetition * glm::vec2(1.0f, 0.0f);
+    v2.texcoord3 = repetition * glm::vec2(1.0f, 1.0f);
+    v3.texcoord3 = repetition * glm::vec2(0.0f, 1.0f);
+
 }
 
 
@@ -272,8 +315,6 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
-
-
 	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
 
@@ -423,20 +464,28 @@ size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, Vert
 
 void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    // shuxxx
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
 
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+    color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
 
-
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = color;
 }
 
 void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
 
-    // shuxxx
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+    color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
 
-
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = color;
 }
 
 
@@ -568,19 +617,27 @@ size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * particle, Ve
 
 void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    // shuxxx
+    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
 
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+    color.a = (particle.touched_count_down > 0) ? 0.0f : 1.0f;
 
-
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    for (size_t i = 0; i < 4; ++i)
+        primitive[i].color = color;
 }
 
 void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
+    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
 
-    // shuxxx
+    // copy the color in all triangles vertex
+    glm::vec4 color = particle.color;
+    color.a = (particle.touched_count_down > 0) ? 0.0f : 1.0f;
 
-
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    for (size_t i = 0; i < 6; ++i)
+        primitive[i].color = color;
 }
 

@@ -223,44 +223,9 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	if (particle->pattern != nullptr)
 		return particle->pattern->UpdateParticle(delta_time, particle, player_box, layer_trait->game->GetLevelInstance()->GetCameraBox(0));
 
-	
-
 
 	return false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -491,7 +456,7 @@ void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, cha
     }
 
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < 6; ++i)
         primitive[i].color = boost_color * particle.color;
 }
 

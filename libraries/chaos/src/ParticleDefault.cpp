@@ -39,16 +39,11 @@ namespace chaos
                 primitive[i].color = particle.color;
         }
 
-        GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<Vertex>)
+        void GetTypedVertexDeclaration(GPUVertexDeclaration * result, boost::mpl::identity<Vertex>)
         {
-            chaos::GPUVertexDeclaration* result = new GPUVertexDeclaration;
-            if (result != nullptr)
-            {
-                result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-                result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-                result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-            }
-            return result;
+			result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+            result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+            result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
         }
 
         GPUProgram* GenDefaultParticleProgram()

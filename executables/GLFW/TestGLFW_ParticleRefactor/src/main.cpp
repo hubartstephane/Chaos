@@ -50,16 +50,11 @@ public:
 
 };
 
-chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>)
+void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexExample>)
 {
-    chaos::GPUVertexDeclaration* result = new chaos::GPUVertexDeclaration;
-    if (result != nullptr)
-    {
-        result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-        result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-        result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-    }
-	return result;
+	result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+	result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+	result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
 }
 
 class ParticleExampleTrait : public chaos::ParticleAllocationTrait<ParticleExample, VertexExample>

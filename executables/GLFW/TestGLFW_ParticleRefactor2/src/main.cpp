@@ -51,7 +51,7 @@ public:
 
 };
 
-chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexExample>)
+void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexExample>)
 {
 	chaos::GPUVertexDeclaration * result = new chaos::GPUVertexDeclaration;
     if (result != nullptr)

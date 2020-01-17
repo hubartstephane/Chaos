@@ -23,7 +23,7 @@ public:
 
 };
 
-chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>);
+void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
 
 class ParticleBase : public death::TiledMap::TileParticle
 {
@@ -70,7 +70,7 @@ public:
 	glm::vec2 texcoord3;
 };
 
-chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexPowerUpZone>);
+void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexPowerUpZone>);
 
 
 class PowerUpZoneParticleTrait : public chaos::ParticleAllocationTrait<ParticlePowerUpZone, VertexPowerUpZone, true, true> // shuxxx set to false = optimization 1

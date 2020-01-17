@@ -19,16 +19,11 @@ static float COLLISION_PLAYER_TWEAK = 0.50f;
 static float COLLISION_FIRE_TWEAK = 0.75f;
 
 /*
-chaos::GPUVertexDeclaration * GetTypedVertexDeclaration(boost::mpl::identity<VertexBase>)
+void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>)
 {
-	chaos::GPUVertexDeclaration * result = new chaos::GPUVertexDeclaration;
-    if (result != nullptr)
-    {
-        result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-        result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-        result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-    }
-	return result;
+	result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+	result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+    result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
 }
 */
 

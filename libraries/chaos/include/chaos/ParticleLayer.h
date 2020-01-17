@@ -904,7 +904,13 @@ class ParticleTraitTools
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
 		/** override */
-		virtual GPUVertexDeclaration * GetVertexDeclaration() const override { return GetTypedVertexDeclaration(boost::mpl::identity<vertex_type>()); }
+		virtual GPUVertexDeclaration * GetVertexDeclaration() const override 
+		{
+			GPUVertexDeclaration* result = new GPUVertexDeclaration;
+			if (result != nullptr)
+				GetTypedVertexDeclaration(result, boost::mpl::identity<vertex_type>()); 
+			return result;
+		}
         /** override */
         virtual GLenum GetGLPrimitiveType() const override { return ParticleTraitTools::GetGLPrimitiveType<allocation_trait_type>(); }
 

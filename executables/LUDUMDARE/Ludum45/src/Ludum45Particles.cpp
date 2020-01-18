@@ -53,9 +53,6 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 	return result;
 }
 
-
-
-
 static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & result)
 {
 	// get the enemies
@@ -81,8 +78,6 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 	}
 }
 
-
-
 // ===========================================================================
 // Utility
 // ===========================================================================
@@ -96,13 +91,9 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 	return false;
 }
 
-
-
-
 // ===========================================================================
 // ParticleEnemyTrait
 // ===========================================================================
-
 
 chaos::box2 ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
 {
@@ -112,7 +103,6 @@ chaos::box2 ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::Pa
 
 	return result;
 }
-
 
 size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
 {
@@ -149,6 +139,7 @@ void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos
 void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
 
     // copy the color in all triangles vertex
     glm::vec4 color = particle.color;
@@ -157,8 +148,6 @@ void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos
     for (size_t i = 0; i < 4; ++i)
         primitive[i].color = color;
 }
-
-
 
 bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
 {
@@ -174,9 +163,6 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 
 	if (particle->touched_count_down > 0.0f)
 		particle->touched_count_down -= delta_time;
-
-
-
 
 	if (chaos::Collide(bb, player_box))
 	{
@@ -221,8 +207,6 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 
 	return false;
 }
-
-
 
 // ===========================================================================
 // ParticleBonusTrait
@@ -315,8 +299,6 @@ void ParticleBonusTrait::ParticleToVertices(ParticleBonus const& particle, chaos
         primitive[i].color = particle.color;
 }
 
-
-
 bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
 {
 	chaos::box2 bb = particle->bounding_box;
@@ -332,10 +314,6 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * partic
 	}
 	return false;
 }
-
-
-
-
 
 // ===========================================================================
 // ParticlePlayerTrait
@@ -392,7 +370,6 @@ void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, cha
         chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
 
         texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-
     }
 
     // generate particle corners and texcoords
@@ -429,7 +406,6 @@ void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, cha
         chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
 
         texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-
     }
 
     // generate particle corners and texcoords

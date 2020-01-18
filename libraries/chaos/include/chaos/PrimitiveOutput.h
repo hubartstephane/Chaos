@@ -41,7 +41,7 @@ namespace chaos
         triangle_fan = 4,
     };
 
-    /** returns the number of element per primitive */
+    /** returns the number of element per primitive (user accessible) */
     constexpr size_t GetVerticesPerParticle(PrimitiveType primitive_type)
     {
         if (primitive_type == PrimitiveType::triangle)
@@ -53,6 +53,15 @@ namespace chaos
         return 0; // strip and fans have no defined values for this
     }
 
+    /** returns the real number of element per primitive (the count in GPU buffer) */
+    constexpr size_t GetRealVerticesPerParticle(PrimitiveType primitive_type)
+    {
+        if (primitive_type == PrimitiveType::quad)
+            return 6;
+        return GetVerticesPerParticle(primitive_type);
+    }
+
+    /** returns the OpenGL primitive type corresponding to the primitive */
     constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
     {
         if (primitive_type == PrimitiveType::triangle)
@@ -60,7 +69,7 @@ namespace chaos
         if (primitive_type == PrimitiveType::triangle_pair)
             return GL_TRIANGLES;
         if (primitive_type == PrimitiveType::quad)
-            return GL_QUADS;
+            return GL_TRIANGLES;
         if (primitive_type == PrimitiveType::triangle_strip)
             return GL_TRIANGLE_STRIP;
         if (primitive_type == PrimitiveType::triangle_fan)
@@ -205,9 +214,13 @@ namespace chaos
 
         /** size of a vertex */
         size_t vertex_size = 0;
-        /** the number of vertices per primitive */
+        /** the number of vertices per primitive (accessible for user from Primitive with [] operator) */
         size_t vertices_per_primitive = 0;
+        /** the real number of vertices per primitives (in GPU memory quads are transformed into a triangle pair) */
+        size_t real_vertices_per_primitive = 0;
         /** the primitive type */
+        PrimitiveType type;
+        /** the GL primitive type */
         GLenum primitive_gl_type = GL_NONE;
     };
 
@@ -230,6 +243,8 @@ namespace chaos
         {
             vertex_size = sizeof(vertex_type);
             vertices_per_primitive = chaos::GetVerticesPerParticle(PRIMITIVE_TYPE);
+            real_vertices_per_primitive = chaos::GetRealVerticesPerParticle(PRIMITIVE_TYPE);
+            type = PRIMITIVE_TYPE;
             primitive_gl_type = chaos::GetGLPrimitiveType(PRIMITIVE_TYPE);
         }
 
@@ -263,7 +278,7 @@ namespace chaos
             // implementation for fixed length primitives
             else
             {
-                return primitive_type(GeneratePrimitive(vertex_size * vertices_per_primitive), vertex_size);
+                return primitive_type(GeneratePrimitive(vertex_size * real_vertices_per_primitive), vertex_size);
             }
         }
     };

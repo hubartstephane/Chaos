@@ -95,8 +95,7 @@ class ParticleTraitTools
 	{ 
         if constexpr (has_vertices_per_particle_v<TRAIT_TYPE>)
             return trait.vertices_per_particle;
-        else
-            return 2 * 3; // default value (2 triangles to render a quad)
+        return 2 * 3; // default value (2 triangles to render a quad)
 	}
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>
@@ -104,8 +103,7 @@ class ParticleTraitTools
 	{
         if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
             return trait.dynamic_vertices;
-        else
-            return true;
+        return true;
 	}
 	/** returns whether the particles are dynamic */
 	template<typename TRAIT_TYPE>
@@ -113,8 +111,7 @@ class ParticleTraitTools
 	{
         if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
             return trait.dynamic_particles;
-        else
-            return true;
+        return true;
 	}
 
 	/** returns whether the vertices are dynamic (without an instance to read) */
@@ -123,8 +120,7 @@ class ParticleTraitTools
 	{
         if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
             return TRAIT_TYPE::dynamic_vertices;
-        else
-            return true;
+        return true;
     }
 	/** returns whether the particles are dynamic (without an instance to read) */
 	template<typename TRAIT_TYPE>
@@ -132,8 +128,7 @@ class ParticleTraitTools
 	{
         if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
             return TRAIT_TYPE::dynamic_particles;
-        else
-            return true;
+        return true;
 	}
     /** returns the primitive type used for the rendering */
     template<typename TRAIT_TYPE>
@@ -141,20 +136,9 @@ class ParticleTraitTools
     {
         if constexpr (has_primitive_type_v<TRAIT_TYPE>)
             return TRAIT_TYPE::primitive_type;
-        else
-            return PrimitiveType::triangle_pair;
+        return PrimitiveType::triangle_pair;
 
-
-        // shuxxx
-
-
-        return PrimitiveType::quad;
-
-
-
-
-
-
+        //return PrimitiveType::quad;
     }
     /** returns the primitive type used for rendering (OpenGL point of view) */
     template<typename TRAIT_TYPE>
@@ -699,6 +683,8 @@ class ParticleTraitTools
 		virtual size_t GetVerticesPerParticle() const { return 2 * 3; } // 2 triangles per particles to have a square = 6 vertices
 #else
         virtual size_t GetVerticesPerParticle() const { return 0; }
+
+        virtual size_t GetRealVerticesPerParticle() const { return 0; }
 #endif
 
 
@@ -876,6 +862,11 @@ class ParticleTraitTools
         virtual size_t GetVerticesPerParticle() const override
         {
             return chaos::GetVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<allocation_trait_type>()); // see PrimitiveOutput.h
+        }
+
+        virtual size_t GetRealVerticesPerParticle() const override
+        {
+            return chaos::GetRealVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<allocation_trait_type>()); // see PrimitiveOutput.h
         }
 
 #endif

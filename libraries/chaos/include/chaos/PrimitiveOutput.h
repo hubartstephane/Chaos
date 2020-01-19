@@ -56,8 +56,11 @@ namespace chaos
     /** returns the real number of element per primitive (the count in GPU buffer) */
     constexpr size_t GetRealVerticesPerParticle(PrimitiveType primitive_type)
     {
-        if (primitive_type == PrimitiveType::quad)
-            return 6;
+     //   if (primitive_type == PrimitiveType::quad)
+     //       return 6;
+
+
+
         return GetVerticesPerParticle(primitive_type);
     }
 

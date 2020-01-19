@@ -55,8 +55,8 @@ namespace chaos
 		/** get  a fence for the end of this frame */
 		GPUFence * GetCurrentFrameFence();
 
-        /** get an index buffer for quad rendering */
-        GPUBuffer* GetQuadIndexBuffer();
+        /** get an index buffer for quad rendering (returns the number of quad that can be renderer with this buffer) */
+        GPUBuffer* GetQuadIndexBuffer(size_t* result_quad_count);
 
 	protected:
 

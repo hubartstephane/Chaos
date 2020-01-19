@@ -222,7 +222,7 @@ namespace chaos
                         buffer[2] = (GLuint)(start + 2);
                         buffer[3] = (GLuint)(start + 3);
                         buffer[4] = (GLuint)(start + 0);
-                        buffer[5] = (GLuint)(start + 1);
+                        buffer[5] = (GLuint)(start + 2);
                         buffer += 6;
                     }
                 }

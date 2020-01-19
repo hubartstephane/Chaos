@@ -20,7 +20,9 @@
 #include <chaos/ParticleAllocationTrait.h>
 #include <chaos/PrimitiveOutput.h>
 
-#define OLD_RENDERING 1
+#define OLD_RENDERING 0
+
+#define CHAOS_TRIANGLE_PAIR_RENDERING 0
 
 namespace chaos
 {
@@ -136,9 +138,11 @@ class ParticleTraitTools
     {
         if constexpr (has_primitive_type_v<TRAIT_TYPE>)
             return TRAIT_TYPE::primitive_type;
-
-        //return PrimitiveType::triangle_pair;
+#if CHAOS_TRIANGLE_PAIR_RENDERING
+        return PrimitiveType::triangle_pair;
+#else
         return PrimitiveType::quad;
+#endif
     }
     /** returns the primitive type used for rendering (OpenGL point of view) */
     template<typename TRAIT_TYPE>

@@ -8,15 +8,13 @@ namespace chaos
 {
     void PrimitiveOutputBase::Flush()
     {
-        static bool INDEXED_QUAD_RENDERING = true;
-
         // skip empty primitive
         if (buffer_start == nullptr || buffer_position == buffer_start)
             return;
 
         // transform quads into triangle pair      
-
-        if (!INDEXED_QUAD_RENDERING && type == PrimitiveType::quad)
+#if !CHAOS_INDEXED_QUAD_RENDERING
+        if (type == PrimitiveType::quad)
         {
             char* start = buffer_start;
 
@@ -35,20 +33,23 @@ namespace chaos
                 start += offset6;
             }
         }
+#endif
         // one new GPU buffer each time so primitives need to be flushed => one GPUDynamicMeshElement each time
 
-        size_t quad_rendering_count = 0;
+        
 
         GPUDynamicMeshElement& new_element = dynamic_mesh->AddMeshElement();
 
         new_element.vertex_buffer = vertex_buffer;
-        if (type == PrimitiveType::quad && INDEXED_QUAD_RENDERING)
-            new_element.index_buffer = (type == PrimitiveType::quad) ? renderer->GetQuadIndexBuffer(&quad_rendering_count) : nullptr;
         new_element.vertex_declaration = vertex_declaration;        
         new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
-      
-        if (type == PrimitiveType::quad && INDEXED_QUAD_RENDERING)
+
+#if CHAOS_INDEXED_QUAD_RENDERING
+        if (type == PrimitiveType::quad)
         {
+            size_t quad_rendering_count = 0;
+            new_element.index_buffer = (type == PrimitiveType::quad) ? renderer->GetQuadIndexBuffer(&quad_rendering_count) : nullptr;
+
             size_t quad_count = ((buffer_position - buffer_start) / vertex_size) / 4;
 
             size_t base_vertex_index = 0;
@@ -73,6 +74,7 @@ namespace chaos
             }
         }
         else
+#endif
         {
             // insert the primitive into the element
             GPUDrawPrimitive primitive;

@@ -198,4 +198,39 @@ namespace chaos
 			quad_mesh->Render(this, material, uniform_provider, render_params);
 	}
 
+    GPUBuffer * GPURenderer::GetQuadIndexBuffer()
+    {
+        if (quad_index_buffer == nullptr)
+        {
+            quad_index_buffer = new GPUBuffer(true);
+            if (quad_index_buffer != nullptr)
+            {
+                size_t quad_count  = 10000;
+                size_t buffer_size = 6 * quad_count * sizeof(GLuint);
+                // reserve a buffer
+                quad_index_buffer->SetBufferData(nullptr, buffer_size);
+                // fill the buffer
+                GLuint * buffer = (GLuint *)quad_index_buffer->MapBuffer(0, 0, false, true);
+                if (buffer != nullptr)
+                {
+                    for (size_t i = 0; i < quad_count; ++i)
+                    {
+                        size_t start = i * 4;
+
+                        buffer[0] = (GLuint)(start + 0);
+                        buffer[1] = (GLuint)(start + 1);
+                        buffer[2] = (GLuint)(start + 2);
+                        buffer[3] = (GLuint)(start + 3);
+                        buffer[4] = (GLuint)(start + 0);
+                        buffer[5] = (GLuint)(start + 1);
+                        buffer += 6;
+                    }
+                }
+                quad_index_buffer->UnMapBuffer();
+            }
+
+        }
+        return quad_index_buffer.get();
+    }
+
 }; // namespace chaos

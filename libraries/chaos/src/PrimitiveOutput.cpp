@@ -10,6 +10,7 @@ namespace chaos
         // skip empty primitive
         if (buffer_start == nullptr || buffer_position == buffer_start)
             return;
+
         // transform quads into triangle pair      
         if (type == PrimitiveType::quad)
         {

@@ -136,9 +136,9 @@ class ParticleTraitTools
     {
         if constexpr (has_primitive_type_v<TRAIT_TYPE>)
             return TRAIT_TYPE::primitive_type;
-        return PrimitiveType::triangle_pair;
+        //return PrimitiveType::triangle_pair;
 
-        //return PrimitiveType::quad;
+        return PrimitiveType::quad;
     }
     /** returns the primitive type used for rendering (OpenGL point of view) */
     template<typename TRAIT_TYPE>

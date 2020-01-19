@@ -6,6 +6,8 @@
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUBufferCache.h>
 
+#define CHAOS_INDEXED_QUAD_RENDERING 1
+
 namespace chaos
 {
     // QUAD
@@ -56,11 +58,10 @@ namespace chaos
     /** returns the real number of element per primitive (the count in GPU buffer) */
     constexpr size_t GetRealVerticesPerParticle(PrimitiveType primitive_type)
     {
-     //   if (primitive_type == PrimitiveType::quad)
-     //       return 6;
-
-
-
+#if !CHAOS_INDEXED_QUAD_RENDERING
+        if (primitive_type == PrimitiveType::quad)
+            return 6;
+#endif
         return GetVerticesPerParticle(primitive_type);
     }
 

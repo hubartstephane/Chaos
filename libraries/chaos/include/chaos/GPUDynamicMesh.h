@@ -31,6 +31,7 @@ namespace chaos
             vertex_declaration(src.vertex_declaration),
             render_material(src.render_material),
             vertex_buffer(src.vertex_buffer),
+            index_buffer(src.index_buffer),
             primitives(src.primitives) {}
 
         /** the vertex declaration for this element */
@@ -39,6 +40,8 @@ namespace chaos
         shared_ptr<GPURenderMaterial> render_material;
         /** the vertex buffer */
         shared_ptr<GPUBuffer> vertex_buffer;
+        /** the index buffer */
+        shared_ptr<GPUBuffer> index_buffer;
         /** the primitive to render */
         std::vector<GPUDrawPrimitive> primitives;
     };

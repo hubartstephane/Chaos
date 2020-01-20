@@ -12,32 +12,7 @@ namespace chaos
         if (buffer_start == nullptr || buffer_position == buffer_start)
             return;
 
-        // transform quads into triangle pair      
-#if !CHAOS_INDEXED_QUAD_RENDERING
-        if (type == PrimitiveType::quad)
-        {
-            char* start = buffer_start;
-
-            size_t offset2 = vertex_size * 2;
-            size_t offset4 = vertex_size * 4;
-            size_t offset5 = vertex_size * 5;
-            size_t offset6 = vertex_size * 6;
-
-            size_t count = ((buffer_position - buffer_start) / vertex_size) / 6;
-            for (size_t i = 0; i < count; ++i)
-            {
-                //_mm_prefetch(start + offset6, 0);
-
-                memcpy(start + offset4, start, vertex_size);
-                memcpy(start + offset5, start + offset2, vertex_size);
-                start += offset6;
-            }
-        }
-#endif
         // one new GPU buffer each time so primitives need to be flushed => one GPUDynamicMeshElement each time
-
-        
-
         GPUDynamicMeshElement& new_element = dynamic_mesh->AddMeshElement();
 
         new_element.vertex_buffer = vertex_buffer;
@@ -119,14 +94,20 @@ namespace chaos
         if (vertex_requirement_evaluation != 0)
             count = std::max(vertex_requirement_evaluation, required_size / vertex_size);
         else
-            count = std::max(100 * real_vertices_per_primitive, required_size / vertex_size); // a default buffer of 100 primitives
+            count = std::max(30 * real_vertices_per_primitive, required_size / vertex_size); // a default buffer of 100 primitives
         // compute buffer size and allocate a buffer
         size_t bufsize = count * vertex_size;         
         if (!buffer_cache->GetBuffer(bufsize, vertex_buffer))
             return nullptr;
         // map the buffer
+
+#if 1 // only map required memory
+        buffer_start = vertex_buffer->MapBuffer(0, bufsize, false, true);
+        buffer_end = buffer_start + bufsize;
+#else // map whole buffer
         buffer_start = vertex_buffer->MapBuffer(0, 0, false, true);
         buffer_end = buffer_start + vertex_buffer->GetBufferSize();
+#endif
         buffer_position = buffer_start;
 
         return buffer_position;

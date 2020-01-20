@@ -104,6 +104,22 @@ namespace chaos
             assert(in_buffer != nullptr);
             assert(in_vertex_size > 0);
         }
+        /** destructor */
+        inline ~PrimitiveBase()
+        {
+            // Quad is internally considered as a triangle pair. Duplicate vertices
+#if !CHAOS_INDEXED_QUAD_RENDERING
+            if constexpr (PRIMITIVE_TYPE == PrimitiveType::quad)
+            {
+                size_t offset2 = vertex_size * 2;
+                size_t offset4 = vertex_size * 4;
+                size_t offset5 = vertex_size * 5;
+
+                std::memcpy(buffer + offset4, buffer, vertex_size);
+                std::memcpy(buffer + offset5, buffer + offset2, vertex_size);
+            }
+#endif
+        }
 
         /** cast operator to child vertex type */
         template<typename OTHER_VERTEX_TYPE> 

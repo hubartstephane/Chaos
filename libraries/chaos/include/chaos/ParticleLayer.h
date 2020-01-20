@@ -20,6 +20,18 @@
 #include <chaos/ParticleAllocationTrait.h>
 #include <chaos/PrimitiveOutput.h>
 
+// There are several rendering mode
+//  - OLD_RENDERING => always faster (10-15% faster) but less flexible
+//
+//  - QUAD (transformed as triangle pair)
+//  - INDEXED QUAD
+//  - TRIANGLE_PAIR
+//
+//  It is difficult to compare the performances of thoses 3 modes.
+//  Working by default with quads seems more convinient
+//
+//  (see CHAOS_TRIANGLE_PAIR_RENDERING/CHAOS_INDEXED_QUAD_RENDERING)
+
 #define OLD_RENDERING 0
 
 #define CHAOS_TRIANGLE_PAIR_RENDERING 0

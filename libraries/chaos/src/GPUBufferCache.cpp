@@ -17,9 +17,12 @@ namespace chaos
         {
             GPUBuffer * buffer = buffers[i].get();
 
-            // buffer too small ? or too big ?
+            // buffer too small ? 
             size_t buffer_size = buffer->GetBufferSize();
-            if (buffer_size < required_size || buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
+            if (buffer_size < required_size)            
+                continue;
+            // or too big ?
+            if (0 && buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
                 continue;
             // buffer found            
             result = buffer;

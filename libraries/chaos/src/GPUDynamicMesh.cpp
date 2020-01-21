@@ -59,7 +59,8 @@ namespace chaos
         // store fence for this last rendering time (only if some draw call has been made)
         if (result > 0)
         {
-            // XXX : make code slower : last_rendered_fence = renderer->GetCurrentFrameFence();
+            // XXX : make code slower : 
+            //last_rendered_fence = renderer->GetCurrentFrameFence();
             glBindVertexArray(0);
         }
         return result;

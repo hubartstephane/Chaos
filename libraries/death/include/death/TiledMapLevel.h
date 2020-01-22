@@ -16,6 +16,7 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/CollisionFramework.h>
 #include <chaos/SoundManager.h>
+#include <chaos/ParticleSpawner.h>
 
 namespace death
 {
@@ -545,8 +546,19 @@ namespace death
 			/** get the bounding box for the level */
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
+            /** create a particle spawner */
+#if 0
+            template<typename ...PARAMS>
+            chaos::ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+            {
+                if (!CreateParticleLayer())
+                    return nullptr;
+                return particle_layer->CreateParticleSpawner(params...);
+            }
+#endif
+
 			/** create a particle allocation for the layer */
-			chaos::ParticleAllocationBase * CreateParticleAllocation(size_t count);
+			chaos::ParticleAllocationBase * SpawnParticles(size_t count);
 			/** create the particle layer if required */
 			chaos::ParticleLayerBase * CreateParticleLayer();
 

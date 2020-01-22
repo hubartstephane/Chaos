@@ -1021,12 +1021,11 @@ namespace death
 			return true;
 		}
 
-		chaos::ParticleAllocationBase * LayerInstance::CreateParticleAllocation(size_t count)
+		chaos::ParticleAllocationBase * LayerInstance::SpawnParticles(size_t count)
 		{
 			// create particle layer if necessary
-			if (particle_layer == nullptr)
-				if (CreateParticleLayer() == nullptr)
-					return nullptr;
+            if (CreateParticleLayer() == nullptr)
+				return nullptr;
 			// create the allocation
 			return particle_layer->SpawnParticles(count);
 		}

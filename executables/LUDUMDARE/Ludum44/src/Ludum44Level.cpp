@@ -243,7 +243,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 		return true;
 	
 	// create an allocation for all enemies we are about to create
-	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->CreateParticleAllocation(0);
+	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->SpawnParticles(0);
 	if (allocation == nullptr)
 		return true;
 

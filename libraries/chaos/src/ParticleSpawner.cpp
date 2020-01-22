@@ -1,5 +1,3 @@
-#pragma once
-
 #include <chaos/ParticleSpawner.h>
 
 namespace chaos

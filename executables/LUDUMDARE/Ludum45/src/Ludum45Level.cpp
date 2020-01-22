@@ -7,128 +7,16 @@
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/ParticleSpawner.h>
 
 #include <death/TiledMapLevel.h>
 
 #if 1
-class Spawner
-{
-public:
 
-    /** simplest constructor */
-	Spawner(chaos::ParticleLayerBase* in_particle_layer):
-        particle_layer(in_particle_layer)
-	{
-        assert(in_particle_layer != nullptr);
-	}
-
-    /** constructor with additionnal bitmap arguments */
-    template<typename ...PARAMS>
-    Spawner(chaos::ParticleLayerBase* in_particle_layer, PARAMS... params) :
-        particle_layer(in_particle_layer)
-    {
-        SetBitmapInfo(params...);
-    }
-
-    /** change the bitmap info */
-    template<typename BITMAP_NAME, typename FOLDER_NAME>
-    void SetBitmapInfo(BITMAP_NAME bitmap_name, FOLDER_NAME folder_name)
-    {
-        // get the atlas
-        chaos::BitmapAtlas::TextureArrayAtlas const * atlas = particle_layer->GetTextureAtlas();
-        if (atlas == nullptr)
-            return;
-        // find the folder
-        chaos::BitmapAtlas::FolderInfo const* bitmap_set = atlas->GetFolderInfo(folder_name, true);
-        if (bitmap_set != nullptr)
-            return;
-        // get the bitmap
-        bitmap_info = bitmap_set->GetBitmapInfo(bitmap_name, true);
-    }
-
-    /** change the bitmap info with just a bitmap name */
-    template<typename BITMAP_NAME>
-    void SetBitmapInfo(BITMAP_NAME bitmap_name)
-    {
-        SetBitmapInfo(bitmap_name, "sprites"); // folder "sprites" by default
-    }
-
-    /** simple spawn method */
-    chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation)
-    {    
-        chaos::ParticleAllocationBase* result = DoSpawnParticles(count, new_allocation);
-        if (result != nullptr)
-        {            
-            if (bitmap_info != nullptr)
-            {
-                size_t allocation_count = result->GetParticleCount();
-
-                // find the corresponding Bitmap
-                chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*bitmap_info);
-                // apply the texcoords to all particles
-                chaos::ParticleAccessor<chaos::ParticleDefault::Particle> accessor = result->GetParticleAccessor(allocation_count - count, count); // partial accessor, take the last particles in the array
-                for (chaos::ParticleDefault::Particle& particle : accessor)
-                    particle.texcoords = texcoords;
-            }
-        }
-        return result;
-    }
-
-	/** spawn + user initialization methods */
-    template<typename INIT_PARTICLE_FUNC>
-    chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
-    {
-        chaos::ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
-        // call user initialization function
-        if (result != nullptr)
-        {
-            size_t allocation_count = result->GetParticleCount();
-            init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
-        }
-        return result;
-    }
-
-protected:
-
-    /** the spawn internal method (that just creates particles) */
-    chaos::ParticleAllocationBase* DoSpawnParticles(size_t count, bool new_allocation)
-    {
-        chaos::ParticleAllocationBase* result = nullptr;
-        if (!new_allocation)
-        {
-            // create a first allocation, while there are none
-            if (particle_layer->GetAllocationCount() == 0)
-            {
-                result = particle_layer->SpawnParticles(count);
-            }
-            // take the very first existing allocation and add particles at the end
-            else
-            {
-                result = particle_layer->GetAllocation(0);
-                if (result == nullptr || !result->AddParticles(count))
-                    return nullptr;
-            }
-        }
-        else
-        {
-            // independant allocation
-            result = particle_layer->SpawnParticles(count);
-        }
-        return result;
-    }
-
-
-protected:
-
-    /** the layer instance where to spawn the particles */
-    chaos::ParticleLayerBase* particle_layer = nullptr;
-	/** the bitmap info to use for the spawned particles */
-	chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
-};
 
 void f()
 {
-    Spawner spawner = Spawner(nullptr);
+    chaos::ParticleSpawner spawner = chaos::ParticleSpawner(nullptr);
 
     spawner.SpawnParticles(5, true, [](chaos::ParticleAccessor<chaos::ParticleDefault::Particle> accessor)
     {

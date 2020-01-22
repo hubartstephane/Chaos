@@ -10,6 +10,41 @@
 
 #include <death/TiledMapLevel.h>
 
+#if 0
+class Spawner
+{
+public:
+
+    chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation)
+    {
+        return nullptr;
+
+    }
+
+    template<typename INIT_PARTICLE_FUNC>
+    chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
+    {
+        chaos::ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
+        if (result != nullptr)
+        {
+            size_t allocation_count = result->GetParticleCount();
+            init_func(result->GetParticleAccessor(allocation_count - count, count)); // partial accessor
+        }
+        return result;
+    }
+};
+
+void f()
+{
+    Spawner spawner;
+
+    spawner.SpawnParticles(5, true, [](chaos::ParticleAccessor<chaos::ParticleDefault::Particle>& accessor)
+    {
+        for (chaos::ParticleDefault::Particle& p : accessor)
+            p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+    });
+}
+#endif
 
 
 

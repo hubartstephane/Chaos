@@ -291,7 +291,10 @@ namespace chaos
         /** copy constructor */
         AutoCastedParticleAccessor(AutoCastedParticleAccessor const& src) = default;
         /** initialization contructor */
-        AutoCastedParticleAccessor(class ParticleAllocationBase* in_allocation_base) : allocation_base(in_allocation_base)
+        AutoCastedParticleAccessor(class ParticleAllocationBase* in_allocation_base, size_t in_start = 0, size_t in_count = 0) :
+            allocation_base(in_allocation_base),
+            start(in_start),
+            count(in_count)
         {
             assert(in_allocation_base != nullptr);
         }
@@ -300,7 +303,7 @@ namespace chaos
         operator ParticleAccessor<PARTICLE_TYPE>() const
         {
             return (allocation_base != nullptr) ?
-                allocation_base->GetParticleAccessor<PARTICLE_TYPE>() :
+                allocation_base->GetParticleAccessor<PARTICLE_TYPE>(start, count) :
                 ParticleAccessor<PARTICLE_TYPE>();
         }
         /** the conversion method */
@@ -308,7 +311,7 @@ namespace chaos
         operator ParticleConstAccessor<PARTICLE_TYPE>() const
         {
             return (allocation_base != nullptr) ?
-                allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>() :
+                allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>(start, count) :
                 ParticleConstAccessor<PARTICLE_TYPE>();
         }
 
@@ -316,6 +319,10 @@ namespace chaos
 
         /** the allocation we are using */
         ParticleAllocationBase* allocation_base = nullptr;
+        /** particle to start iteration on */
+        size_t start = 0;
+        /** number of particles concerned */
+        size_t count = 0;
     };
 
     // ==============================================================
@@ -331,19 +338,26 @@ namespace chaos
         /** copy constructor */
         AutoCastedParticleConstAccessor(AutoCastedParticleConstAccessor const& src) = default;
         /** initialization contructor */
-        AutoCastedParticleConstAccessor(class ParticleAllocationBase const* in_allocation_base) : allocation_base(in_allocation_base)
+        AutoCastedParticleConstAccessor(class ParticleAllocationBase const* in_allocation_base, size_t in_start = 0, size_t in_count = 0) : 
+            allocation_base(in_allocation_base),
+            start(in_start),
+            count(in_count)
         {
             assert(in_allocation_base != nullptr);
         }
         /** copy from non const instance */
-        AutoCastedParticleConstAccessor(AutoCastedParticleAccessor const& src) : allocation_base(src.allocation_base) {}
+        AutoCastedParticleConstAccessor(AutoCastedParticleAccessor const& src) : 
+            allocation_base(src.allocation_base),
+            start(src.start),
+            count(src.count)
+        {}
 
         /** the conversion method */
         template<typename PARTICLE_TYPE>
         operator ParticleConstAccessor<PARTICLE_TYPE>() const
         {
             return (allocation_base != nullptr) ?
-                allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>() :
+                allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>(start, count) :
                 ParticleConstAccessor<PARTICLE_TYPE>();
         }
 
@@ -351,9 +365,11 @@ namespace chaos
 
         /** the allocation we are using */
         ParticleAllocationBase const* allocation_base = nullptr;
+        /** particle to start iteration on */
+        size_t start = 0;
+        /** number of particles concerned */
+        size_t count = 0;
     };
-
-
 
 }; // namespace chaos
 

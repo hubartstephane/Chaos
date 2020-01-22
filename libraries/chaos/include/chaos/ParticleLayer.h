@@ -225,39 +225,49 @@ class ParticleTraitTools
 			return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
 		}
         /** get an AutoCasting particle accessor */
-        AutoCastedParticleAccessor GetParticleAccessor()
+        AutoCastedParticleAccessor GetParticleAccessor(size_t start = 0, size_t count = 0)
         {
-            return AutoCastedParticleAccessor(this);
+            return AutoCastedParticleAccessor(this, start, count);
         }
         /** get an AutoCasting particle accessor */
-        AutoCastedParticleConstAccessor GetParticleAccessor() const
+        AutoCastedParticleConstAccessor GetParticleAccessor(size_t start = 0, size_t count = 0) const
         {
-            return AutoCastedParticleConstAccessor(this);
+            return AutoCastedParticleConstAccessor(this, start, count);
         }
         /** get an AutoCasting particle accessor */
-        AutoCastedParticleConstAccessor GetParticleConstAccessor() const
+        AutoCastedParticleConstAccessor GetParticleConstAccessor(size_t start = 0, size_t count = 0) const
         {
-            return AutoCastedParticleConstAccessor(this);
+            return AutoCastedParticleConstAccessor(this, start, count);
         }
 		/** get an accessor for the particles */
 		template<typename PARTICLE_TYPE>
-		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor()
+		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor(size_t start = 0, size_t count = 0)
 		{
 			assert(IsParticleClassCompatible<PARTICLE_TYPE>(true));
-			return ParticleAccessor<PARTICLE_TYPE>(GetParticleBuffer(), GetParticleCount(), GetParticleSize());
+            
+            size_t particle_size = 0;
+            void* buffer = const_cast<void *>(GetAccessorEffectiveRanges(start, count, particle_size));
+            if (buffer == nullptr)
+                return ParticleAccessor<PARTICLE_TYPE>();
+			return ParticleAccessor<PARTICLE_TYPE>(buffer, count, particle_size);
 		}
 
 		/** get an accessor for the particles */
 		template<typename PARTICLE_TYPE>
-		ParticleConstAccessor<PARTICLE_TYPE> GetParticleConstAccessor() const
+		ParticleConstAccessor<PARTICLE_TYPE> GetParticleConstAccessor(size_t start = 0, size_t count = 0) const
 		{
 			assert(IsParticleClassCompatible<PARTICLE_TYPE>(true));
-			return ParticleConstAccessor<PARTICLE_TYPE>(GetParticleBuffer(), GetParticleCount(), GetParticleSize());
+
+            size_t particle_size = 0;
+            void const * buffer = GetAccessorEffectiveRanges(start, count, particle_size);
+            if (buffer == nullptr)
+                return ParticleConstAccessor<PARTICLE_TYPE>();
+            return ParticleConstAccessor<PARTICLE_TYPE>(buffer, count, particle_size);
 		}
 
 		/** get an accessor for the particles */
 		template<typename PARTICLE_TYPE>
-		ParticleConstAccessor<PARTICLE_TYPE> GetParticleAccessor() const
+		ParticleConstAccessor<PARTICLE_TYPE> GetParticleAccessor(size_t start = 0, size_t count = 0) const
 		{
 			return GetParticleConstAccessor<PARTICLE_TYPE>();
 		}
@@ -284,6 +294,8 @@ class ParticleTraitTools
 
 	protected:
 
+        /** compute the ranges for accessor (returns false in case of failure) */
+        void const * GetAccessorEffectiveRanges(size_t& start, size_t& count, size_t& particle_size) const;
 		/** tick the allocation (returns true whether the allocation is to be destroyed) */
 		virtual bool TickAllocation(float delta_time, void const * layer_trait) { return false; }
 
@@ -318,16 +330,8 @@ class ParticleTraitTools
 		bool visible = true;
 		/** a callback called whenever the allocation becomes empty */
 		bool destroy_when_empty = false;
-
-
-
-
-
-
-   
-
-
-
+        /** size of particles */
+        size_t particle_size = 0;
 	};
 
 	// ==============================================================
@@ -351,8 +355,10 @@ class ParticleTraitTools
 		using layer_trait_type = typename get_LayerTrait<allocation_trait_type>::type;
 
 		/** constructor */
-		ParticleAllocation(ParticleLayerBase* in_layer) : ParticleAllocationBase(in_layer) {}
-
+		ParticleAllocation(ParticleLayerBase* in_layer) : 
+            ParticleAllocationBase(in_layer)
+        {
+        }
 		/** override */
 		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
 		{
@@ -531,20 +537,6 @@ class ParticleTraitTools
 			return j; // final number of particles
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if !OLD_RENDERING
   
 
@@ -559,11 +551,6 @@ class ParticleTraitTools
                 allocation_trait.ParticleToVertices(particle_accessor[i], output, params...);
             }
         }
-
-
-
-
-
 #else
 
 
@@ -638,21 +625,7 @@ class ParticleTraitTools
 		}
 
 
-
-
-
-
-
-
-
 #endif
-
-
-
-
-
-
-
 
 	protected:
 

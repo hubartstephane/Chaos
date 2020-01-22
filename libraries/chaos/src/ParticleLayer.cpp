@@ -102,6 +102,27 @@ namespace chaos
             RemoveFromLayer();
 	}
 
+    void const* ParticleAllocationBase::GetAccessorEffectiveRanges(size_t& start, size_t& count, size_t& particle_size) const
+    {
+        size_t particle_count = GetParticleCount();
+        if (particle_count == 0)
+            return nullptr;
+        if (start >= particle_count)
+            return nullptr;
+        if (count == 0) // 0 = map all
+        {
+            count = particle_count - start;
+            if (count == 0)
+                return nullptr; // nothing more to map
+        }
+        else if (start + count > particle_count) // map all what required or nothing
+            return nullptr;
+        // compute some other useful values
+        particle_size = GetParticleSize();
+        void const* buffer = GetParticleBuffer();        
+        return ((char const*)buffer) + start * particle_size;
+    }
+
 	// ==============================================================
 	// ParticleLayerBase
 	// ==============================================================

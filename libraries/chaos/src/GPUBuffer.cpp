@@ -161,7 +161,6 @@ namespace chaos
 
        // map_type |= GL_MAP_UNSYNCHRONIZED_BIT;
 
-
 		// check for map range
 		if (start >= buffer_size)
 			return nullptr;
@@ -173,7 +172,6 @@ namespace chaos
 		}
 		else if (start + count > buffer_size) // map all what required or nothing
 			return nullptr;
-
 		// do the mapping
 		return (char*)glMapNamedBufferRange(buffer_id, start, count , map_type);
 	}

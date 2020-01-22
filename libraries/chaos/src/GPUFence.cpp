@@ -33,9 +33,9 @@ namespace chaos
 			return false;
 
 		GLuint64   timeout64 = (GLuint64)(timeout * 10.0e9);
-		GLbitfield flags     = 0; 
+		GLbitfield flags     = 0;  // GL_SYNC_FLUSH_COMMANDS_BIT ???
 
-		GLenum result = glClientWaitSync(fence, flags, timeout64);
+		GLenum result = glClientWaitSync(fence, flags, timeout64); // ??? glWaitSync glFlush
 		if (result == GL_ALREADY_SIGNALED || result == GL_CONDITION_SATISFIED)
 			return true;
 		return false; // GL_TIMEOUT_EXPIRED or GL_WAIT_FAILED

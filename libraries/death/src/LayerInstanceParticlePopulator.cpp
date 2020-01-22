@@ -41,7 +41,7 @@ namespace death
 			// create an allocation if necessary
 			if (allocation == nullptr)
 			{
-				allocation = layer_instance->CreateParticleAllocation(0);
+				allocation = layer_instance->SpawnParticles(0);
 				if (allocation == nullptr)
 					return;
 			}

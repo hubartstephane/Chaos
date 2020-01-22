@@ -76,7 +76,7 @@ bool LayerParticleSpawnerBase::Initialize(death::TiledMap::LayerInstance * in_la
 	if (bitmap_set == nullptr)
 		return false;
 	// create the allocation
-	allocation = layer_instance->CreateParticleAllocation(count);
+	allocation = layer_instance->SpawnParticles(count);
 	if (allocation == nullptr)
 		return false;
 
@@ -266,6 +266,12 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	if (enemy_count == 0)
 		return true;
 
+
+  //  chaos::ParticleSpawner spawner2(GetLayerInstance()->GetParticleLayer(), "Enemies");
+
+    //GetLayerInstance()->CreateParticleSpawner();
+
+
 	// prepare the spawner
 	LayerParticleSpawner<ParticleEnemy> spawner;
 	if (!spawner.Initialize(GetLayerInstance(), "Enemies", enemy_count))
@@ -277,7 +283,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = spawner.bitmap_set->GetBitmapInfo(type->bitmap_name.c_str());
 	if (bitmap_info == nullptr)
 		return true;
-
+#if 0
 	// initialize the allocation
 	chaos::ParticleAllocation<ParticleEnemyTrait> * typed_allocation = auto_cast(spawner.allocation);
 	if (typed_allocation != nullptr)
@@ -287,6 +293,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 	
 	
 	}
+#endif
 
 
 	chaos::box2 player_box = GetLayerInstance()->GetGame()->GetPlayer(0)->GetPlayerBox();

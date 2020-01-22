@@ -19,6 +19,7 @@
 #include <chaos/ParticleAccessor.h>
 #include <chaos/ParticleAllocationTrait.h>
 #include <chaos/PrimitiveOutput.h>
+#include <chaos/ParticleSpawner.h>
 
 // There are several rendering mode
 //  - OLD_RENDERING => always faster (10-15% faster) but less flexible
@@ -705,6 +706,15 @@ class ParticleTraitTools
 
 		/** spawn a given number of particles */
 		ParticleAllocationBase * SpawnParticles(size_t count);
+
+        /** create a particle spawner */
+#if 0
+        template<typename ...PARAMS>
+        class ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+        {
+            return nullptr; // new ParticleSpawner(this, params...);
+        }
+#endif
 
 		/** get the number of allocations */
 		size_t GetAllocationCount() const;

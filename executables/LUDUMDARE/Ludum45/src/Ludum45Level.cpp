@@ -10,17 +10,38 @@
 
 #include <death/TiledMapLevel.h>
 
-#if 0
+#if 1
 class Spawner
 {
 public:
 
+	Spawner()
+	{
+
+
+	}
+
+	Spawner(chaos::BitmapAtlas::BitmapInfo const* bitmap_info)
+	{
+#if 0
+		particle_layer = layer_instance->GetParticleLayer();
+
+		particle_layer->GetTextureAtlas();
+
+		if (layer_instance != nullptr)
+
+		atlas = layer_instance->GetGame()->GetTextureAtlas();
+#endif
+	}
+
+
+	/** simple spawn method */
     chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation)
     {
         return nullptr;
-
     }
 
+	/** spawn + user initialization methods */
     template<typename INIT_PARTICLE_FUNC>
     chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
     {
@@ -32,13 +53,32 @@ public:
         }
         return result;
     }
+
+protected:
+
+	/** the atlas for the spawn */
+	chaos::BitmapAtlas::TextureArrayAtlas const* atlas = nullptr;
+	/** the bitmap info to use for the spawned particles */
+	chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
+	/** the layer instance where to spawn the particles */
+	chaos::ParticleLayerBase* particle_layer = nullptr;
+
+
+	/** the layer instance where to spawn the particles */
+	death::TiledMap::LayerInstance* layer_instance = nullptr;
+
+	
+
+	chaos::BitmapAtlas::FolderInfo const* bitmap_set = nullptr;
+
+
 };
 
 void f()
 {
     Spawner spawner;
 
-    spawner.SpawnParticles(5, true, [](chaos::ParticleAccessor<chaos::ParticleDefault::Particle>& accessor)
+    spawner.SpawnParticles(5, true, [](chaos::ParticleAccessor<chaos::ParticleDefault::Particle> accessor)
     {
         for (chaos::ParticleDefault::Particle& p : accessor)
             p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);

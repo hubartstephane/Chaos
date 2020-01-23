@@ -269,7 +269,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 
   //  chaos::ParticleSpawner spawner2(GetLayerInstance()->GetParticleLayer(), "Enemies");
 
-    //GetLayerInstance()->CreateParticleSpawner();
+    auto xxx = GetLayerInstance()->CreateParticleSpawner();
 
 
 	// prepare the spawner

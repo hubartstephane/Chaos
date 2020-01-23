@@ -559,7 +559,7 @@ namespace death
 			chaos::ParticleSpawner GetParticleSpawner(PARAMS... params)
 			{
 				if (!CreateParticleLayer())
-					return chaos::ParticleSpawner();
+					return chaos::ParticleSpawner(nullptr);
 				return particle_layer->GetParticleSpawner(params...);
 			}
 

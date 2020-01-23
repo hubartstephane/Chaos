@@ -18,7 +18,6 @@ namespace chaos
         ParticleSpawner(ParticleLayerBase* in_particle_layer) :
             particle_layer(in_particle_layer)
         {
-            assert(in_particle_layer != nullptr);
         }
 
         /** constructor with additionnal bitmap arguments */
@@ -31,25 +30,30 @@ namespace chaos
 
         /** change the bitmap info */
         template<typename BITMAP_NAME, typename FOLDER_NAME>
-        void SetBitmapInfo(BITMAP_NAME bitmap_name, FOLDER_NAME folder_name)
+        bool SetBitmapInfo(BITMAP_NAME bitmap_name, FOLDER_NAME folder_name)
         {
+            if (particle_layer == nullptr)
+                return false;
             // get the atlas
             BitmapAtlas::TextureArrayAtlas const* atlas = particle_layer->GetTextureAtlas();
             if (atlas == nullptr)
-                return;
+                return false;
             // find the folder
             BitmapAtlas::FolderInfo const* bitmap_set = atlas->GetFolderInfo(folder_name, true);
-            if (bitmap_set != nullptr)
-                return;
+            if (bitmap_set == nullptr)
+                return false;
             // get the bitmap
             bitmap_info = bitmap_set->GetBitmapInfo(bitmap_name, true);
+            if (bitmap_info == nullptr)
+                return false;
+            return true;
         }
 
         /** change the bitmap info with just a bitmap name */
         template<typename BITMAP_NAME>
-        void SetBitmapInfo(BITMAP_NAME bitmap_name)
+        bool SetBitmapInfo(BITMAP_NAME bitmap_name)
         {
-            SetBitmapInfo(bitmap_name, "sprites"); // folder "sprites" by default
+            return SetBitmapInfo(bitmap_name, "sprites"); // folder "sprites" by default
         }
 
         /** simple spawn method */
@@ -68,6 +72,12 @@ namespace chaos
             }
             return result;
         }
+
+        /** gets the bitmap info used for spawned particles */
+        BitmapAtlas::BitmapInfo const * GetBitmapInfo() const { return bitmap_info; }
+
+        /** returns whether the spawner is valid */
+        bool IsValid() const { return (particle_layer != nullptr); }
 
     protected:
 

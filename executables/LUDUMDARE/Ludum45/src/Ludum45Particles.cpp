@@ -18,16 +18,6 @@
 static float COLLISION_PLAYER_TWEAK = 0.50f;
 static float COLLISION_FIRE_TWEAK = 0.75f;
 
-/*
-void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>)
-{
-	result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-	result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-    result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-}
-*/
-
-
 static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player, chaos::box2 const & ref_box) // returns the life damage produced by the enemy collision (its life)
 {
 	float result = collision_with_player? enemy->enemy_damage : enemy->enemy_life;

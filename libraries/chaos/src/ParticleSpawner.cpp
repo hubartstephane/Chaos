@@ -25,6 +25,10 @@ namespace chaos
 
     ParticleAllocationBase* ParticleSpawner::DoSpawnParticles(size_t count, bool new_allocation)
     {
+        // early exit
+        if (particle_layer == nullptr)
+            return nullptr;
+
         ParticleAllocationBase* result = nullptr;
         if (!new_allocation)
         {

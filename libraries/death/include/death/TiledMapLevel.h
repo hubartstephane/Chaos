@@ -547,15 +547,21 @@ namespace death
 			chaos::box2 GetBoundingBox(bool world_system) const;
 
             /** create a particle spawner */
-#if 0
             template<typename ...PARAMS>
             chaos::ParticleSpawner* CreateParticleSpawner(PARAMS... params)
             {
                 if (!CreateParticleLayer())
                     return nullptr;
-                return particle_layer->CreateParticleSpawner(params...);
+				return particle_layer->CreateParticleSpawner(params...);
             }
-#endif
+
+			template<typename ...PARAMS>
+			chaos::ParticleSpawner GetParticleSpawner(PARAMS... params)
+			{
+				if (!CreateParticleLayer())
+					return chaos::ParticleSpawner();
+				return particle_layer->GetParticleSpawner(params...);
+			}
 
 			/** create a particle allocation for the layer */
 			chaos::ParticleAllocationBase * SpawnParticles(size_t count);

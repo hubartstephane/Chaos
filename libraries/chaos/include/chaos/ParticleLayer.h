@@ -640,6 +640,8 @@ class ParticleTraitTools
 	// ParticleLayerBase
 	// ==============================================================
 
+	class ParticleSpawner; // required for compilation
+
 	class ParticleLayerBase : public GPURenderable
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
@@ -708,13 +710,18 @@ class ParticleTraitTools
 		ParticleAllocationBase * SpawnParticles(size_t count);
 
         /** create a particle spawner */
-#if 0
-        template<typename ...PARAMS>
-        class ParticleSpawner* CreateParticleSpawner(PARAMS... params)
-        {
-            return nullptr; // new ParticleSpawner(this, params...);
-        }
-#endif
+		template<typename ...PARAMS>
+		ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+		{
+			return new ParticleSpawner(this, params...);
+		}
+
+		/** create a particle spawner */
+		template<typename ...PARAMS>
+		ParticleSpawner GetParticleSpawner(PARAMS... params)
+		{
+			return ParticleSpawner(this, params...);
+		}
 
 		/** get the number of allocations */
 		size_t GetAllocationCount() const;

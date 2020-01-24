@@ -131,6 +131,4 @@ protected:
 	float dash_cooldown = 0.0f; 
 
 	bool  dash_locked = false; // locked until key is released
-
-    chaos::shared_ptr<chaos::ParticleSpawner> fire_spawner;
 };

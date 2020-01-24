@@ -993,7 +993,6 @@ namespace death
 		chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
 		if (folder_info != nullptr)
 		{
-
 			// for each bitmap, that correspond to a button, register a [NAME] in the generator	
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{

@@ -28,7 +28,7 @@ public:
 	LudumGameInstance(death::Game * in_game);
 
 
-	ParticleExplosion * FireExplosion(chaos::box2 const & ref_box);
+	void FireExplosion(chaos::box2 const & ref_box);
 
 protected:
 

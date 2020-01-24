@@ -103,6 +103,8 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
     chaos::box2 player_box = GetLayerInstance()->GetGame()->GetPlayer(0)->GetPlayerBox();
 
     chaos::ParticleSpawner spawner = layer_instance->GetParticleSpawner(type->bitmap_name.c_str());
+    if (!spawner.IsValid())
+        return true;
 
     chaos::BitmapAtlas::BitmapInfo const* bitmap_info = spawner.GetBitmapInfo();
   
@@ -114,7 +116,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
         for (ParticleEnemy& particle : accessor)
         {
             particle.bounding_box.half_size = 0.5f * glm::vec2(bitmap_info->width, bitmap_info->height) * t->scale;
-            particle.color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+            particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
             particle.enemy_damage = t->enemy_damage;
             particle.enemy_life = t->enemy_life;
             particle.enemy_index = (int)(&particle - &accessor[0]);

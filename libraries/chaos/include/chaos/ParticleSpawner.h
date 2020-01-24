@@ -78,6 +78,8 @@ namespace chaos
 
         /** returns whether the spawner is valid */
         bool IsValid() const { return (particle_layer != nullptr); }
+        /** returns whether the spawner has a bitmap info */
+        bool HasBitmap() const { return (bitmap_info != nullptr); }
 
     protected:
 

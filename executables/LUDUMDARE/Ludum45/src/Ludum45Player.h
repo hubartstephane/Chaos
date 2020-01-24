@@ -70,8 +70,6 @@ public:
 	float GetCurrentLife() const { return current_life; }
 	float GetCurrentMaxLife() const { return current_max_life; }
 
-
-
 protected:
 
 	/** override */
@@ -95,15 +93,13 @@ protected:
 	virtual void HandleKeyboardInputs(double delta_time) override;
 
 
-
 	void UpdatePlayerAcceleration(double delta_time);
 	void UpdatePlayerFire(double delta_time);
 	void UpdateBrightSideOfLife(double delta_time);
 	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
 	void OnDamagedReceived(float damage);
 
-	ParticleFire * FireProjectile();
-	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity);
+	void FireProjectiles();
 
 	void RegisterUpgrades();
 
@@ -115,16 +111,7 @@ protected:
 
 	std::string GetPlayerUpgradeString() const;
 
-
-
-
-
 	void DoUpdateBrightSideOfLife(bool value);
-
-
-
-
-	
 
 protected:
 
@@ -145,7 +132,5 @@ protected:
 
 	bool  dash_locked = false; // locked until key is released
 
-	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
-	chaos::BitmapAtlas::BitmapLayout fire_bitmap_layout;
-
+    chaos::shared_ptr<chaos::ParticleSpawner> fire_spawner;
 };

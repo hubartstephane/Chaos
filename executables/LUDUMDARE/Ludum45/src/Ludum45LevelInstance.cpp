@@ -98,20 +98,6 @@ bool LudumLevelInstance::DoTick(double delta_time)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void LudumLevelInstance::OnLevelStarted()
 {
 	// !!! Should be automatic no ??
@@ -122,15 +108,6 @@ void LudumLevelInstance::OnLevelStarted()
 	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("PlayerFire"); // 
 	if (layer_instance != nullptr)
 		layer_instance->CreateParticleLayer();
-
-
-
-
-
-
-
-
-
 
 
 	// super call
@@ -159,29 +136,13 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player == nullptr)
 		return;
-
-	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("PlayerFire"); // shuludum => not created when no object inside
-	if (layer_instance == nullptr)
-		return;
-
-	chaos::ParticleLayerBase * fire_layer = layer_instance->GetParticleLayer();
-	if (fire_layer != nullptr)
-		ludum_player->fire_allocation = fire_layer->SpawnParticles(0);
-
-
-
-
-
+    ludum_player->fire_spawner = CreateParticleSpawner("PlayerFire", "fire");
 
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
 		return;
-
 	ludum_player->current_life = ludum_game->initial_player_life; 
 	ludum_player->current_max_life = ludum_game->initial_player_life;
-
-
-
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
@@ -189,16 +150,12 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 	death::TiledMap::LevelInstance::OnPlayerLeaved(player);
 
 	LudumPlayer * ludum_player = auto_cast(player);
-	if (ludum_player != nullptr)	
-		ludum_player->DoUpdateBrightSideOfLife(false);
+    if (ludum_player != nullptr)
+    {
+        ludum_player->DoUpdateBrightSideOfLife(false);
+        ludum_player->fire_spawner = nullptr;
+    }
 }
-
-
-
-
-
-
-
 
 death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const
 {
@@ -225,18 +182,10 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 		}
 	}
 
-
-
 	if (!death::TiledMap::LevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
 		return false;
 
-
 	// shuludum .... refactor the share this code ... hard copy of what is in LD44
-
-
-
-
-
 
 	return true;
 }
@@ -249,11 +198,6 @@ bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoin
 
 	if (!death::TiledMap::LevelInstance::DoSaveIntoCheckpoint(ludum_checkpoint))
 		return false;
-
-
-
-
-
 
 	return true;
 }

@@ -136,7 +136,6 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player == nullptr)
 		return;
-    ludum_player->fire_spawner = CreateParticleSpawner("PlayerFire", "fire");
 
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
@@ -151,10 +150,7 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 
 	LudumPlayer * ludum_player = auto_cast(player);
     if (ludum_player != nullptr)
-    {
         ludum_player->DoUpdateBrightSideOfLife(false);
-        ludum_player->fire_spawner = nullptr;
-    }
 }
 
 death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const

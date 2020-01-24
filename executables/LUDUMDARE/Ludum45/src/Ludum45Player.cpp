@@ -331,10 +331,12 @@ void LudumPlayer::FireProjectiles()
     LudumGame * ludum_game = GetLudumGame();
     if (ludum_game == nullptr)
         return;
-    if (fire_spawner == nullptr || !fire_spawner->IsValid() || !fire_spawner->HasBitmap())
+
+    chaos::ParticleSpawner fire_spawner = GetLudumLevelInstance()->GetParticleSpawner("PlayerFire", "fire");
+    if (!fire_spawner.IsValid() || !fire_spawner.HasBitmap())
         return;
 
-    chaos::BitmapAtlas::BitmapLayout const layout = *fire_spawner->GetBitmapInfo();
+    chaos::BitmapAtlas::BitmapLayout const layout = *fire_spawner.GetBitmapInfo();
 
     // get the spread value
     int count = GetCurrentPowerSpreadValue();
@@ -361,7 +363,7 @@ void LudumPlayer::FireProjectiles()
     particle_box.half_size = ratio_to_player * particle_box.half_size;
     particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 
-    fire_spawner->SpawnParticles(count, false, [ratio_to_player, velocity, damage, particle_box](chaos::ParticleAccessor<ParticleFire> accessor)
+    fire_spawner.SpawnParticles(count, false, [ratio_to_player, velocity, damage, particle_box](chaos::ParticleAccessor<ParticleFire> accessor)
     {
         float delta_rotation  = 0.1f;
         float offset_rotation = -(float)M_PI_2; 

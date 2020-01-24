@@ -302,24 +302,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	player_particle->bounding_box.position += dt * player_particle->velocity;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void LudumPlayer::UpdatePlayerFire(double delta_time)
 {
 	// decrease normal fire cool down
@@ -337,63 +319,85 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 		bool fire_pressed = CheckButtonPressed(fire_key_buttons, chaos::MyGLFW::XBOX_BUTTON_A);
 		if (fire_pressed && GetCurrentPowerRateValue() > 0)
 		{
-			FireProjectile();					
+            FireProjectiles();
 			fire_timer = GetCurrentPowerRateValue();
 		}								
 	}			
 }
 
-ParticleFire * LudumPlayer::FireProjectile()
+void LudumPlayer::FireProjectiles()
 {
-	LudumGame const * ludum_game = GetLudumGame();
-	if (ludum_game == nullptr)
-		return nullptr;
+    // early exit
+    LudumGame * ludum_game = GetLudumGame();
+    if (ludum_game == nullptr)
+        return;
+    if (fire_spawner == nullptr || !fire_spawner->IsValid() || !fire_spawner->HasBitmap())
+        return;
 
-	float power_ratio = 1.0f;
+    chaos::BitmapAtlas::BitmapLayout const layout = *fire_spawner->GetBitmapInfo();
 
-	PlayerUpgrade * upgrade = FindPlayerUpgrade(UpgradeKeys::DAMAGE);
-	if (upgrade != nullptr)
-	{
-		float power_level = (float)GetCurrentDamageValue();
-		float power_max   = (float)upgrade->max_level;	
-	
-		power_ratio = power_level / power_max;
-	}
+    // get the spread value
+    int count = GetCurrentPowerSpreadValue();
+    if (count == 0)
+        return;
+    // get the power ratio
+    float power_ratio = 1.0f;
 
-	
+    PlayerUpgrade* upgrade = FindPlayerUpgrade(UpgradeKeys::DAMAGE);
+    if (upgrade != nullptr)
+    {
+        float power_level = (float)GetCurrentDamageValue();
+        float power_max = (float)upgrade->max_level;
 
+        power_ratio = power_level / power_max;
+    }
 
+    // create particles (keep the same allocation)
+    float ratio_to_player = ludum_game->fire_size_ratio * power_ratio;
+    float velocity = ludum_game->fire_velocity;
+    float damage = GetCurrentDamageValue();
 
+    chaos::box2 particle_box = GetPlayerBox();
+    particle_box.half_size = ratio_to_player * particle_box.half_size;
+    particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 
+    fire_spawner->SpawnParticles(count, false, [ratio_to_player, velocity, damage, particle_box](chaos::ParticleAccessor<ParticleFire> accessor)
+    {
+        float delta_rotation  = 0.1f;
+        float offset_rotation = -(float)M_PI_2; 
 
+        for (ParticleFire & particle : accessor)
+        {
+            size_t particle_index = &particle - &accessor[0];
+            
+            float rotation = delta_rotation * ((float)particle_index) - delta_rotation * (float)(accessor.GetCount() / 2);
 
+            particle.bounding_box = particle_box;
+            particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+            int scroll_direction = 0;
+            float particle_orientation = rotation + offset_rotation;
+            float particle_velocity_orientation = rotation + offset_rotation + (float)M_PI_2;
 
-	int count = GetCurrentPowerSpreadValue(); 
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, ludum_game->fire_size_ratio * power_ratio, count, "fire", 0.1f, ludum_game->fire_velocity);
-	if (p != nullptr)
-	{
-		for (int i = 0 ; i < count ; ++i)
-		{
-			p[i].damage = GetCurrentDamageValue();
-			p[i].player_ownership = true;
-			p[i].trample = false;
-		}
-	}
-	return p;
+            glm::vec2 direction = glm::vec2(std::cos(particle_velocity_orientation), std::sin(particle_velocity_orientation));
+            particle.velocity = velocity * direction;
+            particle.rotation = particle_orientation;
+
+            particle.bounding_box.position += direction * particle_box.half_size[scroll_direction];
+
+            particle.player_ownership = true;
+
+            rotation += delta_rotation;
+
+            particle.damage = damage;
+            particle.player_ownership = true;
+            particle.trample = false;
+        }
+    });
+
+    // play the sound
+    ludum_game->Play("fire", false, false, 0.0f, death::SoundContext::LEVEL);
 }
-
-ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity)
-{
-	ParticlePlayer const * player_particle = GetPlayerParticle();
-	if (player_particle == nullptr)
-		return nullptr;
-
-	return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true, velocity, -(float)M_PI_2);
-
-	//return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true, velocity, player_particle->orientation);
-}
-
 
 void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
@@ -419,8 +423,6 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 		GLFWwindow * glfw_window = game->GetGLFWWindow();
 		if (glfw_window == nullptr)
 			return;
-
-
 
 
 	}
@@ -503,10 +505,6 @@ void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
 
 
 }
-
-
-
-
 
 void LudumPlayer::RegisterUpgrades()
 {

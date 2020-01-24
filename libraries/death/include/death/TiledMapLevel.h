@@ -808,6 +808,25 @@ namespace death
 			/** find the typed object surface from its name */
 			GeometricObject const * FindGeometricObject(char const * name) const;
 
+            /** create a particle spawner */
+            template<typename ...PARAMS>
+            chaos::ParticleSpawner* CreateParticleSpawner(char const * layer_instance_name, PARAMS... params)
+            {
+                LayerInstance * layer_instance = FindLayerInstance(layer_instance_name);
+                if (layer_instance == nullptr)
+                    return nullptr;
+                return layer_instance->CreateParticleSpawner(params...);
+            }
+
+            template<typename ...PARAMS>
+            chaos::ParticleSpawner GetParticleSpawner(char const* layer_instance_name, PARAMS... params)
+            {
+                LayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
+                if (layer_instance == nullptr)
+                    return chaos::ParticleSpawner(nullptr);
+                return layer_instance->GetParticleSpawner(params...);
+            }
+
 			/** get the bounding box for the level (in worls system obviously) */
 			virtual chaos::box2 GetBoundingBox() const override;
 

@@ -49,9 +49,6 @@ bool LudumGameInstance::DoSaveIntoCheckpoint(death::GameCheckpoint * checkpoint)
 	if (!death::GameInstance::DoSaveIntoCheckpoint(checkpoint))
 		return false;
 
-
-
-
 	return true;
 }
 
@@ -59,10 +56,6 @@ bool LudumGameInstance::DoLoadFromCheckpoint(death::GameCheckpoint const * check
 {
 	if (!death::GameInstance::DoLoadFromCheckpoint(checkpoint))
 		return false;
-
-
-
-
 
 	return true;
 }
@@ -126,87 +119,34 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 	return result;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-ParticleExplosion * LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
+void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 {
+    death::TiledMap::LayerInstance* layer_instance = GetLudumLevelInstance()->FindLayerInstance("Explosions");
+    if (layer_instance == nullptr)
+        return;
 
-	// search BitmapLayout for Enemy
-	chaos::BitmapAtlas::FolderInfo const * bitmap_set = game->GetTextureAtlas()->GetFolderInfo("sprites");
-	if (bitmap_set == nullptr)
-		return nullptr;
+    chaos::ParticleSpawner spawner = layer_instance->GetParticleSpawner("explosion");
+    if (!spawner.IsValid())
+        return;
 
-	chaos::BitmapAtlas::BitmapInfo const * explosion_info = bitmap_set->GetBitmapInfo("explosion");
-	if (explosion_info == nullptr)
-		return nullptr;
+    chaos::BitmapAtlas::BitmapInfo const* explosion_info = spawner.GetBitmapInfo();
 
-	size_t count = explosion_info->GetAnimationImageCount();
-	if (count == 0)
-		return nullptr;
-
-	if (explosion_info->animation_info == nullptr)
-		return nullptr;
-
-
-	death::TiledMap::LayerInstance * layer_instance = GetLudumLevelInstance()->FindLayerInstance("Explosions");
-	if (layer_instance == nullptr)
-		return nullptr;
-
-	chaos::ParticleLayerBase * particle_layer = layer_instance->CreateParticleLayer();
-	if (particle_layer == nullptr)
-		return nullptr;
-
-	chaos::ParticleAllocationBase * allocation = nullptr;
-	if (particle_layer->GetAllocationCount() > 0)
-		allocation = particle_layer->GetAllocation(0);
-	else
-	{
-		allocation = particle_layer->SpawnParticles(0);
-		if (allocation == nullptr)
-			return nullptr;		
-	}
-
-	if (!allocation->AddParticles(1))
-		return nullptr;
-
-	chaos::ParticleAccessor<ParticleExplosion> particle = allocation->GetParticleAccessor();
-	if (particle.GetCount() == 0)
-		return nullptr;
-
-	ParticleExplosion * p = &particle[particle.GetCount() - 1];
-
-	p->bounding_box = ref_box; 
-	p->bounding_box.half_size.x = p->bounding_box.half_size.y = 
-		
-		//1.3f * 
-		
-		
-		std::max(ref_box.half_size.x, ref_box.half_size.y);
-
-	p->color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f); 
-	p->explosion_info = explosion_info;
-
-	return p;
+    spawner.SpawnParticles(1, false, [ref_box, explosion_info](chaos::ParticleAccessorBase<ParticleExplosion> accessor) 
+    {
+        for (ParticleExplosion& particle : accessor)
+        {
+            particle.bounding_box = ref_box;
+            particle.bounding_box.half_size.x = particle.bounding_box.half_size.y = std::max(ref_box.half_size.x, ref_box.half_size.y);
+            particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+            particle.explosion_info = explosion_info;
+        }
+    });
 }
-
-
-
 
 void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
 	// super method
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
-
-
 }
 
 void LudumGameInstance::OnPlayerEntered(death::Player * player)
@@ -231,5 +171,4 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 
 		ludum_player->fire_bitmap_layout = *fire_info;
 	}
-
 }

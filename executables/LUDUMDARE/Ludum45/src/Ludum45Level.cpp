@@ -96,13 +96,9 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
     if (surface == nullptr)
         return true;
 
-    death::TiledMap::LayerInstance * layer_instance = GetLayerInstance()->GetTiledLevelInstance()->FindLayerInstance("Enemies");
-    if (layer_instance == nullptr)
-        return true;
-    
     chaos::box2 player_box = GetLayerInstance()->GetGame()->GetPlayer(0)->GetPlayerBox();
 
-    chaos::ParticleSpawner spawner = layer_instance->GetParticleSpawner(type->bitmap_name.c_str());
+    chaos::ParticleSpawner spawner = GetLayerInstance()->GetTiledLevelInstance()->GetParticleSpawner("Enemies", type->bitmap_name.c_str());
     if (!spawner.IsValid())
         return true;
 

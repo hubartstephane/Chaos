@@ -121,11 +121,7 @@ ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase *
 
 void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 {
-    death::TiledMap::LayerInstance* layer_instance = GetLudumLevelInstance()->FindLayerInstance("Explosions");
-    if (layer_instance == nullptr)
-        return;
-
-    chaos::ParticleSpawner spawner = layer_instance->GetParticleSpawner("explosion");
+    chaos::ParticleSpawner spawner = GetLudumLevelInstance()->GetParticleSpawner("Explosions", "explosion");
     if (!spawner.IsValid())
         return;
 
@@ -168,7 +164,6 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 		chaos::BitmapAtlas::BitmapInfo const * fire_info = bitmap_set->GetBitmapInfo("fire");
 		if (fire_info == nullptr)
 			return;
-
 		ludum_player->fire_bitmap_layout = *fire_info;
 	}
 }

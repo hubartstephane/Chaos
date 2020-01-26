@@ -2,7 +2,6 @@
 
 namespace chaos
 {
-
     ParticleAllocationBase* ParticleSpawner::SpawnParticles(size_t count, bool new_allocation)
     {
         ParticleAllocationBase* result = DoSpawnParticles(count, new_allocation);

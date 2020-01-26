@@ -491,29 +491,6 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	{
 		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
 		//result.camera_box.half_size *= 3.0f;
-
-		// search some bitmap layout information
-		chaos::BitmapAtlas::FolderInfo const * bitmap_set = layer_trait->game->GetTextureAtlas()->GetFolderInfo("sprites");
-		if (bitmap_set != nullptr)
-		{
-			chaos::BitmapAtlas::BitmapInfo const * fire_info = bitmap_set->GetBitmapInfo("enemy_fire");
-			if (fire_info != nullptr)
-				result.fire_layout = *fire_info;
-		}	
-
-		// get the layer of interrest
-		death::TiledMap::LayerInstance * layer_instance = layer_trait->game->GetLudumLevelInstance()->FindLayerInstance("fire");
-		if (layer_instance != nullptr)
-		{
-			chaos::ParticleLayerBase * fire_layer = layer_instance->GetParticleLayer();
-			if (fire_layer != nullptr)
-			{
-				if (fire_layer->GetAllocationCount() > 0)
-					result.fire_allocation = fire_layer->GetAllocation(0);
-				else
-					result.fire_allocation = fire_layer->SpawnParticles(0);
-			}
-		}
 	}
 	return result;
 }
@@ -524,13 +501,6 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	if (particle->life <= 0.0f)
 		return true;
 	// destroy the particle if outside a BIG camera box
-
-
-
-
-
-
-
 
 	// shuxxx
 	//if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
@@ -571,6 +541,14 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 			float size_ratio = 0.2f;
 			int count = 4;
 			float delta_angle = 2.0f * (float)M_PI / (float)count;
+
+            layer_trait->game->GetLudumGameInstance()->FireProjectile("enemy_fire", particle->bounding_box, size_ratio, count, nullptr, particle->rotation, delta_angle, layer_trait->game->enemy_fire_velocity, layer_trait->game->enemy_fire_damage, false, false);
+
+#if 0
+                enemy_fire
+
+                fire
+
 			ParticleFire * p = layer_trait->game->GetLudumGameInstance()->FireProjectile(update_data.fire_allocation.get(), particle->bounding_box, update_data.fire_layout, size_ratio, count, nullptr, delta_angle, false, layer_trait->game->enemy_fire_velocity, particle->rotation);
 			if (p != nullptr)
 			{
@@ -580,6 +558,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 					p[i].trample = false;
 				}
 			}
+#endif
 			particle->current_fire_timer = 0.0f;		
 		}
 	}

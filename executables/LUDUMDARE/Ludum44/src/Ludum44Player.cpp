@@ -165,48 +165,30 @@ bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_b
 	return false;
 }
 
-ParticleFire * LudumPlayer::FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity)
+void LudumPlayer::FireChargedProjectile()
 {
-	return GetLudumGameInstance()->FireProjectile(fire_allocation.get(), GetPlayerBox(), layout, ratio_to_player, count, sound_name, delta_rotation, true, velocity, 0.0f);
+    LudumGame const* ludum_game = GetLudumGame();
+    if (ludum_game == nullptr)
+        return;
+    LudumGameInstance* ludum_game_instance = GetLudumGameInstance();
+    if (ludum_game_instance == nullptr)
+        return;
+
+    int count = 1;
+    ludum_game_instance->FireProjectile("charged_fire", GetPlayerBox(), 1.0f, count, "thrust", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_charged_damages[current_charged_damage_index], true, true);
 }
 
-ParticleFire * LudumPlayer::FireChargedProjectile()
+void LudumPlayer::FireNormalProjectile()
 {
-	LudumGame const * ludum_game = GetLudumGame();
-	if (ludum_game == nullptr)
-		return nullptr;
+    LudumGame const* ludum_game = GetLudumGame();
+    if (ludum_game == nullptr)
+        return;
+    LudumGameInstance* ludum_game_instance = GetLudumGameInstance();
+    if (ludum_game_instance == nullptr)
+        return;
 
-	int count = 1;
-
-	ParticleFire * p = FireProjectile(charged_fire_bitmap_layout, 1.0f, count, "thrust", 0.1f, ludum_game->fire_velocity);
-	if (p != nullptr)
-	{
-		for (int i = 0 ; i < count ; ++i)
-		{
-			p[i].damage = ludum_game->player_charged_damages[current_charged_damage_index];
-			p[i].trample = true;
-		}
-	}
-	return p;
-}
-
-ParticleFire * LudumPlayer::FireNormalProjectile()
-{
-	LudumGame const * ludum_game = GetLudumGame();
-	if (ludum_game == nullptr)
-		return nullptr;
-
-	int count = ludum_game->player_fire_rates[current_fire_rate_index]; 
-	ParticleFire * p = FireProjectile(fire_bitmap_layout, 0.3f, count, "fire", 0.1f, ludum_game->fire_velocity);
-	if (p != nullptr)
-	{
-		for (int i = 0 ; i < count ; ++i)
-		{
-			p[i].damage = ludum_game->player_damages[current_damage_index];
-			p[i].trample = false;
-		}
-	}
-	return p;
+    int count = ludum_game->player_fire_rates[current_fire_rate_index];
+    ludum_game_instance->FireProjectile("fire", GetPlayerBox(), 0.3f, count, "fire", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_damages[current_damage_index], false, true);
 }
 
 void LudumPlayer::UpdatePlayerFire(double delta_time)

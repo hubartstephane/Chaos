@@ -79,11 +79,9 @@ protected:
 	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
 
 	/** fire a charged projectile */
-	ParticleFire * FireChargedProjectile();	
+	void FireChargedProjectile();	
 	/** fire a normal projectile */
-	ParticleFire * FireNormalProjectile();		
-	/** fire generic projectile */
-	ParticleFire * FireProjectile(chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_player, int count, char const * sound_name, float delta_rotation, float velocity);
+	void FireNormalProjectile();		
 
 protected:
 
@@ -100,11 +98,4 @@ protected:
 	float charged_fire_timer = 0.0f;
 
 	bool buylocked = false;
-
-	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
-
-	chaos::BitmapAtlas::BitmapLayout fire_bitmap_layout;
-
-	chaos::BitmapAtlas::BitmapLayout charged_fire_bitmap_layout;
-
 };

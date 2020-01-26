@@ -33,17 +33,6 @@ public:
 
 };
 
-
-
-
-
-
-
-
-
-
-
-
 // =====================================
 // PowerUpZoneParticleTrait
 // =====================================
@@ -54,8 +43,6 @@ public:
 
 	ParticlePowerUpZone() 
 	{
-		int i = 0;
-		++i;
 	}
 
 };
@@ -82,18 +69,8 @@ public:
     void ParticleToVertices(death::TiledMap::TileParticle const & particle, chaos::TrianglePairOutput<VertexPowerUpZone> & output) const;
     void ParticleToVertices(death::TiledMap::TileParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
 
-
-
-
-
-
 	bool UpdateParticle(float delta_time, ParticlePowerUpZone * particle);
 };
-
-
-
-
-
 
 // ===========================================================================
 // ParticleEnemy
@@ -120,10 +97,6 @@ public:
 class ParticleEnemyUpdateData
 {
 public:
-
-	chaos::BitmapAtlas::BitmapLayout fire_layout;
-
-	chaos::shared_ptr<chaos::ParticleAllocationBase> fire_allocation;
 
 	chaos::box2 camera_box;
 };

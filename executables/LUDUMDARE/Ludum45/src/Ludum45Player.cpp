@@ -363,15 +363,15 @@ void LudumPlayer::FireProjectiles()
     particle_box.half_size = ratio_to_player * particle_box.half_size;
     particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 
-    fire_spawner.SpawnParticles(count, false, [ratio_to_player, velocity, damage, particle_box](chaos::ParticleAccessor<ParticleFire> accessor)
+    fire_spawner.SpawnParticles(count, false, [velocity, damage, particle_box](chaos::ParticleAccessor<ParticleFire> accessor)
     {
         float delta_rotation  = 0.1f;
         float offset_rotation = -(float)M_PI_2; 
 
         for (ParticleFire & particle : accessor)
         {
-            size_t particle_index = &particle - &accessor[0];
-            
+            size_t particle_index = accessor.GetParticleIndex(&particle);
+
             float rotation = delta_rotation * ((float)particle_index) - delta_rotation * (float)(accessor.GetCount() / 2);
 
             particle.bounding_box = particle_box;

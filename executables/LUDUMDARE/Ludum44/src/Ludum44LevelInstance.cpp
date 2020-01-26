@@ -126,27 +126,14 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 {
 	death::TiledMap::LevelInstance::OnPlayerEntered(player);
 
-	LudumPlayer * ludum_player = auto_cast(player);
-	if (ludum_player == nullptr)
-		return;
 
-	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("fire");
-	if (layer_instance == nullptr)
-		return;
-
-	chaos::ParticleLayerBase * fire_layer = layer_instance->GetParticleLayer();
-	if (fire_layer != nullptr)
-		ludum_player->fire_allocation = fire_layer->SpawnParticles(0);
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 {
 	death::TiledMap::LevelInstance::OnPlayerLeaved(player);
 
-	LudumPlayer * ludum_player = auto_cast(player);
-	if (ludum_player == nullptr)
-		return;
-	ludum_player->fire_allocation = nullptr;
+
 }
 
 

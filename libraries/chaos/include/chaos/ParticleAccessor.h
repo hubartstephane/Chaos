@@ -260,6 +260,20 @@ namespace chaos
             return ParticleAccessorReverseIterator<type>();
         }
 
+        /** gets the index of the particle in the accessor */
+        template<typename OTHER_PARTICLE_TYPE>
+        size_t GetParticleIndex(OTHER_PARTICLE_TYPE const* particle) const
+        {
+            assert(particle != nullptr);
+            assert(particle_count != 0);
+            assert((char const*)particle >= (char const*)buffer);
+            assert((char const*)particle  < (char const*)buffer + particle_size * particle_count);
+
+            char const* p = (char const*)particle;
+            char const* b = (char const*)buffer;
+            return (p - b) / particle_size;
+        }
+
     protected:
 
         /** the start of the buffer */

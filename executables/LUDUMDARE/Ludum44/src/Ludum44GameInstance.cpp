@@ -215,10 +215,7 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
             particle.bounding_box = particle_box;
             particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-            float rotation = delta_rotation * ((float)accessor.GetParticleIndex(&particle));
-
-            
-#if 1
+            float rotation = delta_rotation * ((float)accessor.GetParticleIndex(&particle)) - delta_rotation * (float)(accessor.GetCount() / 2);
 
             float particle_orientation = rotation + offset_rotation;
             float particle_velocity_orientation = offset_rotation + rotation + (float)M_PI_2;
@@ -229,16 +226,11 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
 
             particle.bounding_box.position += direction * particle_box.half_size[scroll_direction];
 
-
-            rotation += delta_rotation;
-#endif
             particle.damage = damage;
             particle.trample = trample;
             particle.player_ownership = player_ownership;
         }
     });
-
-
 
     // play some sound
     if (sound_name != nullptr)
@@ -246,36 +238,3 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
 
     return result;
 }
-
-#if 0
-
-ParticleFire * LudumGameInstance::FireProjectile(chaos::ParticleAllocationBase * allocation, chaos::box2 const & ref_box, chaos::BitmapAtlas::BitmapLayout const & layout, float ratio_to_box, int count, char const * sound_name, float delta_rotation, bool player_ownership, float velocity, float offset_rotation)
-{
-
-
-	float rotation = 0.0f - delta_rotation * (float)(count / 2);
-
-	for (int i = 0 ; i < count ; ++i)
-	{
-		result[i].bounding_box = particle_box;	
-		result[i].texcoords = texcoords;
-		result[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-		int scroll_direction = 1;
-		float particle_orientation = rotation + offset_rotation;
-		float particle_velocity_orientation = offset_rotation + rotation + (float)M_PI_2;
-
-		glm::vec2 direction = glm::vec2(std::cos(particle_velocity_orientation), std::sin(particle_velocity_orientation));
-		result[i].velocity  = velocity * direction;
-		result[i].rotation  = particle_orientation;
-
-		result[i].bounding_box.position += direction * ref_box.half_size[scroll_direction];
-
-		result[i].player_ownership = player_ownership;
-
-		rotation += delta_rotation;
-	}
-
-
-}
-#endif

@@ -389,8 +389,6 @@ void LudumPlayer::FireProjectiles()
 
             particle.player_ownership = true;
 
-            rotation += delta_rotation;
-
             particle.damage = damage;
             particle.player_ownership = true;
             particle.trample = false;

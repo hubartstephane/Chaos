@@ -539,26 +539,13 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		if (particle->current_fire_timer >= particle->fire_frequency)
 		{
 			float size_ratio = 0.2f;
-			int count = 4;
+
+            int count = 4;
+
 			float delta_angle = 2.0f * (float)M_PI / (float)count;
 
             layer_trait->game->GetLudumGameInstance()->FireProjectile("enemy_fire", particle->bounding_box, size_ratio, count, nullptr, particle->rotation, delta_angle, layer_trait->game->enemy_fire_velocity, layer_trait->game->enemy_fire_damage, false, false);
 
-#if 0
-                enemy_fire
-
-                fire
-
-			ParticleFire * p = layer_trait->game->GetLudumGameInstance()->FireProjectile(update_data.fire_allocation.get(), particle->bounding_box, update_data.fire_layout, size_ratio, count, nullptr, delta_angle, false, layer_trait->game->enemy_fire_velocity, particle->rotation);
-			if (p != nullptr)
-			{
-				for (int i = 0 ; i < count ; ++i)
-				{
-					p[i].damage = layer_trait->game->enemy_fire_damage;
-					p[i].trample = false;
-				}
-			}
-#endif
 			particle->current_fire_timer = 0.0f;		
 		}
 	}

@@ -206,7 +206,6 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
     // spawn the particles and updates
     spawner.SpawnParticles(count, false, [offset_rotation, delta_rotation, particle_box, player_ownership, velocity, damage, trample, &result](chaos::ParticleAccessor<ParticleFire> accessor)
     {
-
         result = accessor;
         for (ParticleFire& particle : accessor)
         {

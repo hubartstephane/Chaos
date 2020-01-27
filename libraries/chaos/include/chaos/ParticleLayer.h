@@ -101,14 +101,6 @@ class ParticleTraitTools
 		
 	public:
 
-	/** returns the number of vertices require for one particle */
-	template<typename TRAIT_TYPE>
-	static size_t GetVerticesPerParticle(TRAIT_TYPE const & trait)
-	{ 
-        if constexpr (has_vertices_per_particle_v<TRAIT_TYPE>)
-            return trait.vertices_per_particle;
-        return 2 * 3; // default value (2 triangles to render a quad)
-	}
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
@@ -301,8 +293,6 @@ class ParticleTraitTools
 		bool visible = true;
 		/** a callback called whenever the allocation becomes empty */
 		bool destroy_when_empty = false;
-        /** size of particles */
-        size_t particle_size = 0;
 	};
 
 	// ==============================================================
@@ -560,8 +550,6 @@ class ParticleTraitTools
 		/** returns the size in memory of a vertex */
 		virtual size_t GetVertexSize() const { return 0; }
 		/** returns the number of vertices required for each particles */
-        virtual size_t GetVerticesPerParticle() const { return 0; }
-
         virtual size_t GetRealVerticesPerParticle() const { return 0; }
 
 		/** returns true whether vertices need to be updated */
@@ -727,11 +715,6 @@ class ParticleTraitTools
         /** override */
 		virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
 		/** override */
-        virtual size_t GetVerticesPerParticle() const override
-        {
-            return chaos::GetVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<allocation_trait_type>()); // see PrimitiveOutput.h
-        }
-
         virtual size_t GetRealVerticesPerParticle() const override
         {
             return chaos::GetRealVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<allocation_trait_type>()); // see PrimitiveOutput.h

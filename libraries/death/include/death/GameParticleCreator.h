@@ -18,15 +18,12 @@ namespace death
 		bool Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 
 		/** spawn some objects */
-		chaos::ParticleAllocationBase * SpawnParticles(chaos::TagType layer_id, size_t count) const;
+		//chaos::ParticleAllocationBase * SpawnParticles(chaos::TagType layer_id, size_t count) const;
 
 		/** create some particle of the given type (Spawn + Initialization) */
-		chaos::ParticleAllocationBase * CreateParticles(char const * bitmap_name, size_t count, chaos::TagType layer_id) const;
+		chaos::ParticleAllocationBase * CreateParticles(char const * bitmap_name, size_t count, bool new_allocation, chaos::TagType layer_id) const;
 		/** create a text particle system */
 		chaos::ParticleAllocationBase * CreateTextParticles(char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params, chaos::TagType layer_id = death::GameHUDKeys::TEXT_LAYER_ID) const; 		
-
-		/** initialize the game objects texture coordinates (from the end of the array) */
-		bool InitializeParticles(chaos::ParticleAllocationBase * allocation, char const * bitmap_name, size_t last_count) const;
 
 		/** get the bitmap info used for given bitmap_name */
 		chaos::BitmapAtlas::BitmapInfo const * FindBitmapInfo(char const * bitmap_name) const;

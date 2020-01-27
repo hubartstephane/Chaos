@@ -134,11 +134,6 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool a
 // ParticlePlayerTrait
 // ===========================================================================
 
-size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
-}
-
 void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
@@ -247,26 +242,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // ParticleEnemyTrait
 // ===========================================================================
 
-
-size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const* p, VertexBase* vertices, size_t vertices_per_particle, LayerTrait const* layer_trait) const
-{
-    size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
-
-    for (size_t i = 0; i < result; ++i)
-    {
-        vertices[i].attraction_position =
-            p->bounding_box.position +
-            2.0f * p->attraction_maxradius * glm::normalize(vertices[i].position - p->bounding_box.position);
-
-        vertices[i].particle_center = p->bounding_box.position;
-    }
-
-    return result;
-}
-
-
-
-
 void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const * layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
@@ -335,11 +310,6 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 // ParticleAtomTrait
 // ===========================================================================
 
-size_t ParticleAtomTrait::ParticleToVertices(ParticleAtom const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
-}
-
 void ParticleAtomTrait::ParticleToVertices(ParticleAtom const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
@@ -349,8 +319,6 @@ void ParticleAtomTrait::ParticleToVertices(ParticleAtom const& particle, chaos::
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
 }
-
-
 
 bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
 {
@@ -445,13 +413,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 
 bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const
 {
-
 	return false;
-}
-
-size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
 
 void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const

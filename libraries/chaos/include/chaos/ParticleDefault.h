@@ -69,21 +69,6 @@ namespace chaos
             static void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive);
             /** generates 1 triangle pair from one particle */
             static void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive);
-
-
-
-            // obsolete
-			template<typename VERTEX_TYPE>
-			static size_t ParticleToVertices(Particle const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle)
-			{
-				// generate particle corners and texcoords
-				ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices);
-				// copy the color in all triangles vertex
-				for (size_t i = 0; i < 6; ++i)
-					vertices[i].color = particle->color;
-				return vertices_per_particle;
-			}
-
 		};
 
 		/** the default vertex declaration */

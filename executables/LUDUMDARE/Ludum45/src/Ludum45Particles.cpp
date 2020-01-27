@@ -94,24 +94,6 @@ chaos::box2 ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::Pa
 	return result;
 }
 
-size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices);
-
-	glm::vec4 color = p->color;
-	if (p->touched_count_down > 0.0f)
-		color.a = 0.0f;
-	else
-		color.a = 1.0f;
-
-	// copy the color in all triangles vertex
-	for (size_t i = 0 ; i < 6 ; ++i)
-		vertices[i].color =  color;
-
-	return vertices_per_particle;
-}
-
 void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
@@ -254,19 +236,6 @@ chaos::box2 ParticleBonusTrait::BeginUpdateParticles(float delta_time, chaos::Pa
 	return result;
 }
 
-
-size_t ParticleBonusTrait::ParticleToVertices(ParticleBonus const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, p->texcoords, vertices);
-	// copy the color in all triangles vertex
-	for (size_t i = 0 ; i < 6 ; ++i)
-		vertices[i].color =  p->color;
-
-	return vertices_per_particle;
-}
-
-
 void ParticleBonusTrait::ParticleToVertices(ParticleBonus const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
@@ -308,46 +277,6 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * partic
 // ===========================================================================
 // ParticlePlayerTrait
 // ===========================================================================
-
-size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-
-	chaos::ParticleTexcoords texcoords = p->texcoords;
-
-	if (p->bitmap_info != nullptr && p->bitmap_info->HasGridAnimation())
-	{
-		chaos::BitmapAtlas::BitmapLayout layout = p->bitmap_info->GetAnimationLayout(p->current_frame, chaos::BitmapAtlas::GetBitmapLayoutFlag::wrap);
-
-		texcoords =  chaos::ParticleTools::GetParticleTexcoords(layout);
-
-	}
-
-	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(p->bounding_box, texcoords, vertices, p->orientation);
-
-	glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	LudumPlayer const * player = layer_trait->game->GetLudumPlayer(0);
-	if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
-	{
-		float alpha = 1.0f;
-
-		if (layer_trait->game->player_dash_duration > 0.0f)
-			alpha = player->dash_timer / layer_trait->game->player_dash_duration;
-		
-		alpha = 0.8f;
-
-		boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - alpha);
-	}
-
-	// copy the color in all triangles vertex
-	for (size_t i = 0 ; i < 6 ; ++i)
-		vertices[i].color = boost_color * p->color;
-
-	return vertices_per_particle;
-}
-
-
 
 void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
@@ -526,23 +455,6 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	return false; // do not destroy the particle
 }
 
-size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
-	// copy the color in all triangles vertex
-	float alpha = 1.0f;
-	if (particle->lifetime < 1.0f)
-		alpha = particle->lifetime;
-
-
-	for (size_t i = 0; i < 6; ++i)
-	{
-		vertices[i].color = particle->color;
-		vertices[i].color.a = alpha;
-	}
-	return 6;
-}
-
 void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
@@ -597,11 +509,6 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 	return false; // never destroy it
 }
 
-size_t ParticleShroudLifeTrait::ParticleToVertices(ParticleShroudLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
-}
-
 void ParticleShroudLifeTrait::ParticleToVertices(ParticleShroudLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
@@ -619,18 +526,11 @@ void ParticleShroudLifeTrait::ParticleToVertices(ParticleShroudLife const& parti
 
 // shuludum .... duplication AGAIN !!!
 
-
 bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle) const
 {
 
 	return false;
 }
-
-size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
-}
-
 
 void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
 {
@@ -686,13 +586,6 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 
 	return false;
-}
-
-size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-
-
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
 }
 
 void ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const

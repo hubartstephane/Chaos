@@ -25,7 +25,9 @@ namespace chaos
         ParticleSpawner(ParticleLayerBase* in_particle_layer, PARAMS... params) :
             particle_layer(in_particle_layer)
         {
-            SetBitmapInfo(params...);
+            // in case of error, make the Spawner invalid
+            if (!SetBitmapInfo(params...))
+                particle_layer = nullptr;
         }
 
         /** change the bitmap info */
@@ -38,6 +40,17 @@ namespace chaos
             BitmapAtlas::TextureArrayAtlas const* atlas = particle_layer->GetTextureAtlas();
             if (atlas == nullptr)
                 return false;
+
+            // if the requested bitmap is nullptr, considere the call as successfull
+            if constexpr (std::is_same_v<BITMAP_NAME, char const*>)
+            {
+                if (bitmap_name == nullptr)
+                {
+                    bitmap_info = nullptr;
+                    return true;
+                }
+            }
+
             // find the folder
             BitmapAtlas::FolderInfo const* bitmap_set = atlas->GetFolderInfo(folder_name, true);
             if (bitmap_set == nullptr)

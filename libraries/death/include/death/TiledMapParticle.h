@@ -41,11 +41,6 @@ namespace death
             {
                 chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
             }
-
-			static size_t ParticleToVertices(TileParticle const * particle, chaos::ParticleDefault::Vertex * vertices, size_t vertices_per_particle)
-			{
-				return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
-			}
 		};
 
 	}; // namespace TiledMap

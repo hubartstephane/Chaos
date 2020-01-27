@@ -73,6 +73,25 @@ namespace chaos
 			return result;
 		}
 
+        /** create a particle spawner */
+        template<typename NAME_TYPE, typename ...PARAMS>
+        chaos::ParticleSpawner* CreateParticleSpawner(NAME_TYPE layer_name, PARAMS... params)
+        {
+            ParticleLayerBase* layer = FindLayer(layer_name);
+            if (layer == nullptr)
+                return nullptr;
+            return layer->CreateParticleSpawner(params...);
+        }
+
+        template<typename NAME_TYPE, typename ...PARAMS>
+        chaos::ParticleSpawner GetParticleSpawner(NAME_TYPE layer_name, PARAMS... params)
+        {
+            ParticleLayerBase* layer = FindLayer(layer_name);
+            if (layer == nullptr)
+                return chaos::ParticleSpawner(nullptr);
+            return layer->GetParticleSpawner(params...);
+        }
+
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayerBase * layer);
 

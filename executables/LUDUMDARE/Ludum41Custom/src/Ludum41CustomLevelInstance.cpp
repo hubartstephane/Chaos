@@ -76,7 +76,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	// create the bricks resource
 	size_t brick_count = ludum_level->GetBrickCount();
-	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().CreateParticles("brick", brick_count, death::GameHUDKeys::BRICK_LAYER_ID);
+	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().CreateParticles("brick", brick_count, true, death::GameHUDKeys::BRICK_LAYER_ID);
 	if (result == nullptr)
 		return nullptr;
 

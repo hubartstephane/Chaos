@@ -456,13 +456,19 @@ namespace death
 		// create/ resize the allocation
 		if (allocations == nullptr)
 		{
-			allocations = hud->GetGameParticleCreator().CreateParticles(particle_name.c_str(), count, layer_id);
+			allocations = hud->GetGameParticleCreator().CreateParticles(particle_name.c_str(), count, true, layer_id);
 			if (allocations == nullptr)
 				return;
 		}
 		else
 		{
 			allocations->Resize(count);
+
+
+
+            // shuxxx health
+
+
 			if (count > cached_value)
 				hud->GetGameParticleCreator().InitializeParticles(allocations.get(), particle_name.c_str(), count - cached_value);
 		}
@@ -481,10 +487,6 @@ namespace death
 
 
 
-
-
-
-
 		glm::vec2 particle_final_size = particle_size;
 		if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
 		{
@@ -500,9 +502,6 @@ namespace death
 			}
 		}
 
-
-
-
 		// compute the size of the whole sprites with their offset
 		glm::vec2 whole_particle_size =
 			particle_final_size +
@@ -515,13 +514,11 @@ namespace death
 		glm::vec2 whole_particle_ref = chaos::Hotpoint::Convert(screen_ref + position, whole_particle_size, hotpoint_type, chaos::Hotpoint::BOTTOM_LEFT);
 
 		// update the particles members
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particles = allocations->GetParticleAccessor();
-
 		glm::vec2 particle_position = whole_particle_ref;
-		for (size_t i = 0; i < (size_t)count; ++i)
-		{			
-			chaos::ParticleDefault::Particle & p = particles[i];
 
+        chaos::ParticleAccessor<chaos::ParticleDefault::Particle> accessor = allocations->GetParticleAccessor();
+        for (chaos::ParticleDefault::Particle & p : accessor)
+        {
 			p.bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 			p.bounding_box.half_size = 0.5f * particle_final_size;
 
@@ -531,8 +528,6 @@ namespace death
 			p.color = glm::vec4(1.0f, 1.0f, 1.0f, fadeout);			
 
 			particle_position += glm::abs(particle_offset);
-
-//			p.bounding_box.position = glm::vec2(0.0f, 0.0f);
 		}
 
 		cached_value = count;

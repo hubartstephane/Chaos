@@ -220,17 +220,9 @@ namespace chaos
 
 	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
-#if OLD_RENDERING
-		// early exit
-		if (vertices_count == 0)
-			return 0;
-
-#else
         // early exit
         if (dynamic_mesh.IsEmpty())
             return 0;
-
-#endif
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
         if (final_material == nullptr)
@@ -262,36 +254,6 @@ namespace chaos
 
     int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
     {
-#if OLD_RENDERING
-
-        // no vertices, no rendering
-        if (vertices_count == 0)
-            return 0;
-
-        // use the material : search the program to use
-        GPUProgram const* program = final_material->UseMaterial(uniform_provider, render_params);
-        if (program == nullptr)
-            return 0;
-
-        // get the vertex array
-        GPUVertexArray const* vertex_array = old_vertex_array_cache.FindOrCreateVertexArray(program, old_vertex_buffer.get(), nullptr, vertex_declaration.get(), 0);
-        if (vertex_array == nullptr)
-            return 0;
-        // bind the vertex array
-        glBindVertexArray(vertex_array->GetResourceID());
-        // one draw call for the whole buffer
-        GPUDrawPrimitive primitive;
-        primitive.primitive_type = GL_TRIANGLES;
-        primitive.indexed = false;
-        primitive.count = (int)vertices_count;
-        primitive.start = 0;
-        primitive.base_vertex_index = 0;
-        renderer->Draw(primitive, render_params.instancing);
-        glBindVertexArray(0);
-
-        return 1; // 1 DrawCall
-
-#else
         // create a new GPURenderParams that override the Material for inside the GPUDynamicMesh
         DisableReferenceCount<GPUConstantMaterialProvider> material_provider(final_material);  // while on stack, use DisableReferenceCount<...>
 
@@ -299,7 +261,6 @@ namespace chaos
         other_render_params.material_provider = &material_provider;
         // let the dynamic mesh render itself
         return dynamic_mesh.Display(renderer, uniform_provider, other_render_params);
-#endif
     }
 
     void ParticleLayerBase::UpdateVertexDeclaration()
@@ -310,19 +271,6 @@ namespace chaos
         // fill the vertex declaration
         vertex_declaration = GetVertexDeclaration();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-#if !OLD_RENDERING
 
     size_t ParticleLayerBase::EvaluateGPUVertexMemoryRequirement() const
     {
@@ -368,111 +316,6 @@ namespace chaos
         return true;
     }
 
-#else
-
-	bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer * renderer)
-	{
-		// update the vertex declaration
-		UpdateVertexDeclaration();
-		// return the number of vertices from the previous call
-		if (!require_GPU_update && !AreVerticesDynamic())
-			return true;
-
-		// create the vertex buffer if necessary
-        bool dynamic_buffer = true; // (AreVerticesDynamic() || AreParticlesDynamic());
-
-		if (old_vertex_buffer == nullptr)
-		{
-			vertices_count = 0; // no vertices inside for the moment
-
-			old_vertex_buffer = new GPUBuffer(dynamic_buffer);
-			if (old_vertex_buffer == nullptr || !old_vertex_buffer->IsValid())
-			{
-                old_vertex_buffer = nullptr;
-				return false;
-			}
-		}
-
-		// release memory => maybe this is worth delay this action after a while and being sure the data inside is not necessary anymore
-		size_t vertex_buffer_size = GetVertexSize() * GetVerticesPerParticle() * ComputeMaxParticleCount();
-		if (vertex_buffer_size == 0)
-		{
-            old_vertex_buffer->SetBufferData(nullptr, 0); // empty the buffer : for some reason, we cannot just kill the buffer
-			vertices_count = 0;
-			return true;
-		}
-
-		// reserve memory (for the maximum number of vertices possible)
-		if (!old_vertex_buffer->SetBufferData(nullptr, vertex_buffer_size))
-		{
-			vertices_count = 0;
-			return false;
-		}
-		// map the vertex buffer
-		char * buffer = old_vertex_buffer->MapBuffer(0, vertex_buffer_size, false, true);
-		if (buffer == nullptr)
-		{
-			vertices_count = 0;
-			return false;
-		}
-		// fill the buffer with data
-		vertices_count = DoUpdateGPUBuffers(buffer, vertex_buffer_size);
-		// unmap the buffer
-        old_vertex_buffer->UnMapBuffer();
-
-		// no more update required
-		require_GPU_update = false;
-
-        return true;
-    }
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-	size_t ParticleLayerBase::DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size)
-	{
-
-
-		size_t result = 0;
-
-		size_t vertex_size = GetVertexSize();
-
-		size_t count = particles_allocations.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			// get the allocation, ignore if invisible
-			ParticleAllocationBase * allocation = particles_allocations[i].get();
-			if (!allocation->IsVisible())
-				continue;
-			// transform particles into vertices
-			size_t new_vertices = allocation->ParticlesToVertices(buffer, GetLayerTrait());
-			// shift buffer
-			buffer += new_vertices * vertex_size;
-			result += new_vertices;
-		}
-
-		return result;
-	}
-
-
-
-
-
-
-
-
-
-
 	size_t ParticleLayerBase::ComputeMaxParticleCount() const
 	{
 		size_t result = 0;
@@ -493,14 +336,6 @@ namespace chaos
 		}
 		return result;
 	}
-
-
-
-
-
-
-
-
 
 	void ParticleLayerBase::UpdateRenderingStates(GPURenderer * renderer, bool begin) const
 	{

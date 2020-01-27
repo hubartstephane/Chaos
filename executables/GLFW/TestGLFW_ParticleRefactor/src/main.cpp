@@ -90,25 +90,6 @@ public:
 		return (particle->remaining_time <= 0.0f);
 	}
 
-	size_t ParticleToVertices(ParticleExample const * particle, VertexExample * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-	{
-		chaos::ParticleTools::GenerateBoxParticle(particle->box, particle->texcoords, vertices);
-
-		float alpha = particle->remaining_time / particle->lifetime;
-		for (size_t i = 0 ; i < 6 ; ++i)
-		{
-			vertices[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
-			vertices[i].position.y += 50 * std::cos(time);
-		}
-
-		if (rand() % 5 == 0) // flickering particles (not always rendered)
-			return 0;
-		
-		return vertices_per_particle;
-	}
-
-
-
     void ParticleToVertices(ParticleExample const & particle, chaos::TrianglePairOutput<VertexExample> & output, LayerTrait const* layer_trait) const
     {
         if (rand() % 5 == 0) // flickering particles (not always rendered)

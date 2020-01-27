@@ -18,11 +18,6 @@ namespace chaos
 		/** the type for one vertex */
 		using vertex_type = VERTEX_TYPE;
 
-		size_t ParticleToVertices(PARTICLE_TYPE const * particle, VERTEX_TYPE * vertices, size_t vertices_per_particle) const
-		{
-			return 0; // default implementation
-		}
-
 		bool UpdateParticle(float delta_time, PARTICLE_TYPE * particle) const
 		{
 			return false; // default implementation => do not destroy particle

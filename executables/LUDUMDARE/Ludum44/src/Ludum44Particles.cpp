@@ -86,11 +86,6 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 // ParticlePlayerTrait
 // ===========================================================================
 
-size_t ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const * p, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(p, vertices, vertices_per_particle);
-}
-
 void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
@@ -157,35 +152,6 @@ bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZ
 	}
 	return false;
 }
-size_t PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const * particle, VertexPowerUpZone * vertices, size_t vertices_per_particle) const
-{
-	size_t result = chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
-
-	// get the texture coordinates in the atlas
-	glm::vec3 texture_bl = vertices[0].texcoord;
-	glm::vec3 texture_tr = vertices[2].texcoord;
-
-	glm::vec2 position_bl = vertices[0].position;
-	glm::vec2 position_tr = vertices[2].position;
-
-	// override the texture coordinates
-	for (size_t i = 0; i < 6; ++i)
-	{
-		vertices[i].texcoord  = texture_bl;
-		vertices[i].texcoord2 = texture_tr;
-	}
-
-	// compute repetition
-	glm::vec2 repetition = glm::vec2(1.0f, 1.0f);
-
-	vertices[0].texcoord3 = vertices[3].texcoord3 = repetition * glm::vec2(0.0f, 0.0f);
-	vertices[1].texcoord3 = repetition * glm::vec2(1.0f, 0.0f);
-	vertices[2].texcoord3 = vertices[4].texcoord3 = repetition * glm::vec2(1.0f, 1.0f);
-	vertices[5].texcoord3 = repetition * glm::vec2(0.0f, 1.0f);
-
-	return result;
-}
-
 
 void PowerUpZoneParticleTrait::ParticleToVertices(death::TiledMap::TileParticle const& particle, chaos::TrianglePairOutput<VertexPowerUpZone>& output) const
 {
@@ -303,12 +269,6 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 	return false;
 }
 
-size_t ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
-}
-
-
 void ParticleExplosionTrait::ParticleToVertices(ParticleExplosion const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
@@ -331,11 +291,6 @@ bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle
 	return false;
 }
 
-size_t ParticleLifeTrait::ParticleToVertices(ParticleLife const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
-}
-
 void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
@@ -345,9 +300,6 @@ void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::
 {
     chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
 }
-
-
-
 
 // ===========================================================================
 // ParticleFireTrait
@@ -429,28 +381,6 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 
 	return false; // do not destroy the particle
 }
-
-size_t ParticleFireTrait::ParticleToVertices(ParticleFire const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
-	// copy the color in all triangles vertex
-	for (size_t i = 0; i < 6; ++i)
-		vertices[i].color = particle->color;
-
-	float alpha = 1.0f;
-	if (particle->lifetime < 1.0f)
-		alpha = particle->lifetime;
-
-	for (size_t i = 0; i < 6; ++i)
-	{
-		vertices[i].color = particle->color;
-		vertices[i].color.a = alpha;
-	}
-
-	return 6;
-}
-
-
 
 void ParticleFireTrait::ParticleToVertices(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
@@ -552,24 +482,6 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 
 	return false; // do not destroy the particle
 }
-
-size_t ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const * particle, VertexBase * vertices, size_t vertices_per_particle, LayerTrait const * layer_trait) const
-{
-	chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
-	// select wanted color
-	glm::vec4 color = particle->color;
-
-	if (particle->touched_count_down > 0)
-		color.a = 0.0f;
-	else
-		color.a = 1.0f;
-	
-	// copy the color in all triangles vertex
-	for (size_t i = 0; i < 6; ++i)
-		vertices[i].color = color;
-	return 6;
-}
-
 
 void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {

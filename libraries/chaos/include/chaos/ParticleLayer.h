@@ -22,7 +22,6 @@
 #include <chaos/ParticleSpawner.h>
 
 // There are several rendering mode
-//  - OLD_RENDERING => always faster (10-15% faster) but less flexible
 //
 //  - QUAD (transformed as triangle pair)
 //  - INDEXED QUAD
@@ -33,7 +32,6 @@
 //
 //  (see CHAOS_TRIANGLE_PAIR_RENDERING/CHAOS_INDEXED_QUAD_RENDERING)
 
-#define OLD_RENDERING 0
 
 #define CHAOS_TRIANGLE_PAIR_RENDERING 0
 
@@ -100,8 +98,7 @@ class ParticleTraitTools
 	//				has_vertices_per_particle<...>   
 	//
 	//			template in all cases
-	
-	
+		
 	public:
 
 	/** returns the number of vertices require for one particle */
@@ -163,7 +160,6 @@ class ParticleTraitTools
     {
         return chaos::GetGLPrimitiveType(GetPrimitiveType<TRAIT_TYPE>()); // see PrimitiveOutput.h
     }
-
 };
 
 		// ==============================================================
@@ -281,40 +277,14 @@ class ParticleTraitTools
 		/** remove the allocation from its layer */
 		void RemoveFromLayer();
 
-#if !OLD_RENDERING
-
-
-        /** transforms the particles into vertices in the buffer */
-     //   virtual void ParticlesToVertices(PrimitiveOutputBase & output, void const* layer_trait) const { }
-
-
-
-
-
-#endif
-
 	protected:
 
         /** compute the ranges for accessor (returns false in case of failure) */
         void const * GetAccessorEffectiveRanges(size_t& start, size_t& count, size_t& particle_size) const;
 		/** tick the allocation (returns true whether the allocation is to be destroyed) */
 		virtual bool TickAllocation(float delta_time, void const * layer_trait) { return false; }
-
-
-
-
-
-
-
 		/** transforms the particles into vertices in the buffer */
 		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const { return 0; }
-
-        
-
-        
-
-
-
 
 		/** called whenever the allocation is removed from the layer */
 		void OnRemovedFromLayer();
@@ -403,7 +373,6 @@ class ParticleTraitTools
 			return true;
 		}
 
-#if !OLD_RENDERING
         /** transforms the particles into vertices in the buffer */
         template<typename PRIMITIVE_OUTPUT_TYPE>
         void ParticlesToVertices(PRIMITIVE_OUTPUT_TYPE& output, void const* layer_trait) const
@@ -440,9 +409,8 @@ class ParticleTraitTools
                 }
             }
         }
-#endif
 
-	protected:
+    protected:
 
 		/** override */
 		virtual bool TickAllocation(float delta_time, void const * layer_trait) override
@@ -538,9 +506,6 @@ class ParticleTraitTools
 			return j; // final number of particles
 		}
 
-#if !OLD_RENDERING
-  
-
         template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
         void DoParticlesToVerticesLoop(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
         {
@@ -552,81 +517,6 @@ class ParticleTraitTools
                 allocation_trait.ParticleToVertices(particle_accessor[i], output, params...);
             }
         }
-#else
-
-
-		/** override */
-		virtual size_t ParticlesToVertices(void * v, void const * layer_trait) const override
-		{ 
-			layer_trait_type const * typed_layer_trait = (layer_trait_type const *)layer_trait;
-
-
-            // XXX : has_function_ParticleToVertices<allocation_trait_type>::type()*/); //  shuxxx FIXME : this template does not detect template function => see ParticleDefault
-
-            vertex_type* vertices = (vertex_type*)v;
-
-            size_t vertices_per_particle = ParticleTraitTools::GetVerticesPerParticle(allocation_trait);
-
-            size_t result = 0;
-            if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
-            {
-                if constexpr (has_LayerTrait_v<allocation_trait_type>)
-                {
-                    result = DoParticlesToVerticesLoop(
-                        vertices,
-                        vertices_per_particle,
-                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
-                        typed_layer_trait);
-                }
-                else
-                {
-                    result = DoParticlesToVerticesLoop(
-                        vertices,
-                        vertices_per_particle,
-                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>())); // do not use a temp variable, so it can be a left-value reference
-                }
-            }
-            else
-            {
-                if constexpr (has_LayerTrait_v<allocation_trait_type>)
-                {
-                    result = DoParticlesToVerticesLoop(
-                        vertices,
-                        vertices_per_particle,
-                        typed_layer_trait);
-                }
-                else
-                {
-                    result = DoParticlesToVerticesLoop(
-                        vertices,
-                        vertices_per_particle);
-                }
-            }            
-            return result;
-		}
-
-		template<typename ...PARAMS>
-		size_t DoParticlesToVerticesLoop(vertex_type * vertices, size_t vertices_per_particle, PARAMS... params) const
-		{
-            ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
-
-            size_t particle_count = particle_accessor.GetCount();
-			size_t result = 0;
-			// transforms particles to vertices
-			vertex_type * v = vertices;
-
-			for (size_t i = 0; i < particle_count; ++i)
-			{
-				size_t new_vertices = allocation_trait.ParticleToVertices(&particle_accessor[i], v, vertices_per_particle, params...);
-				assert(new_vertices <= vertices_per_particle);
-				result += new_vertices;
-				v += new_vertices;
-			}
-			return result;
-		}
-
-
-#endif
 
 	protected:
 
@@ -670,16 +560,9 @@ class ParticleTraitTools
 		/** returns the size in memory of a vertex */
 		virtual size_t GetVertexSize() const { return 0; }
 		/** returns the number of vertices required for each particles */
-
-#if OLD_RENDERING
-		virtual size_t GetVerticesPerParticle() const { return 2 * 3; } // 2 triangles per particles to have a square = 6 vertices
-#else
         virtual size_t GetVerticesPerParticle() const { return 0; }
 
         virtual size_t GetRealVerticesPerParticle() const { return 0; }
-#endif
-
-
 
 		/** returns true whether vertices need to be updated */
 		virtual bool AreVerticesDynamic() const { return true; }
@@ -763,9 +646,6 @@ class ParticleTraitTools
 		/** internal method to remove a range from the layer */
 		void RemoveParticleAllocation(ParticleAllocationBase * allocation);
 
-		/** internal method to update the GPU buffers */
-		size_t DoUpdateGPUBuffers(char * buffer, size_t vertex_buffer_size);
-
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration();
 		/** the effective rendering */
@@ -777,10 +657,8 @@ class ParticleTraitTools
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;
 
-#if !OLD_RENDERING
         /** select the PrimitiveOutput and update the rendering GPU resources */
         virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t previous_frame_vertices_count) {}
-#endif
 
         /** returns the number of vertices used in a dynamic mesh */
         size_t GetDynamicMeshVertexCount(GPUDynamicMesh const& mesh) const;
@@ -805,20 +683,10 @@ class ParticleTraitTools
         shared_ptr<GPUVertexArrayCache> vertex_array_cache;
         /** the vertex cache (used when the layer is NOT in a manager) */
         GPUBufferCache buffer_cache;
-
-        /** whether there was changes in particles, and a vertex array need to be recomputed */
-        bool require_GPU_update = false;
-
         /** the corresponding dynamic mesh */
         GPUDynamicMesh dynamic_mesh;
-
-		/** the vertex buffer for the rendering */
-		shared_ptr<GPUBuffer> old_vertex_buffer;
-		/** the cache for vertex array */
-		GPUVertexArrayCache old_vertex_array_cache;
-
-		/** number of used vertices in the vertex buffer */
-		size_t vertices_count = 0;
+        /** whether there was changes in particles, and a vertex array need to be recomputed */
+        bool require_GPU_update = false;
 	};
 
 	// ==============================================================
@@ -859,12 +727,6 @@ class ParticleTraitTools
         /** override */
 		virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
 		/** override */
-#if OLD_RENDERING
-		virtual size_t GetVerticesPerParticle() const override 
-        { 
-            return ParticleTraitTools::GetVerticesPerParticle(layer_trait); 
-        }
-#else
         virtual size_t GetVerticesPerParticle() const override
         {
             return chaos::GetVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<allocation_trait_type>()); // see PrimitiveOutput.h
@@ -874,8 +736,6 @@ class ParticleTraitTools
         {
             return chaos::GetRealVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<allocation_trait_type>()); // see PrimitiveOutput.h
         }
-
-#endif
 		/** override */
 		virtual bool AreVerticesDynamic() const override 
 		{ 
@@ -920,7 +780,6 @@ class ParticleTraitTools
 		/** override */
 		virtual void const * GetLayerTrait() const { return &layer_trait; }
 
-#if !OLD_RENDERING
         /** override */
         virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t vertex_requirement_evaluation) override
         {
@@ -971,7 +830,6 @@ class ParticleTraitTools
             }
             output.Flush();
         }
-#endif
 
 	protected:
 

@@ -303,128 +303,124 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 	spawn_curve_type = (spawn_curve_type % SPAWN_CURVE_LAST);
 
 
-	int index_offset = (int)allocation->GetParticleCount();
-
 	chaos::BitmapAtlas::BitmapInfo const * enemy_info = nullptr; // so we can reuse among the loop existing random choice
-	if (allocation->AddParticles(count))
-	{
-		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor();
-		for (int i = 0 ; i < count ; ++i)
-		{
-			ParticleEnemy & p = particles[index_offset + i];
-		
-			// fill position & velocity			
-			if (spawn_curve_type == SPAWN_CURVE_RANDOM)
-			{
-				p.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;			
-			}
-			else if (spawn_curve_type == SPAWN_CURVE_V || spawn_curve_type == SPAWN_CURVE_INVERTED_V || spawn_curve_type == SPAWN_CURVE_ALIGNED)
-			{
-				float x = 0.5f; // by default center of the surface
-				if (count > 1)
-					x = ((float)i) / (float)(count - 1);
-
-				float sx = surface_box.half_size.x;
-				float sy = surface_box.half_size.y;
-
-				p.bounding_box.position.x = surface_box.position.x - sx + 2.0f * x * sx;				
-
-				if (spawn_curve_type == SPAWN_CURVE_ALIGNED)
-					p.bounding_box.position.y = surface_box.position.y;
-				else
-				{
-					float renormalized_x = (x * 2.0f) - 1.0f;
-
-					float y = (spawn_curve_type == SPAWN_CURVE_V)? 
-						(renormalized_x * renormalized_x) : 
-						(1.0f - renormalized_x * renormalized_x);
-
-					p.bounding_box.position.y = surface_box.position.y + sy * y;
-				}
-			}
-
-			// move type
-			if (spawn_move_type == SPAWN_MOVE_STATIC)
-			{
-				p.velocity = glm::vec2(0.0f, 0.0f);
-			}
-			else if (spawn_move_type == SPAWN_MOVE_FORWARD)
-			{
-				p.velocity = glm::vec2(0.0f, -1000.0f);
-			}
-			else if (spawn_move_type == SPAWN_MOVE_RANDOM)
-			{
-				p.velocity = glm::vec2(chaos::MathTools::RandFloat(-200.0f, +200.0f), chaos::MathTools::RandFloat(0.0f, -1000.0f));
-			}
 
 
-			// fill enemy behavior
-			if (spawn_enemy_type == SPAWN_ENEMY_METEORS)
-			{
-				char const * enemy_names[] = {"meteor1", "meteor2", "meteor3", "meteor4"}; // one RANDOM for each enemy
-				int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);				
-				int rand_name = rand() % name_count;
-				enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
-
-				p.rotation_speed = chaos::MathTools::RandFloat(0.0f, -1.0f);
+    // shuludum
 
 
-				p.life = ludum_game->meteor_life;
-				p.damage_for_player = ludum_game->meteor_damage_for_player;
-			}
-			else if (spawn_enemy_type == SPAWN_ENEMY_ALIEN)
-			{
-				char const * enemy_names[] = { "Enemy2" }; // , "Enemy3", "Enemy4", "Enemy5"
-			  // an single RANDOM for the whole set of enemies
-				if (enemy_info == nullptr)
-				{
-					int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);				
-					int rand_name = rand() % name_count;
+    chaos::ParticleAccessor<ParticleEnemy> accessor = allocation->AddParticles(count);
+    for (ParticleEnemy& particle : accessor)
+    {
+        size_t i = accessor.GetParticleIndex(&particle);
 
-					enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
-				}			
+        // fill position & velocity			
+        if (spawn_curve_type == SPAWN_CURVE_RANDOM)
+        {
+            particle.bounding_box.position = surface_box.position + (2.0f * chaos::GLMTools::RandVec2() - glm::vec2(1.0f, 1.0f)) * surface_box.half_size;
+        }
+        else if (spawn_curve_type == SPAWN_CURVE_V || spawn_curve_type == SPAWN_CURVE_INVERTED_V || spawn_curve_type == SPAWN_CURVE_ALIGNED)
+        {
+            float x = 0.5f; // by default center of the surface
+            if (count > 1)
+                x = ((float)i) / (float)(count - 1);
 
-				p.life = ludum_game->alien_life;
-				p.damage_for_player = ludum_game->alien_damage_for_player;
-			}
-			else if (spawn_enemy_type == SPAWN_ENEMY_FOUR_TURRETS)
-			{
-				enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
-				p.fire_frequency = fire_frequency * 2.0f;         // x2 because 4 bullets in a row !!!
-				p.rotation_following_player = false;
-				p.rotation_speed = 1.0f;
+            float sx = surface_box.half_size.x;
+            float sy = surface_box.half_size.y;
 
-				p.life = ludum_game->turret_life;
-				p.damage_for_player = ludum_game->turret_damage_for_player;
+            particle.bounding_box.position.x = surface_box.position.x - sx + 2.0f * x * sx;
 
-			}
-			else if (spawn_enemy_type == SPAWN_ENEMY_FOLLOWING_TURRET)
-			{
-				enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
-				p.fire_frequency = fire_frequency;
-				p.rotation_following_player = true;
+            if (spawn_curve_type == SPAWN_CURVE_ALIGNED)
+                particle.bounding_box.position.y = surface_box.position.y;
+            else
+            {
+                float renormalized_x = (x * 2.0f) - 1.0f;
 
-				p.life = ludum_game->turret_life;
-				p.damage_for_player = ludum_game->turret_damage_for_player;
-			}
+                float y = (spawn_curve_type == SPAWN_CURVE_V) ?
+                    (renormalized_x * renormalized_x) :
+                    (1.0f - renormalized_x * renormalized_x);
 
-			// not found
-			if (enemy_info == nullptr)
-			{
-				p.life = 0.0f; // destroy it
-				continue;
-			}
+                particle.bounding_box.position.y = surface_box.position.y + sy * y;
+            }
+        }
+
+        // move type
+        if (spawn_move_type == SPAWN_MOVE_STATIC)
+        {
+            particle.velocity = glm::vec2(0.0f, 0.0f);
+        }
+        else if (spawn_move_type == SPAWN_MOVE_FORWARD)
+        {
+            particle.velocity = glm::vec2(0.0f, -1000.0f);
+        }
+        else if (spawn_move_type == SPAWN_MOVE_RANDOM)
+        {
+            particle.velocity = glm::vec2(chaos::MathTools::RandFloat(-200.0f, +200.0f), chaos::MathTools::RandFloat(0.0f, -1000.0f));
+        }
+        // fill enemy behavior
+        if (spawn_enemy_type == SPAWN_ENEMY_METEORS)
+        {
+            char const* enemy_names[] = { "meteor1", "meteor2", "meteor3", "meteor4" }; // one RANDOM for each enemy
+            int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);
+            int rand_name = rand() % name_count;
+            enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
+
+            particle.rotation_speed = chaos::MathTools::RandFloat(0.0f, -1.0f);
 
 
-			// common filling
-			chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*enemy_info);
+            particle.life = ludum_game->meteor_life;
+            particle.damage_for_player = ludum_game->meteor_damage_for_player;
+        }
+        else if (spawn_enemy_type == SPAWN_ENEMY_ALIEN)
+        {
+            char const* enemy_names[] = { "Enemy2" }; // , "Enemy3", "Enemy4", "Enemy5"
+          // an single RANDOM for the whole set of enemies
+            if (enemy_info == nullptr)
+            {
+                int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);
+                int rand_name = rand() % name_count;
 
-			p.bounding_box.half_size = 0.5f * scale_factor * glm::vec2((float)enemy_info->width, (float)enemy_info->height);	
-			p.texcoords = texcoords;
+                enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
+            }
 
-			p.life *= life_factor;
-		}
-	}
+            particle.life = ludum_game->alien_life;
+            particle.damage_for_player = ludum_game->alien_damage_for_player;
+        }
+        else if (spawn_enemy_type == SPAWN_ENEMY_FOUR_TURRETS)
+        {
+            enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
+            particle.fire_frequency = fire_frequency * 2.0f;         // x2 because 4 bullets in a row !!!
+            particle.rotation_following_player = false;
+            particle.rotation_speed = 1.0f;
+
+            particle.life = ludum_game->turret_life;
+            particle.damage_for_player = ludum_game->turret_damage_for_player;
+
+        }
+        else if (spawn_enemy_type == SPAWN_ENEMY_FOLLOWING_TURRET)
+        {
+            enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
+            particle.fire_frequency = fire_frequency;
+            particle.rotation_following_player = true;
+
+            particle.life = ludum_game->turret_life;
+            particle.damage_for_player = ludum_game->turret_damage_for_player;
+        }
+
+        // not found
+        if (enemy_info == nullptr)
+        {
+            particle.life = 0.0f; // destroy it
+            continue;
+        }
+        // common filling
+        chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(*enemy_info);
+
+        particle.bounding_box.half_size = 0.5f * scale_factor * glm::vec2((float)enemy_info->width, (float)enemy_info->height);
+        particle.texcoords = texcoords;
+
+        particle.life *= life_factor;
+    }
 
 	// auto delete allocation
 	allocation->SetDestroyWhenEmpty(true);

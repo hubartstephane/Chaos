@@ -219,6 +219,22 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 		return false;
 
 
+    // shuludum
+
+#if 0
+    chaos::ParticleSpawner spawner = GetLayerInstance()->GetTiledLevelInstance()->GetParticleSpawner("Enemies");
+    if (!spawner.IsValid())
+        return true;
+#endif
+
+
+
+
+
+
+
+
+
 
 	// shuludm : see if this can be refactored
 
@@ -246,6 +262,8 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 	chaos::ParticleAllocationBase * allocation = enemy_layer_instance->SpawnParticles(0);
 	if (allocation == nullptr)
 		return true;
+
+
 
 	// get the frequencies
 

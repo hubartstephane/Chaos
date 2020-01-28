@@ -20,8 +20,37 @@ namespace death
 
 		/** create some particle of the given type (Spawn + Initialization) */
 		chaos::ParticleAllocationBase * SpawnParticles(chaos::NamedObjectRequest layer_id, char const * bitmap_name, size_t count, bool new_allocation) const;
+
+        /** spawn + user initialization methods */
+        template<typename INIT_PARTICLE_FUNC>
+        chaos::ParticleAllocationBase* SpawnParticles(chaos::NamedObjectRequest layer_id, char const* bitmap_name, size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func) const
+        {
+            chaos::ParticleAllocationBase* result = SpawnParticles(layer_id, bitmap_name, count, new_allocation);
+            // call user initialization function
+            if (result != nullptr)
+            {
+                size_t allocation_count = result->GetParticleCount();
+                init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
+            }
+            return result;
+        }
+
 		/** create a text particle system */
 		chaos::ParticleAllocationBase * SpawnTextParticles(chaos::NamedObjectRequest layer_id, char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params) const;
+
+        /** spawn + user initialization methods */
+        template<typename INIT_PARTICLE_FUNC>
+        chaos::ParticleAllocationBase* SpawnTextParticles(chaos::NamedObjectRequest layer_id, char const* text, chaos::ParticleTextGenerator::GeneratorParams const& params, INIT_PARTICLE_FUNC init_func) const
+        {
+            chaos::ParticleAllocationBase* result = SpawnTextParticles(layer_id, text, params);
+            // call user initialization function
+            if (result != nullptr)
+            {
+                size_t allocation_count = result->GetParticleCount();
+                init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
+            }
+            return result;
+        }
 
 		/** get the bitmap info used for given bitmap_name */
 		chaos::BitmapAtlas::BitmapInfo const * FindBitmapInfo(char const * bitmap_name) const;

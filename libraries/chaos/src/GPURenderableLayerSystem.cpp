@@ -54,37 +54,21 @@ namespace chaos
 		return true;
 	}
 
-	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(char const * name)
+	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(NamedObjectRequest request)
 	{
-		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, name);
+		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, request);
 		if (info == nullptr)
 			return nullptr;
 		return info->object.get();
 	}
 
-	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(char const * name) const
+	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(NamedObjectRequest request) const
 	{
-		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, name);
+		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, request);
 		if (info == nullptr)
 			return nullptr;
 		return info->object.get();
 	}
-
-	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(TagType tag)
-	{
-		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, tag);
-		if (info == nullptr)
-			return nullptr;
-		return info->object.get();
-	}
-
-	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(TagType tag) const
-	{
-		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, tag);
-		if (info == nullptr)
-			return nullptr;
-		return info->object.get();
-	}	
 
 	size_t GPURenderableLayerSystem::GetChildCount() const
 	{

@@ -30,14 +30,10 @@ namespace chaos
 
 	public:
 
-		/** Find a renderable by its name */
-		GPURenderable * FindChildRenderable(char const * name);
-		/** Find a renderable by its name */
-		GPURenderable const * FindChildRenderable(char const * name) const;
-		/** Find a renderable by its tag */
-		GPURenderable * FindChildRenderable(TagType tag);
-		/** Find a renderable by its tag */
-		GPURenderable const * FindChildRenderable(TagType tag) const;
+		/** Find a renderable by its name/id */
+		GPURenderable * FindChildRenderable(NamedObjectRequest request);
+		/** Find a renderable by its name/id */
+		GPURenderable const * FindChildRenderable(NamedObjectRequest request) const;
 		/** insert a renderable */
 		bool AddChildRenderable(GPURenderable * renderable, int render_order);
 		/** remove a renderable */

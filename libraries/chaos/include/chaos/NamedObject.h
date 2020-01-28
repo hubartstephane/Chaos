@@ -33,6 +33,31 @@ namespace chaos
 	/** function to generate a TagType from a name (XXX : not thread safe) */
 	TagType MakeStaticTagType(char const * name);
 
+    /** a utility class for parameter passing */
+    class NamedObjectRequest
+    {
+    public:
+
+        /** constructor */
+        NamedObjectRequest(char const* in_name) :
+            name(in_name), use_name(true)
+        {
+            assert(in_name != nullptr);
+        }
+        /** constructor */
+        NamedObjectRequest(TagType in_tag) :
+            tag(in_tag), use_name(false)
+        {
+        }
+
+        /** the name for the request */
+        char const* name = nullptr;
+        /** the tag for the request */
+        TagType tag = 0;
+        /** whether the string is to be used */
+        bool use_name = true;
+    };
+
 	/** a class that describe an object that can be reference by tag and by name */
 	class NamedObject
 	{
@@ -50,15 +75,12 @@ namespace chaos
 
 		/** test whether the object name/tag match */
 		template<typename T>
-		friend bool Match(T const & object, char const * in_name) // use template to use NamedObjectWrapper as well as NamedObject
+		friend bool Match(T const & object, NamedObjectRequest request) // use template to use NamedObjectWrapper as well as NamedObject
 		{
-			return (StringTools::Stricmp(object.GetName(), in_name) == 0);
-		}
-		/** test whether the object name/tag match */
-		template<typename T>
-		friend bool Match(T const & object, TagType in_tag) // use template to use NamedObjectWrapper as well as NamedObject
-		{
-			return (object.GetTag() == in_tag);
+            if (request.use_name)
+			    return (StringTools::Stricmp(object.GetName(), request.name) == 0);
+            else
+                return (object.GetTag() == request.tag);
 		}
 
 	public:
@@ -72,76 +94,34 @@ namespace chaos
 
 		/** search element in a vector */
 		template<typename P>
-		static auto FindNamedObject(std::vector<P> & elements, TagType tag) -> decltype(meta::get_raw_pointer(elements[0]))
+		static auto FindNamedObject(std::vector<P> & elements, NamedObjectRequest request) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
-			// maybe tag could math the position in the array
-			size_t count = elements.size();
-			if (tag >= 0 && (size_t)tag < count)
-			{
-				auto e = meta::get_raw_pointer(elements[tag]);
-				if (Match(*e, tag))
-					return e;
-			}
+            // early exit
+            if (request.use_name && request.name == nullptr)
+                return nullptr;
 			// search in the list
+            size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
 			{
 				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e, tag))
+				if (Match(*e, request))
 					return e;
 			}
 			return nullptr;
 		}
 		/** search element in a vector */
 		template<typename P>
-		static auto FindNamedObject(std::vector<P> const & elements, TagType tag) -> decltype(meta::get_raw_pointer(elements[0]))
+		static auto FindNamedObject(std::vector<P> const & elements, NamedObjectRequest request) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
-			// maybe tag could math the position in the array
-			size_t count = elements.size();
-			if (tag >= 0 && (size_t)tag < count)
-			{
-				auto e = meta::get_raw_pointer(elements[tag]);
-				if (Match(*e, tag))
-					return e;
-			}
+            // early exit
+            if (request.use_name && request.name == nullptr)
+                return nullptr;
 			// search in the list
+            size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
 			{
 				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e, tag))
-					return e;
-			}
-			return nullptr;
-		}
-		/** search element in a vector */
-		template<typename P>
-		static auto FindNamedObject(std::vector<P> & elements, char const * in_name) -> decltype(meta::get_raw_pointer(elements[0]))
-		{
-			// early exit
-			if (in_name == nullptr)
-				return nullptr;
-			// search in the list
-			size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e, in_name))
-					return e;
-			}
-			return nullptr;
-		}
-		/** search element in a vector */
-		template<typename P>
-		static auto FindNamedObject(std::vector<P> const & elements, char const * in_name) -> decltype(meta::get_raw_pointer(elements[0]))
-		{
-			// early exit
-			if (in_name == nullptr)
-				return nullptr;
-			// search in the list
-			size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e, in_name))
+				if (Match(*e, request))
 					return e;
 			}
 			return nullptr;
@@ -149,15 +129,15 @@ namespace chaos
 
 		/** remove an element by name in a vector */
 		template<typename P>
-		static bool RemoveNamedObject(std::vector<P> & elements, char const * in_name)
+		static bool RemoveNamedObject(std::vector<P> & elements, NamedObjectRequest request)
 		{
 			// early exit
-			if (in_name == nullptr)
+			if (request.use_name && request.name == nullptr)
 				return false;
 			// search in the list
 			for (auto it = elements.begin() ; it != elements.end() ; ++it)
 			{
-				if (Match(*meta::get_raw_pointer(*it), in_name))
+				if (Match(*meta::get_raw_pointer(*it), request))
 				{
 					elements.erase(it);
 					return true;
@@ -165,7 +145,6 @@ namespace chaos
 			}
 			return false;
 		}
-
 	};
 
 	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */

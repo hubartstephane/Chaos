@@ -1411,11 +1411,11 @@ namespace death
 		}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
-		result_type constness * LayerInstance::func_name(char const * name) constness\
+		result_type constness * LayerInstance::func_name(chaos::NamedObjectRequest request) constness\
 		{\
-			if (name == nullptr && member_vector.size() > 0)\
+			if ((request.use_name && request.name == nullptr) && member_vector.size() > 0)\
 				return member_vector[0].get();\
-			return NamedObject::FindNamedObject(member_vector, name);\
+			return NamedObject::FindNamedObject(member_vector, request);\
 		}
 		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
 		DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, const);
@@ -1696,12 +1696,12 @@ namespace death
 		}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, constness)\
-		result_type constness * LevelInstance::func_name(char const * name) constness\
+		result_type constness * LevelInstance::func_name(chaos::NamedObjectRequest request) constness\
 		{\
 			size_t count = layer_instances.size();\
 			for (size_t i = 0; i < count; ++i)\
 			{\
-				result_type constness * result = layer_instances[i]->func_name(name);\
+				result_type constness * result = layer_instances[i]->func_name(request);\
 				if (result != nullptr)\
 					return result;\
 			}\
@@ -1718,17 +1718,17 @@ namespace death
 
 #undef DEATH_FIND_OBJECT
 
-		LayerInstance * LevelInstance::FindLayerInstance(char const * name)
+		LayerInstance * LevelInstance::FindLayerInstance(chaos::NamedObjectRequest request)
 		{
-			if (name == nullptr && layer_instances.size() > 0)
+			if ((request.use_name && request.name == nullptr) && layer_instances.size() > 0)
 				return layer_instances[0].get();
-			return NamedObject::FindNamedObject(layer_instances, name);
+			return NamedObject::FindNamedObject(layer_instances, request);
 		}
-		LayerInstance const * LevelInstance::FindLayerInstance(char const * name) const
+		LayerInstance const * LevelInstance::FindLayerInstance(chaos::NamedObjectRequest request) const
 		{
-			if (name == nullptr && layer_instances.size() > 0)
+			if ((request.use_name && request.name == nullptr) && layer_instances.size() > 0)
 				return layer_instances[0].get();
-			return NamedObject::FindNamedObject(layer_instances, name);
+			return NamedObject::FindNamedObject(layer_instances, request);
 		}
 
 		void LevelInstance::CreateCameras()

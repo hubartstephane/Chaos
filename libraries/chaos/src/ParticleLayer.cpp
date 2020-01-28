@@ -78,7 +78,7 @@ namespace chaos
 		return visible;
 	}
 
-	bool ParticleAllocationBase::AddParticles(size_t extra_count)
+    AutoCastedParticleAccessor ParticleAllocationBase::AddParticles(size_t extra_count)
 	{
 		return Resize(extra_count + GetParticleCount());
 	}

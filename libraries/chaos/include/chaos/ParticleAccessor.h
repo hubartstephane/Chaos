@@ -274,6 +274,12 @@ namespace chaos
             return (p - b) / particle_size;
         }
 
+        /** implicit conversion to bool whether the accessor has elements */
+        operator bool() const
+        {
+            return (particle_count > 0);
+        }
+
     protected:
 
         /** the start of the buffer */
@@ -329,6 +335,22 @@ namespace chaos
                 ParticleConstAccessor<PARTICLE_TYPE>();
         }
 
+        /** returns the number of particles inside the accessor */
+        size_t GetCount() const 
+        {
+            return count;
+        }
+        /** returns the start of particles inside the accessor */
+        size_t GetStart() const
+        {
+            return start;
+        }
+        /** implicit conversion to bool whether the accessor has elements */
+        operator bool() const
+        {
+            return (count > 0);
+        }
+
     protected:
 
         /** the allocation we are using */
@@ -373,6 +395,22 @@ namespace chaos
             return (allocation_base != nullptr) ?
                 allocation_base->GetParticleConstAccessor<PARTICLE_TYPE>(start, count) :
                 ParticleConstAccessor<PARTICLE_TYPE>();
+        }
+
+        /** returns the number of particles inside the accessor */
+        size_t GetCount() const
+        {
+            return count;
+        }
+        /** returns the start of particles inside the accessor */
+        size_t GetStart() const
+        {
+            return start;
+        }
+        /** implicit conversion to bool whether the accessor has elements */
+        operator bool() const
+        {
+            return (count > 0);
         }
 
     protected:

@@ -182,10 +182,10 @@ public:
 		/** get the particles */
 		virtual void const * GetParticleBuffer() const { return nullptr; }
 		/** resize the particles */
-		virtual bool Resize(size_t new_count) { return true; }
+		virtual AutoCastedParticleAccessor Resize(size_t new_count) { return AutoCastedParticleAccessor(this, 0, 0); }
 
 		/** increment number of particles */
-		bool AddParticles(size_t extra_count);
+        AutoCastedParticleAccessor AddParticles(size_t extra_count);
 
 		/** set the empty callback */
 		void SetDestroyWhenEmpty(bool in_destroy_when_empty) { destroy_when_empty = in_destroy_when_empty; }
@@ -333,19 +333,23 @@ public:
 		}
 		
 		/** override */
-		virtual bool Resize(size_t new_count) override
+		virtual AutoCastedParticleAccessor Resize(size_t new_count) override
 		{
 			// test whether this is valid
 			if (!IsAttachedToLayer())
-				return false;
+				return AutoCastedParticleAccessor(this, 0, 0);
 			// early exit
-			if (new_count == particles.size())
-				return true;
+            size_t old_count = particles.size();
+			if (new_count == old_count)
+				return AutoCastedParticleAccessor(this, 0, 0);
 			// increment the number of particles
 			particles.resize(new_count);
 			// notify the layer
 			ConditionalRequireGPUUpdate(true, false);
-			return true;
+            // get the accessor on the new particles if any
+            if (new_count < old_count)
+                return AutoCastedParticleAccessor(this, 0, 0);
+            return AutoCastedParticleAccessor(this, old_count, new_count - old_count);
 		}
 
         /** transforms the particles into vertices in the buffer */

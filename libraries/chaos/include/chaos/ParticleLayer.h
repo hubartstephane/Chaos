@@ -65,15 +65,7 @@ namespace chaos
 // detect whether class has a member named XXX (use has_XXX<T>::value => bool => convert into boost::mpl::bool_)
 CHAOS_GENERATE_HAS_MEMBER(dynamic_particles);
 CHAOS_GENERATE_HAS_MEMBER(dynamic_vertices);
-CHAOS_GENERATE_HAS_MEMBER(vertices_per_particle);
 CHAOS_GENERATE_HAS_MEMBER(primitive_type);
-
-// detect whether classes have some functions
-CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(Tick);
-CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(UpdateParticle);
-CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(ParticleToVertices);
-CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(BeginUpdateParticles);
-CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(BeginParticlesToVertices);
 
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
@@ -92,14 +84,7 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 class ParticleTraitTools
 {
 
-	// shuxxx : there is no way YET to know whether the flags 'has_vertices_per_particle' ... are static or per instance
-	//			look at the following code, we use the   
-	//
-	//				has_vertices_per_particle<...>   
-	//
-	//			template in all cases
-		
-	public:
+public:
 
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>

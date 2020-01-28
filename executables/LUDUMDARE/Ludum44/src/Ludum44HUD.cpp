@@ -102,7 +102,7 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());
 		
 
-	allocations = hud->GetGameParticleCreator().CreateTextParticles(title.c_str(), params, death::GameHUDKeys::TEXT_LAYER_ID);
+	allocations = hud->GetGameParticleCreator().SpawnTextParticles(death::GameHUDKeys::TEXT_LAYER_ID, title.c_str(), params);
 
 
 	return true;

@@ -119,7 +119,7 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 
 	if (allocations == nullptr)
 	{
-		allocations = hud->GetGameParticleCreator().CreateParticles(bitmap_name, 1, true, death::GameHUDKeys::SHROUDLIFE_ID);
+		allocations = hud->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::SHROUDLIFE_ID, bitmap_name, 1, true);
 		if (allocations == nullptr)
 			return;
 	}

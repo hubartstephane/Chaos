@@ -17,6 +17,7 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/SoundManager.h>
 #include <chaos/ParticleSpawner.h>
+#include <chaos/NamedObject.h>
 
 namespace death
 {
@@ -524,24 +525,24 @@ namespace death
 			Game const * GetGame() const;
 
 			/** find the player start from its name */
-			PlayerStartObject * FindPlayerStart(char const * name);
+			PlayerStartObject * FindPlayerStart(chaos::NamedObjectRequest request);
 			/** find the player start from its name */
-			PlayerStartObject const * FindPlayerStart(char const * name) const;
+			PlayerStartObject const * FindPlayerStart(chaos::NamedObjectRequest request) const;
 
 			/** find the camera from its name */
-			CameraObject * FindCamera(char const * name);
+			CameraObject * FindCamera(chaos::NamedObjectRequest request);
 			/** find the camera from its name */
-			CameraObject const * FindCamera(char const * name) const;
+			CameraObject const * FindCamera(chaos::NamedObjectRequest request) const;
 
 			/** find the trigger surface from its name */
-			TriggerObject * FindTrigger(char const * name);
+			TriggerObject * FindTrigger(chaos::NamedObjectRequest request);
 			/** find the trigger surface from its name */
-			TriggerObject const * FindTrigger(char const * name) const;
+			TriggerObject const * FindTrigger(chaos::NamedObjectRequest request) const;
 
 			/** find the geometric object from its name */
-			GeometricObject * FindGeometricObject(char const * name);
+			GeometricObject * FindGeometricObject(chaos::NamedObjectRequest request);
 			/** find the geometric object surface from its name */
-			GeometricObject const * FindGeometricObject(char const * name) const;
+			GeometricObject const * FindGeometricObject(chaos::NamedObjectRequest request) const;
 
 			/** get the bounding box for the level */
 			chaos::box2 GetBoundingBox(bool world_system) const;
@@ -788,29 +789,29 @@ namespace death
 			Game const * GetGame() const { return game; }
 
 			/** find the layer instance from its name */
-			LayerInstance * FindLayerInstance(char const * name);
+			LayerInstance * FindLayerInstance(chaos::NamedObjectRequest request);
 			/** find the layer instance from its name */
-			LayerInstance const * FindLayerInstance(char const * name) const;
+			LayerInstance const * FindLayerInstance(chaos::NamedObjectRequest request) const;
 			/** find the camera from its name */
-			CameraObject * FindCamera(char const * name);
+			CameraObject * FindCamera(chaos::NamedObjectRequest request);
 			/** find the camera from its name */
-			CameraObject const * FindCamera(char const * name) const;
+			CameraObject const * FindCamera(chaos::NamedObjectRequest request) const;
 			/** find the player start from its name */
-			PlayerStartObject * FindPlayerStart(char const * name);
+			PlayerStartObject * FindPlayerStart(chaos::NamedObjectRequest request);
 			/** find the player start from its name */
-			PlayerStartObject const * FindPlayerStart(char const * name) const;
+			PlayerStartObject const * FindPlayerStart(chaos::NamedObjectRequest request) const;
 			/** find the trigger surface from its name */
-			TriggerObject * FindTrigger(char const * name);
+			TriggerObject * FindTrigger(chaos::NamedObjectRequest request);
 			/** find the trigger surface from its name */
-			TriggerObject const * FindTrigger(char const * name) const;
+			TriggerObject const * FindTrigger(chaos::NamedObjectRequest request) const;
 			/** find the typed object from its name */
-			GeometricObject * FindGeometricObject(char const * name);
+			GeometricObject * FindGeometricObject(chaos::NamedObjectRequest request);
 			/** find the typed object surface from its name */
-			GeometricObject const * FindGeometricObject(char const * name) const;
+			GeometricObject const * FindGeometricObject(chaos::NamedObjectRequest request) const;
 
             /** create a particle spawner */
             template<typename ...PARAMS>
-            chaos::ParticleSpawner* CreateParticleSpawner(char const * layer_instance_name, PARAMS... params)
+            chaos::ParticleSpawner* CreateParticleSpawner(chaos::NamedObjectRequest layer_instance_name, PARAMS... params)
             {
                 LayerInstance * layer_instance = FindLayerInstance(layer_instance_name);
                 if (layer_instance == nullptr)
@@ -819,7 +820,7 @@ namespace death
             }
 
             template<typename ...PARAMS>
-            chaos::ParticleSpawner GetParticleSpawner(char const* layer_instance_name, PARAMS... params)
+            chaos::ParticleSpawner GetParticleSpawner(chaos::NamedObjectRequest layer_instance_name, PARAMS... params)
             {
                 LayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
                 if (layer_instance == nullptr)

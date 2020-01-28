@@ -13,25 +13,6 @@ namespace chaos
 		// insert a new string
 		auto it = tags.insert(std::move(std::string(name)));		
 		return (TagType)it.first->c_str();
-
-
-#if 0
-
-		static std::map<std::string, TagType> tags;
-
-		// search if tag is already registered
-		for (auto it : tags)
-			if (it.first == name)
-				return it.second;
-		// create a tag
-		TagType * result = new TagType;
-		if (result == nullptr)
-			return 0;
-		// the pointer points on itsef
-		*result = (TagType)result; 
-		tags[name] = (TagType)result;
-		return (TagType)result;
-#endif
 	}
 
 	void NamedObject::SetName(char const * in_name)

@@ -34,13 +34,9 @@ namespace chaos
 		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas);
 
 		/** Search a layer by its name */
-		ParticleLayerBase * FindLayer(char const * name);
+		ParticleLayerBase * FindLayer(NamedObjectRequest request);
 		/** Search a layer by its name */
-		ParticleLayerBase const * FindLayer(char const * name) const;
-		/** Search a layer by its id */
-		ParticleLayerBase * FindLayer(TagType id);
-		/** Search a layer by its id */
-		ParticleLayerBase const * FindLayer(TagType id) const;
+		ParticleLayerBase const * FindLayer(NamedObjectRequest request) const;
 
 		/** templated method to add a layer and set some values */
 		template<typename ALLOCATION_TRAIT, typename ...PARAMS>
@@ -74,8 +70,8 @@ namespace chaos
 		}
 
         /** create a particle spawner */
-        template<typename NAME_TYPE, typename ...PARAMS>
-        chaos::ParticleSpawner* CreateParticleSpawner(NAME_TYPE layer_name, PARAMS... params)
+        template<typename ...PARAMS>
+        chaos::ParticleSpawner* CreateParticleSpawner(NamedObjectRequest layer_name, PARAMS... params)
         {
             ParticleLayerBase* layer = FindLayer(layer_name);
             if (layer == nullptr)
@@ -83,8 +79,8 @@ namespace chaos
             return layer->CreateParticleSpawner(params...);
         }
 
-        template<typename NAME_TYPE, typename ...PARAMS>
-        chaos::ParticleSpawner GetParticleSpawner(NAME_TYPE layer_name, PARAMS... params)
+        template<typename ...PARAMS>
+        chaos::ParticleSpawner GetParticleSpawner(NamedObjectRequest layer_name, PARAMS... params)
         {
             ParticleLayerBase* layer = FindLayer(layer_name);
             if (layer == nullptr)

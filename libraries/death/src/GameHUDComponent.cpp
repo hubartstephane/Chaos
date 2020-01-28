@@ -469,8 +469,8 @@ namespace death
             // shuxxx health
 
 
-			if (count > cached_value)
-				hud->GetGameParticleCreator().InitializeParticles(allocations.get(), particle_name.c_str(), count - cached_value);
+		//	if (count > cached_value)
+		//		hud->GetGameParticleCreator().InitializeParticles(allocations.get(), particle_name.c_str(), count - cached_value);
 		}
 
 		// compute the final size of the particle

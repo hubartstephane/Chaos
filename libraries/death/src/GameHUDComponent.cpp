@@ -202,7 +202,7 @@ namespace death
 		{
 			chaos::ParticleTextGenerator::GeneratorParams other_params = generator_params;
 			TweakTextGeneratorParams(other_params);
-			allocations = hud->GetGameParticleCreator().CreateTextParticles(in_text, other_params, layer_id);
+			allocations = hud->GetGameParticleCreator().SpawnTextParticles(layer_id, in_text, other_params);
 		}
 	}
 
@@ -454,23 +454,11 @@ namespace death
 			return;
 		}
 		// create/ resize the allocation
-		if (allocations == nullptr)
+		if (allocations == nullptr || count != cached_value)
 		{
-			allocations = hud->GetGameParticleCreator().CreateParticles(particle_name.c_str(), count, true, layer_id);
+			allocations = hud->GetGameParticleCreator().SpawnParticles(layer_id, particle_name.c_str(), count, true);
 			if (allocations == nullptr)
 				return;
-		}
-		else
-		{
-			allocations->Resize(count);
-
-
-
-            // shuxxx health
-
-
-		//	if (count > cached_value)
-		//		hud->GetGameParticleCreator().InitializeParticles(allocations.get(), particle_name.c_str(), count - cached_value);
 		}
 
 		// compute the final size of the particle

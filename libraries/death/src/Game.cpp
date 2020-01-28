@@ -608,8 +608,7 @@ namespace death
 		// create the particle allocation if necessary
 		if (background_allocations == nullptr)
 		{
-			//background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, 1);
-            background_allocations = GetGameParticleCreator().CreateParticles(nullptr, 1, true, death::GameHUDKeys::BACKGROUND_LAYER_ID);
+            background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, nullptr, 1, true);
 			if (background_allocations == nullptr)
 				return false;
 

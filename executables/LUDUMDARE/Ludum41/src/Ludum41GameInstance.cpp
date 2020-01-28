@@ -442,7 +442,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 	LudumGame const * ludum_game = GetLudumGame();
 
 	// create the object
-	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().CreateParticles("ball", 1, true, death::GameHUDKeys::BALL_LAYER_ID);
+	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
 	if (result == nullptr)
 		return nullptr;
 
@@ -705,7 +705,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	death::GameInstance::OnPlayerEntered(player);
 
 	// create the player pawn
-	chaos::ParticleAllocationBase * player_allocation = game->GetGameParticleCreator().CreateParticles("player", 1, true, death::GameHUDKeys::GAMEOBJECT_LAYER_ID);
+	chaos::ParticleAllocationBase * player_allocation = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
 	if (player_allocation == nullptr)
 		return;
 	player->SetPlayerAllocation(player_allocation);

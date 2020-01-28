@@ -17,17 +17,6 @@ namespace death
 		return true;
 	}
 
-#if 0
-	chaos::ParticleAllocationBase * GameParticleCreator::SpawnParticles(chaos::TagType layer_id, size_t count) const
-	{
-    	// spawn the particles
-		chaos::ParticleLayerBase * layer = particle_manager->FindLayer(layer_id);
-		if (layer == nullptr)
-			return nullptr;
-		return layer->SpawnParticles(count);
-	}
-#endif
-
 	chaos::BitmapAtlas::BitmapInfo const * GameParticleCreator::FindBitmapInfo(char const * bitmap_name) const
 	{
 		// find bitmap set

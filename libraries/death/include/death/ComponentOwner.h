@@ -8,10 +8,8 @@
 	size_t Get##FUNC_COMPONENT_NAME##Count() const;\
 	COMPONENT_CLASS * Get##FUNC_COMPONENT_NAME(size_t index);\
 	COMPONENT_CLASS const * Get##FUNC_COMPONENT_NAME(size_t index) const;\
-	COMPONENT_CLASS * Find##FUNC_COMPONENT_NAME(chaos::TagType tag);\
-	COMPONENT_CLASS const * Find##FUNC_COMPONENT_NAME(chaos::TagType tag) const;\
-	COMPONENT_CLASS * Find##FUNC_COMPONENT_NAME(char const * name);\
-	COMPONENT_CLASS const * Find##FUNC_COMPONENT_NAME(char const * name) const;\
+	COMPONENT_CLASS * Find##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request);\
+	COMPONENT_CLASS const * Find##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request) const;\
 	template<typename T>\
 	T * Find##FUNC_COMPONENT_NAME##ByClass()\
 	{\
@@ -61,21 +59,13 @@ COMPONENT_CLASS const * OWNER_CLASS::Get##FUNC_COMPONENT_NAME(size_t index) cons
 		return nullptr;\
 	return VECTOR_NAME[index].get();\
 }\
-COMPONENT_CLASS * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(chaos::TagType tag)\
+COMPONENT_CLASS * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request)\
+{\
+	return chaos::NamedObject::FindNamedObject(VECTOR_NAME, request);\
+}\
+COMPONENT_CLASS const * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request) const\
 {\
 	return chaos::NamedObject::FindNamedObject(VECTOR_NAME, tag);\
-}\
-COMPONENT_CLASS const * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(chaos::TagType tag) const\
-{\
-	return chaos::NamedObject::FindNamedObject(VECTOR_NAME, tag);\
-}\
-COMPONENT_CLASS * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(char const * name)\
-{\
-	return chaos::NamedObject::FindNamedObject(VECTOR_NAME, name);\
-}\
-COMPONENT_CLASS const * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(char const * name) const\
-{\
-	return chaos::NamedObject::FindNamedObject(VECTOR_NAME, name);\
 }\
 bool OWNER_CLASS::Add##FUNC_COMPONENT_NAME(COMPONENT_CLASS * component)\
 {\

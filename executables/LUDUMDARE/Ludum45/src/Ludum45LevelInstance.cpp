@@ -100,16 +100,6 @@ bool LudumLevelInstance::DoTick(double delta_time)
 
 void LudumLevelInstance::OnLevelStarted()
 {
-	// !!! Should be automatic no ??
-
-	// shuludum => not created whe no object inside ??
-
-	// create the fire particle layer if necessary
-	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("PlayerFire"); // 
-	if (layer_instance != nullptr)
-		layer_instance->CreateParticleLayer();
-
-
 	// super call
 	death::TiledMap::LevelInstance::OnLevelStarted();
 }
@@ -118,7 +108,6 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 {
 	if (!death::TiledMap::LevelInstance::Initialize(in_game, in_level))
 		return false;
-
 
 	death::TiledMap::Level const * level = GetTiledLevel();
 	if (level != nullptr)

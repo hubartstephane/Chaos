@@ -65,17 +65,12 @@ public:
 
 
 
-	void SetLifeBarValue(float in_value, bool in_increment);
-
-	float GetCurrentLife() const { return current_health; }
-	float GetCurrentMaxLife() const { return current_max_health; }
+	void SetHealth(float in_value, bool in_increment);
 
 protected:
 
 	/** override */
 	virtual bool Initialize(death::GameInstance * in_game_instance);
-	/** override */
-	virtual void OnLifeLost() override;
 	/** override */
 	virtual death::PlayerCheckpoint * DoCreateCheckpoint() const override;
 	/** override */
@@ -116,9 +111,6 @@ protected:
 protected:
 
 	float invulnerability_timer = 0.0f;
-
-	float current_health = 1.0f;
-	float current_max_health = 1.0f;
 
 	bool brightsideoflife = false;
 

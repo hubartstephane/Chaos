@@ -192,8 +192,6 @@ void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel 
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
-
-
 	current_cooldown = 0.0f;
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;

@@ -40,17 +40,12 @@ public:
 	/** override */
 	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
-	void SetLifeBarValue(float in_value, bool in_increment);
+	void SetHealth(float in_value, bool in_increment);
 
-
-	float GetCurrentLife() const { return current_health; }
-	float GetCurrentMaxLife() const { return current_max_health; }
 	float GetBuyTimer() const { return buy_timer; }
 
 protected:
 
-	/** override */
-	virtual void OnLifeLost() override;
 	/** override */
 	virtual death::PlayerCheckpoint * DoCreateCheckpoint() const override;
 	/** override */
@@ -58,8 +53,6 @@ protected:
 	/** override */
 	virtual bool DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const override;
 
-	/** override */
-	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 	/** override */
 	virtual void TickPlayerDisplacement(double delta_time) override;
 	/** override */
@@ -84,9 +77,6 @@ protected:
 	void FireNormalProjectile();		
 
 protected:
-
-	float current_health = 1.0f;
-	float current_max_health = 1.0f;
 
 	size_t current_speed_index = 0;
 	size_t current_damage_index = 0;

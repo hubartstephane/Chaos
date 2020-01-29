@@ -423,25 +423,16 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 		GLFWwindow * glfw_window = game->GetGLFWWindow();
 		if (glfw_window == nullptr)
 			return;
-
-
 	}
-}
-
-void LudumPlayer::OnLifeLost()
-{
-    death::Player::OnLifeLost();
-    current_health = current_max_health;
 }
 
 void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
-	current_health = current_max_health;
 	DoUpdateBrightSideOfLife(false);
 }
 
-void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
+void LudumPlayer::SetHealth(float in_value, bool in_increment)
 {
 	// compute new life 
 	float old_health = current_health;
@@ -485,7 +476,7 @@ void LudumPlayer::OnDamagedReceived(float damage)
 {
 	if (invulnerability_timer <= 0.0f)
 	{
-		SetLifeBarValue(-damage, true);	
+        SetHealth(-damage, true);
 		invulnerability_timer = GetLudumGame()->player_invulnerability_duration;
 	}
 	GetGame()->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
@@ -496,8 +487,6 @@ void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
 	PlayerUpgrade * upgrade = FindPlayerUpgrade(upgrade_type);
 	if (upgrade != nullptr)
 		upgrade->Upgrade(GetGame());
-
-
 }
 
 void LudumPlayer::RegisterUpgrades()

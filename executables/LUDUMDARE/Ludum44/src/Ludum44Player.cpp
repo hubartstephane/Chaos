@@ -96,25 +96,7 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 		GLFWwindow * glfw_window = game->GetGLFWWindow();
 		if (glfw_window == nullptr)
 			return;
-
-
-
-
 	}
-}
-
-void LudumPlayer::OnLifeLost()
-{
-	death::Player::OnLifeLost();
-	current_health = current_max_health;
-}
-
-
-void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
-{
-	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
-
-	current_health = current_max_health;
 }
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
@@ -303,9 +285,8 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 		buylocked = false;
 }
 
-void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
+void LudumPlayer::SetHealth(float in_value, bool in_increment)
 {
-
 	// compute new life 
 	float old_health = current_health;
 	float new_health = current_health;

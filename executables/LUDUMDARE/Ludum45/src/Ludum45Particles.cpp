@@ -492,8 +492,8 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 	if (ludum_player == nullptr)
 		return false;
 
-	float current_health = ludum_player->GetCurrentLife();
-	float max_health = ludum_player->GetCurrentMaxLife();
+	float current_health = ludum_player->GetCurrentHealth();
+	float max_health = ludum_player->GetCurrentMaxHealth();
 
 	float image_count = (float)particle->bitmap_info->GetAnimationImageCount();
 

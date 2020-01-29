@@ -40,8 +40,6 @@ public:
 	/** override */
 	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
 
-	void SetHealth(float in_value, bool in_increment);
-
 	float GetBuyTimer() const { return buy_timer; }
 
 protected:

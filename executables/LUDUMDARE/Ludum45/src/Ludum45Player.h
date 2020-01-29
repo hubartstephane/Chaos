@@ -51,7 +51,6 @@ public:
 	size_t GetPowerSpreadLevel() const;
 	size_t GetSpecialPowerLevel() const;
 
-
 	float GetCurrentSpeedValue() const; 
 	float GetCurrentDamageValue() const; 
 	float GetCurrentDashValue() const; 
@@ -62,10 +61,6 @@ public:
 	
 	template<typename T>
 	T GetPlayerUpgradedValue(chaos::TagType upgrade_type, std::vector<T> const & values) const;
-
-
-
-	void SetHealth(float in_value, bool in_increment);
 
 protected:
 

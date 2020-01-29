@@ -143,15 +143,10 @@ namespace chaos
 			using meta_wrapper_type = META_WRAPPER_TYPE;
 			using character_stored_type = typename boost::mpl::apply<meta_wrapper_type, character_type>::type;
 
-			/** gets an info by its name */
-			character_type const * GetCharacterInfo(char const * name) const
+			/** gets an info by name/tag */
+			character_type const * GetCharacterInfo(NamedObjectRequest request) const
 			{
-				return NamedObject::FindNamedObject(elements, name);
-			}
-			/** gets an info by its tag */
-			character_type const * GetCharacterInfo(TagType tag) const
-			{
-				return NamedObject::FindNamedObject(elements, tag);
+				return NamedObject::FindNamedObject(elements, request);
 			}
 
 		public:
@@ -209,20 +204,14 @@ namespace chaos
 					result = folders[i]->funcname(name, recursive);\
 				return result;\
 			}
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, char const *, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, char const *, const);
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, TagType, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, TagType, const);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, NamedObjectRequest, BOOST_PP_EMPTY());
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, NamedObjectRequest, const);
 
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, char const *, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, char const *, const);
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, TagType, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, TagType, const);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, NamedObjectRequest, BOOST_PP_EMPTY());
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, NamedObjectRequest, const);
 
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, char const *, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, char const *, const);
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, TagType, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, TagType, const);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, NamedObjectRequest, BOOST_PP_EMPTY());
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, NamedObjectRequest, const);
 #undef CHAOS_IMPL_GETINFO
 
 			/** clear the content of the folder */
@@ -305,59 +294,32 @@ namespace chaos
 				return &root_folder;
 			}
 
-			/** gets a bitmap info by its name */
-			bitmap_type * GetBitmapInfo(char const * name, bool recursive = false)
+			/** gets a bitmap info by its name/tag */
+			bitmap_type * GetBitmapInfo(NamedObjectRequest request, bool recursive = false)
 			{
-				return root_folder.GetBitmapInfo(name, recursive);
+				return root_folder.GetBitmapInfo(request, recursive);
 			}
-			bitmap_type const * GetBitmapInfo(char const * name, bool recursive = false) const
+			bitmap_type const * GetBitmapInfo(NamedObjectRequest request, bool recursive = false) const
 			{
-				return root_folder.GetBitmapInfo(name, recursive);
+				return root_folder.GetBitmapInfo(request, recursive);
 			}
-			/** gets a bitmap info by its tag */
-			bitmap_type * GetBitmapInfo(TagType tag, bool recursive = false)
+			/** gets a font info by its name/tag */
+			font_type * GetFontInfo(NamedObjectRequest request, bool recursive = false)
 			{
-				return root_folder.GetBitmapInfo(tag, recursive);
+				return root_folder.GetFontInfo(request, recursive);
 			}
-			bitmap_type const * GetBitmapInfo(TagType tag, bool recursive = false) const
+			font_type const * GetFontInfo(NamedObjectRequest request, bool recursive = false) const
 			{
-				return root_folder.GetBitmapInfo(tag, recursive);
+				return root_folder.GetFontInfo(request, recursive);
 			}
-			/** gets a font info by its name */
-			font_type * GetFontInfo(char const * name, bool recursive = false)
+			/** gets a folder info by its name/tag */
+			folder_type * GetFolderInfo(NamedObjectRequest request, bool recursive = false)
 			{
-				return root_folder.GetFontInfo(name, recursive);
+				return root_folder.GetFolderInfo(request, recursive);
 			}
-			font_type const * GetFontInfo(char const * name, bool recursive = false) const
+			folder_type const * GetFolderInfo(NamedObjectRequest request, bool recursive = false) const
 			{
-				return root_folder.GetFontInfo(name, recursive);
-			}
-			/** gets a font info by its tag */
-			font_type * GetFontInfo(TagType tag, bool recursive = false)
-			{
-				return root_folder.GetFontInfo(tag, recursive);
-			}
-			font_type const * GetFontInfo(TagType tag, bool recursive = false) const
-			{
-				return root_folder.GetFontInfo(tag, recursive);
-			}
-			/** gets a folder info by its name */
-			folder_type * GetFolderInfo(char const * name, bool recursive = false)
-			{
-				return root_folder.GetFolderInfo(name, recursive);
-			}
-			folder_type const * GetFolderInfo(char const * name, bool recursive = false) const
-			{
-				return root_folder.GetFolderInfo(name, recursive);
-			}
-			/** gets a folder info by its tag */
-			folder_type * GetFolderInfo(TagType tag, bool recursive = false)
-			{
-				return root_folder.GetFolderInfo(tag, recursive);
-			}
-			folder_type const * GetFolderInfo(TagType tag, bool recursive = false) const
-			{
-				return root_folder.GetFolderInfo(tag, recursive);
+				return root_folder.GetFolderInfo(request, recursive);
 			}
 
 		protected:

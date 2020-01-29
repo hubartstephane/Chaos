@@ -18,7 +18,7 @@ class LudumGameInstance : public death::GameInstance
 
 public:
 
-	friend class GameHUDLifeBarComponent;
+	friend class GameHUDHealthBarComponent;
 	friend class GameHUDPowerUpComponent;	
 	friend class PowerUpTriggerObject;	
 

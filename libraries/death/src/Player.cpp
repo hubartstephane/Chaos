@@ -22,7 +22,7 @@ namespace death
 
 	void Player::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 	{
-
+        current_health = current_max_health;
 	}
 
 	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
@@ -285,7 +285,7 @@ namespace death
 
 	void Player::OnLifeLost()
 	{
-
+        current_health = current_max_health;
 	}
 
 	// =================================================

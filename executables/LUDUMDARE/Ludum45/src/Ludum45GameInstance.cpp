@@ -24,7 +24,7 @@ bool LudumGameInstance::DoCheckGameOverCondition() // shuludum : mututaliser le 
 	LudumPlayer * ludum_player = GetLudumPlayer(0);
 	if (ludum_player != nullptr)
 	{
-		if (ludum_player->GetCurrentLife() <= 0.0f) // no more energy => go to checkpoint
+		if (ludum_player->GetCurrentHealth() <= 0.0f) // no more energy => go to checkpoint
 		{
 			// game over mandatory (last life about to be removed)
 			int life_count = ludum_player->GetLifeCount();

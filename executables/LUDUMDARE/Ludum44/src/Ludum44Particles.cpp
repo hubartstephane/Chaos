@@ -113,7 +113,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, true, enemy->bounding_box); // destroy the enemy always
 			
 				LudumPlayer * player = layer_trait->game->GetLudumPlayer(0);
-				player->SetLifeBarValue(-life_lost, true);
+				player->SetHealth(-life_lost, true);
 			}
 		}
 	}
@@ -369,7 +369,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	{
 		if (chaos::Collide(particle->bounding_box, player_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		{				
-			update_data.player->SetLifeBarValue(-particle->damage, true);
+			update_data.player->SetHealth(-particle->damage, true);
 			particle->damage = 0.0f;
 			
 			layer_trait->game->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);

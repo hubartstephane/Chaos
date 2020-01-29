@@ -276,7 +276,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
 	
 	chaos::box2 surface_box = surface->GetBoundingBox(true);
 	float scale_factor     = surface->FindPropertyFloat("ENEMY_SCALE_FACTOR", 1.0f);
-	float life_factor     = surface->FindPropertyFloat("ENEMY_LIFE_FACTOR", 1.0f);
+	float life_factor     = surface->FindPropertyFloat("ENEMY_HEALTH_FACTOR", 1.0f);
 	int   count            = surface->FindPropertyInt("ENEMY_COUNT", 10);
 	int   spawn_curve_type = surface->FindPropertyInt("SPAWN_CURVE_TYPE", 0);
 	int   spawn_enemy_type = surface->FindPropertyInt("SPAWN_ENEMY_TYPE", 0);
@@ -368,7 +368,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
             particle.rotation_speed = chaos::MathTools::RandFloat(0.0f, -1.0f);
 
 
-            particle.life = ludum_game->meteor_life;
+            particle.life = ludum_game->meteor_health;
             particle.damage_for_player = ludum_game->meteor_damage_for_player;
         }
         else if (spawn_enemy_type == SPAWN_ENEMY_ALIEN)
@@ -383,7 +383,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
                 enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
             }
 
-            particle.life = ludum_game->alien_life;
+            particle.life = ludum_game->alien_health;
             particle.damage_for_player = ludum_game->alien_damage_for_player;
         }
         else if (spawn_enemy_type == SPAWN_ENEMY_FOUR_TURRETS)
@@ -393,7 +393,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
             particle.rotation_following_player = false;
             particle.rotation_speed = 1.0f;
 
-            particle.life = ludum_game->turret_life;
+            particle.life = ludum_game->turret_health;
             particle.damage_for_player = ludum_game->turret_damage_for_player;
 
         }
@@ -403,7 +403,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2
             particle.fire_frequency = fire_frequency;
             particle.rotation_following_player = true;
 
-            particle.life = ludum_game->turret_life;
+            particle.life = ludum_game->turret_health;
             particle.damage_for_player = ludum_game->turret_damage_for_player;
         }
 

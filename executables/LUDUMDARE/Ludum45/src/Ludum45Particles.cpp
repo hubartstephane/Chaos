@@ -20,14 +20,14 @@ static float COLLISION_FIRE_TWEAK = 0.75f;
 
 static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame * game, bool collision_with_player, chaos::box2 const & ref_box) // returns the life damage produced by the enemy collision (its life)
 {
-	float result = collision_with_player? enemy->enemy_damage : enemy->enemy_life;
+	float result = collision_with_player? enemy->enemy_damage : enemy->enemy_health;
 
 	// update life from both size
-	enemy->enemy_life -= damage;
+	enemy->enemy_health -= damage;
 	enemy->touched_count_down = 0.05f;
 
 	// play sound
-	if (enemy->enemy_life > 0.0f)
+	if (enemy->enemy_health > 0.0f)
 		game->Play("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
 	else 
 	{
@@ -123,7 +123,7 @@ void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos
 
 bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
 {
-	if (particle->enemy_life <= 0.0f)
+	if (particle->enemy_health <= 0.0f)
 		return true;
 
 	chaos::box2 bb = particle->bounding_box;
@@ -143,9 +143,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 		{
 			if (ludum_player->dash_timer <= 0.0f ||! ludum_player->GetGhostLevel())
 			{
-				float life_lost = OnCollisionWithEnemy(particle, particle->enemy_life, layer_trait->game, true, particle->bounding_box); // destroy the enemy always
-
-
+				float life_lost = OnCollisionWithEnemy(particle, particle->enemy_health, layer_trait->game, true, particle->bounding_box); // destroy the enemy always
 
 				ludum_player->OnDamagedReceived(life_lost);
 				
@@ -411,7 +409,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 		for (size_t i = 0 ; i < count ; ++i)
 		{
 			ParticleEnemy * enemy = update_data.enemies[i];
-			if (enemy->enemy_life > 0.0f)
+			if (enemy->enemy_health > 0.0f)
 			{
 				chaos::box2 b1 = particle->bounding_box;
 				chaos::box2 b2 = enemy->bounding_box;
@@ -494,12 +492,12 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 	if (ludum_player == nullptr)
 		return false;
 
-	float current_life = ludum_player->GetCurrentLife();
-	float max_life = ludum_player->GetCurrentMaxLife();
+	float current_health = ludum_player->GetCurrentLife();
+	float max_health = ludum_player->GetCurrentMaxLife();
 
 	float image_count = (float)particle->bitmap_info->GetAnimationImageCount();
 
-	int index = (int)(image_count * (1.0 - (current_life / max_life)));
+	int index = (int)(image_count * (1.0 - (current_health / max_health)));
 
 	chaos::BitmapAtlas::BitmapLayout layout = particle->bitmap_info->GetAnimationLayout(index, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp);
 

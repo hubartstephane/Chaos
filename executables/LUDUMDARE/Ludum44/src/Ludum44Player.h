@@ -43,8 +43,8 @@ public:
 	void SetLifeBarValue(float in_value, bool in_increment);
 
 
-	float GetCurrentLife() const { return current_life; }
-	float GetCurrentMaxLife() const { return current_max_life; }
+	float GetCurrentLife() const { return current_health; }
+	float GetCurrentMaxLife() const { return current_max_health; }
 	float GetBuyTimer() const { return buy_timer; }
 
 protected:
@@ -85,8 +85,8 @@ protected:
 
 protected:
 
-	float current_life = 1.0f;
-	float current_max_life = 1.0f;
+	float current_health = 1.0f;
+	float current_max_health = 1.0f;
 
 	size_t current_speed_index = 0;
 	size_t current_damage_index = 0;

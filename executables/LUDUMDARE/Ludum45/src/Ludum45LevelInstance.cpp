@@ -129,8 +129,8 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
 		return;
-	ludum_player->current_life = ludum_game->initial_player_life; 
-	ludum_player->current_max_life = ludum_game->initial_player_life;
+	ludum_player->current_health = ludum_game->initial_player_health;
+	ludum_player->current_max_health = ludum_game->initial_player_health;
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)

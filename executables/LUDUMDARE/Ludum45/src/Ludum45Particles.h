@@ -86,7 +86,7 @@ class ParticleEnemy : public ParticleBase
 public:
 
 
-	float enemy_life = 0.0f;
+	float enemy_health = 0.0f;
 
 	float enemy_damage = 10.0f;
 

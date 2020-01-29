@@ -50,7 +50,7 @@ public:
 	std::string name;
 
 	std::string bitmap_name;
-	float enemy_life = 0.0f;
+	float enemy_health = 0.0f;
 	float enemy_damage = 0.0f;
 	float scale = 1.0f;
 };

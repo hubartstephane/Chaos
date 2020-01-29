@@ -1,15 +1,15 @@
-{ 
-  "fonts":{ "@filename":"fonts.json"},  
+{
+  "fonts": { "@filename": "fonts.json" },
 
-	"sprite_directory":"@sprites",
-	"levels_directory":"@levels",
-	"tilesets_directory":"@tilesets",
+  "sprite_directory": "@sprites",
+  "levels_directory": "@levels",
+  "tilesets_directory": "@tilesets",
 
-	"initial_life":3,
-	"max_life":3,
+  "initial_life": 3,
+  "max_life": 3,
 
-  "initial_player_life": 4.0,
-  "initial_particle_life": 0.7,
+  "initial_player_health": 4.0,
+  "initial_particle_health": 0.7,
   "cooldown": 1.0,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,
@@ -44,7 +44,7 @@
 
   "particle_max_velocity": 3000.0,
   "particle_slowing_factor": 0.5,
-	"particle_min_radius_factor": 1.0,
+  "particle_min_radius_factor": 1.0,
   "particle_max_radius_factor": 3.0,
-  "world_clamp_radius":4000
+  "world_clamp_radius": 4000
 }

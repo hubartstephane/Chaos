@@ -213,7 +213,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 #if _DEBUG
 		if (!layer_trait->game->GetCheatMode())
 #endif
-			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_player_life, true, layer_trait->game))
+			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_player_health, true, layer_trait->game))
 				return true;
 	}
 
@@ -373,7 +373,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	particle->velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
 
 	// update life and color
-	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_particle_life, false, layer_trait->game))
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_particle_health, false, layer_trait->game))
 	{
 		if (particle->waken_up)
 			if (ludum_game_instance != nullptr)

@@ -163,7 +163,7 @@
   <object id="1872" name="Spawner" gid="2" x="-1368" y="-44024" width="15344" height="12976">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="3"/>
@@ -173,7 +173,7 @@
   <object id="1873" name="Spawner" gid="2" x="-1752" y="5928" width="16048" height="13168">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
@@ -193,7 +193,7 @@
   <object id="1886" name="Spawner" gid="2" x="-1272" y="-17368" width="15344" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
@@ -203,7 +203,7 @@
   <object id="1887" name="Spawner" gid="2" x="-1272" y="-66904" width="15344" height="12976">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="2"/>
@@ -255,7 +255,7 @@
   <object id="1900" name="Spawner" gid="2" x="-1624" y="-91704" width="16048" height="9648">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
@@ -265,7 +265,7 @@
   <object id="1903" name="Spawner" gid="2" x="-1336" y="-21848" width="7408" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
@@ -275,7 +275,7 @@
   <object id="1904" name="Spawner" gid="2" x="-1272" y="-26392" width="7280" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
@@ -285,7 +285,7 @@
   <object id="1906" name="Spawner" gid="2" x="6536" y="-21784" width="7408" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="2"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
@@ -295,7 +295,7 @@
   <object id="1907" name="Spawner" gid="2" x="6664" y="-26328" width="7280" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="20"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="1"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="1"/>
@@ -305,7 +305,7 @@
   <object id="1908" name="Spawner" gid="2" x="-1688" y="-102104" width="16048" height="9648">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>
@@ -315,7 +315,7 @@
   <object id="1909" name="Spawner" gid="2" x="-1496" y="-112280" width="16048" height="17776">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
-    <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
+    <property name="ENEMY_HEALTH_FACTOR" type="float" value="1"/>
     <property name="ENEMY_SCALE_FACTOR" type="float" value="3"/>
     <property name="SPAWN_CURVE_TYPE" type="int" value="0"/>
     <property name="SPAWN_ENEMY_TYPE" type="int" value="0"/>

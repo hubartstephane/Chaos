@@ -90,7 +90,7 @@ bool GameHUDHealthBarComponent::DoTick(double delta_time)
 
 		particles[0].bounding_box = chaos::box2(std::make_pair(position1, position2));
 		particles[0].texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
-		particles[0].texcoords.topright = glm::vec2(ludum_game->initial_player_life, 1.0f);
+		particles[0].texcoords.topright = glm::vec2(ludum_game->initial_player_health, 1.0f);
 		particles[0].color = glm::vec4(life, life, life, life);
 
 		cached_value = life;

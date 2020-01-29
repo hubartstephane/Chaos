@@ -285,45 +285,6 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 		buylocked = false;
 }
 
-void LudumPlayer::SetHealth(float in_value, bool in_increment)
-{
-	// compute new life 
-	float old_health = current_health;
-	float new_health = current_health;
-
-	if (in_increment)
-		new_health += in_value;
-	else
-		new_health = in_value;
-
-	if (new_health < 0.0f)
-		new_health = 0.0f;
-	else if (new_health > current_max_health)
-		new_health = current_max_health;
-
-	// commit life lost
-	bool update_health = true;
-#if _DEBUG
-	if (old_health > new_health&& GetGame()->GetCheatMode())
-		update_health = false;
-#endif
-	if (update_health)
-		current_health = new_health;
-
-	// special FX
-	if (old_health > new_health)
-	{
-		death::Camera * camera = GetLevelInstance()->GetCamera(0);
-		if (camera != nullptr)
-		{
-			death::ShakeCameraComponent * shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
-			if (shake_component != nullptr)
-				shake_component->RestartModifier();
-		}
-	}
-}
-
-
 death::PlayerCheckpoint * LudumPlayer::DoCreateCheckpoint() const
 {
 	return new LudumPlayerCheckpoint();

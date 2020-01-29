@@ -59,6 +59,8 @@ namespace death
 		void SetScore(int in_score, bool increment = false);
 		/** update player life */
 		void SetLifeCount(int in_life, bool increment = false);
+        /** update player health */
+        void SetHealth(float in_value, bool in_increment = false);
 
 		/** try to give physical device to the player */
 		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
@@ -130,6 +132,9 @@ namespace death
 		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const override;
 		/** override */
 		virtual bool DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint) override;
+
+        /** called whenever health is changed */
+        virtual void OnHealthChanged(float old_health, float new_health);
 
 	protected:
 

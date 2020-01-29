@@ -1,0 +1,9 @@
+{
+	"pixel_sources":
+	[
+		"@health.psh"
+	],
+  "vertex_sources": [
+    "@health.vsh"
+  ]
+}

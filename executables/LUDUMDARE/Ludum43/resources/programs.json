@@ -1,12 +1,12 @@
 {
-  "@postprocess" : { "path": "@programs/postprocess/postprocess.pgm" },
-  "@background" : { "path": "@programs/background/background.pgm" },
-  "@lifebar"  : { "path": "@programs/lifebar/lifebar.pgm" },
-  "@player"  : { "path": "@programs/player/player.pgm" },
-  "@atom"  : { "path": "@programs/atom/atom.pgm" },
-  "@enemy"  : { "path": "@programs/enemy/enemy.pgm" },
-  "@worldlimit"  : { "path": "@programs/worldlimit/worldlimit.pgm" },
-  "@background_particle"  : { "path": "@programs/background_particle/background_particle.pgm" },
-  "@text"  : { "path": "@programs/text/text.pgm" }    
+  "@postprocess": { "path": "@programs/postprocess/postprocess.pgm" },
+  "@background": { "path": "@programs/background/background.pgm" },
+  "@health": { "path": "@programs/health/health.pgm" },
+  "@player": { "path": "@programs/player/player.pgm" },
+  "@atom": { "path": "@programs/atom/atom.pgm" },
+  "@enemy": { "path": "@programs/enemy/enemy.pgm" },
+  "@worldlimit": { "path": "@programs/worldlimit/worldlimit.pgm" },
+  "@background_particle": { "path": "@programs/background_particle/background_particle.pgm" },
+  "@text": { "path": "@programs/text/text.pgm" }
 
 }

@@ -35,10 +35,10 @@ protected:
 };
 
 // ====================================================================
-// GameHUDLifeBarComponent
+// GameHUDHealthBarComponent
 // ====================================================================
 
-class GameHUDLifeBarComponent : public death::GameHUDSingleAllocationComponent
+class GameHUDHealthBarComponent : public death::GameHUDSingleAllocationComponent
 {
 protected:
 

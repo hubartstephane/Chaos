@@ -1,11 +1,11 @@
 {
-    "@postprocess": {"path":"@materials/postprocess.mat"},
-		"@background": {"path":"@materials/background.mat"},
-		"@lifebar" : {"path":"@materials/lifebar.mat"},
-    "@player" : {"path":"@materials/player.mat"},
-		"@enemy" : {"path":"@materials/enemy.mat"},
-		"@atom" : {"path":"@materials/atom.mat"},
-		"@worldlimit" : {"path":"@materials/worldlimit.mat"},
-    "@background_particle" : {"path":"@materials/background_particle.mat"},
-		"@text" : {"path":"@materials/text.mat"}    
+  "@postprocess": { "path": "@materials/postprocess.mat" },
+  "@background": { "path": "@materials/background.mat" },
+  "@health": { "path": "@materials/health.mat" },
+  "@player": { "path": "@materials/player.mat" },
+  "@enemy": { "path": "@materials/enemy.mat" },
+  "@atom": { "path": "@materials/atom.mat" },
+  "@worldlimit": { "path": "@materials/worldlimit.mat" },
+  "@background_particle": { "path": "@materials/background_particle.mat" },
+  "@text": { "path": "@materials/text.mat" }
 }

@@ -109,10 +109,10 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 }
 
 // ====================================================================
-// GameHUDLifeBarComponent
+// GameHUDHealthBarComponent
 // ====================================================================
 
-bool GameHUDLifeBarComponent::DoTick(double delta_time)
+bool GameHUDHealthBarComponent::DoTick(double delta_time)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud == nullptr)
@@ -203,7 +203,7 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
-	RegisterComponent(death::GameHUDKeys::LIFE_VITAE_ID, new GameHUDLifeBarComponent());
+	RegisterComponent(death::GameHUDKeys::LIFE_HEALTH_ID, new GameHUDHealthBarComponent());
 	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
 	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
 	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
@@ -225,7 +225,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 
 		ParticleLifeTrait::LayerTrait life_trait;
 		life_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "lifebar", life_trait);
+		particle_manager->AddLayer<ParticleLifeTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "health", life_trait);
 	}
 
 	return true;

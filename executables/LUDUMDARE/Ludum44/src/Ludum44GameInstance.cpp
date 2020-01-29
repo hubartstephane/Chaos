@@ -98,10 +98,9 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 		LudumPlayer * p = GetLudumPlayer(i);
 		if (p != nullptr)
 		{
-			p->current_life = p->current_max_life;
+			p->current_health = p->current_max_health;
 		}
 	}
-
 }
 
 void LudumGameInstance::OnPlayerEntered(death::Player * player)
@@ -116,8 +115,8 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	if (ludum_player == nullptr)
 		return;
 
-	ludum_player->current_life = ludum_game->initial_player_life; 
-	ludum_player->current_max_life = ludum_game->initial_player_life;
+	ludum_player->current_health = ludum_game->initial_player_health;
+	ludum_player->current_max_health = ludum_game->initial_player_health;
 
 	ludum_player->current_speed_index = 0;
 	ludum_player->current_damage_index = 0;

@@ -149,7 +149,7 @@ public:
 	float world_clamp_radius = 3000.0f;
 
 	/** current game values */
-	float initial_player_life = 4.0f;
-	float initial_particle_life = 1.0f;
+	float initial_player_health = 4.0f;
+	float initial_particle_health = 1.0f;
 };
 

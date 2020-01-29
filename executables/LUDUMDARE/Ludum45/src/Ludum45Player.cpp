@@ -430,50 +430,44 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 
 void LudumPlayer::OnLifeLost()
 {
-	death::Player::OnLifeLost();
-	current_life = current_max_life;
-
-
-
+    death::Player::OnLifeLost();
+    current_health = current_max_health;
 }
-
 
 void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
-	current_life = current_max_life;
+	current_health = current_max_health;
 	DoUpdateBrightSideOfLife(false);
 }
 
-
 void LudumPlayer::SetLifeBarValue(float in_value, bool in_increment)
 {
-
 	// compute new life 
-	float old_life = current_life;
-	float new_life = current_life;
+	float old_health = current_health;
+	float new_health = current_health;
 
 	if (in_increment)
-		new_life += in_value;
+		new_health += in_value;
 	else
-		new_life = in_value;
+		new_health = in_value;
 
-	if (new_life < 0.0f)
-		new_life = 0.0f;
-	else if (new_life > current_max_life)
-		new_life = current_max_life;
+	if (new_health < 0.0f)
+		new_health = 0.0f;
+	else if (new_health > current_max_health)
+		new_health = current_max_health;
 
 	// commit life lost
-	bool update_life = true;
+	bool update_health = true;
 #if _DEBUG
-	if (old_life > new_life && GetGame()->GetCheatMode())
-		update_life = false;
+	if (old_health > new_health&& GetGame()->GetCheatMode())
+		update_health = false;
 #endif
-	if (update_life)
-		current_life = new_life;
+	if (update_health)
+		current_health = new_health;
 
 	// special FX
-	if (old_life > new_life)
+	if (old_health > new_health)
 	{
 		death::Camera * camera = GetLevelInstance()->GetCamera(0);
 		if (camera != nullptr)

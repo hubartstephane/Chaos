@@ -114,7 +114,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
             particle.bounding_box.half_size = 0.5f * glm::vec2(bitmap_info->width, bitmap_info->height) * t->scale;
             particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
             particle.enemy_damage = t->enemy_damage;
-            particle.enemy_life = t->enemy_life;
+            particle.enemy_health = t->enemy_health;
             particle.enemy_index = (int)(&particle - &accessor[0]);
             particle.enemy_particle_count = (int)accessor.GetCount();
             particle.pattern = p;

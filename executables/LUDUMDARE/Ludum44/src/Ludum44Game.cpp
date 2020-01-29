@@ -92,8 +92,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!InitializeGameValueVector("player_fire_rates", config, config_path, player_fire_rates))
 		return false;
 	
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
-	DEATHGAME_JSON_ATTRIBUTE(min_player_max_life);
+	DEATHGAME_JSON_ATTRIBUTE(initial_player_health);
+	DEATHGAME_JSON_ATTRIBUTE(min_player_max_health);
 	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
 	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
 	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);
@@ -104,9 +104,9 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_damage);
 	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_rate);
 
-	DEATHGAME_JSON_ATTRIBUTE(meteor_life);
-	DEATHGAME_JSON_ATTRIBUTE(alien_life);
-	DEATHGAME_JSON_ATTRIBUTE(turret_life);
+	DEATHGAME_JSON_ATTRIBUTE(meteor_health);
+	DEATHGAME_JSON_ATTRIBUTE(alien_health);
+	DEATHGAME_JSON_ATTRIBUTE(turret_health);
 
 	DEATHGAME_JSON_ATTRIBUTE(meteor_damage_for_player);
 	DEATHGAME_JSON_ATTRIBUTE(alien_damage_for_player);

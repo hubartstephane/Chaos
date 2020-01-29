@@ -211,6 +211,6 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor();
 		size_t count = player_particles.GetCount();
 		for (size_t i = 0 ; i < count ; ++i)
-			player_particles[i].life = ludum_game->initial_player_life;
+			player_particles[i].life = ludum_game->initial_player_health;
 	}
 }

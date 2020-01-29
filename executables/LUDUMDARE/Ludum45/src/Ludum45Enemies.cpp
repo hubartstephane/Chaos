@@ -93,45 +93,13 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 		result = particle_out;
 	}
 
-
-
-
-
-
-
-	if (result)
-		result = result;
-
-
-
-
-
-	
-
-
 	return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 bool EnemyType::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
 {
 	bitmap_name = def->FindPropertyString("BITMAP_NAME", "");
-	enemy_life  = def->FindPropertyFloat("ENEMY_LIFE", enemy_life);
+    enemy_health = def->FindPropertyFloat("ENEMY_HEALTH", enemy_health);
 	enemy_damage  = def->FindPropertyFloat("ENEMY_DAMAGE", enemy_damage);
 	scale =  def->FindPropertyFloat("SCALE", scale);
 

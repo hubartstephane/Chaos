@@ -246,8 +246,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
-	DEATHGAME_JSON_ATTRIBUTE(initial_particle_life);
+	DEATHGAME_JSON_ATTRIBUTE(initial_player_health);
+	DEATHGAME_JSON_ATTRIBUTE(initial_particle_health);
 
 	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
 	DEATHGAME_JSON_ATTRIBUTE(dash_cooldown);

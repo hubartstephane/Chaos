@@ -112,8 +112,8 @@ protected:
 
 protected:
 
-	float initial_player_life = 1.0f; 
-	float min_player_max_life = 0.1f;
+	float initial_player_health = 1.0f;
+	float min_player_max_health = 0.1f;
 
 	std::vector<float> player_speeds;
 	std::vector<float> player_damages;
@@ -146,9 +146,9 @@ protected:
 	/** a scroll multiplier */
 	float scroll_factor = 1.0f;
 
-	float meteor_life = 3.0f;
-	float alien_life = 3.0f;
-	float turret_life = 3.0f;
+	float meteor_health = 3.0f;
+	float alien_health = 3.0f;
+	float turret_health = 3.0f;
 		
 	float meteor_damage_for_player = 0.5f;
 	float alien_damage_for_player = 0.5f;

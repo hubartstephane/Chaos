@@ -1,11 +1,11 @@
 {
 
-  "fonts":{ "@filename":"fonts.json"},  
+  "fonts": { "@filename": "fonts.json" },
 
   "sprite_directory": "@sprites",
   "levels_directory": "@levels",
   "tilesets_directory": "@tilesets",
-	"objecttypesets_directory": "@objecttypessets",
+  "objecttypesets_directory": "@objecttypessets",
 
   "initial_life": 3,
   "max_life": 3,
@@ -13,8 +13,8 @@
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,
 
-  "initial_player_life": 1.0,
-  "min_player_max_life": 0.1,
+  "initial_player_health": 1.0,
+  "min_player_max_health": 0.1,
 
   "player_speeds": [ 1.0, 1.5, 2.0, 2.5 ],
   "player_damages": [ 0.5, 1.0, 1.5, 2.0 ],
@@ -36,9 +36,9 @@
   "enemy_fire_velocity": 1400.0,
   "enemy_fire_damage": 0.1,
   "enemy_fire_rate": 1.5,
-  "meteor_life": 2.5,
-  "alien_life": 3.5,
-  "turret_life": 3.5,
+  "meteor_health": 2.5,
+  "alien_health": 3.5,
+  "turret_health": 3.5,
 
   "meteor_damage_for_player": 0.2,
   "alien_damage_for_player": 0.3,

@@ -161,7 +161,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 			ParticleAtom & p = particles[i];
 			p.particle_radius_factor = chaos::MathTools::RandFloat(ludum_game->particle_min_radius_factor, ludum_game->particle_max_radius_factor);
 			p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-			p.life = ludum_game->initial_particle_life;
+			p.life = ludum_game->initial_particle_health;
 		}
 		return true;
 	}

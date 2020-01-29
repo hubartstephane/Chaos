@@ -88,7 +88,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(fire_velocity);	
 	
 	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_life);
+	DEATHGAME_JSON_ATTRIBUTE(initial_player_health);
 	
 	DEATHGAME_JSON_ATTRIBUTE(player_speeds);
 	DEATHGAME_JSON_ATTRIBUTE(player_damages);

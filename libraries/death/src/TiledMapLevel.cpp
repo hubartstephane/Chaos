@@ -42,7 +42,6 @@ namespace death
 			return true;
 		}
 
-
 		// =====================================
 		// TriggerObject implementation
 		// =====================================
@@ -793,11 +792,10 @@ namespace death
 
 		bool LayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer * image_layer)
 		{
-
 			return true;
 		}
 
-		void LayerInstance::CreateAdditionalObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator & particle_populator)
+		void LayerInstance::CreateAdditionalObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator * particle_populator)
 		{
 			chaos::TiledMap::Map * tiled_map = level_instance->GetTiledMap();
 
@@ -837,7 +835,7 @@ namespace death
 
 
 
-
+                // shuludum ?
 
 				// shu FindProperty
 
@@ -885,7 +883,7 @@ namespace death
 						particle_box = geometric->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 					}
 				}
-				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, keep_aspect_ratio);
+				particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, keep_aspect_ratio);
 			}
 		}
 
@@ -926,6 +924,11 @@ namespace death
 			return nullptr;
 		}
 
+        LayerInstanceParticlePopulator* LayerInstance::CreateParticlePopulator()
+        {
+            return new LayerInstanceParticlePopulator();
+        }
+
 		bool LayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer * object_layer)
 		{
 			// search the bounding box (explicit or not)
@@ -933,8 +936,8 @@ namespace death
 			chaos::box2 explicit_bounding_box;
 
 			// the particle generator
-			LayerInstanceParticlePopulator particle_populator;
-			if (!particle_populator.Initialize(this))
+            chaos::shared_ptr<LayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
+			if (!particle_populator->Initialize(this))
 				return false;
 
 			// iterate over all objects
@@ -961,16 +964,16 @@ namespace death
 				GeometricObject * object = CreateObjectInstance(geometric_object);
 				if (object != nullptr && !object->IsAdditionalParticlesCreationEnabled())
 					continue;
-				CreateAdditionalObjectParticles(geometric_object, object, particle_populator);
+				CreateAdditionalObjectParticles(geometric_object, object, particle_populator.get());
 			}
 
 			// final flush
-			particle_populator.FlushParticles();
+            particle_populator->FlushParticles();
 			// update the bounding box
 			if (!IsGeometryEmpty(explicit_bounding_box))
 				bounding_box = explicit_bounding_box;
 			else
-				bounding_box = box | particle_populator.GetBoundingBox();
+				bounding_box = box | particle_populator->GetBoundingBox();
 
 			return true;
 		}
@@ -1061,8 +1064,8 @@ namespace death
 			if (count == 0)
 				return false;
 
-			LayerInstanceParticlePopulator particle_populator;
-			if (!particle_populator.Initialize(this))
+            chaos::shared_ptr<LayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
+			if (!particle_populator->Initialize(this))
 				return false;
 
 			// populate the layer
@@ -1081,13 +1084,13 @@ namespace death
 
 				bool horizontal_flip = false;
 				bool vertical_flip = false;
-				particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip);
+                particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip);
 			}
 
 			// final flush
-			particle_populator.FlushParticles();
+            particle_populator->FlushParticles();
 			// update the bounding box
-			bounding_box = particle_populator.GetBoundingBox();
+			bounding_box = particle_populator->GetBoundingBox();
 
 			return true;
 		}
@@ -1802,8 +1805,8 @@ namespace death
 				return;
 
 			// create a particle populator
-			LayerInstanceParticlePopulator particle_populator;
-			if (!particle_populator.Initialize(layer_instance))
+            chaos::shared_ptr<LayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
+			if (!particle_populator->Initialize(layer_instance))
 				return;
 
 			// compute the bounding box
@@ -1818,11 +1821,11 @@ namespace death
 			// shuludum
 
 
-			particle_populator.AddParticle(bitmap_name->c_str(), player_bounding_box);
-			particle_populator.FlushParticles();
+            particle_populator->AddParticle(bitmap_name->c_str(), player_bounding_box);
+            particle_populator->FlushParticles();
 
 			// allocation
-			chaos::ParticleAllocationBase * player_allocation = particle_populator.GetParticleAllocation();
+			chaos::ParticleAllocationBase * player_allocation = particle_populator->GetParticleAllocation();
 
 			// set the player allocation
 			player->SetPlayerAllocation(player_allocation);

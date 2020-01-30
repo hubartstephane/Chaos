@@ -21,7 +21,7 @@ namespace death
 		public:
 
 			int gid = 0;
-			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = nullptr; // shudum hai le hack
+			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = nullptr;
 		};
 
         // =====================================

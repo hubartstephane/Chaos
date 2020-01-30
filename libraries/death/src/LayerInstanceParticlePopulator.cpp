@@ -33,6 +33,13 @@ namespace death
 			return true;
 		}
 
+        void LayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
+        {
+            chaos::ParticleAccessor<TileParticle> accessor = allocation->AddParticles(particle_count);
+            for (size_t i = 0; i < particle_count; ++i)
+                accessor[i] = particles[i];
+        }
+
 		void LayerInstanceParticlePopulator::FlushParticles()
 		{
 			// nothing to flush
@@ -45,33 +52,24 @@ namespace death
 				if (allocation == nullptr)
 					return;
 			}
-			size_t old_count = allocation->GetParticleCount();
-
-			// reserve memory
-			allocation->AddParticles(particle_count);
-			// an accessor to flush
-			chaos::ParticleAccessor<TileParticle> p = allocation->GetParticleAccessor();
-			for (size_t i = 0; i < particle_count; ++i)
-				p[old_count + i] = particles[i];
-
+			// reserve memory and flush
+            FlushCachedParticlesToAllocation();
 			// empty the cache
 			particle_count = 0;
 		}
 
 		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color, int gid, bool horizontal_flip, bool vertical_flip, bool keep_aspect_ratio)
 		{
+            assert(bitmap_name != nullptr);
+
 			// search bitmap information for the particle
 			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 			if (bitmap_info == nullptr)
 				return false;
-
-			// shuludum
-
 			// get the real layout of the bitmap by removing animation
 			chaos::BitmapAtlas::BitmapLayout layout = *bitmap_info;
 			if (bitmap_info->HasAnimation())
 				layout = bitmap_info->GetAnimationLayout(0, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp); // take frame 0 by default
-
 			// compute the bounding box
 			if (IsGeometryEmpty(particle_box))
 			{
@@ -91,17 +89,7 @@ namespace death
 			particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
 			particle.color = color;
 			particle.gid = gid;
-
-
 			particle.bitmap_info = bitmap_info;
-
-			
-
-			// shuludum
-
-
-
-
 
 			particles[particle_count++] = particle;
 

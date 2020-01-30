@@ -666,6 +666,9 @@ namespace death
 			/** compute collisions between players and tiles (returns false if if do not want to handle mode player collisions) */
 			virtual bool ComputePlayerTileCollisions(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
 
+            /** create a particle populator so that each layer may have its own particle type */
+            virtual LayerInstanceParticlePopulator* CreateParticlePopulator();
+
 			/** specialized layer */
 			bool InitializeImageLayer(chaos::TiledMap::ImageLayer * image_layer);
 			/** specialized layer */
@@ -676,7 +679,7 @@ namespace death
 			/** create an object in an object layer */
 			GeometricObject * CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
 			/** create an object in an object layer */
-			void CreateAdditionalObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator & particle_populator);
+			void CreateAdditionalObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator * particle_populator);
 
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();

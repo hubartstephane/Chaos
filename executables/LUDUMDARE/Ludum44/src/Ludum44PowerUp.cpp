@@ -24,17 +24,17 @@ bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool dec
 
 	if (decreasing_power_up)
 	{
-		player->current_health += life_cost;
-		player->current_health += life_cost;
-		if (player->current_max_health > 1.0f)
-			player->current_max_health = 1.0f;
+		player->health += life_cost;
+		player->health += life_cost;
+		if (player->max_health > 1.0f)
+			player->max_health = 1.0f;
 	}
 	else
 	{
-		player->current_max_health -= life_cost;
+		player->max_health -= life_cost;
 	}
-	if (player->current_health > player->current_max_health)
-		player->current_health = player->current_max_health;
+	if (player->health > player->max_health)
+		player->health = player->max_health;
 
 	if (decreasing_power_up)
 		game->Play("life_restored", false, false, 0.0f, death::SoundContext::LEVEL);	
@@ -51,12 +51,12 @@ bool LudumPowerUp::CanPowerUp(LudumGame * game, LudumPlayer * player, bool decre
 {
 	if (decreasing_power_up)
 	{
-		if (player->current_max_health < 1.0f)
+		if (player->max_health < 1.0f)
 			return true;
 	}
 	else
 	{
-		if (player->current_max_health - life_cost > game->min_player_max_health)
+		if (player->max_health - life_cost > game->min_player_max_health)
 			return true;	
 	}
 	return false;

@@ -299,8 +299,8 @@ bool LudumPlayer::DoLoadFromCheckpoint(death::PlayerCheckpoint const * checkpoin
 	if (!death::Player::DoLoadFromCheckpoint(checkpoint))
 		return false;
 
-	current_health               = ludum_checkpoint->current_health;
-	current_max_health           = ludum_checkpoint->current_max_health;
+	health               = ludum_checkpoint->health;
+	max_health           = ludum_checkpoint->max_health;
 	current_speed_index          = ludum_checkpoint->current_speed_index;
 	current_damage_index         = ludum_checkpoint->current_damage_index;
 	current_charged_damage_index = ludum_checkpoint->current_charged_damage_index;
@@ -318,8 +318,8 @@ bool LudumPlayer::DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) con
 	if (!death::Player::DoSaveIntoCheckpoint(checkpoint))
 		return false;
 
-    ludum_checkpoint->current_health = current_health;
-    ludum_checkpoint->current_max_health = current_max_health;
+    ludum_checkpoint->health = health;
+    ludum_checkpoint->max_health = max_health;
     ludum_checkpoint->current_speed_index = current_speed_index;
     ludum_checkpoint->current_damage_index = current_damage_index;
     ludum_checkpoint->current_charged_damage_index = current_charged_damage_index;

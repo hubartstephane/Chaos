@@ -10,8 +10,8 @@ class LudumPlayerCheckpoint : public death::PlayerCheckpoint
 {
 public:
 
-	float current_health = 1.0f;
-	float current_max_health = 1.0f;
+	float health = 1.0f;
+	float max_health = 1.0f;
 
 	size_t current_speed_index = 0;
 	size_t current_damage_index = 0;

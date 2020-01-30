@@ -169,8 +169,8 @@ bool GameHUDHealthBarComponent::DoTick(double delta_time)
 
 
 
-	part->color.x = ludum_player->GetCurrentHealth();
-	part->color.y = ludum_player->GetCurrentMaxHealth();
+	part->color.x = ludum_player->GetHealth();
+	part->color.y = ludum_player->GetMaxHealth();
 	part->color.z = 0.0f;
 	part->color.w = 0.0f;
 

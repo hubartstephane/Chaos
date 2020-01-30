@@ -48,9 +48,9 @@ namespace death
 		/** get the life count */
 		int GetLifeCount() const { return life_count; }
         /** get the current health value */
-        float GetCurrentHealth() const { return current_health; }
+        float GetHealth() const { return health; }
         /** get the maximum health value health value */
-        float GetCurrentMaxHealth() const { return current_max_health; }
+        float GetMaxHealth() const { return max_health; }
 
 		/** returns whether the player is dead or not */
 		bool IsDead() const { return life_count == 0; }
@@ -149,9 +149,9 @@ namespace death
 		/** the life for the player */
 		int life_count = 3;
         /** the current health of the player */
-        float current_health = 1.0f;
+        float health = 1.0f;
         /** the maximum health of the player */
-        float current_max_health = 1.0f;
+        float max_health = 1.0f;
 		/** the score for the player */
 		int score = 0;
 

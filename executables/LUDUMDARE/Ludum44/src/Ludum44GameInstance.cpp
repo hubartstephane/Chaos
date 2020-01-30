@@ -24,7 +24,7 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 	LudumPlayer * ludum_player = GetLudumPlayer(0);
 	if (ludum_player != nullptr)
 	{
-		if (ludum_player->GetCurrentHealth() <= 0.0f) // no more energy => go to checkpoint
+		if (ludum_player->GetHealth() <= 0.0f) // no more energy => go to checkpoint
 		{
 			// game over mandatory (last life about to be removed)
 			int life_count = ludum_player->GetLifeCount();
@@ -98,7 +98,7 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 		LudumPlayer * p = GetLudumPlayer(i);
 		if (p != nullptr)
 		{
-			p->current_health = p->current_max_health;
+			p->health = p->max_health;
 		}
 	}
 }
@@ -115,8 +115,8 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	if (ludum_player == nullptr)
 		return;
 
-	ludum_player->current_health = ludum_game->initial_player_health;
-	ludum_player->current_max_health = ludum_game->initial_player_health;
+	ludum_player->health = ludum_game->initial_player_health;
+	ludum_player->max_health = ludum_game->initial_player_health;
 
 	ludum_player->current_speed_index = 0;
 	ludum_player->current_damage_index = 0;

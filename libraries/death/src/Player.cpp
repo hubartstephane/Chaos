@@ -22,7 +22,7 @@ namespace death
 
 	void Player::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 	{
-        current_health = current_max_health;
+        health = max_health;
 	}
 
 	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
@@ -284,14 +284,14 @@ namespace death
 
 	void Player::OnLifeLost()
 	{
-        current_health = current_max_health;
+        health = max_health;
 	}
 
     void Player::SetHealth(float in_value, bool in_increment)
     {
         // compute new life 
-        float old_health = current_health;
-        float new_health = current_health;
+        float old_health = health;
+        float new_health = health;
 
         if (in_increment)
             new_health += in_value;
@@ -300,8 +300,8 @@ namespace death
 
         if (new_health < 0.0f)
             new_health = 0.0f;
-        else if (new_health > current_max_health)
-            new_health = current_max_health;
+        else if (new_health > max_health)
+            new_health = max_health;
 
         // commit life lost
         bool update_health = true;
@@ -311,7 +311,7 @@ namespace death
 #endif
         if (update_health)
         {
-            current_health = new_health;
+            health = new_health;
             OnHealthChanged(old_health, new_health);
         }
     }

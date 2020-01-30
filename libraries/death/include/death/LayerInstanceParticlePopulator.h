@@ -22,10 +22,7 @@ namespace death
 		// LayerInstanceParticlePopulator : utility class to generate particles for a layer with a cache
 		// =====================================
 
-
-		// shuludum : can be templated ?
-
-		class LayerInstanceParticlePopulator
+		class LayerInstanceParticlePopulator : public chaos::ReferencedObject
 		{
 			static size_t const PARTICLE_BUFFER_SIZE = 100;
 
@@ -42,6 +39,11 @@ namespace death
 			chaos::box2 const & GetBoundingBox() const { return bounding_box; }
 			/** get the particle allocation */
 			chaos::ParticleAllocationBase * GetParticleAllocation() { return allocation; }
+
+        protected:
+
+            /** 'copy' the cached particle into the allocation (with type conversion) */
+            virtual void FlushCachedParticlesToAllocation();
 
 		protected:
 
@@ -62,6 +64,16 @@ namespace death
 			/** a bounding box */
 			chaos::box2 bounding_box;
 		};
+
+        // =====================================
+        // LayerInstanceParticlePopulator : 
+        // =====================================
+
+        template<typename PARTICLE_TYPE>
+        class TypedLayerInstanceParticlePopulator : public LayerInstanceParticlePopulator
+        {
+
+        };
 
 	}; // namespace TiledMap
 

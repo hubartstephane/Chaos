@@ -20,14 +20,7 @@ namespace death
 		/** constructor */
 		GameInstanceEntity(GameInstance * in_game_instance);
 		/** destructor */
-		//virtual ~GameInstanceEntity() = default;
-
-
-		virtual ~GameInstanceEntity();
-
-
-
-
+		virtual ~GameInstanceEntity() = default;
 
 		/** returns the game */
 		Game * GetGame();

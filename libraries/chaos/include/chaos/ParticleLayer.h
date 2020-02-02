@@ -21,32 +21,77 @@
 #include <chaos/PrimitiveOutput.h>
 #include <chaos/ParticleSpawner.h>
 
+// ==============================================================
+// ParticleAllocation<...>
+// ==============================================================
+//
+// XXX : remark on ParticleAllocation
+//
+//         The ParticleAllocation life time is special. see ReferenceCount remark in .cpp !!! 
+//
+//
+// ParticleAllocation<...> use a template class to define particles behavior
+//
+//   - The class of the PARTICLES
+//   - Ticking the PARTICLES
+//   - For rendering, transforming PARTICLES into GPU primtives (quad, triangles ...) or VERTICES = > so defining VERTICES
+//
+//
+//
+// 1 - it must implement:
+//
+//    bool UpdateParticle(...) const;    => returns true if the particle must be destroyed
+//
+// and 
+//
+//    void ParticleToPrimitives(...) const;  
+//
+//
+//
+// 2 - If we have to make a computation on ALL particles before, we can implement the two following functions
+//
+//	  TYPE_XXX BeginUpdateParticles(...)
+//
+//	  TYPE_YYY BeginParticlesToPrimitives(...)
+//
+// in that case, the previous functions have an additionnal argument
+//
+//    UpdateParticle(... TYPE_XXX)
+//
+//    ParticleToPrimitives(... TYPE_YYY)
+//
+// Example : we can compute an transform for the whole allocation (single call) and apply it to each particle
+//
+//
+//
+// 3 - if we may have a nested class LayerTrait, so that the layer has an instance of that
+//
+//    class LayerTrait { ... }
+//
+// in that case, the previous functions have an additionnal argument
+//
+//    UpdateParticle(... LayerTrait, TYPE_XXX) 
+//
+//    ParticleToPrimitives(... LayerTrait, TYPE_YYY)
+//
+//	  TYPE_XXX BeginUpdateParticles(...LayerTrait)
+//
+//	  TYPE_YYY BeginParticlesToPrimitives(...LayerTrait)
+//
+//
 // There are several rendering mode
 //
 //  - QUAD (transformed as triangle pair)
 //  - INDEXED QUAD
 //  - TRIANGLE_PAIR
-//
-//  It is difficult to compare the performances of thoses 3 modes.
-//  Working by default with quads seems more convinient
-//
-//  (see CHAOS_TRIANGLE_PAIR_RENDERING/CHAOS_INDEXED_QUAD_RENDERING)
-
 
 #define CHAOS_TRIANGLE_PAIR_RENDERING 0
 
 namespace chaos
 {
 	// ==============================================================
-	// XXX : remark on ParticleAllocation
-	//
-	//         The ParticleAllocation life time is special. see ReferenceCount remark in .cpp !!! 
-	// ==============================================================
-
-	// ==============================================================
 	// FORWARD DECLARATION / FRIENDSHIP MACROS
 	// ==============================================================
-
 
 	// all classes in this file
 #define CHAOS_PARTICLE_CLASSES \
@@ -70,9 +115,9 @@ CHAOS_GENERATE_HAS_MEMBER(primitive_type);
 // detect whether classes have some functions
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToVertices)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToPrimitives)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToVertices)
+CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToPrimitives)
 
 // detect whether class have a nested class
 CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
@@ -261,7 +306,7 @@ public:
 		/** tick the allocation (returns true whether the allocation is to be destroyed) */
 		virtual bool TickAllocation(float delta_time, void const * layer_trait) { return false; }
 		/** transforms the particles into vertices in the buffer */
-		virtual size_t ParticlesToVertices(void * vertices, void const * layer_trait) const { return 0; }
+		virtual size_t ParticlesToPrimitives(void * vertices, void const * layer_trait) const { return 0; }
 
 		/** called whenever the allocation is removed from the layer */
 		void OnRemovedFromLayer();
@@ -354,37 +399,37 @@ public:
 
         /** transforms the particles into vertices in the buffer */
         template<typename PRIMITIVE_OUTPUT_TYPE>
-        void ParticlesToVertices(PRIMITIVE_OUTPUT_TYPE& output, void const* layer_trait) const
+        void ParticlesToPrimitives(PRIMITIVE_OUTPUT_TYPE& output, void const* layer_trait) const
         {
             if constexpr (has_LayerTrait_v<allocation_trait_type>)
             {
                 layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
 
-                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
+                if constexpr (has_function_BeginParticlesToPrimitives_v<allocation_trait_type>)
                 {
-                    DoParticlesToVerticesLoop(
+                    DoParticlesToPrimitivesLoop(
                         output,
-                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
+                        allocation_trait.BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
                         typed_layer_trait);
                 }
                 else
                 {
-                    DoParticlesToVerticesLoop(
+                    DoParticlesToPrimitivesLoop(
                         output,
                         typed_layer_trait);
                 }
             }
             else
             {
-                if constexpr (has_function_BeginParticlesToVertices_v<allocation_trait_type>)
+                if constexpr (has_function_BeginParticlesToPrimitives_v<allocation_trait_type>)
                 {
-                    DoParticlesToVerticesLoop(
+                    DoParticlesToPrimitivesLoop(
                         output,
-                        allocation_trait.BeginParticlesToVertices(GetParticleConstAccessor<particle_type>(), typed_layer_trait)); // do not use a temp variable, so it can be a left-value reference
+                        allocation_trait.BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), typed_layer_trait)); // do not use a temp variable, so it can be a left-value reference
                 }
                 else
                 {
-                    DoParticlesToVerticesLoop(output);
+                    DoParticlesToPrimitivesLoop(output);
                 }
             }
         }
@@ -486,14 +531,14 @@ public:
 		}
 
         template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
-        void DoParticlesToVerticesLoop(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
+        void DoParticlesToPrimitivesLoop(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
         {
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
             size_t particle_count = particle_accessor.GetCount();
             for (size_t i = 0; i < particle_count; ++i)
             {
-                allocation_trait.ParticleToVertices(particle_accessor[i], output, params...);
+                allocation_trait.ParticleToPrimitives(particle_accessor[i], output, params...);
             }
         }
 
@@ -762,33 +807,33 @@ public:
             if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
             {
                 TriangleOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
-                ParticlesToVerticesLoop(output);
+                ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
             {
                 TrianglePairOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
-                ParticlesToVerticesLoop(output);
+                ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
             {
                 QuadOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
-                ParticlesToVerticesLoop(output);
+                ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
             {
                 TriangleStripOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
-                ParticlesToVerticesLoop(output);
+                ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
             {
                 TriangleFanOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
-                ParticlesToVerticesLoop(output);
+                ParticlesToPrimitivesLoop(output);
             }
         }
 
         // convert particles into vertices
         template<typename PRIMITIVE_OUTPUT_TYPE>
-        void ParticlesToVerticesLoop(PRIMITIVE_OUTPUT_TYPE& output)
+        void ParticlesToPrimitivesLoop(PRIMITIVE_OUTPUT_TYPE& output)
         {
             size_t count = particles_allocations.size();
             for (size_t i = 0; i < count; ++i)
@@ -798,7 +843,7 @@ public:
                 if (!allocation->IsVisible())
                     continue;
                 // transform particles into vertices
-                allocation->ParticlesToVertices(output, GetLayerTrait());
+                allocation->ParticlesToPrimitives(output, GetLayerTrait());
             }
             output.Flush();
         }
@@ -808,82 +853,6 @@ public:
 		/** the trait of the layer */
 		layer_trait_type layer_trait;
 	};
-
-	// ==============================================================
-	// PARTICLE LAYER DESC
-	// ==============================================================
-
-	// ParticleLayerDesc : this is class that deserves to implement how 
-	//
-	//  - Particles are allocated (create an ParticleAllocation subclass instance corresponding to the read structure for each particles)
-	//  - Particles are updated
-	//  - Particles are transformed into (6?) vertices fo rendering (a quad?)
-	//
-	// the main functions to override are:
-	//
-	//  - NewAllocation(...)
-	//  - ParticlesToVertices(...)
-	//  - UpdateParticles(...)
-
-
-
-	// ==============================================================
-	// TypedParticleLayerDesc
-	// ==============================================================
-
-	// TypedParticleLayerDesc : 
-	//    
-	//   this a ParticleLayerDesc derived class. Instead of implementing by hand such a new class for each PARTICLE type, 
-	//   we use this template class that use a LAYER_TRAIT argument
-	//
-	//   => the LAYER_TRAIT implement the very low level necessary functions and 'TypedParticleLayerDesc' helps making the glue to have a valid 'ParticleLayerDesc' class
-	//   => PRO: we avoid virtual function calls for each particles, but only a single time for every 'Allocation'
-	//
-	// requirement of LAYER_TRAIT:
-	//
-	// 1 - it must implement:
-	//
-	//    bool UpdateParticle(...) const;    => returns true if the particle must be destroyed
-	//
-	// and 
-	//
-	//    size_t ParticleToVertices(...) const;  => returns the number of vertices written (should be 6)
-	//
-	// 2 - If we have to make a computation on ALL particles before, we can implement the two following functions
-	//
-	//	  TYPE_XXX BeginUpdateParticles(...)
-	//
-	//	  TYPE_YYY BeginParticlesToVertices(...)
-	//
-	// in that case, the previous functions have an additionnal argument
-	//
-	//    UpdateParticle(... TYPE_XXX)
-	//
-	//    ParticleToVertices(... TYPE_YYY)
-	//
-	// Example : we can compute an transform for the whole allocation (single call) and apply it to each particle
-	//
-	// 3 - if we want each allocation to have embedded data, your trait just has to have an embedded data
-	//
-	//    class per_allocation_data { ... }
-	//
-	// in that case, the previous functions have an additionnal argument
-	//
-	//    UpdateParticle(... per_allocation_data, TYPE_XXX) 
-	//
-	//    ParticleToVertices(... per_allocation_data, TYPE_YYY)
-	//
-	//	  TYPE_XXX BeginUpdateParticles(...per_allocation_data)
-	//
-	//	  TYPE_YYY BeginParticlesToVertices(...per_allocation_data)
-	//
-	// This per_allocation_data may have :
-	//
-	//   - a Tick(delta_time) method => returns true if the allocation must be destroyed
-	//
-	//   - UpdateVertice(vertex *) method
-
-
 
 	// undefine macros
 	//#undef CHAOS_PARTICLE_CLASSES

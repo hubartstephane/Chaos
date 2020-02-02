@@ -11,12 +11,12 @@ namespace chaos
 {
     namespace ParticleDefault
     {
-        void ParticleTrait::ParticleToVertices(Particle const& particle, TrianglePairOutput<Vertex>& output)
+        void ParticleTrait::ParticleToPrimitives(Particle const& particle, TrianglePairOutput<Vertex>& output)
         {
             ParticleToPrimitive(particle, output.AddPrimitive());
         }
 
-        void ParticleTrait::ParticleToVertices(Particle const& particle, QuadOutput<Vertex>& output)
+        void ParticleTrait::ParticleToPrimitives(Particle const& particle, QuadOutput<Vertex>& output)
         {
             ParticleToPrimitive(particle, output.AddPrimitive());
         }

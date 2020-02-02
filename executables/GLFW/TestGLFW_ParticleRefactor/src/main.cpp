@@ -90,7 +90,7 @@ public:
 		return (particle->remaining_time <= 0.0f);
 	}
 
-    void ParticleToVertices(ParticleExample const & particle, chaos::TrianglePairOutput<VertexExample> & output, LayerTrait const* layer_trait) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::TrianglePairOutput<VertexExample> & output, LayerTrait const* layer_trait) const
     {
         if (rand() % 5 == 0) // flickering particles (not always rendered)
             return;
@@ -107,7 +107,7 @@ public:
         }
     }
 
-    void ParticleToVertices(ParticleExample const& particle, chaos::QuadOutput<VertexExample>& output, LayerTrait const* layer_trait) const
+    void ParticleToPrimitives(ParticleExample const& particle, chaos::QuadOutput<VertexExample>& output, LayerTrait const* layer_trait) const
     {
         if (rand() % 5 == 0) // flickering particles (not always rendered)
             return;

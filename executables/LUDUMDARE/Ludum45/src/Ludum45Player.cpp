@@ -219,7 +219,7 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 				{
 					dash_timer = ludum_game->player_dash_duration;
 					dash_cooldown = GetCurrentDashValue();			
-					GetGame()->Play("dash", false, false, 0.0f, death::SoundContext::LEVEL);
+					GetGame()->PlaySound("dash", false, false, 0.0f, death::SoundContext::LEVEL);
 				}		
 			}
 			dash_locked = true; // dash is locked until the key is released
@@ -396,7 +396,7 @@ void LudumPlayer::FireProjectiles()
     });
 
     // play the sound
-    ludum_game->Play("fire", false, false, 0.0f, death::SoundContext::LEVEL);
+    ludum_game->PlaySound("fire", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 
 void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
@@ -439,7 +439,7 @@ void LudumPlayer::OnDamagedReceived(float damage)
         SetHealth(-damage, true);
 		invulnerability_timer = GetLudumGame()->player_invulnerability_duration;
 	}
-	GetGame()->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
+	GetGame()->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 
 void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)

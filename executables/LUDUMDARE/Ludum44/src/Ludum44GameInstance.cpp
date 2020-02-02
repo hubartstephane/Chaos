@@ -232,7 +232,7 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
 
     // play some sound
     if (sound_name != nullptr)
-        ludum_game->Play(sound_name, false, false, 0.0f, death::SoundContext::LEVEL);
+        ludum_game->PlaySound(sound_name, false, false, 0.0f, death::SoundContext::LEVEL);
 
     return result;
 }

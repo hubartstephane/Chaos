@@ -71,12 +71,14 @@ namespace death
 
 		/** the life for the player */
 		int life_count = 0;
+        /** the health of the player */
+        float health = 1.0f;
+        /** the maximum health of the player */
+        float max_health = 1.0f;
 		/** the score for the player */
 		int score = 0;
 		/** the player box */
 		chaos::box2 player_box;
-
-
 	};
 
 	// =============================================

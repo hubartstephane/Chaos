@@ -269,6 +269,8 @@ namespace death
 	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const
 	{
 		checkpoint->life_count = life_count;
+        checkpoint->health = health;
+        checkpoint->max_health = max_health;
 		checkpoint->score = score;
 		checkpoint->player_box = GetPlayerBox();
 		return true;
@@ -277,6 +279,8 @@ namespace death
 	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
 	{
 		life_count = checkpoint->life_count;
+        health     = checkpoint->health;
+        max_health = checkpoint->max_health;
 		score      = checkpoint->score;
 		SetPlayerBox(checkpoint->player_box);
 		return true;

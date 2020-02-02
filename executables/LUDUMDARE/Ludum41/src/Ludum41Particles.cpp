@@ -15,7 +15,7 @@
 // Object particle system
 // ===========================================================================
 
-void ParticleObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -26,7 +26,7 @@ void ParticleObjectTrait::ParticleToVertices(ParticleObject const& particle, cha
         primitive[i].color = particle.color;
 }
 
-void ParticleObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
+void ParticleObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
 {
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -51,7 +51,7 @@ int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, chaos::Parti
 	return 0;
 }
 
-glm::vec2 ParticleLifeObjectTrait::BeginParticlesToVertices(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const
+glm::vec2 ParticleLifeObjectTrait::BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const
 {
 	return glm::vec2(0.0f, 0.0f);
 }
@@ -61,7 +61,7 @@ bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * 
 	return false;
 }
 
-void ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
+void ParticleLifeObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -72,7 +72,7 @@ void ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const& particle,
         primitive[i].color = particle.color;
 }
 
-void ParticleLifeObjectTrait::ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
+void ParticleLifeObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
 {
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -99,7 +99,7 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 	return false;
 }
 
-void ParticleBrickTrait::ParticleToVertices(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
@@ -119,7 +119,7 @@ void ParticleBrickTrait::ParticleToVertices(ParticleBrick const& particle, chaos
         primitive[i].color = color;
 }
 
-void ParticleBrickTrait::ParticleToVertices(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
@@ -145,7 +145,7 @@ void ParticleBrickTrait::ParticleToVertices(ParticleBrick const& particle, chaos
 // Object Movable particle system
 // ===========================================================================
 
-void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
@@ -166,7 +166,7 @@ void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const&
         primitive[i].color = particle.color * power_color;
 }
 
-void ParticleMovableObjectTrait::ParticleToVertices(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
 
@@ -342,7 +342,7 @@ glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 
 // Challenge particle system
 // ===========================================================================
 
-void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
     int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
     bool keyboard = chaos::InputMode::IsPCMode(input_mode);
@@ -378,7 +378,7 @@ void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const& particl
 }
 
 
-void ParticleChallengeTrait::ParticleToVertices(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
+void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
 {
     int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
     bool keyboard = chaos::InputMode::IsPCMode(input_mode);

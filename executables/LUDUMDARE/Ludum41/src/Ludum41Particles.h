@@ -26,8 +26,8 @@ class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject
 public:
 
 
-    void ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase> & output) const;
-    void ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase> & output) const;
+    void ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 
 	bool UpdateParticle(float delta_time, ParticleObject * particle) const;
 };
@@ -54,10 +54,10 @@ public:
     bool UpdateParticle(float delta_time, ParticleObject* particle, int extra_param, LayerTrait const* layer_trait) const;
 
 	// called once for the whole allocation
-	glm::vec2 BeginParticlesToVertices(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const;
+	glm::vec2 BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const;
     // called for every particles
-    void ParticleToVertices(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
-    void ParticleToVertices(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
+    void ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
+    void ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
 };
 
 // ===========================================================================
@@ -87,8 +87,8 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleBrick * particle, LayerTrait const * layer_trait) const;
 
-    void ParticleToVertices(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToVertices(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToPrimitives(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 // ===========================================================================
@@ -116,8 +116,8 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const;
 
-    void ParticleToVertices(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToVertices(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 
 	void UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const;
 
@@ -148,8 +148,8 @@ class ParticleChallengeTrait : public chaos::ParticleAllocationTrait<ParticleCha
 {
 public:
 
-    void ParticleToVertices(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const;
-    void ParticleToVertices(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 };
 
 

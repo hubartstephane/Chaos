@@ -61,9 +61,9 @@ namespace chaos
 		public:
 
             /** generates 1 quad from one particle */
-            static void ParticleToVertices(Particle const& particle, QuadOutput<Vertex> & output);
+            static void ParticleToPrimitives(Particle const& particle, QuadOutput<Vertex> & output);
             /** generates 1 triangle pair from one particle */
-            static void ParticleToVertices(Particle const& particle, TrianglePairOutput<Vertex>& output);
+            static void ParticleToPrimitives(Particle const& particle, TrianglePairOutput<Vertex>& output);
 
             /** generates 1 quad from one particle */
             static void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive);

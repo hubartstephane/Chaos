@@ -237,19 +237,6 @@ namespace chaos
 		// restore rendering states
 		UpdateRenderingStates(renderer, false);
 		return result;
-
-
-
-
-
-
-
-
-
-
-
-
-
 	}
 
     int ParticleLayerBase::DoDisplayHelper(GPURenderer* renderer, GPURenderMaterial const* final_material, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)

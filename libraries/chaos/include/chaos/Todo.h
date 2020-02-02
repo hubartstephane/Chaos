@@ -133,7 +133,7 @@
 
 		-- Mieux a  faire que d un coté
 		
-			chaos::ParticleDefault::ParticleTrait::ParticleToVertices
+			chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives
 
 		  et 
 
@@ -151,7 +151,7 @@
 
 
 
-	//return chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, vertices, vertices_per_particle);
+	//return chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, vertices, vertices_per_particle);
 
 
 

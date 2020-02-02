@@ -134,14 +134,14 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool a
 // ParticlePlayerTrait
 // ===========================================================================
 
-void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
-void ParticlePlayerTrait::ParticleToVertices(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
 
@@ -242,7 +242,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 // ParticleEnemyTrait
 // ===========================================================================
 
-void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const * layer_trait) const
+void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const * layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -257,7 +257,7 @@ void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos
 	}
 }
 
-void ParticleEnemyTrait::ParticleToVertices(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -310,14 +310,14 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 // ParticleAtomTrait
 // ===========================================================================
 
-void ParticleAtomTrait::ParticleToVertices(ParticleAtom const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleAtomTrait::ParticleToPrimitives(ParticleAtom const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
-void ParticleAtomTrait::ParticleToVertices(ParticleAtom const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleAtomTrait::ParticleToPrimitives(ParticleAtom const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
 bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
@@ -416,13 +416,13 @@ bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle
 	return false;
 }
 
-void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleLifeTrait::ParticleToPrimitives(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
-void ParticleLifeTrait::ParticleToVertices(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleLifeTrait::ParticleToPrimitives(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::ParticleDefault::ParticleTrait::ParticleToVertices(particle, output);
+    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
 

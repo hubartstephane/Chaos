@@ -832,11 +832,11 @@ namespace death
 			previous_music = true;
 		}
 		// start new music
-		game_music = Play(music_name, false, true, (previous_music) ? BLEND_TIME : 0.0f, SoundContext::GAME);
+		game_music = PlaySound(music_name, false, true, (previous_music) ? BLEND_TIME : 0.0f, SoundContext::GAME);
 		return game_music.get();
 	}
 
-	chaos::Sound * Game::Play(char const * name, chaos::PlaySoundDesc play_desc, chaos::TagType category_tag)
+	chaos::Sound * Game::PlaySound(char const * name, chaos::PlaySoundDesc play_desc, chaos::TagType category_tag)
 	{
 		// search manager
 		chaos::SoundManager * sound_manager = GetSoundManager();
@@ -865,14 +865,14 @@ namespace death
 		return source->Play(play_desc);
 	}
 
-	chaos::Sound * Game::Play(char const * name, bool paused, bool looping, float blend_in_time, chaos::TagType category_tag)
+	chaos::Sound * Game::PlaySound(char const * name, bool paused, bool looping, float blend_in_time, chaos::TagType category_tag)
 	{
 		chaos::PlaySoundDesc play_desc;
 		play_desc.paused = paused;
 		play_desc.looping = looping;
 		play_desc.blend_in_time = blend_in_time;
 
-		return Play(name, play_desc, category_tag);
+		return PlaySound(name, play_desc, category_tag);
 	}
 
 	bool Game::InitializeSoundManager()
@@ -1070,7 +1070,7 @@ namespace death
 			menu_music = nullptr;
 		else
 #endif
-		menu_music = Play("menu_music", false, true, 0.0f, SoundContext::MAINMENU);
+		menu_music = PlaySound("menu_music", false, true, 0.0f, SoundContext::MAINMENU);
 		game_music = nullptr;
 		pause_music = nullptr;
 		// restore the background image
@@ -1108,7 +1108,7 @@ namespace death
 			pause_music = nullptr;
 		else
 #endif
-		pause_music = Play("pause_music", false, true, 0.0f, SoundContext::PAUSEMENU);
+		pause_music = PlaySound("pause_music", false, true, 0.0f, SoundContext::PAUSEMENU);
 		// internal code
 		CreatePauseMenuHUD();
 		// give opportunity to other game classes to respond

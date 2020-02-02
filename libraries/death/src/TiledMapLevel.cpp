@@ -303,7 +303,7 @@ namespace death
 				play_desc.max_distance = glm::length(box.half_size);
 				play_desc.min_distance = play_desc.max_distance * min_distance_ratio;
 
-				result = game->Play(sound_name.c_str(), play_desc, SoundContext::LEVEL);
+				result = game->PlaySound(sound_name.c_str(), play_desc, SoundContext::LEVEL);
 			}
 
 			return result;

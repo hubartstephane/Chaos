@@ -28,12 +28,12 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// play sound
 	if (enemy->enemy_health > 0.0f)
-		game->Play("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
 	else 
 	{
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(10, true);
-		game->Play("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
 
 		chaos::box2 b = ref_box;
 		b.half_size *= 2.0f;

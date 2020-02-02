@@ -59,7 +59,7 @@ void LudumGameInstance::TickHeartBeat(double delta_time)
 	if (heart_beat_time >= limit_value)
 	{
 		heart_beat_time = 0.0f;
-		game->Play("heartbeat", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("heartbeat", false, false, 0.0f, death::SoundContext::LEVEL);
 	}
 }
 
@@ -83,8 +83,8 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 void LudumGameInstance::NotifyAtomCountChange(int delta)
 {
 	if (delta > 0)
-		game->Play("particle_add", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("particle_add", false, false, 0.0f, death::SoundContext::LEVEL);
 	else if (delta < 0)
-		game->Play("particle_removed", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("particle_removed", false, false, 0.0f, death::SoundContext::LEVEL);
 	waken_up_particle_count += delta;
 }

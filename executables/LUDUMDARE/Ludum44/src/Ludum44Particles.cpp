@@ -71,12 +71,12 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// play sound
 	if (enemy->life > 0.0f)
-		game->Play("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
 	else 
 	{
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(enemy->score, true);
-		game->Play("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
 		game->GetLudumGameInstance()->FireExplosion(ref_box);
 	}
 	return result;
@@ -372,7 +372,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			update_data.player->SetHealth(-particle->damage, true);
 			particle->damage = 0.0f;
 			
-			layer_trait->game->Play("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
+			layer_trait->game->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 		}	
 	}
 

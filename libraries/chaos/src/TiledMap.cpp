@@ -1245,6 +1245,7 @@ namespace chaos
 			};
 			XMLTools::ReadEnumAttribute(element, "renderorder", render_order_map, render_order);
 
+            XMLTools::ReadAttribute(element, "compressionlevel", compressionlevel);
 			XMLTools::ReadAttribute(element, "version", version);
 			XMLTools::ReadAttribute(element, "width", size.x);
 			XMLTools::ReadAttribute(element, "height", size.y);

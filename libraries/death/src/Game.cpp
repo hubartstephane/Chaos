@@ -608,15 +608,13 @@ namespace death
 		// create the particle allocation if necessary
 		if (background_allocations == nullptr)
 		{
-            background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, nullptr, 1, true);
+            background_allocations = GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BACKGROUND_LAYER_ID, nullptr, 1, true, [](chaos::ParticleAccessor<death::ParticleBackground> accessor)
+            {
+                for (death::ParticleBackground & particle : accessor)
+                    particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+            });
 			if (background_allocations == nullptr)
 				return false;
-
-			chaos::ParticleAccessor<death::ParticleBackground> particles = background_allocations->GetParticleAccessor();
-			if (particles.GetCount() == 0)
-				return false;
-
-			particles[0].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 
 		// create a material

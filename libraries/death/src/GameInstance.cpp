@@ -32,13 +32,6 @@ namespace death
 		return game->GetLevelInstance();
 	}
 
-
-
-
-
-
-
-
 	Player * GameInstance::GetPlayer(size_t player_index)
 	{
 
@@ -112,7 +105,7 @@ namespace death
 
 	Player * GameInstance::CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
-		// ensure we can cerate a new player
+		// ensure we can create a new player
 		size_t count = players.size();
 		if (count >= GetMaxPlayerCount())
 			return nullptr;

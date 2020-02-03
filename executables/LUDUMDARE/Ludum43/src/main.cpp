@@ -2,8 +2,6 @@
 #include <death/Death.h> 
 #include "Ludum43Game.h"
 
-#include <chaos/NameFilter.h>
-
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::MyGLFW::SingleWindowApplicationParams params;

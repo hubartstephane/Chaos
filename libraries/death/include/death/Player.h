@@ -88,6 +88,9 @@ namespace death
 		/** gets the right trigger */
 		float GetRightTrigger() const { return right_trigger; }
 
+        /** utility function to check whether a keyboard key or gamepad button is down */
+        bool CheckButtonPressed(int const* keyboard_buttons, int gamepad_button);
+
 	protected:
 
 		/** initialize the game instance */

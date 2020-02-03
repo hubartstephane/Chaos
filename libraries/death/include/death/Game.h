@@ -186,8 +186,8 @@ namespace death
 		/** get any level */
 		GameLevel const * GetLevel(int level_index) const;
 
-		/** get glfw window */
-		GLFWwindow * GetGLFWWindow() { return glfw_window; }
+        /** get glfw window */
+        GLFWwindow* GetGLFWWindow() { return glfw_window; }
 
 		/** reloading the configuration file */
 		bool ReloadGameConfiguration();

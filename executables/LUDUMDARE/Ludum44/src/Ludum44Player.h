@@ -66,9 +66,6 @@ protected:
 	/** test whether the player wants to by an item */
 	void UpdatePlayerBuyingItem(double delta_time);
 
-	/** check whether some inputs are pressed */
-	bool CheckButtonPressed(int const * keyboard_buttons, int gamepad_button);
-
 	/** fire a charged projectile */
 	void FireChargedProjectile();	
 	/** fire a normal projectile */

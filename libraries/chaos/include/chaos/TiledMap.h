@@ -1243,6 +1243,8 @@ namespace chaos
 			int stagger_index = STAGGERED_INDEX_ODD;
 			/** object information */
 			int render_order = RENDER_ORDER_RIGHT_DOWN;
+            /** object information */
+            int compressionlevel = 0;
 			/** object information */
 			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** object information */

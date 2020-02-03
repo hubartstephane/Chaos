@@ -123,7 +123,7 @@ namespace death
 			/** additionnal initialization */
 			virtual bool Initialize();
 			/** enable the creation of additionnal particles */
-			virtual bool IsAdditionalParticlesCreationEnabled() const { return true; }
+            virtual bool IsParticleCreationEnabled() const;
 
 		protected:
 
@@ -205,9 +205,6 @@ namespace death
 			/** search whether there is a collision given box */
 			virtual bool IsCollisionWith(chaos::box2 const & other_box, std::vector<chaos::weak_ptr<TriggerObject>> const * triggers) const;
 
-			/** enable the creation of tile for this trigger */
-			virtual bool IsAdditionalParticlesCreationEnabled() const {return true;}
-
 		protected:
 
 			/** override */
@@ -271,7 +268,7 @@ namespace death
 			/** constructor */
 			using TriggerObject::TriggerObject;
 			/** override */
-			virtual bool IsAdditionalParticlesCreationEnabled() const override;
+			virtual bool IsParticleCreationEnabled() const override;
 			/** override */
 			virtual bool Initialize() override;
 
@@ -309,7 +306,7 @@ namespace death
 			/** constructor */
 			using TriggerObject::TriggerObject;
 			/** override */
-			virtual bool IsAdditionalParticlesCreationEnabled() const override;
+			virtual bool IsParticleCreationEnabled() const override;
 			/** override */
 			virtual bool Initialize() override;
 
@@ -332,7 +329,7 @@ namespace death
 			/** constructor */
 			using TriggerObject::TriggerObject;
 			/** override */
-			virtual bool IsAdditionalParticlesCreationEnabled() const override;
+			virtual bool IsParticleCreationEnabled() const override;
 
 		protected:
 
@@ -381,7 +378,7 @@ namespace death
 		protected:
 
 			/** override */
-			virtual bool IsAdditionalParticlesCreationEnabled() const override;
+			virtual bool IsParticleCreationEnabled() const override;
 			/** override */
 			virtual bool OnPlayerCollisionEvent(double delta_time, Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
 		};
@@ -676,7 +673,7 @@ namespace death
 			/** create an object in an object layer */
 			GeometricObject * CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
 			/** create an object in an object layer */
-			void CreateAdditionalObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator * particle_populator);
+			void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator * particle_populator);
 
 			/** finalize the particles created */
 			virtual bool FinalizeParticles();

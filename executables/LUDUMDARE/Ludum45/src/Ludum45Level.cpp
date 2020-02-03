@@ -16,7 +16,7 @@
 // BonusSpawnerTriggerObject implementation
 // =============================================================
 
-bool BonusSpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
+bool BonusSpawnerTriggerObject::IsParticleCreationEnabled() const
 {
 	return false;
 }
@@ -54,7 +54,7 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 // EnemySpawnerTriggerObject implementation
 // =============================================================
 
-bool EnemySpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
+bool EnemySpawnerTriggerObject::IsParticleCreationEnabled() const
 {
 	return false;
 }

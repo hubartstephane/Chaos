@@ -48,9 +48,6 @@ public:
 	/** constructor */
 	using death::TiledMap::TriggerObject::TriggerObject;
 
-	/** override */
-	virtual bool IsAdditionalParticlesCreationEnabled() const override;
-
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
@@ -70,8 +67,6 @@ public:
 	/** constructor */
 	using death::TiledMap::TriggerObject::TriggerObject;
 
-	/** override */
-	virtual bool IsAdditionalParticlesCreationEnabled() const override;
 	/** override */
 	virtual bool Initialize() override;
 

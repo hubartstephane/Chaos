@@ -26,7 +26,7 @@ public:
 	/** constructor */
 	using TriggerObject::TriggerObject;
 	/** override */
-	virtual bool IsAdditionalParticlesCreationEnabled() const override;
+	virtual bool IsParticleCreationEnabled() const override;
 	/** override */
 	virtual bool Initialize() override;
 
@@ -57,7 +57,7 @@ public:
 	/** constructor */
 	using TriggerObject::TriggerObject;
 	/** override */
-	virtual bool IsAdditionalParticlesCreationEnabled() const override;
+	virtual bool IsParticleCreationEnabled() const override;
 	/** override */
 	virtual bool Initialize() override;
 

@@ -9,30 +9,6 @@
 #include <chaos/GeometryFramework.h>
 
 // =============================================================
-// IsAdditionalParticlesCreationEnabled
-// =============================================================
-
-static bool IsDefaultTileCreationEnabled()
-{
-	return false;
-#if _DEBUG
-	return true;
-#else 
-	return false;
-#endif	
-}
-
-bool SpeedUpTriggerObject::IsAdditionalParticlesCreationEnabled() const
-{
-	return IsDefaultTileCreationEnabled();
-}
-
-bool SpawnerTriggerObject::IsAdditionalParticlesCreationEnabled() const
-{
-	return IsDefaultTileCreationEnabled();
-}
-
-// =============================================================
 // LudumLevel implementation
 // =============================================================
 
@@ -112,7 +88,7 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 	if (surface_object != nullptr)
 	{
 		if (chaos::TiledMapTools::HasFlag(surface_object, "PowerUp", "PowerUp", "PowerUp"))
-			return new PowerUpTriggerObject(in_layer_instance, surface_object); // XXX : the power up, is the only object that has IsAdditionalParticlesCreationEnabled() => true
+			return new PowerUpTriggerObject(in_layer_instance, surface_object); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
 		if (chaos::TiledMapTools::HasFlag(surface_object, "SpeedUp", "SpeedUp", "SpeedUp"))
 			return new SpeedUpTriggerObject(in_layer_instance, surface_object);
 		if (chaos::TiledMapTools::HasFlag(surface_object, "Spawner", "Spawner", "Spawner"))

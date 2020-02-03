@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="16" nextobjectid="1925">
+<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="1" nextlayerid="16" nextobjectid="1925">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -139,19 +139,19 @@
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="1808" name="Checkpoint" type="Checkpoint" gid="2" x="-3680" y="14240" width="20912" height="2416"/>
-  <object id="1809" name="Checkpoint" gid="2" x="-4312" y="-11128" width="20912" height="688"/>
-  <object id="1843" name="Finish" gid="2" x="-2008" y="-133560" width="16432" height="8752"/>
-  <object id="1870" name="PowerUp" gid="2" x="-3788" y="11388" width="10160" height="5000">
+  <object id="1809" name="Checkpoint" type="Checkpoint" gid="2" x="-4312" y="-11128" width="20912" height="688"/>
+  <object id="1843" name="Finish" type="Finish" gid="2" x="-2008" y="-133560" width="16432" height="8752"/>
+  <object id="1870" name="PowerUp" type="PowerUp" gid="2" x="-3788" y="11388" width="10160" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1871" name="PowerUp" gid="11" x="7580" y="11388" width="9520" height="5000">
+  <object id="1871" name="PowerUp" type="PowerUp" gid="11" x="7580" y="11388" width="9520" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1872" name="Spawner" gid="2" x="1832" y="-43704" width="9072" height="10096">
+  <object id="1872" name="Spawner" type="Spawner" gid="2" x="1832" y="-43704" width="9072" height="10096">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -161,7 +161,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="0"/>
    </properties>
   </object>
-  <object id="1873" name="Spawner" gid="2" x="-1752" y="5928" width="16048" height="13168">
+  <object id="1873" name="Spawner" type="Spawner" gid="2" x="-1752" y="5928" width="16048" height="13168">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -171,17 +171,17 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="0"/>
    </properties>
   </object>
-  <object id="1874" name="PowerUp" gid="11" x="7132" y="-12100" width="9456" height="5000">
+  <object id="1874" name="PowerUp" type="PowerUp" gid="11" x="7132" y="-12100" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1875" name="PowerUp" gid="2" x="-4300" y="-12100" width="10160" height="5000">
+  <object id="1875" name="PowerUp" type="PowerUp" gid="2" x="-4300" y="-12100" width="10160" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1886" name="Spawner" gid="2" x="-1272" y="-17368" width="15344" height="4272">
+  <object id="1886" name="Spawner" type="Spawner" gid="2" x="-1272" y="-17368" width="15344" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -191,7 +191,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1887" name="Spawner" gid="2" x="-1272" y="-66904" width="15344" height="12976">
+  <object id="1887" name="Spawner" type="Spawner" gid="2" x="-1272" y="-66904" width="15344" height="12976">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -201,40 +201,40 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="0"/>
    </properties>
   </object>
-  <object id="1891" name="PowerUp" gid="2" x="-4428" y="-36612" width="10160" height="5000">
+  <object id="1891" name="PowerUp" type="PowerUp" gid="2" x="-4428" y="-36612" width="10160" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1892" name="Checkpoint" gid="2" x="-4440" y="-35640" width="20912" height="688"/>
-  <object id="1893" name="PowerUp" gid="11" x="7004" y="-36612" width="9456" height="5000">
+  <object id="1892" name="Checkpoint" type="Checkpoint" gid="2" x="-4440" y="-35640" width="20912" height="688"/>
+  <object id="1893" name="PowerUp" type="PowerUp" gid="11" x="7004" y="-36612" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1894" name="PowerUp" gid="2" x="-4364" y="-61508" width="10160" height="5000">
+  <object id="1894" name="PowerUp" type="PowerUp" gid="2" x="-4364" y="-61508" width="10160" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1895" name="Checkpoint" gid="2" x="-4376" y="-60536" width="20912" height="688"/>
-  <object id="1896" name="PowerUp" gid="11" x="7068" y="-61508" width="9456" height="5000">
+  <object id="1895" name="Checkpoint" type="Checkpoint" gid="2" x="-4376" y="-60536" width="20912" height="688"/>
+  <object id="1896" name="PowerUp" type="PowerUp" gid="11" x="7068" y="-61508" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1897" name="PowerUp" gid="2" x="-4364" y="-84420" width="10160" height="5000">
+  <object id="1897" name="PowerUp" type="PowerUp" gid="2" x="-4364" y="-84420" width="10160" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1898" name="Checkpoint" gid="2" x="-4376" y="-83448" width="20912" height="688"/>
-  <object id="1899" name="PowerUp" gid="11" x="7068" y="-84420" width="9456" height="5000">
+  <object id="1898" name="Checkpoint" type="Checkpoint" gid="2" x="-4376" y="-83448" width="20912" height="688"/>
+  <object id="1899" name="PowerUp" type="PowerUp" gid="11" x="7068" y="-84420" width="9456" height="5000">
    <properties>
     <property name="DECREASE_POWER_UP" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="1900" name="Spawner" gid="2" x="-1624" y="-91704" width="16048" height="9648">
+  <object id="1900" name="Spawner" type="Spawner" gid="2" x="-1624" y="-91704" width="16048" height="9648">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -244,7 +244,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
    </properties>
   </object>
-  <object id="1903" name="Spawner" gid="2" x="-1336" y="-21848" width="7408" height="4272">
+  <object id="1903" name="Spawner" type="Spawner" gid="2" x="-1336" y="-21848" width="7408" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -254,7 +254,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1904" name="Spawner" gid="2" x="-1272" y="-27416" width="7280" height="4272">
+  <object id="1904" name="Spawner" type="Spawner" gid="2" x="-1272" y="-27416" width="7280" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -264,7 +264,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1906" name="Spawner" gid="2" x="6536" y="-21784" width="7408" height="4272">
+  <object id="1906" name="Spawner" type="Spawner" gid="2" x="6536" y="-21784" width="7408" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -274,7 +274,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1907" name="Spawner" gid="2" x="6664" y="-27352" width="7280" height="4272">
+  <object id="1907" name="Spawner" type="Spawner" gid="2" x="6664" y="-27352" width="7280" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -284,7 +284,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1908" name="Spawner" gid="2" x="-1688" y="-102104" width="16048" height="9648">
+  <object id="1908" name="Spawner" type="Spawner" gid="2" x="-1688" y="-102104" width="16048" height="9648">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -294,7 +294,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
    </properties>
   </object>
-  <object id="1909" name="Spawner" gid="2" x="-1496" y="-112280" width="16048" height="17776">
+  <object id="1909" name="Spawner" type="Spawner" gid="2" x="-1496" y="-112280" width="16048" height="17776">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="80"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>
@@ -304,7 +304,7 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="2"/>
    </properties>
   </object>
-  <object id="1911" name="Spawner" gid="2" x="2696" y="-24024" width="7280" height="4272">
+  <object id="1911" name="Spawner" type="Spawner" gid="2" x="2696" y="-24024" width="7280" height="4272">
    <properties>
     <property name="ENEMY_COUNT" type="int" value="15"/>
     <property name="ENEMY_LIFE_FACTOR" type="float" value="1"/>

@@ -42,6 +42,11 @@ namespace death
 			return true;
 		}
 
+        bool GeometricObject::IsParticleCreationEnabled() const 
+        { 
+            return true; 
+        }
+
 		// =====================================
 		// TriggerObject implementation
 		// =====================================
@@ -174,7 +179,7 @@ namespace death
 			return true; // collisions handled successfully
 		}
 
-		bool CheckpointTriggerObject::IsAdditionalParticlesCreationEnabled() const
+		bool CheckpointTriggerObject::IsParticleCreationEnabled() const
 		{
 			return false;
 		}
@@ -194,7 +199,7 @@ namespace death
 		// NotificationTriggerObject
 		// =================================================
 
-		bool NotificationTriggerObject::IsAdditionalParticlesCreationEnabled() const
+		bool NotificationTriggerObject::IsParticleCreationEnabled() const
 		{
 			return false;
 		}
@@ -330,7 +335,7 @@ namespace death
 			return false;
 		}
 
-		bool SoundTriggerObject::IsAdditionalParticlesCreationEnabled() const
+		bool SoundTriggerObject::IsParticleCreationEnabled() const
 		{
 			return false;
 		}
@@ -339,7 +344,7 @@ namespace death
 		// FinishingTriggerObject implementation
 		// =============================================================
 
-		bool FinishingTriggerObject::IsAdditionalParticlesCreationEnabled() const
+		bool FinishingTriggerObject::IsParticleCreationEnabled() const
 		{
 			return false;
 		}
@@ -795,7 +800,7 @@ namespace death
 			return true;
 		}
 
-		void LayerInstance::CreateAdditionalObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator * particle_populator)
+		void LayerInstance::CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject * geometric_object, GeometricObject * object, LayerInstanceParticlePopulator * particle_populator)
 		{
 			chaos::TiledMap::Map * tiled_map = level_instance->GetTiledMap();
 
@@ -962,9 +967,17 @@ namespace death
 
 				// create the object
 				GeometricObject * object = CreateObjectInstance(geometric_object);
-				if (object != nullptr && !object->IsAdditionalParticlesCreationEnabled())
-					continue;
-				CreateAdditionalObjectParticles(geometric_object, object, particle_populator.get());
+                if (object != nullptr)
+                {
+#if _DEBUG
+                    if (!chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
+#endif
+                    {
+                        if (!object->GetGeometricObject()->FindPropertyBool("PARTICLE_CREATION", object->IsParticleCreationEnabled()))
+                            continue;
+                    }
+                }
+                CreateGeometricObjectParticles(geometric_object, object, particle_populator.get());
 			}
 
 			// final flush

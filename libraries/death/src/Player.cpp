@@ -335,6 +335,29 @@ namespace death
         }
     }
 
+    bool Player::CheckButtonPressed(int const* keyboard_buttons, int gamepad_button)
+    {
+        // keyboard input
+        if (keyboard_buttons != nullptr)
+        {
+            death::Game * game = GetGame();
+            if (game != nullptr)
+            {
+                GLFWwindow * glfw_window = game->GetGLFWWindow();
+                if (glfw_window != nullptr)
+                    for (int i = 0; keyboard_buttons[i] >= 0 ; ++i)
+                        if (glfwGetKey(glfw_window, keyboard_buttons[i]) != GLFW_RELEASE)
+                            return true;
+            }
+        }
+
+        // gamepad input
+        if (gamepad_button >= 0)
+            if (gamepad != nullptr && gamepad->IsButtonPressed(gamepad_button))
+                return true;
+        return false;
+    }
+
 	// =================================================
 	// PlayerGamepadCallbacks
 	// =================================================

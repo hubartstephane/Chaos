@@ -138,43 +138,6 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 
 }
 
-bool LudumPlayer::CheckButtonPressed(int const * keyboard_buttons, int gamepad_button)
-{
-	// keyboard input
-	if (keyboard_buttons != nullptr)
-	{
-		death::Game * game = GetGame();
-		if (game != nullptr)
-		{
-			GLFWwindow * glfw_window = game->GetGLFWWindow();
-			if (glfw_window != nullptr)
-			{
-				int i = 0;
-				while (keyboard_buttons[i] >= 0)
-				{
-					if (glfwGetKey(glfw_window, keyboard_buttons[i]) != GLFW_RELEASE)
-						return true;					
-					++i;
-				}
-			}
-		}
-	}
-
-	// gamepad input
-	if (gamepad_button >= 0)
-		if (gamepad != nullptr && gamepad->IsButtonPressed(gamepad_button))
-			return true;	
-	return false;
-}
-
-
-
-
-
-
-
-
-
 
 void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 {

@@ -615,16 +615,13 @@ namespace death
 					if (particle_allocation == nullptr)
 						continue;
 
-					chaos::ParticleAccessor<TileParticle> particles = particle_allocation->GetParticleAccessor();
-
-					size_t particle_count = particles.GetCount();
-					for (size_t j = 0; j < particle_count; ++j)
-					{
-						TileParticle & particle = particles[j];
-						if (chaos::Collide(bounding_box, particle.bounding_box))
-							if (!func(particle)) // stop other collisions
-								return false;
-					}
+					chaos::ParticleAccessor<TileParticle> accessor = particle_allocation->GetParticleAccessor();
+                    for (TileParticle& particle : accessor)
+                    {
+                        if (chaos::Collide(bounding_box, particle.bounding_box))
+                            if (!func(particle)) // stop other collisions
+                                return false;
+                    }
 				}
 				return true; // continue other collisions
 			}

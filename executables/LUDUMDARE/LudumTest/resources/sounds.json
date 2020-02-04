@@ -1,0 +1,33 @@
+{
+	"categories":{
+	
+		"@music":{
+			"volume":0.35
+		},
+    "@FX": {
+      "volume": 0.2
+    },
+		"@FX2":{
+			"volume":1.0
+		},
+
+    "@Voices": {
+      "volume": 1.0
+    },
+
+		"@HeartBeat":{
+			"volume":0.3
+		}  
+	},
+
+  "sources": [
+
+    { "path": "sounds/game_music1.ogg" , "categories" :  "music"},
+    { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
+    { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
+    { "path": "sounds/gameover.ogg" , "categories" :  "Voices"},
+    { "path": "sounds/start.ogg" , "categories" :  "FX"},
+    { "path": "sounds/next_level.ogg" , "categories" :  "FX"},     
+    { "path": "sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
+  ]
+}

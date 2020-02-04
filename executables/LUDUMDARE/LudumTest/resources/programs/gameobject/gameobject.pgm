@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@gameobject.psh"
+	],
+	"vertex_sources":
+	[
+		"@gameobject.vsh"
+	]
+}

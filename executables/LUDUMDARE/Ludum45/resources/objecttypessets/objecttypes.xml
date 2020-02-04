@@ -3,21 +3,27 @@
  <objecttype name="BonusSpawner" color="#ffff00">
   <property name="BONUS_SPAWNER" type="bool" default="true"/>
   <property name="BONUS_TYPE" type="string" default=""/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
  <objecttype name="Camera" color="#ff00ff">
   <property name="CAMERA" type="bool" default="true"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
- <objecttype name="Checkpoint" color="#a4970a"/>
+ <objecttype name="Checkpoint" color="#a4970a">
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
  <objecttype name="EnemySpawner" color="#5500ff">
   <property name="ENEMY_PATTERN" type="string"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
  <objecttype name="EnemySpawner1" color="#a0a0a4">
   <property name="COMMENT" type="string" default="cercle"/>
   <property name="ENEMY_COUNT" type="int" default="10"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type1"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="0.3"/>
   <property name="PATTERN_INDEX" type="int" default="1"/>
@@ -27,6 +33,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type2"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="0.3"/>
   <property name="PATTERN_INDEX" type="int" default="2"/>
@@ -36,6 +43,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type3"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="1"/>
   <property name="PARTICLE_SPEED" type="float" default="1000"/>
   <property name="PATTERN_INDEX" type="int" default="3"/>
@@ -45,6 +53,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type4"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="1"/>
   <property name="PARTICLE_SPEED" type="float" default="1000"/>
   <property name="PATTERN_INDEX" type="int" default="4"/>
@@ -54,6 +63,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type5"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="1"/>
   <property name="PATTERN_INDEX" type="int" default="1"/>
@@ -63,6 +73,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type6"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="1"/>
   <property name="PATTERN_INDEX" type="int" default="2"/>
@@ -72,6 +83,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type7"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="1"/>
   <property name="PARTICLE_SPEED" type="float" default="1000"/>
   <property name="PATTERN_INDEX" type="int" default="3"/>
@@ -81,6 +93,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type8"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="1"/>
   <property name="PARTICLE_SPEED" type="float" default="1000"/>
   <property name="PATTERN_INDEX" type="int" default="4"/>
@@ -90,6 +103,7 @@
   <property name="ENEMY_COUNT" type="int" default="20"/>
   <property name="ENEMY_SPAWNER" type="bool" default="true"/>
   <property name="ENEMY_TYPE" type="string" default="ET_Type9"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_INITIAL_RANGE" type="float" default="6.28"/>
   <property name="PARTICLE_SPEED" type="float" default="1"/>
   <property name="PATTERN_INDEX" type="int" default="1"/>
@@ -98,71 +112,86 @@
   <property name="BITMAP_NAME" type="string" default="ange1"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.2"/>
   <property name="ENEMY_HEALTH" type="float" default="2"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="1"/>
  </objecttype>
  <objecttype name="ET_Type2" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="ange2"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.2"/>
   <property name="ENEMY_HEALTH" type="float" default="4"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="1"/>
  </objecttype>
  <objecttype name="ET_Type3" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="bird1"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.2"/>
   <property name="ENEMY_HEALTH" type="float" default="6"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="1"/>
  </objecttype>
  <objecttype name="ET_Type4" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="bird2"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.3"/>
   <property name="ENEMY_HEALTH" type="float" default="8"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="1"/>
  </objecttype>
  <objecttype name="ET_Type5" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="satan1"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.3"/>
   <property name="ENEMY_HEALTH" type="float" default="10"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="1"/>
  </objecttype>
  <objecttype name="ET_Type6" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="monster1"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.3"/>
   <property name="ENEMY_HEALTH" type="float" default="12"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="3"/>
  </objecttype>
  <objecttype name="ET_Type7" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="monster2"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.4"/>
   <property name="ENEMY_HEALTH" type="float" default="14"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="3"/>
  </objecttype>
  <objecttype name="ET_Type8" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="rabbit1"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.4"/>
   <property name="ENEMY_HEALTH" type="float" default="16"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="3"/>
  </objecttype>
  <objecttype name="ET_Type9" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string" default="rabbit2"/>
   <property name="ENEMY_DAMAGE" type="float" default="0.4"/>
   <property name="ENEMY_HEALTH" type="float" default="20"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="SCALE" type="float" default="3"/>
+ </objecttype>
+ <objecttype name="Finish" color="#a0a0a4">
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
  <objecttype name="Notification" color="#34a404">
   <property name="LIFETIME" type="float" default="5"/>
   <property name="NOTIFICATION" type="string" default="toto"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PLAYER_COLLISION" type="bool" default="true"/>
   <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
   <property name="TRIGGER_ONCE" type="bool" default="true"/>
  </objecttype>
  <objecttype name="PlayerStart" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PLAYER_START" type="bool" default="true"/>
  </objecttype>
  <objecttype name="Sound" color="#a40002">
   <property name="3D_SOUND" type="bool" default="true"/>
   <property name="LOOPING" type="bool" default="false"/>
   <property name="MIN_DISTANCE_RATIO" type="float" default="0.3"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" default="-1"/>
   <property name="SOUND_NAME" type="string"/>
   <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>

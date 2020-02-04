@@ -16,11 +16,6 @@
 // BonusSpawnerTriggerObject implementation
 // =============================================================
 
-bool BonusSpawnerTriggerObject::IsParticleCreationEnabled() const
-{
-	return false;
-}
-
 bool BonusSpawnerTriggerObject::Initialize()
 {
 	if (!death::TiledMap::TriggerObject::Initialize())
@@ -53,11 +48,6 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos:
 // =============================================================
 // EnemySpawnerTriggerObject implementation
 // =============================================================
-
-bool EnemySpawnerTriggerObject::IsParticleCreationEnabled() const
-{
-	return false;
-}
 
 bool EnemySpawnerTriggerObject::Initialize()
 {

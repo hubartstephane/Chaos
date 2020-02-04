@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2128">
+<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2128">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -138,7 +137,7 @@
     <property name="BITMAP_NAME" value="jesus"/>
    </properties>
   </object>
-  <object id="2009" name="Finish" gid="22" x="33448" y="16232" width="2992" height="8752"/>
+  <object id="2009" name="Finish" type="Finish" gid="22" x="33448" y="16232" width="2992" height="8752"/>
   <object id="2092" name="Checkpoint" type="Checkpoint" gid="22" x="12616" y="17768" width="1264" height="12272"/>
   <object id="2093" name="Checkpoint" type="Checkpoint" gid="22" x="25096" y="18632" width="704" height="12272"/>
  </objectgroup>

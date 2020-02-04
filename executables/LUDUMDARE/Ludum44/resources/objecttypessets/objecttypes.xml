@@ -6,6 +6,9 @@
  <objecttype name="Checkpoint" color="#a4970a">
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
+ <objecttype name="Finish" color="#a0a0a4">
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
  <objecttype name="Notification" color="#34a404">
   <property name="LIFETIME" type="float" default="5"/>
   <property name="NOTIFICATION" type="string" default="toto"/>

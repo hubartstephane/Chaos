@@ -416,15 +416,17 @@ namespace chaos
                 pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
                 images = &pages;
             }
-
-          // prefere JSON settings to name encoded values or GIF meta data for frame rate
+			// error case
+			size_t count = images->size();
+			if (images->size() == 0)
+				return nullptr;
+			// prefere JSON settings to name encoded values or GIF meta data for frame rate
             if (manifest_animation_description.frame_time > 0.0f)
                 animation_description.frame_time = manifest_animation_description.frame_time;
             if (!manifest_animation_description.grid_data.IsEmpty())
                 animation_description.grid_data = manifest_animation_description.grid_data;
 
-            // register resources for destructions
-			size_t count = images->size();
+            // register resources for destructions			
 			for (size_t i = 0; i < count; ++i)
 				RegisterResource(images->operator[](i), true);
 

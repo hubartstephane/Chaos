@@ -88,6 +88,8 @@ namespace death
 	{
 		Game * game = GetGame();
 
+		// tick the invulnerability
+		TickInvulnerability(delta_time);
 		// remove previous frame cached input
 		ResetCachedInputs();
 		// cache values for stick displacement
@@ -106,6 +108,13 @@ namespace death
 			TickPlayerDisplacement(delta_time);
 		}
 		return true;
+	}
+
+	void Player::TickInvulnerability(double delta_time)
+	{
+		invulnerability_timer -= (float)delta_time;
+		if (invulnerability_timer < 0.0f)
+			invulnerability_timer = 0.0f;
 	}
 
 	void Player::TickPlayerDisplacement(double delta_time)
@@ -307,17 +316,21 @@ namespace death
         else if (new_health > max_health)
             new_health = max_health;
 
-        // commit life lost
-        bool update_health = true;
+		// invulnerability ?
+		if (new_health < old_health)
+		{
 #if _DEBUG
-        if (old_health > new_health && GetGame()->GetCheatMode())
-            update_health = false;
+			if (GetGame()->GetCheatMode())
+				return;
 #endif
-        if (update_health)
-        {
-            health = new_health;
-            OnHealthChanged(old_health, new_health);
-        }
+			if (invulnerability_timer > 0)
+				return;
+			invulnerability_timer = invulnerability_duration;
+		}
+
+        // commit life lost
+		health = new_health;
+		OnHealthChanged(old_health, new_health);
     }
 
     void Player::OnHealthChanged(float old_health, float new_health)
@@ -325,6 +338,10 @@ namespace death
         // special FX
         if (old_health > new_health)
         {
+			// 2 seconds force feedback effect
+			if (gamepad != nullptr)
+				gamepad->AddForceFeedbackEffect(2.0f, 1.0f, 1.0f);
+			// camera effect
             death::Camera* camera = GetLevelInstance()->GetCamera(0);
             if (camera != nullptr)
             {

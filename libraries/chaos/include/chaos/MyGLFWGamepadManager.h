@@ -328,6 +328,21 @@ namespace chaos
 			/** give a callback object to the gamepad */
 			void SetCallbacks(GamepadCallbacks * in_callbacks);
 
+			/** returns whether the force feedback is enabled */
+			bool IsForceFeedbackEnabled() const { return force_feedback_enabled; }
+			/** set whether the force feedback is enabled */
+			bool SetForceFeedbackEnabled(bool in_enabled) { force_feedback_enabled = in_enabled; }
+
+			/** add a force feedback effect */
+			void AddForceFeedbackEffect(float duration, float left_value, float right_value);
+			/** remove force feedback effects */
+			void ClearForceFeedbackEffects();
+
+		protected:
+
+			/** tick force feedback effects */
+			void TickForceFeedbackEffects(float delta_time);
+
 		protected:
 
 			/** the manager */
@@ -338,6 +353,8 @@ namespace chaos
 			shared_ptr<GamepadCallbacks> callbacks;
 			/** indicates whether the stick has already be connected to a physical device */
 			bool ever_connected = false;
+			/** indicates whether the force feedback is enabled */
+			bool force_feedback_enabled = true;
 		};
 
 		/**
@@ -388,6 +405,9 @@ namespace chaos
 			Gamepad * DoAllocateGamepad(PhysicalGamepad * physical_gamepad, GamepadCallbacks * in_callbacks);
 			/** capture a physical device and get a logical device */
 			Gamepad * DoCaptureDevice(PhysicalGamepad * in_physical_gamepad, GamepadCallbacks * in_callbacks);
+
+			/** tick the force feedback effects of all allocated gamepad */
+			void TickForceFeedbackEffects(float delta_time);
 
 		protected:
 

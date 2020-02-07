@@ -492,47 +492,97 @@ namespace chaos
 
 		void Gamepad::ClearForceFeedbackEffects()
 		{
-
+            if (feedback_effects.size() > 0)
+            {
+                feedback_effects.clear();
+                DoUpdateForceFeedbackDevice(0.0f, 0.0f);
+            }
 		}
+
+        void Gamepad::SetForceFeedbackEnabled(bool in_enabled) 
+        { 
+            if (force_feedback_enabled != in_enabled)
+            {
+                force_feedback_enabled = in_enabled;
+                if (!in_enabled)
+                    DoUpdateForceFeedbackDevice(0.0f, 0.0f);
+            }            
+        }
+
+        void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
+        {
+            if (!IsPresent())
+                return;
+#if _WIN32 || _WIN64
+            if (GamepadManager::XInputSetStateFunc == nullptr)
+                return;
+            XINPUT_VIBRATION vibration;
+            vibration.wLeftMotorSpeed = (WORD)(max_left_value * 65535.0f);
+            vibration.wRightMotorSpeed = (WORD)(max_right_value * 65535.0f);
+            GamepadManager::XInputSetStateFunc(GetGamepadIndex(), &vibration);
+#endif
+        }
 
 		void Gamepad::TickForceFeedbackEffects(float delta_time)
 		{
 			// disable force feedback => clear all feedbacks
-			if (!force_feedback_enabled)
-			{
-				ClearForceFeedbackEffects();
-				return;
-			}
-				
+            if (!force_feedback_enabled)
+                return;
+            // compute the max left & right values, destroy finished values
+            float max_left_value = 0.0f;
+            float max_right_value = 0.0f;
 
+            size_t count = feedback_effects.size();
+            for (size_t i = count; i > 0; --i)
+            {
+                size_t index = i - 1;
 
+                ForceFeedbackEffect & effect = feedback_effects[index];
+                max_left_value = std::max(max_left_value, effect.left_value);
+                max_right_value = std::max(max_right_value, effect.right_value);
 
-
+                if (effect.timer > 0.0f)
+                {
+                    effect.timer -= delta_time;
+                    if (effect.timer <= 0.0f)
+                        feedback_effects.erase(feedback_effects.begin() + index);
+                }
+            }
+            // update the device
+            DoUpdateForceFeedbackDevice(max_left_value, max_right_value);
 		}
 
 		void Gamepad::AddForceFeedbackEffect(float duration, float left_value, float right_value)
 		{
-
-#if 0
-			DWORD left_value
-
-			XINPUT_VIBRATION vib;
-			memset(&vib, 0, sizeof(XINPUT_VIBRATION));
-
-			vib.wLeftMotorSpeed = 65535; // 0 to 65, 535.
-
-			auto xxx = gamepad->GetGamepadIndex();
-
-			XInputSetState((DWORD)GetGamepadIndex(), &vib);
-#endif
+            ForceFeedbackEffect effect;
+            effect.timer = std::max(duration, 0.0f);
+            effect.left_value = std::clamp(left_value, 0.0f, 1.0f);
+            effect.right_value = std::clamp(right_value, 0.0f, 1.0f);
+            feedback_effects.push_back(effect);
 		}
 		//
 		// GamepadManager functions
 		//
 
+#if _WIN32 || _WIN64
+        GamepadManager::XINPUT_SET_STATE_FUNC GamepadManager::XInputSetStateFunc = nullptr;
+#endif
+
 		GamepadManager::GamepadManager(float in_dead_zone) : dead_zone(in_dead_zone)
 		{
-			physical_gamepads.reserve(MAX_SUPPORTED_GAMEPAD_COUNT); // allocate a PhysicalGamepad for all supported inputs
+            // load manually module so that this work on windows 7 & windows +
+#if _WIN32 || _WIN64
+            if (XInputSetStateFunc == nullptr)
+            {
+                HMODULE hModule = LoadLibrary("XInput1_4.dll"); // try to load both library
+                if (hModule == NULL)
+                    hModule = LoadLibrary("xinput9_1_0.dll"); // try to load both library
+                if (hModule != NULL)
+                    XInputSetStateFunc = (XINPUT_SET_STATE_FUNC)GetProcAddress(hModule, "XInputSetState");
+            }
+#endif
+            // allocate a PhysicalGamepad for all supported inputs
+			physical_gamepads.reserve(MAX_SUPPORTED_GAMEPAD_COUNT); 
 			for (int i = 0; i < MAX_SUPPORTED_GAMEPAD_COUNT; ++i)
 			{
 				PhysicalGamepad * physical_gamepad = new PhysicalGamepad(this, i);

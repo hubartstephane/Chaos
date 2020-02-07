@@ -275,6 +275,21 @@ namespace chaos
 			GamepadData gamepad_data;
 		};
 
+        /**
+         * ForceFeedbackEffect : the feedback effects
+         */
+
+        class ForceFeedbackEffect
+        {
+        public:
+
+            /** the remaining time */
+            float timer = 0.0f;
+            /** the left engine of the gamepad ('shocks') */
+            float left_value  = 1.0f;
+            /** the right engine of the gamepad ('vibration') */
+            float right_value = 1.0f;
+        };
 
 		/**
 		* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
@@ -331,7 +346,7 @@ namespace chaos
 			/** returns whether the force feedback is enabled */
 			bool IsForceFeedbackEnabled() const { return force_feedback_enabled; }
 			/** set whether the force feedback is enabled */
-			bool SetForceFeedbackEnabled(bool in_enabled) { force_feedback_enabled = in_enabled; }
+            void SetForceFeedbackEnabled(bool in_enabled);
 
 			/** add a force feedback effect */
 			void AddForceFeedbackEffect(float duration, float left_value, float right_value);
@@ -342,6 +357,8 @@ namespace chaos
 
 			/** tick force feedback effects */
 			void TickForceFeedbackEffects(float delta_time);
+            /** setting the left & right values to the device */
+            void DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value);
 
 		protected:
 
@@ -355,6 +372,9 @@ namespace chaos
 			bool ever_connected = false;
 			/** indicates whether the force feedback is enabled */
 			bool force_feedback_enabled = true;
+
+            /** the forcefeedback effects */
+            std::vector<ForceFeedbackEffect> feedback_effects;
 		};
 
 		/**
@@ -365,6 +385,9 @@ namespace chaos
 		{
 			friend class Gamepad;
 			friend class PhysicalGamepad;
+
+            // the type of the function pointer used for forcefeedback
+            typedef DWORD(*XINPUT_SET_STATE_FUNC)(DWORD, XINPUT_VIBRATION*);
 
 		public:
 
@@ -424,6 +447,11 @@ namespace chaos
 			std::vector<PhysicalGamepad *> physical_gamepads;
 			/** enable pooling unused inputs */
 			bool pooling_enabled = true;
+
+#if _WIN32 || _WIN64
+            /** the function pointer to use for ForceFeedback */
+            static XINPUT_SET_STATE_FUNC XInputSetStateFunc;
+#endif
 		};
 
 	}; // namespace MyGLFW

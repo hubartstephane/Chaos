@@ -128,6 +128,8 @@ namespace death
 
 		/** tick the player displacement */
 		virtual void TickPlayerDisplacement(double delta_time);
+		/** tick the invulnerability */
+		virtual void TickInvulnerability(double delta_time);
 
 		/** called whenever a life is lost */
 		virtual void OnLifeLost();
@@ -155,6 +157,10 @@ namespace death
         float health = 1.0f;
         /** the maximum health of the player */
         float max_health = 1.0f;
+		/** the invulnerability after some health is lost */
+		float invulnerability_duration = 1.0f;
+		/** the current timer of invulnerability */
+		float invulnerability_timer = 0.0f;
 		/** the score for the player */
 		int score = 0;
 

@@ -490,6 +490,42 @@ namespace chaos
 			return physical_device->GetGamepadData();
 		}
 
+		void Gamepad::ClearForceFeedbackEffects()
+		{
+
+		}
+
+		void Gamepad::TickForceFeedbackEffects(float delta_time)
+		{
+			// disable force feedback => clear all feedbacks
+			if (!force_feedback_enabled)
+			{
+				ClearForceFeedbackEffects();
+				return;
+			}
+				
+
+
+
+
+		}
+
+		void Gamepad::AddForceFeedbackEffect(float duration, float left_value, float right_value)
+		{
+
+#if 0
+			DWORD left_value
+
+			XINPUT_VIBRATION vib;
+			memset(&vib, 0, sizeof(XINPUT_VIBRATION));
+
+			vib.wLeftMotorSpeed = 65535; // 0 to 65, 535.
+
+			auto xxx = gamepad->GetGamepadIndex();
+
+			XInputSetState((DWORD)GetGamepadIndex(), &vib);
+#endif
+		}
 		//
 		// GamepadManager functions
 		//
@@ -626,6 +662,9 @@ namespace chaos
 			// uncatched inputs pooling
 			if (unallocated_present_physical_device_count > 0 && pooling_enabled)
 				PoolInputs(unallocated_present_physical_device_count);
+
+			// tick the force feedback effects
+			TickForceFeedbackEffects(delta_time);
 		}
 
 		void GamepadManager::PoolInputs(int & unallocated_present_physical_device_count)
@@ -649,6 +688,20 @@ namespace chaos
 				--unallocated_present_physical_device_count;
 				if (!DoPoolGamepad(physical_gamepad))
 					break;
+			}
+		}
+
+		void GamepadManager::TickForceFeedbackEffects(float delta_time)
+		{
+			size_t count = user_gamepads.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				Gamepad* gamepad = user_gamepads[i];
+				if (gamepad == nullptr)
+					continue;
+				if (!gamepad->IsPresent())
+					continue;
+				gamepad->TickForceFeedbackEffects(delta_time);
 			}
 		}
 

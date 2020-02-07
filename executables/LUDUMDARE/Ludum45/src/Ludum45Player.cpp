@@ -122,20 +122,12 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 
 void LudumPlayer::TickPlayerDisplacement(double delta_time)
 {
-	invulnerability_timer -= (float)delta_time;
-	if (invulnerability_timer < 0.0f)
-		invulnerability_timer = 0.0f;
-
-
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
 	// player fire particles
 	UpdatePlayerFire(delta_time);
 	// player fire particles
 	UpdateBrightSideOfLife(delta_time);
-
-
-
 }
 
 

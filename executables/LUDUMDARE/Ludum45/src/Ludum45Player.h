@@ -104,8 +104,6 @@ protected:
 
 protected:
 
-	float invulnerability_timer = 0.0f;
-
 	bool brightsideoflife = false;
 
 	float brightsideoflife_timer = 0.0f;

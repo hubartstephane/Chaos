@@ -82,16 +82,8 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	if (!death::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 
-	XINPUT_VIBRATION vib;
-	memset(&vib, 0, sizeof(XINPUT_VIBRATION));
-
-	vib.wLeftMotorSpeed = 65535; // 0 to 65, 535.
 
 
-
-	XInputSetState(0, &vib);
-
-	// https://docs.microsoft.com/en-us/windows/win32/api/xinput/nf-xinput-xinputsetstate
 
 
 	return true;

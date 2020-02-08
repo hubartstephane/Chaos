@@ -279,7 +279,7 @@ namespace chaos
          * ForceFeedbackEffect : the feedback effects
          */
 
-        class ForceFeedbackEffect
+        class ForceFeedbackEffect : public ReferencedObject
         {
         public:
 
@@ -374,7 +374,7 @@ namespace chaos
 			bool force_feedback_enabled = true;
 
             /** the forcefeedback effects */
-            std::vector<ForceFeedbackEffect> feedback_effects;
+            std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;
 		};
 
 		/**

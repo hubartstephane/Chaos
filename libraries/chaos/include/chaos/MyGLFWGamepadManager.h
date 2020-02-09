@@ -19,10 +19,35 @@
 //
 //                while they are not bound to the same index, you can check both values
 
+
+
+
 namespace chaos
 {
 	namespace MyGLFW
 	{
+
+		// ==============================================================
+		// FORWARD DECLARATION / FRIENDSHIP MACROS
+		// ==============================================================
+
+		// all classes in this file
+#define CHAOS_GAMEPAD_CLASSES \
+(GamepadData) \
+(PhysicalGamepad) \
+(Gamepad) \
+(GamepadCallbacks) \
+(GamepadManager) \
+(ForceFeedbackEffect)
+
+	// forward declaration
+#define CHAOS_GAMEPAD_FORWARD_DECL(r, data, elem) class elem;
+		BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES)
+
+			// friendship macro
+#define CHAOS_GAMEPAD_FRIEND_DECL(r, data, elem) friend class elem;
+#define CHAOS_GAMEPAD_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FRIEND_DECL, _, CHAOS_GAMEPAD_CLASSES)
+
 		/**
 		* Some constants
 		*/
@@ -82,7 +107,7 @@ namespace chaos
 		static int const XBOX_RIGHT_AXIS_Y = 3;  // STICK DOWN = positive values
 
 		/** index in axis for the LEFT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
-		static int const XBOX_LEFT_TRIGGER = 4; 
+		static int const XBOX_LEFT_TRIGGER = 4;
 		/** index in axis for the RIGHT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
 		static int const XBOX_RIGHT_TRIGGER = 5;
 #else // GLFW 3.1
@@ -114,21 +139,23 @@ namespace chaos
 
 		class GamepadCallbacks : public ReferencedObject
 		{
+			CHAOS_GAMEPAD_ALL_FRIENDS
+
 		public:
 
 			/** destructor */
 			virtual ~GamepadCallbacks() = default;
 
 			/** called to determin if a physical gamepad is a good candidate for binding */
-			virtual bool AcceptPhysicalDevice(class PhysicalGamepad *) { return true; }
+			virtual bool AcceptPhysicalDevice(class PhysicalGamepad*) { return true; }
 			/** called whenever a gamepad is disconnected */
-			virtual bool OnGamepadDisconnected(class Gamepad *) { return true; }
+			virtual bool OnGamepadDisconnected(class Gamepad*) { return true; }
 			/** called whenever a gamepad is "connected" (a new ID is given to it) */
-			virtual bool OnGamepadConnected(class Gamepad *) { return true; }
+			virtual bool OnGamepadConnected(class Gamepad*) { return true; }
 			/** called whenever the manager is destroyed before the gamepad */
-			virtual bool OnManagerDestroyed(class Gamepad *) { return true; }
+			virtual bool OnManagerDestroyed(class Gamepad*) { return true; }
 			/** called to add some filters on inputs */
-			virtual void OnGamepadDataUpdated(class GamepadData &) {}
+			virtual void OnGamepadDataUpdated(class GamepadData&) {}
 		};
 
 		/**
@@ -137,6 +164,8 @@ namespace chaos
 		*/
 		class AxisData
 		{
+			CHAOS_GAMEPAD_ALL_FRIENDS
+
 		public:
 
 			/** update the value */
@@ -164,7 +193,7 @@ namespace chaos
 
 		class GamepadData
 		{
-			friend class PhysicalGamepad;
+			CHAOS_GAMEPAD_ALL_FRIENDS
 
 		public:
 
@@ -209,13 +238,12 @@ namespace chaos
 		*/
 		class PhysicalGamepad
 		{
-			friend class GamepadManager;
-			friend class Gamepad;
+			CHAOS_GAMEPAD_ALL_FRIENDS
 
 		public:
 
 			/** get a reference on the data */
-			GamepadData const * GetGamepadData() const { return &gamepad_data; }
+			GamepadData const* GetGamepadData() const { return &gamepad_data; }
 
 			/* returns a status giving the change of button relative to previous frame */
 			int GetButtonChanges(size_t button_index) const;
@@ -247,12 +275,12 @@ namespace chaos
 			inline bool IsPresent() const { return is_present; }
 
 			/** take a physical device, and create a logical device if possible */
-			class Gamepad * CaptureDevice(GamepadCallbacks * in_callbacks);
+			class Gamepad* CaptureDevice(GamepadCallbacks* in_callbacks);
 
 		protected:
 
 			/** the constructor is protected */
-			PhysicalGamepad(GamepadManager * in_gamepad_manager, int in_stick_index);
+			PhysicalGamepad(GamepadManager* in_gamepad_manager, int in_stick_index);
 			/** destructor is protected */
 			~PhysicalGamepad() {}
 
@@ -264,32 +292,44 @@ namespace chaos
 		protected:
 
 			/** the manager */
-			class GamepadManager * gamepad_manager = nullptr;
+			class GamepadManager* gamepad_manager = nullptr;
 			/** the current stick index */
 			int stick_index = -1;
 			/** indicates whether the stick is present */
 			bool is_present = false;
 			/** indicates whether the stick is allocated to a client */
-			class Gamepad * user_gamepad = nullptr;
+			class Gamepad* user_gamepad = nullptr;
 			/** the device data */
 			GamepadData gamepad_data;
 		};
 
-        /**
-         * ForceFeedbackEffect : the feedback effects
-         */
+		/**
+		 * ForceFeedbackEffect : the feedback effects
+		 */
 
-        class ForceFeedbackEffect : public ReferencedObject
-        {
-        public:
+		class ForceFeedbackEffect : public ReferencedObject
+		{
+			CHAOS_GAMEPAD_ALL_FRIENDS
 
-            /** the remaining time */
-            float timer = 0.0f;
-            /** the left engine of the gamepad ('shocks') */
-            float left_value  = 1.0f;
-            /** the right engine of the gamepad ('vibration') */
-            float right_value = 1.0f;
-        };
+		public:
+
+
+			/** remove the forcefeedback from its gamepad */
+			void RemoveFromGamepad();
+			/** the force feedbaack effect may deleted itself as soon as a reference is removed and the last one is from the gamepad */
+			virtual void SubReference(SharedPointerPolicy policy) override;
+
+		protected:
+
+			/** the gamepad using this effect */
+			Gamepad * gamepad = nullptr;
+			/** the remaining time */
+			float timer = 0.0f;
+			/** the left engine of the gamepad ('shocks') */
+			float left_value = 1.0f;
+			/** the right engine of the gamepad ('vibration') */
+			float right_value = 1.0f;
+		};
 
 		/**
 		* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
@@ -298,11 +338,11 @@ namespace chaos
 		{
 		public:
 
-			friend class GamepadManager;
+			CHAOS_GAMEPAD_ALL_FRIENDS
 
 		protected:
 
-			Gamepad(GamepadManager * in_gamepad_manager, PhysicalGamepad * in_physical_device); // protected constructor
+			Gamepad(GamepadManager* in_gamepad_manager, PhysicalGamepad* in_physical_device); // protected constructor
 
 		public:
 
@@ -310,7 +350,7 @@ namespace chaos
 			virtual ~Gamepad();
 
 			/** get a reference on the data (if connected) */
-			GamepadData const * GetGamepadData() const;
+			GamepadData const* GetGamepadData() const;
 
 			/* returns a status giving the change of button relative to previous frame */
 			int GetButtonChanges(size_t button_index) const;
@@ -341,15 +381,19 @@ namespace chaos
 			inline bool IsEverConnected() const { return ever_connected; }
 
 			/** give a callback object to the gamepad */
-			void SetCallbacks(GamepadCallbacks * in_callbacks);
+			void SetCallbacks(GamepadCallbacks* in_callbacks);
 
 			/** returns whether the force feedback is enabled */
 			bool IsForceFeedbackEnabled() const { return force_feedback_enabled; }
 			/** set whether the force feedback is enabled */
-            void SetForceFeedbackEnabled(bool in_enabled);
+			void SetForceFeedbackEnabled(bool in_enabled);
+
+
 
 			/** add a force feedback effect */
 			void AddForceFeedbackEffect(float duration, float left_value, float right_value);
+			/** remove a forcefeedback effect */
+			void RemoveForceFeedbackEffect(ForceFeedbackEffect* effect);
 			/** remove force feedback effects */
 			void ClearForceFeedbackEffects();
 
@@ -357,15 +401,15 @@ namespace chaos
 
 			/** tick force feedback effects */
 			void TickForceFeedbackEffects(float delta_time);
-            /** setting the left & right values to the device */
-            void DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value);
+			/** setting the left & right values to the device */
+			void DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value);
 
 		protected:
 
 			/** the manager */
-			class GamepadManager * gamepad_manager = nullptr;
+			class GamepadManager* gamepad_manager = nullptr;
 			/* the device */
-			PhysicalGamepad * physical_device = nullptr;
+			PhysicalGamepad* physical_device = nullptr;
 			/** the callbacks */
 			shared_ptr<GamepadCallbacks> callbacks;
 			/** indicates whether the stick has already be connected to a physical device */
@@ -373,8 +417,8 @@ namespace chaos
 			/** indicates whether the force feedback is enabled */
 			bool force_feedback_enabled = true;
 
-            /** the forcefeedback effects */
-            std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;
+			/** the forcefeedback effects */
+			std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;
 		};
 
 		/**
@@ -383,11 +427,10 @@ namespace chaos
 
 		class GamepadManager : public ReferencedObject
 		{
-			friend class Gamepad;
-			friend class PhysicalGamepad;
+			CHAOS_GAMEPAD_ALL_FRIENDS
 
-            // the type of the function pointer used for forcefeedback
-            typedef DWORD(*XINPUT_SET_STATE_FUNC)(DWORD, XINPUT_VIBRATION*);
+				// the type of the function pointer used for forcefeedback
+				typedef DWORD(*XINPUT_SET_STATE_FUNC)(DWORD, XINPUT_VIBRATION*);
 
 		public:
 
@@ -399,7 +442,7 @@ namespace chaos
 			/** update all the joysticks */
 			void Tick(float delta_time);
 			/** create a gamepad */
-			Gamepad * AllocateGamepad(bool want_present = false, GamepadCallbacks * in_callbacks = nullptr);
+			Gamepad* AllocateGamepad(bool want_present = false, GamepadCallbacks* in_callbacks = nullptr);
 			/** enable / disable pooling */
 			void EnableInputPooling(bool in_pooling_enabled);
 			/** returns true whether input pooling is enabled */
@@ -411,23 +454,23 @@ namespace chaos
 		protected:
 
 			/** find a gamepad that is used by nobody */
-			PhysicalGamepad * FindUnallocatedPhysicalGamepad(GamepadCallbacks * in_callbacks);
+			PhysicalGamepad* FindUnallocatedPhysicalGamepad(GamepadCallbacks* in_callbacks);
 			/** update the physical devices and detect unconnections */
-			void UpdateAndUnconnectPhysicalGamepads(float delta_time, int & unallocated_present_physical_device_count);
+			void UpdateAndUnconnectPhysicalGamepads(float delta_time, int& unallocated_present_physical_device_count);
 			/** try to give a physical device to all unconnected logical device */
-			void GiveGamepadPhysicalDevices(int & unallocated_present_physical_device_count);
+			void GiveGamepadPhysicalDevices(int& unallocated_present_physical_device_count);
 			/** returns false if no more logical device to bound with */
-			bool DoGiveGamepadPhysicalDevice(PhysicalGamepad * physical_gamepad);
+			bool DoGiveGamepadPhysicalDevice(PhysicalGamepad* physical_gamepad);
 			/** find the best gamepad that can be bound */
-			Gamepad * FindBestGamepadToBeBoundToPhysicalDevice(PhysicalGamepad * physical_gamepad);
+			Gamepad* FindBestGamepadToBeBoundToPhysicalDevice(PhysicalGamepad* physical_gamepad);
 			/** called whenever a gamepad is destroyed */
-			bool OnGamepadDestroyed(Gamepad * gamepad);
+			bool OnGamepadDestroyed(Gamepad* gamepad);
 			/** called to pool inputs on unbound connected physical device */
-			void PoolInputs(int & unallocated_present_physical_device_count);
+			void PoolInputs(int& unallocated_present_physical_device_count);
 			/** internal method to allocate and initialize a gamepad */
-			Gamepad * DoAllocateGamepad(PhysicalGamepad * physical_gamepad, GamepadCallbacks * in_callbacks);
+			Gamepad* DoAllocateGamepad(PhysicalGamepad* physical_gamepad, GamepadCallbacks* in_callbacks);
 			/** capture a physical device and get a logical device */
-			Gamepad * DoCaptureDevice(PhysicalGamepad * in_physical_gamepad, GamepadCallbacks * in_callbacks);
+			Gamepad* DoCaptureDevice(PhysicalGamepad* in_physical_gamepad, GamepadCallbacks* in_callbacks);
 
 			/** tick the force feedback effects of all allocated gamepad */
 			void TickForceFeedbackEffects(float delta_time);
@@ -435,26 +478,32 @@ namespace chaos
 		protected:
 
 			/** the pool method to override */
-			virtual bool DoPoolGamepad(PhysicalGamepad * physical_gamepad);
+			virtual bool DoPoolGamepad(PhysicalGamepad* physical_gamepad);
 
 		protected:
 
 			/** the default dead zone value */
 			float dead_zone = 0.4f;
 			/** the logical gamepads */
-			std::vector<Gamepad *> user_gamepads;
+			std::vector<Gamepad*> user_gamepads;
 			/** the physical gamepads */
-			std::vector<PhysicalGamepad *> physical_gamepads;
+			std::vector<PhysicalGamepad*> physical_gamepads;
 			/** enable pooling unused inputs */
 			bool pooling_enabled = true;
 
 #if _WIN32 || _WIN64
-            /** the function pointer to use for ForceFeedback */
-            static XINPUT_SET_STATE_FUNC XInputSetStateFunc;
+			/** the function pointer to use for ForceFeedback */
+			static XINPUT_SET_STATE_FUNC XInputSetStateFunc;
 #endif
 		};
 
 	}; // namespace MyGLFW
+
+	// undefine macros
+	//#undef CHAOS_GAMEPAD_CLASSES
+	//#undef CHAOS_GAMEPAD_FORWARD_DECL
+	//#undef CHAOS_GAMEPAD_FRIEND_DECL
+	//#undef CHAOS_GAMEPAD_ALL_FRIENDS
 
 }; // namespace chaos
 

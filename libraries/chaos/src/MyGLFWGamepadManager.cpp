@@ -368,6 +368,26 @@ namespace chaos
 		{
 			return gamepad_manager->DoCaptureDevice(this, in_callbacks);
 		}
+		//
+		// ForceFeedbackEffect functions
+		//
+
+        void ForceFeedbackEffect::SubReference(SharedPointerPolicy policy)
+        {
+            // the ParticleAllocation is handled as usual
+            if (gamepad == nullptr)
+                ReferencedObject::SubReference(policy);
+            // the last reference is the one from the layer. Destroy it
+            else if (--shared_count == 1)
+                RemoveFromGamepad();
+        }
+
+		void ForceFeedbackEffect::RemoveFromGamepad()
+		{
+			if (gamepad == nullptr)
+				return;
+			gamepad->RemoveForceFeedbackEffect(this);
+		}
 
 		//
 		// Gamepad functions
@@ -569,6 +589,24 @@ namespace chaos
             effect->right_value = right_value;
             feedback_effects.push_back(effect);
 		}
+
+		void Gamepad::RemoveForceFeedbackEffect(ForceFeedbackEffect* effect)
+		{
+			assert(effect != nullptr);
+			assert(effect->gamepad == this);
+
+			for (size_t i = feedback_effects.size(); i > 0; --i) // from end to beginning because ... maybe a future DetachAllFeedback(...) function will be from end to beginning
+			{
+				size_t index = i - 1;
+				if (feedback_effects[index] == effect)
+				{
+					feedback_effects.erase(feedback_effects.begin() + index);
+					return;
+				}
+			}
+		}
+
+
 		//
 		// GamepadManager functions
 		//

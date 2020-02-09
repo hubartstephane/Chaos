@@ -612,6 +612,7 @@ namespace chaos
 		{
 			assert(effect != nullptr);
 			assert(effect->gamepad == nullptr);
+			effect->gamepad = this;
 			feedback_effects.push_back(effect);
 		}
 			

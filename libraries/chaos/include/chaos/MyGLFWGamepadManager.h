@@ -38,7 +38,8 @@ namespace chaos
 (Gamepad) \
 (GamepadCallbacks) \
 (GamepadManager) \
-(ForceFeedbackEffect)
+(ForceFeedbackEffect) \
+(DefaultForceFeedbackEffect)
 
 	// forward declaration
 #define CHAOS_GAMEPAD_FORWARD_DECL(r, data, elem) class elem;
@@ -313,7 +314,8 @@ namespace chaos
 
 		public:
 
-
+			/** returns the values for left and right motors. returns true whether the effect is to be finished */
+			virtual bool GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value);
 			/** remove the forcefeedback from its gamepad */
 			void RemoveFromGamepad();
 			/** the force feedbaack effect may deleted itself as soon as a reference is removed and the last one is from the gamepad */
@@ -323,6 +325,31 @@ namespace chaos
 
 			/** the gamepad using this effect */
 			Gamepad * gamepad = nullptr;
+		};
+
+		/**
+		 * DefaultForceFeedbackEffect : a simple constant effect with a timer
+		 */
+
+		class DefaultForceFeedbackEffect : public ForceFeedbackEffect
+		{
+			CHAOS_GAMEPAD_ALL_FRIENDS
+
+		public:
+
+			/** constructor */
+			DefaultForceFeedbackEffect(float in_duration, float in_left_value, float in_right_value) :
+				duration(in_duration),
+				left_value(in_left_value),
+				right_value(in_right_value){}
+
+			/** override */
+			virtual bool GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value) override;
+
+		protected:
+
+			/** the duration of the effect */
+			float duration = 0.0f;
 			/** the remaining time */
 			float timer = 0.0f;
 			/** the left engine of the gamepad ('shocks') */
@@ -388,10 +415,8 @@ namespace chaos
 			/** set whether the force feedback is enabled */
 			void SetForceFeedbackEnabled(bool in_enabled);
 
-
-
 			/** add a force feedback effect */
-			void AddForceFeedbackEffect(float duration, float left_value, float right_value);
+			void AddForceFeedbackEffect(ForceFeedbackEffect* effect);
 			/** remove a forcefeedback effect */
 			void RemoveForceFeedbackEffect(ForceFeedbackEffect* effect);
 			/** remove force feedback effects */

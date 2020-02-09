@@ -368,6 +368,7 @@ namespace chaos
 		{
 			return gamepad_manager->DoCaptureDevice(this, in_callbacks);
 		}
+
 		//
 		// ForceFeedbackEffect functions
 		//
@@ -382,11 +383,32 @@ namespace chaos
                 RemoveFromGamepad();
         }
 
+		bool ForceFeedbackEffect::GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value)
+		{
+			result_left_value = 0.0f;
+			result_right_value = 0.0f;
+			return false; // do not destroy the effect
+		}
+
 		void ForceFeedbackEffect::RemoveFromGamepad()
 		{
 			if (gamepad == nullptr)
 				return;
 			gamepad->RemoveForceFeedbackEffect(this);
+		}
+
+		//
+		// ForceFeedbackEffect functions
+		//
+
+		bool DefaultForceFeedbackEffect::GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value)
+		{
+			timer += delta_time;
+			if (timer >= duration)
+				return true; // end of the effect
+			result_left_value = left_value;
+			result_right_value = right_value;
+			return false; // do not destroy the effect
 		}
 
 		//
@@ -567,29 +589,32 @@ namespace chaos
                 size_t index = i - 1;
 
                 ForceFeedbackEffect * effect = feedback_effects[index].get();
-                max_left_value = std::max(max_left_value, effect->left_value);
-                max_right_value = std::max(max_right_value, effect->right_value);
+				if (effect == nullptr)
+					continue;
 
-                if (effect->timer > 0.0f)
-                {
-                    effect->timer -= delta_time;
-                    if (effect->timer <= 0.0f)
-                        feedback_effects.erase(feedback_effects.begin() + index);
-                }
+				float left_value = 0.0f;
+				float right_value = 0.0f;
+				if (effect->GetForceFeedbackValues(delta_time, left_value, right_value))
+				{
+					feedback_effects.erase(feedback_effects.begin() + index);
+				}
+				else
+				{
+					max_left_value = std::max(max_left_value, left_value);
+					max_right_value = std::max(max_right_value, right_value);
+				}
             }
             // update the device
             DoUpdateForceFeedbackDevice(max_left_value, max_right_value);
 		}
 
-		void Gamepad::AddForceFeedbackEffect(float duration, float left_value, float right_value)
+		void Gamepad::AddForceFeedbackEffect(ForceFeedbackEffect* effect)
 		{
-            ForceFeedbackEffect* effect = new ForceFeedbackEffect;
-            effect->timer = std::max(duration, 0.0f);
-            effect->left_value = left_value;
-            effect->right_value = right_value;
-            feedback_effects.push_back(effect);
+			assert(effect != nullptr);
+			assert(effect->gamepad == nullptr);
+			feedback_effects.push_back(effect);
 		}
-
+			
 		void Gamepad::RemoveForceFeedbackEffect(ForceFeedbackEffect* effect)
 		{
 			assert(effect != nullptr);

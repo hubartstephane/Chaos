@@ -340,7 +340,7 @@ namespace death
         {
 			// 2 seconds force feedback effect
 			if (gamepad != nullptr)
-				gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.075f, 1.0f, 1.0f));
+				gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
 			// camera effect
             death::Camera* camera = GetLevelInstance()->GetCamera(0);
             if (camera != nullptr)

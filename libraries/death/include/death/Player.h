@@ -91,6 +91,11 @@ namespace death
         /** utility function to check whether a keyboard key or gamepad button is down */
         bool CheckButtonPressed(int const* keyboard_buttons, int gamepad_button);
 
+		/** player initialization from config */
+		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
+		/** called after player configuration has been (re)loaded */
+		virtual void OnGameValuesChanged(bool hot_reload);
+
 	protected:
 
 		/** initialize the game instance */

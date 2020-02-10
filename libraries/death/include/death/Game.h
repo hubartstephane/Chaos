@@ -257,6 +257,8 @@ namespace death
 
 		/** initialization from the config file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+		/** called whenever the game values as been changed */
+		virtual void OnGameValuesChanged(bool hot_reload);
 
 		/** test whether the current score is higher than best score and save it */
 		void ConditionnalSaveBestScore();
@@ -454,6 +456,11 @@ namespace death
 
 		/** score values */
 		int best_score = 0;
+
+		/** the configuration object to use for game instance */
+		nlohmann::json game_instance_configuration;
+		/** the configuration path */
+		boost::filesystem::path configuration_path;
 
 		/** life counters */
 		int initial_life = 3;

@@ -673,6 +673,7 @@ namespace death
 		// initialize game values
 		if (!InitializeGameValues(config, config_path, false)) // false => not hot_reload
 			return false;
+		OnGameValuesChanged(false);
 		// loading object type sets
 		if (!GenerateObjectTypeSets(config))
 			return false;
@@ -1053,11 +1054,29 @@ namespace death
 
 	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 	{
+		// keep a reference on the configuration path
+		configuration_path = config_path;
+
+		// capture the game instance configuration
+		nlohmann::json const* gi_config = chaos::JSONTools::GetStructure(config, "game_instance");
+		if (gi_config != nullptr && gi_config->is_object())
+			game_instance_configuration = *gi_config;
+		else
+			game_instance_configuration = nlohmann::json();
+
+		// read dedicated game values
 		DEATHGAME_JSON_ATTRIBUTE(initial_life);
 		DEATHGAME_JSON_ATTRIBUTE(max_life);
 		DEATHGAME_JSON_ATTRIBUTE(mouse_sensitivity);
 		DEATHGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
 		return true;
+	}
+
+	void Game::OnGameValuesChanged(bool hot_reload)
+	{
+		if (game_instance != nullptr)
+			if (game_instance->InitializeGameValues(game_instance_configuration, configuration_path, hot_reload))
+				game_instance->OnGameValuesChanged(hot_reload);
 	}
 
 	void Game::OnEnterMainMenu(bool very_first)
@@ -1572,7 +1591,10 @@ namespace death
 		if (game_config == nullptr)
 			return false;
 
-		return InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
+		bool result = InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
+		if (result)
+			OnGameValuesChanged(true);
+		return result;
 	}
 
 	bool Game::ReloadCurrentLevel()

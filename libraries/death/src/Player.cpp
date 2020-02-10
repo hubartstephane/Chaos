@@ -55,8 +55,15 @@ namespace death
 		if (!GameInstanceEntity::Initialize(in_game_instance))
 			return false;
 
-		Game * game = GetGame();
+		Game* game = GetGame();
 		if (game != nullptr)
+		{
+			if (!InitializeGameValues(in_game_instance->player_configuration, game->configuration_path, false)) // false => not hot relead
+				return false;
+			OnGameValuesChanged(false);
+		}
+			
+		
 			life_count = game->initial_life;
 		return true;
 	}
@@ -377,6 +384,17 @@ namespace death
                 return true;
         return false;
     }
+
+	bool Player::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
+	{
+
+		return true;
+	}
+
+	void Player::OnGameValuesChanged(bool hot_reload)
+	{
+
+	}
 
 	// =================================================
 	// PlayerGamepadCallbacks

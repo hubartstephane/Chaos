@@ -97,6 +97,11 @@ namespace death
 		/** returns the sound category */
 		chaos::SoundCategory const * GetSoundCategory() const;
 
+		/** initialization of the game instance */
+		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
+		/** called after game instance configuration has been (re)loaded */
+		virtual void OnGameValuesChanged(bool hot_reload);
+
 	protected:
 
 		/** initialize the game instance */
@@ -161,6 +166,9 @@ namespace death
 
 		/** the game */
 		Game * game = nullptr;
+
+		/** the configuration object to use for players */
+		nlohmann::json player_configuration;
 
 		/** all the players present in the game */
 		std::vector<chaos::shared_ptr<Player>> players;

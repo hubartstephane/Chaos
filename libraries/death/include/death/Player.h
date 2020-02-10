@@ -139,7 +139,7 @@ namespace death
 		virtual bool DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint) override;
 
         /** called whenever health is changed */
-        virtual void OnHealthChanged(float old_health, float new_health);
+        virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable);
 
 	protected:
 

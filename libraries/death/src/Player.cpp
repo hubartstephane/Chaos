@@ -316,27 +316,30 @@ namespace death
         else if (new_health > max_health)
             new_health = max_health;
 
-		// invulnerability ?
-		if (new_health < old_health)
-		{
+		bool invulnerable = false;
 #if _DEBUG
-			if (GetGame()->GetCheatMode())
-				return;
+		if (GetGame()->GetCheatMode())
+			invulnerable = true;
 #endif
+		// invulnerability ?
+		if (new_health < old_health && !invulnerable)
+		{
 			if (invulnerability_timer > 0)
-				return;
-			invulnerability_timer = invulnerability_duration;
+				invulnerable = true;
+			else
+				invulnerability_timer = invulnerability_duration;
 		}
 
         // commit life lost
-		health = new_health;
-		OnHealthChanged(old_health, new_health);
+		if (!invulnerable || new_health > old_health)
+			health = new_health;
+		OnHealthChanged(old_health, new_health, invulnerable);
     }
 
-    void Player::OnHealthChanged(float old_health, float new_health)
+    void Player::OnHealthChanged(float old_health, float new_health, bool invulnerable)
     {
         // special FX
-        if (old_health > new_health)
+        if (old_health > new_health && !invulnerable)
         {
 			// 2 seconds force feedback effect
 			if (gamepad != nullptr)

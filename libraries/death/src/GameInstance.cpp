@@ -196,6 +196,11 @@ namespace death
 
 	bool GameInstance::Initialize(death::Game * in_game)
 	{
+		// initialize from configuration
+		if (!InitializeGameValues(in_game->game_instance_configuration, in_game->configuration_path, false)) // false for not hot reload
+			return false;
+		OnGameValuesChanged(false);
+
 		// create the game instance clocks
 		chaos::Clock * root_clock = in_game->GetRootClock();
 		if (root_clock == nullptr)
@@ -398,6 +403,29 @@ namespace death
 		return sound_category.get();
 	}
 
+	bool GameInstance::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
+	{
+		// capture the player configuration
+		nlohmann::json const* p_config = chaos::JSONTools::GetStructure(config, "player");
+		if (p_config != nullptr && p_config->is_object())
+			player_configuration = *p_config;
+		else
+			player_configuration = nlohmann::json();
 
+		return true;
+	}
+
+	void GameInstance::OnGameValuesChanged(bool hot_reload)
+	{
+		size_t count = players.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			Player* player = players[i].get();
+			if (player == nullptr)
+				continue;
+			if (player->InitializeGameValues(player_configuration, game->configuration_path, hot_reload))
+				player->OnGameValuesChanged(hot_reload);
+		}
+	}
 
 }; // namespace death

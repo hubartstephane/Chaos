@@ -64,7 +64,7 @@ public:
 
 	virtual chaos::box2 GetWorldBox() const override;
 
-	float GetPlayerLife(int player_index) const;
+	float GetPlayerParticleLife(int player_index) const;
 
 	ParticlePlayer * GetPlayerParticle(int player_index);
 
@@ -149,7 +149,6 @@ public:
 	float world_clamp_radius = 3000.0f;
 
 	/** current game values */
-	float initial_player_health = 4.0f;
 	float initial_particle_health = 1.0f;
 };
 

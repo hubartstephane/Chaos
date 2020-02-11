@@ -55,6 +55,7 @@ namespace death
 		if (!GameInstanceEntity::Initialize(in_game_instance))
 			return false;
 
+		// read the configuration
 		Game* game = GetGame();
 		if (game != nullptr)
 		{
@@ -62,9 +63,10 @@ namespace death
 				return false;
 			OnGameValuesChanged(false);
 		}
-			
-		
-			life_count = game->initial_life;
+		// set the current values
+		life_count = initial_life_count;
+		health = initial_health;
+
 		return true;
 	}
 
@@ -247,10 +249,13 @@ namespace death
 
 	void Player::SetLifeCount(int in_life, bool increment)
 	{
+		// update life
 		if (increment)
 			life_count += in_life;
 		else
 			life_count = in_life;
+		// clamp life
+		life_count = std::clamp(life_count, 0, max_life_count);
 	}
 
 	chaos::ParticleDefault::Particle * Player::GetPlayerParticle()
@@ -286,6 +291,7 @@ namespace death
 	{
 		checkpoint->life_count = life_count;
         checkpoint->health = health;
+		checkpoint->max_life_count = max_life_count;
         checkpoint->max_health = max_health;
 		checkpoint->score = score;
 		checkpoint->player_box = GetPlayerBox();
@@ -294,10 +300,11 @@ namespace death
 
 	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
 	{
-		life_count = checkpoint->life_count;
-        health     = checkpoint->health;
-        max_health = checkpoint->max_health;
-		score      = checkpoint->score;
+		life_count     = checkpoint->life_count;
+        health         = checkpoint->health;
+		max_life_count = checkpoint->max_life_count;
+        max_health     = checkpoint->max_health;
+		score          = checkpoint->score;
 		SetPlayerBox(checkpoint->player_box);
 		return true;
 	}
@@ -387,7 +394,11 @@ namespace death
 
 	bool Player::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
 	{
-
+		DEATHGAME_JSON_ATTRIBUTE(initial_life_count);
+		DEATHGAME_JSON_ATTRIBUTE(max_life_count);
+		DEATHGAME_JSON_ATTRIBUTE(initial_health);
+		DEATHGAME_JSON_ATTRIBUTE(max_health);
+		DEATHGAME_JSON_ATTRIBUTE(invulnerability_duration);		
 		return true;
 	}
 

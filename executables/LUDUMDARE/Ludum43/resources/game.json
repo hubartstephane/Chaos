@@ -5,14 +5,13 @@
   "levels_directory": "@levels",
   "tilesets_directory": "@tilesets",
 
-  "initial_life": 3,
-  "max_life": 3,
-
-  "initial_player_health": 4.0,
-  "initial_particle_health": 0.7,
-  "cooldown": 1.0,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,
+
+  "game_instance": { "@filename": "game_instance.json" },
+
+  "initial_particle_health": 0.7,
+  "cooldown": 1.0,
 
   "dash_duration": 1.0,
   "dash_cooldown": 3.0,

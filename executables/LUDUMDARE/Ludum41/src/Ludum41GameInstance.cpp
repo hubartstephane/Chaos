@@ -370,15 +370,13 @@ void LudumGameInstance::OnBallPowerChallenge(bool success)
 
 bool LudumGameInstance::IsExtraBallChallengeValid(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
-
 	death::Player * player = GetPlayer(0);
 	if (player == nullptr)
 		return false;
 
 	int current_life = player->GetLifeCount();
 	if (success)
-		return current_life < ludum_game->max_life; // do not add life is already max
+		return current_life < player->GetMaxLifeCount(); // do not add life is already max
 	else
 		return current_life > 1; // do not remove life if last
 }

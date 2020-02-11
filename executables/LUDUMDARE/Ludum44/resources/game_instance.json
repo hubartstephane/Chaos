@@ -1,16 +1,5 @@
 {
-
-  "fonts": { "@filename": "fonts.json" },
-
-  "sprite_directory": "@sprites",
-  "levels_directory": "@levels",
-  "tilesets_directory": "@tilesets",
-  "objecttypesets_directory": "@objecttypessets",
-
-  "mouse_sensitivity": 1.0,
-  "gamepad_sensitivity": 1.0,
-
-  "game_instance": { "@filename": "game_instance.json" },
+  "player": { "@filename": "player.json" },
 
 
   "initial_life": 3,

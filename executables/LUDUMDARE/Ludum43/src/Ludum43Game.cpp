@@ -246,7 +246,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_health);
 	DEATHGAME_JSON_ATTRIBUTE(initial_particle_health);
 
 	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
@@ -344,7 +343,7 @@ void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * 
         PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
 }
 
-float LudumGame::GetPlayerLife(int player_index) const
+float LudumGame::GetPlayerParticleLife(int player_index) const
 {
 	ParticlePlayer const * player_particle = GetPlayerParticle(player_index);
 	if (player_particle == nullptr)

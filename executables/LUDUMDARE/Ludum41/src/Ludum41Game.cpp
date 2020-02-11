@@ -26,7 +26,6 @@ DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
 LudumGame::LudumGame()
 {
 	game_name = "AsciiPaouf 2";
-	max_life = 10;
 }
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()

@@ -1065,8 +1065,6 @@ namespace death
 			game_instance_configuration = nlohmann::json();
 
 		// read dedicated game values
-		DEATHGAME_JSON_ATTRIBUTE(initial_life);
-		DEATHGAME_JSON_ATTRIBUTE(max_life);
 		DEATHGAME_JSON_ATTRIBUTE(mouse_sensitivity);
 		DEATHGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
 		return true;

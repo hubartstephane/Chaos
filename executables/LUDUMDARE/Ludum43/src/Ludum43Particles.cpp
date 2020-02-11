@@ -196,8 +196,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 			in_danger_zone = true;
 
 
-
-
 	particle->velocity += sum_velocity * 0.0f;
 
 	// update life and color
@@ -213,7 +211,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 #if _DEBUG
 		if (!layer_trait->game->GetCheatMode())
 #endif
-			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_player_health, true, layer_trait->game))
+			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->GetPlayer(0)->GetMaxHealth(), true, layer_trait->game))
 				return true;
 	}
 

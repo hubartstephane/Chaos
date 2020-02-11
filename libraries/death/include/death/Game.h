@@ -462,10 +462,6 @@ namespace death
 		/** the configuration path */
 		boost::filesystem::path configuration_path;
 
-		/** life counters */
-		int initial_life = 3;
-		int max_life = 3;
-
 		/** cheating */
 #if _DEBUG
 		mutable bool cheat_skip_level_required = false;

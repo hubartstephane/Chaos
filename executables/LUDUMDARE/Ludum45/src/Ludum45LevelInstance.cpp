@@ -122,15 +122,7 @@ void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 {
 	death::TiledMap::LevelInstance::OnPlayerEntered(player);
 
-	LudumPlayer * ludum_player = auto_cast(player);
-	if (ludum_player == nullptr)
-		return;
 
-	LudumGame * ludum_game = GetLudumGame();
-	if (ludum_game == nullptr)
-		return;
-	ludum_player->health = ludum_game->initial_player_health;
-	ludum_player->max_health = ludum_game->initial_player_health;
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)

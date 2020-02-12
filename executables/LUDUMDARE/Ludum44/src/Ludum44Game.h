@@ -112,7 +112,6 @@ protected:
 
 protected:
 
-	float initial_player_health = 1.0f;
 	float min_player_max_health = 0.1f;
 
 	std::vector<float> player_speeds;

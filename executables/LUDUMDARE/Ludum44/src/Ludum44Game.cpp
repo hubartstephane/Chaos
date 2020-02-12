@@ -92,7 +92,6 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!InitializeGameValueVector("player_fire_rates", config, config_path, player_fire_rates))
 		return false;
 	
-	DEATHGAME_JSON_ATTRIBUTE(initial_player_health);
 	DEATHGAME_JSON_ATTRIBUTE(min_player_max_health);
 	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
 	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);

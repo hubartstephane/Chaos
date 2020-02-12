@@ -387,14 +387,10 @@ void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel 
 	DoUpdateBrightSideOfLife(false);
 }
 
-void LudumPlayer::OnDamagedReceived(float damage)
+void LudumPlayer::OnHealthChanged(float old_health, float new_health, bool invulnerable)
 {
-	if (invulnerability_timer <= 0.0f)
-	{
-        SetHealth(-damage, true);
-		invulnerability_timer = GetLudumGame()->player_invulnerability_duration;
-	}
-	GetGame()->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
+	if (old_health < new_health)
+		GetGame()->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 
 void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)

@@ -71,15 +71,9 @@ namespace death
 
 		/** the life for the player */
 		int life_count = 0;
-		/** the initial life for the player */
-		int initial_life_count = 0;
-		/** the maximum life for the player */
-		int max_life_count = 0;
 
         /** the health of the player */
         float health = 1.0f;
-		/** the health of the player */
-		float initial_health = 1.0f;
         /** the maximum health of the player */
         float max_health = 1.0f;
 

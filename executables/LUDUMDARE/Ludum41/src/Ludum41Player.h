@@ -30,6 +30,9 @@ public:
 	/** get current player length */
 	float GetPlayerLength() const { return player_length; }
 
+	/** get the maximum life count */
+	int GetMaxLifeCount() const { return max_life_count; }
+
 protected:
 
 	/** override */
@@ -40,6 +43,8 @@ protected:
 	virtual bool OnCharEvent(unsigned int c) override;
 	/** override */
 	virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
+	/** override */
+	virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
 
 	/** displace the racket from given quantity */
 	void DisplacePlayerRacket(float delta_x);
@@ -48,4 +53,6 @@ protected:
 
 	/** current player length */
 	float player_length = 70.0f;
+	/** the maximum life for the player */
+	int max_life_count = 3;
 };

@@ -433,7 +433,7 @@ void LudumGameInstance::OnBallPowerChallenge(bool success)
 
 bool LudumGameInstance::IsExtraBallChallengeValid(bool success)
 {
-	death::Player * player = GetPlayer(0);
+	LudumPlayer * player = GetLudumPlayer(0);
 	if (player == nullptr)
 		return false;
 

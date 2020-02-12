@@ -22,7 +22,7 @@ namespace death
 
 	void Player::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 	{
-        health = initial_health;
+        health = max_health;
 		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
@@ -64,9 +64,6 @@ namespace death
 				return false;
 			OnGameValuesChanged(false);
 		}
-		// set the current values
-		life_count = initial_life_count;
-		health = initial_health;
 
 		return true;
 	}
@@ -256,7 +253,7 @@ namespace death
 		else
 			life_count = in_life;
 		// clamp life
-		life_count = std::clamp(life_count, 0, max_life_count);
+		life_count = std::max(life_count, 0);
 	}
 
 	chaos::ParticleDefault::Particle * Player::GetPlayerParticle()
@@ -290,12 +287,8 @@ namespace death
 
 	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const
 	{
-		checkpoint->life_count = life_count;
-		checkpoint->initial_life_count = initial_life_count;
-		checkpoint->max_life_count = max_life_count;
-		
+		checkpoint->life_count = life_count;		
         checkpoint->health = health;		
-		checkpoint->initial_health = initial_health;
         checkpoint->max_health = max_health;
 
 		checkpoint->invulnerability_timer = invulnerability_timer;
@@ -309,11 +302,7 @@ namespace death
 	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
 	{
 		life_count     = checkpoint->life_count;
-		initial_life_count = checkpoint->initial_life_count;
-		max_life_count = checkpoint->max_life_count;
-
         health         = checkpoint->health;
-		initial_health = checkpoint->initial_health;
         max_health     = checkpoint->max_health;
 
 		invulnerability_timer = checkpoint->invulnerability_timer;
@@ -326,7 +315,7 @@ namespace death
 
 	void Player::OnLifeLost()
 	{
-        health = initial_health;
+        health = max_health;
 		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
@@ -410,9 +399,7 @@ namespace death
 
 	bool Player::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
 	{
-		DEATHGAME_JSON_ATTRIBUTE(initial_life_count);
-		DEATHGAME_JSON_ATTRIBUTE(max_life_count);
-		DEATHGAME_JSON_ATTRIBUTE(initial_health);
+		DEATHGAME_JSON_ATTRIBUTE(life_count);
 		DEATHGAME_JSON_ATTRIBUTE(max_health);
 		DEATHGAME_JSON_ATTRIBUTE(invulnerability_duration);		
 		return true;
@@ -420,6 +407,7 @@ namespace death
 
 	void Player::OnGameValuesChanged(bool hot_reload)
 	{
+		health = max_health;
 
 	}
 

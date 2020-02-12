@@ -47,8 +47,6 @@ namespace death
 		int GetScore() const { return score; }
 		/** get the life count */
 		int GetLifeCount() const { return life_count; }
-		/** get the maximum life count */
-		int GetMaxLifeCount() const { return max_life_count; }
         /** get the current health value */
         float GetHealth() const { return health; }
         /** get the maximum health value health value */
@@ -159,23 +157,16 @@ namespace death
 		/** the index of the player */
 		int player_index = 0;
 
-		/** the initial life for the player */
-		int initial_life_count = 3;
-		/** the initial health of the player */
-		float initial_health = 1.0f;
-		/** the maximum life for the player */
-		int max_life_count = 3;
-        /** the maximum health of the player */
-        float max_health = 1.0f;
-		/** the invulnerability after some health is lost */
-		float invulnerability_duration = 1.0f;
-
 		/** the current life for the player */
 		int life_count = 3;
 		/** the current health of the player */
 		float health = 1.0f;
+		/** the maximum health of the player */
+		float max_health = 1.0f;
 		/** the current timer of invulnerability */
 		float invulnerability_timer = 0.0f;
+		/** the invulnerability after some health is lost */
+		float invulnerability_duration = 1.0f;
 		/** the score for the player */
 		int score = 0;
 

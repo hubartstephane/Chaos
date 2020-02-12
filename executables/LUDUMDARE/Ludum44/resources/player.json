@@ -1,6 +1,4 @@
 {
-  "initial_life_count": 3,
-  "max_life_count": 3,
-  "initial_health": 1.0,
+  "life_count": 3,
   "max_health": 1.0
 }

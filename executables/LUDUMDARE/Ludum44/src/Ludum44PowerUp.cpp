@@ -25,12 +25,13 @@ bool LudumPowerUp::ApplyPowerUp(LudumGame * game, LudumPlayer * player, bool dec
 	if (decreasing_power_up)
 	{
 		player->health += life_cost;
-		player->health += life_cost;
+		player->initial_health += life_cost;
 		if (player->max_health > 1.0f)
 			player->max_health = 1.0f;
 	}
 	else
 	{
+		player->initial_health -= life_cost;
 		player->max_health -= life_cost;
 	}
 	if (player->health > player->max_health)

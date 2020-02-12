@@ -22,7 +22,8 @@ namespace death
 
 	void Player::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 	{
-        health = max_health;
+        health = initial_health;
+		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
 	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
@@ -290,9 +291,16 @@ namespace death
 	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const
 	{
 		checkpoint->life_count = life_count;
-        checkpoint->health = health;
+		checkpoint->initial_life_count = initial_life_count;
 		checkpoint->max_life_count = max_life_count;
+		
+        checkpoint->health = health;		
+		checkpoint->initial_health = initial_health;
         checkpoint->max_health = max_health;
+
+		checkpoint->invulnerability_timer = invulnerability_timer;
+		checkpoint->invulnerability_duration = invulnerability_duration;
+
 		checkpoint->score = score;
 		checkpoint->player_box = GetPlayerBox();
 		return true;
@@ -301,9 +309,16 @@ namespace death
 	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
 	{
 		life_count     = checkpoint->life_count;
-        health         = checkpoint->health;
+		initial_life_count = checkpoint->initial_life_count;
 		max_life_count = checkpoint->max_life_count;
+
+        health         = checkpoint->health;
+		initial_health = checkpoint->initial_health;
         max_health     = checkpoint->max_health;
+
+		invulnerability_timer = checkpoint->invulnerability_timer;
+		invulnerability_duration = checkpoint->invulnerability_duration;
+
 		score          = checkpoint->score;
 		SetPlayerBox(checkpoint->player_box);
 		return true;
@@ -311,7 +326,8 @@ namespace death
 
 	void Player::OnLifeLost()
 	{
-        health = max_health;
+        health = initial_health;
+		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
     void Player::SetHealth(float in_value, bool in_increment)
@@ -341,7 +357,7 @@ namespace death
 			if (invulnerability_timer > 0)
 				invulnerable = true;
 			else
-				invulnerability_timer = invulnerability_duration;
+				invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 		}
 
         // commit life lost

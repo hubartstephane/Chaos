@@ -86,7 +86,8 @@ protected:
 	void UpdatePlayerAcceleration(double delta_time);
 	void UpdatePlayerFire(double delta_time);
 	void UpdateBrightSideOfLife(double delta_time);
-	void OnDamagedReceived(float damage);
+
+	virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable) override;
 
 	void FireProjectiles();
 

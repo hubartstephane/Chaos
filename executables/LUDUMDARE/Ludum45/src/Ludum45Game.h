@@ -119,15 +119,11 @@ protected:
 	float player_tan_speed_damping = 0.95f;
 	float player_dash_velocity_boost = 500.0f;
 	float player_dash_duration       = 0.5f;
-	float player_invulnerability_duration = 0.2f;
 
 	float fire_size_ratio = 0.3f;
 	float fire_velocity = 800.0f;
 
-	float initial_player_health = 1.0f;
-
 	float scroll_factor = 1.0f;
-	
 	
 	std::vector<float> player_speeds;
 	std::vector<float> player_damages;

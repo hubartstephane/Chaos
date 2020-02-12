@@ -115,9 +115,6 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	if (ludum_player == nullptr)
 		return;
 
-	ludum_player->health = ludum_game->initial_player_health;
-	ludum_player->max_health = ludum_game->initial_player_health;
-
 	ludum_player->current_speed_index = 0;
 	ludum_player->current_damage_index = 0;
 	ludum_player->current_charged_damage_index = 0;

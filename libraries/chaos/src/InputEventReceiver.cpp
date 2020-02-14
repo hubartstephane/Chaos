@@ -3,6 +3,19 @@
 
 namespace chaos
 {
+	void InputEventReceiver::SetInputMode(InputMode new_mode)
+	{
+		if (new_mode == input_mode)
+			return;
+		InputMode old_mode = input_mode;
+		input_mode = new_mode;
+		OnInputModeChanged(new_mode, old_mode);
+	}
+
+	void InputEventReceiver::OnInputModeChanged(InputMode new_mode, InputMode old_mode) 
+	{
+	}
+
 	bool InputEventReceiver::OnMouseMove(double x, double y) 
 	{ 
 		return false; 

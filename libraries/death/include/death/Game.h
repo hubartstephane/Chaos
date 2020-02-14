@@ -286,7 +286,7 @@ namespace death
 		virtual bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
 
 		/** called whenever the input mode changes */
-		virtual void OnInputModeChanged(int new_mode, int old_mode);
+		virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 
 		/** create some clocks */
 		virtual bool InitializeClocks();

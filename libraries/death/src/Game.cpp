@@ -23,7 +23,7 @@ namespace death
 		return 0;
 	}
 
-	void Game::OnInputModeChanged(int new_mode, int old_mode)
+	void Game::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
 	{
 
 	}

@@ -64,15 +64,10 @@ namespace chaos
 		/** create the use local temp directory */
 		boost::filesystem::path const & CreateUserLocalTempDirectory() const;
 
-		/* get the current input mode */
-		int GetInputMode() const { return current_input_mode; }
 		/* get the current input mode (search the application) */
-		static int GetApplicationInputMode();
-
-		/** change the current input mode */
-		void SetInputMode(int new_mode);
+		static InputMode GetApplicationInputMode();
 		/** change the current input mode (search the application) */
-		static void SetApplicationInputMode(int new_mode);
+		static void SetApplicationInputMode(InputMode new_mode);
 
 		/** check whether -flag_name is in command line */
 		bool HasCommandLineFlag(char const * flag_name) const;
@@ -114,9 +109,6 @@ namespace chaos
 		/** finalize the managers */
 		virtual bool FinalizeManagers();
 
-		/** the user callback called when current input mode changes */
-		virtual void OnInputModeChanged(int new_mode, int old_mode){}
-
 		/** loading the configuration file */
 		bool LoadConfigurationFile();
 
@@ -155,9 +147,6 @@ namespace chaos
 
 		/** the file manager */
 		shared_ptr<FileManager> file_manager;
-
-		/** the current input mode */
-		int current_input_mode = InputMode::Keyboard;
 	};
 
 	template<typename APPLICATION_TYPE>

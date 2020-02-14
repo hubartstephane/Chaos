@@ -131,7 +131,7 @@ namespace chaos
 			void TweakHintsFromConfiguration(SingleWindowApplicationParams & params, nlohmann::json const & in_config);
 
 			/** the user callback called when current input mode changes */
-			virtual void OnInputModeChanged(int new_mode, int old_mode) override;
+			virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 		protected:
 

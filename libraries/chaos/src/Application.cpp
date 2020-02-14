@@ -190,7 +190,7 @@ namespace chaos
 		return result;
 	}
 
-	int Application::GetApplicationInputMode()
+	InputMode Application::GetApplicationInputMode()
 	{
 		Application const * application = Application::GetConstInstance();
 		if (application != nullptr)
@@ -198,21 +198,11 @@ namespace chaos
 		return InputMode::Keyboard;
 	}
 
-	void Application::SetApplicationInputMode(int new_mode)
+	void Application::SetApplicationInputMode(InputMode new_mode)
 	{
 		Application * application = Application::GetInstance();
 		if (application != nullptr)
 			application->SetInputMode(new_mode);	
-	}
-
-	void Application::SetInputMode(int new_mode)
-	{
-		if (new_mode == current_input_mode)
-			return;
-
-		int old_mode = current_input_mode;
-		current_input_mode = new_mode;
-		OnInputModeChanged(new_mode, old_mode);
 	}
 
 	bool Application::HasApplicationCommandLineFlag(char const * flag_name)

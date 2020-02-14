@@ -8,7 +8,7 @@
 
 namespace death
 {
-	void GameWindow::OnInputModeChanged(int new_mode, int old_mode)
+	void GameWindow::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
 	{
 		if (game != nullptr)
 			game->OnInputModeChanged(new_mode, old_mode);

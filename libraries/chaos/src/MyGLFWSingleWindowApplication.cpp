@@ -409,7 +409,7 @@ namespace chaos
 			return true;
 		}
 
-		void SingleWindowApplication::OnInputModeChanged(int new_mode, int old_mode)
+		void SingleWindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 		{
 			if (window != nullptr)
 				window->OnInputModeChanged(new_mode, old_mode);			

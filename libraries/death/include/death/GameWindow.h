@@ -36,7 +36,7 @@ namespace death
 		/** override */
 		virtual bool Tick(double delta_time) override;
 		/** override */
-		virtual void OnInputModeChanged(int new_mode, int old_mode) override;
+		virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 		/** override */
 		virtual void OnIconifiedStateChange(bool iconified) override;
 		/** override */

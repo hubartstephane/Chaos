@@ -42,7 +42,7 @@ void LudumGame::OnEnterMainMenu(bool very_first)
 		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
+void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
 {
 	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
 	if (ludum_game_instance != nullptr)

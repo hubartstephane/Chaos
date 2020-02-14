@@ -215,11 +215,6 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	}
 }
 
-void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
-{
-
-}
-
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD(this);

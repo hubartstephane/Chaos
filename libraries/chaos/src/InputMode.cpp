@@ -2,19 +2,19 @@
 
 namespace chaos
 {
-	bool InputMode::IsPCMode(int mode)
+	bool IsPCMode(InputMode mode)
 	{
-		return (mode == Keyboard) || (mode == Mouse);
+		return (mode == InputMode::Keyboard) || (mode == InputMode::Mouse);
 	}
 
-	bool InputMode::IsConsoleMode(int mode)
+	bool IsConsoleMode(InputMode mode)
 	{
-		return (mode == Gamepad);
+		return (mode == InputMode::Gamepad);
 	}
 
-	bool InputMode::IsPlatformChanged(int new_mode, int old_mode)
+	bool IsPlatformChanged(InputMode new_mode, InputMode old_mode)
 	{
-		return (new_mode == Gamepad) ^ (old_mode == Gamepad); // one and only one is gamepad
+		return IsConsoleMode(new_mode) != IsConsoleMode(old_mode); // one and only one is gamepad
 	}
 
 }; // namespace chaos

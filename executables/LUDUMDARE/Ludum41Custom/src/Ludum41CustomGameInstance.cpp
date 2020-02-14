@@ -54,11 +54,11 @@ void LudumGameInstance::TickChallenge(double delta_time)
 }
 
 
-void LudumGameInstance::OnInputModeChanged(int new_mode, int old_mode)
+void LudumGameInstance::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
 {
 	if (sequence_challenge != nullptr)
 	{
-		if (chaos::InputMode::IsPlatformChanged(new_mode, old_mode))
+		if (chaos::IsPlatformChanged(new_mode, old_mode))
 		{
 			sequence_challenge->particle_range = CreateChallengeParticles(sequence_challenge.get());
 			sequence_challenge->Show(game->IsPlaying());
@@ -685,8 +685,8 @@ std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> c
 
 chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(LudumChallenge * challenge)
 {
-	int  input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
-	bool keyboard = chaos::InputMode::IsPCMode(input_mode);
+	chaos::InputMode input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+	bool keyboard = chaos::IsPCMode(input_mode);
 
 	chaos::ParticleLayerBase * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
 	if (layer == nullptr)

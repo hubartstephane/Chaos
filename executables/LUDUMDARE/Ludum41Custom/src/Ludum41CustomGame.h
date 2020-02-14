@@ -78,7 +78,7 @@ protected:
 	virtual death::GameLevel * DoLoadLevel(chaos::FilePathParam const & path) override;
 
 	/** override */
-	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
+	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 
 	virtual death::GameInstance * CreateGameInstance() override;
 

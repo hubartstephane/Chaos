@@ -98,9 +98,6 @@ protected:
 	/** override level creation */
 	death::TiledMap::Level * CreateTiledMapLevel() override;
 
-	/** called whenever the input mode changes */
-	virtual void OnInputModeChanged(int new_mode, int old_mode) override;
-
 	/** move the player */
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 

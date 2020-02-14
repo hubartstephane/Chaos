@@ -44,11 +44,6 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 	return true;
 }
 
-void LudumGame::OnInputModeChanged(int new_mode, int old_mode)
-{
-
-}
-
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD(this);

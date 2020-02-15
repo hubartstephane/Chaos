@@ -451,7 +451,8 @@ namespace death
 	{
 		// iterate the files and load the tilesets
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, property_name, property_name); it != end; ++it)
+
+		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, property_name, default_value); it != end; ++it)
 		{
 			boost::filesystem::path p = it->path();
 

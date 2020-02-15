@@ -56,9 +56,12 @@ namespace chaos
 		{
 			try
 			{
-				boost::filesystem::directory_iterator result = boost::filesystem::directory_iterator(redirected_path);
-				if (result != boost::filesystem::directory_iterator())
-					return result;
+				if (boost::filesystem::is_directory(redirected_path))
+				{
+					boost::filesystem::directory_iterator result = boost::filesystem::directory_iterator(redirected_path);
+					if (result != boost::filesystem::directory_iterator())
+						return result;
+				}
 			}
 			catch (...)
 			{
@@ -67,7 +70,8 @@ namespace chaos
 #endif // _DEBUG 
 		try
 		{
-			return boost::filesystem::directory_iterator(resolved_path);
+			if (boost::filesystem::is_directory(resolved_path))
+				return boost::filesystem::directory_iterator(resolved_path);
 		}
 		catch (...)
 		{
@@ -137,6 +141,13 @@ namespace chaos
 					result.data[file_size] = 0;
 			}
 		}
+
+#if _DEBUG
+		if (chaos::Application::HasApplicationCommandLineFlag("-ShowLoadedFile")) // CMDLINE
+		{
+			chaos::LogTools::Log("LoadFile [%s]    size = [%d]", resolved_path.string().c_str(), result.bufsize);
+		}
+#endif
 		return result;
 	}
 

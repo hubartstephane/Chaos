@@ -82,16 +82,13 @@ namespace death
 	{
 		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
 			return false;
-
 		// create the game
 		game = CreateGame();
 		if (game == nullptr)
 			return false;
-
 		// basic initialization of the game */
 		if (!game->InitializeGame(glfw_window))
 			return false;
-
 		// initialize the game
 		nlohmann::json const * game_config = chaos::JSONTools::GetStructure(config, "game");
 		if (game_config != nullptr)

@@ -535,7 +535,7 @@ namespace chaos
 				}
 			}
 			// super method
-			if (InputEventReceiver::OnKeyEvent(key, scan_code, action, modifier))
+			if (InputEventReceiver::OnKeyEventImpl(key, scan_code, action, modifier))
 				return true;
 			// give opportunity to application
 			Application * application = Application::GetInstance();

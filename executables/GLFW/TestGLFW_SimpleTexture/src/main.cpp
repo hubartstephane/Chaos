@@ -24,7 +24,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
 		{
@@ -41,7 +41,7 @@ protected:
 			ChangeTextureLevel();
 			return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
 	}
 
 	void ChangeTextureLevel()
@@ -255,7 +255,7 @@ protected:
 		return result;
 	}
 
-	virtual bool OnMouseButton(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
 	{
 		if (button == 0 && action == GLFW_RELEASE)
 		{

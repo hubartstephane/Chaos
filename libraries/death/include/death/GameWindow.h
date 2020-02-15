@@ -17,13 +17,13 @@ namespace death
 		virtual Game * CreateGame();
 
 		/** override */
-		virtual bool OnMouseButton(int button, int action, int modifier) override;
+		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
 		/** override */
-		virtual bool OnMouseMove(double x, double y) override;
+		virtual bool OnMouseMoveImpl(double x, double y) override;
 		/** override */
-		virtual bool OnCharEvent(unsigned int c) override;
+		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** override */
-		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
+		virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override;
 
 		/** override */
 		virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override;

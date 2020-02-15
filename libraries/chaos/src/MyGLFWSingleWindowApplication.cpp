@@ -463,7 +463,7 @@ namespace chaos
 			return application->GetGPUResourceManager();
 		}
 
-		bool SingleWindowApplication::OnKeyEvent(int key, int scan_code, int action, int modifier)
+		bool SingleWindowApplication::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
 		{	
 			// reloading GPU resources
 			if (key == GLFW_KEY_F8 && action == GLFW_PRESS)
@@ -472,7 +472,7 @@ namespace chaos
 				ReloadGPUResources();
 				return true;
 			}
-			return Application::OnKeyEvent(key, scan_code, action, modifier);
+			return Application::OnKeyEventImpl(key, scan_code, action, modifier);
 		}
 
 	}; // namespace MyGLFW

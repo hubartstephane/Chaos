@@ -91,7 +91,7 @@ namespace chaos
 			/** reload all GPU resources */
 			virtual bool ReloadGPUResources();
 			/** override */
-			virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
+			virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override;
 
 		protected:
 

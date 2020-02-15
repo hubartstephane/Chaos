@@ -82,7 +82,7 @@ namespace death
 			hud->Tick(delta_time);
 	}
 
-	bool Game::OnKeyEvent(int key, int scan_code, int action, int modifier)
+	bool Game::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
 	{
 		// give the game instance opportunity to capture the input
 		if (game_instance != nullptr)
@@ -152,13 +152,12 @@ namespace death
 				SaveIntoCheckpoint();
 				return true;
 			}
-
 #endif
 		}
 		return false;
 	}
 
-	bool Game::OnCharEvent(unsigned int c)
+	bool Game::OnCharEventImpl(unsigned int c)
 	{
 		// give the game instance opportunity to capture the input
 		if (game_instance != nullptr)
@@ -167,7 +166,7 @@ namespace death
 		return false;
 	}
 
-	bool Game::OnMouseButton(int button, int action, int modifier)
+	bool Game::OnMouseButtonImpl(int button, int action, int modifier)
 	{
 		// give the game instance opportunity to capture the input
 		if (game_instance != nullptr)
@@ -180,7 +179,7 @@ namespace death
 		return false;
 	}
 
-	bool Game::OnMouseMove(double x, double y)
+	bool Game::OnMouseMoveImpl(double x, double y)
 	{
 		// give the game instance opportunity to capture the input
 		if (game_instance != nullptr)

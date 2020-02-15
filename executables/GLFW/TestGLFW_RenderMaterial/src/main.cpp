@@ -76,7 +76,7 @@ protected:
 		UpdateDebugDisplay();
 	}
 
-	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS)
 		{
@@ -94,7 +94,7 @@ protected:
 				ChangeMaterial(-1);
 			return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override

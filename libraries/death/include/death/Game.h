@@ -230,13 +230,13 @@ namespace death
 		virtual void TickGameInputs(double delta_time);
 
 		/** whenever a key event is received */
-		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
+		virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override;
 		/** whenever a char event is received */
-		virtual bool OnCharEvent(unsigned int c) override;
+		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** whenever a mouse event is received */
-		virtual bool OnMouseButton(int button, int action, int modifier) override;
+		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
 		/** whenever mouse is displaced */
-		virtual bool OnMouseMove(double x, double y) override;
+		virtual bool OnMouseMoveImpl(double x, double y) override;
 
 		/** getting the required viewport for given window */
 		virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const;

@@ -5,7 +5,7 @@
   "sprite_directory": "@sprites",
   "levels_directory": "@levels",
   "tilesets_directory": "@tilesets",
-  "objecttypesets_directory": "@objecttypessets",
+  "objecttypesets_directory": "@objecttypesets",
 
   "game_instance": { "@filename": "game_instance.json" },
 

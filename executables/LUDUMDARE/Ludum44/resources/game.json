@@ -5,7 +5,7 @@
   "sprite_directory": "@sprites",
   "levels_directory": "@levels",
   "tilesets_directory": "@tilesets",
-  "objecttypesets_directory": "@objecttypessets",
+  "objecttypesets_directory": "@objecttypesets",
 
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1.0,

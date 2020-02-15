@@ -38,12 +38,12 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
 	{
 		if (game != nullptr)
 			if (game->OnKeyEvent(key, action))
 				return true;
-		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override

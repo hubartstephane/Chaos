@@ -106,14 +106,6 @@ namespace death
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
-		/** handle keyboard input */
-		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
-		/** handle keyboard input */
-		virtual bool OnCharEvent(unsigned int c) override;
-		/** handle mouse input */
-		virtual bool OnMouseButton(int button, int action, int modifier) override;
-		/** handle mouse movement */
-		virtual bool OnMouseMove(double x, double y) override;
 
 		/** extract stick values from keyboard state */
 		virtual void CacheKeyboardPlayerDisplacementInputs();

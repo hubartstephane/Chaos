@@ -111,13 +111,13 @@ namespace death
 		virtual bool DoTick(double delta_time) override;
 
 		/** handle keyboard input */
-		virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override;
+		virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override;
 		/** handle keyboard input */
-		virtual bool OnCharEvent(unsigned int c) override;
+		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** handle mouse input */
-		virtual bool OnMouseButton(int button, int action, int modifier) override;
+		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
 		/** handle mouse movement */
-		virtual bool OnMouseMove(double x, double y) override;
+		virtual bool OnMouseMoveImpl(double x, double y) override;
 
 		/** returns the maximum number of player */
 		virtual size_t GetMaxPlayerCount() const;

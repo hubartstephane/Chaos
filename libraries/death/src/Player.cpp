@@ -31,26 +31,6 @@ namespace death
 		player_allocations = in_allocation;
 	}
 
-	bool Player::OnKeyEvent(int key, int scan_code, int action, int modifier)
-	{
-		return false;
-	}
-
-	bool Player::OnCharEvent(unsigned int c)
-	{
-		return false;
-	}
-
-	bool Player::OnMouseButton(int button, int action, int modifier)
-	{
-		return false;
-	}
-
-	bool Player::OnMouseMove(double x, double y)
-	{
-		return false;
-	}
-
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
 		if (!GameInstanceEntity::Initialize(in_game_instance))

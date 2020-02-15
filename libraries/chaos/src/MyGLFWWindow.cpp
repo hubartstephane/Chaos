@@ -506,7 +506,7 @@ namespace chaos
 			return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
 		}
 
-		bool Window::OnKeyEvent(int key, int scan_code, int action, int modifier)
+		bool Window::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
 		{
 			// kill the window
 			if (action == GLFW_PRESS)

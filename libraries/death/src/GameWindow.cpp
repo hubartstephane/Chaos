@@ -14,39 +14,39 @@ namespace death
 			game->OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool GameWindow::OnCharEvent(unsigned int c)
+	bool GameWindow::OnCharEventImpl(unsigned int c)
 	{
 		// give inputs to the game
 		if (game != nullptr)
 			if (game->OnCharEvent(c))
 				return true;
-		return chaos::MyGLFW::Window::OnCharEvent(c);
+		return chaos::MyGLFW::Window::OnCharEventImpl(c);
 	}
 
-	bool GameWindow::OnKeyEvent(int key, int scan_code, int action, int modifier)
+	bool GameWindow::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
 	{
 		// give inputs to the game
 		if (game != nullptr)
 			if (game->OnKeyEvent(key, scan_code, action, modifier))
 				return true;
 		// super method
-		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
 	}
 
-	bool GameWindow::OnMouseButton(int button, int action, int modifier)
+	bool GameWindow::OnMouseButtonImpl(int button, int action, int modifier)
 	{
 		if (game != nullptr)
 			if (game->OnMouseButton(button, action, modifier))
 				return true;
-		return chaos::MyGLFW::Window::OnMouseButton(button, action, modifier);
+		return chaos::MyGLFW::Window::OnMouseButtonImpl(button, action, modifier);
 	}
 
-	bool GameWindow::OnMouseMove(double x, double y)
+	bool GameWindow::OnMouseMoveImpl(double x, double y)
 	{
 		if (game != nullptr)
 			if (game->OnMouseMove(x, y))
 				return true;
-		return chaos::MyGLFW::Window::OnMouseMove(x, y);
+		return chaos::MyGLFW::Window::OnMouseMoveImpl(x, y);
 	}
 
 	chaos::box2 GameWindow::GetRequiredViewport(glm::ivec2 const & size) const

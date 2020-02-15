@@ -187,7 +187,7 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
 		{
@@ -200,7 +200,7 @@ protected:
 				--bitmap_index;
 			return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
 	}
 
 protected:

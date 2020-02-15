@@ -67,7 +67,7 @@ namespace death
 		return result;
 	}
 
-	bool GameInstance::OnKeyEvent(int key, int scan_code, int action, int modifier)
+	bool GameInstance::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
@@ -76,7 +76,7 @@ namespace death
 		return false;
 	}
 
-	bool GameInstance::OnCharEvent(unsigned int c)
+	bool GameInstance::OnCharEventImpl(unsigned int c)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
@@ -85,7 +85,7 @@ namespace death
 		return false;
 	}
 
-	bool GameInstance::OnMouseButton(int button, int action, int modifier)
+	bool GameInstance::OnMouseButtonImpl(int button, int action, int modifier)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
@@ -94,7 +94,7 @@ namespace death
 		return false;
 	}
 
-	bool GameInstance::OnMouseMove(double x, double y)
+	bool GameInstance::OnMouseMoveImpl(double x, double y)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)

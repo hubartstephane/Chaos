@@ -345,7 +345,7 @@ protected:
 		return false;
 	}
 
-	virtual bool OnKeyEvent(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
 	{
 		if (key == GLFW_KEY_T && action == GLFW_RELEASE)
 		{
@@ -370,7 +370,7 @@ protected:
 			if (GenerateEvent(clock3.get(), key, GLFW_KEY_E, action, "EVENT 3", EVENT_FOREVER_TEST))
 				return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEvent(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
 	}
 
 protected:

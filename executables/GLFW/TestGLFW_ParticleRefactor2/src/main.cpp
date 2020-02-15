@@ -185,7 +185,7 @@ protected:
 		return true; // no redraw
 	}
 
-	virtual bool OnMouseButton(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
 	{
 		double mouse_x = 0.0;
 		double mouse_y = 0.0;

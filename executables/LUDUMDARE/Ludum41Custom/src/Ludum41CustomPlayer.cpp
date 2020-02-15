@@ -33,7 +33,7 @@ void LudumPlayer::DisplacePlayerRacket(float delta_x)
 }
 
 
-bool LudumPlayer::OnMouseMove(double x, double y)
+bool LudumPlayer::OnMouseMoveImpl(double x, double y)
 {
 	death::Game const * game = GetGame();
 	if (game == nullptr)
@@ -44,7 +44,7 @@ bool LudumPlayer::OnMouseMove(double x, double y)
 	return false;
 }
 
-bool LudumPlayer::OnCharEvent(unsigned int c)
+bool LudumPlayer::OnCharEventImpl(unsigned int c)
 {
 	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
 
@@ -60,7 +60,7 @@ bool LudumPlayer::OnCharEvent(unsigned int c)
 		return true;
 	}
 
-	return death::Player::OnCharEvent(c);
+	return death::Player::OnCharEventImpl(c);
 }
 
 void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)

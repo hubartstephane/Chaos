@@ -26,7 +26,7 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (event.IsKeyReleased(GLFW_KEY_KP_ADD)
+		if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
 		{
 			ChangeTexture(texture_index + 1);
 			return true;

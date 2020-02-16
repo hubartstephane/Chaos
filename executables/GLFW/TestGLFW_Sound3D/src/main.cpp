@@ -140,7 +140,7 @@ protected:
     {
     //  glm::mat4 view = fps_view_controller.GlobalToLocal();
       glm::mat4 view = fps_view_controller.LocalToGlobal();
-      sound_manager->SetListenerPosition(view);
+      sound_manager->SetListenerPosition(view[3]); // ??? 
       sound_manager->Tick((float)delta_time);
     }
 
@@ -161,7 +161,7 @@ protected:
     return true; // refresh
   }
 
-  virtual bool OnMouseButton(int button, int action, int modifier) override
+  virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
   {
 		if (button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS)
 		{

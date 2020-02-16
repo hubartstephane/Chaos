@@ -112,7 +112,7 @@ namespace chaos
 			virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const;
 
 			/** override */
-			virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override;
+			virtual bool OnKeyEventImpl(KeyEvent const & event) override;
 
 		protected:
 

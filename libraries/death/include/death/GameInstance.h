@@ -111,7 +111,7 @@ namespace death
 		virtual bool DoTick(double delta_time) override;
 
 		/** handle keyboard input */
-		virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override;
+		virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override;
 		/** handle keyboard input */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** handle mouse input */

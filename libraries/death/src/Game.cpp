@@ -82,78 +82,77 @@ namespace death
 			hud->Tick(delta_time);
 	}
 
-	bool Game::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
+	bool Game::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
 		// give the game instance opportunity to capture the input
 		if (game_instance != nullptr)
-			if (game_instance->OnKeyEvent(key, scan_code, action, modifier))
+			if (game_instance->OnKeyEvent(event))
 				return true;
 
 		// only care for keys that are PRESSED (ignore RELEASE, ignore REPEAT)
-		if (action == GLFW_PRESS)
+		if (event.action == GLFW_PRESS)
 		{
 			// MAIN MENU to PLAYING
-			if (key != GLFW_KEY_ESCAPE && key != GLFW_KEY_LEFT_SHIFT && key != GLFW_KEY_RIGHT_SHIFT)
+			if (event.key != GLFW_KEY_ESCAPE && event.key != GLFW_KEY_LEFT_SHIFT && event.key != GLFW_KEY_RIGHT_SHIFT)
 				if (RequireStartGame(nullptr))
 					return true;
-			// PLAYING to PAUSE
-			if (key == GLFW_KEY_KP_ENTER || key == GLFW_KEY_ENTER)
-				if (RequireTogglePause())
-					return true;
-			// QUIT GAME
-			if (key == GLFW_KEY_ESCAPE)
-			{		
-				if (modifier & GLFW_MOD_SHIFT)
-				{
-					if (RequireExitGame())
-						return true;
-				}
-				else
-				{
-					if (RequireTogglePause())
-						return true;
-				}
-			}
-			// CHEAT CODE TO SKIP LEVEL
-#if _DEBUG
-			// CMD GLFW_KEY_F1  : SetCheatSkipLevelRequired(...)
-			if (key == GLFW_KEY_F1)
-			{
-				SetCheatSkipLevelRequired(true);
-				return true;
-			}
-			// CMD GLFW_KEY_F2  : SetCheatMode(...)
-			if (key == GLFW_KEY_F2)
-			{
-				SetCheatMode(!GetCheatMode());
-				return true;
-			}
-			// CMD GLFW_KEY_F3  : ReloadGameConfiguration(...)
-			if (key == GLFW_KEY_F3)
-			{
-				ReloadGameConfiguration();
-				return true;
-			}
-			// CMD GLFW_KEY_F4  : ReloadCurrentLevel(...)
-			if (key == GLFW_KEY_F4)
-			{
-				ReloadCurrentLevel();
-				return true;
-			}
-			// CMD GLFW_KEY_F5  : SetFreeCameraMode(...)
-			if (key == GLFW_KEY_F5)
-			{
-				SetFreeCameraMode(!IsFreeCameraMode());
-				return true;
-			}
-			// CMD GLFW_KEY_F6  : SaveToCheckpoint(...)
-			if (key == GLFW_KEY_F6)
-			{
-				SaveIntoCheckpoint();
-				return true;
-			}
-#endif
 		}
+		// PLAYING to PAUSE
+		if (event.IsKeyPressed(GLFW_KEY_KP_ENTER) || event.IsKeyPressed(GLFW_KEY_ENTER))
+			if (RequireTogglePause())
+				return true;
+		// QUIT GAME
+		if (event.IsKeyPressed(GLFW_KEY_ESCAPE, GLFW_MOD_SHIFT))
+		{
+			if (RequireExitGame())
+				return true;
+		}
+		else if (event.IsKeyPressed(GLFW_KEY_ESCAPE))
+		{
+			if (RequireTogglePause())
+				return true;
+		}
+		// CHEAT CODE TO SKIP LEVEL
+#if _DEBUG
+			
+		// CMD GLFW_KEY_F1  : SetCheatSkipLevelRequired(...)	
+		if (event.IsKeyPressed(GLFW_KEY_F1))
+		{
+			SetCheatSkipLevelRequired(true);
+			return true;
+		}
+		// CMD GLFW_KEY_F2  : SetCheatMode(...)
+		if (event.IsKeyPressed(GLFW_KEY_F2))
+		{
+			SetCheatMode(!GetCheatMode());
+			return true;
+		}
+		// CMD GLFW_KEY_F3  : ReloadGameConfiguration(...)
+		if (event.IsKeyPressed(GLFW_KEY_F3))
+		{
+			ReloadGameConfiguration();
+			return true;
+		}
+		// CMD GLFW_KEY_F4  : ReloadCurrentLevel(...)
+		if (event.IsKeyPressed(GLFW_KEY_F4))
+		{
+			ReloadCurrentLevel();
+			return true;
+		}
+		// CMD GLFW_KEY_F5  : SetFreeCameraMode(...)
+		if (event.IsKeyPressed(GLFW_KEY_F5))
+		{
+			SetFreeCameraMode(!IsFreeCameraMode());
+			return true;
+		}
+		// CMD GLFW_KEY_F6  : SaveToCheckpoint(...)
+		if (event.IsKeyPressed(GLFW_KEY_F6))
+		{
+			SaveIntoCheckpoint();
+			return true;
+		}
+#endif
+
 		return false;
 	}
 

@@ -67,11 +67,11 @@ namespace death
 		return result;
 	}
 
-	bool GameInstance::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
+	bool GameInstance::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
-			if (players[i]->OnKeyEvent(key, scan_code, action, modifier))
+			if (players[i]->OnKeyEvent(event))
 				return true;
 		return false;
 	}

@@ -254,9 +254,15 @@ namespace chaos
 		{
 			Application::SetApplicationInputMode(InputMode::Keyboard);
 
+			KeyEvent event;
+			event.key       = key;
+			event.scan_code = scan_code;
+			event.action    = action;
+			event.modifier  = modifier;
+
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
-				my_window->OnKeyEvent(key, scan_code, action, modifier);
+				my_window->OnKeyEvent(event);
 		}
 
 		void Window::DoOnCharEvent(GLFWwindow * in_glfw_window, unsigned int c)
@@ -506,42 +512,36 @@ namespace chaos
 			return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
 		}
 
-		bool Window::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
+		bool Window::OnKeyEventImpl(KeyEvent const & event)
 		{
 			// kill the window
-			if (action == GLFW_PRESS)
+			if (event.IsKeyPressed(GLFW_KEY_ESCAPE, GLFW_MOD_SHIFT))
 			{
-				if (key == GLFW_KEY_ESCAPE)
-				{
-					if (modifier & GLFW_MOD_SHIFT)
-					{
-						RequireWindowClosure();
-						return true;
-					}
-				}
-				// screen capture
-				// CMD GLFW_KEY_F9 : ScreenCapture(...)
-				if (key == GLFW_KEY_F9)
-				{
-					ScreenCapture();
-					return true;
-				}
-				// try to go fullscreen
-				// CMD GLFW_KEY_F10 : ToggleFullscreen(...)
-				if (key == GLFW_KEY_F10)
-				{
-					ToggleFullscreen();
-					return true;
-				}
-			}
-			// super method
-			if (InputEventReceiver::OnKeyEventImpl(key, scan_code, action, modifier))
+				RequireWindowClosure();
 				return true;
+			}
+			// screen capture
+			// CMD GLFW_KEY_F9 : ScreenCapture(...)
+			if (event.IsKeyPressed(GLFW_KEY_F9))
+			{
+				ScreenCapture();
+				return true;
+			}
+			// try to go fullscreen
+			// CMD GLFW_KEY_F10 : ToggleFullscreen(...)
+			if (event.IsKeyPressed(GLFW_KEY_F10))
+			{
+				ToggleFullscreen();
+				return true;
+			}
 			// give opportunity to application
 			Application * application = Application::GetInstance();
 			if (application != nullptr)
-				if (application->OnKeyEvent(key, scan_code, action, modifier))
+				if (application->OnKeyEvent(event))
 					return true;
+			// super method
+			if (InputEventReceiver::OnKeyEventImpl(event))
+				return true;
 			return false;
 		}
 

@@ -953,7 +953,7 @@ namespace death
 		if (!physical_gamepad->IsAnyAction())
 			return true;
 		// change the application mode
-		chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
+		SetInputMode(chaos::InputMode::Gamepad);
 		// special action on gamepad input
 		OnGamepadInput(physical_gamepad);
 

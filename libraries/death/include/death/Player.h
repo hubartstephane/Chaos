@@ -106,6 +106,8 @@ namespace death
 
 		/** override */
 		virtual bool DoTick(double delta_time) override;
+		/** override */
+		virtual GLFWwindow* GetGLFWWindow() const override;
 
 		/** extract stick values from keyboard state */
 		virtual void CacheKeyboardPlayerDisplacementInputs();

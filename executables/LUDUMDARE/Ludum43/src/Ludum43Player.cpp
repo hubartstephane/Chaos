@@ -170,20 +170,9 @@ void LudumPlayer::HandleKeyboardInputs(double delta_time)
 
 	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Keyboard)
 	{
-		// get the data
-		death::Game * game = GetGame();
-		if (game == nullptr)
-			return;
-
-		GLFWwindow * glfw_window = game->GetGLFWWindow();
-		if (glfw_window == nullptr)
-			return;
-
-		// get the mode
-		bool dash_mode = (glfwGetKey(glfw_window, GLFW_KEY_SPACE) != GLFW_RELEASE);
+		bool dash_mode = CheckKeyPressed(GLFW_KEY_SPACE);
 		SetDashMode(dash_mode);
-
-		bool reversed_mode = (glfwGetKey(glfw_window, GLFW_KEY_RIGHT_CONTROL) != GLFW_RELEASE);
+		bool reversed_mode = CheckKeyPressed(GLFW_KEY_RIGHT_CONTROL);
 		SetReverseMode(reversed_mode);
 	}
 }

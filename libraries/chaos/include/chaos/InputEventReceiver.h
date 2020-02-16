@@ -40,7 +40,14 @@ namespace chaos
 		InputMode GetInputMode() const { return input_mode; }
 		
 		/** check whether a key event correspond to given request. Change input mode to keyboard if true */
-		bool IsKeyPressed(KeyEvent const& event, int check_key, int check_modifier = 0);
+		bool CheckKeyPressed(KeyEvent const& event, int check_key, int check_modifier = 0);
+		/** check whether a key is pressed given request. Change input mode to keyboard if true */
+		bool CheckKeyPressed(int check_key);
+
+
+
+		/** Get the window (usefull for Key function) */
+		virtual GLFWwindow* GetGLFWWindow() const { return nullptr; }
 
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(double x, double y);

@@ -113,6 +113,8 @@ namespace chaos
 
 			/** override */
 			virtual bool OnKeyEventImpl(KeyEvent const & event) override;
+			/** override */
+			virtual GLFWwindow* GetGLFWWindow() const override { return glfw_window; }
 
 		protected:
 

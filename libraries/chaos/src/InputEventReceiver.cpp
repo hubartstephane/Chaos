@@ -5,9 +5,10 @@ namespace chaos
 {
 	bool KeyEvent::IsKeyPressed(int check_key, int check_modifier) const
 	{
-		if (key == check_key && action == GLFW_PRESS)
-			if ((modifier & check_modifier) == check_modifier)
-				return true;
+		if (key == check_key)
+			if (action == GLFW_PRESS || action == GLFW_REPEAT)
+				if ((modifier & check_modifier) == check_modifier)
+					return true;
 		return false;
 	}
 
@@ -28,7 +29,20 @@ namespace chaos
 		OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool InputEventReceiver::IsKeyPressed(KeyEvent const& event, int check_key, int check_modifier)
+	bool InputEventReceiver::CheckKeyPressed(int check_key)
+	{
+		GLFWwindow* glfw_window = GetGLFWWindow();
+		if (glfw_window == nullptr)
+			return false;
+		if (glfwGetKey(glfw_window, check_key))
+		{
+			SetInputMode(InputMode::Keyboard);
+			return true;
+		}
+		return false;
+	}
+
+	bool InputEventReceiver::CheckKeyPressed(KeyEvent const& event, int check_key, int check_modifier)
 	{
 		if (event.IsKeyPressed(check_key, check_modifier))
 		{

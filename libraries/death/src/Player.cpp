@@ -83,6 +83,9 @@ namespace death
 		CacheKeyboardPlayerDisplacementInputs();
 		// cache values for stick displacement
 		CacheGamepadPlayerDisplacementInputs();
+		// update the forcefeedback
+		if (gamepad != nullptr)
+			gamepad->SetForceFeedbackMuted(GetInputMode() != chaos::InputMode::Gamepad);
 
 		// tick player displacement
 		if (game != nullptr && !game->IsFreeCameraMode() && GetGame()->IsPlaying())
@@ -111,26 +114,17 @@ namespace death
 
 	void Player::CacheKeyboardPlayerDisplacementInputs()
 	{
-		// get the data
-		Game * game = GetGame();
-		if (game == nullptr)
-			return;
-		// get the GLFW object to get the key state
-		GLFWwindow * glfw_window = game->GetGLFWWindow();
-		if (glfw_window == nullptr)
-			return;
-
 		// test whether the stick position can be overriden
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
+		if (CheckKeyPressed(GLFW_KEY_LEFT))
 			simulated_stick.x -= 1.0f;
-		if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
+		if (CheckKeyPressed(GLFW_KEY_RIGHT))
 			simulated_stick.x += 1.0f;
 
-		if (glfwGetKey(glfw_window, GLFW_KEY_DOWN))
+		if (CheckKeyPressed(GLFW_KEY_DOWN))
 			simulated_stick.y += 1.0f;
-		if (glfwGetKey(glfw_window, GLFW_KEY_UP))
+		if (CheckKeyPressed(GLFW_KEY_UP))
 			simulated_stick.y -= 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
@@ -148,7 +142,7 @@ namespace death
 			return;
 		// change the application mode
 		if (gamepad_data->IsAnyAction())			
-			chaos::Application::SetApplicationInputMode(chaos::InputMode::Gamepad);
+			SetInputMode(chaos::InputMode::Gamepad);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
 		glm::vec2 lsp = gamepad_data->GetXBOXStickDirection(chaos::MyGLFW::XBOX_LEFT_AXIS);
@@ -365,7 +359,7 @@ namespace death
                 GLFWwindow * glfw_window = game->GetGLFWWindow();
                 if (glfw_window != nullptr)
                     for (int i = 0; keyboard_buttons[i] >= 0 ; ++i)
-                        if (glfwGetKey(glfw_window, keyboard_buttons[i]) != GLFW_RELEASE)
+                        if (CheckKeyPressed(keyboard_buttons[i]))
                             return true;
             }
         }
@@ -389,6 +383,14 @@ namespace death
 	{
 		health = max_health;
 
+	}
+
+	GLFWwindow* Player::GetGLFWWindow() const
+	{
+		Game const* game = GetGame();
+		if (game == nullptr)
+			return nullptr;
+		return game->GetGLFWWindow();
 	}
 
 	// =================================================

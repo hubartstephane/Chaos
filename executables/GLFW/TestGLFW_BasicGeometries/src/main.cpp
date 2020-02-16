@@ -1125,33 +1125,33 @@ protected:
 		return true; // refresh
 	}
 
-	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (key == GLFW_KEY_T && action == GLFW_RELEASE)
+		if (event.IsKeyReleased(GLFW_KEY_T))
 		{
 			chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->Toggle();
 			return true;
 		}
-		else if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+		else if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
 		{
 			SetExample(display_example + 1);
 			DebugDisplayExampleTitle();
 			return true;
 		}
-		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
 		{
 			SetExample(display_example - 1);
 			DebugDisplayExampleTitle();     
 			return true;
 		}
-		if (key == GLFW_KEY_KP_5 && action == GLFW_RELEASE)
+		else if (event.IsKeyReleased(GLFW_KEY_KP_5))
 		{
 			UpdateObjectType();
 			DebugDisplayExampleTitle();
 		}
-		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
 	}
 
 	void SetExample(int new_display_example)

@@ -24,19 +24,19 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 
 protected:
 
-	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (key == GLFW_KEY_KP_ADD && action == GLFW_RELEASE)
+		if (event.IsKeyReleased(GLFW_KEY_KP_ADD)
 		{
 			ChangeTexture(texture_index + 1);
 			return true;
 		}
-		else if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_RELEASE)
+		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
 		{
 			ChangeTexture(texture_index - 1);
 			return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
 	}
 
 	void ChangeTexture(int index)

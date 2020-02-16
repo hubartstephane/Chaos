@@ -3,6 +3,22 @@
 
 namespace chaos
 {
+	bool KeyEvent::IsKeyPressed(int check_key, int check_modifier) const
+	{
+		if (key == check_key && action == GLFW_PRESS)
+			if ((modifier & check_modifier) == check_modifier)
+				return true;
+		return false;
+	}
+
+	bool KeyEvent::IsKeyReleased(int check_key, int check_modifier) const
+	{
+		if (key == check_key && action == GLFW_RELEASE)
+			if ((modifier & check_modifier) == check_modifier)
+				return true;
+		return false;
+	}
+
 	void InputEventReceiver::SetInputMode(InputMode new_mode)
 	{
 		if (new_mode == input_mode)
@@ -10,6 +26,16 @@ namespace chaos
 		InputMode old_mode = input_mode;
 		input_mode = new_mode;
 		OnInputModeChanged(new_mode, old_mode);
+	}
+
+	bool InputEventReceiver::IsKeyPressed(KeyEvent const& event, int check_key, int check_modifier)
+	{
+		if (event.IsKeyPressed(check_key, check_modifier))
+		{
+			SetInputMode(InputMode::Keyboard);
+			return true;
+		}
+		return false;
 	}
 
 	void InputEventReceiver::OnInputModeChanged(InputMode new_mode, InputMode old_mode) 
@@ -46,9 +72,9 @@ namespace chaos
 		return false; 
 	}
 
-	bool InputEventReceiver::OnKeyEvent(int key, int scan_code, int action, int modifier) 
+	bool InputEventReceiver::OnKeyEvent(KeyEvent const & event) 
 	{ 
-		if (OnKeyEventImpl(key, scan_code, action, modifier))
+		if (OnKeyEventImpl(event))
 		{
 			SetInputMode(InputMode::Keyboard);
 			return true;
@@ -81,7 +107,7 @@ namespace chaos
 		return false;
 	}
 
-	bool InputEventReceiver::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
+	bool InputEventReceiver::OnKeyEventImpl(KeyEvent const & event)
 	{
 		return false;
 	}

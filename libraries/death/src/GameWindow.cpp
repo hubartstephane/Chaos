@@ -23,14 +23,14 @@ namespace death
 		return chaos::MyGLFW::Window::OnCharEventImpl(c);
 	}
 
-	bool GameWindow::OnKeyEventImpl(int key, int scan_code, int action, int modifier)
+	bool GameWindow::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
 		// give inputs to the game
 		if (game != nullptr)
-			if (game->OnKeyEvent(key, scan_code, action, modifier))
+			if (game->OnKeyEvent(event))
 				return true;
 		// super method
-		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
+		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
 	}
 
 	bool GameWindow::OnMouseButtonImpl(int button, int action, int modifier)

@@ -23,7 +23,7 @@ namespace death
 		/** override */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** override */
-		virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override;
+		virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override;
 
 		/** override */
 		virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override;

@@ -5,6 +5,27 @@
 
 namespace chaos
 {
+	class KeyEvent
+	{
+	public:
+
+		/** check whether this is a key press event */
+		bool IsKeyPressed(int check_key, int check_modifier = 0) const;
+		/** check whether this is a key release event */
+		bool IsKeyReleased(int check_key, int check_modifier = 0) const;
+
+	public:
+
+		/** the key */
+		int key = 0;
+		/** the scan code */
+		int scan_code = 0;
+		/** pressed or release */
+		int action = 0;
+		/** some special key modifiers like shift */
+		int modifier = 0;
+	};
+
 	class InputEventReceiver
 	{
 
@@ -18,6 +39,9 @@ namespace chaos
 		/* get the current input mode */
 		InputMode GetInputMode() const { return input_mode; }
 		
+		/** check whether a key event correspond to given request. Change input mode to keyboard if true */
+		bool IsKeyPressed(KeyEvent const& event, int check_key, int check_modifier = 0);
+
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(double x, double y);
 		/** called whenever the mouse button is down / up */
@@ -25,7 +49,7 @@ namespace chaos
 		/** called whenever the mouse wheel is changed */
 		bool OnMouseWheel(double scroll_x, double scroll_y);
 		/** called whenever a key is pressed */
-		bool OnKeyEvent(int key, int scan_code, int action, int modifier);
+		bool OnKeyEvent(KeyEvent const& event);
 		/** called whenever a char is generated */
 		bool OnCharEvent(unsigned int c);
 
@@ -38,7 +62,7 @@ namespace chaos
 		/** called whenever the mouse wheel is changed */
 		virtual bool OnMouseWheelImpl(double scroll_x, double scroll_y);
 		/** called whenever a key is pressed */
-		virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier);
+		virtual bool OnKeyEventImpl(KeyEvent const& event);
 		/** called whenever a char is generated */
 		virtual bool OnCharEventImpl(unsigned int c);
 

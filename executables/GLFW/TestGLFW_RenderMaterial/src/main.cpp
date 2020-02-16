@@ -76,25 +76,29 @@ protected:
 		UpdateDebugDisplay();
 	}
 
-	virtual bool OnKeyEventImpl(int key, int scan_code, int action, int modifier) override
+	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (key == GLFW_KEY_KP_ADD && action == GLFW_PRESS)
+		if (event.IsKeyPressed(GLFW_KEY_KP_ADD, GLFW_MOD_SHIFT))
 		{
-			if (modifier & GLFW_MOD_SHIFT)
-				ChangeRenderpass(+1);
-			else
-				ChangeMaterial(+1);
+			ChangeRenderpass(+1);
 			return true;
 		}
-		if (key == GLFW_KEY_KP_SUBTRACT && action == GLFW_PRESS)
+		else if (event.IsKeyPressed(GLFW_KEY_KP_ADD))
 		{
-			if (modifier & GLFW_MOD_SHIFT)
-				ChangeRenderpass(-1);
-			else
-				ChangeMaterial(-1);
+			ChangeMaterial(+1);
 			return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEventImpl(key, scan_code, action, modifier);
+		else if (event.IsKeyPressed(GLFW_KEY_KP_SUBTRACT, GLFW_MOD_SHIFT))
+		{
+			ChangeRenderpass(-1);
+			return true;
+		}
+		else if (event.IsKeyPressed(GLFW_KEY_KP_SUBTRACT))
+		{
+			ChangeMaterial(-1);
+			return true;
+		}
+		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override

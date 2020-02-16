@@ -537,27 +537,42 @@ namespace chaos
             if (feedback_effects.size() > 0)
             {
                 feedback_effects.clear();
-                DoUpdateForceFeedbackDevice(0.0f, 0.0f);
+				TickForceFeedbackEffects(0.0f);
             }
 		}
+		
+        void Gamepad::SetForceFeedbackMuted(bool in_muted)
+        { 
+			force_feedback_muted = in_muted;
+
+#if 0
+			bool old_value = (force_feedback_muted || !force_feedback_enabled);
+			force_feedback_muted = in_muted;
+			if ((force_feedback_muted || !force_feedback_enabled) != old_value)
+				TickForceFeedbackEffects(0.0f);
+#endif
+        }
 
         void Gamepad::SetForceFeedbackEnabled(bool in_enabled) 
         { 
-            if (force_feedback_enabled != in_enabled)
-            {
-                force_feedback_enabled = in_enabled;
-                if (!in_enabled)
-                    DoUpdateForceFeedbackDevice(0.0f, 0.0f);
-            }            
+			force_feedback_enabled = in_enabled;
+#if 0
+			bool old_value = (force_feedback_muted || !force_feedback_enabled);
+			force_feedback_enabled = in_enabled;
+			if ((force_feedback_muted || !force_feedback_enabled) != old_value)
+				TickForceFeedbackEffects(0.0f);
+#endif
         }
 
         void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
         {
 #if _DEBUG
-            if (Application::HasApplicationCommandLineFlag("-NoForceFeedback")) // CMDLINE
-                return;
+			if (Application::HasApplicationCommandLineFlag("-NoForceFeedback")) // CMDLINE
+			{
+				max_left_value = 0.0f;
+				max_right_value = 0.0f;
+			}
 #endif
-
             if (!IsPresent())
                 return;
 #if _WIN32 || _WIN64
@@ -576,19 +591,16 @@ namespace chaos
 
 		void Gamepad::TickForceFeedbackEffects(float delta_time)
 		{
-			// disable force feedback => clear all feedbacks
-            if (!force_feedback_enabled)
-                return;
             // compute the max left & right values, destroy finished values
             float max_left_value = 0.0f;
             float max_right_value = 0.0f;
 
-            size_t count = feedback_effects.size();
-            for (size_t i = count; i > 0; --i)
-            {
-                size_t index = i - 1;
+			size_t count = feedback_effects.size();
+			for (size_t i = count; i > 0; --i)
+			{
+				size_t index = i - 1;
 
-                ForceFeedbackEffect * effect = feedback_effects[index].get();
+				ForceFeedbackEffect* effect = feedback_effects[index].get();
 				if (effect == nullptr)
 					continue;
 
@@ -603,7 +615,13 @@ namespace chaos
 					max_left_value = std::max(max_left_value, left_value);
 					max_right_value = std::max(max_right_value, right_value);
 				}
-            }
+			}
+			// reduce feedback to 0 (do not skip GetForceFeedbackValues(...) calls so the effects tick themselves even if muted 
+			if (!force_feedback_enabled || force_feedback_muted)
+			{
+				max_left_value = 0.0f;
+				max_right_value = 0.0f;
+			}
             // update the device
             DoUpdateForceFeedbackDevice(max_left_value, max_right_value);
 		}

@@ -19,9 +19,6 @@
 //
 //                while they are not bound to the same index, you can check both values
 
-
-
-
 namespace chaos
 {
 	namespace MyGLFW
@@ -415,6 +412,12 @@ namespace chaos
 			/** set whether the force feedback is enabled */
 			void SetForceFeedbackEnabled(bool in_enabled);
 
+
+			/** returns whether the force feedback is muted */
+			bool IsForceFeedbackMuted() const { return force_feedback_muted; }
+			/** set whether the force feedback is muted */
+			void SetForceFeedbackMuted(bool in_muted);
+
 			/** add a force feedback effect */
 			void AddForceFeedbackEffect(ForceFeedbackEffect* effect);
 			/** remove a forcefeedback effect */
@@ -441,6 +444,8 @@ namespace chaos
 			bool ever_connected = false;
 			/** indicates whether the force feedback is enabled */
 			bool force_feedback_enabled = true;
+			/** indicates whether the force feedback is muted */
+			bool force_feedback_muted = false;
 
 			/** the forcefeedback effects */
 			std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;

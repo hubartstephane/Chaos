@@ -354,33 +354,6 @@ void LudumPlayer::FireProjectiles()
     ludum_game->PlaySound("fire", false, false, 0.0f, death::SoundContext::LEVEL);
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
-{
-	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
-
-	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
-	{
-
-	}
-}
-
-void LudumPlayer::HandleKeyboardInputs(double delta_time)
-{
-	death::Player::HandleKeyboardInputs(delta_time);
-
-	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Keyboard)
-	{
-		// get the data
-		death::Game * game = GetGame();
-		if (game == nullptr)
-			return;
-
-		GLFWwindow * glfw_window = game->GetGLFWWindow();
-		if (glfw_window == nullptr)
-			return;
-	}
-}
-
 void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
@@ -389,6 +362,7 @@ void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel 
 
 void LudumPlayer::OnHealthChanged(float old_health, float new_health, bool invulnerable)
 {
+	death::Player::OnHealthChanged(old_health, new_health, invulnerable);
 	if (old_health < new_health)
 		GetGame()->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 }

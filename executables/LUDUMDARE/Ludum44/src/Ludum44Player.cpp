@@ -71,34 +71,6 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	}
 }
 
-
-void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
-{
-	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
-
-	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
-	{
-
-	}
-}
-
-void LudumPlayer::HandleKeyboardInputs(double delta_time)
-{
-	death::Player::HandleKeyboardInputs(delta_time);
-
-	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Keyboard)
-	{
-		// get the data
-		death::Game * game = GetGame();
-		if (game == nullptr)
-			return;
-
-		GLFWwindow * glfw_window = game->GetGLFWWindow();
-		if (glfw_window == nullptr)
-			return;
-	}
-}
-
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {
 	LudumGame * ludum_game = GetLudumGame();

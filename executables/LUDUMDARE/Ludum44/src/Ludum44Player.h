@@ -53,10 +53,6 @@ protected:
 
 	/** override */
 	virtual void TickPlayerDisplacement(double delta_time) override;
-	/** override */
-	virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
-	/** override */
-	virtual void HandleKeyboardInputs(double delta_time) override;
 
 	/** update player displacement with the stick values that are stored */
 	virtual void UpdatePlayerAcceleration(double delta_time);

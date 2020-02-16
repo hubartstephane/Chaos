@@ -427,5 +427,13 @@ namespace death
 				player->OnGameValuesChanged(hot_reload);
 		}
 	}
+	
+	GLFWwindow* GameInstance::GetGLFWWindow() const
+	{
+		Game const * game = GetGame();
+		if (game == nullptr)
+			return nullptr;
+		return game->GetGLFWWindow();
+	}
 
 }; // namespace death

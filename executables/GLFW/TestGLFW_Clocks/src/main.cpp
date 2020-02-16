@@ -290,27 +290,24 @@ protected:
 		DebugDisplayTips();
 	}
 
-	bool UpdateClockTimeScaleWithKeys(chaos::Clock * clock, int key, int incr_key, int decr_key, int action)
+	bool UpdateClockTimeScaleWithKeys(chaos::Clock * clock, chaos::KeyEvent const & event, int incr_key, int decr_key)
 	{
-		if (action == GLFW_RELEASE)
+		if (event.IsKeyReleased(incr_key))
 		{
-			if (key == incr_key)
-			{
-				UpdateClockTimeScale(clock, 0.2);
-				return true;
-			}
-			else if (key == decr_key)
-			{
-				UpdateClockTimeScale(clock, -0.2);
-				return true;
-			}
+			UpdateClockTimeScale(clock, 0.2);
+			return true;
+		}
+		else if (event.IsKeyReleased(decr_key))
+		{
+			UpdateClockTimeScale(clock, -0.2);
+			return true;
 		}
 		return false;
 	}
 
-	bool GenerateEvent(chaos::Clock * clock, int key, int create_key, int action, char const * str, int type)
+	bool GenerateEvent(chaos::Clock * clock, chaos::KeyEvent const & event, int create_key, char const * str, int type)
 	{
-		if (action == GLFW_RELEASE && key == create_key)
+		if (event.IsKeyReleased(create_key))
 		{
 			// remove previous event
 			if (clock_event != nullptr)
@@ -347,7 +344,7 @@ protected:
 
 	virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override
 	{
-		if (key == GLFW_KEY_T && action == GLFW_RELEASE)
+		if (event.IsKeyReleased(GLFW_KEY_T))
 		{
 			chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
@@ -356,18 +353,18 @@ protected:
 		}
 		else
 		{
-			if (UpdateClockTimeScaleWithKeys(clock1.get(), key, GLFW_KEY_KP_1, GLFW_KEY_KP_2, action))
+			if (UpdateClockTimeScaleWithKeys(clock1.get(), event, GLFW_KEY_KP_1, GLFW_KEY_KP_2))
 				return true;				
-			if (UpdateClockTimeScaleWithKeys(clock2.get(), key, GLFW_KEY_KP_4, GLFW_KEY_KP_5, action))
+			if (UpdateClockTimeScaleWithKeys(clock2.get(), event, GLFW_KEY_KP_4, GLFW_KEY_KP_5))
 				return true;
-			if (UpdateClockTimeScaleWithKeys(clock3.get(), key, GLFW_KEY_KP_7, GLFW_KEY_KP_8, action))
+			if (UpdateClockTimeScaleWithKeys(clock3.get(), event, GLFW_KEY_KP_7, GLFW_KEY_KP_8))
 				return true;
 
-			if (GenerateEvent(clock1.get(), key, GLFW_KEY_A, action, "EVENT 1", EVENT_SINGLE_TEST))
+			if (GenerateEvent(clock1.get(), event, GLFW_KEY_A, "EVENT 1", EVENT_SINGLE_TEST))
 				return true;
-			if (GenerateEvent(clock2.get(), key, GLFW_KEY_Z, action, "EVENT 2", EVENT_RANGE_TEST))
+			if (GenerateEvent(clock2.get(), event, GLFW_KEY_Z, "EVENT 2", EVENT_RANGE_TEST))
 				return true;
-			if (GenerateEvent(clock3.get(), key, GLFW_KEY_E, action, "EVENT 3", EVENT_FOREVER_TEST))
+			if (GenerateEvent(clock3.get(), event, GLFW_KEY_E, "EVENT 3", EVENT_FOREVER_TEST))
 				return true;
 		}
 		return chaos::MyGLFW::Window::OnKeyEventImpl(event);

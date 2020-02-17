@@ -132,7 +132,8 @@ protected:
 	int points_per_challenge = 10;
 
 	float split_angle = 0.1f;
-	float ball_angle_limit = 0.1f;
+	float ball_angle_min = 0.1f;
+	float ball_angle_max = 0.4f;
 
 	/** the possible rewards */
 	std::vector<chaos::shared_ptr<LudumChallengeRewardPunishment>> rewards;

@@ -93,7 +93,8 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	DEATHGAME_JSON_ATTRIBUTE(points_per_brick);
 	DEATHGAME_JSON_ATTRIBUTE(points_per_challenge);
 	DEATHGAME_JSON_ATTRIBUTE(split_angle);
-	DEATHGAME_JSON_ATTRIBUTE(ball_angle_limit);
+	DEATHGAME_JSON_ATTRIBUTE(ball_angle_min);
+	DEATHGAME_JSON_ATTRIBUTE(ball_angle_max);
 	DEATHGAME_JSON_ATTRIBUTE(max_brick_offset);
 	DEATHGAME_JSON_ATTRIBUTE(brick_offset_speed);
 	DEATHGAME_JSON_ATTRIBUTE(brick_offset_increment);

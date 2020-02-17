@@ -317,23 +317,23 @@ glm::vec2 MakeVelocityFromAngle(float angle)
 
 glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const
 {
-	float ball_angle_limit = layer_trait->game->ball_angle_limit;
-	if (ball_angle_limit <= 0.0f)
+	float ball_angle_max = layer_trait->game->ball_angle_max;
+	if (ball_angle_max <= 0.0f)
 		return v;
 
 	float angle = atan2(v.y, v.x);
 
-	if (angle > (float)M_PI - ball_angle_limit)
-		return MakeVelocityFromAngle((float)M_PI - ball_angle_limit);
+	if (angle > (float)M_PI - ball_angle_max)
+		return MakeVelocityFromAngle((float)M_PI - ball_angle_max);
 
-	if (angle < -(float)M_PI + ball_angle_limit)
-		return MakeVelocityFromAngle(-(float)M_PI + ball_angle_limit);
+	if (angle < -(float)M_PI + ball_angle_max)
+		return MakeVelocityFromAngle(-(float)M_PI + ball_angle_max);
 
-	if (angle >= 0.0f && angle < ball_angle_limit)
-		return MakeVelocityFromAngle(ball_angle_limit);	
+	if (angle >= 0.0f && angle < ball_angle_max)
+		return MakeVelocityFromAngle(ball_angle_max);	
 
-	if (angle < 0.0f && angle >= -ball_angle_limit)
-		return MakeVelocityFromAngle(-ball_angle_limit);
+	if (angle < 0.0f && angle >= -ball_angle_max)
+		return MakeVelocityFromAngle(-ball_angle_max);
 
 	return v;
 }

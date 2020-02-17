@@ -53,17 +53,6 @@ void LudumGameInstance::TickChallenge(double delta_time)
 }
 
 
-void LudumGameInstance::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
-{
-	if (sequence_challenge != nullptr)
-	{
-		if (chaos::IsPlatformChanged(new_mode, old_mode))
-		{
-			sequence_challenge->particle_range = CreateChallengeParticles(sequence_challenge.get());
-			sequence_challenge->Show(game->IsPlaying());
-		}
-	}
-}
 
 static void RotateVelocity(glm::vec2 & src, float angle)
 {

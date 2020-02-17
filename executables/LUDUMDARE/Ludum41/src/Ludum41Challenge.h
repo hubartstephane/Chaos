@@ -8,6 +8,7 @@
 class LudumChallenge : public chaos::ReferencedObject
 {
 	friend class LudumGameInstance;
+	friend class LudumPlayer;
 
 public:
 

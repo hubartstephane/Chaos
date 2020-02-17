@@ -107,8 +107,6 @@ protected:
 
 	virtual void OnEnterPause() override;
 
-	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
-
 	virtual bool DoCheckGameOverCondition() override;
 
 	/** override */

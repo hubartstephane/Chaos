@@ -71,10 +71,7 @@ void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
-	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
-	{
 
-	}
 }
 
 void LudumPlayer::HandleKeyboardInputs(double delta_time)

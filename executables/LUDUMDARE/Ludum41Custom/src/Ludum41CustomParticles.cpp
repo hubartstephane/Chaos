@@ -343,7 +343,7 @@ glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 
 // ===========================================================================
 void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
-	chaos::InputMode input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
     bool keyboard = chaos::IsPCMode(input_mode);
 
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
@@ -379,13 +379,9 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
 
 void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
 {
-	chaos::InputMode input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
     bool keyboard = chaos::IsPCMode(input_mode);
-
-
-
-
-
+	   	  
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
     // generate particle corners and texcoords

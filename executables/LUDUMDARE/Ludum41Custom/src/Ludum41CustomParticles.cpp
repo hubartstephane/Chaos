@@ -269,6 +269,31 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
 		{
 			chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
+
+			// alter rebound angle according to the position the ball touch the racket
+			if (0 && velocity.y > 0.0f)
+			{
+				float len   = glm::length(velocity);
+				glm::vec2 v = velocity / len;
+				float angle = std::atan2(v.y, v.x);
+
+				float delta_position = (player_box.position.x - new_ball_box.position.x);
+				float bound_factor = delta_position / player_box.half_size.x;
+
+				// whenever the ball hit the racket at [0.5 .. 1.0], we get a rebound factor between [0 .. 0.3]
+				float const DST_RANGE_MIN = 0.0f;
+				float const DST_RANGE_MAX = 0.3f;
+				bound_factor = std::clamp(std::abs(bound_factor), 0.0f, 1.0f);
+				bound_factor = chaos::MathTools::RemapRanges(0.5f, 1.0f, DST_RANGE_MIN, DST_RANGE_MAX, bound_factor);
+				bound_factor = std::clamp(bound_factor, DST_RANGE_MIN, DST_RANGE_MAX);
+
+				angle *= (1.0f * bound_factor);
+
+			//	velocity = len * glm::vec2(std::cos(angle), std::sin(angle));
+
+				
+			}
+			
 			ball_box.position = new_ball_box.position;
 			game_instance->OnBallCollide(false);
 		}
@@ -315,27 +340,67 @@ glm::vec2 MakeVelocityFromAngle(float angle)
 	return glm::vec2(std::cos(angle), std::sin(angle));
 }
 
+void CompareDistanceAndReplace(float angle, float value, float & best_value, float & best_distance)
+{
+	float distance = std::abs(angle - value);
+	if (distance < best_distance)
+	{
+		best_value = value;
+		best_distance = distance;
+	}
+}
+
+float ClampAngleToNearestRange(float angle, std::pair<float, float> const* ranges, size_t range_count)
+{
+	float const TO_RAD = (float)M_PI / 180.0f;
+
+	float best_value = angle;
+	float best_distance = std::numeric_limits<float>::max();
+
+	for (size_t i = 0; i < range_count; ++i)
+	{
+		float min_angle = ranges[i].first;
+		float max_angle = ranges[i].second;
+
+		// degree to rad
+		
+		min_angle = min_angle * TO_RAD;
+		max_angle = max_angle * TO_RAD;
+		if (min_angle > max_angle)
+			std::swap(min_angle, max_angle);
+
+		if (angle >= min_angle)
+		{
+			if (angle <= max_angle)
+				return angle;
+			CompareDistanceAndReplace(angle, max_angle, best_value, best_distance);
+		}
+		else
+			CompareDistanceAndReplace(angle, min_angle, best_value, best_distance);
+	}
+	return best_value;
+}
+
 glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const
 {
-	float ball_angle_limit = layer_trait->game->ball_angle_limit;
-	if (ball_angle_limit <= 0.0f)
+	float ball_angle_min = layer_trait->game->ball_angle_min;
+	float ball_angle_max = layer_trait->game->ball_angle_max;
+	if (ball_angle_max <= 0.0f || ball_angle_min <= 0.0f)
 		return v;
 
-	float angle = atan2(v.y, v.x);
 
-	if (angle > (float)M_PI - ball_angle_limit)
-		return MakeVelocityFromAngle((float)M_PI - ball_angle_limit);
-
-	if (angle < -(float)M_PI + ball_angle_limit)
-		return MakeVelocityFromAngle(-(float)M_PI + ball_angle_limit);
-
-	if (angle >= 0.0f && angle < ball_angle_limit)
-		return MakeVelocityFromAngle(ball_angle_limit);	
-
-	if (angle < 0.0f && angle >= -ball_angle_limit)
-		return MakeVelocityFromAngle(-ball_angle_limit);
-
-	return v;
+	float angle = atan2(v.y, v.x); // => [-PI , +PI]
+	
+	std::pair<float, float> ranges[] =
+	{
+		std::make_pair(180.0f - ball_angle_max,  90.0f + ball_angle_min),
+		std::make_pair(90.0f - ball_angle_min, ball_angle_max),
+		std::make_pair(-180.0f + ball_angle_max,  -90.0f - ball_angle_min),
+		std::make_pair(-90.0f + ball_angle_min, -ball_angle_max)
+	};
+		
+	angle = ClampAngleToNearestRange(angle, ranges, sizeof(ranges) / sizeof(ranges[0]));
+	return MakeVelocityFromAngle(angle);
 }
 
 // ===========================================================================

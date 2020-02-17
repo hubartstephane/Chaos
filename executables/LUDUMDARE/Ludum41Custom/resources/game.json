@@ -25,7 +25,11 @@
   "points_per_challenge": 12,
   "points_per_brick": 5,
   "split_angle": 0.4,
-  "ball_angle_limit": 0.4,
+  "ball_angle_min": 20.0,
+  "ball_angle_max": 20.0,
+
+  "background_fillratio_changespeed": 0.05,
+  "delay_before_next_level": 6.0,
 
   "max_brick_offset": 200.0,
   "brick_offset_speed": 75.0,

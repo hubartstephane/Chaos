@@ -672,7 +672,7 @@ std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> c
 
 chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(LudumChallenge * challenge)
 {
-	chaos::InputMode input_mode = chaos::MyGLFW::SingleWindowApplication::GetApplicationInputMode();
+	chaos::InputMode input_mode = GetPlayer(0)->GetInputMode();
 	bool keyboard = chaos::IsPCMode(input_mode);
 
 	chaos::ParticleLayerBase * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);

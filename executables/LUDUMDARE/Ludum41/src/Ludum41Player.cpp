@@ -41,7 +41,7 @@ bool LudumPlayer::OnMouseMoveImpl(double x, double y)
 	if (game->IsPaused() || game->IsFreeCameraMode())
 		return true;
 	DisplacePlayerRacket(game->GetMouseSensitivity() * (float)x);
-	return false;
+	return true;
 }
 
 bool LudumPlayer::OnCharEventImpl(unsigned int c)
@@ -97,4 +97,22 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 		return false;
 	DEATHGAME_JSON_ATTRIBUTE(max_life_count);
 	return true;
+}
+
+void LudumPlayer::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
+{
+	death::Player::OnInputModeChanged(new_mode, old_mode);
+
+	LudumGameInstance* game_instance = GetLudumGameInstance();
+	if (game_instance == nullptr)
+		return;
+
+	if (game_instance->sequence_challenge != nullptr)
+	{
+		if (chaos::IsPlatformChanged(new_mode, old_mode))
+		{
+			game_instance->sequence_challenge->particle_range = game_instance->CreateChallengeParticles(game_instance->sequence_challenge.get());
+			game_instance->sequence_challenge->Show(game_instance->game->IsPlaying());
+		}
+	}
 }

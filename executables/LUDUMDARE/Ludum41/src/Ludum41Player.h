@@ -45,6 +45,8 @@ protected:
 	virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
 	/** override */
 	virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
+	/** override */
+	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 
 	/** displace the racket from given quantity */
 	void DisplacePlayerRacket(float delta_x);

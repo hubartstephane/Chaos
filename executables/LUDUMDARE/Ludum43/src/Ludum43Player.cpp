@@ -155,26 +155,20 @@ void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
-	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Gamepad)
-	{
-		bool dash = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
-		SetDashMode(dash);
-		bool reversed_mode = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_B, false);
-		SetReverseMode(reversed_mode);
-	}
+	bool dash = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_A, false);
+	SetDashMode(dash);
+	bool reversed_mode = gpd->IsButtonPressed(chaos::MyGLFW::XBOX_BUTTON_B, false);
+	SetReverseMode(reversed_mode);
 }
 
 void LudumPlayer::HandleKeyboardInputs(double delta_time)
 {
 	death::Player::HandleKeyboardInputs(delta_time);
 
-	if (chaos::Application::GetApplicationInputMode() == chaos::InputMode::Keyboard)
-	{
-		bool dash_mode = CheckKeyPressed(GLFW_KEY_SPACE);
-		SetDashMode(dash_mode);
-		bool reversed_mode = CheckKeyPressed(GLFW_KEY_RIGHT_CONTROL);
-		SetReverseMode(reversed_mode);
-	}
+	bool dash_mode = CheckKeyPressed(GLFW_KEY_SPACE);
+	SetDashMode(dash_mode);
+	bool reversed_mode = CheckKeyPressed(GLFW_KEY_RIGHT_CONTROL);
+	SetReverseMode(reversed_mode);
 }
 
 void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)

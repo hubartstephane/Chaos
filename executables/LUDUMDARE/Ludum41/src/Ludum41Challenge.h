@@ -34,6 +34,8 @@ public:
 	/** convert the keyboard_challenge into a string with no space */
 	static std::string NoSpaceKeyboardChallenge(std::string const & keyboard_challenge);
 
+	class LudumGameInstance* GetGameInstance() { return game_instance; }
+
 protected:
 
 	/** the challenge progress */

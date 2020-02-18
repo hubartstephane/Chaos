@@ -131,9 +131,12 @@ protected:
 	int points_per_brick = 1;
 	int points_per_challenge = 10;
 
-	float split_angle = 0.1f;
-	float ball_angle_min = 0.1f;
-	float ball_angle_max = 0.4f;
+	float split_angle = 20.0f;
+	float ball_angle_min = 20.0f;
+	float ball_angle_max = 20.0f;
+
+	float rebound_angle_decrease = 10.0f;
+	float rebound_angle_increase = 30.0f;
 
 	/** the possible rewards */
 	std::vector<chaos::shared_ptr<LudumChallengeRewardPunishment>> rewards;

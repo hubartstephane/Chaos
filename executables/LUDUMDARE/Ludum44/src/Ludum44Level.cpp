@@ -98,7 +98,7 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 }
 
 
-bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle)
+bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle)
 {
 
 	return true; // continue with other
@@ -132,7 +132,7 @@ bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * 
 // PowerUpTriggerObject implementation
 // =============================================================
 
-bool PowerUpTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
 	LudumGameInstance * ludum_game_instance = auto_cast(player->GetGameInstance());
 	if (ludum_game_instance == nullptr)
@@ -159,7 +159,7 @@ bool PowerUpTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Play
 // SpeedUpTriggerObject implementation
 // =============================================================
 
-bool SpeedUpTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 {
 	if (event_type != TriggerObject::COLLISION_STARTED) // already handled
 		return false;
@@ -188,7 +188,7 @@ bool SpawnerTriggerObject::Initialize()
 	return true;
 }
 
-bool SpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	// only the first time collision is detected
 	if (event_type != death::TiledMap::TriggerObject::COLLISION_STARTED)

@@ -290,7 +290,7 @@ namespace death
 		return true;
 	}
 
-	bool GameLevelInstance::DoTick(double delta_time)
+	bool GameLevelInstance::DoTick(float delta_time)
 	{	
 		// update the current camera
 		Camera * current_camera = GetCamera(0);
@@ -313,7 +313,7 @@ namespace death
 			&& !game->GetCheatMode()
 #endif
 			){
-			level_timeout -= (float)delta_time;
+			level_timeout -= delta_time;
 			if (level_timeout < 0.0f)
 				level_timeout = 0.0f;
 		}	

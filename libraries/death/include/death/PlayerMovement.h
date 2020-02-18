@@ -11,7 +11,7 @@ namespace death
 	public:
 
 		/** the tick entry point */
-		void Tick(double delta_time);
+		void Tick(float delta_time);
 
 		/** whether the pawn is jumping */
 		bool IsJumping() const;
@@ -23,9 +23,9 @@ namespace death
 	protected:
 
 		/** apply acceleration/impulsion to the pawn */
-		void DisplacePawn(double delta_time);
+		void DisplacePawn(float delta_time);
 		/** compute the pawn collision */
-		void ComputePawnCollision(double delta_time);
+		void ComputePawnCollision(float delta_time);
 
 		/** apply collisions with roof/ground */
 		void ApplyVerticalCollisions(glm::vec2 const & old_position, bool & jump_stopped_thrown);
@@ -33,14 +33,14 @@ namespace death
 		void ApplyHorizontalCollisions(glm::vec2 const & old_position, bool & run_stopped_thrown);
 
 		/** update the vertical velocity */
-		void  UpdateVerticalVelocity(double delta_time, bool & jump_stopped_thrown);
+		void  UpdateVerticalVelocity(float delta_time, bool & jump_stopped_thrown);
 		/** update the vertical impulse */
-		float UpdateVerticalImpulse(double delta_time, bool & jump_stopped_thrown);
+		float UpdateVerticalImpulse(float delta_time, bool & jump_stopped_thrown);
 		/** call a single time per frame the OnJumpStopped callbacks */
 		void ConditionnalThrowJumpStoppedEvent(bool & jump_stopped_thrown);
 
 		/** update the horizontal velocity */
-		void UpdateHorizontalVelocity(double delta_time, bool & run_stopped_thrown);
+		void UpdateHorizontalVelocity(float delta_time, bool & run_stopped_thrown);
 
 		/** call a single time per frame the OnRunStopped callbacks */
 		void ConditionnalThrowRunStoppedEvent(bool & run_stopped_thrown);

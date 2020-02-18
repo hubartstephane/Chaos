@@ -44,7 +44,7 @@ namespace death
 		OnRunStopped();
 	}
 
-	void PlayerMovement::Tick(double delta_time)
+	void PlayerMovement::Tick(float delta_time)
 	{
 		// compute the vertical velocity
 		bool jump_stopped_thrown = false;
@@ -62,12 +62,12 @@ namespace death
 		ApplyHorizontalCollisions(old_position, run_stopped_thrown);
 	}
 
-	void PlayerMovement::UpdateVerticalVelocity(double delta_time, bool & jump_stopped_thrown)
+	void PlayerMovement::UpdateVerticalVelocity(float delta_time, bool & jump_stopped_thrown)
 	{
 		float impulse = UpdateVerticalImpulse(delta_time, jump_stopped_thrown);
 		// no vertical impulse, let gravity do its action
 		if (impulse == 0.0f)
-			velocity.y -= gravity * (float)delta_time; // apply accelerate
+			velocity.y -= gravity * delta_time; // apply accelerate
 		else
 			velocity.y = impulse;
 		// clamp the vertical velocity
@@ -75,7 +75,7 @@ namespace death
 			velocity.y = std::clamp(velocity.y, -max_velocity.y, +max_velocity.y);
 	}
 
-	float PlayerMovement::UpdateVerticalImpulse(double delta_time, bool & jump_stopped_thrown)
+	float PlayerMovement::UpdateVerticalImpulse(float delta_time, bool & jump_stopped_thrown)
 	{
 		// get jump button state button state 
 		bool jump_pressed = IsJumpKeyPressed();
@@ -113,7 +113,7 @@ namespace death
 		// continue jumping (time consideration)
 		if (max_impulse_time > 0.0f)
 		{
-			current_impulse_time = current_impulse_time + (float)delta_time;
+			current_impulse_time = current_impulse_time + delta_time;
 			if (current_impulse_time >= max_impulse_time)
 			{
 				current_impulse_time = max_impulse_time; // clamp
@@ -126,7 +126,7 @@ namespace death
 		// continue jumping (height consideration)
 		if (max_impulse_height > 0.0f)
 		{
-			current_impulse_height = current_impulse_height + (float)delta_time * jump_impulse; // integral over velocity
+			current_impulse_height = current_impulse_height + delta_time * jump_impulse; // integral over velocity
 			if (current_impulse_height >= max_impulse_height)
 			{
 				current_impulse_height = max_impulse_height; // clamp
@@ -140,7 +140,7 @@ namespace death
 		return 0.0f;
 	}
 
-	void PlayerMovement::UpdateHorizontalVelocity(double delta_time, bool & run_stopped_thrown)
+	void PlayerMovement::UpdateHorizontalVelocity(float delta_time, bool & run_stopped_thrown)
 	{
 
 
@@ -148,12 +148,12 @@ namespace death
 
 
 
-	void PlayerMovement::DisplacePawn(double delta_time)
+	void PlayerMovement::DisplacePawn(float delta_time)
 	{
-		position += velocity * (float)delta_time;
+		position += velocity * delta_time;
 	}
 
-	void PlayerMovement::ComputePawnCollision(double delta_time)
+	void PlayerMovement::ComputePawnCollision(float delta_time)
 	{
 
 	}

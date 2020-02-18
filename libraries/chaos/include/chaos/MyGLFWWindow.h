@@ -78,7 +78,7 @@ namespace chaos
 			Window();
 
 			/** entry point from Application */
-			void MainTick(double delta_time);
+			void MainTick(float delta_time);
 			/** called to require the window to close */
 			void RequireWindowClosure();
 			/** called to require the window to refresh */
@@ -123,7 +123,7 @@ namespace chaos
 			/** bind Window with GLFW */
 			virtual void BindGLFWWindow(GLFWwindow * in_glfw_window, bool in_double_buffer);
 			/** called every Tick (returns true whenever we want to redraw the window) */
-			virtual bool Tick(double delta_time) { return true; }
+			virtual bool Tick(float delta_time) { return true; }
 			/** called at window creation (returns false if the window must be killed) */
 			virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 			/** called at window destruction */

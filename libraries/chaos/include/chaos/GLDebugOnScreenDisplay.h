@@ -43,7 +43,7 @@ namespace chaos
 		/** display the debug text */
 		void Display(int width, int height) const;
 		/** tick all lines (returns true whether there is a change) */
-		bool Tick(double delta_time);
+		bool Tick(float delta_time);
 		/** Add a line in the log (character size and position are in pixels) */
 		void AddLine(char const * line, float duration = -1);
 		/** clear all the lines */

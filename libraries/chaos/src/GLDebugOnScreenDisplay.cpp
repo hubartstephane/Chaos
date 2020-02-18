@@ -39,7 +39,7 @@ namespace chaos
 	}
 	)PIXELSHADERCODE";
 
-	bool GLDebugOnScreenDisplay::Tick(double delta_time)
+	bool GLDebugOnScreenDisplay::Tick(float delta_time)
 	{
 		int count = (int)lines.size();
 		for (int i = count - 1; i >= 0; --i)
@@ -47,7 +47,7 @@ namespace chaos
 			auto & l = lines[i];
 			if (l.second >= 0.0f) // if lines is timed
 			{
-				l.second -= (float)delta_time; // decrement time
+				l.second -= delta_time; // decrement time
 				if (l.second <= 0)
 					lines.erase(lines.begin() + i); // erase the line at this position if it is timed out
 			}

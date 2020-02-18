@@ -32,9 +32,9 @@ protected:
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 
-	virtual bool DoTick(double delta_time) override;
+	virtual bool DoTick(float delta_time) override;
 
-	void TickHeartBeat(double delta_time);
+	void TickHeartBeat(float delta_time);
 
 
 

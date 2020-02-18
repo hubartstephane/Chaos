@@ -218,9 +218,9 @@ namespace death
 			virtual bool DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint) override;
 
 			/** called whenever a collision with player is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
-			virtual bool OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
+			virtual bool OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
 			/** called whenever a collision with camera is detected (=> important for TriggerOnce) */
-			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type);
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type);
 
 		protected:
 
@@ -275,11 +275,11 @@ namespace death
 		protected:
 
 			/** generic method to handle both collision with player and camera */
-			virtual bool OnTriggerCollision(double delta_time, int event_type);
+			virtual bool OnTriggerCollision(float delta_time, int event_type);
 			/** override */
-			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
 			/** override */
-			virtual bool OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+			virtual bool OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
 
 		protected:
 
@@ -313,7 +313,7 @@ namespace death
 		protected:
 
 			/** override */
-			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
 		};
 
 		// =================================================
@@ -336,7 +336,7 @@ namespace death
 			/** override */
 			virtual bool Initialize() override;
 			/** override */
-			virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
 
 			/** the sound creation method */
 			chaos::Sound * CreateSound() const;
@@ -380,7 +380,7 @@ namespace death
 			/** override */
 			virtual bool IsParticleCreationEnabled() const override;
 			/** override */
-			virtual bool OnPlayerCollisionEvent(double delta_time, Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+			virtual bool OnPlayerCollisionEvent(float delta_time, Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
 		};
 
 
@@ -440,7 +440,7 @@ namespace death
 			virtual bool FinalizeLayerParticles(LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation){ return true; }
 
 			/** called whenever a collision between player and tile happens */
-			virtual bool OnPlayerTileCollision(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
+			virtual bool OnPlayerTileCollision(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle);
 
 			/** the default program when not specified */
 			virtual chaos::GPUProgram * GenDefaultRenderProgram();
@@ -647,18 +647,18 @@ namespace death
 			chaos::GPURenderMaterial * FindOrCreateRenderMaterial(char const * material_name);
 
 			/** override */
-			virtual bool DoTick(double delta_time) override;
+			virtual bool DoTick(float delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
 
 			/** search all collision with the player (tiles/TriggerObject) */
-			virtual void ComputePlayerAndCameraCollision(double delta_time);
+			virtual void ComputePlayerAndCameraCollision(float delta_time);
 			/** compute trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
-			virtual bool ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
+			virtual bool ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
 			/** compute trigger collisions with camera */
-			virtual bool ComputeCameraCollisionWithSurfaceTriggers(double delta_time, chaos::box2 const & camera_box);
+			virtual bool ComputeCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const & camera_box);
 			/** compute collisions between players and tiles (returns false if if do not want to handle mode player collisions) */
-			virtual bool ComputePlayerTileCollisions(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
+			virtual bool ComputePlayerTileCollisions(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle);
 
             /** create a particle populator so that each layer may have its own particle type */
             virtual LayerInstanceParticlePopulator* CreateParticlePopulator();
@@ -833,12 +833,12 @@ namespace death
 			/** override */
 			virtual bool Initialize(Game * in_game, GameLevel * in_level) override;
 			/** override */
-			virtual bool DoTick(double delta_time) override;
+			virtual bool DoTick(float delta_time) override;
 			/** override */
 			virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
 
 			/** search all collision with the player (tiles/TriggerObject) */
-			virtual void ComputePlayerAndCameraCollision(double delta_time);
+			virtual void ComputePlayerAndCameraCollision(float delta_time);
 
 			/** override */
 			virtual void OnPlayerEntered(Player * player) override;

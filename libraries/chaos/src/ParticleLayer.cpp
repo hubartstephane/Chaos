@@ -156,7 +156,7 @@ namespace chaos
 		}
 	}
 
-	bool ParticleLayerBase::DoTick(double delta_time)
+	bool ParticleLayerBase::DoTick(float delta_time)
 	{
 		// update the particles themselves
 		if (AreParticlesDynamic())
@@ -164,7 +164,7 @@ namespace chaos
 		return true;
 	}
 
-	bool ParticleLayerBase::TickAllocations(double delta_time)
+	bool ParticleLayerBase::TickAllocations(float delta_time)
 	{
 		bool result = false;
 
@@ -185,7 +185,7 @@ namespace chaos
 			if (allocation->GetParticleCount() == 0 && allocation->GetDestroyWhenEmpty()) // XXX: if the TRAIT is not particle_dynamic, this will never be called
 				destroy_allocation = true;
 			else
-				destroy_allocation = allocation->TickAllocation((float)delta_time, GetLayerTrait());
+				destroy_allocation = allocation->TickAllocation(delta_time, GetLayerTrait());
 
 			// register as an allocation to be destroyed
 			if (destroy_allocation)

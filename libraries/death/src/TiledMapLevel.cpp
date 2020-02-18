@@ -96,12 +96,12 @@ namespace death
 			return chaos::Collide(other_box, box);
 		}
 
-		bool TriggerObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		bool TriggerObject::OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
 			return false; // do not do anything with collision
 		}
 
-		bool TriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		bool TriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			return false; // do not do anything with collision
 		}
@@ -167,7 +167,7 @@ namespace death
 			return true;
 		}
 
-		bool CheckpointTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		bool CheckpointTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			if (event_type != TriggerObject::COLLISION_STARTED)
 				return false;
@@ -217,21 +217,21 @@ namespace death
 			return true;
 		}
 
-		bool NotificationTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		bool NotificationTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			if (player_collision)
 				return false;
 			return OnTriggerCollision(delta_time, event_type);
 		}
 
-		bool NotificationTriggerObject::OnPlayerCollisionEvent(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		bool NotificationTriggerObject::OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
 			if (!player_collision)
 				return false;
 			return OnTriggerCollision(delta_time, event_type);
 		}
 
-		bool NotificationTriggerObject::OnTriggerCollision(double delta_time, int event_type)
+		bool NotificationTriggerObject::OnTriggerCollision(float delta_time, int event_type)
 		{
 			// early exit
 			if (event_type != TriggerObject::COLLISION_STARTED && event_type != TriggerObject::COLLISION_FINISHED) // ignore AGAIN event
@@ -314,7 +314,7 @@ namespace death
 			return result;
 		}
 
-		bool SoundTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+		bool SoundTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type)
 		{
 			if (event_type == TriggerObject::COLLISION_STARTED)
 			{
@@ -349,7 +349,7 @@ namespace death
 			return false;
 		}
 
-		bool FinishingTriggerObject::OnPlayerCollisionEvent(double delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
+		bool FinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type)
 		{
 			if (event_type != TriggerObject::COLLISION_STARTED)
 				return false;
@@ -654,7 +654,7 @@ namespace death
 			return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 		}
 
-		bool Level::OnPlayerTileCollision(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
+		bool Level::OnPlayerTileCollision(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, TileParticle * particle)
 		{
 			return true; // continue with other
 		}
@@ -1108,7 +1108,7 @@ namespace death
 			return true;
 		}
 
-		void LayerInstance::ComputePlayerAndCameraCollision(double delta_time)
+		void LayerInstance::ComputePlayerAndCameraCollision(float delta_time)
 		{
 			// get the game
 			Game * game = GetGame();
@@ -1173,7 +1173,7 @@ namespace death
 		}
 
 
-		bool LayerInstance::ComputeCameraCollisionWithSurfaceTriggers(double delta_time, chaos::box2 const & camera_box)
+		bool LayerInstance::ComputeCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const & camera_box)
 		{
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
@@ -1230,7 +1230,7 @@ namespace death
 
 		}
 
-		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
+		bool LayerInstance::ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			// the new colliding triggers
 			std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
@@ -1298,7 +1298,7 @@ namespace death
 			return true; // continue other collisions 
 		}
 
-		bool LayerInstance::ComputePlayerTileCollisions(double delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
+		bool LayerInstance::ComputePlayerTileCollisions(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
 			TiledMap::Level * level = GetTiledLevel();
 
@@ -1315,7 +1315,7 @@ namespace death
 			});
 		}
 
-		bool LayerInstance::DoTick(double delta_time)
+		bool LayerInstance::DoTick(float delta_time)
 		{
 			// tick the game objects
 			size_t player_start_count = player_starts.size();
@@ -1607,14 +1607,14 @@ namespace death
 			return auto_cast(GetLevel());
 		}
 
-		void LevelInstance::ComputePlayerAndCameraCollision(double delta_time)
+		void LevelInstance::ComputePlayerAndCameraCollision(float delta_time)
 		{
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
 				layer_instances[i]->ComputePlayerAndCameraCollision(delta_time);
 		}
 
-		bool LevelInstance::DoTick(double delta_time)
+		bool LevelInstance::DoTick(float delta_time)
 		{
 			GameLevelInstance::DoTick(delta_time);
 

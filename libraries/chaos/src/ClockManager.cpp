@@ -249,7 +249,7 @@ namespace chaos
 		}
 	}
 
-	bool Clock::TickClock(double delta_time) // should only be called on TopLevel node (public interface)
+	bool Clock::TickClock(float delta_time) // should only be called on TopLevel node (public interface)
 	{
 		assert(parent_clock == nullptr);
 
@@ -269,7 +269,7 @@ namespace chaos
 		return result;
 	}
 
-	bool Clock::TickClockImpl(double delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set) // protected interface
+	bool Clock::TickClockImpl(float delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set) // protected interface
 	{
 		// internal tick
 		if (paused || time_scale == 0.0)

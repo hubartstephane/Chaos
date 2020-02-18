@@ -38,7 +38,7 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
-bool LudumLevelInstance::DoTick(double delta_time)
+bool LudumLevelInstance::DoTick(float delta_time)
 {
 	death::TiledMap::LevelInstance::DoTick(delta_time);
 
@@ -64,7 +64,7 @@ bool LudumLevelInstance::DoTick(double delta_time)
 		return true;
 
 	// compute scroll for both camera and player
-	float scroll_displacement = ludum_game->scroll_factor * camera_speed * (float)delta_time;
+	float scroll_displacement = ludum_game->scroll_factor * camera_speed * delta_time;
 	float camera_x = camera_box.position.x + scroll_displacement; // the final wanted camera Y
 
 																  // the camera follows the player in X & Y direction

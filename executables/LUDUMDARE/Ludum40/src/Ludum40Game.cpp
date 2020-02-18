@@ -68,9 +68,9 @@ bool MyGamepadManager::DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_g
 
 // ======================================================================================
 
-void Game::Tick(double delta_time)
+void Game::Tick(float delta_time)
 {
-	gamepad_manager->Tick((float)delta_time);
+	gamepad_manager->Tick(delta_time);
 
 	if (pending_gameover || pending_restart_game)
 	{
@@ -83,8 +83,8 @@ void Game::Tick(double delta_time)
 		GameInfo game_info(*this);
 		if (game_started && !game_paused)
 		{
-			SpawnExtraParticles(game_info, (float)delta_time);
-			UpdatePlayerDisplacement((float)delta_time);
+			SpawnExtraParticles(game_info, delta_time);
+			UpdatePlayerDisplacement(delta_time);
 			FindPlayerCollision();
 		}
 		

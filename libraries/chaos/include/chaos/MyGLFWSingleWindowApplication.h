@@ -125,7 +125,7 @@ namespace chaos
 			/** the method to override for window generation */
 			virtual Window * GenerateWindow();
 			/** tick all the managers */
-			virtual void TickManagers(double delta_time);
+			virtual void TickManagers(float delta_time);
 
 			/** Tweak window hints from configuration */
 			void TweakHintsFromConfiguration(SingleWindowApplicationParams & params, nlohmann::json const & in_config);
@@ -152,9 +152,9 @@ namespace chaos
 
 			
 			/** forced time slice for tick */
-			double forced_tick_duration = 0.0;
+			float forced_tick_duration = 0.0f;
 			/** maximum time slice for tick */
-			double max_tick_duration = 0.0;
+			float max_tick_duration = 0.0f;
 			/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
 			bool   forced_zero_tick_duration = false;
 		};

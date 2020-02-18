@@ -55,7 +55,7 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 
 
 
-void LudumPlayer::TickPlayerDisplacement(double delta_time)
+void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
     Player::TickPlayerDisplacement(delta_time);
 
@@ -67,14 +67,14 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 
 
 
-void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
+void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
 
 }
 
-void LudumPlayer::HandleKeyboardInputs(double delta_time)
+void LudumPlayer::HandleKeyboardInputs(float delta_time)
 {
 	death::Player::HandleKeyboardInputs(delta_time);
 

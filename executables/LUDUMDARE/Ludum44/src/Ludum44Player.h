@@ -52,15 +52,15 @@ protected:
 	virtual bool DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const override;
 
 	/** override */
-	virtual void TickPlayerDisplacement(double delta_time) override;
+	virtual void TickPlayerDisplacement(float delta_time) override;
 
 	/** update player displacement with the stick values that are stored */
-	virtual void UpdatePlayerAcceleration(double delta_time);
+	virtual void UpdatePlayerAcceleration(float delta_time);
 	
 	/** test whether the player is firing */
-	void UpdatePlayerFire(double delta_time);
+	void UpdatePlayerFire(float delta_time);
 	/** test whether the player wants to by an item */
-	void UpdatePlayerBuyingItem(double delta_time);
+	void UpdatePlayerBuyingItem(float delta_time);
 
 	/** fire a charged projectile */
 	void FireChargedProjectile();	

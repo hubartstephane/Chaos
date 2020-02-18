@@ -111,7 +111,7 @@ namespace death
 		hints.decorated = 1;
 	}
 
-	bool GameWindow::Tick(double delta_time)
+	bool GameWindow::Tick(float delta_time)
 	{
 		game->Tick(delta_time);
 		return true; // refresh

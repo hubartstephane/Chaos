@@ -105,7 +105,7 @@ namespace death
 		virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance);
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual GLFWwindow* GetGLFWWindow() const override;
 
@@ -114,11 +114,11 @@ namespace death
 		/** extract stick values from gamepad state */
 		virtual void CacheGamepadPlayerDisplacementInputs();
 		/** handle the player input */
-		virtual void HandleKeyboardInputs(double delta_time);
+		virtual void HandleKeyboardInputs(float delta_time);
 		/** handle the player input (top level function) */
-		virtual void HandleGamepadInputs(double delta_time);
+		virtual void HandleGamepadInputs(float delta_time);
 		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gamepad_data);
+		virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gamepad_data);
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 
@@ -126,9 +126,9 @@ namespace death
 		virtual void OnGamepadDisconnected();
 
 		/** tick the player displacement */
-		virtual void TickPlayerDisplacement(double delta_time);
+		virtual void TickPlayerDisplacement(float delta_time);
 		/** tick the invulnerability */
-		virtual void TickInvulnerability(double delta_time);
+		virtual void TickInvulnerability(float delta_time);
 
 		/** called whenever a life is lost */
 		virtual void OnLifeLost();

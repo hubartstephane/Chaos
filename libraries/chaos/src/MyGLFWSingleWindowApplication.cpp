@@ -67,8 +67,8 @@ namespace chaos
 				glfwPollEvents();
 
 				double t2 = glfwGetTime();
-				double delta_time = t2 - t1;
-				double real_delta_time = delta_time;
+				float delta_time = (float)(t2 - t1);
+				float real_delta_time = delta_time;
 
 				if (forced_zero_tick_duration)
 				{
@@ -77,9 +77,9 @@ namespace chaos
 				}
 				else 
 				{
-					if (forced_tick_duration > 0.0)
+					if (forced_tick_duration > 0.0f)
 						delta_time = forced_tick_duration;
-					else if (max_tick_duration > 0.0)
+					else if (max_tick_duration > 0.0f)
 						delta_time = std::min(delta_time, max_tick_duration);
 				}
 
@@ -238,13 +238,13 @@ namespace chaos
 		}
 
 		
-		void SingleWindowApplication::TickManagers(double delta_time)
+		void SingleWindowApplication::TickManagers(float delta_time)
 		{
 
 			if (main_clock != nullptr)
 				main_clock->TickClock(delta_time);
 			if (sound_manager != nullptr)
-				sound_manager->Tick((float)delta_time);
+				sound_manager->Tick(delta_time);
 		}
 
 		void SingleWindowApplication::OnGLFWError(int code, const char* msg)

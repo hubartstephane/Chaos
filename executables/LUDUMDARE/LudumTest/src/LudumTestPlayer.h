@@ -45,11 +45,11 @@ protected:
     /** override */
     virtual void OnLevelChanged(death::GameLevel* new_level, death::GameLevel* old_level, death::GameLevelInstance* new_level_instance) override;
     /** override */
-    virtual void TickPlayerDisplacement(double delta_time) override;
+    virtual void TickPlayerDisplacement(float delta_time) override;
     /** override */
-    virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const* gpd) override;
+    virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const* gpd) override;
     /** override */
-    virtual void HandleKeyboardInputs(double delta_time) override;
+    virtual void HandleKeyboardInputs(float delta_time) override;
 
 
 };

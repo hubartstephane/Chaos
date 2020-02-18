@@ -63,7 +63,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 
 	protected:
 
@@ -97,7 +97,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 
 	protected:
 
@@ -125,7 +125,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual chaos::box2 ApplyModifier(chaos::box2 const & src) const override;
 
@@ -146,7 +146,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 	};
 
 }; // namespace death

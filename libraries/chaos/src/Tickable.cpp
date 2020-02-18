@@ -19,7 +19,7 @@ namespace chaos
 		return paused;
 	}
 
-	bool Tickable::Tick(double delta_time)
+	bool Tickable::Tick(float delta_time)
 	{
 		if (!CanTick())
 			return false;
@@ -31,7 +31,7 @@ namespace chaos
 		return !IsPaused();
 	}
 
-	bool Tickable::DoTick(double delta_time)
+	bool Tickable::DoTick(float delta_time)
 	{
 		return true;
 	}

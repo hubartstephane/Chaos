@@ -47,7 +47,7 @@ bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
 // GameHUDHealthBarComponent
 // ====================================================================
 
-bool GameHUDHealthBarComponent::DoTick(double delta_time)
+bool GameHUDHealthBarComponent::DoTick(float delta_time)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud == nullptr)

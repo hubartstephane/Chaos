@@ -29,7 +29,7 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 protected:
 
-	virtual bool Tick(double delta_time) override
+	virtual bool Tick(float delta_time) override
 	{
 #if 0
 		// XINPUT1_4.dll

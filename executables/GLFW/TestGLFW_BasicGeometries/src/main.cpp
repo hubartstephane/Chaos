@@ -1069,7 +1069,7 @@ protected:
 		hints.decorated = 1;
 	}
 
-	void UpdateObjectPosition(int key, double delta_time, glm::vec3 const & factor)
+	void UpdateObjectPosition(int key, float delta_time, glm::vec3 const & factor)
 	{
 		static float SPEED = 5.0f;
 		if (glfwGetKey(glfw_window, key) == GLFW_PRESS)
@@ -1081,7 +1081,7 @@ protected:
 		}
 	}
 
-	void UpdateObjectRotation(int key, double delta_time, float factor)
+	void UpdateObjectRotation(int key, float delta_time, float factor)
 	{
 		static float SPEED = 1.0f;
 
@@ -1102,7 +1102,7 @@ protected:
 			prim_type_object2 = (prim_type_object2 + 1) % PRIMITIVE_TYPE_COUNT;
 	}
 
-	virtual bool Tick(double delta_time) override
+	virtual bool Tick(float delta_time) override
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
 

@@ -51,12 +51,12 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 }
 
 
-void LudumPlayer::UpdateBrightSideOfLife(double delta_time)
+void LudumPlayer::UpdateBrightSideOfLife(float delta_time)
 {
 #if 0
 	if (brightsideoflife_timer > 0.0f)
 	{
-		brightsideoflife_timer -= (float)delta_time;
+		brightsideoflife_timer -= delta_time;
 		if (brightsideoflife_timer > 0.0f)
 			return;	
 	}
@@ -120,7 +120,7 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 	
 }
 
-void LudumPlayer::TickPlayerDisplacement(double delta_time)
+void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
@@ -131,14 +131,10 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 }
 
 
-void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
+void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 {
 
 	// shufixme
-
-
-	float dt = (float)delta_time;
-
 	LudumGame const * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
 		return;
@@ -148,10 +144,10 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 		return;
 
 	// update dash timer
-	dash_timer -= dt;
+	dash_timer -= delta_time;
 	if (dash_timer < 0.0f)
 		dash_timer = 0.0f;
-	dash_cooldown -= dt;
+	dash_cooldown -= delta_time;
 	if (dash_cooldown < 0.0f)
 		dash_cooldown = 0.0f;
 
@@ -242,10 +238,10 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 			+
 			dash_velocity_boost * direction
 			+ 
-			tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, dt);
+			tangeantial_velocity * powf(ludum_game->player_tan_speed_damping, delta_time);
 	}
 	else
-		player_velocity *= powf(ludum_game->player_speed_damping, dt);
+		player_velocity *= powf(ludum_game->player_speed_damping, delta_time);
 
 	// clamp the final velocity		
 	float len = glm::length(player_velocity);
@@ -254,13 +250,13 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	player_particle->velocity = player_velocity;
 
 	// displace the player
-	player_particle->bounding_box.position += dt * player_particle->velocity;
+	player_particle->bounding_box.position += delta_time * player_particle->velocity;
 }
 
-void LudumPlayer::UpdatePlayerFire(double delta_time)
+void LudumPlayer::UpdatePlayerFire(float delta_time)
 {
 	// decrease normal fire cool down
-	fire_timer -= (float)delta_time;
+	fire_timer -= delta_time;
 	if (fire_timer < 0.0f)
 		fire_timer = 0.0f;
 

@@ -300,7 +300,7 @@ namespace chaos
 	public:
 
 		/** a time scale for the clock */
-		double time_scale = 1.0;
+		float time_scale = 1.0;
 		/** whether the clock is paused or not */
 		bool   paused = false;  	
 	};
@@ -346,9 +346,9 @@ namespace chaos
 		void Reset(bool remove_events = true);
 
 		/** change the time scale */
-		void SetTimeScale(double new_scale) { time_scale = new_scale; }
+		void SetTimeScale(float new_scale) { time_scale = new_scale; }
 		/** returns the time scale */
-		double GetTimeScale() const { return time_scale; }
+		float GetTimeScale() const { return time_scale; }
 
 		/** gets a clock by name */
 		Clock * FindChildClock(char const * in_name, bool recursive = true);
@@ -361,7 +361,7 @@ namespace chaos
 		Clock const * GetTopLevelParent() const;
 
 		/** advance the clock (public interface) */
-		bool TickClock(double delta_time);
+		bool TickClock(float delta_time);
 
 		/** add a clock */
 		Clock * CreateChildClock(char const * in_name = nullptr, ClockCreateParams const & params = ClockCreateParams());
@@ -386,7 +386,7 @@ namespace chaos
 	protected:
 
 		/** advance the clock */
-		bool TickClockImpl(double delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set);
+		bool TickClockImpl(float delta_time, double cumulated_factor, ClockEventTickSet & event_tick_set);
 		/** internal methods to trigger all the event */
 		void TriggerClockEvent(ClockEventTickRegistration & registered_event);
 		/** ensure given clock is a child of the hierarchy tree */
@@ -399,7 +399,7 @@ namespace chaos
 		/** the time of the clock */
 		double clock_time = 0.0;
 		/** a time scale for the clock */
-		double time_scale = 1.0;
+		float time_scale = 1.0;
 		/** whether the clock is paused or not */
 		bool   paused = false;  
 		/** whether events should be ticked */

@@ -76,7 +76,7 @@ namespace death
 		/** constructor */
 		PlayingState(GameStateMachine * in_state_machine);
 		/** override */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, float delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	class PauseState : public GameState
@@ -134,7 +134,7 @@ namespace death
 		/** overriding */
 		virtual bool OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::ReferencedObject * extra_data) override;
 		/** overriding */
-		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data) override;
+		virtual bool TickImpl(chaos::SM::StateMachineInstance * sm_instance, float delta_time, chaos::ReferencedObject * extra_data) override;
 	};
 
 	// =========================================================

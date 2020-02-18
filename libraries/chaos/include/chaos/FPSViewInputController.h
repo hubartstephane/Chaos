@@ -70,7 +70,7 @@ namespace chaos
 	public:
 
 		/** the tick method */
-		virtual void Tick(GLFWwindow * glfw_window, double delta_time);
+		virtual void Tick(GLFWwindow * glfw_window, float delta_time);
 
 		/** matrix getter */
 		inline glm::mat4 GlobalToLocal() const { return fps_controller.GlobalToLocal(); }
@@ -86,9 +86,9 @@ namespace chaos
 	protected:
 
 		/** handle the mouse displacement */
-		void HandleMouseInputs(GLFWwindow * glfw_window, double delta_time);
+		void HandleMouseInputs(GLFWwindow * glfw_window, float delta_time);
 		/** handle the keyboard inputs */
-		void HandleKeyboardInputs(GLFWwindow * glfw_window, double delta_time);
+		void HandleKeyboardInputs(GLFWwindow * glfw_window, float delta_time);
 
 		/** check whether keyboard input is down */
 		bool CheckKeyInput(GLFWwindow * glfw_window, int key) const;

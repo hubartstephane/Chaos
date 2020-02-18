@@ -136,7 +136,7 @@ protected:
 		hints.decorated = 1;
 	}
 
-	virtual bool Tick(double delta_time) override
+	virtual bool Tick(float delta_time) override
 	{
 		debug_display.Tick(delta_time);
 		gamepad_manager->Tick(0.0f);

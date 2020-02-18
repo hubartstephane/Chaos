@@ -30,7 +30,7 @@ bool BonusSpawnerTriggerObject::Initialize()
 
 // -------------------------------------------------------------------
 
-bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
@@ -73,7 +73,7 @@ bool EnemySpawnerTriggerObject::Initialize()
 
 // -------------------------------------------------------------------
 
-bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type)
+bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type)
 {
 	if (event_type != TriggerObject::COLLISION_STARTED)
 		return false;
@@ -205,7 +205,7 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 
-bool LudumLevel::OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle)
+bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle)
 {
 
 	return true; // continue with other

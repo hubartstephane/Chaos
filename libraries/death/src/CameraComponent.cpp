@@ -57,13 +57,13 @@ namespace death
 		return result;
 	}
 
-	bool ShakeCameraComponent::DoTick(double delta_time)
+	bool ShakeCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
 
 		if (current_time >= 0.0f)
 		{
-			current_time += (float)delta_time;
+			current_time += delta_time;
 			if (current_time >= modifier_duration)
 			{
 				current_time = modifier_duration;
@@ -77,7 +77,7 @@ namespace death
 	// FollowPlayerCameraComponent
 	// =============================================
 
-	bool FollowPlayerCameraComponent::DoTick(double delta_time)
+	bool FollowPlayerCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
 
@@ -117,7 +117,7 @@ namespace death
 	// FreeCameraComponent
 	// =============================================
 
-	bool FreeCameraComponent::DoTick(double delta_time)
+	bool FreeCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
 
@@ -141,9 +141,9 @@ namespace death
 		if ((zoom_in == 0.0f) ^ (zoom_out == 0.0f))
 		{
 			if (zoom_in > 0.0f)
-				zoom_value -= 1.0f * zoom_in * (float)delta_time;				
+				zoom_value -= 1.0f * zoom_in * delta_time;				
 			else if (zoom_out > 0.0f)
-				zoom_value += 1.0f * zoom_value * (float)delta_time;
+				zoom_value += 1.0f * zoom_value * delta_time;
 		}
 
 		zoom_value = std::clamp(zoom_value, 1.0f, 4.0f);
@@ -151,7 +151,7 @@ namespace death
 		// update camera position
 		// XXX : -multiply by 'half_size' => the greater the view is, the faster we go
 		//       -screen Y coordinate and gamepad are inverted
-		camera_box.position += glm::vec2(1.0f, -1.0f) * left_stick_position * (float)delta_time * camera_box.half_size * 3.0f;
+		camera_box.position += glm::vec2(1.0f, -1.0f) * left_stick_position * delta_time * camera_box.half_size * 3.0f;
 
 		// try to keep the camera in the world
 		chaos::box2 world = camera->GetLevelInstance()->GetBoundingBox();
@@ -176,7 +176,7 @@ namespace death
 	// SoundListenerCameraComponent
 	// =============================================
 
-	bool SoundListenerCameraComponent::DoTick(double delta_time)
+	bool SoundListenerCameraComponent::DoTick(float delta_time)
 	{
 		CameraComponent::DoTick(delta_time);
 

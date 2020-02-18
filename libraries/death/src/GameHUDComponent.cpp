@@ -243,12 +243,12 @@ namespace death
 		allocations = nullptr;
 	}
 
-	bool GameHUDNotificationComponent::DoTick(double delta_time)
+	bool GameHUDNotificationComponent::DoTick(float delta_time)
 	{
 		GameHUDTextComponent::DoTick(delta_time);
 		if (lifetime >= 0.0f && current_time < lifetime)
 		{
-			current_time += (float)delta_time;
+			current_time += delta_time;
 			if (current_time >= lifetime)
 				HideNotification();
 		}
@@ -382,7 +382,7 @@ namespace death
 		return true;
 	}
 
-	bool GameHUDLifeComponent::DoTick(double delta_time)
+	bool GameHUDLifeComponent::DoTick(float delta_time)
 	{
 		GameHUDSingleAllocationComponent::DoTick(delta_time);
 		TickHeartBeat(delta_time);
@@ -390,7 +390,7 @@ namespace death
 		return true;
 	}
 
-	void GameHUDLifeComponent::TickHeartBeat(double delta_time)
+	void GameHUDLifeComponent::TickHeartBeat(float delta_time)
 	{
 		// early exit
 		if (heart_beat_frequency <= 0.0f || heart_beat_sound.empty())
@@ -408,7 +408,7 @@ namespace death
 
 		if (count == 1)
 		{
-			warning_value -= (float)delta_time / heart_beat_frequency;
+			warning_value -= delta_time / heart_beat_frequency;
 			if (warning_value <= 0.0f)
 			{
 				game->PlaySound(heart_beat_sound.c_str(), false, false, 0.0f, SoundContext::GAME);
@@ -433,7 +433,7 @@ namespace death
 		return player->GetLifeCount();
 	}
 
-	void GameHUDLifeComponent::UpdateLifeParticles(double delta_time)
+	void GameHUDLifeComponent::UpdateLifeParticles(float delta_time)
 	{
 		// early exit
 		if (particle_name.empty())
@@ -600,7 +600,7 @@ namespace death
 	{
 	}
 
-	bool GameHUDFreeCameraComponent::DoTick(double delta_time)
+	bool GameHUDFreeCameraComponent::DoTick(float delta_time)
 	{
 		Game * game = GetGame();
 		if (game != nullptr)
@@ -622,12 +622,12 @@ namespace death
 		child_component->hud = hud;
 	}
 
-	bool GameHUDTimedComponent::DoTick(double delta_time)
+	bool GameHUDTimedComponent::DoTick(float delta_time)
 	{
 		// decrease hud lifetime
 		if (lifetime >= 0.0f) // well, child_components do not known their hud yet
 		{
-			current_time += (float)delta_time;
+			current_time += delta_time;
 			if (current_time >= lifetime)
 			{
 				hud->UnregisterComponent(this);

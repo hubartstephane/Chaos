@@ -34,7 +34,7 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
-bool LudumLevelInstance::DoTick(double delta_time)
+bool LudumLevelInstance::DoTick(float delta_time)
 {
 	death::TiledMap::LevelInstance::DoTick(delta_time);
 

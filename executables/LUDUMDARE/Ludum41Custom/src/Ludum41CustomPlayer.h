@@ -36,13 +36,13 @@ public:
 protected:
 
 	/** override */
-	virtual void TickPlayerDisplacement(double delta_time) override;
+	virtual void TickPlayerDisplacement(float delta_time) override;
 	/** override */
 	virtual bool OnMouseMoveImpl(double x, double y) override;
 	/** override */
 	virtual bool OnCharEventImpl(unsigned int c) override;
 	/** override */
-	virtual void InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
+	virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
 	/** override */
 	virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
 	/** override */

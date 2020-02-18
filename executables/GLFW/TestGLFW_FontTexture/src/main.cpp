@@ -56,7 +56,7 @@ protected:
 		chaos::MyGLFW::Window::Finalize();
 	}
 
-	virtual bool Tick(double delta_time) override
+	virtual bool Tick(float delta_time) override
 	{
 		return debug_display.Tick(delta_time);
 	}

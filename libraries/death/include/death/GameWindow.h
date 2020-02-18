@@ -34,7 +34,7 @@ namespace death
 		/** override */
 		virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override;
 		/** override */
-		virtual bool Tick(double delta_time) override;
+		virtual bool Tick(float delta_time) override;
 		/** override */
 		virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 		/** override */

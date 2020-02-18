@@ -14,12 +14,12 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 		player_length = ludum_game->player_initial_length;
 }
 
-void LudumPlayer::TickPlayerDisplacement(double delta_time)
+void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	float value = left_stick_position.x;
 	if (abs(right_stick_position.x) > abs(left_stick_position.x))
 		value = right_stick_position.x;
-	DisplacePlayerRacket(value * GetGame()->GetGamepadSensitivity() * (float)delta_time); // even if 0 because this will ensure player Y is well placed even if no input is pressed
+	DisplacePlayerRacket(value * GetGame()->GetGamepadSensitivity() * delta_time); // even if 0 because this will ensure player Y is well placed even if no input is pressed
 }
 
 void LudumPlayer::DisplacePlayerRacket(float delta_x)
@@ -63,7 +63,7 @@ bool LudumPlayer::OnCharEventImpl(unsigned int c)
 	return death::Player::OnCharEventImpl(c);
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
+void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 

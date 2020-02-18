@@ -146,7 +146,7 @@ namespace death
 			format(in_format){}
 
 		/** override */
-		virtual bool DoTick(double delta_time) override
+		virtual bool DoTick(float delta_time) override
 		{
 			UpdateTextAllocation(nullptr);
 			return true;
@@ -237,7 +237,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 
 	protected:
 
@@ -331,13 +331,13 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** update all particles (count, alpha) */
-		void UpdateLifeParticles(double delta_time);
+		void UpdateLifeParticles(float delta_time);
 		/** returns the number of life */
 		virtual int GetLifeCount() const;
 		/** tick heart */
-		void TickHeartBeat(double delta_time);
+		void TickHeartBeat(float delta_time);
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 
@@ -419,7 +419,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 	};
 
 	// ====================================================================
@@ -442,7 +442,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual void OnRemovedFromHUD() override;
 		/** override */

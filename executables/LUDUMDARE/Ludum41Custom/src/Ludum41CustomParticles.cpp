@@ -284,26 +284,44 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 				float delta_position = (player_box.position.x - new_ball_box.position.x);
 				float bound_factor = delta_position / player_box.half_size.x;
-				bound_factor = std::clamp(std::abs(bound_factor), 0.0f, 1.0f);
-				// whenever the ball hit the racket at [0.5 .. 1.0], we get a rebound factor between [0 .. 0.3]
+				bound_factor = std::clamp(bound_factor, -1.0f, 1.0f);
 
-				float const REBOUND_MODIFIER_ANGLE = 50.0f * (float)M_PI / 180.0f;
+				float const TO_RAD = (float)M_PI / 180.0f;
 
-				if (bound_factor < 0.3f)
+				float rebound_angle_decrease = layer_trait->game->rebound_angle_decrease * TO_RAD;
+				float rebound_angle_increase = layer_trait->game->rebound_angle_increase * TO_RAD;
+
+				float const PI_2 = (float)M_PI_2;
+
+				
+				float const GOOD_LIMIT = 0.3f;
+				float const BAD_LIMIT  = 0.6f;
+
+				if (bound_factor < GOOD_LIMIT && bound_factor > -GOOD_LIMIT)
 				{
-					if (angle > (float)M_PI_2)
-						angle = angle - REBOUND_MODIFIER_ANGLE * (1.0f - bound_factor / 0.3f);
+					bound_factor = std::abs(bound_factor);
+					if (angle > PI_2)
+						angle = angle - rebound_angle_decrease * (1.0f - bound_factor / GOOD_LIMIT);
 					else 
-						angle = angle + REBOUND_MODIFIER_ANGLE * (1.0f - bound_factor / 0.3f);
-				}
-				else if (bound_factor > 0.7f)
+						angle = angle + rebound_angle_decrease * (1.0f - bound_factor / GOOD_LIMIT);
+				}	
+				else if (bound_factor > BAD_LIMIT)
 				{
-					if (angle > (float)M_PI_2)
-						angle = angle + REBOUND_MODIFIER_ANGLE * (bound_factor - 0.7f) / (1.0f - 0.7f);
+					bound_factor = std::abs(bound_factor);
+					if (angle > PI_2)						
+						angle = angle + rebound_angle_increase * (bound_factor - BAD_LIMIT) / (1.0f - BAD_LIMIT);
 					else
-						angle = angle - REBOUND_MODIFIER_ANGLE * (bound_factor - 0.7f) / (1.0f - 0.7f);
+						angle = PI_2 - (angle - PI_2);
 				}
 
+				else if (bound_factor < -BAD_LIMIT)
+				{				
+					bound_factor = std::abs(bound_factor);
+					if (angle > PI_2)
+						angle = PI_2 - (angle - PI_2);
+					else						
+						angle = angle - rebound_angle_increase * (bound_factor - BAD_LIMIT) / (1.0f - BAD_LIMIT);
+				}
 				velocity = MakeVelocityFromAngle(angle);
 			}
 			

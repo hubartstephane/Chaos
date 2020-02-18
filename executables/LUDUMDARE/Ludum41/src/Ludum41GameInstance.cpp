@@ -38,6 +38,11 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 
 void LudumGameInstance::TickChallenge(float delta_time)
 {
+#if _DEBUG
+	if (chaos::Application::HasApplicationCommandLineFlag("-NoChallenge")) // CMDLINE
+		return;
+#endif
+
 	if (sequence_challenge != nullptr)
 	{
 		sequence_challenge->Tick(delta_time);
@@ -88,8 +93,10 @@ void LudumGameInstance::TickBallSplit(float delta_time)
 	ParticleMovableObject * new_ball = &balls[ball_count];
 	*new_ball = *parent_ball;
 
-	RotateVelocity(parent_ball->velocity, ludum_game->split_angle);
-	RotateVelocity(new_ball->velocity, -ludum_game->split_angle);
+	float const TO_RAD = (float)M_PI / 180.0f;
+
+	RotateVelocity(parent_ball->velocity, ludum_game->split_angle * TO_RAD);
+	RotateVelocity(new_ball->velocity, -ludum_game->split_angle * TO_RAD);
 
 	pending_split_count = 0;
 }

@@ -24,7 +24,7 @@ public:
 	size_t GetChallengePosition(bool gamepad) const;
 
 	/** challenge can be ticked */
-	void Tick(double delta_time);
+	void Tick(float delta_time);
 
 	/** a timeout can be given */
 	void SetTimeout(float in_timeout);

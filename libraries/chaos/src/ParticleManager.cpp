@@ -44,7 +44,7 @@ namespace chaos
 		layer_system.RemoveChildRenderable(layer);
 	}
 
-	bool ParticleManager::DoTick(double delta_time)
+	bool ParticleManager::DoTick(float delta_time)
 	{
 		size_t count = layer_system.GetChildCount();
 		for (size_t i = 0; i < count; ++i)

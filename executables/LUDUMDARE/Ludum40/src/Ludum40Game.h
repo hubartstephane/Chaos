@@ -62,7 +62,7 @@ class Game : public chaos::ReferencedObject
 
 public:
 
-	void Tick(double delta_time);
+	void Tick(float delta_time);
 
 	bool Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size);
 

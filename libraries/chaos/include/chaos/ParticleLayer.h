@@ -656,7 +656,7 @@ public:
 	protected:
 
 		/** ticking the particle system */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** draw the layer */
 		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 
@@ -674,7 +674,7 @@ public:
 		int DoDisplayHelper(GPURenderer * renderer, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** internal method to update particles (returns true whether there was real changes) */
-		virtual bool TickAllocations(double delta_time);
+		virtual bool TickAllocations(float delta_time);
 
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;

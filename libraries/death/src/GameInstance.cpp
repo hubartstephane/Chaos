@@ -137,7 +137,7 @@ namespace death
 
 	}
 
-	bool GameInstance::DoTick(double delta_time)
+	bool GameInstance::DoTick(float delta_time)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)

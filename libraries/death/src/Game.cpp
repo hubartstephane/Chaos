@@ -54,14 +54,14 @@ namespace death
 	}
 #endif // _DEBUG
 
-	void Game::TickGameInputs(double delta_time)
+	void Game::TickGameInputs(float delta_time)
 	{
 		// catch all stick inputs
 		if (gamepad_manager != nullptr)
-			gamepad_manager->Tick((float)delta_time);
+			gamepad_manager->Tick(delta_time);
 	}
 
-	void Game::Tick(double delta_time)
+	void Game::Tick(float delta_time)
 	{
 		// update player inputs
 		TickGameInputs(delta_time);
@@ -76,7 +76,7 @@ namespace death
 			game_instance->Tick(delta_time);		
 		// tick the particle manager
 		if (particle_manager != nullptr)
-			particle_manager->Tick((float)delta_time);
+			particle_manager->Tick(delta_time);
 		// tick the hud
 		if (hud != nullptr)
 			hud->Tick(delta_time);
@@ -1267,7 +1267,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::TickGameLoop(double delta_time)
+	bool Game::TickGameLoop(float delta_time)
 	{
 		// level finished
 		if (CheckLevelCompleted())

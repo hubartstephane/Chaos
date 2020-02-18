@@ -134,21 +134,21 @@ protected:
     hints.decorated = 1;
   }
 
-  virtual bool Tick(double delta_time) override
+  virtual bool Tick(float delta_time) override
   {
     if (sound_manager != nullptr)
     {
     //  glm::mat4 view = fps_view_controller.GlobalToLocal();
       glm::mat4 view = fps_view_controller.LocalToGlobal();
       sound_manager->SetListenerPosition(view[3]); // ??? 
-      sound_manager->Tick((float)delta_time);
+      sound_manager->Tick(delta_time);
     }
 
     fps_view_controller.Tick(glfw_window, delta_time);
 
     if (rotation_started)
     {
-      box_alpha += rotation_speed * (float)delta_time;
+      box_alpha += rotation_speed * delta_time;
       while (box_alpha > 2.0f * (float)M_PI)
         box_alpha -= 2.0f * (float)M_PI;
     }

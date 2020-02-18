@@ -71,7 +71,7 @@ namespace death
 			game->RequirePauseGame();
 	}
 
-	bool Player::DoTick(double delta_time)
+	bool Player::DoTick(float delta_time)
 	{
 		Game * game = GetGame();
 
@@ -100,14 +100,14 @@ namespace death
 		return true;
 	}
 
-	void Player::TickInvulnerability(double delta_time)
+	void Player::TickInvulnerability(float delta_time)
 	{
-		invulnerability_timer -= (float)delta_time;
+		invulnerability_timer -= delta_time;
 		if (invulnerability_timer < 0.0f)
 			invulnerability_timer = 0.0f;
 	}
 
-	void Player::TickPlayerDisplacement(double delta_time)
+	void Player::TickPlayerDisplacement(float delta_time)
 	{
 
 	}
@@ -180,7 +180,7 @@ namespace death
 			game->RequireTogglePause();
 	}
 
-	void Player::HandleKeyboardInputs(double delta_time)
+	void Player::HandleKeyboardInputs(float delta_time)
 	{
 
 	}
@@ -193,7 +193,7 @@ namespace death
 		right_trigger = 0.0f;
 	}
 
-	void Player::HandleGamepadInputs(double delta_time)
+	void Player::HandleGamepadInputs(float delta_time)
 	{
 		// early exit
 		if (gamepad == nullptr)
@@ -206,7 +206,7 @@ namespace death
 		InternalHandleGamepadInputs(delta_time, gamepad_data);
 	}
 
-	void Player::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gamepad_data)
+	void Player::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gamepad_data)
 	{
 
 	}

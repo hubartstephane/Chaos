@@ -31,7 +31,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
 
 protected:
 
@@ -60,7 +60,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnCameraCollisionEvent(double delta_time, chaos::box2 const & camera_box, int event_type) override;
+	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
 
 protected:
 
@@ -92,5 +92,5 @@ protected:
 
 	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
-	virtual bool OnPlayerTileCollision(double delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle) override;
+	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMap::TileParticle * particle) override;
 };

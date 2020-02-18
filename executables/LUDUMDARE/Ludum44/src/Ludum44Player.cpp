@@ -38,7 +38,7 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 	return &player_particles[0];
 }
 
-void LudumPlayer::TickPlayerDisplacement(double delta_time)
+void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
@@ -48,7 +48,7 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 	UpdatePlayerBuyingItem(delta_time);
 }
 
-void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
+void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 {
 	LudumGame const * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
@@ -116,10 +116,10 @@ void LudumPlayer::FireNormalProjectile()
     ludum_game_instance->FireProjectile("fire", GetPlayerBox(), 0.3f, count, "fire", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_damages[current_damage_index], false, true);
 }
 
-void LudumPlayer::UpdatePlayerFire(double delta_time)
+void LudumPlayer::UpdatePlayerFire(float delta_time)
 {
 	// decrease normal fire cool down
-	fire_timer -= (float)delta_time;
+	fire_timer -= delta_time;
 	if (fire_timer < 0.0f)
 		fire_timer = 0.0f;
 	
@@ -133,7 +133,7 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 	bool charged_pressed = CheckButtonPressed(charged_key_buttons, chaos::MyGLFW::XBOX_BUTTON_B);
 	if (charged_pressed)
 	{
-		charged_fire_timer += (float)delta_time;
+		charged_fire_timer += delta_time;
 		if (charged_fire_timer >= ludum_game->charged_fire_time)
 			charged_fire_timer = ludum_game->charged_fire_time;	
 	}
@@ -160,7 +160,7 @@ void LudumPlayer::UpdatePlayerFire(double delta_time)
 	}
 }
 
-void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
+void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 {
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
@@ -180,7 +180,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(double delta_time)
 	bool buy_pressed = CheckButtonPressed(buy_key_buttons, chaos::MyGLFW::XBOX_BUTTON_Y);
 	if (buy_pressed && !buylocked)
 	{
-		buy_timer += (float)delta_time;
+		buy_timer += delta_time;
 		if (buy_timer >= ludum_game->buy_upgrade_time)
 		{
 			// XXX : HACK : destroy all power up zone in the camera view : not the best but should work if a single zone in the same time

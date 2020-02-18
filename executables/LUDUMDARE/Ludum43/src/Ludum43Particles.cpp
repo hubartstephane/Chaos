@@ -127,7 +127,7 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool a
 	if (velocity_length2 > max_velocity * max_velocity)
 		velocity = glm::normalize(velocity) * max_velocity;
 	// update particle position
-	position += velocity * (float)delta_time;
+	position += velocity * delta_time;
 }
 
 // ===========================================================================

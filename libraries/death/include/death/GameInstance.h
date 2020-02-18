@@ -108,7 +108,7 @@ namespace death
 		virtual bool Initialize(death::Game * in_game);
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 
 		/** handle keyboard input */
 		virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override;

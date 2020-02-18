@@ -38,7 +38,7 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 	return &player_particles[0];
 }
 
-void LudumPlayer::TickPlayerDisplacement(double delta_time)
+void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
@@ -48,7 +48,7 @@ void LudumPlayer::TickPlayerDisplacement(double delta_time)
 	TickCooldown(delta_time);
 }
 
-void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
+void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 {
 	LudumGame const * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
@@ -71,19 +71,19 @@ void LudumPlayer::UpdatePlayerAcceleration(double delta_time)
 	}
 }
 
-void LudumPlayer::TickCooldown(double delta_time)
+void LudumPlayer::TickCooldown(float delta_time)
 {
-	current_cooldown = std::max(0.0f, current_cooldown - (float)delta_time);
+	current_cooldown = std::max(0.0f, current_cooldown - delta_time);
 }
 
-void LudumPlayer::TickDashValues(double delta_time)
+void LudumPlayer::TickDashValues(float delta_time)
 {
 	// cooldow in progress
 	if (current_dash_cooldown > 0.0f)
-		current_dash_cooldown = std::max(0.0f, current_dash_cooldown - (float)delta_time);
+		current_dash_cooldown = std::max(0.0f, current_dash_cooldown - delta_time);
 	if (current_dash_duration > 0.0f)
 	{
-		current_dash_duration = std::max(0.0f, current_dash_duration - (float)delta_time);
+		current_dash_duration = std::max(0.0f, current_dash_duration - delta_time);
 		if (current_dash_duration == 0.0f)
 			SetDashMode(false);
 	}
@@ -151,7 +151,7 @@ void LudumPlayer::SetDashMode(bool dash)
 	}
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::GamepadData const * gpd)
+void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
@@ -161,7 +161,7 @@ void LudumPlayer::InternalHandleGamepadInputs(double delta_time, chaos::MyGLFW::
 	SetReverseMode(reversed_mode);
 }
 
-void LudumPlayer::HandleKeyboardInputs(double delta_time)
+void LudumPlayer::HandleKeyboardInputs(float delta_time)
 {
 	death::Player::HandleKeyboardInputs(delta_time);
 

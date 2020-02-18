@@ -73,11 +73,11 @@ public:
 	/** returns the current combo multiplier */
 	int GetCurrentComboMultiplier() const { return combo_multiplier; }
 
-	void TickBrickOffset(double delta_time);
+	void TickBrickOffset(float delta_time);
 
-	void TickChallenge(double delta_time);
+	void TickChallenge(float delta_time);
 
-	void TickBallSplit(double delta_time);
+	void TickBallSplit(float delta_time);
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
 	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data);
@@ -95,7 +95,7 @@ protected:
 
 	virtual death::Player * DoCreatePlayer() override;
 
-	virtual bool DoTick(double delta_time) override;
+	virtual bool DoTick(float delta_time) override;
 
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 

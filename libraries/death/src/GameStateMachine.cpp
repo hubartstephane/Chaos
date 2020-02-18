@@ -88,7 +88,7 @@ namespace death
 		SetName("Playing");
 	}
 
-	bool PlayingState::TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data)
+	bool PlayingState::TickImpl(chaos::SM::StateMachineInstance * sm_instance, float delta_time, chaos::ReferencedObject * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -160,7 +160,7 @@ namespace death
 		return false;
 	}
 
-	bool PlayingToGameOverTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, double delta_time, chaos::ReferencedObject * extra_data)
+	bool PlayingToGameOverTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, float delta_time, chaos::ReferencedObject * extra_data)
 	{
 		// wait until game over sound is finished
 		chaos::Sound * gameover_sound = auto_cast(sm_instance->GetContextData());

@@ -27,7 +27,7 @@ namespace death
 		assert(in_game_level_instance != nullptr);
 	}
 	
-	bool Camera::DoTick(double delta_time)
+	bool Camera::DoTick(float delta_time)
 	{
 		// tick all components
 		size_t count = components.size();

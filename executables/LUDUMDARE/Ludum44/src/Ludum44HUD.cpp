@@ -49,7 +49,7 @@ bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
 // ====================================================================
 
 
-bool GameHUDPowerUpComponent::DoTick(double delta_time)
+bool GameHUDPowerUpComponent::DoTick(float delta_time)
 {
 	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
 
@@ -112,7 +112,7 @@ bool GameHUDPowerUpComponent::DoTick(double delta_time)
 // GameHUDHealthBarComponent
 // ====================================================================
 
-bool GameHUDHealthBarComponent::DoTick(double delta_time)
+bool GameHUDHealthBarComponent::DoTick(float delta_time)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud == nullptr)

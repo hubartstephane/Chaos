@@ -76,12 +76,12 @@ protected:
 	/** override */
 	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
 	/** override */
-	virtual void TickPlayerDisplacement(double delta_time) override;
+	virtual void TickPlayerDisplacement(float delta_time) override;
 
 
-	void UpdatePlayerAcceleration(double delta_time);
-	void UpdatePlayerFire(double delta_time);
-	void UpdateBrightSideOfLife(double delta_time);
+	void UpdatePlayerAcceleration(float delta_time);
+	void UpdatePlayerFire(float delta_time);
+	void UpdateBrightSideOfLife(float delta_time);
 
 	virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable) override;
 

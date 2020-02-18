@@ -213,7 +213,7 @@ namespace death
 		return it->second.get();
 	}
 
-	bool GameHUD::DoTick(double delta_time)
+	bool GameHUD::DoTick(float delta_time)
 	{
 		// tick the components
 		for (auto it : components)

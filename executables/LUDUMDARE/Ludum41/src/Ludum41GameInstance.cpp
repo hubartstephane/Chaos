@@ -36,7 +36,7 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 }
 
 
-void LudumGameInstance::TickChallenge(double delta_time)
+void LudumGameInstance::TickChallenge(float delta_time)
 {
 	if (sequence_challenge != nullptr)
 	{
@@ -45,7 +45,7 @@ void LudumGameInstance::TickChallenge(double delta_time)
 	else
 	{
 		// start a challenge (only if one ball is going upward)
-		challenge_timer = std::max(0.0f, challenge_timer - (float)delta_time);
+		challenge_timer = std::max(0.0f, challenge_timer - delta_time);
 		if (challenge_timer <= 0.0f)
 			if (CanStartChallengeBallIndex(false) != std::numeric_limits<size_t>::max()) // any ball going up
 				sequence_challenge = CreateSequenceChallenge();
@@ -65,7 +65,7 @@ static void RotateVelocity(glm::vec2 & src, float angle)
 }
 
 
-void LudumGameInstance::TickBallSplit(double delta_time)
+void LudumGameInstance::TickBallSplit(float delta_time)
 {
 	LudumGame const * ludum_game = GetLudumGame();
 
@@ -94,19 +94,19 @@ void LudumGameInstance::TickBallSplit(double delta_time)
 	pending_split_count = 0;
 }
 
-void LudumGameInstance::TickBrickOffset(double delta_time)
+void LudumGameInstance::TickBrickOffset(float delta_time)
 {
 	LudumGame const * ludum_game = GetLudumGame();
 
 	if (target_brick_offset > brick_offset)
 	{
-		brick_offset = brick_offset + (float)delta_time * ludum_game->brick_offset_speed;
+		brick_offset = brick_offset + delta_time * ludum_game->brick_offset_speed;
 		if (brick_offset > target_brick_offset)
 			brick_offset = target_brick_offset;
 	}
 	else if (target_brick_offset < brick_offset)
 	{
-		brick_offset = brick_offset - (float)delta_time * ludum_game->brick_offset_speed;
+		brick_offset = brick_offset - delta_time * ludum_game->brick_offset_speed;
 		if (brick_offset < target_brick_offset)
 			brick_offset = target_brick_offset;
 	}
@@ -194,7 +194,7 @@ void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::Game
 }
 
 
-bool LudumGameInstance::DoTick(double delta_time)
+bool LudumGameInstance::DoTick(float delta_time)
 {
 	if (!death::GameInstance::DoTick(delta_time)) // ticking GameInstance, tick Players ... this is usefull to work with inputs
 		return false;

@@ -108,7 +108,7 @@ int LudumChallenge::GetTimeSoundIndex(float t) const
 	return 0; // should never happen
 }
 
-void LudumChallenge::Tick(double delta_time)
+void LudumChallenge::Tick(float delta_time)
 {
 	LudumGame * game = game_instance->GetLudumGame();
 
@@ -116,7 +116,7 @@ void LudumChallenge::Tick(double delta_time)
 	{
 		int time_sound_index1 = GetTimeSoundIndex(timeout);
 	
-		timeout = timeout - (float)delta_time;
+		timeout = timeout - delta_time;
 		if (timeout <= 0.0f)
 		{
 			OnChallengeError(true);		

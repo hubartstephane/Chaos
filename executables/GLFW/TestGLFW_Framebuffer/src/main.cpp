@@ -160,7 +160,7 @@ protected:
 		hints.decorated = 0;
 	}
 
-	virtual bool Tick(double delta_time) override
+	virtual bool Tick(float delta_time) override
 	{
 		fps_view_controller.Tick(glfw_window, delta_time);
 

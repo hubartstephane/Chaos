@@ -103,7 +103,7 @@ namespace chaos
 	protected:
 		
 		/** tick the manager */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** display all the particles */
 		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 

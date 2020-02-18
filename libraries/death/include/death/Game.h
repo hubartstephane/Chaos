@@ -225,9 +225,9 @@ namespace death
 	protected:
 
 		/** the tick method */
-		virtual void Tick(double delta_time);
+		virtual void Tick(float delta_time);
 		/** tick the game inputs */
-		virtual void TickGameInputs(double delta_time);
+		virtual void TickGameInputs(float delta_time);
 
 		/** whenever a key event is received */
 		virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override;
@@ -339,7 +339,7 @@ namespace death
 		virtual death::TiledMap::Level * CreateTiledMapLevel();
 
 		/** the game main loop */
-		virtual bool TickGameLoop(double delta_time);
+		virtual bool TickGameLoop(float delta_time);
 		/** test whether there is a game over */
 		virtual bool CheckGameOverCondition();
 		/** check whether we must go to next level */

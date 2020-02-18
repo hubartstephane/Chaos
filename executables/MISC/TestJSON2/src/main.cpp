@@ -25,7 +25,7 @@ protected:
     return true;
   }
 
-  virtual bool Tick(double delta_time) override
+  virtual bool Tick(float delta_time) override
   {
 
     return false; // no redraw

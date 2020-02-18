@@ -85,7 +85,7 @@ ObjectDefinition const * GameInfo::GetObjectDefinition(int id)
 // ======================================================================================
 
 
-void SpriteLayer::Tick(double delta_time, GameInfo game_info)
+void SpriteLayer::Tick(float delta_time, GameInfo game_info)
 {
 	if (!visible)
 		return;
@@ -100,16 +100,14 @@ void SpriteLayer::SetVisible(bool in_visible)
 	visible = in_visible;
 }
 
-void SpriteLayer::UpdateParticleLifetime(double delta_time)
+void SpriteLayer::UpdateParticleLifetime(float delta_time)
 {
-	float dt = (float)delta_time;
-
 	size_t i = 0;
 	while (i < particles.size())
 	{
 		if (particles[i].life_time > 0.0f)
 		{
-			particles[i].life_time -= dt;
+			particles[i].life_time -= delta_time;
 			if (particles[i].life_time <= 0.0f)
 			{
 				particles[i] = particles.back();
@@ -121,11 +119,10 @@ void SpriteLayer::UpdateParticleLifetime(double delta_time)
 	}
 }
 
-void SpriteLayer::UpdateParticleVelocity(double delta_time)
+void SpriteLayer::UpdateParticleVelocity(float delta_time)
 {
-	float dt = (float)delta_time;	
 	for (size_t i = 0 ; i < particles.size() ; ++i)
-		particles[i].position += particles[i].velocity * dt;
+		particles[i].position += particles[i].velocity * delta_time;
 }
 
 void SpriteLayer::DestroyParticleByClipRect(GameInfo game_info)

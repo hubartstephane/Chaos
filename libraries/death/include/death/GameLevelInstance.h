@@ -120,7 +120,7 @@ namespace death
 		Camera const * DoGetCamera(size_t index) const;
 
 		/** override */
-		virtual bool DoTick(double delta_time) override;
+		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual bool CanTick() override;
 

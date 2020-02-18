@@ -31,7 +31,7 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 	return death::GameInstance::DoCheckGameOverCondition();
 }
 
-bool LudumGameInstance::DoTick(double delta_time)
+bool LudumGameInstance::DoTick(float delta_time)
 {
 	death::GameInstance::DoTick(delta_time);
 	if (game->IsPlaying())
@@ -39,7 +39,7 @@ bool LudumGameInstance::DoTick(double delta_time)
 	return true;
 }
 
-void LudumGameInstance::TickHeartBeat(double delta_time)
+void LudumGameInstance::TickHeartBeat(float delta_time)
 {
 	LudumGame * ludum_game = GetLudumGame();
 	if (ludum_game == nullptr)
@@ -55,7 +55,7 @@ void LudumGameInstance::TickHeartBeat(double delta_time)
 		limit_value = 0.4f;
 	previous_frame_life = particle_player->life;
 
-	heart_beat_time += (float)delta_time;
+	heart_beat_time += delta_time;
 	if (heart_beat_time >= limit_value)
 	{
 		heart_beat_time = 0.0f;

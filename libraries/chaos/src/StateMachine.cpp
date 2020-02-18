@@ -29,7 +29,7 @@ namespace chaos
 		{
 		}
 
-		void State::Tick(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
+		void State::Tick(StateMachineInstance * sm_instance, float delta_time, ReferencedObject * extra_data)
 		{
 			// the USER implementation catch the method
 			if (!TickImpl(sm_instance, delta_time, extra_data))
@@ -77,7 +77,7 @@ namespace chaos
 			return false; 
 		}
 
-		bool State::TickImpl(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
+		bool State::TickImpl(StateMachineInstance * sm_instance, float delta_time, ReferencedObject * extra_data)
 		{
 			return true; // enable automatic transitions
 		}
@@ -123,7 +123,7 @@ namespace chaos
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
 		}
 
-		void Transition::Tick(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
+		void Transition::Tick(StateMachineInstance * sm_instance, float delta_time, ReferencedObject * extra_data)
 		{	
 			if (TickImpl(sm_instance, delta_time, extra_data))
 				sm_instance->ChangeState(to_state, extra_data); // will cause OnLeave call
@@ -140,7 +140,7 @@ namespace chaos
 			return true; // pass throught transition (no tick)
 		}
 
-		bool Transition::TickImpl(StateMachineInstance * sm_instance, double delta_time, ReferencedObject * extra_data)
+		bool Transition::TickImpl(StateMachineInstance * sm_instance, float delta_time, ReferencedObject * extra_data)
 		{
 			return true; // the transition has no special code. We can exit it
 		}
@@ -169,7 +169,7 @@ namespace chaos
 			assert(in_state_machine != nullptr);
 		}
 
-		bool StateMachineInstance::Tick(double delta_time, ReferencedObject * extra_data)
+		bool StateMachineInstance::Tick(float delta_time, ReferencedObject * extra_data)
 		{
 			// enter initial state if necessary
 			if (current_state == nullptr)

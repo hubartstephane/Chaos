@@ -90,7 +90,7 @@ namespace chaos
 			return (glfwWindowShouldClose(glfw_window) != 0);
 		}
 
-		void Window::MainTick(double delta_time)
+		void Window::MainTick(float delta_time)
 		{
 			if (Tick(delta_time))
 				RequireWindowRefresh();

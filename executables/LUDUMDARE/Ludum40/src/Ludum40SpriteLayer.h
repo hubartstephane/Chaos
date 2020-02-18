@@ -97,7 +97,7 @@ public:
 
 	void Draw(chaos::GPUProgramProviderBase * uniform_provider);
 
-	void Tick(double delta_time, GameInfo game_info);
+	void Tick(float delta_time, GameInfo game_info);
 
 	void DestroyAllParticles();
 
@@ -109,8 +109,8 @@ public:
 
 protected:
 
-	void UpdateParticleLifetime(double delta_time);
-	void UpdateParticleVelocity(double delta_time);
+	void UpdateParticleLifetime(float delta_time);
+	void UpdateParticleVelocity(float delta_time);
 	void DestroyParticleByClipRect(GameInfo game_info);
 	void UpdateGPUBuffer(GameInfo game_info);
 

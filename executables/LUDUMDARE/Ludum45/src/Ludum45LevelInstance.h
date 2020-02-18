@@ -30,7 +30,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool DoTick(double delta_time) override;
+	virtual bool DoTick(float delta_time) override;
 	/** override */
 	virtual void OnLevelStarted() override;
 	/** override */

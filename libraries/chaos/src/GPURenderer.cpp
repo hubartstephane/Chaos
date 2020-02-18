@@ -110,12 +110,12 @@ namespace chaos
 		return rendering_timestamp; 
 	}
 
-	bool GPURenderer::DoTick(double delta_time)
+	bool GPURenderer::DoTick(float delta_time)
 	{
 		// update counters
-		framerate_counter.Tick((float)delta_time);
-		drawcall_counter.Tick((float)delta_time);
-		vertices_counter.Tick((float)delta_time);
+		framerate_counter.Tick(delta_time);
+		drawcall_counter.Tick(delta_time);
+		vertices_counter.Tick(delta_time);
 
 		return true;
 	}

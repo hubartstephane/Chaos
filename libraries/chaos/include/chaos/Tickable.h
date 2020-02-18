@@ -20,12 +20,12 @@ namespace chaos
 		/** get the pause state */
 		bool IsPaused() const;
 		/** the tick entry point */
-		bool Tick(double delta_time);
+		bool Tick(float delta_time);
 
 	protected:
 
 		/** the tick user function */
-		virtual bool DoTick(double delta_time);
+		virtual bool DoTick(float delta_time);
 		/** whether the object should be ticked or not */
 		virtual bool CanTick();
 		/** called whenever object pause state has been changed */

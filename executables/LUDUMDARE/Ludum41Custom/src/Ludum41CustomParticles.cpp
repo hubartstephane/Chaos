@@ -208,6 +208,11 @@ void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 c
 	}
 }
 
+glm::vec2 MakeVelocityFromAngle(float angle)
+{
+	return glm::vec2(std::cos(angle), std::sin(angle));
+}
+
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const
 {
 	LudumGameInstance * game_instance = layer_trait->game->GetLudumGameInstance();
@@ -271,7 +276,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 			chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
 
 			// alter rebound angle according to the position the ball touch the racket
-			if (0 && velocity.y > 0.0f)
+			if (velocity.y > 0.0f)
 			{
 				float len   = glm::length(velocity);
 				glm::vec2 v = velocity / len;
@@ -279,19 +284,27 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 				float delta_position = (player_box.position.x - new_ball_box.position.x);
 				float bound_factor = delta_position / player_box.half_size.x;
-
-				// whenever the ball hit the racket at [0.5 .. 1.0], we get a rebound factor between [0 .. 0.3]
-				float const DST_RANGE_MIN = 0.0f;
-				float const DST_RANGE_MAX = 0.3f;
 				bound_factor = std::clamp(std::abs(bound_factor), 0.0f, 1.0f);
-				bound_factor = chaos::MathTools::RemapRanges(0.5f, 1.0f, DST_RANGE_MIN, DST_RANGE_MAX, bound_factor);
-				bound_factor = std::clamp(bound_factor, DST_RANGE_MIN, DST_RANGE_MAX);
+				// whenever the ball hit the racket at [0.5 .. 1.0], we get a rebound factor between [0 .. 0.3]
 
-				angle *= (1.0f * bound_factor);
+				float const REBOUND_MODIFIER_ANGLE = 50.0f * (float)M_PI / 180.0f;
 
-			//	velocity = len * glm::vec2(std::cos(angle), std::sin(angle));
+				if (bound_factor < 0.3f)
+				{
+					if (angle > (float)M_PI_2)
+						angle = angle - REBOUND_MODIFIER_ANGLE * (1.0f - bound_factor / 0.3f);
+					else 
+						angle = angle + REBOUND_MODIFIER_ANGLE * (1.0f - bound_factor / 0.3f);
+				}
+				else if (bound_factor > 0.7f)
+				{
+					if (angle > (float)M_PI_2)
+						angle = angle + REBOUND_MODIFIER_ANGLE * (bound_factor - 0.7f) / (1.0f - 0.7f);
+					else
+						angle = angle - REBOUND_MODIFIER_ANGLE * (bound_factor - 0.7f) / (1.0f - 0.7f);
+				}
 
-				
+				velocity = MakeVelocityFromAngle(angle);
 			}
 			
 			ball_box.position = new_ball_box.position;
@@ -335,10 +348,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	return false; 
 }
 
-glm::vec2 MakeVelocityFromAngle(float angle)
-{
-	return glm::vec2(std::cos(angle), std::sin(angle));
-}
+
 
 void CompareDistanceAndReplace(float angle, float value, float & best_value, float & best_distance)
 {
@@ -387,7 +397,6 @@ glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 
 	float ball_angle_max = layer_trait->game->ball_angle_max;
 	if (ball_angle_max <= 0.0f || ball_angle_min <= 0.0f)
 		return v;
-
 
 	float angle = atan2(v.y, v.x); // => [-PI , +PI]
 	

@@ -11,7 +11,7 @@ namespace death
         primitive[2].position = glm::vec2(+1.0f, +1.0f);
         primitive[3].position = glm::vec2(-1.0f, +1.0f);
 
-        for (size_t i = 0; i < 4; ++i)
+        for (size_t i = 0; i < primitive.count ; ++i)
         {
             chaos::ParticleDefault::Vertex& vertex = primitive[i];
 
@@ -36,7 +36,7 @@ namespace death
         primitive[4].position = glm::vec2(+1.0f, -1.0f);
         primitive[5].position = glm::vec2(+1.0f, +1.0f);
 
-        for (size_t i = 0; i < 6; ++i)
+        for (size_t i = 0; i < primitive.count; ++i)
         {
             chaos::ParticleDefault::Vertex& vertex = primitive[i];
 

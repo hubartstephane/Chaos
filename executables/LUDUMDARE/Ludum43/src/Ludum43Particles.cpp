@@ -246,7 +246,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
 
 	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
 
-	for (size_t i = 0; i < 4; ++i)
+	for (size_t i = 0; i < primitive.count; ++i)
 	{
         primitive[i].attraction_position =
 			particle.bounding_box.position +
@@ -261,7 +261,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
 
     chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
 
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
     {
         primitive[i].attraction_position =
             particle.bounding_box.position +

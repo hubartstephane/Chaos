@@ -104,7 +104,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
     glm::vec4 color = particle.color;
     color.a = (particle.touched_count_down > 0.0f) ? 0.0f : 1.0f;
     
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 
@@ -117,7 +117,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
     glm::vec4 color = particle.color;
     color.a = (particle.touched_count_down > 0.0f) ? 0.0f : 1.0f;
 
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 
@@ -241,7 +241,7 @@ void ParticleBonusTrait::ParticleToPrimitives(ParticleBonus const& particle, cha
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 
@@ -252,7 +252,7 @@ void ParticleBonusTrait::ParticleToPrimitives(ParticleBonus const& particle, cha
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 
@@ -308,7 +308,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
     }
 
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = boost_color * particle.color;
 }
 
@@ -344,7 +344,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
     }
 
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = boost_color * particle.color;
 }
 
@@ -462,7 +462,7 @@ void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos
     glm::vec4 color = particle.color;
 
     color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 
@@ -475,7 +475,7 @@ void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos
     glm::vec4 color = particle.color;
 
     color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 

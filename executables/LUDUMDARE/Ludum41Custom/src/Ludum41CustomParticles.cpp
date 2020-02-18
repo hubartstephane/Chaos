@@ -22,7 +22,7 @@ void ParticleObjectTrait::ParticleToPrimitives(ParticleObject const& particle, c
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 
@@ -33,7 +33,7 @@ void ParticleObjectTrait::ParticleToPrimitives(ParticleObject const& particle, c
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 
@@ -68,7 +68,7 @@ void ParticleLifeObjectTrait::ParticleToPrimitives(ParticleObject const& particl
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 
@@ -79,7 +79,7 @@ void ParticleLifeObjectTrait::ParticleToPrimitives(ParticleObject const& particl
     // generate particle corners and texcoords
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color;
 }
 
@@ -115,7 +115,7 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
     float ratio = (extra + particle.life) / (extra + particle.starting_life);
     glm::vec4 color = ratio * particle.color;
     
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 
@@ -135,7 +135,7 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
     float ratio = (extra + particle.life) / (extra + particle.starting_life);
     glm::vec4 color = ratio * particle.color;
 
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 
@@ -162,7 +162,7 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
     else if (ludum_game_instance->ball_power == 3.0f)
         power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color * power_color;
 }
 
@@ -183,7 +183,7 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
     else if (ludum_game_instance->ball_power == 3.0f)
         power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color * power_color;
 }
 
@@ -437,7 +437,7 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
             color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
     }
 
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count ; ++i)
         primitive[i].color = color;
 }
 
@@ -473,7 +473,7 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
             color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
     }
 
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 

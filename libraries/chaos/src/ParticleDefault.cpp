@@ -26,7 +26,7 @@ namespace chaos
             // generate particle corners and texcoords
             ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
             // copy the color in all triangles vertex
-            for (size_t i = 0; i < 4; ++i)
+            for (size_t i = 0; i < primitive.count; ++i)
                 primitive[i].color = particle.color;
         }
 
@@ -35,7 +35,7 @@ namespace chaos
             // generate particle corners and texcoords
             ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
             // copy the color in all triangles vertex
-            for (size_t i = 0; i < 6; ++i)
+            for (size_t i = 0; i < primitive.count; ++i)
                 primitive[i].color = particle.color;
         }
 

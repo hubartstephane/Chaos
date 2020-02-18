@@ -156,6 +156,11 @@ namespace chaos
         /** gets the number of vertices for this primitive */
         size_t GetVerticesCount() const { return vertices_count; }
 
+	public:
+
+		/** number of vertices for the primitives */
+		static size_t constexpr count = GetRealVerticesPerParticle(PRIMITIVE_TYPE);
+
     protected:
 
         /** the buffer where we write buffer */

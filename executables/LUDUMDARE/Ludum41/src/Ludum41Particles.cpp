@@ -208,6 +208,11 @@ void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 c
 	}
 }
 
+glm::vec2 MakeVelocityFromAngle(float angle)
+{
+	return glm::vec2(std::cos(angle), std::sin(angle));
+}
+
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const
 {
 	LudumGameInstance * game_instance = layer_trait->game->GetLudumGameInstance();
@@ -269,6 +274,57 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		if (chaos::RestrictToOutside(player_box, new_ball_box))
 		{
 			chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
+
+			// alter rebound angle according to the position the ball touch the racket
+			if (velocity.y > 0.0f)
+			{
+				float len   = glm::length(velocity);
+				glm::vec2 v = velocity / len;
+				float angle = std::atan2(v.y, v.x);
+
+				float delta_position = (player_box.position.x - new_ball_box.position.x);
+				float bound_factor = delta_position / player_box.half_size.x;
+				bound_factor = std::clamp(bound_factor, -1.0f, 1.0f);
+
+				float const TO_RAD = (float)M_PI / 180.0f;
+
+				float rebound_angle_decrease = layer_trait->game->rebound_angle_decrease * TO_RAD;
+				float rebound_angle_increase = layer_trait->game->rebound_angle_increase * TO_RAD;
+
+				float const PI_2 = (float)M_PI_2;
+
+				
+				float const GOOD_LIMIT = 0.3f;
+				float const BAD_LIMIT  = 0.6f;
+
+				if (bound_factor < GOOD_LIMIT && bound_factor > -GOOD_LIMIT)
+				{
+					bound_factor = std::abs(bound_factor);
+					if (angle > PI_2)
+						angle = angle - rebound_angle_decrease * (1.0f - bound_factor / GOOD_LIMIT);
+					else 
+						angle = angle + rebound_angle_decrease * (1.0f - bound_factor / GOOD_LIMIT);
+				}	
+				else if (bound_factor > BAD_LIMIT)
+				{
+					bound_factor = std::abs(bound_factor);
+					if (angle > PI_2)						
+						angle = angle + rebound_angle_increase * (bound_factor - BAD_LIMIT) / (1.0f - BAD_LIMIT);
+					else
+						angle = PI_2 - (angle - PI_2);
+				}
+
+				else if (bound_factor < -BAD_LIMIT)
+				{				
+					bound_factor = std::abs(bound_factor);
+					if (angle > PI_2)
+						angle = PI_2 - (angle - PI_2);
+					else						
+						angle = angle - rebound_angle_increase * (bound_factor - BAD_LIMIT) / (1.0f - BAD_LIMIT);
+				}
+				velocity = MakeVelocityFromAngle(angle);
+			}
+			
 			ball_box.position = new_ball_box.position;
 			game_instance->OnBallCollide(false);
 		}
@@ -310,42 +366,76 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	return false; 
 }
 
-glm::vec2 MakeVelocityFromAngle(float angle)
+
+
+void CompareDistanceAndReplace(float angle, float value, float & best_value, float & best_distance)
 {
-	return glm::vec2(std::cos(angle), std::sin(angle));
+	float distance = std::abs(angle - value);
+	if (distance < best_distance)
+	{
+		best_value = value;
+		best_distance = distance;
+	}
+}
+
+float ClampAngleToNearestRange(float angle, std::pair<float, float> const* ranges, size_t range_count)
+{
+	float const TO_RAD = (float)M_PI / 180.0f;
+
+	float best_value = angle;
+	float best_distance = std::numeric_limits<float>::max();
+
+	for (size_t i = 0; i < range_count; ++i)
+	{
+		float min_angle = ranges[i].first;
+		float max_angle = ranges[i].second;
+
+		// degree to rad
+		
+		min_angle = min_angle * TO_RAD;
+		max_angle = max_angle * TO_RAD;
+		if (min_angle > max_angle)
+			std::swap(min_angle, max_angle);
+
+		if (angle >= min_angle)
+		{
+			if (angle <= max_angle)
+				return angle;
+			CompareDistanceAndReplace(angle, max_angle, best_value, best_distance);
+		}
+		else
+			CompareDistanceAndReplace(angle, min_angle, best_value, best_distance);
+	}
+	return best_value;
 }
 
 glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const
 {
+	float ball_angle_min = layer_trait->game->ball_angle_min;
 	float ball_angle_max = layer_trait->game->ball_angle_max;
-	if (ball_angle_max <= 0.0f)
+	if (ball_angle_max <= 0.0f || ball_angle_min <= 0.0f)
 		return v;
 
-	float angle = atan2(v.y, v.x);
-
-	if (angle > (float)M_PI - ball_angle_max)
-		return MakeVelocityFromAngle((float)M_PI - ball_angle_max);
-
-	if (angle < -(float)M_PI + ball_angle_max)
-		return MakeVelocityFromAngle(-(float)M_PI + ball_angle_max);
-
-	if (angle >= 0.0f && angle < ball_angle_max)
-		return MakeVelocityFromAngle(ball_angle_max);	
-
-	if (angle < 0.0f && angle >= -ball_angle_max)
-		return MakeVelocityFromAngle(-ball_angle_max);
-
-	return v;
+	float angle = atan2(v.y, v.x); // => [-PI , +PI]
+	
+	std::pair<float, float> ranges[] =
+	{
+		std::make_pair(180.0f - ball_angle_max,  90.0f + ball_angle_min),
+		std::make_pair(90.0f - ball_angle_min, ball_angle_max),
+		std::make_pair(-180.0f + ball_angle_max,  -90.0f - ball_angle_min),
+		std::make_pair(-90.0f + ball_angle_min, -ball_angle_max)
+	};
+		
+	angle = ClampAngleToNearestRange(angle, ranges, sizeof(ranges) / sizeof(ranges[0]));
+	return MakeVelocityFromAngle(angle);
 }
 
 // ===========================================================================
 // Challenge particle system
 // ===========================================================================
-
 void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
-
     bool keyboard = chaos::IsPCMode(input_mode);
 
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
@@ -374,7 +464,7 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
             color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
     }
 
-    for (size_t i = 0; i < primitive.count; ++i)
+    for (size_t i = 0; i < primitive.count ; ++i)
         primitive[i].color = color;
 }
 
@@ -383,7 +473,7 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
 {
 	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
     bool keyboard = chaos::IsPCMode(input_mode);
-
+	   	  
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
     // generate particle corners and texcoords

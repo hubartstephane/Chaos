@@ -173,7 +173,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMap::TileParticl
     glm::vec2 position_tr = v2.position;
 
     // override the texture coordinates
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
     {
         VertexPowerUpZone& vertex = primitive[i];
         vertex.texcoord = texture_bl;
@@ -206,7 +206,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMap::TileParticl
     glm::vec2 position_tr = v2.position;
 
     // override the texture coordinates
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
     {
         VertexPowerUpZone& vertex = primitive[i];
         vertex.texcoord = texture_bl;
@@ -391,7 +391,7 @@ void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos
     glm::vec4 color = particle.color;
     color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
 
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 
@@ -404,7 +404,7 @@ void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos
     glm::vec4 color = particle.color;
     color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
 
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 
@@ -492,7 +492,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
     glm::vec4 color = particle.color;
     color.a = (particle.touched_count_down > 0) ? 0.0f : 1.0f;
 
-    for (size_t i = 0; i < 4; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 
@@ -505,7 +505,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
     glm::vec4 color = particle.color;
     color.a = (particle.touched_count_down > 0) ? 0.0f : 1.0f;
 
-    for (size_t i = 0; i < 6; ++i)
+    for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
 

@@ -100,7 +100,7 @@ public:
         chaos::ParticleTools::GenerateBoxParticle(particle.box, particle.texcoords, primitive);
 
         float alpha = particle.remaining_time / particle.lifetime;
-        for (size_t i = 0; i < 6; ++i)
+        for (size_t i = 0; i < primitive.count; ++i)
         {
             primitive[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
             primitive[i].position.y += 50 * std::cos(time);
@@ -117,7 +117,7 @@ public:
         chaos::ParticleTools::GenerateBoxParticle(particle.box, particle.texcoords, primitive);
 
         float alpha = particle.remaining_time / particle.lifetime;
-        for (size_t i = 0; i < 4; ++i)
+        for (size_t i = 0; i < primitive.count; ++i)
         {
             primitive[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
             primitive[i].position.y += 50 * std::cos(time);

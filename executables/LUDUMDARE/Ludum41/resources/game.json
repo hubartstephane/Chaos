@@ -48,6 +48,7 @@
   "delay_before_ball_move": 0.5,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1600.0,
+
   "challenge_time_dilation": 0.35,
   "challenge_frequency": 5.0,
 

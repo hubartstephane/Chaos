@@ -62,6 +62,9 @@ namespace death
 
 	public:
 
+		/** constructor */
+		Game();
+
 		/** get the player by its index */
 		Player * GetPlayer(size_t player_index);
 		/** get the player by its index */
@@ -198,6 +201,8 @@ namespace death
 		float GetMouseSensitivity() const { return mouse_sensitivity;}
 		/** getter on gamepad sensitivity */
 		float GetGamepadSensitivity() const { return gamepad_sensitivity; }
+		/** get the wanted viewport aspect */
+		float GetViewportWantedAspect() const { return viewport_wanted_aspect; }
 
 		/** get current state ID */
 		chaos::TagType GetCurrentStateTag(bool strict_state = false, bool use_destination = false) const;
@@ -471,7 +476,6 @@ namespace death
 		/** game settings */
 		float mouse_sensitivity = 1.0f;
 		float gamepad_sensitivity = 1.0f;
-
 		/** the wanted viewport aspect */
 		float viewport_wanted_aspect = (16.0f / 9.0f);
 

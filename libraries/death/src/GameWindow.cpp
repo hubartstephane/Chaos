@@ -52,7 +52,7 @@ namespace death
 	chaos::box2 GameWindow::GetRequiredViewport(glm::ivec2 const & size) const
 	{
 		if (game != nullptr)
-			game->GetRequiredViewport(size);
+			return game->GetRequiredViewport(size);
 		return chaos::MyGLFW::Window::GetRequiredViewport(size);
 	}
 

@@ -16,6 +16,10 @@
 
 namespace death
 {
+	Game::Game()
+	{
+	}
+
 	int Game::GetBestPlayerScore() const
 	{
 		if (game_instance != nullptr)
@@ -1066,6 +1070,7 @@ namespace death
 		// read dedicated game values
 		DEATHGAME_JSON_ATTRIBUTE(mouse_sensitivity);
 		DEATHGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
+		DEATHGAME_JSON_ATTRIBUTE(viewport_wanted_aspect);
 		return true;
 	}
 

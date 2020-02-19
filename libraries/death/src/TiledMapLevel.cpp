@@ -1767,11 +1767,18 @@ namespace death
 					return;
 			}
 
+			// get the aspect ratio
+			float aspect_ratio = 16.0f / 9.0f;
+
+			Game const * game = GetGame();
+			if (game != nullptr)
+				aspect_ratio = game->GetViewportWantedAspect();
+
 			// compute the surface
 			chaos::TiledMap::GeometricObjectSurface * camera_surface = camera_object->GetGeometricObject()->GetObjectSurface();
 			if (camera_surface == nullptr)
 				return;
-			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(true), 16.0f / 9.0f, true);
+			chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(true), aspect_ratio, true);
 
 			// create the real camera
 			Camera * camera = new Camera(this);

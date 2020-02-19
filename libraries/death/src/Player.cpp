@@ -334,7 +334,7 @@ namespace death
         // special FX
         if (old_health > new_health && !invulnerable)
         {
-			// 2 seconds force feedback effect
+			// force feedback effect
 			if (gamepad != nullptr)
 				gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
 			// camera effect

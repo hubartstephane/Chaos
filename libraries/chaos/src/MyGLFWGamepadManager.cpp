@@ -544,24 +544,15 @@ namespace chaos
         void Gamepad::SetForceFeedbackMuted(bool in_muted)
         { 
 			force_feedback_muted = in_muted;
-
-#if 0
-			bool old_value = (force_feedback_muted || !force_feedback_enabled);
-			force_feedback_muted = in_muted;
-			if ((force_feedback_muted || !force_feedback_enabled) != old_value)
+			if (force_feedback_muted || !force_feedback_enabled) // immediate update. because not sure, the Gamepad will be ticked
 				TickForceFeedbackEffects(0.0f);
-#endif
         }
 
         void Gamepad::SetForceFeedbackEnabled(bool in_enabled) 
         { 
 			force_feedback_enabled = in_enabled;
-#if 0
-			bool old_value = (force_feedback_muted || !force_feedback_enabled);
-			force_feedback_enabled = in_enabled;
-			if ((force_feedback_muted || !force_feedback_enabled) != old_value)
+			if (force_feedback_muted || !force_feedback_enabled) // immediate update. because not sure, the Gamepad will be ticked
 				TickForceFeedbackEffects(0.0f);
-#endif
         }
 
         void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
@@ -721,6 +712,9 @@ namespace chaos
 		{
 			assert(gamepad != nullptr);
 
+			// remove all force feedback effect that could remains on physical device after its destruction
+			gamepad->ClearForceFeedbackEffects();
+			// remove the gamepad for list
 			size_t count = user_gamepads.size();
 			for (size_t i = 0; i < count; ++i)
 			{

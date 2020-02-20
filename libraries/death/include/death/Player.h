@@ -117,8 +117,11 @@ namespace death
 		virtual void HandleKeyboardInputs(float delta_time);
 		/** handle the player input (top level function) */
 		virtual void HandleGamepadInputs(float delta_time);
+		/** handle the special commands for gamepad (like pause ...) */
+		virtual void HandleSpecialGamepadCommands(float delta_time);
+
 		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gamepad_data);
+		virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gamepad_data);		
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 

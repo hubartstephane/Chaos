@@ -540,18 +540,30 @@ namespace chaos
 				TickForceFeedbackEffects(0.0f);
             }
 		}
+
+		bool Gamepad::ShouldReduceForceFeedbackToZero() const
+		{
+			return (force_feedback_paused || force_feedback_muted || !force_feedback_enabled); 
+		}
+
+		void Gamepad::SetForceFeedbackPaused(bool in_paused)
+		{
+			force_feedback_paused = in_paused;
+			if (ShouldReduceForceFeedbackToZero()) // immediate update. because not sure, the Gamepad will ever be ticked
+				TickForceFeedbackEffects(0.0f);
+		}
 		
         void Gamepad::SetForceFeedbackMuted(bool in_muted)
         { 
 			force_feedback_muted = in_muted;
-			if (force_feedback_muted || !force_feedback_enabled) // immediate update. because not sure, the Gamepad will be ticked
+			if (ShouldReduceForceFeedbackToZero()) // immediate update. because not sure, the Gamepad will ever be ticked
 				TickForceFeedbackEffects(0.0f);
         }
 
         void Gamepad::SetForceFeedbackEnabled(bool in_enabled) 
         { 
 			force_feedback_enabled = in_enabled;
-			if (force_feedback_muted || !force_feedback_enabled) // immediate update. because not sure, the Gamepad will be ticked
+			if (ShouldReduceForceFeedbackToZero()) // immediate update. because not sure, the Gamepad will ever be ticked
 				TickForceFeedbackEffects(0.0f);
         }
 
@@ -586,29 +598,32 @@ namespace chaos
             float max_left_value = 0.0f;
             float max_right_value = 0.0f;
 
-			size_t count = feedback_effects.size();
-			for (size_t i = count; i > 0; --i)
+			if (!force_feedback_paused)
 			{
-				size_t index = i - 1;
-
-				ForceFeedbackEffect* effect = feedback_effects[index].get();
-				if (effect == nullptr)
-					continue;
-
-				float left_value = 0.0f;
-				float right_value = 0.0f;
-				if (effect->GetForceFeedbackValues(delta_time, left_value, right_value))
+				size_t count = feedback_effects.size();
+				for (size_t i = count; i > 0; --i)
 				{
-					feedback_effects.erase(feedback_effects.begin() + index);
-				}
-				else
-				{
-					max_left_value = std::max(max_left_value, left_value);
-					max_right_value = std::max(max_right_value, right_value);
+					size_t index = i - 1;
+
+					ForceFeedbackEffect* effect = feedback_effects[index].get();
+					if (effect == nullptr)
+						continue;
+
+					float left_value = 0.0f;
+					float right_value = 0.0f;
+					if (effect->GetForceFeedbackValues(delta_time, left_value, right_value))
+					{
+						feedback_effects.erase(feedback_effects.begin() + index);
+					}
+					else
+					{
+						max_left_value = std::max(max_left_value, left_value);
+						max_right_value = std::max(max_right_value, right_value);
+					}
 				}
 			}
 			// reduce feedback to 0 (do not skip GetForceFeedbackValues(...) calls so the effects tick themselves even if muted 
-			if (!force_feedback_enabled || force_feedback_muted)
+			if (ShouldReduceForceFeedbackToZero())
 			{
 				max_left_value = 0.0f;
 				max_right_value = 0.0f;

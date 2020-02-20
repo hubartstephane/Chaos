@@ -412,11 +412,15 @@ namespace chaos
 			/** set whether the force feedback is enabled */
 			void SetForceFeedbackEnabled(bool in_enabled);
 
-
 			/** returns whether the force feedback is muted */
 			bool IsForceFeedbackMuted() const { return force_feedback_muted; }
 			/** set whether the force feedback is muted */
 			void SetForceFeedbackMuted(bool in_muted);
+
+			/** returns whether the force feedback is paused */
+			bool IsForceFeedbackPaused() const { return force_feedback_paused; }
+			/** set whether the force feedback is paused */
+			void SetForceFeedbackPaused(bool in_paused);
 
 			/** add a force feedback effect */
 			void AddForceFeedbackEffect(ForceFeedbackEffect* effect);
@@ -431,6 +435,8 @@ namespace chaos
 			void TickForceFeedbackEffects(float delta_time);
 			/** setting the left & right values to the device */
 			void DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value);
+			/** returns whether forcefeedback should be reduced to 0 */
+			bool ShouldReduceForceFeedbackToZero() const;
 
 		protected:
 
@@ -446,6 +452,8 @@ namespace chaos
 			bool force_feedback_enabled = true;
 			/** indicates whether the force feedback is muted */
 			bool force_feedback_muted = false;
+			/** indicates whether the force feedback must be ticked or not */
+			bool force_feedback_paused = false;
 
 			/** the forcefeedback effects */
 			std::vector<shared_ptr<ForceFeedbackEffect>> feedback_effects;

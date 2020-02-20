@@ -71,32 +71,62 @@ namespace death
 			game->RequirePauseGame();
 	}
 
-	bool Player::DoTick(float delta_time)
+	void Player::HandleSpecialGamepadCommands(float delta_time)
 	{
-		Game * game = GetGame();
+		if (gamepad == nullptr)
+			return;
+		// get the gamepad data
+		chaos::MyGLFW::GamepadData const* gamepad_data = gamepad->GetGamepadData();
+		if (gamepad_data == nullptr)
+			return;
+		// maybe a game/pause resume
+		if ((gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
+			(gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+		{
+			Game* game = GetGame();
+			if (game != nullptr)
+				game->RequireTogglePause();
+		}
+	}
 
-		// tick the invulnerability
-		TickInvulnerability(delta_time);
+	bool Player::DoTick(float delta_time)
+	{	
 		// remove previous frame cached input
 		ResetCachedInputs();
 		// cache values for stick displacement
 		CacheKeyboardPlayerDisplacementInputs();
 		// cache values for stick displacement
 		CacheGamepadPlayerDisplacementInputs();
-		// update the forcefeedback
-		if (gamepad != nullptr)
-			gamepad->SetForceFeedbackMuted(GetInputMode() != chaos::InputMode::Gamepad);
+
+		bool mute_force_feedback   = true; // no forcefeedback except during main loop
+		bool paused_force_feedback = true;
 
 		// tick player displacement
-		if (game != nullptr && !game->IsFreeCameraMode() && GetGame()->IsPlaying())
+		Game* game = GetGame();
+		if (game != nullptr && !game->IsFreeCameraMode() && game->IsPlaying())
 		{
+			// tick the invulnerability
+			TickInvulnerability(delta_time);
 			// transform keyboard inputs as stick input
 			HandleKeyboardInputs(delta_time);
 			// handle gamepad inputs
 			HandleGamepadInputs(delta_time);
 			// tick the player displacement
 			TickPlayerDisplacement(delta_time);
+
+			mute_force_feedback = false;
+			paused_force_feedback = false;
 		}
+
+		// some gamepad commands that should be handled even when not in Game
+		HandleSpecialGamepadCommands(delta_time);
+		// update the forcefeedback mute state
+		if (gamepad != nullptr)
+		{
+			gamepad->SetForceFeedbackMuted(mute_force_feedback || (GetInputMode() != chaos::InputMode::Gamepad));
+			gamepad->SetForceFeedbackPaused(paused_force_feedback);
+		}
+
 		return true;
 	}
 
@@ -169,15 +199,6 @@ namespace death
 		// cache the TRIGGERS
 		left_trigger  = gamepad_data->GetAxisValue(chaos::MyGLFW::XBOX_LEFT_TRIGGER);
 		right_trigger = gamepad_data->GetAxisValue(chaos::MyGLFW::XBOX_RIGHT_TRIGGER);
-
-		// get data
-		Game * game = GetGame();
-		if (game == nullptr)
-			return;
-		// maybe a game/pause resume
-		if ((gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) || 
-			(gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
-			game->RequireTogglePause();
 	}
 
 	void Player::HandleKeyboardInputs(float delta_time)

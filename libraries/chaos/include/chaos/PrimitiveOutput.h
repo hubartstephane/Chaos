@@ -34,7 +34,7 @@ namespace chaos
      * PrimitiveType : the type of primitives that can be rendered
      */
 
-    enum class PrimitiveType
+    enum class PrimitiveType : int
     {
         triangle = 0,
         triangle_pair = 1,

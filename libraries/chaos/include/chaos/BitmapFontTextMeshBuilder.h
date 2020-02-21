@@ -8,37 +8,43 @@ namespace chaos
 {
 
 	/**
+	* BitmapFontTextMeshAlign : alignment of generated texts
+	*/
+
+	enum class BitmapFontTextMeshAlign : int
+	{
+		/** some bit field to generate alignment */
+		TOP_FLAG = (1 << 0),
+		/** some bit field to generate alignment */
+		BOTTOM_FLAG = (1 << 1),
+		/** some bit field to generate alignment */
+		LEFT_FLAG = (1 << 2),
+		/** some bit field to generate alignment */
+		RIGHT_FLAG = (1 << 3),
+		/** some bit field to generate alignment */
+		MIDDLE_VERT_FLAG = (1 << 4),
+		/** some bit field to generate alignment */
+		MIDDLE_HORIZ_FLAG = (1 << 5),
+
+		/** some alignment */
+		ALIGN_CENTER = MIDDLE_VERT_FLAG | MIDDLE_HORIZ_FLAG,
+		/** some alignment */
+		ALIGN_TOPLEFT = TOP_FLAG | LEFT_FLAG,
+		/** some alignment */
+		ALIGN_TOPRIGHT = TOP_FLAG | RIGHT_FLAG,
+		/** some alignment */
+		ALIGN_BOTTOMLEFT = BOTTOM_FLAG | LEFT_FLAG,
+		/** some alignment */
+		ALIGN_BOTTOMRIGHT = BOTTOM_FLAG | RIGHT_FLAG
+	};
+
+	/**
 	* BitmapFontTextMeshBuilder : this class is used to generate quads to represents characters for a text using a bitmap font
 	*/
 
 	class BitmapFontTextMeshBuilder
 	{
-
 	public:
-
-		/** some bit field to generate alignment */
-		static int const TOP_FLAG          = (1 << 0);
-		/** some bit field to generate alignment */
-		static int const BOTTOM_FLAG       = (1 << 1);
-		/** some bit field to generate alignment */
-		static int const LEFT_FLAG         = (1 << 2);
-		/** some bit field to generate alignment */
-		static int const RIGHT_FLAG        = (1 << 3);
-		/** some bit field to generate alignment */
-		static int const MIDDLE_VERT_FLAG  = (1 << 4);
-		/** some bit field to generate alignment */
-		static int const MIDDLE_HORIZ_FLAG = (1 << 5);
-
-		/** some alignment */
-		static int const ALIGN_CENTER      = MIDDLE_VERT_FLAG | MIDDLE_HORIZ_FLAG;
-		/** some alignment */
-		static int const ALIGN_TOPLEFT     = TOP_FLAG    | LEFT_FLAG;
-		/** some alignment */
-		static int const ALIGN_TOPRIGHT    = TOP_FLAG    | RIGHT_FLAG;
-		/** some alignment */
-		static int const ALIGN_BOTTOMLEFT  = BOTTOM_FLAG | LEFT_FLAG;
-		/** some alignment */
-		static int const ALIGN_BOTTOMRIGHT = BOTTOM_FLAG | RIGHT_FLAG;
 
 		/** Structure used as input for the builder */
 		class Params
@@ -59,7 +65,7 @@ namespace chaos
 			/** the size of a tab in 'SPACE' equivalent */
 			int          tab_size = 2;
 			/** the alignment for the vertices */
-			int          alignment_flags = ALIGN_TOPLEFT;
+			BitmapFontTextMeshAlign alignment_flags = BitmapFontTextMeshAlign::ALIGN_TOPLEFT;
 			/** maximum number of characters on a line */
 			int          line_limit = 0;
 

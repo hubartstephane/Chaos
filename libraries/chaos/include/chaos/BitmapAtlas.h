@@ -80,7 +80,7 @@ namespace chaos
 		* BitmapInfo : represents an Bitmap info in the atlas
 		*/
 
-		enum class GetBitmapLayoutFlag
+		enum class GetBitmapLayoutFlag : int
 		{
 			none = 0,
 			clamp = 1,

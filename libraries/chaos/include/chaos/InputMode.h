@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	enum class InputMode
+	enum class InputMode : int
 	{
 		/** the mode for keyboard */
 		Keyboard = 0,

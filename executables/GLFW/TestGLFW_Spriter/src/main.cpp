@@ -96,9 +96,9 @@ protected:
 		static int const GENERATE_GRAY_FLOAT = 3;
 		static int const GENERATE_RGB_FLOAT = 4;
 		static int const GENERATE_RGBA_FLOAT = 5;
-		static const int GENERATE_BACKGROUND = 6;
-		static const int GENERATE_BACKGROUND_GRAY = 7;
-		static const int GENERATE_FLOAT_BACKGROUND = 8;
+		static int const GENERATE_BACKGROUND = 6;
+		static int const GENERATE_BACKGROUND_GRAY = 7;
+		static int const GENERATE_FLOAT_BACKGROUND = 8;
 
 		chaos::shared_ptr<chaos::GPUTexture> result;
 

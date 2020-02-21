@@ -22,10 +22,10 @@ namespace chaos
 		{
 		public:
 
-			static const int ALIGN_LEFT = 0;
-			static const int ALIGN_RIGHT = 1;
-			static const int ALIGN_CENTER = 2;
-			static const int ALIGN_JUSTIFY = 3;
+			static int const ALIGN_LEFT = 0;
+			static int const ALIGN_RIGHT = 1;
+			static int const ALIGN_CENTER = 2;
+			static int const ALIGN_JUSTIFY = 3;
 
 		public:
 

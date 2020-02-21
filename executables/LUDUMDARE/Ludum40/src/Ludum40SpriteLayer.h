@@ -90,10 +90,10 @@ class SpriteLayer
 {
 public:
 
-	static const int NO_COLLISION = 0;
-	static const int COLLISION_DEATH = 1;
-	static const int COLLISION_LEVELUP = 2;
-	static const int COLLISION_SPEEDUP = 3;
+	static int const NO_COLLISION = 0;
+	static int const COLLISION_DEATH = 1;
+	static int const COLLISION_LEVELUP = 2;
+	static int const COLLISION_SPEEDUP = 3;
 
 	void Draw(chaos::GPUProgramProviderBase * uniform_provider);
 

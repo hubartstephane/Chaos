@@ -75,7 +75,7 @@ namespace chaos
 	{
 		assert(src != nullptr);
 
-		static const int CHUNK_SIZE = 1024 * 16;
+		static int const CHUNK_SIZE = 1024 * 16;
 
 		SparseWriteBuffer<> writer(CHUNK_SIZE);
 

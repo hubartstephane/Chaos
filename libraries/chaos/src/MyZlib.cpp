@@ -5,7 +5,7 @@ namespace chaos
 {
 	Buffer<char> MyZLib::Encode(Buffer<char> const & src)
 	{
-		static const int CHUNK_SIZE = 1024 * 1;
+		static int const CHUNK_SIZE = 1024 * 1;
 
 		SparseWriteBuffer<> writer(CHUNK_SIZE);
 
@@ -50,7 +50,7 @@ namespace chaos
 
 	Buffer<char> MyZLib::Decode(Buffer<char> const & src)
 	{
-		static const int CHUNK_SIZE = 1024 * 1;
+		static int const CHUNK_SIZE = 1024 * 1;
 
 		SparseWriteBuffer<> writer(CHUNK_SIZE);
 

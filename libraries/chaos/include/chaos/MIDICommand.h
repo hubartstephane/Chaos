@@ -57,14 +57,14 @@ namespace chaos
 		//      U = message type
 		//      V = channel concerned 
 		//
-		static const unsigned int CMD_NOTE_OFF = 0x80; 
-		static const unsigned int CMD_NOTE_ON  = 0x90; 
-		static const unsigned int CMD_POLYPHONIC_AFTER_TOUCH  = 0xA0; 
-		static const unsigned int CMD_CONTROL_CHANGE = 0xB0; 
-		static const unsigned int CMD_PROGRAM_CHANGE = 0xC0; 
-		static const unsigned int CMD_CHANNEL_AFTER_TOUCH = 0xD0; 
-		static const unsigned int CMD_PITCH_WHEEL_CHANGE  = 0xE0; 
-		static const unsigned int CMD_SYSTEM_MESSAGE = 0xF0;
+		static unsigned int const CMD_NOTE_OFF = 0x80;
+		static unsigned int const CMD_NOTE_ON  = 0x90;
+		static unsigned int const CMD_POLYPHONIC_AFTER_TOUCH  = 0xA0;
+		static unsigned int const CMD_CONTROL_CHANGE = 0xB0;
+		static unsigned int const CMD_PROGRAM_CHANGE = 0xC0;
+		static unsigned int const CMD_CHANNEL_AFTER_TOUCH = 0xD0;
+		static unsigned int const CMD_PITCH_WHEEL_CHANGE  = 0xE0;
+		static unsigned int const CMD_SYSTEM_MESSAGE = 0xF0;
 
 		/** default constructor */
 		MIDICommand() = default;

@@ -4,6 +4,7 @@
 #include <chaos/FilePath.h>
 #include <chaos/Buffer.h>
 #include <chaos/SmartPointers.h>
+#include <chaos/StringTools.h>
 
 
 // =================
@@ -142,6 +143,28 @@ namespace chaos
 		}
 		return true;
 	}
+
+	/** enumeration method */
+	template<typename T, typename ENCODE_TABLE>	
+	bool SaveEnumIntoJSON(nlohmann::json& json_entry, ENCODE_TABLE const& encode_table, T const& src)
+	{
+		std::string encoded_src;
+		if (!JSONTools::EncodeEnum(src, encode_table, encoded_src))
+			return false;
+		return SaveIntoJSON(json_entry, encoded_src);
+	}
+
+	template<typename T, typename ENCODE_TABLE>
+	bool LoadEnumFromJSON(nlohmann::json const& json_entry, ENCODE_TABLE const& encode_table, T & dst)
+	{
+		std::string encoded_src;
+		if (!LoadFromJSON(json_entry, encoded_src))
+			return false;
+		if (!JSONTools::DecodeEnum(encoded_src.c_str(), encode_table, dst))
+			return false;
+		return true;
+	}
+
 
 	// =================
 	// JSONTools
@@ -299,8 +322,6 @@ namespace chaos
 			return false;
 		}
 
-	protected:
-
 		/** decode a value with a conversion table */
 		template<typename T, typename ENCODE_TABLE>
 		static bool DecodeEnum(char const * str, ENCODE_TABLE const & encode_table, T & result)
@@ -330,9 +351,6 @@ namespace chaos
 			}
 			return false;
 		}
-
-
-
 	};
 
 }; // namespace chaos

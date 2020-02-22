@@ -1,9 +1,10 @@
 #include <chaos/Hotpoint.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
 
-	std::vector<std::pair<HotpointType, char const *>> const Hotpoint::hotpoint_encoding =
+	static std::vector<std::pair<HotpointType, char const *>> const hotpoint_encoding =
 	{
 		{ HotpointType::TOP, "top" },
 		{ HotpointType::BOTTOM, "bottom" },
@@ -16,7 +17,7 @@ namespace chaos
 		{ HotpointType::CENTER, "center" }
 	};
 
-	glm::vec2 Hotpoint::Convert(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType initial_hotpoint_type, HotpointType final_hotpoint_type)
+	glm::vec2 ConvertHotpoint(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType initial_hotpoint_type, HotpointType final_hotpoint_type)
 	{
 		if (initial_hotpoint_type == final_hotpoint_type)
 			return hotpoint;
@@ -41,7 +42,7 @@ namespace chaos
 
 	}
 
-	glm::vec2 Hotpoint::ConvertToBottomLeft(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType hotpoint_type)
+	glm::vec2 ConvertHotpointToBottomLeft(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType hotpoint_type)
 	{
 		static float const offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
 
@@ -56,4 +57,15 @@ namespace chaos
 		result.y += size.y * offset_factor[v_part];
 		return result;
 	}
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, HotpointType& dst)
+	{		
+		return LoadEnumFromJSON(json_entry, hotpoint_encoding, dst);
+	}
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, HotpointType const& src)
+	{
+		return SaveEnumIntoJSON(json_entry, hotpoint_encoding, src);
+	}
+
 }; // namespace chaos

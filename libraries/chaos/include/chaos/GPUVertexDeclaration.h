@@ -8,15 +8,22 @@
 namespace chaos
 {
 	/** the possible semantics */
-	static int const SEMANTIC_POSITION   = 0;
-	static int const SEMANTIC_COLOR      = 1;
-	static int const SEMANTIC_NORMAL     = 2;
-	static int const SEMANTIC_BINORMAL   = 3;
-	static int const SEMANTIC_TANGENT    = 4;
-	static int const SEMANTIC_TEXCOORD   = 5;
-	static int const SEMANTIC_BONEINDEX  = 6;
-	static int const SEMANTIC_BONEWEIGHT = 7;
-	static int const SEMANTIC_USERDATA   = 8;
+	enum class SemanticType : int
+	{
+		SEMANTIC_NONE = -1,
+		SEMANTIC_POSITION = 0,
+		SEMANTIC_COLOR = 1,
+		SEMANTIC_NORMAL = 2,
+		SEMANTIC_BINORMAL = 3,
+		SEMANTIC_TANGENT = 4,
+		SEMANTIC_TEXCOORD = 5,
+		SEMANTIC_BONEINDEX = 6,
+		SEMANTIC_BONEWEIGHT = 7,
+		SEMANTIC_USERDATA = 8
+	};
+
+	
+
 
 	/** the possible basic types */
 	static int const TYPE_FLOAT  = 1;
@@ -74,7 +81,7 @@ namespace chaos
 	public:
 
 		/** the semantic of the vertex component */
-		int semantic = 0;
+		SemanticType semantic = SemanticType::SEMANTIC_NONE;
 		/** for repetition of the same semantic */
 		int semantic_index = 0;
 		/** the type of the vertex component */
@@ -94,7 +101,7 @@ namespace chaos
 		int GetVertexSize() const;
 
 		/** returns the number of elements for a given semantic */
-		int GetSemanticCount(int semantic) const;
+		int GetSemanticCount(SemanticType semantic) const;
 		/** returns the number of position */
 		int GetPositionCount() const;
 		/** returns the number of color */
@@ -107,14 +114,14 @@ namespace chaos
 	public:
 
 		/** insert an entry into the declaration */
-		void Push(int semantic, int semantic_index, int type);
+		void Push(SemanticType semantic, int semantic_index, int type);
 		/** reset the object */
 		void Clear(){ entries.clear(); }
 
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		GPUVertexDeclarationEntry const * GetEntry(int semantic, int semantic_index) const;
+		GPUVertexDeclarationEntry const * GetEntry(SemanticType semantic, int semantic_index) const;
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		GPUVertexDeclarationEntry * GetEntry(int semantic, int semantic_index);
+		GPUVertexDeclarationEntry * GetEntry(SemanticType semantic, int semantic_index);
 
 	public:
 

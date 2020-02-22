@@ -46,7 +46,7 @@ namespace chaos
 		return component_count * component_size; 
 	}
 
-	void GPUVertexDeclaration::Push(int semantic, int semantic_index, int type)
+	void GPUVertexDeclaration::Push(SemanticType semantic, int semantic_index, int type)
 	{
 		int offset = 0;
 		if (entries.size() > 0)
@@ -63,7 +63,7 @@ namespace chaos
 		entries.push_back(entry);
 	}
 
-	GPUVertexDeclarationEntry * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index)
+	GPUVertexDeclarationEntry * GPUVertexDeclaration::GetEntry(SemanticType semantic, int semantic_index)
 	{
 		for (auto & entry : entries)
 			if (entry.semantic == semantic && (entry.semantic_index < 0 || entry.semantic_index == semantic_index))
@@ -71,7 +71,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	GPUVertexDeclarationEntry const * GPUVertexDeclaration::GetEntry(int semantic, int semantic_index) const
+	GPUVertexDeclarationEntry const * GPUVertexDeclaration::GetEntry(SemanticType semantic, int semantic_index) const
 	{
 		for (auto const & entry : entries)
 			if (entry.semantic == semantic && (entry.semantic_index < 0 || entry.semantic_index == semantic_index))
@@ -87,7 +87,7 @@ namespace chaos
 		return result;
 	}
 
-	int GPUVertexDeclaration::GetSemanticCount(int semantic) const
+	int GPUVertexDeclaration::GetSemanticCount(SemanticType semantic) const
 	{
 		int result = -1;
 		for (auto const & entry : entries)
@@ -98,22 +98,22 @@ namespace chaos
 
 	int GPUVertexDeclaration::GetPositionCount() const
 	{
-		return GetSemanticCount(SEMANTIC_POSITION);
+		return GetSemanticCount(SemanticType::SEMANTIC_POSITION);
 	}
 
 	int GPUVertexDeclaration::GetColorCount() const
 	{
-		return GetSemanticCount(SEMANTIC_COLOR);
+		return GetSemanticCount(SemanticType::SEMANTIC_COLOR);
 	}
 
 	int GPUVertexDeclaration::GetTextureCount() const
 	{
-		return GetSemanticCount(SEMANTIC_TEXCOORD);
+		return GetSemanticCount(SemanticType::SEMANTIC_TEXCOORD);
 	}
 
 	int GPUVertexDeclaration::GetBoneCount() const
 	{
-		return std::min(GetSemanticCount(SEMANTIC_BONEINDEX), GetSemanticCount(SEMANTIC_BONEWEIGHT));
+		return std::min(GetSemanticCount(SemanticType::SEMANTIC_BONEINDEX), GetSemanticCount(SemanticType::SEMANTIC_BONEWEIGHT));
 	}
 
 

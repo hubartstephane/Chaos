@@ -41,9 +41,9 @@ namespace chaos
 
         void GetTypedVertexDeclaration(GPUVertexDeclaration * result, boost::mpl::identity<Vertex>)
         {
-			result->Push(chaos::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-            result->Push(chaos::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-            result->Push(chaos::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+			result->Push(chaos::SemanticType::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
+            result->Push(chaos::SemanticType::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
+            result->Push(chaos::SemanticType::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
         }
 
         GPUProgram* GenDefaultParticleProgram()

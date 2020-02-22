@@ -247,17 +247,17 @@ namespace chaos
 
 #endif
 
-		if (face == SkyBoxImages::IMAGE_RIGHT)
+		if (face == SkyBoxImageType::IMAGE_RIGHT)
 			return 0 + 6 * level;
-		if (face == SkyBoxImages::IMAGE_LEFT)
+		if (face == SkyBoxImageType::IMAGE_LEFT)
 			return 1 + 6 * level;
-		if (face == SkyBoxImages::IMAGE_BOTTOM)
+		if (face == SkyBoxImageType::IMAGE_BOTTOM)
 			return 2 + 6 * level;
-		if (face == SkyBoxImages::IMAGE_TOP)
+		if (face == SkyBoxImageType::IMAGE_TOP)
 			return 3 + 6 * level;
-		if (face == SkyBoxImages::IMAGE_FRONT)
+		if (face == SkyBoxImageType::IMAGE_FRONT)
 			return 4 + 6 * level;
-		if (face == SkyBoxImages::IMAGE_BACK)
+		if (face == SkyBoxImageType::IMAGE_BACK)
 			return 5 + 6 * level;
 		return -1;
 	}
@@ -296,7 +296,7 @@ namespace chaos
 		bool conversion_required[6] = { false, false, false, false, false, false };
 		bool central_symetry[6] = { false, false, false, false, false, false };
 
-		for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
+		for (int i = SkyBoxImageType::IMAGE_LEFT; i <= SkyBoxImageType::IMAGE_BACK; ++i)
 		{
 			// ensure the image is valid and not empty
 			ImageDescription image = skybox->GetImageFaceDescription(i);
@@ -311,7 +311,7 @@ namespace chaos
 			if (is_single_image)
 			{
 				glm::ivec3 position_and_flags = skybox->GetPositionAndFlags(i);
-				if (position_and_flags.z == SkyBoxImages::IMAGE_CENTRAL_SYMETRY)
+				if (position_and_flags.z == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY)
 					central_symetry[i] = conversion_required[i] = true;
 			}
 			// compute memory required
@@ -342,7 +342,7 @@ namespace chaos
 			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
 			// fill the faces in GPU with the images of SkyBox
-			for (int i = SkyBoxImages::IMAGE_LEFT; i <= SkyBoxImages::IMAGE_BACK; ++i)
+			for (int i = SkyBoxImageType::IMAGE_LEFT; i <= SkyBoxImageType::IMAGE_BACK; ++i)
 			{
 				// ensure the image is valid and not empty
 				if (!face_valid[i])

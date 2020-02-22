@@ -25,7 +25,7 @@ void TestConvertToSingle(boost::filesystem::path const & dst_p, boost::filesyste
 		chaos::SkyBoxImages single_sky_box = multiple_sky_box.ToSingleImage(horizontal, back_color, chaos::PixelFormatMergeParams());
 		if (single_sky_box.IsSingleImage())
 		{
-			FIBITMAP * image = single_sky_box.GetImage(chaos::SkyBoxImages::IMAGE_SINGLE);
+			FIBITMAP * image = single_sky_box.GetImage(chaos::SkyBoxImageType::IMAGE_SINGLE);
 			if (image != nullptr)
 			{
 				boost::filesystem::path dst = (horizontal)?
@@ -56,23 +56,23 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 			char const * top_image    = "posy.png";
 			char const * bottom_image = "negy.png"; 
 
-			for (int i = chaos::SkyBoxImages::IMAGE_LEFT ; i <= chaos::SkyBoxImages::IMAGE_BACK ; ++i)
+			for (int i = chaos::SkyBoxImageType::IMAGE_LEFT ; i <= chaos::SkyBoxImageType::IMAGE_BACK ; ++i)
 			{
 				FIBITMAP * image = multiple_sky_box.GetImage(i);
 				if (image != nullptr)
 				{
 					char const * suffix = nullptr;
-					if (i == chaos::SkyBoxImages::IMAGE_LEFT)
+					if (i == chaos::SkyBoxImageType::IMAGE_LEFT)
 						suffix = left_image;
-					else if (i == chaos::SkyBoxImages::IMAGE_RIGHT)
+					else if (i == chaos::SkyBoxImageType::IMAGE_RIGHT)
 						suffix = right_image;
-					else if (i == chaos::SkyBoxImages::IMAGE_TOP)
+					else if (i == chaos::SkyBoxImageType::IMAGE_TOP)
 						suffix = top_image;
-					else if (i == chaos::SkyBoxImages::IMAGE_BOTTOM)
+					else if (i == chaos::SkyBoxImageType::IMAGE_BOTTOM)
 						suffix = bottom_image;
-					else if (i == chaos::SkyBoxImages::IMAGE_FRONT)
+					else if (i == chaos::SkyBoxImageType::IMAGE_FRONT)
 						suffix = front_image;
-					else if (i == chaos::SkyBoxImages::IMAGE_BACK)
+					else if (i == chaos::SkyBoxImageType::IMAGE_BACK)
 						suffix = back_image;
 
 					std::string filename = chaos::StringTools::Printf("%s_%s", dst_filename, suffix);         
@@ -101,7 +101,7 @@ void TestDoubleConversion(boost::filesystem::path const & dst_p, boost::filesyst
 			chaos::SkyBoxImages single_image_back = multiple_image.ToSingleImage(!horizontal, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), chaos::PixelFormatMergeParams());
 			if (single_image_back.IsSingleImage())
 			{
-				FIBITMAP * image = single_image_back.GetImage(chaos::SkyBoxImages::IMAGE_SINGLE);
+				FIBITMAP * image = single_image_back.GetImage(chaos::SkyBoxImageType::IMAGE_SINGLE);
 				if (image != nullptr)
 				{
 					boost::filesystem::path dst = dst_p / dst_filename;

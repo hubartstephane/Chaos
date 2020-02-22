@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	enum HotpointType : int // XXX : no class so it can be casted to int
+	enum HotpointType : int // XXX : no class, so we can make implicit int conversion
 	{
 		LEFT = 1,
 		RIGHT = 2,
@@ -21,20 +21,14 @@ namespace chaos
 		CENTER = VMIDDLE | HMIDDLE
 	};
 
-	/** this class is used to handle hotpoint and there conversions */
-	class Hotpoint
-	{
-	public:
+	/** given a hotpoint and a hotpoint_type, returns the BottomLeft hotpoint position */
+	glm::vec2 ConvertHotpointToBottomLeft(glm::vec2 const& hotpoint, glm::vec2 const& size, HotpointType hotpoint_type);
+	/** given a hotpoint and a hotpoint_type, returns any other hotpoint_type position */
+	glm::vec2 ConvertHotpoint(glm::vec2 const& hotpoint, glm::vec2 const& size, HotpointType initial_hotpoint_type, HotpointType final_hotpoint_type);
 
-		/** given a hotpoint and a hotpoint_type, returns the BottomLeft hotpoint position */
-		static glm::vec2 ConvertToBottomLeft(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType hotpoint_type);
-		/** given a hotpoint and a hotpoint_type, returns any other hotpoint_type position */
-		static glm::vec2 Convert(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType initial_hotpoint_type, HotpointType final_hotpoint_type);
-
-		/** data for JSON encoding/decoding */
-		static std::vector<std::pair<HotpointType, char const *>> const hotpoint_encoding;
-	};
-
-
+	/** JSON loading method */
+	bool LoadFromJSON(nlohmann::json const& json_entry, HotpointType& dst);
+	/** JSON saving method */
+	bool SaveIntoJSON(nlohmann::json& json_entry, HotpointType const& src);
 
 }; // namespace chaos

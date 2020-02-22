@@ -44,8 +44,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "font_info_name", src.font_info_name);
 			JSONTools::SetAttribute(json_entry, "tab_size", src.tab_size);
 			JSONTools::SetAttribute(json_entry, "position", src.position);
-
-			JSONTools::SetEnumAttribute(json_entry, "hotpoint_type", Hotpoint::hotpoint_encoding, src.hotpoint_type);
+			JSONTools::SetAttribute(json_entry, "hotpoint_type", src.hotpoint_type);
 			return true;
 		}
 
@@ -65,7 +64,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "font_info_name", dst.font_info_name);
 			JSONTools::GetAttribute(json_entry, "tab_size", dst.tab_size);
 			JSONTools::GetAttribute(json_entry, "position", dst.position);
-			JSONTools::GetEnumAttribute(json_entry, "hotpoint_type", Hotpoint::hotpoint_encoding, dst.hotpoint_type);
+			JSONTools::GetAttribute(json_entry, "hotpoint_type", dst.hotpoint_type);
 			return true;
 		}
 
@@ -636,7 +635,7 @@ namespace chaos
 			// displace all the sprites to match the position
 			glm::vec2 offset =
 				generator_data.params.position -
-				Hotpoint::Convert(min_position, max_position - min_position, HotpointType::BOTTOM_LEFT, generator_data.params.hotpoint_type);
+				ConvertHotpoint(min_position, max_position - min_position, HotpointType::BOTTOM_LEFT, generator_data.params.hotpoint_type);
 
 			MoveParticles(generator_data.result, offset);
 

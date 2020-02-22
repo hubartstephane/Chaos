@@ -151,7 +151,7 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 
 
 	glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
-	glm::vec2 particle_position = chaos::Hotpoint::Convert(screen_ref + position, particle_final_size, hotpoint_type, chaos::HotpointType::CENTER);
+	glm::vec2 particle_position = chaos::ConvertHotpoint(screen_ref + position, particle_final_size, hotpoint_type, chaos::HotpointType::CENTER);
 
 
 	//glm::vec2 particle_position = whole_particle_ref;
@@ -176,11 +176,9 @@ bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json cons
 	if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
 		return true;
 
-
-	chaos::JSONTools::GetEnumAttribute(json, "hotpoint_type", chaos::Hotpoint::hotpoint_encoding, hotpoint_type);
+	chaos::JSONTools::GetAttribute(json, "hotpoint_type", hotpoint_type);
 	chaos::JSONTools::GetAttribute(json, "position", position);
 	chaos::JSONTools::GetAttribute(json, "particle_size", particle_size);
-
 
 	return true;
 }

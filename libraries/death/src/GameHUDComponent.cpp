@@ -368,7 +368,7 @@ namespace death
 		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
 			return true;
 		
-		chaos::JSONTools::GetEnumAttribute(json, "hotpoint_type", chaos::Hotpoint::hotpoint_encoding, hotpoint_type);
+		chaos::JSONTools::GetAttribute(json, "hotpoint_type", hotpoint_type);
 		chaos::JSONTools::GetAttribute(json, "position", position);
 		chaos::JSONTools::GetAttribute(json, "particle_size", particle_size);
 		chaos::JSONTools::GetAttribute(json, "particle_offset", particle_offset);
@@ -499,7 +499,7 @@ namespace death
 		glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
 
 		// compute the bottom-left corner of the whole sprite rectangle
-		glm::vec2 whole_particle_ref = chaos::Hotpoint::Convert(screen_ref + position, whole_particle_size, hotpoint_type, chaos::HotpointType::BOTTOM_LEFT);
+		glm::vec2 whole_particle_ref = chaos::ConvertHotpoint(screen_ref + position, whole_particle_size, hotpoint_type, chaos::HotpointType::BOTTOM_LEFT);
 
 		// update the particles members
 		glm::vec2 particle_position = whole_particle_ref;
@@ -507,7 +507,7 @@ namespace death
         chaos::ParticleAccessor<chaos::ParticleDefault::Particle> accessor = allocations->GetParticleAccessor();
         for (chaos::ParticleDefault::Particle & p : accessor)
         {
-			p.bounding_box.position = chaos::Hotpoint::Convert(particle_position, particle_final_size, chaos::HotpointType::BOTTOM_LEFT, chaos::HotpointType::CENTER);
+			p.bounding_box.position = chaos::ConvertHotpoint(particle_position, particle_final_size, chaos::HotpointType::BOTTOM_LEFT, chaos::HotpointType::CENTER);
 			p.bounding_box.half_size = 0.5f * particle_final_size;
 
 			float fadeout = 1.0f;

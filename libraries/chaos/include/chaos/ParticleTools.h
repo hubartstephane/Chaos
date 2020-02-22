@@ -6,6 +6,7 @@
 #include <chaos/ClassTools.h>
 #include <chaos/PrimitiveOutput.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/Hotpoint.h>
 
 namespace chaos
 {
@@ -34,7 +35,7 @@ namespace chaos
 		/** conversion methods */
 		ParticleCorners BoxToParticleCorners(box2 const & box);
 		/** returns the 2 corners of a particle according to a given position, a size and an hotpoint */
-		ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, int hotpoint_type);
+		ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, HotpointType hotpoint_type);
 		/** returns the texture coordinates of a particle */
 		ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapLayout const & layout);
 

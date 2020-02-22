@@ -690,7 +690,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 	chaos::ParticleTextGenerator::GeneratorParams params;
 
 	params.line_height = CHALLENGE_SIZE;
-	params.hotpoint_type = chaos::Hotpoint::TOP | chaos::Hotpoint::HMIDDLE;
+	params.hotpoint_type = chaos::HotpointType::TOP;
 	params.position.x = 0.0f;
 	params.position.y = CHALLENGE_PLACEMENT_Y;
 	params.font_info_name = "challenge";

@@ -82,7 +82,7 @@ namespace chaos
             return result;
         }
 
-        ParticleCorners GetParticleCorners(glm::vec2 const& position, glm::vec2 const& size, int hotpoint_type)
+        ParticleCorners GetParticleCorners(glm::vec2 const& position, glm::vec2 const& size, HotpointType hotpoint_type)
         {
             ParticleCorners result;
             result.bottomleft = Hotpoint::ConvertToBottomLeft(position, size, hotpoint_type);

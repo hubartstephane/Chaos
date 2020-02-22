@@ -19,7 +19,7 @@ namespace chaos
 			{ GeneratorParams::ALIGN_JUSTIFY, "justify" }
 		};
 
-		GeneratorParams::GeneratorParams(char const * in_font_info_name, float in_line_height, glm::vec2 const & in_position, int in_hotpoint_type):
+		GeneratorParams::GeneratorParams(char const * in_font_info_name, float in_line_height, glm::vec2 const & in_position, HotpointType in_hotpoint_type):
 			line_height(in_line_height),
 			font_info_name(in_font_info_name),
 			position(in_position),
@@ -636,7 +636,7 @@ namespace chaos
 			// displace all the sprites to match the position
 			glm::vec2 offset =
 				generator_data.params.position -
-				Hotpoint::Convert(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, generator_data.params.hotpoint_type);
+				Hotpoint::Convert(min_position, max_position - min_position, HotpointType::BOTTOM_LEFT, generator_data.params.hotpoint_type);
 
 			MoveParticles(generator_data.result, offset);
 
@@ -900,9 +900,9 @@ namespace chaos
 				for (SpriteToken const & token : line)
 				{
 					if (token.IsBitmap())
-						sprite_manager->AddSpriteBitmap(token.bitmap_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT);
+						sprite_manager->AddSpriteBitmap(token.bitmap_layout, token.position, token.size, HotpointType::BOTTOM_LEFT);
 					else if (token.IsVisibleCharacter())
-						sprite_manager->AddSpriteCharacter(token.character_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
+						sprite_manager->AddSpriteCharacter(token.character_layout, token.position, token.size, HotpointType::BOTTOM_LEFT, token.color);
 				}
 			}
 			return true;

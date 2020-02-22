@@ -80,7 +80,7 @@ namespace chaos
 			// pseudo button
 			if (button_index == XBoxButtonType::XBOX_BUTTON_LEFTTRIGGER)
 			{
-				float trigger_value = GetAxisValue(XBoxButtonType::XBOX_LEFT_TRIGGER, previous_frame);
+				float trigger_value = GetAxisValue(XBoxAxisType::XBOX_LEFT_TRIGGER, previous_frame);
 				if (trigger_value > 0)
 					return true;
 				return false;
@@ -88,7 +88,7 @@ namespace chaos
 
 			if (button_index == XBoxButtonType::XBOX_BUTTON_RIGHTTRIGGER)
 			{
-				float trigger_value = GetAxisValue(XBoxButtonType::XBOX_RIGHT_TRIGGER, previous_frame);
+				float trigger_value = GetAxisValue(XBoxAxisType::XBOX_RIGHT_TRIGGER, previous_frame);
 				if (trigger_value > 0)
 					return true;
 				return false;
@@ -161,15 +161,15 @@ namespace chaos
 		glm::vec2 GamepadData::GetXBOXStickDirection(int stick_number, bool previous_frame) const
 		{
 			glm::vec2 result(0.0f, 0.0f);
-			if (stick_number == XBoxButtonType::XBOX_LEFT_AXIS)
+			if (stick_number == XBoxAxisType::XBOX_LEFT_AXIS)
 			{
-				result.x = GetAxisValue(XBoxButtonType::XBOX_LEFT_AXIS_X, previous_frame);
-				result.y = GetAxisValue(XBoxButtonType::XBOX_LEFT_AXIS_Y, previous_frame);
+				result.x = GetAxisValue(XBoxAxisType::XBOX_LEFT_AXIS_X, previous_frame);
+				result.y = GetAxisValue(XBoxAxisType::XBOX_LEFT_AXIS_Y, previous_frame);
 			}
-			else if (stick_number == XBoxButtonType::XBOX_RIGHT_AXIS)
+			else if (stick_number == XBoxAxisType::XBOX_RIGHT_AXIS)
 			{
-				result.x = GetAxisValue(XBoxButtonType::XBOX_RIGHT_AXIS_X, previous_frame);
-				result.y = GetAxisValue(XBoxButtonType::XBOX_RIGHT_AXIS_Y, previous_frame);
+				result.x = GetAxisValue(XBoxAxisType::XBOX_RIGHT_AXIS_X, previous_frame);
+				result.y = GetAxisValue(XBoxAxisType::XBOX_RIGHT_AXIS_Y, previous_frame);
 			}
 			else
 				return result;
@@ -205,7 +205,7 @@ namespace chaos
 				{
 					// update this frame value
 					float value = axis_buffer[i];
-					if (i == XBoxButtonType::XBOX_LEFT_TRIGGER || i == XBoxButtonType::XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+					if (i == XBoxAxisType::XBOX_LEFT_TRIGGER || i == XBoxAxisType::XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
 					axis[i].UpdateValue(value, dead_zone);
 					// initilize previous frame value 
@@ -220,7 +220,7 @@ namespace chaos
 					axis[i + ac] = axis[i];
 					// update this frame value
 					float value = axis_buffer[i];
-					if (i == XBoxButtonType::XBOX_LEFT_TRIGGER || i == XBoxButtonType::XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+					if (i == XBoxAxisType::XBOX_LEFT_TRIGGER || i == XBoxAxisType::XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
 					axis[i].UpdateValue(value, dead_zone);
 				}

@@ -34,7 +34,7 @@ namespace chaos
 		BUTTON_BECOME_PRESSED = 4
 	};
 
-	enum XBoxButtonType : int
+	enum XBoxButtonType : int // XXXX: no class, so this can be implicitly converted to int
 	{
 		/** index in buttons of A for XBOX like pad */
 		XBOX_BUTTON_A = 0,
@@ -68,8 +68,11 @@ namespace chaos
 		/** index in buttons of LEFT TRIGGER for XBOX like pad (this is a simulate button, while the physical left trigger is an axis) */
 		XBOX_BUTTON_LEFTTRIGGER = 101,
 		/** index in buttons of RIGHT TRIGGER for XBOX like pad (this is a simulate button, while the physical right trigger is an axis) */
-		XBOX_BUTTON_RIGHTTRIGGER = 102,
+		XBOX_BUTTON_RIGHTTRIGGER = 102
+	};
 
+	enum XBoxAxisType : int // XXXX: no class, so this can be implicitly converted to int
+	{
 		/** index in axis of LEFT X for XBOX like pad */
 		XBOX_LEFT_AXIS_X = 0,
 		/** index in axis of LEFT Y for XBOX like pad */

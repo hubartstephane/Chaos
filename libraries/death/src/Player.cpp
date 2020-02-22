@@ -175,7 +175,7 @@ namespace death
 			SetInputMode(chaos::InputMode::Gamepad);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_data->GetXBOXStickDirection(chaos::XBoxButtonType::XBOX_LEFT_AXIS);
+		glm::vec2 lsp = gamepad_data->GetXBOXStickDirection(chaos::XBoxAxisType::XBOX_LEFT_AXIS);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
@@ -192,13 +192,13 @@ namespace death
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_data->GetXBOXStickDirection(chaos::XBoxButtonType::XBOX_RIGHT_AXIS);
+		glm::vec2 rsp = gamepad_data->GetXBOXStickDirection(chaos::XBoxAxisType::XBOX_RIGHT_AXIS);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
 		// cache the TRIGGERS
-		left_trigger  = gamepad_data->GetAxisValue(chaos::XBoxButtonType::XBOX_LEFT_TRIGGER);
-		right_trigger = gamepad_data->GetAxisValue(chaos::XBoxButtonType::XBOX_RIGHT_TRIGGER);
+		left_trigger  = gamepad_data->GetAxisValue(chaos::XBoxAxisType::XBOX_LEFT_TRIGGER);
+		right_trigger = gamepad_data->GetAxisValue(chaos::XBoxAxisType::XBOX_RIGHT_TRIGGER);
 	}
 
 	void Player::HandleKeyboardInputs(float delta_time)

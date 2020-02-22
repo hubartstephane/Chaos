@@ -218,9 +218,9 @@ namespace death
 			virtual bool DoLoadFromCheckpoint(BaseObjectCheckpoint const * checkpoint) override;
 
 			/** called whenever a collision with player is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
-			virtual bool OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type);
+			virtual bool OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type);
 			/** called whenever a collision with camera is detected (=> important for TriggerOnce) */
-			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type);
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type);
 
 		protected:
 
@@ -275,11 +275,11 @@ namespace death
 		protected:
 
 			/** generic method to handle both collision with player and camera */
-			virtual bool OnTriggerCollision(float delta_time, int event_type);
+			virtual bool OnTriggerCollision(float delta_time, chaos::CollisionType event_type);
 			/** override */
-			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type) override;
 			/** override */
-			virtual bool OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+			virtual bool OnPlayerCollisionEvent(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type) override;
 
 		protected:
 
@@ -313,7 +313,7 @@ namespace death
 		protected:
 
 			/** override */
-			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type) override;
 		};
 
 		// =================================================
@@ -336,7 +336,7 @@ namespace death
 			/** override */
 			virtual bool Initialize() override;
 			/** override */
-			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
+			virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type) override;
 
 			/** the sound creation method */
 			chaos::Sound * CreateSound() const;
@@ -380,7 +380,7 @@ namespace death
 			/** override */
 			virtual bool IsParticleCreationEnabled() const override;
 			/** override */
-			virtual bool OnPlayerCollisionEvent(float delta_time, Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+			virtual bool OnPlayerCollisionEvent(float delta_time, Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type) override;
 		};
 
 

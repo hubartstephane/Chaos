@@ -29,7 +29,7 @@ public:
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type) override;
 
 protected:
 
@@ -51,7 +51,7 @@ public:
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, int event_type) override;
+	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type) override;
 };
 
 
@@ -73,7 +73,7 @@ public:
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, int event_type) override;
+	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type) override;
 };
 
 

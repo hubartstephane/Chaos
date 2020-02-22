@@ -70,7 +70,7 @@ namespace chaos
 	BlendVolumeDesc BlendVolumeDesc::BlendIn(float blend_time)
 	{
 		BlendVolumeDesc result;
-		result.blend_type = BLEND_IN;
+		result.blend_type = SoundBlendType::BLEND_IN;
 		result.blend_time = blend_time;
 		return result;
 	}
@@ -78,7 +78,7 @@ namespace chaos
 	BlendVolumeDesc BlendVolumeDesc::BlendOut(float blend_time, bool pause_at_end, bool kill_at_end, bool kill_when_paused)
 	{
 		BlendVolumeDesc result;
-		result.blend_type = BLEND_OUT;
+		result.blend_type = SoundBlendType::BLEND_OUT;
 		result.blend_time = blend_time;
 		result.pause_at_end = pause_at_end;
 		result.kill_at_end = kill_at_end;
@@ -120,13 +120,13 @@ namespace chaos
 		// keep trace of the effective volume before blending is done
 		float old_effective_volume = GetEffectiveVolume();
 		// update the blend data
-		if (blend_desc.blend_type == BlendVolumeDesc::BLEND_IN)
+		if (blend_desc.blend_type == SoundBlendType::BLEND_IN)
 		{
 			blend_value = std::clamp(blend_value + delta_blend, 0.0f, 1.0f);
 			if (blend_value >= 1.0f)
 				OnBlendFinished();
 		}
-		else if (blend_desc.blend_type == BlendVolumeDesc::BLEND_OUT)
+		else if (blend_desc.blend_type == SoundBlendType::BLEND_OUT)
 		{
 			blend_value = std::clamp(blend_value - delta_blend, 0.0f, 1.0f);
 			if (blend_value <= 0.0f)
@@ -304,16 +304,16 @@ namespace chaos
 		// ensure validity
 		if (desc.blend_time < 0.0f)
 			return false;
-		if (desc.blend_type != BlendVolumeDesc::BLEND_IN && desc.blend_type != BlendVolumeDesc::BLEND_OUT)
+		if (desc.blend_type != SoundBlendType::BLEND_IN && desc.blend_type != SoundBlendType::BLEND_OUT)
 			return false;
 		// copy the blend
 		blend_desc = desc;
 		// immediate blending (special case)		
 		if (desc.blend_time == 0.0f)
 		{
-			if (desc.blend_type == BlendVolumeDesc::BLEND_IN)
+			if (desc.blend_type == SoundBlendType::BLEND_IN)
 				blend_value = 1.0f;
-			else if (desc.blend_type == BlendVolumeDesc::BLEND_OUT)
+			else if (desc.blend_type == SoundBlendType::BLEND_OUT)
 				blend_value = 0.0f;
 			if (desc.callbacks != nullptr)
 				desc.callbacks->OnFinished(this);
@@ -334,7 +334,7 @@ namespace chaos
 
 	bool SoundObject::HasVolumeBlending() const
 	{
-		return (blend_desc.blend_type != BlendVolumeDesc::BLEND_NONE);
+		return (blend_desc.blend_type != SoundBlendType::BLEND_NONE);
 	}
 
 	bool SoundObject::InitializeFromJSON(nlohmann::json const & json, boost::filesystem::path const & config_path)
@@ -668,7 +668,7 @@ namespace chaos
 		// copy blend data
 		if (play_desc.blend_in_time > 0.0f)
 		{
-			blend_desc.blend_type = BlendVolumeDesc::BLEND_IN;
+			blend_desc.blend_type = SoundBlendType::BLEND_IN;
 			blend_desc.blend_time = play_desc.blend_in_time;
 			blend_value = 0.0f;
 		}

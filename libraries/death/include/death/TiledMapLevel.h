@@ -179,10 +179,6 @@ namespace death
 
 		public:
 
-			static int const COLLISION_FINISHED = 0;
-			static int const COLLISION_STARTED  = 1;
-			static int const COLLISION_AGAIN    = 2;
-
 			/** constructor */
 			TriggerObject(LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object);
 

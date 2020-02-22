@@ -37,6 +37,17 @@ namespace chaos
 #define CHAOS_SOUND_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FRIEND_DECL, _, CHAOS_SOUND_CLASSES)
 
 		// ==============================================================
+		// SoundBlendType
+		// ==============================================================
+
+	enum class SoundBlendType : int
+	{
+		BLEND_NONE = 0,
+		BLEND_IN = 1,
+		BLEND_OUT = 2
+	};
+
+		// ==============================================================
 		// CALLBACKS
 		// ==============================================================
 
@@ -91,10 +102,6 @@ namespace chaos
 	{
 	public:
 
-		static int const BLEND_NONE = 0;
-		static int const BLEND_IN = 1;
-		static int const BLEND_OUT = 2;
-
 		/** helper function to create a BLEND_IN effect */
 		static BlendVolumeDesc BlendIn(float blend_time);
 		/** helper function to create a BLEND_OUTeffect */
@@ -103,7 +110,7 @@ namespace chaos
 	public:
 
 		/** the kind of blending */
-		int   blend_type = BLEND_NONE;
+		SoundBlendType blend_type = SoundBlendType::BLEND_NONE;
 		/** the time to blend from [0 to 1] or [1 to 0] => if current blend value is between, the time is renormalized */
 		float blend_time = 1.0f;
 		/** whether the object should be paused at the end of blend */

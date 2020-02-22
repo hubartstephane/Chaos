@@ -5,14 +5,18 @@
 
 namespace chaos
 {
+	enum class InheritanceType : int
+	{
+		INHERITANCE_UNKNOWN = -1,
+		INHERITANCE_NO = 0,
+		INHERITANCE_YES = 1
+	};
+
 	class ClassTools
 	{
 	public:
 
-		// the inheritance values
-		static int const INHERITANCE_UNKNOWN = -1;
-		static int const INHERITANCE_NO = 0;
-		static int const INHERITANCE_YES = 1;
+
 
 		/** a registration block for one class */
 		class ClassRegistration
@@ -113,45 +117,45 @@ namespace chaos
 		}
 
 		/** returns whether 2 classes are known to be parents of one another */
-		static int InheritsFrom(ClassRegistration const * child_registration, ClassRegistration const * parent_registration, bool accept_equal = false)
+		static InheritanceType InheritsFrom(ClassRegistration const * child_registration, ClassRegistration const * parent_registration, bool accept_equal = false)
 		{
 			assert(child_registration != nullptr);
 			assert(parent_registration != nullptr);
 
 			// fast test on the size
 			if (child_registration->size < parent_registration->size)
-				return INHERITANCE_NO;
+				return InheritanceType::INHERITANCE_NO;
 
 			// class not registered, cannot known result
 			if (!child_registration->registered)
-				return INHERITANCE_UNKNOWN;
+				return InheritanceType::INHERITANCE_UNKNOWN;
 
 			// class not registered, cannot known result
 			if (!parent_registration->registered)
-				return INHERITANCE_UNKNOWN;
+				return InheritanceType::INHERITANCE_UNKNOWN;
 
 			// returns no if classes are same and we don't accept that as a valid result
 			if (child_registration == parent_registration)
 			{
 				if (!accept_equal)
-					return INHERITANCE_NO;
+					return InheritanceType::INHERITANCE_NO;
 				else
-					return INHERITANCE_YES;
+					return InheritanceType::INHERITANCE_YES;
 			}
 			// from top to root in the hierarchy
 			for (child_registration = child_registration->parent; child_registration != nullptr; child_registration = child_registration->parent)
 			{
 				// fast test on the size
 				if (child_registration->size < parent_registration->size)
-					return INHERITANCE_NO;
+					return InheritanceType::INHERITANCE_NO;
 				// found the searched parent
 				if (child_registration == parent_registration)
-					return INHERITANCE_YES;
+					return InheritanceType::INHERITANCE_YES;
 				// unintialized class
 				if (!child_registration->registered)
-					return INHERITANCE_UNKNOWN;
+					return InheritanceType::INHERITANCE_UNKNOWN;
 			}
-			return INHERITANCE_NO;
+			return InheritanceType::INHERITANCE_NO;
 		}
 
 		/** GetClassID : returns a unique ID given a class */

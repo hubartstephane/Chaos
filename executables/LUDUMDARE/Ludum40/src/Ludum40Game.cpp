@@ -738,8 +738,8 @@ bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_game
 			SetPause(!game_paused);		
 	}		
 
-	glm::vec2 left_stick_position  = physical_gamepad->GetXBOXStickDirection(chaos::XBoxButtonType::XBOX_LEFT_AXIS);
-	glm::vec2 right_stick_position = physical_gamepad->GetXBOXStickDirection(chaos::XBoxButtonType::XBOX_RIGHT_AXIS);
+	glm::vec2 left_stick_position  = physical_gamepad->GetXBOXStickDirection(chaos::XBoxAxisType::XBOX_LEFT_AXIS);
+	glm::vec2 right_stick_position = physical_gamepad->GetXBOXStickDirection(chaos::XBoxAxisType::XBOX_RIGHT_AXIS);
 
 	if (glm::length2(left_stick_position) > 0.0f)
 		stick_position = left_stick_position;

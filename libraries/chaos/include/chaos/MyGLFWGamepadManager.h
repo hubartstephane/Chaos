@@ -19,6 +19,21 @@
 
 namespace chaos
 {
+
+	enum class ButtonChangeType : int
+	{
+		/** button status change */
+		BUTTON_NO_CHANGE = 0,
+		/** button status change */
+		BUTTON_STAY_RELEASED = 1,
+		/** button status change */
+		BUTTON_STAY_PRESSED = 2,
+		/** button status change */
+		BUTTON_BECOME_RELEASED = 3,
+		/** button status change */
+		BUTTON_BECOME_PRESSED = 4
+	};
+
 	namespace MyGLFW
 	{
 
@@ -47,15 +62,6 @@ namespace chaos
 		/**
 		* Some constants
 		*/
-
-		/** button status change */
-		static int const BUTTON_STAY_RELEASED = 1;
-		/** button status change */
-		static int const BUTTON_STAY_PRESSED = 2;
-		/** button status change */
-		static int const BUTTON_BECOME_RELEASED = 3;
-		/** button status change */
-		static int const BUTTON_BECOME_PRESSED = 4;
 
 		/** index in buttons of A for XBOX like pad */
 		static int const XBOX_BUTTON_A = 0;
@@ -179,7 +185,7 @@ namespace chaos
 		public:
 
 			/* returns a status giving the change of button relative to previous frame */
-			int GetButtonChanges(size_t button_index) const;
+			ButtonChangeType GetButtonChanges(size_t button_index) const;
 			/** returns the button state */
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
@@ -227,7 +233,7 @@ namespace chaos
 			GamepadData const* GetGamepadData() const { return &gamepad_data; }
 
 			/* returns a status giving the change of button relative to previous frame */
-			int GetButtonChanges(size_t button_index) const;
+			ButtonChangeType GetButtonChanges(size_t button_index) const;
 			/** returns the button state */
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
@@ -360,7 +366,7 @@ namespace chaos
 			GamepadData const* GetGamepadData() const;
 
 			/* returns a status giving the change of button relative to previous frame */
-			int GetButtonChanges(size_t button_index) const;
+			ButtonChangeType GetButtonChanges(size_t button_index) const;
 			/** returns the button state */
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */

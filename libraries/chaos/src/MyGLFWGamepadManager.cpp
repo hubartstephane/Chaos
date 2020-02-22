@@ -64,15 +64,15 @@ namespace chaos
 		}
 
 
-		int GamepadData::GetButtonChanges(size_t button_index) const
+		ButtonChangeType GamepadData::GetButtonChanges(size_t button_index) const
 		{
 			bool current_state = IsButtonPressed(button_index, false);
 			bool previous_state = IsButtonPressed(button_index, true);
 
 			if (current_state == previous_state)
-				return (current_state) ? BUTTON_STAY_PRESSED : BUTTON_STAY_RELEASED;
+				return (current_state) ? ButtonChangeType::BUTTON_STAY_PRESSED : ButtonChangeType::BUTTON_STAY_RELEASED;
 			else
-				return (current_state) ? BUTTON_BECOME_PRESSED : BUTTON_BECOME_RELEASED;
+				return (current_state) ? ButtonChangeType::BUTTON_BECOME_PRESSED : ButtonChangeType::BUTTON_BECOME_RELEASED;
 		}
 
 		bool GamepadData::IsButtonPressed(size_t button_index, bool previous_frame) const
@@ -283,10 +283,10 @@ namespace chaos
 			return gamepad_data.GetAxisCount();
 		}
 
-		int PhysicalGamepad::GetButtonChanges(size_t button_index) const
+		ButtonChangeType PhysicalGamepad::GetButtonChanges(size_t button_index) const
 		{
 			if (!IsPresent())
-				return 0;
+				return ButtonChangeType::BUTTON_NO_CHANGE;
 			return gamepad_data.GetButtonChanges(button_index);
 		}
 
@@ -432,11 +432,11 @@ namespace chaos
 			return 0;
 		}
 
-		int Gamepad::GetButtonChanges(size_t button_index) const
+		ButtonChangeType Gamepad::GetButtonChanges(size_t button_index) const
 		{
 			if (physical_device != nullptr)
 				return physical_device->GetButtonChanges(button_index);
-			return 0;
+			return ButtonChangeType::BUTTON_NO_CHANGE;
 		}
 
 		bool Gamepad::IsButtonPressed(size_t button_index, bool previous_frame) const

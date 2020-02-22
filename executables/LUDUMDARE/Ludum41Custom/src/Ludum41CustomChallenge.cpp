@@ -33,7 +33,7 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * 
 
 	int expected_key = gamepad_challenge[gamepad_challenge_position];
 
-	if (in_gamepad_data->GetButtonChanges(expected_key) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
+	if (in_gamepad_data->GetButtonChanges(expected_key) == chaos::ButtonChangeType::BUTTON_BECOME_PRESSED)
 	{
 		AdvanceChallenge();
 	}
@@ -45,7 +45,7 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * 
 			if (it->first == expected_key) 
 				continue;
 		
-			if (in_gamepad_data->GetButtonChanges(it->first) == chaos::MyGLFW::BUTTON_BECOME_PRESSED)
+			if (in_gamepad_data->GetButtonChanges(it->first) == chaos::ButtonChangeType::BUTTON_BECOME_PRESSED)
 			{
 				OnChallengeError(false);
 				return;

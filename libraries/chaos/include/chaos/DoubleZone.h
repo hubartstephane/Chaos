@@ -5,6 +5,25 @@
 
 namespace chaos
 {
+	enum class ZonePartitionType : int
+	{
+		/** point is inside inner zone */
+		NEAR_ZONE = 0,
+		/** point is betwen inner_zone and outer_zone */
+		MIDDLE_ZONE = 1,
+		/** point is outside outer_zone */
+		FAR_ZONE = 2
+	};
+	
+	enum class ZonePartitionChangeType : int
+	{
+		/** no zone of change */
+		NOCHANGE_ZONE = 0,
+		/** was not in the near zone, and then enters in it */
+		ENTER_ZONE = 1,
+		/** was not in the far zone and enters in it */
+		LEAVE_ZONE = 2
+	};
 
 	/**
 	* DoubleZone : testing if a point enters or exits to trigger an action can be tedious if the 
@@ -22,49 +41,35 @@ namespace chaos
 		/** the type of the vector */
 		using vec_type = typename ZONE_TYPE::vec_type;
 
-		/** point is inside inner zone */
-		static int const NEAR_ZONE   = 0;
-		/** point is betwen inner_zone and outer_zone */
-		static int const MIDDLE_ZONE = 1;
-		/** point is outside outer_zone */
-		static int const FAR_ZONE    = 2; 
-
-		/** no zone of change */
-		static int const NOCHANGE_ZONE = 0;
-		/** was not in the near zone, and then enters in it */
-		static int const ENTER_ZONE    = 1; 
-		/** was not in the far zone and enters in it */
-		static int const LEAVE_ZONE    = 2; 
-
 		/** returns the zone where is the point */
-		int GetPointZone(vec_type const & p) const
+		ZonePartitionType GetPointZone(vec_type const & p) const
 		{
 			if (!inside(p, outer_zone))
-				return FAR_ZONE;
+				return ZonePartitionType::FAR_ZONE;
 			if (!inside(p, inner_zone))
-				return MIDDLE_ZONE;    
-			return NEAR_ZONE;   
+				return ZonePartitionType::MIDDLE_ZONE;
+			return ZonePartitionType::NEAR_ZONE;
 		}
 
 		/** returns the point zone changement */
-		int CheckZoneChange(vec_type const & before, vec_type const & after) const
+		ZonePartitionChangeType CheckZoneChange(vec_type const & before, vec_type const & after) const
 		{
-			int before_zone = GetPointZone(before);
-			int after_zone  = GetPointZone(after);
+			ZonePartitionType before_zone = GetPointZone(before);
+			ZonePartitionType after_zone  = GetPointZone(after);
 			return CheckZoneChange(before_zone, after_zone);
 		}
 
 		/** returns the point zone changement */
-		static int CheckZoneChange(int before, int after)
+		static ZonePartitionChangeType CheckZoneChange(ZonePartitionType before, ZonePartitionType after)
 		{  
 			if (before_zone != after_zone)
 			{
-				if (after_zone == NEAR_ZONE)
-					return ENTER_ZONE;  
-				if (after_zone == FAR_ZONE)
-					return LEAVE_ZONE;        
+				if (after_zone == ZonePartitionType::NEAR_ZONE)
+					return ZonePartitionChangeType::ENTER_ZONE;
+				if (after_zone == ZonePartitionType::FAR_ZONE)
+					return ZonePartitionChangeType::LEAVE_ZONE;
 			}
-			return NOCHANGE_ZONE;  
+			return ZonePartitionChangeType::NOCHANGE_ZONE;
 		}
 
 	protected:

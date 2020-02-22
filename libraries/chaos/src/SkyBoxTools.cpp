@@ -27,24 +27,24 @@ namespace chaos
 	{
 		4, 3,
 		{
-			glm::ivec3(0, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // left
-			glm::ivec3(2, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // right
-			glm::ivec3(1, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // top
-			glm::ivec3(1, 0, SkyBoxImages::IMAGE_NO_TRANSFORM), // bottom
-			glm::ivec3(1, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // front
-			glm::ivec3(3, 1, SkyBoxImages::IMAGE_NO_TRANSFORM)  // back	
+			glm::ivec3(0, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // left
+			glm::ivec3(2, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // right
+			glm::ivec3(1, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // top
+			glm::ivec3(1, 0, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // bottom
+			glm::ivec3(1, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // front
+			glm::ivec3(3, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM)  // back	
 		}
 	};
 	SkyBoxSingleDisposition const SkyBoxSingleDisposition::VerticalDisposition = 
 	{
 		3, 4,
 		{
-			glm::ivec3(0, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // left
-			glm::ivec3(2, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // right
-			glm::ivec3(1, 3, SkyBoxImages::IMAGE_NO_TRANSFORM), // top
-			glm::ivec3(1, 1, SkyBoxImages::IMAGE_NO_TRANSFORM), // bottom
-			glm::ivec3(1, 2, SkyBoxImages::IMAGE_NO_TRANSFORM), // front
-			glm::ivec3(1, 0, SkyBoxImages::IMAGE_CENTRAL_SYMETRY)  // back  	
+			glm::ivec3(0, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // left
+			glm::ivec3(2, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // right
+			glm::ivec3(1, 3, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // top
+			glm::ivec3(1, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // bottom
+			glm::ivec3(1, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // front
+			glm::ivec3(1, 0, SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY)  // back  	
 		}
 	};
 
@@ -211,7 +211,7 @@ namespace chaos
 			int dst_y = 0;
 
 			int flag = position_and_flags.z;
-			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY));
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY));
 
 			result.images[i] = image;
 			result.release_images[i] = true;
@@ -291,7 +291,7 @@ namespace chaos
 			int dst_y = bottom;
 
 			int flag = position_and_flags.z;
-			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImages::IMAGE_CENTRAL_SYMETRY));
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY));
 		}
 
 		return result;
@@ -454,7 +454,7 @@ namespace chaos
 	SkyBoxImages SkyBoxTools::LoadSingleSkyBox(FilePathParam const & path)
 	{  
 		SkyBoxImages result;
-		DoLoadMultipleSkyBox_OneImage(result, path, SkyBoxImages::IMAGE_SINGLE);
+		DoLoadMultipleSkyBox_OneImage(result, path, SkyBoxImageType::IMAGE_SINGLE);
 		return result;
 	}
 
@@ -462,12 +462,12 @@ namespace chaos
 	{
 		SkyBoxImages result;
 		if (
-			!DoLoadMultipleSkyBox_OneImage(result, left_image,   SkyBoxImages::IMAGE_LEFT)   ||
-			!DoLoadMultipleSkyBox_OneImage(result, right_image,  SkyBoxImages::IMAGE_RIGHT)  ||
-			!DoLoadMultipleSkyBox_OneImage(result, top_image,    SkyBoxImages::IMAGE_TOP)    ||
-			!DoLoadMultipleSkyBox_OneImage(result, bottom_image, SkyBoxImages::IMAGE_BOTTOM) ||
-			!DoLoadMultipleSkyBox_OneImage(result, front_image,  SkyBoxImages::IMAGE_FRONT)  ||
-			!DoLoadMultipleSkyBox_OneImage(result, back_image,   SkyBoxImages::IMAGE_BACK)
+			!DoLoadMultipleSkyBox_OneImage(result, left_image, SkyBoxImageType::IMAGE_LEFT)   ||
+			!DoLoadMultipleSkyBox_OneImage(result, right_image, SkyBoxImageType::IMAGE_RIGHT)  ||
+			!DoLoadMultipleSkyBox_OneImage(result, top_image, SkyBoxImageType::IMAGE_TOP)    ||
+			!DoLoadMultipleSkyBox_OneImage(result, bottom_image, SkyBoxImageType::IMAGE_BOTTOM) ||
+			!DoLoadMultipleSkyBox_OneImage(result, front_image, SkyBoxImageType::IMAGE_FRONT)  ||
+			!DoLoadMultipleSkyBox_OneImage(result, back_image, SkyBoxImageType::IMAGE_BACK)
 			)
 			result.Release(); // release whole object in case of error
 		return result;

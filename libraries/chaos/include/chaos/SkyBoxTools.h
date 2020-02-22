@@ -32,23 +32,29 @@ namespace chaos
 		glm::ivec3 image_position[6];
 	};
 
+	enum SkyBoxImageType : int // XXX: no class for automatic conversion to int
+	{
+		IMAGE_LEFT = 0,
+		IMAGE_RIGHT = 1,
+		IMAGE_TOP = 2,
+		IMAGE_BOTTOM = 3,
+		IMAGE_FRONT = 4,
+		IMAGE_BACK = 5,
+		IMAGE_SINGLE = 6,
+
+		IMAGE_FIRST_INDEX = IMAGE_LEFT,
+		IMAGE_LAST_INDEX = IMAGE_SINGLE
+	};
+
+	enum SkyBoxImageTransform : int // XXX: no class for automatic conversion to int
+	{
+		IMAGE_NO_TRANSFORM = 0,
+		IMAGE_CENTRAL_SYMETRY = 1,
+	};
+
 	class SkyBoxImages
 	{
 	public:
-
-		static int const IMAGE_LEFT   = 0;
-		static int const IMAGE_RIGHT  = 1;
-		static int const IMAGE_TOP    = 2;
-		static int const IMAGE_BOTTOM = 3;
-		static int const IMAGE_FRONT  = 4;
-		static int const IMAGE_BACK   = 5;
-		static int const IMAGE_SINGLE = 6;
-
-		static int const IMAGE_FIRST_INDEX = IMAGE_LEFT;
-		static int const IMAGE_LAST_INDEX  = IMAGE_SINGLE;
-
-		static int const IMAGE_NO_TRANSFORM    = 0;
-		static int const IMAGE_CENTRAL_SYMETRY = 1;
 
 		/** constructor */
 		SkyBoxImages() = default;

@@ -967,7 +967,7 @@ namespace death
 	bool Game::InitializeGamepadButtonInfo()
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
-#define DEATHGAME_ADD_BUTTONMAP(x, y) gamepad_button_map[chaos::MyGLFW::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
+#define DEATHGAME_ADD_BUTTONMAP(x, y) gamepad_button_map[chaos::XBoxButtonType::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
 		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_A, ButtonA);
 		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_B, ButtonB);
 		DEATHGAME_ADD_BUTTONMAP(XBOX_BUTTON_X, ButtonX);

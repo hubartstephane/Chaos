@@ -3,8 +3,6 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 
-#define CHAOS_WITH_GLFW_3_3 1
-
 // XXX: there are important changes in GLFW 3.3 relative to 3.1
 //
 //  -XBOX_RIGHT_AXIS_X and XBOX_RIGHT_AXIS_Y : are bound to other indices.
@@ -93,7 +91,6 @@ namespace chaos
 		/** index in buttons of RIGHT TRIGGER for XBOX like pad (this is a simulate button, while the physical right trigger is an axis) */
 		static int const XBOX_BUTTON_RIGHTTRIGGER = 102;
 
-#if CHAOS_WITH_GLFW_3_3 // GLFW 3.3
 		/** index in axis of LEFT X for XBOX like pad */
 		static int const XBOX_LEFT_AXIS_X = 0;
 		/** index in axis of LEFT Y for XBOX like pad */
@@ -108,20 +105,6 @@ namespace chaos
 		static int const XBOX_LEFT_TRIGGER = 4;
 		/** index in axis for the RIGHT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
 		static int const XBOX_RIGHT_TRIGGER = 5;
-#else // GLFW 3.1
-		/** index in axis of LEFT X for XBOX like pad */
-		static int const XBOX_LEFT_AXIS_X = 0;
-		/** index in axis of LEFT Y for XBOX like pad */
-		static int const XBOX_LEFT_AXIS_Y = 1; // STICK DOWN = positive values
-
-		/** index in axis of RIGHT Y for XBOX like pad */
-		static int const XBOX_RIGHT_AXIS_Y = 3;  // STICK DOWN = positive values
-		/** index in axis of RIGHT X for XBOX like pad */
-		static int const XBOX_RIGHT_AXIS_X = 4;
-
-		/** index in axis for the trigger for XBOX like pad */
-		static int const XBOX_TRIGGER = 2; // LEFT TRIGGER = positive values,  RIGHT TRIGGER = negative values
-#endif
 
 		/** returns the direction of left stick (beware the low level interface only knows for axis) */
 		static int const XBOX_LEFT_AXIS = 0;

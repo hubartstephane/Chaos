@@ -80,8 +80,8 @@ namespace death
 		if (gamepad_data == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::MyGLFW::BUTTON_BECOME_PRESSED) ||
-			(gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::MyGLFW::BUTTON_BECOME_PRESSED))
+		if ((gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_SELECT) == chaos::ButtonChangeType::BUTTON_BECOME_PRESSED) ||
+			(gamepad_data->GetButtonChanges(chaos::MyGLFW::XBOX_BUTTON_START) == chaos::ButtonChangeType::BUTTON_BECOME_PRESSED))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)

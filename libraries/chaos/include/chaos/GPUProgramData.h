@@ -97,9 +97,9 @@ namespace chaos
 	public:
 
 		/** see GPUVertexDeclaration */
-		int semantic;
+		SemanticType semantic = SemanticType::SEMANTIC_NONE;
 		/** see GPUVertexDeclaration */
-		int semantic_index;
+		int semantic_index = 0;
 	};
 
 	/**
@@ -117,7 +117,7 @@ namespace chaos
 		void DisplayProgramDiagnostic() const;
 
 		/** get the location for a given semantic/semantic_index */
-		GLint GetLocation(int semantic, int semantic_index) const;
+		GLint GetLocation(SemanticType semantic, int semantic_index) const;
 
 		/** bind the attributes */
 		void BindAttributes(GLuint vertex_array, GPUVertexDeclaration const & declaration, class GPUProgramProviderBase const * attribute_provider = nullptr) const;
@@ -149,7 +149,7 @@ namespace chaos
 	protected:
 
 		/** compute the semantic and semantic index from a name */
-		static std::string ExtractSemanticDataAndName(char const * attrib_name, std::pair<int, int> & semantic_data, bool & is_array);
+		static std::string ExtractSemanticDataAndName(char const * attrib_name, std::pair<SemanticType, int> & semantic_data, bool & is_array);
 		/** remove the '[' part from a variable name et returns if it is an array*/
 		static std::string ExtractVariableName(char const * name, bool & is_array);
 

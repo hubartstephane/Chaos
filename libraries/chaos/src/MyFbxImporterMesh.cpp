@@ -142,7 +142,7 @@ namespace chaos
 
 		/** if element is valid, this function insert a new GPUVertexDeclarationEntry in the declaration */
 		template<typename T>
-		static void UpdateVertexDeclarationWithGeometryElement(T const * element, GPUVertexDeclaration & vertex_declaration, int semantic, int semantic_index, int type)
+		static void UpdateVertexDeclarationWithGeometryElement(T const * element, GPUVertexDeclaration & vertex_declaration, SemanticType semantic, int semantic_index, int type)
 		{
 			if (IsGeometryElementValid(element))
 				vertex_declaration.Push(semantic, semantic_index, type);
@@ -210,22 +210,22 @@ namespace chaos
 			//
 			GPUVertexDeclaration vertex_declaration;
 
-			vertex_declaration.Push(SEMANTIC_POSITION, 0, TYPE_FLOAT3); // always containing a position
+			vertex_declaration.Push(SemanticType::SEMANTIC_POSITION, 0, TYPE_FLOAT3); // always containing a position
 
 			for (int i = 0; i < color_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementVertexColor(i), vertex_declaration, SEMANTIC_COLOR, i, TYPE_BYTE4);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementVertexColor(i), vertex_declaration, SemanticType::SEMANTIC_COLOR, i, TYPE_BYTE4);
 
 			for (int i = 0; i < uv_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementUV(i), vertex_declaration, SEMANTIC_TEXCOORD, i, TYPE_FLOAT2);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementUV(i), vertex_declaration, SemanticType::SEMANTIC_TEXCOORD, i, TYPE_FLOAT2);
 
 			for (int i = 0; i < normal_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementNormal(i), vertex_declaration, SEMANTIC_NORMAL, i, TYPE_FLOAT3);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementNormal(i), vertex_declaration, SemanticType::SEMANTIC_NORMAL, i, TYPE_FLOAT3);
 
 			for (int i = 0; i < binormal_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementBinormal(i), vertex_declaration, SEMANTIC_BINORMAL, i, TYPE_FLOAT3);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementBinormal(i), vertex_declaration, SemanticType::SEMANTIC_BINORMAL, i, TYPE_FLOAT3);
 
 			for (int i = 0; i < tangent_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementTangent(i), vertex_declaration, SEMANTIC_TANGENT, i, TYPE_FLOAT3);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementTangent(i), vertex_declaration, SemanticType::SEMANTIC_TANGENT, i, TYPE_FLOAT3);
 
 			//
 			// STEP 1.1 : search if there are some skinning information
@@ -236,8 +236,8 @@ namespace chaos
 			size_t max_bone_count = GetMaxBoneCount(bone_table);
 			for (size_t i = 0; i < max_bone_count; ++i)
 			{
-				vertex_declaration.Push(SEMANTIC_BONEWEIGHT, (int)i, TYPE_FLOAT1);
-				vertex_declaration.Push(SEMANTIC_BONEINDEX, (int)i, TYPE_INT1);
+				vertex_declaration.Push(SemanticType::SEMANTIC_BONEWEIGHT, (int)i, TYPE_FLOAT1);
+				vertex_declaration.Push(SemanticType::SEMANTIC_BONEINDEX, (int)i, TYPE_INT1);
 			}
 
 			int vertex_byte_size = vertex_declaration.GetVertexSize();

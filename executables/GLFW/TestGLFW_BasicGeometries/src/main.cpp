@@ -33,6 +33,7 @@ static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+
 static int EXAMPLE_COUNT = 0;
 
 static int const BOX2_DISPLAY_TEST			= EXAMPLE_COUNT++;

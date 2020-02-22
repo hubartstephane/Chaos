@@ -383,7 +383,7 @@ void SpriteLayer::UpdateGPUBuffer(GameInfo game_info)
 			Particle const & p = particles[j]; // only manage the particles corresponding to this model of sprite
 			if (p.id != id)
 				continue;
-			sprite_manager->AddSpriteBitmap(bitmap_info, p.position, 2.0f * p.half_size, chaos::Hotpoint::CENTER);
+			sprite_manager->AddSpriteBitmap(bitmap_info, p.position, 2.0f * p.half_size, chaos::HotpointType::CENTER);
 		}
 	}
 }

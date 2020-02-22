@@ -32,7 +32,7 @@ namespace chaos
 			/** constructor */
 			GeneratorParams() = default;
 			/** constructor */
-			GeneratorParams(char const * in_font_name, float in_line_height, glm::vec2 const & in_position, int in_hotpoint_type);
+			GeneratorParams(char const * in_font_name, float in_line_height, glm::vec2 const & in_position, HotpointType in_hotpoint_type);
 
 			/** data for JSON encoding/decoding */
 			static std::vector<std::pair<int, char const *>> const alignment_encoding;
@@ -65,7 +65,7 @@ namespace chaos
 			/** the position */
 			glm::vec2 position = glm::vec2(0.0f, 0.0f);
 			/** the hotpoint */
-			int hotpoint_type = Hotpoint::BOTTOM_LEFT;
+			HotpointType hotpoint_type = HotpointType::BOTTOM_LEFT;
 		};
 
 		/** json functions */

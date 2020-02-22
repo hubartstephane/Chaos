@@ -71,7 +71,7 @@ GameHUDUpgradeComponent::GameHUDUpgradeComponent(chaos::TagType in_layer_id) :
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(-40.0f, 100.0f);
-	generator_params.hotpoint_type = chaos::Hotpoint::BOTTOM_RIGHT;
+	generator_params.hotpoint_type = chaos::HotpointType::BOTTOM_RIGHT;
 }
 
 bool GameHUDUpgradeComponent::UpdateCachedValue(bool & destroy_allocation) 
@@ -151,7 +151,7 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 
 
 	glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint_type);
-	glm::vec2 particle_position = chaos::Hotpoint::Convert(screen_ref + position, particle_final_size, hotpoint_type, chaos::Hotpoint::CENTER);
+	glm::vec2 particle_position = chaos::Hotpoint::Convert(screen_ref + position, particle_final_size, hotpoint_type, chaos::HotpointType::CENTER);
 
 
 	//glm::vec2 particle_position = whole_particle_ref;

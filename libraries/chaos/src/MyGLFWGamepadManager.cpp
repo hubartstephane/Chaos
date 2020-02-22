@@ -77,8 +77,6 @@ namespace chaos
 
 		bool GamepadData::IsButtonPressed(size_t button_index, bool previous_frame) const
 		{
-
-#if CHAOS_WITH_GLFW_3_3
 			if (button_index == XBOX_BUTTON_LEFTTRIGGER)
 			{
 				float trigger_value = GetAxisValue(XBOX_LEFT_TRIGGER, previous_frame);
@@ -94,18 +92,6 @@ namespace chaos
 					return true;
 				return false;
 			}
-#else // GLFW 3.1
-  		// simulated buttons
-			if (button_index == XBOX_BUTTON_LEFTTRIGGER || button_index == XBOX_BUTTON_RIGHTTRIGGER)
-			{
-				float trigger_value = GetAxisValue(XBOX_TRIGGER, previous_frame);
-				if (trigger_value > 0 && button_index == XBOX_BUTTON_LEFTTRIGGER)
-					return true;
-				if (trigger_value < 0 && button_index == XBOX_BUTTON_RIGHTTRIGGER)
-					return true;
-				return false;
-			}
-#endif		
 
 			// standard input
 			size_t count = GetButtonCount();
@@ -218,10 +204,8 @@ namespace chaos
 				{
 					// update this frame value
 					float value = axis_buffer[i];
-#if CHAOS_WITH_GLFW_3_3
 					if (i == XBOX_LEFT_TRIGGER || i == XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
-#endif
 					axis[i].UpdateValue(value, dead_zone);
 					// initilize previous frame value 
 					axis[i + ac] = axis[i];
@@ -235,10 +219,8 @@ namespace chaos
 					axis[i + ac] = axis[i];
 					// update this frame value
 					float value = axis_buffer[i];
-#if CHAOS_WITH_GLFW_3_3
 					if (i == XBOX_LEFT_TRIGGER || i == XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
-#endif
 					axis[i].UpdateValue(value, dead_zone);
 				}
 			}

@@ -188,8 +188,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(SemanticType::SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-            result->Push(SemanticType::SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_POSITION, 0, VertexAttributeType::TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_NORMAL, 0, VertexAttributeType::TYPE_FLOAT3);
         }
         return result;
 	}
@@ -234,8 +234,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(SemanticType::SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-            result->Push(SemanticType::SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_POSITION, 0, VertexAttributeType::TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_NORMAL, 0, VertexAttributeType::TYPE_FLOAT3);
         }
         return result;
 	}
@@ -283,8 +283,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(SemanticType::SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-            result->Push(SemanticType::SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_POSITION, 0, VertexAttributeType::TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_NORMAL, 0, VertexAttributeType::TYPE_FLOAT3);
         }
         return result;
 	}
@@ -334,8 +334,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(SemanticType::SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-            result->Push(SemanticType::SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_POSITION, 0, VertexAttributeType::TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_NORMAL, 0, VertexAttributeType::TYPE_FLOAT3);
         }
         return result;
 	}
@@ -403,8 +403,8 @@ namespace chaos
         GPUVertexDeclaration* result = new GPUVertexDeclaration();
         if (result != nullptr)
         {
-            result->Push(SemanticType::SEMANTIC_POSITION, 0, TYPE_FLOAT3);
-            result->Push(SemanticType::SEMANTIC_NORMAL, 0, TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_POSITION, 0, VertexAttributeType::TYPE_FLOAT3);
+            result->Push(VertexAttributeSemantic::SEMANTIC_NORMAL, 0, VertexAttributeType::TYPE_FLOAT3);
         }
         return result;
 	}

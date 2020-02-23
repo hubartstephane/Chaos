@@ -14,9 +14,9 @@
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>)
 {
-	result->Push(chaos::SemanticType::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-    result->Push(chaos::SemanticType::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3);
-    result->Push(chaos::SemanticType::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
+	result->Push(chaos::VertexAttributeSemantic::SEMANTIC_POSITION, 0, chaos::VertexAttributeType::TYPE_FLOAT2);
+    result->Push(chaos::VertexAttributeSemantic::SEMANTIC_TEXCOORD, 0, chaos::VertexAttributeType::TYPE_FLOAT3);
+    result->Push(chaos::VertexAttributeSemantic::SEMANTIC_COLOR, 0, chaos::VertexAttributeType::TYPE_FLOAT4);
 }
 
 
@@ -132,11 +132,11 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexPowerUpZone>)
 {
-	result->Push(chaos::SemanticType::SEMANTIC_POSITION, 0, chaos::TYPE_FLOAT2);
-    result->Push(chaos::SemanticType::SEMANTIC_TEXCOORD, 0, chaos::TYPE_FLOAT3); // bottom-left of sprite in atlas
-    result->Push(chaos::SemanticType::SEMANTIC_COLOR, 0, chaos::TYPE_FLOAT4);
-    result->Push(chaos::SemanticType::SEMANTIC_TEXCOORD, 1, chaos::TYPE_FLOAT3); // top-right of sprite in atlas
-    result->Push(chaos::SemanticType::SEMANTIC_TEXCOORD, 2, chaos::TYPE_FLOAT2);
+	result->Push(chaos::VertexAttributeSemantic::SEMANTIC_POSITION, 0, chaos::VertexAttributeType::TYPE_FLOAT2);
+    result->Push(chaos::VertexAttributeSemantic::SEMANTIC_TEXCOORD, 0, chaos::VertexAttributeType::TYPE_FLOAT3); // bottom-left of sprite in atlas
+    result->Push(chaos::VertexAttributeSemantic::SEMANTIC_COLOR, 0, chaos::VertexAttributeType::TYPE_FLOAT4);
+    result->Push(chaos::VertexAttributeSemantic::SEMANTIC_TEXCOORD, 1, chaos::VertexAttributeType::TYPE_FLOAT3); // top-right of sprite in atlas
+    result->Push(chaos::VertexAttributeSemantic::SEMANTIC_TEXCOORD, 2, chaos::VertexAttributeType::TYPE_FLOAT2);
 }
 
 bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZone * particle)

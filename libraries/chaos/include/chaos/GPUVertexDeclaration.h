@@ -8,7 +8,7 @@
 namespace chaos
 {
 	/** the possible semantics */
-	enum class SemanticType : int
+	enum class VertexAttributeSemantic : int
 	{
 		SEMANTIC_NONE = -1,
 		SEMANTIC_POSITION = 0,
@@ -22,47 +22,44 @@ namespace chaos
 		SEMANTIC_USERDATA = 8
 	};
 
-	
-
-
-	/** the possible basic types */
-	static int const TYPE_FLOAT  = 1;
-	static int const TYPE_DOUBLE = 2;
-	static int const TYPE_HALF   = 3;
-	static int const TYPE_BYTE   = 4;
-	static int const TYPE_INT    = 5;
-
-	/** the possible count for vectors */
-	static int const TYPE_COUNT_1 = 1;
-	static int const TYPE_COUNT_2 = 2;
-	static int const TYPE_COUNT_3 = 3;
-	static int const TYPE_COUNT_4 = 4;
+	/** the possible component types */
+	enum class VertexAttributeComponentType : int // XXX : no class for implicit int conversion
+	{	
+		TYPE_FLOAT = 1,
+		TYPE_DOUBLE = 2,
+		TYPE_HALF = 3,
+		TYPE_BYTE = 4,
+		TYPE_INT = 5
+	};
 
 	/** the possible vector types */
-	static int const TYPE_FLOAT1 = (TYPE_FLOAT << 3) | TYPE_COUNT_1;
-	static int const TYPE_FLOAT2 = (TYPE_FLOAT << 3) | TYPE_COUNT_2;
-	static int const TYPE_FLOAT3 = (TYPE_FLOAT << 3) | TYPE_COUNT_3;
-	static int const TYPE_FLOAT4 = (TYPE_FLOAT << 3) | TYPE_COUNT_4;
+	enum class VertexAttributeType : int // XXX : no class for implicit int conversion
+	{		
+		TYPE_FLOAT1 = ((int)VertexAttributeComponentType::TYPE_FLOAT << 3) | 1,
+		TYPE_FLOAT2 = ((int)VertexAttributeComponentType::TYPE_FLOAT << 3) | 2,
+		TYPE_FLOAT3 = ((int)VertexAttributeComponentType::TYPE_FLOAT << 3) | 3,
+		TYPE_FLOAT4 = ((int)VertexAttributeComponentType::TYPE_FLOAT << 3) | 4,
 
-	static int const TYPE_DOUBLE1 = (TYPE_DOUBLE << 3) | TYPE_COUNT_1;
-	static int const TYPE_DOUBLE2 = (TYPE_DOUBLE << 3) | TYPE_COUNT_2;
-	static int const TYPE_DOUBLE3 = (TYPE_DOUBLE << 3) | TYPE_COUNT_3;
-	static int const TYPE_DOUBLE4 = (TYPE_DOUBLE << 3) | TYPE_COUNT_4;
+		TYPE_DOUBLE1 = ((int)VertexAttributeComponentType::TYPE_DOUBLE << 3) | 1,
+		TYPE_DOUBLE2 = ((int)VertexAttributeComponentType::TYPE_DOUBLE << 3) | 2,
+		TYPE_DOUBLE3 = ((int)VertexAttributeComponentType::TYPE_DOUBLE << 3) | 3,
+		TYPE_DOUBLE4 = ((int)VertexAttributeComponentType::TYPE_DOUBLE << 3) | 4,
 
-	static int const TYPE_HALF1 = (TYPE_HALF << 3) | TYPE_COUNT_1;
-	static int const TYPE_HALF2 = (TYPE_HALF << 3) | TYPE_COUNT_2;
-	static int const TYPE_HALF3 = (TYPE_HALF << 3) | TYPE_COUNT_3;
-	static int const TYPE_HALF4 = (TYPE_HALF << 3) | TYPE_COUNT_4;
+		TYPE_HALF1 = ((int)VertexAttributeComponentType::TYPE_HALF << 3) | 1,
+		TYPE_HALF2 = ((int)VertexAttributeComponentType::TYPE_HALF << 3) | 2,
+		TYPE_HALF3 = ((int)VertexAttributeComponentType::TYPE_HALF << 3) | 3,
+		TYPE_HALF4 = ((int)VertexAttributeComponentType::TYPE_HALF << 3) | 4,
 
-	static int const TYPE_BYTE1 = (TYPE_BYTE << 3) | TYPE_COUNT_1;
-	static int const TYPE_BYTE2 = (TYPE_BYTE << 3) | TYPE_COUNT_2;
-	static int const TYPE_BYTE3 = (TYPE_BYTE << 3) | TYPE_COUNT_3;
-	static int const TYPE_BYTE4 = (TYPE_BYTE << 3) | TYPE_COUNT_4;
+		TYPE_BYTE1 = ((int)VertexAttributeComponentType::TYPE_BYTE << 3) | 1,
+		TYPE_BYTE2 = ((int)VertexAttributeComponentType::TYPE_BYTE << 3) | 2,
+		TYPE_BYTE3 = ((int)VertexAttributeComponentType::TYPE_BYTE << 3) | 3,
+		TYPE_BYTE4 = ((int)VertexAttributeComponentType::TYPE_BYTE << 3) | 4,
 
-	static int const TYPE_INT1 = (TYPE_INT << 3) | TYPE_COUNT_1;
-	static int const TYPE_INT2 = (TYPE_INT << 3) | TYPE_COUNT_2;
-	static int const TYPE_INT3 = (TYPE_INT << 3) | TYPE_COUNT_3;
-	static int const TYPE_INT4 = (TYPE_INT << 3) | TYPE_COUNT_4;
+		TYPE_INT1 = ((int)VertexAttributeComponentType::TYPE_INT << 3) | 1,
+		TYPE_INT2 = ((int)VertexAttributeComponentType::TYPE_INT << 3) | 2,
+		TYPE_INT3 = ((int)VertexAttributeComponentType::TYPE_INT << 3) | 3,
+		TYPE_INT4 = ((int)VertexAttributeComponentType::TYPE_INT << 3) | 4,
+	};
 
 	/**
 	* Declaration of one component of a vertex
@@ -81,11 +78,11 @@ namespace chaos
 	public:
 
 		/** the semantic of the vertex component */
-		SemanticType semantic = SemanticType::SEMANTIC_NONE;
+		VertexAttributeSemantic semantic = VertexAttributeSemantic::SEMANTIC_NONE;
 		/** for repetition of the same semantic */
 		int semantic_index = 0;
 		/** the type of the vertex component */
-		int type = 0;
+		VertexAttributeType type;
 		/** offset of this entry from the beginning of the vertex */
 		int offset = 0;
 	};
@@ -101,7 +98,7 @@ namespace chaos
 		int GetVertexSize() const;
 
 		/** returns the number of elements for a given semantic */
-		int GetSemanticCount(SemanticType semantic) const;
+		int GetSemanticCount(VertexAttributeSemantic semantic) const;
 		/** returns the number of position */
 		int GetPositionCount() const;
 		/** returns the number of color */
@@ -114,14 +111,14 @@ namespace chaos
 	public:
 
 		/** insert an entry into the declaration */
-		void Push(SemanticType semantic, int semantic_index, int type);
+		void Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type);
 		/** reset the object */
 		void Clear(){ entries.clear(); }
 
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		GPUVertexDeclarationEntry const * GetEntry(SemanticType semantic, int semantic_index) const;
+		GPUVertexDeclarationEntry const * GetEntry(VertexAttributeSemantic semantic, int semantic_index) const;
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
-		GPUVertexDeclarationEntry * GetEntry(SemanticType semantic, int semantic_index);
+		GPUVertexDeclarationEntry * GetEntry(VertexAttributeSemantic semantic, int semantic_index);
 
 	public:
 

@@ -104,32 +104,32 @@ namespace chaos
 		// PropertyOwner methods
 		// ==========================================
 
-		Property * PropertyOwner::FindProperty(char const * name, int type_id)
+		Property * PropertyOwner::FindProperty(char const * name, PropertyType type_id)
 		{
 			return FindInternalProperty(name, type_id);
 		}
 
-		Property const * PropertyOwner::FindProperty(char const * name, int type_id) const
+		Property const * PropertyOwner::FindProperty(char const * name, PropertyType type_id) const
 		{
 			return FindInternalProperty(name, type_id);
 		}
 
 
-		Property * PropertyOwner::FindInternalProperty(char const * name, int type_id)
+		Property * PropertyOwner::FindInternalProperty(char const * name, PropertyType type_id)
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
+				if (type_id == PropertyType::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyType())
 					if (StringTools::Stricmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
 		}
 
-		Property const * PropertyOwner::FindInternalProperty(char const * name, int type_id) const
+		Property const * PropertyOwner::FindInternalProperty(char const * name, PropertyType type_id) const
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (type_id == Property::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyTypeID())
+				if (type_id == PropertyType::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyType())
 					if (StringTools::Stricmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
@@ -137,7 +137,7 @@ namespace chaos
 
 		int * PropertyOwner::FindPropertyInt(char const * name)
 		{
-			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_INT);
+			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_INT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetIntProperty();
@@ -145,7 +145,7 @@ namespace chaos
 
 		int const * PropertyOwner::FindPropertyInt(char const * name) const
 		{
-			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_INT);
+			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_INT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetIntProperty();
@@ -153,7 +153,7 @@ namespace chaos
 
 		float * PropertyOwner::FindPropertyFloat(char const * name)
 		{
-			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_FLOAT);
+			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_FLOAT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetFloatProperty();
@@ -161,7 +161,7 @@ namespace chaos
 
 		float const * PropertyOwner::FindPropertyFloat(char const * name) const
 		{
-			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_FLOAT);
+			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_FLOAT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetFloatProperty();
@@ -169,7 +169,7 @@ namespace chaos
 
 		bool * PropertyOwner::FindPropertyBool(char const * name)
 		{
-			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_BOOL);
+			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_BOOL);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetBoolProperty();
@@ -177,7 +177,7 @@ namespace chaos
 
 		bool const * PropertyOwner::FindPropertyBool(char const * name) const
 		{
-			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_BOOL);
+			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_BOOL);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetBoolProperty();
@@ -185,7 +185,7 @@ namespace chaos
 
 		std::string * PropertyOwner::FindPropertyString(char const * name)
 		{
-			Property * property = FindProperty(name, Property::PROPERTY_TYPEID_STRING);
+			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_STRING);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetStringProperty();
@@ -193,7 +193,7 @@ namespace chaos
 
 		std::string const * PropertyOwner::FindPropertyString(char const * name) const
 		{
-			Property const * property = FindProperty(name, Property::PROPERTY_TYPEID_STRING);
+			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_STRING);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetStringProperty();
@@ -238,7 +238,7 @@ namespace chaos
 				if (name_attribute == nullptr)
 					continue;
 				char const * property_name = name_attribute->Value();
-				if (FindInternalProperty(property_name, Property::PROPERTY_TYPEID_ANY) != nullptr) // and must be unique
+				if (FindInternalProperty(property_name, PropertyType::PROPERTY_TYPEID_ANY) != nullptr) // and must be unique
 					continue;
 
 				tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is NOT mandatory (for multiline strings, we use node->GetText())
@@ -327,7 +327,7 @@ namespace chaos
 		// GeometricObject methods
 		// ==========================================
 
-		Property * GeometricObject::FindProperty(char const * name, int type_id)
+		Property * GeometricObject::FindProperty(char const * name, PropertyType type_id)
 		{
 			Property * result = PropertyOwner::FindProperty(name, type_id);
 			if (result == nullptr && !StringTools::IsEmpty(type))
@@ -339,7 +339,7 @@ namespace chaos
 			return result;
 		}
 
-		Property const * GeometricObject::FindProperty(char const * name, int type_id) const
+		Property const * GeometricObject::FindProperty(char const * name, PropertyType type_id) const
 		{
 			Property const * result = PropertyOwner::FindProperty(name, type_id);
 			if (result == nullptr && !StringTools::IsEmpty(type))
@@ -573,7 +573,7 @@ namespace chaos
 			return result;
 		}
 
-		Property * GeometricObjectTile::FindProperty(char const * name, int type_id)
+		Property * GeometricObjectTile::FindProperty(char const * name, PropertyType type_id)
 		{
 			Property * result = GeometricObjectSurface::FindProperty(name, type_id);
 			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
@@ -589,7 +589,7 @@ namespace chaos
 			return result;
 		}
 
-		Property const * GeometricObjectTile::FindProperty(char const * name, int type_id) const 
+		Property const * GeometricObjectTile::FindProperty(char const * name, PropertyType type_id) const
 		{
 			Property const * result = GeometricObjectSurface::FindProperty(name, type_id);
 			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
@@ -692,7 +692,7 @@ namespace chaos
 			return true;
 		}
 
-		Property * TileData::FindProperty(char const * name, int type_id)
+		Property * TileData::FindProperty(char const * name, PropertyType type_id)
 		{
 			Property * result = PropertyOwner::FindProperty(name, type_id);
 			if (result == nullptr && !StringTools::IsEmpty(type))
@@ -704,7 +704,7 @@ namespace chaos
 			return result;
 		}
 
-		Property const * TileData::FindProperty(char const * name, int type_id) const
+		Property const * TileData::FindProperty(char const * name, PropertyType type_id) const
 		{
 			Property const * result = PropertyOwner::FindProperty(name, type_id);
 			if (result == nullptr && !StringTools::IsEmpty(type))
@@ -1096,7 +1096,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		Property * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, int type_id)
+		Property * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, PropertyType type_id)
 		{
 			if (StringTools::IsEmpty(type))
 				return nullptr;
@@ -1106,7 +1106,7 @@ namespace chaos
 			return definition->FindProperty(name, type_id);
 		}
 
-		Property const * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, int type_id) const
+		Property const * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, PropertyType type_id) const
 		{
 			if (StringTools::IsEmpty(type))
 				return nullptr;
@@ -1551,7 +1551,7 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 
 #undef CHAOS_IMPL_MANAGER_DOLOAD
 
-		Property * Manager::FindObjectProperty(char const * type, char const * name, int type_id)
+		Property * Manager::FindObjectProperty(char const * type, char const * name, PropertyType type_id)
 		{	
 			if (StringTools::IsEmpty(type))
 				return nullptr;
@@ -1568,7 +1568,7 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 			return nullptr;
 		}
 
-		Property const * Manager::FindObjectProperty(char const * type, char const * name, int type_id) const
+		Property const * Manager::FindObjectProperty(char const * type, char const * name, PropertyType type_id) const
 		{
 			if (StringTools::IsEmpty(type))
 				return nullptr;

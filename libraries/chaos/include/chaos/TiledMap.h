@@ -165,18 +165,21 @@ namespace chaos
 		// Property : base class for some properties
 		// ==========================================
 
+			/** types of particle */
+		enum class PropertyType
+		{
+			PROPERTY_TYPEID_ANY = 0,
+			PROPERTY_TYPEID_INT = 1,
+			PROPERTY_TYPEID_FLOAT = 2,
+			PROPERTY_TYPEID_BOOL = 3,
+			PROPERTY_TYPEID_STRING = 4
+		};
+
 		class Property : public BaseObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
-
-			/** types of particle */
-			static int const PROPERTY_TYPEID_ANY    = 0;
-			static int const PROPERTY_TYPEID_INT    = 1;
-			static int const PROPERTY_TYPEID_FLOAT  = 2;
-			static int const PROPERTY_TYPEID_BOOL   = 3;
-			static int const PROPERTY_TYPEID_STRING = 4;
 
 			/** constructor */
 			using BaseObject::BaseObject;
@@ -206,21 +209,21 @@ namespace chaos
 			/** returns the name of the property */
 			char const * GetName() const { return name.c_str(); }
 			/** returns the property type */
-			int GetPropertyTypeID() const { return property_type_id; }
+			PropertyType GetPropertyType() const { return type; }
 
 		protected:
 
 			/** the name of the property */
 			std::string name;
 			/** the type of the property */
-			int property_type_id = PROPERTY_TYPEID_ANY;
+			PropertyType type = PropertyType::PROPERTY_TYPEID_ANY;
 		};
 
 		// ==========================================
 		// PropertyTemplate : templated specialization for properties
 		// ==========================================
 
-		template<typename T, int TYPE_ID>
+		template<typename T, PropertyType TYPE_ID>
 		class PropertyTemplate : public Property
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
@@ -231,7 +234,7 @@ namespace chaos
 			PropertyTemplate(BaseObject * in_owner) :
 				Property(in_owner)
 			{
-				property_type_id = TYPE_ID;
+				type = TYPE_ID;
 			}
 
 			/** the type of the property */
@@ -275,10 +278,10 @@ namespace chaos
 		// Specialization of properties
 		// ==========================================
 
-		using PropertyInt = PropertyTemplate<int, Property::PROPERTY_TYPEID_INT>;
-		using PropertyFloat = PropertyTemplate<float, Property::PROPERTY_TYPEID_FLOAT>;
-		using PropertyBool = PropertyTemplate<bool, Property::PROPERTY_TYPEID_BOOL>;
-		using PropertyString = PropertyTemplate<std::string, Property::PROPERTY_TYPEID_STRING>;
+		using PropertyInt = PropertyTemplate<int, PropertyType::PROPERTY_TYPEID_INT>;
+		using PropertyFloat = PropertyTemplate<float, PropertyType::PROPERTY_TYPEID_FLOAT>;
+		using PropertyBool = PropertyTemplate<bool, PropertyType::PROPERTY_TYPEID_BOOL>;
+		using PropertyString = PropertyTemplate<std::string, PropertyType::PROPERTY_TYPEID_STRING>;
 
 		// ==========================================
 		// PropertyOwner : some objects that have dynamic properties
@@ -294,14 +297,14 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** find property by name */
-			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY);
 			/** find property by name */
-			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const;
 
 			/** find property without looking elsewhere than our own table */
-			Property * FindInternalProperty(char const * name, int type_id);
+			Property * FindInternalProperty(char const * name, PropertyType type_id);
 			/** find property without looking elsewhere than our own table */
-			Property const * FindInternalProperty(char const * name, int type_id) const;
+			Property const * FindInternalProperty(char const * name, PropertyType type_id) const;
 
 			/** find a property of type int */
 			int * FindPropertyInt(char const * name);
@@ -411,9 +414,9 @@ namespace chaos
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** override */
-			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) override;
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const override;
 
 			/** loading method from XML */
 			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
@@ -653,9 +656,9 @@ namespace chaos
 			virtual box2 GetBoundingBox(bool world_system) const override;
 
 			/** override */
-			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) override;
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const override;
 
 		protected:
 
@@ -715,9 +718,9 @@ namespace chaos
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** override */
-			virtual Property * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) override;
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const override;
 
 			/** initialize terrain indices from string */
 			bool ComputeTerrainIndices(char const * str);
@@ -1009,9 +1012,9 @@ namespace chaos
 			ObjectTypeDefinition const * FindObjectType(char const * name) const;
 
 			/** find the property in an ObjectType */
-			Property * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
+			Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY);
 			/** find the property in an ObjectType */
-			Property const * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
+			Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const;
 
 
 			/** returns the number of object type */
@@ -1305,9 +1308,9 @@ namespace chaos
 			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
 
 			/** find the property in an ObjectTypeSet */
-			virtual Property * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY);
+			virtual Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY);
 			/** find the property in an ObjectTypeSet */
-			virtual Property const * FindObjectProperty(char const * type, char const * name, int type_id = Property::PROPERTY_TYPEID_ANY) const;
+			virtual Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const;
 
 			/** returns the number of map */
 			size_t GetMapCount() const { return maps.size();}

@@ -13,6 +13,10 @@ namespace chaos
 {
 	namespace TiledMap
 	{
+		// ==========================================
+		// Utility methods
+		// ==========================================
+
 		int GetHEXCharacterCount(char const * c)
 		{
 			int result = 0;
@@ -476,20 +480,20 @@ namespace chaos
 
 			tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
 
-			std::pair<char const*, int> const halign_map[] = {
-				{ "left", HALIGN_LEFT },
-				{ "center", HALIGN_CENTER },
-				{ "right", HALIGN_RIGHT },
-				{ "justify", HALIGN_JUSTIFY },
-				{ nullptr, HALIGN_LEFT }
+			static std::vector<std::pair<ObjectTextHAlignment, char const*>> const halign_map = {
+				{ ObjectTextHAlignment::HALIGN_LEFT, "left" },
+				{ ObjectTextHAlignment::HALIGN_CENTER, "center" },
+				{ ObjectTextHAlignment::HALIGN_RIGHT, "right" },
+				{ ObjectTextHAlignment::HALIGN_JUSTIFY, "justify" },
+				{ ObjectTextHAlignment::HALIGN_LEFT, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(text_element, "halign", halign_map, halign);
 
-			std::pair<char const*, int> const valign_map[] = {
-				{ "top", VALIGN_TOP },
-				{ "center", VALIGN_CENTER },
-				{ "bottom", VALIGN_BOTTOM },
-				{ nullptr, VALIGN_TOP }
+			static std::vector<std::pair<ObjectTextVAlignment, char const*>> const valign_map = {
+				{ ObjectTextVAlignment::VALIGN_TOP, "top" },
+				{ ObjectTextVAlignment::VALIGN_CENTER, "center" },
+				{ ObjectTextVAlignment::VALIGN_BOTTOM, "bottom" },
+				{ ObjectTextVAlignment::VALIGN_TOP, nullptr  }
 			};
 			XMLTools::ReadEnumAttribute(text_element, "valign", valign_map, valign);
 
@@ -817,9 +821,9 @@ namespace chaos
 
 			ReadXMLColor(element, "color", color);
 
-			std::pair<char const*, int> const draw_order_map[] = {
-				{ "index", DRAW_ORDER_MANUAL },
-				{ nullptr, DRAW_ORDER_TOPDOWN }
+			static std::vector<std::pair<DrawOrder, char const*>> const draw_order_map = {
+				{ DrawOrder::DRAW_ORDER_MANUAL, "index"  },
+				{ DrawOrder::DRAW_ORDER_TOPDOWN, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "draworder", draw_order_map, draw_order);
 
@@ -1173,9 +1177,9 @@ namespace chaos
 			tinyxml2::XMLElement const * grid_element = element->FirstChildElement("grid");
 			if (grid_element != nullptr)
 			{
-				std::pair<char const*, int> const orientation_map[] = {
-					{ "isometric", ORIENTATION_ISOMETRIC },
-					{ nullptr, ORIENTATION_ORTHOGONAL }
+				static std::vector<std::pair<TileSetOrientation, char const*>> const orientation_map = {
+					{ TileSetOrientation::ORIENTATION_ISOMETRIC, "isometric" },
+					{ TileSetOrientation::ORIENTATION_ORTHOGONAL, nullptr }
 				};
 				XMLTools::ReadEnumAttribute(grid_element, "orientation", orientation_map, orientation);
 
@@ -1215,33 +1219,35 @@ namespace chaos
 
 		bool Map::DoLoadMembers(tinyxml2::XMLElement const * element)
 		{
-			std::pair<char const*, int> const orient_map[] = {
-				{ "orthogonal", ORIENTATION_ORTHOGONAL },
-				{ "isometric" , ORIENTATION_ISOMETRIC },
-				{ "staggered" , ORIENTATION_STAGGERED },
-				{ "hexagonal" , ORIENTATION_HEXAGONAL },
-				{ nullptr, 0 }
+			static std::vector<std::pair<MapOrientation, char const*>> const orient_map = {
+				{ MapOrientation::ORIENTATION_ORTHOGONAL, "orthogonal" },
+				{ MapOrientation::ORIENTATION_ISOMETRIC, "isometric" },
+				{ MapOrientation::ORIENTATION_STAGGERED, "staggered" },
+				{ MapOrientation::ORIENTATION_HEXAGONAL, "hexagonal" },
+				{ MapOrientation::ORIENTATION_ORTHOGONAL, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "orientation", orient_map, orientation);
 
-			std::pair<char const*, int> const stagger_axis_map[] = {
-				{ "Y", STAGGERED_AXIS_Y },
-				{ nullptr, STAGGERED_AXIS_X }
+			static std::vector < std::pair<StaggerAxis, char const*>> const stagger_axis_map = {
+				{ StaggerAxis::STAGGERED_AXIS_X, "X",  },
+				{ StaggerAxis::STAGGERED_AXIS_Y, "Y",  },
+				{ StaggerAxis::STAGGERED_AXIS_X, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "staggeraxis", stagger_axis_map, stagger_axis);
 
-			std::pair<char const*, int> const stagger_index_map[] = {
-				{ "even", STAGGERED_INDEX_EVEN },
-				{ nullptr, STAGGERED_INDEX_ODD }
+			static std::vector<std::pair<StaggerIndex, char const*>> const stagger_index_map = {
+				{ StaggerIndex::STAGGERED_INDEX_ODD, "odd" },
+				{ StaggerIndex::STAGGERED_INDEX_EVEN, "even" },				
+				{ StaggerIndex::STAGGERED_INDEX_ODD, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "staggerindex", stagger_index_map, stagger_index);
 
-			std::pair<char const*, int> const render_order_map[] = {
-				{ "right-up", RENDER_ORDER_RIGHT_UP },
-				{ "right-down", RENDER_ORDER_RIGHT_DOWN },
-				{ "left-up", RENDER_ORDER_LEFT_UP },
-				{ "left-down", RENDER_ORDER_LEFT_DOWN },
-				{ nullptr, 0 }
+			static std::vector<std::pair<RenderOrder, char const*>> const render_order_map = {
+				{ RenderOrder::RENDER_ORDER_RIGHT_UP, "right-up" },
+				{ RenderOrder::RENDER_ORDER_RIGHT_DOWN, "right-down" },
+				{ RenderOrder::RENDER_ORDER_LEFT_UP, "left-up" },
+				{ RenderOrder::RENDER_ORDER_LEFT_DOWN, "left-down" },
+				{ RenderOrder::RENDER_ORDER_RIGHT_UP, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "renderorder", render_order_map, render_order);
 

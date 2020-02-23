@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/EnumTools.h>
 
 namespace chaos
 {
@@ -62,7 +63,20 @@ namespace chaos
 		/** Find an attribute a read into result */
 		static bool ReadAttribute(tinyxml2::XMLElement const * element, char const * attribute_name, boost::filesystem::path & result);
 		/** Find an attribute, read it as a string an find corresponding value in translation map (returns very last value in case of failure) */
-		static bool ReadEnumAttribute(tinyxml2::XMLElement const * element, char const * name, std::pair<char const *, int> const * values, int & result_value);
+		template<typename T, typename ENCODE_TABLE>
+		static bool ReadEnumAttribute(tinyxml2::XMLElement const* element, char const* attribute_name, ENCODE_TABLE const& encode_table, T& dst)
+		{	
+			// read attribute and convert into enum
+			std::string str;
+			if (ReadAttribute(element, attribute_name, str))
+				return EnumTools::StringToEnum(str.c_str(), encode_table, dst);
+			// find the very last entry to get the default value
+			size_t i = 0;
+			while (encode_table[i].second != nullptr)
+				++i;
+			dst = encode_table[i].first;
+			return false;
+		}
 
 	protected:
 

@@ -181,32 +181,5 @@ namespace chaos
 		return ReadAttribute(attribute, result);
 	}
 
-	bool XMLTools::ReadEnumAttribute(tinyxml2::XMLElement const * element, char const * name, std::pair<char const *, int> const * values, int & result_value)
-	{
-		assert(values != nullptr);
-		std::string str;
-
-		bool result = false;
-
-		int i = 0;
-		if (ReadAttribute(element, name, str)) // if not found, value for 
-		{        
-			while (values[i].first != nullptr)
-			{
-				result = str == values[i].first;
-				if (result)
-					break;           
-				++i;
-			} 
-		}
-		else
-		{
-			while (values[i].first != nullptr) // find the very last entry to get the default value
-				++i;      
-		}
-		result_value = values[i].second;
-		return result;
-	}
-
 }; // namespace chaos
 

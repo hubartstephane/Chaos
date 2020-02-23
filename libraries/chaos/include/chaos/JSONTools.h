@@ -5,7 +5,21 @@
 #include <chaos/Buffer.h>
 #include <chaos/SmartPointers.h>
 #include <chaos/StringTools.h>
+#include <chaos/EnumTools.h>
 
+// =================
+// Some macros for enum json reading
+// =================
+
+#define CHAOS_IMPLEMENT_ENUMJSON_METHOD(enum_type, table_name)\
+bool LoadFromJSON(nlohmann::json const& json_entry, enum_type& dst)\
+{\
+	return LoadEnumFromJSON(json_entry, table_name, dst);\
+}\
+bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
+{\
+	return SaveEnumIntoJSON(json_entry, table_name, src);\
+}\
 
 // =================
 // EXTERNAL FUNCTION
@@ -148,19 +162,19 @@ namespace chaos
 	template<typename T, typename ENCODE_TABLE>	
 	bool SaveEnumIntoJSON(nlohmann::json& json_entry, ENCODE_TABLE const& encode_table, T const& src)
 	{
-		std::string encoded_src;
-		if (!JSONTools::EncodeEnum(src, encode_table, encoded_src))
+		std::string encoded_str;
+		if (!EnumTools::EnumToString(src, encode_table, encoded_str))
 			return false;
-		return SaveIntoJSON(json_entry, encoded_src);
+		return SaveIntoJSON(json_entry, encoded_str);
 	}
 
 	template<typename T, typename ENCODE_TABLE>
 	bool LoadEnumFromJSON(nlohmann::json const& json_entry, ENCODE_TABLE const& encode_table, T & dst)
 	{
-		std::string encoded_src;
-		if (!LoadFromJSON(json_entry, encoded_src))
+		std::string encoded_str;
+		if (!LoadFromJSON(json_entry, encoded_str))
 			return false;
-		if (!JSONTools::DecodeEnum(encoded_src.c_str(), encode_table, dst))
+		if (!EnumTools::StringToEnum(encoded_str.c_str(), encode_table, dst))
 			return false;
 		return true;
 	}
@@ -225,7 +239,7 @@ namespace chaos
 		static bool SetEnumAttribute(nlohmann::json & entry, char const * name, ENCODE_TABLE const & encode_table, T const & src)
 		{
 			std::string encoded_src;
-			if (!EncodeEnum(src, encode_table, encoded_src))
+			if (!EnumTools::EnumToString(src, encode_table, encoded_src))
 				return false;
 			return SetAttribute(entry, name, encoded_src);
 		}
@@ -235,7 +249,7 @@ namespace chaos
 		static bool SetEnumAttributeByIndex(nlohmann::json & entry, size_t index, ENCODE_TABLE const & encode_table, T const & src)
 		{
 			std::string encoded_src;
-			if (!EncodeEnum(src, encode_table, encoded_src))
+			if (!EnumTools::EnumToString(src, encode_table, encoded_src))
 				return false;
 			return SetAttributeByIndex(entry, index, encoded_src);
 		}
@@ -289,7 +303,7 @@ namespace chaos
 			std::string str_result;
 			if (!GetAttribute(entry, name, str_result))
 				return false;
-			return DecodeEnum(str_result.c_str(), encode_table, result);
+			return EnumTools::StringToEnum(str_result.c_str(), encode_table, result);
 		}
 
 		/** reading an attribute and make a lookup on an encoding table */
@@ -299,7 +313,7 @@ namespace chaos
 			std::string str_result;
 			if (!GetAttributeByIndex(entry, index, str_result))
 				return false;
-			return DecodeEnum(str_result.c_str(), encode_table, result);
+			return EnumTools::StringToEnum(str_result.c_str(), encode_table, result);
 		}
 
 		/** reading an attribute and make a lookup on an encoding table with a default value */
@@ -319,36 +333,6 @@ namespace chaos
 			if (GetEnumAttributeByIndex(entry, index, encode_table, result))
 				return true;
 			result = default_value;
-			return false;
-		}
-
-		/** decode a value with a conversion table */
-		template<typename T, typename ENCODE_TABLE>
-		static bool DecodeEnum(char const * str, ENCODE_TABLE const & encode_table, T & result)
-		{
-			for (auto const & encode : encode_table)
-			{
-				if (StringTools::Stricmp(str, encode.second) == 0)
-				{
-					result = encode.first;
-					return true;
-				}
-			}
-			return false;
-		}
-
-		/** encode a value with a conversion table */
-		template<typename T, typename ENCODE_TABLE>
-		static bool EncodeEnum(T const & src, ENCODE_TABLE const & encode_table, std::string & result)
-		{
-			for (auto const & encode : encode_table)
-			{
-				if (src == encode.first)
-				{
-					result = encode.second;
-					return true;
-				}
-			}
 			return false;
 		}
 	};

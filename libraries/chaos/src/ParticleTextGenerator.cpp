@@ -9,16 +9,7 @@
 namespace chaos
 {
 	namespace ParticleTextGenerator
-	{
-		
-		std::vector<std::pair<int, char const *>> const GeneratorParams::alignment_encoding =
-		{
-			{ GeneratorParams::ALIGN_LEFT, "left" },
-			{ GeneratorParams::ALIGN_RIGHT, "right" },
-			{ GeneratorParams::ALIGN_CENTER, "center" },
-			{ GeneratorParams::ALIGN_JUSTIFY, "justify" }
-		};
-
+	{	
 		GeneratorParams::GeneratorParams(char const * in_font_info_name, float in_line_height, glm::vec2 const & in_position, HotpointType in_hotpoint_type):
 			line_height(in_line_height),
 			font_info_name(in_font_info_name),
@@ -39,7 +30,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "max_text_width", src.max_text_width);
 			JSONTools::SetAttribute(json_entry, "word_wrap", src.word_wrap);
 			JSONTools::SetAttribute(json_entry, "justify_space_factor", src.justify_space_factor);
-			JSONTools::SetEnumAttribute(json_entry, "alignment", GeneratorParams::alignment_encoding, src.alignment);
+			JSONTools::SetAttribute(json_entry, "alignment", src.alignment);
 			JSONTools::SetAttribute(json_entry, "default_color", src.default_color);
 			JSONTools::SetAttribute(json_entry, "font_info_name", src.font_info_name);
 			JSONTools::SetAttribute(json_entry, "tab_size", src.tab_size);
@@ -59,7 +50,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "max_text_width", dst.max_text_width);
 			JSONTools::GetAttribute(json_entry, "word_wrap", dst.word_wrap);
 			JSONTools::GetAttribute(json_entry, "justify_space_factor", dst.justify_space_factor);
-			JSONTools::GetEnumAttribute(json_entry, "alignment", GeneratorParams::alignment_encoding, dst.alignment);
+			JSONTools::GetAttribute(json_entry, "alignment", dst.alignment);
 			JSONTools::GetAttribute(json_entry, "default_color", dst.default_color);
 			JSONTools::GetAttribute(json_entry, "font_info_name", dst.font_info_name);
 			JSONTools::GetAttribute(json_entry, "tab_size", dst.tab_size);
@@ -652,11 +643,11 @@ namespace chaos
 		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data)
 		{
 			// left align : nothing to do
-			if (params.alignment == GeneratorParams::ALIGN_LEFT)
+			if (params.alignment == TextAlignment::ALIGN_LEFT)
 				return true;
 
 			// justifaction : cannot increase line size if the factor is below 1.0
-			if (params.alignment == GeneratorParams::ALIGN_JUSTIFY && params.justify_space_factor <= 1.0f)
+			if (params.alignment == TextAlignment::ALIGN_JUSTIFY && params.justify_space_factor <= 1.0f)
 				return true;
 
 			// compute the whole text bounding box
@@ -680,17 +671,17 @@ namespace chaos
 						continue;
 
 					// right align
-					if (params.alignment == GeneratorParams::ALIGN_RIGHT)
+					if (params.alignment == TextAlignment::ALIGN_RIGHT)
 					{
 						MoveParticles(line, glm::vec2(W1 - W2, 0.0f));
 					}
 					// center align
-					else if (params.alignment == GeneratorParams::ALIGN_CENTER)
+					else if (params.alignment == TextAlignment::ALIGN_CENTER)
 					{
 						MoveParticles(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
 					}
 					// justification
-					else if (params.alignment == GeneratorParams::ALIGN_JUSTIFY && W2 < W1) // cannot justify to decrease line size 
+					else if (params.alignment == TextAlignment::ALIGN_JUSTIFY && W2 < W1) // cannot justify to decrease line size 
 					{
 						// count the total size of whitespace token						
 						float whitespace_width = 0.0f;

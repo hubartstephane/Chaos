@@ -7,11 +7,10 @@
 #include <chaos/ParticleTools.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/ParticleManager.h>
+#include <chaos/TextAlignment.h>
 
 namespace chaos
 {
-
-
 	namespace ParticleTextGenerator
 	{
 		/**
@@ -22,20 +21,10 @@ namespace chaos
 		{
 		public:
 
-			static int const ALIGN_LEFT = 0;
-			static int const ALIGN_RIGHT = 1;
-			static int const ALIGN_CENTER = 2;
-			static int const ALIGN_JUSTIFY = 3;
-
-		public:
-
 			/** constructor */
 			GeneratorParams() = default;
 			/** constructor */
 			GeneratorParams(char const * in_font_name, float in_line_height, glm::vec2 const & in_position, HotpointType in_hotpoint_type);
-
-			/** data for JSON encoding/decoding */
-			static std::vector<std::pair<int, char const *>> const alignment_encoding;
 
 		public:
 
@@ -54,7 +43,7 @@ namespace chaos
 			/** the maximum factor for space to apply when lines are to be justified. if a greater value should be applyed, ignore justification */
 			float justify_space_factor = 2.0f;
 			/** the line alignment */
-			int alignment = ALIGN_LEFT;
+			TextAlignment alignment = TextAlignment::ALIGN_LEFT;
 			/** the color to use by default */
 			glm::vec4 default_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			/** the font to use by default */

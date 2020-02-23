@@ -17,6 +17,17 @@ namespace chaos
 		{ HotpointType::CENTER, "center" }
 	};
 
+	bool LoadFromJSON(nlohmann::json const& json_entry, HotpointType& dst)
+	{
+		return LoadEnumFromJSON(json_entry, hotpoint_encoding, dst);
+	}
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, HotpointType const& src)
+	{
+		return SaveEnumIntoJSON(json_entry, hotpoint_encoding, src);
+	}
+
+
 	glm::vec2 ConvertHotpoint(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType initial_hotpoint_type, HotpointType final_hotpoint_type)
 	{
 		if (initial_hotpoint_type == final_hotpoint_type)
@@ -56,16 +67,6 @@ namespace chaos
 		result.x += size.x * offset_factor[h_part];
 		result.y += size.y * offset_factor[v_part];
 		return result;
-	}
-
-	bool LoadFromJSON(nlohmann::json const& json_entry, HotpointType& dst)
-	{		
-		return LoadEnumFromJSON(json_entry, hotpoint_encoding, dst);
-	}
-
-	bool SaveIntoJSON(nlohmann::json& json_entry, HotpointType const& src)
-	{
-		return SaveEnumIntoJSON(json_entry, hotpoint_encoding, src);
 	}
 
 }; // namespace chaos

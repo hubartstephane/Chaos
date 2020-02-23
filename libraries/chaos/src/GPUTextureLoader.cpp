@@ -219,7 +219,7 @@ namespace chaos
 	//  v
 	//
 
-	int GPUTextureLoader::GetCubeMapLayerValueFromSkyBoxFace(int face, int level)
+	int GPUTextureLoader::GetCubeMapLayerValueFromSkyBoxFace(SkyBoxImageType face, int level)
 	{
 #if 0
 		// previous code was using GL_enum
@@ -296,10 +296,10 @@ namespace chaos
 		bool conversion_required[6] = { false, false, false, false, false, false };
 		bool central_symetry[6] = { false, false, false, false, false, false };
 
-		for (int i = SkyBoxImageType::IMAGE_LEFT; i <= SkyBoxImageType::IMAGE_BACK; ++i)
+		for (size_t i = (int)SkyBoxImageType::IMAGE_LEFT; i <= (int)SkyBoxImageType::IMAGE_BACK; ++i)
 		{
 			// ensure the image is valid and not empty
-			ImageDescription image = skybox->GetImageFaceDescription(i);
+			ImageDescription image = skybox->GetImageFaceDescription((SkyBoxImageType)i);
 			if (image.data == nullptr || !image.pixel_format.IsValid())
 				continue;
 			face_valid[i] = true;
@@ -310,8 +310,8 @@ namespace chaos
 
 			if (is_single_image)
 			{
-				glm::ivec3 position_and_flags = skybox->GetPositionAndFlags(i);
-				if (position_and_flags.z == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY)
+				glm::ivec3 position_and_flags = skybox->GetPositionAndFlags((SkyBoxImageType)i);
+				if (position_and_flags.z == (int)SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY)
 					central_symetry[i] = conversion_required[i] = true;
 			}
 			// compute memory required
@@ -342,14 +342,14 @@ namespace chaos
 			glTextureStorage2D(texture_id, level_count, gl_final_pixel_format.internal_format, size, size);
 
 			// fill the faces in GPU with the images of SkyBox
-			for (int i = SkyBoxImageType::IMAGE_LEFT; i <= SkyBoxImageType::IMAGE_BACK; ++i)
+			for (size_t i = (int)SkyBoxImageType::IMAGE_LEFT; i <= (int)SkyBoxImageType::IMAGE_BACK; ++i)
 			{
 				// ensure the image is valid and not empty
 				if (!face_valid[i])
 					continue;
 
 				// do the conversion, central symetry
-				ImageDescription image = skybox->GetImageFaceDescription(i);
+				ImageDescription image = skybox->GetImageFaceDescription((SkyBoxImageType)i);
 
 				ImageDescription effective_image = (conversion_required[i]) ?
 					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]) :
@@ -362,7 +362,7 @@ namespace chaos
 				if (texture_buffer != nullptr)
 				{
 					// fill GPU
-					int depth = GetCubeMapLayerValueFromSkyBoxFace(i, 0);
+					int depth = GetCubeMapLayerValueFromSkyBoxFace((SkyBoxImageType)i, 0);
 
 					GLPixelFormat gl_face_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
 

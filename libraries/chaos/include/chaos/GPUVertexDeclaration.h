@@ -23,7 +23,7 @@ namespace chaos
 	};
 
 	/** the possible component types */
-	enum class VertexAttributeComponentType : int // XXX : no class for implicit int conversion
+	enum class VertexAttributeComponentType : int
 	{	
 		TYPE_FLOAT = 1,
 		TYPE_DOUBLE = 2,
@@ -33,7 +33,7 @@ namespace chaos
 	};
 
 	/** the possible vector types */
-	enum class VertexAttributeType : int // XXX : no class for implicit int conversion
+	enum class VertexAttributeType : int
 	{		
 		TYPE_FLOAT1 = ((int)VertexAttributeComponentType::TYPE_FLOAT << 3) | 1,
 		TYPE_FLOAT2 = ((int)VertexAttributeComponentType::TYPE_FLOAT << 3) | 2,

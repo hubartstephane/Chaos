@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	enum HotpointType : int // XXX : no class, so we can make implicit int conversion
+	enum class HotpointType : int
 	{
 		LEFT = 1,
 		RIGHT = 2,

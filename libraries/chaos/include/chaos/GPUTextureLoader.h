@@ -69,7 +69,7 @@ namespace chaos
 	protected:
 
 		/** for cubemap texture, returns a layer index depending on the face considered */
-		static int GetCubeMapLayerValueFromSkyBoxFace(int face, int level = 0);
+		static int GetCubeMapLayerValueFromSkyBoxFace(SkyBoxImageType face, int level = 0);
 
 
 		/** search whether the path is already in used in the manager */

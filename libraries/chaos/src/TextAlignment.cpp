@@ -11,14 +11,6 @@ namespace chaos
 		{ TextAlignment::ALIGN_JUSTIFY, "justify" }
 	};
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, TextAlignment& dst)
-	{
-		return LoadEnumFromJSON(json_entry, alignment_encoding, dst);
-	}
-
-	bool SaveIntoJSON(nlohmann::json& json_entry, TextAlignment const& src)
-	{
-		return SaveEnumIntoJSON(json_entry, alignment_encoding, src);
-	}
+	CHAOS_IMPLEMENT_ENUMJSON_METHOD(TextAlignment, alignment_encoding);
 
 }; // namespace chaos

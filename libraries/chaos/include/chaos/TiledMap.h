@@ -594,20 +594,24 @@ namespace chaos
 		// GeometricObjectText
 		// ==========================================
 
+		enum class ObjectTextHAlignment : int
+		{
+			HALIGN_LEFT = 0,
+			HALIGN_CENTER = 1,
+			HALIGN_RIGHT = 2,
+			HALIGN_JUSTIFY = 3
+		};
+
+		enum class ObjectTextVAlignment : int
+		{
+			VALIGN_TOP = 0,
+			VALIGN_CENTER = 1,
+			VALIGN_BOTTOM = 2
+		};
+
 		class GeometricObjectText : public GeometricObjectSurface
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
-
-		public:
-
-			static int const HALIGN_LEFT = 0;
-			static int const HALIGN_CENTER = 1;
-			static int const HALIGN_RIGHT = 2;
-			static int const HALIGN_JUSTIFY = 3;
-
-			static int const VALIGN_TOP = 0;
-			static int const VALIGN_CENTER = 1;
-			static int const VALIGN_BOTTOM = 2;
 
 		public:
 
@@ -625,9 +629,9 @@ namespace chaos
 		public:
 
 			/** object information */
-			int halign = HALIGN_LEFT;
+			ObjectTextHAlignment halign = ObjectTextHAlignment::HALIGN_LEFT;
 			/** object information */
-			int valign = VALIGN_TOP;
+			ObjectTextVAlignment valign = ObjectTextVAlignment::VALIGN_TOP;
 			/** object information */
 			std::string fontfamily;
 			/** object information */
@@ -840,12 +844,15 @@ namespace chaos
 		// ObjectLayer
 		// ==========================================
 
+		enum class DrawOrder
+		{
+			DRAW_ORDER_MANUAL = 0,
+			DRAW_ORDER_TOPDOWN = 1
+		};
+
 		class ObjectLayer : public LayerBase
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
-
-			static int const DRAW_ORDER_MANUAL = 0;
-			static int const DRAW_ORDER_TOPDOWN = 1;
 
 		public:
 
@@ -871,7 +878,7 @@ namespace chaos
 			/** object information */
 			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** object information */
-			int       draw_order = DRAW_ORDER_MANUAL;
+			DrawOrder draw_order = DrawOrder::DRAW_ORDER_MANUAL;
 
 			/** the properties of the object */
 			std::vector<shared_ptr<GeometricObject>> geometric_objects;
@@ -1048,10 +1055,14 @@ namespace chaos
 		// TileSet
 		// ==========================================
 
+		enum class TileSetOrientation : int
+		{
+			ORIENTATION_ORTHOGONAL = 0,
+			ORIENTATION_ISOMETRIC = 1
+		};
+
 		class TileSet : public ManagerObject
 		{
-			static int const ORIENTATION_ORTHOGONAL = 0;
-			static int const ORIENTATION_ISOMETRIC = 1;
 
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -1094,7 +1105,7 @@ namespace chaos
 			/** object information */
 			std::string name;
 			/** object information */
-			int         orientation = ORIENTATION_ORTHOGONAL;
+			TileSetOrientation orientation = TileSetOrientation::ORIENTATION_ORTHOGONAL;
 			/** object information */
 			glm::ivec2  size = glm::ivec2(32, 32);
 			/** object information */
@@ -1158,25 +1169,42 @@ namespace chaos
 			TileData * tiledata = nullptr;
 		};
 
+
+		// ==========================================
+		// Map
+		// ==========================================
+
+		enum class MapOrientation : int
+		{
+			ORIENTATION_ORTHOGONAL = 0,
+			ORIENTATION_ISOMETRIC = 1,
+			ORIENTATION_STAGGERED = 2,
+			ORIENTATION_HEXAGONAL = 3,
+		};
+
+		enum class StaggerAxis : int
+		{
+			STAGGERED_AXIS_X = 0,
+			STAGGERED_AXIS_Y = 1
+		};
+
+		enum class StaggerIndex : int
+		{
+			STAGGERED_INDEX_ODD = 0,
+			STAGGERED_INDEX_EVEN = 1
+		};
+
+		enum class RenderOrder : int
+		{
+			RENDER_ORDER_RIGHT_UP = 0,
+			RENDER_ORDER_RIGHT_DOWN = 1,
+			RENDER_ORDER_LEFT_UP = 2,
+			RENDER_ORDER_LEFT_DOWN = 3
+		};
+
 		class Map : public ManagerObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
-
-			static int const ORIENTATION_ORTHOGONAL = 0;
-			static int const ORIENTATION_ISOMETRIC = 1;
-			static int const ORIENTATION_STAGGERED = 2;
-			static int const ORIENTATION_HEXAGONAL = 3;
-
-			static int const STAGGERED_AXIS_X = 0;
-			static int const STAGGERED_AXIS_Y = 1;
-
-			static int const STAGGERED_INDEX_ODD = 0;
-			static int const STAGGERED_INDEX_EVEN = 1;
-
-			static int const RENDER_ORDER_RIGHT_UP = 0;
-			static int const RENDER_ORDER_RIGHT_DOWN = 1;
-			static int const RENDER_ORDER_LEFT_UP = 2;
-			static int const RENDER_ORDER_LEFT_DOWN = 3;
 
 		protected:
 
@@ -1231,7 +1259,7 @@ namespace chaos
 		public:
 
 			/** object information */
-			int orientation = ORIENTATION_ORTHOGONAL;
+			MapOrientation orientation = MapOrientation::ORIENTATION_ORTHOGONAL;
 			/** object information */
 			glm::ivec2 size = glm::ivec2(100, 100);
 			/** object information */
@@ -1241,11 +1269,11 @@ namespace chaos
 			/** object information */
 			int hex_side_length = 0;
 			/** object information */
-			int stagger_axis = STAGGERED_AXIS_Y;
+			StaggerAxis stagger_axis = StaggerAxis::STAGGERED_AXIS_Y;
 			/** object information */
-			int stagger_index = STAGGERED_INDEX_ODD;
+			StaggerIndex stagger_index = StaggerIndex::STAGGERED_INDEX_ODD;
 			/** object information */
-			int render_order = RENDER_ORDER_RIGHT_DOWN;
+			RenderOrder render_order = RenderOrder::RENDER_ORDER_RIGHT_DOWN;
             /** object information */
             int compressionlevel = 0;
 			/** object information */

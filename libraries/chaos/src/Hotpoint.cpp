@@ -17,16 +17,7 @@ namespace chaos
 		{ HotpointType::CENTER, "center" }
 	};
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, HotpointType& dst)
-	{
-		return LoadEnumFromJSON(json_entry, hotpoint_encoding, dst);
-	}
-
-	bool SaveIntoJSON(nlohmann::json& json_entry, HotpointType const& src)
-	{
-		return SaveEnumIntoJSON(json_entry, hotpoint_encoding, src);
-	}
-
+	CHAOS_IMPLEMENT_ENUMJSON_METHOD(HotpointType, hotpoint_encoding);
 
 	glm::vec2 ConvertHotpoint(glm::vec2 const & hotpoint, glm::vec2 const & size, HotpointType initial_hotpoint_type, HotpointType final_hotpoint_type)
 	{

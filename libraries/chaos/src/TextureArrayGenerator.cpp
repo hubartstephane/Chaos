@@ -228,7 +228,7 @@ namespace chaos
 				char * texture_buffer = GLTextureTools::PrepareGLTextureTransfert(effective_image);
 				if (texture_buffer != nullptr)
 				{
-					int type = (effective_image.pixel_format.component_type == PixelFormat::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
+					int type = (effective_image.pixel_format.component_type == PixelComponentType::TYPE_UNSIGNED_CHAR) ? GL_UNSIGNED_BYTE : GL_FLOAT;
 
 					GLPixelFormat slice_pixel_format = GLTextureTools::GetGLPixelFormat(effective_image.pixel_format);
 					glTextureSubImage3D(texture_id, 0, 0, 0, (GLsizei)i, effective_image.width, effective_image.height, 1, slice_pixel_format.format, type, texture_buffer);

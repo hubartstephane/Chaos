@@ -92,9 +92,9 @@ namespace chaos
 		}
 
 		// prepare the vertex declaration
-		declaration.Push(SemanticType::SEMANTIC_POSITION, 0, TYPE_FLOAT2);
-		declaration.Push(SemanticType::SEMANTIC_TEXCOORD, 0, TYPE_FLOAT3);
-		declaration.Push(SemanticType::SEMANTIC_COLOR, 0, TYPE_FLOAT3);
+		declaration.Push(VertexAttributeSemantic::SEMANTIC_POSITION, 0, VertexAttributeType::TYPE_FLOAT2);
+		declaration.Push(VertexAttributeSemantic::SEMANTIC_TEXCOORD, 0, VertexAttributeType::TYPE_FLOAT3);
+		declaration.Push(VertexAttributeSemantic::SEMANTIC_COLOR, 0, VertexAttributeType::TYPE_FLOAT3);
 
 		// Generate Vertex Array and Buffer
 		if (!GLTools::GenerateVertexAndIndexBuffers(&vertex_array, &vertex_buffer, nullptr, true, false))  // vertex_buffer is dynamic

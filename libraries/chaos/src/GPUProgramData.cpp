@@ -343,20 +343,20 @@ namespace chaos
 		}
 	}
 
-	std::string GPUProgramData::ExtractSemanticDataAndName(char const * attrib_name, std::pair<SemanticType, int> & semantic_data, bool & is_array)
+	std::string GPUProgramData::ExtractSemanticDataAndName(char const * attrib_name, std::pair<VertexAttributeSemantic, int> & semantic_data, bool & is_array)
 	{
-		static std::pair<char const *, SemanticType> const names[] = // should be a prefix for name
+		static std::pair<char const *, VertexAttributeSemantic> const names[] = // should be a prefix for name
 		{
-			{ "position",   SemanticType::SEMANTIC_POSITION },
-			{ "color",      SemanticType::SEMANTIC_COLOR },
-			{ "normal",     SemanticType::SEMANTIC_NORMAL },
-			{ "binormal",   SemanticType::SEMANTIC_BINORMAL },
-			{ "tangent",    SemanticType::SEMANTIC_TANGENT },
-			{ "texcoord",   SemanticType::SEMANTIC_TEXCOORD },
-			{ "boneindex",  SemanticType::SEMANTIC_BONEINDEX },
-			{ "boneweight", SemanticType::SEMANTIC_BONEWEIGHT },
-			{ "userdata",   SemanticType::SEMANTIC_USERDATA },
-			{ nullptr, SemanticType::SEMANTIC_NONE }
+			{ "position",   VertexAttributeSemantic::SEMANTIC_POSITION },
+			{ "color",      VertexAttributeSemantic::SEMANTIC_COLOR },
+			{ "normal",     VertexAttributeSemantic::SEMANTIC_NORMAL },
+			{ "binormal",   VertexAttributeSemantic::SEMANTIC_BINORMAL },
+			{ "tangent",    VertexAttributeSemantic::SEMANTIC_TANGENT },
+			{ "texcoord",   VertexAttributeSemantic::SEMANTIC_TEXCOORD },
+			{ "boneindex",  VertexAttributeSemantic::SEMANTIC_BONEINDEX },
+			{ "boneweight", VertexAttributeSemantic::SEMANTIC_BONEWEIGHT },
+			{ "userdata",   VertexAttributeSemantic::SEMANTIC_USERDATA },
+			{ nullptr, VertexAttributeSemantic::SEMANTIC_NONE }
 		};
 
 		is_array = false;
@@ -370,7 +370,7 @@ namespace chaos
 			{
 				if (attrib_name[l] == 0 || std::isdigit(attrib_name[l])) // the prefix match
 				{
-					SemanticType semantic = names[i].second;
+					VertexAttributeSemantic semantic = names[i].second;
 					int semantic_index = atoi(attrib_name + l);
 
 					semantic_data = std::make_pair(semantic, semantic_index);
@@ -378,7 +378,7 @@ namespace chaos
 				}
 				else if (attrib_name[l] == '[') // this is array, no need to parse more
 				{
-					SemanticType semantic = names[i].second;
+					VertexAttributeSemantic semantic = names[i].second;
 					int semantic_index = 0;
 
 					semantic_data = std::make_pair(semantic, semantic_index);
@@ -388,7 +388,7 @@ namespace chaos
 			}
 			++i;
 		}
-		semantic_data = std::make_pair(SemanticType::SEMANTIC_NONE, -1);
+		semantic_data = std::make_pair(VertexAttributeSemantic::SEMANTIC_NONE, -1);
 		return "";
 	}
 
@@ -430,7 +430,7 @@ namespace chaos
 				if (location < 0)
 					continue;        // some native attribute as 'gl_InstanceID' have negative location
 
-				std::pair<SemanticType, int> semantic_data;
+				std::pair<VertexAttributeSemantic, int> semantic_data;
 
 				bool is_array = false;
 
@@ -518,7 +518,7 @@ namespace chaos
 		}
 	}
 
-	GLint GPUProgramData::GetLocation(SemanticType semantic, int semantic_index) const
+	GLint GPUProgramData::GetLocation(VertexAttributeSemantic semantic, int semantic_index) const
 	{
 		for (auto const & attrib : attributes)
 			if (attrib.semantic == semantic && attrib.semantic_index == semantic_index)
@@ -536,7 +536,7 @@ namespace chaos
 			if (location < 0)
 				continue;          // should never happen
 
-			if (attrib.semantic == SemanticType::SEMANTIC_NONE) // this entry does not have a well known semantic, try to find a global default-attribute from the name
+			if (attrib.semantic == VertexAttributeSemantic::SEMANTIC_NONE) // this entry does not have a well known semantic, try to find a global default-attribute from the name
 			{
 				if (attribute_provider != nullptr)
 					if (!attribute_provider->BindAttribute(attrib))

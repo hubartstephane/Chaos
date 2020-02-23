@@ -33,100 +33,99 @@ static glm::vec4 const green = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 static glm::vec4 const blue  = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 static glm::vec4 const white = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
+enum class TestID : int
+{
+	BOX2_DISPLAY_TEST,
+	OBOX2_DISPLAY_TEST,
+	SPHERE2_DISPLAY_TEST,
+	TRIANGLE2_DISPLAY_TEST,
 
-static int EXAMPLE_COUNT = 0;
+	BOX3_DISPLAY_TEST,
+	OBOX3_DISPLAY_TEST,
+	SPHERE3_DISPLAY_TEST,
+	TRIANGLE3_DISPLAY_TEST,
 
-static int const BOX2_DISPLAY_TEST			= EXAMPLE_COUNT++;
-static int const OBOX2_DISPLAY_TEST			= EXAMPLE_COUNT++;
-static int const SPHERE2_DISPLAY_TEST		= EXAMPLE_COUNT++;
-static int const TRIANGLE2_DISPLAY_TEST = EXAMPLE_COUNT++;
-
-static int const BOX3_DISPLAY_TEST			= EXAMPLE_COUNT++;
-static int const OBOX3_DISPLAY_TEST     = EXAMPLE_COUNT++;
-static int const SPHERE3_DISPLAY_TEST		= EXAMPLE_COUNT++;
-static int const TRIANGLE3_DISPLAY_TEST	= EXAMPLE_COUNT++;
-
-static int const COLLISION_2D_TEST = EXAMPLE_COUNT++;
-static int const COLLISION_3D_TEST = EXAMPLE_COUNT++;
-
+	COLLISION_2D_TEST,
+	COLLISION_3D_TEST,
 
 #if 0
 
-static int const COLLISION_BOX2_BOX2 = EXAMPLE_COUNT++;
-static int const COLLISION_BOX3_BOX3 = EXAMPLE_COUNT++;
-static int const COLLISION_SPHERE2_SPHERE2 = EXAMPLE_COUNT++;
-static int const COLLISION_SPHERE3_SPHERE3 = EXAMPLE_COUNT++;
-static int const COLLISION_TRIANGLE2_TRIANGLE2 = EXAMPLE_COUNT++;
-static int const COLLISION_TRIANGLE3_TRIANGLE3 = EXAMPLE_COUNT++;
+	COLLISION_BOX2_BOX2,
+	COLLISION_BOX3_BOX3,
+	COLLISION_SPHERE2_SPHERE2,
+	COLLISION_SPHERE3_SPHERE3,
+	COLLISION_TRIANGLE2_TRIANGLE2,
+	COLLISION_TRIANGLE3_TRIANGLE3,
 
-static int const COLLISION_BOX2_SPHERE2 = EXAMPLE_COUNT++;
-static int const COLLISION_BOX2_TRIANGLE2 = EXAMPLE_COUNT++;
-
-
-static int const COLLISION_BOX3_SPHERE3 = EXAMPLE_COUNT++;
-static int const COLLISION_BOX2_SPHERE2 = EXAMPLE_COUNT++;
-static int const COLLISION_BOX3_SPHERE3 = EXAMPLE_COUNT++;
-
-static int const RECTANGLE_CORNERS_TEST        = EXAMPLE_COUNT++;
-static int const CORNERS_TO_RECTANGLE_TEST     = EXAMPLE_COUNT++;
-static int const BOX_INTERSECTION_TEST         = EXAMPLE_COUNT++;
-static int const BOX_UNION_TEST                = EXAMPLE_COUNT++;
-static int const RESTRICT_BOX_INSIDE_1_TEST    = EXAMPLE_COUNT++;
-static int const RESTRICT_BOX_INSIDE_2_TEST    = EXAMPLE_COUNT++;
-static int const RESTRICT_BOX_INSIDE_3_TEST    = EXAMPLE_COUNT++;
-static int const RESTRICT_BOX_INSIDE_4_TEST    = EXAMPLE_COUNT++;
-static int const RESTRICT_SPHERE_INSIDE_1_TEST = EXAMPLE_COUNT++;
-static int const RESTRICT_SPHERE_INSIDE_2_TEST = EXAMPLE_COUNT++;
-
-static int const SPHERE_INTERSECTION_TEST      = EXAMPLE_COUNT++;
-static int const SPHERE_UNION_TEST             = EXAMPLE_COUNT++;
-static int const INNER_SPHERE_TEST             = EXAMPLE_COUNT++;
-static int const BOUNDING_SPHERE_TEST          = EXAMPLE_COUNT++;
-static int const BOUNDING_BOX_TEST             = EXAMPLE_COUNT++;
-static int const SPLIT_BOX_TEST                = EXAMPLE_COUNT++;
-static int const RESTRICT_BOX_OUTSIDE_TEST     = EXAMPLE_COUNT++;
-static int const RESTRICT_SPHERE_OUTSIDE_TEST  = EXAMPLE_COUNT++;
+	COLLISION_BOX2_SPHERE2,
+	COLLISION_BOX2_TRIANGLE2,
 
 
+	COLLISION_BOX3_SPHERE3,
+	COLLISION_BOX2_SPHERE2,
+	COLLISION_BOX3_SPHERE3,
 
-static int const POINT_INSIDE_BOX_TEST = EXAMPLE_COUNT++;
-static int const POINT_INSIDE_SPHERE_TEST = EXAMPLE_COUNT++;
-static int const COLLISION_SHERE2_BOX2_TEST    = EXAMPLE_COUNT++;
-static int const COLLISION_SHERE2_TRIANGLE_TEST = EXAMPLE_COUNT++;
-static int const COLLISION_POINT_TRIANGLE_TEST  = EXAMPLE_COUNT++;
-static int const BOX_COLLISION_TEST = EXAMPLE_COUNT++;
-static int const SPHERE_COLLISION_TEST = EXAMPLE_COUNT++;
+	RECTANGLE_CORNERS_TEST,
+	CORNERS_TO_RECTANGLE_TEST,
+	BOX_INTERSECTION_TEST,
+	BOX_UNION_TEST,
+	RESTRICT_BOX_INSIDE_1_TEST,
+	RESTRICT_BOX_INSIDE_2_TEST,
+	RESTRICT_BOX_INSIDE_3_TEST,
+	RESTRICT_BOX_INSIDE_4_TEST,
+	RESTRICT_SPHERE_INSIDE_1_TEST,
+	RESTRICT_SPHERE_INSIDE_2_TEST,
+
+	SPHERE_INTERSECTION_TEST,
+	SPHERE_UNION_TEST,
+	INNER_SPHERE_TEST,
+	BOUNDING_SPHERE_TEST,
+	BOUNDING_BOX_TEST,
+	SPLIT_BOX_TEST,
+	RESTRICT_BOX_OUTSIDE_TEST,
+	RESTRICT_SPHERE_OUTSIDE_TEST,
+
+	POINT_INSIDE_BOX_TEST,
+	POINT_INSIDE_SPHERE_TEST,
+	COLLISION_SHERE2_BOX2_TEST,
+	COLLISION_SHERE2_TRIANGLE_TEST,
+	COLLISION_POINT_TRIANGLE_TEST,
+	BOX_COLLISION_TEST,
+	SPHERE_COLLISION_TEST,
 
 
-static int const OBOX_DISPLAY_TEST  = EXAMPLE_COUNT++;
-static int const OBOX_CORNERS_TEST  = EXAMPLE_COUNT++;
+	OBOX_DISPLAY_TEST,
+	OBOX_CORNERS_TEST,
 
-static int const OBOX_BOUNDING_SPHERE_TEST = EXAMPLE_COUNT++;
-static int const OBOX_BOUNDING_BOX_TEST    = EXAMPLE_COUNT++;
+	OBOX_BOUNDING_SPHERE_TEST,
+	OBOX_BOUNDING_BOX_TEST,
 
-static int const OBOX_INNER_SPHERE_TEST = EXAMPLE_COUNT++;
-static int const POINT_INSIDE_OBOX_TEST = EXAMPLE_COUNT++;
+	OBOX_INNER_SPHERE_TEST,
+	POINT_INSIDE_OBOX_TEST,
 #endif
 
-static int const TEST_COUNT = EXAMPLE_COUNT;
+	EXAMPLE_COUNT
+};
 
-
-
-static int PRIMITIVE_TYPE_BOX      = 0;
-static int PRIMITIVE_TYPE_OBOX     = 1;
-static int PRIMITIVE_TYPE_SPHERE   = 2;
-static int PRIMITIVE_TYPE_TRIANGLE = 3;
-static int PRIMITIVE_TYPE_COUNT    = 4;
-
-char const * GetPrimitiveName(int type)
+enum class PrimitiveType : int
 {
-	if (type == PRIMITIVE_TYPE_BOX)
+	PRIMITIVE_TYPE_BOX = 0,
+	PRIMITIVE_TYPE_OBOX = 1,
+	PRIMITIVE_TYPE_SPHERE = 2,
+	PRIMITIVE_TYPE_TRIANGLE = 3,
+	PRIMITIVE_TYPE_COUNT = 4
+};
+
+
+char const * GetPrimitiveName(PrimitiveType type)
+{
+	if (type == PrimitiveType::PRIMITIVE_TYPE_BOX)
 		return "box";
-	if (type == PRIMITIVE_TYPE_OBOX)
+	if (type == PrimitiveType::PRIMITIVE_TYPE_OBOX)
 		return "obox";
-	if (type == PRIMITIVE_TYPE_SPHERE)
+	if (type == PrimitiveType::PRIMITIVE_TYPE_SPHERE)
 		return "sphere";
-	if (type == PRIMITIVE_TYPE_TRIANGLE)
+	if (type == PrimitiveType::PRIMITIVE_TYPE_TRIANGLE)
 		return "triangle";
 	return "unknown";
 }
@@ -135,21 +134,21 @@ class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 protected:
 
-	char const * GetExampleTitle(int example)
+	char const * GetExampleTitle(TestID example)
 	{
-		if (example == BOX2_DISPLAY_TEST)         return "box2 display tests";
-		if (example == OBOX2_DISPLAY_TEST)				return "obox2 display tests";
-		if (example == SPHERE2_DISPLAY_TEST)      return "sphere2 display tests";
-		if (example == TRIANGLE2_DISPLAY_TEST)    return "triangle2 display tests";
+		if (example == TestID::BOX2_DISPLAY_TEST)         return "box2 display tests";
+		if (example == TestID::OBOX2_DISPLAY_TEST)				return "obox2 display tests";
+		if (example == TestID::SPHERE2_DISPLAY_TEST)      return "sphere2 display tests";
+		if (example == TestID::TRIANGLE2_DISPLAY_TEST)    return "triangle2 display tests";
 
-		if (example == BOX3_DISPLAY_TEST)         return "box3 display tests";
-		if (example == OBOX3_DISPLAY_TEST)				return "obox3 display tests";
-		if (example == SPHERE3_DISPLAY_TEST)      return "sphere3 display tests";
-		if (example == TRIANGLE3_DISPLAY_TEST)    return "triangle3 display tests";
+		if (example == TestID::BOX3_DISPLAY_TEST)         return "box3 display tests";
+		if (example == TestID::OBOX3_DISPLAY_TEST)				return "obox3 display tests";
+		if (example == TestID::SPHERE3_DISPLAY_TEST)      return "sphere3 display tests";
+		if (example == TestID::TRIANGLE3_DISPLAY_TEST)    return "triangle3 display tests";
 
-		if (example == COLLISION_2D_TEST || example == COLLISION_3D_TEST)
+		if (example == TestID::COLLISION_2D_TEST || example == TestID::COLLISION_3D_TEST)
 		{
-			char const * type = (example == COLLISION_2D_TEST) ? "collision 2D" : "collision 3D";
+			char const * type = (example == TestID::COLLISION_2D_TEST) ? "collision 2D" : "collision 3D";
 			char const * p1 = GetPrimitiveName(prim_type_object1);
 			char const * p2 = GetPrimitiveName(prim_type_object2);
 
@@ -164,38 +163,38 @@ protected:
 #if 0
 
 
-		if (example == RECTANGLE_CORNERS_TEST)         return "box.GetCorner(...)";
-		if (example == CORNERS_TO_RECTANGLE_TEST)      return "construct box from corners";
-		if (example == BOX_INTERSECTION_TEST)          return "box intersection";
-		if (example == BOX_UNION_TEST)                 return "box union";
-		if (example == RESTRICT_BOX_INSIDE_1_TEST)     return "restrict box displacement to inside : move bigger";
-		if (example == RESTRICT_BOX_INSIDE_2_TEST)     return "restrict box displacement to inside : move smaller";
-		if (example == RESTRICT_BOX_INSIDE_3_TEST)     return "restrict box displacement to inside : move bigger  (smaller is REAL bigger)";
-		if (example == RESTRICT_BOX_INSIDE_4_TEST)     return "restrict box displacement to inside : move smaller (smaller is REAL bigger)";
-		if (example == RESTRICT_SPHERE_INSIDE_1_TEST)  return "restrict sphere displacement to inside : move bigger";
-		if (example == RESTRICT_SPHERE_INSIDE_2_TEST)  return "restrict sphere displacement to inside : move smaller";
+		if (example == TestID::RECTANGLE_CORNERS_TEST)         return "box.GetCorner(...)";
+		if (example == TestID::CORNERS_TO_RECTANGLE_TEST)      return "construct box from corners";
+		if (example == TestID::BOX_INTERSECTION_TEST)          return "box intersection";
+		if (example == TestID::BOX_UNION_TEST)                 return "box union";
+		if (example == TestID::RESTRICT_BOX_INSIDE_1_TEST)     return "restrict box displacement to inside : move bigger";
+		if (example == TestID::RESTRICT_BOX_INSIDE_2_TEST)     return "restrict box displacement to inside : move smaller";
+		if (example == TestID::RESTRICT_BOX_INSIDE_3_TEST)     return "restrict box displacement to inside : move bigger  (smaller is REAL bigger)";
+		if (example == TestID::RESTRICT_BOX_INSIDE_4_TEST)     return "restrict box displacement to inside : move smaller (smaller is REAL bigger)";
+		if (example == TestID::RESTRICT_SPHERE_INSIDE_1_TEST)  return "restrict sphere displacement to inside : move bigger";
+		if (example == TestID::RESTRICT_SPHERE_INSIDE_2_TEST)  return "restrict sphere displacement to inside : move smaller";
 		
-		if (example == SPHERE_INTERSECTION_TEST)       return "sphere intersection";
-		if (example == SPHERE_UNION_TEST)              return "sphere union";
-		if (example == INNER_SPHERE_TEST)              return "inner sphere";
-		if (example == BOUNDING_SPHERE_TEST)           return "bounding sphere";
-		if (example == BOUNDING_BOX_TEST)              return "bounding box";
-		if (example == SPLIT_BOX_TEST)                 return "split box";
-		if (example == BOX_COLLISION_TEST)             return "box collision";
-		if (example == SPHERE_COLLISION_TEST)          return "sphere collision";
-		if (example == RESTRICT_BOX_OUTSIDE_TEST)      return "restrict box displacement to outside";
-		if (example == RESTRICT_SPHERE_OUTSIDE_TEST)   return "restrict sphere displacement to outside";
-		if (example == POINT_INSIDE_BOX_TEST)          return "point inside box";
-		if (example == POINT_INSIDE_SPHERE_TEST)       return "point inside sphere";
-		if (example == COLLISION_SHERE2_BOX2_TEST)     return "collision sphere2/box2";
-		if (example == COLLISION_SHERE2_TRIANGLE_TEST) return "collision sphere2/triangle2";
-		if (example == COLLISION_POINT_TRIANGLE_TEST)  return "collision point2/triangle2";
-		if (example == OBOX_DISPLAY_TEST)              return "obox";
-		if (example == OBOX_CORNERS_TEST)              return "obox corners";
-		if (example == OBOX_BOUNDING_SPHERE_TEST)      return "obox bounding sphere";
-		if (example == OBOX_BOUNDING_BOX_TEST)         return "obox bounding box";
-		if (example == OBOX_INNER_SPHERE_TEST)         return "obox inner sphere";
-		if (example == POINT_INSIDE_OBOX_TEST)         return "point inside obox";
+		if (example == TestID::SPHERE_INTERSECTION_TEST)       return "sphere intersection";
+		if (example == TestID::SPHERE_UNION_TEST)              return "sphere union";
+		if (example == TestID::INNER_SPHERE_TEST)              return "inner sphere";
+		if (example == TestID::BOUNDING_SPHERE_TEST)           return "bounding sphere";
+		if (example == TestID::BOUNDING_BOX_TEST)              return "bounding box";
+		if (example == TestID::SPLIT_BOX_TEST)                 return "split box";
+		if (example == TestID::BOX_COLLISION_TEST)             return "box collision";
+		if (example == TestID::SPHERE_COLLISION_TEST)          return "sphere collision";
+		if (example == TestID::RESTRICT_BOX_OUTSIDE_TEST)      return "restrict box displacement to outside";
+		if (example == TestID::RESTRICT_SPHERE_OUTSIDE_TEST)   return "restrict sphere displacement to outside";
+		if (example == TestID::POINT_INSIDE_BOX_TEST)          return "point inside box";
+		if (example == TestID::POINT_INSIDE_SPHERE_TEST)       return "point inside sphere";
+		if (example == TestID::COLLISION_SHERE2_BOX2_TEST)     return "collision sphere2/box2";
+		if (example == TestID::COLLISION_SHERE2_TRIANGLE_TEST) return "collision sphere2/triangle2";
+		if (example == TestID::COLLISION_POINT_TRIANGLE_TEST)  return "collision point2/triangle2";
+		if (example == TestID::OBOX_DISPLAY_TEST)              return "obox";
+		if (example == TestID::OBOX_CORNERS_TEST)              return "obox corners";
+		if (example == TestID::OBOX_BOUNDING_SPHERE_TEST)      return "obox bounding sphere";
+		if (example == TestID::OBOX_BOUNDING_BOX_TEST)         return "obox bounding box";
+		if (example == TestID::OBOX_INNER_SPHERE_TEST)         return "obox inner sphere";
+		if (example == TestID::POINT_INSIDE_OBOX_TEST)         return "point inside obox";
 		
 #endif
 
@@ -211,7 +210,7 @@ protected:
 		debug_display.AddLine("  +/-       : change example");
 		debug_display.AddLine("  T         : freeze time");
 
-		if (display_example == COLLISION_2D_TEST || display_example == COLLISION_3D_TEST)
+		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
 		{			
 			debug_display.AddLine("  LEFT CTRL : select object modified");
 			debug_display.AddLine("  NUM 5     : change primitive type");
@@ -551,7 +550,7 @@ protected:
 
 
 	template<typename PRIM1, typename PRIM2>
-	void DrawPrimitiveCollision(int type1, int type2)
+	void DrawPrimitiveCollision(PrimitiveType type1, PrimitiveType type2)
 	{
 		if (prim_type_object1 == type1 && prim_type_object2 == type2)
 		{
@@ -586,82 +585,82 @@ protected:
 		double realtime = clock->GetClockTime();
 
 		// base display 2D
-		if (display_example == BOX2_DISPLAY_TEST)
+		if (display_example == TestID::BOX2_DISPLAY_TEST)
 		{
 			chaos::box2 b = GetMovingBox2();
 			primitive_renderer->GPUDrawPrimitive(b, red, false);
 		}
-		if (display_example == OBOX2_DISPLAY_TEST)
+		if (display_example == TestID::OBOX2_DISPLAY_TEST)
 		{
 			chaos::obox2 b = GetMovingOBox2();
 			primitive_renderer->GPUDrawPrimitive(b, red, false);
 		}
-		if (display_example == SPHERE2_DISPLAY_TEST)
+		if (display_example == TestID::SPHERE2_DISPLAY_TEST)
 		{
 			chaos::sphere2 s = GetMovingSphere2();
 			primitive_renderer->GPUDrawPrimitive(s, red, false);
 		}
-		if (display_example == TRIANGLE2_DISPLAY_TEST)
+		if (display_example == TestID::TRIANGLE2_DISPLAY_TEST)
 		{
 			chaos::triangle2 t = GetMovingTriangle2();
 			primitive_renderer->GPUDrawPrimitive(t, red, false);
 		}
 
 		// base display 3D
-		if (display_example == BOX3_DISPLAY_TEST)
+		if (display_example == TestID::BOX3_DISPLAY_TEST)
 		{
 			chaos::box3 b = GetMovingBox3();
 			primitive_renderer->GPUDrawPrimitive(b, red, false);
 		}
-		if (display_example == OBOX3_DISPLAY_TEST)
+		if (display_example == TestID::OBOX3_DISPLAY_TEST)
 		{
 			chaos::obox3 b = GetMovingOBox3();
 			primitive_renderer->GPUDrawPrimitive(b, red, false);
 		}
-		if (display_example == SPHERE3_DISPLAY_TEST)
+		if (display_example == TestID::SPHERE3_DISPLAY_TEST)
 		{
 			chaos::sphere3 s = GetMovingSphere3();
 			primitive_renderer->GPUDrawPrimitive(s, red, false);
 		}
-		if (display_example == TRIANGLE3_DISPLAY_TEST)
+		if (display_example == TestID::TRIANGLE3_DISPLAY_TEST)
 		{
 			chaos::triangle3 t = GetMovingTriangle3();
 			primitive_renderer->GPUDrawPrimitive(t, red, false);
 		}
 
 		// collisions
-		if (display_example == COLLISION_2D_TEST)
+		if (display_example == TestID::COLLISION_2D_TEST)
 		{
-			DrawPrimitiveCollision<chaos::box2, chaos::box2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_BOX);
-			DrawPrimitiveCollision<chaos::obox2, chaos::obox2>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_OBOX);
-			DrawPrimitiveCollision<chaos::sphere2, chaos::sphere2>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_SPHERE);
-			DrawPrimitiveCollision<chaos::triangle2, chaos::triangle2>(PRIMITIVE_TYPE_TRIANGLE, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::box2, chaos::box2>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_BOX);
+			DrawPrimitiveCollision<chaos::obox2, chaos::obox2>(PrimitiveType::PRIMITIVE_TYPE_OBOX, PrimitiveType::PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::sphere2, chaos::sphere2>(PrimitiveType::PRIMITIVE_TYPE_SPHERE, PrimitiveType::PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::triangle2, chaos::triangle2>(PrimitiveType::PRIMITIVE_TYPE_TRIANGLE, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 
-			DrawPrimitiveCollision<chaos::box2, chaos::obox2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_OBOX);
-			DrawPrimitiveCollision<chaos::box2, chaos::sphere2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_SPHERE);
-			DrawPrimitiveCollision<chaos::box2, chaos::triangle2>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::box2, chaos::obox2>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::box2, chaos::sphere2>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::box2, chaos::triangle2>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 
-			DrawPrimitiveCollision<chaos::obox2, chaos::sphere2>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_SPHERE);
-			DrawPrimitiveCollision<chaos::obox2, chaos::triangle2>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::obox2, chaos::sphere2>(PrimitiveType::PRIMITIVE_TYPE_OBOX, PrimitiveType::PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::obox2, chaos::triangle2>(PrimitiveType::PRIMITIVE_TYPE_OBOX, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 
-			DrawPrimitiveCollision<chaos::sphere2, chaos::triangle2>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::sphere2, chaos::triangle2>(PrimitiveType::PRIMITIVE_TYPE_SPHERE, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 		}
 
-		if (display_example == COLLISION_3D_TEST)
+		if (display_example == TestID::COLLISION_3D_TEST)
 		{
-			DrawPrimitiveCollision<chaos::box3, chaos::box3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_BOX);
-			DrawPrimitiveCollision<chaos::obox3, chaos::obox3>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_OBOX);
-			DrawPrimitiveCollision<chaos::sphere3, chaos::sphere3>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_SPHERE);
-			DrawPrimitiveCollision<chaos::triangle3, chaos::triangle3>(PRIMITIVE_TYPE_TRIANGLE, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::box3, chaos::box3>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_BOX);
+			DrawPrimitiveCollision<chaos::obox3, chaos::obox3>(PrimitiveType::PRIMITIVE_TYPE_OBOX, PrimitiveType::PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::sphere3, chaos::sphere3>(PrimitiveType::PRIMITIVE_TYPE_SPHERE, PrimitiveType::PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::triangle3, chaos::triangle3>(PrimitiveType::PRIMITIVE_TYPE_TRIANGLE, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 
-			DrawPrimitiveCollision<chaos::box3, chaos::obox3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_OBOX);
-			DrawPrimitiveCollision<chaos::box3, chaos::sphere3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_SPHERE);
-			DrawPrimitiveCollision<chaos::box3, chaos::triangle3>(PRIMITIVE_TYPE_BOX, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::box3, chaos::obox3>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_OBOX);
+			DrawPrimitiveCollision<chaos::box3, chaos::sphere3>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::box3, chaos::triangle3>(PrimitiveType::PRIMITIVE_TYPE_BOX, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 
-			DrawPrimitiveCollision<chaos::obox3, chaos::sphere3>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_SPHERE);
-			DrawPrimitiveCollision<chaos::obox3, chaos::triangle3>(PRIMITIVE_TYPE_OBOX, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::obox3, chaos::sphere3>(PrimitiveType::PRIMITIVE_TYPE_OBOX, PrimitiveType::PRIMITIVE_TYPE_SPHERE);
+			DrawPrimitiveCollision<chaos::obox3, chaos::triangle3>(PrimitiveType::PRIMITIVE_TYPE_OBOX, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 
-			DrawPrimitiveCollision<chaos::sphere3, chaos::triangle3>(PRIMITIVE_TYPE_SPHERE, PRIMITIVE_TYPE_TRIANGLE);
+			DrawPrimitiveCollision<chaos::sphere3, chaos::triangle3>(PrimitiveType::PRIMITIVE_TYPE_SPHERE, PrimitiveType::PRIMITIVE_TYPE_TRIANGLE);
 		}
 
 
@@ -678,7 +677,7 @@ protected:
 
 
 		// display box and corners
-		if (display_example == RECTANGLE_CORNERS_TEST)
+		if (display_example == TestID::RECTANGLE_CORNERS_TEST)
 		{
 			chaos::box3 b(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -690,7 +689,7 @@ protected:
 		}
 
 		// box construction from corners
-		if (display_example == CORNERS_TO_RECTANGLE_TEST)
+		if (display_example == TestID::CORNERS_TO_RECTANGLE_TEST)
 		{
 			glm::vec3 p1(0.0f, 0.0f, 0.0f);
 			glm::vec3 p2(1.0f, 2.0f, 3.0f);
@@ -703,7 +702,7 @@ protected:
 		}
 
 		// box union or intersection
-		if (display_example == BOX_INTERSECTION_TEST || display_example == BOX_UNION_TEST)
+		if (display_example == TestID::BOX_INTERSECTION_TEST || display_example == TestID::BOX_UNION_TEST)
 		{
 			chaos::box3 b1(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::box3 b2(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(3.0f, 1.0f, 2.0f));
@@ -712,27 +711,27 @@ protected:
 
 		// restrict displacement
 		if (
-			display_example == RESTRICT_BOX_INSIDE_1_TEST || 
-			display_example == RESTRICT_BOX_INSIDE_2_TEST ||
-			display_example == RESTRICT_BOX_INSIDE_3_TEST ||
-			display_example == RESTRICT_BOX_INSIDE_4_TEST )
-			DrawRestrictToInside(smaller_box, bigger_box, display_example == RESTRICT_BOX_INSIDE_1_TEST || display_example == RESTRICT_BOX_INSIDE_3_TEST);
+			display_example == TestID::RESTRICT_BOX_INSIDE_1_TEST ||
+			display_example == TestID::RESTRICT_BOX_INSIDE_2_TEST ||
+			display_example == TestID::RESTRICT_BOX_INSIDE_3_TEST ||
+			display_example == TestID::RESTRICT_BOX_INSIDE_4_TEST )
+			DrawRestrictToInside(smaller_box, bigger_box, display_example == TestID::RESTRICT_BOX_INSIDE_1_TEST || display_example == TestID::RESTRICT_BOX_INSIDE_3_TEST);
 
-		if (display_example == RESTRICT_SPHERE_INSIDE_1_TEST || display_example == RESTRICT_SPHERE_INSIDE_2_TEST)
-			DrawRestrictToInside(smaller_sphere, bigger_sphere, display_example == RESTRICT_SPHERE_INSIDE_1_TEST);
+		if (display_example == TestID::RESTRICT_SPHERE_INSIDE_1_TEST || display_example == TestID::RESTRICT_SPHERE_INSIDE_2_TEST)
+			DrawRestrictToInside(smaller_sphere, bigger_sphere, display_example == TestID::RESTRICT_SPHERE_INSIDE_1_TEST);
 
 
 
 		// sphere union or intersection
-		if (display_example == SPHERE_INTERSECTION_TEST || display_example == SPHERE_UNION_TEST)
+		if (display_example == TestID::SPHERE_INTERSECTION_TEST || display_example == TestID::SPHERE_UNION_TEST)
 		{
 			chaos::sphere3 s1(glm::vec3(0.0f, 0.0f, 0.0f), 3.0f);
 			chaos::sphere3 s2(glm::vec3(0.0f, 0.0f, 0.0f), 2.0f);
-			DrawIntersectionOrUnion(s1, s2, display_example == SPHERE_INTERSECTION_TEST);
+			DrawIntersectionOrUnion(s1, s2, display_example == TestID::SPHERE_INTERSECTION_TEST);
 		}
 
 		// inner sphere
-		if (display_example == INNER_SPHERE_TEST)
+		if (display_example == TestID::INNER_SPHERE_TEST)
 		{
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetInnerSphere(b);
@@ -742,7 +741,7 @@ protected:
 		}
 
 		// bounding sphere
-		if (display_example == BOUNDING_SPHERE_TEST)
+		if (display_example == TestID::BOUNDING_SPHERE_TEST)
 		{
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 			chaos::sphere3 s = GetBoundingSphere(b);
@@ -751,7 +750,7 @@ protected:
 			primitive_renderer->GPUDrawPrimitive(s, blue, true);
 		}
 		// bounding box
-		if (display_example == BOUNDING_BOX_TEST)
+		if (display_example == TestID::BOUNDING_BOX_TEST)
 		{      
 			chaos::sphere3 s(glm::vec3(1.0f, 2.0f, 3.0f), 3.0f);
 
@@ -762,7 +761,7 @@ protected:
 		}
 
 		// split box
-		if (display_example == SPLIT_BOX_TEST)
+		if (display_example == TestID::SPLIT_BOX_TEST)
 		{
 			chaos::box3 b(glm::vec3(2.0f, 3.0f, 4.0f), glm::vec3(1.0f, 2.0f, 3.0f));
 
@@ -782,7 +781,7 @@ protected:
 		}
 
 		// box collision
-		if (display_example == BOX_COLLISION_TEST)
+		if (display_example == TestID::BOX_COLLISION_TEST)
 		{
 			chaos::box3 b1;
 			chaos::box3 b2;
@@ -793,7 +792,7 @@ protected:
 		}
 
 		// sphere collision
-		if (display_example == SPHERE_COLLISION_TEST)
+		if (display_example == TestID::SPHERE_COLLISION_TEST)
 		{
 			chaos::sphere3 s1;
 			chaos::sphere3 s2;
@@ -804,32 +803,32 @@ protected:
 		}
 
 		// restrict displacement
-		if (display_example == RESTRICT_BOX_OUTSIDE_TEST)
+		if (display_example == TestID::RESTRICT_BOX_OUTSIDE_TEST)
 			DrawRestrictToOutside(smaller_box, bigger_box);
 
-		if (display_example == RESTRICT_SPHERE_OUTSIDE_TEST)
+		if (display_example == TestID::RESTRICT_SPHERE_OUTSIDE_TEST)
 			DrawRestrictToOutside(smaller_sphere, bigger_sphere);
 
-		if (display_example == POINT_INSIDE_BOX_TEST)
+		if (display_example == TestID::POINT_INSIDE_BOX_TEST)
 			DrawPointInside(bigger_box);
 
-		if (display_example == POINT_INSIDE_SPHERE_TEST)
+		if (display_example == TestID::POINT_INSIDE_SPHERE_TEST)
 			DrawPointInside(bigger_sphere);
 
 		// 2D collision
-		if (display_example == COLLISION_SHERE2_BOX2_TEST)
+		if (display_example == TestID::COLLISION_SHERE2_BOX2_TEST)
 			DrawSphereBox2Collision();
 
-		if (display_example == COLLISION_SHERE2_TRIANGLE_TEST)
+		if (display_example == TestID::COLLISION_SHERE2_TRIANGLE_TEST)
 			DrawTriangleBox2Collision();
 
 
-		if (display_example == COLLISION_POINT_TRIANGLE_TEST)
+		if (display_example == TestID::COLLISION_POINT_TRIANGLE_TEST)
 			DrawTrianglePointCollision();
 
 
 		// Obox
-		if (display_example == OBOX_DISPLAY_TEST || display_example == OBOX_CORNERS_TEST || display_example == OBOX_BOUNDING_SPHERE_TEST || display_example == OBOX_BOUNDING_BOX_TEST || display_example == OBOX_INNER_SPHERE_TEST || display_example == POINT_INSIDE_OBOX_TEST)
+		if (display_example == TestID::OBOX_DISPLAY_TEST || display_example == TestID::OBOX_CORNERS_TEST || display_example == TestID::OBOX_BOUNDING_SPHERE_TEST || display_example == TestID::OBOX_BOUNDING_BOX_TEST || display_example == TestID::OBOX_INNER_SPHERE_TEST || display_example == TestID::POINT_INSIDE_OBOX_TEST)
 		{
 
 #if 1
@@ -851,9 +850,9 @@ protected:
 
 
 			bool transparent_obox = false;
-			if (display_example == OBOX_INNER_SPHERE_TEST)
+			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)
 				transparent_obox = true;
-			else if (display_example == POINT_INSIDE_OBOX_TEST && Collide(pt, b))
+			else if (display_example == TestID::POINT_INSIDE_OBOX_TEST && Collide(pt, b))
 				transparent_obox = true;
 
 
@@ -862,7 +861,7 @@ protected:
 
 			primitive_renderer->GPUDrawPrimitive(b, red, transparent_obox);
 
-			if (display_example == OBOX_CORNERS_TEST)
+			if (display_example == TestID::OBOX_CORNERS_TEST)
 			{
 				glm::vec3 vertices[8];
 				GetBoxVertices(b, vertices);
@@ -870,25 +869,25 @@ protected:
 					primitive_renderer->GPUDrawPrimitive(vertices[i], white, false);
 			}
 
-			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
+			if (display_example == TestID::OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetBoundingSphere(b);
 				primitive_renderer->GPUDrawPrimitive(s, blue, true);
 			}
 
-			if (display_example == OBOX_BOUNDING_BOX_TEST)
+			if (display_example == TestID::OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box3 box = GetBoundingBox(b);
 				primitive_renderer->GPUDrawPrimitive(box, blue, true);
 			}
 
-			if (display_example == OBOX_INNER_SPHERE_TEST)
+			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere3 s = GetInnerSphere(b);
 				primitive_renderer->GPUDrawPrimitive(s, blue, false);
 			}
 
-			if (display_example == POINT_INSIDE_OBOX_TEST)
+			if (display_example == TestID::POINT_INSIDE_OBOX_TEST)
 			{
 				primitive_renderer->GPUDrawPrimitive(pt, white, false);
 			}
@@ -910,14 +909,14 @@ protected:
 
 
 			bool transparent_obox = false;
-			if (display_example == OBOX_INNER_SPHERE_TEST)
+			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)
 				transparent_obox = true;
-			else if (display_example == POINT_INSIDE_OBOX_TEST && Collide(pt, b))
+			else if (display_example == TestID::POINT_INSIDE_OBOX_TEST && Collide(pt, b))
 				transparent_obox = true;
 
 			primitive_renderer->GPUDrawPrimitive(b, red, transparent_obox);
 
-			if (display_example == OBOX_CORNERS_TEST)
+			if (display_example == TestID::OBOX_CORNERS_TEST)
 			{
 				glm::vec2 vertices[4];
 				GetBoxVertices(b, vertices);
@@ -925,25 +924,25 @@ protected:
 					primitive_renderer->GPUDrawPrimitive(glm::vec3(vertices[i].x, 0.0f, vertices[i].y), white, false);
 			}
 
-			if (display_example == OBOX_BOUNDING_SPHERE_TEST)
+			if (display_example == TestID::OBOX_BOUNDING_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingSphere(b);
 				primitive_renderer->GPUDrawPrimitive(s, blue, true);
 			}
 
-			if (display_example == OBOX_BOUNDING_BOX_TEST)
+			if (display_example == TestID::OBOX_BOUNDING_BOX_TEST)
 			{
 				chaos::box2 box = GetBoundingBox(b);
 				primitive_renderer->GPUDrawPrimitive(box, blue, true);
 			}
 
-			if (display_example == OBOX_INNER_SPHERE_TEST)
+			if (display_example == TestID::OBOX_INNER_SPHERE_TEST)
 			{
 				chaos::sphere2 s = GetBoundingSphere(b);
 				primitive_renderer->GPUDrawPrimitive(s, blue, false);
 			}
 
-			if (display_example == POINT_INSIDE_OBOX_TEST)
+			if (display_example == TestID::POINT_INSIDE_OBOX_TEST)
 			{
 				primitive_renderer->GPUDrawPrimitive(glm::vec3(pt.x, 0.0f, pt.y), white, false);
 			}
@@ -1054,7 +1053,7 @@ protected:
 		fps_view_controller.keyboard_config.key_yaw_right  = GLFW_KEY_UNKNOWN;
 
 		// initialize the example
-		SetExample(0);
+		SetExample(TestID::BOX2_DISPLAY_TEST);
 
 		// initial display
 		DebugDisplayExampleTitle();
@@ -1098,9 +1097,9 @@ protected:
 	void UpdateObjectType()
 	{
 		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT_CONTROL) != GLFW_RELEASE)
-			prim_type_object1 = (prim_type_object1 + 1) % PRIMITIVE_TYPE_COUNT;
+			prim_type_object1 = (PrimitiveType)(((int)prim_type_object1 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
 		else
-			prim_type_object2 = (prim_type_object2 + 1) % PRIMITIVE_TYPE_COUNT;
+			prim_type_object2 = (PrimitiveType)(((int)prim_type_object2 + 1) % (int)PrimitiveType::PRIMITIVE_TYPE_COUNT);
 	}
 
 	virtual bool Tick(float delta_time) override
@@ -1110,7 +1109,7 @@ protected:
 		debug_display.Tick(delta_time);
 
 		// update primitives
-		if (display_example == COLLISION_2D_TEST || display_example == COLLISION_3D_TEST)
+		if (display_example == TestID::COLLISION_2D_TEST || display_example == TestID::COLLISION_3D_TEST)
 		{
 			UpdateObjectPosition(GLFW_KEY_KP_6, delta_time, glm::vec3( 1.0f,  0.0f,  0.0f));
 			UpdateObjectPosition(GLFW_KEY_KP_4, delta_time, glm::vec3(-1.0f,  0.0f,  0.0f));
@@ -1137,13 +1136,13 @@ protected:
 		}
 		else if (event.IsKeyReleased(GLFW_KEY_KP_ADD))
 		{
-			SetExample(display_example + 1);
+			SetExample((TestID)((int)display_example + 1));
 			DebugDisplayExampleTitle();
 			return true;
 		}
 		else if (event.IsKeyReleased(GLFW_KEY_KP_SUBTRACT))
 		{
-			SetExample(display_example - 1);
+			SetExample((TestID)((int)display_example - 1));
 			DebugDisplayExampleTitle();     
 			return true;
 		}
@@ -1155,9 +1154,9 @@ protected:
 		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
 	}
 
-	void SetExample(int new_display_example)
+	void SetExample(TestID new_display_example)
 	{
-		new_display_example = (new_display_example + EXAMPLE_COUNT) % EXAMPLE_COUNT;
+		new_display_example = (TestID)(((int)new_display_example + (int)TestID::EXAMPLE_COUNT) % (int)TestID::EXAMPLE_COUNT);
 		display_example = new_display_example;
 
 		// reset the time
@@ -1187,7 +1186,7 @@ protected:
 	chaos::sphere3 bigger_sphere;
 	chaos::sphere3 smaller_sphere;
 
-	int    display_example = 0;
+	TestID display_example = TestID::BOX2_DISPLAY_TEST;
 
 	chaos::FPSViewInputController fps_view_controller;
 
@@ -1199,8 +1198,8 @@ protected:
 	float     rotation_object1 = 0.0f;
 	float     rotation_object2 = 0.0f;
 
-	int prim_type_object1 = PRIMITIVE_TYPE_BOX;
-	int prim_type_object2 = PRIMITIVE_TYPE_BOX;
+	PrimitiveType prim_type_object1 = PrimitiveType::PRIMITIVE_TYPE_BOX;
+	PrimitiveType prim_type_object2 = PrimitiveType::PRIMITIVE_TYPE_BOX;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)

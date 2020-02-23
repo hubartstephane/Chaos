@@ -7,6 +7,26 @@
 namespace chaos
 {
 
+	enum class SkyBoxImageType : int
+	{
+		IMAGE_LEFT = 0,
+		IMAGE_RIGHT = 1,
+		IMAGE_TOP = 2,
+		IMAGE_BOTTOM = 3,
+		IMAGE_FRONT = 4,
+		IMAGE_BACK = 5,
+		IMAGE_SINGLE = 6,
+
+		IMAGE_FIRST_INDEX = IMAGE_LEFT,
+		IMAGE_LAST_INDEX = IMAGE_SINGLE
+	};
+
+	enum class SkyBoxImageTransform : int
+	{
+		IMAGE_NO_TRANSFORM = 0,
+		IMAGE_CENTRAL_SYMETRY = 1
+	};
+
 	/**
 	* SkyBoxSingleDisposition : the disposition of each individual face inside the single image
 	*/
@@ -21,7 +41,7 @@ namespace chaos
 		static SkyBoxSingleDisposition const VerticalDisposition;
 
 		/** returns the position according to an image type */
-		glm::ivec3 GetPositionAndFlags(int image_type) const;
+		glm::ivec3 GetPositionAndFlags(SkyBoxImageType image_type) const;
 
 		/** the number of aligned images horizontally */
 		int image_count_horiz;
@@ -30,26 +50,6 @@ namespace chaos
 
 		/** the position for the images */
 		glm::ivec3 image_position[6];
-	};
-
-	enum SkyBoxImageType : int // XXX: no class for automatic conversion to int
-	{
-		IMAGE_LEFT = 0,
-		IMAGE_RIGHT = 1,
-		IMAGE_TOP = 2,
-		IMAGE_BOTTOM = 3,
-		IMAGE_FRONT = 4,
-		IMAGE_BACK = 5,
-		IMAGE_SINGLE = 6,
-
-		IMAGE_FIRST_INDEX = IMAGE_LEFT,
-		IMAGE_LAST_INDEX = IMAGE_SINGLE
-	};
-
-	enum SkyBoxImageTransform : int // XXX: no class for automatic conversion to int
-	{
-		IMAGE_NO_TRANSFORM = 0,
-		IMAGE_CENTRAL_SYMETRY = 1,
 	};
 
 	class SkyBoxImages
@@ -101,14 +101,14 @@ namespace chaos
 		PixelFormat GetMergedPixelFormat(PixelFormatMergeParams const & merge_params) const;
 
 		/** Gets the description of one face */
-		ImageDescription GetImageFaceDescription(int image_type) const;
+		ImageDescription GetImageFaceDescription(SkyBoxImageType image_type) const;
 		/** Gets position and flags for a single image */
-		glm::ivec3 GetPositionAndFlags(int image_type) const;
+		glm::ivec3 GetPositionAndFlags(SkyBoxImageType image_type) const;
 
 		/** Sets an image (verify that it is a coherent call) */
-		bool SetImage(int image_type, FIBITMAP * image, bool release_image);
+		bool SetImage(SkyBoxImageType image_type, FIBITMAP * image, bool release_image);
 		/** get the image of any face */
-		FIBITMAP * GetImage(int face) const;
+		FIBITMAP * GetImage(SkyBoxImageType face) const;
 
 		/** no copy */
 		SkyBoxImages & operator = (SkyBoxImages const & other) = delete;
@@ -145,7 +145,7 @@ namespace chaos
 	protected:
 
 		/** utility function to load a file into one image. Incrementaly test for compatibility with previsous image */
-		static bool DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, int image_index);
+		static bool DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, SkyBoxImageType image_index);
 	};
 
 }; // namespace chaos

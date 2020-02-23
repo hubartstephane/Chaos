@@ -48,16 +48,16 @@ namespace chaos
 		}
 	};
 
-	glm::ivec3 SkyBoxSingleDisposition::GetPositionAndFlags(int image_type) const
+	glm::ivec3 SkyBoxSingleDisposition::GetPositionAndFlags(SkyBoxImageType image_type) const
 	{
-		assert(image_type >= 0);
-		assert(image_type <= 5);
-		return image_position[image_type];
+		assert((size_t)image_type >= 0);
+		assert((size_t)image_type <= 5);
+		return image_position[(size_t)image_type];
 	}
 
 	SkyBoxImages::SkyBoxImages(SkyBoxImages && other) noexcept
 	{
-		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_FIRST_INDEX ; i <= (size_t)SkyBoxImageType::IMAGE_LAST_INDEX ; ++i)
 		{
 			std::swap(images[i], other.images[i]);
 			std::swap(release_images[i], other.release_images[i]);
@@ -71,7 +71,7 @@ namespace chaos
 
 	SkyBoxImages & SkyBoxImages::operator = (SkyBoxImages && other) noexcept
 	{
-		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_FIRST_INDEX ; i <= (size_t)SkyBoxImageType::IMAGE_LAST_INDEX ; ++i)
 		{
 			std::swap(images[i], other.images[i]);
 			std::swap(release_images[i], other.release_images[i]);
@@ -81,7 +81,7 @@ namespace chaos
 
 	void SkyBoxImages::Release()
 	{
-		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_FIRST_INDEX ; i <= (size_t)SkyBoxImageType::IMAGE_LAST_INDEX ; ++i)
 		{
 			if (images[i] != nullptr)
 			{
@@ -94,9 +94,9 @@ namespace chaos
 
 	int SkyBoxImages::GetSkyBoxSize() const
 	{
-		if (images[IMAGE_SINGLE] != nullptr)
-			return GetSingleImageSize(images[IMAGE_SINGLE]);
-		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		if (images[(size_t)SkyBoxImageType::IMAGE_SINGLE] != nullptr)
+			return GetSingleImageSize(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT ; i <= (size_t)SkyBoxImageType::IMAGE_BACK ; ++i)
 			if (images[i] != nullptr)
 				return GetMultipleImageSize(images[i]);
 		return -1;
@@ -134,8 +134,8 @@ namespace chaos
 	{
 		if (!IsSingleImage())
 			return false;
-		int width  = FreeImage_GetWidth(images[IMAGE_SINGLE]);
-		int height = FreeImage_GetHeight(images[IMAGE_SINGLE]);
+		int width  = FreeImage_GetWidth(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
+		int height = FreeImage_GetHeight(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
 		return (width > height);
 	}
 
@@ -143,8 +143,8 @@ namespace chaos
 	{
 		if (!IsSingleImage())
 			return false;
-		int width  = FreeImage_GetWidth(images[IMAGE_SINGLE]);
-		int height = FreeImage_GetHeight(images[IMAGE_SINGLE]);
+		int width  = FreeImage_GetWidth(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
+		int height = FreeImage_GetHeight(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
 		return (height > width);
 	}
 
@@ -163,7 +163,7 @@ namespace chaos
 		return GetMultipleImageSize(ImageTools::GetImageDescription(image));
 	}
 
-	glm::ivec3 SkyBoxImages::GetPositionAndFlags(int image_type) const
+	glm::ivec3 SkyBoxImages::GetPositionAndFlags(SkyBoxImageType image_type) const
 	{
 		assert(IsSingleImage());
 
@@ -182,7 +182,7 @@ namespace chaos
 			return result;
 
 		// get the single image description
-		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[IMAGE_SINGLE]);
+		ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
 		if (!src_image_desc.IsValid(false))
 			return result;
 
@@ -190,9 +190,9 @@ namespace chaos
 		int size = GetSingleImageSize(src_image_desc); 
 
 		// iterate over all faces
-		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT ; i <= (size_t)SkyBoxImageType::IMAGE_BACK ; ++i)
 		{
-			glm::ivec3 position_and_flags = GetPositionAndFlags(i);
+			glm::ivec3 position_and_flags = GetPositionAndFlags((SkyBoxImageType)i);
 
 			int left   = position_and_flags.x * size; // number of pixels / number of images aligned
 			int bottom = position_and_flags.y * size;
@@ -210,7 +210,7 @@ namespace chaos
 			int dst_x = 0;
 			int dst_y = 0;
 
-			int flag = position_and_flags.z;
+			SkyBoxImageTransform flag = (SkyBoxImageTransform)position_and_flags.z;
 			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY));
 
 			result.images[i] = image;
@@ -235,7 +235,7 @@ namespace chaos
 
 		// find the final format and size
 		int size = -1;
-		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT ; i <= (size_t)SkyBoxImageType::IMAGE_BACK ; ++i)
 		{
 			FIBITMAP * face_image = images[i];
 			if (face_image == nullptr)
@@ -261,7 +261,7 @@ namespace chaos
 		FIBITMAP * new_image = ImageTools::GenFreeImage(final_pixel_format, new_image_width, new_image_height);
 		if (new_image == nullptr)
 			return result;
-		result.SetImage(IMAGE_SINGLE, new_image, true);
+		result.SetImage(SkyBoxImageType::IMAGE_SINGLE, new_image, true);
 
 		// fill the background (Blue - Green - Red - Alpha)
 		ImageDescription dst_image_desc = ImageTools::GetImageDescription(new_image);
@@ -269,7 +269,7 @@ namespace chaos
 		ImageTools::FillImageBackground(dst_image_desc, fill_color);
 
 		// copy the faces into the single image
-		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT ; i <= (size_t)SkyBoxImageType::IMAGE_BACK ; ++i)
 		{
 			FIBITMAP * image = images[i];
 			if (image == nullptr)
@@ -277,7 +277,7 @@ namespace chaos
 
 			ImageDescription src_image_desc = ImageTools::GetImageDescription(image);
 
-			glm::ivec3 position_and_flags = dispo.GetPositionAndFlags(i);
+			glm::ivec3 position_and_flags = dispo.GetPositionAndFlags((SkyBoxImageType)i);
 
 			int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
 			int sub_image_index_y = position_and_flags.y;
@@ -290,7 +290,7 @@ namespace chaos
 			int dst_x = left;
 			int dst_y = bottom;
 
-			int flag = position_and_flags.z;
+			SkyBoxImageTransform flag = (SkyBoxImageTransform)position_and_flags.z;
 			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY));
 		}
 
@@ -304,29 +304,29 @@ namespace chaos
 		if (!IsEmpty())
 		{
 			if (IsSingleImage())
-				pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[IMAGE_SINGLE]));
+				pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]));
 			else
-				for (int i = IMAGE_LEFT; i <= IMAGE_BACK; ++i)
+				for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT; i <= (size_t)SkyBoxImageType::IMAGE_BACK; ++i)
 					if (images[i] != nullptr)
 						pixel_format_merger.Merge(ImageTools::GetPixelFormat(images[i]));
 		}
 		return pixel_format_merger.GetResult();
 	}
 
-	ImageDescription SkyBoxImages::GetImageFaceDescription(int image_type) const
+	ImageDescription SkyBoxImages::GetImageFaceDescription(SkyBoxImageType image_type) const
 	{
-		assert(image_type >= IMAGE_LEFT && image_type <= IMAGE_BACK);
+		assert((size_t)image_type >= (size_t)SkyBoxImageType::IMAGE_LEFT && (size_t)image_type <= (size_t)SkyBoxImageType::IMAGE_BACK);
 
 		if (IsSingleImage())
 		{
 			glm::ivec3 position_and_flags = GetPositionAndFlags(image_type);
 
-			ImageDescription src_image_desc = ImageTools::GetImageDescription(images[IMAGE_SINGLE]);
+			ImageDescription src_image_desc = ImageTools::GetImageDescription(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
 
 			int sub_image_index_x = position_and_flags.x; // number of pixels / number of images aligned
 			int sub_image_index_y = position_and_flags.y;
 
-			int size = GetSingleImageSize(images[IMAGE_SINGLE]); // size of each face
+			int size = GetSingleImageSize(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]); // size of each face
 			int x    = sub_image_index_x * size;
 			int y    = sub_image_index_y * size;
 
@@ -334,7 +334,7 @@ namespace chaos
 		}
 		else
 		{
-			FIBITMAP * image = images[image_type];
+			FIBITMAP * image = images[(size_t)image_type];
 			if (image != nullptr)
 				return ImageTools::GetImageDescription(image);
 		}
@@ -343,7 +343,7 @@ namespace chaos
 
 	bool SkyBoxImages::IsEmpty() const // Empty = no images
 	{
-		for (int i = IMAGE_FIRST_INDEX ; i <= IMAGE_LAST_INDEX ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_FIRST_INDEX ; i <= (size_t)SkyBoxImageType::IMAGE_LAST_INDEX ; ++i)
 			if (images[i] != nullptr)
 				return false;
 		return true;  
@@ -351,14 +351,14 @@ namespace chaos
 
 	bool SkyBoxImages::IsSingleImage() const
 	{
-		return (images[IMAGE_SINGLE] != nullptr);
+		return (images[(size_t)SkyBoxImageType::IMAGE_SINGLE] != nullptr);
 	}
 
 	bool SkyBoxImages::IsMultipleImage() const // no single image, at least one multiple image
 	{
-		if (images[IMAGE_SINGLE] != nullptr)
+		if (images[(size_t)SkyBoxImageType::IMAGE_SINGLE] != nullptr)
 			return false;
-		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT ; i <= (size_t)SkyBoxImageType::IMAGE_BACK ; ++i)
 			if (images[i] != nullptr)			
 				return true;
 		return false;  
@@ -366,9 +366,9 @@ namespace chaos
 
 	bool SkyBoxImages::IsMultipleImageComplete() const // no single image, every face defined
 	{
-		if (images[IMAGE_SINGLE] != nullptr)
+		if (images[(size_t)SkyBoxImageType::IMAGE_SINGLE] != nullptr)
 			return false;
-		for (int i = IMAGE_LEFT ; i <= IMAGE_BACK ; ++i)
+		for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT ; i <= (size_t)SkyBoxImageType::IMAGE_BACK ; ++i)
 			if (images[i] == nullptr)			
 				return false;
 		return true;  
@@ -385,24 +385,24 @@ namespace chaos
 		return true;
 	}
 
-	FIBITMAP * SkyBoxImages::GetImage(int face) const
+	FIBITMAP * SkyBoxImages::GetImage(SkyBoxImageType face) const
 	{
-		assert(face >= IMAGE_FIRST_INDEX);
-		assert(face <= IMAGE_LAST_INDEX);
-		return images[face];
+		assert((size_t)face >= (size_t)SkyBoxImageType::IMAGE_FIRST_INDEX);
+		assert((size_t)face <= (size_t)SkyBoxImageType::IMAGE_LAST_INDEX);
+		return images[(size_t)face];
 	}
 
-	bool SkyBoxImages::SetImage(int image_type, FIBITMAP * image, bool release_image)
+	bool SkyBoxImages::SetImage(SkyBoxImageType image_type, FIBITMAP * image, bool release_image)
 	{
 		assert(image != nullptr);
-		assert(image_type >= IMAGE_FIRST_INDEX && image_type <= IMAGE_LAST_INDEX); 
+		assert((size_t)image_type >= (size_t)SkyBoxImageType::IMAGE_FIRST_INDEX && (size_t)image_type <= (size_t)SkyBoxImageType::IMAGE_LAST_INDEX);
 
 		// test whether the pixel format is supported
 		ImageDescription description = ImageTools::GetImageDescription(image);
 		if (!description.IsValid(false))
 			return false;
 
-		if (image_type == IMAGE_SINGLE)
+		if (image_type == SkyBoxImageType::IMAGE_SINGLE)
 		{
 			// ensure image is 3/4 or 4/3
 			int size = GetSingleImageSize(description);
@@ -411,10 +411,10 @@ namespace chaos
 			// if multiple face skybox, we cannot set the image
 			if (IsEmpty() || IsSingleImage()) 
 			{
-				if (images[IMAGE_SINGLE] != nullptr && release_images[IMAGE_SINGLE])
-					FreeImage_Unload(images[IMAGE_SINGLE]);
-				images[IMAGE_SINGLE] = image;
-				release_images[IMAGE_SINGLE] = release_image;
+				if (images[(size_t)SkyBoxImageType::IMAGE_SINGLE] != nullptr && release_images[(size_t)SkyBoxImageType::IMAGE_SINGLE])
+					FreeImage_Unload(images[(size_t)SkyBoxImageType::IMAGE_SINGLE]);
+				images[(size_t)SkyBoxImageType::IMAGE_SINGLE] = image;
+				release_images[(size_t)SkyBoxImageType::IMAGE_SINGLE] = release_image;
 				return true;
 			}
 		}
@@ -429,8 +429,8 @@ namespace chaos
 			{
 				// get another image for comparison (one that will not be erased by this call)
 				FIBITMAP * other_image = nullptr;
-				for (int i = IMAGE_LEFT ; (i <= IMAGE_BACK) && (other_image == nullptr) ; ++i)
-					if (i != image_type)
+				for (size_t i = (size_t)SkyBoxImageType::IMAGE_LEFT ; (i <= (size_t)SkyBoxImageType::IMAGE_BACK) && (other_image == nullptr) ; ++i)
+					if (i != (size_t)image_type)
 						other_image = images[i];
 
 				// if there is other images in the skybox, ensure for compatibility
@@ -438,13 +438,13 @@ namespace chaos
 					return false;
 
 				// release previous image
-				FIBITMAP * previous_image = images[image_type];
-				if (previous_image != nullptr && release_images[image_type])
+				FIBITMAP * previous_image = images[(size_t)image_type];
+				if (previous_image != nullptr && release_images[(size_t)image_type])
 					FreeImage_Unload(previous_image);
 
 				// do the writing
-				images[image_type] = image;
-				release_images[image_type] = release_image;
+				images[(size_t)image_type] = image;
+				release_images[(size_t)image_type] = release_image;
 				return true;
 			}
 		}
@@ -473,7 +473,7 @@ namespace chaos
 		return result;
 	}
 
-	bool SkyBoxTools::DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, int image_index)
+	bool SkyBoxTools::DoLoadMultipleSkyBox_OneImage(SkyBoxImages & skybox, FilePathParam const & path, SkyBoxImageType image_index)
 	{
 		FIBITMAP * image = ImageTools::LoadImageFromFile(path);
 		if (image == nullptr)

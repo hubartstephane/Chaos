@@ -96,16 +96,16 @@ namespace death
 
 		glm::vec2 result;
 		// search the X position
-		if (hotpoint & chaos::HotpointType::LEFT)
+		if ((int)hotpoint & (int)chaos::HotpointType::LEFT)
 			result.x = corners.first.x;
-		else if (hotpoint & chaos::HotpointType::RIGHT)
+		else if ((int)hotpoint & (int)chaos::HotpointType::RIGHT)
 			result.x = corners.second.x;
 		else
 			result.x = canvas_box.position.x;
 		// search the Y position
-		if (hotpoint & chaos::HotpointType::BOTTOM)
+		if ((int)hotpoint & (int)chaos::HotpointType::BOTTOM)
 			result.y = corners.first.y;
-		else if (hotpoint & chaos::HotpointType::TOP)
+		else if ((int)hotpoint & (int)chaos::HotpointType::TOP)
 			result.y = corners.second.y;
 		else
 			result.y = canvas_box.position.y;

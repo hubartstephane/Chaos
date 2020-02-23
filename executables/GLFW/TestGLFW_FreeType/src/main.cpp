@@ -269,13 +269,13 @@ protected:
 		//parameters.mag_filter = GL_NEAREST;
 
 
-		 // chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY);
-		//chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGB);
-		//  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA);
+		 // chaos::PixelFormat pixel_format(chaos::PixelFormatType::FORMAT_GRAY);
+		//chaos::PixelFormat pixel_format(chaos::PixelFormatType::FORMAT_RGB);
+		//  chaos::PixelFormat pixel_format(chaos::PixelFormatType::FORMAT_RGBA);
 
-		//  chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_GRAY_FLOAT);
-		 // chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGB_FLOAT);
-		chaos::PixelFormat pixel_format(chaos::PixelFormat::FORMAT_RGBA_FLOAT);
+		//  chaos::PixelFormat pixel_format(chaos::PixelFormatType::FORMAT_GRAY_FLOAT);
+		 // chaos::PixelFormat pixel_format(chaos::PixelFormatType::FORMAT_RGB_FLOAT);
+		chaos::PixelFormat pixel_format(chaos::PixelFormatType::FORMAT_RGBA_FLOAT);
 
 		FIBITMAP* bm = nullptr;
 #if 0

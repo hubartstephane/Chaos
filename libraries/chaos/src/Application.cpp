@@ -190,7 +190,7 @@ namespace chaos
 		Application const * application = Application::GetConstInstance();
 		if (application != nullptr)
 			return application->GetInputMode();	
-		return InputMode::Keyboard;
+		return InputMode::KEYBOARD;
 	}
 
 	void Application::SetApplicationInputMode(InputMode new_mode)

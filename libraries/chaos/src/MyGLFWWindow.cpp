@@ -217,7 +217,7 @@ namespace chaos
 
 		void Window::DoOnMouseMove(GLFWwindow * in_glfw_window, double x, double y)
 		{
-			Application::SetApplicationInputMode(InputMode::Mouse);
+			Application::SetApplicationInputMode(InputMode::MOUSE);
 
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
@@ -234,7 +234,7 @@ namespace chaos
 
 		void Window::DoOnMouseButton(GLFWwindow * in_glfw_window, int button, int action, int modifier)
 		{
-			Application::SetApplicationInputMode(InputMode::Mouse);
+			Application::SetApplicationInputMode(InputMode::MOUSE);
 
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
@@ -243,7 +243,7 @@ namespace chaos
 
 		void Window::DoOnMouseWheel(GLFWwindow * in_glfw_window, double scroll_x, double scroll_y)
 		{
-			Application::SetApplicationInputMode(InputMode::Mouse);
+			Application::SetApplicationInputMode(InputMode::MOUSE);
 
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
@@ -252,7 +252,7 @@ namespace chaos
 
 		void Window::DoOnKeyEvent(GLFWwindow * in_glfw_window, int key, int scan_code, int action, int modifier)
 		{
-			Application::SetApplicationInputMode(InputMode::Keyboard);
+			Application::SetApplicationInputMode(InputMode::KEYBOARD);
 
 			KeyEvent event;
 			event.key       = key;
@@ -267,7 +267,7 @@ namespace chaos
 
 		void Window::DoOnCharEvent(GLFWwindow * in_glfw_window, unsigned int c)
 		{
-			Application::SetApplicationInputMode(InputMode::Keyboard);
+			Application::SetApplicationInputMode(InputMode::KEYBOARD);
 
 			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)

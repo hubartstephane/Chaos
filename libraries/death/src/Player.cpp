@@ -123,7 +123,7 @@ namespace death
 		// update the forcefeedback mute state
 		if (gamepad != nullptr)
 		{
-			gamepad->SetForceFeedbackMuted(mute_force_feedback || (GetInputMode() != chaos::InputMode::Gamepad));
+			gamepad->SetForceFeedbackMuted(mute_force_feedback || (GetInputMode() != chaos::InputMode::GAMEPAD));
 			gamepad->SetForceFeedbackPaused(paused_force_feedback);
 		}
 
@@ -172,7 +172,7 @@ namespace death
 			return;
 		// change the application mode
 		if (gamepad_data->IsAnyAction())			
-			SetInputMode(chaos::InputMode::Gamepad);
+			SetInputMode(chaos::InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
 		glm::vec2 lsp = gamepad_data->GetXBOXStickDirection(chaos::XBoxAxisType::LEFT_AXIS);

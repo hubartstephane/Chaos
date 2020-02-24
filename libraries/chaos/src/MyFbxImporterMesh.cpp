@@ -210,22 +210,22 @@ namespace chaos
 			//
 			GPUVertexDeclaration vertex_declaration;
 
-			vertex_declaration.Push(VertexAttributeSemantic::SEMANTIC_POSITION, 0, VertexAttributeType::TYPE_FLOAT3); // always containing a position
+			vertex_declaration.Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT3); // always containing a position
 
 			for (int i = 0; i < color_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementVertexColor(i), vertex_declaration, VertexAttributeSemantic::SEMANTIC_COLOR, i, VertexAttributeType::TYPE_BYTE4);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementVertexColor(i), vertex_declaration, VertexAttributeSemantic::COLOR, i, VertexAttributeType::BYTE4);
 
 			for (int i = 0; i < uv_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementUV(i), vertex_declaration, VertexAttributeSemantic::SEMANTIC_TEXCOORD, i, VertexAttributeType::TYPE_FLOAT2);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementUV(i), vertex_declaration, VertexAttributeSemantic::TEXCOORD, i, VertexAttributeType::FLOAT2);
 
 			for (int i = 0; i < normal_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementNormal(i), vertex_declaration, VertexAttributeSemantic::SEMANTIC_NORMAL, i, VertexAttributeType::TYPE_FLOAT3);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementNormal(i), vertex_declaration, VertexAttributeSemantic::NORMAL, i, VertexAttributeType::FLOAT3);
 
 			for (int i = 0; i < binormal_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementBinormal(i), vertex_declaration, VertexAttributeSemantic::SEMANTIC_BINORMAL, i, VertexAttributeType::TYPE_FLOAT3);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementBinormal(i), vertex_declaration, VertexAttributeSemantic::BINORMAL, i, VertexAttributeType::FLOAT3);
 
 			for (int i = 0; i < tangent_count; ++i)
-				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementTangent(i), vertex_declaration, VertexAttributeSemantic::SEMANTIC_TANGENT, i, VertexAttributeType::TYPE_FLOAT3);
+				UpdateVertexDeclarationWithGeometryElement(mesh->GetElementTangent(i), vertex_declaration, VertexAttributeSemantic::TANGENT, i, VertexAttributeType::FLOAT3);
 
 			//
 			// STEP 1.1 : search if there are some skinning information
@@ -236,8 +236,8 @@ namespace chaos
 			size_t max_bone_count = GetMaxBoneCount(bone_table);
 			for (size_t i = 0; i < max_bone_count; ++i)
 			{
-				vertex_declaration.Push(VertexAttributeSemantic::SEMANTIC_BONEWEIGHT, (int)i, VertexAttributeType::TYPE_FLOAT1);
-				vertex_declaration.Push(VertexAttributeSemantic::SEMANTIC_BONEINDEX, (int)i, VertexAttributeType::TYPE_INT1);
+				vertex_declaration.Push(VertexAttributeSemantic::BONEWEIGHT, (int)i, VertexAttributeType::FLOAT1);
+				vertex_declaration.Push(VertexAttributeSemantic::BONEINDEX, (int)i, VertexAttributeType::INT1);
 			}
 
 			int vertex_byte_size = vertex_declaration.GetVertexSize();

@@ -347,16 +347,16 @@ namespace chaos
 	{
 		static std::pair<char const *, VertexAttributeSemantic> const names[] = // should be a prefix for name
 		{
-			{ "position",   VertexAttributeSemantic::SEMANTIC_POSITION },
-			{ "color",      VertexAttributeSemantic::SEMANTIC_COLOR },
-			{ "normal",     VertexAttributeSemantic::SEMANTIC_NORMAL },
-			{ "binormal",   VertexAttributeSemantic::SEMANTIC_BINORMAL },
-			{ "tangent",    VertexAttributeSemantic::SEMANTIC_TANGENT },
-			{ "texcoord",   VertexAttributeSemantic::SEMANTIC_TEXCOORD },
-			{ "boneindex",  VertexAttributeSemantic::SEMANTIC_BONEINDEX },
-			{ "boneweight", VertexAttributeSemantic::SEMANTIC_BONEWEIGHT },
-			{ "userdata",   VertexAttributeSemantic::SEMANTIC_USERDATA },
-			{ nullptr, VertexAttributeSemantic::SEMANTIC_NONE }
+			{ "position",   VertexAttributeSemantic::POSITION },
+			{ "color",      VertexAttributeSemantic::COLOR },
+			{ "normal",     VertexAttributeSemantic::NORMAL },
+			{ "binormal",   VertexAttributeSemantic::BINORMAL },
+			{ "tangent",    VertexAttributeSemantic::TANGENT },
+			{ "texcoord",   VertexAttributeSemantic::TEXCOORD },
+			{ "boneindex",  VertexAttributeSemantic::BONEINDEX },
+			{ "boneweight", VertexAttributeSemantic::BONEWEIGHT },
+			{ "userdata",   VertexAttributeSemantic::USERDATA },
+			{ nullptr, VertexAttributeSemantic::NONE }
 		};
 
 		is_array = false;
@@ -388,7 +388,7 @@ namespace chaos
 			}
 			++i;
 		}
-		semantic_data = std::make_pair(VertexAttributeSemantic::SEMANTIC_NONE, -1);
+		semantic_data = std::make_pair(VertexAttributeSemantic::NONE, -1);
 		return "";
 	}
 
@@ -536,7 +536,7 @@ namespace chaos
 			if (location < 0)
 				continue;          // should never happen
 
-			if (attrib.semantic == VertexAttributeSemantic::SEMANTIC_NONE) // this entry does not have a well known semantic, try to find a global default-attribute from the name
+			if (attrib.semantic == VertexAttributeSemantic::NONE) // this entry does not have a well known semantic, try to find a global default-attribute from the name
 			{
 				if (attribute_provider != nullptr)
 					if (!attribute_provider->BindAttribute(attrib))

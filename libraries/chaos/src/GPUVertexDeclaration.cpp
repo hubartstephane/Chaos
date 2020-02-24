@@ -13,15 +13,15 @@ namespace chaos
 	{
 		VertexAttributeComponentType component_type = (VertexAttributeComponentType)(((int)type >> 3) & 7);
 
-		if (component_type == VertexAttributeComponentType::TYPE_FLOAT)
+		if (component_type == VertexAttributeComponentType::FLOAT)
 			return GL_FLOAT;
-		else if (component_type == VertexAttributeComponentType::TYPE_DOUBLE)
+		else if (component_type == VertexAttributeComponentType::DOUBLE)
 			return GL_DOUBLE;
-		else if (component_type == VertexAttributeComponentType::TYPE_HALF)
+		else if (component_type == VertexAttributeComponentType::HALF)
 			return GL_HALF_FLOAT;
-		else if (component_type == VertexAttributeComponentType::TYPE_BYTE)
+		else if (component_type == VertexAttributeComponentType::BYTE)
 			return GL_BYTE;
-		else if (component_type == VertexAttributeComponentType::TYPE_INT)
+		else if (component_type == VertexAttributeComponentType::INT)
 			return GL_INT;
 		return GL_INVALID_ENUM;
 	}
@@ -31,15 +31,15 @@ namespace chaos
 		VertexAttributeComponentType component_type = (VertexAttributeComponentType)(((int)type >> 3) & 7);
 
 		int component_size = 0;
-		if (component_type == VertexAttributeComponentType::TYPE_FLOAT)
+		if (component_type == VertexAttributeComponentType::FLOAT)
 			component_size = sizeof(float);
-		else if (component_type == VertexAttributeComponentType::TYPE_DOUBLE)
+		else if (component_type == VertexAttributeComponentType::DOUBLE)
 			component_size = sizeof(double);
-		else if (component_type == VertexAttributeComponentType::TYPE_HALF)
+		else if (component_type == VertexAttributeComponentType::HALF)
 			component_size = sizeof(float) / 2;
-		else if (component_type == VertexAttributeComponentType::TYPE_BYTE)
+		else if (component_type == VertexAttributeComponentType::BYTE)
 			component_size = sizeof(unsigned char);
-		else if (component_type == VertexAttributeComponentType::TYPE_INT)
+		else if (component_type == VertexAttributeComponentType::INT)
 			component_size = sizeof(int32_t);
 
 		int component_count = ((int)type & 7);
@@ -99,22 +99,22 @@ namespace chaos
 
 	int GPUVertexDeclaration::GetPositionCount() const
 	{
-		return GetSemanticCount(VertexAttributeSemantic::SEMANTIC_POSITION);
+		return GetSemanticCount(VertexAttributeSemantic::POSITION);
 	}
 
 	int GPUVertexDeclaration::GetColorCount() const
 	{
-		return GetSemanticCount(VertexAttributeSemantic::SEMANTIC_COLOR);
+		return GetSemanticCount(VertexAttributeSemantic::COLOR);
 	}
 
 	int GPUVertexDeclaration::GetTextureCount() const
 	{
-		return GetSemanticCount(VertexAttributeSemantic::SEMANTIC_TEXCOORD);
+		return GetSemanticCount(VertexAttributeSemantic::TEXCOORD);
 	}
 
 	int GPUVertexDeclaration::GetBoneCount() const
 	{
-		return std::min(GetSemanticCount(VertexAttributeSemantic::SEMANTIC_BONEINDEX), GetSemanticCount(VertexAttributeSemantic::SEMANTIC_BONEWEIGHT));
+		return std::min(GetSemanticCount(VertexAttributeSemantic::BONEINDEX), GetSemanticCount(VertexAttributeSemantic::BONEWEIGHT));
 	}
 
 

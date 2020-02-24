@@ -76,7 +76,7 @@ public:
 
 protected:
 
-	chaos::HotpointType hotpoint_type = chaos::HotpointType::BOTTOM_LEFT;
+	chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 	glm::vec2 particle_size = glm::vec2(0.0f, 0.0f);
 	glm::vec2 position = glm::vec2(0.0f, 0.0f);
 

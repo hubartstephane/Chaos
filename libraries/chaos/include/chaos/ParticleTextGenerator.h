@@ -24,7 +24,7 @@ namespace chaos
 			/** constructor */
 			GeneratorParams() = default;
 			/** constructor */
-			GeneratorParams(char const * in_font_name, float in_line_height, glm::vec2 const & in_position, HotpointType in_hotpoint_type);
+			GeneratorParams(char const * in_font_name, float in_line_height, glm::vec2 const & in_position, Hotpoint in_hotpoint);
 
 		public:
 
@@ -54,7 +54,7 @@ namespace chaos
 			/** the position */
 			glm::vec2 position = glm::vec2(0.0f, 0.0f);
 			/** the hotpoint */
-			HotpointType hotpoint_type = HotpointType::BOTTOM_LEFT;
+			Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
 		};
 
 		/** json functions */

@@ -10,11 +10,11 @@ namespace chaos
 {
 	namespace ParticleTextGenerator
 	{	
-		GeneratorParams::GeneratorParams(char const * in_font_info_name, float in_line_height, glm::vec2 const & in_position, HotpointType in_hotpoint_type):
+		GeneratorParams::GeneratorParams(char const * in_font_info_name, float in_line_height, glm::vec2 const & in_position, Hotpoint in_hotpoint):
 			line_height(in_line_height),
 			font_info_name(in_font_info_name),
 			position(in_position),
-			hotpoint_type(in_hotpoint_type)
+			hotpoint(in_hotpoint)
 		{
 		}
 
@@ -35,7 +35,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "font_info_name", src.font_info_name);
 			JSONTools::SetAttribute(json_entry, "tab_size", src.tab_size);
 			JSONTools::SetAttribute(json_entry, "position", src.position);
-			JSONTools::SetAttribute(json_entry, "hotpoint_type", src.hotpoint_type);
+			JSONTools::SetAttribute(json_entry, "hotpoint", src.hotpoint);
 			return true;
 		}
 
@@ -55,7 +55,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "font_info_name", dst.font_info_name);
 			JSONTools::GetAttribute(json_entry, "tab_size", dst.tab_size);
 			JSONTools::GetAttribute(json_entry, "position", dst.position);
-			JSONTools::GetAttribute(json_entry, "hotpoint_type", dst.hotpoint_type);
+			JSONTools::GetAttribute(json_entry, "hotpoint", dst.hotpoint);
 			return true;
 		}
 
@@ -626,7 +626,7 @@ namespace chaos
 			// displace all the sprites to match the position
 			glm::vec2 offset =
 				generator_data.params.position -
-				ConvertHotpoint(min_position, max_position - min_position, HotpointType::BOTTOM_LEFT, generator_data.params.hotpoint_type);
+				ConvertHotpoint(min_position, max_position - min_position, Hotpoint::BOTTOM_LEFT, generator_data.params.hotpoint);
 
 			MoveParticles(generator_data.result, offset);
 
@@ -890,9 +890,9 @@ namespace chaos
 				for (SpriteToken const & token : line)
 				{
 					if (token.IsBitmap())
-						sprite_manager->AddSpriteBitmap(token.bitmap_layout, token.position, token.size, HotpointType::BOTTOM_LEFT);
+						sprite_manager->AddSpriteBitmap(token.bitmap_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT);
 					else if (token.IsVisibleCharacter())
-						sprite_manager->AddSpriteCharacter(token.character_layout, token.position, token.size, HotpointType::BOTTOM_LEFT, token.color);
+						sprite_manager->AddSpriteCharacter(token.character_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
 				}
 			}
 			return true;

@@ -53,7 +53,7 @@ namespace death
 	protected:
 
 		/** returns the coordinate of the view corner corresponding to the given hotpoint */
-		static glm::vec2 GetCanvasBoxCorner(chaos::box2 const & canvas_box, chaos::HotpointType hotpoint);
+		static glm::vec2 GetCanvasBoxCorner(chaos::box2 const & canvas_box, chaos::Hotpoint hotpoint);
 		/** MAYBE (!!!) called whenever the hud is beeing inserted into the hud (the HUD::RegisterComponent is template function. the function below is not necessaraly been called) */
 		virtual void OnInsertedInHUD();
 		/** called whenever the hud is beeing removed into the hud */
@@ -356,7 +356,7 @@ namespace death
 		int cached_value = -1;
 
 		/** the hotpoint of the first particle */
-		chaos::HotpointType hotpoint_type = chaos::HotpointType::BOTTOM_LEFT;
+		chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 		/** the position of the very first particle */
 		glm::vec2 position = glm::vec2(0.0f, 0.0f);
 		/** the particle size of the particle (special meaning, see .cpp) */

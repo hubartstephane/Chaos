@@ -11,7 +11,7 @@
     {
       "line_height":250,
       "default_color":[1.0, 1.0, 1.0, 1.0],
-			"hotpoint_type":"center"
+			"hotpoint":"center"
     }
 	}
 }

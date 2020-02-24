@@ -3,7 +3,7 @@
 
     "format": "[LEFTSCOREICON] %d [RIGHTSCOREICON]",
     "generator_params": {
-      "hotpoint_type": "top",
+      "hotpoint": "top",
       "line_height": 60,
       "position": [ 0.0, -20.0 ]
     }
@@ -13,7 +13,7 @@
 
     "format": "[LEFTSCOREICON] %04d [RIGHTSCOREICON]",
     "generator_params": {
-      "hotpoint_type": "bottom",
+      "hotpoint": "bottom",
       "line_height": 100,
       "position": [ 0.0, 20.0 ]
     }
@@ -22,7 +22,7 @@
   "LEVEL_TITLE_ID": {
 
     "generator_params": {
-      "hotpoint_type": "center",
+      "hotpoint": "center",
       "alignment": "center",
       "line_height": 150,
       "position": [ 0.0, 0.0 ]
@@ -38,7 +38,7 @@
 
   "FPS_ID": {
     "generator_params": {
-      "hotpoint_type": "bottom-right",
+      "hotpoint": "bottom-right",
       "position": [ -20.0, 20.0 ]
     }
   }

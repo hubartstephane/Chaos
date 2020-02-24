@@ -128,14 +128,14 @@ namespace chaos
 		// recenter the whole box
 		glm::vec2 offset(0.0f, 0.0f);
 
-		if (((int)params.alignment_flags & (int)BitmapFontTextMeshAlign::RIGHT_FLAG) != 0)
+		if (((int)params.hotpoint & (int)Hotpoint::RIGHT) != 0)
 			offset.x = -2.0f * result.half_size.x;
-		if (((int)params.alignment_flags & (int)BitmapFontTextMeshAlign::MIDDLE_HORIZ_FLAG) != 0)
+		else if (((int)params.hotpoint & (int)Hotpoint::LEFT) == 0) // horizontal middle
 			offset.x = -result.half_size.x;
 
-		if (((int)params.alignment_flags & (int)BitmapFontTextMeshAlign::BOTTOM_FLAG) != 0)
+		if (((int)params.hotpoint & (int)Hotpoint::BOTTOM) != 0)
 			offset.y = 2.0f * result.half_size.y;
-		if (((int)params.alignment_flags & (int)BitmapFontTextMeshAlign::MIDDLE_VERT_FLAG) != 0)
+		else if (((int)params.hotpoint & (int)Hotpoint::TOP) == 0) // vertical middle
 			offset.y = result.half_size.y;
 
 		if (offset.x != 0.0f || offset.y != 0.0f)

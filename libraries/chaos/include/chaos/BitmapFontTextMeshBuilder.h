@@ -2,42 +2,11 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/Hotpoint.h>
 
 
 namespace chaos
 {
-
-	/**
-	* BitmapFontTextMeshAlign : alignment of generated texts
-	*/
-
-	enum class BitmapFontTextMeshAlign : int
-	{
-		/** some bit field to generate alignment */
-		TOP_FLAG = (1 << 0),
-		/** some bit field to generate alignment */
-		BOTTOM_FLAG = (1 << 1),
-		/** some bit field to generate alignment */
-		LEFT_FLAG = (1 << 2),
-		/** some bit field to generate alignment */
-		RIGHT_FLAG = (1 << 3),
-		/** some bit field to generate alignment */
-		MIDDLE_VERT_FLAG = (1 << 4),
-		/** some bit field to generate alignment */
-		MIDDLE_HORIZ_FLAG = (1 << 5),
-
-		/** some alignment */
-		ALIGN_CENTER = MIDDLE_VERT_FLAG | MIDDLE_HORIZ_FLAG,
-		/** some alignment */
-		ALIGN_TOPLEFT = TOP_FLAG | LEFT_FLAG,
-		/** some alignment */
-		ALIGN_TOPRIGHT = TOP_FLAG | RIGHT_FLAG,
-		/** some alignment */
-		ALIGN_BOTTOMLEFT = BOTTOM_FLAG | LEFT_FLAG,
-		/** some alignment */
-		ALIGN_BOTTOMRIGHT = BOTTOM_FLAG | RIGHT_FLAG
-	};
-
 	/**
 	* BitmapFontTextMeshBuilder : this class is used to generate quads to represents characters for a text using a bitmap font
 	*/
@@ -65,7 +34,7 @@ namespace chaos
 			/** the size of a tab in 'SPACE' equivalent */
 			int          tab_size = 2;
 			/** the alignment for the vertices */
-			BitmapFontTextMeshAlign alignment_flags = BitmapFontTextMeshAlign::ALIGN_TOPLEFT;
+			Hotpoint hotpoint = Hotpoint::TOP_LEFT;
 			/** maximum number of characters on a line */
 			int          line_limit = 0;
 

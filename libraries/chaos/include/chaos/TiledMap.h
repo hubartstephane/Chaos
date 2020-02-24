@@ -166,13 +166,13 @@ namespace chaos
 		// ==========================================
 
 			/** types of particle */
-		enum class PropertyType
+		enum class PropertyType : int
 		{
-			PROPERTY_TYPEID_ANY = 0,
-			PROPERTY_TYPEID_INT = 1,
-			PROPERTY_TYPEID_FLOAT = 2,
-			PROPERTY_TYPEID_BOOL = 3,
-			PROPERTY_TYPEID_STRING = 4
+			ANY = 0,
+			INT = 1,
+			FLOAT = 2,
+			BOOL = 3,
+			STRING = 4
 		};
 
 		class Property : public BaseObject
@@ -216,7 +216,7 @@ namespace chaos
 			/** the name of the property */
 			std::string name;
 			/** the type of the property */
-			PropertyType type = PropertyType::PROPERTY_TYPEID_ANY;
+			PropertyType type = PropertyType::ANY;
 		};
 
 		// ==========================================
@@ -278,10 +278,10 @@ namespace chaos
 		// Specialization of properties
 		// ==========================================
 
-		using PropertyInt = PropertyTemplate<int, PropertyType::PROPERTY_TYPEID_INT>;
-		using PropertyFloat = PropertyTemplate<float, PropertyType::PROPERTY_TYPEID_FLOAT>;
-		using PropertyBool = PropertyTemplate<bool, PropertyType::PROPERTY_TYPEID_BOOL>;
-		using PropertyString = PropertyTemplate<std::string, PropertyType::PROPERTY_TYPEID_STRING>;
+		using PropertyInt = PropertyTemplate<int, PropertyType::INT>;
+		using PropertyFloat = PropertyTemplate<float, PropertyType::FLOAT>;
+		using PropertyBool = PropertyTemplate<bool, PropertyType::BOOL>;
+		using PropertyString = PropertyTemplate<std::string, PropertyType::STRING>;
 
 		// ==========================================
 		// PropertyOwner : some objects that have dynamic properties
@@ -297,9 +297,9 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** find property by name */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY);
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY);
 			/** find property by name */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const;
 
 			/** find property without looking elsewhere than our own table */
 			Property * FindInternalProperty(char const * name, PropertyType type_id);
@@ -414,9 +414,9 @@ namespace chaos
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** override */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) override;
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const override;
 
 			/** loading method from XML */
 			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
@@ -594,19 +594,19 @@ namespace chaos
 		// GeometricObjectText
 		// ==========================================
 
-		enum class ObjectTextHAlignment : int
+		enum class HorizontalTextAlignment : int
 		{
-			HALIGN_LEFT = 0,
-			HALIGN_CENTER = 1,
-			HALIGN_RIGHT = 2,
-			HALIGN_JUSTIFY = 3
+			LEFT = 0,
+			CENTER = 1,
+			RIGHT = 2,
+			JUSTIFY = 3
 		};
 
-		enum class ObjectTextVAlignment : int
+		enum class VerticalTextAlignment : int
 		{
-			VALIGN_TOP = 0,
-			VALIGN_CENTER = 1,
-			VALIGN_BOTTOM = 2
+			TOP = 0,
+			CENTER = 1,
+			BOTTOM = 2
 		};
 
 		class GeometricObjectText : public GeometricObjectSurface
@@ -629,9 +629,9 @@ namespace chaos
 		public:
 
 			/** object information */
-			ObjectTextHAlignment halign = ObjectTextHAlignment::HALIGN_LEFT;
+			HorizontalTextAlignment halign = HorizontalTextAlignment::LEFT;
 			/** object information */
-			ObjectTextVAlignment valign = ObjectTextVAlignment::VALIGN_TOP;
+			VerticalTextAlignment valign = VerticalTextAlignment::TOP;
 			/** object information */
 			std::string fontfamily;
 			/** object information */
@@ -660,9 +660,9 @@ namespace chaos
 			virtual box2 GetBoundingBox(bool world_system) const override;
 
 			/** override */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) override;
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const override;
 
 		protected:
 
@@ -722,9 +722,9 @@ namespace chaos
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** override */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) override;
+			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const override;
 
 			/** initialize terrain indices from string */
 			bool ComputeTerrainIndices(char const * str);
@@ -844,10 +844,10 @@ namespace chaos
 		// ObjectLayer
 		// ==========================================
 
-		enum class DrawOrder
+		enum class DrawOrder : int
 		{
-			DRAW_ORDER_MANUAL = 0,
-			DRAW_ORDER_TOPDOWN = 1
+			MANUAL = 0,
+			TOPDOWN = 1
 		};
 
 		class ObjectLayer : public LayerBase
@@ -878,7 +878,7 @@ namespace chaos
 			/** object information */
 			glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 			/** object information */
-			DrawOrder draw_order = DrawOrder::DRAW_ORDER_MANUAL;
+			DrawOrder draw_order = DrawOrder::MANUAL;
 
 			/** the properties of the object */
 			std::vector<shared_ptr<GeometricObject>> geometric_objects;
@@ -1019,9 +1019,9 @@ namespace chaos
 			ObjectTypeDefinition const * FindObjectType(char const * name) const;
 
 			/** find the property in an ObjectType */
-			Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY);
+			Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY);
 			/** find the property in an ObjectType */
-			Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const;
+			Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY) const;
 
 
 			/** returns the number of object type */
@@ -1057,8 +1057,8 @@ namespace chaos
 
 		enum class TileSetOrientation : int
 		{
-			ORIENTATION_ORTHOGONAL = 0,
-			ORIENTATION_ISOMETRIC = 1
+			ORTHOGONAL = 0,
+			ISOMETRIC = 1
 		};
 
 		class TileSet : public ManagerObject
@@ -1105,7 +1105,7 @@ namespace chaos
 			/** object information */
 			std::string name;
 			/** object information */
-			TileSetOrientation orientation = TileSetOrientation::ORIENTATION_ORTHOGONAL;
+			TileSetOrientation orientation = TileSetOrientation::ORTHOGONAL;
 			/** object information */
 			glm::ivec2  size = glm::ivec2(32, 32);
 			/** object information */
@@ -1176,30 +1176,30 @@ namespace chaos
 
 		enum class MapOrientation : int
 		{
-			ORIENTATION_ORTHOGONAL = 0,
-			ORIENTATION_ISOMETRIC = 1,
-			ORIENTATION_STAGGERED = 2,
-			ORIENTATION_HEXAGONAL = 3,
+			ORTHOGONAL = 0,
+			ISOMETRIC = 1,
+			STAGGERED = 2,
+			HEXAGONAL = 3,
 		};
 
 		enum class StaggerAxis : int
 		{
-			STAGGERED_AXIS_X = 0,
-			STAGGERED_AXIS_Y = 1
+			AXIS_X = 0,
+			AXIS_Y = 1
 		};
 
 		enum class StaggerIndex : int
 		{
-			STAGGERED_INDEX_ODD = 0,
-			STAGGERED_INDEX_EVEN = 1
+			ODD = 0,
+			EVEN = 1
 		};
 
 		enum class RenderOrder : int
 		{
-			RENDER_ORDER_RIGHT_UP = 0,
-			RENDER_ORDER_RIGHT_DOWN = 1,
-			RENDER_ORDER_LEFT_UP = 2,
-			RENDER_ORDER_LEFT_DOWN = 3
+			RIGHT_UP = 0,
+			RIGHT_DOWN = 1,
+			LEFT_UP = 2,
+			LEFT_DOWN = 3
 		};
 
 		class Map : public ManagerObject
@@ -1259,7 +1259,7 @@ namespace chaos
 		public:
 
 			/** object information */
-			MapOrientation orientation = MapOrientation::ORIENTATION_ORTHOGONAL;
+			MapOrientation orientation = MapOrientation::ORTHOGONAL;
 			/** object information */
 			glm::ivec2 size = glm::ivec2(100, 100);
 			/** object information */
@@ -1269,11 +1269,11 @@ namespace chaos
 			/** object information */
 			int hex_side_length = 0;
 			/** object information */
-			StaggerAxis stagger_axis = StaggerAxis::STAGGERED_AXIS_Y;
+			StaggerAxis stagger_axis = StaggerAxis::AXIS_Y;
 			/** object information */
-			StaggerIndex stagger_index = StaggerIndex::STAGGERED_INDEX_ODD;
+			StaggerIndex stagger_index = StaggerIndex::ODD;
 			/** object information */
-			RenderOrder render_order = RenderOrder::RENDER_ORDER_RIGHT_DOWN;
+			RenderOrder render_order = RenderOrder::RIGHT_DOWN;
             /** object information */
             int compressionlevel = 0;
 			/** object information */
@@ -1336,9 +1336,9 @@ namespace chaos
 			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
 
 			/** find the property in an ObjectTypeSet */
-			virtual Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY);
+			virtual Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY);
 			/** find the property in an ObjectTypeSet */
-			virtual Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::PROPERTY_TYPEID_ANY) const;
+			virtual Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY) const;
 
 			/** returns the number of map */
 			size_t GetMapCount() const { return maps.size();}

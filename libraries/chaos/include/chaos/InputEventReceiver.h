@@ -79,7 +79,7 @@ namespace chaos
 	protected:
 
 		/** the current input mode */
-		InputMode input_mode = InputMode::Keyboard;
+		InputMode input_mode = InputMode::KEYBOARD;
 	};
 
 }; // namespace chaos

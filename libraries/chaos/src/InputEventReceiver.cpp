@@ -36,7 +36,7 @@ namespace chaos
 			return false;
 		if (glfwGetKey(glfw_window, check_key))
 		{
-			SetInputMode(InputMode::Keyboard);
+			SetInputMode(InputMode::KEYBOARD);
 			return true;
 		}
 		return false;
@@ -46,7 +46,7 @@ namespace chaos
 	{
 		if (event.IsKeyPressed(check_key, check_modifier))
 		{
-			SetInputMode(InputMode::Keyboard);
+			SetInputMode(InputMode::KEYBOARD);
 			return true;
 		}
 		return false;
@@ -60,7 +60,7 @@ namespace chaos
 	{
 		if (OnMouseMoveImpl(x, y))
 		{
-			SetInputMode(InputMode::Mouse);
+			SetInputMode(InputMode::MOUSE);
 			return true;
 		}
 		return false; 
@@ -70,7 +70,7 @@ namespace chaos
 	{ 
 		if (OnMouseButtonImpl(button, action, modifier))
 		{
-			SetInputMode(InputMode::Mouse);
+			SetInputMode(InputMode::MOUSE);
 			return true;
 		}
 		return false; 
@@ -80,7 +80,7 @@ namespace chaos
 	{ 
 		if (OnMouseWheelImpl(scroll_x, scroll_y))
 		{
-			SetInputMode(InputMode::Mouse);
+			SetInputMode(InputMode::MOUSE);
 			return true;
 		}
 		return false; 
@@ -90,7 +90,7 @@ namespace chaos
 	{ 
 		if (OnKeyEventImpl(event))
 		{
-			SetInputMode(InputMode::Keyboard);
+			SetInputMode(InputMode::KEYBOARD);
 			return true;
 		}
 		return false; 
@@ -100,7 +100,7 @@ namespace chaos
 	{ 
 		if (OnCharEventImpl(c))
 		{
-			SetInputMode(InputMode::Keyboard);
+			SetInputMode(InputMode::KEYBOARD);
 			return true;
 		}
 		return false; 

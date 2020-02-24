@@ -20,7 +20,7 @@
 namespace chaos
 {
 
-	enum class ButtonChangeType : int
+	enum class ButtonStateChange : int
 	{
 		/** button status change */
 		NO_CHANGE = 0,
@@ -191,7 +191,7 @@ namespace chaos
 		public:
 
 			/* returns a status giving the change of button relative to previous frame */
-			ButtonChangeType GetButtonChanges(size_t button_index) const;
+			ButtonStateChange GetButtonStateChange(size_t button_index) const;
 			/** returns the button state */
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
@@ -239,7 +239,7 @@ namespace chaos
 			GamepadData const* GetGamepadData() const { return &gamepad_data; }
 
 			/* returns a status giving the change of button relative to previous frame */
-			ButtonChangeType GetButtonChanges(size_t button_index) const;
+			ButtonStateChange GetButtonStateChange(size_t button_index) const;
 			/** returns the button state */
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */
@@ -372,7 +372,7 @@ namespace chaos
 			GamepadData const* GetGamepadData() const;
 
 			/* returns a status giving the change of button relative to previous frame */
-			ButtonChangeType GetButtonChanges(size_t button_index) const;
+			ButtonStateChange GetButtonStateChange(size_t button_index) const;
 			/** returns the button state */
 			bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
 			/** returns the button state */

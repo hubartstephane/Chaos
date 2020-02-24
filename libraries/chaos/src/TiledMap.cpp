@@ -123,7 +123,7 @@ namespace chaos
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (type_id == PropertyType::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyType())
+				if (type_id == PropertyType::ANY || type_id == property->GetPropertyType())
 					if (StringTools::Stricmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
@@ -133,7 +133,7 @@ namespace chaos
 		{
 			assert(name != nullptr);
 			for (auto & property : properties)
-				if (type_id == PropertyType::PROPERTY_TYPEID_ANY || type_id == property->GetPropertyType())
+				if (type_id == PropertyType::ANY || type_id == property->GetPropertyType())
 					if (StringTools::Stricmp(property->GetName(), name) == 0)
 						return property.get();
 			return nullptr;
@@ -141,7 +141,7 @@ namespace chaos
 
 		int * PropertyOwner::FindPropertyInt(char const * name)
 		{
-			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_INT);
+			Property * property = FindProperty(name, PropertyType::INT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetIntProperty();
@@ -149,7 +149,7 @@ namespace chaos
 
 		int const * PropertyOwner::FindPropertyInt(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_INT);
+			Property const * property = FindProperty(name, PropertyType::INT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetIntProperty();
@@ -157,7 +157,7 @@ namespace chaos
 
 		float * PropertyOwner::FindPropertyFloat(char const * name)
 		{
-			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_FLOAT);
+			Property * property = FindProperty(name, PropertyType::FLOAT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetFloatProperty();
@@ -165,7 +165,7 @@ namespace chaos
 
 		float const * PropertyOwner::FindPropertyFloat(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_FLOAT);
+			Property const * property = FindProperty(name, PropertyType::FLOAT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetFloatProperty();
@@ -173,7 +173,7 @@ namespace chaos
 
 		bool * PropertyOwner::FindPropertyBool(char const * name)
 		{
-			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_BOOL);
+			Property * property = FindProperty(name, PropertyType::BOOL);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetBoolProperty();
@@ -181,7 +181,7 @@ namespace chaos
 
 		bool const * PropertyOwner::FindPropertyBool(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_BOOL);
+			Property const * property = FindProperty(name, PropertyType::BOOL);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetBoolProperty();
@@ -189,7 +189,7 @@ namespace chaos
 
 		std::string * PropertyOwner::FindPropertyString(char const * name)
 		{
-			Property * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_STRING);
+			Property * property = FindProperty(name, PropertyType::STRING);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetStringProperty();
@@ -197,7 +197,7 @@ namespace chaos
 
 		std::string const * PropertyOwner::FindPropertyString(char const * name) const
 		{
-			Property const * property = FindProperty(name, PropertyType::PROPERTY_TYPEID_STRING);
+			Property const * property = FindProperty(name, PropertyType::STRING);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetStringProperty();
@@ -242,7 +242,7 @@ namespace chaos
 				if (name_attribute == nullptr)
 					continue;
 				char const * property_name = name_attribute->Value();
-				if (FindInternalProperty(property_name, PropertyType::PROPERTY_TYPEID_ANY) != nullptr) // and must be unique
+				if (FindInternalProperty(property_name, PropertyType::ANY) != nullptr) // and must be unique
 					continue;
 
 				tinyxml2::XMLAttribute const * value_attribute = node->FindAttribute("value"); // value is NOT mandatory (for multiline strings, we use node->GetText())
@@ -480,20 +480,20 @@ namespace chaos
 
 			tinyxml2::XMLElement const * text_element = element->FirstChildElement("text");
 
-			static std::vector<std::pair<ObjectTextHAlignment, char const*>> const halign_map = {
-				{ ObjectTextHAlignment::HALIGN_LEFT, "left" },
-				{ ObjectTextHAlignment::HALIGN_CENTER, "center" },
-				{ ObjectTextHAlignment::HALIGN_RIGHT, "right" },
-				{ ObjectTextHAlignment::HALIGN_JUSTIFY, "justify" },
-				{ ObjectTextHAlignment::HALIGN_LEFT, nullptr }
+			static std::vector<std::pair<HorizontalTextAlignment, char const*>> const halign_map = {
+				{ HorizontalTextAlignment::LEFT, "left" },
+				{ HorizontalTextAlignment::CENTER, "center" },
+				{ HorizontalTextAlignment::RIGHT, "right" },
+				{ HorizontalTextAlignment::JUSTIFY, "justify" },
+				{ HorizontalTextAlignment::LEFT, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(text_element, "halign", halign_map, halign);
 
-			static std::vector<std::pair<ObjectTextVAlignment, char const*>> const valign_map = {
-				{ ObjectTextVAlignment::VALIGN_TOP, "top" },
-				{ ObjectTextVAlignment::VALIGN_CENTER, "center" },
-				{ ObjectTextVAlignment::VALIGN_BOTTOM, "bottom" },
-				{ ObjectTextVAlignment::VALIGN_TOP, nullptr  }
+			static std::vector<std::pair<VerticalTextAlignment, char const*>> const valign_map = {
+				{ VerticalTextAlignment::TOP, "top" },
+				{ VerticalTextAlignment::CENTER, "center" },
+				{ VerticalTextAlignment::BOTTOM, "bottom" },
+				{ VerticalTextAlignment::TOP, nullptr  }
 			};
 			XMLTools::ReadEnumAttribute(text_element, "valign", valign_map, valign);
 
@@ -822,8 +822,8 @@ namespace chaos
 			ReadXMLColor(element, "color", color);
 
 			static std::vector<std::pair<DrawOrder, char const*>> const draw_order_map = {
-				{ DrawOrder::DRAW_ORDER_MANUAL, "index"  },
-				{ DrawOrder::DRAW_ORDER_TOPDOWN, nullptr }
+				{ DrawOrder::MANUAL, "index"  },
+				{ DrawOrder::TOPDOWN, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "draworder", draw_order_map, draw_order);
 
@@ -1178,8 +1178,8 @@ namespace chaos
 			if (grid_element != nullptr)
 			{
 				static std::vector<std::pair<TileSetOrientation, char const*>> const orientation_map = {
-					{ TileSetOrientation::ORIENTATION_ISOMETRIC, "isometric" },
-					{ TileSetOrientation::ORIENTATION_ORTHOGONAL, nullptr }
+					{ TileSetOrientation::ISOMETRIC, "isometric" },
+					{ TileSetOrientation::ORTHOGONAL, nullptr }
 				};
 				XMLTools::ReadEnumAttribute(grid_element, "orientation", orientation_map, orientation);
 
@@ -1220,34 +1220,34 @@ namespace chaos
 		bool Map::DoLoadMembers(tinyxml2::XMLElement const * element)
 		{
 			static std::vector<std::pair<MapOrientation, char const*>> const orient_map = {
-				{ MapOrientation::ORIENTATION_ORTHOGONAL, "orthogonal" },
-				{ MapOrientation::ORIENTATION_ISOMETRIC, "isometric" },
-				{ MapOrientation::ORIENTATION_STAGGERED, "staggered" },
-				{ MapOrientation::ORIENTATION_HEXAGONAL, "hexagonal" },
-				{ MapOrientation::ORIENTATION_ORTHOGONAL, nullptr }
+				{ MapOrientation::ORTHOGONAL, "orthogonal" },
+				{ MapOrientation::ISOMETRIC, "isometric" },
+				{ MapOrientation::STAGGERED, "staggered" },
+				{ MapOrientation::HEXAGONAL, "hexagonal" },
+				{ MapOrientation::ORTHOGONAL, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "orientation", orient_map, orientation);
 
 			static std::vector < std::pair<StaggerAxis, char const*>> const stagger_axis_map = {
-				{ StaggerAxis::STAGGERED_AXIS_X, "X",  },
-				{ StaggerAxis::STAGGERED_AXIS_Y, "Y",  },
-				{ StaggerAxis::STAGGERED_AXIS_X, nullptr }
+				{ StaggerAxis::AXIS_X, "X",  },
+				{ StaggerAxis::AXIS_Y, "Y",  },
+				{ StaggerAxis::AXIS_X, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "staggeraxis", stagger_axis_map, stagger_axis);
 
 			static std::vector<std::pair<StaggerIndex, char const*>> const stagger_index_map = {
-				{ StaggerIndex::STAGGERED_INDEX_ODD, "odd" },
-				{ StaggerIndex::STAGGERED_INDEX_EVEN, "even" },				
-				{ StaggerIndex::STAGGERED_INDEX_ODD, nullptr }
+				{ StaggerIndex::ODD, "odd" },
+				{ StaggerIndex::EVEN, "even" },				
+				{ StaggerIndex::ODD, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "staggerindex", stagger_index_map, stagger_index);
 
 			static std::vector<std::pair<RenderOrder, char const*>> const render_order_map = {
-				{ RenderOrder::RENDER_ORDER_RIGHT_UP, "right-up" },
-				{ RenderOrder::RENDER_ORDER_RIGHT_DOWN, "right-down" },
-				{ RenderOrder::RENDER_ORDER_LEFT_UP, "left-up" },
-				{ RenderOrder::RENDER_ORDER_LEFT_DOWN, "left-down" },
-				{ RenderOrder::RENDER_ORDER_RIGHT_UP, nullptr }
+				{ RenderOrder::RIGHT_UP, "right-up" },
+				{ RenderOrder::RIGHT_DOWN, "right-down" },
+				{ RenderOrder::LEFT_UP, "left-up" },
+				{ RenderOrder::LEFT_DOWN, "left-down" },
+				{ RenderOrder::RIGHT_UP, nullptr }
 			};
 			XMLTools::ReadEnumAttribute(element, "renderorder", render_order_map, render_order);
 

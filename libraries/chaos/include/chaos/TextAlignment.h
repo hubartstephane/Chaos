@@ -6,10 +6,10 @@ namespace chaos
 {
 	enum class TextAlignment : int
 	{
-		ALIGN_LEFT = 0,
-		ALIGN_RIGHT = 1,
-		ALIGN_CENTER = 2,
-		ALIGN_JUSTIFY = 3
+		LEFT = 0,
+		RIGHT = 1,
+		CENTER = 2,
+		JUSTIFY = 3
 	};
 
 	/** JSON loading method */

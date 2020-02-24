@@ -187,7 +187,7 @@ protected:
 		generator_params.line_spacing = 0.0f;
 		generator_params.bitmap_padding.x = 1.0f * 30.0f;
 		generator_params.bitmap_padding.y = 5.0f;
-		generator_params.alignment = chaos::TextAlignment::ALIGN_LEFT;
+		generator_params.alignment = chaos::TextAlignment::LEFT;
 		generator_params.justify_space_factor = 8.0f;
 		generator_params.max_text_width = 200.0f;
 		generator_params.word_wrap = true;

@@ -169,7 +169,7 @@ namespace death
 
 		bool CheckpointTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type)
 		{
-			if (event_type != chaos::CollisionType::COLLISION_STARTED)
+			if (event_type != chaos::CollisionType::STARTED)
 				return false;
 
 			GameInstance * game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
@@ -234,9 +234,9 @@ namespace death
 		bool NotificationTriggerObject::OnTriggerCollision(float delta_time, chaos::CollisionType event_type)
 		{
 			// early exit
-			if (event_type != chaos::CollisionType::COLLISION_STARTED && event_type != chaos::CollisionType::COLLISION_FINISHED) // ignore AGAIN event
+			if (event_type != chaos::CollisionType::STARTED && event_type != chaos::CollisionType::FINISHED) // ignore AGAIN event
 				return false;
-			if (event_type == chaos::CollisionType::COLLISION_FINISHED && !stop_when_collision_over) // ignore FINISHED if you do not want to kill the notification
+			if (event_type == chaos::CollisionType::FINISHED && !stop_when_collision_over) // ignore FINISHED if you do not want to kill the notification
 				return false;
 			// get some variables 
 			Game * game = layer_instance->GetGame();
@@ -249,10 +249,10 @@ namespace death
 			if (notification_component == nullptr)
 				return false;
 			// show notification
-			if (event_type == chaos::CollisionType::COLLISION_STARTED)
+			if (event_type == chaos::CollisionType::STARTED)
 				notification_component->ShowNotification(notification_string.c_str(), notification_lifetime);
 			// hide notification
-			else if (event_type == chaos::CollisionType::COLLISION_FINISHED) // XXX : 'stop_when_collision_over' has already be checked
+			else if (event_type == chaos::CollisionType::FINISHED) // XXX : 'stop_when_collision_over' has already be checked
 				notification_component->HideNotification();
 			return true;
 		}
@@ -316,14 +316,14 @@ namespace death
 
 		bool SoundTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type)
 		{
-			if (event_type == chaos::CollisionType::COLLISION_STARTED)
+			if (event_type == chaos::CollisionType::STARTED)
 			{
 				chaos::Sound * new_sound = CreateSound();
 				if (stop_when_collision_over)
 					sound = new_sound;
 				return true;
 			}
-			if (event_type == chaos::CollisionType::COLLISION_FINISHED)
+			if (event_type == chaos::CollisionType::FINISHED)
 			{
 				if (stop_when_collision_over && sound != nullptr)
 				{
@@ -351,7 +351,7 @@ namespace death
 
 		bool FinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type)
 		{
-			if (event_type != chaos::CollisionType::COLLISION_STARTED)
+			if (event_type != chaos::CollisionType::STARTED)
 				return false;
 
 			Game * game = layer_instance->GetGame();
@@ -1197,17 +1197,17 @@ namespace death
 				TriggerObject * trigger = new_triggers[i].get();
 
 				// search in previous frame data	
-				chaos::CollisionType collision_type = chaos::CollisionType::COLLISION_STARTED;
+				chaos::CollisionType collision_type = chaos::CollisionType::STARTED;
 				if (std::find(camera_collision_records.begin(), camera_collision_records.end(), trigger) != camera_collision_records.end()) 
-					collision_type = chaos::CollisionType::COLLISION_AGAIN;
+					collision_type = chaos::CollisionType::AGAIN;
 
 				// trigger once : do not trigger anymore entering events
-				if (collision_type == chaos::CollisionType::COLLISION_STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
+				if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
 					continue;
 				// trigger event
 				if (trigger->OnCameraCollisionEvent(delta_time, camera_box, collision_type))
 				{
-					if (collision_type == chaos::CollisionType::COLLISION_STARTED && trigger->IsTriggerOnce())
+					if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce())
 					{
 						trigger->enter_event_triggered = true;
 						trigger->SetModified();
@@ -1220,7 +1220,7 @@ namespace death
 			for (size_t i = 0; i < previous_count; ++i)
 			{
 				if (std::find(new_triggers.begin(), new_triggers.end(), camera_collision_records[i]) == new_triggers.end()) // no more colliding
-					camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, chaos::CollisionType::COLLISION_FINISHED);
+					camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, chaos::CollisionType::FINISHED);
 			}
 
 			// store the new triggers
@@ -1256,17 +1256,17 @@ namespace death
 				TriggerObject * trigger = new_triggers[i].get();
 
 				// search in previous frame data
-				chaos::CollisionType collision_type = chaos::CollisionType::COLLISION_STARTED;
+				chaos::CollisionType collision_type = chaos::CollisionType::STARTED;
 				if (previous_collisions != nullptr)
 					if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), trigger) != previous_collisions->triggers.end())
-						collision_type = chaos::CollisionType::COLLISION_AGAIN;
+						collision_type = chaos::CollisionType::AGAIN;
 				// trigger once : do not trigger anymore entering events
-				if (collision_type == chaos::CollisionType::COLLISION_STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
+				if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
 					continue;
 				// trigger event
 				if (trigger->OnPlayerCollisionEvent(delta_time, player, player_particle, collision_type))
 				{
-					if (collision_type == chaos::CollisionType::COLLISION_STARTED && trigger->IsTriggerOnce())
+					if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce())
 					{
 						trigger->enter_event_triggered = true;
 						trigger->SetModified();
@@ -1281,7 +1281,7 @@ namespace death
 				for (size_t i = 0; i < previous_count; ++i)
 				{
 					if (std::find(new_triggers.begin(), new_triggers.end(), previous_collisions->triggers[i]) == new_triggers.end()) // no more colliding
-						previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, chaos::CollisionType::COLLISION_FINISHED);
+						previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, chaos::CollisionType::FINISHED);
 				}
 			}
 

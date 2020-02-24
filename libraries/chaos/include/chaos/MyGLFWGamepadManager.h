@@ -34,7 +34,7 @@ namespace chaos
 		BECOME_PRESSED = 4
 	};
 
-	enum XBoxButtonType : int // XXXX: no class, so this can be implicitly converted to int
+	enum XBoxButton : int // XXXX: no class, so this can be implicitly converted to int
 	{
 		/** index in buttons of A for XBOX like pad */
 		BUTTON_A = 0,
@@ -71,7 +71,7 @@ namespace chaos
 		BUTTON_RIGHTTRIGGER = 102
 	};
 
-	enum XBoxAxisType : int // XXXX: no class, so this can be implicitly converted to int
+	enum XBoxAxis : int // XXXX: no class, so this can be implicitly converted to int
 	{
 		/** index in axis of LEFT X for XBOX like pad */
 		LEFT_AXIS_X = 0,

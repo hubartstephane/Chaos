@@ -3,7 +3,7 @@
 
     "format": "[LEFTSCOREICON] %d [RIGHTSCOREICON]",
     "generator_params": {
-      "hotpoint_type": "top",
+      "hotpoint": "top",
       "line_height": 60,
       "position": [ 0.0, -20.0 ]
     }
@@ -13,7 +13,7 @@
 
     "format": "[LEFTSCOREICON] %04d [RIGHTSCOREICON]",
     "generator_params": {
-      "hotpoint_type": "bottom",
+      "hotpoint": "bottom",
       "line_height": 100,
       "position": [ 0.0, 20.0 ]
     }
@@ -22,7 +22,7 @@
   "LEVEL_TITLE_ID": {
 
     "generator_params": {
-      "hotpoint_type": "center",
+      "hotpoint": "center",
       "alignment": "center",
       "line_height": 150,
       "position": [ 0.0, 0.0 ]
@@ -30,7 +30,7 @@
   },
 
   "SHROUDLIFE_ID": {
-    "hotpoint_type": "top-left",
+    "hotpoint": "top-left",
     "position": [ 20.0, -20.0 ],
     "particle_size": [ 0.0, 150 ]
   },
@@ -44,7 +44,7 @@
 
   "UPGRADE_ID": {
     "generator_params": {
-      "hotpoint_type": "top-right",
+      "hotpoint": "top-right",
       "position": [ -20.0, -20.0 ],
       "line_height": 80.0
     }
@@ -52,14 +52,14 @@
 
   "FPS_ID": {
     "generator_params": {
-      "hotpoint_type": "bottom-right",
+      "hotpoint": "bottom-right",
       "position": [ -20.0, 20.0 ]
     }
   },
 
   "LIFE_ID": {
 
-    "hotpoint_type": "bottom-left",
+    "hotpoint": "bottom-left",
     "position": [ 20.0, 20.0 ],
     "particle_offset": [ 120.0, 0.0 ],
     "particle_size": [ 0.0, 120.0 ]

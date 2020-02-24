@@ -819,7 +819,7 @@ namespace death
 				chaos::ParticleTextGenerator::GeneratorParams params;
 
 				params.line_height = (float)text->pixelsize;
-				params.hotpoint_type = chaos::HotpointType::TOP;
+				params.hotpoint = chaos::Hotpoint::TOP;
 				params.position = text->position;
 				params.default_color = text->color;
 

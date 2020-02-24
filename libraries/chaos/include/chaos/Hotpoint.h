@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	enum class HotpointType : int
+	enum class Hotpoint : int
 	{
 		LEFT = 1,
 		RIGHT = 2,
@@ -21,14 +21,14 @@ namespace chaos
 		CENTER = VMIDDLE | HMIDDLE
 	};
 
-	/** given a hotpoint and a hotpoint_type, returns the BottomLeft hotpoint position */
-	glm::vec2 ConvertHotpointToBottomLeft(glm::vec2 const& hotpoint, glm::vec2 const& size, HotpointType hotpoint_type);
-	/** given a hotpoint and a hotpoint_type, returns any other hotpoint_type position */
-	glm::vec2 ConvertHotpoint(glm::vec2 const& hotpoint, glm::vec2 const& size, HotpointType initial_hotpoint_type, HotpointType final_hotpoint_type);
+	/** given a hotpoint and a hotpoint, returns the BottomLeft hotpoint position */
+	glm::vec2 ConvertHotpointToBottomLeft(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint hotpoint);
+	/** given a hotpoint and a hotpoint, returns any other hotpoint position */
+	glm::vec2 ConvertHotpoint(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint initial_hotpoint, Hotpoint final_hotpoint);
 
 	/** JSON loading method */
-	bool LoadFromJSON(nlohmann::json const& json_entry, HotpointType& dst);
+	bool LoadFromJSON(nlohmann::json const& json_entry, Hotpoint& dst);
 	/** JSON saving method */
-	bool SaveIntoJSON(nlohmann::json& json_entry, HotpointType const& src);
+	bool SaveIntoJSON(nlohmann::json& json_entry, Hotpoint const& src);
 
 }; // namespace chaos

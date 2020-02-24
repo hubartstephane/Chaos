@@ -258,19 +258,19 @@ namespace death
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
 			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-				chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::HotpointType::CENTER), GameHUDKeys::TEXT_LAYER_ID), game_name);
+				chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), game_name);
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
 			std::string best_score = chaos::StringTools::Printf("Best score: %d", game->GetBestScore());
 			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent(
-				chaos::ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), chaos::HotpointType::CENTER), GameHUDKeys::TEXT_LAYER_ID), best_score.c_str());
+				chaos::ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), best_score.c_str());
 		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();
 		if (game_instructions != nullptr)
 			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent(
-				chaos::ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), chaos::HotpointType::BOTTOM), GameHUDKeys::TEXT_LAYER_ID), game_instructions);
+				chaos::ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), chaos::Hotpoint::BOTTOM), GameHUDKeys::TEXT_LAYER_ID), game_instructions);
 
 		return true;
 	}
@@ -286,7 +286,7 @@ namespace death
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::HotpointType::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Pause");
+			chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Pause");
 		return true;
 	}
 
@@ -301,7 +301,7 @@ namespace death
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::HotpointType::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Game Over");
+			chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Game Over");
 		return true;
 	}
 

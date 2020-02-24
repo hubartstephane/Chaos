@@ -182,7 +182,7 @@ protected:
 		generator_params.line_height = 50;
 		generator_params.font_info_name = "font_info1"; // the default character set
 		generator_params.position = glm::vec2(0.0f, 0.0f);
-		generator_params.hotpoint_type = chaos::HotpointType::BOTTOM_LEFT;
+		generator_params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 		generator_params.character_spacing = 0.0f;
 		generator_params.line_spacing = 0.0f;
 		generator_params.bitmap_padding.x = 1.0f * 30.0f;

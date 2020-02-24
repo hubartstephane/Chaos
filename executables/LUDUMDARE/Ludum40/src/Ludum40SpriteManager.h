@@ -53,9 +53,9 @@ namespace chaos
     /** Finalize the manager */
     void Finalize();
     /** add a sprite to be rendered */
-    void AddSpriteBitmap(BitmapAtlas::BitmapInfo const * info, glm::vec2 const & position, glm::vec2 const & size, HotpointType hotpoint_type);
+    void AddSpriteBitmap(BitmapAtlas::BitmapInfo const * info, glm::vec2 const & position, glm::vec2 const & size, Hotpoint hotpoint);
     /** add a sprite to be rendered */
-    void AddSpriteCharacter(BitmapAtlas::CharacterInfo const * info, glm::vec2 const & position, glm::vec2 const & size, HotpointType hotpoint_type, glm::vec3 const & color);
+    void AddSpriteCharacter(BitmapAtlas::CharacterInfo const * info, glm::vec2 const & position, glm::vec2 const & size, Hotpoint hotpoint, glm::vec3 const & color);
     /** Display the sprites */
     void Display(GPUProgramProviderBase * uniform_provider);
     /** get the number of sprites in the buffer */

@@ -257,7 +257,7 @@ namespace chaos
 						ImageDescription src_desc = entry_input->description;
 						ImageDescription dst_desc = ImageTools::GetImageDescription(bitmap.get());
 
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, src_desc.width, src_desc.height, false);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, src_desc.width, src_desc.height, ImageTransform::NO_TRANSFORM);
 					}
 					result.push_back(std::move(bitmap));
 				}

@@ -191,7 +191,7 @@ namespace chaos
 			return nullptr;
 		// fill the bitmap
 		ImageDescription dst_desc = GetImageDescription(result);
-		ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, 0, 0, src_desc.width, src_desc.height, false);
+		ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, 0, 0, src_desc.width, src_desc.height, ImageTransform::NO_TRANSFORM);
 
 		return result;
 	}
@@ -316,14 +316,14 @@ namespace chaos
 	public:
 
 		/// constructor
-		CopyPixelMetaFunc(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height, bool in_central_symetry) :
+		CopyPixelMetaFunc(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height, ImageTransform in_image_transform) :
 			src_format(in_src_desc.pixel_format.GetFormat()),
 			dst_format(in_dst_desc.pixel_format.GetFormat()),
 			src_desc(in_src_desc), dst_desc(in_dst_desc),
 			src_x(in_src_x), src_y(in_src_y),
 			dst_x(in_dst_x), dst_y(in_dst_y),
 			width(in_width), height(in_height),
-			central_symetry(in_central_symetry)
+			image_transform(in_image_transform)
 		{
 			assert(src_desc.IsValid(false));
 			assert(dst_desc.IsValid(false));
@@ -349,10 +349,10 @@ namespace chaos
 
 		/// copy function
 		template<typename DST_TYPE, typename SRC_TYPE>
-		void CopyPixels(bool central_symetry)
+		void CopyPixels(ImageTransform image_transform)
 		{
 			// normal copy
-			if (!central_symetry)
+			if (image_transform == ImageTransform::NO_TRANSFORM)
 			{
 				if (boost::is_same<DST_TYPE, SRC_TYPE>::value)
 				{
@@ -378,7 +378,7 @@ namespace chaos
 			}
 			// copy with central symetry 
 			//   no interest to test if source type and dest types are identical because we cannot use memcpy(...) due to symetry
-			else
+			else if (image_transform == ImageTransform::CENTRAL_SYMETRY)
 			{
 				for (int l = 0; l < height; ++l)
 				{
@@ -387,6 +387,10 @@ namespace chaos
 					for (int c = 0; c < width; ++c)
 						PixelConverter::Convert(d[width - 1 - c], s[c]);
 				}
+			}
+			else
+			{
+				assert(0);
 			}
 		}
 
@@ -405,8 +409,8 @@ namespace chaos
 		int dst_y;
 		int width;
 		int height;
-		// whether a central symetry is to be applyed
-		bool central_symetry;
+		// the transformation to be applyed
+		ImageTransform image_transform = ImageTransform::NO_TRANSFORM;
 	};
 
 	//
@@ -428,7 +432,7 @@ namespace chaos
 		{
 			PixelFormat pf = PixelFormat::GetPixelFormat<SRC_TYPE>();
 			if (pf.GetFormat() == params->src_format)
-				params->CopyPixels<DST_TYPE, SRC_TYPE>(params->central_symetry);
+				params->CopyPixels<DST_TYPE, SRC_TYPE>(params->image_transform);
 		}
 
 	public:
@@ -436,9 +440,9 @@ namespace chaos
 		CopyPixelMetaFunc * params;
 	};
 
-	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, bool central_symetry)
+	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, ImageTransform image_transform)
 	{
-		CopyPixelMetaFunc copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height, central_symetry);
+		CopyPixelMetaFunc copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height, image_transform);
 
 		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
 	}
@@ -472,14 +476,11 @@ namespace chaos
 		return result;
 	}
 
-	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry)
+	ImageDescription ImageTools::ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, ImageTransform image_transform)
 	{
 		ImageDescription result = GetImageDescriptionForAlignedTexture(final_pixel_format, src_desc.width, src_desc.height, conversion_buffer);
-
 		assert(result.IsValid(false));
-
-		ImageTools::CopyPixels(src_desc, result, 0, 0, 0, 0, result.width, result.height, central_symetry); // do the conversion + symmetry
-
+		ImageTools::CopyPixels(src_desc, result, 0, 0, 0, 0, result.width, result.height, image_transform); // do the conversion + symmetry
 		return result;
 	}
 

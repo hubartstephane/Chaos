@@ -8,6 +8,12 @@
 
 namespace chaos
 {
+	enum class ImageTransform : int
+	{
+		NO_TRANSFORM = 0,
+		CENTRAL_SYMETRY = 1
+	};
+
 	/**
 	* FIBITMAPDeleter : deleter for FIBITMAP
 	*/
@@ -111,9 +117,9 @@ namespace chaos
 		static PixelFormat GetPixelFormat(FIBITMAP * image);
 
 		/** copy pixels */
-		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, bool central_symetry);
+		static void CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, ImageTransform image_transform = ImageTransform::NO_TRANSFORM);
 		/** convert image into another pixel format + central symetry if required */
-		static ImageDescription ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, bool central_symetry);
+		static ImageDescription ConvertPixels(ImageDescription const & src_desc, PixelFormat const & final_pixel_format, char * conversion_buffer, ImageTransform image_transform = ImageTransform::NO_TRANSFORM);
 
 		/** create a ImageTexture with DWORD alignment requirements with a given buffer */
 		static ImageDescription GetImageDescriptionForAlignedTexture(PixelFormat const & pixel_format, int width, int height, char * buffer);

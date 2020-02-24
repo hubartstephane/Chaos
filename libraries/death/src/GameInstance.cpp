@@ -1,5 +1,5 @@
 #include <death/GameInstance.h>
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
 
@@ -12,22 +12,22 @@ namespace death
 	}
 
 	
-	GameLevel * GameInstance::GetLevel()
+	Level * GameInstance::GetLevel()
 	{
 		return game->GetLevel();
 	}
 	
-	GameLevel const * GameInstance::GetLevel() const
+	Level const * GameInstance::GetLevel() const
 	{
 		return game->GetLevel();
 	}
 
-	GameLevelInstance * GameInstance::GetLevelInstance()
+	LevelInstance * GameInstance::GetLevelInstance()
 	{
 		return game->GetLevelInstance();
 	}
 	
-	GameLevelInstance const * GameInstance::GetLevelInstance() const
+	LevelInstance const * GameInstance::GetLevelInstance() const
 	{
 		return game->GetLevelInstance();
 	}
@@ -265,7 +265,7 @@ namespace death
 		if (game_clock != nullptr)
 			game_clock->SetPause(enter_pause);
 
-		GameLevelInstance * level_instance = GetLevelInstance();
+		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 		{
 			chaos::Clock * level_clock = level_instance->GetLevelClock();
@@ -285,7 +285,7 @@ namespace death
 		return false;
 	}
 
-	void GameInstance::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance)
+	void GameInstance::OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance)
 	{
 
 	}
@@ -316,7 +316,7 @@ namespace death
 	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const
 	{
 		// save level data
-		GameLevelInstance const * level_instance = GetLevelInstance();
+		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 		{
 			checkpoint->level_index      = game->GetLevel()->GetLevelIndex();
@@ -355,7 +355,7 @@ namespace death
 
 
 		// load level
-		GameLevelInstance * level_instance = GetLevelInstance();
+		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			 level_instance->LoadFromCheckpoint(checkpoint->level_checkpoint.get());
 

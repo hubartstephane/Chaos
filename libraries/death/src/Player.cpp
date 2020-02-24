@@ -20,7 +20,7 @@ namespace death
 
 	}
 
-	void Player::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
+	void Player::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 	{
         health = max_health;
 		invulnerability_timer = std::max(invulnerability_duration, 0.0f);

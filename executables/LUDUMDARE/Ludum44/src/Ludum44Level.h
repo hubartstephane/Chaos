@@ -5,7 +5,7 @@
 #include <chaos/TiledMap.h>
 #include <chaos/TiledMapTools.h>
 
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/TiledMapLevel.h>
 #include <death/Game.h>
 #include <death/GameFramework.h>
@@ -94,7 +94,7 @@ public:
 protected:
 
 	/** override */
-	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
+	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 
 	virtual bool FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <death/GameLevel.h>
-#include <death/GameLevelInstance.h>
+#include <death/Level.h>
+#include <death/LevelInstance.h>
 #include <death/TiledMapParticle.h>
 #include <death/GameCheckpoint.h>
 
@@ -384,7 +384,7 @@ namespace death
 		// Level : a level described by a tiledmap
 		// =====================================
 
-		class Level : public GameLevel
+		class Level : public death::Level
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -404,7 +404,7 @@ namespace death
 		protected:
 
 			/** create a level instance for that level user specified function */
-			virtual GameLevelInstance * DoCreateLevelInstance(Game * in_game) override;
+			virtual death::LevelInstance * DoCreateLevelInstance(Game * in_game) override;
 
 
 			/** create a typed object specializable method */
@@ -760,7 +760,7 @@ namespace death
 		// LevelInstance : instance of a Level
 		// =====================================
 
-		class LevelInstance : public GameLevelInstance
+		class LevelInstance : public death::LevelInstance
 		{
 			DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -827,7 +827,7 @@ namespace death
 		protected:
 
 			/** override */
-			virtual bool Initialize(Game * in_game, GameLevel * in_level) override;
+			virtual bool Initialize(Game * in_game, death::Level * in_level) override;
 			/** override */
 			virtual bool DoTick(float delta_time) override;
 			/** override */

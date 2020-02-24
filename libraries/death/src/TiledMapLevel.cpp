@@ -357,7 +357,7 @@ namespace death
 			Game * game = layer_instance->GetGame();
 			if (game != nullptr)
 			{
-				GameLevelInstance * level_instance = game->GetLevelInstance();
+				death::LevelInstance * level_instance = game->GetLevelInstance();
 				if (level_instance != nullptr)
 					level_instance->SetLevelCompletionFlag();
 			}
@@ -513,7 +513,7 @@ namespace death
 			return true;
 		}
 
-		GameLevelInstance * Level::DoCreateLevelInstance(Game * in_game)
+		death::LevelInstance * Level::DoCreateLevelInstance(Game * in_game)
 		{
 			return new LevelInstance;
 		}
@@ -1616,7 +1616,7 @@ namespace death
 
 		bool LevelInstance::DoTick(float delta_time)
 		{
-			GameLevelInstance::DoTick(delta_time);
+			death::LevelInstance::DoTick(delta_time);
 
 			// tick the particle manager
 			if (particle_manager != nullptr)
@@ -1646,9 +1646,9 @@ namespace death
 			return result;
 		}
 
-		bool LevelInstance::Initialize(Game * in_game, GameLevel * in_level)
+		bool LevelInstance::Initialize(Game * in_game, death::Level * in_level)
 		{
-			if (!GameLevelInstance::Initialize(in_game, in_level))
+			if (!death::LevelInstance::Initialize(in_game, in_level))
 				return false;
 			// create a the layers instances
 			if (!CreateLayerInstances(in_game))
@@ -1891,7 +1891,7 @@ namespace death
 				level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
 
 			if (level_music == nullptr)
-				GameLevelInstance::SetInGameMusic();
+				death::LevelInstance::SetInGameMusic();
 			else
 				game->SetInGameMusic(level_music->c_str());
 		}
@@ -1907,7 +1907,7 @@ namespace death
 			if (tiled_level_checkpoint == nullptr)
 				return false;
 
-			if (!GameLevelInstance::DoSaveIntoCheckpoint(checkpoint))
+			if (!death::LevelInstance::DoSaveIntoCheckpoint(checkpoint))
 				return false;
 
 			size_t count = layer_instances.size();
@@ -1939,7 +1939,7 @@ namespace death
 				return false;
 
 			// super method
-			if (!GameLevelInstance::DoLoadFromCheckpoint(checkpoint))
+			if (!death::LevelInstance::DoLoadFromCheckpoint(checkpoint))
 				return false;
 
 			// iterate over layers that have serialized a checkpoint
@@ -1966,7 +1966,7 @@ namespace death
 
 		void LevelInstance::OnLevelEnded()
 		{
-			GameLevelInstance::OnLevelEnded();
+			death::LevelInstance::OnLevelEnded();
 
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)
@@ -1975,7 +1975,7 @@ namespace death
 
 		void LevelInstance::OnLevelStarted()
 		{
-			GameLevelInstance::OnLevelStarted();
+			death::LevelInstance::OnLevelStarted();
 
 			size_t count = layer_instances.size();
 			for (size_t i = 0; i < count; ++i)

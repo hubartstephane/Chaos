@@ -8,7 +8,7 @@
 #include <chaos/MathTools.h>
 #include <chaos/ParticleLayer.h>
 
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/SoundContext.h>
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
@@ -96,7 +96,7 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 	assert(game_instance != nullptr);
 	assert(game_instance != nullptr);
 
-	death::GameLevelInstance * level_instance = ludum_game->GetLevelInstance();
+	death::LevelInstance * level_instance = ludum_game->GetLevelInstance();
 	if (level_instance == nullptr)
 		return;
 
@@ -126,7 +126,7 @@ void LudumPlayer::SetDashMode(bool dash)
 	assert(ludum_game != nullptr);
 	assert(game_instance != nullptr);
 
-	death::GameLevelInstance * level_instance = ludum_game->GetLevelInstance();
+	death::LevelInstance * level_instance = ludum_game->GetLevelInstance();
 	if (level_instance == nullptr)
 		return;
 
@@ -171,7 +171,7 @@ void LudumPlayer::HandleKeyboardInputs(float delta_time)
 	SetReverseMode(reversed_mode);
 }
 
-void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 

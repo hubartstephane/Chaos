@@ -24,22 +24,22 @@ namespace death
 		return game->GetGameInstance(); 
 	}
 
-	GameLevel * GameHUD::GetLevel()
+	Level * GameHUD::GetLevel()
 	{
 		return game->GetLevel();
 	}
 
-	GameLevel const * GameHUD::GetLevel() const
+	Level const * GameHUD::GetLevel() const
 	{
 		return game->GetLevel();
 	}
 
-	GameLevelInstance * GameHUD::GetLevelInstance()
+	LevelInstance * GameHUD::GetLevelInstance()
 	{
 		return game->GetLevelInstance();
 	}
 
-	GameLevelInstance const * GameHUD::GetLevelInstance() const
+	LevelInstance const * GameHUD::GetLevelInstance() const
 	{
 		return game->GetLevelInstance();
 	}

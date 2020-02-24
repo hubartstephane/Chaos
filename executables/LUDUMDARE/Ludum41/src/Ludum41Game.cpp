@@ -104,7 +104,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::GameLevel * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
+death::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 {
 	nlohmann::json level_content;
 	if (!chaos::JSONTools::LoadJSONFile(path, level_content, false))

@@ -75,7 +75,7 @@ protected:
 	bool InitializeRewardsAndPunishments();
 	
 	/** load one level */
-	virtual death::GameLevel * DoLoadLevel(chaos::FilePathParam const & path) override;
+	virtual death::Level * DoLoadLevel(chaos::FilePathParam const & path) override;
 
 	/** override */
 	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;

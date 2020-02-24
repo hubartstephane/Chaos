@@ -17,19 +17,19 @@ namespace death
 {
 
 	// =====================================
-	// GameLevelInstance : this is the runtime part of a level
+	// LevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class GameLevelInstance : public chaos::GPURenderable, public CheckpointObject<LevelCheckpoint>
+	class LevelInstance : public chaos::GPURenderable, public CheckpointObject<LevelCheckpoint>
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
 
 		/** get the level corresponding to this instance */
-		GameLevel * GetLevel();
+		Level * GetLevel();
 		/** get the level corresponding to this instance */
-		GameLevel const * GetLevel() const;
+		Level const * GetLevel() const;
 
 		/** get the game */
 		Game * GetGame();
@@ -125,7 +125,7 @@ namespace death
 		virtual bool CanTick() override;
 
 		/** additionnal initialization */
-		virtual bool Initialize(Game * in_game, GameLevel * in_level);
+		virtual bool Initialize(Game * in_game, Level * in_level);
 
 		/** called for each player whenever a level is started */
 		virtual void OnPlayerEntered(Player * player);
@@ -158,7 +158,7 @@ namespace death
 	protected:
 
 		/** a pointer on the level that generated this */
-		GameLevel * level = nullptr;
+		Level * level = nullptr;
 		/** pointer on the game */
 		Game * game = nullptr;
 		/** the time to run the level (no time out by default) */

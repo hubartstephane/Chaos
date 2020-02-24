@@ -37,7 +37,7 @@ protected:
 
 	virtual bool DoCheckGameOverCondition() override;
 
-	virtual void OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance) override;
+	virtual void OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance) override;
 
 	virtual void OnPlayerEntered(death::Player * player) override;
 

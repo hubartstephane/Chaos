@@ -6,9 +6,9 @@
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_LEVELINSTANCE(Ludum);
 
-bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in_level)
+bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
-	if (!death::GameLevelInstance::Initialize(in_game, in_level))
+	if (!death::LevelInstance::Initialize(in_game, in_level))
 		return false;
 
 	bricks_allocations = CreateBricks();
@@ -18,7 +18,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
-	if (death::GameLevelInstance::CheckLevelCompletion())
+	if (death::LevelInstance::CheckLevelCompletion())
 		return true;
 
 	LudumLevel const * ludum_level = auto_cast(GetLevel());
@@ -49,7 +49,7 @@ chaos::box2 LudumLevelInstance::GetBoundingBox() const
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::GameLevelInstance::DoTick(delta_time);
+	death::LevelInstance::DoTick(delta_time);
 	RestrictPlayerToWorld(0);
 	return true;
 }
@@ -184,7 +184,7 @@ void LudumLevelInstance::CreateBackgroundImage()
 			return;
 		}
 	}
-	death::GameLevelInstance::CreateBackgroundImage(); // fallback
+	death::LevelInstance::CreateBackgroundImage(); // fallback
 }
 
 void LudumLevelInstance::SetInGameMusic()
@@ -198,5 +198,5 @@ void LudumLevelInstance::SetInGameMusic()
 			return;
 		}
 	}
-	death::GameLevelInstance::SetInGameMusic(); // fallback
+	death::LevelInstance::SetInGameMusic(); // fallback
 }

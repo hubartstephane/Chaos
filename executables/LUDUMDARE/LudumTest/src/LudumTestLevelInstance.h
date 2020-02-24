@@ -5,7 +5,7 @@
 #include <chaos/TiledMap.h>
 #include <chaos/TiledMapTools.h>
 
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/TiledMapLevel.h>
 #include <death/Game.h>
 #include <death/Player.h>
@@ -34,7 +34,7 @@ protected:
 	/** override */
 	virtual void OnLevelStarted() override;
 	/** override */
-	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
+	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
 	/** override */
 	virtual void OnPlayerEntered(death::Player * player) override;
 	/** override */

@@ -49,7 +49,7 @@ void LudumLevelInstance::OnLevelStarted()
 	death::TiledMap::LevelInstance::OnLevelStarted();
 }
 
-bool LudumLevelInstance::Initialize(death::Game * in_game, death::GameLevel * in_level)
+bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
 	if (!death::TiledMap::LevelInstance::Initialize(in_game, in_level))
 		return false;

@@ -36,14 +36,14 @@ namespace death
 		GameInstance const * GetGameInstance() const;
 
 		/** get currently played level */
-		GameLevel * GetLevel();
+		Level * GetLevel();
 		/** get currently played level */
-		GameLevel const * GetLevel() const;
+		Level const * GetLevel() const;
 
 		/** get currently played level */
-		GameLevelInstance * GetLevelInstance();
+		LevelInstance * GetLevelInstance();
 		/** get currently played level */
-		GameLevelInstance const * GetLevelInstance() const;
+		LevelInstance const * GetLevelInstance() const;
 
 		/** get the player */
 		Player * GetPlayer(size_t player_index);

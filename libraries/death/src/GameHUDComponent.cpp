@@ -40,28 +40,28 @@ namespace death
 		return hud->GetGameInstance();
 	}
 
-	GameLevel * GameHUDComponent::GetLevel()
+	Level * GameHUDComponent::GetLevel()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevel();
 	}
 
-	GameLevel const * GameHUDComponent::GetLevel() const
+	Level const * GameHUDComponent::GetLevel() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevel();
 	}
 
-	GameLevelInstance * GameHUDComponent::GetLevelInstance()
+	LevelInstance * GameHUDComponent::GetLevelInstance()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevelInstance();
 	}
 
-	GameLevelInstance const * GameHUDComponent::GetLevelInstance() const
+	LevelInstance const * GameHUDComponent::GetLevelInstance() const
 	{
 		if (hud == nullptr)
 			return nullptr;
@@ -329,7 +329,7 @@ namespace death
 
 	bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
 	{
-		GameLevelInstance * level_instance = GetLevelInstance();
+		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 		{
 			float level_timeout = level_instance->GetLevelTimeout();
@@ -537,8 +537,8 @@ namespace death
 	bool GameHUDLevelTitleComponent::UpdateCachedValue(bool & destroy_allocation) 
 	{ 
 		// ensure we got a level/level instance
-		GameLevel * level = GetLevel();
-		GameLevelInstance * level_instance = GetLevelInstance();
+		Level * level = GetLevel();
+		LevelInstance * level_instance = GetLevelInstance();
 
 		if (level == nullptr || level_instance == nullptr)
 		{

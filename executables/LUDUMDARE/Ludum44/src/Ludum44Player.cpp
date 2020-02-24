@@ -9,7 +9,7 @@
 #include <chaos/MathTools.h>
 #include <chaos/ParticleLayer.h>
 
-#include <death/GameLevel.h>
+#include <death/Level.h>
 
 DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
 

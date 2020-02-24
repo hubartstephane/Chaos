@@ -22,7 +22,7 @@
 
 #include <death/GameFramework.h>
 #include <death/GameHUD.h>
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/TiledMapLevel.h>
 #include <death/GameParticleCreator.h>
 #include <death/GameInstanceEntity.h>
@@ -73,14 +73,14 @@ namespace death
 		size_t GetPlayerCount() const;
 
 		/** get currently played level */
-		GameLevel * GetLevel();
+		Level * GetLevel();
 		/** get currently played level */
-		GameLevel const * GetLevel() const;
+		Level const * GetLevel() const;
 
 		/** get currently played level */
-		GameLevelInstance * GetLevelInstance();
+		LevelInstance * GetLevelInstance();
 		/** get currently played level */
-		GameLevelInstance const * GetLevelInstance() const;
+		LevelInstance const * GetLevelInstance() const;
 
 		/** get the game instance */
 		GameInstance * GetGameInstance() { return game_instance.get(); }
@@ -185,9 +185,9 @@ namespace death
 #endif
 
 		/** get any level */
-		GameLevel * GetLevel(int level_index);
+		Level * GetLevel(int level_index);
 		/** get any level */
-		GameLevel const * GetLevel(int level_index) const;
+		Level const * GetLevel(int level_index) const;
 
         /** get glfw window */
         virtual GLFWwindow* GetGLFWWindow() const override { return glfw_window; }
@@ -339,7 +339,7 @@ namespace death
 		/** load all the levels from the game (can be simple data) */
 		virtual bool LoadLevels(nlohmann::json const & config);
 		/* load one level */
-		virtual GameLevel * DoLoadLevel(chaos::FilePathParam const & path);
+		virtual Level * DoLoadLevel(chaos::FilePathParam const & path);
 		/** create one tiled map level */
 		virtual death::TiledMap::Level * CreateTiledMapLevel();
 
@@ -405,13 +405,13 @@ namespace death
 		virtual GameHUD * DoCreateGameOverHUD();
 
 		/** change the current level */
-		bool SetCurrentLevel(GameLevel * new_level);
+		bool SetCurrentLevel(Level * new_level);
 		/** change the current level from its index */
 		bool SetCurrentLevel(int level_index);
 		/** change the current level for the next */
 		bool SetNextLevel(bool looping_levels);
 		/** reflex method whenever the level is changed */
-		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance);
+		virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance);
 
 		/** generate the game instance */
 		virtual GameInstance * CreateGameInstance();
@@ -422,7 +422,7 @@ namespace death
 		/** create a free camera for the current level instance */
 		Camera * CreateFreeCamera() const;
 		/** create a free camera for the current level instance */
-		Camera * DoCreateFreeCamera(Camera const * camera_to_copy, GameLevelInstance * level_instance) const;
+		Camera * DoCreateFreeCamera(Camera const * camera_to_copy, LevelInstance * level_instance) const;
 
 	protected:
 
@@ -497,9 +497,9 @@ namespace death
 		chaos::shared_ptr<chaos::TiledMap::Manager> tiled_map_manager;
 
 		/** level data */
-		std::vector<chaos::shared_ptr<GameLevel>> levels;
+		std::vector<chaos::shared_ptr<Level>> levels;
 		/** the current level instance */
-		chaos::shared_ptr<GameLevelInstance> current_level_instance;
+		chaos::shared_ptr<LevelInstance> current_level_instance;
 
 		/** some allocations */
 		chaos::shared_ptr<chaos::ParticleAllocationBase> background_allocations;

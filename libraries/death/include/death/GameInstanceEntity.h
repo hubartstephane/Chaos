@@ -33,14 +33,14 @@ namespace death
 		GameInstance const * GetGameInstance() const { return game_instance; }
 
 		/** returns the level */
-		GameLevel * GetLevel();
+		Level * GetLevel();
 		/** returns the level */
-		GameLevel const * GetLevel() const;
+		Level const * GetLevel() const;
 
 		/** returns the level instance */
-		GameLevelInstance * GetLevelInstance();
+		LevelInstance * GetLevelInstance();
 		/** returns the level */
-		GameLevelInstance const * GetLevelInstance() const;
+		LevelInstance const * GetLevelInstance() const;
 
 	protected:
 

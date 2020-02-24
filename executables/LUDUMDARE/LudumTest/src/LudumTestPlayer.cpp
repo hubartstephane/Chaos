@@ -9,7 +9,7 @@
 #include <chaos/MathTools.h>
 #include <chaos/ParticleLayer.h>
 
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/SoundContext.h>
 
 
@@ -81,7 +81,7 @@ void LudumPlayer::HandleKeyboardInputs(float delta_time)
 
 }
 
-void LudumPlayer::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 

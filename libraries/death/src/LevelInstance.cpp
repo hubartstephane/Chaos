@@ -1,5 +1,5 @@
-#include <death/GameLevel.h>
-#include <death/GameLevelInstance.h>
+#include <death/Level.h>
+#include <death/LevelInstance.h>
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/Player.h>
@@ -11,35 +11,35 @@ namespace death
 {
 
 	// =====================================
-	// GameLevelInstance implementation
+	// LevelInstance implementation
 	// =====================================
 
-	GameLevel * GameLevelInstance::GetLevel() 
+	Level * LevelInstance::GetLevel() 
 	{ 
 		return level; 
 	}
 
-	GameLevel const * GameLevelInstance::GetLevel() const 
+	Level const * LevelInstance::GetLevel() const 
 	{ 
 		return level; 
 	}
 
-	Game * GameLevelInstance::GetGame() 
+	Game * LevelInstance::GetGame() 
 	{ 
 		return game; 
 	}
 	
-	Game const * GameLevelInstance::GetGame() const 
+	Game const * LevelInstance::GetGame() const 
 	{ 
 		return game; 
 	}
 
-	GameInstance * GameLevelInstance::GetGameInstance() 
+	GameInstance * LevelInstance::GetGameInstance() 
 	{ 
 		return game->GetGameInstance(); 
 	}
 
-	Player * GameLevelInstance::GetPlayer(size_t player_index)
+	Player * LevelInstance::GetPlayer(size_t player_index)
 	{
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
@@ -47,7 +47,7 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	Player const * GameLevelInstance::GetPlayer(size_t player_index) const
+	Player const * LevelInstance::GetPlayer(size_t player_index) const
 	{
 		GameInstance const * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
@@ -55,19 +55,19 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	GameInstance const * GameLevelInstance::GetGameInstance() const 
+	GameInstance const * LevelInstance::GetGameInstance() const 
 	{ 
 		return game->GetGameInstance(); 
 	}
 
-	double GameLevelInstance::GetLevelClockTime() const
+	double LevelInstance::GetLevelClockTime() const
 	{
 		if (level_clock == nullptr)
 			return 0.0;
 		return level_clock->GetClockTime();
 	}
 
-	void GameLevelInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
+	void LevelInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
 	{
 		// the timers
 		double level_time = GetLevelClockTime();
@@ -83,27 +83,27 @@ namespace death
 		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera_box)); 
 	}
 
-	void GameLevelInstance::OnPlayerEntered(Player * player)
+	void LevelInstance::OnPlayerEntered(Player * player)
 	{
 
 	}
 
-	void GameLevelInstance::OnPlayerLeaved(Player * player)
+	void LevelInstance::OnPlayerLeaved(Player * player)
 	{
 	
 	}
 
-	void GameLevelInstance::DestroyCameras()
+	void LevelInstance::DestroyCameras()
 	{
 		cameras.clear(); // destroy all camera
 	}
 
-	void GameLevelInstance::CreateCameras()
+	void LevelInstance::CreateCameras()
 	{
 
 	}
 
-	void GameLevelInstance::OnLevelEnded()
+	void LevelInstance::OnLevelEnded()
 	{
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
@@ -122,7 +122,7 @@ namespace death
 		}
 	}
 	
-	void GameLevelInstance::OnLevelStarted()
+	void LevelInstance::OnLevelStarted()
 	{
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
@@ -146,17 +146,17 @@ namespace death
 			game_instance->CreateRespawnCheckpoint();
 	}
 
-	void GameLevelInstance::CreateBackgroundImage()
+	void LevelInstance::CreateBackgroundImage()
 	{
 
 	}
 
-	void GameLevelInstance::SetInGameMusic()
+	void LevelInstance::SetInGameMusic()
 	{
 		game->SetInGameMusic("game_music");
 	}
 
-	bool GameLevelInstance::Initialize(Game * in_game, GameLevel * in_level)
+	bool LevelInstance::Initialize(Game * in_game, Level * in_level)
 	{
 		assert(in_game != nullptr);
 		assert(in_level != nullptr);
@@ -178,44 +178,44 @@ namespace death
 		return true;
 	}
 
-	bool GameLevelInstance::GetLevelCompletionFlag() const
+	bool LevelInstance::GetLevelCompletionFlag() const
 	{
 		return level_completion_flag;
 	}
 
-	void GameLevelInstance::SetLevelCompletionFlag()
+	void LevelInstance::SetLevelCompletionFlag()
 	{
 		level_completion_flag = true;
 	}
 
-	bool GameLevelInstance::CheckLevelCompletion() const
+	bool LevelInstance::CheckLevelCompletion() const
 	{
 		if (level_completion_flag)
 			return true;
 		return false;
 	}
 
-	bool GameLevelInstance::CanCompleteLevel() const
+	bool LevelInstance::CanCompleteLevel() const
 	{
 		return true; // no delay to effectively complete the level
 	}
 
-	void GameLevelInstance::OnEnterPause()
+	void LevelInstance::OnEnterPause()
 	{
 
 	}
 
-	void GameLevelInstance::OnLeavePause()
+	void LevelInstance::OnLeavePause()
 	{
 
 	}
 
-	void GameLevelInstance::OnGameOver()
+	void LevelInstance::OnGameOver()
 	{
 
 	}
 
-	void GameLevelInstance::RestrictCameraToPlayerAndWorld(int player_index, size_t camera_index)
+	void LevelInstance::RestrictCameraToPlayerAndWorld(int player_index, size_t camera_index)
 	{
 		// get the wanted player
 		Player * player = GetPlayer(player_index);
@@ -252,7 +252,7 @@ namespace death
 		camera->SetCameraBox(camera_box);
 	}
 
-	void GameLevelInstance::RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index)
+	void LevelInstance::RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index)
 	{
 		if (allocation == nullptr)
 			return;
@@ -264,33 +264,33 @@ namespace death
 		chaos::ParticleTools::SetParticleBox(allocation, index, box);
 	}
 
-	void GameLevelInstance::RestrictPlayerToWorld(int player_index)
+	void LevelInstance::RestrictPlayerToWorld(int player_index)
 	{
 		RestrictPlayerToWorld(GetPlayer(player_index));
 	}
 
-	void GameLevelInstance::RestrictPlayerToWorld(Player * player)
+	void LevelInstance::RestrictPlayerToWorld(Player * player)
 	{
 		if (player == nullptr)
 			return;
 		RestrictObjectToWorld(player->GetPlayerAllocation(), 0);
 	}
 
-	bool GameLevelInstance::DoCheckGameOverCondition()
+	bool LevelInstance::DoCheckGameOverCondition()
 	{
 		if (level_timeout == 0.0f)
 			return true;
 		return false;
 	}
 
-	bool GameLevelInstance::CanTick()
+	bool LevelInstance::CanTick()
 	{
 		if (game->IsFreeCameraMode()) // in Free camera mode, do not tick level any more
 			return false;
 		return true;
 	}
 
-	bool GameLevelInstance::DoTick(float delta_time)
+	bool LevelInstance::DoTick(float delta_time)
 	{	
 		// update the current camera
 		Camera * current_camera = GetCamera(0);
@@ -320,12 +320,12 @@ namespace death
 		return true;
 	}
 
-	size_t GameLevelInstance::GetCameraCount() const
+	size_t LevelInstance::GetCameraCount() const
 	{
 		return cameras.size();
 	}
 
-	Camera * GameLevelInstance::GetCamera(size_t index)
+	Camera * LevelInstance::GetCamera(size_t index)
 	{
 		// try the free camera mode first
 		if (game->IsFreeCameraMode())
@@ -338,14 +338,14 @@ namespace death
 		return DoGetCamera(index);
 	}
 
-	Camera * GameLevelInstance::DoGetCamera(size_t index)
+	Camera * LevelInstance::DoGetCamera(size_t index)
 	{		
 		if (index >= cameras.size())
 			return nullptr;
 		return cameras[index].get();
 	}
 
-	Camera const * GameLevelInstance::GetCamera(size_t index) const
+	Camera const * LevelInstance::GetCamera(size_t index) const
 	{
 		// try the free camera mode first
 		if (game->IsFreeCameraMode())
@@ -358,14 +358,14 @@ namespace death
 		return DoGetCamera(index);
 	}
 
-	Camera const * GameLevelInstance::DoGetCamera(size_t index) const
+	Camera const * LevelInstance::DoGetCamera(size_t index) const
 	{
 		if (index >= cameras.size())
 			return nullptr;
 		return cameras[index].get();
 	}
 
-	chaos::obox2 GameLevelInstance::GetInitialCameraOBox(size_t index) const
+	chaos::obox2 LevelInstance::GetInitialCameraOBox(size_t index) const
 	{ 
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
@@ -373,7 +373,7 @@ namespace death
 		return camera->GetInitialCameraOBox();
 	}
 
-	chaos::obox2 GameLevelInstance::GetCameraOBox(size_t index, bool apply_modifiers) const
+	chaos::obox2 LevelInstance::GetCameraOBox(size_t index, bool apply_modifiers) const
 	{
 		// find a camera
 		Camera const * camera = GetCamera(index);
@@ -383,7 +383,7 @@ namespace death
 		return GetDefaultCameraOBox();
 	}
 
-	chaos::obox2 GameLevelInstance::GetDefaultCameraOBox() const
+	chaos::obox2 LevelInstance::GetDefaultCameraOBox() const
 	{
 		chaos::obox2 result;
 		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -392,7 +392,7 @@ namespace death
 		return result;
 	}
 
-	chaos::box2 GameLevelInstance::GetCameraBox(size_t index, bool apply_modifiers) const 
+	chaos::box2 LevelInstance::GetCameraBox(size_t index, bool apply_modifiers) const 
 	{ 
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
@@ -400,7 +400,7 @@ namespace death
 		return camera->GetCameraBox(apply_modifiers);
 	}
 
-	void GameLevelInstance::SetCameraBox(size_t index, chaos::box2 in_box)
+	void LevelInstance::SetCameraBox(size_t index, chaos::box2 in_box)
 	{ 
 		Camera * camera = GetCamera(index);
 		if (camera == nullptr)
@@ -408,17 +408,17 @@ namespace death
 		camera->SetCameraBox(in_box);
 	}
 
-	chaos::SoundCategory * GameLevelInstance::GetSoundCategory()
+	chaos::SoundCategory * LevelInstance::GetSoundCategory()
 	{
 		return sound_category.get();
 	}
 
-	chaos::SoundCategory const * GameLevelInstance::GetSoundCategory() const
+	chaos::SoundCategory const * LevelInstance::GetSoundCategory() const
 	{
 		return sound_category.get();
 	}
 
-	bool GameLevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
+	bool LevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
 	{
 		checkpoint->camera_box    = GetCameraBox(0, false);
 		checkpoint->level_timeout = level_timeout;
@@ -429,7 +429,7 @@ namespace death
 		return true;
 	}
 
-	bool GameLevelInstance::DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint)
+	bool LevelInstance::DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint)
 	{
 		SetCameraBox(0, checkpoint->camera_box);
 		level_timeout = checkpoint->level_timeout;

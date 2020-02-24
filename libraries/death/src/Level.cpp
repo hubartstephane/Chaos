@@ -1,17 +1,17 @@
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/Game.h>
-#include <death/GameLevelInstance.h>
+#include <death/LevelInstance.h>
 
 namespace death
 {
 	// =====================================
-	// GameLevelInstance implementation
+	// LevelInstance implementation
 	// =====================================
 
-	GameLevelInstance * GameLevel::CreateLevelInstance(Game * in_game)
+	LevelInstance * Level::CreateLevelInstance(Game * in_game)
 	{
 		// create the instance
-		GameLevelInstance * result = DoCreateLevelInstance(in_game); 
+		LevelInstance * result = DoCreateLevelInstance(in_game); 
 		if (result == nullptr)
 			return nullptr;
 		// additional initialization
@@ -23,9 +23,9 @@ namespace death
 		return result;
 	}
 
-	GameLevelInstance * GameLevel::DoCreateLevelInstance(Game * in_game)
+	LevelInstance * Level::DoCreateLevelInstance(Game * in_game)
 	{
-		return new GameLevelInstance;
+		return new LevelInstance;
 	}
 
 }; // namespace death

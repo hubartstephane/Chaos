@@ -9,17 +9,17 @@
 namespace death
 {
 	// =====================================
-	// GameLevel : a simple game level
+	// Level : a simple game level
 	// =====================================
 
-	class GameLevel : public chaos::ReferencedObject, public chaos::FileResource
+	class Level : public chaos::ReferencedObject, public chaos::FileResource
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
 
 		/** create a level instance for that level */
-		GameLevelInstance * CreateLevelInstance(Game * in_game);
+		LevelInstance * CreateLevelInstance(Game * in_game);
 
 		/** returns the level timeout */
 		float GetLevelTimeout() const { return level_timeout; }
@@ -31,7 +31,7 @@ namespace death
 	protected:
 
 		/** create a level instance for that level user specified function */
-		virtual class GameLevelInstance * DoCreateLevelInstance(Game * in_game);
+		virtual class LevelInstance * DoCreateLevelInstance(Game * in_game);
 
 	protected:
 

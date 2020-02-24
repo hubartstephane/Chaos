@@ -17,7 +17,7 @@ LudumLevel::LudumLevel()
 
 }
 
-death::GameLevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
+death::LevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 {
 	return new LudumLevelInstance(auto_cast(in_game));
 }

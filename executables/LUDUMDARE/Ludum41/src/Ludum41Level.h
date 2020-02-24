@@ -4,14 +4,14 @@
 #include <chaos/ReferencedObject.h>
 
 #include <death/Game.h>
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/GameFramework.h>
 
 // =================================================
 // Levels
 // =================================================
 
-class LudumLevel : public death::GameLevel
+class LudumLevel : public death::Level
 {
 
 public:
@@ -25,7 +25,7 @@ public:
 protected:
 
 	/** override */
-	virtual death::GameLevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
+	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 
 public:
 

@@ -1,7 +1,7 @@
 #include <death/Game.h>
 #include <death/GameStateMachine.h>
 #include <death/GamepadManager.h>
-#include <death/GameLevel.h>
+#include <death/Level.h>
 #include <death/TiledMapLevel.h>
 #include <death/SoundContext.h>
 
@@ -393,7 +393,7 @@ namespace death
 		return nullptr;
 	}
 
-	death::GameLevel * Game::DoLoadLevel(chaos::FilePathParam const & path)
+	death::Level * Game::DoLoadLevel(chaos::FilePathParam const & path)
 	{
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
@@ -502,7 +502,7 @@ namespace death
 			int level_index = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
 
 			// create the level
-			death::GameLevel * level = DoLoadLevel(it->path());
+			death::Level * level = DoLoadLevel(it->path());
 			if (level == nullptr)
 				continue;
 			// initialize it
@@ -514,7 +514,7 @@ namespace death
 
 		// sort the levels
 		std::sort(levels.begin(), levels.end(),
-			[](chaos::shared_ptr<GameLevel> l1, chaos::shared_ptr<GameLevel> l2)
+			[](chaos::shared_ptr<Level> l1, chaos::shared_ptr<Level> l2)
 		{
 			return (l1->level_index < l2->level_index);
 		});
@@ -1250,7 +1250,7 @@ namespace death
 			return true;
 #endif
 		// level knows about that
-		death::GameLevelInstance const * level_instance = GetLevelInstance();
+		death::LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (level_instance->CheckLevelCompletion())
 				return true;
@@ -1265,7 +1265,7 @@ namespace death
 			if (!game_instance->CanCompleteLevel())
 				return false;
 		// level knows about that
-		death::GameLevelInstance const * level_instance = GetLevelInstance();
+		death::LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (!level_instance->CanCompleteLevel())
 				return false;
@@ -1423,33 +1423,33 @@ namespace death
 		return GetCanvasBox();
 	}
 
-	GameLevel * Game::GetLevel()
+	Level * Game::GetLevel()
 	{
-		GameLevelInstance * li = GetLevelInstance();
+		LevelInstance * li = GetLevelInstance();
 		if (li == nullptr)
 			return nullptr;
 		return li->GetLevel();
 	}
 
-	GameLevel const * Game::GetLevel() const
+	Level const * Game::GetLevel() const
 	{
-		GameLevelInstance const * li = GetLevelInstance();
+		LevelInstance const * li = GetLevelInstance();
 		if (li == nullptr)
 			return nullptr;
 		return li->GetLevel();
 	}
 
-	GameLevelInstance * Game::GetLevelInstance()
+	LevelInstance * Game::GetLevelInstance()
 	{
 		return current_level_instance.get();
 	}
 
-	GameLevelInstance const * Game::GetLevelInstance() const
+	LevelInstance const * Game::GetLevelInstance() const
 	{
 		return current_level_instance.get();
 	}
 
-	GameLevel * Game::GetLevel(int level_index)
+	Level * Game::GetLevel(int level_index)
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1458,7 +1458,7 @@ namespace death
 		return nullptr;
 	}
 
-	GameLevel const * Game::GetLevel(int level_index) const
+	Level const * Game::GetLevel(int level_index) const
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1478,7 +1478,7 @@ namespace death
 		if (count == 0)
 			return false;
 		// very first level
-		GameLevel * current_level = GetLevel();
+		Level * current_level = GetLevel();
 		if (current_level == nullptr)
 			return SetCurrentLevel(levels[0].get());
 		// search the current level
@@ -1502,15 +1502,15 @@ namespace death
 
 	bool Game::SetCurrentLevel(int level_index)
 	{
-		GameLevel * new_level = GetLevel(level_index); // we required a level_index, level should not be nullptr !
+		Level * new_level = GetLevel(level_index); // we required a level_index, level should not be nullptr !
 		if (new_level == nullptr)
 			return false;
 		return SetCurrentLevel(new_level);
 	}
 
-	bool Game::SetCurrentLevel(GameLevel * new_level) // new_level can be set to nullptr, just to clear every thing
+	bool Game::SetCurrentLevel(Level * new_level) // new_level can be set to nullptr, just to clear every thing
 	{
-		chaos::shared_ptr<GameLevel> old_level = GetLevel();
+		chaos::shared_ptr<Level> old_level = GetLevel();
 
 		// destroy current level instance, so that new instance can get all resources it want
 		if (current_level_instance != nullptr)
@@ -1534,7 +1534,7 @@ namespace death
 		return true;
 	}
 
-	void Game::OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance)
+	void Game::OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance)
 	{
 		// free camera points an invalid 'level_instance'
 		if (free_camera != nullptr)
@@ -1604,11 +1604,11 @@ namespace death
 		if (current_level_instance == nullptr)
 			return false;
 
-		chaos::shared_ptr<GameLevel> old_level = current_level_instance->GetLevel(); // keep a reference to prevent the destruction when it will be removed from the levels array
+		chaos::shared_ptr<Level> old_level = current_level_instance->GetLevel(); // keep a reference to prevent the destruction when it will be removed from the levels array
 		assert(old_level != nullptr);
 
 		// reload the level
-		chaos::shared_ptr<GameLevel> level = DoLoadLevel(old_level->GetPath()); 
+		chaos::shared_ptr<Level> level = DoLoadLevel(old_level->GetPath()); 
 		if (level == nullptr)
 			return false;
 		// initialize it
@@ -1660,20 +1660,20 @@ namespace death
 
 	Camera * Game::CreateFreeCamera() const
 	{
-		GameLevelInstance const * level_instance = GetLevelInstance();
+		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 		{
 			if (level_instance->GetCameraCount() > 0)
 			{
 				Camera const * first_camera = level_instance->DoGetCamera(0); // XXX : beware, not 'GetCamera(...)' that would recursively call CreateFreeCamera(...) => 'DoGetCamera(...)' instead
 				if (first_camera != nullptr)
-					return DoCreateFreeCamera(first_camera, (GameLevelInstance *)level_instance);
+					return DoCreateFreeCamera(first_camera, (LevelInstance *)level_instance);
 			}
 		}
 		return nullptr;
 	}
 
-	Camera * Game::DoCreateFreeCamera(Camera const * camera_to_copy, GameLevelInstance * level_instance) const
+	Camera * Game::DoCreateFreeCamera(Camera const * camera_to_copy, LevelInstance * level_instance) const
 	{
 		Camera * result = new Camera(level_instance);
 		if (result != nullptr)

@@ -34,7 +34,7 @@ namespace death
 	public:
 
 		/** constructor */
-		Camera(GameLevelInstance * in_game_level_instance);
+		Camera(LevelInstance * in_level_instance);
 
 		/** get the player by its index */
 		Player * GetPlayer(size_t player_index);
@@ -52,14 +52,14 @@ namespace death
 		GameInstance const * GetGameInstance() const;
 
 		/** returns the level */
-		GameLevel * GetLevel();
+		Level * GetLevel();
 		/** returns the level */
-		GameLevel const * GetLevel() const;
+		Level const * GetLevel() const;
 
 		/** returns the level instance */
-		GameLevelInstance * GetLevelInstance() { return game_level_instance; }
+		LevelInstance * GetLevelInstance() { return level_instance; }
 		/** returns the level */
-		GameLevelInstance const * GetLevelInstance() const { return game_level_instance; }
+		LevelInstance const * GetLevelInstance() const { return level_instance; }
 
 		/** set the camera box */
 		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}
@@ -98,7 +98,7 @@ namespace death
 		glm::vec2 safe_zone = glm::vec2(0.8f, 0.8f);
 
 		/** the game instance owning the camera */
-		GameLevelInstance * game_level_instance = nullptr;
+		LevelInstance * level_instance = nullptr;
 
 		/** the components */
 		std::vector<chaos::shared_ptr<CameraComponent>> components;

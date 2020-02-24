@@ -4,8 +4,8 @@
 #include <chaos/ReferencedObject.h>
 
 #include <death/Game.h>
-#include <death/GameLevel.h>
-#include <death/GameLevelInstance.h>
+#include <death/Level.h>
+#include <death/LevelInstance.h>
 #include <death/GameFramework.h>
 
 #include "Ludum41Particles.h"
@@ -14,7 +14,7 @@
 // LevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::GameLevelInstance
+class LudumLevelInstance : public death::LevelInstance
 {
 
 	friend class ParticleMovableObjectTrait;
@@ -28,7 +28,7 @@ public:
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */
-	virtual bool Initialize(death::Game * in_game, death::GameLevel * in_level) override;
+	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 	/** override */

@@ -1,7 +1,7 @@
 #include <death/Camera.h>
 #include <death/CameraComponent.h>
 #include <death/ComponentOwner.h>
-#include <death/GameLevelInstance.h>
+#include <death/LevelInstance.h>
 
 namespace death
 {
@@ -21,10 +21,10 @@ namespace death
 	// Camera
 	// =================================================
 
-	Camera::Camera(GameLevelInstance * in_game_level_instance) :
-		game_level_instance(in_game_level_instance)
+	Camera::Camera(LevelInstance * in_level_instance) :
+		level_instance(in_level_instance)
 	{
-		assert(in_game_level_instance != nullptr);
+		assert(in_level_instance != nullptr);
 	}
 	
 	bool Camera::DoTick(float delta_time)
@@ -66,58 +66,58 @@ namespace death
 	
 	Player * Camera::GetPlayer(size_t player_index)
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetPlayer(player_index);
+		return level_instance->GetPlayer(player_index);
 	}
 	
 	Player const * Camera::GetPlayer(size_t player_index) const
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetPlayer(player_index);
+		return level_instance->GetPlayer(player_index);
 	}
 
 	Game * Camera::GetGame()
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetGame();
+		return level_instance->GetGame();
 	}
 
 	Game const * Camera::GetGame() const
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetGame();
+		return level_instance->GetGame();
 	}
 
-	GameLevel * Camera::GetLevel()
+	Level * Camera::GetLevel()
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetLevel();
+		return level_instance->GetLevel();
 	}
 
-	GameLevel const * Camera::GetLevel() const
+	Level const * Camera::GetLevel() const
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetLevel();
+		return level_instance->GetLevel();
 	}
 
 	GameInstance * Camera::GetGameInstance()
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetGameInstance();
+		return level_instance->GetGameInstance();
 	}
 
 	GameInstance const * Camera::GetGameInstance() const
 	{
-		if (game_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return nullptr;
-		return game_level_instance->GetGameInstance();
+		return level_instance->GetGameInstance();
 	}
 
 

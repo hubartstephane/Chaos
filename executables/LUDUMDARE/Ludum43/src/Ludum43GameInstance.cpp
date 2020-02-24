@@ -64,7 +64,7 @@ void LudumGameInstance::TickHeartBeat(float delta_time)
 }
 
 
-void LudumGameInstance::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
+void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 {
 	// super method
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);

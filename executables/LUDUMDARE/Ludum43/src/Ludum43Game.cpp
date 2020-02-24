@@ -328,7 +328,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	}
 }
 
-void LudumGame::OnLevelChanged(death::GameLevel * new_level, death::GameLevel * old_level, death::GameLevelInstance * new_level_instance)
+void LudumGame::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 {
 	// super method
 	death::Game::OnLevelChanged(new_level, old_level, new_level_instance);

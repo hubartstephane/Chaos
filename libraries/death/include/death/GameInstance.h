@@ -32,14 +32,14 @@ namespace death
 		Game const * GetGame() const { return game; }
 
 		/** returns the level */
-		GameLevel * GetLevel();
+		Level * GetLevel();
 		/** returns the level */
-		GameLevel const * GetLevel() const;
+		Level const * GetLevel() const;
 
 		/** returns the level instance */
-		GameLevelInstance * GetLevelInstance();
+		LevelInstance * GetLevelInstance();
 		/** returns the level instance */
-		GameLevelInstance const * GetLevelInstance() const;
+		LevelInstance const * GetLevelInstance() const;
 
 		/** get the player by its index */
 		Player * GetPlayer(size_t player_index);
@@ -142,7 +142,7 @@ namespace death
 		void OnPauseStateUpdateClocks(bool enter_pause);
 
 		/** called whenever the level is being changed */
-		virtual void OnLevelChanged(GameLevel * new_level, GameLevel * old_level, GameLevelInstance * new_level_instance);
+		virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance);
 
 		/** check whether there is a game over */
 		virtual bool DoCheckGameOverCondition();

@@ -28,7 +28,7 @@ namespace death
 		return game_instance->GetGame();
 	}
 
-	GameLevel * GameInstanceEntity::GetLevel()
+	Level * GameInstanceEntity::GetLevel()
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -36,7 +36,7 @@ namespace death
 		return game->GetLevel();
 	}
 	
-	GameLevel const * GameInstanceEntity::GetLevel() const
+	Level const * GameInstanceEntity::GetLevel() const
 	{
 		Game const * game = GetGame();
 		if (game == nullptr)
@@ -44,7 +44,7 @@ namespace death
 		return game->GetLevel();
 	}
 	
-	GameLevelInstance * GameInstanceEntity::GetLevelInstance()
+	LevelInstance * GameInstanceEntity::GetLevelInstance()
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -52,7 +52,7 @@ namespace death
 		return game->GetLevelInstance();
 	}
 	
-	GameLevelInstance const * GameInstanceEntity::GetLevelInstance() const
+	LevelInstance const * GameInstanceEntity::GetLevelInstance() const
 	{
 		Game const * game = GetGame();
 		if (game == nullptr)

@@ -3,15 +3,15 @@
 
 
 #if 0
-		{ "position", VertexAttributeSemantic::SEMANTIC_POSITION },
-		{ "color",      VertexAttributeSemantic::SEMANTIC_COLOR },
-		{ "normal",     VertexAttributeSemantic::SEMANTIC_NORMAL },
-		{ "binormal",   VertexAttributeSemantic::SEMANTIC_BINORMAL },
-		{ "tangent",    VertexAttributeSemantic::SEMANTIC_TANGENT },
-		{ "texcoord",   VertexAttributeSemantic::SEMANTIC_TEXCOORD },
-		{ "boneindex",  VertexAttributeSemantic::SEMANTIC_BONEINDEX },
-		{ "boneweight", VertexAttributeSemantic::SEMANTIC_BONEWEIGHT },
-		{ "userdata",   VertexAttributeSemantic::SEMANTIC_USERDATA },
+		{ "position", VertexAttributeSemantic::POSITION },
+		{ "color",      VertexAttributeSemantic::COLOR },
+		{ "normal",     VertexAttributeSemantic::NORMAL },
+		{ "binormal",   VertexAttributeSemantic::BINORMAL },
+		{ "tangent",    VertexAttributeSemantic::TANGENT },
+		{ "texcoord",   VertexAttributeSemantic::TEXCOORD },
+		{ "boneindex",  VertexAttributeSemantic::BONEINDEX },
+		{ "boneweight", VertexAttributeSemantic::BONEWEIGHT },
+		{ "userdata",   VertexAttributeSemantic::USERDATA },
 
 
 			//BOOST_TTI_HAS_MEMBER_FUNCTION(AMemberFunction)

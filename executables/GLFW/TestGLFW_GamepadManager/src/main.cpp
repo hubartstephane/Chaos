@@ -17,7 +17,7 @@ public:
 
   virtual bool AcceptPhysicalDevice(chaos::MyGLFW::PhysicalGamepad * physical_device) override
   {
-	  if (!physical_device->IsButtonPressed(chaos::XBoxButtonType::XBOX_BUTTON_A))
+	  if (!physical_device->IsButtonPressed(chaos::XBoxButtonType::BUTTON_A))
 		  return false;
 	  return true;
   }
@@ -38,7 +38,7 @@ public:
 
   virtual void OnGamepadDataUpdated(class chaos::MyGLFW::GamepadData & gamepad_data) override
   {
-  //  if (gamepad_data.IsButtonPressed(chaos::XBoxButtonType::XBOX_BUTTON_Y))
+  //  if (gamepad_data.IsButtonPressed(chaos::XBoxButtonType::BUTTON_Y))
     {
    //   if (debug_display != nullptr)
     //    debug_display->AddLine("Y");
@@ -186,19 +186,19 @@ debug_display.AddLine("Pressed : " #x, 1.0f);
 			TEST_BUTTON(XBOX_BUTTON_LEFT);
 			TEST_BUTTON(XBOX_BUTTON_RIGHT);
 
-			glm::vec2 l = main_gamepad->GetXBOXStickDirection(chaos::XBoxAxisType::XBOX_LEFT_AXIS);
+			glm::vec2 l = main_gamepad->GetXBOXStickDirection(chaos::XBoxAxisType::LEFT_AXIS);
 			if (l.x != 0.0f || l.y != 0.0f)
 				debug_display.AddLine(chaos::StringTools::Printf("LEFT AXIS x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
 
-			glm::vec2 r = main_gamepad->GetXBOXStickDirection(chaos::XBoxAxisType::XBOX_RIGHT_AXIS);
+			glm::vec2 r = main_gamepad->GetXBOXStickDirection(chaos::XBoxAxisType::RIGHT_AXIS);
 			if (r.x != 0.0f || r.y != 0.0f)
 				debug_display.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
 
-			float left_trigger = main_gamepad->GetAxisValue(chaos::XBoxAxisType::XBOX_LEFT_TRIGGER);
+			float left_trigger = main_gamepad->GetAxisValue(chaos::XBoxAxisType::LEFT_TRIGGER);
 			if (left_trigger)
 				debug_display.AddLine(chaos::StringTools::Printf("LEFT TRIGGER  %0.3f", left_trigger).c_str(), 1.0f);
 
-			float right_trigger = main_gamepad->GetAxisValue(chaos::XBoxAxisType::XBOX_RIGHT_TRIGGER);
+			float right_trigger = main_gamepad->GetAxisValue(chaos::XBoxAxisType::RIGHT_TRIGGER);
 			if (right_trigger)
 				debug_display.AddLine(chaos::StringTools::Printf("RIGHT TRIGGER  %0.3f", right_trigger).c_str(), 1.0f);
 #endif

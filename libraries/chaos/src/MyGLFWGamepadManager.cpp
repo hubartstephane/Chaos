@@ -70,25 +70,25 @@ namespace chaos
 			bool previous_state = IsButtonPressed(button_index, true);
 
 			if (current_state == previous_state)
-				return (current_state) ? ButtonChangeType::BUTTON_STAY_PRESSED : ButtonChangeType::BUTTON_STAY_RELEASED;
+				return (current_state) ? ButtonChangeType::STAY_PRESSED : ButtonChangeType::STAY_RELEASED;
 			else
-				return (current_state) ? ButtonChangeType::BUTTON_BECOME_PRESSED : ButtonChangeType::BUTTON_BECOME_RELEASED;
+				return (current_state) ? ButtonChangeType::BECOME_PRESSED : ButtonChangeType::BECOME_RELEASED;
 		}
 
 		bool GamepadData::IsButtonPressed(size_t button_index, bool previous_frame) const
 		{
 			// pseudo button
-			if (button_index == XBoxButtonType::XBOX_BUTTON_LEFTTRIGGER)
+			if (button_index == XBoxButtonType::BUTTON_LEFTTRIGGER)
 			{
-				float trigger_value = GetAxisValue(XBoxAxisType::XBOX_LEFT_TRIGGER, previous_frame);
+				float trigger_value = GetAxisValue(XBoxAxisType::LEFT_TRIGGER, previous_frame);
 				if (trigger_value > 0)
 					return true;
 				return false;
 			}
 
-			if (button_index == XBoxButtonType::XBOX_BUTTON_RIGHTTRIGGER)
+			if (button_index == XBoxButtonType::BUTTON_RIGHTTRIGGER)
 			{
-				float trigger_value = GetAxisValue(XBoxAxisType::XBOX_RIGHT_TRIGGER, previous_frame);
+				float trigger_value = GetAxisValue(XBoxAxisType::RIGHT_TRIGGER, previous_frame);
 				if (trigger_value > 0)
 					return true;
 				return false;
@@ -161,15 +161,15 @@ namespace chaos
 		glm::vec2 GamepadData::GetXBOXStickDirection(int stick_number, bool previous_frame) const
 		{
 			glm::vec2 result(0.0f, 0.0f);
-			if (stick_number == XBoxAxisType::XBOX_LEFT_AXIS)
+			if (stick_number == XBoxAxisType::LEFT_AXIS)
 			{
-				result.x = GetAxisValue(XBoxAxisType::XBOX_LEFT_AXIS_X, previous_frame);
-				result.y = GetAxisValue(XBoxAxisType::XBOX_LEFT_AXIS_Y, previous_frame);
+				result.x = GetAxisValue(XBoxAxisType::LEFT_AXIS_X, previous_frame);
+				result.y = GetAxisValue(XBoxAxisType::LEFT_AXIS_Y, previous_frame);
 			}
-			else if (stick_number == XBoxAxisType::XBOX_RIGHT_AXIS)
+			else if (stick_number == XBoxAxisType::RIGHT_AXIS)
 			{
-				result.x = GetAxisValue(XBoxAxisType::XBOX_RIGHT_AXIS_X, previous_frame);
-				result.y = GetAxisValue(XBoxAxisType::XBOX_RIGHT_AXIS_Y, previous_frame);
+				result.x = GetAxisValue(XBoxAxisType::RIGHT_AXIS_X, previous_frame);
+				result.y = GetAxisValue(XBoxAxisType::RIGHT_AXIS_Y, previous_frame);
 			}
 			else
 				return result;
@@ -205,7 +205,7 @@ namespace chaos
 				{
 					// update this frame value
 					float value = axis_buffer[i];
-					if (i == XBoxAxisType::XBOX_LEFT_TRIGGER || i == XBoxAxisType::XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+					if (i == XBoxAxisType::LEFT_TRIGGER || i == XBoxAxisType::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
 					axis[i].UpdateValue(value, dead_zone);
 					// initilize previous frame value 
@@ -220,7 +220,7 @@ namespace chaos
 					axis[i + ac] = axis[i];
 					// update this frame value
 					float value = axis_buffer[i];
-					if (i == XBoxAxisType::XBOX_LEFT_TRIGGER || i == XBoxAxisType::XBOX_RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+					if (i == XBoxAxisType::LEFT_TRIGGER || i == XBoxAxisType::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
 					axis[i].UpdateValue(value, dead_zone);
 				}
@@ -287,7 +287,7 @@ namespace chaos
 		ButtonChangeType PhysicalGamepad::GetButtonChanges(size_t button_index) const
 		{
 			if (!IsPresent())
-				return ButtonChangeType::BUTTON_NO_CHANGE;
+				return ButtonChangeType::NO_CHANGE;
 			return gamepad_data.GetButtonChanges(button_index);
 		}
 
@@ -437,7 +437,7 @@ namespace chaos
 		{
 			if (physical_device != nullptr)
 				return physical_device->GetButtonChanges(button_index);
-			return ButtonChangeType::BUTTON_NO_CHANGE;
+			return ButtonChangeType::NO_CHANGE;
 		}
 
 		bool Gamepad::IsButtonPressed(size_t button_index, bool previous_frame) const

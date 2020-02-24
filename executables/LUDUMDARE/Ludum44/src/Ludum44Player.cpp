@@ -130,7 +130,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	int const fire_key_buttons[] = {GLFW_KEY_SPACE, -1};
 	int const charged_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
 
-	bool charged_pressed = CheckButtonPressed(charged_key_buttons, chaos::XBoxButtonType::XBOX_BUTTON_B);
+	bool charged_pressed = CheckButtonPressed(charged_key_buttons, chaos::XBoxButtonType::BUTTON_B);
 	if (charged_pressed)
 	{
 		charged_fire_timer += delta_time;
@@ -149,7 +149,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 			charged_fire_timer = 0.0f;
 			if (fire_timer == 0.0f)
 			{
-				bool fire_pressed = CheckButtonPressed(fire_key_buttons, chaos::XBoxButtonType::XBOX_BUTTON_A);
+				bool fire_pressed = CheckButtonPressed(fire_key_buttons, chaos::XBoxButtonType::BUTTON_A);
 				if (fire_pressed)
 				{
 					FireNormalProjectile();					
@@ -177,7 +177,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 
 	int const buy_key_buttons[] = { GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1 };
 
-	bool buy_pressed = CheckButtonPressed(buy_key_buttons, chaos::XBoxButtonType::XBOX_BUTTON_Y);
+	bool buy_pressed = CheckButtonPressed(buy_key_buttons, chaos::XBoxButtonType::BUTTON_Y);
 	if (buy_pressed && !buylocked)
 	{
 		buy_timer += delta_time;

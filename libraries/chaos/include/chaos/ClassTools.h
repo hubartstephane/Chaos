@@ -7,9 +7,9 @@ namespace chaos
 {
 	enum class InheritanceType : int
 	{
-		INHERITANCE_UNKNOWN = -1,
-		INHERITANCE_NO = 0,
-		INHERITANCE_YES = 1
+		UNKNOWN = -1,
+		NO = 0,
+		YES = 1
 	};
 
 	class ClassTools
@@ -124,38 +124,38 @@ namespace chaos
 
 			// fast test on the size
 			if (child_registration->size < parent_registration->size)
-				return InheritanceType::INHERITANCE_NO;
+				return InheritanceType::NO;
 
 			// class not registered, cannot known result
 			if (!child_registration->registered)
-				return InheritanceType::INHERITANCE_UNKNOWN;
+				return InheritanceType::UNKNOWN;
 
 			// class not registered, cannot known result
 			if (!parent_registration->registered)
-				return InheritanceType::INHERITANCE_UNKNOWN;
+				return InheritanceType::UNKNOWN;
 
 			// returns no if classes are same and we don't accept that as a valid result
 			if (child_registration == parent_registration)
 			{
 				if (!accept_equal)
-					return InheritanceType::INHERITANCE_NO;
+					return InheritanceType::NO;
 				else
-					return InheritanceType::INHERITANCE_YES;
+					return InheritanceType::YES;
 			}
 			// from top to root in the hierarchy
 			for (child_registration = child_registration->parent; child_registration != nullptr; child_registration = child_registration->parent)
 			{
 				// fast test on the size
 				if (child_registration->size < parent_registration->size)
-					return InheritanceType::INHERITANCE_NO;
+					return InheritanceType::NO;
 				// found the searched parent
 				if (child_registration == parent_registration)
-					return InheritanceType::INHERITANCE_YES;
+					return InheritanceType::YES;
 				// unintialized class
 				if (!child_registration->registered)
-					return InheritanceType::INHERITANCE_UNKNOWN;
+					return InheritanceType::UNKNOWN;
 			}
-			return InheritanceType::INHERITANCE_NO;
+			return InheritanceType::NO;
 		}
 
 		/** GetClassID : returns a unique ID given a class */

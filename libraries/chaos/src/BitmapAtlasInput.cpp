@@ -180,7 +180,7 @@ namespace chaos
 				int w = glyph.second.bitmap_glyph->bitmap.width;
 				int h = glyph.second.bitmap_glyph->bitmap.rows;
 
-				FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormatType::FORMAT_RGBA);
+				FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormatType::RGBA);
 				if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting                                          
 				{
 					char name[] = " ";

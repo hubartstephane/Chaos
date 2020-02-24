@@ -101,7 +101,7 @@ namespace chaos
 		{
 			if (pixel_format.component_count == 1) // GRAY
 			{
-				if (pixel_format.component_type == PixelComponentType::TYPE_UNSIGNED_CHAR)
+				if (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)
 				{
 					unsigned char gray_color = (unsigned char)(255.0f * (color.r + color.g + color.b) / 3.0f);
 
@@ -113,7 +113,7 @@ namespace chaos
 
 					FreeImage_FillBackground(image, bgra, FI_COLOR_IS_RGB_COLOR);
 				}
-				else if (pixel_format.component_type == PixelComponentType::TYPE_FLOAT)
+				else if (pixel_format.component_type == PixelComponentType::FLOAT)
 				{
 					float gray_color = (color.r + color.g + color.b) / 3.0f;
 
@@ -128,7 +128,7 @@ namespace chaos
 			}
 			else // COLOR
 			{
-				if (pixel_format.component_type == PixelComponentType::TYPE_UNSIGNED_CHAR)
+				if (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)
 				{
 					unsigned char bgra[4];
 					bgra[0] = (unsigned char)(color.b * 255.0f);
@@ -139,7 +139,7 @@ namespace chaos
 					FreeImage_FillBackground(image, bgra, FI_COLOR_IS_RGB_COLOR);
 
 				}
-				else if (pixel_format.component_type == PixelComponentType::TYPE_FLOAT)
+				else if (pixel_format.component_type == PixelComponentType::FLOAT)
 				{
 					float rgba[4];
 					rgba[0] = color.r;
@@ -213,12 +213,12 @@ namespace chaos
 
 	FREE_IMAGE_FORMAT ImageTools::GetFreeImageFormat(PixelFormat const & pixel_format)
 	{
-		return (pixel_format.component_type == PixelComponentType::TYPE_UNSIGNED_CHAR) ? FIF_PNG : FIF_EXR;
+		return (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR) ? FIF_PNG : FIF_EXR;
 	}
 
 	FREE_IMAGE_TYPE ImageTools::GetFreeImageType(PixelFormat const & pixel_format, int * bpp)
 	{
-		if (pixel_format.component_type == PixelComponentType::TYPE_UNSIGNED_CHAR)
+		if (pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)
 		{
 			if (pixel_format.component_count == 1 || pixel_format.component_count == 3 || pixel_format.component_count == 4)
 			{
@@ -227,7 +227,7 @@ namespace chaos
 				return FIT_BITMAP;
 			}
 		}
-		else if (pixel_format.component_type == PixelComponentType::TYPE_FLOAT)
+		else if (pixel_format.component_type == PixelComponentType::FLOAT)
 		{
 			if (pixel_format.component_count == 1)
 				return FIT_FLOAT;
@@ -236,7 +236,7 @@ namespace chaos
 			if (pixel_format.component_count == 4)
 				return FIT_RGBAF;
 		}
-		else if (pixel_format.component_type == PixelComponentType::TYPE_DEPTH_STENCIL)
+		else if (pixel_format.component_type == PixelComponentType::DEPTH_STENCIL)
 		{
 			assert(0);
 		}
@@ -256,12 +256,12 @@ namespace chaos
 			if (bpp != 8 && bpp != 24 && bpp != 32)
 				return result;
 
-			result.component_type = PixelComponentType::TYPE_UNSIGNED_CHAR;
+			result.component_type = PixelComponentType::UNSIGNED_CHAR;
 			result.component_count = bpp / 8;
 		}
 		else if (image_type == FIT_FLOAT || image_type == FIT_RGBF || image_type == FIT_RGBAF) // floating points format are accepted
 		{
-			result.component_type = PixelComponentType::TYPE_FLOAT;
+			result.component_type = PixelComponentType::FLOAT;
 
 			if (image_type == FIT_FLOAT)
 				result.component_count = 1;
@@ -511,7 +511,7 @@ namespace chaos
 			return false;
 
 		// a 'luminance' image is a grayscale
-		if (pixel_format.component_type == PixelComponentType::TYPE_FLOAT)
+		if (pixel_format.component_type == PixelComponentType::FLOAT)
 			return true;
 
 		// 1 component of type UNSIGNED CHAR :

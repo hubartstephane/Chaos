@@ -73,7 +73,7 @@ namespace chaos
 
 		result.width = w;
 		result.height = h;
-		result.pixel_format = PixelFormat(PixelFormatType::FORMAT_GRAY);
+		result.pixel_format = PixelFormat(PixelFormatType::GRAY);
 		result.line_size = w * sizeof(PixelGray);
 		result.pitch_size = bitmap.pitch;
 		result.padding_size = result.pitch_size - result.line_size;
@@ -85,7 +85,7 @@ namespace chaos
 	void FontTools::MakeAlphaChannelConsistent(ImageDescription & desc)
 	{
 		// correction of alpha channel
-		if (desc.pixel_format == PixelFormatType::FORMAT_RGBA_FLOAT)
+		if (desc.pixel_format == PixelFormatType::RGBA_FLOAT)
 		{
 			int w = desc.width;
 			int h = desc.height;
@@ -97,7 +97,7 @@ namespace chaos
 					d[i].A = d[i].R;
 			}
 		}
-		else if (desc.pixel_format == PixelFormatType::FORMAT_RGBA)
+		else if (desc.pixel_format == PixelFormatType::RGBA)
 		{
 			int w = desc.width;
 			int h = desc.height;

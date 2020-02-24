@@ -249,7 +249,7 @@ protected:
 	// the bitmap used to generate the slices
 	std::vector<FIBITMAP *> bitmaps;
 
-	int current_pixel_format = chaos::PixelFormatType::FORMAT_GRAY;
+	int current_pixel_format = chaos::PixelFormatType::GRAY;
 
 
 	// rendering for the box  

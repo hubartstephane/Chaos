@@ -20,10 +20,10 @@ namespace chaos
         new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
 
 #if CHAOS_INDEXED_QUAD_RENDERING
-        if (type == PrimitiveType::quad)
+        if (type == PrimitiveType::QUAD)
         {
             size_t quad_rendering_count = 0;
-            new_element.index_buffer = (type == PrimitiveType::quad) ? renderer->GetQuadIndexBuffer(&quad_rendering_count) : nullptr;
+            new_element.index_buffer = (type == PrimitiveType::QUAD) ? renderer->GetQuadIndexBuffer(&quad_rendering_count) : nullptr;
 
             size_t quad_count = ((buffer_position - buffer_start) / vertex_size) / 4;
 

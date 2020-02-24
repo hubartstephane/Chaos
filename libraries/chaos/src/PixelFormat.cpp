@@ -8,79 +8,79 @@ namespace chaos
 
 	PixelFormat::PixelFormat(PixelFormatType in_format)
 	{
-		if (in_format == PixelFormatType::FORMAT_GRAY)
+		if (in_format == PixelFormatType::GRAY)
 		{
-			component_type = PixelComponentType::TYPE_UNSIGNED_CHAR;
+			component_type = PixelComponentType::UNSIGNED_CHAR;
 			component_count = 1;
 		}
-		else if (in_format == PixelFormatType::FORMAT_RGB)
+		else if (in_format == PixelFormatType::RGB)
 		{
-			component_type = PixelComponentType::TYPE_UNSIGNED_CHAR;
+			component_type = PixelComponentType::UNSIGNED_CHAR;
 			component_count = 3;
 		}
-		else if (in_format == PixelFormatType::FORMAT_RGBA)
+		else if (in_format == PixelFormatType::RGBA)
 		{
-			component_type = PixelComponentType::TYPE_UNSIGNED_CHAR;
+			component_type = PixelComponentType::UNSIGNED_CHAR;
 			component_count = 4;
 		}
-		else if (in_format == PixelFormatType::FORMAT_GRAY_FLOAT)
+		else if (in_format == PixelFormatType::GRAY_FLOAT)
 		{
-			component_type = PixelComponentType::TYPE_FLOAT;
+			component_type = PixelComponentType::FLOAT;
 			component_count = 1;
 		}
-		else if (in_format == PixelFormatType::FORMAT_RGB_FLOAT)
+		else if (in_format == PixelFormatType::RGB_FLOAT)
 		{
-			component_type = PixelComponentType::TYPE_FLOAT;
+			component_type = PixelComponentType::FLOAT;
 			component_count = 3;
 		}
-		else if (in_format == PixelFormatType::FORMAT_RGBA_FLOAT)
+		else if (in_format == PixelFormatType::RGBA_FLOAT)
 		{
-			component_type = PixelComponentType::TYPE_FLOAT;
+			component_type = PixelComponentType::FLOAT;
 			component_count = 4;
 		}
-		else if (in_format == PixelFormatType::FORMAT_DEPTH_STENCIL)
+		else if (in_format == PixelFormatType::DEPTH_STENCIL)
 		{
-			component_type = PixelComponentType::TYPE_DEPTH_STENCIL;
+			component_type = PixelComponentType::DEPTH_STENCIL;
 			component_count = 1;
 		}
 	}
 
 	PixelFormatType PixelFormat::GetFormat() const
 	{
-		if (component_type == PixelComponentType::TYPE_UNSIGNED_CHAR)
+		if (component_type == PixelComponentType::UNSIGNED_CHAR)
 		{
 			if (component_count == 1)
-				return PixelFormatType::FORMAT_GRAY;
+				return PixelFormatType::GRAY;
 			if (component_count == 3)
-				return PixelFormatType::FORMAT_RGB;
+				return PixelFormatType::RGB;
 			if (component_count == 4)
-				return PixelFormatType::FORMAT_RGBA;
+				return PixelFormatType::RGBA;
 		}
-		else if (component_type == PixelComponentType::TYPE_FLOAT)
+		else if (component_type == PixelComponentType::FLOAT)
 		{
 			if (component_count == 1)
-				return PixelFormatType::FORMAT_GRAY_FLOAT;
+				return PixelFormatType::GRAY_FLOAT;
 			if (component_count == 3)
-				return PixelFormatType::FORMAT_RGB_FLOAT;
+				return PixelFormatType::RGB_FLOAT;
 			if (component_count == 4)
-				return PixelFormatType::FORMAT_RGBA_FLOAT;
+				return PixelFormatType::RGBA_FLOAT;
 		}
-		else if (component_type == PixelComponentType::TYPE_DEPTH_STENCIL)
+		else if (component_type == PixelComponentType::DEPTH_STENCIL)
 		{
-			return PixelFormatType::FORMAT_DEPTH_STENCIL;
+			return PixelFormatType::DEPTH_STENCIL;
 		}
-		return PixelFormatType::FORMAT_UNKNOWN;
+		return PixelFormatType::UNKNOWN;
 	}
 
 	int PixelFormat::GetPixelSize() const
 	{
 		if (IsValid())
 		{
-			if (component_type == PixelComponentType::TYPE_UNSIGNED_CHAR)
+			if (component_type == PixelComponentType::UNSIGNED_CHAR)
 				return component_count * sizeof(unsigned char);
-			if (component_type == PixelComponentType::TYPE_FLOAT)
+			if (component_type == PixelComponentType::FLOAT)
 				return component_count * sizeof(float);
-			if (component_type == PixelComponentType::TYPE_DEPTH_STENCIL)
+			if (component_type == PixelComponentType::DEPTH_STENCIL)
 				return sizeof(PixelDepthStencil);
 		}
 		return 0;	
@@ -93,7 +93,7 @@ namespace chaos
 
 	bool PixelFormat::IsColorPixel() const
 	{
-		if (component_type != PixelComponentType::TYPE_UNSIGNED_CHAR && component_type != PixelComponentType::TYPE_FLOAT)
+		if (component_type != PixelComponentType::UNSIGNED_CHAR && component_type != PixelComponentType::FLOAT)
 			return false;
 		if (component_count != 1 && component_count != 3 && component_count != 4)
 			return false;
@@ -102,7 +102,7 @@ namespace chaos
 
 	bool PixelFormat::IsDepthStencilPixel() const
 	{
-		if (component_type == PixelComponentType::TYPE_DEPTH_STENCIL)
+		if (component_type == PixelComponentType::DEPTH_STENCIL)
 			return true;
 		return false;
 	}
@@ -145,11 +145,11 @@ namespace chaos
 		if (!params.accept_luminance && src.component_count == 1) // transform luminance into RGB
 			src.component_count = 3;
 
-		if (!params.accept_float && src.component_type == PixelComponentType::TYPE_FLOAT) // transform float into unsigned char
+		if (!params.accept_float && src.component_type == PixelComponentType::FLOAT) // transform float into unsigned char
 		{
 			assert(0);
-			//ORI src.component_count = PixelComponentType::TYPE_UNSIGNED_CHAR; 
-			src.component_type = PixelComponentType::TYPE_UNSIGNED_CHAR;
+			//ORI src.component_count = PixelComponentType::UNSIGNED_CHAR; 
+			src.component_type = PixelComponentType::UNSIGNED_CHAR;
 		}
 
 		if (!result_is_available)

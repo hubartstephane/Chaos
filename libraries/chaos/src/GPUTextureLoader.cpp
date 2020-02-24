@@ -76,7 +76,7 @@ namespace chaos
 
 			GLenum format          = gl_formats.format;
 			GLenum internal_format = gl_formats.internal_format;
-			GLenum type            = (image.pixel_format.component_type == PixelComponentType::TYPE_UNSIGNED_CHAR)? 
+			GLenum type            = (image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR)? 
 				GL_UNSIGNED_BYTE : 
 				GL_FLOAT;
 
@@ -372,7 +372,7 @@ namespace chaos
 						0, 0, depth,
 						size, size, 1,
 						gl_face_pixel_format.format,
-						effective_image.pixel_format.component_type == PixelComponentType::TYPE_UNSIGNED_CHAR ? GL_UNSIGNED_BYTE : GL_FLOAT,
+						effective_image.pixel_format.component_type == PixelComponentType::UNSIGNED_CHAR ? GL_UNSIGNED_BYTE : GL_FLOAT,
 						texture_buffer
 					);								
 				}

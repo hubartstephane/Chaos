@@ -8,23 +8,23 @@ namespace chaos
 	/** the type of each component of each pixels */
 	enum class PixelComponentType : int
 	{
-		TYPE_UNKNOWN = 0,
-		TYPE_UNSIGNED_CHAR = 1,
-		TYPE_FLOAT = 2,
-		TYPE_DEPTH_STENCIL = 3
+		UNKNOWN = 0,
+		UNSIGNED_CHAR = 1,
+		FLOAT = 2,
+		DEPTH_STENCIL = 3
 	};
 
 	/** the well known formats */
 	enum class PixelFormatType : int
 	{
-		FORMAT_UNKNOWN = 0,
-		FORMAT_GRAY = 1,
-		FORMAT_RGB = 2,
-		FORMAT_RGBA = 3,
-		FORMAT_GRAY_FLOAT = 4,
-		FORMAT_RGB_FLOAT = 5,
-		FORMAT_RGBA_FLOAT = 6,
-		FORMAT_DEPTH_STENCIL = 7
+		UNKNOWN = 0,
+		GRAY = 1,
+		RGB = 2,
+		RGBA = 3,
+		GRAY_FLOAT = 4,
+		RGB_FLOAT = 5,
+		RGBA_FLOAT = 6,
+		DEPTH_STENCIL = 7
 	};
 
 	/** 
@@ -68,24 +68,24 @@ namespace chaos
 		static PixelFormat GetPixelFormat();
 
 		template<>
-		static PixelFormat GetPixelFormat<PixelGray>(){ return PixelFormat(PixelComponentType::TYPE_UNSIGNED_CHAR, 1);}
+		static PixelFormat GetPixelFormat<PixelGray>(){ return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 1);}
 		template<>
-		static PixelFormat GetPixelFormat<PixelBGR>(){ return PixelFormat(PixelComponentType::TYPE_UNSIGNED_CHAR, 3);}
+		static PixelFormat GetPixelFormat<PixelBGR>(){ return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 3);}
 		template<>
-		static PixelFormat GetPixelFormat<PixelBGRA>(){ return PixelFormat(PixelComponentType::TYPE_UNSIGNED_CHAR, 4);}
+		static PixelFormat GetPixelFormat<PixelBGRA>(){ return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 4);}
 		template<>
-		static PixelFormat GetPixelFormat<PixelGrayFloat>(){ return PixelFormat(PixelComponentType::TYPE_FLOAT, 1);}
+		static PixelFormat GetPixelFormat<PixelGrayFloat>(){ return PixelFormat(PixelComponentType::FLOAT, 1);}
 		template<>
-		static PixelFormat GetPixelFormat<PixelRGBFloat>(){ return PixelFormat(PixelComponentType::TYPE_FLOAT, 3);}
+		static PixelFormat GetPixelFormat<PixelRGBFloat>(){ return PixelFormat(PixelComponentType::FLOAT, 3);}
 		template<>
-		static PixelFormat GetPixelFormat<PixelRGBAFloat>(){ return PixelFormat(PixelComponentType::TYPE_FLOAT, 4);}
+		static PixelFormat GetPixelFormat<PixelRGBAFloat>(){ return PixelFormat(PixelComponentType::FLOAT, 4);}
 		template<>
-		static PixelFormat GetPixelFormat<PixelDepthStencil>() { return PixelFormat(PixelComponentType::TYPE_DEPTH_STENCIL, 1); }
+		static PixelFormat GetPixelFormat<PixelDepthStencil>() { return PixelFormat(PixelComponentType::DEPTH_STENCIL, 1); }
 
 	public:
 
 		/** the type of the components */
-		PixelComponentType component_type = PixelComponentType::TYPE_UNKNOWN;
+		PixelComponentType component_type = PixelComponentType::UNKNOWN;
 		/** the number of components for each pixels */
 		int component_count = 0;		
 	};

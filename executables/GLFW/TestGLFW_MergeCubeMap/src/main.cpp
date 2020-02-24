@@ -54,7 +54,7 @@ protected:
 
 			chaos::PixelFormat pf(chaos::PixelFormatType(index + 1));
 		
-			char const * component_type = (pf.component_type == chaos::PixelComponentType::TYPE_UNSIGNED_CHAR) ? "unsigned char" : "float";
+			char const * component_type = (pf.component_type == chaos::PixelComponentType::UNSIGNED_CHAR) ? "unsigned char" : "float";
 
 			debug_display.AddLine(chaos::StringTools::Printf("format : index = [%d] component = [%d] type = [%s]", index, pf.component_count, component_type).c_str());
 		}
@@ -175,7 +175,7 @@ protected:
 
 			chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(bitmap);
 
-			void * color = (desc.pixel_format.component_type == chaos::PixelComponentType::TYPE_UNSIGNED_CHAR) ? (void*)&c1[0] : (void*)&c2; // select a color for background
+			void * color = (desc.pixel_format.component_type == chaos::PixelComponentType::UNSIGNED_CHAR) ? (void*)&c1[0] : (void*)&c2; // select a color for background
 
 			int dx = size - desc.width;
 			int dy = size - desc.height;

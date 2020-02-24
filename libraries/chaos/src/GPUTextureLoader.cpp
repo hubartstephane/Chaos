@@ -311,7 +311,7 @@ namespace chaos
 			if (is_single_image)
 			{
 				glm::ivec3 position_and_flags = skybox->GetPositionAndFlags((SkyBoxImageType)i);
-				if (position_and_flags.z == (int)SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY)
+				if (position_and_flags.z == (int)ImageTransform::CENTRAL_SYMETRY)
 					central_symetry[i] = conversion_required[i] = true;
 			}
 			// compute memory required
@@ -352,7 +352,7 @@ namespace chaos
 				ImageDescription image = skybox->GetImageFaceDescription((SkyBoxImageType)i);
 
 				ImageDescription effective_image = (conversion_required[i]) ?
-					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]) :
+					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, central_symetry[i]? ImageTransform::CENTRAL_SYMETRY : ImageTransform::NO_TRANSFORM) :
 					image;
 
 				// fill glPixelStorei(...)

@@ -27,24 +27,24 @@ namespace chaos
 	{
 		4, 3,
 		{
-			glm::ivec3(0, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // left
-			glm::ivec3(2, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // right
-			glm::ivec3(1, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // top
-			glm::ivec3(1, 0, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // bottom
-			glm::ivec3(1, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // front
-			glm::ivec3(3, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM)  // back	
+			glm::ivec3(0, 1, ImageTransform::NO_TRANSFORM), // left
+			glm::ivec3(2, 1, ImageTransform::NO_TRANSFORM), // right
+			glm::ivec3(1, 2, ImageTransform::NO_TRANSFORM), // top
+			glm::ivec3(1, 0, ImageTransform::NO_TRANSFORM), // bottom
+			glm::ivec3(1, 1, ImageTransform::NO_TRANSFORM), // front
+			glm::ivec3(3, 1, ImageTransform::NO_TRANSFORM)  // back	
 		}
 	};
 	SkyBoxSingleDisposition const SkyBoxSingleDisposition::VerticalDisposition = 
 	{
 		3, 4,
 		{
-			glm::ivec3(0, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // left
-			glm::ivec3(2, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // right
-			glm::ivec3(1, 3, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // top
-			glm::ivec3(1, 1, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // bottom
-			glm::ivec3(1, 2, SkyBoxImageTransform::IMAGE_NO_TRANSFORM), // front
-			glm::ivec3(1, 0, SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY)  // back  	
+			glm::ivec3(0, 2, ImageTransform::NO_TRANSFORM), // left
+			glm::ivec3(2, 2, ImageTransform::NO_TRANSFORM), // right
+			glm::ivec3(1, 3, ImageTransform::NO_TRANSFORM), // top
+			glm::ivec3(1, 1, ImageTransform::NO_TRANSFORM), // bottom
+			glm::ivec3(1, 2, ImageTransform::NO_TRANSFORM), // front
+			glm::ivec3(1, 0, ImageTransform::CENTRAL_SYMETRY)  // back  	
 		}
 	};
 
@@ -210,8 +210,8 @@ namespace chaos
 			int dst_x = 0;
 			int dst_y = 0;
 
-			SkyBoxImageTransform flag = (SkyBoxImageTransform)position_and_flags.z;
-			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY));
+			ImageTransform transform = (ImageTransform)position_and_flags.z;
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, transform);
 
 			result.images[i] = image;
 			result.release_images[i] = true;
@@ -290,8 +290,8 @@ namespace chaos
 			int dst_x = left;
 			int dst_y = bottom;
 
-			SkyBoxImageTransform flag = (SkyBoxImageTransform)position_and_flags.z;
-			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, (flag == SkyBoxImageTransform::IMAGE_CENTRAL_SYMETRY));
+			ImageTransform transform = (ImageTransform)position_and_flags.z;
+			ImageTools::CopyPixels(src_image_desc, dst_image_desc, src_x, src_y, dst_x, dst_y, size, size, transform);
 		}
 
 		return result;

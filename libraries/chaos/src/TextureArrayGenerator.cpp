@@ -222,7 +222,7 @@ namespace chaos
 				ImageDescription image = slice_registry.slices[i].description;
 
 				ImageDescription effective_image = (final_pixel_format.component_count != 1 && image.pixel_format.component_count == 1)?
-					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, false) :
+					ImageTools::ConvertPixels(image, final_pixel_format, conversion_buffer, ImageTransform::NO_TRANSFORM) :
 					image;
 
 				char * texture_buffer = GLTextureTools::PrepareGLTextureTransfert(effective_image);

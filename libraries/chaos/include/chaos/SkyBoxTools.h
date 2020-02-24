@@ -21,12 +21,6 @@ namespace chaos
 		IMAGE_LAST_INDEX = IMAGE_SINGLE
 	};
 
-	enum class SkyBoxImageTransform : int
-	{
-		IMAGE_NO_TRANSFORM = 0,
-		IMAGE_CENTRAL_SYMETRY = 1
-	};
-
 	/**
 	* SkyBoxSingleDisposition : the disposition of each individual face inside the single image
 	*/

@@ -10,6 +10,7 @@
 #include <death/GameInstanceEntity.h>
 #include <death/GameFramework.h>
 #include <death/Game.h>
+#include <death/PlayerPawn.h>
 
 namespace death
 {
@@ -147,6 +148,9 @@ namespace death
 
 		/** a gamepad that can be given to the player */
 		chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad;
+
+		/** the player pawn */
+		chaos::shared_ptr<PlayerPawn> pawn;
 
 		/** the allocation for the player */
 		chaos::shared_ptr<chaos::ParticleAllocationBase> player_allocations;

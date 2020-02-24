@@ -90,6 +90,19 @@ namespace death
 	};
 
 	// =============================================
+	// PlayerPawnCheckpoint
+	// =============================================
+
+	class PlayerPawnCheckpoint : public chaos::ReferencedObject
+	{
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+
+	public:
+
+
+	};
+
+	// =============================================
 	// LevelCheckpoint
 	// =============================================
 

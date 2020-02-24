@@ -1,11 +1,28 @@
 #pragma once
 
+// internal macros (do not use outside this file)
+#define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix)\
+	friend class prefix##PlayerCheckpoint;\
+	friend class prefix##LevelCheckpoint;\
+	friend class prefix##GameCheckpoint;\
+	friend class prefix##Player;\
+	friend class prefix##PawnPlayer;\
+	friend class prefix##Level;\
+	friend class prefix##LevelInstance;\
+	friend class prefix##Game;\
+	friend class prefix##Camera;\
+	friend class prefix##CameraComponent;\
+	friend class prefix##GameInstanceEntity;\
+	friend class prefix##GameInstance;\
+	friend class prefix##GameHUD;
+
 // declare all friendship for main game classes
 #define DEATH_GAMEFRAMEWORK_ALLFRIENDS()\
 	friend class PlayerCheckpoint;\
 	friend class LevelCheckpoint;\
 	friend class GameCheckpoint;\
 	friend class Player;\
+	friend class PlayerPawn;\
 	friend class GameLevel;\
 	friend class GameLevelInstance;\
 	friend class Game;\
@@ -15,19 +32,6 @@
 	friend class GameInstance;\
 	friend class GameHUD;
 
-// internal macros (do not use outside this file)
-#define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix)\
-	friend class prefix##PlayerCheckpoint;\
-	friend class prefix##LevelCheckpoint;\
-	friend class prefix##GameCheckpoint;\
-	friend class prefix##Player;\
-	friend class prefix##Level;\
-	friend class prefix##LevelInstance;\
-	friend class prefix##Game;\
-	friend class prefix##Camera;\
-	friend class prefix##CameraComponent;\
-	friend class prefix##GameInstanceEntity;\
-	friend class prefix##GameInstance;
 
 #define DEATH_GAMEFRAMEWORK_DECLARE_GETTER(prefix, type)\
 	prefix##type * Get##prefix##type();\

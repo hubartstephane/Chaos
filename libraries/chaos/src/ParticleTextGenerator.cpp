@@ -643,11 +643,11 @@ namespace chaos
 		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data)
 		{
 			// left align : nothing to do
-			if (params.alignment == TextAlignment::ALIGN_LEFT)
+			if (params.alignment == TextAlignment::LEFT)
 				return true;
 
 			// justifaction : cannot increase line size if the factor is below 1.0
-			if (params.alignment == TextAlignment::ALIGN_JUSTIFY && params.justify_space_factor <= 1.0f)
+			if (params.alignment == TextAlignment::JUSTIFY && params.justify_space_factor <= 1.0f)
 				return true;
 
 			// compute the whole text bounding box
@@ -671,17 +671,17 @@ namespace chaos
 						continue;
 
 					// right align
-					if (params.alignment == TextAlignment::ALIGN_RIGHT)
+					if (params.alignment == TextAlignment::RIGHT)
 					{
 						MoveParticles(line, glm::vec2(W1 - W2, 0.0f));
 					}
 					// center align
-					else if (params.alignment == TextAlignment::ALIGN_CENTER)
+					else if (params.alignment == TextAlignment::CENTER)
 					{
 						MoveParticles(line, glm::vec2((W1 - W2) * 0.5f, 0.0f));
 					}
 					// justification
-					else if (params.alignment == TextAlignment::ALIGN_JUSTIFY && W2 < W1) // cannot justify to decrease line size 
+					else if (params.alignment == TextAlignment::JUSTIFY && W2 < W1) // cannot justify to decrease line size 
 					{
 						// count the total size of whitespace token						
 						float whitespace_width = 0.0f;

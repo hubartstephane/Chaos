@@ -5,10 +5,10 @@ namespace chaos
 {
 	static std::vector<std::pair<TextAlignment, char const*>> const alignment_encoding =
 	{
-		{ TextAlignment::ALIGN_LEFT, "left" },
-		{ TextAlignment::ALIGN_RIGHT, "right" },
-		{ TextAlignment::ALIGN_CENTER, "center" },
-		{ TextAlignment::ALIGN_JUSTIFY, "justify" }
+		{ TextAlignment::LEFT, "left" },
+		{ TextAlignment::RIGHT, "right" },
+		{ TextAlignment::CENTER, "center" },
+		{ TextAlignment::JUSTIFY, "justify" }
 	};
 
 	CHAOS_IMPLEMENT_ENUMJSON_METHOD(TextAlignment, alignment_encoding);

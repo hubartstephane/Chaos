@@ -92,7 +92,7 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 	params.font_info_name = "normal";
 	params.bitmap_padding = glm::vec2(-5.0f, -5.0f);
 	params.character_spacing = 0.0f;
-	params.alignment = chaos::TextAlignment::ALIGN_CENTER;
+	params.alignment = chaos::TextAlignment::CENTER;
 
 	std::string title;
 	

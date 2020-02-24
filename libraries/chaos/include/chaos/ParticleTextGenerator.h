@@ -43,7 +43,7 @@ namespace chaos
 			/** the maximum factor for space to apply when lines are to be justified. if a greater value should be applyed, ignore justification */
 			float justify_space_factor = 2.0f;
 			/** the line alignment */
-			TextAlignment alignment = TextAlignment::ALIGN_LEFT;
+			TextAlignment alignment = TextAlignment::LEFT;
 			/** the color to use by default */
 			glm::vec4 default_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			/** the font to use by default */

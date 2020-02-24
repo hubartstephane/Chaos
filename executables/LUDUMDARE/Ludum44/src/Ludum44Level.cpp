@@ -140,11 +140,11 @@ bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 
 	bool decrease_power = geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
 
-	if (event_type == chaos::CollisionType::COLLISION_STARTED)
+	if (event_type == chaos::CollisionType::STARTED)
 		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
-	else if (event_type == chaos::CollisionType::COLLISION_AGAIN && reset_trigger)
+	else if (event_type == chaos::CollisionType::AGAIN && reset_trigger)
 		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
-	else if (event_type == chaos::CollisionType::COLLISION_FINISHED)
+	else if (event_type == chaos::CollisionType::FINISHED)
 		ludum_game_instance->OnPowerUpZone(player, false, this, decrease_power);
 	else
 		return false;
@@ -161,7 +161,7 @@ bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 
 bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type)
 {
-	if (event_type != chaos::CollisionType::COLLISION_STARTED) // already handled
+	if (event_type != chaos::CollisionType::STARTED) // already handled
 		return false;
 
 	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
@@ -191,7 +191,7 @@ bool SpawnerTriggerObject::Initialize()
 bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type)
 {
 	// only the first time collision is detected
-	if (event_type != chaos::CollisionType::COLLISION_STARTED)
+	if (event_type != chaos::CollisionType::STARTED)
 		return false;
 
 

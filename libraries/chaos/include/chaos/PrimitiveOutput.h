@@ -34,23 +34,23 @@ namespace chaos
      * PrimitiveType : the type of primitives that can be rendered
      */
 
-    enum class PrimitiveType : int
-    {
-        triangle = 0,
-        triangle_pair = 1,
-        quad = 2,
-        triangle_strip = 3,
-        triangle_fan = 4,
-    };
+	enum class PrimitiveType : int
+	{
+		TRIANGLE = 0,
+		TRIANGLE_PAIR = 1,
+		QUAD = 2,
+		TRIANGLE_STRIP = 3,
+		TRIANGLE_FAN = 4
+	};
 
     /** returns the number of element per primitive (user accessible) */
     constexpr size_t GetVerticesPerParticle(PrimitiveType primitive_type)
     {
-        if (primitive_type == PrimitiveType::triangle)
+        if (primitive_type == PrimitiveType::TRIANGLE)
             return 3;
-        if (primitive_type == PrimitiveType::triangle_pair)
+        if (primitive_type == PrimitiveType::TRIANGLE_PAIR)
             return 6;
-        if (primitive_type == PrimitiveType::quad)
+        if (primitive_type == PrimitiveType::QUAD)
             return 4;
         return 0; // strip and fans have no defined values for this
     }
@@ -59,7 +59,7 @@ namespace chaos
     constexpr size_t GetRealVerticesPerParticle(PrimitiveType primitive_type)
     {
 #if !CHAOS_INDEXED_QUAD_RENDERING
-        if (primitive_type == PrimitiveType::quad)
+        if (primitive_type == PrimitiveType::QUAD)
             return 6;
 #endif
         return GetVerticesPerParticle(primitive_type);
@@ -68,15 +68,15 @@ namespace chaos
     /** returns the OpenGL primitive type corresponding to the primitive */
     constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
     {
-        if (primitive_type == PrimitiveType::triangle)
+        if (primitive_type == PrimitiveType::TRIANGLE)
             return GL_TRIANGLES;
-        if (primitive_type == PrimitiveType::triangle_pair)
+        if (primitive_type == PrimitiveType::TRIANGLE_PAIR)
             return GL_TRIANGLES;
-        if (primitive_type == PrimitiveType::quad)
+        if (primitive_type == PrimitiveType::QUAD)
             return GL_TRIANGLES;
-        if (primitive_type == PrimitiveType::triangle_strip)
+        if (primitive_type == PrimitiveType::TRIANGLE_STRIP)
             return GL_TRIANGLE_STRIP;
-        if (primitive_type == PrimitiveType::triangle_fan)
+        if (primitive_type == PrimitiveType::TRIANGLE_FAN)
             return GL_TRIANGLE_FAN;
         return GL_NONE;
     }
@@ -109,7 +109,7 @@ namespace chaos
         {
             // Quad is internally considered as a triangle pair. Duplicate vertices
 #if !CHAOS_INDEXED_QUAD_RENDERING
-            if constexpr (PRIMITIVE_TYPE == PrimitiveType::quad)
+            if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
             {
                 size_t offset2 = vertex_size * 2;
                 size_t offset4 = vertex_size * 4;
@@ -174,12 +174,12 @@ namespace chaos
       */
 
     // fixed length primitives
-    template<typename VERTEX_TYPE> using TrianglePrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle>;
-    template<typename VERTEX_TYPE> using TrianglePairPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_pair>;
-    template<typename VERTEX_TYPE> using QuadPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::quad>;
+    template<typename VERTEX_TYPE> using TrianglePrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
+    template<typename VERTEX_TYPE> using TrianglePairPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
+    template<typename VERTEX_TYPE> using QuadPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::QUAD>;
     // non-fixed length vertices count
-    template<typename VERTEX_TYPE> using TriangleStripPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_strip>;
-    template<typename VERTEX_TYPE> using TriangleFanPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::triangle_fan>;
+    template<typename VERTEX_TYPE> using TriangleStripPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
+    template<typename VERTEX_TYPE> using TriangleFanPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
 
     /**
      * PrimitiveOutputBase : a primitive generator (the base class)
@@ -313,12 +313,12 @@ namespace chaos
       */
 
     // fixed length primitive
-    template<typename VERTEX_TYPE> using TriangleOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::triangle>;
-    template<typename VERTEX_TYPE> using TrianglePairOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::triangle_pair>;
-    template<typename VERTEX_TYPE> using QuadOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::quad>;
+    template<typename VERTEX_TYPE> using TriangleOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
+    template<typename VERTEX_TYPE> using TrianglePairOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
+    template<typename VERTEX_TYPE> using QuadOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::QUAD>;
     // non-fixed length vertices count
-    template<typename VERTEX_TYPE> using TriangleStripOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::triangle_strip>;
-    template<typename VERTEX_TYPE> using TriangleFanOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::triangle_fan>;
+    template<typename VERTEX_TYPE> using TriangleStripOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
+    template<typename VERTEX_TYPE> using TriangleFanOutput = TypedPrimitiveOutputBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
     
 }; // namespace chaos
 

@@ -171,9 +171,9 @@ public:
         if constexpr (has_primitive_type_v<TRAIT_TYPE>)
             return TRAIT_TYPE::primitive_type;
 #if CHAOS_TRIANGLE_PAIR_RENDERING
-        return PrimitiveType::triangle_pair;
+        return PrimitiveType::TRIANGLE_PAIR;
 #else
-        return PrimitiveType::quad;
+        return PrimitiveType::QUAD;
 #endif
     }
     /** returns the primitive type used for rendering (OpenGL point of view) */
@@ -804,27 +804,27 @@ public:
             GPUBufferCache* cache = (particle_manager == nullptr) ? &buffer_cache : &particle_manager->GetBufferCache();
 
             // select PrimitiveOutput and collect vertices
-            if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle)
+            if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE)
             {
                 TriangleOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_pair)
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE_PAIR)
             {
                 TrianglePairOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::quad)
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::QUAD)
             {
                 QuadOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_strip)
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE_STRIP)
             {
                 TriangleStripOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::triangle_fan)
+            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE_FAN)
             {
                 TriangleFanOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);

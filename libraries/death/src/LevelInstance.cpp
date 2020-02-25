@@ -215,7 +215,7 @@ namespace death
 
 	}
 
-	void LevelInstance::RestrictCameraToPlayerAndWorld(int player_index, size_t camera_index)
+	void LevelInstance::RestrictCameraToPlayerAndWorld(size_t player_index, size_t camera_index)
 	{
 		// get the wanted player
 		Player * player = GetPlayer(player_index);
@@ -262,11 +262,6 @@ namespace death
 		chaos::box2 box = chaos::ParticleTools::GetParticleBox(allocation, index);		
 		chaos::RestrictToInside(world, box, false);
 		chaos::ParticleTools::SetParticleBox(allocation, index, box);
-	}
-
-	void LevelInstance::RestrictPlayerToWorld(int player_index)
-	{
-		RestrictPlayerToWorld(GetPlayer(player_index));
 	}
 
 	void LevelInstance::RestrictPlayerToWorld(Player * player)

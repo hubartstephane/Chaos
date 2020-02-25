@@ -91,11 +91,9 @@ namespace death
 		virtual bool CanCompleteLevel() const;
 
 		/** update the player and the camera position so that they remains inside the world */
-		void RestrictCameraToPlayerAndWorld(int player_index, size_t camera_index);
+		void RestrictCameraToPlayerAndWorld(size_t player_index, size_t camera_index);
 		/** restrict an object to the world */
 		void RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index);
-		/** restrict an player to the world */
-		void RestrictPlayerToWorld(int player_index);
 		/** restrict an player to the world */
 		void RestrictPlayerToWorld(Player * player);
 

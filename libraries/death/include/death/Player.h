@@ -42,7 +42,7 @@ namespace death
 		virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation);
 
 		/** get the index of the player */
-		int GetPlayerIndex() const { return player_index; }
+		size_t GetPlayerIndex() const { return player_index; }
 
 		/** get the current score */
 		int GetScore() const { return score; }
@@ -156,7 +156,7 @@ namespace death
 		chaos::shared_ptr<chaos::ParticleAllocationBase> player_allocations;
 
 		/** the index of the player */
-		int player_index = 0;
+		size_t player_index = 0;
 
 		/** the current life for the player */
 		int life_count = 3;

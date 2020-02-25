@@ -13,7 +13,12 @@ namespace chaos
 			AutoCasted(T * in_ptr) : ptr(in_ptr) {}
 			/** the conversion operator */
 			template<typename U>
-			operator U * () const { return dynamic_cast<U *>(ptr); }
+			operator U * () const 
+			{ 
+				if constexpr (std::is_base_of_v<U, T>)
+					return ptr;
+				return dynamic_cast<U *>(ptr); 
+			}
 
 		protected:
 
@@ -30,7 +35,12 @@ namespace chaos
 			AutoConstCasted(const T * in_ptr) : ptr(in_ptr) {}
 			/** the conversion operator */
 			template<typename U> 
-			operator U const * () const { return dynamic_cast<const U *>(ptr); }
+			operator U const * () const 
+			{ 
+				if constexpr (std::is_base_of_v<U, T>)
+					return ptr;
+				return dynamic_cast<const U *>(ptr); 
+			}
 
 		protected:
 

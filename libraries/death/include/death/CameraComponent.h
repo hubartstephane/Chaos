@@ -91,7 +91,7 @@ namespace death
 	public:
 
 		/** constructor */
-		FollowPlayerCameraComponent(int in_player_index = 0) :
+		FollowPlayerCameraComponent(size_t in_player_index = 0) :
 			player_index(in_player_index) {}
 
 	protected:
@@ -102,7 +102,7 @@ namespace death
 	protected:
 
 		/** the player index to follow */
-		int player_index = 0;
+		size_t player_index = 0;
 	};
 
 	// =============================================
@@ -114,7 +114,7 @@ namespace death
 	public:
 
 		/** constructor */
-		FreeCameraComponent(int in_player_index = 0) :
+		FreeCameraComponent(size_t in_player_index = 0) :
 			player_index(in_player_index) {}
 
 		/** returns the zoom value */
@@ -132,7 +132,7 @@ namespace death
 	protected:
 
 		/** the player index to follow */
-		int player_index = 0;
+		size_t player_index = 0;
 		/** the value of zoom to apply */
 		float zoom_value = 1.0f;
 	};

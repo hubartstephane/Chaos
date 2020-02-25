@@ -50,7 +50,7 @@ chaos::box2 LudumLevelInstance::GetBoundingBox() const
 bool LudumLevelInstance::DoTick(float delta_time)
 {
 	death::LevelInstance::DoTick(delta_time);
-	RestrictPlayerToWorld(0);
+	RestrictPlayerToWorld(GetPlayer(0));
 	return true;
 }
 

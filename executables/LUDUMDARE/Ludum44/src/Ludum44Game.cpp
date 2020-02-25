@@ -134,7 +134,7 @@ void LudumGame::OnLevelChanged(death::Level * new_level, death::Level * old_leve
         PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
 }
 
-ParticlePlayer * LudumGame::GetPlayerParticle(int player_index)
+ParticlePlayer * LudumGame::GetPlayerParticle(size_t player_index)
 {
 	LudumPlayer * player = GetLudumPlayer(player_index);
 	if (player == nullptr)
@@ -142,7 +142,7 @@ ParticlePlayer * LudumGame::GetPlayerParticle(int player_index)
 	return player->GetPlayerParticle();
 }
 
-ParticlePlayer const * LudumGame::GetPlayerParticle(int player_index) const
+ParticlePlayer const * LudumGame::GetPlayerParticle(size_t player_index) const
 {
 	LudumPlayer const * player = GetLudumPlayer(player_index);
 	if (player == nullptr)

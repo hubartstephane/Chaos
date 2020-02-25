@@ -61,9 +61,9 @@ public:
 
 	virtual chaos::box2 GetWorldBox() const override;
 
-	ParticlePlayer * GetPlayerParticle(int player_index);
+	ParticlePlayer * GetPlayerParticle(size_t player_index);
 
-	ParticlePlayer const * GetPlayerParticle(int player_index) const;
+	ParticlePlayer const * GetPlayerParticle(size_t player_index) const;
 
 
 

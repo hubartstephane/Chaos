@@ -226,8 +226,8 @@ namespace death
 	{
 		if (game_instance != nullptr)
 			game_instance->FillUniformProvider(main_uniform_provider);
-		if (current_level_instance != nullptr)
-			current_level_instance->FillUniformProvider(main_uniform_provider);
+		if (level_instance != nullptr)
+			level_instance->FillUniformProvider(main_uniform_provider);
 	}
 
 	void Game::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
@@ -263,8 +263,8 @@ namespace death
 		// shuwww   root_render_layer ??
 		if (particle_manager != nullptr)
 			particle_manager->Display(renderer, uniform_provider, render_params);
-		if (current_level_instance != nullptr)
-			current_level_instance->Display(renderer, uniform_provider, render_params);
+		if (level_instance != nullptr)
+			level_instance->Display(renderer, uniform_provider, render_params);
 	}
 
 	void Game::DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
@@ -858,9 +858,9 @@ namespace death
 
 			if (category_tag == SoundContext::LEVEL)
 			{
-				if (current_level_instance != nullptr)
-					if (current_level_instance->sound_category != nullptr && !current_level_instance->sound_category->IsPendingKill())
-						play_desc.categories.push_back(current_level_instance->sound_category.get());
+				if (level_instance != nullptr)
+					if (level_instance->sound_category != nullptr && !level_instance->sound_category->IsPendingKill())
+						play_desc.categories.push_back(level_instance->sound_category.get());
 			}
 		}
 
@@ -1113,8 +1113,8 @@ namespace death
 		// internal code
 		CreateGameOverHUD();
 		// give opportunity to other game classes to respond
-		if (current_level_instance != nullptr)
-			current_level_instance->OnGameOver();
+		if (level_instance != nullptr)
+			level_instance->OnGameOver();
 		if (game_instance != nullptr)
 			game_instance->OnGameOver();		
 	}
@@ -1131,8 +1131,8 @@ namespace death
 		// internal code
 		CreatePauseMenuHUD();
 		// give opportunity to other game classes to respond
-		if (current_level_instance != nullptr)
-			current_level_instance->OnEnterPause();
+		if (level_instance != nullptr)
+			level_instance->OnEnterPause();
 		if (game_instance != nullptr)
 			game_instance->OnEnterPause();
 		// pause in-game sounds
@@ -1151,8 +1151,8 @@ namespace death
 		// internal code
 		CreatePlayingHUD();
 		// give opportunity to other game classes to respond
-		if (current_level_instance != nullptr)
-			current_level_instance->OnLeavePause();
+		if (level_instance != nullptr)
+			level_instance->OnLeavePause();
 		if (game_instance != nullptr)
 			game_instance->OnLeavePause();
 		// resume in-game sounds
@@ -1167,8 +1167,8 @@ namespace death
 
 		if (game_instance != nullptr)
 			categories[0] = game_instance->GetSoundCategory();
-		if (current_level_instance != nullptr)
-			categories[1] = current_level_instance->GetSoundCategory();
+		if (level_instance != nullptr)
+			categories[1] = level_instance->GetSoundCategory();
 
 		for (int i = 0; i < 2; ++i)
 		{
@@ -1231,8 +1231,8 @@ namespace death
 		if (game_instance != nullptr)
 		{
 			// check level game over only if game is started. It could be a background level in main menu
-			if (current_level_instance != nullptr)
-				if (current_level_instance->DoCheckGameOverCondition())
+			if (level_instance != nullptr)
+				if (level_instance->DoCheckGameOverCondition())
 					return true;
 			// check for game over in game instance
 			if (game_instance->DoCheckGameOverCondition())
@@ -1297,8 +1297,8 @@ namespace death
 			return false;
 		}
 		// tick the level
-		if (current_level_instance != nullptr)
-			current_level_instance->Tick(delta_time);
+		if (level_instance != nullptr)
+			level_instance->Tick(delta_time);
 		return true;
 	}
 
@@ -1413,9 +1413,9 @@ namespace death
 	chaos::box2 Game::GetWorldBox() const
 	{
 		// look at the level instance
-		if (current_level_instance != nullptr)
+		if (level_instance != nullptr)
 		{
-			chaos::box2 result = current_level_instance->GetBoundingBox();
+			chaos::box2 result = level_instance->GetBoundingBox();
 			if (!IsGeometryEmpty(result))
 				return result;
 		}
@@ -1441,12 +1441,12 @@ namespace death
 
 	LevelInstance * Game::GetLevelInstance()
 	{
-		return current_level_instance.get();
+		return level_instance.get();
 	}
 
 	LevelInstance const * Game::GetLevelInstance() const
 	{
-		return current_level_instance.get();
+		return level_instance.get();
 	}
 
 	Level * Game::GetLevel(int level_index)
@@ -1513,23 +1513,23 @@ namespace death
 		chaos::shared_ptr<Level> old_level = GetLevel();
 
 		// destroy current level instance, so that new instance can get all resources it want
-		if (current_level_instance != nullptr)
+		if (level_instance != nullptr)
 		{
-			current_level_instance->OnLevelEnded();
-			current_level_instance = nullptr;
+			level_instance->OnLevelEnded();
+			level_instance = nullptr;
 		}
 
 		// create the new level instance if required
 		if (new_level != nullptr)
 		{
-			current_level_instance = new_level->CreateLevelInstance(this);
-			if (current_level_instance == nullptr)
+			level_instance = new_level->CreateLevelInstance(this);
+			if (level_instance == nullptr)
 				return false;
-			current_level_instance->OnLevelStarted();
+			level_instance->OnLevelStarted();
 		}
 
 		// change the level
-		OnLevelChanged(new_level, old_level.get(), current_level_instance.get());
+		OnLevelChanged(new_level, old_level.get(), level_instance.get());
 
 		return true;
 	}
@@ -1601,10 +1601,10 @@ namespace death
 
 	bool Game::ReloadCurrentLevel()
 	{
-		if (current_level_instance == nullptr)
+		if (level_instance == nullptr)
 			return false;
 
-		chaos::shared_ptr<Level> old_level = current_level_instance->GetLevel(); // keep a reference to prevent the destruction when it will be removed from the levels array
+		chaos::shared_ptr<Level> old_level = level_instance->GetLevel(); // keep a reference to prevent the destruction when it will be removed from the levels array
 		assert(old_level != nullptr);
 
 		// reload the level

@@ -80,7 +80,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// try to capture the "WorldBounds layer"
-	// XXX : in menu, there is no current_level_instance, so we can test the pointer to exaclty know what to do
+	// XXX : in menu, there is no level_instance, so we can test the pointer to exaclty know what to do
 	//
 
 	// RENDER TARGET 1 : SPECIAL WorldLimits (on red channel), Enlarged enemies (on blue channel)
@@ -160,7 +160,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		// draw particle system (the background)
 		if (particle_manager != nullptr)
 			particle_manager->Display(renderer, uniform_provider, other_render_params);
-		current_level_instance->Display(renderer, uniform_provider, other_render_params);
+		level_instance->Display(renderer, uniform_provider, other_render_params);
 
 		renderer->PopFramebufferRenderContext();
 	}
@@ -211,7 +211,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 #endif
 
 		// draw particle system (the background)
-		current_level_instance->Display(renderer, uniform_provider, other_rendering_params);
+		level_instance->Display(renderer, uniform_provider, other_rendering_params);
 	}
 }
 
@@ -364,8 +364,8 @@ ParticlePlayer const * LudumGame::GetPlayerParticle(int player_index) const
 
 chaos::box2 LudumGame::GetWorldBox() const
 {
-	if (current_level_instance != nullptr)
-		return current_level_instance->GetBoundingBox();
+	if (level_instance != nullptr)
+		return level_instance->GetBoundingBox();
 	return chaos::box2();
 }
 

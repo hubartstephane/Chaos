@@ -140,8 +140,8 @@ ParticlePlayer const * LudumGame::GetPlayerParticle(int player_index) const
 
 chaos::box2 LudumGame::GetWorldBox() const
 {
-	if (current_level_instance != nullptr)
-		 return current_level_instance->GetBoundingBox();
+	if (level_instance != nullptr)
+		 return level_instance->GetBoundingBox();
 	return chaos::box2();
 }
 

@@ -499,7 +499,7 @@ namespace death
 		/** level data */
 		std::vector<chaos::shared_ptr<Level>> levels;
 		/** the current level instance */
-		chaos::shared_ptr<LevelInstance> current_level_instance;
+		chaos::shared_ptr<LevelInstance> level_instance;
 
 		/** some allocations */
 		chaos::shared_ptr<chaos::ParticleAllocationBase> background_allocations;

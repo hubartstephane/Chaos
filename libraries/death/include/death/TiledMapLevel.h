@@ -806,7 +806,7 @@ namespace death
 		template<typename ...PARAMS>
 		chaos::ParticleSpawner GetParticleSpawner(chaos::NamedObjectRequest layer_instance_name, PARAMS... params)
 		{
-			LayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
+			TiledMapLayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
 			if (layer_instance == nullptr)
 				return chaos::ParticleSpawner(nullptr);
 			return layer_instance->GetParticleSpawner(params...);

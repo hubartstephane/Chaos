@@ -56,7 +56,7 @@ namespace death
 	{
 		GameInstance const * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
-			return (Player const*)nullptr;
+			return nullptr;
 		return game_instance->GetPlayer(player_index);
 	}
 

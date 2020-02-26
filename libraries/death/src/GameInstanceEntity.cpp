@@ -24,7 +24,7 @@ namespace death
 	chaos::AutoConstCastable<Game> GameInstanceEntity::GetGame() const
 	{
 		if (game_instance == nullptr)
-			return (Game const *)nullptr;
+			return nullptr;
 		return game_instance->GetGame();
 	}
 
@@ -40,7 +40,7 @@ namespace death
 	{
 		Game const * game = GetGame();
 		if (game == nullptr)
-			return (Level const *)nullptr;
+			return nullptr;
 		return game->GetLevel();
 	}
 	
@@ -56,7 +56,7 @@ namespace death
 	{
 		Game const * game = GetGame();
 		if (game == nullptr)
-			return (LevelInstance const *)nullptr;
+			return nullptr;
 		return game->GetLevelInstance();
 	}
 

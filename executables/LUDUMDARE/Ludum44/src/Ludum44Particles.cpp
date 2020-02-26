@@ -39,7 +39,9 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & result)
 {
 	// get the enemies
-	death::TiledMap::LayerInstance * enemies_layer_instance = game->GetLudumLevelInstance()->FindLayerInstance("Enemies");
+	LudumLevelInstance* ludum_level_instance = game->GetLevelInstance();
+
+	death::TiledMap::LayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
 	if (enemies_layer_instance != nullptr)
 	{
 		chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
@@ -77,7 +79,9 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(enemy->score, true);
 		game->PlaySound("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
-		game->GetLudumGameInstance()->FireExplosion(ref_box);
+
+		LudumGameInstance* ludum_game_instance = game->GetGameInstance();
+		ludum_game_instance->FireExplosion(ref_box);
 	}
 	return result;
 }
@@ -112,7 +116,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 			{
 				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, true, enemy->bounding_box); // destroy the enemy always
 			
-				LudumPlayer * player = layer_trait->game->GetLudumPlayer(0);
+				LudumPlayer * player = layer_trait->game->GetPlayer(0);
 				player->SetHealth(-life_lost, true);
 			}
 		}
@@ -311,13 +315,15 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
+		LudumLevelInstance* ludum_level_instance = layer_trait->game->GetLevelInstance();
+
 		// get the camera box 
-		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
+		result.camera_box = ludum_level_instance->GetCameraBox(0);
 		//result.camera_box.half_size *= 3.0f;
 		// get the enemies
 		FindEnemiesOnMap(layer_trait->game, result.enemies);
 		// get the players
-		result.player = layer_trait->game->GetLudumPlayer(0);
+		result.player = layer_trait->game->GetPlayer(0);
 	}
 	return result;
 }
@@ -419,7 +425,9 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	ParticleEnemyUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
-		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
+		LudumLevelInstance* ludum_level_instance = layer_trait->game->GetLevelInstance();
+
+		result.camera_box = ludum_level_instance->GetCameraBox(0);
 		//result.camera_box.half_size *= 3.0f;
 	}
 	return result;
@@ -445,7 +453,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	
 	if (particle->rotation_following_player)
 	{
-		LudumPlayer * player = layer_trait->game->GetLudumPlayer(0);
+		LudumPlayer * player = layer_trait->game->GetPlayer(0);
 		if (player != nullptr)
 		{		
 			glm::vec2 delta_pos = player->GetPlayerPosition() - particle->bounding_box.position;
@@ -474,7 +482,8 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 
 			float delta_angle = 2.0f * (float)M_PI / (float)count;
 
-            layer_trait->game->GetLudumGameInstance()->FireProjectile("enemy_fire", particle->bounding_box, size_ratio, count, nullptr, particle->rotation, delta_angle, layer_trait->game->enemy_fire_velocity, layer_trait->game->enemy_fire_damage, false, false);
+			LudumGameInstance* ludum_game_instance = layer_trait->game->GetGameInstance();
+			ludum_game_instance->FireProjectile("enemy_fire", particle->bounding_box, size_ratio, count, nullptr, particle->rotation, delta_angle, layer_trait->game->enemy_fire_velocity, layer_trait->game->enemy_fire_damage, false, false);
 
 			particle->current_fire_timer = 0.0f;		
 		}

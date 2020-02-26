@@ -4,8 +4,6 @@
 #include "Ludum41CustomGameInstance.h"
 #include "Ludum41CustomPlayer.h"
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_LEVELINSTANCE(Ludum);
-
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
 	if (!death::LevelInstance::Initialize(in_game, in_level))
@@ -21,7 +19,7 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 	if (death::LevelInstance::CheckLevelCompletion())
 		return true;
 
-	LudumLevel const * ludum_level = auto_cast(GetLevel());
+	LudumLevel const * ludum_level = GetLevel();
 	if (ludum_level == nullptr)
 		return false;
 
@@ -34,7 +32,7 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 
 bool LudumLevelInstance::CanCompleteLevel() const
 {
-	LudumGameInstance const * ludum_game_instance = GetLudumGameInstance();
+	LudumGameInstance const * ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance == nullptr)
 		return true;
 	if (ludum_game_instance->CanStartChallengeBallIndex(true) != std::numeric_limits<size_t>::max()) // any ball is going down
@@ -56,11 +54,11 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 {
-	LudumLevel const * ludum_level = GetLudumLevel();
+	LudumLevel const * ludum_level = GetLevel();
 	if (ludum_level == nullptr)
 		return nullptr;
 
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return nullptr;
 
@@ -173,7 +171,7 @@ ParticleBrick const * LudumLevelInstance::GetBricks() const
 
 void LudumLevelInstance::CreateBackgroundImage()
 {
-	LudumLevel const * ludum_level = GetLudumLevel();
+	LudumLevel const * ludum_level = GetLevel();
 	if (ludum_level != nullptr)
 	{
 		char const * background_material = (ludum_level->background_material.empty())? nullptr : ludum_level->background_material.c_str();
@@ -189,7 +187,7 @@ void LudumLevelInstance::CreateBackgroundImage()
 
 void LudumLevelInstance::SetInGameMusic()
 {
-	LudumLevel const * ludum_level = GetLudumLevel();
+	LudumLevel const * ludum_level = GetLevel();
 	if (ludum_level != nullptr)
 	{
 		if (!ludum_level->music.empty())

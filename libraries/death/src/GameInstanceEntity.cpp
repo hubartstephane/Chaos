@@ -14,21 +14,21 @@ namespace death
 		//assert(in_game_instance != nullptr);
 	}
 
-	Game * GameInstanceEntity::GetGame()
+	chaos::AutoCastable<Game> GameInstanceEntity::GetGame()
 	{
 		if (game_instance == nullptr)
 			return nullptr;
 		return game_instance->GetGame();
 	}
 
-	Game const * GameInstanceEntity::GetGame() const
+	chaos::AutoConstCastable<Game> GameInstanceEntity::GetGame() const
 	{
 		if (game_instance == nullptr)
-			return nullptr;
+			return (Game const *)nullptr;
 		return game_instance->GetGame();
 	}
 
-	Level * GameInstanceEntity::GetLevel()
+	chaos::AutoCastable<Level> GameInstanceEntity::GetLevel()
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -36,15 +36,15 @@ namespace death
 		return game->GetLevel();
 	}
 	
-	Level const * GameInstanceEntity::GetLevel() const
+	chaos::AutoConstCastable<Level> GameInstanceEntity::GetLevel() const
 	{
 		Game const * game = GetGame();
 		if (game == nullptr)
-			return nullptr;
+			return (Level const *)nullptr;
 		return game->GetLevel();
 	}
 	
-	LevelInstance * GameInstanceEntity::GetLevelInstance()
+	chaos::AutoCastable<LevelInstance> GameInstanceEntity::GetLevelInstance()
 	{
 		Game * game = GetGame();
 		if (game == nullptr)
@@ -52,11 +52,11 @@ namespace death
 		return game->GetLevelInstance();
 	}
 	
-	LevelInstance const * GameInstanceEntity::GetLevelInstance() const
+	chaos::AutoConstCastable<LevelInstance> GameInstanceEntity::GetLevelInstance() const
 	{
 		Game const * game = GetGame();
 		if (game == nullptr)
-			return nullptr;
+			return (LevelInstance const *)nullptr;
 		return game->GetLevelInstance();
 	}
 

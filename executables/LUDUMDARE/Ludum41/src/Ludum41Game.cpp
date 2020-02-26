@@ -20,9 +20,6 @@
 
 #include <death/GameParticles.h>
 
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
-
 LudumGame::LudumGame()
 {
 	game_name = "AsciiPaouf 2";
@@ -44,7 +41,7 @@ void LudumGame::OnEnterMainMenu(bool very_first)
 
 void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
 {
-	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	LudumGameInstance * ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance != nullptr)
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
 }

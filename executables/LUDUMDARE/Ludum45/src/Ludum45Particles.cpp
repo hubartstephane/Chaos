@@ -38,7 +38,8 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 		chaos::box2 b = ref_box;
 		b.half_size *= 2.0f;
 
-		game->GetLudumGameInstance()->FireExplosion(b);
+		LudumGameInstance* ludum_game_instance = game->GetGameInstance();
+		ludum_game_instance->FireExplosion(b);
 	}
 	return result;
 }
@@ -46,7 +47,9 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & result)
 {
 	// get the enemies
-	death::TiledMap::LayerInstance * enemies_layer_instance = game->GetLudumLevelInstance()->FindLayerInstance("Enemies");
+	LudumLevelInstance* ludum_level_instance = game->GetLevelInstance();
+
+	death::TiledMap::LayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
 	if (enemies_layer_instance != nullptr)
 	{
 		chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
@@ -138,7 +141,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 
 	if (chaos::Collide(bb, player_box))
 	{
-		LudumPlayer * ludum_player = auto_cast(layer_trait->game->GetPlayer(0));
+		LudumPlayer * ludum_player = layer_trait->game->GetPlayer(0);
 		if (ludum_player != nullptr)			
 		{
 			if (ludum_player->dash_timer <= 0.0f ||! ludum_player->GetGhostLevel())
@@ -178,39 +181,6 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	return false;
 }
 
-// ===========================================================================
-// ParticleBonusTrait
-// ===========================================================================
-
-#if 0
-
-static void FindBonusOnMap(LudumGame * game, std::vector<ParticleBonus*> & result)
-{
-	// get the enemies
-	death::TiledMap::LayerInstance * layer_instance = game->GetLudumLevelInstance()->FindLayerInstance("Bonus");
-	if (layer_instance != nullptr)
-	{
-		chaos::ParticleLayerBase * layer = layer_instance->GetParticleLayer();
-		if (layer != nullptr)
-		{
-			size_t allocation_count = layer->GetAllocationCount();
-			for (size_t i = 0 ; i < allocation_count ; ++i)
-			{
-				chaos::ParticleAllocationBase * allocation = layer->GetAllocation(i);
-				if (allocation != nullptr)
-				{
-					chaos::ParticleAccessor<ParticleBonus> bonus = allocation->GetParticleAccessor();
-					size_t count = bonus.GetCount();
-					for (size_t j = 0 ; j < count ; ++j)
-						result.push_back(&bonus[j]);
-				}				
-			}			
-		}
-	}
-}
-
-#endif
-
 
 chaos::box2 ParticleBonusTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const
 {
@@ -218,19 +188,6 @@ chaos::box2 ParticleBonusTrait::BeginUpdateParticles(float delta_time, chaos::Pa
 
 	result = layer_trait->game->GetPlayer(0)->GetPlayerBox();
 
-#if 0
-	ParticleFireUpdateData result;
-	if (count > 0)
-	{
-		// get the camera box 
-		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
-		//result.camera_box.half_size *= 3.0f;
-		// get the enemies
-		FindEnemiesOnMap(layer_trait->game, result.enemies);
-		// get the players
-		result.player = layer_trait->game->GetLudumPlayer(0);
-	}
-#endif
 	return result;
 }
 
@@ -263,7 +220,7 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * partic
 
 	if (chaos::Collide(bb, player_box))
 	{
-		LudumPlayer * ludum_player = auto_cast(layer_trait->game->GetPlayer(0));
+		LudumPlayer * ludum_player = layer_trait->game->GetPlayer(0);
 		if (ludum_player != nullptr)
 			ludum_player->OnPlayerUpgrade(particle->bonus_type);
 
@@ -294,7 +251,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 
     glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-    LudumPlayer const* player = layer_trait->game->GetLudumPlayer(0);
+    LudumPlayer const* player = layer_trait->game->GetPlayer(0);
     if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
     {
         float alpha = 1.0f;
@@ -330,7 +287,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 
     glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-    LudumPlayer const* player = layer_trait->game->GetLudumPlayer(0);
+    LudumPlayer const* player = layer_trait->game->GetPlayer(0);
     if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
     {
         float alpha = 1.0f;
@@ -375,13 +332,15 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
+		LudumLevelInstance* ludum_level_instance = layer_trait->game->GetLevelInstance();
+
 		// get the camera box 
-		result.camera_box = layer_trait->game->GetLudumLevelInstance()->GetCameraBox(0);
+		result.camera_box = ludum_level_instance->GetCameraBox(0);
 		result.camera_box.half_size *= 1.1f;
 		// get the enemies
 		FindEnemiesOnMap(layer_trait->game, result.enemies);
 		// get the players
-		result.player = layer_trait->game->GetLudumPlayer(0);
+		result.player = layer_trait->game->GetPlayer(0);
 	}
 	return result;
 }
@@ -488,7 +447,7 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 {
 	if (particle->bitmap_info == nullptr)
 		return false;
-	LudumPlayer * ludum_player = layer_trait->game->GetLudumPlayer(0);
+	LudumPlayer * ludum_player = layer_trait->game->GetPlayer(0);
 	if (ludum_player == nullptr)
 		return false;
 

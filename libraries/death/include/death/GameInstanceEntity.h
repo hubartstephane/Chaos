@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Tickable.h>
+#include <chaos/AutoCast.h>
 #include <death/GameFramework.h>
 
 namespace death
@@ -23,24 +24,24 @@ namespace death
 		virtual ~GameInstanceEntity() = default;
 
 		/** returns the game */
-		Game * GetGame();
+		chaos::AutoCastable<Game> GetGame();
 		/** returns the game */
-		Game const * GetGame() const;
+		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** returns the game instance */
-		GameInstance * GetGameInstance() { return game_instance; }
+		chaos::AutoCastable<GameInstance> GetGameInstance() { return game_instance; }
 		/** returns the game instance */
-		GameInstance const * GetGameInstance() const { return game_instance; }
+		chaos::AutoConstCastable<GameInstance> GetGameInstance() const { return game_instance; }
 
 		/** returns the level */
-		Level * GetLevel();
+		chaos::AutoCastable<Level> GetLevel();
 		/** returns the level */
-		Level const * GetLevel() const;
+		chaos::AutoConstCastable<Level> GetLevel() const;
 
 		/** returns the level instance */
-		LevelInstance * GetLevelInstance();
+		chaos::AutoCastable<LevelInstance> GetLevelInstance();
 		/** returns the level */
-		LevelInstance const * GetLevelInstance() const;
+		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 	protected:
 

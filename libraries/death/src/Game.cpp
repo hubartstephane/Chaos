@@ -1423,33 +1423,33 @@ namespace death
 		return GetCanvasBox();
 	}
 
-	Level * Game::GetLevel()
+	chaos::AutoCastable<Level> Game::GetLevel()
 	{
 		LevelInstance * li = GetLevelInstance();
 		if (li == nullptr)
-			return nullptr;
+			return (Level*)nullptr;
 		return li->GetLevel();
 	}
 
-	Level const * Game::GetLevel() const
+	chaos::AutoConstCastable<Level> Game::GetLevel() const
 	{
 		LevelInstance const * li = GetLevelInstance();
 		if (li == nullptr)
-			return nullptr;
+			return (Level const*)nullptr;
 		return li->GetLevel();
 	}
 
-	LevelInstance * Game::GetLevelInstance()
+	chaos::AutoCastable<LevelInstance> Game::GetLevelInstance()
 	{
 		return level_instance.get();
 	}
 
-	LevelInstance const * Game::GetLevelInstance() const
+	chaos::AutoConstCastable<LevelInstance> Game::GetLevelInstance() const
 	{
 		return level_instance.get();
 	}
 
-	Level * Game::GetLevel(int level_index)
+	chaos::AutoCastable<Level> Game::GetLevel(int level_index)
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1458,13 +1458,13 @@ namespace death
 		return nullptr;
 	}
 
-	Level const * Game::GetLevel(int level_index) const
+	chaos::AutoConstCastable<Level> Game::GetLevel(int level_index) const
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
 			if (levels[i]->GetLevelIndex() == level_index)
 				return levels[i].get();
-		return nullptr;
+		return (Level const*)nullptr;
 	}
 
 	bool Game::SetNextLevel(bool looping_levels)
@@ -1549,7 +1549,7 @@ namespace death
 			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);
 	}
 
-	Player * Game::GetPlayer(size_t player_index)
+	chaos::AutoCastable<Player> Game::GetPlayer(size_t player_index)
 	{
 		// game even not started : no player
 		if (game_instance == nullptr)
@@ -1558,11 +1558,11 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	Player const * Game::GetPlayer(size_t player_index) const
+	chaos::AutoConstCastable<Player> Game::GetPlayer(size_t player_index) const
 	{
 		// game even not started : no player
 		if (game_instance == nullptr)
-			return nullptr;
+			return (Player const *)nullptr;
 		// give the instance the responsability 
 		return game_instance->GetPlayer(player_index);
 	}

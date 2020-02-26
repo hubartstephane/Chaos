@@ -5,6 +5,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/InputEventReceiver.h>
 #include <chaos/SoundManager.h>
+#include <chaos/AutoCast.h>
 
 #include <death/GameFramework.h>
 #include <death/Player.h>
@@ -27,24 +28,24 @@ namespace death
 		GameInstance(Game * in_game);
 
 		/** returns the game */
-		Game * GetGame() { return game; }
+		chaos::AutoCastable<Game> GetGame() { return game; }
 		/** returns the game */
-		Game const * GetGame() const { return game; }
+		chaos::AutoConstCastable<Game> GetGame() const { return game; }
 
 		/** returns the level */
-		Level * GetLevel();
+		chaos::AutoCastable<Level> GetLevel();
 		/** returns the level */
-		Level const * GetLevel() const;
+		chaos::AutoConstCastable<Level> GetLevel() const;
 
 		/** returns the level instance */
-		LevelInstance * GetLevelInstance();
+		chaos::AutoCastable<LevelInstance> GetLevelInstance();
 		/** returns the level instance */
-		LevelInstance const * GetLevelInstance() const;
+		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 		/** get the player by its index */
-		Player * GetPlayer(size_t player_index);
+		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player by its index */
-		Player const * GetPlayer(size_t player_index) const;
+		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
 
 		/** get the number of players */
 		size_t GetPlayerCount() const { return players.size(); }

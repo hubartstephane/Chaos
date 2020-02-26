@@ -35,10 +35,10 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;
 
-	LudumGame * ludum_game = auto_cast(GetLayerInstance()->GetGame());
+	LudumGame * ludum_game = GetLayerInstance()->GetGame();
 	if (ludum_game != nullptr)
 	{
-		LudumPlayer * ludum_player = auto_cast(ludum_game->GetPlayer(0));
+		LudumPlayer * ludum_player = ludum_game->GetPlayer(0);
 		if (ludum_player != nullptr)
 			ludum_player->OnPlayerUpgrade(bonus_type);	
 	}
@@ -64,7 +64,7 @@ bool EnemySpawnerTriggerObject::Initialize()
 	if (pattern != nullptr)
 		pattern->Initialize(geometric_object.get());
 
-	LudumGame * ludum_game = auto_cast(GetLayerInstance()->GetGame());
+	LudumGame * ludum_game = GetLayerInstance()->GetGame();
 	if (ludum_game != nullptr)
 		type = ludum_game->FindEnemyType(enemy_type.c_str());
 
@@ -88,7 +88,9 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
 
     chaos::box2 player_box = GetLayerInstance()->GetGame()->GetPlayer(0)->GetPlayerBox();
 
-    chaos::ParticleSpawner spawner = GetLayerInstance()->GetTiledLevelInstance()->GetParticleSpawner("Enemies", type->bitmap_name.c_str());
+	LudumLevelInstance* ludum_level_instance = GetLayerInstance()->GetLevelInstance();
+
+    chaos::ParticleSpawner spawner = ludum_level_instance->GetParticleSpawner("Enemies", type->bitmap_name.c_str());
     if (!spawner.IsValid())
         return true;
 
@@ -141,7 +143,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
-	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
+	LudumGame * ludum_game = layer_instance->GetGame();
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 

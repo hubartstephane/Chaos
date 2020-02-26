@@ -64,66 +64,61 @@ namespace death
 		return result;
 	}
 	
-	Player * Camera::GetPlayer(size_t player_index)
+	chaos::AutoCastable<Player> Camera::GetPlayer(size_t player_index)
 	{
 		if (level_instance == nullptr)
 			return nullptr;
 		return level_instance->GetPlayer(player_index);
 	}
 	
-	Player const * Camera::GetPlayer(size_t player_index) const
+	chaos::AutoConstCastable<Player> Camera::GetPlayer(size_t player_index) const
 	{
 		if (level_instance == nullptr)
-			return nullptr;
+			return (Player const *)nullptr;
 		return level_instance->GetPlayer(player_index);
 	}
 
-	Game * Camera::GetGame()
+	chaos::AutoCastable<Game> Camera::GetGame()
 	{
 		if (level_instance == nullptr)
 			return nullptr;
 		return level_instance->GetGame();
 	}
 
-	Game const * Camera::GetGame() const
+	chaos::AutoConstCastable<Game> Camera::GetGame() const
 	{
 		if (level_instance == nullptr)
-			return nullptr;
+			return (Game const*) nullptr;
 		return level_instance->GetGame();
 	}
 
-	Level * Camera::GetLevel()
+	chaos::AutoCastable<Level> Camera::GetLevel()
 	{
 		if (level_instance == nullptr)
 			return nullptr;
 		return level_instance->GetLevel();
 	}
 
-	Level const * Camera::GetLevel() const
+	chaos::AutoConstCastable<Level> Camera::GetLevel() const
 	{
 		if (level_instance == nullptr)
-			return nullptr;
+			return (Level const*)nullptr;
 		return level_instance->GetLevel();
 	}
 
-	GameInstance * Camera::GetGameInstance()
+	chaos::AutoCastable<GameInstance> Camera::GetGameInstance()
 	{
 		if (level_instance == nullptr)
 			return nullptr;
 		return level_instance->GetGameInstance();
 	}
 
-	GameInstance const * Camera::GetGameInstance() const
+	chaos::AutoConstCastable<GameInstance> Camera::GetGameInstance() const
 	{
 		if (level_instance == nullptr)
-			return nullptr;
+			return (GameInstance const*)nullptr;
 		return level_instance->GetGameInstance();
 	}
-
-
-
-
-
 
 	DEATH_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)
 

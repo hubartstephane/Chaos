@@ -19,6 +19,7 @@
 #include <chaos/GPURenderableLayerSystem.h>
 #include <chaos/TimedAccumulator.h>
 #include <chaos/FileResource.h>
+#include <chaos/AutoCast.h>
 
 #include <death/GameFramework.h>
 #include <death/GameHUD.h>
@@ -66,26 +67,31 @@ namespace death
 		Game();
 
 		/** get the player by its index */
-		Player * GetPlayer(size_t player_index);
+		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player by its index */
-		Player const * GetPlayer(size_t player_index) const;
+		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
 		/** get the number of players */
 		size_t GetPlayerCount() const;
 
 		/** get currently played level */
-		Level * GetLevel();
+		chaos::AutoCastable<Level> GetLevel();
 		/** get currently played level */
-		Level const * GetLevel() const;
+		chaos::AutoConstCastable<Level> GetLevel() const;
 
 		/** get currently played level */
-		LevelInstance * GetLevelInstance();
+		chaos::AutoCastable<LevelInstance> GetLevelInstance();
 		/** get currently played level */
-		LevelInstance const * GetLevelInstance() const;
+		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 		/** get the game instance */
-		GameInstance * GetGameInstance() { return game_instance.get(); }
+		chaos::AutoCastable<GameInstance> GetGameInstance() { return game_instance.get(); }
 		/** get the game instance */
-		GameInstance const * GetGameInstance() const { return game_instance.get(); }
+		chaos::AutoConstCastable<GameInstance> GetGameInstance() const { return game_instance.get(); }
+
+		/** get any level */
+		chaos::AutoCastable<Level> GetLevel(int level_index);
+		/** get any level */
+		chaos::AutoConstCastable<Level> GetLevel(int level_index) const;
 
 		/** initialization of the game */
 		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
@@ -183,11 +189,6 @@ namespace death
 		/** test whether we can to loose life */
 		bool GetCheatMode() const;
 #endif
-
-		/** get any level */
-		Level * GetLevel(int level_index);
-		/** get any level */
-		Level const * GetLevel(int level_index) const;
 
         /** get glfw window */
         virtual GLFWwindow* GetGLFWWindow() const override { return glfw_window; }

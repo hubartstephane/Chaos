@@ -14,32 +14,37 @@ namespace death
 	// LevelInstance implementation
 	// =====================================
 
-	Level * LevelInstance::GetLevel() 
+	chaos::AutoCastable<Level> LevelInstance::GetLevel()
 	{ 
 		return level; 
 	}
 
-	Level const * LevelInstance::GetLevel() const 
+	chaos::AutoConstCastable<Level> LevelInstance::GetLevel() const
 	{ 
 		return level; 
 	}
 
-	Game * LevelInstance::GetGame() 
+	chaos::AutoCastable<Game> LevelInstance::GetGame()
 	{ 
 		return game; 
 	}
 	
-	Game const * LevelInstance::GetGame() const 
+	chaos::AutoConstCastable<Game> LevelInstance::GetGame() const
 	{ 
 		return game; 
 	}
 
-	GameInstance * LevelInstance::GetGameInstance() 
+	chaos::AutoCastable<GameInstance> LevelInstance::GetGameInstance()
 	{ 
 		return game->GetGameInstance(); 
 	}
 
-	Player * LevelInstance::GetPlayer(size_t player_index)
+	chaos::AutoConstCastable<GameInstance> LevelInstance::GetGameInstance() const
+	{
+		return game->GetGameInstance();
+	}
+
+	chaos::AutoCastable<Player> LevelInstance::GetPlayer(size_t player_index)
 	{
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
@@ -47,17 +52,12 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
-	Player const * LevelInstance::GetPlayer(size_t player_index) const
+	chaos::AutoConstCastable<Player> LevelInstance::GetPlayer(size_t player_index) const
 	{
 		GameInstance const * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
-			return nullptr;
+			return (Player const*)nullptr;
 		return game_instance->GetPlayer(player_index);
-	}
-
-	GameInstance const * LevelInstance::GetGameInstance() const 
-	{ 
-		return game->GetGameInstance(); 
 	}
 
 	double LevelInstance::GetLevelClockTime() const
@@ -320,7 +320,7 @@ namespace death
 		return cameras.size();
 	}
 
-	Camera * LevelInstance::GetCamera(size_t index)
+	chaos::AutoCastable<Camera> LevelInstance::GetCamera(size_t index)
 	{
 		// try the free camera mode first
 		if (game->IsFreeCameraMode())
@@ -340,7 +340,7 @@ namespace death
 		return cameras[index].get();
 	}
 
-	Camera const * LevelInstance::GetCamera(size_t index) const
+	chaos::AutoConstCastable<Camera> LevelInstance::GetCamera(size_t index) const
 	{
 		// try the free camera mode first
 		if (game->IsFreeCameraMode())

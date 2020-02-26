@@ -11,8 +11,6 @@
 #include <death/Level.h>
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
-
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
@@ -50,7 +48,7 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 
 void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -91,7 +89,7 @@ void LudumPlayer::TickDashValues(float delta_time)
 
 void LudumPlayer::SetReverseMode(bool reversed_mode)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	assert(ludum_game != nullptr);
 	assert(game_instance != nullptr);
 	assert(game_instance != nullptr);
@@ -122,7 +120,7 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 
 void LudumPlayer::SetDashMode(bool dash)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	assert(ludum_game != nullptr);
 	assert(game_instance != nullptr);
 
@@ -182,7 +180,7 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 

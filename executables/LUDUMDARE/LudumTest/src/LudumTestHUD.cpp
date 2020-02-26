@@ -7,9 +7,6 @@
 
 #include <death/GameHUDComponent.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
-
-
 namespace death
 {
 	namespace GameHUDKeys

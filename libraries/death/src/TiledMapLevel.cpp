@@ -671,36 +671,36 @@ namespace death
 			assert(in_layer != nullptr);
 		}
 
-		Game * LayerInstance::GetGame()
+		chaos::AutoCastable<Game> LayerInstance::GetGame()
 		{
 			return level_instance->GetGame();
 		}
 
-		Game const * LayerInstance::GetGame() const
+		chaos::AutoConstCastable<Game> LayerInstance::GetGame() const
 		{
 			return level_instance->GetGame();
 		}
 
-		Level * LayerInstance::GetTiledLevel()
+		chaos::AutoCastable<death::Level> LayerInstance::GetLevel()
 		{
 			if (level_instance == nullptr)
 				return nullptr;
-			return level_instance->GetTiledLevel();
+			return level_instance->GetLevel();
 		}
 
-		Level const * LayerInstance::GetTiledLevel() const
+		chaos::AutoConstCastable<death::Level> LayerInstance::GetLevel() const
 		{
 			if (level_instance == nullptr)
-				return nullptr;
-			return level_instance->GetTiledLevel();
+				return (Level *)nullptr;
+			return level_instance->GetLevel();
 		}
 
-		LevelInstance * LayerInstance::GetTiledLevelInstance()
+		chaos::AutoCastable<death::LevelInstance> LayerInstance::GetLevelInstance()
 		{
 			return level_instance;
 		}
 
-		LevelInstance const * LayerInstance::GetTiledLevelInstance() const
+		chaos::AutoConstCastable<death::LevelInstance> LayerInstance::GetLevelInstance() const
 		{
 			return level_instance;
 		}
@@ -895,7 +895,7 @@ namespace death
 
 		GeometricObject * LayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object)
 		{
-			Level * level = GetTiledLevel();
+			Level * level = GetLevel();
 
 			// player start 
 			if (chaos::TiledMapTools::IsPlayerStart(geometric_object))
@@ -997,7 +997,7 @@ namespace death
 			if (particle_layer == nullptr)
 				return true;
 			// no level ?
-			Level * level = GetTiledLevel();
+			Level * level = GetLevel();
 			if (level == nullptr)
 				return true;
 			// initialize each allocations
@@ -1055,7 +1055,8 @@ namespace death
 				if (render_material == nullptr)
 					return nullptr;
 				// create a particle layer
-				particle_layer = GetTiledLevel()->DoCreateParticleLayer(this);
+				Level* level = GetLevel();
+				particle_layer = level->DoCreateParticleLayer(this);
 				if (particle_layer == nullptr)
 					return false;
 				// add name and tag to the particle_layer
@@ -1070,7 +1071,7 @@ namespace death
 
 		bool LayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer * tile_layer)
 		{
-			Level * level = GetTiledLevel();
+			Level * level = GetLevel();
 
 			// early exit for empty tile_layer
 			size_t count = tile_layer->tile_indices.size();
@@ -1300,7 +1301,7 @@ namespace death
 
 		bool LayerInstance::ComputePlayerTileCollisions(float delta_time, class Player * player, chaos::ParticleDefault::Particle * player_particle)
 		{
-			TiledMap::Level * level = GetTiledLevel();
+			TiledMap::Level * level = GetLevel();
 
 			return FindTileCollisions(player_particle->bounding_box, [this, delta_time, player, player_particle, level](TileParticle & tile_particle)
 			{
@@ -1348,8 +1349,8 @@ namespace death
 				return result;
 
 			// camera is expressed in world, so is for layer
-			chaos::obox2 camera_obox = GetTiledLevelInstance()->GetCameraOBox(0);
-			chaos::obox2 initial_camera_obox = GetTiledLevelInstance()->GetInitialCameraOBox(0);
+			chaos::obox2 camera_obox = GetLevelInstance()->GetCameraOBox(0);
+			chaos::obox2 initial_camera_obox = GetLevelInstance()->GetInitialCameraOBox(0);
 
 
 			// XXX : we want some layers to appear further or more near the camera
@@ -1583,7 +1584,7 @@ namespace death
 
 		chaos::TiledMap::Map * LevelInstance::GetTiledMap()
 		{
-			Level * level = GetTiledLevel();
+			Level * level = GetLevel();
 			if (level == nullptr)
 				return nullptr;
 			return level->GetTiledMap();
@@ -1591,20 +1592,10 @@ namespace death
 
 		chaos::TiledMap::Map const * LevelInstance::GetTiledMap() const
 		{
-			Level const * level = GetTiledLevel();
+			Level const * level = GetLevel();
 			if (level == nullptr)
 				return nullptr;
 			return level->GetTiledMap();
-		}
-
-		Level * LevelInstance::GetTiledLevel()
-		{
-			return auto_cast(GetLevel());
-		}
-
-		Level const * LevelInstance::GetTiledLevel() const
-		{
-			return auto_cast(GetLevel());
 		}
 
 		void LevelInstance::ComputePlayerAndCameraCollision(float delta_time)
@@ -1671,7 +1662,7 @@ namespace death
 
 		bool LevelInstance::CreateLayerInstances(Game * in_game)
 		{
-			Level * level = GetTiledLevel();
+			Level * level = GetLevel();
 
 			chaos::TiledMap::Map * tiled_map = GetTiledMap();
 
@@ -1707,7 +1698,10 @@ namespace death
 		chaos::GPURenderMaterial * LevelInstance::GetDefaultRenderMaterial()
 		{
 			if (default_material == nullptr)
-				default_material = GetTiledLevel()->GetDefaultRenderMaterial(); // create material and cache
+			{
+				Level* level = GetLevel();
+				default_material = level->GetDefaultRenderMaterial(); // create material and cache
+			}
 			return default_material.get();
 		}
 
@@ -1749,7 +1743,7 @@ namespace death
 
 		void LevelInstance::CreateCameras()
 		{
-			Level * level = GetTiledLevel();
+			Level * level = GetLevel();
 
 			// search CAMERA NAME
 			std::string const * camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
@@ -1796,7 +1790,7 @@ namespace death
 			if (player == nullptr)
 				return;
 
-			Level * level = GetTiledLevel();
+			Level * level = GetLevel();
 
 			// search PLAYER START NAME
 			std::string const * player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
@@ -1870,7 +1864,7 @@ namespace death
 			std::string const * background_material = nullptr;
 			std::string const * background_texture = nullptr;
 
-			TiledMap::Level const * level = GetTiledLevel();
+			TiledMap::Level const * level = GetLevel();
 			if (level != nullptr)
 			{
 				background_material = level->GetTiledMap()->FindPropertyString("BACKGROUND_MATERIAL");
@@ -1886,7 +1880,7 @@ namespace death
 		{
 			std::string const * level_music = nullptr;
 
-			TiledMap::Level const * level = GetTiledLevel();
+			TiledMap::Level const * level = GetLevel();
 			if (level != nullptr)
 				level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
 

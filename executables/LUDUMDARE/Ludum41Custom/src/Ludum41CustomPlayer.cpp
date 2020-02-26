@@ -4,12 +4,10 @@
 #include "Ludum41CustomLevel.h"
 #include "Ludum41CustomLevelInstance.h"
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
-
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 	if (ludum_game != nullptr)
 		player_length = ludum_game->player_initial_length;
 }
@@ -27,7 +25,7 @@ void LudumPlayer::DisplacePlayerRacket(float delta_x)
 	glm::vec2 position = GetPlayerPosition();
 	SetPlayerPosition(glm::vec2(position.x + delta_x, PLAYER_Y));
 
-	LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
+	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 		ludum_level_instance->RestrictPlayerToWorld(this);
 }
@@ -46,7 +44,7 @@ bool LudumPlayer::OnMouseMoveImpl(double x, double y)
 
 bool LudumPlayer::OnCharEventImpl(unsigned int c)
 {
-	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	LudumGameInstance * ludum_game_instance = GetGameInstance();
 
 	// CHALLENGE
 	if (c >= 'a' && c <= 'z')
@@ -67,13 +65,13 @@ void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::G
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
-	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	LudumGameInstance * ludum_game_instance = GetGameInstance();
 	ludum_game_instance->SendGamepadButtonToChallenge(gpd);
 }
 
 void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	if (increment)
 		player_length += in_length;
@@ -86,7 +84,7 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 	box.half_size = glm::vec2(player_length * 0.5f, PLAYER_HEIGHT * 0.5f);
 	SetPlayerBox(box);
 
-	LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
+	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 		ludum_level_instance->RestrictPlayerToWorld(this);
 }
@@ -103,7 +101,7 @@ void LudumPlayer::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode
 {
 	death::Player::OnInputModeChanged(new_mode, old_mode);
 
-	LudumGameInstance* game_instance = GetLudumGameInstance();
+	LudumGameInstance* game_instance = GetGameInstance();
 	if (game_instance == nullptr)
 		return;
 

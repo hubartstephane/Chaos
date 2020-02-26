@@ -15,8 +15,6 @@ class LudumGameInstance : public death::GameInstance
 
 public:
 
-	DEATH_GAMEFRAMEWORK_DECLARE_GAMEINSTANCE(Ludum);
-
 	/** constructor */
 	LudumGameInstance(death::Game * in_game);
 

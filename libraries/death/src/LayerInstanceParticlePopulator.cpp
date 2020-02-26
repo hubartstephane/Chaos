@@ -17,7 +17,7 @@ namespace death
 			assert(in_layer_instance != nullptr);
 			layer_instance = in_layer_instance;
 
-			death::TiledMap::Level * level = layer_instance->GetTiledLevel();
+			death::TiledMap::Level * level = layer_instance->GetLevel();
 			assert(level != nullptr);
 
 			// get the texture atlas

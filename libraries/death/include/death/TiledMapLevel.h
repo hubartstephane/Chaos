@@ -503,19 +503,19 @@ namespace death
 			chaos::TiledMap::LayerBase const * GetTiledLayer() const { return layer.get(); }
 
 			/** get the level (for this layer) */
-			Level * GetTiledLevel();
+			chaos::AutoCastable<death::Level> GetLevel();
 			/** get the level (for this layer) */
-			Level const * GetTiledLevel() const;
+			chaos::AutoConstCastable<death::Level> GetLevel() const;
 
 			/** get the level instance for this layer */
-			LevelInstance * GetTiledLevelInstance();
+			chaos::AutoCastable<death::LevelInstance> GetLevelInstance();
 			/** get the level instance for this layer */
-			LevelInstance const * GetTiledLevelInstance() const;
+			chaos::AutoConstCastable<death::LevelInstance> GetLevelInstance() const;
 
 			/** get the game */
-			Game * GetGame();
+			chaos::AutoCastable<Game> GetGame();
 			/** get the game */
-			Game const * GetGame() const;
+			chaos::AutoConstCastable<Game> GetGame() const;
 
 			/** find the player start from its name */
 			PlayerStartObject * FindPlayerStart(chaos::NamedObjectRequest request);
@@ -766,20 +766,10 @@ namespace death
 
 		public:
 
-			/** level getter with a cast */
-			Level * GetTiledLevel();
-			/** level getter with a cast */
-			Level const * GetTiledLevel() const;
-
 			/** get the tiled map */
 			chaos::TiledMap::Map * GetTiledMap();
 			/** get the tiled map */
 			chaos::TiledMap::Map const * GetTiledMap() const;
-
-			/** get the game */
-			Game * GetGame() { return game; }
-			/** get the game */
-			Game const * GetGame() const { return game; }
 
 			/** find the layer instance from its name */
 			LayerInstance * FindLayerInstance(chaos::NamedObjectRequest request);

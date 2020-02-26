@@ -50,7 +50,7 @@ class LudumGame : public death::Game
 
 public:
 
-	DEATH_GAMEFRAMEWORK_DECLARE_GAME(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
 	/** constructor */
 	LudumGame();

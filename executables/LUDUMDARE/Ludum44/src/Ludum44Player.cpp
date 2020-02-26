@@ -11,8 +11,6 @@
 
 #include <death/Level.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
-
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
@@ -50,7 +48,7 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 
 void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -73,7 +71,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -92,10 +90,10 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 
 void LudumPlayer::FireChargedProjectile()
 {
-    LudumGame const* ludum_game = GetLudumGame();
+    LudumGame const* ludum_game = GetGame();
     if (ludum_game == nullptr)
         return;
-    LudumGameInstance* ludum_game_instance = GetLudumGameInstance();
+    LudumGameInstance* ludum_game_instance = GetGameInstance();
     if (ludum_game_instance == nullptr)
         return;
 
@@ -105,10 +103,10 @@ void LudumPlayer::FireChargedProjectile()
 
 void LudumPlayer::FireNormalProjectile()
 {
-    LudumGame const* ludum_game = GetLudumGame();
+    LudumGame const* ludum_game = GetGame();
     if (ludum_game == nullptr)
         return;
-    LudumGameInstance* ludum_game_instance = GetLudumGameInstance();
+    LudumGameInstance* ludum_game_instance = GetGameInstance();
     if (ludum_game_instance == nullptr)
         return;
 
@@ -123,7 +121,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	if (fire_timer < 0.0f)
 		fire_timer = 0.0f;
 	
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -162,17 +160,17 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 
 void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
-	LudumGameInstance * ludum_game_instance = GetLudumGameInstance();
+	LudumGameInstance * ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance == nullptr || ludum_game_instance->current_power_up == nullptr || ludum_game_instance->current_power_up_surface == nullptr)
 		return;
 
 	bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
 
-	if (!ludum_game_instance->current_power_up->CanPowerUp(GetLudumGame(), this, decreasing_power_up))
+	if (!ludum_game_instance->current_power_up->CanPowerUp(GetGame(), this, decreasing_power_up))
 		return;
 
 	int const buy_key_buttons[] = { GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1 };
@@ -184,7 +182,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 		if (buy_timer >= ludum_game->buy_upgrade_time)
 		{
 			// XXX : HACK : destroy all power up zone in the camera view : not the best but should work if a single zone in the same time
-			LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();
+			LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 			if (ludum_level_instance != nullptr)
 			{
 				death::TiledMap::LayerInstance * layer_instance = ludum_level_instance->FindLayerInstance("Zones");
@@ -199,7 +197,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 			}
 
 			// reset the corresponding trigger surface
-			ludum_game_instance->current_power_up->ApplyPowerUp(GetLudumGame(), this, decreasing_power_up);
+			ludum_game_instance->current_power_up->ApplyPowerUp(GetGame(), this, decreasing_power_up);
 			buylocked = true;
 			// shuxxx ludum_game_instance->current_power_up_surface->SetEnabled(false);
 

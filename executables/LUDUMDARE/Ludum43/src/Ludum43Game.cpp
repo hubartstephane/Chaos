@@ -24,8 +24,6 @@
 #include <death/GameParticles.h>
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
-
 LudumGame::LudumGame()
 {
 	game_name = "Quantic Paouf IV";
@@ -46,7 +44,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	death::TiledMap::LevelInstance * ludum_level_instance = GetLudumLevelInstance();
+	death::TiledMap::LevelInstance * ludum_level_instance = GetLevelInstance();
 
 	// -------------------------------------
 	// I/ no level rendering like main menu (the background)
@@ -290,7 +288,7 @@ death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
 void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all)
 {
 	// capture all Enemies in range
-	LudumLevelInstance const * level_instance = GetLudumLevelInstance();
+	LudumLevelInstance const * level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
 		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
@@ -348,7 +346,7 @@ float LudumGame::GetPlayerParticleLife(size_t player_index) const
 
 ParticlePlayer * LudumGame::GetPlayerParticle(size_t player_index)
 {
-	LudumPlayer * player = GetLudumPlayer(player_index);
+	LudumPlayer * player = GetPlayer(player_index);
 	if (player == nullptr)
 		return nullptr;
 	return player->GetPlayerParticle();
@@ -356,7 +354,7 @@ ParticlePlayer * LudumGame::GetPlayerParticle(size_t player_index)
 
 ParticlePlayer const * LudumGame::GetPlayerParticle(size_t player_index) const
 {
-	LudumPlayer const * player = GetLudumPlayer(player_index);
+	LudumPlayer const * player = GetPlayer(player_index);
 	if (player == nullptr)
 		return nullptr;
 	return player->GetPlayerParticle();

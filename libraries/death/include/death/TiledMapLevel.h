@@ -310,21 +310,6 @@ namespace death
 		virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type) override;
 	};
 
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
 	// =================================================
 	// TiledMapSoundTriggerObject : an object that play a sound
 	// =================================================
@@ -519,14 +504,14 @@ namespace death
 		chaos::TiledMap::LayerBase const* GetTiledLayer() const { return layer.get(); }
 
 		/** get the level (for this layer) */
-		chaos::AutoCastable<death::Level> GetLevel();
+		chaos::AutoCastable<Level> GetLevel();
 		/** get the level (for this layer) */
-		chaos::AutoConstCastable<death::Level> GetLevel() const;
+		chaos::AutoConstCastable<Level> GetLevel() const;
 
 		/** get the level instance for this layer */
-		chaos::AutoCastable<death::LevelInstance> GetLevelInstance();
+		chaos::AutoCastable<LevelInstance> GetLevelInstance();
 		/** get the level instance for this layer */
-		chaos::AutoConstCastable<death::LevelInstance> GetLevelInstance() const;
+		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 		/** get the game */
 		chaos::AutoCastable<Game> GetGame();

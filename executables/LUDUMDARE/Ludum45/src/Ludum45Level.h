@@ -72,7 +72,7 @@ protected:
 // Levels
 // =================================================
 
-class LudumLevel : public death::TiledMap::Level
+class LudumLevel : public death::TiledMapLevel
 {
 	friend class LudumLevelInstance;
 

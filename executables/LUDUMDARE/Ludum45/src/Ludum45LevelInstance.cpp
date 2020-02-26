@@ -20,7 +20,7 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 
 void LudumLevelInstance::CreateCameras()
 {
-	death::TiledMap::LevelInstance::CreateCameras();
+	death::TiledMapLevelInstance::CreateCameras();
 
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
@@ -38,7 +38,7 @@ void LudumLevelInstance::CreateCameras()
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::TiledMap::LevelInstance::DoTick(delta_time);
+	death::TiledMapLevelInstance::DoTick(delta_time);
 
 	// get the game
 	LudumGame * ludum_game = GetGame();
@@ -99,15 +99,15 @@ bool LudumLevelInstance::DoTick(float delta_time)
 void LudumLevelInstance::OnLevelStarted()
 {
 	// super call
-	death::TiledMap::LevelInstance::OnLevelStarted();
+	death::TiledMapLevelInstance::OnLevelStarted();
 }
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
-	if (!death::TiledMap::LevelInstance::Initialize(in_game, in_level))
+	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
 		return false;
 
-	death::TiledMap::Level const * level = GetLevel();
+	death::TiledMapLevel const * level = GetLevel();
 	if (level != nullptr)
 	{
 		camera_speed = level->GetTiledMap()->FindPropertyFloat("CAMERA_SPEED", camera_speed);
@@ -118,14 +118,14 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 {
-	death::TiledMap::LevelInstance::OnPlayerEntered(player);
+	death::TiledMapLevelInstance::OnPlayerEntered(player);
 
 
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 {
-	death::TiledMap::LevelInstance::OnPlayerLeaved(player);
+	death::TiledMapLevelInstance::OnPlayerLeaved(player);
 
 	LudumPlayer * ludum_player = auto_cast(player);
     if (ludum_player != nullptr)
@@ -157,7 +157,7 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 		}
 	}
 
-	if (!death::TiledMap::LevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
+	if (!death::TiledMapLevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
 		return false;
 
 	// shuludum .... refactor the share this code ... hard copy of what is in LD44
@@ -171,7 +171,7 @@ bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoin
 	if (ludum_checkpoint == nullptr)
 		return false;
 
-	if (!death::TiledMap::LevelInstance::DoSaveIntoCheckpoint(ludum_checkpoint))
+	if (!death::TiledMapLevelInstance::DoSaveIntoCheckpoint(ludum_checkpoint))
 		return false;
 
 	return true;

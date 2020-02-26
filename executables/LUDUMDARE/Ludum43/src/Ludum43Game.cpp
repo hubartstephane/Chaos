@@ -291,7 +291,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	LudumLevelInstance const * level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TiledMap::LayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
+		death::TiledMapLayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
 		if (layer_instance)
 		{
 			chaos::ParticleLayerBase const * particle_layer = layer_instance->GetParticleLayer();

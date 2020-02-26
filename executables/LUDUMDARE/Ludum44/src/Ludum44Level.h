@@ -16,13 +16,13 @@
 // PowerUpTriggerObject
 // =================================================
 
-class PowerUpTriggerObject : public death::TiledMap::TriggerObject
+class PowerUpTriggerObject : public death::TiledMapTriggerObject
 {
 
 public:
 
 	/** constructor */
-	using death::TiledMap::TriggerObject::TriggerObject;
+	using death::TiledMapTriggerObject::TriggerObject;
 
 	void ResetTrigger() { reset_trigger = true; }
 
@@ -40,13 +40,13 @@ protected:
 // SpeedUpTriggerObject
 // =================================================
 
-class SpeedUpTriggerObject : public death::TiledMap::TriggerObject
+class SpeedUpTriggerObject : public death::TiledMapTriggerObject
 {
 
 public:
 
 	/** constructor */
-	using death::TiledMap::TriggerObject::TriggerObject;
+	using death::TiledMapTriggerObject::TriggerObject;
 
 protected:
 
@@ -59,13 +59,13 @@ protected:
 // SpawnerTriggerObject
 // =================================================
 
-class SpawnerTriggerObject : public death::TiledMap::TriggerObject
+class SpawnerTriggerObject : public death::TiledMapTriggerObject
 {
 
 public:
 
 	/** constructor */
-	using death::TiledMap::TriggerObject::TriggerObject;
+	using death::TiledMapTriggerObject::TriggerObject;
 
 	/** override */
 	virtual bool Initialize() override;
@@ -96,11 +96,11 @@ protected:
 	/** override */
 	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 
-	virtual bool FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
+	virtual bool FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
 
-	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance) override;
+	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
-	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
+	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
 	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMapParticle * particle) override;
 

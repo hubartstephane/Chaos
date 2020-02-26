@@ -119,7 +119,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	ludum_player->current_fire_rate_index = 0;
 }
 
-void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerObject * surface, bool decreasing_power_up)
+void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMapTriggerObject * surface, bool decreasing_power_up)
 {
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)

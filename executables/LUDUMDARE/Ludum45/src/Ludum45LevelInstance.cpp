@@ -148,7 +148,7 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 	char const * layer_names[] = { "PlayerFire", "EnemyFire", "Enemies", "Bonus", nullptr };
 	for (int i = 0; layer_names[i] != nullptr; ++i)
 	{
-		death::TiledMap::LayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
+		death::TiledMapLayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
 		if (layer_instance != nullptr)
 		{
 			chaos::ParticleLayerBase * particle_layer = layer_instance->GetParticleLayer();

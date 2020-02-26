@@ -22,7 +22,7 @@ death::LevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 	return new LudumLevelInstance(auto_cast(in_game));
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -68,7 +68,7 @@ static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset
 	return r * factor + offset;
 }
 
-bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
+bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -169,7 +169,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 	return true;
 }
 
-death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
 	chaos::TiledMap::GeometricObjectSurface * surface_object = in_geometric_object->GetObjectSurface();
 
@@ -185,15 +185,15 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 // FinishingTriggerObject implementation
 // =============================================================
 
-MyFinishingTriggerObject::MyFinishingTriggerObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
-	death::TiledMap::TriggerObject(in_layer_instance, in_surface_object)
+MyFinishingTriggerObject::MyFinishingTriggerObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
+	death::TiledMapTriggerObject(in_layer_instance, in_surface_object)
 {
 
 }
 
 bool MyFinishingTriggerObject::Initialize()
 {
-	if (!death::TiledMap::TriggerObject::Initialize())
+	if (!death::TiledMapTriggerObject::Initialize())
 		return false;
 	trigger_once = true;
 	return true;

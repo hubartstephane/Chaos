@@ -22,7 +22,7 @@ death::LevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 	return new LudumLevelInstance(auto_cast(in_game));
 }
 
-bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
+bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
 	if (!death::TiledMapLevel::FinalizeLayerParticles(layer_instance, allocation))
 		return false;
@@ -33,7 +33,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 }
 
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -81,7 +81,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::La
 }
 
 
-death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
 	chaos::TiledMap::GeometricObjectSurface * surface_object = in_geometric_object->GetObjectSurface();
 
@@ -182,7 +182,7 @@ bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 
 bool SpawnerTriggerObject::Initialize()
 {
-	if (!death::TiledMap::TriggerObject::Initialize())
+	if (!death::TiledMapTriggerObject::Initialize())
 		return false;
 	trigger_once = true;
 	return true;
@@ -217,7 +217,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	// search the layer for enemies
 	LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 
-	death::TiledMap::LayerInstance * enemy_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
+	death::TiledMapLayerInstance * enemy_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
 	if (enemy_layer_instance == nullptr)
 		return true;
 

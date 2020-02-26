@@ -17,7 +17,7 @@
 // EnemySpawnerTriggerObject
 // =================================================
 
-class EnemySpawnerTriggerObject : public death::TiledMap::TriggerObject
+class EnemySpawnerTriggerObject : public death::TiledMapTriggerObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -46,7 +46,7 @@ protected:
 // BonusSpawnerTriggerObject
 // =================================================
 
-class BonusSpawnerTriggerObject : public death::TiledMap::TriggerObject
+class BonusSpawnerTriggerObject : public death::TiledMapTriggerObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -86,11 +86,11 @@ protected:
 	/** override */
 	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 
-	virtual bool FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
+	virtual bool FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
 
-	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance) override;
+	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
-	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
+	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
 	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMapParticle * particle) override;
 };

@@ -94,7 +94,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 void LudumLevelInstance::OnLevelStarted()
 {
 	// create the fire particle layer if necessary
-	death::TiledMap::LayerInstance * layer_instance = FindLayerInstance("fire");
+	death::TiledMapLayerInstance * layer_instance = FindLayerInstance("fire");
 	if (layer_instance != nullptr)
 		layer_instance->CreateParticleLayer();
 
@@ -161,7 +161,7 @@ bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * che
 	char const * layer_names[] = { "fire", "Enemies", nullptr };
 	for (int i = 0; layer_names[i] != nullptr; ++i)
 	{
-		death::TiledMap::LayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
+		death::TiledMapLayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
 		if (layer_instance != nullptr)
 		{
 			chaos::ParticleLayerBase * particle_layer = layer_instance->GetParticleLayer();

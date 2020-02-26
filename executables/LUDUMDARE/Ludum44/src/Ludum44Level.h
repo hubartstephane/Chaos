@@ -22,7 +22,7 @@ class PowerUpTriggerObject : public death::TiledMapTriggerObject
 public:
 
 	/** constructor */
-	using death::TiledMapTriggerObject::TriggerObject;
+	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 
 	void ResetTrigger() { reset_trigger = true; }
 
@@ -46,7 +46,7 @@ class SpeedUpTriggerObject : public death::TiledMapTriggerObject
 public:
 
 	/** constructor */
-	using death::TiledMapTriggerObject::TriggerObject;
+	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 
 protected:
 
@@ -65,7 +65,7 @@ class SpawnerTriggerObject : public death::TiledMapTriggerObject
 public:
 
 	/** constructor */
-	using death::TiledMapTriggerObject::TriggerObject;
+	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 
 	/** override */
 	virtual bool Initialize() override;
@@ -100,7 +100,7 @@ protected:
 
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
-	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
+	virtual death::TiledMapGeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
 	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMapParticle * particle) override;
 

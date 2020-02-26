@@ -74,7 +74,7 @@ namespace death
 	chaos::AutoConstCastable<Player> Camera::GetPlayer(size_t player_index) const
 	{
 		if (level_instance == nullptr)
-			return (Player const *)nullptr;
+			return nullptr;
 		return level_instance->GetPlayer(player_index);
 	}
 
@@ -88,7 +88,7 @@ namespace death
 	chaos::AutoConstCastable<Game> Camera::GetGame() const
 	{
 		if (level_instance == nullptr)
-			return (Game const*) nullptr;
+			return nullptr;
 		return level_instance->GetGame();
 	}
 
@@ -102,7 +102,7 @@ namespace death
 	chaos::AutoConstCastable<Level> Camera::GetLevel() const
 	{
 		if (level_instance == nullptr)
-			return (Level const*)nullptr;
+			return nullptr;
 		return level_instance->GetLevel();
 	}
 
@@ -116,7 +116,7 @@ namespace death
 	chaos::AutoConstCastable<GameInstance> Camera::GetGameInstance() const
 	{
 		if (level_instance == nullptr)
-			return (GameInstance const*)nullptr;
+			return nullptr;
 		return level_instance->GetGameInstance();
 	}
 

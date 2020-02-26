@@ -51,7 +51,7 @@ namespace death
 		for (size_t i = 0; i < count; ++i)
 			if (players[i]->GetPlayerIndex() == player_index)
 				return players[i].get();
-		return (Player const *)nullptr;
+		return nullptr;
 	}
 
 	int GameInstance::GetBestPlayerScore() const

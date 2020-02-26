@@ -1427,7 +1427,7 @@ namespace death
 	{
 		LevelInstance * li = GetLevelInstance();
 		if (li == nullptr)
-			return (Level*)nullptr;
+			return nullptr;
 		return li->GetLevel();
 	}
 
@@ -1435,7 +1435,7 @@ namespace death
 	{
 		LevelInstance const * li = GetLevelInstance();
 		if (li == nullptr)
-			return (Level const*)nullptr;
+			return nullptr;
 		return li->GetLevel();
 	}
 
@@ -1464,7 +1464,7 @@ namespace death
 		for (size_t i = 0; i < count; ++i)
 			if (levels[i]->GetLevelIndex() == level_index)
 				return levels[i].get();
-		return (Level const*)nullptr;
+		return nullptr;
 	}
 
 	bool Game::SetNextLevel(bool looping_levels)
@@ -1562,7 +1562,7 @@ namespace death
 	{
 		// game even not started : no player
 		if (game_instance == nullptr)
-			return (Player const *)nullptr;
+			return nullptr;
 		// give the instance the responsability 
 		return game_instance->GetPlayer(player_index);
 	}

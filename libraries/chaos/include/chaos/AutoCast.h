@@ -12,7 +12,6 @@ namespace chaos
 		/** the constructors */
 		AutoConstCastable() = default;
 		AutoConstCastable(AutoConstCastable const& src) = default;
-		AutoConstCastable(T* in_ptr) : ptr(in_ptr) {}
 		AutoConstCastable(T const* in_ptr) : ptr(in_ptr) {}
 		/** the conversion operator */
 		template<typename U>
@@ -25,6 +24,8 @@ namespace chaos
 
 		/** indirection operator */
 		T const* operator -> () const { return ptr; }
+		/** deferencing operator */
+		T const * operator * () const { return *ptr; }
 
 	protected:
 
@@ -56,6 +57,8 @@ namespace chaos
 		}
 		/** indirection operator */
 		T * operator -> () const { return ptr; }
+		/** deferencing operator */
+		T* operator * () const { return *ptr; }
 
 	protected:
 
@@ -63,6 +66,12 @@ namespace chaos
 		T* ptr = nullptr;
 	};
 
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	AutoCastable<T> auto_cast(AutoCastable<T> const & src) { return src; }
+	/** create a delayed dynamic_cast<> */
+	template<typename T>
+	AutoConstCastable<T> auto_cast(AutoConstCastable<T> const& src) { return src; }
 	/** create a delayed dynamic_cast<> */
 	template<typename T>
 	AutoCastable<T> auto_cast(T * ptr) { return AutoCastable<T>(ptr); }

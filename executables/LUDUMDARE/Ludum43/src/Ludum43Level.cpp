@@ -60,7 +60,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::La
 		return new chaos::ParticleLayer<chaos::ParticleDefault::ParticleTrait>();
 	}
 
-	return death::TiledMap::Level::DoCreateParticleLayer(layer_instance);
+	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);
 }
 
 static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset)
@@ -178,7 +178,7 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 		if (chaos::TiledMapTools::HasFlag(surface_object, "FinishSurface", "FinishSurface", "FINISHSURFACE"))
 			return new MyFinishingTriggerObject(in_layer_instance, surface_object);
 	}
-	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
+	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 
 // =============================================================

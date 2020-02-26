@@ -24,7 +24,7 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 void LudumLevelInstance::CreateCameras()
 {
 	// create the cameras
-	death::TiledMap::LevelInstance::CreateCameras();
+	death::TiledMapLevelInstance::CreateCameras();
 	// tweak the cameras
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
@@ -37,7 +37,7 @@ void LudumLevelInstance::CreateCameras()
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
-	if (death::TiledMap::LevelInstance::CheckLevelCompletion())
+	if (death::TiledMapLevelInstance::CheckLevelCompletion())
 		return true;
 
 	if (game != nullptr)
@@ -68,7 +68,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
-	if (!death::TiledMap::LevelInstance::Initialize(in_game, in_level))
+	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
 		return false;
 	// change the level timeout
 	level_timeout = in_level->GetLevelTimeout();

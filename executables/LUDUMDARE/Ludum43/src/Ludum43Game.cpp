@@ -44,7 +44,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	death::TiledMap::LevelInstance * ludum_level_instance = GetLevelInstance();
+	death::TiledMapLevelInstance * ludum_level_instance = GetLevelInstance();
 
 	// -------------------------------------
 	// I/ no level rendering like main menu (the background)
@@ -280,7 +280,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::TiledMap::Level * LudumGame::CreateTiledMapLevel()
+death::TiledMapLevel * LudumGame::CreateTiledMapLevel()
 {
 	return new LudumLevel();
 }

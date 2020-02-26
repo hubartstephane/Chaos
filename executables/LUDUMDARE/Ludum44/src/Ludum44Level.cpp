@@ -24,7 +24,7 @@ death::LevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 
 bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
-	if (!death::TiledMap::Level::FinalizeLayerParticles(layer_instance, allocation))
+	if (!death::TiledMapLevel::FinalizeLayerParticles(layer_instance, allocation))
 		return false;
 
 
@@ -77,7 +77,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::La
 		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
 	}
 
-	return death::TiledMap::Level::DoCreateParticleLayer(layer_instance);
+	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);
 }
 
 
@@ -94,7 +94,7 @@ death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::Ti
 		if (chaos::TiledMapTools::HasFlag(surface_object, "Spawner", "Spawner", "Spawner"))
 			return new SpawnerTriggerObject(in_layer_instance, surface_object);
 	}
-	return death::TiledMap::Level::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
+	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 
 

@@ -914,7 +914,7 @@ namespace death
 		// camera 
 		if (chaos::TiledMapTools::IsCamera(geometric_object))
 		{
-			CameraObject* camera = level->CreateCamera(this, geometric_object);
+			TiledMapCameraObject* camera = level->CreateCamera(this, geometric_object);
 			if (camera != nullptr)
 				cameras.push_back(camera);
 			return camera;
@@ -924,7 +924,7 @@ namespace death
 		TiledMapGeometricObject* object = level->CreateGeometricObject(this, geometric_object);
 		if (object != nullptr)
 		{
-			TriggerObject* trigger = auto_cast(object);
+			TiledMapTriggerObject* trigger = auto_cast(object);
 			if (trigger != nullptr)
 				triggers.push_back(trigger);
 			else
@@ -971,7 +971,7 @@ namespace death
 			}
 
 			// create the object
-			GeometricObject* object = CreateObjectInstance(geometric_object);
+			TiledMapGeometricObject* object = CreateObjectInstance(geometric_object);
 			if (object != nullptr)
 			{
 #if _DEBUG
@@ -1197,7 +1197,7 @@ namespace death
 		size_t triggers_count = triggers.size();
 		for (size_t i = 0; i < triggers_count; ++i)
 		{
-			TriggerObject* trigger = triggers[i].get();
+			TiledMapTriggerObject* trigger = triggers[i].get();
 			if (trigger == nullptr || !trigger->IsEnabled())
 				continue;
 			// detect collision
@@ -1248,7 +1248,7 @@ namespace death
 	bool TiledMapLayerInstance::ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle)
 	{
 		// the new colliding triggers
-		std::vector<chaos::weak_ptr<TriggerObject>> new_triggers;
+		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
 		// the previous colliding triggers
 		TiledMapPlayerAndTriggerCollisionRecord* previous_collisions = FindPlayerCollisionRecord(player);
 
@@ -1315,7 +1315,7 @@ namespace death
 
 	bool TiledMapLayerInstance::ComputePlayerTileCollisions(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle)
 	{
-		TiledMap::Level* level = GetLevel();
+		TiledMapLevel* level = GetLevel();
 
 		return FindTileCollisions(player_particle->bounding_box, [this, delta_time, player, player_particle, level](TiledMapParticle& tile_particle)
 		{
@@ -1442,20 +1442,20 @@ namespace death
 	}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
-		result_type constness * LayerInstance::func_name(chaos::NamedObjectRequest request) constness\
+		result_type constness * TiledMapLayerInstance::func_name(chaos::NamedObjectRequest request) constness\
 		{\
 			if ((request.use_name && request.name == nullptr) && member_vector.size() > 0)\
 				return member_vector[0].get();\
 			return NamedObject::FindNamedObject(member_vector, request);\
 		}
-	DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(GeometricObject, FindGeometricObject, geometric_objects, const);
-	DEATH_FIND_OBJECT(TriggerObject, FindTrigger, triggers, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TriggerObject, FindTrigger, triggers, const);
-	DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(PlayerStartObject, FindPlayerStart, player_starts, const);
-	DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(CameraObject, FindCamera, cameras, const);
+	DEATH_FIND_OBJECT(TiledMapGeometricObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapGeometricObject, FindGeometricObject, geometric_objects, const);
+	DEATH_FIND_OBJECT(TiledMapTriggerObject, FindTrigger, triggers, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapTriggerObject, FindTrigger, triggers, const);
+	DEATH_FIND_OBJECT(TiledMapPlayerStartObject, FindPlayerStart, player_starts, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapPlayerStartObject, FindPlayerStart, player_starts, const);
+	DEATH_FIND_OBJECT(TiledMapCameraObject, FindCamera, cameras, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapCameraObject, FindCamera, cameras, const);
 
 #undef DEATH_FIND_OBJECT
 
@@ -1516,7 +1516,7 @@ namespace death
 	}
 
 	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
-	bool LayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints)
+	bool TiledMapLayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints)
 	{
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1674,7 +1674,7 @@ namespace death
 		return true;
 	}
 
-	bool LevelInstance::CreateLayerInstances(Game* in_game)
+	bool TiledMapLevelInstance::CreateLayerInstances(Game* in_game)
 	{
 		TiledMapLevel* level = GetLevel();
 
@@ -1713,7 +1713,7 @@ namespace death
 	{
 		if (default_material == nullptr)
 		{
-			Level* level = GetLevel();
+			TiledMapLevel* level = GetLevel();
 			default_material = level->GetDefaultRenderMaterial(); // create material and cache
 		}
 		return default_material.get();
@@ -1757,13 +1757,13 @@ namespace death
 
 	void TiledMapLevelInstance::CreateCameras()
 	{
-		Level* level = GetLevel();
+		TiledMapLevel* level = GetLevel();
 
 		// search CAMERA NAME
 		std::string const* camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
 
 		// search the CAMERA
-		TiledMap::CameraObject* camera_object = nullptr;
+		TiledMapCameraObject* camera_object = nullptr;
 		if (camera_name != nullptr)
 		{
 			camera_object = FindCamera(camera_name->c_str()); // first, if a name is given, use it
@@ -1810,7 +1810,7 @@ namespace death
 		std::string const* player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
 
 		// search the PLAYER START
-		TiledMap::PlayerStartObject* player_start = nullptr;
+		TiledMapPlayerStartObject* player_start = nullptr;
 		if (player_start_name != nullptr)
 		{
 			player_start = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
@@ -1878,7 +1878,7 @@ namespace death
 		std::string const* background_material = nullptr;
 		std::string const* background_texture = nullptr;
 
-		TiledMap::Level const* level = GetLevel();
+		TiledMapLevel const* level = GetLevel();
 		if (level != nullptr)
 		{
 			background_material = level->GetTiledMap()->FindPropertyString("BACKGROUND_MATERIAL");
@@ -1894,7 +1894,7 @@ namespace death
 	{
 		std::string const* level_music = nullptr;
 
-		TiledMap::Level const* level = GetLevel();
+		TiledMapLevel const* level = GetLevel();
 		if (level != nullptr)
 			level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
 
@@ -1904,7 +1904,7 @@ namespace death
 			game->SetInGameMusic(level_music->c_str());
 	}
 
-	TiledMapLevelCheckpoint* TiledMapLevelInstance::DoCreateCheckpoint() const
+	LevelCheckpoint* TiledMapLevelInstance::DoCreateCheckpoint() const
 	{
 		return new TiledMapLevelCheckpoint();
 	}

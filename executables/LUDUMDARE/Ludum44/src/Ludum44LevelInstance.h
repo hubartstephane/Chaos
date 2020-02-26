@@ -17,7 +17,7 @@
 // LudumLevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::TiledMap::LevelInstance
+class LudumLevelInstance : public death::TiledMapLevelInstance
 {
 public:
 

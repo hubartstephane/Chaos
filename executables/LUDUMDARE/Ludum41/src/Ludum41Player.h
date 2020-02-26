@@ -20,7 +20,7 @@ class LudumPlayer : public death::Player
 
 public:
 
-	DEATH_GAMEFRAMEWORK_DECLARE_PLAYER(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);

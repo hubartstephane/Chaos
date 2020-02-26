@@ -6,8 +6,6 @@
 
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
-
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
@@ -72,7 +70,7 @@ static void RotateVelocity(glm::vec2 & src, float angle)
 
 void LudumGameInstance::TickBallSplit(float delta_time)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	if (pending_split_count <= 0)
 		return;
@@ -103,7 +101,7 @@ void LudumGameInstance::TickBallSplit(float delta_time)
 
 void LudumGameInstance::TickBrickOffset(float delta_time)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	if (target_brick_offset > brick_offset)
 	{
@@ -137,7 +135,7 @@ void LudumGameInstance::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData 
 
 void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	// rewards/punishment
 	auto const & rewards_punishments = (success) ? ludum_game->rewards : ludum_game->punishments;
@@ -233,9 +231,9 @@ void LudumGameInstance::IncrementScore(int delta)
 
 bool LudumGameInstance::IsBrickLifeChallengeValid(bool success)
 {
-	LudumLevel const * level = GetLudumLevel();
+	LudumLevel const * level = GetLevel();
 
-	LudumLevelInstance const * level_instance = GetLudumLevelInstance();
+	LudumLevelInstance const * level_instance = GetLevelInstance();
 
 	size_t brick_count = level_instance->GetBrickCount();
 	return (brick_count > level->indestructible_brick_count);
@@ -243,9 +241,9 @@ bool LudumGameInstance::IsBrickLifeChallengeValid(bool success)
 
 void LudumGameInstance::OnBrickLifeChallenge(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
-	LudumLevelInstance * level_instance = GetLudumLevelInstance();
+	LudumLevelInstance * level_instance = GetLevelInstance();
 
 
 	size_t brick_count = level_instance->GetBrickCount();
@@ -290,7 +288,7 @@ void LudumGameInstance::OnBrickLifeChallenge(bool success)
 
 bool LudumGameInstance::IsSplitBallChallengeValid(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	size_t ball_count = GetBallCount();
 	return (ball_count < ludum_game->max_ball_count);
@@ -305,7 +303,7 @@ void LudumGameInstance::OnSplitBallChallenge(bool success)
 
 bool LudumGameInstance::IsBallSpeedChallengeValid(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	if (success)
 		return (ball_speed > ludum_game->ball_initial_speed); // can still decrease speed ?
@@ -315,7 +313,7 @@ bool LudumGameInstance::IsBallSpeedChallengeValid(bool success)
 
 void LudumGameInstance::OnBallSpeedChallenge(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	if (success)
 		ball_speed = ball_speed - ludum_game->ball_speed_increment;
@@ -327,7 +325,7 @@ void LudumGameInstance::OnBallSpeedChallenge(bool success)
 
 void LudumGameInstance::OnBrickOffsetChallenge(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	if (success)
 		target_brick_offset -= ludum_game->brick_offset_increment;
@@ -339,7 +337,7 @@ void LudumGameInstance::OnBrickOffsetChallenge(bool success)
 
 bool LudumGameInstance::IsBrickOffsetChallengeValid(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	if (success)
 		return (target_brick_offset > 0.0f);
@@ -366,7 +364,7 @@ void LudumGameInstance::OnBallPowerChallenge(bool success)
 
 bool LudumGameInstance::IsExtraBallChallengeValid(bool success)
 {
-	LudumPlayer * player = GetLudumPlayer(0);
+	LudumPlayer * player = GetPlayer(0);
 	if (player == nullptr)
 		return false;
 
@@ -387,9 +385,9 @@ void LudumGameInstance::OnExtraBallChallenge(bool success)
 
 bool LudumGameInstance::IsLongBarChallengeValid(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
-	LudumPlayer * player = GetLudumPlayer(0);
+	LudumPlayer * player = GetPlayer(0);
 	if (player == nullptr)
 		return false;
 
@@ -402,9 +400,9 @@ bool LudumGameInstance::IsLongBarChallengeValid(bool success)
 
 void LudumGameInstance::OnLongBarChallenge(bool success)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
-	LudumPlayer * player = GetLudumPlayer(0);
+	LudumPlayer * player = GetPlayer(0);
 	if (player == nullptr)
 		return;
 
@@ -433,7 +431,7 @@ glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
 
 chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, bool full_init)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	// create the object
 	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
@@ -490,7 +488,7 @@ size_t LudumGameInstance::GetBallCount() const
 
 int LudumGameInstance::GetRandomButtonID() const
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	size_t key_index = (size_t)(rand() % ludum_game->gamepad_buttons.size());
 	if (key_index >= ludum_game->gamepad_buttons.size())
@@ -501,9 +499,9 @@ int LudumGameInstance::GetRandomButtonID() const
 
 LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 {
-	LudumGame const * ludum_game = GetLudumGame();
-	LudumLevel const * ludum_level = GetLudumLevel();
-	LudumLevelInstance * ludum_level_instance = GetLudumLevelInstance();	
+	LudumGame const * ludum_game = GetGame();
+	LudumLevel const * ludum_level = GetLevel();
+	LudumLevelInstance * ludum_level_instance = GetLevelInstance();	
 
 	// if the level has a dedicated text, use it
 	if (ludum_level != nullptr && ludum_level_instance != nullptr)
@@ -559,7 +557,7 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge()
 
 LudumChallenge * LudumGameInstance::CreateSequenceChallenge(std::string keyboard_challenge)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	// remove all spaces from the challenge
 	std::string nospace_keyboard_challenge = LudumChallenge::NoSpaceKeyboardChallenge(keyboard_challenge);
@@ -599,7 +597,7 @@ LudumChallenge * LudumGameInstance::CreateSequenceChallenge(std::string keyboard
 
 std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 	std::string result;
 
@@ -662,7 +660,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 
 void LudumGameInstance::OnBallCollide(bool collide_brick)
 {
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 
 
 	game->PlaySound("ball", false, false, 0.0f, death::SoundContext::GAME);
@@ -687,7 +685,7 @@ bool LudumGameInstance::Initialize(death::Game * in_game)
 	if (balls_allocations == nullptr)
 		balls_allocations = CreateBalls(1, true);
 
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 	challenge_timer = ludum_game->challenge_frequency;
 	ball_speed = ludum_game->ball_initial_speed;
 
@@ -714,7 +712,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	LudumPlayer * ludum_player = auto_cast(player);
 	if (ludum_player != nullptr)
 	{
-		LudumGame * ludum_game = GetLudumGame();
+		LudumGame * ludum_game = GetGame();
 		if (ludum_game != nullptr)
 			ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
 	}
@@ -728,7 +726,7 @@ void LudumGameInstance::OnPlayerLeaved(death::Player * player)
 
 bool LudumGameInstance::DoCheckGameOverCondition()
 {
-	LudumPlayer * ludum_player = GetLudumPlayer(0);
+	LudumPlayer * ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr)
 	{
 		size_t ball_count = GetBallCount();
@@ -739,7 +737,7 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 				return true;
 			else
 			{
-				LudumGame * ludum_game = GetLudumGame();
+				LudumGame * ludum_game = GetGame();
 
 				ludum_game->PlaySound("balllost", false, false, 0.0f, death::SoundContext::GAME);
 				combo_multiplier = 1;

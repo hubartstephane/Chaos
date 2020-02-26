@@ -8,9 +8,6 @@
 #include <death/GameHUD.h>
 #include <death/GameHUDComponent.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
-
-
 // ====================================================================
 // GameHUDComboComponent
 // ====================================================================
@@ -29,7 +26,7 @@ bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
 	{
-		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();
+		LudumGameInstance const * ludum_game_instance = playing_hud->GetGameInstance();
 		if (ludum_game_instance != nullptr)
 		{
 			int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
@@ -64,7 +61,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;
 	// create a layer for the life bar
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game != nullptr)
 	{
 		int render_order = -1;

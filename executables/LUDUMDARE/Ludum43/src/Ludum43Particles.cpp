@@ -320,7 +320,7 @@ void ParticleAtomTrait::ParticleToPrimitives(ParticleAtom const& particle, chaos
 
 bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
 {
-	LudumGameInstance * ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+	LudumGameInstance * ludum_game_instance = layer_trait->game->GetGameInstance();
 
 	glm::vec2 const & player_position = update_data.player_particle.bounding_box.position;
 	glm::vec2 & particle_position = particle->bounding_box.position;

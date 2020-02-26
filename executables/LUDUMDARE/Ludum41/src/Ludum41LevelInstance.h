@@ -21,7 +21,7 @@ class LudumLevelInstance : public death::LevelInstance
 
 public:
 
-	DEATH_GAMEFRAMEWORK_DECLARE_LEVELINSTANCE(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
 	/** override */
 	virtual bool CheckLevelCompletion() const override;

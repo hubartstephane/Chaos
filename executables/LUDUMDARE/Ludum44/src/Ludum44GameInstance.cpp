@@ -6,8 +6,6 @@
 
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
-
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
@@ -21,7 +19,7 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 
 bool LudumGameInstance::DoCheckGameOverCondition()
 {
-	LudumPlayer * ludum_player = GetLudumPlayer(0);
+	LudumPlayer * ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr)
 	{
 		if (ludum_player->GetHealth() <= 0.0f) // no more energy => go to checkpoint
@@ -95,7 +93,7 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 	size_t player_count = GetPlayerCount();
 	for (size_t i = 0; i < player_count; ++i)
 	{
-		LudumPlayer * p = GetLudumPlayer(i);
+		LudumPlayer * p = GetPlayer(i);
 		if (p != nullptr)
 		{
 			p->health = p->max_health;
@@ -107,7 +105,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 {
 	death::GameInstance::OnPlayerEntered(player);
 
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -123,7 +121,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 
 void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerObject * surface, bool decreasing_power_up)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -159,7 +157,9 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 
 void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 {
-    chaos::ParticleSpawner spawner = GetLudumLevelInstance()->GetParticleSpawner("Explosions", "explosion");
+	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+
+    chaos::ParticleSpawner spawner = ludum_level_instance->GetParticleSpawner("Explosions", "explosion");
     if (!spawner.IsValid())
         return;
 
@@ -184,12 +184,14 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
     // early exit
     if (count <= 0)
         return result;
-    LudumGame* ludum_game = GetLudumGame();
+    LudumGame* ludum_game = GetGame();
     if (ludum_game == nullptr)
         return result;
 
     // create spawner
-    chaos::ParticleSpawner spawner = GetLudumLevelInstance()->GetParticleSpawner("fire", bitmap_name);
+	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+
+    chaos::ParticleSpawner spawner = ludum_level_instance->GetParticleSpawner("fire", bitmap_name);
     if (!spawner.IsValid() || !spawner.HasBitmap())
         return result;
 

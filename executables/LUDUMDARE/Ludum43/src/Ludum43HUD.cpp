@@ -7,10 +7,6 @@
 
 #include <death/GameHUDComponent.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
-
-
-
 // ====================================================================
 // GameHUDWakenParticleComponent
 // ====================================================================
@@ -29,7 +25,7 @@ bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
 	{
-		LudumGameInstance const * ludum_game_instance = playing_hud->GetLudumGameInstance();
+		LudumGameInstance const * ludum_game_instance = playing_hud->GetGameInstance();
 		if (ludum_game_instance != nullptr)
 		{
 			int waken_up_particle_count = ludum_game_instance->GetWakenUpParticleCount();
@@ -53,11 +49,11 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	if (playing_hud == nullptr)
 		return true;
 
-	LudumGame const * ludum_game = playing_hud->GetLudumGame();
+	LudumGame const * ludum_game = playing_hud->GetGame();
 	if (ludum_game == nullptr)
 		return true;
 
-	LudumPlayer const* ludum_player = playing_hud->GetLudumPlayer(0);
+	LudumPlayer const* ludum_player = playing_hud->GetPlayer(0);
 	if (ludum_player == nullptr)
 		return true;
 
@@ -125,7 +121,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 	if (!death::PlayingHUD::CreateHUDLayers())
 		return false;
 	// create a layer for the life bar
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game != nullptr)
 	{
 		int render_order = -1;

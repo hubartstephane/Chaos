@@ -14,8 +14,6 @@
 // LudumLevelInstance implementation
 // =============================================================
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_LEVELINSTANCE(Ludum);
-
 LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	game(in_game)
 {

@@ -12,11 +12,6 @@
 #include <death/Level.h>
 #include <death/SoundContext.h>
 
-
-
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
-
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
@@ -89,7 +84,7 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 

@@ -7,8 +7,6 @@
 
 #include <death/GameHUDComponent.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_HUD(Ludum);
-
 
 namespace death
 {
@@ -46,7 +44,7 @@ bool LudumPlayingHUD::CreateHUDLayers()
 		return false;
 
 
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game != nullptr)
 	{
 		// create a layer for the life bar
@@ -79,7 +77,7 @@ bool GameHUDUpgradeComponent::UpdateCachedValue(bool & destroy_allocation)
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
 	{
-		LudumPlayer const * ludum_player = playing_hud->GetLudumPlayer(0);
+		LudumPlayer const * ludum_player = playing_hud->GetPlayer(0);
 		if (ludum_player != nullptr)
 		{
 			std::string upgrade_string = ludum_player->GetPlayerUpgradeString();

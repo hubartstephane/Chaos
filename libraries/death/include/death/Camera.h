@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/Tickable.h>
+#include <chaos/AutoCast.h>
 
 #include <death/CameraComponent.h>
 #include <death/GameFramework.h>
@@ -37,29 +38,29 @@ namespace death
 		Camera(LevelInstance * in_level_instance);
 
 		/** get the player by its index */
-		Player * GetPlayer(size_t player_index);
+		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player by its index */
-		Player const * GetPlayer(size_t player_index) const;
+		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
 
 		/** returns the game */
-		Game * GetGame();
+		chaos::AutoCastable<Game> GetGame();
 		/** returns the game */
-		Game const * GetGame() const;
+		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** returns the game instance */
-		GameInstance * GetGameInstance();
+		chaos::AutoCastable<GameInstance> GetGameInstance();
 		/** returns the game instance */
-		GameInstance const * GetGameInstance() const;
+		chaos::AutoConstCastable<GameInstance> GetGameInstance() const;
 
 		/** returns the level */
-		Level * GetLevel();
+		chaos::AutoCastable<Level> GetLevel();
 		/** returns the level */
-		Level const * GetLevel() const;
+		chaos::AutoConstCastable<Level> GetLevel() const;
 
 		/** returns the level instance */
-		LevelInstance * GetLevelInstance() { return level_instance; }
+		chaos::AutoCastable<LevelInstance> GetLevelInstance() { return level_instance; }
 		/** returns the level */
-		LevelInstance const * GetLevelInstance() const { return level_instance; }
+		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const { return level_instance; }
 
 		/** set the camera box */
 		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}

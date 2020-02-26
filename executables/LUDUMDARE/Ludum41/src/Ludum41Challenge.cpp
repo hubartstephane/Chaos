@@ -8,7 +8,7 @@
 
 void LudumChallenge::OnKeyboardButtonReceived(char c)
 {
-	LudumGame * game = game_instance->GetLudumGame();
+	LudumGame * game = game_instance->GetGame();
 	if (game->IsFreeCameraMode())
 		return;
 
@@ -27,7 +27,7 @@ void LudumChallenge::Show(bool visible)
 
 void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * in_gamepad_data)
 {
-	LudumGame * game = game_instance->GetLudumGame();
+	LudumGame * game = game_instance->GetGame();
 	if (game->IsFreeCameraMode())
 		return;
 
@@ -56,7 +56,7 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadData const * 
 
 void LudumChallenge::AdvanceChallenge()
 {
-	LudumGame * game = game_instance->GetLudumGame();
+	LudumGame * game = game_instance->GetGame();
 
 	// update keyboard position
 	++keyboard_challenge_position;
@@ -74,7 +74,7 @@ void LudumChallenge::AdvanceChallenge()
 
 void LudumChallenge::OnChallengeError(bool out_of_time)
 {
-	LudumGame * game = game_instance->GetLudumGame();
+	LudumGame * game = game_instance->GetGame();
 
 	if (out_of_time)
 		game->PlaySound("challenge_timeout", false, false, 0.0f, death::SoundContext::GAME);
@@ -110,7 +110,7 @@ int LudumChallenge::GetTimeSoundIndex(float t) const
 
 void LudumChallenge::Tick(float delta_time)
 {
-	LudumGame * game = game_instance->GetLudumGame();
+	LudumGame * game = game_instance->GetGame();
 
 	if (timeout > 0.0f)
 	{

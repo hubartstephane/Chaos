@@ -12,11 +12,6 @@
 #include <death/Level.h>
 #include <death/SoundContext.h>
 
-
-
-
-DEATH_GAMEFRAMEWORK_IMPLEMENT_PLAYER(Ludum);
-
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
@@ -135,7 +130,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 {
 
 	// shufixme
-	LudumGame const * ludum_game = GetLudumGame();
+	LudumGame const * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -260,7 +255,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	if (fire_timer < 0.0f)
 		fire_timer = 0.0f;
 
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -279,11 +274,13 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 void LudumPlayer::FireProjectiles()
 {
     // early exit
-    LudumGame * ludum_game = GetLudumGame();
+    LudumGame * ludum_game = GetGame();
     if (ludum_game == nullptr)
         return;
 
-    chaos::ParticleSpawner fire_spawner = GetLudumLevelInstance()->GetParticleSpawner("PlayerFire", "fire");
+	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+
+    chaos::ParticleSpawner fire_spawner = ludum_level_instance->GetParticleSpawner("PlayerFire", "fire");
     if (!fire_spawner.IsValid() || !fire_spawner.HasBitmap())
         return;
 
@@ -372,7 +369,7 @@ void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)
 
 void LudumPlayer::RegisterUpgrades()
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -515,39 +512,44 @@ size_t LudumPlayer::GetSpecialPowerLevel() const
 
 float LudumPlayer::GetCurrentSpeedValue() const
 {
-	return GetPlayerUpgradedValue(UpgradeKeys::SPEED, GetLudumGame()->player_speeds);
+	LudumGame const * ludum_game = GetGame();
+	return GetPlayerUpgradedValue(UpgradeKeys::SPEED, ludum_game->player_speeds);
 }
 
 float LudumPlayer::GetCurrentDamageValue() const
 {
-	return GetPlayerUpgradedValue(UpgradeKeys::DAMAGE, GetLudumGame()->player_damages);
+	LudumGame const* ludum_game = GetGame();
+	return GetPlayerUpgradedValue(UpgradeKeys::DAMAGE, ludum_game->player_damages);
 }
 
 float LudumPlayer::GetCurrentDashValue() const
 {
-	return GetPlayerUpgradedValue(UpgradeKeys::DASH, GetLudumGame()->player_dash_cooldowns);
+	LudumGame const* ludum_game = GetGame();
+	return GetPlayerUpgradedValue(UpgradeKeys::DASH, ludum_game->player_dash_cooldowns);
+}
+
+float LudumPlayer::GetCurrentPowerRateValue() const
+{
+	LudumGame const* ludum_game = GetGame();
+	return GetPlayerUpgradedValue(UpgradeKeys::POWERRATE, ludum_game->player_power_rates);
+}
+
+int LudumPlayer::GetCurrentPowerSpreadValue() const
+{
+	LudumGame const* ludum_game = GetGame();
+	return GetPlayerUpgradedValue(UpgradeKeys::POWERSPREAD, ludum_game->player_power_spreads);
+}
+
+float LudumPlayer::GetCurrentSpecialPowerValue() const
+{
+	LudumGame const* ludum_game = GetGame();
+	return GetPlayerUpgradedValue(UpgradeKeys::SPECIALPOWER, ludum_game->player_specialpowers);
 }
 
 bool LudumPlayer::GetCurrentGhostValue() const
 {
 	return GetGhostLevel() > 0;
 }
-
-float LudumPlayer::GetCurrentPowerRateValue() const
-{
-	return GetPlayerUpgradedValue(UpgradeKeys::POWERRATE, GetLudumGame()->player_power_rates);
-}
-
-int LudumPlayer::GetCurrentPowerSpreadValue() const
-{
-	return GetPlayerUpgradedValue(UpgradeKeys::POWERSPREAD, GetLudumGame()->player_power_spreads);
-}
-
-float LudumPlayer::GetCurrentSpecialPowerValue() const
-{
-	return GetPlayerUpgradedValue(UpgradeKeys::SPECIALPOWER, GetLudumGame()->player_specialpowers);
-}
-
 
 
 
@@ -569,7 +571,7 @@ float LudumPlayer::GetCurrentSpecialPowerValue() const
 
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 

@@ -14,42 +14,42 @@ namespace death
 		assert(in_game != nullptr);
 	}
 
-	GameInstance * GameHUD::GetGameInstance()
+	chaos::AutoCastable<GameInstance> GameHUD::GetGameInstance()
 	{ 
 		return game->GetGameInstance(); 
 	}
 
-	GameInstance const * GameHUD::GetGameInstance() const 
+	chaos::AutoConstCastable<GameInstance> GameHUD::GetGameInstance() const
 	{ 
 		return game->GetGameInstance(); 
 	}
 
-	Level * GameHUD::GetLevel()
+	chaos::AutoCastable<Level> GameHUD::GetLevel()
 	{
 		return game->GetLevel();
 	}
 
-	Level const * GameHUD::GetLevel() const
+	chaos::AutoConstCastable<Level> GameHUD::GetLevel() const
 	{
 		return game->GetLevel();
 	}
 
-	LevelInstance * GameHUD::GetLevelInstance()
+	chaos::AutoCastable<LevelInstance> GameHUD::GetLevelInstance()
 	{
 		return game->GetLevelInstance();
 	}
 
-	LevelInstance const * GameHUD::GetLevelInstance() const
+	chaos::AutoConstCastable<LevelInstance> GameHUD::GetLevelInstance() const
 	{
 		return game->GetLevelInstance();
 	}
 
-	Player * GameHUD::GetPlayer(size_t player_index)
+	chaos::AutoCastable<Player> GameHUD::GetPlayer(size_t player_index)
 	{
 		return game->GetPlayer(player_index);
 	}
 
-	Player const * GameHUD::GetPlayer(size_t player_index) const
+	chaos::AutoConstCastable<Player> GameHUD::GetPlayer(size_t player_index) const
 	{
 		return game->GetPlayer(player_index);
 	}

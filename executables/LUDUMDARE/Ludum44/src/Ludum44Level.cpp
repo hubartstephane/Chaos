@@ -35,7 +35,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_i
 
 chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance)
 {
-	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
+	LudumGame * ludum_game = layer_instance->GetGame();
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
@@ -134,7 +134,7 @@ bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * p
 
 bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type)
 {
-	LudumGameInstance * ludum_game_instance = auto_cast(player->GetGameInstance());
+	LudumGameInstance * ludum_game_instance = player->GetGameInstance();
 	if (ludum_game_instance == nullptr)
 		return false;
 
@@ -164,7 +164,7 @@ bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 	if (event_type != chaos::CollisionType::STARTED) // already handled
 		return false;
 
-	LudumLevelInstance * ludum_level_instance = auto_cast(GetLayerInstance()->GetTiledLevelInstance());
+	LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 	if (ludum_level_instance == nullptr)
 		return true;
 
@@ -215,7 +215,9 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	// shuludm : see if this can be refactored
 
 	// search the layer for enemies
-	death::TiledMap::LayerInstance * enemy_layer_instance = GetLayerInstance()->GetTiledLevelInstance()->FindLayerInstance("Enemies");
+	LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
+
+	death::TiledMap::LayerInstance * enemy_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
 	if (enemy_layer_instance == nullptr)
 		return true;
 
@@ -244,7 +246,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	// get the frequencies
 
 	float fire_frequency = 1.0f;
-	LudumGame * ludum_game = auto_cast(enemy_layer_instance->GetGame());
+	LudumGame * ludum_game = enemy_layer_instance->GetGame();
 	if (ludum_game != nullptr)
 		fire_frequency = ludum_game->enemy_fire_rate;
 

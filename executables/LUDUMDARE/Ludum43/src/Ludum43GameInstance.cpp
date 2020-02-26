@@ -6,8 +6,6 @@
 
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
-
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
@@ -21,7 +19,7 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 
 bool LudumGameInstance::DoCheckGameOverCondition()
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game != nullptr)
 	{
 		ParticlePlayer const * particle_player = ludum_game->GetPlayerParticle(0);
@@ -41,7 +39,7 @@ bool LudumGameInstance::DoTick(float delta_time)
 
 void LudumGameInstance::TickHeartBeat(float delta_time)
 {
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
 
@@ -70,7 +68,7 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	// internal
-	LudumPlayer * player = GetLudumPlayer(0);
+	LudumPlayer * player = GetPlayer(0);
 	if (player != nullptr)
 	{
 		player->SetScore(waken_up_particle_count, true);

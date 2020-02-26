@@ -23,8 +23,6 @@
 #include <death/GameParticles.h>
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAME(Ludum);
-
 LudumGame::LudumGame()
 {		
 	game_name = "Kill Paouf V";
@@ -136,7 +134,7 @@ void LudumGame::OnLevelChanged(death::Level * new_level, death::Level * old_leve
 
 ParticlePlayer * LudumGame::GetPlayerParticle(size_t player_index)
 {
-	LudumPlayer * player = GetLudumPlayer(player_index);
+	LudumPlayer * player = GetPlayer(player_index);
 	if (player == nullptr)
 		return nullptr;
 	return player->GetPlayerParticle();
@@ -144,7 +142,7 @@ ParticlePlayer * LudumGame::GetPlayerParticle(size_t player_index)
 
 ParticlePlayer const * LudumGame::GetPlayerParticle(size_t player_index) const
 {
-	LudumPlayer const * player = GetLudumPlayer(player_index);
+	LudumPlayer const * player = GetPlayer(player_index);
 	if (player == nullptr)
 		return nullptr;
 	return player->GetPlayerParticle();

@@ -8,6 +8,7 @@
 #include <chaos/ClockManager.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/SoundManager.h>
+#include <chaos/AutoCast.h>
 
 #include <death/Camera.h>
 #include <death/GameFramework.h>
@@ -27,36 +28,39 @@ namespace death
 	public:
 
 		/** get the level corresponding to this instance */
-		Level * GetLevel();
+		chaos::AutoCastable<Level> GetLevel();
 		/** get the level corresponding to this instance */
-		Level const * GetLevel() const;
+		chaos::AutoConstCastable<Level> GetLevel() const;
 
 		/** get the game */
-		Game * GetGame();
+		chaos::AutoCastable<Game> GetGame();
 		/** get the game */
-		Game const * GetGame() const;
+		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** get the game instance */
-		GameInstance * GetGameInstance();
+		chaos::AutoCastable<GameInstance> GetGameInstance();
 		/** get the game instance */
-		GameInstance const * GetGameInstance() const;
+		chaos::AutoConstCastable<GameInstance> GetGameInstance() const;
 
 		/** get a player */
-		Player * GetPlayer(size_t player_index);
+		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get a player */
-		Player const * GetPlayer(size_t player_index) const;
+		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
+
+
+		/** returns the number of cameras */
+		size_t GetCameraCount() const;
+		/** gets a camera by its index (or free camera) */
+		chaos::AutoCastable<Camera> GetCamera(size_t index);
+		/** gets a camera by its index (or free camera) */
+		chaos::AutoConstCastable<Camera> GetCamera(size_t index) const;
+
+
 
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();
 		/** create cameras when the level is started */
 		virtual void CreateCameras();
-
-		/** returns the number of cameras */
-		size_t GetCameraCount() const;
-		/** gets a camera by its index (or free camera) */
-		Camera * GetCamera(size_t index);
-		/** gets a camera by its index (or free camera) */
-		Camera const * GetCamera(size_t index) const;
 
 		/** get the transformation world to camera */
 		chaos::obox2 GetCameraOBox(size_t index, bool apply_modifiers = true) const;

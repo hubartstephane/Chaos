@@ -101,7 +101,7 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 
 void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
 
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -121,7 +121,7 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
 
 void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
 
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -147,7 +147,7 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
 
 void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
 
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
     // generate particle corners and texcoords
@@ -168,7 +168,7 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
 
 void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetLudumGameInstance();
+    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
 
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
     // generate particle corners and texcoords
@@ -215,7 +215,7 @@ glm::vec2 MakeVelocityFromAngle(float angle)
 
 bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const
 {
-	LudumGameInstance * game_instance = layer_trait->game->GetLudumGameInstance();
+	LudumGameInstance * game_instance = layer_trait->game->GetGameInstance();
 	if (game_instance == nullptr)
 		return false;
 
@@ -330,7 +330,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		}
 	}
 
-	LudumLevelInstance * level_instance = layer_trait->game->GetLudumLevelInstance();
+	LudumLevelInstance * level_instance = layer_trait->game->GetLevelInstance();
 
 	// bounce against bricks
 	ParticleBrick * bricks = level_instance->GetBricks();

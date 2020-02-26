@@ -12,8 +12,6 @@
 // LudumLevelInstance implementation
 // =============================================================
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_LEVELINSTANCE(Ludum);
-
 LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	game(in_game)
 {
@@ -39,11 +37,11 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	death::TiledMap::LevelInstance::DoTick(delta_time);
 
 	// get the game
-	LudumGame * ludum_game = GetLudumGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return true;
 	// get the PLAYER 0
-	LudumPlayer * player = GetLudumPlayer(0);
+	LudumPlayer * player = GetPlayer(0);
 	if (player == nullptr)
 		return true;
 	// get the camera
@@ -113,7 +111,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	static float DEFAULT_CAMERA_SPEED = 100.0f;
 	camera_speed = DEFAULT_CAMERA_SPEED;
 
-	death::TiledMap::Level const * level = GetTiledLevel();
+	death::TiledMap::Level const * level = GetLevel();
 	if (level != nullptr)
 	{
 		camera_speed = level->GetTiledMap()->FindPropertyFloat("CAMERA_SPEED", DEFAULT_CAMERA_SPEED);

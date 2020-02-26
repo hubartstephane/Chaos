@@ -6,8 +6,6 @@
 
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
-
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
@@ -21,7 +19,7 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 
 bool LudumGameInstance::DoCheckGameOverCondition() // shuludum : mututaliser le code
 {
-	LudumPlayer * ludum_player = GetLudumPlayer(0);
+	LudumPlayer * ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr)
 	{
 		if (ludum_player->GetHealth() <= 0.0f) // no more energy => go to checkpoint
@@ -62,7 +60,9 @@ bool LudumGameInstance::DoLoadFromCheckpoint(death::GameCheckpoint const * check
 
 void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 {
-    chaos::ParticleSpawner spawner = GetLudumLevelInstance()->GetParticleSpawner("Explosions", "explosion");
+	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+
+    chaos::ParticleSpawner spawner = ludum_level_instance->GetParticleSpawner("Explosions", "explosion");
     if (!spawner.IsValid())
         return;
 

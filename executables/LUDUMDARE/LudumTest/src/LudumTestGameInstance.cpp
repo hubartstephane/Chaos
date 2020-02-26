@@ -6,8 +6,6 @@
 
 #include <death/SoundContext.h>
 
-DEATH_GAMEFRAMEWORK_IMPLEMENT_GAMEINSTANCE(Ludum);
-
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
@@ -21,7 +19,7 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 
 bool LudumGameInstance::DoCheckGameOverCondition() // shuludum : mututaliser le code
 {
-	LudumPlayer * ludum_player = GetLudumPlayer(0);
+	LudumPlayer * ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr)
 	{
 

@@ -12,29 +12,28 @@ namespace death
 	}
 
 	
-	Level * GameInstance::GetLevel()
+	chaos::AutoCastable<Level> GameInstance::GetLevel()
 	{
 		return game->GetLevel();
 	}
 	
-	Level const * GameInstance::GetLevel() const
+	chaos::AutoConstCastable<Level> GameInstance::GetLevel() const
 	{
 		return game->GetLevel();
 	}
 
-	LevelInstance * GameInstance::GetLevelInstance()
+	chaos::AutoCastable<LevelInstance> GameInstance::GetLevelInstance()
 	{
 		return game->GetLevelInstance();
 	}
 	
-	LevelInstance const * GameInstance::GetLevelInstance() const
+	chaos::AutoConstCastable<LevelInstance> GameInstance::GetLevelInstance() const
 	{
 		return game->GetLevelInstance();
 	}
 
-	Player * GameInstance::GetPlayer(size_t player_index)
+	chaos::AutoCastable<Player> GameInstance::GetPlayer(size_t player_index)
 	{
-
 		// shuxxx check player_index is initialized (seems NOT)
 
 		size_t count = players.size();
@@ -44,16 +43,15 @@ namespace death
 		return nullptr;
 	}
 
-	Player const * GameInstance::GetPlayer(size_t player_index) const
+	chaos::AutoConstCastable<Player> GameInstance::GetPlayer(size_t player_index) const
 	{
-
 		// shuxxx check player_index is initialized (seems NOT)
 
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
 			if (players[i]->GetPlayerIndex() == player_index)
 				return players[i].get();
-		return nullptr;
+		return (Player const *)nullptr;
 	}
 
 	int GameInstance::GetBestPlayerScore() const

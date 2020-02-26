@@ -21,7 +21,7 @@ class LudumLevelInstance : public death::TiledMap::LevelInstance
 {
 public:
 
-	DEATH_GAMEFRAMEWORK_DECLARE_LEVELINSTANCE(Ludum);
+	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
 	/** constructor */
 	LudumLevelInstance(class LudumGame * in_game);

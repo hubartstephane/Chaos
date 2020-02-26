@@ -16,13 +16,13 @@
 // MyFinishingTriggerObject
 // =================================================
 
-class MyFinishingTriggerObject : public death::TiledMap::TriggerObject
+class MyFinishingTriggerObject : public death::TiledMapTriggerObject
 {
 
 public:
 
 	/** constructor */
-	MyFinishingTriggerObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object);
+	MyFinishingTriggerObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object);
 
 	/** override */
 	virtual bool Initialize() override;
@@ -51,9 +51,9 @@ protected:
 	/** override */
 	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 
-	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMap::LayerInstance * layer_instance) override;
+	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
-	virtual bool FinalizeLayerParticles(death::TiledMap::LayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
+	virtual bool FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
 
-	virtual death::TiledMap::GeometricObject * DoCreateGeometricObject(death::TiledMap::LayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
+	virtual death::TiledMapGeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 };

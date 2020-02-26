@@ -41,7 +41,7 @@ protected:
 
 	virtual void OnPlayerEntered(death::Player * player) override;
 
-	void OnPowerUpZone(death::Player * player, bool enter, death::TiledMap::TriggerObject * surface, bool decreasing_power_up);
+	void OnPowerUpZone(death::Player * player, bool enter, death::TiledMapTriggerObject * surface, bool decreasing_power_up);
 
 	
 	virtual bool DoSaveIntoCheckpoint(death::GameCheckpoint * checkpoint) const override;
@@ -53,5 +53,5 @@ protected:
 
 	chaos::shared_ptr<LudumPowerUp> current_power_up;
 
-	chaos::shared_ptr<death::TiledMap::TriggerObject> current_power_up_surface;
+	chaos::shared_ptr<death::TiledMapTriggerObject> current_power_up_surface;
 };

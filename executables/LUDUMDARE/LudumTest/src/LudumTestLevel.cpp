@@ -56,7 +56,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 }
 
 
-death::TiledMap::GeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
 	chaos::TiledMap::GeometricObjectSurface * surface_object = in_geometric_object->GetObjectSurface();
 

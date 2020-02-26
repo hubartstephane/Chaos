@@ -27,7 +27,7 @@ public:
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
 
-class ParticleBase : public death::TiledMap::TileParticle
+class ParticleBase : public death::TiledMapParticle
 {
 public:
 

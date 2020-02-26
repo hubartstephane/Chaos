@@ -13,7 +13,7 @@ public:
 
 };
 
-class LudumLevelCheckpoint : public death::TiledMap::TiledLevelCheckpoint
+class LudumLevelCheckpoint : public death::TiledMapLevelCheckpoint
 {
 public:
 

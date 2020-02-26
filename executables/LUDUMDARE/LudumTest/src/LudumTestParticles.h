@@ -16,7 +16,7 @@
 
 using VertexBase = chaos::ParticleDefault::Vertex;
 
-class ParticleBase : public  death::TiledMap::TileParticle
+class ParticleBase : public  death::TiledMapParticle
 {
 public:
 

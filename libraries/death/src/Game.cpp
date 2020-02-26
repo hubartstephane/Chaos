@@ -388,7 +388,7 @@ namespace death
 		return true;
 	}
 
-	death::TiledMap::Level * Game::CreateTiledMapLevel()
+	death::TiledMapLevel * Game::CreateTiledMapLevel()
 	{
 		return nullptr;
 	}
@@ -411,7 +411,7 @@ namespace death
 			if (tiled_map == nullptr)
 				return false;
 			// allocate a level
-			death::TiledMap::Level * result = CreateTiledMapLevel();
+			death::TiledMapLevel * result = CreateTiledMapLevel();
 			if (result == nullptr)
 				return false;
 			// some additionnal computation

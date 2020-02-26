@@ -868,7 +868,7 @@ namespace death
 		bool has_explicit_bounding_box = false;
 
 		/** the layer of reference for displacement */
-		chaos::shared_ptr<TiledMap::LayerInstance> reference_layer;
+		chaos::shared_ptr<TiledMapLayerInstance> reference_layer;
 
 		/** the particle manager used to render the world */
 		chaos::shared_ptr<chaos::ParticleManager> particle_manager;

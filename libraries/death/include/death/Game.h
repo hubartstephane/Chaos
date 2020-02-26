@@ -342,7 +342,7 @@ namespace death
 		/* load one level */
 		virtual Level * DoLoadLevel(chaos::FilePathParam const & path);
 		/** create one tiled map level */
-		virtual death::TiledMap::Level * CreateTiledMapLevel();
+		virtual death::TiledMapLevel * CreateTiledMapLevel();
 
 		/** the game main loop */
 		virtual bool TickGameLoop(float delta_time);

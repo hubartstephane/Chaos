@@ -25,7 +25,7 @@ public:
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
 
-class ParticleBase : public death::TiledMap::TileParticle
+class ParticleBase : public death::TiledMapParticle
 {
 public:
 
@@ -37,7 +37,7 @@ public:
 // PowerUpZoneParticleTrait
 // =====================================
 
-class ParticlePowerUpZone : public death::TiledMap::TileParticle
+class ParticlePowerUpZone : public death::TiledMapParticle
 {
 public:
 
@@ -64,8 +64,8 @@ class PowerUpZoneParticleTrait : public chaos::ParticleAllocationTrait<ParticleP
 {
 public:
 
-    void ParticleToPrimitives(death::TiledMap::TileParticle const & particle, chaos::TrianglePairOutput<VertexPowerUpZone> & output) const;
-    void ParticleToPrimitives(death::TiledMap::TileParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
+    void ParticleToPrimitives(death::TiledMapParticle const & particle, chaos::TrianglePairOutput<VertexPowerUpZone> & output) const;
+    void ParticleToPrimitives(death::TiledMapParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
 
 	bool UpdateParticle(float delta_time, ParticlePowerUpZone * particle);
 };

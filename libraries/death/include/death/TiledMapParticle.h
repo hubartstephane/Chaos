@@ -9,40 +9,35 @@
 namespace death
 {
 
-	namespace TiledMap
+	// =====================================
+	// TiledMapParticle
+	// =====================================
+
+	class TiledMapParticle : public chaos::ParticleDefault::Particle
 	{
+	public:
 
-		// =====================================
-		// TileParticle
-		// =====================================
+		int gid = 0;
+		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
+	};
 
-		class TileParticle : public chaos::ParticleDefault::Particle
+	// =====================================
+	// TiledMapParticleTrait
+	// =====================================
+
+	class TiledMapParticleTrait : public chaos::ParticleAllocationTrait<TiledMapParticle, chaos::ParticleDefault::Vertex, false, false> // shuxxx set to false = optimization 1
+	{
+	public:
+
+		static void ParticleToPrimitives(TiledMapParticle const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex>& output)
 		{
-		public:
+			chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
+		}
 
-			int gid = 0;
-			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = nullptr;
-		};
-
-        // =====================================
-        // TileParticleTrait
-        // =====================================
-
-		class TileParticleTrait : public chaos::ParticleAllocationTrait<TileParticle, chaos::ParticleDefault::Vertex, false, false> // shuxxx set to false = optimization 1
+		static void ParticleToPrimitives(TiledMapParticle const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output)
 		{
-		public:
-
-            static void ParticleToPrimitives(TileParticle const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output)
-            {
-                chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-            }
-
-            static void ParticleToPrimitives(TileParticle const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output)
-            {
-                chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-            }
-		};
-
-	}; // namespace TiledMap
+			chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
+		}
+	};
 
 }; // namespace death

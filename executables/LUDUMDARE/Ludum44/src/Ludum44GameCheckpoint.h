@@ -19,7 +19,7 @@ public:
 	size_t current_fire_rate_index = 0;
 };
 
-class LudumLevelCheckpoint : public death::TiledMap::TiledLevelCheckpoint
+class LudumLevelCheckpoint : public death::TiledMapLevelCheckpoint
 {
 public:
 

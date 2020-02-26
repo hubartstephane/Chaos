@@ -157,7 +157,7 @@ bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZ
 	return false;
 }
 
-void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMap::TileParticle const& particle, chaos::TrianglePairOutput<VertexPowerUpZone>& output) const
+void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle const& particle, chaos::TrianglePairOutput<VertexPowerUpZone>& output) const
 {
     chaos::TrianglePairPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
@@ -192,7 +192,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMap::TileParticl
     v2.texcoord3 = v4.texcoord3 = repetition * glm::vec2(1.0f, 1.0f);
     v5.texcoord3 = repetition * glm::vec2(0.0f, 1.0f);
 }
-void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMap::TileParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
+void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
 {
     chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 

@@ -6,102 +6,98 @@
 
 namespace death
 {
-	namespace TiledMap
+	// =====================================
+	// LayerInstanceParticlePopulator implementation
+	// =====================================
+
+	bool TiledMapLayerInstanceParticlePopulator::Initialize(TiledMapLayerInstance* in_layer_instance)
 	{
-		// =====================================
-		// LayerInstanceParticlePopulator implementation
-		// =====================================
+		assert(in_layer_instance != nullptr);
+		layer_instance = in_layer_instance;
 
-		bool LayerInstanceParticlePopulator::Initialize(LayerInstance * in_layer_instance)
+		death::TiledMapLevel* level = layer_instance->GetLevel();
+		assert(level != nullptr);
+
+		// get the texture atlas
+		texture_atlas = level->GetTextureAtlas(layer_instance);
+		if (texture_atlas == nullptr)
+			return false;
+
+		// get the folder in which the bitmap information are stored
+		folder_info = level->GetFolderInfo(layer_instance);
+		if (folder_info == nullptr)
+			return false;
+
+		return true;
+	}
+
+	void TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
+	{
+		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
+		for (size_t i = 0; i < particle_count; ++i)
+			accessor[i] = particles[i];
+	}
+
+	void TiledMapLayerInstanceParticlePopulator::FlushParticles()
+	{
+		// nothing to flush
+		if (particle_count == 0)
+			return;
+		// create an allocation if necessary
+		if (allocation == nullptr)
 		{
-			assert(in_layer_instance != nullptr);
-			layer_instance = in_layer_instance;
-
-			death::TiledMap::Level * level = layer_instance->GetLevel();
-			assert(level != nullptr);
-
-			// get the texture atlas
-			texture_atlas = level->GetTextureAtlas(layer_instance);
-			if (texture_atlas == nullptr)
-				return false;
-
-			// get the folder in which the bitmap information are stored
-			folder_info = level->GetFolderInfo(layer_instance);
-			if (folder_info == nullptr)
-				return false;
-
-			return true;
-		}
-
-        void LayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
-        {
-            chaos::ParticleAccessor<TileParticle> accessor = allocation->AddParticles(particle_count);
-            for (size_t i = 0; i < particle_count; ++i)
-                accessor[i] = particles[i];
-        }
-
-		void LayerInstanceParticlePopulator::FlushParticles()
-		{
-			// nothing to flush
-			if (particle_count == 0)
-				return;
-			// create an allocation if necessary
+			allocation = layer_instance->SpawnParticles(0);
 			if (allocation == nullptr)
-			{
-				allocation = layer_instance->SpawnParticles(0);
-				if (allocation == nullptr)
-					return;
-			}
-			// reserve memory and flush
-            FlushCachedParticlesToAllocation();
-			// empty the cache
-			particle_count = 0;
+				return;
 		}
+		// reserve memory and flush
+		FlushCachedParticlesToAllocation();
+		// empty the cache
+		particle_count = 0;
+	}
 
-		bool LayerInstanceParticlePopulator::AddParticle(char const * bitmap_name, chaos::box2 particle_box, glm::vec4 const & color, int gid, bool horizontal_flip, bool vertical_flip, bool keep_aspect_ratio)
+	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, int gid, bool horizontal_flip, bool vertical_flip, bool keep_aspect_ratio)
+	{
+		assert(bitmap_name != nullptr);
+
+		// search bitmap information for the particle
+		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
+		if (bitmap_info == nullptr)
+			return false;
+		// get the real layout of the bitmap by removing animation
+		chaos::BitmapAtlas::BitmapLayout layout = *bitmap_info;
+		if (bitmap_info->HasAnimation())
+			layout = bitmap_info->GetAnimationLayout(0, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp); // take frame 0 by default
+		// compute the bounding box
+		if (IsGeometryEmpty(particle_box))
 		{
-            assert(bitmap_name != nullptr);
-
-			// search bitmap information for the particle
-			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
-			if (bitmap_info == nullptr)
-				return false;
-			// get the real layout of the bitmap by removing animation
-			chaos::BitmapAtlas::BitmapLayout layout = *bitmap_info;
-			if (bitmap_info->HasAnimation())
-				layout = bitmap_info->GetAnimationLayout(0, chaos::BitmapAtlas::GetBitmapLayoutFlag::clamp); // take frame 0 by default
-			// compute the bounding box
-			if (IsGeometryEmpty(particle_box))
-			{
-				particle_box.half_size = glm::vec2(layout.width, layout.height) * 0.5f;
-			}
-			// maintain aspect ratio
-			else
-			{
-				if (keep_aspect_ratio)
-					particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
-			}
-
-			// add the particle
-			TileParticle particle;
-			particle.bounding_box = particle_box;
-			particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-			particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
-			particle.color = color;
-			particle.gid = gid;
-			particle.bitmap_info = bitmap_info;
-
-			particles[particle_count++] = particle;
-
-			// increment the bounding box
-			bounding_box = bounding_box | particle_box;
-
-			// flush previous particles to make room for the new one
-			if (particle_count == PARTICLE_BUFFER_SIZE)
-				FlushParticles();
-			return true;
+			particle_box.half_size = glm::vec2(layout.width, layout.height) * 0.5f;
+		}
+		// maintain aspect ratio
+		else
+		{
+			if (keep_aspect_ratio)
+				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 		}
 
-	}; // namespace TiledMap
+		// add the particle
+		TiledMapParticle particle;
+		particle.bounding_box = particle_box;
+		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
+		particle.color = color;
+		particle.gid = gid;
+		particle.bitmap_info = bitmap_info;
+
+		particles[particle_count++] = particle;
+
+		// increment the bounding box
+		bounding_box = bounding_box | particle_box;
+
+		// flush previous particles to make room for the new one
+		if (particle_count == PARTICLE_BUFFER_SIZE)
+			FlushParticles();
+		return true;
+	}
 
 }; // namespace death

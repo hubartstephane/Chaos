@@ -64,7 +64,7 @@ namespace death
 	public:
 
 		/** constructor */
-		Game();
+		Game(GLFWwindow * in_glfw_window);
 
 		/** get the player by its index */
 		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
@@ -92,9 +92,6 @@ namespace death
 		chaos::AutoCastable<Level> GetLevel(int level_index);
 		/** get any level */
 		chaos::AutoConstCastable<Level> GetLevel(int level_index) const;
-
-		/** initialization of the game */
-		virtual bool InitializeGame(GLFWwindow * in_glfw_window);
 
 		/** returns the game name */
 		char const * GetGameName() const { return game_name; }

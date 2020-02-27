@@ -16,8 +16,10 @@
 
 namespace death
 {
-	Game::Game()
+	Game::Game(GLFWwindow* in_glfw_window):
+		glfw_window(in_glfw_window)
 	{
+		assert(in_glfw_window != nullptr);
 	}
 
 	int Game::GetBestPlayerScore() const
@@ -667,6 +669,19 @@ namespace death
 
 	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
+		// initialize the gamepad manager
+		gamepad_manager = new GamepadManager(this);
+		if (gamepad_manager == nullptr)
+			return false;
+		// create game state_machine
+		if (!CreateGameStateMachine())
+			return false;
+		// create the sound manager
+		if (!InitializeSoundManager())
+			return false;
+		// initialize particle classes
+		if (!DeclareParticleClasses())
+			return false;
 		// initialize clocks
 		if (!InitializeClocks())
 			return false;
@@ -913,28 +928,6 @@ namespace death
 	chaos::SM::StateMachineInstance * Game::DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine)
 	{
 		return new GameStateMachineInstance(this, state_machine);
-	}
-
-	bool Game::InitializeGame(GLFWwindow * in_glfw_window)
-	{
-		// initialize the window
-		assert(in_glfw_window != nullptr);
-		glfw_window = in_glfw_window;
-		// initialize the gamepad manager
-		gamepad_manager = new GamepadManager(this);
-		if (gamepad_manager == nullptr)
-			return false;
-		// create game state_machine
-		if (!CreateGameStateMachine())
-			return false;
-		// create the sound manager
-		if (!InitializeSoundManager())
-			return false;
-		// initialize particle classes
-		if (!DeclareParticleClasses())
-			return false;
-
-		return true;
 	}
 
 	bool Game::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming

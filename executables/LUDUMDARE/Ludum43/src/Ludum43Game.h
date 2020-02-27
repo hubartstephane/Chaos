@@ -54,7 +54,7 @@ public:
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
 	/** constructor */
-	LudumGame();
+	LudumGame(GLFWwindow* in_glfw_window);
 
 	/** override */
 	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params) override;

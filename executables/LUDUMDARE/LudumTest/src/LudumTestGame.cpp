@@ -23,7 +23,8 @@
 #include <death/GameParticles.h>
 #include <death/SoundContext.h>
 
-LudumGame::LudumGame()
+LudumGame::LudumGame(GLFWwindow* in_glfw_window) :
+	death::Game(in_glfw_window)
 {		
 	game_name = "Hello World";
 	game_instructions = R"INSTRUCTIONS(

@@ -8,9 +8,9 @@
 namespace death
 {
 	template<typename GAME_TYPE>
-	void RunGame(int argc, char ** argv, char ** env, chaos::MyGLFW::SingleWindowApplicationParams params = chaos::MyGLFW::SingleWindowApplicationParams())
+	bool RunGame(int argc, char ** argv, char ** env, chaos::MyGLFW::SingleWindowApplicationParams params = chaos::MyGLFW::SingleWindowApplicationParams())
 	{
-		chaos::MyGLFW::RunWindowApplication<TypedGameWindow<GAME_TYPE>>(argc, argv, env, params);
+		return chaos::MyGLFW::RunWindowApplication<TypedGameWindow<GAME_TYPE>>(argc, argv, env, params);
 	}
 
 }; // namespace death

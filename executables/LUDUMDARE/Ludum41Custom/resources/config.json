@@ -4,7 +4,7 @@
     "height": 600
   },
 
-	"max_tick_duration":1.0,
+  "max_tick_duration": 1.0,  
 
   "gpu":{"@filename":"@gpu.json"},
   "game":{ "@filename":"@game.json"},

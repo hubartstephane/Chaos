@@ -477,7 +477,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::GenerateObjectTypeSets(nlohmann::json const & config)
+	bool Game::GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path)
 	{
 		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](chaos::TiledMap::Manager * manager, boost::filesystem::path const & path) {
 			if (!manager->LoadObjectTypeSet(path))
@@ -486,7 +486,7 @@ namespace death
 		});
 	}
 
-	bool Game::GenerateTileSets(nlohmann::json const & config)
+	bool Game::GenerateTileSets(nlohmann::json const & config, boost::filesystem::path const& config_path)
 	{
 		return DoGenerateTiledMapEntity(config, "tilesets_directory", "tilesets", "tsx", [](chaos::TiledMap::Manager * manager, boost::filesystem::path const & path) {
 			if (!manager->LoadTileSet(path))
@@ -495,7 +495,7 @@ namespace death
 		});
 	}
 
-	bool Game::LoadLevels(nlohmann::json const & config)
+	bool Game::LoadLevels(nlohmann::json const & config, boost::filesystem::path const& config_path)
 	{
 		// iterate the files and load the levels
 		boost::filesystem::directory_iterator end;
@@ -655,7 +655,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::InitializeClocks()
+	bool Game::InitializeClocks(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 		chaos::Clock * application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
@@ -667,23 +667,35 @@ namespace death
 		return true;
 	}
 
+	bool Game::CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path)
+	{
+		bool gamepad_enabled = true;
+		chaos::JSONTools::GetAttribute(config, "gamepad_enabled", gamepad_enabled, true);
+		if (gamepad_enabled)
+		{
+			gamepad_manager = new GamepadManager(this);
+			if (gamepad_manager == nullptr)
+				return false;
+		}
+		return true;
+	}
+
 	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		// initialize the gamepad manager
-		gamepad_manager = new GamepadManager(this);
-		if (gamepad_manager == nullptr)
+		if (!CreateGamepadManager(config, config_path))
 			return false;
 		// create game state_machine
-		if (!CreateGameStateMachine())
+		if (!CreateGameStateMachine(config, config_path))
 			return false;
 		// create the sound manager
-		if (!InitializeSoundManager())
+		if (!InitializeSoundManager(config, config_path))
 			return false;
 		// initialize particle classes
 		if (!DeclareParticleClasses())
 			return false;
 		// initialize clocks
-		if (!InitializeClocks())
+		if (!InitializeClocks(config, config_path))
 			return false;
 		// initialize the button map
 		if (!InitializeGamepadButtonInfo())
@@ -693,16 +705,16 @@ namespace death
 			return false;
 		OnGameValuesChanged(false);
 		// loading object type sets
-		if (!GenerateObjectTypeSets(config))
+		if (!GenerateObjectTypeSets(config, config_path))
 			return false;
 		// loading tilemapset
-		if (!GenerateTileSets(config))
+		if (!GenerateTileSets(config, config_path))
 			return false;
 		// the atlas
 		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
 			return false;
 		// load exisiting levels
-		if (!LoadLevels(config))
+		if (!LoadLevels(config, config_path))
 			return false;
 		// initialize the root render system
 		if (!InitializeRootRenderLayer())
@@ -892,7 +904,7 @@ namespace death
 		return PlaySound(name, play_desc, category_tag);
 	}
 
-	bool Game::InitializeSoundManager()
+	bool Game::InitializeSoundManager(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 
 		return true;
@@ -907,7 +919,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::CreateGameStateMachine()
+	bool Game::CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 		game_state_machine = DoCreateGameStateMachine();
 		if (game_state_machine == nullptr)

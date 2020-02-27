@@ -1,6 +1,8 @@
 {
   "fonts": { "@filename": "fonts.json" },
 
+  "gamepad_enabled": false,
+
   "small_french_dictionnary": "@dictionnary/small_french.txt",
   "small_english_dictionnary": "@dictionnary/small_english.txt",
   "french_dictionnary": "@dictionnary/french.txt",

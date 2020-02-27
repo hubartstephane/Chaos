@@ -59,7 +59,7 @@ namespace death
 		/** override */
 		virtual Game * CreateGame() override
 		{
-			return new GAME_TYPE;
+			return new GAME_TYPE(glfw_window);
 		}
 	};
 

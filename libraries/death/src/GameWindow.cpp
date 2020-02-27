@@ -110,7 +110,8 @@ namespace death
 
 	bool GameWindow::Tick(float delta_time)
 	{
-		game->Tick(delta_time);
+		if (game != nullptr)
+			game->Tick(delta_time);
 		return true; // refresh
 	}
 

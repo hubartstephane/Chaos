@@ -175,9 +175,7 @@ namespace chaos
 				Window * GenerateWindow() override { return new WINDOW_TYPE; }
 			};
 
-			bool result = false;
-
-			MyApplication * application = new MyApplication(in_window_params);
+			chaos::shared_ptr<MyApplication> application = new MyApplication(in_window_params);
 			if (application != nullptr)
 			{
 				// XXX : under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries
@@ -187,10 +185,9 @@ namespace chaos
 				static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;
 				application->SetFileRedirectionDirectories(build_path, src_path);
 #endif
-				result = application->Run(argc, argv, env);
-				delete(application);
+				return application->Run(argc, argv, env);
 			}
-			return result;
+			return false;
 		}
 
 	}; // namespace MyGLFW

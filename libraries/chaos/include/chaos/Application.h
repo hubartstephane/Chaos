@@ -4,13 +4,14 @@
 #include <chaos/FileManager.h>
 #include <chaos/InputMode.h>
 #include <chaos/InputEventReceiver.h>
+#include <chaos/ReferencedObject.h>
 
 namespace chaos
 {
 	/**
 	* Application : used to store generic application data
 	*/
-	class Application : public InputEventReceiver
+	class Application : public chaos::ReferencedObject, public InputEventReceiver
 	{
 
 	public:
@@ -149,15 +150,10 @@ namespace chaos
 	template<typename APPLICATION_TYPE>
 	bool RunApplication(int argc, char ** argv, char ** env)
 	{
-		bool result = false;
-
-		APPLICATION_TYPE * application = new APPLICATION_TYPE();
+		chaos::shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE();
 		if (application != nullptr)
-		{
-			result = application->Run(argc, argv, env);
-			delete(application);
-		}
-		return result;
+			return application->Run(argc, argv, env);
+		return false;
 	}
 
 }; // namespace chaos

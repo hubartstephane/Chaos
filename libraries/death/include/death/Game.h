@@ -272,12 +272,14 @@ namespace death
 		/** data internal method serialization */
 		virtual bool SaveBestScore(std::ofstream & file);
 
+		/** create the gamepad manager */
+		virtual bool CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** initialization of the manager */
-		virtual bool InitializeSoundManager();
+		virtual bool InitializeSoundManager(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** declare all particle types (for safety) */
 		virtual bool DeclareParticleClasses();
 		/** create the game state_machine */
-		virtual bool CreateGameStateMachine();
+		virtual bool CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** allocate the state machine */
 		virtual chaos::SM::StateMachine * DoCreateGameStateMachine();
 		/** create the game state_machine instance */
@@ -292,7 +294,7 @@ namespace death
 		virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 
 		/** create some clocks */
-		virtual bool InitializeClocks();
+		virtual bool InitializeClocks(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** initialize the game data from configuration file */
 		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload);
 		/** initialize a mapping with button names / text generator joker */
@@ -323,9 +325,9 @@ namespace death
 		virtual bool FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** load object type sets concerned by the game (if required) */
-		virtual bool GenerateObjectTypeSets(nlohmann::json const & config);
+		virtual bool GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path);
 		/** load tileset concerned by the game (if required) */
-		virtual bool GenerateTileSets(nlohmann::json const & config);
+		virtual bool GenerateTileSets(nlohmann::json const & config, boost::filesystem::path const& config_path);
 
 		/** a generic function to load some tiled map instances */
 		template<typename FUNC>
@@ -335,7 +337,7 @@ namespace death
 		boost::filesystem::directory_iterator GetResourceDirectoryIteratorFromConfig(nlohmann::json const & config, char const * config_name, char const * default_path) const;
 
 		/** load all the levels from the game (can be simple data) */
-		virtual bool LoadLevels(nlohmann::json const & config);
+		virtual bool LoadLevels(nlohmann::json const & config, boost::filesystem::path const& config_path);
 		/* load one level */
 		virtual Level * DoLoadLevel(chaos::FilePathParam const & path);
 		/** create one tiled map level */

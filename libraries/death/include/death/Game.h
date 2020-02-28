@@ -264,13 +264,13 @@ namespace death
 		virtual void OnGameValuesChanged(bool hot_reload);
 
 		/** save the best score */
-		bool SerializeStoredGameData(bool save);
+		bool SerializePersistentGameData(bool save);
 		/** data internal method serialization */
-		virtual bool LoadStoredGameData(nlohmann::json const& game_data);
+		virtual bool LoadPersistentGameData(nlohmann::json const& game_data);
 		/** data internal method serialization */
-		virtual bool SaveStoredGameData(nlohmann::json & game_data) const;
+		virtual bool SavePersistentGameData(nlohmann::json & game_data) const;
 		/** prepare data before saving */
-		virtual void UpdateStoredGameData();
+		virtual void UpdatePersistentGameData();
 
 		/** create the gamepad manager */
 		virtual bool CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path);

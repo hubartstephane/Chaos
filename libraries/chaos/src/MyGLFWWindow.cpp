@@ -118,21 +118,6 @@ namespace chaos
 			return mouse_position;		
 		}
 
-
-
-		typedef LRESULT (*WndProcedureType)(HWND, UINT, WPARAM, LPARAM);
-
-		WndProcedureType Old = nullptr;
-
-		LRESULT CALLBACK WndProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-		{
-			if (uMsg == WM_CLOSE)
-				return 0;
-
-
-			return (*Old)(hwnd, uMsg, wParam, lParam);
-		}
-
 		void Window::BindGLFWWindow(GLFWwindow * in_glfw_window, bool in_double_buffer)
 		{
 			assert(glfw_window == nullptr); // ensure not already bound
@@ -155,15 +140,6 @@ namespace chaos
 			glfwSetDropCallback(in_glfw_window, DoOnDropFile);
 			glfwSetWindowFocusCallback(in_glfw_window, DoOnFocusStateChange);
 			glfwSetWindowIconifyCallback(in_glfw_window, DoOnIconifiedStateChange);
-
-
-			
-
-			HWND hWnd = glfwGetWin32Window(in_glfw_window);
-			Old = (WndProcedureType)GetWindowLongPtr(hWnd, GWLP_WNDPROC); //GWL_WNDPROC GWLP_WNDPROC -4
-			SetWindowLongPtr(hWnd, GWLP_WNDPROC,(LONG_PTR)WndProcedure); //GWL_WNDPROC GWLP_WNDPROC -4
-
-
 
 			double_buffer = in_double_buffer;
 		}

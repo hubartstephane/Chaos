@@ -38,44 +38,44 @@ namespace chaos
 			return animation_info->IsGridAnimation();
 		}
 
-		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, GetBitmapLayoutFlag flag) const
+		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, WrapMode mode) const
 		{
 			// check index range, returns failure or clamp
 			if (index < 0 || index >= animation_info->child_frame_count)
 			{
-				if (flag == GetBitmapLayoutFlag::none)
+				if (mode == WrapMode::none)
 					return BitmapLayout();
-				if (flag == GetBitmapLayoutFlag::clamp)
+				if (mode == WrapMode::clamp)
 					index = std::clamp(index, 0, animation_info->child_frame_count - 1);
-				else if (flag == GetBitmapLayoutFlag::wrap)
+				else if (mode == WrapMode::wrap)
 					index = index % animation_info->child_frame_count;
 			}
 			// find the bitmap further in the bitmapinfo array
 			return this[index];
 		}
 
-		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, GetBitmapLayoutFlag flag) const
+		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const
 		{
 			BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
 			// check grid_index range, returns failure or clamp
 			if (grid_index.x < 0 || grid_index.x >= grid_data.grid_size.x)
 			{
-				if (flag == GetBitmapLayoutFlag::none)
+				if (mode == WrapMode::none)
 					return BitmapLayout();
-				if (flag == GetBitmapLayoutFlag::clamp)
+				if (mode == WrapMode::clamp)
 					grid_index.x = std::clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
-				else if (flag == GetBitmapLayoutFlag::wrap)
+				else if (mode == WrapMode::wrap)
 					grid_index.x = grid_index.x % grid_data.grid_size.x;
 			}
 
 			if (grid_index.y < 0 || grid_index.y >= grid_data.grid_size.y)
 			{
-				if (flag == GetBitmapLayoutFlag::none)
+				if (mode == WrapMode::none)
 					return BitmapLayout();
-				if (flag == GetBitmapLayoutFlag::clamp)
+				if (mode == WrapMode::clamp)
 					grid_index.y = std::clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
-				else if (flag == GetBitmapLayoutFlag::wrap)
+				else if (mode == WrapMode::wrap)
 					grid_index.y = grid_index.y % grid_data.grid_size.y;
 			}
 
@@ -87,11 +87,11 @@ namespace chaos
 				int animation_count = (grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
 				if (index >= animation_count)
 				{
-					if (flag == GetBitmapLayoutFlag::none)
+					if (mode == WrapMode::none)
 						return BitmapLayout();
-					if (flag == GetBitmapLayoutFlag::clamp)
+					if (mode == WrapMode::clamp)
 						index = animation_count - 1;
-					else if (flag == GetBitmapLayoutFlag::wrap)
+					else if (mode == WrapMode::wrap)
 						index = index % animation_count;
 					grid_index.x = (index % grid_data.grid_size.x);
 					grid_index.y = (index / grid_data.grid_size.x);
@@ -125,7 +125,7 @@ namespace chaos
 			return result;
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, GetBitmapLayoutFlag flag) const
+		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, WrapMode mode) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
@@ -133,7 +133,7 @@ namespace chaos
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
-				return DoGetFrameAnimationLayout((int)index, flag);
+				return DoGetFrameAnimationLayout((int)index, mode);
 			}
 			else // grid base animation
 			{
@@ -142,11 +142,11 @@ namespace chaos
 				glm::ivec2 grid_index;
  				grid_index.x = ((int)index) % grid_data.grid_size.x;
 				grid_index.y = ((int)index) / grid_data.grid_size.x;
-				return DoGetGridAnimationLayout(grid_index, flag);
+				return DoGetGridAnimationLayout(grid_index, mode);
 			}
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & grid_index, GetBitmapLayoutFlag flag) const
+		BitmapLayout BitmapInfo::GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
@@ -154,13 +154,13 @@ namespace chaos
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
-				if (grid_index.y != 0 && flag == GetBitmapLayoutFlag::none)
+				if (grid_index.y != 0 && mode == WrapMode::none)
 					return BitmapLayout();
-				return DoGetFrameAnimationLayout(grid_index.x, flag);
+				return DoGetFrameAnimationLayout(grid_index.x, mode);
 			}
 			else // grid base animation
 			{
-				return DoGetGridAnimationLayout(grid_index, flag);
+				return DoGetGridAnimationLayout(grid_index, mode);
 			}
 		}
 

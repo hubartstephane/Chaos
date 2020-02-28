@@ -9,6 +9,7 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 #include <chaos/ParticleTools.h>
+#include <chaos/WrapMode.h>
 
 #include <death/SoundContext.h>
 
@@ -248,7 +249,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 	int image_index = (int)(particle->age / frame_time);
 
-	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::BitmapAtlas::GetBitmapLayoutFlag::none);
+	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::none);
 	if (bitmap_layout.bitmap_index < 0)
 		return true;
 

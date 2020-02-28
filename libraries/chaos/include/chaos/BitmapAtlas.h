@@ -6,6 +6,7 @@
 #include <chaos/FilePath.h>
 #include <chaos/ImageTools.h>
 #include <chaos/ImageAnimationDescription.h>
+#include <chaos/WrapMode.h>
 
 namespace chaos
 {
@@ -80,13 +81,6 @@ namespace chaos
 		* BitmapInfo : represents an Bitmap info in the atlas
 		*/
 
-		enum class GetBitmapLayoutFlag : int
-		{
-			none = 0,
-			clamp = 1,
-			wrap = 2
-		};
-
 		class BitmapInfo : public BitmapLayout, public ObjectBase
 		{
 		public:
@@ -99,9 +93,9 @@ namespace chaos
 			bool HasGridAnimation() const;
 
 			/** returns the layout for one linear frame of the animation */
-			BitmapLayout GetAnimationLayout(size_t index, GetBitmapLayoutFlag flag) const;
+			BitmapLayout GetAnimationLayout(size_t index, WrapMode mode) const;
 			/** returns the layout for one grid frame of the animation */
-			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, GetBitmapLayoutFlag flag) const;
+			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode) const;
 			/** returns the number of frames in the animation */
 			size_t GetAnimationImageCount() const;
 			/** returns the duration of a frame in seconds */
@@ -110,9 +104,9 @@ namespace chaos
 		protected:
 
 			/** utility method */
-			BitmapLayout DoGetFrameAnimationLayout(int index, GetBitmapLayoutFlag flag) const;
+			BitmapLayout DoGetFrameAnimationLayout(int index, WrapMode mode) const;
 			/** utility method */
-			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, GetBitmapLayoutFlag flag) const;
+			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const;
 
 		public:
 

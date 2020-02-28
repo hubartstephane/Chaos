@@ -733,7 +733,7 @@ namespace death
 			return false;
 
 		// load the best score if any
-		SerializeBestScore(false);
+		SerializeStoredGameData(false);
 		return true;
 	}
 
@@ -778,52 +778,50 @@ namespace death
 		return root_clock->GetClockTime();
 	}
 
-	bool Game::LoadBestScore(std::ifstream & file)
+	void Game::UpdateStoredGameData()
 	{
-		file >> best_score;
+		best_score = std::max(best_score, GetBestPlayerScore());
+	}
+
+	bool Game::LoadStoredGameData(nlohmann::json const& game_data)
+	{
+		chaos::JSONTools::GetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
-	bool Game::SaveBestScore(std::ofstream & file)
+	bool Game::SaveStoredGameData(nlohmann::json & game_data) const
 	{
-		file << best_score;
+		chaos::JSONTools::SetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
-	void Game::ConditionnalSaveBestScore()
-	{
-		int player_best_score = GetBestPlayerScore();
-		if (best_score < player_best_score)
-		{
-			best_score = player_best_score;
-			SerializeBestScore(true);
-		}
-	}
-
-	bool Game::SerializeBestScore(bool save)
+	bool Game::SerializeStoredGameData(bool save)
 	{
 		// get application
 		chaos::Application * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
 		// get user temp directory
-		boost::filesystem::path filepath = application->GetUserLocalTempPath() / "best_score.txt";
+		boost::filesystem::path filepath = application->GetUserLocalTempPath() / "game_data.json";
 
-		// save the score
+		nlohmann::json game_data;
+		// save the game data
 		if (save)
 		{
+			if (!SaveStoredGameData(game_data))
+				return false;
 			std::ofstream file(filepath.string().c_str());
 			if (!file)
 				return false;
-			return SaveBestScore(file);
+			file << game_data.dump();
+			return true;
 		}
-		// load the score
+		// load the game data
 		else
-		{
-			std::ifstream file(filepath.string().c_str());
-			if (!file)
+		{	
+			if (!chaos::JSONTools::LoadJSONFile(filepath, game_data, false))
 				return false;
-			return LoadBestScore(file);
+			return LoadStoredGameData(game_data);
 		}
 	}
 
@@ -1216,8 +1214,10 @@ namespace death
 
 	bool Game::OnLeaveGame()
 	{
+		// update game data that must me prevent from destruction
+		UpdateStoredGameData();
 		// save the best score (and other values)
-		ConditionnalSaveBestScore();
+		SerializeStoredGameData(true);
 		// restore main menu condition (level, music ...)
 		SetCurrentLevel(nullptr);	
 		// notify all players start the game instance

@@ -263,14 +263,14 @@ namespace death
 		/** called whenever the game values as been changed */
 		virtual void OnGameValuesChanged(bool hot_reload);
 
-		/** test whether the current score is higher than best score and save it */
-		void ConditionnalSaveBestScore();
 		/** save the best score */
-		bool SerializeBestScore(bool save);
+		bool SerializeStoredGameData(bool save);
 		/** data internal method serialization */
-		virtual bool LoadBestScore(std::ifstream & file);
+		virtual bool LoadStoredGameData(nlohmann::json const& game_data);
 		/** data internal method serialization */
-		virtual bool SaveBestScore(std::ofstream & file);
+		virtual bool SaveStoredGameData(nlohmann::json & game_data) const;
+		/** prepare data before saving */
+		virtual void UpdateStoredGameData();
 
 		/** create the gamepad manager */
 		virtual bool CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path);

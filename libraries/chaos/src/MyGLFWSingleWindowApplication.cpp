@@ -203,6 +203,7 @@ namespace chaos
 
 			// bind the window
 			window->BindGLFWWindow(glfw_window, params.hints.double_buffer ? true : false);
+
 			// prepare the window
 			result = window->InitializeFromConfiguration(configuration, configuration_path);
 			if (result)

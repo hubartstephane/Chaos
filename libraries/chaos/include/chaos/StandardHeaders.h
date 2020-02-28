@@ -171,6 +171,7 @@
 #  include <Mmsystem.h>
 #  include <Shlobj.h>
 #  include <Dbghelp.h>
+#  include <WinUser.h>
 #endif
 
 #include <lua.hpp>

@@ -733,7 +733,7 @@ namespace death
 			return false;
 
 		// load the best score if any
-		SerializeStoredGameData(false);
+		SerializePersistentGameData(false);
 		return true;
 	}
 
@@ -778,24 +778,24 @@ namespace death
 		return root_clock->GetClockTime();
 	}
 
-	void Game::UpdateStoredGameData()
+	void Game::UpdatePersistentGameData()
 	{
 		best_score = std::max(best_score, GetBestPlayerScore());
 	}
 
-	bool Game::LoadStoredGameData(nlohmann::json const& game_data)
+	bool Game::LoadPersistentGameData(nlohmann::json const& game_data)
 	{
 		chaos::JSONTools::GetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
-	bool Game::SaveStoredGameData(nlohmann::json & game_data) const
+	bool Game::SavePersistentGameData(nlohmann::json & game_data) const
 	{
 		chaos::JSONTools::SetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
-	bool Game::SerializeStoredGameData(bool save)
+	bool Game::SerializePersistentGameData(bool save)
 	{
 		// get application
 		chaos::Application * application = chaos::Application::GetInstance();
@@ -808,7 +808,7 @@ namespace death
 		// save the game data
 		if (save)
 		{
-			if (!SaveStoredGameData(game_data))
+			if (!SavePersistentGameData(game_data))
 				return false;
 			std::ofstream file(filepath.string().c_str());
 			if (!file)
@@ -821,7 +821,7 @@ namespace death
 		{	
 			if (!chaos::JSONTools::LoadJSONFile(filepath, game_data, false))
 				return false;
-			return LoadStoredGameData(game_data);
+			return LoadPersistentGameData(game_data);
 		}
 	}
 
@@ -1215,9 +1215,9 @@ namespace death
 	bool Game::OnLeaveGame()
 	{
 		// update game data that must me prevent from destruction
-		UpdateStoredGameData();
+		UpdatePersistentGameData();
 		// save the best score (and other values)
-		SerializeStoredGameData(true);
+		SerializePersistentGameData(true);
 		// restore main menu condition (level, music ...)
 		SetCurrentLevel(nullptr);	
 		// notify all players start the game instance

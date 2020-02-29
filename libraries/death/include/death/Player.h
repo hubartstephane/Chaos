@@ -53,9 +53,6 @@ namespace death
         /** get the maximum health value health value */
         float GetMaxHealth() const { return max_health; }
 
-		/** returns whether the player is dead or not */
-		bool IsDead() const { return life_count == 0; }
-
 		/** update player score */
 		void SetScore(int in_score, bool increment = false);
 		/** update player life */

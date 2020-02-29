@@ -1190,6 +1190,9 @@ namespace death
 
 	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
+
+		// shurefactor
+
 		// create the game instance
 		game_instance = CreateGameInstance();
 		if (game_instance == nullptr)
@@ -1214,6 +1217,9 @@ namespace death
 
 	bool Game::OnLeaveGame()
 	{
+		// shurefactor
+
+
 		// update game data that must me prevent from destruction
 		UpdatePersistentGameData();
 		// save the best score (and other values)
@@ -1233,6 +1239,9 @@ namespace death
 
 	bool Game::CheckGameOverCondition()
 	{
+		// shurefactor ->  level_instance->DoCheckGameOverCondition()   juste timeout
+
+
 		if (game_instance != nullptr)
 		{
 			// check level game over only if game is started. It could be a background level in main menu
@@ -1264,6 +1273,11 @@ namespace death
 
 	bool Game::CanCompleteLevel()
 	{
+		// shurefactor
+
+
+
+
 		// game instance knows about that
 		death::GameInstance const* game_instance = GetGameInstance();
 		if (game_instance != nullptr)
@@ -1279,6 +1293,10 @@ namespace death
 
 	bool Game::TickGameLoop(float delta_time)
 	{
+
+		// shurefactor
+
+
 		// level finished
 		if (CheckLevelCompleted())
 		{

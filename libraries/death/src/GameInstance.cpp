@@ -103,6 +103,10 @@ namespace death
 
 	Player * GameInstance::CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
+
+		// shurefactor
+
+
 		// ensure we can create a new player
 		size_t count = players.size();
 		if (count >= GetMaxPlayerCount())

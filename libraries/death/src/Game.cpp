@@ -75,8 +75,8 @@ namespace death
 		if (free_camera != nullptr)
 			free_camera->Tick(delta_time);
 		// update the game state_machine
-		if (game_state_machine_instance != nullptr)
-			game_state_machine_instance->Tick(delta_time, nullptr);
+		if (game_sm_instance != nullptr)
+			game_sm_instance->Tick(delta_time, nullptr);
 		// update the game instance
 		if (game_instance != nullptr)
 			game_instance->Tick(delta_time);		
@@ -95,14 +95,13 @@ namespace death
 			if (game_instance->OnKeyEvent(event))
 				return true;
 
-		// only care for keys that are PRESSED (ignore RELEASE, ignore REPEAT)
-		if (event.action == GLFW_PRESS)
-		{
-			// MAIN MENU to PLAYING
-			if (event.key != GLFW_KEY_ESCAPE && event.key != GLFW_KEY_LEFT_SHIFT && event.key != GLFW_KEY_RIGHT_SHIFT)
+		// shurefactor
+
+		// MAIN MENU to PLAYING
+		if (game_instance == nullptr)
+			if (event.IsKeyPressed() && !event.IsKeyEvent(GLFW_KEY_ESCAPE) && !event.IsKeyEvent(GLFW_KEY_LEFT_SHIFT) && !event.IsKeyEvent(GLFW_KEY_RIGHT_SHIFT))
 				if (RequireStartGame(nullptr))
 					return true;
-		}
 		// PLAYING to PAUSE
 		if (event.IsKeyPressed(GLFW_KEY_KP_ENTER) || event.IsKeyPressed(GLFW_KEY_ENTER))
 			if (RequireTogglePause())
@@ -919,13 +918,13 @@ namespace death
 
 	bool Game::CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
-		game_state_machine = DoCreateGameStateMachine();
-		if (game_state_machine == nullptr)
+		game_sm = DoCreateGameStateMachine();
+		if (game_sm == nullptr)
 			return false;
-		if (!game_state_machine->InitializeStateMachine()) // create all internal states and transition
+		if (!game_sm->InitializeStateMachine()) // create all internal states and transition
 			return false;
-		game_state_machine_instance = DoCreateGameStateMachineInstance(game_state_machine.get());
-		if (game_state_machine_instance == nullptr)
+		game_sm_instance = DoCreateGameStateMachineInstance(game_sm.get());
+		if (game_sm_instance == nullptr)
 			return false;
 		return true;
 	}
@@ -1327,11 +1326,11 @@ namespace death
 
 	chaos::TagType Game::GetCurrentStateTag(bool strict_state, bool use_destination) const
 	{
-		if (game_state_machine_instance == nullptr)
+		if (game_sm_instance == nullptr)
 			return -1;
 		chaos::SM::StateBase const * current_state = (strict_state)?
-			game_state_machine_instance->GetCurrentStrictState(use_destination) :
-			game_state_machine_instance->GetCurrentState();
+			game_sm_instance->GetCurrentStrictState(use_destination) :
+			game_sm_instance->GetCurrentState();
 		if (current_state == nullptr)
 			return -1;
 		return current_state->GetTag();
@@ -1353,7 +1352,7 @@ namespace death
 
 	bool Game::RequireGameOver()
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_GAME_OVER, nullptr))
+		if (game_sm_instance->SendEvent(GameStateMachineKeys::EVENT_GAME_OVER, nullptr))
 			return true;
 		return false;
 	}
@@ -1367,14 +1366,14 @@ namespace death
 
 	bool Game::RequireTogglePause()
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_TOGGLE_PAUSE, nullptr))
+		if (game_sm_instance->SendEvent(GameStateMachineKeys::EVENT_TOGGLE_PAUSE, nullptr))
 			return true;
 		return false;
 	}
 
 	bool Game::RequireExitGame()
 	{
-		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_EXIT_GAME, nullptr))
+		if (game_sm_instance->SendEvent(GameStateMachineKeys::EVENT_EXIT_GAME, nullptr))
 			return true;
 		return false;
 	}
@@ -1383,7 +1382,7 @@ namespace death
 	{
 		PhysicalGamepadWrapper game_pad_wrapper = PhysicalGamepadWrapper(physical_gamepad);
 
-		if (game_state_machine_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, &game_pad_wrapper))
+		if (game_sm_instance->SendEvent(GameStateMachineKeys::EVENT_START_GAME, &game_pad_wrapper))
 			return true;
 		return false;
 	}

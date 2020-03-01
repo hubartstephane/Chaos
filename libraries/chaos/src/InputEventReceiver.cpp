@@ -3,20 +3,35 @@
 
 namespace chaos
 {
-	bool KeyEvent::IsKeyPressed(int check_key, int check_modifier) const
+	bool KeyEvent::IsKeyPressed() const
+	{
+		return (action == GLFW_PRESS || action == GLFW_REPEAT);
+	}
+
+	bool KeyEvent::IsKeyReleased() const
+	{
+		return (action == GLFW_RELEASE);
+	}
+
+	bool KeyEvent::IsKeyEvent(int check_key, int check_modifier) const
 	{
 		if (key == check_key)
-			if (action == GLFW_PRESS || action == GLFW_REPEAT)
-				if ((modifier & check_modifier) == check_modifier)
-					return true;
+			if ((modifier & check_modifier) == check_modifier)
+				return true;
+		return false;
+	}
+
+	bool KeyEvent::IsKeyPressed(int check_key, int check_modifier) const
+	{
+		if (IsKeyPressed() && IsKeyEvent(check_key, check_modifier))
+				return true;
 		return false;
 	}
 
 	bool KeyEvent::IsKeyReleased(int check_key, int check_modifier) const
 	{
-		if (key == check_key && action == GLFW_RELEASE)
-			if ((modifier & check_modifier) == check_modifier)
-				return true;
+		if (IsKeyReleased() && IsKeyEvent(check_key, check_modifier))
+			return true;
 		return false;
 	}
 

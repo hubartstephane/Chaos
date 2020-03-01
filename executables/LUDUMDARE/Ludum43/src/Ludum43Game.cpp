@@ -327,16 +327,6 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	}
 }
 
-void LudumGame::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
-{
-	// super method
-	death::Game::OnLevelChanged(new_level, old_level, new_level_instance);
-
-	// play a sound
-	if (new_level != nullptr && old_level != nullptr)
-        PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
-}
-
 float LudumGame::GetPlayerParticleLife(size_t player_index) const
 {
 	ParticlePlayer const * player_particle = GetPlayerParticle(player_index);

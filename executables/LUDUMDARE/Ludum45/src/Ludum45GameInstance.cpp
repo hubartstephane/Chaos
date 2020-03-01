@@ -83,6 +83,9 @@ void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 {
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
+	// play a sound
+	if (new_level != nullptr && old_level != nullptr)
+		game->PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
 }
 
 void LudumGameInstance::OnPlayerEntered(death::Player * player)

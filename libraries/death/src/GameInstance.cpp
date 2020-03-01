@@ -65,6 +65,13 @@ namespace death
 		return result;
 	}
 
+	bool GameInstance::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad* in_physical_gamepad)
+	{
+		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) // try to give the gamepad to a player
+			return true;
+		return false;
+	}
+
 	bool GameInstance::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
 		size_t count = players.size();

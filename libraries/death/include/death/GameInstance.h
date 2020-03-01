@@ -111,6 +111,8 @@ namespace death
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 
+		/** handle an uncatched gamepad input incomming */
+		virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad* in_physical_gamepad); 
 		/** handle keyboard input */
 		virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override;
 		/** handle keyboard input */

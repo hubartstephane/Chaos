@@ -15,17 +15,17 @@ namespace death
 
 	Game * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance)
 	{
-		GameStateMachineInstance * game_state_machine_instance = auto_cast(sm_instance);
-		if (game_state_machine_instance != nullptr)
-			return game_state_machine_instance->GetGame();
+		GameStateMachineInstance * game_sm_instance = auto_cast(sm_instance);
+		if (game_sm_instance != nullptr)
+			return game_sm_instance->GetGame();
 		return nullptr;
 	}
 
 	Game const * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance) const
 	{
-		GameStateMachineInstance const * game_state_machine_instance = auto_cast(sm_instance);
-		if (game_state_machine_instance != nullptr)
-			return game_state_machine_instance->GetGame();
+		GameStateMachineInstance const * game_sm_instance = auto_cast(sm_instance);
+		if (game_sm_instance != nullptr)
+			return game_sm_instance->GetGame();
 		return nullptr;
 	}
 
@@ -40,17 +40,17 @@ namespace death
 
 	Game * GameState::GetGame(chaos::SM::StateMachineInstance * sm_instance)
 	{
-		GameStateMachineInstance * game_state_machine_instance = auto_cast(sm_instance);
-		if (game_state_machine_instance != nullptr)
-			return game_state_machine_instance->GetGame();
+		GameStateMachineInstance * game_sm_instance = auto_cast(sm_instance);
+		if (game_sm_instance != nullptr)
+			return game_sm_instance->GetGame();
 		return nullptr;
 	}
 
 	Game const * GameState::GetGame(chaos::SM::StateMachineInstance const * sm_instance) const
 	{
-		GameStateMachineInstance const * game_state_machine_instance = auto_cast(sm_instance);
-		if (game_state_machine_instance != nullptr)
-			return game_state_machine_instance->GetGame();
+		GameStateMachineInstance const * game_sm_instance = auto_cast(sm_instance);
+		if (game_sm_instance != nullptr)
+			return game_sm_instance->GetGame();
 		return nullptr;
 	}
 
@@ -126,6 +126,9 @@ namespace death
 
 	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data)
 	{
+		// shurefactor
+
+
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;

@@ -9,8 +9,16 @@ namespace chaos
 	{
 	public:
 
+		/** check whether the key event is for considered key */
+		bool IsKeyEvent(int check_key, int check_modifier = 0) const;
+
+		/** check whether this is a key press event (no key requirement) */
+		bool IsKeyPressed() const;
 		/** check whether this is a key press event */
 		bool IsKeyPressed(int check_key, int check_modifier = 0) const;
+
+		/** check whether this is a key release event (no key requirement) */
+		bool IsKeyReleased() const;
 		/** check whether this is a key release event */
 		bool IsKeyReleased(int check_key, int check_modifier = 0) const;
 

@@ -452,9 +452,9 @@ namespace death
 		chaos::shared_ptr<GameHUD> hud;
 
 		/** pointer on the state_machine */
-		chaos::shared_ptr<chaos::SM::StateMachine> game_state_machine;
+		chaos::shared_ptr<chaos::SM::StateMachine> game_sm;
 		/** pointer on the state_machine instance */
-		chaos::shared_ptr<chaos::SM::StateMachineInstance> game_state_machine_instance;
+		chaos::shared_ptr<chaos::SM::StateMachineInstance> game_sm_instance;
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<int, std::pair<std::string, std::string>> gamepad_button_map;

@@ -780,12 +780,6 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	}
 }
 
-void LudumGameInstance::OnPlayerLeaved(death::Player * player)
-{
-	death::GameInstance::OnPlayerLeaved(player);
-
-}
-
 bool LudumGameInstance::DoCheckGameOverCondition()
 {
 	LudumPlayer * ludum_player = GetPlayer(0);

@@ -28,21 +28,6 @@ bool LudumGameInstance::DoCheckGameOverCondition() // shuludum : mututaliser le 
 	return false;
 }
 
-bool LudumGameInstance::DoSaveIntoCheckpoint(death::GameCheckpoint * checkpoint) const
-{
-	if (!death::GameInstance::DoSaveIntoCheckpoint(checkpoint))
-		return false;
-
-	return true;
-}
-
-bool LudumGameInstance::DoLoadFromCheckpoint(death::GameCheckpoint const * checkpoint)
-{
-	if (!death::GameInstance::DoLoadFromCheckpoint(checkpoint))
-		return false;
-
-	return true;
-}
 
 void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 {
@@ -50,10 +35,4 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 	// play a sound
 	if (new_level != nullptr && old_level != nullptr)
 		game->PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
-}
-
-void LudumGameInstance::OnPlayerEntered(death::Player * player)
-{
-	death::GameInstance::OnPlayerEntered(player);
-
 }

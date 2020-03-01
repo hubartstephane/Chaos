@@ -107,8 +107,6 @@ protected:
 
 	/** override */
 	virtual void OnPlayerEntered(death::Player * player) override;
-	/** override */
-	virtual void OnPlayerLeaved(death::Player * player) override;
 
 	/** generate a direction updward random for the ball */
 	glm::vec2 GenerateBallRandomDirection() const;

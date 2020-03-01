@@ -42,30 +42,6 @@ bool LudumGameInstance::DoCheckGameOverCondition()
 	return false;
 }
 
-bool LudumGameInstance::DoSaveIntoCheckpoint(death::GameCheckpoint * checkpoint) const
-{
-	if (!death::GameInstance::DoSaveIntoCheckpoint(checkpoint))
-		return false;
-
-
-
-
-	return true;
-}
-
-bool LudumGameInstance::DoLoadFromCheckpoint(death::GameCheckpoint const * checkpoint)
-{
-	if (!death::GameInstance::DoLoadFromCheckpoint(checkpoint))
-		return false;
-
-
-
-
-
-	return true;
-}
-
-
 
 
 

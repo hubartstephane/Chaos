@@ -43,12 +43,6 @@ protected:
 
 	void OnPowerUpZone(death::Player * player, bool enter, death::TiledMapTriggerObject * surface, bool decreasing_power_up);
 
-	
-	virtual bool DoSaveIntoCheckpoint(death::GameCheckpoint * checkpoint) const override;
-	
-	virtual bool DoLoadFromCheckpoint(death::GameCheckpoint const * checkpoint) override;
-	
-
 protected:
 
 	chaos::shared_ptr<LudumPowerUp> current_power_up;

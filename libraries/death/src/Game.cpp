@@ -177,7 +177,7 @@ namespace death
 			if (game_instance->OnMouseButton(button, action, modifier))
 				return true;
 		// start the game on a 'OnClick'
-		if (action == GLFW_PRESS)
+		if (game_instance == nullptr && action == GLFW_PRESS)
 			if (RequireStartGame(nullptr))
 				return true;
 		return false;
@@ -944,7 +944,7 @@ namespace death
 		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());
 
 		// maybe a start game
-		if (in_physical_gamepad->IsAnyButtonJustPressed())
+		if (game_instance == nullptr && in_physical_gamepad->IsAnyButtonJustPressed())
 			if (RequireStartGame(in_physical_gamepad))
 				return true;
 		// maybe a player is interrested in capturing this device

@@ -126,9 +126,6 @@ namespace death
 
 	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::ReferencedObject * extra_data)
 	{
-		// shurefactor
-
-
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
 			return true;

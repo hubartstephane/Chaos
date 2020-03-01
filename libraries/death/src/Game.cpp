@@ -90,18 +90,19 @@ namespace death
 
 	bool Game::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
-		// give the game instance opportunity to capture the input
+		// try start the game
+		if (game_instance == nullptr)
+		{
+			if (event.IsKeyPressed()) // && !event.IsKeyEvent(GLFW_KEY_ESCAPE) && !event.IsKeyEvent(GLFW_KEY_LEFT_SHIFT) && !event.IsKeyEvent(GLFW_KEY_RIGHT_SHIFT))
+				RequireStartGame(nullptr);
+			return true;
+		}
+
+		// give opportunity to game instance to response		
 		if (game_instance != nullptr)
 			if (game_instance->OnKeyEvent(event))
 				return true;
 
-		// shurefactor
-
-		// MAIN MENU to PLAYING
-		if (game_instance == nullptr)
-			if (event.IsKeyPressed() && !event.IsKeyEvent(GLFW_KEY_ESCAPE) && !event.IsKeyEvent(GLFW_KEY_LEFT_SHIFT) && !event.IsKeyEvent(GLFW_KEY_RIGHT_SHIFT))
-				if (RequireStartGame(nullptr))
-					return true;
 		// PLAYING to PAUSE
 		if (event.IsKeyPressed(GLFW_KEY_KP_ENTER) || event.IsKeyPressed(GLFW_KEY_ENTER))
 			if (RequireTogglePause())
@@ -172,14 +173,16 @@ namespace death
 
 	bool Game::OnMouseButtonImpl(int button, int action, int modifier)
 	{
-		// give the game instance opportunity to capture the input
-		if (game_instance != nullptr)
-			if (game_instance->OnMouseButton(button, action, modifier))
-				return true;
-		// start the game on a 'OnClick'
-		if (game_instance == nullptr && action == GLFW_PRESS)
-			if (RequireStartGame(nullptr))
-				return true;
+		// try start the game
+		if (game_instance == nullptr)
+		{
+			if (action == GLFW_PRESS)
+				RequireStartGame(nullptr);
+			return true;
+		}
+		// give opportunity to game instance to response
+		if (game_instance->OnMouseButton(button, action, modifier))
+			return true;
 		return false;
 	}
 
@@ -943,13 +946,16 @@ namespace death
 	{
 		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());
 
-		// maybe a start game
-		if (game_instance == nullptr && in_physical_gamepad->IsAnyButtonJustPressed())
-			if (RequireStartGame(in_physical_gamepad))
-				return true;
-		// maybe a player is interrested in capturing this device
-		if (game_instance != nullptr)
-			game_instance->GivePhysicalGamepadToPlayer(in_physical_gamepad); // single player mode
+		// try start the game
+		if (game_instance == nullptr)
+		{
+			if (in_physical_gamepad->IsAnyButtonJustPressed())
+				RequireStartGame(in_physical_gamepad);
+			return true;
+		}
+		// give opportunity to game instance to response
+		if (game_instance->OnGamepadInput(in_physical_gamepad))
+			return true;
 		return false;
 	}
 

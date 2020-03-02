@@ -25,7 +25,7 @@ void LudumPlayer::DisplacePlayerRacket(float delta_x)
 	glm::vec2 canvas_size = GetGame()->GetCanvasSize();
 
 	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(glm::vec2(position.x + delta_x, -canvas_size.y * 0.5f + 100.0f));
+	SetPlayerPosition(glm::vec2(position.x + delta_x, -canvas_size.y * 0.5f + PLAYER_Y));
 
 	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)

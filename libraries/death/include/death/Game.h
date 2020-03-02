@@ -63,6 +63,8 @@ namespace death
 
 	public:
 
+		DEATH_GAMEENTITY_IMPLEMENT();
+
 		/** constructor */
 		Game(GLFWwindow * in_glfw_window);
 

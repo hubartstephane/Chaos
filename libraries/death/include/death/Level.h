@@ -5,6 +5,7 @@
 #include <chaos/FileResource.h>
 
 #include <death/GameFramework.h>
+#include <death/GameInstanceEntity.h>
 
 namespace death
 {
@@ -17,6 +18,8 @@ namespace death
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
+
+		DEATH_GAMEENTITY_IMPLEMENT();
 
 		/** create a level instance for that level */
 		LevelInstance * CreateLevelInstance(Game * in_game);

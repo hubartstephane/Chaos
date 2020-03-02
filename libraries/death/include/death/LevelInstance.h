@@ -13,6 +13,7 @@
 #include <death/Camera.h>
 #include <death/GameFramework.h>
 #include <death/GameCheckpoint.h>
+#include <death/GameInstanceEntity.h>
 
 namespace death
 {
@@ -26,6 +27,8 @@ namespace death
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
+
+		DEATH_GAMEENTITY_IMPLEMENT();
 
 		/** get the level corresponding to this instance */
 		chaos::AutoCastable<Level> GetLevel();

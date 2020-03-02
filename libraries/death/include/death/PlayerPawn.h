@@ -8,6 +8,7 @@
 
 #include <death/GameFramework.h>
 #include <death/GameCheckpoint.h>
+#include <death/GameInstanceEntity.h>
 
 namespace death
 {
@@ -21,6 +22,8 @@ namespace death
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
+
+		DEATH_GAMEENTITY_IMPLEMENT();
 
 		/** destructor */
 		virtual ~PlayerPawn() = default;

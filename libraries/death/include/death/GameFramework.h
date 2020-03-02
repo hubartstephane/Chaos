@@ -23,6 +23,7 @@
 // declare all friendship for main game classes
 #define DEATH_GAMEFRAMEWORK_ALLFRIENDS() DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(BOOST_PP_EMPTY())
 
+// declare main classes for death
 namespace death
 {
 	DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(BOOST_PP_EMPTY(), BOOST_PP_EMPTY())

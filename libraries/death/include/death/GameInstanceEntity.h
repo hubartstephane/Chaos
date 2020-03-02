@@ -28,6 +28,8 @@ namespace death
 		template<typename T>
 		static chaos::AutoCastable<Player> GetPlayer(T* src, size_t player_index)
 		{
+			
+
 			return nullptr;
 		}
 		/** returns the player */
@@ -41,12 +43,19 @@ namespace death
 		template<typename T>
 		static chaos::AutoCastable<Game> GetGame(T* src)
 		{
+			if constexpr (std::is_convertible_v<Game, T>)
+				return src;
+
+
 			return nullptr;
 		}
 		/** returns the game */
 		template<typename T>
 		static chaos::AutoConstCastable<Game> GetGame(T const* src)
 		{
+			if constexpr (std::is_convertible_v<Game, T>)
+				return src;
+
 			return nullptr;
 		}
 
@@ -54,12 +63,18 @@ namespace death
 		template<typename T>
 		static chaos::AutoCastable<GameInstance> GetGameInstance(T* src)
 		{
+			if constexpr (std::is_convertible_v<GameInstance, T>)
+				return src;
+
 			return nullptr;
 		}
 		/** returns the game instance */
 		template<typename T>
 		static chaos::AutoConstCastable<GameInstance> GetGameInstance(T const* src)
 		{
+			if constexpr (std::is_convertible_v<GameInstance, T>)
+				return src;
+
 			return nullptr;
 		}
 
@@ -67,12 +82,18 @@ namespace death
 		template<typename T>
 		static chaos::AutoCastable<Level> GetLevel(T* src)
 		{
+			if constexpr (std::is_convertible_v<Level, T>)
+				return src;
+
 			return nullptr;
 		}
 		/** returns the level */
 		template<typename T>
 		static chaos::AutoConstCastable<Level> GetLevel(T const* src)
 		{
+			if constexpr (std::is_convertible_v<Level, T>)
+				return src;
+
 			return nullptr;
 		}
 
@@ -80,12 +101,18 @@ namespace death
 		template<typename T>
 		static chaos::AutoCastable<LevelInstance> GetLevelInstance(T* src)
 		{
+			if constexpr (std::is_convertible_v<LevelInstance, T>)
+				return src;
+
 			return nullptr;
 		}
 		/** returns the level */
 		template<typename T>
 		static chaos::AutoConstCastable<LevelInstance> GetLevelInstance(T const* src)
 		{
+			if constexpr (std::is_convertible_v<LevelInstance, T>)
+				return src;
+
 			return nullptr;
 		}
 	};

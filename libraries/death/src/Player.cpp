@@ -6,6 +6,10 @@
 namespace death
 {
 
+
+
+
+
 	// =================================================
 	// Player
 	// =================================================
@@ -33,6 +37,11 @@ namespace death
 
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
+		auto ppp = MyGetGame();
+
+
+
+
 		if (!GameInstanceEntity::Initialize(in_game_instance))
 			return false;
 

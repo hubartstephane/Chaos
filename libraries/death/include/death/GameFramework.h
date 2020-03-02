@@ -1,26 +1,33 @@
 #pragma once
 
 // internal macros (do not use outside this file)
-#define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix)\
-	friend class prefix##PlayerCheckpoint;\
-	friend class prefix##PlayerPawnCheckpoint;\
-	friend class prefix##LevelCheckpoint;\
-	friend class prefix##GameCheckpoint;\
-	friend class prefix##Player;\
-	friend class prefix##PawnPlayer;\
-	friend class prefix##Level;\
-	friend class prefix##LevelInstance;\
-	friend class prefix##Game;\
-	friend class prefix##Camera;\
-	friend class prefix##CameraComponent;\
-	friend class prefix##GameInstanceEntity;\
-	friend class prefix##GameInstance;\
-	friend class prefix##GameHUD;
+#define DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(prefix, friend_prefix)\
+	friend_prefix class prefix##PlayerCheckpoint;\
+	friend_prefix class prefix##PlayerPawnCheckpoint;\
+	friend_prefix class prefix##LevelCheckpoint;\
+	friend_prefix class prefix##GameCheckpoint;\
+	friend_prefix class prefix##Player;\
+	friend_prefix class prefix##PawnPlayer;\
+	friend_prefix class prefix##Level;\
+	friend_prefix class prefix##LevelInstance;\
+	friend_prefix class prefix##Game;\
+	friend_prefix class prefix##Camera;\
+	friend_prefix class prefix##CameraComponent;\
+	friend_prefix class prefix##GameInstanceEntity;\
+	friend_prefix class prefix##GameInstance;\
+	friend_prefix class prefix##GameHUD;
+
+// internal macros (do not use outside this file)
+#define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix) DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(prefix, friend)
 
 // declare all friendship for main game classes
 #define DEATH_GAMEFRAMEWORK_ALLFRIENDS() DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(BOOST_PP_EMPTY())
 
+namespace death
+{
+	DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(BOOST_PP_EMPTY(), BOOST_PP_EMPTY())
 
+}; // namespace death
 
 
 

@@ -26,13 +26,13 @@ namespace death
 
 		/** returns the player */
 		template<typename T>
-		static chaos::AutoCastable<Game> GetPlayer(T* src, size_t player_index)
+		static chaos::AutoCastable<Player> GetPlayer(T* src, size_t player_index)
 		{
 			return nullptr;
 		}
 		/** returns the player */
 		template<typename T>
-		static chaos::AutoConstCastable<Game> GetPlayer(T const* src, size_t player_index)
+		static chaos::AutoConstCastable<Player> GetPlayer(T const* src, size_t player_index)
 		{
 			return nullptr;
 		}

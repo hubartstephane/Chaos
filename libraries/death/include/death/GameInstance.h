@@ -10,6 +10,7 @@
 #include <death/GameFramework.h>
 #include <death/Player.h>
 #include <death/Game.h>
+#include <death/GameInstanceEntity.h>
 
 namespace death
 {
@@ -23,6 +24,8 @@ namespace death
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
+
+		DEATH_GAMEENTITY_IMPLEMENT();
 
 		/** constructor */
 		GameInstance(Game * in_game);

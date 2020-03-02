@@ -8,6 +8,89 @@
 namespace death
 {
 
+#define DEATH_GAMEENTITY_IMPLEMENT()\
+	chaos::AutoCastable<Player> MyGetPlayer(size_t player_index) { return GameEntity::GetPlayer(this, player_index);}\
+	chaos::AutoConstCastable<Player> MyGetPlayer(size_t player_index) const { return GameEntity::GetPlayer(this, player_index); }\
+	chaos::AutoCastable<Game> MyGetGame() { return GameEntity::GetGame(this);}\
+	chaos::AutoConstCastable<Game> MyGetGame() const { return GameEntity::GetGame(this); }\
+	chaos::AutoCastable<GameInstance> MyGetGameInstance() { return GameEntity::GetGameInstance(this); }\
+	chaos::AutoConstCastable<GameInstance> MyGetGameInstance() const { return GameEntity::GetGameInstance(this); }\
+	chaos::AutoCastable<LevelInstance> MyGetLevelInstance() { return GameEntity::GetLevelInstance(this); }\
+	chaos::AutoConstCastable<LevelInstance> MyGetLevelInstance() const { return GameEntity::GetLevelInstance(this); }\
+	chaos::AutoCastable<Level> MyGetLevel() { return GameEntity::GetLevel(this); }\
+	chaos::AutoConstCastable<Level> MyGetLevel() const { return GameEntity::GetLevel(this); }
+
+	class GameEntity
+	{
+	public:
+
+		/** returns the player */
+		template<typename T>
+		static chaos::AutoCastable<Game> GetPlayer(T* src, size_t player_index)
+		{
+			return nullptr;
+		}
+		/** returns the player */
+		template<typename T>
+		static chaos::AutoConstCastable<Game> GetPlayer(T const* src, size_t player_index)
+		{
+			return nullptr;
+		}
+
+		/** returns the game */
+		template<typename T>
+		static chaos::AutoCastable<Game> GetGame(T* src)
+		{
+			return nullptr;
+		}
+		/** returns the game */
+		template<typename T>
+		static chaos::AutoConstCastable<Game> GetGame(T const* src)
+		{
+			return nullptr;
+		}
+
+		/** returns the game instance */
+		template<typename T>
+		static chaos::AutoCastable<GameInstance> GetGameInstance(T* src)
+		{
+			return nullptr;
+		}
+		/** returns the game instance */
+		template<typename T>
+		static chaos::AutoConstCastable<GameInstance> GetGameInstance(T const* src)
+		{
+			return nullptr;
+		}
+
+		/** returns the level */
+		template<typename T>
+		static chaos::AutoCastable<Level> GetLevel(T* src)
+		{
+			return nullptr;
+		}
+		/** returns the level */
+		template<typename T>
+		static chaos::AutoConstCastable<Level> GetLevel(T const* src)
+		{
+			return nullptr;
+		}
+
+		/** returns the level instance */
+		template<typename T>
+		static chaos::AutoCastable<LevelInstance> GetLevelInstance(T* src)
+		{
+			return nullptr;
+		}
+		/** returns the level */
+		template<typename T>
+		static chaos::AutoConstCastable<LevelInstance> GetLevelInstance(T const* src)
+		{
+			return nullptr;
+		}
+	};
+
+
 	// =============================================
 	// GameInstanceEntity
 	// =============================================

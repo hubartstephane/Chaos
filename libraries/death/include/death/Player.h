@@ -31,6 +31,24 @@ namespace death
 		/** destructor */
 		virtual ~Player();
 
+
+
+		DEATH_GAMEENTITY_IMPLEMENT();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
 

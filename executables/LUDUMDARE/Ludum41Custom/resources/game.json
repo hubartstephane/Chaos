@@ -12,6 +12,8 @@
   "levels_directory": "@levels",
 
   "game_instance": { "@filename": "game_instance.json" },
+  "viewport_wanted_aspect": 1.15,
+
 
   "min_word_size": 4,
   "max_word_size": 10,
@@ -58,6 +60,6 @@
   "min_brick_life": 1,
   "max_brick_life": 4,
 
-  "brick_per_line": 20,
+  "brick_per_line": 13,
   "brick_line_count": 6
 }

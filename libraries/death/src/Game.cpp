@@ -69,6 +69,11 @@ namespace death
 
 	void Game::Tick(float delta_time)
 	{
+	//	Game* gg = MyGetGame();
+
+		//gg = gg;
+
+
 		// update player inputs
 		TickGameInputs(delta_time);
 		// tick the free camera

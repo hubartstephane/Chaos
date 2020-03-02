@@ -37,7 +37,7 @@ namespace death
 
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
-		auto ppp = MyGetGame();
+		//auto ppp = MyGetGame();
 
 
 

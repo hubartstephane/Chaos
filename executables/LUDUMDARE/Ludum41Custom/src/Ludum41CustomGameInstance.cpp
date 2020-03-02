@@ -776,7 +776,10 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	{
 		LudumGame * ludum_game = GetGame();
 		if (ludum_game != nullptr)
+		{
 			ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
+			ludum_player->DisplacePlayerRacket(0.0f); // to put the player on its correct Y coordinate
+		}
 	}
 }
 

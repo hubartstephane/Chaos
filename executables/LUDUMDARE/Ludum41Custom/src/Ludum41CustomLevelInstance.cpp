@@ -62,6 +62,8 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	if (ludum_game == nullptr)
 		return nullptr;
 
+	int brick_per_line = ludum_game->brick_per_line;
+
 	glm::vec4 const indestructible_color = glm::vec4(1.0f, 0.4f, 0.0f, 1.0f);
 
 	glm::vec4 const colors[] = {
@@ -98,6 +100,9 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 		std::vector<int> const & line = ludum_level->bricks[i];
 		for (size_t j = 0; j < line.size(); ++j)
 		{
+			if (j >= brick_per_line)
+				break;
+
 			int b = line[j];
 			if (b == LudumLevel::NONE)
 				continue;

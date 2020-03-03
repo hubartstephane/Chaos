@@ -42,7 +42,9 @@ bool LudumLevelInstance::CanCompleteLevel() const
 
 chaos::box2 LudumLevelInstance::GetBoundingBox() const
 {
-	return game->GetCanvasBox();
+	chaos::box2 result = game->GetCanvasBox();
+	result.half_size *= 0.9f;
+	return result;
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)

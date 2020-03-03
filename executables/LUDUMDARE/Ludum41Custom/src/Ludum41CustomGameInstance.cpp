@@ -19,13 +19,13 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 		ParticleMovableObject const * balls = GetBallParticles();
 		if (balls != nullptr)
 		{
-			glm::vec2 canvas_size = game->GetCanvasSize();
-
+			chaos::box2 level_box = GetLevelInstance()->GetBoundingBox();
+			
 			for (size_t i = 0; i < ball_count; ++i)
 			{
 				if (going_down ^ (balls->velocity.y <= 0.0f)) // going up
 					continue;
-				if (going_down ^ (balls->bounding_box.position.y > -canvas_size.y * 0.5f * 0.75f)) // wait until particle is high enough on screen
+				if (going_down ^ (balls->bounding_box.position.y > -level_box.half_size.y * 0.75f)) // wait until particle is high enough on screen
 					return i;
 			}
 		}

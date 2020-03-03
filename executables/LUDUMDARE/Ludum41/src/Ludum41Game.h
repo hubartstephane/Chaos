@@ -126,7 +126,6 @@ protected:
 	float max_brick_life = 5.0f;
 
 	int brick_per_line   = 5;
-	int brick_line_count = 5;
 
 	int points_per_brick = 1;
 	int points_per_challenge = 10;

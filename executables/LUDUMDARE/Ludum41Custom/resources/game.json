@@ -20,7 +20,7 @@
 
   "max_ball_count": 3,
   "ball_size": 30.0,
-  "player_max_length": 400.0,
+  "player_max_length": 300.0,
   "player_min_length": 100.0,
   "player_initial_length": 150.0,
   "player_length_increment": 50.0,
@@ -36,11 +36,11 @@
   "rebound_angle_increase": 20.0,
 
   "background_fillratio_changespeed": 0.05,
-  "delay_before_next_level": 6.0,
+  "delay_before_next_level": 10.0,
 
-  "max_brick_offset": 200.0,
-  "brick_offset_speed": 75.0,
-  "brick_offset_increment": 80.0,
+  "max_brick_offset": 360.0,
+  "brick_offset_speed": 100.0,
+  "brick_offset_increment": 120.0,
 
   "ball_max_speed": 1200.0,
   "ball_initial_speed": 200.0,
@@ -61,5 +61,6 @@
   "max_brick_life": 4,
 
   "brick_per_line": 13,
-  "brick_line_count": 6
+
+  "combo_for_reward": 3
 }

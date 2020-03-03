@@ -129,6 +129,11 @@ death::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 		char const * l = lines[i].c_str();
 		for (size_t j = 0; l[j] != 0; ++j)
 		{
+
+			if (j >= brick_per_line)
+				break;
+
+
 			char c = l[j];
 
 			// indestructible

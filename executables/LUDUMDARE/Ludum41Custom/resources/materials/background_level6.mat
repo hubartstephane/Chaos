@@ -1,0 +1,9 @@
+{
+  "parent_material": "background_level_base",
+
+  "textures": {
+
+    "background_clear": { "name": "background_clear_level6" },
+    "background_hidden": { "name": "background_hidden_level6" }
+  }
+}

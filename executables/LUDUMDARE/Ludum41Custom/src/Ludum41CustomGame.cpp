@@ -24,7 +24,8 @@
 LudumGame::LudumGame(GLFWwindow* in_glfw_window) :
 	death::Game(in_glfw_window)
 {
-	game_name = "AsciiPaouf 2";
+	game_name = "AsciiPaouf 2\nJuju & Barbara Edition";
+	looping_levels = false;
 }
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()

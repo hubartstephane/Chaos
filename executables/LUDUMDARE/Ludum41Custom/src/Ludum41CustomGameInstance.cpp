@@ -188,25 +188,7 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	auto const & rewards_punishments = (success) ? ludum_game->rewards : ludum_game->punishments;
 
 	LudumChallengeRewardPunishment * selected_rp = nullptr;
-
-	size_t count = rewards_punishments.size();
-	if (count > 0)
-	{
-		size_t index = (size_t)rand();
-		for (size_t i = 0; (i < count) && (selected_rp == nullptr); ++i)
-		{
-			LudumChallengeRewardPunishment * rp = rewards_punishments[(i + index) % count].get();
-			if (rp != nullptr && rp->IsRewardPunishmentValid(this, success))
-				selected_rp = rp;
-		}
-
-		if (selected_rp != nullptr)
-		{
-			if (selected_rp->CheckRewardPunishmentCondition(this, success))
-				selected_rp->OnRewardPunishment(this, success);
-		}
-	}
-
+	   	 
 	// reset some values
 	sequence_challenge = nullptr;
 	ball_time_dilation = 1.0f;
@@ -221,6 +203,32 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	else
 	{
 		combo_multiplier = 1;
+	}
+
+	// the reward or the punishment
+	// check whether there are not enough combo to increase
+	if (success && ludum_game->combo_for_reward > 0)
+	{
+		if ((combo_multiplier - 1) % ludum_game->combo_for_reward != 0)
+			return;
+	}
+
+	size_t count = rewards_punishments.size();
+	if (count > 0)
+	{
+		size_t index = (size_t)rand();
+		for (size_t i = 0; (i < count) && (selected_rp == nullptr); ++i)
+		{
+			LudumChallengeRewardPunishment* rp = rewards_punishments[(i + index) % count].get();
+			if (rp != nullptr && rp->IsRewardPunishmentValid(this, success))
+				selected_rp = rp;
+		}
+
+		if (selected_rp != nullptr)
+		{
+			if (selected_rp->CheckRewardPunishmentCondition(this, success))
+				selected_rp->OnRewardPunishment(this, success);
+		}
 	}
 }
 

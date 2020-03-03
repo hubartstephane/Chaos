@@ -1,10 +1,13 @@
 {
-	"categories":{
-	
-		"@music":{
-			"volume":0.3
-		}
-	},
+  "categories": {
+
+    "@music": {
+      "volume": 0.3
+    },
+    "@too_loud": {
+      "volume": 0.1
+    }
+  },
 
   "sources": [
 
@@ -13,7 +16,7 @@
     { "path": "sounds/challenge_timeout.ogg"},
     { "path": "sounds/challenge_bip.ogg" },
 
-    { "path": "sounds/menu_music.ogg" , "categories" :  "music" },
+    { "path": "sounds/menu_music.ogg" , "categories" :  ["music","too_loud"] },
     { "path": "sounds/pause_music.ogg" , "categories" :  "music" },
     { "path": "sounds/game_music.ogg" , "categories" :  "music"},
 		{ "path": "sounds/game_music2.ogg" , "categories" :  "music"},

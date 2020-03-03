@@ -17,6 +17,15 @@
     { "path": "sounds/pause_music.ogg" , "categories" :  "music" },
     { "path": "sounds/game_music.ogg" , "categories" :  "music"},
 		{ "path": "sounds/game_music2.ogg" , "categories" :  "music"},
+    
+    { "path": "sounds/music_level1.ogg" , "categories" :  "music"},
+    { "path": "sounds/music_level2.ogg" , "categories" :  "music"},
+    { "path": "sounds/music_level3.ogg" , "categories" :  "music"},
+    { "path": "sounds/music_level4.ogg" , "categories" :  "music"},
+    { "path": "sounds/music_level5.ogg" , "categories" :  "music"},
+    { "path": "sounds/music_level6.ogg" , "categories" :  "music"},
+    { "path": "sounds/music_level7.ogg" , "categories" :  "music"},
+    
     { "path": "sounds/gameover.ogg" },
     { "path": "sounds/ball.ogg" },
     { "path": "sounds/bonus1.ogg" },

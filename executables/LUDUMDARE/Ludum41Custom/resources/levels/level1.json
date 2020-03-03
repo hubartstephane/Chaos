@@ -7,7 +7,7 @@
     "11111111111111111111"
   ],
   "BACKGROUND_MATERIAL": "background_level1",
-  "xMUSIC": "game_music2",
+  "MUSIC": "music_level1",
   "xDICTIONNARY": [
     "worda wordb wordc",
     "wordd worde wordf"

@@ -22,14 +22,15 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 
 void LudumPlayer::DisplacePlayerRacket(float delta_x)
 {
-	glm::vec2 canvas_size = GetGame()->GetCanvasSize();
+	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+	if (ludum_level_instance == nullptr)
+		return;
+
+	chaos::box2 level_box = GetLevelInstance()->GetBoundingBox();
 
 	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(glm::vec2(position.x + delta_x, -canvas_size.y * 0.5f + PLAYER_Y));
-
-	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
-	if (ludum_level_instance != nullptr)
-		ludum_level_instance->RestrictPlayerToWorld(this);
+	SetPlayerPosition(glm::vec2(position.x + delta_x, level_box.position.y - level_box.half_size.y + PLAYER_Y));
+	ludum_level_instance->RestrictPlayerToWorld(this);
 }
 
 

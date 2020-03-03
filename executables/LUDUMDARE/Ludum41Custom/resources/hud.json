@@ -1,9 +1,17 @@
 {
-	"LIFE_ID":
-	{
-		"hotpoint":"bottom-left",
-		"position":[20.0, 20.0],
-		"particle_offset":[45.0, 0.0],
-		"particle_size":[45.0, 0]
-	}
+
+  "TITLE_ID": {
+
+    "generator_params": {
+      "alignment": "center",
+      "line_height": 75.0
+    }
+  },
+
+  "LIFE_ID": {
+    "hotpoint": "bottom-left",
+    "position": [ 20.0, 20.0 ],
+    "particle_offset": [ 45.0, 0.0 ],
+    "particle_size": [ 45.0, 0 ]
+  }
 }

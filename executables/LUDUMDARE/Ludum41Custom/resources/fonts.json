@@ -1,8 +1,7 @@
 {
-	"fonts":
-	{
-		"normal": "@fonts/overpass-mono-bold.otf",
-		"challenge": "@fonts/gomarice_katamari_serif.ttf",
-		"title":"@fonts/unispace bold italic.ttf"
-	}
+  "fonts": {
+    "normal": "@fonts/overpass-mono-bold.otf",
+    "challenge": "@fonts/gomarice_katamari_serif.ttf",
+    "title": "@fonts/unispace bold italic.ttf"
+  }
 }

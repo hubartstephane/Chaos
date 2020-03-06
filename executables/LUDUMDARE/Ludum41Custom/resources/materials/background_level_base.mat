@@ -10,6 +10,7 @@
 
   "textures": {
 
-    "noise": { "name": "noise" }
+    "noise": { "name": "noise" },
+    "background_game": { "name": "background_game" }
   }
 }

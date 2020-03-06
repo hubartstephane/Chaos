@@ -111,5 +111,5 @@ void main()
 	// apply the game border
 	vec4 border = texture(background_game, vs_texcoord);
 
-	output_color = border + mix_image * (1.0f - border.a);
+	output_color = mix(border, mix_image, 1.0f - border.a);
 }

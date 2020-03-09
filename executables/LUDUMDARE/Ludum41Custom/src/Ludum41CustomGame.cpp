@@ -169,9 +169,11 @@ death::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 	{
 		for (std::string const & dictionnary_line : dictionnary)
 		{
-			std::vector<std::string> words = chaos::StringTools::Split(dictionnary_line.c_str(), ' ');
-			for (std::string const & word : words)
-				result->dictionnary.push_back(word);		
+			//std::vector<std::string> words = chaos::StringTools::Split(dictionnary_line.c_str(), ' ');
+			//for (std::string const & word : words)
+				//result->dictionnary.push_back(word);		
+
+			result->dictionnary.push_back(dictionnary_line.c_str());
 		}	
 	}
 	return result;
@@ -316,8 +318,9 @@ bool LudumGame::InitializeRewardsAndPunishments()
 	punishments.push_back(new LudumChallengeRewardPunishment_BallPower);
 	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);
 	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
-	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife);
+	
 #if 0
+	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife); // too hard
 	punishments.push_back(new LudumChallengeRewardPunishment_BrickLife); // too weak
 #endif 
 	return true;

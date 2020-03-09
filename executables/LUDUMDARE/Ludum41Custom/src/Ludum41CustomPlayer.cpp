@@ -50,17 +50,11 @@ bool LudumPlayer::OnCharEventImpl(unsigned int c)
 	LudumGameInstance * ludum_game_instance = GetGameInstance();
 
 	// CHALLENGE
-	if (c >= 'a' && c <= 'z')
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 	{
 		ludum_game_instance->SendKeyboardButtonToChallenge((char)c);
 		return true;
 	}
-	else if (c >= 'A' && c <= 'Z')
-	{
-		ludum_game_instance->SendKeyboardButtonToChallenge((char)(c - 'A' + 'a'));
-		return true;
-	}
-
 	return death::Player::OnCharEventImpl(c);
 }
 

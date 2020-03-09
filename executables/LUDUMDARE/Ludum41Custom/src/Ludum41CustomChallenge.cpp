@@ -13,7 +13,7 @@ void LudumChallenge::OnKeyboardButtonReceived(char c)
 		return;
 
 	// test the challenge
-	if (keyboard_challenge[keyboard_challenge_position] == c)
+	if (std::toupper(keyboard_challenge[keyboard_challenge_position]) == std::toupper(c))
 		AdvanceChallenge();
 	else
 		OnChallengeError(false);

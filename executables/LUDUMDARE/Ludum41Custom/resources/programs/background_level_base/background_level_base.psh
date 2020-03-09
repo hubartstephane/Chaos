@@ -2,7 +2,6 @@ out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindF
 
 uniform sampler2D background_clear;
 uniform sampler2D background_hidden;
-uniform sampler2D background_game;
 uniform sampler2D noise;
 
 uniform float fill_ratio;
@@ -108,8 +107,5 @@ void main()
 	// mix both image textures
 	vec4 mix_image = clear_color* v2 + hidden_color * v1;
 
-	// apply the game border
-	vec4 border = texture(background_game, vs_texcoord);
-
-	output_color = mix(border, mix_image, 1.0f - border.a);
+	output_color = mix_image;
 }

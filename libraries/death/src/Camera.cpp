@@ -2,6 +2,7 @@
 #include <death/CameraComponent.h>
 #include <death/ComponentOwner.h>
 #include <death/LevelInstance.h>
+#include <death/Game.h>
 
 namespace death
 {
@@ -39,6 +40,13 @@ namespace death
 	chaos::box2 Camera::GetCameraBox(bool apply_modifiers) const 
 	{
 		chaos::box2 result = camera_box;
+
+		// apply the aspect ratio
+		Game const * game = GetGame();
+		if (game != nullptr)
+			chaos::AlterBoxToAspect(result, game->GetViewportWantedAspect(), true);
+
+		// apply the modifiers
 		if (apply_modifiers)
 		{
 			size_t count = components.size();

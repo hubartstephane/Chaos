@@ -40,21 +40,6 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
-chaos::box2 LudumLevelInstance::GetBoundingBox() const
-{
-	chaos::box2 result = game->GetCanvasBox();
-
-	auto xx = chaos::box2(std::make_pair(glm::vec2(42.0f, 1390.0f), glm::vec2(1558.0f, 174.0f)));
-
-	return xx;
-
-
-
-	//chaos::box2 result = game->GetCanvasBox();
-	result.half_size *= 0.9f;
-	return result;
-}
-
 bool LudumLevelInstance::DoTick(float delta_time)
 {
 	death::LevelInstance::DoTick(delta_time);

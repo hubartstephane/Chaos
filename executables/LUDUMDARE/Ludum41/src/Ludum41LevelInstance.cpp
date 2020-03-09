@@ -85,7 +85,9 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	// compute the brick size
 	float BRICK_ASPECT = 16.0f / 9.0f;
 
-	glm::vec2 canvas_size = ludum_game->GetCanvasSize();
+	chaos::box2 canvas_box = ludum_game->GetCanvasBox();
+
+	glm::vec2 canvas_size = canvas_box.half_size * 2.0f;
 
 	glm::vec2 particle_size;
 	particle_size.x = canvas_size.x / (float)ludum_game->brick_per_line;

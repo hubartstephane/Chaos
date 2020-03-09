@@ -19,7 +19,9 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 		ParticleMovableObject const * balls = GetBallParticles();
 		if (balls != nullptr)
 		{
-			glm::vec2 canvas_size = game->GetCanvasSize();
+			chaos::box2 canvas_box = game->GetCanvasBox();
+
+			glm::vec2 canvas_size = 2.0f * canvas_box.half_size;
 
 			for (size_t i = 0; i < ball_count; ++i)
 			{

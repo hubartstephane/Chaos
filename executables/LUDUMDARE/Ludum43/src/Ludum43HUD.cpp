@@ -79,7 +79,9 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 		if (particles.GetCount() == 0)
 			return true;
 
-		glm::vec2 canvas_size = ludum_game->GetCanvasSize();
+		chaos::box2 canvas_box = ludum_game->GetCanvasBox();
+
+		glm::vec2 canvas_size = 2.0f * canvas_box.half_size;
 
 		glm::vec2 position1, position2;
 		position1.x = -canvas_size.x * 0.5f + 40.0f;

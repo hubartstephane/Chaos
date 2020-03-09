@@ -85,7 +85,7 @@ namespace death
 		double GetLevelClockTime() const;
 
 		/** get the world box */
-		virtual chaos::box2 GetBoundingBox() const { return chaos::box2(); }
+		virtual chaos::box2 GetBoundingBox() const;
 
 		/** some callbacks */
 		virtual void OnLevelEnded();

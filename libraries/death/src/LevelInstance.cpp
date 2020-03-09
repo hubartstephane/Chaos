@@ -380,24 +380,16 @@ namespace death
 
 	chaos::obox2 LevelInstance::GetDefaultCameraOBox() const
 	{
-
-		// shuxxx
-
-		chaos::box2 level_bounding_box = GetBoundingBox();
-
-		chaos::obox2 result;
-		result.position = level_bounding_box.position;
-		result.half_size = level_bounding_box.half_size;
-		result.rotator = 0.0f;
-
-
-#if 0 // ORI
-
+		// by default, the camera box has same size than the canvas
 		chaos::obox2 result;
 		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
-		result.half_size = GetGame()->GetCanvasSize() * 0.5f;
+		result.half_size = GetGame()->GetCanvasBox().half_size;
 		result.rotator = 0.0f;
-#endif
+
+		// apply the aspect ratio
+		if (game != nullptr)
+			chaos::AlterBoxToAspect(result, game->GetViewportWantedAspect(), true);
+
 		return result;
 	}
 
@@ -447,6 +439,13 @@ namespace death
 		//	level_clock->SetClockTime(checkpoint->level_clock_time);
 
 		return true;
+	}
+
+	chaos::box2 LevelInstance::GetBoundingBox() const
+	{
+		if (game != nullptr)
+			return game->GetCanvasBox();
+		return chaos::box2();
 	}
 
 }; // namespace death

@@ -380,10 +380,24 @@ namespace death
 
 	chaos::obox2 LevelInstance::GetDefaultCameraOBox() const
 	{
+
+		// shuxxx
+
+		chaos::box2 level_bounding_box = GetBoundingBox();
+
+		chaos::obox2 result;
+		result.position = level_bounding_box.position;
+		result.half_size = level_bounding_box.half_size;
+		result.rotator = 0.0f;
+
+
+#if 0 // ORI
+
 		chaos::obox2 result;
 		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
 		result.half_size = GetGame()->GetCanvasSize() * 0.5f;
 		result.rotator = 0.0f;
+#endif
 		return result;
 	}
 

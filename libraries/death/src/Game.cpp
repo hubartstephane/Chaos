@@ -1427,19 +1427,15 @@ namespace death
 		hud = nullptr;
 	}
 
-	glm::vec2 Game::GetCanvasSize() const
-	{
-		glm::vec2 result;
-		result.x = 1600.0f;
-		result.y = result.x / viewport_wanted_aspect;
-		return result;
-	}
-
 	chaos::box2 Game::GetCanvasBox() const
 	{
+		glm::vec2 canvas_size;
+		canvas_size.x = 1600.0f;
+		canvas_size.y = canvas_size.x / viewport_wanted_aspect;
+
 		chaos::box2 result;
 		result.position = glm::vec2(0.0f, 0.0f);
-		result.half_size = GetCanvasSize() * 0.5f;
+		result.half_size = canvas_size * 0.5f;
 		return result;
 	}
 

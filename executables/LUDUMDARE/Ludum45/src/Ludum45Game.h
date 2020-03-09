@@ -59,8 +59,6 @@ public:
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
-	virtual chaos::box2 GetWorldBox() const override;
-
 	ParticlePlayer * GetPlayerParticle(size_t player_index);
 
 	ParticlePlayer const * GetPlayerParticle(size_t player_index) const;

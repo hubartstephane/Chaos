@@ -127,13 +127,6 @@ ParticlePlayer const * LudumGame::GetPlayerParticle(size_t player_index) const
 	return player->GetPlayerParticle();
 }
 
-chaos::box2 LudumGame::GetWorldBox() const
-{
-	if (level_instance != nullptr)
-		 return level_instance->GetBoundingBox();
-	return chaos::box2();
-}
-
 death::GameInstance * LudumGame::CreateGameInstance()
 {
 	return new LudumGameInstance(this);

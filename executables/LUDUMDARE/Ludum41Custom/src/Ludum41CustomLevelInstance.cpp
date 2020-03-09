@@ -43,6 +43,14 @@ bool LudumLevelInstance::CanCompleteLevel() const
 chaos::box2 LudumLevelInstance::GetBoundingBox() const
 {
 	chaos::box2 result = game->GetCanvasBox();
+
+	auto xx = chaos::box2(std::make_pair(glm::vec2(42.0f, 1390.0f), glm::vec2(1558.0f, 174.0f)));
+
+	return xx;
+
+
+
+	//chaos::box2 result = game->GetCanvasBox();
 	result.half_size *= 0.9f;
 	return result;
 }
@@ -92,8 +100,9 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	chaos::box2 level_box = GetBoundingBox();
 
+	chaos::box2 canvas_box = ludum_game->GetCanvasBox();
 
-	glm::vec2 canvas_size = ludum_game->GetCanvasSize();
+	glm::vec2 canvas_size = 2.0f * canvas_box.half_size;
 
 	glm::vec2 particle_size;
 	particle_size.x = 2.0f * level_box.half_size.x / (float)ludum_game->brick_per_line;

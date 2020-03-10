@@ -1,5 +1,23 @@
 {
 
+  "SCORE_ID": {
+
+    "generator_params": {
+      "default_color": [ 1.0, 1.0, 1.0, 1.0 ],
+      "font_info_name": "score",
+      "line_height": 50.0
+    }
+  },
+
+  "COMBO_ID": {
+
+    "generator_params": {
+      "default_color": [ 1.0, 1.0, 1.0, 1.0 ],
+      "font_info_name": "score",
+      "line_height": 50.0
+    }
+  },
+
   "TITLE_ID": {
 
     "generator_params": {

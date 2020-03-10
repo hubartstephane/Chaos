@@ -47,6 +47,22 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	return true;
 }
 
+glm::vec4 GetHexColor(char const* str)
+{
+	int value = chaos::StringTools::AtoiH(str);
+
+	unsigned char R = (unsigned char)((value >> 24) & 0xFF);
+	unsigned char G = (unsigned char)((value >> 16) & 0xFF);
+	unsigned char B = (unsigned char)((value >> 8)  & 0xFF);
+	unsigned char A = (unsigned char)((value >> 0)  & 0xFF);
+
+	return glm::vec4(
+		chaos::PixelComponentConverter::Convert<float>(R),
+		chaos::PixelComponentConverter::Convert<float>(G),
+		chaos::PixelComponentConverter::Convert<float>(B),
+		chaos::PixelComponentConverter::Convert<float>(A));
+}
+
 chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 {
 	LudumLevel const * ludum_level = GetLevel();
@@ -59,12 +75,20 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	int brick_per_line = ludum_game->brick_per_line;
 
-	glm::vec4 const indestructible_color = glm::vec4(1.0f, 0.4f, 0.0f, 1.0f);
+
+
+
+	glm::vec4 const indestructible_color = GetHexColor("BC8823FF");
+	glm::vec4 const two_life_color       = GetHexColor("73756AFF");
+	glm::vec4 const four_life_color      = GetHexColor("31E6C5FF");
 
 	glm::vec4 const colors[] = {
-		glm::vec4(0.7f, 0.0f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 0.7f, 0.0f, 1.0f),
-		glm::vec4(0.0f, 0.0f, 0.7f, 1.0f)
+		GetHexColor("31E6C5FF"),
+		GetHexColor("BD1820FF"),
+		GetHexColor("DEF608FF"),
+		GetHexColor("2018ACFF"),
+		GetHexColor("B418E6FF"),
+		GetHexColor("18D218FF")
 	};
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);
@@ -106,25 +130,35 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 			int b = line[j];
 			if (b == LudumLevel::NONE)
 				continue;
-			if (b < 0 && b != LudumLevel::INDESTRUCTIBLE)
-				continue;
 
 			// compute color / indestructible / life
 			size_t life = 1;
 
 			if (b == LudumLevel::INDESTRUCTIBLE)
 			{
-				particles[k].color = indestructible_color;
-				particles[k].indestructible = true;
+				particles[k].color = indestructible_color;				
 				particles[k].life = 1.0f;
+				particles[k].indestructible = true;
+			}
+			else if (b == LudumLevel::TWO_LIFE)
+			{
+				particles[k].color = two_life_color;
+				particles[k].life = 2.0f;
+				particles[k].indestructible = false;
+			}
+			else if (b == LudumLevel::FOUR_LIFE)
+			{
+				particles[k].color = four_life_color;
+				particles[k].life = 4.0f;
+				particles[k].indestructible = false;
 			}
 			else 
 			{
 				particles[k].indestructible = false;
 
-				size_t color_index = std::min((size_t)b, color_count - 1);
+				size_t color_index = std::clamp(b, 0, (int)(color_count - 1));
 				particles[k].color = colors[color_index];
-				particles[k].life = (float)b;
+				particles[k].life = 1.0f;
 			}
 
 			particles[k].starting_life = particles[k].life;

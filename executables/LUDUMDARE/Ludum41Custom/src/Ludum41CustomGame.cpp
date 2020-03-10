@@ -148,7 +148,7 @@ death::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 				brick_line.push_back(LudumLevel::FOUR_LIFE);
 				continue;
 			}
-			if (std::toupper(c) == 'B')
+			if (std::toupper(c) == 'I')
 			{
 				brick_line.push_back(LudumLevel::INDESTRUCTIBLE);
 				result->indestructible_brick_count++;

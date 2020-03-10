@@ -80,15 +80,15 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	glm::vec4 const four_life_color      = GetHexColor("31E6C5FF"); // ???
 
 	glm::vec4 const colors[] = {
-		GetHexColor("31E6C5FF"), // cyan
-		GetHexColor("BD1820FF"), // red
-		GetHexColor("DEF608FF"), // yellow
-		GetHexColor("2018ACFF"), // marine
-		GetHexColor("B418E6FF"), // purple
-		GetHexColor("18D218FF"), // red
-		GetHexColor("BC8823FF"), // orange
-		GetHexColor("FFFFFFFF"), // white
-		GetHexColor("BB8822FF")  // pink		
+		GetHexColor("31E6C5FF"), // 0: cyan
+		GetHexColor("FF0000FF"), // 1: red
+		GetHexColor("DEF608FF"), // 2: yellow
+		GetHexColor("0000FFFF"), // 3: blue
+		GetHexColor("B418E6FF"), // 4: purple
+		GetHexColor("18D218FF"), // 5: green
+		GetHexColor("FF6A00FF"), // 6: orange
+		GetHexColor("FFFFFFFF"), // 7: white
+		GetHexColor("BB8822FF")  // 8: pink		
 	};
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);

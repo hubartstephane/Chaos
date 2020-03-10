@@ -7,10 +7,12 @@
     "             ",
     "11I I111I I11",
     "11I I111I I11",
-    "11I I111I I11",
     "             ",
     "7777777777777",
-    "7777777777777"
+    "7777777777777",
+    "             ",
+    "11I I111I I11",
+    "11I I111I I11"
   ],
   "BACKGROUND_MATERIAL": "background_level5",
   "MUSIC": "music_level5",

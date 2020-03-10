@@ -38,9 +38,9 @@
   "background_fillratio_changespeed": 0.05,
   "delay_before_next_level": 10.0,
 
-  "max_brick_offset": 360.0,
-  "brick_offset_speed": 100.0,
-  "brick_offset_increment": 120.0,
+  "max_brick_offset": 180.0,
+  "brick_offset_speed": 200.0,
+  "brick_offset_increment": 60.0,
 
   "ball_max_speed": 1200.0,
   "ball_initial_speed": 200.0,

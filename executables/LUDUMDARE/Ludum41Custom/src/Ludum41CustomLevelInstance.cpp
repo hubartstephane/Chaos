@@ -75,20 +75,20 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	int brick_per_line = ludum_game->brick_per_line;
 
-	glm::vec4 const indestructible_color = GetHexColor("BC8823FF");
-	glm::vec4 const two_life_color       = GetHexColor("73756AFF");
-	glm::vec4 const four_life_color      = GetHexColor("31E6C5FF");
+	glm::vec4 const indestructible_color = GetHexColor("BC8823FF"); // orange
+	glm::vec4 const two_life_color       = GetHexColor("73756AFF"); // gray
+	glm::vec4 const four_life_color      = GetHexColor("31E6C5FF"); // ???
 
 	glm::vec4 const colors[] = {
-		GetHexColor("31E6C5FF"),
-		GetHexColor("BD1820FF"),
-		GetHexColor("DEF608FF"),
-		GetHexColor("2018ACFF"),
-		GetHexColor("B418E6FF"),
-		GetHexColor("18D218FF"),
-		GetHexColor("BC8823FF"),
-		GetHexColor("FFFFFFFF"),
-		GetHexColor("BB8822FF")		
+		GetHexColor("31E6C5FF"), // cyan
+		GetHexColor("BD1820FF"), // red
+		GetHexColor("DEF608FF"), // yellow
+		GetHexColor("2018ACFF"), // marine
+		GetHexColor("B418E6FF"), // purple
+		GetHexColor("18D218FF"), // red
+		GetHexColor("BC8823FF"), // orange
+		GetHexColor("FFFFFFFF"), // white
+		GetHexColor("BB8822FF")  // pink		
 	};
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);

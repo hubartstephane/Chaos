@@ -325,9 +325,9 @@ bool LudumGame::InitializeRewardsAndPunishments()
 #endif
 
 	punishments.push_back(new LudumChallengeRewardPunishment_BrickOffset);
-	punishments.push_back(new LudumChallengeRewardPunishment_BallPower);
-	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);
-	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
+//	punishments.push_back(new LudumChallengeRewardPunishment_BallPower);
+//	punishments.push_back(new LudumChallengeRewardPunishment_BarSize);
+//	punishments.push_back(new LudumChallengeRewardPunishment_SpeedDownBall);
 	
 #if 0
 	punishments.push_back(new LudumChallengeRewardPunishment_ExtraLife); // too hard

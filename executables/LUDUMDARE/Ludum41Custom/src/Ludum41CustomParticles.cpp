@@ -259,6 +259,8 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		
 			return true; // ball lost
 		}
+
+		game_instance->OnBallCollide(false);
 	}
 
 	// bounce against player

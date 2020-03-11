@@ -256,20 +256,28 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 
 	// reset the challenge timer & some datas
 	LudumGame const* ludum_game = GetGame();
-	challenge_timer = ludum_game->challenge_frequency;
-	ball_speed = ludum_game->ball_initial_speed;
+	if (ludum_game != nullptr)
+	{
+		challenge_timer = ludum_game->challenge_frequency;
+		ball_speed = ludum_game->ball_initial_speed;
+
+		LudumPlayer* ludum_player = GetPlayer(0);
+		if (ludum_player != nullptr)
+			ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
+	}
 	ball_power = 1.0f;
 	ball_collision_speed = 0.0f;
+	pending_split_count = 0;
+
+
 
 	// recreate the balls, just to ensure they have a correct initial position (destroy all but one)
 	if (old_level != nullptr)
 	{
 		size_t ball_count = GetBallCount();
 		balls_allocations = nullptr;
-		balls_allocations = CreateBalls(1, true);
+		balls_allocations = CreateBalls(1, true); // force 1 !
 	}
-
-
 }
 
 bool LudumGameInstance::CanCompleteLevel() const

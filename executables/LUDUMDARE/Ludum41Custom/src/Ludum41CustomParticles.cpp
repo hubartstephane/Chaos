@@ -95,7 +95,7 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * partic
 {
 	if (particle->life <= 0)
 		return true;
-
+	particle->highlight_time = std::max(0.0f, particle->highlight_time - delta_time);
 	return false;
 }
 
@@ -114,7 +114,9 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
     float extra = 2;
     float ratio = (extra + particle.life) / (extra + particle.starting_life);
     glm::vec4 color = ratio * particle.color;
-    
+
+	if (particle.highlight_time > 0.0f)
+		color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);    
     for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }
@@ -355,7 +357,12 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 				if (!bricks[i].indestructible)
 					bricks[i].life -= game_instance->ball_power;
+				
+				if (bricks[i].starting_life > 1.0f || bricks[i].indestructible)
+					bricks[i].highlight_time = 0.05f;
 				game_instance->OnBallCollide(true);
+
+
 			
 			}				
 		}	

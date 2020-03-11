@@ -77,6 +77,7 @@ public:
 	float life           = 0.0f;
 	bool  indestructible = false;
 	int   special_type   = 0;
+	float highlight_time = 0.0f;
 };
 
 class ParticleBrickTrait : public chaos::ParticleAllocationTrait<ParticleBrick, VertexBase>

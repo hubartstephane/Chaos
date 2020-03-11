@@ -116,7 +116,12 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
     glm::vec4 color = ratio * particle.color;
 
 	if (particle.highlight_time > 0.0f)
-		color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);    
+	{
+		color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		for (size_t i = 0; i < primitive.count; ++i) // according to Pixel Shader, negative texcoord make the texture content to be ignored
+			primitive[i].texcoord.x = -1.0f;
+	}
+		
     for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = color;
 }

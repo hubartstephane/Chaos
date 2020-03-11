@@ -253,6 +253,14 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 	brick_offset = 0.0f;
 	current_background_fillratio = 1.0f;
 	complete_level_timer = 0.0f;
+
+	// recreate the balls, just to ensure they have a correct initial position
+	if (old_level != nullptr)
+	{
+		size_t ball_count = GetBallCount();
+		balls_allocations = nullptr;
+		balls_allocations = CreateBalls(ball_count, true);
+	}
 }
 
 bool LudumGameInstance::CanCompleteLevel() const
@@ -260,6 +268,8 @@ bool LudumGameInstance::CanCompleteLevel() const
 	if (!death::GameInstance::CanCompleteLevel())
 		return false;
 	if (current_background_fillratio > 0.0f)
+		return false;
+	if (sequence_challenge != nullptr) // do no change level during a challenge
 		return false;
 	LudumGame const* ludum_game = GetGame();
 	if (ludum_game != nullptr && complete_level_timer < ludum_game->delay_before_next_level)
@@ -503,7 +513,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 	LudumGame const * ludum_game = GetGame();
 
 	// create the object
-	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
+	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BALL_LAYER_ID, "ball", count, true);
 	if (result == nullptr)
 		return nullptr;
 
@@ -514,7 +524,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 
 	chaos::box2 canvas_box = ludum_game->GetCanvasBox();
 
-	float const BALL_Y = 200.0f;
+	float const BALL_Y = 300.0f;
 
 
 	for (size_t i = 0 ; i < count ; ++i)

@@ -516,10 +516,11 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 
 	float const BALL_Y = 200.0f;
 
+
 	for (size_t i = 0 ; i < count ; ++i)
 	{	
 		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particles[i].bounding_box.position  = glm::vec2(0.0f, canvas_box.half_size.y) - BALL_Y;
+		particles[i].bounding_box.position  = glm::vec2(0.0f, -canvas_box.half_size.y + BALL_Y);
 		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ludum_game->ball_size, ludum_game->ball_size);
 		
 		if (full_init)

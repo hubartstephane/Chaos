@@ -94,6 +94,11 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);
 
+	chaos::BitmapAtlas::BitmapInfo const* brick_info = game->GetGameParticleCreator().FindBitmapInfo("brick");
+	chaos::BitmapAtlas::BitmapInfo const* indestructible_brick_info = game->GetGameParticleCreator().FindBitmapInfo("IndestructibleBrick");
+	chaos::BitmapAtlas::BitmapInfo const* two_brick_info = game->GetGameParticleCreator().FindBitmapInfo("TwoBrick");
+	chaos::BitmapAtlas::BitmapInfo const* four_brick_info = game->GetGameParticleCreator().FindBitmapInfo("FourBrick");
+
 	// create the bricks resource
 	size_t brick_count = ludum_level->GetBrickCount();
 	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
@@ -140,6 +145,8 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 				particles[k].color = indestructible_color;				
 				particles[k].life = 1.0f;
 				particles[k].indestructible = true;
+
+				particles[k].texcoords = chaos::ParticleTools::GetParticleTexcoords(*indestructible_brick_info);
 			}
 			else if (b == LudumLevel::TWO_LIFE)
 			{

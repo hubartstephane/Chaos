@@ -49,7 +49,7 @@
   "ball_collision_speed_increment": 20,
   "ball_collision_max_speed": 600,
 
-  "delay_before_ball_move": 0.5,
+  "delay_before_ball_move": 1.5,
   "mouse_sensitivity": 1.0,
   "gamepad_sensitivity": 1600.0,
   "challenge_time_dilation": 0.35,

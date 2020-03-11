@@ -231,18 +231,17 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		return false;
 
 	// delay before moving the particle
+	float delay_factor = 1.0f;
+
+	particle->delay_before_move = std::max(0.0f, particle->delay_before_move - delta_time);
 	if (particle->delay_before_move > 0.0f)
-	{
-		particle->delay_before_move -=delta_time;
-		if (particle->delay_before_move > 0.0f)
-			return false;
-	}
+		delay_factor = 0.1f;
 
 	// update the velocity of the ball
 	glm::vec2 velocity = glm::normalize(particle->velocity);
 	
 	// moving the particle
-	particle->bounding_box.position += velocity *
+	particle->bounding_box.position += delay_factor * velocity *
 		(game_instance->ball_collision_speed + game_instance->ball_speed) *
 		(delta_time * game_instance->ball_time_dilation);
 

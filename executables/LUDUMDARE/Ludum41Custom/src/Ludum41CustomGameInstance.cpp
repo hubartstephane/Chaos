@@ -525,12 +525,14 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 	chaos::box2 canvas_box = ludum_game->GetCanvasBox();
 
 	float const BALL_Y = 300.0f;
+	float const BALL_SPACING = 60.0f;
 
+	float ball_x = -BALL_SPACING * 0.5f * (float)(count - 1);
 
 	for (size_t i = 0 ; i < count ; ++i)
 	{	
 		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particles[i].bounding_box.position  = glm::vec2(0.0f, -canvas_box.half_size.y + BALL_Y);
+		particles[i].bounding_box.position  = glm::vec2(ball_x, -canvas_box.half_size.y + BALL_Y);
 		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ludum_game->ball_size, ludum_game->ball_size);
 		
 		if (full_init)
@@ -538,6 +540,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 			particles[i].delay_before_move = ludum_game->delay_before_ball_move;
 			particles[i].velocity = ball_speed * GenerateBallRandomDirection();
 		}
+		ball_x += BALL_SPACING;
 	}
 	return result;
 }

@@ -141,11 +141,13 @@ death::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 			if (std::toupper(c) == 'T')
 			{
 				brick_line.push_back(LudumLevel::TWO_LIFE);
+				result->destructible_brick_count++;
 				continue;
 			}
 			if (std::toupper(c) == 'F')
 			{
 				brick_line.push_back(LudumLevel::FOUR_LIFE);
+				result->destructible_brick_count++;
 				continue;
 			}
 			if (std::toupper(c) == 'I')

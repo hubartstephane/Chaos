@@ -145,7 +145,6 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 				particles[k].color = indestructible_color;				
 				particles[k].life = 1.0f;
 				particles[k].indestructible = true;
-
 				particles[k].texcoords = chaos::ParticleTools::GetParticleTexcoords(*indestructible_brick_info);
 			}
 			else if (b == LudumLevel::TWO_LIFE)
@@ -153,12 +152,14 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 				particles[k].color = two_life_color;
 				particles[k].life = 2.0f;
 				particles[k].indestructible = false;
+				particles[k].texcoords = chaos::ParticleTools::GetParticleTexcoords(*two_brick_info);
 			}
 			else if (b == LudumLevel::FOUR_LIFE)
 			{
 				particles[k].color = four_life_color;
 				particles[k].life = 4.0f;
 				particles[k].indestructible = false;
+				particles[k].texcoords = chaos::ParticleTools::GetParticleTexcoords(*four_brick_info);
 			}
 			else 
 			{

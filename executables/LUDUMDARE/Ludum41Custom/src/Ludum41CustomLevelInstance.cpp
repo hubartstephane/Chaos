@@ -88,7 +88,8 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 		GetHexColor("01FF00FF"), // 5: green
 		GetHexColor("FF6A00FF"), // 6: orange
 		GetHexColor("FFFFFFFF"), // 7: white
-		GetHexColor("FF00FEFF")  // 8: pink		
+		GetHexColor("FF00FEFF"), // 8: pink		
+		GetHexColor("000000FF")  // 9: black
 	};
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);

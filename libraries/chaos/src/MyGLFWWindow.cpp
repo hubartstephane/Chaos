@@ -310,8 +310,6 @@ namespace chaos
 			if (pseudo_fullscreen) // full-screen, the window use the full-size
 			{
 				hints.decorated = 0;
-				hints.resizable = 0;
-				hints.toplevel = 1;
 				hints.focused = 1;
 			}
 		}

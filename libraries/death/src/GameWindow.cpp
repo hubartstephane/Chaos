@@ -99,13 +99,12 @@ namespace death
 	{
 		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 #if !_DEBUG
-		hints.toplevel = 1;
 		if (chaos::Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
 			hints.unlimited_fps = true;
 #else 
 		hints.unlimited_fps = true;
 #endif
-		hints.decorated = 1;
+
 	}
 
 	bool GameWindow::Tick(float delta_time)

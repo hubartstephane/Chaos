@@ -127,7 +127,7 @@ ParticlePlayer const * LudumGame::GetPlayerParticle(size_t player_index) const
 	return player->GetPlayerParticle();
 }
 
-death::GameInstance * LudumGame::CreateGameInstance()
+death::GameInstance * LudumGame::DoCreateGameInstance()
 {
 	return new LudumGameInstance(this);
 }

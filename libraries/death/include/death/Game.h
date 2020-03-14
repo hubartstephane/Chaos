@@ -413,8 +413,10 @@ namespace death
 		/** reflex method whenever the level is changed */
 		virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance);
 
+		/** generate the game instance entry point*/
+		virtual GameInstance* CreateGameInstance();
 		/** generate the game instance */
-		virtual GameInstance * CreateGameInstance();
+		virtual GameInstance* DoCreateGameInstance();
 
 		/** all sounds flagged in game are set to pause */
 		void SetInGameSoundPause(bool in_paused);

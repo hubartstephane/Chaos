@@ -54,6 +54,11 @@ namespace death
 		return game->GetPlayer(player_index);
 	}
 
+	size_t GameHUD::GetPlayerCount() const
+	{
+		return game->GetPlayerCount();
+	}
+
 	void GameHUD::InitializeComponentFromConfiguration(chaos::TagType key, GameHUDComponent * component)
 	{
 		assert(component != nullptr);

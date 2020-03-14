@@ -86,6 +86,13 @@ namespace death
 		return level_instance->GetPlayer(player_index);
 	}
 
+	size_t Camera::GetPlayerCount() const
+	{
+		if (level_instance == nullptr)
+			return 0;
+		return level_instance->GetPlayerCount();
+	}
+
 	chaos::AutoCastable<Game> Camera::GetGame()
 	{
 		if (level_instance == nullptr)

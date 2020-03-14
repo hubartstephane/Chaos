@@ -60,6 +60,14 @@ namespace death
 		return game_instance->GetPlayer(player_index);
 	}
 
+	size_t LevelInstance::GetPlayerCount() const
+	{
+		GameInstance const* game_instance = GetGameInstance();
+		if (game_instance == nullptr)
+			return 0;
+		return game_instance->GetPlayerCount();
+	}
+
 	double LevelInstance::GetLevelClockTime() const
 	{
 		if (level_clock == nullptr)
@@ -127,10 +135,6 @@ namespace death
 		GameInstance * game_instance = GetGameInstance();
 		if (game_instance == nullptr)
 			return;
-		// players entering the level
-		size_t player_count = game_instance->GetPlayerCount();
-		for (size_t i = 0; i < player_count; ++i)
-			OnPlayerEntered(game_instance->GetPlayer(i));
 		// create cameras
 		CreateCameras();
 		// last initialization of camera
@@ -141,6 +145,10 @@ namespace death
 		CreateBackgroundImage();
 		// change music
 		SetInGameMusic();
+		// players entering the level
+		size_t player_count = game_instance->GetPlayerCount();
+		for (size_t i = 0; i < player_count; ++i)
+			OnPlayerEntered(game_instance->GetPlayer(i));		
 		// create respawn checkpoint
 		if (player_count > 0)
 			game_instance->CreateRespawnCheckpoint();

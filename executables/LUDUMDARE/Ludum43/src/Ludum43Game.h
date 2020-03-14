@@ -89,7 +89,7 @@ protected:
 
 	bool GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer);
 
-	virtual death::GameInstance * CreateGameInstance() override;
+	virtual death::GameInstance * DoCreateGameInstance() override;
 
 protected:
 

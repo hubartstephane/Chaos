@@ -49,9 +49,8 @@ namespace death
 		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player by its index */
 		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
-
-		/** get the number of players */
-		size_t GetPlayerCount() const { return players.size(); }
+		/** get the player count */
+		size_t GetPlayerCount() const;
 
 		/** create one player and give it the gamepad provided if any */
 		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);

@@ -26,29 +26,31 @@ namespace death
 	public:
 
 		/** getters on game */
-		Game * GetGame();
+		chaos::AutoCastable<Game> GetGame();
 		/** getters on game */
-		Game const * GetGame() const;
+		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** getters on game instance */
-		GameInstance * GetGameInstance();
+		chaos::AutoCastable<GameInstance> GetGameInstance();
 		/** getters on game instance */
-		GameInstance const * GetGameInstance() const;
+		chaos::AutoConstCastable<GameInstance> GetGameInstance() const;
 
 		/** get currently played level */
-		Level * GetLevel();
+		chaos::AutoCastable<Level> GetLevel();
 		/** get currently played level */
-		Level const * GetLevel() const;
+		chaos::AutoConstCastable<Level> GetLevel() const;
 
 		/** get currently played level */
-		LevelInstance * GetLevelInstance();
+		chaos::AutoCastable<LevelInstance> GetLevelInstance();
 		/** get currently played level */
-		LevelInstance const * GetLevelInstance() const;
+		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 		/** get the player */
-		Player * GetPlayer(size_t player_index);
+		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player */
-		Player const * GetPlayer(size_t player_index) const;
+		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
+		/** get the number of player */
+		size_t GetPlayerCount() const;
 
 	protected:
 

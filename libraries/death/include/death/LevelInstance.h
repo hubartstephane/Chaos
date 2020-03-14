@@ -49,6 +49,8 @@ namespace death
 		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get a player */
 		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
+		/** get the number of player */
+		size_t GetPlayerCount() const;
 
 
 		/** returns the number of cameras */

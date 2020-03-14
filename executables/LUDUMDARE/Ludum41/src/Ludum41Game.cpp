@@ -332,7 +332,7 @@ int LudumGame::AddParticleLayers()
 	return render_order;
 }
 
-death::GameInstance * LudumGame::CreateGameInstance()
+death::GameInstance * LudumGame::DoCreateGameInstance()
 {
 	return new LudumGameInstance(this);
 }

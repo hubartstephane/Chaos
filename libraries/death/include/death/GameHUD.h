@@ -52,6 +52,8 @@ namespace death
 		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player */
 		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
+		/** get the number of player */
+		size_t GetPlayerCount() const;
 
 		/** find a component by its class */
 		template<typename T>

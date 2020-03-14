@@ -24,7 +24,10 @@
 LudumGame::LudumGame(GLFWwindow* in_glfw_window) :
 	death::Game(in_glfw_window)
 {
-	game_name = "AsciiPaouf 2\nJuju and Barbara Edition";
+	game_name = "AsciiPaouf\nJuju and Barbara Edition";
+	game_instructions = R"INSTRUCTIONS(
+	Enter : Pause (You should have a look)
+	F10   : Toggle Fullscreen)INSTRUCTIONS";
 	looping_levels = false;
 }
 
@@ -363,7 +366,7 @@ int LudumGame::AddParticleLayers()
 	return render_order;
 }
 
-death::GameInstance * LudumGame::CreateGameInstance()
+death::GameInstance * LudumGame::DoCreateGameInstance()
 {
 	return new LudumGameInstance(this);
 }

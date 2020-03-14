@@ -306,12 +306,6 @@ namespace chaos
 			hints.alpha_bits = (hints.red_bits == 8 && hints.green_bits == 8 && hints.blue_bits == 8) ? 8 : 0; // alpha only if RGBA 32bits
 
 			hints.refresh_rate = mode->refreshRate;
-
-			if (pseudo_fullscreen) // full-screen, the window use the full-size
-			{
-				hints.decorated = 0;
-				hints.focused = 1;
-			}
 		}
 
 		GLFWmonitor * Window::GetFullscreenMonitor() const

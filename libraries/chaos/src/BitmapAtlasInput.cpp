@@ -313,7 +313,7 @@ namespace chaos
                     result[i] = child_images[indirection[i]];
                 return result;
             }
-            return child_images;
+           return child_images;
         }
 
         BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData& add_data)

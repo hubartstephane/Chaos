@@ -98,7 +98,7 @@ namespace death
 		// try start the game
 		if (game_instance == nullptr)
 		{
-			if (event.IsKeyPressed()) // && !event.IsKeyEvent(GLFW_KEY_ESCAPE) && !event.IsKeyEvent(GLFW_KEY_LEFT_SHIFT) && !event.IsKeyEvent(GLFW_KEY_RIGHT_SHIFT))
+			if (event.IsKeyPressed())
 				RequireStartGame(nullptr);
 			return true;
 		}
@@ -1198,29 +1198,36 @@ namespace death
 		}
 	}
 
+	GameInstance* Game::CreateGameInstance()
+	{
+		// create the game instance
+		GameInstance * result = DoCreateGameInstance();
+		if (result == nullptr)
+			return false;
+		// initialie the instance
+		if (!result->Initialize(this))
+		{
+			delete(result);
+			return false;
+		}
+		// create other resources
+		result->OnEnterGame();
+		return result;
+	}
+
 	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
-
-		// shurefactor
-
+		assert(game_instance == nullptr);
 		// create the game instance
 		game_instance = CreateGameInstance();
 		if (game_instance == nullptr)
 			return false;
-		if (!game_instance->Initialize(this))
-			return false;
-		// create other resources
+		// game entered			
 		CreatePlayingHUD();
+		// start the level
+		SetNextLevel(true);
 		// create a first player and insert it
 		game_instance->CreatePlayer(in_physical_gamepad);
-		// notify all players start the game instance
-		for (size_t i = 0; i < game_instance->players.size(); ++i)
-			if (game_instance->players[i] != nullptr)
-				game_instance->OnPlayerEntered(game_instance->players[i].get());
-		// game entered
-		game_instance->OnEnterGame();
-		// select the very first level
-		SetNextLevel(true); 
 
 		return true;
 	}
@@ -1656,7 +1663,7 @@ namespace death
 		return true;
 	}
 
-	GameInstance * Game::CreateGameInstance()
+	GameInstance * Game::DoCreateGameInstance()
 	{
 		return new GameInstance(this);
 	}

@@ -95,7 +95,7 @@ protected:
 	/** move the player */
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
-	virtual death::GameInstance * CreateGameInstance() override;
+	virtual death::GameInstance * DoCreateGameInstance() override;
 
 	bool PopulatePowerUps(nlohmann::json const & config, boost::filesystem::path const & config_path);
 

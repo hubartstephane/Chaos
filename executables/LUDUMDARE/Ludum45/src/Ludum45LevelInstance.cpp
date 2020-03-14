@@ -44,63 +44,72 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return true;
-	// get the PLAYER 0
-	LudumPlayer * player = GetPlayer(0);
-	if (player == nullptr)
-		return true;
 	// get the camera
-	death::Camera * camera = GetCamera(0);
+	death::Camera* camera = GetCamera(0);
 	if (camera == nullptr)
 		return true;
 	// get the camera boc without effects
 	chaos::box2 camera_box = camera->GetCameraBox(false);
 	if (IsGeometryEmpty(camera_box))
 		return true;
-	// get the player box
-	chaos::box2 player_box = player->GetPlayerBox();
-	if (IsGeometryEmpty(player_box))
-		return true;
 
-	// compute scroll for both camera and player
-	float scroll_displacement = ludum_game->scroll_factor * camera_speed * delta_time;
-	float camera_x = camera_box.position.x + scroll_displacement; // the final wanted camera Y
-
-																  // the camera follows the player in X & Y direction
-	chaos::box2 safe_camera = camera_box;
-	safe_camera.half_size *= camera->GetSafeZone();
-	chaos::RestrictToInside(safe_camera, player_box, true);
-	camera_box.position = safe_camera.position;
-
-	// force the camera Y position and player is now forced to be in Y camera range
-	camera_box.position.x = camera_x;
-	player_box.position.x += scroll_displacement;
-
-	// force the player Y to be in camera box (X will not change because already in correct range from previous restrictionp)
-	safe_camera = camera_box;
-	safe_camera.half_size *= camera->GetSafeZone();
-	chaos::RestrictToInside(safe_camera, player_box, false);
-
-	// restrict camera to world
-	chaos::box2 world = GetBoundingBox();
-	if (!IsGeometryEmpty(world))
+	// move all players
+	size_t player_count = GetPlayerCount();
+	for (size_t i = 0; i < player_count; ++i)
 	{
-		chaos::RestrictToInside(world, camera_box, false);
-		chaos::RestrictToInside(world, player_box, false);
-	}
+		// get the PLAYER 
+		LudumPlayer* player = GetPlayer(i);
+		if (player == nullptr)
+			continue;
+		// get the player box
+		chaos::box2 player_box = player->GetPlayerBox();
+		if (IsGeometryEmpty(player_box))
+			continue;
 
-	// apply the compute result
-	camera->SetCameraBox(camera_box);
-	player->SetPlayerBox(player_box);
+	
+
+
+
+
+
+
+		// compute scroll for both camera and player
+		float scroll_displacement = ludum_game->scroll_factor * camera_speed * delta_time;
+		float camera_x = camera_box.position.x + scroll_displacement; // the final wanted camera Y
+
+		// the camera follows the player in X & Y direction
+		chaos::box2 safe_camera = camera_box;
+		safe_camera.half_size *= camera->GetSafeZone();
+		chaos::RestrictToInside(safe_camera, player_box, true);
+		camera_box.position = safe_camera.position;
+
+		// force the camera Y position and player is now forced to be in Y camera range
+		camera_box.position.x = camera_x;
+		player_box.position.x += scroll_displacement;
+
+		// force the player Y to be in camera box (X will not change because already in correct range from previous restrictionp)
+		safe_camera = camera_box;
+		safe_camera.half_size *= camera->GetSafeZone();
+		chaos::RestrictToInside(safe_camera, player_box, false);
+
+		// restrict camera to world
+		chaos::box2 world = GetBoundingBox();
+		if (!IsGeometryEmpty(world))
+		{
+			chaos::RestrictToInside(world, camera_box, false);
+			chaos::RestrictToInside(world, player_box, false);
+		}
+		player->SetPlayerBox(player_box);
+
+		// apply the compute result
+		camera->SetCameraBox(camera_box);
+
+	}
+	
 
 	return true;
 }
 
-
-void LudumLevelInstance::OnLevelStarted()
-{
-	// super call
-	death::TiledMapLevelInstance::OnLevelStarted();
-}
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
@@ -114,13 +123,6 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	}
 
 	return true;
-}
-
-void LudumLevelInstance::OnPlayerEntered(death::Player * player)
-{
-	death::TiledMapLevelInstance::OnPlayerEntered(player);
-
-
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)

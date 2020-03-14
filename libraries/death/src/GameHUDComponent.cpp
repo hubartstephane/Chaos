@@ -12,74 +12,81 @@ namespace death
 	// GameHUDComponent
 	// ====================================================================
 
-	Game * GameHUDComponent::GetGame()
+	chaos::AutoCastable<Game> GameHUDComponent::GetGame()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGame();
 	}
 
-	Game const * GameHUDComponent::GetGame() const
+	chaos::AutoConstCastable<Game> GameHUDComponent::GetGame() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGame();
 	}
 
-	GameInstance * GameHUDComponent::GetGameInstance()
+	chaos::AutoCastable<GameInstance> GameHUDComponent::GetGameInstance()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGameInstance();
 	}
 
-	GameInstance const * GameHUDComponent::GetGameInstance() const
+	chaos::AutoConstCastable<GameInstance> GameHUDComponent::GetGameInstance() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGameInstance();
 	}
 
-	Level * GameHUDComponent::GetLevel()
+	chaos::AutoCastable<Level> GameHUDComponent::GetLevel()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevel();
 	}
 
-	Level const * GameHUDComponent::GetLevel() const
+	chaos::AutoConstCastable<Level> GameHUDComponent::GetLevel() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevel();
 	}
 
-	LevelInstance * GameHUDComponent::GetLevelInstance()
+	chaos::AutoCastable<LevelInstance> GameHUDComponent::GetLevelInstance()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevelInstance();
 	}
 
-	LevelInstance const * GameHUDComponent::GetLevelInstance() const
+	chaos::AutoConstCastable<LevelInstance> GameHUDComponent::GetLevelInstance() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevelInstance();
 	}
 
-	Player * GameHUDComponent::GetPlayer(size_t player_index)
+	chaos::AutoCastable<Player> GameHUDComponent::GetPlayer(size_t player_index)
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetPlayer(player_index);
 	}
 
-	Player const * GameHUDComponent::GetPlayer(size_t player_index) const
+	chaos::AutoConstCastable<Player> GameHUDComponent::GetPlayer(size_t player_index) const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetPlayer(player_index);
+	}
+
+	size_t GameHUDComponent::GetPlayerCount() const
+	{
+		if (hud == nullptr)
+			return 0;
+		return hud->GetPlayerCount();
 	}
 
 	void GameHUDComponent::OnInsertedInHUD() // XXX: this function is a "PLACEHOLDER". It does not deserve to be overriden. It is called in a template function 

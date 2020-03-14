@@ -54,6 +54,11 @@ namespace death
 		return nullptr;
 	}
 
+	size_t GameInstance::GetPlayerCount() const
+	{
+		return players.size();
+	}
+
 	int GameInstance::GetBestPlayerScore() const
 	{
 		int result = 0;
@@ -67,8 +72,14 @@ namespace death
 
 	bool GameInstance::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad* in_physical_gamepad)
 	{
-		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) // try to give the gamepad to a player
+		assert(in_physical_gamepad != nullptr);
+		// try to give the gamepad to a player
+		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) 
 			return true;
+		// try to have another player enter the game
+		if (CreatePlayer(in_physical_gamepad) != nullptr)
+			return true;
+
 		return false;
 	}
 
@@ -110,10 +121,6 @@ namespace death
 
 	Player * GameInstance::CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
-
-		// shurefactor
-
-
 		// ensure we can create a new player
 		size_t count = players.size();
 		if (count >= GetMaxPlayerCount())
@@ -132,6 +139,13 @@ namespace death
 		players.push_back(result);
 		// give the physical device to the player
 		result->CapturePhysicalGamepad(in_physical_gamepad);
+
+		// let the player enter the game instance
+		OnPlayerEntered(result);
+		// let the player enter the level
+		LevelInstance * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+			level_instance->OnPlayerEntered(result);
 
 		return result;
 	}
@@ -156,7 +170,7 @@ namespace death
 
 	size_t GameInstance::GetMaxPlayerCount() const
 	{
-		return 1;
+		return 2;
 	}
 
 	Player * GameInstance::DoCreatePlayer()

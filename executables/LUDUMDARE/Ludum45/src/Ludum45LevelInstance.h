@@ -32,11 +32,7 @@ protected:
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 	/** override */
-	virtual void OnLevelStarted() override;
-	/** override */
 	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
-	/** override */
-	virtual void OnPlayerEntered(death::Player * player) override;
 	/** override */
 	virtual void OnPlayerLeaved(death::Player * player) override;
 	/** override */

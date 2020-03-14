@@ -80,7 +80,7 @@ protected:
 	/** override */
 	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 
-	virtual death::GameInstance * CreateGameInstance() override;
+	virtual death::GameInstance * DoCreateGameInstance() override;
 
 protected:
 

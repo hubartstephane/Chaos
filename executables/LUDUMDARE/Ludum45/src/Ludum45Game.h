@@ -92,7 +92,7 @@ protected:
 	/** move the player */
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
 
-	virtual death::GameInstance * CreateGameInstance() override;
+	virtual death::GameInstance * DoCreateGameInstance() override;
 
 	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params) override;
 

@@ -8,6 +8,10 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
 
+#include <death/ShakeCameraComponent.h>
+#include <death/SoundListenerCameraComponent.h>
+#include <death/ScrollCameraComponent.h>
+
 // =============================================================
 // LudumLevelInstance implementation
 // =============================================================
@@ -22,17 +26,17 @@ void LudumLevelInstance::CreateCameras()
 {
 	death::TiledMapLevelInstance::CreateCameras();
 
+	LudumGame* ludum_game = GetGame();
+
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
 	{
-		//cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.8f));
-
 		cameras[i]->SetSafeZone(glm::vec2(0.9f, 0.6f));
 
-
-		//cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
 		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
+		if (ludum_game != nullptr)
+			cameras[i]->AddComponent(new death::ScrollCameraComponent(ludum_game->scroll_factor * camera_speed, chaos::Axis::AXIS_X));
 	}
 }
 
@@ -40,73 +44,19 @@ bool LudumLevelInstance::DoTick(float delta_time)
 {
 	death::TiledMapLevelInstance::DoTick(delta_time);
 
-	// get the game
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game == nullptr)
-		return true;
+	LudumGame* ludum_game = GetGame();
+
 	// get the camera
-	death::Camera* camera = GetCamera(0);
-	if (camera == nullptr)
-		return true;
-	// get the camera boc without effects
-	chaos::box2 camera_box = camera->GetCameraBox(false);
-	if (IsGeometryEmpty(camera_box))
-		return true;
-
-	// move all players
-	size_t player_count = GetPlayerCount();
-	for (size_t i = 0; i < player_count; ++i)
+	if (ludum_game != nullptr)
 	{
-		// get the PLAYER 
-		LudumPlayer* player = GetPlayer(i);
-		if (player == nullptr)
-			continue;
-		// get the player box
-		chaos::box2 player_box = player->GetPlayerBox();
-		if (IsGeometryEmpty(player_box))
-			continue;
-
-	
-
-
-
-
-
-
-		// compute scroll for both camera and player
-		float scroll_displacement = ludum_game->scroll_factor * camera_speed * delta_time;
-		float camera_x = camera_box.position.x + scroll_displacement; // the final wanted camera Y
-
-		// the camera follows the player in X & Y direction
-		chaos::box2 safe_camera = camera_box;
-		safe_camera.half_size *= camera->GetSafeZone();
-		chaos::RestrictToInside(safe_camera, player_box, true);
-		camera_box.position = safe_camera.position;
-
-		// force the camera Y position and player is now forced to be in Y camera range
-		camera_box.position.x = camera_x;
-		player_box.position.x += scroll_displacement;
-
-		// force the player Y to be in camera box (X will not change because already in correct range from previous restrictionp)
-		safe_camera = camera_box;
-		safe_camera.half_size *= camera->GetSafeZone();
-		chaos::RestrictToInside(safe_camera, player_box, false);
-
-		// restrict camera to world
-		chaos::box2 world = GetBoundingBox();
-		if (!IsGeometryEmpty(world))
+		death::Camera* camera = GetCamera(0);
+		if (camera != nullptr)
 		{
-			chaos::RestrictToInside(world, camera_box, false);
-			chaos::RestrictToInside(world, player_box, false);
+			death::ScrollCameraComponent* scroll_component = camera->FindComponentByClass<death::ScrollCameraComponent>();
+			if (scroll_component != nullptr)
+				scroll_component->SetScrollSpeed(ludum_game->scroll_factor * camera_speed);
 		}
-		player->SetPlayerBox(player_box);
-
-		// apply the compute result
-		camera->SetCameraBox(camera_box);
-
 	}
-	
-
 	return true;
 }
 

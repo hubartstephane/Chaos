@@ -139,7 +139,9 @@ namespace death
 			return result;
 		}
 		// insert the player in our list
+		result->player_index = players.size();
 		players.push_back(result);
+		
 		// give the physical device to the player
 		result->CapturePhysicalGamepad(in_physical_gamepad);
 

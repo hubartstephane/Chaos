@@ -1,5 +1,6 @@
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
+#include <death/ShakeCameraComponent.h>
 
 #include <chaos/ParticleDefault.h>
 

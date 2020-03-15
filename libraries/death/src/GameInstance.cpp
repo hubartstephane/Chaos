@@ -74,11 +74,14 @@ namespace death
 	{
 		assert(in_physical_gamepad != nullptr);
 		// try to give the gamepad to a player
-		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) 
-			return true;
-		// try to have another player enter the game
-		if (CreatePlayer(in_physical_gamepad) != nullptr)
-			return true;
+		//if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) 
+		//	return true;
+
+
+		// try to have another player enter the game (not in pause)
+		if (!game->IsPaused())
+			if (CreatePlayer(in_physical_gamepad) != nullptr)
+				return true;
 
 		return false;
 	}
@@ -409,6 +412,12 @@ namespace death
 
 	void GameInstance::OnLeaveGame()
 	{
+		// notify all players start the game instance
+		size_t count = players.size();
+		for (size_t i = 0; i < count; ++i)
+			if (players[i] != nullptr)
+				OnPlayerLeaved(players[i].get());
+		// destroy the sound category
 		if (sound_category != nullptr)
 		{
 			sound_category->Stop();

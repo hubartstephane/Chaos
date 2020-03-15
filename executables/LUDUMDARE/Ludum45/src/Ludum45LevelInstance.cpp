@@ -127,11 +127,11 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 {
-	death::TiledMapLevelInstance::OnPlayerLeaved(player);
-
 	LudumPlayer * ludum_player = auto_cast(player);
     if (ludum_player != nullptr)
         ludum_player->DoUpdateBrightSideOfLife(false);
+
+	death::TiledMapLevelInstance::OnPlayerLeaved(player);
 }
 
 death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const

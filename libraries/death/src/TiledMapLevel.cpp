@@ -1974,11 +1974,11 @@ namespace death
 
 	void TiledMapLevelInstance::OnLevelEnded()
 	{
-		death::LevelInstance::OnLevelEnded();
-
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->OnLevelEnded();
+
+		death::LevelInstance::OnLevelEnded();
 	}
 
 	void TiledMapLevelInstance::OnLevelStarted()

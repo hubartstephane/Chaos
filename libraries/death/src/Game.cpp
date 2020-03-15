@@ -12,7 +12,9 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ParticleDefault.h>
 
-#include <Death/GameParticles.h>
+#include <death/SoundListenerCameraComponent.h>
+#include <death/FreeCameraComponent.h>
+#include <death/GameParticles.h>
 
 namespace death
 {
@@ -1210,8 +1212,6 @@ namespace death
 			delete(result);
 			return false;
 		}
-		// create other resources
-		result->OnEnterGame();
 		return result;
 	}
 
@@ -1222,6 +1222,8 @@ namespace death
 		game_instance = CreateGameInstance();
 		if (game_instance == nullptr)
 			return false;
+		// create other resources
+		game_instance->OnEnterGame();
 		// game entered			
 		CreatePlayingHUD();
 		// start the level
@@ -1234,19 +1236,12 @@ namespace death
 
 	bool Game::OnLeaveGame()
 	{
-		// shurefactor
-
-
 		// update game data that must me prevent from destruction
 		UpdatePersistentGameData();
 		// save the best score (and other values)
 		SerializePersistentGameData(true);
 		// restore main menu condition (level, music ...)
 		SetCurrentLevel(nullptr);	
-		// notify all players start the game instance
-		for (size_t i = 0; i < game_instance->players.size(); ++i)
-			if (game_instance->players[i] != nullptr)
-				game_instance->OnPlayerLeaved(game_instance->players[i].get());
 		// game instance stop
 		game_instance->OnLeaveGame();
 		// destroy the game instance 

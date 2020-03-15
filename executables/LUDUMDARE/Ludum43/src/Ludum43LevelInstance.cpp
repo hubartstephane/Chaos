@@ -8,6 +8,9 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
 
+#include <death/FollowPlayerCameraComponent.h>
+#include <death/SoundListenerCameraComponent.h>
+
 #include <death/CameraComponent.h>
 
 // =============================================================

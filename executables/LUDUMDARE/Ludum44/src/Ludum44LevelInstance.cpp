@@ -4,6 +4,9 @@
 #include "Ludum44Player.h"
 #include "Ludum44GameInstance.h"
 
+#include <death/ShakeCameraComponent.h>
+#include <death/SoundListenerCameraComponent.h>
+
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
@@ -119,27 +122,6 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 	return true;
 }
-
-void LudumLevelInstance::OnPlayerEntered(death::Player * player)
-{
-	death::TiledMapLevelInstance::OnPlayerEntered(player);
-
-
-}
-
-void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
-{
-	death::TiledMapLevelInstance::OnPlayerLeaved(player);
-
-
-}
-
-
-
-
-
-
-
 
 death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const
 {

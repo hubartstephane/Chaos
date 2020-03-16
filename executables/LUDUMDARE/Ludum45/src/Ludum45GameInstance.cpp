@@ -6,6 +6,18 @@
 
 #include <death/SoundContext.h>
 
+
+
+
+
+
+
+
+
+
+
+
+
 LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
 	death::GameInstance(in_game)
 {
@@ -16,6 +28,56 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 {
 	return new LudumPlayer(this);
 }
+
+
+#if 0
+
+class GameRule
+{
+
+};
+
+bool Player::IsDead()
+{
+	if (health <= 0.0f)
+		return true;
+
+
+}
+
+class SinglePlayerGameRule : public GameRule
+{
+public:
+
+	bool Process()
+	{
+
+		death::Player* player = game_instance->GetPlayer(0);
+		if (player == nullptr)
+			return false;
+
+		if 
+
+	}
+
+	death::GameInstance* game_instance = nullptr;
+
+};
+
+class PVPGameRule : public GameRule
+{
+
+};
+
+class 
+
+
+
+#endif
+
+
+
+
 
 bool LudumGameInstance::DoCheckGameOverCondition() // shuludum : mututaliser le code
 {

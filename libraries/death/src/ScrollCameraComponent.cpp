@@ -23,18 +23,23 @@ namespace death
 		if (IsGeometryEmpty(camera_box))
 			return true;
 
+		size_t axis_index = (size_t)axis;
+
 		// compute scroll for both camera and player
 		float scroll_displacement = scroll_speed * delta_time;
 
-		// scroll the camera in given direction and keep the wanted value
-		camera_box.position[(size_t)axis] += scroll_displacement;
+		// scroll the camera in given direction and keep the wanted value	
+		float camera_position_scroll_axis = camera_box.position[axis_index] + scroll_displacement;
+		camera_box.position[axis_index] = camera_position_scroll_axis;
 
-		float camera_position = camera_box.position[(size_t)axis];
+		float camera_position_scroll_other_axis = camera_box.position[1 - axis_index];
 
 		// get the world
-		chaos::box2 world = camera->GetLevelInstance()->GetBoundingBox();
+		chaos::box2 world = level_instance->GetBoundingBox();
 
-		// step 1 : scroll all players and camera follows players in axis not concerned by the scroll
+		// step 1 : scroll all players. Compute all players bounding box. Move the camera according the players
+		chaos::box2 all_players_box;
+
 		size_t player_count = camera->GetPlayerCount();
 		for (size_t i = 0; i < player_count; ++i)
 		{
@@ -42,14 +47,12 @@ namespace death
 			Player* player = camera->GetPlayer(i);
 			if (player == nullptr)
 				continue;
-
 			// get the player box
 			chaos::box2 player_box = player->GetPlayerBox();
 			if (IsGeometryEmpty(player_box))
 				continue;
-
-			// scroll the player
-			player_box.position[(size_t)axis] += scroll_displacement;
+			// scroll the player and keep it into world
+			player_box.position[axis_index] += scroll_displacement;
 			if (!IsGeometryEmpty(world))
 				chaos::RestrictToInside(world, player_box, false);
 			player->SetPlayerBox(player_box);
@@ -59,10 +62,27 @@ namespace death
 			safe_camera.half_size *= camera->GetSafeZone();
 			chaos::RestrictToInside(safe_camera, player_box, true);
 			camera_box.position = safe_camera.position;
-			
 			// ensure the camera has not been modified along the scroll direction
-			camera_box.position[(size_t)axis] = camera_position;
+			camera_box.position[axis_index] = camera_position_scroll_axis;
+			// the whole player bounding box
+			all_players_box = all_players_box | player_box;
 		}
+
+		// compute the max displacement along the other index
+		float min_player_box_other_axis = all_players_box.position[1 - axis_index] - all_players_box.half_size[1 - axis_index];
+		float max_player_box_other_axis = all_players_box.position[1 - axis_index] + all_players_box.half_size[1 - axis_index];
+
+		// the camera position must stay between theses 2 values 
+		float p1_other_axis = min_player_box_other_axis + camera_box.half_size[1 - axis_index];
+		float p2_other_axis = max_player_box_other_axis - camera_box.half_size[1 - axis_index];		
+
+
+		if (p2_other_axis - p1_other_axis > 2.0f * camera_box.half_size[1 - axis_index]) // range too big : dont move
+			camera_box.position[1 - axis_index] = camera_position_scroll_other_axis;
+		else if (camera_box.position[1 - axis_index] > p1_other_axis)
+			camera_box.position[1 - axis_index] = p1_other_axis;
+		else if (camera_box.position[1 - axis_index] < p2_other_axis)
+			camera_box.position[1 - axis_index] = p2_other_axis;
 
 		// restrict camera to world		
 		if (!IsGeometryEmpty(world))

@@ -14,7 +14,7 @@ bool EnemyPattern::Initialize(chaos::TiledMap::PropertyOwner const * def)
 	return true;
 }
 
-bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, chaos::box2 const & camera_box)
+bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & camera_box)
 {
 
 	float particle_ratio = chaos::MathTools::CastAndDiv<float>(particle->enemy_index, particle->enemy_particle_count);

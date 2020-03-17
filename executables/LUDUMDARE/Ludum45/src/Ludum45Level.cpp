@@ -112,7 +112,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
             particle.pattern = p;
             particle.spawner_surface = surface->GetBoundingBox(true);
             particle.time = 0.0f;
-            p->UpdateParticle(0.0f, &particle, player_box, camera_box);
+            p->UpdateParticle(0.0f, &particle, camera_box);
         }    
     });
     return true;

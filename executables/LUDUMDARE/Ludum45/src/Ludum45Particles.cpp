@@ -90,12 +90,13 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 // ParticleEnemyTrait
 // ===========================================================================
 
-chaos::box2 ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
+std::vector<chaos::box2> ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
 {
-	chaos::box2 result;
+	std::vector<chaos::box2> result;
 
-	result = layer_trait->game->GetPlayer(0)->GetPlayerBox();
-
+	size_t count = layer_trait->game->GetPlayerCount();
+	for (size_t i = 0; i < count; ++i)
+		result.push_back(layer_trait->game->GetPlayer(i)->GetPlayerBox());
 	return result;
 }
 
@@ -126,7 +127,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
         primitive[i].color = color;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, std::vector<chaos::box2> const& player_boxes, LayerTrait const * layer_trait) const
 {
 	if (particle->enemy_health <= 0.0f)
 		return true;
@@ -141,18 +142,22 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	if (particle->touched_count_down > 0.0f)
 		particle->touched_count_down -= delta_time;
 
-	if (chaos::Collide(bb, player_box))
+	for (size_t i = 0; i < player_boxes.size(); ++i)
 	{
-		LudumPlayer * ludum_player = layer_trait->game->GetPlayer(0);
-		if (ludum_player != nullptr)			
+		chaos::box2 player_box = player_boxes[i];
+		if (chaos::Collide(bb, player_box))
 		{
-			if (ludum_player->dash_timer <= 0.0f ||! ludum_player->GetGhostLevel())
+			LudumPlayer* ludum_player = layer_trait->game->GetPlayer(i);
+			if (ludum_player != nullptr)
 			{
-				float life_lost = OnCollisionWithEnemy(particle, particle->enemy_health, layer_trait->game, true, particle->bounding_box); // destroy the enemy always
+				if (ludum_player->dash_timer <= 0.0f || !ludum_player->GetGhostLevel())
+				{
+					float life_lost = OnCollisionWithEnemy(particle, particle->enemy_health, layer_trait->game, true, particle->bounding_box); // destroy the enemy always
 
-				ludum_player->SetHealth(-life_lost, true);
-				
-				return true;
+					ludum_player->SetHealth(-life_lost, true);
+
+					return true;
+				}
 			}
 		}
 	}
@@ -174,22 +179,21 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	particle->time += delta_time;
 
 	particle->bounding_box.position += particle->velocity * delta_time;
-
 	
 	if (particle->pattern != nullptr)
-		return particle->pattern->UpdateParticle(delta_time, particle, player_box, layer_trait->game->GetLevelInstance()->GetCameraBox(0));
-
+		return particle->pattern->UpdateParticle(delta_time, particle, layer_trait->game->GetLevelInstance()->GetCameraBox(0));
 
 	return false;
 }
 
 
-chaos::box2 ParticleBonusTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const
+std::vector<chaos::box2> ParticleBonusTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const
 {
-	chaos::box2 result;
+	std::vector<chaos::box2> result;
 
-	result = layer_trait->game->GetPlayer(0)->GetPlayerBox();
-
+	size_t count = layer_trait->game->GetPlayerCount();
+	for (size_t i = 0; i < count; ++i)
+		result.push_back(layer_trait->game->GetPlayer(i)->GetPlayerBox());
 	return result;
 }
 
@@ -215,18 +219,22 @@ void ParticleBonusTrait::ParticleToPrimitives(ParticleBonus const& particle, cha
         primitive[i].color = particle.color;
 }
 
-bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const
+bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const
 {
 	chaos::box2 bb = particle->bounding_box;
 	bb.half_size *= 0.70f;
 
-	if (chaos::Collide(bb, player_box))
+	for (size_t i = 0; i < player_boxes.size(); ++i)
 	{
-		LudumPlayer * ludum_player = layer_trait->game->GetPlayer(0);
-		if (ludum_player != nullptr)
-			ludum_player->OnPlayerUpgrade(particle->bonus_type);
+		chaos::box2 player_box = player_boxes[i];
+		if (chaos::Collide(bb, player_box))
+		{
+			LudumPlayer* ludum_player = layer_trait->game->GetPlayer(i);
+			if (ludum_player != nullptr)
+				ludum_player->OnPlayerUpgrade(particle->bonus_type);
 
-		return true;
+			return true;
+		}
 	}
 	return false;
 }

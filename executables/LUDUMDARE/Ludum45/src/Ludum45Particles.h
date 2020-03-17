@@ -67,9 +67,9 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	chaos::box2 BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const;
+	std::vector<chaos::box2> BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleBonus * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleBonus * particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleBonus const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleBonus const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
@@ -118,9 +118,9 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	chaos::box2 BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;
+	std::vector<chaos::box2> BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, chaos::box2 const & player_box, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleEnemy * particle, std::vector<chaos::box2> const& player_boxes, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;

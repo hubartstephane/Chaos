@@ -193,3 +193,15 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 			player_particles[i].life = GetMaxHealth(); // XXX : the health of the player is never modified. Instead, the player particle health is changed
 	}
 }
+
+bool LudumPlayer::IsDead() const
+{
+	if (death::Player::IsDead())
+		return true;
+
+	ParticlePlayer const* particle_player = GetPlayerParticle();
+	if (particle_player == nullptr)
+		return true;
+
+	return false;
+}

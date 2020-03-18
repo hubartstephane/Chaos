@@ -17,18 +17,6 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 	return new LudumPlayer(this);
 }
 
-bool LudumGameInstance::DoCheckGameOverCondition()
-{
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game != nullptr)
-	{
-		ParticlePlayer const * particle_player = ludum_game->GetPlayerParticle(0);
-		if (particle_player == nullptr)
-			return true;		
-	}
-	return death::GameInstance::DoCheckGameOverCondition();
-}
-
 bool LudumGameInstance::DoTick(float delta_time)
 {
 	death::GameInstance::DoTick(delta_time);

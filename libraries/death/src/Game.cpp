@@ -1251,19 +1251,10 @@ namespace death
 
 	bool Game::CheckGameOverCondition()
 	{
-		// shurefactor ->  level_instance->DoCheckGameOverCondition()   juste timeout
-
-
+		// check for game over in game instance
 		if (game_instance != nullptr)
-		{
-			// check level game over only if game is started. It could be a background level in main menu
-			if (level_instance != nullptr)
-				if (level_instance->DoCheckGameOverCondition())
-					return true;
-			// check for game over in game instance
 			if (game_instance->DoCheckGameOverCondition())
 				return true;
-		}
 		return false; // no gameover
 	}
 

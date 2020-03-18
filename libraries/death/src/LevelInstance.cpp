@@ -93,7 +93,12 @@ namespace death
 
 	void LevelInstance::OnPlayerEntered(Player * player)
 	{
-
+		// create respawn checkpoint for the very first player
+		GameInstance* game_instance = GetGameInstance();
+		if (game_instance == nullptr)
+			return;
+		if (GetPlayerCount() == 1)
+			game_instance->CreateRespawnCheckpoint();
 	}
 
 	void LevelInstance::OnPlayerLeaved(Player * player)
@@ -149,9 +154,6 @@ namespace death
 		size_t player_count = game_instance->GetPlayerCount();
 		for (size_t i = 0; i < player_count; ++i)
 			OnPlayerEntered(game_instance->GetPlayer(i));		
-		// create respawn checkpoint
-		if (player_count > 0)
-			game_instance->CreateRespawnCheckpoint();
 	}
 
 	void LevelInstance::CreateBackgroundImage()
@@ -279,7 +281,7 @@ namespace death
 		RestrictObjectToWorld(player->GetPlayerAllocation(), 0);
 	}
 
-	bool LevelInstance::DoCheckGameOverCondition()
+	bool LevelInstance::IsPlayerDead(Player * player)
 	{
 		if (level_timeout == 0.0f)
 			return true;

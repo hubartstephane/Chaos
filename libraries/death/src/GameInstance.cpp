@@ -302,14 +302,58 @@ namespace death
 		}
 	}
 
+	bool GameInstance::RespawnPlayer(Player* player)
+	{
+		int life_count = player->GetLifeCount();
+		// keep some values to restore later
+		int score = player->GetScore();
+		// try to go to checkpoint
+		if (!RestartFromRespawnCheckpoint())
+			return false;
+		// update player values after death
+		player->SetScore(score, false);
+		player->SetLifeCount(life_count - 1, false);
+		player->OnLifeLost();
+		return true;
+	}
+
 	bool GameInstance::DoCheckGameOverCondition()
 	{
-		// player has no life any more
-		Player * player = GetPlayer(0);
-		if (player != nullptr)
-			if (player->GetLifeCount() <= 0)
-				return true;
+		bool any_player_alive = false;
 
+		death::LevelInstance* level_instance = GetLevelInstance();
+
+		// compute whether all player are dead
+		size_t player_count = GetPlayerCount();
+		for (size_t i = 0; i < player_count; ++i)
+		{
+			death::Player* player = GetPlayer(i);
+			if (player == nullptr)
+				continue;
+
+			// check whether the player is dead (from player point of view or level instance)
+			bool player_dead = player->IsDead();
+			if (!player_dead && level_instance != nullptr)
+				player_dead = level_instance->IsPlayerDead(player);
+
+			// player still alive
+			if (!player_dead) 
+			{
+				any_player_alive = true;
+			}
+			// player dead
+			else
+			{
+				int life_count = player->GetLifeCount(); // player may respawn
+				if (life_count > 0)
+					if (RespawnPlayer(player))
+						any_player_alive = true;
+			}
+		}
+
+		// no more living player, end the game
+		if (!any_player_alive)
+			return true;
 		return false;
 	}
 

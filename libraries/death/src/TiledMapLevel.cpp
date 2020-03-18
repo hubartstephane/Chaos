@@ -171,7 +171,7 @@ namespace death
 			return false;
 
 		GameInstance* game_instance = GetLayerInstance()->GetGame()->GetGameInstance();
-		if (game_instance != nullptr)
+		if (game_instance != nullptr && game_instance->GetPlayerCount() > 0)
 			game_instance->CreateRespawnCheckpoint();
 
 		return true; // collisions handled successfully
@@ -1800,6 +1800,8 @@ namespace death
 
 	void TiledMapLevelInstance::OnPlayerEntered(Player* player)
 	{
+		death::LevelInstance::OnPlayerEntered(player);
+
 		// early exit
 		if (player == nullptr)
 			return;
@@ -1868,6 +1870,8 @@ namespace death
 
 	void TiledMapLevelInstance::OnPlayerLeaved(Player* player)
 	{
+		death::LevelInstance::OnPlayerLeaved(player);
+
 		if (player == nullptr)
 			return;
 		player->SetPlayerAllocation(nullptr);

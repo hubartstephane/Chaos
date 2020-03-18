@@ -78,6 +78,9 @@ namespace death
         /** update player health */
         void SetHealth(float in_value, bool in_increment = false);
 
+		/** check whether the player is dead */
+		virtual bool IsDead() const;
+
 		/** try to give physical device to the player */
 		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 

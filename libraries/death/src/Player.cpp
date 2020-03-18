@@ -379,6 +379,14 @@ namespace death
         }
     }
 
+	bool Player::IsDead() const
+	{
+		// no more health
+		if (health <= 0.0f)
+			return true;
+		return false;
+	}
+
     bool Player::CheckButtonPressed(int const* keyboard_buttons, int gamepad_button)
     {
         // keyboard input

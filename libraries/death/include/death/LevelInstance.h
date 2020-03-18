@@ -149,8 +149,8 @@ namespace death
 		/** state changes */
 		virtual void OnGameOver();
 
-		/** check whether there is a game over */
-		virtual bool DoCheckGameOverCondition();
+		/** check whether a player is dead according to the level instance */
+		virtual bool IsPlayerDead(Player * player);
 
 		/** change the background */
 		virtual void CreateBackgroundImage();

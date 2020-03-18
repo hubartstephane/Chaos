@@ -8,6 +8,10 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
 
+#include <death/FollowPlayerCameraComponent.h>
+#include <death/ShakeCameraComponent.h>
+#include <death/SoundListenerCameraComponent.h>
+
 // =============================================================
 // LudumLevelInstance implementation
 // =============================================================

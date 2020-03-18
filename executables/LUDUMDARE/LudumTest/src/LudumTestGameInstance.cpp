@@ -17,18 +17,6 @@ death::Player * LudumGameInstance::DoCreatePlayer()
 	return new LudumPlayer(this);
 }
 
-bool LudumGameInstance::DoCheckGameOverCondition() // shuludum : mututaliser le code
-{
-	LudumPlayer * ludum_player = GetPlayer(0);
-	if (ludum_player != nullptr)
-	{
-
-
-	}
-	return false;
-}
-
-
 void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 {
 	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);

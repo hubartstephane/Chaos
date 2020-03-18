@@ -360,7 +360,14 @@ namespace death
 
 	void GameInstance::OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance)
 	{
-
+		size_t count = GetPlayerCount();
+		for (size_t i = 0; i < count; ++i)
+		{
+			Player* player = GetPlayer(i);
+			if (player == nullptr)
+				continue;
+			player->OnLevelChanged(new_level, old_level, new_level_instance);
+		}
 	}
 	
 	void GameInstance::OnPlayerEntered(Player * player)

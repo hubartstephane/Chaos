@@ -94,6 +94,7 @@ namespace death
 	void LevelInstance::OnPlayerEntered(Player * player)
 	{
 		assert(player != nullptr);
+		// 
 		// create the pawn for the player
 		CreatePlayerPawn(player);
 		// create respawn checkpoint for the very first player

@@ -154,6 +154,7 @@ namespace death
 
 		/** called whenever a life is lost */
 		virtual void OnLifeLost();
+
 		/** override */
 		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const override;
 		/** override */

@@ -421,7 +421,6 @@ namespace death
 	void Player::OnGameValuesChanged(bool hot_reload)
 	{
 		health = max_health;
-
 	}
 
 	GLFWwindow* Player::GetGLFWWindow() const

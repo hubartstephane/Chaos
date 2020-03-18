@@ -150,7 +150,10 @@ namespace death
 		// let the player enter the level
 		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
+		{
 			level_instance->OnPlayerEntered(result);
+			result->OnLevelChanged(level_instance->GetLevel(), nullptr, level_instance);
+		}
 
 		return result;
 	}
@@ -372,12 +375,12 @@ namespace death
 	
 	void GameInstance::OnPlayerEntered(Player * player)
 	{
-
+		assert(player != nullptr);
 	}
 	
 	void GameInstance::OnPlayerLeaved(Player * player)
 	{
-
+		assert(player != nullptr);
 	}
 
 	bool GameInstance::CreateRespawnCheckpoint()

@@ -828,9 +828,7 @@ namespace death
 		virtual void ComputePlayerAndCameraCollision(float delta_time);
 
 		/** override */
-		virtual void OnPlayerEntered(Player* player) override;
-		/** override */
-		virtual void OnPlayerLeaved(Player* player) override;
+		virtual void CreatePlayerPawn(Player* player) override;
 
 		/** override */
 		virtual void OnLevelEnded() override;

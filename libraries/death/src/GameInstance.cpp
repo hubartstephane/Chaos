@@ -304,7 +304,10 @@ namespace death
 
 	bool GameInstance::RespawnPlayer(Player* player)
 	{
+		// enough life ?
 		int life_count = player->GetLifeCount();
+		if (life_count <= 1)
+			return false;
 		// keep some values to restore later
 		int score = player->GetScore();
 		// try to go to checkpoint
@@ -344,10 +347,8 @@ namespace death
 			// player dead
 			else
 			{
-				int life_count = player->GetLifeCount(); // player may respawn
-				if (life_count > 0)
-					if (RespawnPlayer(player))
-						any_player_alive = true;
+				if (RespawnPlayer(player))
+					any_player_alive = true;
 			}
 		}
 

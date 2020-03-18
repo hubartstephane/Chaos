@@ -1798,13 +1798,9 @@ namespace death
 		camera->SetCameraBox(camera_box);
 	}
 
-	void TiledMapLevelInstance::OnPlayerEntered(Player* player)
+	void TiledMapLevelInstance::CreatePlayerPawn(Player* player)
 	{
-		death::LevelInstance::OnPlayerEntered(player);
-
-		// early exit
-		if (player == nullptr)
-			return;
+		assert(player != nullptr);
 
 		TiledMapLevel* level = GetLevel();
 
@@ -1866,15 +1862,6 @@ namespace death
 		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
 		//          call it twice as a fast fix
 		layer_instance->FinalizeParticles();
-	}
-
-	void TiledMapLevelInstance::OnPlayerLeaved(Player* player)
-	{
-		death::LevelInstance::OnPlayerLeaved(player);
-
-		if (player == nullptr)
-			return;
-		player->SetPlayerAllocation(nullptr);
 	}
 
 	void TiledMapLevelInstance::CreateBackgroundImage()

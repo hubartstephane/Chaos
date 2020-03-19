@@ -4,6 +4,8 @@
 #include "Ludum41CustomLevel.h"
 #include "Ludum41CustomLevelInstance.h"
 
+#include <death/SoundContext.h>
+
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
@@ -110,4 +112,40 @@ void LudumPlayer::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode
 			game_instance->sequence_challenge->Show(game_instance->game->IsPlaying());
 		}
 	}
+}
+
+bool LudumPlayer::IsDead() const
+{
+	if (death::Player::IsDead())
+		return true;
+
+	LudumGameInstance const* ludum_game_instance = GetGameInstance();
+	if (ludum_game_instance != nullptr)
+	{
+		if (ludum_game_instance->GetBallCount() == 0)
+			return true;
+	}
+	return false;
+}
+
+void LudumPlayer::OnLifeLost()
+{
+	death::Player::OnLifeLost();
+
+	LudumGame* ludum_game = GetGame();
+	LudumGameInstance* ludum_game_instance = GetGameInstance();
+
+	ludum_game->PlaySound("balllost", false, false, 0.0f, death::SoundContext::GAME);
+	ludum_game_instance->combo_multiplier = 1;
+	ludum_game_instance->ball_collision_speed = 0.0f;
+	ludum_game_instance->ball_power = 1.0f;
+	ludum_game_instance->ball_speed = ludum_game->ball_initial_speed;
+	ludum_game_instance->pending_split_count = 0;
+	ludum_game_instance->target_brick_offset = 0.0f;
+	ludum_game_instance->ball_time_dilation = 1.0f;
+	ludum_game_instance->challenge_timer = ludum_game->challenge_frequency;
+
+	SetPlayerLength(ludum_game->player_initial_length, false);
+
+	ludum_game_instance->balls_allocations = ludum_game_instance->CreateBalls(1, true);
 }

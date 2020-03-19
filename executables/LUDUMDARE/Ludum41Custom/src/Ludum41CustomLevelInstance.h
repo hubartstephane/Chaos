@@ -31,6 +31,8 @@ public:
 	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
 	/** override */
 	virtual bool DoTick(float delta_time) override;
+	/** override */
+	virtual void CreatePlayerPawn(death::Player* player) override;
 
 protected:
 

@@ -33,6 +33,10 @@ public:
 	/** get the maximum life count */
 	int GetMaxLifeCount() const { return max_life_count; }
 
+	virtual bool IsDead() const override;
+
+	virtual void OnLifeLost() override;
+
 protected:
 
 	/** override */

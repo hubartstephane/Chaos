@@ -3,6 +3,7 @@
 
 namespace chaos
 {
+
 	bool KeyEvent::IsKeyPressed() const
 	{
 		return (action == GLFW_PRESS || action == GLFW_REPEAT);

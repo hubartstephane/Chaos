@@ -5,6 +5,9 @@
 #include <death/TiledMapLevel.h>
 #include <death/SoundContext.h>
 
+
+#include <chaos/LogTools.h>
+
 #include <chaos/InputMode.h>
 #include <chaos/FileTools.h>
 #include <chaos/TiledMap.h>
@@ -691,6 +694,16 @@ namespace death
 
 	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
+		for (int i = GLFW_KEY_SPACE; i <= GLFW_KEY_LAST; ++i)
+		{
+			chaos::LogTools::Log("Key [%03d] = [%s]", i, glfwGetKeyName(i, glfwGetKeyScancode(i)));
+
+		}
+
+
+
+
+
 		// initialize the gamepad manager
 		if (!CreateGamepadManager(config, config_path))
 			return false;

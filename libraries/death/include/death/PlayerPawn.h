@@ -19,42 +19,21 @@ namespace death
 
 	class PlayerPawn : public chaos::Tickable, public CheckpointObject<PlayerPawnCheckpoint>
 	{
+
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
 
 		DEATH_GAMEENTITY_IMPLEMENT();
 
-		/** destructor */
-		virtual ~PlayerPawn() = default;
-
-		/** get pawn position */
+		/** override */
 		virtual glm::vec2 GetPosition() const;
-		/** get pawn box */
+		/** override */
 		virtual chaos::box2 GetBox() const;
-		/** set the pawn position */
+		/** override */
 		virtual bool SetPosition(glm::vec2 const& position);
-		/** set the pawn box */
+		/** override */
 		virtual bool SetBox(chaos::box2 const& box);
-	};
-
-	// =============================================
-	// SimplePlayerPawn : a pawn to handle a single allocation
-	// =============================================
-
-	class SimplePlayerPawn : public PlayerPawn
-	{
-
-	public:
-
-		/** override */
-		virtual glm::vec2 GetPosition() const override;
-		/** override */
-		virtual chaos::box2 GetBox() const override;
-		/** override */
-		virtual bool SetPosition(glm::vec2 const& position) override;
-		/** override */
-		virtual bool SetBox(chaos::box2 const& box) override;
 
 		/** get the pawn allocation */
 		chaos::ParticleAllocationBase* GetAllocation() { return allocations.get(); }
@@ -64,7 +43,7 @@ namespace death
 		virtual void SetAllocation(chaos::ParticleAllocationBase* in_allocation);
 
 		/** get pawn particle */
-		chaos::ParticleDefault::Particle* GetParticle();
+		chaos::ParticleDefault::Particle * GetParticle();
 		chaos::ParticleDefault::Particle const* GetParticle() const;
 
 	protected:

@@ -140,7 +140,7 @@ namespace death
 		virtual void OnPlayerLeaved(Player * player);
 
 		/** give the player a pawn */
-		virtual void CreatePlayerPawn(Player* player);
+		virtual PlayerPawn * CreatePlayerPawn(Player* player);
 		/** delete the pawn for the player */
 		virtual void DestroyPlayerPawn(Player* player);
 

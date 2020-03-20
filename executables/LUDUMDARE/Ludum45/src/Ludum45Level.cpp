@@ -132,15 +132,6 @@ death::LevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
 	return new LudumLevelInstance(auto_cast(in_game));
 }
 
-bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
-{
-	if (!death::TiledMapLevel::FinalizeLayerParticles(layer_instance, allocation))
-		return false;
-
-	return true;
-}
-
-
 chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();

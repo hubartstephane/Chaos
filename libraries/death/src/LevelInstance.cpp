@@ -111,9 +111,10 @@ namespace death
 		DestroyPlayerPawn(player);	
 	}
 
-	void LevelInstance::CreatePlayerPawn(Player* player)
+	PlayerPawn * LevelInstance::CreatePlayerPawn(Player* player)
 	{
 		assert(player != nullptr);
+		return nullptr;
 	}
 
 	void LevelInstance::DestroyPlayerPawn(Player* player)

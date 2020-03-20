@@ -4,6 +4,7 @@
 #include <death/LevelInstance.h>
 #include <death/TiledMapParticle.h>
 #include <death/GameCheckpoint.h>
+#include <death/GameFramework.h>
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
@@ -673,7 +674,7 @@ namespace death
 		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
 
 		/** finalize the particles created */
-		virtual bool FinalizeParticles();
+		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);
 		/** try to search a name and a tag in the chaos::layer,  give them to the particle layer (and some other data as well) */
 		virtual bool InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer);
 
@@ -828,7 +829,12 @@ namespace death
 		virtual void ComputePlayerAndCameraCollision(float delta_time);
 
 		/** override */
-		virtual void CreatePlayerPawn(Player* player) override;
+		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
+		/** the sub function responsible for player pawn creation */
+		virtual PlayerPawn * DoCreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box);
+
+		/** get the player start used for an incomming player */
+		virtual TiledMapPlayerStartObject* GetPlayerStartForPawn(Player* player);
 
 		/** override */
 		virtual void OnLevelEnded() override;

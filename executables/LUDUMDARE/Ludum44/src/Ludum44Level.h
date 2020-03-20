@@ -96,8 +96,6 @@ protected:
 	/** override */
 	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
 
-	virtual bool FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
-
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
 	virtual death::TiledMapGeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;

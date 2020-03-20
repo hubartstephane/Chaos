@@ -778,7 +778,7 @@ namespace death
 		{
 			if (!InitializeImageLayer(image_layer))
 				return false;
-			return FinalizeParticles();
+			return FinalizeParticles(nullptr);
 		}
 
 		chaos::TiledMap::ObjectLayer* object_layer = layer->GetObjectLayer();
@@ -786,7 +786,7 @@ namespace death
 		{
 			if (!InitializeObjectLayer(object_layer))
 				return false;
-			return FinalizeParticles();
+			return FinalizeParticles(nullptr);
 		}
 
 		chaos::TiledMap::TileLayer* tile_layer = layer->GetTileLayer();
@@ -794,7 +794,7 @@ namespace death
 		{
 			if (!InitializeTileLayer(tile_layer))
 				return false;
-			return FinalizeParticles();
+			return FinalizeParticles(nullptr);
 		}
 
 		return false;
@@ -996,7 +996,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLayerInstance::FinalizeParticles()
+	bool TiledMapLayerInstance::FinalizeParticles(chaos::ParticleAllocationBase* allocation)
 	{
 		// no layer, nothing to do !
 		if (particle_layer == nullptr)
@@ -1006,11 +1006,19 @@ namespace death
 		if (level == nullptr)
 			return true;
 		// initialize each allocations
-		size_t allocation_count = particle_layer->GetAllocationCount();
-		for (size_t i = 0; i < allocation_count; ++i)
-			if (!level->FinalizeLayerParticles(this, particle_layer->GetAllocation(i)))
+		if (allocation == nullptr)
+		{
+			size_t allocation_count = particle_layer->GetAllocationCount();
+			for (size_t i = 0; i < allocation_count; ++i)
+				if (!level->FinalizeLayerParticles(this, particle_layer->GetAllocation(i)))
+					return false;
+		}
+		// or just specified one
+		else
+		{
+			if (!level->FinalizeLayerParticles(this, allocation))
 				return false;
-
+		}
 		return true;
 	}
 	bool TiledMapLayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer)
@@ -1798,42 +1806,82 @@ namespace death
 		camera->SetCameraBox(camera_box);
 	}
 
-	void TiledMapLevelInstance::CreatePlayerPawn(Player* player)
-	{
-		assert(player != nullptr);
 
+	TiledMapPlayerStartObject* TiledMapLevelInstance::GetPlayerStartForPawn(Player* player)
+	{
 		TiledMapLevel* level = GetLevel();
+		if (level == nullptr)
+			return nullptr;
 
 		// search PLAYER START NAME
 		std::string const* player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
 
 		// search the PLAYER START
-		TiledMapPlayerStartObject* player_start = nullptr;
+		TiledMapPlayerStartObject* result = nullptr;
 		if (player_start_name != nullptr)
-		{
-			player_start = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
-		}
+			result = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
+		if (result == nullptr)
+			result = FindPlayerStart(nullptr); // try to find the very first one otherwise
+		return result;
+	}
+
+	PlayerPawn* TiledMapLevelInstance::DoCreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box)
+	{
+		// create a particle populator
+		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
+		if (!particle_populator->Initialize(layer_instance))
+			return nullptr;
+
+		// create the particle
+		particle_populator->AddParticle(bitmap_name, player_bounding_box);
+		particle_populator->FlushParticles();
+
+		// get the allocation and finalize the layer
+		chaos::ParticleAllocationBase* player_allocation = particle_populator->GetParticleAllocation();
+		if (player_allocation == nullptr)
+			return nullptr;
+		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
+		//          call it twice as a fast fix
+		layer_instance->FinalizeParticles(player_allocation);
+
+
+
+		player->SetPlayerAllocation(player_allocation);
+
+		 return nullptr;
+
+
+		// return a new player pawn
+		PlayerPawn* result = new PlayerPawn;
+		if (result == nullptr)
+			return result;
+
+		result->SetAllocation(player_allocation);
+		return result;
+
+
+		// set the player allocation
+		player->SetPlayerAllocation(player_allocation);
+
+
+	}
+
+	PlayerPawn * TiledMapLevelInstance::CreatePlayerPawn(Player* player)
+	{
+		// find the player start to use for the player
+		TiledMapPlayerStartObject* player_start = GetPlayerStartForPawn(player);
 		if (player_start == nullptr)
-		{
-			player_start = FindPlayerStart(nullptr); // try to find the very first one otherwise
-			if (player_start == nullptr)
-				return;
-		}
+			return nullptr;
 
 		// search the bitmap name for the player
 		std::string const* bitmap_name = player_start->GetGeometricObject()->FindPropertyString("BITMAP_NAME");
 		if (bitmap_name == nullptr)
-			return;
+			return nullptr;
 
 		// initialize some data
 		TiledMapLayerInstance* layer_instance = player_start->GetLayerInstance();
 		if (layer_instance == nullptr)
-			return;
-
-		// create a particle populator
-		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
-		if (!particle_populator->Initialize(layer_instance))
-			return;
+			return nullptr;
 
 		// compute the bounding box
 		chaos::box2 player_bounding_box;
@@ -1843,25 +1891,10 @@ namespace death
 		if (object_surface != nullptr)
 			player_bounding_box = object_surface->GetBoundingBox(true);
 
-
-		// shuludum
-
-
-		particle_populator->AddParticle(bitmap_name->c_str(), player_bounding_box);
-		particle_populator->FlushParticles();
-
-		// allocation
-		chaos::ParticleAllocationBase* player_allocation = particle_populator->GetParticleAllocation();
-
-		// set the player allocation
-		player->SetPlayerAllocation(player_allocation);
-
 		// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 		reference_layer = layer_instance;
 
-		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
-		//          call it twice as a fast fix
-		layer_instance->FinalizeParticles();
+		return DoCreatePlayerPawn(player, player_start, bitmap_name->c_str(), layer_instance, player_bounding_box);
 	}
 
 	void TiledMapLevelInstance::CreateBackgroundImage()

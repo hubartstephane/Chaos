@@ -245,97 +245,103 @@ namespace death
 			return nullptr;
 		}
 
-
 		// =======================================================================
 		// LevelInstance Getters
 		// =======================================================================
 
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(Player* src)
+		{
+			assert(src != nullptr);
+			if (src->game_instance != nullptr)
+				return GetLevelInstance(src->game_instance);
+			return nullptr;
+		}
+
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(GameInstance* src)
+		{
+			assert(src != nullptr);
+			if (src->game != nullptr)
+				return GetLevelInstance(src->game);
+			return nullptr;
+		}
+
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(Game* src)
+		{
+			assert(src != nullptr);
+			return chaos::meta::get_raw_pointer(src->level_instance);
+		}
+
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(LevelInstance* src)
+		{
+			assert(src != nullptr);
+			return src;
+		}
+
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(Camera* src)
+		{
+			assert(src != nullptr);
+			return chaos::meta::get_raw_pointer(src->level_instance);
+		}
+
+		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(Player const* src)
+		{
+			assert(src != nullptr);
+			if (src->game_instance != nullptr)
+				return GetLevelInstance(src->game_instance);
+			return nullptr;
+		}
+
+		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(GameInstance const* src)
+		{
+			assert(src != nullptr);
+			if (src->game != nullptr)
+				return GetLevelInstance(src->game);
+			return nullptr;
+		}
+
+		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(Game const* src)
+		{
+			assert(src != nullptr);
+			return chaos::meta::get_raw_pointer(src->level_instance);
+		}
+
+		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(LevelInstance const* src)
+		{
+			assert(src != nullptr);
+			return src;
+		}
+
+		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(Camera const* src)
+		{
+			assert(src != nullptr);
+			return chaos::meta::get_raw_pointer(src->level_instance);
+		}
 
 
+		// =======================================================================
+		// Level Getters
+		// =======================================================================
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/** returns the level */
 		template<typename T>
 		static inline chaos::AutoCastable<Level> GetLevel(T* src)
 		{
 			assert(src != nullptr);
-			if constexpr (std::is_convertible_v<T, Level>)
-				return (Level*)src;
-
-
+			LevelInstance* li = GetLevelInstance(src);
+			if (li != nullptr)
+				return chaos::meta::get_raw_pointer(li->level);
 			return nullptr;
 		}
-		/** returns the level */
+
 		template<typename T>
 		static inline chaos::AutoConstCastable<Level> GetLevel(T const* src)
 		{
 			assert(src != nullptr);
-			if constexpr (std::is_convertible_v<T, Level const>)
-				return (Level const*)src;
-
+			LevelInstance const * li = GetLevelInstance(src);
+			if (li != nullptr)
+				return chaos::meta::get_raw_pointer(li->level);
 			return nullptr;
 		}
 
-		/** returns the level instance */
-		template<typename T>
-		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(T* src)
-		{
-			if constexpr (std::is_convertible_v<T, LevelInstance>)
-				return (LevelInstance*)src;
-
-			if constexpr (has_level_instance_v<T>)
-				return chaos::meta::get_raw_pointer(src->level_instance);
-
-
-
-
-
-			return nullptr;
-		}
-		/** returns the level */
-		template<typename T>
-		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(T const* src)
-		{
-			if constexpr (std::is_convertible_v<T, LevelInstance const>)
-				return (LevelInstance const*)src;
-
-			if constexpr (has_level_instance_v<T>)
-				return chaos::meta::get_raw_pointer(src->level_instance);
-
-
-
-
-
-			return nullptr;
-		}
 	};
 
 

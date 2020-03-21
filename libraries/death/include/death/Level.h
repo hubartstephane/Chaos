@@ -19,8 +19,6 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_DECLAREGETTERS();
-
 		/** create a level instance for that level */
 		LevelInstance * CreateLevelInstance(Game * in_game);
 

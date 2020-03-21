@@ -31,29 +31,42 @@ namespace death
 		template<typename T>
 		static chaos::AutoCastable<Player> GetPlayer(T* src, size_t player_index)
 		{
-
-			return nullptr;
-
-#if 0
-			GameInstance* gi = GetGameInstance(stc);
-			if (gi == nullptr)
-				return nullptr;
-			return gi->GetPlayer(player_index);
-#endif
+			// array of players ?
+			if constexpr (has_players_v<T>)
+			{
+				if (player_index >= src->players.size())
+					return nullptr;
+				return chaos::meta::get_raw_pointer(src->players[player_index]);
+			}
+			// from GameInstance ?
+			GameInstance* gi = GetGameInstance(src);
+			if (gi != nullptr)
+				return gi->GetPlayer(player_index);
+			return nullptr;			
 		}
 		/** returns the player */
 		template<typename T>
 		static chaos::AutoConstCastable<Player> GetPlayer(T const* src, size_t player_index)
 		{
+			// array of players ?
+			if constexpr (has_players_v<T>)
+			{
+				if (player_index >= src->players.size())
+					return nullptr;
+				return chaos::meta::get_raw_pointer(src->players[player_index]);
+			}
+			// from GameInstance
+			GameInstance const* gi = GetGameInstance(src);
+			if (gi != nullptr)
+				return gi->GetPlayer(player_index);
 			return nullptr;
-
-#if 0
-			GameInstance const* gi = GetGameInstance(stc);
-			if (gi == nullptr)
-				return nullptr;
-			return gi->GetPlayer(player_index);
-#endif
 		}
+
+
+
+
+
+
 
 		/** returns the game */
 		template<typename T>

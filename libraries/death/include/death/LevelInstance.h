@@ -28,7 +28,7 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_IMPLEMENT();
+		DEATH_GAMEENTITY_DECLAREGETTERS();
 
 		/** get the level corresponding to this instance */
 		chaos::AutoCastable<Level> GetLevel();

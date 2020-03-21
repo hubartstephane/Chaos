@@ -25,7 +25,7 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_IMPLEMENT();
+		DEATH_GAMEENTITY_DECLAREGETTERS();
 
 		/** constructor */
 		GameInstance(Game * in_game);

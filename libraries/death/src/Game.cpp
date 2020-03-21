@@ -6,6 +6,7 @@
 #include <death/SoundContext.h>
 
 
+#include <chaos/KeyDefinition.h>
 #include <chaos/LogTools.h>
 
 #include <chaos/InputMode.h>
@@ -21,6 +22,8 @@
 
 namespace death
 {
+	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Game);
+
 	Game::Game(GLFWwindow* in_glfw_window):
 		glfw_window(in_glfw_window)
 	{
@@ -74,7 +77,8 @@ namespace death
 
 	void Game::Tick(float delta_time)
 	{
-	//	Game* gg = MyGetGame();
+	
+		Game* gg = MyGetGame();
 
 		//gg = gg;
 
@@ -696,7 +700,7 @@ namespace death
 	{
 		for (int i = GLFW_KEY_SPACE; i <= GLFW_KEY_LAST; ++i)
 		{
-			chaos::LogTools::Log("Key [%03d] = [%s]", i, glfwGetKeyName(i, glfwGetKeyScancode(i)));
+			chaos::LogTools::Log("Key [%03d] = [%s]", i, chaos::KeyDefinition::GetKeyName(i));
 
 		}
 

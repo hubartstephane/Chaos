@@ -7,6 +7,8 @@
 namespace death
 {
 
+	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Player);
+
 
 
 

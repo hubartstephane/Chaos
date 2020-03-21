@@ -15,7 +15,8 @@
 	friend_prefix class prefix##CameraComponent;\
 	friend_prefix class prefix##GameInstanceEntity;\
 	friend_prefix class prefix##GameInstance;\
-	friend_prefix class prefix##GameHUD;
+	friend_prefix class prefix##GameHUD;\
+	friend_prefix class GameEntityTools;
 
 // internal macros (do not use outside this file)
 #define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix) DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(prefix, friend)

@@ -9,16 +9,18 @@ namespace death
 {
 
 #define DEATH_GAMEENTITY_DECLAREGETTERS()\
-	chaos::AutoCastable<Player> MyGetPlayer(size_t player_index);\
-	chaos::AutoConstCastable<Player> MyGetPlayer(size_t player_index) const;\
-	chaos::AutoCastable<Game> MyGetGame();\
-	chaos::AutoConstCastable<Game> MyGetGame() const;\
-	chaos::AutoCastable<GameInstance> MyGetGameInstance();\
-	chaos::AutoConstCastable<GameInstance> MyGetGameInstance() const;\
-	chaos::AutoCastable<LevelInstance> MyGetLevelInstance();\
-	chaos::AutoConstCastable<LevelInstance> MyGetLevelInstance() const;\
-	chaos::AutoCastable<Level> MyGetLevel();\
-	chaos::AutoConstCastable<Level> MyGetLevel() const;\
+	chaos::AutoCastable<Player> inline MyGetPlayer(size_t player_index);\
+	chaos::AutoConstCastable<Player> inline MyGetPlayer(size_t player_index) const;\
+	chaos::AutoCastable<Game> inline MyGetGame();\
+	chaos::AutoConstCastable<Game> inline MyGetGame() const;\
+	chaos::AutoCastable<GameInstance> inline MyGetGameInstance();\
+	chaos::AutoConstCastable<GameInstance> inline MyGetGameInstance() const;\
+	chaos::AutoCastable<LevelInstance> inline MyGetLevelInstance();\
+	chaos::AutoConstCastable<LevelInstance> inline MyGetLevelInstance() const;\
+	chaos::AutoCastable<Level> inline MyGetLevel();\
+	chaos::AutoConstCastable<Level> inline MyGetLevel() const;\
+	chaos::AutoCastable<Camera> inline MyGetCamera(size_t camera_index);\
+	chaos::AutoConstCastable<Camera> inline MyGetCamera(size_t camera_index) const;
 
 #define DEATH_GAMEENTITY_IMPLEMENTGETTERS(CLASSNAME)\
 	chaos::AutoCastable<Player> CLASSNAME::MyGetPlayer(size_t player_index) { return GameEntityTools::GetPlayer(this, player_index);}\
@@ -30,7 +32,9 @@ namespace death
 	chaos::AutoCastable<LevelInstance> CLASSNAME::MyGetLevelInstance() { return GameEntityTools::GetLevelInstance(this); }\
 	chaos::AutoConstCastable<LevelInstance> CLASSNAME::MyGetLevelInstance() const { return GameEntityTools::GetLevelInstance(this); }\
 	chaos::AutoCastable<Level> CLASSNAME::MyGetLevel() { return GameEntityTools::GetLevel(this); }\
-	chaos::AutoConstCastable<Level> CLASSNAME::MyGetLevel() const { return GameEntityTools::GetLevel(this); }
+	chaos::AutoConstCastable<Level> CLASSNAME::MyGetLevel() const { return GameEntityTools::GetLevel(this); }\
+	chaos::AutoCastable<Camera> CLASSNAME::MyGetCamera(size_t camera_index) { return GameEntityTools::GetCamera(this, camera_index); }\
+	chaos::AutoConstCastable<Camera> CLASSNAME::MyGetCamera(size_t camera_index) const { return GameEntityTools::GetCamera(this, camera_index); }
 
 	// =============================================
 	// GameInstanceEntity

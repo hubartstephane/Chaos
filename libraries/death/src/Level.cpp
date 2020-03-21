@@ -1,15 +1,12 @@
 #include <death/Level.h>
 #include <death/Game.h>
 #include <death/LevelInstance.h>
-#include <death/GameEntityTools.h>
 
 namespace death
 {
 	// =====================================
 	// LevelInstance implementation
 	// =====================================
-
-	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Level);
 
 	LevelInstance * Level::CreateLevelInstance(Game * in_game)
 	{

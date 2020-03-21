@@ -6,7 +6,7 @@
 
 namespace death
 {
-	DEATH_GAMEENTITY_IMPLEMENTGETTERS(PlayerPawn);
+	//DEATH_GAMEENTITY_IMPLEMENTGETTERS(PlayerPawn);
 
 	// =============================================
 	// SimplePlayerPawn

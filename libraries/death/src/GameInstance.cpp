@@ -1,6 +1,7 @@
 #include <death/GameInstance.h>
 #include <death/Level.h>
 #include <death/Player.h>
+#include <death/Camera.h>
 #include <death/GameCheckpoint.h>
 #include <death/GameEntityTools.h>
 

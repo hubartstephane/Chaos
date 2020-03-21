@@ -4,8 +4,10 @@
 #include <death/GameInstance.h>
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
+#include <death/GameEntityTools.h>
 
 #include <chaos/CollisionFramework.h>
+
 
 namespace death
 {

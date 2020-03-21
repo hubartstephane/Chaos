@@ -1,6 +1,7 @@
 #include <death/Level.h>
 #include <death/Game.h>
 #include <death/LevelInstance.h>
+#include <death/GameEntityTools.h>
 
 namespace death
 {

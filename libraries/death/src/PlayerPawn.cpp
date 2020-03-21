@@ -1,5 +1,8 @@
 #include <death/PlayerPawn.h>
 #include <death/GameCheckpoint.h>
+#include <death/GameEntityTools.h>
+
+#include <death/GameEntityTools.h>
 
 namespace death
 {

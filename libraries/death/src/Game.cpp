@@ -4,7 +4,10 @@
 #include <death/Level.h>
 #include <death/TiledMapLevel.h>
 #include <death/SoundContext.h>
-
+#include <death/GameEntityTools.h>
+#include <death/SoundListenerCameraComponent.h>
+#include <death/FreeCameraComponent.h>
+#include <death/GameParticles.h>
 
 #include <chaos/KeyDefinition.h>
 #include <chaos/LogTools.h>
@@ -16,9 +19,7 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ParticleDefault.h>
 
-#include <death/SoundListenerCameraComponent.h>
-#include <death/FreeCameraComponent.h>
-#include <death/GameParticles.h>
+
 
 namespace death
 {

@@ -2,6 +2,7 @@
 #include <death/Level.h>
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
+#include <death/GameEntityTools.h>
 
 namespace death
 {

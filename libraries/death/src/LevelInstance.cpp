@@ -14,6 +14,8 @@ namespace death
 	// LevelInstance implementation
 	// =====================================
 
+	DEATH_GAMEENTITY_IMPLEMENTGETTERS(LevelInstance);
+
 	chaos::AutoCastable<Level> LevelInstance::GetLevel()
 	{ 
 		return level; 

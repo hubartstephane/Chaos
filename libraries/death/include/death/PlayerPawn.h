@@ -24,7 +24,7 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_IMPLEMENT();
+		DEATH_GAMEENTITY_DECLAREGETTERS();
 
 		/** override */
 		virtual glm::vec2 GetPosition() const;

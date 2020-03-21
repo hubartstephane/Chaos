@@ -5,6 +5,8 @@
 
 namespace death
 {
+	DEATH_GAMEENTITY_IMPLEMENTGETTERS(GameInstance);
+
 	GameInstance::GameInstance(Game * in_game) :
 		game(in_game)
 	{

@@ -8,6 +8,8 @@ namespace death
 	// LevelInstance implementation
 	// =====================================
 
+	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Level);
+
 	LevelInstance * Level::CreateLevelInstance(Game * in_game)
 	{
 		// create the instance

@@ -8,17 +8,29 @@
 namespace death
 {
 
-#define DEATH_GAMEENTITY_IMPLEMENT()\
-	chaos::AutoCastable<Player> MyGetPlayer(size_t player_index) { return GameEntity::GetPlayer(this, player_index);}\
-	chaos::AutoConstCastable<Player> MyGetPlayer(size_t player_index) const { return GameEntity::GetPlayer(this, player_index); }\
-	chaos::AutoCastable<Game> MyGetGame() { return GameEntity::GetGame(this);}\
-	chaos::AutoConstCastable<Game> MyGetGame() const { return GameEntity::GetGame(this); }\
-	chaos::AutoCastable<GameInstance> MyGetGameInstance() { return GameEntity::GetGameInstance(this); }\
-	chaos::AutoConstCastable<GameInstance> MyGetGameInstance() const { return GameEntity::GetGameInstance(this); }\
-	chaos::AutoCastable<LevelInstance> MyGetLevelInstance() { return GameEntity::GetLevelInstance(this); }\
-	chaos::AutoConstCastable<LevelInstance> MyGetLevelInstance() const { return GameEntity::GetLevelInstance(this); }\
-	chaos::AutoCastable<Level> MyGetLevel() { return GameEntity::GetLevel(this); }\
-	chaos::AutoConstCastable<Level> MyGetLevel() const { return GameEntity::GetLevel(this); }
+#define DEATH_GAMEENTITY_DECLAREGETTERS()\
+	chaos::AutoCastable<Player> MyGetPlayer(size_t player_index);\
+	chaos::AutoConstCastable<Player> MyGetPlayer(size_t player_index) const;\
+	chaos::AutoCastable<Game> MyGetGame();\
+	chaos::AutoConstCastable<Game> MyGetGame() const;\
+	chaos::AutoCastable<GameInstance> MyGetGameInstance();\
+	chaos::AutoConstCastable<GameInstance> MyGetGameInstance() const;\
+	chaos::AutoCastable<LevelInstance> MyGetLevelInstance();\
+	chaos::AutoConstCastable<LevelInstance> MyGetLevelInstance() const;\
+	chaos::AutoCastable<Level> MyGetLevel();\
+	chaos::AutoConstCastable<Level> MyGetLevel() const;\
+
+#define DEATH_GAMEENTITY_IMPLEMENTGETTERS(CLASSNAME)\
+	chaos::AutoCastable<Player> CLASSNAME::MyGetPlayer(size_t player_index) { return GameEntity::GetPlayer(this, player_index);}\
+	chaos::AutoConstCastable<Player> CLASSNAME::MyGetPlayer(size_t player_index) const { return GameEntity::GetPlayer(this, player_index); }\
+	chaos::AutoCastable<Game> CLASSNAME::MyGetGame() { return GameEntity::GetGame(this);}\
+	chaos::AutoConstCastable<Game> CLASSNAME::MyGetGame() const { return GameEntity::GetGame(this); }\
+	chaos::AutoCastable<GameInstance> CLASSNAME::MyGetGameInstance() { return GameEntity::GetGameInstance(this); }\
+	chaos::AutoConstCastable<GameInstance> CLASSNAME::MyGetGameInstance() const { return GameEntity::GetGameInstance(this); }\
+	chaos::AutoCastable<LevelInstance> CLASSNAME::MyGetLevelInstance() { return GameEntity::GetLevelInstance(this); }\
+	chaos::AutoConstCastable<LevelInstance> CLASSNAME::MyGetLevelInstance() const { return GameEntity::GetLevelInstance(this); }\
+	chaos::AutoCastable<Level> CLASSNAME::MyGetLevel() { return GameEntity::GetLevel(this); }\
+	chaos::AutoConstCastable<Level> CLASSNAME::MyGetLevel() const { return GameEntity::GetLevel(this); }
 
 	class GameEntity
 	{
@@ -26,34 +38,95 @@ namespace death
 
 		/** returns the player */
 		template<typename T>
-		static chaos::AutoCastable<Player> GetPlayer(T* src, size_t player_index);
+		static chaos::AutoCastable<Player> GetPlayer(T* src, size_t player_index)
+		{
+
+
+			return nullptr;
+		}
 		/** returns the player */
 		template<typename T>
-		static chaos::AutoConstCastable<Player> GetPlayer(T const* src, size_t player_index);
+		static chaos::AutoConstCastable<Player> GetPlayer(T const* src, size_t player_index)
+		{
+			return nullptr;
+		}
+
 		/** returns the game */
 		template<typename T>
-		static chaos::AutoCastable<Game> GetGame(T* src);
+		static chaos::AutoCastable<Game> GetGame(T* src)
+		{
+			//if constexpr (std::is_convertible_v<T, Game>)
+			//	return (Game*)src;
+
+
+			return nullptr;
+		}
 		/** returns the game */
 		template<typename T>
-		static chaos::AutoConstCastable<Game> GetGame(T const* src);
+		static chaos::AutoConstCastable<Game> GetGame(T const* src)
+		{
+		//	if constexpr (std::is_convertible_v<T, Game const>)
+		//		return (Game const*)src;
+
+			return nullptr;
+		}
+
 		/** returns the game instance */
 		template<typename T>
-		static chaos::AutoCastable<GameInstance> GetGameInstance(T* src);
+		static chaos::AutoCastable<GameInstance> GetGameInstance(T* src)
+		{
+		//	if constexpr (std::is_convertible_v<T, GameInstance>)
+		//		return (GameInstance*)src;
+
+			return nullptr;
+		}
 		/** returns the game instance */
 		template<typename T>
-		static chaos::AutoConstCastable<GameInstance> GetGameInstance(T const* src);
+		static chaos::AutoConstCastable<GameInstance> GetGameInstance(T const* src)
+		{
+		//	if constexpr (std::is_convertible_v<T, GameInstance const>)
+		//		return (GameInstance const*)src;
+
+			return nullptr;
+		}
+
 		/** returns the level */
 		template<typename T>
-		static chaos::AutoCastable<Level> GetLevel(T* src);
+		static chaos::AutoCastable<Level> GetLevel(T* src)
+		{
+		//	if constexpr (std::is_convertible_v<T, Level>)
+		//		return (Level*)src;
+
+			return nullptr;
+		}
 		/** returns the level */
 		template<typename T>
-		static chaos::AutoConstCastable<Level> GetLevel(T const* src);
+		static chaos::AutoConstCastable<Level> GetLevel(T const* src)
+		{
+		//	if constexpr (std::is_convertible_v<T, Level const>)
+		//		return (Level const*)src;
+
+			return nullptr;
+		}
+
 		/** returns the level instance */
 		template<typename T>
-		static chaos::AutoCastable<LevelInstance> GetLevelInstance(T* src);
+		static chaos::AutoCastable<LevelInstance> GetLevelInstance(T* src)
+		{
+		//	if constexpr (std::is_convertible_v<T, LevelInstance>)
+		//		return (LevelInstance*)src;
+
+			return nullptr;
+		}
 		/** returns the level */
 		template<typename T>
-		static chaos::AutoConstCastable<LevelInstance> GetLevelInstance(T const* src);
+		static chaos::AutoConstCastable<LevelInstance> GetLevelInstance(T const* src)
+		{
+		//	if constexpr (std::is_convertible_v<T, LevelInstance const>)
+		//		return (LevelInstance const*)src;
+
+			return nullptr;
+		}
 	};
 
 

@@ -21,6 +21,13 @@ CHAOS_GENERATE_HAS_MEMBER(game_instance);
 CHAOS_GENERATE_HAS_MEMBER(game);
 CHAOS_GENERATE_HAS_MEMBER(players);
 
+//
+//    Player <----> GameInstance <----> Game <----> LevelInstance <----> Camera 
+//      |                                 |              |                 |
+//      v                                 v              |                 v
+//  PlayerPawn                          Level <----------+           CameraComponent
+//
+
 namespace death
 {
 	class GameEntityTools
@@ -72,9 +79,10 @@ namespace death
 		template<typename T>
 		static chaos::AutoCastable<Game> GetGame(T* src)
 		{
+			// game itself ?
 			if constexpr (std::is_convertible_v<T, Game>)
 				return (Game*)src;
-
+			// has pointer on game ?
 			if constexpr (has_game_v<T>)
 				return chaos::meta::get_raw_pointer(src->game);
 

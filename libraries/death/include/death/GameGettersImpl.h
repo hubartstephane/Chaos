@@ -90,11 +90,7 @@ namespace death
 			assert(src != nullptr);
 			LevelInstance* li = GetLevelInstance(src);
 			if (li != nullptr)
-			{
-				if (camera_index >= li->cameras.size())
-					return nullptr;
-				return chaos::meta::get_raw_pointer(li->cameras[camera_index]);
-			}
+				return li->DoGetCamera(camera_index);
 			return nullptr;
 		}
 		
@@ -104,11 +100,7 @@ namespace death
 			assert(src != nullptr);
 			LevelInstance const* li = GetLevelInstance(src);
 			if (li != nullptr)
-			{
-				if (camera_index >= li->cameras.size())
-					return nullptr;
-				return chaos::meta::get_raw_pointer(li->cameras[camera_index]);
-			}
+				return li->DoGetCamera(camera_index);
 			return nullptr;
 		}
 

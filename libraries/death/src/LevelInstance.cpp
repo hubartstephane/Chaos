@@ -307,12 +307,7 @@ namespace death
 		return DoGetCamera(index);
 	}
 
-	Camera * LevelInstance::DoGetCamera(size_t index)
-	{		
-		if (index >= cameras.size())
-			return nullptr;
-		return cameras[index].get();
-	}
+
 
 	chaos::AutoConstCastable<Camera> LevelInstance::GetCamera(size_t index) const
 	{
@@ -327,6 +322,15 @@ namespace death
 		return DoGetCamera(index);
 	}
 
+#endif
+
+	Camera* LevelInstance::DoGetCamera(size_t index)
+	{
+		if (index >= cameras.size())
+			return nullptr;
+		return cameras[index].get();
+	}
+
 	Camera const * LevelInstance::DoGetCamera(size_t index) const
 	{
 		if (index >= cameras.size())
@@ -334,7 +338,7 @@ namespace death
 		return cameras[index].get();
 	}
 
-#endif
+
 
 	chaos::obox2 LevelInstance::GetInitialCameraOBox(size_t index) const
 	{ 

@@ -89,14 +89,10 @@ namespace death
 
 	protected:
 
-#if 0
-
 		/** gets a camera by its index */
 		Camera * DoGetCamera(size_t index);
 		/** gets a camera by its index */
 		Camera const * DoGetCamera(size_t index) const;
-
-#endif
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

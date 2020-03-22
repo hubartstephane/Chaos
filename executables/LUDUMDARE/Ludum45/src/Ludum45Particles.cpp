@@ -181,7 +181,11 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	particle->bounding_box.position += particle->velocity * delta_time;
 	
 	if (particle->pattern != nullptr)
-		return particle->pattern->UpdateParticle(delta_time, particle, layer_trait->game->GetLevelInstance()->GetCameraBox(0));
+	{
+		death::Camera const* camera = layer_trait->game->GetCamera(0);
+		if (camera != nullptr)
+			return particle->pattern->UpdateParticle(delta_time, particle, camera->GetCameraBox(true));
+	}
 
 	return false;
 }
@@ -342,11 +346,13 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
-		LudumLevelInstance* ludum_level_instance = layer_trait->game->GetLevelInstance();
-
 		// get the camera box 
-		result.camera_box = ludum_level_instance->GetCameraBox(0);
-		result.camera_box.half_size *= 1.1f;
+		death::Camera const* camera = layer_trait->game->GetCamera(0);
+		if (camera != nullptr)
+		{
+			result.camera_box = camera->GetCameraBox(true);
+			result.camera_box.half_size *= 1.1f;
+		}
 		// get the enemies
 		FindEnemiesOnMap(layer_trait->game, result.enemies);
 		// get the players

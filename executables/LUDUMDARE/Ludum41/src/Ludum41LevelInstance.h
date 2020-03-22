@@ -32,7 +32,7 @@ public:
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 	/** override */
-	virtual void CreatePlayerPawn(death::Player* player) override;
+	virtual death::PlayerPawn * CreatePlayerPawn(death::Player* player) override;
 
 protected:
 

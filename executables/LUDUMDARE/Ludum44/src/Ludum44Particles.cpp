@@ -316,10 +316,10 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
-		LudumLevelInstance* ludum_level_instance = layer_trait->game->GetLevelInstance();
-
 		// get the camera box 
-		result.camera_box = ludum_level_instance->GetCameraBox(0);
+		death::Camera const* camera = layer_trait->game->GetCamera(0);
+		if (camera != nullptr)
+			result.camera_box = camera->GetCameraBox(true);
 		//result.camera_box.half_size *= 3.0f;
 		// get the enemies
 		FindEnemiesOnMap(layer_trait->game, result.enemies);
@@ -426,9 +426,9 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	ParticleEnemyUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
-		LudumLevelInstance* ludum_level_instance = layer_trait->game->GetLevelInstance();
-
-		result.camera_box = ludum_level_instance->GetCameraBox(0);
+		death::Camera const * camera = layer_trait->game->GetCamera(0);
+		if (camera != nullptr)
+			result.camera_box = camera->GetCameraBox(true);
 		//result.camera_box.half_size *= 3.0f;
 	}
 	return result;

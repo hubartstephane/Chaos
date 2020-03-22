@@ -355,22 +355,6 @@ namespace death
 		return result;
 	}
 
-	chaos::box2 LevelInstance::GetCameraBox(size_t index, bool apply_modifiers) const 
-	{ 
-		Camera const * camera = GetCamera(index);
-		if (camera == nullptr)
-			return chaos::box2();
-		return camera->GetCameraBox(apply_modifiers);
-	}
-
-	void LevelInstance::SetCameraBox(size_t index, chaos::box2 in_box)
-	{ 
-		Camera * camera = GetCamera(index);
-		if (camera == nullptr)
-			return;
-		camera->SetCameraBox(in_box);
-	}
-
 	chaos::SoundCategory * LevelInstance::GetSoundCategory()
 	{
 		return sound_category.get();
@@ -383,7 +367,9 @@ namespace death
 
 	bool LevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
 	{
-		checkpoint->camera_box    = GetCameraBox(0, false);
+		Camera const* camera = DoGetCamera(0, false); // do not accept free camera
+		if (camera != nullptr)
+			checkpoint->camera_box = camera->GetCameraBox(false);
 		checkpoint->level_timeout = level_timeout;
 
 		//if (level_clock != nullptr)
@@ -394,7 +380,9 @@ namespace death
 
 	bool LevelInstance::DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint)
 	{
-		SetCameraBox(0, checkpoint->camera_box);
+		Camera * camera = DoGetCamera(0, false); // do not accept free camera
+		if (camera != nullptr)
+			camera->SetCameraBox(checkpoint->camera_box);
 		level_timeout = checkpoint->level_timeout;
 
 		//if (level_clock != nullptr)

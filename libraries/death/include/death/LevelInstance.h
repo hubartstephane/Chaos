@@ -30,38 +30,6 @@ namespace death
 
 		DEATH_GAMEENTITY_DECLAREGETTERS();
 
-		/** get the level corresponding to this instance */
-		chaos::AutoCastable<Level> GetLevel();
-		/** get the level corresponding to this instance */
-		chaos::AutoConstCastable<Level> GetLevel() const;
-
-		/** get the game */
-		chaos::AutoCastable<Game> GetGame();
-		/** get the game */
-		chaos::AutoConstCastable<Game> GetGame() const;
-
-		/** get the game instance */
-		chaos::AutoCastable<GameInstance> GetGameInstance();
-		/** get the game instance */
-		chaos::AutoConstCastable<GameInstance> GetGameInstance() const;
-
-		/** get a player */
-		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
-		/** get a player */
-		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
-		/** get the number of player */
-		size_t GetPlayerCount() const;
-
-
-		/** returns the number of cameras */
-		size_t GetCameraCount() const;
-		/** gets a camera by its index (or free camera) */
-		chaos::AutoCastable<Camera> GetCamera(size_t index);
-		/** gets a camera by its index (or free camera) */
-		chaos::AutoConstCastable<Camera> GetCamera(size_t index) const;
-
-
-
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();
 		/** create cameras when the level is started */
@@ -121,10 +89,14 @@ namespace death
 
 	protected:
 
+#if 0
+
 		/** gets a camera by its index */
 		Camera * DoGetCamera(size_t index);
 		/** gets a camera by its index */
 		Camera const * DoGetCamera(size_t index) const;
+
+#endif
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

@@ -30,28 +30,6 @@ namespace death
 		/** constructor */
 		GameInstance(Game * in_game);
 
-		/** returns the game */
-		chaos::AutoCastable<Game> GetGame() { return game; }
-		/** returns the game */
-		chaos::AutoConstCastable<Game> GetGame() const { return game; }
-
-		/** returns the level */
-		chaos::AutoCastable<Level> GetLevel();
-		/** returns the level */
-		chaos::AutoConstCastable<Level> GetLevel() const;
-
-		/** returns the level instance */
-		chaos::AutoCastable<LevelInstance> GetLevelInstance();
-		/** returns the level instance */
-		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
-
-		/** get the player by its index */
-		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
-		/** get the player by its index */
-		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
-		/** get the player count */
-		size_t GetPlayerCount() const;
-
 		/** create one player and give it the gamepad provided if any */
 		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 

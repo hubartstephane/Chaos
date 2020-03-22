@@ -256,19 +256,19 @@ void LudumLevelInstance::SetInGameMusic()
 	death::LevelInstance::SetInGameMusic(); // fallback
 }
 
-void LudumLevelInstance::CreatePlayerPawn(death::Player* player)
+death::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(death::Player* player)
 {
 	assert(player != nullptr);
 
 	// create the player pawn
 	chaos::ParticleAllocationBase* player_allocation = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
 	if (player_allocation == nullptr)
-		return;
+		return nullptr;
 	player->SetPlayerAllocation(player_allocation);
 	// initialize the player particle
 	chaos::ParticleAccessor<ParticleObject> particles = player_allocation->GetParticleAccessor();
 	if (particles.GetCount() == 0)
-		return;
+		return nullptr;
 	particles[0].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	particles[0].bounding_box.position = glm::vec2(0.0f, 0.0f);
 	particles[0].bounding_box.half_size = glm::vec2(0.0f, 0.0f);
@@ -280,4 +280,5 @@ void LudumLevelInstance::CreatePlayerPawn(death::Player* player)
 		if (ludum_game != nullptr)
 			ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
 	}
+	return nullptr;
 }

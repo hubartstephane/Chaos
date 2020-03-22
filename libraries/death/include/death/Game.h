@@ -68,31 +68,9 @@ namespace death
 		/** constructor */
 		Game(GLFWwindow * in_glfw_window);
 
-		/** get the player by its index */
-		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
-		/** get the player by its index */
-		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
-		/** get the number of players */
-		size_t GetPlayerCount() const;
-
-		/** get currently played level */
-		chaos::AutoCastable<Level> GetLevel();
-		/** get currently played level */
-		chaos::AutoConstCastable<Level> GetLevel() const;
-
-		/** get currently played level */
-		chaos::AutoCastable<LevelInstance> GetLevelInstance();
-		/** get currently played level */
-		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
-
-		/** get the game instance */
-		chaos::AutoCastable<GameInstance> GetGameInstance() { return game_instance.get(); }
-		/** get the game instance */
-		chaos::AutoConstCastable<GameInstance> GetGameInstance() const { return game_instance.get(); }
-
-		/** get any level */
+		/** Get a level by its index */
 		chaos::AutoCastable<Level> GetLevel(int level_index);
-		/** get any level */
+		/** Get a level by its index */
 		chaos::AutoConstCastable<Level> GetLevel(int level_index) const;
 
 		/** returns the game name */

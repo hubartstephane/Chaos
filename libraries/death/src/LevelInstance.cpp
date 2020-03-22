@@ -18,60 +18,6 @@ namespace death
 
 	DEATH_GAMEENTITY_IMPLEMENTGETTERS(LevelInstance);
 
-	chaos::AutoCastable<Level> LevelInstance::GetLevel()
-	{ 
-		return level; 
-	}
-
-	chaos::AutoConstCastable<Level> LevelInstance::GetLevel() const
-	{ 
-		return level; 
-	}
-
-	chaos::AutoCastable<Game> LevelInstance::GetGame()
-	{ 
-		return game; 
-	}
-	
-	chaos::AutoConstCastable<Game> LevelInstance::GetGame() const
-	{ 
-		return game; 
-	}
-
-	chaos::AutoCastable<GameInstance> LevelInstance::GetGameInstance()
-	{ 
-		return game->GetGameInstance(); 
-	}
-
-	chaos::AutoConstCastable<GameInstance> LevelInstance::GetGameInstance() const
-	{
-		return game->GetGameInstance();
-	}
-
-	chaos::AutoCastable<Player> LevelInstance::GetPlayer(size_t player_index)
-	{
-		GameInstance * game_instance = GetGameInstance();
-		if (game_instance == nullptr)
-			return nullptr;
-		return game_instance->GetPlayer(player_index);
-	}
-
-	chaos::AutoConstCastable<Player> LevelInstance::GetPlayer(size_t player_index) const
-	{
-		GameInstance const * game_instance = GetGameInstance();
-		if (game_instance == nullptr)
-			return nullptr;
-		return game_instance->GetPlayer(player_index);
-	}
-
-	size_t LevelInstance::GetPlayerCount() const
-	{
-		GameInstance const* game_instance = GetGameInstance();
-		if (game_instance == nullptr)
-			return 0;
-		return game_instance->GetPlayerCount();
-	}
-
 	double LevelInstance::GetLevelClockTime() const
 	{
 		if (level_clock == nullptr)
@@ -346,10 +292,7 @@ namespace death
 		return true;
 	}
 
-	size_t LevelInstance::GetCameraCount() const
-	{
-		return cameras.size();
-	}
+#if 0
 
 	chaos::AutoCastable<Camera> LevelInstance::GetCamera(size_t index)
 	{
@@ -390,6 +333,8 @@ namespace death
 			return nullptr;
 		return cameras[index].get();
 	}
+
+#endif
 
 	chaos::obox2 LevelInstance::GetInitialCameraOBox(size_t index) const
 	{ 

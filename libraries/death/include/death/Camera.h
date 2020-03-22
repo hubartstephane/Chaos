@@ -5,6 +5,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/AutoCast.h>
 
+#include <death/GameInstanceEntity.h>
 #include <death/CameraComponent.h>
 #include <death/GameFramework.h>
 #include <death/ComponentOwner.h>
@@ -34,35 +35,10 @@ namespace death
 
 	public:
 
+		DEATH_GAMEENTITY_DECLAREGETTERS();
+
 		/** constructor */
 		Camera(LevelInstance * in_level_instance);
-
-		/** get the player by its index */
-		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
-		/** get the player by its index */
-		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
-		/** get the number of player */
-		size_t GetPlayerCount() const;
-
-		/** returns the game */
-		chaos::AutoCastable<Game> GetGame();
-		/** returns the game */
-		chaos::AutoConstCastable<Game> GetGame() const;
-
-		/** returns the game instance */
-		chaos::AutoCastable<GameInstance> GetGameInstance();
-		/** returns the game instance */
-		chaos::AutoConstCastable<GameInstance> GetGameInstance() const;
-
-		/** returns the level */
-		chaos::AutoCastable<Level> GetLevel();
-		/** returns the level */
-		chaos::AutoConstCastable<Level> GetLevel() const;
-
-		/** returns the level instance */
-		chaos::AutoCastable<LevelInstance> GetLevelInstance() { return level_instance; }
-		/** returns the level */
-		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const { return level_instance; }
 
 		/** set the camera box */
 		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}

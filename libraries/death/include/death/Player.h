@@ -19,7 +19,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public GameInstanceEntity, public CheckpointObject<PlayerCheckpoint>
+	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<PlayerCheckpoint>
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;
@@ -31,23 +31,7 @@ namespace death
 		/** destructor */
 		virtual ~Player();
 
-
-
 		DEATH_GAMEENTITY_DECLAREGETTERS();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager
@@ -118,7 +102,7 @@ namespace death
 	protected:
 
 		/** initialize the game instance */
-		virtual bool Initialize(death::GameInstance * in_game_instance) override;
+		virtual bool Initialize(death::GameInstance * in_game_instance);
 
 		/** called whenever the level is being changed */
 		virtual void OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance);
@@ -164,6 +148,9 @@ namespace death
         virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable);
 
 	protected:
+
+		/** the game instance owning the player */
+		GameInstance* game_instance = nullptr;
 
 		/** a gamepad that can be given to the player */
 		chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad;

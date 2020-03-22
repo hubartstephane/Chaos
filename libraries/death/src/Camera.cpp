@@ -3,9 +3,12 @@
 #include <death/ComponentOwner.h>
 #include <death/LevelInstance.h>
 #include <death/Game.h>
+#include <death/GameEntityTools.h>
 
 namespace death
 {
+
+	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Camera);
 
 	// =================================================
 	// CameraTransform
@@ -70,69 +73,6 @@ namespace death
 		result.half_size = box.half_size;
 		result.rotator = 0.0f;
 		return result;
-	}
-	
-	chaos::AutoCastable<Player> Camera::GetPlayer(size_t player_index)
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetPlayer(player_index);
-	}
-	
-	chaos::AutoConstCastable<Player> Camera::GetPlayer(size_t player_index) const
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetPlayer(player_index);
-	}
-
-	size_t Camera::GetPlayerCount() const
-	{
-		if (level_instance == nullptr)
-			return 0;
-		return level_instance->GetPlayerCount();
-	}
-
-	chaos::AutoCastable<Game> Camera::GetGame()
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetGame();
-	}
-
-	chaos::AutoConstCastable<Game> Camera::GetGame() const
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetGame();
-	}
-
-	chaos::AutoCastable<Level> Camera::GetLevel()
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetLevel();
-	}
-
-	chaos::AutoConstCastable<Level> Camera::GetLevel() const
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetLevel();
-	}
-
-	chaos::AutoCastable<GameInstance> Camera::GetGameInstance()
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetGameInstance();
-	}
-
-	chaos::AutoConstCastable<GameInstance> Camera::GetGameInstance() const
-	{
-		if (level_instance == nullptr)
-			return nullptr;
-		return level_instance->GetGameInstance();
 	}
 
 	DEATH_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)

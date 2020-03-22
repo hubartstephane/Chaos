@@ -20,6 +20,12 @@ namespace death
 
 		/** constructor */
 		CameraComponent();
+
+		/** gets the camera the component belongs to */
+		Camera* GetCamera() { return camera; }
+		/** gets the camera the component belongs to */
+		Camera const * GetCamera() const { return camera; }
+
 		/** modifier */
 		virtual chaos::box2 ApplyModifier(chaos::box2 const & src) const;
 

@@ -1852,7 +1852,7 @@ namespace death
 
 
 		// return a new player pawn
-		PlayerPawn* result = new PlayerPawn;
+		PlayerPawn* result = new PlayerPawn(player);
 		if (result == nullptr)
 			return result;
 

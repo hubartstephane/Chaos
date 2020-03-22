@@ -13,7 +13,6 @@
 	friend_prefix class prefix##Game;\
 	friend_prefix class prefix##Camera;\
 	friend_prefix class prefix##CameraComponent;\
-	friend_prefix class prefix##GameInstanceEntity;\
 	friend_prefix class prefix##GameInstance;\
 	friend_prefix class prefix##GameHUD;\
 	friend_prefix class GameEntityTools;

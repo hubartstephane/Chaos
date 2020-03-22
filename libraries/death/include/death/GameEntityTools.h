@@ -41,6 +41,15 @@ namespace death
 		// =======================================================================
 
 		template<typename T>
+		static inline size_t GetPlayerCount(T const * src)
+		{
+			GameInstance const* gi = GetGameInstance(src);
+			if (gi != nullptr)
+				return gi->players.size();
+			return 0;
+		}
+
+		template<typename T>
 		static inline chaos::AutoCastable<Player> GetPlayer(T* src, size_t player_index)
 		{
 			assert(src != nullptr);
@@ -72,6 +81,15 @@ namespace death
 		// Camera Getters
 		// =======================================================================
 		
+		template<typename T>
+		static inline size_t GetCameraCount(T const* src)
+		{
+			LevelInstance const* li = GetLevelInstance(src);
+			if (li != nullptr)
+				return li->cameras.size();
+			return 0;
+		}
+
 		template<typename T>
 		static inline chaos::AutoCastable<Camera> GetCamera(T* src, size_t camera_index)
 		{

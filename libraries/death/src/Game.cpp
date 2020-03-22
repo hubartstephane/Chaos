@@ -78,12 +78,6 @@ namespace death
 
 	void Game::Tick(float delta_time)
 	{
-	
-		Game* gg = MyGetGame();
-
-		//gg = gg;
-
-
 		// update player inputs
 		TickGameInputs(delta_time);
 		// tick the free camera
@@ -1463,49 +1457,6 @@ namespace death
 		return GetCanvasBox();
 	}
 
-	chaos::AutoCastable<Level> Game::GetLevel()
-	{
-		LevelInstance * li = GetLevelInstance();
-		if (li == nullptr)
-			return nullptr;
-		return li->GetLevel();
-	}
-
-	chaos::AutoConstCastable<Level> Game::GetLevel() const
-	{
-		LevelInstance const * li = GetLevelInstance();
-		if (li == nullptr)
-			return nullptr;
-		return li->GetLevel();
-	}
-
-	chaos::AutoCastable<LevelInstance> Game::GetLevelInstance()
-	{
-		return level_instance.get();
-	}
-
-	chaos::AutoConstCastable<LevelInstance> Game::GetLevelInstance() const
-	{
-		return level_instance.get();
-	}
-
-	chaos::AutoCastable<Level> Game::GetLevel(int level_index)
-	{
-		size_t count = levels.size();
-		for (size_t i = 0; i < count; ++i)
-			if (levels[i]->GetLevelIndex() == level_index)
-				return levels[i].get();
-		return nullptr;
-	}
-
-	chaos::AutoConstCastable<Level> Game::GetLevel(int level_index) const
-	{
-		size_t count = levels.size();
-		for (size_t i = 0; i < count; ++i)
-			if (levels[i]->GetLevelIndex() == level_index)
-				return levels[i].get();
-		return nullptr;
-	}
 
 	bool Game::SetNextLevel(bool looping_levels)
 	{
@@ -1538,6 +1489,24 @@ namespace death
 		}
 		// default
 		return SetCurrentLevel(levels[i + 1].get());
+	}
+	
+	chaos::AutoCastable<Level> Game::GetLevel(int level_index)
+	{
+		size_t count = levels.size();
+		for (size_t i = 0; i < count; ++i)
+			if (levels[i]->GetLevelIndex() == level_index)
+				return levels[i].get();
+		return nullptr;
+	}
+
+	chaos::AutoConstCastable<Level> Game::GetLevel(int level_index) const
+	{
+		size_t count = levels.size();
+		for (size_t i = 0; i < count; ++i)
+			if (levels[i]->GetLevelIndex() == level_index)
+				return levels[i].get();
+		return nullptr;
 	}
 
 	bool Game::SetCurrentLevel(int level_index)
@@ -1587,33 +1556,6 @@ namespace death
 		// update the instance
 		if (game_instance != nullptr)
 			game_instance->OnLevelChanged(new_level, old_level, new_level_instance);
-	}
-
-	chaos::AutoCastable<Player> Game::GetPlayer(size_t player_index)
-	{
-		// game even not started : no player
-		if (game_instance == nullptr)
-			return nullptr;
-		// give the instance the responsability 
-		return game_instance->GetPlayer(player_index);
-	}
-
-	chaos::AutoConstCastable<Player> Game::GetPlayer(size_t player_index) const
-	{
-		// game even not started : no player
-		if (game_instance == nullptr)
-			return nullptr;
-		// give the instance the responsability 
-		return game_instance->GetPlayer(player_index);
-	}
-
-	size_t Game::GetPlayerCount() const 
-	{ 
-		// game even not started : no player
-		if (game_instance == nullptr)
-			return 0;
-		// give the instance the responsability 
-		return game_instance->GetPlayerCount();
 	}
 
 	bool Game::ReloadGameConfiguration()
@@ -1700,6 +1642,9 @@ namespace death
 
 	Camera * Game::CreateFreeCamera() const
 	{
+
+#if 0
+
 		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 		{
@@ -1710,6 +1655,8 @@ namespace death
 					return DoCreateFreeCamera(first_camera, (LevelInstance *)level_instance);
 			}
 		}
+#endif
+
 		return nullptr;
 	}
 

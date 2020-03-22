@@ -10,16 +10,12 @@ namespace death
 
 	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Player);
 
-
-
-
-
 	// =================================================
 	// Player
 	// =================================================
 
 	Player::Player(GameInstance * in_game_instance) :
-		GameInstanceEntity(in_game_instance)
+		game_instance(in_game_instance)
 	{
 	}
 
@@ -41,14 +37,6 @@ namespace death
 
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
-		//auto ppp = MyGetGame();
-
-
-
-
-		if (!GameInstanceEntity::Initialize(in_game_instance))
-			return false;
-
 		// read the configuration
 		Game* game = GetGame();
 		if (game != nullptr)
@@ -57,7 +45,6 @@ namespace death
 				return false;
 			OnGameValuesChanged(false);
 		}
-
 		return true;
 	}
 

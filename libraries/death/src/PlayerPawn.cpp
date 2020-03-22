@@ -5,11 +5,17 @@
 
 namespace death
 {
-	//DEATH_GAMEGETTERS_IMPLEMENT(PlayerPawn);
+	DEATH_GAMEGETTERS_IMPLEMENT(PlayerPawn);
 
 	// =============================================
-	// SimplePlayerPawn
+	// PlayerPawn
 	// =============================================
+
+	PlayerPawn::PlayerPawn(Player* in_player) :
+		player(in_player)
+	{
+		assert(in_player != nullptr);
+	}
 
 	chaos::ParticleDefault::Particle* PlayerPawn::GetParticle()
 	{

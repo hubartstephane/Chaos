@@ -24,15 +24,23 @@ namespace death
 
 	public:
 
-		//DEATH_GAMEGETTERS_DECLARE();
+		DEATH_GAMEGETTERS_DECLARE();
 
-		/** override */
+		/** constructor */
+		PlayerPawn(Player* in_player);
+
+		/** returns the player the pawn belongs to */
+		Player* GetPlayer() { return player; }
+		/** returns the player the pawn belongs to */
+		Player const * GetPlayer() const { return player; }
+
+		/** Get the position of the pawn */
 		virtual glm::vec2 GetPosition() const;
-		/** override */
+		/** Get the bounding box of the pawn */
 		virtual chaos::box2 GetBox() const;
-		/** override */
+		/** Set the position of the pawn */
 		virtual bool SetPosition(glm::vec2 const& position);
-		/** override */
+		/** Set the bounding box of the pawn */
 		virtual bool SetBox(chaos::box2 const& box);
 
 		/** get the pawn allocation */
@@ -48,8 +56,11 @@ namespace death
 
 	protected:
 
+		/** the player that owns this pawn */
+		Player* player = nullptr;
 		/** the allocation for the pawn */
 		chaos::shared_ptr<chaos::ParticleAllocationBase> allocations;
+
 	};
 
 }; // namespace death

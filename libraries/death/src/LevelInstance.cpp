@@ -292,53 +292,35 @@ namespace death
 		return true;
 	}
 
-#if 0
-
-	chaos::AutoCastable<Camera> LevelInstance::GetCamera(size_t index)
+	Camera* LevelInstance::DoGetCamera(size_t index, bool accept_freecam)
 	{
 		// try the free camera mode first
-		if (game->IsFreeCameraMode())
+		if (accept_freecam && game->IsFreeCameraMode())
 		{
-			Camera * result = game->GetFreeCamera();
+			Camera* result = game->GetFreeCamera();
 			if (result != nullptr)
 				return result;
 		}
 		// level instance camera
-		return DoGetCamera(index);
+		if (index >= cameras.size())
+			return nullptr;
+		return cameras[index].get();
 	}
 
-
-
-	chaos::AutoConstCastable<Camera> LevelInstance::GetCamera(size_t index) const
+	Camera const * LevelInstance::DoGetCamera(size_t index, bool accept_freecam) const
 	{
 		// try the free camera mode first
-		if (game->IsFreeCameraMode())
+		if (accept_freecam && game->IsFreeCameraMode())
 		{
-			Camera const * result = game->GetFreeCamera();
+			Camera const* result = game->GetFreeCamera();
 			if (result != nullptr)
-				return result;		
+				return result;
 		}
 		// level instance camera
-		return DoGetCamera(index);
-	}
-
-#endif
-
-	Camera* LevelInstance::DoGetCamera(size_t index)
-	{
 		if (index >= cameras.size())
 			return nullptr;
 		return cameras[index].get();
 	}
-
-	Camera const * LevelInstance::DoGetCamera(size_t index) const
-	{
-		if (index >= cameras.size())
-			return nullptr;
-		return cameras[index].get();
-	}
-
-
 
 	chaos::obox2 LevelInstance::GetInitialCameraOBox(size_t index) const
 	{ 

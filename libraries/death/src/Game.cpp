@@ -693,16 +693,6 @@ namespace death
 
 	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
-		for (int i = GLFW_KEY_SPACE; i <= GLFW_KEY_LAST; ++i)
-		{
-			chaos::LogTools::Log("Key [%03d] = [%s]", i, chaos::KeyDefinition::GetKeyName(i));
-
-		}
-
-
-
-
-
 		// initialize the gamepad manager
 		if (!CreateGamepadManager(config, config_path))
 			return false;
@@ -1642,21 +1632,16 @@ namespace death
 
 	Camera * Game::CreateFreeCamera() const
 	{
-
-#if 0
-
 		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 		{
 			if (level_instance->GetCameraCount() > 0)
 			{
-				Camera const * first_camera = level_instance->DoGetCamera(0); // XXX : beware, not 'GetCamera(...)' that would recursively call CreateFreeCamera(...) => 'DoGetCamera(...)' instead
+				Camera const * first_camera = level_instance->DoGetCamera(0, false); // do not accept free camera
 				if (first_camera != nullptr)
 					return DoCreateFreeCamera(first_camera, (LevelInstance *)level_instance);
 			}
 		}
-#endif
-
 		return nullptr;
 	}
 

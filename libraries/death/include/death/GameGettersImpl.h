@@ -90,7 +90,7 @@ namespace death
 			assert(src != nullptr);
 			LevelInstance* li = GetLevelInstance(src);
 			if (li != nullptr)
-				return li->DoGetCamera(camera_index);
+				return li->DoGetCamera(camera_index, true);  // accept free camera
 			return nullptr;
 		}
 		
@@ -100,7 +100,7 @@ namespace death
 			assert(src != nullptr);
 			LevelInstance const* li = GetLevelInstance(src);
 			if (li != nullptr)
-				return li->DoGetCamera(camera_index);
+				return li->DoGetCamera(camera_index, true); // accept free camera
 			return nullptr;
 		}
 

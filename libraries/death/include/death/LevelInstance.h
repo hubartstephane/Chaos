@@ -90,9 +90,9 @@ namespace death
 	protected:
 
 		/** gets a camera by its index */
-		Camera * DoGetCamera(size_t index);
+		Camera * DoGetCamera(size_t index, bool accept_freecam);
 		/** gets a camera by its index */
-		Camera const * DoGetCamera(size_t index) const;
+		Camera const * DoGetCamera(size_t index, bool accept_freecam) const;
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;

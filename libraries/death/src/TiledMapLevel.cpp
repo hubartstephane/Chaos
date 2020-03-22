@@ -1168,18 +1168,18 @@ namespace death
 		// compute collision with camera
 		if (AreCameraCollisionEnabled())
 		{
-			chaos::box2 camera_box = game->GetLevelInstance()->GetCameraBox(0);
-			if (!IsGeometryEmpty(camera_box))
+			Camera const* camera = game->GetCamera(0);
+			if (camera != nullptr)
 			{
-				if (trigger_collision_enabled)
-					ComputeCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
+				chaos::box2 camera_box = camera->GetCameraBox(true);
+				if (!IsGeometryEmpty(camera_box))
+				{
+					if (trigger_collision_enabled)
+						ComputeCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
+				}
 			}
 		}
 	}
-
-
-
-
 
 	TiledMapPlayerAndTriggerCollisionRecord* TiledMapLayerInstance::FindPlayerCollisionRecord(Player* player)
 	{

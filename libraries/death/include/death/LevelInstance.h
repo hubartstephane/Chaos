@@ -42,11 +42,6 @@ namespace death
 		/** the initial camera box getter */		
 		chaos::obox2 GetInitialCameraOBox(size_t index) const;
 
-		/** the camera box getter */
-		chaos::box2 GetCameraBox(size_t index, bool apply_modifiers = true) const;
-		/** the camera box setter */
-		void SetCameraBox(size_t index, chaos::box2 in_box);
-
 		/** returns level clock */
 		chaos::Clock * GetLevelClock() { return level_clock.get();}
 		/** returns level clock */

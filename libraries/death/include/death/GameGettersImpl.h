@@ -18,14 +18,14 @@
 
 //
 //    Player <----> GameInstance <----> Game <----> LevelInstance <----> Camera 
-//      ^                                 |              |                 ^
-//      |                                 v              |                 |
-//      v                               Level <----------+                 v
-//   PlayerPawn                                                      CameraComponent
+//      ^                                                |                 ^
+//      |                                                |                 |
+//      v                                                v                 v
+//   PlayerPawn                                        Level         CameraComponent
 
 namespace death
 {
-	class GameEntityTools
+	class GameGettersTools
 	{
 	public:
 
@@ -175,6 +175,14 @@ namespace death
 			return nullptr;
 		}
 
+		static inline chaos::AutoCastable<Game> GetGame(CameraComponent * src)
+		{
+			assert(src != nullptr);
+			if (src->camera != nullptr)
+				return GetGame(src->camera);
+			return nullptr;
+		}
+
 		static inline chaos::AutoConstCastable<Game> GetGame(Player const* src)
 		{
 			assert(src != nullptr);
@@ -214,6 +222,14 @@ namespace death
 			assert(src != nullptr);
 			if (src->level_instance != nullptr)
 				return GetGame(src->level_instance);
+			return nullptr;
+		}
+
+		static inline chaos::AutoConstCastable<Game> GetGame(CameraComponent const* src)
+		{
+			assert(src != nullptr);
+			if (src->camera != nullptr)
+				return GetGame(src->camera);
 			return nullptr;
 		}
 
@@ -263,6 +279,14 @@ namespace death
 			return nullptr;
 		}
 
+		static inline chaos::AutoCastable<GameInstance> GetGameInstance(CameraComponent * src)
+		{
+			assert(src != nullptr);
+			if (src->camera != nullptr)
+				return GetGameInstance(src->camera);
+			return nullptr;
+		}
+
 		static inline chaos::AutoConstCastable<GameInstance> GetGameInstance(Player const* src)
 		{
 			assert(src != nullptr);
@@ -302,6 +326,14 @@ namespace death
 			assert(src != nullptr);
 			if (src->level_instance != nullptr)
 				return GetGameInstance(src->level_instance);
+			return nullptr;
+		}
+
+		static inline chaos::AutoConstCastable<GameInstance> GetGameInstance(CameraComponent const * src)
+		{
+			assert(src != nullptr);
+			if (src->camera != nullptr)
+				return GetGameInstance(src->camera);
 			return nullptr;
 		}
 
@@ -351,6 +383,14 @@ namespace death
 			return chaos::meta::get_raw_pointer(src->level_instance);
 		}
 
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(CameraComponent* src)
+		{
+			assert(src != nullptr);
+			if (src->camera != nullptr)
+				return GetLevelInstance(src->camera);
+			return nullptr;
+		}
+
 		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(Player const* src)
 		{
 			assert(src != nullptr);
@@ -393,6 +433,13 @@ namespace death
 			return chaos::meta::get_raw_pointer(src->level_instance);
 		}
 
+		static inline chaos::AutoConstCastable<LevelInstance> GetLevelInstance(CameraComponent const * src)
+		{
+			assert(src != nullptr);
+			if (src->camera != nullptr)
+				return GetLevelInstance(src->camera);
+			return nullptr;
+		}
 
 		// =======================================================================
 		// Level Getters

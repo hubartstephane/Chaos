@@ -2,12 +2,16 @@
 #include <death/Camera.h>
 #include <death/Player.h>
 
+#include <death/GameGettersImpl.h>
+
 namespace death
 {
 
 	// =================================================
 	// CameraComponent
 	// =================================================
+
+	DEATH_GAMEGETTERS_IMPLEMENT(CameraComponent);
 
 	CameraComponent::CameraComponent()
 	{	

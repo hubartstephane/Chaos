@@ -26,7 +26,7 @@
 #include <death/Level.h>
 #include <death/TiledMapLevel.h>
 #include <death/GameParticleCreator.h>
-#include <death/GameInstanceEntity.h>
+#include <death/GameGettersDecl.h>
 #include <death/Player.h>
 #include <death/GameInstance.h>
 
@@ -63,7 +63,7 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_DECLAREGETTERS();
+		DEATH_GAMEGETTERS_DECLARE();
 
 		/** constructor */
 		Game(GLFWwindow * in_glfw_window);

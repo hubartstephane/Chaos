@@ -1,7 +1,7 @@
 #pragma once
 
 // XXX : Due to class declaration order and dependencies, this must only be included from .cpp !!
-//       usefull for classes using DEATH_GAMEENTITY_IMPLEMENTGETTERS(...)
+//       usefull for classes using DEATH_GAMEGETTERS_IMPLEMENT(...)
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/AutoCast.h>
@@ -15,12 +15,6 @@
 #include <death/GameInstance.h>
 #include <death/LevelInstance.h>
 #include <death/Level.h>
-
-CHAOS_GENERATE_HAS_MEMBER(level_instance);
-CHAOS_GENERATE_HAS_MEMBER(game_instance);
-CHAOS_GENERATE_HAS_MEMBER(game);
-CHAOS_GENERATE_HAS_MEMBER(level);
-CHAOS_GENERATE_HAS_MEMBER(players);
 
 //
 //    Player <----> GameInstance <----> Game <----> LevelInstance <----> Camera 

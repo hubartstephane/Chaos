@@ -4,7 +4,7 @@
 #include <death/GameInstance.h>
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
-#include <death/GameEntityTools.h>
+#include <death/GameGettersImpl.h>
 
 #include <chaos/CollisionFramework.h>
 
@@ -16,7 +16,7 @@ namespace death
 	// LevelInstance implementation
 	// =====================================
 
-	DEATH_GAMEENTITY_IMPLEMENTGETTERS(LevelInstance);
+	DEATH_GAMEGETTERS_IMPLEMENT(LevelInstance);
 
 	double LevelInstance::GetLevelClockTime() const
 	{

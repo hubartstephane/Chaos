@@ -1,12 +1,11 @@
 #include <death/PlayerPawn.h>
 #include <death/GameCheckpoint.h>
-#include <death/GameEntityTools.h>
 
-#include <death/GameEntityTools.h>
+#include <death/GameGettersImpl.h>
 
 namespace death
 {
-	//DEATH_GAMEENTITY_IMPLEMENTGETTERS(PlayerPawn);
+	//DEATH_GAMEGETTERS_IMPLEMENT(PlayerPawn);
 
 	// =============================================
 	// SimplePlayerPawn

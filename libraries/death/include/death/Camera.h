@@ -5,7 +5,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/AutoCast.h>
 
-#include <death/GameInstanceEntity.h>
+#include <death/GameGettersDecl.h>
 #include <death/CameraComponent.h>
 #include <death/GameFramework.h>
 #include <death/ComponentOwner.h>
@@ -35,7 +35,7 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_DECLAREGETTERS();
+		DEATH_GAMEGETTERS_DECLARE();
 
 		/** constructor */
 		Camera(LevelInstance * in_level_instance);

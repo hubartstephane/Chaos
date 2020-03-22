@@ -13,7 +13,7 @@
 #include <death/Camera.h>
 #include <death/GameFramework.h>
 #include <death/GameCheckpoint.h>
-#include <death/GameInstanceEntity.h>
+#include <death/GameGettersDecl.h>
 
 namespace death
 {
@@ -28,7 +28,7 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_DECLAREGETTERS();
+		DEATH_GAMEGETTERS_DECLARE();
 
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();

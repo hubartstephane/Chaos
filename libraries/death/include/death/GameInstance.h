@@ -10,7 +10,7 @@
 #include <death/GameFramework.h>
 #include <death/Player.h>
 #include <death/Game.h>
-#include <death/GameInstanceEntity.h>
+#include <death/GameGettersDecl.h>
 
 namespace death
 {
@@ -25,7 +25,7 @@ namespace death
 
 	public:
 
-		DEATH_GAMEENTITY_DECLAREGETTERS();
+		DEATH_GAMEGETTERS_DECLARE();
 
 		/** constructor */
 		GameInstance(Game * in_game);

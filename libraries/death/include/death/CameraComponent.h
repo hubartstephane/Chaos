@@ -6,6 +6,8 @@
 #include <chaos/Tickable.h>
 #include <death/GameFramework.h>
 
+#include <death/GameGettersDecl.h>
+
 namespace death
 {
 	// =============================================
@@ -17,6 +19,8 @@ namespace death
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
 	public:
+
+		DEATH_GAMEGETTERS_DECLARE();
 
 		/** constructor */
 		CameraComponent();

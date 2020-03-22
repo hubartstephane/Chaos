@@ -26,21 +26,21 @@ namespace death
 	chaos::AutoConstCastable<Camera> GetCamera(size_t camera_index) const;
 
 #define DEATH_GAMEGETTERS_IMPLEMENT(CLASSNAME)\
-	size_t CLASSNAME::GetPlayerCount() const { return GameEntityTools::GetPlayerCount(this);}\
-	chaos::AutoCastable<Player> CLASSNAME::GetPlayer(size_t player_index) { return GameEntityTools::GetPlayer(this, player_index);}\
-	chaos::AutoConstCastable<Player> CLASSNAME::GetPlayer(size_t player_index) const { return GameEntityTools::GetPlayer(this, player_index); }\
-	chaos::AutoCastable<PlayerPawn> CLASSNAME::GetPlayerPawn(size_t player_index) { return GameEntityTools::GetPlayerPawn(this, player_index);}\
-	chaos::AutoConstCastable<PlayerPawn> CLASSNAME::GetPlayerPawn(size_t player_index) const { return GameEntityTools::GetPlayerPawn(this, player_index); }\
-	chaos::AutoCastable<Game> CLASSNAME::GetGame() { return GameEntityTools::GetGame(this);}\
-	chaos::AutoConstCastable<Game> CLASSNAME::GetGame() const { return GameEntityTools::GetGame(this); }\
-	chaos::AutoCastable<GameInstance> CLASSNAME::GetGameInstance() { return GameEntityTools::GetGameInstance(this); }\
-	chaos::AutoConstCastable<GameInstance> CLASSNAME::GetGameInstance() const { return GameEntityTools::GetGameInstance(this); }\
-	chaos::AutoCastable<LevelInstance> CLASSNAME::GetLevelInstance() { return GameEntityTools::GetLevelInstance(this); }\
-	chaos::AutoConstCastable<LevelInstance> CLASSNAME::GetLevelInstance() const { return GameEntityTools::GetLevelInstance(this); }\
-	chaos::AutoCastable<Level> CLASSNAME::GetLevel() { return GameEntityTools::GetLevel(this); }\
-	chaos::AutoConstCastable<Level> CLASSNAME::GetLevel() const { return GameEntityTools::GetLevel(this); }\
-	size_t CLASSNAME::GetCameraCount() const { return GameEntityTools::GetCameraCount(this);}\
-	chaos::AutoCastable<Camera> CLASSNAME::GetCamera(size_t camera_index) { return GameEntityTools::GetCamera(this, camera_index); }\
-	chaos::AutoConstCastable<Camera> CLASSNAME::GetCamera(size_t camera_index) const { return GameEntityTools::GetCamera(this, camera_index); }
+	size_t CLASSNAME::GetPlayerCount() const { return GameGettersTools::GetPlayerCount(this);}\
+	chaos::AutoCastable<Player> CLASSNAME::GetPlayer(size_t player_index) { return GameGettersTools::GetPlayer(this, player_index);}\
+	chaos::AutoConstCastable<Player> CLASSNAME::GetPlayer(size_t player_index) const { return GameGettersTools::GetPlayer(this, player_index); }\
+	chaos::AutoCastable<PlayerPawn> CLASSNAME::GetPlayerPawn(size_t player_index) { return GameGettersTools::GetPlayerPawn(this, player_index);}\
+	chaos::AutoConstCastable<PlayerPawn> CLASSNAME::GetPlayerPawn(size_t player_index) const { return GameGettersTools::GetPlayerPawn(this, player_index); }\
+	chaos::AutoCastable<Game> CLASSNAME::GetGame() { return GameGettersTools::GetGame(this);}\
+	chaos::AutoConstCastable<Game> CLASSNAME::GetGame() const { return GameGettersTools::GetGame(this); }\
+	chaos::AutoCastable<GameInstance> CLASSNAME::GetGameInstance() { return GameGettersTools::GetGameInstance(this); }\
+	chaos::AutoConstCastable<GameInstance> CLASSNAME::GetGameInstance() const { return GameGettersTools::GetGameInstance(this); }\
+	chaos::AutoCastable<LevelInstance> CLASSNAME::GetLevelInstance() { return GameGettersTools::GetLevelInstance(this); }\
+	chaos::AutoConstCastable<LevelInstance> CLASSNAME::GetLevelInstance() const { return GameGettersTools::GetLevelInstance(this); }\
+	chaos::AutoCastable<Level> CLASSNAME::GetLevel() { return GameGettersTools::GetLevel(this); }\
+	chaos::AutoConstCastable<Level> CLASSNAME::GetLevel() const { return GameGettersTools::GetLevel(this); }\
+	size_t CLASSNAME::GetCameraCount() const { return GameGettersTools::GetCameraCount(this);}\
+	chaos::AutoCastable<Camera> CLASSNAME::GetCamera(size_t camera_index) { return GameGettersTools::GetCamera(this, camera_index); }\
+	chaos::AutoConstCastable<Camera> CLASSNAME::GetCamera(size_t camera_index) const { return GameGettersTools::GetCamera(this, camera_index); }
 
 }; // namespace death

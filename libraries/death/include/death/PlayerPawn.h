@@ -8,7 +8,7 @@
 
 #include <death/GameFramework.h>
 #include <death/GameCheckpoint.h>
-#include <death/GameInstanceEntity.h>
+#include <death/GameGettersDecl.h>
 
 namespace death
 {
@@ -24,7 +24,7 @@ namespace death
 
 	public:
 
-		//DEATH_GAMEENTITY_DECLAREGETTERS();
+		//DEATH_GAMEGETTERS_DECLARE();
 
 		/** override */
 		virtual glm::vec2 GetPosition() const;

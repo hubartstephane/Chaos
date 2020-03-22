@@ -3,12 +3,12 @@
 #include <death/ComponentOwner.h>
 #include <death/LevelInstance.h>
 #include <death/Game.h>
-#include <death/GameEntityTools.h>
+#include <death/GameGettersImpl.h>
 
 namespace death
 {
 
-	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Camera);
+	DEATH_GAMEGETTERS_IMPLEMENT(Camera);
 
 	// =================================================
 	// CameraTransform

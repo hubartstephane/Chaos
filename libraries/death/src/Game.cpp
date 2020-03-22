@@ -4,7 +4,7 @@
 #include <death/Level.h>
 #include <death/TiledMapLevel.h>
 #include <death/SoundContext.h>
-#include <death/GameEntityTools.h>
+#include <death/GameGettersImpl.h>
 #include <death/SoundListenerCameraComponent.h>
 #include <death/FreeCameraComponent.h>
 #include <death/GameParticles.h>
@@ -23,7 +23,7 @@
 
 namespace death
 {
-	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Game);
+	DEATH_GAMEGETTERS_IMPLEMENT(Game);
 
 	Game::Game(GLFWwindow* in_glfw_window):
 		glfw_window(in_glfw_window)

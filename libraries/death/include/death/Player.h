@@ -7,7 +7,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/InputEventReceiver.h>
 
-#include <death/GameInstanceEntity.h>
+#include <death/GameGettersDecl.h>
 #include <death/GameFramework.h>
 #include <death/Game.h>
 #include <death/PlayerPawn.h>
@@ -31,7 +31,7 @@ namespace death
 		/** destructor */
 		virtual ~Player();
 
-		DEATH_GAMEENTITY_DECLAREGETTERS();
+		DEATH_GAMEGETTERS_DECLARE();
 
 		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
 		//       it can be set from a level instance's particle_manager

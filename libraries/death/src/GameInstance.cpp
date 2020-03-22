@@ -3,11 +3,11 @@
 #include <death/Player.h>
 #include <death/Camera.h>
 #include <death/GameCheckpoint.h>
-#include <death/GameEntityTools.h>
+#include <death/GameGettersImpl.h>
 
 namespace death
 {
-	DEATH_GAMEENTITY_IMPLEMENTGETTERS(GameInstance);
+	DEATH_GAMEGETTERS_IMPLEMENT(GameInstance);
 
 	GameInstance::GameInstance(Game * in_game) :
 		game(in_game)

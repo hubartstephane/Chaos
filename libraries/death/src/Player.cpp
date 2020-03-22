@@ -1,14 +1,14 @@
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
 #include <death/ShakeCameraComponent.h>
-#include <death/GameEntityTools.h>
+#include <death/GameGettersImpl.h>
 
 #include <chaos/ParticleDefault.h>
 
 namespace death
 {
 
-	DEATH_GAMEENTITY_IMPLEMENTGETTERS(Player);
+	DEATH_GAMEGETTERS_IMPLEMENT(Player);
 
 	// =================================================
 	// Player

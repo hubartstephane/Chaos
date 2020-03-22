@@ -7,7 +7,7 @@
 namespace death
 {
 
-#define DEATH_GAMEENTITY_DECLAREGETTERS()\
+#define DEATH_GAMEGETTERS_DECLARE()\
 	size_t GetPlayerCount() const;\
 	chaos::AutoCastable<Player> GetPlayer(size_t player_index);\
 	chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;\
@@ -23,7 +23,7 @@ namespace death
 	chaos::AutoCastable<Camera> GetCamera(size_t camera_index);\
 	chaos::AutoConstCastable<Camera> GetCamera(size_t camera_index) const;
 
-#define DEATH_GAMEENTITY_IMPLEMENTGETTERS(CLASSNAME)\
+#define DEATH_GAMEGETTERS_IMPLEMENT(CLASSNAME)\
 	size_t CLASSNAME::GetPlayerCount() const { return GameEntityTools::GetPlayerCount(this);}\
 	chaos::AutoCastable<Player> CLASSNAME::GetPlayer(size_t player_index) { return GameEntityTools::GetPlayer(this, player_index);}\
 	chaos::AutoConstCastable<Player> CLASSNAME::GetPlayer(size_t player_index) const { return GameEntityTools::GetPlayer(this, player_index); }\

@@ -5,7 +5,7 @@
 #include <chaos/FileResource.h>
 
 #include <death/GameFramework.h>
-#include <death/GameInstanceEntity.h>
+#include <death/GameGettersDecl.h>
 
 namespace death
 {

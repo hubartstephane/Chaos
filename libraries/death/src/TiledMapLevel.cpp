@@ -1853,24 +1853,13 @@ namespace death
 		//          call it twice as a fast fix
 		layer_instance->FinalizeParticles(player_allocation);
 
-
-
-		//player->SetPlayerAllocation(player_allocation);
-
-		 return nullptr;
-
-
-		// return a new player pawn
+		// create a pawn 
 		PlayerPawn* result = new PlayerPawn(player);
 		if (result == nullptr)
 			return result;
 
 		result->SetAllocation(player_allocation);
 		return result;
-
-
-
-
 	}
 
 	PlayerPawn * TiledMapLevelInstance::CreatePlayerPawn(Player* player)

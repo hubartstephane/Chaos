@@ -46,7 +46,7 @@ namespace death
 		assert(player != nullptr);
 		// 
 		// create the pawn for the player
-		CreatePlayerPawn(player);
+		player->pawn = CreatePlayerPawn(player);
 		// create respawn checkpoint for the very first player
 		GameInstance* game_instance = GetGameInstance();
 		if (game_instance == nullptr)

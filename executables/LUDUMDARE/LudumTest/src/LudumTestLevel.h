@@ -34,5 +34,5 @@ protected:
 
 	virtual death::TiledMapGeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
-	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMapParticle * particle) override;
+	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, death::TiledMapParticle * particle) override;
 };

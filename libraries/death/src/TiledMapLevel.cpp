@@ -94,7 +94,7 @@ namespace death
 		return chaos::Collide(other_box, box);
 	}
 
-	bool TiledMapTriggerObject::OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle, chaos::CollisionType event_type)
+	bool TiledMapTriggerObject::OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::CollisionType event_type)
 	{
 		return false; // do not do anything with collision
 	}
@@ -222,7 +222,7 @@ namespace death
 		return OnTriggerCollision(delta_time, event_type);
 	}
 
-	bool TiledMapNotificationTriggerObject::OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle, chaos::CollisionType event_type)
+	bool TiledMapNotificationTriggerObject::OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::CollisionType event_type)
 	{
 		if (!player_collision)
 			return false;
@@ -347,7 +347,7 @@ namespace death
 		return false;
 	}
 
-	bool TiledMapFinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player* player, chaos::ParticleDefault::Particle* player_particle, chaos::CollisionType event_type)
+	bool TiledMapFinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player* player, chaos::CollisionType event_type)
 	{
 		if (event_type != chaos::CollisionType::STARTED)
 			return false;
@@ -659,7 +659,7 @@ namespace death
 		return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 	}
 
-	bool TiledMapLevel::OnPlayerTileCollision(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle, TiledMapParticle* particle)
+	bool TiledMapLevel::OnPlayerTileCollision(float delta_time, class Player* player, TiledMapParticle* particle)
 	{
 		return true; // continue with other
 	}
@@ -1150,17 +1150,13 @@ namespace death
 				Player* player = game->GetPlayer(i);
 				if (player == nullptr)
 					continue;
-				// get the player particle
-				chaos::ParticleDefault::Particle* player_particle = player->GetPlayerParticle();
-				if (player_particle == nullptr)
-					continue;
 				// collision with surface triggers
 				if (trigger_collision_enabled)
-					if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player, player_particle))
+					if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player))
 						continue;
 				// collision with tiles
 				if (tile_collision_enabled)
-					if (!ComputePlayerTileCollisions(delta_time, player, player_particle))
+					if (!ComputePlayerTileCollisions(delta_time, player))
 						continue;
 			}
 		}
@@ -1253,7 +1249,7 @@ namespace death
 
 	}
 
-	bool TiledMapLayerInstance::ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle)
+	bool TiledMapLayerInstance::ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player)
 	{
 		// the new colliding triggers
 		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
@@ -1261,15 +1257,21 @@ namespace death
 		TiledMapPlayerAndTriggerCollisionRecord* previous_collisions = FindPlayerCollisionRecord(player);
 
 		// search all colliding triggers
-		size_t triggers_count = triggers.size();
-		for (size_t i = 0; i < triggers_count; ++i)
+		PlayerPawn* player_pawn = player->GetPawn();
+		if (player_pawn != nullptr)
 		{
-			TiledMapTriggerObject* trigger = triggers[i].get();
-			if (trigger == nullptr || !trigger->IsEnabled())
-				continue;
-			// detect collision
-			if (trigger->IsCollisionWith(player_particle->bounding_box, (previous_collisions != nullptr) ? &previous_collisions->triggers : nullptr))
-				new_triggers.push_back(trigger);
+			chaos::box2 pawn_box = player_pawn->GetBox();
+			
+			size_t triggers_count = triggers.size();
+			for (size_t i = 0; i < triggers_count; ++i)
+			{
+				TiledMapTriggerObject* trigger = triggers[i].get();
+				if (trigger == nullptr || !trigger->IsEnabled())
+					continue;
+				// detect collision
+				if (trigger->IsCollisionWith(pawn_box, (previous_collisions != nullptr) ? &previous_collisions->triggers : nullptr))
+					new_triggers.push_back(trigger);
+			}
 		}
 
 		// triggers collisions 
@@ -1287,7 +1289,7 @@ namespace death
 			if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
 				continue;
 			// trigger event
-			if (trigger->OnPlayerCollisionEvent(delta_time, player, player_particle, collision_type))
+			if (trigger->OnPlayerCollisionEvent(delta_time, player, collision_type))
 			{
 				if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce())
 				{
@@ -1304,7 +1306,7 @@ namespace death
 			for (size_t i = 0; i < previous_count; ++i)
 			{
 				if (std::find(new_triggers.begin(), new_triggers.end(), previous_collisions->triggers[i]) == new_triggers.end()) // no more colliding
-					previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, player_particle, chaos::CollisionType::FINISHED);
+					previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, chaos::CollisionType::FINISHED);
 			}
 		}
 
@@ -1321,21 +1323,28 @@ namespace death
 		return true; // continue other collisions 
 	}
 
-	bool TiledMapLayerInstance::ComputePlayerTileCollisions(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle)
+	bool TiledMapLayerInstance::ComputePlayerTileCollisions(float delta_time, class Player* player)
 	{
 		TiledMapLevel* level = GetLevel();
 
-		return FindTileCollisions(player_particle->bounding_box, [this, delta_time, player, player_particle, level](TiledMapParticle& tile_particle)
+		PlayerPawn* player_pawn = player->GetPawn();
+		if (player_pawn != nullptr)
 		{
-			// ignore self collision
-			if (player_particle == &tile_particle)
-				return true;
-			// stop other collisions
-			if (!level->OnPlayerTileCollision(delta_time, player, player_particle, &tile_particle))
-				return false;
+			chaos::box2 pawn_box = player_pawn->GetBox();
 
-			return true;
-		});
+			return FindTileCollisions(pawn_box, [this, delta_time, player, level](TiledMapParticle& tile_particle)
+			{
+				// ignore self collision
+				//if (player_particle == &tile_particle)
+				//	return true;
+				// stop other collisions
+				if (!level->OnPlayerTileCollision(delta_time, player, &tile_particle))
+					return false;
+
+				return true;
+			});
+		}
+		return true;
 	}
 
 	bool TiledMapLayerInstance::DoTick(float delta_time)
@@ -1846,7 +1855,7 @@ namespace death
 
 
 
-		player->SetPlayerAllocation(player_allocation);
+		//player->SetPlayerAllocation(player_allocation);
 
 		 return nullptr;
 

@@ -198,7 +198,7 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 
-bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMapParticle * particle)
+bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, death::TiledMapParticle * particle)
 {
 
 	return true; // continue with other

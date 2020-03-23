@@ -205,7 +205,7 @@ bool MyFinishingTriggerObject::Initialize()
 }
 
 
-bool MyFinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type)
+bool MyFinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
 {
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;

@@ -70,7 +70,7 @@ namespace death
 	void LevelInstance::DestroyPlayerPawn(Player* player)
 	{
 		assert(player != nullptr);
-		player->SetPlayerAllocation(nullptr);
+		player->pawn = nullptr;
 	}
 
 	void LevelInstance::DestroyCameras()

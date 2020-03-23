@@ -70,10 +70,6 @@ public:
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
 
-	ParticlePlayer * GetPlayerParticle(size_t player_index);
-
-	ParticlePlayer const * GetPlayerParticle(size_t player_index) const;
-
 	float GetBuyUpgradeTime() const { return buy_upgrade_time; }
 
 protected:

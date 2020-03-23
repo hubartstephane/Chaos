@@ -332,6 +332,7 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 
 bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
+
 	// all damage consummed
 	if (particle->damage <= 0.0f)
 		return true;
@@ -346,6 +347,11 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 
 	if (!particle->player_ownership && ObjectBesideCamera(update_data.camera_box, particle->bounding_box))
 		return true;
+
+	death::PlayerPawn* player_pawn = update_data.player->GetPawn();
+	if (player_pawn == nullptr)
+		return false;
+
 
 	// search for collisions
 	if (particle->player_ownership)
@@ -370,11 +376,14 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 		}	
 	}
 	// enemy bullet
-	chaos::box2 player_box = update_data.player->GetPlayerBox();
-	player_box.half_size *= 0.7f;
+
+
+
+	chaos::box2 pawn_box = player_pawn->GetBox();
+	pawn_box.half_size *= 0.7f;
 	if (!particle->player_ownership && update_data.player != nullptr)
 	{
-		if (chaos::Collide(particle->bounding_box, player_box)) // destroy the particle outside the camera frustum (works for empty camera)
+		if (chaos::Collide(particle->bounding_box, pawn_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		{				
 			update_data.player->SetHealth(-particle->damage, true);
 			particle->damage = 0.0f;
@@ -454,10 +463,10 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	
 	if (particle->rotation_following_player)
 	{
-		LudumPlayer * player = layer_trait->game->GetPlayer(0);
-		if (player != nullptr)
+		death::PlayerPawn * player_pawn = layer_trait->game->GetPlayerPawn(0);
+		if (player_pawn != nullptr)
 		{		
-			glm::vec2 delta_pos = player->GetPlayerPosition() - particle->bounding_box.position;
+			glm::vec2 delta_pos = player_pawn->GetPosition() - particle->bounding_box.position;
 			particle->rotation = atan2f(delta_pos.y, delta_pos.x) - (float)M_PI_2; 
 		}
 	}

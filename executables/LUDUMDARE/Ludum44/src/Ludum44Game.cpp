@@ -123,22 +123,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	return true;
 }
 
-ParticlePlayer * LudumGame::GetPlayerParticle(size_t player_index)
-{
-	LudumPlayer * player = GetPlayer(player_index);
-	if (player == nullptr)
-		return nullptr;
-	return player->GetPlayerParticle();
-}
-
-ParticlePlayer const * LudumGame::GetPlayerParticle(size_t player_index) const
-{
-	LudumPlayer const * player = GetPlayer(player_index);
-	if (player == nullptr)
-		return nullptr;
-	return player->GetPlayerParticle();
-}
-
 death::GameInstance * LudumGame::DoCreateGameInstance()
 {
 	return new LudumGameInstance(this);

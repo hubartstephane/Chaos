@@ -31,10 +31,14 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 	LudumGame const * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return;
-
-	ParticlePlayer * player_particle = GetPlayerParticle();
-	if (player_particle == nullptr)
+	if (pawn == nullptr || pawn->GetAllocation() == nullptr || pawn->GetAllocation()->GetParticleCount() == 0)
 		return;
+
+	chaos::ParticleAccessor<ParticlePlayer> particles = pawn->GetAllocation()->GetParticleAccessor();
+
+
+	ParticlePlayer * player_particle = &particles[0];
+
 	player_particle->velocity = glm::vec2(0.0f, 0.0f);
 
 	float left_length_2 = glm::length2(left_stick_position);
@@ -49,25 +53,6 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 	}
 }
 
-void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
-{
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game == nullptr)
-		return;
-
-	Player::SetPlayerAllocation(in_allocation);
-
-#if 0
-	if (in_allocation != nullptr)
-	{
-		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor();
-		size_t count = player_particles.GetCount();
-		for (size_t i = 0 ; i < count ; ++i)
-			player_particles[i].life = ludum_game->player_life.initial_value;
-	}
-#endif
-}
-
 void LudumPlayer::FireChargedProjectile()
 {
     LudumGame const* ludum_game = GetGame();
@@ -78,7 +63,7 @@ void LudumPlayer::FireChargedProjectile()
         return;
 
     int count = 1;
-    ludum_game_instance->FireProjectile("charged_fire", GetPlayerBox(), 1.0f, count, "thrust", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_charged_damages[current_charged_damage_index], true, true);
+    ludum_game_instance->FireProjectile("charged_fire", GetPawn()->GetBox(), 1.0f, count, "thrust", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_charged_damages[current_charged_damage_index], true, true);
 }
 
 void LudumPlayer::FireNormalProjectile()
@@ -91,7 +76,7 @@ void LudumPlayer::FireNormalProjectile()
         return;
 
     int count = ludum_game->player_fire_rates[current_fire_rate_index];
-    ludum_game_instance->FireProjectile("fire", GetPlayerBox(), 0.3f, count, "fire", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_damages[current_damage_index], false, true);
+    ludum_game_instance->FireProjectile("fire", GetPawn()->GetBox(), 0.3f, count, "fire", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_damages[current_damage_index], false, true);
 }
 
 void LudumPlayer::UpdatePlayerFire(float delta_time)

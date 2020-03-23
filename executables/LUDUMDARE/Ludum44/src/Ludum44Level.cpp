@@ -87,7 +87,7 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 }
 
 
-bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMapParticle * particle)
+bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, death::TiledMapParticle * particle)
 {
 
 	return true; // continue with other
@@ -121,7 +121,7 @@ bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * p
 // PowerUpTriggerObject implementation
 // =============================================================
 
-bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type)
+bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
 {
 	LudumGameInstance * ludum_game_instance = player->GetGameInstance();
 	if (ludum_game_instance == nullptr)
@@ -148,7 +148,7 @@ bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 // SpeedUpTriggerObject implementation
 // =============================================================
 
-bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type)
+bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
 {
 	if (event_type != chaos::CollisionType::STARTED) // already handled
 		return false;

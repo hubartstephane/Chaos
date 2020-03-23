@@ -213,7 +213,7 @@ namespace death
 		virtual bool DoLoadFromCheckpoint(TiledMapObjectCheckpoint const* checkpoint) override;
 
 		/** called whenever a collision with player is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
-		virtual bool OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle, chaos::CollisionType event_type);
+		virtual bool OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::CollisionType event_type);
 		/** called whenever a collision with camera is detected (=> important for TriggerOnce) */
 		virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type);
 
@@ -274,7 +274,7 @@ namespace death
 		/** override */
 		virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type) override;
 		/** override */
-		virtual bool OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle, chaos::CollisionType event_type) override;
+		virtual bool OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::CollisionType event_type) override;
 
 	protected:
 
@@ -375,7 +375,7 @@ namespace death
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
-		virtual bool OnPlayerCollisionEvent(float delta_time, Player* player, chaos::ParticleDefault::Particle* player_particle, chaos::CollisionType event_type) override;
+		virtual bool OnPlayerCollisionEvent(float delta_time, Player* player, chaos::CollisionType event_type) override;
 	};
 
 
@@ -435,7 +435,7 @@ namespace death
 		virtual bool FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) { return true; }
 
 		/** called whenever a collision between player and tile happens */
-		virtual bool OnPlayerTileCollision(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle, TiledMapParticle* particle);
+		virtual bool OnPlayerTileCollision(float delta_time, class Player* player, TiledMapParticle* particle);
 
 		/** the default program when not specified */
 		virtual chaos::GPUProgram* GenDefaultRenderProgram();
@@ -652,11 +652,11 @@ namespace death
 		/** search all collision with the player (tiles/TriggerObject) */
 		virtual void ComputePlayerAndCameraCollision(float delta_time);
 		/** compute trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
-		virtual bool ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle);
+		virtual bool ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player);
 		/** compute trigger collisions with camera */
 		virtual bool ComputeCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box);
 		/** compute collisions between players and tiles (returns false if if do not want to handle mode player collisions) */
-		virtual bool ComputePlayerTileCollisions(float delta_time, class Player* player, chaos::ParticleDefault::Particle* player_particle);
+		virtual bool ComputePlayerTileCollisions(float delta_time, class Player* player);
 
 		/** create a particle populator so that each layer may have its own particle type */
 		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator();

@@ -29,7 +29,7 @@ public:
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type) override;
+	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type) override;
 
 protected:
 
@@ -51,7 +51,7 @@ public:
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::ParticleDefault::Particle * player_particle, chaos::CollisionType event_type) override;
+	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type) override;
 };
 
 
@@ -100,6 +100,6 @@ protected:
 
 	virtual death::TiledMapGeometricObject * DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object) override;
 
-	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, chaos::ParticleDefault::Particle * player_particle, death::TiledMapParticle * particle) override;
+	virtual bool OnPlayerTileCollision(float delta_time, class death::Player * player, death::TiledMapParticle * particle) override;
 
 };

@@ -29,7 +29,7 @@ void LudumPlayer::DisplacePlayerRacket(float delta_x)
 
 	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
-		ludum_level_instance->RestrictPlayerToWorld(this);
+		ludum_level_instance->RestrictPawnToWorld(this);
 }
 
 
@@ -88,7 +88,7 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 
 	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
-		ludum_level_instance->RestrictPlayerToWorld(this);
+		ludum_level_instance->RestrictPawnToWorld(this);
 }
 
 bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)

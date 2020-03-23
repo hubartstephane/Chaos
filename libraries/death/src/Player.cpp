@@ -30,11 +30,6 @@ namespace death
 		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
-	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
-	{
-		player_allocations = in_allocation;
-	}
-
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
 		// read the configuration
@@ -251,6 +246,9 @@ namespace death
 		life_count = std::max(life_count, 0);
 	}
 
+
+#if 0
+
 	chaos::ParticleDefault::Particle * Player::GetPlayerParticle()
 	{
 		return chaos::ParticleTools::GetParticle(GetPlayerAllocation(), 0);
@@ -280,31 +278,39 @@ namespace death
 		return chaos::ParticleTools::SetParticleBox(GetPlayerAllocation(), 0, box);
 	}
 
+	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase* in_allocation)
+	{
+		player_allocations = in_allocation;
+	}
+#endif
+
 	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const
 	{
-		checkpoint->life_count = life_count;		
-        checkpoint->health = health;		
-        checkpoint->max_health = max_health;
-
+		checkpoint->life_count = life_count;
+		checkpoint->health = health;
+		checkpoint->max_health = max_health;
 		checkpoint->invulnerability_timer = invulnerability_timer;
 		checkpoint->invulnerability_duration = invulnerability_duration;
-
 		checkpoint->score = score;
-		checkpoint->player_box = GetPlayerBox();
+
+		if (pawn != nullptr)
+			checkpoint->pawn_checkpoint = pawn->SaveIntoCheckpoint();
+
 		return true;
 	}
 
 	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
 	{
-		life_count     = checkpoint->life_count;
-        health         = checkpoint->health;
-        max_health     = checkpoint->max_health;
-
+		life_count = checkpoint->life_count;
+		health = checkpoint->health;
+		max_health = checkpoint->max_health;
 		invulnerability_timer = checkpoint->invulnerability_timer;
 		invulnerability_duration = checkpoint->invulnerability_duration;
+		score = checkpoint->score;
 
-		score          = checkpoint->score;
-		SetPlayerBox(checkpoint->player_box);
+		if (pawn != nullptr)
+			pawn->LoadFromCheckpoint(checkpoint->pawn_checkpoint.get());
+
 		return true;
 	}
 

@@ -1860,8 +1860,6 @@ namespace death
 		return result;
 
 
-		// set the player allocation
-		player->SetPlayerAllocation(player_allocation);
 
 
 	}

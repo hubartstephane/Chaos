@@ -194,9 +194,9 @@ namespace death
 
 	void LevelInstance::RestrictCameraToPlayerAndWorld(size_t player_index, size_t camera_index)
 	{
-		// get the wanted player
-		Player * player = GetPlayer(player_index);
-		if (player == nullptr)
+		// get the wanted player pawn
+		PlayerPawn * player_pawn = GetPlayerPawn(player_index);
+		if (player_pawn == nullptr)
 			return;
 
 		// get the camera
@@ -209,14 +209,14 @@ namespace death
 		if (IsGeometryEmpty(camera_box))
 			return;
 
-		// keep player inside camera safe zone
-		chaos::box2 player_box = player->GetPlayerBox();
-		if (!IsGeometryEmpty(player_box))
+		// keep player pawn inside camera safe zone
+		chaos::box2 pawn_box = player_pawn->GetBox();
+		if (!IsGeometryEmpty(pawn_box))
 		{
 			chaos::box2 safe_camera = camera_box;
 			safe_camera.half_size *= camera->GetSafeZone();
 
-			if (chaos::RestrictToInside(safe_camera, player_box, true)) // apply the safe_zone displacement to the real camera
+			if (chaos::RestrictToInside(safe_camera, pawn_box, true)) // apply the safe_zone displacement to the real camera
 				camera_box.position = safe_camera.position;
 		}
 
@@ -241,11 +241,11 @@ namespace death
 		chaos::ParticleTools::SetParticleBox(allocation, index, box);
 	}
 
-	void LevelInstance::RestrictPlayerToWorld(Player * player)
+	void LevelInstance::RestrictPawnToWorld(PlayerPawn* player_pawn)
 	{
-		if (player == nullptr)
+		if (player_pawn == nullptr)
 			return;
-		RestrictObjectToWorld(player->GetPlayerAllocation(), 0);
+		RestrictObjectToWorld(player_pawn->GetAllocation(), 0);
 	}
 
 	bool LevelInstance::IsPlayerDead(Player * player)

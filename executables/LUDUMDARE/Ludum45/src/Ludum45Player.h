@@ -38,9 +38,6 @@ public:
 	ParticlePlayer * GetPlayerParticle();
 	ParticlePlayer const * GetPlayerParticle() const;
 
-	/** override */
-	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
-
 	size_t GetUpgradeLevel(chaos::TagType upgrade_type) const;
 
 	size_t GetSpeedLevel() const;

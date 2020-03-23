@@ -86,7 +86,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
     if (surface == nullptr)
         return true;
 
-    chaos::box2 player_box = GetLayerInstance()->GetGame()->GetPlayer(0)->GetPlayerBox();
+    chaos::box2 pawn_box = GetLayerInstance()->GetGame()->GetPlayerPawn(0)->GetBox();
 
 	LudumLevelInstance* ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 
@@ -99,7 +99,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
     EnemyPattern * p = pattern;
     EnemyType* t = type;
 
-    spawner.SpawnParticles(pattern->enemy_count, true, [camera_box, player_box, surface, t, p, bitmap_info](chaos::ParticleAccessorBase<ParticleEnemy> accessor) {
+    spawner.SpawnParticles(pattern->enemy_count, true, [camera_box, pawn_box, surface, t, p, bitmap_info](chaos::ParticleAccessorBase<ParticleEnemy> accessor) {
 
         for (ParticleEnemy& particle : accessor)
         {

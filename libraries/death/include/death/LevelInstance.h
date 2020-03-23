@@ -66,8 +66,8 @@ namespace death
 		void RestrictCameraToPlayerAndWorld(size_t player_index, size_t camera_index);
 		/** restrict an object to the world */
 		void RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index);
-		/** restrict an player to the world */
-		void RestrictPlayerToWorld(Player * player);
+		/** restrict an pawn to the world */
+		void RestrictPawnToWorld(PlayerPawn * player_pawn);
 
 		/** get the current time out */
 		float GetLevelTimeout() const { return level_timeout; }

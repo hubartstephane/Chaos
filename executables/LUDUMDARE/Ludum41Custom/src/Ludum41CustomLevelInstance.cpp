@@ -43,7 +43,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 bool LudumLevelInstance::DoTick(float delta_time)
 {
 	death::LevelInstance::DoTick(delta_time);
-	RestrictPlayerToWorld(GetPlayer(0));
+	RestrictPawnToWorld(GetPlayer(0));
 	return true;
 }
 

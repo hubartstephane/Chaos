@@ -569,14 +569,6 @@ bool LudumPlayer::GetCurrentGhostValue() const
 
 
 
-void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
-{
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game == nullptr)
-		return;
-
-	Player::SetPlayerAllocation(in_allocation);
-}
 
 death::PlayerCheckpoint * LudumPlayer::DoCreateCheckpoint() const
 {

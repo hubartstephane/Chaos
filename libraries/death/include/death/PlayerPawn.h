@@ -56,6 +56,13 @@ namespace death
 
 	protected:
 
+		/** override */
+		virtual bool DoSaveIntoCheckpoint(PlayerPawnCheckpoint* checkpoint) const override;
+		/** override */
+		virtual bool DoLoadFromCheckpoint(PlayerPawnCheckpoint const* checkpoint) override;
+
+	protected:
+
 		/** the player that owns this pawn */
 		Player* player = nullptr;
 		/** the allocation for the pawn */

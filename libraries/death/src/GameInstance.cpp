@@ -172,12 +172,12 @@ namespace death
 		main_uniform_provider.AddVariableValue("game_time", game_time);
 		double pause_time = GetPauseClockTime();
 		main_uniform_provider.AddVariableValue("pause_time", pause_time);
-		// the main player box
-		Player const * player = GetPlayer(0);
-		if (player != nullptr)
+		// the main player pawn box
+		PlayerPawn const * player_pawn = GetPlayerPawn(0);
+		if (player_pawn != nullptr)
 		{
-			chaos::box2 player_box = player->GetPlayerBox();
-			main_uniform_provider.AddVariableValue("player_box", chaos::EncodeBoxToVector(player_box));
+			chaos::box2 pawn_box = player_pawn->GetBox();
+			main_uniform_provider.AddVariableValue("pawn_box", chaos::EncodeBoxToVector(pawn_box));
 		}
 	}
 

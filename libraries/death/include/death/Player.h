@@ -21,27 +21,18 @@ namespace death
 
 	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<PlayerCheckpoint>
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 		friend class PlayerGamepadCallbacks;
 
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		
 	public:
+
+		DEATH_GAMEGETTERS_DECLARE();
 
 		/** constructor */
 		Player(GameInstance * in_game_instance);
 		/** destructor */
 		virtual ~Player();
-
-		DEATH_GAMEGETTERS_DECLARE();
-
-		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
-		//       it can be set from a level instance's particle_manager
-
-		/** get the player allocation */
-		chaos::ParticleAllocationBase * GetPlayerAllocation() { return player_allocations.get(); }
-		/** get the player allocation */
-		chaos::ParticleAllocationBase const * GetPlayerAllocation() const { return player_allocations.get(); }
-		/** set the player allocation */
-		virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation);
 
 		/** get the index of the player */
 		size_t GetPlayerIndex() const { return player_index; }
@@ -68,6 +59,20 @@ namespace death
 		/** try to give physical device to the player */
 		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
+
+
+#if 0
+
+		// XXX : player allocation is not necessarly in one of the game particle_manager's layer
+		//       it can be set from a level instance's particle_manager
+
+		/** get the player allocation */
+		chaos::ParticleAllocationBase* GetPlayerAllocation() { return player_allocations.get(); }
+		/** get the player allocation */
+		chaos::ParticleAllocationBase const* GetPlayerAllocation() const { return player_allocations.get(); }
+		/** set the player allocation */
+		virtual void SetPlayerAllocation(chaos::ParticleAllocationBase* in_allocation);
+
 		/** get player particle */
 		chaos::ParticleDefault::Particle * GetPlayerParticle();
 		chaos::ParticleDefault::Particle const * GetPlayerParticle() const;
@@ -80,6 +85,12 @@ namespace death
 		bool SetPlayerPosition(glm::vec2 const & position);
 		/** set the player box */
 		bool SetPlayerBox(chaos::box2 const & box);
+
+#endif
+		/** gets the pawn */
+		PlayerPawn* GetPawn() { return pawn.get(); }
+		/** gets the pawn */
+		PlayerPawn const * GetPawn() const { return pawn.get(); }
 
 		/** gets the left stick position */
 		glm::vec2 GetLeftStickPosition() const { return left_stick_position; }
@@ -158,8 +169,10 @@ namespace death
 		/** the player pawn */
 		chaos::shared_ptr<PlayerPawn> pawn;
 
+#if 0
 		/** the allocation for the player */
 		chaos::shared_ptr<chaos::ParticleAllocationBase> player_allocations;
+#endif
 
 		/** the index of the player */
 		size_t player_index = 0;

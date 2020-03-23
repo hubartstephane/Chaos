@@ -34,10 +34,6 @@ public:
 	/** constructor */
 	LudumPlayer(death::GameInstance * in_game_instance);
 
-	/** get the player particle */
-	ParticlePlayer * GetPlayerParticle();
-	ParticlePlayer const * GetPlayerParticle() const;
-
 	size_t GetUpgradeLevel(chaos::TagType upgrade_type) const;
 
 	size_t GetSpeedLevel() const;

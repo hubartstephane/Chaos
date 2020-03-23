@@ -25,26 +25,6 @@ bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
 	return true;
 }
 
-ParticlePlayer * LudumPlayer::GetPlayerParticle()
-{
-	if (player_allocations == nullptr)
-		return nullptr;
-	chaos::ParticleAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
-	if (player_particles.GetCount() == 0)
-		return nullptr;
-	return &player_particles[0];
-}
-
-ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
-{
-	if (player_allocations == nullptr)
-		return nullptr;
-	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
-	if (player_particles.GetCount() == 0)
-		return nullptr;
-	return &player_particles[0];
-}
-
 
 void LudumPlayer::UpdateBrightSideOfLife(float delta_time)
 {
@@ -134,7 +114,12 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 	if (ludum_game == nullptr)
 		return;
 
-	ParticlePlayer * player_particle = GetPlayerParticle();
+	if (pawn == nullptr || pawn->GetAllocation() == nullptr || pawn->GetAllocation()->GetParticleCount() == 0)
+		return;
+
+	chaos::ParticleAccessor<ParticlePlayer> particles = pawn->GetAllocation()->GetParticleAccessor();
+
+	ParticlePlayer* player_particle = &particles[0];
 	if (player_particle == nullptr)
 		return;
 
@@ -278,6 +263,9 @@ void LudumPlayer::FireProjectiles()
     if (ludum_game == nullptr)
         return;
 
+	if (pawn == nullptr)
+		return;
+
 	LudumLevelInstance* ludum_level_instance = GetLevelInstance();
 
     chaos::ParticleSpawner fire_spawner = ludum_level_instance->GetParticleSpawner("PlayerFire", "fire");
@@ -307,7 +295,7 @@ void LudumPlayer::FireProjectiles()
     float velocity = ludum_game->fire_velocity;
     float damage = GetCurrentDamageValue();
 
-    chaos::box2 particle_box = GetPlayerBox();
+    chaos::box2 particle_box = pawn->GetBox();
     particle_box.half_size = ratio_to_player * particle_box.half_size;
     particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 

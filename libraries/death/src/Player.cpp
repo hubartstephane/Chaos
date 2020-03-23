@@ -246,44 +246,6 @@ namespace death
 		life_count = std::max(life_count, 0);
 	}
 
-
-#if 0
-
-	chaos::ParticleDefault::Particle * Player::GetPlayerParticle()
-	{
-		return chaos::ParticleTools::GetParticle(GetPlayerAllocation(), 0);
-	}
-
-	chaos::ParticleDefault::Particle const * Player::GetPlayerParticle() const
-	{
-		return chaos::ParticleTools::GetParticle(GetPlayerAllocation(), 0);
-	}
-
-	glm::vec2 Player::GetPlayerPosition() const
-	{
-		return chaos::ParticleTools::GetParticlePosition(GetPlayerAllocation(), 0);
-	}
-
-	chaos::box2 Player::GetPlayerBox() const
-	{
-		return chaos::ParticleTools::GetParticleBox(GetPlayerAllocation(), 0);
-	}
-
-	bool Player::SetPlayerPosition(glm::vec2 const & position)
-	{
-		return chaos::ParticleTools::SetParticlePosition(GetPlayerAllocation(), 0, position);
-	}
-	bool Player::SetPlayerBox(chaos::box2 const & box)
-	{
-		return chaos::ParticleTools::SetParticleBox(GetPlayerAllocation(), 0, box);
-	}
-
-	void Player::SetPlayerAllocation(chaos::ParticleAllocationBase* in_allocation)
-	{
-		player_allocations = in_allocation;
-	}
-#endif
-
 	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const
 	{
 		checkpoint->life_count = life_count;

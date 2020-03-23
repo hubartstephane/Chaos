@@ -16,26 +16,6 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 {
 }
 
-ParticlePlayer * LudumPlayer::GetPlayerParticle()
-{
-	if (player_allocations == nullptr)
-		return nullptr;
-	chaos::ParticleAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
-	if (player_particles.GetCount() == 0)
-		return nullptr;
-	return &player_particles[0];
-}
-
-ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
-{
-	if (player_allocations == nullptr)
-		return nullptr;
-	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
-	if (player_particles.GetCount() == 0)
-		return nullptr;
-	return &player_particles[0];
-}
-
 void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	// displace the player

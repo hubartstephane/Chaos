@@ -24,13 +24,6 @@ public:
     /** constructor */
     LudumPlayer(death::GameInstance* in_game_instance);
 
-    /** get the player particle */
-    ParticlePlayer* GetPlayerParticle();
-    ParticlePlayer const* GetPlayerParticle() const;
-
-    /** override */
-    virtual void SetPlayerAllocation(chaos::ParticleAllocationBase* in_allocation) override;
-
 protected:
 
     /** override */

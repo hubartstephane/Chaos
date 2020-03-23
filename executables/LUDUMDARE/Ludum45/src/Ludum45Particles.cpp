@@ -96,7 +96,7 @@ std::vector<chaos::box2> ParticleEnemyTrait::BeginUpdateParticles(float delta_ti
 
 	size_t count = layer_trait->game->GetPlayerCount();
 	for (size_t i = 0; i < count; ++i)
-		result.push_back(layer_trait->game->GetPlayer(i)->GetPlayerBox());
+		result.push_back(layer_trait->game->GetPlayerPawn(i)->GetBox());
 	return result;
 }
 
@@ -197,7 +197,7 @@ std::vector<chaos::box2> ParticleBonusTrait::BeginUpdateParticles(float delta_ti
 
 	size_t count = layer_trait->game->GetPlayerCount();
 	for (size_t i = 0; i < count; ++i)
-		result.push_back(layer_trait->game->GetPlayer(i)->GetPlayerBox());
+		result.push_back(layer_trait->game->GetPlayerPawn(i)->GetBox());
 	return result;
 }
 
@@ -411,15 +411,20 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 
 
 	// enemy bullet
-	chaos::box2 player_box = update_data.player->GetPlayerBox();
-	player_box.half_size *= 0.7f;
-	if (!particle->player_ownership && update_data.player != nullptr)
+
+	death::PlayerPawn const* player_pawn = update_data.player->GetPawn();
+	if (player_pawn != nullptr)
 	{
-		if (chaos::Collide(particle->bounding_box, player_box)) // destroy the particle outside the camera frustum (works for empty camera)
-		{			
-			update_data.player->SetHealth(-particle->damage, true);
-			particle->damage = 0.0f;
-		}	
+		chaos::box2 player_box = player_pawn->GetBox();
+		player_box.half_size *= 0.7f;
+		if (!particle->player_ownership && update_data.player != nullptr)
+		{
+			if (chaos::Collide(particle->bounding_box, player_box)) // destroy the particle outside the camera frustum (works for empty camera)
+			{
+				update_data.player->SetHealth(-particle->damage, true);
+				particle->damage = 0.0f;
+			}
+		}
 	}
 
 	// update position velocity

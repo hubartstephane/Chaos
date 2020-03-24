@@ -40,7 +40,7 @@ protected:
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
 	/** override */
-	virtual void CreateCameras() override;
+	virtual void CreateGameCameras() override;
 
 	/** override */
 	virtual death::LevelCheckpoint * DoCreateCheckpoint() const;

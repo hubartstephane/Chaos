@@ -32,7 +32,7 @@ protected:
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */
-	virtual void CreateCameras() override;
+	virtual void CreateGameCameras() override;
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
 

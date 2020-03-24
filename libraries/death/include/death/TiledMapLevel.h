@@ -409,18 +409,18 @@ namespace death
 		/** create a typed object specializable method */
 		virtual TiledMapGeometricObject* DoCreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a Camera specializable method */
-		virtual TiledMapCameraObject* DoCreateCamera(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapCameraObject* DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a PlayerStartObject specializable method */
-		virtual TiledMapPlayerStartObject* DoCreatePlayerStart(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapPlayerStartObject* DoCreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 
 		/** create a typed object 'entry point' */
 		TiledMapGeometricObject* CreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a camera 'entry point' */
-		TiledMapCameraObject* CreateCamera(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		TiledMapCameraObject* CreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a player start 'entry point' */
-		TiledMapPlayerStartObject* CreatePlayerStart(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		TiledMapPlayerStartObject* CreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a layer instance 'entry point' */
 		TiledMapLayerInstance* CreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 
@@ -520,19 +520,19 @@ namespace death
 		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** find the player start from its name */
-		TiledMapPlayerStartObject* FindPlayerStart(chaos::NamedObjectRequest request);
+		TiledMapPlayerStartObject* FindPlayerStartObject(chaos::NamedObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStartObject const* FindPlayerStart(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStartObject const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
 
 		/** find the camera from its name */
-		TiledMapCameraObject* FindCamera(chaos::NamedObjectRequest request);
+		TiledMapCameraObject* FindCameraObject(chaos::NamedObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraObject const* FindCamera(chaos::NamedObjectRequest request) const;
+		TiledMapCameraObject const* FindCameraObject(chaos::NamedObjectRequest request) const;
 
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject* FindTrigger(chaos::NamedObjectRequest request);
+		TiledMapTriggerObject* FindTriggerObject(chaos::NamedObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject const* FindTrigger(chaos::NamedObjectRequest request) const;
+		TiledMapTriggerObject const* FindTriggerObject(chaos::NamedObjectRequest request) const;
 
 		/** find the geometric object from its name */
 		TiledMapGeometricObject* FindGeometricObject(chaos::NamedObjectRequest request);
@@ -715,11 +715,11 @@ namespace death
 		chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
 
 		/** the player starts */
-		std::vector<chaos::shared_ptr<TiledMapPlayerStartObject>> player_starts;
+		std::vector<chaos::shared_ptr<TiledMapPlayerStartObject>> player_start_objects;
 		/** the player cameras */
-		std::vector<chaos::shared_ptr<TiledMapCameraObject>> cameras;
+		std::vector<chaos::shared_ptr<TiledMapCameraObject>> camera_objects;
 		/** the trigger surface */
-		std::vector<chaos::shared_ptr<TiledMapTriggerObject>> triggers;
+		std::vector<chaos::shared_ptr<TiledMapTriggerObject>> trigger_objects;
 		/** the geometric objects */
 		std::vector<chaos::shared_ptr<TiledMapGeometricObject>> geometric_objects;
 
@@ -778,17 +778,17 @@ namespace death
 		/** find the layer instance from its name */
 		TiledMapLayerInstance const* FindLayerInstance(chaos::NamedObjectRequest request) const;
 		/** find the camera from its name */
-		TiledMapCameraObject* FindCamera(chaos::NamedObjectRequest request);
+		TiledMapCameraObject* FindCameraObject(chaos::NamedObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraObject const* FindCamera(chaos::NamedObjectRequest request) const;
+		TiledMapCameraObject const* FindCameraObject(chaos::NamedObjectRequest request) const;
 		/** find the player start from its name */
-		TiledMapPlayerStartObject* FindPlayerStart(chaos::NamedObjectRequest request);
+		TiledMapPlayerStartObject* FindPlayerStartObject(chaos::NamedObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStartObject const* FindPlayerStart(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStartObject const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject* FindTrigger(chaos::NamedObjectRequest request);
+		TiledMapTriggerObject* FindTriggerObject(chaos::NamedObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject const* FindTrigger(chaos::NamedObjectRequest request) const;
+		TiledMapTriggerObject const* FindTriggerObject(chaos::NamedObjectRequest request) const;
 		/** find the typed object from its name */
 		TiledMapGeometricObject* FindGeometricObject(chaos::NamedObjectRequest request);
 		/** find the typed object surface from its name */
@@ -842,7 +842,7 @@ namespace death
 		virtual void OnLevelStarted() override;
 
 		/** create the cameras */
-		virtual void CreateCameras() override;
+		virtual void CreateGameCameras() override;
 
 		/** create the particle manager */
 		virtual bool CreateParticleManager(Game* in_game);

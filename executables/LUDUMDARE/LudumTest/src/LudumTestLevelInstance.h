@@ -40,7 +40,7 @@ protected:
 	/** override */
 	virtual void OnPlayerLeaved(death::Player * player) override;
 	/** override */
-	virtual void CreateCameras() override;
+	virtual void CreateGameCameras() override;
 
 	/** override */
 	virtual death::LevelCheckpoint * DoCreateCheckpoint() const;

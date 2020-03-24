@@ -78,7 +78,7 @@ namespace death
 		cameras.clear(); // destroy all camera
 	}
 
-	void LevelInstance::CreateCameras()
+	void LevelInstance::CreateGameCameras()
 	{
 
 	}
@@ -108,7 +108,7 @@ namespace death
 		if (game_instance == nullptr)
 			return;
 		// create cameras
-		CreateCameras();
+		CreateGameCameras();
 		// last initialization of camera
 		size_t camera_count = cameras.size();
 		for (size_t i = 0; i < camera_count; ++i)

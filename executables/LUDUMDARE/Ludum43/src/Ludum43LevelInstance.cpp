@@ -24,10 +24,10 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	
 }
 
-void LudumLevelInstance::CreateCameras()
+void LudumLevelInstance::CreateGameCameras()
 {
 	// create the cameras
-	death::TiledMapLevelInstance::CreateCameras();
+	death::TiledMapLevelInstance::CreateGameCameras();
 	// tweak the cameras
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)

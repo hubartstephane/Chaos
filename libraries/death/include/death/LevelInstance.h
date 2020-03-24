@@ -33,7 +33,7 @@ namespace death
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();
 		/** create cameras when the level is started */
-		virtual void CreateCameras();
+		virtual void CreateGameCameras();
 
 		/** get the transformation world to camera */
 		chaos::obox2 GetCameraOBox(size_t index, bool apply_modifiers = true) const;

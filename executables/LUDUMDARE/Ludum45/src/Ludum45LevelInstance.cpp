@@ -22,9 +22,9 @@ LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
 	assert(in_game != nullptr); 
 }
 
-void LudumLevelInstance::CreateCameras()
+void LudumLevelInstance::CreateGameCameras()
 {
-	death::TiledMapLevelInstance::CreateCameras();
+	death::TiledMapLevelInstance::CreateGameCameras();
 
 	LudumGame* ludum_game = GetGame();
 

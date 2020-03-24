@@ -327,30 +327,6 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	}
 }
 
-float LudumGame::GetPlayerParticleLife(size_t player_index) const
-{
-	ParticlePlayer const * player_particle = GetPlayerParticle(player_index);
-	if (player_particle == nullptr)
-		return 0.0f;
-	return player_particle->life;
-}
-
-ParticlePlayer * LudumGame::GetPlayerParticle(size_t player_index)
-{
-	LudumPlayer * player = GetPlayer(player_index);
-	if (player == nullptr)
-		return nullptr;
-	return player->GetPlayerParticle();
-}
-
-ParticlePlayer const * LudumGame::GetPlayerParticle(size_t player_index) const
-{
-	LudumPlayer const * player = GetPlayer(player_index);
-	if (player == nullptr)
-		return nullptr;
-	return player->GetPlayerParticle();
-}
-
 bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer)
 {
 	if (in_framebuffer != nullptr)

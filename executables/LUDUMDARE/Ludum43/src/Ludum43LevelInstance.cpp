@@ -43,28 +43,26 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 	if (death::TiledMapLevelInstance::CheckLevelCompletion())
 		return true;
 
-	if (game != nullptr)
+	LudumPlayer const * ludum_player = GetPlayer(0);
+	if (ludum_player != nullptr)
 	{
-		ParticlePlayer * player_particle = game->GetPlayerParticle(0);
+		ParticlePlayer const* player_particle = ludum_player->GetPlayerParticle();
 		if (player_particle != nullptr)
-		{
 			if (player_particle->level_end_reached)
 				return true;
-		}
 	}
 	return false;
 }
 
 bool LudumLevelInstance::CanCompleteLevel() const
 {
-	if (game != nullptr)
+	LudumPlayer const* ludum_player = GetPlayer(0);
+	if (ludum_player != nullptr)
 	{
-		ParticlePlayer * player_particle = game->GetPlayerParticle(0);
+		ParticlePlayer const* player_particle = ludum_player->GetPlayerParticle();
 		if (player_particle != nullptr)
-		{
 			if (player_particle->level_end_reached && player_particle->level_end_timer <= 0.0f)
 				return true;
-		}
 	}
 	return false;
 }

@@ -4,6 +4,7 @@
 #include "Ludum43Particles.h"
 #include "Ludum43Game.h"
 #include "Ludum43GameInstance.h"
+#include "Ludum43Player.h"
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
@@ -389,7 +390,13 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 {
 	ParticleAtomTrait::UpdateAtomData result;
 
-	ParticlePlayer const * player_particle = (ParticlePlayer const*)layer_trait->game->GetPlayerParticle(0);
+	
+
+	LudumPlayer const* ludum_player = layer_trait->game->GetPlayer(0);
+	if (ludum_player == nullptr)
+		return result;
+
+	ParticlePlayer const* player_particle = ludum_player->GetPlayerParticle();
 	if (player_particle == nullptr)
 		return result;
 

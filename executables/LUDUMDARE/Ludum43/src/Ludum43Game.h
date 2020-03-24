@@ -62,12 +62,6 @@ public:
 	/** called whenever a gamepad input is comming */
 	void RegisterEnemiesInRange(glm::vec2 const & center, float radius, std::vector<ParticleEnemy> & enemy_particles, char const * layer_name, bool take_all);
 
-	float GetPlayerParticleLife(size_t player_index) const;
-
-	ParticlePlayer * GetPlayerParticle(size_t player_index);
-
-	ParticlePlayer const * GetPlayerParticle(size_t player_index) const;
-
 protected:
 
 	/** override */

@@ -210,15 +210,18 @@ bool MyFinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::P
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;
 
-	if (player_particle != nullptr)
+	LudumPlayer* ludum_player = auto_cast(player);
+	if (ludum_player != nullptr)
 	{
-		ParticlePlayer * pp = (ParticlePlayer *)player_particle;
-		if (!pp->level_end_reached)
+		ParticlePlayer* player_particle = ludum_player->GetPlayerParticle();
+		if (player_particle != nullptr)
 		{
-			pp->level_end_reached = true;
-			pp->level_end_timer = 2.0f;
+			if (!player_particle->level_end_reached)
+			{
+				player_particle->level_end_reached = true;
+				player_particle->level_end_timer = 2.0f;
+			}
 		}
 	}
-
 	return true; // collisions handled successfully
 }

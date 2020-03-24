@@ -27,11 +27,11 @@ bool LudumGameInstance::DoTick(float delta_time)
 
 void LudumGameInstance::TickHeartBeat(float delta_time)
 {
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game == nullptr)
+	LudumPlayer* ludum_player = GetPlayer(0);
+	if (ludum_player == nullptr)
 		return;
 
-	ParticlePlayer const * particle_player = ludum_game->GetPlayerParticle(0);
+	ParticlePlayer const * particle_player = ludum_player->GetPlayerParticle();
 	if (particle_player == nullptr)
 		return;
 

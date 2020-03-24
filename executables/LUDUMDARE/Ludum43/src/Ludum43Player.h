@@ -27,10 +27,9 @@ public:
 	ParticlePlayer * GetPlayerParticle();
 	ParticlePlayer const * GetPlayerParticle() const;
 
-	virtual bool IsDead() const override;
+	float GetPlayerParticleLife() const;
 
-	/** override */
-	virtual void SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation) override;
+	virtual bool IsDead() const override;
 
 protected:
 

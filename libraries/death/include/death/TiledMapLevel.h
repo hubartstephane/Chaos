@@ -831,7 +831,7 @@ namespace death
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
 		/** the sub function responsible for player pawn creation */
-		virtual PlayerPawn * DoCreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box);
+		virtual PlayerPawn * CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box);
 
 		/** get the player start used for an incomming player */
 		virtual TiledMapPlayerStartObject* GetPlayerStartForPawn(Player* player);
@@ -842,7 +842,7 @@ namespace death
 		virtual void OnLevelStarted() override;
 
 		/** create the cameras */
-		virtual void CreateGameCameras() override;
+		virtual void CreateCameras() override;
 
 		/** create the particle manager */
 		virtual bool CreateParticleManager(Game* in_game);

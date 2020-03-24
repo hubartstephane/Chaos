@@ -18,9 +18,10 @@ LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) :
 
 ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {
-	if (player_allocations == nullptr)
+	if (pawn == nullptr || pawn->GetAllocation() == nullptr || pawn->GetAllocation()->GetParticleCount() == 0)
 		return nullptr;
-	chaos::ParticleAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
+
+	chaos::ParticleAccessor<ParticlePlayer> player_particles = pawn->GetAllocation()->GetParticleAccessor();
 	if (player_particles.GetCount() == 0)
 		return nullptr;
 	return &player_particles[0];
@@ -28,12 +29,21 @@ ParticlePlayer * LudumPlayer::GetPlayerParticle()
 
 ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 {
-	if (player_allocations == nullptr)
+	if (pawn == nullptr || pawn->GetAllocation() == nullptr || pawn->GetAllocation()->GetParticleCount() == 0)
 		return nullptr;
-	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = player_allocations->GetParticleAccessor();
+
+	chaos::ParticleConstAccessor<ParticlePlayer> player_particles = pawn->GetAllocation()->GetParticleAccessor();
 	if (player_particles.GetCount() == 0)
 		return nullptr;
 	return &player_particles[0];
+}
+
+float LudumPlayer::GetPlayerParticleLife() const
+{
+	ParticlePlayer const* player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return 0.0f;
+	return player_particle->life;
 }
 
 void LudumPlayer::TickPlayerDisplacement(float delta_time)
@@ -178,6 +188,9 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 	current_dash_duration = 0.0f;
 }
 
+
+#if 0
+
 void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
 {
 	LudumGame * ludum_game = GetGame();
@@ -193,6 +206,8 @@ void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocat
 			player_particles[i].life = GetMaxHealth(); // XXX : the health of the player is never modified. Instead, the player particle health is changed
 	}
 }
+
+#endif
 
 bool LudumPlayer::IsDead() const
 {

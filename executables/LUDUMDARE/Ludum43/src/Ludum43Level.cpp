@@ -86,7 +86,28 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_ins
 
 	if (is_player)
 	{
-		chaos::ParticleAccessor<ParticleAffector> particles = allocation->GetParticleAccessor();
+
+
+
+
+
+		
+
+
+		chaos::ParticleAccessor<ParticlePlayer> particles = allocation->GetParticleAccessor();
+		for (ParticlePlayer& particle : particles)
+		{
+			float radius = chaos::GetInnerSphere(particle.bounding_box).radius;
+
+			particle.attraction_minradius = radius + ludum_game->player_attraction_minradius;
+			particle.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
+			particle.attraction_force = ludum_game->player_attraction_force;
+			particle.repulsion_force = ludum_game->player_repulsion_force;
+			particle.tangent_force = ludum_game->player_tangent_force;
+			
+		}
+
+#if 0
 
 		size_t count = particles.GetCount();
 		for (size_t i = 0; i < count; ++i)
@@ -102,21 +123,18 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_ins
 			p.tangent_force = ludum_game->player_tangent_force;
 		}
 		return true;
+#endif
 	}
 
 
 	if (is_enemy || is_world_limits)
 	{
 		chaos::ParticleAccessor<ParticleEnemy> particles = allocation->GetParticleAccessor();
-
-		size_t count = particles.GetCount();
-		for (size_t i = 0; i < count; ++i)
+		for (ParticleEnemy& p : particles)
 		{
-			ParticleEnemy & p = particles[i];
-
 			chaos::sphere2 c = chaos::GetInnerSphere(p.bounding_box);
 
-			float & radius = c.radius;
+			float& radius = c.radius;
 
 			// XXX : i should rework on level themselves instead of scale 1.2 for world limits
 			if (!is_world_limits)
@@ -159,11 +177,8 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_ins
 	if (is_atoms)
 	{
 		chaos::ParticleAccessor<ParticleAtom> particles = allocation->GetParticleAccessor();
-
-		size_t count = particles.GetCount();
-		for (size_t i = 0; i < count; ++i)
+		for (ParticleAtom& p : particles)
 		{
-			ParticleAtom & p = particles[i];
 			p.particle_radius_factor = chaos::MathTools::RandFloat(ludum_game->particle_min_radius_factor, ludum_game->particle_max_radius_factor);
 			p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 			p.life = ludum_game->initial_particle_health;

@@ -33,7 +33,7 @@ namespace death
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();
 		/** create cameras when the level is started */
-		virtual void CreateGameCameras();
+		virtual void CreateCameras();
 
 		/** get the transformation world to camera */
 		chaos::obox2 GetCameraOBox(size_t index, bool apply_modifiers = true) const;
@@ -104,6 +104,10 @@ namespace death
 
 		/** give the player a pawn */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player);
+
+		/** the allocation PlayerPawn creation method */
+		virtual PlayerPawn* DoCreatePlayerPawn(Player* player);
+
 		/** delete the pawn for the player */
 		virtual void DestroyPlayerPawn(Player* player);
 

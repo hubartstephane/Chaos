@@ -1772,7 +1772,7 @@ namespace death
 		return NamedObject::FindNamedObject(layer_instances, request);
 	}
 
-	void TiledMapLevelInstance::CreateGameCameras()
+	void TiledMapLevelInstance::CreateCameras()
 	{
 		TiledMapLevel* level = GetLevel();
 
@@ -1834,7 +1834,7 @@ namespace death
 		return result;
 	}
 
-	PlayerPawn* TiledMapLevelInstance::DoCreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box)
+	PlayerPawn* TiledMapLevelInstance::CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box)
 	{
 		// create a particle populator
 		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
@@ -1854,7 +1854,7 @@ namespace death
 		layer_instance->FinalizeParticles(player_allocation);
 
 		// create a pawn 
-		PlayerPawn* result = new PlayerPawn(player);
+		PlayerPawn* result = DoCreatePlayerPawn(player);
 		if (result == nullptr)
 			return result;
 
@@ -1890,7 +1890,7 @@ namespace death
 		// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 		reference_layer = layer_instance;
 
-		return DoCreatePlayerPawn(player, player_start, bitmap_name->c_str(), layer_instance, player_bounding_box);
+		return CreatePlayerPawn(player, player_start, bitmap_name->c_str(), layer_instance, player_bounding_box);
 	}
 
 	void TiledMapLevelInstance::CreateBackgroundImage()

@@ -61,10 +61,15 @@ namespace death
 		DestroyPlayerPawn(player);	
 	}
 
+	PlayerPawn* LevelInstance::DoCreatePlayerPawn(Player* player)
+	{
+		return new PlayerPawn(player);
+	}
+
 	PlayerPawn * LevelInstance::CreatePlayerPawn(Player* player)
 	{
 		assert(player != nullptr);
-		return nullptr;
+		return DoCreatePlayerPawn(player);
 	}
 
 	void LevelInstance::DestroyPlayerPawn(Player* player)
@@ -78,7 +83,7 @@ namespace death
 		cameras.clear(); // destroy all camera
 	}
 
-	void LevelInstance::CreateGameCameras()
+	void LevelInstance::CreateCameras()
 	{
 
 	}
@@ -108,7 +113,7 @@ namespace death
 		if (game_instance == nullptr)
 			return;
 		// create cameras
-		CreateGameCameras();
+		CreateCameras();
 		// last initialization of camera
 		size_t camera_count = cameras.size();
 		for (size_t i = 0; i < camera_count; ++i)

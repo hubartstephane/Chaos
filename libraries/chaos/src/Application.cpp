@@ -41,8 +41,17 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
-		WinTools::AllocConsoleAndRedirectStdOutput();
+		// show console
+		bool will_show_console = show_console;
+		if (HasCommandLineFlag("-ShowConsole"))
+			will_show_console = true;
+		else if (HasCommandLineFlag("-HideConsole"))
+			will_show_console = false;
 
+		if (will_show_console)
+			WinTools::AllocConsoleAndRedirectStdOutput();
+
+		// initialize the managers
 		if (!InitializeManagers())
 			return false;
 		// open user temp directory and dump the config file

@@ -116,6 +116,14 @@ public:
 
 class MyApplication : public chaos::Application
 {
+
+public:
+
+	MyApplication() 
+	{		
+		show_console = false;
+	}
+
 protected:
 
 	virtual bool Main() override

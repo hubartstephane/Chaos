@@ -759,7 +759,8 @@ namespace chaos
 			FIBITMAP* bitmap_32bpp = FreeImage_ConvertTo32Bits(bitmap);
 			if (bitmap_32bpp != nullptr)
 			{
-				FreeImage_FlipVertical(bitmap_32bpp);
+				if (flip_vertical)
+					FreeImage_FlipVertical(bitmap_32bpp);
 				result = ConvertToHBITMAP(bitmap_32bpp, false); // do not flip while already made (this spares a new bitmap creation)
 				FreeImage_Unload(bitmap_32bpp);
 			}

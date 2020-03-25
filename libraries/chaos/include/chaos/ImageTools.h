@@ -214,7 +214,7 @@ return true;\
 		/** conversion between HBITMAP & FIBITMAP */
 		static FIBITMAP* ConvertFromHBITMAP(HBITMAP hBitmap);
 		/** conversion between HBITMAP & FIBITMAP */
-		static HBITMAP ConvertToHBITMAP(FIBITMAP* bitmap);
+		static HBITMAP ConvertToHBITMAP(FIBITMAP* bitmap, bool flip_vertical = true);
 	};
 
 }; // namespace chaos

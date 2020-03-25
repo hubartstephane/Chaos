@@ -11,10 +11,6 @@ public:
 
 	void WorkWithImage(char const* filename, FIBITMAP* bitmap)
 	{
-
-		chaos::WinTools::CopyBitmapToClipboard(bitmap);
-		return;
-
 		std::vector<FIBITMAP*> split_images;
 
 		int ImageNumberW = 2;
@@ -27,7 +23,7 @@ public:
 		int BitmapHeight = FreeImage_GetHeight(bitmap) / ImageNumberH;
 
 		int OffsetX = 0;
-		int OffsetY = 0;
+		int OffsetY = -10;
 
 		// split the image
 		for (int i = 0; i < ImageNumberH; ++i)
@@ -46,7 +42,10 @@ public:
 				int right  = left + WantedWidth;
 				int bottom = top + WantedHeight;
 
-				FIBITMAP* split_image = FreeImage_CreateView(bitmap, left, top, right, bottom);
+				FIBITMAP* split_image = FreeImage_Copy(bitmap, left, top, right, bottom);
+
+				chaos::ImageDescription desc = chaos::ImageTools::GetImageDescription(split_image);
+
 				split_images.push_back(split_image);
 			}
 		}
@@ -54,6 +53,9 @@ public:
 		FIBITMAP* new_bitmap = FreeImage_Allocate(WantedWidth * ImageNumberW, WantedHeight * ImageNumberH, 32);
 		if (new_bitmap != nullptr)
 		{
+			RGBQUAD background = { 0, 0, 0, 0 };
+			FreeImage_FillBackground(new_bitmap, &background);
+
 			for (int i = 0; i < ImageNumberH; ++i)
 			{
 				for (int j = 0; j < ImageNumberW; ++j)
@@ -64,17 +66,20 @@ public:
 
 					int left = j * WantedWidth;
 					int top  = i * WantedHeight;
-					int alpha = 0;
-
+					int alpha = 255; 
 					FreeImage_Paste(new_bitmap, split_image, left, top, alpha);
 				}
 			}
 
-			chaos::WinTools::CopyBitmapToClipboard(new_bitmap);
+			chaos::Application* application = chaos::Application::GetInstance();
+			if (application != nullptr)
+			{
+				boost::filesystem::path const& user_path = application->GetUserLocalTempPath();
 
-			//char const* new_filename = nullptr;
+				boost::filesystem::path dest = user_path / boost::filesystem::path(filename).filename();
 
-			//FreeImage_Save(FREE_IMAGE_FORMAT::FIF_PNG, new_bitmap, new_filename);
+				FreeImage_Save(FREE_IMAGE_FORMAT::FIF_PNG, new_bitmap, dest.string().c_str());
+			}
 
 			FreeImage_Unload(new_bitmap);
 		}
@@ -86,8 +91,6 @@ public:
 	virtual BOOL OnDragFile(char const* filename, POINT const& pt) override
 	{
 		FIBITMAP* bitmap = chaos::ImageTools::LoadImageFromFile(filename);
-
-		//FIBITMAP* bitmap = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_UNKNOWN, filename, 0);
 		if (bitmap != nullptr)
 		{
 			WorkWithImage(filename, bitmap);
@@ -117,6 +120,10 @@ protected:
 
 	virtual bool Main() override
 	{
+		boost::filesystem::path user_temp = CreateUserLocalTempDirectory();
+		chaos::WinTools::ShowFile(user_temp);
+
+
 		chaos::SimpleWin32CreateParam create_params;
 		create_params.x         = 10;
 		create_params.y         = 10;

@@ -743,7 +743,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	HBITMAP ImageTools::ConvertToHBITMAP(FIBITMAP* bitmap)
+	HBITMAP ImageTools::ConvertToHBITMAP(FIBITMAP* bitmap, bool flip_vertical)
 	{
 		HBITMAP result = NULL;
 
@@ -754,29 +754,33 @@ namespace chaos
 		// ensure we use supported formats (32bpp)
 		ImageDescription desc = GetImageDescription(bitmap);
 
-		int bpp = 0;
 		if (desc.pixel_format != PixelFormat::GetPixelFormat<PixelBGRA>())
 		{
 			FIBITMAP* bitmap_32bpp = FreeImage_ConvertTo32Bits(bitmap);
 			if (bitmap_32bpp != nullptr)
 			{
-				result = ConvertToHBITMAP(bitmap_32bpp);
+				FreeImage_FlipVertical(bitmap_32bpp);
+				result = ConvertToHBITMAP(bitmap_32bpp, false); // do not flip while already made (this spares a new bitmap creation)
 				FreeImage_Unload(bitmap_32bpp);
 			}
 			return result;
 		}
 
-		// flip the image
-		FIBITMAP* flipped_image = FreeImage_Clone(bitmap);
-		if (flipped_image == nullptr)
-			return NULL;
-		FreeImage_FlipVertical(flipped_image);
-
-		ImageDescription flipped_desc = GetImageDescription(flipped_image);
+		// convert image to flipped one
+		if (flip_vertical)
+		{
+			bitmap = FreeImage_Clone(bitmap); // has to be destroyed at the end
+			if (bitmap == nullptr)
+				return NULL;
+			FreeImage_FlipVertical(bitmap);
+			desc = GetImageDescription(bitmap);
+		}
 
 		// create the bitmap
-		result = CreateBitmap(flipped_desc.width, flipped_desc.height, 1, 32, flipped_desc.data);
-		FreeImage_Unload(flipped_image);
+		result = CreateBitmap(desc.width, desc.height, 1, 32, desc.data);
+		// the bitmap has been exchanged with the flipped version
+		if (flip_vertical)
+			FreeImage_Unload(bitmap);
 		return result;
 	}
 

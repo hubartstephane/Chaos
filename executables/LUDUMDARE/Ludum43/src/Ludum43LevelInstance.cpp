@@ -75,3 +75,32 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	level_timeout = in_level->GetLevelTimeout();
 	return true;
 }
+
+death::PlayerPawn* LudumLevelInstance::CreatePlayerPawn(death::Player* player, death::TiledMapPlayerStartObject* player_start, char const* bitmap_name, death::TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box)
+{
+	death::PlayerPawn* result = death::TiledMapLevelInstance::CreatePlayerPawn(player, player_start, bitmap_name, layer_instance, player_bounding_box);
+	if (result != nullptr)
+	{
+		chaos::ParticleAllocationBase* allocation = result->GetAllocation();
+		if (allocation != nullptr)
+		{
+			LudumGame* ludum_game = GetGame();
+			if (ludum_game != nullptr)
+			{
+				chaos::ParticleAccessor<ParticlePlayer> particles = allocation->GetParticleAccessor();
+				for (ParticlePlayer& particle : particles)
+				{
+					float radius = chaos::GetInnerSphere(particle.bounding_box).radius;
+
+					particle.attraction_minradius = radius + ludum_game->player_attraction_minradius;
+					particle.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
+					particle.attraction_force = ludum_game->player_attraction_force;
+					particle.repulsion_force = ludum_game->player_repulsion_force;
+					particle.tangent_force = ludum_game->player_tangent_force;
+					particle.life = player->GetMaxHealth(); // XXX : the health of the player is never modified. Instead, the player particle health is changed
+				}
+			}
+		}
+	}
+	return result;
+}

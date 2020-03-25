@@ -188,27 +188,6 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 	current_dash_duration = 0.0f;
 }
 
-
-#if 0
-
-void LudumPlayer::SetPlayerAllocation(chaos::ParticleAllocationBase * in_allocation)
-{
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game == nullptr)
-		return;
-
-	Player::SetPlayerAllocation(in_allocation);
-	if (in_allocation != nullptr)
-	{
-		chaos::ParticleAccessor<ParticlePlayer> player_particles = in_allocation->GetParticleAccessor();
-		size_t count = player_particles.GetCount();
-		for (size_t i = 0 ; i < count ; ++i)
-			player_particles[i].life = GetMaxHealth(); // XXX : the health of the player is never modified. Instead, the player particle health is changed
-	}
-}
-
-#endif
-
 bool LudumPlayer::IsDead() const
 {
 	if (death::Player::IsDead())

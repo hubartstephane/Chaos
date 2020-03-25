@@ -145,6 +145,13 @@ namespace chaos
 
 		/** the file manager */
 		shared_ptr<FileManager> file_manager;
+
+		/** whether to show the console by default (can be overriden in constructor) */
+#if _DEBUG
+		bool show_console = true;
+#else
+		bool show_console = false;
+#endif
 	};
 
 	template<typename APPLICATION_TYPE>

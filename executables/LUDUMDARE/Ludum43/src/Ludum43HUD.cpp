@@ -58,10 +58,6 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 		return true;
 
 	float life = ludum_player->GetHealth();
-
-	if (life < 4.0f)
-		life = life;
-
 	if (life != cached_value)
 	{
 		// create the allocation

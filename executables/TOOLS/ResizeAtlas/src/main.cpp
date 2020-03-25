@@ -3,6 +3,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/Application.h>
+#include <chaos/ImageTools.h>
 
 class MyWindow : public chaos::SimpleWin32Window
 {
@@ -10,6 +11,10 @@ public:
 
 	void WorkWithImage(char const* filename, FIBITMAP* bitmap)
 	{
+
+		chaos::WinTools::CopyBitmapToClipboard(bitmap);
+		return;
+
 		std::vector<FIBITMAP*> split_images;
 
 		int ImageNumberW = 2;
@@ -53,7 +58,7 @@ public:
 			{
 				for (int j = 0; j < ImageNumberW; ++j)
 				{
-					FIBITMAP * split_image = split_images[i * ImageNumberW + j];
+					FIBITMAP * split_image = split_images[(size_t)(i * ImageNumberW + j)];
 					if (split_image == nullptr)
 						continue;
 
@@ -65,9 +70,11 @@ public:
 				}
 			}
 
-			char const* new_filename = nullptr;
+			chaos::WinTools::CopyBitmapToClipboard(new_bitmap);
 
-			FreeImage_Save(FREE_IMAGE_FORMAT::FIF_PNG, new_bitmap, new_filename);
+			//char const* new_filename = nullptr;
+
+			//FreeImage_Save(FREE_IMAGE_FORMAT::FIF_PNG, new_bitmap, new_filename);
 
 			FreeImage_Unload(new_bitmap);
 		}
@@ -78,7 +85,9 @@ public:
 
 	virtual BOOL OnDragFile(char const* filename, POINT const& pt) override
 	{
-		FIBITMAP* bitmap = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_UNKNOWN, filename, 0);
+		FIBITMAP* bitmap = chaos::ImageTools::LoadImageFromFile(filename);
+
+		//FIBITMAP* bitmap = FreeImage_Load(FREE_IMAGE_FORMAT::FIF_UNKNOWN, filename, 0);
 		if (bitmap != nullptr)
 		{
 			WorkWithImage(filename, bitmap);
@@ -86,25 +95,6 @@ public:
 		}
 		return TRUE;
 	}
-#if 0
-	virtual LRESULT OnLButtonDown(int x, int y, int buttonStates) override
-	{
-		//::ShowWindow(GetHwnd(), SW_HIDE);
-
-		FIBITMAP * bitmap = chaos::WinTools::CaptureWindowToImage(GetHwnd());
-		if (bitmap != NULL)
-		{
-			std::string path = chaos::StringTools::Printf("c:\\temp\\capture_shu.png");
-
-			FreeImage_Save(FIF_PNG, bitmap, path.c_str());  
-			FreeImage_Unload(bitmap);
-		}
-
-		//::ShowWindow(GetHwnd(), SW_SHOW);
-
-		return 0;
-	}
-#endif
 
 	virtual LRESULT OnWindowSize(int width, int height) override
 	{
@@ -131,7 +121,7 @@ protected:
 		create_params.x         = 10;
 		create_params.y         = 10;
 		create_params.nWidth    = 300;
-		create_params.nHeight   = 2000;
+		create_params.nHeight   = 300;
 		create_params.dwExStyle = 0;
 		//  create_params.dwStyle   = WS_POPUP;
 

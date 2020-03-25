@@ -2,6 +2,7 @@
 #include <chaos/AllocatorTools.h>
 #include <chaos/LogTools.h>
 #include <chaos/StringTools.h>
+#include <chaos/ImageTools.h>
 
 namespace chaos
 {
@@ -237,6 +238,16 @@ namespace chaos
 		return result;
 	}
 
+
+	bool WinTools::CopyBitmapToClipboard(FIBITMAP* bitmap)
+	{
+		HBITMAP hBitmap = ImageTools::ConvertToHBITMAP(bitmap);
+		if (hBitmap == NULL)
+			return false;
+		bool result = CopyBitmapToClipboard(hBitmap);
+		DeleteObject(hBitmap);
+		return result;
+	}
 
 	bool WinTools::CopyBitmapToClipboard(HBITMAP hBitmap)
 	{

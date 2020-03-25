@@ -213,7 +213,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 		if (!layer_trait->game->GetCheatMode())
 #endif
 			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->GetPlayer(0)->GetMaxHealth(), true, layer_trait->game))
-				return true;
+				return false; // do not destroy the particle even if the life is 0 (but do not process the following code that displace it)
 	}
 
 

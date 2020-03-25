@@ -27,10 +27,6 @@ public:
 	ParticlePlayer * GetPlayerParticle();
 	ParticlePlayer const * GetPlayerParticle() const;
 
-	float GetPlayerParticleLife() const;
-
-	virtual bool IsDead() const override;
-
 protected:
 
 	/** override */
@@ -52,6 +48,9 @@ protected:
 	void SetDashMode(bool dash);
 	/** change reverse mode */
 	void SetReverseMode(bool reversed_mode);
+
+	/** read the health back from the particle */
+	void GetHealthFromParticle();
 	
 protected:
 

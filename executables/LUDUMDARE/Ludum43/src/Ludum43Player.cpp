@@ -38,14 +38,6 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 	return &player_particles[0];
 }
 
-float LudumPlayer::GetPlayerParticleLife() const
-{
-	ParticlePlayer const* player_particle = GetPlayerParticle();
-	if (player_particle == nullptr)
-		return 0.0f;
-	return player_particle->life;
-}
-
 void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	// displace the player
@@ -54,6 +46,16 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 	TickDashValues(delta_time);
 	// cooldown
 	TickCooldown(delta_time);
+	// read health back from the particle
+	GetHealthFromParticle();
+}
+
+void LudumPlayer::GetHealthFromParticle()
+{
+	ParticlePlayer const* player_particle = GetPlayerParticle();
+	if (player_particle == nullptr)
+		return;
+	health = player_particle->life;
 }
 
 void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
@@ -186,16 +188,4 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 	current_cooldown = 0.0f;
 	current_dash_cooldown = 0.0f;
 	current_dash_duration = 0.0f;
-}
-
-bool LudumPlayer::IsDead() const
-{
-	if (death::Player::IsDead())
-		return true;
-
-	ParticlePlayer const* particle_player = GetPlayerParticle();
-	if (particle_player == nullptr)
-		return true;
-
-	return false;
 }

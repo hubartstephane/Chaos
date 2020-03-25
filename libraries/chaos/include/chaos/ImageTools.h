@@ -211,6 +211,10 @@ return true;\
 			return ReadFIFTag(tag, result, default_value);
 		}
 
+		/** conversion between HBITMAP & FIBITMAP */
+		static FIBITMAP* ConvertFromHBITMAP(HBITMAP hBitmap);
+		/** conversion between HBITMAP & FIBITMAP */
+		static HBITMAP ConvertToHBITMAP(FIBITMAP* bitmap);
 	};
 
 }; // namespace chaos

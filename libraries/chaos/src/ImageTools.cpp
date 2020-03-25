@@ -730,5 +730,56 @@ namespace chaos
 #endif
 	}
 
+
+	FIBITMAP* ImageTools::ConvertFromHBITMAP(HBITMAP hBitmap)
+	{
+		if (hBitmap == NULL)
+			return nullptr;
+
+		SIZE size = { 0, 0 };
+		GetBitmapDimensionEx(hBitmap, &size);
+
+
+		return nullptr;
+	}
+
+	HBITMAP ImageTools::ConvertToHBITMAP(FIBITMAP* bitmap)
+	{
+		HBITMAP result = NULL;
+
+		// early exit
+		if (bitmap == nullptr)
+			return NULL;
+
+		// ensure we use supported formats (32bpp)
+		ImageDescription desc = GetImageDescription(bitmap);
+
+		int bpp = 0;
+		if (desc.pixel_format != PixelFormat::GetPixelFormat<PixelBGRA>())
+		{
+			FIBITMAP* bitmap_32bpp = FreeImage_ConvertTo32Bits(bitmap);
+			if (bitmap_32bpp != nullptr)
+			{
+				result = ConvertToHBITMAP(bitmap_32bpp);
+				FreeImage_Unload(bitmap_32bpp);
+			}
+			return result;
+		}
+
+		// flip the image
+		FIBITMAP* flipped_image = FreeImage_Clone(bitmap);
+		if (flipped_image == nullptr)
+			return NULL;
+		FreeImage_FlipVertical(flipped_image);
+
+		ImageDescription flipped_desc = GetImageDescription(flipped_image);
+
+		// create the bitmap
+		result = CreateBitmap(flipped_desc.width, flipped_desc.height, 1, 32, flipped_desc.data);
+		FreeImage_Unload(flipped_image);
+		return result;
+	}
+
+
 }; // namespace chaos
 

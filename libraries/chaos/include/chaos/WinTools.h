@@ -31,7 +31,7 @@ namespace chaos
 		static void DisplayErrorMessage(char const * title = nullptr);
 
 		/** get the string from an error code */
-		static std::string WinTools::GetErrorString(DWORD errCode);
+		static std::string GetErrorString(DWORD errCode);
 
 		/** use the windows register to "open" a file */
 		static void ShowFile(FilePathParam const & path);
@@ -50,6 +50,8 @@ namespace chaos
 
 		/** copies a HBITMAP into clipboard */
 		static bool CopyBitmapToClipboard(HBITMAP hbitmap);
+		/** copies a FIBITMAP into clipboard */
+		static bool CopyBitmapToClipboard(FIBITMAP* bitmap);
 
 		/** capture a windows inside a HBITMAP */
 		static HBITMAP CaptureWindowToBitmap(HWND hWnd);

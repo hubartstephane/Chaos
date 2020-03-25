@@ -57,7 +57,11 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	if (ludum_player == nullptr)
 		return true;
 
-	float life = ludum_player->GetPlayerParticleLife();
+	float life = ludum_player->GetHealth();
+
+	if (life < 4.0f)
+		life = life;
+
 	if (life != cached_value)
 	{
 		// create the allocation
@@ -92,7 +96,7 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 
 		particles[0].bounding_box = chaos::box2(std::make_pair(position1, position2));
 		particles[0].texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
-		particles[0].texcoords.topright = glm::vec2(ludum_player->GetHealth(), 1.0f);
+		particles[0].texcoords.topright = glm::vec2(ludum_player->GetMaxHealth(), 1.0f);
 		particles[0].color = glm::vec4(life, life, life, life);
 
 		cached_value = life;

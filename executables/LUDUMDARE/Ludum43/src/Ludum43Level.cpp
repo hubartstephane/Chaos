@@ -70,62 +70,12 @@ static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset
 
 bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
-
-	// shufinalize
-
-
-
 	LudumGame * ludum_game = layer_instance->GetGame();
-
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
 	bool is_enemy = (layer_name == "Enemies");
 	bool is_world_limits = (layer_name == "WorldLimits");
-	bool is_player = (layer_name == "PlayerAndCamera");
-
-	if (is_player)
-	{
-
-
-
-
-
-		
-
-
-		chaos::ParticleAccessor<ParticlePlayer> particles = allocation->GetParticleAccessor();
-		for (ParticlePlayer& particle : particles)
-		{
-			float radius = chaos::GetInnerSphere(particle.bounding_box).radius;
-
-			particle.attraction_minradius = radius + ludum_game->player_attraction_minradius;
-			particle.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
-			particle.attraction_force = ludum_game->player_attraction_force;
-			particle.repulsion_force = ludum_game->player_repulsion_force;
-			particle.tangent_force = ludum_game->player_tangent_force;
-			
-		}
-
-#if 0
-
-		size_t count = particles.GetCount();
-		for (size_t i = 0; i < count; ++i)
-		{
-			ParticleAffector & p = particles[i];
-
-			float radius = chaos::GetInnerSphere(p.bounding_box).radius;
-
-			p.attraction_minradius = radius + ludum_game->player_attraction_minradius;
-			p.attraction_maxradius = radius + ludum_game->player_attraction_maxradius;
-			p.attraction_force = ludum_game->player_attraction_force;
-			p.repulsion_force = ludum_game->player_repulsion_force;
-			p.tangent_force = ludum_game->player_tangent_force;
-		}
-		return true;
-#endif
-	}
-
 
 	if (is_enemy || is_world_limits)
 	{

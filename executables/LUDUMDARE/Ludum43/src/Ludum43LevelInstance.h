@@ -35,6 +35,8 @@ protected:
 	virtual void CreateCameras() override;
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
+	/** override */
+	virtual death::PlayerPawn* CreatePlayerPawn(death::Player* player, death::TiledMapPlayerStartObject* player_start, char const* bitmap_name, death::TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box) override;
 
 protected:
 

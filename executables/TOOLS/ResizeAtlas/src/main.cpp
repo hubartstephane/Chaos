@@ -13,34 +13,41 @@ public:
 	{
 		std::vector<FIBITMAP*> split_images;
 
-		int ImageNumberW = 2;
-		int ImageNumberH = 5;
+		int SrcImageNumberW = 2;
+		int SrcImageNumberH = 19;
 
-		int WantedWidth = 256;
-		int WantedHeight = 204;
+		int SrcBitmapWidth  = FreeImage_GetWidth(bitmap) / SrcImageNumberW;
+		int SrcBitmapHeight = FreeImage_GetHeight(bitmap) / SrcImageNumberH;
 
-		int BitmapWidth  = FreeImage_GetWidth(bitmap) / ImageNumberW;
-		int BitmapHeight = FreeImage_GetHeight(bitmap) / ImageNumberH;
+		int DstImageNumberW = 7;
+		int DstImageNumberH = 6;
+
+		int DstFullImageNumberW = 8;
+		int DstFullImageNumberH = 8;
+
+		int DstBitmapWidth = 256;
+		int DstBitmapHeight = 256;
+
 
 		int OffsetX = 0;
-		int OffsetY = -10;
+		int OffsetY = 0;
 
 		// split the image
-		for (int i = 0; i < ImageNumberH; ++i)
+		for (int i = 0; i < SrcImageNumberH; ++i)
 		{
-			for (int j = 0; j < ImageNumberW; ++j)
+			for (int j = 0; j < SrcImageNumberW; ++j)
 			{
-				int left   = j * BitmapWidth;
-				int top    = i * BitmapHeight;
+				int left   = j * SrcBitmapWidth;
+				int top    = i * SrcBitmapHeight;
 
-				left += (BitmapWidth - WantedWidth) / 2;
-				top += (BitmapHeight - WantedHeight) / 2;
+				left += (SrcBitmapWidth - DstBitmapWidth) / 2;
+				top += (SrcBitmapHeight - DstBitmapHeight) / 2;
 
 				left += OffsetX;
 				top  += OffsetY;
 
-				int right  = left + WantedWidth;
-				int bottom = top + WantedHeight;
+				int right  = left + DstBitmapWidth;
+				int bottom = top + DstBitmapHeight;
 
 				FIBITMAP* split_image = FreeImage_Copy(bitmap, left, top, right, bottom);
 
@@ -50,25 +57,27 @@ public:
 			}
 		}
 		// reconstitute the image
-		FIBITMAP* new_bitmap = FreeImage_Allocate(WantedWidth * ImageNumberW, WantedHeight * ImageNumberH, 32);
+		FIBITMAP* new_bitmap = FreeImage_Allocate(DstBitmapWidth * DstFullImageNumberW, DstBitmapHeight * DstFullImageNumberH, 32);
 		if (new_bitmap != nullptr)
 		{
 			RGBQUAD background = { 0, 0, 0, 0 };
+			FreeImage_SetBackgroundColor(new_bitmap, &background);
 			FreeImage_FillBackground(new_bitmap, &background);
 
-			for (int i = 0; i < ImageNumberH; ++i)
+			for (size_t i = 0; i < split_images.size(); ++i)
 			{
-				for (int j = 0; j < ImageNumberW; ++j)
-				{
-					FIBITMAP * split_image = split_images[(size_t)(i * ImageNumberW + j)];
-					if (split_image == nullptr)
-						continue;
+				int PosX = ((int)i) % DstImageNumberW;
+				int PosY = ((int)i) / DstImageNumberW;
 
-					int left = j * WantedWidth;
-					int top  = i * WantedHeight;
-					int alpha = 255; 
-					FreeImage_Paste(new_bitmap, split_image, left, top, alpha);
-				}
+				FIBITMAP* split_image = split_images[i];
+				if (split_image == nullptr)
+					continue;
+
+				int left = PosX * DstBitmapWidth;
+				int top = PosY * DstBitmapHeight;
+				int alpha = 255;
+				FreeImage_Paste(new_bitmap, split_image, left, top, alpha);
+
 			}
 
 			chaos::Application* application = chaos::Application::GetInstance();

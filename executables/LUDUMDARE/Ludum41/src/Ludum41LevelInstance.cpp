@@ -201,25 +201,38 @@ death::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(death::Player* player)
 {
 	assert(player != nullptr);
 
-	// create the player pawn
+	death::PlayerPawn* player_pawn = DoCreatePlayerPawn(player);
+	if (player_pawn == nullptr)
+		return nullptr;
+
+	// spawn particles for the pawn
 	chaos::ParticleAllocationBase* player_allocation = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
 	if (player_allocation == nullptr)
-		return nullptr;
-	player->SetPlayerAllocation(player_allocation);
+		return player_pawn;
+	player_pawn->SetAllocation(player_allocation);
 	// initialize the player particle
 	chaos::ParticleAccessor<ParticleObject> particles = player_allocation->GetParticleAccessor();
-	if (particles.GetCount() == 0)
-		return nullptr;
-	particles[0].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	particles[0].bounding_box.position = glm::vec2(0.0f, 0.0f);
-	particles[0].bounding_box.half_size = glm::vec2(0.0f, 0.0f);
-	// set the player length
-	LudumPlayer* ludum_player = auto_cast(player);
-	if (ludum_player != nullptr)
+	for (ParticleObject& particle : particles)
 	{
-		LudumGame* ludum_game = GetGame();
-		if (ludum_game != nullptr)
-			ludum_player->SetPlayerLength(ludum_game->player_initial_length, false);
+		particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		particle.bounding_box.position = glm::vec2(0.0f, 0.0f);
+		particle.bounding_box.half_size = glm::vec2(0.0f, 0.0f);
 	}
-	return nullptr;
+
+	LudumGame* ludum_game = GetGame();
+	LudumPlayer* ludum_player = auto_cast(player);
+
+	// raw copy of LudumPlayer::SetPlayerLength(...) (while pawn is not set yet we cannot call this function)
+	float player_length = std::clamp(ludum_player->player_length, ludum_game->player_min_length, ludum_game->player_max_length);
+
+	if (player_pawn != nullptr)
+	{
+		chaos::box2 box = player_pawn->GetBox();
+		box.half_size = glm::vec2(player_length * 0.5f, LudumPlayer::PLAYER_HEIGHT * 0.5f);
+		player_pawn->SetBox(box);
+
+		RestrictPawnToWorld(player_pawn);
+	}
+
+	return player_pawn;
 }

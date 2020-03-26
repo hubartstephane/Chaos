@@ -6,6 +6,12 @@
 
 #include <death/SoundContext.h>
 
+
+
+float const LudumPlayer::PLAYER_Y = -385.0f;
+
+float const LudumPlayer::PLAYER_HEIGHT = 35.0f;
+
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {
@@ -24,12 +30,15 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 
 void LudumPlayer::DisplacePlayerRacket(float delta_x)
 {
-	glm::vec2 position = GetPlayerPosition();
-	SetPlayerPosition(glm::vec2(position.x + delta_x, PLAYER_Y));
+	if (pawn != nullptr)
+	{
+		glm::vec2 position = pawn->GetPosition();
+		pawn->SetPosition(glm::vec2(position.x + delta_x, PLAYER_Y));
 
-	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
-	if (ludum_level_instance != nullptr)
-		ludum_level_instance->RestrictPawnToWorld(this);
+		LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+		if (ludum_level_instance != nullptr)
+			ludum_level_instance->RestrictPawnToWorld(pawn.get());
+	}
 }
 
 
@@ -82,13 +91,16 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 
 	player_length = std::clamp(player_length, ludum_game->player_min_length, ludum_game->player_max_length);
 
-	chaos::box2 box = GetPlayerBox();
-	box.half_size = glm::vec2(player_length * 0.5f, PLAYER_HEIGHT * 0.5f);
-	SetPlayerBox(box);
+	if (pawn != nullptr)
+	{
+		chaos::box2 box = pawn->GetBox();
+		box.half_size = glm::vec2(player_length * 0.5f, PLAYER_HEIGHT * 0.5f);
+		pawn->SetBox(box);
 
-	LudumLevelInstance * ludum_level_instance = GetLevelInstance();
-	if (ludum_level_instance != nullptr)
-		ludum_level_instance->RestrictPawnToWorld(this);
+		LudumLevelInstance* ludum_level_instance = GetLevelInstance();
+		if (ludum_level_instance != nullptr)
+			ludum_level_instance->RestrictPawnToWorld(pawn.get());
+	}
 }
 
 bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)

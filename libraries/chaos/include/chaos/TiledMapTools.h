@@ -36,9 +36,17 @@ namespace chaos
 		static bool IsLayerBoundingBox(TiledMap::GeometricObject const * object_geometric);
 
 		/** returns true whether the object is a player start */
-		static bool IsPlayerStart(TiledMap::GeometricObject const * object_geometric);
+		static bool IsPlayerStartObject(TiledMap::GeometricObject const * object_geometric);
 		/** returns true whether the object is a camera */
-		static bool IsCamera(TiledMap::GeometricObject const * object_geometric);
+		static bool IsCameraObject(TiledMap::GeometricObject const * object_geometric);
+		/** returns true whether the object is a finish trigger */
+		static bool IsFinishTrigger(TiledMap::GeometricObject const* object_geometric);
+		/** returns true whether the object is a checpoint trigger */
+		static bool IsCheckpointTrigger(TiledMap::GeometricObject const* object_geometric);
+		/** returns true whether the object is a notification trigger */
+		static bool IsNotificationTrigger(TiledMap::GeometricObject const* object_geometric);
+		/** returns true whether the object is a sound */
+		static bool IsSoundTrigger(TiledMap::GeometricObject const* object_geometric);
 
 		/** returns the type of an object */
 		static char const * GetObjectType(TiledMap::GeometricObject const * object_geometric);

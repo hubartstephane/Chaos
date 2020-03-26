@@ -146,14 +146,34 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool TiledMapTools::IsPlayerStart(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsPlayerStartObject(TiledMap::GeometricObject const * object_geometric)
 	{
 		return HasFlag(object_geometric, "player_start", "player_start", "PLAYER_START");
 	}
 
-	bool TiledMapTools::IsCamera(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsCameraObject(TiledMap::GeometricObject const * object_geometric)
 	{
 		return HasFlag(object_geometric, "camera", "camera", "CAMERA");
+	}
+
+	bool TiledMapTools::IsFinishTrigger(TiledMap::GeometricObject const* object_geometric)
+	{
+		return HasFlag(object_geometric, "Finish", "Finish", "Finish");
+	}
+
+	bool TiledMapTools::IsCheckpointTrigger(TiledMap::GeometricObject const* object_geometric)
+	{
+		return HasFlag(object_geometric, "Checkpoint", "Checkpoint", "Checkpoint");
+	}
+
+	bool TiledMapTools::IsNotificationTrigger(TiledMap::GeometricObject const* object_geometric)
+	{
+		return HasFlag(object_geometric, "Notification", "Notification", "Notification");
+	}
+
+	bool TiledMapTools::IsSoundTrigger(TiledMap::GeometricObject const* object_geometric)
+	{
+		return HasFlag(object_geometric, "Sound", "Sound", "Sound");
 	}
 
 	bool TiledMapTools::GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system)

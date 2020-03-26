@@ -889,7 +889,11 @@ namespace death
 				chaos::TiledMap::GeometricObjectSurface const* geometric = geometric_object->GetObjectSurface();
 				if (geometric != nullptr)
 				{
-					keep_aspect_ratio = false;
+					keep_aspect_ratio = false; // ??? shuludum
+
+
+
+
 					particle_box = geometric->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 				}
 			}

@@ -270,16 +270,16 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// bounce against player
-	death::Player * player = layer_trait->game->GetPlayer(0);
-	if (player == nullptr)
+	death::PlayerPawn * player_pawn = layer_trait->game->GetPlayerPawn(0);
+	if (player_pawn == nullptr)
 		return false;
 
-	if (player != nullptr)
+	if (player_pawn != nullptr)
 	{
-		chaos::box2 player_box = player->GetPlayerBox();
+		chaos::box2 pawn_box = player_pawn->GetBox();
 
 		chaos::box2 new_ball_box = ball_box;
-		if (chaos::RestrictToOutside(player_box, new_ball_box))
+		if (chaos::RestrictToOutside(pawn_box, new_ball_box))
 		{
 			chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
 
@@ -290,8 +290,8 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 				glm::vec2 v = velocity / len;
 				float angle = std::atan2(v.y, v.x);
 
-				float delta_position = (player_box.position.x - new_ball_box.position.x);
-				float bound_factor = delta_position / player_box.half_size.x;
+				float delta_position = (pawn_box.position.x - new_ball_box.position.x);
+				float bound_factor = delta_position / pawn_box.half_size.x;
 				bound_factor = std::clamp(bound_factor, -1.0f, 1.0f);
 
 				float const TO_RAD = (float)M_PI / 180.0f;

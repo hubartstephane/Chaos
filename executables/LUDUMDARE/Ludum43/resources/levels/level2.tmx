@@ -475,13 +475,13 @@
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="1877" name="finish point" gid="10" x="-13736" y="-3386.5" width="2000" height="2000"/>
-  <object id="1878" name="FinishSurface" x="-13235" y="-4885.5" width="1120" height="1088">
+  <object id="1878" name="Finish" x="-13235" y="-4885.5" width="1120" height="1088">
    <properties>
     <property name="TRIGGER_ID" type="int" value="3"/>
    </properties>
   </object>
   <object id="1879" name="finish point" gid="10" x="7064" y="18053.5" width="2000" height="2000"/>
-  <object id="1880" name="FinishSurface" x="7565" y="16554.5" width="1120" height="1088">
+  <object id="1880" name="Finish" x="7565" y="16554.5" width="1120" height="1088">
    <properties>
     <property name="TRIGGER_ID" type="int" value="3"/>
    </properties>

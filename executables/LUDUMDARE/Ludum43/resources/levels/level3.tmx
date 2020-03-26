@@ -469,7 +469,7 @@
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="473" name="finish point" gid="10" x="-557" y="-10949" width="2000" height="2000"/>
-  <object id="477" name="FinishSurface" x="-56" y="-12448" width="1120" height="1088">
+  <object id="477" name="Finish" x="-56" y="-12448" width="1120" height="1088">
    <properties>
     <property name="TRIGGER_ID" type="int" value="3"/>
    </properties>

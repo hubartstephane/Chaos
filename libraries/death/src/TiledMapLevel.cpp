@@ -552,13 +552,13 @@ namespace death
 
 		if (surface_object != nullptr)
 		{
-			if (chaos::TiledMapTools::HasFlag(surface_object, "Finish", "Finish", "Finish"))
+			if (chaos::TiledMapTools::IsFinishTrigger(surface_object))
 				return new TiledMapFinishingTriggerObject(in_layer_instance, surface_object);
-			if (chaos::TiledMapTools::HasFlag(surface_object, "Checkpoint", "Checkpoint", "Checkpoint"))
+			if (chaos::TiledMapTools::IsCheckpointTrigger(surface_object))
 				return new TiledMapCheckpointTriggerObject(in_layer_instance, surface_object);
-			if (chaos::TiledMapTools::HasFlag(surface_object, "Notification", "Notification", "Notification"))
+			if (chaos::TiledMapTools::IsNotificationTrigger(surface_object))
 				return new TiledMapNotificationTriggerObject(in_layer_instance, surface_object);
-			if (chaos::TiledMapTools::HasFlag(surface_object, "Sound", "Sound", "Sound"))
+			if (chaos::TiledMapTools::IsSoundTrigger(surface_object))
 				return new TiledMapSoundTriggerObject(in_layer_instance, surface_object);
 		}
 		return nullptr;
@@ -903,7 +903,7 @@ namespace death
 		TiledMapLevel* level = GetLevel();
 
 		// player start 
-		if (chaos::TiledMapTools::IsPlayerStart(geometric_object))
+		if (chaos::TiledMapTools::IsPlayerStartObject(geometric_object))
 		{
 			TiledMapPlayerStartObject* player_start = level->CreatePlayerStartObject(this, geometric_object);
 			if (player_start != nullptr)
@@ -912,7 +912,7 @@ namespace death
 		}
 
 		// camera 
-		if (chaos::TiledMapTools::IsCamera(geometric_object))
+		if (chaos::TiledMapTools::IsCameraObject(geometric_object))
 		{
 			TiledMapCameraObject* camera = level->CreateCameraObject(this, geometric_object);
 			if (camera != nullptr)

@@ -145,7 +145,7 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 
 	if (surface_object != nullptr)
 	{
-		if (chaos::TiledMapTools::HasFlag(surface_object, "Finish", "Finish", "Finish"))
+		if (chaos::TiledMapTools::IsFinishTrigger(surface_object))
 			return new MyFinishingTriggerObject(in_layer_instance, surface_object);
 	}
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);

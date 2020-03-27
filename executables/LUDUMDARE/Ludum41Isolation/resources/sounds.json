@@ -16,7 +16,7 @@
     { "path": "sounds/challenge_timeout.ogg"},
     { "path": "sounds/challenge_bip.ogg" },
 
-    { "path": "sounds/menu_music.ogg" , "categories" :  ["music","too_loud"] },
+    { "path": "sounds/menu_music.ogg" , "categories" :  "music" },
     { "path": "sounds/pause_music.ogg" , "categories" :  "music" },
     { "path": "sounds/game_music.ogg" , "categories" :  "music"},
 		{ "path": "sounds/game_music2.ogg" , "categories" :  "music"},

@@ -1,0 +1,35 @@
+{
+
+  "SCORE_ID": {
+
+    "generator_params": {
+      "default_color": [ 1.0, 1.0, 1.0, 1.0 ],
+      "font_info_name": "score",
+      "line_height": 50.0
+    }
+  },
+
+  "COMBO_ID": {
+
+    "generator_params": {
+      "default_color": [ 1.0, 1.0, 1.0, 1.0 ],
+      "font_info_name": "score",
+      "line_height": 50.0
+    }
+  },
+
+  "TITLE_ID": {
+
+    "generator_params": {
+      "alignment": "center",
+      "line_height": 95.0
+    }
+  },
+
+  "LIFE_ID": {
+    "hotpoint": "bottom-left",
+    "position": [ 20.0, 20.0 ],
+    "particle_offset": [ 45.0, 0.0 ],
+    "particle_size": [ 45.0, 0 ]
+  }
+}

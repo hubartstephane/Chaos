@@ -1,0 +1,66 @@
+{
+  "fonts": { "@filename": "fonts.json" },
+
+  "gamepad_enabled": false,
+
+  "small_french_dictionnary": "@dictionnary/small_french.txt",
+  "small_english_dictionnary": "@dictionnary/small_english.txt",
+  "french_dictionnary": "@dictionnary/french.txt",
+  "english_dictionnary": "@dictionnary/english.txt",
+
+  "sprite_directory": "@sprites",
+  "levels_directory": "@levels",
+
+  "game_instance": { "@filename": "game_instance.json" },
+  "viewport_wanted_aspect": 1.15,
+
+
+  "min_word_size": 4,
+  "max_word_size": 10,
+
+  "max_ball_count": 3,
+  "ball_size": 30.0,
+  "player_max_length": 300.0,
+  "player_min_length": 100.0,
+  "player_initial_length": 150.0,
+  "player_length_increment": 50.0,
+  "player_length_decrement": 50.0,
+
+  "points_per_challenge": 12,
+  "points_per_brick": 5,
+
+  "split_angle": 20.0,
+  "ball_angle_min": 20.0,
+  "ball_angle_max": 20.0,
+  "rebound_angle_decrease": 20.0,
+  "rebound_angle_increase": 20.0,
+
+  "background_fillratio_changespeed": 0.05,
+  "delay_before_next_level": 10.0,
+
+  "max_brick_offset": 180.0,
+  "brick_offset_speed": 200.0,
+  "brick_offset_increment": 60.0,
+
+  "ball_max_speed": 1200.0,
+  "ball_initial_speed": 200.0,
+  "ball_speed_increment": 200.0,
+
+  "ball_collision_speed_increment": 20,
+  "ball_collision_max_speed": 600,
+
+  "delay_before_ball_move": 1.0,
+  "mouse_sensitivity": 1.0,
+  "gamepad_sensitivity": 1600.0,
+  "challenge_time_dilation": 0.35,
+  "challenge_frequency": 5.0,
+
+  "challenge_duration": 5.0,
+
+  "min_brick_life": 1,
+  "max_brick_life": 4,
+
+  "brick_per_line": 13,
+
+  "combo_for_reward": 2
+}

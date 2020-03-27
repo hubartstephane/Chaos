@@ -1,0 +1,8 @@
+{
+  "program": "background",
+
+  "textures": {
+
+    "background": { "name": "background_menu" }
+  }
+}

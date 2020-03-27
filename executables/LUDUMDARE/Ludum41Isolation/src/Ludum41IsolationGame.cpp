@@ -24,9 +24,9 @@
 LudumGame::LudumGame(GLFWwindow* in_glfw_window) :
 	death::Game(in_glfw_window)
 {
-	game_name = "AsciiPaouf\nJuju and Barbara Edition";
+	game_name = "Worldaouf of Hell\nSurvivor Edition";
 	game_instructions = R"INSTRUCTIONS(
-	Enter : Pause (You should have a look)
+	Enter : Pause
 	F10   : Toggle Fullscreen)INSTRUCTIONS";
 	looping_levels = false;
 }

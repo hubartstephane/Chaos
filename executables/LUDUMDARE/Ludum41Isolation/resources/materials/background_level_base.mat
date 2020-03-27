@@ -1,0 +1,15 @@
+{
+  "program": "background_level_base",
+
+  "uniforms": {
+
+    "blendzone_ratio": 1.9,
+    "decal_speed": [ 0.2 ],
+    "decal_ratio": [ 0.3 ]
+  },
+
+  "textures": {
+
+    "noise": { "name": "noise" }
+  }
+}

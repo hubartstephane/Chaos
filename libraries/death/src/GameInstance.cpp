@@ -134,7 +134,7 @@ namespace death
 
 	size_t GameInstance::GetMaxPlayerCount() const
 	{
-		return 2;
+		return 1;
 	}
 
 	Player * GameInstance::DoCreatePlayer()

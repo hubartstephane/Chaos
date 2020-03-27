@@ -1,0 +1,8 @@
+{
+  "fonts": {
+    "normal": "@fonts/overpass-mono-bold.otf",
+    "challenge": "@fonts/gomarice_katamari_serif.ttf",
+    "title": "@fonts/unispace bold italic.ttf",
+    "score": "@fonts/unispace.ttf"
+  }
+}

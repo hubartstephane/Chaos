@@ -161,13 +161,22 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
 
+	float ball_power = ludum_game_instance->ball_power;
+
+	//ball_power = 4.0f;
+
     glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    if (ludum_game_instance->ball_power == 0.5f)
+    if (ball_power <= 0.5f)
         power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 2.0f)
+    else if (ball_power == 2.0f)
         power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 3.0f)
+    else if (ball_power >= 3.0f)
         power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	float factor = std::max(0.0f, ball_power - particle.damage_done_since_last_bounce) / ball_power;
+
+	// blend the color to white
+	//power_color = power_color * factor + glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) * (1.0f - factor);
 
     for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color * power_color;
@@ -182,12 +191,14 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
     chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
     // copy the color in all triangles vertex
 
+	float ball_power = ludum_game_instance->ball_power;
+
     glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    if (ludum_game_instance->ball_power == 0.5f)
+    if (ball_power == 0.5f)
         power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 2.0f)
+    else if (ball_power == 2.0f)
         power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 3.0f)
+    else if (ball_power == 3.0f)
         power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
     for (size_t i = 0; i < primitive.count; ++i)
@@ -281,6 +292,8 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(pawn_box, new_ball_box))
 		{
+			particle->damage_done_since_last_bounce = 0.0f;
+
 			chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
 
 			// alter rebound angle according to the position the ball touch the racket
@@ -353,21 +366,28 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		
 			if (chaos::RestrictToOutside(brick_box, new_ball_box))
 			{
-				if (bricks[i].indestructible || bricks[i].life >= game_instance->ball_power)
-				{
+				float ball_power = game_instance->ball_power;
+
+				//ball_power = 4.0f;
+
+				if (bricks[i].indestructible || bricks[i].life >= ball_power)
+				// do not go through brick
+				//if (bricks[i].indestructible || bricks[i].life >= ball_power - particle->damage_done_since_last_bounce)
+				{					
 					chaos::UpdateVelocityFromCollision(ball_box.position, new_ball_box.position, velocity);
 					ball_box.position = new_ball_box.position;					
+					particle->damage_done_since_last_bounce = 0.0f;
 				}
+				else
+
+					particle->damage_done_since_last_bounce += bricks[i].life;
 
 				if (!bricks[i].indestructible)
-					bricks[i].life -= game_instance->ball_power;
+					bricks[i].life -= ball_power;
 				
 				if (bricks[i].starting_life > 1.0f || bricks[i].indestructible)
 					bricks[i].highlight_time = 0.05f;
-				game_instance->OnBallCollide(true);
-
-
-			
+				game_instance->OnBallCollide(true);	
 			}				
 		}	
 	}

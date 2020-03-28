@@ -105,8 +105,9 @@ class ParticleMovableObject : public ParticleObject
 {
 public:
 
-	float delay_before_move;
-	glm::vec2 velocity;
+	float delay_before_move = 0.0f;
+	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
+	float damage_done_since_last_bounce = 0.0f;
 };
 
 class ParticleMovableObjectTrait : public chaos::ParticleAllocationTrait<ParticleMovableObject, VertexBase>

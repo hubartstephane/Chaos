@@ -444,7 +444,7 @@ bool LudumGameInstance::IsBrickOffsetChallengeValid(bool success)
 bool LudumGameInstance::IsBallPowerChallengeValid(bool success)
 {
 	if (success)
-		return (ball_power < 3); // can still increase power ?
+		return (ball_power < 2.0f); // can still increase power ?
 	else
 		return (ball_power > 0.5f); // can still decrease power ?
 }
@@ -455,7 +455,7 @@ void LudumGameInstance::OnBallPowerChallenge(bool success)
 		ball_power = (ball_power == 0.5f) ? 1.0f : (ball_power + 1.0f);
 	else
 		ball_power = (ball_power == 1.0f) ? 0.5f : (ball_power - 1.0f);
-	ball_power = std::clamp(ball_power, 0.5f, 3.0f);
+	ball_power = std::clamp(ball_power, 0.5f, 2.0f);
 }
 
 bool LudumGameInstance::IsExtraBallChallengeValid(bool success)

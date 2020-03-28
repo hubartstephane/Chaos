@@ -60,7 +60,7 @@
   "min_brick_life": 1,
   "max_brick_life": 4,
 
-  "brick_per_line": 21,
+  "brick_per_line": 26,
 
   "combo_for_reward": 2
 }

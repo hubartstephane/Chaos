@@ -484,9 +484,9 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
     {
         size_t challenge_position = particle.challenge->GetChallengePosition(false);
         if (particle.index < challenge_position)
-            color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
         else
-            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f); 
     }
     else
     {

@@ -1787,7 +1787,7 @@ namespace death
 		TiledMapCameraObject* camera_object = nullptr;
 		if (camera_name != nullptr)
 		{
-			camera_object = FindCameraObject(camera_name->c_str()); // first, if a name is given, use it
+			camera_object = FindCameraObject(*camera_name); // first, if a name is given, use it
 		}
 		if (camera_object == nullptr)
 		{

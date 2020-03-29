@@ -41,15 +41,18 @@ namespace chaos
         /** constructor */
         NamedObjectRequest(char const* in_name) :
             name(in_name), use_name(true)
-        {
-            assert(in_name != nullptr);
+        {            
         }
+		/** constructor */
+		NamedObjectRequest(std::string const & in_name) :
+			name(in_name.c_str()), use_name(true)
+		{			
+		}
         /** constructor */
         NamedObjectRequest(TagType in_tag) :
             tag(in_tag), use_name(false)
         {
         }
-
         /** the name for the request */
         char const* name = nullptr;
         /** the tag for the request */

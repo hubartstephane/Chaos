@@ -25,11 +25,20 @@ namespace death
 
 	bool GameWindow::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
+		//if (chaos::MyGLFW::Window::OnKeyEventImpl(event))
+		//	return true;
+
+
+
+
 		// give inputs to the game
 		if (game != nullptr)
 			if (game->OnKeyEvent(event))
 				return true;
 		// super method
+
+		 
+
 		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
 	}
 

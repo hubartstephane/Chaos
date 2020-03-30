@@ -25,8 +25,8 @@ namespace death
 
 	bool GameWindow::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
-		//if (chaos::MyGLFW::Window::OnKeyEventImpl(event))
-		//	return true;
+		if (chaos::MyGLFW::Window::OnKeyEventImpl(event))
+			return true;
 
 
 
@@ -37,6 +37,7 @@ namespace death
 				return true;
 		// super method
 
+		return false;
 		 
 
 		return chaos::MyGLFW::Window::OnKeyEventImpl(event);

@@ -132,7 +132,8 @@ namespace death
 #if !_DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-ShowFPS")) // CMDLINE
 #endif
-			RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
+			if (!chaos::Application::HasApplicationCommandLineFlag("-HideFPS")) // CMDLINE
+				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 #if _DEBUG
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent(), "Free Camera Mode");
 #endif

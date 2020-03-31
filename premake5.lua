@@ -184,10 +184,7 @@ end
 -- Function to require copying a file or directory
 -- =============================================================================
 
-function TransformResourcePath(proj, value, plat, conf)
-
-  if (not IsNil(value)) then
-    local filename = value[plat][conf]
+function TransformResourcePathHelper(proj, dst, value, filename, plat, conf)
 
     local relative_path = true
     if (string.sub(filename, 1, 1) == "@") then -- the file is to be copied directly in the same directory than the executable itself
@@ -203,23 +200,62 @@ function TransformResourcePath(proj, value, plat, conf)
     
     Output("DECLARE RESOURCE [" .. full_filename .. "] => [" .. filename .. "] for " .. plat .. " " .. conf)            
   
-    value[plat][conf] = {filename, full_filename}          
+    --value[plat][conf] = {filename, full_filename}
+    
+    table.insert(dst[plat][conf], {filename, full_filename})   
+
+end
+
+
+function TransformResourcePath(proj, dst, value, plat, conf)
+
+  if (not IsNil(value)) then
+    local filename = value[plat][conf]
+    
+    if (IsTable(filename)) then
+      for f in pairs(filename) do
+        Output("xxxx " .. f)        
+        Output("f : " .. f .. " = " .. filename[f])
+        TransformResourcePathHelper(proj, dst, value, filename[f], plat, conf)
+        Output("====")        
+      end
+    else  
+      TransformResourcePathHelper(proj, dst, value, filename, plat, conf)  
+    end
   end      
 end
 
 function DeclareResourceHelper(proj, filename)
 
+
   local tmp = GetPlatConfArray(filename)
- 
-  TransformResourcePath(proj, tmp, x32, DEBUG)
-  TransformResourcePath(proj, tmp, x32, RELEASE)  
-  TransformResourcePath(proj, tmp, x64, DEBUG)      
-  TransformResourcePath(proj, tmp, x64, RELEASE)
   
-  table.insert(proj.tocopy[x32][DEBUG],   tmp[x32][DEBUG])   
-  table.insert(proj.tocopy[x32][RELEASE], tmp[x32][RELEASE])
-  table.insert(proj.tocopy[x64][DEBUG],   tmp[x64][DEBUG]) 
-  table.insert(proj.tocopy[x64][RELEASE], tmp[x64][RELEASE])
+  
+  Output("UUU " .. GetDebugRepresentationString(tmp))
+
+ Output("A")
+  TransformResourcePath(proj, proj.tocopy, tmp, x32, DEBUG)
+Output("B")  
+  TransformResourcePath(proj, proj.tocopy, tmp, x32, RELEASE)
+Output("C")    
+  TransformResourcePath(proj, proj.tocopy, tmp, x64, DEBUG)
+Output("D")        
+  TransformResourcePath(proj, proj.tocopy, tmp, x64, RELEASE)
+  Output("E")
+  
+  
+  --table.insert(proj.tocopy[x32][DEBUG],   tmp[x32][DEBUG])   
+  --table.insert(proj.tocopy[x32][RELEASE], tmp[x32][RELEASE])
+  --table.insert(proj.tocopy[x64][DEBUG],   tmp[x64][DEBUG]) 
+  --table.insert(proj.tocopy[x64][RELEASE], tmp[x64][RELEASE])
+  
+  
+  
+  --proj.tocopy[x32][DEBUG]   = tmp[x32][DEBUG]
+--Output("F")    
+ -- proj.tocopy[x32][RELEASE] = tmp[x32][RELEASE]
+ -- proj.tocopy[x64][DEBUG]   = tmp[x64][DEBUG]
+  --proj.tocopy[x64][RELEASE] = tmp[x64][RELEASE]  
 end
 
 function DeclareResource(filename)
@@ -477,6 +513,7 @@ function CppProject(in_kind, proj_type)
     
     language "C++"
     cppdialect "C++17"
+    --staticruntime "on"
     
     -- change entry point for windows (avoid WinMain to main)
     if (os.target() == "windows") then

@@ -41,4 +41,4 @@ REM go back to initial directory
 :END
 POPD
 
-PAUSE
+REM PAUSE

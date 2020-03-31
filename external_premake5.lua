@@ -14,7 +14,7 @@ local GLM_INC_PATH = "glm"
 DeclareExternalLib("GLM", GLM_INC_PATH, nil, nil)
 
   -- BOOST
-local BOOST_PATH     = "boost_1_71_0"
+local BOOST_PATH     = "boost_1_72_0"
 local BOOST_LIB_PATH =  {x32 = path.join(BOOST_PATH, "stage", "lib"), x64 = path.join(BOOST_PATH, "stage", "lib")}
 DeclareExternalLib("BOOST", BOOST_PATH, BOOST_LIB_PATH, nil)
 
@@ -66,6 +66,38 @@ GLFW_LIB_PATH = {
 }
 
 DeclareExternalLib("GLFW", GLFW_INC_PATH, GLFW_LIB_PATH, "glfw3.lib")
+
+  -- VISUAL STUDIO REDISTRIBUABLE
+  
+MSVC_BASELIB_PATH = path.join("MSVC_Redist", "14.23.27820")   
+  
+MSVC_LIB_PATH_X32 = path.join(MSVC_BASELIB_PATH, "x86", "Microsoft.VC142.CRT")
+MSVC_LIB_PATH_X64 = path.join(MSVC_BASELIB_PATH, "x64", "Microsoft.VC142.CRT") 
+
+local MSVC_TOCOPY  = { -- @ because this copies the file directly in
+  x32 = {
+    "@" .. path.join(MSVC_LIB_PATH_X32, "concrt140.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140_1.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140_2.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X32, "msvcp140_codecvt_ids.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X32, "vccorlib140.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X32, "vcruntime140.dll")
+  },
+  x64 = {
+    "@" .. path.join(MSVC_LIB_PATH_X64, "concrt140.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140_1.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140_2.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X64, "msvcp140_codecvt_ids.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X64, "vccorlib140.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X64, "vcruntime140.dll"),
+    "@" .. path.join(MSVC_LIB_PATH_X64, "vcruntime140_1.dll")
+  }                  
+} 
+  
+DeclareExternalLib("MSVC", nil, nil, nil, MSVC_TOCOPY)  
+
 
   -- GLI          
 local GLI_PATH = "gli-0.5.1.0"

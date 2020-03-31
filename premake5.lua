@@ -200,8 +200,6 @@ function TransformResourcePathHelper(proj, dst, value, filename, plat, conf)
     
     Output("DECLARE RESOURCE [" .. full_filename .. "] => [" .. filename .. "] for " .. plat .. " " .. conf)            
   
-    --value[plat][conf] = {filename, full_filename}
-    
     table.insert(dst[plat][conf], {filename, full_filename})   
 
 end
@@ -214,10 +212,7 @@ function TransformResourcePath(proj, dst, value, plat, conf)
     
     if (IsTable(filename)) then
       for f in pairs(filename) do
-        Output("xxxx " .. f)        
-        Output("f : " .. f .. " = " .. filename[f])
-        TransformResourcePathHelper(proj, dst, value, filename[f], plat, conf)
-        Output("====")        
+        TransformResourcePathHelper(proj, dst, value, filename[f], plat, conf)        
       end
     else  
       TransformResourcePathHelper(proj, dst, value, filename, plat, conf)  
@@ -227,35 +222,12 @@ end
 
 function DeclareResourceHelper(proj, filename)
 
-
   local tmp = GetPlatConfArray(filename)
   
-  
-  Output("UUU " .. GetDebugRepresentationString(tmp))
-
- Output("A")
-  TransformResourcePath(proj, proj.tocopy, tmp, x32, DEBUG)
-Output("B")  
-  TransformResourcePath(proj, proj.tocopy, tmp, x32, RELEASE)
-Output("C")    
-  TransformResourcePath(proj, proj.tocopy, tmp, x64, DEBUG)
-Output("D")        
-  TransformResourcePath(proj, proj.tocopy, tmp, x64, RELEASE)
-  Output("E")
-  
-  
-  --table.insert(proj.tocopy[x32][DEBUG],   tmp[x32][DEBUG])   
-  --table.insert(proj.tocopy[x32][RELEASE], tmp[x32][RELEASE])
-  --table.insert(proj.tocopy[x64][DEBUG],   tmp[x64][DEBUG]) 
-  --table.insert(proj.tocopy[x64][RELEASE], tmp[x64][RELEASE])
-  
-  
-  
-  --proj.tocopy[x32][DEBUG]   = tmp[x32][DEBUG]
---Output("F")    
- -- proj.tocopy[x32][RELEASE] = tmp[x32][RELEASE]
- -- proj.tocopy[x64][DEBUG]   = tmp[x64][DEBUG]
-  --proj.tocopy[x64][RELEASE] = tmp[x64][RELEASE]  
+  TransformResourcePath(proj, proj.tocopy, tmp, x32, DEBUG) 
+  TransformResourcePath(proj, proj.tocopy, tmp, x32, RELEASE)    
+  TransformResourcePath(proj, proj.tocopy, tmp, x64, DEBUG)        
+  TransformResourcePath(proj, proj.tocopy, tmp, x64, RELEASE)  
 end
 
 function DeclareResource(filename)
@@ -285,7 +257,8 @@ function ReleaseConf(plat)
     defines { "NDEBUG" }
     defines { RELEASE }
     defines { "_RELEASE" }
-    optimize "On" 
+    optimize "On"
+    symbols "Off" 
     flags { "MultiProcessorCompile" } 
 end
 

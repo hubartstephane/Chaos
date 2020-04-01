@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.3" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="26" nextobjectid="2114">
+<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="27" nextobjectid="2115">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -12,7 +12,10 @@
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <layer id="25" name="Walls" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eAHt0dEKwCAIAMD2/z+9ehjIYBFSROOEQMiszlIEAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQGCfwFWvbkvkBGbZPXOY1S/3m/NPjTj2anp75+vs+0HGtZ0RawXiXL68Y83a1+geBaL7O491cgIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQJ/FrgBpZ0AIg==
+   eAHt0dEKgCAMAEDr/z+6fAhG0EhJhLyBMHBOvZUiCBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQLzBLbz6rpEn0CL3Z5ccc2hpV/SbtmtN45ZTba3LOoHH+9xrWfEWIE4lyfvWDP2NbpHgeh+z2OdnAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgMCfBQ4Y3AAk
   </data>
  </layer>
+ <objectgroup id="26" name="Camera">
+  <object id="2114" type="CAMERA" x="279" y="1947" width="342" height="226"/>
+ </objectgroup>
 </map>

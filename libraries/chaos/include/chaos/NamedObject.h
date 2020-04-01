@@ -33,32 +33,46 @@ namespace chaos
 	/** function to generate a TagType from a name (XXX : not thread safe) */
 	TagType MakeStaticTagType(char const * name);
 
+	/** a utility class for parameter passing */
+	enum class NameObjectRequestType
+	{
+		/** accept anything */
+		EMPTY = 0,
+		/** search by string */
+		STRING = 1,
+		/** search by tag */
+		TAG = 2
+	};
+
+
     /** a utility class for parameter passing */
     class NamedObjectRequest
     {
     public:
 
+		/** EMPTY request */
+		NamedObjectRequest() {}
         /** constructor */
         NamedObjectRequest(char const* in_name) :
-            name(in_name), use_name(true)
+            name(in_name), request_type(NameObjectRequestType::STRING)
         {            
         }
 		/** constructor */
 		NamedObjectRequest(std::string const & in_name) :
-			name(in_name.c_str()), use_name(true)
+			name(in_name.c_str()), request_type(NameObjectRequestType::STRING)
 		{			
 		}
         /** constructor */
         NamedObjectRequest(TagType in_tag) :
-            tag(in_tag), use_name(false)
+            tag(in_tag), request_type(NameObjectRequestType::TAG)
         {
         }
         /** the name for the request */
         char const* name = nullptr;
         /** the tag for the request */
         TagType tag = 0;
-        /** whether the string is to be used */
-        bool use_name = true;
+        /** the kind of request of interrest */
+		NameObjectRequestType request_type = NameObjectRequestType::EMPTY;
     };
 
 	/** a class that describe an object that can be reference by tag and by name */
@@ -80,10 +94,13 @@ namespace chaos
 		template<typename T>
 		friend bool Match(T const & object, NamedObjectRequest request) // use template to use NamedObjectWrapper as well as NamedObject
 		{
-            if (request.use_name)
-			    return (StringTools::Stricmp(object.GetName(), request.name) == 0);
-            else
-                return (object.GetTag() == request.tag);
+			if (request.request_type == NameObjectRequestType::EMPTY)
+				return true;
+			else if (request.request_type == NameObjectRequestType::STRING)
+				return (StringTools::Stricmp(object.GetName(), request.name) == 0);
+			else if (request.request_type == NameObjectRequestType::TAG)
+				return (object.GetTag() == request.tag);
+			return false; // should never happen
 		}
 
 	public:
@@ -99,9 +116,6 @@ namespace chaos
 		template<typename P>
 		static auto FindNamedObject(std::vector<P> & elements, NamedObjectRequest request) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
-            // early exit
-            if (request.use_name && request.name == nullptr)
-                return nullptr;
 			// search in the list
             size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
@@ -116,9 +130,6 @@ namespace chaos
 		template<typename P>
 		static auto FindNamedObject(std::vector<P> const & elements, NamedObjectRequest request) -> decltype(meta::get_raw_pointer(elements[0]))
 		{
-            // early exit
-            if (request.use_name && request.name == nullptr)
-                return nullptr;
 			// search in the list
             size_t count = elements.size();
 			for (size_t i = 0; i < count; ++i)
@@ -134,9 +145,6 @@ namespace chaos
 		template<typename P>
 		static bool RemoveNamedObject(std::vector<P> & elements, NamedObjectRequest request)
 		{
-			// early exit
-			if (request.use_name && request.name == nullptr)
-				return false;
 			// search in the list
 			for (auto it = elements.begin() ; it != elements.end() ; ++it)
 			{

@@ -86,13 +86,13 @@ namespace chaos
 		return true;
 	}
 
-	bool TiledMapTools::HasFlag(TiledMap::PropertyOwner const * property_owner, char const * property_name)
+	bool TiledMapTools::IsObjectOfType(TiledMap::PropertyOwner const * property_owner, char const * type)
 	{
 		assert(property_owner != nullptr);
 		// search in properties
-		if (property_name != nullptr)
+		if (type != nullptr)
 		{
-			TiledMap::Property const * property = property_owner->FindProperty(property_name);
+			TiledMap::Property const * property = property_owner->FindProperty(type);
 			if (property != nullptr)
 			{
 				bool const * property_bool = property->GetBoolProperty();
@@ -107,74 +107,63 @@ namespace chaos
 		return false;
 	}
 
-	bool TiledMapTools::HasFlag(TiledMap::GeometricObject const * object_geometric, char const * name, char const * type, char const * property_name)
+	bool TiledMapTools::IsObjectOfType(TiledMap::GeometricObject const * object_geometric, char const * type)
 	{
 		assert(object_geometric != nullptr);
-		// name is an indicator
-		if (name != nullptr && chaos::StringTools::Stricmp(object_geometric->name, name) == 0)
-			return true;
 		// type is an indicator
 		if (type != nullptr && chaos::StringTools::Stricmp(object_geometric->type, type) == 0)
 			return true;
 		// search in properties
 		TiledMap::PropertyOwner const * property_owner = object_geometric;
-		if (HasFlag(property_owner, property_name))
+		if (IsObjectOfType(property_owner, type))
 			return true;
 		return false;
 	}
 
 	bool TiledMapTools::IsWorldBoundingBox(TiledMap::GeometricObject const * object_geometric)
 	{
-		return HasFlag(object_geometric, "world_bounding_box", "world_bounding_box", "WORLD_BOUNDING_BOX");
+		return IsObjectOfType(object_geometric, "WorldBoundingBox");
 	}
 
-	bool TiledMapTools::IsLayerBoundingBox(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsLayerBoundingBox(TiledMap::GeometricObject const* object_geometric)
 	{
-		return HasFlag(object_geometric, "layer_bounding_box", "layer_bounding_box", "LAYER_BOUNDING_BOX");
+		return IsObjectOfType(object_geometric, "LayerBoundingBox");
 	}
 
-	char const * TiledMapTools::GetObjectType(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsPlayerStartObject(TiledMap::GeometricObject const* object_geometric)
 	{
-		assert(object_geometric != nullptr);
-		// the type of the object may be given by the field 'type'
-		if (object_geometric->type.length() > 0)
-			return object_geometric->type.c_str();
-		// or by a property 'OBJECT_TYPE'
-		std::string const * property_string = object_geometric->FindPropertyString("OBJECT_TYPE"); // whatever kind of property it is
-		if (property_string != nullptr && property_string->length() > 0)
-			return property_string->c_str();
-		return nullptr;
+		return IsObjectOfType(object_geometric, "PlayerStart");
 	}
 
-	bool TiledMapTools::IsPlayerStartObject(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsCameraObject(TiledMap::GeometricObject const* object_geometric)
 	{
-		return HasFlag(object_geometric, "player_start", "player_start", "PLAYER_START");
-	}
-
-	bool TiledMapTools::IsCameraObject(TiledMap::GeometricObject const * object_geometric)
-	{
-		return HasFlag(object_geometric, "camera", "camera", "CAMERA");
+		return IsObjectOfType(object_geometric, "Camera");
 	}
 
 	bool TiledMapTools::IsFinishTrigger(TiledMap::GeometricObject const* object_geometric)
 	{
-		return HasFlag(object_geometric, "Finish", "Finish", "Finish");
+		return IsObjectOfType(object_geometric, "Finish");
 	}
 
 	bool TiledMapTools::IsCheckpointTrigger(TiledMap::GeometricObject const* object_geometric)
 	{
-		return HasFlag(object_geometric, "Checkpoint", "Checkpoint", "Checkpoint");
+		return IsObjectOfType(object_geometric, "Checkpoint");
 	}
 
 	bool TiledMapTools::IsNotificationTrigger(TiledMap::GeometricObject const* object_geometric)
 	{
-		return HasFlag(object_geometric, "Notification", "Notification", "Notification");
+		return IsObjectOfType(object_geometric, "Notification");
 	}
 
 	bool TiledMapTools::IsSoundTrigger(TiledMap::GeometricObject const* object_geometric)
 	{
-		return HasFlag(object_geometric, "Sound", "Sound", "Sound");
+		return IsObjectOfType(object_geometric, "Sound");
 	}
+
+
+
+
+
 
 	bool TiledMapTools::GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system)
 	{

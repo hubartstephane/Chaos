@@ -189,10 +189,9 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 
 	if (surface_object != nullptr)
 	{
-		if (chaos::TiledMapTools::HasFlag(surface_object, nullptr, nullptr, "BONUS_SPAWNER")) // shuludum : it is better to rely on a type of an object that to rely on its name
-			return new BonusSpawnerTriggerObject(in_layer_instance, surface_object);          //            here we test for the property 'BONUS_SPAWNER' . Maybe the cleaner. Beware HasFlag method does not recurse like FindPropery(...)
-
-		if (chaos::TiledMapTools::HasFlag(surface_object, nullptr, nullptr, "ENEMY_SPAWNER"))
+		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "BONUS_SPAWNER"))  
+			return new BonusSpawnerTriggerObject(in_layer_instance, surface_object);
+		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "ENEMY_SPAWNER"))
 			return new EnemySpawnerTriggerObject(in_layer_instance, surface_object);
 	}
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);

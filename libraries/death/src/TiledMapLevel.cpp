@@ -904,6 +904,9 @@ namespace death
 
 	TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object)
 	{
+
+		// shuzzz
+
 		TiledMapLevel* level = GetLevel();
 
 		// player start 
@@ -945,6 +948,9 @@ namespace death
 
 	bool TiledMapLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer* object_layer)
 	{
+
+		// shuzzz
+
 		// search the bounding box (explicit or not)
 		chaos::box2 box;
 		chaos::box2 explicit_bounding_box;
@@ -1027,6 +1033,10 @@ namespace death
 	}
 	bool TiledMapLayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer)
 	{
+		// shuzzz
+
+
+
 		// the name
 		std::string const* renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
 		if (renderable_name != nullptr)
@@ -1093,6 +1103,9 @@ namespace death
 
 	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
 	{
+
+		// shuzzz
+
 		TiledMapLevel* level = GetLevel();
 
 		// early exit for empty tile_layer

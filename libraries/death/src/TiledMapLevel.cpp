@@ -1465,8 +1465,6 @@ namespace death
 #define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
 		result_type constness * TiledMapLayerInstance::func_name(chaos::NamedObjectRequest request) constness\
 		{\
-			if ((request.use_name && request.name == nullptr) && member_vector.size() > 0)\
-				return member_vector[0].get();\
 			return NamedObject::FindNamedObject(member_vector, request);\
 		}
 	DEATH_FIND_OBJECT(TiledMapGeometricObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
@@ -1765,14 +1763,10 @@ namespace death
 
 	TiledMapLayerInstance* TiledMapLevelInstance::FindLayerInstance(chaos::NamedObjectRequest request)
 	{
-		if ((request.use_name && request.name == nullptr) && layer_instances.size() > 0)
-			return layer_instances[0].get();
 		return NamedObject::FindNamedObject(layer_instances, request);
 	}
 	TiledMapLayerInstance const* TiledMapLevelInstance::FindLayerInstance(chaos::NamedObjectRequest request) const
 	{
-		if ((request.use_name && request.name == nullptr) && layer_instances.size() > 0)
-			return layer_instances[0].get();
 		return NamedObject::FindNamedObject(layer_instances, request);
 	}
 
@@ -1786,12 +1780,10 @@ namespace death
 		// search the CAMERA
 		TiledMapCameraObject* camera_object = nullptr;
 		if (camera_name != nullptr)
-		{
 			camera_object = FindCameraObject(*camera_name); // first, if a name is given, use it
-		}
 		if (camera_object == nullptr)
 		{
-			camera_object = FindCameraObject(nullptr); // try to find the very first one otherwise
+			camera_object = FindCameraObject(chaos::NamedObjectRequest()); // try to find the very first one otherwise
 			if (camera_object == nullptr)
 				return;
 		}
@@ -1834,7 +1826,7 @@ namespace death
 		if (player_start_name != nullptr)
 			result = FindPlayerStartObject(player_start_name->c_str()); // first, if a name is given, use it
 		if (result == nullptr)
-			result = FindPlayerStartObject(nullptr); // try to find the very first one otherwise
+			result = FindPlayerStartObject(chaos::NamedObjectRequest()); // try to find the very first one otherwise
 		return result;
 	}
 

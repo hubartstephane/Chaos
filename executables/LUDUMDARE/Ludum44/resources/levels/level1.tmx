@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="1" nextlayerid="16" nextobjectid="1925">
+<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="1" nextlayerid="16" nextobjectid="1925">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background4"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -314,14 +314,14 @@
     <property name="SPAWN_MOVE_TYPE" type="int" value="1"/>
    </properties>
   </object>
-  <object id="1915" name="Sound" type="Sound" x="-22080" y="-4800" width="10176" height="9728">
+  <object id="1915" name="Sound" type="Sound" x="-25280" y="-8128" width="16832" height="9728">
    <properties>
     <property name="LOOPING" type="bool" value="true"/>
     <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" value="5"/>
     <property name="SOUND_NAME" value="thrust"/>
    </properties>
   </object>
-  <object id="1924" name="Notification" type="Notification" x="-20160" y="7680" width="10176" height="9728"/>
+  <object id="1924" name="Notification" type="Notification" x="-19536" y="4160" width="10176" height="9728"/>
  </objectgroup>
  <objectgroup id="12" name="Enemies" locked="1">
   <properties>
@@ -342,7 +342,7 @@
    <property name="MATERIAL" value="player"/>
   </properties>
   <object id="57" name="TheCamera1" type="Camera" x="3432" y="8816" width="7120" height="4648"/>
-  <object id="75" name="world_bounding_box" x="-1424" y="-141440" width="15424" height="155264"/>
+  <object id="75" name="WorldBoundingBox" type="WorldBoundingBox" x="-1424" y="-141440" width="15424" height="155264"/>
   <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="6896" y="12176" width="112" height="496">
    <properties>
     <property name="BITMAP_NAME" value="player"/>

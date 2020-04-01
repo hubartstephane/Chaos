@@ -21,7 +21,7 @@
   <object id="2062" gid="15" x="8201" y="-7532" width="270" height="201"/>
   <object id="2063" gid="15" x="4425" y="-7516" width="270" height="201"/>
   <object id="2064" gid="14" x="6568" y="-9654" width="240" height="180"/>
-  <object id="2067" name="LAYER_BOUNDING_BOX" x="2552" y="-10584" width="7360" height="4216"/>
+  <object id="2067" name="LayerBoundingBox" type="LayerBoundingBox" x="2552" y="-10584" width="7360" height="4216"/>
  </objectgroup>
  <objectgroup id="21" name="Background1" locked="1">
   <properties>
@@ -35,7 +35,7 @@
   <object id="2056" gid="15" x="10073" y="-1604" width="270" height="201"/>
   <object id="2057" gid="15" x="8769" y="-1500" width="270" height="201"/>
   <object id="2059" gid="14" x="9312" y="-2270" width="552" height="300"/>
-  <object id="2065" name="LAYER_BOUNDING_BOX" x="6176" y="-3976" width="5584" height="3456"/>
+  <object id="2065" name="LayerBoundingBox" type="LayerBoundingBox" x="6176" y="-3976" width="5584" height="3456"/>
  </objectgroup>
  <objectgroup id="19" name="Bonus">
   <properties>
@@ -131,7 +131,7 @@
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="57" name="TheCamera1" type="Camera" x="2088" y="10016" width="3504" height="2472"/>
-  <object id="75" name="world_bounding_box" x="1136" y="9440" width="49440" height="3616"/>
+  <object id="75" name="WorldBoundingBox" type="WorldBoundingBox" x="1136" y="9440" width="49440" height="3616"/>
   <object id="1735" name="ThePlayerStart1" type="PlayerStart" x="3058" y="11696" width="326" height="510">
    <properties>
     <property name="BITMAP_NAME" value="jesus"/>
@@ -153,7 +153,7 @@
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="2128" name="LAYER_BOUNDING_BOX" x="2528" y="-16352" width="9888" height="4288"/>
+  <object id="2128" name="LayerBoundingBox" type="LayerBoundingBox" x="2528" y="-16352" width="9888" height="4288"/>
   <object id="2129" gid="21" x="3624" y="-15528" width="36" height="36"/>
   <object id="2130" gid="21" x="4392" y="-15016" width="36" height="36"/>
   <object id="2131" gid="21" x="3848" y="-13832" width="36" height="36"/>
@@ -177,7 +177,7 @@
    <property name="WRAP_X" type="bool" value="true"/>
    <property name="WRAP_Y" type="bool" value="true"/>
   </properties>
-  <object id="2145" name="LAYER_BOUNDING_BOX" x="10848" y="-10432" width="9888" height="4288"/>
+  <object id="2145" name="LayerBoundingBox" type="LayerBoundingBox" x="10848" y="-10432" width="9888" height="4288"/>
   <object id="2160" gid="21" x="19176" y="-9256" width="36" height="36"/>
   <object id="2162" x="13152" y="-7872"/>
   <object id="2163" x="14432" y="-8928"/>

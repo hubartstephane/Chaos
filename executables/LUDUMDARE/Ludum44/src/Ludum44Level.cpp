@@ -76,11 +76,11 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 
 	if (surface_object != nullptr)
 	{
-		if (chaos::TiledMapTools::HasFlag(surface_object, "PowerUp", "PowerUp", "PowerUp"))
+		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "PowerUp"))
 			return new PowerUpTriggerObject(in_layer_instance, surface_object); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
-		if (chaos::TiledMapTools::HasFlag(surface_object, "SpeedUp", "SpeedUp", "SpeedUp"))
+		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "SpeedUp"))
 			return new SpeedUpTriggerObject(in_layer_instance, surface_object);
-		if (chaos::TiledMapTools::HasFlag(surface_object, "Spawner", "Spawner", "Spawner"))
+		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "Spawner"))
 			return new SpawnerTriggerObject(in_layer_instance, surface_object);
 	}
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);

@@ -469,7 +469,7 @@
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="473" name="finish point" gid="10" x="-557" y="-10949" width="2000" height="2000"/>
-  <object id="477" name="Finish" x="-56" y="-12448" width="1120" height="1088">
+  <object id="477" name="Finish" type="Finish" x="-56" y="-12448" width="1120" height="1088">
    <properties>
     <property name="TRIGGER_ID" type="int" value="3"/>
    </properties>
@@ -610,17 +610,13 @@
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="true"/>
    <property name="MATERIAL" value="player"/>
   </properties>
-  <object id="56" name="ThePlayerStart1" x="-4058" y="-1138" width="350" height="350">
+  <object id="56" name="ThePlayerStart1" type="PlayerStart" x="-4058" y="-1138" width="350" height="350">
    <properties>
     <property name="BITMAP_NAME" value="player"/>
-    <property name="PLAYER_START" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="57" name="TheCamera1" x="-5640" y="-2112" width="3632" height="2920">
-   <properties>
-    <property name="CAMERA" type="bool" value="true"/>
-   </properties>
+  <object id="57" name="TheCamera1" type="Camera" x="-5640" y="-2112" width="3632" height="2920">
   </object>
-  <object id="75" name="world_bounding_box" x="-11024" y="-24704" width="47424" height="55680"/>
+  <object id="75" name="WorldBoundingBox" type="WorldBoundingBox" x="-11024" y="-24704" width="47424" height="55680"/>
  </objectgroup>
 </map>

@@ -20,6 +20,7 @@ namespace chaos
 (BaseObject) \
 (Property) \
 (PropertyOwner) \
+(TypedObject) \
 (GeometricObject) \
 (GeometricObjectPoint) \
 (GeometricObjectSurface) \
@@ -364,7 +365,35 @@ namespace chaos
 		// GeometricObject
 		// ==========================================
 
-		class GeometricObject : public PropertyOwner
+		class TypedObject : public PropertyOwner
+		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
+		public:
+
+			/** override */
+			virtual Property* FindProperty(char const* name, PropertyType type_id = PropertyType::ANY) override;
+			/** override */
+			virtual Property const* FindProperty(char const* name, PropertyType type_id = PropertyType::ANY) const override;
+
+		protected:
+
+			/** constructor */
+			using PropertyOwner::PropertyOwner;
+			/** override */
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
+
+		public:
+
+			/** object information */
+			std::string type;
+		};
+
+		// ==========================================
+		// GeometricObject
+		// ==========================================
+
+		class GeometricObject : public TypedObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
@@ -409,14 +438,10 @@ namespace chaos
 		protected:
 
 			/** constructor */
-			using PropertyOwner::PropertyOwner;
+			using TypedObject::TypedObject;
 
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-			/** override */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) override;
-			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const override;
 
 			/** loading method from XML */
 			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
@@ -427,8 +452,6 @@ namespace chaos
 			int id = 0;
 			/** object information */
 			std::string name;
-			/** object information */
-			std::string type;
 			/** object information */
 			bool visible = true;
 			/** object information */
@@ -710,21 +733,17 @@ namespace chaos
 		// TileData
 		// ==========================================
 
-		class TileData : public PropertyOwner
+		class TileData : public TypedObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		protected:
 
 			/** constructor */
-			using PropertyOwner::PropertyOwner;
+			using TypedObject::TypedObject;
 
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
-			/** override */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) override;
-			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const override;
 
 			/** initialize terrain indices from string */
 			bool ComputeTerrainIndices(char const * str);
@@ -733,8 +752,6 @@ namespace chaos
 
 			/** object information */
 			int id = 0;
-			/** object information */
-			std::string type;
 			/** object information */
 			float probability = 1.0f;
 

@@ -107,62 +107,58 @@ namespace chaos
 		return false;
 	}
 
-	bool TiledMapTools::IsObjectOfType(TiledMap::GeometricObject const * object_geometric, char const * type)
+	bool TiledMapTools::IsObjectOfType(TiledMap::TypedObject const * typed_object, char const * type)
 	{
-		assert(object_geometric != nullptr);
+		assert(typed_object != nullptr);
 		// type is an indicator
-		if (type != nullptr && chaos::StringTools::Stricmp(object_geometric->type, type) == 0)
+		if (type != nullptr && chaos::StringTools::Stricmp(typed_object->type, type) == 0)
 			return true;
 		// search in properties
-		TiledMap::PropertyOwner const * property_owner = object_geometric;
+		TiledMap::PropertyOwner const * property_owner = typed_object;
 		if (IsObjectOfType(property_owner, type))
 			return true;
 		return false;
 	}
 
-	bool TiledMapTools::IsWorldBoundingBox(TiledMap::GeometricObject const * object_geometric)
+	bool TiledMapTools::IsWorldBoundingBox(TiledMap::TypedObject const * typed_object)
 	{
-		return IsObjectOfType(object_geometric, "WorldBoundingBox");
+		return IsObjectOfType(typed_object, "WorldBoundingBox");
 	}
 
-	bool TiledMapTools::IsLayerBoundingBox(TiledMap::GeometricObject const* object_geometric)
+	bool TiledMapTools::IsLayerBoundingBox(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(object_geometric, "LayerBoundingBox");
+		return IsObjectOfType(typed_object, "LayerBoundingBox");
 	}
 
-	bool TiledMapTools::IsPlayerStartObject(TiledMap::GeometricObject const* object_geometric)
+	bool TiledMapTools::IsPlayerStartObject(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(object_geometric, "PlayerStart");
+		return IsObjectOfType(typed_object, "PlayerStart");
 	}
 
-	bool TiledMapTools::IsCameraObject(TiledMap::GeometricObject const* object_geometric)
+	bool TiledMapTools::IsCameraObject(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(object_geometric, "Camera");
+		return IsObjectOfType(typed_object, "Camera");
 	}
 
-	bool TiledMapTools::IsFinishTrigger(TiledMap::GeometricObject const* object_geometric)
+	bool TiledMapTools::IsFinishTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(object_geometric, "Finish");
+		return IsObjectOfType(typed_object, "Finish");
 	}
 
-	bool TiledMapTools::IsCheckpointTrigger(TiledMap::GeometricObject const* object_geometric)
+	bool TiledMapTools::IsCheckpointTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(object_geometric, "Checkpoint");
+		return IsObjectOfType(typed_object, "Checkpoint");
 	}
 
-	bool TiledMapTools::IsNotificationTrigger(TiledMap::GeometricObject const* object_geometric)
+	bool TiledMapTools::IsNotificationTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(object_geometric, "Notification");
+		return IsObjectOfType(typed_object, "Notification");
 	}
 
-	bool TiledMapTools::IsSoundTrigger(TiledMap::GeometricObject const* object_geometric)
+	bool TiledMapTools::IsSoundTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(object_geometric, "Sound");
+		return IsObjectOfType(typed_object, "Sound");
 	}
-
-
-
-
 
 
 	bool TiledMapTools::GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system)

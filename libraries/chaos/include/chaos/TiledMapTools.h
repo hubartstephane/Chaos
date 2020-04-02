@@ -28,27 +28,24 @@ namespace chaos
 		/** search whether the object has a boolean/integer property set to true */
 		static bool IsObjectOfType(TiledMap::PropertyOwner const * property_owner, char const * type);
 		/** search whether the object has a given type or a boolean/integer property set to true */
-		static bool IsObjectOfType(TiledMap::GeometricObject const * object_geometric, char const * type);
+		static bool IsObjectOfType(TiledMap::TypedObject const * typed_object, char const * type);
 
 		/** returns true whether the object defines an explicit world bounding */
-		static bool IsWorldBoundingBox(TiledMap::GeometricObject const* object_geometric);
+		static bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object defines an explicit layer bounding */
-		static bool IsLayerBoundingBox(TiledMap::GeometricObject const* object_geometric);
+		static bool IsLayerBoundingBox(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a player start */
-		static bool IsPlayerStartObject(TiledMap::GeometricObject const* object_geometric);
+		static bool IsPlayerStartObject(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a camera */
-		static bool IsCameraObject(TiledMap::GeometricObject const* object_geometric);
+		static bool IsCameraObject(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a finish trigger */
-		static bool IsFinishTrigger(TiledMap::GeometricObject const* object_geometric);
+		static bool IsFinishTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a checpoint trigger */
-		static bool IsCheckpointTrigger(TiledMap::GeometricObject const* object_geometric);
+		static bool IsCheckpointTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a notification trigger */
-		static bool IsNotificationTrigger(TiledMap::GeometricObject const* object_geometric);
+		static bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a sound */
-		static bool IsSoundTrigger(TiledMap::GeometricObject const* object_geometric);
-
-
-
+		static bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
 
 		/** try to read world bounding box from object if possible */
 		static bool GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system);

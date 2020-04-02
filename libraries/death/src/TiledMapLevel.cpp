@@ -1123,10 +1123,16 @@ namespace death
 		for (size_t i = 0; i < count; ++i)
 		{
 			int gid = tile_layer->tile_indices[i];
+			if (gid == 0)
+				continue;
 			// search the tile information 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata == nullptr)
 				continue;
+
+
+
+
 			// create a simple particle
 			glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(i);
 			chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);

@@ -331,7 +331,7 @@ namespace chaos
 		// GeometricObject methods
 		// ==========================================
 
-		Property * GeometricObject::FindProperty(char const * name, PropertyType type_id)
+		Property * TypedObject::FindProperty(char const * name, PropertyType type_id)
 		{
 			Property * result = PropertyOwner::FindProperty(name, type_id);
 			if (result == nullptr && !StringTools::IsEmpty(type))
@@ -343,7 +343,7 @@ namespace chaos
 			return result;
 		}
 
-		Property const * GeometricObject::FindProperty(char const * name, PropertyType type_id) const
+		Property const * TypedObject::FindProperty(char const * name, PropertyType type_id) const
 		{
 			Property const * result = PropertyOwner::FindProperty(name, type_id);
 			if (result == nullptr && !StringTools::IsEmpty(type))
@@ -354,6 +354,18 @@ namespace chaos
 			}
 			return result;
 		}
+
+		bool TypedObject::DoLoad(tinyxml2::XMLElement const* element)
+		{
+			if (!PropertyOwner::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "type", type);
+			return true;
+		}
+
+		// ==========================================
+		// GeometricObject methods
+		// ==========================================
 
 		std::vector<glm::vec2> GeometricObject::GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name)
 		{
@@ -402,22 +414,12 @@ namespace chaos
 			return result;
 		}
 
-		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const * element)
-		{
-			if (!GeometricObject::DoLoad(element))
-				return false;
-			XMLTools::ReadAttribute(element, "width", size.x);
-			XMLTools::ReadAttribute(element, "height", size.y);
-			return true;
-		}
-
 		bool GeometricObject::DoLoad(tinyxml2::XMLElement const * element)
 		{
-			if (!PropertyOwner::DoLoad(element))
+			if (!TypedObject::DoLoad(element))
 				return false;
 			XMLTools::ReadAttribute(element, "id", id);
 			XMLTools::ReadAttribute(element, "name", name);
-			XMLTools::ReadAttribute(element, "type", type);
 			XMLTools::ReadAttribute(element, "visible", visible);
 			XMLTools::ReadAttribute(element, "x", position.x);
 			XMLTools::ReadAttribute(element, "y", position.y);
@@ -431,6 +433,15 @@ namespace chaos
 #if CHAOS_REVERSE_Y_AXIS
 			position.y = -position.y;
 #endif
+			return true;
+		}
+
+		bool GeometricObjectSurface::DoLoad(tinyxml2::XMLElement const* element)
+		{
+			if (!GeometricObject::DoLoad(element))
+				return false;
+			XMLTools::ReadAttribute(element, "width", size.x);
+			XMLTools::ReadAttribute(element, "height", size.y);
 			return true;
 		}
 
@@ -628,11 +639,10 @@ namespace chaos
 
 		bool TileData::DoLoad(tinyxml2::XMLElement const * element)
 		{
-			if (!PropertyOwner::DoLoad(element))
+			if (!TypedObject::DoLoad(element))
 				return false;
 
 			XMLTools::ReadAttribute(element, "id", id);
-			XMLTools::ReadAttribute(element, "type", type);
 			XMLTools::ReadAttribute(element, "probability", probability);
 
 			std::string terrain;
@@ -694,30 +704,6 @@ namespace chaos
 				}
 			}
 			return true;
-		}
-
-		Property * TileData::FindProperty(char const * name, PropertyType type_id)
-		{
-			Property * result = PropertyOwner::FindProperty(name, type_id);
-			if (result == nullptr && !StringTools::IsEmpty(type))
-			{
-				Manager * manager = GetManager();
-				if (manager != nullptr)
-					result = manager->FindObjectProperty(type.c_str(), name, type_id);
-			}
-			return result;
-		}
-
-		Property const * TileData::FindProperty(char const * name, PropertyType type_id) const
-		{
-			Property const * result = PropertyOwner::FindProperty(name, type_id);
-			if (result == nullptr && !StringTools::IsEmpty(type))
-			{
-				Manager const * manager = GetManager();
-				if (manager != nullptr)
-					result = manager->FindObjectProperty(type.c_str(), name, type_id);
-			}
-			return result;
 		}
 
 		// ==========================================

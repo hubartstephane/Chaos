@@ -101,7 +101,7 @@ public:
 
 	int         enemy_index = 0;
 	float       time = 0.0f;
-	chaos::box2 spawner_surface;
+	chaos::box2 spawner_box;
 
 	class EnemyPattern * pattern = nullptr;
 	

@@ -24,15 +24,15 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 	float t = (base_offset + particle_speed * particle->time);
 	
 
-	glm::vec2 spawner_position  = particle->spawner_surface.position;
-	glm::vec2 spawner_half_size = particle->spawner_surface.half_size;
+	glm::vec2 spawner_position  = particle->spawner_box.position;
+	glm::vec2 spawner_half_size = particle->spawner_box.half_size;
 
 	glm::vec2 & particle_position = particle->bounding_box.position;
 	glm::vec2 & particle_half_size  = particle->bounding_box.half_size ;
 
 
 
-	float spawner_radius = chaos::GetInnerSphere(particle->spawner_surface).radius;
+	float spawner_radius = chaos::GetInnerSphere(particle->spawner_box).radius;
 
 	float min_camera_x = camera_box.position.x - camera_box.half_size.x;
 

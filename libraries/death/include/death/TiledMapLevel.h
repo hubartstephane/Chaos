@@ -117,6 +117,9 @@ namespace death
 		/** get the geometric object corresponding to this */
 		chaos::TiledMap::GeometricObject const* GetGeometricObject() const { return geometric_object.get(); }
 
+		/** get the object bounding box */
+		chaos::box2 GetBoundingBox(bool world_system) const;
+
 	protected:
 
 		/** additionnal initialization */
@@ -128,6 +131,9 @@ namespace death
 
 		/** the associated geometric object */
 		chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
+		/** the bounding box of the object */
+		chaos::box2 bounding_box;
+
 	};
 
 	// =====================================
@@ -166,6 +172,11 @@ namespace death
 
 		/** override */
 		virtual bool Initialize() override;
+
+	protected:
+
+		/** the bitmap to use for this player */
+		std::string bitmap_name;
 	};
 
 	// =====================================
@@ -193,9 +204,6 @@ namespace death
 
 		/** get the trigger ID */
 		int GetTriggerID() const { return trigger_id; }
-
-		/** get the object bounding box */
-		chaos::box2 GetBoundingBox(bool world_system) const;
 
 		/** search whether there is a collision given box */
 		virtual bool IsCollisionWith(chaos::box2 const& other_box, std::vector<chaos::weak_ptr<TiledMapTriggerObject>> const* triggers) const;
@@ -831,7 +839,7 @@ namespace death
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
 		/** the sub function responsible for player pawn creation */
-		virtual PlayerPawn * CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box);
+		virtual PlayerPawn * CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, TiledMapLayerInstance* layer_instance);
 
 		/** get the player start used for an incomming player */
 		virtual TiledMapPlayerStartObject* GetPlayerStartForPawn(Player* player);

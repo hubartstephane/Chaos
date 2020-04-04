@@ -82,9 +82,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
 		return true;
 
     // cast in a surface
-    chaos::TiledMap::GeometricObjectSurface const* surface = geometric_object->GetObjectSurface();
-    if (surface == nullptr)
-        return true;
+	chaos::box2 spawner_box = GetBoundingBox(true);
 
     chaos::box2 pawn_box = GetLayerInstance()->GetGame()->GetPlayerPawn(0)->GetBox();
 
@@ -99,7 +97,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
     EnemyPattern * p = pattern;
     EnemyType* t = type;
 
-    spawner.SpawnParticles(pattern->enemy_count, true, [camera_box, pawn_box, surface, t, p, bitmap_info](chaos::ParticleAccessorBase<ParticleEnemy> accessor) {
+    spawner.SpawnParticles(pattern->enemy_count, true, [camera_box, pawn_box, spawner_box, t, p, bitmap_info](chaos::ParticleAccessorBase<ParticleEnemy> accessor) {
 
         for (ParticleEnemy& particle : accessor)
         {
@@ -110,7 +108,7 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
             particle.enemy_index = (int)(&particle - &accessor[0]);
             particle.enemy_particle_count = (int)accessor.GetCount();
             particle.pattern = p;
-            particle.spawner_surface = surface->GetBoundingBox(true);
+            particle.spawner_box = spawner_box;
             particle.time = 0.0f;
             p->UpdateParticle(0.0f, &particle, camera_box);
         }    

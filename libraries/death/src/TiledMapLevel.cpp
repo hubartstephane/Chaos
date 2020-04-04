@@ -988,7 +988,7 @@ namespace death
 				if (!chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
 #endif
 				{
-					if (!object->GetGeometricObject()->FindPropertyBool("PARTICLE_CREATION", object->IsParticleCreationEnabled()))
+					if (!geometric_object->FindPropertyBool("PARTICLE_CREATION", object->IsParticleCreationEnabled()))
 						continue;
 				}
 			}

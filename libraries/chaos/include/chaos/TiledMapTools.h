@@ -46,11 +46,6 @@ namespace chaos
 		static bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a sound */
 		static bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
-
-		/** try to read world bounding box from object if possible */
-		static bool GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system);
-		/** try to read layer bounding box from object if possible */
-		static bool GetExplicitLayerBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system);
 	}; 
 
 }; // namespace chaos

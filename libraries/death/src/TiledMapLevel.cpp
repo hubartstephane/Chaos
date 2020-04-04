@@ -1013,13 +1013,19 @@ namespace death
 			// explicit world bounding box
 			if (!level_instance->has_explicit_bounding_box && chaos::TiledMapTools::IsWorldBoundingBox(geometric_object))
 			{
-				chaos::TiledMapTools::GetExplicitWorldBoundingBox(geometric_object, level_instance->explicit_bounding_box, true); // in world coordinate				
-				level_instance->has_explicit_bounding_box = true;
+				chaos::TiledMap::GeometricObjectSurface const* object_surface = geometric_object->GetObjectSurface();
+				if (object_surface != nullptr)
+				{
+					level_instance->explicit_bounding_box = object_surface->GetBoundingBox(true); // in world coordinate	
+					level_instance->has_explicit_bounding_box = true;
+				}
 			}
 			// explicit layer bounding box
 			if (IsGeometryEmpty(explicit_bounding_box) && chaos::TiledMapTools::IsLayerBoundingBox(geometric_object))
 			{
-				chaos::TiledMapTools::GetExplicitLayerBoundingBox(geometric_object, explicit_bounding_box, false); // in layer coordinates				
+				chaos::TiledMap::GeometricObjectSurface const* object_surface = geometric_object->GetObjectSurface();
+				if (object_surface != nullptr)
+					explicit_bounding_box = object_surface->GetBoundingBox(false); // in layer coordinates	
 			}
 
 			// create the object

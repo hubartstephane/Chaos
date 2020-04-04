@@ -160,35 +160,4 @@ namespace chaos
 		return IsObjectOfType(typed_object, "Sound");
 	}
 
-
-	bool TiledMapTools::GetExplicitWorldBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system)
-	{
-		if (object_geometric == nullptr)
-			return false;
-		TiledMap::GeometricObjectSurface const * object_surface = object_geometric->GetObjectSurface();
-		if (object_surface == nullptr)
-			return false;
-		if (TiledMapTools::IsWorldBoundingBox(object_surface))
-		{
-			result = object_surface->GetBoundingBox(world_system);
-			return true;
-		}
-		return false;
-	}
-
-	bool TiledMapTools::GetExplicitLayerBoundingBox(TiledMap::GeometricObject const * object_geometric, box2 & result, bool world_system) 
-	{
-		if (object_geometric == nullptr)
-			return false;
-		TiledMap::GeometricObjectSurface const * object_surface = object_geometric->GetObjectSurface();
-		if (object_surface == nullptr)
-			return false;
-		if (TiledMapTools::IsLayerBoundingBox(object_surface))
-		{
-			result = object_surface->GetBoundingBox(world_system);
-			return true;
-		}
-		return false;
-	}
-
 }; // namespace chaos

@@ -4,7 +4,7 @@
  <tile id="0" type="WALL">
   <image width="32" height="32" source="../sprites/Brick.png"/>
  </tile>
- <tile id="1" type="PLAYER_START">
+ <tile id="1" type="PlayerStart">
   <image width="32" height="32" source="../sprites/player.png"/>
  </tile>
 </tileset>

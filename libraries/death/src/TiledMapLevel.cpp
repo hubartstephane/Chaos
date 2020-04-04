@@ -556,8 +556,16 @@ namespace death
 
 	TiledMapGeometricObject* TiledMapLevel::DoCreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		chaos::TiledMap::GeometricObjectSurface* surface_object = in_geometric_object->GetObjectSurface();
+		// player start 
+		if (chaos::TiledMapTools::IsPlayerStartObject(in_geometric_object))
+			return CreatePlayerStartObject(in_layer_instance, in_geometric_object);
 
+		// camera 
+		if (chaos::TiledMapTools::IsCameraObject(in_geometric_object))
+			return CreateCameraObject(in_layer_instance, in_geometric_object);
+
+		// other kind of objects
+		chaos::TiledMap::GeometricObjectSurface* surface_object = in_geometric_object->GetObjectSurface();
 		if (surface_object != nullptr)
 		{
 			if (chaos::TiledMapTools::IsFinishTrigger(surface_object))
@@ -951,31 +959,16 @@ namespace death
 
 		TiledMapLevel* level = GetLevel();
 
-		// player start 
-		if (chaos::TiledMapTools::IsPlayerStartObject(geometric_object))
-		{
-			TiledMapPlayerStartObject* player_start = level->CreatePlayerStartObject(this, geometric_object);
-			if (player_start != nullptr)
-				player_start_objects.push_back(player_start);
-			return player_start;
-		}
-
-		// camera 
-		if (chaos::TiledMapTools::IsCameraObject(geometric_object))
-		{
-			TiledMapCameraObject* camera = level->CreateCameraObject(this, geometric_object);
-			if (camera != nullptr)
-				camera_objects.push_back(camera);
-			return camera;
-		}
-
 		// other type of object 
 		TiledMapGeometricObject* object = level->CreateGeometricObject(this, geometric_object);
 		if (object != nullptr)
 		{
-			TiledMapTriggerObject* trigger = auto_cast(object);
-			if (trigger != nullptr)
+			if (TiledMapTriggerObject * trigger = auto_cast(object))
 				trigger_objects.push_back(trigger);
+			else if (TiledMapPlayerStartObject* player_start = auto_cast(object))
+				player_start_objects.push_back(player_start);
+			else if (TiledMapCameraObject* camera = auto_cast(object))
+				camera_objects.push_back(camera);
 			else
 				geometric_objects.push_back(object);
 			return object;
@@ -1177,6 +1170,19 @@ namespace death
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata == nullptr)
 				continue;
+
+
+
+
+			// shuzzz
+
+			if (chaos::TiledMapTools::IsPlayerStartObject(tile_info.tiledata))
+			{
+
+				i = i;
+			}
+
+
 
 
 

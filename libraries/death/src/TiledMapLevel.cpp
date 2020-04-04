@@ -34,9 +34,23 @@ namespace death
 		assert(in_geometric_object != nullptr);
 	}
 
+	chaos::box2 TiledMapGeometricObject::GetBoundingBox(bool world_system) const
+	{
+		chaos::box2 result = bounding_box;
+		if (world_system)
+			result.position += layer_instance->GetLayerOffset();
+		return result;
+	}
+
 	bool TiledMapGeometricObject::Initialize()
 	{
+		// get some data from the geometric object
 		name = geometric_object->name;
+		// extract the bounding box
+		chaos::TiledMap::GeometricObjectSurface* surface = geometric_object->GetObjectSurface();
+		if (surface != nullptr)
+			bounding_box = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
+
 		return true;
 	}
 
@@ -67,17 +81,6 @@ namespace death
 		// enable the possibility to trigger once again the object
 		enter_event_triggered = false;
 		return true;
-	}
-
-	chaos::box2 TiledMapTriggerObject::GetBoundingBox(bool world_system) const
-	{
-		chaos::TiledMap::GeometricObjectSurface* surface = geometric_object->GetObjectSurface();
-		if (surface == nullptr)
-			return chaos::box2();
-		chaos::box2 result = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
-		if (world_system)
-			result.position += layer_instance->GetLayerOffset();
-		return result;
 	}
 
 	bool TiledMapTriggerObject::IsCollisionWith(chaos::box2 const& other_box, std::vector<chaos::weak_ptr<TiledMapTriggerObject>> const* triggers) const
@@ -190,6 +193,11 @@ namespace death
 	{
 		if (!TiledMapGeometricObject::Initialize())
 			return false;
+		// search the bitmap name for the player
+		std::string const * in_bitmap_name = geometric_object->FindPropertyString("BITMAP_NAME");
+		if (in_bitmap_name == nullptr)
+			return false;
+		bitmap_name = *in_bitmap_name;
 		return true;
 	}
 
@@ -1849,7 +1857,7 @@ namespace death
 		return result;
 	}
 
-	PlayerPawn* TiledMapLevelInstance::CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, char const* bitmap_name, TiledMapLayerInstance* layer_instance, chaos::box2 const& player_bounding_box)
+	PlayerPawn* TiledMapLevelInstance::CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, TiledMapLayerInstance* layer_instance)	
 	{
 		// create a particle populator
 		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
@@ -1857,7 +1865,7 @@ namespace death
 			return nullptr;
 
 		// create the particle
-		particle_populator->AddParticle(bitmap_name, player_bounding_box);
+		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true));
 		particle_populator->FlushParticles();
 
 		// get the allocation and finalize the layer
@@ -1884,28 +1892,15 @@ namespace death
 		if (player_start == nullptr)
 			return nullptr;
 
-		// search the bitmap name for the player
-		std::string const* bitmap_name = player_start->GetGeometricObject()->FindPropertyString("BITMAP_NAME");
-		if (bitmap_name == nullptr)
-			return nullptr;
-
 		// initialize some data
 		TiledMapLayerInstance* layer_instance = player_start->GetLayerInstance();
 		if (layer_instance == nullptr)
 			return nullptr;
 
-		// compute the bounding box
-		chaos::box2 player_bounding_box;
-		player_bounding_box.position = player_start->GetGeometricObject()->position;
-
-		chaos::TiledMap::GeometricObjectSurface const* object_surface = player_start->GetGeometricObject()->GetObjectSurface();
-		if (object_surface != nullptr)
-			player_bounding_box = object_surface->GetBoundingBox(true);
-
 		// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
 		reference_layer = layer_instance;
 
-		return CreatePlayerPawn(player, player_start, bitmap_name->c_str(), layer_instance, player_bounding_box);
+		return CreatePlayerPawn(player, player_start, layer_instance);
 	}
 
 	void TiledMapLevelInstance::CreateBackgroundImage()

@@ -572,38 +572,72 @@ namespace death
 		return nullptr;
 	}
 
-#define DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
-		result_type * TiledMapLevel::Do##func_name(declared_parameters)\
-		{\
-			return new result_type(constructor_parameters);\
+	TiledMapGeometricObject* TiledMapLevel::CreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		TiledMapGeometricObject* result = DoCreateGeometricObject(in_layer_instance, in_geometric_object);
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize())
+		{
+			delete result;
+			return nullptr;
 		}
+		return result;
+	}
+	
+	TiledMapCameraObject* TiledMapLevel::DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		return new TiledMapCameraObject(in_layer_instance, in_geometric_object);
+	}
 
-#define DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
-		result_type * TiledMapLevel::func_name(declared_parameters)\
-		{\
-			result_type * result = Do##func_name(constructor_parameters);\
-			if (result == nullptr)\
-				return nullptr;\
-			if (!result->Initialize())\
-			{\
-				delete result;\
-				return nullptr;\
-			}\
-			return result;\
+	TiledMapCameraObject* TiledMapLevel::CreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		TiledMapCameraObject* result = DoCreateCameraObject(in_layer_instance, in_geometric_object);
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize())
+		{
+			delete result;
+			return nullptr;
 		}
+		return result;
+	}
 
-#define DEATH_CREATE_OBJECT_FULL(result_type, func_name, declared_parameters, constructor_parameters)\
-	DEATH_DOCREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)\
-	DEATH_CREATE_OBJECT(result_type, func_name, declared_parameters, constructor_parameters)
+	TiledMapPlayerStartObject* TiledMapLevel::DoCreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		return new TiledMapPlayerStartObject(in_layer_instance, in_geometric_object);
+	}
 
-	DEATH_CREATE_OBJECT(TiledMapGeometricObject, CreateGeometricObject, TiledMapLayerInstance* in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject* in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
-	DEATH_CREATE_OBJECT_FULL(TiledMapCameraObject, CreateCameraObject, TiledMapLayerInstance* in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject* in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
-	DEATH_CREATE_OBJECT_FULL(TiledMapPlayerStartObject, CreatePlayerStartObject, TiledMapLayerInstance* in_layer_instance BOOST_PP_COMMA() chaos::TiledMap::GeometricObject* in_geometric_object, in_layer_instance BOOST_PP_COMMA() in_geometric_object);
-	DEATH_CREATE_OBJECT_FULL(TiledMapLayerInstance, CreateLayerInstance, TiledMapLevelInstance* in_level_instance BOOST_PP_COMMA() chaos::TiledMap::LayerBase* in_layer, in_level_instance BOOST_PP_COMMA() in_layer);
+	TiledMapPlayerStartObject* TiledMapLevel::CreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		TiledMapPlayerStartObject* result = DoCreatePlayerStartObject(in_layer_instance, in_geometric_object);
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize())
+		{
+			delete result;
+			return nullptr;
+		}
+		return result;
+	}
 
-#undef DEATH_DOCREATE_OBJECT
-#undef DEATH_CREATE_OBJECT
-#undef DEATH_CREATE_OBJECT_FULL
+	TiledMapLayerInstance* TiledMapLevel::DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
+	{
+		return new TiledMapLayerInstance(in_level_instance, in_layer);
+	}
+
+	TiledMapLayerInstance* TiledMapLevel::CreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
+	{
+		TiledMapLayerInstance* result = DoCreateLayerInstance(in_level_instance, in_layer);
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize())
+		{
+			delete result;
+			return nullptr;
+		}
+		return result;
+	}
 
 	chaos::GPUProgram* TiledMapLevel::GenDefaultRenderProgram()
 	{

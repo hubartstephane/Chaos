@@ -559,11 +559,9 @@ namespace death
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_geometric_object))
 			return CreatePlayerStartObject(in_layer_instance, in_geometric_object);
-
 		// camera 
 		if (chaos::TiledMapTools::IsCameraObject(in_geometric_object))
 			return CreateCameraObject(in_layer_instance, in_geometric_object);
-
 		// other kind of objects
 		chaos::TiledMap::GeometricObjectSurface* surface_object = in_geometric_object->GetObjectSurface();
 		if (surface_object != nullptr)
@@ -857,6 +855,11 @@ namespace death
 
 	void TiledMapLayerInstance::CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
 	{
+
+		// shuzzz
+
+
+
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
 		// create additionnal particles (TEXT)
@@ -936,15 +939,17 @@ namespace death
 			chaos::box2 particle_box = tile->GetBoundingBox(true);
 			if (object != nullptr)
 			{
-				chaos::TiledMap::GeometricObjectSurface const* geometric = geometric_object->GetObjectSurface();
-				if (geometric != nullptr)
+
+
+				chaos::TiledMap::GeometricObjectSurface const* surface_object = geometric_object->GetObjectSurface();
+				if (surface_object != nullptr)
 				{
 					keep_aspect_ratio = false; // ??? shuludum
 
 
 
 
-					particle_box = geometric->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
+					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 				}
 			}
 			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, keep_aspect_ratio);
@@ -952,11 +957,8 @@ namespace death
 	}
 
 
-	TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object)
+	TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object, bool & create_particle)
 	{
-
-		// shuzzz
-
 		TiledMapLevel* level = GetLevel();
 
 		// other type of object 
@@ -971,9 +973,17 @@ namespace death
 				camera_objects.push_back(camera);
 			else
 				geometric_objects.push_back(object);
-			return object;
 		}
-		return nullptr;
+
+		// whether to create the particle
+#if _DEBUG
+		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
+			create_particle = true;
+		else
+#endif
+			create_particle = geometric_object->FindPropertyBool("PARTICLE_CREATION", (object != nullptr)? object->IsParticleCreationEnabled() : true);
+
+		return object;
 	}
 
 	TiledMapLayerInstanceParticlePopulator* TiledMapLayerInstance::CreateParticlePopulator()
@@ -983,9 +993,6 @@ namespace death
 
 	bool TiledMapLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer* object_layer)
 	{
-
-		// shuzzz
-
 		// search the bounding box (explicit or not)
 		chaos::box2 box;
 		chaos::box2 explicit_bounding_box;
@@ -1022,18 +1029,11 @@ namespace death
 			}
 
 			// create the object
-			TiledMapGeometricObject* object = CreateObjectInstance(geometric_object);
-			if (object != nullptr)
-			{
-#if _DEBUG
-				if (!chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
-#endif
-				{
-					if (!geometric_object->FindPropertyBool("PARTICLE_CREATION", object->IsParticleCreationEnabled()))
-						continue;
-				}
-			}
-			CreateGeometricObjectParticles(geometric_object, object, particle_populator.get());
+			bool create_particle = false;
+
+			TiledMapGeometricObject* object = CreateObjectInstance(geometric_object, create_particle);
+			if (create_particle)
+				CreateGeometricObjectParticles(geometric_object, object, particle_populator.get());
 		}
 
 		// final flush
@@ -1074,10 +1074,6 @@ namespace death
 	}
 	bool TiledMapLayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer)
 	{
-		// shuzzz
-
-
-
 		// the name
 		std::string const* renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
 		if (renderable_name != nullptr)
@@ -1144,6 +1140,7 @@ namespace death
 
 	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
 	{
+		// TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object)
 
 		// shuzzz
 

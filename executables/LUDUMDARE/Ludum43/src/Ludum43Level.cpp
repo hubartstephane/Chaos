@@ -146,7 +146,7 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 	if (surface_object != nullptr)
 	{
 		if (chaos::TiledMapTools::IsFinishTrigger(surface_object))
-			return new MyFinishingTriggerObject(in_layer_instance, surface_object);
+			return new MyFinishingTriggerObject(in_layer_instance);
 	}
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
@@ -155,20 +155,13 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 // FinishingTriggerObject implementation
 // =============================================================
 
-MyFinishingTriggerObject::MyFinishingTriggerObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObjectSurface * in_surface_object) :
-	death::TiledMapTriggerObject(in_layer_instance, in_surface_object)
+bool MyFinishingTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-
-}
-
-bool MyFinishingTriggerObject::Initialize()
-{
-	if (!death::TiledMapTriggerObject::Initialize())
+	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
 		return false;
 	trigger_once = true;
 	return true;
 }
-
 
 bool MyFinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
 {

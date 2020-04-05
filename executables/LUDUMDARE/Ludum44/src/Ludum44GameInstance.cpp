@@ -28,7 +28,7 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 		game->PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
 	// internals
 	current_power_up = nullptr;
-	current_power_up_surface = nullptr;
+	current_powerup_trigger = nullptr;
 }
 
 void LudumGameInstance::OnPlayerEntered(death::Player * player)
@@ -49,7 +49,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	ludum_player->current_fire_rate_index = 0;
 }
 
-void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death::TiledMapTriggerObject * surface, bool decreasing_power_up)
+void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, PowerUpTriggerObject* powerup_trigger)
 {
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
@@ -66,7 +66,7 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 	if (!enter)
 	{
 		current_power_up = nullptr;
-		current_power_up_surface = nullptr;
+		current_powerup_trigger = nullptr;
 	}
 	else
 	{		
@@ -74,10 +74,10 @@ void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, death:
 		for (int i = 0 ; i < count ; ++i)
 		{
 			int index = (i + value) % count;
-			if (ludum_game->power_ups[index]->CanPowerUp(ludum_game, ludum_player, decreasing_power_up))
+			if (ludum_game->power_ups[index]->CanPowerUp(ludum_game, ludum_player, powerup_trigger->decrease_power))
 			{
 				current_power_up = ludum_game->power_ups[index].get();	
-				current_power_up_surface = surface;
+				current_powerup_trigger = powerup_trigger;
 				return;
 			}
 		}

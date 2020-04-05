@@ -130,10 +130,10 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 		return;
 
 	LudumGameInstance * ludum_game_instance = GetGameInstance();
-	if (ludum_game_instance == nullptr || ludum_game_instance->current_power_up == nullptr || ludum_game_instance->current_power_up_surface == nullptr)
+	if (ludum_game_instance == nullptr || ludum_game_instance->current_power_up == nullptr || ludum_game_instance->current_powerup_trigger == nullptr)
 		return;
 
-	bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
+	bool decreasing_power_up = ludum_game_instance->current_powerup_trigger->decrease_power; // GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
 
 	if (!ludum_game_instance->current_power_up->CanPowerUp(GetGame(), this, decreasing_power_up))
 		return;
@@ -168,15 +168,15 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 			// reset the corresponding trigger surface
 			ludum_game_instance->current_power_up->ApplyPowerUp(GetGame(), this, decreasing_power_up);
 			buylocked = true;
-			// shuxxx ludum_game_instance->current_power_up_surface->SetEnabled(false);
+			// shuxxx ludum_game_instance->current_powerup_trigger->SetEnabled(false);
 
-			PowerUpTriggerObject * power_up_trigger_surface = auto_cast(ludum_game_instance->current_power_up_surface.get());
+			PowerUpTriggerObject * power_up_trigger_surface = auto_cast(ludum_game_instance->current_powerup_trigger.get());
 			if (power_up_trigger_surface != nullptr)
 				power_up_trigger_surface->ResetTrigger();
 
 
 			ludum_game_instance->current_power_up = nullptr;
-			ludum_game_instance->current_power_up_surface = nullptr;
+			ludum_game_instance->current_powerup_trigger = nullptr;
 			buy_timer = 0.0f;
 		}
 	}
@@ -184,7 +184,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 	{
 		if (buy_timer > 0.0f)
 		{
-			PowerUpTriggerObject * power_up_trigger_surface = auto_cast(ludum_game_instance->current_power_up_surface.get());
+			PowerUpTriggerObject * power_up_trigger_surface = auto_cast(ludum_game_instance->current_powerup_trigger.get());
 			if (power_up_trigger_surface != nullptr)
 				power_up_trigger_surface->ResetTrigger();
 		}

@@ -26,12 +26,10 @@ namespace death
 	// TiledMapGeometricObject implementation
 	// =====================================
 
-	TiledMapGeometricObject::TiledMapGeometricObject(class TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) :
-		TiledMapObject(in_layer_instance),
-		geometric_object(in_geometric_object)
-
+	TiledMapGeometricObject::TiledMapGeometricObject(class TiledMapLayerInstance* in_layer_instance) :
+		TiledMapObject(in_layer_instance)
 	{
-		assert(in_geometric_object != nullptr);
+		assert(in_layer_instance != nullptr);
 	}
 
 	chaos::box2 TiledMapGeometricObject::GetBoundingBox(bool world_system) const
@@ -42,12 +40,13 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapGeometricObject::Initialize()
+	bool TiledMapGeometricObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
+		assert(in_geometric_object != nullptr);
 		// get some data from the geometric object
-		name = geometric_object->name;
+		name = in_geometric_object->name;
 		// extract the bounding box
-		chaos::TiledMap::GeometricObjectSurface* surface = geometric_object->GetObjectSurface();
+		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
 		if (surface != nullptr)
 			bounding_box = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
 
@@ -63,20 +62,20 @@ namespace death
 	// TiledMapTriggerObject implementation
 	// =====================================
 
-	TiledMapTriggerObject::TiledMapTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObjectSurface* in_surface_object) :
-		TiledMapGeometricObject(in_layer_instance, in_surface_object)
+	TiledMapTriggerObject::TiledMapTriggerObject(TiledMapLayerInstance* in_layer_instance) :
+		TiledMapGeometricObject(in_layer_instance)
 	{
 	}
 
-	bool TiledMapTriggerObject::Initialize()
+	bool TiledMapTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapGeometricObject::Initialize())
+		if (!TiledMapGeometricObject::Initialize(in_geometric_object))
 			return false;
 		// default values are set to the one defined by default in constructor
-		enabled = geometric_object->FindPropertyBool("ENABLED", enabled);
-		trigger_once = geometric_object->FindPropertyBool("TRIGGER_ONCE", trigger_once);
-		trigger_id = geometric_object->FindPropertyInt("TRIGGER_ID", trigger_id);
-		outside_box_factor = geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", outside_box_factor);
+		enabled = in_geometric_object->FindPropertyBool("ENABLED", enabled);
+		trigger_once = in_geometric_object->FindPropertyBool("TRIGGER_ONCE", trigger_once);
+		trigger_id = in_geometric_object->FindPropertyInt("TRIGGER_ID", trigger_id);
+		outside_box_factor = in_geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", outside_box_factor);
 
 		// enable the possibility to trigger once again the object
 		enter_event_triggered = false;
@@ -160,9 +159,9 @@ namespace death
 	// TiledMapCheckPointTriggerObject implementation
 	// =============================================================
 
-	bool TiledMapCheckpointTriggerObject::Initialize()
+	bool TiledMapCheckpointTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapTriggerObject::Initialize())
+		if (!TiledMapTriggerObject::Initialize(in_geometric_object))
 			return false;
 		trigger_once = true; // force a trigger once for checkpoint
 		return true;
@@ -189,12 +188,12 @@ namespace death
 	// TiledMapPlayerStartObject implementation
 	// =====================================
 
-	bool TiledMapPlayerStartObject::Initialize()
+	bool TiledMapPlayerStartObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapGeometricObject::Initialize())
+		if (!TiledMapGeometricObject::Initialize(in_geometric_object))
 			return false;
 		// search the bitmap name for the player
-		std::string const * in_bitmap_name = geometric_object->FindPropertyString("BITMAP_NAME");
+		std::string const * in_bitmap_name = in_geometric_object->FindPropertyString("BITMAP_NAME");
 		if (in_bitmap_name == nullptr)
 			return false;
 		bitmap_name = *in_bitmap_name;
@@ -210,15 +209,15 @@ namespace death
 		return false;
 	}
 
-	bool TiledMapNotificationTriggerObject::Initialize()
+	bool TiledMapNotificationTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapTriggerObject::Initialize())
+		if (!TiledMapTriggerObject::Initialize(in_geometric_object))
 			return false;
 
-		notification_string = geometric_object->FindPropertyString("NOTIFICATION", "");
-		notification_lifetime = geometric_object->FindPropertyFloat("LIFETIME", notification_lifetime);
-		stop_when_collision_over = geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
-		player_collision = geometric_object->FindPropertyBool("PLAYER_COLLISION", player_collision);
+		notification_string = in_geometric_object->FindPropertyString("NOTIFICATION", "");
+		notification_lifetime = in_geometric_object->FindPropertyFloat("LIFETIME", notification_lifetime);
+		stop_when_collision_over = in_geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		player_collision = in_geometric_object->FindPropertyBool("PLAYER_COLLISION", player_collision);
 
 		return true;
 	}
@@ -267,19 +266,19 @@ namespace death
 	// TiledMapSoundTriggerObject implementation
 	// =====================================
 
-	bool TiledMapSoundTriggerObject::Initialize()
+	bool TiledMapSoundTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapTriggerObject::Initialize())
+		if (!TiledMapTriggerObject::Initialize(in_geometric_object))
 			return false;
 
-		sound_name = geometric_object->FindPropertyString("SOUND_NAME", "");
-		min_distance_ratio = geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
+		sound_name = in_geometric_object->FindPropertyString("SOUND_NAME", "");
+		min_distance_ratio = in_geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
 		min_distance_ratio = std::clamp(min_distance_ratio, 0.0f, 1.0f);
 
-		pause_timer_when_too_far = geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
-		is_3D_sound = geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
-		looping = geometric_object->FindPropertyBool("LOOPING", looping);
-		stop_when_collision_over = geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		pause_timer_when_too_far = in_geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
+		is_3D_sound = in_geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
+		looping = in_geometric_object->FindPropertyBool("LOOPING", looping);
+		stop_when_collision_over = in_geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 
 		return true;
 	}
@@ -290,18 +289,13 @@ namespace death
 		if (sound_name.length() == 0)
 			return nullptr;
 
-		// can only play sounds on point and surface			
-		chaos::TiledMap::GeometricObjectSurface* surface_object = geometric_object->GetObjectSurface();
-		if (surface_object == nullptr)
-			return nullptr;
-
 		// create the sound
 		chaos::Sound* result = nullptr;
 
 		Game* game = layer_instance->GetGame();
 		if (game != nullptr)
 		{
-			chaos::box2 box = surface_object->GetBoundingBox(true);
+			chaos::box2 box = GetBoundingBox(true);
 			glm::vec2   position = box.position;
 
 			chaos::PlaySoundDesc play_desc;
@@ -374,12 +368,16 @@ namespace death
 	// TiledMapCameraObject implementation
 	// =====================================
 
-	bool TiledMapCameraObject::Initialize()
+	bool TiledMapCameraObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapGeometricObject::Initialize())
+		if (!TiledMapGeometricObject::Initialize(in_geometric_object))
 			return false;
 		return true;
 	}
+
+
+
+
 
 
 
@@ -567,13 +565,13 @@ namespace death
 		if (surface_object != nullptr)
 		{
 			if (chaos::TiledMapTools::IsFinishTrigger(surface_object))
-				return new TiledMapFinishingTriggerObject(in_layer_instance, surface_object);
+				return new TiledMapFinishingTriggerObject(in_layer_instance);
 			if (chaos::TiledMapTools::IsCheckpointTrigger(surface_object))
-				return new TiledMapCheckpointTriggerObject(in_layer_instance, surface_object);
+				return new TiledMapCheckpointTriggerObject(in_layer_instance);
 			if (chaos::TiledMapTools::IsNotificationTrigger(surface_object))
-				return new TiledMapNotificationTriggerObject(in_layer_instance, surface_object);
+				return new TiledMapNotificationTriggerObject(in_layer_instance);
 			if (chaos::TiledMapTools::IsSoundTrigger(surface_object))
-				return new TiledMapSoundTriggerObject(in_layer_instance, surface_object);
+				return new TiledMapSoundTriggerObject(in_layer_instance);
 		}
 		return nullptr;
 	}
@@ -583,7 +581,7 @@ namespace death
 		TiledMapGeometricObject* result = DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize())
+		if (!result->Initialize(in_geometric_object))
 		{
 			delete result;
 			return nullptr;
@@ -593,7 +591,7 @@ namespace death
 	
 	TiledMapCameraObject* TiledMapLevel::DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		return new TiledMapCameraObject(in_layer_instance, in_geometric_object);
+		return new TiledMapCameraObject(in_layer_instance);
 	}
 
 	TiledMapCameraObject* TiledMapLevel::CreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
@@ -601,7 +599,7 @@ namespace death
 		TiledMapCameraObject* result = DoCreateCameraObject(in_layer_instance, in_geometric_object);
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize())
+		if (!result->Initialize(in_geometric_object))
 		{
 			delete result;
 			return nullptr;
@@ -611,7 +609,7 @@ namespace death
 
 	TiledMapPlayerStartObject* TiledMapLevel::DoCreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		return new TiledMapPlayerStartObject(in_layer_instance, in_geometric_object);
+		return new TiledMapPlayerStartObject(in_layer_instance);
 	}
 
 	TiledMapPlayerStartObject* TiledMapLevel::CreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
@@ -619,7 +617,7 @@ namespace death
 		TiledMapPlayerStartObject* result = DoCreatePlayerStartObject(in_layer_instance, in_geometric_object);
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize())
+		if (!result->Initialize(in_geometric_object))
 		{
 			delete result;
 			return nullptr;
@@ -1421,23 +1419,22 @@ namespace death
 
 	bool TiledMapLayerInstance::DoTick(float delta_time)
 	{
-		// tick the game objects
+		// player starts
 		size_t player_start_count = player_start_objects.size();
 		for (size_t i = 0; i < player_start_count; ++i)
 			player_start_objects[i]->Tick(delta_time);
-
+		// camera
 		size_t camera_count = camera_objects.size();
 		for (size_t i = 0; i < camera_count; ++i)
 			camera_objects[i]->Tick(delta_time);
-
+		// trigger
 		size_t trigger_count = trigger_objects.size();
 		for (size_t i = 0; i < trigger_count; ++i)
 			trigger_objects[i]->Tick(delta_time);
-
+		// geometric objects
 		size_t geometric_count = geometric_objects.size();
 		for (size_t i = 0; i < geometric_count; ++i)
 			geometric_objects[i]->Tick(delta_time);
-
 		// tick the particles
 		if (particle_layer != nullptr)
 			particle_layer->Tick(delta_time);
@@ -1575,6 +1572,9 @@ namespace death
 	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
 	bool TiledMapLayerInstance::DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const& elements, CHECKPOINT_VECTOR& checkpoints) const
 	{
+		// shuzzz
+
+#if 0
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1592,6 +1592,7 @@ namespace death
 				continue;
 			checkpoints[geometric_object->GetObjectID()] = checkpoint;
 		}
+#endif
 		return true;
 	}
 
@@ -1605,6 +1606,10 @@ namespace death
 	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
 	bool TiledMapLayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints)
 	{
+		// shuzzz
+
+
+#if 0
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1631,6 +1636,7 @@ namespace death
 			else if (obj->IsModified())
 				obj->Initialize();
 		}
+#endif
 		return true;
 	}
 
@@ -1643,18 +1649,19 @@ namespace death
 
 	void TiledMapLayerInstance::OnLevelEnded()
 	{
+		// players
 		size_t player_start_count = player_start_objects.size();
 		for (size_t i = 0; i < player_start_count; ++i)
 			player_start_objects[i]->OnLevelEnded();
-
+		// camera
 		size_t camera_count = camera_objects.size();
 		for (size_t i = 0; i < camera_count; ++i)
 			camera_objects[i]->OnLevelEnded();
-
+		// triggers
 		size_t trigger_count = trigger_objects.size();
 		for (size_t i = 0; i < trigger_count; ++i)
 			trigger_objects[i]->OnLevelEnded();
-
+		//  geometric object
 		size_t object_count = geometric_objects.size();
 		for (size_t i = 0; i < object_count; ++i)
 			geometric_objects[i]->OnLevelEnded();
@@ -1662,18 +1669,19 @@ namespace death
 
 	void TiledMapLayerInstance::OnLevelStarted()
 	{
+		// players
 		size_t player_start_count = player_start_objects.size();
 		for (size_t i = 0; i < player_start_count; ++i)
 			player_start_objects[i]->OnLevelStarted();
-
+		// camera
 		size_t camera_count = camera_objects.size();
 		for (size_t i = 0; i < camera_count; ++i)
 			camera_objects[i]->OnLevelStarted();
-
+		// triggers
 		size_t trigger_count = trigger_objects.size();
 		for (size_t i = 0; i < trigger_count; ++i)
 			trigger_objects[i]->OnLevelStarted();
-
+		//  geometric object
 		size_t object_count = geometric_objects.size();
 		for (size_t i = 0; i < object_count; ++i)
 			geometric_objects[i]->OnLevelStarted();
@@ -1864,10 +1872,7 @@ namespace death
 			aspect_ratio = game->GetViewportWantedAspect();
 
 		// compute the surface
-		chaos::TiledMap::GeometricObjectSurface* camera_surface = camera_object->GetGeometricObject()->GetObjectSurface();
-		if (camera_surface == nullptr)
-			return;
-		chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_surface->GetBoundingBox(true), aspect_ratio, true);
+		chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_object->GetBoundingBox(true), aspect_ratio, true);
 
 		// create the real camera
 		Camera* camera = new Camera(this);

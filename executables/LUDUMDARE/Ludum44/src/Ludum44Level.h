@@ -26,14 +26,18 @@ public:
 
 	void ResetTrigger() { reset_trigger = true; }
 
+	/** override */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
 	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type) override;
 
-protected:
+public:
 
 	bool reset_trigger = false;
+	bool decrease_power = false;
 };
 
 // =================================================
@@ -48,10 +52,17 @@ public:
 	/** constructor */
 	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 
+	/** override */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
 	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type) override;
+
+protected:
+
+	float scroll_speed = 1.0f;
 };
 
 
@@ -68,12 +79,21 @@ public:
 	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 
 	/** override */
-	virtual bool Initialize() override;
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 protected:
 
 	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
 	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type) override;
+
+public:
+
+	float scale_factor = 1.0f;
+	float life_factor = 1.0f;
+	int   count = 10;
+	int   spawn_curve_type = 0;
+	int   spawn_enemy_type = 0;
+	int   spawn_move_type = 0;
 };
 
 

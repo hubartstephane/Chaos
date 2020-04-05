@@ -16,13 +16,13 @@
 // BonusSpawnerTriggerObject implementation
 // =============================================================
 
-bool BonusSpawnerTriggerObject::Initialize()
+bool BonusSpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize())
+	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
 		return false;
 	trigger_once = true;
 
-	bonus_name = geometric_object->FindPropertyString("BONUS_TYPE", "");
+	bonus_name = in_geometric_object->FindPropertyString("BONUS_TYPE", "");
 	bonus_type = chaos::MakeStaticTagType(bonus_name.c_str());
 
 	return true;
@@ -49,20 +49,20 @@ bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
 // EnemySpawnerTriggerObject implementation
 // =============================================================
 
-bool EnemySpawnerTriggerObject::Initialize()
+bool EnemySpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize())
+	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
 		return false;
 	trigger_once = true;
 
-	enemy_type    = geometric_object->FindPropertyString("ENEMY_TYPE", "");
-	enemy_pattern = geometric_object->FindPropertyString("ENEMY_PATTERN", "");
+	enemy_type    = in_geometric_object->FindPropertyString("ENEMY_TYPE", "");
+	enemy_pattern = in_geometric_object->FindPropertyString("ENEMY_PATTERN", "");
 
 
 	// we possess the pattern
 	pattern = new EnemyPattern;
 	if (pattern != nullptr)
-		pattern->Initialize(geometric_object.get());
+		pattern->Initialize(in_geometric_object);
 
 	LudumGame * ludum_game = GetLayerInstance()->GetGame();
 	if (ludum_game != nullptr)
@@ -188,9 +188,9 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 	if (surface_object != nullptr)
 	{
 		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "BONUS_SPAWNER"))  
-			return new BonusSpawnerTriggerObject(in_layer_instance, surface_object);
+			return new BonusSpawnerTriggerObject(in_layer_instance);
 		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "ENEMY_SPAWNER"))
-			return new EnemySpawnerTriggerObject(in_layer_instance, surface_object);
+			return new EnemySpawnerTriggerObject(in_layer_instance);
 	}
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }

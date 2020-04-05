@@ -26,7 +26,7 @@ public:
 	/** constructor */
 	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 	/** override */
-	virtual bool Initialize() override;
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 protected:
 
@@ -55,7 +55,7 @@ public:
 	/** constructor */
 	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 	/** override */
-	virtual bool Initialize() override;
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 protected:
 

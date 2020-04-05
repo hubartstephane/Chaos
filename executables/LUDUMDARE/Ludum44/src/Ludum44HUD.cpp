@@ -69,7 +69,7 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 	if (cached_power_up.get() == ludum_game_instance->current_power_up.get())
 		return true;
 
-	bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
+	bool decreasing_power_up = ludum_game_instance->current_powerup_trigger->decrease_power;
 
 	// ensure we do not have already cached this power_up
 	cached_power_up = ludum_game_instance->current_power_up.get();
@@ -128,8 +128,6 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	if (ludum_player == nullptr)
 		return true;
 
-
-
 	// create the allocation
 	if (allocations == nullptr)
 	{
@@ -174,9 +172,9 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	part->color.z = 0.0f;
 	part->color.w = 0.0f;
 
-	if (ludum_game_instance->current_power_up != nullptr && ludum_game_instance->current_power_up_surface != nullptr)
+	if (ludum_game_instance->current_power_up != nullptr && ludum_game_instance->current_powerup_trigger != nullptr)
 	{
-		bool decreasing_power_up = ludum_game_instance->current_power_up_surface->GetGeometricObject()->FindPropertyBool("DECREASE_POWER_UP", false);
+		bool decreasing_power_up = ludum_game_instance->current_powerup_trigger->decrease_power;
 
 		float cost = ludum_game_instance->current_power_up->GetLifeCost();
 		float paid_cost_ratio = ludum_player->GetBuyTimer() / ludum_game->GetBuyUpgradeTime();

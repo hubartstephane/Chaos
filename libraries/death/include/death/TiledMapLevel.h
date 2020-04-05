@@ -110,30 +110,21 @@ namespace death
 	public:
 
 		/** constructor */
-		TiledMapGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
-
-		/** get the geometric object corresponding to this */
-		chaos::TiledMap::GeometricObject* GetGeometricObject() { return geometric_object.get(); }
-		/** get the geometric object corresponding to this */
-		chaos::TiledMap::GeometricObject const* GetGeometricObject() const { return geometric_object.get(); }
-
+		TiledMapGeometricObject(TiledMapLayerInstance* in_layer_instance);
 		/** get the object bounding box */
 		chaos::box2 GetBoundingBox(bool world_system) const;
 
 	protected:
 
 		/** additionnal initialization */
-		virtual bool Initialize();
+		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
 	protected:
 
-		/** the associated geometric object */
-		chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
 		/** the bounding box of the object */
 		chaos::box2 bounding_box;
-
 	};
 
 	// =====================================
@@ -152,7 +143,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize() override;
+		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 	};
 
 	// =====================================
@@ -171,7 +162,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize() override;
+		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	protected:
 
@@ -190,7 +181,7 @@ namespace death
 	public:
 
 		/** constructor */
-		TiledMapTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObjectSurface* in_surface_object);
+		TiledMapTriggerObject(TiledMapLayerInstance* in_layer_instance);
 
 		/** whether it is enabled or not */
 		bool IsEnabled() const { return enabled; }
@@ -211,7 +202,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize() override;
+		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 		/** override */
 		virtual TiledMapObjectCheckpoint* DoCreateCheckpoint() const override;
@@ -273,7 +264,7 @@ namespace death
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
-		virtual bool Initialize() override;
+		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	protected:
 
@@ -311,7 +302,7 @@ namespace death
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
-		virtual bool Initialize() override;
+		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	protected:
 
@@ -337,7 +328,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize() override;
+		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 		/** override */
 		virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type) override;
 
@@ -385,6 +376,12 @@ namespace death
 		/** override */
 		virtual bool OnPlayerCollisionEvent(float delta_time, Player* player, chaos::CollisionType event_type) override;
 	};
+
+
+
+
+
+
 
 
 	// =====================================

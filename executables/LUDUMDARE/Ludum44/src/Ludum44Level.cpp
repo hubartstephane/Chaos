@@ -77,11 +77,11 @@ death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::Tile
 	if (surface_object != nullptr)
 	{
 		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "PowerUp"))
-			return new PowerUpTriggerObject(in_layer_instance, surface_object); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
+			return new PowerUpTriggerObject(in_layer_instance); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
 		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "SpeedUp"))
-			return new SpeedUpTriggerObject(in_layer_instance, surface_object);
+			return new SpeedUpTriggerObject(in_layer_instance);
 		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "Spawner"))
-			return new SpawnerTriggerObject(in_layer_instance, surface_object);
+			return new SpawnerTriggerObject(in_layer_instance);
 	}
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
@@ -121,20 +121,26 @@ bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * p
 // PowerUpTriggerObject implementation
 // =============================================================
 
+bool PowerUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+{
+	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
+		return false;
+	decrease_power = in_geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
+	return true;
+}
+
 bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
 {
 	LudumGameInstance * ludum_game_instance = player->GetGameInstance();
 	if (ludum_game_instance == nullptr)
 		return false;
 
-	bool decrease_power = geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
-
 	if (event_type == chaos::CollisionType::STARTED)
-		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
+		ludum_game_instance->OnPowerUpZone(player, true, this);
 	else if (event_type == chaos::CollisionType::AGAIN && reset_trigger)
-		ludum_game_instance->OnPowerUpZone(player, true, this, decrease_power);
+		ludum_game_instance->OnPowerUpZone(player, true, this);
 	else if (event_type == chaos::CollisionType::FINISHED)
-		ludum_game_instance->OnPowerUpZone(player, false, this, decrease_power);
+		ludum_game_instance->OnPowerUpZone(player, false, this);
 	else
 		return false;
 
@@ -148,6 +154,14 @@ bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 // SpeedUpTriggerObject implementation
 // =============================================================
 
+bool SpeedUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+{
+	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
+		return false;
+	scroll_speed = in_geometric_object->FindPropertyFloat("SCROLL_SPEED", 1.0f);
+	return true;
+}
+
 bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
 {
 	if (event_type != chaos::CollisionType::STARTED) // already handled
@@ -156,8 +170,6 @@ bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 	LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 	if (ludum_level_instance == nullptr)
 		return true;
-
-	float scroll_speed = geometric_object->FindPropertyFloat("SCROLL_SPEED", 1.0f);
 	ludum_level_instance->SetScrollFactor(scroll_speed);
 
 	return true; // collisions handled successfully
@@ -169,10 +181,18 @@ bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Playe
 // =============================================================
 
 
-bool SpawnerTriggerObject::Initialize()
+bool SpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize())
+	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
 		return false;
+	
+	scale_factor = in_geometric_object->FindPropertyFloat("ENEMY_SCALE_FACTOR", 1.0f);
+	life_factor = in_geometric_object->FindPropertyFloat("ENEMY_HEALTH_FACTOR", 1.0f);
+	count = in_geometric_object->FindPropertyInt("ENEMY_COUNT", 10);
+	spawn_curve_type = in_geometric_object->FindPropertyInt("SPAWN_CURVE_TYPE", 0);
+	spawn_enemy_type = in_geometric_object->FindPropertyInt("SPAWN_ENEMY_TYPE", 0);
+	spawn_move_type = in_geometric_object->FindPropertyInt("SPAWN_MOVE_TYPE", 0);
+
 	trigger_once = true;
 	return true;
 }
@@ -183,7 +203,6 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;
 
-
     // shuludum
 
 #if 0
@@ -191,14 +210,6 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
     if (!spawner.IsValid())
         return true;
 #endif
-
-
-
-
-
-
-
-
 
 
 	// shuludm : see if this can be refactored
@@ -215,11 +226,6 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	if (atlas == nullptr)
 		return true;
 
-	// cast in a surface
-	chaos::TiledMap::GeometricObjectSurface const * surface = geometric_object->GetObjectSurface();
-	if (surface == nullptr)
-		return true;
-
 	// search BitmapLayout for Enemy
 	chaos::BitmapAtlas::FolderInfo const * bitmap_set = atlas->GetFolderInfo("sprites");
 	if (bitmap_set == nullptr)
@@ -230,10 +236,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	if (allocation == nullptr)
 		return true;
 
-
-
 	// get the frequencies
-
 	float fire_frequency = 1.0f;
 	LudumGame * ludum_game = enemy_layer_instance->GetGame();
 	if (ludum_game != nullptr)
@@ -241,13 +244,7 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 
 	// extract zone parametes
 	
-	chaos::box2 surface_box = surface->GetBoundingBox(true);
-	float scale_factor     = surface->FindPropertyFloat("ENEMY_SCALE_FACTOR", 1.0f);
-	float life_factor     = surface->FindPropertyFloat("ENEMY_HEALTH_FACTOR", 1.0f);
-	int   count            = surface->FindPropertyInt("ENEMY_COUNT", 10);
-	int   spawn_curve_type = surface->FindPropertyInt("SPAWN_CURVE_TYPE", 0);
-	int   spawn_enemy_type = surface->FindPropertyInt("SPAWN_ENEMY_TYPE", 0);
-	int   spawn_move_type  = surface->FindPropertyInt("SPAWN_MOVE_TYPE", 0);
+	chaos::box2 surface_box = GetBoundingBox(true);
 
 	static int const SPAWN_ENEMY_METEORS          = 0;
 	static int const SPAWN_ENEMY_ALIEN            = 1;
@@ -269,12 +266,9 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	static int const SPAWN_CURVE_LAST          = 4;
 	spawn_curve_type = (spawn_curve_type % SPAWN_CURVE_LAST);
 
-
 	chaos::BitmapAtlas::BitmapInfo const * enemy_info = nullptr; // so we can reuse among the loop existing random choice
 
-
     // shuludum
-
 
     chaos::ParticleAccessor<ParticleEnemy> accessor = allocation->AddParticles(count);
     for (ParticleEnemy& particle : accessor)

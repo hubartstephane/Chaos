@@ -676,10 +676,13 @@ namespace death
 		/** specialized layer */
 		bool InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer);
 
+		
 		/** create an object in an object layer */
-		TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object, bool * should_create_particle);
+		TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object);
 		/** create an object in an object layer */
 		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
+		/** returns whether a particle should be created for object instance */
+		bool ShouldCreateParticleForObject(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object) const;
 
 		/** finalize the particles created */
 		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);

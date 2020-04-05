@@ -957,7 +957,7 @@ namespace death
 	}
 
 
-	TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object, bool & create_particle)
+	TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object, bool * should_create_particle)
 	{
 		TiledMapLevel* level = GetLevel();
 
@@ -976,13 +976,15 @@ namespace death
 		}
 
 		// whether to create the particle
+		if (should_create_particle != nullptr)
+		{
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
-			create_particle = true;
-		else
+			if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
+				*should_create_particle = true;
+			else
 #endif
-			create_particle = geometric_object->FindPropertyBool("PARTICLE_CREATION", (object != nullptr)? object->IsParticleCreationEnabled() : true);
-
+				*should_create_particle = geometric_object->FindPropertyBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
+		}
 		return object;
 	}
 
@@ -1029,10 +1031,10 @@ namespace death
 			}
 
 			// create the object
-			bool create_particle = false;
+			bool should_create_particle = false;
 
-			TiledMapGeometricObject* object = CreateObjectInstance(geometric_object, create_particle);
-			if (create_particle)
+			TiledMapGeometricObject* object = CreateObjectInstance(geometric_object, &should_create_particle);
+			if (should_create_particle)
 				CreateGeometricObjectParticles(geometric_object, object, particle_populator.get());
 		}
 

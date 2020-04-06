@@ -30,10 +30,8 @@ namespace death
 	{
 		assert(in_physical_gamepad != nullptr);
 		// try to give the gamepad to a player
-		//if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) 
-		//	return true;
-
-
+		if (GivePhysicalGamepadToPlayer(in_physical_gamepad) != nullptr) 
+			return true;
 		// try to have another player enter the game (not in pause)
 		if (!game->IsPaused())
 			if (CreatePlayer(in_physical_gamepad) != nullptr)

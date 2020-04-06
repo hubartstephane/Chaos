@@ -543,24 +543,13 @@ namespace death
 		return texture_atlas->GetFolderInfo("sprites");
 	}
 
-
-
-
-
-
-
-
 	chaos::ParticleLayerBase* TiledMapLevel::DoCreateParticleLayer(TiledMapLayerInstance* layer_instance)
 	{
 		return new chaos::ParticleLayer<TiledMapParticleTrait>();
 	}
 
-	
-
 	GeometricObjectFactory TiledMapLevel::DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		// shuzzz
-
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_geometric_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return CreatePlayerStartObject(in_layer_instance, in_geometric_object););
@@ -586,9 +575,9 @@ namespace death
 		if (factory == nullptr)
 			return nullptr;
 		// create another factory that wraps the previous (and add Initialize(...) call)
-		GeometricObjectFactory result = [factory](TiledMapLayerInstance* in_li, chaos::TiledMap::GeometricObject* in_go)
+		GeometricObjectFactory result = [factory](chaos::TiledMap::GeometricObject* in_go)
 		{
-			TiledMapGeometricObject * result = factory(in_li, in_go);
+			TiledMapGeometricObject * result = factory(in_go);
 			if (result != nullptr && !result->Initialize(in_go))
 			{
 				delete result;
@@ -974,29 +963,32 @@ namespace death
 		return geometric_object->FindPropertyBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
-	TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object)
+	GeometricObjectFactory TiledMapLayerInstance::GetGeometricObjectFactory(chaos::TiledMap::GeometricObject* geometric_object)
 	{
 		TiledMapLevel* level = GetLevel();
 
-		// get a factory for the object
+		// get a factory for the object (new + Initialize(...) ...)
 		GeometricObjectFactory factory = level->GetGeometricObjectFactory(this, geometric_object);
 		if (!factory)
 			return nullptr;
-
-		// create the object 
-		TiledMapGeometricObject* object = factory(this, geometric_object);
-		if (object != nullptr)
+		// create a 'final' factory that use previous one + insert the result object in correct list
+		GeometricObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject* geometric_object)
 		{
-			if (TiledMapTriggerObject * trigger = auto_cast(object))
-				trigger_objects.push_back(trigger);
-			else if (TiledMapPlayerStartObject* player_start = auto_cast(object))
-				player_start_objects.push_back(player_start);
-			else if (TiledMapCameraObject* camera = auto_cast(object))
-				camera_objects.push_back(camera);
-			else
-				geometric_objects.push_back(object);
-		}
-		return object;
+			TiledMapGeometricObject* result = factory(geometric_object);
+			if (result != nullptr)
+			{
+				if (TiledMapTriggerObject* trigger = auto_cast(result))
+					trigger_objects.push_back(trigger);
+				else if (TiledMapPlayerStartObject* player_start = auto_cast(result))
+					player_start_objects.push_back(player_start);
+				else if (TiledMapCameraObject* camera = auto_cast(result))
+					camera_objects.push_back(camera);
+				else
+					geometric_objects.push_back(result);
+			}
+			return result;
+		};
+		return result;
 	}
 
 	TiledMapLayerInstanceParticlePopulator* TiledMapLayerInstance::CreateParticlePopulator()
@@ -1041,8 +1033,15 @@ namespace death
 					explicit_bounding_box = object_surface->GetBoundingBox(false); // in layer coordinates	
 			}
 
-			// create the object
-			TiledMapGeometricObject* object = CreateObjectInstance(geometric_object);
+			// get factory + create the object
+			TiledMapGeometricObject* object = nullptr;
+
+			GeometricObjectFactory factory = GetGeometricObjectFactory(geometric_object);
+			if (factory)
+				object = factory(geometric_object);
+
+			// create tile if no object created 
+			// (XXX : no way yet to know whether this a normal situation because user does not want to create object or whether an error happened)
 			if (object == nullptr || ShouldCreateParticleForObject(geometric_object, object))
 				CreateGeometricObjectParticles(geometric_object, object, particle_populator.get());
 		}
@@ -1151,7 +1150,7 @@ namespace death
 
 	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
 	{
-		// TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object)
+		
 
 		// shuzzz
 
@@ -1187,6 +1186,7 @@ namespace death
 			if (chaos::TiledMapTools::IsPlayerStartObject(tile_info.tiledata))
 			{
 
+				// TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object)
 //				TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
 
 				i = i;

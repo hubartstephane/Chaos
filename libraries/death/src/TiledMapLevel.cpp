@@ -45,6 +45,7 @@ namespace death
 		assert(in_geometric_object != nullptr);
 		// get some data from the geometric object
 		name = in_geometric_object->name;
+		object_id = in_geometric_object->GetObjectID();
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
 		if (surface != nullptr)
@@ -1573,8 +1574,6 @@ namespace death
 	bool TiledMapLayerInstance::DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const& elements, CHECKPOINT_VECTOR& checkpoints) const
 	{
 		// shuzzz
-
-#if 0
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1583,16 +1582,14 @@ namespace death
 			if (obj == nullptr || !obj->IsModified()) // only modified objects
 				continue;
 			// object for chaos point of view
-			chaos::TiledMap::GeometricObject* geometric_object = obj->geometric_object.get();
-			if (geometric_object == nullptr || geometric_object->GetObjectID() < 0)
+			if (obj->GetObjectID() < 0)
 				continue;
 			// save the checkpoint
 			TiledMapObjectCheckpoint* checkpoint = obj->SaveIntoCheckpoint();
 			if (checkpoint == nullptr)
 				continue;
-			checkpoints[geometric_object->GetObjectID()] = checkpoint;
+			checkpoints[obj->GetObjectID()] = checkpoint;
 		}
-#endif
 		return true;
 	}
 
@@ -1607,9 +1604,6 @@ namespace death
 	bool TiledMapLayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints)
 	{
 		// shuzzz
-
-
-#if 0
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1618,13 +1612,12 @@ namespace death
 			if (obj == nullptr)
 				continue;
 			// object for chaos point of view
-			chaos::TiledMap::GeometricObject* geometric_object = obj->geometric_object.get();
-			if (geometric_object == nullptr || geometric_object->GetObjectID() < 0)
+			if (obj->GetObjectID() < 0)
 				continue;
 			// get checkpoint
 			TiledMapObjectCheckpoint* obj_checkpoint = nullptr;
 
-			auto it = checkpoints.find(geometric_object->GetObjectID());
+			auto it = checkpoints.find(obj->GetObjectID());
 			if (it != checkpoints.end())
 				obj_checkpoint = it->second.get();
 
@@ -1633,10 +1626,12 @@ namespace death
 			//    -> object is currently modified, restore initial settings
 			if (obj_checkpoint != nullptr)
 				obj->LoadFromCheckpoint(obj_checkpoint);
+
+#if 0
 			else if (obj->IsModified())
 				obj->Initialize();
-		}
 #endif
+		}
 		return true;
 	}
 

@@ -91,12 +91,17 @@ namespace death
 		/** whenever the Level is being stopped */
 		virtual void OnLevelEnded() {}
 
+		/** get the layer ID (used for Checkpoints) */
+		int GetObjectID() const { return object_id; }
+
 	protected:
 
 		/** a reference to the layer instance */
 		TiledMapLayerInstance* layer_instance = nullptr;
 		/** whether the object has been modified from the JSON base data (usefull for checkpoint serialization) */
 		bool modified = false;
+		/** an ID deducted from the order in the source JSON (chaos) */
+		int object_id = -1;
 	};
 
 	// =====================================

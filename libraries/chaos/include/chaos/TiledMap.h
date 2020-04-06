@@ -746,19 +746,19 @@ namespace chaos
 		public:
 
 			/** cast method into its subtype */
-			virtual class ImageLayer * GetImageLayer() { return nullptr; }
+			ImageLayer * GetImageLayer() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class ImageLayer const * GetImageLayer() const { return nullptr; }
+			ImageLayer const * GetImageLayer() const { return auto_cast(this); }
 
 			/** cast method into its subtype */
-			virtual class ObjectLayer * GetObjectLayer() { return nullptr; }
+			ObjectLayer * GetObjectLayer() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class ObjectLayer const * GetObjectLayer() const { return nullptr; }
+			ObjectLayer const * GetObjectLayer() const { return auto_cast(this); }
 
 			/** cast method into its subtype */
-			virtual class TileLayer * GetTileLayer() { return nullptr; }
+			TileLayer * GetTileLayer() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class TileLayer const * GetTileLayer() const { return nullptr; }
+			TileLayer const * GetTileLayer() const { return auto_cast(this); }
 
 			/** get the layer ID (used for Checkpoints) */
 			int GetObjectID() const { return object_id; }
@@ -806,11 +806,6 @@ namespace chaos
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
-			/** override */
-			virtual class ImageLayer * GetImageLayer() override { return this; }
-			/** override */
-			virtual class ImageLayer const * GetImageLayer() const override { return this; }
-
 		public:
 
 			/** object information */
@@ -834,13 +829,6 @@ namespace chaos
 		class ObjectLayer : public LayerBase
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
-
-		public:
-
-			/** override */
-			virtual class ObjectLayer * GetObjectLayer() override { return this; }
-			/** override */
-			virtual class ObjectLayer const * GetObjectLayer() const override { return this; }
 
 		protected:
 
@@ -883,11 +871,6 @@ namespace chaos
 			size_t GetNonEmptyTileCount() const;
 			/** get the position of the tile */
 			glm::ivec2 GetTileCoordinate(size_t index) const;
-
-			/** override */
-			virtual class TileLayer * GetTileLayer() override { return this; }
-			/** override */
-			virtual class TileLayer const * GetTileLayer() const override { return this; }
 
 		protected:
 

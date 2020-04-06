@@ -400,37 +400,37 @@ namespace chaos
 		public:
 
 			/** cast method into its subtype */
-			virtual class GeometricObjectPoint * GetObjectPoint() { return nullptr; }
+			GeometricObjectPoint * GetObjectPoint() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectPoint const * GetObjectPoint() const { return nullptr; }
+			GeometricObjectPoint const * GetObjectPoint() const { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectSurface * GetObjectSurface() { return nullptr; }
+			GeometricObjectSurface * GetObjectSurface() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectSurface const * GetObjectSurface() const { return nullptr; }
+			GeometricObjectSurface const * GetObjectSurface() const { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectRectangle * GetObjectRectangle() { return nullptr; }
+			GeometricObjectRectangle * GetObjectRectangle() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectRectangle const * GetObjectRectangle() const { return nullptr; }
+			GeometricObjectRectangle const * GetObjectRectangle() const { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectEllipse * GetObjectEllipse() { return nullptr; }
+			GeometricObjectEllipse * GetObjectEllipse() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectEllipse const * GetObjectEllipse() const { return nullptr; }
+			GeometricObjectEllipse const * GetObjectEllipse() const { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectPolygon * GetObjectPolygon() { return nullptr; }
+			GeometricObjectPolygon * GetObjectPolygon() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectPolygon const * GetObjectPolygon() const { return nullptr; }
+			GeometricObjectPolygon const * GetObjectPolygon() const { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectPolyline * GetObjectPolyline() { return nullptr; }
+			GeometricObjectPolyline * GetObjectPolyline() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectPolyline const * GetObjectPolyline() const { return nullptr; }
+			GeometricObjectPolyline const * GetObjectPolyline() const { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectText * GetObjectText() { return nullptr; }
+			GeometricObjectText * GetObjectText() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectText const * GetObjectText() const { return nullptr; }
+			GeometricObjectText const * GetObjectText() const { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectTile * GetObjectTile() { return nullptr; }
+			GeometricObjectTile * GetObjectTile() { return auto_cast(this); }
 			/** cast method into its subtype */
-			virtual class GeometricObjectTile const * GetObjectTile() const { return nullptr; }
+			GeometricObjectTile const * GetObjectTile() const { return auto_cast(this); }
 
 			/** get the layer ID (used for Checkpoints) */
 			int GetObjectID() const { return object_id; }
@@ -471,11 +471,6 @@ namespace chaos
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
-		public:
-
-			virtual GeometricObjectPoint * GetObjectPoint() override { return this; }
-			virtual GeometricObjectPoint const * GetObjectPoint() const override { return this; }
-
 		protected:
 
 			/** constructor */
@@ -494,9 +489,6 @@ namespace chaos
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
-
-			virtual class GeometricObjectSurface * GetObjectSurface() override { return this; }
-			virtual class GeometricObjectSurface const * GetObjectSurface() const override { return this; }
 
 			/** get the bounding box */
 			virtual box2 GetBoundingBox(bool world_system) const;
@@ -523,11 +515,6 @@ namespace chaos
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
-		public:
-
-			virtual GeometricObjectRectangle * GetObjectRectangle() override { return this; }
-			virtual GeometricObjectRectangle const * GetObjectRectangle() const override { return this; }
-
 		protected:
 
 			/** constructor */
@@ -545,11 +532,6 @@ namespace chaos
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
-		public:
-
-			virtual GeometricObjectEllipse * GetObjectEllipse() override { return this; }
-			virtual GeometricObjectEllipse const * GetObjectEllipse() const override { return this; }
-
 		protected:
 
 			/** constructor */
@@ -566,11 +548,6 @@ namespace chaos
 		class GeometricObjectPolygon : public GeometricObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
-
-		public:
-
-			virtual GeometricObjectPolygon * GetObjectPolygon() override { return this; }
-			virtual GeometricObjectPolygon const * GetObjectPolygon() const override { return this; }
 
 		protected:
 
@@ -593,11 +570,6 @@ namespace chaos
 		class GeometricObjectPolyline : public GeometricObject
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
-
-		public:
-
-			virtual GeometricObjectPolyline * GetObjectPolyline() override { return this; }
-			virtual GeometricObjectPolyline const * GetObjectPolyline() const override { return this; }
 
 		protected:
 
@@ -636,11 +608,6 @@ namespace chaos
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
-		public:
-
-			virtual GeometricObjectText * GetObjectText() override { return this; }
-			virtual GeometricObjectText const * GetObjectText() const override { return this; }
-
 		protected:
 
 			/** constructor */
@@ -676,9 +643,6 @@ namespace chaos
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
 		public:
-
-			virtual GeometricObjectTile * GetObjectTile() override { return this; }
-			virtual GeometricObjectTile const * GetObjectTile() const override { return this; }
 
 			virtual box2 GetBoundingBox(bool world_system) const override;
 

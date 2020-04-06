@@ -506,12 +506,14 @@ namespace chaos
 
 		bool Window::OnKeyEventImpl(KeyEvent const & event)
 		{
-			// kill the window
+			// kill the window (use ALT+F4 for the moment)
+#if 0
 			if (event.IsKeyPressed(GLFW_KEY_ESCAPE, GLFW_MOD_SHIFT))
 			{
 				RequireWindowClosure();
 				return true;
 			}
+#endif
 			// screen capture
 			// CMD GLFW_KEY_F9 : ScreenCapture(...)
 			if (event.IsKeyPressed(GLFW_KEY_F9))

@@ -42,6 +42,8 @@ namespace death
 
 	bool TiledMapGeometricObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
+		// shuzzz
+
 		assert(in_geometric_object != nullptr);
 		// get some data from the geometric object
 		name = in_geometric_object->name;
@@ -553,36 +555,47 @@ namespace death
 		return new chaos::ParticleLayer<TiledMapParticleTrait>();
 	}
 
-	TiledMapGeometricObject* TiledMapLevel::DoCreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	
+
+	GeometricObjectFactory TiledMapLevel::DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
+		// shuzzz
+
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_geometric_object))
-			return CreatePlayerStartObject(in_layer_instance, in_geometric_object);
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return CreatePlayerStartObject(in_layer_instance, in_geometric_object););
 		// camera 
 		if (chaos::TiledMapTools::IsCameraObject(in_geometric_object))
-			return CreateCameraObject(in_layer_instance, in_geometric_object);
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return CreateCameraObject(in_layer_instance, in_geometric_object););
 		// other kind of objects
 		if (chaos::TiledMapTools::IsFinishTrigger(in_geometric_object))
-			return new TiledMapFinishingTriggerObject(in_layer_instance);
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapFinishingTriggerObject(in_layer_instance););
 		if (chaos::TiledMapTools::IsCheckpointTrigger(in_geometric_object))
-			return new TiledMapCheckpointTriggerObject(in_layer_instance);
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapCheckpointTriggerObject(in_layer_instance););
 		if (chaos::TiledMapTools::IsNotificationTrigger(in_geometric_object))
-			return new TiledMapNotificationTriggerObject(in_layer_instance);
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapNotificationTriggerObject(in_layer_instance););
 		if (chaos::TiledMapTools::IsSoundTrigger(in_geometric_object))
-			return new TiledMapSoundTriggerObject(in_layer_instance);
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapSoundTriggerObject(in_layer_instance););
 		return nullptr;
 	}
 
-	TiledMapGeometricObject* TiledMapLevel::CreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	GeometricObjectFactory TiledMapLevel::GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		TiledMapGeometricObject* result = DoCreateGeometricObject(in_layer_instance, in_geometric_object);
-		if (result == nullptr)
+		// get a very first factory that just
+		GeometricObjectFactory factory = DoGetGeometricObjectFactory(in_layer_instance, in_geometric_object);
+		if (factory == nullptr)
 			return nullptr;
-		if (!result->Initialize(in_geometric_object))
+		// create another factory that wraps the previous (and add Initialize(...) call)
+		GeometricObjectFactory result = [factory](TiledMapLayerInstance* in_li, chaos::TiledMap::GeometricObject* in_go)
 		{
-			delete result;
-			return nullptr;
-		}
+			TiledMapGeometricObject * result = factory(in_li, in_go);
+			if (result != nullptr && !result->Initialize(in_go))
+			{
+				delete result;
+				result = nullptr;
+			}
+			return result;
+		};
 		return result;
 	}
 	
@@ -965,8 +978,13 @@ namespace death
 	{
 		TiledMapLevel* level = GetLevel();
 
-		// other type of object 
-		TiledMapGeometricObject* object = level->CreateGeometricObject(this, geometric_object);
+		// get a factory for the object
+		GeometricObjectFactory factory = level->GetGeometricObjectFactory(this, geometric_object);
+		if (!factory)
+			return nullptr;
+
+		// create the object 
+		TiledMapGeometricObject* object = factory(this, geometric_object);
 		if (object != nullptr)
 		{
 			if (TiledMapTriggerObject * trigger = auto_cast(object))
@@ -1169,7 +1187,7 @@ namespace death
 			if (chaos::TiledMapTools::IsPlayerStartObject(tile_info.tiledata))
 			{
 
-				TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
+//				TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
 
 				i = i;
 			}

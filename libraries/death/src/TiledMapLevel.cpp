@@ -562,18 +562,14 @@ namespace death
 		if (chaos::TiledMapTools::IsCameraObject(in_geometric_object))
 			return CreateCameraObject(in_layer_instance, in_geometric_object);
 		// other kind of objects
-		chaos::TiledMap::GeometricObjectSurface* surface_object = in_geometric_object->GetObjectSurface();
-		if (surface_object != nullptr)
-		{
-			if (chaos::TiledMapTools::IsFinishTrigger(surface_object))
-				return new TiledMapFinishingTriggerObject(in_layer_instance);
-			if (chaos::TiledMapTools::IsCheckpointTrigger(surface_object))
-				return new TiledMapCheckpointTriggerObject(in_layer_instance);
-			if (chaos::TiledMapTools::IsNotificationTrigger(surface_object))
-				return new TiledMapNotificationTriggerObject(in_layer_instance);
-			if (chaos::TiledMapTools::IsSoundTrigger(surface_object))
-				return new TiledMapSoundTriggerObject(in_layer_instance);
-		}
+		if (chaos::TiledMapTools::IsFinishTrigger(in_geometric_object))
+			return new TiledMapFinishingTriggerObject(in_layer_instance);
+		if (chaos::TiledMapTools::IsCheckpointTrigger(in_geometric_object))
+			return new TiledMapCheckpointTriggerObject(in_layer_instance);
+		if (chaos::TiledMapTools::IsNotificationTrigger(in_geometric_object))
+			return new TiledMapNotificationTriggerObject(in_layer_instance);
+		if (chaos::TiledMapTools::IsSoundTrigger(in_geometric_object))
+			return new TiledMapSoundTriggerObject(in_layer_instance);
 		return nullptr;
 	}
 
@@ -1173,6 +1169,8 @@ namespace death
 			if (chaos::TiledMapTools::IsPlayerStartObject(tile_info.tiledata))
 			{
 
+				TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
+
 				i = i;
 			}
 
@@ -1573,16 +1571,12 @@ namespace death
 	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
 	bool TiledMapLayerInstance::DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const& elements, CHECKPOINT_VECTOR& checkpoints) const
 	{
-		// shuzzz
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			// object in death::TiledMap point of view
+			// only modified object with an ID
 			auto const* obj = elements[i].get();
-			if (obj == nullptr || !obj->IsModified()) // only modified objects
-				continue;
-			// object for chaos point of view
-			if (obj->GetObjectID() < 0)
+			if (obj == nullptr || !obj->IsModified() || obj->GetObjectID() < 0)
 				continue;
 			// save the checkpoint
 			TiledMapObjectCheckpoint* checkpoint = obj->SaveIntoCheckpoint();
@@ -1607,16 +1601,13 @@ namespace death
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			// object in death::TiledMap point of view
+			// only modified object with an ID
 			auto* obj = elements[i].get();
-			if (obj == nullptr)
+			if (obj == nullptr || obj->GetObjectID() < 0)
 				continue;
-			// object for chaos point of view
-			if (obj->GetObjectID() < 0)
-				continue;
+		
 			// get checkpoint
 			TiledMapObjectCheckpoint* obj_checkpoint = nullptr;
-
 			auto it = checkpoints.find(obj->GetObjectID());
 			if (it != checkpoints.end())
 				obj_checkpoint = it->second.get();

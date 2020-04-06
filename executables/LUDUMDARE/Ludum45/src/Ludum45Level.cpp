@@ -183,15 +183,10 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 
 death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
-	chaos::TiledMap::GeometricObjectSurface * surface_object = in_geometric_object->GetObjectSurface();
-
-	if (surface_object != nullptr)
-	{
-		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "BONUS_SPAWNER"))  
-			return new BonusSpawnerTriggerObject(in_layer_instance);
-		if (chaos::TiledMapTools::IsObjectOfType(surface_object, "ENEMY_SPAWNER"))
-			return new EnemySpawnerTriggerObject(in_layer_instance);
-	}
+	if (chaos::TiledMapTools::IsObjectOfType(in_geometric_object, "BONUS_SPAWNER"))
+		return new BonusSpawnerTriggerObject(in_layer_instance);
+	if (chaos::TiledMapTools::IsObjectOfType(in_geometric_object, "ENEMY_SPAWNER"))
+		return new EnemySpawnerTriggerObject(in_layer_instance);
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 

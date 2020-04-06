@@ -181,13 +181,13 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 }
 
 
-death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
 	if (chaos::TiledMapTools::IsObjectOfType(in_geometric_object, "BONUS_SPAWNER"))
-		return new BonusSpawnerTriggerObject(in_layer_instance);
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new BonusSpawnerTriggerObject(in_layer_instance););
 	if (chaos::TiledMapTools::IsObjectOfType(in_geometric_object, "ENEMY_SPAWNER"))
-		return new EnemySpawnerTriggerObject(in_layer_instance);
-	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new EnemySpawnerTriggerObject(in_layer_instance););
+	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_geometric_object);
 }
 
 bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, death::TiledMapParticle * particle)

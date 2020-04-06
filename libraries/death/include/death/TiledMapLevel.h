@@ -382,12 +382,23 @@ namespace death
 		virtual bool OnPlayerCollisionEvent(float delta_time, Player* player, chaos::CollisionType event_type) override;
 	};
 
+	// =====================================
+	// TiledMapLevel : utility
+	// =====================================
 
+	// XXX : while we want to create GeometricObject during tile creation we will need a fake 'geometric_object' (or a geometric_object on the fly)
+	//       we cannot afford to create such a costly object for each tile (considering that 99% of the tiles should not require such a fake object)
+	// 
+	//       that's why we use factories (even for non tile layers).
+	//       for a tile we:
+	//         - get a factory
+	//         - create the fake geometric_object
+	//         - use the factory with this geometric object on the fly
 
-
-
-
-
+	/** a functor for geometric object factory */
+	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (death::TiledMapLayerInstance*, chaos::TiledMap::GeometricObject*)>;
+	/** an helper to make a lambda inside DoGetGeometricObjectFactory */
+#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this](death::TiledMapLayerInstance*in_layer_instance, chaos::TiledMap::GeometricObject*in_geometric_object) { x };
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap
@@ -417,7 +428,10 @@ namespace death
 
 
 		/** create a typed object specializable method */
-		virtual TiledMapGeometricObject* DoCreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual GeometricObjectFactory DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		/** create a typed object 'entry point' */
+		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+
 		/** create a Camera specializable method */
 		virtual TiledMapCameraObject* DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a PlayerStartObject specializable method */
@@ -425,8 +439,6 @@ namespace death
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 
-		/** create a typed object 'entry point' */
-		TiledMapGeometricObject* CreateGeometricObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a camera 'entry point' */
 		TiledMapCameraObject* CreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a player start 'entry point' */

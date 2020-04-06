@@ -141,13 +141,8 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_ins
 
 death::TiledMapGeometricObject * LudumLevel::DoCreateGeometricObject(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
 {
-	chaos::TiledMap::GeometricObjectSurface * surface_object = in_geometric_object->GetObjectSurface();
-
-	if (surface_object != nullptr)
-	{
-		if (chaos::TiledMapTools::IsFinishTrigger(surface_object))
-			return new MyFinishingTriggerObject(in_layer_instance);
-	}
+	if (chaos::TiledMapTools::IsFinishTrigger(in_geometric_object))
+		return new MyFinishingTriggerObject(in_layer_instance);
 	return death::TiledMapLevel::DoCreateGeometricObject(in_layer_instance, in_geometric_object);
 }
 

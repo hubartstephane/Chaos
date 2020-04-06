@@ -396,9 +396,9 @@ namespace death
 	//         - use the factory with this geometric object on the fly
 
 	/** a functor for geometric object factory */
-	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (death::TiledMapLayerInstance*, chaos::TiledMap::GeometricObject*)>;
+	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (chaos::TiledMap::GeometricObject*)>;
 	/** an helper to make a lambda inside DoGetGeometricObjectFactory */
-#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this](death::TiledMapLayerInstance*in_layer_instance, chaos::TiledMap::GeometricObject*in_geometric_object) { x };
+#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject*in_geometric_object) { x };
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap
@@ -689,10 +689,10 @@ namespace death
 		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer* object_layer);
 		/** specialized layer */
 		bool InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer);
-
-		
+	
 		/** create an object in an object layer */
-		TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object);
+		GeometricObjectFactory GetGeometricObjectFactory(chaos::TiledMap::GeometricObject* geometric_object);
+
 		/** create an object in an object layer */
 		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
 		/** returns whether a particle should be created for object instance */

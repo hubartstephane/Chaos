@@ -48,11 +48,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 }
 
 
-death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject * in_geometric_object)
+death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
 
 
-	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_geometric_object);
+	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }
 
 bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, death::TiledMapParticle * particle)

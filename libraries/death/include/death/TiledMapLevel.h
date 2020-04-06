@@ -394,6 +394,12 @@ namespace death
 	//         - get a factory
 	//         - create the fake geometric_object
 	//         - use the factory with this geometric object on the fly
+	//
+	// XXX : the functions to get factories receive a : TypedObject         (because we just need some properties and a type to know which object we would like to create (and that's what we get in Tile generation method))
+	//       the factories receive a                  : GeometricObjectType (because for the real object creation we need more than a TypedObject)
+	//
+	// XXX : beware, the DEATH_MAKE_GEOMETRICOBJECT_FACTORY(...) macro hide the complexity of lambda parameters capture. Use with caution 
+	//
 
 	/** a functor for geometric object factory */
 	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (chaos::TiledMap::GeometricObject*)>;
@@ -428,9 +434,9 @@ namespace death
 
 
 		/** create a typed object specializable method */
-		virtual GeometricObjectFactory DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual GeometricObjectFactory DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 		/** create a typed object 'entry point' */
-		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object);
 
 		/** create a Camera specializable method */
 		virtual TiledMapCameraObject* DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
@@ -691,7 +697,7 @@ namespace death
 		bool InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer);
 	
 		/** create an object in an object layer */
-		GeometricObjectFactory GetGeometricObjectFactory(chaos::TiledMap::GeometricObject* geometric_object);
+		GeometricObjectFactory GetGeometricObjectFactory(chaos::TiledMap::TypedObject* in_typed_object);
 
 		/** create an object in an object layer */
 		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);

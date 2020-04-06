@@ -547,38 +547,38 @@ namespace death
 	{
 		return new chaos::ParticleLayer<TiledMapParticleTrait>();
 	}
-
-	GeometricObjectFactory TiledMapLevel::DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	
+	GeometricObjectFactory TiledMapLevel::DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 	{
 		// player start 
-		if (chaos::TiledMapTools::IsPlayerStartObject(in_geometric_object))
+		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return CreatePlayerStartObject(in_layer_instance, in_geometric_object););
 		// camera 
-		if (chaos::TiledMapTools::IsCameraObject(in_geometric_object))
+		if (chaos::TiledMapTools::IsCameraObject(in_typed_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return CreateCameraObject(in_layer_instance, in_geometric_object););
 		// other kind of objects
-		if (chaos::TiledMapTools::IsFinishTrigger(in_geometric_object))
+		if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapFinishingTriggerObject(in_layer_instance););
-		if (chaos::TiledMapTools::IsCheckpointTrigger(in_geometric_object))
+		if (chaos::TiledMapTools::IsCheckpointTrigger(in_typed_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapCheckpointTriggerObject(in_layer_instance););
-		if (chaos::TiledMapTools::IsNotificationTrigger(in_geometric_object))
+		if (chaos::TiledMapTools::IsNotificationTrigger(in_typed_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapNotificationTriggerObject(in_layer_instance););
-		if (chaos::TiledMapTools::IsSoundTrigger(in_geometric_object))
+		if (chaos::TiledMapTools::IsSoundTrigger(in_typed_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapSoundTriggerObject(in_layer_instance););
 		return nullptr;
 	}
 
-	GeometricObjectFactory TiledMapLevel::GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	GeometricObjectFactory TiledMapLevel::GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 	{
 		// get a very first factory that just
-		GeometricObjectFactory factory = DoGetGeometricObjectFactory(in_layer_instance, in_geometric_object);
-		if (factory == nullptr)
+		GeometricObjectFactory factory = DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
+		if (!factory)
 			return nullptr;
 		// create another factory that wraps the previous (and add Initialize(...) call)
-		GeometricObjectFactory result = [factory](chaos::TiledMap::GeometricObject* in_go)
+		GeometricObjectFactory result = [factory](chaos::TiledMap::GeometricObject* in_geometric_object)
 		{
-			TiledMapGeometricObject * result = factory(in_go);
-			if (result != nullptr && !result->Initialize(in_go))
+			TiledMapGeometricObject * result = factory(in_geometric_object);
+			if (result != nullptr && !result->Initialize(in_geometric_object))
 			{
 				delete result;
 				result = nullptr;
@@ -963,12 +963,12 @@ namespace death
 		return geometric_object->FindPropertyBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
-	GeometricObjectFactory TiledMapLayerInstance::GetGeometricObjectFactory(chaos::TiledMap::GeometricObject* geometric_object)
+	GeometricObjectFactory TiledMapLayerInstance::GetGeometricObjectFactory(chaos::TiledMap::TypedObject* in_typed_object)
 	{
 		TiledMapLevel* level = GetLevel();
 
 		// get a factory for the object (new + Initialize(...) ...)
-		GeometricObjectFactory factory = level->GetGeometricObjectFactory(this, geometric_object);
+		GeometricObjectFactory factory = level->GetGeometricObjectFactory(this, in_typed_object);
 		if (!factory)
 			return nullptr;
 		// create a 'final' factory that use previous one + insert the result object in correct list

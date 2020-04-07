@@ -558,13 +558,13 @@ namespace death
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateCameraObject(in_layer_instance, in_geometric_object););
 		// other kind of objects
 		if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapFinishingTriggerObject(in_layer_instance););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateFinishingTriggerObject(in_layer_instance, in_geometric_object););
 		if (chaos::TiledMapTools::IsCheckpointTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapCheckpointTriggerObject(in_layer_instance););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateCheckpointTriggerObject(in_layer_instance, in_geometric_object););
 		if (chaos::TiledMapTools::IsNotificationTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapNotificationTriggerObject(in_layer_instance););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateNotificationTriggerObject(in_layer_instance, in_geometric_object););
 		if (chaos::TiledMapTools::IsSoundTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapSoundTriggerObject(in_layer_instance););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateSoundTriggerObject(in_layer_instance, in_geometric_object););
 		return nullptr;
 	}
 
@@ -591,6 +591,25 @@ namespace death
 	TiledMapCameraObject* TiledMapLevel::DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
 		return new TiledMapCameraObject(in_layer_instance);
+	}
+
+
+
+	TiledMapFinishingTriggerObject* TiledMapLevel::DoCreateFinishingTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		return new TiledMapFinishingTriggerObject(in_layer_instance);
+	}
+	TiledMapCheckpointTriggerObject* TiledMapLevel::DoCreateCheckpointTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		return new TiledMapCheckpointTriggerObject(in_layer_instance);
+	}
+	TiledMapNotificationTriggerObject* TiledMapLevel::DoCreateNotificationTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		return new TiledMapNotificationTriggerObject(in_layer_instance);
+	}
+	TiledMapSoundTriggerObject* TiledMapLevel::DoCreateSoundTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		return new TiledMapSoundTriggerObject(in_layer_instance);
 	}
 
 	TiledMapPlayerStartObject* TiledMapLevel::DoCreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)

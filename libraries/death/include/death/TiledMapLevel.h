@@ -442,6 +442,15 @@ namespace death
 		virtual TiledMapCameraObject* DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapPlayerStartObject* DoCreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		/** create a FinishingTriggerObject specializable method */
+		virtual TiledMapFinishingTriggerObject* DoCreateFinishingTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		/** create a CheckpointTriggerObject specializable method */
+		virtual TiledMapCheckpointTriggerObject* DoCreateCheckpointTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		/** create a NotificationTriggerObject specializable method */
+		virtual TiledMapNotificationTriggerObject* DoCreateNotificationTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		/** create a SoundTriggerObject specializable method */
+		virtual TiledMapSoundTriggerObject* DoCreateSoundTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 

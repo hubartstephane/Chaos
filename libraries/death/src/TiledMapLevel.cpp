@@ -1192,6 +1192,9 @@ namespace death
 					tile_object->position.y = particle_box.position.y - particle_box.half_size.y;
 
 					// XXX : for player start : but this is not a great idea to process by exception
+					//       We are writing int the fake object properties, not in the 'tile_info.tiledata'
+					//       That means that if 'tile_info.tiledata' already has a BITMAP_NAME property, this does not
+					//       interfere with that (a just in case value)
 					tile_object->InsertProperty("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); 
 
 					TiledMapGeometricObject* object = factory(tile_object.get());

@@ -336,6 +336,15 @@ namespace chaos
 			/** find a typed property with default value */
 			std::string FindPropertyString(char const * name, char const * default_value) const;
 
+			/** create property */
+			PropertyInt* InsertProperty(char const* name, int value);
+			/** create property */
+			PropertyFloat* InsertProperty(char const* name, float value);
+			/** create property */
+			PropertyBool* InsertProperty(char const* name, bool value);
+			/** create property */
+			PropertyString* InsertProperty(char const* name, char const* value);
+
 		protected:
 
 			/** the method to override */
@@ -345,15 +354,6 @@ namespace chaos
 			virtual bool DoLoadProperties(tinyxml2::XMLElement const * element);
 			/** returns the container of properties */
 			virtual tinyxml2::XMLElement const * GetPropertiesChildNode(tinyxml2::XMLElement const * element) const;
-
-			/** create property */
-			PropertyInt * DoInsertProperty(char const * name, int value);
-			/** create property */
-			PropertyFloat * DoInsertProperty(char const * name, float value);
-			/** create property */
-			PropertyBool * DoInsertProperty(char const * name, bool value);
-			/** create property */
-			PropertyString * DoInsertProperty(char const * name, char const * value);
 
 		protected:
 
@@ -376,18 +376,24 @@ namespace chaos
 				property_owner(in_property_owner) {}
 
 			/** override */
-			virtual chaos::TiledMap::Property* FindProperty(char const* name, PropertyType type_id) override
+			virtual Property* FindProperty(char const* name, PropertyType type_id) override
 			{
+				Property* result = nullptr;
 				if (property_owner != nullptr)
-					return property_owner->FindProperty(name, type_id);
-				return nullptr;
+					result = property_owner->FindProperty(name, type_id);
+				if (result == nullptr)
+					result = T::FindProperty(name, type_id);
+				return result;
 			}
 			/** override */
-			virtual chaos::TiledMap::Property const* FindProperty(char const* name, PropertyType type_id) const override
+			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override
 			{
+				Property const* result = nullptr;
 				if (property_owner != nullptr)
-					return property_owner->FindProperty(name, type_id);
-				return nullptr;
+					result = property_owner->FindProperty(name, type_id);
+				if (result == nullptr)
+					result = T::FindProperty(name, type_id);
+				return result;
 			}
 
 		protected:

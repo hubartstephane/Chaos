@@ -258,28 +258,28 @@ namespace chaos
 				{
 					char const * value = (value_attribute != nullptr) ? value_attribute->Value() : node->GetText();
 					if (value != nullptr)
-						DoInsertProperty(property_name, value);
+						InsertProperty(property_name, value);
 				}
 				else if (value_attribute != nullptr) // now, to this point, value_attribute becomes MANDATORY
 				{
 					if (StringTools::Stricmp(property_type, "int") == 0)
 					{
-						DoInsertProperty(property_name, value_attribute->IntValue());
+						InsertProperty(property_name, value_attribute->IntValue());
 					}
 					else if (StringTools::Stricmp(property_type, "float") == 0)
 					{
-						DoInsertProperty(property_name, value_attribute->FloatValue());
+						InsertProperty(property_name, value_attribute->FloatValue());
 					}
 					else if (StringTools::Stricmp(property_type, "bool") == 0)
 					{
-						DoInsertProperty(property_name, value_attribute->BoolValue());
+						InsertProperty(property_name, value_attribute->BoolValue());
 					}
 				}
 			}
 			return true;
 		}
 
-		PropertyInt * PropertyOwner::DoInsertProperty(char const * name, int value)
+		PropertyInt * PropertyOwner::InsertProperty(char const * name, int value)
 		{
 			PropertyInt * result = new PropertyInt(this);
 			if (result != nullptr)
@@ -291,7 +291,7 @@ namespace chaos
 			return result;
 		}
 
-		PropertyFloat * PropertyOwner::DoInsertProperty(char const * name, float value)
+		PropertyFloat * PropertyOwner::InsertProperty(char const * name, float value)
 		{
 			PropertyFloat * result = new PropertyFloat(this);
 			if (result != nullptr)
@@ -303,7 +303,7 @@ namespace chaos
 			return result;
 		}
 
-		PropertyBool * PropertyOwner::DoInsertProperty(char const * name, bool value)
+		PropertyBool * PropertyOwner::InsertProperty(char const * name, bool value)
 		{
 			PropertyBool * result = new PropertyBool(this);
 			if (result != nullptr)
@@ -315,7 +315,7 @@ namespace chaos
 			return result;
 		}
 
-		PropertyString * PropertyOwner::DoInsertProperty(char const * name, char const * value)
+		PropertyString * PropertyOwner::InsertProperty(char const * name, char const * value)
 		{
 			PropertyString * result = new PropertyString(this);
 			if (result != nullptr)

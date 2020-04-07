@@ -445,10 +445,6 @@ namespace death
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 
-		/** create a camera 'entry point' */
-		TiledMapCameraObject* CreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
-		/** create a player start 'entry point' */
-		TiledMapPlayerStartObject* CreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** create a layer instance 'entry point' */
 		TiledMapLayerInstance* CreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 
@@ -702,7 +698,7 @@ namespace death
 		/** create an object in an object layer */
 		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
 		/** returns whether a particle should be created for object instance */
-		bool ShouldCreateParticleForObject(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object) const;
+		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapGeometricObject* object) const;
 
 		/** finalize the particles created */
 		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);

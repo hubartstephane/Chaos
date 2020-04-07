@@ -552,10 +552,10 @@ namespace death
 	{
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return CreatePlayerStartObject(in_layer_instance, in_geometric_object););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreatePlayerStartObject(in_layer_instance, in_geometric_object););
 		// camera 
 		if (chaos::TiledMapTools::IsCameraObject(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return CreateCameraObject(in_layer_instance, in_geometric_object););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateCameraObject(in_layer_instance, in_geometric_object););
 		// other kind of objects
 		if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
 			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new TiledMapFinishingTriggerObject(in_layer_instance););
@@ -593,35 +593,9 @@ namespace death
 		return new TiledMapCameraObject(in_layer_instance);
 	}
 
-	TiledMapCameraObject* TiledMapLevel::CreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
-	{
-		TiledMapCameraObject* result = DoCreateCameraObject(in_layer_instance, in_geometric_object);
-		if (result == nullptr)
-			return nullptr;
-		if (!result->Initialize(in_geometric_object))
-		{
-			delete result;
-			return nullptr;
-		}
-		return result;
-	}
-
 	TiledMapPlayerStartObject* TiledMapLevel::DoCreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
 		return new TiledMapPlayerStartObject(in_layer_instance);
-	}
-
-	TiledMapPlayerStartObject* TiledMapLevel::CreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
-	{
-		TiledMapPlayerStartObject* result = DoCreatePlayerStartObject(in_layer_instance, in_geometric_object);
-		if (result == nullptr)
-			return nullptr;
-		if (!result->Initialize(in_geometric_object))
-		{
-			delete result;
-			return nullptr;
-		}
-		return result;
 	}
 
 	TiledMapLayerInstance* TiledMapLevel::DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
@@ -954,14 +928,14 @@ namespace death
 		}
 	}
 
-	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object) const
+	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapGeometricObject* object) const
 	{
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
 			return true;
 
 #endif			
-		return geometric_object->FindPropertyBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
+		return property_owner->FindPropertyBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
 	GeometricObjectFactory TiledMapLayerInstance::GetGeometricObjectFactory(chaos::TiledMap::TypedObject* in_typed_object)
@@ -1197,7 +1171,9 @@ namespace death
 					tile_object->size = particle_box.half_size * 2.0f;
 					tile_object->position.x = particle_box.position.x - particle_box.half_size.x;
 					tile_object->position.y = particle_box.position.y - particle_box.half_size.y;
-					tile_object->InsertProperty("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); // XXX : for player start : but this is not a great idea
+
+					// XXX : for player start : but this is not a great idea to process by exception
+					tile_object->InsertProperty("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); 
 
 					TiledMapGeometricObject* object = factory(tile_object.get());
 					if (object != nullptr)

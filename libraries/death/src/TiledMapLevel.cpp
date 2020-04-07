@@ -1178,7 +1178,12 @@ namespace death
 			if (tile_info.tiledata == nullptr)
 				continue;
 
+			// prepare data for the tile/object
+			glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(i);
+			chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
 
+			bool horizontal_flip = false;
+			bool vertical_flip = false;
 
 			// try to create a geometric object from the tile
 			GeometricObjectFactory factory = GetGeometricObjectFactory(tile_info.tiledata);
@@ -1188,36 +1193,22 @@ namespace death
 				if (tile_object != nullptr)
 				{
 					tile_object->gid = gid;
-					
+					tile_object->type = tile_info.tiledata->type;
+					tile_object->size = particle_box.half_size * 2.0f;
+					tile_object->position.x = particle_box.position.x - particle_box.half_size.x;
+					tile_object->position.y = particle_box.position.y - particle_box.half_size.y;
+					tile_object->InsertProperty("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); // XXX : for player start : but this is not a great idea
 
-					TiledMapGeometricObject* geometric_object = factory(tile_object.get());
-					if (geometric_object != nullptr)
+					TiledMapGeometricObject* object = factory(tile_object.get());
+					if (object != nullptr)
 					{
-
-
+						if (!ShouldCreateParticleForObject(tile_object.get(), object))
+							continue;
 					}
-
-
-
 				}
 			}
 
-
-
-
-
-
-
-
-
-
-
 			// create a simple particle
-			glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(i);
-			chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
-
-			bool horizontal_flip = false;
-			bool vertical_flip = false;
 			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip);
 		}
 

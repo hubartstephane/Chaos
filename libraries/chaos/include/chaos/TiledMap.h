@@ -362,6 +362,41 @@ namespace chaos
 		};
 
 		// ==========================================
+		// PropertyOwnerOverride : an utility class to capture the properties of a source 
+		// ==========================================
+
+		template<typename T>
+		class PropertyOwnerOverride : public T
+		{
+		public:
+
+			/** constructor */
+			PropertyOwnerOverride(BaseObject* in_owner, PropertyOwner* in_property_owner) :
+				T(in_owner),
+				property_owner(in_property_owner) {}
+
+			/** override */
+			virtual chaos::TiledMap::Property* FindProperty(char const* name, PropertyType type_id) override
+			{
+				if (property_owner != nullptr)
+					return property_owner->FindProperty(name, type_id);
+				return nullptr;
+			}
+			/** override */
+			virtual chaos::TiledMap::Property const* FindProperty(char const* name, PropertyType type_id) const override
+			{
+				if (property_owner != nullptr)
+					return property_owner->FindProperty(name, type_id);
+				return nullptr;
+			}
+
+		protected:
+
+			/** a substitute property owner to fake the system */
+			PropertyOwner* property_owner = nullptr;
+		};
+
+		// ==========================================
 		// GeometricObject
 		// ==========================================
 
@@ -372,9 +407,9 @@ namespace chaos
 		public:
 
 			/** override */
-			virtual Property* FindProperty(char const* name, PropertyType type_id = PropertyType::ANY) override;
+			virtual Property* FindProperty(char const* name, PropertyType type_id) override;
 			/** override */
-			virtual Property const* FindProperty(char const* name, PropertyType type_id = PropertyType::ANY) const override;
+			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override;
 
 		protected:
 
@@ -644,12 +679,12 @@ namespace chaos
 
 		public:
 
+			/** override */
 			virtual box2 GetBoundingBox(bool world_system) const override;
-
 			/** override */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) override;
+			virtual Property * FindProperty(char const * name, PropertyType type_id) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id) const override;
 
 		protected:
 

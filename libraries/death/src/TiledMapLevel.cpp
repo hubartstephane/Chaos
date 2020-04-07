@@ -938,6 +938,7 @@ namespace death
 			{
 
 
+
 				chaos::TiledMap::GeometricObjectSurface const* surface_object = geometric_object->GetObjectSurface();
 				if (surface_object != nullptr)
 				{
@@ -1147,7 +1148,6 @@ namespace death
 
 
 
-
 	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
 	{
 		
@@ -1180,17 +1180,32 @@ namespace death
 
 
 
-
-			// shuzzz
-
-			if (chaos::TiledMapTools::IsPlayerStartObject(tile_info.tiledata))
+			// try to create a geometric object from the tile
+			GeometricObjectFactory factory = GetGeometricObjectFactory(tile_info.tiledata);
+			if (factory)
 			{
+				chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new chaos::TiledMap::PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
+				if (tile_object != nullptr)
+				{
+					tile_object->gid = gid;
+					
 
-				// TiledMapGeometricObject* TiledMapLayerInstance::CreateObjectInstance(chaos::TiledMap::GeometricObject* geometric_object)
-//				TiledMapGeometricObject* CreateObjectInstance(chaos::TiledMap::GeometricObject * geometric_object);
+					TiledMapGeometricObject* geometric_object = factory(tile_object.get());
+					if (geometric_object != nullptr)
+					{
 
-				i = i;
+
+					}
+
+
+
+				}
 			}
+
+
+
+
+
 
 
 

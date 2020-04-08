@@ -1186,6 +1186,23 @@ namespace death
 				chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new chaos::TiledMap::PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
 				if (tile_object != nullptr)
 				{
+					// compute an ID base on 'tile_coord' 
+					// TiledMap gives positive ID
+					// we want a negative ID to avoid conflicts
+					// for a 32 bits integer
+					// 15 bits for X
+					// 15 bits for Y
+					// 1  unused
+					// 1  bit for sign
+
+					int int_bit_count = 8 * sizeof(int);
+					int per_component_bit_count = (int_bit_count - 1) / 2;
+					int mask = ~(-1 << per_component_bit_count);
+					int idx = tile_coord.x & mask;
+					int idy = tile_coord.y & mask;
+					int object_id = -1 * (idx | (idy << per_component_bit_count));
+
+					tile_object->id  = object_id;
 					tile_object->gid = gid;
 					tile_object->type = tile_info.tiledata->type;
 					tile_object->size = particle_box.half_size * 2.0f;

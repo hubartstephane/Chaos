@@ -6,8 +6,8 @@
  </tile>
  <tile id="1" type="PlayerStart">
   <properties>
-   <property name="BITMAP_NAME" value="Brick"/>
-   <property name="PARTICLE_CREATION" type="bool" value="true"/>
+   <property name="BITMAP_NAME" value="Player"/>
+   <property name="PARTICLE_CREATION" type="bool" value="false"/>
   </properties>
   <image width="32" height="32" source="../sprites/player.png"/>
  </tile>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="27" nextobjectid="2115">
+<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="28" nextobjectid="2115">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -12,10 +12,15 @@
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <layer id="25" name="Walls" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eAHt0dEKgCAMAEDr/z+6fAhG0EhJhLyBMHBOvZUiCBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQLzBLbz6rpEn0CL3Z5ccc2hpV/SbtmtN45ZTba3LOoHH+9xrWfEWIE4lyfvWDP2NbpHgeh+z2OdnAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgMCfBQ4Y3AAk
+   eAHt0UEKwCAMAEH7/08XD4VQMCQFL3U8Cd0GHcewCBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQJ7BK7C2NlUusKoI5OOXdY+75A1RwI3L11xzJrsW/Mo8iDwxXX+Y+0ViO+y8o7N3tOYHgWi+3sfO3sCBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECfxa4ARpsACQ=
+  </data>
+ </layer>
+ <layer id="27" name="PlayerAndCamera" width="100" height="100" locked="1">
+  <data encoding="base64" compression="zlib">
+   eAHt0DERAAAMhLC/+hddFWxBAEM2ESBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQagWu2rgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgRSgQcSnwAD
   </data>
  </layer>
  <objectgroup id="26" name="Camera">
-  <object id="2114" type="Camera" x="279" y="1947" width="342" height="226"/>
+  <object id="2114" type="Camera" x="279" y="1809" width="647" height="462"/>
  </objectgroup>
 </map>

@@ -473,8 +473,8 @@ namespace chaos
 			/** cast method into its subtype */
 			GeometricObjectTile const * GetObjectTile() const { return auto_cast(this); }
 
-			/** get the layer ID (used for Checkpoints) */
-			int GetObjectID() const { return object_id; }
+			/** get the object ID (used for Checkpoints) */
+			int GetObjectID() const { return id; }
 
 		protected:
 
@@ -499,9 +499,6 @@ namespace chaos
 			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : bottomleft, but due to inverted axis Y, this is the point the greatest Y
 			/** object information */
 			float rotation = 0.0f; // clockwise rotation in degree
-
-			/** an ID deducted from the order in the source JSON */
-			int object_id = -1;
 		};
 
 		// ==========================================
@@ -802,7 +799,7 @@ namespace chaos
 			TileLayer const * GetTileLayer() const { return auto_cast(this); }
 
 			/** get the layer ID (used for Checkpoints) */
-			int GetObjectID() const { return object_id; }
+			int GetLayerID() const { return id; }
 
 		protected:
 
@@ -814,6 +811,8 @@ namespace chaos
 
 		public:
 
+			/** object information */
+			int id = 0;
 			/** the name of the layer */
 			std::string name;
 			/** whether the layer is visible */
@@ -826,9 +825,6 @@ namespace chaos
 			int zorder = 0;
 			/** the offset of the layer */
 			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
-
-			/** an ID deducted from the order in the source JSON */
-			int object_id = -1;
 		};
 
 		// ==========================================

@@ -92,7 +92,7 @@ namespace death
 		virtual void OnLevelEnded() {}
 
 		/** get the layer ID (used for Checkpoints) */
-		int GetObjectID() const { return object_id; }
+		int GetObjectID() const { return id; }
 
 	protected:
 
@@ -100,8 +100,8 @@ namespace death
 		TiledMapLayerInstance* layer_instance = nullptr;
 		/** whether the object has been modified from the JSON base data (usefull for checkpoint serialization) */
 		bool modified = false;
-		/** an ID deducted from the order in the source JSON (chaos) */
-		int object_id = -1;
+		/** id of the object (comming from chaos::TiledMap) */
+		int id = 0;
 	};
 
 	// =====================================
@@ -514,9 +514,9 @@ namespace death
 
 	public:
 
-		// the checkpoint per Object (see object_id)
+		// the checkpoint per Object
 		std::map<int, chaos::shared_ptr<TiledMapObjectCheckpoint>> trigger_checkpoints;
-		// the checkpoint per Object (see object_id)
+		// the checkpoint per Object
 		std::map<int, chaos::shared_ptr<TiledMapObjectCheckpoint>> object_checkpoints;
 	};
 
@@ -668,6 +668,8 @@ namespace death
 		/** returns a trigger surface by its index */
 		TiledMapTriggerObject const* GetTrigger(size_t index) const;
 
+		/** get the layer ID */
+		int GetLayerID() const { return id; }
 
 	protected:
 
@@ -738,6 +740,8 @@ namespace death
 
 	protected:
 
+		/** id of the object (comming from chaos::TiledMap) */
+		int id = 0;
 		/** displacement ratio relatively to the main layer */
 		glm::vec2 displacement_ratio = glm::vec2(1.0f, 1.0f);
 		/** whether the layer is to be repeated infinitely in X direction */
@@ -797,7 +801,7 @@ namespace death
 
 	public:
 
-		// the checkpoint per LayerBase (see object_id)
+		// the checkpoint per LayerBase
 		std::map<int, chaos::shared_ptr<TiledMapLayerCheckpoint>> layer_checkpoints;
 	};
 

@@ -42,12 +42,11 @@ namespace death
 
 	bool TiledMapGeometricObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		// shuzzz
-
 		assert(in_geometric_object != nullptr);
 		// get some data from the geometric object
 		name = in_geometric_object->name;
 		object_id = in_geometric_object->GetObjectID();
+		geometric_object = in_geometric_object;
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
 		if (surface != nullptr)
@@ -1639,11 +1638,8 @@ namespace death
 			//    -> object is currently modified, restore initial settings
 			if (obj_checkpoint != nullptr)
 				obj->LoadFromCheckpoint(obj_checkpoint);
-
-#if 0
 			else if (obj->IsModified())
-				obj->Initialize();
-#endif
+				obj->Initialize(obj->GetGeometricObject());
 		}
 		return true;
 	}

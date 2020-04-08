@@ -116,8 +116,13 @@ namespace death
 
 		/** constructor */
 		TiledMapGeometricObject(TiledMapLayerInstance* in_layer_instance);
+
 		/** get the object bounding box */
 		chaos::box2 GetBoundingBox(bool world_system) const;
+		/** getters on the chaos::GeometricObject that this instance references to */
+		chaos::TiledMap::GeometricObject* GetGeometricObject() { return geometric_object.get(); }
+		/** getters on the chaos::GeometricObject that this instance references to */
+		chaos::TiledMap::GeometricObject const * GetGeometricObject() const { return geometric_object.get(); }
 
 	protected:
 
@@ -130,6 +135,8 @@ namespace death
 
 		/** the bounding box of the object */
 		chaos::box2 bounding_box;
+		/** a reference to the geometric object (chaos point of view) that was used for initialization */
+		chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
 	};
 
 	// =====================================

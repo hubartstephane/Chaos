@@ -45,7 +45,7 @@ namespace death
 		assert(in_geometric_object != nullptr);
 		// get some data from the geometric object
 		name = in_geometric_object->name;
-		object_id = in_geometric_object->GetObjectID();
+		id = in_geometric_object->GetObjectID();
 		geometric_object = in_geometric_object;
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
@@ -782,6 +782,8 @@ namespace death
 	bool TiledMapLayerInstance::Initialize()
 	{
 		// get the properties of interrest
+		id = layer->id;
+
 		float const* ratio = layer->FindPropertyFloat("DISPLACEMENT_RATIO");
 		if (ratio != nullptr)
 		{
@@ -1595,9 +1597,9 @@ namespace death
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			// only modified object with an ID
+			// only modified object
 			auto const* obj = elements[i].get();
-			if (obj == nullptr || !obj->IsModified() || obj->GetObjectID() < 0)
+			if (obj == nullptr || !obj->IsModified())
 				continue;
 			// save the checkpoint
 			TiledMapObjectCheckpoint* checkpoint = obj->SaveIntoCheckpoint();
@@ -1622,11 +1624,10 @@ namespace death
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			// only modified object with an ID
+			// only modified object
 			auto* obj = elements[i].get();
-			if (obj == nullptr || obj->GetObjectID() < 0)
-				continue;
-		
+			if (obj == nullptr)
+				continue;	
 			// get checkpoint
 			TiledMapObjectCheckpoint* obj_checkpoint = nullptr;
 			auto it = checkpoints.find(obj->GetObjectID());
@@ -2005,16 +2006,12 @@ namespace death
 			TiledMapLayerInstance const* layer = layer_instances[i].get();
 			if (layer == nullptr)
 				continue;
-			// the layer (chaos point of view). If must have an 
-			chaos::TiledMap::LayerBase const* base_layer = layer->layer.get();
-			if (base_layer == nullptr || base_layer->GetObjectID() < 0)
-				continue;
 			// create the checkpoint 
 			TiledMapLayerCheckpoint* layer_checkpoint = layer_instances[i]->SaveIntoCheckpoint();
 			if (layer_checkpoint == nullptr)
 				continue;
 			// insert the layer_checkpoint in level_checkpoint
-			tiled_level_checkpoint->layer_checkpoints[base_layer->GetObjectID()] = layer_checkpoint;
+			tiled_level_checkpoint->layer_checkpoints[layer->GetLayerID()] = layer_checkpoint;
 		}
 
 		return true;
@@ -2034,16 +2031,12 @@ namespace death
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			// the layer (death::TiledMap point of view)
+			// the layer
 			TiledMapLayerInstance* layer = layer_instances[i].get();
 			if (layer == nullptr)
 				continue;
-			// the layer (chaos point of view). If must have an 
-			chaos::TiledMap::LayerBase* base_layer = layer->layer.get();
-			if (base_layer == nullptr || base_layer->GetObjectID() < 0)
-				continue;
 			// find the corresponding checkpoint
-			auto it = tiled_level_checkpoint->layer_checkpoints.find(base_layer->GetObjectID());
+			auto it = tiled_level_checkpoint->layer_checkpoints.find(layer->GetLayerID());
 			if (it == tiled_level_checkpoint->layer_checkpoints.end())
 				continue;
 			// load layer_chackpoint

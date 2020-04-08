@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="28" nextobjectid="2115">
+<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="29" nextobjectid="2120">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -12,7 +12,7 @@
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <layer id="25" name="Walls" width="100" height="100">
   <data encoding="base64" compression="zlib">
-   eAHt0UEKwCAMAEH7/08XD4VQMCQFL3U8Cd0GHcewCBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQJ7BK7C2NlUusKoI5OOXdY+75A1RwI3L11xzJrsW/Mo8iDwxXX+Y+0ViO+y8o7N3tOYHgWi+3sfO3sCBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECfxa4ARpsACQ=
+   eAHt00EKgCAUBFC7/6XDhaCB9j/iyuemxGnEJ5ViECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgTOCDyB2pqJ5AJVV0Yydqtsu4dV5krg5KEjjqtMW0tuK/4j0FzrMzoy2Win3CjQ38vMu8+MX5udFOjdv+8n99W9LzD7l/abNRAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIE7hN4ARQsACQ=
   </data>
  </layer>
  <layer id="27" name="PlayerAndCamera" width="100" height="100" locked="1">
@@ -22,5 +22,12 @@
  </layer>
  <objectgroup id="26" name="Camera">
   <object id="2114" type="Camera" x="279" y="1809" width="647" height="462"/>
+ </objectgroup>
+ <objectgroup id="28" name="Calque d'objets 2">
+  <object id="2115" x="1085" y="2114" width="109" height="82"/>
+  <object id="2116" x="1366" y="2181" width="32" height="75"/>
+  <object id="2117" x="1293" y="2335" width="75" height="68"/>
+  <object id="2118" x="1100" y="2458" width="125" height="61"/>
+  <object id="2119" x="1055" y="2038" width="125" height="44"/>
  </objectgroup>
 </map>

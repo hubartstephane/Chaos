@@ -933,6 +933,23 @@ namespace chaos
 			if (data == nullptr)
 				return false;
 
+
+			// shuzzz
+			// beware : for infinite map, there is a junk level of indirection
+#if 0
+			<data encoding = "base64" compression = "zlib" >
+				<chunk x = "0" y = "48" width = "16" height = "16">
+				eAFjYBgFoyEwGgLDIQQYyfAEAAQ0AAI =
+				</chunk>
+			</ data>
+#endif
+
+
+
+
+
+
+
 			std::string encoding;
 			XMLTools::ReadAttribute(data, "encoding", encoding);
 

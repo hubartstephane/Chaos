@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="32" tileheight="32" infinite="0" nextlayerid="29" nextobjectid="2120">
+<map version="1.2" tiledversion="1.3.0" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="104" tilewidth="32" tileheight="32" infinite="0" nextlayerid="29" nextobjectid="2120">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -10,24 +10,17 @@
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <layer id="25" name="Walls" width="100" height="100">
+ <layer id="25" name="Walls" width="100" height="104">
   <data encoding="base64" compression="zlib">
-   eAHt00EKgCAUBFC7/6XDhaCB9j/iyuemxGnEJ5ViECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgTOCDyB2pqJ5AJVV0Yydqtsu4dV5krg5KEjjqtMW0tuK/4j0FzrMzoy2Win3CjQ38vMu8+MX5udFOjdv+8n99W9LzD7l/abNRAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIE7hN4ARQsACQ=
+   eAHt1EEKgCAQBdC6/6XDhaCBw4i4EJ+bEn8z9qSexyBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIEDhV4D114/ZNgACBQCDzbyuZTC5oc/XSjF2UrecQZa6GTr58xjHK1LVkO7GkQHUt1+yYyWZryvUC7bmMvNtM/7TZToHW/X+/s6/a6wKjb2m9sgoECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAgfsEPlpwACU=
   </data>
  </layer>
- <layer id="27" name="PlayerAndCamera" width="100" height="100" locked="1">
+ <layer id="27" name="PlayerAndCamera" width="100" height="104">
   <data encoding="base64" compression="zlib">
-   eAHt0DERAAAMhLC/+hddFWxBAEM2ESBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQagWu2rgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgRSgQcSnwAD
+   eAHt0CEOAEAIA8Fy/380GPRZxDSp30ySvLndEKjJ2N8oUkGAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAj8BBrKaQAG
   </data>
  </layer>
  <objectgroup id="26" name="Camera">
-  <object id="2114" type="Camera" x="279" y="1809" width="647" height="462"/>
- </objectgroup>
- <objectgroup id="28" name="Calque d'objets 2">
-  <object id="2115" x="1085" y="2114" width="109" height="82"/>
-  <object id="2116" x="1366" y="2181" width="32" height="75"/>
-  <object id="2117" x="1293" y="2335" width="75" height="68"/>
-  <object id="2118" x="1100" y="2458" width="125" height="61"/>
-  <object id="2119" x="1055" y="2038" width="125" height="44"/>
+  <object id="2114" type="Camera" x="-261" y="-379" width="647" height="462"/>
  </objectgroup>
 </map>

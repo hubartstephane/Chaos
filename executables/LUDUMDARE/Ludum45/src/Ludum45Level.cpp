@@ -189,9 +189,3 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new EnemySpawnerTriggerObject(in_layer_instance););
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }
-
-bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player * player, death::TiledMapParticle * particle)
-{
-
-	return true; // continue with other
-}

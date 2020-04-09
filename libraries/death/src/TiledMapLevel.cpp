@@ -547,7 +547,7 @@ namespace death
 		return new chaos::ParticleLayer<TiledMapParticleTrait>();
 	}
 	
-	GeometricObjectFactory TiledMapLevel::DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
+	GeometricObjectFactory TiledMapLevel::DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
 	{
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
@@ -567,7 +567,7 @@ namespace death
 		return nullptr;
 	}
 
-	GeometricObjectFactory TiledMapLevel::GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
+	GeometricObjectFactory TiledMapLevel::GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
 	{
 		// get a very first factory that just
 		GeometricObjectFactory factory = DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
@@ -958,7 +958,7 @@ namespace death
 		return property_owner->FindPropertyBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
-	GeometricObjectFactory TiledMapLayerInstance::GetGeometricObjectFactory(chaos::TiledMap::TypedObject* in_typed_object)
+	GeometricObjectFactory TiledMapLayerInstance::GetGeometricObjectFactory(chaos::TiledMap::TypedObject * in_typed_object)
 	{
 		TiledMapLevel* level = GetLevel();
 
@@ -1430,6 +1430,61 @@ namespace death
 			collision_records.push_back(std::move(new_record));
 		}
 		return true; // continue other collisions 
+	}
+
+	std::vector<TileParticleCollisionInfo> TiledMapLayerInstance::FindTileCollisions(chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func)
+	{
+		std::vector<TileParticleCollisionInfo> result;
+
+		// no particle layer, no collisions
+		if (layer == nullptr || particle_layer == nullptr)
+			return result;
+		// search map
+		chaos::TiledMap::Map const* map = layer->GetMap();
+		if (map == nullptr)
+			return result;
+
+		// a cache for tiledata : hope this is less costly than a per particle search
+		std::map<int, chaos::TiledMap::TileInfo> gid_to_tileinfo;
+
+		// iterate over all allocations
+		size_t allocation_count = particle_layer->GetAllocationCount();
+		for (size_t i = 0; i < allocation_count; ++i)
+		{
+			// check allocation
+			chaos::ParticleAllocationBase* particle_allocation = particle_layer->GetAllocation(i);
+			if (particle_allocation == nullptr)
+				continue;
+			// filter out collision
+			if (filter_allocation_func && !filter_allocation_func(particle_allocation))
+				continue;
+			// search collisions
+			chaos::ParticleAccessor<TiledMapParticle> accessor = particle_allocation->GetParticleAccessor();
+			for (TiledMapParticle& particle : accessor)
+			{
+				if (chaos::Collide(bounding_box, particle.bounding_box))
+				{
+					chaos::TiledMap::TileInfo ti;
+					
+					// search whether the tile_info is already in cache
+					auto it = gid_to_tileinfo.find(particle.gid);
+					if (it != gid_to_tileinfo.end())
+					{
+						ti = it->second;
+					}
+					// search the tile_info in the map
+					else
+					{
+						ti = map->FindTileInfo(particle.gid);
+						if (ti.tiledata == nullptr || ti.tileset == nullptr) // unknown info : ignore this collision
+							continue;
+						gid_to_tileinfo[particle.gid] = ti;
+					}
+					result.emplace_back(particle, ti);
+				}
+			}
+		}
+		return result; 
 	}
 
 	bool TiledMapLayerInstance::ComputePlayerTileCollisions(float delta_time, class Player* player)

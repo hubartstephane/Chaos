@@ -409,9 +409,9 @@ namespace death
 	//
 
 	/** a functor for geometric object factory */
-	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (chaos::TiledMap::GeometricObject*)>;
+	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (chaos::TiledMap::GeometricObject *)>;
 	/** an helper to make a lambda inside DoGetGeometricObjectFactory */
-#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject*in_geometric_object) { x };
+#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x };
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap
@@ -443,7 +443,7 @@ namespace death
 		/** create a typed object specializable method */
 		virtual GeometricObjectFactory DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 		/** create a typed object 'entry point' */
-		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object);
+		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create a Camera specializable method */
 		virtual TiledMapCameraObject* DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
@@ -520,10 +520,31 @@ namespace death
 		std::map<int, chaos::shared_ptr<TiledMapObjectCheckpoint>> object_checkpoints;
 	};
 
+	// =====================================
+	// TileParticleCollisionInfo : a structure for the collision with particles
+	// =====================================
 
-	
-	
+	class TileParticleCollisionInfo
+	{
+	public:
 
+		/** constructor */
+		TileParticleCollisionInfo(TiledMapParticle& in_particle, chaos::TiledMap::TileInfo const& in_tile_info) :
+			particle(in_particle),
+			tile_info(in_tile_info) {}
+
+	public:
+
+		// XXX : 
+		//  - the particle is a reference because we may want to modify it (and may be we would like to cast<> it)
+		//  - the tile_info is a copy because it is in a cache and due to cache reallocation, it is not safe to keep reference
+
+		/** the particle which with the collision is detected */
+		TiledMapParticle & particle;
+		/** some information about the tile information */
+		chaos::TiledMap::TileInfo tile_info;
+	};
+	
 	// =====================================
 	// TiledMapLayerInstance : instance of a Layer
 	// =====================================
@@ -635,7 +656,10 @@ namespace death
 		/** get the particle layer */
 		chaos::ParticleLayerBase const* GetParticleLayer() const { return particle_layer.get(); }
 
-		/** processing collision on all tiles until FUNC returns false to stop */
+		/** Find all colliding tiles for a given box */
+		std::vector<TileParticleCollisionInfo> FindTileCollisions(chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func);
+
+
 		template<typename FUNC>
 		bool FindTileCollisions(chaos::box2 const& bounding_box, FUNC func)
 		{
@@ -711,7 +735,7 @@ namespace death
 		bool InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer);
 	
 		/** create an object in an object layer */
-		GeometricObjectFactory GetGeometricObjectFactory(chaos::TiledMap::TypedObject* in_typed_object);
+		GeometricObjectFactory GetGeometricObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create an object in an object layer */
 		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);

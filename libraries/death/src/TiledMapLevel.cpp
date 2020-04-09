@@ -696,7 +696,7 @@ namespace death
 		return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 	}
 
-	bool TiledMapLevel::OnPlayerTileCollision(float delta_time, class Player* player, TiledMapParticle* particle)
+	bool TiledMapLevel::OnPlayerTileCollision(float delta_time, class Player* player, TiledMapLayerInstance * layer, std::vector<TileParticleCollisionInfo> const & colliding_tiles)
 	{
 		return true; // continue with other
 	}
@@ -1496,17 +1496,17 @@ namespace death
 		{
 			chaos::box2 pawn_box = player_pawn->GetBox();
 
-			return FindTileCollisions(pawn_box, [this, delta_time, player, level](TiledMapParticle& tile_particle)
+			std::vector<TileParticleCollisionInfo> colliding_tiles = FindTileCollisions(pawn_box);
+			if (colliding_tiles.size() > 0)
 			{
-				// ignore self collision
-				//if (player_particle == &tile_particle)
-				//	return true;
-				// stop other collisions
-				if (!level->OnPlayerTileCollision(delta_time, player, &tile_particle))
-					return false;
+				if (colliding_tiles.size() == 1)
+					player_pawn = player_pawn;
 
-				return true;
-			});
+				if (!level->OnPlayerTileCollision(delta_time, player, this, colliding_tiles))
+					return false; // stop iteration
+			}
+			else
+				player_pawn = player_pawn;
 		}
 		return true;
 	}

@@ -650,40 +650,10 @@ namespace death
 		/** set the layer offset */
 		void SetLayerOffset(glm::vec2 const& in_offset) { offset = in_offset; }
 
-
 		/** get the particle layer */
 		chaos::ParticleLayerBase* GetParticleLayer() { return particle_layer.get(); }
 		/** get the particle layer */
 		chaos::ParticleLayerBase const* GetParticleLayer() const { return particle_layer.get(); }
-
-		/** Find all colliding tiles for a given box */
-		std::vector<TileParticleCollisionInfo> FindTileCollisions(chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func = std::function<bool(chaos::ParticleAllocationBase const*)>());
-
-
-		template<typename FUNC>
-		bool FindTileCollisions(chaos::box2 const& bounding_box, FUNC func)
-		{
-			// no particle layer, no collisions
-			if (particle_layer == nullptr)
-				return true;
-			// iterate over all allocations
-			size_t allocation_count = particle_layer->GetAllocationCount();
-			for (size_t i = 0; i < allocation_count; ++i)
-			{
-				chaos::ParticleAllocationBase* particle_allocation = particle_layer->GetAllocation(i);
-				if (particle_allocation == nullptr)
-					continue;
-
-				chaos::ParticleAccessor<TiledMapParticle> accessor = particle_allocation->GetParticleAccessor();
-				for (TiledMapParticle& particle : accessor)
-				{
-					if (chaos::Collide(bounding_box, particle.bounding_box))
-						if (!func(particle)) // stop other collisions
-							return false;
-				}
-			}
-			return true; // continue other collisions
-		}
 
 		/** returns the number of trigger surfaces */
 		size_t GetTriggerCount() const;
@@ -694,6 +664,9 @@ namespace death
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
+
+		/** Find all colliding tiles for a given box */
+		std::vector<TileParticleCollisionInfo> FindTileCollisions(chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func = std::function<bool(chaos::ParticleAllocationBase const*)>());
 
 	protected:
 

@@ -1496,17 +1496,18 @@ namespace death
 		{
 			chaos::box2 pawn_box = player_pawn->GetBox();
 
-			std::vector<TileParticleCollisionInfo> colliding_tiles = FindTileCollisions(pawn_box);
+			// search all collisions with particles that does not belongs to the player
+			std::vector<TileParticleCollisionInfo> colliding_tiles = FindTileCollisions(pawn_box, [player_pawn](chaos::ParticleAllocationBase const* allocation)
+			{
+				return (player_pawn->GetAllocation() != allocation); // player does not collide itself
+			});
+
+			// trigger per layer collisions
 			if (colliding_tiles.size() > 0)
 			{
-				if (colliding_tiles.size() == 1)
-					player_pawn = player_pawn;
-
 				if (!level->OnPlayerTileCollision(delta_time, player, this, colliding_tiles))
 					return false; // stop iteration
 			}
-			else
-				player_pawn = player_pawn;
 		}
 		return true;
 	}
@@ -1988,7 +1989,7 @@ namespace death
 			return nullptr;
 
 		// create the particle
-		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true));
+		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 666);
 		particle_populator->FlushParticles();
 
 		// get the allocation and finalize the layer

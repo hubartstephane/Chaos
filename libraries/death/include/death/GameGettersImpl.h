@@ -101,6 +101,30 @@ namespace death
 		}
 
 		// =======================================================================
+		// PlayerDisplacementComponent Getters
+		// =======================================================================
+
+		template<typename T>
+		static inline chaos::AutoCastable<PlayerDisplacementComponent> GetPlayerDisplacementComponent(T* src, size_t player_index)
+		{
+			assert(src != nullptr);
+			Player* pl = GetPlayer(src, player_index);
+			if (pl != nullptr)
+				return chaos::meta::get_raw_pointer(pl->displacement_component);
+			return nullptr;
+		}
+
+		template<typename T>
+		static inline chaos::AutoConstCastable<PlayerDisplacementComponent> GetPlayerDisplacementComponent(T const* src, size_t player_index)
+		{
+			assert(src != nullptr);
+			Player const* pl = GetPlayer(src, player_index);
+			if (pl != nullptr)
+				return chaos::meta::get_raw_pointer(pl->displacement_component);
+			return nullptr;
+		}
+
+		// =======================================================================
 		// Camera Getters
 		// =======================================================================
 		
@@ -154,6 +178,14 @@ namespace death
 			return nullptr;
 		}
 
+		static inline chaos::AutoCastable<Game> GetGame(PlayerDisplacementComponent* src)
+		{
+			assert(src != nullptr);
+			if (src->player != nullptr)
+				return GetGame(src->player);
+			return nullptr;
+		}
+
 		static inline chaos::AutoCastable<Game> GetGame(GameInstance * src)
 		{
 			assert(src != nullptr);
@@ -197,6 +229,14 @@ namespace death
 		}
 
 		static inline chaos::AutoCastable<Game> GetGame(PlayerPawn const * src)
+		{
+			assert(src != nullptr);
+			if (src->player != nullptr)
+				return GetGame(src->player);
+			return nullptr;
+		}
+
+		static inline chaos::AutoCastable<Game> GetGame(PlayerDisplacementComponent const* src)
 		{
 			assert(src != nullptr);
 			if (src->player != nullptr)
@@ -256,6 +296,14 @@ namespace death
 			return nullptr;
 		}
 
+		static inline chaos::AutoCastable<GameInstance> GetGameInstance(PlayerDisplacementComponent* src)
+		{
+			assert(src != nullptr);
+			if (src->player != nullptr)
+				return GetGameInstance(src->player);
+			return nullptr;
+		}
+
 		static inline chaos::AutoCastable<GameInstance> GetGameInstance(GameInstance* src)
 		{
 			assert(src != nullptr);
@@ -299,6 +347,14 @@ namespace death
 		}
 
 		static inline chaos::AutoCastable<GameInstance> GetGameInstance(PlayerPawn const* src)
+		{
+			assert(src != nullptr);
+			if (src->player != nullptr)
+				return GetGameInstance(src->player);
+			return nullptr;
+		}
+
+		static inline chaos::AutoCastable<GameInstance> GetGameInstance(PlayerDisplacementComponent const* src)
 		{
 			assert(src != nullptr);
 			if (src->player != nullptr)
@@ -362,6 +418,14 @@ namespace death
 			return nullptr;
 		}
 
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(PlayerDisplacementComponent* src)
+		{
+			assert(src != nullptr);
+			if (src->player != nullptr)
+				return GetLevelInstance(src->player);
+			return nullptr;
+		}
+
 		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(GameInstance* src)
 		{
 			assert(src != nullptr);
@@ -405,6 +469,14 @@ namespace death
 		}
 
 		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(PlayerPawn const* src)
+		{
+			assert(src != nullptr);
+			if (src->player != nullptr)
+				return GetLevelInstance(src->player);
+			return nullptr;
+		}
+
+		static inline chaos::AutoCastable<LevelInstance> GetLevelInstance(PlayerDisplacementComponent const* src)
 		{
 			assert(src != nullptr);
 			if (src->player != nullptr)

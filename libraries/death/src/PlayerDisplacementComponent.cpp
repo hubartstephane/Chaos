@@ -6,7 +6,7 @@
 
 namespace death
 {
-//	DEATH_GAMEGETTERS_IMPLEMENT(PlayerDisplacementComponent);
+	DEATH_GAMEGETTERS_IMPLEMENT(PlayerDisplacementComponent);
 
 	// =============================================
 	// PlayerDisplacementComponent

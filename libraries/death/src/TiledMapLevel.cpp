@@ -1989,7 +1989,8 @@ namespace death
 			return nullptr;
 
 		// create the particle
-		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), 666);
+		int player_gid = 0;
+		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), player_gid);
 		particle_populator->FlushParticles();
 
 		// get the allocation and finalize the layer

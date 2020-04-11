@@ -30,9 +30,9 @@ namespace death
 		PlayerPawn(Player* in_player);
 
 		/** returns the player the pawn belongs to */
-		Player* GetPlayer() { return player; }
+		chaos::AutoCastable<Player> GetPlayer() { return player; }
 		/** returns the player the pawn belongs to */
-		Player const * GetPlayer() const { return player; }
+		chaos::AutoConstCastable<Player> GetPlayer() const { return player; }
 
 		/** Get the position of the pawn */
 		virtual glm::vec2 GetPosition() const;

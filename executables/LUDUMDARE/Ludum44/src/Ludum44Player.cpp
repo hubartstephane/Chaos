@@ -162,7 +162,8 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 					death::Camera const* camera = ludum_level_instance->GetCamera(0);
 					if (camera != nullptr)
 					{
-						std::vector<death::TileParticleCollisionInfo> colliding_tiles = layer_instance->FindTileCollisions(camera->GetCameraBox(true));
+						std::vector<death::TileParticleCollisionInfo> colliding_tiles;
+						layer_instance->FindTileCollisions(colliding_tiles, camera->GetCameraBox(true));
 
 						for (death::TileParticleCollisionInfo& collision : colliding_tiles)
 						{

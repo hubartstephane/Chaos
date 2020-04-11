@@ -696,11 +696,6 @@ namespace death
 		return chaos::GPURenderMaterial::GenRenderMaterialObject(program.get());
 	}
 
-	bool TiledMapLevel::OnPlayerTileCollision(float delta_time, class Player* player, TiledMapLayerInstance * layer, std::vector<TileParticleCollisionInfo> const & colliding_tiles)
-	{
-		return true; // continue with other
-	}
-
 	// =====================================
 	// TiledMapLayerInstance implementation
 	// =====================================
@@ -1236,7 +1231,27 @@ namespace death
 		return true;
 	}
 
-	void TiledMapLayerInstance::ComputePlayerAndCameraCollision(float delta_time)
+	void TiledMapLayerInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result)
+	{
+		// layer accept collision with player
+		if (!ArePlayerCollisionEnabled() || AreTileCollisionsEnabled())
+			return;
+		// early exit
+		PlayerPawn* player_pawn = player->GetPawn();
+		if (player_pawn == nullptr)
+			return;
+		chaos::box2 pawn_box = player_pawn->GetBox();
+		if (IsGeometryEmpty(pawn_box))
+			return;
+
+		// search all collisions with particles that does not belongs to the player
+		FindTileCollisions(result, pawn_box, [player_pawn](chaos::ParticleAllocationBase const* allocation)
+		{
+			return (player_pawn->GetAllocation() != allocation); // player does not collide itself
+		});
+	}
+
+	void TiledMapLayerInstance::HandlePlayerAndCameraCollision(float delta_time)
 	{
 		// get the game
 		Game* game = GetGame();
@@ -1244,9 +1259,7 @@ namespace death
 			return;
 
 		// early exit
-		bool trigger_collision_enabled = AreTriggersEnabled();
-		bool tile_collision_enabled = AreTileCollisionsEnabled();
-		if (!trigger_collision_enabled && !tile_collision_enabled)
+		if (!AreTriggersEnabled())
 			return;
 
 		// check player collisions
@@ -1260,13 +1273,8 @@ namespace death
 				if (player == nullptr)
 					continue;
 				// collision with surface triggers
-				if (trigger_collision_enabled)
-					if (!ComputePlayerCollisionWithSurfaceTriggers(delta_time, player))
-						continue;
-				// collision with tiles
-				if (tile_collision_enabled)
-					if (!ComputePlayerTileCollisions(delta_time, player))
-						continue;
+				if (!HandlePlayerCollisionWithSurfaceTriggers(delta_time, player))
+					continue;
 			}
 		}
 
@@ -1278,10 +1286,7 @@ namespace death
 			{
 				chaos::box2 camera_box = camera->GetCameraBox(true);
 				if (!IsGeometryEmpty(camera_box))
-				{
-					if (trigger_collision_enabled)
-						ComputeCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
-				}
+					HandleCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
 			}
 		}
 	}
@@ -1301,7 +1306,7 @@ namespace death
 	}
 
 
-	bool TiledMapLayerInstance::ComputeCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box)
+	bool TiledMapLayerInstance::HandleCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box)
 	{
 		// the new colliding triggers
 		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
@@ -1358,7 +1363,7 @@ namespace death
 
 	}
 
-	bool TiledMapLayerInstance::ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player)
+	bool TiledMapLayerInstance::HandlePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player)
 	{
 		// the new colliding triggers
 		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
@@ -1432,17 +1437,15 @@ namespace death
 		return true; // continue other collisions 
 	}
 
-	std::vector<TileParticleCollisionInfo> TiledMapLayerInstance::FindTileCollisions(chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func)
+	void TiledMapLayerInstance::FindTileCollisions(std::vector<TileParticleCollisionInfo> & result, chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func)
 	{
-		std::vector<TileParticleCollisionInfo> result;
-
 		// no particle layer, no collisions
 		if (layer == nullptr || particle_layer == nullptr)
-			return result;
+			return;
 		// search map
 		chaos::TiledMap::Map const* map = layer->GetMap();
 		if (map == nullptr)
-			return result;
+			return;
 
 		// a cache for tiledata : hope this is less costly than a per particle search
 		std::map<int, chaos::TiledMap::TileInfo> gid_to_tileinfo;
@@ -1484,32 +1487,6 @@ namespace death
 				}
 			}
 		}
-		return result; 
-	}
-
-	bool TiledMapLayerInstance::ComputePlayerTileCollisions(float delta_time, class Player* player)
-	{
-		TiledMapLevel* level = GetLevel();
-
-		PlayerPawn* player_pawn = player->GetPawn();
-		if (player_pawn != nullptr)
-		{
-			chaos::box2 pawn_box = player_pawn->GetBox();
-
-			// search all collisions with particles that does not belongs to the player
-			std::vector<TileParticleCollisionInfo> colliding_tiles = FindTileCollisions(pawn_box, [player_pawn](chaos::ParticleAllocationBase const* allocation)
-			{
-				return (player_pawn->GetAllocation() != allocation); // player does not collide itself
-			});
-
-			// trigger per layer collisions
-			if (colliding_tiles.size() > 0)
-			{
-				if (!level->OnPlayerTileCollision(delta_time, player, this, colliding_tiles))
-					return false; // stop iteration
-			}
-		}
-		return true;
 	}
 
 	bool TiledMapLayerInstance::DoTick(float delta_time)
@@ -1785,11 +1762,18 @@ namespace death
 		return level->GetTiledMap();
 	}
 
-	void TiledMapLevelInstance::ComputePlayerAndCameraCollision(float delta_time)
+	void TiledMapLevelInstance::HandlePlayerAndCameraCollision(float delta_time)
 	{
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
-			layer_instances[i]->ComputePlayerAndCameraCollision(delta_time);
+			layer_instances[i]->HandlePlayerAndCameraCollision(delta_time);
+	}
+
+	void TiledMapLevelInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result)
+	{
+		size_t count = layer_instances.size();
+		for (size_t i = 0; i < count; ++i)
+			layer_instances[i]->FindPlayerTileCollisions(player, result);
 	}
 
 	bool TiledMapLevelInstance::DoTick(float delta_time)
@@ -1804,7 +1788,7 @@ namespace death
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->Tick(delta_time);
 		// compute the collisions with the player
-		ComputePlayerAndCameraCollision(delta_time);
+		HandlePlayerAndCameraCollision(delta_time);
 
 		return true;
 	}

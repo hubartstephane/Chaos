@@ -54,9 +54,3 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }
-
-bool LudumLevel::OnPlayerTileCollision(float delta_time, class death::Player* player, death::TiledMapLayerInstance* layer, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
-{
-
-	return true; // continue with other
-}

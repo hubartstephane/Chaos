@@ -499,9 +499,6 @@ namespace death
 		/** called after all particles of a layers has been created, so we can plug additionnal data */
 		virtual bool FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) { return true; }
 
-		/** called whenever a collision between player and tile happens */
-		virtual bool OnPlayerTileCollision(float delta_time, class Player* player, TiledMapLayerInstance* layer, std::vector<TileParticleCollisionInfo> const& colliding_tiles);
-
 		/** the default program when not specified */
 		virtual chaos::GPUProgram* GenDefaultRenderProgram();
 		/** the default material when not specified */
@@ -666,7 +663,10 @@ namespace death
 		int GetLayerID() const { return id; }
 
 		/** Find all colliding tiles for a given box */
-		std::vector<TileParticleCollisionInfo> FindTileCollisions(chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func = std::function<bool(chaos::ParticleAllocationBase const*)>());
+		void FindTileCollisions(std::vector<TileParticleCollisionInfo> & result, chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func = std::function<bool(chaos::ParticleAllocationBase const*)>());
+
+		/** find player with tile collisions */
+		void FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result);
 
 	protected:
 
@@ -688,14 +688,13 @@ namespace death
 		/** override */
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
-		/** search all collision with the player (tiles/TriggerObject) */
-		virtual void ComputePlayerAndCameraCollision(float delta_time);
-		/** compute trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
-		virtual bool ComputePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player);
-		/** compute trigger collisions with camera */
-		virtual bool ComputeCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box);
-		/** compute collisions between players and tiles (returns false if if do not want to handle mode player collisions) */
-		virtual bool ComputePlayerTileCollisions(float delta_time, class Player* player);
+		/** handle all collisions with the player (TriggerObject) */
+		virtual void HandlePlayerAndCameraCollision(float delta_time);
+		/** handle trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
+		virtual bool HandlePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player);
+		/** handle trigger collisions with camera */
+		virtual bool HandleCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box);
+
 
 		/** create a particle populator so that each layer may have its own particle type */
 		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator();
@@ -860,6 +859,9 @@ namespace death
 		/** get the bounding box for the level (in worls system obviously) */
 		virtual chaos::box2 GetBoundingBox() const override;
 
+		/** compute player tile collisions */
+		void FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result);
+
 	protected:
 
 		/** override */
@@ -869,8 +871,8 @@ namespace death
 		/** override */
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
-		/** search all collision with the player (tiles/TriggerObject) */
-		virtual void ComputePlayerAndCameraCollision(float delta_time);
+		/** handle all collisions with the player (TriggerObject) */
+		virtual void HandlePlayerAndCameraCollision(float delta_time);
 
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;

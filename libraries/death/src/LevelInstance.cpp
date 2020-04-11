@@ -44,9 +44,10 @@ namespace death
 	void LevelInstance::OnPlayerEntered(Player * player)
 	{
 		assert(player != nullptr);
-		// 
 		// create the pawn for the player
 		player->pawn = CreatePlayerPawn(player);
+		// create the player displacement for the player
+		player->displacement_component = CreatePlayerDisplacementComponent(player);
 		// create respawn checkpoint for the very first player
 		GameInstance* game_instance = GetGameInstance();
 		if (game_instance == nullptr)
@@ -59,6 +60,7 @@ namespace death
 	{
 		assert(player != nullptr);
 		DestroyPlayerPawn(player);	
+		DestroyPlayerDisplacementComponent(player);
 	}
 
 	PlayerPawn* LevelInstance::DoCreatePlayerPawn(Player* player)
@@ -72,10 +74,22 @@ namespace death
 		return DoCreatePlayerPawn(player);
 	}
 
+	PlayerDisplacementComponent* LevelInstance::CreatePlayerDisplacementComponent(Player* player)
+	{
+		assert(player != nullptr);
+		return new PlayerDisplacementComponent(player);
+	}
+
 	void LevelInstance::DestroyPlayerPawn(Player* player)
 	{
 		assert(player != nullptr);
 		player->pawn = nullptr;
+	}
+
+	void LevelInstance::DestroyPlayerDisplacementComponent(Player* player)
+	{
+		assert(player != nullptr);
+		player->displacement_component = nullptr;
 	}
 
 	void LevelInstance::DestroyCameras()

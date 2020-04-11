@@ -60,14 +60,14 @@ namespace death
 		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
 		/** gets the pawn */
-		PlayerPawn* GetPawn() { return pawn.get(); }
+		chaos::AutoCastable<PlayerPawn> GetPawn() { return pawn.get(); }
 		/** gets the pawn */
-		PlayerPawn const * GetPawn() const { return pawn.get(); }
+		chaos::AutoConstCastable<PlayerPawn> GetPawn() const { return pawn.get(); }
 
 		/** gets the displacement component */
-		PlayerDisplacementComponent * GetDisplacementComponent() { return displacement_component.get(); }
+		chaos::AutoCastable<PlayerDisplacementComponent> GetDisplacementComponent() { return displacement_component.get(); }
 		/** gets the pawn */
-		PlayerDisplacementComponent const* GetDisplacementComponent() const { return displacement_component.get(); }
+		chaos::AutoConstCastable<PlayerDisplacementComponent> GetDisplacementComponent() const { return displacement_component.get(); }
 
 		/** gets the left stick position */
 		glm::vec2 GetLeftStickPosition() const { return left_stick_position; }
@@ -149,11 +149,6 @@ namespace death
 		chaos::shared_ptr<PlayerPawn> pawn;
 		/** the player displacement component */
 		chaos::shared_ptr<PlayerDisplacementComponent> displacement_component;
-
-#if 0
-		/** the allocation for the player */
-		chaos::shared_ptr<chaos::ParticleAllocationBase> player_allocations;
-#endif
 
 		/** the index of the player */
 		size_t player_index = 0;

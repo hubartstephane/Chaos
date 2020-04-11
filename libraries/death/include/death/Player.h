@@ -114,6 +114,8 @@ namespace death
 		/** called whenever player gamepad is disconnected */
 		virtual void OnGamepadDisconnected();
 
+		/** tick player method when playing */
+		virtual void TickInternal(float delta_time);
 		/** tick the player displacement */
 		virtual void TickPlayerDisplacement(float delta_time);
 		/** tick the invulnerability */

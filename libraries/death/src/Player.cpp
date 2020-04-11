@@ -100,14 +100,12 @@ namespace death
 		Game* game = GetGame();
 		if (game != nullptr && !game->IsFreeCameraMode() && game->IsPlaying())
 		{
-			// tick the invulnerability
-			TickInvulnerability(delta_time);
 			// transform keyboard inputs as stick input
 			HandleKeyboardInputs(delta_time);
 			// handle gamepad inputs
 			HandleGamepadInputs(delta_time);
-			// tick the player displacement
-			TickPlayerDisplacement(delta_time);
+			// tick other player objects
+			TickInternal(delta_time);
 
 			mute_force_feedback = false;
 			paused_force_feedback = false;
@@ -123,6 +121,14 @@ namespace death
 		}
 
 		return true;
+	}
+
+	void Player::TickInternal(float delta_time)
+	{
+		// tick the invulnerability
+		TickInvulnerability(delta_time);
+		// tick the player displacement
+		TickPlayerDisplacement(delta_time);
 	}
 
 	void Player::TickInvulnerability(float delta_time)

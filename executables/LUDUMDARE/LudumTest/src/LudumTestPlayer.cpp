@@ -27,35 +27,6 @@ bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
 	return true;
 }
 
-
-
-
-
-void LudumPlayer::TickPlayerDisplacement(float delta_time)
-{
-    Player::TickPlayerDisplacement(delta_time);
-
-	if (pawn == nullptr)
-		return;
-
-
-
-
-
-	glm::vec2 p = pawn->GetPosition();
-
-	p += 100.0f * glm::vec2(1.0f, -1.0f) * left_stick_position * delta_time;
-
-	pawn->SetPosition(p);
-
-
-
-
-}
-
-
-
-
 void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);

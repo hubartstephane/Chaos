@@ -1234,7 +1234,7 @@ namespace death
 	void TiledMapLayerInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result)
 	{
 		// layer accept collision with player
-		if (!ArePlayerCollisionEnabled() || AreTileCollisionsEnabled())
+		if (!ArePlayerCollisionEnabled() || !AreTileCollisionsEnabled())
 			return;
 		// early exit
 		PlayerPawn* player_pawn = player->GetPawn();

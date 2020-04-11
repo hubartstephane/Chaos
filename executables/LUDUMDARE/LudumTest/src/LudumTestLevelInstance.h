@@ -41,6 +41,8 @@ protected:
 	virtual void OnPlayerLeaved(death::Player * player) override;
 	/** override */
 	virtual void CreateCameras() override;
+	/** override */
+	virtual death::PlayerDisplacementComponent* CreatePlayerDisplacementComponent(death::Player* player) override;
 
 	/** override */
 	virtual death::LevelCheckpoint * DoCreateCheckpoint() const;

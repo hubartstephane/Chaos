@@ -38,16 +38,22 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 	return &player_particles[0];
 }
 
-void LudumPlayer::TickPlayerDisplacement(float delta_time)
+void LudumPlayer::TickInternal(float delta_time)
 {
-	// displace the player
-	UpdatePlayerAcceleration(delta_time);
+	death::Player::TickInternal(delta_time);
+
 	// dash values update
 	TickDashValues(delta_time);
 	// cooldown
 	TickCooldown(delta_time);
 	// read health back from the particle
 	GetHealthFromParticle();
+}
+
+void LudumPlayer::TickPlayerDisplacement(float delta_time)
+{
+	// displace the player
+	UpdatePlayerAcceleration(delta_time);
 }
 
 void LudumPlayer::GetHealthFromParticle()

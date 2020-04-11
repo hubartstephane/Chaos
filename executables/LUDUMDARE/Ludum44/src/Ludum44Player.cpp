@@ -20,6 +20,12 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	// displace the player
 	UpdatePlayerAcceleration(delta_time);
+}
+
+void LudumPlayer::TickInternal(float delta_time)
+{
+	death::Player::TickInternal(delta_time);
+
 	// fire 
 	UpdatePlayerFire(delta_time);
 	// buy items

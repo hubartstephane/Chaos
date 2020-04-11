@@ -43,6 +43,8 @@ protected:
 	virtual bool DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const override;
 
 	/** override */
+	virtual void TickInternal(float delta_time) override;
+	/** override */
 	virtual void TickPlayerDisplacement(float delta_time) override;
 
 	/** update player displacement with the stick values that are stored */

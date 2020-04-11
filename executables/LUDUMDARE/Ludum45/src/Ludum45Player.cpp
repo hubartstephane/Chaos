@@ -95,14 +95,20 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 	
 }
 
-void LudumPlayer::TickPlayerDisplacement(float delta_time)
+void LudumPlayer::TickInternal(float delta_time)
 {
-	// displace the player
-	UpdatePlayerAcceleration(delta_time);
+	death::Player::TickInternal(delta_time);
+
 	// player fire particles
 	UpdatePlayerFire(delta_time);
 	// player fire particles
 	UpdateBrightSideOfLife(delta_time);
+}
+
+void LudumPlayer::TickPlayerDisplacement(float delta_time)
+{
+	// displace the player
+	UpdatePlayerAcceleration(delta_time);
 }
 
 

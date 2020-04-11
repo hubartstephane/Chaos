@@ -1,9 +1,25 @@
-#include <death/PlayerMovement.h>
-
 #include <chaos/MathTools.h>
+
+#include <death/PlayerDisplacementComponent.h>
+#include <death/GameGettersImpl.h>
+#include <death/GameFramework.h>
 
 namespace death
 {
+//	DEATH_GAMEGETTERS_IMPLEMENT(PlayerDisplacementComponent);
+
+	// =============================================
+	// PlayerDisplacementComponent
+	// =============================================
+
+	PlayerDisplacementComponent::PlayerDisplacementComponent(Player* in_player) :
+		player(in_player)
+	{
+		assert(in_player != nullptr);
+	}
+
+
+#if 0
 
 	bool PlayerMovement::IsJumping() const
 	{
@@ -225,5 +241,7 @@ namespace death
 	void PlayerMovement::OnWallTouched()
 	{
 	}
+
+#endif
 
 }; // namespace death

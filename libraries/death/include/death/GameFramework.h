@@ -8,6 +8,7 @@
 	friend_prefix class prefix##GameCheckpoint;\
 	friend_prefix class prefix##Player;\
 	friend_prefix class prefix##PlayerPawn;\
+	friend_prefix class prefix##PlayerDisplacementComponent;\
 	friend_prefix class prefix##Level;\
 	friend_prefix class prefix##LevelInstance;\
 	friend_prefix class prefix##Game;\

@@ -10,13 +10,18 @@
 #include <death/GameFramework.h>
 #include <death/Player.h>
 #include <death/PlayerPawn.h>
+#include <death/PlayerDisplacementComponent.h>
 #include <death/Camera.h>
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/LevelInstance.h>
 #include <death/Level.h>
 
-//
+
+//  PlayerDisplacementComponent
+//      ^
+//      |
+//      v
 //    Player <----> GameInstance <----> Game <----> LevelInstance <----> Camera 
 //      ^                                                |                 ^
 //      |                                                |                 |

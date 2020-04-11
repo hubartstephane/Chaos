@@ -64,6 +64,11 @@ namespace death
 		/** gets the pawn */
 		PlayerPawn const * GetPawn() const { return pawn.get(); }
 
+		/** gets the displacement component */
+		PlayerDisplacementComponent * GetDisplacementComponent() { return displacement_component.get(); }
+		/** gets the pawn */
+		PlayerDisplacementComponent const* GetDisplacementComponent() const { return displacement_component.get(); }
+
 		/** gets the left stick position */
 		glm::vec2 GetLeftStickPosition() const { return left_stick_position; }
 		/** gets the right stick position */
@@ -142,6 +147,8 @@ namespace death
 
 		/** the player pawn */
 		chaos::shared_ptr<PlayerPawn> pawn;
+		/** the player displacement component */
+		chaos::shared_ptr<PlayerDisplacementComponent> displacement_component;
 
 #if 0
 		/** the allocation for the player */

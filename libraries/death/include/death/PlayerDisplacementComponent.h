@@ -3,8 +3,38 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
 
+#include <death/GameFramework.h>
+#include <death/GameGettersDecl.h>
+
 namespace death
 {
+	class PlayerDisplacementComponent : public chaos::ReferencedObject
+	{
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+
+	public:
+
+	//	DEATH_GAMEGETTERS_DECLARE();
+
+
+		/** constructor */
+		PlayerDisplacementComponent(Player* in_player);
+
+		/** returns the player the component belongs to */
+		chaos::AutoCastable<Player> GetPlayer() { return player; }
+		/** returns the player the component belongs to */
+		chaos::AutoConstCastable<Player> GetPlayer() const { return player; }
+
+	protected:
+
+		/** the player that owns this component */
+		Player* player = nullptr;
+
+	};
+
+
+
+#if 0
 
 	class PlayerMovement : public chaos::ReferencedObject
 	{
@@ -102,5 +132,7 @@ namespace death
 		/** whether to pawn is touching te ground */
 		bool touching_ground = false;
 	};
+
+#endif
 
 }; // namespace death

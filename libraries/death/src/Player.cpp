@@ -140,7 +140,8 @@ namespace death
 
 	void Player::TickPlayerDisplacement(float delta_time)
 	{
-
+		if (displacement_component != nullptr)
+			displacement_component->Tick(delta_time);
 	}
 
 	void Player::CacheKeyboardPlayerDisplacementInputs()

@@ -2,13 +2,14 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/Tickable.h>
 
 #include <death/GameFramework.h>
 #include <death/GameGettersDecl.h>
 
 namespace death
 {
-	class PlayerDisplacementComponent : public chaos::ReferencedObject
+	class PlayerDisplacementComponent : public chaos::Tickable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 

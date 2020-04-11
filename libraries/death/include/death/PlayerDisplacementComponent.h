@@ -14,8 +14,7 @@ namespace death
 
 	public:
 
-	//	DEATH_GAMEGETTERS_DECLARE();
-
+		DEATH_GAMEGETTERS_DECLARE();
 
 		/** constructor */
 		PlayerDisplacementComponent(Player* in_player);

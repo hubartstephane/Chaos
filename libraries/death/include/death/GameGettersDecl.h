@@ -13,6 +13,8 @@ namespace death
 	chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;\
 	chaos::AutoCastable<PlayerPawn> GetPlayerPawn(size_t player_index);\
 	chaos::AutoConstCastable<PlayerPawn> GetPlayerPawn(size_t player_index) const;\
+	chaos::AutoCastable<PlayerDisplacementComponent> GetPlayerDisplacementComponent(size_t player_index);\
+	chaos::AutoConstCastable<PlayerDisplacementComponent> GetPlayerDisplacementComponent(size_t player_index) const;\
 	chaos::AutoCastable<Game> GetGame();\
 	chaos::AutoConstCastable<Game> GetGame() const;\
 	chaos::AutoCastable<GameInstance> GetGameInstance();\
@@ -31,6 +33,8 @@ namespace death
 	chaos::AutoConstCastable<Player> CLASSNAME::GetPlayer(size_t player_index) const { return GameGettersTools::GetPlayer(this, player_index); }\
 	chaos::AutoCastable<PlayerPawn> CLASSNAME::GetPlayerPawn(size_t player_index) { return GameGettersTools::GetPlayerPawn(this, player_index);}\
 	chaos::AutoConstCastable<PlayerPawn> CLASSNAME::GetPlayerPawn(size_t player_index) const { return GameGettersTools::GetPlayerPawn(this, player_index); }\
+	chaos::AutoCastable<PlayerDisplacementComponent> CLASSNAME::GetPlayerDisplacementComponent(size_t player_index) { return GameGettersTools::GetPlayerDisplacementComponent(this, player_index);}\
+	chaos::AutoConstCastable<PlayerDisplacementComponent> CLASSNAME::GetPlayerDisplacementComponent(size_t player_index) const { return GameGettersTools::GetPlayerDisplacementComponent(this, player_index); }\
 	chaos::AutoCastable<Game> CLASSNAME::GetGame() { return GameGettersTools::GetGame(this);}\
 	chaos::AutoConstCastable<Game> CLASSNAME::GetGame() const { return GameGettersTools::GetGame(this); }\
 	chaos::AutoCastable<GameInstance> CLASSNAME::GetGameInstance() { return GameGettersTools::GetGameInstance(this); }\

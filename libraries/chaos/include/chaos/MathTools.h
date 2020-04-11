@@ -199,6 +199,15 @@ namespace chaos
 			return static_cast<T>(x) - (static_cast<T>(1.0 - 0.5 * 0.5));
 		}
 
+		/** transform range [-1 .. +1] into 3 integer values -1, 0, +1 */
+		template<typename T>
+		static T AnalogicToDiscret(T value)
+		{
+			if (value == 0)
+				return 0;
+			return (value > 0) ? (T)+1 : (T)-1;
+		}
+
 		/** the structure for polynomial solutions */
 		template<typename T>
 		struct Polynome2Solution 

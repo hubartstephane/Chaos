@@ -3,6 +3,7 @@
 #include "LudumTestGame.h"
 #include "LudumTestPlayer.h"
 #include "LudumTestGameInstance.h"
+#include "LudumTestPlayerDisplacementComponent.h"
 
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
@@ -109,4 +110,8 @@ bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoin
 	return true;
 }
 
+death::PlayerDisplacementComponent* LudumLevelInstance::CreatePlayerDisplacementComponent(death::Player* player)
+{
+	return new LudumPlayerDisplacementComponent(player);
+}
 

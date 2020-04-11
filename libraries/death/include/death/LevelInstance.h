@@ -102,14 +102,18 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
 
+		/** create a player displacement component for the player */
+		virtual PlayerDisplacementComponent* CreatePlayerDisplacementComponent(Player* player);
+
 		/** give the player a pawn */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player);
-
 		/** the allocation PlayerPawn creation method */
 		virtual PlayerPawn* DoCreatePlayerPawn(Player* player);
 
 		/** delete the pawn for the player */
 		virtual void DestroyPlayerPawn(Player* player);
+		/** delete the displacement component for the player */
+		virtual void DestroyPlayerDisplacementComponent(Player* player);
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);

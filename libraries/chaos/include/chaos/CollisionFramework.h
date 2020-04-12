@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GLMTools.h>
 #include <chaos/MathTools.h>
+#include <chaos/BitTools.h>
 #include <chaos/GeometryFramework.h>
 
 namespace chaos
@@ -448,7 +449,7 @@ namespace chaos
 			while (edges != 0)
 			{
 				// get the edge of interrest and remove it from current iteration
-				int edge_index = chaos::MathTools::bsf(edges);
+				int edge_index = chaos::BitTools::bsf(edges);
 				edges &= ~(1 << edge_index);
 
 				int   c = edge_component[edge_index];

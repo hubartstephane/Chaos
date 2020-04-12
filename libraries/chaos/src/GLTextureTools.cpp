@@ -1,5 +1,5 @@
 ﻿#include <chaos/GLTextureTools.h>
-#include <chaos/MathTools.h>
+#include <chaos/BitTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/JSONTools.h>
@@ -195,7 +195,7 @@ namespace chaos
 	int GLTextureTools::GetMipmapLevelCount(int width)
 	{
 		assert(width > 0);
-		return MathTools::bsr(width) + 1;
+		return BitTools::bsr(width) + 1;
 	}
 
 	GLPixelFormat GLTextureTools::GetGLPixelFormat(PixelFormat const & pixel_format) // format / internal format

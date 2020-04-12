@@ -6,48 +6,20 @@ namespace chaos
 {
 
 	/**
-	* MathTools is namespace-class for methods to handle mathematical functions
+	* MathTools is namespace for methods to handle mathematical functions
 	*/
 
-	class MathTools
+	namespace MathTools
 	{
-	public:
-
-		/** structure used to decompose floating point in bit fields */
-		typedef union tagFloatingPointStruct {
-
-			float value;
-			struct {
-				unsigned int mantissa  : 23;  // to get exponent, we decompose value to the form 1.xxx E exponent    
-				unsigned int exponent  : 8;   // beware : should add 127 to have the correct value
-				unsigned int sign      : 1;    
-			};
-
-		} FloatingPointStruct;
 
 		/** returns the mantissa of a float */
-		static unsigned int GetMantissa(float f)
-		{
-			FloatingPointStruct r;
-			r.value = f;
-			return r.mantissa;
-		}
+		unsigned int GetMantissa(float f);
 
 		/** returns the exponent of a float */
-		static int GetExponent(float f)
-		{
-			FloatingPointStruct r;
-			r.value = f;
-			return r.exponent;  
-		}
+		int GetExponent(float f);
 
 		/** returns the sign of a float */
-		static unsigned int GetSign(float f)
-		{
-			FloatingPointStruct r;
-			r.value = f;
-			return r.sign;
-		}
+		unsigned int GetSign(float f);
 
 
 		/** a functor used to repeatly map a range to another */
@@ -86,28 +58,28 @@ namespace chaos
 
 		/** remap a range to another */
 		template<typename T, typename U>
-		static U RemapRanges(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max, T src)
+		U RemapRanges(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max, T src)
 		{
 			return dst_range_min + (src - src_range_min) * (dst_range_max - dst_range_min) / (src_range_max - src_range_min);
 		}
 
 		/** create a range remapper functor */
 		template<typename T, typename U>
-		static RangeMapper<T, U> MakeRangeRemapper(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max)
+		RangeMapper<T, U> MakeRangeRemapper(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max)
 		{
 			return RangeMapper<T, U>(src_range_min, src_range_max, dst_range_min, dst_range_max);
 		}
 
 		/** create a range remapper functor */
 		template<typename T, typename U>
-		static RangeMapper<T, U> MakeRangeRemapper(std::pair<T, T> const & src_range, std::pair<U, U> const & dst_range)
+		RangeMapper<T, U> MakeRangeRemapper(std::pair<T, T> const & src_range, std::pair<U, U> const & dst_range)
 		{
 			return RangeMapper<T, U>(src_range, dst_range);
 		}
 
 		/** a function to multiply to values and convert */
 		template<typename T, typename T1, typename T2>
-		static T CastAndMul(T1 src1, T2 src2)
+		T CastAndMul(T1 src1, T2 src2)
 		{
 			return static_cast<T>(
 				static_cast<float>(src1) * static_cast<float>(src2)
@@ -115,7 +87,7 @@ namespace chaos
 		}
 
 		template<typename T, typename T1, typename T2>
-		static T CastAndDiv(T1 src1, T2 src2)
+		T CastAndDiv(T1 src1, T2 src2)
 		{
 			return static_cast<T>(
 				static_cast<float>(src1) / static_cast<float>(src2)
@@ -124,35 +96,35 @@ namespace chaos
 
 		/** convert an angle into Radian (for float or double) */
 		template<typename T>
-		static T DegreeToRadian(T degree)
+		T DegreeToRadian(T degree)
 		{
 			return degree * static_cast<T>(M_PI / 180.0);
 		}
 
 		/** convert an angle into Degree (for float or double) */
 		template<typename T>
-		static T RadianToDegree(T radian)
+		T RadianToDegree(T radian)
 		{
 			return radian * static_cast<T>(180.0 / M_PI);
 		}
 
 		/** return the square of a value */
 		template<typename T>
-		static T Square(T value)
+		T Square(T value)
 		{
 			return value * value;
 		}
 
 		/** Saturate a value to 1 */
 		template<typename T>
-		static T Saturate(T x)
+		T Saturate(T x)
 		{
 			return std::min(x, static_cast<T>(1));
 		}
 
 		/** compute a vector from polar coordinates */
 		template<typename T> 
-		static glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
+		glm::tvec3<T> PolarCoordToVector(T alpha, T beta)
 		{
 			T c = std::cos (beta);
 
@@ -161,14 +133,14 @@ namespace chaos
 
 		/** returns the linear interpolation between 2 values */
 		template<typename T> 
-		static T Lerp(T t, T a, T b)
+		T Lerp(T t, T a, T b)
 		{
 			return ((static_cast<T>(1) - t) * a) + (t * b);
 		}
 
 		/** returns the cos interpolation between 2 values */
 		template<typename T> 
-		static T Coserp(T t, T a, T b)
+		T Coserp(T t, T a, T b)
 		{
 			T f = (static_cast<T>(1) - std::cos(t * static_cast<T>(M_PI)) / static_cast<T>(2));
 
@@ -186,7 +158,7 @@ namespace chaos
 
 		/** an Ease-In, Ease-out function */
 		template<typename T>  
-		static T Ease(T x)
+		T Ease(T x)
 		{
 			T x2 = x * x;
 			return static_cast<T>(3) * x2 - static_cast<T>(2) * x2 * x;
@@ -194,14 +166,14 @@ namespace chaos
 
 		/** a linear function that is y(x) = a.x + b, but with a ease In (the derivative of    y(x) = x * x    as a value of 1 when x = 0.5) */
 		template<typename T>  
-		static T EaseInIdentity(T x)
+		T EaseInIdentity(T x)
 		{
 			return static_cast<T>(x) - (static_cast<T>(1.0 - 0.5 * 0.5));
 		}
 
 		/** transform range [-1 .. +1] into 3 integer values -1, 0, +1 */
 		template<typename T>
-		static T AnalogicToDiscret(T value)
+		T AnalogicToDiscret(T value)
 		{
 			if (value == 0)
 				return 0;
@@ -220,7 +192,7 @@ namespace chaos
 
 		/** solve the 2 degree polynome ax2 + bx + c */
 		template<typename T>
-		static Polynome2Solution<T> SolvePolynome2(T a, T b, T c)
+		Polynome2Solution<T> SolvePolynome2(T a, T b, T c)
 		{
 			Polynome2Solution<T> result;
 
@@ -248,33 +220,31 @@ namespace chaos
 			return result;
 		}
 
+
+
+
+
+
+
 		/** a function to reset rand() function */
-		static void ResetRandSeed()
-		{
-			srand((unsigned int)time(nullptr));
-		}
+		void ResetRandSeed();
+
 		/** returns a random float between [0..1] */
-		static float RandFloat()
-		{
-			return CastAndDiv<float>(rand(), RAND_MAX);
-		}
+		float RandFloat();
 
 		/** returns a random float between X and Y */
-		static float RandFloat(float min_value, float max_value)
-		{
-			return min_value + RandFloat() * (max_value - min_value);
-		}
+		float RandFloat(float min_value, float max_value);
 
 		/** a function to detect if an entry is power of 2 */
 		template<typename T>
-		static bool IsPowerOf2(T src)
+		bool IsPowerOf2(T src)
 		{
 			return ((src != 0) && (src & (src - 1)) == 0);
 		}
 
 		/** a function to find the smallest power of 2 greater or equal than src */
 		template<typename T>
-		static T GetNearestPowerOf2(T src)
+		T GetNearestPowerOf2(T src)
 		{
 			if (src == 0)
 				return 1;
@@ -287,76 +257,28 @@ namespace chaos
 #if _WIN32
 
 		/** Bit Scan Forward method */
-		static int16_t bsf(int16_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (int16_t)result;
-		}
+		int16_t bsf(int16_t i);
 
 		/** Bit Scan Forward method */
-		static int32_t bsf(int32_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (int32_t)result;
-		}
+		int32_t bsf(int32_t i);
 
 		/** Bit Scan Forward method */
-		static uint16_t bsf(uint16_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (uint16_t)result;
-		}
+		uint16_t bsf(uint16_t i);
 
 		/** Bit Scan Forward method */
-		static uint32_t bsf(uint32_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward(&result, (unsigned long)i);
-			return (uint32_t)result;
-		}
+		uint32_t bsf(uint32_t i);
 
 		/** Bit Scan Reverse methods */
-		static int16_t bsr(int16_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (int16_t)result;
-		}
+		int16_t bsr(int16_t i);
 
 		/** Bit Scan Reverse methods */
-		static int32_t bsr(int32_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (int32_t)result;
-		}
+		int32_t bsr(int32_t i);
 
 		/** Bit Scan Reverse methods */
-		static uint16_t bsr(uint16_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (uint16_t)result;
-		}
+		uint16_t bsr(uint16_t i);
 
 		/** Bit Scan Reverse methods */
-		static uint32_t bsr(uint32_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse(&result, (unsigned long)i);
-			return (uint16_t)result;  
-		}
+		uint32_t bsr(uint32_t i);
 
 #endif // _WIN32
 
@@ -364,142 +286,18 @@ namespace chaos
 #if _WIN64
 
 		/** Bit Scan Forward methods */
-		static int64_t bsf(int64_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward64(&result, (__int64)i);
-			return (uint16_t)result;
-		}
+		int64_t bsf(int64_t i);
 
 		/** Bit Scan Forward methods */
-		static uint64_t bsf(uint64_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanForward64(&result, (unsigned __int64)i);
-			return (uint64_t)result;
-		}
+		uint64_t bsf(uint64_t i);
 
 		/** Bit Scan Reverse methods */
-		static int64_t bsr(int64_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse64(&result, (__int64)i);
-			return (uint16_t)result;
-		}
+		int64_t bsr(int64_t i);
 
 		/** Bit Scan Reverse methods */
-		static uint64_t bsr(uint64_t i)
-		{
-			assert(i != 0);
-			unsigned long result = 0;
-			_BitScanReverse64(&result, (unsigned __int64)i);
-			return (uint64_t)result;
-		}
+		uint64_t bsr(uint64_t i);
 
 #endif // _WIN64
-
-#if _LINUX
-
-		/*
-
-		/** Bit Scan Forward method */
-		static int16_t bsf(int16_t i)
-		{
-			assert(i != 0);
-			__asm mov ax, i
-			__asm bsf ax, ax
-			__asm mov i, ax
-			return i;
-		}
-
-		/** Bit Scan Forward method */
-		static int32_t bsf(int32_t i)
-		{
-			assert(i != 0);
-			__asm mov eax, i
-			__asm bsf eax, eax
-			__asm mov i, eax
-			return i;
-		}
-
-		/** Bit Scan Forward method */
-		static uint16_t bsf(uint16_t i)
-		{
-			assert(i != 0);
-			__asm mov ax, i
-			__asm bsf ax, ax
-			__asm mov i, ax
-			return i;
-		}
-
-		/** Bit Scan Forward method */
-		static uint32_t bsf(uint32_t i)
-		{
-			assert(i != 0);
-			__asm mov eax, i
-			__asm bsf eax, eax
-			__asm mov i, eax
-			return i;
-		}
-
-		/** Bit Scan Reverse methods */
-		static int16_t bsr(int16_t i)
-		{
-			assert(i != 0);
-			__asm mov ax, i
-			__asm bsr ax, ax
-			__asm mov i, ax
-			return i;
-		}
-
-		/** Bit Scan Reverse methods */
-		static int32_t bsr(int32_t i)
-		{
-			assert(i != 0);
-			__asm mov eax, i
-			__asm bsr eax, eax
-			__asm mov i, eax
-			return i;
-		}
-
-		/** Bit Scan Reverse methods */
-		static uint16_t bsr(uint16_t i)
-		{
-			assert(i != 0);
-			__asm mov ax, i
-			__asm bsr ax, ax
-			__asm mov i, ax
-			return i;
-		}
-
-		/** Bit Scan Reverse methods */
-		static uint32_t bsr(uint32_t i)
-		{
-			assert(i != 0);
-			__asm mov eax, i
-			__asm bsr eax, eax
-			__asm mov i, eax
-			return i;
-			*/
-		}
-
-
-
-		asm(
-
-			"bsr %1,%0"
-
-			: "=r" (result)
-			: "r"  (i)
-
-		);
-		*/
-
-#endif // _LINUX
-
 
 	};
 

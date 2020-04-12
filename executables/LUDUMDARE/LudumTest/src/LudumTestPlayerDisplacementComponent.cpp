@@ -7,12 +7,64 @@
 #include "LudumTestParticles.h"
 #include "LudumTestGameCheckpoint.h"
 
+
+
 glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 velocity) const
 {
 	for (int direction = 0; direction <= 1; ++direction)
 		if (max_pawn_velocity[direction] >= 0.0f && std::abs(velocity[direction]) > max_pawn_velocity[direction])
 			velocity[direction] = max_pawn_velocity[direction] * ((velocity[direction] > 0.0f) ? +1.0f : -1.0f);
 	return velocity;
+}
+
+PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& pawn_box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles) const
+{
+	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
+
+#if 0
+
+	for (death::TileParticleCollisionInfo const & collision : colliding_tiles)
+	{
+
+
+
+
+
+
+
+		// WALLS
+		chaos::box2 new_pawn_box = pawn_box;
+		if (chaos::RestrictToOutside(collision.particle.bounding_box, new_pawn_box))
+		{
+			bool is_wall = true;
+			bool is_ladder = false;
+			bool can_traverse_wall = false;
+
+
+			// touching the floor
+			if (new_pawn_box.position.y > pawn_box.position.y&& pawn_velocity.y < 0.0f)
+			{
+				initial_pawn_position.y = new_pawn_box.position.y; // force Y velociy to 0 after the loop
+				touching_floor = true;
+			}
+			// touching the ceil
+			if (new_pawn_box.position.y < pawn_box.position.y && pawn_velocity.y > 0.0f)
+			{
+				initial_pawn_position.y = new_pawn_box.position.y; // force Y velociy to 0 after the loop
+				touching_ceil = true;
+			}
+			// touching walls
+			if ((new_pawn_box.position.x - pawn_box.position.x) * (pawn_velocity.x) < 0.0f)
+			{
+				initial_pawn_position.x = new_pawn_box.position.x; // force X velociy to 0 after the loop
+				touching_wall = true;
+			}
+		}
+		pawn_box = new_pawn_box;
+	}
+#endif
+
+	return result;
 }
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
@@ -45,20 +97,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	
 	glm::vec2 initial_pawn_position = pawn_box.position;
 
-
-
-
-
-
-
-
-
-
-
 	// sum the forces 
 	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
 
-	sum_forces += glm::vec2(0.0f, -gravity);
+	if (player_state == PlayerDisplacementState::FALLING) 
+		sum_forces += glm::vec2(0.0f, -gravity);
 
 	
 	// mode IMPULSE : pushing the stick in 1 direction create an impulse (velocity is immediatly set)
@@ -116,6 +159,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		chaos::box2 new_pawn_box = pawn_box;
 		if (chaos::RestrictToOutside(collision.particle.bounding_box, new_pawn_box))
 		{
+			bool is_wall = true;
+			bool is_ladder = false;
+			bool can_traverse_wall = false;
+
+
 			// touching the floor
 			if (new_pawn_box.position.y > pawn_box.position.y && pawn_velocity.y < 0.0f)
 			{
@@ -138,12 +186,54 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		pawn_box = new_pawn_box;
 	}
 
+	//
+	if (jump_pressed)
+	{
+		// try to start a new jump 
+		if (player_state != PlayerDisplacementState::JUMPING)
+		{
+			if (current_jump_count < max_jump_count) // only 
+			{
+				++current_jump_count;
+				current_jump_start_y = pawn_box.position.y;
+				pawn_velocity.y = jump_velocity;
+
+
+			}
+
+		}
+		// continue new 
+		else
+		{
+			// 
+			if (pawn_box.position.y - current_jump_start_y < max_jump_height)
+			{
+				pawn_velocity.y = jump_velocity;
+
+
+			}
+			else
+			{
+
+			}
+
+		}
+
+
+
+	}
+
+
+	
+
 
 	// do not compute velocity with acceleration : just take the difference of positions
 	if (delta_time == 0.0f)
 		pawn_velocity = glm::vec2(0.0f, 0.0f);
 	else
 		pawn_velocity = (pawn_box.position - initial_pawn_position) / delta_time;
+
+	pawn_velocity = ClampPlayerVelocity(pawn_velocity);
 
 	// update the player pawn
 	pawn->SetPosition(pawn_box.position);

@@ -8,6 +8,24 @@
 // LudumPlayerDisplacementComponent
 // =========================================================
 
+enum class PlayerDisplacementState : int
+{
+	GROUNDED,     // player is on the ground
+	FALLING,      // player in the air and going down
+	JUMPING,      // player jump button has been pressed
+	JUMPING_DOWN, // player is going down through a platform
+	CLIMBING      // whether the player is on a ladder a goind up or down
+};
+
+enum class PlayerDisplacementCollisionFlags : int
+{
+	NOTHING         = 0, // no collision of interrests
+	TOUCHING_FLOOR  = (1 << 0),
+	TOUCHING_CEIL   = (1 << 1),
+	TOUCHING_WALL   = (1 << 2),
+	TOUCHING_LADDER = (1 << 2)
+};
+
 class LudumPlayerDisplacementComponent : public death::PlayerDisplacementComponent
 {
 
@@ -23,6 +41,9 @@ public:
 	virtual bool DoTick(float delta_time) override;
 
 protected:
+
+	/** compute the collision flags according to all */
+	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2 & pawn_box, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles) const;
 
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
@@ -46,9 +67,33 @@ protected:
 	glm::vec2 pawn_acceleration = glm::vec2(10.0f, 0.0f);
 
 	/** the gravity to apply to the pawn */
-	float gravity = 20.0f;
+	float gravity = 100.0f;
 
-	/** */
-	bool jump_pressed = false;
+
+	/** the current state for the player */
+	PlayerDisplacementState player_state = PlayerDisplacementState::GROUNDED;
+
+
+
+	/** the maximum height jump */
+	float max_jump_height = 60.0f;
+	/** the current Y position where the jump started */
+	float current_jump_start_y = 0.0f;
+	/** the jump velocity */
+	float jump_velocity = 30.0f;
+
+
+
+	/** the maximum jump count */
+	int max_jump_count = 2;
+	/** the current jump count */
+	int current_jump_count = 0;
+
+	/** the delay before jumping (usefull if we want to jump down through a plaftorm) */
+	float jump_delay = 0.1f;
+	/** the current jump delay value */
+	float current_jump_delay = 0.0f;
+	
+
 
 };

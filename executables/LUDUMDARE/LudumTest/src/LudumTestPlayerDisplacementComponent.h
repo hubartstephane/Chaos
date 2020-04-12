@@ -24,6 +24,11 @@ public:
 
 protected:
 
+	/** clamp the player velocity according to limits */
+	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
+
+protected:
+
 	/** whether the player left stick value is exactly -1, 0, +1 or whether this may have intermediate values */
 	bool analogic_stick_mode = true;
 
@@ -41,6 +46,9 @@ protected:
 	glm::vec2 pawn_acceleration = glm::vec2(10.0f, 0.0f);
 
 	/** the gravity to apply to the pawn */
-	float gravity = 10.0f;
+	float gravity = 20.0f;
+
+	/** */
+	bool jump_pressed = false;
 
 };

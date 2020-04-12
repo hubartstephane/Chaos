@@ -23,7 +23,7 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
-    RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
+   // RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
 
 	return true;
 }

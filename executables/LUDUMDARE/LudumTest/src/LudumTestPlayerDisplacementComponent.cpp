@@ -34,6 +34,8 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 			is_bridge = true;
 		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
 			is_ladder = true;
+		else
+			continue;
 
 		// there are only "HARD collision" with wall and bridge
 		if (is_ladder)
@@ -112,14 +114,20 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 	if (jump_pressed)
 	{
 		// start jumping down ?
-		if (stick_position.y > 0.0f)
+		if (stick_position.y < 0.0f)
 		{
-			if (!is_jumping_down)
+			if (!was_jump_pressed)
 			{
-				if (is_climbing || (is_grounded && touching_bridge && !touching_floor))
+				if (is_climbing)
+					return PlayerDisplacementState::FALLING;
+
+				if (!is_jumping_down)
 				{
-					current_jumpdown_start_y = pawn_position.y;
-					return PlayerDisplacementState::JUMPING_DOWN;
+					if (is_grounded && touching_bridge && !touching_floor)
+					{
+						current_jumpdown_start_y = pawn_position.y;
+						return PlayerDisplacementState::JUMPING_DOWN;
+					}
 				}
 			}
 		}
@@ -130,11 +138,14 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			if (is_jumping)
 			{
 				if (touching_ceil || (pawn_position.y - current_jump_start_y >= max_jump_height))
+				{
+					pawn_velocity.y = 0.0f;
 					return PlayerDisplacementState::FALLING;
+				}
 				return PlayerDisplacementState::JUMPING;
 			}
 			// start jumping ?
-			else
+			else if (!was_jump_pressed)
 			{
 				if ((is_grounded || is_climbing) ||
 					(current_jump_count < max_jump_count))
@@ -147,17 +158,33 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			}
 		}
 	}
+	else
+	{
+		if (is_jumping)
+		{
+			displacement_state = PlayerDisplacementState::FALLING;
+			pawn_velocity.y = 0.0f;
+		}
+	}
 
 	if (touching_ladder && is_grounded && stick_position.y != 0.0f)
+	{
 		return PlayerDisplacementState::CLIMBING;
+	}
 
 	if (touching_floor || touching_bridge)
 	{
-		current_jump_count = 0;
+		pawn_velocity.y = 0.0f;
 		return PlayerDisplacementState::GROUNDED;
 	}
 	else
 	{
+		if (is_climbing)
+		{
+			if (!touching_ladder)
+				return PlayerDisplacementState::GROUNDED;
+			return PlayerDisplacementState::CLIMBING;
+		}
 		if (is_jumping_down)
 			return PlayerDisplacementState::JUMPING_DOWN;
 		return PlayerDisplacementState::FALLING;
@@ -185,6 +212,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
 		stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
 	}
+	stick_position.y = -stick_position.y; // Y stick is inverted
 
 	int const jump_key_buttons[] = { GLFW_KEY_SPACE, -1 };
 	bool jump_pressed = player->CheckButtonPressed(jump_key_buttons, chaos::XBoxButton::BUTTON_A);
@@ -205,11 +233,13 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	if (displacement_state == PlayerDisplacementState::GROUNDED)
 	{
+		current_jump_count = 0;
 		pawn_velocity.y = 0.0f;
 	}		
 	else if (displacement_state == PlayerDisplacementState::CLIMBING)
 	{
-		pawn_velocity.y = -stick_position.y * climp_velocity;
+		current_jump_count = 0;
+		pawn_velocity.y = stick_position.y * climp_velocity;
 	}
 	else if (displacement_state == PlayerDisplacementState::JUMPING)
 	{
@@ -228,14 +258,20 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// update player state
 	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
 
+#if 0
 	// do not compute velocity with acceleration : just take the difference of positions
 	if (delta_time == 0.0f)
 		pawn_velocity = glm::vec2(0.0f, 0.0f);
 	else
 		pawn_velocity = ClampPlayerVelocity((pawn_box.position - initial_pawn_position) / delta_time);
+#endif
+
+	pawn_velocity = ClampPlayerVelocity(pawn_velocity);
 
 	// update the player pawn
 	pawn->SetPosition(pawn_box.position);
+
+	was_jump_pressed = jump_pressed;
 
 	return true;
 }

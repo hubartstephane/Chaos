@@ -86,9 +86,9 @@ protected:
 		// JUMP
 
 	/** the maximum height jump */
-	float max_jump_height = 60.0f;
+	float max_jump_height = 64.0f;
 	/** the jump velocity */
-	float jump_velocity = 300.0f;
+	float jump_velocity = 100.0f;
 	/** the maximum jump count */
 	int max_jump_count = 2;
 	/** the delay before jumping (usefull if we want to jump down through a plaftorm) */
@@ -109,12 +109,11 @@ protected:
 		// JUMP DOWN
 
 	/** the distance that can be jumpdown before colliding bridge again */
-	float max_jumpdown_height = 100.0f;
+	float max_jumpdown_height = 32.0f;
 	/** the current Y position where the jump down started */
 	float current_jumpdown_start_y = 0.0f;
 
 	
-	
-
-
+	/** whether jump was pressed previous frame */
+	bool was_jump_pressed = false;
 };

@@ -45,6 +45,8 @@ protected:
 
 	/** compute the collision flags according to all */
 	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, glm::vec2& velocity, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles) const;
+	/** compute the new displacement state */
+	PlayerDisplacementState ComputeDisplacementState(chaos::box2 & pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags);
 
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
@@ -69,7 +71,7 @@ protected:
 	glm::vec2 pawn_impulse = glm::vec2(200.0f, 0.0f);
 
 	/** the gravity to apply to the pawn */
-	float gravity = 100.0f;
+	float gravity = 200.0f;
 
 
 
@@ -86,7 +88,7 @@ protected:
 	/** the maximum height jump */
 	float max_jump_height = 60.0f;
 	/** the jump velocity */
-	float jump_velocity = 30.0f;
+	float jump_velocity = 300.0f;
 	/** the maximum jump count */
 	int max_jump_count = 2;
 	/** the delay before jumping (usefull if we want to jump down through a plaftorm) */
@@ -102,7 +104,7 @@ protected:
 		// CLIMB
 
 	/** the climb speed */
-	float climp_velocity = 30.0f;
+	float climp_velocity = 50.0f;
 
 		// JUMP DOWN
 

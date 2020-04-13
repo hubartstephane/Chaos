@@ -94,6 +94,75 @@ bool LudumPlayerDisplacementComponent::StartJump(glm::vec2 pawn_position, bool t
 	return true;
 }
 
+PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementState(chaos::box2 &pawn_box, bool jump_pressed, glm::vec2 const & stick_position, PlayerDisplacementCollisionFlags collision_flags)
+{
+	glm::vec2& pawn_position = pawn_box.position;
+
+	bool touching_ceil   = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_CEIL);
+	bool touching_floor  = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_FLOOR);
+	bool touching_bridge = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_BRIDGE);
+	bool touching_wall   = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_WALL);
+	bool touching_ladder = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_LADDER);
+
+	bool is_jumping      = (displacement_state == PlayerDisplacementState::JUMPING);
+	bool is_jumping_down = (displacement_state == PlayerDisplacementState::JUMPING_DOWN);
+	bool is_climbing     = (displacement_state == PlayerDisplacementState::CLIMBING);
+	bool is_grounded     = (displacement_state == PlayerDisplacementState::GROUNDED);
+
+	if (jump_pressed)
+	{
+		// start jumping down ?
+		if (stick_position.y > 0.0f)
+		{
+			if (!is_jumping_down)
+			{
+				if (is_climbing || (is_grounded && touching_bridge && !touching_floor))
+				{
+					current_jumpdown_start_y = pawn_position.y;
+					return PlayerDisplacementState::JUMPING_DOWN;
+				}
+			}
+		}
+		// start / continue jump
+		else
+		{
+			// stop jumping ?
+			if (is_jumping)
+			{
+				if (touching_ceil || (pawn_position.y - current_jump_start_y >= max_jump_height))
+					return PlayerDisplacementState::FALLING;
+				return PlayerDisplacementState::JUMPING;
+			}
+			// start jumping ?
+			else
+			{
+				if ((is_grounded || is_climbing) ||
+					(current_jump_count < max_jump_count))
+				{					
+					current_jump_start_y = pawn_position.y;
+					if (!is_grounded && !is_climbing)
+						++current_jump_count;
+					return PlayerDisplacementState::JUMPING;
+				}
+			}
+		}
+	}
+
+	if (touching_ladder && is_grounded && stick_position.y != 0.0f)
+		return PlayerDisplacementState::CLIMBING;
+
+	if (touching_floor || touching_bridge)
+	{
+		current_jump_count = 0;
+		return PlayerDisplacementState::GROUNDED;
+	}
+	else
+	{
+		if (is_jumping_down)
+			return PlayerDisplacementState::JUMPING_DOWN;
+		return PlayerDisplacementState::FALLING;
+	}
+}
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
@@ -130,124 +199,40 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	if (displacement_state == PlayerDisplacementState::FALLING || displacement_state == PlayerDisplacementState::JUMPING_DOWN) // do not fall otherway
 		sum_forces += glm::vec2(0.0f, -gravity);
-	
+
 	// mode IMPULSE : pushing the stick in 1 direction create an impulse (velocity is immediatly set)
-	pawn_velocity.x = stick_position.x * pawn_impulse.x;
+	pawn_velocity.x =  stick_position.x * pawn_impulse.x;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-	GROUNDED,     // player is on the ground
-		FALLING,      // player in the air and going down
-		JUMPING,      // player jump button has been pressed
-		JUMPING_DOWN, // whether the player has jumped down through a bridge
-		CLIMBING      // whether the player is on a ladder a goind up or down
-#endif
-
-
-#if 0
-
-	bool touching_ladder = false;
-	bool touching_bridge = false;
-	
-
-	//
-
-
-	// jump
-	if (jump_pressed)
+	if (displacement_state == PlayerDisplacementState::GROUNDED)
 	{
-		// already jumping ?
-		if (displacement_state == PlayerDisplacementState::JUMPING)
-		{
-			if (pawn_position.y - current_jump_start_y < max_jump_height)
-			{
-				pawn_velocity.y = jump_velocity;
-			}
-			else
-			{
-				displacement_state = PlayerDisplacementState::FALLING;
-			}
-		}
-		// start jump ? start jump down ?
-		else
-		{
-			// jump down ?
-			if (stick_position.y < 0.0f)
-			{
-				if (touching_bridge)
-					StartJumpDown(pawn_position);
-
-			}
-			// immediate jump
-			else if (stick_position.y > 0.0f)
-			{
-				StartJump(pawn_position, touching_bridge | touching_floor);
-
-
-			}
-			// maybe an jump-down / maybe an immediate jump / maybe a delayed jump
-			else if (stick_position.y == 0.0f)
-			{
-				StartJump(pawn_position, touching_bridge | touching_floor);
-			}
-		}
+		pawn_velocity.y = 0.0f;
+	}		
+	else if (displacement_state == PlayerDisplacementState::CLIMBING)
+	{
+		pawn_velocity.y = -stick_position.y * climp_velocity;
 	}
-	// climp ladder
-	else if (touching_ladder && stick_position.y != 0.0f) // every state
+	else if (displacement_state == PlayerDisplacementState::JUMPING)
 	{
-
-		displacement_state = PlayerDisplacementState::CLIMBING;
-
+		pawn_velocity.y = jump_velocity;
+	}
+	else if (displacement_state == PlayerDisplacementState::JUMPING_DOWN || displacement_state == PlayerDisplacementState::FALLING)
+	{
+		pawn_velocity += (sum_forces * delta_time);
 	}
 
+	pawn_position += pawn_velocity * delta_time;
 
+	// compute collisions and keep trace of all collided objects
+	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, pawn_velocity, colliding_tiles);
 
-
-
-
-
-#endif
-
-
-	
-
-
-	// update velocity with force, then clamp
-	pawn_velocity = ClampPlayerVelocity(pawn_velocity + sum_forces * delta_time);
-
-
-	// update internals
-	pawn_box.position += pawn_velocity * delta_time;
-
-
+	// update player state
+	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
 
 	// do not compute velocity with acceleration : just take the difference of positions
 	if (delta_time == 0.0f)
 		pawn_velocity = glm::vec2(0.0f, 0.0f);
 	else
-		pawn_velocity = (pawn_box.position - initial_pawn_position) / delta_time;
-
-	pawn_velocity = ClampPlayerVelocity(pawn_velocity);
+		pawn_velocity = ClampPlayerVelocity((pawn_box.position - initial_pawn_position) / delta_time);
 
 	// update the player pawn
 	pawn->SetPosition(pawn_box.position);

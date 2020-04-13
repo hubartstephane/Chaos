@@ -29,6 +29,6 @@
   </data>
  </layer>
  <objectgroup id="26" name="Camera">
-  <object id="2114" type="Camera" x="157" y="283" width="647" height="462"/>
+  <object id="2114" type="Camera" x="227" y="546" width="203" height="192"/>
  </objectgroup>
 </map>

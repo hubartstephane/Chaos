@@ -1231,18 +1231,19 @@ namespace death
 		return true;
 	}
 
-	void TiledMapLayerInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result)
+	void TiledMapLayerInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, glm::vec2 const& box_extend)
 	{
 		// layer accept collision with player
 		if (!ArePlayerCollisionEnabled() || !AreTileCollisionsEnabled())
 			return;
-		// early exit
+		// get the pawn bounding box + early exit
 		PlayerPawn* player_pawn = player->GetPawn();
 		if (player_pawn == nullptr)
 			return;
 		chaos::box2 pawn_box = player_pawn->GetBox();
 		if (IsGeometryEmpty(pawn_box))
 			return;
+		pawn_box.half_size += box_extend;
 
 		// search all collisions with particles that does not belongs to the player
 		FindTileCollisions(result, pawn_box, [player_pawn](chaos::ParticleAllocationBase const* allocation)
@@ -1769,11 +1770,11 @@ namespace death
 			layer_instances[i]->HandlePlayerAndCameraCollision(delta_time);
 	}
 
-	void TiledMapLevelInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result)
+	void TiledMapLevelInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, glm::vec2 const& box_extend)
 	{
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
-			layer_instances[i]->FindPlayerTileCollisions(player, result);
+			layer_instances[i]->FindPlayerTileCollisions(player, result, box_extend);
 	}
 
 	bool TiledMapLevelInstance::DoTick(float delta_time)

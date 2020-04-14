@@ -17,7 +17,7 @@ glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 veloci
 	return velocity;
 }
 
-PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, glm::vec2 & velocity, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles) const
+PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, chaos::box2& extended_pawn_box, glm::vec2 & velocity, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles) const
 {
 	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
 
@@ -50,56 +50,45 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 			continue;
 		}
 		// keep the box outside the
-		chaos::box2 new_box = box;
-		if (chaos::RestrictToOutside(collision.particle.bounding_box, new_box))
+
+		glm::vec2 displacement = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, extended_pawn_box);
+		if (displacement == glm::vec2(0.0f, 0.0f))
+			continue;
+
+		// ========================= WALL =========================
+		if (is_wall)
 		{
-			// ========================= BRIDGE =========================
-			if (is_bridge)
-			{
-				// can go through a bridge from down to up
-				if (velocity.y > 0.0f)
-					continue;
-
-				// pushed DOWN -> the bridge is not a collider as a ceil
-				if (new_box.position.y < box.position.y)
-					continue;
-
-				// jumping down ?
-				if (displacement_state == PlayerDisplacementState::JUMPING_DOWN)
-					if (current_jumpdown_start_y - box.position.y < max_jumpdown_height) // player has just started jumping down -> ignore the bridge
-						continue;
-
-				// pushed UP
-				if (new_box.position.y > box.position.y)
-					result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_BRIDGE);
-
-				// no horizontal collision
-				new_box.position.x = box.position.x; 
-			}
-			// ========================= WALL =========================
-			else if (is_wall)
-			{
-				if (new_box.position.x != box.position.x)
-					result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed LEFT or RIGHT
-				if (new_box.position.y < box.position.y)
-					result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed DOWN
-				else if (new_box.position.y > box.position.y)
-					result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP
-			}
-			box = new_box;
+			if (displacement.x != 0.0f)
+				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed LEFT or RIGHT
+			if (displacement.y < 0.0f)
+				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed DOWN
+			else if (displacement.y > 0.0f)
+				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP
 		}
+		// ========================= BRIDGE =========================
+		else if (is_bridge)
+		{
+			// can go through a bridge from down to up
+			if (velocity.y > 0.0f)
+				continue;
+
+			// pushed DOWN -> the bridge is not a collider as a ceil
+			if (displacement.y < 0.0f)
+				continue;
+
+			// jumping down ?
+			if (displacement_state == PlayerDisplacementState::JUMPING_DOWN)
+				if (current_jumpdown_start_y - box.position.y < max_jumpdown_height) // player has just started jumping down -> ignore the bridge
+					continue;
+			// pushed UP
+			if (displacement.y > 0.0f)
+				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_BRIDGE);
+
+		}
+
+		chaos::RestrictToOutside(collision.particle.bounding_box, box); // displace the pawn box according to the NON EXTENDED pawn box
 	}
 	return result;
-}
-
-bool LudumPlayerDisplacementComponent::StartJumpDown(glm::vec2 pawn_position)
-{
-	return true;
-}
-
-bool LudumPlayerDisplacementComponent::StartJump(glm::vec2 pawn_position, bool touching_floor)
-{
-	return true;
 }
 
 PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementState(chaos::box2 &pawn_box, bool jump_pressed, glm::vec2 const & stick_position, PlayerDisplacementCollisionFlags collision_flags)
@@ -204,13 +193,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	if (pawn == nullptr)
 		return true;
 
-	// get colliding tiles
-	std::vector<death::TileParticleCollisionInfo> colliding_tiles;
-
-	death::TiledMapLevelInstance * level_instance = GetLevelInstance();
-	if (level_instance != nullptr)
-		level_instance->FindPlayerTileCollisions(player, colliding_tiles, glm::vec2(1.0f, 1.0f));
-
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
 	if (!analogic_stick_mode)
@@ -225,8 +207,20 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// get player position
 	chaos::box2 pawn_box = pawn->GetBox();
-	glm::vec2 & pawn_position = pawn_box.position;
+	glm::vec2& pawn_position = pawn_box.position;
 	glm::vec2   initial_pawn_position = pawn_position;
+
+	// extend the pawn box for ground collision
+	auto pawn_box_extremums = chaos::GetBoxExtremums(pawn_box);
+	pawn_box_extremums.first.y -= 1.0f;
+	chaos::box2 extended_pawn_box = chaos::box2(pawn_box_extremums);
+
+	// get colliding tiles
+	std::vector<death::TileParticleCollisionInfo> colliding_tiles;
+
+	death::TiledMapLevelInstance * level_instance = GetLevelInstance();
+	if (level_instance != nullptr)
+		level_instance->FindPlayerTileCollisions(player, colliding_tiles, &extended_pawn_box);
 
 	// sum the forces 
 	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
@@ -259,7 +253,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	pawn_position += pawn_velocity * delta_time;
 
 	// compute collisions and keep trace of all collided objects
-	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, pawn_velocity, colliding_tiles);
+	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, extended_pawn_box, pawn_velocity, colliding_tiles);
 
 	// update player state
 	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);

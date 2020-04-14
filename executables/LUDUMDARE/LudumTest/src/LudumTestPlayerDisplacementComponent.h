@@ -84,8 +84,8 @@ protected:
 	float max_jump_height = 64.0f;
 	/** the jump velocity */
 	float jump_velocity = 100.0f;
-	/** the maximum jump count */
-	int max_jump_count = 2;
+	/** the maximum extra jump count */
+	int max_extra_jump_count = 1;
 	/** the delay before jumping (usefull if we want to jump down through a plaftorm) */
 	float jump_delay = 0.1f;
 

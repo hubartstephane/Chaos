@@ -132,7 +132,8 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			// stop jumping ?
 			if (is_jumping)
 			{
-				if (touching_ceil || (pawn_position.y - current_jump_start_y >= max_jump_height))
+				//if (touching_ceil || (pawn_position.y - current_jump_start_y >= max_jump_height))
+				if (touching_ceil || current_jump_timer >= GetMaxJumpDuration())
 				{
 					pawn_velocity.y = 0.0f;
 					return PlayerDisplacementState::FALLING;
@@ -186,15 +187,50 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 	}
 }
 
-float LudumPlayerDisplacementComponent::ComputeJumpInitialVelocity(float max_height) const
+float LudumPlayerDisplacementComponent::GetMaxJumpDuration() const
 {
-
-	return 0.0f;
+	return std::sqrt(2.0f * max_jump_height / gravity);
 }
 
 float LudumPlayerDisplacementComponent::GetJumpRelativeHeight(float jump_time) const
 {
-	return max_jump_height * std::sin(jump_time * (float)M_PI_2 / jump_duration);
+	// 1. forces
+	//
+	//   sum(Forces) = m.gravity = m.acceleration 
+	//
+	//   acceleration = gravity
+	//
+	// 2. this is an uniformly accelerated movement
+	//
+	//   position(t) = (1/2 * a * t ^ 2)  +  (v0 * t)  +  position(0)   | -we can set   position(0) == 0
+	//                                                                  | -we know      a           == gravity
+	//   velocity(t) = (a * t)   +   velocity(0)                        | -we search    velocity(0) ???
+	//
+	// 3. when the jumper reach the max height we know   
+	//
+	//   velocity(tmax) = 0
+	//
+	//   position(tmax) = max_jump_height
+	//
+	// 4.
+	//
+	//   0 = (a * tmax)   +    v0
+	//
+	//      => v0 = -(a * tmax)
+	//
+	//   max_jump_height = (1/2 * a * tmax ^ 2)   +   (v0 * tmax)
+	//	
+	// 5.
+	//  
+	//    max_jump_height = (1/2 * a * tmax ^ 2)   -   (a * tmax ^ 2)
+	//
+	//      => tmax = sqrt(  -2 * max_jump_height / gravity   )                   XXX : gravity is NEGATIVE !! dont panic
+	
+	float t_max = std::sqrt(2.0f * max_jump_height / gravity);
+
+	float v0 = gravity * t_max;
+
+	return (-0.5f * gravity * jump_time * jump_time) + v0 * jump_time;
 }
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
@@ -254,7 +290,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	}
 	else if (displacement_state == PlayerDisplacementState::JUMPING)
 	{
-		current_jump_timer = std::min(current_jump_timer + delta_time, jump_duration);
+		current_jump_timer = std::min(current_jump_timer + delta_time, GetMaxJumpDuration());
 		pawn_position.y = current_jump_start_y + GetJumpRelativeHeight(current_jump_timer);
 		pawn_velocity.y = 0.0f;
 		//pawn_velocity.y = jump_velocity;

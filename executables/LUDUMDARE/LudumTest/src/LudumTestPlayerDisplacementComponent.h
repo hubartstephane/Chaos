@@ -49,11 +49,11 @@ protected:
 	PlayerDisplacementState ComputeDisplacementState(chaos::box2 & pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags);
 	/** get the offset from the jumping point when the player is jumping */
 	float GetJumpRelativeHeight(float jump_time) const;
+	/** get the duration of a jump according to gravity/max_height */
+	float GetMaxJumpDuration() const;
+
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
-
-	/** compute the jump initial velocity to reach the wanted height */
-	float ComputeJumpInitialVelocity(float max_height) const;
 
 
 
@@ -72,7 +72,7 @@ protected:
 	glm::vec2 pawn_impulse = glm::vec2(200.0f, 0.0f);
 
 	/** the gravity to apply to the pawn */
-	float gravity = 300.0f;
+	float gravity = 500.0f;
 
 
 

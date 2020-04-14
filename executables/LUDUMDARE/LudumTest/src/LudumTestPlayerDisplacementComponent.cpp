@@ -12,8 +12,8 @@
 glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 velocity) const
 {
 	for (int direction = 0; direction <= 1; ++direction)
-		if (max_pawn_velocity[direction] >= 0.0f && std::abs(velocity[direction]) > max_pawn_velocity[direction])
-			velocity[direction] = max_pawn_velocity[direction] * ((velocity[direction] > 0.0f) ? +1.0f : -1.0f);
+		if (displacement_info.max_pawn_velocity[direction] >= 0.0f && std::abs(velocity[direction]) > displacement_info.max_pawn_velocity[direction])
+			velocity[direction] = displacement_info.max_pawn_velocity[direction] * ((velocity[direction] > 0.0f) ? +1.0f : -1.0f);
 	return velocity;
 }
 
@@ -78,7 +78,7 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 
 			// jumping down ?
 			if (displacement_state == PlayerDisplacementState::JUMPING_DOWN)
-				if (current_jumpdown_start_y - box.position.y < max_jumpdown_height) // player has just started jumping down -> ignore the bridge
+				if (current_jumpdown_start_y - box.position.y < displacement_info.max_jumpdown_height) // player has just started jumping down -> ignore the bridge
 					continue;
 			// pushed UP
 			if (displacement.y > 0.0f)
@@ -142,7 +142,7 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			// start jumping ?
 			else if (!was_jump_pressed)
 			{
-				if ((is_grounded || is_climbing) || (current_jump_count < max_extra_jump_count))
+				if ((is_grounded || is_climbing) || (current_jump_count < displacement_info.max_extra_jump_count))
 				{					
 					current_jump_timer = 0.0f;
 					current_jump_start_y = pawn_position.y;
@@ -159,7 +159,7 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 		if (is_jumping)
 		{
 			displacement_state = PlayerDisplacementState::FALLING;
-			pawn_velocity.y = std::max(0.0f, jump_released_velocity_factor *GetJumpVelocity(current_jump_timer)); // do not clamp the velocity to 0 => smooth it instead
+			pawn_velocity.y = std::max(0.0f, displacement_info.jump_released_velocity_factor * GetJumpVelocity(current_jump_timer)); // do not clamp the velocity to 0 => smooth it instead
 		}
 	}
 
@@ -221,27 +221,25 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 
 float LudumPlayerDisplacementComponent::GetJumpVelocity(float jump_time) const
 {
-	float t_max = std::sqrt(2.0f * max_jump_height / gravity);
+	float t_max = std::sqrt(2.0f * displacement_info.max_jump_height / displacement_info.gravity);
 
-	float v0 = gravity * t_max;
+	float v0 = displacement_info.gravity * t_max;
 
-	return -gravity * jump_time + v0;
+	return -displacement_info.gravity * jump_time + v0;
 }
 
 float LudumPlayerDisplacementComponent::GetMaxJumpDuration() const
 {
-	return std::sqrt(2.0f * max_jump_height / gravity);
+	return std::sqrt(2.0f * displacement_info.max_jump_height / displacement_info.gravity);
 }
 
 float LudumPlayerDisplacementComponent::GetJumpRelativeHeight(float jump_time) const
-{
+{	
+	float t_max = std::sqrt(2.0f * displacement_info.max_jump_height / displacement_info.gravity);
 
-	
-	float t_max = std::sqrt(2.0f * max_jump_height / gravity);
+	float v0 = displacement_info.gravity * t_max;
 
-	float v0 = gravity * t_max;
-
-	return (-0.5f * gravity * jump_time * jump_time) + v0 * jump_time;
+	return (-0.5f * displacement_info.gravity * jump_time * jump_time) + v0 * jump_time;
 }
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
@@ -253,7 +251,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
-	if (!analogic_stick_mode)
+	if (!displacement_info.analogic_stick_mode)
 	{
 		stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
 		stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
@@ -284,10 +282,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
 
 	if (displacement_state == PlayerDisplacementState::FALLING || displacement_state == PlayerDisplacementState::JUMPING_DOWN) // do not fall otherway
-		sum_forces += glm::vec2(0.0f, -gravity);
+		sum_forces += glm::vec2(0.0f, -displacement_info.gravity);
 
 	// mode IMPULSE : pushing the stick in 1 direction create an impulse (velocity is immediatly set)
-	pawn_velocity.x =  stick_position.x * pawn_impulse.x;
+	pawn_velocity.x =  stick_position.x * displacement_info.pawn_impulse.x;
 
 	if (displacement_state == PlayerDisplacementState::GROUNDED)
 	{
@@ -297,7 +295,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	else if (displacement_state == PlayerDisplacementState::CLIMBING)
 	{
 		current_jump_count = 0;
-		pawn_velocity.y = stick_position.y * climp_velocity;
+		pawn_velocity.y = stick_position.y * displacement_info.climp_velocity;
 	}
 	else if (displacement_state == PlayerDisplacementState::JUMPING)
 	{

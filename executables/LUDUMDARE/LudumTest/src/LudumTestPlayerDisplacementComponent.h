@@ -27,6 +27,32 @@ enum PlayerDisplacementCollisionFlags : int // XXXX: no class, so this can be im
 	TOUCHING_LADDER = (1 << 4)
 };
 
+class PlayerDisplacementComponentInfo
+{
+public:
+
+	/** whether the player left stick value is exactly -1, 0, +1 or whether this may have intermediate values */
+	bool analogic_stick_mode = true;
+	/** clamping the velocity in both direction */
+	glm::vec2 max_pawn_velocity = glm::vec2(-1.0f, -1.0f);
+	/** IMPULSE mode : the impulse value for the pawn (immediate velocity given along X axis) */
+	glm::vec2 pawn_impulse = glm::vec2(200.0f, 0.0f);
+	/** the gravity to apply to the pawn */
+	float gravity = 500.0f;
+	/** the maximum height jump */
+	float max_jump_height = 64.0f;
+	/** the maximum extra jump count */
+	int max_extra_jump_count = 1;
+	/** whenever the jump button is released during a jump, some ratio of the jump velocity is transmitted to smooth the animation */
+	float jump_released_velocity_factor = 0.3f;
+	/** the climb speed */
+	float climp_velocity = 50.0f;
+	/** the distance that can be jumpdown before colliding bridge again */
+	float max_jumpdown_height = 32.0f;
+};
+
+
+
 class LudumPlayerDisplacementComponent : public death::PlayerDisplacementComponent
 {
 
@@ -58,35 +84,16 @@ protected:
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
 
 
-
 protected:
 
-	/** whether the player left stick value is exactly -1, 0, +1 or whether this may have intermediate values */
-	bool analogic_stick_mode = true;
-
-		// VELOCITY
-
-	/** the velocity of the pawn */
-	glm::vec2 pawn_velocity = glm::vec2(0.0f, 0.0f);
-	/** clamping the velocity in both direction */
-	glm::vec2 max_pawn_velocity = glm::vec2(-1.0f, -1.0f);
-	/** IMPULSE mode : the impulse value for the pawn (immediate velocity given along X axis) */
-	glm::vec2 pawn_impulse = glm::vec2(200.0f, 0.0f);
-
-	/** the gravity to apply to the pawn */
-	float gravity = 500.0f;
+	/** the rules for the displacement */
+	PlayerDisplacementComponentInfo displacement_info;
 
 	/** the current state for the player */
 	PlayerDisplacementState displacement_state = PlayerDisplacementState::GROUNDED;
 
-		// JUMP
-
-	/** the maximum height jump */
-	float max_jump_height = 64.0f;
-	/** the maximum extra jump count */
-	int max_extra_jump_count = 1;
-	/** whenever the jump button is released during a jump, some ratio of the jump velocity is transmitted to smooth the animation */
-	float jump_released_velocity_factor = 0.3f;
+	/** the current velocity of the pawn */
+	glm::vec2 pawn_velocity = glm::vec2(0.0f, 0.0f);
 
 	/** the current Y position where the jump started */
 	float current_jump_start_y = 0.0f;
@@ -95,15 +102,6 @@ protected:
 	/** the current jump count */
 	int current_jump_count = 0;
 
-		// CLIMB
-
-	/** the climb speed */
-	float climp_velocity = 50.0f;
-
-		// JUMP DOWN
-
-	/** the distance that can be jumpdown before colliding bridge again */
-	float max_jumpdown_height = 32.0f;
 	/** the current Y position where the jump down started */
 	float current_jumpdown_start_y = 0.0f;
 	

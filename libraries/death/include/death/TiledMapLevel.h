@@ -666,7 +666,7 @@ namespace death
 		void FindTileCollisions(std::vector<TileParticleCollisionInfo> & result, chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func = std::function<bool(chaos::ParticleAllocationBase const*)>());
 
 		/** find player with tile collisions */
-		void FindPlayerTileCollisions(Player* player,std::vector<TileParticleCollisionInfo>& result, glm::vec2 const& box_extend = glm::vec2(0.0f, 0.0f));
+		void FindPlayerTileCollisions(Player* player,std::vector<TileParticleCollisionInfo>& result, chaos::box2 const* pawn_box = nullptr);
 
 	protected:
 
@@ -860,7 +860,7 @@ namespace death
 		virtual chaos::box2 GetBoundingBox() const override;
 
 		/** compute player tile collisions */
-		void FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, glm::vec2 const& box_extend = glm::vec2(0.0f, 0.0f));
+		void FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, chaos::box2 const * pawn_box = nullptr);
 
 	protected:
 

@@ -44,17 +44,12 @@ public:
 protected:
 
 	/** compute the collision flags according to all */
-	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, glm::vec2& velocity, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles) const;
+	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, chaos::box2& extended_pawn_box, glm::vec2& velocity, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles) const;
 	/** compute the new displacement state */
 	PlayerDisplacementState ComputeDisplacementState(chaos::box2 & pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags);
 
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
-
-	/** try to start jumping */
-	bool StartJump(glm::vec2 pawn_position, bool touching_floor);
-	/** try to start jumping down */
-	bool StartJumpDown(glm::vec2 pawn_position);
 
 protected:
 

@@ -142,8 +142,7 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			// start jumping ?
 			else if (!was_jump_pressed)
 			{
-				if ((is_grounded || is_climbing) ||
-					(current_jump_count < max_jump_count))
+				if ((is_grounded || is_climbing) || (current_jump_count < max_extra_jump_count))
 				{					
 					current_jump_start_y = pawn_position.y;
 					if (!is_grounded && !is_climbing)

@@ -29,11 +29,17 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		bool is_ladder = false;
 
 		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
+		{
 			is_wall = true;
+		}
 		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BRIDGE"))
+		{
 			is_bridge = true;
+		}
 		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
+		{
 			is_ladder = true;
+		}
 		else
 			continue;
 
@@ -203,7 +209,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	death::TiledMapLevelInstance * level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
-		level_instance->FindPlayerTileCollisions(player, colliding_tiles);
+		level_instance->FindPlayerTileCollisions(player, colliding_tiles, glm::vec2(1.0f, 1.0f));
 
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();

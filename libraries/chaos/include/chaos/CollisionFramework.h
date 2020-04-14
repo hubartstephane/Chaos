@@ -171,18 +171,21 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	bool RestrictToOutside(type_box<T, dimension> & src, type_box<T, dimension> & target)
+	auto GetRestrictToOutsideDisplacement(type_box<T, dimension> const & src, type_box<T, dimension> const & target)
 	{
+		// the null result
+		type_box<T, dimension>::vec_type result = type_box<T, dimension>::vec_type(0);
+
 		if (IsGeometryEmpty(src) || IsGeometryEmpty(target))
-			return false;
+			return result;
 
 		auto src_corners = GetBoxExtremums(src);
 		auto target_corners = GetBoxExtremums(target);
 
 		if (glm::any(glm::lessThan(src_corners.second, target_corners.first)))
-			return false;
+			return result;
 		if (glm::any(glm::greaterThan(src_corners.first, target_corners.second)))
-			return false;
+			return result;
 
 		// compute the minimum distance, and best direction (+X, -X, +Y ...) to move the box
 		T   best_distance = (T)-1;
@@ -192,10 +195,10 @@ namespace chaos
 			// in positive direction (dist_pos is to be positive)
 			T dist_pos = src_corners.second[i] - target_corners.first[i];
 			if (dist_pos <= 0)
-				return false; // no collision, nothing to do
+				return result; // no collision, nothing to do
 			T dist_neg = target_corners.second[i] - src_corners.first[i];
 			if (dist_neg <= 0)
-				return false; // no collision, nothing to do
+				return result; // no collision, nothing to do
 
 			if (best_distance < 0 || dist_pos < best_distance)
 			{
@@ -214,13 +217,37 @@ namespace chaos
 		if (best_direction >= 0)
 		{
 			if ((best_direction & 1) == 0)
-				target.position[best_direction / 2] += best_distance; // positive direction
+				result[best_direction / 2] = +best_distance; // positive direction
 			else
-				target.position[best_direction / 2] -= best_distance; // negative direction  
-			return true;
+				result[best_direction / 2] = -best_distance; // negative direction  
 		}
-		return false;
+		return result;
 	}
+
+
+	template<typename T, int dimension>
+	bool RestrictToOutside(type_box<T, dimension>& src, type_box<T, dimension>& target)
+	{
+		auto delta_position = GetRestrictToOutsideDisplacement(src, target);
+		if (delta_position == type_box<T, dimension>::vec_type(0))
+			return false;
+		target.position += delta_position;
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	template<typename T, int dimension>
 	bool RestrictToInside(type_sphere<T, dimension> & bigger, type_sphere<T, dimension> & smaller, bool move_big)

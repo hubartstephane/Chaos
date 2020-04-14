@@ -47,9 +47,15 @@ protected:
 	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, chaos::box2& extended_pawn_box, glm::vec2& velocity, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles) const;
 	/** compute the new displacement state */
 	PlayerDisplacementState ComputeDisplacementState(chaos::box2 & pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags);
-
+	/** get the offset from the jumping point when the player is jumping */
+	float GetJumpRelativeHeight(float jump_time) const;
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
+
+	/** compute the jump initial velocity to reach the wanted height */
+	float ComputeJumpInitialVelocity(float max_height) const;
+
+
 
 protected:
 
@@ -66,7 +72,7 @@ protected:
 	glm::vec2 pawn_impulse = glm::vec2(200.0f, 0.0f);
 
 	/** the gravity to apply to the pawn */
-	float gravity = 200.0f;
+	float gravity = 300.0f;
 
 
 
@@ -82,6 +88,9 @@ protected:
 
 	/** the maximum height jump */
 	float max_jump_height = 64.0f;
+	/** the full jump duration */
+	float jump_duration = 0.4f;
+
 	/** the jump velocity */
 	float jump_velocity = 100.0f;
 	/** the maximum extra jump count */
@@ -91,6 +100,9 @@ protected:
 
 	/** the current Y position where the jump started */
 	float current_jump_start_y = 0.0f;
+	/** the jump timer */
+	float current_jump_timer = 0.0f;
+
 	/** the current jump count */
 	int current_jump_count = 0;
 	/** the current jump delay value */

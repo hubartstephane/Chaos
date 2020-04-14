@@ -144,6 +144,7 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			{
 				if ((is_grounded || is_climbing) || (current_jump_count < max_extra_jump_count))
 				{					
+					current_jump_timer = 0.0f;
 					current_jump_start_y = pawn_position.y;
 					if (!is_grounded && !is_climbing)
 						++current_jump_count;
@@ -183,6 +184,17 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			return PlayerDisplacementState::JUMPING_DOWN;
 		return PlayerDisplacementState::FALLING;
 	}
+}
+
+float LudumPlayerDisplacementComponent::ComputeJumpInitialVelocity(float max_height) const
+{
+
+	return 0.0f;
+}
+
+float LudumPlayerDisplacementComponent::GetJumpRelativeHeight(float jump_time) const
+{
+	return max_jump_height * std::sin(jump_time * (float)M_PI_2 / jump_duration);
 }
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
@@ -242,7 +254,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	}
 	else if (displacement_state == PlayerDisplacementState::JUMPING)
 	{
-		pawn_velocity.y = jump_velocity;
+		current_jump_timer = std::min(current_jump_timer + delta_time, jump_duration);
+		pawn_position.y = current_jump_start_y + GetJumpRelativeHeight(current_jump_timer);
+		pawn_velocity.y = 0.0f;
+		//pawn_velocity.y = jump_velocity;
 	}
 	else if (displacement_state == PlayerDisplacementState::JUMPING_DOWN || displacement_state == PlayerDisplacementState::FALLING)
 	{

@@ -51,6 +51,8 @@ protected:
 	float GetJumpRelativeHeight(float jump_time) const;
 	/** get the duration of a jump according to gravity/max_height */
 	float GetMaxJumpDuration() const;
+	/** get the velocity of jumper at given time */
+	float GetJumpVelocity(float jump_time) const;
 
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
@@ -74,13 +76,6 @@ protected:
 	/** the gravity to apply to the pawn */
 	float gravity = 500.0f;
 
-
-
-
-
-
-
-
 	/** the current state for the player */
 	PlayerDisplacementState displacement_state = PlayerDisplacementState::GROUNDED;
 
@@ -88,25 +83,17 @@ protected:
 
 	/** the maximum height jump */
 	float max_jump_height = 64.0f;
-	/** the full jump duration */
-	float jump_duration = 0.4f;
-
-	/** the jump velocity */
-	float jump_velocity = 100.0f;
 	/** the maximum extra jump count */
 	int max_extra_jump_count = 1;
-	/** the delay before jumping (usefull if we want to jump down through a plaftorm) */
-	float jump_delay = 0.1f;
+	/** whenever the jump button is released during a jump, some ratio of the jump velocity is transmitted to smooth the animation */
+	float jump_released_velocity_factor = 0.3f;
 
 	/** the current Y position where the jump started */
 	float current_jump_start_y = 0.0f;
 	/** the jump timer */
 	float current_jump_timer = 0.0f;
-
 	/** the current jump count */
 	int current_jump_count = 0;
-	/** the current jump delay value */
-	float current_jump_delay = 0.0f;
 
 		// CLIMB
 
@@ -119,7 +106,6 @@ protected:
 	float max_jumpdown_height = 32.0f;
 	/** the current Y position where the jump down started */
 	float current_jumpdown_start_y = 0.0f;
-
 	
 	/** whether jump was pressed previous frame */
 	bool was_jump_pressed = false;

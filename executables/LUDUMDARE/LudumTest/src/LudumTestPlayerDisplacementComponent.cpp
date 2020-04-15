@@ -50,6 +50,10 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		bool is_bridge = false;
 		bool is_ladder = false;
 
+
+		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BIGGER"))
+			is_wall = is_wall;
+
 		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
 		{
 			is_wall = true;

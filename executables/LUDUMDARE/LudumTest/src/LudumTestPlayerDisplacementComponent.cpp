@@ -126,30 +126,26 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 				}
 			}
 		}
-		// start / continue jump
-		else
+		// start / stop / continue jump
+		if (is_jumping)
 		{
-			// stop jumping ?
-			if (is_jumping)
+			if (touching_ceil || current_jump_timer >= GetMaxJumpDuration())
 			{
-				if (touching_ceil || current_jump_timer >= GetMaxJumpDuration())
-				{
-					pawn_velocity.y = 0.0f;
-					return PlayerDisplacementState::FALLING;
-				}
-				return PlayerDisplacementState::JUMPING;
+				pawn_velocity.y = 0.0f;
+				return PlayerDisplacementState::FALLING;
 			}
-			// start jumping ?
-			else if (!was_jump_pressed)
+			return PlayerDisplacementState::JUMPING;
+		}
+		// start jumping ?
+		else if (!was_jump_pressed)
+		{
+			if ((is_grounded || is_climbing) || (current_jump_count < displacement_info.max_extra_jump_count))
 			{
-				if ((is_grounded || is_climbing) || (current_jump_count < displacement_info.max_extra_jump_count))
-				{					
-					current_jump_timer = 0.0f;
-					current_jump_start_y = pawn_position.y;
-					if (!is_grounded && !is_climbing)
-						++current_jump_count;
-					return PlayerDisplacementState::JUMPING;
-				}
+				current_jump_timer = 0.0f;
+				current_jump_start_y = pawn_position.y;
+				if (!is_grounded && !is_climbing)
+					++current_jump_count;
+				return PlayerDisplacementState::JUMPING;
 			}
 		}
 	}

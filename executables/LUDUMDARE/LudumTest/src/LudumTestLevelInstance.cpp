@@ -30,7 +30,7 @@ void LudumLevelInstance::CreateCameras()
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
 	{
-		cameras[i]->SetSafeZone(glm::vec2(0.9f, 0.6f));
+		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.6f));
 		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
 		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());

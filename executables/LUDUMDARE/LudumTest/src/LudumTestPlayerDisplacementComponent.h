@@ -49,11 +49,22 @@ public:
 	float climp_velocity = 50.0f;
 	/** the distance that can be jumpdown before colliding bridge again */
 	float max_jumpdown_height = 32.0f;
-
+#if 0
 	/** pawn do not advance forward anymore */
 	float pawn_break_ratio = 0.01f;
 	/** pawn is trying to change its direction */
 	float pawn_hardturn_break_ratio = 0.005f;
+#endif
+
+
+	/** pawn do not advance forward anymore */
+	float pawn_break_ratio = 0.1f;
+	/** pawn is trying to change its direction */
+	float pawn_hardturn_break_ratio = 0.05f;
+
+	/* an extend of the pawn box so we can detect collision */
+	glm::vec2 pawn_box_extend = glm::vec2(5.0f, 5.0f); 
+
 };
 
 
@@ -75,7 +86,7 @@ public:
 protected:
 
 	/** compute the collision flags according to all */
-	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, chaos::box2& extended_pawn_box, glm::vec2& velocity, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles) const;
+	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles);
 	/** compute the new displacement state */
 	PlayerDisplacementState ComputeDisplacementState(chaos::box2 & pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags);
 	/** get the offset from the jumping point when the player is jumping */
@@ -88,6 +99,8 @@ protected:
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
 
+	/** extend the box by adding some padding */
+	chaos::box2 ExtendBox(chaos::box2 const& src, float left, float right, float bottom, float top) const;
 
 protected:
 

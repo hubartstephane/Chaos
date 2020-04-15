@@ -247,7 +247,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
-	if (!displacement_info.analogic_stick_mode)
+	if (displacement_info.discrete_stick_mode)
 	{
 		stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
 		stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
@@ -281,7 +281,25 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		sum_forces += glm::vec2(0.0f, -displacement_info.gravity);
 
 	// mode IMPULSE : pushing the stick in 1 direction create an impulse (velocity is immediatly set)
+
+#if 1
+	// pawn is breaking
+	if (stick_position.x == 0.0f)
+		pawn_velocity.x = pawn_velocity.x * std::pow(displacement_info.pawn_break_ratio, delta_time);
+	// pawn is accelerating forward
+	else if (stick_position.x * pawn_velocity.x >= 0.0f)
+		pawn_velocity.x = pawn_velocity.x + stick_position.x * displacement_info.pawn_impulse.x * delta_time;
+	// pawn is changing direction (break harder)
+	else if (stick_position.x * pawn_velocity.x < 0.0f)
+		pawn_velocity.x = 
+			pawn_velocity.x * std::pow(displacement_info.pawn_hardturn_break_ratio, delta_time) +
+			stick_position.x * displacement_info.pawn_impulse.x * delta_time;
+
+#else
+
 	pawn_velocity.x =  stick_position.x * displacement_info.pawn_impulse.x;
+
+#endif
 
 	if (displacement_state == PlayerDisplacementState::GROUNDED)
 	{

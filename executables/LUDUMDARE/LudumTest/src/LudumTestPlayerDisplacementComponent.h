@@ -32,13 +32,13 @@ class PlayerDisplacementComponentInfo
 public:
 
 	/** whether the player left stick value is exactly -1, 0, +1 or whether this may have intermediate values */
-	bool analogic_stick_mode = true;
+	bool discrete_stick_mode = true;
 	/** clamping the velocity in both direction */
-	glm::vec2 max_pawn_velocity = glm::vec2(-1.0f, -1.0f);
+	glm::vec2 max_pawn_velocity = glm::vec2(500.0f, 500.0f);
 	/** IMPULSE mode : the impulse value for the pawn (immediate velocity given along X axis) */
-	glm::vec2 pawn_impulse = glm::vec2(200.0f, 0.0f);
+	glm::vec2 pawn_impulse = glm::vec2(500.0f, 0.0f);
 	/** the gravity to apply to the pawn */
-	float gravity = 500.0f;
+	float gravity = 2000.0f;
 	/** the maximum height jump */
 	float max_jump_height = 64.0f;
 	/** the maximum extra jump count */
@@ -49,6 +49,11 @@ public:
 	float climp_velocity = 50.0f;
 	/** the distance that can be jumpdown before colliding bridge again */
 	float max_jumpdown_height = 32.0f;
+
+	/** pawn do not advance forward anymore */
+	float pawn_break_ratio = 0.01f;
+	/** pawn is trying to change its direction */
+	float pawn_hardturn_break_ratio = 0.005f;
 };
 
 

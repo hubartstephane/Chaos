@@ -74,7 +74,7 @@ namespace chaos
 
         ParticleCorners BoxToParticleCorners(box2 const& box)
         {
-            std::pair<glm::vec2, glm::vec2> tmp = GetBoxExtremums(box);
+            std::pair<glm::vec2, glm::vec2> tmp = GetBoxCorners(box);
 
             ParticleCorners result;
             result.bottomleft = tmp.first;
@@ -185,7 +185,7 @@ namespace chaos
 
         void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, QuadPrimitive<ParticleDefault::Vertex>& primitive, float rotation)
         {
-            std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
+            std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(box);
 
             ParticleCorners particle_corners;
             particle_corners.bottomleft = corners.first;
@@ -248,7 +248,7 @@ namespace chaos
 
         void GenerateBoxParticle(box2 const& box, ParticleTexcoords const& texcoords, TrianglePairPrimitive<ParticleDefault::Vertex>& primitive, float rotation)
         {
-            std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
+            std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(box);
 
             ParticleCorners particle_corners;
             particle_corners.bottomleft = corners.first;

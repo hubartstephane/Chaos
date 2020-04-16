@@ -19,12 +19,12 @@ glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 veloci
 
 chaos::box2 LudumPlayerDisplacementComponent::ExtendBox(chaos::box2 const& src, float left, float right, float bottom, float top) const
 {
-	std::pair<glm::vec2, glm::vec2> box_extremums = chaos::GetBoxExtremums(src);
-	box_extremums.first.x -= left;
-	box_extremums.first.y -= bottom;
-	box_extremums.second.x += right;
-	box_extremums.second.y += top;
-	return chaos::box2(box_extremums);
+	std::pair<glm::vec2, glm::vec2> box_corners = chaos::GetBoxCorners(src);
+	box_corners.first.x -= left;
+	box_corners.first.y -= bottom;
+	box_corners.second.x += right;
+	box_corners.second.y += top;
+	return chaos::box2(box_corners);
 }
 
 PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)

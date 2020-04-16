@@ -23,7 +23,7 @@ namespace chaos
 		template<typename T>
 		static void SetViewport(type_box2<T> const & viewport)
 		{
-			auto corners = GetBoxExtremums(viewport);
+			auto corners = GetBoxCorners(viewport);
 			glViewport(
 				(GLint)corners.first.x, 
 				(GLint)corners.first.y, 

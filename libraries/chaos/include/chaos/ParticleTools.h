@@ -101,7 +101,7 @@ namespace chaos
 		template<typename VERTEX_TYPE>
 		void GenerateBoxParticle(box2 const & box, ParticleTexcoords const & texcoords, VERTEX_TYPE * vertices, float rotation = 0.0f)
 		{
-			std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(box);
+			std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(box);
 
 			ParticleCorners particle_corners;
 			particle_corners.bottomleft = corners.first;

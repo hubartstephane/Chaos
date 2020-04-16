@@ -107,8 +107,6 @@ protected:
 	float ComputeBoxUnionHeight(chaos::box2 const& b1, chaos::box2 const& b2) const;
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity, bool running) const;
-	/** extend the box by adding some padding */
-	chaos::box2 ExtendBox(chaos::box2 const& src, float left, float right, float bottom, float top) const;
 
 protected:
 

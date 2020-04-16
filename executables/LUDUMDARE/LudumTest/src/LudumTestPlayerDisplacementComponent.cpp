@@ -54,6 +54,37 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 			continue;
 		}
 
+		glm::vec2 extend = displacement_info.pawn_box_extend;
+
+		glm::vec2 d1 = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, 0.0f, 0.0f, extend.y, 0.0f), 4 | 8);
+		if (d1.y > 0.0f)
+		{
+			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP
+			if (pawn_velocity.y < 0.0f)
+				pawn_velocity.y = 0.0f;
+		//	box.position += d1;
+		}
+
+
+		glm::vec2 d2 = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, 0.0f, 0.0f, 0.0f, extend.y), 4 | 8);
+		if (d2.y < 0.0f)
+		{
+			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed DOWN
+			if (pawn_velocity.y > 0.0f)
+				pawn_velocity.y = 0.0f;
+		//	box.position += d2;
+		}
+
+		glm::vec2 d3 = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, extend.x, extend.x, 0.0f, 0.0f), 1 | 2);
+		if (d3.x != 0.0f)
+		{
+			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed DOWN
+			if (pawn_velocity.x * d3.x < 0.0f)
+				pawn_velocity.x = 0.0f;
+		//	box.position += d3;
+		}
+
+		continue;
 
 		// keep the box outside the
 

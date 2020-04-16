@@ -34,7 +34,9 @@ public:
 	/** whether the player left stick value is exactly -1, 0, +1 or whether this may have intermediate values */
 	bool discrete_stick_mode = true;
 	/** clamping the velocity in both direction */
-	glm::vec2 max_pawn_velocity = glm::vec2(500.0f, 500.0f);
+	glm::vec2 max_pawn_velocity = glm::vec2(250.0f, 500.0f);
+	/** a factor to apply to max_velocity.x whenever pawn is running */
+	float run_velocity_factor = 2.0f;
 	/** IMPULSE mode : the impulse value for the pawn (immediate velocity given along X axis) */
 	glm::vec2 pawn_impulse = glm::vec2(500.0f, 0.0f);
 	/** the gravity to apply to the pawn */
@@ -100,7 +102,7 @@ protected:
 	float GetJumpVelocity(float jump_time) const;
 
 	/** clamp the player velocity according to limits */
-	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity) const;
+	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity, bool running) const;
 
 	/** extend the box by adding some padding */
 	chaos::box2 ExtendBox(chaos::box2 const& src, float left, float right, float bottom, float top) const;

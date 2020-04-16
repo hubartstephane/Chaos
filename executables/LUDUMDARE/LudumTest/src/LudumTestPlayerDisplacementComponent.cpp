@@ -9,11 +9,17 @@
 
 
 
-glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 velocity) const
+glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 velocity, bool running) const
 {
+	glm::vec2 runfactor = (running) ? glm::vec2(displacement_info.run_velocity_factor, 1.0f) : glm::vec2(1.0f, 1.0f);
+
 	for (int direction = 0; direction <= 1; ++direction)
-		if (displacement_info.max_pawn_velocity[direction] >= 0.0f && std::abs(velocity[direction]) > displacement_info.max_pawn_velocity[direction])
-			velocity[direction] = displacement_info.max_pawn_velocity[direction] * ((velocity[direction] > 0.0f) ? +1.0f : -1.0f);
+	{
+		float max_vel = displacement_info.max_pawn_velocity[direction] * runfactor[direction];
+
+		if (max_vel >= 0.0f && std::abs(velocity[direction]) > max_vel)
+			velocity[direction] = max_vel * ((velocity[direction] > 0.0f) ? +1.0f : -1.0f);
+	}
 	return velocity;
 }
 
@@ -321,6 +327,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	int const jump_key_buttons[] = { GLFW_KEY_SPACE, -1 };
 	bool jump_pressed = player->CheckButtonPressed(jump_key_buttons, chaos::XBoxButton::BUTTON_A);
 
+	int const run_key_buttons[] = { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1 };
+	bool run_pressed = player->CheckButtonPressed(run_key_buttons, chaos::XBoxButton::BUTTON_RIGHTTRIGGER);
+
 	// get player position
 	chaos::box2 pawn_box = pawn->GetBox();
 	glm::vec2& pawn_position = pawn_box.position;
@@ -338,17 +347,19 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	}
 	else
 	{
+		float run_factor = (run_pressed && displacement_state != PlayerDisplacementState::CLIMBING) ? displacement_info.run_velocity_factor : 1.0f;
+
 		// pawn is breaking
 		if (stick_position.x == 0.0f)
 			pawn_velocity.x = pawn_velocity.x * std::pow(displacement_info.pawn_break_ratio, delta_time);
 		// pawn is accelerating forward
 		else if (stick_position.x * pawn_velocity.x >= 0.0f)
-			pawn_velocity.x = pawn_velocity.x + stick_position.x * displacement_info.pawn_impulse.x * delta_time;
+			pawn_velocity.x = pawn_velocity.x + run_factor * stick_position.x * displacement_info.pawn_impulse.x * delta_time;
 		// pawn is changing direction (break harder)
 		else if (stick_position.x * pawn_velocity.x < 0.0f)
 			pawn_velocity.x =
 			pawn_velocity.x * std::pow(displacement_info.pawn_hardturn_break_ratio, delta_time) +
-			stick_position.x * displacement_info.pawn_impulse.x * delta_time;
+			run_factor * stick_position.x * displacement_info.pawn_impulse.x * delta_time;
 	}
 
 	// compute vertical velocity
@@ -393,7 +404,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// update player state
 	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
 
-	pawn_velocity = ClampPlayerVelocity(pawn_velocity);
+	pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlayerDisplacementState::CLIMBING);
 
 	// update the player pawn
 	pawn->SetPosition(pawn_box.position);

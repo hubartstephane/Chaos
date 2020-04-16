@@ -189,12 +189,14 @@ namespace chaos
 		for (int i = 0; i < dimension; ++i)
 		{
 			// in negative direction (dist_neg is to be positive)
+			T dist_neg = target_corners.second[i] - src_corners.first[i];
+			if (dist_neg <= 0)
+				return result; // separating plane -> no collision -> exit
+
 			int negative_flag = (1 << (i * 2 + 0));
 			if ((axis_of_interrests & negative_flag) != 0)
 			{
-				T dist_neg = target_corners.second[i] - src_corners.first[i];
-				if (dist_neg <= 0)
-					return result; // no collision, nothing to do
+
 				if (best_distance < 0 || dist_neg < best_distance)
 				{
 					best_distance = dist_neg;
@@ -203,13 +205,13 @@ namespace chaos
 			}
 
 			// in positive direction (dist_pos is to be positive)
+			T dist_pos = src_corners.second[i] - target_corners.first[i];
+			if (dist_pos <= 0)
+				return result; // separating plane -> no collision -> exit
+
 			int positive_flag = (1 << (i * 2 + 1));
 			if ((axis_of_interrests & positive_flag) != 0)
 			{
-				T dist_pos = src_corners.second[i] - target_corners.first[i];
-				if (dist_pos <= 0)
-					return result; // no collision, nothing to do
-
 				if (best_distance < 0 || dist_pos < best_distance)
 				{
 					best_distance = dist_pos;

@@ -99,7 +99,7 @@ namespace death
 
 	glm::vec2 GameHUDComponent::GetCanvasBoxCorner(chaos::box2 const & canvas_box, chaos::Hotpoint hotpoint)
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxExtremums(canvas_box);
+		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(canvas_box);
 
 		glm::vec2 result;
 		// search the X position

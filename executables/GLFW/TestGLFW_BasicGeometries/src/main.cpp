@@ -683,7 +683,7 @@ protected:
 
 			primitive_renderer->GPUDrawPrimitive(b, red, false);
 
-			std::pair<glm::vec3, glm::vec3> corners = GetBoxExtremums(b);
+			std::pair<glm::vec3, glm::vec3> corners = GetBoxCorners(b);
 			primitive_renderer->GPUDrawPrimitive(corners.first, white, false);
 			primitive_renderer->GPUDrawPrimitive(corners.second, white, false);
 		}

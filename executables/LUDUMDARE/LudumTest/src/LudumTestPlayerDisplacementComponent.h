@@ -103,8 +103,8 @@ protected:
 
 	/** check whether the detected collision is a wall collision instead of a ceil/floor collision. Update the collision_flag */
 	bool CheckWallCollision(chaos::box2& box, chaos::box2 const & pb, PlayerDisplacementCollisionFlags& collision_flag);
-	/** compute the height of the union of 2 boxes */
-	float ComputeBoxUnionHeight(chaos::box2 const& b1, chaos::box2 const& b2) const;
+	/** compute the length of a side of the union of 2 boxes */
+	float ComputeBoxUnionSideLength(chaos::box2 const& b1, chaos::box2 const& b2, int axis) const;
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity, bool running) const;
 

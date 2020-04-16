@@ -25,9 +25,9 @@ glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 veloci
 	return velocity;
 }
 
-float LudumPlayerDisplacementComponent::ComputeBoxUnionHeight(chaos::box2 const& b1, chaos::box2 const& b2) const
+float LudumPlayerDisplacementComponent::ComputeBoxUnionSideLength(chaos::box2 const& b1, chaos::box2 const& b2, int axis) const
 {
-	// compute the HEIGHT of the box UNION
+	// compute the HEIGHT (or WIDTH) of the box UNION
 	//
 	// ------+ A
 	//       |
@@ -46,10 +46,10 @@ float LudumPlayerDisplacementComponent::ComputeBoxUnionHeight(chaos::box2 const&
 	// XXX : in fact this can't because for SOFT TOUCHING box (along x axis for example), the half_size.y is set to -1 instead of 0
 	//
 
-	float a = b1.position.y + b1.half_size.y;
-	float b = b1.position.y - b1.half_size.y;
-	float c = b2.position.y + b2.half_size.y;
-	float d = b2.position.y - b2.half_size.y;
+	float a = b1.position[axis] + b1.half_size[axis];
+	float b = b1.position[axis] - b1.half_size[axis];
+	float c = b2.position[axis] + b2.half_size[axis];
+	float d = b2.position[axis] - b2.half_size[axis];
 
 	float mn = std::min(a, c);
 	float mx = std::max(b, d);
@@ -61,7 +61,7 @@ float LudumPlayerDisplacementComponent::ComputeBoxUnionHeight(chaos::box2 const&
 bool LudumPlayerDisplacementComponent::CheckWallCollision(chaos::box2& box, chaos::box2 const & pb, PlayerDisplacementCollisionFlags& collision_flag)
 {
 	// we can choose between a wall or a floor/ceil collision depending on the height of the interpenetration zone
-	float h = ComputeBoxUnionHeight(box, pb);
+	float h = ComputeBoxUnionSideLength(box, pb, 1);
 	if (h > box.half_size.y)
 	{
 		float min_pawn_x = box.position.x - box.half_size.x;
@@ -127,7 +127,7 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		if ((pb.position.y + pb.half_size.y >= box.position.y - box.half_size.y) && (pb.position.y + pb.half_size.y <= box.position.y + box.half_size.y))
 		{
 			// to known whether to keep a FLOOR or a WALL collision we compute the HEIGHT of the interpenetration
-			if (!CheckWallCollision(box, pb, result))
+			if (!CheckWallCollision(box, pb, result) && ComputeBoxUnionSideLength(box,pb, 0) > 0.0f)
 			{
 				box.position.y = pb.position.y + pb.half_size.y + box.half_size.y;				
 				pawn_velocity.y = 0.0f;
@@ -139,7 +139,7 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		else if ((pb.position.y - pb.half_size.y >= box.position.y - box.half_size.y) && (pb.position.y - pb.half_size.y <= box.position.y + box.half_size.y))
 		{
 			// to known whether to keep a FLOOR or a WALL collision we compute the HEIGHT of the interpenetration
-			if (!CheckWallCollision(box, pb, result))
+			if (!CheckWallCollision(box, pb, result) && ComputeBoxUnionSideLength(box, pb, 0) > 0.0f)
 			{
 				box.position.y = pb.position.y - pb.half_size.y - box.half_size.y;				
 				pawn_velocity.y = 0.0f;				

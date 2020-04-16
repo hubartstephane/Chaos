@@ -399,6 +399,8 @@ namespace chaos
 	}
 
 
+#if 0 // shuludum????!!!
+
 	template<typename T>
 	bool Collide(type_box<T, 2> const & src1, type_box<T, 2> const & src2)
 	{
@@ -421,6 +423,7 @@ namespace chaos
 
 		return true;
 	}
+#endif
 
 
 

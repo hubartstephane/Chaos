@@ -60,8 +60,11 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		if (d1.y > 0.0f)
 		{
 			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP
-			if (pawn_velocity.y < 0.0f)
-				pawn_velocity.y = 0.0f;
+			//if (pawn_velocity.y < 0.0f)
+			//pawn_velocity.y = 0.0f;
+
+			chaos::RestrictToOutside(collision.particle.bounding_box, box, 4 | 8);
+
 		//	box.position += d1;
 		}
 
@@ -70,8 +73,10 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		if (d2.y < 0.0f)
 		{
 			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed DOWN
-			if (pawn_velocity.y > 0.0f)
-				pawn_velocity.y = 0.0f;
+			//if (pawn_velocity.y > 0.0f)
+			//	pawn_velocity.y = 0.0f;
+
+			chaos::RestrictToOutside(collision.particle.bounding_box, box, 4 | 8);
 		//	box.position += d2;
 		}
 
@@ -79,12 +84,30 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		if (d3.x != 0.0f)
 		{
 			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed DOWN
-			if (pawn_velocity.x * d3.x < 0.0f)
-				pawn_velocity.x = 0.0f;
+			//if (pawn_velocity.x * d3.x < 0.0f)
+			//	pawn_velocity.x = 0.0f;
+
+			chaos::RestrictToOutside(collision.particle.bounding_box, box, 1 | 2);
+
 		//	box.position += d3;
 		}
 
+
+	//	chaos::RestrictToOutside(collision.particle.bounding_box, box); 
+
 		continue;
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// keep the box outside the
 
@@ -201,7 +224,8 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 
 	if (touching_ladder && is_grounded && stick_position.y != 0.0f)
 	{
-		return PlayerDisplacementState::CLIMBING;
+		if (displacement_info.climb_max_horizontal_velocity <= 0.0f || std::abs(pawn_velocity.x) < displacement_info.climb_max_horizontal_velocity) // cannot walk too fast to start a climb
+			return PlayerDisplacementState::CLIMBING;
 	}
 
 	if (touching_floor || touching_bridge)
@@ -307,27 +331,27 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	if (displacement_state == PlayerDisplacementState::FALLING || displacement_state == PlayerDisplacementState::JUMPING_DOWN) // do not fall otherway
 		sum_forces += glm::vec2(0.0f, -displacement_info.gravity);
 
-	// mode IMPULSE : pushing the stick in 1 direction create an impulse (velocity is immediatly set)
-
-#if 1
-	// pawn is breaking
-	if (stick_position.x == 0.0f)
-		pawn_velocity.x = pawn_velocity.x * std::pow(displacement_info.pawn_break_ratio, delta_time);
-	// pawn is accelerating forward
-	else if (stick_position.x * pawn_velocity.x >= 0.0f)
-		pawn_velocity.x = pawn_velocity.x + stick_position.x * displacement_info.pawn_impulse.x * delta_time;
-	// pawn is changing direction (break harder)
-	else if (stick_position.x * pawn_velocity.x < 0.0f)
-		pawn_velocity.x = 
+	// compute horizonral velocity (based on uniform acceleration or not for climbing)
+	if (displacement_state == PlayerDisplacementState::CLIMBING)
+	{
+		pawn_velocity.x = stick_position.x * displacement_info.climp_velocity.x;
+	}
+	else
+	{
+		// pawn is breaking
+		if (stick_position.x == 0.0f)
+			pawn_velocity.x = pawn_velocity.x * std::pow(displacement_info.pawn_break_ratio, delta_time);
+		// pawn is accelerating forward
+		else if (stick_position.x * pawn_velocity.x >= 0.0f)
+			pawn_velocity.x = pawn_velocity.x + stick_position.x * displacement_info.pawn_impulse.x * delta_time;
+		// pawn is changing direction (break harder)
+		else if (stick_position.x * pawn_velocity.x < 0.0f)
+			pawn_velocity.x =
 			pawn_velocity.x * std::pow(displacement_info.pawn_hardturn_break_ratio, delta_time) +
 			stick_position.x * displacement_info.pawn_impulse.x * delta_time;
+	}
 
-#else
-
-	pawn_velocity.x =  stick_position.x * displacement_info.pawn_impulse.x;
-
-#endif
-
+	// compute vertical velocity
 	if (displacement_state == PlayerDisplacementState::GROUNDED)
 	{
 		current_jump_count = 0;
@@ -336,22 +360,23 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	else if (displacement_state == PlayerDisplacementState::CLIMBING)
 	{
 		current_jump_count = 0;
-		pawn_velocity.y = stick_position.y * displacement_info.climp_velocity;
+		pawn_velocity.y = stick_position.y * displacement_info.climp_velocity.y;
 	}
 	else if (displacement_state == PlayerDisplacementState::JUMPING)
 	{
 		current_jump_timer = std::min(current_jump_timer + delta_time, GetMaxJumpDuration());
 		pawn_position.y = current_jump_start_y + GetJumpRelativeHeight(current_jump_timer);
-		pawn_velocity.y = 0.0f;
+		pawn_velocity.y = 0.0f; // no physics (ignore gravity, velocity) for the jump, just use a curve for the height of the player (even if that curve is based on physical equations)
 	}
 	else if (displacement_state == PlayerDisplacementState::JUMPING_DOWN || displacement_state == PlayerDisplacementState::FALLING)
 	{
 		pawn_velocity += (sum_forces * delta_time);
 	}
 
+	// update pawn position
 	pawn_position += pawn_velocity * delta_time;
 
-	// extend the pawn box for ground collision
+	// extend the pawn box for ground/wall collision
 	chaos::box2 extended_pawn_box = pawn_box;
 	extended_pawn_box.half_size += displacement_info.pawn_box_extend;
 
@@ -361,7 +386,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	death::TiledMapLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 		level_instance->FindPlayerTileCollisions(player, colliding_tiles, &extended_pawn_box);
-
 
 	// compute collisions and keep trace of all collided objects
 	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, colliding_tiles);

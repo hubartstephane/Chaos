@@ -46,7 +46,7 @@ public:
 	/** whenever the jump button is released during a jump, some ratio of the jump velocity is transmitted to smooth the animation */
 	float jump_released_velocity_factor = 0.3f;
 	/** the climb speed */
-	float climp_velocity = 50.0f;
+	glm::vec2 climp_velocity = glm::vec2(30.0f, 75.0f);
 	/** the distance that can be jumpdown before colliding bridge again */
 	float max_jumpdown_height = 32.0f;
 #if 0
@@ -61,6 +61,9 @@ public:
 	float pawn_break_ratio = 0.1f;
 	/** pawn is trying to change its direction */
 	float pawn_hardturn_break_ratio = 0.05f;
+
+	/** an horizontal velocity above which climb is forbidden */
+	float climb_max_horizontal_velocity = 32.0f;
 
 	/* an extend of the pawn box so we can detect collision */
 	glm::vec2 pawn_box_extend = glm::vec2(15.0f, 15.0f); 

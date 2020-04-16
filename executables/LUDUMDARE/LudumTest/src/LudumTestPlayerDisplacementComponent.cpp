@@ -7,6 +7,8 @@
 #include "LudumTestParticles.h"
 #include "LudumTestGameCheckpoint.h"
 
+#include "death/TiledMapParticle.h"
+
 
 
 glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 velocity, bool running) const
@@ -33,8 +35,159 @@ chaos::box2 LudumPlayerDisplacementComponent::ExtendBox(chaos::box2 const& src, 
 	return chaos::box2(box_corners);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static void GetTileObjectTypes(death::TileParticleCollisionInfo const& collision, bool & is_wall, bool & is_bridge, bool & is_ladder)
+{
+	is_wall = is_bridge = is_ladder = false;
+
+	if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
+		is_wall = true;
+	else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BRIDGE"))
+		is_bridge = true;
+	else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
+		is_ladder = true;
+}
+
+
+
+
+
+float LudumPlayerDisplacementComponent::ComputeBoxUnionHeight(chaos::box2 const& b1, chaos::box2 const& b2) const
+{
+	// compute the HEIGHT of the box UNION
+	//
+	// ------+ A
+	//       |
+	//  C +------    ^
+	//    |  |       | 
+	//    |  |       | Result
+	//    |  |       |
+	// ------+ B     v
+    //    |   
+	//  D +------
+	//
+	// XXX : this 'could be' replaced by
+	//
+	//       return (b1 & b2).half_size.y * 2.0f;
+	//
+	// XXX : in fact this can't because for SOFT TOUCHING box (along x axis for example), the half_size.y is set to -1 instead of 0
+	//
+
+	float a = b1.position.y + b1.half_size.y;
+	float b = b1.position.y - b1.half_size.y;
+	float c = b2.position.y + b2.half_size.y;
+	float d = b2.position.y - b2.half_size.y;
+
+	float mn = std::min(a, c);
+	float mx = std::max(b, d);
+	float dist = mn - mx;
+	return dist;
+}
+
+
+bool LudumPlayerDisplacementComponent::CheckWallCollision(chaos::box2& box, chaos::box2 const & pb, PlayerDisplacementCollisionFlags& collision_flag)
+{
+	float h = ComputeBoxUnionHeight(box, pb);
+	if (h > box.half_size.y)
+	{
+		pawn_velocity.x = 0.0f;
+
+		collision_flag = (PlayerDisplacementCollisionFlags)(collision_flag | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed HORIZONTALLY	
+		return true;
+	}
+	return false;
+}
+ 
 PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
 {
+
+	displacement_info.pawn_box_extend = glm::vec2(15.0f, 15.0f);
+
+	glm::vec2 extend = displacement_info.pawn_box_extend;
+
+
+	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
+
+	// detect collision flags
+	for (death::TileParticleCollisionInfo const& collision : colliding_tiles)
+	{
+		// check for real collisions because the very first TiledMap request may have use a an extra padding
+		// (Collide(...) detects SOFT TOUCH (strict 0 distance) as collision)
+		chaos::box2 const& pb = collision.particle.bounding_box;
+		if (!chaos::Collide(box, pb))
+			continue;
+
+		// search the kind of object pawn is touching
+		bool is_wall = false;
+		bool is_bridge = false;
+		bool is_ladder = false;
+		GetTileObjectTypes(collision, is_wall, is_bridge, is_ladder);
+
+		// handle only ground or cell
+		if (!is_wall && !is_bridge)
+			continue;
+
+
+
+		// is FLOOR ? (check this first to have precedence)
+		if ((pb.position.y + pb.half_size.y >= box.position.y - box.half_size.y) && (pb.position.y + pb.half_size.y <= box.position.y + box.half_size.y))
+		{
+			// to known whether to keep a FLOOR or a WALL collision we compute the HEIGHT of the interpenetration
+			if (!CheckWallCollision(box, pb, result))
+			{
+				box.position.y = pb.position.y + pb.half_size.y + box.half_size.y;				
+				pawn_velocity.y = 0.0f;
+
+				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP	
+			}
+		}
+		// is CEIL ? (cannot be both floor and ceil)
+		else if ((pb.position.y - pb.half_size.y >= box.position.y - box.half_size.y) && (pb.position.y - pb.half_size.y <= box.position.y + box.half_size.y))
+		{
+			// to known whether to keep a FLOOR or a WALL collision we compute the HEIGHT of the interpenetration
+			if (!CheckWallCollision(box, pb, result))
+			{
+				box.position.y = pb.position.y - pb.half_size.y - box.half_size.y;				
+				pawn_velocity.y = 0.0f;				
+
+				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed UP			
+			}				
+		}
+	}
+	return result;
+}
+
+
+
+
+
+
+
+
+
+#if 0
+
+PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
+{
+
+	displacement_info.pawn_box_extend = glm::vec2(15.0f, 0.0f);
+
+
+
 	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
 
 	for (death::TileParticleCollisionInfo const& collision : colliding_tiles)
@@ -159,6 +312,8 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 	}
 	return result;
 }
+
+#endif
 
 PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementState(chaos::box2 &pawn_box, bool jump_pressed, glm::vec2 const & stick_position, PlayerDisplacementCollisionFlags collision_flags)
 {

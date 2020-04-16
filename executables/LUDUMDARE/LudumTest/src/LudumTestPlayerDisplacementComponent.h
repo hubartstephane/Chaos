@@ -40,7 +40,7 @@ public:
 	/** IMPULSE mode : the impulse value for the pawn (immediate velocity given along X axis) */
 	glm::vec2 pawn_impulse = glm::vec2(500.0f, 0.0f);
 	/** the gravity to apply to the pawn */
-	float gravity = 2000.0f;
+	float gravity = 1000.0f;
 	/** the maximum height jump */
 	float max_jump_height = 64.0f;
 	/** the maximum extra jump count */
@@ -101,9 +101,12 @@ protected:
 	/** get the velocity of jumper at given time */
 	float GetJumpVelocity(float jump_time) const;
 
+	/** check whether the detected collision is a wall collision instead of a ceil/floor collision. Update the collision_flag */
+	bool CheckWallCollision(chaos::box2& box, chaos::box2 const & pb, PlayerDisplacementCollisionFlags& collision_flag);
+	/** compute the height of the union of 2 boxes */
+	float ComputeBoxUnionHeight(chaos::box2 const& b1, chaos::box2 const& b2) const;
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity, bool running) const;
-
 	/** extend the box by adding some padding */
 	chaos::box2 ExtendBox(chaos::box2 const& src, float left, float right, float bottom, float top) const;
 

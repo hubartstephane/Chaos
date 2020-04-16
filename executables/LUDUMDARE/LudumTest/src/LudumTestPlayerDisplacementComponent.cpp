@@ -25,47 +25,6 @@ glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 veloci
 	return velocity;
 }
 
-chaos::box2 LudumPlayerDisplacementComponent::ExtendBox(chaos::box2 const& src, float left, float right, float bottom, float top) const
-{
-	std::pair<glm::vec2, glm::vec2> box_corners = chaos::GetBoxCorners(src);
-	box_corners.first.x -= left;
-	box_corners.first.y -= bottom;
-	box_corners.second.x += right;
-	box_corners.second.y += top;
-	return chaos::box2(box_corners);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-static void GetTileObjectTypes(death::TileParticleCollisionInfo const& collision, bool & is_wall, bool & is_bridge, bool & is_ladder)
-{
-	is_wall = is_bridge = is_ladder = false;
-
-	if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
-		is_wall = true;
-	else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BRIDGE"))
-		is_bridge = true;
-	else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
-		is_ladder = true;
-}
-
-
-
-
-
 float LudumPlayerDisplacementComponent::ComputeBoxUnionHeight(chaos::box2 const& b1, chaos::box2 const& b2) const
 {
 	// compute the HEIGHT of the box UNION
@@ -101,10 +60,25 @@ float LudumPlayerDisplacementComponent::ComputeBoxUnionHeight(chaos::box2 const&
 
 bool LudumPlayerDisplacementComponent::CheckWallCollision(chaos::box2& box, chaos::box2 const & pb, PlayerDisplacementCollisionFlags& collision_flag)
 {
+	// we can choose between a wall or a floor/ceil collision depending on the height of the interpenetration zone
 	float h = ComputeBoxUnionHeight(box, pb);
 	if (h > box.half_size.y)
 	{
-		pawn_velocity.x = 0.0f;
+		float min_pawn_x = box.position.x - box.half_size.x;
+		float max_pawn_x = box.position.x + box.half_size.x;
+
+		if ((pb.position.x + pb.half_size.x >= min_pawn_x) && (pb.position.x + pb.half_size.x <= max_pawn_x)) // WALL is on the LEFT
+		{
+			box.position.x = pb.position.x + pb.half_size.x + box.half_size.x;
+			if (pawn_velocity.x < 0.0f)
+				pawn_velocity.x = 0.0f;
+		}
+		else if ((pb.position.x - pb.half_size.x >= min_pawn_x) && (pb.position.x - pb.half_size.x <= max_pawn_x)) // WALL is on the RIGHT
+		{
+			box.position.x = pb.position.x - pb.half_size.x - box.half_size.x;
+			if (pawn_velocity.x > 0.0f)
+				pawn_velocity.x = 0.0f;
+		}
 
 		collision_flag = (PlayerDisplacementCollisionFlags)(collision_flag | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed HORIZONTALLY	
 		return true;
@@ -114,12 +88,6 @@ bool LudumPlayerDisplacementComponent::CheckWallCollision(chaos::box2& box, chao
  
 PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
 {
-
-	displacement_info.pawn_box_extend = glm::vec2(15.0f, 15.0f);
-
-	glm::vec2 extend = displacement_info.pawn_box_extend;
-
-
 	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
 
 	// detect collision flags
@@ -135,13 +103,25 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		bool is_wall = false;
 		bool is_bridge = false;
 		bool is_ladder = false;
-		GetTileObjectTypes(collision, is_wall, is_bridge, is_ladder);
 
-		// handle only ground or cell
+		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
+			is_wall = true;
+		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BRIDGE"))
+			is_bridge = true;
+		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
+			is_ladder = true;
+
+
+		// ladder ?
+		if (is_ladder)
+		{
+			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_LADDER);
+			continue;
+		}
+
+		// can continue
 		if (!is_wall && !is_bridge)
 			continue;
-
-
 
 		// is FLOOR ? (check this first to have precedence)
 		if ((pb.position.y + pb.half_size.y >= box.position.y - box.half_size.y) && (pb.position.y + pb.half_size.y <= box.position.y + box.half_size.y))
@@ -184,110 +164,9 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
 {
 
-	displacement_info.pawn_box_extend = glm::vec2(15.0f, 0.0f);
-
-
-
-	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
-
-	for (death::TileParticleCollisionInfo const& collision : colliding_tiles)
-	{
-		// search the kind of object pawn is touching
-		bool is_wall = false;
-		bool is_bridge = false;
-		bool is_ladder = false;
-
-		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
-			is_wall = true;
-		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BRIDGE"))
-			is_bridge = true;
-		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
-			is_ladder = true;
-		else
-			continue;
-
-		// there are only "HARD collision" with wall and bridge
-		if (is_ladder)
-		{
-			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_LADDER);
-			continue;
-		}
-
-		glm::vec2 extend = displacement_info.pawn_box_extend;
-
-		glm::vec2 d1 = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, 0.0f, 0.0f, extend.y, 0.0f), 4 | 8);
-		if (d1.y > 0.0f)
-		{
-			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP
-			//if (pawn_velocity.y < 0.0f)
-			//pawn_velocity.y = 0.0f;
-
-			chaos::RestrictToOutside(collision.particle.bounding_box, box, 4 | 8);
-
-		//	box.position += d1;
-		}
-
-
-		glm::vec2 d2 = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, 0.0f, 0.0f, 0.0f, extend.y), 4 | 8);
-		if (d2.y < 0.0f)
-		{
-			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed DOWN
-			//if (pawn_velocity.y > 0.0f)
-			//	pawn_velocity.y = 0.0f;
-
-			chaos::RestrictToOutside(collision.particle.bounding_box, box, 4 | 8);
-		//	box.position += d2;
-		}
-
-		glm::vec2 d3 = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, extend.x, extend.x, 0.0f, 0.0f), 1 | 2);
-		if (d3.x != 0.0f)
-		{
-			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed DOWN
-			//if (pawn_velocity.x * d3.x < 0.0f)
-			//	pawn_velocity.x = 0.0f;
-
-			chaos::RestrictToOutside(collision.particle.bounding_box, box, 1 | 2);
-
-		//	box.position += d3;
-		}
-
-
-	//	chaos::RestrictToOutside(collision.particle.bounding_box, box); 
-
-		continue;
-
-
-
-
-
-
-
-
-
-
-
-
 
 		// keep the box outside the
 
-		glm::vec2 displacement = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, box);
-		if (displacement == glm::vec2(0.0f, 0.0f))
-			continue;
-
-		// ========================= WALL / CEIL / FLOOR (all have type WALL) =========================
-		if (is_wall)
-		{
-			if (displacement.x != 0.0f)
-			{
-				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed LEFT or RIGHT
-				if (pawn_velocity.x * displacement.y < 0.0f)
-					pawn_velocity.x = 0.0f;
-			}
-			if (displacement.y < 0.0f)
-				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed DOWN
-			else if (displacement.y > 0.0f)
-				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP
-		}
 		// ========================= BRIDGE =========================
 		else if (is_bridge)
 		{

@@ -171,7 +171,7 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
-	auto GetRestrictToOutsideDisplacement(type_box<T, dimension> const & src, type_box<T, dimension> const & target)
+	auto GetRestrictToOutsideDisplacement(type_box<T, dimension> const & src, type_box<T, dimension> const & target, int axis_of_interrests = -1)
 	{
 		// the null result
 		type_box<T, dimension>::vec_type result = type_box<T, dimension>::vec_type(0);
@@ -182,34 +182,39 @@ namespace chaos
 		auto src_corners = GetBoxExtremums(src);
 		auto target_corners = GetBoxExtremums(target);
 
-		if (glm::any(glm::lessThan(src_corners.second, target_corners.first)))
-			return result;
-		if (glm::any(glm::greaterThan(src_corners.first, target_corners.second)))
-			return result;
-
-		// compute the minimum distance, and best direction (+X, -X, +Y ...) to move the box
+		// compute the minimum distance, and best direction (+X, -X, +Y ...) to move the box 
+		// (best_direction encode the axis as X = 2 , Y = 4  and the negative/direction as a bitfield) 
 		T   best_distance = (T)-1;
 		int best_direction = -1;
 		for (int i = 0; i < dimension; ++i)
 		{
-			// in positive direction (dist_pos is to be positive)
-			T dist_pos = src_corners.second[i] - target_corners.first[i];
-			if (dist_pos <= 0)
-				return result; // no collision, nothing to do
-			T dist_neg = target_corners.second[i] - src_corners.first[i];
-			if (dist_neg <= 0)
-				return result; // no collision, nothing to do
-
-			if (best_distance < 0 || dist_pos < best_distance)
-			{
-				best_distance = dist_pos;
-				best_direction = 2 * i;
-			}
 			// in negative direction (dist_neg is to be positive)
-			if (best_distance < 0 || dist_neg < best_distance)
+			int negative_flag = (1 << (i * 2 + 0));
+			if ((axis_of_interrests & negative_flag) != 0)
 			{
-				best_distance = dist_neg;
-				best_direction = 2 * i + 1;
+				T dist_neg = target_corners.second[i] - src_corners.first[i];
+				if (dist_neg <= 0)
+					return result; // no collision, nothing to do
+				if (best_distance < 0 || dist_neg < best_distance)
+				{
+					best_distance = dist_neg;
+					best_direction = 2 * i + 0;
+				}
+			}
+
+			// in positive direction (dist_pos is to be positive)
+			int positive_flag = (1 << (i * 2 + 1));
+			if ((axis_of_interrests & positive_flag) != 0)
+			{
+				T dist_pos = src_corners.second[i] - target_corners.first[i];
+				if (dist_pos <= 0)
+					return result; // no collision, nothing to do
+
+				if (best_distance < 0 || dist_pos < best_distance)
+				{
+					best_distance = dist_pos;
+					best_direction = 2 * i + 1;
+				}
 			}
 		}
 
@@ -217,18 +222,18 @@ namespace chaos
 		if (best_direction >= 0)
 		{
 			if ((best_direction & 1) == 0)
-				result[best_direction / 2] = +best_distance; // positive direction
-			else
 				result[best_direction / 2] = -best_distance; // negative direction  
+			else
+				result[best_direction / 2] = +best_distance; // positive direction
 		}
 		return result;
 	}
 
 
 	template<typename T, int dimension>
-	bool RestrictToOutside(type_box<T, dimension>& src, type_box<T, dimension>& target)
+	bool RestrictToOutside(type_box<T, dimension>& src, type_box<T, dimension>& target, int axis_of_interrests = -1)
 	{
-		auto delta_position = GetRestrictToOutsideDisplacement(src, target);
+		auto delta_position = GetRestrictToOutsideDisplacement(src, target, axis_of_interrests);
 		if (delta_position == type_box<T, dimension>::vec_type(0))
 			return false;
 		target.position += delta_position;

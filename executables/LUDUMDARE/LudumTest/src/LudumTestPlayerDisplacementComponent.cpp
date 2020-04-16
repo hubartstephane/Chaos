@@ -29,19 +29,7 @@ chaos::box2 LudumPlayerDisplacementComponent::ExtendBox(chaos::box2 const& src, 
 
 PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
 {
-
-
-
-
-
-
-
-
-
 	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
-
-
-
 
 	for (death::TileParticleCollisionInfo const& collision : colliding_tiles)
 	{
@@ -50,22 +38,12 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		bool is_bridge = false;
 		bool is_ladder = false;
 
-
-		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BIGGER"))
-			is_wall = is_wall;
-
 		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
-		{
 			is_wall = true;
-		}
 		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BRIDGE"))
-		{
 			is_bridge = true;
-		}
 		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
-		{
 			is_ladder = true;
-		}
 		else
 			continue;
 
@@ -77,66 +55,9 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		}
 
 
-
-		// ========================= WALL / CEIL / FLOOR (all have type WALL) =========================
-
-		glm::vec2 displacement = glm::vec2(0.0f, 0.0f);
-
-		if (is_wall) // need to know whether this is a FLOOR, a CEIL or just a vertical WALL (this depends were the collision push the pawn)
-		{		
-			// wall ?
-			if ((displacement = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, displacement_info.pawn_box_extend.x, displacement_info.pawn_box_extend.x, 0.0f, 0.0f))) != glm::vec2(0.0f, 0.0f))
-			{
-				if (displacement.x != 0.0f)
-				{
-					result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed LEFT or RIGHT
-				}
-			}
-			// floor ?
-			if ((displacement = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, 0.0f, 0.0f, displacement_info.pawn_box_extend.y, 0.0f))) != glm::vec2(0.0f, 0.0f))
-			{
-				if (displacement.y > 0.0f)
-				{
-					result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP					
-				}
-			}
-			// ceil ?
-			else if ((displacement = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, ExtendBox(box, 0.0f, 0.0f, 0.0f, displacement_info.pawn_box_extend.y))) != glm::vec2(0.0f, 0.0f))
-			{
-				if (displacement.y < 0.0f)
-				{
-					result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed DOWN
-				}
-			}
-
-
-
-
-
-		}
-		else if (is_bridge)
-		{
-
-			is_bridge = is_bridge;
-
-
-		}
-
-
-
-
-
-
-
-
-#if 0
-
-
-
-
 		// keep the box outside the
 
-		glm::vec2 displacement = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, extended_pawn_box);
+		glm::vec2 displacement = chaos::GetRestrictToOutsideDisplacement(collision.particle.bounding_box, box);
 		if (displacement == glm::vec2(0.0f, 0.0f))
 			continue;
 
@@ -174,18 +95,8 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_BRIDGE);
 
 		}
-
-		
-
-
-#endif
-
 		chaos::RestrictToOutside(collision.particle.bounding_box, box); // displace the pawn box according to the NON EXTENDED pawn box
-
 	}
-
-
-
 	return result;
 }
 
@@ -358,18 +269,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// get player position
 	chaos::box2 pawn_box = pawn->GetBox();
 	glm::vec2& pawn_position = pawn_box.position;
-	glm::vec2   initial_pawn_position = pawn_position;
-
-	// extend the pawn box for ground collision
-	chaos::box2 extended_pawn_box = pawn_box;
-	pawn_box.half_size += displacement_info.pawn_box_extend;
-
-	// get colliding tiles
-	std::vector<death::TileParticleCollisionInfo> colliding_tiles;
-
-	death::TiledMapLevelInstance * level_instance = GetLevelInstance();
-	if (level_instance != nullptr)
-		level_instance->FindPlayerTileCollisions(player, colliding_tiles, &extended_pawn_box);
 
 	// sum the forces 
 	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
@@ -420,6 +319,18 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	}
 
 	pawn_position += pawn_velocity * delta_time;
+
+	// extend the pawn box for ground collision
+	chaos::box2 extended_pawn_box = pawn_box;
+	extended_pawn_box.half_size += displacement_info.pawn_box_extend;
+
+	// get colliding tiles
+	std::vector<death::TileParticleCollisionInfo> colliding_tiles;
+
+	death::TiledMapLevelInstance* level_instance = GetLevelInstance();
+	if (level_instance != nullptr)
+		level_instance->FindPlayerTileCollisions(player, colliding_tiles, &extended_pawn_box);
+
 
 	// compute collisions and keep trace of all collided objects
 	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, colliding_tiles);

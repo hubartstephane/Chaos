@@ -63,7 +63,7 @@ public:
 	float pawn_hardturn_break_ratio = 0.05f;
 
 	/* an extend of the pawn box so we can detect collision */
-	glm::vec2 pawn_box_extend = glm::vec2(5.0f, 5.0f); 
+	glm::vec2 pawn_box_extend = glm::vec2(15.0f, 15.0f); 
 
 };
 

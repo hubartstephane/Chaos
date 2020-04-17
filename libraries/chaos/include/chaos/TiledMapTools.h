@@ -46,6 +46,9 @@ namespace chaos
 		static bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a sound */
 		static bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
+
+		/** split the tile pseudo GID into GID/H-FLIP/V-FLIP */
+		static int GetTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip);
 	}; 
 
 }; // namespace chaos

@@ -160,16 +160,25 @@ namespace chaos
 		return IsObjectOfType(typed_object, "Sound");
 	}
 
-	int TiledMapTools::GetTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip)
+	int TiledMapTools::GetTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip, bool * diagonal_flip)
 	{
-		int gid = (pseudo_gid & ~((1 << 31) | (1 << 30)));
+		// see https://doc.mapeditor.org/en/stable/reference/tmx-map-format/
+		const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+		const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
+		const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+
+		std::int32_t tmp = (std::int32_t)pseudo_gid;
+
+		std::int32_t gid = tmp & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
 
 		if (horizontal_flip != nullptr)
-			*horizontal_flip = ((pseudo_gid & (1 << 31)) != 0);
+			*horizontal_flip = (tmp & FLIPPED_HORIZONTALLY_FLAG);
 		if (vertical_flip != nullptr)
-			*vertical_flip = ((pseudo_gid & (1 << 30)) != 0);
+			*vertical_flip = (tmp & FLIPPED_VERTICALLY_FLAG);
+		if (diagonal_flip != nullptr)
+			*diagonal_flip = (tmp & FLIPPED_DIAGONALLY_FLAG);
 
-		return gid;
+		return (int)gid;
 	}
 
 }; // namespace chaos

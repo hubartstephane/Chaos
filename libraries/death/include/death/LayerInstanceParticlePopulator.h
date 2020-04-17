@@ -29,7 +29,10 @@ namespace death
 		/** initialize the object */
 		bool Initialize(TiledMapLayerInstance* in_layer_instance);
 		/** insert a particle */
-		bool AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), int gid = 0, bool horizontal_flip = false, bool vertical_flip = false, bool keep_aspect_ratio = true);
+		//bool AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), int gid = 0, bool horizontal_flip = false, bool vertical_flip = false, bool diagonal_flip = false, bool keep_aspect_ratio = true);
+
+		bool AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, int gid, bool horizontal_flip, bool vertical_flip, bool diagonal_flip, bool keep_aspect_ratio);
+
 		/** flush remaining particles */
 		void FlushParticles();
 

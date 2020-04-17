@@ -939,7 +939,7 @@ namespace death
 					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 				}
 			}
-			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, keep_aspect_ratio);
+			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, tile->diagonal_flip, keep_aspect_ratio);
 		}
 	}
 
@@ -1223,7 +1223,8 @@ namespace death
 			}
 
 			// create a simple particle
-			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip);
+			bool keep_aspect_ratio = true;
+			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip, diagonal_flip, keep_aspect_ratio);
 		}
 
 		// final flush
@@ -1977,7 +1978,12 @@ namespace death
 
 		// create the particle
 		int player_gid = 0;
-		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), player_gid);
+		bool horizontal_flip = false;
+		bool vertical_flip = false;
+		bool diagonal_flip = false;
+		bool keep_aspect_ratio = true;
+
+		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), player_gid, horizontal_flip, vertical_flip, diagonal_flip, keep_aspect_ratio);
 		particle_populator->FlushParticles();
 
 		// get the allocation and finalize the layer

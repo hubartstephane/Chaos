@@ -705,6 +705,8 @@ namespace chaos
 			bool horizontal_flip = false;
 			/** object information */
 			bool vertical_flip = false;
+			/** object information */
+			bool diagonal_flip = false;
 		};
 
 		// ==========================================

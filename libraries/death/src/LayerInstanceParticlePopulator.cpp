@@ -57,7 +57,7 @@ namespace death
 		particle_count = 0;
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, int gid, bool horizontal_flip, bool vertical_flip, bool keep_aspect_ratio)
+	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, int gid, bool horizontal_flip, bool vertical_flip, bool diagonal_flip, bool keep_aspect_ratio)
 	{
 		assert(bitmap_name != nullptr);
 
@@ -81,11 +81,26 @@ namespace death
 				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 		}
 
+		// rotate the box if diagonal flipping is on
+		if (diagonal_flip)
+		{
+			glm::vec2 hotpoint = particle_box.position - particle_box.half_size; // the bottom left corner position has to be unmodified (as in Tiled Map Editor)
+			std::swap(particle_box.half_size.x, particle_box.half_size.y);
+			particle_box.position = hotpoint + particle_box.half_size;
+		}
+
 		// add the particle
 		TiledMapParticle particle;
 		particle.bounding_box = particle_box;
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip);
+		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip, diagonal_flip);
+
+
+
+
+
+
+
 		particle.color = color;
 		particle.gid = gid;
 		particle.bitmap_info = bitmap_info;

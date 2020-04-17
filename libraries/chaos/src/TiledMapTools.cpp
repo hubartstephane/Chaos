@@ -160,4 +160,16 @@ namespace chaos
 		return IsObjectOfType(typed_object, "Sound");
 	}
 
+	int TiledMapTools::GetTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip)
+	{
+		int gid = (pseudo_gid & ~((1 << 31) | (1 << 30)));
+
+		if (horizontal_flip != nullptr)
+			*horizontal_flip = ((pseudo_gid & (1 << 31)) != 0);
+		if (vertical_flip != nullptr)
+			*vertical_flip = ((pseudo_gid & (1 << 30)) != 0);
+
+		return gid;
+	}
+
 }; // namespace chaos

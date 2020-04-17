@@ -6,6 +6,7 @@
 #include <chaos/StringTools.h>
 #include <chaos/MyBase64.h>
 #include <chaos/MyZLib.h>
+#include <chaos/TiledMapTools.h>
 
 #define CHAOS_REVERSE_Y_AXIS 1
 
@@ -528,10 +529,7 @@ namespace chaos
 			int pseudo_gid = 0;// this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
 			XMLTools::ReadAttribute(element, "gid", pseudo_gid);
 
-			gid = (pseudo_gid & ~((1 << 31) | (1 << 30)));
-
-			horizontal_flip = ((pseudo_gid & (1 << 31)) != 0);
-			vertical_flip = ((pseudo_gid & (1 << 30)) != 0);
+			gid = TiledMapTools::GetTileGID(pseudo_gid, &horizontal_flip, &vertical_flip);
 
 			return true;
 		}

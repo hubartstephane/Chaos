@@ -1159,7 +1159,14 @@ namespace death
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			int gid = tile_layer->tile_indices[i];
+			int pseudo_gid = tile_layer->tile_indices[i];
+
+			bool horizontal_flip = false;
+			bool vertical_flip = false;
+			int gid = chaos::TiledMapTools::GetTileGID(pseudo_gid, &horizontal_flip, &vertical_flip);
+
+
+
 			if (gid == 0)
 				continue;
 			// search the tile information 
@@ -1170,9 +1177,6 @@ namespace death
 			// prepare data for the tile/object
 			glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(i);
 			chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
-
-			bool horizontal_flip = false;
-			bool vertical_flip = false;
 
 			// try to create a geometric object from the tile
 			GeometricObjectFactory factory = GetGeometricObjectFactory(tile_info.tiledata);

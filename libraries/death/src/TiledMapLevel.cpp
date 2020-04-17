@@ -1163,9 +1163,8 @@ namespace death
 
 			bool horizontal_flip = false;
 			bool vertical_flip = false;
-			int gid = chaos::TiledMapTools::GetTileGID(pseudo_gid, &horizontal_flip, &vertical_flip);
-
-
+			bool diagonal_flip = false;
+			int gid = chaos::TiledMapTools::GetTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
 
 			if (gid == 0)
 				continue;

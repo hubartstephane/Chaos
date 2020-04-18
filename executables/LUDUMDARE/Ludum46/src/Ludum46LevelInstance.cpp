@@ -199,3 +199,43 @@ bool LudumLevelInstance::CanCompleteLevel() const
 		return true;
 	return false;
 }
+
+
+void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particles_count)
+{
+	chaos::ParticleSpawner spawner = GetParticleSpawner("Blood", "Blood");
+	if (spawner.IsValid())
+	{
+		spawner.SpawnParticles(particles_count, false, [this, box](chaos::ParticleAccessor<ParticleBlood> accessor)
+		{
+			for (ParticleBlood& p : accessor)
+			{
+				p.bounding_box = box;
+				p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+				
+
+			}		
+		});
+	}
+
+}
+
+void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count)
+{
+	chaos::ParticleSpawner spawner = GetParticleSpawner("BurnedSouls", "BurnedSoul");
+	if (spawner.IsValid())
+	{
+		spawner.SpawnParticles(particles_count, false, [this, box](chaos::ParticleAccessor<ParticleBurnedSoul> accessor)
+		{
+			for (ParticleBurnedSoul& p : accessor)
+			{
+				p.bounding_box = box;
+				p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+				p.velocity = glm::vec2(0.0f, chaos::MathTools::RandFloat(50.0f, 100.0f) );
+				p.duration = 3.0f;
+				p.life = 0.0f;
+				p.offset_t = chaos::MathTools::RandFloat() * (float)M_PI;
+			}
+		});
+	}
+}

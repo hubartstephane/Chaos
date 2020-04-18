@@ -41,6 +41,8 @@ public:
 
 	death::TiledMapLayerInstance * fire_layer_instance = nullptr;
 
+	class LudumLevelInstance* ludum_level_instance = nullptr;
+
 };
 
 class ParticleSoul : public ParticleBase
@@ -139,6 +141,61 @@ public:
     void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
+
+// ===========================================================================
+// ParticleBlood
+// ===========================================================================
+
+class ParticleBlood : public ParticleBase
+{
+public:
+
+
+};
+
+class ParticleBloodTrait : public chaos::ParticleAllocationTrait<ParticleBlood, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame* game = nullptr;
+	};
+
+	bool UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const;
+
+	void ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+};
+
+// ===========================================================================
+// ParticleBurnedSoul
+// ===========================================================================
+
+class ParticleBurnedSoul : public ParticleBase
+{
+public:
+
+	float offset_t = 0.0f;
+
+};
+
+class ParticleBurnedSoulTrait : public chaos::ParticleAllocationTrait<ParticleBurnedSoul, VertexBase>
+{
+public:
+
+	class LayerTrait
+	{
+	public:
+
+		class LudumGame* game = nullptr;
+	};
+
+	bool UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const;
+
+	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+};
 
 
 

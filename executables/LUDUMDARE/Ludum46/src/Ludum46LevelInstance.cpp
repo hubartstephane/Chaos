@@ -57,6 +57,8 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
 		return false;
 
+	
+
 
 
 	return true;
@@ -130,10 +132,37 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 	death::TiledMapLayerInstance const* layer_instance = FindLayerInstance("Spawners");
 	if (layer_instance != nullptr)
 	{
-		//size_t count = layer_instance->GetTriggerCount
-
-
+		size_t count = layer_instance->GetGeometricObjectCount();
+		for (size_t i = 0; i < count; ++i)
+		{
+			SoulSpawnerObject const * soul_spawner = auto_cast(layer_instance->GetGeometricObject(i));
+			if (soul_spawner != nullptr)
+			{
+				int remaining_count = soul_spawner->GetRemainingParticleCount();
+				if (remaining_count < 0) // infinite case
+					return -1;
+				result += remaining_count;
+			}
+		}
 	}
 	return result;
 }
 
+bool LudumLevelInstance::IsPlayerDead(death::Player* player)
+{
+	if (death::TiledMapLevelInstance::IsPlayerDead(player))
+		return true;
+
+	LudumLevel* ludum_level = GetLevel();
+	if (ludum_level != nullptr)
+	{
+		int potential_soul_count = GetPotentialSoulCount();
+		if (potential_soul_count < 0) // No END
+			return false;
+
+		int current_soul_count = GetCurrentSoulCount();
+		if (current_soul_count + potential_soul_count < ludum_level->required_souls)
+			return true;
+	}
+	return false;
+}

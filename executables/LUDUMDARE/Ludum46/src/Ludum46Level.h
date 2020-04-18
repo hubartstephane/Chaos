@@ -28,6 +28,8 @@ public:
 
 	virtual bool DoTick(float delta_time);
 
+	int GetRemainingParticleCount() const;
+
 protected:
 
 	void SpawnParticles(chaos::ParticleSpawner & spawner, int count);
@@ -53,38 +55,36 @@ protected:
 
 };
 
-#if 0
-
 // =================================================
-// EnemySpawnerTriggerObject
+// FireSpawnerObject
 // =================================================
 
-class EnemySpawnerTriggerObject : public death::TiledMapTriggerObject
+class FireSpawnerObject : public SpawnerObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
 public:
 
 	/** constructor */
-	using death::TiledMapTriggerObject::TiledMapTriggerObject;
-	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	using SpawnerObject::SpawnerObject;
 
-protected:
-
-	/** override */
-	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type) override;
-
-protected:
-
-	EnemyPattern* pattern = nullptr;
-	EnemyType* type = nullptr;
-
-	std::string enemy_type;
-	std::string enemy_pattern;
 };
 
-#endif
+
+// =================================================
+// SoulSpawnerObject
+// =================================================
+
+class SoulSpawnerObject : public SpawnerObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using SpawnerObject::SpawnerObject;
+
+};
 
 
 // =================================================
@@ -108,4 +108,11 @@ protected:
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
 	virtual death::GeometricObjectFactory DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
+
+	virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map) override;
+
+protected:
+
+	int required_souls = 0;
+
 };

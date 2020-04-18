@@ -30,6 +30,7 @@
   <properties>
    <property name="PARTICLE_START_VELOCITY_Y" type="float" value="-10"/>
    <property name="SPAWNED_PARTICLE" value="Soul"/>
+   <property name="SPAWNER_TYPE" value="SoulSpawner"/>
    <property name="TARGET_LAYER" value="Souls"/>
   </properties>
   <image width="64" height="64" source="../sprites/SoulSpawner.png"/>
@@ -39,6 +40,7 @@
    <property name="PARTICLE_DURATION" type="float" value="6"/>
    <property name="PARTICLE_START_VELOCITY_X" type="float" value="100"/>
    <property name="SPAWNED_PARTICLE" value="Fire"/>
+   <property name="SPAWNER_TYPE" value="FireSpawner"/>
    <property name="SPAWN_PER_SECOND" type="float" value="2"/>
    <property name="TARGET_LAYER" value="Fire"/>
   </properties>

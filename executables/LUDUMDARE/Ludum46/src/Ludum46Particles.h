@@ -8,6 +8,7 @@
 #include <chaos/BitmapAtlas.h> 
 
 #include <death/TiledMapParticle.h> 
+#include <death/TiledMapLevel.h> 
 
 
 // ===========================================================================
@@ -37,6 +38,8 @@ public:
 	chaos::box2 level_bounding_box;
 
 	std::vector<class SoulTriggerObject*> soul_triggers;
+
+	death::TiledMapLayerInstance * fire_layer_instance = nullptr;
 
 };
 

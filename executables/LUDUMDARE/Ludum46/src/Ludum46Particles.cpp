@@ -28,8 +28,9 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 	if (ludum_level_instance != nullptr)
 	{
 		result.level_bounding_box = ludum_level_instance->GetBoundingBox();
+		result.fire_layer_instance = ludum_level_instance->FindLayerInstance("Fire");
 
-
+		// store triggers
 		death::TiledMapLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
 		if (layer_instance != nullptr)
 		{
@@ -70,7 +71,26 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 		if (particle->life > particle->duration)
 			return true;
 
-		particle->color.a = 1.0f - (particle->life / particle->duration);
+		particle->color.a = 1.0f - (particle->life / particle->duration);	
+	}
+
+	// check fire particles
+
+		// the fire elements
+	if (update_data.fire_layer_instance != nullptr && update_data.fire_layer_instance->GetParticleLayer() != nullptr)
+	{
+		size_t count = update_data.fire_layer_instance->GetParticleLayer()->GetAllocationCount();
+		for (size_t i = 0; i < count; ++i)
+		{
+			chaos::ParticleConstAccessor<ParticleFire> accessor = update_data.fire_layer_instance->GetParticleLayer()->GetAllocation(i)->GetParticleAccessor();
+			for (ParticleFire const& fire_particle : accessor)
+			{
+				if (chaos::Collide(fire_particle.bounding_box, particle->bounding_box))
+				{
+					return true; // touching fire 
+				}
+			}
+		}
 	}
 
 	// checking triggers

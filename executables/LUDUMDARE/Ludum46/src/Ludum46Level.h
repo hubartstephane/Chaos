@@ -13,6 +13,41 @@
 #include "Ludum46Game.h"
 
 
+// =================================================
+// EffectorObject
+// =================================================
+
+class EffectorObject
+{
+public:
+
+	/** no override here */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object);
+
+	virtual void SetEffectorState(bool in_active)
+	{
+		if (active == in_active)
+			return;
+		active = in_active;
+		OnEffectorChangeState();
+	}
+
+	virtual void OnEffectorChangeState() {}
+
+protected:
+
+	bool active = false;
+
+
+
+	float delay_between_triggers = 1.0f;
+
+	float last_time_triggered = -1;
+
+
+
+};
+
 
 class SpawnerObject : public death::TiledMapGeometricObject
 {
@@ -52,14 +87,14 @@ protected:
 
 	int spawned_count = 0;
 	float nospawn_time_cumulated = 0.0f; // accumulated time from previous frames with no spawn
-
+	bool emission_started = true;
 };
 
 // =================================================
 // FireSpawnerObject
 // =================================================
 
-class FireSpawnerObject : public SpawnerObject
+class FireSpawnerObject : public SpawnerObject, public EffectorObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -67,6 +102,12 @@ public:
 
 	/** constructor */
 	using SpawnerObject::SpawnerObject;
+
+	/** override */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+
+	virtual void OnEffectorChangeState() override;
+
 
 };
 
@@ -83,38 +124,6 @@ public:
 
 	/** constructor */
 	using SpawnerObject::SpawnerObject;
-
-
-};
-
-// =================================================
-// EffectorObject
-// =================================================
-
-class EffectorObject
-{
-public:
-
-	virtual void SetEffectorState(bool in_active)
-	{
-		if (active == in_active)
-			return;
-		active = in_active;
-		OnEffectorChangeState();
-	}
-
-	virtual void OnEffectorChangeState() {}
-
-protected:
-
-	bool active = false;
-
-
-
-	float delay_between_triggers = 1.0f;
-
-	float last_time_triggered = -1;
-
 
 
 };

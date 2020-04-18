@@ -6,6 +6,7 @@
 #include "Ludum46GameInstance.h"
 #include "Ludum46Player.h"
 #include "Ludum46LevelInstance.h"
+#include "Ludum46Level.h"
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
@@ -28,6 +29,19 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 	{
 		result.level_bounding_box = ludum_level_instance->GetBoundingBox();
 
+
+		death::TiledMapLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
+		if (layer_instance != nullptr)
+		{
+			size_t count = layer_instance->GetGeometricObjectCount();
+			for (size_t i = 0; i < count; ++i)
+			{
+				SoulTriggerObject* trigger = auto_cast(layer_instance->GetGeometricObject(i));
+				if (trigger == nullptr)
+					continue;
+				result.soul_triggers.push_back(trigger);
+			}
+		}
 	}
 	return result;
 }
@@ -41,9 +55,15 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 {
 	particle->bounding_box.position += delta_time * particle->velocity;
 
+	// out of world
 	if (!chaos::Collide(particle->bounding_box, update_data.level_bounding_box))
 		return true;
 
+	// out of health
+	if (particle->health <= 0.0f)
+		return true;
+
+	// out of lifetime
 	if (particle->duration > 0.0f)
 	{
 		particle->life += delta_time;
@@ -51,6 +71,13 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 			return true;
 
 		particle->color.a = 1.0f - (particle->life / particle->duration);
+	}
+
+	// checking triggers
+	for (SoulTriggerObject* trigger : update_data.soul_triggers)
+	{
+		if (chaos::Collide(trigger->GetBoundingBox(true), particle->bounding_box))
+			trigger->AddTriggerCount();
 	}
 
 	return false;

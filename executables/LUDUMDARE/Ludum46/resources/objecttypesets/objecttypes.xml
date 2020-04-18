@@ -45,6 +45,7 @@
   <property name="TRIGGER_ONCE" type="bool" default="false"/>
  </objecttype>
  <objecttype name="Spawner" color="#ffff00">
+  <property name="EMISSION_STARTED" type="bool" default="true"/>
   <property name="FORCED_SERIALIZATION" type="bool" default="true"/>
   <property name="MAX_SPAWNED_PARTICLES" type="int" default="100"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>

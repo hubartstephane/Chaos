@@ -41,7 +41,6 @@
    <property name="PARTICLE_START_VELOCITY_X" type="float" value="100"/>
    <property name="SPAWNED_PARTICLE" value="Fire"/>
    <property name="SPAWNER_TYPE" value="FireSpawner"/>
-   <property name="SPAWN_PER_SECOND" type="float" value="2"/>
    <property name="TARGET_LAYER" value="Fire"/>
   </properties>
   <image width="80" height="80" source="../sprites/FireSpawner.png"/>

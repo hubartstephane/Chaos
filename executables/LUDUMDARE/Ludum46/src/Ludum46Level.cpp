@@ -38,12 +38,26 @@
 //
 // eventuellement les objects geometrics pourraient avoir leur propre allocation !!!
 
+
+// =============================================================
+// EffectorObject implementation
+// =============================================================
+
+bool EffectorObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+{
+
+
+	return true;
+}
+
 // =============================================================
 // SpikeBarObject implementation
 // =============================================================
 
 bool SpikeBarObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 {
+	if (!EffectorObject::Initialize(in_geometric_object))
+		return false;
 	if (!death::TiledMapGeometricObject::Initialize(in_geometric_object))
 		return false;
 
@@ -54,6 +68,7 @@ bool SpikeBarObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_o
 void SpikeBarObject::OnEffectorChangeState()
 {
 	active = active;
+
 
 }
 
@@ -146,7 +161,7 @@ bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_ob
 	target_layer = in_geometric_object->FindPropertyString("TARGET_LAYER", "");
 	spawned_particle = in_geometric_object->FindPropertyString("SPAWNED_PARTICLE", "");
 	particle_duration = in_geometric_object->FindPropertyFloat("PARTICLE_DURATION", particle_duration);
-
+	emission_started = in_geometric_object->FindPropertyBool("EMISSION_STARTED", emission_started);
 	// update internals (used whenever checkpoint is reloaded)
 	spawned_count = 0;
 	nospawn_time_cumulated = 0.0f; 
@@ -158,6 +173,9 @@ bool SpawnerObject::DoTick(float delta_time)
 {
 	death::TiledMapGeometricObject::DoTick(delta_time);
 
+	// whether the emission is enabled 
+	if (!emission_started)
+		return true;
 	// nothing to spawn
 	if (spawn_per_second <= 0.0f)
 		return true;
@@ -207,8 +225,26 @@ void SpawnerObject::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 }
 
 
+// =============================================================
+// SpawnerObject implementation
+// =============================================================
 
 
+bool FireSpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+{
+	if (!EffectorObject::Initialize(in_geometric_object))
+		return false;
+	if (!SpawnerObject::Initialize(in_geometric_object))
+		return false;
+
+	return true;
+}
+
+void FireSpawnerObject::OnEffectorChangeState()
+{
+	if (active)
+		emission_started = true;
+}
 
 // =============================================================
 // LudumLevel implementation

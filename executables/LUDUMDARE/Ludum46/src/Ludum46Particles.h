@@ -36,11 +36,15 @@ public:
 
 	chaos::box2 level_bounding_box;
 
+	std::vector<class SoulTriggerObject*> soul_triggers;
+
 };
 
 class ParticleSoul : public ParticleBase
 {
 public:
+
+	float health = 1.0f;
 
 
 };

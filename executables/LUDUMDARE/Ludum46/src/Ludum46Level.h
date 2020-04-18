@@ -28,6 +28,11 @@ public:
 
 	virtual bool DoTick(float delta_time);
 
+protected:
+
+	int max_spawned_particles = -1;
+
+	glm::vec2 particle_start_velocity = glm::vec2(0.0f, 0.0f);
 
 };
 

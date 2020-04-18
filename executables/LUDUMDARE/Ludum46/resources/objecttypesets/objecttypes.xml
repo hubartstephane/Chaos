@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objecttypes>
- <objecttype name="BonusSpawner" color="#ffff00">
-  <property name="BONUS_SPAWNER" type="bool" default="true"/>
-  <property name="BONUS_TYPE" type="string" default=""/>
-  <property name="PARTICLE_CREATION" type="bool" default="false"/>
- </objecttype>
  <objecttype name="Camera" color="#ff00ff">
   <property name="CAMERA" type="bool" default="true"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
@@ -43,5 +38,11 @@
   <property name="SOUND_NAME" type="string"/>
   <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
   <property name="TRIGGER_ONCE" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="Spawner" color="#ffff00">
+  <property name="MAX_SPAWNED_PARTICLES" type="int" default="100"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+  <property name="PARTICLE_START_VELOCITY_X" type="float" default="0"/>
+  <property name="PARTICLE_START_VELOCITY_Y" type="float" default="0"/>
  </objecttype>
 </objecttypes>

@@ -47,6 +47,9 @@ namespace death
 		name = in_geometric_object->name;
 		id = in_geometric_object->GetObjectID();
 		geometric_object = in_geometric_object;
+
+		forced_serialization = in_geometric_object->FindPropertyBool("FORCED_SERIALIZATION", forced_serialization);
+
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
 		if (surface != nullptr)
@@ -874,6 +877,7 @@ namespace death
 			// create particles
 			game->GetTextGenerator()->Generate(text->text.c_str(), result, params);
 			chaos::ParticleTextGenerator::CreateTextAllocation(particle_layer.get(), result);
+			return;
 		}
 
 		// create additionnal particles (TILES)
@@ -1711,7 +1715,11 @@ namespace death
 		{
 			// only modified object
 			auto const* obj = elements[i].get();
-			if (obj == nullptr || !obj->IsModified())
+			if (obj == nullptr)
+				continue;
+			// Shu46 : IsForcedSerialization sometimes commented, sometimes nod ... bad design
+			//if (!obj->IsModified() && !obj->IsForcedSerialization()) 
+			if (!obj->IsModified())
 				continue;
 			// save the checkpoint
 			TiledMapObjectCheckpoint* checkpoint = obj->SaveIntoCheckpoint();
@@ -1751,7 +1759,7 @@ namespace death
 			//    -> object is currently modified, restore initial settings
 			if (obj_checkpoint != nullptr)
 				obj->LoadFromCheckpoint(obj_checkpoint);
-			else if (obj->IsModified())
+			else if (obj->IsModified() || obj->IsForcedSerialization()) // Shu46 : IsForcedSerialization sometimes commented, sometimes nod ... bad design
 				obj->Initialize(obj->GetGeometricObject());
 		}
 		return true;

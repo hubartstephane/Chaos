@@ -28,8 +28,18 @@
 //
 //  layer->FindCollidingObject<SoulTriggerObject>(...);
 
+// ca serait bien que dans
+//
+//    TiledMapLayerInstance::CreateGeometricObjectParticles(...) 
+//
+// on puisse recuperer les particules que l on vient de creer pour faire notre petite ttambouille ... pb : on utilise un cache de particles (et en plus elles sont typées en TiledMapParticle : aie)
+//
+//    TiledMapLayerInstanceParticlePopulator::AddParticle(
+//
+// eventuellement les objects geometrics pourraient avoir leur propre allocation !!!
+
 // =============================================================
-// EffectorObject implementation
+// SpikeBarObject implementation
 // =============================================================
 
 bool SpikeBarObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
@@ -74,6 +84,9 @@ bool SoulTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometri
 	std::vector<std::string> name_array = chaos::StringTools::Split(effectors.c_str(), separator);
 	for (std::string & name : name_array)
 		effector_names.push_back(std::move(name));
+
+	// update internals (used whenever checkpoint is reloaded)
+	trigger_count = 0;
 
 	return true;
 }
@@ -134,6 +147,10 @@ bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_ob
 	spawned_particle = in_geometric_object->FindPropertyString("SPAWNED_PARTICLE", "");
 	particle_duration = in_geometric_object->FindPropertyFloat("PARTICLE_DURATION", particle_duration);
 
+	// update internals (used whenever checkpoint is reloaded)
+	spawned_count = 0;
+	nospawn_time_cumulated = 0.0f; 
+
 	return true;
 }
 
@@ -169,6 +186,7 @@ bool SpawnerObject::DoTick(float delta_time)
 		spawned_count += count;
 		nospawn_time_cumulated = 0.0f;
 	}
+
 	return true;
 }
 

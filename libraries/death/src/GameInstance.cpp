@@ -261,9 +261,12 @@ namespace death
 
 	bool GameInstance::RespawnPlayer(Player* player)
 	{
+
+		// LD46 : infinite life (life_count < 0 at any moment)
+
 		// enough life ?
 		int life_count = player->GetLifeCount();
-		if (life_count <= 1)
+		if (life_count == 1) // player is loosing its last life
 			return false;
 		// keep some values to restore later
 		int score = player->GetScore();
@@ -272,7 +275,8 @@ namespace death
 			return false;
 		// update player values after death
 		player->SetScore(score, false);
-		player->SetLifeCount(life_count - 1, false);
+		if (life_count > 0)
+			player->SetLifeCount(life_count - 1, false); // life_count <= 0 : player has immortality
 		player->OnLifeLost();
 		return true;
 	}

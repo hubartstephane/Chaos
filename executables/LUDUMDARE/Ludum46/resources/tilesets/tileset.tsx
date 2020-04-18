@@ -6,7 +6,7 @@
  </tile>
  <tile id="1" type="PlayerStart">
   <properties>
-   <property name="BITMAP_NAME" value="Player"/>
+   <property name="BITMAP_NAME" value="PlayerAnim"/>
    <property name="PARTICLE_CREATION" type="bool" value="false"/>
   </properties>
   <image width="32" height="32" source="../sprites/player.png"/>

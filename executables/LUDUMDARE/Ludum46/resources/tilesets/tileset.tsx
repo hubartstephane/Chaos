@@ -23,6 +23,7 @@
  <tile id="5" type="Spawner">
   <properties>
    <property name="PARTICLE_CREATION" type="bool" value="false"/>
+   <property name="PARTICLE_START_VELOCITY_X" type="float" value="50"/>
    <property name="SPAWNED_PARTICLE" value="Fire"/>
    <property name="TARGET_LAYER" value="Fire"/>
   </properties>

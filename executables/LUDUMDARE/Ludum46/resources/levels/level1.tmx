@@ -44,7 +44,7 @@
     <property name="EMISSION_STARTED" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="2129" name="MySoulSpawner" type="Spawner" gid="9" x="1475" y="618.333" width="64" height="64">
+  <object id="2129" name="MySoulSpawner" type="Spawner" gid="9" x="1482" y="536.333" width="64" height="64">
    <properties>
     <property name="SPAWN_PER_SECOND" type="float" value="1"/>
    </properties>

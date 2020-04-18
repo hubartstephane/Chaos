@@ -163,16 +163,25 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle,
 
 void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
+	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
+	chaos::box2 box = particle.bounding_box;
 
+	box.half_size *= 1.0f + (particle.life / particle.duration);
 
-
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < primitive.count; ++i)
+		primitive[i].color = particle.color;
 }
 
 bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const
 {
 	particle->bounding_box.position += delta_time * particle->velocity;
+
+	particle->velocity += delta_time * particle->acceleration;
+
 	
 	if (particle->duration > 0.0f)
 	{

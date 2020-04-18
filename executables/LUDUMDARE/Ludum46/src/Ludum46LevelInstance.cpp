@@ -212,8 +212,13 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 			{
 				p.bounding_box = box;
 				p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-				
 
+				float angle = chaos::MathTools::RandFloat() * (float)M_PI;
+				p.velocity = chaos::MathTools::RandFloat(50.0f, 100.0f) * glm::vec2(std::cos(angle), std::sin(angle));
+
+				p.duration = 3.0f;
+				p.life = 0.0f;
+				p.acceleration.y = -30.0f;
 			}		
 		});
 	}

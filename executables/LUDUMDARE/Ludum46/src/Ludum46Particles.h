@@ -150,6 +150,8 @@ class ParticleBlood : public ParticleBase
 {
 public:
 
+	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
+
 
 };
 

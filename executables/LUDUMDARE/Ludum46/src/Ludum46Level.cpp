@@ -12,6 +12,12 @@
 #include <death/TiledMapLevel.h>
 
 
+// shuludum
+//
+// FindPropertyInt(...) mais return a value or a pointer depending on the additionnal DEFAULT parameter : not a good idea
+
+
+
 // =============================================================
 // LudumLevel implementation
 // =============================================================
@@ -20,6 +26,11 @@ bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_ob
 {
 	if (!death::TiledMapGeometricObject::Initialize(in_geometric_object))
 		return false;
+
+	max_spawned_particles = in_geometric_object->FindPropertyInt("MAX_SPAWNED_PARTICLES", max_spawned_particles);
+	particle_start_velocity.x = in_geometric_object->FindPropertyFloat("PARTICLE_START_VELOCITY_X", particle_start_velocity.x);
+	particle_start_velocity.y = in_geometric_object->FindPropertyFloat("PARTICLE_START_VELOCITY_Y", particle_start_velocity.y);
+
 
 	return true;
 }
@@ -81,7 +92,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
-	if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
+	if (chaos::TiledMapTools::IsObjectOfType(in_typed_object, "Spawner"))
 		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpawnerObject(in_layer_instance););
 
 

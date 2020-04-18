@@ -20,7 +20,7 @@
  <tile id="4" type="BRIDGE">
   <image width="32" height="32" source="../sprites/Bridge.png"/>
  </tile>
- <tile id="5" type="BIGGER">
+ <tile id="5" type="Spawner">
   <image width="80" height="80" source="../sprites/Bigger.png"/>
  </tile>
  <tile id="6">

@@ -42,6 +42,7 @@
  <objecttype name="Spawner" color="#ffff00">
   <property name="MAX_SPAWNED_PARTICLES" type="int" default="100"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
+  <property name="PARTICLE_DURATION" type="float" default="-1"/>
   <property name="PARTICLE_START_VELOCITY_X" type="float" default="0"/>
   <property name="PARTICLE_START_VELOCITY_Y" type="float" default="0"/>
   <property name="SPAWNED_PARTICLE" type="string"/>

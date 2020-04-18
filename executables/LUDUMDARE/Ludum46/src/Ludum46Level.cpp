@@ -18,6 +18,9 @@
 // 
 // SpawnParticle(...) maybe initialize automatically color to 1.0 (=> else 0 => invisible)
 //
+// chaos::ParticleAccessorBase<ParticleBase> => maybe some upcasting ?
+//
+// Level BoundingBox. Does not take care of tile/spawner very vwell rework on that
 
 
 
@@ -36,6 +39,7 @@ bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_ob
 	spawn_per_second = in_geometric_object->FindPropertyFloat("SPAWN_PER_SECOND", spawn_per_second);
 	target_layer = in_geometric_object->FindPropertyString("TARGET_LAYER", "");
 	spawned_particle = in_geometric_object->FindPropertyString("SPAWNED_PARTICLE", "");
+	particle_duration = in_geometric_object->FindPropertyFloat("PARTICLE_DURATION", particle_duration);
 
 	return true;
 }
@@ -77,19 +81,23 @@ bool SpawnerObject::DoTick(float delta_time)
 
 void SpawnerObject::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 {
-	spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessorBase<ParticleFire> accessor) 
+	spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessorBase<ParticleBase> accessor) 
 	{
 		chaos::box2 bx = GetBoundingBox(false);
-		chaos::box2 bbx = GetBoundingBox(true);
 
-		for (ParticleFire& p : accessor)
+		for (ParticleBase& p : accessor)
 		{
 			p.bounding_box = bx;
 			p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			p.velocity = particle_start_velocity;
+			p.duration = particle_duration;
 		}	
 	});
 }
+
+
+
+
 
 // =============================================================
 // LudumLevel implementation

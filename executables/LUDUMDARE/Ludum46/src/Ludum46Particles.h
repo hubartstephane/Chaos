@@ -21,6 +21,8 @@ class ParticleBase : public  death::TiledMapParticle
 public:
 
 	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
+	float life = 0.0f;
+	float duration = 0.0f;
 
 };
 
@@ -65,6 +67,14 @@ public:
 
 };
 
+class ParticleFireUpdateData
+{
+public:
+
+	chaos::box2 level_bounding_box;
+
+};
+
 class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
 {
 public:
@@ -76,7 +86,9 @@ public:
 		class LudumGame* game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleFire* particle, LayerTrait const* layer_trait) const;
+	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const* layer_trait) const;
+
+	bool UpdateParticle(float delta_time, ParticleFire* particle, ParticleFireUpdateData& update_data, LayerTrait const* layer_trait) const;
 
 	void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };

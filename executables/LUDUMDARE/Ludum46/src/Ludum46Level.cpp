@@ -12,7 +12,25 @@
 #include <death/TiledMapLevel.h>
 
 
+// =============================================================
+// LudumLevel implementation
+// =============================================================
 
+bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+{
+	if (!death::TiledMapGeometricObject::Initialize(in_geometric_object))
+		return false;
+
+	return true;
+}
+
+bool SpawnerObject::DoTick(float delta_time)
+{
+	death::TiledMapGeometricObject::DoTick(delta_time);
+
+
+	return true;
+}
 // =============================================================
 // LudumLevel implementation
 // =============================================================
@@ -34,12 +52,25 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;
 
-	bool is_player_and_camera = (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0);
-	if (is_player_and_camera)
+	if (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0)
 	{
 		ParticlePlayerTrait::LayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
+	}
+
+	if (chaos::StringTools::Stricmp(layer_name, "Souls") == 0)
+	{
+		ParticleSoulTrait::LayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleSoulTrait>(layer_trait);
+	}
+
+	if (chaos::StringTools::Stricmp(layer_name, "Fire") == 0)
+	{
+		ParticleFireTrait::LayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleFireTrait>(layer_trait);
 	}
 
 
@@ -50,6 +81,8 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
+	if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpawnerObject(in_layer_instance););
 
 
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);

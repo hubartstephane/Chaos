@@ -12,6 +12,59 @@
 
 #include "Ludum46Game.h"
 
+
+
+class SpawnerObject : public death::TiledMapGeometricObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using death::TiledMapGeometricObject::TiledMapGeometricObject;
+
+	/** override */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+
+	virtual bool DoTick(float delta_time);
+
+
+};
+
+#if 0
+
+// =================================================
+// EnemySpawnerTriggerObject
+// =================================================
+
+class EnemySpawnerTriggerObject : public death::TiledMapTriggerObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using death::TiledMapTriggerObject::TiledMapTriggerObject;
+	/** override */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+
+protected:
+
+	/** override */
+	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type) override;
+
+protected:
+
+	EnemyPattern* pattern = nullptr;
+	EnemyType* type = nullptr;
+
+	std::string enemy_type;
+	std::string enemy_pattern;
+};
+
+#endif
+
+
 // =================================================
 // Levels
 // =================================================

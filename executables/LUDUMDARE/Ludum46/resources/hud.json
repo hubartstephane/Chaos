@@ -1,0 +1,45 @@
+{
+  "BEST_SCORE_ID": {
+
+    "format": "[LEFTSCOREICON] %d [RIGHTSCOREICON]",
+    "generator_params": {
+      "hotpoint": "top",
+      "line_height": 60,
+      "position": [ 0.0, -20.0 ]
+    }
+  },
+
+  "SCORE_ID": {
+
+    "format": "[LEFTSCOREICON] %04d [RIGHTSCOREICON]",
+    "generator_params": {
+      "hotpoint": "bottom",
+      "line_height": 100,
+      "position": [ 0.0, 20.0 ]
+    }
+
+  },
+  "LEVEL_TITLE_ID": {
+
+    "generator_params": {
+      "hotpoint": "center",
+      "alignment": "center",
+      "line_height": 150,
+      "position": [ 0.0, 0.0 ]
+    }
+  },
+
+  "TITLE_ID": {
+
+    "generator_params": {
+      "alignment": "center"
+    }
+  },
+
+  "FPS_ID": {
+    "generator_params": {
+      "hotpoint": "bottom-right",
+      "position": [ -20.0, 20.0 ]
+    }
+  }
+}

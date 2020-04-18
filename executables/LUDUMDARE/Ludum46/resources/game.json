@@ -1,0 +1,9 @@
+{
+
+  "fonts": { "@filename": "fonts.json" },
+
+  "sprite_directory": "@sprites",
+  "levels_directory": "@levels",
+  "tilesets_directory": "@tilesets",
+  "objecttypesets_directory": "@objecttypesets"
+}

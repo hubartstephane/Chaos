@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="BonusSpawner" color="#ffff00">
+  <property name="BONUS_SPAWNER" type="bool" default="true"/>
+  <property name="BONUS_TYPE" type="string" default=""/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="Camera" color="#ff00ff">
+  <property name="CAMERA" type="bool" default="true"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="Checkpoint" color="#a4970a">
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="EnemySpawner" color="#5500ff">
+  <property name="ENEMY_PATTERN" type="string"/>
+  <property name="ENEMY_SPAWNER" type="bool" default="true"/>
+  <property name="ENEMY_TYPE" type="string"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="Finish" color="#a0a0a4">
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+ </objecttype>
+ <objecttype name="Notification" color="#34a404">
+  <property name="LIFETIME" type="float" default="5"/>
+  <property name="NOTIFICATION" type="string" default="toto"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+  <property name="PLAYER_COLLISION" type="bool" default="true"/>
+  <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
+  <property name="TRIGGER_ONCE" type="bool" default="true"/>
+ </objecttype>
+ <objecttype name="PlayerStart" color="#a0a0a4">
+  <property name="BITMAP_NAME" type="string"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+  <property name="PLAYER_START" type="bool" default="true"/>
+ </objecttype>
+ <objecttype name="Sound" color="#a40002">
+  <property name="3D_SOUND" type="bool" default="true"/>
+  <property name="LOOPING" type="bool" default="false"/>
+  <property name="MIN_DISTANCE_RATIO" type="float" default="0.3"/>
+  <property name="PARTICLE_CREATION" type="bool" default="false"/>
+  <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" default="-1"/>
+  <property name="SOUND_NAME" type="string"/>
+  <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
+  <property name="TRIGGER_ONCE" type="bool" default="false"/>
+ </objecttype>
+</objecttypes>

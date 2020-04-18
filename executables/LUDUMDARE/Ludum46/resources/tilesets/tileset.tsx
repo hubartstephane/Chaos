@@ -28,7 +28,7 @@
  </tile>
  <tile id="8" type="Spawner">
   <properties>
-   <property name="PARTICLE_START_VELOCITY_Y" type="float" value="-10"/>
+   <property name="PARTICLE_START_VELOCITY_Y" type="float" value="-100"/>
    <property name="SPAWNED_PARTICLE" value="Soul"/>
    <property name="SPAWNER_TYPE" value="SoulSpawner"/>
    <property name="TARGET_LAYER" value="Souls"/>

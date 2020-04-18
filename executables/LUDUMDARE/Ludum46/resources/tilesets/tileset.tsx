@@ -23,8 +23,10 @@
  <tile id="5" type="Spawner">
   <properties>
    <property name="PARTICLE_CREATION" type="bool" value="false"/>
-   <property name="PARTICLE_START_VELOCITY_X" type="float" value="50"/>
+   <property name="PARTICLE_DURATION" type="float" value="-1"/>
+   <property name="PARTICLE_START_VELOCITY_X" type="float" value="500"/>
    <property name="SPAWNED_PARTICLE" value="Fire"/>
+   <property name="SPAWN_PER_SECOND" type="float" value="5"/>
    <property name="TARGET_LAYER" value="Fire"/>
   </properties>
   <image width="80" height="80" source="../sprites/Bigger.png"/>

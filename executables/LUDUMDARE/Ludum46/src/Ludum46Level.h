@@ -44,6 +44,8 @@ protected:
 
 	std::string spawned_particle;
 
+	float particle_duration = -1.0f;
+
 protected:
 
 	int spawned_count = 0;

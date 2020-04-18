@@ -8,6 +8,8 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/ParticleSpawner.h>
+#include <chaos/StringTools.h>
+
 
 #include <death/TiledMapLevel.h>
 
@@ -27,6 +29,13 @@
 // =============================================================
 // LudumLevel implementation
 // =============================================================
+
+int SpawnerObject::GetRemainingParticleCount() const
+{
+	if (max_spawned_particles < 0) // infinite case
+		return -1;
+	return (max_spawned_particles - spawned_count);
+}
 
 bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 {
@@ -150,8 +159,30 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
 	if (chaos::TiledMapTools::IsObjectOfType(in_typed_object, "Spawner"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpawnerObject(in_layer_instance););
+	{
+		std::string const* spawner_type = in_typed_object->FindPropertyString("SPAWNER_TYPE");
+		if (spawner_type != nullptr)
+		{
+			if (chaos::StringTools::Strcmp(*spawner_type, "SoulSpawner") == 0)
+				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulSpawnerObject(in_layer_instance););
+			if (chaos::StringTools::Strcmp(*spawner_type, "FireSpawner") == 0)
+				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new FireSpawnerObject(in_layer_instance););
+		}
+	}
 
 
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
+}
+
+
+bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
+{
+	if (!death::TiledMapLevel::Initialize(in_tiled_map))
+		return false;
+
+	required_souls = in_tiled_map->FindPropertyInt("REQUIRED_SOULS", 10);
+	if (required_souls <= 0)
+		return false;
+
+	return true;
 }

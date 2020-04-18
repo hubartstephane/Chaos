@@ -778,6 +778,9 @@ namespace death
 		/** material name */
 		std::string material_name;
 
+		/** whether the particles of this layer must be destroyed when LoadingCheckpoint */
+		bool autoclean_particles = false;
+
 		/** the level instance this object belongs to */
 		TiledMapLevelInstance* level_instance = nullptr;
 

@@ -782,6 +782,9 @@ namespace death
 		// get the properties of interrest
 		id = layer->id;
 
+
+		// shu46 : replace avec    XX = FindProperty( .. XX) => eviter initialization differente du constructeur
+
 		float const* ratio = layer->FindPropertyFloat("DISPLACEMENT_RATIO");
 		if (ratio != nullptr)
 		{
@@ -802,6 +805,8 @@ namespace death
 		tile_collisions_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
 
 		infinite_bounding_box = layer->FindPropertyBool("INFINITE_BOUNDING_BOX", false);
+
+		autoclean_particles = layer->FindPropertyBool("AUTOCLEAN_PARTICLES", autoclean_particles);
 
 		// copy the offset / name
 		offset = layer->offset;
@@ -1740,7 +1745,6 @@ namespace death
 	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
 	bool TiledMapLayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints)
 	{
-		// shuzzz
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
@@ -1767,6 +1771,11 @@ namespace death
 
 	bool TiledMapLayerInstance::DoLoadFromCheckpoint(TiledMapLayerCheckpoint const* checkpoint)
 	{
+		// destroy particles
+		if (autoclean_particles && particle_layer != nullptr)
+			particle_layer->ClearAllAllocations();
+
+		// serialize the objects
 		DoLoadFromCheckpointHelper(trigger_objects, checkpoint->trigger_checkpoints);
 		DoLoadFromCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
 		return true;

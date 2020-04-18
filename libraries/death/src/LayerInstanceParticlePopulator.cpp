@@ -95,12 +95,6 @@ namespace death
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
 		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip, diagonal_flip);
 
-
-
-
-
-
-
 		particle.color = color;
 		particle.gid = gid;
 		particle.bitmap_info = bitmap_info;

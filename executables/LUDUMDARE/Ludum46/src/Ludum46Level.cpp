@@ -12,9 +12,12 @@
 #include <death/TiledMapLevel.h>
 
 
-// shuludum
+// shu46
 //
 // FindPropertyInt(...) mais return a value or a pointer depending on the additionnal DEFAULT parameter : not a good idea
+// 
+// SpawnParticle(...) maybe initialize automatically color to 1.0 (=> else 0 => invisible)
+//
 
 
 
@@ -76,24 +79,16 @@ void SpawnerObject::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 {
 	spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessorBase<ParticleFire> accessor) 
 	{
+		chaos::box2 bx = GetBoundingBox(false);
+		chaos::box2 bbx = GetBoundingBox(true);
+
 		for (ParticleFire& p : accessor)
 		{
-
+			p.bounding_box = bx;
+			p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			p.velocity = particle_start_velocity;
 		}	
 	});
-
-#if 0
-
-	chaos::ParticleSpawner spawner = target_layer_instance->GetParticleSpawner();
-	spawner.SpawnParticles(count, false []() {
-	
-	
-	
-	});
-
-	//target_layer_instance->SpawnParticles(count)
-#endif
-	count = count;
 }
 
 // =============================================================

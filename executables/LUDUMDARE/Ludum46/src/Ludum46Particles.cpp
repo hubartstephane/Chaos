@@ -44,6 +44,7 @@ void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos
 
 bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle, LayerTrait const* layer_trait) const
 {
+	particle->bounding_box.position += delta_time * particle->velocity;
 
 	return false;
 }

@@ -37,7 +37,7 @@
   </data>
  </layer>
  <objectgroup id="26" name="Camera">
-  <object id="2114" type="Camera" x="977.545" y="280.182" width="883.727" height="513.818"/>
+  <object id="2114" type="Camera" x="849.545" y="104.182" width="1379.73" height="977.818"/>
  </objectgroup>
  <layer id="31" name="Spawners" width="100" height="104">
   <data encoding="base64">

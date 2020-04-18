@@ -18,7 +18,7 @@ namespace death
 	public:
 
 		int gid = 0;
-		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr;
+		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; // shu46 !!! 
 	};
 
 	// =====================================

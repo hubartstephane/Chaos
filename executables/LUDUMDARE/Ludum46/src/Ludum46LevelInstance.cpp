@@ -153,15 +153,18 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 	if (death::TiledMapLevelInstance::IsPlayerDead(player))
 		return true;
 
-	LudumLevel* ludum_level = GetLevel();
-	if (ludum_level != nullptr)
+	LudumPlayer* ludum_player = auto_cast(player);
+
+	LudumLevel * ludum_level = GetLevel();
+
+	if (ludum_level != nullptr && ludum_player != nullptr)
 	{
 		int potential_soul_count = GetPotentialSoulCount();
 		if (potential_soul_count < 0) // No END
 			return false;
 
 		int current_soul_count = GetCurrentSoulCount();
-		if (current_soul_count + potential_soul_count < ludum_level->required_souls)
+		if (current_soul_count + potential_soul_count + ludum_player->burned_souls < ludum_level->required_souls)
 			return true;
 	}
 	return false;

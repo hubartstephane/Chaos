@@ -35,6 +35,8 @@ protected:
     /** override */
     virtual bool DoSaveIntoCheckpoint(death::PlayerCheckpoint* checkpoint) const override;
 
+	/** override */
+	virtual void OnLifeLost() override;
     /** override */
     virtual void OnLevelChanged(death::Level* new_level, death::Level* old_level, death::LevelInstance* new_level_instance) override;
     /** override */
@@ -42,6 +44,8 @@ protected:
     /** override */
     virtual void HandleKeyboardInputs(float delta_time) override;
 
+protected:
 
+	int burned_souls = 0;
 };
 

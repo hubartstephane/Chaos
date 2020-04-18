@@ -124,6 +124,11 @@ namespace death
 		/** getters on the chaos::GeometricObject that this instance references to */
 		chaos::TiledMap::GeometricObject const * GetGeometricObject() const { return geometric_object.get(); }
 
+		/** whether the object is to forced be serialized */
+		bool IsForcedSerialization() const { return forced_serialization; }
+		/** raise the forced serialization flag */
+		void SetForcedSerialization(bool in_forced_serialization = true) { forced_serialization = in_forced_serialization; }
+
 	protected:
 
 		/** additionnal initialization */
@@ -137,6 +142,8 @@ namespace death
 		chaos::box2 bounding_box;
 		/** a reference to the geometric object (chaos point of view) that was used for initialization */
 		chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
+		/** whether the object is forced to be serialized */
+		bool forced_serialization = false;
 	};
 
 	// =====================================

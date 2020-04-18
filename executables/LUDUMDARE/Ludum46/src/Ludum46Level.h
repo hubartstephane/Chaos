@@ -84,7 +84,58 @@ public:
 	/** constructor */
 	using SpawnerObject::SpawnerObject;
 
+
 };
+
+// =================================================
+// SoulTriggerObject
+// =================================================
+
+class EffectorObject
+{
+public:
+
+	virtual void SetEffectorState(bool in_active)
+	{
+		if (active == in_active)
+			return;
+		active = in_active;
+		OnEffectorChangeState();
+	}
+
+	virtual void OnEffectorChangeState() {}
+
+protected:
+
+	bool active = false;
+};
+
+// =================================================
+// SoulTriggerObject
+// =================================================
+
+class SoulTriggerObject : public death::TiledMapGeometricObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using death::TiledMapGeometricObject::TiledMapGeometricObject;
+
+	/** override */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+
+	virtual bool DoTick(float delta_time);
+
+	
+
+public:
+
+	std::string effector_name;
+};
+
+
 
 
 // =================================================

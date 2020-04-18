@@ -25,9 +25,30 @@
 // Level BoundingBox. Does not take care of tile/spawner very vwell rework on that
 
 
+// =============================================================
+// SoulTriggerObject implementation
+// =============================================================
+
+bool SoulTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+{
+	if (!death::TiledMapGeometricObject::Initialize(in_geometric_object))
+		return false;
+
+	effector_name = in_geometric_object->FindPropertyString("EFFECTOR_NAME", "");
+
+	return true;
+}
+
+bool SoulTriggerObject::DoTick(float delta_time)
+{
+	death::TiledMapGeometricObject::DoTick(delta_time);
+
+	return true;
+}
+
 
 // =============================================================
-// LudumLevel implementation
+// SpawnerObject implementation
 // =============================================================
 
 int SpawnerObject::GetRemainingParticleCount() const

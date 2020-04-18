@@ -46,6 +46,15 @@
 // maybe review CheckCompletedLevel/ CanCompleteLevel / CheckGameOverCondition
 // 
 
+//
+// UpdateParticle/DrawParticle : un prends un pointer l autre une ref !
+// 
+
+// Make ParticleTraits inherit one another / Particles inherit
+//
+//    class ParticleBurnedSoulTrait : public chaos::ParticleAllocationTrait<ParticleBurnedSoul, VertexBase>
+//
+
 // =============================================================
 // EffectorObject implementation
 // =============================================================

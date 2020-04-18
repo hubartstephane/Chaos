@@ -218,6 +218,8 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 {
 	particle->bounding_box.position += delta_time * particle->velocity;
 
+	particle->velocity += delta_time * particle->acceleration;
+
 	if (particle->duration > 0.0f)
 	{
 		particle->life += delta_time;

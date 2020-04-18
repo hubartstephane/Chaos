@@ -175,7 +175,7 @@ public:
 // ParticleBurnedSoul
 // ===========================================================================
 
-class ParticleBurnedSoul : public ParticleBase
+class ParticleBurnedSoul : public ParticleBlood
 {
 public:
 

@@ -52,6 +52,14 @@ protected:
 	virtual bool DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoint) const override;
 
 
+
+	int GetCurrentSoulCount() const;
+
+	int GetPotentialSoulCount() const;
+
+
+
+
 protected:
 
 	/** pointer on game */

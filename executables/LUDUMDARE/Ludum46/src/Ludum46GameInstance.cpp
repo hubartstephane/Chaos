@@ -24,3 +24,4 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 	if (new_level != nullptr && old_level != nullptr)
 		game->PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
 }
+

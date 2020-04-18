@@ -1639,6 +1639,62 @@ namespace death
 		return trigger_objects[index].get();
 	}
 
+	size_t TiledMapLayerInstance::GetCameraObjectCount() const
+	{
+		return camera_objects.size();
+	}
+
+	TiledMapCameraObject * TiledMapLayerInstance::GetCameraObject(size_t index)
+	{
+		if (index >= camera_objects.size())
+			return nullptr;
+		return camera_objects[index].get();
+	}
+
+	TiledMapCameraObject const* TiledMapLayerInstance::GetCameraObject(size_t index) const
+	{
+		if (index >= camera_objects.size())
+			return nullptr;
+		return camera_objects[index].get();
+	}
+
+	size_t TiledMapLayerInstance::GetPlayerStartObjectCount() const
+	{
+		return player_start_objects.size();
+	}
+
+	TiledMapPlayerStartObject* TiledMapLayerInstance::GetPlayerStartObject(size_t index)
+	{
+		if (index >= player_start_objects.size())
+			return nullptr;
+		return player_start_objects[index].get();
+	}
+
+	TiledMapPlayerStartObject const* TiledMapLayerInstance::GetPlayerStartObject(size_t index) const
+	{
+		if (index >= player_start_objects.size())
+			return nullptr;
+		return player_start_objects[index].get();
+	}
+
+	size_t TiledMapLayerInstance::GetGeometricObjectCount() const
+	{
+		return geometric_objects.size();
+	}
+
+	TiledMapGeometricObject* TiledMapLayerInstance::GetGeometricObject(size_t index)
+	{
+		if (index >= geometric_objects.size())
+			return nullptr;
+		return geometric_objects[index].get();
+	}
+
+	TiledMapGeometricObject const* TiledMapLayerInstance::GetGeometricObject(size_t index) const
+	{
+		if (index >= geometric_objects.size())
+			return nullptr;
+		return geometric_objects[index].get();
+	}
 
 	TiledMapLayerCheckpoint* TiledMapLayerInstance::DoCreateCheckpoint() const
 	{

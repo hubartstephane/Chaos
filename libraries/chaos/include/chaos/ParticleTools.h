@@ -151,6 +151,12 @@ namespace chaos
 				std::swap(result.bottomleft.x, result.topright.x);
 			if (vertical_flip)
 				std::swap(result.bottomleft.y, result.topright.y);
+			if (diagonal_flip)
+			{
+				std::swap(result.bottomleft.x, result.topright.x);
+				std::swap(result.bottomleft.y, result.topright.y);
+
+			}
 
 
 

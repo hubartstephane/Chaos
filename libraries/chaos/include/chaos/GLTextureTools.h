@@ -37,10 +37,21 @@ namespace chaos
 		GLenum wrap_t = GL_REPEAT;
 		/** parameters for glTexParameteri(...) */
 		GLenum wrap_r = GL_REPEAT;
+
+#if 0 // Shu46
+
 		/** parameters for glTexParameteri(...) */
 		GLenum mag_filter = GL_LINEAR;
 		/** parameters for glTexParameteri(...) */
 		GLenum min_filter = GL_LINEAR_MIPMAP_LINEAR;
+
+#endif
+
+		/** parameters for glTexParameteri(...) */
+		GLenum mag_filter = GL_NEAREST;
+		/** parameters for glTexParameteri(...) */
+		GLenum min_filter = GL_NEAREST;
+
 		/** parameters for glTexImageXX(...) */
 		GLint  level = 0;
 		/** parameters for glTexImageXX(...) */

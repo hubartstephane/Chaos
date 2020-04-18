@@ -44,5 +44,8 @@
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_START_VELOCITY_X" type="float" default="0"/>
   <property name="PARTICLE_START_VELOCITY_Y" type="float" default="0"/>
+  <property name="SPAWNED_PARTICLE" type="string"/>
+  <property name="SPAWN_PER_SECOND" type="float" default="20.5"/>
+  <property name="TARGET_LAYER" type="string"/>
  </objecttype>
 </objecttypes>

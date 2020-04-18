@@ -30,9 +30,24 @@ public:
 
 protected:
 
+	void SpawnParticles(chaos::ParticleSpawner & spawner, int count);
+
+protected:
+
 	int max_spawned_particles = -1;
 
+	float spawn_per_second = 10.0f;
+
 	glm::vec2 particle_start_velocity = glm::vec2(0.0f, 0.0f);
+
+	std::string target_layer;
+
+	std::string spawned_particle;
+
+protected:
+
+	int spawned_count = 0;
+	float nospawn_time_cumulated = 0.0f; // accumulated time from previous frames with no spawn
 
 };
 

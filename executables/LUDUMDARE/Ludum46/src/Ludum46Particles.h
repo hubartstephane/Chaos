@@ -30,6 +30,14 @@ public:
 // ParticleSoul
 // ===========================================================================
 
+class ParticleSoulUpdateData
+{
+public:
+
+	chaos::box2 level_bounding_box;
+
+};
+
 class ParticleSoul : public ParticleBase
 {
 public:
@@ -48,7 +56,9 @@ public:
 		class LudumGame* game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleSoul* particle, LayerTrait const* layer_trait) const;
+	ParticleSoulUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor, LayerTrait const* layer_trait) const;
+
+	bool UpdateParticle(float delta_time, ParticleSoul* particle, ParticleSoulUpdateData& update_data, LayerTrait const* layer_trait) const;
 
 	void ParticleToPrimitives(ParticleSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
@@ -60,13 +70,6 @@ public:
 // ParticleFire
 // ===========================================================================
 
-class ParticleFire : public ParticleBase
-{
-public:
-
-
-};
-
 class ParticleFireUpdateData
 {
 public:
@@ -74,6 +77,15 @@ public:
 	chaos::box2 level_bounding_box;
 
 };
+
+class ParticleFire : public ParticleBase
+{
+public:
+
+
+};
+
+
 
 class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
 {

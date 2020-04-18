@@ -122,7 +122,7 @@ bool SoulTriggerObject::DoTick(float delta_time)
 		EffectorObject* effector = auto_cast(layer_instance->FindGeometricObject(effector_name));
 		if (effector == nullptr)
 			continue;
-		effector->SetEffectorState(trigger_count > trigger_limit);
+		effector->SetEffectorState(trigger_count >= trigger_limit);
 	}
 	trigger_count = 0;
 

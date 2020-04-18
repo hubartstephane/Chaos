@@ -191,24 +191,6 @@ bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particl
 // ParticleBurnedSoulTrait
 // ===========================================================================
 
-#if 0
-void ParticleTrait::ParticleToPrimitives(Particle const& particle, QuadOutput<Vertex>& output)
-{
-	ParticleToPrimitive(particle, output.AddPrimitive());
-		}
-
-void ParticleTrait::ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive)
-{
-	// generate particle corners and texcoords
-	ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-	// copy the color in all triangles vertex
-	for (size_t i = 0; i < primitive.count; ++i)
-		primitive[i].color = particle.color;
-}
-
-#endif
-
-
 void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
 	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();

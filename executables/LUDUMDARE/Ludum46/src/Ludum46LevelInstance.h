@@ -26,6 +26,10 @@ public:
 	/** constructor */
 	LudumLevelInstance(class LudumGame * in_game);
 
+	void SpawnBloodParticles(chaos::box2 const& box, int particles_count);
+
+	void SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count);
+
 
 protected:
 
@@ -64,6 +68,8 @@ protected:
 
 
 
+
+
 protected:
 
 	/** pointer on game */
@@ -72,5 +78,4 @@ protected:
 
 	mutable float completion_timer = -1.0f; // shu46 : due to Checkcomplete constness !!
 	float completion_delay = 3.0f;
-
 };

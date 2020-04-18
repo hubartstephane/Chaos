@@ -29,6 +29,7 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 	{
 		result.level_bounding_box = ludum_level_instance->GetBoundingBox();
 		result.fire_layer_instance = ludum_level_instance->FindLayerInstance("Fire");
+		result.ludum_level_instance = ludum_level_instance;
 
 		// store triggers
 		death::TiledMapLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
@@ -87,6 +88,9 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 			{
 				if (chaos::Collide(fire_particle.bounding_box, particle->bounding_box))
 				{
+					if (update_data.ludum_level_instance != nullptr)
+						update_data.ludum_level_instance->SpawnBloodParticles(particle->bounding_box, 10);
+
 					return true; // touching fire 
 				}
 			}
@@ -94,11 +98,20 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 	}
 
 	// checking triggers
-	bool result = false;
 	for (SoulTriggerObject* trigger : update_data.soul_triggers)
+	{
 		if (chaos::Collide(trigger->GetBoundingBox(true), particle->bounding_box))
-			result |= trigger->AddTriggerCount();
-	return result;// destroy the particle ?
+		{
+			if (trigger->AddTriggerCount())
+			{
+				if (update_data.ludum_level_instance != nullptr)
+					update_data.ludum_level_instance->SpawnBurnedSoulParticles(particle->bounding_box, 10);
+
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 
@@ -144,6 +157,90 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle,
 	return false;
 }
 
+// ===========================================================================
+// ParticleBloodTrait
+// ===========================================================================
+
+void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
+
+
+
+
+}
+
+bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const
+{
+	particle->bounding_box.position += delta_time * particle->velocity;
+	
+	if (particle->duration > 0.0f)
+	{
+		particle->life += delta_time;
+		if (particle->life > particle->duration)
+			return true;
+
+		particle->color.a = 1.0f - (particle->life / particle->duration);
+	}
+
+	return false;
+}
+
+
+// ===========================================================================
+// ParticleBurnedSoulTrait
+// ===========================================================================
+
+#if 0
+void ParticleTrait::ParticleToPrimitives(Particle const& particle, QuadOutput<Vertex>& output)
+{
+	ParticleToPrimitive(particle, output.AddPrimitive());
+		}
+
+void ParticleTrait::ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive)
+{
+	// generate particle corners and texcoords
+	ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < primitive.count; ++i)
+		primitive[i].color = particle.color;
+}
+
+#endif
+
+
+void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+{
+	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+	chaos::box2 box = particle.bounding_box;
+	box.position.x += 50.0f * std::sin(particle.offset_t);
+
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < primitive.count; ++i)
+		primitive[i].color = particle.color;
+}
+
+bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const
+{
+	particle->bounding_box.position += delta_time * particle->velocity;
+
+	if (particle->duration > 0.0f)
+	{
+		particle->life += delta_time;
+		if (particle->life > particle->duration)
+			return true;
+
+		particle->color.a = 1.0f - (particle->life / particle->duration);
+	}
+
+	particle->offset_t += delta_time;
+
+
+	return false;
+}
 
 
 

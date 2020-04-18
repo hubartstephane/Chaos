@@ -312,6 +312,20 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 		return new chaos::ParticleLayer<ParticleFireTrait>(layer_trait);
 	}
 
+	if (chaos::StringTools::Stricmp(layer_name, "Blood") == 0)
+	{
+		ParticleBloodTrait::LayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleBloodTrait>(layer_trait);
+	}
+
+	if (chaos::StringTools::Stricmp(layer_name, "BurnedSouls") == 0)
+	{
+		ParticleBurnedSoulTrait::LayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleBurnedSoulTrait>(layer_trait);
+	}
+
 
 
 	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);

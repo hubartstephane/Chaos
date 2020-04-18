@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objecttypes>
- <objecttype name="SpikeBar" color="#a0a0a4"/>
  <objecttype name="Camera" color="#ff00ff">
   <property name="CAMERA" type="bool" default="true"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
@@ -31,7 +30,8 @@
   <property name="PLAYER_START" type="bool" default="true"/>
  </objecttype>
  <objecttype name="SoulTrigger" color="#a0a0a4">
-  <property name="EFFECTOR_NAME" type="string"/>
+  <property name="EFFECTORS" type="string"/>
+  <property name="TRIGGER_LIMIT" type="int" default="1"/>
  </objecttype>
  <objecttype name="Sound" color="#a40002">
   <property name="3D_SOUND" type="bool" default="true"/>
@@ -54,4 +54,5 @@
   <property name="SPAWN_PER_SECOND" type="float" default="20.5"/>
   <property name="TARGET_LAYER" type="string"/>
  </objecttype>
+ <objecttype name="SpikeBar" color="#a0a0a4"/>
 </objecttypes>

@@ -896,7 +896,9 @@ namespace death
 				return;
 			// aspect ratio is to be maintained ??
 
-			bool keep_aspect_ratio = tile->FindPropertyBool("KEEP_ASPECT_RATIO", true);
+			// before  bool keep_aspect_ratio = tile->FindPropertyBool("KEEP_ASPECT_RATIO", true);
+			
+			bool keep_aspect_ratio = tile->FindPropertyBool("KEEP_ASPECT_RATIO", false); // shu46 i suppose user that create a tile object and stretch it expect to be naturaly fitting the object
 #if 0
 
 			bool keep_aspect_ratio = true;

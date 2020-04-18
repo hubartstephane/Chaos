@@ -24,6 +24,35 @@
 //
 // Level BoundingBox. Does not take care of tile/spawner very vwell rework on that
 
+// creer un iterator/request qui permet de chercher toutes les collisions avec un type d objet donner par layer
+//
+//  layer->FindCollidingObject<SoulTriggerObject>(...);
+
+// =============================================================
+// EffectorObject implementation
+// =============================================================
+
+bool SpikeBarObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+{
+	if (!death::TiledMapGeometricObject::Initialize(in_geometric_object))
+		return false;
+
+
+	return true;
+}
+
+void SpikeBarObject::OnEffectorChangeState()
+{
+	active = active;
+
+}
+
+#if 0
+
+
+delay_between_triggers = in_geometric_object->FindPropertyFloat("DELAY_BETWEEN_TRIGGERS", delay_between_triggers);
+
+#endif
 
 // =============================================================
 // SoulTriggerObject implementation
@@ -34,7 +63,17 @@ bool SoulTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometri
 	if (!death::TiledMapGeometricObject::Initialize(in_geometric_object))
 		return false;
 
-	effector_name = in_geometric_object->FindPropertyString("EFFECTOR_NAME", "");
+	// number of element that must be triggered
+	trigger_limit = in_geometric_object->FindPropertyInt("TRIGGER_LIMIT", trigger_limit);
+
+	// read all the effectors
+	std::string effectors = in_geometric_object->FindPropertyString("EFFECTORS", "");
+
+	char const separator = ',';
+
+	std::vector<std::string> name_array = chaos::StringTools::Split(effectors.c_str(), separator);
+	for (std::string & name : name_array)
+		effector_names.push_back(std::move(name));
 
 	return true;
 }
@@ -43,8 +82,32 @@ bool SoulTriggerObject::DoTick(float delta_time)
 {
 	death::TiledMapGeometricObject::DoTick(delta_time);
 
+	for (std::string const& effector_name : effector_names)
+	{
+		EffectorObject* effector = auto_cast(layer_instance->FindGeometricObject(effector_name));
+		if (effector == nullptr)
+			continue;
+		effector->SetEffectorState(trigger_count > trigger_limit);
+	}
+	trigger_count = 0;
+
 	return true;
 }
+
+void SoulTriggerObject::AddTriggerCount()
+{
+	++trigger_count; // will be triggered next tick
+}
+
+
+
+
+
+
+
+
+
+
 
 
 // =============================================================
@@ -179,6 +242,8 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
+	in_typed_object->type;
+
 	if (chaos::TiledMapTools::IsObjectOfType(in_typed_object, "Spawner"))
 	{
 		std::string const* spawner_type = in_typed_object->FindPropertyString("SPAWNER_TYPE");
@@ -191,6 +256,11 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 		}
 	}
 
+	if (chaos::TiledMapTools::IsObjectOfType(in_typed_object, "SoulTrigger"))
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulTriggerObject(in_layer_instance););
+
+	if (chaos::TiledMapTools::IsObjectOfType(in_typed_object, "SpikeBar"))
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpikeBarObject(in_layer_instance););
 
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }

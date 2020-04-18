@@ -88,7 +88,7 @@ public:
 };
 
 // =================================================
-// SoulTriggerObject
+// EffectorObject
 // =================================================
 
 class EffectorObject
@@ -108,6 +108,36 @@ public:
 protected:
 
 	bool active = false;
+
+
+
+	float delay_between_triggers = 1.0f;
+
+	float last_time_triggered = -1;
+
+
+
+};
+
+// =================================================
+// SpikeBarObject
+// =================================================
+
+class SpikeBarObject : public death::TiledMapGeometricObject, public EffectorObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using death::TiledMapGeometricObject::TiledMapGeometricObject;
+
+	/** override */
+	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+
+	virtual void OnEffectorChangeState() override;
+
+
 };
 
 // =================================================
@@ -128,11 +158,18 @@ public:
 
 	virtual bool DoTick(float delta_time);
 
-	
+	void AddTriggerCount();
 
 public:
 
-	std::string effector_name;
+	std::vector<std::string> effector_names;
+
+	int trigger_limit = 0;
+
+protected:
+
+	int trigger_count = 0;
+
 };
 
 

@@ -129,7 +129,7 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 {
 	int result = 0;
 
-	death::TiledMapLayerInstance const* layer_instance = FindLayerInstance("Objects");
+	death::TiledMapLayerInstance const* layer_instance = FindLayerInstance("Spawner");
 	if (layer_instance != nullptr)
 	{
 		size_t count = layer_instance->GetGeometricObjectCount();

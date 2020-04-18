@@ -586,6 +586,101 @@ namespace chaos
 			return result;
 		}
 
+		// shu46 : Invert TikeInfo/Super method call
+
+
+		// XXX : the natural order for calls should be
+		//       - GeometricObjectSurface::FindProperty(...) -----+-------> PropertyOwner::FindProperty(...)
+		//                                                        +-------> Type::FindProperty(...)
+		//       - tiledata->FindProperty(...)
+		//
+		// This is not what we want. We should try the tile (that has itself a type, propably the same) first
+		// and after for the generic type.
+		// So we unroll the whole inheritance chain like we want
+		Property* GeometricObjectTile::FindProperty(char const* name, PropertyType type_id)
+		{
+			// 1 - Own properties
+			Property* result = PropertyOwner::FindProperty(name, type_id);
+			if (result != nullptr)
+				return result;
+
+			// 2 - See Tile properties
+			Map* tiled_map = GetMap();
+			if (tiled_map != nullptr)
+			{
+				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+				if (tile_info.tiledata != nullptr)
+				{
+					result = tile_info.tiledata->FindProperty(name, type_id);
+					if (result != nullptr)
+						return result;
+				}
+			}
+
+			// 3 - See our own type
+			if (!StringTools::IsEmpty(type))
+			{
+				Manager* manager = GetManager();
+				if (manager != nullptr)
+				{
+					result = manager->FindObjectProperty(type.c_str(), name, type_id);
+					if (result != nullptr)
+						return result;
+				}
+			}
+			return result;
+		}
+
+		Property const* GeometricObjectTile::FindProperty(char const* name, PropertyType type_id) const
+		{
+			// 1 - Own properties
+			Property const * result = PropertyOwner::FindProperty(name, type_id);
+			if (result != nullptr)
+				return result;
+
+			// 2 - See Tile properties
+			Map const* tiled_map = GetMap();
+			if (tiled_map != nullptr)
+			{
+				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+				if (tile_info.tiledata != nullptr)
+				{
+					result = tile_info.tiledata->FindProperty(name, type_id);
+					if (result != nullptr)
+						return result;
+				}
+			}
+
+			// 3 - See our own type
+			if (!StringTools::IsEmpty(type))
+			{
+				Manager const* manager = GetManager();
+				if (manager != nullptr)
+				{
+					result = manager->FindObjectProperty(type.c_str(), name, type_id);
+					if (result != nullptr)
+						return result;
+				}
+			}
+			return result;
+		}
+
+#if 0 // BEFORE
+
+		//////// 
+		Property* TypedObject::FindProperty(char const* name, PropertyType type_id)
+		{
+			Property* result = PropertyOwner::FindProperty(name, type_id);
+			if (result == nullptr && !StringTools::IsEmpty(type))
+			{
+				Manager* manager = GetManager();
+				if (manager != nullptr)
+					result = manager->FindObjectProperty(type.c_str(), name, type_id);
+			}
+			return result;
+		}
+		///////
+
 		Property * GeometricObjectTile::FindProperty(char const * name, PropertyType type_id)
 		{
 			Property * result = GeometricObjectSurface::FindProperty(name, type_id);
@@ -617,6 +712,8 @@ namespace chaos
 			}
 			return result;
 		}
+
+#endif
 
 		// ==========================================
 		// GroundData methods

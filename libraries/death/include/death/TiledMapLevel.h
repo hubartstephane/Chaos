@@ -659,6 +659,28 @@ namespace death
 		/** returns a trigger surface by its index */
 		TiledMapTriggerObject const* GetTrigger(size_t index) const;
 
+		/** returns the number of camera objects */
+		size_t GetCameraObjectCount() const;
+		/** returns a camera object by its index */
+		TiledMapCameraObject* GetCameraObject(size_t index);
+		/** returns a camera object by its index */
+		TiledMapCameraObject const* GetCameraObject(size_t index) const;
+
+		/** returns the number of player start objects */
+		size_t GetPlayerStartObjectCount() const;
+		/** returns a player start object by its index */
+		TiledMapPlayerStartObject* GetPlayerStartObject(size_t index);
+		/** returns a player start object by its index */
+		TiledMapPlayerStartObject const* GetPlayerStartObject(size_t index) const;
+
+
+		/** returns the number of geometric objects */
+		size_t GetGeometricObjectCount() const;
+		/** returns a geometric object by its index */
+		TiledMapGeometricObject* GetGeometricObject(size_t index);
+		/** returns a geometric object by its index */
+		TiledMapGeometricObject const* GetGeometricObject(size_t index) const;
+
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
 

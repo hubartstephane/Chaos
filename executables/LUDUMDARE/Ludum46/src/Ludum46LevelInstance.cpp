@@ -115,3 +115,25 @@ death::PlayerDisplacementComponent* LudumLevelInstance::CreatePlayerDisplacement
 	return new LudumPlayerDisplacementComponent(player);
 }
 
+int LudumLevelInstance::GetCurrentSoulCount() const
+{
+	death::TiledMapLayerInstance const * layer_instance = FindLayerInstance("Souls");
+	if (layer_instance != nullptr && layer_instance->GetParticleLayer() != nullptr)
+		return (int)layer_instance->GetParticleLayer()->GetParticleCount();
+	return 0;
+}
+
+int LudumLevelInstance::GetPotentialSoulCount() const
+{
+	int result = 0;
+
+	death::TiledMapLayerInstance const* layer_instance = FindLayerInstance("Spawners");
+	if (layer_instance != nullptr)
+	{
+		//size_t count = layer_instance->GetTriggerCount
+
+
+	}
+	return result;
+}
+

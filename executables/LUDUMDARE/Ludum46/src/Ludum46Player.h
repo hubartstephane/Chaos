@@ -24,6 +24,8 @@ public:
     /** constructor */
     LudumPlayer(death::GameInstance* in_game_instance);
 
+	void AddBurnedSouls(int count) { burned_souls += count; }
+
 protected:
 
     /** override */
@@ -43,6 +45,8 @@ protected:
     virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const* gpd) override;
     /** override */
     virtual void HandleKeyboardInputs(float delta_time) override;
+
+
 
 protected:
 

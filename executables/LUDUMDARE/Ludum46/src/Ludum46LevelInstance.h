@@ -53,6 +53,10 @@ protected:
 	/** override */
 	virtual bool IsPlayerDead(death::Player* player) override;
 
+	virtual bool CheckLevelCompletion() const override;
+
+	virtual bool CanCompleteLevel() const override;
+
 	int GetCurrentSoulCount() const;
 
 	int GetPotentialSoulCount() const;
@@ -64,5 +68,9 @@ protected:
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;
+
+
+	mutable float completion_timer = -1.0f; // shu46 : due to Checkcomplete constness !!
+	float completion_delay = 3.0f;
 
 };

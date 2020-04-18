@@ -167,7 +167,7 @@ public:
 
 	virtual bool DoTick(float delta_time);
 
-	void AddTriggerCount();
+	virtual bool AddTriggerCount();
 
 public:
 
@@ -181,6 +181,22 @@ protected:
 
 };
 
+// =================================================
+// SoulBurnTriggerObject
+// =================================================
+
+
+class SoulBurnTriggerObject : public SoulTriggerObject
+{
+	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+public:
+
+	/** constructor */
+	using SoulTriggerObject::SoulTriggerObject;
+
+	virtual bool AddTriggerCount() override;
+};
 
 
 

@@ -99,6 +99,32 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 {
 	death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
 
+
+	// Fadeout
+	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
+	if (ludum_level_instance != nullptr)
+	{
+		if (ludum_level_instance->completion_timer > 0.0f && ludum_level_instance->completion_delay > 0.0f)
+		{
+			chaos::GPUResourceManager* resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+			if (resource_manager == nullptr)
+				return;
+
+			chaos::GPURenderMaterial* blackscreen_material = resource_manager->FindRenderMaterial("blackscreen");
+			if (blackscreen_material != nullptr)
+			{
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+				chaos::GPUProgramProviderChain blackscreen_provider(uniform_provider);
+				blackscreen_provider.AddVariableValue("fade_ratio", 1.0f - (ludum_level_instance->completion_timer / ludum_level_instance->completion_delay));
+
+				renderer->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
+
+				glDisable(GL_BLEND);
+			}
+		}
+	}
 }
 
 

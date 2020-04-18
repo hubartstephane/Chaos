@@ -30,7 +30,9 @@ bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_ob
 	max_spawned_particles = in_geometric_object->FindPropertyInt("MAX_SPAWNED_PARTICLES", max_spawned_particles);
 	particle_start_velocity.x = in_geometric_object->FindPropertyFloat("PARTICLE_START_VELOCITY_X", particle_start_velocity.x);
 	particle_start_velocity.y = in_geometric_object->FindPropertyFloat("PARTICLE_START_VELOCITY_Y", particle_start_velocity.y);
-
+	spawn_per_second = in_geometric_object->FindPropertyFloat("SPAWN_PER_SECOND", spawn_per_second);
+	target_layer = in_geometric_object->FindPropertyString("TARGET_LAYER", "");
+	spawned_particle = in_geometric_object->FindPropertyString("SPAWNED_PARTICLE", "");
 
 	return true;
 }
@@ -39,9 +41,61 @@ bool SpawnerObject::DoTick(float delta_time)
 {
 	death::TiledMapGeometricObject::DoTick(delta_time);
 
+	// nothing to spawn
+	if (spawn_per_second <= 0.0f)
+		return true;
+	// already all particles have been spawned
+	if (max_spawned_particles > 0 && spawned_count >= max_spawned_particles)
+		return true;
 
+	// compute the number of particles to spawn
+	int count = (int)(spawn_per_second * (delta_time + nospawn_time_cumulated));
+
+	if (count == 0)
+	{
+		nospawn_time_cumulated += delta_time;
+	}
+	else
+	{
+		LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
+		if (ludum_level_instance == nullptr)
+			return true;
+
+		chaos::ParticleSpawner spawner = ludum_level_instance->GetParticleSpawner(target_layer, spawned_particle);
+		if (!spawner.IsValid())
+			return false;
+
+		SpawnParticles(spawner, count);
+		spawned_count += count;
+		nospawn_time_cumulated = 0.0f;
+	}
 	return true;
 }
+
+void SpawnerObject::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
+{
+	spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessorBase<ParticleFire> accessor) 
+	{
+		for (ParticleFire& p : accessor)
+		{
+
+		}	
+	});
+
+#if 0
+
+	chaos::ParticleSpawner spawner = target_layer_instance->GetParticleSpawner();
+	spawner.SpawnParticles(count, false []() {
+	
+	
+	
+	});
+
+	//target_layer_instance->SpawnParticles(count)
+#endif
+	count = count;
+}
+
 // =============================================================
 // LudumLevel implementation
 // =============================================================

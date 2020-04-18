@@ -42,6 +42,10 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	death::TiledMapLevelInstance::DoTick(delta_time);
 
 
+	// completed ?
+	if (completion_timer > 0.0f)
+		completion_timer = std::max(0.0f, completion_timer - delta_time);
+
 	return true;
 }
 
@@ -167,5 +171,31 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 		if (current_soul_count + potential_soul_count + ludum_player->burned_souls < ludum_level->required_souls)
 			return true;
 	}
+	return false;
+}
+
+bool LudumLevelInstance::CheckLevelCompletion() const
+{
+	LudumLevel const * ludum_level = GetLevel();
+
+	LudumPlayer const * ludum_player = GetPlayer(0);
+	if (ludum_player != nullptr && ludum_level != nullptr)
+	{
+		if (ludum_player->burned_souls >= ludum_level->required_souls)
+		{
+			if (completion_timer < 0.0f)
+			{
+				completion_timer = completion_delay; // forced to be mutable !??
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool LudumLevelInstance::CanCompleteLevel() const
+{
+	if (completion_timer == 0.0f)
+		return true;
 	return false;
 }

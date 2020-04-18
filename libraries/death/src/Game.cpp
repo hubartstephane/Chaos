@@ -1318,6 +1318,11 @@ namespace death
 				return false; // do not call remaining code in TickGameLoop(...) specialization
 			}
 		}
+
+		// shu46 : can have game over even if CheckLevelCompleted() !!!
+
+
+
 		// game over ? (not if level is finished and wait for completion)
 		if (CheckGameOverCondition())
 		{

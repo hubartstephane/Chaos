@@ -33,6 +33,7 @@
   <property name="EFFECTORS" type="string"/>
   <property name="FORCED_SERIALIZATION" type="bool" default="true"/>
   <property name="TRIGGER_LIMIT" type="int" default="1"/>
+  <property name="TRIGGER_TYPE" type="string"/>
  </objecttype>
  <objecttype name="Sound" color="#a40002">
   <property name="3D_SOUND" type="bool" default="true"/>

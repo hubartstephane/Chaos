@@ -37,7 +37,14 @@
 //    TiledMapLayerInstanceParticlePopulator::AddParticle(
 //
 // eventuellement les objects geometrics pourraient avoir leur propre allocation !!!
+//
+//
+///
 
+
+//
+// maybe review CheckCompletedLevel/ CanCompleteLevel / CheckGameOverCondition
+// 
 
 // =============================================================
 // EffectorObject implementation
@@ -122,14 +129,31 @@ bool SoulTriggerObject::DoTick(float delta_time)
 	return true;
 }
 
-void SoulTriggerObject::AddTriggerCount()
+bool SoulTriggerObject::AddTriggerCount()
 {
 	++trigger_count; // will be triggered next tick
+
+	return false; // do not destroy the particle
 }
 
+// =============================================================
+// SoulBurnTriggerObject implementation
+// =============================================================
 
+bool SoulBurnTriggerObject::AddTriggerCount()
+{
+	SoulTriggerObject::AddTriggerCount();
 
+	LudumLevelInstance* ludum_level_instance = GetLayerInstance()->GetLevelInstance();
+	if (ludum_level_instance != nullptr)
+	{
+		LudumPlayer* player = ludum_level_instance->GetPlayer(0);
+		if (player != nullptr)
+			player->AddBurnedSouls(1);
 
+	}
+	return true;
+}
 
 
 
@@ -311,8 +335,14 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 	}
 
 	if (chaos::TiledMapTools::IsObjectOfType(in_typed_object, "SoulTrigger"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulTriggerObject(in_layer_instance););
-
+	{
+		std::string const* trigger_type = in_typed_object->FindPropertyString("TRIGGER_TYPE");
+		if (trigger_type != nullptr && chaos::StringTools::Strcmp(*trigger_type, "BurnTrigger") == 0)
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulBurnTriggerObject(in_layer_instance););
+		else
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulTriggerObject(in_layer_instance););
+	}
+		
 	if (chaos::TiledMapTools::IsObjectOfType(in_typed_object, "SpikeBar"))
 		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpikeBarObject(in_layer_instance););
 

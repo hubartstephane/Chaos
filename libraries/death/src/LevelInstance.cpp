@@ -299,7 +299,7 @@ namespace death
 
 
 		// update the timeout
-		if (level_timeout > 0.0f && !CheckLevelCompletion() 
+		if (level_timeout > 0.0f && !CheckLevelCompletion()  // shu46 -> use a flag and store the value. a single call should be nice
 #if _DEBUG	
 			&& !game->GetCheatMode()
 #endif

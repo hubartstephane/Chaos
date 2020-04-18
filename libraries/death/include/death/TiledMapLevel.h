@@ -443,7 +443,7 @@ namespace death
 	/** a functor for geometric object factory */
 	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (chaos::TiledMap::GeometricObject *)>;
 	/** an helper to make a lambda inside DoGetGeometricObjectFactory */
-#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x };
+#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap

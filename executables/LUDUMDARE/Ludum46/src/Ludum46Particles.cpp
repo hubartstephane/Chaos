@@ -74,13 +74,11 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 	}
 
 	// checking triggers
+	bool result = false;
 	for (SoulTriggerObject* trigger : update_data.soul_triggers)
-	{
 		if (chaos::Collide(trigger->GetBoundingBox(true), particle->bounding_box))
-			trigger->AddTriggerCount();
-	}
-
-	return false;
+			result |= trigger->AddTriggerCount();
+	return result;// destroy the particle ?
 }
 
 

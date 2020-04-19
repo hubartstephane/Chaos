@@ -688,13 +688,13 @@ namespace death
 				vec4 r = textureGather(material, vs_texcoord, 0); 
 				vec4 g = textureGather(material, vs_texcoord, 1);
 				vec4 b = textureGather(material, vs_texcoord, 2);
-				vec4 a = textureGather(material, vs_texcoord, 3);
+				vec4 a = textureGather(material, vs_texcoord, 3); // all alphas
 
+				//vec4 tmp = vec4(r.w, g.w, b.w, a.w);
+				vec4 tmp = texture(material, vs_texcoord);
 
 				vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
-					vec4(1.0, 1.0, 1.0, 1.0) : 
-					//texture(material, vs_texcoord);
-					vec4(r.a, g.a, b.a, a.a);					
+					vec4(1.0, 1.0, 1.0, 1.0) : tmp;					
 				output_color.xyz = color.xyz * vs_color.xyz;
 				output_color.a   = vs_color.a * color.a;
 			};

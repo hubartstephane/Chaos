@@ -151,8 +151,6 @@ class ParticlePlayer : public ParticleAnimated
 public:
 
 
-	bool horizontal_flip = false;
-
 };
 
 class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>

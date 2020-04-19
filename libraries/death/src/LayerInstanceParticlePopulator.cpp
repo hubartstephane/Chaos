@@ -95,6 +95,11 @@ namespace death
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
 		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip, diagonal_flip);
 
+		// shu46 : i kept the flags in the particle, because for animated image, just the very image produced HERE as the information. after it is lost forever
+		particle.horizontal_flip = horizontal_flip;
+		particle.vertical_flip = vertical_flip;
+		particle.diagonal_flip = diagonal_flip;
+
 		particle.color = color;
 		particle.gid = gid;
 		particle.bitmap_info = bitmap_info;

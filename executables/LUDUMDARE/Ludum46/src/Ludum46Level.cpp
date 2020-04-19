@@ -56,6 +56,19 @@
 //
 //
 // the WrapMode::Clamp is not working for GRID !!!
+//
+// Make a memo why
+//  - there is a BurningFire.png in tileset
+//  - there is a BurningFire_6x1 in sprites
+//
+// Make a memo how JSON textures are working
+//
+// Make a memo how JSON resources are working
+//
+//
+// Refactor AtlasGeneration to make it much faster
+//
+//
 
 // =============================================================
 // EffectorObject implementation

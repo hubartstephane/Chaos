@@ -175,6 +175,7 @@ static chaos::ParticleTexcoords DoGetAnimatedParticleTexcoords(ParticleAnimated 
 		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, mode);
 
 		result = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
+		result = chaos::ParticleTools::ApplySymetriesToTexcoords(result, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
 	}
 	return result;
 }
@@ -328,7 +329,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 
 		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
 
-		texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(texcoords, particle.horizontal_flip, false, false);
+		texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(texcoords, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
 
 		// generate particle corners and texcoords
 		chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive);

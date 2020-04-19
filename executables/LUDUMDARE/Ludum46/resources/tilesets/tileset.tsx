@@ -53,6 +53,7 @@
  </tile>
  <tile id="12" type="SoulTrigger">
   <properties>
+   <property name="PARTICLE_CREATION" type="bool" value="false"/>
    <property name="TRIGGER_TYPE" value="BurnTrigger"/>
   </properties>
   <image width="64" height="64" source="../sprites/SoulBurnTrigger.png"/>

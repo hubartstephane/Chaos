@@ -46,6 +46,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	if (completion_timer > 0.0f)
 		completion_timer = std::max(0.0f, completion_timer - delta_time);
 
+	flame_health = std::max(0.0f, flame_health - delta_time * flame_health_lost_per_second);
+
 	return true;
 }
 
@@ -61,10 +63,13 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
 		return false;
 
+	LudumLevel* ludum_level = auto_cast(in_level);
+	if (ludum_level != nullptr)
+	{
+		flame_health = ludum_level->flame_initial_health;
+		flame_health_lost_per_second = ludum_level->flame_health_lost_per_second;
+	}
 	
-
-
-
 	return true;
 }
 
@@ -156,6 +161,12 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 {
 	if (death::TiledMapLevelInstance::IsPlayerDead(player))
 		return true;
+
+
+	if (flame_health <= 0.0f)
+		return true;
+
+
 
 	LudumPlayer* ludum_player = auto_cast(player);
 

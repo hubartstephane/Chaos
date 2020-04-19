@@ -110,21 +110,16 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		float health = ludum_level_instance->flame_health;
 		float max_health = ludum_level_instance->flame_initial_health;
 
-		int burning_decrease_step = (int)(9.0 * (max_health - health) / max_health);
+		int burning_decrease_step = (int)(12.0 * (max_health - health) / max_health);
 
 		update_provider.AddVariableValue("burning_decrease_step", burning_decrease_step);
 	}
 	
 
-
-
 	death::Game::DoDisplayGame(renderer, &update_provider, render_params);
 
 
-	// Fadeout
-
-#if 0
-
+	// Win Fadeout to white
 	if (ludum_level_instance != nullptr)
 	{
 		if (ludum_level_instance->completion_timer > 0.0f && ludum_level_instance->completion_delay > 0.0f)
@@ -148,7 +143,6 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			}
 		}
 	}
-#endif
 }
 
 

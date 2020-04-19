@@ -237,8 +237,21 @@ namespace chaos
 		glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, parameters.wrap_s);
 		glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, parameters.wrap_t);
 		glTextureParameteri(texture_id, GL_TEXTURE_WRAP_R, parameters.wrap_r);
+
+
+		// SHu46 : for GL_NEAREST to test
+
+#if 1 // OLD
+
 		glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
 		glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
+
+#else
+
+		glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+#endif
 
 		if (gl_formats.internal_format == GL_R8 || gl_formats.internal_format == GL_R32F)
 		{

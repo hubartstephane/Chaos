@@ -351,10 +351,15 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* parti
 	{
 		glm::vec2 pawn_velocity = displacement_component->GetPawnVelocity();
 
-		if (std::abs(pawn_velocity.x) < 5.0f)
+		if (std::abs(pawn_velocity.x) < 1.0f)
 		{
 			particle->frame_index = 0;
 			particle->horizontal_flip = false;	
+		}
+		else if (std::abs(pawn_velocity.x) < 12.0f)
+		{
+			particle->frame_index = 3;
+			particle->horizontal_flip = (pawn_velocity.x < 0.0f);
 		}
 		else 
 		{

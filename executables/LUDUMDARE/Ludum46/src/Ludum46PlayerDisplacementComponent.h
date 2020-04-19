@@ -70,6 +70,8 @@ public:
 	/* an extend of the pawn box so we can detect collision */
 	glm::vec2 pawn_box_extend = glm::vec2(15.0f, 15.0f); 
 
+	glm::vec2 pawn_collision_adjust = glm::vec2(0.7f, 1.0f);
+
 };
 
 

@@ -7,12 +7,15 @@
 #include "Ludum46Player.h"
 #include "Ludum46LevelInstance.h"
 #include "Ludum46Level.h"
+#include "Ludum46PlayerDisplacementComponent.h"
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/ClassTools.h>
 #include <chaos/ParticleTools.h>
 
 #include <death/SoundContext.h>
+
+
 
 
 
@@ -245,7 +248,32 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 
 void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
+   // 
+
+	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
+	{
+		chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, chaos::WrapMode::clamp);
+
+		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
+
+		texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(texcoords, particle.horizontal_flip, false, false);
+
+
+
+		// generate particle corners and texcoords
+		chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive);
+		// copy the color in all triangles vertex
+		for (size_t i = 0; i < primitive.count; ++i)
+			primitive[i].color = particle.color;
+
+	}
+	else
+	{
+		chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
+	}
+
 
 
 
@@ -253,6 +281,35 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* particle, LayerTrait const* layer_trait) const
 {
+	
+
+	LudumPlayerDisplacementComponent* displacement_component = layer_trait->game->GetPlayerDisplacementComponent(0);
+	if (displacement_component != nullptr)
+	{
+		glm::vec2 pawn_velocity = displacement_component->GetPawnVelocity();
+
+		if (std::abs(pawn_velocity.x) < 10.0f)
+		{
+			particle->frame_index = 0;
+			particle->horizontal_flip = false;	
+		}
+		else 
+		{
+			float max_pawn_velocity = displacement_component->GetDisplacementInfo().max_pawn_velocity.x;
+
+			float speed_factor = 8.0f;
+			if (max_pawn_velocity > 0.0f)
+				speed_factor = std::max(1.0f, speed_factor * std::abs(pawn_velocity.x) / max_pawn_velocity);
+
+			particle->animation_timer += speed_factor * delta_time;
+
+			particle->horizontal_flip = (pawn_velocity.x < 0.0f);
+			particle->frame_index = 1 + (int)std::fmodf(particle->animation_timer, 2.0f);
+
+
+		}
+
+	}
 
 
 	return false;

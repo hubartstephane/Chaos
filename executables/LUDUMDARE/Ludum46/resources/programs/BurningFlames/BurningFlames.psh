@@ -6,6 +6,8 @@ in vec4 vs_color;
 
 uniform sampler2DArray material;
 
+uniform int burning_decrease_step;
+
 
 void main()
 {
@@ -30,7 +32,7 @@ void main()
 
 	float color_count = 12.0;
 
-	int step = 10; // for fire disruption
+	int step = burning_decrease_step; // for fire disruption
 
 	float color_len = length(color.rgb);
 	

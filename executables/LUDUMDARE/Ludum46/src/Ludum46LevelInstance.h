@@ -80,5 +80,6 @@ protected:
 	float completion_delay = 3.0f;
 
 	float flame_health = 100.0f;
+	float flame_initial_health = 100.0f;
 	float flame_health_lost_per_second = 1.0f;
 };

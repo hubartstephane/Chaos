@@ -9,7 +9,14 @@ uniform sampler2DArray material;
 
 void main()
 {
-	vec4 color = texture(material, vs_texcoord);
+	ivec3 size = textureSize(material, 0);
+	ivec3 coord;
+	coord.xy = ivec2((vs_texcoord.xy * vec2(size.xy)));
+	coord.z = int(vs_texcoord.z);
+	vec4 color = texelFetch(material, coord, 0);
+
+
+	//vec4 color = texture(material, vs_texcoord);
 
 	// 0.3 feu complet
 	// 2.0 presque plus rien

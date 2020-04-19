@@ -9,6 +9,13 @@
     }
   },
 
+  "INSTRUCTIONS_ID": 
+  {
+    "generator_params": {
+      "line_height": 75
+    }
+  },
+
   "SCORE_ID": {
 
     "format": "[LEFTSCOREICON] %04d [RIGHTSCOREICON]",

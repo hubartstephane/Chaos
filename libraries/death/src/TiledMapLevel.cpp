@@ -679,9 +679,22 @@ namespace death
 
 			void main()
 			{
+				// shu46 : HACK while it is complicated to change the MIN/MAG Filter of textures
+				//         espacially because sprites and fonts are stored inside the same CubeTexture
+				//		   i you this trick to have PixelArt rendering style
+
+				// textureGather read a single component of 4 adjacent texels (with no filtering) and pack that into a single vec4
+				// You then just have to reconstitute a fake color 
+				vec4 r = textureGather(material, vs_texcoord, 0); 
+				vec4 g = textureGather(material, vs_texcoord, 1);
+				vec4 b = textureGather(material, vs_texcoord, 2);
+				vec4 a = textureGather(material, vs_texcoord, 3);
+
+
 				vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
 					vec4(1.0, 1.0, 1.0, 1.0) : 
-					texture(material, vs_texcoord);
+					//texture(material, vs_texcoord);
+					vec4(r.a, g.a, b.a, a.a);					
 				output_color.xyz = color.xyz * vs_color.xyz;
 				output_color.a   = vs_color.a * color.a;
 			};

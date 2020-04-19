@@ -246,7 +246,7 @@ namespace chaos
 		glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
 		glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);
 
-#else
+#else // HACK
 
 		glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

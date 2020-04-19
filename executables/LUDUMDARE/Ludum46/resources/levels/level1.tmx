@@ -61,7 +61,7 @@
   </data>
  </layer>
  <objectgroup id="26" name="Camera">
-  <object id="2114" type="Camera" x="1151.21" y="514.06" width="356.093" height="186.666"/>
+  <object id="2114" type="Camera" x="1151.21" y="370.06" width="592.093" height="330.666"/>
  </objectgroup>
  <layer id="33" name="Souls" width="100" height="104" locked="1">
   <properties>

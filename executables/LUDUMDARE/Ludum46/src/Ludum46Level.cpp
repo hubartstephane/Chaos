@@ -54,6 +54,8 @@
 //
 //    class ParticleBurnedSoulTrait : public chaos::ParticleAllocationTrait<ParticleBurnedSoul, VertexBase>
 //
+//
+// the WrapMode::Clamp is not working for GRID !!!
 
 // =============================================================
 // EffectorObject implementation

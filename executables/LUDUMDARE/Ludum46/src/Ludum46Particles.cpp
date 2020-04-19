@@ -108,7 +108,7 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 			if (trigger->AddTriggerCount())
 			{
 				if (update_data.ludum_level_instance != nullptr)
-					update_data.ludum_level_instance->SpawnBurnedSoulParticles(particle->bounding_box, 10);
+					update_data.ludum_level_instance->SpawnBurnedSoulParticles(particle->bounding_box, 5);
 
 				return true;
 			}
@@ -164,6 +164,30 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle,
 // ParticleBloodTrait
 // ===========================================================================
 
+static bool DoUpdateBloodParticle(float delta_time, ParticleBlood* particle)
+{
+	particle->bounding_box.position += delta_time * particle->velocity;
+
+	particle->velocity += delta_time * particle->acceleration;
+
+	if (particle->duration > 0.0f)
+	{
+		particle->life += delta_time;
+		if (particle->life > particle->duration)
+			return true;
+
+		particle->color.a = 1.0f - (particle->life / particle->duration);
+	}
+
+	return false;
+}
+
+
+
+// ===========================================================================
+// ParticleBloodTrait
+// ===========================================================================
+
 void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
 	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
@@ -181,20 +205,8 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 
 bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const
 {
-	particle->bounding_box.position += delta_time * particle->velocity;
-
-	particle->velocity += delta_time * particle->acceleration;
-
-	
-	if (particle->duration > 0.0f)
-	{
-		particle->life += delta_time;
-		if (particle->life > particle->duration)
-			return true;
-
-		particle->color.a = 1.0f - (particle->life / particle->duration);
-	}
-
+	if (DoUpdateBloodParticle(delta_time, particle))
+		return true;
 	return false;
 }
 
@@ -210,30 +222,54 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 	chaos::box2 box = particle.bounding_box;
 	box.position.x += 50.0f * std::sin(particle.offset_t);
 
+
+	chaos::ParticleTexcoords texcoords = particle.texcoords;
+
+	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
+	{
+		// shu46 : chaos::WrapMode::clamp not working; to fix
+
+		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, chaos::WrapMode::clamp);
+
+		texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
+	}
+
+
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
+	chaos::ParticleTools::GenerateBoxParticle(box, texcoords, primitive);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
+
+
+
+
+
+
+
 }
 
 bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const
 {
-	particle->bounding_box.position += delta_time * particle->velocity;
+	if (DoUpdateBloodParticle(delta_time, particle))
+		return true;
 
-	particle->velocity += delta_time * particle->acceleration;
 
-	if (particle->duration > 0.0f)
+	
+
+	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
 	{
-		particle->life += delta_time;
-		if (particle->life > particle->duration)
-			return true;
+		int anim_count = (int)particle->bitmap_info->GetAnimationImageCount();
 
-		particle->color.a = 1.0f - (particle->life / particle->duration);
+		particle->animation_timer += 2.0f * delta_time * (particle->life / particle->duration); // count on CLAMP to avoid loop
+
+		// shu46 : manual clamp
+		particle->frame_index = std::min(
+			anim_count - 1,			
+			(int)((float)anim_count * particle->animation_timer));
 	}
 
 	particle->offset_t += delta_time;
-
 
 	return false;
 }

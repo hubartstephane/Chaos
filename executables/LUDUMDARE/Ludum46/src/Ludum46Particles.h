@@ -92,6 +92,8 @@ class ParticleFire : public ParticleBase
 public:
 
 
+
+
 };
 
 
@@ -156,6 +158,9 @@ public:
 
 	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
 
+
+	int frame_index = 0;
+	float animation_timer = 0.0f;
 
 };
 

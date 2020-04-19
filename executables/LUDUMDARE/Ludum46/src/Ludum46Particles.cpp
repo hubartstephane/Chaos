@@ -161,14 +161,68 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle,
 }
 
 // ===========================================================================
+// STATICS
+// ===========================================================================
+
+static chaos::ParticleTexcoords DoGetAnimatedParticleTexcoords(ParticleAnimated const& particle, chaos::WrapMode mode)
+{
+	chaos::ParticleTexcoords result = particle.texcoords;
+
+	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
+	{
+		// shu46 : chaos::WrapMode::clamp not working; to fix
+
+		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, mode);
+
+		result = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
+	}
+	return result;
+}
+
+// ===========================================================================
+// ParticleAnimatedTrait
+// ===========================================================================
+
+
+bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated* particle)
+{
+	
+
+	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
+	{
+		float frame_time = particle->bitmap_info->GetFrameTime();
+		if (frame_time <= 0.0f)
+			frame_time = 1 / 16.0f;
+
+		particle->animation_timer += delta_time / frame_time;
+
+		particle->frame_index = (int)particle->animation_timer;
+	}
+
+	return false;
+}
+
+void ParticleAnimatedTrait::ParticleToPrimitives(ParticleAnimated const& particle, chaos::QuadOutput<VertexBase>& output)
+{
+	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+
+	chaos::ParticleTexcoords texcoords = DoGetAnimatedParticleTexcoords(particle, chaos::WrapMode::wrap);
+
+	// generate particle corners and texcoords
+	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive);
+	// copy the color in all triangles vertex
+	for (size_t i = 0; i < primitive.count; ++i)
+		primitive[i].color = particle.color;
+}
+
+
+// ===========================================================================
 // ParticleBloodTrait
 // ===========================================================================
 
-static bool DoUpdateBloodParticle(float delta_time, ParticleBlood* particle, float animation_rate)
+static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle, float animation_rate)
 {
 	particle->bounding_box.position += delta_time * particle->velocity;
-
-	particle->velocity += delta_time * particle->acceleration;
 
 	if (particle->duration > 0.0f)
 	{
@@ -193,24 +247,6 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleBlood* particle, flo
 	return false;
 }
 
-static chaos::ParticleTexcoords DoGetBloodParticleTexcoords(ParticleBlood const & particle)
-{
-	chaos::ParticleTexcoords result = particle.texcoords;
-
-	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
-	{
-		// shu46 : chaos::WrapMode::clamp not working; to fix
-
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, chaos::WrapMode::clamp);
-
-		result = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
-	}
-	return result;
-}
-
-
-
-
 // ===========================================================================
 // ParticleBloodTrait
 // ===========================================================================
@@ -223,7 +259,7 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 
 	box.half_size *= 1.0f + (particle.life / particle.duration);
 
-	chaos::ParticleTexcoords texcoords = DoGetBloodParticleTexcoords(particle);
+	chaos::ParticleTexcoords texcoords = DoGetAnimatedParticleTexcoords(particle, chaos::WrapMode::clamp);
 
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(box, texcoords, primitive);
@@ -236,6 +272,7 @@ bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particl
 {
 	if (DoUpdateBloodParticle(delta_time, particle, 1.0f))
 		return true;
+	particle->velocity += delta_time * particle->acceleration;
 	return false;
 }
 
@@ -251,7 +288,8 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 	chaos::box2 box = particle.bounding_box;
 	box.position.x += 50.0f * std::sin(particle.offset_t);
 
-		chaos::ParticleTexcoords texcoords = DoGetBloodParticleTexcoords(particle);
+		
+	chaos::ParticleTexcoords texcoords = DoGetAnimatedParticleTexcoords(particle, chaos::WrapMode::clamp);
 	
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(box, texcoords, primitive);
@@ -264,11 +302,17 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 {
 	if (DoUpdateBloodParticle(delta_time, particle, 2.0f))
 		return true;
-
+	particle->velocity += delta_time * particle->acceleration;
 	particle->offset_t += delta_time;
 
 	return false;
 }
+
+
+// ===========================================================================
+// ParticlePlayerTrait
+// ===========================================================================
+
 
 // ===========================================================================
 // ParticlePlayerTrait

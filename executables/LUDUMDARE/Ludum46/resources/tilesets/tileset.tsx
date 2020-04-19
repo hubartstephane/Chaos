@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.2" tiledversion="1.3.0" name="tileset" tilewidth="128" tileheight="96" tilecount="13" columns="0">
+<tileset version="1.2" tiledversion="1.3.0" name="tileset" tilewidth="128" tileheight="96" tilecount="14" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="WALL">
   <image width="32" height="32" source="../sprites/Brick.png"/>
@@ -59,5 +59,8 @@
  </tile>
  <tile id="14" type="BurningFire">
   <image width="128" height="96" source="BurningFire.png"/>
+ </tile>
+ <tile id="15">
+  <image width="64" height="64" source="Banner.png"/>
  </tile>
 </tileset>

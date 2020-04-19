@@ -1,0 +1,10 @@
+{
+	"pixel_sources":
+	[
+		"@BurningFlames.psh"
+	],
+  "vertex_sources": 
+  [
+    "@BurningFlames.vsh"
+  ]
+}

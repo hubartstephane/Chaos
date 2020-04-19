@@ -358,7 +358,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 		return new chaos::ParticleLayer<ParticleBurnedSoulTrait>(layer_trait);
 	}
 
-	if (chaos::StringTools::Stricmp(layer_name, "BurningFlames") == 0)
+	if ((chaos::StringTools::Stricmp(layer_name, "BurningFlames") == 0) || (chaos::StringTools::Stricmp(layer_name, "Animated") == 0))
 	{
 		return new chaos::ParticleLayer<ParticleAnimatedTrait>();
 	}
@@ -407,8 +407,16 @@ bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 	if (!death::TiledMapLevel::Initialize(in_tiled_map))
 		return false;
 
-	required_souls = in_tiled_map->FindPropertyInt("REQUIRED_SOULS", 10);
+	required_souls = in_tiled_map->FindPropertyInt("REQUIRED_SOULS", required_souls);
 	if (required_souls <= 0)
+		return false;
+
+	flame_initial_health = in_tiled_map->FindPropertyFloat("FLAME_HEALTH", flame_initial_health);
+	if (flame_initial_health <= 0.0f)
+		return false;
+
+	flame_lost_per_seconds = in_tiled_map->FindPropertyFloat("FLAME_LOST_HEALTH_PER_SECOND", flame_lost_per_seconds);
+	if (flame_lost_per_seconds <= 0.0f)
 		return false;
 
 	return true;

@@ -228,4 +228,8 @@ protected:
 
 	int required_souls = 0;
 
+	float flame_initial_health = 90.0f;
+
+	float flame_lost_per_seconds = 0.5f;
+
 };

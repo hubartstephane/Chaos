@@ -2,6 +2,9 @@
 
 namespace chaos
 {
+	// shu46 : would be greate to take the very first image if nothing is provided
+
+
     ParticleAllocationBase* ParticleSpawner::SpawnParticles(size_t count, bool new_allocation)
     {
         ParticleAllocationBase* result = DoSpawnParticles(count, new_allocation);

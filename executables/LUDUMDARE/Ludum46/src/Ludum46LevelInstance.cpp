@@ -206,7 +206,7 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 	chaos::ParticleSpawner spawner = GetParticleSpawner("Blood", "Blood");
 	if (spawner.IsValid())
 	{
-		spawner.SpawnParticles(particles_count, false, [this, box](chaos::ParticleAccessor<ParticleBlood> accessor)
+		spawner.SpawnParticles(particles_count, false, [this, box, &spawner](chaos::ParticleAccessor<ParticleBlood> accessor)
 		{
 			for (ParticleBlood& p : accessor)
 			{
@@ -215,6 +215,7 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 
 				float angle = chaos::MathTools::RandFloat() * (float)M_PI;
 				p.velocity = chaos::MathTools::RandFloat(50.0f, 100.0f) * glm::vec2(std::cos(angle), std::sin(angle));
+				p.bitmap_info = spawner.GetBitmapInfo();
 
 				p.duration = 3.0f;
 				p.life = 0.0f;
@@ -227,10 +228,10 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 
 void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count)
 {
-	chaos::ParticleSpawner spawner = GetParticleSpawner("BurnedSouls", "BurnedSoul");
+	chaos::ParticleSpawner spawner = GetParticleSpawner("BurnedSouls", "BurnedSoulAnim");
 	if (spawner.IsValid())
 	{
-		spawner.SpawnParticles(particles_count, false, [this, box](chaos::ParticleAccessor<ParticleBurnedSoul> accessor)
+		spawner.SpawnParticles(particles_count, false, [this, box, &spawner](chaos::ParticleAccessor<ParticleBurnedSoul> accessor)
 		{
 			for (ParticleBurnedSoul& p : accessor)
 			{
@@ -240,6 +241,7 @@ void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int pa
 				p.duration = 3.0f;
 				p.life = 0.0f;
 				p.offset_t = chaos::MathTools::RandFloat() * (float)M_PI;
+				p.bitmap_info = spawner.GetBitmapInfo();
 
 				p.acceleration.y = +30.0f;
 			}

@@ -228,6 +228,10 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 
 void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count)
 {
+	LudumPlayer* ludum_player = GetPlayer(0);
+	if (ludum_player != nullptr)
+		ludum_player->SetScore(10, true); // increment score
+
 	chaos::ParticleSpawner spawner = GetParticleSpawner("BurnedSouls", "BurnedSoulAnim");
 	if (spawner.IsValid())
 	{

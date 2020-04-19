@@ -241,7 +241,7 @@ namespace chaos
 
 		// SHu46 : for GL_NEAREST to test
 
-#if 1 // OLD
+#if 0 // OLD
 
 		glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, parameters.mag_filter);
 		glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, parameters.min_filter);

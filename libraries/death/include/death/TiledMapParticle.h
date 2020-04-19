@@ -19,6 +19,12 @@ namespace death
 
 		int gid = 0;
 		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; // shu46 !!! 
+
+
+		bool horizontal_flip = false;
+		bool vertical_flip = false;
+		bool diagonal_flip = false;
+
 	};
 
 	// =====================================

@@ -58,6 +58,6 @@
   <image width="64" height="64" source="../sprites/SoulBurnTrigger.png"/>
  </tile>
  <tile id="14" type="BurningFire">
-  <image width="64" height="64" source="../sprites/BurningFire.png"/>
+  <image width="64" height="64" source="BurningFire.png"/>
  </tile>
 </tileset>

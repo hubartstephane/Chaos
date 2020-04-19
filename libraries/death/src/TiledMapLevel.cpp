@@ -1163,10 +1163,6 @@ namespace death
 
 	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
 	{
-		
-
-		// shuzzz
-
 		TiledMapLevel* level = GetLevel();
 
 		// early exit for empty tile_layer
@@ -1192,6 +1188,7 @@ namespace death
 
 			if (gid == 0)
 				continue;
+
 			// search the tile information 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata == nullptr)

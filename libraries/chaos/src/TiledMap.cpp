@@ -1220,6 +1220,8 @@ namespace chaos
 		// TileSet methods
 		// ==========================================
 
+		// shu46 : could use NamedRequest no ?
+
 #define CHAOS_IMPL_FIND_FILE_DATA(func_name, arg_type, member_name, constess)\
 		TileData constess * TileSet::func_name(arg_type arg_name) constess\
 		{\

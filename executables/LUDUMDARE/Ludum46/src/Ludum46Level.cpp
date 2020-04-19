@@ -69,6 +69,9 @@
 // Refactor AtlasGeneration to make it much faster
 //
 //
+//
+// Support des tileset mode fullcarte
+
 
 // =============================================================
 // EffectorObject implementation

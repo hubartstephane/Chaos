@@ -49,7 +49,7 @@
     <property name="SPAWN_PER_SECOND" type="float" value="1"/>
    </properties>
   </object>
-  <object id="2131" name="BurnTrigger" type="SoulTrigger" gid="13" x="1320" y="848" width="520" height="64"/>
+  <object id="2131" name="BurnTrigger" type="SoulTrigger" gid="13" x="1324" y="818" width="520" height="64"/>
  </objectgroup>
  <layer id="27" name="PlayerAndCamera" width="100" height="104">
   <properties>

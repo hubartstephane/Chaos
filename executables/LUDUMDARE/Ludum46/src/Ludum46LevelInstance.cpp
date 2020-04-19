@@ -67,9 +67,9 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	if (ludum_level != nullptr)
 	{
 		flame_health = ludum_level->flame_initial_health;
+		flame_initial_health = ludum_level->flame_initial_health;
 		flame_health_lost_per_second = ludum_level->flame_health_lost_per_second;
-	}
-	
+	}	
 	return true;
 }
 
@@ -162,14 +162,8 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 	if (death::TiledMapLevelInstance::IsPlayerDead(player))
 		return true;
 
-
 	if (flame_health <= 0.0f)
 		return true;
-
-
-
-	return false;
-
 
 	LudumPlayer* ludum_player = auto_cast(player);
 
@@ -190,9 +184,6 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
-
-	return false;
-
 	LudumLevel const * ludum_level = GetLevel();
 
 	LudumPlayer const * ludum_player = GetPlayer(0);

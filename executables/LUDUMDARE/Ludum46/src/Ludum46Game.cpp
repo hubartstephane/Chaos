@@ -102,14 +102,29 @@ death::GameInstance * LudumGame::DoCreateGameInstance()
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	death::Game::DoDisplayGame(renderer, uniform_provider, render_params);
+	chaos::GPUProgramProviderChain update_provider(uniform_provider);
+
+	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
+	if (ludum_level_instance != nullptr)
+	{
+		float health = ludum_level_instance->flame_health;
+		float max_health = ludum_level_instance->flame_initial_health;
+
+		int burning_decrease_step = (int)(9.0 * (max_health - health) / max_health);
+
+		update_provider.AddVariableValue("burning_decrease_step", burning_decrease_step);
+	}
+	
+
+
+
+	death::Game::DoDisplayGame(renderer, &update_provider, render_params);
 
 
 	// Fadeout
 
-#if 1
+#if 0
 
-	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 	{
 		if (ludum_level_instance->completion_timer > 0.0f && ludum_level_instance->completion_delay > 0.0f)

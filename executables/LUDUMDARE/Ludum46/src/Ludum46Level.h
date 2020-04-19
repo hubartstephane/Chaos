@@ -224,7 +224,7 @@ protected:
 
 	virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map) override;
 
-protected:
+public:
 
 	int required_souls = 0;
 

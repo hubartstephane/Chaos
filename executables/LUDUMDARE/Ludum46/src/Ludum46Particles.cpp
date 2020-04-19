@@ -164,7 +164,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle,
 // ParticleBloodTrait
 // ===========================================================================
 
-static bool DoUpdateBloodParticle(float delta_time, ParticleBlood* particle)
+static bool DoUpdateBloodParticle(float delta_time, ParticleBlood* particle, float animation_rate)
 {
 	particle->bounding_box.position += delta_time * particle->velocity;
 
@@ -179,8 +179,35 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleBlood* particle)
 		particle->color.a = 1.0f - (particle->life / particle->duration);
 	}
 
+	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
+	{
+		int anim_count = (int)particle->bitmap_info->GetAnimationImageCount();
+
+		particle->animation_timer += animation_rate * delta_time * (particle->life / particle->duration); // count on CLAMP to avoid loop
+
+		// shu46 : manual clamp
+		particle->frame_index = std::min(
+			anim_count - 1,
+			(int)((float)anim_count * particle->animation_timer));
+	}
 	return false;
 }
+
+static chaos::ParticleTexcoords DoGetBloodParticleTexcoords(ParticleBlood const & particle)
+{
+	chaos::ParticleTexcoords result = particle.texcoords;
+
+	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
+	{
+		// shu46 : chaos::WrapMode::clamp not working; to fix
+
+		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, chaos::WrapMode::clamp);
+
+		result = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
+	}
+	return result;
+}
+
 
 
 
@@ -196,8 +223,10 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 
 	box.half_size *= 1.0f + (particle.life / particle.duration);
 
+	chaos::ParticleTexcoords texcoords = DoGetBloodParticleTexcoords(particle);
+
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
+	chaos::ParticleTools::GenerateBoxParticle(box, texcoords, primitive);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
@@ -205,7 +234,7 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 
 bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const
 {
-	if (DoUpdateBloodParticle(delta_time, particle))
+	if (DoUpdateBloodParticle(delta_time, particle, 1.0f))
 		return true;
 	return false;
 }
@@ -222,61 +251,24 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 	chaos::box2 box = particle.bounding_box;
 	box.position.x += 50.0f * std::sin(particle.offset_t);
 
-
-	chaos::ParticleTexcoords texcoords = particle.texcoords;
-
-	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
-	{
-		// shu46 : chaos::WrapMode::clamp not working; to fix
-
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, chaos::WrapMode::clamp);
-
-		texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
-	}
-
-
+		chaos::ParticleTexcoords texcoords = DoGetBloodParticleTexcoords(particle);
+	
 	// generate particle corners and texcoords
 	chaos::ParticleTools::GenerateBoxParticle(box, texcoords, primitive);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
-
-
-
-
-
-
-
 }
 
 bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const
 {
-	if (DoUpdateBloodParticle(delta_time, particle))
+	if (DoUpdateBloodParticle(delta_time, particle, 2.0f))
 		return true;
-
-
-	
-
-	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
-	{
-		int anim_count = (int)particle->bitmap_info->GetAnimationImageCount();
-
-		particle->animation_timer += 2.0f * delta_time * (particle->life / particle->duration); // count on CLAMP to avoid loop
-
-		// shu46 : manual clamp
-		particle->frame_index = std::min(
-			anim_count - 1,			
-			(int)((float)anim_count * particle->animation_timer));
-	}
 
 	particle->offset_t += delta_time;
 
 	return false;
 }
-
-
-
-
 
 // ===========================================================================
 // ParticlePlayerTrait
@@ -296,8 +288,6 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 
 		texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(texcoords, particle.horizontal_flip, false, false);
 
-
-
 		// generate particle corners and texcoords
 		chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive);
 		// copy the color in all triangles vertex
@@ -309,16 +299,10 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 	{
 		chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 	}
-
-
-
-
 }
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* particle, LayerTrait const* layer_trait) const
 {
-	
-
 	LudumPlayerDisplacementComponent* displacement_component = layer_trait->game->GetPlayerDisplacementComponent(0);
 	if (displacement_component != nullptr)
 	{

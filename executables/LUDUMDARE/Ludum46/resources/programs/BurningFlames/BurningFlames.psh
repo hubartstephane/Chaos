@@ -1,12 +1,27 @@
 out vec4 output_color; // "output_color" replaces "gl_FragColor" because glBindFragDataLocation(...) has been called
 
-uniform float fade_ratio;
-
 in vec2 vs_position;
-in vec2 vs_texcoord;
+in vec3 vs_texcoord;
 in vec4 vs_color;
+
+uniform sampler2DArray material;
+
 
 void main()
 {
-	output_color = vec4(0.0, 0.0, 0.0, fade_ratio);
-}
+	vec4 color = texture(material, vs_texcoord);
+
+	// 0.3 feu complet
+	// 2.0 presque plus rien
+	float lim = 0.3;
+	
+	//float lim = 2.0;
+
+	float l = length(color.xy);
+	if (l < lim)
+		color.a *= 1.0 - ((lim - l) / lim);
+
+
+
+	output_color = color * vs_color;
+};

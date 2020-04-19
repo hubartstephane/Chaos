@@ -26,10 +26,11 @@
 LudumGame::LudumGame(GLFWwindow* in_glfw_window) :
 	death::Game(in_glfw_window)
 {		
-	game_name = "Burnaouf\nVII";
+	game_name = "Burnaouf Paradise\nVII";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Jump
-	[RightTrigger] or [KEYBOARD CTRL]  : Run)INSTRUCTIONS";
+	[ButtonB] or [KEYBOARD CTRL]  : Attack
+	[RightTrigger] or [KEYBOARD SHIFT] : Run)INSTRUCTIONS";
 
 	looping_levels = false;
 }

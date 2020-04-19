@@ -415,8 +415,8 @@ bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 	if (flame_initial_health <= 0.0f)
 		return false;
 
-	flame_lost_per_seconds = in_tiled_map->FindPropertyFloat("FLAME_LOST_HEALTH_PER_SECOND", flame_lost_per_seconds);
-	if (flame_lost_per_seconds <= 0.0f)
+	flame_health_lost_per_second = in_tiled_map->FindPropertyFloat("FLAME_HEALTH_LOST_PER_SECOND", flame_health_lost_per_second);
+	if (flame_health_lost_per_second <= 0.0f)
 		return false;
 
 	return true;

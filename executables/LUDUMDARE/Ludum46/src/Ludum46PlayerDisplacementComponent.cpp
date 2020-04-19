@@ -361,8 +361,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	int const jump_key_buttons[] = { GLFW_KEY_SPACE, -1 };
 	bool jump_pressed = player->CheckButtonPressed(jump_key_buttons, chaos::XBoxButton::BUTTON_A);
 
-	int const run_key_buttons[] = { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1 };
+	int const run_key_buttons[] = { GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT, -1 };
 	bool run_pressed = player->CheckButtonPressed(run_key_buttons, chaos::XBoxButton::BUTTON_RIGHTTRIGGER);
+
+
+	int const attaque_key_buttons[] = { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1 };
 
 	// get player position
 	chaos::box2 pawn_box = pawn->GetBox();

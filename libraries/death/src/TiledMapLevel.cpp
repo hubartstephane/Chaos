@@ -679,19 +679,17 @@ namespace death
 
 			void main()
 			{
-				// shu46 : HACK while it is complicated to change the MIN/MAG Filter of textures
-				//         espacially because sprites and fonts are stored inside the same CubeTexture
-				//		   i you this trick to have PixelArt rendering style
+				// Using texel interpolation :
 
-				// textureGather read a single component of 4 adjacent texels (with no filtering) and pack that into a single vec4
-				// You then just have to reconstitute a fake color 
-				vec4 r = textureGather(material, vs_texcoord, 0); 
-				vec4 g = textureGather(material, vs_texcoord, 1);
-				vec4 b = textureGather(material, vs_texcoord, 2);
-				vec4 a = textureGather(material, vs_texcoord, 3); // all alphas
+				//vec4 tmp = texture(material, vs_texcoord);
 
-				//vec4 tmp = vec4(r.w, g.w, b.w, a.w);
-				vec4 tmp = texture(material, vs_texcoord);
+				// Not using texel interpolation :
+
+				ivec3 size = textureSize(material, 0);
+				ivec3 coord;
+				coord.xy = ivec2((vs_texcoord.xy * vec2(size.xy)));
+				coord.z = int(vs_texcoord.z);	
+				vec4 tmp = texelFetch(material, coord, 0);
 
 				vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
 					vec4(1.0, 1.0, 1.0, 1.0) : tmp;					

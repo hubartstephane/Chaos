@@ -20,15 +20,7 @@ namespace chaos
 	public:
 
 
-
-
-
-
-
 		// TODO : take care of level and border
-
-
-
 
 
 		/** parameters for glTexParameteri(...) */

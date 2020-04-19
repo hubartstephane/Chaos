@@ -257,7 +257,31 @@ namespace chaos
 						ImageDescription src_desc = entry_input->description;
 						ImageDescription dst_desc = ImageTools::GetImageDescription(bitmap.get());
 
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, src_desc.width, src_desc.height, ImageTransform::NO_TRANSFORM);
+
+						int w = src_desc.width;
+						int h = src_desc.height;
+						
+
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, w, src_desc.height, ImageTransform::NO_TRANSFORM);
+
+						// Duplicate the first/last rows/column of each subimage so that the sampling errors would give us a duplicate value
+						//
+						// +------+
+						// |+----+|
+						// ||    || Double border
+						// |+----+|
+						// +------+
+
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y - 1, w, 1, ImageTransform::NO_TRANSFORM);
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
+
+						ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x, tex_y + h, w, 1, ImageTransform::NO_TRANSFORM);
+						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
+
+
+						// shu46 : ... missing the 4 corners
+
+
 					}
 					result.push_back(std::move(bitmap));
 				}

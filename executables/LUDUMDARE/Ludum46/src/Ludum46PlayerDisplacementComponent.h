@@ -88,6 +88,10 @@ public:
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 
+	glm::vec2 GetPawnVelocity() const { return pawn_velocity; }
+
+	PlayerDisplacementComponentInfo const& GetDisplacementInfo() const { return displacement_info; }
+
 protected:
 
 	/** compute the collision flags according to all */

@@ -122,6 +122,10 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
+	int frame_index = 0;
+	bool horizontal_flip = false;
+	float animation_timer = 0.0f;
+
 
 };
 

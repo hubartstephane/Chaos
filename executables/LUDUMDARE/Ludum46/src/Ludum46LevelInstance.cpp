@@ -243,7 +243,7 @@ void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int pa
 				p.offset_t = chaos::MathTools::RandFloat() * (float)M_PI;
 				p.bitmap_info = spawner.GetBitmapInfo();
 
-				p.acceleration.y = +30.0f;
+				p.acceleration.y = 0.0f;
 			}
 		});
 	}

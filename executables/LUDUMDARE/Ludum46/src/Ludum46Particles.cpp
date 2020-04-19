@@ -186,13 +186,11 @@ static chaos::ParticleTexcoords DoGetAnimatedParticleTexcoords(ParticleAnimated 
 
 bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated* particle)
 {
-	
-
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
 	{
 		float frame_time = particle->bitmap_info->GetFrameTime();
 		if (frame_time <= 0.0f)
-			frame_time = 1 / 16.0f;
+			frame_time = 1 / 5.0f;
 
 		particle->animation_timer += delta_time / frame_time;
 

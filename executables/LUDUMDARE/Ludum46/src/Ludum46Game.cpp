@@ -104,6 +104,9 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 
 	// Fadeout
+
+#if 1
+
 	LudumLevelInstance const* ludum_level_instance = GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 	{
@@ -128,6 +131,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 			}
 		}
 	}
+#endif
 }
 
 

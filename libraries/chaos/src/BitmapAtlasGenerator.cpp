@@ -272,14 +272,16 @@ namespace chaos
 						// |+----+|
 						// +------+
 
+#if 1
 						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y - 1, w, 1, ImageTransform::NO_TRANSFORM);
 						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
 
 						ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x, tex_y + h, w, 1, ImageTransform::NO_TRANSFORM);
 						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
-
+#endif
 
 						// shu46 : ... missing the 4 corners
+						//         beware : letters no have this extra border!!!
 
 
 					}

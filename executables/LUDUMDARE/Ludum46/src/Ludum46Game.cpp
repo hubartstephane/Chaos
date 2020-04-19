@@ -26,6 +26,8 @@
 LudumGame::LudumGame(GLFWwindow* in_glfw_window) :
 	death::Game(in_glfw_window)
 {		
+	// 	Don't let the Flames of Hell die
+
 	game_name = "Burnaouf Paradise\nVII";
 	game_instructions = R"INSTRUCTIONS(
 	[ButtonA] or [KEYBOARD SPACE] : Jump

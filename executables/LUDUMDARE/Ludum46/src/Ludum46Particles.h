@@ -117,17 +117,41 @@ public:
 };
 
 // ===========================================================================
-// ParticlePlayer
+// ParticleAnimated
 // ===========================================================================
 
-class ParticlePlayer : public ParticleBase
+class ParticleAnimated : public ParticleBase
+{
+public:
+	int frame_index = 0;
+	float animation_timer = 0.0f;
+};
+
+class ParticleAnimatedTrait : public chaos::ParticleAllocationTrait<ParticleAnimated, VertexBase>
 {
 public:
 
-	int frame_index = 0;
-	bool horizontal_flip = false;
-	float animation_timer = 0.0f;
+	static bool UpdateParticle(float delta_time, ParticleAnimated* particle);
 
+	static void ParticleToPrimitives(ParticleAnimated const& particle, chaos::QuadOutput<VertexBase>& output);
+};
+
+
+
+
+
+
+
+// ===========================================================================
+// ParticlePlayer
+// ===========================================================================
+
+class ParticlePlayer : public ParticleAnimated
+{
+public:
+
+
+	bool horizontal_flip = false;
 
 };
 
@@ -148,19 +172,17 @@ public:
 };
 
 
+
+
 // ===========================================================================
 // ParticleBlood
 // ===========================================================================
 
-class ParticleBlood : public ParticleBase
+class ParticleBlood : public ParticleAnimated
 {
 public:
 
 	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
-
-
-	int frame_index = 0;
-	float animation_timer = 0.0f;
 
 };
 

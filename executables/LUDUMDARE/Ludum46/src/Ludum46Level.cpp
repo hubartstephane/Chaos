@@ -337,6 +337,12 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 		return new chaos::ParticleLayer<ParticleBurnedSoulTrait>(layer_trait);
 	}
 
+	if (chaos::StringTools::Stricmp(layer_name, "BurningFlame") == 0)
+	{
+		return new chaos::ParticleLayer<ParticleAnimatedTrait>();
+	}
+
+
 
 
 	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);

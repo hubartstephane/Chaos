@@ -168,6 +168,9 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 
 
 
+	return false;
+
+
 	LudumPlayer* ludum_player = auto_cast(player);
 
 	LudumLevel * ludum_level = GetLevel();
@@ -187,6 +190,9 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
+
+	return false;
+
 	LudumLevel const * ludum_level = GetLevel();
 
 	LudumPlayer const * ludum_player = GetPlayer(0);
@@ -198,6 +204,12 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 			{
 				completion_timer = completion_delay; // forced to be mutable !??
 			}
+
+
+
+
+
+
 			return true;
 		}
 	}

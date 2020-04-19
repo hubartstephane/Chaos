@@ -13,7 +13,7 @@ void main()
 
 	// 0.3 feu complet
 	// 2.0 presque plus rien
-	float lim = 1.0;
+	float lim = 0.5;
 	
 	//float lim = 2.0;
 

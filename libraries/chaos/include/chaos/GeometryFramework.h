@@ -402,6 +402,9 @@ namespace chaos
 	// box_base functions
 	// ==============================================================================================
 
+	// shu46 : half_size.x == 0  -> pas vide
+
+
 	/** returns true whether the box is empty */
 	template<typename T, int dimension>
 	bool IsGeometryEmpty(box_base<T, dimension> const & b)

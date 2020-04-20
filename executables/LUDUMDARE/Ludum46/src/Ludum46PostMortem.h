@@ -96,6 +96,7 @@ namespace CollisionFlags
 
 https://www.piskelapp.com/
 https://ezgif.com/
+https://www.imgonline.com.ua/eng/make-seamless-texture.php
 
 
 

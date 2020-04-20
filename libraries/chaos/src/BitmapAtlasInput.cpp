@@ -423,7 +423,7 @@ namespace chaos
 			// prefere JSON settings to name encoded values or GIF meta data for frame rate
             if (manifest_animation_description.frame_time > 0.0f)
                 animation_description.frame_time = manifest_animation_description.frame_time;
-            if (!manifest_animation_description.grid_data.IsEmpty())
+            if (manifest_animation_description.grid_data.GetFrameCount() > 0)
                 animation_description.grid_data = manifest_animation_description.grid_data;
 
             // register resources for destructions			
@@ -490,7 +490,7 @@ namespace chaos
 			result = bitmaps.back().get();
 
 			// insert child animation frames
-			if ((animation_description != nullptr && !animation_description->grid_data.IsEmpty()) || page_count > 1)
+			if ((animation_description != nullptr && animation_description->grid_data.GetFrameCount() > 0) || page_count > 1)
 			{
 				BitmapAnimationInfoInput * animation_info = new BitmapAnimationInfoInput;
 				if (animation_info != nullptr)

@@ -12,7 +12,7 @@ namespace chaos
 
 	/** cast a vector into another vector (arity and type may change) */
 	template<typename VECTOR_TYPE1, typename VECTOR_TYPE2>
-	static VECTOR_TYPE1 RecastVector(VECTOR_TYPE2 const& value)
+	VECTOR_TYPE1 RecastVector(VECTOR_TYPE2 const& value)
 	{
 		VECTOR_TYPE1 result(0);
 		size_t count = std::min(result.length(), value.length());
@@ -33,7 +33,7 @@ namespace chaos
 	template<typename T, int dimension>
 	bool IsGeometryEmpty(box_base<T, dimension> const & b)
 	{
-		return glm::any(glm::lessThan(b.half_size, box_base<T, dimension>::vec_type((T)0.0f)));
+		return glm::any(glm::lessThan(b.half_size, box_base<T, dimension>::vec_type(0)));
 	}
 
 	/** returns the perimeter of the box */
@@ -312,7 +312,7 @@ namespace chaos
 		if (IsGeometryEmpty(b))
 		{
 			b.position  = v;
-			b.half_size = vec_type((T)0.0f);
+			b.half_size = vec_type(0);
 		}
 		else
 		{
@@ -577,14 +577,14 @@ namespace chaos
 
 	/** returns the perimeter of the circle */
 	template<typename T>
-	float GetPerimeter(type_sphere2<T> const & c)
+	T GetPerimeter(type_sphere2<T> const & c)
 	{
 		return static_cast<T>(2.0 * M_PI) * c.radius;
 	}
 
 	/** returns the surface of the circle */
 	template<typename T>
-	float GetSurface(type_sphere2<T> const & c)
+	T GetSurface(type_sphere2<T> const & c)
 	{
 		return static_cast<T>(M_PI) * c.radius * c.radius;
 	}
@@ -598,7 +598,7 @@ namespace chaos
 
 	/** returns the surface of the sphere */
 	template<typename T>
-	float GetSurface(type_sphere3<T> const & s)
+	T GetSurface(type_sphere3<T> const & s)
 	{
 		return static_cast<T>(4.0 * M_PI) * s.radius * s.radius;
 	}

@@ -193,21 +193,21 @@ namespace chaos
 		template<typename T>
 		static auto Mult(glm::tmat4x4<T> const & m, glm::tvec2<T> const & v)
 		{
-			return glm::tvec2<T>(m * glm::tvec4<T>(v, (T)0.0f, (T)0.0f));
+			return glm::tvec2<T>(m * glm::tvec4<T>(v, 0, 0));
 		}
 
 		/** multiply a 3D vector by a 4x4 matrix WITHOUT translation applyed */
 		template<typename T>
 		static auto Mult(glm::tmat4x4<T> const & m, glm::tvec3<T> const & v)
 		{
-			return glm::tvec3<T>(m * glm::tvec4<T>(v, (T)0.0f));
+			return glm::tvec3<T>(m * glm::tvec4<T>(v, 0));
 		}
 
 		/** multiply a 2D vector by a 4x4 matrix WITH translation applyed */
 		template<typename T>
 		static auto MultWithTranslation(glm::tmat4x4<T> const & m, glm::tvec2<T> const & v)
 		{
-			return glm::tvec2<T>(m * glm::tvec4<T>(v, (T)0.0f, (T)1.0f));
+			return glm::tvec2<T>(m * glm::tvec4<T>(v, 0, (T)1.0f));
 		}
 
 		/** multiply a 3D vector by a 4x4 matrix WITH translation applyed */

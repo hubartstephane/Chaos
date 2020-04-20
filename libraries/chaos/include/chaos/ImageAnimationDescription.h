@@ -20,8 +20,8 @@ namespace chaos
 
 	public:
 
-		/** returns whether the animation is valid */
-		bool IsEmpty() const;
+		/** return the number of frames of the animation */
+		size_t GetFrameCount() const;
 
 		/** parsing the the name to extract the grid numbers */
 		static bool ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
@@ -52,9 +52,8 @@ namespace chaos
 		bool IsGridAnimation() const;
 		/** get the duration of a frame in seconds */
 		float GetFrameTime() const { return frame_time; }
-
-		/** returns true whether the object is null */
-		bool IsEmpty() const;
+		/** return the number of frames of the animation */
+		size_t GetFrameCount() const;
 
 	public:
 

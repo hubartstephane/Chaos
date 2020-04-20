@@ -84,9 +84,47 @@ namespace CollisionFlags
 };
 
 // revoir la method RecastVector : inexploitable
+//  -> faire un equivalent a auto_cast()
+
+
+
+
+// et si le vertex shader avait access a toutes les informations de la particle + interpolation(X, Y) => x, y e [0..1] ?
+
+
+// garder reference aux sites bien
+
+https://www.piskelapp.com/
+https://ezgif.com/
+
+
+
+// attention visual studio est capable de passer les images en 4bpp !!! (ou paint ??)
+
+
+// verifier quand on fait correlation entre .png et .json qu ils sont bien dans le meme repertoire (que l un ne va pas en _DEBUG dans les dossiers visual studio, et pas l autre)
+
+// ParticleManager : pourrait on envisager d avoir dans un meme layer des Particles differentes, mais dans meme VERTEX
+
+// changer les conditions de l alpha blending par layer ?
+
+// TiledMap : models !
+
+// TiledMap : world composition ! (cool pour avoir des arrieres plans)
+
+// TiledMap : repeat => collision !
+
+// TiledSet : wang ? etudier
+
+// Atlas : choisir ce qui doit etre PIXEL ART et ce qui ne le doit pas
+
+
+
+
+// the Animation.json file manifest could declare    frame_duration / animation_duration /  default_animation_mode
 //
-//
-//
+// WrapMode: add a flipflip
+
 
 
 #endif

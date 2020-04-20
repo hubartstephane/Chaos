@@ -108,7 +108,7 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 			if (trigger->AddTriggerCount())
 			{
 				if (update_data.ludum_level_instance != nullptr)
-					update_data.ludum_level_instance->SpawnBurnedSoulParticles(particle->bounding_box, 5);
+					update_data.ludum_level_instance->SpawnBurnedSoulParticles(particle->bounding_box, 3);
 
 				return true;
 			}

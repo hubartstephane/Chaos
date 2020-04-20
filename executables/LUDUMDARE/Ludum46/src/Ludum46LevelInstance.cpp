@@ -256,7 +256,7 @@ void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int pa
 				p.bounding_box = box;
 				p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 				p.velocity = glm::vec2(0.0f, chaos::MathTools::RandFloat(50.0f, 100.0f) );
-				p.duration = 3.0f;
+				p.duration = 5.0f;
 				p.life = 0.0f;
 				p.offset_t = chaos::MathTools::RandFloat() * (float)M_PI;
 				p.bitmap_info = spawner.GetBitmapInfo();

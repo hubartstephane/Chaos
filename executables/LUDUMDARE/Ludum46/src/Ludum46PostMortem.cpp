@@ -67,8 +67,26 @@
 // revoir les collisions
 //
 //  introduire soft collision ---> compte la limite ou pas
-//  les methodes IsGeometryEmpty() devraient avoir un flag en plus
+//  les methodes IsGeometryEmpty() devraient avoir un flag en plus   soft_machin
+//
+// TiledMap
+//
+//   - requete sur les collisions
+//   - utiliser un collision_mask
+//
 
+namespace CollisionFlags
+{
+	static int const Player = (1 << 0);
+	static int const Camera = (1 << 1);
+	...
+
+};
+
+// revoir la method RecastVector : inexploitable
+//
+//
+//
 
 
 #endif

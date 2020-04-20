@@ -36,13 +36,6 @@ namespace chaos
 		return glm::any(glm::lessThan(b.half_size, box_base<T, dimension>::vec_type((T)0.0f)));
 	}
 
-	/** set the box has an empty box */
-	template<typename T, int dimension>
-	void SetGeometryEmpty(box_base<T, dimension> & b)
-	{
-		b.half_size = box_base<T, dimension>::vec_type((T)-1.0f);
-	}
-
 	/** returns the perimeter of the box */
 	template<typename T>
 	T GetPerimeter(box_base<T, 2> const & b)
@@ -566,13 +559,6 @@ namespace chaos
 	bool IsGeometryEmpty(type_sphere<T, dimension> const & c)
 	{
 		return (c.radius < 0);
-	}
-
-	/** set the circle has an empty circle */
-	template<typename T, int dimension>
-	void SetGeometryEmpty(type_sphere<T, dimension> & c)
-	{
-		c.radius = (T)-1.0f;
 	}
 
 	/** equality function for circle */

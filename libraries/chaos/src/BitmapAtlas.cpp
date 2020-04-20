@@ -130,6 +130,7 @@ namespace chaos
 			// non animated bitmap
 			if (animation_info == nullptr)
 				return BitmapLayout();
+
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
@@ -138,6 +139,16 @@ namespace chaos
 			else // grid base animation
 			{
 				BitmapGridAnimationInfo grid_data = animation_info->grid_data;
+
+				// transform the index into a 2D coord on the grid
+				size_t frame_count = animation_info->grid_data.GetFrameCount();
+
+				if (mode == WrapMode::clamp)
+					index = std::min(index, frame_count);
+				else if (mode == WrapMode::wrap)
+					index = index % frame_count;
+				else if (mode == WrapMode::none && index >= frame_count)
+					return BitmapLayout();
 
 				glm::ivec2 grid_index;
  				grid_index.x = ((int)index) % grid_data.grid_size.x;
@@ -154,7 +165,7 @@ namespace chaos
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
-				if (grid_index.y != 0 && mode == WrapMode::none)
+				if (mode == WrapMode::none && grid_index.y != 0)
 					return BitmapLayout();
 				return DoGetFrameAnimationLayout(grid_index.x, mode);
 			}

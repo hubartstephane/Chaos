@@ -44,7 +44,7 @@ namespace chaos
 		result.grid_size.x = atoi(name + result.grid_size.x);
 		result.grid_size.y = atoi(name + result.grid_size.y);
 		if (result.skip_lasts >= 0)
-			result.skip_lasts = atoi(name + result.skip_lasts);
+			result.skip_lasts = atoi(name + result.skip_lasts); // XXX : beware, before result.skip_lasts was on index on a std::string
 		else
 			result.skip_lasts = 0;
 
@@ -79,7 +79,7 @@ namespace chaos
 		if (name[i] != 's')
 			return false;
 
-		result.skip_lasts = i + 1;
+		result.skip_lasts = i + 1; // XXX : beware, we store an index on a std::string
 		return ParseFromNameReadGridY(name, i - 1, result, name_result);
 	}
 
@@ -124,7 +124,7 @@ namespace chaos
 		if (!ParseFromNameReadGridSkip(name, i, tmp, name_result))
 			return false;
 		// ensure the result is not empty
-		if (!tmp.IsEmpty())
+		if (tmp.GetFrameCount() > 0)
 		{
 			result = tmp;
 			return true;
@@ -132,11 +132,11 @@ namespace chaos
 		return false;
 	}
 
-	bool BitmapGridAnimationInfo::IsEmpty() const
+	size_t BitmapGridAnimationInfo::GetFrameCount() const
 	{
 		if (grid_size.x <= 0 || grid_size.y <= 0)
-			return true;
-		return (grid_size.x * grid_size.y - skip_lasts <= 0); 
+			return 0;
+		return std::max((size_t)(grid_size.x * grid_size.y - skip_lasts), (size_t)0);
 	}
 
 	// ========================================================================
@@ -152,12 +152,14 @@ namespace chaos
 	{
 		if (IsFrameAnimation())
 			return false;
-		return !grid_data.IsEmpty();
+		return (grid_data.GetFrameCount() > 0);
 	}
 
-	bool ImageAnimationDescription::IsEmpty() const
+	size_t ImageAnimationDescription::GetFrameCount() const
 	{
-		return (grid_data.IsEmpty() && child_frame_count <= 0 && frame_time <= 0.0f);
+		if (IsGridAnimation())
+			return grid_data.GetFrameCount();
+		return child_frame_count;
 	}
 
 	// ========================================================================

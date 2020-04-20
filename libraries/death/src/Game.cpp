@@ -385,8 +385,9 @@ namespace death
 			return false;
 
 		// generate the atlas
-		int ATLAS_SIZE = 1024;
-		int ATLAS_PADDING = 10;
+		int ATLAS_SIZE    = 1024;
+		int ATLAS_PADDING = 0;
+
 		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
 #if _DEBUG

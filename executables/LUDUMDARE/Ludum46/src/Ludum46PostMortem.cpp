@@ -64,9 +64,10 @@
 // Les lettres ont cette ligne qui bave
 
 
+// revoir les collisions
 //
-//
-//
+//  introduire soft collision ---> compte la limite ou pas
+//  les methodes IsGeometryEmpty() devraient avoir un flag en plus
 
 
 

@@ -46,11 +46,11 @@ protected:
 		if (info == nullptr)
 			return true;
 
-		float frame_time = info->GetFrameTime();
-		if (frame_time <= 0.0f)
-			frame_time = 1.0f / 10.0f;
+		float frame_duration = info->GetFrameDuration();
+		if (frame_duration <= 0.0f)
+			frame_duration = 1.0f / 10.0f;
 
-		int image = (int)(time / frame_time);
+		int image = (int)(time / frame_duration);
 		
 		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, chaos::WrapMode::wrap);
 

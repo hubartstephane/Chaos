@@ -189,11 +189,11 @@ bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated* p
 {
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
 	{
-		float frame_time = particle->bitmap_info->GetFrameTime();
-		if (frame_time <= 0.0f)
-			frame_time = 1 / 5.0f;
+		float frame_duration = particle->bitmap_info->GetFrameDuration();
+		if (frame_duration <= 0.0f)
+			frame_duration = 1 / 5.0f;
 
-		particle->animation_timer += delta_time / frame_time;
+		particle->animation_timer += delta_time / frame_duration;
 
 		particle->frame_index = (int)particle->animation_timer;
 	}
@@ -219,7 +219,7 @@ void ParticleAnimatedTrait::ParticleToPrimitives(ParticleAnimated const& particl
 // ParticleBloodTrait
 // ===========================================================================
 
-static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle, float animation_rate)
+static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle)
 {
 	particle->bounding_box.position += delta_time * particle->velocity;
 
@@ -236,8 +236,10 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle, 
 	{
 		int anim_count = (int)particle->bitmap_info->GetAnimationImageCount();
 
-		particle->animation_timer += animation_rate * delta_time * (particle->life / particle->duration); // count on CLAMP to avoid loop
+		particle->animation_timer += delta_time * (particle->life / particle->duration); // count on CLAMP to avoid loop
 
+
+			   		 
 		// shu46 : manual clamp
 		particle->frame_index = std::min(
 			anim_count - 1,
@@ -269,7 +271,7 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 
 bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const
 {
-	if (DoUpdateBloodParticle(delta_time, particle, 1.0f))
+	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
 	particle->velocity += delta_time * particle->acceleration;
 	return false;
@@ -299,7 +301,7 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 
 bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const
 {
-	if (DoUpdateBloodParticle(delta_time, particle, 2.0f))
+	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
 	particle->velocity += delta_time * particle->acceleration;
 	particle->offset_t += delta_time;

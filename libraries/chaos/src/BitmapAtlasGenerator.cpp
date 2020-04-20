@@ -375,7 +375,7 @@ namespace chaos
 						// copy the animation
 						animation_info->grid_data = animation_info_input->animation_description.grid_data;
 						animation_info->child_frame_count = (int)animation_info_input->child_frames.size();
-						animation_info->frame_time = animation_info_input->animation_description.frame_time;
+						animation_info->frame_duration = animation_info_input->animation_description.frame_duration;
 						animation_info->anim_duration = animation_info_input->animation_description.anim_duration;
 						// store the animation
 						bitmap_info->animation_info = animation_info;

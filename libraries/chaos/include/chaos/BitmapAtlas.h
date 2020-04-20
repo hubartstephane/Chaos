@@ -100,6 +100,8 @@ namespace chaos
 			size_t GetAnimationImageCount() const;
 			/** returns the duration of a frame in seconds */
 			float GetFrameTime() const;
+			/** returns the duration of the whole animation in seconds */
+			float GetAnimationDuration() const;
 
 		protected:
 

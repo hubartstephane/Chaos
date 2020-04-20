@@ -51,7 +51,9 @@ namespace chaos
 		/** returns true whether the animation is of type grid */
 		bool IsGridAnimation() const;
 		/** get the duration of a frame in seconds */
-		float GetFrameTime() const { return frame_time; }
+		float GetFrameTime() const;
+		/** get the duration of the whole animation in seconds */
+		float GetAnimationDuration() const;
 		/** return the number of frames of the animation */
 		size_t GetFrameCount() const;
 
@@ -62,7 +64,9 @@ namespace chaos
 		/** number of child frame (directly following the BitmapInfo */
 		int child_frame_count = 0;
 		/** the duration of a frame in seconds */
-		float frame_time = 0.0f;
+		float frame_time = -1.0f;
+		/** the duration of the whole animation */
+		float anim_duration = -1.0f;
 	};
 
 	/**

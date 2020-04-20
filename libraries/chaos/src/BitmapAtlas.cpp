@@ -186,10 +186,17 @@ namespace chaos
 			return (size_t)std::max((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
 		}
 
+		float BitmapInfo::GetAnimationDuration() const
+		{
+			if (animation_info == nullptr)
+				return 0.0f;
+			return animation_info->GetAnimationDuration();
+		}
+
 		float BitmapInfo::GetFrameTime() const
 		{
 			if (animation_info == nullptr)
-				return 0;
+				return 0.0f;
 			return animation_info->GetFrameTime();
 		}
 

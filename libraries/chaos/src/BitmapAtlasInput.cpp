@@ -26,7 +26,9 @@ namespace chaos
 			/** if the animation is stored inside a grid */
 			BitmapGridAnimationInfo grid_data;
 			/** the duration of a frame in seconds */
-			float frame_time = 0.0f;
+			float frame_time = -1.0f;
+			/** the duration of a the whole animation in seconds */
+			float anim_duration = -1.0f;
 			/** the directory path that contains the child images */
 			boost::filesystem::path images_path;
 		};
@@ -38,6 +40,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "grid_data", src.grid_data);
 			JSONTools::SetAttribute(json_entry, "images_path", src.images_path);
 			JSONTools::SetAttribute(json_entry, "frame_time", src.frame_time);
+			JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
 			return true;
 		}
 
@@ -48,6 +51,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "grid_data", dst.grid_data);
 			JSONTools::GetAttribute(json_entry, "images_path", dst.images_path);
 			JSONTools::GetAttribute(json_entry, "frame_time", dst.frame_time);
+			JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
 			return true;
 		}
 
@@ -420,9 +424,16 @@ namespace chaos
 			size_t count = images->size();
 			if (images->size() == 0)
 				return nullptr;
+
 			// prefere JSON settings to name encoded values or GIF meta data for frame rate
+			if (manifest_animation_description.anim_duration > 0.0f)
+			{
+				animation_description.frame_time = -1; // XXX : erase data that can be found in the META data of the image, because this would lead to the 'anim_duration' being ignored at run time
+				animation_description.anim_duration = manifest_animation_description.anim_duration;
+			}
             if (manifest_animation_description.frame_time > 0.0f)
                 animation_description.frame_time = manifest_animation_description.frame_time;
+
             if (manifest_animation_description.grid_data.GetFrameCount() > 0)
                 animation_description.grid_data = manifest_animation_description.grid_data;
 

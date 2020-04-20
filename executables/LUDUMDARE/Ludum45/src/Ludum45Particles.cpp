@@ -165,10 +165,10 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	// bitmap animation
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
 	{
-        float frame_time = particle->bitmap_info->GetFrameTime();
+        float frame_duration = particle->bitmap_info->GetFrameDuration();
 
 		particle->image_timer += delta_time;
-		if (particle->image_timer > frame_time)
+		if (particle->image_timer > frame_duration)
 		{
 			particle->image_timer = 0.0f;
 			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())
@@ -323,10 +323,10 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 {
 	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
 	{
-        float frame_time = particle->bitmap_info->GetFrameTime();
+        float frame_duration = particle->bitmap_info->GetFrameDuration();
 
 		particle->image_timer += delta_time;
-		if (particle->image_timer > frame_time)
+		if (particle->image_timer > frame_duration)
 		{
 			particle->image_timer = 0.0f;
 			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())
@@ -534,9 +534,9 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 		return true;
 
 	size_t image_count = particle->explosion_info->GetAnimationImageCount();
-	float  frame_time = particle->explosion_info->GetFrameTime();
+	float  frame_duration = particle->explosion_info->GetFrameDuration();
 
-	int image_index = (int)(particle->age / frame_time);
+	int image_index = (int)(particle->age / frame_duration);
 
 	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::none);
 	if (bitmap_layout.bitmap_index < 0)

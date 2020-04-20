@@ -193,11 +193,11 @@ namespace chaos
 			return animation_info->GetAnimationDuration();
 		}
 
-		float BitmapInfo::GetFrameTime() const
+		float BitmapInfo::GetFrameDuration() const
 		{
 			if (animation_info == nullptr)
 				return 0.0f;
-			return animation_info->GetFrameTime();
+			return animation_info->GetFrameDuration();
 		}
 
 		// ========================================================================

@@ -165,14 +165,14 @@ namespace chaos
 	float ImageAnimationDescription::GetAnimationDuration() const
 	{
 		float frame_count = (float)GetFrameCount();
-		return frame_count * GetFrameTime();
+		return frame_count * GetFrameDuration();
 	}
 
-	float ImageAnimationDescription::GetFrameTime() const
+	float ImageAnimationDescription::GetFrameDuration() const
 	{
 		// frame time is known explicitly
-		if (frame_time > 0.0f)
-			return frame_time;
+		if (frame_duration > 0.0f)
+			return frame_duration;
 		// try to deduce the time from the whole animation duration
 		float frame_count = (float)GetFrameCount();
 		if (frame_count <= 0.0f)
@@ -211,7 +211,7 @@ namespace chaos
 
 		JSONTools::SetAttribute(json_entry, "grid_data", src.grid_data);
 		JSONTools::SetAttribute(json_entry, "child_frame_count", src.child_frame_count);
-		JSONTools::SetAttribute(json_entry, "frame_time", src.frame_time);
+		JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
 		JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
 		return true;
 	}
@@ -222,7 +222,7 @@ namespace chaos
 			return false;
 		JSONTools::GetAttribute(json_entry, "grid_data", dst.grid_data);
 		JSONTools::GetAttribute(json_entry, "child_frame_count", dst.child_frame_count);
-		JSONTools::GetAttribute(json_entry, "frame_time", dst.frame_time);
+		JSONTools::GetAttribute(json_entry, "frame_duration", dst.frame_duration);
 		JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
 		return true;
 	}

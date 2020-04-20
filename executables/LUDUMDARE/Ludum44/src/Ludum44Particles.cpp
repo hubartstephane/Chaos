@@ -242,9 +242,9 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 		return true;
 
 	size_t image_count = particle->explosion_info->GetAnimationImageCount();
-	float frame_time = particle->explosion_info->GetFrameTime();
+	float frame_duration = particle->explosion_info->GetFrameDuration();
 
-	int image_index = (int)(particle->age / frame_time);
+	int image_index = (int)(particle->age / frame_duration);
 
 	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::none);
 	if (bitmap_layout.bitmap_index < 0)

@@ -693,10 +693,10 @@ namespace chaos
 
 	bool ImageTools::GetImageAnimDescription(FIBITMAP * image, ImageAnimationDescription & result)
 	{
-		int frame_time_ms = 0;		
-		if (ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_time_ms))
+		int frame_duration_ms = 0;		
+		if (ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_duration_ms))
 		{
-			result.frame_time = 0.001f * (float)frame_time_ms;
+			result.frame_duration = 0.001f * (float)frame_duration_ms;
 			return true;
 		}
 		return false;
@@ -704,8 +704,8 @@ namespace chaos
 
 		// Some metadata (GIF ?) FreeImage library read them
 #if 0 
-		std::int32_t frame_time = 0;
-		ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_time);
+		std::int32_t frame_duration = 0;
+		ReadMetaData(image, FIMD_ANIMATION, "FrameTime", frame_duration);
 
 		std::int32_t loop = 0;
 		ReadMetaData(image, FIMD_ANIMATION, "Loop", loop);

@@ -264,7 +264,10 @@ namespace chaos
 
 						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y, w, src_desc.height, ImageTransform::NO_TRANSFORM);
 
+						
+						// XXX:
 						// Duplicate the first/last rows/column of each subimage so that the sampling errors would give us a duplicate value
+						// this force to have a padding of a least 1 (each image have its own padding zone) 
 						//
 						// +------+
 						// |+----+|
@@ -272,18 +275,26 @@ namespace chaos
 						// |+----+|
 						// +------+
 
-#if 1
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y - 1, w, 1, ImageTransform::NO_TRANSFORM);
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
+						if (params.duplicate_image_border)
+						{
+							// XXX : it is possible to index dst texture to outside the range reserved surface (the double border) because
+							//       dst_desc is descriptor on the whole image
+							//       (we force a padding of at least 1)						
 
-						ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x, tex_y + h, w, 1, ImageTransform::NO_TRANSFORM);
-						ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
-#endif
+							// 4 edges
+							ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x, tex_y - 1, w, 1, ImageTransform::NO_TRANSFORM);
+							ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
 
-						// shu46 : ... missing the 4 corners
-						//         beware : letters no have this extra border!!!
+							ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x, tex_y + h, w, 1, ImageTransform::NO_TRANSFORM);
+							ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y, 1, h, ImageTransform::NO_TRANSFORM);
 
+							// 4 extra corners
+							ImageTools::CopyPixels(src_desc, dst_desc, 0, 0, tex_x - 1, tex_y - 1, 1, 1, ImageTransform::NO_TRANSFORM);
+							ImageTools::CopyPixels(src_desc, dst_desc, w - 1, 0, tex_x + w, tex_y - 1, 1, 1, ImageTransform::NO_TRANSFORM);
 
+							ImageTools::CopyPixels(src_desc, dst_desc, 0, h - 1, tex_x - 1, tex_y + h, 1, 1, ImageTransform::NO_TRANSFORM);
+							ImageTools::CopyPixels(src_desc, dst_desc, w - 1, h - 1, tex_x + w, tex_y + h, 1, 1, ImageTransform::NO_TRANSFORM);
+						}
 					}
 					result.push_back(std::move(bitmap));
 				}
@@ -436,6 +447,10 @@ namespace chaos
 			params = in_params;
 			input = &in_input;
 			output = &in_output;
+
+			// due to special image treatment we may want to have an extra padding (see texel interpolation and  AtlasGenerator::GenerateBitmaps(...)
+			if (params.duplicate_image_border)
+				++params.atlas_padding;
 
 			// prepare the result to receive new computation
 			output->Clear();

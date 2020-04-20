@@ -34,6 +34,8 @@ namespace chaos
 			bool force_power_of_2 = true;
 			/** whether we have to use square bitmap */
 			bool force_square = true;
+			/** whether each image in the atlas should have extra border that is the duplication of the origin image (usefull for texel interpolation in shaders) */
+			bool duplicate_image_border = true;
 			/** the width of an atlas bitmap */
 			int atlas_width = 0;
 			/** the height of an atlas bitmap */

@@ -213,6 +213,7 @@ namespace chaos
 		JSONTools::SetAttribute(json_entry, "child_frame_count", src.child_frame_count);
 		JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
 		JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
+		JSONTools::SetAttribute(json_entry, "default_wrap_mode", src.default_wrap_mode);
 		return true;
 	}
 
@@ -224,6 +225,7 @@ namespace chaos
 		JSONTools::GetAttribute(json_entry, "child_frame_count", dst.child_frame_count);
 		JSONTools::GetAttribute(json_entry, "frame_duration", dst.frame_duration);
 		JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
+		JSONTools::GetAttribute(json_entry, "default_wrap_mode", dst.default_wrap_mode);
 		return true;
 	}
 

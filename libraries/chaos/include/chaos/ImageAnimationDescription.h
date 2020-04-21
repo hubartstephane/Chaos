@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/PixelFormat.h>
+#include <chaos/WrapMode.h>
 
 namespace chaos
 {
@@ -56,6 +57,8 @@ namespace chaos
 		float GetAnimationDuration() const;
 		/** return the number of frames of the animation */
 		size_t GetFrameCount() const;
+		/** returns the default wrap mode when accessing this animation */
+		WrapMode GetDefaultWrapMode() const { return default_wrap_mode; }
 
 	public:
 
@@ -67,6 +70,8 @@ namespace chaos
 		float frame_duration = -1.0f;
 		/** the duration of the whole animation */
 		float anim_duration = -1.0f;
+		/** the default wrap mode */
+		WrapMode default_wrap_mode = WrapMode::clamp;
 	};
 
 	/**

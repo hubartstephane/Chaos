@@ -43,7 +43,7 @@ namespace chaos
 			// check index range, returns failure or clamp
 			if (index < 0 || index >= animation_info->child_frame_count)
 			{
-				if (mode == WrapMode::none)
+				if (mode == WrapMode::check_ranges)
 					return BitmapLayout();
 				if (mode == WrapMode::clamp)
 					index = std::clamp(index, 0, animation_info->child_frame_count - 1);
@@ -61,7 +61,7 @@ namespace chaos
 			// check grid_index range, returns failure or clamp
 			if (grid_index.x < 0 || grid_index.x >= grid_data.grid_size.x)
 			{
-				if (mode == WrapMode::none)
+				if (mode == WrapMode::check_ranges)
 					return BitmapLayout();
 				if (mode == WrapMode::clamp)
 					grid_index.x = std::clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
@@ -71,7 +71,7 @@ namespace chaos
 
 			if (grid_index.y < 0 || grid_index.y >= grid_data.grid_size.y)
 			{
-				if (mode == WrapMode::none)
+				if (mode == WrapMode::check_ranges)
 					return BitmapLayout();
 				if (mode == WrapMode::clamp)
 					grid_index.y = std::clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
@@ -87,7 +87,7 @@ namespace chaos
 				int animation_count = (grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
 				if (index >= animation_count)
 				{
-					if (mode == WrapMode::none)
+					if (mode == WrapMode::check_ranges)
 						return BitmapLayout();
 					if (mode == WrapMode::clamp)
 						index = animation_count - 1;
@@ -125,6 +125,18 @@ namespace chaos
 			return result;
 		}
 
+		WrapMode BitmapInfo::GetRequestWrapMode(WrapMode src) const
+		{
+			return src;
+		}
+
+		BitmapLayout BitmapInfo::GetAnimationLayoutFromTime(float time, WrapMode mode) const
+		{
+
+
+			return BitmapLayout();
+		}
+
 		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, WrapMode mode) const
 		{
 			// non animated bitmap
@@ -147,7 +159,7 @@ namespace chaos
 					index = std::min(index, frame_count);
 				else if (mode == WrapMode::wrap)
 					index = index % frame_count;
-				else if (mode == WrapMode::none && index >= frame_count)
+				else if (mode == WrapMode::check_ranges && index >= frame_count)
 					return BitmapLayout();
 
 				glm::ivec2 grid_index;
@@ -165,7 +177,7 @@ namespace chaos
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
-				if (mode == WrapMode::none && grid_index.y != 0)
+				if (mode == WrapMode::check_ranges && grid_index.y != 0)
 					return BitmapLayout();
 				return DoGetFrameAnimationLayout(grid_index.x, mode);
 			}

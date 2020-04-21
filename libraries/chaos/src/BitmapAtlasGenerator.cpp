@@ -377,6 +377,7 @@ namespace chaos
 						animation_info->child_frame_count = (int)animation_info_input->child_frames.size();
 						animation_info->frame_duration = animation_info_input->animation_description.frame_duration;
 						animation_info->anim_duration = animation_info_input->animation_description.anim_duration;
+						animation_info->default_wrap_mode = animation_info_input->animation_description.default_wrap_mode;
 						// store the animation
 						bitmap_info->animation_info = animation_info;
 					}

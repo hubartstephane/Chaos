@@ -176,44 +176,39 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle,
 // STATICS
 // ===========================================================================
 
-static chaos::ParticleTexcoords DoGetAnimatedParticleTexcoords(ParticleAnimated const& particle, chaos::WrapMode mode)
+static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // return whether we successfully found it
 {
-	chaos::ParticleTexcoords result = particle.texcoords;
-
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer, chaos::WrapMode::none);
-		
-		result = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
-		result = chaos::ParticleTools::ApplySymetriesToTexcoords(result, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
+		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
+		if (!layout.IsValid())
+			return false;
+
+		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
+		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
 	}
-	return result;
+	return true;
 }
 
 // ===========================================================================
 // ParticleAnimatedTrait
 // ===========================================================================
 
-
 bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated* particle)
 {
 	particle->animation_timer += delta_time;
+
+	// destroy the particles ? 
+	if (!UpdateAnimatedParticleTexcoords(*particle))
+		return true;
+
 	return false;
 }
 
 void ParticleAnimatedTrait::ParticleToPrimitives(ParticleAnimated const& particle, chaos::QuadOutput<VertexBase>& output)
 {
-	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-	chaos::ParticleTexcoords texcoords = DoGetAnimatedParticleTexcoords(particle, chaos::WrapMode::wrap);
-
-	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive);
-	// copy the color in all triangles vertex
-	for (size_t i = 0; i < primitive.count; ++i)
-		primitive[i].color = particle.color;
+	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
-
 
 // ===========================================================================
 // ParticleBloodTrait
@@ -233,6 +228,10 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle, 
 	}
 	particle->animation_timer += delta_time;
 
+	// destroy the particles ? 
+	if (!UpdateAnimatedParticleTexcoords(*particle))
+		return true;
+
 	return false;
 }
 
@@ -248,10 +247,8 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 
 	box.half_size *= 1.0f + (particle.life / particle.duration);
 
-	chaos::ParticleTexcoords texcoords = DoGetAnimatedParticleTexcoords(particle, chaos::WrapMode::clamp);
-
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(box, texcoords, primitive);
+	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
@@ -276,12 +273,9 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 
 	chaos::box2 box = particle.bounding_box;
 	box.position.x += 50.0f * std::sin(particle.offset_t);
-
-		
-	chaos::ParticleTexcoords texcoords = DoGetAnimatedParticleTexcoords(particle, chaos::WrapMode::clamp);
-	
+			
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(box, texcoords, primitive);
+	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
@@ -304,29 +298,7 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 
 void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-   // 
-
-	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
-	{
-		chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, chaos::WrapMode::clamp);
-
-		chaos::ParticleTexcoords texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
-
-		texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(texcoords, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
-
-		// generate particle corners and texcoords
-		chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive);
-		// copy the color in all triangles vertex
-		for (size_t i = 0; i < primitive.count; ++i)
-			primitive[i].color = particle.color;
-
-	}
-	else
-	{
-		chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-	}
+	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* particle, LayerTrait const* layer_trait) const
@@ -358,13 +330,18 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* parti
 
 			particle->horizontal_flip = (pawn_velocity.x < 0.0f);
 			particle->frame_index = 1 + (int)std::fmodf(particle->animation_timer, 2.0f);
-
-
 		}
-
 	}
 
+	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
+	{
+		chaos::BitmapAtlas::BitmapLayout layout = particle->bitmap_info->GetAnimationLayout(particle->frame_index);
+		if (!layout.IsValid())
+			return true; // destroy the particle
 
+		particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+		particle->texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle->texcoords, particle->horizontal_flip, particle->vertical_flip, particle->diagonal_flip);
+	}
 	return false;
 }
 

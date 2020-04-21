@@ -30,7 +30,7 @@ namespace chaos
 			/** the duration of a the whole animation in seconds */
 			float anim_duration = -1.0f;
 			/** the default wrap mode */
-			WrapMode default_wrap_mode = WrapMode::clamp;
+			WrapMode default_wrap_mode = WrapMode::none; // let the code decide in a single location (see  BitmapInfo::GetEffectiveRequestWrapMode(...))
 			/** the directory path that contains the child images */
 			boost::filesystem::path images_path;
 		};
@@ -440,6 +440,8 @@ namespace chaos
 
             if (manifest_animation_description.grid_data.GetFrameCount() > 0)
                 animation_description.grid_data = manifest_animation_description.grid_data;
+
+			animation_description.default_wrap_mode = manifest_animation_description.default_wrap_mode; // default_wrap_mode is nor encoded into file nor in metadata
 
             // register resources for destructions			
 			for (size_t i = 0; i < count; ++i)

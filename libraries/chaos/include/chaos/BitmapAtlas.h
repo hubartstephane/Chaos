@@ -108,11 +108,11 @@ namespace chaos
 		protected:
 
 			/** utility method */
-			BitmapLayout DoGetFrameAnimationLayout(int index, WrapMode mode = WrapMode::none) const;
+			BitmapLayout DoGetFrameAnimationLayout(int index, WrapMode mode) const;
 			/** utility method */
-			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode = WrapMode::none) const;
+			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const;
 			/** get the effective WrapMode to use for the request */
-			WrapMode GetRequestWrapMode(WrapMode src) const;
+			WrapMode GetEffectiveRequestWrapMode(WrapMode src) const;
 
 
 		public:

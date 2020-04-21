@@ -153,7 +153,6 @@ namespace chaos
 
 			// transform time into an index
 			int index = (int)(time / frame_duration);
-
 			return GetAnimationLayout(index, mode);
 		}
 
@@ -179,7 +178,7 @@ namespace chaos
 				size_t frame_count = animation_info->grid_data.GetFrameCount();
 
 				if (mode == WrapMode::clamp)
-					index = std::min(index, frame_count);
+					index = std::min(index, frame_count - 1);
 				else if (mode == WrapMode::wrap)
 					index = index % frame_count;
 				else if (mode == WrapMode::check_ranges && index >= frame_count)

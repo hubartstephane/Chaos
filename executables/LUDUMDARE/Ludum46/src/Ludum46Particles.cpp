@@ -160,6 +160,18 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle,
 	return false;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 // ===========================================================================
 // STATICS
 // ===========================================================================
@@ -170,10 +182,8 @@ static chaos::ParticleTexcoords DoGetAnimatedParticleTexcoords(ParticleAnimated 
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		// shu46 : chaos::WrapMode::clamp not working; to fix
-
-		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index, mode);
-
+		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer, chaos::WrapMode::none);
+		
 		result = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
 		result = chaos::ParticleTools::ApplySymetriesToTexcoords(result, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
 	}
@@ -187,17 +197,7 @@ static chaos::ParticleTexcoords DoGetAnimatedParticleTexcoords(ParticleAnimated 
 
 bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated* particle)
 {
-	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
-	{
-		float frame_duration = particle->bitmap_info->GetFrameDuration();
-		if (frame_duration <= 0.0f)
-			frame_duration = 1 / 5.0f;
-
-		particle->animation_timer += delta_time / frame_duration;
-
-		particle->frame_index = (int)particle->animation_timer;
-	}
-
+	particle->animation_timer += delta_time;
 	return false;
 }
 
@@ -231,20 +231,8 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle, 
 
 		particle->color.a = 1.0f - (particle->life / particle->duration);
 	}
+	particle->animation_timer += delta_time;
 
-	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
-	{
-		int anim_count = (int)particle->bitmap_info->GetAnimationImageCount();
-
-		particle->animation_timer += delta_time * (particle->life / particle->duration); // count on CLAMP to avoid loop
-
-
-			   		 
-		// shu46 : manual clamp
-		particle->frame_index = std::min(
-			anim_count - 1,
-			(int)((float)time_ratio * anim_count * particle->animation_timer));
-	}
 	return false;
 }
 
@@ -308,11 +296,6 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 
 	return false;
 }
-
-
-// ===========================================================================
-// ParticlePlayerTrait
-// ===========================================================================
 
 
 // ===========================================================================

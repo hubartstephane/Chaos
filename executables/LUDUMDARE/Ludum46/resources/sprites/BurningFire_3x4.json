@@ -1,5 +1,6 @@
 {
 
-  "frame_duration": 0.09
+  "frame_duration": 0.06,
+  "default_wrap_mode": "wrap"
 
 }

@@ -143,11 +143,18 @@ namespace chaos
 
 		BitmapLayout BitmapInfo::GetAnimationLayoutFromTime(float time, WrapMode mode) const
 		{
-			// get the mode to use
-			mode = GetEffectiveRequestWrapMode(mode);
+			// non animated bitmap
+			if (animation_info == nullptr)
+				return BitmapLayout();
 
+			float frame_duration = animation_info->GetFrameDuration();
+			if (frame_duration <= 0.0f)
+				return BitmapLayout();
 
-			return BitmapLayout();
+			// transform time into an index
+			int index = (int)(time / frame_duration);
+
+			return GetAnimationLayout(index, mode);
 		}
 
 		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, WrapMode mode) const

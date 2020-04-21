@@ -22,7 +22,7 @@ namespace chaos
 	public:
 
 		/** return the number of frames of the animation */
-		size_t GetFrameCount() const;
+		int GetFrameCount() const;
 
 		/** parsing the the name to extract the grid numbers */
 		static bool ParseFromName(char const * name, BitmapGridAnimationInfo & result, std::string * name_result = nullptr);
@@ -56,7 +56,7 @@ namespace chaos
 		/** get the duration of the whole animation in seconds */
 		float GetAnimationDuration() const;
 		/** return the number of frames of the animation */
-		size_t GetFrameCount() const;
+		int GetFrameCount() const;
 		/** returns the default wrap mode when accessing this animation */
 		WrapMode GetDefaultWrapMode() const { return default_wrap_mode; }
 

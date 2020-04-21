@@ -51,7 +51,7 @@ namespace chaos
 					index = index % animation_info->child_frame_count;
 			}
 			// find the bitmap further in the bitmapinfo array
-			return this[index];
+			return this[(size_t)index];
 		}
 
 		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const
@@ -156,7 +156,7 @@ namespace chaos
 			return GetAnimationLayout(index, mode);
 		}
 
-		BitmapLayout BitmapInfo::GetAnimationLayout(size_t index, WrapMode mode) const
+		BitmapLayout BitmapInfo::GetAnimationLayout(int index, WrapMode mode) const
 		{
 			// non animated bitmap
 			if (animation_info == nullptr)
@@ -168,14 +168,14 @@ namespace chaos
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{
-				return DoGetFrameAnimationLayout((int)index, mode);
+				return DoGetFrameAnimationLayout(index, mode);
 			}
 			else // grid base animation
 			{
 				BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
 				// transform the index into a 2D coord on the grid
-				size_t frame_count = animation_info->grid_data.GetFrameCount();
+				int frame_count = animation_info->grid_data.GetFrameCount();
 
 				if (mode == WrapMode::clamp)
 					index = std::min(index, frame_count - 1);
@@ -185,8 +185,8 @@ namespace chaos
 					return BitmapLayout();
 
 				glm::ivec2 grid_index;
- 				grid_index.x = ((int)index) % grid_data.grid_size.x;
-				grid_index.y = ((int)index) / grid_data.grid_size.x;
+ 				grid_index.x = index % grid_data.grid_size.x;
+				grid_index.y = index / grid_data.grid_size.x;
 				return DoGetGridAnimationLayout(grid_index, mode);
 			}
 		}
@@ -213,7 +213,7 @@ namespace chaos
 			}
 		}
 
-		size_t BitmapInfo::GetAnimationImageCount() const
+		int BitmapInfo::GetAnimationImageCount() const
 		{
 			if (animation_info == nullptr)
 				return 0;
@@ -221,7 +221,7 @@ namespace chaos
 				return animation_info->child_frame_count;
 
 			assert(animation_info->IsGridAnimation());
-			return (size_t)std::max((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
+			return std::max((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);
 		}
 
 		float BitmapInfo::GetAnimationDuration() const

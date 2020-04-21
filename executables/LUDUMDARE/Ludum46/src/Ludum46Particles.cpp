@@ -214,7 +214,7 @@ void ParticleAnimatedTrait::ParticleToPrimitives(ParticleAnimated const& particl
 // ParticleBloodTrait
 // ===========================================================================
 
-static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle, float time_ratio)
+static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle)
 {
 	particle->bounding_box.position += delta_time * particle->velocity;
 
@@ -256,7 +256,7 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 
 bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const
 {
-	if (DoUpdateBloodParticle(delta_time, particle, 1.0f))
+	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
 	particle->velocity += delta_time * particle->acceleration;
 	return false;
@@ -283,7 +283,7 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 
 bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const
 {
-	if (DoUpdateBloodParticle(delta_time, particle, 5.0f))
+	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
 	particle->velocity += delta_time * particle->acceleration;
 	particle->offset_t += delta_time;

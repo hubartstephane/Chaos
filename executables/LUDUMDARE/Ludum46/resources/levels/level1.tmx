@@ -5,7 +5,7 @@
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
   <property name="FLAME_HEALTH" type="float" value="100"/>
-  <property name="FLAME_HEALTH_LOST_PER_SECOND" type="float" value="0.5"/>
+  <property name="FLAME_HEALTH_LOST_PER_SECOND" type="float" value="10"/>
   <property name="LEVEL_TITLE">Level 1
 [LEVELTITLE Welcome Home]</property>
   <property name="MUSIC" value="game_music1"/>

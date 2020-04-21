@@ -92,10 +92,12 @@ namespace chaos
 			/** returns true whether the bitmap contains an animation of type grid */
 			bool HasGridAnimation() const;
 
+			/** returns the animation layout with a time */
+			BitmapLayout GetAnimationLayoutFromTime(float time, WrapMode mode = WrapMode::none) const;
 			/** returns the layout for one linear frame of the animation */
-			BitmapLayout GetAnimationLayout(size_t index, WrapMode mode) const;
+			BitmapLayout GetAnimationLayout(size_t index, WrapMode mode = WrapMode::none) const;
 			/** returns the layout for one grid frame of the animation */
-			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode) const;
+			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode = WrapMode::none) const;
 			/** returns the number of frames in the animation */
 			size_t GetAnimationImageCount() const;
 			/** returns the duration of a frame in seconds */
@@ -106,9 +108,12 @@ namespace chaos
 		protected:
 
 			/** utility method */
-			BitmapLayout DoGetFrameAnimationLayout(int index, WrapMode mode) const;
+			BitmapLayout DoGetFrameAnimationLayout(int index, WrapMode mode = WrapMode::none) const;
 			/** utility method */
-			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const;
+			BitmapLayout DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode = WrapMode::none) const;
+			/** get the effective WrapMode to use for the request */
+			WrapMode GetRequestWrapMode(WrapMode src) const;
+
 
 		public:
 

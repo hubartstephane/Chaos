@@ -29,6 +29,8 @@ namespace chaos
 			float frame_duration = -1.0f;
 			/** the duration of a the whole animation in seconds */
 			float anim_duration = -1.0f;
+			/** the default wrap mode */
+			WrapMode default_wrap_mode = WrapMode::clamp;
 			/** the directory path that contains the child images */
 			boost::filesystem::path images_path;
 		};
@@ -41,6 +43,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "images_path", src.images_path);
 			JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
 			JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
+			JSONTools::SetAttribute(json_entry, "default_wrap_mode", src.default_wrap_mode);
 			return true;
 		}
 
@@ -52,6 +55,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "images_path", dst.images_path);
 			JSONTools::GetAttribute(json_entry, "frame_duration", dst.frame_duration);
 			JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
+			JSONTools::GetAttribute(json_entry, "default_wrap_mode", dst.default_wrap_mode);
 			return true;
 		}
 

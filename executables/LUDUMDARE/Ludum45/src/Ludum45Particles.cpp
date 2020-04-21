@@ -538,7 +538,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 	int image_index = (int)(particle->age / frame_duration);
 
-	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::none);
+	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::check_ranges);
 	if (bitmap_layout.bitmap_index < 0)
 		return true;
 

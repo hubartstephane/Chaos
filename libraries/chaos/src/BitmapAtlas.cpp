@@ -125,13 +125,26 @@ namespace chaos
 			return result;
 		}
 
-		WrapMode BitmapInfo::GetRequestWrapMode(WrapMode src) const
+		WrapMode BitmapInfo::GetEffectiveRequestWrapMode(WrapMode src) const
 		{
+			// mode is none, see in the animation itself if there is a default settings
+			if (src == WrapMode::none)
+			{
+				if (animation_info != nullptr)
+				{
+					src = animation_info->default_wrap_mode;
+					// still no mode by default, take clamp
+					if (src == WrapMode::none)
+						src = WrapMode::clamp; // do not use 'check_ranges' by default because it is more to detect error for an invisible sprite than for bad animation
+				}
+			}
 			return src;
 		}
 
 		BitmapLayout BitmapInfo::GetAnimationLayoutFromTime(float time, WrapMode mode) const
 		{
+			// get the mode to use
+			mode = GetEffectiveRequestWrapMode(mode);
 
 
 			return BitmapLayout();
@@ -142,6 +155,9 @@ namespace chaos
 			// non animated bitmap
 			if (animation_info == nullptr)
 				return BitmapLayout();
+
+			// get the mode to use
+			mode = GetEffectiveRequestWrapMode(mode);
 
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
@@ -174,6 +190,10 @@ namespace chaos
 			// non animated bitmap
 			if (animation_info == nullptr)
 				return BitmapLayout();
+
+			// get the mode to use
+			mode = GetEffectiveRequestWrapMode(mode);
+
 			// frame base animation
 			if (animation_info->IsFrameAnimation())
 			{

@@ -136,7 +136,7 @@ public:
 
 	float  orientation = 0.0f;
 	float  image_timer = 0.0f;
-	size_t current_frame = 0;
+	int current_frame = 0;
 	
 
 };

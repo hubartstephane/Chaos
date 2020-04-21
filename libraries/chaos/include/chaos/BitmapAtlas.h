@@ -95,11 +95,11 @@ namespace chaos
 			/** returns the animation layout with a time */
 			BitmapLayout GetAnimationLayoutFromTime(float time, WrapMode mode = WrapMode::none) const;
 			/** returns the layout for one linear frame of the animation */
-			BitmapLayout GetAnimationLayout(size_t index, WrapMode mode = WrapMode::none) const;
+			BitmapLayout GetAnimationLayout(int index, WrapMode mode = WrapMode::none) const;
 			/** returns the layout for one grid frame of the animation */
 			BitmapLayout GetAnimationLayout(glm::ivec2 const & grid_index, WrapMode mode = WrapMode::none) const;
 			/** returns the number of frames in the animation */
-			size_t GetAnimationImageCount() const;
+			int GetAnimationImageCount() const;
 			/** returns the duration of a frame in seconds */
 			float GetFrameDuration() const;
 			/** returns the duration of the whole animation in seconds */

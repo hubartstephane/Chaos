@@ -132,11 +132,11 @@ namespace chaos
 		return false;
 	}
 
-	size_t BitmapGridAnimationInfo::GetFrameCount() const
+	int BitmapGridAnimationInfo::GetFrameCount() const
 	{
 		if (grid_size.x <= 0 || grid_size.y <= 0)
 			return 0;
-		return std::max((size_t)(grid_size.x * grid_size.y - skip_lasts), (size_t)0);
+		return std::max(grid_size.x * grid_size.y - skip_lasts, 0);
 	}
 
 	// ========================================================================
@@ -155,7 +155,7 @@ namespace chaos
 		return (grid_data.GetFrameCount() > 0);
 	}
 
-	size_t ImageAnimationDescription::GetFrameCount() const
+	int ImageAnimationDescription::GetFrameCount() const
 	{
 		if (IsGridAnimation())
 			return grid_data.GetFrameCount();

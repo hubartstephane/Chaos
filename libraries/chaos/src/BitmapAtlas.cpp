@@ -40,59 +40,49 @@ namespace chaos
 
 		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, WrapMode mode) const
 		{
-			// check index range, returns failure or clamp
-			if (index < 0 || index >= animation_info->child_frame_count)
-			{
-				if (mode == WrapMode::check_ranges)
-					return BitmapLayout();
-				if (mode == WrapMode::clamp)
-					index = std::clamp(index, 0, animation_info->child_frame_count - 1);
-				else if (mode == WrapMode::wrap)
-					index = index % animation_info->child_frame_count;
-			}
+			// wrap the index
+			if (!ApplyWrapMode(index, 0, animation_info->child_frame_count - 1, mode, index))
+				return BitmapLayout();
 			// find the bitmap further in the bitmapinfo array
-			return this[(size_t)index];
+			return this[static_cast<size_t>(index)];
 		}
 
 		BitmapLayout BitmapInfo::DoGetGridAnimationLayout(glm::ivec2 grid_index, WrapMode mode) const
 		{
 			BitmapGridAnimationInfo grid_data = animation_info->grid_data;
 
-			// check grid_index range, returns failure or clamp
-			if (grid_index.x < 0 || grid_index.x >= grid_data.grid_size.x)
-			{
-				if (mode == WrapMode::check_ranges)
-					return BitmapLayout();
-				if (mode == WrapMode::clamp)
-					grid_index.x = std::clamp(grid_index.x, 0, grid_data.grid_size.x - 1);
-				else if (mode == WrapMode::wrap)
-					grid_index.x = grid_index.x % grid_data.grid_size.x;
-			}
-
-			if (grid_index.y < 0 || grid_index.y >= grid_data.grid_size.y)
-			{
-				if (mode == WrapMode::check_ranges)
-					return BitmapLayout();
-				if (mode == WrapMode::clamp)
-					grid_index.y = std::clamp(grid_index.y, 0, grid_data.grid_size.y - 1);
-				else if (mode == WrapMode::wrap)
-					grid_index.y = grid_index.y % grid_data.grid_size.y;
-			}
+			// wrap the index
+			if (!ApplyWrapMode(grid_index, glm::ivec2(0, 0), grid_data.grid_size - glm::ivec2(1, 1), mode, grid_index)) // -1 because the max_range belongs to the wanted values
+				return BitmapLayout();
 
 			// check linear index and skip_lasts 
-			if (grid_data.skip_lasts > 0) // if 0 this test is useless
+			//
+			// Indexing a grid with skip images may cause indexation of invalid cell
+			//
+			// +---------------+
+			// |               |
+			// |               |
+			// |           A   |
+			// |       +-------+  You access x, which cell is best to read instead
+			// |     B |   x   |
+			// +-------+       |
+			// |               |
+			// +---------------+
+			//
+			// there is no real best choice between A & B for clamp methods
+			// BUT, a grid with skip image probably means you want to access cell in a 1D way (just an index)
+			// for that reason, we transform the 2D grid coord into a 1D index coord and then apply the wrapping on that new index
+
+			if (grid_data.skip_lasts > 0) 
 			{
 				int index = grid_index.x + grid_index.y * grid_data.grid_size.x;
 
 				int animation_count = (grid_data.grid_size.x * grid_data.grid_size.y) - grid_data.skip_lasts;
+
 				if (index >= animation_count)
 				{
-					if (mode == WrapMode::check_ranges)
+					if (!ApplyWrapMode(index, 0, animation_count - 1, mode, index))
 						return BitmapLayout();
-					if (mode == WrapMode::clamp)
-						index = animation_count - 1;
-					else if (mode == WrapMode::wrap)
-						index = index % animation_count;
 					grid_index.x = (index % grid_data.grid_size.x);
 					grid_index.y = (index / grid_data.grid_size.x);
 				}			
@@ -177,11 +167,7 @@ namespace chaos
 				// transform the index into a 2D coord on the grid
 				int frame_count = animation_info->grid_data.GetFrameCount();
 
-				if (mode == WrapMode::clamp)
-					index = std::min(index, frame_count - 1);
-				else if (mode == WrapMode::wrap)
-					index = index % frame_count;
-				else if (mode == WrapMode::check_ranges && index >= frame_count)
+				if (!ApplyWrapMode(index, 0, frame_count - 1, mode, index))
 					return BitmapLayout();
 
 				glm::ivec2 grid_index;
@@ -207,10 +193,11 @@ namespace chaos
 					return BitmapLayout();
 				return DoGetFrameAnimationLayout(grid_index.x, mode);
 			}
-			else // grid base animation
+			else
 			{
 				return DoGetGridAnimationLayout(grid_index, mode);
 			}
+			return BitmapLayout();
 		}
 
 		int BitmapInfo::GetAnimationImageCount() const

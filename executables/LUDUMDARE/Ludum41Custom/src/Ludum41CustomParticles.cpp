@@ -37,7 +37,7 @@ void ParticleObjectTrait::ParticleToPrimitives(ParticleObject const& particle, c
         primitive[i].color = particle.color;
 }
 
-bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle) const
+bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject & particle) const
 { 
 	return false; 
 }
@@ -56,7 +56,7 @@ glm::vec2 ParticleLifeObjectTrait::BeginParticlesToPrimitives(chaos::ParticleCon
 	return glm::vec2(0.0f, 0.0f);
 }
 
-bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject * particle, int extra_param, LayerTrait const * layer_trait) const
+bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject& particle, int extra_param, LayerTrait const * layer_trait) const
 {
 	return false;
 }
@@ -91,11 +91,11 @@ void ParticleLifeObjectTrait::ParticleToPrimitives(ParticleObject const& particl
 // Brick particle system
 // ===========================================================================
 
-bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick * particle, LayerTrait const * layer_trait) const
+bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick& particle, LayerTrait const * layer_trait) const
 {
-	if (particle->life <= 0)
+	if (particle.life <= 0)
 		return true;
-	particle->highlight_time = std::max(0.0f, particle->highlight_time - delta_time);
+	particle.highlight_time = std::max(0.0f, particle.highlight_time - delta_time);
 	return false;
 }
 
@@ -220,7 +220,7 @@ glm::vec2 MakeVelocityFromAngle(float angle)
 	return glm::vec2(std::cos(angle), std::sin(angle));
 }
 
-bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const
+bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject& particle, LayerTrait const * layer_trait) const
 {
 	LudumGameInstance * game_instance = layer_trait->game->GetGameInstance();
 	if (game_instance == nullptr)
@@ -233,22 +233,22 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	// delay before moving the particle
 	float delay_factor = 1.0f;
 
-	particle->delay_before_move = std::max(0.0f, particle->delay_before_move - delta_time);
-	if (particle->delay_before_move > 0.0f)
+	particle.delay_before_move = std::max(0.0f, particle.delay_before_move - delta_time);
+	if (particle.delay_before_move > 0.0f)
 		delay_factor = 0.1f;
 
 	// update the velocity of the ball
-	glm::vec2 velocity = glm::normalize(particle->velocity);
+	glm::vec2 velocity = glm::normalize(particle.velocity);
 	
 	// moving the particle
-	particle->bounding_box.position += delay_factor * velocity *
+	particle.bounding_box.position += delay_factor * velocity *
 		(game_instance->ball_collision_speed + game_instance->ball_speed) *
 		(delta_time * game_instance->ball_time_dilation);
 
 	// ball bouncing against world
 
 	chaos::box2 level_box = layer_trait->game->GetLevelInstance()->GetBoundingBox();
-	chaos::box2 ball_box = particle->bounding_box;
+	chaos::box2 ball_box = particle.bounding_box;
 		
 
 	// bounce against the world borders
@@ -373,8 +373,8 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// recenter the particle
-	particle->velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity), layer_trait);
-	particle->bounding_box = ball_box;
+	particle.velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity), layer_trait);
+	particle.bounding_box = ball_box;
 
 	return false; 
 }

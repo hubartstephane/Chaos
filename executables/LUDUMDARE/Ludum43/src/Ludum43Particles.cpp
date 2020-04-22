@@ -24,12 +24,12 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
 // ===========================================================================
 
 template<typename T>
-static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor, glm::vec2 & result_velocity, float particle_radius_factor)
+static bool ApplyAffectorToParticles(float delta_time, T& particle, ParticleAffector const & affector, bool & in_inner_radius, float inner_radius_factor, glm::vec2 & result_velocity, float particle_radius_factor)
 {
 	result_velocity = glm::vec2(0.0f, 0.0f);
 
-	glm::vec2 & particle_position = particle->bounding_box.position;
-	glm::vec2 & particle_velocity = particle->velocity;
+	glm::vec2 & particle_position = particle.bounding_box.position;
+	glm::vec2 & particle_velocity = particle.velocity;
 
 	glm::vec2 const & affector_position = affector.bounding_box.position;
 
@@ -89,42 +89,42 @@ static bool ApplyAffectorToParticles(float delta_time, T * particle, ParticleAff
 
 
 template<typename T>
-bool UpdateParticleLifeAndColor(T * particle, bool in_inner_radius, float delta_time, float lifetime, bool player, LudumGame * game)
+bool UpdateParticleLifeAndColor(T& particle, bool in_inner_radius, float delta_time, float lifetime, bool player, LudumGame * game)
 {
 	if (in_inner_radius)
 	{
-		particle->life = std::clamp(particle->life - delta_time, 0.0f, lifetime);
-		if (particle->life <= 0.0f)
+		particle.life = std::clamp(particle.life - delta_time, 0.0f, lifetime);
+		if (particle.life <= 0.0f)
 			return true; // destroy the particle
 	}
 	else
 	{
-		particle->life = std::clamp(particle->life + delta_time, 0.0f, lifetime);
+		particle.life = std::clamp(particle.life + delta_time, 0.0f, lifetime);
 	}
 
 	if (player)
 	{
-		particle->color.a = 0.2f + 0.8f * (particle->life / lifetime);
+		particle.color.a = 0.2f + 0.8f * (particle.life / lifetime);
 	}
 	else
 	{
-		particle->color.g = 1.0f - (particle->life / lifetime);
-		particle->color.b = 1.0f - (particle->life / lifetime);
+		particle.color.g = 1.0f - (particle.life / lifetime);
+		particle.color.b = 1.0f - (particle.life / lifetime);
 	}
 	return false;
 }
 
-void UpdateVelocityAndPosition(float delta_time, ParticleBase * particle, bool apply_slowdown, float slowing_factor, float max_velocity)
+void UpdateVelocityAndPosition(float delta_time, ParticleBase& particle, bool apply_slowdown, float slowing_factor, float max_velocity)
 {
-	glm::vec2 & velocity = particle->velocity;
-	glm::vec2 & position = particle->bounding_box.position;
+	glm::vec2 & velocity = particle.velocity;
+	glm::vec2 & position = particle.bounding_box.position;
 
 	// particle slowing down
 	if (apply_slowdown)
 		velocity *= powf(slowing_factor, delta_time);
 
 	// update particle velocity
-	float velocity_length2 = glm::length2(particle->velocity);
+	float velocity_length2 = glm::length2(particle.velocity);
 	if (velocity_length2 > max_velocity * max_velocity)
 		velocity = glm::normalize(velocity) * max_velocity;
 	// update particle position
@@ -156,13 +156,13 @@ ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(
 }
 
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const
+bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const
 {
 	// search all nearby enemies
 	std::vector<ParticleEnemy> enemy_particles;
-	layer_trait->game->RegisterEnemiesInRange(particle->bounding_box.position, layer_trait->game->world_clamp_radius, enemy_particles, "Enemies", false);
+	layer_trait->game->RegisterEnemiesInRange(particle.bounding_box.position, layer_trait->game->world_clamp_radius, enemy_particles, "Enemies", false);
 	std::vector<ParticleEnemy> worldlimits_particles;
-	layer_trait->game->RegisterEnemiesInRange(particle->bounding_box.position, layer_trait->game->world_clamp_radius, worldlimits_particles, "WorldLimits", true);
+	layer_trait->game->RegisterEnemiesInRange(particle.bounding_box.position, layer_trait->game->world_clamp_radius, worldlimits_particles, "WorldLimits", true);
 
 	// apply all effectors
 	bool affected_by_enemies = false;
@@ -177,7 +177,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	for (size_t i = 0; i < enemy_count; ++i)
 	{
 		glm::vec2 effector_velocity;
-		affected_by_enemies |= ApplyAffectorToParticles(delta_time, particle, enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, effector_velocity, particle->particle_radius_factor);
+		affected_by_enemies |= ApplyAffectorToParticles(delta_time, particle, enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, effector_velocity, particle.particle_radius_factor);
 		sum_velocity += effector_velocity;
 	}
 
@@ -192,19 +192,19 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	}
 
 	// loose life if your not in danger zone
-	if (!particle->level_end_reached)
+	if (!particle.level_end_reached)
 		if (!affected_by_worldlimits)
 			in_danger_zone = true;
 
 
-	particle->velocity += sum_velocity * 0.0f;
+	particle.velocity += sum_velocity * 0.0f;
 
 	// update life and color
 
-	if (particle->level_end_reached)
+	if (particle.level_end_reached)
 	{
-		particle->level_end_timer = std::max(0.0f, particle->level_end_timer - delta_time);
-		particle->color.a = particle->level_end_timer / 2.0f;
+		particle.level_end_timer = std::max(0.0f, particle.level_end_timer - delta_time);
+		particle.color.a = particle.level_end_timer / 2.0f;
 	}
 	else
 	{
@@ -219,21 +219,21 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 
 
 	// add external forces
-	float acceleration_factor = (particle->dash) ? 3.0f : 1.0f;
+	float acceleration_factor = (particle.dash) ? 3.0f : 1.0f;
 
 	//static float bbb = 5.0f;
 
-	//if (chaos::GLMTools::Get2DCrossProductZ(particle->velocity, particle->acceleration) < 0.0f)
+	//if (chaos::GLMTools::Get2DCrossProductZ(particle.velocity, particle.acceleration) < 0.0f)
 	//	acceleration_factor *= bbb;
 
-	float max_velocity_factor = (particle->dash) ? 3.0f : 1.0f;
+	float max_velocity_factor = (particle.dash) ? 3.0f : 1.0f;
 
-	particle->velocity += acceleration_factor * particle->acceleration * delta_time;
+	particle.velocity += acceleration_factor * particle.acceleration * delta_time;
 
 	// update and clamp the velocity
-	bool apply_slowdown = (particle->acceleration == glm::vec2(0.0f, 0.0f));
+	bool apply_slowdown = (particle.acceleration == glm::vec2(0.0f, 0.0f));
 	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, layer_trait->game->player_slowing_factor, max_velocity_factor * layer_trait->game->player_max_velocity);
-	particle->acceleration = glm::vec2(0.0f, 0.0f);
+	particle.acceleration = glm::vec2(0.0f, 0.0f);
 	return false;
 }
 
@@ -287,19 +287,19 @@ ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(flo
 	return result;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyTrait::UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyTrait::UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const
 {
-	particle->rotation_alpha += 2.0f * delta_time;
-	if (particle->rotation_alpha > 2.0f * (float)M_PI)
-		particle->rotation_alpha -= 2.0f * (float)M_PI;
+	particle.rotation_alpha += 2.0f * delta_time;
+	if (particle.rotation_alpha > 2.0f * (float)M_PI)
+		particle.rotation_alpha -= 2.0f * (float)M_PI;
 
 
-	glm::vec2 v = glm::vec2(std::cos(particle->rotation_alpha), std::sin(particle->rotation_alpha));
+	glm::vec2 v = glm::vec2(std::cos(particle.rotation_alpha), std::sin(particle.rotation_alpha));
 
 
-	particle->bounding_box.position =
-		particle->rotation_center +
-		particle->rotation_radius * v;
+	particle.bounding_box.position =
+		particle.rotation_center +
+		particle.rotation_radius * v;
 
 	return false;
 }
@@ -319,12 +319,12 @@ void ParticleAtomTrait::ParticleToPrimitives(ParticleAtom const& particle, chaos
     chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
-bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom& particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
 {
 	LudumGameInstance * ludum_game_instance = layer_trait->game->GetGameInstance();
 
 	glm::vec2 const & player_position = update_data.player_particle.bounding_box.position;
-	glm::vec2 & particle_position = particle->bounding_box.position;
+	glm::vec2 & particle_position = particle.bounding_box.position;
 
 	glm::vec2 delta_pos = (player_position - particle_position);
 
@@ -343,19 +343,19 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 
 	glm::vec2 player_sum_velocity = glm::vec2(0.0f, 0.0f);
 
-	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO, player_sum_velocity, particle->particle_radius_factor);
+	affected |= ApplyAffectorToParticles(delta_time, particle, update_data.player_particle, in_waken_up_zone, WAKEN_RADIUS_RATIO, player_sum_velocity, particle.particle_radius_factor);
 
-	if (in_waken_up_zone && !particle->waken_up)
+	if (in_waken_up_zone && !particle.waken_up)
 	{
 		if (ludum_game_instance != nullptr)
 			ludum_game_instance->NotifyAtomCountChange(+1);
-		particle->waken_up = true;
+		particle.waken_up = true;
 	}
-	else if (!affected && particle->waken_up)
+	else if (!affected && particle.waken_up)
 	{
 		if (ludum_game_instance != nullptr)
 			ludum_game_instance->NotifyAtomCountChange(-1);
-		particle->waken_up = false;
+		particle.waken_up = false;
 	}
 
 	// danger affectors
@@ -365,16 +365,16 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom * particle
 	for (size_t i = 0; i < enemy_count; ++i)
 	{
 		glm::vec2 enemy_velocity;
-		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, enemy_velocity, particle->particle_radius_factor);
+		affected |= ApplyAffectorToParticles(delta_time, particle, update_data.enemy_particles[i], in_danger_zone, DANGER_RADIUS_RATIO, enemy_velocity, particle.particle_radius_factor);
 		enemy_sum_velocity += enemy_velocity;
 	}
 
-	particle->velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
+	particle.velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
 
 	// update life and color
 	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_particle_health, false, layer_trait->game))
 	{
-		if (particle->waken_up)
+		if (particle.waken_up)
 			if (ludum_game_instance != nullptr)
 				ludum_game_instance->NotifyAtomCountChange(-1);
 		return true;
@@ -416,7 +416,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 // ===========================================================================
 
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const
+bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
 {
 	return false;
 }

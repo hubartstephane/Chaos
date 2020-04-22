@@ -127,20 +127,20 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
         primitive[i].color = color;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, std::vector<chaos::box2> const& player_boxes, LayerTrait const * layer_trait) const
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy & particle, std::vector<chaos::box2> const& player_boxes, LayerTrait const * layer_trait) const
 {
-	if (particle->enemy_health <= 0.0f)
+	if (particle.enemy_health <= 0.0f)
 		return true;
 
-	chaos::box2 bb = particle->bounding_box;
+	chaos::box2 bb = particle.bounding_box;
 	bb.half_size *= COLLISION_PLAYER_TWEAK;
 
 	// collision with player
 
 	// update blinking effect
 
-	if (particle->touched_count_down > 0.0f)
-		particle->touched_count_down -= delta_time;
+	if (particle.touched_count_down > 0.0f)
+		particle.touched_count_down -= delta_time;
 
 	for (size_t i = 0; i < player_boxes.size(); ++i)
 	{
@@ -152,7 +152,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 			{
 				if (ludum_player->dash_timer <= 0.0f || !ludum_player->GetGhostLevel())
 				{
-					float life_lost = OnCollisionWithEnemy(particle, particle->enemy_health, layer_trait->game, true, particle->bounding_box); // destroy the enemy always
+					float life_lost = OnCollisionWithEnemy(&particle, particle.enemy_health, layer_trait->game, true, particle.bounding_box); // destroy the enemy always
 
 					ludum_player->SetHealth(-life_lost, true);
 
@@ -163,28 +163,28 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 	}
 
 	// bitmap animation
-	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
+	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasGridAnimation())
 	{
-        float frame_duration = particle->bitmap_info->GetFrameDuration();
+        float frame_duration = particle.bitmap_info->GetFrameDuration();
 
-		particle->image_timer += delta_time;
-		if (particle->image_timer > frame_duration)
+		particle.image_timer += delta_time;
+		if (particle.image_timer > frame_duration)
 		{
-			particle->image_timer = 0.0f;
-			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())
-				particle->current_frame = 0;
+			particle.image_timer = 0.0f;
+			if (++particle.current_frame >= particle.bitmap_info->GetAnimationImageCount())
+				particle.current_frame = 0;
 		}
 	}
 
-	particle->time += delta_time;
+	particle.time += delta_time;
 
-	particle->bounding_box.position += particle->velocity * delta_time;
+	particle.bounding_box.position += particle.velocity * delta_time;
 	
-	if (particle->pattern != nullptr)
+	if (particle.pattern != nullptr)
 	{
 		death::Camera const* camera = layer_trait->game->GetCamera(0);
 		if (camera != nullptr)
-			return particle->pattern->UpdateParticle(delta_time, particle, camera->GetCameraBox(true));
+			return particle.pattern->UpdateParticle(delta_time, &particle, camera->GetCameraBox(true));
 	}
 
 	return false;
@@ -223,9 +223,9 @@ void ParticleBonusTrait::ParticleToPrimitives(ParticleBonus const& particle, cha
         primitive[i].color = particle.color;
 }
 
-bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const
+bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus& particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const
 {
-	chaos::box2 bb = particle->bounding_box;
+	chaos::box2 bb = particle.bounding_box;
 	bb.half_size *= 0.70f;
 
 	for (size_t i = 0; i < player_boxes.size(); ++i)
@@ -235,7 +235,7 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus * partic
 		{
 			LudumPlayer* ludum_player = layer_trait->game->GetPlayer(i);
 			if (ludum_player != nullptr)
-				ludum_player->OnPlayerUpgrade(particle->bonus_type);
+				ludum_player->OnPlayerUpgrade(particle.bonus_type);
 
 			return true;
 		}
@@ -319,18 +319,18 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
         primitive[i].color = boost_color * particle.color;
 }
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
+bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const
 {
-	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasGridAnimation())
+	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasGridAnimation())
 	{
-        float frame_duration = particle->bitmap_info->GetFrameDuration();
+        float frame_duration = particle.bitmap_info->GetFrameDuration();
 
-		particle->image_timer += delta_time;
-		if (particle->image_timer > frame_duration)
+		particle.image_timer += delta_time;
+		if (particle.image_timer > frame_duration)
 		{
-			particle->image_timer = 0.0f;
-			if (++particle->current_frame >= particle->bitmap_info->GetAnimationImageCount())
-				particle->current_frame = 0;
+			particle.image_timer = 0.0f;
+			if (++particle.current_frame >= particle.bitmap_info->GetAnimationImageCount())
+				particle.current_frame = 0;
 		}
 	}
 	return false;
@@ -362,23 +362,23 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 }
 
 
-bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
 	// all damage consummed
-	if (particle->damage <= 0.0f)
+	if (particle.damage <= 0.0f)
 		return true;
 	// outside the camera
 
-	particle->lifetime -= delta_time;
-	if (particle->lifetime <= 0.0f)
+	particle.lifetime -= delta_time;
+	if (particle.lifetime <= 0.0f)
 		return true;
 
-	if (particle->player_ownership && !chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
+	if (particle.player_ownership && !chaos::Collide(update_data.camera_box, particle.bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
 
 
 	// search for collisions
-	if (particle->player_ownership)
+	if (particle.player_ownership)
 	{
 		size_t count = update_data.enemies.size();
 		for (size_t i = 0 ; i < count ; ++i)
@@ -386,7 +386,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			ParticleEnemy * enemy = update_data.enemies[i];
 			if (enemy->enemy_health > 0.0f)
 			{
-				chaos::box2 b1 = particle->bounding_box;
+				chaos::box2 b1 = particle.bounding_box;
 				chaos::box2 b2 = enemy->bounding_box;
 				
 				b1.half_size *= COLLISION_FIRE_TWEAK;
@@ -397,12 +397,12 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 				{
 
 
-					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, false, enemy->bounding_box);
+					particle.damage -= OnCollisionWithEnemy(enemy, particle.damage, layer_trait->game, false, enemy->bounding_box);
 
 					// kill bullet ?
-					if (particle->damage <= 0.0f)
+					if (particle.damage <= 0.0f)
 						return true;
-					if (!particle->trample)
+					if (!particle.trample)
 						return true;
 				}			
 			}
@@ -417,18 +417,18 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 	{
 		chaos::box2 player_box = player_pawn->GetBox();
 		player_box.half_size *= 0.7f;
-		if (!particle->player_ownership && update_data.player != nullptr)
+		if (!particle.player_ownership && update_data.player != nullptr)
 		{
-			if (chaos::Collide(particle->bounding_box, player_box)) // destroy the particle outside the camera frustum (works for empty camera)
+			if (chaos::Collide(particle.bounding_box, player_box)) // destroy the particle outside the camera frustum (works for empty camera)
 			{
-				update_data.player->SetHealth(-particle->damage, true);
-				particle->damage = 0.0f;
+				update_data.player->SetHealth(-particle.damage, true);
+				particle.damage = 0.0f;
 			}
 		}
 	}
 
 	// update position velocity
-	particle->bounding_box.position += delta_time * particle->velocity;
+	particle.bounding_box.position += delta_time * particle.velocity;
 
 	return false; // do not destroy the particle
 }
@@ -464,9 +464,9 @@ void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos
 // ParticleShroudLife
 // ===========================================================================
 
-bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLife * particle, LayerTrait const * layer_trait) const
+bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLife& particle, LayerTrait const * layer_trait) const
 {
-	if (particle->bitmap_info == nullptr)
+	if (particle.bitmap_info == nullptr)
 		return false;
 	LudumPlayer * ludum_player = layer_trait->game->GetPlayer(0);
 	if (ludum_player == nullptr)
@@ -475,13 +475,13 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 	float health = ludum_player->GetHealth();
 	float max_health = ludum_player->GetMaxHealth();
 
-	float image_count = (float)particle->bitmap_info->GetAnimationImageCount();
+	float image_count = (float)particle.bitmap_info->GetAnimationImageCount();
 
 	int index = (int)(image_count * (1.0 - (health / max_health)));
 
-	chaos::BitmapAtlas::BitmapLayout layout = particle->bitmap_info->GetAnimationLayout(index, chaos::WrapMode::clamp);
+	chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(index, chaos::WrapMode::clamp);
 
-	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+	particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
 
 
 	return false; // never destroy it
@@ -504,7 +504,7 @@ void ParticleShroudLifeTrait::ParticleToPrimitives(ParticleShroudLife const& par
 
 // shuludum .... duplication AGAIN !!!
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle) const
+bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife& particle) const
 {
 
 	return false;
@@ -528,24 +528,24 @@ void ParticleLifeTrait::ParticleToPrimitives(ParticleLife const& particle, chaos
 // ===========================================================================
 
 
-bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const
+bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const
 {
-	if (particle->explosion_info == nullptr) // delete the particle
+	if (particle.explosion_info == nullptr) // delete the particle
 		return true;
 
-	size_t image_count = particle->explosion_info->GetAnimationImageCount();
-	float  frame_duration = particle->explosion_info->GetFrameDuration();
+	size_t image_count = particle.explosion_info->GetAnimationImageCount();
+	float  frame_duration = particle.explosion_info->GetFrameDuration();
 
-	int image_index = (int)(particle->age / frame_duration);
+	int image_index = (int)(particle.age / frame_duration);
 
-	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::check_ranges);
+	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle.explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::check_ranges);
 	if (bitmap_layout.bitmap_index < 0)
 		return true;
 
-	particle->age += delta_time;
+	particle.age += delta_time;
 
 #if 0
-	particle->texcoords = bitmap_layout;
+	particle.texcoords = bitmap_layout;
 
 	// compute the bounding box for all particles
 	chaos::box2 particle_box = ref_box;
@@ -556,7 +556,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 	// compute texcoords for all particles
 #endif
-	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout);
+	particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout);
 
 
 

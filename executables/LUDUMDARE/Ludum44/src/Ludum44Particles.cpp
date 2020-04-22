@@ -100,7 +100,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
     chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const
+bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const
 {
 	// find all enemies
 	std::vector<ParticleEnemy*> enemies;
@@ -113,7 +113,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 		ParticleEnemy * enemy = enemies[i];
 		if (enemy->life > 0.0f)
 		{
-			if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
+			if (chaos::Collide(particle.bounding_box, enemy->bounding_box))
 			{
 				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, true, enemy->bounding_box); // destroy the enemy always
 			
@@ -124,7 +124,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer * part
 	}
 
 	// displace the player
-	particle->bounding_box.position += delta_time * particle->velocity;
+	particle.bounding_box.position += delta_time * particle.velocity;
 
 	return false;
 }
@@ -144,15 +144,15 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
     result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 2, chaos::VertexAttributeType::FLOAT2);
 }
 
-bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZone * particle)
+bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZone& particle)
 {
 	// XXX: see UpdatePlayerBuyingItem(...)	=> particle.gid = 0;
 	//          this was usefull to require a zone destruction
 	//          this is not used anymore
-	if (particle->gid == 0)
+	if (particle.gid == 0)
 	{
-		particle->color.a -= delta_time;
-		if (particle->color.a <= 0.0f) // fade out the particle
+		particle.color.a -= delta_time;
+		if (particle.color.a <= 0.0f) // fade out the particle
 			return true;	
 	}
 	return false;
@@ -236,24 +236,24 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle cons
 // ===========================================================================
 
 
-bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const
+bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const
 {
-	if (particle->explosion_info == nullptr) // delete the particle
+	if (particle.explosion_info == nullptr) // delete the particle
 		return true;
 
-	size_t image_count = particle->explosion_info->GetAnimationImageCount();
-	float frame_duration = particle->explosion_info->GetFrameDuration();
+	size_t image_count = particle.explosion_info->GetAnimationImageCount();
+	float frame_duration = particle.explosion_info->GetFrameDuration();
 
-	int image_index = (int)(particle->age / frame_duration);
+	int image_index = (int)(particle.age / frame_duration);
 
-	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle->explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::check_ranges);
+	chaos::BitmapAtlas::BitmapLayout bitmap_layout = particle.explosion_info->GetAnimationLayout(image_index, chaos::WrapMode::check_ranges);
 	if (bitmap_layout.bitmap_index < 0)
 		return true;
 
-	particle->age += delta_time;
+	particle.age += delta_time;
 
 #if 0
-	particle->texcoords = bitmap_layout;
+	particle.texcoords = bitmap_layout;
 
 	// compute the bounding box for all particles
 	chaos::box2 particle_box = ref_box;
@@ -264,7 +264,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion 
 
 	// compute texcoords for all particles
 #endif
-	particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout);
+	particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout);
 	
 
 
@@ -287,7 +287,7 @@ void ParticleExplosionTrait::ParticleToPrimitives(ParticleExplosion const& parti
 // ===========================================================================
 
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const
+bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
 {
 
 	return false;
@@ -327,22 +327,22 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 }
 
 
-bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
 
 	// all damage consummed
-	if (particle->damage <= 0.0f)
+	if (particle.damage <= 0.0f)
 		return true;
 	// outside the camera
 
-	particle->lifetime -= delta_time;
-	if (particle->lifetime <= 0.0f)
+	particle.lifetime -= delta_time;
+	if (particle.lifetime <= 0.0f)
 		return true;
 
-	if (particle->player_ownership && !chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
+	if (particle.player_ownership && !chaos::Collide(update_data.camera_box, particle.bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		return true;	
 
-	if (!particle->player_ownership && ObjectBesideCamera(update_data.camera_box, particle->bounding_box))
+	if (!particle.player_ownership && ObjectBesideCamera(update_data.camera_box, particle.bounding_box))
 		return true;
 
 	death::PlayerPawn* player_pawn = update_data.player->GetPawn();
@@ -351,7 +351,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 
 
 	// search for collisions
-	if (particle->player_ownership)
+	if (particle.player_ownership)
 	{
 		size_t count = update_data.enemies.size();
 		for (size_t i = 0 ; i < count ; ++i)
@@ -359,14 +359,14 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 			ParticleEnemy * enemy = update_data.enemies[i];
 			if (enemy->life > 0.0f)
 			{
-				if (chaos::Collide(particle->bounding_box, enemy->bounding_box))
+				if (chaos::Collide(particle.bounding_box, enemy->bounding_box))
 				{
-					particle->damage -= OnCollisionWithEnemy(enemy, particle->damage, layer_trait->game, false, enemy->bounding_box);
+					particle.damage -= OnCollisionWithEnemy(enemy, particle.damage, layer_trait->game, false, enemy->bounding_box);
 
 					// kill bullet ?
-					if (particle->damage <= 0.0f)
+					if (particle.damage <= 0.0f)
 						return true;
-					if (!particle->trample)
+					if (!particle.trample)
 						return true;
 				}			
 			}
@@ -378,19 +378,19 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire * particle
 
 	chaos::box2 pawn_box = player_pawn->GetBox();
 	pawn_box.half_size *= 0.7f;
-	if (!particle->player_ownership && update_data.player != nullptr)
+	if (!particle.player_ownership && update_data.player != nullptr)
 	{
-		if (chaos::Collide(particle->bounding_box, pawn_box)) // destroy the particle outside the camera frustum (works for empty camera)
+		if (chaos::Collide(particle.bounding_box, pawn_box)) // destroy the particle outside the camera frustum (works for empty camera)
 		{				
-			update_data.player->SetHealth(-particle->damage, true);
-			particle->damage = 0.0f;
+			update_data.player->SetHealth(-particle.damage, true);
+			particle.damage = 0.0f;
 			
 			layer_trait->game->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 		}	
 	}
 
 	// update position velocity
-	particle->bounding_box.position += delta_time * particle->velocity;
+	particle.bounding_box.position += delta_time * particle.velocity;
 
 	return false; // do not destroy the particle
 }
@@ -440,48 +440,48 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	return result;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
 	// destroy the particle if no life
-	if (particle->life <= 0.0f)
+	if (particle.life <= 0.0f)
 		return true;
 	// destroy the particle if outside a BIG camera box
 
 	// shuxxx
-	//if (!chaos::Collide(update_data.camera_box, particle->bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
+	//if (!chaos::Collide(update_data.camera_box, particle.bounding_box)) // destroy the particle outside the camera frustum (works for empty camera)
 	//	return true;	
 
-	if (ObjectBesideCamera(update_data.camera_box, particle->bounding_box))
+	if (ObjectBesideCamera(update_data.camera_box, particle.bounding_box))
 		return true;
 
 	// apply velocity
-	particle->bounding_box.position += delta_time * particle->velocity;
+	particle.bounding_box.position += delta_time * particle.velocity;
 	// apply rotation
 	
-	if (particle->rotation_following_player)
+	if (particle.rotation_following_player)
 	{
 		death::PlayerPawn * player_pawn = layer_trait->game->GetPlayerPawn(0);
 		if (player_pawn != nullptr)
 		{		
-			glm::vec2 delta_pos = player_pawn->GetPosition() - particle->bounding_box.position;
-			particle->rotation = atan2f(delta_pos.y, delta_pos.x) - (float)M_PI_2; 
+			glm::vec2 delta_pos = player_pawn->GetPosition() - particle.bounding_box.position;
+			particle.rotation = atan2f(delta_pos.y, delta_pos.x) - (float)M_PI_2;
 		}
 	}
 	else
 	{
-		particle->rotation += delta_time * particle->rotation_speed;	
+		particle.rotation += delta_time * particle.rotation_speed;
 	}
 
 	// update blinking effect
-	if (particle->touched_count_down > 0)
-		--particle->touched_count_down;
+	if (particle.touched_count_down > 0)
+		--particle.touched_count_down;
 
 
 
-	if (particle->fire_frequency > 0.0f)
+	if (particle.fire_frequency > 0.0f)
 	{
-		particle->current_fire_timer += delta_time;
-		if (particle->current_fire_timer >= particle->fire_frequency)
+		particle.current_fire_timer += delta_time;
+		if (particle.current_fire_timer >= particle.fire_frequency)
 		{
 			float size_ratio = 0.2f;
 
@@ -490,9 +490,9 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy * partic
 			float delta_angle = 2.0f * (float)M_PI / (float)count;
 
 			LudumGameInstance* ludum_game_instance = layer_trait->game->GetGameInstance();
-			ludum_game_instance->FireProjectile("enemy_fire", particle->bounding_box, size_ratio, count, nullptr, particle->rotation, delta_angle, layer_trait->game->enemy_fire_velocity, layer_trait->game->enemy_fire_damage, false, false);
+			ludum_game_instance->FireProjectile("enemy_fire", particle.bounding_box, size_ratio, count, nullptr, particle.rotation, delta_angle, layer_trait->game->enemy_fire_velocity, layer_trait->game->enemy_fire_damage, false, false);
 
-			particle->current_fire_timer = 0.0f;		
+			particle.current_fire_timer = 0.0f;
 		}
 	}
 

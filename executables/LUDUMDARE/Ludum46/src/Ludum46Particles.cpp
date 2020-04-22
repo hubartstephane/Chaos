@@ -56,26 +56,26 @@ void ParticleSoulTrait::ParticleToPrimitives(ParticleSoul const& particle, chaos
 	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
-bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle, ParticleSoulUpdateData & update_data, LayerTrait const* layer_trait) const
+bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData & update_data, LayerTrait const* layer_trait) const
 {
-	particle->bounding_box.position += delta_time * particle->velocity;
+	particle.bounding_box.position += delta_time * particle.velocity;
 
 	// out of world
-	if (!chaos::Collide(particle->bounding_box, update_data.level_bounding_box))
+	if (!chaos::Collide(particle.bounding_box, update_data.level_bounding_box))
 		return true;
 
 	// out of health
-	if (particle->health <= 0.0f)
+	if (particle.health <= 0.0f)
 		return true;
 
 	// out of lifetime
-	if (particle->duration > 0.0f)
+	if (particle.duration > 0.0f)
 	{
-		particle->life += delta_time;
-		if (particle->life > particle->duration)
+		particle.life += delta_time;
+		if (particle.life > particle.duration)
 			return true;
 
-		particle->color.a = 1.0f - (particle->life / particle->duration);	
+		particle.color.a = 1.0f - (particle.life / particle.duration);
 	}
 
 	// check fire particles
@@ -89,10 +89,10 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 			chaos::ParticleConstAccessor<ParticleFire> accessor = update_data.fire_layer_instance->GetParticleLayer()->GetAllocation(i)->GetParticleAccessor();
 			for (ParticleFire const& fire_particle : accessor)
 			{
-				if (chaos::Collide(fire_particle.bounding_box, particle->bounding_box))
+				if (chaos::Collide(fire_particle.bounding_box, particle.bounding_box))
 				{
 					if (update_data.ludum_level_instance != nullptr)
-						update_data.ludum_level_instance->SpawnBloodParticles(particle->bounding_box, 10);
+						update_data.ludum_level_instance->SpawnBloodParticles(particle.bounding_box, 10);
 
 					return true; // touching fire 
 				}
@@ -103,12 +103,12 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul* particle,
 	// checking triggers
 	for (SoulTriggerObject* trigger : update_data.soul_triggers)
 	{
-		if (chaos::Collide(trigger->GetBoundingBox(true), particle->bounding_box))
+		if (chaos::Collide(trigger->GetBoundingBox(true), particle.bounding_box))
 		{
 			if (trigger->AddTriggerCount())
 			{
 				if (update_data.ludum_level_instance != nullptr)
-					update_data.ludum_level_instance->SpawnBurnedSoulParticles(particle->bounding_box, 3);
+					update_data.ludum_level_instance->SpawnBurnedSoulParticles(particle.bounding_box, 3);
 
 				return true;
 			}
@@ -142,20 +142,20 @@ void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos
 	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
-bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire* particle, ParticleFireUpdateData & update_data, LayerTrait const* layer_trait) const
+bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData & update_data, LayerTrait const* layer_trait) const
 {
-	particle->bounding_box.position += delta_time * particle->velocity;
+	particle.bounding_box.position += delta_time * particle.velocity;
 
-	if (!chaos::Collide(particle->bounding_box, update_data.level_bounding_box))
+	if (!chaos::Collide(particle.bounding_box, update_data.level_bounding_box))
 		return true;
 
-	if (particle->duration > 0.0f)
+	if (particle.duration > 0.0f)
 	{
-		particle->life += delta_time;
-		if (particle->life > particle->duration)
+		particle.life += delta_time;
+		if (particle.life > particle.duration)
 			return true;
 
-		particle->color.a = 1.0f - (particle->life / particle->duration);
+		particle.color.a = 1.0f - (particle.life / particle.duration);
 	}
 	return false;
 }
@@ -194,12 +194,12 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 // ParticleAnimatedTrait
 // ===========================================================================
 
-bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated* particle)
+bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated & particle)
 {
-	particle->animation_timer += delta_time;
+	particle.animation_timer += delta_time;
 
 	// destroy the particles ? 
-	if (!UpdateAnimatedParticleTexcoords(*particle))
+	if (!UpdateAnimatedParticleTexcoords(particle))
 		return true;
 
 	return false;
@@ -214,22 +214,22 @@ void ParticleAnimatedTrait::ParticleToPrimitives(ParticleAnimated const& particl
 // ParticleBloodTrait
 // ===========================================================================
 
-static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle)
+static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated & particle)
 {
-	particle->bounding_box.position += delta_time * particle->velocity;
+	particle.bounding_box.position += delta_time * particle.velocity;
 
-	if (particle->duration > 0.0f)
+	if (particle.duration > 0.0f)
 	{
-		particle->life += delta_time;
-		if (particle->life > particle->duration)
+		particle.life += delta_time;
+		if (particle.life > particle.duration)
 			return true;
 
-		particle->color.a = 1.0f - (particle->life / particle->duration);
+		particle.color.a = 1.0f - (particle.life / particle.duration);
 	}
-	particle->animation_timer += delta_time;
+	particle.animation_timer += delta_time;
 
 	// destroy the particles ? 
-	if (!UpdateAnimatedParticleTexcoords(*particle))
+	if (!UpdateAnimatedParticleTexcoords(particle))
 		return true;
 
 	return false;
@@ -254,11 +254,11 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 		primitive[i].color = particle.color;
 }
 
-bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const
+bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & particle, LayerTrait const* layer_trait) const
 {
 	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
-	particle->velocity += delta_time * particle->acceleration;
+	particle.velocity += delta_time * particle.acceleration;
 	return false;
 }
 
@@ -281,12 +281,12 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 		primitive[i].color = particle.color;
 }
 
-bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const
+bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle, LayerTrait const* layer_trait) const
 {
 	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
-	particle->velocity += delta_time * particle->acceleration;
-	particle->offset_t += delta_time;
+	particle.velocity += delta_time * particle.acceleration;
+	particle.offset_t += delta_time;
 
 	return false;
 }
@@ -301,7 +301,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
 }
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* particle, LayerTrait const* layer_trait) const
+bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle, LayerTrait const* layer_trait) const
 {
 	LudumPlayerDisplacementComponent* displacement_component = layer_trait->game->GetPlayerDisplacementComponent(0);
 	if (displacement_component != nullptr)
@@ -310,13 +310,13 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* parti
 
 		if (std::abs(pawn_velocity.x) < 1.0f)
 		{
-			particle->frame_index = 0;
-			particle->horizontal_flip = false;	
+			particle.frame_index = 0;
+			particle.horizontal_flip = false;
 		}
 		else if (std::abs(pawn_velocity.x) < 12.0f)
 		{
-			particle->frame_index = 3;
-			particle->horizontal_flip = (pawn_velocity.x < 0.0f);
+			particle.frame_index = 3;
+			particle.horizontal_flip = (pawn_velocity.x < 0.0f);
 		}
 		else 
 		{
@@ -326,21 +326,21 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer* parti
 			if (max_pawn_velocity > 0.0f)
 				speed_factor = std::max(1.0f, speed_factor * std::abs(pawn_velocity.x) / max_pawn_velocity);
 
-			particle->animation_timer += speed_factor * delta_time;
+			particle.animation_timer += speed_factor * delta_time;
 
-			particle->horizontal_flip = (pawn_velocity.x < 0.0f);
-			particle->frame_index = 1 + (int)std::fmodf(particle->animation_timer, 2.0f);
+			particle.horizontal_flip = (pawn_velocity.x < 0.0f);
+			particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
 		}
 	}
 
-	if (particle->bitmap_info != nullptr && particle->bitmap_info->HasAnimation())
+	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{
-		chaos::BitmapAtlas::BitmapLayout layout = particle->bitmap_info->GetAnimationLayout(particle->frame_index);
+		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.frame_index);
 		if (!layout.IsValid())
 			return true; // destroy the particle
 
-		particle->texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-		particle->texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle->texcoords, particle->horizontal_flip, particle->vertical_flip, particle->diagonal_flip);
+		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
 	}
 	return false;
 }

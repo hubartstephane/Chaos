@@ -67,7 +67,7 @@ public:
     void ParticleToPrimitives(death::TiledMapParticle const & particle, chaos::TrianglePairOutput<VertexPowerUpZone> & output) const;
     void ParticleToPrimitives(death::TiledMapParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
 
-	bool UpdateParticle(float delta_time, ParticlePowerUpZone * particle);
+	bool UpdateParticle(float delta_time, ParticlePowerUpZone & particle);
 };
 
 // ===========================================================================
@@ -112,7 +112,7 @@ public:
 
 	ParticleEnemyUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleEnemy * particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
@@ -160,7 +160,7 @@ public:
 
 	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const * layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleFire * particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleFire const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
@@ -186,7 +186,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleLife * particle, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
@@ -217,7 +217,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleExplosion * particle, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleExplosion const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleExplosion const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
@@ -250,7 +250,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;

@@ -520,7 +520,7 @@ public:
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
 			{
-				if (!allocation_trait.UpdateParticle(delta_time, &particle_accessor[i], params...)) // particle not destroyed ?
+				if (!allocation_trait.UpdateParticle(delta_time, particle_accessor[i], params...)) // particle not destroyed ?
 				{
 					if (i != j)
                         particle_accessor[j] = particle_accessor[i];

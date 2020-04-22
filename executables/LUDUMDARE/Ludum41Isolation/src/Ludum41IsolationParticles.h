@@ -28,7 +28,7 @@ public:
     void ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase> & output) const;
     void ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 
-	bool UpdateParticle(float delta_time, ParticleObject * particle) const;
+	bool UpdateParticle(float delta_time, ParticleObject & particle) const;
 };
 
 
@@ -51,7 +51,7 @@ public:
 	// called once for the whole allocation
 	int BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject> & particle_accessor, LayerTrait const * layer_trait) const;
     // called for every particles
-    bool UpdateParticle(float delta_time, ParticleObject* particle, int extra_param, LayerTrait const* layer_trait) const;
+    bool UpdateParticle(float delta_time, ParticleObject& particle, int extra_param, LayerTrait const* layer_trait) const;
 
 	// called once for the whole allocation
 	glm::vec2 BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const;
@@ -91,7 +91,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleBrick * particle, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleBrick& particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
@@ -121,7 +121,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleMovableObject * particle, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleMovableObject& particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;

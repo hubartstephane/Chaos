@@ -67,7 +67,7 @@ public:
 
 	ParticleSoulUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor, LayerTrait const* layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleSoul* particle, ParticleSoulUpdateData& update_data, LayerTrait const* layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData& update_data, LayerTrait const* layer_trait) const;
 
 	void ParticleToPrimitives(ParticleSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
@@ -111,7 +111,7 @@ public:
 
 	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const* layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleFire* particle, ParticleFireUpdateData& update_data, LayerTrait const* layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data, LayerTrait const* layer_trait) const;
 
 	void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
@@ -131,7 +131,7 @@ class ParticleAnimatedTrait : public chaos::ParticleAllocationTrait<ParticleAnim
 {
 public:
 
-	static bool UpdateParticle(float delta_time, ParticleAnimated* particle);
+	static bool UpdateParticle(float delta_time, ParticleAnimated & particle);
 
 	static void ParticleToPrimitives(ParticleAnimated const& particle, chaos::QuadOutput<VertexBase>& output);
 };
@@ -164,7 +164,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticlePlayer * particle, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticlePlayer & particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
@@ -195,7 +195,7 @@ public:
 		class LudumGame* game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleBlood* particle, LayerTrait const* layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleBlood & particle, LayerTrait const* layer_trait) const;
 
 	void ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
@@ -223,7 +223,7 @@ public:
 		class LudumGame* game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleBurnedSoul* particle, LayerTrait const* layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleBurnedSoul & particle, LayerTrait const* layer_trait) const;
 
 	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };

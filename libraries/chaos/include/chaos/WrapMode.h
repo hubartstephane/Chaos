@@ -14,7 +14,7 @@ namespace chaos
 
 	// apply the wrap mode (return whether this is not an out of bounds)
 	template<typename T>
-	bool ApplyWrapMode(T src, std::pair<T, T> const& range, WrapMode mode, T & result)
+	bool ApplyWrapMode(T src, T min_value, T max_value, WrapMode mode, T & result)
 	{
 		if (mode == WrapMode::none)
 		{
@@ -22,17 +22,17 @@ namespace chaos
 		}
 		else if (mode == WrapMode::clamp)
 		{
-			result = std::clamp(src, range.first, range.second);
+			result = std::clamp(src, min_value, max_value);
 		}
 		else if (mode == WrapMode::wrap)
 		{
-			result = range.first + MathTools::Modulo(result, range.second - range.first);
+			result = min_value + MathTools::Modulo(src - min_value, max_value - min_value + 1); // +1 because 'max_value' is inside accepted range
 		}
 		else if (mode == WrapMode::check_ranges)
 		{
-			if (src < range.first)
+			if (src < min_value)
 				return false;
-			if (src > range.second)
+			if (src > max_value)
 				return false;
 			result = src;
 		}
@@ -40,37 +40,37 @@ namespace chaos
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec1<T> src, std::pair<glm::tvec1<T>, glm::tvec1<T>> const& range, WrapMode mode, glm::tvec1<T> & result)
+	bool ApplyWrapMode(glm::tvec1<T> const & src, glm::tvec1<T> const & min_value, glm::tvec1<T> const& max_value, WrapMode mode, glm::tvec1<T> & result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
-			if (!ApplyWrapMode(src[i], std::make_pair(range.first[i], range.second[i]), mode, result))
+			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))
 				return false;
 		return true;
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec2<T> src, std::pair<glm::tvec2<T>, glm::tvec1<T>> const& range, WrapMode mode, glm::tvec2<T>& result)
+	bool ApplyWrapMode(glm::tvec2<T> const & src, glm::tvec2<T> const& min_value, glm::tvec2<T> const& max_value, WrapMode mode, glm::tvec2<T>& result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
-			if (!ApplyWrapMode(src[i], std::make_pair(range.first[i], range.second[i]), mode, result))
+			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))
 				return false;
 		return true;
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec3<T> src, std::pair<glm::tvec3<T>, glm::tvec1<T>> const& range, WrapMode mode, glm::tvec3<T>& result)
+	bool ApplyWrapMode(glm::tvec3<T> const & src, glm::tvec3<T> const& min_value, glm::tvec3<T> const& max_value, WrapMode mode, glm::tvec3<T>& result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
-			if (!ApplyWrapMode(src[i], std::make_pair(range.first[i], range.second[i]), mode, result))
+			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))
 				return false;
 		return true;
 	}
 
 	template<typename T>
-	bool ApplyWrapMode(glm::tvec4<T> src, std::pair<glm::tvec4<T>, glm::tvec4<T>> const& range, WrapMode mode, glm::tvec4<T>& result)
+	bool ApplyWrapMode(glm::tvec4<T> src, glm::tvec4<T> const& min_value, glm::tvec4<T> const& max_value, WrapMode mode, glm::tvec4<T>& result)
 	{
 		for (size_t i = 0; i < src.length(); ++i)
-			if (!ApplyWrapMode(src[i], std::make_pair(range.first[i], range.second[i]), mode, result))
+			if (!ApplyWrapMode(src[i], min_value[i], max_value[i], mode, result[i]))
 				return false;
 		return true;
 	}

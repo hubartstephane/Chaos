@@ -56,6 +56,42 @@ namespace chaos
 			U factor;
 		};
 
+		// A signed modulo version
+		//
+		// XXX : the '%' operator is the reminder of the integer divide ... not really modulo when it comes with negative values
+		//
+		template<typename T>
+		T Modulo(T a, T b)
+		{
+			assert(b > 0);
+
+			// property :    
+			//
+			//    a ^ b == (a + k.b) ^ b
+			//
+			// i want to use % operator, so i need to have a 'a + k.b' positive value
+			//
+			//    a + k.b >= 0     =>  k = -(a/b) + 1
+			if constexpr (std::is_integral_v<T>)
+			{
+				if (a < 0)
+				{
+					int k = -(a / b) + 1;
+					a = a + (k * b);
+				}
+				return a % b;
+			}
+			else if constexpr (std::is_same_v<T, float> || std::is_same_v<T, double>)
+			{
+				if (a < 0)
+				{
+					int64_t k = -static_cast<int64_t>(a / b) + static_cast<int64_t>(1);
+					a = a + (static_cast<T>(k)* b);
+				}
+				return std::fmod(a, b);
+			}
+		}
+
 		/** remap a range to another */
 		template<typename T, typename U>
 		U RemapRanges(T const & src_range_min, T const & src_range_max, U const & dst_range_min, U const & dst_range_max, T src)

@@ -216,6 +216,19 @@ void ParticleAnimatedTrait::ParticleToPrimitives(ParticleAnimated const& particl
 
 static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated* particle)
 {
+	for (auto m : { chaos::WrapMode::none , chaos::WrapMode::clamp, chaos::WrapMode::wrap, chaos::WrapMode::check_ranges })
+	{
+		for (int i = -1 ; i < 5 ; ++i)
+		{
+			int result = 666;
+			bool b = chaos::ApplyWrapMode(i, std::make_pair(1, 3), m, result);
+
+			result = result;
+		}
+	}
+
+
+
 	particle->bounding_box.position += delta_time * particle->velocity;
 
 	if (particle->duration > 0.0f)

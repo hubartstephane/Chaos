@@ -90,39 +90,6 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 
 
 
-	// SFINAE
-	// ------
-	// XXX : here is an example of what kind of code, the preceding macro can generate
-	//  
-	//
-	// char has_function_helper_XXXXXXXXX(...);
-	//
-	// template<typename T>
-	// auto has_function_helper_XXXXXXXXX(T const & t) -> decltype(&T::XXXXXXXXX);
-	//
-	// template<typename T>
-	// using has_function_XXXXXXXXX = boost::mpl::bool_<
-	//	 sizeof(has_function_helper_XXXXXXXXX(chaos::meta::GenerateFakeInstance<T>())) != 1
-	// >;
-	//
-	// XXX : boost can generate some 'similar' code with : BOOST_TTI_HAS_MEMBER_FUNCTION(XXXXXXX);
-	//       the difference is that at usage, we have to ask for a precise function signature
-	//
-	//  has_member_function_XXXXXXXX<T, int (T::*)(float)>;    <-- function signature required (even return type)
-	//
-	// XXX : limitation !!!
-	//
-	//  this is not working if the class has a XXXXXXXXX TEMPLATE function
-	//
-
-
-
-
-
-
-
-
-
 
 
 
@@ -144,6 +111,10 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 	//		bool constexpr a1 = has_callable2_toto<A>();
 	//		bool constexpr a2 = has_callable2_toto<A, int>();
 	//		bool constexpr a3 = has_callable2_toto<A, float>();
+	//
+	// with a short cut for the 2nd form
+	//
+	//      bool constexpr b = has_callable2_toto_v<A, int>;
 	//
 	// XXX: both forms are working with 'const'
 	//
@@ -174,8 +145,9 @@ template<typename T, typename ...PARAMS>\
 constexpr bool has_callable2_##funcname##()\
 {\
 	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
-}
-
+}\
+template<typename T, typename ...PARAMS>\
+constexpr bool has_callable2_##funcname##_v = has_callable2_##funcname<T, PARAMS...>();
 
 	// ==================================================
 	// Meta functions

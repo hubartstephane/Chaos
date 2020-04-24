@@ -11,23 +11,21 @@
 #include <chaos/ClassTools.h>
 
 
+CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(toto)
 
-
-
-CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(toto);
 
 class A
 {
 public:
 
-	int toto() const { return 1; }
+	float toto() const { return 1.3f; }
 
 	int toto(int) { return 2; }
 
 
 	int toto(float) { return 3; }
 
-	int toto(A*, A*) const { return 4; }
+	A * toto(A*, A*) const { return nullptr; }
 
 
 };
@@ -41,6 +39,13 @@ class B
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
+
+	typeof_callable2_toto<A> ppp;
+
+	typeof_callable2_toto<A, int> xxx;
+
+	typeof_callable2_toto<A, A *, A*> yyy;
+
 	bool a1 = has_callable2_toto_v<A>;
 	bool a2 = has_callable2_toto_v<A, int>;
 	bool a3 = has_callable2_toto_v<A, float>;

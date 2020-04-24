@@ -119,8 +119,28 @@ CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToPrimitives)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
 CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToPrimitives)
 
+
+
+
+CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(Tick)
+CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(UpdateParticle)
+CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(ParticleToPrimitives)
+CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(BeginUpdateParticles)
+CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(BeginParticlesToPrimitives)
+
+
 // detect whether class have a nested class
 CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
+
+
+// ==============================================================
+// The kinf of ParticleUpdate to do
+// ==============================================================
+
+enum class ParticleToPrimitiveType : int
+{
+
+};
 
 // ==============================================================
 // ParticleTraitTools
@@ -178,12 +198,79 @@ public:
 	template<typename TRAIT_TYPE>
 	static constexpr PrimitiveType GetPrimitiveType()
 	{
-		// shutoto
+		int p = 0;
 
-//		if constexpr (has_UpdateParticle<TRAIT_TYPE, decltype()>)
+		using particle_type = typename TRAIT_TYPE::particle_type;
+		using vertex_type = typename TRAIT_TYPE::vertex_type;
 
+		if constexpr (has_LayerTrait_v<TRAIT_TYPE>)
+		{
+			using layer_trait_type = typename TRAIT_TYPE::LayerTrait;
 
+			// LayerTrait + BeginParticlesToPrimitive
+			if constexpr (has_callable2_BeginParticlesToPrimitives_v<TRAIT_TYPE, ParticleConstAccessor<particle_type> const&, layer_trait_type const *>)
+			{
+				//typename begin_particles_to_primitives_type;
 
+				int p = 0;
+				++p;
+
+			}
+
+			// LayerTrait
+			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleOutput<vertex_type>&, layer_trait_type const* > )
+			{
+
+			}
+			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TrianglePairOutput<vertex_type>&, layer_trait_type const* > )
+			{
+
+			}
+			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, QuadOutput<vertex_type>&, layer_trait_type const* > )
+			{
+
+			}
+			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleStripOutput<vertex_type>&, layer_trait_type const* > )
+			{
+
+			}
+			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleFanOutput<vertex_type>&, layer_trait_type const* > )
+			{
+
+			}
+
+			
+		}
+
+		// BeginParticlesToPrimitive
+		if constexpr (has_callable2_BeginParticlesToPrimitives_v<TRAIT_TYPE, ParticleConstAccessor<particle_type> const&>)
+		{
+
+			int p = 0;
+			++p;
+		}
+
+		// Nothing
+		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleOutput<vertex_type>&>)
+		{
+
+		}
+		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TrianglePairOutput<vertex_type>&>)
+		{
+
+		}
+		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, QuadOutput<vertex_type>&>)
+		{
+
+		}
+		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleStripOutput<vertex_type>&>)
+		{
+
+		}
+		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleFanOutput<vertex_type>&>)
+		{
+
+		}
 
 
 

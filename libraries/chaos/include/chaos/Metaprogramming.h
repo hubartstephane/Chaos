@@ -126,6 +126,10 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 	//		function(double) <=== you can give a float
 	//		function(float)  <=== you cannot give a double
 	//
+	// The template produce a decltype(...) shortcut too
+	//
+	//		typeof_callable2_toto<A, int> ---> this give the type of the result of a call to A().toto(333);
+	//
 	// ====================================================================================================
 
 
@@ -136,16 +140,22 @@ namespace details\
 	auto constexpr has_callable_##funcname##_helper(T & t, PARAMS... params) -> decltype(t.funcname(params...)) *;\
 	char constexpr has_callable_##funcname##_helper(...);\
 }\
+\
 template<typename T, typename ...PARAMS>\
-bool constexpr has_callable1_##funcname##(PARAMS... params)\
+bool constexpr has_callable1_##funcname(PARAMS... params)\
 {\
 	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), params...)) != 1;\
 }\
+\
 template<typename T, typename ...PARAMS>\
-constexpr bool has_callable2_##funcname##()\
+constexpr bool has_callable2_##funcname()\
 {\
 	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
 }\
+\
+template<typename T, typename ...PARAMS>\
+using typeof_callable2_##funcname = decltype(chaos::meta::FakeInstance<T>().funcname(chaos::meta::FakeInstance<PARAMS>()...));\
+\
 template<typename T, typename ...PARAMS>\
 constexpr bool has_callable2_##funcname##_v = has_callable2_##funcname<T, PARAMS...>();
 

@@ -164,24 +164,54 @@ public:
             return TRAIT_TYPE::dynamic_particles;
         return true;
 	}
-    /** returns the primitive type used for the rendering */
-    template<typename TRAIT_TYPE>
-    static constexpr PrimitiveType GetPrimitiveType()
-    {
-        if constexpr (has_primitive_type_v<TRAIT_TYPE>)
-            return TRAIT_TYPE::primitive_type;
-#if CHAOS_TRIANGLE_PAIR_RENDERING
-        return PrimitiveType::TRIANGLE_PAIR;
-#else
-        return PrimitiveType::QUAD;
-#endif
-    }
+
     /** returns the primitive type used for rendering (OpenGL point of view) */
     template<typename TRAIT_TYPE>
     static constexpr GLenum GetGLPrimitiveType()
     {
         return chaos::GetGLPrimitiveType(GetPrimitiveType<TRAIT_TYPE>()); // see PrimitiveOutput.h
     }
+
+
+
+	/** returns the primitive type used for the rendering */
+	template<typename TRAIT_TYPE>
+	static constexpr PrimitiveType GetPrimitiveType()
+	{
+		// shutoto
+
+//		if constexpr (has_UpdateParticle<TRAIT_TYPE, decltype()>)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		if constexpr (has_primitive_type_v<TRAIT_TYPE>)
+			return TRAIT_TYPE::primitive_type;
+#if CHAOS_TRIANGLE_PAIR_RENDERING
+		return PrimitiveType::TRIANGLE_PAIR;
+#else
+		return PrimitiveType::QUAD;
+#endif
+	}
+
+
+
+
+
+
+
+
+
 };
 
 		// ==============================================================
@@ -401,6 +431,24 @@ public:
         template<typename PRIMITIVE_OUTPUT_TYPE>
         void ParticlesToPrimitives(PRIMITIVE_OUTPUT_TYPE& output, void const* layer_trait) const
         {
+
+			// shutoto3 TriangleOutput<vertex_type> outpu
+
+			// MyParticleToPrimitive(output, BEGIN, layer_trait)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             if constexpr (has_LayerTrait_v<allocation_trait_type>)
             {
                 layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
@@ -533,6 +581,9 @@ public:
         template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
         void DoParticlesToPrimitivesLoop(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
         {
+			// shutoto
+
+
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
             size_t particle_count = particle_accessor.GetCount();
@@ -661,7 +712,7 @@ public:
 		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 
 		/** change the GL rendering state */
-		void UpdateRenderingStates(GPURenderer * renderer, bool begin) const;
+		virtual void UpdateRenderingStates(GPURenderer * renderer, bool begin) const;
 
 		/** unlink all particles allocations */
 		void DetachAllParticleAllocations();
@@ -835,6 +886,9 @@ public:
         template<typename PRIMITIVE_OUTPUT_TYPE>
         void ParticlesToPrimitivesLoop(PRIMITIVE_OUTPUT_TYPE& output)
         {
+
+			// shutoto 2
+
             size_t count = particles_allocations.size();
             for (size_t i = 0; i < count; ++i)
             {

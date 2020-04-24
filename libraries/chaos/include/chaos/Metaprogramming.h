@@ -60,10 +60,34 @@ auto has_function_helper_##function_name(T const & t) -> decltype(&T::function_n
 };\
 template<typename T>\
 using has_function_##function_name = boost::mpl::bool_<\
-	sizeof(details::has_function_helper_##function_name(chaos::meta::GenerateFakeInstance<T>())) != 1\
+	sizeof(details::has_function_helper_##function_name(chaos::meta::FakeInstance<T>())) != 1\
 >;\
 template<typename T>\
 auto constexpr has_function_##function_name##_v = has_function_##function_name<T>::value;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	// SFINAE
@@ -91,56 +115,55 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 	//  this is not working if the class has a XXXXXXXXX TEMPLATE function
 	//
 
-#define CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(funcname)\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// ====================================================================================================
+	// CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(TOTO) generates a function that returns 
+	//
+	//   bool constexpr b = has_callable_TOTO<A>(1, 2, 3)
+	//
+	// ====================================================================================================
+
+
+#define CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(funcname)\
 namespace details\
 {\
 	template<typename T>\
-	auto has_function_signature_##funcname##_helper_no_params(T * t) -> decltype(t->funcname()) *;\
-	char has_function_signature_##funcname##_helper_no_params(...);\
+	auto constexpr has_callable_##funcname##_helper_no_params(T & t) -> decltype(t.funcname()) *;\
+	char constexpr has_callable_##funcname##_helper_no_params(...);\
+\
 	template<typename T, typename ...PARAMS>\
-	auto has_function_signature_##funcname##_helper(T * t, PARAMS... params) -> decltype(t->funcname(params...)) *;\
-	char has_function_signature_##funcname##_helper(...);\
+	auto constexpr has_callable_##funcname##_helper(T & t, PARAMS... params) -> decltype(t.funcname(params...)) *;\
+	char constexpr has_callable_##funcname##_helper(...);\
 }\
 template<typename T, typename ...PARAMS>\
-auto has_function_signature_##funcname##(T * t, PARAMS... params)\
+bool constexpr has_callable_##funcname##(PARAMS... params)\
 {\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper(t, params...)) != 1>();\
+	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), params...)) != 1;\
 }\
 template<typename T>\
-auto has_function_signature_##funcname##(T * t)\
+bool constexpr has_callable_##funcname##()\
 {\
-	return boost::mpl::bool_<sizeof(details::has_function_signature_##funcname##_helper_no_params(t)) != 1>();\
+	return sizeof(details::has_callable_##funcname##_helper_no_params(chaos::meta::FakeInstance<T>())) != 1;\
 }
 
+	// ==================================================
+	// Meta functions
+	// ==================================================
 
-	// CHAOS_GENERATE_HAS_FUNCTION_SIGNATURE(XXXXXXX) generates a function that returns 
-	//
-	//   -boost::mpl::true_ or
-	//   -boost::mpl::false_
-	//
-	// if given class has a function called XXXXXXX that can be called with the given arguments
-	//
-	// A usage sample could be:
-	//
-	//   A * a = nullptr
-	//
-	//   auto res1 = has_function_signature_XXXXXXX(a);                => res is an instance of true_ or false_ depending of if a->XXXXXXX() can be called
-	// 
-	//   auto res2 = has_function_signature_XXXXXXX(a, 1, 2, "toto")   => a->XXXXXXX(1, 2, "toto")  can be called ???
-	//
-	// XXX: this works with template functions !!!
-	//
-	// class A
-	// {
-	//   public:
-	// 
-	//    template<typename ...PARAMS>           => has_function_signature_XXXXXXX(this, anything and more) would return true_
-	//    int XXXXXXX(PARAMS... params);
-	// };
-  //
-  //
-
-	// Meta 
 	namespace meta
 	{
 		/** meta function to get a raw pointer from an input */
@@ -203,34 +226,10 @@ auto has_function_signature_##funcname##(T * t)\
 		struct get_type<T, boost::mpl::false_> : public boost::mpl::identity<T> {};
 
 
-		/** remove all pointer */
-		template<typename T>
-		struct remove_all_pointer : boost::mpl::eval_if<
-			boost::is_pointer<T>,
-			remove_all_pointer<typename boost::remove_pointer<T>::type>,
-			boost::mpl::identity<T>
-		> {};
-
-		/** add a pointer only if it is not already a pointer */
-		template<typename T>
-		using add_uniq_pointer = boost::mpl::eval_if<
-			boost::is_pointer<T>,
-			boost::mpl::identity<T>,
-			boost::add_pointer<T>
-		>;
-
-		/** returns true_ whether a sequence has an element satisfying a predicat */
-		template<typename SEQ, typename PRED>
-		using has_satisfying_element = boost::mpl::not_<
-			boost::is_same<
-			typename boost::mpl::end<SEQ>::type,
-			typename boost::mpl::find_if<SEQ, PRED>::type
-			>
-		>;
-
 		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */
 		template<typename T>
-		T & GenerateFakeInstance();
-	};
+		T & FakeInstance();
+	
+	}; // namespace meta
 
 }; // namespace chaos

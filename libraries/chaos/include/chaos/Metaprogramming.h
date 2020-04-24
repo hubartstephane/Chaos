@@ -131,9 +131,29 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 
 
 	// ====================================================================================================
-	// CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(TOTO) generates a function that returns 
+	// CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(TOTO) generates 2 functions
 	//
-	//   bool constexpr b = has_callable_TOTO<A>(1, 2, 3)
+	// the first is useable directly with parameters
+	//
+	//		bool constexpr a1 = has_callable_toto<A>();
+	//		bool constexpr a2 = has_callable_toto<A>(3);
+	//		bool constexpr a3 = has_callable_toto<A>(4.0f, " ");
+	//
+	// the second is useable with types
+	//
+	//		bool constexpr a1 = has_callable2_toto<A>();
+	//		bool constexpr a2 = has_callable2_toto<A, int>();
+	//		bool constexpr a3 = has_callable2_toto<A, float>();
+	//
+	// XXX: both forms are working with 'const'
+	//
+	//		bool constexpr a1 = has_callable1_toto<const A>(3);
+	//		bool constexpr a1 = has_callable2_toto<const A, int>();
+	//
+	// XXX: the types given may not be strictly equals, but an implicit conversion should exist
+	//
+	//		function(double) <=== you can give a float
+	//		function(float)  <=== you cannot give a double
 	//
 	// ====================================================================================================
 
@@ -141,24 +161,21 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 #define CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(funcname)\
 namespace details\
 {\
-	template<typename T>\
-	auto constexpr has_callable_##funcname##_helper_no_params(T & t) -> decltype(t.funcname()) *;\
-	char constexpr has_callable_##funcname##_helper_no_params(...);\
-\
 	template<typename T, typename ...PARAMS>\
 	auto constexpr has_callable_##funcname##_helper(T & t, PARAMS... params) -> decltype(t.funcname(params...)) *;\
 	char constexpr has_callable_##funcname##_helper(...);\
 }\
 template<typename T, typename ...PARAMS>\
-bool constexpr has_callable_##funcname##(PARAMS... params)\
+bool constexpr has_callable1_##funcname##(PARAMS... params)\
 {\
 	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), params...)) != 1;\
 }\
-template<typename T>\
-bool constexpr has_callable_##funcname##()\
+template<typename T, typename ...PARAMS>\
+constexpr bool has_callable2_##funcname##()\
 {\
-	return sizeof(details::has_callable_##funcname##_helper_no_params(chaos::meta::FakeInstance<T>())) != 1;\
+	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
 }
+
 
 	// ==================================================
 	// Meta functions
@@ -228,7 +245,7 @@ bool constexpr has_callable_##funcname##()\
 
 		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */
 		template<typename T>
-		T & FakeInstance();
+		constexpr T & FakeInstance();
 	
 	}; // namespace meta
 

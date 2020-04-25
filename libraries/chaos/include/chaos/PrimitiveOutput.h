@@ -36,11 +36,12 @@ namespace chaos
 
 	enum class PrimitiveType : int
 	{
-		TRIANGLE = 0,
-		TRIANGLE_PAIR = 1,
-		QUAD = 2,
-		TRIANGLE_STRIP = 3,
-		TRIANGLE_FAN = 4
+		NONE = 0,
+		TRIANGLE = 1,
+		TRIANGLE_PAIR = 2,
+		QUAD = 3,
+		TRIANGLE_STRIP = 4,
+		TRIANGLE_FAN = 5
 	};
 
     /** returns the number of element per primitive (user accessible) */

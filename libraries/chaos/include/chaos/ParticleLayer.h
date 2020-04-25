@@ -137,10 +137,24 @@ CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 // The kinf of ParticleUpdate to do
 // ==============================================================
 
-enum class ParticleToPrimitiveType : int
+namespace ParticleToPrimitiveImplementationType  // XXXX: no class, so this can be implicitly converted to int
 {
+	static constexpr int NONE = 0;
 
+	static constexpr int TRIANGLE = 1;
+	static constexpr int TRIANGLE_PAIR = 2;
+	static constexpr int QUAD = 3;
+	static constexpr int TRIANGLE_STRIP = 4;
+	static constexpr int TRIANGLE_FAN = 5;
+
+	static constexpr int PRIMITIVE_MASK = 7;
+
+	static constexpr int WITH_LAYER_TRAIT = 8;
+	static constexpr int WITH_BEGIN_CALL = 16;
+	static constexpr int PARTICLE_CALL = 32;
+	static constexpr int DEFAULT_CALL = 64;
 };
+
 
 // ==============================================================
 // ParticleTraitTools
@@ -192,88 +206,140 @@ public:
         return chaos::GetGLPrimitiveType(GetPrimitiveType<TRAIT_TYPE>()); // see PrimitiveOutput.h
     }
 
+	/** returns the kind of implementation required for the particle rendering */
+
+	template<typename TRAIT_TYPE>
+	static constexpr int GetParticlesToPrimitivesImplementationType()
+	{
+
+		// the types used 
+		using trait = TRAIT_TYPE;
+		using particle = typename trait::particle_type;
+		using vertex = typename trait::vertex_type;
+		using accessor = typename ParticleConstAccessor<particle>;
+		using triangle_output = TriangleOutput<vertex>;
+		using trianglepair_output = TrianglePairOutput<vertex>;
+		using quad_output = QuadOutput<vertex>;
+		using trianglestrip_output = TriangleStripOutput<vertex>;
+		using trianglefan_output = TriangleFanOutput<vertex>;
+
+
+
+
+		if constexpr (has_LayerTrait_v<trait>)
+		{
+			using layer_trait = typename trait::LayerTrait;
+
+			// LayerTrait + BeginParticlesToPrimitive
+			if constexpr (has_callable2_BeginParticlesToPrimitives_v<trait, accessor const&, layer_trait const*>)
+			{
+				using begin_result = typeof_callable2_BeginParticlesToPrimitives<trait, accessor const&, layer_trait const*>;
+
+				int base_flags = ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL | ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
+
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, triangle_output&, layer_trait const*, begin_result>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&, layer_trait const*, begin_result>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, quad_output&, layer_trait const*, begin_result>)
+					return ParticleToPrimitiveImplementationType::QUAD | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&, layer_trait const*, begin_result>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&, layer_trait const*, begin_result>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
+			}
+
+			// LayerTrait - NOBEGIN
+			{
+				int base_flags = ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
+
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, triangle_output&, layer_trait const*>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&, layer_trait const*>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, quad_output&, layer_trait const*>)
+					return ParticleToPrimitiveImplementationType::QUAD | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&, layer_trait const*>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
+				if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&, layer_trait const*>)
+					return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
+			}
+		}
+
+		// NOLAYERTRAIT + BeginParticlesToPrimitive
+		if constexpr (has_callable2_BeginParticlesToPrimitives_v<trait, accessor const&>)
+		{
+			using begin_result = typeof_callable2_BeginParticlesToPrimitives<trait, accessor const&>;
+
+			int base_flags = ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL | ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
+
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, triangle_output&, begin_result>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&, begin_result>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, quad_output&, begin_result>)
+				return ParticleToPrimitiveImplementationType::QUAD | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&, begin_result>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&, begin_result>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
+		}
+
+		// NOLAYERTRAIT - NOBEGIN
+		{
+			int base_flags = ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
+
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, triangle_output&>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, quad_output&>)
+				return ParticleToPrimitiveImplementationType::QUAD | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
+			if constexpr (has_callable2_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&>)
+				return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
+		}
+
+
+
+
+
+
+
+
+
+
+
+		return ParticleToPrimitiveImplementationType::NONE;
+	}
 
 
 	/** returns the primitive type used for the rendering */
 	template<typename TRAIT_TYPE>
 	static constexpr PrimitiveType GetPrimitiveType()
 	{
-		int p = 0;
+		constexpr int implementation_type = GetParticlesToPrimitivesImplementationType<TRAIT_TYPE>();
+		constexpr int primitive_type = (implementation_type & ParticleToPrimitiveImplementationType::PRIMITIVE_MASK);
 
-		using particle_type = typename TRAIT_TYPE::particle_type;
-		using vertex_type = typename TRAIT_TYPE::vertex_type;
+		if constexpr (primitive_type == ParticleToPrimitiveImplementationType::TRIANGLE_PAIR)
+			return PrimitiveType::TRIANGLE_PAIR;
 
-		if constexpr (has_LayerTrait_v<TRAIT_TYPE>)
-		{
-			using layer_trait_type = typename TRAIT_TYPE::LayerTrait;
+		if constexpr (primitive_type == ParticleToPrimitiveImplementationType::QUAD)
+			return PrimitiveType::QUAD;
 
-			// LayerTrait + BeginParticlesToPrimitive
-			if constexpr (has_callable2_BeginParticlesToPrimitives_v<TRAIT_TYPE, ParticleConstAccessor<particle_type> const&, layer_trait_type const *>)
-			{
-				//typename begin_particles_to_primitives_type;
+		if constexpr (primitive_type == ParticleToPrimitiveImplementationType::TRIANGLE)
+			return PrimitiveType::TRIANGLE;
 
-				int p = 0;
-				++p;
+		if ((implementation_type & ParticleToPrimitiveImplementationType::PRIMITIVE_MASK) == ParticleToPrimitiveImplementationType::TRIANGLE_STRIP)
+			return PrimitiveType::TRIANGLE_STRIP;
 
-			}
+		if ((implementation_type & ParticleToPrimitiveImplementationType::PRIMITIVE_MASK) == ParticleToPrimitiveImplementationType::TRIANGLE_FAN)
+			return PrimitiveType::TRIANGLE_FAN;
 
-			// LayerTrait
-			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleOutput<vertex_type>&, layer_trait_type const* > )
-			{
+		
 
-			}
-			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TrianglePairOutput<vertex_type>&, layer_trait_type const* > )
-			{
-
-			}
-			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, QuadOutput<vertex_type>&, layer_trait_type const* > )
-			{
-
-			}
-			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleStripOutput<vertex_type>&, layer_trait_type const* > )
-			{
-
-			}
-			if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleFanOutput<vertex_type>&, layer_trait_type const* > )
-			{
-
-			}
-
-			
-		}
-
-		// BeginParticlesToPrimitive
-		if constexpr (has_callable2_BeginParticlesToPrimitives_v<TRAIT_TYPE, ParticleConstAccessor<particle_type> const&>)
-		{
-
-			int p = 0;
-			++p;
-		}
-
-		// Nothing
-		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleOutput<vertex_type>&>)
-		{
-
-		}
-		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TrianglePairOutput<vertex_type>&>)
-		{
-
-		}
-		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, QuadOutput<vertex_type>&>)
-		{
-
-		}
-		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleStripOutput<vertex_type>&>)
-		{
-
-		}
-		if constexpr (has_callable2_ParticleToPrimitives_v<TRAIT_TYPE, particle_type const&, TriangleFanOutput<vertex_type>&>)
-		{
-
-		}
-
-
-
+	
 
 
 
@@ -941,28 +1007,30 @@ public:
             // some layers are in a manager, some not (see TiledMap)
             GPUBufferCache* cache = (particle_manager == nullptr) ? &buffer_cache : &particle_manager->GetBufferCache();
 
+			constexpr PrimitiveType primitive_type = ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>();
+
             // select PrimitiveOutput and collect vertices
-            if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE)
+            if constexpr (primitive_type == PrimitiveType::TRIANGLE)
             {
                 TriangleOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE_PAIR)
+            else if constexpr (primitive_type == PrimitiveType::TRIANGLE_PAIR)
             {
                 TrianglePairOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::QUAD)
+            else if constexpr (primitive_type == PrimitiveType::QUAD)
             {
                 QuadOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE_STRIP)
+            else if constexpr (primitive_type == PrimitiveType::TRIANGLE_STRIP)
             {
                 TriangleStripOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
-            else if constexpr (ParticleTraitTools::GetPrimitiveType<ALLOCATION_TRAIT>() == PrimitiveType::TRIANGLE_FAN)
+            else if constexpr (primitive_type == PrimitiveType::TRIANGLE_FAN)
             {
                 TriangleFanOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);

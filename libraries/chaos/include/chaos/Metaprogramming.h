@@ -98,28 +98,22 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 
 
 	// ====================================================================================================
-	// CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(TOTO) generates 2 functions
+	// CHAOS_GENERATE_CHECK_METHOD(toto) generates 
 	//
-	// the first is useable directly with parameters
+	// - function returning BOOL whether the class 'T' (the very first template parameter) has a callable method called 'toto'
 	//
-	//		bool constexpr a1 = has_callable_toto<A>();
-	//		bool constexpr a2 = has_callable_toto<A>(3);
-	//		bool constexpr a3 = has_callable_toto<A>(4.0f, " ");
+	//		bool constexpr a1 = check_method_toto<T>();
+	//		bool constexpr a2 = check_method_toto<T, int>();
+	//		bool constexpr a3 = check_method_toto<T, float, char>();
 	//
-	// the second is useable with types
+	// - there is a shortcut to have directly the BOOL value
 	//
-	//		bool constexpr a1 = has_callable2_toto<A>();
-	//		bool constexpr a2 = has_callable2_toto<A, int>();
-	//		bool constexpr a3 = has_callable2_toto<A, float>();
+	//      bool constexpr b = check_method_toto_v<T, int>;
 	//
-	// with a short cut for the 2nd form
+	// XXX: the parameter T may be CONST or NON-CONST (this works)
 	//
-	//      bool constexpr b = has_callable2_toto_v<A, int>;
-	//
-	// XXX: both forms are working with 'const'
-	//
-	//		bool constexpr a1 = has_callable1_toto<const A>(3);
-	//		bool constexpr a1 = has_callable2_toto<const A, int>();
+	//		bool constexpr a1 = check_method_toto<T, int>();
+	//		bool constexpr a1 = check_method_toto<T const, int>();
 	//
 	// XXX: the types given may not be strictly equals, but an implicit conversion should exist
 	//
@@ -128,36 +122,92 @@ auto constexpr has_function_##function_name##_v = has_function_##function_name<T
 	//
 	// The template produce a decltype(...) shortcut too
 	//
-	//		typeof_callable2_toto<A, int> ---> this give the type of the result of a call to A().toto(333);
+	//		typeof_method_toto<T, int> ---> this give the type of the result of a call to T().toto(333);
 	//
 	// ====================================================================================================
 
 
-#define CHAOS_GENERATE_HAS_CALLABLE_FUNCTION(funcname)\
+#define CHAOS_GENERATE_CHECK_METHOD(funcname)\
 namespace details\
 {\
 	template<typename T, typename ...PARAMS>\
-	auto constexpr has_callable_##funcname##_helper(T & t, PARAMS... params) -> decltype(t.funcname(params...)) *;\
-	char constexpr has_callable_##funcname##_helper(...);\
+	auto constexpr check_method_##funcname##_helper(T & t, PARAMS... params) -> decltype(t.funcname(params...)) *;\
+	char constexpr check_method_##funcname##_helper(...);\
 }\
-\
 template<typename T, typename ...PARAMS>\
-bool constexpr has_callable1_##funcname(PARAMS... params)\
+constexpr bool check_method_##funcname()\
 {\
-	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), params...)) != 1;\
+	return sizeof(details::check_method_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
 }\
 \
 template<typename T, typename ...PARAMS>\
-constexpr bool has_callable2_##funcname()\
+constexpr bool check_method_##funcname##_v = check_method_##funcname<T, PARAMS...>();\
+\
+template<typename T, typename ...PARAMS>\
+using typeof_method_##funcname = decltype(chaos::meta::FakeInstance<T>().funcname(chaos::meta::FakeInstance<PARAMS>()...));\
+
+
+	// ====================================================================================================
+	// CHAOS_GENERATE_CHECK_FUNCTION(toto) generates 
+	//
+	// - function returning BOOL whether there is a function 'toto" that can be called with following parameters
+	//
+	//		bool constexpr a1 = check_function_toto<>();
+	//		bool constexpr a2 = check_function_toto<int>();
+	//		bool constexpr a3 = check_function_toto<float, char>();
+	//
+	// - there is a shortcut to have directly the BOOL value
+	//
+	//      bool constexpr b = check_function_toto_v<int>;
+	//
+	// XXX: the types given may not be strictly equals, but an implicit conversion should exist
+	//
+	//		function(double) <=== you can give a float
+	//		function(float)  <=== you cannot give a double
+	//
+	// The template produce a decltype(...) shortcut too
+	//
+	//		typeof_function_toto<int> ---> this give the type of the result of a call to toto(333);
+	//
+	//
+	// XXX : during implementation of thoses SFINAE code, i encoutered several issues
+	//
+	//	     I forced an additionnal template parameter T (and i give it an int), so there is no ambiguity between   f(no parameters)  & f(...)
+	//
+	//       typeof_function_toto<...> was not working every time if i was using directly decltype(...). So i used an intermediate meta function class
+	//
+	//       (the compiler was immediatly returning an error,   at decltype(toto())   because it didn't know about the function toto() yet
+	//
+	// ====================================================================================================
+
+#define CHAOS_GENERATE_CHECK_FUNCTION(funcname)\
+namespace details\
 {\
-	return sizeof(details::has_callable_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
+	template<typename T, typename ...PARAMS>\
+	auto constexpr check_function_##funcname##_helper(T t, PARAMS... params) -> decltype(funcname(params...)) *;\
+	char constexpr check_function_##funcname##_helper(...);\
+	template<typename ...PARAMS>\
+	struct check_function_##funcname##_type {using type = decltype(funcname(chaos::meta::FakeInstance<PARAMS>()...));};\
+}\
+template<typename ...PARAMS>\
+constexpr bool check_function_##funcname()\
+{\
+	return sizeof(details::check_function_##funcname##_helper(666, chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
 }\
 \
-template<typename T, typename ...PARAMS>\
-using typeof_callable2_##funcname = decltype(chaos::meta::FakeInstance<T>().funcname(chaos::meta::FakeInstance<PARAMS>()...));\
+template<typename ...PARAMS>\
+constexpr bool check_function_##funcname##_v = check_function_##funcname<PARAMS...>();\
 \
-template<typename T, typename ...PARAMS>\
-constexpr bool has_callable2_##funcname##_v = has_callable2_##funcname<T, PARAMS...>();
+template<typename ...PARAMS>\
+using typeof_function_##funcname = typename details::check_function_##funcname##_type<PARAMS...>::type;
+
+	// ====================================================================================================
+	// CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(toto) generates 
+	// ====================================================================================================
+
+#define CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(funcname)\
+CHAOS_GENERATE_CHECK_METHOD(funcname)\
+CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 
 	// ==================================================
 	// Meta functions

@@ -80,5 +80,10 @@ namespace chaos
 
 	}; // namespace ParticleDefault
 
+	/** generates 1 quad from one particle */
+	void ParticleToPrimitives(ParticleDefault::Particle const& particle, QuadOutput<ParticleDefault::Vertex>& output);
+	/** generates 1 triangle pair from one particle */
+	void ParticleToPrimitives(ParticleDefault::Particle const& particle, TrianglePairOutput<ParticleDefault::Vertex>& output);
+
 }; // namespace chaos
 

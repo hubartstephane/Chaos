@@ -583,13 +583,13 @@ public:
 			constexpr int with_begin_call         = (implementation_type & ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL);
 			constexpr int with_layer_trait        = (implementation_type & ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT);
 
-			if constexpr (default_implementation)
+			if constexpr (default_implementation != 0)
 			{
-				DoParticlesToPrimitivesLoop_ParticleImplementation(output);
+				DoParticlesToPrimitivesLoop_DefaultImplementation(output); 
 			}
 			else if constexpr (particle_implementation != 0)
 			{
-				DoParticlesToPrimitivesLoop_DefaultImplementation(output);
+				DoParticlesToPrimitivesLoop_ParticleImplementation(output);				
 			}
 			else if constexpr (with_begin_call != 0)
 			{

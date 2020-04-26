@@ -34,17 +34,8 @@ namespace chaos
 
     namespace ParticleDefault
     {
-        void ParticleTrait::ParticleToPrimitives(Particle const& particle, TrianglePairOutput<Vertex>& output)
-        {
-            ParticleToPrimitive(particle, output.AddPrimitive());
-        }
 
-        void ParticleTrait::ParticleToPrimitives(Particle const& particle, QuadOutput<Vertex>& output)
-        {
-            ParticleToPrimitive(particle, output.AddPrimitive());
-        }
-
-        void ParticleTrait::ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive)
+        void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive)
         {
             // generate particle corners and texcoords
             ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
@@ -53,7 +44,7 @@ namespace chaos
                 primitive[i].color = particle.color;
         }
 
-        void ParticleTrait::ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive)
+        void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive)
         {
             // generate particle corners and texcoords
             ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);

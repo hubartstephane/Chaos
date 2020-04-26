@@ -35,15 +35,7 @@ namespace death
 	{
 	public:
 
-		static void ParticleToPrimitives(TiledMapParticle const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex>& output)
-		{
-			chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-		}
 
-		static void ParticleToPrimitives(TiledMapParticle const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output)
-		{
-			chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-		}
 	};
 
 }; // namespace death

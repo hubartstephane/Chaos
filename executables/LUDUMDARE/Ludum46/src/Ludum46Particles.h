@@ -114,10 +114,6 @@ public:
 	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const* layer_trait) const;
 
 	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data, LayerTrait const* layer_trait) const;
-
-#if 0
-	void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-#endif
 };
 
 // ===========================================================================
@@ -137,16 +133,7 @@ public:
 
 	static bool UpdateParticle(float delta_time, ParticleAnimated & particle);
 
-#if 0
-	static void ParticleToPrimitives(ParticleAnimated const& particle, chaos::QuadOutput<VertexBase>& output);
-#endif
 };
-
-
-
-
-
-
 
 // ===========================================================================
 // ParticlePlayer
@@ -156,7 +143,6 @@ class ParticlePlayer : public ParticleAnimated
 {
 public:
 
-	void ParticleToPrimitives(chaos::QuadOutput<VertexBase>& output) const;
 
 };
 
@@ -172,10 +158,6 @@ public:
 	};
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle, LayerTrait const * layer_trait) const;
-
-#if 0
-    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-#endif
 };
 
 

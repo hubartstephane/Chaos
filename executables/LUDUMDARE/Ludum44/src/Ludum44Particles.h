@@ -64,7 +64,6 @@ class PowerUpZoneParticleTrait : public chaos::ParticleAllocationTrait<ParticleP
 {
 public:
 
-    void ParticleToPrimitives(death::TiledMapParticle const & particle, chaos::TrianglePairOutput<VertexPowerUpZone> & output) const;
     void ParticleToPrimitives(death::TiledMapParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
 
 	bool UpdateParticle(float delta_time, ParticlePowerUpZone & particle);
@@ -114,7 +113,6 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const;
 
-    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
@@ -162,7 +160,6 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
 
-    void ParticleToPrimitives(ParticleFire const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 

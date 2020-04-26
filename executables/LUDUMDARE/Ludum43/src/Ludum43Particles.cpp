@@ -245,29 +245,6 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
 	}
 }
 
-void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    chaos::ParticleDefault::ParticleToPrimitive(particle, primitive);
-
-    for (size_t i = 0; i < primitive.count; ++i)
-    {
-        primitive[i].attraction_position =
-            particle.bounding_box.position +
-            2.0f * particle.attraction_maxradius * glm::normalize(primitive[i].position - particle.bounding_box.position);
-        primitive[i].particle_center = particle.bounding_box.position;
-    }
-}
-
-
-
-
-
-
-
-
-
 ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleEnemyTrait::UpdateEnemyData result;

@@ -90,7 +90,6 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleEnemy & particle, UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const;
 
-    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
     void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 
 	UpdateEnemyData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;

@@ -51,16 +51,6 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 	return result;
 }
 
-
-#if 0
-
-void ParticleSoulTrait::ParticleToPrimitives(ParticleSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-
-#endif
-
 bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData & update_data, LayerTrait const* layer_trait) const
 {
 	particle.bounding_box.position += delta_time * particle.velocity;
@@ -142,13 +132,6 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	return result;
 }
 
-#if 0
-void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-#endif
-
 bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData & update_data, LayerTrait const* layer_trait) const
 {
 	particle.bounding_box.position += delta_time * particle.velocity;
@@ -211,13 +194,6 @@ bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated & 
 
 	return false;
 }
-
-#if 0
-void ParticleAnimatedTrait::ParticleToPrimitives(ParticleAnimated const& particle, chaos::QuadOutput<VertexBase>& output)
-{
-	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-#endif
 
 // ===========================================================================
 // ParticleBloodTrait
@@ -304,12 +280,6 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 // ===========================================================================
 // ParticlePlayerTrait
 // ===========================================================================
-
-void ParticlePlayer::ParticleToPrimitives(chaos::QuadOutput<VertexBase>& output) const
-{
-	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(*this, output);
-}
-
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle, LayerTrait const* layer_trait) const
 {

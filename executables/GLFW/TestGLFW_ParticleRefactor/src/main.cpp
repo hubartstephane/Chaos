@@ -82,12 +82,12 @@ public:
 	
 	}
 
-	bool UpdateParticle(float delta_time, ParticleExample * particle, LayerTrait const * layer_trait) const
+	bool UpdateParticle(float delta_time, ParticleExample & particle, LayerTrait const * layer_trait) const
 	{
-		particle->box.position += particle->velocity * delta_time;
-		particle->remaining_time -= delta_time;
+		particle.box.position += particle.velocity * delta_time;
+		particle.remaining_time -= delta_time;
 
-		return (particle->remaining_time <= 0.0f);
+		return (particle.remaining_time <= 0.0f);
 	}
 
     void ParticleToPrimitives(ParticleExample const & particle, chaos::TrianglePairOutput<VertexExample> & output, LayerTrait const* layer_trait) const

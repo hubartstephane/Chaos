@@ -15,28 +15,6 @@
 // Object particle system
 // ===========================================================================
 
-void ParticleObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output) const
-{
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-    // copy the color in all triangles vertex
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color;
-}
-
-void ParticleObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
-{
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-    // copy the color in all triangles vertex
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color;
-}
-
 bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject& particle) const
 { 
 	return false; 
@@ -51,41 +29,10 @@ int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, chaos::Parti
 	return 0;
 }
 
-glm::vec2 ParticleLifeObjectTrait::BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const
-{
-	return glm::vec2(0.0f, 0.0f);
-}
-
 bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject& particle, int extra_param, LayerTrait const * layer_trait) const
 {
 	return false;
 }
-
-void ParticleLifeObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
-{
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-    // copy the color in all triangles vertex
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color;
-}
-
-void ParticleLifeObjectTrait::ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_param, LayerTrait const* layer_trait) const
-{
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-    // copy the color in all triangles vertex
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color;
-}
-
-
-
-
 
 // ===========================================================================
 // Brick particle system

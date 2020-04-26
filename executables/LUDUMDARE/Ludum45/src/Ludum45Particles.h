@@ -37,9 +37,6 @@ class ParticleLifeTrait : public chaos::ParticleAllocationTrait<chaos::ParticleD
 public:
 
 	bool UpdateParticle(float delta_time, ParticleLife& particle) const;
-
-    void ParticleToPrimitives(ParticleLife const & particle, chaos::QuadOutput<VertexBase> & output) const;
-    void ParticleToPrimitives(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 };
 
 // ===========================================================================
@@ -70,10 +67,6 @@ public:
 	std::vector<chaos::box2> BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const;
 
 	bool UpdateParticle(float delta_time, ParticleBonus& particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticleBonus const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleBonus const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-
 };
 
 // ===========================================================================
@@ -181,11 +174,7 @@ public:
 		class LudumGame * game = nullptr;
 	};
 
-
 	bool UpdateParticle(float delta_time, ParticleShroudLife& particle, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticleShroudLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleShroudLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 // ===========================================================================
@@ -263,9 +252,6 @@ public:
 	};
 
 	bool UpdateParticle(float delta_time, ParticleExplosion & particle, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticleExplosion const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleExplosion const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 

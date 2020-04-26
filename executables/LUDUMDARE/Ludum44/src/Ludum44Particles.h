@@ -187,9 +187,6 @@ public:
 	};
 
 	bool UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 // ===========================================================================
@@ -218,14 +215,7 @@ public:
 	};
 
 	bool UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticleExplosion const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleExplosion const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
-
-
-
-
 
 // ===========================================================================
 // ParticlePlayer
@@ -251,10 +241,6 @@ public:
 	};
 
 	bool UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-
 };
 
 

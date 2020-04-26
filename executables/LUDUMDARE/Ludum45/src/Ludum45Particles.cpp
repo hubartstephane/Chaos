@@ -201,28 +201,6 @@ std::vector<chaos::box2> ParticleBonusTrait::BeginUpdateParticles(float delta_ti
 	return result;
 }
 
-void ParticleBonusTrait::ParticleToPrimitives(ParticleBonus const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-    // copy the color in all triangles vertex
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color;
-}
-
-void ParticleBonusTrait::ParticleToPrimitives(ParticleBonus const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-    // copy the color in all triangles vertex
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color;
-}
-
 bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus& particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const
 {
 	chaos::box2 bb = particle.bounding_box;
@@ -487,16 +465,6 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 	return false; // never destroy it
 }
 
-void ParticleShroudLifeTrait::ParticleToPrimitives(ParticleShroudLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-
-void ParticleShroudLifeTrait::ParticleToPrimitives(ParticleShroudLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-
 // ===========================================================================
 // ParticleLifeTrait
 // ===========================================================================
@@ -509,19 +477,6 @@ bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife& particle)
 
 	return false;
 }
-
-void ParticleLifeTrait::ParticleToPrimitives(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
-{
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-
-void ParticleLifeTrait::ParticleToPrimitives(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output) const
-{
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-
-
-
 
 // ===========================================================================
 // ParticleExplosionTrait
@@ -562,16 +517,3 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion&
 
 	return false;
 }
-
-void ParticleExplosionTrait::ParticleToPrimitives(ParticleExplosion const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-}
-
-void ParticleExplosionTrait::ParticleToPrimitives(ParticleExplosion const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitives(particle, output);
-
-}
-
-

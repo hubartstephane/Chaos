@@ -25,10 +25,6 @@ class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject
 {
 public:
 
-
-    void ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase> & output) const;
-    void ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
-
 	bool UpdateParticle(float delta_time, ParticleObject& particle) const;
 };
 
@@ -52,12 +48,6 @@ public:
 	int BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject> & particle_accessor, LayerTrait const * layer_trait) const;
     // called for every particles
     bool UpdateParticle(float delta_time, ParticleObject& particle, int extra_param, LayerTrait const* layer_trait) const;
-
-	// called once for the whole allocation
-	glm::vec2 BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleObject> const & particle_accessor, LayerTrait const * layer_trait) const;
-    // called for every particles
-    void ParticleToPrimitives(ParticleObject const& particle, chaos::QuadOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, glm::vec2 const& extra_data, LayerTrait const* layer_trait) const;
 };
 
 // ===========================================================================

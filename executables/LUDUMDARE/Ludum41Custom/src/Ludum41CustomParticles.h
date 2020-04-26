@@ -81,7 +81,6 @@ public:
 	bool UpdateParticle(float delta_time, ParticleBrick& particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 // ===========================================================================
@@ -110,7 +109,6 @@ public:
 	bool UpdateParticle(float delta_time, ParticleMovableObject& particle, LayerTrait const * layer_trait) const;
 
     void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 
 	void UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const;
 
@@ -142,7 +140,6 @@ class ParticleChallengeTrait : public chaos::ParticleAllocationTrait<ParticleCha
 public:
 
     void ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const;
-    void ParticleToPrimitives(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const;
 };
 
 

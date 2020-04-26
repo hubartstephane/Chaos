@@ -10,30 +10,20 @@
 namespace chaos
 {
 
-	void ParticleToPrimitives(ParticleDefault::Particle const& particle, QuadOutput<ParticleDefault::Vertex>& output)
-	{
-		QuadPrimitive<ParticleDefault::Vertex> primitive = output.AddPrimitive();
 
-		// generate particle corners and texcoords
-		ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-		// copy the color in all triangles vertex
-		for (size_t i = 0; i < primitive.count; ++i)
-			primitive[i].color = particle.color;
-	}
-	
-	void ParticleToPrimitives(ParticleDefault::Particle const& particle, TrianglePairOutput<ParticleDefault::Vertex>& output)
-	{
-		TrianglePairPrimitive<ParticleDefault::Vertex> primitive = output.AddPrimitive();
-
-		// generate particle corners and texcoords
-		ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-		// copy the color in all triangles vertex
-		for (size_t i = 0; i < primitive.count; ++i)
-			primitive[i].color = particle.color;
-	}
 
     namespace ParticleDefault
     {
+
+		void ParticleToPrimitives(ParticleDefault::Particle const& particle, QuadOutput<ParticleDefault::Vertex>& output)
+		{
+			ParticleToPrimitive(particle, output.AddPrimitive());
+		}
+
+		void ParticleToPrimitives(ParticleDefault::Particle const& particle, TrianglePairOutput<ParticleDefault::Vertex>& output)
+		{
+			ParticleToPrimitive(particle, output.AddPrimitive());
+		}
 
         void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive)
         {

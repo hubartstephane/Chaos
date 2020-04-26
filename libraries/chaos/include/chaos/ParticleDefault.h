@@ -55,21 +55,17 @@ namespace chaos
 			glm::vec4 color;
 		};
 
-		/** ParticleVertexDefault : vertex for default particle */
+		/** ParticleTrait : the default trait */
 		class ParticleTrait : public ParticleAllocationTrait<Particle, Vertex>
 		{
 		public:
 
-            /** generates 1 quad from one particle */
-            static void ParticleToPrimitives(Particle const& particle, QuadOutput<Vertex> & output);
-            /** generates 1 triangle pair from one particle */
-            static void ParticleToPrimitives(Particle const& particle, TrianglePairOutput<Vertex>& output);
-
-            /** generates 1 quad from one particle */
-            static void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive);
-            /** generates 1 triangle pair from one particle */
-            static void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive);
 		};
+
+		/** generates 1 quad from one particle */
+		void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive);
+		/** generates 1 triangle pair from one particle */
+		void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive);
 
 		/** the default vertex declaration */
 		void GetTypedVertexDeclaration(GPUVertexDeclaration * result, boost::mpl::identity<Vertex>);

@@ -234,7 +234,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
-	chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
+	chaos::ParticleDefault::ParticleToPrimitive(particle, primitive);
 
 	for (size_t i = 0; i < primitive.count; ++i)
 	{
@@ -249,7 +249,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
 {
     chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
+    chaos::ParticleDefault::ParticleToPrimitive(particle, primitive);
 
     for (size_t i = 0; i < primitive.count; ++i)
     {

@@ -153,7 +153,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle cons
 {
     chaos::TrianglePairPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
+    chaos::ParticleDefault::ParticleToPrimitive(particle, primitive);
 
     VertexPowerUpZone& v0 = primitive[0];
     VertexPowerUpZone& v1 = primitive[1];
@@ -188,7 +188,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle cons
 {
     chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
-    chaos::ParticleDefault::ParticleTrait::ParticleToPrimitive(particle, primitive);
+    chaos::ParticleDefault::ParticleToPrimitive(particle, primitive);
 
     VertexPowerUpZone& v0 = primitive[0];
     VertexPowerUpZone& v1 = primitive[1];

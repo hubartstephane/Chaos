@@ -132,9 +132,6 @@ public:
 		std::vector<ParticleEnemy> enemy_particles;
 	};
 
-    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-
 	bool UpdateParticle(float delta_time, ParticlePlayer& particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const;
 
 	UpdatePlayerData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer> & particle_accessor, LayerTrait const * layer_trait) const;
@@ -181,9 +178,6 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleAtom& particle, UpdateAtomData const & update_data, LayerTrait const * layer_trait) const;
 
-    void ParticleToPrimitives(ParticleAtom const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleAtom const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-
 	UpdateAtomData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleAtom> & particle_accessor, LayerTrait const * layer_trait) const;
 };
 
@@ -208,9 +202,6 @@ public:
 	};
 
 	bool UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticleLife const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-    void ParticleToPrimitives(ParticleLife const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
 };
 
 

@@ -100,19 +100,6 @@ std::vector<chaos::box2> ParticleEnemyTrait::BeginUpdateParticles(float delta_ti
 	return result;
 }
 
-void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-
-    // copy the color in all triangles vertex
-    glm::vec4 color = particle.color;
-    color.a = (particle.touched_count_down > 0.0f) ? 0.0f : 1.0f;
-    
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = color;
-}
 
 void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
@@ -261,41 +248,6 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
         primitive[i].color = boost_color * particle.color;
 }
 
-void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    chaos::ParticleTexcoords texcoords = particle.texcoords;
-
-    if (particle.bitmap_info != nullptr && particle.bitmap_info->HasGridAnimation())
-    {
-        chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.current_frame, chaos::WrapMode::wrap);
-
-        texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-    }
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive, particle.orientation);
-
-    glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    LudumPlayer const* player = layer_trait->game->GetPlayer(0);
-    if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
-    {
-        float alpha = 1.0f;
-
-        if (layer_trait->game->player_dash_duration > 0.0f)
-            alpha = player->dash_timer / layer_trait->game->player_dash_duration;
-
-        alpha = 0.8f;
-
-        boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f - alpha);
-    }
-
-    // copy the color in all triangles vertex
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = boost_color * particle.color;
-}
 
 bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const
 {
@@ -409,19 +361,6 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle,
 	particle.bounding_box.position += delta_time * particle.velocity;
 
 	return false; // do not destroy the particle
-}
-
-void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
-
-    // copy the color in all triangles vertex
-    glm::vec4 color = particle.color;
-
-    color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color;
 }
 
 void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const

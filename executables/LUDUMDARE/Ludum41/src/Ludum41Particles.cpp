@@ -66,28 +66,6 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
         primitive[i].color = color;
 }
 
-void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
-
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::box2 bounding_box = particle.bounding_box;
-    bounding_box.position.y -= ludum_game_instance->brick_offset;
-    chaos::ParticleTools::GenerateBoxParticle(bounding_box, particle.texcoords, primitive);
-
-    // copy the color in all triangles vertex
-    float extra = 2;
-    float ratio = (extra + particle.life) / (extra + particle.starting_life);
-    glm::vec4 color = ratio * particle.color;
-
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = color;
-}
-
-
-
 // ===========================================================================
 // Object Movable particle system
 // ===========================================================================
@@ -112,35 +90,6 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
     for (size_t i = 0; i < primitive.count; ++i)
         primitive[i].color = particle.color * power_color;
 }
-
-void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::TrianglePairOutput<VertexBase>& output, LayerTrait const* layer_trait) const
-{
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
-
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-    // copy the color in all triangles vertex
-
-    glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    if (ludum_game_instance->ball_power == 0.5f)
-        power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 2.0f)
-        power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 3.0f)
-        power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color * power_color;
-}
-
-
-
-
-
-
-
-
 
 void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
 {
@@ -414,41 +363,3 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
     for (size_t i = 0; i < primitive.count ; ++i)
         primitive[i].color = color;
 }
-
-
-void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::TrianglePairOutput<VertexBase>& output) const
-{
-	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
-    bool keyboard = chaos::IsPCMode(input_mode);
-	   	  
-    chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
-
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-
-    // copy the color in all triangles vertex
-
-    glm::vec4 color = particle.color;
-
-    if (keyboard)
-    {
-        size_t challenge_position = particle.challenge->GetChallengePosition(false);
-        if (particle.index < challenge_position)
-            color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        else
-            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    }
-    else
-    {
-        size_t challenge_position = particle.challenge->GetChallengePosition(true);
-        if (particle.index < challenge_position)
-            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-        else
-            color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
-    }
-
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = color;
-}
-
-

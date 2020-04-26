@@ -63,6 +63,11 @@ namespace chaos
 		};
 
 		/** generates 1 quad from one particle */
+		void ParticleToPrimitives(ParticleDefault::Particle const& particle, QuadOutput<ParticleDefault::Vertex>& output);
+		/** generates 1 triangle pair from one particle */
+		void ParticleToPrimitives(ParticleDefault::Particle const& particle, TrianglePairOutput<ParticleDefault::Vertex>& output);
+
+		/** generates 1 quad from one particle */
 		void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive);
 		/** generates 1 triangle pair from one particle */
 		void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive);
@@ -75,11 +80,6 @@ namespace chaos
 		GPURenderMaterial * GenDefaultParticleMaterial();
 
 	}; // namespace ParticleDefault
-
-	/** generates 1 quad from one particle */
-	void ParticleToPrimitives(ParticleDefault::Particle const& particle, QuadOutput<ParticleDefault::Vertex>& output);
-	/** generates 1 triangle pair from one particle */
-	void ParticleToPrimitives(ParticleDefault::Particle const& particle, TrianglePairOutput<ParticleDefault::Vertex>& output);
 
 }; // namespace chaos
 

@@ -109,7 +109,7 @@ public:
 
 	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const* layer_trait) const;
 
-	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data, LayerTrait const* layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data) const;
 };
 
 // ===========================================================================
@@ -182,9 +182,9 @@ public:
 		class LudumGame* game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleBlood & particle, LayerTrait const* layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleBlood & particle) const;
 
-	void ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+	void ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output) const;
 };
 
 // ===========================================================================
@@ -210,9 +210,11 @@ public:
 		class LudumGame* game = nullptr;
 	};
 
-	bool UpdateParticle(float delta_time, ParticleBurnedSoul & particle, LayerTrait const* layer_trait) const;
+	int BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleBurnedSoul>& accessor, LayerTrait const* layer_trait) const;
 
-	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const;
+
+	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const;
 };
 
 

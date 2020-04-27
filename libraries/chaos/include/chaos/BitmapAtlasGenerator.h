@@ -65,9 +65,9 @@ namespace chaos
 		{
 		public:
 			/** the top-left corner of the rectangle */
-			int x;
+			int x = 0;
 			/** the top-left corner of the rectangle */
-			int y;
+			int y = 0;
 			/** the size of the rectangle */
 			int width;
 			/** the size of the rectangle */
@@ -97,8 +97,9 @@ namespace chaos
 			{
 			public:
 				unsigned int surface_sum = 0;
-				std::vector<int> split_x;
-				std::vector<int> split_y;
+
+				std::vector<Rectangle>  collision_rectangles;
+				std::vector<glm::ivec2> potential_bottomleft_corners;
 			};
 
 			/** an utility class used to reference all entries in input */
@@ -131,18 +132,14 @@ namespace chaos
 			/** test whether there is an intersection between each pair of Entries in an atlas */
 			bool EnsureValidResults(BitmapInfoInputVector const & result, std::ostream & stream = std::cout) const;
 			/** test whether rectangle intersects with any of the entries */
-			bool HasIntersectingInfo(BitmapInfoInputVector const & entries, int bitmap_index, Rectangle const & r) const;
+			bool HasIntersectingInfo(Rectangle const & r, std::vector<Rectangle> const & collision_rectangles) const;
 
 			/** the effective function to do the computation */
 			bool DoComputeResult(BitmapInfoInputVector const & entries);
-			/** an utility function that gets a score for a rectangle */
-			float GetAdjacentSurface(BitmapInfoInput const & info, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const;
 			/** returns the position (if any) in an atlas withe the best score */
-			float FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, int & x, int & y) const;
-			/** insert an integer in a vector. keep it ordered */
-			void InsertOrdered(std::vector<int> & v, int value);
+			float FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, glm::ivec2 & position) const;
 			/** insert a bitmap in an atlas definition */
-			void InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, int x, int y);
+			void InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, glm::ivec2 const & position);
 
 			/** an utility function that returns an array with 0.. count - 1*/
 			static std::vector<size_t> CreateIndexTable(size_t count)

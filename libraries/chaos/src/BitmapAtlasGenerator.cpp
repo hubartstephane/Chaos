@@ -201,22 +201,11 @@ namespace chaos
 			return result;
 		}
 
-		bool AtlasGenerator::HasIntersectingInfo(BitmapInfoInputVector const & entries, int bitmap_index, Rectangle const & r) const
+		bool AtlasGenerator::HasIntersectingInfo(Rectangle const& r, std::vector<Rectangle> const& collision_rectangles) const
 		{
-			Rectangle r1 = AddPadding(r);
-
-			for (BitmapInfoInput const * info : entries)
-			{
-				BitmapLayout const * layout = GetBitmapLayout(info);
-				if (layout == nullptr)
-					continue;
-
-				if (layout->bitmap_index != bitmap_index)
-					continue;
-				Rectangle r2 = AddPadding(GetRectangle(*layout));
-				if (r2.IsIntersecting(r1))
+			for (Rectangle const& other_r : collision_rectangles)
+				if (other_r.IsIntersecting(r))
 					return true;
-			}
 			return false;
 		}
 
@@ -569,23 +558,23 @@ namespace chaos
 				BitmapInfoInput const * input_entry = entries[entry_index];
 
 				int   best_atlas_index = -1;
-				int   best_x = 0;
-				int   best_y = 0;
 				float best_score = -1.0f;
+
+				glm::ivec2 best_position = glm::ivec2(0, 0);
 
 				for (size_t j = 0; j < atlas_definitions.size(); ++j)
 				{
-					int   x, y;
-					float score = FindBestPositionInAtlas(entries, *input_entry, atlas_definitions[j], x, y);
+					glm::ivec2 position = glm::ivec2(0, 0);
+
+					float score = FindBestPositionInAtlas(entries, *input_entry, atlas_definitions[j], position);
 
 					if (score < 0.0f)
 						continue; // cannot insert the texture in this atlas
 
 					if (score < best_score || best_score < 0) // new best position found
 					{
-						best_score = score;
-						best_x = x;
-						best_y = y;
+						best_score       = score;
+						best_position    = position;
 						best_atlas_index = (int)j;
 					}
 
@@ -596,72 +585,24 @@ namespace chaos
 				if (best_atlas_index == -1) // not enough size in any existing atlas. create a new one
 				{
 					AtlasDefinition def;
-					def.split_x.push_back(0);
-					def.split_x.push_back(params.atlas_width + 2 * params.atlas_padding);
-					def.split_y.push_back(0);
-					def.split_y.push_back(params.atlas_height + 2 * params.atlas_padding);
+
+					def.potential_bottomleft_corners.push_back(glm::ivec2(0, 0));
 
 					best_atlas_index = (int)atlas_definitions.size();
-					best_x = 0;
-					best_y = 0;
+					best_position = glm::ivec2(0, 0);
 
 					atlas_definitions.push_back(std::move(def));
 				}
 
 				BitmapLayout * layout = GetBitmapLayout(entries[entry_index]);
 				if (layout != nullptr)					
-					InsertBitmapLayoutInAtlas(*layout, atlas_definitions[best_atlas_index], best_x, best_y);
+					InsertBitmapLayoutInAtlas(*layout, atlas_definitions[best_atlas_index], best_position);
 			}
 			return true;
 		}
 
-		float AtlasGenerator::GetAdjacentSurface(BitmapInfoInput const & info, AtlasDefinition const & atlas_def, std::vector<int> const & collision, size_t x_count, size_t y_count, size_t u, size_t v, size_t dx, size_t dy) const
+		float AtlasGenerator::FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, glm::ivec2 & position) const
 		{
-			float result = 0.0f;
-
-			size_t a = u;
-			size_t b = v;
-
-			// search the first intersection
-			u += dx;
-			v += dy;
-			while ((u < x_count) && (u != SIZE_MAX) && (v < y_count) && (v != SIZE_MAX))
-			{
-				size_t index = u * y_count + v;
-				if (collision[index])
-					break;
-				u += dx;
-				v += dy;
-			}
-
-			u -= dx;
-			v -= dy;
-
-			if (u != a || v != b)
-			{
-				if (dx != 0)
-				{
-					int x1 = atlas_def.split_x[a];
-					int x2 = atlas_def.split_x[u];
-
-					result = ((float)std::abs(x1 - x2)) * ((float)(info.description.height + 2 * params.atlas_padding));
-				}
-				else
-				{
-					int y1 = atlas_def.split_y[b];
-					int y2 = atlas_def.split_y[v];
-
-					result = ((float)std::abs(y1 - y2)) * ((float)(info.description.width + 2 * params.atlas_padding));
-				}
-			}
-
-			return result;
-		}
-
-		float AtlasGenerator::FindBestPositionInAtlas(BitmapInfoInputVector const & entries, BitmapInfoInput const & info, AtlasDefinition const & atlas_def, int & x, int & y) const
-		{
-			float result = -1.0f;
-
 			// not enought surface remaining. Early exit
 			unsigned int max_surface = (unsigned int)(params.atlas_width * params.atlas_height);
 			unsigned int entry_surface = (unsigned int)
@@ -671,92 +612,36 @@ namespace chaos
 			if (atlas_def.surface_sum + entry_surface > max_surface)
 				return -1.0f;
 
-			size_t  x_count = atlas_def.split_x.size();
-			size_t  y_count = atlas_def.split_y.size();
-			size_t count = x_count * y_count;
-
-			std::vector<int> collision_table;
-			collision_table.insert(collision_table.begin(), count, 1); // by default, we cannot place the texture at any position
-
-																	   // find collision table
+			// the rectangle for given bitmap including the padding
 			Rectangle r;
-			r.width = info.description.width;
-			r.height = info.description.height;
+			r.width  = info.description.width + 2 * params.atlas_padding;
+			r.height = info.description.height + 2 * params.atlas_padding;
 
-			bool any_value = false;
-			for (size_t u = 0; u < x_count; ++u)
+			for (glm::ivec2 const& p : atlas_def.potential_bottomleft_corners)
 			{
-				int px = atlas_def.split_x[u];
-				if (px + info.description.width + 2 * params.atlas_padding > params.atlas_width) // cannot puts the texture at this position (not fully inside the atlas)
-					break;
-				r.x = px + params.atlas_padding;
-
-				for (size_t v = 0; v < y_count; ++v)
+				// position of the rectangle (padding included)
+				r.x = p.x;
+				r.y = p.y;
+				// check whether the rectangle fully fill into to atlas page
+				if (r.x + r.width >= params.atlas_width)
+					continue;
+				if (r.y + r.height >= params.atlas_height)
+					continue;
+				// check for other rectangles in the same page
+				if (!HasIntersectingInfo(r, atlas_def.collision_rectangles))
 				{
-					int py = atlas_def.split_y[v];
-					if (py + info.description.height + 2 * params.atlas_padding > params.atlas_height)  // cannot puts the texture at this position (not fully inside the atlas)
-						break;
-					r.y = py + params.atlas_padding;
-
-					bool collision = HasIntersectingInfo(entries, (int)(&atlas_def - &atlas_definitions[0]), r);
-					any_value |= !collision;
-
-					if (!collision)
-						collision_table[u * y_count + v] = 0;
+					position = p;
+					return 0.0f; // perfect fit
 				}
 			}
-
-			if (!any_value)
-				return -1.0f; // texture can be set nowhere in that atlas
-
-							  // find the best position
-			for (size_t u = 0; u < x_count; ++u)
-			{
-				for (size_t v = 0; v < y_count; ++v)
-				{
-					size_t index = u * y_count + v;
-					if (!collision_table[index])
-					{
-						float surf1 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, +1, 0);
-						float surf2 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, -1, 0);
-						float surf3 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, 0, +1);
-						float surf4 = GetAdjacentSurface(info, atlas_def, collision_table, x_count, y_count, u, v, 0, -1);
-
-						float sum_surf = surf1 + surf2 + surf3 + surf4;
-
-						if (sum_surf == 0.0f) // perfect fit
-						{
-							x = atlas_def.split_x[u];
-							y = atlas_def.split_y[v];
-							return 0.0f;
-						}
-
-						if (result < 0.0f || sum_surf < result)
-						{
-							x = atlas_def.split_x[u];
-							y = atlas_def.split_y[v];
-							result = sum_surf;
-						}
-					}
-				}
-			}
-
-			return result;
+			return -1.0f; // not found on this page
 		}
 
-		void AtlasGenerator::InsertOrdered(std::vector<int> & v, int value)
-		{
-			auto it = std::lower_bound(v.begin(), v.end(), value);
-			if ((it != v.end()) && (*it == value))
-				return;
-			v.insert(it, value);
-		}
-
-		void AtlasGenerator::InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, int x, int y)
+		void AtlasGenerator::InsertBitmapLayoutInAtlas(BitmapLayout & layout, AtlasDefinition & atlas_def, glm::ivec2 const & position)
 		{
 			layout.bitmap_index = (int)(&atlas_def - &atlas_definitions[0]);
-			layout.x = x + params.atlas_padding;
-			layout.y = y + params.atlas_padding;
+			layout.x = position.x + params.atlas_padding;
+			layout.y = position.y + params.atlas_padding;
 
 			// XXX : for OpenGL, texture Y = 0 is bottom
 			//       for bitmap,         Y = 0 is top
@@ -768,12 +653,28 @@ namespace chaos
 			layout.topright_texcoord.x = MathTools::CastAndDiv<float>(layout.x + layout.width, params.atlas_width);
 			layout.topright_texcoord.y = 1.0f - MathTools::CastAndDiv<float>(layout.y, params.atlas_height);
 
-			InsertOrdered(atlas_def.split_x, x);
-			InsertOrdered(atlas_def.split_x, x + layout.width + 2 * params.atlas_padding);
+			// erase the point from potential entries
+			auto it = std::find(atlas_def.potential_bottomleft_corners.begin(), atlas_def.potential_bottomleft_corners.end(), position);
+			if (it != atlas_def.potential_bottomleft_corners.end())
+				atlas_def.potential_bottomleft_corners.erase(it);
 
-			InsertOrdered(atlas_def.split_y, y);
-			InsertOrdered(atlas_def.split_y, y + layout.height + 2 * params.atlas_padding);
+			// insert 3 new corners as entries (bottom-right / top-left / top-right)
+			int width  = layout.width + 2 * params.atlas_padding;
+			int height = layout.height + 2 * params.atlas_padding;
 
+			atlas_def.potential_bottomleft_corners.emplace_back(position.x + width, position.y);
+			atlas_def.potential_bottomleft_corners.emplace_back(position.x, position.y + height);
+			atlas_def.potential_bottomleft_corners.emplace_back(position.x + width, position.y + height);
+
+			// insert new rectangle to test for collision
+			Rectangle r;
+			r.x = position.x;
+			r.y = position.y;
+			r.width = width;
+			r.height = height;
+			atlas_def.collision_rectangles.push_back(r);
+
+			// compute sum of all surfaces used in this atlas page
 			atlas_def.surface_sum += (unsigned int)
 				((layout.width + 2 * params.atlas_padding) *
 				(layout.height + 2 * params.atlas_padding));

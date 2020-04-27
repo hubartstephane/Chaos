@@ -132,7 +132,7 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	return result;
 }
 
-bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData & update_data, LayerTrait const* layer_trait) const
+bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData & update_data) const
 {
 	particle.bounding_box.position += delta_time * particle.velocity;
 
@@ -224,7 +224,7 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated & particle)
 // ParticleBloodTrait
 // ===========================================================================
 
-void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -239,7 +239,7 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 		primitive[i].color = particle.color;
 }
 
-bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & particle, LayerTrait const* layer_trait) const
+bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & particle) const
 {
 	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
@@ -252,7 +252,7 @@ bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & partic
 // ParticleBurnedSoulTrait
 // ===========================================================================
 
-void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const
 {
 	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -266,7 +266,7 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 		primitive[i].color = particle.color;
 }
 
-bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle, LayerTrait const* layer_trait) const
+bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const
 {
 	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
@@ -274,6 +274,11 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 	particle.offset_t += delta_time;
 
 	return false;
+}
+
+int ParticleBurnedSoulTrait::BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleBurnedSoul>& accessor, LayerTrait const* layer_trait) const
+{
+	return 666;
 }
 
 

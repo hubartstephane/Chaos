@@ -87,9 +87,9 @@
 //
 // in that case, the previous functions have an additionnal argument (just for 1.1 cases)
 //
-//    UpdateParticle(... LayerTrait, TYPE_XXX) 
+//    UpdateParticle(... TYPE_XXX, LayerTrait) 
 //
-//    ParticleToPrimitives(... LayerTrait, TYPE_YYY)
+//    ParticleToPrimitives(... TYPE_YYY, LayerTrait)
 //
 //	  TYPE_XXX BeginUpdateParticles(...LayerTrait)
 //
@@ -264,15 +264,15 @@ public:
 
 				int base_flags = ParticleToPrimitiveImplementationType::TRAIT_IMPLEMENTATION | ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL | ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
 
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, begin_result, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, begin_result, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, begin_result, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::QUAD | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, begin_result, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, begin_result, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
 			}
 

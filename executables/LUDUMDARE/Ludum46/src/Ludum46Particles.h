@@ -118,16 +118,25 @@ public:
 
 class ParticleAnimated : public ParticleBase
 {
+
+public:
+
+	//bool UpdateParticle(float delta_time);
+
 public:
 	int frame_index = 0;
 	float animation_timer = 0.0f;
 };
 
+bool UpdateParticle(float delta_time, ParticleAnimated& particle);
+
 class ParticleAnimatedTrait : public chaos::ParticleAllocationTrait<ParticleAnimated, VertexBase>
 {
 public:
 
+#if 0
 	static bool UpdateParticle(float delta_time, ParticleAnimated & particle);
+#endif
 
 };
 

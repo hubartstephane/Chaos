@@ -18,11 +18,6 @@ namespace chaos
 		/** the type for one vertex */
 		using vertex_type = VERTEX_TYPE;
 
-		bool UpdateParticle(float delta_time, PARTICLE_TYPE & particle) const
-		{
-			return false; // default implementation => do not destroy particle
-		}
-
 		/** whether the particles are dynamic */
 		static bool const dynamic_particles = DYNAMIC_PARTICLES;
 		/** whether the vertices are dynamic */

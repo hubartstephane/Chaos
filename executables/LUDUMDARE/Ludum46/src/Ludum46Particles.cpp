@@ -184,6 +184,30 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 // ParticleAnimatedTrait
 // ===========================================================================
 
+
+bool UpdateParticle(float delta_time, ParticleAnimated & particle)
+{
+	particle.animation_timer += delta_time;
+
+	// destroy the particles ? 
+	if (!UpdateAnimatedParticleTexcoords(particle))
+		return true;
+
+	return false;
+}
+#if 0
+bool ParticleAnimated::UpdateParticle(float delta_time)
+{
+	animation_timer += delta_time;
+
+	// destroy the particles ? 
+	if (!UpdateAnimatedParticleTexcoords(*this))
+		return true;
+
+	return false;
+}
+
+
 bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated & particle)
 {
 	particle.animation_timer += delta_time;
@@ -194,6 +218,7 @@ bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated & 
 
 	return false;
 }
+#endif
 
 // ===========================================================================
 // ParticleBloodTrait

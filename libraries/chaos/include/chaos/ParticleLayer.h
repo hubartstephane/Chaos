@@ -409,7 +409,9 @@ public:
 			}
 			// LayerTrait - NOBEGIN
 			if constexpr (check_method_UpdateParticle_v<trait const, float, particle&, layer_trait const*>)
+			{
 				return UpdateParticleImplementationType::TRAIT_IMPLEMENTATION | UpdateParticleImplementationType::WITH_LAYER_TRAIT;
+			}
 		}
 
 		// NOLAYERTRAIT + BeginUpdateParticle
@@ -418,23 +420,28 @@ public:
 			using begin_result = typeof_method_BeginUpdateParticles<trait const, float, accessor&>;
 
 			if constexpr (check_method_UpdateParticle_v<trait const, float, particle&, begin_result>)
+			{
 				return UpdateParticleImplementationType::TRAIT_IMPLEMENTATION | UpdateParticleImplementationType::WITH_BEGIN_CALL;
+			}
 		}
 		// NOLAYERTRAIT - NOBEGIN
 		if constexpr (check_method_UpdateParticle_v<trait const, float, particle&>)
+		{
 			return UpdateParticleImplementationType::TRAIT_IMPLEMENTATION;
+		}
 
 		// ============================== use implementation from PARTICLE ITSELF ==============================
+		if constexpr (check_method_UpdateParticle_v<particle, float>)
 		{
-			if constexpr (check_method_UpdateParticle_v<particle const&, float>)
-				return UpdateParticleImplementationType::PARTICLE_IMPLEMENTATION;
+			return UpdateParticleImplementationType::PARTICLE_IMPLEMENTATION;
 		}
 
 		// ============================== use implementation DEFAULT ==============================
+		if constexpr (check_function_UpdateParticle_v<float, particle&>)
 		{
-			if constexpr (check_function_UpdateParticle_v<float, particle const&>)
-				return UpdateParticleImplementationType::DEFAULT_IMPLEMENTATION;
+			return UpdateParticleImplementationType::DEFAULT_IMPLEMENTATION;
 		}
+
 		return UpdateParticleImplementationType::NONE;
 	}
 };
@@ -760,7 +767,7 @@ public:
 
 			size_t particle_count = GetParticleCount();
 
-			size_t remaining_particles = 0;
+			size_t remaining_particles = particle_count; // by default, no particle destruction
 
 			ParticleAccessor<particle_type> particle_accessor = GetParticleAccessor();
 

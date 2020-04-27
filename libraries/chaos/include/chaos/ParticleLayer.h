@@ -33,12 +33,12 @@
 // ParticleAllocation<...> use a template class to define particles behavior
 //
 //   - The class of the PARTICLES
+//   - The class of the VERTICES
 //   - Ticking the PARTICLES
-//   - For rendering, transforming PARTICLES into GPU primtives (quad, triangles ...) or VERTICES = > so defining VERTICES
+//   - Rendering PARTICLES (transforming PARTICLES into GPU primtives (quad, triangles ...))
 //
 //
-//
-// 1 - it must implement:
+// 1 - it can/must implement:
 //
 //    bool UpdateParticle(...) const;    => returns true if the particle must be destroyed
 //
@@ -47,28 +47,45 @@
 //    void ParticleToPrimitives(...) const;  
 //
 //
+// ... but you could simply have
 //
-// 2 - If we have to make a computation on ALL particles before, we can implement the two following functions
+//
+// 1.a - have the particle implements its own functions
+//
+//    particle.UpdateParticle(...)
+//
+//    particle.ParticleToPrimitives(...)
+//
+//
+// 1.b - have simple independant function 
+//
+//    ParticleToPrimitive(... particle ...)
+//
+//    ParticleToPrimitives(... particle ...)
+//
+//
+//
+// 2 - If we have to make a computation on ALL particles before, we can implement the two following functions (just for the 1.1 cases)
 //
 //	  TYPE_XXX BeginUpdateParticles(...)
 //
 //	  TYPE_YYY BeginParticlesToPrimitives(...)
 //
-// in that case, the previous functions have an additionnal argument
+// in that case, the previous functions have an additionnal argument (just for 1.1 cases)
 //
 //    UpdateParticle(... TYPE_XXX)
 //
 //    ParticleToPrimitives(... TYPE_YYY)
 //
-// Example : we can compute an transform for the whole allocation (single call) and apply it to each particle
+// Example : we can compute a transform for the whole allocation (single call) and apply it to each particle
 //
 //
 //
-// 3 - if we may have a nested class LayerTrait, so that the layer has an instance of that
+// 3 - if we may have a nested class LayerTrait, so that the layer has an instance of that (just for 1.1 cases)
 //
 //    class LayerTrait { ... }
 //
-// in that case, the previous functions have an additionnal argument
+// in that case, the previous functions have an additionnal argument (just for 1.1 cases)
 //
 //    UpdateParticle(... LayerTrait, TYPE_XXX) 
 //
@@ -109,34 +126,23 @@ namespace chaos
 // detect whether class has a member named XXX (use has_XXX<T>::value => bool => convert into boost::mpl::bool_)
 CHAOS_GENERATE_HAS_MEMBER(dynamic_particles);
 CHAOS_GENERATE_HAS_MEMBER(dynamic_vertices);
-CHAOS_GENERATE_HAS_MEMBER(primitive_type);
 
 // detect whether classes have some functions
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(Tick)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(UpdateParticle)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(ParticleToPrimitives)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginUpdateParticles)
-CHAOS_GENERATE_HAS_FUNCTION_METACLASS(BeginParticlesToPrimitives)
-
-
-
-
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(Tick)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateParticle)
-CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(ParticleToPrimitives)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginUpdateParticles)
-CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginParticlesToPrimitives)
 
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(ParticleToPrimitives)
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginParticlesToPrimitives)
 
 // detect whether class have a nested class
 CHAOS_GENERATE_HAS_TRAIT(LayerTrait)
 
-
 // ==============================================================
-// The kinf of ParticleUpdate to do
+// The kind of ParticleToPrimitive to do
 // ==============================================================
 
-namespace ParticleToPrimitiveImplementationType  // XXXX: no class, so this can be implicitly converted to int
+namespace ParticleToPrimitiveImplementationType  // XXXX: no enum, no class, so this can be implicitly converted to int
 {
 	// the kind of primitive emitted
 	static constexpr int NONE = 0;
@@ -148,17 +154,38 @@ namespace ParticleToPrimitiveImplementationType  // XXXX: no class, so this can 
 	// a mask for the primitive type
 	static constexpr int PRIMITIVE_MASK = 7;
 
+	// whether the trait has the implementation to use
+	static constexpr int TRAIT_IMPLEMENTATION = 8;
 	// whether the particle class itself has the implementation to use
-	static constexpr int PARTICLE_IMPLEMENTATION = 8;
+	static constexpr int PARTICLE_IMPLEMENTATION = 16;
 	// whether nor the particle class nor the trait class has an implementation. So whether to use the default implementation method
-	static constexpr int DEFAULT_IMPLEMENTATION = 16;
+	static constexpr int DEFAULT_IMPLEMENTATION = 32;
 
 	// for trait implementation, whether there is a LAYER TRAIT to use in the call
-	static constexpr int WITH_LAYER_TRAIT = 32;
+	static constexpr int WITH_LAYER_TRAIT = 64;
 	// for trait implementation, whether there is a BEGIN to call before
-	static constexpr int WITH_BEGIN_CALL = 64;
+	static constexpr int WITH_BEGIN_CALL = 128;
 };
 
+// ==============================================================
+// The kind of UpdateParticle to do
+// ==============================================================
+
+namespace UpdateParticleImplementationType // XXXX: no enum, no class, so this can be implicitly converted to int
+{
+	// no update required
+	static constexpr int NONE = 0;
+	// whether the trait has the implementation to use
+	static constexpr int TRAIT_IMPLEMENTATION = 1;
+	// whether the particle class itself has the implementation to use
+	static constexpr int PARTICLE_IMPLEMENTATION = 2;
+	// whether nor the particle class nor the trait class has an implementation. So whether to use the default implementation method
+	static constexpr int DEFAULT_IMPLEMENTATION = 4;
+	// for trait implementation, whether there is a LAYER TRAIT to use in the call
+	static constexpr int WITH_LAYER_TRAIT = 8;
+	// for trait implementation, whether there is a BEGIN to call before
+	static constexpr int WITH_BEGIN_CALL = 16;
+};
 
 // ==============================================================
 // ParticleTraitTools
@@ -212,9 +239,8 @@ public:
 
 	/** returns the kind of implementation required for the particle rendering */
 	template<typename TRAIT_TYPE>
-	static constexpr int GetParticlesToPrimitivesImplementationType()
+	static constexpr int GetParticleToPrimitivesImplementationType()
 	{
-
 		// the types used 
 		using trait = TRAIT_TYPE;
 		using particle = typename trait::particle_type;
@@ -232,73 +258,73 @@ public:
 			using layer_trait = typename trait::LayerTrait;
 
 			// LayerTrait + BeginParticlesToPrimitive
-			if constexpr (check_method_BeginParticlesToPrimitives_v<trait, accessor const&, layer_trait const*>)
+			if constexpr (check_method_BeginParticlesToPrimitives_v<trait const, accessor &, layer_trait const*>)
 			{
-				using begin_result = typeof_method_BeginParticlesToPrimitives<trait, accessor const&, layer_trait const*>;
+				using begin_result = typeof_method_BeginParticlesToPrimitives<trait const, accessor&, layer_trait const*>;
 
-				int base_flags = ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL | ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
+				int base_flags = ParticleToPrimitiveImplementationType::TRAIT_IMPLEMENTATION | ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL | ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
 
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, triangle_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, layer_trait const*, begin_result>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, layer_trait const*, begin_result>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, quad_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, layer_trait const*, begin_result>)
 					return ParticleToPrimitiveImplementationType::QUAD | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, layer_trait const*, begin_result>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&, layer_trait const*, begin_result>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, layer_trait const*, begin_result>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
 			}
 
 			// LayerTrait - NOBEGIN
 			{
-				int base_flags = ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
+				int base_flags = ParticleToPrimitiveImplementationType::TRAIT_IMPLEMENTATION | ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT;
 
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, triangle_output&, layer_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&, layer_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, quad_output&, layer_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::QUAD | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&, layer_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&, layer_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, layer_trait const*>)
 					return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
 			}
 		}
 
 		// NOLAYERTRAIT + BeginParticlesToPrimitive
-		if constexpr (check_method_BeginParticlesToPrimitives_v<trait, accessor const&>)
+		if constexpr (check_method_BeginParticlesToPrimitives_v<trait const, accessor&>)
 		{
-			using begin_result = typeof_method_BeginParticlesToPrimitives<trait, accessor const&>;
+			using begin_result = typeof_method_BeginParticlesToPrimitives<trait const, accessor&>;
 
-			int base_flags = ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL;
+			int base_flags = ParticleToPrimitiveImplementationType::TRAIT_IMPLEMENTATION | ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL;
 
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, triangle_output&, begin_result>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, begin_result>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&, begin_result>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, begin_result>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, quad_output&, begin_result>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, begin_result>)
 				return ParticleToPrimitiveImplementationType::QUAD | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&, begin_result>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, begin_result>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&, begin_result>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, begin_result>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
 		}
 
 		// NOLAYERTRAIT - NOBEGIN
 		{
-			int base_flags = 0;
+			int base_flags = ParticleToPrimitiveImplementationType::TRAIT_IMPLEMENTATION;
 
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, triangle_output&>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglepair_output&>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE_PAIR | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, quad_output&>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&>)
 				return ParticleToPrimitiveImplementationType::QUAD | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglestrip_output&>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE_STRIP | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait, particle const&, trianglefan_output&>)
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&>)
 				return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
 		}
 
@@ -318,7 +344,6 @@ public:
 				return ParticleToPrimitiveImplementationType::TRIANGLE_FAN | base_flags;
 		}
 
-
 		// ============================== use implementation DEFAULT ==============================
 		{
 			int base_flags = ParticleToPrimitiveImplementationType::DEFAULT_IMPLEMENTATION;
@@ -337,12 +362,11 @@ public:
 		return ParticleToPrimitiveImplementationType::NONE;
 	}
 
-
 	/** returns the primitive type used for the rendering */
 	template<typename TRAIT_TYPE>
 	static constexpr PrimitiveType GetPrimitiveType()
 	{
-		constexpr int implementation_type = GetParticlesToPrimitivesImplementationType<TRAIT_TYPE>();
+		constexpr int implementation_type = GetParticleToPrimitivesImplementationType<TRAIT_TYPE>();
 		constexpr int primitive_type = (implementation_type & ParticleToPrimitiveImplementationType::PRIMITIVE_MASK);
 
 		if constexpr (primitive_type == ParticleToPrimitiveImplementationType::TRIANGLE_PAIR)
@@ -355,7 +379,63 @@ public:
 			return PrimitiveType::TRIANGLE_STRIP;
 		if ((implementation_type & ParticleToPrimitiveImplementationType::PRIMITIVE_MASK) == ParticleToPrimitiveImplementationType::TRIANGLE_FAN)
 			return PrimitiveType::TRIANGLE_FAN;	
+
 		return PrimitiveType::NONE;
+	}
+
+	/** returns the kind of implementation required for the particle update */
+	template<typename TRAIT_TYPE>
+	static constexpr int GetUpdateParticleImplementationType()
+	{
+
+		// the types used 
+		using trait = TRAIT_TYPE;
+		using particle = typename trait::particle_type;
+		using vertex = typename trait::vertex_type;
+		using accessor = typename ParticleAccessor<particle>;
+
+		// ============================== use implementation from TRAIT_TYPE ==============================
+		if constexpr (has_LayerTrait_v<trait>)
+		{
+			using layer_trait = typename trait::LayerTrait;
+
+			// LayerTrait + BeginUpdateParticle
+			if constexpr (check_method_BeginUpdateParticles_v<trait const, float, accessor&, layer_trait const*>)
+			{
+				using begin_result = typeof_method_BeginUpdateParticles<trait const, float, accessor&, layer_trait const*>;
+
+				if constexpr (check_method_UpdateParticle_v<trait const, float, particle &, begin_result, layer_trait const*>)
+					return UpdateParticleImplementationType::TRAIT_IMPLEMENTATION | UpdateParticleImplementationType::WITH_BEGIN_CALL | UpdateParticleImplementationType::WITH_LAYER_TRAIT;
+			}
+			// LayerTrait - NOBEGIN
+			if constexpr (check_method_UpdateParticle_v<trait const, float, particle&, layer_trait const*>)
+				return UpdateParticleImplementationType::TRAIT_IMPLEMENTATION | UpdateParticleImplementationType::WITH_LAYER_TRAIT;
+		}
+
+		// NOLAYERTRAIT + BeginUpdateParticle
+		if constexpr (check_method_BeginUpdateParticles_v<trait const, float, accessor&>)
+		{
+			using begin_result = typeof_method_BeginUpdateParticles<trait const, float, accessor&>;
+
+			if constexpr (check_method_UpdateParticle_v<trait const, float, particle&, begin_result>)
+				return UpdateParticleImplementationType::TRAIT_IMPLEMENTATION | UpdateParticleImplementationType::WITH_BEGIN_CALL;
+		}
+		// NOLAYERTRAIT - NOBEGIN
+		if constexpr (check_method_UpdateParticle_v<trait const, float, particle&>)
+			return UpdateParticleImplementationType::TRAIT_IMPLEMENTATION;
+
+		// ============================== use implementation from PARTICLE ITSELF ==============================
+		{
+			if constexpr (check_method_UpdateParticle_v<particle const&, float>)
+				return UpdateParticleImplementationType::PARTICLE_IMPLEMENTATION;
+		}
+
+		// ============================== use implementation DEFAULT ==============================
+		{
+			if constexpr (check_function_UpdateParticle_v<float, particle const&>)
+				return UpdateParticleImplementationType::DEFAULT_IMPLEMENTATION;
+		}
+		return UpdateParticleImplementationType::NONE;
 	}
 };
 
@@ -576,50 +656,51 @@ public:
         template<typename PRIMITIVE_OUTPUT_TYPE>
         void ParticlesToPrimitives(PRIMITIVE_OUTPUT_TYPE& output, void const* layer_trait) const
         {		
-			constexpr int implementation_type = ParticleTraitTools::GetParticlesToPrimitivesImplementationType<ALLOCATION_TRAIT>();
+			constexpr int implementation_type = ParticleTraitTools::GetParticleToPrimitivesImplementationType<ALLOCATION_TRAIT>();
 
+			constexpr int trait_implementation    = (implementation_type & ParticleToPrimitiveImplementationType::TRAIT_IMPLEMENTATION);
 			constexpr int default_implementation  = (implementation_type & ParticleToPrimitiveImplementationType::DEFAULT_IMPLEMENTATION);
 			constexpr int particle_implementation = (implementation_type & ParticleToPrimitiveImplementationType::PARTICLE_IMPLEMENTATION);
 			constexpr int with_begin_call         = (implementation_type & ParticleToPrimitiveImplementationType::WITH_BEGIN_CALL);
 			constexpr int with_layer_trait        = (implementation_type & ParticleToPrimitiveImplementationType::WITH_LAYER_TRAIT);
 
-			if constexpr (default_implementation != 0)
+			if constexpr (trait_implementation != 0)
 			{
-				DoParticlesToPrimitivesLoop_DefaultImplementation(output); 
-			}
-			else if constexpr (particle_implementation != 0)
-			{
-				DoParticlesToPrimitivesLoop_ParticleImplementation(output);				
-			}
-			else if constexpr (with_begin_call != 0)
-			{
-				layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
-
 				if constexpr (with_layer_trait != 0)
 				{
-					DoParticlesToPrimitivesLoop(
-						output,
-						allocation_trait.BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
-						typed_layer_trait);
+					layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
+
+					if constexpr (with_begin_call != 0)
+					{
+						DoParticlesToPrimitivesLoop(
+							output,
+							allocation_trait.BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
+							typed_layer_trait);
+					}
+					else
+					{
+						DoParticlesToPrimitivesLoop(output, typed_layer_trait);
+					}
 				}
-				else
+				else if constexpr (with_begin_call != 0)
 				{
 					DoParticlesToPrimitivesLoop(
 						output,
 						allocation_trait.BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>()) // do not use a temp variable, so it can be a left-value reference
 					);
 				}
-				
+				else
+				{
+					DoParticlesToPrimitivesLoop(output);
+				}
 			}
-			else if constexpr (with_layer_trait != 0)
+			else if constexpr (particle_implementation != 0)
 			{
-				layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
-
-				DoParticlesToPrimitivesLoop(output, typed_layer_trait);
+				DoParticlesToPrimitivesLoop_ParticleImplementation(output);
 			}
-			else
+			else if constexpr (default_implementation != 0)
 			{
-				DoParticlesToPrimitivesLoop(output);
+				DoParticlesToPrimitivesLoop_DefaultImplementation(output); 
 			}
         }
 
@@ -631,6 +712,9 @@ public:
             layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
 
             bool destroy_allocation = false;
+
+#if 0
+
 
             // tick the allocation (if the trait has a Tick(...) function)
             if constexpr (has_function_Tick_v<allocation_trait_type>)
@@ -656,42 +740,69 @@ public:
                         destroy_allocation = UpdateParticles(delta_time, typed_layer_trait);
                 }
             }
+
+#endif
+			if (particles.size() > 0)
+				destroy_allocation = UpdateParticles(delta_time, typed_layer_trait);
+
             return destroy_allocation;
 		}
 
 		bool UpdateParticles(float delta_time, layer_trait_type const * layer_trait)
 		{
+			constexpr int implementation_type = ParticleTraitTools::GetUpdateParticleImplementationType<ALLOCATION_TRAIT>();
+
+			constexpr int trait_implementation		= (implementation_type & UpdateParticleImplementationType::TRAIT_IMPLEMENTATION);
+			constexpr int default_implementation	= (implementation_type & UpdateParticleImplementationType::DEFAULT_IMPLEMENTATION);
+			constexpr int particle_implementation	= (implementation_type & UpdateParticleImplementationType::PARTICLE_IMPLEMENTATION);
+			constexpr int with_begin_call			= (implementation_type & UpdateParticleImplementationType::WITH_BEGIN_CALL);
+			constexpr int with_layer_trait			= (implementation_type & UpdateParticleImplementationType::WITH_LAYER_TRAIT);
+
 			size_t particle_count = GetParticleCount();
 
-            size_t remaining_particles = 0;
+			size_t remaining_particles = 0;
 
-            ParticleAccessor<particle_type> particle_accessor = GetParticleAccessor();
+			ParticleAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
-            if constexpr (has_function_BeginUpdateParticles<allocation_trait_type>::type())
-            {
-                if constexpr (has_LayerTrait_v<allocation_trait_type>)
-                {
-                    remaining_particles = DoUpdateParticlesLoop(
-                        delta_time,
-                        particle_accessor,
-                        allocation_trait.BeginUpdateParticles(delta_time, particle_accessor, layer_trait), // do not use a temp variable, so it can be a left-value reference
-                        layer_trait);
-                }
-                else
-                {
-                    remaining_particles = DoUpdateParticlesLoop(
-                        delta_time,
-                        particle_accessor,
-                        allocation_trait.BeginUpdateParticles(delta_time, particle_accessor, layer_trait)); // do not use a temp variable, so it can be a left-value reference
-                }
-            }
-            else
-            {
-                if constexpr (has_LayerTrait_v<allocation_trait_type>)
-                    remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor, layer_trait);
-                else
-                    remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor);
-            }
+			if constexpr (trait_implementation != 0)
+			{
+				if constexpr (with_layer_trait != 0)
+				{
+					layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
+
+					if constexpr (with_begin_call != 0)
+					{
+						remaining_particles = DoUpdateParticlesLoop(
+							delta_time,
+							particle_accessor,
+							allocation_trait.BeginUpdateParticles(delta_time, particle_accessor, layer_trait), // do not use a temp variable, so it can be a left-value reference
+							layer_trait);
+					}
+					else
+					{
+						remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor, layer_trait);
+					}
+				}
+				else if constexpr (with_begin_call != 0)
+				{
+					remaining_particles = DoUpdateParticlesLoop(
+						delta_time,
+						particle_accessor,
+						allocation_trait.BeginUpdateParticles(delta_time, particle_accessor)); // do not use a temp variable, so it can be a left-value reference
+				}
+				else
+				{
+					remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor);
+				}
+			}
+			else if constexpr (particle_implementation != 0)
+			{
+				remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor);
+			}
+			else if constexpr (default_implementation != 0)
+			{
+				remaining_particles = DoUpdateParticlesLoop(delta_time, particle_accessor);
+			}
 
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
 				return true; // destroy allocation
@@ -703,16 +814,32 @@ public:
 		template<typename ...PARAMS>
 		size_t DoUpdateParticlesLoop(float delta_time, ParticleAccessor<particle_type> particle_accessor, PARAMS... params)
 		{
+			constexpr int implementation_type = ParticleTraitTools::GetUpdateParticleImplementationType<ALLOCATION_TRAIT>();
+
+			constexpr int trait_implementation    = (implementation_type & UpdateParticleImplementationType::TRAIT_IMPLEMENTATION);
+			constexpr int default_implementation  = (implementation_type & UpdateParticleImplementationType::DEFAULT_IMPLEMENTATION);
+			constexpr int particle_implementation = (implementation_type & UpdateParticleImplementationType::PARTICLE_IMPLEMENTATION);
+
             size_t particle_count = particle_accessor.GetCount();
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;
 			for (size_t i = 0; i < particle_count; ++i)
-			{
-				if (!allocation_trait.UpdateParticle(delta_time, particle_accessor[i], params...)) // particle not destroyed ?
+			{			
+				particle_type& particle = particle_accessor[i];
+
+				bool destroy_particle = false;
+				if constexpr (trait_implementation != 0)
+					destroy_particle = allocation_trait.UpdateParticle(delta_time, particle, params...);
+				else if constexpr (particle_implementation != 0)
+					destroy_particle = particle.UpdateParticle(delta_time, params ...);
+				else if constexpr (default_implementation != 0)
+					destroy_particle = UpdateParticle(delta_time, particle, params ...);
+				
+				if (!destroy_particle)
 				{
 					if (i != j)
-                        particle_accessor[j] = particle_accessor[i];
+						particle_accessor[j] = particle;
 					++j;
 				}
 			}

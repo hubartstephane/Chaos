@@ -68,10 +68,6 @@ public:
 	ParticleSoulUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor, LayerTrait const* layer_trait) const;
 
 	bool UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData& update_data, LayerTrait const* layer_trait) const;
-
-#if 0
-	void ParticleToPrimitives(ParticleSoul const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
-#endif
 };
 
 

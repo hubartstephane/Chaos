@@ -188,7 +188,7 @@ namespace chaos
 				if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
 					return;
 
-				MyGLFW::SingleWindowApplication * application = MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+				MyGLFW::SingleWindowApplication * application = Application::GetInstance();
 				if (application != nullptr)
 				{
 					GPURenderer * renderer = application->GetRenderer();
@@ -431,7 +431,7 @@ namespace chaos
 		bool Window::ScreenCapture()
 		{
 			// get renderer
-			MyGLFW::SingleWindowApplication * application = MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+			MyGLFW::SingleWindowApplication * application = Application::GetInstance();
 			if (application == nullptr)
 				return false;
 

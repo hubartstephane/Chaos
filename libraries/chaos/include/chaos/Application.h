@@ -5,6 +5,7 @@
 #include <chaos/InputMode.h>
 #include <chaos/InputEventReceiver.h>
 #include <chaos/ReferencedObject.h>
+#include <chaos/AutoCast.h>
 
 namespace chaos
 {
@@ -25,9 +26,9 @@ namespace chaos
 		bool Run(int argc, char ** argv, char ** env);
 
 		/** getter of the singleton instance */
-		static inline Application * GetInstance() { return singleton_instance; }
+		static AutoCastable<Application> GetInstance() { return singleton_instance; }
 		/** getter of the singleton instance */
-		static inline Application const * GetConstInstance() { return singleton_instance; }
+		static AutoConstCastable<Application> GetConstInstance() { return singleton_instance; }
 
 		/** get the name of the application */
 		char const * GetApplicationName() const { return application_name.c_str(); }

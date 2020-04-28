@@ -21,7 +21,7 @@ static glm::vec4 const translucent = glm::vec4(1.0f, 1.0f, 1.0f, 0.3f);
 
 bool PrimitiveRenderer::Initialize()
 {
-	chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+	chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
 	if (application == nullptr)
 		return false;
 

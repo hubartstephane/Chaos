@@ -18,7 +18,7 @@ public:
 
 	void TestFile(char const * filename)
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return;
 

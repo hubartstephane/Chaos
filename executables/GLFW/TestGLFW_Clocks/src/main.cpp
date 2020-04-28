@@ -215,7 +215,7 @@ protected:
 		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
 

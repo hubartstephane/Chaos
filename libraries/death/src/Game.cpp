@@ -451,7 +451,7 @@ namespace death
 		if (default_path != nullptr)
 		{
 			// get the application
-			chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+			chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
 			if (application != nullptr)
 			{
 				// compute resource path
@@ -752,12 +752,12 @@ namespace death
 
 	chaos::MyGLFW::SingleWindowApplication * Game::GetApplication()
 	{
-		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		return chaos::Application::GetInstance();
 	}
 
 	chaos::MyGLFW::SingleWindowApplication const * Game::GetApplication() const
 	{
-		return chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationConstInstance();
+		return chaos::Application::GetInstance();
 	}
 
 	chaos::SoundManager * Game::GetSoundManager()
@@ -1557,7 +1557,7 @@ namespace death
 
 	bool Game::ReloadGameConfiguration()
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::MyGLFW::SingleWindowApplication::GetGLFWApplicationInstance();
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
 

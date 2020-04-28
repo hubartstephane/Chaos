@@ -418,7 +418,7 @@ namespace chaos
 
 		Clock * SingleWindowApplication::GetMainClockInstance()
 		{
-			SingleWindowApplication * application = GetGLFWApplicationInstance();
+			SingleWindowApplication * application = GetInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetMainClock();
@@ -426,7 +426,7 @@ namespace chaos
 
 		Clock const * SingleWindowApplication::GetMainClockConstInstance()
 		{
-			SingleWindowApplication const * application = GetGLFWApplicationConstInstance();
+			SingleWindowApplication const * application = GetConstInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetMainClock();
@@ -434,7 +434,7 @@ namespace chaos
 
 		SoundManager * SingleWindowApplication::GetSoundManagerInstance()
 		{
-			SingleWindowApplication * application = GetGLFWApplicationInstance();
+			SingleWindowApplication * application = GetInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetSoundManager();
@@ -442,7 +442,7 @@ namespace chaos
 
 		SoundManager const * SingleWindowApplication::GetSoundManagerConstInstance()
 		{
-			SingleWindowApplication const * application = GetGLFWApplicationConstInstance();
+			SingleWindowApplication const * application = GetConstInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetSoundManager();
@@ -450,7 +450,7 @@ namespace chaos
 
 		GPUResourceManager * SingleWindowApplication::GetGPUResourceManagerInstance()
 		{
-			SingleWindowApplication * application = GetGLFWApplicationInstance();
+			SingleWindowApplication * application = GetInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetGPUResourceManager();
@@ -458,7 +458,7 @@ namespace chaos
 
 		GPUResourceManager const * SingleWindowApplication::GetGPUResourceManagerConstInstance()
 		{
-			SingleWindowApplication const * application = GetGLFWApplicationConstInstance();
+			SingleWindowApplication const * application = GetConstInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetGPUResourceManager();

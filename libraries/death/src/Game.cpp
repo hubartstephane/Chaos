@@ -359,43 +359,44 @@ namespace death
 
 	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
-		// Try to load already computed data (in debug only)
-#if _DEBUG
-		if (!chaos::Application::HasApplicationCommandLineFlag("-IgnoreCachedAtlas")) // CMDLINE
+		char const* CachedAtlasFilename = "CachedAtlas";
+
+		// Try to load already computed data 
+		if (chaos::Application::HasApplicationCommandLineFlag("-UseCachedAtlas")) // CMDLINE
 		{
-			chaos::BitmapAtlas::TextureArrayAtlas * tmp_texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+			chaos::BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
 			if (tmp_texture_atlas != nullptr)
 			{
-				chaos::Application * application = chaos::Application::GetInstance();
+				chaos::Application* application = chaos::Application::GetInstance();
 				if (application != nullptr)
 				{
-					if (tmp_texture_atlas->LoadAtlas(application->GetUserLocalTempPath() / "LudumAtlas"))
+					if (tmp_texture_atlas->LoadAtlas(application->GetUserLocalTempPath() / CachedAtlasFilename))
 					{
 						texture_atlas = tmp_texture_atlas;
 						return true;
 					}
 					delete(tmp_texture_atlas);
 				}
-			}		
+			}
 		}
-#endif
 
+		// fill sub images for atlas generation
 		chaos::BitmapAtlas::AtlasInput input;
 		if (!FillAtlasGenerationInput(input, config, config_path))
 			return false;
 
-		// generate the atlas
+		// generate the atlas + maybe a dump
 		int ATLAS_SIZE    = 1024;
 		int ATLAS_PADDING = 10;
 
 		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
-#if _DEBUG
-		params.debug_dump_atlas_dirname = "LudumAtlas";
-#endif
+		char const * dump_atlas_dirname = nullptr;
+		if (chaos::Application::HasApplicationCommandLineFlag("-DumpCachedAtlas")) // CMDLINE
+			dump_atlas_dirname = CachedAtlasFilename;
 
 		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
-		texture_atlas = generator.ComputeResult(input, params);
+		texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
 		if (texture_atlas == nullptr)
 			return false;
 

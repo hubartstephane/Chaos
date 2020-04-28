@@ -563,9 +563,6 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	int ATLAS_PADDING = 10;
 	chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
-#if _DEBUG
-	params.debug_dump_atlas_dirname = "LudumAtlas";
-#endif
 
 	chaos::BitmapAtlas::AtlasInput input;
 
@@ -581,8 +578,12 @@ bool Game::GenerateAtlas(boost::filesystem::path const & path)
 	}
 
 	// generate STD Atlas
+	char const* dump_atlas_dirname = nullptr;
+#if _DEBUG
+	dump_atlas_dirname = "LudumAtlas";
+#endif
 	chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
-	texture_atlas = generator.ComputeResult(input, params);
+	texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
 	if (texture_atlas == nullptr)
 		return false;
 

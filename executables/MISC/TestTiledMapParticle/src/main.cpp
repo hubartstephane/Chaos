@@ -156,12 +156,13 @@ protected:
 		int ATLAS_PADDING = 10;
 		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
+		char const* dump_atlas_dirname = nullptr;
 #if DUMP_DEBUG_DATA
-		params.debug_dump_atlas_dirname = "Atlas";
+		dump_atlas_dirname = "Atlas";
 #endif
 
 		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
-		return generator.ComputeResult(input, params);
+		return generator.ComputeResult(input, params, dump_atlas_dirname);
 	}
 
 	bool InitializeTiledMapManager()

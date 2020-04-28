@@ -514,14 +514,6 @@ namespace chaos
 					output->OutputInfo(std::cout);
 #endif // CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
 
-#if _DEBUG
-					if (params.debug_dump_atlas_dirname.size() > 0) // dump the atlas
-					{
-						Application * application = Application::GetInstance();
-						if (application != nullptr)
-							in_output.SaveAtlas(application->GetUserLocalTempPath() / params.debug_dump_atlas_dirname.c_str());
-					}
-#endif
 					return true;
 				}
 #if CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
@@ -566,12 +558,15 @@ namespace chaos
 				{
 					glm::ivec2 position = glm::ivec2(0, 0);
 
+					// score < 0	=> failure
+					// score == 0	=> perfect match, no need to search in other page
+					// score > 0	=> search greater score
 					float score = FindBestPositionInAtlas(entries, *input_entry, atlas_definitions[j], position);
 
 					if (score < 0.0f)
 						continue; // cannot insert the texture in this atlas
 
-					if (score < best_score || best_score < 0) // new best position found
+					if (score > best_score || best_score < 0) // new best position found
 					{
 						best_score       = score;
 						best_position    = position;
@@ -698,13 +693,21 @@ namespace chaos
 		// TextureArrayAtlasGenerator implementation
 		// ========================================================================
 
-		TextureArrayAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params)
+		TextureArrayAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params, char const * dump_atlas_dirname)
 		{
 			// generate a standard atlas to be converted
 			chaos::BitmapAtlas::Atlas          atlas;
 			chaos::BitmapAtlas::AtlasGenerator generator;
 			if (!generator.ComputeResult(in_input, atlas, in_params))
 				return nullptr;
+
+			// dump the atlas on disk
+			if (dump_atlas_dirname != nullptr)
+			{
+				Application* application = Application::GetInstance();
+				if (application != nullptr)
+					atlas.SaveAtlas(application->GetUserLocalTempPath() / dump_atlas_dirname);
+			}
 
 			// generate texture Atlas
 			chaos::BitmapAtlas::TextureArrayAtlas * result = new BitmapAtlas::TextureArrayAtlas;

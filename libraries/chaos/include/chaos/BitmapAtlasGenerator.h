@@ -50,11 +50,6 @@ namespace chaos
 			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 			/** parameters for merging different pixel format */
 			PixelFormatMergeParams merge_params;
-
-#if _DEBUG
-			/** when generating an atlas, this may dump into a file */
-			std::string debug_dump_atlas_dirname;
-#endif
 		};
 
 		/**
@@ -69,9 +64,9 @@ namespace chaos
 			/** the top-left corner of the rectangle */
 			int y = 0;
 			/** the size of the rectangle */
-			int width;
+			int width = 0;
 			/** the size of the rectangle */
-			int height;
+			int height = 0;
 			/** equality test */
 			bool operator == (Rectangle const & src) const
 			{
@@ -183,7 +178,7 @@ namespace chaos
 			/** make destructor virtual */
 			virtual ~TextureArrayAtlasGenerator() = default;
 			/** compute all BitmapInfo positions */
-			TextureArrayAtlas * ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params = AtlasGeneratorParams());
+			TextureArrayAtlas * ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params = AtlasGeneratorParams(), char const * dump_atlas_dirname = nullptr);
 		};
 
 	}; // namespace BitmapAtlas

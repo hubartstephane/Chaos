@@ -119,10 +119,6 @@ namespace death
 		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayerBase, FindParticleLayer);
 #undef DEATH_FIND_RENDERABLE_CHILD
 
-		/** utility function to get the application */
-		chaos::MyGLFW::SingleWindowApplication * GetApplication();
-		/** utility function to get the application */
-		chaos::MyGLFW::SingleWindowApplication const * GetApplication() const;
 		/** utility function to get the sound manager */
 		chaos::SoundManager * GetSoundManager();
 

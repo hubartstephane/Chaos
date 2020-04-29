@@ -670,7 +670,7 @@ namespace death
 
 	bool Game::InitializeClocks(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
-		chaos::Clock * application_clock = GetApplicationClock();
+		chaos::Clock* application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
 			return false;
 
@@ -750,19 +750,9 @@ namespace death
 		return true;
 	}
 
-	chaos::MyGLFW::SingleWindowApplication * Game::GetApplication()
-	{
-		return chaos::Application::GetInstance();
-	}
-
-	chaos::MyGLFW::SingleWindowApplication const * Game::GetApplication() const
-	{
-		return chaos::Application::GetInstance();
-	}
-
 	chaos::SoundManager * Game::GetSoundManager()
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetSoundManager();
@@ -770,7 +760,7 @@ namespace death
 
 	chaos::Clock * Game::GetApplicationClock()
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = GetApplication();
+		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();
@@ -778,7 +768,7 @@ namespace death
 
 	chaos::Clock const * Game::GetApplicationClock() const
 	{
-		chaos::MyGLFW::SingleWindowApplication const * application = GetApplication();
+		chaos::MyGLFW::SingleWindowApplication const * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();

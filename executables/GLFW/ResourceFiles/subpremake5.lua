@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_ResourceFiles
+-- ROOT_PATH/executables/GLFW/ResourceFiles
 -- =============================================================================
 
   WindowedApp()

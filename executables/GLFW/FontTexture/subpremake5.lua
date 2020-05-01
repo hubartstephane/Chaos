@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_FontTexture
+-- ROOT_PATH/executables/GLFW/FontTexture
 -- =============================================================================
 
   WindowedApp()

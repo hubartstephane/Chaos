@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/Misc/TestFilePathParam
+-- ROOT_PATH/executables/Misc/FilePathParam
 -- =============================================================================
 
   WindowedApp()

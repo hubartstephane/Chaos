@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_FreeType
+-- ROOT_PATH/executables/GLFW/FreeType
 -- =============================================================================
 
   WindowedApp()

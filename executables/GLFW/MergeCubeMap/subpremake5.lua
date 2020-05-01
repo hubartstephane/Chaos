@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_MergeCubeMap
+-- ROOT_PATH/executables/GLFW/MergeCubeMap
 -- =============================================================================
 
   WindowedApp()

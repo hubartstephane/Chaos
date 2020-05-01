@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_TextSpriteFormat
+-- ROOT_PATH/executables/GLFW/TextSpriteFormat
 -- =============================================================================
 
   WindowedApp()

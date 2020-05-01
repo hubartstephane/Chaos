@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/Misc/TestRedirectOutput_Windowed
+-- ROOT_PATH/executables/Misc/RedirectOutput_Windowed
 -- =============================================================================
 
   WindowedApp()

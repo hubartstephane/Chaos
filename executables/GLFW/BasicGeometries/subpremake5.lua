@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_BasicGeometries
+-- ROOT_PATH/executables/GLFW/BasicGeometries
 -- =============================================================================
 
   WindowedApp()

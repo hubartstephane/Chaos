@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_Framebuffer
+-- ROOT_PATH/executables/GLFW/Framebuffer
 -- =============================================================================
 
   WindowedApp()

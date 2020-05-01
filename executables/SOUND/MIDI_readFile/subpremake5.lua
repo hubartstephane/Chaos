@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/SOUND/Test_MIDI_readFile
+-- ROOT_PATH/executables/SOUND/MIDI_readFile
 -- =============================================================================
 
   WindowedApp()

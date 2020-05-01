@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestMetaprogramming
+-- ROOT_PATH/executables/MISC/Metaprogramming
 -- =============================================================================
 
   WindowedApp()

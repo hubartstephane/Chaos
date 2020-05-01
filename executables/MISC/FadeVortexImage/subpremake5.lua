@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestFadeVortexImage
+-- ROOT_PATH/executables/MISC/FadeVortexImage
 -- =============================================================================
 
   WindowedApp()

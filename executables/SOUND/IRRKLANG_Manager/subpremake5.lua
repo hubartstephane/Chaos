@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/SOUND/Test_IRRKLANG_Manager
+-- ROOT_PATH/executables/SOUND/IRRKLANG_Manager
 -- =============================================================================
 
   WindowedApp()

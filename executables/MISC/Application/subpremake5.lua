@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestApplication
+-- ROOT_PATH/executables/MISC/Application
 -- =============================================================================
 
   WindowedApp()

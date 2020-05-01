@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestTiledMapReader
+-- ROOT_PATH/executables/MISC/TiledMapReader
 -- =============================================================================
 
   WindowedApp()

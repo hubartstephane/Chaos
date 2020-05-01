@@ -2,15 +2,15 @@
 -- ROOT_PATH/executables/NANA
 -- =============================================================================
 
-ProcessSubPremake("TestNana_1")
-ProcessSubPremake("TestNana_2")
-ProcessSubPremake("TestNana_3")
-ProcessSubPremake("TestNana_4")
-ProcessSubPremake("TestNana_5")
-ProcessSubPremake("TestNana_6")
-ProcessSubPremake("TestNana_7")
-ProcessSubPremake("TestNana_8")
-ProcessSubPremake("TestNana_9")
-ProcessSubPremake("TestNana_10")
+ProcessSubPremake("Nana_1")
+ProcessSubPremake("Nana_2")
+ProcessSubPremake("Nana_3")
+ProcessSubPremake("Nana_4")
+ProcessSubPremake("Nana_5")
+ProcessSubPremake("Nana_6")
+ProcessSubPremake("Nana_7")
+ProcessSubPremake("Nana_8")
+ProcessSubPremake("Nana_9")
+ProcessSubPremake("Nana_10")
 
 

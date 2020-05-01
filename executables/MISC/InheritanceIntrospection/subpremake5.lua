@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestInheritanceIntrospection
+-- ROOT_PATH/executables/MISC/InheritanceIntrospection
 -- =============================================================================
 
   WindowedApp()

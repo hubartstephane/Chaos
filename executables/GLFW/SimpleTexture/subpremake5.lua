@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_SimpleTexture
+-- ROOT_PATH/executables/GLFW/SimpleTexture
 -- =============================================================================
 
   WindowedApp()

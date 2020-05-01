@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_MergeAtlas
+-- ROOT_PATH/executables/GLFW/MergeAtlas
 -- =============================================================================
 
   WindowedApp()

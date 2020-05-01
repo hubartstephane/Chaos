@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestTristripper
+-- ROOT_PATH/executables/MISC/Tristripper
 -- =============================================================================
 
   WindowedApp()

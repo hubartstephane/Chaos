@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestBoostOptions
+-- ROOT_PATH/executables/MISC/BoostOptions
 -- =============================================================================
 
   WindowedApp()

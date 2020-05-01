@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_GamepadDetection
+-- ROOT_PATH/executables/GLFW/GamepadDetection
 -- =============================================================================
 
   WindowedApp()

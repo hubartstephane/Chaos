@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/Misc/TestRedirectOutput_Console
+-- ROOT_PATH/executables/Misc/RedirectOutput_Console
 -- =============================================================================
 
   WindowedApp()

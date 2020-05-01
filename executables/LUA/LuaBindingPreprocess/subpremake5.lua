@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/LUA/TestLuaBindingPreprocess
+-- ROOT_PATH/executables/LUA/LuaBindingPreprocess
 -- =============================================================================
 
   WindowedApp()

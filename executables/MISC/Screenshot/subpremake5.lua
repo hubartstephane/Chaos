@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestScreenshot
+-- ROOT_PATH/executables/MISC/Screenshot
 -- =============================================================================
 
   WindowedApp()

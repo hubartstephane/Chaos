@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestDataSource
+-- ROOT_PATH/executables/MISC/DataSource
 -- =============================================================================
 
   WindowedApp()

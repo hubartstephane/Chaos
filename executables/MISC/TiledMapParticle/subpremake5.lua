@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestTiledMapParticle
+-- ROOT_PATH/executables/MISC/TiledMapParticle
 -- =============================================================================
 
   WindowedApp()

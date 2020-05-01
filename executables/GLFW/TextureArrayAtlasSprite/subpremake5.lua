@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_TextureArrayAtlasSprite
+-- ROOT_PATH/executables/GLFW/TextureArrayAtlasSprite
 -- =============================================================================
 
   WindowedApp()

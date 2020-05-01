@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestSparseBuffer
+-- ROOT_PATH/executables/MISC/SparseBuffer
 -- =============================================================================
 
   WindowedApp()

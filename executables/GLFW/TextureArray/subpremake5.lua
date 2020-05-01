@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_TextureArray
+-- ROOT_PATH/executables/GLFW/TextureArray
 -- =============================================================================
 
   WindowedApp()

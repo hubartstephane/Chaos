@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestOpenFileMap
+-- ROOT_PATH/executables/MISC/OpenFileMap
 -- =============================================================================
 
   WindowedApp()

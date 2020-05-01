@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_Instancing
+-- ROOT_PATH/executables/GLFW/Instancing
 -- =============================================================================
 
   WindowedApp()

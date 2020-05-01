@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/MISC/TestBufferPolicy
+-- ROOT_PATH/executables/MISC/BufferPolicy
 -- =============================================================================
 
   WindowedApp()

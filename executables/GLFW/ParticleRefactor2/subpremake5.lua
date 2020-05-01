@@ -1,5 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/GLFW/TestGLFW_ParticleRefactor2
+-- ROOT_PATH/executables/GLFW/ParticleRefactor2
 -- =============================================================================
 
   WindowedApp()

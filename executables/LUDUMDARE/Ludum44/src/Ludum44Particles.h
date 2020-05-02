@@ -17,7 +17,7 @@ static float const WAKEN_RADIUS_RATIO  = 1.0f;
 // VertexBase and ParticleBase
 // ===========================================================================
 
-class VertexBase : public chaos::ParticleDefault::Vertex
+class VertexBase : public chaos::VertexDefault
 {
 public:
 
@@ -167,7 +167,7 @@ public:
 // ParticleLife
 // ===========================================================================
 
-class ParticleLife : public chaos::ParticleDefault::Particle
+class ParticleLife : public chaos::ParticleDefault
 {
 
 };
@@ -190,7 +190,7 @@ public:
 // ParticleLife
 // ===========================================================================
 
-class ParticleExplosion : public chaos::ParticleDefault::Particle
+class ParticleExplosion : public chaos::ParticleDefault
 {
 
 public:

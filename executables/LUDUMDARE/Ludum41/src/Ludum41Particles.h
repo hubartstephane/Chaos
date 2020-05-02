@@ -12,9 +12,9 @@
 // VertexBase and Particle
 // ===========================================================================
 
-using VertexBase = chaos::ParticleDefault::Vertex;
+using VertexBase = chaos::VertexDefault;
 
-using ParticleObject = chaos::ParticleDefault::Particle;
+using ParticleObject = chaos::ParticleDefault;
 
 // ===========================================================================
 // Object particle system

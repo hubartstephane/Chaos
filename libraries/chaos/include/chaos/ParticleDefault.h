@@ -9,6 +9,19 @@
 
 namespace chaos
 {
+	// XXX : given a rectangle particle and a 4 textures coordinates, there are 8 possibilities to make them match (without twisting the position)
+	//
+	//       -4 rotations
+	//       -1 optional symetry
+	//
+	//       these is given with the 3 bitfields (i use the notation int:1  instead of bool because the compiler fails to optimize 1 bool into a single bit
+
+	namespace ParticleDefaultFlags
+	{
+		static int const TEXTURE_HORIZONTAL_FLIP = (1 << 1);
+		static int const TEXTURE_VERTICAL_FLIP   = (1 << 2);
+		static int const TEXTURE_DIAGONAL_FLIP   = (1 << 4);
+	};
 
     /**
     * ParticleCorners : represents 2 corners of a particle
@@ -22,64 +35,67 @@ namespace chaos
         glm::vec2 topright;
     };
 
-    /**
-    * ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
-    */
+	/**
+	* ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
+	*/
 
     class ParticleTexcoords : public ParticleCorners
     {
     public:
 
-        float bitmap_index;
+		int bitmap_index = 0;
     };
 
-	namespace ParticleDefault
+	/** Particle : a default particle, with simpler data */
+	class ParticleDefault
 	{
-		/** Particle : a default particle, with simpler data */
-		class Particle
-		{
-		public:
+	public:
 
-			chaos::box2 bounding_box;
-			chaos::ParticleTexcoords texcoords;
-			glm::vec4 color;
-		};
+		/** the bounding box of the particle */
+		chaos::box2 bounding_box;
+		/** the four texcoords to apply to the particle vertices */
+		chaos::ParticleTexcoords texcoords;
+		/** the colour of the particle */
+		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		/** some flags (more or less custom) */
+		int flags = 0;
+	};
 
-		/** Vertex : vertex for default particle */
-		class Vertex
-		{
-		public:
+	/** Vertex : vertex for default particle */
+	class VertexDefault
+	{
+	public:
 
-			glm::vec2 position;
-			glm::vec3 texcoord;
-			glm::vec4 color;
-		};
+		/** the position of the vertex */
+		glm::vec2 position;
+		/** the texcoord of the vertex */
+		glm::vec3 texcoord;
+		/** the colour of the vertex */
+		glm::vec4 color;
+	};
 
-		/** ParticleTrait : the default trait */
-		class ParticleTrait : public ParticleAllocationTrait<Particle, Vertex>
-		{
-		public:
+	/** ParticleTrait : the default trait */
+	using ParticleDefaultTrait = ParticleAllocationTrait<ParticleDefault, VertexDefault>;
 
-		};
 
-		/** generates 1 quad from one particle */
-		void ParticleToPrimitives(ParticleDefault::Particle const& particle, QuadOutput<ParticleDefault::Vertex>& output);
-		/** generates 1 triangle pair from one particle */
-		void ParticleToPrimitives(ParticleDefault::Particle const& particle, TrianglePairOutput<ParticleDefault::Vertex>& output);
 
-		/** generates 1 quad from one particle */
-		void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive);
-		/** generates 1 triangle pair from one particle */
-		void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive);
 
-		/** the default vertex declaration */
-		void GetTypedVertexDeclaration(GPUVertexDeclaration * result, boost::mpl::identity<Vertex>);
-		/** generate a default shader */
-		GPUProgram * GenDefaultParticleProgram();
-		/** generate a default material */
-		GPURenderMaterial * GenDefaultParticleMaterial();
+	/** generates 1 quad from one particle */
+	void ParticleToPrimitives(ParticleDefault const& particle, QuadOutput<VertexDefault>& output);
+	/** generates 1 triangle pair from one particle */
+	void ParticleToPrimitives(ParticleDefault const& particle, TrianglePairOutput<VertexDefault>& output);
 
-	}; // namespace ParticleDefault
+	/** generates 1 quad from one particle */
+	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive);
+	/** generates 1 triangle pair from one particle */
+	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive);
+
+	/** the default vertex declaration */
+	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>);
+	/** generate a default shader */
+	GPUProgram* GenDefaultParticleProgram();
+	/** generate a default material */
+	GPURenderMaterial* GenDefaultParticleMaterial();
 
 }; // namespace chaos
 

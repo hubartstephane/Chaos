@@ -14,7 +14,7 @@
 // VertexBase and ParticleBase
 // ===========================================================================
 
-using VertexBase = chaos::ParticleDefault::Vertex;
+using VertexBase = chaos::VertexDefault;
 
 //void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
 
@@ -30,9 +30,9 @@ public:
 // ParticleLifeTrait
 // ===========================================================================
 
-using ParticleLife = chaos::ParticleDefault::Particle;
+using ParticleLife = chaos::ParticleDefault;
 
-class ParticleLifeTrait : public chaos::ParticleAllocationTrait<chaos::ParticleDefault::Particle, chaos::ParticleDefault::Vertex>
+class ParticleLifeTrait : public chaos::ParticleAllocationTrait<chaos::ParticleDefault, chaos::VertexDefault>
 {
 public:
 
@@ -227,7 +227,7 @@ public:
 // ParticleExplosion
 // ===========================================================================
 
-class ParticleExplosion : public chaos::ParticleDefault::Particle
+class ParticleExplosion : public chaos::ParticleDefault
 {
 
 public:

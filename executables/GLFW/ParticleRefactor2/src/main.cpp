@@ -45,7 +45,7 @@ public:
 	float remaining_time;
 };
 
-class VertexExample : public chaos::ParticleDefault::Vertex
+class VertexExample : public chaos::VertexDefault
 {
 public:
 
@@ -98,7 +98,7 @@ public:
 
         chaos::TrianglePairPrimitive<VertexExample> primitive = output.AddPrimitive();
 
-        chaos::ParticleTools::GenerateBoxParticle(particle.box, particle.texcoords, primitive);
+        chaos::ParticleTools::GenerateBoxParticle(primitive, particle.box, particle.texcoords);
 
         float alpha = particle.remaining_time / particle.lifetime;
         for (size_t i = 0; i < primitive.count; ++i)
@@ -115,7 +115,7 @@ public:
 
         chaos::QuadPrimitive<VertexExample> primitive = output.AddPrimitive();
 
-        chaos::ParticleTools::GenerateBoxParticle(particle.box, particle.texcoords, primitive);
+        chaos::ParticleTools::GenerateBoxParticle(primitive, particle.box, particle.texcoords);
 
         float alpha = particle.remaining_time / particle.lifetime;
         for (size_t i = 0; i < primitive.count; ++i)

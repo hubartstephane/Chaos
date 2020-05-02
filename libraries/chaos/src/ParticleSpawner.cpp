@@ -17,8 +17,8 @@ namespace chaos
                 // find the corresponding Bitmap
                 ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*bitmap_info);
                 // apply the texcoords to all particles
-                ParticleAccessor<ParticleDefault::Particle> accessor = result->GetParticleAccessor(allocation_count - count, count); // partial accessor, take the last particles in the array
-                for (ParticleDefault::Particle& particle : accessor)
+                ParticleAccessor<ParticleDefault> accessor = result->GetParticleAccessor(allocation_count - count, count); // partial accessor, take the last particles in the array
+                for (ParticleDefault& particle : accessor)
                     particle.texcoords = texcoords;
             }
         }

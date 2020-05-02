@@ -57,7 +57,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 	bool is_texts = (layer_name == "Texts");
 	if (is_texts)
 	{
-		return new chaos::ParticleLayer<chaos::ParticleDefault::ParticleTrait>();
+		return new chaos::ParticleLayer<chaos::ParticleDefaultTrait>();
 	}
 
 	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);

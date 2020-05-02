@@ -2,9 +2,9 @@
 
 namespace death
 {
-    void ParticleBackgroundTrait::ParticleToPrimitives(ParticleBackground const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output) const
+    void ParticleBackgroundTrait::ParticleToPrimitives(ParticleBackground const& particle, chaos::QuadOutput<chaos::VertexDefault> & output) const
     {
-        chaos::QuadPrimitive<chaos::ParticleDefault::Vertex> primitive = output.AddPrimitive();
+        chaos::QuadPrimitive<chaos::VertexDefault> primitive = output.AddPrimitive();
 
         primitive[0].position = glm::vec2(-1.0f, -1.0f);
         primitive[1].position = glm::vec2(+1.0f, -1.0f);
@@ -13,7 +13,7 @@ namespace death
 
         for (size_t i = 0; i < primitive.count ; ++i)
         {
-            chaos::ParticleDefault::Vertex& vertex = primitive[i];
+            chaos::VertexDefault& vertex = primitive[i];
 
             glm::vec2 texcoord = vertex.position * 0.5f + glm::vec2(0.5f, 0.5f);
 
@@ -24,9 +24,9 @@ namespace death
         }
     }
 
-    void ParticleBackgroundTrait::ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output) const
+    void ParticleBackgroundTrait::ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const
     {
-        chaos::TrianglePairPrimitive<chaos::ParticleDefault::Vertex> primitive = output.AddPrimitive();
+        chaos::TrianglePairPrimitive<chaos::VertexDefault> primitive = output.AddPrimitive();
 
         primitive[0].position = glm::vec2(-1.0f, -1.0f);
         primitive[1].position = glm::vec2(+1.0f, -1.0f);
@@ -38,7 +38,7 @@ namespace death
 
         for (size_t i = 0; i < primitive.count; ++i)
         {
-            chaos::ParticleDefault::Vertex& vertex = primitive[i];
+            chaos::VertexDefault& vertex = primitive[i];
 
             glm::vec2 texcoord = vertex.position * 0.5f + glm::vec2(0.5f, 0.5f);
 

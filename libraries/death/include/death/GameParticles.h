@@ -20,13 +20,13 @@ namespace death
 		glm::vec4 color;
 	};
 
-	class ParticleBackgroundTrait : public chaos::ParticleAllocationTrait<ParticleBackground, chaos::ParticleDefault::Vertex>
+	class ParticleBackgroundTrait : public chaos::ParticleAllocationTrait<ParticleBackground, chaos::VertexDefault>
 	{
 	public:
 
-        void ParticleToPrimitives(ParticleBackground const& particle, chaos::QuadOutput<chaos::ParticleDefault::Vertex> & output) const;
+        void ParticleToPrimitives(ParticleBackground const& particle, chaos::QuadOutput<chaos::VertexDefault> & output) const;
 
-        void ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::ParticleDefault::Vertex>& output) const;
+        void ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const;
 	};
 
 

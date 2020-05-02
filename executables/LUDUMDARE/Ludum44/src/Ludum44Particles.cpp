@@ -154,7 +154,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle cons
 {
     chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
-    chaos::ParticleDefault::ParticleToPrimitive(particle, primitive);
+    chaos::ParticleToPrimitive(particle, primitive);
 
     VertexPowerUpZone& v0 = primitive[0];
     VertexPowerUpZone& v1 = primitive[1];
@@ -182,11 +182,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle cons
     v1.texcoord3 = repetition * glm::vec2(1.0f, 0.0f);
     v2.texcoord3 = repetition * glm::vec2(1.0f, 1.0f);
     v3.texcoord3 = repetition * glm::vec2(0.0f, 1.0f);
-
 }
-
-
-
 
 // ===========================================================================
 // ParticleExplosionTrait
@@ -334,7 +330,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle,
 void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags, particle.rotation);
 
     // copy the color in all triangles vertex
     glm::vec4 color = particle.color;
@@ -423,7 +419,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy& particl
 void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags, particle.rotation);
 
     // copy the color in all triangles vertex
     glm::vec4 color = particle.color;

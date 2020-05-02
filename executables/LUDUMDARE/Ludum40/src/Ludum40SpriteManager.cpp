@@ -120,6 +120,48 @@ namespace chaos
 		AddSpriteImpl(info, corners, color);
 	}
 
+
+	static void MyGenerateBoxParticle(ParticleCorners const& corners, ParticleTexcoords const& texcoords, SpriteVertex* vertices)
+	{
+		float bitmap_index = (float)texcoords.bitmap_index;
+
+		SpriteVertex bl;
+		bl.position.x = corners.bottomleft.x;
+		bl.position.y = corners.bottomleft.y;
+		bl.texcoord.x = texcoords.bottomleft.x;
+		bl.texcoord.y = texcoords.bottomleft.y;
+		bl.texcoord.z = bitmap_index;
+
+		SpriteVertex tr;
+		tr.position.x = corners.topright.x;
+		tr.position.y = corners.topright.y;
+		tr.texcoord.x = texcoords.topright.x;
+		tr.texcoord.y = texcoords.topright.y;
+		tr.texcoord.z = bitmap_index;
+
+		SpriteVertex tl;
+		tl.position.x = corners.bottomleft.x;
+		tl.position.y = corners.topright.y;
+		tl.texcoord.x = texcoords.bottomleft.x;
+		tl.texcoord.y = texcoords.topright.y;
+		tl.texcoord.z = bitmap_index;
+
+		SpriteVertex br;
+		br.position.x = corners.topright.x;
+		br.position.y = corners.bottomleft.y;
+		br.texcoord.x = texcoords.topright.x;
+		br.texcoord.y = texcoords.bottomleft.y;
+		br.texcoord.z = bitmap_index;
+
+		vertices[0] = bl;
+		vertices[1] = br;
+		vertices[2] = tr;
+
+		vertices[3] = bl;
+		vertices[4] = tr;
+		vertices[5] = tl;
+	}
+
 	void SpriteManager::AddSpriteImpl(BitmapAtlas::BitmapLayout const * layout, ParticleCorners const & corners, glm::vec3 const & color)
 	{
 		ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*layout);
@@ -129,7 +171,8 @@ namespace chaos
 		sprites.insert(sprites.end(), 6, SpriteVertex());
 		SpriteVertex * new_vertices = &sprites[count];
 		// fill the particles position and textures
-		ParticleTools::GenerateBoxParticle(corners, texcoords, new_vertices);
+		MyGenerateBoxParticle(corners, texcoords, new_vertices);
+
 		// fix the colour
 		for (size_t i = 0; i < 6; ++i)
 			new_vertices[i].color = color;

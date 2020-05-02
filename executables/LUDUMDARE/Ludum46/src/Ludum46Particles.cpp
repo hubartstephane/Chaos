@@ -173,9 +173,7 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
 		if (!layout.IsValid())
 			return false;
-
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
-		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
 	}
 	return true;
 }
@@ -258,7 +256,7 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 	box.half_size *= 1.0f + (particle.life / particle.duration);
 
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
+	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
@@ -277,15 +275,15 @@ bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & partic
 // ParticleBurnedSoulTrait
 // ===========================================================================
 
-void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const
+void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const
 {
-	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+	chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
 	chaos::box2 box = particle.bounding_box;
 	box.position.x += 50.0f * std::sin(particle.offset_t);
 			
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(box, particle.texcoords, primitive);
+	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
@@ -318,15 +316,18 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & part
 	{
 		glm::vec2 pawn_velocity = displacement_component->GetPawnVelocity();
 
+		particle.flags = 0;
+
 		if (std::abs(pawn_velocity.x) < 1.0f)
 		{
 			particle.frame_index = 0;
-			particle.horizontal_flip = false;
+			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
 		else if (std::abs(pawn_velocity.x) < 12.0f)
 		{
 			particle.frame_index = 3;
-			particle.horizontal_flip = (pawn_velocity.x < 0.0f);
+			if (pawn_velocity.x < 0.0f)
+				particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
 		else 
 		{
@@ -338,7 +339,9 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & part
 
 			particle.animation_timer += speed_factor * delta_time;
 
-			particle.horizontal_flip = (pawn_velocity.x < 0.0f);
+			if (pawn_velocity.x < 0.0f)
+				particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
+
 			particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
 		}
 	}
@@ -350,7 +353,6 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & part
 			return true; // destroy the particle
 
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, particle.horizontal_flip, particle.vertical_flip, particle.diagonal_flip);
 	}
 	return false;
 }

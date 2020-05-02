@@ -93,15 +93,21 @@ namespace death
 		TiledMapParticle particle;
 		particle.bounding_box = particle_box;
 		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
-		particle.texcoords = chaos::ParticleTools::ApplySymetriesToTexcoords(particle.texcoords, horizontal_flip, vertical_flip, diagonal_flip);
-
-		// shu46 : i kept the flags in the particle, because for animated image, just the very image produced HERE as the information. after it is lost forever
-		particle.horizontal_flip = horizontal_flip;
-		particle.vertical_flip = vertical_flip;
-		particle.diagonal_flip = diagonal_flip;
-
 		particle.color = color;
+		particle.flags = 0;
+
+		if (horizontal_flip)
+			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
+		if (vertical_flip)
+			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_VERTICAL_FLIP;
+		if (diagonal_flip)
+			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP;
+		
 		particle.gid = gid;
+
+
+		// shuxxx
+
 		particle.bitmap_info = bitmap_info;
 
 		particles[particle_count++] = particle;

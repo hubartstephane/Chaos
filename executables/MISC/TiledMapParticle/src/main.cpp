@@ -260,7 +260,7 @@ protected:
 					if (particle_layer == nullptr)
 					{
 						int layer_id = 0;
-						particle_layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(rendering_order, layer_id, material);
+						particle_layer = particle_manager->AddLayer<chaos::ParticleDefaultTrait>(rendering_order, layer_id, material);
 						if (particle_layer == nullptr)
 							return false;
 						chaos::ParticleAllocationBase * allocation = particle_layer->SpawnParticles(0);

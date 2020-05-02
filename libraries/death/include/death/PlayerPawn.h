@@ -51,8 +51,8 @@ namespace death
 		virtual void SetAllocation(chaos::ParticleAllocationBase* in_allocation);
 
 		/** get pawn particle */
-		chaos::ParticleDefault::Particle * GetParticle();
-		chaos::ParticleDefault::Particle const* GetParticle() const;
+		chaos::ParticleDefault * GetParticle();
+		chaos::ParticleDefault const* GetParticle() const;
 
 	protected:
 

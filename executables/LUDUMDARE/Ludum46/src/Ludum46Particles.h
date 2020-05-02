@@ -15,7 +15,7 @@
 // VertexBase and ParticleBase
 // ===========================================================================
 
-using VertexBase = chaos::ParticleDefault::Vertex;
+using VertexBase = chaos::VertexDefault;
 
 class ParticleBase : public  death::TiledMapParticle
 {
@@ -223,7 +223,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const;
 
-	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::QuadOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const;
+	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const;
 };
 
 

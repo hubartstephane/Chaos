@@ -729,7 +729,7 @@ namespace chaos
 		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params)
 		{
 			assert(layer != nullptr);
-			assert(layer->IsParticleClassCompatible<ParticleDefault::Particle>(true));
+			assert(layer->IsParticleClassCompatible<ParticleDefault>(true));
 
 			int extra_background = (allocation_params.create_background) ? 1 : 0;
 
@@ -739,7 +739,7 @@ namespace chaos
 				return nullptr;
 
 			// spawn the particles
-			ParticleAccessor<ParticleDefault::Particle> particles = result->GetParticleAccessor();
+			ParticleAccessor<ParticleDefault> particles = result->GetParticleAccessor();
 			if (particles.GetCount() == 0)
 			{
 				result->SubReference(SharedPointerPolicy()); // error => destroy the allocation
@@ -750,7 +750,7 @@ namespace chaos
 			// create the background
 			if (allocation_params.create_background)
 			{
-				ParticleDefault::Particle & p = particles[token_index];
+				ParticleDefault & p = particles[token_index];
 
 				glm::vec2 padding = glm::vec2(allocation_params.background_padding, allocation_params.background_padding);
 
@@ -772,7 +772,7 @@ namespace chaos
 				{
 					ParticleTextGenerator::Token const & token = line[j];
 
-					ParticleDefault::Particle & p = particles[token_index];
+					ParticleDefault & p = particles[token_index];
 
 					p.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
 					p.texcoords = token.texcoords;

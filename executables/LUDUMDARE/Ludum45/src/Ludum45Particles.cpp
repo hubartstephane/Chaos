@@ -104,7 +104,7 @@ std::vector<chaos::box2> ParticleEnemyTrait::BeginUpdateParticles(float delta_ti
 void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords);
 
     // copy the color in all triangles vertex
     glm::vec4 color = particle.color;
@@ -226,7 +226,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
     }
 
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, texcoords, primitive, particle.orientation);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, texcoords, particle.orientation);
 
     glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -366,7 +366,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle,
 void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive, particle.rotation);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags, particle.rotation);
 
     // copy the color in all triangles vertex
     glm::vec4 color = particle.color;

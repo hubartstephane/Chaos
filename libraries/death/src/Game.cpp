@@ -915,7 +915,7 @@ namespace death
 	{
 		// XXX : cannot register ParticleDefault, because if will be registered later as ParticleObject
 		//       require refactor
-		//chaos::ClassTools::DeclareClass<chaos::ParticleDefault::Particle>("ParticleDefault");
+		//chaos::ClassTools::DeclareClass<chaos::ParticleDefault>("ParticleDefault");
 		chaos::ClassTools::DeclareClass<death::ParticleBackground>("ParticleBackground");
 		return true;
 	}

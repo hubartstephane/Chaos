@@ -17,12 +17,12 @@ namespace death
 		assert(in_player != nullptr);
 	}
 
-	chaos::ParticleDefault::Particle* PlayerPawn::GetParticle()
+	chaos::ParticleDefault* PlayerPawn::GetParticle()
 	{
 		return chaos::ParticleTools::GetParticle(GetAllocation(), 0);
 	}
 
-	chaos::ParticleDefault::Particle const* PlayerPawn::GetParticle() const
+	chaos::ParticleDefault const* PlayerPawn::GetParticle() const
 	{
 		return chaos::ParticleTools::GetParticle(GetAllocation(), 0);
 	}

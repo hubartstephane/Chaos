@@ -13,25 +13,19 @@ namespace death
 	// TiledMapParticle
 	// =====================================
 
-	class TiledMapParticle : public chaos::ParticleDefault::Particle
+	class TiledMapParticle : public chaos::ParticleDefault
 	{
 	public:
 
 		int gid = 0;
 		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; // shu46 !!! 
-
-
-		bool horizontal_flip = false;
-		bool vertical_flip = false;
-		bool diagonal_flip = false;
-
 	};
 
 	// =====================================
 	// TiledMapParticleTrait
 	// =====================================
 
-	class TiledMapParticleTrait : public chaos::ParticleAllocationTrait<TiledMapParticle, chaos::ParticleDefault::Vertex, false, false> // shuxxx set to false = optimization 1
+	class TiledMapParticleTrait : public chaos::ParticleAllocationTrait<TiledMapParticle, chaos::VertexDefault, false, false> // shuxxx set to false = optimization 1
 	{
 	public:
 

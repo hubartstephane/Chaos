@@ -511,8 +511,8 @@ namespace death
 		// update the particles members
 		glm::vec2 particle_position = whole_particle_ref;
 
-        chaos::ParticleAccessor<chaos::ParticleDefault::Particle> accessor = allocations->GetParticleAccessor();
-        for (chaos::ParticleDefault::Particle & p : accessor)
+        chaos::ParticleAccessor<chaos::ParticleDefault> accessor = allocations->GetParticleAccessor();
+        for (chaos::ParticleDefault & p : accessor)
         {
 			p.bounding_box.position = chaos::ConvertHotpoint(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
 			p.bounding_box.half_size = 0.5f * particle_final_size;

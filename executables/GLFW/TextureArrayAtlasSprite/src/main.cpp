@@ -62,10 +62,10 @@ protected:
 
 		// initialize the particles
 
-		chaos::ParticleAccessor<chaos::ParticleDefault::Particle> particle_accessor = particles_allocation->GetParticleAccessor();
+		chaos::ParticleAccessor<chaos::ParticleDefault> particle_accessor = particles_allocation->GetParticleAccessor();
 		for (size_t i = 0; i < bitmap_count; ++i)
 		{
-			chaos::ParticleDefault::Particle & p = particle_accessor[i];
+			chaos::ParticleDefault & p = particle_accessor[i];
 
 			glm::vec2 position = screen_size * chaos::GLMTools::RandVec2();
 			glm::vec2 size = glm::vec2(particle_size * (0.01f + 0.05f * chaos::MathTools::RandFloat()));
@@ -151,7 +151,7 @@ protected:
 		// create the layer
 		int render_order = 0;
 		int layer_id = 0;
-		chaos::ParticleLayerBase * layer = particle_manager->AddLayer<chaos::ParticleDefault::ParticleTrait>(render_order, layer_id, material.get());
+		chaos::ParticleLayerBase * layer = particle_manager->AddLayer<chaos::ParticleDefaultTrait>(render_order, layer_id, material.get());
 		if (layer == nullptr)
 			return false;
 

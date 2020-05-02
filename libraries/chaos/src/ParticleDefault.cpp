@@ -9,50 +9,44 @@
 
 namespace chaos
 {
+	void ParticleToPrimitives(ParticleDefault const& particle, QuadOutput<VertexDefault>& output)
+	{
+		ParticleToPrimitive(particle, output.AddPrimitive());
+	}
 
+	void ParticleToPrimitives(ParticleDefault const& particle, TrianglePairOutput<VertexDefault>& output)
+	{
+		ParticleToPrimitive(particle, output.AddPrimitive());
+	}
 
+	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive)
+	{
+		// generate particle corners and texcoords
+		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags);
+		// copy the color in all triangles vertex
+		for (size_t i = 0; i < primitive.count; ++i)
+			primitive[i].color = particle.color;
+	}
 
-    namespace ParticleDefault
-    {
+	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive)
+	{
+		// generate particle corners and texcoords
+		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags);
+		// copy the color in all triangles vertex
+		for (size_t i = 0; i < primitive.count; ++i)
+			primitive[i].color = particle.color;
+	}
 
-		void ParticleToPrimitives(ParticleDefault::Particle const& particle, QuadOutput<ParticleDefault::Vertex>& output)
-		{
-			ParticleToPrimitive(particle, output.AddPrimitive());
-		}
+	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>)
+	{
+		result->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2);
+		result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
+		result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
+	}
 
-		void ParticleToPrimitives(ParticleDefault::Particle const& particle, TrianglePairOutput<ParticleDefault::Vertex>& output)
-		{
-			ParticleToPrimitive(particle, output.AddPrimitive());
-		}
-
-        void ParticleToPrimitive(Particle const& particle, QuadPrimitive<Vertex>& primitive)
-        {
-            // generate particle corners and texcoords
-            ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-            // copy the color in all triangles vertex
-            for (size_t i = 0; i < primitive.count; ++i)
-                primitive[i].color = particle.color;
-        }
-
-        void ParticleToPrimitive(Particle const& particle, TrianglePairPrimitive<Vertex>& primitive)
-        {
-            // generate particle corners and texcoords
-            ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
-            // copy the color in all triangles vertex
-            for (size_t i = 0; i < primitive.count; ++i)
-                primitive[i].color = particle.color;
-        }
-
-        void GetTypedVertexDeclaration(GPUVertexDeclaration * result, boost::mpl::identity<Vertex>)
-        {
-			result->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2);
-            result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
-            result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
-        }
-
-        GPUProgram* GenDefaultParticleProgram()
-        {
-            char const* vertex_shader_source = R"VERTEXSHADERCODE(
+	GPUProgram* GenDefaultParticleProgram()
+	{
+		char const* vertex_shader_source = R"VERTEXSHADERCODE(
 		in vec2 position;
 		in vec3 texcoord;
 		in vec4 color;
@@ -70,7 +64,7 @@ namespace chaos
 		};											
 		)VERTEXSHADERCODE";
 
-            char const* pixel_shader_source = R"PIXELSHADERCODE(
+		char const* pixel_shader_source = R"PIXELSHADERCODE(
 		in vec3 vs_texcoord;
 		in vec4 vs_color;
 
@@ -87,19 +81,17 @@ namespace chaos
 		};
 		)PIXELSHADERCODE";
 
-            GPUProgramGenerator program_generator;
-            program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
-            program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
-            return program_generator.GenProgramObject();
-        }
+		GPUProgramGenerator program_generator;
+		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
+		program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
+		return program_generator.GenProgramObject();
+	}
 
-        GPURenderMaterial* GenDefaultParticleMaterial()
-        {
-            shared_ptr<GPUProgram> program = GenDefaultParticleProgram(); // store a temporary object for lifetime management
-            return GPURenderMaterial::GenRenderMaterialObject(program.get());
-        }
-
-    }; // namespace ParticleDefault
+	GPURenderMaterial* GenDefaultParticleMaterial()
+	{
+		shared_ptr<GPUProgram> program = GenDefaultParticleProgram(); // store a temporary object for lifetime management
+		return GPURenderMaterial::GenRenderMaterialObject(program.get());
+	}
 
 }; // namespace chaos
 

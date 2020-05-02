@@ -55,7 +55,7 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
     // generate particle corners and texcoords
     chaos::box2 bounding_box = particle.bounding_box;
     bounding_box.position.y -= ludum_game_instance->brick_offset;
-    chaos::ParticleTools::GenerateBoxParticle(bounding_box, particle.texcoords, primitive);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, bounding_box, particle.texcoords);
 
     // copy the color in all triangles vertex
     float extra = 2;
@@ -83,7 +83,7 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
 
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords);
     // copy the color in all triangles vertex
 
 	float ball_power = ludum_game_instance->ball_power;
@@ -369,7 +369,7 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(particle.bounding_box, particle.texcoords, primitive);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords);
 
     // copy the color in all triangles vertex
 

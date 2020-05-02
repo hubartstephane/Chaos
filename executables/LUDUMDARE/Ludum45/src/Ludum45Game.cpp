@@ -62,7 +62,7 @@ bool LudumGame::DeclareParticleClasses()
 	chaos::ClassTools::DeclareClass<ParticleFire, ParticleBase>("ParticleFire");
 	chaos::ClassTools::DeclareClass<ParticleBonus, ParticleBase>("ParticleBonus");
 	chaos::ClassTools::DeclareClass<ParticleEnemy, ParticleBase>("ParticleEnemy");
-	chaos::ClassTools::DeclareClass<ParticleExplosion, chaos::ParticleDefault::Particle>("ParticleExplosion");
+	chaos::ClassTools::DeclareClass<ParticleExplosion, chaos::ParticleDefault>("ParticleExplosion");
 
 
 

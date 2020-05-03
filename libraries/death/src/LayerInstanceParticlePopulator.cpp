@@ -92,7 +92,7 @@ namespace death
 		// add the particle
 		TiledMapParticle particle;
 		particle.bounding_box = particle_box;
-		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+		particle.texcoords = layout.GetTexcoords();
 		particle.color = color;
 		particle.flags = 0;
 

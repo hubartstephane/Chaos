@@ -19,7 +19,6 @@ namespace chaos
         new_element.vertex_declaration = vertex_declaration;        
         new_element.render_material = nullptr; // XXX : the used material will be given by ParticleLayer each frame so that if we change Layer::Material, the dynamic mesh will be updated too
 
-#if CHAOS_INDEXED_QUAD_RENDERING
         if (type == PrimitiveType::QUAD)
         {
             size_t quad_rendering_count = 0;
@@ -49,7 +48,6 @@ namespace chaos
             }
         }
         else
-#endif
         {
             // insert the primitive into the element
             GPUDrawPrimitive primitive;

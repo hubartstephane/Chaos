@@ -15,7 +15,7 @@ namespace chaos
                 size_t allocation_count = result->GetParticleCount();
 
                 // find the corresponding Bitmap
-                ParticleTexcoords texcoords = ParticleTools::GetParticleTexcoords(*bitmap_info);
+                ParticleTexcoords texcoords = bitmap_info->GetTexcoords();
                 // apply the texcoords to all particles
                 ParticleAccessor<ParticleDefault> accessor = result->GetParticleAccessor(allocation_count - count, count); // partial accessor, take the last particles in the array
                 for (ParticleDefault& particle : accessor)

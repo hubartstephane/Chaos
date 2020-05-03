@@ -1,12 +1,14 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
+#include <chaos/GPUClasses.h>
 #include <chaos/ReferencedObject.h>
 #include <chaos/NamedObject.h>
 #include <chaos/FilePath.h>
 #include <chaos/ImageTools.h>
 #include <chaos/ImageAnimationDescription.h>
 #include <chaos/WrapMode.h>
+#include <chaos/ParticleDefault.h>
 
 namespace chaos
 {
@@ -28,6 +30,9 @@ namespace chaos
 
 			/** returns whether the bitmap index is valid */
 			bool IsValid() const { return (bitmap_index >= 0); }
+
+			/** get the texcoordinates for that bitmap */
+			ParticleTexcoords GetTexcoords() const;
 
 		public:
 

@@ -3,10 +3,9 @@
 #include <chaos/StandardHeaders.h>
 
 #include <chaos/GPUClasses.h>
+#include <chaos/GPUBuffer.h>
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUBufferCache.h>
-
-#define CHAOS_INDEXED_QUAD_RENDERING 1
 
 namespace chaos
 {
@@ -59,10 +58,6 @@ namespace chaos
     /** returns the real number of element per primitive (the count in GPU buffer) */
     constexpr size_t GetRealVerticesPerParticle(PrimitiveType primitive_type)
     {
-#if !CHAOS_INDEXED_QUAD_RENDERING
-        if (primitive_type == PrimitiveType::QUAD)
-            return 6;
-#endif
         return GetVerticesPerParticle(primitive_type);
     }
 
@@ -104,22 +99,6 @@ namespace chaos
         {
             assert(in_buffer != nullptr);
             assert(in_vertex_size > 0);
-        }
-        /** destructor */
-        inline ~PrimitiveBase()
-        {
-            // Quad is internally considered as a triangle pair. Duplicate vertices
-#if !CHAOS_INDEXED_QUAD_RENDERING
-            if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
-            {
-                size_t offset2 = vertex_size * 2;
-                size_t offset4 = vertex_size * 4;
-                size_t offset5 = vertex_size * 5;
-
-                std::memcpy(buffer + offset4, buffer, vertex_size);
-                std::memcpy(buffer + offset5, buffer + offset2, vertex_size);
-            }
-#endif
         }
 
         /** cast operator to child vertex type */

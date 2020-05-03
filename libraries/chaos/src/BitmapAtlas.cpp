@@ -14,6 +14,19 @@ namespace chaos
 	{
 
 		// ========================================================================
+		// BitmapLayout functions
+		// ========================================================================
+
+		ParticleTexcoords BitmapLayout::GetTexcoords() const
+		{
+			ParticleTexcoords result;
+			result.bottomleft = bottomleft_texcoord;
+			result.topright = topright_texcoord;
+			result.bitmap_index = bitmap_index;
+			return result;
+		}
+
+		// ========================================================================
 		// BitmapInfo functions
 		// ========================================================================
 

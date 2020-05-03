@@ -222,11 +222,11 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
     {
         chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(particle.current_frame, chaos::WrapMode::wrap);
 
-        texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+        texcoords = layout.GetTexcoords();
     }
 
     // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, texcoords, particle.orientation);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, texcoords, particle.orientation, 0);
 
     glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -366,7 +366,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle,
 void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags, particle.rotation);
+    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.rotation, particle.flags);
 
     // copy the color in all triangles vertex
     glm::vec4 color = particle.color;
@@ -398,7 +398,7 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 
 	chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayout(index, chaos::WrapMode::clamp);
 
-	particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+	particle.texcoords = layout.GetTexcoords();
 
 
 	return false; // never destroy it
@@ -450,7 +450,7 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion&
 
 	// compute texcoords for all particles
 #endif
-	particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmap_layout);
+	particle.texcoords = bitmap_layout.GetTexcoords();
 
 
 

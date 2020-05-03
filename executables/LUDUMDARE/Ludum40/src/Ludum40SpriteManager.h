@@ -65,6 +65,8 @@ namespace chaos
     /** get the program */
     GPUProgram * GetProgram() { return program.get(); }
 
+	ParticleCorners GetParticleCorners(glm::vec2 const& position, glm::vec2 const& size, Hotpoint hotpoint) const;
+
   protected:
 
     /** initialize the manager */

@@ -32,9 +32,6 @@
 // maybe review CheckCompletedLevel/ CanCompleteLevel / CheckGameOverCondition
 // 
 
-//
-// UpdateParticle/DrawParticle : un prends un pointer l autre une ref !
-// 
 
 // Make ParticleTraits inherit one another / Particles inherit
 //
@@ -51,8 +48,6 @@
 //
 // Make a memo how JSON resources are working
 //
-//
-// Refactor AtlasGeneration to make it much faster
 //
 //
 //
@@ -92,14 +87,6 @@ namespace CollisionFlags
 // et si le vertex shader avait access a toutes les informations de la particle + interpolation(X, Y) => x, y e [0..1] ?
 
 
-// garder reference aux sites bien
-
-https://www.piskelapp.com/
-https://ezgif.com/
-https://www.imgonline.com.ua/eng/make-seamless-texture.php
-https://www.naturalreaders.com/online/
-
-
 
 // attention visual studio est capable de passer les images en 4bpp !!! (ou paint ??)
 
@@ -122,8 +109,6 @@ https://www.naturalreaders.com/online/
 
 
 
-
-// the Animation.json file manifest could declare    frame_duration / animation_duration /  default_animation_mode
 //
 // WrapMode: add a flipflip
 

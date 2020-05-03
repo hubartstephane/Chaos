@@ -82,20 +82,13 @@ namespace chaos
             return result;
         }
 
+		//shu46
+		// n est plus utilisé que par LD40
         ParticleCorners GetParticleCorners(glm::vec2 const& position, glm::vec2 const& size, Hotpoint hotpoint)
         {
             ParticleCorners result;
             result.bottomleft = ConvertHotpointToBottomLeft(position, size, hotpoint);
             result.topright = result.bottomleft + size;
-            return result;
-        }
-
-        ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapLayout const& layout)
-        {
-            ParticleTexcoords result;
-            result.bottomleft = layout.bottomleft_texcoord;
-            result.topright = layout.topright_texcoord;
-            result.bitmap_index = layout.bitmap_index;
             return result;
         }
 
@@ -139,22 +132,25 @@ namespace chaos
             return texcoords;
         }
 
-		void GenerateBoxParticleAttributes(glm::vec2* vertex_positions, glm::vec3* vertex_texcoords, ParticleCorners const& corners, ParticleTexcoords const& texcoords, int flags, float rotation) // in order BL, BR, TR, TL
-		{
-			float bitmap_index = (float)texcoords.bitmap_index;
 
+
+
+
+
+
+
+
+
+
+
+
+		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags) // in order BL, BR, TR, TL
+		{
 			// compute the vertices
 			vertex_positions[0] = glm::vec2(corners.bottomleft.x, corners.bottomleft.y);
-			vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, bitmap_index);
-
 			vertex_positions[1] = glm::vec2(corners.topright.x, corners.bottomleft.y);
-			vertex_texcoords[1] = glm::vec3(texcoords.topright.x, texcoords.bottomleft.y, bitmap_index);
-
 			vertex_positions[2] = glm::vec2(corners.topright.x, corners.topright.y);
-			vertex_texcoords[2] = glm::vec3(texcoords.topright.x, texcoords.topright.y, bitmap_index);
-
 			vertex_positions[3] = glm::vec2(corners.bottomleft.x, corners.topright.y);
-			vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, bitmap_index);
 
 			// apply the rotation
 			if (rotation != 0.0f)
@@ -163,9 +159,20 @@ namespace chaos
 
 				float c = std::cos(rotation);
 				float s = std::sin(rotation);
-				for (int i = 0 ; i < 4 ; ++i)
+				for (int i = 0; i < 4; ++i)
 					vertex_positions[i] = GLMTools::Rotate(vertex_positions[i] - center_position, c, s) + center_position;
 			}
+		}
+
+		void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags) // in order BL, BR, TR, TL
+		{
+			float bitmap_index = (float)texcoords.bitmap_index;
+
+			// compute the vertices
+			vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, bitmap_index);
+			vertex_texcoords[1] = glm::vec3(texcoords.topright.x, texcoords.bottomleft.y, bitmap_index);
+			vertex_texcoords[2] = glm::vec3(texcoords.topright.x, texcoords.topright.y, bitmap_index);
+			vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, bitmap_index);
 
 			// apply texture symetries
 			if ((flags & ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
@@ -180,12 +187,24 @@ namespace chaos
 			}
 		}
 
-        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, int flags, float rotation)
+
+
+
+
+
+
+
+
+
+
+        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation, int flags)
         {
 			// in order BL, BR, TR, TL
-			glm::vec2 vertex_positions[4];
+			glm::vec2 vertex_positions[4];			
+			GenerateVertexPositionAttributes(vertex_positions, corners, rotation, flags);
+
 			glm::vec3 vertex_texcoords[4];
-			GenerateBoxParticleAttributes(vertex_positions, vertex_texcoords, corners, texcoords, flags, rotation);
+			GenerateVertexTextureAttributes(vertex_texcoords, texcoords, flags);
 
 			VertexDefault& v0 = primitive[0];
 			VertexDefault& v1 = primitive[1];
@@ -205,22 +224,24 @@ namespace chaos
 			v3.texcoord = vertex_texcoords[3];
         }
 
-        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, int flags, float rotation)
+        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation, int flags)
         {
             std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(box);
 
             ParticleCorners particle_corners;
             particle_corners.bottomleft = corners.first;
             particle_corners.topright = corners.second;
-            GenerateBoxParticle(primitive, particle_corners, texcoords, flags, rotation);
+            GenerateBoxParticle(primitive, particle_corners, texcoords, rotation, flags);
         }
 
-        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, int flags, float rotation)
+        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation, int flags)
         {
 			// in order BL, BR, TR, TL
 			glm::vec2 vertex_positions[4];
+			GenerateVertexPositionAttributes(vertex_positions, corners, rotation, flags);
+
 			glm::vec3 vertex_texcoords[4];
-			GenerateBoxParticleAttributes(vertex_positions, vertex_texcoords, corners, texcoords, flags, rotation);
+			GenerateVertexTextureAttributes(vertex_texcoords, texcoords, flags);
 
             VertexDefault& v0 = primitive[0];
             VertexDefault& v1 = primitive[1];
@@ -248,14 +269,14 @@ namespace chaos
             v5.texcoord = vertex_texcoords[3];
         }
 
-        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, int flags, float rotation)
+        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation, int flags)
         {
             std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(box);
 
             ParticleCorners particle_corners;
             particle_corners.bottomleft = corners.first;
             particle_corners.topright = corners.second;
-            GenerateBoxParticle(primitive, particle_corners, texcoords, flags, rotation);
+            GenerateBoxParticle(primitive, particle_corners, texcoords, rotation, flags);
         }
 
     }; // namespace ParticleTools

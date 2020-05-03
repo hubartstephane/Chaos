@@ -173,7 +173,7 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 		chaos::BitmapAtlas::BitmapLayout layout = particle.bitmap_info->GetAnimationLayoutFromTime(particle.animation_timer);
 		if (!layout.IsValid())
 			return false;
-		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout); // shu46 : should be a member of BitmapLayout itself shouldnt it??!
+		particle.texcoords = layout.GetTexcoords();
 	}
 	return true;
 }
@@ -352,7 +352,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & part
 		if (!layout.IsValid())
 			return true; // destroy the particle
 
-		particle.texcoords = chaos::ParticleTools::GetParticleTexcoords(layout);
+		particle.texcoords = layout.GetTexcoords();
 	}
 	return false;
 }

@@ -79,7 +79,7 @@ protected:
 			p.color.b = color.b;
 			p.color.a = 1.0f;
 
-			p.texcoords = chaos::ParticleTools::GetParticleTexcoords(bitmaps[i]);
+			p.texcoords = bitmaps[i].GetTexcoords();
 		}
   }
 

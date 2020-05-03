@@ -7,20 +7,21 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/ParticleAllocationTrait.h>
 
+
 namespace chaos
 {
-	// XXX : given a rectangle particle and a 4 textures coordinates, there are 8 possibilities to make them match (without twisting the position)
+	// XXX : given a rectangle particle and a 4 textures coordinates, there are 8 possibilities to make them match (without twisting the geometry itself)
 	//
 	//       -4 rotations
 	//       -1 optional symetry
 	//
-	//       these is given with the 3 bitfields (i use the notation int:1  instead of bool because the compiler fails to optimize 1 bool into a single bit
+	//       these is given with the 3 bitfields
 
 	namespace ParticleDefaultFlags
 	{
 		static int const TEXTURE_HORIZONTAL_FLIP = (1 << 1);
 		static int const TEXTURE_VERTICAL_FLIP   = (1 << 2);
-		static int const TEXTURE_DIAGONAL_FLIP   = (1 << 4);
+		static int const TEXTURE_DIAGONAL_FLIP   = (1 << 3);
 	};
 
     /**

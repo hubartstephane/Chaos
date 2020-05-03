@@ -36,8 +36,6 @@ namespace chaos
 		ParticleCorners BoxToParticleCorners(box2 const & box);
 		/** returns the 2 corners of a particle according to a given position, a size and an hotpoint */
 		ParticleCorners GetParticleCorners(glm::vec2 const & position, glm::vec2 const & size, Hotpoint hotpoint);
-		/** returns the texture coordinates of a particle */
-		ParticleTexcoords GetParticleTexcoords(BitmapAtlas::BitmapLayout const & layout);
 
 		/** considere the incoming texcoords represent a grid atlas, returns the sub image corresponding to given image */
 		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, int skip_last, int image_id);
@@ -45,17 +43,19 @@ namespace chaos
 		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, glm::ivec2 const & image_id);
 
         /** fill the vertices array with 4 vertices corresponding to 1 QUAD */
-        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, int flags = 0, float rotation = 0.0f);
+        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation = 0.0f, int flags = 0);
 
-        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, int flags = 0, float rotation = 0.0f);
+        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation = 0.0f, int flags = 0);
 
         /** fill the vertices array with 6 vertices corresponding to 1 TRIANGLE PAIR */
-        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, int flags = 0, float rotation = 0.0f);
+        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation = 0.0f, int flags = 0);
 
-        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, int flags = 0, float rotation = 0.0f);
+        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation = 0.0f, int flags = 0);
 
 		/** an utility method to generate the 4 vertex attributes for a Particle */
-		void GenerateBoxParticleAttributes(glm::vec2* vertex_positions, glm::vec3* vertex_texcoords, ParticleCorners const& corners, ParticleTexcoords const& texcoords, int flags, float rotation);
+		void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags); // in order BL, BR, TR, TL
+		/** an utility method to generate the 4 vertex attributes for a Particle */
+		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags); // in order BL, BR, TR, TL
 
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)

@@ -24,12 +24,5 @@ namespace chaos
 		static bool const dynamic_vertices = DYNAMIC_VERTICES;
 	};
 
-	// ==============================================================
-	// ParticleAllocationTrait
-	// ==============================================================
-
-
-
-
 }; // namespace chaos
 

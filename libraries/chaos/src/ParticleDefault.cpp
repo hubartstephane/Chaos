@@ -4,7 +4,6 @@
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPURenderMaterial.h>
-#include <chaos/GPURenderMaterialLoader.h>
 #include <chaos/ParticleTools.h>
 
 namespace chaos
@@ -22,7 +21,7 @@ namespace chaos
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive)
 	{
 		// generate particle corners and texcoords
-		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags);
+		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, 0.0f, particle.flags);
 		// copy the color in all triangles vertex
 		for (size_t i = 0; i < primitive.count; ++i)
 			primitive[i].color = particle.color;
@@ -31,7 +30,7 @@ namespace chaos
 	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive)
 	{
 		// generate particle corners and texcoords
-		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.flags);
+		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, 0.0f, particle.flags);
 		// copy the color in all triangles vertex
 		for (size_t i = 0; i < primitive.count; ++i)
 			primitive[i].color = particle.color;

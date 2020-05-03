@@ -204,7 +204,7 @@ namespace chaos
 				// compute the particle data
 				token.corners.bottomleft = bottomleft_position; 
 				token.corners.topright   = bottomleft_position + token_size; 
-				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.bitmap_layout);
+				token.texcoords          = token.bitmap_layout->GetTexcoords();
 
 				// next bitmap/character data
 
@@ -249,7 +249,7 @@ namespace chaos
 				// compute the particle data
 				token.corners.bottomleft = bottomleft_position; 
 				token.corners.topright   = bottomleft_position + token_size; 
-				token.texcoords          = ParticleTools::GetParticleTexcoords(*token.character_layout);
+				token.texcoords = token.character_layout->GetTexcoords();
 
 				// XXX : Some fonts are in italic. The 'advance' cause some 'override' in character bounding box.
 				//       That's great for characters that are near one another

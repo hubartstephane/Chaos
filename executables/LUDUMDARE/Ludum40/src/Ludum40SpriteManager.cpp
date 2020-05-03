@@ -106,9 +106,17 @@ namespace chaos
 		return true;
 	}
 
+	ParticleCorners SpriteManager::GetParticleCorners(glm::vec2 const& position, glm::vec2 const& size, Hotpoint hotpoint) const
+	{
+		ParticleCorners result;
+		result.bottomleft = ConvertHotpointToBottomLeft(position, size, hotpoint);
+		result.topright = result.bottomleft + size;
+		return result;
+	}
+
 	void SpriteManager::AddSpriteCharacter(BitmapAtlas::CharacterInfo const * info, glm::vec2 const & position, glm::vec2 const & size, Hotpoint hotpoint, glm::vec3 const & color)
 	{
-		ParticleCorners corners = ParticleTools::GetParticleCorners(position, size, hotpoint);
+		ParticleCorners corners = GetParticleCorners(position, size, hotpoint);
 		AddSpriteImpl(info, corners, color);
 	}
 
@@ -116,7 +124,7 @@ namespace chaos
 	{
 		static glm::vec3 const color(1.0f, 1.0f, 1.0f);
 
-		ParticleCorners corners = ParticleTools::GetParticleCorners(position, size, hotpoint);
+		ParticleCorners corners = GetParticleCorners(position, size, hotpoint);
 		AddSpriteImpl(info, corners, color);
 	}
 

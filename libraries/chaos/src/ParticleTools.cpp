@@ -82,16 +82,6 @@ namespace chaos
             return result;
         }
 
-		//shu46
-		// n est plus utilisé que par LD40
-        ParticleCorners GetParticleCorners(glm::vec2 const& position, glm::vec2 const& size, Hotpoint hotpoint)
-        {
-            ParticleCorners result;
-            result.bottomleft = ConvertHotpointToBottomLeft(position, size, hotpoint);
-            result.topright = result.bottomleft + size;
-            return result;
-        }
-
         ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const& atlas_dimension, int skip_last, int image_id)
         {
             // tweak particle texcoords to have a sub image

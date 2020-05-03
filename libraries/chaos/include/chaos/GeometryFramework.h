@@ -22,6 +22,42 @@ namespace chaos
 		return result;
 	}
 
+	template<typename VECTOR_TYPE>
+	class AutoCastableVector
+	{
+	public:
+
+		/** the constructors */
+		AutoCastableVector() = default;
+		AutoCastableVector(AutoCastableVector const& src) = default;
+		AutoCastableVector(VECTOR_TYPE const & in_src) : src(in_src) {}
+
+		/** 'cast' function */
+		template<typename VECTOR_DST_TYPE>
+		operator VECTOR_DST_TYPE () const
+		{
+			VECTOR_DST_TYPE result(0);
+			size_t count = std::min(result.length(), src.length());
+			for (size_t i = 0; i < count; ++i)
+				result[i] = static_cast<VECTOR_DST_TYPE::value_type>(src[i]);
+			return result;
+		}
+
+	protected:
+
+		/** the src vector that will be 'casted' on demand */
+		VECTOR_TYPE src;
+	};
+
+	/** create a delayed 'cast' */
+	template<typename T>
+	AutoCastableVector<T> auto_cast_vector(AutoCastableVector<T> const& src) { return src; }
+
+	/** create a delayed 'cast' */
+	template<typename T>
+	AutoCastableVector<T> auto_cast_vector(T const& src) { return src; }
+
+
 	// ==============================================================================================
 	// box_base functions
 	// ==============================================================================================

@@ -5,10 +5,10 @@
 
 bool EnemyPattern::Initialize(chaos::TiledMap::PropertyOwner const * def)
 {
-	enemy_count = def->FindPropertyInt("ENEMY_COUNT", 0);
-	particle_initial_range = def->FindPropertyFloat("PARTICLE_INITIAL_RANGE", particle_initial_range);
-	particle_speed = def->FindPropertyFloat("PARTICLE_SPEED", 0);
-	pattern_index =  def->FindPropertyInt("PATTERN_INDEX", pattern_index);
+	enemy_count = def->GetPropertyValueInt("ENEMY_COUNT", 0);
+	particle_initial_range = def->GetPropertyValueFloat("PARTICLE_INITIAL_RANGE", particle_initial_range);
+	particle_speed = def->GetPropertyValueFloat("PARTICLE_SPEED", 0);
+	pattern_index =  def->GetPropertyValueInt("PATTERN_INDEX", pattern_index);
 
 
 	return true;
@@ -98,10 +98,10 @@ bool EnemyPattern::UpdateParticle(float delta_time, ParticleEnemy * particle, ch
 
 bool EnemyType::Initialize(chaos::TiledMap::ObjectTypeDefinition const * def)
 {
-	bitmap_name = def->FindPropertyString("BITMAP_NAME", "");
-    enemy_health = def->FindPropertyFloat("ENEMY_HEALTH", enemy_health);
-	enemy_damage  = def->FindPropertyFloat("ENEMY_DAMAGE", enemy_damage);
-	scale =  def->FindPropertyFloat("SCALE", scale);
+	bitmap_name = def->GetPropertyValueString("BITMAP_NAME", "");
+    enemy_health = def->GetPropertyValueFloat("ENEMY_HEALTH", enemy_health);
+	enemy_damage  = def->GetPropertyValueFloat("ENEMY_DAMAGE", enemy_damage);
+	scale =  def->GetPropertyValueFloat("SCALE", scale);
 
 	return true;
 }

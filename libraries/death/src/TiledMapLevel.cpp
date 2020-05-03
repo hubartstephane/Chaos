@@ -48,7 +48,7 @@ namespace death
 		id = in_geometric_object->GetObjectID();
 		geometric_object = in_geometric_object;
 
-		forced_serialization = in_geometric_object->FindPropertyBool("FORCED_SERIALIZATION", forced_serialization);
+		forced_serialization = in_geometric_object->GetPropertyValueBool("FORCED_SERIALIZATION", forced_serialization);
 
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
@@ -77,10 +77,10 @@ namespace death
 		if (!TiledMapGeometricObject::Initialize(in_geometric_object))
 			return false;
 		// default values are set to the one defined by default in constructor
-		enabled = in_geometric_object->FindPropertyBool("ENABLED", enabled);
-		trigger_once = in_geometric_object->FindPropertyBool("TRIGGER_ONCE", trigger_once);
-		trigger_id = in_geometric_object->FindPropertyInt("TRIGGER_ID", trigger_id);
-		outside_box_factor = in_geometric_object->FindPropertyFloat("OUTSIDE_BOX_FACTOR", outside_box_factor);
+		enabled = in_geometric_object->GetPropertyValueBool("ENABLED", enabled);
+		trigger_once = in_geometric_object->GetPropertyValueBool("TRIGGER_ONCE", trigger_once);
+		trigger_id = in_geometric_object->GetPropertyValueInt("TRIGGER_ID", trigger_id);
+		outside_box_factor = in_geometric_object->GetPropertyValueFloat("OUTSIDE_BOX_FACTOR", outside_box_factor);
 
 		// enable the possibility to trigger once again the object
 		enter_event_triggered = false;
@@ -219,10 +219,10 @@ namespace death
 		if (!TiledMapTriggerObject::Initialize(in_geometric_object))
 			return false;
 
-		notification_string = in_geometric_object->FindPropertyString("NOTIFICATION", "");
-		notification_lifetime = in_geometric_object->FindPropertyFloat("LIFETIME", notification_lifetime);
-		stop_when_collision_over = in_geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
-		player_collision = in_geometric_object->FindPropertyBool("PLAYER_COLLISION", player_collision);
+		notification_string = in_geometric_object->GetPropertyValueString("NOTIFICATION", "");
+		notification_lifetime = in_geometric_object->GetPropertyValueFloat("LIFETIME", notification_lifetime);
+		stop_when_collision_over = in_geometric_object->GetPropertyValueBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		player_collision = in_geometric_object->GetPropertyValueBool("PLAYER_COLLISION", player_collision);
 
 		return true;
 	}
@@ -276,14 +276,14 @@ namespace death
 		if (!TiledMapTriggerObject::Initialize(in_geometric_object))
 			return false;
 
-		sound_name = in_geometric_object->FindPropertyString("SOUND_NAME", "");
-		min_distance_ratio = in_geometric_object->FindPropertyFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
+		sound_name = in_geometric_object->GetPropertyValueString("SOUND_NAME", "");
+		min_distance_ratio = in_geometric_object->GetPropertyValueFloat("MIN_DISTANCE_RATIO", min_distance_ratio);
 		min_distance_ratio = std::clamp(min_distance_ratio, 0.0f, 1.0f);
 
-		pause_timer_when_too_far = in_geometric_object->FindPropertyFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
-		is_3D_sound = in_geometric_object->FindPropertyBool("3D_SOUND", is_3D_sound);
-		looping = in_geometric_object->FindPropertyBool("LOOPING", looping);
-		stop_when_collision_over = in_geometric_object->FindPropertyBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		pause_timer_when_too_far = in_geometric_object->GetPropertyValueFloat("PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
+		is_3D_sound = in_geometric_object->GetPropertyValueBool("3D_SOUND", is_3D_sound);
+		looping = in_geometric_object->GetPropertyValueBool("LOOPING", looping);
+		stop_when_collision_over = in_geometric_object->GetPropertyValueBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 
 		return true;
 	}
@@ -518,7 +518,7 @@ namespace death
 		if (in_level_title != nullptr)
 			level_title = *in_level_title;
 		// get the level time	
-		level_timeout = in_tiled_map->FindPropertyFloat("LEVEL_TIMEOUT", -1);
+		level_timeout = in_tiled_map->GetPropertyValueFloat("LEVEL_TIMEOUT", -1);
 		return true;
 	}
 
@@ -803,21 +803,21 @@ namespace death
 		}
 		else
 		{
-			displacement_ratio.x = layer->FindPropertyFloat("DISPLACEMENT_RATIO_X", 1.0f);
-			displacement_ratio.y = layer->FindPropertyFloat("DISPLACEMENT_RATIO_Y", 1.0f);
+			displacement_ratio.x = layer->GetPropertyValueFloat("DISPLACEMENT_RATIO_X", 1.0f);
+			displacement_ratio.y = layer->GetPropertyValueFloat("DISPLACEMENT_RATIO_Y", 1.0f);
 		}
-		wrap_x = layer->FindPropertyBool("WRAP_X", false);
-		wrap_y = layer->FindPropertyBool("WRAP_Y", false);
-		material_name = layer->FindPropertyString("MATERIAL", "");
+		wrap_x = layer->GetPropertyValueBool("WRAP_X", false);
+		wrap_y = layer->GetPropertyValueBool("WRAP_Y", false);
+		material_name = layer->GetPropertyValueString("MATERIAL", "");
 
-		triggers_enabled = layer->FindPropertyBool("TRIGGERS_ENABLED", false);
-		player_collision_enabled = layer->FindPropertyBool("PLAYER_COLLISIONS_ENABLED", false);
-		camera_collision_enabled = layer->FindPropertyBool("CAMERA_COLLISIONS_ENABLED", false);
-		tile_collisions_enabled = layer->FindPropertyBool("TILE_COLLISIONS_ENABLED", false);
+		triggers_enabled = layer->GetPropertyValueBool("TRIGGERS_ENABLED", false);
+		player_collision_enabled = layer->GetPropertyValueBool("PLAYER_COLLISIONS_ENABLED", false);
+		camera_collision_enabled = layer->GetPropertyValueBool("CAMERA_COLLISIONS_ENABLED", false);
+		tile_collisions_enabled = layer->GetPropertyValueBool("TILE_COLLISIONS_ENABLED", false);
 
-		infinite_bounding_box = layer->FindPropertyBool("INFINITE_BOUNDING_BOX", false);
+		infinite_bounding_box = layer->GetPropertyValueBool("INFINITE_BOUNDING_BOX", false);
 
-		autoclean_particles = layer->FindPropertyBool("AUTOCLEAN_PARTICLES", autoclean_particles);
+		autoclean_particles = layer->GetPropertyValueBool("AUTOCLEAN_PARTICLES", autoclean_particles);
 
 		// copy the offset / name
 		offset = layer->offset;
@@ -916,9 +916,9 @@ namespace death
 				return;
 			// aspect ratio is to be maintained ??
 
-			// before  bool keep_aspect_ratio = tile->FindPropertyBool("KEEP_ASPECT_RATIO", true);
+			// before  bool keep_aspect_ratio = tile->GetPropertyValueBool("KEEP_ASPECT_RATIO", true);
 			
-			bool keep_aspect_ratio = tile->FindPropertyBool("KEEP_ASPECT_RATIO", false); // shu46 i suppose user that create a tile object and stretch it expect to be naturaly fitting the object
+			bool keep_aspect_ratio = tile->GetPropertyValueBool("KEEP_ASPECT_RATIO", false); // shu46 i suppose user that create a tile object and stretch it expect to be naturaly fitting the object
 #if 0
 
 			bool keep_aspect_ratio = true;
@@ -972,7 +972,7 @@ namespace death
 			return true;
 
 #endif			
-		return property_owner->FindPropertyBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
+		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
 	GeometricObjectFactory TiledMapLayerInstance::GetGeometricObjectFactory(chaos::TiledMap::TypedObject * in_typed_object)

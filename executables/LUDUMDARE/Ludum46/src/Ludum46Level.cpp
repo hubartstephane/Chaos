@@ -49,7 +49,7 @@ void SpikeBarObject::OnEffectorChangeState()
 #if 0
 
 
-delay_between_triggers = in_geometric_object->FindPropertyFloat("DELAY_BETWEEN_TRIGGERS", delay_between_triggers);
+delay_between_triggers = in_geometric_object->GetPropertyValueFloat("DELAY_BETWEEN_TRIGGERS", delay_between_triggers);
 
 #endif
 
@@ -63,10 +63,10 @@ bool SoulTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometri
 		return false;
 
 	// number of element that must be triggered
-	trigger_limit = in_geometric_object->FindPropertyInt("TRIGGER_LIMIT", trigger_limit);
+	trigger_limit = in_geometric_object->GetPropertyValueInt("TRIGGER_LIMIT", trigger_limit);
 
 	// read all the effectors
-	std::string effectors = in_geometric_object->FindPropertyString("EFFECTORS", "");
+	std::string effectors = in_geometric_object->GetPropertyValueString("EFFECTORS", "");
 
 	char const separator = ',';
 
@@ -145,14 +145,14 @@ bool SpawnerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_ob
 	if (!death::TiledMapGeometricObject::Initialize(in_geometric_object))
 		return false;
 
-	max_spawned_particles = in_geometric_object->FindPropertyInt("MAX_SPAWNED_PARTICLES", max_spawned_particles);
-	particle_start_velocity.x = in_geometric_object->FindPropertyFloat("PARTICLE_START_VELOCITY_X", particle_start_velocity.x);
-	particle_start_velocity.y = in_geometric_object->FindPropertyFloat("PARTICLE_START_VELOCITY_Y", particle_start_velocity.y);
-	spawn_per_second = in_geometric_object->FindPropertyFloat("SPAWN_PER_SECOND", spawn_per_second);
-	target_layer = in_geometric_object->FindPropertyString("TARGET_LAYER", "");
-	spawned_particle = in_geometric_object->FindPropertyString("SPAWNED_PARTICLE", "");
-	particle_duration = in_geometric_object->FindPropertyFloat("PARTICLE_DURATION", particle_duration);
-	emission_started = in_geometric_object->FindPropertyBool("EMISSION_STARTED", emission_started);
+	max_spawned_particles = in_geometric_object->GetPropertyValueInt("MAX_SPAWNED_PARTICLES", max_spawned_particles);
+	particle_start_velocity.x = in_geometric_object->GetPropertyValueFloat("PARTICLE_START_VELOCITY_X", particle_start_velocity.x);
+	particle_start_velocity.y = in_geometric_object->GetPropertyValueFloat("PARTICLE_START_VELOCITY_Y", particle_start_velocity.y);
+	spawn_per_second = in_geometric_object->GetPropertyValueFloat("SPAWN_PER_SECOND", spawn_per_second);
+	target_layer = in_geometric_object->GetPropertyValueString("TARGET_LAYER", "");
+	spawned_particle = in_geometric_object->GetPropertyValueString("SPAWNED_PARTICLE", "");
+	particle_duration = in_geometric_object->GetPropertyValueFloat("PARTICLE_DURATION", particle_duration);
+	emission_started = in_geometric_object->GetPropertyValueBool("EMISSION_STARTED", emission_started);
 	// update internals (used whenever checkpoint is reloaded)
 	spawned_count = 0;
 	nospawn_time_cumulated = 0.0f; 
@@ -342,15 +342,15 @@ bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 	if (!death::TiledMapLevel::Initialize(in_tiled_map))
 		return false;
 
-	required_souls = in_tiled_map->FindPropertyInt("REQUIRED_SOULS", required_souls);
+	required_souls = in_tiled_map->GetPropertyValueInt("REQUIRED_SOULS", required_souls);
 	if (required_souls <= 0)
 		return false;
 
-	flame_initial_health = in_tiled_map->FindPropertyFloat("FLAME_HEALTH", flame_initial_health);
+	flame_initial_health = in_tiled_map->GetPropertyValueFloat("FLAME_HEALTH", flame_initial_health);
 	if (flame_initial_health <= 0.0f)
 		return false;
 
-	flame_health_lost_per_second = in_tiled_map->FindPropertyFloat("FLAME_HEALTH_LOST_PER_SECOND", flame_health_lost_per_second);
+	flame_health_lost_per_second = in_tiled_map->GetPropertyValueFloat("FLAME_HEALTH_LOST_PER_SECOND", flame_health_lost_per_second);
 	if (flame_health_lost_per_second <= 0.0f)
 		return false;
 

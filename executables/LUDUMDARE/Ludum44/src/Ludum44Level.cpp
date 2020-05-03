@@ -109,7 +109,7 @@ bool PowerUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 {
 	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
 		return false;
-	decrease_power = in_geometric_object->FindPropertyBool("DECREASE_POWER_UP", false);
+	decrease_power = in_geometric_object->GetPropertyValueBool("DECREASE_POWER_UP", false);
 	return true;
 }
 
@@ -142,7 +142,7 @@ bool SpeedUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 {
 	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
 		return false;
-	scroll_speed = in_geometric_object->FindPropertyFloat("SCROLL_SPEED", 1.0f);
+	scroll_speed = in_geometric_object->GetPropertyValueFloat("SCROLL_SPEED", 1.0f);
 	return true;
 }
 
@@ -170,12 +170,12 @@ bool SpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
 		return false;
 	
-	scale_factor = in_geometric_object->FindPropertyFloat("ENEMY_SCALE_FACTOR", 1.0f);
-	life_factor = in_geometric_object->FindPropertyFloat("ENEMY_HEALTH_FACTOR", 1.0f);
-	count = in_geometric_object->FindPropertyInt("ENEMY_COUNT", 10);
-	spawn_curve_type = in_geometric_object->FindPropertyInt("SPAWN_CURVE_TYPE", 0);
-	spawn_enemy_type = in_geometric_object->FindPropertyInt("SPAWN_ENEMY_TYPE", 0);
-	spawn_move_type = in_geometric_object->FindPropertyInt("SPAWN_MOVE_TYPE", 0);
+	scale_factor = in_geometric_object->GetPropertyValueFloat("ENEMY_SCALE_FACTOR", 1.0f);
+	life_factor = in_geometric_object->GetPropertyValueFloat("ENEMY_HEALTH_FACTOR", 1.0f);
+	count = in_geometric_object->GetPropertyValueInt("ENEMY_COUNT", 10);
+	spawn_curve_type = in_geometric_object->GetPropertyValueInt("SPAWN_CURVE_TYPE", 0);
+	spawn_enemy_type = in_geometric_object->GetPropertyValueInt("SPAWN_ENEMY_TYPE", 0);
+	spawn_move_type = in_geometric_object->GetPropertyValueInt("SPAWN_MOVE_TYPE", 0);
 
 	trigger_once = true;
 	return true;

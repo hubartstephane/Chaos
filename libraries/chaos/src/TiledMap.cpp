@@ -204,18 +204,20 @@ namespace chaos
 			return property->GetStringProperty();
 		}
 
-#define CHAOS_FIND_PROPERTY_WITH_DEFAULT(function_name, return_type, arg_type)\
-		return_type PropertyOwner::function_name(char const * name, arg_type default_value) const\
+
+
+#define CHAOS_FIND_PROPERTY_WITH_DEFAULT(suffix, return_type, arg_type)\
+		return_type PropertyOwner::GetPropertyValue##suffix(char const * name, arg_type default_value) const\
 		{\
-			return_type const * result = function_name(name);\
+			return_type const * result = FindProperty##suffix(name);\
 			if (result == nullptr)\
 				return default_value;\
 			return *result;\
 		}
-		CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyInt, int, int)
-			CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyFloat, float, float)
-			CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyBool, bool, bool)
-			CHAOS_FIND_PROPERTY_WITH_DEFAULT(FindPropertyString, std::string, char const *)
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Int, int, int)
+			CHAOS_FIND_PROPERTY_WITH_DEFAULT(Float, float, float)
+			CHAOS_FIND_PROPERTY_WITH_DEFAULT(Bool, bool, bool)
+			CHAOS_FIND_PROPERTY_WITH_DEFAULT(String, std::string, char const *)
 #undef CHAOS_FIND_PROPERTY_WITH_DEFAULT
 
 			bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)

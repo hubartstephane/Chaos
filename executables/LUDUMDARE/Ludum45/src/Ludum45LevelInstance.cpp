@@ -69,7 +69,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	death::TiledMapLevel const * level = GetLevel();
 	if (level != nullptr)
 	{
-		camera_speed = level->GetTiledMap()->FindPropertyFloat("CAMERA_SPEED", camera_speed);
+		camera_speed = level->GetTiledMap()->GetPropertyValueFloat("CAMERA_SPEED", camera_speed);
 	}
 
 	return true;

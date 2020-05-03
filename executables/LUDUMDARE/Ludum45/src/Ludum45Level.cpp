@@ -22,7 +22,7 @@ bool BonusSpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_
 		return false;
 	trigger_once = true;
 
-	bonus_name = in_geometric_object->FindPropertyString("BONUS_TYPE", "");
+	bonus_name = in_geometric_object->GetPropertyValueString("BONUS_TYPE", "");
 	bonus_type = chaos::MakeStaticTagType(bonus_name.c_str());
 
 	return true;
@@ -55,8 +55,8 @@ bool EnemySpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_
 		return false;
 	trigger_once = true;
 
-	enemy_type    = in_geometric_object->FindPropertyString("ENEMY_TYPE", "");
-	enemy_pattern = in_geometric_object->FindPropertyString("ENEMY_PATTERN", "");
+	enemy_type    = in_geometric_object->GetPropertyValueString("ENEMY_TYPE", "");
+	enemy_pattern = in_geometric_object->GetPropertyValueString("ENEMY_PATTERN", "");
 
 
 	// we possess the pattern

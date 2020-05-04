@@ -631,21 +631,19 @@ namespace chaos
 			return false;
 		}
 
-
-		// shu46 : Invert TikeInfo/Super method call
-
-
-
-#if 1 // NEW Shu46
-
-		// XXX : the natural order for calls should be
-		//       - GeometricObjectSurface::FindProperty(...) -----+-------> PropertyOwner::FindProperty(...)
-		//                                                        +-------> Type::FindProperty(...)
-		//       - tiledata->FindProperty(...)
+		// XXX : for a ObjectTile, a property may be localized in 4 places
 		//
-		// This is not what we want. We should try the tile (that has itself a type, propably the same) first
-		// and after for the generic type.
-		// So we unroll the whole inheritance chain like we want
+		//       -the PROPERTY_MAP of the object
+		//       -the TYPE1 of the object
+		//       -the TILE_DATA 
+		//           -PROPERTY_MAP 
+		//           -TYPE2 (that may differ from TYPE1)
+		//
+		//       the PROPERTY_MAP of the object is obviously the very first place where to look at for a property (while it is the finer customization we can do)
+		//
+		//       we can say that TILE_DATA.PROPERTY_MAP is to be searched before TILE_DATA.TYPE2 (obvious)
+		//
+
 		Property* GeometricObjectTile::FindProperty(char const* name, PropertyType type_id)
 		{
 			// 1 - Own properties
@@ -665,12 +663,15 @@ namespace chaos
 			// 3 - See our own type
 			if (!StringTools::IsEmpty(type))
 			{
-				Manager* manager = GetManager();
-				if (manager != nullptr)
+				if (tile_info.tiledata == nullptr || StringTools::Stricmp(type, tile_info.tiledata->type) != 0) // if TYPE1 == TYPE2, do not search twice
 				{
-					result = manager->FindObjectProperty(type.c_str(), name, type_id);
-					if (result != nullptr)
-						return result;
+					Manager* manager = GetManager();
+					if (manager != nullptr)
+					{
+						result = manager->FindObjectProperty(type.c_str(), name, type_id);
+						if (result != nullptr)
+							return result;
+					}
 				}
 			}
 			return result;
@@ -679,7 +680,7 @@ namespace chaos
 		Property const* GeometricObjectTile::FindProperty(char const* name, PropertyType type_id) const
 		{
 			// 1 - Own properties
-			Property const * result = PropertyOwner::FindProperty(name, type_id);
+			Property const* result = PropertyOwner::FindProperty(name, type_id);
 			if (result != nullptr)
 				return result;
 
@@ -695,49 +696,19 @@ namespace chaos
 			// 3 - See our own type
 			if (!StringTools::IsEmpty(type))
 			{
-				Manager const* manager = GetManager();
-				if (manager != nullptr)
+				if (tile_info.tiledata == nullptr || StringTools::Stricmp(type, tile_info.tiledata->type) != 0) // if TYPE1 == TYPE2, do not search twice
 				{
-					result = manager->FindObjectProperty(type.c_str(), name, type_id);
-					if (result != nullptr)
-						return result;
+					Manager const * manager = GetManager();
+					if (manager != nullptr)
+					{
+						result = manager->FindObjectProperty(type.c_str(), name, type_id);
+						if (result != nullptr)
+							return result;
+					}
 				}
 			}
 			return result;
 		}
-
-#else  // BEFORE
-
-
-
-
-		///////
-
-		Property * GeometricObjectTile::FindProperty(char const * name, PropertyType type_id)
-		{
-			Property * result = GeometricObjectSurface::FindProperty(name, type_id);
-			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
-			{
-				TileInfo tile_info = FindTileInfo();
-				if (tile_info.tiledata != nullptr)
-					result = tile_info.tiledata->FindProperty(name, type_id);
-			}
-			return result;
-		}
-
-		Property const * GeometricObjectTile::FindProperty(char const * name, PropertyType type_id) const
-		{
-			Property const * result = GeometricObjectSurface::FindProperty(name, type_id);
-			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
-			{
-				TileInfo tile_info = FindTileInfo();
-				if (tile_info.tiledata != nullptr)
-					result = tile_info.tiledata->FindProperty(name, type_id);
-			}
-			return result;
-		}
-
-#endif
 
 		// ==========================================
 		// GroundData methods

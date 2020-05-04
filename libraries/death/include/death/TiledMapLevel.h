@@ -802,13 +802,13 @@ namespace death
 		chaos::box2 bounding_box;
 
 		/** whether collision with player are to be tested with that layer */
-		bool player_collision_enabled = true;
+		bool player_collision_enabled = false;
 		/** whether collision with camera are to be tested with that layer */
-		bool camera_collision_enabled = true;
+		bool camera_collision_enabled = false;
 		/** whether trigger surfaces are enabled on that layer */
-		bool triggers_enabled = true;
+		bool triggers_enabled = false;
 		/** whether collisions with tiles are enabled on that layer */
-		bool tile_collisions_enabled = true;
+		bool tile_collisions_enabled = false;
 
 		/** the current offset */
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);

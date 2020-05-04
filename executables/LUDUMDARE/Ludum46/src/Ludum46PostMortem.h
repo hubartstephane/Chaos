@@ -2,8 +2,6 @@
 
 // shu46
 //
-// FindPropertyInt(...) mais return a value or a pointer depending on the additionnal DEFAULT parameter : not a good idea
-// 
 // SpawnParticle(...) maybe initialize automatically color to 1.0 (=> else 0 => invisible)
 //
 // chaos::ParticleAccessorBase<ParticleBase> => maybe some upcasting ?

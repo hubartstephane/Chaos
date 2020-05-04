@@ -518,7 +518,7 @@ namespace death
 		if (in_level_title != nullptr)
 			level_title = *in_level_title;
 		// get the level time	
-		level_timeout = in_tiled_map->GetPropertyValueFloat("LEVEL_TIMEOUT", -1);
+		level_timeout = in_tiled_map->GetPropertyValueFloat("LEVEL_TIMEOUT", level_timeout);
 		return true;
 	}
 
@@ -793,9 +793,6 @@ namespace death
 		// get the properties of interrest
 		id = layer->id;
 
-
-		// shu46 : replace avec    XX = FindProperty( .. XX) => eviter initialization differente du constructeur
-
 		float const* ratio = layer->FindPropertyFloat("DISPLACEMENT_RATIO");
 		if (ratio != nullptr)
 		{
@@ -803,19 +800,19 @@ namespace death
 		}
 		else
 		{
-			displacement_ratio.x = layer->GetPropertyValueFloat("DISPLACEMENT_RATIO_X", 1.0f);
-			displacement_ratio.y = layer->GetPropertyValueFloat("DISPLACEMENT_RATIO_Y", 1.0f);
+			displacement_ratio.x = layer->GetPropertyValueFloat("DISPLACEMENT_RATIO_X", displacement_ratio.x);
+			displacement_ratio.y = layer->GetPropertyValueFloat("DISPLACEMENT_RATIO_Y", displacement_ratio.y);
 		}
-		wrap_x = layer->GetPropertyValueBool("WRAP_X", false);
-		wrap_y = layer->GetPropertyValueBool("WRAP_Y", false);
+		wrap_x = layer->GetPropertyValueBool("WRAP_X", wrap_x);
+		wrap_y = layer->GetPropertyValueBool("WRAP_Y", wrap_y);
 		material_name = layer->GetPropertyValueString("MATERIAL", "");
 
-		triggers_enabled = layer->GetPropertyValueBool("TRIGGERS_ENABLED", false);
-		player_collision_enabled = layer->GetPropertyValueBool("PLAYER_COLLISIONS_ENABLED", false);
-		camera_collision_enabled = layer->GetPropertyValueBool("CAMERA_COLLISIONS_ENABLED", false);
-		tile_collisions_enabled = layer->GetPropertyValueBool("TILE_COLLISIONS_ENABLED", false);
+		triggers_enabled = layer->GetPropertyValueBool("TRIGGERS_ENABLED", triggers_enabled);
+		player_collision_enabled = layer->GetPropertyValueBool("PLAYER_COLLISIONS_ENABLED", player_collision_enabled);
+		camera_collision_enabled = layer->GetPropertyValueBool("CAMERA_COLLISIONS_ENABLED", camera_collision_enabled);
+		tile_collisions_enabled = layer->GetPropertyValueBool("TILE_COLLISIONS_ENABLED", tile_collisions_enabled);
 
-		infinite_bounding_box = layer->GetPropertyValueBool("INFINITE_BOUNDING_BOX", false);
+		infinite_bounding_box = layer->GetPropertyValueBool("INFINITE_BOUNDING_BOX", infinite_bounding_box);
 
 		autoclean_particles = layer->GetPropertyValueBool("AUTOCLEAN_PARTICLES", autoclean_particles);
 

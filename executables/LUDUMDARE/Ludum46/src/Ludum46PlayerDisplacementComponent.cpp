@@ -104,11 +104,11 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 		bool is_bridge = false;
 		bool is_ladder = false;
 
-		if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "WALL"))
+		if (collision.tile_info.tiledata->IsObjectOfType("WALL"))
 			is_wall = true;
-		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "BRIDGE"))
+		else if (collision.tile_info.tiledata->IsObjectOfType("BRIDGE"))
 			is_bridge = true;
-		else if (chaos::TiledMapTools::IsObjectOfType(collision.tile_info.tiledata, "LADDER"))
+		else if (collision.tile_info.tiledata->IsObjectOfType("LADDER"))
 			is_ladder = true;
 
 

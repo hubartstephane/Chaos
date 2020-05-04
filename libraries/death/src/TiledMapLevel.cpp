@@ -42,6 +42,15 @@ namespace death
 
 	bool TiledMapGeometricObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
+
+
+
+
+
+
+
+
+
 		assert(in_geometric_object != nullptr);
 		// get some data from the geometric object
 		name = in_geometric_object->name;

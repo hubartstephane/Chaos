@@ -330,9 +330,32 @@ namespace chaos
 			return result;
 		}
 
+		bool PropertyOwner::IsObjectOfType(char const* in_type) const
+		{
+			Property const* property = FindProperty(in_type);
+			if (property != nullptr)
+			{
+				bool const* property_bool = property->GetBoolProperty();
+				if (property_bool != nullptr)
+					return *property_bool;
+
+				int const* property_int = property->GetIntProperty();
+				if (property_int != nullptr)
+					return (*property_int > 0);
+			}
+			return false;
+		}
+
 		// ==========================================
-		// GeometricObject methods
+		// TypedObject methods
 		// ==========================================
+
+		bool TypedObject::IsObjectOfType(char const* in_type) const
+		{
+			if (chaos::StringTools::Stricmp(type, in_type) == 0)
+				return true;
+			return PropertyOwner::IsObjectOfType(in_type);
+		}
 
 		Property * TypedObject::FindProperty(char const * name, PropertyType type_id)
 		{
@@ -588,8 +611,32 @@ namespace chaos
 			return result;
 		}
 
+		TileInfo GeometricObjectTile::FindTileInfo() const
+		{
+			Map const * tiled_map = GetMap();
+			if (tiled_map != nullptr)
+				return tiled_map->FindTileInfo(gid);
+			return TileInfo();
+		}
+
+		bool GeometricObjectTile::IsObjectOfType(char const* in_type) const
+		{
+			if (GeometricObjectSurface::IsObjectOfType(in_type))
+				return true;
+
+			TileInfo tile_info = FindTileInfo();
+			if (tile_info.tiledata != nullptr)
+				if (tile_info.tiledata->IsObjectOfType(in_type))
+					return true;
+			return false;
+		}
+
+
 		// shu46 : Invert TikeInfo/Super method call
 
+
+
+#if 1 // NEW Shu46
 
 		// XXX : the natural order for calls should be
 		//       - GeometricObjectSurface::FindProperty(...) -----+-------> PropertyOwner::FindProperty(...)
@@ -607,16 +654,12 @@ namespace chaos
 				return result;
 
 			// 2 - See Tile properties
-			Map* tiled_map = GetMap();
-			if (tiled_map != nullptr)
+			TileInfo tile_info = FindTileInfo();
+			if (tile_info.tiledata != nullptr)
 			{
-				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
-				if (tile_info.tiledata != nullptr)
-				{
-					result = tile_info.tiledata->FindProperty(name, type_id);
-					if (result != nullptr)
-						return result;
-				}
+				result = tile_info.tiledata->FindProperty(name, type_id);
+				if (result != nullptr)
+					return result;
 			}
 
 			// 3 - See our own type
@@ -641,16 +684,12 @@ namespace chaos
 				return result;
 
 			// 2 - See Tile properties
-			Map const* tiled_map = GetMap();
-			if (tiled_map != nullptr)
+			TileInfo tile_info = FindTileInfo();
+			if (tile_info.tiledata != nullptr)
 			{
-				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
-				if (tile_info.tiledata != nullptr)
-				{
-					result = tile_info.tiledata->FindProperty(name, type_id);
-					if (result != nullptr)
-						return result;
-				}
+				result = tile_info.tiledata->FindProperty(name, type_id);
+				if (result != nullptr)
+					return result;
 			}
 
 			// 3 - See our own type
@@ -667,20 +706,11 @@ namespace chaos
 			return result;
 		}
 
-#if 0 // BEFORE
+#else  // BEFORE
 
-		//////// 
-		Property* TypedObject::FindProperty(char const* name, PropertyType type_id)
-		{
-			Property* result = PropertyOwner::FindProperty(name, type_id);
-			if (result == nullptr && !StringTools::IsEmpty(type))
-			{
-				Manager* manager = GetManager();
-				if (manager != nullptr)
-					result = manager->FindObjectProperty(type.c_str(), name, type_id);
-			}
-			return result;
-		}
+
+
+
 		///////
 
 		Property * GeometricObjectTile::FindProperty(char const * name, PropertyType type_id)
@@ -688,13 +718,9 @@ namespace chaos
 			Property * result = GeometricObjectSurface::FindProperty(name, type_id);
 			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
 			{
-				Map * tiled_map = GetMap();
-				if (tiled_map != nullptr)
-				{
-					chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
-					if (tile_info.tiledata != nullptr)
-						result = tile_info.tiledata->FindProperty(name, type_id);
-				}
+				TileInfo tile_info = FindTileInfo();
+				if (tile_info.tiledata != nullptr)
+					result = tile_info.tiledata->FindProperty(name, type_id);
 			}
 			return result;
 		}
@@ -704,13 +730,9 @@ namespace chaos
 			Property const * result = GeometricObjectSurface::FindProperty(name, type_id);
 			if (result == nullptr) // our type does not interrest us here, this is the tile type whe want
 			{
-				Map const * tiled_map = GetMap();
-				if (tiled_map != nullptr)
-				{
-					chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
-					if (tile_info.tiledata != nullptr)
-						result = tile_info.tiledata->FindProperty(name, type_id);
-				}
+				TileInfo tile_info = FindTileInfo();
+				if (tile_info.tiledata != nullptr)
+					result = tile_info.tiledata->FindProperty(name, type_id);
 			}
 			return result;
 		}

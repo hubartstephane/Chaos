@@ -86,78 +86,44 @@ namespace chaos
 		return true;
 	}
 
-	bool TiledMapTools::IsObjectOfType(TiledMap::PropertyOwner const * property_owner, char const * type)
-	{
-		assert(property_owner != nullptr);
-		// search in properties
-		if (type != nullptr)
-		{
-			TiledMap::Property const * property = property_owner->FindProperty(type);
-			if (property != nullptr)
-			{
-				bool const * property_bool = property->GetBoolProperty();
-				if (property_bool != nullptr)
-					return *property_bool;
-
-				int const * property_int = property->GetIntProperty();
-				if (property_int != nullptr)
-					return (*property_int > 0);
-			}
-		}
-		return false;
-	}
-
-	bool TiledMapTools::IsObjectOfType(TiledMap::TypedObject const * typed_object, char const * type)
-	{
-		assert(typed_object != nullptr);
-		// type is an indicator
-		if (type != nullptr && chaos::StringTools::Stricmp(typed_object->type, type) == 0)
-			return true;
-		// search in properties
-		TiledMap::PropertyOwner const * property_owner = typed_object;
-		if (IsObjectOfType(property_owner, type))
-			return true;
-		return false;
-	}
-
 	bool TiledMapTools::IsWorldBoundingBox(TiledMap::TypedObject const * typed_object)
 	{
-		return IsObjectOfType(typed_object, "WorldBoundingBox");
+		return typed_object->IsObjectOfType("WorldBoundingBox");
 	}
 
 	bool TiledMapTools::IsLayerBoundingBox(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(typed_object, "LayerBoundingBox");
+		return typed_object->IsObjectOfType("LayerBoundingBox");
 	}
 
 	bool TiledMapTools::IsPlayerStartObject(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(typed_object, "PlayerStart");
+		return typed_object->IsObjectOfType("PlayerStart");
 	}
 
 	bool TiledMapTools::IsCameraObject(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(typed_object, "Camera");
+		return typed_object->IsObjectOfType("Camera");
 	}
 
 	bool TiledMapTools::IsFinishTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(typed_object, "Finish");
+		return typed_object->IsObjectOfType("Finish");
 	}
 
 	bool TiledMapTools::IsCheckpointTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(typed_object, "Checkpoint");
+		return typed_object->IsObjectOfType("Checkpoint");
 	}
 
 	bool TiledMapTools::IsNotificationTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(typed_object, "Notification");
+		return typed_object->IsObjectOfType("Notification");
 	}
 
 	bool TiledMapTools::IsSoundTrigger(TiledMap::TypedObject const* typed_object)
 	{
-		return IsObjectOfType(typed_object, "Sound");
+		return typed_object->IsObjectOfType("Sound");
 	}
 
 	int TiledMapTools::GetTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip, bool * diagonal_flip)

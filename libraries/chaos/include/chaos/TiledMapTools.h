@@ -25,11 +25,6 @@ namespace chaos
 		/** fill BitmapAtlasInput from a Map */
 		static bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
 
-		/** search whether the object has a boolean/integer property set to true */
-		static bool IsObjectOfType(TiledMap::PropertyOwner const * property_owner, char const * type);
-		/** search whether the object has a given type or a boolean/integer property set to true */
-		static bool IsObjectOfType(TiledMap::TypedObject const * typed_object, char const * type);
-
 		/** returns true whether the object defines an explicit world bounding */
 		static bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object defines an explicit layer bounding */

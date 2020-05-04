@@ -31,6 +31,7 @@ namespace chaos
 (GeometricObjectText) \
 (GeometricObjectTile) \
 (GroundData) \
+(TileInfo) \
 (TileData) \
 (LayerBase) \
 (ImageLayer) \
@@ -345,6 +346,9 @@ namespace chaos
 			/** create property */
 			PropertyString* InsertProperty(char const* name, char const* value);
 
+			/** check whether an object is of given type */
+			virtual bool IsObjectOfType(char const* in_type) const;
+
 		protected:
 
 			/** the method to override */
@@ -416,6 +420,8 @@ namespace chaos
 			virtual Property* FindProperty(char const* name, PropertyType type_id) override;
 			/** override */
 			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override;
+			/** override */
+			virtual bool IsObjectOfType(char const* in_type) const override;
 
 		protected:
 
@@ -687,7 +693,12 @@ namespace chaos
 			/** override */
 			virtual Property * FindProperty(char const * name, PropertyType type_id) override;
 			/** override */
-			virtual Property const * FindProperty(char const * name, PropertyType type_id) const override;
+			virtual Property const * FindProperty(char const * name, PropertyType type_id) const override;			
+			/** override */
+			virtual bool IsObjectOfType(char const* in_type) const override;
+
+			/** get the tile info for this object */
+			TileInfo FindTileInfo() const;
 
 		protected:
 

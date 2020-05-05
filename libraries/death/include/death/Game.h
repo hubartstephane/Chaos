@@ -290,13 +290,13 @@ namespace death
 		/** generate the atlas for the whole game */
 		virtual bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** fill atlas generation input */
-		virtual bool FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool FillAtlasGeneratorInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** fill atlas generation input (sprite directory) */
-		virtual bool FillAtlasGenerationInputSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool FillAtlasGeneratorInputSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** fill atlas generation input (fonts) */
-		virtual bool FillAtlasGenerationInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool FillAtlasGeneratorInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** fill atlas generation input from the tiled map manager */
-		virtual bool FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool FillAtlasGeneratorInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 
 		/** load object type sets concerned by the game (if required) */
 		virtual bool GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path);

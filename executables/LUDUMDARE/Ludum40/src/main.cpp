@@ -34,7 +34,7 @@
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
-	static float const VIEWPORT_WANTED_ASPECT;
+	static constexpr float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 protected:
 
@@ -120,8 +120,6 @@ protected:
 
 	chaos::shared_ptr<Game> game;
 };
-
-float const MyGLFWWindowOpenGLTest1::VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {

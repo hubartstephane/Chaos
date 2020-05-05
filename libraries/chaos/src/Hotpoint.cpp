@@ -24,7 +24,7 @@ namespace chaos
 		if (initial_hotpoint == final_hotpoint)
 			return pt;
 
-		static float const offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
+		static constexpr float offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
 
 		int initial_h_part = ((int)initial_hotpoint >> 0) & 3;
 		int initial_v_part = ((int)initial_hotpoint >> 2) & 3;
@@ -46,7 +46,7 @@ namespace chaos
 
 	glm::vec2 ConvertHotpointToBottomLeft(glm::vec2 const & pt, glm::vec2 const & size, Hotpoint hotpoint)
 	{
-		static float const offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
+		static constexpr float offset_factor[] = { -0.5f, 0.0f, -1.0f, 0.0f };
 
 		int h_part = ((int)hotpoint >> 0) & 3;
 		int v_part = ((int)hotpoint >> 2) & 3;

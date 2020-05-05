@@ -70,8 +70,8 @@
 
 namespace CollisionFlags
 {
-	static int const Player = (1 << 0);
-	static int const Camera = (1 << 1);
+	static constexpr int Player = (1 << 0);
+	static constexpr int Camera = (1 << 1);
 	...
 
 };

@@ -6,10 +6,6 @@
 
 #include <death/SoundContext.h>
 
-float const LudumPlayer::PLAYER_Y = 100.0f;
-
-float const LudumPlayer::PLAYER_HEIGHT = 35.0f;
-
 LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
 	death::Player(in_game_instance)
 {

@@ -10,8 +10,8 @@
 #include <death/TiledMapParticle.h> 
 
 
-static float const DANGER_RADIUS_RATIO = 0.3f;
-static float const WAKEN_RADIUS_RATIO  = 1.0f;
+static constexpr float DANGER_RADIUS_RATIO = 0.3f;
+static constexpr float WAKEN_RADIUS_RATIO  = 1.0f;
 
 // ===========================================================================
 // VertexBase and ParticleBase

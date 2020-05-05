@@ -50,9 +50,9 @@ class ObjectDefinition
 
 public:
 
-	static int const SPAWN_TYPE_CENTER = 0;
-	static int const SPAWN_TYPE_OUTASCREEN = 1;
-	static int const SPAWN_TYPE_OUTASCREEN_TESTCOLLISION = 2;
+	static constexpr int SPAWN_TYPE_CENTER = 0;
+	static constexpr int SPAWN_TYPE_OUTASCREEN = 1;
+	static constexpr int SPAWN_TYPE_OUTASCREEN_TESTCOLLISION = 2;
 
 	bool LoadFromJSON(nlohmann::json const & json_entry);
 
@@ -90,10 +90,10 @@ class SpriteLayer
 {
 public:
 
-	static int const NO_COLLISION = 0;
-	static int const COLLISION_DEATH = 1;
-	static int const COLLISION_LEVELUP = 2;
-	static int const COLLISION_SPEEDUP = 3;
+	static constexpr int NO_COLLISION = 0;
+	static constexpr int COLLISION_DEATH = 1;
+	static constexpr int COLLISION_LEVELUP = 2;
+	static constexpr int COLLISION_SPEEDUP = 3;
 
 	void Draw(chaos::GPUProgramProviderBase * uniform_provider);
 

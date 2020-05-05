@@ -230,24 +230,24 @@ bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 
 	
 	chaos::box2 surface_box = GetBoundingBox(true);
 
-	static int const SPAWN_ENEMY_METEORS          = 0;
-	static int const SPAWN_ENEMY_ALIEN            = 1;
-	static int const SPAWN_ENEMY_FOUR_TURRETS     = 2;
-	static int const SPAWN_ENEMY_FOLLOWING_TURRET = 3;
-	static int const SPAWN_ENEMY_LAST = 4;
+	static constexpr int SPAWN_ENEMY_METEORS          = 0;
+	static constexpr int SPAWN_ENEMY_ALIEN            = 1;
+	static constexpr int SPAWN_ENEMY_FOUR_TURRETS     = 2;
+	static constexpr int SPAWN_ENEMY_FOLLOWING_TURRET = 3;
+	static constexpr int SPAWN_ENEMY_LAST = 4;
 	spawn_enemy_type = (spawn_enemy_type % SPAWN_ENEMY_LAST);
 
-	static int const SPAWN_MOVE_STATIC  = 0;
-	static int const SPAWN_MOVE_FORWARD = 1;
-	static int const SPAWN_MOVE_RANDOM  = 2;	
-	static int const SPAWN_MOVE_LAST    = 3;
+	static constexpr int SPAWN_MOVE_STATIC  = 0;
+	static constexpr int SPAWN_MOVE_FORWARD = 1;
+	static constexpr int SPAWN_MOVE_RANDOM  = 2;	
+	static constexpr int SPAWN_MOVE_LAST    = 3;
 	spawn_move_type = (spawn_move_type % SPAWN_MOVE_LAST);
 
-	static int const SPAWN_CURVE_RANDOM        = 0;
-	static int const SPAWN_CURVE_V             = 1;
-	static int const SPAWN_CURVE_INVERTED_V    = 2;
-	static int const SPAWN_CURVE_ALIGNED       = 3;
-	static int const SPAWN_CURVE_LAST          = 4;
+	static constexpr int SPAWN_CURVE_RANDOM        = 0;
+	static constexpr int SPAWN_CURVE_V             = 1;
+	static constexpr int SPAWN_CURVE_INVERTED_V    = 2;
+	static constexpr int SPAWN_CURVE_ALIGNED       = 3;
+	static constexpr int SPAWN_CURVE_LAST          = 4;
 	spawn_curve_type = (spawn_curve_type % SPAWN_CURVE_LAST);
 
 	chaos::BitmapAtlas::BitmapInfo const * enemy_info = nullptr; // so we can reuse among the loop existing random choice

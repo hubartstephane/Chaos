@@ -90,15 +90,15 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUTexture> GenerateTexture(int index)
 	{
-		static int const GENERATE_GRAY = 0;
-		static int const GENERATE_RGB  = 1;
-		static int const GENERATE_RGBA = 2;
-		static int const GENERATE_GRAY_FLOAT = 3;
-		static int const GENERATE_RGB_FLOAT = 4;
-		static int const GENERATE_RGBA_FLOAT = 5;
-		static int const GENERATE_BACKGROUND = 6;
-		static int const GENERATE_BACKGROUND_GRAY = 7;
-		static int const GENERATE_FLOAT_BACKGROUND = 8;
+		static constexpr int GENERATE_GRAY = 0;
+		static constexpr int GENERATE_RGB  = 1;
+		static constexpr int GENERATE_RGBA = 2;
+		static constexpr int GENERATE_GRAY_FLOAT = 3;
+		static constexpr int GENERATE_RGB_FLOAT = 4;
+		static constexpr int GENERATE_RGBA_FLOAT = 5;
+		static constexpr int GENERATE_BACKGROUND = 6;
+		static constexpr int GENERATE_BACKGROUND_GRAY = 7;
+		static constexpr int GENERATE_FLOAT_BACKGROUND = 8;
 
 		chaos::shared_ptr<chaos::GPUTexture> result;
 

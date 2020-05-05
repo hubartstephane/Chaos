@@ -134,7 +134,7 @@ namespace chaos
 	public:
 
 		/** the dimension of the space */
-		static int const dimension = 2;
+		static constexpr int dimension = 2;
 
 		/** the type of vector */
 		using vec_type = vec2_type;
@@ -161,7 +161,7 @@ namespace chaos
 	public:
 
 		/** the dimension of the space */
-		static int const dimension = 3;
+		static constexpr int dimension = 3;
 
 		/** the type of vector */
 		using vec_type = vec3_type;

@@ -6,8 +6,8 @@ namespace death
 {
 	namespace CollisionMask
 	{
-		static int const PLAYER = (1 << 0);
-		static int const CAMERA = (1 << 1);
+		static constexpr int PLAYER = (1 << 0);
+		static constexpr int CAMERA = (1 << 1);
 	};
 	
 }; // namespace death

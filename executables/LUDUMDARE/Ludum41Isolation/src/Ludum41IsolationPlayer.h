@@ -14,9 +14,9 @@ class LudumPlayer : public death::Player
 {
 
 	/** the Y coordinate of the player on screen */
-	static float const PLAYER_Y;
+	static constexpr float PLAYER_Y = 100.0f;
 	/** the height of the player on screen */
-	static float const PLAYER_HEIGHT;
+	static constexpr float PLAYER_HEIGHT = 35.0f;
 
 public:
 

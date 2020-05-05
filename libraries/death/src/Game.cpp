@@ -286,18 +286,18 @@ namespace death
 			hud->Display(renderer, uniform_provider, render_params);
 	}
 
-	bool Game::FillAtlasGenerationInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
-		if (!FillAtlasGenerationInputSprites(input, config, config_path))
+		if (!FillAtlasGeneratorInputSprites(input, config, config_path))
 			return false;
-		if (!FillAtlasGenerationInputFonts(input, config, config_path))
+		if (!FillAtlasGeneratorInputFonts(input, config, config_path))
 			return false;
-		if (!FillAtlasGenerationInputTiledMapManager(input, config, config_path))
+		if (!FillAtlasGeneratorInputTiledMapManager(input, config, config_path))
 			return false;
 		return true;
 	}
 
-	bool Game::FillAtlasGenerationInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		if (tiled_map_manager != nullptr)
 		{
@@ -312,7 +312,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::FillAtlasGenerationInputSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInputSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		// get the directory where the sprites are
 		std::string sprite_directory;
@@ -328,7 +328,7 @@ namespace death
 		return true;
 	}
 
-	bool Game::FillAtlasGenerationInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		nlohmann::json const * fonts_config = chaos::JSONTools::GetStructure(config, "fonts");
 		if (fonts_config != nullptr)
@@ -382,7 +382,7 @@ namespace death
 
 		// fill sub images for atlas generation
 		chaos::BitmapAtlas::AtlasInput input;
-		if (!FillAtlasGenerationInput(input, config, config_path))
+		if (!FillAtlasGeneratorInput(input, config, config_path))
 			return false;
 
 		// generate the atlas + maybe a dump

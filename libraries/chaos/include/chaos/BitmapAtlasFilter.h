@@ -17,7 +17,7 @@ namespace chaos
 		public:
 
 			/** the image processing method to override */
-			virtual FIBITMAP* ProcessImage(ImageDescription const& desc);
+			virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc);
 
 		};
 

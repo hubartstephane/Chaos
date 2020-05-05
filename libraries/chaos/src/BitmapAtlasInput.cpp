@@ -644,6 +644,48 @@ namespace chaos
 			return root_folder.AddFont(face, release_face, name, tag, params);
 		}
 
+		void AtlasInput::ApplyFilter(BitmapAtlasFilter * filter)
+		{
+			if (filter != nullptr)
+				ApplyFilter(filter, &root_folder);
+		}
+
+		void AtlasInput::ApplyFilter(BitmapAtlasFilter* filter, FolderInfoInput * folder)
+		{
+			assert(filter != nullptr);
+
+			// the bitmaps
+			for (std::unique_ptr<BitmapInfoInput> & bitmap_input : folder->bitmaps)
+				ApplyFilter(filter, bitmap_input.get());
+
+			// the animations
+			for (std::unique_ptr<FontInfoInput>& font_input : folder->fonts)
+				ApplyFilter(filter, font_input.get());
+
+			// recursive through the hierarchy
+			for (std::unique_ptr<FolderInfoInput>& child_folder : folder->folders)
+				ApplyFilter(filter, child_folder.get());			
+		}
+
+		void AtlasInput::ApplyFilter(BitmapAtlasFilter* filter, BitmapInfoInput* input)
+		{
+			assert(filter != nullptr);
+
+			FIBITMAP* new_bitmap = filter->ProcessImage(input->description);
+			if (new_bitmap != nullptr)
+			{
+				input->description = chaos::ImageTools::GetImageDescription(new_bitmap);
+				RegisterResource(new_bitmap, true);
+			}
+		}
+
+		void AtlasInput::ApplyFilter(BitmapAtlasFilter* filter, FontInfoInput* input)
+		{
+			assert(filter != nullptr);
+
+
+		}
+
 	}; // namespace BitmapAtlas
 
 }; // namespace chaos

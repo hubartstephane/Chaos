@@ -740,6 +740,10 @@ namespace chaos
 		GetBitmapDimensionEx(hBitmap, &size);
 
 
+		// shu46 to finish
+
+
+
 		return nullptr;
 	}
 

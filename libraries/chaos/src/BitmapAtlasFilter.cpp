@@ -11,27 +11,26 @@ namespace chaos
 
 	namespace BitmapAtlas
 	{
-		FIBITMAP* BitmapAtlasFilter::ProcessImage(ImageDescription const& desc)
+		FIBITMAP* BitmapAtlasFilter::ProcessImage(ImageDescription const& src_desc)
 		{
-			return ImageTools::GenFreeImage<chaos::PixelBGRA>(10 + desc.width, 10 + desc.height, [desc](ImageDescription const & new_desc) 
+			return ImageTools::GenFreeImage<chaos::PixelBGRA>(src_desc.width, src_desc.height, [src_desc](ImageDescription const & dst_desc)
 			{
-				ImagePixelAccessor<chaos::PixelBGRA> accessor1(new_desc);
-				ImagePixelAccessor<chaos::PixelBGR> accessor2(new_desc);
+				ImagePixelAccessor<chaos::PixelBGRA> src_acc(src_desc);
+				ImagePixelAccessor<chaos::PixelBGRA> dst_acc(dst_desc);
 
-				bool b1 = accessor1.IsValid();
-				bool b2 = accessor2.IsValid();
-
-				for (int j = 0; j < new_desc.height; ++j)
+				if (src_acc.IsValid() && dst_acc.IsValid())
 				{
-					for (int i = 0; i < new_desc.width; ++i)
+					for (int j = 0; j < dst_desc.height; ++j)
 					{
-						accessor1(i, j).R = (unsigned char)i;
-						accessor1(i, j).A = 255;
-
-
+						for (int i = 0; i < dst_desc.width; ++i)
+						{
+							dst_acc(i, j).R = src_acc(i, j).B;
+							dst_acc(i, j).B = src_acc(i, j).R;
+							dst_acc(i, j).G = src_acc(i, j).G;
+							dst_acc(i, j).A = src_acc(i, j).A;
+						}
 					}
 				}
-			
 			});
 			return nullptr;
 		}

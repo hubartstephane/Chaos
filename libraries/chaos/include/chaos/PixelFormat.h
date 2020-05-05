@@ -5,7 +5,10 @@
 
 namespace chaos
 {
-	/** the type of each component of each pixels */
+	/** 
+	 * the type of each component of each pixels 
+	 */
+	 
 	enum class PixelComponentType : int
 	{
 		UNKNOWN = 0,
@@ -14,7 +17,16 @@ namespace chaos
 		DEPTH_STENCIL = 3
 	};
 
-	/** the well known formats */
+
+	/** JSON loading method */
+	bool LoadFromJSON(nlohmann::json const& json_entry, PixelComponentType& dst);
+	/** JSON saving method */
+	bool SaveIntoJSON(nlohmann::json& json_entry, PixelComponentType const& src);
+
+
+	/** 
+	 * the well known formats 
+	 */
 	enum class PixelFormatType : int
 	{
 		UNKNOWN = 0,
@@ -90,6 +102,10 @@ namespace chaos
 		int component_count = 0;		
 	};
 
+	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormat& dst);
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, PixelFormat const& src);
+
 	/**
 	* PixelFormatMergeParams
 	*/
@@ -108,6 +124,10 @@ namespace chaos
 		/** if set to false, all float formats will become unsigned char */
 		bool accept_float = true;	
 	};
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormatMergeParams& dst);
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, PixelFormatMergeParams const& src);
 
 	/**
 	* PixelFormatMerger : utility function to find a common PixelFormat for multiple images

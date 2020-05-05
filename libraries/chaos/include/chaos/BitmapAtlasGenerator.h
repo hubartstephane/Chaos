@@ -24,7 +24,11 @@ namespace chaos
 		public:
 
 			/** contructor */
-			AtlasGeneratorParams(int in_width = 0, int in_height = 0, int in_padding = 0, PixelFormatMergeParams const & in_merge_params = PixelFormatMergeParams()) :
+			AtlasGeneratorParams() = default;
+			/** copy contructor */
+			AtlasGeneratorParams(AtlasGeneratorParams const& src) = default;
+			/** contructor with initialization */
+			AtlasGeneratorParams(int in_width, int in_height, int in_padding, PixelFormatMergeParams const & in_merge_params) :
 				atlas_width(in_width),
 				atlas_height(in_height),
 				atlas_padding(in_padding),
@@ -51,6 +55,11 @@ namespace chaos
 			/** parameters for merging different pixel format */
 			PixelFormatMergeParams merge_params;
 		};
+
+		/** load from JSON */
+		bool LoadFromJSON(nlohmann::json const& json_entry, AtlasGeneratorParams& dst);
+		/** save into JSON */
+		bool SaveIntoJSON(nlohmann::json& json_entry, AtlasGeneratorParams const& src);
 
 		/**
 		* Rectangle : a class to represents rectangles

@@ -385,6 +385,11 @@ namespace death
 		if (!FillAtlasGeneratorInput(input, config, config_path))
 			return false;
 
+		chaos::BitmapAtlas::BitmapAtlasFilter filter;
+
+		input.ApplyFilter(&filter);
+
+
 		// generate the atlas + maybe a dump
 		int ATLAS_SIZE    = 1024;
 		int ATLAS_PADDING = 10;
@@ -392,8 +397,12 @@ namespace death
 		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
 
 		char const * dump_atlas_dirname = nullptr;
+#if _DEBUG
+		dump_atlas_dirname = CachedAtlasFilename;
+#else
 		if (chaos::Application::HasApplicationCommandLineFlag("-DumpCachedAtlas")) // CMDLINE
 			dump_atlas_dirname = CachedAtlasFilename;
+#endif
 
 		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
 		texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);

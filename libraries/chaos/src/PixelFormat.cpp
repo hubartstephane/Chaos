@@ -1,7 +1,25 @@
 #include <chaos/PixelFormat.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
+
+
+
+	// ==============================================================================================
+	// PixelFormat methods
+	// ==============================================================================================
+
+	static std::vector<std::pair<PixelComponentType, char const*>> const pixel_component_type_encoding =
+	{
+		{ PixelComponentType::UNKNOWN, "UNKNOWN" },
+		{ PixelComponentType::UNSIGNED_CHAR, "UNSIGNED_CHAR" },
+		{ PixelComponentType::FLOAT, "FLOAT" },
+		{ PixelComponentType::DEPTH_STENCIL, "DEPTH_STENCIL" }
+	};
+
+	CHAOS_IMPLEMENT_ENUMJSON_METHOD(PixelComponentType, pixel_component_type_encoding);
+
 	// ==============================================================================================
 	// PixelFormat methods
 	// ==============================================================================================
@@ -115,6 +133,51 @@ namespace chaos
 	bool PixelFormat::operator != (PixelFormat const & other) const
 	{
 		return !operator == (other);
+	}
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormat& dst)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "component_type", dst.component_type);
+		JSONTools::GetAttribute(json_entry, "component_count", dst.component_count);
+		return true;
+	}
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, PixelFormat const& src)
+	{
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "component_type", src.component_type);
+		JSONTools::SetAttribute(json_entry, "component_count", src.component_count);
+		return true;
+	}
+
+	// ==============================================================================================
+	// PixelFormatMergeParams methods
+	// ==============================================================================================
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, PixelFormatMergeParams& dst)
+	{
+		if (!json_entry.is_object())
+			return false;
+
+		JSONTools::GetAttribute(json_entry, "pixel_format", dst.pixel_format);
+		JSONTools::GetAttribute(json_entry, "upgrade_pixel_format", dst.upgrade_pixel_format);
+		JSONTools::GetAttribute(json_entry, "accept_luminance", dst.accept_luminance);
+		JSONTools::GetAttribute(json_entry, "accept_float", dst.accept_float);
+		return true;
+	}
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, PixelFormatMergeParams const& src)
+	{
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "pixel_format", src.pixel_format);
+		JSONTools::SetAttribute(json_entry, "upgrade_pixel_format", src.upgrade_pixel_format);
+		JSONTools::SetAttribute(json_entry, "accept_luminance", src.accept_luminance);
+		JSONTools::SetAttribute(json_entry, "accept_float", src.accept_float);
+		return true;
 	}
 
 	// ==============================================================================================

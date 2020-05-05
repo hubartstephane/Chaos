@@ -99,7 +99,7 @@ namespace chaos
 		//
 		//   the minimum suffis size for an animated image is 4 characters (_1x4)
 
-		static int const MIN_PREFIX_SIZE = 4;
+		static constexpr int MIN_PREFIX_SIZE = 4;
 
 		// get the length
 		int len = (int)strlen(name);

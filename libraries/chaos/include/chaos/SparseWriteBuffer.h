@@ -26,10 +26,10 @@ namespace chaos
 		using alloc_type = uintptr_t;
 		using allocator_type = ALLOCATOR;
 
-		static int const BLOCK_SIZE = 0;
-		static int const USED_SIZE  = 1;
-		static int const NEXT_CHUNK = 2;
-		static int const PREV_CHUNK = 3;
+		static constexpr int BLOCK_SIZE = 0;
+		static constexpr int USED_SIZE  = 1;
+		static constexpr int NEXT_CHUNK = 2;
+		static constexpr int PREV_CHUNK = 3;
 
 	public:
 

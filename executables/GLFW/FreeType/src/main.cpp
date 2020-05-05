@@ -20,7 +20,7 @@
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPURenderParams.h>
 
-static int const TESTS_PER_FONT = 4;
+static constexpr int TESTS_PER_FONT = 4;
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {

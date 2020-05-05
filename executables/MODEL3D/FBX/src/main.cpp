@@ -13,8 +13,8 @@
 #include <chaos/GPUSimpleMesh.h>
 
 
-static int const MAX_BONE_COUNT = 10;
-static int const SKELETAL_BONE_COUNT = 250;
+static constexpr int MAX_BONE_COUNT = 10;
+static constexpr int SKELETAL_BONE_COUNT = 250;
 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window

@@ -17,10 +17,10 @@ class LudumLevel : public death::Level
 public:
 
 	
-	static int const INDESTRUCTIBLE = -4;
-	static int const FOUR_LIFE = -3;
-	static int const TWO_LIFE = -2;
-	static int const NONE = -1;
+	static constexpr int INDESTRUCTIBLE = -4;
+	static constexpr int FOUR_LIFE = -3;
+	static constexpr int TWO_LIFE = -2;
+	static constexpr int NONE = -1;
 	
 	/** get the number of brick in the level */
 	size_t GetBrickCount() const;

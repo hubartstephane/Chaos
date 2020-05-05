@@ -19,9 +19,9 @@ namespace chaos
 
 	namespace ParticleDefaultFlags
 	{
-		static int const TEXTURE_HORIZONTAL_FLIP = (1 << 1);
-		static int const TEXTURE_VERTICAL_FLIP   = (1 << 2);
-		static int const TEXTURE_DIAGONAL_FLIP   = (1 << 3);
+		static constexpr int TEXTURE_HORIZONTAL_FLIP = (1 << 1);
+		static constexpr int TEXTURE_VERTICAL_FLIP   = (1 << 2);
+		static constexpr int TEXTURE_DIAGONAL_FLIP   = (1 << 3);
 	};
 
     /**

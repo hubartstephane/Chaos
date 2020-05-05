@@ -26,9 +26,9 @@ class MyGLFWWindowOpenGLTest1;
 
 // ====================================================================
 
-static int const EVENT_SINGLE_TEST  = 0;
-static int const EVENT_RANGE_TEST   = 1;
-static int const EVENT_FOREVER_TEST = 2;
+static constexpr int EVENT_SINGLE_TEST  = 0;
+static constexpr int EVENT_RANGE_TEST   = 1;
+static constexpr int EVENT_FOREVER_TEST = 2;
 
 class MyEvent : public chaos::ClockEvent
 {

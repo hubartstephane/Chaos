@@ -124,7 +124,7 @@ namespace chaos
 		*/
 
 		/** maximum number of supported physical gamepads */
-		static int const MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
+		static constexpr int MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
 
 		/**
 		* GamepadCallbacks : some callbacks that may be plugged into a gamepad

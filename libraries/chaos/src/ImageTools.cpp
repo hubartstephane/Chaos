@@ -2,6 +2,7 @@
 #include <chaos/Buffer.h>
 #include <chaos/FileTools.h>
 #include <chaos/GLTextureTools.h>
+#include <chaos/ImagePixelAccessor.h>
 
 namespace chaos
 {
@@ -49,15 +50,17 @@ namespace chaos
 				PixelConverter::Convert(dst_color, rgba_color); // ... convert it into the wanted PixelType
 
 				// step 1 : fill line 1 (with standard assignement)
-				DST_TYPE * d1 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, 0);
+				ImagePixelAccessor<DST_TYPE> dst_acc(dst_desc);
+
+				DST_TYPE * line1 = &dst_acc(0, 0);
 				for (int c = 0; c < dst_desc.width; ++c)
-					d1[c] = dst_color;
+					line1[c] = dst_color;
 
 				// step2 : fill other lines with memcpy(...) : should be faster
 				for (int l = 1; l < dst_desc.height; ++l)
 				{
-					DST_TYPE * d2 = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, l);
-					memcpy(d2, d1, dst_desc.line_size);
+					DST_TYPE* line2 = &dst_acc(0, l);
+					memcpy(line2, line1, dst_desc.line_size);
 				}
 			}
 		}
@@ -351,6 +354,9 @@ namespace chaos
 		template<typename DST_TYPE, typename SRC_TYPE>
 		void CopyPixels(ImageTransform image_transform)
 		{
+			ImagePixelAccessor<SRC_TYPE> src_acc(src_desc);
+			ImagePixelAccessor<DST_TYPE> dst_acc(dst_desc);
+
 			// normal copy
 			if (image_transform == ImageTransform::NO_TRANSFORM)
 			{
@@ -358,21 +364,19 @@ namespace chaos
 				{
 					for (int l = 0; l < height; ++l) // optimized version using memcopy, if there is no conversion to do
 					{
-						using TYPE = DST_TYPE; // same types fro both src and dst
-
-						TYPE const * s = ImageTools::GetPixelAddress<TYPE>(src_desc, src_x, src_y + l);
-						TYPE       * d = ImageTools::GetPixelAddress<TYPE>(dst_desc, dst_x, dst_y + l);
-						memcpy(d, s, width * sizeof(TYPE));
+						SRC_TYPE const * src_line = &src_acc(src_x, src_y + l);
+						DST_TYPE       * dst_line = &dst_acc(dst_x, dst_y + l);
+						memcpy(dst_line, src_line, width * sizeof(DST_TYPE));
 					}
 				}
 				else
 				{
 					for (int l = 0; l < height; ++l)
 					{
-						SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
-						DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + l);
+						SRC_TYPE const* src_line = &src_acc(src_x, src_y + l);
+						DST_TYPE      * dst_line = &dst_acc(dst_x, dst_y + l);
 						for (int c = 0; c < width; ++c)
-							PixelConverter::Convert(d[c], s[c]);
+							PixelConverter::Convert(dst_line[c], src_line[c]);
 					}
 				}
 			}
@@ -382,10 +386,10 @@ namespace chaos
 			{
 				for (int l = 0; l < height; ++l)
 				{
-					SRC_TYPE const * s = ImageTools::GetPixelAddress<SRC_TYPE>(src_desc, src_x, src_y + l);
-					DST_TYPE       * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, dst_x, dst_y + height - 1 - l);
+					SRC_TYPE const* src_line = &src_acc(src_x, src_y + l);
+					DST_TYPE      * dst_line = &dst_acc(dst_x, dst_y + height - 1 - l);
 					for (int c = 0; c < width; ++c)
-						PixelConverter::Convert(d[width - 1 - c], s[c]);
+						PixelConverter::Convert(dst_line[width - 1 - c], src_line[c]);
 				}
 			}
 			else

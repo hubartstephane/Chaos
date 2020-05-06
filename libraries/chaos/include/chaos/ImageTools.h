@@ -126,19 +126,6 @@ namespace chaos
 		/** compute the memory requirement for a texture with DWORD aligned rows texture */
 		static int GetMemoryRequirementForAlignedTexture(PixelFormat const & pixel_format, int width, int height);
 
-		/** compute the address of a pixel (type T is usefull to know for pixel size/format) */
-		template<typename T> 
-		static inline T * GetPixelAddress(ImageDescription & desc, int x, int y)
-		{
-			return (T *)((char *)desc.data + desc.pitch_size * y) + x;
-		}
-		/** compute the address of a pixel (type T is usefull to know for pixel size/format) */
-		template<typename T> 
-		static inline T const * GetPixelAddress(ImageDescription const & desc, int x, int y)
-		{
-			return (T const *)((char const *)desc.data + desc.pitch_size * y) + x;
-		}
-
 		/** Generate an image from lambda */
 		template<typename T, typename GENERATOR>
 		static FIBITMAP * GenFreeImage(int width, int height, GENERATOR const & generator)

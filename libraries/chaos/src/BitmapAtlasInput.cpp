@@ -683,7 +683,14 @@ namespace chaos
 		{
 			assert(filter != nullptr);
 
-
+			size_t count = input->elements.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				CharacterInfoInput* character = input->elements[i].get();
+				if (character == nullptr)
+					continue;
+				ApplyFilter(filter, character);
+			}
 		}
 
 	}; // namespace BitmapAtlas

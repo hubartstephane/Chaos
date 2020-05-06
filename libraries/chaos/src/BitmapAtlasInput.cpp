@@ -671,12 +671,32 @@ namespace chaos
 		{
 			assert(filter != nullptr);
 
-			FIBITMAP* new_bitmap = filter->ProcessImage(input->description);
-			if (new_bitmap != nullptr)
+			if (input->animation_info != nullptr)
 			{
-				input->description = chaos::ImageTools::GetImageDescription(new_bitmap);
-				RegisterResource(new_bitmap, true);
+				if (input->animation_info->animation_description.IsFrameAnimation())
+				{
+
+				}
+				if (input->animation_info->animation_description.IsGridAnimation())
+				{
+				//	glm::ivec2 
+
+				}
 			}
+			else
+			{
+				FIBITMAP* new_bitmap = filter->ProcessImage(input->description);
+				if (new_bitmap != nullptr)
+				{
+					input->description = chaos::ImageTools::GetImageDescription(new_bitmap);
+					RegisterResource(new_bitmap, true);
+				}
+			}
+
+
+
+
+
 		}
 
 		void AtlasInput::ApplyFilter(BitmapAtlasFilter* filter, FontInfoInput* input)

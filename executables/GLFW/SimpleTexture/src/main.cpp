@@ -18,6 +18,7 @@
 #include <chaos/GPUTexture.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPURenderParams.h>
+#include <chaos/ImagePixelAccessor.h>
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -111,7 +112,9 @@ protected:
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
-					chaos::PixelGray * line = chaos::ImageTools::GetPixelAddress<chaos::PixelGray>(desc, 0, i);
+					chaos::ImagePixelAccessor<chaos::PixelGray> accessor(desc);
+
+					chaos::PixelGray * line = &accessor(0, i);
 
 					for (int j = 0; j < desc.width; ++j)
 						line[j] = (unsigned char)i;
@@ -125,7 +128,9 @@ protected:
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
-					chaos::PixelBGR * line = chaos::ImageTools::GetPixelAddress<chaos::PixelBGR>(desc, 0, i);
+					chaos::ImagePixelAccessor<chaos::PixelBGR> accessor(desc);
+
+					chaos::PixelBGR * line = &accessor(0, i);
 
 					for (int j = 0; j < desc.width; ++j)
 					{
@@ -143,7 +148,9 @@ protected:
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
-					chaos::PixelBGRA * line = chaos::ImageTools::GetPixelAddress<chaos::PixelBGRA>(desc, 0, i);
+					chaos::ImagePixelAccessor<chaos::PixelBGRA> accessor(desc);
+
+					chaos::PixelBGRA * line = &accessor(0, i);
 
 					for (int j = 0; j < desc.width; ++j)
 					{
@@ -162,7 +169,9 @@ protected:
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
-					chaos::PixelGrayFloat * line = chaos::ImageTools::GetPixelAddress<chaos::PixelGrayFloat>(desc, 0, i);
+					chaos::ImagePixelAccessor<chaos::PixelGrayFloat> accessor(desc);
+
+					chaos::PixelGrayFloat * line = &accessor(0, i);
 
 					for (int j = 0; j < desc.width; ++j)
 						line[j] = chaos::MathTools::CastAndDiv<float>(i, desc.height);
@@ -177,7 +186,9 @@ protected:
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
-					chaos::PixelRGBFloat * line = chaos::ImageTools::GetPixelAddress<chaos::PixelRGBFloat>(desc, 0, i);
+					chaos::ImagePixelAccessor<chaos::PixelRGBFloat> accessor(desc);
+
+					chaos::PixelRGBFloat* line = &accessor(0, i);
 
 					for (int j = 0; j < desc.width; ++j)
 					{
@@ -196,7 +207,9 @@ protected:
 			{
 				for (int i = 0; i < desc.height; ++i)
 				{
-					chaos::PixelRGBAFloat * line = chaos::ImageTools::GetPixelAddress<chaos::PixelRGBAFloat>(desc, 0, i);
+					chaos::ImagePixelAccessor<chaos::PixelRGBAFloat> accessor(desc);
+
+					chaos::PixelRGBAFloat* line = &accessor(0, i);
 
 					for (int j = 0; j < desc.width; ++j)
 					{

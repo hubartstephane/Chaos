@@ -7,6 +7,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/MathTools.h>
+#include <chaos/ImagePixelAccessor.h>
 
 
 
@@ -407,7 +408,9 @@ protected:
 					
 			for (int j = 0; j < desc.height; ++j)
 			{
-				chaos::PixelBGRA * bgra = chaos::ImageTools::GetPixelAddress<chaos::PixelBGRA>(desc, 0, j);
+				chaos::ImagePixelAccessor<chaos::PixelBGRA> accessor(desc);
+
+				chaos::PixelBGRA * line = &accessor(0, j);
 				
 				for (int i = 0; i < desc.width; ++i)
 				{
@@ -417,10 +420,10 @@ protected:
 
 
 
-					bgra[i].R = (char)(color.x * 255.0f);
-					bgra[i].G = (char)(color.y * 255.0f);
-					bgra[i].B = (char)(color.z * 255.0f);
-					bgra[i].A = 255;
+					line[i].R = (char)(color.x * 255.0f);
+					line[i].G = (char)(color.y * 255.0f);
+					line[i].B = (char)(color.z * 255.0f);
+					line[i].A = 255;
 				}
 			}
 		});

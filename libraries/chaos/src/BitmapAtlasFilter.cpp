@@ -24,10 +24,10 @@ namespace chaos
 					{
 						for (int i = 0; i < dst_desc.width; ++i)
 						{
-							dst_acc(i, j).R = src_acc(i, j).B;
-							dst_acc(i, j).B = src_acc(i, j).R;
-							dst_acc(i, j).G = src_acc(i, j).G;
-							dst_acc(i, j).A = src_acc(i, j).A;
+							dst_acc(i, j).R = (unsigned char)i;
+							//dst_acc(i, j).B = src_acc(i, j).R;
+							//dst_acc(i, j).G = src_acc(i, j).G;
+							dst_acc(i, j).A = 255; // src_acc(i, j).A;
 						}
 					}
 				}

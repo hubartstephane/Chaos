@@ -1,5 +1,6 @@
 #include <chaos/FontTools.h>
 #include <chaos/ImageTools.h>
+#include <chaos/ImagePixelAccessor.h>
 
 
 // XXX : for Freetype, a glyph in memory is organised up to down
@@ -47,13 +48,16 @@ namespace chaos
 				int w = dst_desc.width;
 				int h = dst_desc.height;
 
+				ImagePixelAccessor<PixelGray> src_acc(src_desc);
+				ImagePixelAccessor<DST_TYPE> dst_acc(dst_desc);
+
 				for (int j = 0; j < h; ++j)
 				{
-					DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, 0, j);
-					PixelGray const * s = ImageTools::GetPixelAddress<PixelGray>(src_desc, 0, (h - 1 - j));
+					DST_TYPE * dst_line        = &dst_acc(0, j);
+					PixelGray const * src_line = &src_acc(0, h - 1 - j);
 
 					for (int i = 0; i < w; ++i) // glyph is reversed compare to what we want
-						PixelConverter::Convert(d[i], s[i]);
+						PixelConverter::Convert(dst_line[i], src_line[i]);
 				}
 			}
 		}
@@ -90,11 +94,13 @@ namespace chaos
 			int w = desc.width;
 			int h = desc.height;
 
+			ImagePixelAccessor<PixelRGBAFloat> accessor(desc);
+
 			for (int j = 0; j < h; ++j)
 			{
-				PixelRGBAFloat * d = ImageTools::GetPixelAddress<PixelRGBAFloat>(desc, 0, j);
+				PixelRGBAFloat * line = &accessor(0, j);
 				for (int i = 0; i < w; ++i)
-					d[i].A = d[i].R;
+					line[i].A = line[i].R;
 			}
 		}
 		else if (desc.pixel_format == PixelFormatType::RGBA)
@@ -102,11 +108,13 @@ namespace chaos
 			int w = desc.width;
 			int h = desc.height;
 
+			ImagePixelAccessor<PixelBGRA> accessor(desc);
+
 			for (int j = 0; j < h; ++j)
 			{
-				PixelBGRA * d = ImageTools::GetPixelAddress<PixelBGRA>(desc, 0, j);
+				PixelBGRA * line = &accessor(0, j);
 				for (int i = 0; i < w; ++i)
-					d[i].A = d[i].R;
+					line[i].A = line[i].R;
 			}
 		}
 	}
@@ -316,30 +324,23 @@ namespace chaos
 					ImageDescription src_desc = FontTools::GetImageDescription(record.bitmap_glyph->bitmap);
 
 					// copy the glyph to dest buffer : invert lines 
+					ImagePixelAccessor<DST_TYPE>  dst_acc(dst_desc);
+					ImagePixelAccessor<PixelGray> src_acc(src_desc); 
+
 					for (int y = 0; y < h; ++y)
 					{
 						int delta_x = (pos_x + bl - min_x);
 						int delta_y = (pos_y + bt - min_y + y);
 
-						DST_TYPE * d = ImageTools::GetPixelAddress<DST_TYPE>(dst_desc, delta_x, dst_height - 1 - delta_y);
-						PixelGray const * s = ImageTools::GetPixelAddress<PixelGray>(src_desc, 0, y);
+						DST_TYPE * dst_line = &dst_acc(delta_x, dst_height - 1 - delta_y);
+						PixelGray const * src_line = &src_acc(0, y);
 
 						for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
 						{
 							DST_TYPE p;
-							PixelConverter::Convert(p, s[x]);
-							BlendPixel(d[x], p);
+							PixelConverter::Convert(p, src_line[x]);
+							BlendPixel(dst_line[x], p);
 						}
-#if 0
-						DST_TYPE * d = (DST_TYPE*)(dst_buffer +
-							sizeof(DST_TYPE) * (pos_x + bl - min_x) +
-							(dst_height - 1 - (pos_y + bt - min_y + y)) * pitch_size); // compute destination address
-
-						PixelGray const * s = (PixelGray const *)record.bitmap_glyph->bitmap.buffer + y * w; // compute source address
-
-						for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
-							PixelConverter::Convert(d[x], s[x]);
-#endif
 					}
 					// advance the cursor
 					pos_x += avx;

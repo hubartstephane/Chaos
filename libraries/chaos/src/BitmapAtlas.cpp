@@ -431,7 +431,7 @@ namespace chaos
 		void AtlasBase::DoOutputInfo(FontInfo const & info, std::ostream & stream, int indent)
 		{
 			NamedObject const & named_info = info;
-			DoOutputInfo(info, stream, indent);
+			DoOutputInfo(named_info, stream, indent);
 
 			StreamTools::OStreamIndent stream_indent(indent);
 			stream << stream_indent << "  max_character_width  : " << info.max_character_width << std::endl;

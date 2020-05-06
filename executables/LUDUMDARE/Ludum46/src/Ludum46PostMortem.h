@@ -54,7 +54,10 @@
 //
 // J ai ajouté une bordure redondante dans l atlas, pour eciter que les access textures n interpolent sur une ligne/colonne de padding.
 // C'est pas une bonne idée. 
-// Les lettres ont cette ligne qui bave
+// Les lettres ont cette ligne qui bave (<== a verifier)
+//
+// en revanche pour les images grille   mybitmap_3x4 par exemple, cette bordure n exite pas donc on retombe sur le probleme
+// 
 
 
 // revoir les collisions

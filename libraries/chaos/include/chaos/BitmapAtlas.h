@@ -158,9 +158,9 @@ namespace chaos
 		public:
 
 			/** the max bitmap size in the set */
-			int max_character_width = 0;
+			int glyph_width = 0;
 			/** the max bitmap size in the set */
-			int max_character_height = 0;
+			int glyph_height = 0;
 			/** the face ascender */
 			int ascender = 0;
 			/** the face descender */

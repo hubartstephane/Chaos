@@ -16,6 +16,72 @@ namespace chaos
 	{
 
 		// ========================================================================
+		// FontInfoInputParams functions
+		// ========================================================================
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputBaseParams const& src)
+		{
+			if (!json_entry.is_object())
+				json_entry = nlohmann::json::object();
+			JSONTools::SetAttribute(json_entry, "characters", src.characters);
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputBaseParams& dst)
+		{
+			if (!json_entry.is_object())
+				return false;
+			JSONTools::GetAttribute(json_entry, "characters", dst.characters);
+			return true;
+		}
+
+		// ========================================================================
+		// FontInfoInputParams functions
+		// ========================================================================
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputParams const& src)
+		{
+			FontInfoInputBaseParams const& base = src;
+			if (!SaveIntoJSON(json_entry, base))
+				return false;
+			JSONTools::SetAttribute(json_entry, "glyph_width", src.glyph_width);
+			JSONTools::SetAttribute(json_entry, "glyph_height", src.glyph_height);
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputParams& dst)
+		{
+			FontInfoInputBaseParams & base = dst;
+			if (!LoadFromJSON(json_entry, base))
+				return false;
+			JSONTools::GetAttribute(json_entry, "glyph_width", dst.glyph_width);
+			JSONTools::GetAttribute(json_entry, "glyph_height", dst.glyph_height);
+			return true;
+		}
+
+		// ========================================================================
+		// FontInfoBitmapParams functions
+		// ========================================================================
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoBitmapParams const& src)
+		{
+			FontInfoInputBaseParams const& base = src;
+			if (!SaveIntoJSON(json_entry, base))
+				return false;
+			JSONTools::SetAttribute(json_entry, "grid_size", src.grid_size);
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoBitmapParams& dst)
+		{
+			FontInfoInputBaseParams& base = dst;
+			if (!LoadFromJSON(json_entry, base))
+				return false;
+			JSONTools::GetAttribute(json_entry, "grid_size", dst.grid_size);
+			return true;
+		}
+
+		// ========================================================================
 		// BitmapInfoInputAnimationDescription : an utility class for JSON files coming as image descriptors
 		// ========================================================================
 
@@ -126,6 +192,19 @@ namespace chaos
 			if (buffer != nullptr)
 				FT_New_Memory_Face(library, (FT_Byte const *)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
 
+
+
+
+			// filter files
+
+
+
+
+
+
+
+
+
 			if (face == nullptr)
 			{
 				if (release_library)
@@ -155,15 +234,15 @@ namespace chaos
 
 			// set font size
 			// XXX : order is important. Face.size.metrics will not be initialized elsewhere
-			FT_Error error = FT_Set_Pixel_Sizes(face, params.max_character_width, params.max_character_height);
+			FT_Error error = FT_Set_Pixel_Sizes(face, params.glyph_width, params.glyph_height);
 			if (error != 0)
 				return nullptr;
 
 			// new character set input
 			result->atlas_input = atlas_input;
 			result->name = name;
-			result->max_character_width = params.max_character_width;
-			result->max_character_height = params.max_character_height;
+			result->glyph_width = params.glyph_width;
+			result->glyph_height = params.glyph_height;
 			result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
 			result->descender = face->size->metrics.descender / 64;   // take the FT_Pixel_Size(...) into consideration 
 			result->face_height = face->size->metrics.height / 64;    // take the FT_Pixel_Size(...) into consideration
@@ -219,6 +298,26 @@ namespace chaos
 
 			return result;
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         void FolderInfoInput::AddBitmapFilesData::SearchDirectoryEntries(FilePathParam const& path, bool search_files, bool search_directories)

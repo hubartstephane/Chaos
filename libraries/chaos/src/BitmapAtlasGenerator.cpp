@@ -425,8 +425,8 @@ namespace chaos
 				FontInfo font_info_output;
 				font_info_output.name = font_info_input->name;
 				font_info_output.tag = font_info_input->tag;
-				font_info_output.max_character_width = font_info_input->max_character_width;
-				font_info_output.max_character_height = font_info_input->max_character_height;
+				font_info_output.glyph_width = font_info_input->glyph_width;
+				font_info_output.glyph_height = font_info_input->glyph_height;
 				font_info_output.ascender = font_info_input->ascender;
 				font_info_output.descender = font_info_input->descender;
 				font_info_output.face_height = font_info_input->face_height;

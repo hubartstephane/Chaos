@@ -434,8 +434,8 @@ namespace chaos
 			DoOutputInfo(named_info, stream, indent);
 
 			StreamTools::OStreamIndent stream_indent(indent);
-			stream << stream_indent << "  max_character_width  : " << info.max_character_width << std::endl;
-			stream << stream_indent << "  max_character_height : " << info.max_character_height << std::endl;
+			stream << stream_indent << "  glyph_width  : " << info.glyph_width << std::endl;
+			stream << stream_indent << "  glyph_height : " << info.glyph_height << std::endl;
 			stream << stream_indent << "  ascender             : " << info.ascender << std::endl;
 			stream << stream_indent << "  descender            : " << info.descender << std::endl;
 			stream << stream_indent << "  face_height          : " << info.face_height << std::endl;
@@ -835,8 +835,8 @@ namespace chaos
 		{
 			SaveIntoJSON(json_entry, (NamedObject const &)src); // call 'super' method (implies json_entry = nlohmann::json::object();)
 
-			JSONTools::SetAttribute(json_entry, "max_character_width", src.max_character_width);
-			JSONTools::SetAttribute(json_entry, "max_character_height", src.max_character_height);
+			JSONTools::SetAttribute(json_entry, "glyph_width", src.glyph_width);
+			JSONTools::SetAttribute(json_entry, "glyph_height", src.glyph_height);
 			JSONTools::SetAttribute(json_entry, "ascender", src.ascender);
 			JSONTools::SetAttribute(json_entry, "descender", src.descender);
 			JSONTools::SetAttribute(json_entry, "face_height", src.face_height);
@@ -851,8 +851,8 @@ namespace chaos
 
 			LoadFromJSON(json_entry, (NamedObject & )dst); // call 'super' method
 
-			JSONTools::GetAttribute(json_entry, "max_character_width", dst.max_character_width);
-			JSONTools::GetAttribute(json_entry, "max_character_height", dst.max_character_height);
+			JSONTools::GetAttribute(json_entry, "glyph_width", dst.glyph_width);
+			JSONTools::GetAttribute(json_entry, "glyph_height", dst.glyph_height);
 			JSONTools::GetAttribute(json_entry, "ascender", dst.ascender);
 			JSONTools::GetAttribute(json_entry, "descender", dst.descender);
 			JSONTools::GetAttribute(json_entry, "face_height", dst.face_height);

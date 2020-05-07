@@ -27,6 +27,10 @@ namespace chaos
 			std::string characters;
 		};
 
+		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputBaseParams const& src);
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputBaseParams& dst);
+
 		/**
 		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
@@ -35,11 +39,17 @@ namespace chaos
 		{
 		public:
 
+			// XXX : FreeType does not produce glyph of the exact requested size
+
 			/** width of the glyph */
-			int max_character_width = 32;
+			int glyph_width = 64;
 			/** height of the glyph */
-			int max_character_height = 32;
+			int glyph_height = 64;
 		};
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputParams const& src);
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputParams& dst);
 
 		/**
 		* FontInfoBitmapParams : some fonts can be represent by a grid of characters
@@ -50,8 +60,12 @@ namespace chaos
 		public:
 
 			/** number of uniform grid cells for the bitmaps */
-			glm::ivec2 size = glm::ivec2(0, 0);
+			glm::ivec2 grid_size = glm::ivec2(0, 0);
 		};
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoBitmapParams const& src);
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoBitmapParams& dst);
 
 		/**
 		* ObjectBaseInput : base object for inputs

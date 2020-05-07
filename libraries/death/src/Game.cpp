@@ -333,6 +333,14 @@ namespace death
 		nlohmann::json const * fonts_config = chaos::JSONTools::GetStructure(config, "fonts");
 		if (fonts_config != nullptr)
 		{
+			// read the default font parameters
+			chaos::BitmapAtlas::FontInfoInputParams font_params;
+
+			nlohmann::json const* default_font_param_json = chaos::JSONTools::GetStructure(*fonts_config, "default_font_param");
+			if (default_font_param_json != nullptr)
+				LoadFromJSON(*default_font_param_json, font_params);
+
+			// Add the fonts
 			nlohmann::json const * fonts_json = chaos::JSONTools::GetStructure(*fonts_config, "fonts");
 			if (fonts_json != nullptr && fonts_json->is_object())
 			{
@@ -343,11 +351,6 @@ namespace death
 					// read information
 					std::string font_name = it.key();
 					std::string font_path = it->get<std::string>();
-					// Add the font
-					chaos::BitmapAtlas::FontInfoInputParams font_params;
-					font_params.max_character_width = 64;
-					font_params.max_character_height = 64;
-
 					if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
 						return false;
 				}			

@@ -1,9 +1,13 @@
 {
-	"fonts":
-	{
-		"normal": "@fonts/overpass-mono-bold.otf",
-		"title":"@fonts/unispace bold italic.ttf"
-	},
+  "fonts": {
+    "normal": "@fonts/overpass-mono-bold.otf",
+    "title": "@fonts/unispace bold italic.ttf"
+  },
+  "default_font_param": 
+  {
+    "glyph_width": 64,
+    "glyph_height": 64
+  },
   "colors": {
     "LEVELTITLE": [ 1.0, 0.0, 0.0 ]
   }

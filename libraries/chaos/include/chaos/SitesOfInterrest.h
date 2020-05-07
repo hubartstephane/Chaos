@@ -18,5 +18,11 @@ https://www.imgonline.com.ua/eng/make-seamless-texture.php
 // Voice generation
 https://www.naturalreaders.com/online/
 
+// Basic
+BlitzMax
+
+// Free License for resources
+cc0
+
 
 #endif

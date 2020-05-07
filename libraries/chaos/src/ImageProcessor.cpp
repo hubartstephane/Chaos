@@ -7,6 +7,24 @@
 namespace chaos
 {
 
+	// ================================================================
+	// JSON generic functions
+	// ================================================================
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, ImageProcessor const& src)
+	{
+		return src.SaveIntoJSON(json_entry);
+	}
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst)
+	{
+		return dst.LoadFromJSON(json_entry);
+	}
+
+	// ================================================================
+	// ImageProcessor functions
+	// ================================================================
+
 	FIBITMAP* ImageProcessor::ProcessImage(ImageDescription const& src_desc)
 	{
 		return ImageTools::GenFreeImage<chaos::PixelBGRA>(src_desc.width, src_desc.height, [src_desc](ImageDescription const& dst_desc)
@@ -54,14 +72,32 @@ namespace chaos
 		return true;
 	}
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, ImageProcessor const& src)
+	// ================================================================
+	// ImageProcessorOutline functions
+	// ================================================================
+
+	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc)
 	{
-		return src.SaveIntoJSON(json_entry);
+
+		return nullptr;
 	}
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst)
+	bool ImageProcessorOutline::SaveIntoJSON(nlohmann::json& json_entry) const
 	{
-		return dst.LoadFromJSON(json_entry);
+		if (!ImageProcessor::SaveIntoJSON(json_entry))
+			return false;
+		JSONTools::SetAttribute(json_entry, "distance", distance);
+		JSONTools::SetAttribute(json_entry, "outline_color", outline_color);
+		return true;
+	}
+
+	bool ImageProcessorOutline::LoadFromJSON(nlohmann::json const& json_entry)
+	{
+		if (!ImageProcessor::LoadFromJSON(json_entry))
+			return false;
+		JSONTools::GetAttribute(json_entry, "distance", distance);
+		JSONTools::GetAttribute(json_entry, "outline_color", outline_color);
+		return true;
 	}
 
 }; // namespace chaos

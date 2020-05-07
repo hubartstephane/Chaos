@@ -54,6 +54,8 @@ namespace chaos
 			glm::vec4 background_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 			/** parameters for merging different pixel format */
 			PixelFormatMergeParams merge_params;
+			/** the filters to be applyed to each bitmaps */
+			BitmapAtlasFilterSet const* filters = nullptr;
 		};
 
 		/** load from JSON */

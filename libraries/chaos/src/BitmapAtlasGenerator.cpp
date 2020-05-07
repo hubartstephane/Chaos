@@ -8,8 +8,6 @@
 #include <chaos/JSONTools.h>
 #include <chaos/BitmapAtlasInput.h>
 
-#define CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG (_DEBUG && 0)
-
 namespace chaos
 {
 	namespace BitmapAtlas
@@ -551,17 +549,8 @@ namespace chaos
 					output->bitmaps = GenerateBitmaps(entries, final_pixel_format);
 					output->atlas_count = (int)output->bitmaps.size();
 					output->dimension = glm::ivec2(params.atlas_width, params.atlas_height);					
-#if CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
-					output->OutputAtlasSpaceOccupation(std::cout);
-					output->OutputInfo(std::cout);
-#endif // CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
-
 					return true;
 				}
-#if CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
-				else
-					output->OutputInfo(std::cout);
-#endif // CHAOS_BITMAPATLASGENERATION_OUTPUTDEBUG
 			}
 
 			// in case of failure, clean the atlas

@@ -20,10 +20,21 @@ namespace chaos
 				{
 					for (int i = 0; i < dst_desc.width; ++i)
 					{
+#if 1
+
+
 						dst_acc(i, j).R = (unsigned char)i;
-						//dst_acc(i, j).B = src_acc(i, j).R;
-						//dst_acc(i, j).G = src_acc(i, j).G;
-						dst_acc(i, j).A = 255; // src_acc(i, j).A;
+						dst_acc(i, j).B = 0;
+						dst_acc(i, j).G = 0;
+						dst_acc(i, j).A = 255;
+
+#else
+
+						dst_acc(i, j).R = src_acc(i, j).B;
+						dst_acc(i, j).B = 0;
+						dst_acc(i, j).G = src_acc(i, j).G;
+						dst_acc(i, j).A = src_acc(i, j).A;
+#endif
 					}
 				}
 			}
@@ -41,6 +52,16 @@ namespace chaos
 	{
 
 		return true;
+	}
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, ImageProcessor const& src)
+	{
+		return src.SaveIntoJSON(json_entry);
+	}
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst)
+	{
+		return dst.LoadFromJSON(json_entry);
 	}
 
 }; // namespace chaos

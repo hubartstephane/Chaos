@@ -261,9 +261,6 @@ namespace chaos
 			/** insert an image inside the atlas */
 			BitmapInfoInput * AddBitmap(FIMULTIBITMAP * animated_bitmap, bool release_bitmap, char const * name, TagType tag);
 
-			/** applying some filter to the whole input */
-			void ApplyFilter(BitmapAtlasFilter * filter);
-
 			/** Add a character set */
 			FontInfoInput * AddFont(
 				char const * font_name,
@@ -282,13 +279,6 @@ namespace chaos
 				FontInfoInputParams const & params = FontInfoInputParams());
 
 		protected:
-
-			/** applying a filter on a folder */
-			void ApplyFilter(BitmapAtlasFilter* filter, FolderInfoInput* folder);
-			/** applying a filter on a bitmap */
-			void ApplyFilter(BitmapAtlasFilter* filter, BitmapInfoInput* input);
-			/** applying a filter on a font */
-			void ApplyFilter(BitmapAtlasFilter* filter, FontInfoInput* input);
 
 			/** register bitmap */
 			void RegisterResource(FIBITMAP * bitmap, bool release);

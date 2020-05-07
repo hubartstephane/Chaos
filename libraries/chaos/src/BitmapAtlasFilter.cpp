@@ -6,11 +6,36 @@
 
 namespace chaos
 {
-
-
-
 	namespace BitmapAtlas
 	{
+		// ==========================================================================
+		// BitmapAtlasFilterCondition methods
+		// ==========================================================================
+
+		bool BitmapAtlasFilterCondition::AcceptBitmap(BitmapInfoInput const* input) const
+		{
+			return true;
+		}
+
+		bool BitmapAtlasFilterCondition::AcceptFont(FontInfoInput const* input) const
+		{
+			return true;
+		}
+
+		void BitmapAtlasFilterSet::AddFilter(BitmapAtlasFilterCondition* condition, ImageProcessor* processor)
+		{
+			assert(processor != nullptr);
+			BitmapAtlasFilter new_filter;
+			new_filter.condition = condition;
+			new_filter.processor = processor;
+			filters.push_back(new_filter);
+		}
+
+
+
+
+#if 0
+
 		FIBITMAP* BitmapAtlasFilter::ProcessImage(ImageDescription const& src_desc)
 		{
 			return ImageTools::GenFreeImage<chaos::PixelBGRA>(src_desc.width, src_desc.height, [src_desc](ImageDescription const & dst_desc)
@@ -45,6 +70,11 @@ namespace chaos
 			});
 			return nullptr;
 		}
+
+#endif
+
+
+
 
 
 	}; // namespace BitmapAtlas

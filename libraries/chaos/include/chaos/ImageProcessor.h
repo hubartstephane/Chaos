@@ -24,15 +24,9 @@ namespace chaos
 		virtual bool LoadFromJSON(nlohmann::json const& json_entry);
 	};
 
-
-	bool SaveIntoJSON(nlohmann::json& json_entry, ImageProcessor const& src)
-	{
-		return src.SaveIntoJSON(json_entry);
-	}
-
-	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst)
-	{
-		return dst.LoadFromJSON(json_entry);
-	}
+	/** JSON saving entry point */
+	bool SaveIntoJSON(nlohmann::json& json_entry, ImageProcessor const& src);
+	/** JSON loading entry point */
+	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst);
 
 }; // namespace chaos

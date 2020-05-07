@@ -385,9 +385,18 @@ namespace death
 		if (!FillAtlasGeneratorInput(input, config, config_path))
 			return false;
 
-		chaos::BitmapAtlas::BitmapAtlasFilter filter;
 
-		input.ApplyFilter(&filter);
+
+
+
+
+
+		chaos::BitmapAtlas::BitmapAtlasFilterSet filters;
+		filters.AddFilter(nullptr, new chaos::ImageProcessor);
+
+
+
+
 
 
 		// generate the atlas + maybe a dump
@@ -395,6 +404,7 @@ namespace death
 		int ATLAS_PADDING = 10;
 
 		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
+		params.filters = &filters;
 
 		char const * dump_atlas_dirname = nullptr;
 #if _DEBUG

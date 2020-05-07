@@ -644,6 +644,25 @@ namespace chaos
 			return root_folder.AddFont(face, release_face, name, tag, params);
 		}
 
+
+
+
+
+
+
+
+#if 0
+
+		/** applying some filter to the whole input */
+		void ApplyFilter(BitmapAtlasFilter* filter);
+
+		/** applying a filter on a folder */
+		void ApplyFilter(BitmapAtlasFilter* filter, FolderInfoInput* folder);
+		/** applying a filter on a bitmap */
+		void ApplyFilter(BitmapAtlasFilter* filter, BitmapInfoInput* input);
+		/** applying a filter on a font */
+		void ApplyFilter(BitmapAtlasFilter* filter, FontInfoInput* input);
+
 		void AtlasInput::ApplyFilter(BitmapAtlasFilter * filter)
 		{
 			if (filter != nullptr)
@@ -712,6 +731,12 @@ namespace chaos
 				ApplyFilter(filter, character);
 			}
 		}
+#endif
+
+
+
+
+
 
 	}; // namespace BitmapAtlas
 

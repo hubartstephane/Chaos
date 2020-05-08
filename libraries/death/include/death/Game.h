@@ -31,18 +31,6 @@
 #include <death/GameInstance.h>
 
 
-
-template<typename T> 
-int DeclareClass(char const* name)
-{
-
-	return 0;
-}
-
-#define DECLARE_CLASS(x) inline int const DeclaredClassID_##x = DeclareClass<x>(#x);
-
-
-
 namespace death
 {
 
@@ -501,9 +489,5 @@ namespace death
 		/** free camera mode */
 		bool free_camera_mode = false;
 	};
-
-
-
-	DECLARE_CLASS(Game);
 
 }; // namespace death

@@ -175,6 +175,10 @@ namespace chaos
 				std::swap(vertex_texcoords[0].y, vertex_texcoords[3].y);
 				std::swap(vertex_texcoords[1].y, vertex_texcoords[2].y);
 			}
+
+			// shu46.. Diagonal flipping
+
+
 		}
 
 

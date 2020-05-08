@@ -8,6 +8,9 @@
 
 namespace chaos
 {
+
+	//DECLARE_IMAGE_PROCESSOR(ImageProcessor);
+
 	/**
 	* ImageProcessor : take an image as an entry and returns a new image as output
 	*/
@@ -30,10 +33,11 @@ namespace chaos
 	/** JSON loading entry point */
 	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst);
 
-
 	/**
 	* ImageProcessorOutline : add an outline to any image
 	*/
+
+	//DECLARE_IMAGE_PROCESSOR(ImageProcessorOutline);
 
 	class ImageProcessorOutline : public ImageProcessor
 	{

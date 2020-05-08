@@ -144,6 +144,9 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	B* b = nullptr;
 	C* c = nullptr;
 
+	void* p = nullptr;
+
+	A* a = dynamic_cast<A*>(p);
 
 
 

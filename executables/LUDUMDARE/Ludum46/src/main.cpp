@@ -4,155 +4,142 @@
 
 #include "Ludum46Game.h"
 
-
-class Object
+class ClassRegistryEntry
 {
 public:
 
-	virtual ~Object() = default;
-};
+	void* CreateInstance()
+	{
+		if (create_func)
+			return create_func();
+		return nullptr;
+	}
 
-class A : public Object
-{
-
-};
-
-class B : public Object
-{
-
-};
-
-class C : public A
-{
-
-};
-
-
-// ===========================================================
-
-
-
-
-class ObjectFactory
-{
 public:
 
-	virtual Object* Create() { return nullptr; }
-
+	/** the name of the class */
+	std::string classname;
+	/** the allocation function */
+	std::function<void*()> create_func;
 };
 
-template<typename T>
-class TypedObjectFactory : public ObjectFactory
+std::vector<ClassRegistryEntry*> & GetClassRegistryEntries()
 {
-public:
-
-	virtual Object* Create() override { return new T; }
-
-};
-
-class FactoryGroup
-{
-public:
-
-	std::map<std::string, ObjectFactory *> factories;
-
-};
-
-
-// ===========================================================
-template<typename T>
-bool DeclareClass(T * fake_ptr, char const * name)
-{
-	// get the group for this class
-	FactoryGroup* factory_group = GetFactoryGroup(fake_ptr);
-	if (factory_group == nullptr)
-		return false;
-	// check whether the class is already registered
-	auto it = factory_group->factories.find(name);
-	if (it != factory_group->factories.end())
-		return false;
-	// register the class
-	factory_group->factories[name] = new TypedObjectFactory<T>();
-
-	return true;
+	static std::vector<ClassRegistryEntry*> result;
+	return result;
 }
 
-// ===========================================================
-
-FactoryGroup * GetFactoryGroup(...)
+template<typename T>
+ClassRegistryEntry * GetClassRegistryEntry(T const* fake_ptr)
 {
+	static ClassRegistryEntry entry;
+	return &entry;
+}
+
+ClassRegistryEntry* GetClassRegistryEntry(char const* classname)
+{
+	assert(classname != nullptr && strlen(classname) > 0);
+	for (ClassRegistryEntry * entry : GetClassRegistryEntries())
+		if (chaos::StringTools::Strcmp(classname, entry->classname) == 0)
+			return entry;
 	return nullptr;
 }
 
-#define DECLARE_CLASS_GROUP(baseclassname)\
-FactoryGroup * GetFactoryGroup(baseclassname *)\
-{\
-	static FactoryGroup result;\
-	return &result;\
+template<typename T>
+ClassRegistryEntry * RegisterClassRegistryEntry(T const* fake_ptr, char const * classname)
+{
+	// not already registered
+	assert(classname != nullptr && strlen(classname) > 0);
+	assert(GetClassRegistryEntry(classname) == nullptr);
+
+	ClassRegistryEntry * result = GetClassRegistryEntry(fake_ptr);
+	result->classname = classname;
+	result->create_func = []() { return new T; };
+
+	GetClassRegistryEntries().push_back(result);
+	return result;
 }
 
-#define DECLARE_CLASS(classname)\
-namespace declared_class\
-{\
-	inline bool declared_class_##classname = DeclareClass((classname*)nullptr, #classname);\
+#define REGISTER_CLASS(classname)\
+inline ClassRegistryEntry * classname##_factory_entry = RegisterClassRegistryEntry((classname const *)nullptr, #classname);
+
+
+
+
+
+
+
+
+
+class A
+{
+public:
+
+
+	A() 
+	{
+	
+	}
+
 };
 
-DECLARE_CLASS_GROUP(A)
-DECLARE_CLASS(A)
-DECLARE_CLASS(B)
-DECLARE_CLASS(C)
+REGISTER_CLASS(A);
 
+
+
+
+
+
+#if 0
 
  template<typename T>
- T* CreateClassInstance(T*& result, char const* classname)
+ bool StoreToJSON(nlohmann::json & json_entry, T const* object)
  {
-	 result = nullptr;
+	 char const* classname = GetClassName(object);
 
-	 FactoryGroup* factory_group = GetFactoryGroup(result);
-	 if (factory_group != nullptr)
+	 if (!json_entry.is_object())
+		 json_entry = nlohmann::json::object();
+
+	 chaos::JSONTools::SetAttribute(json_entry, "__classname__", classname);
+	 return true;
+ }
+
+ template<typename T>
+ bool ReadFromJSON(nlohmann::json const & json_entry, T * & object)
+ {
+	 if (!json_entry.is_object())
+		 return false;
+
+	 if (object != nullptr)
+		 return DoReadFromJSON(json_entry, object);
+
+	 std::string classname;
+	 if (chaos::JSONTools::GetAttribute(json_entry, "__classname__", classname))
 	 {
-		 auto it = factory_group->factories.find(classname);
-		 if (it != factory_group->factories.end())
-		 {
-			 Object* object = it->second->Create();
-			 if (object != nullptr)
-			 {
-				 result = chaos::auto_cast(object);
-				 if (result == nullptr)
-					 delete(object);
-			 }
-		 }
+		 object = CreateClass<T>(classname);
+		 if (object )
+
+
 	 }
-	 return result;
+	 else
+	 {
+		 return DoReadFromJSON(json_entry, object);
+	 }
+	 return true;
  }
 
 
-
-
-
-
-
-
-
-
+#endif
 
 
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	A* a = nullptr;
-	B* b = nullptr;
-	C* c = nullptr;
+	GetClassRegistryEntry("A")->CreateInstance();
 
-	void* p = nullptr;
-
-	A* a = dynamic_cast<A*>(p);
+	GetClassRegistryEntry((A*)nullptr)->CreateInstance();
 
 
-
-	auto pA = CreateClassInstance(a, "A");
-	auto pB = CreateClassInstance(b, "B");
-	auto pC = CreateClassInstance(c, "C");
 
 	return 0;
 

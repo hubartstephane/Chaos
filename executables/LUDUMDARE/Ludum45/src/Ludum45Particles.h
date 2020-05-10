@@ -6,6 +6,7 @@
 #include <chaos/ParticleDefault.h> 
 #include <chaos/GPUVertexDeclaration.h> 
 #include <chaos/BitmapAtlas.h> 
+#include <chaos/ClassTools.h> 
 
 #include <death/TiledMapParticle.h> 
 
@@ -253,7 +254,17 @@ public:
 
 
 
+CHAOS_REGISTER_CLASS(ParticlePlayer)
+CHAOS_REGISTER_CLASS(ParticleFire)
+CHAOS_REGISTER_CLASS(ParticleBonus)
+CHAOS_REGISTER_CLASS(ParticleEnemy)
+CHAOS_REGISTER_CLASS(ParticleExplosion)
 
-
-
+#if 0
+	chaos::ClassTools::InsertClassRegistration<ParticlePlayer, ParticleBase>("ParticlePlayer");
+	chaos::ClassTools::InsertClassRegistration<ParticleFire, ParticleBase>("ParticleFire");
+	chaos::ClassTools::InsertClassRegistration<ParticleBonus, ParticleBase>("ParticleBonus");
+	chaos::ClassTools::InsertClassRegistration<ParticleEnemy, ParticleBase>("ParticleEnemy");
+	chaos::ClassTools::InsertClassRegistration<ParticleExplosion, chaos::ParticleDefault>("ParticleExplosion");
+#endif
 

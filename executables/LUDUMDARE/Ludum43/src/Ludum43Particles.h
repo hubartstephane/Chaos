@@ -5,6 +5,7 @@
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
 #include <chaos/GPUVertexDeclaration.h> 
+#include <chaos/ClassTools.h> 
 
 
 #include <death/TiledMapParticle.h> 
@@ -203,4 +204,13 @@ public:
 	bool UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const;
 };
 
+CHAOS_REGISTER_CLASS(ParticlePlayer)
+CHAOS_REGISTER_CLASS(ParticleEnemy)
+CHAOS_REGISTER_CLASS(ParticleAtom)
+
+#if 0
+	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleBase>("ParticlePlayer");
+	chaos::ClassTools::DeclareClass<ParticleEnemy, ParticleBase>("ParticleEnemy");
+	chaos::ClassTools::DeclareClass<ParticleAtom, ParticleBase>("ParticleAtom");
+#endif
 

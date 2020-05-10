@@ -251,8 +251,6 @@ namespace death
 		virtual bool CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** initialization of the manager */
 		virtual bool InitializeSoundManager(nlohmann::json const& config, boost::filesystem::path const& config_path);
-		/** declare all particle types (for safety) */
-		virtual bool DeclareParticleClasses();
 		/** create the game state_machine */
 		virtual bool CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** allocate the state machine */

@@ -56,9 +56,9 @@ namespace chaos
 		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags); // in order BL, BR, TR, TL
 
 		template<typename PARTICLE_TYPE>
-		bool IsParticleClassCompatible(ClassTools::ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
+		bool IsParticleClassCompatible(ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
 		{
-			ClassTools::ClassRegistration const * wanted_class = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
+			ClassRegistration const * wanted_class = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
 
 			// strict equality
 			if (particle_class == wanted_class)

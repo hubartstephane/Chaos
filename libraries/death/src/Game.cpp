@@ -726,9 +726,6 @@ namespace death
 		// create the sound manager
 		if (!InitializeSoundManager(config, config_path))
 			return false;
-		// initialize particle classes
-		if (!DeclareParticleClasses())
-			return false;
 		// initialize clocks
 		if (!InitializeClocks(config, config_path))
 			return false;
@@ -930,15 +927,6 @@ namespace death
 	bool Game::InitializeSoundManager(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 
-		return true;
-	}
-
-	bool Game::DeclareParticleClasses()
-	{
-		// XXX : cannot register ParticleDefault, because if will be registered later as ParticleObject
-		//       require refactor
-		//chaos::ClassTools::DeclareClass<chaos::ParticleDefault>("ParticleDefault");
-		chaos::ClassTools::InsertClassRegistration<death::ParticleBackground>("ParticleBackground");
 		return true;
 	}
 

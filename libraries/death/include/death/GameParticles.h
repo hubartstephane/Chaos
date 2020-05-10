@@ -4,6 +4,7 @@
 
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/ClassTools.h>
 
 
 namespace death
@@ -29,6 +30,7 @@ namespace death
         void ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const;
 	};
 
+	CHAOS_REGISTER_CLASS(ParticleBackground);
 
 }; //namespace death
 

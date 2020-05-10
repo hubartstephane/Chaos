@@ -6,9 +6,11 @@
 #include <chaos/ParticleDefault.h> 
 #include <chaos/GPUVertexDeclaration.h> 
 #include <chaos/BitmapAtlas.h> 
+#include <chaos/ClassTools.h> 
 
 #include <death/TiledMapParticle.h> 
 #include <death/TiledMapLevel.h> 
+
 
 
 // ===========================================================================
@@ -227,5 +229,18 @@ public:
 };
 
 
+//chaos::ClassTools::InsertClassRegistration<ParticleAnimated, ParticleBase>("ParticleAnimated");
+//chaos::ClassTools::InsertClassRegistration<ParticlePlayer, ParticleAnimated>("ParticlePlayer");
+//chaos::ClassTools::InsertClassRegistration<ParticleFire, ParticleBase>("ParticleFire");
+//chaos::ClassTools::InsertClassRegistration<ParticleSoul, ParticleBase>("ParticleSoul");
+//chaos::ClassTools::InsertClassRegistration<ParticleBlood, ParticleAnimated>("ParticleBlood");
+//chaos::ClassTools::InsertClassRegistration<ParticleBurnedSoul, ParticleBlood>("ParticleBurnedSoul");
 
+
+CHAOS_REGISTER_CLASS(ParticleAnimated);
+CHAOS_REGISTER_CLASS(ParticlePlayer);
+CHAOS_REGISTER_CLASS(ParticleFire);
+CHAOS_REGISTER_CLASS(ParticleSoul);
+CHAOS_REGISTER_CLASS(ParticleBlood);
+CHAOS_REGISTER_CLASS(ParticleBurnedSoul);
 

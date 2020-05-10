@@ -9,7 +9,7 @@ namespace chaos
 	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
 	 */
 
-#define CHAOS_REGISTER_CLASS(classname) inline ClassRegistration * classname##_register = chaos::ClassTools::InsertClassRegistration<classname)(#classname);
+#define CHAOS_REGISTER_CLASS(classname) inline chaos::ClassRegistration * classname##_register = chaos::ClassTools::InsertClassRegistration<classname>(#classname);
 
 	/**
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes
@@ -22,64 +22,47 @@ namespace chaos
 		YES = 1
 	};
 
+	/** 
+	 * ClassRegistration : a registration block for one class 
+	 */
+	class ClassRegistration
+	{
+		friend class ClassTools;
+
+	public:
+
+		/** method to create an instance of the object */
+		void* CreateInstance() const
+		{
+			if (create_instance_func)
+				return create_instance_func();
+			return nullptr;
+		}
+
+		/** returns whether the class has been registered */
+		bool IsRegistered() const
+		{
+			return (class_name.length() > 0);
+		}
+
+	protected:
+
+		/** the parent of the class */
+		ClassRegistration const* parent = nullptr;
+		/** get class size */
+		size_t size = 0;
+		/** the optional name of the class */
+		std::string class_name;
+		/** create an instance of the object delegate */
+		std::function<void* ()> create_instance_func;
+	};
+
 	/**
-	 *
+	 * ClassTools
 	 */
 
 	class ClassTools
 	{
-	public:
-
-		/** a registration block for one class */
-		class ClassRegistration
-		{
-			friend class chaos::ClassTools;
-
-		public:
-
-			/** method to create an instance of the object */
-			void* CreateInstance() const
-			{
-				if (create_instance_func)
-					return create_instance_func();
-				return nullptr;
-			}
-
-			/** returns whether the class has been registered */
-			bool IsRegistered() const
-			{
-				return (class_name.length() > 0);
-			}
-
-		protected:
-
-			/** the parent of the class */
-			ClassRegistration const * parent = nullptr;
-			/** get class size */
-			size_t size = 0;
-			/** the optional name of the class */
-			std::string class_name;
-			/** create an instance of the object delegate */
-			std::function<void*()> create_instance_func;
-		};
-
-
-	protected:
-
-		/** get the list of all registrations */
-		static std::vector<ClassRegistration*>& GetClassRegistrationList()
-		{
-			static std::vector<ClassRegistration*> result;
-			return result;
-		}
-
-
-
-
-
-
-
-
 	public:
 
 		/** find a registration by name */
@@ -176,6 +159,15 @@ namespace chaos
 			return InheritanceType::NO;
 		}
 
-	}; // namespace ClassTools
+	protected:
+
+		/** get the list of all registrations */
+		static std::vector<ClassRegistration*>& GetClassRegistrationList()
+		{
+			static std::vector<ClassRegistration*> result;
+			return result;
+		}
+
+	};
 
 }; // namespace chaos

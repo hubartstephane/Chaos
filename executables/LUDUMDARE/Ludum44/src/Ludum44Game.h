@@ -76,8 +76,6 @@ protected:
 
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
-	/** override */
-	virtual bool DeclareParticleClasses() override;
 
 	/** override */
 	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;

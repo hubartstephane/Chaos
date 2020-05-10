@@ -478,7 +478,7 @@ public:
 		bool IsVisible() const;
 
 		/** returns the ID representing the class of the particle */
-		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
+		virtual ClassRegistration const * GetParticleClass() const { return nullptr; }
 
 		/** get the size of one particle */
 		virtual size_t GetParticleSize() const { return 0; }
@@ -613,7 +613,7 @@ public:
         {
         }
 		/** override */
-		virtual ClassTools::ClassRegistration const * GetParticleClass() const override
+		virtual ClassRegistration const * GetParticleClass() const override
 		{
 			return ClassTools::GetClassRegistration<particle_type>();
 		}
@@ -930,7 +930,7 @@ public:
 		virtual bool AreParticlesDynamic() const { return true; }
 
 		/** get the particle ID for this system */
-		virtual ClassTools::ClassRegistration const * GetParticleClass() const { return nullptr; }
+		virtual ClassRegistration const * GetParticleClass() const { return nullptr; }
 
 		/** returns true whether the particle type is the one given as template parameter */
 		template<typename T>
@@ -1114,7 +1114,7 @@ public:
 			return true;
 		}
 		/** override */
-		virtual ClassTools::ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
+		virtual ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
 		/** override */
 		virtual GPUVertexDeclaration * GetVertexDeclaration() const override 
 		{

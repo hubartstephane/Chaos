@@ -52,8 +52,6 @@ protected:
 
 	/** override */
 	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
-	/** override */
-	virtual bool DeclareParticleClasses() override;
 
 	/** override */
 	virtual void OnEnterMainMenu(bool very_first) override;

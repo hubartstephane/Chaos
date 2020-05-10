@@ -1,16 +1,30 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/AllocatorTools.h>
+#include <chaos/StringTools.h>
 
 namespace chaos
 {
+	/**
+	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
+	 */
+
+#define CHAOS_REGISTER_CLASS(classname) inline ClassRegistration * classname##_register = chaos::ClassTools::InsertClassRegistration<classname)(#classname);
+
+	/**
+	 * InheritanceType : the kind if inheritance that can exist between 2 classes
+	 */
+
 	enum class InheritanceType : int
 	{
 		UNKNOWN = -1,
 		NO = 0,
 		YES = 1
 	};
+
+	/**
+	 *
+	 */
 
 	class ClassTools
 	{
@@ -21,87 +35,97 @@ namespace chaos
 		{
 			friend class chaos::ClassTools;
 
-		protected:
+		public:
 
-			/** constructor */
-			ClassRegistration(size_t in_size):
-				size(in_size){}
+			/** method to create an instance of the object */
+			void* CreateInstance() const
+			{
+				if (create_instance_func)
+					return create_instance_func();
+				return nullptr;
+			}
+
+			/** returns whether the class has been registered */
+			bool IsRegistered() const
+			{
+				return (class_name.length() > 0);
+			}
+
+		protected:
 
 			/** the parent of the class */
 			ClassRegistration const * parent = nullptr;
-			/** whether the class has been registered */
-			bool registered = false;
 			/** get class size */
 			size_t size = 0;
 			/** the optional name of the class */
 			std::string class_name;
+			/** create an instance of the object delegate */
+			std::function<void*()> create_instance_func;
 		};
+
 
 	protected:
 
-		/** a fake class to declare that a class has no parent */
-		class NoParent {};
-
-		/** internal method to have the registration instance for a given class */
-		template<typename T>
-		static ClassRegistration * GetClassRegistrationInstanceHelper()
+		/** get the list of all registrations */
+		static std::vector<ClassRegistration*>& GetClassRegistrationList()
 		{
-			static ClassRegistration registration(sizeof(T));
-			return &registration;
+			static std::vector<ClassRegistration*> result;
+			return result;
 		}
 
-		/** internal method to have the registration instance for a given class */
-		template<typename T>
-		static ClassRegistration * GetClassRegistrationInstance()
-		{
-			return GetClassRegistrationInstanceHelper<boost::remove_const<T>::type>();
-		}
 
-		/** initialize a class registration when no parent */
-		static void InitializeRegistration(ClassRegistration * registration, char const * in_class_name, boost::mpl::identity<NoParent>)
-		{
-			registration->registered = true;
-			if (in_class_name != nullptr)
-				registration->class_name = in_class_name;
-		}
 
-		/** initialize a class registration when one parent */
-		template<typename PARENT>
-		static void InitializeRegistration(ClassRegistration * registration, char const * in_class_name, boost::mpl::identity<PARENT>)
-		{
-			registration->parent = GetClassRegistration<PARENT>();
-			registration->registered = true;
-			if (in_class_name != nullptr)
-				registration->class_name = in_class_name;
-		}
+
+
+
+
 
 	public:
 
-		/** internal method to have the registration instance for a given class */
-		template<typename T>
-		static ClassRegistration const * GetClassRegistration()
+		/** find a registration by name */
+		static ClassRegistration* GetClassRegistration(char const * class_name)
 		{
-			return GetClassRegistrationInstance<T>();
+			assert(class_name != nullptr && strlen(class_name) > 0);
+			for (ClassRegistration* registration : GetClassRegistrationList())
+				if (StringTools::Strcmp(class_name, registration->class_name) == 0)
+					return registration;
+			return nullptr;
 		}
 
-		/** declare a class and its parent */
-		template<typename T, typename PARENT = NoParent>
-		static int DeclareClass(char const * in_class_name = nullptr)
+		/** find a registration by type */
+		template<typename CLASS_TYPE>
+		static ClassRegistration* GetClassRegistration()
 		{
-			assert(sizeof(T) >= sizeof(PARENT)); // NoParent is the smaller class as possible. This should work too
-
-			ClassRegistration * registration = GetClassRegistrationInstance<T>();
-			assert(!registration->registered);
-			InitializeRegistration(registration, in_class_name, boost::mpl::identity<PARENT>());
-			return 0;
+			static ClassRegistration result;
+			return &result;
 		}
 
+		/** register a class */
+		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = chaos::EmptyClass>
+		static ClassRegistration* InsertClassRegistration(char const* class_name)
+		{
+			// check parameter and not already registered
+			assert(class_name != nullptr && strlen(class_name) > 0);
+			assert(GetClassRegistration(class_name) == nullptr);
+
+			ClassRegistration* result = GetClassRegistration<CLASS_TYPE>();
+			if (result != nullptr)
+			{
+				result->class_name = class_name;
+				result->size = sizeof(CLASS_TYPE);
+				result->create_instance_func = []() { return new CLASS_TYPE; };
+
+				GetClassRegistrationList().push_back(result);
+			}		
+			return result;
+		}
+		
 		/** returns true whether a class has been declared */
 		template<typename T>
 		static bool IsClassDeclared()
 		{
 			ClassRegistration const * registration = GetClassRegistration<T>();
-			return registration->registered;
+			return registration->IsRegistered();
 		}
 
 		/** returns whether 2 classes are known to be parents of one another */
@@ -125,11 +149,7 @@ namespace chaos
 				return InheritanceType::NO;
 
 			// class not registered, cannot known result
-			if (!child_registration->registered)
-				return InheritanceType::UNKNOWN;
-
-			// class not registered, cannot known result
-			if (!parent_registration->registered)
+			if (!child_registration->IsRegistered() || !parent_registration->IsRegistered())
 				return InheritanceType::UNKNOWN;
 
 			// returns no if classes are same and we don't accept that as a valid result
@@ -143,14 +163,14 @@ namespace chaos
 			// from top to root in the hierarchy
 			for (child_registration = child_registration->parent; child_registration != nullptr; child_registration = child_registration->parent)
 			{
-				// fast test on the size
-				if (child_registration->size < parent_registration->size)
-					return InheritanceType::NO;
 				// found the searched parent
 				if (child_registration == parent_registration)
 					return InheritanceType::YES;
+				// fast test on the size
+				if (child_registration->size < parent_registration->size)
+					return InheritanceType::NO;
 				// unintialized class
-				if (!child_registration->registered)
+				if (!child_registration->IsRegistered())
 					return InheritanceType::UNKNOWN;
 			}
 			return InheritanceType::NO;

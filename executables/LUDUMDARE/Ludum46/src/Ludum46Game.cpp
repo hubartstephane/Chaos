@@ -60,12 +60,12 @@ bool LudumGame::DeclareParticleClasses()
 {
 	if (!Game::DeclareParticleClasses())
 		return false;
-	chaos::ClassTools::DeclareClass<ParticleAnimated, ParticleBase>("ParticleAnimated");
-	chaos::ClassTools::DeclareClass<ParticlePlayer, ParticleAnimated>("ParticlePlayer");
-	chaos::ClassTools::DeclareClass<ParticleFire, ParticleBase>("ParticleFire");
-	chaos::ClassTools::DeclareClass<ParticleSoul, ParticleBase>("ParticleSoul");
-	chaos::ClassTools::DeclareClass<ParticleBlood, ParticleAnimated>("ParticleBlood");
-	chaos::ClassTools::DeclareClass<ParticleBurnedSoul, ParticleBlood>("ParticleBurnedSoul");
+	chaos::ClassTools::InsertClassRegistration<ParticleAnimated, ParticleBase>("ParticleAnimated");
+	chaos::ClassTools::InsertClassRegistration<ParticlePlayer, ParticleAnimated>("ParticlePlayer");
+	chaos::ClassTools::InsertClassRegistration<ParticleFire, ParticleBase>("ParticleFire");
+	chaos::ClassTools::InsertClassRegistration<ParticleSoul, ParticleBase>("ParticleSoul");
+	chaos::ClassTools::InsertClassRegistration<ParticleBlood, ParticleAnimated>("ParticleBlood");
+	chaos::ClassTools::InsertClassRegistration<ParticleBurnedSoul, ParticleBlood>("ParticleBurnedSoul");
 	
 	return true;
 }

@@ -53,19 +53,6 @@ chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 	return new LudumStateMachine(this);
 }
 
-bool LudumGame::DeclareParticleClasses()
-{
-	if (!Game::DeclareParticleClasses())
-		return false;
-	chaos::ClassTools::InsertClassRegistration<ParticlePowerUpZone, chaos::ParticleDefault>("ParticlePowerUpZone");
-	chaos::ClassTools::InsertClassRegistration<ParticlePlayer, ParticleBase>("ParticlePlayer");
-	chaos::ClassTools::InsertClassRegistration<ParticleEnemy, ParticleBase>("ParticleEnemy");
-	chaos::ClassTools::InsertClassRegistration<ParticleFire, ParticleBase>("ParticleFire");
-	chaos::ClassTools::InsertClassRegistration<ParticleLife, chaos::ParticleDefault>("ParticleLife");
-	chaos::ClassTools::InsertClassRegistration<ParticleExplosion, chaos::ParticleDefault>("ParticleExplosion");
-	return true;
-}
-
 template<typename T>
 static bool InitializeGameValueVector(char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path, std::vector<T> & result)
 {

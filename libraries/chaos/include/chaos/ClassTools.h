@@ -16,8 +16,6 @@ namespace chaos
 	{
 	public:
 
-
-
 		/** a registration block for one class */
 		class ClassRegistration
 		{
@@ -90,7 +88,7 @@ namespace chaos
 		template<typename T, typename PARENT = NoParent>
 		static int DeclareClass(char const * in_class_name = nullptr)
 		{
-			assert(sizeof(T) >= sizeof(PARENT)); // NoParent is the sorted class as possible. This should work too
+			assert(sizeof(T) >= sizeof(PARENT)); // NoParent is the smaller class as possible. This should work too
 
 			ClassRegistration * registration = GetClassRegistrationInstance<T>();
 			assert(!registration->registered);
@@ -157,24 +155,6 @@ namespace chaos
 			}
 			return InheritanceType::NO;
 		}
-
-		/** GetClassID : returns a unique ID given a class */
-		template<typename T>
-		static uintptr_t GetClassID()
-		{
-			return (uintptr_t)GetClassRegistration<T>();
-		};
-
-		/** Aligned16 : base class for children that want to be 16 aligned */
-		class Aligned16
-		{
-		public:
-
-			/** the new operator */
-			void * operator new (size_t size){ return AllocatorTools::Aligned16Alloc(size);}
-			/** the delete operator */
-			void operator delete(void * ptr){ AllocatorTools::Aligned16Free(ptr);}
-		};
 
 	}; // namespace ClassTools
 

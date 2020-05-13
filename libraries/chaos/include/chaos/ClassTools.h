@@ -35,18 +35,9 @@ namespace chaos
 	public:
 
 		/** method to create an instance of the object */
-		void* CreateInstance() const
-		{
-			if (create_instance_func)
-				return create_instance_func();
-			return nullptr;
-		}
-
+		void* CreateInstance() const;
 		/** returns whether the class has been registered */
-		bool IsRegistered() const
-		{
-			return (class_name.length() > 0);
-		}
+		bool IsRegistered() const;
 
 	protected:
 
@@ -69,14 +60,7 @@ namespace chaos
 	public:
 
 		/** find a registration by name */
-		static ClassRegistration* GetClassRegistration(char const * class_name)
-		{
-			assert(class_name != nullptr && strlen(class_name) > 0);
-			for (ClassRegistration* registration : GetClassRegistrationList())
-				if (StringTools::Strcmp(class_name, registration->class_name) == 0)
-					return registration;
-			return nullptr;
-		}
+		static ClassRegistration* GetClassRegistration(char const* class_name);
 
 		/** find a registration by type */
 		template<typename CLASS_TYPE>
@@ -129,51 +113,12 @@ namespace chaos
 		}
 
 		/** returns whether 2 classes are known to be parents of one another */
-		static InheritanceType InheritsFrom(ClassRegistration const * child_registration, ClassRegistration const * parent_registration, bool accept_equal = false)
-		{
-			assert(child_registration != nullptr);
-			assert(parent_registration != nullptr);
-
-			// fast test on the size
-			if (child_registration->size < parent_registration->size)
-				return InheritanceType::NO;
-
-			// class not registered, cannot known result
-			if (!child_registration->IsRegistered() || !parent_registration->IsRegistered())
-				return InheritanceType::UNKNOWN;
-
-			// returns no if classes are same and we don't accept that as a valid result
-			if (child_registration == parent_registration)
-			{
-				if (!accept_equal)
-					return InheritanceType::NO;
-				else
-					return InheritanceType::YES;
-			}
-			// from top to root in the hierarchy
-			for (child_registration = child_registration->parent; child_registration != nullptr; child_registration = child_registration->parent)
-			{
-				// found the searched parent
-				if (child_registration == parent_registration)
-					return InheritanceType::YES;
-				// fast test on the size
-				if (child_registration->size < parent_registration->size)
-					return InheritanceType::NO;
-				// unintialized class
-				if (!child_registration->IsRegistered())
-					return InheritanceType::UNKNOWN;
-			}
-			return InheritanceType::NO;
-		}
+		static InheritanceType InheritsFrom(ClassRegistration const* child_registration, ClassRegistration const* parent_registration, bool accept_equal = false);
 
 	protected:
 
 		/** get the list of all registrations */
-		static std::vector<ClassRegistration*>& GetClassRegistrationList()
-		{
-			static std::vector<ClassRegistration*> result;
-			return result;
-		}
+		static std::vector<ClassRegistration*>& GetClassRegistrationList();
 
 	};
 

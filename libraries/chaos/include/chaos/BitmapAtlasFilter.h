@@ -2,6 +2,8 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/ImageProcessor.h>
+#include <chaos/JSONTools.h>
+#include <chaos/ClassTools.h>
 #include <chaos/ReferencedObject.h>
 
 namespace chaos
@@ -20,7 +22,15 @@ namespace chaos
 			virtual bool AcceptBitmap(class BitmapInfoInput const* input) const;
 			/** whether the processing is to be done on the font */
 			virtual bool AcceptFont(class FontInfoInput const* input) const;
+
+			/** loading method from JSON */
+			virtual bool LoadFromJSON(nlohmann::json const& entry);
+			/** saving method from JSON */
+			virtual bool SaveIntoJSON(nlohmann::json& entry) const;
 		};
+
+		CHAOS_REGISTER_CLASS1(BitmapAtlasFilterCondition);
+
 
 		/**
 		* BitmapAtlasFilter : check condition on an entry and start the processor
@@ -28,6 +38,14 @@ namespace chaos
 
 		class BitmapAtlasFilter
 		{
+
+		public:
+
+			/** loading method from JSON */
+			virtual bool LoadFromJSON(nlohmann::json const& entry);
+			/** saving method from JSON */
+			virtual bool SaveIntoJSON(nlohmann::json& entry) const;
+
 		public:
 
 			/** the condition for handling the image */
@@ -35,7 +53,6 @@ namespace chaos
 			/** the condition for handling the image */
 			shared_ptr<ImageProcessor> processor;
 		};
-
 
 		/**
 		* BitmapAtlasFilterSet : a whole set of condition/image processor
@@ -49,12 +66,16 @@ namespace chaos
 			/** insert a new filter inside the list */
 			void AddFilter(BitmapAtlasFilterCondition* condition, ImageProcessor* processor);
 
+			/** loading method from JSON */
+			virtual bool LoadFromJSON(nlohmann::json const& entry);
+			/** saving method from JSON */
+			virtual bool SaveIntoJSON(nlohmann::json& entry) const;
+
 		protected:
 
 			/** the filters to apply */
 			std::vector<BitmapAtlasFilter> filters;
 		};
-
 
 	}; // namespace BitmapAtlas
 

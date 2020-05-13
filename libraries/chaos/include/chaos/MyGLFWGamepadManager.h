@@ -524,7 +524,7 @@ namespace chaos
 			/** enable pooling unused inputs */
 			bool pooling_enabled = true;
 
-#if _WIN32 || _WIN64
+#if _WIN64
 			/** the function pointer to use for ForceFeedback */
 			static XINPUT_SET_STATE_FUNC XInputSetStateFunc;
 #endif

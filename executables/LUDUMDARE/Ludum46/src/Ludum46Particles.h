@@ -228,19 +228,10 @@ public:
 	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const;
 };
 
-
-//chaos::ClassTools::InsertClassRegistration<ParticleAnimated, ParticleBase>("ParticleAnimated");
-//chaos::ClassTools::InsertClassRegistration<ParticlePlayer, ParticleAnimated>("ParticlePlayer");
-//chaos::ClassTools::InsertClassRegistration<ParticleFire, ParticleBase>("ParticleFire");
-//chaos::ClassTools::InsertClassRegistration<ParticleSoul, ParticleBase>("ParticleSoul");
-//chaos::ClassTools::InsertClassRegistration<ParticleBlood, ParticleAnimated>("ParticleBlood");
-//chaos::ClassTools::InsertClassRegistration<ParticleBurnedSoul, ParticleBlood>("ParticleBurnedSoul");
-
-
-CHAOS_REGISTER_CLASS(ParticleAnimated);
-CHAOS_REGISTER_CLASS(ParticlePlayer);
-CHAOS_REGISTER_CLASS(ParticleFire);
-CHAOS_REGISTER_CLASS(ParticleSoul);
-CHAOS_REGISTER_CLASS(ParticleBlood);
-CHAOS_REGISTER_CLASS(ParticleBurnedSoul);
+CHAOS_REGISTER_CLASS2(ParticleAnimated, ParticleBase);
+CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);
+CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase);
+CHAOS_REGISTER_CLASS2(ParticleSoul, ParticleBase);
+CHAOS_REGISTER_CLASS2(ParticleBlood, ParticleAnimated);
+CHAOS_REGISTER_CLASS2(ParticleBurnedSoul, ParticleBlood);
 

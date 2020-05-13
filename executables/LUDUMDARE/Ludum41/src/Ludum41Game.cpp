@@ -52,17 +52,6 @@ chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 	return new LudumStateMachine(this);
 }
 
-bool LudumGame::DeclareParticleClasses()
-{
-	if (!Game::DeclareParticleClasses())
-		return false;
-	chaos::ClassTools::DeclareClass<ParticleObject>("ParticleObject");
-	chaos::ClassTools::DeclareClass<ParticleBrick, ParticleObject>("ParticleBrick");
-	chaos::ClassTools::DeclareClass<ParticleMovableObject, ParticleObject>("ParticleMovableObject");
-	chaos::ClassTools::DeclareClass<ParticleChallenge, ParticleObject>("ParticleChallenge");
-	return true;
-}
-
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))

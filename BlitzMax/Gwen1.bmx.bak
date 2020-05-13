@@ -7,17 +7,34 @@ Local Image:TImage = LoadImage("voiture.png")
 
 Local diametre = 30
 
-Local X% = 100
-
+Local X = 0
 While Not AppTerminate()
 
 	Cls
 	
 		DrawImage image, X, 100
+		
+		
+		
+		If KeyDown(Key_O) Then
+		o
+		End If
 
+
+		
+		If X > 800 Then 
+			X = 0
+		End If		
 
 	Flip
 	
 
 
 Wend
+
+
+
+Rem
+
+
+End Rem

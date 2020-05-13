@@ -3,6 +3,7 @@
 
 #include "Ludum46Game.h"
 
+
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 	chaos::MyGLFW::SingleWindowApplicationParams params;

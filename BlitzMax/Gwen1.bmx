@@ -13,14 +13,28 @@ While Not AppTerminate()
 	Cls
 	
 		DrawImage image, X, 100
+		
+		
+		
+		If KeyDown(Key_O) Then
+		
+		End If
 
-		x = x + 1
-		If x > 800 Then 
-			x = 0
-		End if
+
+		
+		If X > 800 Then 
+			X = 0
+		End If		
 
 	Flip
 	
 
 
 Wend
+
+
+
+Rem
+
+
+End Rem

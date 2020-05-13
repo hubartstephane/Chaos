@@ -5,6 +5,7 @@
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
 #include <chaos/PrimitiveOutput.h> 
+#include <chaos/ClassTools.h> 
 
 #include <death/Game.h> 
 
@@ -143,4 +144,7 @@ public:
 };
 
 
-
+CHAOS_REGISTER_CLASS1(ParticleObject)
+CHAOS_REGISTER_CLASS2(ParticleBrick, ParticleObject)
+CHAOS_REGISTER_CLASS2(ParticleMovableObject, ParticleObject)
+CHAOS_REGISTER_CLASS2(ParticleChallenge, ParticleObject)

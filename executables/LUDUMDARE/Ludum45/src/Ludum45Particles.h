@@ -89,7 +89,7 @@ public:
 
 	float  orientation = 0.0f;
 	float  image_timer = 0.0f;
-	size_t current_frame = 0;
+	int    current_frame = 0;
 
 	int enemy_particle_count = 0;
 
@@ -252,19 +252,9 @@ public:
 	bool UpdateParticle(float delta_time, ParticleExplosion & particle, LayerTrait const * layer_trait) const;
 };
 
-
-
-CHAOS_REGISTER_CLASS(ParticlePlayer)
-CHAOS_REGISTER_CLASS(ParticleFire)
-CHAOS_REGISTER_CLASS(ParticleBonus)
-CHAOS_REGISTER_CLASS(ParticleEnemy)
-CHAOS_REGISTER_CLASS(ParticleExplosion)
-
-#if 0
-	chaos::ClassTools::InsertClassRegistration<ParticlePlayer, ParticleBase>("ParticlePlayer");
-	chaos::ClassTools::InsertClassRegistration<ParticleFire, ParticleBase>("ParticleFire");
-	chaos::ClassTools::InsertClassRegistration<ParticleBonus, ParticleBase>("ParticleBonus");
-	chaos::ClassTools::InsertClassRegistration<ParticleEnemy, ParticleBase>("ParticleEnemy");
-	chaos::ClassTools::InsertClassRegistration<ParticleExplosion, chaos::ParticleDefault>("ParticleExplosion");
-#endif
+CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleBonus, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleEnemy, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleExplosion, chaos::ParticleDefault)
 

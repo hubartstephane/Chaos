@@ -12,6 +12,18 @@ namespace chaos
 		// BitmapAtlasFilterCondition methods
 		// ==========================================================================
 
+		bool BitmapAtlasFilterCondition::LoadFromJSON(nlohmann::json const& entry)
+		{
+
+			return true;
+		}
+
+		bool BitmapAtlasFilterCondition::SaveIntoJSON(nlohmann::json& entry) const
+		{
+
+			return true;
+		}
+
 		bool BitmapAtlasFilterCondition::AcceptBitmap(BitmapInfoInput const* input) const
 		{
 			return true;
@@ -73,8 +85,39 @@ namespace chaos
 
 #endif
 
+		// ==========================================================================
+		// BitmapAtlasFilter methods
+		// ==========================================================================
 
+		bool BitmapAtlasFilter::LoadFromJSON(nlohmann::json const& entry)
+		{
+			JSONTools::GetAttribute(entry, "condition", condition);
+			JSONTools::GetAttribute(entry, "processor", processor);
+			return true;
+		}
 
+		bool BitmapAtlasFilter::SaveIntoJSON(nlohmann::json& entry) const
+		{
+			JSONTools::SetAttribute(entry, "condition", condition);
+			JSONTools::SetAttribute(entry, "processor", processor);
+			return true;
+		}
+
+		// ==========================================================================
+		// BitmapAtlasFilterSet methods
+		// ==========================================================================
+
+		bool BitmapAtlasFilterSet::LoadFromJSON(nlohmann::json const& entry)
+		{
+			JSONTools::GetAttribute(entry, "filters", filters);
+			return true;
+		}
+
+		bool BitmapAtlasFilterSet::SaveIntoJSON(nlohmann::json& entry) const
+		{
+			JSONTools::SetAttribute(entry, "filters", filters);
+			return true;
+		}
 
 
 	}; // namespace BitmapAtlas

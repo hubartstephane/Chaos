@@ -5,6 +5,7 @@
 #include <chaos/Buffer.h>
 #include <chaos/SmartPointers.h>
 #include <chaos/StringTools.h>
+#include <chaos/ClassTools.h>
 #include <chaos/EnumTools.h>
 #include <chaos/Metaprogramming.h>
 
@@ -87,7 +88,32 @@ namespace chaos
 	{
 		if constexpr (std::is_pointer_v<T>)
 		{
-			T other = new std::remove_pointer_t<T>;
+			using T2 = std::remove_pointer_t<T>;
+
+			// try to make a rich object loading
+			T2* other = nullptr;
+
+			if constexpr (std::is_class_v<T2>)
+			{
+				if (dst == nullptr && entry.is_object)
+				{
+					std::string classname;
+					if (JSONTools::GetAttribute(entry, "__classname__", classname))
+					{
+						chaos::ClassRegistration* registration = chos::ClassTools::GetClassRegistration(classname.c_str());
+						if (registration)
+						{
+							registration = registration;
+
+						}
+					}
+				}
+			}
+
+			// object instanciation
+			if (other == nullptr)
+				other = new T2;
+			// loading
 			if (other == nullptr)
 				return false;
 			if (!LoadFromJSON(entry, *other))

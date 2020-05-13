@@ -5,11 +5,10 @@
 #include <chaos/ImageDescription.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/JSONTools.h>
+#include <chaos/ClassTools.h>
 
 namespace chaos
 {
-
-	//DECLARE_IMAGE_PROCESSOR(ImageProcessor);
 
 	/**
 	* ImageProcessor : take an image as an entry and returns a new image as output
@@ -28,11 +27,11 @@ namespace chaos
 		virtual bool LoadFromJSON(nlohmann::json const& json_entry);
 	};
 
+	CHAOS_REGISTER_CLASS1(ImageProcessor);
+
 	/**
 	* ImageProcessorOutline : add an outline to any image
 	*/
-
-	//DECLARE_IMAGE_PROCESSOR(ImageProcessorOutline);
 
 	class ImageProcessorOutline : public ImageProcessor
 	{
@@ -53,6 +52,8 @@ namespace chaos
 		/** the ouline color */
 		glm::vec4 outline_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	};
+
+	CHAOS_REGISTER_CLASS2(ImageProcessorOutline, ImageProcessor);
 
 
 }; // namespace chaos

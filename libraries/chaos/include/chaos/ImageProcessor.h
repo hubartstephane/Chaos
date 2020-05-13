@@ -28,11 +28,6 @@ namespace chaos
 		virtual bool LoadFromJSON(nlohmann::json const& json_entry);
 	};
 
-	/** JSON saving entry point */
-	bool SaveIntoJSON(nlohmann::json& json_entry, ImageProcessor const& src);
-	/** JSON loading entry point */
-	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst);
-
 	/**
 	* ImageProcessorOutline : add an outline to any image
 	*/

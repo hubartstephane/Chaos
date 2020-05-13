@@ -8,20 +8,6 @@ namespace chaos
 {
 
 	// ================================================================
-	// JSON generic functions
-	// ================================================================
-
-	bool SaveIntoJSON(nlohmann::json& json_entry, ImageProcessor const& src)
-	{
-		return src.SaveIntoJSON(json_entry);
-	}
-
-	bool LoadFromJSON(nlohmann::json const& json_entry, ImageProcessor& dst)
-	{
-		return dst.LoadFromJSON(json_entry);
-	}
-
-	// ================================================================
 	// ImageProcessor functions
 	// ================================================================
 

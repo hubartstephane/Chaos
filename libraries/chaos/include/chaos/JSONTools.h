@@ -6,6 +6,7 @@
 #include <chaos/SmartPointers.h>
 #include <chaos/StringTools.h>
 #include <chaos/EnumTools.h>
+#include <chaos/Metaprogramming.h>
 
 // =================
 // Some macros for enum json reading
@@ -25,39 +26,14 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 // EXTERNAL FUNCTION
 // =================
 
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(LoadFromJSON)
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SaveIntoJSON)
+
 namespace chaos
 {
 	/** loading a bool (because we try to read an int as a fallback) */
-	bool LoadFromJSON(nlohmann::json const & entry, bool & dst);
-	/** default template loading (catch exceptions) */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, T & dst)
-	{
-		try
-		{
-			dst = entry.get<T>(); // may throw an exception
-			return true;
-		}
-		catch (...)
-		{
-		}
-		return false;
-	}
-	/** template for raw pointer */
-	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, T * & dst)
-	{
-		T * other = new T;
-		if (other == nullptr)
-			return false;
-		if (!LoadFromJSON(entry, *other))
-		{
-			delete(other);
-			return false;		
-		}
-		dst = other;
-		return true;
-	}
+	bool LoadFromJSON(nlohmann::json const& entry, bool& dst);
+
 	/** template for unique_ptr */
 	template<typename T, typename DELETER>
 	bool LoadFromJSON(nlohmann::json const & entry, std::unique_ptr<T, DELETER> & dst)
@@ -105,28 +81,43 @@ namespace chaos
 		dst.push_back(std::move(element));
 		return true;
 	}
-
+	/** default template loading (catch exceptions) */
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & entry, T src) // copy for basic types
+	bool LoadFromJSON(nlohmann::json const& entry, T& dst)
 	{
-		try
+		if constexpr (std::is_pointer_v<T>)
 		{
-			entry = src;
+			T other = new std::remove_pointer_t<T>;
+			if (other == nullptr)
+				return false;
+			if (!LoadFromJSON(entry, *other))
+			{
+				delete(other);
+				return false;
+			}
+			dst = other;
 			return true;
+		} 	
+		// class has its own implementation
+		else if constexpr (check_method_LoadFromJSON_v<T, nlohmann::json const&>)
+		{
+			return dst.LoadFromJSON(entry);
 		}
-		catch (...)
-		{			
-		}	
-		return false;
+		// for native types
+		else
+		{
+			try
+			{
+				dst = entry.get<T>(); // may throw an exception
+				return true;
+			}
+			catch (...)
+			{
+			}
+			return false;
+		}
 	}
-	/** template for raw pointer */
-	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & entry, T const * src)
-	{
-		if (src == nullptr)
-			return true;
-		return SaveIntoJSON(entry, *src);
-	}
+
 	/** template for unique_ptr */
 	template<typename T, typename DELETER>
 	bool SaveIntoJSON(nlohmann::json & entry, std::unique_ptr<T, DELETER> const & src)
@@ -157,6 +148,33 @@ namespace chaos
 		}
 		return true;
 	}
+	template<typename T>
+	bool SaveIntoJSON(nlohmann::json& entry, T const& src) // copy for basic types
+	{
+		// check for pointer
+		if constexpr (std::is_pointer_v<T>)
+		{
+			return SaveIntoJSON(entry, *src);
+		}
+		// class has its own implementation
+		else if constexpr (check_method_SaveIntoJSON_v<T const, nlohmann::json&>)
+		{
+			return src.SaveIntoJSON(entry);
+		}
+		// for native types
+		else
+		{
+			try
+			{
+				entry = src;
+				return true;
+			}
+			catch (...)
+			{
+			}
+			return false;
+		}
+	}
 
 	/** enumeration method */
 	template<typename T, typename ENCODE_TABLE>	
@@ -178,7 +196,6 @@ namespace chaos
 			return false;
 		return true;
 	}
-
 
 	// =================
 	// JSONTools

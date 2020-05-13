@@ -172,10 +172,23 @@ int _bb_main(){
 			struct BBDebugStm __stmt_1 = {0x7febf9c48ae25513, 15, 0};
 			bbOnDebugEnterStm(&__stmt_1);
 			brl_max2d_DrawImage((struct brl_max2d_image_TImage_obj*)bbt_Image,((BBFLOAT)bbt_X),100.000000f,0);
-			struct BBDebugStm __stmt_2 = {0x7febf9c48ae25513, 17, 0};
+			struct BBDebugStm __stmt_2 = {0x7febf9c48ae25513, 19, 0};
 			bbOnDebugEnterStm(&__stmt_2);
-			bbt_X=(bbt_X+1);
-			struct BBDebugStm __stmt_3 = {0x7febf9c48ae25513, 18, 0};
+			if(brl_polledinput_KeyDown(79)!=0){
+				struct BBDebugScope __scope = {
+					BBDEBUGSCOPE_LOCALBLOCK,
+					0,
+					{
+						BBDEBUGDECL_END 
+					}
+				};
+				bbOnDebugEnterScope(&__scope);
+				struct BBDebugStm __stmt_0 = {0x7febf9c48ae25513, 21, 0};
+				bbOnDebugEnterStm(&__stmt_0);
+				bbt_X=(bbt_X+5);
+				bbOnDebugLeaveScope();
+			}
+			struct BBDebugStm __stmt_3 = {0x7febf9c48ae25513, 27, 0};
 			bbOnDebugEnterStm(&__stmt_3);
 			if(bbt_X>800){
 				struct BBDebugScope __scope = {
@@ -186,12 +199,12 @@ int _bb_main(){
 					}
 				};
 				bbOnDebugEnterScope(&__scope);
-				struct BBDebugStm __stmt_0 = {0x7febf9c48ae25513, 19, 0};
+				struct BBDebugStm __stmt_0 = {0x7febf9c48ae25513, 28, 0};
 				bbOnDebugEnterStm(&__stmt_0);
 				bbt_X=0;
 				bbOnDebugLeaveScope();
 			}
-			struct BBDebugStm __stmt_4 = {0x7febf9c48ae25513, 22, 0};
+			struct BBDebugStm __stmt_4 = {0x7febf9c48ae25513, 31, 0};
 			bbOnDebugEnterStm(&__stmt_4);
 			brl_graphics_Flip(-1);
 			bbOnDebugLeaveScope();

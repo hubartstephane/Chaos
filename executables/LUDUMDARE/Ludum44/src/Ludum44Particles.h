@@ -242,19 +242,11 @@ public:
 };
 
 
-CHAOS_REGISTER_CLASS(ParticlePowerUpZone)
-CHAOS_REGISTER_CLASS(ParticlePlayer)
-CHAOS_REGISTER_CLASS(ParticleEnemy)
-CHAOS_REGISTER_CLASS(ParticleFire)
-CHAOS_REGISTER_CLASS(ParticleLife)
-CHAOS_REGISTER_CLASS(ParticleExplosion)
+CHAOS_REGISTER_CLASS2(ParticlePowerUpZone, chaos::ParticleDefault)
+CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleEnemy, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleLife, chaos::ParticleDefault)
+CHAOS_REGISTER_CLASS2(ParticleExplosion, chaos::ParticleDefault)
 
-#if 0
-	chaos::ClassTools::InsertClassRegistration<ParticlePowerUpZone, chaos::ParticleDefault>("ParticlePowerUpZone");
-	chaos::ClassTools::InsertClassRegistration<ParticlePlayer, ParticleBase>("ParticlePlayer");
-	chaos::ClassTools::InsertClassRegistration<ParticleEnemy, ParticleBase>("ParticleEnemy");
-	chaos::ClassTools::InsertClassRegistration<ParticleFire, ParticleBase>("ParticleFire");
-	chaos::ClassTools::InsertClassRegistration<ParticleLife, chaos::ParticleDefault>("ParticleLife");
-	chaos::ClassTools::InsertClassRegistration<ParticleExplosion, chaos::ParticleDefault>("ParticleExplosion");
-#endif
 

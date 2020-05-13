@@ -561,7 +561,7 @@ namespace chaos
 #endif
             if (!IsPresent())
                 return;
-#if _WIN32 || _WIN64
+#if _WIN64
             if (GamepadManager::XInputSetStateFunc == nullptr)
                 return;
 
@@ -644,14 +644,14 @@ namespace chaos
 		// GamepadManager functions
 		//
 
-#if _WIN32 || _WIN64
+#if _WIN64
         GamepadManager::XINPUT_SET_STATE_FUNC GamepadManager::XInputSetStateFunc = nullptr;
 #endif
 
 		GamepadManager::GamepadManager(float in_dead_zone) : dead_zone(in_dead_zone)
 		{
             // load manually module so that this work on windows 7 & windows +
-#if _WIN32 || _WIN64
+#if _WIN64
             if (XInputSetStateFunc == nullptr)
             {
                 HMODULE hModule = LoadLibrary("XInput1_4.dll"); // try to load both library

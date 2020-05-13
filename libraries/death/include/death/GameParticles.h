@@ -30,7 +30,7 @@ namespace death
         void ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const;
 	};
 
-	CHAOS_REGISTER_CLASS(ParticleBackground);
+	CHAOS_REGISTER_CLASS1(ParticleBackground);
 
 }; //namespace death
 

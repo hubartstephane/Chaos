@@ -995,6 +995,10 @@ namespace death
 			TiledMapGeometricObject* result = factory(geometric_object);
 			if (result != nullptr)
 			{
+				// shu46 : 4 lists ! isn't it worth to merge some
+
+
+
 				if (TiledMapTriggerObject* trigger = auto_cast(result))
 					trigger_objects.push_back(trigger);
 				else if (TiledMapPlayerStartObject* player_start = auto_cast(result))
@@ -1260,6 +1264,18 @@ namespace death
 		return true;
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
 	void TiledMapLayerInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, chaos::box2 const* pawn_box)
 	{
 		// layer accept collision with player
@@ -1279,6 +1295,16 @@ namespace death
 			return (player_pawn->GetAllocation() != allocation); // player does not collide itself
 		});
 	}
+
+
+
+
+
+
+
+
+
+
 
 	void TiledMapLayerInstance::HandlePlayerAndCameraCollision(float delta_time)
 	{
@@ -1310,12 +1336,12 @@ namespace death
 		// compute collision with camera
 		if (AreCameraCollisionEnabled())
 		{
-			Camera const* camera = game->GetCamera(0);
+			Camera const* camera = game->GetCamera(0); // shu46 : multiple camera, multiple view
 			if (camera != nullptr)
 			{
 				chaos::box2 camera_box = camera->GetCameraBox(true);
 				if (!IsGeometryEmpty(camera_box))
-					HandleCameraCollisionWithSurfaceTriggers(delta_time, camera_box);
+					HandleCameraCollisionWithSurfaceTriggers(delta_time, camera_box); // shu46 add Camera reference
 			}
 		}
 	}
@@ -1337,6 +1363,16 @@ namespace death
 
 	bool TiledMapLayerInstance::HandleCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box)
 	{
+		// shu46
+
+
+
+
+
+
+
+
+
 		// the new colliding triggers
 		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
 
@@ -1394,6 +1430,14 @@ namespace death
 
 	bool TiledMapLayerInstance::HandlePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player)
 	{
+		// shu46
+
+
+
+
+
+
+
 		// the new colliding triggers
 		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
 		// the previous colliding triggers
@@ -1463,8 +1507,27 @@ namespace death
 			new_record.triggers = std::move(new_triggers);
 			collision_records.push_back(std::move(new_record));
 		}
+
+
+
+
+
+
+
+
+
 		return true; // continue other collisions 
 	}
+
+	
+
+
+
+
+
+
+
+
 
 	void TiledMapLayerInstance::FindTileCollisions(std::vector<TileParticleCollisionInfo> & result, chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func)
 	{
@@ -2218,6 +2281,150 @@ namespace death
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->OnLevelStarted();
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// =====================================
+	// TiledMapTileCollisionIterator implementation
+	// =====================================
+
+	TiledMapTileCollisionIterator::TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+		level_instance(in_level_instance),
+		collision_box(in_collision_box),
+		collision_mask(in_collision_mask)
+	{
+		assert(in_level_instance != nullptr);
+		assert(collision_mask != 0);
+		assert(!chaos::IsGeometryEmpty(in_collision_box));
+
+		FindFirstCollision();
+	}
+
+	TileCollisionInfo TiledMapTileCollisionIterator::operator *() const
+	{
+		assert(level_instance != nullptr); // end already reached. cannot indirect
+
+
+
+		return TileCollisionInfo();
+	}
+
+	// indirection
+	TileCollisionInfo* TiledMapTileCollisionIterator::operator ->() const
+	{
+		assert(level_instance != nullptr); // end already reached. cannot indirect
+
+
+
+
+		return nullptr;
+	}
+
+	// pre increment iterator
+	void TiledMapTileCollisionIterator::FindFirstCollision()
+	{
+		assert(level_instance != nullptr); // end already reached. cannot go further
+
+		if (level_instance != nullptr)
+		{
+			while (layer_instance_index < level_instance->layer_instances.size())
+			{	
+				TiledMapLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
+
+				if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
+				{
+					chaos::ParticleLayerBase* particle_layer = layer_instance->particle_layer.get();
+
+					if (particle_layer != nullptr)
+					{
+						while (allocation_index < particle_layer->GetAllocationCount())
+						{
+							chaos::ParticleAllocationBase* allocation = particle_layer->GetAllocation(allocation_index);
+
+							if (allocation != nullptr)
+							{
+								chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->GetParticleAccessor(0, 0);
+
+								if (particle_index < accessor.GetCount())
+								{
+									death::TiledMapParticle* particle = &accessor[particle_index];
+
+									if (chaos::Collide(collision_box, particle->bounding_box))
+									{
+
+										return;
+									}
+								}
+								// next particle
+								++particle_index;
+							}
+							// next allocation
+							++allocation_index;
+							particle_index = 0;
+						}
+					}	
+				}	
+				// next layer
+				++layer_instance_index;
+				allocation_index = 0;
+				particle_index = 0;
+			}
+			// no collision found, end of the iterator
+			level_instance = nullptr; 
+			layer_instance_index = 0;
+			allocation_index = 0;
+			particle_index = 0;
+		}
+	}
+
+	TiledMapTileCollisionIterator& TiledMapTileCollisionIterator::operator ++ ()
+	{
+		++particle_index;
+		FindFirstCollision();
+		return *this;
+	}
+
+	TiledMapTileCollisionIterator TiledMapTileCollisionIterator::operator ++ (int i)
+	{
+		TiledMapTileCollisionIterator result = *this;
+		++(*this);
+		return result;
+	}
+
+	bool operator == (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2)
+	{
+		return
+			(src1.level_instance == src2.level_instance) &&
+			(src1.layer_instance_index == src2.layer_instance_index) &&
+			(src1.allocation_index == src2.allocation_index) &&
+			(src1.particle_index == src2.particle_index);
+	}
+
+	bool operator != (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2)
+	{
+		return !(src1 == src2);
+	}
+
 
 
 }; // namespace death

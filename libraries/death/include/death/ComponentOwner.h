@@ -1,7 +1,7 @@
 #pragma once
 
 // XXX : the component/component owner such as Camera/CameraComponent or Player/PlayerComponent is such a common paradigm that it is worth
-//       having some macros prevent code duplication
+//       having some macros preventing code duplication
 
 /** a macro to help inserting code for component owning in class declaration */
 #define DEATH_DECLARE_COMPONENT_OWNER(COMPONENT_CLASS, FUNC_COMPONENT_NAME, VECTOR_NAME)\

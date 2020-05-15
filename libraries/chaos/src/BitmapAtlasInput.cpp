@@ -82,10 +82,10 @@ namespace chaos
 		}
 
 		// ========================================================================
-		// BitmapInfoInputAnimationDescription : an utility class for JSON files coming as image descriptors
+		// BitmapInfoInputManifest : an utility class for JSON files coming as image descriptors
 		// ========================================================================
 
-		class BitmapInfoInputAnimationDescription
+		class BitmapInfoInputManifest
 		{
 		public:
 
@@ -99,9 +99,12 @@ namespace chaos
 			WrapMode default_wrap_mode = WrapMode::none; // let the code decide in a single location (see  BitmapInfo::GetEffectiveRequestWrapMode(...))
 			/** the directory path that contains the child images */
 			boost::filesystem::path images_path;
+
+			/** the image processing to apply */
+			shared_ptr<ImageProcessor> image_processor;
 		};
 
-		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfoInputAnimationDescription const & src)
+		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfoInputManifest const & src)
 		{
 			if (!json_entry.is_object())
 				json_entry = nlohmann::json::object();
@@ -110,10 +113,12 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
 			JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
 			JSONTools::SetAttribute(json_entry, "default_wrap_mode", src.default_wrap_mode);
+
+			JSONTools::SetAttribute(json_entry, "image_processor", src.image_processor);
 			return true;
 		}
 
-		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfoInputAnimationDescription & dst)
+		bool LoadFromJSON(nlohmann::json const & json_entry, BitmapInfoInputManifest & dst)
 		{
 			if (!json_entry.is_object())
 				return false;
@@ -122,6 +127,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "frame_duration", dst.frame_duration);
 			JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
 			JSONTools::GetAttribute(json_entry, "default_wrap_mode", dst.default_wrap_mode);
+			JSONTools::GetAttribute(json_entry, "image_processor", dst.image_processor);
 			return true;
 		}
 
@@ -512,9 +518,9 @@ namespace chaos
                 return nullptr;
 
             // search if there is a JSON file to describe an animation
-            BitmapInfoInputAnimationDescription manifest_animation_description;
+            BitmapInfoInputManifest input_manifest;
             if (json_manifest != nullptr)
-                LoadFromJSON(*json_manifest, manifest_animation_description);
+                LoadFromJSON(*json_manifest, input_manifest);
 
 			// load all pages for the bitmap
             std::vector<FIBITMAP*> pages;            
@@ -529,18 +535,18 @@ namespace chaos
 				return nullptr;
 
 			// prefere JSON settings to name encoded values or GIF meta data for frame rate
-			if (manifest_animation_description.anim_duration > 0.0f)
+			if (input_manifest.anim_duration > 0.0f)
 			{
 				animation_description.frame_duration = -1; // XXX : erase data that can be found in the META data of the image, because this would lead to the 'anim_duration' being ignored at run time
-				animation_description.anim_duration = manifest_animation_description.anim_duration;
+				animation_description.anim_duration = input_manifest.anim_duration;
 			}
-            if (manifest_animation_description.frame_duration > 0.0f)
-                animation_description.frame_duration = manifest_animation_description.frame_duration;
+            if (input_manifest.frame_duration > 0.0f)
+                animation_description.frame_duration = input_manifest.frame_duration;
 
-            if (manifest_animation_description.grid_data.GetFrameCount() > 0)
-                animation_description.grid_data = manifest_animation_description.grid_data;
+            if (input_manifest.grid_data.GetFrameCount() > 0)
+                animation_description.grid_data = input_manifest.grid_data;
 
-			animation_description.default_wrap_mode = manifest_animation_description.default_wrap_mode; // default_wrap_mode is nor encoded into file nor in metadata
+			animation_description.default_wrap_mode = input_manifest.default_wrap_mode; // default_wrap_mode is nor encoded into file nor in metadata
 
             // register resources for destructions			
 			for (size_t i = 0; i < count; ++i)

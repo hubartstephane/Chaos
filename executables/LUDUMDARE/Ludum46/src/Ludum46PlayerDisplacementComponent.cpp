@@ -365,7 +365,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	bool run_pressed = player->CheckButtonPressed(run_key_buttons, chaos::XBoxButton::BUTTON_RIGHTTRIGGER);
 
 
-	int const attaque_key_buttons[] = { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1 };
+	int const attack_key_buttons[] = { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1 };
 
 	// get player position
 	chaos::box2 pawn_box = pawn->GetBox();
@@ -434,6 +434,23 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	death::TiledMapLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 		level_instance->FindPlayerTileCollisions(player, colliding_tiles, &extended_pawn_box);
+
+
+
+	death::TiledMapTileCollisionIterator it(level_instance, extended_pawn_box, 1);
+
+	while (it != death::TiledMapTileCollisionIterator())
+	{
+
+		++it;
+	}
+
+
+
+
+
+
+
 
 	// compute collisions and keep trace of all collided objects
 	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, colliding_tiles);

@@ -41,6 +41,7 @@ namespace death
 (TiledMapObject) \
 (TiledMapLayerInstanceParticlePopulator) \
 (TiledMapPlayerAndTriggerCollisionRecord) \
+(TiledMapTileCollisionIterator)\
 (TiledMapSoundTriggerObject)
 
 		// forward declaration
@@ -810,6 +811,12 @@ namespace death
 		/** whether collisions with tiles are enabled on that layer */
 		bool tile_collisions_enabled = false;
 
+
+		/** the collision mask for that layer */
+		uint64_t collision_mask = 1;
+
+
+
 		/** the current offset */
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 
@@ -832,6 +839,12 @@ namespace death
 		// the checkpoint per LayerBase
 		std::map<int, chaos::shared_ptr<TiledMapLayerCheckpoint>> layer_checkpoints;
 	};
+
+
+
+
+
+
 
 	// =====================================
 	// TiledMapLevelInstance : instance of a Level
@@ -959,6 +972,158 @@ namespace death
 		/** the default render material */
 		chaos::shared_ptr<chaos::GPURenderMaterial> default_material;
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// =====================================
+
+	class TileCollisionInfo
+	{
+	public:
+
+		/** the layer instance concerned by this collision */
+		TiledMapLayerInstance* layer_instance = nullptr;
+		/** the allocation concerned by this collision */
+		chaos::ParticleAllocationBase* allocation = nullptr;
+		/** the particle which with the collision is detected */
+		TiledMapParticle* particle = nullptr;
+		/** some information about the tile information */
+		chaos::TiledMap::TileInfo tile_info;
+	};
+
+	class TiledMapTileCollisionIterator
+	{
+	public:
+
+		/** the default constructor */
+		TiledMapTileCollisionIterator() = default;
+		/** the copy constructor */
+		TiledMapTileCollisionIterator(TiledMapTileCollisionIterator const& src) = default;
+		/** the constructor with initialization */
+		TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+
+		// indirection
+		TileCollisionInfo operator *() const;
+		// indirection
+		TileCollisionInfo* operator ->() const;
+		// pre increment iterator
+		TiledMapTileCollisionIterator& operator ++ ();
+		// post increment iterator
+		TiledMapTileCollisionIterator operator ++ (int i);
+
+		/** comparaison operator */
+		friend bool operator == (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2);
+		/** comparaison operator */
+		friend bool operator != (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2);
+
+	protected:
+
+		/** find the very first collision from given conditions */
+		void FindFirstCollision();
+
+	protected:
+
+		/** the collision mask for iterating over layers */
+		uint64_t collision_mask = 0;
+		/** the collision box */
+		chaos::box2 collision_box;
+
+		/** the level instance of concern */
+		TiledMapLevelInstance* level_instance = nullptr;
+		/** index of the layer */
+		size_t layer_instance_index = 0;
+		/** allocation index in that layer */
+		size_t allocation_index = 0;
+		/** index of the particle in that layer */
+		size_t particle_index = 0;
+	};
+
+
+
+
+
+
+
+	class TiledMapCollisionIterator
+	{
+	public:
+
+		/** the collision mask for iterating over layers */
+		uint64_t collision_mask = 0;
+		/** the collision box */
+		chaos::box2 collision_box;
+
+
+		/** index of the layer */
+		size_t layer_instance_index = 0;
+
+		/** index of player starts for the layer */
+		size_t player_start_index = 0;
+		/** index of camera for the layer */
+		size_t camera_index = 0;
+		/** index of trigger for the layer */
+		size_t trigger_index = 0;
+		/** index of geometric for the layer */
+		size_t geometric_index = 0;
+
+		// pre increment iterator
+		TiledMapCollisionIterator& operator ++ ()
+		{
+
+			return *this;
+		}
+
+		// post increment iterator
+		TiledMapCollisionIterator operator ++ (int i)
+		{
+			TiledMapCollisionIterator result = *this;
+			++(*this);
+			return result;
+		}
+
+
+
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		 // undefine macros
 #undef DEATH_TILEDMAP_CLASSES

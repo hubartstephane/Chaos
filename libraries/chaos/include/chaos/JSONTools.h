@@ -51,6 +51,40 @@ namespace chaos
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & entry, chaos::shared_ptr<T> & dst)
 	{
+		if (entry.is_object())
+		{
+			std::string classname;
+			if (JSONTools::GetAttribute(entry, "__classname__", classname))
+			{
+				chaos::ClassRegistration* json_registration = chaos::ClassTools::GetClassRegistration(classname.c_str());
+				if (json_registration != nullptr)
+				{
+					chaos::ClassRegistration* dst_registration = chaos::ClassTools::GetClassRegistration<T>();
+					if (dst_registration != nullptr)
+					{
+						if (ClassTools::InheritsFrom(json_registration, dst_registration, true) == InheritanceType::YES) // accept equal
+						{
+							T* result = (T*)json_registration->CreateInstance();
+
+							dst_registration = dst_registration;
+						}
+					}
+				}
+				classname = classname;
+			}
+		}
+
+
+
+
+
+
+
+
+
+
+
+
 		chaos::shared_ptr<T> other = new T;
 		if (other == nullptr)
 			return false;
@@ -95,7 +129,7 @@ namespace chaos
 
 			if constexpr (std::is_class_v<T2>)
 			{
-				if (dst == nullptr && entry.is_object)
+				if (dst == nullptr && entry.is_object())
 				{
 					std::string classname;
 					if (JSONTools::GetAttribute(entry, "__classname__", classname))
@@ -177,6 +211,11 @@ namespace chaos
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json& entry, T const& src) // copy for basic types
 	{
+		//std::is_object
+		//if (std::is_polymorphic_v<>)
+
+
+
 		// check for pointer
 		if constexpr (std::is_pointer_v<T>)
 		{

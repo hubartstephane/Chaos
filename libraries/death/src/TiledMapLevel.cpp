@@ -2305,10 +2305,10 @@ namespace death
 
 
 	// =====================================
-	// TiledMapTileCollisionIterator implementation
+	// TileCollisionIterator implementation
 	// =====================================
 
-	TiledMapTileCollisionIterator::TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+	TileCollisionIterator::TileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
 		level_instance(in_level_instance),
 		collision_box(in_collision_box),
 		collision_mask(in_collision_mask)
@@ -2320,28 +2320,19 @@ namespace death
 		FindFirstCollision();
 	}
 
-	TileCollisionInfo TiledMapTileCollisionIterator::operator *() const
+	TileCollisionInfo const & TileCollisionIterator::operator *() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
-
-
-
-		return TileCollisionInfo();
+		return cached_info;
 	}
 
-	// indirection
-	TileCollisionInfo* TiledMapTileCollisionIterator::operator ->() const
+	TileCollisionInfo const * TileCollisionIterator::operator ->() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
-
-
-
-
-		return nullptr;
+		return &cached_info;
 	}
 
-	// pre increment iterator
-	void TiledMapTileCollisionIterator::FindFirstCollision()
+	void TileCollisionIterator::FindFirstCollision()
 	{
 		assert(level_instance != nullptr); // end already reached. cannot go further
 
@@ -2371,7 +2362,9 @@ namespace death
 
 									if (chaos::Collide(collision_box, particle->bounding_box))
 									{
-
+										cached_info.layer_instance = layer_instance;
+										cached_info.allocation     = allocation;
+										cached_info.particle       = particle;
 										return;
 									}
 								}
@@ -2397,21 +2390,41 @@ namespace death
 		}
 	}
 
-	TiledMapTileCollisionIterator& TiledMapTileCollisionIterator::operator ++ ()
+	TileCollisionIterator& TileCollisionIterator::operator ++ ()
 	{
-		++particle_index;
-		FindFirstCollision();
+		NextParticle();
 		return *this;
 	}
 
-	TiledMapTileCollisionIterator TiledMapTileCollisionIterator::operator ++ (int i)
+	TileCollisionIterator TileCollisionIterator::operator ++ (int i)
 	{
-		TiledMapTileCollisionIterator result = *this;
+		TileCollisionIterator result = *this;
 		++(*this);
 		return result;
 	}
+	
+	void TileCollisionIterator::NextLayer()
+	{
+		++layer_instance_index;
+		allocation_index = 0;
+		particle_index = 0;
+		FindFirstCollision();
+	}
+	
+	void TileCollisionIterator::NextAllocation()
+	{
+		++allocation_index;
+		particle_index = 0;
+		FindFirstCollision();
+	}
+	
+	void TileCollisionIterator::NextParticle()
+	{
+		++particle_index;
+		FindFirstCollision();
+	}
 
-	bool operator == (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2)
+	bool operator == (TileCollisionIterator const& src1, TileCollisionIterator const& src2)
 	{
 		return
 			(src1.level_instance == src2.level_instance) &&
@@ -2420,7 +2433,7 @@ namespace death
 			(src1.particle_index == src2.particle_index);
 	}
 
-	bool operator != (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2)
+	bool operator != (TileCollisionIterator const& src1, TileCollisionIterator const& src2)
 	{
 		return !(src1 == src2);
 	}

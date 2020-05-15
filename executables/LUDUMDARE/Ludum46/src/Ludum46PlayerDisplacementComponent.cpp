@@ -437,12 +437,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-	death::TiledMapTileCollisionIterator it(level_instance, extended_pawn_box, 1);
+	death::TileCollisionIterator it(level_instance, extended_pawn_box, 1);
 
-	while (it != death::TiledMapTileCollisionIterator())
+	while (it != death::TileCollisionIterator())
 	{
-
-		++it;
+		it.NextLayer();
 	}
 
 

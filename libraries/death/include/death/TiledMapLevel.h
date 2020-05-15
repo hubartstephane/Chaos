@@ -41,7 +41,7 @@ namespace death
 (TiledMapObject) \
 (TiledMapLayerInstanceParticlePopulator) \
 (TiledMapPlayerAndTriggerCollisionRecord) \
-(TiledMapTileCollisionIterator)\
+(TileCollisionIterator)\
 (TiledMapSoundTriggerObject)
 
 		// forward declaration
@@ -1012,30 +1012,37 @@ namespace death
 		chaos::TiledMap::TileInfo tile_info;
 	};
 
-	class TiledMapTileCollisionIterator
+	class TileCollisionIterator
 	{
 	public:
 
 		/** the default constructor */
-		TiledMapTileCollisionIterator() = default;
+		TileCollisionIterator() = default;
 		/** the copy constructor */
-		TiledMapTileCollisionIterator(TiledMapTileCollisionIterator const& src) = default;
+		TileCollisionIterator(TileCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
+		/** next to next layer */
+		void NextLayer();
+		/** next allocation */
+		void NextAllocation();
+		/** next to next particle (i.e operator ++) */
+		void NextParticle();
+		
 		// indirection
-		TileCollisionInfo operator *() const;
+		TileCollisionInfo const & operator *() const;
 		// indirection
-		TileCollisionInfo* operator ->() const;
+		TileCollisionInfo const * operator ->() const;
 		// pre increment iterator
-		TiledMapTileCollisionIterator& operator ++ ();
+		TileCollisionIterator& operator ++ ();
 		// post increment iterator
-		TiledMapTileCollisionIterator operator ++ (int i);
+		TileCollisionIterator operator ++ (int i);
 
 		/** comparaison operator */
-		friend bool operator == (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2);
+		friend bool operator == (TileCollisionIterator const& src1, TileCollisionIterator const& src2);
 		/** comparaison operator */
-		friend bool operator != (TiledMapTileCollisionIterator const& src1, TiledMapTileCollisionIterator const& src2);
+		friend bool operator != (TileCollisionIterator const& src1, TileCollisionIterator const& src2);
 
 	protected:
 
@@ -1057,6 +1064,9 @@ namespace death
 		size_t allocation_index = 0;
 		/** index of the particle in that layer */
 		size_t particle_index = 0;
+
+		/** the collision data */
+		TileCollisionInfo cached_info;
 	};
 
 

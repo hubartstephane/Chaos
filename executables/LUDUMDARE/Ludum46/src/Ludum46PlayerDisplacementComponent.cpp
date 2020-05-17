@@ -88,16 +88,16 @@ bool LudumPlayerDisplacementComponent::CheckWallCollision(chaos::box2& box, chao
 	return false;
 }
  
-PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
+PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileCollisionInfo> const& colliding_tiles)
 {
 	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
 
 	// detect collision flags
-	for (death::TileParticleCollisionInfo const& collision : colliding_tiles)
+	for (death::TileCollisionInfo const& collision : colliding_tiles)
 	{
 		// check for real collisions because the very first TiledMap request may have use a an extra padding
 		// (Collide(...) detects SOFT TOUCH (strict 0 distance) as collision)
-		chaos::box2 const& pb = collision.particle.bounding_box;
+		chaos::box2 const& pb = collision.particle->bounding_box;
 		if (!chaos::Collide(box, pb))
 			continue;
 
@@ -163,7 +163,7 @@ PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisio
 
 #if 0
 
-PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const& colliding_tiles)
+PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileCollisionInfo> const& colliding_tiles)
 {
 
 
@@ -431,7 +431,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	extended_pawn_box.half_size += displacement_info.pawn_box_extend;
 
 	// get colliding tiles
-	std::vector<death::TileParticleCollisionInfo> colliding_tiles;
+	std::vector<death::TileCollisionInfo> colliding_tiles;
 
 	death::TiledMapLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
@@ -445,8 +445,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				it.NextAllocation();
 				continue;
 			}
-			death::TileParticleCollisionInfo ci(*it->particle, it->tile_info);
-			colliding_tiles.push_back(ci);
+			colliding_tiles.push_back(*it);
 			++it;
 		}
 	}

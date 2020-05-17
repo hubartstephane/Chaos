@@ -135,7 +135,6 @@
    <property name="MATERIAL" value="power_up"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="COLLISION_MASK" type="string" value="Player,Camera"/>
-   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="1808" name="Checkpoint" type="Checkpoint" gid="2" x="-3680" y="14240" width="20912" height="2416"/>

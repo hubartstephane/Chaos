@@ -13,7 +13,7 @@ namespace chaos
 	{
 
 		/** the separator to use */
-		static char const separator = ',';
+		static char const name_separator = ',';
 
 		/** JSON saving method */
 		friend bool SaveIntoJSON(nlohmann::json & json_entry, NameFilter const & src);
@@ -37,12 +37,12 @@ namespace chaos
 		/** check whether the name passes the filter */
 		bool IsNameEnabled(char const * name) const;
 
-	protected:
+	public:
 
 		/** utility method to insert names in the enabled/disabled array  (separated with ',') */
-		void AddNamesImpl(char const * names, std::vector<std::string> & target_list);
+		static void AddNames(char const * names, std::vector<std::string>& target_list, char separator = name_separator);
 		/** utility method to remove names from the enabled/disabled array  (separated with ',') */
-		void RemoveNamesImpl(char const * names, std::vector<std::string> & target_list);
+		static void RemoveNames(char const * names, std::vector<std::string>& target_list, char separator = name_separator);
 
 	protected:
 

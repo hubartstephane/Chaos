@@ -424,6 +424,7 @@
    <property name="ENABLED_RENDERPASSES" value="UNDEFORMED_OBJECT"/>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="COLLISION_MASK" type="string" value="Player"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="473" name="finish point" gid="10" x="-557" y="-10949" width="2000" height="2000"/>

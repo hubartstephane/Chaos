@@ -36,25 +36,25 @@ namespace chaos
 	
 	void NameFilter::AddEnabledNames(char const * names)
 	{
-		AddNamesImpl(names, enabled_names);
+		AddNames(names, enabled_names, name_separator);
 	}
 
 	void NameFilter::AddDisabledNames(char const * names)
 	{
-		AddNamesImpl(names, disabled_names);
+		AddNames(names, disabled_names, name_separator);
 	}
 
 	void NameFilter::RemoveEnabledNames(char const * names)
 	{
-		RemoveNamesImpl(names, enabled_names);
+		RemoveNames(names, enabled_names, name_separator);
 	}
 
 	void NameFilter::RemoveDisabledNames(char const * names)
 	{
-		RemoveNamesImpl(names, disabled_names);
+		RemoveNames(names, disabled_names, name_separator);
 	}
 
-	void NameFilter::AddNamesImpl(char const * names, std::vector<std::string> & target_list)
+	void NameFilter::AddNames(char const * names, std::vector<std::string> & target_list, char separator)
 	{
 		// nullptr is equivalent to empty string
 		if (names == nullptr)
@@ -63,7 +63,8 @@ namespace chaos
 		std::vector<std::string> name_array = chaos::StringTools::Split(names, separator);
 		for (std::string & name : name_array)
 		{
-			name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end()); // remove space 
+			// remove space 
+			name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end()); 
 			// search if the name is already existing
 			for (std::string const & element : target_list)
 				if (StringTools::Stricmp(name, element) == 0)
@@ -73,15 +74,18 @@ namespace chaos
 		}
 	}
 
-	void NameFilter::RemoveNamesImpl(char const * names, std::vector<std::string> & target_list)
+	void NameFilter::RemoveNames(char const * names, std::vector<std::string> & target_list, char separator)
 	{
 		// nullptr is equivalent to empty string
 		if (names == nullptr)
 			names = "";
 		// split by separator
 		std::vector<std::string> name_array = chaos::StringTools::Split(names, separator);
-		for (std::string const & name : name_array)
+		for (std::string & name : name_array)
 		{
+			// remove space 
+			name.erase(std::remove_if(name.begin(), name.end(), isspace), name.end());
+			// remove the name from list
 			size_t count = target_list.size();
 			for (size_t i = 0; i < count; ++i)
 			{

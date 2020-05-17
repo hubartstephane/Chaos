@@ -152,27 +152,6 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 		buy_timer += delta_time;
 		if (buy_timer >= ludum_game->buy_upgrade_time)
 		{
-			// XXX : HACK : destroy all power up zone in the camera view : not the best but should work if a single zone in the same time
-			LudumLevelInstance * ludum_level_instance = GetLevelInstance();
-			if (ludum_level_instance != nullptr)
-			{
-				death::TiledMapLayerInstance * layer_instance = ludum_level_instance->FindLayerInstance("Zones");
-				if (layer_instance != nullptr)
-				{
-					death::Camera const* camera = ludum_level_instance->GetCamera(0);
-					if (camera != nullptr)
-					{
-						std::vector<death::TileParticleCollisionInfo> colliding_tiles;
-						layer_instance->FindTileCollisions(colliding_tiles, camera->GetCameraBox(true));
-
-						for (death::TileParticleCollisionInfo& collision : colliding_tiles)
-						{
-							// shuxxx collision.particle.gid = 0;
-						}
-					}
-				}
-			}
-
 			// reset the corresponding trigger surface
 			ludum_game_instance->current_power_up->ApplyPowerUp(GetGame(), this, decreasing_power_up);
 			buylocked = true;

@@ -3,12 +3,14 @@
 #include <death/LayerInstanceParticlePopulator.h>
 #include <death/Player.h>
 #include <death/SoundContext.h>
+#include <death/CollisionMask.h>
 
 #include <chaos/CollisionFramework.h>
 #include <chaos/TiledMapTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/StringTools.h>
+
 
 namespace death
 {
@@ -797,6 +799,31 @@ namespace death
 		return level_instance->GetDefaultRenderMaterial();
 	}
 
+	void TiledMapLayerInstance::ComputeLayerCollisionMask(char const * mask)
+	{
+		assert(mask != nullptr);
+
+		collision_mask = 0;
+
+		std::vector<std::string> collision_names;
+		chaos::NameFilter::AddNames(mask, collision_names);
+
+		for (std::string const& name : collision_names)
+			collision_mask |= GetCollisionFlagByName(name.c_str());
+	}
+
+	uint64_t TiledMapLayerInstance::GetCollisionFlagByName(char const* name) const
+	{
+		assert(name != nullptr);
+
+		if (chaos::StringTools::Stricmp(name, "PLAYER") == 0)
+			return death::CollisionMask::PLAYER;
+		if (chaos::StringTools::Stricmp(name, "CAMERA") == 0)
+			return death::CollisionMask::CAMERA;
+
+		return 0;
+	}
+
 	bool TiledMapLayerInstance::Initialize()
 	{
 		// get the properties of interrest
@@ -824,6 +851,9 @@ namespace death
 		infinite_bounding_box = layer->GetPropertyValueBool("INFINITE_BOUNDING_BOX", infinite_bounding_box);
 
 		autoclean_particles = layer->GetPropertyValueBool("AUTOCLEAN_PARTICLES", autoclean_particles);
+
+		std::string collision_mask = layer->GetPropertyValueString("COLLISION_MASK", "");
+		ComputeLayerCollisionMask(collision_mask.c_str());
 
 		// copy the offset / name
 		offset = layer->offset;
@@ -1281,6 +1311,13 @@ namespace death
 		// layer accept collision with player
 		if (!ArePlayerCollisionEnabled() || !AreTileCollisionsEnabled())
 			return;
+
+		if ((collision_mask & 1) == 0)
+			player = player;
+
+
+
+
 		// get the pawn bounding box + early exit
 		PlayerPawn* player_pawn = player->GetPawn();
 		if (player_pawn == nullptr)
@@ -2356,7 +2393,7 @@ namespace death
 							{
 								chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->GetParticleAccessor(0, 0);
 
-								if (particle_index < accessor.GetCount())
+								while (particle_index < accessor.GetCount())
 								{
 									death::TiledMapParticle* particle = &accessor[particle_index];
 
@@ -2365,16 +2402,18 @@ namespace death
 										cached_info.layer_instance = layer_instance;
 										cached_info.allocation     = allocation;
 										cached_info.particle       = particle;
+										cached_info.tile_info      = level_instance->GetTiledMap()->FindTileInfo(particle->gid);
 										return;
 									}
+									// next particle
+									++particle_index;
 								}
-								// next particle
-								++particle_index;
 							}
 							// next allocation
 							++allocation_index;
 							particle_index = 0;
 						}
+
 					}	
 				}	
 				// next layer

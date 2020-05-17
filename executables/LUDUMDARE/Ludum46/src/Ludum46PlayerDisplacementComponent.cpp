@@ -8,6 +8,8 @@
 #include "Ludum46GameCheckpoint.h"
 
 #include "death/TiledMapParticle.h"
+#include "death/CollisionMask.h"
+
 
 
 
@@ -433,23 +435,21 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	death::TiledMapLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
-		level_instance->FindPlayerTileCollisions(player, colliding_tiles, &extended_pawn_box);
-
-
-
-	death::TileCollisionIterator it(level_instance, extended_pawn_box, 1);
-
-	while (it != death::TileCollisionIterator())
 	{
-		it.NextLayer();
+		death::TileCollisionIterator it(level_instance, extended_pawn_box, death::CollisionMask::PLAYER);
+
+		while (it != death::TileCollisionIterator())
+		{
+			if (it->allocation == pawn->GetAllocation())
+			{
+				it.NextAllocation();
+				continue;
+			}
+			death::TileParticleCollisionInfo ci(*it->particle, it->tile_info);
+			colliding_tiles.push_back(ci);
+			++it;
+		}
 	}
-
-
-
-
-
-
-
 
 	// compute collisions and keep trace of all collided objects
 	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, colliding_tiles);

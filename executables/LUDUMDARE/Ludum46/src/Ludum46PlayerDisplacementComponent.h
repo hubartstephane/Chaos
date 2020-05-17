@@ -97,7 +97,7 @@ public:
 protected:
 
 	/** compute the collision flags according to all */
-	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileParticleCollisionInfo> const & colliding_tiles);
+	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileCollisionInfo> const & colliding_tiles);
 	/** compute the new displacement state */
 	PlayerDisplacementState ComputeDisplacementState(chaos::box2 & pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags);
 	/** get the offset from the jumping point when the player is jumping */

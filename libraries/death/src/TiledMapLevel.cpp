@@ -846,7 +846,6 @@ namespace death
 		triggers_enabled = layer->GetPropertyValueBool("TRIGGERS_ENABLED", triggers_enabled);
 		player_collision_enabled = layer->GetPropertyValueBool("PLAYER_COLLISIONS_ENABLED", player_collision_enabled);
 		camera_collision_enabled = layer->GetPropertyValueBool("CAMERA_COLLISIONS_ENABLED", camera_collision_enabled);
-		tile_collisions_enabled = layer->GetPropertyValueBool("TILE_COLLISIONS_ENABLED", tile_collisions_enabled);
 
 		infinite_bounding_box = layer->GetPropertyValueBool("INFINITE_BOUNDING_BOX", infinite_bounding_box);
 
@@ -1294,55 +1293,6 @@ namespace death
 		return true;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-	void TiledMapLayerInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, chaos::box2 const* pawn_box)
-	{
-		// layer accept collision with player
-		if (!ArePlayerCollisionEnabled() || !AreTileCollisionsEnabled())
-			return;
-
-		if ((collision_mask & 1) == 0)
-			player = player;
-
-
-
-
-		// get the pawn bounding box + early exit
-		PlayerPawn* player_pawn = player->GetPawn();
-		if (player_pawn == nullptr)
-			return;
-		chaos::box2 b = (pawn_box != nullptr) ? *pawn_box : player_pawn->GetBox();
-		if (IsGeometryEmpty(b))
-			return;
-
-		// search all collisions with particles that does not belongs to the player
-		FindTileCollisions(result, b, [player_pawn](chaos::ParticleAllocationBase const* allocation)
-		{
-			return (player_pawn->GetAllocation() != allocation); // player does not collide itself
-		});
-	}
-
-
-
-
-
-
-
-
-
-
-
 	void TiledMapLayerInstance::HandlePlayerAndCameraCollision(float delta_time)
 	{
 		// get the game
@@ -1566,57 +1516,7 @@ namespace death
 
 
 
-	void TiledMapLayerInstance::FindTileCollisions(std::vector<TileParticleCollisionInfo> & result, chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func)
-	{
-		// no particle layer, no collisions
-		if (layer == nullptr || particle_layer == nullptr)
-			return;
-		// search map
-		chaos::TiledMap::Map const* map = layer->GetMap();
-		if (map == nullptr)
-			return;
 
-		// a cache for tiledata : hope this is less costly than a per particle search
-		std::map<int, chaos::TiledMap::TileInfo> gid_to_tileinfo;
-
-		// iterate over all allocations
-		size_t allocation_count = particle_layer->GetAllocationCount();
-		for (size_t i = 0; i < allocation_count; ++i)
-		{
-			// check allocation
-			chaos::ParticleAllocationBase* particle_allocation = particle_layer->GetAllocation(i);
-			if (particle_allocation == nullptr)
-				continue;
-			// filter out collision
-			if (filter_allocation_func && !filter_allocation_func(particle_allocation))
-				continue;
-			// search collisions
-			chaos::ParticleAccessor<TiledMapParticle> accessor = particle_allocation->GetParticleAccessor();
-			for (TiledMapParticle& particle : accessor)
-			{
-				if (chaos::Collide(bounding_box, particle.bounding_box))
-				{
-					chaos::TiledMap::TileInfo ti;
-					
-					// search whether the tile_info is already in cache
-					auto it = gid_to_tileinfo.find(particle.gid);
-					if (it != gid_to_tileinfo.end())
-					{
-						ti = it->second;
-					}
-					// search the tile_info in the map
-					else
-					{
-						ti = map->FindTileInfo(particle.gid);
-						if (ti.tiledata == nullptr || ti.tileset == nullptr) // unknown info : ignore this collision
-							continue;
-						gid_to_tileinfo[particle.gid] = ti;
-					}
-					result.emplace_back(particle, ti);
-				}
-			}
-		}
-	}
 
 	bool TiledMapLayerInstance::DoTick(float delta_time)
 	{
@@ -1960,13 +1860,6 @@ namespace death
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->HandlePlayerAndCameraCollision(delta_time);
-	}
-
-	void TiledMapLevelInstance::FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, chaos::box2 const* pawn_box)
-	{
-		size_t count = layer_instances.size();
-		for (size_t i = 0; i < count; ++i)
-			layer_instances[i]->FindPlayerTileCollisions(player, result, pawn_box);
 	}
 
 	bool TiledMapLevelInstance::DoTick(float delta_time)

@@ -645,11 +645,6 @@ namespace death
 		/** change whether trigger surfaces are enabled on that layer */
 		void SetTriggersEnabled(bool in_triggers_enabled) { triggers_enabled = in_triggers_enabled; }
 
-		/** get whether collisions with tiles are enabled on that layer */
-		bool AreTileCollisionsEnabled() const { return tile_collisions_enabled; }
-		/** change whether collisions with tiles are enabled on that layer */
-		void SetTileCollisionsEnabled(bool in_tile_collisions_enabled) { tile_collisions_enabled = in_tile_collisions_enabled; }
-
 		/** get the layer offset */
 		glm::vec2 GetLayerOffset() const { return offset; }
 		/** set the layer offset */
@@ -691,12 +686,6 @@ namespace death
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
-
-		/** Find all colliding tiles for a given box */
-		void FindTileCollisions(std::vector<TileParticleCollisionInfo> & result, chaos::box2 const& bounding_box, std::function<bool(chaos::ParticleAllocationBase const*)> filter_allocation_func = std::function<bool(chaos::ParticleAllocationBase const*)>());
-
-		/** find player with tile collisions */
-		void FindPlayerTileCollisions(Player* player,std::vector<TileParticleCollisionInfo>& result, chaos::box2 const* pawn_box = nullptr);
 
 	protected:
 
@@ -814,8 +803,6 @@ namespace death
 		bool camera_collision_enabled = false;
 		/** whether trigger surfaces are enabled on that layer */
 		bool triggers_enabled = false;
-		/** whether collisions with tiles are enabled on that layer */
-		bool tile_collisions_enabled = false;
 
 		/** the collision mask for that layer */
 		uint64_t collision_mask = 0;
@@ -907,9 +894,6 @@ namespace death
 		/** get the bounding box for the level (in worls system obviously) */
 		virtual chaos::box2 GetBoundingBox() const override;
 
-		/** compute player tile collisions */
-		void FindPlayerTileCollisions(Player* player, std::vector<TileParticleCollisionInfo>& result, chaos::box2 const * pawn_box = nullptr);
-
 	protected:
 
 		/** override */
@@ -975,7 +959,6 @@ namespace death
 		/** the default render material */
 		chaos::shared_ptr<chaos::GPURenderMaterial> default_material;
 	};
-
 
 
 

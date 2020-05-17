@@ -764,6 +764,12 @@ namespace death
 		/** some callbacks */
 		virtual void OnLevelStarted();
 
+		/** compute the collision mask from the formated string */
+		void ComputeLayerCollisionMask(char const* mask);
+		/** search a collision flag from its name */
+		virtual uint64_t GetCollisionFlagByName(char const* name) const;
+
+
 	protected:
 
 		/** id of the object (comming from chaos::TiledMap) */
@@ -811,11 +817,8 @@ namespace death
 		/** whether collisions with tiles are enabled on that layer */
 		bool tile_collisions_enabled = false;
 
-
 		/** the collision mask for that layer */
-		uint64_t collision_mask = 1;
-
-
+		uint64_t collision_mask = 0;
 
 		/** the current offset */
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);

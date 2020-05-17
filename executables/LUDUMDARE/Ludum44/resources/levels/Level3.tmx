@@ -134,6 +134,7 @@
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
    <property name="MATERIAL" value="power_up"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="COLLISION_MASK" type="string" value="Player, Camera"/>
    <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
@@ -312,9 +313,6 @@
  <objectgroup id="13" name="fire" locked="1">
   <properties>
    <property name="MATERIAL" value="fire"/>
-   <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="false"/>
-   <property name="TILE_COLLISIONS_ENABLED" type="bool" value="false"/>
-   <property name="TRIGGERS_ENABLED" type="bool" value="false"/>
   </properties>
  </objectgroup>
  <objectgroup id="14" name="PlayerAndCamera" visible="0">

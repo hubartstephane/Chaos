@@ -2220,16 +2220,7 @@ namespace death
 	// TiledMapCollisionIteratorBase implementation
 	// =====================================
 
-
-
-
-
-
-	// =====================================
-	// TiledMapTileCollisionIterator implementation
-	// =====================================
-
-	TiledMapTileCollisionIterator::TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+	TiledMapCollisionIteratorBase::TiledMapCollisionIteratorBase(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
 		level_instance(in_level_instance),
 		collision_box(in_collision_box),
 		collision_mask(in_collision_mask)
@@ -2237,7 +2228,20 @@ namespace death
 		assert(in_level_instance != nullptr);
 		assert(collision_mask != 0);
 		assert(!chaos::IsGeometryEmpty(in_collision_box));
+	}
 
+	TiledMapCollisionIteratorBase::operator bool() const
+	{
+		return (level_instance != nullptr);
+	}
+
+	// =====================================
+	// TiledMapTileCollisionIterator implementation
+	// =====================================
+
+	TiledMapTileCollisionIterator::TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+		TiledMapCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
+	{
 		FindFirstCollision();
 	}
 
@@ -2306,7 +2310,7 @@ namespace death
 				particle_index = 0;
 			}
 			// no collision found, end of the iterator
-			level_instance = nullptr; 
+			level_instance = nullptr;
 			layer_instance_index = 0;
 			allocation_index = 0;
 			particle_index = 0;
@@ -2347,36 +2351,14 @@ namespace death
 		FindFirstCollision();
 	}
 
-	TiledMapTileCollisionIterator::operator bool() const
-	{
-		return (level_instance != nullptr);
-	}
-
-
-
-
-
-
-
-
-
-
-
-
 
 	// =====================================
 	// TiledMapTriggerCollisionIterator implementation
 	// =====================================
 
 	TiledMapTriggerCollisionIterator::TiledMapTriggerCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		level_instance(in_level_instance),
-		collision_box(in_collision_box),
-		collision_mask(in_collision_mask)
+		TiledMapCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
 	{
-		assert(in_level_instance != nullptr);
-		assert(collision_mask != 0);
-		assert(!chaos::IsGeometryEmpty(in_collision_box));
-
 		FindFirstCollision();
 	}
 
@@ -2455,9 +2437,6 @@ namespace death
 		FindFirstCollision();
 	}
 
-	TiledMapTriggerCollisionIterator::operator bool() const
-	{
-		return (level_instance != nullptr);
-	}
+
 
 }; // namespace death

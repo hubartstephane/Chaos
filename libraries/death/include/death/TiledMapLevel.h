@@ -41,7 +41,8 @@ namespace death
 (TiledMapObject) \
 (TiledMapLayerInstanceParticlePopulator) \
 (TiledMapPlayerAndTriggerCollisionRecord) \
-(TileCollisionIterator)\
+(TiledMapTriggerCollisionIterator)\
+(TiledMapTileCollisionIterator)\
 (TiledMapSoundTriggerObject)
 
 		// forward declaration
@@ -398,31 +399,6 @@ namespace death
 	};
 
 	// =====================================
-	// TileParticleCollisionInfo : a structure for the collision with particles
-	// =====================================
-
-	class TileParticleCollisionInfo
-	{
-	public:
-
-		/** constructor */
-		TileParticleCollisionInfo(TiledMapParticle& in_particle, chaos::TiledMap::TileInfo const& in_tile_info) :
-			particle(in_particle),
-			tile_info(in_tile_info) {}
-
-	public:
-
-		// XXX : 
-		//  - the particle is a reference because we may want to modify it (and may be we would like to cast<> it)
-		//  - the tile_info is a copy because it is in a cache and due to cache reallocation, it is not safe to keep reference
-
-		/** the particle which with the collision is detected */
-		TiledMapParticle& particle;
-		/** some information about the tile information */
-		chaos::TiledMap::TileInfo tile_info;
-	};
-
-	// =====================================
 	// TiledMapLevel : utility
 	// =====================================
 
@@ -630,6 +606,20 @@ namespace death
 		/** create the particle layer if required */
 		chaos::ParticleLayerBase* CreateParticleLayer();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		/** get whether player collisions are enabled on that layer */
 		bool ArePlayerCollisionEnabled() const { return player_collision_enabled; }
 		/** change whether collisions with player are to be test on that layer */
@@ -830,12 +820,6 @@ namespace death
 		std::map<int, chaos::shared_ptr<TiledMapLayerCheckpoint>> layer_checkpoints;
 	};
 
-
-
-
-
-
-
 	// =====================================
 	// TiledMapLevelInstance : instance of a Level
 	// =====================================
@@ -893,6 +877,11 @@ namespace death
 
 		/** get the bounding box for the level (in worls system obviously) */
 		virtual chaos::box2 GetBoundingBox() const override;
+
+		/** Get a collision iterator for tiles */
+		TiledMapTileCollisionIterator GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		/** Get a collision iterator for triggers */
+		TiledMapTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 	protected:
 
@@ -973,15 +962,8 @@ namespace death
 
 
 
-
-
-
-
-
-
-
-
-
+	// =====================================
+	// TileCollisionInfo
 	// =====================================
 
 	class TileCollisionInfo
@@ -998,22 +980,58 @@ namespace death
 		chaos::TiledMap::TileInfo tile_info;
 	};
 
-	class TileCollisionIterator
+	// =====================================
+	// TiledMapTileCollisionIterator
+	// =====================================
+
+	template<typename T>
+	class TiledMapCollisionIteratorBase
+	{
+
+#if 0
+	public:
+
+		/** the default constructor */
+		TiledMapCollisionIteratorBase() = default;
+		/** the copy constructor */
+		TiledMapCollisionIteratorBase(TiledMapCollisionIteratorBase const& src) = default;
+		/** the constructor with initialization */
+		TiledMapCollisionIteratorBase(TiledMapCollisionIteratorBase * in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+
+	protected:
+
+		/** the collision mask for iterating over layers */
+		uint64_t collision_mask = 0;
+		/** the collision box */
+		chaos::box2 collision_box;
+
+		/** the level instance of concern */
+		TiledMapLevelInstance* level_instance = nullptr;
+		/** index of the layer */
+		size_t layer_instance_index = 0;
+#endif
+	};
+
+
+
+
+
+	class TiledMapTileCollisionIterator : public TiledMapCollisionIteratorBase<TiledMapTileCollisionIterator>
 	{
 	public:
 
 		/** the default constructor */
-		TileCollisionIterator() = default;
+		TiledMapTileCollisionIterator() = default;
 		/** the copy constructor */
-		TileCollisionIterator(TileCollisionIterator const& src) = default;
+		TiledMapTileCollisionIterator(TiledMapTileCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
-		/** next to next layer */
+		/** next layer */
 		void NextLayer();
 		/** next allocation */
 		void NextAllocation();
-		/** next to next particle (i.e operator ++) */
+		/** next particle (i.e operator ++) */
 		void NextParticle();
 		
 		// indirection
@@ -1021,14 +1039,12 @@ namespace death
 		// indirection
 		TileCollisionInfo const * operator ->() const;
 		// pre increment iterator
-		TileCollisionIterator& operator ++ ();
+		TiledMapTileCollisionIterator& operator ++ ();
 		// post increment iterator
-		TileCollisionIterator operator ++ (int i);
+		TiledMapTileCollisionIterator operator ++ (int i);
 
-		/** comparaison operator */
-		friend bool operator == (TileCollisionIterator const& src1, TileCollisionIterator const& src2);
-		/** comparaison operator */
-		friend bool operator != (TileCollisionIterator const& src1, TileCollisionIterator const& src2);
+		/** returns whether the iterator is valid */
+		operator bool () const;
 
 	protected:
 
@@ -1052,74 +1068,63 @@ namespace death
 		size_t particle_index = 0;
 
 		/** the collision data */
-		TileCollisionInfo cached_info;
+		TileCollisionInfo cached_result;
 	};
 
+	// =====================================
+	// TiledMapTriggerCollisionIterator
+	// =====================================
 
-
-
-
-
-
-	class TiledMapCollisionIterator
+	class TiledMapTriggerCollisionIterator : public TiledMapCollisionIteratorBase<TiledMapTriggerCollisionIterator>
 	{
 	public:
+
+		/** the default constructor */
+		TiledMapTriggerCollisionIterator() = default;
+		/** the copy constructor */
+		TiledMapTriggerCollisionIterator(TiledMapTriggerCollisionIterator const& src) = default;
+		/** the constructor with initialization */
+		TiledMapTriggerCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+
+		/** next layer */
+		void NextLayer();
+		/** next trigger (i.e operator ++) */
+		void NextTrigger();
+
+		// indirection
+		TiledMapTriggerObject & operator *() const;
+		// indirection
+		TiledMapTriggerObject * operator ->() const;
+		// pre increment iterator
+		TiledMapTriggerCollisionIterator& operator ++ ();
+		// post increment iterator
+		TiledMapTriggerCollisionIterator operator ++ (int i);
+
+		/** returns whether the iterator is valid */
+		operator bool() const;
+
+	protected:
+
+		/** find the very first collision from given conditions */
+		void FindFirstCollision();
+
+	protected:
 
 		/** the collision mask for iterating over layers */
 		uint64_t collision_mask = 0;
 		/** the collision box */
 		chaos::box2 collision_box;
 
-
+		/** the level instance of concern */
+		TiledMapLevelInstance* level_instance = nullptr;
 		/** index of the layer */
 		size_t layer_instance_index = 0;
-
-		/** index of player starts for the layer */
-		size_t player_start_index = 0;
-		/** index of camera for the layer */
-		size_t camera_index = 0;
-		/** index of trigger for the layer */
+		/** trigger index in that layer */
 		size_t trigger_index = 0;
-		/** index of geometric for the layer */
-		size_t geometric_index = 0;
 
-		// pre increment iterator
-		TiledMapCollisionIterator& operator ++ ()
-		{
-
-			return *this;
-		}
-
-		// post increment iterator
-		TiledMapCollisionIterator operator ++ (int i)
-		{
-			TiledMapCollisionIterator result = *this;
-			++(*this);
-			return result;
-		}
-
-
-
+		/** the current result of the research */
+		TiledMapTriggerObject* cached_result = nullptr;
 	};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		 // undefine macros
 #undef DEATH_TILEDMAP_CLASSES

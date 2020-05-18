@@ -436,9 +436,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	death::TiledMapLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TileCollisionIterator it(level_instance, extended_pawn_box, death::CollisionMask::PLAYER);
+		death::TiledMapTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_pawn_box, death::CollisionMask::PLAYER);
 
-		while (it != death::TileCollisionIterator())
+		while (it)
 		{
 			if (it->allocation == pawn->GetAllocation())
 			{

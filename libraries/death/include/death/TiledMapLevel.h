@@ -981,14 +981,12 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapTileCollisionIterator
+	// TiledMapCollisionIteratorBase
 	// =====================================
 
-	template<typename T>
 	class TiledMapCollisionIteratorBase
 	{
 
-#if 0
 	public:
 
 		/** the default constructor */
@@ -996,7 +994,10 @@ namespace death
 		/** the copy constructor */
 		TiledMapCollisionIteratorBase(TiledMapCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TiledMapCollisionIteratorBase(TiledMapCollisionIteratorBase * in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TiledMapCollisionIteratorBase(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+
+		/** returns whether the iterator is still valid */
+		operator bool() const;
 
 	protected:
 
@@ -1009,14 +1010,10 @@ namespace death
 		TiledMapLevelInstance* level_instance = nullptr;
 		/** index of the layer */
 		size_t layer_instance_index = 0;
-#endif
 	};
 
 
-
-
-
-	class TiledMapTileCollisionIterator : public TiledMapCollisionIteratorBase<TiledMapTileCollisionIterator>
+	class TiledMapTileCollisionIterator : public TiledMapCollisionIteratorBase
 	{
 	public:
 
@@ -1043,9 +1040,6 @@ namespace death
 		// post increment iterator
 		TiledMapTileCollisionIterator operator ++ (int i);
 
-		/** returns whether the iterator is valid */
-		operator bool () const;
-
 	protected:
 
 		/** find the very first collision from given conditions */
@@ -1053,15 +1047,6 @@ namespace death
 
 	protected:
 
-		/** the collision mask for iterating over layers */
-		uint64_t collision_mask = 0;
-		/** the collision box */
-		chaos::box2 collision_box;
-
-		/** the level instance of concern */
-		TiledMapLevelInstance* level_instance = nullptr;
-		/** index of the layer */
-		size_t layer_instance_index = 0;
 		/** allocation index in that layer */
 		size_t allocation_index = 0;
 		/** index of the particle in that layer */
@@ -1075,7 +1060,7 @@ namespace death
 	// TiledMapTriggerCollisionIterator
 	// =====================================
 
-	class TiledMapTriggerCollisionIterator : public TiledMapCollisionIteratorBase<TiledMapTriggerCollisionIterator>
+	class TiledMapTriggerCollisionIterator : public TiledMapCollisionIteratorBase
 	{
 	public:
 
@@ -1100,9 +1085,6 @@ namespace death
 		// post increment iterator
 		TiledMapTriggerCollisionIterator operator ++ (int i);
 
-		/** returns whether the iterator is valid */
-		operator bool() const;
-
 	protected:
 
 		/** find the very first collision from given conditions */
@@ -1110,13 +1092,6 @@ namespace death
 
 	protected:
 
-		/** the collision mask for iterating over layers */
-		uint64_t collision_mask = 0;
-		/** the collision box */
-		chaos::box2 collision_box;
-
-		/** the level instance of concern */
-		TiledMapLevelInstance* level_instance = nullptr;
 		/** index of the layer */
 		size_t layer_instance_index = 0;
 		/** trigger index in that layer */

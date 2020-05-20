@@ -1286,6 +1286,13 @@ namespace death
 
 	void TiledMapLayerInstance::HandlePlayerAndCameraCollision(float delta_time)
 	{
+
+		// shucol
+
+
+
+
+
 		// get the game
 		Game* game = GetGame();
 		if (game == nullptr)
@@ -1846,12 +1853,126 @@ namespace death
 		return level->GetTiledMap();
 	}
 
+	// shucol
+#if 0
 	void TiledMapLevelInstance::HandlePlayerAndCameraCollision(float delta_time)
 	{
+		
+
+
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->HandlePlayerAndCameraCollision(delta_time);
 	}
+
+
+
+
+
+
+
+	// check player collisions
+	if (ArePlayerCollisionEnabled())
+	{
+		// compute the collisions for all players
+		size_t player_count = game->GetPlayerCount();
+		for (size_t i = 0; i < player_count; ++i)
+		{
+			Player* player = game->GetPlayer(i);
+			if (player == nullptr)
+				continue;
+			// collision with surface triggers
+			if (!HandlePlayerCollisionWithSurfaceTriggers(delta_time, player))
+				continue;
+		}
+	}
+
+	// compute collision with camera
+	if (AreCameraCollisionEnabled())
+	{
+		Camera const* camera = game->GetCamera(0); // shu46 : multiple camera, multiple view
+		if (camera != nullptr)
+		{
+			chaos::box2 camera_box = camera->GetCameraBox(true);
+			if (!IsGeometryEmpty(camera_box))
+				HandleCameraCollisionWithSurfaceTriggers(delta_time, camera_box); // shu46 add Camera reference
+		}
+	}
+
+
+
+
+
+
+#endif
+
+	void TiledMapLevelInstance::HandlePlayerTriggerCollisions(float delta_time)
+	{
+		// compute the collisions for all players
+		size_t player_count = game->GetPlayerCount();
+		for (size_t i = 0; i < player_count; ++i)
+		{
+			Player* player = game->GetPlayer(i);
+			if (player == nullptr)
+				continue;
+
+			PlayerPawn* player_pawn = player->GetPawn();
+			if (player_pawn == nullptr)
+				continue;
+
+			chaos::box2 pawn_box = player_pawn->GetBox();
+			if (chaos::IsGeometryEmpty(pawn_box))
+				continue;
+
+			TiledMapTriggerCollisionIterator it = GetTriggerCollisionIterator(pawn_box, death::CollisionMask::PLAYER);
+			while (it)
+			{
+
+
+
+
+
+
+
+
+
+				++it;
+			}
+		}
+	}
+
+	void TiledMapLevelInstance::HandleCameraTriggerCollisions(float delta_time)
+	{
+		// compute the collisions for all cameras
+		size_t camera_count = game->GetCameraCount();
+		for (size_t i = 0; i < camera_count; ++i)
+		{
+			Camera* camera = game->GetCamera(i);
+			if (camera == nullptr)
+				continue;
+
+
+
+
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	bool TiledMapLevelInstance::DoTick(float delta_time)
 	{
@@ -1865,7 +1986,9 @@ namespace death
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->Tick(delta_time);
 		// compute the collisions with the player
-		HandlePlayerAndCameraCollision(delta_time);
+		HandlePlayerTriggerCollisions(delta_time);
+		// compute the collisions with the camera
+		HandleCameraTriggerCollisions(delta_time);
 
 		return true;
 	}
@@ -2301,20 +2424,26 @@ namespace death
 							++allocation_index;
 							particle_index = 0;
 						}
-
 					}	
 				}	
 				// next layer
+				if (ignore_other_layers)
+					break;
 				++layer_instance_index;
 				allocation_index = 0;
 				particle_index = 0;
 			}
 			// no collision found, end of the iterator
-			level_instance = nullptr;
-			layer_instance_index = 0;
-			allocation_index = 0;
-			particle_index = 0;
+			EndIterator();
 		}
+	}
+
+	void TiledMapTileCollisionIterator::EndIterator()
+	{
+		level_instance = nullptr;
+		layer_instance_index = 0;
+		allocation_index = 0;
+		particle_index = 0;
 	}
 
 	TiledMapTileCollisionIterator& TiledMapTileCollisionIterator::operator ++ ()
@@ -2332,10 +2461,17 @@ namespace death
 	
 	void TiledMapTileCollisionIterator::NextLayer()
 	{
-		++layer_instance_index;
-		allocation_index = 0;
-		particle_index = 0;
-		FindFirstCollision();
+		if (ignore_other_layers)
+		{
+			EndIterator();
+		}
+		else
+		{
+			++layer_instance_index;
+			allocation_index = 0;
+			particle_index = 0;
+			FindFirstCollision();
+		}
 	}
 	
 	void TiledMapTileCollisionIterator::NextAllocation()
@@ -2400,15 +2536,21 @@ namespace death
 						++trigger_index;
 					}
 				}
-
+				if (ignore_other_layers)
+					break;
 				++layer_instance_index;
 				trigger_index = 0;
 			}
 			// no collision found, end of the iterator
-			level_instance = nullptr;
-			layer_instance_index = 0;
-			trigger_index = 0;
+			EndIterator();
 		}
+	}
+
+	void TiledMapTriggerCollisionIterator::EndIterator()
+	{
+		level_instance = nullptr;
+		layer_instance_index = 0;
+		trigger_index = 0;
 	}
 
 	TiledMapTriggerCollisionIterator& TiledMapTriggerCollisionIterator::operator ++ ()
@@ -2426,9 +2568,16 @@ namespace death
 
 	void TiledMapTriggerCollisionIterator::NextLayer()
 	{
-		++layer_instance_index;
-		trigger_index = 0;
-		FindFirstCollision();
+		if (ignore_other_layers)
+		{
+			EndIterator();
+		}
+		else
+		{
+			++layer_instance_index;
+			trigger_index = 0;
+			FindFirstCollision();
+		}
 	}
 
 	void TiledMapTriggerCollisionIterator::NextTrigger()

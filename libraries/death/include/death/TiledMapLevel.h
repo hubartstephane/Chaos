@@ -893,7 +893,9 @@ namespace death
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
 		/** handle all collisions with the player (TriggerObject) */
-		virtual void HandlePlayerAndCameraCollision(float delta_time);
+		virtual void HandlePlayerTriggerCollisions(float delta_time);
+		/** handle all collisions with the camera (TriggerObject) */
+		virtual void HandleCameraTriggerCollisions(float delta_time);
 
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
@@ -1010,6 +1012,8 @@ namespace death
 		TiledMapLevelInstance* level_instance = nullptr;
 		/** index of the layer */
 		size_t layer_instance_index = 0;
+		/** whether the iterator finishs with the current layer */
+		bool ignore_other_layers = false;
 	};
 
 
@@ -1044,6 +1048,8 @@ namespace death
 
 		/** find the very first collision from given conditions */
 		void FindFirstCollision();
+		/** called to set the iterator at its end */
+		void EndIterator();
 
 	protected:
 
@@ -1089,6 +1095,8 @@ namespace death
 
 		/** find the very first collision from given conditions */
 		void FindFirstCollision();
+		/** called to set the iterator at its end */
+		void EndIterator();
 
 	protected:
 

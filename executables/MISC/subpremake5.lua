@@ -3,6 +3,7 @@
 -- =============================================================================
 
 ProcessSubPremake("FadeVortexImage")
+ProcessSubPremake("GenerateTexture")
 ProcessSubPremake("C++11")
 ProcessSubPremake("C++17")
 ProcessSubPremake("AllLibs")

@@ -1,3 +1,5 @@
+
+
 #include <chaos/StandardHeaders.h>
 #include <chaos/StringTools.h>
 #include <chaos/Application.h>
@@ -34,7 +36,7 @@ public:
 };
 
 template<typename T>
-RecastVectorData<T> RecastVector(T const & in_value)
+RecastVectorData<T> RecastVector(T const& in_value)
 {
 	return RecastVectorData<T>(in_value);
 }
@@ -76,7 +78,7 @@ protected:
 	//
 
 	// the number of layers
-	static int GetLayerCount(glm::ivec2 const & grid_size)
+	static int GetLayerCount(glm::ivec2 const& grid_size)
 	{
 		assert(grid_size.x > 0);
 		assert(grid_size.y > 0);
@@ -98,7 +100,7 @@ protected:
 
 
 	// the number of cell categories in a layer
-	static int GetCategoryCountOnLayer(glm::ivec2 const & grid_size, int layer_index)
+	static int GetCategoryCountOnLayer(glm::ivec2 const& grid_size, int layer_index)
 	{
 		assert(grid_size.x > 0);
 		assert(grid_size.y > 0);
@@ -124,7 +126,7 @@ protected:
 		return layer_index * base_category - 4 * (layer_index - 1) * (layer_index) / 2;
 	}
 	// the layer the cell is on
-	static int GetCellLayer(glm::ivec2 const & cell, glm::ivec2 const& grid_size)
+	static int GetCellLayer(glm::ivec2 const& cell, glm::ivec2 const& grid_size)
 	{
 		// which border is the cell the more nearby
 		return std::min(
@@ -196,7 +198,7 @@ protected:
 		float a2 = a1 + 1.0f / (float)sum_category_count;
 
 		static bool init = false;
-		
+
 		int constexpr color_count = 4;
 
 		static glm::vec4 values[color_count];
@@ -216,7 +218,7 @@ protected:
 
 		int index = (int)(cell.x + cell.y * grid_size.x);
 
-	//	return values[index % color_count];
+		//	return values[index % color_count];
 
 		assert(a1 >= 0.0f && a1 <= 1.0f);
 		assert(a2 >= 0.0f && a2 <= 1.0f);
@@ -234,7 +236,7 @@ protected:
 	}
 
 
-	static glm::vec4 GetPixelColor(glm::vec2 const & pos, glm::vec2 const & image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
+	static glm::vec4 GetPixelColor(glm::vec2 const& pos, glm::vec2 const& image_size, glm::ivec2 const& grid_size, float ratio, int recurse_count)
 	{
 		assert(grid_size.x > 0 && grid_size.y > 0);
 
@@ -280,11 +282,11 @@ protected:
 				if (neighboor_cell.x >= grid_size.x || neighboor_cell.y >= grid_size.y)
 					continue;
 
-			//if (i != 0 || j != 0)
-			//		continue;
+				//if (i != 0 || j != 0)
+				//		continue;
 
-				// compute value of that neighboor
-				int index = 1 + i + (j + 1) * 3;								
+					// compute value of that neighboor
+				int index = 1 + i + (j + 1) * 3;
 				glm::vec4 neighboor_value = GetPixelColorForCell(neighboor_cell, grid_size, ratio);
 
 				// compute distance of that neighboor => distance = 0 bring early exit
@@ -310,11 +312,11 @@ protected:
 
 				// store the values
 				distances[index] = d;
-				values[index] = neighboor_value;				
+				values[index] = neighboor_value;
 				distance_product *= d;
 			}
 		}
-		
+
 		// computation of SUM
 		float sum = 0.0f;
 		for (int i = 0; i < 9; ++i)
@@ -342,8 +344,8 @@ protected:
 		assert(image_size.y > 0);
 
 		// compute the diagonale of the rectangle and the angle beta to the X Axis
-		glm::vec2 diag        = image_size * 0.5f;
-		float     diag_length = glm::length(diag);	
+		glm::vec2 diag = image_size * 0.5f;
+		float     diag_length = glm::length(diag);
 
 		float beta = std::atan2(diag.y, diag.x);
 
@@ -384,7 +386,7 @@ protected:
 		// compute the distance from center to the 2 limits
 		float min_distance = glm::length(min_limit);
 		float max_distance = glm::length(max_limit);
-		float p_distance   = glm::length(dp);
+		float p_distance = glm::length(dp);
 
 		p_distance += ratio * max_distance;
 
@@ -402,16 +404,16 @@ protected:
 
 
 
-	void GenerateTexture(int file_index, glm::ivec2 const & image_size, glm::ivec2 const& cell_count, float ratio, int recurse_count, boost::filesystem::path const & dst_directory_path)
+	void GenerateTexture(int file_index, glm::ivec2 const& image_size, glm::ivec2 const& cell_count, float ratio, int recurse_count, boost::filesystem::path const& dst_directory_path)
 	{
-		FIBITMAP* img = chaos::ImageTools::GenFreeImage<chaos::PixelBGRA>(image_size.x, image_size.y, [image_size, cell_count, ratio, recurse_count](chaos::ImageDescription & desc) {
-					
+		FIBITMAP* img = chaos::ImageTools::GenFreeImage<chaos::PixelBGRA>(image_size.x, image_size.y, [image_size, cell_count, ratio, recurse_count](chaos::ImageDescription& desc) {
+
 			for (int j = 0; j < desc.height; ++j)
 			{
 				chaos::ImagePixelAccessor<chaos::PixelBGRA> accessor(desc);
 
-				chaos::PixelBGRA * line = &accessor(0, j);
-				
+				chaos::PixelBGRA* line = &accessor(0, j);
+
 				for (int i = 0; i < desc.width; ++i)
 				{
 
@@ -462,7 +464,7 @@ protected:
 			float ratio = chaos::MathTools::CastAndDiv<float>(i, texture_count - 1);
 			GenerateTexture(i, image_size, cell_count, ratio, recurse_count, dst_directory_path);
 		}
-			
+
 		chaos::WinTools::ShowFile(dst_directory_path);
 
 		return true;

@@ -431,7 +431,6 @@
   <object id="477" name="Finish" type="Finish" x="-56" y="-12448" width="1120" height="1088">
    <properties>
     <property name="OUTSIDE_BOX_FACTOR" type="float" value="5"/>
-    <property name="TRIGGER_ID" type="int" value="3"/>
    </properties>
   </object>
  </objectgroup>

@@ -113,8 +113,12 @@ bool PowerUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 	return true;
 }
 
-bool PowerUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
+bool PowerUpTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 {
+	death::Player* player = auto_cast(object);
+	if (player == nullptr)
+		return false;
+
 	LudumGameInstance * ludum_game_instance = player->GetGameInstance();
 	if (ludum_game_instance == nullptr)
 		return false;
@@ -146,8 +150,12 @@ bool SpeedUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 	return true;
 }
 
-bool SpeedUpTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type)
+bool SpeedUpTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 {
+	death::Player* player = auto_cast(object);
+	if (player == nullptr)
+		return false;
+
 	if (event_type != chaos::CollisionType::STARTED) // already handled
 		return false;
 
@@ -181,8 +189,12 @@ bool SpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 	return true;
 }
 
-bool SpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type)
+bool SpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 {
+	death::Camera* camera = auto_cast(object);
+	if (camera == nullptr)
+		return false;
+	
 	// only the first time collision is detected
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;

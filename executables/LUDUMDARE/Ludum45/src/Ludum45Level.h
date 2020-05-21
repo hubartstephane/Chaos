@@ -31,7 +31,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type) override;
+	virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
 
 protected:
 
@@ -60,7 +60,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type) override;
+	virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
 
 protected:
 

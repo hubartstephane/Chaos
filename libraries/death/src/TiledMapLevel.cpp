@@ -102,12 +102,7 @@ namespace death
 		return chaos::Collide(other_box, box);
 	}
 
-	bool TiledMapTriggerObject::OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::CollisionType event_type)
-	{
-		return false; // do not do anything with collision
-	}
-
-	bool TiledMapTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type)
+	bool TiledMapTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 	{
 		return false; // do not do anything with collision
 	}
@@ -173,8 +168,12 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapCheckpointTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type)
+	bool TiledMapCheckpointTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 	{
+		Camera* camera = auto_cast(object);
+		if (camera == nullptr)
+			return false;
+		
 		if (event_type != chaos::CollisionType::STARTED)
 			return false;
 
@@ -228,22 +227,22 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapNotificationTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type)
+	bool TiledMapNotificationTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 	{
+		// check object type
 		if (player_collision)
-			return false;
-		return OnTriggerCollision(delta_time, event_type);
-	}
+		{
+			Player* player = auto_cast(object);
+			if (player == nullptr)
+				return false;
+		}
+		else
+		{
+			Camera* camera = auto_cast(object);
+			if (camera == nullptr)
+				return false;
+		}
 
-	bool TiledMapNotificationTriggerObject::OnPlayerCollisionEvent(float delta_time, class Player* player, chaos::CollisionType event_type)
-	{
-		if (!player_collision)
-			return false;
-		return OnTriggerCollision(delta_time, event_type);
-	}
-
-	bool TiledMapNotificationTriggerObject::OnTriggerCollision(float delta_time, chaos::CollisionType event_type)
-	{
 		// early exit
 		if (event_type != chaos::CollisionType::STARTED && event_type != chaos::CollisionType::FINISHED) // ignore AGAIN event
 			return false;
@@ -320,8 +319,12 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapSoundTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const& camera_box, chaos::CollisionType event_type)
+	bool TiledMapSoundTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 	{
+		Camera* camera = auto_cast(object);
+		if (camera == nullptr)
+			return false;
+
 		if (event_type == chaos::CollisionType::STARTED)
 		{
 			chaos::Sound* new_sound = CreateSound();
@@ -355,8 +358,12 @@ namespace death
 		return false;
 	}
 
-	bool TiledMapFinishingTriggerObject::OnPlayerCollisionEvent(float delta_time, death::Player* player, chaos::CollisionType event_type)
+	bool TiledMapFinishingTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 	{
+		Player* player = auto_cast(object);
+		if (player == nullptr)
+			return false;
+
 		if (event_type != chaos::CollisionType::STARTED)
 			return false;
 

@@ -30,8 +30,12 @@ bool BonusSpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_
 
 // -------------------------------------------------------------------
 
-bool BonusSpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type)
+bool BonusSpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 {
+	death::Camera* camera = auto_cast(object);
+	if (camera == nullptr)
+		return false;
+
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;
 
@@ -73,8 +77,12 @@ bool EnemySpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_
 
 // -------------------------------------------------------------------
 
-bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::box2 const & camera_box, chaos::CollisionType event_type)
+bool EnemySpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
 {
+	death::Camera* camera = auto_cast(object);
+	if (camera == nullptr)
+		return false;
+
 	if (event_type != chaos::CollisionType::STARTED)
 		return false;
 
@@ -96,6 +104,8 @@ bool EnemySpawnerTriggerObject::OnCameraCollisionEvent(float delta_time, chaos::
   
     EnemyPattern * p = pattern;
     EnemyType* t = type;
+
+	chaos::box2 camera_box = camera->GetCameraBox();
 
     spawner.SpawnParticles(pattern->enemy_count, true, [camera_box, pawn_box, spawner_box, t, p, bitmap_info](chaos::ParticleAccessorBase<ParticleEnemy> accessor) {
 

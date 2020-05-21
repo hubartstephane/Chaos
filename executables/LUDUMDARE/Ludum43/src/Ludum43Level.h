@@ -28,8 +28,8 @@ public:
 
 protected:
 
-	/** called whenever a collision with player is detected (returns false, if loop is to be broken) */
-	virtual bool OnPlayerCollisionEvent(float delta_time, death::Player * player, chaos::CollisionType event_type) override;
+	/** override */
+	virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
 };
 
 // =================================================

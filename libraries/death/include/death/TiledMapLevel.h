@@ -40,7 +40,6 @@ namespace death
 (TiledMapCheckpointTriggerObject) \
 (TiledMapObject) \
 (TiledMapLayerInstanceParticlePopulator) \
-(TiledMapPlayerAndTriggerCollisionRecord) \
 (TiledMapTriggerCollisionIterator)\
 (TiledMapTileCollisionIterator)\
 (TiledMapSoundTriggerObject)
@@ -214,9 +213,6 @@ namespace death
 		/** change whether the trigger once is enabled or not */
 		void SetTriggerOnce(bool in_trigger_once = true);
 
-		/** get the trigger ID */
-		int GetTriggerID() const { return trigger_id; }
-
 		/** search whether there is a collision given box */
 		virtual bool IsCollisionWith(chaos::box2 const& other_box, std::vector<chaos::weak_ptr<TiledMapTriggerObject>> const* triggers) const;
 
@@ -243,8 +239,6 @@ namespace death
 		bool enabled = true;
 		/** flag whether to can only trigger once */
 		bool trigger_once = false;
-		/** an ID that helps make classification */
-		int trigger_id = 0;
 		/** outside box factor (a factor applyed to bounding box to detect whether the player is going outside of the range) */
 		float outside_box_factor = 1.0f;
 
@@ -495,17 +489,15 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapPlayerAndTriggerCollisionRecord 
+	// TiledMapTriggerCollisionInfo 
 	// =====================================
 
-	class TiledMapPlayerAndTriggerCollisionRecord
+	class TiledMapTriggerCollisionInfo
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
-
 	public:
 
-		/** the player considered */
-		chaos::weak_ptr<Player> player;
+		/** the target considered */
+		chaos::weak_ptr<chaos::ReferencedObject> object;
 		/** all the triggers colliding */
 		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> triggers;
 	};
@@ -606,35 +598,6 @@ namespace death
 		/** create the particle layer if required */
 		chaos::ParticleLayerBase* CreateParticleLayer();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		/** get whether player collisions are enabled on that layer */
-		bool ArePlayerCollisionEnabled() const { return player_collision_enabled; }
-		/** change whether collisions with player are to be test on that layer */
-		void SetPlayerCollisionEnabled(bool in_player_collision_enabled) { player_collision_enabled = in_player_collision_enabled; }
-
-		/** get whether camera collisions are enabled on that layer */
-		bool AreCameraCollisionEnabled() const { return camera_collision_enabled; }
-		/** change whether collisions with camera are to be test on that layer */
-		void SetCameraCollisionEnabled(bool in_camera_collision_enabled) { camera_collision_enabled = in_camera_collision_enabled; }
-
-		/** get whether trigger surfaces are enabled on that layer */
-		bool AreTriggersEnabled() const { return triggers_enabled; }
-		/** change whether trigger surfaces are enabled on that layer */
-		void SetTriggersEnabled(bool in_triggers_enabled) { triggers_enabled = in_triggers_enabled; }
-
 		/** get the layer offset */
 		glm::vec2 GetLayerOffset() const { return offset; }
 		/** set the layer offset */
@@ -697,14 +660,6 @@ namespace death
 		/** override */
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
-		/** handle all collisions with the player (TriggerObject) */
-		virtual void HandlePlayerAndCameraCollision(float delta_time);
-		/** handle trigger collisions with surface triggers (returns false if if do not want to handle mode player collisions) */
-		virtual bool HandlePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player);
-		/** handle trigger collisions with camera */
-		virtual bool HandleCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box);
-
-
 		/** create a particle populator so that each layer may have its own particle type */
 		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator();
 
@@ -727,9 +682,6 @@ namespace death
 		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);
 		/** try to search a name and a tag in the chaos::layer,  give them to the particle layer (and some other data as well) */
 		virtual bool InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer);
-
-		/** find the collision record for a player (clean all records for destroyed player) */
-		TiledMapPlayerAndTriggerCollisionRecord* FindPlayerCollisionRecord(Player* player);
 
 		/** utility methods for loading objects in layer instances */
 		template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
@@ -787,23 +739,11 @@ namespace death
 		/** the bounding box of the layer */
 		chaos::box2 bounding_box;
 
-		/** whether collision with player are to be tested with that layer */
-		bool player_collision_enabled = false;
-		/** whether collision with camera are to be tested with that layer */
-		bool camera_collision_enabled = false;
-		/** whether trigger surfaces are enabled on that layer */
-		bool triggers_enabled = false;
-
 		/** the collision mask for that layer */
 		uint64_t collision_mask = 0;
 
 		/** the current offset */
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
-
-		/** the previous frame collision */
-		std::vector<TiledMapPlayerAndTriggerCollisionRecord> collision_records;
-		/** the previous frame trigger collision with camera */
-		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> camera_collision_records;
 	};
 
 	// =====================================
@@ -933,6 +873,10 @@ namespace death
 		/** override */
 		virtual bool DoLoadFromCheckpoint(LevelCheckpoint const* checkpoint) override;
 
+
+		/** find the collision info for an object */
+		TiledMapTriggerCollisionInfo* FindTriggerCollisionInfo(chaos::ReferencedObject * object);
+
 	protected:
 
 		/** explicit bounding box (else it is dynamic with LayerInstance evaluation) */
@@ -949,6 +893,9 @@ namespace death
 		std::vector<chaos::shared_ptr<TiledMapLayerInstance>> layer_instances;
 		/** the default render material */
 		chaos::shared_ptr<chaos::GPURenderMaterial> default_material;
+
+		/** the previous frame trigger collision */
+		std::vector<TiledMapTriggerCollisionInfo> collision_info;
 	};
 
 

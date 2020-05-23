@@ -41,6 +41,7 @@ namespace death
 (TiledMapObject) \
 (TiledMapLayerInstanceParticlePopulator) \
 (TiledMapTriggerCollisionIterator)\
+(TiledMapGeometricObjectCollisionIterator)\
 (TiledMapTileCollisionIterator)\
 (TiledMapSoundTriggerObject)
 
@@ -823,7 +824,7 @@ namespace death
 		/** Get a collision iterator for triggers */
 		TiledMapTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 		/** Get a collision iterator for objects */
-		//TiledMapGeometricObjectCollisionIterator GetGeometricObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TiledMapGeometricObjectCollisionIterator GetGeometricObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();
@@ -1078,6 +1079,37 @@ namespace death
 		TiledMapTriggerCollisionIterator& operator ++ ();
 		// post increment iterator
 		TiledMapTriggerCollisionIterator operator ++ (int i);
+
+		/** go to next layer */
+		void NextLayer();
+		/** go to next element */
+		void Next();
+
+	protected:
+
+		/** find the very first collision from given conditions */
+		void FindFirstCollision();
+	};
+
+	// =====================================
+	// TiledMapGeometricObjectCollisionIterator
+	// =====================================
+
+	class TiledMapGeometricObjectCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapGeometricObject>
+	{
+	public:
+
+		/** the default constructor */
+		TiledMapGeometricObjectCollisionIterator() = default;
+		/** the copy constructor */
+		TiledMapGeometricObjectCollisionIterator(TiledMapGeometricObjectCollisionIterator const& src) = default;
+		/** the constructor with initialization */
+		TiledMapGeometricObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+
+		// pre increment iterator
+		TiledMapGeometricObjectCollisionIterator& operator ++ ();
+		// post increment iterator
+		TiledMapGeometricObjectCollisionIterator operator ++ (int i);
 
 		/** go to next layer */
 		void NextLayer();

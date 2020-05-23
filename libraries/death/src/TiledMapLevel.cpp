@@ -2121,6 +2121,11 @@ namespace death
 		return TiledMapTriggerCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
 
+	TiledMapGeometricObjectCollisionIterator TiledMapLevelInstance::GetGeometricObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	{
+		return TiledMapGeometricObjectCollisionIterator(this, in_collision_box, in_collision_mask);
+	}
+
 	// =====================================
 	// TiledMapCollisionIteratorBase implementation
 	// =====================================
@@ -2294,12 +2299,12 @@ namespace death
 				{
 					while (object_index < layer_instance->GetTriggerCount())
 					{
-						TiledMapTriggerObject* trigger = layer_instance->GetTrigger(object_index);
-						if (trigger != nullptr)
+						TiledMapTriggerObject* object = layer_instance->GetTrigger(object_index);
+						if (object != nullptr)
 						{
-							if (chaos::Collide(collision_box, trigger->GetBoundingBox(true)))
+							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))
 							{
-								cached_result = trigger;
+								cached_result = object;
 								return;
 							}
 						}
@@ -2350,5 +2355,83 @@ namespace death
 	}
 
 
+	// =====================================
+	// TiledMapGeometricObjectCollisionIterator implementation
+	// =====================================
+
+	TiledMapGeometricObjectCollisionIterator::TiledMapGeometricObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+		TiledMapObjectCollisionIteratorBase<TiledMapGeometricObject>(in_level_instance, in_collision_box, in_collision_mask)
+	{
+		FindFirstCollision();
+	}
+
+	void TiledMapGeometricObjectCollisionIterator::FindFirstCollision()
+	{
+		assert(level_instance != nullptr); // end already reached. cannot go further
+
+		if (level_instance != nullptr)
+		{
+			while (layer_instance_index < level_instance->layer_instances.size())
+			{
+				TiledMapLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
+
+				if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
+				{
+					while (object_index < layer_instance->GetGeometricObjectCount())
+					{
+						TiledMapGeometricObject* object = layer_instance->GetGeometricObject(object_index);
+						if (object != nullptr)
+						{
+							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))
+							{
+								cached_result = object;
+								return;
+							}
+						}
+						++object_index;
+					}
+				}
+				if (ignore_other_layers)
+					break;
+				++layer_instance_index;
+				object_index = 0;
+			}
+			// no collision found, end of the iterator
+			EndIterator();
+		}
+	}
+
+	TiledMapGeometricObjectCollisionIterator& TiledMapGeometricObjectCollisionIterator::operator ++ ()
+	{
+		Next();
+		return *this;
+	}
+
+	TiledMapGeometricObjectCollisionIterator TiledMapGeometricObjectCollisionIterator::operator ++ (int i)
+	{
+		TiledMapGeometricObjectCollisionIterator result = *this;
+		++(*this);
+		return result;
+	}
+
+	void TiledMapGeometricObjectCollisionIterator::NextLayer()
+	{
+		if (ignore_other_layers)
+		{
+			EndIterator();
+		}
+		else
+		{
+			++layer_instance_index;
+			object_index = 0;
+			FindFirstCollision();
+		}
+	}
+
+	void TiledMapGeometricObjectCollisionIterator::Next()
+	{
+		++object_index;
+		FindFirstCollision();
+	}
 
 }; // namespace death

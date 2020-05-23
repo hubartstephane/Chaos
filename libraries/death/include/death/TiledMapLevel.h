@@ -214,7 +214,7 @@ namespace death
 		void SetTriggerOnce(bool in_trigger_once = true);
 
 		/** search whether there is a collision given box */
-		virtual bool IsCollisionWith(chaos::box2 const& other_box, std::vector<chaos::weak_ptr<TiledMapTriggerObject>> const* triggers) const;
+		virtual bool IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const;
 
 	protected:
 
@@ -483,20 +483,6 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapTriggerCollisionInfo 
-	// =====================================
-
-	class TiledMapTriggerCollisionInfo
-	{
-	public:
-
-		/** the target considered */
-		chaos::weak_ptr<chaos::ReferencedObject> object;
-		/** all the triggers colliding */
-		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> triggers;
-	};
-
-	// =====================================
 	// TiledMapLayerCheckpoint
 	// =====================================
 
@@ -740,6 +726,26 @@ namespace death
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 	};
 
+
+	// =====================================
+	// TiledMapTriggerCollisionInfo 
+	// =====================================
+
+	class TiledMapTriggerCollisionInfo
+	{
+	public:
+
+		/** search whether a trigger is in the collision list */
+		bool FindTrigger(TiledMapTriggerObject const * trigger) const;
+
+	public:
+
+		/** the target considered */
+		chaos::weak_ptr<chaos::ReferencedObject> object;
+		/** all the triggers colliding */
+		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> triggers;
+	};
+
 	// =====================================
 	// TiledMapLevelCheckpoint
 	// =====================================
@@ -817,6 +823,11 @@ namespace death
 		/** Get a collision iterator for triggers */
 		TiledMapTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
+		/** purge all collisions with object deleted */
+		void PurgeCollisionInfo();
+		/** handle all collision for a given object (TriggerObject) */
+		void HandleTriggerCollisions(float delta_time, chaos::ReferencedObject* object, chaos::box2 const& box, int mask);
+
 	protected:
 
 		/** override */
@@ -827,9 +838,9 @@ namespace death
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
 		/** handle all collisions with the player (TriggerObject) */
-		virtual void HandlePlayerTriggerCollisions(float delta_time);
+		void HandlePlayerTriggerCollisions(float delta_time);
 		/** handle all collisions with the camera (TriggerObject) */
-		virtual void HandleCameraTriggerCollisions(float delta_time);
+		void HandleCameraTriggerCollisions(float delta_time);
 
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
@@ -891,19 +902,6 @@ namespace death
 		/** the previous frame trigger collision */
 		std::vector<TiledMapTriggerCollisionInfo> collision_info;
 	};
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	// =====================================
 	// TileCollisionInfo

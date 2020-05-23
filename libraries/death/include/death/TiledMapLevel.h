@@ -822,6 +822,8 @@ namespace death
 		TiledMapTileCollisionIterator GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 		/** Get a collision iterator for triggers */
 		TiledMapTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		/** Get a collision iterator for objects */
+		//TiledMapGeometricObjectCollisionIterator GetGeometricObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();
@@ -955,6 +957,9 @@ namespace death
 		bool ignore_other_layers = false;
 	};
 
+	// =====================================
+	// TiledMapTileCollisionIterator
+	// =====================================
 
 	class TiledMapTileCollisionIterator : public TiledMapCollisionIteratorBase
 	{
@@ -972,7 +977,7 @@ namespace death
 		/** next allocation */
 		void NextAllocation();
 		/** next particle (i.e operator ++) */
-		void NextParticle();
+		void Next();
 		
 		// indirection
 		TileCollisionInfo const & operator *() const;
@@ -1002,10 +1007,63 @@ namespace death
 	};
 
 	// =====================================
+	// TiledMapObjectCollisionIteratorBase
+	// =====================================
+
+	template<typename T>
+	class TiledMapObjectCollisionIteratorBase : public TiledMapCollisionIteratorBase
+	{
+	public:
+
+		/** the default constructor */
+		TiledMapObjectCollisionIteratorBase() = default;
+		/** the copy constructor */
+		TiledMapObjectCollisionIteratorBase(TiledMapObjectCollisionIteratorBase const& src) = default;
+		/** the constructor with initialization */
+		TiledMapObjectCollisionIteratorBase(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+			TiledMapCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
+		{
+		}
+		// indirection
+		T & operator *() const
+		{
+			assert(level_instance != nullptr); // end already reached. cannot indirect
+			return *cached_result;
+		}
+		// indirection
+		T * operator ->() const
+		{
+			assert(level_instance != nullptr); // end already reached. cannot indirect
+			return cached_result;
+		}
+
+	protected:
+
+		/** called to set the iterator at its end */
+		void EndIterator()
+		{
+			level_instance = nullptr;
+			layer_instance_index = 0;
+			object_index = 0;
+		}
+
+	protected:
+
+		/** index of the layer */
+		size_t layer_instance_index = 0;
+		/** trigger index in that layer */
+		size_t object_index = 0;
+
+		/** the current result of the research */
+		T* cached_result = nullptr;
+	};
+
+
+	// =====================================
 	// TiledMapTriggerCollisionIterator
 	// =====================================
 
-	class TiledMapTriggerCollisionIterator : public TiledMapCollisionIteratorBase
+	class TiledMapTriggerCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapTriggerObject>
 	{
 	public:
 
@@ -1016,36 +1074,20 @@ namespace death
 		/** the constructor with initialization */
 		TiledMapTriggerCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
-		/** next layer */
-		void NextLayer();
-		/** next trigger (i.e operator ++) */
-		void NextTrigger();
-
-		// indirection
-		TiledMapTriggerObject & operator *() const;
-		// indirection
-		TiledMapTriggerObject * operator ->() const;
 		// pre increment iterator
 		TiledMapTriggerCollisionIterator& operator ++ ();
 		// post increment iterator
 		TiledMapTriggerCollisionIterator operator ++ (int i);
 
+		/** go to next layer */
+		void NextLayer();
+		/** go to next element */
+		void Next();
+
 	protected:
 
 		/** find the very first collision from given conditions */
 		void FindFirstCollision();
-		/** called to set the iterator at its end */
-		void EndIterator();
-
-	protected:
-
-		/** index of the layer */
-		size_t layer_instance_index = 0;
-		/** trigger index in that layer */
-		size_t trigger_index = 0;
-
-		/** the current result of the research */
-		TiledMapTriggerObject* cached_result = nullptr;
 	};
 
 		 // undefine macros

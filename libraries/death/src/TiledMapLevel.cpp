@@ -2150,13 +2150,13 @@ namespace death
 		FindFirstCollision();
 	}
 
-	TileCollisionInfo const & TiledMapTileCollisionIterator::operator *() const
+	TileCollisionInfo const& TiledMapTileCollisionIterator::operator *() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
 		return cached_result;
 	}
 
-	TileCollisionInfo const * TiledMapTileCollisionIterator::operator ->() const
+	TileCollisionInfo const* TiledMapTileCollisionIterator::operator ->() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
 		return &cached_result;
@@ -2230,7 +2230,7 @@ namespace death
 
 	TiledMapTileCollisionIterator& TiledMapTileCollisionIterator::operator ++ ()
 	{
-		NextParticle();
+		Next();
 		return *this;
 	}
 
@@ -2263,7 +2263,7 @@ namespace death
 		FindFirstCollision();
 	}
 	
-	void TiledMapTileCollisionIterator::NextParticle()
+	void TiledMapTileCollisionIterator::Next()
 	{
 		++particle_index;
 		FindFirstCollision();
@@ -2275,21 +2275,9 @@ namespace death
 	// =====================================
 
 	TiledMapTriggerCollisionIterator::TiledMapTriggerCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TiledMapCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
+		TiledMapObjectCollisionIteratorBase<TiledMapTriggerObject>(in_level_instance, in_collision_box, in_collision_mask)
 	{
 		FindFirstCollision();
-	}
-
-	TiledMapTriggerObject & TiledMapTriggerCollisionIterator::operator *() const
-	{
-		assert(level_instance != nullptr); // end already reached. cannot indirect
-		return *cached_result;
-	}
-
-	TiledMapTriggerObject * TiledMapTriggerCollisionIterator::operator ->() const
-	{
-		assert(level_instance != nullptr); // end already reached. cannot indirect
-		return cached_result;
 	}
 
 	void TiledMapTriggerCollisionIterator::FindFirstCollision()
@@ -2304,9 +2292,9 @@ namespace death
 
 				if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
 				{
-					while (trigger_index < layer_instance->GetTriggerCount())
+					while (object_index < layer_instance->GetTriggerCount())
 					{
-						TiledMapTriggerObject* trigger = layer_instance->GetTrigger(trigger_index);
+						TiledMapTriggerObject* trigger = layer_instance->GetTrigger(object_index);
 						if (trigger != nullptr)
 						{
 							if (chaos::Collide(collision_box, trigger->GetBoundingBox(true)))
@@ -2315,29 +2303,22 @@ namespace death
 								return;
 							}
 						}
-						++trigger_index;
+						++object_index;
 					}
 				}
 				if (ignore_other_layers)
 					break;
 				++layer_instance_index;
-				trigger_index = 0;
+				object_index = 0;
 			}
 			// no collision found, end of the iterator
 			EndIterator();
 		}
 	}
 
-	void TiledMapTriggerCollisionIterator::EndIterator()
-	{
-		level_instance = nullptr;
-		layer_instance_index = 0;
-		trigger_index = 0;
-	}
-
 	TiledMapTriggerCollisionIterator& TiledMapTriggerCollisionIterator::operator ++ ()
 	{
-		NextTrigger();
+		Next();
 		return *this;
 	}
 
@@ -2357,14 +2338,14 @@ namespace death
 		else
 		{
 			++layer_instance_index;
-			trigger_index = 0;
+			object_index = 0;
 			FindFirstCollision();
 		}
 	}
 
-	void TiledMapTriggerCollisionIterator::NextTrigger()
+	void TiledMapTriggerCollisionIterator::Next()
 	{
-		++trigger_index;
+		++object_index;
 		FindFirstCollision();
 	}
 

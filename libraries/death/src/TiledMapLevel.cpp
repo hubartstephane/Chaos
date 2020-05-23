@@ -88,17 +88,14 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapTriggerObject::IsCollisionWith(chaos::box2 const& other_box, std::vector<chaos::weak_ptr<TiledMapTriggerObject>> const* triggers) const
+	bool TiledMapTriggerObject::IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const
 	{
 		chaos::box2 box = GetBoundingBox(true);
 
-		if (outside_box_factor > 1.0f) // the box is bigger when we want to go outside !
-		{
-			// search whether we were already colliding with
-			if (triggers != nullptr)
-				if (std::find(triggers->begin(), triggers->end(), this) != triggers->end()) // we where already colliding the object
-					box.half_size *= outside_box_factor;
-		}
+		// the box is bigger when we want to go outside !
+		if (collision_type == chaos::CollisionType::AGAIN && outside_box_factor > 1.0f) 
+			box.half_size *= outside_box_factor;
+
 		return chaos::Collide(other_box, box);
 	}
 
@@ -388,12 +385,6 @@ namespace death
 		return true;
 	}
 
-
-
-
-
-
-
 	// =====================================
 	// BoxScissoringWithRepetitionResult : an utility object to compute instances in 2D of a box that collide a given scissor
 	// =====================================
@@ -602,8 +593,6 @@ namespace death
 	{
 		return new TiledMapCameraObject(in_layer_instance);
 	}
-
-
 
 	TiledMapFinishingTriggerObject* TiledMapLevel::DoCreateFinishingTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
@@ -1607,6 +1596,11 @@ namespace death
 	// TiledMapLevelInstance implementation
 	// =====================================
 
+	bool TiledMapTriggerCollisionInfo::FindTrigger(TiledMapTriggerObject const* trigger) const
+	{
+		return std::find_if(triggers.begin(), triggers.end(), [trigger](chaos::weak_ptr<TiledMapTriggerObject> const& p) {return p.get() == trigger; }) != triggers.end();
+	}
+
 	chaos::TiledMap::Map* TiledMapLevelInstance::GetTiledMap()
 	{
 		TiledMapLevel* level = GetLevel();
@@ -1623,148 +1617,72 @@ namespace death
 		return level->GetTiledMap();
 	}
 
-	// shucol
-
-	TiledMapTriggerCollisionInfo* TiledMapLevelInstance::FindTriggerCollisionInfo(chaos::ReferencedObject* object)
+	void TiledMapLevelInstance::PurgeCollisionInfo()
 	{
 		size_t count = collision_info.size();
 		for (size_t i = count; i > 0; --i)
 		{
 			size_t index = i - 1;
 			if (collision_info[index].object == nullptr)
-				collision_info.erase(collision_info.begin() + index);
-			else if (collision_info[index].object == object)
-				return &collision_info[index];
+			{
+				std::swap(collision_info[index], collision_info[collision_info.size() - 1]);
+				collision_info.pop_back();
+			}
 		}
+	}
+
+	TiledMapTriggerCollisionInfo* TiledMapLevelInstance::FindTriggerCollisionInfo(chaos::ReferencedObject* object)
+	{
+		size_t count = collision_info.size();
+		for (size_t i = 0; i < count ; ++i)
+			if (collision_info[i].object == object)
+				return &collision_info[i];
 		return nullptr;
 	}
 
-
-#if 0
-
-
-
-	// shucol
-
-
-	bool TiledMapLayerInstance::HandleCameraCollisionWithSurfaceTriggers(float delta_time, chaos::box2 const& camera_box)
+	void TiledMapLevelInstance::HandleTriggerCollisions(float delta_time, chaos::ReferencedObject* object, chaos::box2 const& box, int mask)
 	{
-		// shu46
+		TiledMapTriggerCollisionInfo* previous_collisions = FindTriggerCollisionInfo(object);
 
+		TiledMapTriggerCollisionInfo new_collisions;
 
-
-
-
-
-
-
-
-		// the new colliding triggers
-		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
-
-		// search all colliding triggers
-		size_t triggers_count = trigger_objects.size();
-		for (size_t i = 0; i < triggers_count; ++i)
+		// search all new collisions
+		for (TiledMapTriggerCollisionIterator it = GetTriggerCollisionIterator(box, mask) ; it ; ++it)
 		{
-			TiledMapTriggerObject* trigger = trigger_objects[i].get();
-			if (trigger == nullptr || !trigger->IsEnabled())
+			TiledMapTriggerObject& trigger = *it;
+			// trigger only enabled trigger
+			if (!trigger.IsEnabled())
 				continue;
-			// detect collision
-			if (trigger->IsCollisionWith(camera_box, &camera_collision_records))
-				new_triggers.push_back(trigger);
-		}
-
-		// triggers collisions 
-		size_t new_triggers_count = new_triggers.size();
-		for (size_t i = 0; i < new_triggers_count; ++i)
-		{
-			TiledMapTriggerObject* trigger = new_triggers[i].get();
-
-			// search in previous frame data	
-			chaos::CollisionType collision_type = chaos::CollisionType::STARTED;
-			if (std::find(camera_collision_records.begin(), camera_collision_records.end(), trigger) != camera_collision_records.end())
-				collision_type = chaos::CollisionType::AGAIN;
-
 			// trigger once : do not trigger anymore entering events
-			if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
+			if (trigger.IsTriggerOnce() && trigger.enter_event_triggered)
 				continue;
-			// trigger event
-			if (trigger->OnCameraCollisionEvent(delta_time, camera_box, collision_type))
-			{
-				if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce())
-				{
-					trigger->enter_event_triggered = true;
-					trigger->SetModified();
-				}
-			}
+			// collision type
+			chaos::CollisionType collision_type = chaos::CollisionType::STARTED;
+			if (previous_collisions != nullptr)
+				if (previous_collisions->FindTrigger(&trigger))
+					collision_type = chaos::CollisionType::AGAIN;
+			// check for collision (bounding box may change when wanting to go outside)
+			if (trigger.IsCollisionWith(box, collision_type))
+				new_collisions.triggers.push_back(&trigger);
 		}
 
-		// triggers end of collisions
-		size_t previous_count = camera_collision_records.size();
-		for (size_t i = 0; i < previous_count; ++i)
-		{
-			if (std::find(new_triggers.begin(), new_triggers.end(), camera_collision_records[i]) == new_triggers.end()) // no more colliding
-				camera_collision_records[i]->OnCameraCollisionEvent(delta_time, camera_box, chaos::CollisionType::FINISHED);
-		}
-
-		// store the new triggers
-		camera_collision_records = std::move(new_triggers);
-
-		return true;
-
-	}
-
-	bool TiledMapLayerInstance::HandlePlayerCollisionWithSurfaceTriggers(float delta_time, class Player* player)
-	{
-		// shu46
-
-
-
-
-
-
-
-		// the new colliding triggers
-		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> new_triggers;
-		// the previous colliding triggers
-		TiledMapPlayerAndTriggerCollisionRecord* previous_collisions = FindPlayerCollisionRecord(player);
-
-		// search all colliding triggers
-		PlayerPawn* player_pawn = player->GetPawn();
-		if (player_pawn != nullptr)
-		{
-			chaos::box2 pawn_box = player_pawn->GetBox();
-
-			size_t triggers_count = trigger_objects.size();
-			for (size_t i = 0; i < triggers_count; ++i)
-			{
-				TiledMapTriggerObject* trigger = trigger_objects[i].get();
-				if (trigger == nullptr || !trigger->IsEnabled())
-					continue;
-				// detect collision
-				if (trigger->IsCollisionWith(pawn_box, (previous_collisions != nullptr) ? &previous_collisions->triggers : nullptr))
-					new_triggers.push_back(trigger);
-			}
-		}
 
 		// triggers collisions 
-		size_t new_triggers_count = new_triggers.size();
-		for (size_t i = 0; i < new_triggers_count; ++i)
+		size_t new_collision_count = new_collisions.triggers.size();
+		for (size_t i = 0; i < new_collision_count; ++i)
 		{
-			TiledMapTriggerObject* trigger = new_triggers[i].get();
+			TiledMapTriggerObject* trigger = new_collisions.triggers[i].get();
 
 			// search in previous frame data
 			chaos::CollisionType collision_type = chaos::CollisionType::STARTED;
 			if (previous_collisions != nullptr)
-				if (std::find(previous_collisions->triggers.begin(), previous_collisions->triggers.end(), trigger) != previous_collisions->triggers.end())
+				if (previous_collisions->FindTrigger(trigger))
 					collision_type = chaos::CollisionType::AGAIN;
-			// trigger once : do not trigger anymore entering events
-			if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce() && trigger->enter_event_triggered)
-				continue;
+
 			// trigger event
-			if (trigger->OnPlayerCollisionEvent(delta_time, player, collision_type))
+			if (trigger->OnCollisionEvent(delta_time, object, collision_type))
 			{
-				if (collision_type == chaos::CollisionType::STARTED && trigger->IsTriggerOnce())
+				if (trigger->IsTriggerOnce() && !trigger->enter_event_triggered)
 				{
 					trigger->enter_event_triggered = true;
 					trigger->SetModified();
@@ -1778,109 +1696,25 @@ namespace death
 			size_t previous_count = previous_collisions->triggers.size();
 			for (size_t i = 0; i < previous_count; ++i)
 			{
-				if (std::find(new_triggers.begin(), new_triggers.end(), previous_collisions->triggers[i]) == new_triggers.end()) // no more colliding
-					previous_collisions->triggers[i]->OnPlayerCollisionEvent(delta_time, player, chaos::CollisionType::FINISHED);
+				if (std::find(new_collisions.triggers.begin(), new_collisions.triggers.end(), previous_collisions->triggers[i]) == new_collisions.triggers.end()) // no more colliding
+					previous_collisions->triggers[i]->OnCollisionEvent(delta_time, object, chaos::CollisionType::FINISHED);
 			}
 		}
 
 		// store the record
 		if (previous_collisions != nullptr)
-			previous_collisions->triggers = std::move(new_triggers);
-		else
 		{
-			TiledMapPlayerAndTriggerCollisionRecord new_record;
-			new_record.player = player;
-			new_record.triggers = std::move(new_triggers);
-			collision_records.push_back(std::move(new_record));
+			if (new_collisions.triggers.size() == 0)
+				collision_info.erase(std::remove_if(collision_info.begin(), collision_info.end(), [object](TiledMapTriggerCollisionInfo const& info) { return info.object == object; }), collision_info.end());
+			else
+				previous_collisions->triggers = std::move(new_collisions.triggers);
 		}
-
-
-
-
-
-
-
-
-
-		return true; // continue other collisions 
+		else if(new_collisions.triggers.size() > 0)
+		{
+			new_collisions.object = object;		
+			collision_info.push_back(std::move(new_collisions));
+		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-	// shucol
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	void TiledMapLevelInstance::HandlePlayerTriggerCollisions(float delta_time)
@@ -1901,24 +1735,7 @@ namespace death
 			if (chaos::IsGeometryEmpty(pawn_box))
 				continue;
 
-			// iterate over all colliding trigger
-			TiledMapTriggerCollisionIterator it = GetTriggerCollisionIterator(pawn_box, death::CollisionMask::PLAYER);
-			while (it)
-			{
-				TiledMapTriggerObject & trigger = *it;
-
-
-
-				// shucol
-
-
-
-
-
-
-
-				++it;
-			}
+			HandleTriggerCollisions(delta_time, player, pawn_box, death::CollisionMask::PLAYER);
 		}
 	}
 
@@ -1936,42 +1753,9 @@ namespace death
 			if (chaos::IsGeometryEmpty(camera_box))
 				continue;
 
-			// iterate over all colliding trigger
-			TiledMapTriggerCollisionIterator it = GetTriggerCollisionIterator(camera_box, death::CollisionMask::CAMERA);
-			while (it)
-			{
-				TiledMapTriggerObject& trigger = *it;
-
-
-				// shucol
-
-
-
-
-
-
-
-				++it;
-			}
+			HandleTriggerCollisions(delta_time, camera, camera_box, death::CollisionMask::CAMERA);
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	bool TiledMapLevelInstance::DoTick(float delta_time)
 	{
@@ -1984,6 +1768,8 @@ namespace death
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 			layer_instances[i]->Tick(delta_time);
+		// purge collision info for object that may have been destroyed
+		PurgeCollisionInfo();
 		// compute the collisions with the player
 		HandlePlayerTriggerCollisions(delta_time);
 		// compute the collisions with the camera
@@ -2334,9 +2120,6 @@ namespace death
 	{
 		return TiledMapTriggerCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
-
-
-
 
 	// =====================================
 	// TiledMapCollisionIteratorBase implementation

@@ -877,11 +877,6 @@ namespace death
 
 	void TiledMapLayerInstance::CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
 	{
-
-		// shuzzz
-
-
-
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
 		// create additionnal particles (TEXT)
@@ -919,65 +914,19 @@ namespace death
 		{
 			int gid = tile->gid;
 
-
-
-			// shuludum ?
-
-			// shu FindProperty
-
-
-
 			// search the tile information 
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata == nullptr)
 				return;
-			// aspect ratio is to be maintained ??
-
-			// before  bool keep_aspect_ratio = tile->GetPropertyValueBool("KEEP_ASPECT_RATIO", true);
-			
-			bool keep_aspect_ratio = tile->GetPropertyValueBool("KEEP_ASPECT_RATIO", false); // shu46 i suppose user that create a tile object and stretch it expect to be naturaly fitting the object
-#if 0
-
-			bool keep_aspect_ratio = true;
-			bool* prop = tile->FindPropertyBool("KEEP_ASPECT_RATIO");
-			if (prop != nullptr)
-				keep_aspect_ratio = *prop;
-			else
-			{
-				prop = tile_info.tiledata->FindPropertyBool("KEEP_ASPECT_RATIO");
-				if (prop != nullptr)
-					keep_aspect_ratio = *prop;
-			}
-#endif
-
-
-
-
-
-
-
-
-
-
-
 			// create a simple particle
 			chaos::box2 particle_box = tile->GetBoundingBox(true);
 			if (object != nullptr)
 			{
-
-
-
 				chaos::TiledMap::GeometricObjectSurface const* surface_object = geometric_object->GetObjectSurface();
 				if (surface_object != nullptr)
-				{
-					keep_aspect_ratio = false; // ??? shuludum
-
-
-
-
 					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
-				}
 			}
+			bool keep_aspect_ratio = false;
 			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, tile->diagonal_flip, keep_aspect_ratio);
 		}
 	}

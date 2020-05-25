@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/TiledMap.h>
 #include <chaos/TiledMapTools.h>
 

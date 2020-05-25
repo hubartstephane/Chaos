@@ -4,7 +4,7 @@
 #include <chaos/GPUClasses.h>
 
 #include <chaos/NamedObject.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GPURenderable.h>
 
 namespace chaos

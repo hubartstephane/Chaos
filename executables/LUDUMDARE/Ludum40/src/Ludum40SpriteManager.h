@@ -39,7 +39,7 @@ namespace chaos
 
 
   /** the manager for sprites */
-  class SpriteManager : public ReferencedObject
+  class SpriteManager : public Object
   {
   public:
 

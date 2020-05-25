@@ -30,7 +30,7 @@ bool BonusSpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_
 
 // -------------------------------------------------------------------
 
-bool BonusSpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+bool BonusSpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Camera* camera = auto_cast(object);
 	if (camera == nullptr)
@@ -77,7 +77,7 @@ bool EnemySpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_
 
 // -------------------------------------------------------------------
 
-bool EnemySpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+bool EnemySpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Camera* camera = auto_cast(object);
 	if (camera == nullptr)

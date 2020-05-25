@@ -304,7 +304,7 @@ namespace chaos
 						// |+----+|
 						// +------+
 
-						if (params.duplicate_image_border)
+						if (params.duplicate_image_border && 0)
 						{
 							// XXX : it is possible to index dst texture to outside the range reserved surface (the double border) because
 							//       dst_desc is descriptor on the whole image
@@ -479,7 +479,7 @@ namespace chaos
 			output = &in_output;
 
 			// due to special image treatment we may want to have an extra padding (see texel interpolation and  AtlasGenerator::GenerateBitmaps(...)
-			if (params.duplicate_image_border)
+			if (params.duplicate_image_border && 0)
 				++params.atlas_padding;
 
 			// prepare the result to receive new computation

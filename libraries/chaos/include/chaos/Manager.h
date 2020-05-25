@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/FilePath.h>
 #include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
@@ -14,7 +14,7 @@ namespace chaos
 	// MANAGER
 	// ==============================================================
 
-	class Manager : public ReferencedObject
+	class Manager : public Object
 	{
 
 	public:

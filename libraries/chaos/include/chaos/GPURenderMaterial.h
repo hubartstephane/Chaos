@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUProgramProvider.h>
 #include <chaos/GPUFileResource.h>
@@ -90,7 +90,7 @@ namespace chaos
 	* GPURenderMaterialInfo : the data for a material
 	*/
 
-	class GPURenderMaterialInfo : public ReferencedObject
+	class GPURenderMaterialInfo : public Object
 	{
 
 	public:

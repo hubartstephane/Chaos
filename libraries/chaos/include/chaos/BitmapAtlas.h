@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/NamedObject.h>
 #include <chaos/FilePath.h>
 #include <chaos/ImageTools.h>
@@ -78,7 +78,7 @@ namespace chaos
 		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
 		 */
 
-		class BitmapAnimationInfo : public ReferencedObject, public ImageAnimationDescription // XXX: inheritance order is important
+		class BitmapAnimationInfo : public Object, public ImageAnimationDescription // XXX: inheritance order is important
 		{
 		};
 
@@ -338,7 +338,7 @@ namespace chaos
 		* AtlasBase : base class for Atlas and TextureArrayAtlas
 		*/
 
-		class AtlasBase : public  AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, ReferencedObject>
+		class AtlasBase : public  AtlasBaseTemplate<BitmapInfo, FontInfo, FolderInfo, Object>
 		{
 
 			friend class AtlasGenerator;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
@@ -220,7 +220,7 @@ namespace chaos
 	* Event that can be triggered by clock
 	*/
 
-	class ClockEvent : public ReferencedObject
+	class ClockEvent : public Object
 	{
 		friend class Clock;
 
@@ -309,7 +309,7 @@ namespace chaos
 	* This represents a clock that may paused or have a different time scale than absolute time. It can have inner clocks
 	*/
 
-	class Clock : public ReferencedObject
+	class Clock : public Object
 	{
 		friend class ClockEvent;
 

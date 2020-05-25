@@ -94,7 +94,7 @@ namespace chaos
 		* BitmapAnimationInfoInput : Describe an animation for a BitmapInfoInput
 		*/
 
-		class BitmapAnimationInfoInput : public ReferencedObject
+		class BitmapAnimationInfoInput : public Object
 		{
 
 		public:
@@ -250,7 +250,7 @@ namespace chaos
 		* AtlasInput : this hold the bitmaps / glyphs used for Atlas generation
 		*/
 
-		class AtlasInput : public AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, ReferencedObject>
+		class AtlasInput : public AtlasBaseTemplate<BitmapInfoInput, FontInfoInput, FolderInfoInput, Object>
 		{
 			friend class ObjectBaseInput;
 			friend class AtlasGenerator;		

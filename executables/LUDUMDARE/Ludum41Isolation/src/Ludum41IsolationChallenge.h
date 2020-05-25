@@ -1,11 +1,11 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/ParticleManager.h>
 
-class LudumChallenge : public chaos::ReferencedObject
+class LudumChallenge : public chaos::Object
 {
 	friend class LudumGameInstance;
 	friend class LudumPlayer;

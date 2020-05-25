@@ -5,7 +5,7 @@
 
 #include <chaos/GeometryFramework.h>
 #include <chaos/GPUSimpleMesh.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/MemoryBufferWriter.h>
 #include <chaos/GPUDrawPrimitive.h>
 
@@ -37,7 +37,7 @@ namespace chaos
 	* GPUSimpleMeshGenerator : an object that is responsible for generating the mesh data
 	*/
 
-	class GPUSimpleMeshGenerator : public ReferencedObject
+	class GPUSimpleMeshGenerator : public Object
 	{
 	public:
 

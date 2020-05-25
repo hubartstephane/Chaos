@@ -20,7 +20,7 @@ namespace chaos
 
 	};
 
-	class GPUBufferPool : public ReferencedObject
+	class GPUBufferPool : public Object
 	{
 	public:
 

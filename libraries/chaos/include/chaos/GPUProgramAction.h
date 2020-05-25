@@ -4,7 +4,7 @@
 #include <chaos/GPUClasses.h>
 
 #include <chaos/GPUProgramData.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GLTools.h>
 #include <chaos/GPUTexture.h>
 #include <chaos/GLMTools.h>

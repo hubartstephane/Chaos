@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/Buffer.h>
 #include <chaos/FilePath.h>
 #include <chaos/GeometryFramework.h>
@@ -74,7 +74,7 @@ namespace chaos
 		//
 		// 
 
-		class BaseObject : public ReferencedObject
+		class BaseObject : public Object
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 

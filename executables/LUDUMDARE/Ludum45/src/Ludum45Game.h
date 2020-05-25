@@ -6,7 +6,7 @@
 #include "Ludum45Enemies.h"
 
 #include <chaos/StandardHeaders.h> 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/TextureArrayAtlas.h>

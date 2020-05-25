@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/Tickable.h>
 #include <chaos/InputEventReceiver.h>
 #include <chaos/SoundManager.h>

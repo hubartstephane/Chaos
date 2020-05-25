@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/TiledMap.h>
 #include <chaos/TiledMapTools.h>
 
@@ -32,7 +32,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
+	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
 public:
 
@@ -57,7 +57,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
+	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
 protected:
 
@@ -82,7 +82,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type) override;
+	virtual bool OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type) override;
 
 public:
 

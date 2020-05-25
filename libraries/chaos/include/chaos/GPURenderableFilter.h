@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/NamedObject.h>
 
 namespace chaos
@@ -12,7 +12,7 @@ namespace chaos
 	// GPURenderableFilter : filter-out some objects frome rendering
 	// ========================================================
 
-	class GPURenderableFilter : public ReferencedObject
+	class GPURenderableFilter : public Object
 	{
 	public:
 

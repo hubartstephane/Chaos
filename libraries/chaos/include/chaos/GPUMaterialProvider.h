@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
@@ -11,7 +11,7 @@ namespace chaos
 	// GPUMaterialProvider : used to override the material used
 	// ========================================================	
 
-	class GPUMaterialProvider : public ReferencedObject
+	class GPUMaterialProvider : public Object
 	{
 	public:
 

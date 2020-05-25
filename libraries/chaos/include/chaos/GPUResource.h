@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
@@ -12,7 +12,7 @@ namespace chaos
 	// CALLBACKS
 	// ==============================================================
 
-	class GPUResourceCallbacks : public ReferencedObject
+	class GPUResourceCallbacks : public Object
 	{
 		friend class GPUResource;
 
@@ -51,7 +51,7 @@ namespace chaos
 	// GPUResource
 	// ==============================================================
 
-	class GPUResource : public ReferencedObject
+	class GPUResource : public Object
 	{
 	public:
 

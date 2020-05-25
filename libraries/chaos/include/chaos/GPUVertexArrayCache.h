@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GPUVertexArray.h>
 #include <chaos/GPUProgram.h>
 #include <chaos/GPUResource.h>
@@ -49,7 +49,7 @@ namespace chaos
 	// GPUVertexArrayCache : a binding between GPUProgram/GPUVertexArray that support destruction of both side
 	// =================================================================================================
 
-	class GPUVertexArrayCache : public ReferencedObject
+	class GPUVertexArrayCache : public Object
 	{
 
 	public:

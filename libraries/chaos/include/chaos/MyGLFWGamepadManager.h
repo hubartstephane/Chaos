@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 // XXX: there are important changes in GLFW 3.3 relative to 3.1
 //
@@ -130,7 +130,7 @@ namespace chaos
 		* GamepadCallbacks : some callbacks that may be plugged into a gamepad
 		*/
 
-		class GamepadCallbacks : public ReferencedObject
+		class GamepadCallbacks : public Object
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -300,7 +300,7 @@ namespace chaos
 		 * ForceFeedbackEffect : the feedback effects
 		 */
 
-		class ForceFeedbackEffect : public ReferencedObject
+		class ForceFeedbackEffect : public Object
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -353,7 +353,7 @@ namespace chaos
 		/**
 		* Gamepad : this is a logical gamepad .. may change the physical gamepad it is bound on
 		*/
-		class Gamepad : public ReferencedObject
+		class Gamepad : public Object
 		{
 		public:
 
@@ -458,7 +458,7 @@ namespace chaos
 		* GamepadManager : used to handle gamepads, there allocation, the dynamic change of their index ...
 		*/
 
-		class GamepadManager : public ReferencedObject
+		class GamepadManager : public Object
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 

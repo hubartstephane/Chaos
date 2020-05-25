@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/BitmapAtlas.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/NamedObject.h>
 
 #include <death/Game.h>
@@ -21,7 +21,7 @@ namespace UpgradeKeys
 	CHAOS_DECLARE_TAG(SPECIALPOWER);
 };
 
-class PlayerUpgrade : public chaos::ReferencedObject
+class PlayerUpgrade : public chaos::Object
 {
 public:
 

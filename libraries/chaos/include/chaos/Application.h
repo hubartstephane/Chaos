@@ -4,7 +4,7 @@
 #include <chaos/FileManager.h>
 #include <chaos/InputMode.h>
 #include <chaos/InputEventReceiver.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/AutoCast.h>
 
 namespace chaos
@@ -12,7 +12,7 @@ namespace chaos
 	/**
 	* Application : used to store generic application data
 	*/
-	class Application : public chaos::ReferencedObject, public InputEventReceiver
+	class Application : public chaos::Object, public InputEventReceiver
 	{
 
 	public:

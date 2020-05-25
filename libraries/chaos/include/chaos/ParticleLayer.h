@@ -2,11 +2,11 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/GPUBuffer.h>
 #include <chaos/GPUBufferCache.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GPUVertexDeclaration.h>
 #include <chaos/GPUVertexArrayCache.h>
 #include <chaos/GPUProgramProvider.h>
@@ -450,7 +450,7 @@ public:
 		// ParticleAllocationBase
 		// ==============================================================
 
-	class ParticleAllocationBase : public ReferencedObject
+	class ParticleAllocationBase : public Object
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 

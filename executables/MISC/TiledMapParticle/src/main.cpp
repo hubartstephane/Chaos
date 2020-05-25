@@ -7,7 +7,7 @@
 #include <chaos/SparseWriteBuffer.h>
 #include <chaos/Buffer.h>
 #include <chaos/FileTools.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/XMLTools.h>
 #include <chaos/TiledMap.h>
 #include <chaos/BoostTools.h>

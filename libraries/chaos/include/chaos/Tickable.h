@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/NamedObject.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
@@ -11,7 +11,7 @@ namespace chaos
 	// Tickable : an object that deserve to be ticked
 	// ========================================================	
 
-	class Tickable : public ReferencedObject, public NamedObject
+	class Tickable : public Object, public NamedObject
 	{
 	public:
 

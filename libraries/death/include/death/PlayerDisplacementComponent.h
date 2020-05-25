@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/Tickable.h>
 
 #include <death/GameFramework.h>
@@ -36,7 +36,7 @@ namespace death
 
 #if 0
 
-	class PlayerMovement : public chaos::ReferencedObject
+	class PlayerMovement : public chaos::Object
 	{
 	public:
 

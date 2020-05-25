@@ -2,50 +2,50 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/SmartPointers.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
-	ReferencedObject::ReferencedObject() :
+	Object::Object() :
 		shared_count(0),
 		weak_count(0),
 		shared_destroyed(false)
 	{
 	}
 
-	void ReferencedObject::AddReference(SharedPointerPolicy policy)
+	void Object::AddReference(SharedPointerPolicy policy)
 	{
 		assert(!shared_destroyed);
 		++shared_count;
 	}
 
-	void ReferencedObject::AddReference(WeakPointerPolicy policy)
+	void Object::AddReference(WeakPointerPolicy policy)
 	{
 		++weak_count; // can add a weak reference even if the object is destroyed
 	}
 
-	void ReferencedObject::SubReference(SharedPointerPolicy policy)
+	void Object::SubReference(SharedPointerPolicy policy)
 	{
 		assert(!shared_destroyed);
 		assert(shared_count > 0);
 		if (--shared_count <= 0)
 		{
 			shared_destroyed = true;
-			this->~ReferencedObject(); // destroy the object content, but only release memory if weak_count is 0 too
+			this->~Object(); // destroy the object content, but only release memory if weak_count is 0 too
 
 			if (weak_count <= 0)
 				OnLastReferenceLost();
 		}
 	}
 
-	void ReferencedObject::SubReference(WeakPointerPolicy policy)
+	void Object::SubReference(WeakPointerPolicy policy)
 	{
 		if (--weak_count <= 0)
 			if (shared_count == 0) // no more weak reference nor shared reference, release memory
 				OnLastReferenceLost();
 	}
 
-	void ReferencedObject::OnLastReferenceLost()
+	void Object::OnLastReferenceLost()
 	{
 		// XXX : this is different from : delete(this)
 		//       delete(this)          : destruction + deallocation

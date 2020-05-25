@@ -49,7 +49,7 @@ protected:
 
 // ======================================================================================
 
-class Game : public chaos::ReferencedObject
+class Game : public chaos::Object
 {	
 	static constexpr int PLAYER_LAYER = -1;	
 	static constexpr int PAUSED_OBJECT_LAYER = -3;

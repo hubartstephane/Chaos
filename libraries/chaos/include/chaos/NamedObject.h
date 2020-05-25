@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/MetaProgramming.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/StringTools.h>
 
 // XXX : automatic TagType generation
@@ -176,7 +176,7 @@ namespace chaos
 	};
 
 	/** NamedObjectFilter : a class to filter objects by their name */
-	class NamedObjectFilter : public ReferencedObject
+	class NamedObjectFilter : public Object
 	{
 	public:
 

@@ -5,7 +5,7 @@
 #include <chaos/Buffer.h>
 #include <chaos/SmartPointers.h>
 #include <chaos/StringTools.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/EnumTools.h>
 #include <chaos/Metaprogramming.h>
 
@@ -56,10 +56,10 @@ namespace chaos
 			std::string classname;
 			if (JSONTools::GetAttribute(entry, "__classname__", classname))
 			{
-				chaos::ClassRegistration* json_registration = chaos::ClassTools::GetClassRegistration(classname.c_str());
+				chaos::Class* json_registration = chaos::ClassTools::GetClass(classname.c_str());
 				if (json_registration != nullptr)
 				{
-					chaos::ClassRegistration* dst_registration = chaos::ClassTools::GetClassRegistration<T>();
+					chaos::Class* dst_registration = chaos::ClassTools::GetClass<T>();
 					if (dst_registration != nullptr)
 					{
 						if (ClassTools::InheritsFrom(json_registration, dst_registration, true) == InheritanceType::YES) // accept equal
@@ -134,7 +134,7 @@ namespace chaos
 					std::string classname;
 					if (JSONTools::GetAttribute(entry, "__classname__", classname))
 					{
-						chaos::ClassRegistration* registration = chos::ClassTools::GetClassRegistration(classname.c_str());
+						chaos::Class* registration = chos::ClassTools::GetClass(classname.c_str());
 						if (registration)
 						{
 							registration = registration;

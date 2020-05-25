@@ -24,7 +24,7 @@
 #include <chaos/GPURenderMaterial.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/ParticleTextGenerator.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/StringTools.h>
 #include <chaos/GPURenderParams.h>
 

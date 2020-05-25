@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/PrimitiveOutput.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/Hotpoint.h>
@@ -56,9 +56,9 @@ namespace chaos
 		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags); // in order BL, BR, TR, TL
 
 		template<typename PARTICLE_TYPE>
-		bool IsParticleClassCompatible(ClassRegistration const * particle_class, size_t particle_size, bool accept_bigger_particle)
+		bool IsParticleClassCompatible(Class const * particle_class, size_t particle_size, bool accept_bigger_particle)
 		{
-			ClassRegistration const * wanted_class = ClassTools::GetClassRegistration<PARTICLE_TYPE>();
+			Class const * wanted_class = ClassTools::GetClass<PARTICLE_TYPE>();
 
 			// strict equality
 			if (particle_class == wanted_class)

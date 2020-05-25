@@ -8,7 +8,7 @@
 #include <chaos/Metaprogramming.h>
 #include <chaos/EmptyClass.h>
 #include <chaos/NamedObject.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(toto)
 

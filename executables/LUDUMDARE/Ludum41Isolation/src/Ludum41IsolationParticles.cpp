@@ -8,7 +8,7 @@
 #include "Ludum41IsolationChallenge.h"
 
 #include <chaos/CollisionFramework.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/PrimitiveOutput.h>
 
 // ===========================================================================

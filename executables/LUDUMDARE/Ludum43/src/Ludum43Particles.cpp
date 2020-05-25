@@ -7,7 +7,7 @@
 #include "Ludum43Player.h"
 
 #include <chaos/CollisionFramework.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>)
 {

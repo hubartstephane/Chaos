@@ -5,7 +5,7 @@
 #include <chaos/ParticleManager.h> 
 #include <chaos/ParticleDefault.h> 
 #include <chaos/PrimitiveOutput.h> 
-#include <chaos/ClassTools.h> 
+#include <chaos/Class.h> 
 
 #include <death/Game.h> 
 

@@ -1,6 +1,6 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 
 class A {};
 

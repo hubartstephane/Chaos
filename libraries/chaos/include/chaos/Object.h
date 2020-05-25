@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/SmartPointers.h>
+#include <chaos/Class.h>
 
 namespace chaos
 {
@@ -55,6 +56,9 @@ namespace chaos
 		virtual ~Object() = default;
 
 	public:
+
+		/** get the class corresponding of the object */
+		virtual Class const * GetClass() const;
 
 		/** adding a shared reference */
 		virtual void AddReference(SharedPointerPolicy policy);

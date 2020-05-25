@@ -13,7 +13,7 @@
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUDynamicMesh.h>
 #include <chaos/TextureArrayAtlas.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/ParticleTools.h>
 #include <chaos/GPURenderable.h>
 #include <chaos/ParticleAccessor.h>
@@ -478,7 +478,7 @@ public:
 		bool IsVisible() const;
 
 		/** returns the ID representing the class of the particle */
-		virtual ClassRegistration const * GetParticleClass() const { return nullptr; }
+		virtual Class const * GetParticleClass() const { return nullptr; }
 
 		/** get the size of one particle */
 		virtual size_t GetParticleSize() const { return 0; }
@@ -613,9 +613,9 @@ public:
         {
         }
 		/** override */
-		virtual ClassRegistration const * GetParticleClass() const override
+		virtual Class const * GetParticleClass() const override
 		{
-			return ClassTools::GetClassRegistration<particle_type>();
+			return ClassTools::GetClass<particle_type>();
 		}
 
         /** override */
@@ -930,13 +930,13 @@ public:
 		virtual bool AreParticlesDynamic() const { return true; }
 
 		/** get the particle ID for this system */
-		virtual ClassRegistration const * GetParticleClass() const { return nullptr; }
+		virtual Class const * GetParticleClass() const { return nullptr; }
 
 		/** returns true whether the particle type is the one given as template parameter */
 		template<typename T>
 		bool IsParticleType() const
 		{
-			return (GetParticleClass() == ClassTools::GetClassRegistration<T>());
+			return (GetParticleClass() == ClassTools::GetClass<T>());
 		}
 
         /** change the atlas */
@@ -1114,7 +1114,7 @@ public:
 			return true;
 		}
 		/** override */
-		virtual ClassRegistration const * GetParticleClass() const override { return ClassTools::GetClassRegistration<particle_type>(); }
+		virtual Class const * GetParticleClass() const override { return ClassTools::GetClass<particle_type>(); }
 		/** override */
 		virtual GPUVertexDeclaration * GetVertexDeclaration() const override 
 		{

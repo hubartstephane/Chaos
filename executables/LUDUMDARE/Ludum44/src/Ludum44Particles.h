@@ -6,7 +6,7 @@
 #include <chaos/ParticleDefault.h> 
 #include <chaos/GPUVertexDeclaration.h> 
 #include <chaos/BitmapAtlas.h> 
-#include <chaos/ClassTools.h> 
+#include <chaos/Class.h> 
 
 #include <death/TiledMapParticle.h> 
 

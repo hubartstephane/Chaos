@@ -9,7 +9,7 @@
 #include "Ludum45Enemies.h"
 
 #include <chaos/CollisionFramework.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/ParticleTools.h>
 
 #include <chaos/WrapMode.h>

@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/StringTools.h>
+#include <chaos/EmptyClass.h>
 
 namespace chaos
 {
@@ -11,8 +12,8 @@ namespace chaos
 
 	// ideally this should be replaced with __VA_OPT__, but not supported yet by VS2019
 
-#define CHAOS_REGISTER_CLASS1(classname) inline chaos::Class * classname##_register = chaos::ClassTools::DeclareClass<classname>(#classname);
-#define CHAOS_REGISTER_CLASS2(classname, parent_classname) inline chaos::Class * classname##_register = chaos::ClassTools::DeclareClass<classname, parent_classname>(#classname);
+#define CHAOS_REGISTER_CLASS1(classname) inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname>(#classname);
+#define CHAOS_REGISTER_CLASS2(classname, parent_classname) inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname, parent_classname>(#classname);
 
 	/**
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes
@@ -72,7 +73,7 @@ namespace chaos
 
 		/** declare a class */
 		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = chaos::EmptyClass>
-		static Class* DeclareClass(char const* class_name)
+		static Class const * DeclareClass(char const* class_name)
 		{
 			// check parameter and not already registered
 			assert(class_name != nullptr && strlen(class_name) > 0);

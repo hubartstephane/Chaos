@@ -8,6 +8,24 @@ namespace chaos
 {
 
 	/**
+	 * Macros for declaring classes in object derivated classes
+	 */
+
+#define CHAOS_OBJECT_DECLARE_CLASS1(classname)\
+private:\
+static inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname>(#classname);\
+public:\
+static chaos::Class const * GetStaticClass(){ return classname##_class;}\
+virtual chaos::Class const * GetClass() { return classname##_class; }
+
+#define CHAOS_OBJECT_DECLARE_CLASS2(classname, parent_classname)\
+private:\
+static inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname, parent_classname>(#classname);\
+public:\
+static chaos::Class const * GetStaticClass(){ return classname##_class;}\
+virtual chaos::Class const * GetClass() { return classname##_class; }
+
+	/**
 	* Object is a base class that have a reference count (shared and weak)
 	*/
 
@@ -48,6 +66,8 @@ namespace chaos
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
 
+		CHAOS_OBJECT_DECLARE_CLASS1(Object);
+
 	public:
 
 		/** constructor */
@@ -56,9 +76,6 @@ namespace chaos
 		virtual ~Object() = default;
 
 	public:
-
-		/** get the class corresponding of the object */
-		virtual Class const * GetClass() const;
 
 		/** adding a shared reference */
 		virtual void AddReference(SharedPointerPolicy policy);

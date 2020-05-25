@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GeometryFramework.h>
 
 #include <death/GameFramework.h>
@@ -63,7 +63,7 @@ namespace death
 	// PlayerPawnCheckpoint
 	// =============================================
 
-	class PlayerPawnCheckpoint : public chaos::ReferencedObject
+	class PlayerPawnCheckpoint : public chaos::Object
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -77,7 +77,7 @@ namespace death
 	// PlayerCheckpoint
 	// =============================================
 
-	class PlayerCheckpoint : public chaos::ReferencedObject
+	class PlayerCheckpoint : public chaos::Object
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -107,7 +107,7 @@ namespace death
 	// LevelCheckpoint
 	// =============================================
 
-	class LevelCheckpoint : public chaos::ReferencedObject
+	class LevelCheckpoint : public chaos::Object
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
@@ -125,7 +125,7 @@ namespace death
 	// GameCheckpoint
 	// =============================================
 
-	class GameCheckpoint : public chaos::ReferencedObject
+	class GameCheckpoint : public chaos::Object
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 

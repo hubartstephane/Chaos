@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/FileResource.h>
 
 #include <death/GameFramework.h>
@@ -13,7 +13,7 @@ namespace death
 	// Level : a simple game level
 	// =====================================
 
-	class Level : public chaos::ReferencedObject, public chaos::FileResource
+	class Level : public chaos::Object, public chaos::FileResource
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 

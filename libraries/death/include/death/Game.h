@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/InputEventReceiver.h>
 #include <chaos/MyGLFWwindow.h>
 #include <chaos/MyGLFWGamepadManager.h>
@@ -38,7 +38,7 @@ namespace death
 
 	using PhysicalGamepadWrapper = chaos::ReferencedObjectDataWrapper<chaos::MyGLFW::PhysicalGamepad*>;
 
-	class Game : public chaos::ReferencedObject, public chaos::InputEventReceiver, public chaos::ResourceFriend
+	class Game : public chaos::Object, public chaos::InputEventReceiver, public chaos::ResourceFriend
 	{
 		friend class GamepadManager;
 		friend class GameWindow;

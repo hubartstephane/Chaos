@@ -113,7 +113,7 @@ bool PowerUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 	return true;
 }
 
-bool PowerUpTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+bool PowerUpTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Player* player = auto_cast(object);
 	if (player == nullptr)
@@ -150,7 +150,7 @@ bool SpeedUpTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 	return true;
 }
 
-bool SpeedUpTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+bool SpeedUpTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Player* player = auto_cast(object);
 	if (player == nullptr)
@@ -189,7 +189,7 @@ bool SpawnerTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geome
 	return true;
 }
 
-bool SpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+bool SpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Camera* camera = auto_cast(object);
 	if (camera == nullptr)

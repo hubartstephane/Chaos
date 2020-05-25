@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
@@ -90,7 +90,7 @@ namespace chaos
 	/**
 	* Declaration of a full vertex
 	*/
-	class GPUVertexDeclaration : public ReferencedObject
+	class GPUVertexDeclaration : public Object
 	{
 	public:
 

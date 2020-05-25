@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/IrrklangTools.h>
 #include <chaos/SmartPointers.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/FilePath.h>
 #include <chaos/Manager.h>
 #include <chaos/ResourceManagerLoader.h>
@@ -51,7 +51,7 @@ namespace chaos
 		// CALLBACKS
 		// ==============================================================
 
-	class SoundCallbacks : public ReferencedObject
+	class SoundCallbacks : public Object
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -181,7 +181,7 @@ namespace chaos
 	// SOUND OBJECT
 	// ==============================================================
 
-	class SoundObject : public ReferencedObject, public NamedResource
+	class SoundObject : public Object, public NamedResource
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 

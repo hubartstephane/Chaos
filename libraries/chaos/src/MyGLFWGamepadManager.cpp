@@ -360,7 +360,7 @@ namespace chaos
         {
             // the ParticleAllocation is handled as usual
             if (gamepad == nullptr)
-                ReferencedObject::SubReference(policy);
+                Object::SubReference(policy);
             // the last reference is the one from the layer. Destroy it
             else if (--shared_count == 1)
                 RemoveFromGamepad();

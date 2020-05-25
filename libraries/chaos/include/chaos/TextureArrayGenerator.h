@@ -51,7 +51,7 @@ namespace chaos
 	* TextureArraySliceGenerator : base class for slice generators
 	*/
 
-	class TextureArraySliceGenerator : public ReferencedObject
+	class TextureArraySliceGenerator : public Object
 	{
 	public:
 

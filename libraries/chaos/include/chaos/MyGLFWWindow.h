@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/InputEventReceiver.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/GPURenderer.h>
 
@@ -68,7 +68,7 @@ namespace chaos
 		* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 		*/
 
-		class Window : public ReferencedObject, public InputEventReceiver
+		class Window : public Object, public InputEventReceiver
 		{
 			friend class SingleWindowApplication;
 

@@ -1,7 +1,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/WinTools.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 
 

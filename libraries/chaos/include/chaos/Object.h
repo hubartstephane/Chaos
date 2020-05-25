@@ -7,11 +7,11 @@ namespace chaos
 {
 
 	/**
-	* ReferencedObject is a base class that have a reference count (shared and weak)
+	* Object is a base class that have a reference count (shared and weak)
 	*/
 
 	// XXX : due to memory allocation management (destruction is manually called with ->~destructor())
-	//       it is important that ReferencedObject is the very first object in hierarchy chain
+	//       it is important that Object is the very first object in hierarchy chain
 	//
 	//       the destructor operator calls   free(p) : p must point to the beginning of the allocated buffer
 	//
@@ -19,10 +19,10 @@ namespace chaos
 	//   case 1 : BAD !!! 
 	//
 	//
-	//                  +--- this (from the point of view of ReferencedObject)
+	//                  +--- this (from the point of view of Object)
 	//                  v
 	//   +------------+----------------------+
-	//   |            | ReferencedObject     |
+	//   |            | Object               |
 	//   +------------+----------------------+
 	//   ^
 	//   +-- allocated buffer for the whole class
@@ -32,17 +32,17 @@ namespace chaos
 	//
 	//   case 2 : GOOD !!!
 	//
-	//   +--- this (from the point of view of ReferencedObject)
+	//   +--- this (from the point of view of Object)
 	//   v
 	//   +----------------------+------------+
-	//   | ReferencedObject     |            |
+	//   | Object               |            |
 	//   +----------------------+------------+
 	//   ^
 	//   +-- allocated buffer for the whole class
 	//
 	//   operator delete(this) <==> free(this)   ===> we call free with a GOOD pointer
 
-	class ReferencedObject
+	class Object
 	{
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
@@ -50,9 +50,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		ReferencedObject();
+		Object();
 		/** destructor */
-		virtual ~ReferencedObject() = default;
+		virtual ~Object() = default;
 
 	public:
 
@@ -107,7 +107,7 @@ namespace chaos
 	*/
 
 	template<typename T>
-	class ReferencedObjectDataWrapper : public DisableReferenceCount<ReferencedObject>
+	class ReferencedObjectDataWrapper : public DisableReferenceCount<Object>
 	{
 		using type = T;
 
@@ -135,22 +135,22 @@ namespace chaos
 }; // namespace chaos
 
 	 /**
-	 * ReferencedObject : reference count external methods
+	 * Object : reference count external methods
 	 *
 	 * XXX : theses functions are out of chaos scope, else while shared_ptr is in chaos, it searches for chaos::intrusive_ptr_add function in prioriy
-	 *       and if it was finding ReferencedObject reference functions inside chaos scope, it will fail with IrrklangTools functions
+	 *       and if it was finding Object reference functions inside chaos scope, it will fail with IrrklangTools functions
 	 */
 
 	 /** utility method for shared_ptr */
 template<typename POLICY = chaos::SharedPointerPolicy>
-void intrusive_ptr_add_ref(chaos::ReferencedObject * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
+void intrusive_ptr_add_ref(chaos::Object * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
 {
 	obj->AddReference(policy);
 }
 
 /** utility method for shared_ptr */
 template<typename POLICY = chaos::SharedPointerPolicy>
-void intrusive_ptr_release(chaos::ReferencedObject * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
+void intrusive_ptr_release(chaos::Object * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
 {
 	obj->SubReference(policy);
 }

@@ -21,7 +21,7 @@ public:
 	glm::vec4 color;
 };
 
-class PrimitiveRenderer : public chaos::ReferencedObject
+class PrimitiveRenderer : public chaos::Object
 {
 public:
 

@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/BitmapAtlas.h>
 #include <chaos/ParticleLayer.h>
 #include <chaos/ParticleAccessor.h>
@@ -10,7 +10,7 @@
 namespace chaos
 {
 
-    class ParticleSpawner : public ReferencedObject
+    class ParticleSpawner : public Object
     {
     public:
 

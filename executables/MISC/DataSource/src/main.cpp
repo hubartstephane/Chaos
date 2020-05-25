@@ -4,12 +4,12 @@
 #include <chaos/StringTools.h>
 #include <chaos/Application.h>
 #include <chaos/FileTools.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/FileManager.h>
 
 
 
-class DataSource : public chaos::ReferencedObject
+class DataSource : public chaos::Object
 {
 
 protected:
@@ -24,7 +24,7 @@ protected:
   boost::filesystem::path path;
 };
 
-class OBJ : public chaos::ReferencedObject
+class OBJ : public chaos::Object
 {
 public:
 
@@ -48,7 +48,7 @@ protected:
 
 
 
-class OBJManager : public chaos::ReferencedObject
+class OBJManager : public chaos::Object
 {
 public:
 

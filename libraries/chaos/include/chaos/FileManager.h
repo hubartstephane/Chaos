@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/Buffer.h>
 
 namespace chaos
@@ -19,7 +19,7 @@ namespace chaos
 		operator Buffer<char> ();
 	};
 
-	class FileManager : public ReferencedObject
+	class FileManager : public Object
 	{
 	public:
 

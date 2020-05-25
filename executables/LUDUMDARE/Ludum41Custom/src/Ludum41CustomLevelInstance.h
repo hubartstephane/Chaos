@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 #include <death/Game.h>
 #include <death/Level.h>

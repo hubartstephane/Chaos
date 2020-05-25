@@ -3,7 +3,7 @@
 #include "Ludum44Player.h"
 
 #include <chaos/StandardHeaders.h> 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 #include <death/Game.h>
 #include <death/GameFramework.h>
@@ -12,7 +12,7 @@
 // LudumPowerUp
 // =================================================
 
-class LudumPowerUp : public chaos::ReferencedObject
+class LudumPowerUp : public chaos::Object
 {
 public:
 

@@ -4,7 +4,7 @@
 #include <chaos/ImageProcessor.h>
 #include <chaos/JSONTools.h>
 #include <chaos/ClassTools.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
@@ -14,7 +14,7 @@ namespace chaos
 		* BitmapAtlasFilterCondition : a condition to know whether the bitmap is to be processed
 		*/
 
-		class BitmapAtlasFilterCondition : public ReferencedObject
+		class BitmapAtlasFilterCondition : public Object
 		{
 		public:
 
@@ -58,7 +58,7 @@ namespace chaos
 		* BitmapAtlasFilterSet : a whole set of condition/image processor
 		*/
 
-		class BitmapAtlasFilterSet : public ReferencedObject
+		class BitmapAtlasFilterSet : public Object
 		{
 
 		public:

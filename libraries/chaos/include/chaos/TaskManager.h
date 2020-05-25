@@ -1,11 +1,11 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 namespace chaos
 {
-	class TaskManager : public ReferencedObject
+	class TaskManager : public Object
 	{
 
 	};

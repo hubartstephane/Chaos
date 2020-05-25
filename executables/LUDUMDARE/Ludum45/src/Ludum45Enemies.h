@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/BitmapAtlas.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/NamedObject.h>
 #include <chaos/ParticleAccessor.h>
 
@@ -14,7 +14,7 @@
 #include "Ludum45Particles.h"
 
 
-class EnemyPattern : public chaos::ReferencedObject
+class EnemyPattern : public chaos::Object
 {
 
 public:
@@ -38,7 +38,7 @@ public:
 
 
 
-class EnemyType : public chaos::ReferencedObject
+class EnemyType : public chaos::Object
 {
 public:
 

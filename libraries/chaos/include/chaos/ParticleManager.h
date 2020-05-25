@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/ParticleLayer.h>
 #include <chaos/GPUClasses.h>
 #include <chaos/GPURenderMaterial.h>

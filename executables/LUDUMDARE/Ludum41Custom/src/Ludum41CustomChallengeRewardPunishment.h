@@ -1,9 +1,9 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h> 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
-class LudumChallengeRewardPunishment : public chaos::ReferencedObject
+class LudumChallengeRewardPunishment : public chaos::Object
 {
 public:
 

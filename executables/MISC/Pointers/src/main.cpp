@@ -1,6 +1,6 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/SmartPointers.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 
 #if 0
 
@@ -315,22 +315,22 @@ namespace toto
 
 // ====================================================
 
-void intrusive_ptr_add_ref(chaos::ReferencedObject * obj, toto::SharedPointerPolicy policy)
+void intrusive_ptr_add_ref(chaos::Object * obj, toto::SharedPointerPolicy policy)
 {
 	obj->AddReference(chaos::SharedPointerPolicy());
 }
 
-void intrusive_ptr_release(chaos::ReferencedObject * obj, toto::SharedPointerPolicy policy)
+void intrusive_ptr_release(chaos::Object * obj, toto::SharedPointerPolicy policy)
 {
 	obj->SubReference(chaos::SharedPointerPolicy());
 }
 
-void intrusive_ptr_add_ref(chaos::ReferencedObject * obj, toto::WeakPointerPolicy policy)
+void intrusive_ptr_add_ref(chaos::Object * obj, toto::WeakPointerPolicy policy)
 {
 	obj->AddReference(chaos::WeakPointerPolicy());
 }
 
-void intrusive_ptr_release(chaos::ReferencedObject * obj, toto::WeakPointerPolicy policy)
+void intrusive_ptr_release(chaos::Object * obj, toto::WeakPointerPolicy policy)
 {
 	obj->SubReference(chaos::WeakPointerPolicy());
 }
@@ -354,7 +354,7 @@ void intrusive_ptr_release(chaos::ReferencedObject * obj, toto::WeakPointerPolic
 
 
 
-class A : public chaos::ReferencedObject
+class A : public chaos::Object
 {
 public:
 

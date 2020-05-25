@@ -4,7 +4,7 @@
 #include <chaos/GPUClasses.h>
 
 #include <chaos/GPUProgramData.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/GLTools.h>
 #include <chaos/GPUTexture.h>
 #include <chaos/GLMTools.h>
@@ -17,7 +17,7 @@ namespace chaos
 	* GPUProgramProviderBase : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
 	*/
 
-	class GPUProgramProviderBase : public ReferencedObject
+	class GPUProgramProviderBase : public Object
 	{
 		friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
 		friend class GPUProgramProviderChain;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/ImageDescription.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/JSONTools.h>
@@ -14,7 +14,7 @@ namespace chaos
 	* ImageProcessor : take an image as an entry and returns a new image as output
 	*/
 
-	class ImageProcessor : public ReferencedObject
+	class ImageProcessor : public Object
 	{
 	public:
 

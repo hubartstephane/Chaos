@@ -99,7 +99,7 @@ namespace death
 		return chaos::Collide(other_box, box);
 	}
 
-	bool TiledMapTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+	bool TiledMapTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		return false; // do not do anything with collision
 	}
@@ -165,7 +165,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapCheckpointTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+	bool TiledMapCheckpointTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Camera* camera = auto_cast(object);
 		if (camera == nullptr)
@@ -224,7 +224,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapNotificationTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+	bool TiledMapNotificationTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		// check object type
 		if (player_collision)
@@ -316,7 +316,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapSoundTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+	bool TiledMapSoundTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Camera* camera = auto_cast(object);
 		if (camera == nullptr)
@@ -355,7 +355,7 @@ namespace death
 		return false;
 	}
 
-	bool TiledMapFinishingTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+	bool TiledMapFinishingTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Player* player = auto_cast(object);
 		if (player == nullptr)
@@ -1580,7 +1580,7 @@ namespace death
 		}
 	}
 
-	TiledMapTriggerCollisionInfo* TiledMapLevelInstance::FindTriggerCollisionInfo(chaos::ReferencedObject* object)
+	TiledMapTriggerCollisionInfo* TiledMapLevelInstance::FindTriggerCollisionInfo(chaos::Object* object)
 	{
 		size_t count = collision_info.size();
 		for (size_t i = 0; i < count ; ++i)
@@ -1589,7 +1589,7 @@ namespace death
 		return nullptr;
 	}
 
-	void TiledMapLevelInstance::HandleTriggerCollisions(float delta_time, chaos::ReferencedObject* object, chaos::box2 const& box, int mask)
+	void TiledMapLevelInstance::HandleTriggerCollisions(float delta_time, chaos::Object* object, chaos::box2 const& box, int mask)
 	{
 		TiledMapTriggerCollisionInfo* previous_collisions = FindTriggerCollisionInfo(object);
 

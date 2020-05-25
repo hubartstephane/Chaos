@@ -2,7 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/TiledMap.h>
 #include <chaos/GPURenderable.h>
 #include <chaos/Tickable.h>
@@ -20,7 +20,7 @@ namespace death
 	// TiledMapLayerInstanceParticlePopulator : utility class to generate particles for a layer with a cache
 	// =====================================
 
-	class TiledMapLayerInstanceParticlePopulator : public chaos::ReferencedObject
+	class TiledMapLayerInstanceParticlePopulator : public chaos::Object
 	{
 		static size_t const PARTICLE_BUFFER_SIZE = 100;
 

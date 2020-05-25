@@ -158,7 +158,7 @@ bool MyFinishingTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_g
 	return true;
 }
 
-bool MyFinishingTriggerObject::OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type)
+bool MyFinishingTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Player* player = auto_cast(object);
 	if (player == nullptr)

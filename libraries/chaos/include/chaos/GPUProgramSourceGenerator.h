@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
 
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/Buffer.h>
 #include <chaos/FilePath.h>
 
@@ -13,7 +13,7 @@ namespace chaos
 	* GPUProgramSourceGenerator : used to generate GLSL source (or part of source) code from a set of definitions
 	*/
 
-	class GPUProgramSourceGenerator : public ReferencedObject
+	class GPUProgramSourceGenerator : public Object
 	{
 	public:
 

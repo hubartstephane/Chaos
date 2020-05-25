@@ -8,7 +8,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/ReferencedObject.h>
+#include <chaos/Object.h>
 #include <chaos/TiledMap.h>
 #include <chaos/GPURenderable.h>
 #include <chaos/Tickable.h>
@@ -57,7 +57,7 @@ namespace death
 		// TiledMapObjectCheckpoint
 		// =====================================
 
-	class TiledMapObjectCheckpoint : public chaos::ReferencedObject
+	class TiledMapObjectCheckpoint : public chaos::Object
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -230,7 +230,7 @@ namespace death
 		virtual bool DoLoadFromCheckpoint(TiledMapObjectCheckpoint const* checkpoint) override;
 
 		/** called whenever a collision with object is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
-		virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject * object, chaos::CollisionType event_type);
+		virtual bool OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type);
 
 	protected:
 
@@ -283,7 +283,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
 	protected:
 
@@ -317,7 +317,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 	};
 
 	// =================================================
@@ -340,7 +340,7 @@ namespace death
 		/** override */
 		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
 		/** the sound creation method */
 		chaos::Sound* CreateSound() const;
@@ -384,7 +384,7 @@ namespace death
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::ReferencedObject* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 	};
 
 	// =====================================
@@ -487,7 +487,7 @@ namespace death
 	// TiledMapLayerCheckpoint
 	// =====================================
 
-	class TiledMapLayerCheckpoint : public chaos::ReferencedObject
+	class TiledMapLayerCheckpoint : public chaos::Object
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -742,7 +742,7 @@ namespace death
 	public:
 
 		/** the target considered */
-		chaos::weak_ptr<chaos::ReferencedObject> object;
+		chaos::weak_ptr<chaos::Object> object;
 		/** all the triggers colliding */
 		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> triggers;
 	};
@@ -829,7 +829,7 @@ namespace death
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();
 		/** handle all collision for a given object (TriggerObject) */
-		void HandleTriggerCollisions(float delta_time, chaos::ReferencedObject* object, chaos::box2 const& box, int mask);
+		void HandleTriggerCollisions(float delta_time, chaos::Object* object, chaos::box2 const& box, int mask);
 
 	protected:
 
@@ -883,7 +883,7 @@ namespace death
 
 
 		/** find the collision info for an object */
-		TiledMapTriggerCollisionInfo* FindTriggerCollisionInfo(chaos::ReferencedObject * object);
+		TiledMapTriggerCollisionInfo* FindTriggerCollisionInfo(chaos::Object * object);
 
 	protected:
 

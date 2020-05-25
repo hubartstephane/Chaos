@@ -455,7 +455,7 @@ namespace chaos
 	{
 		if (parent_clock == nullptr)
 		{			
-			ReferencedObject::SubReference(policy); // the Clock is handled as usual
+			Object::SubReference(policy); // the Clock is handled as usual
 		}
 		else
 		{

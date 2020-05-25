@@ -3,7 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/ImageProcessor.h>
 #include <chaos/JSONTools.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/Object.h>
 
 namespace chaos

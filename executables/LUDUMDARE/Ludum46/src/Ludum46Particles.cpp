@@ -10,7 +10,7 @@
 #include "Ludum46PlayerDisplacementComponent.h"
 
 #include <chaos/CollisionFramework.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 #include <chaos/ParticleTools.h>
 
 #include <death/SoundContext.h>

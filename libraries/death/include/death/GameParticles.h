@@ -4,7 +4,7 @@
 
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 
 
 namespace death

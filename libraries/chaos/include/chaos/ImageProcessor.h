@@ -5,7 +5,7 @@
 #include <chaos/ImageDescription.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/JSONTools.h>
-#include <chaos/ClassTools.h>
+#include <chaos/Class.h>
 
 namespace chaos
 {

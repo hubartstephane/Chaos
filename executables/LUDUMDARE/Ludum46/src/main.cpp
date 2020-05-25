@@ -2,7 +2,7 @@
 #include <death/Death.h> 
 
 
-#include <chaos/ClassTools.h> 
+#include <chaos/Class.h> 
 
 #include "Ludum46Game.h"
 
@@ -10,10 +10,10 @@
 
 #define DECLARE_CLASS(classname)\
 private:\
-static inline chaos::ClassRegistration * classname##_register = chaos::ClassTools::InsertClassRegistration<classname>(#classname);\
+static inline chaos::Class * classname##_register = chaos::ClassTools::DeclareClass<classname>(#classname);\
 public:\
-static chaos::ClassRegistration * GetStaticClass(){ return classname##_register;}\
-virtual chaos::ClassRegistration * GetClass() { return classname##_register; }
+static chaos::Class * GetStaticClass(){ return classname##_register;}\
+virtual chaos::Class * GetClass() { return classname##_register; }
 
 class A
 {

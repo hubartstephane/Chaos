@@ -13,11 +13,6 @@ namespace chaos
 	{
 	}
 
-	Class const* Object::GetClass() const
-	{
-		return nullptr;
-	}
-
 	void Object::AddReference(SharedPointerPolicy policy)
 	{
 		assert(!shared_destroyed);

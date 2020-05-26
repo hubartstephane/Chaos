@@ -16,6 +16,8 @@ namespace chaos
 
 	class ImageProcessor : public Object
 	{
+		CHAOS_OBJECT_DECLARE_CLASS2(ImageProcessor, Object);
+
 	public:
 
 		/** the image processing method to override */
@@ -27,14 +29,14 @@ namespace chaos
 		virtual bool LoadFromJSON(nlohmann::json const& json_entry);
 	};
 
-	CHAOS_REGISTER_CLASS1(ImageProcessor);
-
 	/**
 	* ImageProcessorOutline : add an outline to any image
 	*/
 
 	class ImageProcessorOutline : public ImageProcessor
 	{
+		CHAOS_OBJECT_DECLARE_CLASS2(ImageProcessorOutline, ImageProcessor);
+
 	public:
 
 		/** the image processing method to override */
@@ -52,8 +54,5 @@ namespace chaos
 		/** the ouline color */
 		glm::vec4 outline_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	};
-
-	CHAOS_REGISTER_CLASS2(ImageProcessorOutline, ImageProcessor);
-
 
 }; // namespace chaos

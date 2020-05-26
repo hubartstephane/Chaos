@@ -16,6 +16,8 @@ namespace chaos
 
 		class BitmapAtlasFilterCondition : public Object
 		{
+			CHAOS_OBJECT_DECLARE_CLASS2(BitmapAtlasFilterCondition, Object)
+
 		public:
 
 			/** whether the processing is to be done on the bitmap */
@@ -28,9 +30,6 @@ namespace chaos
 			/** saving method from JSON */
 			virtual bool SaveIntoJSON(nlohmann::json& entry) const;
 		};
-
-		CHAOS_REGISTER_CLASS1(BitmapAtlasFilterCondition);
-
 
 		/**
 		* BitmapAtlasFilter : check condition on an entry and start the processor
@@ -60,6 +59,8 @@ namespace chaos
 
 		class BitmapAtlasFilterSet : public Object
 		{
+
+			CHAOS_OBJECT_DECLARE_CLASS2(BitmapAtlasFilterSet, Object)
 
 		public:
 

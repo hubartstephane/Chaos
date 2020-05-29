@@ -5,6 +5,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/Class.h>
 #include <chaos/Object.h>
+#include <chaos/JSONSerializable.h>
 
 namespace chaos
 {
@@ -14,7 +15,7 @@ namespace chaos
 		* BitmapAtlasFilterCondition : a condition to know whether the bitmap is to be processed
 		*/
 
-		class BitmapAtlasFilterCondition : public Object
+		class BitmapAtlasFilterCondition : public Object, public JSONSerializable
 		{
 			CHAOS_OBJECT_DECLARE_CLASS2(BitmapAtlasFilterCondition, Object)
 
@@ -26,9 +27,9 @@ namespace chaos
 			virtual bool AcceptFont(class FontInfoInput const* input) const;
 
 			/** loading method from JSON */
-			virtual bool LoadFromJSON(nlohmann::json const& entry);
+			virtual bool LoadFromJSON(nlohmann::json const& entry) override;
 			/** saving method from JSON */
-			virtual bool SaveIntoJSON(nlohmann::json& entry) const;
+			virtual bool SaveIntoJSON(nlohmann::json& entry) const override;
 		};
 
 		/**
@@ -40,43 +41,33 @@ namespace chaos
 
 		public:
 
-			/** loading method from JSON */
-			virtual bool LoadFromJSON(nlohmann::json const& entry);
-			/** saving method from JSON */
-			virtual bool SaveIntoJSON(nlohmann::json& entry) const;
-
-		public:
-
 			/** the condition for handling the image */
 			shared_ptr<BitmapAtlasFilterCondition> condition;
 			/** the condition for handling the image */
 			shared_ptr<ImageProcessor> processor;
 		};
 
+		/** loading method from JSON */
+		bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilter& dst);
+		/** saving method from JSON */
+		bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilter const& src);
+
 		/**
 		* BitmapAtlasFilterSet : a whole set of condition/image processor
 		*/
 
-		class BitmapAtlasFilterSet : public Object
+		class BitmapAtlasFilterSet
 		{
-
-			CHAOS_OBJECT_DECLARE_CLASS2(BitmapAtlasFilterSet, Object)
-
 		public:
-
-			/** insert a new filter inside the list */
-			void AddFilter(BitmapAtlasFilterCondition* condition, ImageProcessor* processor);
-
-			/** loading method from JSON */
-			virtual bool LoadFromJSON(nlohmann::json const& entry);
-			/** saving method from JSON */
-			virtual bool SaveIntoJSON(nlohmann::json& entry) const;
-
-		protected:
 
 			/** the filters to apply */
 			std::vector<BitmapAtlasFilter> filters;
 		};
+
+		/** loading method from JSON */
+		bool LoadFromJSON(nlohmann::json const& entry, BitmapAtlasFilterSet& dst);
+		/** saving method from JSON */
+		bool SaveIntoJSON(nlohmann::json& entry, BitmapAtlasFilterSet const& src);
 
 	}; // namespace BitmapAtlas
 

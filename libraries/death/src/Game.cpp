@@ -395,7 +395,7 @@ namespace death
 
 
 		chaos::BitmapAtlas::BitmapAtlasFilterSet filters;
-		filters.AddFilter(nullptr, new chaos::ImageProcessor);
+		filters.filters.push_back({ nullptr, new chaos::ImageProcessor });
 
 
 

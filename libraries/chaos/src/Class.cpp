@@ -17,10 +17,10 @@ namespace chaos
 		return (class_name.length() > 0);
 	}
 
-	Class* ClassTools::GetClass(char const* class_name)
+	Class const * ClassTools::GetClass(char const* class_name)
 	{
 		assert(class_name != nullptr && strlen(class_name) > 0);
-		for (Class* cls : GetClassesList())
+		for (Class const * cls : GetClassesList())
 			if (StringTools::Strcmp(class_name, cls->class_name) == 0)
 				return cls;
 		return nullptr;
@@ -32,7 +32,7 @@ namespace chaos
 		assert(parent != nullptr);
 
 		// fast test on the size
-		if (child->size < parent->size)
+		if (child->class_size < parent->class_size)
 			return InheritanceType::NO;
 
 		// class not registered, cannot known result
@@ -54,7 +54,7 @@ namespace chaos
 			if (child == parent)
 				return InheritanceType::YES;
 			// fast test on the size
-			if (child->size < parent->size)
+			if (child->class_size < parent->class_size)
 				return InheritanceType::NO;
 			// unintialized class
 			if (!child->IsDeclared())
@@ -63,9 +63,9 @@ namespace chaos
 		return InheritanceType::NO;
 	}
 
-	std::vector<Class*>& ClassTools::GetClassesList()
+	std::vector<Class const *>& ClassTools::GetClassesList()
 	{
-		static std::vector<Class*> result;
+		static std::vector<Class const*> result;
 		return result;
 	}
 

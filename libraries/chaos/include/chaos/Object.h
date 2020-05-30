@@ -16,14 +16,14 @@ private:\
 static inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname>(#classname);\
 public:\
 static chaos::Class const * GetStaticClass(){ return classname##_class;}\
-virtual chaos::Class const * GetClass() { return classname##_class; }
+virtual chaos::Class const * GetClass() const { return classname##_class; }
 
 #define CHAOS_OBJECT_DECLARE_CLASS2(classname, parent_classname)\
 private:\
 static inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname, parent_classname>(#classname);\
 public:\
 static chaos::Class const * GetStaticClass(){ return classname##_class;}\
-virtual chaos::Class const * GetClass() { return classname##_class; }
+virtual chaos::Class const * GetClass() const { return classname##_class; }
 
 	/**
 	* Object is a base class that have a reference count (shared and weak)

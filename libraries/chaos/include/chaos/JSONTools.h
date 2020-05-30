@@ -29,9 +29,32 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(LoadFromJSON)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SaveIntoJSON)
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(GetClass)
 
 namespace chaos
 {
+	/** an utility function to create an object from a json object */
+	template<typename T>
+	static T * LoadFromJSONCreateObject(nlohmann::json const& entry)
+	{
+		if (entry.is_object())
+		{
+			std::string classname;
+			if (JSONTools::GetAttribute(entry, "classname", classname))
+			{
+				chaos::Class const* json_class = chaos::ClassTools::GetClass(classname.c_str());
+				if (json_class != nullptr)
+				{
+					chaos::Class const* dst_class = chaos::ClassTools::GetClass<T>();
+					if (dst_class != nullptr)
+						if (ClassTools::InheritsFrom(json_class, dst_class, true) == InheritanceType::YES) // accept equal
+							return (T*)json_class->CreateInstance();
+				}
+			}
+		}
+		return new T;
+	}
+
 	/** loading a bool (because we try to read an int as a fallback) */
 	bool LoadFromJSON(nlohmann::json const& entry, bool& dst);
 
@@ -39,7 +62,7 @@ namespace chaos
 	template<typename T, typename DELETER>
 	bool LoadFromJSON(nlohmann::json const & entry, std::unique_ptr<T, DELETER> & dst)
 	{
-		std::unique_ptr<T, DELETER> other(new T); // force to use another smart pointer and swap due to lake of copy 
+		std::unique_ptr<T, DELETER> other(LoadFromJSONCreateObject<T>(entry)); // force to use another smart pointer and swap due to lake of copy 
 		if (other == nullptr)
 			return false;
 		if (!LoadFromJSON(entry, *other))
@@ -51,41 +74,7 @@ namespace chaos
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & entry, chaos::shared_ptr<T> & dst)
 	{
-		if (entry.is_object())
-		{
-			std::string classname;
-			if (JSONTools::GetAttribute(entry, "__classname__", classname))
-			{
-				chaos::Class* json_registration = chaos::ClassTools::GetClass(classname.c_str());
-				if (json_registration != nullptr)
-				{
-					chaos::Class* dst_registration = chaos::ClassTools::GetClass<T>();
-					if (dst_registration != nullptr)
-					{
-						if (ClassTools::InheritsFrom(json_registration, dst_registration, true) == InheritanceType::YES) // accept equal
-						{
-							T* result = (T*)json_registration->CreateInstance();
-
-							dst_registration = dst_registration;
-						}
-					}
-				}
-				classname = classname;
-			}
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-		chaos::shared_ptr<T> other = new T;
+		chaos::shared_ptr<T> other = LoadFromJSONCreateObject<T>(entry);
 		if (other == nullptr)
 			return false;
 		if (!LoadFromJSON(entry, *other))
@@ -124,30 +113,8 @@ namespace chaos
 		{
 			using T2 = std::remove_pointer_t<T>;
 
-			// try to make a rich object loading
-			T2* other = nullptr;
-
-			if constexpr (std::is_class_v<T2>)
-			{
-				if (dst == nullptr && entry.is_object())
-				{
-					std::string classname;
-					if (JSONTools::GetAttribute(entry, "__classname__", classname))
-					{
-						chaos::Class* registration = chos::ClassTools::GetClass(classname.c_str());
-						if (registration)
-						{
-							registration = registration;
-
-						}
-					}
-				}
-			}
-
 			// object instanciation
-			if (other == nullptr)
-				other = new T2;
-			// loading
+			T2* other = LoadFromJSONCreateObject<T2>(entry);
 			if (other == nullptr)
 				return false;
 			if (!LoadFromJSON(entry, *other))
@@ -211,20 +178,43 @@ namespace chaos
 	template<typename T>
 	bool SaveIntoJSON(nlohmann::json& entry, T const& src) // copy for basic types
 	{
-		//std::is_object
-		//if (std::is_polymorphic_v<>)
-
-
-
 		// check for pointer
 		if constexpr (std::is_pointer_v<T>)
 		{
+			if (src == nullptr)
+				return true;
 			return SaveIntoJSON(entry, *src);
 		}
 		// class has its own implementation
-		else if constexpr (check_method_SaveIntoJSON_v<T const, nlohmann::json&>)
+		else if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
 		{
-			return src.SaveIntoJSON(entry);
+			if constexpr (check_method_SaveIntoJSON_v<T const, nlohmann::json&>)
+			{
+				// we need a json object to store a C++ object
+				if (!entry.is_object())
+				{
+					if (!entry.is_null())
+						return false;
+					entry = nlohmann::json::object(); // create the JSON object if not already set
+				}
+
+				// get the class of the C++ object
+				Class const * src_class = nullptr;
+				if constexpr (check_method_GetClass_v<T const>)
+					src_class = src.GetClass();
+				if (src_class == nullptr || !src_class->IsDeclared())
+					src_class = ClassTools::GetClass<T>();
+				// write the class into the json object
+				if (src_class != nullptr && src_class->IsDeclared())
+					JSONTools::SetAttribute(entry, "classname", src_class->GetClassName());
+
+				// save into JSON
+				return src.SaveIntoJSON(entry);
+			}
+			else
+			{
+				return false; // do not know how to save the object (we should never come here if the object had a Save method or if there was a standalone Save function)
+			}
 		}
 		// for native types
 		else

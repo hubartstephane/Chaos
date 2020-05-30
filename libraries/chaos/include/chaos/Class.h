@@ -39,13 +39,17 @@ namespace chaos
 		void* CreateInstance() const;
 		/** returns whether the class has been registered */
 		bool IsDeclared() const;
+		/** gets the class size */
+		size_t GetClassSize() const { return class_size; }
+		/** gets the class name */
+		std::string const & GetClassName() const { return class_name; }
 
 	protected:
 
 		/** the parent of the class */
 		Class const* parent = nullptr;
 		/** get class size */
-		size_t size = 0;
+		size_t class_size = 0;
 		/** the optional name of the class */
 		std::string class_name;
 		/** create an instance of the object delegate */
@@ -61,11 +65,11 @@ namespace chaos
 	public:
 
 		/** find a class by name */
-		static Class* GetClass(char const* class_name);
+		static Class const * GetClass(char const* class_name);
 
 		/** find a class by type */
 		template<typename CLASS_TYPE>
-		static Class* GetClass()
+		static Class const * GetClass()
 		{
 			static Class result;
 			return &result;
@@ -80,11 +84,11 @@ namespace chaos
 			assert(GetClass(class_name) == nullptr);
 			assert((std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
 
-			Class* result = GetClass<CLASS_TYPE>();
+			Class * result = const_cast<Class *>(GetClass<CLASS_TYPE>()); // remove constness
 			if (result != nullptr)
 			{
 				result->class_name = class_name;
-				result->size = sizeof(CLASS_TYPE);
+				result->class_size = sizeof(CLASS_TYPE);
 				result->create_instance_func = []() { return new CLASS_TYPE; };
 
 				if (!std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass>)
@@ -119,7 +123,7 @@ namespace chaos
 	protected:
 
 		/** get the list of all classes */
-		static std::vector<Class*>& GetClassesList();
+		static std::vector<Class const*>& GetClassesList();
 
 	};
 

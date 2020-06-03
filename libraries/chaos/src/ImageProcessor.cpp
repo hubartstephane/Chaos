@@ -11,8 +11,40 @@ namespace chaos
 	// ImageProcessor functions
 	// ================================================================
 
-	FIBITMAP* ImageProcessor::ProcessImage(ImageDescription const& src_desc)
+	std::vector<FIBITMAP*> ImageProcessor::ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, ImageAnimationDescription& anim_desc) const
 	{
+
+#if 0
+		ImageAnimationDescription
+
+
+
+			std::vector<FIBITMAP*> processed_pages;
+		processed_pages.reserve(pages.size());
+
+		// process all images
+		for (FIBITMAP* p : pages)
+		{
+			FIBITMAP* p2 = input_manifest.image_processor->ProcessImage(ImageTools::GetImageDescription(p));
+			if (p2 == nullptr)
+			{
+				ReleaseAllImages(images);
+				return nullptr;
+			}
+			processed_pages.push_back(p2);
+		}
+		// free memory
+		std::swap(pages, processed_pages);
+		ReleaseAllImages(&processed_pages);
+#endif
+
+		return src;
+	}
+
+	FIBITMAP* ImageProcessor::ProcessImage(FIBITMAP* src_image) const
+	{
+		ImageDescription src_desc = ImageTools::GetImageDescription(src_image);
+
 		return ImageTools::GenFreeImage<chaos::PixelBGRA>(src_desc.width, src_desc.height, [src_desc](ImageDescription const& dst_desc)
 		{
 			ImagePixelAccessor<chaos::PixelBGRA> src_acc(src_desc);
@@ -62,7 +94,7 @@ namespace chaos
 	// ImageProcessorOutline functions
 	// ================================================================
 
-	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc)
+	FIBITMAP* ImageProcessorOutline::ProcessImage(FIBITMAP* src_image) const
 	{
 
 		return nullptr;

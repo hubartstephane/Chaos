@@ -113,7 +113,6 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
 			JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
 			JSONTools::SetAttribute(json_entry, "default_wrap_mode", src.default_wrap_mode);
-
 			JSONTools::SetAttribute(json_entry, "image_processor", src.image_processor);
 			return true;
 		}
@@ -351,6 +350,15 @@ namespace chaos
             directories_searched |= search_directories;
         }
 
+
+
+
+
+
+
+
+
+
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
             AddBitmapFilesData add_data;
@@ -386,7 +394,7 @@ namespace chaos
 			return AddBitmapImpl(path, name, tag, AddBitmapFilesData());
 		}
 
-        static std::vector<FIBITMAP*> FindManifestChildImages(boost::filesystem::path const& directory_path)
+        static std::vector<FIBITMAP*> LoadManifestImagesFromDirectory(boost::filesystem::path const& directory_path)
         {
             std::vector<FIBITMAP*> child_images;
             std::vector<size_t> child_path_index;
@@ -397,7 +405,7 @@ namespace chaos
             {
                 boost::filesystem::path const& p = it->path();
 
-                FIBITMAP* image = ImageTools::LoadImageFromFile(p);
+                FIBITMAP* image = ImageTools::LoadImageFromFile(p); // XXX : do not call LoadMultipleImagesFromFile(...) because we are already considering all images in that directory as an animation (ignore animated GIF)
                 if (image != nullptr)
                 {
                     child_images.push_back(image);
@@ -452,7 +460,7 @@ namespace chaos
                 {
                     add_data.ignore_directories.push_back(noext_path);
 
-                    std::vector<FIBITMAP*> child_images = FindManifestChildImages(noext_path);
+                    std::vector<FIBITMAP*> child_images = LoadManifestImagesFromDirectory(noext_path); // read in that directory all images and considere these as an animation (if several)
                     if (child_images.size() > 0)
                         return AddBitmapWithManifestImpl(path, name, tag, &json_manifest, &child_images);
                 }
@@ -491,6 +499,16 @@ namespace chaos
             }
         }
 
+		static void ReleaseAllImages(std::vector<FIBITMAP*> * images)
+		{
+			if (images != nullptr)
+			{
+				for (FIBITMAP* image : *images)
+					FreeImage_Unload(image);
+				images->clear();
+			}
+		}
+
         BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest, std::vector<FIBITMAP*>* images)
         {
 			// compute a name from the path if necessary
@@ -514,8 +532,11 @@ namespace chaos
 			}
 
             // test whether the object already exists
-            if (GetBitmapInfo(name) != nullptr)
-                return nullptr;
+			if (GetBitmapInfo(name) != nullptr)
+			{
+				ReleaseAllImages(images);
+				return nullptr;
+			}
 
             // search if there is a JSON file to describe an animation
             BitmapInfoInputManifest input_manifest;
@@ -529,10 +550,6 @@ namespace chaos
                 pages = ImageTools::LoadMultipleImagesFromFile(path, &animation_description); // extract frame_rate from META DATA
                 images = &pages;
             }
-			// error case
-			size_t count = images->size();
-			if (images->size() == 0)
-				return nullptr;
 
 			// prefere JSON settings to name encoded values or GIF meta data for frame rate
 			if (input_manifest.anim_duration > 0.0f)
@@ -548,12 +565,21 @@ namespace chaos
 
 			animation_description.default_wrap_mode = input_manifest.default_wrap_mode; // default_wrap_mode is nor encoded into file nor in metadata
 
+			// apply filter on image
+			if (input_manifest.image_processor != nullptr && images->size() > 0)
+				*images = input_manifest.image_processor->ProcessAnimatedImage(*images, animation_description);
+
+			// error case
+			size_t count = images->size();
+			if (count == 0)
+				return nullptr;
+
             // register resources for destructions			
 			for (size_t i = 0; i < count; ++i)
 				RegisterResource(images->operator[](i), true);
 
 			// create the bitmap
-			return AddBitmapImpl(*images, name, tag, &animation_description);
+			return AddBitmapImpl(*images, name, tag, &animation_description); // in case of failure, the images have already been registered for destruction
 		}
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
@@ -748,100 +774,6 @@ namespace chaos
 		{
 			return root_folder.AddFont(face, release_face, name, tag, params);
 		}
-
-
-
-
-
-
-
-
-#if 0
-
-		/** applying some filter to the whole input */
-		void ApplyFilter(BitmapAtlasFilter* filter);
-
-		/** applying a filter on a folder */
-		void ApplyFilter(BitmapAtlasFilter* filter, FolderInfoInput* folder);
-		/** applying a filter on a bitmap */
-		void ApplyFilter(BitmapAtlasFilter* filter, BitmapInfoInput* input);
-		/** applying a filter on a font */
-		void ApplyFilter(BitmapAtlasFilter* filter, FontInfoInput* input);
-
-		void AtlasInput::ApplyFilter(BitmapAtlasFilter * filter)
-		{
-			if (filter != nullptr)
-				ApplyFilter(filter, &root_folder);
-		}
-
-		void AtlasInput::ApplyFilter(BitmapAtlasFilter* filter, FolderInfoInput * folder)
-		{
-			assert(filter != nullptr);
-
-			// the bitmaps
-			for (std::unique_ptr<BitmapInfoInput> & bitmap_input : folder->bitmaps)
-				ApplyFilter(filter, bitmap_input.get());
-
-			// the animations
-			for (std::unique_ptr<FontInfoInput>& font_input : folder->fonts)
-				ApplyFilter(filter, font_input.get());
-
-			// recursive through the hierarchy
-			for (std::unique_ptr<FolderInfoInput>& child_folder : folder->folders)
-				ApplyFilter(filter, child_folder.get());			
-		}
-
-		void AtlasInput::ApplyFilter(BitmapAtlasFilter* filter, BitmapInfoInput* input)
-		{
-			assert(filter != nullptr);
-
-			if (input->animation_info != nullptr)
-			{
-				if (input->animation_info->animation_description.IsFrameAnimation())
-				{
-
-				}
-				if (input->animation_info->animation_description.IsGridAnimation())
-				{
-				//	glm::ivec2 
-
-				}
-			}
-			else
-			{
-				FIBITMAP* new_bitmap = filter->ProcessImage(input->description);
-				if (new_bitmap != nullptr)
-				{
-					input->description = chaos::ImageTools::GetImageDescription(new_bitmap);
-					RegisterResource(new_bitmap, true);
-				}
-			}
-
-
-
-
-
-		}
-
-		void AtlasInput::ApplyFilter(BitmapAtlasFilter* filter, FontInfoInput* input)
-		{
-			assert(filter != nullptr);
-
-			size_t count = input->elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				CharacterInfoInput* character = input->elements[i].get();
-				if (character == nullptr)
-					continue;
-				ApplyFilter(filter, character);
-			}
-		}
-#endif
-
-
-
-
-
 
 	}; // namespace BitmapAtlas
 

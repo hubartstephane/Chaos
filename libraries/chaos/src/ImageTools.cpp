@@ -735,6 +735,8 @@ namespace chaos
 	}
 
 
+#if _WIN32 || _WIN64
+
 	FIBITMAP* ImageTools::ConvertFromHBITMAP(HBITMAP hBitmap)
 	{
 		if (hBitmap == NULL)
@@ -786,12 +788,14 @@ namespace chaos
 		}
 
 		// create the bitmap
-		result = CreateBitmap(desc.width, desc.height, 1, 32, desc.data);
+		result = ::CreateBitmap(desc.width, desc.height, 1, 32, desc.data);
 		// the bitmap has been exchanged with the flipped version
 		if (flip_vertical)
 			FreeImage_Unload(bitmap);
 		return result;
 	}
+
+#endif // #if _WIN32 || _WIN64
 
 
 }; // namespace chaos

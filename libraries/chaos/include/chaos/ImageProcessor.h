@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/Object.h>
 #include <chaos/ImageDescription.h>
+#include <chaos/ImageAnimationDescription.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/JSONTools.h>
 #include <chaos/Class.h>
@@ -20,8 +21,12 @@ namespace chaos
 
 	public:
 
+
 		/** the image processing method to override */
-		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc);
+		virtual FIBITMAP* ProcessImage(FIBITMAP* src_image) const;
+
+		/** apply processing on a whole animation (grid or not) */
+		virtual std::vector<FIBITMAP*> ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, ImageAnimationDescription& anim_desc) const;
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const;
@@ -40,7 +45,7 @@ namespace chaos
 	public:
 
 		/** the image processing method to override */
-		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) override;
+		virtual FIBITMAP* ProcessImage(FIBITMAP * src_image) const override;
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const override;

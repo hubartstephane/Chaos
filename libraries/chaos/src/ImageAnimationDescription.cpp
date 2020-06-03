@@ -208,7 +208,6 @@ namespace chaos
 	{
 		if (!json_entry.is_object())
 			json_entry = nlohmann::json::object();
-
 		JSONTools::SetAttribute(json_entry, "grid_data", src.grid_data);
 		JSONTools::SetAttribute(json_entry, "child_frame_count", src.child_frame_count);
 		JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);

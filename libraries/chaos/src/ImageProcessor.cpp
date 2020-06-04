@@ -4,6 +4,8 @@
 #include <chaos/JSONTools.h>
 #include <chaos/ImagePixelAccessor.h>
 
+#include <chaos/WinTools.h>
+
 namespace chaos
 {
 
@@ -13,6 +15,40 @@ namespace chaos
 
 	std::vector<FIBITMAP*> ImageProcessor::ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, ImageAnimationDescription& anim_desc) const
 	{
+		if (src.size() > 1 )
+			anim_desc = anim_desc;
+
+		if (anim_desc.IsGridAnimation())
+		{
+			anim_desc = anim_desc;
+
+		}
+		else if (anim_desc.IsFrameAnimation())
+		{
+			anim_desc = anim_desc;
+		}
+		else
+		{
+			anim_desc = anim_desc;
+
+		}
+
+
+
+
+		static bool bbb = true;
+
+		if (bbb)
+		{
+			HBITMAP hBitmap = ImageTools::ConvertToHBITMAP(src[0], true);
+
+			WinTools::CopyBitmapToClipboard(hBitmap);
+
+			bbb = false; 
+		}
+
+
+
 
 #if 0
 		ImageAnimationDescription

@@ -350,15 +350,6 @@ namespace chaos
             directories_searched |= search_directories;
         }
 
-
-
-
-
-
-
-
-
-
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
             AddBitmapFilesData add_data;

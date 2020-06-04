@@ -1,7 +1,11 @@
 {
   "grid_data_useless": {
 
-    "grid_size": [5,2]
+    "grid_size": [ 5, 2 ]
+
+  },
+  "image_processor": {
+    "classname": "ImageProcessorOutline"
 
   }
 }

@@ -159,7 +159,7 @@ namespace chaos
 	{
 		if (IsGridAnimation())
 			return grid_data.GetFrameCount();
-		return child_frame_count;
+		return child_frame_count + 1; // +1 for the very first image (that is not a child)
 	}
 
 	float ImageAnimationDescription::GetAnimationDuration() const

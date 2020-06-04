@@ -1,7 +1,7 @@
 {
   "frame_duration": 0.06,
   "default_wrap_mode": "wrap",
-  "image_processorx": 
+  "image_processor": 
   {
     "classname":"ImageProcessorOutline"
 

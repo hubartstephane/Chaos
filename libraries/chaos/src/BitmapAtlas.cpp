@@ -54,7 +54,7 @@ namespace chaos
 		BitmapLayout BitmapInfo::DoGetFrameAnimationLayout(int index, WrapMode mode) const
 		{
 			// wrap the index
-			if (!ApplyWrapMode(index, 0, animation_info->child_frame_count - 1, mode, index))
+			if (!ApplyWrapMode(index, 0, animation_info->child_frame_count + 1 - 1, mode, index)) // the real number of frames is (child_frame_count + 1). So for clamping we use (child_frame_count + 1 - 1)
 				return BitmapLayout();
 			// find the bitmap further in the bitmapinfo array
 			return this[static_cast<size_t>(index)];
@@ -76,7 +76,7 @@ namespace chaos
 			// |               |
 			// |               |
 			// |           A   |
-			// |       +-------+  You access x, which cell is best to read instead
+			// |       +-------+  You access x, which cell is best to read instead ?
 			// |     B |   x   |
 			// +-------+       |
 			// |               |
@@ -218,7 +218,7 @@ namespace chaos
 			if (animation_info == nullptr)
 				return 0;
 			if (animation_info->IsFrameAnimation())
-				return animation_info->child_frame_count;
+				return animation_info->child_frame_count + 1; // +1 for the very first image
 
 			assert(animation_info->IsGridAnimation());
 			return std::max((animation_info->grid_data.grid_size.x * animation_info->grid_data.grid_size.y) - animation_info->grid_data.skip_lasts, 0);

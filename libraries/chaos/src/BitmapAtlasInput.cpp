@@ -542,6 +542,11 @@ namespace chaos
                 images = &pages;
             }
 
+			// no image ?
+			size_t count = images->size();
+			if (count == 0)
+				return nullptr;
+
 			// prefere JSON settings to name encoded values or GIF meta data for frame rate
 			if (input_manifest.anim_duration > 0.0f)
 			{
@@ -555,15 +560,31 @@ namespace chaos
                 animation_description.grid_data = input_manifest.grid_data;
 
 			animation_description.default_wrap_mode = input_manifest.default_wrap_mode; // default_wrap_mode is nor encoded into file nor in metadata
-
-			// apply filter on image
-			if (input_manifest.image_processor != nullptr && images->size() > 0)
-				*images = input_manifest.image_processor->ProcessAnimatedImage(*images, animation_description);
-
-			// error case
-			size_t count = images->size();
-			if (count == 0)
+		
+			// not clear what to do (we have both a grid and a per frame animation). Abord
+			if (count > 1 && input_manifest.grid_data.GetFrameCount() > 1)
+			{
+				ReleaseAllImages(images);
 				return nullptr;
+			}
+
+			// apply filter on image => the number of images must be the same or error
+			if (input_manifest.image_processor != nullptr && count > 0)
+			{
+				std::vector<FIBITMAP*> processed_images = input_manifest.image_processor->ProcessAnimatedImage(*images, animation_description.grid_data);
+
+				// error case : free all images
+				if (processed_images.size() != count)
+				{
+					ReleaseAllImages(&processed_images); 
+					ReleaseAllImages(images);
+					return nullptr;
+				}
+
+				// release old images, exchange with new				
+				std::swap(*images, processed_images);
+				ReleaseAllImages(&processed_images);
+			}
 
             // register resources for destructions			
 			for (size_t i = 0; i < count; ++i)

@@ -23,10 +23,10 @@ namespace chaos
 
 
 		/** the image processing method to override */
-		virtual FIBITMAP* ProcessImage(FIBITMAP* src_image) const;
+		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const;
 
 		/** apply processing on a whole animation (grid or not) */
-		virtual std::vector<FIBITMAP*> ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, ImageAnimationDescription& anim_desc) const;
+		virtual std::vector<FIBITMAP*> ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const;
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const;
@@ -45,7 +45,7 @@ namespace chaos
 	public:
 
 		/** the image processing method to override */
-		virtual FIBITMAP* ProcessImage(FIBITMAP * src_image) const override;
+		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const override;
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const override;

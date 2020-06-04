@@ -13,104 +13,92 @@ namespace chaos
 	// ImageProcessor functions
 	// ================================================================
 
-	std::vector<FIBITMAP*> ImageProcessor::ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, ImageAnimationDescription& anim_desc) const
+	static std::vector<FIBITMAP*> ProcessAnimatedImage_ClearResult(std::vector<FIBITMAP*>& images)
 	{
-		if (src.size() > 1 )
-			anim_desc = anim_desc;
-
-		if (anim_desc.IsGridAnimation())
-		{
-			anim_desc = anim_desc;
-
-		}
-		else if (anim_desc.IsFrameAnimation())
-		{
-			anim_desc = anim_desc;
-		}
-		else
-		{
-			anim_desc = anim_desc;
-
-		}
-
-
-
-
-		static bool bbb = true;
-
-		if (bbb)
-		{
-			HBITMAP hBitmap = ImageTools::ConvertToHBITMAP(src[0], true);
-
-			WinTools::CopyBitmapToClipboard(hBitmap);
-
-			bbb = false; 
-		}
-
-
-
-
-#if 0
-		ImageAnimationDescription
-
-
-
-			std::vector<FIBITMAP*> processed_pages;
-		processed_pages.reserve(pages.size());
-
-		// process all images
-		for (FIBITMAP* p : pages)
-		{
-			FIBITMAP* p2 = input_manifest.image_processor->ProcessImage(ImageTools::GetImageDescription(p));
-			if (p2 == nullptr)
-			{
-				ReleaseAllImages(images);
-				return nullptr;
-			}
-			processed_pages.push_back(p2);
-		}
-		// free memory
-		std::swap(pages, processed_pages);
-		ReleaseAllImages(&processed_pages);
-#endif
-
-		return src;
+		for (FIBITMAP* img : images)
+			FreeImage_Unload(img);
+		images.clear();
+		return std::vector<FIBITMAP*>(); // in case of error, destroy all allocated resources
 	}
 
-	FIBITMAP* ImageProcessor::ProcessImage(FIBITMAP* src_image) const
+	std::vector<FIBITMAP*> ImageProcessor::ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const
 	{
-		ImageDescription src_desc = ImageTools::GetImageDescription(src_image);
+		assert(src.size() == 1 || grid_anim.GetFrameCount() == 0); // cannot have both multiple image and a grid structure
 
-		return ImageTools::GenFreeImage<chaos::PixelBGRA>(src_desc.width, src_desc.height, [src_desc](ImageDescription const& dst_desc)
+		std::vector<FIBITMAP*> result;
+		
+		// grid animation		
+		if (grid_anim.GetFrameCount() > 1)
 		{
-			ImagePixelAccessor<chaos::PixelBGRA> src_acc(src_desc);
-			ImagePixelAccessor<chaos::PixelBGRA> dst_acc(dst_desc);
+			ImageDescription src_desc = ImageTools::GetImageDescription(src[0]);
 
-			if (src_acc.IsValid() && dst_acc.IsValid())
+			// create an image for all cell in the grid. Store them temporary in result
+			for (int y = 0; y < grid_anim.grid_size.y; ++y)
 			{
-				for (int j = 0; j < dst_desc.height; ++j)
+				for (int x = 0; x < grid_anim.grid_size.x; ++x)
 				{
-					for (int i = 0; i < dst_desc.width; ++i)
+					int w = src_desc.width / grid_anim.grid_size.x;
+					int h = src_desc.height / grid_anim.grid_size.y;
+					ImageDescription sub_desc = src_desc.GetSubImageDescription(x * w, y * h, w, h);
+										
+					FIBITMAP* image = ProcessImage(sub_desc);
+					if (image == nullptr)
+						return ProcessAnimatedImage_ClearResult(result);
+					// push first so that the image is released in case of failure
+					result.push_back(image);
+					// check compatibility with previous elements 
+					if (result.size() > 1)
 					{
-#if 1
-
-
-						dst_acc(i, j).R = (unsigned char)i;
-						dst_acc(i, j).B = 0;
-						dst_acc(i, j).G = 0;
-						dst_acc(i, j).A = 255;
-
-#else
-
-						dst_acc(i, j).R = src_acc(i, j).B;
-						dst_acc(i, j).B = 0;
-						dst_acc(i, j).G = src_acc(i, j).G;
-						dst_acc(i, j).A = src_acc(i, j).A;
-#endif
-					}
+						ImageDescription d1 = ImageTools::GetImageDescription(image);
+						ImageDescription d2 = ImageTools::GetImageDescription(result[0]);
+						if (d1.width != d2.width || d1.height != d2.height || d1.pixel_format != d2.pixel_format)
+							return ProcessAnimatedImage_ClearResult(result);
+					}					
 				}
 			}
-		});
+
+			assert(result.size() > 0);
+
+			// recompose the image to have a grid 
+			ImageDescription d = ImageTools::GetImageDescription(result[0]);
+			FIBITMAP * image = ImageTools::GenFreeImage(d.pixel_format, d.width, d.height);
+			if (image == nullptr)
+				return ProcessAnimatedImage_ClearResult(result);
+
+			ImageDescription dst_desc = ImageTools::GetImageDescription(image);
+			
+			for (int y = 0; y < grid_anim.grid_size.y; ++y)
+			{
+				for (int x = 0; x < grid_anim.grid_size.x; ++x)
+				{
+					int w = dst_desc.width / grid_anim.grid_size.x;
+					int h = dst_desc.height / grid_anim.grid_size.y;
+					ImageDescription src = ImageTools::GetImageDescription(result[(size_t)(x + y * grid_anim.grid_size.x)]);
+
+					ImageTools::CopyPixels(src, dst_desc, 0, 0, x * w, y * h, w, h);
+				}
+			}
+
+			// replace the result
+			ProcessAnimatedImage_ClearResult(result);
+			result.push_back(image);
+		}
+		// frame animation or no animation
+		else if (src.size() > 0)
+		{
+			for (size_t i = 0; i < src.size(); ++i)
+			{
+				FIBITMAP * image = ProcessImage(ImageTools::GetImageDescription(src[i]));
+				if (image == nullptr)
+					return ProcessAnimatedImage_ClearResult(result);
+				result.push_back(image);
+			}
+		}
+		return result;
+	}
+
+	FIBITMAP* ImageProcessor::ProcessImage(ImageDescription const & src_desc) const
+	{
 		return nullptr;
 	}
 
@@ -130,7 +118,7 @@ namespace chaos
 	// ImageProcessorOutline functions
 	// ================================================================
 
-	FIBITMAP* ImageProcessorOutline::ProcessImage(FIBITMAP* src_image) const
+	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc) const
 	{
 
 		return nullptr;

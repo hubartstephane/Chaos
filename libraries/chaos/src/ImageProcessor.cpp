@@ -120,8 +120,48 @@ namespace chaos
 
 	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc) const
 	{
+		int d = (int)distance;
 
-		return nullptr;
+		int dest_width  = src_desc.width  + 2 * d;
+		int dest_height = src_desc.height + 2 * d;
+
+		// create an accessor for the image
+		ImagePixelAccessor<PixelBGR> src_accessor(src_desc);		
+		if (!src_accessor.IsValid())
+			return nullptr;
+
+		// generate the image
+		FIBITMAP* result = ImageTools::GenFreeImage(PixelFormat::GetPixelFormat<PixelBGR>(), dest_width, dest_height);
+		if (result != nullptr)
+		{
+			ImagePixelAccessor<PixelBGR> dst_accessor(ImageTools::GetImageDescription(result));
+			if (!dst_accessor.IsValid())
+			{
+				FreeImage_Unload(result);
+				return nullptr;
+			}
+
+			for (int y = 0; y < dest_height; ++y)
+			{
+				for (int x = 0; x < dest_width; ++x)
+				{
+					int src_x = x - d;
+					int src_y = y - d;
+					if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height)
+						dst_accessor(x, y) = src_accessor(src_x, src_y);
+					else
+					{
+						dst_accessor(x, y).R = 0;
+						dst_accessor(x, y).G = 255;
+						dst_accessor(x, y).B = 0;
+					}
+
+
+
+				}
+			}
+		}
+		return result;
 	}
 
 	bool ImageProcessorOutline::SaveIntoJSON(nlohmann::json& json_entry) const

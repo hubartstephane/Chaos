@@ -21,7 +21,6 @@ namespace chaos
 		{
 			if (!json_entry.is_object())
 				return false;
-
 			JSONTools::GetAttribute(json_entry, "force_power_of_2", dst.force_power_of_2);
 			JSONTools::GetAttribute(json_entry, "force_square", dst.force_square);
 			JSONTools::GetAttribute(json_entry, "duplicate_image_border", dst.duplicate_image_border);
@@ -32,7 +31,6 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "atlas_padding", dst.atlas_padding);
 			JSONTools::GetAttribute(json_entry, "background_color", dst.background_color);
 			JSONTools::GetAttribute(json_entry, "merge_params", dst.merge_params);
-
 			return true;
 		}
 
@@ -40,7 +38,6 @@ namespace chaos
 		{
 			if (!json_entry.is_object())
 				json_entry = nlohmann::json::object();
-
 			JSONTools::SetAttribute(json_entry, "force_power_of_2", src.force_power_of_2);
 			JSONTools::SetAttribute(json_entry, "force_square", src.force_square);
 			JSONTools::SetAttribute(json_entry, "duplicate_image_border", src.duplicate_image_border);
@@ -304,7 +301,7 @@ namespace chaos
 						// |+----+|
 						// +------+
 
-						if (params.duplicate_image_border && 0)
+						if (params.duplicate_image_border && 0) // shu46
 						{
 							// XXX : it is possible to index dst texture to outside the range reserved surface (the double border) because
 							//       dst_desc is descriptor on the whole image

@@ -388,27 +388,17 @@ namespace death
 		if (!FillAtlasGeneratorInput(input, config, config_path))
 			return false;
 
+		// atlas generation params
+		int const DEFAULT_ATLAS_SIZE    = 1024;
+		int const DEFAULT_ATLAS_PADDING = 10;
 
+		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, chaos::PixelFormatMergeParams());
+		
+		nlohmann::json const * atlas_json = chaos::JSONTools::GetStructure(config, "atlas");
+		if (atlas_json != nullptr)
+			LoadFromJSON(*atlas_json, params);
 
-
-
-
-
-		chaos::BitmapAtlas::BitmapAtlasFilterSet filters;
-		filters.filters.push_back({ nullptr, new chaos::ImageProcessor });
-
-
-
-
-
-
-		// generate the atlas + maybe a dump
-		int ATLAS_SIZE    = 1024;
-		int ATLAS_PADDING = 10;
-
-		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(ATLAS_SIZE, ATLAS_SIZE, ATLAS_PADDING, chaos::PixelFormatMergeParams());
-		params.filters = &filters;
-
+		// atlas generation params : maybe a dump
 		char const * dump_atlas_dirname = nullptr;
 #if _DEBUG
 		dump_atlas_dirname = CachedAtlasFilename;
@@ -417,6 +407,7 @@ namespace death
 			dump_atlas_dirname = CachedAtlasFilename;
 #endif
 
+		// generate the atlas
 		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
 		texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
 		if (texture_atlas == nullptr)

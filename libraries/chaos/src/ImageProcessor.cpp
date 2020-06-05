@@ -61,7 +61,7 @@ namespace chaos
 
 			// recompose the image to have a grid 
 			ImageDescription d = ImageTools::GetImageDescription(result[0]);
-			FIBITMAP * image = ImageTools::GenFreeImage(d.pixel_format, d.width, d.height);
+			FIBITMAP * image = ImageTools::GenFreeImage(d.pixel_format, d.width * grid_anim.grid_size.x, d.height * grid_anim.grid_size.y);
 			if (image == nullptr)
 				return ProcessAnimatedImage_ClearResult(result);
 
@@ -126,15 +126,15 @@ namespace chaos
 		int dest_height = src_desc.height + 2 * d;
 
 		// create an accessor for the image
-		ImagePixelAccessor<PixelBGR> src_accessor(src_desc);		
+		ImagePixelAccessor<PixelBGRA> src_accessor(src_desc);		
 		if (!src_accessor.IsValid())
 			return nullptr;
 
 		// generate the image
-		FIBITMAP* result = ImageTools::GenFreeImage(PixelFormat::GetPixelFormat<PixelBGR>(), dest_width, dest_height);
+		FIBITMAP* result = ImageTools::GenFreeImage(PixelFormat::GetPixelFormat<PixelBGRA>(), dest_width, dest_height);
 		if (result != nullptr)
 		{
-			ImagePixelAccessor<PixelBGR> dst_accessor(ImageTools::GetImageDescription(result));
+			ImagePixelAccessor<PixelBGRA> dst_accessor(ImageTools::GetImageDescription(result));
 			if (!dst_accessor.IsValid())
 			{
 				FreeImage_Unload(result);
@@ -154,6 +154,7 @@ namespace chaos
 						dst_accessor(x, y).R = 0;
 						dst_accessor(x, y).G = 255;
 						dst_accessor(x, y).B = 0;
+						dst_accessor(x, y).A = 255;
 					}
 
 

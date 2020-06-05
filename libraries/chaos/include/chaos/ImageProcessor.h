@@ -55,7 +55,7 @@ namespace chaos
 	protected:
 
 		/** the distance to check for adding an outline */
-		float distance = 10.0f;
+		float distance = 5.0f;
 		/** the ouline color */
 		glm::vec4 outline_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	};

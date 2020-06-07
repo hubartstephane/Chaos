@@ -5,8 +5,6 @@
 #include <chaos/ImagePixelAccessor.h>
 #include <chaos/LogTools.h>
 
-#include <chaos/WinTools.h>
-
 namespace chaos
 {
 
@@ -139,12 +137,12 @@ namespace chaos
 			return nullptr;
 		}
 
-		auto process = [this, src_desc](auto src_accessor) -> FIBITMAP *
+		return DoImageProcessing(src_desc, [this, src_desc](auto src_accessor) -> FIBITMAP *
 		{
-			using accessor_type = decltype(src_accessor);
-
 			if (!src_accessor.IsValid())
 				return nullptr;
+
+			using accessor_type = decltype(src_accessor);
 
 			int d = (int)distance;
 
@@ -152,7 +150,7 @@ namespace chaos
 			int dest_height = src_desc.height + 2 * d;
 
 			// generate the image
-			FIBITMAP* result = ImageTools::GenFreeImage(src_desc.pixel_format, dest_width, dest_height);
+			FIBITMAP * result = ImageTools::GenFreeImage(src_desc.pixel_format, dest_width, dest_height);
 			if (result != nullptr)
 			{
 				accessor_type dst_accessor(ImageTools::GetImageDescription(result));
@@ -178,7 +176,7 @@ namespace chaos
 								dst_accessor(x, y).R = 0;
 								dst_accessor(x, y).G = 255;
 								dst_accessor(x, y).B = 0;
-								
+
 							}
 							else if constexpr (std::is_same_v<typename accessor_type::type, PixelBGRA>)
 							{
@@ -192,13 +190,7 @@ namespace chaos
 				}
 			}
 			return result;
-		};
-
-		if (src_desc.pixel_format == PixelFormat::GetPixelFormat<PixelBGR>())
-			return process(ImagePixelAccessor<PixelBGR>(src_desc));
-		else if (src_desc.pixel_format == PixelFormat::GetPixelFormat<PixelBGRA>())
-			return process(ImagePixelAccessor<PixelBGRA>(src_desc));
-		return nullptr;
+		});
 	}
 
 	bool ImageProcessorOutline::SaveIntoJSON(nlohmann::json& json_entry) const

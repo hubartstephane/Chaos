@@ -7,8 +7,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/Application.h>
 #include <chaos/JSONTools.h>
-
-
+#include <chaos/LogTools.h>
 
 namespace chaos
 {
@@ -304,27 +303,6 @@ namespace chaos
 			return result;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         void FolderInfoInput::AddBitmapFilesData::SearchDirectoryEntries(FilePathParam const& path, bool search_files, bool search_directories)
         {
             // nothing more to search
@@ -564,6 +542,7 @@ namespace chaos
 			// not clear what to do (we have both a grid and a per frame animation). Abord
 			if (count > 1 && input_manifest.grid_data.GetFrameCount() > 1)
 			{
+				LogTools::Error("AddBitmapWithManifestImpl[%s] : cannot have multiple images and GRID structure in the same time", resolved_path.string().c_str());
 				ReleaseAllImages(images);
 				return nullptr;
 			}
@@ -573,8 +552,8 @@ namespace chaos
 			{
 				std::vector<FIBITMAP*> processed_images = input_manifest.image_processor->ProcessAnimatedImage(*images, animation_description.grid_data);
 
-				// error case : free all images
-				if (processed_images.size() != count)
+				// error case : free all images 
+				if (processed_images.size() == 0)
 				{
 					ReleaseAllImages(&processed_images); 
 					ReleaseAllImages(images);

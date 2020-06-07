@@ -75,24 +75,33 @@ namespace chaos
 		/** returns true whether the pixel format are different */
 		bool operator != (PixelFormat const & other) const;
 
+		/** a static instance of all pixel formats */
+		static PixelFormat const Gray;
+		static PixelFormat const BGR;
+		static PixelFormat const BGRA;
+		static PixelFormat const GrayFloat;
+		static PixelFormat const RGBFloat;
+		static PixelFormat const RGBAFloat;
+		static PixelFormat const DepthStencil;
+
 		/** transform a type into pixel format (component type and count) */
 		template<typename T>
 		static PixelFormat GetPixelFormat();
 
 		template<>
-		static PixelFormat GetPixelFormat<PixelGray>(){ return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 1);}
+		static PixelFormat GetPixelFormat<PixelGray>(){ return Gray;}
 		template<>
-		static PixelFormat GetPixelFormat<PixelBGR>(){ return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 3);}
+		static PixelFormat GetPixelFormat<PixelBGR>(){ return BGR;}
 		template<>
-		static PixelFormat GetPixelFormat<PixelBGRA>(){ return PixelFormat(PixelComponentType::UNSIGNED_CHAR, 4);}
+		static PixelFormat GetPixelFormat<PixelBGRA>(){ return BGRA;}
 		template<>
-		static PixelFormat GetPixelFormat<PixelGrayFloat>(){ return PixelFormat(PixelComponentType::FLOAT, 1);}
+		static PixelFormat GetPixelFormat<PixelGrayFloat>(){ return GrayFloat;}
 		template<>
-		static PixelFormat GetPixelFormat<PixelRGBFloat>(){ return PixelFormat(PixelComponentType::FLOAT, 3);}
+		static PixelFormat GetPixelFormat<PixelRGBFloat>(){ return RGBFloat;}
 		template<>
-		static PixelFormat GetPixelFormat<PixelRGBAFloat>(){ return PixelFormat(PixelComponentType::FLOAT, 4);}
+		static PixelFormat GetPixelFormat<PixelRGBAFloat>(){ return RGBAFloat;}
 		template<>
-		static PixelFormat GetPixelFormat<PixelDepthStencil>() { return PixelFormat(PixelComponentType::DEPTH_STENCIL, 1); }
+		static PixelFormat GetPixelFormat<PixelDepthStencil>() { return DepthStencil; }
 
 	public:
 

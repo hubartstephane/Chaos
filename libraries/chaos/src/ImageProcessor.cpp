@@ -3,6 +3,7 @@
 #include <chaos/ImageDescription.h>
 #include <chaos/JSONTools.h>
 #include <chaos/ImagePixelAccessor.h>
+#include <chaos/LogTools.h>
 
 #include <chaos/WinTools.h>
 
@@ -43,7 +44,10 @@ namespace chaos
 										
 					FIBITMAP* image = ProcessImage(sub_desc);
 					if (image == nullptr)
+					{
+						LogTools::Error("ImageProcessor : ProcessImage() failed for GRID");
 						return ProcessAnimatedImage_ClearResult(result);
+					}
 					// push first so that the image is released in case of failure
 					result.push_back(image);
 					// check compatibility with previous elements 
@@ -52,7 +56,10 @@ namespace chaos
 						ImageDescription d1 = ImageTools::GetImageDescription(image);
 						ImageDescription d2 = ImageTools::GetImageDescription(result[0]);
 						if (d1.width != d2.width || d1.height != d2.height || d1.pixel_format != d2.pixel_format)
+						{
+							LogTools::Error("ImageProcessor : when processing GRID resulting images should all have same size and same format");
 							return ProcessAnimatedImage_ClearResult(result);
+						}
 					}					
 				}
 			}
@@ -63,7 +70,10 @@ namespace chaos
 			ImageDescription d = ImageTools::GetImageDescription(result[0]);
 			FIBITMAP * image = ImageTools::GenFreeImage(d.pixel_format, d.width * grid_anim.grid_size.x, d.height * grid_anim.grid_size.y);
 			if (image == nullptr)
+			{
+				LogTools::Error("ImageProcessor : failed allocating image");
 				return ProcessAnimatedImage_ClearResult(result);
+			}
 
 			ImageDescription dst_desc = ImageTools::GetImageDescription(image);
 			
@@ -90,7 +100,10 @@ namespace chaos
 			{
 				FIBITMAP * image = ProcessImage(ImageTools::GetImageDescription(src[i]));
 				if (image == nullptr)
+				{
+					LogTools::Error("ImageProcessor : ProcessImage() failed for singe/multiple images");
 					return ProcessAnimatedImage_ClearResult(result);
+				}
 				result.push_back(image);
 			}
 		}
@@ -120,49 +133,72 @@ namespace chaos
 
 	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc) const
 	{
-		int d = (int)distance;
-
-		int dest_width  = src_desc.width  + 2 * d;
-		int dest_height = src_desc.height + 2 * d;
-
-		// create an accessor for the image
-		ImagePixelAccessor<PixelBGRA> src_accessor(src_desc);		
-		if (!src_accessor.IsValid())
-			return nullptr;
-
-		// generate the image
-		FIBITMAP* result = ImageTools::GenFreeImage(PixelFormat::GetPixelFormat<PixelBGRA>(), dest_width, dest_height);
-		if (result != nullptr)
+		if (src_desc.pixel_format != PixelFormat::GetPixelFormat<PixelBGRA>() && src_desc.pixel_format != PixelFormat::GetPixelFormat<PixelBGR>())
 		{
-			ImagePixelAccessor<PixelBGRA> dst_accessor(ImageTools::GetImageDescription(result));
-			if (!dst_accessor.IsValid())
-			{
-				FreeImage_Unload(result);
+			LogTools::Error("ImageProcessorOutline : can only process PixelBGR & PixelBGRA formats");
+			return nullptr;
+		}
+
+		auto process = [this, src_desc](auto src_accessor) -> FIBITMAP *
+		{
+			using accessor_type = decltype(src_accessor);
+
+			if (!src_accessor.IsValid())
 				return nullptr;
-			}
 
-			for (int y = 0; y < dest_height; ++y)
+			int d = (int)distance;
+
+			int dest_width = src_desc.width + 2 * d;
+			int dest_height = src_desc.height + 2 * d;
+
+			// generate the image
+			FIBITMAP* result = ImageTools::GenFreeImage(src_desc.pixel_format, dest_width, dest_height);
+			if (result != nullptr)
 			{
-				for (int x = 0; x < dest_width; ++x)
+				accessor_type dst_accessor(ImageTools::GetImageDescription(result));
+				if (!dst_accessor.IsValid())
 				{
-					int src_x = x - d;
-					int src_y = y - d;
-					if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height)
-						dst_accessor(x, y) = src_accessor(src_x, src_y);
-					else
+					FreeImage_Unload(result);
+					return nullptr;
+				}
+
+				// all pixels on destination images
+				for (int y = 0; y < dest_height; ++y)
+				{
+					for (int x = 0; x < dest_width; ++x)
 					{
-						dst_accessor(x, y).R = 0;
-						dst_accessor(x, y).G = 255;
-						dst_accessor(x, y).B = 0;
-						dst_accessor(x, y).A = 255;
+						int src_x = x - d;
+						int src_y = y - d;
+						if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height)
+							dst_accessor(x, y) = src_accessor(src_x, src_y);
+						else
+						{
+							if constexpr (std::is_same_v<typename accessor_type::type, PixelBGR>)
+							{
+								dst_accessor(x, y).R = 0;
+								dst_accessor(x, y).G = 255;
+								dst_accessor(x, y).B = 0;
+								
+							}
+							else if constexpr (std::is_same_v<typename accessor_type::type, PixelBGRA>)
+							{
+								dst_accessor(x, y).R = 0;
+								dst_accessor(x, y).G = 255;
+								dst_accessor(x, y).B = 0;
+								dst_accessor(x, y).A = 255;
+							}
+						}
 					}
-
-
-
 				}
 			}
-		}
-		return result;
+			return result;
+		};
+
+		if (src_desc.pixel_format == PixelFormat::GetPixelFormat<PixelBGR>())
+			return process(ImagePixelAccessor<PixelBGR>(src_desc));
+		else if (src_desc.pixel_format == PixelFormat::GetPixelFormat<PixelBGRA>())
+			return process(ImagePixelAccessor<PixelBGRA>(src_desc));
+		return nullptr;
 	}
 
 	bool ImageProcessorOutline::SaveIntoJSON(nlohmann::json& json_entry) const

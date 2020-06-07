@@ -764,7 +764,7 @@ namespace chaos
 		// ensure we use supported formats (32bpp)
 		ImageDescription desc = GetImageDescription(bitmap);
 
-		if (desc.pixel_format != PixelFormat::GetPixelFormat<PixelBGRA>())
+		if (desc.pixel_format != PixelFormat::BGRA)
 		{
 			FIBITMAP* bitmap_32bpp = FreeImage_ConvertTo32Bits(bitmap);
 			if (bitmap_32bpp != nullptr)

@@ -131,7 +131,7 @@ namespace chaos
 
 	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc) const
 	{
-		if (src_desc.pixel_format != PixelFormat::GetPixelFormat<PixelBGRA>() && src_desc.pixel_format != PixelFormat::GetPixelFormat<PixelBGR>())
+		if (src_desc.pixel_format != PixelFormat::BGRA && src_desc.pixel_format != PixelFormat::BGR)
 		{
 			LogTools::Error("ImageProcessorOutline : can only process PixelBGR & PixelBGRA formats");
 			return nullptr;

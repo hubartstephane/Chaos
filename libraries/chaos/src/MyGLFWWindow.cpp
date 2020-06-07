@@ -451,7 +451,7 @@ namespace chaos
 			
 			// generate a framebuffer
 			chaos::GPUFramebufferGenerator framebuffer_generator;
-			framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), framebuffer_size, "scene");
+			framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::BGRA, framebuffer_size, "scene");
 			framebuffer_generator.AddDepthStencilAttachment(framebuffer_size, "depth");
 
 			chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);

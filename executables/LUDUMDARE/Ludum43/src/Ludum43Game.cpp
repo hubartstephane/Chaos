@@ -325,7 +325,7 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<c
 	}
 
 	chaos::GPUFramebufferGenerator framebuffer_generator;
-	framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), glm::ivec2(0, 0), "scene");
+	framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::BGRA, glm::ivec2(0, 0), "scene");
 
 	in_framebuffer = framebuffer_generator.GenerateFramebuffer(size);
 

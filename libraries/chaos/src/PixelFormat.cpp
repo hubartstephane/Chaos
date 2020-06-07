@@ -24,6 +24,14 @@ namespace chaos
 	// PixelFormat methods
 	// ==============================================================================================
 
+	PixelFormat const PixelFormat::Gray			= PixelFormat(PixelComponentType::UNSIGNED_CHAR, 1);
+	PixelFormat const PixelFormat::BGR			= PixelFormat(PixelComponentType::UNSIGNED_CHAR, 3);
+	PixelFormat const PixelFormat::BGRA			= PixelFormat(PixelComponentType::UNSIGNED_CHAR, 4);
+	PixelFormat const PixelFormat::GrayFloat	= PixelFormat(PixelComponentType::FLOAT, 1);
+	PixelFormat const PixelFormat::RGBFloat		= PixelFormat(PixelComponentType::FLOAT, 3);
+	PixelFormat const PixelFormat::RGBAFloat	= PixelFormat(PixelComponentType::FLOAT, 4);
+	PixelFormat const PixelFormat::DepthStencil	= PixelFormat(PixelComponentType::DEPTH_STENCIL, 1);
+
 	PixelFormat::PixelFormat(PixelFormatType in_format)
 	{
 		if (in_format == PixelFormatType::GRAY)

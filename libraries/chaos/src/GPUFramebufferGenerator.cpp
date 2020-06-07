@@ -215,7 +215,7 @@ namespace chaos
 
 		GPUFramebufferGeneratorAttachmentInfo info;
 		info.attachment_point = GL_DEPTH_STENCIL_ATTACHMENT;
-		info.pixel_format = PixelFormat::GetPixelFormat<PixelDepthStencil>();
+		info.pixel_format = PixelFormat::DepthStencil;
 		info.size = in_size;
 		info.gen_texture_parameters = gen_texture_parameters;
 		CompleteAndInsertAttachment(info, name);

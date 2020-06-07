@@ -81,7 +81,7 @@ protected:
 			return false;
 
 		chaos::ImageDescription desc;
-		desc.pixel_format = chaos::PixelFormat::GetPixelFormat<chaos::PixelDepthStencil>();
+		desc.pixel_format = chaos::PixelFormat::DepthStencil;
 		desc.width = 512;
 		desc.height = 512;
 
@@ -96,9 +96,9 @@ protected:
 		glm::ivec2 final_size(1024, 1024);
 
 		chaos::GPUFramebufferGenerator framebuffer_generator;
-		framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), null_size, "truc");
-		framebuffer_generator.AddColorAttachment(1, chaos::PixelFormat::GetPixelFormat<chaos::PixelBGRA>(), null_size, "bidule");
-		framebuffer_generator.AddColorAttachment(2, chaos::PixelFormat::GetPixelFormat<chaos::PixelDepthStencil>(), null_size, "machin");
+		framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::BGRA, null_size, "truc");
+		framebuffer_generator.AddColorAttachment(1, chaos::PixelFormat::BGRA, null_size, "bidule");
+		framebuffer_generator.AddColorAttachment(2, chaos::PixelFormat::DepthStencil, null_size, "machin");
 
 
 		

@@ -208,142 +208,31 @@ namespace chaos
 		return result;
 	}
 
-	class FillFontStringImageMetaFunc
+	template<typename T>
+	static void BlendFontGlyphPixel(T& dst, T const& src)
 	{
-	public:
-
-		FillFontStringImageMetaFunc(ImageDescription const & in_dst_desc, char const * in_str, std::map<char, FontTools::CharacterBitmapGlyph> const & in_glyph_cache, int in_min_x, int in_min_y) :
-			dst_desc(in_dst_desc),
-			str(in_str),
-			glyph_cache(in_glyph_cache),    
-			min_x(in_min_x),
-			min_y(in_min_y)
-		{}
-
-		/// utility fonctions for blending pixels
-		static void BlendPixel(PixelGray & dst, PixelGray const & src)
+		if constexpr (std::is_same_v<T, PixelGray> || std::is_same_v<T, PixelGrayFloat>)
 		{
 			dst = std::max(dst, src);
 		}
-		/// utility fonctions for blending pixels
-		static void BlendPixel(PixelBGR & dst, PixelBGR const & src)
+		else if constexpr (std::is_same_v<T, PixelBGR> || std::is_same_v<T, PixelRGBFloat>)
 		{
 			dst.R = std::max(dst.R, src.R);
 			dst.G = std::max(dst.G, src.G);
 			dst.B = std::max(dst.B, src.B);
 		}
-		/// utility fonctions for blending pixels
-		static void BlendPixel(PixelBGRA & dst, PixelBGRA const & src)
+		else if constexpr (std::is_same_v<T, PixelBGRA> || std::is_same_v<T, PixelRGBAFloat>)
 		{
 			dst.R = std::max(dst.R, src.R);
 			dst.G = std::max(dst.G, src.G);
 			dst.B = std::max(dst.B, src.B);
 			dst.A = std::max(dst.A, src.A);
 		}
-		/// utility fonctions for blending pixels
-		static void BlendPixel(PixelGrayFloat & dst, PixelGrayFloat const & src)
+		else
 		{
-			dst = std::max(dst, src);
+			assert(0);
 		}
-		/// utility fonctions for blending pixels
-		static void BlendPixel(PixelRGBFloat & dst, PixelRGBFloat const & src)
-		{
-			dst.R = std::max(dst.R, src.R);
-			dst.G = std::max(dst.G, src.G);
-			dst.B = std::max(dst.B, src.B);
-		}
-		/// utility fonctions for blending pixels
-		static void BlendPixel(PixelRGBAFloat & dst, PixelRGBAFloat const & src)
-		{
-			dst.R = std::max(dst.R, src.R);
-			dst.G = std::max(dst.G, src.G);
-			dst.B = std::max(dst.B, src.B);
-			dst.A = std::max(dst.A, src.A);
-		}
-		/// utility fonctions for blending pixels
-		static void BlendPixel(PixelDepthStencil & dst, PixelDepthStencil const & src)
-		{
-			assert(0); // should never happens
-		}
-
-		/// the dispatch function
-		template<typename DST_TYPE>
-		void operator()(DST_TYPE dst_color)
-		{
-			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
-			if (pf == dst_desc.pixel_format)
-			{
-				// fill the background with empty data
-				ImageTools::FillImageBackground(dst_desc, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-				// copy each character glyph into buffer
-				int pitch_size = dst_desc.pitch_size;
-
-				int dst_height = dst_desc.height;
-
-				unsigned char * dst_buffer = (unsigned char *)dst_desc.data;
-
-				int pos_x = 0;
-				int pos_y = 0;
-				for (int i = 0; str[i] != 0; ++i)
-				{
-					char c = str[i];
-
-					auto const it = glyph_cache.find(c);
-					if (it == glyph_cache.cend())
-						continue;
-
-					FontTools::CharacterBitmapGlyph const & record = it->second;
-
-					// get the metrics
-					int w = record.width;
-					int h = record.height;
-					int bl = record.bitmap_left;
-					int bt = record.bitmap_top;
-					int avx = record.advance.x;
-					int avy = record.advance.y;
-
-					bt = -bt;
-
-					ImageDescription src_desc = FontTools::GetImageDescription(record.bitmap_glyph->bitmap);
-
-					// copy the glyph to dest buffer : invert lines 
-					ImagePixelAccessor<DST_TYPE>  dst_acc(dst_desc);
-					ImagePixelAccessor<PixelGray> src_acc(src_desc); 
-
-					for (int y = 0; y < h; ++y)
-					{
-						int delta_x = (pos_x + bl - min_x);
-						int delta_y = (pos_y + bt - min_y + y);
-
-						DST_TYPE * dst_line = &dst_acc(delta_x, dst_height - 1 - delta_y);
-						PixelGray const * src_line = &src_acc(0, y);
-
-						for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
-						{
-							DST_TYPE p;
-							PixelConverter::Convert(p, src_line[x]);
-							BlendPixel(dst_line[x], p);
-						}
-					}
-					// advance the cursor
-					pos_x += avx;
-					pos_y += avy;
-				}
-			}
-		}
-
-	protected:
-
-		ImageDescription dst_desc;
-
-		char const * str;
-
-		std::map<char, FontTools::CharacterBitmapGlyph> const & glyph_cache;
-
-		int min_x;
-		int min_y;
-	};
+	}
 
 	FIBITMAP * FontTools::GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format)
 	{
@@ -411,9 +300,74 @@ namespace chaos
 		{
 			ImageDescription dst_desc = ImageTools::GetImageDescription(result);
 
-			FillFontStringImageMetaFunc fill_func_map(dst_desc, str, glyph_cache, min_x, min_y);
+			meta::for_each<PixelTypes>([&dst_desc, &glyph_cache, min_x, min_y, str](auto value) -> bool
+			{
+				using pixel_type = typename decltype(value)::type;
 
-			boost::mpl::for_each<PixelTypes>(fill_func_map);
+				// skip other types
+				PixelFormat pf = PixelFormat::GetPixelFormat<pixel_type>();
+				if (pf != dst_desc.pixel_format)
+					return false;
+
+				// fill the background with empty data
+				ImageTools::FillImageBackground(dst_desc, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+				// copy each character glyph into buffer
+				int pitch_size = dst_desc.pitch_size;
+
+				int dst_height = dst_desc.height;
+
+				unsigned char* dst_buffer = (unsigned char*)dst_desc.data;
+
+				int pos_x = 0;
+				int pos_y = 0;
+				for (int i = 0; str[i] != 0; ++i)
+				{
+					char c = str[i];
+
+					auto const it = glyph_cache.find(c);
+					if (it == glyph_cache.cend())
+						continue;
+
+					FontTools::CharacterBitmapGlyph const& record = it->second;
+
+					// get the metrics
+					int w = record.width;
+					int h = record.height;
+					int bl = record.bitmap_left;
+					int bt = record.bitmap_top;
+					int avx = record.advance.x;
+					int avy = record.advance.y;
+
+					bt = -bt;
+
+					ImageDescription src_desc = FontTools::GetImageDescription(record.bitmap_glyph->bitmap);
+
+					// copy the glyph to dest buffer : invert lines 
+					ImagePixelAccessor<pixel_type>  dst_acc(dst_desc);
+					ImagePixelAccessor<PixelGray> src_acc(src_desc);
+
+					for (int y = 0; y < h; ++y)
+					{
+						int delta_x = (pos_x + bl - min_x);
+						int delta_y = (pos_y + bt - min_y + y);
+
+						pixel_type* dst_line = &dst_acc(delta_x, dst_height - 1 - delta_y);
+						PixelGray const* src_line = &src_acc(0, y);
+
+						for (int x = 0; x < w; ++x) // glyph is reversed compare to what we want
+						{
+							pixel_type p;
+							PixelConverter::Convert(p, src_line[x]);
+							BlendFontGlyphPixel(dst_line[x], p);
+						}
+					}
+					// advance the cursor
+					pos_x += avx;
+					pos_y += avy;
+				}
+				return true;
+			});
 		}
 
 		// release the glyphs

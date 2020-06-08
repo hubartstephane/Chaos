@@ -65,38 +65,6 @@ using has_function_##function_name = boost::mpl::bool_<\
 template<typename T>\
 auto constexpr has_function_##function_name##_v = has_function_##function_name<T>::value;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// ====================================================================================================
 	// CHAOS_GENERATE_CHECK_METHOD(toto) generates 
 	//
@@ -209,6 +177,20 @@ using typeof_function_##funcname = typename details::check_function_##funcname##
 CHAOS_GENERATE_CHECK_METHOD(funcname)\
 CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// ==================================================
 	// Meta functions
 	// ==================================================
@@ -217,49 +199,49 @@ CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 	{
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T * get_raw_pointer(T * src)
+		T * get_raw_pointer(T * src)
 		{
 			return src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T const * get_raw_pointer(T const * src)
+		T const * get_raw_pointer(T const * src)
 		{
 			return src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T * get_raw_pointer(T & src)
+		T * get_raw_pointer(T & src)
 		{
 			return &src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T const * get_raw_pointer(T const & src)
+		T const * get_raw_pointer(T const & src)
 		{
 			return &src;
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T * get_raw_pointer(shared_ptr<T> & src)
+		 T * get_raw_pointer(shared_ptr<T> & src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T const * get_raw_pointer(shared_ptr<T> const & src)
+		T const * get_raw_pointer(shared_ptr<T> const & src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T * get_raw_pointer(std::unique_ptr<T> & src)
+		T * get_raw_pointer(std::unique_ptr<T> & src)
 		{
 			return src.get();
 		}
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
-		static T const * get_raw_pointer(std::unique_ptr<T> const & src)
+		T const * get_raw_pointer(std::unique_ptr<T> const & src)
 		{
 			return src.get();
 		}
@@ -278,6 +260,59 @@ CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 		/** a fake function (not implemented) that pretends to return a reference to an instance of T (does not deserve to be called) */
 		template<typename T>
 		constexpr T & FakeInstance();
+
+		/** apply a functor on a boost::mpl::vector<>. Stop whenever some kind of result is found */
+		template<typename ELEMENTS, typename FUNC, typename DEFAULT_RESULT>
+		auto for_each(FUNC func, DEFAULT_RESULT default_result)
+		{
+			return details::for_each_internal<boost::mpl::begin<ELEMENTS>::type, boost::mpl::end<ELEMENTS>::type>(func, default_result);
+		}
+
+		/** apply a functor on a boost::mpl::vector<> */
+		template<typename ELEMENTS, typename FUNC>
+		auto for_each(FUNC func)
+		{
+			details::for_each_internal<boost::mpl::begin<ELEMENTS>::type, boost::mpl::end<ELEMENTS>::type>(func);
+		}
+
+		namespace details
+		{
+
+			/** internal method */
+			template<typename IT, typename END, typename FUNC, typename DEFAULT_RESULT>
+			auto for_each_internal(FUNC func, DEFAULT_RESULT default_result)
+			{
+				if constexpr (std::is_same_v<IT, END>) // constexpr is important for compilation
+					return default_result;
+				else
+				{
+					using VALUE = typename boost::mpl::deref<IT>::type;
+
+					auto result = func(boost::mpl::identity<VALUE>());
+					if (result)
+						return result;
+					return for_each_internal<boost::mpl::next<IT>::type, END>(func, default_result);
+				}
+			}
+
+			/** internal method */
+			template<typename IT, typename END, typename FUNC>
+			void for_each_internal(FUNC func)
+			{
+				if constexpr (std::is_same_v<IT, END>)
+					return;
+				else
+				{
+					using VALUE = typename boost::mpl::deref<IT>::type;
+
+					func(boost::mpl::identity<VALUE>());
+					for_each_internal<boost::mpl::next<IT>::type, END>(func);
+				}
+			}
+
+		}; // namespace details
+
+
 	
 	}; // namespace meta
 

@@ -1,6 +1,7 @@
 #include <chaos/FontTools.h>
 #include <chaos/ImageTools.h>
 #include <chaos/ImagePixelAccessor.h>
+#include <chaos/MetaProgramming.h>
 
 
 // XXX : for Freetype, a glyph in memory is organised up to down
@@ -28,45 +29,6 @@ namespace chaos
 			result = GenerateImage(glyph->bitmap, pixel_format); // convert FreeType-bitmap into FreeImage-bitmap
 		return result;
 	}
-
-	class FillFontImageMetaFunc
-	{
-	public:
-
-		FillFontImageMetaFunc(ImageDescription & in_dst_desc, ImageDescription & in_src_desc) :
-			dst_desc(in_dst_desc),
-			src_desc(in_src_desc)
-		{}
-
-		/// the dispatch function
-		template<typename DST_TYPE>
-		void operator()(DST_TYPE dst_color)
-		{
-			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
-			if (pf == dst_desc.pixel_format)
-			{
-				int w = dst_desc.width;
-				int h = dst_desc.height;
-
-				ImagePixelAccessor<PixelGray> src_acc(src_desc);
-				ImagePixelAccessor<DST_TYPE> dst_acc(dst_desc);
-
-				for (int j = 0; j < h; ++j)
-				{
-					DST_TYPE * dst_line        = &dst_acc(0, j);
-					PixelGray const * src_line = &src_acc(0, h - 1 - j);
-
-					for (int i = 0; i < w; ++i) // glyph is reversed compare to what we want
-						PixelConverter::Convert(dst_line[i], src_line[i]);
-				}
-			}
-		}
-
-	protected:
-
-		ImageDescription dst_desc;
-		ImageDescription src_desc;
-	};
 
 	ImageDescription FontTools::GetImageDescription(FT_Bitmap & bitmap)
 	{
@@ -137,9 +99,31 @@ namespace chaos
 			ImageDescription src_desc = FontTools::GetImageDescription(bitmap);
 			ImageDescription dst_desc = ImageTools::GetImageDescription(result);
 
-			FillFontImageMetaFunc fill_func_map(dst_desc, src_desc);
+			meta::for_each<PixelTypes>([src_desc, dst_desc](auto value) -> bool
+			{
+				using pixel_type = typename decltype(value)::type;
 
-			boost::mpl::for_each<PixelTypes>(fill_func_map);
+				PixelFormat pf = PixelFormat::GetPixelFormat<pixel_type>();
+				if (pf != dst_desc.pixel_format)
+					return false;
+
+				int w = dst_desc.width;
+				int h = dst_desc.height;
+
+				ImagePixelAccessor<PixelGray> src_acc(src_desc);
+				ImagePixelAccessor<pixel_type> dst_acc(dst_desc);
+
+				for (int j = 0; j < h; ++j)
+				{
+					pixel_type* dst_line = &dst_acc(0, j);
+					PixelGray const* src_line = &src_acc(0, h - 1 - j);
+
+					for (int i = 0; i < w; ++i) // glyph is reversed compare to what we want
+						PixelConverter::Convert(dst_line[i], src_line[i]);
+				}
+				return true;
+			});
+
 			MakeAlphaChannelConsistent(dst_desc);
 		}
 

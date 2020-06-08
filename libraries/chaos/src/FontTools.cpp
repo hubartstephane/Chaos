@@ -103,8 +103,7 @@ namespace chaos
 			{
 				using pixel_type = typename decltype(value)::type;
 
-				PixelFormat pf = PixelFormat::GetPixelFormat<pixel_type>();
-				if (pf != dst_desc.pixel_format)
+				if (dst_desc.pixel_format != PixelFormat::GetPixelFormat<pixel_type>())
 					return false;
 
 				int w = dst_desc.width;
@@ -305,8 +304,7 @@ namespace chaos
 				using pixel_type = typename decltype(value)::type;
 
 				// skip other types
-				PixelFormat pf = PixelFormat::GetPixelFormat<pixel_type>();
-				if (pf != dst_desc.pixel_format)
+				if (dst_desc.pixel_format != PixelFormat::GetPixelFormat<pixel_type>())
 					return false;
 
 				// fill the background with empty data

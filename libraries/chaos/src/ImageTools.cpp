@@ -3,6 +3,7 @@
 #include <chaos/FileTools.h>
 #include <chaos/GLTextureTools.h>
 #include <chaos/ImagePixelAccessor.h>
+#include <chaos/Metaprogramming.h>
 
 namespace chaos
 {
@@ -20,61 +21,6 @@ namespace chaos
 	//   - can read GIF correctly and lock pages even if there is a single image
 	//   - for other formats, the lock page fails
 
-	class FillImageMetaFunc
-	{
-	public:
-
-		/// constructor
-		FillImageMetaFunc(ImageDescription & in_dst_desc, glm::vec4 const & in_color) :
-			dst_format(in_dst_desc.pixel_format.GetFormat()),
-			dst_desc(in_dst_desc),
-			color(in_color)
-		{
-			assert(dst_desc.IsValid(false));
-			assert(!dst_desc.IsEmpty(false));
-		}
-
-		/// the dispatch function
-		template<typename DST_TYPE>
-		void operator()(DST_TYPE dst_color)
-		{
-			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
-			if (pf.GetFormat() == dst_format)
-			{
-				PixelRGBAFloat rgba_color; // take the color with the most precision ...
-				rgba_color.R = color.x;
-				rgba_color.G = color.y;
-				rgba_color.B = color.z;
-				rgba_color.A = color.w;
-
-				PixelConverter::Convert(dst_color, rgba_color); // ... convert it into the wanted PixelType
-
-				// step 1 : fill line 1 (with standard assignement)
-				ImagePixelAccessor<DST_TYPE> dst_acc(dst_desc);
-
-				DST_TYPE * line1 = &dst_acc(0, 0);
-				for (int c = 0; c < dst_desc.width; ++c)
-					line1[c] = dst_color;
-
-				// step2 : fill other lines with memcpy(...) : should be faster
-				for (int l = 1; l < dst_desc.height; ++l)
-				{
-					DST_TYPE* line2 = &dst_acc(0, l);
-					memcpy(line2, line1, dst_desc.line_size);
-				}
-			}
-		}
-
-	public:
-
-		/// the well known format for destination pixels
-		PixelFormatType dst_format;
-		/// the color to be applyed
-		glm::vec4 color;
-		/// the parameters for copy
-		ImageDescription dst_desc;
-	};
-
 	//
 	// XXX : the usage of FreeImage_FillBackground(...) is rather unclear
 	//
@@ -88,12 +34,46 @@ namespace chaos
 
 	void ImageTools::FillImageBackground(ImageDescription & image_description, glm::vec4 const & color)
 	{
-		if (!image_description.IsEmpty(false))
-		{
-			FillImageMetaFunc fill_func_map(image_description, color);
+		if (image_description.IsEmpty(false))
+			return;
 
-			boost::mpl::for_each<PixelTypes>(fill_func_map);
-		}
+		meta::for_each<PixelTypes>([image_description, color](auto value) -> bool
+		{
+			using pixel_type = typename decltype(value)::type;
+
+			// check we are working with correct pixel format
+			PixelFormat pf = PixelFormat::GetPixelFormat<pixel_type>();
+			if (pf.GetFormat() != image_description.pixel_format.GetFormat())
+				return false;
+
+			// take the color with the most precision ...
+			PixelRGBAFloat rgba_color; 
+			rgba_color.R = color.x;
+			rgba_color.G = color.y;
+			rgba_color.B = color.z;
+			rgba_color.A = color.w;
+
+			// ... convert it into the wanted PixelType
+			pixel_type dst_color;
+			PixelConverter::Convert(dst_color, rgba_color); 
+
+			// step 1 : fill line 1 (with standard assignement)
+			ImagePixelAccessor<pixel_type> dst_acc(image_description);
+
+			pixel_type* line1 = &dst_acc(0, 0);
+			for (int c = 0; c < image_description.width; ++c)
+				line1[c] = dst_color;
+
+			// step2 : fill other lines with memcpy(...) : should be faster
+			for (int l = 1; l < image_description.height; ++l)
+			{
+				pixel_type* line2 = &dst_acc(0, l);
+				memcpy(line2, line1, image_description.line_size);
+			}
+
+			return true;
+				
+		}, false);
 
 #if 0 // keep for example, but the template implementation should fix the alpha issue
 

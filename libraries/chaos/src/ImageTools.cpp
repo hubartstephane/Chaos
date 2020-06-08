@@ -42,8 +42,7 @@ namespace chaos
 			using pixel_type = typename decltype(value)::type;
 
 			// check we are working with correct pixel format
-			PixelFormat pf = PixelFormat::GetPixelFormat<pixel_type>();
-			if (pf.GetFormat() != image_description.pixel_format.GetFormat())
+			if (image_description.pixel_format != PixelFormat::GetPixelFormat<pixel_type>())
 				return false;
 
 			// take the color with the most precision ...
@@ -286,149 +285,73 @@ namespace chaos
 	//   - from src_desc => get a Pixel Type
 	//   - from dst_desc => get a Pixel Type
 	//
-	// we use the boost::mpl::for_each(...) function twice for that.
-	// and the end we can call a meta function
-	//
-	//   CopyPixels<DST_TYPE, SRC_TYPE>
+	// we use the meat::for_each(...) function twice for that.
 
-	template<typename SRC_TYPE> // forward declaration
-	class CopyPixelMetaFunc2;
-
-	class CopyPixelMetaFunc
+	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, ImageTransform image_transform)
 	{
-	public:
-
-		/// constructor
-		CopyPixelMetaFunc(ImageDescription const & in_src_desc, ImageDescription & in_dst_desc, int in_src_x, int in_src_y, int in_dst_x, int in_dst_y, int in_width, int in_height, ImageTransform in_image_transform) :
-			src_format(in_src_desc.pixel_format.GetFormat()),
-			dst_format(in_dst_desc.pixel_format.GetFormat()),
-			src_desc(in_src_desc), dst_desc(in_dst_desc),
-			src_x(in_src_x), src_y(in_src_y),
-			dst_x(in_dst_x), dst_y(in_dst_y),
-			width(in_width), height(in_height),
-			image_transform(in_image_transform)
+		// all possible SRC pixel types
+		meta::for_each<PixelTypes>([src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height, image_transform](auto value) -> bool
 		{
-			assert(src_desc.IsValid(false));
-			assert(dst_desc.IsValid(false));
+			using src_pixel_type = typename decltype(value)::type;
 
-			assert(width >= 0);
-			assert(height >= 0);
-			assert(src_x >= 0 && src_x + width <= src_desc.width);
-			assert(src_y >= 0 && src_y + height <= src_desc.height);
-			assert(dst_x >= 0 && dst_x + width <= dst_desc.width);
-			assert(dst_y >= 0 && dst_y + height <= dst_desc.height);
-		}
+			if (src_desc.pixel_format != PixelFormat::GetPixelFormat<src_pixel_type>())
+				return false;
 
-		/// the dispatch function
-		template<typename DST_TYPE>
-		void operator()(DST_TYPE x)
-		{
-			PixelFormat pf = PixelFormat::GetPixelFormat<DST_TYPE>();
-			if (pf.GetFormat() == dst_format)
-				boost::mpl::for_each<PixelTypes>(CopyPixelMetaFunc2<DST_TYPE>(this));
-		}
-
-	public:
-
-		/// copy function
-		template<typename DST_TYPE, typename SRC_TYPE>
-		void CopyPixels(ImageTransform image_transform)
-		{
-			ImagePixelAccessor<SRC_TYPE> src_acc(src_desc);
-			ImagePixelAccessor<DST_TYPE> dst_acc(dst_desc);
-
-			// normal copy
-			if (image_transform == ImageTransform::NO_TRANSFORM)
+			// all possible DST pixel types
+			meta::for_each<PixelTypes>([src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height, image_transform](auto value) -> bool
 			{
-				if (boost::is_same<DST_TYPE, SRC_TYPE>::value)
+				using dst_pixel_type = typename decltype(value)::type;
+
+				if (dst_desc.pixel_format != PixelFormat::GetPixelFormat<dst_pixel_type>())
+					return false;
+
+				ImagePixelAccessor<src_pixel_type> src_acc(src_desc);
+				ImagePixelAccessor<dst_pixel_type> dst_acc(dst_desc);
+
+				// normal copy
+				if (image_transform == ImageTransform::NO_TRANSFORM)
 				{
-					for (int l = 0; l < height; ++l) // optimized version using memcopy, if there is no conversion to do
+					if (boost::is_same<dst_pixel_type, src_pixel_type>::value)
 					{
-						SRC_TYPE const * src_line = &src_acc(src_x, src_y + l);
-						DST_TYPE       * dst_line = &dst_acc(dst_x, dst_y + l);
-						memcpy(dst_line, src_line, width * sizeof(DST_TYPE));
+						for (int l = 0; l < height; ++l) // optimized version using memcopy, if there is no conversion to do
+						{
+							src_pixel_type const* src_line = &src_acc(src_x, src_y + l);
+							dst_pixel_type		* dst_line = &dst_acc(dst_x, dst_y + l);
+							memcpy(dst_line, src_line, width * sizeof(src_pixel_type));
+						}
+					}
+					else
+					{
+						for (int l = 0; l < height; ++l)
+						{
+							src_pixel_type const* src_line = &src_acc(src_x, src_y + l);
+							dst_pixel_type		* dst_line = &dst_acc(dst_x, dst_y + l);
+							for (int c = 0; c < width; ++c)
+								PixelConverter::Convert(dst_line[c], src_line[c]);
+						}
+					}
+				}
+				// copy with central symetry 
+				//   no interest to test if source type and dest types are identical because we cannot use memcpy(...) due to symetry
+				else if (image_transform == ImageTransform::CENTRAL_SYMETRY)
+				{
+					for (int l = 0; l < height; ++l)
+					{
+						src_pixel_type const* src_line = &src_acc(src_x, src_y + l);
+						dst_pixel_type		* dst_line = &dst_acc(dst_x, dst_y + height - 1 - l);
+						for (int c = 0; c < width; ++c)
+							PixelConverter::Convert(dst_line[width - 1 - c], src_line[c]);
 					}
 				}
 				else
 				{
-					for (int l = 0; l < height; ++l)
-					{
-						SRC_TYPE const* src_line = &src_acc(src_x, src_y + l);
-						DST_TYPE      * dst_line = &dst_acc(dst_x, dst_y + l);
-						for (int c = 0; c < width; ++c)
-							PixelConverter::Convert(dst_line[c], src_line[c]);
-					}
+					assert(0);
 				}
-			}
-			// copy with central symetry 
-			//   no interest to test if source type and dest types are identical because we cannot use memcpy(...) due to symetry
-			else if (image_transform == ImageTransform::CENTRAL_SYMETRY)
-			{
-				for (int l = 0; l < height; ++l)
-				{
-					SRC_TYPE const* src_line = &src_acc(src_x, src_y + l);
-					DST_TYPE      * dst_line = &dst_acc(dst_x, dst_y + height - 1 - l);
-					for (int c = 0; c < width; ++c)
-						PixelConverter::Convert(dst_line[width - 1 - c], src_line[c]);
-				}
-			}
-			else
-			{
-				assert(0);
-			}
-		}
+				return true;
+			});
 
-	public:
-
-		/// the well known format for source pixels
-		PixelFormatType src_format;
-		/// the well known format for destination pixels
-		PixelFormatType dst_format;
-		/// the parameters for copy
-		ImageDescription src_desc;
-		ImageDescription dst_desc;
-		int src_x;
-		int src_y;
-		int dst_x;
-		int dst_y;
-		int width;
-		int height;
-		// the transformation to be applyed
-		ImageTransform image_transform = ImageTransform::NO_TRANSFORM;
-	};
-
-	//
-	// CopyPixelMetaFunc2 : used to find SRC_TYPE and start the copy
-	// (DST_TYPE is already well known)
-	//
-
-	template<typename DST_TYPE>
-	class CopyPixelMetaFunc2
-	{
-	public:
-
-		/// constructor
-		CopyPixelMetaFunc2(CopyPixelMetaFunc * in_params) : params(in_params) {}
-
-		/// dispatch function
-		template<typename SRC_TYPE>
-		void operator()(SRC_TYPE x)
-		{
-			PixelFormat pf = PixelFormat::GetPixelFormat<SRC_TYPE>();
-			if (pf.GetFormat() == params->src_format)
-				params->CopyPixels<DST_TYPE, SRC_TYPE>(params->image_transform);
-		}
-
-	public:
-
-		CopyPixelMetaFunc * params;
-	};
-
-	void ImageTools::CopyPixels(ImageDescription const & src_desc, ImageDescription & dst_desc, int src_x, int src_y, int dst_x, int dst_y, int width, int height, ImageTransform image_transform)
-	{
-		CopyPixelMetaFunc copy_func_map(src_desc, dst_desc, src_x, src_y, dst_x, dst_y, width, height, image_transform);
-
-		boost::mpl::for_each<PixelTypes>(copy_func_map);	// start by detecting DST_TYPE		
+			return true;
+		});
 	}
 
 	int ImageTools::GetMemoryRequirementForAlignedTexture(PixelFormat const & pixel_format, int width, int height)

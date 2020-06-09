@@ -156,7 +156,7 @@ namespace chaos
 
 			using accessor_type = decltype(src_accessor);
 
-			int d = (int)distance;
+			int d  = (int)distance;
 
 			int dest_width = src_desc.width + 2 * d;
 			int dest_height = src_desc.height + 2 * d;
@@ -181,6 +181,8 @@ namespace chaos
 				PixelConverter::Convert(outline, o);
 				PixelConverter::Convert(empty, e);
 
+				int d2 = d * d;
+
 				// all pixels on destination images
 				for (int y = 0; y < dest_height; ++y)
 				{
@@ -190,45 +192,24 @@ namespace chaos
 						int src_y = y - d;
 
 						// search whether we must add an outline
+						int min_src_x = std::max(0, src_x - d);
+						int max_src_x = std::min(src_x + d, src_desc.width - 1);
+
+						int min_src_y = std::max(0, src_y - d);
+						int max_src_y = std::min(src_y + d, src_desc.height - 1);
+
 						bool all_neighboor_empty = true;
-						for (int dy = 0; (dy <= d) && all_neighboor_empty; ++dy) // Y : positive direction
+						for (int sy = min_src_y; (sy <= max_src_y) && all_neighboor_empty; ++sy)
 						{
-							if (src_y + dy < 0 || src_y + dy >= src_desc.height) break;
-
-							// X : in positive direction
-							for (int dx = 0; (dx <= d) && all_neighboor_empty; ++dx)
+							for (int sx = min_src_x; (sx <= max_src_x) && all_neighboor_empty; ++sx)
 							{
-								if (src_x + dx < 0 || src_x + dx >= src_desc.width) break;
-								if (dx * dx + dy * dy > d) break;
-								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x + dx, src_y + dy));
-							}
-							// Y : in negative direction
-							for (int dx = 1; (dx <= d) && all_neighboor_empty; ++dx)
-							{
-								if (src_x - dx < 0 || src_x - dx >= src_desc.width) break;
-								if (dx * dx + dy * dy > d) break;
-								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x - dx, src_y + dy));
-							}						
-						}
-						for (int dy = 1; (dy <= d) && all_neighboor_empty; ++dy) // Y : negative direction
-						{
-							if (src_y - dy < 0 || src_y - dy >= src_desc.height) break;
-
-							// X : in positive direction
-							for (int dx = 0; (dx <= d) && all_neighboor_empty; ++dx)
-							{
-								if (src_x + dx < 0 || src_x + dx >= src_desc.width) break;
-								if (dx * dx + dy * dy > d) break;
-								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x + dx, src_y - dy));
-							}
-							// Y : in negative direction
-							for (int dx = 1; (dx <= d) && all_neighboor_empty; ++dx)
-							{
-								if (src_x - dx < 0 || src_x - dx >= src_desc.width) break;
-								if (dx * dx + dy * dy > d) break;
-								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x - dx, src_y - dy));
+								int dx = src_x - sx;
+								int dy = src_y - sy;
+								if (dx * dx + dy * dy <= d2)
+									all_neighboor_empty = CheckEmptyPixel(src_accessor(sx, sy));
 							}
 						}
+									
 						// put the pixel on destination
 						if (all_neighboor_empty)
 						{

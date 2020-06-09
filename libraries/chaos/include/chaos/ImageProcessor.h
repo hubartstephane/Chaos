@@ -43,12 +43,12 @@ namespace chaos
 			FIBITMAP* result = nullptr;
 
 			// iterate over all PixelTypes
-			meta::for_each<PixelTypes>([src_desc, func, &result](auto value) -> bool
+			meta::for_each<PixelTypes>([src_desc, func, &result](auto value) -> bool // XXX: value is an instance of identity<pixel_type>
 			{
 				using pixel_type = typename decltype(value)::type;
 				if (src_desc.pixel_format == PixelFormat::GetPixelFormat<pixel_type>())
 				{
-					result = func(ImagePixelAccessor<pixel_type>(src_desc));
+					result = func(ImagePixelAccessor<pixel_type>(src_desc)); 
 					return true;
 				}
 				return false;
@@ -82,7 +82,9 @@ namespace chaos
 		/** the distance to check for adding an outline */
 		float distance = 5.0f;
 		/** the ouline color */
-		glm::vec4 outline_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		glm::vec4 outline_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		/** the empty color */
+		glm::vec4 empty_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	};
 
 }; // namespace chaos

@@ -3,7 +3,6 @@
   "default_wrap_mode": "wrap",
   "image_processor": 
   {
-    "classname":"ImageProcessorOutline"
-
+    "classname": "ImageProcessorOutline"
   }
 }

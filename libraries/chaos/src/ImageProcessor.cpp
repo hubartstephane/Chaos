@@ -129,6 +129,18 @@ namespace chaos
 	// ImageProcessorOutline functions
 	// ================================================================
 
+	template<typename T>
+	static bool CheckEmptyPixel(T const& pixel)
+	{
+		if constexpr (std::is_same_v<T, PixelBGRA>)
+			return (pixel.A == 0);
+
+		//if constexpr (std::is_same_v<T, PixelBGRA>)
+		//	return (pixel.R + pixel.G + pixel.B < 100);
+
+		return false;
+	}
+
 	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc) const
 	{
 		if (src_desc.pixel_format != PixelFormat::BGRA && src_desc.pixel_format != PixelFormat::BGR)
@@ -160,6 +172,15 @@ namespace chaos
 					return nullptr;
 				}
 
+				using pixel_type = typename accessor_type::type;
+
+				PixelRGBAFloat o = outline_color;
+				PixelRGBAFloat e = empty_color;
+
+				pixel_type outline, empty;
+				PixelConverter::Convert(outline, o);
+				PixelConverter::Convert(empty, e);
+
 				// all pixels on destination images
 				for (int y = 0; y < dest_height; ++y)
 				{
@@ -167,24 +188,58 @@ namespace chaos
 					{
 						int src_x = x - d;
 						int src_y = y - d;
-						if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height)
-							dst_accessor(x, y) = src_accessor(src_x, src_y);
+
+						// search whether we must add an outline
+						bool all_neighboor_empty = true;
+						for (int dy = 0; (dy <= d) && all_neighboor_empty; ++dy) // Y : positive direction
+						{
+							if (src_y + dy < 0 || src_y + dy >= src_desc.height) break;
+
+							// X : in positive direction
+							for (int dx = 0; (dx <= d) && all_neighboor_empty; ++dx)
+							{
+								if (src_x + dx < 0 || src_x + dx >= src_desc.width) break;
+								if (dx * dx + dy * dy > d) break;
+								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x + dx, src_y + dy));
+							}
+							// Y : in negative direction
+							for (int dx = 1; (dx <= d) && all_neighboor_empty; ++dx)
+							{
+								if (src_x - dx < 0 || src_x - dx >= src_desc.width) break;
+								if (dx * dx + dy * dy > d) break;
+								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x - dx, src_y + dy));
+							}						
+						}
+						for (int dy = 1; (dy <= d) && all_neighboor_empty; ++dy) // Y : negative direction
+						{
+							if (src_y - dy < 0 || src_y - dy >= src_desc.height) break;
+
+							// X : in positive direction
+							for (int dx = 0; (dx <= d) && all_neighboor_empty; ++dx)
+							{
+								if (src_x + dx < 0 || src_x + dx >= src_desc.width) break;
+								if (dx * dx + dy * dy > d) break;
+								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x + dx, src_y - dy));
+							}
+							// Y : in negative direction
+							for (int dx = 1; (dx <= d) && all_neighboor_empty; ++dx)
+							{
+								if (src_x - dx < 0 || src_x - dx >= src_desc.width) break;
+								if (dx * dx + dy * dy > d) break;
+								all_neighboor_empty &= CheckEmptyPixel(src_accessor(src_x - dx, src_y - dy));
+							}
+						}
+						// put the pixel on destination
+						if (all_neighboor_empty)
+						{
+							dst_accessor(x, y) = empty;
+						}
 						else
 						{
-							if constexpr (std::is_same_v<typename accessor_type::type, PixelBGR>)
-							{
-								dst_accessor(x, y).R = 0;
-								dst_accessor(x, y).G = 255;
-								dst_accessor(x, y).B = 0;
-
-							}
-							else if constexpr (std::is_same_v<typename accessor_type::type, PixelBGRA>)
-							{
-								dst_accessor(x, y).R = 0;
-								dst_accessor(x, y).G = 255;
-								dst_accessor(x, y).B = 0;
-								dst_accessor(x, y).A = 255;
-							}
+							if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && !CheckEmptyPixel(src_accessor(src_x, src_y)))
+								dst_accessor(x, y) = src_accessor(src_x, src_y); 
+							else
+								dst_accessor(x, y) = outline;								
 						}
 					}
 				}
@@ -199,6 +254,7 @@ namespace chaos
 			return false;
 		JSONTools::SetAttribute(json_entry, "distance", distance);
 		JSONTools::SetAttribute(json_entry, "outline_color", outline_color);
+		JSONTools::SetAttribute(json_entry, "empty_color", empty_color);
 		return true;
 	}
 
@@ -208,6 +264,7 @@ namespace chaos
 			return false;
 		JSONTools::GetAttribute(json_entry, "distance", distance);
 		JSONTools::GetAttribute(json_entry, "outline_color", outline_color);
+		JSONTools::GetAttribute(json_entry, "empty_color", empty_color);
 		return true;
 	}
 

@@ -100,7 +100,7 @@ namespace chaos
 			boost::filesystem::path images_path;
 
 			/** the image processing to apply */
-			shared_ptr<ImageProcessor> image_processor;
+			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
 		bool SaveIntoJSON(nlohmann::json & json_entry, BitmapInfoInputManifest const & src)
@@ -112,7 +112,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "frame_duration", src.frame_duration);
 			JSONTools::SetAttribute(json_entry, "anim_duration", src.anim_duration);
 			JSONTools::SetAttribute(json_entry, "default_wrap_mode", src.default_wrap_mode);
-			JSONTools::SetAttribute(json_entry, "image_processor", src.image_processor);
+			JSONTools::SetAttribute(json_entry, "image_processors", src.image_processors);
 			return true;
 		}
 
@@ -125,7 +125,20 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "frame_duration", dst.frame_duration);
 			JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
 			JSONTools::GetAttribute(json_entry, "default_wrap_mode", dst.default_wrap_mode);
-			JSONTools::GetAttribute(json_entry, "image_processor", dst.image_processor);
+			JSONTools::GetAttribute(json_entry, "image_processors", dst.image_processors);
+
+			// image_processor is special it can be an array or a single element
+			shared_ptr<ImageProcessor> image_processor;
+			JSONTools::GetAttribute(json_entry, "image_processor", image_processor);
+
+			if (image_processor != nullptr)
+			{
+				if (dst.image_processors.size() > 0)
+					LogTools::Error("BitmapInfoInputManifest::LoadFromJSON : cannot have both 'image_processor' and 'image_processors'");
+				else
+					dst.image_processors.push_back(image_processor);
+			}
+
 			return true;
 		}
 
@@ -547,22 +560,24 @@ namespace chaos
 				return nullptr;
 			}
 
-			// apply filter on image => the number of images must be the same or error
-			if (input_manifest.image_processor != nullptr && count > 0)
+			// apply filters on image => the number of images must be the same or error
+			if (count > 0)
 			{
-				std::vector<FIBITMAP*> processed_images = input_manifest.image_processor->ProcessAnimatedImage(*images, animation_description.grid_data);
-
-				// error case : free all images 
-				if (processed_images.size() == 0)
+				for (shared_ptr<ImageProcessor>& image_processor : input_manifest.image_processors)
 				{
-					ReleaseAllImages(&processed_images); 
-					ReleaseAllImages(images);
-					return nullptr;
-				}
+					std::vector<FIBITMAP*> processed_images = image_processor->ProcessImageFrames(*images, animation_description.grid_data);
 
-				// release old images, exchange with new				
-				std::swap(*images, processed_images);
-				ReleaseAllImages(&processed_images);
+					// error case : free all images 
+					if (processed_images.size() == 0)
+					{
+						ReleaseAllImages(&processed_images);
+						ReleaseAllImages(images);
+						return nullptr;
+					}
+					// release old images, exchange with new				
+					std::swap(*images, processed_images);
+					ReleaseAllImages(&processed_images);
+				}
 			}
 
             // register resources for destructions			

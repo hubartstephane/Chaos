@@ -20,7 +20,7 @@ namespace chaos
 		return std::vector<FIBITMAP*>(); // in case of error, destroy all allocated resources
 	}
 
-	std::vector<FIBITMAP*> ImageProcessor::ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const
+	std::vector<FIBITMAP*> ImageProcessor::ProcessImageFrames(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const
 	{
 		assert(src.size() == 1 || grid_anim.GetFrameCount() == 0); // cannot have both multiple image and a grid structure
 

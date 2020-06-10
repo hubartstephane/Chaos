@@ -27,7 +27,7 @@ namespace chaos
 		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const;
 
 		/** apply processing on a whole animation (grid or not) */
-		virtual std::vector<FIBITMAP*> ProcessAnimatedImage(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const;
+		virtual std::vector<FIBITMAP*> ProcessImageFrames(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const;
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const;

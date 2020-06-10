@@ -1,10 +1,20 @@
 {
-  "image_processor": 
-  {
-    "classname": "ImageProcessorOutline",
-    "distance": 1,
-    "outline_color": [1.0, 1.0, 1.0, 1.0]
-
-
-  }
+  "image_processors": [
+    {
+      "classname": "ImageProcessorOutline",
+      "distance": 1,
+      "outline_color": [ 1.0, 1.0, 1.0, 1.0 ],
+      "empty_color": [ 0.0, 0.0, 0.0, 0.0 ],
+      "reference_color ": [ 0.0, 0.0, 0.0, 0.0 ],
+      "reference_alpha": 0.0
+    },
+    {
+      "classname": "ImageProcessorOutline",
+      "distance": 1,
+      "outline_color": [ 1.0, 0.0, 0.0, 1.0 ],
+      "empty_color": [ 0.0, 0.0, 0.0, 0.0 ],
+      "reference_color ": [ 0.0, 0.0, 0.0, 0.0 ],
+      "reference_alpha": 0.0
+    }
+  ]
 }

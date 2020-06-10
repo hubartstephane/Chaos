@@ -90,7 +90,7 @@ namespace chaos
 			ParticleCorners   corners;
 			/** the coordinates in atlas */
 			ParticleTexcoords texcoords;	
-			/** the colour of the particle */
+			/** the color of the particle */
 			glm::vec4 color;
 		};
 

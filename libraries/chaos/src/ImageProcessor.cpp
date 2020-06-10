@@ -129,18 +129,6 @@ namespace chaos
 	// ImageProcessorOutline functions
 	// ================================================================
 
-	template<typename T>
-	static bool CheckEmptyPixel(T const& pixel)
-	{
-		if constexpr (std::is_same_v<T, PixelBGRA>)
-			return (pixel.A == 0);
-
-		//if constexpr (std::is_same_v<T, PixelBGRA>)
-		//	return (pixel.R + pixel.G + pixel.B < 100);
-
-		return false;
-	}
-
 	FIBITMAP* ImageProcessorOutline::ProcessImage(ImageDescription const& src_desc) const
 	{
 		if (src_desc.pixel_format != PixelFormat::BGRA && src_desc.pixel_format != PixelFormat::BGR)
@@ -156,10 +144,8 @@ namespace chaos
 
 			using accessor_type = decltype(src_accessor);
 
-			int d  = (int)distance;
-
-			int dest_width = src_desc.width + 2 * d;
-			int dest_height = src_desc.height + 2 * d;
+			int dest_width = src_desc.width + 2 * distance;
+			int dest_height = src_desc.height + 2 * distance;
 
 			// generate the image
 			FIBITMAP * result = ImageTools::GenFreeImage(src_desc.pixel_format, dest_width, dest_height);
@@ -181,22 +167,22 @@ namespace chaos
 				PixelConverter::Convert(outline, o);
 				PixelConverter::Convert(empty, e);
 
-				int d2 = d * d;
+				int d2 = distance * distance;
 
 				// all pixels on destination images
 				for (int y = 0; y < dest_height; ++y)
 				{
 					for (int x = 0; x < dest_width; ++x)
 					{
-						int src_x = x - d;
-						int src_y = y - d;
+						int src_x = x - distance;
+						int src_y = y - distance;
 
 						// search whether we must add an outline
-						int min_src_x = std::max(0, src_x - d);
-						int max_src_x = std::min(src_x + d, src_desc.width - 1);
+						int min_src_x = std::max(0, src_x - distance);
+						int max_src_x = std::min(src_x + distance, src_desc.width - 1);
 
-						int min_src_y = std::max(0, src_y - d);
-						int max_src_y = std::min(src_y + d, src_desc.height - 1);
+						int min_src_y = std::max(0, src_y - distance);
+						int max_src_y = std::min(src_y + distance, src_desc.height - 1);
 
 						bool all_neighboor_empty = true;
 						for (int sy = min_src_y; (sy <= max_src_y) && all_neighboor_empty; ++sy)
@@ -206,22 +192,17 @@ namespace chaos
 								int dx = src_x - sx;
 								int dy = src_y - sy;
 								if (dx * dx + dy * dy <= d2)
-									all_neighboor_empty = CheckEmptyPixel(src_accessor(sx, sy));
+									all_neighboor_empty = color_filter.Filter(src_accessor(sx, sy));
 							}
 						}
 									
 						// put the pixel on destination
 						if (all_neighboor_empty)
-						{
 							dst_accessor(x, y) = empty;
-						}
+						else if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && !color_filter.Filter(src_accessor(src_x, src_y)))
+							dst_accessor(x, y) = src_accessor(src_x, src_y); 
 						else
-						{
-							if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && !CheckEmptyPixel(src_accessor(src_x, src_y)))
-								dst_accessor(x, y) = src_accessor(src_x, src_y); 
-							else
-								dst_accessor(x, y) = outline;								
-						}
+							dst_accessor(x, y) = outline;
 					}
 				}
 			}
@@ -234,6 +215,7 @@ namespace chaos
 		if (!ImageProcessor::SaveIntoJSON(json_entry))
 			return false;
 		JSONTools::SetAttribute(json_entry, "distance", distance);
+		JSONTools::SetAttribute(json_entry, "color_filter", color_filter);
 		JSONTools::SetAttribute(json_entry, "outline_color", outline_color);
 		JSONTools::SetAttribute(json_entry, "empty_color", empty_color);
 		return true;
@@ -244,6 +226,7 @@ namespace chaos
 		if (!ImageProcessor::LoadFromJSON(json_entry))
 			return false;
 		JSONTools::GetAttribute(json_entry, "distance", distance);
+		JSONTools::GetAttribute(json_entry, "color_filter", color_filter);
 		JSONTools::GetAttribute(json_entry, "outline_color", outline_color);
 		JSONTools::GetAttribute(json_entry, "empty_color", empty_color);
 		return true;

@@ -8,10 +8,10 @@
 #include <chaos/JSONTools.h>
 #include <chaos/Class.h>
 #include <chaos/Metaprogramming.h>
+#include <chaos/ColorFilter.h>
 
 namespace chaos
 {
-
 	/**
 	* ImageProcessor : take an image as an entry and returns a new image as output
 	*/
@@ -79,8 +79,11 @@ namespace chaos
 
 	protected:
 
-		/** the distance to check for adding an outline */
-		float distance = 5.0f;
+		/** the size of the outline */
+		int distance = 1;
+
+		/** filter to check pixel to keep */
+		ColorFilter color_filter;
 		/** the ouline color */
 		glm::vec4 outline_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		/** the empty color */

@@ -56,7 +56,7 @@ namespace chaos
 		chaos::box2 bounding_box;
 		/** the four texcoords to apply to the particle vertices */
 		chaos::ParticleTexcoords texcoords;
-		/** the colour of the particle */
+		/** the color of the particle */
 		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		/** some flags (more or less custom) */
 		int flags = 0;
@@ -71,7 +71,7 @@ namespace chaos
 		glm::vec2 position;
 		/** the texcoord of the vertex */
 		glm::vec3 texcoord;
-		/** the colour of the vertex */
+		/** the color of the vertex */
 		glm::vec4 color;
 	};
 

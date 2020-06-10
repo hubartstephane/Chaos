@@ -181,7 +181,7 @@ namespace chaos
 		// fill the particles position and textures
 		MyGenerateBoxParticle(corners, texcoords, new_vertices);
 
-		// fix the colour
+		// fix the color
 		for (size_t i = 0; i < 6; ++i)
 			new_vertices[i].color = color;
 	}

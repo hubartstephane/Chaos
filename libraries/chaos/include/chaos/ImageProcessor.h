@@ -77,17 +77,16 @@ namespace chaos
 		/** the processor may save its configuration from a JSON file */
 		virtual bool LoadFromJSON(nlohmann::json const& json_entry) override;
 
-	protected:
+	public:
 
 		/** the size of the outline */
 		int distance = 1;
-
 		/** filter to check pixel to keep */
 		ColorFilter color_filter;
 		/** the ouline color */
-		glm::vec4 outline_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		glm::vec4 outline_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		/** the empty color */
-		glm::vec4 empty_color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+		glm::vec4 empty_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	};
 
 }; // namespace chaos

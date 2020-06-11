@@ -167,6 +167,35 @@ namespace chaos
 		}
 
 		// ========================================================================
+		// AddFilesToFolderData implementation
+		// ========================================================================
+
+		void AddFilesToFolderData::SearchEntriesInDirectory(FilePathParam const& path, bool search_files, bool search_directories)
+		{
+			// nothing more to search
+			if ((files_searched || !search_files) && (directories_searched || !search_directories))
+				return;
+
+			// iterate over wanted directory
+			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+
+			boost::filesystem::directory_iterator end;
+			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
+			{
+				boost::filesystem::path const& p = it->path();
+
+				boost::filesystem::file_status status = boost::filesystem::status(p);
+
+				if (!files_searched && search_files && (status.type() == boost::filesystem::file_type::regular_file))
+					files.push_back(p);
+				else if (!directories_searched && search_directories && (status.type() == boost::filesystem::file_type::directory_file))
+					directories.push_back(p);
+			}
+			files_searched |= search_files;
+			directories_searched |= search_directories;
+		}
+
+		// ========================================================================
 		// FolderInfoInput implementation
 		// ========================================================================
 
@@ -208,19 +237,6 @@ namespace chaos
 			Buffer<char> buffer = FileTools::LoadFile(font_name, false); // for direct access to resource directory
 			if (buffer != nullptr)
 				FT_New_Memory_Face(library, (FT_Byte const *)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
-
-
-
-
-			// filter files
-
-
-
-
-
-
-
-
 
 			if (face == nullptr)
 			{
@@ -278,6 +294,11 @@ namespace chaos
 
 			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(face, characters);
 
+
+			ImageProcessorOutline processor;
+			processor.distance = 5;
+			processor.outline_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
 			// transforms each info of the glyph map into a bitmap
 			for (auto & glyph : glyph_cache)
 			{
@@ -287,6 +308,34 @@ namespace chaos
 				FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormatType::RGBA);
 				if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting                                          
 				{
+
+
+
+
+					if (bitmap != nullptr)
+					{
+						std::vector<FIBITMAP*> img = { bitmap };
+
+						BitmapGridAnimationInfo grid_data;
+						std::vector<FIBITMAP*> processed_images = processor.ProcessImageFrames(img, grid_data);
+
+						// error case : free all images 
+						if (processed_images.size() == 0)
+						{
+							//ReleaseAllImages(&processed_images);
+							continue;
+						}
+						bitmap = processed_images[0];
+					}
+
+
+
+
+
+
+
+
+
 					char name[] = " ";
 					sprintf_s(name, 2, "%c", glyph.first);
 
@@ -316,35 +365,10 @@ namespace chaos
 			return result;
 		}
 
-        void FolderInfoInput::AddBitmapFilesData::SearchDirectoryEntries(FilePathParam const& path, bool search_files, bool search_directories)
-        {
-            // nothing more to search
-            if ((files_searched || !search_files) && (directories_searched || !search_directories))
-                return;
-
-            // iterate over wanted directory
-            boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-
-            boost::filesystem::directory_iterator end;
-            for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
-            {
-                boost::filesystem::path const & p = it->path();
-
-                boost::filesystem::file_status status = boost::filesystem::status(p);
-
-                if (!files_searched && search_files && (status.type() == boost::filesystem::file_type::regular_file))
-                    files.push_back(p);
-                else if (!directories_searched && search_directories && (status.type() == boost::filesystem::file_type::directory_file))
-                    directories.push_back(p);
-            }
-            files_searched |= search_files;
-            directories_searched |= search_directories;
-        }
-
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
-            AddBitmapFilesData add_data;
-            add_data.SearchDirectoryEntries(path, true, recursive);
+            AddFilesToFolderData add_data;
+            add_data.SearchEntriesInDirectory(path, true, recursive);
 
 			// step 1 : the files
 			for (boost::filesystem::path const & p : add_data.files)
@@ -373,7 +397,7 @@ namespace chaos
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
 		{
-			return AddBitmapImpl(path, name, tag, AddBitmapFilesData());
+			return AddBitmapImpl(path, name, tag, AddFilesToFolderData());
 		}
 
         static std::vector<FIBITMAP*> LoadManifestImagesFromDirectory(boost::filesystem::path const& directory_path)
@@ -419,7 +443,7 @@ namespace chaos
            return child_images;
         }
 
-        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddBitmapFilesData& add_data)
+        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data)
         {
             // compute a name from the path if necessary
             boost::filesystem::path const& resolved_path = path.GetResolvedPath();
@@ -433,7 +457,7 @@ namespace chaos
                     return nullptr;
 
                 // search whether a related file/directory exists
-                add_data.SearchDirectoryEntries(path, true, true);
+                add_data.SearchEntriesInDirectory(path, true, true);
 
                 // search whether there is a corresponding directory for the manifest
                 boost::filesystem::path noext_path = resolved_path;

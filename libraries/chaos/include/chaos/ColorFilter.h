@@ -33,13 +33,13 @@ namespace chaos
 	public:
 
 		/** distance to reference color */
-		float distance = -1.0f;
+		float distance = 0.0f;
 		/** the operator to apply to the distance */
-		ComparisonOperator distance_operator = ComparisonOperator::less_equal;
+		ComparisonOperator distance_operator = ComparisonOperator::greater;
 		/** a reference color to check distance with */
-		glm::vec4 color_reference = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 color_reference = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		/** the mask to apply to incomming color before checking for distance */
-		glm::vec4 color_mask = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 color_mask = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	};
 
 	bool SaveIntoJSON(nlohmann::json& json_entry, ColorFilter const& src);

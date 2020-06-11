@@ -5,24 +5,9 @@ namespace chaos
 {
 	bool ColorFilter::Filter(glm::vec4 const& color) const
 	{
-#if 0
-		// XXX : i do not use XOR in checks because EQUAL values are always in range (the opposite of greater is less_equal, that what i don t want)
-		if (distance >= 0.0f)
-		{
-			float d2 = glm::distance2(color * color_mask, color_reference);
-			if (!reverse_check)
-			{
-				if (d2 > distance * distance)
-					return false;
-			}
-			else
-			{
-				if (d2 < distance * distance)
-					return false;
-			}
-		}
-#endif
-		return true;
+		float d2 = glm::distance2(color * color_mask, color_reference);
+
+		return Compare(distance_operator, d2, distance * distance);
 	}
 
 	bool SaveIntoJSON(nlohmann::json& json_entry, ColorFilter const& src)

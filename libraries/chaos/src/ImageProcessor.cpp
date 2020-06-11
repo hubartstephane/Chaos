@@ -192,14 +192,14 @@ namespace chaos
 								int dx = src_x - sx;
 								int dy = src_y - sy;
 								if (dx * dx + dy * dy <= d2)
-									all_neighboor_empty = color_filter.Filter(src_accessor(sx, sy));
+									all_neighboor_empty = !color_filter.Filter(src_accessor(sx, sy));
 							}
 						}
 									
 						// put the pixel on destination
 						if (all_neighboor_empty)
 							dst_accessor(x, y) = empty;
-						else if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && !color_filter.Filter(src_accessor(src_x, src_y)))
+						else if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && color_filter.Filter(src_accessor(src_x, src_y)))
 							dst_accessor(x, y) = src_accessor(src_x, src_y); 
 						else
 							dst_accessor(x, y) = outline;

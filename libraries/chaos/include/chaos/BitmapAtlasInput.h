@@ -151,6 +151,41 @@ namespace chaos
 		};
 
 		/**
+		* AddFilesToFolderData : structure used when inserting multiple files in a FolderInfoInput
+		*/
+
+		class AddFilesToFolderData
+		{
+		public:
+
+			/** iterate over the directory and find directories and files for the request */
+			void SearchEntriesInDirectory(FilePathParam const& path, bool search_files, bool search_directories);
+
+		public:
+
+			// a file correspondance to a json mainfest
+			std::map<boost::filesystem::path, nlohmann::json> manifests;
+
+			// the files concerned by the request
+			std::vector<boost::filesystem::path> files;
+			// the directories concerned by the request
+			std::vector<boost::filesystem::path> directories;
+
+			// the directories to ignore due to JSON manifest
+			std::vector<boost::filesystem::path> ignore_directories;
+			// the files to ignore due to JSON manifest
+			std::vector<boost::filesystem::path> ignore_files;
+
+		protected:
+
+			// whether the files vector is valid
+			bool files_searched = false;
+			// whether the directories vector is valid
+			bool directories_searched = false;
+		};
+
+
+		/**
 		* FolderInfoInput :  this info will produced in the final Atlas a FolderInfo
 		*/
 
@@ -158,38 +193,6 @@ namespace chaos
 		{
 			friend class AtlasInput;
 			friend class AtlasGenerator;
-
-        protected:
-
-            class AddBitmapFilesData
-            {
-            public:
-
-                /** iterate over the directory and find directories and files for the requet */
-                void SearchDirectoryEntries(FilePathParam const& path, bool search_files, bool search_directories);
-
-            public:
-
-                // a file correspondance to a json mainfest
-                std::map<boost::filesystem::path, nlohmann::json> manifests;
-
-                // the files concerned by the request
-                std::vector<boost::filesystem::path> files;
-                // the directories concerned by the request
-                std::vector<boost::filesystem::path> directories;
-
-                // the directories to ignore due to JSON manifest
-                std::vector<boost::filesystem::path> ignore_directories;
-                // the files to ignore due to JSON manifest
-                std::vector<boost::filesystem::path> ignore_files;
-
-            protected:
-
-                // whether the files vector is valid
-                bool files_searched = false;
-                // whether the directories vector is valid
-                bool directories_searched = false;
-            };
 
 		public:
 
@@ -229,7 +232,7 @@ namespace chaos
 		protected:
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, AddBitmapFilesData& add_data);
+			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, AddFilesToFolderData& add_data);
             /** internal method to add a bitmap whose manifest (or not) is known */
             BitmapInfoInput * AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*> * images);
 			/** internal method to add a bitmap or a multi bitmap */

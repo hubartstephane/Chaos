@@ -16,30 +16,19 @@ namespace chaos
 	{
 
 		/**
-		* FontInfoInputBaseParams : base data for font generating
-		*/
-
-		class FontInfoInputBaseParams
-		{
-		public:
-
-			/** the characters to generate / the characters in the font bitmap */
-			std::string characters;
-		};
-
-		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputBaseParams const& src);
-
-		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputBaseParams& dst);
-
-		/**
 		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
 
-		class FontInfoInputParams : public FontInfoInputBaseParams
+		class FontInfoInputParams
 		{
 		public:
 
 			// XXX : FreeType does not produce glyph of the exact requested size
+
+			/** the characters to generate / the characters in the font bitmap */
+			std::string characters;
+			/** number of uniform grid cells for the bitmaps */
+			glm::ivec2 grid_size = glm::ivec2(0, 0);
 
 			/** width of the glyph */
 			int glyph_width = 64;
@@ -50,22 +39,6 @@ namespace chaos
 		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputParams const& src);
 
 		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputParams& dst);
-
-		/**
-		* FontInfoBitmapParams : some fonts can be represent by a grid of characters
-		*/
-
-		class FontInfoBitmapParams : public FontInfoInputBaseParams
-		{
-		public:
-
-			/** number of uniform grid cells for the bitmaps */
-			glm::ivec2 grid_size = glm::ivec2(0, 0);
-		};
-
-		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoBitmapParams const& src);
-
-		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoBitmapParams& dst);
 
 		/**
 		* ObjectBaseInput : base object for inputs
@@ -158,8 +131,15 @@ namespace chaos
 		{
 		public:
 
+			/** constructor */
+			AddFilesToFolderData() = default;
+			/** constructor */
+			AddFilesToFolderData(AddFilesToFolderData const & src) = default;
+			/** constructor */
+			AddFilesToFolderData(FilePathParam const& in_path);
+
 			/** iterate over the directory and find directories and files for the request */
-			void SearchEntriesInDirectory(FilePathParam const& path, bool search_files, bool search_directories);
+			void SearchEntriesInDirectory(bool search_files, bool search_directories);
 
 		public:
 
@@ -177,6 +157,9 @@ namespace chaos
 			std::vector<boost::filesystem::path> ignore_files;
 
 		protected:
+
+			/** the path of the directory */
+			boost::filesystem::path directory_path;
 
 			// whether the files vector is valid
 			bool files_searched = false;
@@ -232,9 +215,9 @@ namespace chaos
 		protected:
 
 			/** insert a bitmap before computation */
-			BitmapInfoInput * AddBitmapImpl(FilePathParam const & path, char const * name, TagType tag, AddFilesToFolderData& add_data);
+			BitmapInfoInput * AddBitmapFileImpl(FilePathParam const & path, char const * name, TagType tag, AddFilesToFolderData& add_data);
             /** internal method to add a bitmap whose manifest (or not) is known */
-            BitmapInfoInput * AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*> * images);
+            BitmapInfoInput * AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*> * images);
 			/** internal method to add a bitmap or a multi bitmap */
 			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description);
 

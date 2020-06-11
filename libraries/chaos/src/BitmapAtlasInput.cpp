@@ -15,23 +15,17 @@ namespace chaos
 	{
 
 		// ========================================================================
-		// FontInfoInputParams functions
+		// Utility functions
 		// ========================================================================
 
-		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputBaseParams const& src)
+		static void ReleaseAllImages(std::vector<FIBITMAP*>* images)
 		{
-			if (!json_entry.is_object())
-				json_entry = nlohmann::json::object();
-			JSONTools::SetAttribute(json_entry, "characters", src.characters);
-			return true;
-		}
-
-		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputBaseParams& dst)
-		{
-			if (!json_entry.is_object())
-				return false;
-			JSONTools::GetAttribute(json_entry, "characters", dst.characters);
-			return true;
+			if (images != nullptr)
+			{
+				for (FIBITMAP* image : *images)
+					FreeImage_Unload(image);
+				images->clear();
+			}
 		}
 
 		// ========================================================================
@@ -40,9 +34,10 @@ namespace chaos
 
 		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputParams const& src)
 		{
-			FontInfoInputBaseParams const& base = src;
-			if (!SaveIntoJSON(json_entry, base))
-				return false;
+			if (!json_entry.is_object())
+				json_entry = nlohmann::json::object();
+			JSONTools::SetAttribute(json_entry, "characters", src.characters);
+			JSONTools::SetAttribute(json_entry, "grid_size", src.grid_size);
 			JSONTools::SetAttribute(json_entry, "glyph_width", src.glyph_width);
 			JSONTools::SetAttribute(json_entry, "glyph_height", src.glyph_height);
 			return true;
@@ -50,33 +45,12 @@ namespace chaos
 
 		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoInputParams& dst)
 		{
-			FontInfoInputBaseParams & base = dst;
-			if (!LoadFromJSON(json_entry, base))
+			if (!json_entry.is_object())
 				return false;
+			JSONTools::GetAttribute(json_entry, "characters", dst.characters);
+			JSONTools::GetAttribute(json_entry, "grid_size", dst.grid_size);
 			JSONTools::GetAttribute(json_entry, "glyph_width", dst.glyph_width);
 			JSONTools::GetAttribute(json_entry, "glyph_height", dst.glyph_height);
-			return true;
-		}
-
-		// ========================================================================
-		// FontInfoBitmapParams functions
-		// ========================================================================
-
-		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoBitmapParams const& src)
-		{
-			FontInfoInputBaseParams const& base = src;
-			if (!SaveIntoJSON(json_entry, base))
-				return false;
-			JSONTools::SetAttribute(json_entry, "grid_size", src.grid_size);
-			return true;
-		}
-
-		bool LoadFromJSON(nlohmann::json const& json_entry, FontInfoBitmapParams& dst)
-		{
-			FontInfoInputBaseParams& base = dst;
-			if (!LoadFromJSON(json_entry, base))
-				return false;
-			JSONTools::GetAttribute(json_entry, "grid_size", dst.grid_size);
 			return true;
 		}
 
@@ -170,17 +144,21 @@ namespace chaos
 		// AddFilesToFolderData implementation
 		// ========================================================================
 
-		void AddFilesToFolderData::SearchEntriesInDirectory(FilePathParam const& path, bool search_files, bool search_directories)
+		AddFilesToFolderData::AddFilesToFolderData(FilePathParam const& in_path) :
+			directory_path(in_path.GetResolvedPath())
+		{
+
+		}
+
+		void AddFilesToFolderData::SearchEntriesInDirectory(bool search_files, bool search_directories)
 		{
 			// nothing more to search
 			if ((files_searched || !search_files) && (directories_searched || !search_directories))
 				return;
 
 			// iterate over wanted directory
-			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
-
 			boost::filesystem::directory_iterator end;
-			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(resolved_path); it != end; ++it)
+			for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_path); it != end; ++it)
 			{
 				boost::filesystem::path const& p = it->path();
 
@@ -365,10 +343,24 @@ namespace chaos
 			return result;
 		}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
-            AddFilesToFolderData add_data;
-            add_data.SearchEntriesInDirectory(path, true, recursive);
+            AddFilesToFolderData add_data(path);
+            add_data.SearchEntriesInDirectory(true, recursive); // want the directories if we make a recursive search
 
 			// step 1 : the files
 			for (boost::filesystem::path const & p : add_data.files)
@@ -377,7 +369,7 @@ namespace chaos
 				if (std::find(add_data.ignore_files.begin(), add_data.ignore_files.end(), p) != add_data.ignore_files.end())
 					continue;					
 				// add bitmap
-				AddBitmapImpl(p, nullptr, 0, add_data);
+				AddBitmapFileImpl(p, nullptr, 0, add_data);
 			}
 
 			// step 2 : the directories
@@ -393,11 +385,6 @@ namespace chaos
 				child_folder->AddBitmapFilesFromDirectory(p, recursive);
 			}
 			return true;
-		}
-
-		BitmapInfoInput * FolderInfoInput::AddBitmap(FilePathParam const & path, char const * name, TagType tag)
-		{
-			return AddBitmapImpl(path, name, tag, AddFilesToFolderData());
 		}
 
         static std::vector<FIBITMAP*> LoadManifestImagesFromDirectory(boost::filesystem::path const& directory_path)
@@ -443,7 +430,7 @@ namespace chaos
            return child_images;
         }
 
-        BitmapInfoInput* FolderInfoInput::AddBitmapImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data)
+        BitmapInfoInput* FolderInfoInput::AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data)
         {
             // compute a name from the path if necessary
             boost::filesystem::path const& resolved_path = path.GetResolvedPath();
@@ -453,11 +440,14 @@ namespace chaos
             {
                 // load the manifest
                 nlohmann::json json_manifest;
-                if (!JSONTools::LoadJSONFile(path, json_manifest, false))
-                    return nullptr;
+				if (!JSONTools::LoadJSONFile(path, json_manifest, false))
+				{
+					LogTools::Error("FolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					return nullptr;
+				}
 
                 // search whether a related file/directory exists
-                add_data.SearchEntriesInDirectory(path, true, true);
+                add_data.SearchEntriesInDirectory(true, true);
 
                 // search whether there is a corresponding directory for the manifest
                 boost::filesystem::path noext_path = resolved_path;
@@ -468,7 +458,7 @@ namespace chaos
 
                     std::vector<FIBITMAP*> child_images = LoadManifestImagesFromDirectory(noext_path); // read in that directory all images and considere these as an animation (if several)
                     if (child_images.size() > 0)
-                        return AddBitmapWithManifestImpl(path, name, tag, &json_manifest, &child_images);
+                        return AddBitmapFileWithManifestImpl(path, name, tag, &json_manifest, &child_images);
                 }
                 // search whether there is a corresponding file for the manifest
                 else
@@ -482,7 +472,7 @@ namespace chaos
                         if (other_path == noext_path) // other file has same name (without extension)
                         {
                             add_data.ignore_files.push_back(p);
-                            return AddBitmapWithManifestImpl(p, name, tag, &json_manifest, nullptr);
+                            return AddBitmapFileWithManifestImpl(p, name, tag, &json_manifest, nullptr);
                         }
                     }
                 }
@@ -501,21 +491,11 @@ namespace chaos
                 // do not individually load the manifest in recursive calls
                 add_data.ignore_files.push_back(json_path);
 
-                return AddBitmapWithManifestImpl(path, name, tag, json_manifest.empty() ? nullptr : &json_manifest, nullptr);
+                return AddBitmapFileWithManifestImpl(path, name, tag, json_manifest.empty() ? nullptr : &json_manifest, nullptr);
             }
         }
 
-		static void ReleaseAllImages(std::vector<FIBITMAP*> * images)
-		{
-			if (images != nullptr)
-			{
-				for (FIBITMAP* image : *images)
-					FreeImage_Unload(image);
-				images->clear();
-			}
-		}
-
-        BitmapInfoInput* FolderInfoInput::AddBitmapWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest, std::vector<FIBITMAP*>* images)
+        BitmapInfoInput* FolderInfoInput::AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const * json_manifest, std::vector<FIBITMAP*>* images)
         {
 			// compute a name from the path if necessary
 			boost::filesystem::path const & resolved_path = path.GetResolvedPath();
@@ -579,7 +559,7 @@ namespace chaos
 			// not clear what to do (we have both a grid and a per frame animation). Abord
 			if (count > 1 && input_manifest.grid_data.GetFrameCount() > 1)
 			{
-				LogTools::Error("AddBitmapWithManifestImpl[%s] : cannot have multiple images and GRID structure in the same time", resolved_path.string().c_str());
+				LogTools::Error("AddBitmapFileWithManifestImpl[%s] : cannot have multiple images and GRID structure in the same time", resolved_path.string().c_str());
 				ReleaseAllImages(images);
 				return nullptr;
 			}
@@ -610,6 +590,11 @@ namespace chaos
 
 			// create the bitmap
 			return AddBitmapImpl(*images, name, tag, &animation_description); // in case of failure, the images have already been registered for destruction
+		}
+
+		BitmapInfoInput* FolderInfoInput::AddBitmap(FilePathParam const& path, char const* name, TagType tag)
+		{
+			return AddBitmapFileImpl(path, name, tag, AddFilesToFolderData(path.GetResolvedPath().parent_path()));
 		}
 
 		BitmapInfoInput * FolderInfoInput::AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag)
@@ -678,7 +663,7 @@ namespace chaos
 						animation_info->animation_description = *animation_description;
 					result->animation_info = animation_info;
 		
-					// animated images with frames						
+					// animated images with frames (all child frames are stored consecutively)
 					if (page_count > 1)
 					{
 						for (size_t i = 1; i < page_count; ++i)
@@ -698,7 +683,7 @@ namespace chaos
 				}
 			}
 			return result;
-		}
+		}		
 
 		// ========================================================================
 		// AtlasInput implementation

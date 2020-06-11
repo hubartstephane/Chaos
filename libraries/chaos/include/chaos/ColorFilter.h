@@ -4,6 +4,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/PixelTypes.h>
 #include <chaos/JSONTools.h>
+#include <chaos/ComparisonOperator.h>
 
 namespace chaos
 {
@@ -17,42 +18,28 @@ namespace chaos
 
 	public:
 
+		/** filter the incomming color */
+		bool Filter(glm::vec4 const& color) const;
+
+		/** filter the incomming color */
 		template<typename T>
 		bool Filter(T const& color) const
 		{
-			// check R     => range
-			// check G     => range
-			// check B     => range
-			// check A     => range
-
-			// check distance color-color
-
-
-			if constexpr (std::is_same_v<T, PixelBGRA>)
-				return (color.A == 0);
-
-			if constexpr (std::is_same_v<T, PixelBGRA>)
-				return (color.R + color.G + color.B < 100);
-
-			return false;
+			PixelRGBAFloat c;
+			PixelConverter::Convert(c, color);
+			return Filter((glm::vec4)c);
 		}
-
 
 	public:
 
-		/** whether to reverse the color range check */
-		bool reverse_range_check = false;
-		/** the minimum range per component */
-		glm::vec4 min_color_range = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-		/** the maximum range per component */
-		glm::vec4 max_color_range = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-		/** whether to reverse the color distance check */
-		bool reverse_distance_check = false;
-		/** a reference color to check distance with */
-		glm::vec4 reference_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		/** distance to reference color */
-		float reference_distance = 1.0f;
+		float distance = -1.0f;
+		/** the operator to apply to the distance */
+		ComparisonOperator distance_operator = ComparisonOperator::less_equal;
+		/** a reference color to check distance with */
+		glm::vec4 color_reference = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		/** the mask to apply to incomming color before checking for distance */
+		glm::vec4 color_mask = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	};
 
 	bool SaveIntoJSON(nlohmann::json& json_entry, ColorFilter const& src);

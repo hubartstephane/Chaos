@@ -14,7 +14,6 @@ namespace chaos
 {
 	namespace BitmapAtlas
 	{
-
 		/**
 		* FontInfoInputParams : when inserting FontInfoInput into AtlasInput, some glyphs are rendered into bitmaps. This controls the process
 		*/
@@ -34,6 +33,9 @@ namespace chaos
 			int glyph_width = 64;
 			/** height of the glyph */
 			int glyph_height = 64;
+
+			/** the image processing to apply */
+			std::vector<shared_ptr<ImageProcessor>> image_processors;
 		};
 
 		bool SaveIntoJSON(nlohmann::json& json_entry, FontInfoInputParams const& src);
@@ -138,13 +140,10 @@ namespace chaos
 			/** constructor */
 			AddFilesToFolderData(FilePathParam const& in_path);
 
-			/** iterate over the directory and find directories and files for the request */
-			void SearchEntriesInDirectory(bool search_files, bool search_directories);
+			/** iterate over the directory and find directories and files */
+			void SearchEntriesInDirectory();
 
 		public:
-
-			// a file correspondance to a json mainfest
-			std::map<boost::filesystem::path, nlohmann::json> manifests;
 
 			// the files concerned by the request
 			std::vector<boost::filesystem::path> files;
@@ -160,11 +159,8 @@ namespace chaos
 
 			/** the path of the directory */
 			boost::filesystem::path directory_path;
-
-			// whether the files vector is valid
-			bool files_searched = false;
-			// whether the directories vector is valid
-			bool directories_searched = false;
+			// whether the directory has already be processed
+			bool processed_done = false;
 		};
 
 
@@ -197,7 +193,7 @@ namespace chaos
 
 			/** Add a character set */
 			FontInfoInput * AddFont(				
-				char const * font_name,
+				FilePathParam const& path,
 				FT_Library library,
 				bool release_library,
 				char const * name,
@@ -214,12 +210,17 @@ namespace chaos
 
 		protected:
 
-			/** insert a bitmap before computation */
+			/** internal method to add a bitmap from file (and searching manifest) */
 			BitmapInfoInput * AddBitmapFileImpl(FilePathParam const & path, char const * name, TagType tag, AddFilesToFolderData& add_data);
             /** internal method to add a bitmap whose manifest (or not) is known */
             BitmapInfoInput * AddBitmapFileWithManifestImpl(FilePathParam const& path, char const* name, TagType tag, nlohmann::json const* json_manifest, std::vector<FIBITMAP*> * images);
 			/** internal method to add a bitmap or a multi bitmap */
 			BitmapInfoInput * AddBitmapImpl(std::vector<FIBITMAP *> pages, char const * name, TagType tag, ImageAnimationDescription const * animation_description);
+
+			/** internal method to insert a font file (and searching manifest)*/
+			FontInfoInput* AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, AddFilesToFolderData& add_data);
+			/** internal method to add a font whose manifest (or not) is known */
+			FontInfoInput* AddFontFileWithManifestImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, nlohmann::json const* json_manifest);
 
 			/** internal method to add a character set */
 			FontInfoInput * AddFontImpl(
@@ -254,7 +255,7 @@ namespace chaos
 			/** insert multiple bitmap before computation */
 			bool AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive);
 
-			/** insert a bitmap before computation */
+			/** insert an image from a file */
 			BitmapInfoInput * AddBitmap(FilePathParam const & path, char const * name, TagType tag);
 			/** insert an image inside the atlas */
 			BitmapInfoInput * AddBitmap(FIBITMAP * bitmap, bool release_bitmap, char const * name, TagType tag);
@@ -263,7 +264,7 @@ namespace chaos
 
 			/** Add a character set */
 			FontInfoInput * AddFont(
-				char const * font_name,
+				FilePathParam const& path,
 				FT_Library library,
 				bool release_library,
 				char const * name,

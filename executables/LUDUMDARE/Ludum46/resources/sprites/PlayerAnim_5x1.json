@@ -1,10 +1,12 @@
 {
-  "image_processor": {
-    "classname": "ImageProcessorOutline"
+
+  "image_processors": {
+    "classname": "ImageProcessorOutline",
+    "outline_color": [ 1.0, 0.0, 0.0, 1.0 ],
+    "distance": 4
   },
 
-  "cimage_processors": [
-    {
+    "cimage_processors": {
       "classname": "ImageProcessorOutline",
       "distance": 1,
       "outline_color": [ 1.0, 1.0, 1.0, 1.0 ],
@@ -17,5 +19,4 @@
 
       }
     }
-  ]
-}
+  }

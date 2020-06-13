@@ -28,6 +28,31 @@ namespace chaos
 			}
 		}
 
+		static bool ApplyProcessors(std::vector<FIBITMAP*> & images, std::vector<shared_ptr<ImageProcessor>> const& image_processors, BitmapGridAnimationInfo const& grid_data)
+		{
+			size_t image_count = images.size();
+
+			if (image_count > 0)
+			{
+				for (shared_ptr<ImageProcessor> const& image_processor : image_processors)
+				{
+					std::vector<FIBITMAP*> processed_images = image_processor->ProcessImageFrames(images, grid_data);
+
+					// previous images are no more usefull
+					ReleaseAllImages(&images);
+					// error case
+					if (processed_images.size() != image_count) // image count should remain constant
+					{
+						ReleaseAllImages(&processed_images);
+						return false;
+					}
+					// exchange old and new images
+					std::swap(images, processed_images);
+				}
+			}
+			return true;
+		}
+
 		// ========================================================================
 		// FontInfoInputParams functions
 		// ========================================================================
@@ -40,6 +65,7 @@ namespace chaos
 			JSONTools::SetAttribute(json_entry, "grid_size", src.grid_size);
 			JSONTools::SetAttribute(json_entry, "glyph_width", src.glyph_width);
 			JSONTools::SetAttribute(json_entry, "glyph_height", src.glyph_height);
+			JSONTools::SetAttribute(json_entry, "image_processors", src.image_processors);
 			return true;
 		}
 
@@ -51,6 +77,7 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "grid_size", dst.grid_size);
 			JSONTools::GetAttribute(json_entry, "glyph_width", dst.glyph_width);
 			JSONTools::GetAttribute(json_entry, "glyph_height", dst.glyph_height);
+			JSONTools::GetAttribute(json_entry, "image_processors", dst.image_processors);
 			return true;
 		}
 
@@ -100,19 +127,6 @@ namespace chaos
 			JSONTools::GetAttribute(json_entry, "anim_duration", dst.anim_duration);
 			JSONTools::GetAttribute(json_entry, "default_wrap_mode", dst.default_wrap_mode);
 			JSONTools::GetAttribute(json_entry, "image_processors", dst.image_processors);
-
-			// image_processor is special it can be an array or a single element
-			shared_ptr<ImageProcessor> image_processor;
-			JSONTools::GetAttribute(json_entry, "image_processor", image_processor);
-
-			if (image_processor != nullptr)
-			{
-				if (dst.image_processors.size() > 0)
-					LogTools::Error("BitmapInfoInputManifest::LoadFromJSON : cannot have both 'image_processor' and 'image_processors'");
-				else
-					dst.image_processors.push_back(image_processor);
-			}
-
 			return true;
 		}
 
@@ -150,10 +164,9 @@ namespace chaos
 
 		}
 
-		void AddFilesToFolderData::SearchEntriesInDirectory(bool search_files, bool search_directories)
+		void AddFilesToFolderData::SearchEntriesInDirectory()
 		{
-			// nothing more to search
-			if ((files_searched || !search_files) && (directories_searched || !search_directories))
+			if (processed_done)
 				return;
 
 			// iterate over wanted directory
@@ -164,18 +177,22 @@ namespace chaos
 
 				boost::filesystem::file_status status = boost::filesystem::status(p);
 
-				if (!files_searched && search_files && (status.type() == boost::filesystem::file_type::regular_file))
+				if (status.type() == boost::filesystem::file_type::regular_file)
 					files.push_back(p);
-				else if (!directories_searched && search_directories && (status.type() == boost::filesystem::file_type::directory_file))
+				else if (status.type() == boost::filesystem::file_type::directory_file)
 					directories.push_back(p);
 			}
-			files_searched |= search_files;
-			directories_searched |= search_directories;
+
+			processed_done = true;
 		}
 
 		// ========================================================================
 		// FolderInfoInput implementation
 		// ========================================================================
+
+				// ============================
+				// FOLDER
+				// ============================
 
 		FolderInfoInput * FolderInfoInput::AddFolder(char const * name, TagType tag)
 		{
@@ -196,9 +213,86 @@ namespace chaos
 			return result;
 		}
 
-		FontInfoInput * FolderInfoInput::AddFont(char const * font_name, FT_Library library, bool release_library, char const * name, TagType tag, FontInfoInputParams const & params)
+			// ============================
+			// FONT
+			// ============================
+
+		FontInfoInput* FolderInfoInput::AddFont(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params)
 		{
-			assert(font_name != nullptr);
+			return AddFontFileImpl(path, library, release_library, name, tag, params, AddFilesToFolderData(path.GetResolvedPath().parent_path()));
+		}
+
+		FontInfoInput* FolderInfoInput::AddFontFileImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, AddFilesToFolderData & add_data)
+		{
+			// compute a name from the path if necessary
+			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+
+			// JSON manifest for a file or a directory
+			if (FileTools::IsTypedFile(path, "json"))
+			{
+				// load the manifest
+				nlohmann::json json_manifest;
+				if (!JSONTools::LoadJSONFile(path, json_manifest, false))
+				{
+					LogTools::Error("FolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					return nullptr;
+				}
+
+				// search whether a related file/directory exists
+				add_data.SearchEntriesInDirectory();
+
+				// search whether there is a corresponding file for the manifest
+				boost::filesystem::path noext_path = resolved_path;
+				noext_path.replace_extension();
+
+				for (boost::filesystem::path const& p : add_data.files)
+				{
+					if (p == resolved_path) // ignore the manifest itself
+						continue;
+					boost::filesystem::path other_path = p;
+					other_path.replace_extension();
+					if (other_path == noext_path) // other file has same name (without extension)
+					{
+						add_data.ignore_files.push_back(p);
+						return AddFontFileWithManifestImpl(p, library, release_library, name, tag, params, &json_manifest);
+					}
+				}
+				return nullptr;
+			}
+			// normal file
+			else
+			{
+				// search whether a manifest for the file exists
+				nlohmann::json json_manifest;
+
+				boost::filesystem::path json_path = resolved_path;
+				json_path.replace_extension("json");
+				JSONTools::LoadJSONFile(json_path, json_manifest, false);
+
+				// do not individually load the manifest in recursive calls
+				add_data.ignore_files.push_back(json_path);
+
+				return AddFontFileWithManifestImpl(path, library, release_library, name, tag, params, json_manifest.empty() ? nullptr : &json_manifest);
+			}
+		}
+
+		FontInfoInput* FolderInfoInput::AddFontFileWithManifestImpl(FilePathParam const& path, FT_Library library, bool release_library, char const* name, TagType tag, FontInfoInputParams const& params, nlohmann::json const* json_manifest)
+		{
+			// compute a name from the path if necessary
+			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
+
+			// search the name if not provided
+			std::string generated_name;
+			if (name == nullptr)
+			{
+				generated_name = BoostTools::PathToName(resolved_path);
+				name = generated_name.c_str();
+			}
+
+			// search if there is a JSON file to describe the font (this replace any previous info)
+			FontInfoInputParams input_manifest = params;
+			if (json_manifest != nullptr)
+				LoadFromJSON(*json_manifest, input_manifest);
 
 			// create a library if necessary
 			if (library == nullptr)
@@ -212,16 +306,16 @@ namespace chaos
 			// load the face and set pixel size
 			FT_Face face = nullptr;
 
-			Buffer<char> buffer = FileTools::LoadFile(font_name, false); // for direct access to resource directory
+			Buffer<char> buffer = FileTools::LoadFile(path, false); // for direct access to resource directory
 			if (buffer != nullptr)
-				FT_New_Memory_Face(library, (FT_Byte const *)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
+				FT_New_Memory_Face(library, (FT_Byte const*)buffer.data, (FT_Long)buffer.bufsize, 0, &face);
 
 			if (face == nullptr)
 			{
 				if (release_library)
 					FT_Done_FreeType(library); // delete library if necessary
 				return nullptr;
-			}			
+			}
 			return AddFontImpl(library, face, release_library, true, name, tag, params);
 		}
 
@@ -272,11 +366,6 @@ namespace chaos
 
 			std::map<char, FontTools::CharacterBitmapGlyph> glyph_cache = FontTools::GetGlyphCacheForString(face, characters);
 
-
-			ImageProcessorOutline processor;
-			processor.distance = 5;
-			processor.outline_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
 			// transforms each info of the glyph map into a bitmap
 			for (auto & glyph : glyph_cache)
 			{
@@ -286,33 +375,18 @@ namespace chaos
 				FIBITMAP * bitmap = FontTools::GenerateImage(glyph.second.bitmap_glyph->bitmap, PixelFormatType::RGBA);
 				if (bitmap != nullptr || w <= 0 || h <= 0)  // if bitmap is zero sized (whitespace, the allocation failed). The info is still interesting                                          
 				{
-
-
-
-
+					// apply filters (for glyph that have an image)
 					if (bitmap != nullptr)
 					{
-						std::vector<FIBITMAP*> img = { bitmap };
-
-						BitmapGridAnimationInfo grid_data;
-						std::vector<FIBITMAP*> processed_images = processor.ProcessImageFrames(img, grid_data);
-
-						// error case : free all images 
-						if (processed_images.size() == 0)
+						std::vector<FIBITMAP*> images = { bitmap };
+						if (!ApplyProcessors(images, params.image_processors, BitmapGridAnimationInfo())) // in case of error the images array is released by the function
 						{
-							//ReleaseAllImages(&processed_images);
-							continue;
+							delete(result);
+							return nullptr;
 						}
-						bitmap = processed_images[0];
+						// get the final image for the glyph
+						bitmap = images[0];
 					}
-
-
-
-
-
-
-
-
 
 					char name[] = " ";
 					sprintf_s(name, 2, "%c", glyph.first);
@@ -343,24 +417,14 @@ namespace chaos
 			return result;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+			// ============================
+			// BITMAP
+			// ============================
 
 		bool FolderInfoInput::AddBitmapFilesFromDirectory(FilePathParam const & path, bool recursive)
 		{
             AddFilesToFolderData add_data(path);
-            add_data.SearchEntriesInDirectory(true, recursive); // want the directories if we make a recursive search
+            add_data.SearchEntriesInDirectory();
 
 			// step 1 : the files
 			for (boost::filesystem::path const & p : add_data.files)
@@ -373,16 +437,19 @@ namespace chaos
 			}
 
 			// step 2 : the directories
-			for (boost::filesystem::path const & p : add_data.directories)
+			if (recursive)
 			{
-				// skip already handled path
-				if (std::find(add_data.ignore_directories.begin(), add_data.ignore_directories.end(), p) != add_data.ignore_directories.end())
-					continue;
-				// recurse
-				FolderInfoInput * child_folder = AddFolder(BoostTools::PathToName(p).c_str(), 0);
-				if (child_folder == nullptr)
-					continue;
-				child_folder->AddBitmapFilesFromDirectory(p, recursive);
+				for (boost::filesystem::path const& p : add_data.directories)
+				{
+					// skip already handled path
+					if (std::find(add_data.ignore_directories.begin(), add_data.ignore_directories.end(), p) != add_data.ignore_directories.end())
+						continue;
+					// recurse
+					FolderInfoInput* child_folder = AddFolder(BoostTools::PathToName(p).c_str(), 0);
+					if (child_folder == nullptr)
+						continue;
+					child_folder->AddBitmapFilesFromDirectory(p, recursive);
+				}
 			}
 			return true;
 		}
@@ -397,6 +464,8 @@ namespace chaos
             for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(directory_path); it != end; ++it)
             {
                 boost::filesystem::path const& p = it->path();
+				if (boost::filesystem::status(p).type() != boost::filesystem::file_type::regular_file)
+					continue;
 
                 FIBITMAP* image = ImageTools::LoadImageFromFile(p); // XXX : do not call LoadMultipleImagesFromFile(...) because we are already considering all images in that directory as an animation (ignore animated GIF)
                 if (image != nullptr)
@@ -430,6 +499,16 @@ namespace chaos
            return child_images;
         }
 
+
+
+
+
+
+
+
+
+
+
         BitmapInfoInput* FolderInfoInput::AddBitmapFileImpl(FilePathParam const& path, char const* name, TagType tag, AddFilesToFolderData& add_data)
         {
             // compute a name from the path if necessary
@@ -447,7 +526,7 @@ namespace chaos
 				}
 
                 // search whether a related file/directory exists
-                add_data.SearchEntriesInDirectory(true, true);
+                add_data.SearchEntriesInDirectory();
 
                 // search whether there is a corresponding directory for the manifest
                 boost::filesystem::path noext_path = resolved_path;
@@ -565,24 +644,8 @@ namespace chaos
 			}
 
 			// apply filters on image => the number of images must be the same or error
-			if (count > 0)
-			{
-				for (shared_ptr<ImageProcessor>& image_processor : input_manifest.image_processors)
-				{
-					std::vector<FIBITMAP*> processed_images = image_processor->ProcessImageFrames(*images, animation_description.grid_data);
-
-					// error case : free all images 
-					if (processed_images.size() == 0)
-					{
-						ReleaseAllImages(&processed_images);
-						ReleaseAllImages(images);
-						return nullptr;
-					}
-					// release old images, exchange with new				
-					std::swap(*images, processed_images);
-					ReleaseAllImages(&processed_images);
-				}
-			}
+			if (!ApplyProcessors(*images, input_manifest.image_processors, animation_description.grid_data))
+				return nullptr;
 
             // register resources for destructions			
 			for (size_t i = 0; i < count; ++i)
@@ -770,14 +833,14 @@ namespace chaos
 		}
 
 		FontInfoInput * AtlasInput::AddFont(
-			char const * font_name,
+			FilePathParam const& path,
 			FT_Library library,
 			bool release_library,
 			char const * name,
 			TagType tag,
 			FontInfoInputParams const & params)
 		{
-			return root_folder.AddFont(font_name, library, release_library, name, tag, params);
+			return root_folder.AddFont(path, library, release_library, name, tag, params);
 		}
 
 		FontInfoInput * AtlasInput::AddFont(

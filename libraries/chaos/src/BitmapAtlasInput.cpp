@@ -316,7 +316,7 @@ namespace chaos
 					FT_Done_FreeType(library); // delete library if necessary
 				return nullptr;
 			}
-			return AddFontImpl(library, face, release_library, true, name, tag, params);
+			return AddFontImpl(library, face, release_library, true, name, tag, input_manifest);
 		}
 
 		FontInfoInput * FolderInfoInput::AddFont(FT_Face face, bool release_face, char const * name, TagType tag, FontInfoInputParams const & params)

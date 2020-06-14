@@ -160,7 +160,7 @@ namespace chaos
 
 				using pixel_type = typename accessor_type::type;
 
-				PixelRGBAFloat o = outline_color;
+				PixelRGBAFloat o = color;
 				PixelRGBAFloat e = empty_color;
 
 				pixel_type outline, empty;
@@ -216,7 +216,7 @@ namespace chaos
 			return false;
 		JSONTools::SetAttribute(json_entry, "distance", distance);
 		JSONTools::SetAttribute(json_entry, "color_filter", color_filter);
-		JSONTools::SetAttribute(json_entry, "outline_color", outline_color);
+		JSONTools::SetAttribute(json_entry, "color", color);
 		JSONTools::SetAttribute(json_entry, "empty_color", empty_color);
 		return true;
 	}
@@ -227,7 +227,7 @@ namespace chaos
 			return false;
 		JSONTools::GetAttribute(json_entry, "distance", distance);
 		JSONTools::GetAttribute(json_entry, "color_filter", color_filter);
-		JSONTools::GetAttribute(json_entry, "outline_color", outline_color);
+		JSONTools::GetAttribute(json_entry, "color", color);
 		JSONTools::GetAttribute(json_entry, "empty_color", empty_color);
 		return true;
 	}

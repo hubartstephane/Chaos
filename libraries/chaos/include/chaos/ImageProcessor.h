@@ -84,7 +84,7 @@ namespace chaos
 		/** filter to check pixel to keep */
 		ColorFilter color_filter;
 		/** the ouline color */
-		glm::vec4 outline_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		/** the empty color */
 		glm::vec4 empty_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	};

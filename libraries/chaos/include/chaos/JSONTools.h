@@ -87,9 +87,10 @@ namespace chaos
 	template<typename T>
 	bool LoadFromJSON(nlohmann::json const & entry, std::vector<T> & dst)
 	{
-		// input is an array
+		dst.clear();
+		// input is an array		
 		if (entry.is_array())
-		{
+		{		
 			for (auto const & json_entry : entry)
 			{
 				T element;

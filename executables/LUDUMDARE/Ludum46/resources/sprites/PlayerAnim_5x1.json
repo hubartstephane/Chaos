@@ -2,21 +2,7 @@
 
   "image_processors": {
     "classname": "ImageProcessorOutline",
-    "outline_color": [ 1.0, 0.0, 0.0, 1.0 ],
+    "color": [ 1.0, 0.0, 0.0, 1.0 ],
     "distance": 4
-  },
-
-    "cimage_processors": {
-      "classname": "ImageProcessorOutline",
-      "distance": 1,
-      "outline_color": [ 1.0, 1.0, 1.0, 1.0 ],
-      "empty_color": [ 0.0, 0.0, 0.0, 0.0 ],
-      "color_filterc": {
-        "color_mask": [ 0.0, 0.0, 0.0, 1.0 ],
-        "color_reference": [ 0.0, 0.0, 0.0, 0.0 ],
-        "distance": 0.0,
-        "distance_operator": "greater"
-
-      }
-    }
   }
+ }

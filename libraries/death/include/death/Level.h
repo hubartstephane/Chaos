@@ -17,6 +17,8 @@ namespace death
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
+		CHAOS_OBJECT_DECLARE_CLASS2(Level, Object);
+
 	public:
 
 		/** create a level instance for that level */

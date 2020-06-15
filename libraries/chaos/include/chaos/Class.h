@@ -12,8 +12,8 @@ namespace chaos
 
 	// ideally this should be replaced with __VA_OPT__, but not supported yet by VS2019
 
-#define CHAOS_REGISTER_CLASS1(classname) inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname>(#classname);
-#define CHAOS_REGISTER_CLASS2(classname, parent_classname) inline chaos::Class const * classname##_class = chaos::ClassTools::DeclareClass<classname, parent_classname>(#classname);
+#define CHAOS_REGISTER_CLASS1(classname) inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname>(#classname);
+#define CHAOS_REGISTER_CLASS2(classname, parent_classname) inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname, parent_classname>(#classname);
 
 	/**
 	 * InheritanceType : the kind if inheritance that can exist between 2 classes
@@ -31,7 +31,6 @@ namespace chaos
 	 */
 	class Class
 	{
-		friend class ClassTools;
 
 	public:
 
@@ -44,6 +43,51 @@ namespace chaos
 		/** gets the class name */
 		std::string const & GetClassName() const { return class_name; }
 
+	public:
+
+		/** find a class by name */
+		static Class const* FindClass(char const* class_name);
+
+		/** find a class by type */
+		template<typename CLASS_TYPE>
+		static Class const* FindClass()
+		{
+			static Class result;
+			return &result;
+		}
+
+		/** declare a class */
+		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = chaos::EmptyClass>
+		static Class const* DeclareClass(char const* class_name)
+		{
+			// check parameter and not already registered
+			assert(class_name != nullptr && strlen(class_name) > 0);
+			assert(FindClass(class_name) == nullptr);
+			assert((std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
+
+			Class* result = const_cast<Class*>(FindClass<CLASS_TYPE>()); // remove constness
+			if (result != nullptr)
+			{
+				result->class_name = class_name;
+				result->class_size = sizeof(CLASS_TYPE);
+				result->create_instance_func = []() { return new CLASS_TYPE; };
+
+				if (!std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass>)
+					result->parent = FindClass<PARENT_CLASS_TYPE>(); // the parent is accessed, but not necessaraly initialized yet
+
+				GetClassesList().push_back(result);
+			}
+			return result;
+		}
+
+		/** returns whether the class inherits from parent */
+		InheritanceType InheritsFrom(Class const* parent, bool accept_equal = false) const;
+
+	protected:
+
+		/** get the list of all classes */
+		static std::vector<Class const*>& GetClassesList();
+
 	protected:
 
 		/** the parent of the class */
@@ -54,77 +98,6 @@ namespace chaos
 		std::string class_name;
 		/** create an instance of the object delegate */
 		std::function<void* ()> create_instance_func;
-	};
-
-	/**
-	 * ClassTools
-	 */
-
-	class ClassTools
-	{
-	public:
-
-		/** find a class by name */
-		static Class const * GetClass(char const* class_name);
-
-		/** find a class by type */
-		template<typename CLASS_TYPE>
-		static Class const * GetClass()
-		{
-			static Class result;
-			return &result;
-		}
-
-		/** declare a class */
-		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = chaos::EmptyClass>
-		static Class const * DeclareClass(char const* class_name)
-		{
-			// check parameter and not already registered
-			assert(class_name != nullptr && strlen(class_name) > 0);
-			assert(GetClass(class_name) == nullptr);
-			assert((std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
-
-			Class * result = const_cast<Class *>(GetClass<CLASS_TYPE>()); // remove constness
-			if (result != nullptr)
-			{
-				result->class_name = class_name;
-				result->class_size = sizeof(CLASS_TYPE);
-				result->create_instance_func = []() { return new CLASS_TYPE; };
-
-				if (!std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass>)
-					result->parent = GetClass<PARENT_CLASS_TYPE>(); // the parent is accessed, but not necessaraly initialized yet
-
-				GetClassesList().push_back(result);
-			}		
-			return result;
-		}
-		
-		/** returns true whether a class has been declared */
-		template<typename T>
-		static bool IsClassDeclared()
-		{
-			Class const * cls = GetClass<T>();
-			return cls->IsDeclared();
-		}
-
-		/** returns whether 2 classes are known to be parents of one another */
-		template<typename T, typename PARENT>
-		static int InheritsFrom(bool accept_equal = false)
-		{
-			return InheritsFrom(
-				GetClass<T>(), 
-				GetClass<PARENT>(), 
-				accept_equal);
-		}
-
-		/** returns whether 2 classes are known to be parents of one another */
-		static InheritanceType InheritsFrom(Class const* child, Class const* parent, bool accept_equal = false);
-
-	protected:
-
-		/** get the list of all classes */
-		static std::vector<Class const*>& GetClassesList();
-
 	};
 
 }; // namespace chaos

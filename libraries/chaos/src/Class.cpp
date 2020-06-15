@@ -17,7 +17,7 @@ namespace chaos
 		return (class_name.length() > 0);
 	}
 
-	Class const * ClassTools::GetClass(char const* class_name)
+	Class const * Class::FindClass(char const* class_name)
 	{
 		assert(class_name != nullptr && strlen(class_name) > 0);
 		for (Class const * cls : GetClassesList())
@@ -26,21 +26,20 @@ namespace chaos
 		return nullptr;
 	}
 
-	InheritanceType ClassTools::InheritsFrom(Class const* child, Class const* parent, bool accept_equal)
+	InheritanceType Class::InheritsFrom(Class const* parent, bool accept_equal) const
 	{
-		assert(child != nullptr);
 		assert(parent != nullptr);
 
 		// fast test on the size
-		if (child->class_size < parent->class_size)
+		if (class_size < parent->class_size)
 			return InheritanceType::NO;
 
 		// class not registered, cannot known result
-		if (!child->IsDeclared() || !parent->IsDeclared())
+		if (!IsDeclared() || !parent->IsDeclared())
 			return InheritanceType::UNKNOWN;
 
 		// returns no if classes are same and we don't accept that as a valid result
-		if (child == parent)
+		if (this == parent)
 		{
 			if (!accept_equal)
 				return InheritanceType::NO;
@@ -48,7 +47,7 @@ namespace chaos
 				return InheritanceType::YES;
 		}
 		// from top to root in the hierarchy
-		for (child = child->parent; child != nullptr; child = child->parent)
+		for (Class const* child = parent; child != nullptr; child = child->parent)
 		{
 			// found the searched parent
 			if (child == parent)
@@ -63,7 +62,7 @@ namespace chaos
 		return InheritanceType::NO;
 	}
 
-	std::vector<Class const *>& ClassTools::GetClassesList()
+	std::vector<Class const *>& Class::GetClassesList()
 	{
 		static std::vector<Class const*> result;
 		return result;

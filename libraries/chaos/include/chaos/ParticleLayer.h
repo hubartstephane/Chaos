@@ -615,7 +615,7 @@ public:
 		/** override */
 		virtual Class const * GetParticleClass() const override
 		{
-			return ClassTools::GetClass<particle_type>();
+			return Class::FindClass<particle_type>();
 		}
 
         /** override */
@@ -936,7 +936,7 @@ public:
 		template<typename T>
 		bool IsParticleType() const
 		{
-			return (GetParticleClass() == ClassTools::GetClass<T>());
+			return (GetParticleClass() == Class::FindClass<T>());
 		}
 
         /** change the atlas */
@@ -1114,7 +1114,7 @@ public:
 			return true;
 		}
 		/** override */
-		virtual Class const * GetParticleClass() const override { return ClassTools::GetClass<particle_type>(); }
+		virtual Class const * GetParticleClass() const override { return Class::FindClass<particle_type>(); }
 		/** override */
 		virtual GPUVertexDeclaration * GetVertexDeclaration() const override 
 		{

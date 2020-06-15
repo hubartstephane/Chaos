@@ -58,7 +58,7 @@ namespace chaos
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible(Class const * particle_class, size_t particle_size, bool accept_bigger_particle)
 		{
-			Class const * wanted_class = ClassTools::GetClass<PARTICLE_TYPE>();
+			Class const * wanted_class = Class::FindClass<PARTICLE_TYPE>();
 
 			// strict equality
 			if (particle_class == wanted_class)
@@ -70,7 +70,7 @@ namespace chaos
 			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
 				return false;
 			// ensure we have not declared class as incompatible
-			if (ClassTools::InheritsFrom(particle_class, wanted_class) == InheritanceType::NO)
+			if (particle_class->Class::InheritsFrom(wanted_class) == InheritanceType::NO)
 				return false;
 			// success
 			return true;

@@ -42,12 +42,12 @@ namespace chaos
 			std::string classname;
 			if (JSONTools::GetAttribute(entry, "classname", classname))
 			{
-				chaos::Class const* json_class = chaos::ClassTools::GetClass(classname.c_str());
+				chaos::Class const* json_class = chaos::Class::FindClass(classname.c_str());
 				if (json_class != nullptr)
 				{
-					chaos::Class const* dst_class = chaos::ClassTools::GetClass<T>();
+					chaos::Class const* dst_class = chaos::Class::FindClass<T>();
 					if (dst_class != nullptr)
-						if (ClassTools::InheritsFrom(json_class, dst_class, true) == InheritanceType::YES) // accept equal
+						if (json_class->InheritsFrom(dst_class, true) == InheritanceType::YES) // accept equal
 							return (T*)json_class->CreateInstance();
 				}
 			}
@@ -204,7 +204,7 @@ namespace chaos
 				if constexpr (check_method_GetClass_v<T const>)
 					src_class = src.GetClass();
 				if (src_class == nullptr || !src_class->IsDeclared())
-					src_class = ClassTools::GetClass<T>();
+					src_class = Class::FindClass<T>();
 				// write the class into the json object
 				if (src_class != nullptr && src_class->IsDeclared())
 					JSONTools::SetAttribute(entry, "classname", src_class->GetClassName());

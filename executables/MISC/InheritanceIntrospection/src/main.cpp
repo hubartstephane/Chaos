@@ -14,9 +14,11 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
-	chaos::ClassTools::DeclareClass<A>();
-	chaos::ClassTools::DeclareClass<B, A>();
-	chaos::ClassTools::DeclareClass<C, B>();
+#if 0
+
+	chaos::Class::DeclareClass<A>();
+	chaos::Class::DeclareClass<B, A>();
+	chaos::Class::DeclareClass<C, B>();
 
 	bool a = chaos::ClassTools::IsClassDeclared<A>();
 	bool b = chaos::ClassTools::IsClassDeclared<B>();
@@ -31,6 +33,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	int i6 = chaos::ClassTools::InheritsFrom<A, C>();
 	int i7 = chaos::ClassTools::InheritsFrom<A, D>();
 	int i8 = chaos::ClassTools::InheritsFrom<D, A>();
+
+#endif
 
   chaos::WinTools::PressToContinue();
 

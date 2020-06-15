@@ -243,32 +243,39 @@ namespace chaos
 			using property_type = T;
 
 			/** returns a pointer on the int property */
-			virtual int * GetIntProperty() { return CastPropertyTo(&value, boost::mpl::identity<int>()); }
-			virtual int const * GetIntProperty() const { return CastPropertyTo(&value, boost::mpl::identity<int>()); }
+			virtual int * GetIntProperty() override { return CastPropertyTo<int>(); }
+			virtual int const * GetIntProperty() const override { return CastPropertyTo<int>(); }
 			/** returns a pointer on the float property */
-			virtual float * GetFloatProperty() { return CastPropertyTo(&value, boost::mpl::identity<float>()); }
-			virtual float const * GetFloatProperty() const { return CastPropertyTo(&value, boost::mpl::identity<float>()); }
+			virtual float * GetFloatProperty() override { return CastPropertyTo<float>(); }
+			virtual float const * GetFloatProperty() const override { return CastPropertyTo<float>(); }
 			/** returns a pointer on the int property */
-			virtual bool * GetBoolProperty() { return CastPropertyTo(&value, boost::mpl::identity<bool>()); }
-			virtual bool const * GetBoolProperty() const { return CastPropertyTo(&value, boost::mpl::identity<bool>()); }
+			virtual bool * GetBoolProperty() override { return CastPropertyTo<bool>(); }
+			virtual bool const * GetBoolProperty() const override { return CastPropertyTo<bool>(); }
 			/** returns a pointer on the int property */
-			virtual std::string * GetStringProperty() { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
-			virtual std::string const * GetStringProperty() const { return CastPropertyTo(&value, boost::mpl::identity<std::string>()); }
+			virtual std::string * GetStringProperty() override { return CastPropertyTo<std::string>(); }
+			virtual std::string const * GetStringProperty() const override { return CastPropertyTo<std::string>(); }
 
 			/** returns the value of the property */
 			property_type GetValue() { return value; }
 
 		protected:
 
-			/** default template to try casting into given class */
-			template<typename U, typename V>
-			static typename V::type * CastPropertyTo(U * ptr, V) { return nullptr; }
-			/** specialisation if input and wanted class match */
+			/** cast property to wanted type */
 			template<typename U>
-			static typename U * CastPropertyTo(U * ptr, boost::mpl::identity<U>) { return ptr; }
-			/** specialisation if input and wanted class match (const version) */
+			U * CastPropertyTo()
+			{
+				if constexpr (std::is_same_v<U, property_type>)
+					return &value;
+				return nullptr; 
+			}
+
 			template<typename U>
-			static typename U const * CastPropertyTo(U const * ptr, boost::mpl::identity<U>) { return ptr; }
+			U const* CastPropertyTo() const
+			{
+				if constexpr (std::is_same_v<U, property_type>)
+					return &value;
+				return nullptr;
+			}
 
 		public:
 

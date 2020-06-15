@@ -89,4 +89,34 @@ namespace chaos
 		glm::vec4 empty_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 	};
 
+	/**
+	* ImageProcessorShadow : add a shadow to an image
+	*/
+
+	class ImageProcessorShadow : public ImageProcessor
+	{
+		CHAOS_OBJECT_DECLARE_CLASS2(ImageProcessorShadow, ImageProcessor);
+
+	public:
+
+		/** the image processing method to override */
+		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const override;
+
+		/** the processor may save its configuration into a JSON file */
+		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const override;
+		/** the processor may save its configuration from a JSON file */
+		virtual bool LoadFromJSON(nlohmann::json const& json_entry) override;
+
+	public:
+
+		/** the offset of the shadow */
+		glm::vec2 offset = glm::vec2(5, 5);
+		/** filter to check pixel to keep */
+		ColorFilter color_filter;
+		/** the ouline color */
+		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		/** the empty color */
+		glm::vec4 empty_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	};
+
 }; // namespace chaos

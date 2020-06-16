@@ -26,20 +26,20 @@ namespace chaos
 		return nullptr;
 	}
 
-	InheritanceType Class::InheritsFrom(Class const* parent, bool accept_equal) const
+	InheritanceType Class::InheritsFrom(Class const* other, bool accept_equal) const
 	{
-		assert(parent != nullptr);
+		assert(other != nullptr);
 
 		// fast test on the size
-		if (class_size < parent->class_size)
+		if (class_size < other->class_size)
 			return InheritanceType::NO;
 
 		// class not registered, cannot known result
-		if (!IsDeclared() || !parent->IsDeclared())
+		if (!IsDeclared() || !other->IsDeclared())
 			return InheritanceType::UNKNOWN;
 
 		// returns no if classes are same and we don't accept that as a valid result
-		if (this == parent)
+		if (this == other)
 		{
 			if (!accept_equal)
 				return InheritanceType::NO;
@@ -47,16 +47,16 @@ namespace chaos
 				return InheritanceType::YES;
 		}
 		// from top to root in the hierarchy
-		for (Class const* child = parent; child != nullptr; child = child->parent)
+		for (Class const* p = parent; p != nullptr; p = p->parent)
 		{
 			// found the searched parent
-			if (child == parent)
+			if (p == other)
 				return InheritanceType::YES;
 			// fast test on the size
-			if (child->class_size < parent->class_size)
+			if (p->class_size < other->class_size)
 				return InheritanceType::NO;
 			// unintialized class
-			if (!child->IsDeclared())
+			if (!p->IsDeclared())
 				return InheritanceType::UNKNOWN;
 		}
 		return InheritanceType::NO;

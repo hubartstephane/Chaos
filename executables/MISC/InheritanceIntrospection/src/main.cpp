@@ -2,6 +2,7 @@
 #include <chaos/StringTools.h>
 #include <chaos/Class.h>
 #include <chaos/Object.h>
+#include <chaos/LogTools.h>
 
 class A : public chaos::Object 
 {
@@ -33,38 +34,48 @@ class SubClassOf
 public:
 
 	/** constructor */
-	SubClassOf() = default;
+	SubClassOf() : SubClassOf(T::GetStaticClass())
+	{
+	}
 	/** constructor */
 	SubClassOf(SubClassOf const& src) = default;
 	/** constructor */
 	SubClassOf(chaos::Class const * src)
 	{
-		chaos::Class const* base_class = chaos::Class::FindClass<T>();
-		if (base_class == nullptr)
-		{
-			base_class = base_class;
-		}
-		else if (src->InheritsFrom(base_class, true) != chaos::InheritanceType::YES)
+		if (src != nullptr)
 		{
 
 
-			base_class = base_class;
+
+			chaos::Class const* base_class = chaos::Class::FindClass<T>();
+
+
+			auto ppp = src->InheritsFrom(base_class, true);
+
+			if (base_class == nullptr)
+			{
+				chaos::LogTools::Error("SubClassOf constructor : FindClass<T> failure");
+			}
+			else if (src->InheritsFrom(base_class, true) != chaos::InheritanceType::YES)
+			{
+				chaos::LogTools::Error("SubClassOf constructor : src class does not inherit from base_class");
+			}
+			else
+			{
+				internal_class = src;
+			}
 		}
-		else
-		{
-			base_class = base_class;
-		}	
 	}
-
-
 	/** constructor */
 	template<typename U>
-	SubClassOf(SubClassOf<U> const& src)
+	SubClassOf(SubClassOf<U> const& src) : SubClassOf(src.GetInternalClass())
 	{
-		static_assert(std::is_base_of_v<T, U>);
-		internal_class = src.GetInternalClass();
+		int u = 0;
+		++u;
 	}
 
+	/** validity operator */
+	operator bool() const { return IsValid(); }
 	/** returns whether the object is valid */
 	bool IsValid() const { return (internal_class != nullptr);  }
 
@@ -100,9 +111,45 @@ protected:
 };
 
 
+
+class T {};
+
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+
+
+  SubClassOf<chaos::Object> a1 = A::GetStaticClass();
+  SubClassOf<A> a2 = A::GetStaticClass();
+  SubClassOf<B> a3 = A::GetStaticClass();
+  SubClassOf<A> a4 = B::GetStaticClass();
+  SubClassOf<B> a5 = B::GetStaticClass();
+
+
+  SubClassOf<A> a6 = SubClassOf<B>();
+  SubClassOf<B> a7 = SubClassOf<B>();
+  SubClassOf<A> a8 = SubClassOf<A>();
+  SubClassOf<B> a9 = SubClassOf<A>();
+
+
+  bool b1 = a1;
+  bool b2 = a2;
+  bool b3 = a3;
+  bool b4 = a4;
+  bool b5 = a5;
+
+  bool b6 = a6;
+  bool b7 = a7;
+  bool b8 = a8;
+  bool b9 = a9;
+
+  auto pp = chaos::Class::FindClass<T>();
+
+
+
+
+
+
 
 //  SubClassOf<chaos::Object> a = chaos::Object::GetStaticClass();
   SubClassOf<chaos::Object> b = A::GetStaticClass();

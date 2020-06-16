@@ -52,8 +52,10 @@ namespace chaos
 		template<typename CLASS_TYPE>
 		static Class const* FindClass()
 		{
-			static Class result;
-			return &result;
+			Class const* result = FindClassImpl<CLASS_TYPE>();
+			if (!result->IsDeclared())
+				return nullptr;
+			return result;
 		}
 
 		/** declare a class */
@@ -65,7 +67,7 @@ namespace chaos
 			assert(FindClass(class_name) == nullptr);
 			assert((std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
 
-			Class* result = const_cast<Class*>(FindClass<CLASS_TYPE>()); // remove constness
+			Class* result = FindClassImpl<CLASS_TYPE>();
 			if (result != nullptr)
 			{
 				result->class_name = class_name;
@@ -81,9 +83,17 @@ namespace chaos
 		}
 
 		/** returns whether the class inherits from parent */
-		InheritanceType InheritsFrom(Class const* parent, bool accept_equal = false) const;
+		InheritanceType InheritsFrom(Class const* other, bool accept_equal = false) const;
 
 	protected:
+
+		/** return the class for a type even if not initialized */
+		template<typename CLASS_TYPE>
+		static Class * FindClassImpl()
+		{
+			static Class result;
+			return &result;
+		}
 
 		/** get the list of all classes */
 		static std::vector<Class const*>& GetClassesList();

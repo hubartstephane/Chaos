@@ -3,6 +3,8 @@
 #include <chaos/Class.h>
 #include <chaos/Object.h>
 #include <chaos/LogTools.h>
+#include <chaos/JSONTools.h>
+#include <chaos/SubClassOf.h>
 
 class A : public chaos::Object 
 {
@@ -28,89 +30,62 @@ class D
 };
 
 
-template<typename T> 
-class SubClassOf
+
+
+
+
+class BBB
 {
 public:
 
-	/** constructor */
-	SubClassOf() : SubClassOf(T::GetStaticClass())
-	{
-	}
-	/** constructor */
-	SubClassOf(SubClassOf const& src) = default;
-	/** constructor */
-	SubClassOf(chaos::Class const * src)
-	{
-		if (src != nullptr)
-		{
+	int value = 666;
+	chaos::SubClassOf<A> aaa;
 
-
-
-			chaos::Class const* base_class = chaos::Class::FindClass<T>();
-
-
-			auto ppp = src->InheritsFrom(base_class, true);
-
-			if (base_class == nullptr)
-			{
-				chaos::LogTools::Error("SubClassOf constructor : FindClass<T> failure");
-			}
-			else if (src->InheritsFrom(base_class, true) != chaos::InheritanceType::YES)
-			{
-				chaos::LogTools::Error("SubClassOf constructor : src class does not inherit from base_class");
-			}
-			else
-			{
-				internal_class = src;
-			}
-		}
-	}
-	/** constructor */
-	template<typename U>
-	SubClassOf(SubClassOf<U> const& src) : SubClassOf(src.GetInternalClass())
-	{
-		int u = 0;
-		++u;
-	}
-
-	/** validity operator */
-	operator bool() const { return IsValid(); }
-	/** returns whether the object is valid */
-	bool IsValid() const { return (internal_class != nullptr);  }
-
-	/** method to create an instance of the object */
-	T* CreateInstance() const
-	{
-		if (internal_class == nullptr)
-			return nullptr;
-		return (T*)internal_class->CreateInstance();
-	}
-
-	/** assign operator */
-	SubClassOf<T>& operator = (chaos::Class const* src)
-	{
-		*this = SubClassOf<T>(src);
-		return *this;
-	}
-	/** assign operator */
-	template<typename U>
-	SubClassOf<T>& operator = (SubClassOf<U> const & src)
-	{
-		*this = SubClassOf<T>(src);
-		return *this;
-	}
-
-	/** get the internal class */
-	chaos::Class const* GetInternalClass() const { return internal_class; }
-
-protected:
-
-	/** the internal class used for that */
-	chaos::Class const * internal_class = nullptr;
 };
 
+bool SaveIntoJSON(nlohmann::json& json_entry, BBB const& src)
+{
+	if (!json_entry.is_object())
+		json_entry = nlohmann::json::object();
+	chaos::JSONTools::SetAttribute(json_entry, "value", src.value);
+	chaos::JSONTools::SetAttribute(json_entry, "aaa", src.aaa);
+	return true;
+}
 
+bool LoadFromJSON(nlohmann::json const & json_entry, BBB & dst)
+{
+	if (!json_entry.is_object())
+		return false;
+	chaos::JSONTools::GetAttribute(json_entry, "value", dst.value);
+	chaos::JSONTools::GetAttribute(json_entry, "aaa", dst.aaa);
+	return true;
+}
+
+
+
+
+
+
+
+
+#if 0
+
+template<typename T>
+bool LoadFromJSON(nlohmann::json const& json_entry, SubClassOf<T>& dst)
+{
+	if (!json_entry.is_string())
+		return false;
+	json_entry
+	return true;
+}
+
+#if 0
+if (!json_entry.is_object())
+return false;
+JSONTools::GetAttribute(json_entry, "bitmap_index", dst.bitmap_index);
+#endif
+
+#endif
 
 class T {};
 
@@ -119,17 +94,17 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
 
 
-  SubClassOf<chaos::Object> a1 = A::GetStaticClass();
-  SubClassOf<A> a2 = A::GetStaticClass();
-  SubClassOf<B> a3 = A::GetStaticClass();
-  SubClassOf<A> a4 = B::GetStaticClass();
-  SubClassOf<B> a5 = B::GetStaticClass();
+  chaos::SubClassOf<chaos::Object> a1 = A::GetStaticClass();
+  chaos::SubClassOf<A> a2 = A::GetStaticClass();
+  chaos::SubClassOf<B> a3 = A::GetStaticClass();
+  chaos::SubClassOf<A> a4 = B::GetStaticClass();
+  chaos::SubClassOf<B> a5 = B::GetStaticClass();
 
 
-  SubClassOf<A> a6 = SubClassOf<B>();
-  SubClassOf<B> a7 = SubClassOf<B>();
-  SubClassOf<A> a8 = SubClassOf<A>();
-  SubClassOf<B> a9 = SubClassOf<A>();
+  chaos::SubClassOf<A> a6 = chaos::SubClassOf<B>();
+  chaos::SubClassOf<B> a7 = chaos::SubClassOf<B>();
+  chaos::SubClassOf<A> a8 = chaos::SubClassOf<A>();
+  chaos::SubClassOf<B> a9 = chaos::SubClassOf<A>();
 
 
   bool b1 = a1;
@@ -148,38 +123,52 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 
 
+  nlohmann::json e = "toto";
 
+  nlohmann::json f = 3;
 
 
 //  SubClassOf<chaos::Object> a = chaos::Object::GetStaticClass();
-  SubClassOf<chaos::Object> b = A::GetStaticClass();
+  chaos::SubClassOf<chaos::Object> b = A::GetStaticClass();
 
 
-  SubClassOf<A> xxx = SubClassOf<A>();
+  chaos::SubClassOf<A> xxx = chaos::SubClassOf<A>();
 
-  //a = b;
 
-#if 0
 
-	chaos::Class::DeclareClass<A>();
-	chaos::Class::DeclareClass<B, A>();
-	chaos::Class::DeclareClass<C, B>();
 
-	bool a = chaos::ClassTools::IsClassDeclared<A>();
-	bool b = chaos::ClassTools::IsClassDeclared<B>();
-	bool c = chaos::ClassTools::IsClassDeclared<C>();
-	bool d = chaos::ClassTools::IsClassDeclared<D>();
 
-	int i1 = chaos::ClassTools::InheritsFrom<A, A>();
-	int i2 = chaos::ClassTools::InheritsFrom<A, B>();
-	int i3 = chaos::ClassTools::InheritsFrom<B, A>();
-	int i4 = chaos::ClassTools::InheritsFrom<C, B>();
-	int i5 = chaos::ClassTools::InheritsFrom<C, A>();
-	int i6 = chaos::ClassTools::InheritsFrom<A, C>();
-	int i7 = chaos::ClassTools::InheritsFrom<A, D>();
-	int i8 = chaos::ClassTools::InheritsFrom<D, A>();
 
-#endif
+
+	///
+	{
+		BBB bbb;
+		bbb.aaa = chaos::SubClassOf<B>();
+
+		nlohmann::json eee;
+		SaveIntoJSON(eee, bbb);
+
+		auto s1 = eee.dump(2);
+
+
+
+
+
+		BBB ccc;
+		LoadFromJSON(eee, ccc);
+
+
+
+
+		s1 = s1;
+
+	}
+
+
+
+
+
+
 
   chaos::WinTools::PressToContinue();
 

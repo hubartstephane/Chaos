@@ -12,11 +12,6 @@
 #include <death/Level.h>
 #include <death/SoundContext.h>
 
-LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
-	death::Player(in_game_instance)
-{
-}
-
 bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
 {
 	if (!death::Player::Initialize(in_game_instance))

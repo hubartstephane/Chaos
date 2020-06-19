@@ -20,9 +20,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumPlayer(death::GameInstance * in_game_instance);
-
 	/** get the player particle */
 	ParticlePlayer * GetPlayerParticle();
 	ParticlePlayer const * GetPlayerParticle() const;

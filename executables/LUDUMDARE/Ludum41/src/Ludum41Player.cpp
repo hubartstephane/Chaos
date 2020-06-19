@@ -8,12 +8,16 @@
 
 
 
-LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
-	death::Player(in_game_instance)
+bool LudumPlayer::Initialize(death::GameInstance* in_game_instance)
 {
-	LudumGame const * ludum_game = GetGame();
+	if (!death::Player::Initialize(in_game_instance))
+		return false;
+
+	LudumGame const* ludum_game = GetGame();
 	if (ludum_game != nullptr)
 		player_length = ludum_game->player_initial_length;
+
+	return true;
 }
 
 void LudumPlayer::TickPlayerDisplacement(float delta_time)

@@ -11,6 +11,7 @@
 #include <death/GameFramework.h>
 #include <death/Game.h>
 #include <death/PlayerPawn.h>
+#include <death/PlayerDisplacementComponent.h>
 
 namespace death
 {
@@ -29,8 +30,6 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** constructor */
-		Player(GameInstance * in_game_instance);
 		/** destructor */
 		virtual ~Player();
 

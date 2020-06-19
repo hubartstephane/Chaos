@@ -137,7 +137,7 @@ namespace death
 
 	Player * GameInstance::DoCreatePlayer()
 	{
-		return new Player(this);
+		return new Player;
 	}
 
 	double GameInstance::GetMainClockTime() const

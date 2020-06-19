@@ -14,7 +14,7 @@ LudumGameInstance::LudumGameInstance(death::Game * in_game) :
 
 death::Player * LudumGameInstance::DoCreatePlayer()
 {
-	return new LudumPlayer(this);
+	return new LudumPlayer();
 }
 
 void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)

@@ -22,9 +22,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumPlayer(death::GameInstance * in_game_instance);
-
 	/** change the length of the player */
 	void SetPlayerLength(float in_length, bool increment);
 	/** get current player length */
@@ -51,6 +48,8 @@ protected:
 	virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
 	/** override */
 	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
+	/** override */
+	virtual bool Initialize(death::GameInstance* in_game_instance) override;
 	/** displace the racket from given quantity */
 	void DisplacePlayerRacket(float delta_x);
 

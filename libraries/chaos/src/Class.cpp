@@ -28,7 +28,8 @@ namespace chaos
 
 	InheritanceType Class::InheritsFrom(Class const* other, bool accept_equal) const
 	{
-		assert(other != nullptr);
+		if (other == nullptr)
+			return InheritanceType::UNKNOWN;
 
 		// fast test on the size
 		if (class_size < other->class_size)

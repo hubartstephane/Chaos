@@ -11,11 +11,6 @@
 #include <death/Level.h>
 #include <death/SoundContext.h>
 
-LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
-	death::Player(in_game_instance)
-{
-}
-
 ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {
 	if (pawn == nullptr || pawn->GetAllocation() == nullptr || pawn->GetAllocation()->GetParticleCount() == 0)

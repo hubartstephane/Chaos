@@ -14,7 +14,7 @@ LudumGameInstance::LudumGameInstance(death::Game * in_game) :
 
 death::Player * LudumGameInstance::DoCreatePlayer()
 {
-	return new LudumPlayer(this);
+	return new LudumPlayer();
 }
 
 void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)

@@ -21,8 +21,6 @@ public:
 
     DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-    /** constructor */
-    LudumPlayer(death::GameInstance* in_game_instance);
 
 	void AddBurnedSouls(int count) { burned_souls += count; }
 

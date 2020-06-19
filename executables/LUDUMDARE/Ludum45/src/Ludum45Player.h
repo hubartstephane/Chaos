@@ -31,9 +31,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumPlayer(death::GameInstance * in_game_instance);
-
 	size_t GetUpgradeLevel(chaos::TagType upgrade_type) const;
 
 	size_t GetSpeedLevel() const;

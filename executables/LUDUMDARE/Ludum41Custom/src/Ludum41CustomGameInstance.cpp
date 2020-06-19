@@ -312,7 +312,7 @@ bool LudumGameInstance::DoTick(float delta_time)
 
 death::Player * LudumGameInstance::DoCreatePlayer()
 {
-	return new LudumPlayer(this);
+	return new LudumPlayer();
 }
 
 void LudumGameInstance::IncrementScore(int delta)

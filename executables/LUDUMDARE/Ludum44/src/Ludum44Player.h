@@ -28,9 +28,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumPlayer(death::GameInstance * in_game_instance);
-
 	float GetBuyTimer() const { return buy_timer; }
 
 protected:

@@ -14,11 +14,6 @@ namespace death
 	// Player
 	// =================================================
 
-	Player::Player(GameInstance * in_game_instance) :
-		game_instance(in_game_instance)
-	{
-	}
-
 	Player::~Player()
 	{
 
@@ -32,6 +27,10 @@ namespace death
 
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
+		assert(in_game_instance != nullptr);
+
+		game_instance = in_game_instance;
+
 		// read the configuration
 		Game* game = GetGame();
 		if (game != nullptr)

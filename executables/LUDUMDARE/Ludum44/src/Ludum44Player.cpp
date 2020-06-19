@@ -11,11 +11,6 @@
 
 #include <death/Level.h>
 
-LudumPlayer::LudumPlayer(death::GameInstance * in_game_instance) : 
-	death::Player(in_game_instance)
-{
-}
-
 void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
 	// displace the player

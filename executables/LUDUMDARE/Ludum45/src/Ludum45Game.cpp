@@ -97,7 +97,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 
 death::GameInstance * LudumGame::DoCreateGameInstance()
 {
-	return new LudumGameInstance(this);
+	return new LudumGameInstance();
 }
 
 template<typename FUNC>

@@ -24,9 +24,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumGameInstance(death::Game * in_game);
-
 protected:
 
 	virtual death::Player * DoCreatePlayer() override;

@@ -27,9 +27,6 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** constructor */
-		GameInstance(Game * in_game);
-
 		/** create one player and give it the gamepad provided if any */
 		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
 

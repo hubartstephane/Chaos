@@ -357,5 +357,5 @@ int LudumGame::AddParticleLayers()
 
 death::GameInstance * LudumGame::DoCreateGameInstance()
 {
-	return new LudumGameInstance(this);
+	return new LudumGameInstance();
 }

@@ -9,12 +9,6 @@ namespace death
 {
 	DEATH_GAMEGETTERS_IMPLEMENT(GameInstance);
 
-	GameInstance::GameInstance(Game * in_game) :
-		game(in_game)
-	{
-		assert(in_game != nullptr);
-	}
-
 	int GameInstance::GetBestPlayerScore() const
 	{
 		int result = 0;
@@ -181,6 +175,10 @@ namespace death
 
 	bool GameInstance::Initialize(death::Game * in_game)
 	{
+		assert(in_game != nullptr);
+
+		game = in_game;
+
 		// initialize from configuration
 		if (!InitializeGameValues(in_game->game_instance_configuration, in_game->configuration_path, false)) // false for not hot reload
 			return false;

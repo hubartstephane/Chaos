@@ -1599,7 +1599,7 @@ namespace death
 
 	GameInstance * Game::DoCreateGameInstance()
 	{
-		return new GameInstance(this);
+		return new GameInstance();
 	}
 
 	bool Game::IsFreeCameraMode() const

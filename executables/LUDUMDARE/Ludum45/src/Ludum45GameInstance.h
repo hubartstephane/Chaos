@@ -24,10 +24,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumGameInstance(death::Game * in_game);
-
-
 	void FireExplosion(chaos::box2 const & ref_box);
 
 protected:

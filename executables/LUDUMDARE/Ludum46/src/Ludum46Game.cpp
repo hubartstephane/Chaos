@@ -83,7 +83,7 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 
 death::GameInstance * LudumGame::DoCreateGameInstance()
 {
-	return new LudumGameInstance(this);
+	return new LudumGameInstance();
 }
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)

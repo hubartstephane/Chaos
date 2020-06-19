@@ -15,9 +15,6 @@ class LudumGameInstance : public death::GameInstance
 
 public:
 
-	/** constructor */
-	LudumGameInstance(death::Game * in_game);
-
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
 
 	void NotifyAtomCountChange(int delta);

@@ -6,11 +6,6 @@
 
 #include <death/SoundContext.h>
 
-LudumGameInstance::LudumGameInstance(death::Game * in_game) : 
-	death::GameInstance(in_game)
-{
-}
-
 size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 {
 	size_t ball_count = GetBallCount();

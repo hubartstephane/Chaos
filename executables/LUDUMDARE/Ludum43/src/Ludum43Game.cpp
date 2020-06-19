@@ -339,5 +339,5 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<c
 
 death::GameInstance * LudumGame::DoCreateGameInstance()
 {
-	return new LudumGameInstance(this);
+	return new LudumGameInstance();
 }

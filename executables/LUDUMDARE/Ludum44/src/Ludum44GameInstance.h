@@ -24,9 +24,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumGameInstance(death::Game * in_game);
-
     chaos::ParticleAccessor<ParticleFire> FireProjectile(char const* bitmap_name, chaos::box2& ref_box, float ratio_to_box, int count, char const* sound_name, float offset_rotation, float delta_rotation, float velocity, float damage, bool trample, bool player_ownership);
 
 	void FireExplosion(chaos::box2 const & ref_box);

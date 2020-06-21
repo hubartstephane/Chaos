@@ -25,10 +25,11 @@ namespace death
 {
 	DEATH_GAMEGETTERS_IMPLEMENT(Game);
 
-	Game::Game(GLFWwindow* in_glfw_window):
-		glfw_window(in_glfw_window)
+	bool Game::Initialize(GLFWwindow* in_glfw_window)	
 	{
 		assert(in_glfw_window != nullptr);
+		glfw_window = in_glfw_window;
+		return true;
 	}
 
 	int Game::GetBestPlayerScore() const

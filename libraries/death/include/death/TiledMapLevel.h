@@ -421,9 +421,6 @@ namespace death
 
 	public:
 
-		/** constructor */
-		TiledMapLevel();
-
 		/** initialization from tiled_map */
 		virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map);
 

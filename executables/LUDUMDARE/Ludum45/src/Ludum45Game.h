@@ -54,7 +54,7 @@ public:
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
 	/** constructor */
-	LudumGame(GLFWwindow* in_glfw_window);
+	LudumGame();
 
 	/** override */
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;

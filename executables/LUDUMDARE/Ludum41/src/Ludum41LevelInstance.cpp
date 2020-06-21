@@ -201,7 +201,7 @@ death::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(death::Player* player)
 {
 	assert(player != nullptr);
 
-	death::PlayerPawn* player_pawn = DoCreatePlayerPawn(player);
+	death::PlayerPawn* player_pawn = LevelInstance::CreatePlayerPawn(player);
 	if (player_pawn == nullptr)
 		return nullptr;
 

@@ -25,10 +25,11 @@ namespace death
 	// Camera
 	// =================================================
 
-	Camera::Camera(LevelInstance * in_level_instance) :
-		level_instance(in_level_instance)
+	bool Camera::Initialize(LevelInstance * in_level_instance)		
 	{
 		assert(in_level_instance != nullptr);
+		level_instance = in_level_instance;
+		return true;
 	}
 	
 	bool Camera::DoTick(float delta_time)

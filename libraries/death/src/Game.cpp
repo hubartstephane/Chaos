@@ -1645,7 +1645,7 @@ namespace death
 
 	Camera * Game::DoCreateFreeCamera(Camera const * camera_to_copy, LevelInstance * level_instance) const
 	{
-		Camera * result = new Camera(level_instance);
+		Camera* result = level_instance->CreateCamera();
 		if (result != nullptr)
 		{
 			float zoom_value = 1.0f;

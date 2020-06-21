@@ -84,6 +84,12 @@ namespace death
 
 	protected:
 
+		/** the camera instanciation method */
+		virtual Camera* DoCreateCamera();
+		/** create a camera and initialize it */
+		virtual Camera* CreateCamera();
+
+
 		/** gets a camera by its index */
 		Camera * DoGetCamera(size_t index, bool accept_freecam);
 		/** gets a camera by its index */
@@ -108,7 +114,7 @@ namespace death
 		/** give the player a pawn */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player);
 		/** the allocation PlayerPawn creation method */
-		virtual PlayerPawn* DoCreatePlayerPawn(Player* player);
+		virtual PlayerPawn* DoCreatePlayerPawn();
 
 		/** delete the pawn for the player */
 		virtual void DestroyPlayerPawn(Player* player);

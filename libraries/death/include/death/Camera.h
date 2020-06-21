@@ -37,8 +37,8 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** constructor */
-		Camera(LevelInstance * in_level_instance);
+		/** initialization method */
+		bool Initialize(LevelInstance * in_level_instance);
 
 		/** set the camera box */
 		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}

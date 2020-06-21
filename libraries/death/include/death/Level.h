@@ -34,7 +34,7 @@ namespace death
 	protected:
 
 		/** create a level instance for that level user specified function */
-		virtual class LevelInstance * DoCreateLevelInstance(Game * in_game);
+		virtual class LevelInstance * DoCreateLevelInstance();
 
 	protected:
 

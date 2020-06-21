@@ -521,7 +521,7 @@ namespace death
 		return true;
 	}
 
-	LevelInstance* TiledMapLevel::DoCreateLevelInstance(Game* in_game)
+	LevelInstance* TiledMapLevel::DoCreateLevelInstance()
 	{
 		return new TiledMapLevelInstance;
 	}

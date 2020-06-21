@@ -435,7 +435,7 @@ namespace death
 	protected:
 
 		/** create a level instance for that level user specified function */
-		virtual LevelInstance* DoCreateLevelInstance(Game* in_game) override;
+		virtual LevelInstance* DoCreateLevelInstance() override;
 
 
 		/** create a typed object specializable method */

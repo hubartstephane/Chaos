@@ -22,9 +22,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumLevelInstance(class LudumGame * in_game);
-
 protected:
 
 	/** override */

@@ -111,6 +111,9 @@ namespace death
 		/** create a player displacement component for the player */
 		virtual PlayerDisplacementComponent* CreatePlayerDisplacementComponent(Player* player);
 
+		/** create an instance of player displacement component */
+		virtual PlayerDisplacementComponent* DoCreatePlayerDisplacementComponent();
+
 		/** give the player a pawn */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player);
 		/** the allocation PlayerPawn creation method */

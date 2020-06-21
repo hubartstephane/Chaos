@@ -23,9 +23,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumLevelInstance(class LudumGame * in_game);
-
 	/** Set current scroll factor */
 	void SetScrollFactor(float in_scroll_factor){ scroll_factor = in_scroll_factor;}
 	/** Get current scroll factor */

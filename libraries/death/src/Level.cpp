@@ -11,7 +11,7 @@ namespace death
 	LevelInstance * Level::CreateLevelInstance(Game * in_game)
 	{
 		// create the instance
-		LevelInstance * result = DoCreateLevelInstance(in_game); 
+		LevelInstance * result = DoCreateLevelInstance(); 
 		if (result == nullptr)
 			return nullptr;
 		// additional initialization
@@ -23,7 +23,7 @@ namespace death
 		return result;
 	}
 
-	LevelInstance * Level::DoCreateLevelInstance(Game * in_game)
+	LevelInstance * Level::DoCreateLevelInstance()
 	{
 		return new LevelInstance;
 	}

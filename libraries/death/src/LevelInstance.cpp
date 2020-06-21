@@ -85,8 +85,30 @@ namespace death
 	PlayerDisplacementComponent* LevelInstance::CreatePlayerDisplacementComponent(Player* player)
 	{
 		assert(player != nullptr);
-		return new PlayerDisplacementComponent(player);
+		PlayerDisplacementComponent* result = DoCreatePlayerDisplacementComponent();
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize(player))
+		{
+			delete result;
+			return nullptr;
+		}
+		return result;
 	}
+
+
+	PlayerDisplacementComponent* LevelInstance::DoCreatePlayerDisplacementComponent()
+	{
+		return new PlayerDisplacementComponent();
+	}
+
+
+
+
+
+
+
+
 
 	void LevelInstance::DestroyPlayerPawn(Player* player)
 	{

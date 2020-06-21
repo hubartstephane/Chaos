@@ -12,12 +12,12 @@ namespace death
 	// PlayerDisplacementComponent
 	// =============================================
 
-	PlayerDisplacementComponent::PlayerDisplacementComponent(Player* in_player) :
-		player(in_player)
+	bool PlayerDisplacementComponent::Initialize(Player* in_player)
 	{
 		assert(in_player != nullptr);
+		player = in_player;
+		return true;
 	}
-
 
 #if 0
 

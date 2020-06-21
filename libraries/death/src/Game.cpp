@@ -1200,12 +1200,12 @@ namespace death
 		// create the game instance
 		GameInstance * result = DoCreateGameInstance();
 		if (result == nullptr)
-			return false;
-		// initialie the instance
+			return nullptr;
+		// initialize the instance
 		if (!result->Initialize(this))
 		{
 			delete(result);
-			return false;
+			return nullptr;
 		}
 		return result;
 	}

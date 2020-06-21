@@ -84,7 +84,7 @@ namespace death
 		if (!result->Initialize(this))
 		{
 			delete(result);
-			return result;
+			return nullptr;
 		}
 		// insert the player in our list
 		result->player_index = players.size();

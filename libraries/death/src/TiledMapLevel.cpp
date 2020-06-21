@@ -1871,7 +1871,7 @@ namespace death
 		chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_object->GetBoundingBox(true), aspect_ratio, true);
 
 		// create the real camera
-		Camera* camera = new Camera(this);
+		Camera* camera = CreateCamera();
 		if (camera == nullptr)
 			return;
 		cameras.push_back(camera);
@@ -1925,7 +1925,7 @@ namespace death
 		layer_instance->FinalizeParticles(player_allocation);
 
 		// create a pawn 
-		PlayerPawn* result = DoCreatePlayerPawn(player);
+		PlayerPawn* result = LevelInstance::CreatePlayerPawn(player);
 		if (result == nullptr)
 			return result;
 

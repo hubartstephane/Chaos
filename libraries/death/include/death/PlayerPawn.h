@@ -26,8 +26,8 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** constructor */
-		PlayerPawn(Player* in_player);
+		/** initialization method */
+		bool Initialize(Player* in_player);
 
 		/** returns the player the pawn belongs to */
 		chaos::AutoCastable<Player> GetPlayer() { return player; }

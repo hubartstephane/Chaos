@@ -24,5 +24,11 @@ BlitzMax
 // Free License for resources
 cc0
 
+// Particle system editor
+Pixel FX Editor
+
+// Font Tool
+FontLab
+
 
 #endif

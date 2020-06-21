@@ -63,15 +63,23 @@ namespace death
 		DestroyPlayerDisplacementComponent(player);
 	}
 
-	PlayerPawn* LevelInstance::DoCreatePlayerPawn(Player* player)
+	PlayerPawn* LevelInstance::DoCreatePlayerPawn()
 	{
-		return new PlayerPawn(player);
+		return new PlayerPawn();
 	}
 
 	PlayerPawn * LevelInstance::CreatePlayerPawn(Player* player)
 	{
 		assert(player != nullptr);
-		return DoCreatePlayerPawn(player);
+		PlayerPawn * result = DoCreatePlayerPawn();
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize(player))
+		{
+			delete result;
+			return nullptr;
+		}
+		return result;
 	}
 
 	PlayerDisplacementComponent* LevelInstance::CreatePlayerDisplacementComponent(Player* player)
@@ -95,6 +103,24 @@ namespace death
 	void LevelInstance::DestroyCameras()
 	{
 		cameras.clear(); // destroy all camera
+	}
+
+	Camera* LevelInstance::DoCreateCamera()
+	{
+		return new Camera();
+	}
+
+	Camera* LevelInstance::CreateCamera()
+	{
+		Camera* result = DoCreateCamera();
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize(this))
+		{
+			delete(result);
+			return nullptr;
+		}
+		return result;
 	}
 
 	void LevelInstance::CreateCameras()

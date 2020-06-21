@@ -11,10 +11,11 @@ namespace death
 	// PlayerPawn
 	// =============================================
 
-	PlayerPawn::PlayerPawn(Player* in_player) :
-		player(in_player)
+	bool PlayerPawn::Initialize(Player* in_player)
 	{
 		assert(in_player != nullptr);
+		player = in_player;
+		return true;
 	}
 
 	chaos::ParticleDefault* PlayerPawn::GetParticle()

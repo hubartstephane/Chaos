@@ -501,11 +501,6 @@ namespace death
 	// TiledMapLevel implementation
 	// =====================================
 
-	TiledMapLevel::TiledMapLevel()
-	{
-
-	}
-
 	bool TiledMapLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 	{
 		assert(in_tiled_map != nullptr);

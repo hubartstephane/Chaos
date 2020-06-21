@@ -15,6 +15,9 @@ namespace chaos
 
 	class GPURenderable : public Tickable
 	{
+
+		CHAOS_OBJECT_DECLARE_CLASS2(GPURenderable, Tickable);
+
 	public:
 
 		/** public method to render the object */

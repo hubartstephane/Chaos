@@ -13,6 +13,9 @@ namespace chaos
 
 	class Tickable : public Object, public NamedObject
 	{
+
+		CHAOS_OBJECT_DECLARE_CLASS2(Tickable, Object);
+
 	public:
 
 		/** change the pause state */

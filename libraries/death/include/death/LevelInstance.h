@@ -26,6 +26,8 @@ namespace death
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
+		CHAOS_OBJECT_DECLARE_CLASS2(LevelInstance, chaos::GPURenderable);
+
 	public:
 
 		DEATH_GAMEGETTERS_DECLARE();

@@ -13,8 +13,10 @@ namespace death
 
 	protected:
 
-		/** game instance creation */
+		/** game instance creation + initialization */
 		virtual Game * CreateGame();
+		/** game instance creation */
+		virtual Game* DoCreateGame();
 
 		/** override */
 		virtual bool OnMouseButtonImpl(int button, int action, int modifier) override;
@@ -57,9 +59,9 @@ namespace death
 	protected:
 
 		/** override */
-		virtual Game * CreateGame() override
+		virtual Game * DoCreateGame() override
 		{
-			return new GAME_TYPE(glfw_window);
+			return new GAME_TYPE();
 		}
 	};
 

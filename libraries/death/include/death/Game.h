@@ -64,10 +64,12 @@ namespace death
 
 	public:
 
+		CHAOS_OBJECT_DECLARE_CLASS2(Game, chaos::Object);
+
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** constructor */
-		Game(GLFWwindow * in_glfw_window);
+		/** initialization method */
+		bool Initialize(GLFWwindow * in_glfw_window);
 
 		/** Get a level by its index */
 		chaos::AutoCastable<Level> GetLevel(int level_index);

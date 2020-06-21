@@ -83,9 +83,22 @@ namespace death
 		game = nullptr;
 	}
 
-	Game * GameWindow::CreateGame()
+	Game * GameWindow::DoCreateGame()
 	{
-		return nullptr;
+		return new Game;
+	}
+
+	Game* GameWindow::CreateGame()
+	{
+		Game* result = DoCreateGame();
+		if (result == nullptr)
+			return nullptr;
+		if (!result->Initialize(glfw_window))
+		{
+			delete(result);
+			return nullptr;
+		}
+		return result;
 	}
 
 	bool GameWindow::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)

@@ -24,8 +24,7 @@
 #include <death/GameParticles.h>
 #include <death/SoundContext.h>
 
-LudumGame::LudumGame(GLFWwindow* in_glfw_window) :
-	death::Game(in_glfw_window)
+LudumGame::LudumGame()
 {
 	game_name = "Quantic Paouf IV";
 	game_instructions = R"INSTRUCTIONS(

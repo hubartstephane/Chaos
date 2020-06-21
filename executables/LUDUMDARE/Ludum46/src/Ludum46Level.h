@@ -208,15 +208,10 @@ class LudumLevel : public death::TiledMapLevel
 {
 	friend class LudumLevelInstance;
 
-public:
-
-	/** constructor */
-	LudumLevel();
-
 protected:
 
 	/** override */
-	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
+	virtual death::LevelInstance * DoCreateLevelInstance() override;
 
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 

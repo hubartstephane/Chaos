@@ -17,8 +17,8 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** constructor */
-		PlayerDisplacementComponent(Player* in_player);
+		/** Initialization method */
+		bool Initialize(Player* in_player);
 
 		/** returns the player the component belongs to */
 		chaos::AutoCastable<Player> GetPlayer() { return player; }

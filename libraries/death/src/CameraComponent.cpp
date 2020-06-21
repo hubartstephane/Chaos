@@ -13,10 +13,6 @@ namespace death
 
 	DEATH_GAMEGETTERS_IMPLEMENT(CameraComponent);
 
-	CameraComponent::CameraComponent()
-	{	
-	}
-
 	chaos::box2 CameraComponent::ApplyModifier(chaos::box2 const & src) const
 	{
 		return src;

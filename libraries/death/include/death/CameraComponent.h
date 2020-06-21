@@ -22,9 +22,6 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** constructor */
-		CameraComponent();
-
 		/** gets the camera the component belongs to */
 		chaos::AutoCastable<Camera> GetCamera() { return camera; }
 		/** gets the camera the component belongs to */

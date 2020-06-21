@@ -25,7 +25,7 @@ public:
 protected:
 
 	/** override */
-	virtual death::LevelInstance * DoCreateLevelInstance(death::Game * in_game) override;
+	virtual death::LevelInstance * DoCreateLevelInstance() override;
 
 public:
 

@@ -12,14 +12,9 @@
 // LudumLevel implementation
 // =============================================================
 
-LudumLevel::LudumLevel()
+death::LevelInstance * LudumLevel::DoCreateLevelInstance()
 {
-
-}
-
-death::LevelInstance * LudumLevel::DoCreateLevelInstance(death::Game * in_game)
-{
-	return new LudumLevelInstance(auto_cast(in_game));
+	return new LudumLevelInstance();
 }
 
 chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)

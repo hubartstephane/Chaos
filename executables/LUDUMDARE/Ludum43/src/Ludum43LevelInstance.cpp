@@ -17,13 +17,6 @@
 // LudumLevelInstance implementation
 // =============================================================
 
-LudumLevelInstance::LudumLevelInstance(LudumGame * in_game):
-	game(in_game)
-{
-	assert(in_game != nullptr); 
-	
-}
-
 void LudumLevelInstance::CreateCameras()
 {
 	// create the cameras

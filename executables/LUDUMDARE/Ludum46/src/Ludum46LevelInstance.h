@@ -23,9 +23,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumLevelInstance(class LudumGame * in_game);
-
 	void SpawnBloodParticles(chaos::box2 const& box, int particles_count);
 
 	void SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count);
@@ -46,7 +43,7 @@ protected:
 	/** override */
 	virtual void CreateCameras() override;
 	/** override */
-	virtual death::PlayerDisplacementComponent* CreatePlayerDisplacementComponent(death::Player* player) override;
+	virtual death::PlayerDisplacementComponent* DoCreatePlayerDisplacementComponent() override;
 
 	/** override */
 	virtual death::LevelCheckpoint * DoCreateCheckpoint() const;

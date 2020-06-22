@@ -8,12 +8,6 @@ namespace death
 	// GameHUD
 	// =============================================
 
-	GameHUD::GameHUD(Game * in_game) :
-		game(in_game)
-	{
-		assert(in_game != nullptr);
-	}
-
 	chaos::AutoCastable<GameInstance> GameHUD::GetGameInstance()
 	{ 
 		return game->GetGameInstance(); 
@@ -80,8 +74,11 @@ namespace death
 		component->InitializeFromConfiguration(*component_config, application->GetConfigurationPath());
 	}
 
-	bool GameHUD::InitializeHUD()
+	bool GameHUD::Initialize(Game* in_game)
 	{
+		assert(in_game != nullptr);
+		game = in_game;
+
 		// create the particle manager from the game texture atlas
 		if (!CreateInternalData(nullptr, game->GetTextGenerator(), game->GetTextureAtlas()))
 			return false;

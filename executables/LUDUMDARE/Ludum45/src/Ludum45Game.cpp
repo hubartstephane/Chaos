@@ -45,7 +45,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
-	return new LudumPlayingHUD(this);
+	return new LudumPlayingHUD();
 }
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()

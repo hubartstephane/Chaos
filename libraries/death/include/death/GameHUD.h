@@ -23,12 +23,9 @@ namespace death
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
 
-	//	CHAOS_OBJECT_DECLARE_CLASS2(GameHUD, chaos::GPURenderable);
+		CHAOS_OBJECT_DECLARE_CLASS2(GameHUD, chaos::GPURenderable);
 
 	public:
-
-		/** constructor */
-		GameHUD(class Game * in_game);
 
 		/** getters on game */
 		chaos::AutoCastable<Game> GetGame() { return game; }
@@ -83,7 +80,7 @@ namespace death
 		}
 
 		/** initialization of the HUD from the game values */
-		virtual bool InitializeHUD();
+		virtual bool Initialize(Game* in_game);
 
 		/** insert a component inside the HUD */
 		template<typename COMPONENT_TYPE, typename ...PARAMS>
@@ -181,11 +178,7 @@ namespace death
 
 	class MainMenuHUD : public GameHUD
 	{
-	public:
-
-		/** constructor */
-		MainMenuHUD(class Game * in_game) :
-			GameHUD(in_game) {}
+		CHAOS_OBJECT_DECLARE_CLASS2(MainMenuHUD, GameHUD);
 
 	protected:
 
@@ -199,11 +192,8 @@ namespace death
 
 	class PauseMenuHUD : public GameHUD
 	{
-	public:
 
-		/** constructor */
-		PauseMenuHUD(class Game * in_game) :
-			GameHUD(in_game) {}
+		CHAOS_OBJECT_DECLARE_CLASS2(PauseMenuHUD, GameHUD);
 
 	protected:
 
@@ -217,11 +207,8 @@ namespace death
 
 	class GameOverHUD : public GameHUD
 	{
-	public:
 
-		/** constructor */
-		GameOverHUD(class Game * in_game) :
-			GameHUD(in_game) {}
+		CHAOS_OBJECT_DECLARE_CLASS2(GameOverHUD, GameHUD);
 
 	protected:
 
@@ -236,11 +223,7 @@ namespace death
 	class PlayingHUD : public GameHUD
 	{
 
-	public:
-
-		/** constructor */
-		PlayingHUD(class Game * in_game) :
-			GameHUD(in_game) {}
+		CHAOS_OBJECT_DECLARE_CLASS2(PlayingHUD, GameHUD);
 
 	protected:
 

@@ -215,7 +215,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
-	return new LudumPlayingHUD(this);
+	return new LudumPlayingHUD();
 }
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()

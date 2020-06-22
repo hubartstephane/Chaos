@@ -14,10 +14,6 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	/** constructor */
-	LudumPlayingHUD(death::Game * in_game) :
-		death::PlayingHUD(in_game) {}
-
 protected:
 
 	/** override */

@@ -32,7 +32,7 @@ LudumGame::LudumGame()
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
-	return new LudumPlayingHUD(this);
+	return new LudumPlayingHUD();
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)

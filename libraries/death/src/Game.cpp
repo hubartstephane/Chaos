@@ -1398,7 +1398,7 @@ namespace death
 		hud = DoCreate##classname();\
 		if (hud == nullptr)\
 			return false;\
-		if (!hud->InitializeHUD())\
+		if (!hud->Initialize(this))\
 		{\
 			hud = nullptr;\
 			return false;\
@@ -1407,7 +1407,7 @@ namespace death
 	}\
 	GameHUD * Game::DoCreate##classname()\
 	{\
-		return new classname(this);\
+		return new classname();\
 	}
 	DEATH_IMPLEMENTHUD_FUNC(PauseMenuHUD);
 	DEATH_IMPLEMENTHUD_FUNC(MainMenuHUD);

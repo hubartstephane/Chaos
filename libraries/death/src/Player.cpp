@@ -14,11 +14,6 @@ namespace death
 	// Player
 	// =================================================
 
-	Player::~Player()
-	{
-
-	}
-
 	void Player::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
 	{
         health = max_health;

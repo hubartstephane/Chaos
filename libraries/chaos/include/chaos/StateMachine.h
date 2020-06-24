@@ -211,9 +211,6 @@ namespace chaos
 
 		public:
 
-			/** destructor */
-			virtual ~StateMachine() = default;
-
 			/** the initialization method */
 			virtual bool Initialize() { return true; }
 

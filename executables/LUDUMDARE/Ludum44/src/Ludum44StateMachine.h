@@ -14,8 +14,4 @@ class LudumStateMachine : public death::GameStateMachine
 {
 	friend class LudumGame;
 
-public:
-
-	/** constructor */
-	LudumStateMachine(LudumGame * in_game);
 };

@@ -927,7 +927,7 @@ namespace death
 		game_sm = DoCreateGameStateMachine();
 		if (game_sm == nullptr)
 			return false;
-		if (!game_sm->InitializeStateMachine()) // create all internal states and transition
+		if (!game_sm->Initialize()) // create all internal states and transition
 			return false;
 		game_sm_instance = DoCreateGameStateMachineInstance(game_sm.get());
 		if (game_sm_instance == nullptr)

@@ -147,21 +147,8 @@ namespace death
 
 	public:
 
-		/** constructor */
-		GameStateMachine(Game * in_game);
-
-		/** get the game */
-		Game * GetGame() { return game; }
-		/** get the game */
-		Game const * GetGame() const { return game; }
-
 		/** create states and transitions */
-		virtual bool InitializeStateMachine() override;
-
-	protected:
-
-		/** the game */
-		Game * game = nullptr;
+		virtual bool Initialize() override;
 
 	public:
 

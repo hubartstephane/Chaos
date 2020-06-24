@@ -16,10 +16,6 @@ namespace chaos
 			assert(in_state_machine != nullptr);		
 		}
 
-		StateBase::~StateBase()
-		{
-		}
-
 		// ==================================================
 		// State
 		// ==================================================

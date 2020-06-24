@@ -53,7 +53,7 @@ void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode o
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 {
-	return new LudumStateMachine(this);
+	return new LudumStateMachine();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)

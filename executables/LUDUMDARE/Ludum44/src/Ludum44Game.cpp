@@ -32,6 +32,8 @@ LudumGame::LudumGame()
 	[ButtonY] or [KEYBOARD ALT]   : Trade POWER-UP and LIFE)INSTRUCTIONS";
 
 	looping_levels = false;
+
+	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
@@ -45,11 +47,6 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
-}
-
-chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
-{
-	return new LudumStateMachine();
 }
 
 template<typename T>
@@ -107,11 +104,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 		return false;
 
 	return true;
-}
-
-death::GameInstance * LudumGame::DoCreateGameInstance()
-{
-	return new LudumGameInstance();
 }
 
 bool LudumGame::PopulatePowerOneUp(LudumPowerUp * power_up, char const * json_name, nlohmann::json const & config, boost::filesystem::path const & config_path)

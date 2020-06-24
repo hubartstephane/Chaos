@@ -20,6 +20,7 @@
 #include <chaos/TimedAccumulator.h>
 #include <chaos/FileResource.h>
 #include <chaos/AutoCast.h>
+#include <chaos/SubClassOf.h>
 
 #include <death/GameFramework.h>
 #include <death/GameHUD.h>
@@ -67,6 +68,9 @@ namespace death
 		CHAOS_OBJECT_DECLARE_CLASS2(Game, chaos::Object);
 
 		DEATH_GAMEGETTERS_DECLARE();
+
+		/** constructor */
+		Game();
 
 		/** initialization method */
 		bool Initialize(GLFWwindow * in_glfw_window);
@@ -430,6 +434,7 @@ namespace death
 
 		/** pointer on the state_machine */
 		chaos::shared_ptr<chaos::SM::StateMachine> game_sm;
+		chaos::SubClassOf<chaos::SM::StateMachine> game_sm_class;
 		/** pointer on the state_machine instance */
 		chaos::shared_ptr<chaos::SM::StateMachineInstance> game_sm_instance;
 
@@ -483,11 +488,14 @@ namespace death
 
 		/** the game instance */
 		chaos::shared_ptr<GameInstance> game_instance;
+		chaos::SubClassOf<GameInstance> game_instance_class;
 
 		/** the free camera */
 		mutable chaos::shared_ptr<Camera> free_camera;
 		/** free camera mode */
 		bool free_camera_mode = false;
+
+		
 	};
 
 }; // namespace death

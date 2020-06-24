@@ -23,6 +23,8 @@
 LudumGame::LudumGame()
 {
 	game_name = "AsciiPaouf 2";
+
+	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
@@ -44,11 +46,6 @@ void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode o
 	LudumGameInstance * ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance != nullptr)
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
-}
-
-chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
-{
-	return new LudumStateMachine();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
@@ -318,9 +315,4 @@ int LudumGame::AddParticleLayers()
 	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	return render_order;
-}
-
-death::GameInstance * LudumGame::DoCreateGameInstance()
-{
-	return new LudumGameInstance();
 }

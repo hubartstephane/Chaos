@@ -28,6 +28,8 @@ LudumGame::LudumGame()
 	Enter : Pause (You should have a look)
 	F10   : Toggle Fullscreen)INSTRUCTIONS";
 	looping_levels = false;
+
+	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
@@ -49,11 +51,6 @@ void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode o
 	LudumGameInstance * ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance != nullptr)
 		ludum_game_instance->OnInputModeChanged(new_mode, old_mode);
-}
-
-chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
-{
-	return new LudumStateMachine();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
@@ -354,7 +351,3 @@ int LudumGame::AddParticleLayers()
 	return render_order;
 }
 
-death::GameInstance * LudumGame::DoCreateGameInstance()
-{
-	return new LudumGameInstance();
-}

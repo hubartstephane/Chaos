@@ -202,8 +202,11 @@ namespace death
 
 	bool LevelInstance::Initialize(Game * in_game, Level * in_level)
 	{
+		// ensure valid arguments and not already initialized
 		assert(in_game != nullptr);
+		assert(game == nullptr);
 		assert(in_level != nullptr);
+		assert(level == nullptr);
 		game  = in_game;
 		level = in_level;		
 		// create the level clock

@@ -76,7 +76,9 @@ namespace death
 
 	bool GameHUD::Initialize(Game* in_game)
 	{
+		// ensure valid arguments and not already initialized
 		assert(in_game != nullptr);
+		assert(game == nullptr);
 		game = in_game;
 
 		// create the particle manager from the game texture atlas

@@ -27,7 +27,9 @@ namespace death
 
 	bool Camera::Initialize(LevelInstance * in_level_instance)		
 	{
+		// ensure valid arguments and not already initialized
 		assert(in_level_instance != nullptr);
+		assert(level_instance == nullptr);
 		level_instance = in_level_instance;
 		return true;
 	}

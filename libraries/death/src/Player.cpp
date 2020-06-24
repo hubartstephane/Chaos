@@ -22,8 +22,9 @@ namespace death
 
 	bool Player::Initialize(death::GameInstance * in_game_instance)
 	{
+		// ensure valid arguments and not already initialized
 		assert(in_game_instance != nullptr);
-
+		assert(game_instance == nullptr);
 		game_instance = in_game_instance;
 
 		// read the configuration

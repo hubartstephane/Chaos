@@ -175,7 +175,9 @@ namespace death
 
 	bool GameInstance::Initialize(death::Game * in_game)
 	{
+		// ensure valid arguments and not already initialized
 		assert(in_game != nullptr);
+		assert(game == nullptr);
 
 		game = in_game;
 

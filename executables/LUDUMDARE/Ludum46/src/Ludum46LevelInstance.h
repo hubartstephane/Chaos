@@ -23,6 +23,8 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TiledMapLevelInstance);
+
 	void SpawnBloodParticles(chaos::box2 const& box, int particles_count);
 
 	void SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count);

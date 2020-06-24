@@ -23,6 +23,8 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TiledMapLevelInstance);
+
 	/** Set current scroll factor */
 	void SetScrollFactor(float in_scroll_factor){ scroll_factor = in_scroll_factor;}
 	/** Get current scroll factor */

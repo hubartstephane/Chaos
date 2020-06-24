@@ -13,6 +13,7 @@
 
 class LudumLevel : public death::Level
 {
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::Level);
 
 public:
 

@@ -25,6 +25,11 @@ namespace death
 {
 	DEATH_GAMEGETTERS_IMPLEMENT(Game);
 
+	Game::Game()
+	{
+		game_sm_class = GameStateMachine::GetStaticClass();
+	}
+
 	bool Game::Initialize(GLFWwindow* in_glfw_window)	
 	{
 		// ensure valid arguments and not already initialized
@@ -939,7 +944,7 @@ namespace death
 
 	chaos::SM::StateMachine * Game::DoCreateGameStateMachine()
 	{
-		return nullptr;
+		return game_sm_class.CreateInstance();
 	}
 
 	chaos::SM::StateMachineInstance * Game::DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine)
@@ -1602,7 +1607,7 @@ namespace death
 
 	GameInstance * Game::DoCreateGameInstance()
 	{
-		return new GameInstance();
+		return game_instance_class.CreateInstance();
 	}
 
 	bool Game::IsFreeCameraMode() const

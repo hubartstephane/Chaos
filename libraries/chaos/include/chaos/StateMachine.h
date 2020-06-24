@@ -209,6 +209,8 @@ namespace chaos
 		{
 			CHAOS_STATEMACHINE_ALL_FRIENDS
 
+			CHAOS_OBJECT_DECLARE_CLASS2(StateMachine, Object);
+
 		public:
 
 			/** the initialization method */

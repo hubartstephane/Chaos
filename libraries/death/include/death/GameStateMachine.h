@@ -145,6 +145,8 @@ namespace death
 	{
 		friend class Game;
 
+		CHAOS_OBJECT_DECLARE_CLASS2(GameStateMachine, chaos::SM::StateMachine);
+
 	public:
 
 		/** create states and transitions */

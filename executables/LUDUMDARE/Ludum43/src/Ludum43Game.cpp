@@ -32,6 +32,8 @@ Save particles to the level exit.
 Black holes and Shadows are dangerous.
 [ButtonA] Turbo
 [ButtonB] Ejects particles)INSTRUCTIONS";
+
+	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
@@ -218,11 +220,6 @@ death::GameHUD * LudumGame::DoCreatePlayingHUD()
 	return new LudumPlayingHUD();
 }
 
-chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
-{
-	return new LudumStateMachine();
-}
-
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
 	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
@@ -334,9 +331,4 @@ bool LudumGame::GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<c
 		return false;
 
 	return true;
-}
-
-death::GameInstance * LudumGame::DoCreateGameInstance()
-{
-	return new LudumGameInstance();
 }

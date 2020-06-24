@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Ludum41IsolationStateMachine.h"
 #include "Ludum41IsolationChallenge.h"
 #include "Ludum41IsolationParticles.h"
 #include "Ludum41IsolationChallengeRewardPunishment.h"
@@ -53,9 +52,6 @@ protected:
 	death::GameHUD * DoCreatePlayingHUD() override;
 
 	/** override */
-	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
-
-	/** override */
 	virtual void OnEnterMainMenu(bool very_first) override;
 
 	/** initialize the dictionnary */
@@ -79,8 +75,6 @@ protected:
 
 	/** override */
 	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
-
-	virtual death::GameInstance * DoCreateGameInstance() override;
 
 protected:
 

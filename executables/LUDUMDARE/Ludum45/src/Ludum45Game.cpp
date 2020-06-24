@@ -32,6 +32,8 @@ LudumGame::LudumGame()
 	[ButtonY] or [KEYBOARD ALT]   : Bright side of life)INSTRUCTIONS";
 
 	looping_levels = false;
+
+	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
@@ -46,11 +48,6 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 death::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
-}
-
-chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
-{
-	return new LudumStateMachine();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
@@ -92,11 +89,6 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	RegisterEnemyTypes();
 
 	return true;
-}
-
-death::GameInstance * LudumGame::DoCreateGameInstance()
-{
-	return new LudumGameInstance();
 }
 
 template<typename FUNC>

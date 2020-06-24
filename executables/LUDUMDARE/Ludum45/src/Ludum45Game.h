@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Ludum45StateMachine.h"
 #include "Ludum45Particles.h"
 #include "Ludum45Level.h"
 #include "Ludum45Enemies.h"
@@ -36,7 +35,6 @@ class LudumGame : public death::Game
 
 
 	friend class LudumWindow;
-	friend class LudumStateMachine;
 	friend class MainMenuState;
 	friend class PlayingToPauseTransition;
 	friend class PauseToPlayingTransition;
@@ -69,9 +67,6 @@ public:
 protected:
 
 	/** override */
-	virtual chaos::SM::StateMachine * DoCreateGameStateMachine() override;
-
-	/** override */
 	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
 
 	/** initialize the game variables */
@@ -82,8 +77,6 @@ protected:
 
 	/** move the player */
 	virtual death::GameHUD * DoCreatePlayingHUD() override;
-
-	virtual death::GameInstance * DoCreateGameInstance() override;
 
 	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params) override;
 

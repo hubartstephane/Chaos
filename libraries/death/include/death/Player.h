@@ -32,9 +32,6 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
-		/** destructor */
-		virtual ~Player();
-
 		/** get the index of the player */
 		size_t GetPlayerIndex() const { return player_index; }
 

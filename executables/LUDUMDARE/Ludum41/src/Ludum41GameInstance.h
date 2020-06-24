@@ -39,6 +39,8 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, death::GameInstance);
+
 	/** some challenges */
 	void OnBrickLifeChallenge(bool success);
 	bool IsBrickLifeChallengeValid(bool success);

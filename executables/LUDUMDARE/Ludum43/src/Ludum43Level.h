@@ -40,6 +40,8 @@ class LudumLevel : public death::TiledMapLevel
 {
 	friend class LudumLevelInstance;
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::TiledMapLevel);
+
 protected:
 
 	/** override */

@@ -23,6 +23,8 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::LevelInstance);
+
 	/** override */
 	virtual bool CheckLevelCompletion() const override;
 	/** override */

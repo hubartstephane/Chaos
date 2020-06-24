@@ -14,4 +14,5 @@ class LudumStateMachine : public death::GameStateMachine
 {
 	friend class LudumGame;
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumStateMachine, death::GameStateMachine);
 };

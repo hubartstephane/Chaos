@@ -13,6 +13,10 @@
 class LudumGameInstance : public death::GameInstance
 {
 
+	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
+
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, death::GameInstance);
+
 public:
 
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }

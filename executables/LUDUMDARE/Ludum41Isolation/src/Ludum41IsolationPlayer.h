@@ -22,6 +22,8 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
+
 	/** change the length of the player */
 	void SetPlayerLength(float in_length, bool increment);
 	/** get current player length */

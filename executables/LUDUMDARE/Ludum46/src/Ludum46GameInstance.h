@@ -24,6 +24,8 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, death::GameInstance);
+
 protected:
 
 	virtual death::Player * DoCreatePlayer() override;

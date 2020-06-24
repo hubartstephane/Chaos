@@ -49,7 +49,7 @@ death::GameHUD * LudumGame::DoCreatePlayingHUD()
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 {
-	return new LudumStateMachine(this);
+	return new LudumStateMachine();
 }
 
 template<typename T>

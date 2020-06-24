@@ -14,19 +14,19 @@ public:
 		std::vector<FIBITMAP*> split_images;
 
 		int SrcImageNumberW = 2;
-		int SrcImageNumberH = 19;
+		int SrcImageNumberH = 4;
 
 		int SrcBitmapWidth  = FreeImage_GetWidth(bitmap) / SrcImageNumberW;
 		int SrcBitmapHeight = FreeImage_GetHeight(bitmap) / SrcImageNumberH;
 
-		int DstImageNumberW = 7;
-		int DstImageNumberH = 6;
+		int DstImageNumberW = 2;
+		int DstImageNumberH = 4;
 
-		int DstFullImageNumberW = 8;
-		int DstFullImageNumberH = 8;
+		int DstFullImageNumberW = 2;
+		int DstFullImageNumberH = 4;
 
-		int DstBitmapWidth = 256;
-		int DstBitmapHeight = 256;
+		int DstBitmapWidth = 190;
+		int DstBitmapHeight = 250;
 
 
 		int OffsetX = 0;

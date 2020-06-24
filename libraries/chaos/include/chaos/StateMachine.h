@@ -41,8 +41,6 @@ namespace chaos
 
 			/** constructor */
 			StateBase(StateMachine * in_state_machine);
-			/** destructor */
-			virtual ~StateBase();
 
 		protected:
 
@@ -216,8 +214,8 @@ namespace chaos
 			/** destructor */
 			virtual ~StateMachine() = default;
 
-			/** create states and transitions */
-			virtual bool InitializeStateMachine(){ return true; }
+			/** the initialization method */
+			virtual bool Initialize() { return true; }
 
 			/** set the initial state */
 			void SetInitialState(StateBase * in_state);

@@ -185,13 +185,7 @@ namespace death
 	// GameStateMachine
 	// =========================================================
 
-	GameStateMachine::GameStateMachine(class Game * in_game) :
-		game(in_game)
-	{
-		assert(in_game != nullptr);
-	}
-
-	bool GameStateMachine::InitializeStateMachine()
+	bool GameStateMachine::Initialize()
 	{
 		main_menu_state = new MainMenuState(this);
 		playing_state = new PlayingState(this);

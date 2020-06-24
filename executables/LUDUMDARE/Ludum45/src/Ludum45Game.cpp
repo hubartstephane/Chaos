@@ -50,7 +50,7 @@ death::GameHUD * LudumGame::DoCreatePlayingHUD()
 
 chaos::SM::StateMachine * LudumGame::DoCreateGameStateMachine()
 {
-	return new LudumStateMachine(this);
+	return new LudumStateMachine();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)

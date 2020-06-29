@@ -19,13 +19,13 @@ class LudumGameInstance : public death::GameInstance
 
 public:
 
+	LudumGameInstance();
+
 	int GetWakenUpParticleCount() const { return waken_up_particle_count; }
 
 	void NotifyAtomCountChange(int delta);
 
 protected:
-
-	virtual death::Player * DoCreatePlayer() override;
 
 	virtual void OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance) override;
 

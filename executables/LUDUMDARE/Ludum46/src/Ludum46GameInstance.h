@@ -26,9 +26,9 @@ public:
 
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, death::GameInstance);
 
-protected:
+	LudumGameInstance();
 
-	virtual death::Player * DoCreatePlayer() override;
+protected:
 
 	virtual void OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance) override;
 };

@@ -6,10 +6,9 @@
 
 #include <death/SoundContext.h>
 
-
-death::Player * LudumGameInstance::DoCreatePlayer()
+LudumGameInstance::LudumGameInstance()
 {
-	return new LudumPlayer();
+	player_class = LudumPlayer::GetStaticClass();
 }
 
 void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)

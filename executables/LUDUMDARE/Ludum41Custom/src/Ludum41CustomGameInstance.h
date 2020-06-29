@@ -41,6 +41,8 @@ public:
 
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, death::GameInstance);
 
+	LudumGameInstance();
+
 	/** some challenges */
 	void OnBrickLifeChallenge(bool success);
 	bool IsBrickLifeChallengeValid(bool success);
@@ -95,8 +97,6 @@ public:
 	LudumChallenge * CreateSequenceChallenge(std::string keyboard_challenge);
 
 protected:
-
-	virtual death::Player * DoCreatePlayer() override;
 
 	virtual bool DoTick(float delta_time) override;
 

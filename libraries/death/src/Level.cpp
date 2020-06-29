@@ -25,7 +25,7 @@ namespace death
 
 	LevelInstance * Level::DoCreateLevelInstance()
 	{
-		return new LevelInstance;
+		return level_instance_class.CreateInstance();
 	}
 
 }; // namespace death

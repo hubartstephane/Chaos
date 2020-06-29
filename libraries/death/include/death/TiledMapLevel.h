@@ -73,6 +73,8 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapObject, chaos::Tickable);
+
 	public:
 
 		/** constructor */
@@ -113,6 +115,8 @@ namespace death
 	class TiledMapGeometricObject : public TiledMapObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapGeometricObject, TiledMapObject);
 
 	public:
 
@@ -156,6 +160,8 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCameraObject, TiledMapGeometricObject);
+
 	public:
 
 		/** inherit constructor */
@@ -174,6 +180,8 @@ namespace death
 	class TiledMapPlayerStartObject : public TiledMapGeometricObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapPlayerStartObject, TiledMapGeometricObject);
 
 	public:
 
@@ -198,6 +206,8 @@ namespace death
 	class TiledMapTriggerObject : public TiledMapGeometricObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerObject, TiledMapGeometricObject);
 
 	public:
 
@@ -271,6 +281,8 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapNotificationTriggerObject, TiledMapTriggerObject);
+
 	public:
 
 		/** constructor */
@@ -305,6 +317,8 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCheckpointTriggerObject, TiledMapTriggerObject);
+
 	public:
 
 		/** constructor */
@@ -327,6 +341,8 @@ namespace death
 	class TiledMapSoundTriggerObject : public TiledMapTriggerObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapSoundTriggerObject, TiledMapTriggerObject);
 
 	public:
 
@@ -374,6 +390,8 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapFinishingTriggerObject, TiledMapTriggerObject);
+
 	public:
 
 		/** inherit constructor */
@@ -419,7 +437,12 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevel, Level);
+
 	public:
+
+		/** constructor */
+		TiledMapLevel();
 
 		/** initialization from tiled_map */
 		virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map);
@@ -430,10 +453,6 @@ namespace death
 		chaos::TiledMap::Map const* GetTiledMap() const { return tiled_map.get(); }
 
 	protected:
-
-		/** create a level instance for that level user specified function */
-		virtual LevelInstance* DoCreateLevelInstance() override;
-
 
 		/** create a typed object specializable method */
 		virtual GeometricObjectFactory DoGetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
@@ -503,6 +522,8 @@ namespace death
 	class TiledMapLayerInstance : public chaos::GPURenderable, public CheckpointObject<TiledMapLayerCheckpoint>
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLayerInstance, chaos::GPURenderable);
 
 	protected:
 
@@ -765,6 +786,8 @@ namespace death
 	class TiledMapLevelInstance : public LevelInstance
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
+
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevelInstance, LevelInstance);
 
 	public:
 

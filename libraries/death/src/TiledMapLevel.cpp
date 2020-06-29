@@ -501,6 +501,11 @@ namespace death
 	// TiledMapLevel implementation
 	// =====================================
 
+	TiledMapLevel::TiledMapLevel()
+	{
+		level_instance_class = TiledMapLevelInstance::GetStaticClass();
+	}
+
 	bool TiledMapLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 	{
 		assert(in_tiled_map != nullptr);
@@ -514,11 +519,6 @@ namespace death
 		// get the level time	
 		level_timeout = in_tiled_map->GetPropertyValueFloat("LEVEL_TIMEOUT", level_timeout);
 		return true;
-	}
-
-	LevelInstance* TiledMapLevel::DoCreateLevelInstance()
-	{
-		return new TiledMapLevelInstance;
 	}
 
 	chaos::BitmapAtlas::TextureArrayAtlas const* TiledMapLevel::GetTextureAtlas(TiledMapLayerInstance* layer_instance) const

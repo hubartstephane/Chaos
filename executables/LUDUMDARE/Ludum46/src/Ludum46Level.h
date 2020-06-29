@@ -210,10 +210,9 @@ class LudumLevel : public death::TiledMapLevel
 
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::TiledMapLevel);
 
-protected:
+	LudumLevel();
 
-	/** override */
-	virtual death::LevelInstance * DoCreateLevelInstance() override;
+protected:
 
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 

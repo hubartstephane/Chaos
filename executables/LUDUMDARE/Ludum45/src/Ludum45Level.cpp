@@ -130,9 +130,9 @@ bool EnemySpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object
 // LudumLevel implementation
 // =============================================================
 
-death::LevelInstance * LudumLevel::DoCreateLevelInstance()
+LudumLevel::LudumLevel()
 {
-	return new LudumLevelInstance();
+	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
 chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)

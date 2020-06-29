@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/Object.h>
 #include <chaos/FileResource.h>
+#include <chaos/SubClassOf.h>
 
 #include <death/GameFramework.h>
 #include <death/GameGettersDecl.h>
@@ -44,6 +45,9 @@ namespace death
 		std::string level_title;
 		/** the index of the level (maybe a key or an ordered index) */
 		int level_index = 0;
+
+		/** the level instance class */
+		chaos::SubClassOf<LevelInstance> level_instance_class;
 	};
 
 }; // namespace death

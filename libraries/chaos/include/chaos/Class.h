@@ -85,6 +85,9 @@ namespace chaos
 		/** returns whether the class inherits from parent */
 		InheritanceType InheritsFrom(Class const* other, bool accept_equal = false) const;
 
+		/** get the list of all classes */
+		static std::vector<Class const*>& GetClassesList();
+
 	protected:
 
 		/** return the class for a type even if not initialized */
@@ -94,9 +97,6 @@ namespace chaos
 			static Class result;
 			return &result;
 		}
-
-		/** get the list of all classes */
-		static std::vector<Class const*>& GetClassesList();
 
 	protected:
 

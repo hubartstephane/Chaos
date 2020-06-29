@@ -21,13 +21,10 @@ public:
 	static constexpr int NONE = -1;
 	static constexpr int INDESTRUCTIBLE = -2;
 
+	LudumLevel();
+
 	/** get the number of brick in the level */
 	size_t GetBrickCount() const;
-
-protected:
-
-	/** override */
-	virtual death::LevelInstance * DoCreateLevelInstance() override;
 
 public:
 

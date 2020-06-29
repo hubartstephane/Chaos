@@ -6,6 +6,11 @@
 
 #include <death/SoundContext.h>
 
+LudumGameInstance::LudumGameInstance()
+{
+	player_class = LudumPlayer::GetStaticClass();
+}
+
 size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 {
 	size_t ball_count = GetBallCount();
@@ -209,11 +214,6 @@ bool LudumGameInstance::DoTick(float delta_time)
 		TickBallSplit(delta_time);
 	}
 	return true;
-}
-
-death::Player * LudumGameInstance::DoCreatePlayer()
-{
-	return new LudumPlayer();
 }
 
 void LudumGameInstance::IncrementScore(int delta)

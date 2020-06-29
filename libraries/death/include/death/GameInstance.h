@@ -6,6 +6,7 @@
 #include <chaos/InputEventReceiver.h>
 #include <chaos/SoundManager.h>
 #include <chaos/AutoCast.h>
+#include <chaos/SubClassOf.h>
 
 #include <death/GameFramework.h>
 #include <death/Player.h>
@@ -157,6 +158,9 @@ namespace death
 
 		/** the configuration object to use for players */
 		nlohmann::json player_configuration;
+
+		/** the player class */
+		chaos::SubClassOf<Player> player_class;
 
 		/** all the players present in the game */
 		std::vector<chaos::shared_ptr<Player>> players;

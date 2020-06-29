@@ -6,9 +6,9 @@
 
 #include <death/SoundContext.h>
 
-death::Player * LudumGameInstance::DoCreatePlayer()
+LudumGameInstance::LudumGameInstance()
 {
-	return new LudumPlayer();
+	player_class = LudumPlayer::GetStaticClass();
 }
 
 bool LudumGameInstance::DoTick(float delta_time)

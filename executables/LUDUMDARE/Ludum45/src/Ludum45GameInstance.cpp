@@ -6,11 +6,10 @@
 
 #include <death/SoundContext.h>
 
-death::Player * LudumGameInstance::DoCreatePlayer()
+LudumGameInstance::LudumGameInstance()
 {
-	return new LudumPlayer();
+	player_class = LudumPlayer::GetStaticClass();
 }
-
 void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 {
 	LudumLevelInstance* ludum_level_instance = GetLevelInstance();

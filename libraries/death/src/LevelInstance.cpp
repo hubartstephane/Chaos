@@ -4,6 +4,7 @@
 #include <death/GameInstance.h>
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
+#include <death/PlayerPawn.h>
 #include <death/GameGettersImpl.h>
 
 #include <chaos/CollisionFramework.h>
@@ -65,7 +66,7 @@ namespace death
 
 	PlayerPawn* LevelInstance::DoCreatePlayerPawn()
 	{
-		return new PlayerPawn();
+		return player_pawn_class.CreateInstance();
 	}
 
 	PlayerPawn * LevelInstance::CreatePlayerPawn(Player* player)

@@ -24,13 +24,10 @@ public:
 	static constexpr int TWO_LIFE = -2;
 	static constexpr int NONE = -1;
 	
+	LudumLevel();
+
 	/** get the number of brick in the level */
 	size_t GetBrickCount() const;
-
-protected:
-
-	/** override */
-	virtual death::LevelInstance * DoCreateLevelInstance() override;
 
 public:
 

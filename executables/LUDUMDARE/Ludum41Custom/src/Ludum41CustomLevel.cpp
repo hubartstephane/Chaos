@@ -4,6 +4,11 @@
 #include "Ludum41CustomGameInstance.h"
 #include "Ludum41CustomPlayer.h"
 
+LudumLevel::LudumLevel()
+{
+	level_instance_class = LudumLevelInstance::GetStaticClass();
+}
+
 size_t LudumLevel::GetBrickCount() const
 {
 	size_t result = 0;
@@ -15,9 +20,4 @@ size_t LudumLevel::GetBrickCount() const
 				++result;
 	}
 	return result;
-}
-
-death::LevelInstance * LudumLevel::DoCreateLevelInstance()
-{
-	return new LudumLevelInstance;
 }

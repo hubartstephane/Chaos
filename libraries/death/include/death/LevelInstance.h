@@ -9,8 +9,10 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/SoundManager.h>
 #include <chaos/AutoCast.h>
+#include <chaos/SubClassOf.h>
 
 #include <death/Camera.h>
+#include <death/PlayerPawn.h>
 #include <death/GameFramework.h>
 #include <death/GameCheckpoint.h>
 #include <death/GameGettersDecl.h>
@@ -91,7 +93,6 @@ namespace death
 		/** create a camera and initialize it */
 		virtual Camera* CreateCamera();
 
-
 		/** gets a camera by its index */
 		Camera * DoGetCamera(size_t index, bool accept_freecam);
 		/** gets a camera by its index */
@@ -167,6 +168,9 @@ namespace death
 		chaos::shared_ptr<chaos::Clock> level_clock;
 		/** the camera */
 		std::vector<chaos::shared_ptr<Camera>> cameras;
+
+		/** class for the player pawn */
+		chaos::SubClassOf<PlayerPawn> player_pawn_class;
 	};
 
 }; // namespace death

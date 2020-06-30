@@ -21,16 +21,12 @@ class PowerUpTriggerObject : public death::TiledMapTriggerObject
 
 public:
 
-	/** constructor */
-	using death::TiledMapTriggerObject::TiledMapTriggerObject;
-
 	void ResetTrigger() { reset_trigger = true; }
-
-	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 protected:
 
+	/** override */
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 	/** override */
 	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -47,15 +43,10 @@ public:
 class SpeedUpTriggerObject : public death::TiledMapTriggerObject
 {
 
-public:
-
-	/** constructor */
-	using death::TiledMapTriggerObject::TiledMapTriggerObject;
-	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-
 protected:
 
+	/** override */
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 	/** override */
 	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -72,15 +63,10 @@ protected:
 class SpawnerTriggerObject : public death::TiledMapTriggerObject
 {
 
-public:
-
-	/** constructor */
-	using death::TiledMapTriggerObject::TiledMapTriggerObject;
-	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-
 protected:
 
+	/** override */
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 	/** override */
 	virtual bool OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type) override;
 

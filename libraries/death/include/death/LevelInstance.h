@@ -13,6 +13,7 @@
 
 #include <death/Camera.h>
 #include <death/PlayerPawn.h>
+#include <death/PlayerDisplacementComponent.h>
 #include <death/GameFramework.h>
 #include <death/GameCheckpoint.h>
 #include <death/GameGettersDecl.h>
@@ -171,6 +172,9 @@ namespace death
 
 		/** class for the player pawn */
 		chaos::SubClassOf<PlayerPawn> player_pawn_class;
+
+		/** class for the player displacement component */
+		chaos::SubClassOf<PlayerDisplacementComponent> player_displacement_component_class;
 	};
 
 }; // namespace death

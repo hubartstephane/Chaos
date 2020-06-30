@@ -97,19 +97,10 @@ namespace death
 		return result;
 	}
 
-
 	PlayerDisplacementComponent* LevelInstance::DoCreatePlayerDisplacementComponent()
 	{
-		return new PlayerDisplacementComponent();
+		return player_displacement_component_class.CreateInstance();
 	}
-
-
-
-
-
-
-
-
 
 	void LevelInstance::DestroyPlayerPawn(Player* player)
 	{

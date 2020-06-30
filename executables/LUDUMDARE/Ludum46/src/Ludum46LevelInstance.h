@@ -25,10 +25,11 @@ public:
 
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TiledMapLevelInstance);
 
+	LudumLevelInstance();
+
 	void SpawnBloodParticles(chaos::box2 const& box, int particles_count);
 
 	void SpawnBurnedSoulParticles(chaos::box2 const& box, int particles_count);
-
 
 protected:
 
@@ -44,8 +45,6 @@ protected:
 	virtual void OnPlayerLeaved(death::Player * player) override;
 	/** override */
 	virtual void CreateCameras() override;
-	/** override */
-	virtual death::PlayerDisplacementComponent* DoCreatePlayerDisplacementComponent() override;
 
 	/** override */
 	virtual death::LevelCheckpoint * DoCreateCheckpoint() const;

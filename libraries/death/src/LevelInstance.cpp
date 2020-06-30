@@ -121,7 +121,7 @@ namespace death
 
 	Camera* LevelInstance::DoCreateCamera()
 	{
-		return new Camera();
+		return camera_class.CreateInstance();
 	}
 
 	Camera* LevelInstance::CreateCamera()

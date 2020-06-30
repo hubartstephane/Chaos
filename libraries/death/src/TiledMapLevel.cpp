@@ -534,19 +534,19 @@ namespace death
 	{
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreatePlayerStartObject(););
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePlayerStart(););
 		// camera 
 		if (chaos::TiledMapTools::IsCameraObject(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateCameraObject(););
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCamera(););
 		// other kind of objects
 		if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateFinishingTriggerObject(););
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateChangeLevelTrigger(););
 		if (chaos::TiledMapTools::IsCheckpointTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateCheckpointTriggerObject(););
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCheckpointTrigger(););
 		if (chaos::TiledMapTools::IsNotificationTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateNotificationTriggerObject(););
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateNotificationTrigger(););
 		if (chaos::TiledMapTools::IsSoundTrigger(in_typed_object))
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return DoCreateSoundTriggerObject(););
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateSoundTrigger(););
 		return nullptr;
 	}
 
@@ -570,27 +570,27 @@ namespace death
 		return result;
 	}
 	
-	TiledMapCamera* TiledMapLevel::DoCreateCameraObject()
+	TiledMapCamera* TiledMapLevel::DoCreateCamera()
 	{
 		return new TiledMapCamera();
 	}
-	TiledMapChangeLevelTrigger* TiledMapLevel::DoCreateFinishingTriggerObject()
+	TiledMapChangeLevelTrigger* TiledMapLevel::DoCreateChangeLevelTrigger()
 	{
 		return new TiledMapChangeLevelTrigger();
 	}
-	TiledMapCheckpointTrigger* TiledMapLevel::DoCreateCheckpointTriggerObject()
+	TiledMapCheckpointTrigger* TiledMapLevel::DoCreateCheckpointTrigger()
 	{
 		return new TiledMapCheckpointTrigger();
 	}
-	TiledMapNotificationTrigger* TiledMapLevel::DoCreateNotificationTriggerObject()
+	TiledMapNotificationTrigger* TiledMapLevel::DoCreateNotificationTrigger()
 	{
 		return new TiledMapNotificationTrigger();
 	}
-	TiledMapSoundTrigger* TiledMapLevel::DoCreateSoundTriggerObject()
+	TiledMapSoundTrigger* TiledMapLevel::DoCreateSoundTrigger()
 	{
 		return new TiledMapSoundTrigger();
 	}
-	TiledMapPlayerStart* TiledMapLevel::DoCreatePlayerStartObject()
+	TiledMapPlayerStart* TiledMapLevel::DoCreatePlayerStart()
 	{
 		return new TiledMapPlayerStart();
 	}

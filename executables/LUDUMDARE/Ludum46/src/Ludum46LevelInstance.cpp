@@ -17,6 +17,11 @@
 // LudumLevelInstance implementation
 // =============================================================
 
+LudumLevelInstance::LudumLevelInstance()
+{
+	player_displacement_component_class = LudumPlayerDisplacementComponent::GetStaticClass();
+}
+
 void LudumLevelInstance::CreateCameras()
 {
 	death::TiledMapLevelInstance::CreateCameras();
@@ -113,11 +118,6 @@ bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoin
 		return false;
 
 	return true;
-}
-
-death::PlayerDisplacementComponent* LudumLevelInstance::DoCreatePlayerDisplacementComponent()
-{
-	return new LudumPlayerDisplacementComponent();
 }
 
 int LudumLevelInstance::GetCurrentSoulCount() const

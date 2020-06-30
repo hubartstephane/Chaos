@@ -19,6 +19,8 @@
 class MyChangeLevelTrigger : public death::TiledMapTrigger
 {
 
+	CHAOS_OBJECT_DECLARE_CLASS2(MyChangeLevelTrigger, death::TiledMapTrigger);
+
 protected:
 
 	/** override */
@@ -45,5 +47,5 @@ protected:
 
 	virtual bool FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation) override;
 
-	virtual death::GeometricObjectFactory DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
+	virtual death::GeometricObjectFactory DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
 };

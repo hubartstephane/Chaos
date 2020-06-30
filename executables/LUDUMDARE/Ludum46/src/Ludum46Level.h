@@ -55,6 +55,8 @@ class Spawner : public death::TiledMapObject
 
 public:
 
+	CHAOS_OBJECT_DECLARE_CLASS2(Spawner, death::TiledMapObject);
+
 	/** override */
 	virtual bool DoTick(float delta_time);
 
@@ -96,6 +98,8 @@ class FireSpawner : public Spawner, public EffectorObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
+	CHAOS_OBJECT_DECLARE_CLASS2(FireSpawner, Spawner);
+
 public:
 
 	/** override */
@@ -115,6 +119,8 @@ class SoulSpawner : public Spawner
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
+	CHAOS_OBJECT_DECLARE_CLASS2(SoulSpawner, Spawner);
+
 
 
 
@@ -127,6 +133,8 @@ class SoulSpawner : public Spawner
 class SpikeBar : public death::TiledMapObject, public EffectorObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+	CHAOS_OBJECT_DECLARE_CLASS2(SpikeBar, death::TiledMapObject);
 
 public:
 
@@ -145,6 +153,8 @@ protected:
 class SoulTrigger : public death::TiledMapObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+	CHAOS_OBJECT_DECLARE_CLASS2(SoulTrigger, death::TiledMapObject);
 
 public:
 
@@ -179,6 +189,8 @@ class SoulBurnTrigger : public SoulTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
+	CHAOS_OBJECT_DECLARE_CLASS2(SoulBurnTrigger, SoulTrigger);
+
 public:
 
 	virtual bool AddTriggerCount() override;
@@ -202,7 +214,7 @@ protected:
 
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
-	virtual death::GeometricObjectFactory DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
+	virtual death::GeometricObjectFactory DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
 
 	virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map) override;
 

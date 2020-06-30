@@ -175,6 +175,9 @@ namespace death
 
 		/** class for the player displacement component */
 		chaos::SubClassOf<PlayerDisplacementComponent> player_displacement_component_class;
+
+		/** class for the camera */
+		chaos::SubClassOf<Camera> camera_class;
 	};
 
 }; // namespace death

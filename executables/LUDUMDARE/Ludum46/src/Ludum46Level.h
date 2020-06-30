@@ -55,17 +55,15 @@ class SpawnerObject : public death::TiledMapGeometricObject
 
 public:
 
-	/** constructor */
-	using death::TiledMapGeometricObject::TiledMapGeometricObject;
-
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-
 	virtual bool DoTick(float delta_time);
 
 	int GetRemainingParticleCount() const;
 
 protected:
+
+	/** override */
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	void SpawnParticles(chaos::ParticleSpawner & spawner, int count);
 
@@ -100,9 +98,6 @@ class FireSpawnerObject : public SpawnerObject, public EffectorObject
 
 public:
 
-	/** constructor */
-	using SpawnerObject::SpawnerObject;
-
 	/** override */
 	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
@@ -135,12 +130,12 @@ class SpikeBarObject : public death::TiledMapGeometricObject, public EffectorObj
 
 public:
 
-	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-
 	virtual void OnEffectorChangeState() override;
 
+protected:
 
+	/** override */
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 };
 
 // =================================================
@@ -153,13 +148,15 @@ class SoulTriggerObject : public death::TiledMapGeometricObject
 
 public:
 
-
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-
 	virtual bool DoTick(float delta_time);
 
 	virtual bool AddTriggerCount();
+
+protected:
+
+	/** override */
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 public:
 

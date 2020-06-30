@@ -25,33 +25,33 @@ bool EffectorObject::Initialize(death::TiledMapLayerInstance* in_layer_instance,
 }
 
 // =============================================================
-// SpikeBarObject implementation
+// SpikeBar implementation
 // =============================================================
 
-bool SpikeBarObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool SpikeBar::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
 	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
-	if (!death::TiledMapGeometricObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 
 
 	return true;
 }
 
-void SpikeBarObject::OnEffectorChangeState()
+void SpikeBar::OnEffectorChangeState()
 {
 
 
 }
 
 // =============================================================
-// SoulTriggerObject implementation
+// SoulTrigger implementation
 // =============================================================
 
-bool SoulTriggerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool SoulTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapGeometricObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 
 	// number of element that must be triggered
@@ -72,9 +72,9 @@ bool SoulTriggerObject::Initialize(death::TiledMapLayerInstance* in_layer_instan
 	return true;
 }
 
-bool SoulTriggerObject::DoTick(float delta_time)
+bool SoulTrigger::DoTick(float delta_time)
 {
-	death::TiledMapGeometricObject::DoTick(delta_time);
+	death::TiledMapObject::DoTick(delta_time);
 
 	for (std::string const& effector_name : effector_names)
 	{
@@ -88,7 +88,7 @@ bool SoulTriggerObject::DoTick(float delta_time)
 	return true;
 }
 
-bool SoulTriggerObject::AddTriggerCount()
+bool SoulTrigger::AddTriggerCount()
 {
 	++trigger_count; // will be triggered next tick
 
@@ -96,12 +96,12 @@ bool SoulTriggerObject::AddTriggerCount()
 }
 
 // =============================================================
-// SoulBurnTriggerObject implementation
+// SoulBurnTrigger implementation
 // =============================================================
 
-bool SoulBurnTriggerObject::AddTriggerCount()
+bool SoulBurnTrigger::AddTriggerCount()
 {
-	SoulTriggerObject::AddTriggerCount();
+	SoulTrigger::AddTriggerCount();
 
 	LudumLevelInstance* ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 	if (ludum_level_instance != nullptr)
@@ -122,19 +122,19 @@ bool SoulBurnTriggerObject::AddTriggerCount()
 
 
 // =============================================================
-// SpawnerObject implementation
+// Spawner implementation
 // =============================================================
 
-int SpawnerObject::GetRemainingParticleCount() const
+int Spawner::GetRemainingParticleCount() const
 {
 	if (max_spawned_particles < 0) // infinite case
 		return -1;
 	return (max_spawned_particles - spawned_count);
 }
 
-bool SpawnerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool Spawner::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapGeometricObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 
 	max_spawned_particles = in_geometric_object->GetPropertyValueInt("MAX_SPAWNED_PARTICLES", max_spawned_particles);
@@ -152,9 +152,9 @@ bool SpawnerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, 
 	return true;
 }
 
-bool SpawnerObject::DoTick(float delta_time)
+bool Spawner::DoTick(float delta_time)
 {
-	death::TiledMapGeometricObject::DoTick(delta_time);
+	death::TiledMapObject::DoTick(delta_time);
 
 	// whether the emission is enabled 
 	if (!emission_started)
@@ -191,7 +191,7 @@ bool SpawnerObject::DoTick(float delta_time)
 	return true;
 }
 
-void SpawnerObject::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
+void Spawner::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 {	
 	spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessorBase<ParticleBase> accessor) 
 	{
@@ -209,21 +209,21 @@ void SpawnerObject::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 
 
 // =============================================================
-// SpawnerObject implementation
+// Spawner implementation
 // =============================================================
 
 
-bool FireSpawnerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool FireSpawner::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
 	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
-	if (!SpawnerObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!Spawner::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 
 	return true;
 }
 
-void FireSpawnerObject::OnEffectorChangeState()
+void FireSpawner::OnEffectorChangeState()
 {
 	if (active)
 		emission_started = true;
@@ -301,9 +301,9 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 		if (spawner_type != nullptr)
 		{
 			if (chaos::StringTools::Strcmp(*spawner_type, "SoulSpawner") == 0)
-				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulSpawnerObject(););
+				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulSpawner(););
 			if (chaos::StringTools::Strcmp(*spawner_type, "FireSpawner") == 0)
-				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new FireSpawnerObject(););
+				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new FireSpawner(););
 		}
 	}
 
@@ -311,13 +311,13 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 	{
 		std::string const* trigger_type = in_typed_object->FindPropertyString("TRIGGER_TYPE");
 		if (trigger_type != nullptr && chaos::StringTools::Strcmp(*trigger_type, "BurnTrigger") == 0)
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulBurnTriggerObject(););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulBurnTrigger(););
 		else
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulTriggerObject(););
+			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulTrigger(););
 	}
 		
 	if (in_typed_object->IsObjectOfType("SpikeBar"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpikeBarObject(););
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpikeBar(););
 
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }

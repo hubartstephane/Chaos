@@ -13,10 +13,10 @@
 #include "Ludum43Game.h"
 
 // =================================================
-// MyFinishingTriggerObject
+// MyChangeLevelTrigger
 // =================================================
 
-class MyFinishingTriggerObject : public death::TiledMapTriggerObject
+class MyChangeLevelTrigger : public death::TiledMapTrigger
 {
 
 protected:

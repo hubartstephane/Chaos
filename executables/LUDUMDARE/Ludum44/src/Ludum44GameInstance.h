@@ -20,7 +20,7 @@ public:
 
 	friend class GameHUDHealthBarComponent;
 	friend class GameHUDPowerUpComponent;	
-	friend class PowerUpTriggerObject;	
+	friend class PowerUpTrigger;	
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
@@ -38,11 +38,11 @@ protected:
 
 	virtual void OnPlayerEntered(death::Player * player) override;
 
-	void OnPowerUpZone(death::Player * player, bool enter, PowerUpTriggerObject* powerup_trigger);
+	void OnPowerUpZone(death::Player * player, bool enter, PowerUpTrigger* powerup_trigger);
 
 protected:
 
 	chaos::shared_ptr<LudumPowerUp> current_power_up;
 
-	chaos::shared_ptr<PowerUpTriggerObject> current_powerup_trigger;
+	chaos::shared_ptr<PowerUpTrigger> current_powerup_trigger;
 };

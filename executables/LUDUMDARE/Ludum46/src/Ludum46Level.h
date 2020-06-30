@@ -49,7 +49,7 @@ protected:
 };
 
 
-class SpawnerObject : public death::TiledMapGeometricObject
+class Spawner : public death::TiledMapObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -89,10 +89,10 @@ protected:
 };
 
 // =================================================
-// FireSpawnerObject
+// FireSpawner
 // =================================================
 
-class FireSpawnerObject : public SpawnerObject, public EffectorObject
+class FireSpawner : public Spawner, public EffectorObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -108,10 +108,10 @@ public:
 
 
 // =================================================
-// SoulSpawnerObject
+// SoulSpawner
 // =================================================
 
-class SoulSpawnerObject : public SpawnerObject
+class SoulSpawner : public Spawner
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -121,10 +121,10 @@ class SoulSpawnerObject : public SpawnerObject
 };
 
 // =================================================
-// SpikeBarObject
+// SpikeBar
 // =================================================
 
-class SpikeBarObject : public death::TiledMapGeometricObject, public EffectorObject
+class SpikeBar : public death::TiledMapObject, public EffectorObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -139,10 +139,10 @@ protected:
 };
 
 // =================================================
-// SoulTriggerObject
+// SoulTrigger
 // =================================================
 
-class SoulTriggerObject : public death::TiledMapGeometricObject
+class SoulTrigger : public death::TiledMapObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -171,11 +171,11 @@ protected:
 };
 
 // =================================================
-// SoulBurnTriggerObject
+// SoulBurnTrigger
 // =================================================
 
 
-class SoulBurnTriggerObject : public SoulTriggerObject
+class SoulBurnTrigger : public SoulTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 

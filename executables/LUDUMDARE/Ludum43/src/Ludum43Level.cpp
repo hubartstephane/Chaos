@@ -137,7 +137,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_ins
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
 {
 	if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new MyFinishingTriggerObject(););
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new MyChangeLevelTrigger(););
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }
 
@@ -145,15 +145,15 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 // FinishingTriggerObject implementation
 // =============================================================
 
-bool MyFinishingTriggerObject::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool MyChangeLevelTrigger::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	trigger_once = true;
 	return true;
 }
 
-bool MyFinishingTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+bool MyChangeLevelTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Player* player = auto_cast(object);
 	if (player == nullptr)

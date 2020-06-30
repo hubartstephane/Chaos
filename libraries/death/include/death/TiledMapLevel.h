@@ -33,16 +33,16 @@ namespace death
 (TiledMapLevel) \
 (TiledMapLevelInstance) \
 (TiledMapLayerInstance) \
-(TiledMapGeometricObject) \
-(TiledMapCameraObject) \
-(TiledMapPlayerStartObject) \
-(TiledMapTriggerObject) \
-(TiledMapCheckpointTriggerObject) \
+(TiledMapObject) \
+(TiledMapCamera) \
+(TiledMapPlayerStart) \
+(TiledMapTrigger) \
+(TiledMapCheckpointTrigger) \
 (TiledMapLayerInstanceParticlePopulator) \
 (TiledMapTriggerCollisionIterator)\
 (TiledMapGeometricObjectCollisionIterator)\
 (TiledMapTileCollisionIterator)\
-(TiledMapSoundTriggerObject)
+(TiledMapSoundTrigger)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -65,14 +65,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapGeometricObject 
+	// TiledMapObject 
 	// =====================================
 
-	class TiledMapGeometricObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>
+	class TiledMapObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapGeometricObject, chaos::Tickable);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapObject, chaos::Tickable);
 
 	public:
 
@@ -131,14 +131,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapCameraObject : where the player may start
+	// TiledMapCamera : where the player may start
 	// =====================================
 
-	class TiledMapCameraObject : public TiledMapGeometricObject
+	class TiledMapCamera : public TiledMapObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCameraObject, TiledMapGeometricObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCamera, TiledMapObject);
 
 	protected:
 
@@ -147,14 +147,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapPlayerStartObject : where the player may start
+	// TiledMapPlayerStart : where the player may start
 	// =====================================
 
-	class TiledMapPlayerStartObject : public TiledMapGeometricObject
+	class TiledMapPlayerStart : public TiledMapObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapPlayerStartObject, TiledMapGeometricObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapPlayerStart, TiledMapObject);
 
 	protected:
 
@@ -168,14 +168,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapTriggerObject : an object player can collide with (for moment, rectangle)
+	// TiledMapTrigger : an object player can collide with (for moment, rectangle)
 	// =====================================
 
-	class TiledMapTriggerObject : public TiledMapGeometricObject
+	class TiledMapTrigger : public TiledMapObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerObject, TiledMapGeometricObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTrigger, TiledMapObject);
 
 	public:
 
@@ -239,14 +239,14 @@ namespace death
 	};
 
 	// =================================================
-	// TiledMapNotificationTriggerObject
+	// TiledMapNotificationTrigger
 	// =================================================
 
-	class TiledMapNotificationTriggerObject : public TiledMapTriggerObject
+	class TiledMapNotificationTrigger : public TiledMapTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapNotificationTriggerObject, TiledMapTriggerObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapNotificationTrigger, TiledMapTrigger);
 
 	public:
 
@@ -273,14 +273,14 @@ namespace death
 	};
 
 	// =================================================
-	// TiledMapCheckpointTriggerObject
+	// TiledMapCheckpointTrigger
 	// =================================================
 
-	class TiledMapCheckpointTriggerObject : public TiledMapTriggerObject
+	class TiledMapCheckpointTrigger : public TiledMapTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCheckpointTriggerObject, TiledMapTriggerObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCheckpointTrigger, TiledMapTrigger);
 
 	public:
 
@@ -296,14 +296,14 @@ namespace death
 	};
 
 	// =================================================
-	// TiledMapSoundTriggerObject : an object that play a sound
+	// TiledMapSoundTrigger : an object that play a sound
 	// =================================================
 
-	class TiledMapSoundTriggerObject : public TiledMapTriggerObject
+	class TiledMapSoundTrigger : public TiledMapTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapSoundTriggerObject, TiledMapTriggerObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapSoundTrigger, TiledMapTrigger);
 
 	public:
 
@@ -342,14 +342,14 @@ namespace death
 
 
 	// =================================================
-	// TiledMapFinishingTriggerObject
+	// TiledMapChangeLevelTrigger
 	// =================================================
 
-	class TiledMapFinishingTriggerObject : public TiledMapTriggerObject
+	class TiledMapChangeLevelTrigger : public TiledMapTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapFinishingTriggerObject, TiledMapTriggerObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapChangeLevelTrigger, TiledMapTrigger);
 
 	protected:
 
@@ -398,7 +398,7 @@ namespace death
 	//
 
 	/** a functor for geometric object factory */
-	using GeometricObjectFactory = std::function<TiledMapGeometricObject * (chaos::TiledMap::GeometricObject *)>;
+	using GeometricObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject *)>;
 	/** an helper to make a lambda inside DoGetGeometricObjectFactory */
 #define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
 
@@ -433,17 +433,17 @@ namespace death
 		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create a Camera specializable method */
-		virtual TiledMapCameraObject* DoCreateCameraObject();
+		virtual TiledMapCamera* DoCreateCameraObject();
 		/** create a PlayerStartObject specializable method */
-		virtual TiledMapPlayerStartObject* DoCreatePlayerStartObject();
+		virtual TiledMapPlayerStart* DoCreatePlayerStartObject();
 		/** create a FinishingTriggerObject specializable method */
-		virtual TiledMapFinishingTriggerObject* DoCreateFinishingTriggerObject();
+		virtual TiledMapChangeLevelTrigger* DoCreateFinishingTriggerObject();
 		/** create a CheckpointTriggerObject specializable method */
-		virtual TiledMapCheckpointTriggerObject* DoCreateCheckpointTriggerObject();
+		virtual TiledMapCheckpointTrigger* DoCreateCheckpointTriggerObject();
 		/** create a NotificationTriggerObject specializable method */
-		virtual TiledMapNotificationTriggerObject* DoCreateNotificationTriggerObject();
+		virtual TiledMapNotificationTrigger* DoCreateNotificationTriggerObject();
 		/** create a SoundTriggerObject specializable method */
-		virtual TiledMapSoundTriggerObject* DoCreateSoundTriggerObject();
+		virtual TiledMapSoundTrigger* DoCreateSoundTriggerObject();
 
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
@@ -526,24 +526,24 @@ namespace death
 		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** find the player start from its name */
-		TiledMapPlayerStartObject* FindPlayerStartObject(chaos::NamedObjectRequest request);
+		TiledMapPlayerStart* FindPlayerStartObject(chaos::NamedObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStartObject const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStart const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
 
 		/** find the camera from its name */
-		TiledMapCameraObject* FindCameraObject(chaos::NamedObjectRequest request);
+		TiledMapCamera* FindCameraObject(chaos::NamedObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraObject const* FindCameraObject(chaos::NamedObjectRequest request) const;
+		TiledMapCamera const* FindCameraObject(chaos::NamedObjectRequest request) const;
 
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject* FindTriggerObject(chaos::NamedObjectRequest request);
+		TiledMapTrigger* FindTriggerObject(chaos::NamedObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject const* FindTriggerObject(chaos::NamedObjectRequest request) const;
+		TiledMapTrigger const* FindTriggerObject(chaos::NamedObjectRequest request) const;
 
 		/** find the geometric object from its name */
-		TiledMapGeometricObject* FindGeometricObject(chaos::NamedObjectRequest request);
+		TiledMapObject* FindGeometricObject(chaos::NamedObjectRequest request);
 		/** find the geometric object surface from its name */
-		TiledMapGeometricObject const* FindGeometricObject(chaos::NamedObjectRequest request) const;
+		TiledMapObject const* FindGeometricObject(chaos::NamedObjectRequest request) const;
 
 		/** get the bounding box for the level */
 		chaos::box2 GetBoundingBox(bool world_system) const;
@@ -583,31 +583,31 @@ namespace death
 		/** returns the number of trigger surfaces */
 		size_t GetTriggerCount() const;
 		/** returns a trigger surface by its index */
-		TiledMapTriggerObject* GetTrigger(size_t index);
+		TiledMapTrigger* GetTrigger(size_t index);
 		/** returns a trigger surface by its index */
-		TiledMapTriggerObject const* GetTrigger(size_t index) const;
+		TiledMapTrigger const* GetTrigger(size_t index) const;
 
 		/** returns the number of camera objects */
 		size_t GetCameraObjectCount() const;
 		/** returns a camera object by its index */
-		TiledMapCameraObject* GetCameraObject(size_t index);
+		TiledMapCamera* GetCameraObject(size_t index);
 		/** returns a camera object by its index */
-		TiledMapCameraObject const* GetCameraObject(size_t index) const;
+		TiledMapCamera const* GetCameraObject(size_t index) const;
 
 		/** returns the number of player start objects */
 		size_t GetPlayerStartObjectCount() const;
 		/** returns a player start object by its index */
-		TiledMapPlayerStartObject* GetPlayerStartObject(size_t index);
+		TiledMapPlayerStart* GetPlayerStartObject(size_t index);
 		/** returns a player start object by its index */
-		TiledMapPlayerStartObject const* GetPlayerStartObject(size_t index) const;
+		TiledMapPlayerStart const* GetPlayerStartObject(size_t index) const;
 
 
 		/** returns the number of geometric objects */
 		size_t GetGeometricObjectCount() const;
 		/** returns a geometric object by its index */
-		TiledMapGeometricObject* GetGeometricObject(size_t index);
+		TiledMapObject* GetGeometricObject(size_t index);
 		/** returns a geometric object by its index */
-		TiledMapGeometricObject const* GetGeometricObject(size_t index) const;
+		TiledMapObject const* GetGeometricObject(size_t index) const;
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
@@ -646,9 +646,9 @@ namespace death
 		GeometricObjectFactory GetGeometricObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create an object in an object layer */
-		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
+		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
 		/** returns whether a particle should be created for object instance */
-		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapGeometricObject* object) const;
+		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const;
 
 		/** finalize the particles created */
 		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);
@@ -700,13 +700,13 @@ namespace death
 		chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
 
 		/** the player starts */
-		std::vector<chaos::shared_ptr<TiledMapPlayerStartObject>> player_start_objects;
+		std::vector<chaos::shared_ptr<TiledMapPlayerStart>> player_start_objects;
 		/** the player cameras */
-		std::vector<chaos::shared_ptr<TiledMapCameraObject>> camera_objects;
+		std::vector<chaos::shared_ptr<TiledMapCamera>> camera_objects;
 		/** the trigger surface */
-		std::vector<chaos::shared_ptr<TiledMapTriggerObject>> trigger_objects;
+		std::vector<chaos::shared_ptr<TiledMapTrigger>> trigger_objects;
 		/** the geometric objects */
-		std::vector<chaos::shared_ptr<TiledMapGeometricObject>> geometric_objects;
+		std::vector<chaos::shared_ptr<TiledMapObject>> geometric_objects;
 
 		/** the bounding box of the layer */
 		chaos::box2 bounding_box;
@@ -733,14 +733,14 @@ namespace death
 	public:
 
 		/** search whether a trigger is in the collision list */
-		bool FindTrigger(TiledMapTriggerObject const * trigger) const;
+		bool FindTrigger(TiledMapTrigger const * trigger) const;
 
 	public:
 
 		/** the target considered */
 		chaos::weak_ptr<chaos::Object> object;
 		/** all the triggers colliding */
-		std::vector<chaos::weak_ptr<TiledMapTriggerObject>> triggers;
+		std::vector<chaos::weak_ptr<TiledMapTrigger>> triggers;
 	};
 
 	// =====================================
@@ -779,21 +779,21 @@ namespace death
 		/** find the layer instance from its name */
 		TiledMapLayerInstance const* FindLayerInstance(chaos::NamedObjectRequest request) const;
 		/** find the camera from its name */
-		TiledMapCameraObject* FindCameraObject(chaos::NamedObjectRequest request);
+		TiledMapCamera* FindCameraObject(chaos::NamedObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraObject const* FindCameraObject(chaos::NamedObjectRequest request) const;
+		TiledMapCamera const* FindCameraObject(chaos::NamedObjectRequest request) const;
 		/** find the player start from its name */
-		TiledMapPlayerStartObject* FindPlayerStartObject(chaos::NamedObjectRequest request);
+		TiledMapPlayerStart* FindPlayerStartObject(chaos::NamedObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStartObject const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStart const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject* FindTriggerObject(chaos::NamedObjectRequest request);
+		TiledMapTrigger* FindTriggerObject(chaos::NamedObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTriggerObject const* FindTriggerObject(chaos::NamedObjectRequest request) const;
+		TiledMapTrigger const* FindTriggerObject(chaos::NamedObjectRequest request) const;
 		/** find the typed object from its name */
-		TiledMapGeometricObject* FindGeometricObject(chaos::NamedObjectRequest request);
+		TiledMapObject* FindGeometricObject(chaos::NamedObjectRequest request);
 		/** find the typed object surface from its name */
-		TiledMapGeometricObject const* FindGeometricObject(chaos::NamedObjectRequest request) const;
+		TiledMapObject const* FindGeometricObject(chaos::NamedObjectRequest request) const;
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
@@ -846,10 +846,10 @@ namespace death
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
 		/** the sub function responsible for player pawn creation */
-		virtual PlayerPawn * CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, TiledMapLayerInstance* layer_instance);
+		virtual PlayerPawn * CreatePlayerPawn(Player* player, TiledMapPlayerStart* player_start, TiledMapLayerInstance* layer_instance);
 
 		/** get the player start used for an incomming player */
-		virtual TiledMapPlayerStartObject* GetPlayerStartForPawn(Player* player);
+		virtual TiledMapPlayerStart* GetPlayerStartForPawn(Player* player);
 
 		/** override */
 		virtual void OnLevelEnded() override;
@@ -1062,7 +1062,7 @@ namespace death
 	// TiledMapTriggerCollisionIterator
 	// =====================================
 
-	class TiledMapTriggerCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapTriggerObject>
+	class TiledMapTriggerCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapTrigger>
 	{
 	public:
 
@@ -1093,7 +1093,7 @@ namespace death
 	// TiledMapGeometricObjectCollisionIterator
 	// =====================================
 
-	class TiledMapGeometricObjectCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapGeometricObject>
+	class TiledMapGeometricObjectCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapObject>
 	{
 	public:
 

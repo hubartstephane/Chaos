@@ -10,7 +10,7 @@
 
 // creer un iterator/request qui permet de chercher toutes les collisions avec un type d objet donner par layer
 //
-//  layer->FindCollidingObject<SoulTriggerObject>(...);
+//  layer->FindCollidingObject<SoulTrigger>(...);
 
 // ca serait bien que dans
 //

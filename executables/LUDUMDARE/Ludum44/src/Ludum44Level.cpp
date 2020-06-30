@@ -67,11 +67,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("PowerUp"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new PowerUpTriggerObject();); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new PowerUpTrigger();); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
 	if (in_typed_object->IsObjectOfType("SpeedUp"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpeedUpTriggerObject(););
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpeedUpTrigger(););
 	if (in_typed_object->IsObjectOfType("Spawner"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpawnerTriggerObject(););
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpawnerTrigger(););
 
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }
@@ -97,18 +97,18 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 
 
 // =============================================================
-// PowerUpTriggerObject implementation
+// PowerUpTrigger implementation
 // =============================================================
 
-bool PowerUpTriggerObject::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool PowerUpTrigger::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	decrease_power = in_geometric_object->GetPropertyValueBool("DECREASE_POWER_UP", false);
 	return true;
 }
 
-bool PowerUpTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+bool PowerUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Player* player = auto_cast(object);
 	if (player == nullptr)
@@ -134,18 +134,18 @@ bool PowerUpTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * ob
 
 
 // =============================================================
-// SpeedUpTriggerObject implementation
+// SpeedUpTrigger implementation
 // =============================================================
 
-bool SpeedUpTriggerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool SpeedUpTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	scroll_speed = in_geometric_object->GetPropertyValueFloat("SCROLL_SPEED", 1.0f);
 	return true;
 }
 
-bool SpeedUpTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+bool SpeedUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Player* player = auto_cast(object);
 	if (player == nullptr)
@@ -164,13 +164,13 @@ bool SpeedUpTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * ob
 
 
 // =============================================================
-// SpawnerTriggerObject implementation
+// SpawnerTrigger implementation
 // =============================================================
 
 
-bool SpawnerTriggerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool SpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	
 	scale_factor = in_geometric_object->GetPropertyValueFloat("ENEMY_SCALE_FACTOR", 1.0f);
@@ -184,7 +184,7 @@ bool SpawnerTriggerObject::Initialize(death::TiledMapLayerInstance* in_layer_ins
 	return true;
 }
 
-bool SpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Camera* camera = auto_cast(object);
 	if (camera == nullptr)

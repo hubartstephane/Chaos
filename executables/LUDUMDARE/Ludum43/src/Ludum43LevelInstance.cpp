@@ -69,7 +69,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	return true;
 }
 
-death::PlayerPawn* LudumLevelInstance::CreatePlayerPawn(death::Player* player, death::TiledMapPlayerStartObject* player_start, death::TiledMapLayerInstance* layer_instance)
+death::PlayerPawn* LudumLevelInstance::CreatePlayerPawn(death::Player* player, death::TiledMapPlayerStart* player_start, death::TiledMapLayerInstance* layer_instance)
 {
 	death::PlayerPawn* result = death::TiledMapLevelInstance::CreatePlayerPawn(player, player_start, layer_instance);
 	if (result != nullptr)

@@ -13,12 +13,12 @@
 
 
 // =============================================================
-// BonusSpawnerTriggerObject implementation
+// BonusSpawnerTrigger implementation
 // =============================================================
 
-bool BonusSpawnerTriggerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool BonusSpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	trigger_once = true;
 
@@ -30,7 +30,7 @@ bool BonusSpawnerTriggerObject::Initialize(death::TiledMapLayerInstance* in_laye
 
 // -------------------------------------------------------------------
 
-bool BonusSpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Camera* camera = auto_cast(object);
 	if (camera == nullptr)
@@ -50,12 +50,12 @@ bool BonusSpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object
 }
 
 // =============================================================
-// EnemySpawnerTriggerObject implementation
+// EnemySpawnerTrigger implementation
 // =============================================================
 
-bool EnemySpawnerTriggerObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool EnemySpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	trigger_once = true;
 
@@ -77,7 +77,7 @@ bool EnemySpawnerTriggerObject::Initialize(death::TiledMapLayerInstance* in_laye
 
 // -------------------------------------------------------------------
 
-bool EnemySpawnerTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
 	death::Camera* camera = auto_cast(object);
 	if (camera == nullptr)
@@ -189,8 +189,8 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("BONUS_SPAWNER"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new BonusSpawnerTriggerObject(););
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new BonusSpawnerTrigger(););
 	if (in_typed_object->IsObjectOfType("ENEMY_SPAWNER"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new EnemySpawnerTriggerObject(););
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new EnemySpawnerTrigger(););
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }

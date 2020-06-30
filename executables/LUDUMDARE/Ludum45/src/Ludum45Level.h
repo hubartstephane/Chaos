@@ -14,10 +14,10 @@
 #include "Ludum45Enemies.h"
 
 // =================================================
-// EnemySpawnerTriggerObject
+// EnemySpawnerTrigger
 // =================================================
 
-class EnemySpawnerTriggerObject : public death::TiledMapTriggerObject
+class EnemySpawnerTrigger : public death::TiledMapTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
@@ -38,10 +38,10 @@ protected:
 };
 
 // =================================================
-// BonusSpawnerTriggerObject
+// BonusSpawnerTrigger
 // =================================================
 
-class BonusSpawnerTriggerObject : public death::TiledMapTriggerObject
+class BonusSpawnerTrigger : public death::TiledMapTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 

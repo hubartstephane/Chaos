@@ -18,6 +18,7 @@
 
 class PowerUpTrigger : public death::TiledMapTrigger
 {
+	CHAOS_OBJECT_DECLARE_CLASS2(PowerUpTrigger, death::TiledMapTrigger);
 
 public:
 
@@ -43,6 +44,8 @@ public:
 class SpeedUpTrigger : public death::TiledMapTrigger
 {
 
+	CHAOS_OBJECT_DECLARE_CLASS2(SpeedUpTrigger, death::TiledMapTrigger);
+
 protected:
 
 	/** override */
@@ -62,6 +65,8 @@ protected:
 
 class SpawnerTrigger : public death::TiledMapTrigger
 {
+
+	CHAOS_OBJECT_DECLARE_CLASS2(SpawnerTrigger, death::TiledMapTrigger);
 
 protected:
 
@@ -98,5 +103,5 @@ protected:
 
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
-	virtual death::GeometricObjectFactory DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
+	virtual death::GeometricObjectFactory DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
 };

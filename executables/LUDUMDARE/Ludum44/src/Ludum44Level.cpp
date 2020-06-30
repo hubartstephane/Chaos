@@ -64,7 +64,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);
 }
 
-death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
+death::GeometricObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("PowerUp"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new PowerUpTrigger();); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
@@ -73,7 +73,7 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 	if (in_typed_object->IsObjectOfType("Spawner"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new SpawnerTrigger(););
 
-	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
+	return death::TiledMapLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 

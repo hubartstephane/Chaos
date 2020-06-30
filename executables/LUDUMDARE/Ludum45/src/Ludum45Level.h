@@ -21,6 +21,8 @@ class EnemySpawnerTrigger : public death::TiledMapTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
+	CHAOS_OBJECT_DECLARE_CLASS2(EnemySpawnerTrigger, death::TiledMapTrigger);
+
 protected:
 
 	/** override */
@@ -44,6 +46,8 @@ protected:
 class BonusSpawnerTrigger : public death::TiledMapTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
+
+	CHAOS_OBJECT_DECLARE_CLASS2(BonusSpawnerTrigger, death::TiledMapTrigger);
 
 protected:
 
@@ -74,5 +78,5 @@ protected:
 
 	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
 
-	virtual death::GeometricObjectFactory DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
+	virtual death::GeometricObjectFactory DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object) override;
 };

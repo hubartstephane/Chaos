@@ -186,11 +186,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 }
 
 
-death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
+death::GeometricObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("BONUS_SPAWNER"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new BonusSpawnerTrigger(););
 	if (in_typed_object->IsObjectOfType("ENEMY_SPAWNER"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new EnemySpawnerTrigger(););
-	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
+	return death::TiledMapLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

@@ -19,15 +19,10 @@
 class MyFinishingTriggerObject : public death::TiledMapTriggerObject
 {
 
-public:
-
-	/** constructor */
-	using death::TiledMapTriggerObject::TiledMapTriggerObject;
-	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
-
 protected:
 
+	/** override */
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 	/** override */
 	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 };

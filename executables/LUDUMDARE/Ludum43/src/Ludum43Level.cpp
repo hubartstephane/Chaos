@@ -137,7 +137,7 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_ins
 death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
 {
 	if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new MyFinishingTriggerObject(in_layer_instance););
+		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new MyFinishingTriggerObject(););
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }
 
@@ -145,9 +145,9 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 // FinishingTriggerObject implementation
 // =============================================================
 
-bool MyFinishingTriggerObject::Initialize(chaos::TiledMap::GeometricObject* in_geometric_object)
+bool MyFinishingTriggerObject::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 {
-	if (!death::TiledMapTriggerObject::Initialize(in_geometric_object))
+	if (!death::TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	trigger_once = true;
 	return true;

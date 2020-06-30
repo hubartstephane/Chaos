@@ -27,7 +27,7 @@ public:
 	void ResetTrigger() { reset_trigger = true; }
 
 	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 protected:
 
@@ -52,7 +52,7 @@ public:
 	/** constructor */
 	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 protected:
 
@@ -77,7 +77,7 @@ public:
 	/** constructor */
 	using death::TiledMapTriggerObject::TiledMapTriggerObject;
 	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 protected:
 

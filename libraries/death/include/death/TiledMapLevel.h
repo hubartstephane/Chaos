@@ -38,7 +38,6 @@ namespace death
 (TiledMapPlayerStartObject) \
 (TiledMapTriggerObject) \
 (TiledMapCheckpointTriggerObject) \
-(TiledMapObject) \
 (TiledMapLayerInstanceParticlePopulator) \
 (TiledMapTriggerCollisionIterator)\
 (TiledMapGeometricObjectCollisionIterator)\
@@ -66,19 +65,16 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapObject : a base object for special game entities
+	// TiledMapGeometricObject 
 	// =====================================
 
-	class TiledMapObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>
+	class TiledMapGeometricObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapObject, chaos::Tickable);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapGeometricObject, chaos::Tickable);
 
 	public:
-
-		/** constructor */
-		TiledMapObject(TiledMapLayerInstance* in_layer_instance);
 
 		/** whether the object is modified */
 		bool IsModified() const { return modified; }
@@ -98,31 +94,6 @@ namespace death
 		/** get the layer ID (used for Checkpoints) */
 		int GetObjectID() const { return id; }
 
-	protected:
-
-		/** a reference to the layer instance */
-		TiledMapLayerInstance* layer_instance = nullptr;
-		/** whether the object has been modified from the JSON base data (usefull for checkpoint serialization) */
-		bool modified = false;
-		/** id of the object (comming from chaos::TiledMap) */
-		int id = 0;
-	};
-
-	// =====================================
-	// TiledMapGeometricObject 
-	// =====================================
-
-	class TiledMapGeometricObject : public TiledMapObject
-	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
-
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapGeometricObject, TiledMapObject);
-
-	public:
-
-		/** constructor */
-		TiledMapGeometricObject(TiledMapLayerInstance* in_layer_instance);
-
 		/** get the object bounding box */
 		chaos::box2 GetBoundingBox(bool world_system) const;
 		/** getters on the chaos::GeometricObject that this instance references to */
@@ -138,7 +109,7 @@ namespace death
 	protected:
 
 		/** additionnal initialization */
-		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
@@ -150,6 +121,13 @@ namespace death
 		chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
 		/** whether the object is forced to be serialized */
 		bool forced_serialization = false;
+
+		/** a reference to the layer instance */
+		TiledMapLayerInstance* layer_instance = nullptr;
+		/** whether the object has been modified from the JSON base data (usefull for checkpoint serialization) */
+		bool modified = false;
+		/** id of the object (comming from chaos::TiledMap) */
+		int id = 0;
 	};
 
 	// =====================================
@@ -160,17 +138,12 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCameraObject, TiledMapGeometricObject);
-
-	public:
-
-		/** inherit constructor */
-		using TiledMapGeometricObject::TiledMapGeometricObject;
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCameraObject, TiledMapGeometricObject);
 
 	protected:
 
 		/** override */
-		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 	};
 
 	// =====================================
@@ -181,17 +154,12 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapPlayerStartObject, TiledMapGeometricObject);
-
-	public:
-
-		/** inherit constructor */
-		using TiledMapGeometricObject::TiledMapGeometricObject;
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapPlayerStartObject, TiledMapGeometricObject);
 
 	protected:
 
 		/** override */
-		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	protected:
 
@@ -207,12 +175,9 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerObject, TiledMapGeometricObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerObject, TiledMapGeometricObject);
 
 	public:
-
-		/** constructor */
-		TiledMapTriggerObject(TiledMapLayerInstance* in_layer_instance);
 
 		/** whether it is enabled or not */
 		bool IsEnabled() const { return enabled; }
@@ -230,7 +195,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 		/** override */
 		virtual TiledMapObjectCheckpoint* DoCreateCheckpoint() const override;
@@ -281,19 +246,17 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapNotificationTriggerObject, TiledMapTriggerObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapNotificationTriggerObject, TiledMapTriggerObject);
 
 	public:
 
-		/** constructor */
-		using TiledMapTriggerObject::TiledMapTriggerObject;
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
-		/** override */
-		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	protected:
 
+		/** override */
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -317,19 +280,17 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCheckpointTriggerObject, TiledMapTriggerObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCheckpointTriggerObject, TiledMapTriggerObject);
 
 	public:
 
-		/** constructor */
-		using TiledMapTriggerObject::TiledMapTriggerObject;
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
-		/** override */
-		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	protected:
 
+		/** override */
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 	};
@@ -342,19 +303,17 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapSoundTriggerObject, TiledMapTriggerObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapSoundTriggerObject, TiledMapTriggerObject);
 
 	public:
 
-		/** constructor */
-		using TiledMapTriggerObject::TiledMapTriggerObject;
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 
 	protected:
 
 		/** override */
-		virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -390,12 +349,7 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapFinishingTriggerObject, TiledMapTriggerObject);
-
-	public:
-
-		/** inherit constructor */
-		using TiledMapTriggerObject::TiledMapTriggerObject;
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapFinishingTriggerObject, TiledMapTriggerObject);
 
 	protected:
 
@@ -404,6 +358,25 @@ namespace death
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// =====================================
 	// TiledMapLevel : utility
@@ -460,17 +433,17 @@ namespace death
 		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create a Camera specializable method */
-		virtual TiledMapCameraObject* DoCreateCameraObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapCameraObject* DoCreateCameraObject();
 		/** create a PlayerStartObject specializable method */
-		virtual TiledMapPlayerStartObject* DoCreatePlayerStartObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapPlayerStartObject* DoCreatePlayerStartObject();
 		/** create a FinishingTriggerObject specializable method */
-		virtual TiledMapFinishingTriggerObject* DoCreateFinishingTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapFinishingTriggerObject* DoCreateFinishingTriggerObject();
 		/** create a CheckpointTriggerObject specializable method */
-		virtual TiledMapCheckpointTriggerObject* DoCreateCheckpointTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapCheckpointTriggerObject* DoCreateCheckpointTriggerObject();
 		/** create a NotificationTriggerObject specializable method */
-		virtual TiledMapNotificationTriggerObject* DoCreateNotificationTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapNotificationTriggerObject* DoCreateNotificationTriggerObject();
 		/** create a SoundTriggerObject specializable method */
-		virtual TiledMapSoundTriggerObject* DoCreateSoundTriggerObject(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual TiledMapSoundTriggerObject* DoCreateSoundTriggerObject();
 
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
@@ -744,6 +717,11 @@ namespace death
 		/** the current offset */
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 	};
+
+
+
+
+
 
 
 	// =====================================

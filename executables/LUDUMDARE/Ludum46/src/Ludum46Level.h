@@ -22,7 +22,7 @@ class EffectorObject
 public:
 
 	/** no override here */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object);
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
 
 	virtual void SetEffectorState(bool in_active)
 	{
@@ -59,7 +59,7 @@ public:
 	using death::TiledMapGeometricObject::TiledMapGeometricObject;
 
 	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	virtual bool DoTick(float delta_time);
 
@@ -104,7 +104,7 @@ public:
 	using SpawnerObject::SpawnerObject;
 
 	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	virtual void OnEffectorChangeState() override;
 
@@ -120,10 +120,7 @@ class SoulSpawnerObject : public SpawnerObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
-public:
 
-	/** constructor */
-	using SpawnerObject::SpawnerObject;
 
 
 };
@@ -138,11 +135,8 @@ class SpikeBarObject : public death::TiledMapGeometricObject, public EffectorObj
 
 public:
 
-	/** constructor */
-	using death::TiledMapGeometricObject::TiledMapGeometricObject;
-
 	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	virtual void OnEffectorChangeState() override;
 
@@ -159,11 +153,9 @@ class SoulTriggerObject : public death::TiledMapGeometricObject
 
 public:
 
-	/** constructor */
-	using death::TiledMapGeometricObject::TiledMapGeometricObject;
 
 	/** override */
-	virtual bool Initialize(chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
 	virtual bool DoTick(float delta_time);
 
@@ -191,9 +183,6 @@ class SoulBurnTriggerObject : public SoulTriggerObject
 	DEATH_TILEDLEVEL_ALL_FRIENDS
 
 public:
-
-	/** constructor */
-	using SoulTriggerObject::SoulTriggerObject;
 
 	virtual bool AddTriggerCount() override;
 };

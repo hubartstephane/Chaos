@@ -41,7 +41,7 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 			size_t count = layer_instance->GetGeometricObjectCount();
 			for (size_t i = 0; i < count; ++i)
 			{
-				SoulTriggerObject* trigger = auto_cast(layer_instance->GetGeometricObject(i));
+				SoulTrigger* trigger = auto_cast(layer_instance->GetGeometricObject(i));
 				if (trigger == nullptr)
 					continue;
 				result.soul_triggers.push_back(trigger);
@@ -96,7 +96,7 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul & particle
 	}
 
 	// checking triggers
-	for (SoulTriggerObject* trigger : update_data.soul_triggers)
+	for (SoulTrigger* trigger : update_data.soul_triggers)
 	{
 		if (chaos::Collide(trigger->GetBoundingBox(true), particle.bounding_box))
 		{

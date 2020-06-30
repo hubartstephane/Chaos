@@ -138,7 +138,7 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 		size_t count = layer_instance->GetGeometricObjectCount();
 		for (size_t i = 0; i < count; ++i)
 		{
-			SoulSpawnerObject const * soul_spawner = auto_cast(layer_instance->GetGeometricObject(i));
+			SoulSpawner const * soul_spawner = auto_cast(layer_instance->GetGeometricObject(i));
 			if (soul_spawner != nullptr)
 			{
 				int remaining_count = soul_spawner->GetRemainingParticleCount();

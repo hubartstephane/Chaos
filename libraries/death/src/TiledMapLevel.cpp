@@ -15,10 +15,10 @@
 namespace death
 {
 	// =====================================
-	// TiledMapGeometricObject implementation
+	// TiledMapObject implementation
 	// =====================================
 
-	chaos::box2 TiledMapGeometricObject::GetBoundingBox(bool world_system) const
+	chaos::box2 TiledMapObject::GetBoundingBox(bool world_system) const
 	{
 		chaos::box2 result = bounding_box;
 		if (world_system)
@@ -26,7 +26,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapGeometricObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
 		// ensure not already initialized
 		assert(in_layer_instance != nullptr);
@@ -51,18 +51,18 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapGeometricObject::IsParticleCreationEnabled() const
+	bool TiledMapObject::IsParticleCreationEnabled() const
 	{
 		return true;
 	}
 
 	// =====================================
-	// TiledMapTriggerObject implementation
+	// TiledMapTrigger implementation
 	// =====================================
 
-	bool TiledMapTriggerObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapGeometricObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		// default values are set to the one defined by default in constructor
 		enabled = in_geometric_object->GetPropertyValueBool("ENABLED", enabled);
@@ -74,7 +74,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapTriggerObject::IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const
+	bool TiledMapTrigger::IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const
 	{
 		chaos::box2 box = GetBoundingBox(true);
 
@@ -85,35 +85,35 @@ namespace death
 		return chaos::Collide(other_box, box);
 	}
 
-	bool TiledMapTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TiledMapTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		return false; // do not do anything with collision
 	}
 
-	void TiledMapTriggerObject::SetEnabled(bool in_enabled)
+	void TiledMapTrigger::SetEnabled(bool in_enabled)
 	{
 		enabled = in_enabled;
 		SetModified();
 	}
 
-	void TiledMapTriggerObject::SetTriggerOnce(bool in_trigger_once)
+	void TiledMapTrigger::SetTriggerOnce(bool in_trigger_once)
 	{
 		trigger_once = in_trigger_once;
 		SetModified();
 	}
 
-	TiledMapObjectCheckpoint* TiledMapTriggerObject::DoCreateCheckpoint() const
+	TiledMapObjectCheckpoint* TiledMapTrigger::DoCreateCheckpoint() const
 	{
 		return new TiledMapTriggerObjectCheckpoint();
 	}
 
-	bool TiledMapTriggerObject::DoSaveIntoCheckpoint(TiledMapObjectCheckpoint* checkpoint) const
+	bool TiledMapTrigger::DoSaveIntoCheckpoint(TiledMapObjectCheckpoint* checkpoint) const
 	{
 		TiledMapTriggerObjectCheckpoint* trigger_checkpoint = auto_cast(checkpoint);
 		if (trigger_checkpoint == nullptr)
 			return false;
 
-		if (!TiledMapGeometricObject::DoSaveIntoCheckpoint(checkpoint))
+		if (!TiledMapObject::DoSaveIntoCheckpoint(checkpoint))
 			return false;
 
 		trigger_checkpoint->enabled = enabled;
@@ -123,13 +123,13 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapTriggerObject::DoLoadFromCheckpoint(TiledMapObjectCheckpoint const* checkpoint)
+	bool TiledMapTrigger::DoLoadFromCheckpoint(TiledMapObjectCheckpoint const* checkpoint)
 	{
 		TiledMapTriggerObjectCheckpoint const* trigger_checkpoint = auto_cast(checkpoint);
 		if (trigger_checkpoint == nullptr)
 			return false;
 
-		if (!TiledMapGeometricObject::DoLoadFromCheckpoint(checkpoint))
+		if (!TiledMapObject::DoLoadFromCheckpoint(checkpoint))
 			return false;
 
 		enabled = trigger_checkpoint->enabled;
@@ -143,15 +143,15 @@ namespace death
 	// TiledMapCheckPointTriggerObject implementation
 	// =============================================================
 
-	bool TiledMapCheckpointTriggerObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapCheckpointTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		trigger_once = true; // force a trigger once for checkpoint
 		return true;
 	}
 
-	bool TiledMapCheckpointTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TiledMapCheckpointTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Camera* camera = auto_cast(object);
 		if (camera == nullptr)
@@ -167,18 +167,18 @@ namespace death
 		return true; // collisions handled successfully
 	}
 
-	bool TiledMapCheckpointTriggerObject::IsParticleCreationEnabled() const
+	bool TiledMapCheckpointTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
 	// =====================================
-	// TiledMapPlayerStartObject implementation
+	// TiledMapPlayerStart implementation
 	// =====================================
 
-	bool TiledMapPlayerStartObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapPlayerStart::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapGeometricObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		// search the bitmap name for the player
 		std::string const * in_bitmap_name = in_geometric_object->FindPropertyString("BITMAP_NAME");
@@ -189,17 +189,17 @@ namespace death
 	}
 
 	// =================================================
-	// TiledMapNotificationTriggerObject
+	// TiledMapNotificationTrigger
 	// =================================================
 
-	bool TiledMapNotificationTriggerObject::IsParticleCreationEnabled() const
+	bool TiledMapNotificationTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
-	bool TiledMapNotificationTriggerObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapNotificationTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 
 		notification_string = in_geometric_object->GetPropertyValueString("NOTIFICATION", "");
@@ -210,7 +210,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapNotificationTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TiledMapNotificationTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		// check object type
 		if (player_collision)
@@ -251,12 +251,12 @@ namespace death
 	}
 
 	// =====================================
-	// TiledMapSoundTriggerObject implementation
+	// TiledMapSoundTrigger implementation
 	// =====================================
 
-	bool TiledMapSoundTriggerObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapSoundTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapTriggerObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 
 		sound_name = in_geometric_object->GetPropertyValueString("SOUND_NAME", "");
@@ -271,7 +271,7 @@ namespace death
 		return true;
 	}
 
-	chaos::Sound* TiledMapSoundTriggerObject::CreateSound() const
+	chaos::Sound* TiledMapSoundTrigger::CreateSound() const
 	{
 		// early exit
 		if (sound_name.length() == 0)
@@ -302,7 +302,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapSoundTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TiledMapSoundTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Camera* camera = auto_cast(object);
 		if (camera == nullptr)
@@ -327,21 +327,21 @@ namespace death
 		return false;
 	}
 
-	bool TiledMapSoundTriggerObject::IsParticleCreationEnabled() const
+	bool TiledMapSoundTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
 	// =============================================================
-	// TiledMapFinishingTriggerObject implementation
+	// TiledMapChangeLevelTrigger implementation
 	// =============================================================
 
-	bool TiledMapFinishingTriggerObject::IsParticleCreationEnabled() const
+	bool TiledMapChangeLevelTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
-	bool TiledMapFinishingTriggerObject::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TiledMapChangeLevelTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Player* player = auto_cast(object);
 		if (player == nullptr)
@@ -361,12 +361,12 @@ namespace death
 	}
 
 	// =====================================
-	// TiledMapCameraObject implementation
+	// TiledMapCamera implementation
 	// =====================================
 
-	bool TiledMapCameraObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapCamera::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
-		if (!TiledMapGeometricObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		return true;
 	}
@@ -559,7 +559,7 @@ namespace death
 		// create another factory that wraps the previous (and add Initialize(...) call)
 		GeometricObjectFactory result = [in_layer_instance, factory](chaos::TiledMap::GeometricObject* in_geometric_object)
 		{
-			TiledMapGeometricObject * result = factory(in_geometric_object);
+			TiledMapObject * result = factory(in_geometric_object);
 			if (result != nullptr && !result->Initialize(in_layer_instance, in_geometric_object))
 			{
 				delete result;
@@ -570,29 +570,29 @@ namespace death
 		return result;
 	}
 	
-	TiledMapCameraObject* TiledMapLevel::DoCreateCameraObject()
+	TiledMapCamera* TiledMapLevel::DoCreateCameraObject()
 	{
-		return new TiledMapCameraObject();
+		return new TiledMapCamera();
 	}
-	TiledMapFinishingTriggerObject* TiledMapLevel::DoCreateFinishingTriggerObject()
+	TiledMapChangeLevelTrigger* TiledMapLevel::DoCreateFinishingTriggerObject()
 	{
-		return new TiledMapFinishingTriggerObject();
+		return new TiledMapChangeLevelTrigger();
 	}
-	TiledMapCheckpointTriggerObject* TiledMapLevel::DoCreateCheckpointTriggerObject()
+	TiledMapCheckpointTrigger* TiledMapLevel::DoCreateCheckpointTriggerObject()
 	{
-		return new TiledMapCheckpointTriggerObject();
+		return new TiledMapCheckpointTrigger();
 	}
-	TiledMapNotificationTriggerObject* TiledMapLevel::DoCreateNotificationTriggerObject()
+	TiledMapNotificationTrigger* TiledMapLevel::DoCreateNotificationTriggerObject()
 	{
-		return new TiledMapNotificationTriggerObject();
+		return new TiledMapNotificationTrigger();
 	}
-	TiledMapSoundTriggerObject* TiledMapLevel::DoCreateSoundTriggerObject()
+	TiledMapSoundTrigger* TiledMapLevel::DoCreateSoundTriggerObject()
 	{
-		return new TiledMapSoundTriggerObject();
+		return new TiledMapSoundTrigger();
 	}
-	TiledMapPlayerStartObject* TiledMapLevel::DoCreatePlayerStartObject()
+	TiledMapPlayerStart* TiledMapLevel::DoCreatePlayerStartObject()
 	{
-		return new TiledMapPlayerStartObject();
+		return new TiledMapPlayerStart();
 	}
 
 	TiledMapLayerInstance* TiledMapLevel::DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
@@ -854,7 +854,7 @@ namespace death
 		return true;
 	}
 
-	void TiledMapLayerInstance::CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapGeometricObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
+	void TiledMapLayerInstance::CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
@@ -910,7 +910,7 @@ namespace death
 		}
 	}
 
-	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapGeometricObject* object) const
+	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const
 	{
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
@@ -931,18 +931,18 @@ namespace death
 		// create a 'final' factory that use previous one + insert the result object in correct list
 		GeometricObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject* geometric_object)
 		{
-			TiledMapGeometricObject* result = factory(geometric_object);
+			TiledMapObject* result = factory(geometric_object);
 			if (result != nullptr)
 			{
 				// shu46 : 4 lists ! isn't it worth to merge some
 
 
 
-				if (TiledMapTriggerObject* trigger = auto_cast(result))
+				if (TiledMapTrigger* trigger = auto_cast(result))
 					trigger_objects.push_back(trigger);
-				else if (TiledMapPlayerStartObject* player_start = auto_cast(result))
+				else if (TiledMapPlayerStart* player_start = auto_cast(result))
 					player_start_objects.push_back(player_start);
-				else if (TiledMapCameraObject* camera = auto_cast(result))
+				else if (TiledMapCamera* camera = auto_cast(result))
 					camera_objects.push_back(camera);
 				else
 					geometric_objects.push_back(result);
@@ -995,7 +995,7 @@ namespace death
 			}
 
 			// get factory + create the object
-			TiledMapGeometricObject* object = nullptr;
+			TiledMapObject* object = nullptr;
 
 			GeometricObjectFactory factory = GetGeometricObjectFactory(geometric_object);
 			if (factory)
@@ -1181,7 +1181,7 @@ namespace death
 					//       interfere with that (a just in case value)
 					tile_object->InsertProperty("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); 
 
-					TiledMapGeometricObject* object = factory(tile_object.get());
+					TiledMapObject* object = factory(tile_object.get());
 					if (object != nullptr)
 					{
 						if (!ShouldCreateParticleForObject(tile_object.get(), object))
@@ -1318,14 +1318,14 @@ namespace death
 		{\
 			return NamedObject::FindNamedObject(member_vector, request);\
 		}
-	DEATH_FIND_OBJECT(TiledMapGeometricObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapGeometricObject, FindGeometricObject, geometric_objects, const);
-	DEATH_FIND_OBJECT(TiledMapTriggerObject, FindTriggerObject, trigger_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapTriggerObject, FindTriggerObject, trigger_objects, const);
-	DEATH_FIND_OBJECT(TiledMapPlayerStartObject, FindPlayerStartObject, player_start_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapPlayerStartObject, FindPlayerStartObject, player_start_objects, const);
-	DEATH_FIND_OBJECT(TiledMapCameraObject, FindCameraObject, camera_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapCameraObject, FindCameraObject, camera_objects, const);
+	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, const);
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, trigger_objects, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, trigger_objects, const);
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_start_objects, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_start_objects, const);
+	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, camera_objects, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, camera_objects, const);
 
 #undef DEATH_FIND_OBJECT
 
@@ -1335,14 +1335,14 @@ namespace death
 		return trigger_objects.size();
 	}
 
-	TiledMapTriggerObject* TiledMapLayerInstance::GetTrigger(size_t index)
+	TiledMapTrigger* TiledMapLayerInstance::GetTrigger(size_t index)
 	{
 		if (index >= trigger_objects.size())
 			return nullptr;
 		return trigger_objects[index].get();
 	}
 
-	TiledMapTriggerObject const* TiledMapLayerInstance::GetTrigger(size_t index) const
+	TiledMapTrigger const* TiledMapLayerInstance::GetTrigger(size_t index) const
 	{
 		if (index >= trigger_objects.size())
 			return nullptr;
@@ -1354,14 +1354,14 @@ namespace death
 		return camera_objects.size();
 	}
 
-	TiledMapCameraObject * TiledMapLayerInstance::GetCameraObject(size_t index)
+	TiledMapCamera * TiledMapLayerInstance::GetCameraObject(size_t index)
 	{
 		if (index >= camera_objects.size())
 			return nullptr;
 		return camera_objects[index].get();
 	}
 
-	TiledMapCameraObject const* TiledMapLayerInstance::GetCameraObject(size_t index) const
+	TiledMapCamera const* TiledMapLayerInstance::GetCameraObject(size_t index) const
 	{
 		if (index >= camera_objects.size())
 			return nullptr;
@@ -1373,14 +1373,14 @@ namespace death
 		return player_start_objects.size();
 	}
 
-	TiledMapPlayerStartObject* TiledMapLayerInstance::GetPlayerStartObject(size_t index)
+	TiledMapPlayerStart* TiledMapLayerInstance::GetPlayerStartObject(size_t index)
 	{
 		if (index >= player_start_objects.size())
 			return nullptr;
 		return player_start_objects[index].get();
 	}
 
-	TiledMapPlayerStartObject const* TiledMapLayerInstance::GetPlayerStartObject(size_t index) const
+	TiledMapPlayerStart const* TiledMapLayerInstance::GetPlayerStartObject(size_t index) const
 	{
 		if (index >= player_start_objects.size())
 			return nullptr;
@@ -1392,14 +1392,14 @@ namespace death
 		return geometric_objects.size();
 	}
 
-	TiledMapGeometricObject* TiledMapLayerInstance::GetGeometricObject(size_t index)
+	TiledMapObject* TiledMapLayerInstance::GetGeometricObject(size_t index)
 	{
 		if (index >= geometric_objects.size())
 			return nullptr;
 		return geometric_objects[index].get();
 	}
 
-	TiledMapGeometricObject const* TiledMapLayerInstance::GetGeometricObject(size_t index) const
+	TiledMapObject const* TiledMapLayerInstance::GetGeometricObject(size_t index) const
 	{
 		if (index >= geometric_objects.size())
 			return nullptr;
@@ -1524,9 +1524,9 @@ namespace death
 	// TiledMapLevelInstance implementation
 	// =====================================
 
-	bool TiledMapTriggerCollisionInfo::FindTrigger(TiledMapTriggerObject const* trigger) const
+	bool TiledMapTriggerCollisionInfo::FindTrigger(TiledMapTrigger const* trigger) const
 	{
-		return std::find_if(triggers.begin(), triggers.end(), [trigger](chaos::weak_ptr<TiledMapTriggerObject> const& p) {return p.get() == trigger; }) != triggers.end();
+		return std::find_if(triggers.begin(), triggers.end(), [trigger](chaos::weak_ptr<TiledMapTrigger> const& p) {return p.get() == trigger; }) != triggers.end();
 	}
 
 	chaos::TiledMap::Map* TiledMapLevelInstance::GetTiledMap()
@@ -1577,7 +1577,7 @@ namespace death
 		// search all new collisions
 		for (TiledMapTriggerCollisionIterator it = GetTriggerCollisionIterator(box, mask) ; it ; ++it)
 		{
-			TiledMapTriggerObject& trigger = *it;
+			TiledMapTrigger& trigger = *it;
 			// trigger only enabled trigger
 			if (!trigger.IsEnabled())
 				continue;
@@ -1599,7 +1599,7 @@ namespace death
 		size_t new_collision_count = new_collisions.triggers.size();
 		for (size_t i = 0; i < new_collision_count; ++i)
 		{
-			TiledMapTriggerObject* trigger = new_collisions.triggers[i].get();
+			TiledMapTrigger* trigger = new_collisions.triggers[i].get();
 
 			// search in previous frame data
 			chaos::CollisionType collision_type = chaos::CollisionType::STARTED;
@@ -1801,14 +1801,14 @@ namespace death
 			}\
 			return nullptr;\
 		}
-	DEATH_FIND_OBJECT(TiledMapGeometricObject, FindGeometricObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapGeometricObject, FindGeometricObject, const);
-	DEATH_FIND_OBJECT(TiledMapTriggerObject, FindTriggerObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapTriggerObject, FindTriggerObject, const);
-	DEATH_FIND_OBJECT(TiledMapPlayerStartObject, FindPlayerStartObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapPlayerStartObject, FindPlayerStartObject, const);
-	DEATH_FIND_OBJECT(TiledMapCameraObject, FindCameraObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapCameraObject, FindCameraObject, const);
+	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, const);
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, const);
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, const);
+	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, const);
 
 #undef DEATH_FIND_OBJECT
 
@@ -1829,7 +1829,7 @@ namespace death
 		std::string const* camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
 
 		// search the CAMERA
-		TiledMapCameraObject* camera_object = nullptr;
+		TiledMapCamera* camera_object = nullptr;
 		if (camera_name != nullptr)
 			camera_object = FindCameraObject(*camera_name); // first, if a name is given, use it
 		if (camera_object == nullptr)
@@ -1860,7 +1860,7 @@ namespace death
 	}
 
 
-	TiledMapPlayerStartObject* TiledMapLevelInstance::GetPlayerStartForPawn(Player* player)
+	TiledMapPlayerStart* TiledMapLevelInstance::GetPlayerStartForPawn(Player* player)
 	{
 		TiledMapLevel* level = GetLevel();
 		if (level == nullptr)
@@ -1870,7 +1870,7 @@ namespace death
 		std::string const* player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
 
 		// search the PLAYER START
-		TiledMapPlayerStartObject* result = nullptr;
+		TiledMapPlayerStart* result = nullptr;
 		if (player_start_name != nullptr)
 			result = FindPlayerStartObject(player_start_name->c_str()); // first, if a name is given, use it
 		if (result == nullptr)
@@ -1878,7 +1878,7 @@ namespace death
 		return result;
 	}
 
-	PlayerPawn* TiledMapLevelInstance::CreatePlayerPawn(Player* player, TiledMapPlayerStartObject* player_start, TiledMapLayerInstance* layer_instance)	
+	PlayerPawn* TiledMapLevelInstance::CreatePlayerPawn(Player* player, TiledMapPlayerStart* player_start, TiledMapLayerInstance* layer_instance)	
 	{
 		// create a particle populator
 		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
@@ -1915,7 +1915,7 @@ namespace death
 	PlayerPawn * TiledMapLevelInstance::CreatePlayerPawn(Player* player)
 	{
 		// find the player start to use for the player
-		TiledMapPlayerStartObject* player_start = GetPlayerStartForPawn(player);
+		TiledMapPlayerStart* player_start = GetPlayerStartForPawn(player);
 		if (player_start == nullptr)
 			return nullptr;
 
@@ -2208,7 +2208,7 @@ namespace death
 	// =====================================
 
 	TiledMapTriggerCollisionIterator::TiledMapTriggerCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TiledMapObjectCollisionIteratorBase<TiledMapTriggerObject>(in_level_instance, in_collision_box, in_collision_mask)
+		TiledMapObjectCollisionIteratorBase<TiledMapTrigger>(in_level_instance, in_collision_box, in_collision_mask)
 	{
 		FindFirstCollision();
 	}
@@ -2227,7 +2227,7 @@ namespace death
 				{
 					while (object_index < layer_instance->GetTriggerCount())
 					{
-						TiledMapTriggerObject* object = layer_instance->GetTrigger(object_index);
+						TiledMapTrigger* object = layer_instance->GetTrigger(object_index);
 						if (object != nullptr)
 						{
 							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))
@@ -2288,7 +2288,7 @@ namespace death
 	// =====================================
 
 	TiledMapGeometricObjectCollisionIterator::TiledMapGeometricObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TiledMapObjectCollisionIteratorBase<TiledMapGeometricObject>(in_level_instance, in_collision_box, in_collision_mask)
+		TiledMapObjectCollisionIteratorBase<TiledMapObject>(in_level_instance, in_collision_box, in_collision_mask)
 	{
 		FindFirstCollision();
 	}
@@ -2307,7 +2307,7 @@ namespace death
 				{
 					while (object_index < layer_instance->GetGeometricObjectCount())
 					{
-						TiledMapGeometricObject* object = layer_instance->GetGeometricObject(object_index);
+						TiledMapObject* object = layer_instance->GetGeometricObject(object_index);
 						if (object != nullptr)
 						{
 							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))

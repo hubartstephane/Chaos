@@ -152,7 +152,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 			buylocked = true;
 			// shuxxx ludum_game_instance->current_powerup_trigger->SetEnabled(false);
 
-			PowerUpTriggerObject * power_up_trigger_surface = auto_cast(ludum_game_instance->current_powerup_trigger.get());
+			PowerUpTrigger * power_up_trigger_surface = auto_cast(ludum_game_instance->current_powerup_trigger.get());
 			if (power_up_trigger_surface != nullptr)
 				power_up_trigger_surface->ResetTrigger();
 
@@ -166,7 +166,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 	{
 		if (buy_timer > 0.0f)
 		{
-			PowerUpTriggerObject * power_up_trigger_surface = auto_cast(ludum_game_instance->current_powerup_trigger.get());
+			PowerUpTrigger * power_up_trigger_surface = auto_cast(ludum_game_instance->current_powerup_trigger.get());
 			if (power_up_trigger_surface != nullptr)
 				power_up_trigger_surface->ResetTrigger();
 		}

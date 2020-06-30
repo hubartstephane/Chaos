@@ -13,10 +13,10 @@
 #include "Ludum44Game.h"
 
 // =================================================
-// PowerUpTriggerObject
+// PowerUpTrigger
 // =================================================
 
-class PowerUpTriggerObject : public death::TiledMapTriggerObject
+class PowerUpTrigger : public death::TiledMapTrigger
 {
 
 public:
@@ -37,10 +37,10 @@ public:
 };
 
 // =================================================
-// SpeedUpTriggerObject
+// SpeedUpTrigger
 // =================================================
 
-class SpeedUpTriggerObject : public death::TiledMapTriggerObject
+class SpeedUpTrigger : public death::TiledMapTrigger
 {
 
 protected:
@@ -57,10 +57,10 @@ protected:
 
 
 // =================================================
-// SpawnerTriggerObject
+// SpawnerTrigger
 // =================================================
 
-class SpawnerTriggerObject : public death::TiledMapTriggerObject
+class SpawnerTrigger : public death::TiledMapTrigger
 {
 
 protected:

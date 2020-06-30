@@ -39,7 +39,7 @@ public:
 
 	chaos::box2 level_bounding_box;
 
-	std::vector<class SoulTriggerObject*> soul_triggers;
+	std::vector<class SoulTrigger*> soul_triggers;
 
 	death::TiledMapLayerInstance * fire_layer_instance = nullptr;
 

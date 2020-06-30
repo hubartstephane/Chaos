@@ -394,13 +394,13 @@ namespace death
 	// XXX : the functions to get factories receive a : TypedObject         (because we just need some properties and a type to know which object we would like to create (and that's what we get in Tile generation method))
 	//       the factories receive a                  : GeometricObjectType (because for the real object creation we need more than a TypedObject)
 	//
-	// XXX : beware, the DEATH_MAKE_GEOMETRICOBJECT_FACTORY(...) macro hide the complexity of lambda parameters capture. Use with caution 
+	// XXX : beware, the DEATH_MAKE_OBJECT_FACTORY(...) macro hide the complexity of lambda parameters capture. Use with caution 
 	//
 
 	/** a functor for geometric object factory */
 	using GeometricObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject *)>;
 	/** an helper to make a lambda inside DoGetGeometricObjectFactory */
-#define DEATH_MAKE_GEOMETRICOBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
+#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap
@@ -433,17 +433,17 @@ namespace death
 		GeometricObjectFactory GetGeometricObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create a Camera specializable method */
-		virtual TiledMapCamera* DoCreateCameraObject();
+		virtual TiledMapCamera* DoCreateCamera();
 		/** create a PlayerStartObject specializable method */
-		virtual TiledMapPlayerStart* DoCreatePlayerStartObject();
+		virtual TiledMapPlayerStart* DoCreatePlayerStart();
 		/** create a FinishingTriggerObject specializable method */
-		virtual TiledMapChangeLevelTrigger* DoCreateFinishingTriggerObject();
+		virtual TiledMapChangeLevelTrigger* DoCreateChangeLevelTrigger();
 		/** create a CheckpointTriggerObject specializable method */
-		virtual TiledMapCheckpointTrigger* DoCreateCheckpointTriggerObject();
+		virtual TiledMapCheckpointTrigger* DoCreateCheckpointTrigger();
 		/** create a NotificationTriggerObject specializable method */
-		virtual TiledMapNotificationTrigger* DoCreateNotificationTriggerObject();
+		virtual TiledMapNotificationTrigger* DoCreateNotificationTrigger();
 		/** create a SoundTriggerObject specializable method */
-		virtual TiledMapSoundTrigger* DoCreateSoundTriggerObject();
+		virtual TiledMapSoundTrigger* DoCreateSoundTrigger();
 
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);

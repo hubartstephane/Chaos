@@ -301,9 +301,9 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 		if (spawner_type != nullptr)
 		{
 			if (chaos::StringTools::Strcmp(*spawner_type, "SoulSpawner") == 0)
-				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulSpawner(););
+				return DEATH_MAKE_OBJECT_FACTORY(return new SoulSpawner(););
 			if (chaos::StringTools::Strcmp(*spawner_type, "FireSpawner") == 0)
-				return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new FireSpawner(););
+				return DEATH_MAKE_OBJECT_FACTORY(return new FireSpawner(););
 		}
 	}
 
@@ -311,13 +311,13 @@ death::GeometricObjectFactory LudumLevel::DoGetGeometricObjectFactory(death::Til
 	{
 		std::string const* trigger_type = in_typed_object->FindPropertyString("TRIGGER_TYPE");
 		if (trigger_type != nullptr && chaos::StringTools::Strcmp(*trigger_type, "BurnTrigger") == 0)
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulBurnTrigger(););
+			return DEATH_MAKE_OBJECT_FACTORY(return new SoulBurnTrigger(););
 		else
-			return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SoulTrigger(););
+			return DEATH_MAKE_OBJECT_FACTORY(return new SoulTrigger(););
 	}
 		
 	if (in_typed_object->IsObjectOfType("SpikeBar"))
-		return DEATH_MAKE_GEOMETRICOBJECT_FACTORY(return new SpikeBar(););
+		return DEATH_MAKE_OBJECT_FACTORY(return new SpikeBar(););
 
 	return death::TiledMapLevel::DoGetGeometricObjectFactory(in_layer_instance, in_typed_object);
 }

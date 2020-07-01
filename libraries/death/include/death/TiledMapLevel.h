@@ -398,7 +398,7 @@ namespace death
 	//
 
 	/** a functor for geometric object factory */
-	using GeometricObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject *)>;
+	using TiledMapObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject *)>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
 #define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
 
@@ -428,9 +428,9 @@ namespace death
 	protected:
 
 		/** create a typed object specializable method */
-		virtual GeometricObjectFactory DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
+		virtual TiledMapObjectFactory DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 		/** create a typed object 'entry point' */
-		GeometricObjectFactory GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
+		TiledMapObjectFactory GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create a Camera specializable method */
 		virtual TiledMapCamera* DoCreateCamera();
@@ -643,7 +643,7 @@ namespace death
 		bool InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer);
 	
 		/** create an object in an object layer */
-		GeometricObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
+		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create an object in an object layer */
 		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);

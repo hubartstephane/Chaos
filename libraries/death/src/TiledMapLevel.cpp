@@ -1320,10 +1320,10 @@ namespace death
 		}
 	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, const);
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, triggers, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, triggers, const);
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_starts, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_starts, const);
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, triggers, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, triggers, const);
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, player_starts, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, player_starts, const);
 	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, camera_templates, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, camera_templates, const);
 
@@ -1803,10 +1803,10 @@ namespace death
 		}
 	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, const);
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, const);
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, const);
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, const);
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, const);
 	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, const);
 
@@ -1872,9 +1872,9 @@ namespace death
 		// search the PLAYER START
 		TiledMapPlayerStart* result = nullptr;
 		if (player_start_name != nullptr)
-			result = FindPlayerStartObject(player_start_name->c_str()); // first, if a name is given, use it
+			result = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
 		if (result == nullptr)
-			result = FindPlayerStartObject(chaos::NamedObjectRequest()); // try to find the very first one otherwise
+			result = FindPlayerStart(chaos::NamedObjectRequest()); // try to find the very first one otherwise
 		return result;
 	}
 

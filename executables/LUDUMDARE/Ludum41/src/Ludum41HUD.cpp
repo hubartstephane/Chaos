@@ -56,21 +56,21 @@ bool LudumPlayingHUD::FillHUDContent()
 	return true;
 }
 
-bool LudumPlayingHUD::CreateHUDLayers()
+int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	if (!death::PlayingHUD::CreateHUDLayers())
-		return false;
+	int render_order = death::PlayingHUD::CreateHUDLayers();
+	if (render_order < 0)
+		return render_order;
 	// create a layer for the life bar
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game != nullptr)
 	{
-		int render_order = -1;
 		ParticleLifeObjectTrait::LayerTrait life_trait;
 		life_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleLifeObjectTrait>(++render_order, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
+		particle_manager->AddLayer<ParticleLifeObjectTrait>(render_order++, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
 	}
-	return true;
+	return render_order;
 }
 
 

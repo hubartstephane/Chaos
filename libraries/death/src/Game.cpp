@@ -632,9 +632,6 @@ namespace death
 	int Game::AddParticleLayers()
 	{
 		int render_order = 0;
-
-
-
 		particle_manager->AddLayer<death::ParticleBackgroundTrait>(render_order++, death::GameHUDKeys::BACKGROUND_LAYER_ID, "background"); // shuwww est ce que ca doit etre dans le particle_manager
 		return render_order;
 	}

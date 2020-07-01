@@ -139,7 +139,7 @@ namespace death
 		/** initialization method */
 		virtual bool CreateInternalData(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 		/** create the layers */
-		virtual bool CreateHUDLayers();
+		virtual int CreateHUDLayers();
 		/** create the particles */
 		virtual bool FillHUDContent();
 		/** try to find some information in JSON for configuring the component */

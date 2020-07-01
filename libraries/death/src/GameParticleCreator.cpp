@@ -46,12 +46,10 @@ namespace death
 
 		// generate the tokens
 		chaos::ParticleTextGenerator::GeneratorResult result;
-
 		particle_text_generator->Generate(text, result, params);
 
-		chaos::ParticleAllocationBase * allocation = chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
-
-		return allocation;
+		// generate the particles
+		return chaos::ParticleTextGenerator::CreateTextAllocation(layer, result);
 	}
 	
 }; // namespace death

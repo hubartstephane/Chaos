@@ -96,16 +96,18 @@ namespace death
 
 	bool GameHUD::CreateInternalData(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
 	{
-		assert((in_particle_manager != nullptr) ^ (in_texture_atlas != nullptr)); // cannot have both creation protocole
-
 		// create the particle manager
 		if (in_particle_manager != nullptr)
 		{
+			assert(in_texture_atlas == nullptr); // cannot have both parameters
+
 			particle_manager = in_particle_manager;
 			external_manager = true;
 		}
 		else if (in_texture_atlas != nullptr)
 		{
+			assert(in_particle_manager == nullptr); // cannot have both parameters
+
 			particle_manager = in_particle_manager = new chaos::ParticleManager;
 			if (particle_manager == nullptr)
 				return false;
@@ -118,12 +120,11 @@ namespace death
 		return true;
 	}
 		
-	bool GameHUD::CreateHUDLayers()
+	int GameHUD::CreateHUDLayers()
 	{
 		int render_order = 0;
-		particle_manager->AddLayer<chaos::ParticleDefaultTrait>(render_order, death::GameHUDKeys::TEXT_LAYER_ID, "text");
-
-		return true;
+		particle_manager->AddLayer<chaos::ParticleDefaultTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+		return render_order;
 	}
 
 	bool GameHUD::FillHUDContent()

@@ -29,14 +29,15 @@ bool LudumPlayingHUD::FillHUDContent()
 }
 
 
-bool LudumPlayingHUD::CreateHUDLayers()
+int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	if (!death::PlayingHUD::CreateHUDLayers())
-		return false;
+	int render_order = death::PlayingHUD::CreateHUDLayers();
+	if (render_order < 0)
+		return render_order;
 
 
 
 
-	return true;
+	return render_order;
 }

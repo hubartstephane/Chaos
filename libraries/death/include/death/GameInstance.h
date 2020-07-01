@@ -22,7 +22,7 @@ namespace death
 
 	class GameInstance : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<GameCheckpoint>
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(GameInstance, chaos::Tickable);
 

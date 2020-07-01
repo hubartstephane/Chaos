@@ -3,6 +3,7 @@
 #include <chaos/StandardHeaders.h>
 #include <chaos/Object.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/Class.h>
 
 #include <death/GameFramework.h>
 
@@ -65,7 +66,9 @@ namespace death
 
 	class PlayerPawnCheckpoint : public chaos::Object
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(PlayerPawnCheckpoint, LevelCheckpoint);
 
 	public:
 
@@ -79,7 +82,9 @@ namespace death
 
 	class PlayerCheckpoint : public chaos::Object
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(PlayerCheckpoint, chaos::Object);
 
 	public:
 
@@ -109,7 +114,9 @@ namespace death
 
 	class LevelCheckpoint : public chaos::Object
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(LevelCheckpoint, chaos::Object);
 
 	public:
 
@@ -127,7 +134,9 @@ namespace death
 
 	class GameCheckpoint : public chaos::Object
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(GameCheckpoint, chaos::Object);
 
 	public:
 

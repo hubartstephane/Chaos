@@ -78,7 +78,7 @@ bool SoulTrigger::DoTick(float delta_time)
 
 	for (std::string const& effector_name : effector_names)
 	{
-		EffectorObject* effector = auto_cast(layer_instance->FindGeometricObject(effector_name));
+		EffectorObject* effector = auto_cast(layer_instance->FindObject(effector_name));
 		if (effector == nullptr)
 			continue;
 		effector->SetEffectorState(trigger_count >= trigger_limit);

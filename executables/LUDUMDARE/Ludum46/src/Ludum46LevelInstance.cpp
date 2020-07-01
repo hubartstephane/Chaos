@@ -135,10 +135,10 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 	death::TiledMapLayerInstance const* layer_instance = FindLayerInstance("Objects");
 	if (layer_instance != nullptr)
 	{
-		size_t count = layer_instance->GetGeometricObjectCount();
+		size_t count = layer_instance->GetObjectCount();
 		for (size_t i = 0; i < count; ++i)
 		{
-			SoulSpawner const * soul_spawner = auto_cast(layer_instance->GetGeometricObject(i));
+			SoulSpawner const * soul_spawner = auto_cast(layer_instance->GetObject(i));
 			if (soul_spawner != nullptr)
 			{
 				int remaining_count = soul_spawner->GetRemainingParticleCount();

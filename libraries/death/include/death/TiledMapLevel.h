@@ -541,9 +541,9 @@ namespace death
 		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** find the player start from its name */
-		TiledMapPlayerStart* FindPlayerStartObject(chaos::NamedObjectRequest request);
+		TiledMapPlayerStart* FindPlayerStart(chaos::NamedObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStart const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStart const* FindPlayerStart(chaos::NamedObjectRequest request) const;
 
 		/** find the camera from its name */
 		TiledMapCameraTemplate* FindCameraTemplate(chaos::NamedObjectRequest request);
@@ -551,9 +551,9 @@ namespace death
 		TiledMapCameraTemplate const* FindCameraTemplate(chaos::NamedObjectRequest request) const;
 
 		/** find the trigger surface from its name */
-		TiledMapTrigger* FindTriggerObject(chaos::NamedObjectRequest request);
+		TiledMapTrigger* FindTrigger(chaos::NamedObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTrigger const* FindTriggerObject(chaos::NamedObjectRequest request) const;
+		TiledMapTrigger const* FindTrigger(chaos::NamedObjectRequest request) const;
 
 		/** find the geometric object from its name */
 		TiledMapObject* FindGeometricObject(chaos::NamedObjectRequest request);
@@ -800,13 +800,13 @@ namespace death
 		/** find the camera from its name */
 		TiledMapCameraTemplate const* FindCameraTemplate(chaos::NamedObjectRequest request) const;
 		/** find the player start from its name */
-		TiledMapPlayerStart* FindPlayerStartObject(chaos::NamedObjectRequest request);
+		TiledMapPlayerStart* FindPlayerStart(chaos::NamedObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStart const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStart const* FindPlayerStart(chaos::NamedObjectRequest request) const;
 		/** find the trigger surface from its name */
-		TiledMapTrigger* FindTriggerObject(chaos::NamedObjectRequest request);
+		TiledMapTrigger* FindTrigger(chaos::NamedObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTrigger const* FindTriggerObject(chaos::NamedObjectRequest request) const;
+		TiledMapTrigger const* FindTrigger(chaos::NamedObjectRequest request) const;
 		/** find the typed object from its name */
 		TiledMapObject* FindGeometricObject(chaos::NamedObjectRequest request);
 		/** find the typed object surface from its name */

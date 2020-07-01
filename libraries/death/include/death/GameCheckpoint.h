@@ -68,7 +68,7 @@ namespace death
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(PlayerPawnCheckpoint, LevelCheckpoint);
+		CHAOS_OBJECT_DECLARE_CLASS2(PlayerPawnCheckpoint, chaos::Object);
 
 	public:
 

@@ -34,7 +34,7 @@ namespace death
 (TiledMapLevelInstance) \
 (TiledMapLayerInstance) \
 (TiledMapObject) \
-(TiledMapCamera) \
+(TiledMapCameraTemplate) \
 (TiledMapPlayerStart) \
 (TiledMapTrigger) \
 (TiledMapCheckpointTrigger) \
@@ -133,14 +133,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapCamera : where the player may start
+	// TiledMapCameraTemplate : where the player may start
 	// =====================================
 
-	class TiledMapCamera : public TiledMapObject
+	class TiledMapCameraTemplate : public TiledMapObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCamera, TiledMapObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCameraTemplate, TiledMapObject);
 
 	protected:
 
@@ -437,7 +437,7 @@ namespace death
 		TiledMapObjectFactory GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create a Camera specializable method */
-		virtual TiledMapCamera* DoCreateCamera();
+		virtual TiledMapCameraTemplate* DoCreateCamera();
 		/** create a PlayerStartObject specializable method */
 		virtual TiledMapPlayerStart* DoCreatePlayerStart();
 		/** create a FinishingTriggerObject specializable method */
@@ -546,9 +546,9 @@ namespace death
 		TiledMapPlayerStart const* FindPlayerStartObject(chaos::NamedObjectRequest request) const;
 
 		/** find the camera from its name */
-		TiledMapCamera* FindCameraObject(chaos::NamedObjectRequest request);
+		TiledMapCameraTemplate* FindCameraTemplate(chaos::NamedObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCamera const* FindCameraObject(chaos::NamedObjectRequest request) const;
+		TiledMapCameraTemplate const* FindCameraTemplate(chaos::NamedObjectRequest request) const;
 
 		/** find the trigger surface from its name */
 		TiledMapTrigger* FindTriggerObject(chaos::NamedObjectRequest request);
@@ -603,18 +603,18 @@ namespace death
 		TiledMapTrigger const* GetTrigger(size_t index) const;
 
 		/** returns the number of camera objects */
-		size_t GetCameraObjectCount() const;
+		size_t GetCameraTemplateCount() const;
 		/** returns a camera object by its index */
-		TiledMapCamera* GetCameraObject(size_t index);
+		TiledMapCameraTemplate* GetCameraTemplate(size_t index);
 		/** returns a camera object by its index */
-		TiledMapCamera const* GetCameraObject(size_t index) const;
+		TiledMapCameraTemplate const* GetCameraTemplate(size_t index) const;
 
 		/** returns the number of player start objects */
-		size_t GetPlayerStartObjectCount() const;
+		size_t GetPlayerStartCount() const;
 		/** returns a player start object by its index */
-		TiledMapPlayerStart* GetPlayerStartObject(size_t index);
+		TiledMapPlayerStart* GetPlayerStart(size_t index);
 		/** returns a player start object by its index */
-		TiledMapPlayerStart const* GetPlayerStartObject(size_t index) const;
+		TiledMapPlayerStart const* GetPlayerStart(size_t index) const;
 
 
 		/** returns the number of geometric objects */
@@ -715,11 +715,11 @@ namespace death
 		chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
 
 		/** the player starts */
-		std::vector<chaos::shared_ptr<TiledMapPlayerStart>> player_start_objects;
+		std::vector<chaos::shared_ptr<TiledMapPlayerStart>> player_starts;
 		/** the player cameras */
-		std::vector<chaos::shared_ptr<TiledMapCamera>> camera_objects;
+		std::vector<chaos::shared_ptr<TiledMapCameraTemplate>> camera_templates;
 		/** the trigger surface */
-		std::vector<chaos::shared_ptr<TiledMapTrigger>> trigger_objects;
+		std::vector<chaos::shared_ptr<TiledMapTrigger>> triggers;
 		/** the geometric objects */
 		std::vector<chaos::shared_ptr<TiledMapObject>> geometric_objects;
 
@@ -796,9 +796,9 @@ namespace death
 		/** find the layer instance from its name */
 		TiledMapLayerInstance const* FindLayerInstance(chaos::NamedObjectRequest request) const;
 		/** find the camera from its name */
-		TiledMapCamera* FindCameraObject(chaos::NamedObjectRequest request);
+		TiledMapCameraTemplate* FindCameraTemplate(chaos::NamedObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCamera const* FindCameraObject(chaos::NamedObjectRequest request) const;
+		TiledMapCameraTemplate const* FindCameraTemplate(chaos::NamedObjectRequest request) const;
 		/** find the player start from its name */
 		TiledMapPlayerStart* FindPlayerStartObject(chaos::NamedObjectRequest request);
 		/** find the player start from its name */

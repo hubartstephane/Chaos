@@ -361,10 +361,10 @@ namespace death
 	}
 
 	// =====================================
-	// TiledMapCamera implementation
+	// TiledMapCameraTemplate implementation
 	// =====================================
 
-	bool TiledMapCamera::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapCameraTemplate::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
 	{
 		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -570,9 +570,9 @@ namespace death
 		return result;
 	}
 	
-	TiledMapCamera* TiledMapLevel::DoCreateCamera()
+	TiledMapCameraTemplate* TiledMapLevel::DoCreateCamera()
 	{
-		return new TiledMapCamera();
+		return new TiledMapCameraTemplate();
 	}
 	TiledMapChangeLevelTrigger* TiledMapLevel::DoCreateChangeLevelTrigger()
 	{
@@ -864,9 +864,8 @@ namespace death
 		if (text != nullptr)
 		{
 			// create particle layer if necessary
-			if (particle_layer == nullptr)
-				if (CreateParticleLayer() == nullptr) // the generate layer is of  TiledMapParticleTrait => this works fine for Text (except a useless GID per particle)
-					return;
+			if (CreateParticleLayer() == nullptr) // the generate layer is of  TiledMapParticleTrait => this works fine for Text (except a useless GID per particle)
+				return;
 
 			Game* game = GetGame();
 
@@ -940,11 +939,11 @@ namespace death
 
 
 				if (TiledMapTrigger* trigger = auto_cast(result))
-					trigger_objects.push_back(trigger);
+					triggers.push_back(trigger);
 				else if (TiledMapPlayerStart* player_start = auto_cast(result))
-					player_start_objects.push_back(player_start);
-				else if (TiledMapCamera* camera = auto_cast(result))
-					camera_objects.push_back(camera);
+					player_starts.push_back(player_start);
+				else if (TiledMapCameraTemplate* camera = auto_cast(result))
+					camera_templates.push_back(camera);
 				else
 					geometric_objects.push_back(result);
 			}
@@ -1090,7 +1089,7 @@ namespace death
 			chaos::GPURenderMaterial* render_material = FindOrCreateRenderMaterial(material_name.c_str());
 			if (render_material == nullptr)
 				return nullptr;
-			// create a particle layer
+			// create a particle layer (it is not attached to any particle manager !)
 			TiledMapLevel* level = GetLevel();
 			particle_layer = level->DoCreateParticleLayer(this);
 			if (particle_layer == nullptr)
@@ -1207,17 +1206,17 @@ namespace death
 	bool TiledMapLayerInstance::DoTick(float delta_time)
 	{
 		// player starts
-		size_t player_start_count = player_start_objects.size();
+		size_t player_start_count = player_starts.size();
 		for (size_t i = 0; i < player_start_count; ++i)
-			player_start_objects[i]->Tick(delta_time);
+			player_starts[i]->Tick(delta_time);
 		// camera
-		size_t camera_count = camera_objects.size();
+		size_t camera_count = camera_templates.size();
 		for (size_t i = 0; i < camera_count; ++i)
-			camera_objects[i]->Tick(delta_time);
+			camera_templates[i]->Tick(delta_time);
 		// trigger
-		size_t trigger_count = trigger_objects.size();
+		size_t trigger_count = triggers.size();
 		for (size_t i = 0; i < trigger_count; ++i)
-			trigger_objects[i]->Tick(delta_time);
+			triggers[i]->Tick(delta_time);
 		// geometric objects
 		size_t geometric_count = geometric_objects.size();
 		for (size_t i = 0; i < geometric_count; ++i)
@@ -1321,71 +1320,71 @@ namespace death
 		}
 	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, const);
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, trigger_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, trigger_objects, const);
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_start_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_start_objects, const);
-	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, camera_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, camera_objects, const);
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, triggers, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, triggers, const);
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_starts, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, player_starts, const);
+	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, camera_templates, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, camera_templates, const);
 
 #undef DEATH_FIND_OBJECT
 
 
 	size_t TiledMapLayerInstance::GetTriggerCount() const
 	{
-		return trigger_objects.size();
+		return triggers.size();
 	}
 
 	TiledMapTrigger* TiledMapLayerInstance::GetTrigger(size_t index)
 	{
-		if (index >= trigger_objects.size())
+		if (index >= triggers.size())
 			return nullptr;
-		return trigger_objects[index].get();
+		return triggers[index].get();
 	}
 
 	TiledMapTrigger const* TiledMapLayerInstance::GetTrigger(size_t index) const
 	{
-		if (index >= trigger_objects.size())
+		if (index >= triggers.size())
 			return nullptr;
-		return trigger_objects[index].get();
+		return triggers[index].get();
 	}
 
-	size_t TiledMapLayerInstance::GetCameraObjectCount() const
+	size_t TiledMapLayerInstance::GetCameraTemplateCount() const
 	{
-		return camera_objects.size();
+		return camera_templates.size();
 	}
 
-	TiledMapCamera * TiledMapLayerInstance::GetCameraObject(size_t index)
+	TiledMapCameraTemplate * TiledMapLayerInstance::GetCameraTemplate(size_t index)
 	{
-		if (index >= camera_objects.size())
+		if (index >= camera_templates.size())
 			return nullptr;
-		return camera_objects[index].get();
+		return camera_templates[index].get();
 	}
 
-	TiledMapCamera const* TiledMapLayerInstance::GetCameraObject(size_t index) const
+	TiledMapCameraTemplate const* TiledMapLayerInstance::GetCameraTemplate(size_t index) const
 	{
-		if (index >= camera_objects.size())
+		if (index >= camera_templates.size())
 			return nullptr;
-		return camera_objects[index].get();
+		return camera_templates[index].get();
 	}
 
-	size_t TiledMapLayerInstance::GetPlayerStartObjectCount() const
+	size_t TiledMapLayerInstance::GetPlayerStartCount() const
 	{
-		return player_start_objects.size();
+		return player_starts.size();
 	}
 
-	TiledMapPlayerStart* TiledMapLayerInstance::GetPlayerStartObject(size_t index)
+	TiledMapPlayerStart* TiledMapLayerInstance::GetPlayerStart(size_t index)
 	{
-		if (index >= player_start_objects.size())
+		if (index >= player_starts.size())
 			return nullptr;
-		return player_start_objects[index].get();
+		return player_starts[index].get();
 	}
 
-	TiledMapPlayerStart const* TiledMapLayerInstance::GetPlayerStartObject(size_t index) const
+	TiledMapPlayerStart const* TiledMapLayerInstance::GetPlayerStart(size_t index) const
 	{
-		if (index >= player_start_objects.size())
+		if (index >= player_starts.size())
 			return nullptr;
-		return player_start_objects[index].get();
+		return player_starts[index].get();
 	}
 
 	size_t TiledMapLayerInstance::GetGeometricObjectCount() const
@@ -1437,7 +1436,7 @@ namespace death
 
 	bool TiledMapLayerInstance::DoSaveIntoCheckpoint(TiledMapLayerCheckpoint* checkpoint) const
 	{
-		DoSaveIntoCheckpointHelper(trigger_objects, checkpoint->trigger_checkpoints);
+		DoSaveIntoCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
 		DoSaveIntoCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
 		return true;
 	}
@@ -1476,7 +1475,7 @@ namespace death
 			particle_layer->ClearAllAllocations();
 
 		// serialize the objects
-		DoLoadFromCheckpointHelper(trigger_objects, checkpoint->trigger_checkpoints);
+		DoLoadFromCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
 		DoLoadFromCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
 		return true;
 	}
@@ -1484,17 +1483,17 @@ namespace death
 	void TiledMapLayerInstance::OnLevelEnded()
 	{
 		// players
-		size_t player_start_count = player_start_objects.size();
+		size_t player_start_count = player_starts.size();
 		for (size_t i = 0; i < player_start_count; ++i)
-			player_start_objects[i]->OnLevelEnded();
+			player_starts[i]->OnLevelEnded();
 		// camera
-		size_t camera_count = camera_objects.size();
+		size_t camera_count = camera_templates.size();
 		for (size_t i = 0; i < camera_count; ++i)
-			camera_objects[i]->OnLevelEnded();
+			camera_templates[i]->OnLevelEnded();
 		// triggers
-		size_t trigger_count = trigger_objects.size();
+		size_t trigger_count = triggers.size();
 		for (size_t i = 0; i < trigger_count; ++i)
-			trigger_objects[i]->OnLevelEnded();
+			triggers[i]->OnLevelEnded();
 		//  geometric object
 		size_t object_count = geometric_objects.size();
 		for (size_t i = 0; i < object_count; ++i)
@@ -1504,17 +1503,17 @@ namespace death
 	void TiledMapLayerInstance::OnLevelStarted()
 	{
 		// players
-		size_t player_start_count = player_start_objects.size();
+		size_t player_start_count = player_starts.size();
 		for (size_t i = 0; i < player_start_count; ++i)
-			player_start_objects[i]->OnLevelStarted();
+			player_starts[i]->OnLevelStarted();
 		// camera
-		size_t camera_count = camera_objects.size();
+		size_t camera_count = camera_templates.size();
 		for (size_t i = 0; i < camera_count; ++i)
-			camera_objects[i]->OnLevelStarted();
+			camera_templates[i]->OnLevelStarted();
 		// triggers
-		size_t trigger_count = trigger_objects.size();
+		size_t trigger_count = triggers.size();
 		for (size_t i = 0; i < trigger_count; ++i)
-			trigger_objects[i]->OnLevelStarted();
+			triggers[i]->OnLevelStarted();
 		//  geometric object
 		size_t object_count = geometric_objects.size();
 		for (size_t i = 0; i < object_count; ++i)
@@ -1808,8 +1807,8 @@ namespace death
 	DEATH_FIND_OBJECT(TiledMapTrigger, FindTriggerObject, const);
 	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStartObject, const);
-	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapCamera, FindCameraObject, const);
+	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, const);
 
 #undef DEATH_FIND_OBJECT
 
@@ -1830,13 +1829,13 @@ namespace death
 		std::string const* camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
 
 		// search the CAMERA
-		TiledMapCamera* camera_object = nullptr;
+		TiledMapCameraTemplate* camera_template = nullptr;
 		if (camera_name != nullptr)
-			camera_object = FindCameraObject(*camera_name); // first, if a name is given, use it
-		if (camera_object == nullptr)
+			camera_template = FindCameraTemplate(*camera_name); // first, if a name is given, use it
+		if (camera_template == nullptr)
 		{
-			camera_object = FindCameraObject(chaos::NamedObjectRequest()); // try to find the very first one otherwise
-			if (camera_object == nullptr)
+			camera_template = FindCameraTemplate(chaos::NamedObjectRequest()); // try to find the very first one otherwise
+			if (camera_template == nullptr)
 				return;
 		}
 
@@ -1848,7 +1847,7 @@ namespace death
 			aspect_ratio = game->GetViewportWantedAspect();
 
 		// compute the surface
-		chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_object->GetBoundingBox(true), aspect_ratio, true);
+		chaos::box2 camera_box = chaos::AlterBoxToAspect(camera_template->GetBoundingBox(true), aspect_ratio, true);
 
 		// create the real camera
 		Camera* camera = CreateCamera();

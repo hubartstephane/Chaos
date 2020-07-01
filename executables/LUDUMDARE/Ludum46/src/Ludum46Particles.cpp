@@ -38,10 +38,10 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 		death::TiledMapLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
 		if (layer_instance != nullptr)
 		{
-			size_t count = layer_instance->GetGeometricObjectCount();
+			size_t count = layer_instance->GetObjectCount();
 			for (size_t i = 0; i < count; ++i)
 			{
-				SoulTrigger* trigger = auto_cast(layer_instance->GetGeometricObject(i));
+				SoulTrigger* trigger = auto_cast(layer_instance->GetObject(i));
 				if (trigger == nullptr)
 					continue;
 				result.soul_triggers.push_back(trigger);

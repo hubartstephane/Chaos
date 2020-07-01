@@ -945,7 +945,7 @@ namespace death
 				else if (TiledMapCameraTemplate* camera = auto_cast(result))
 					camera_templates.push_back(camera);
 				else
-					geometric_objects.push_back(result);
+					objects.push_back(result);
 			}
 			return result;
 		};
@@ -1217,10 +1217,10 @@ namespace death
 		size_t trigger_count = triggers.size();
 		for (size_t i = 0; i < trigger_count; ++i)
 			triggers[i]->Tick(delta_time);
-		// geometric objects
-		size_t geometric_count = geometric_objects.size();
-		for (size_t i = 0; i < geometric_count; ++i)
-			geometric_objects[i]->Tick(delta_time);
+		// objects
+		size_t object_count = objects.size();
+		for (size_t i = 0; i < object_count; ++i)
+			objects[i]->Tick(delta_time);
 		// tick the particles
 		if (particle_layer != nullptr)
 			particle_layer->Tick(delta_time);
@@ -1318,8 +1318,8 @@ namespace death
 		{\
 			return NamedObject::FindNamedObject(member_vector, request);\
 		}
-	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, geometric_objects, const);
+	DEATH_FIND_OBJECT(TiledMapObject, FindObject, objects, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapObject, FindObject, objects, const);
 	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, triggers, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, triggers, const);
 	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, player_starts, BOOST_PP_EMPTY());
@@ -1387,23 +1387,23 @@ namespace death
 		return player_starts[index].get();
 	}
 
-	size_t TiledMapLayerInstance::GetGeometricObjectCount() const
+	size_t TiledMapLayerInstance::GetObjectCount() const
 	{
-		return geometric_objects.size();
+		return objects.size();
 	}
 
-	TiledMapObject* TiledMapLayerInstance::GetGeometricObject(size_t index)
+	TiledMapObject* TiledMapLayerInstance::GetObject(size_t index)
 	{
-		if (index >= geometric_objects.size())
+		if (index >= objects.size())
 			return nullptr;
-		return geometric_objects[index].get();
+		return objects[index].get();
 	}
 
-	TiledMapObject const* TiledMapLayerInstance::GetGeometricObject(size_t index) const
+	TiledMapObject const* TiledMapLayerInstance::GetObject(size_t index) const
 	{
-		if (index >= geometric_objects.size())
+		if (index >= objects.size())
 			return nullptr;
-		return geometric_objects[index].get();
+		return objects[index].get();
 	}
 
 	TiledMapLayerCheckpoint* TiledMapLayerInstance::DoCreateCheckpoint() const
@@ -1437,7 +1437,7 @@ namespace death
 	bool TiledMapLayerInstance::DoSaveIntoCheckpoint(TiledMapLayerCheckpoint* checkpoint) const
 	{
 		DoSaveIntoCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
-		DoSaveIntoCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
+		DoSaveIntoCheckpointHelper(objects, checkpoint->object_checkpoints);
 		return true;
 	}
 
@@ -1476,7 +1476,7 @@ namespace death
 
 		// serialize the objects
 		DoLoadFromCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
-		DoLoadFromCheckpointHelper(geometric_objects, checkpoint->object_checkpoints);
+		DoLoadFromCheckpointHelper(objects, checkpoint->object_checkpoints);
 		return true;
 	}
 
@@ -1494,10 +1494,10 @@ namespace death
 		size_t trigger_count = triggers.size();
 		for (size_t i = 0; i < trigger_count; ++i)
 			triggers[i]->OnLevelEnded();
-		//  geometric object
-		size_t object_count = geometric_objects.size();
+		//  object
+		size_t object_count = objects.size();
 		for (size_t i = 0; i < object_count; ++i)
-			geometric_objects[i]->OnLevelEnded();
+			objects[i]->OnLevelEnded();
 	}
 
 	void TiledMapLayerInstance::OnLevelStarted()
@@ -1514,10 +1514,10 @@ namespace death
 		size_t trigger_count = triggers.size();
 		for (size_t i = 0; i < trigger_count; ++i)
 			triggers[i]->OnLevelStarted();
-		//  geometric object
-		size_t object_count = geometric_objects.size();
+		//  object
+		size_t object_count = objects.size();
 		for (size_t i = 0; i < object_count; ++i)
-			geometric_objects[i]->OnLevelStarted();
+			objects[i]->OnLevelStarted();
 	}
 
 	// =====================================
@@ -1801,8 +1801,8 @@ namespace death
 			}\
 			return nullptr;\
 		}
-	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapObject, FindGeometricObject, const);
+	DEATH_FIND_OBJECT(TiledMapObject, FindObject, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TiledMapObject, FindObject, const);
 	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, const);
 	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
@@ -2306,9 +2306,9 @@ namespace death
 
 				if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
 				{
-					while (object_index < layer_instance->GetGeometricObjectCount())
+					while (object_index < layer_instance->GetObjectCount())
 					{
-						TiledMapObject* object = layer_instance->GetGeometricObject(object_index);
+						TiledMapObject* object = layer_instance->GetObject(object_index);
 						if (object != nullptr)
 						{
 							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))

@@ -555,10 +555,10 @@ namespace death
 		/** find the trigger surface from its name */
 		TiledMapTrigger const* FindTrigger(chaos::NamedObjectRequest request) const;
 
-		/** find the geometric object from its name */
-		TiledMapObject* FindGeometricObject(chaos::NamedObjectRequest request);
-		/** find the geometric object surface from its name */
-		TiledMapObject const* FindGeometricObject(chaos::NamedObjectRequest request) const;
+		/** find the object from its name */
+		TiledMapObject* FindObject(chaos::NamedObjectRequest request);
+		/** find the object from its name */
+		TiledMapObject const* FindObject(chaos::NamedObjectRequest request) const;
 
 		/** get the bounding box for the level */
 		chaos::box2 GetBoundingBox(bool world_system) const;
@@ -617,12 +617,12 @@ namespace death
 		TiledMapPlayerStart const* GetPlayerStart(size_t index) const;
 
 
-		/** returns the number of geometric objects */
-		size_t GetGeometricObjectCount() const;
-		/** returns a geometric object by its index */
-		TiledMapObject* GetGeometricObject(size_t index);
-		/** returns a geometric object by its index */
-		TiledMapObject const* GetGeometricObject(size_t index) const;
+		/** returns the number of objects */
+		size_t GetObjectCount() const;
+		/** returns an object by its index */
+		TiledMapObject* GetObject(size_t index);
+		/** returns an object by its index */
+		TiledMapObject const* GetObject(size_t index) const;
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
@@ -720,8 +720,8 @@ namespace death
 		std::vector<chaos::shared_ptr<TiledMapCameraTemplate>> camera_templates;
 		/** the trigger surface */
 		std::vector<chaos::shared_ptr<TiledMapTrigger>> triggers;
-		/** the geometric objects */
-		std::vector<chaos::shared_ptr<TiledMapObject>> geometric_objects;
+		/** the objects */
+		std::vector<chaos::shared_ptr<TiledMapObject>> objects;
 
 		/** the bounding box of the layer */
 		chaos::box2 bounding_box;
@@ -808,9 +808,9 @@ namespace death
 		/** find the trigger surface from its name */
 		TiledMapTrigger const* FindTrigger(chaos::NamedObjectRequest request) const;
 		/** find the typed object from its name */
-		TiledMapObject* FindGeometricObject(chaos::NamedObjectRequest request);
+		TiledMapObject* FindObject(chaos::NamedObjectRequest request);
 		/** find the typed object surface from its name */
-		TiledMapObject const* FindGeometricObject(chaos::NamedObjectRequest request) const;
+		TiledMapObject const* FindObject(chaos::NamedObjectRequest request) const;
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>

@@ -24,7 +24,7 @@ namespace death
 	{
 		friend class PlayerGamepadCallbacks;
 
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 		
 		CHAOS_OBJECT_DECLARE_CLASS2(Player, chaos::Tickable);
 

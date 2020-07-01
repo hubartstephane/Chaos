@@ -19,7 +19,7 @@
 
 class EnemySpawnerTrigger : public death::TiledMapTrigger
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(EnemySpawnerTrigger, death::TiledMapTrigger);
 
@@ -45,7 +45,7 @@ protected:
 
 class BonusSpawnerTrigger : public death::TiledMapTrigger
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(BonusSpawnerTrigger, death::TiledMapTrigger);
 

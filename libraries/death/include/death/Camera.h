@@ -31,7 +31,7 @@ namespace death
 
 	class Camera : public chaos::Tickable
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(Camera, chaos::Tickable);
 

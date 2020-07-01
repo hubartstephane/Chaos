@@ -16,7 +16,7 @@ namespace death
 
 	class CameraComponent : public chaos::Tickable
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(CameraComponent, chaos::Tickable);
 

@@ -51,7 +51,7 @@ protected:
 
 class Spawner : public death::TiledMapObject
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 public:
 
@@ -96,7 +96,7 @@ protected:
 
 class FireSpawner : public Spawner, public EffectorObject
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(FireSpawner, Spawner);
 
@@ -117,7 +117,7 @@ public:
 
 class SoulSpawner : public Spawner
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(SoulSpawner, Spawner);
 
@@ -132,7 +132,7 @@ class SoulSpawner : public Spawner
 
 class SpikeBar : public death::TiledMapObject, public EffectorObject
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(SpikeBar, death::TiledMapObject);
 
@@ -152,7 +152,7 @@ protected:
 
 class SoulTrigger : public death::TiledMapObject
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(SoulTrigger, death::TiledMapObject);
 
@@ -187,7 +187,7 @@ protected:
 
 class SoulBurnTrigger : public SoulTrigger
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS
+	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(SoulBurnTrigger, SoulTrigger);
 

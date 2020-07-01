@@ -20,7 +20,7 @@ namespace death
 	class PlayerPawn : public chaos::Tickable, public CheckpointObject<PlayerPawnCheckpoint>
 	{
 
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(PlayerPawn, chaos::Tickable);
 

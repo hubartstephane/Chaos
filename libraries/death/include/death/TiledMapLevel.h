@@ -58,7 +58,9 @@ namespace death
 
 	class TiledMapObjectCheckpoint : public chaos::Object
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapObjectCheckpoint, chaos::Object);
 
 	public:
 
@@ -70,7 +72,7 @@ namespace death
 
 	class TiledMapObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapObject, chaos::Tickable);
 
@@ -136,7 +138,7 @@ namespace death
 
 	class TiledMapCamera : public TiledMapObject
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCamera, TiledMapObject);
 
@@ -152,7 +154,7 @@ namespace death
 
 	class TiledMapPlayerStart : public TiledMapObject
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapPlayerStart, TiledMapObject);
 
@@ -173,7 +175,7 @@ namespace death
 
 	class TiledMapTrigger : public TiledMapObject
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTrigger, TiledMapObject);
 
@@ -226,7 +228,9 @@ namespace death
 
 	class TiledMapTriggerObjectCheckpoint : public TiledMapObjectCheckpoint
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerObjectCheckpoint, TiledMapObjectCheckpoint);
 
 	public:
 
@@ -244,7 +248,7 @@ namespace death
 
 	class TiledMapNotificationTrigger : public TiledMapTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapNotificationTrigger, TiledMapTrigger);
 
@@ -278,7 +282,7 @@ namespace death
 
 	class TiledMapCheckpointTrigger : public TiledMapTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCheckpointTrigger, TiledMapTrigger);
 
@@ -301,7 +305,7 @@ namespace death
 
 	class TiledMapSoundTrigger : public TiledMapTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapSoundTrigger, TiledMapTrigger);
 
@@ -347,7 +351,7 @@ namespace death
 
 	class TiledMapChangeLevelTrigger : public TiledMapTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapChangeLevelTrigger, TiledMapTrigger);
 
@@ -408,7 +412,7 @@ namespace death
 
 	class TiledMapLevel : public Level
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevel, Level);
 
@@ -478,7 +482,9 @@ namespace death
 
 	class TiledMapLayerCheckpoint : public chaos::Object
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLayerCheckpoint, chaos::Object);
 
 	public:
 
@@ -488,13 +494,27 @@ namespace death
 		std::map<int, chaos::shared_ptr<TiledMapObjectCheckpoint>> object_checkpoints;
 	};
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// =====================================
 	// TiledMapLayerInstance : instance of a Layer
 	// =====================================
 
 	class TiledMapLayerInstance : public chaos::GPURenderable, public CheckpointObject<TiledMapLayerCheckpoint>
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLayerInstance, chaos::GPURenderable);
 
@@ -749,7 +769,9 @@ namespace death
 
 	class TiledMapLevelCheckpoint : public LevelCheckpoint
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevelCheckpoint, LevelCheckpoint);
 
 	public:
 
@@ -763,7 +785,7 @@ namespace death
 
 	class TiledMapLevelInstance : public LevelInstance
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevelInstance, LevelInstance);
 

@@ -61,7 +61,7 @@ namespace death
 
 		friend class PlayingHUD;
 
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS()
+		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
 	public:
 

@@ -1949,16 +1949,17 @@ namespace death
 
 	void TiledMapLevelInstance::SetInGameMusic()
 	{
-		std::string const* level_music = nullptr;
-
 		TiledMapLevel const* level = GetLevel();
 		if (level != nullptr)
-			level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
-
-		if (level_music == nullptr)
-			death::LevelInstance::SetInGameMusic();
-		else
-			game->SetInGameMusic(level_music->c_str());
+		{
+			std::string const* level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
+			if (level_music != nullptr)
+			{
+				game->SetInGameMusic(level_music->c_str());
+				return;
+			}
+		}
+		death::LevelInstance::SetInGameMusic();
 	}
 
 	LevelCheckpoint* TiledMapLevelInstance::DoCreateCheckpoint() const

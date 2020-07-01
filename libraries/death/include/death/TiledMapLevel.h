@@ -450,7 +450,7 @@ namespace death
 		virtual TiledMapSoundTrigger* DoCreateSoundTrigger();
 
 		/** create a PlayerStartObject specializable method */
-		virtual TiledMapLayerInstance* DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
+		virtual TiledMapLayerInstance* DoCreateLayerInstance();
 
 		/** create a layer instance 'entry point' */
 		TiledMapLayerInstance* CreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
@@ -516,12 +516,7 @@ namespace death
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		//CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLayerInstance, chaos::GPURenderable);
-
-	protected:
-
-		/** protected constructor */
-		TiledMapLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLayerInstance, chaos::GPURenderable);
 
 	public:
 
@@ -635,7 +630,7 @@ namespace death
 	protected:
 
 		/** initialization */
-		virtual bool Initialize();
+		virtual bool Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 
 		/** override */
 		virtual TiledMapLayerCheckpoint* DoCreateCheckpoint() const override;
@@ -925,6 +920,17 @@ namespace death
 		/** the previous frame trigger collision */
 		std::vector<TiledMapTriggerCollisionInfo> collision_info;
 	};
+
+
+
+
+
+
+
+
+
+
+
 
 	// =====================================
 	// TileCollisionInfo

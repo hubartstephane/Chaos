@@ -595,17 +595,17 @@ namespace death
 		return new TiledMapPlayerStart();
 	}
 
-	TiledMapLayerInstance* TiledMapLevel::DoCreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
+	TiledMapLayerInstance* TiledMapLevel::DoCreateLayerInstance()
 	{
-		return new TiledMapLayerInstance(in_level_instance, in_layer);
+		return new TiledMapLayerInstance();
 	}
 
 	TiledMapLayerInstance* TiledMapLevel::CreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
 	{
-		TiledMapLayerInstance* result = DoCreateLayerInstance(in_level_instance, in_layer);
+		TiledMapLayerInstance* result = DoCreateLayerInstance();
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize())
+		if (!result->Initialize(in_level_instance, in_layer))
 		{
 			delete result;
 			return nullptr;
@@ -689,14 +689,6 @@ namespace death
 	// =====================================
 	// TiledMapLayerInstance implementation
 	// =====================================
-
-	TiledMapLayerInstance::TiledMapLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer) :
-		level_instance(in_level_instance),
-		layer(in_layer)
-	{
-		assert(in_level_instance != nullptr);
-		assert(in_layer != nullptr);
-	}
 
 	chaos::AutoCastable<Game> TiledMapLayerInstance::GetGame()
 	{
@@ -789,8 +781,17 @@ namespace death
 		return 0;
 	}
 
-	bool TiledMapLayerInstance::Initialize()
+	bool TiledMapLayerInstance::Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
 	{
+		// ensure not already initialized
+		assert(in_level_instance != nullptr);
+		assert(in_layer != nullptr);
+		assert(level_instance == nullptr);
+		assert(layer == nullptr);
+
+		level_instance = in_level_instance;
+		layer = in_layer;
+
 		// get the properties of interrest
 		id = layer->id;
 

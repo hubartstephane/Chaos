@@ -530,7 +530,7 @@ namespace death
 		return new chaos::ParticleLayer<TiledMapParticleTrait>();
 	}
 	
-	GeometricObjectFactory TiledMapLevel::DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
+	TiledMapObjectFactory TiledMapLevel::DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
 	{
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
@@ -550,14 +550,14 @@ namespace death
 		return nullptr;
 	}
 
-	GeometricObjectFactory TiledMapLevel::GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
+	TiledMapObjectFactory TiledMapLevel::GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
 	{
 		// get a very first factory that just
-		GeometricObjectFactory factory = DoGetObjectFactory(in_layer_instance, in_typed_object);
+		TiledMapObjectFactory factory = DoGetObjectFactory(in_layer_instance, in_typed_object);
 		if (!factory)
 			return nullptr;
 		// create another factory that wraps the previous (and add Initialize(...) call)
-		GeometricObjectFactory result = [in_layer_instance, factory](chaos::TiledMap::GeometricObject* in_geometric_object)
+		TiledMapObjectFactory result = [in_layer_instance, factory](chaos::TiledMap::GeometricObject* in_geometric_object)
 		{
 			TiledMapObject * result = factory(in_geometric_object);
 			if (result != nullptr && !result->Initialize(in_layer_instance, in_geometric_object))
@@ -920,16 +920,16 @@ namespace death
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
-	GeometricObjectFactory TiledMapLayerInstance::GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object)
+	TiledMapObjectFactory TiledMapLayerInstance::GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object)
 	{
 		TiledMapLevel* level = GetLevel();
 
 		// get a factory for the object (new + Initialize(...) ...)
-		GeometricObjectFactory factory = level->GetObjectFactory(this, in_typed_object);
+		TiledMapObjectFactory factory = level->GetObjectFactory(this, in_typed_object);
 		if (!factory)
 			return nullptr;
 		// create a 'final' factory that use previous one + insert the result object in correct list
-		GeometricObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject* geometric_object)
+		TiledMapObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject* geometric_object)
 		{
 			TiledMapObject* result = factory(geometric_object);
 			if (result != nullptr)
@@ -997,7 +997,7 @@ namespace death
 			// get factory + create the object
 			TiledMapObject* object = nullptr;
 
-			GeometricObjectFactory factory = GetObjectFactory(geometric_object);
+			TiledMapObjectFactory factory = GetObjectFactory(geometric_object);
 			if (factory)
 				object = factory(geometric_object);
 
@@ -1146,7 +1146,7 @@ namespace death
 			chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
 
 			// try to create a geometric object from the tile
-			GeometricObjectFactory factory = GetObjectFactory(tile_info.tiledata);
+			TiledMapObjectFactory factory = GetObjectFactory(tile_info.tiledata);
 			if (factory)
 			{
 				chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new chaos::TiledMap::PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);

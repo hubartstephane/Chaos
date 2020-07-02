@@ -104,12 +104,12 @@ namespace death
 
 	TiledMapObjectCheckpoint* TiledMapTrigger::DoCreateCheckpoint() const
 	{
-		return new TiledMapTriggerObjectCheckpoint();
+		return new TiledMapTriggerCheckpoint();
 	}
 
 	bool TiledMapTrigger::DoSaveIntoCheckpoint(TiledMapObjectCheckpoint* checkpoint) const
 	{
-		TiledMapTriggerObjectCheckpoint* trigger_checkpoint = auto_cast(checkpoint);
+		TiledMapTriggerCheckpoint* trigger_checkpoint = auto_cast(checkpoint);
 		if (trigger_checkpoint == nullptr)
 			return false;
 
@@ -125,7 +125,7 @@ namespace death
 
 	bool TiledMapTrigger::DoLoadFromCheckpoint(TiledMapObjectCheckpoint const* checkpoint)
 	{
-		TiledMapTriggerObjectCheckpoint const* trigger_checkpoint = auto_cast(checkpoint);
+		TiledMapTriggerCheckpoint const* trigger_checkpoint = auto_cast(checkpoint);
 		if (trigger_checkpoint == nullptr)
 			return false;
 
@@ -357,6 +357,15 @@ namespace death
 			if (level_instance != nullptr)
 				level_instance->SetLevelCompletionFlag();
 		}
+		return true;
+	}
+
+	bool TiledMapChangeLevelTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	{
+		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+			return false;
+		level_name = in_geometric_object->GetPropertyValueString("LEVEL_NAME", "");
+		player_start_name = in_geometric_object->GetPropertyValueString("PLAYER_START_NAME", "");
 		return true;
 	}
 

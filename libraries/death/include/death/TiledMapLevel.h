@@ -224,14 +224,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapTriggerObjectCheckpoint
+	// TiledMapTriggerCheckpoint
 	// =====================================
 
-	class TiledMapTriggerObjectCheckpoint : public TiledMapObjectCheckpoint
+	class TiledMapTriggerCheckpoint : public TiledMapObjectCheckpoint
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerObjectCheckpoint, TiledMapObjectCheckpoint);
+		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerCheckpoint, TiledMapObjectCheckpoint);
 
 	public:
 
@@ -359,9 +359,18 @@ namespace death
 	protected:
 
 		/** override */
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
+
+	protected:
+
+		/** the destination level */
+		std::string level_name;
+		/** the destination player start */
+		std::string player_start_name;
 	};
 
 

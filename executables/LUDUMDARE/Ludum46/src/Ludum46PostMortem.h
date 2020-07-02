@@ -14,7 +14,7 @@
 
 // ca serait bien que dans
 //
-//    TiledMapLayerInstance::CreateGeometricObjectParticles(...) 
+//    TiledMapLayerInstance::CreateObjectParticles(...) 
 //
 // on puisse recuperer les particules que l on vient de creer pour faire notre petite ttambouille ... pb : on utilise un cache de particles (et en plus elles sont typées en TiledMapParticle : aie)
 //

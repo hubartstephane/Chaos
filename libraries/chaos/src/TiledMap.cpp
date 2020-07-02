@@ -554,7 +554,7 @@ namespace chaos
 			int pseudo_gid = 0;// this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
 			XMLTools::ReadAttribute(element, "gid", pseudo_gid);
 
-			gid = TiledMapTools::GetTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
+			gid = TiledMapTools::DecodeTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
 
 			return true;
 		}

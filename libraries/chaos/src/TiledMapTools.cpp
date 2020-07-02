@@ -126,7 +126,7 @@ namespace chaos
 		return typed_object->IsObjectOfType("Sound");
 	}
 
-	int TiledMapTools::GetTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip, bool * diagonal_flip)
+	int TiledMapTools::DecodeTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip, bool * diagonal_flip)
 	{
 		// see https://doc.mapeditor.org/en/stable/reference/tmx-map-format/
 		const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;

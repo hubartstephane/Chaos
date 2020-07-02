@@ -90,6 +90,43 @@ namespace chaos
 	};
 
 	/**
+	* ImageProcessorOutline : add an alpha channel according to RGB value
+	*/
+
+	class ImageProcessorAddAlpha : public ImageProcessor
+	{
+		CHAOS_OBJECT_DECLARE_CLASS2(ImageProcessorAddAlpha, ImageProcessor);
+
+	public:
+
+		/** the image processing method to override */
+		virtual FIBITMAP* ProcessImage(ImageDescription const& src_desc) const override;
+
+		/** the processor may save its configuration into a JSON file */
+		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const override;
+		/** the processor may save its configuration from a JSON file */
+		virtual bool LoadFromJSON(nlohmann::json const& json_entry) override;
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/**
 	* ImageProcessorShadow : add a shadow to an image
 	*/
 

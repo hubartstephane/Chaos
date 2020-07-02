@@ -232,7 +232,138 @@ namespace chaos
 		return true;
 	}
 
+	// ================================================================
+	// ImageProcessorAddAlpha functions
+	// ================================================================
 
+	FIBITMAP* ImageProcessorAddAlpha::ProcessImage(ImageDescription const& src_desc) const
+	{
+		if (src_desc.pixel_format == PixelFormat::DepthStencil)
+		{
+			LogTools::Error("ImageProcessorAddAlpha : cannot process DepthStencil format");
+			return nullptr;
+		}
+
+		return DoImageProcessing(src_desc, [this, src_desc](auto src_accessor) -> FIBITMAP*
+		{
+			if (!src_accessor.IsValid())
+				return nullptr;
+
+			using accessor_type = decltype(src_accessor);
+
+			int dest_width = src_desc.width;
+			int dest_height = src_desc.height;
+
+			// generate the image
+			FIBITMAP* result = ImageTools::GenFreeImage(PixelFormat::BGRA, dest_width, dest_height);
+			if (result != nullptr)
+			{
+				ImagePixelAccessor<PixelBGRA> dst_accessor(ImageTools::GetImageDescription(result));
+				if (!dst_accessor.IsValid())
+				{
+					FreeImage_Unload(result);
+					return nullptr;
+				}
+
+				using pixel_type = typename accessor_type::type;
+
+				float dist = 1.0f;
+
+				int d2 = (int)(255.0f * 255.0f * dist * dist);
+
+				for (int j = 0; j < src_desc.height; ++j)
+				{
+					for (int i = 0; i < src_desc.width; ++i)
+					{
+						pixel_type p = src_accessor(i, j);
+
+						PixelBGRA p2;
+						PixelConverter::Convert(p2, p);
+
+						
+
+						if (p2.R * p2.R + p2.G * p2.G + p2.B * p2.B < d2)
+							p2.A = p2.R = 255;
+						dst_accessor(i, j) = p2;
+					}
+				}
+
+#if 0
+
+
+
+
+
+
+
+
+				PixelRGBAFloat o = color;
+				PixelRGBAFloat e = empty_color;
+
+				pixel_type outline, empty;
+				PixelConverter::Convert(outline, o);
+				PixelConverter::Convert(empty, e);
+
+				int d2 = distance * distance;
+
+				// all pixels on destination images
+				for (int y = 0; y < dest_height; ++y)
+				{
+					for (int x = 0; x < dest_width; ++x)
+					{
+						int src_x = x - distance;
+						int src_y = y - distance;
+
+						// search whether we must add an outline
+						int min_src_x = std::max(0, src_x - distance);
+						int max_src_x = std::min(src_x + distance, src_desc.width - 1);
+
+						int min_src_y = std::max(0, src_y - distance);
+						int max_src_y = std::min(src_y + distance, src_desc.height - 1);
+
+						bool all_neighboor_empty = true;
+						for (int sy = min_src_y; (sy <= max_src_y) && all_neighboor_empty; ++sy)
+						{
+							for (int sx = min_src_x; (sx <= max_src_x) && all_neighboor_empty; ++sx)
+							{
+								int dx = src_x - sx;
+								int dy = src_y - sy;
+								if (dx * dx + dy * dy <= d2)
+									all_neighboor_empty = !color_filter.Filter(src_accessor(sx, sy));
+							}
+						}
+
+						// put the pixel on destination
+						if (all_neighboor_empty)
+							dst_accessor(x, y) = empty;
+						else if (src_x >= 0 && src_x < src_desc.width && src_y >= 0 && src_y < src_desc.height && color_filter.Filter(src_accessor(src_x, src_y)))
+							dst_accessor(x, y) = src_accessor(src_x, src_y);
+						else
+							dst_accessor(x, y) = outline;
+					}
+				}
+
+
+#endif
+			}
+			return result;
+		});
+	}
+
+
+	bool ImageProcessorAddAlpha::SaveIntoJSON(nlohmann::json& json_entry) const
+	{
+
+
+		return true;
+	}
+
+	bool ImageProcessorAddAlpha::LoadFromJSON(nlohmann::json const& json_entry)
+	{
+
+
+		return true;
+	}
 
 
 

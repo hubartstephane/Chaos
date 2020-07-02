@@ -855,7 +855,7 @@ namespace death
 		return true;
 	}
 
-	void TiledMapLayerInstance::CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
+	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
@@ -1004,7 +1004,7 @@ namespace death
 			// create tile if no object created 
 			// (XXX : no way yet to know whether this a normal situation because user does not want to create object or whether an error happened)
 			if (object == nullptr || ShouldCreateParticleForObject(geometric_object, object))
-				CreateGeometricObjectParticles(geometric_object, object, particle_populator.get());
+				CreateObjectParticles(geometric_object, object, particle_populator.get());
 		}
 
 		// final flush
@@ -1131,7 +1131,7 @@ namespace death
 			bool horizontal_flip = false;
 			bool vertical_flip = false;
 			bool diagonal_flip = false;
-			int gid = chaos::TiledMapTools::GetTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
+			int gid = chaos::TiledMapTools::DecodeTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
 
 			if (gid == 0)
 				continue;
@@ -2050,9 +2050,9 @@ namespace death
 		return TiledMapTriggerCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
 
-	TiledMapGeometricObjectCollisionIterator TiledMapLevelInstance::GetGeometricObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	TiledMapObjectCollisionIterator TiledMapLevelInstance::GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
 	{
-		return TiledMapGeometricObjectCollisionIterator(this, in_collision_box, in_collision_mask);
+		return TiledMapObjectCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
 
 	// =====================================
@@ -2285,16 +2285,16 @@ namespace death
 
 
 	// =====================================
-	// TiledMapGeometricObjectCollisionIterator implementation
+	// TiledMapObjectCollisionIterator implementation
 	// =====================================
 
-	TiledMapGeometricObjectCollisionIterator::TiledMapGeometricObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+	TiledMapObjectCollisionIterator::TiledMapObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
 		TiledMapObjectCollisionIteratorBase<TiledMapObject>(in_level_instance, in_collision_box, in_collision_mask)
 	{
 		FindFirstCollision();
 	}
 
-	void TiledMapGeometricObjectCollisionIterator::FindFirstCollision()
+	void TiledMapObjectCollisionIterator::FindFirstCollision()
 	{
 		assert(level_instance != nullptr); // end already reached. cannot go further
 
@@ -2330,20 +2330,20 @@ namespace death
 		}
 	}
 
-	TiledMapGeometricObjectCollisionIterator& TiledMapGeometricObjectCollisionIterator::operator ++ ()
+	TiledMapObjectCollisionIterator& TiledMapObjectCollisionIterator::operator ++ ()
 	{
 		Next();
 		return *this;
 	}
 
-	TiledMapGeometricObjectCollisionIterator TiledMapGeometricObjectCollisionIterator::operator ++ (int i)
+	TiledMapObjectCollisionIterator TiledMapObjectCollisionIterator::operator ++ (int i)
 	{
-		TiledMapGeometricObjectCollisionIterator result = *this;
+		TiledMapObjectCollisionIterator result = *this;
 		++(*this);
 		return result;
 	}
 
-	void TiledMapGeometricObjectCollisionIterator::NextLayer()
+	void TiledMapObjectCollisionIterator::NextLayer()
 	{
 		if (ignore_other_layers)
 		{
@@ -2357,7 +2357,7 @@ namespace death
 		}
 	}
 
-	void TiledMapGeometricObjectCollisionIterator::Next()
+	void TiledMapObjectCollisionIterator::Next()
 	{
 		++object_index;
 		FindFirstCollision();

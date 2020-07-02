@@ -40,7 +40,7 @@ namespace death
 (TiledMapCheckpointTrigger) \
 (TiledMapLayerInstanceParticlePopulator) \
 (TiledMapTriggerCollisionIterator)\
-(TiledMapGeometricObjectCollisionIterator)\
+(TiledMapObjectCollisionIterator)\
 (TiledMapTileCollisionIterator)\
 (TiledMapSoundTrigger)
 
@@ -98,6 +98,7 @@ namespace death
 
 		/** get the object bounding box */
 		chaos::box2 GetBoundingBox(bool world_system) const;
+
 		/** getters on the chaos::GeometricObject that this instance references to */
 		chaos::TiledMap::GeometricObject* GetGeometricObject() { return geometric_object.get(); }
 		/** getters on the chaos::GeometricObject that this instance references to */
@@ -661,7 +662,7 @@ namespace death
 		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create an object in an object layer */
-		void CreateGeometricObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
+		void CreateObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
 		/** returns whether a particle should be created for object instance */
 		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const;
 
@@ -839,7 +840,7 @@ namespace death
 		/** Get a collision iterator for triggers */
 		TiledMapTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 		/** Get a collision iterator for objects */
-		TiledMapGeometricObjectCollisionIterator GetGeometricObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TiledMapObjectCollisionIterator GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();
@@ -1118,24 +1119,24 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapGeometricObjectCollisionIterator
+	// TiledMapObjectCollisionIterator
 	// =====================================
 
-	class TiledMapGeometricObjectCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapObject>
+	class TiledMapObjectCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapObject>
 	{
 	public:
 
 		/** the default constructor */
-		TiledMapGeometricObjectCollisionIterator() = default;
+		TiledMapObjectCollisionIterator() = default;
 		/** the copy constructor */
-		TiledMapGeometricObjectCollisionIterator(TiledMapGeometricObjectCollisionIterator const& src) = default;
+		TiledMapObjectCollisionIterator(TiledMapObjectCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TiledMapGeometricObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TiledMapObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		// pre increment iterator
-		TiledMapGeometricObjectCollisionIterator& operator ++ ();
+		TiledMapObjectCollisionIterator& operator ++ ();
 		// post increment iterator
-		TiledMapGeometricObjectCollisionIterator operator ++ (int i);
+		TiledMapObjectCollisionIterator operator ++ (int i);
 
 		/** go to next layer */
 		void NextLayer();

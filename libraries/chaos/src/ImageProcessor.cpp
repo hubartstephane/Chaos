@@ -267,7 +267,7 @@ namespace chaos
 
 				using pixel_type = typename accessor_type::type;
 
-				float dist = 1.0f;
+				float dist = 1.4f;
 
 				int d2 = (int)(255.0f * 255.0f * dist * dist);
 

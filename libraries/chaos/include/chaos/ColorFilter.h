@@ -35,7 +35,7 @@ namespace chaos
 		/** distance to reference color */
 		float distance = 0.0f;
 		/** the operator to apply to the distance */
-		ComparisonOperator distance_operator = ComparisonOperator::greater;
+		ComparisonOperator distance_operator = ComparisonOperator::GREATER;
 		/** a reference color to check distance with */
 		glm::vec4 color_reference = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		/** the mask to apply to incomming color before checking for distance */

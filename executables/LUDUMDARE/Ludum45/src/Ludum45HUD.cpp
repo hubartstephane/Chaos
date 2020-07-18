@@ -130,7 +130,7 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 
 	// shuludum    XXX : bitmap_info->   devrait avoir une fonction qui retourne la VRAIE taille d'une animation et pas la taille de la grille complete => GetAnimationLayout(0, ...)
 
-	chaos::BitmapAtlas::BitmapLayout layout = bitmap_info->GetAnimationLayout(0, chaos::WrapMode::clamp);
+	chaos::BitmapAtlas::BitmapLayout layout = bitmap_info->GetAnimationLayout(0, chaos::WrapMode::CLAMP);
 
 	
 	float bw = (float)layout.width;

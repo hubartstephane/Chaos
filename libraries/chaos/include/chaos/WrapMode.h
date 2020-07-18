@@ -6,29 +6,29 @@ namespace chaos
 {
 	enum class WrapMode : int
 	{
-		none = 0,
-		clamp = 1,
-		wrap = 2,
-		check_ranges = 3
+		NONE = 0,
+		CLAMP = 1,
+		WRAP = 2,
+		CHECK_RANGES = 3
 	};
 
 	// apply the wrap mode (return whether this is not an out of bounds)
 	template<typename T>
 	bool ApplyWrapMode(T src, T min_value, T max_value, WrapMode mode, T & result)
 	{
-		if (mode == WrapMode::none)
+		if (mode == WrapMode::NONE)
 		{
 			result = src;
 		}
-		else if (mode == WrapMode::clamp)
+		else if (mode == WrapMode::CLAMP)
 		{
 			result = std::clamp(src, min_value, max_value);
 		}
-		else if (mode == WrapMode::wrap)
+		else if (mode == WrapMode::WRAP)
 		{
 			result = min_value + MathTools::Modulo(src - min_value, max_value - min_value + 1); // +1 because 'max_value' is inside accepted range
 		}
-		else if (mode == WrapMode::check_ranges)
+		else if (mode == WrapMode::CHECK_RANGES)
 		{
 			if (src < min_value)
 				return false;

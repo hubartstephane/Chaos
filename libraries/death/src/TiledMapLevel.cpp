@@ -1188,7 +1188,7 @@ namespace death
 					//       We are writing int the fake object properties, not in the 'tile_info.tiledata'
 					//       That means that if 'tile_info.tiledata' already has a BITMAP_NAME property, this does not
 					//       interfere with that (a just in case value)
-					tile_object->InsertProperty("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); 
+					tile_object->InsertPropertyString("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); 
 
 					TiledMapObject* object = factory(tile_object.get());
 					if (object != nullptr)

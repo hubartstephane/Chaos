@@ -36,13 +36,9 @@ namespace chaos
 			return true;
 		}
 
-		static bool ReadXMLColor(tinyxml2::XMLElement const * element, char const * attribute_name, glm::vec4 & result)
+		static bool ReadXMLColor(std::string const& str, glm::vec4& result)
 		{
-			std::string result_string;
-			if (!XMLTools::ReadAttribute(element, attribute_name, result_string))
-				return false;
-
-			char const * c = result_string.c_str(); // #00000000 is a valid attribute too, as well as hexadecimal strings
+			char const* c = str.c_str(); // #00000000 is a valid attribute too, as well as hexadecimal strings
 			if (c[0] == '#')
 				c = c + 1;
 			else
@@ -57,6 +53,15 @@ namespace chaos
 
 			result = rgba_float;
 			return true;
+		}
+
+		static bool ReadXMLColor(tinyxml2::XMLElement const* element, char const* attribute_name, glm::vec4& result)
+		{
+			std::string result_string;
+			if (!XMLTools::ReadAttribute(element, attribute_name, result_string))
+				return false;
+
+			return ReadXMLColor(result_string, result);
 		}
 
 		// ==========================================
@@ -103,6 +108,106 @@ namespace chaos
 				return tileset->GetPath();
 			// default path
 			return boost::filesystem::path();
+		}
+
+		// ==========================================
+		// Property methods
+		// ==========================================
+		
+		int* Property::GetIntProperty() 
+		{
+			PropertyTemplate<int, PropertyType::INT>* p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr; 
+		}
+
+		int const* Property::GetIntProperty() const 
+		{ 
+			PropertyTemplate<int, PropertyType::INT> const * p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+		
+		float* Property::GetFloatProperty() 
+		{ 
+			PropertyTemplate<float, PropertyType::FLOAT> * p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+
+		float const* Property::GetFloatProperty() const 
+		{ 
+			PropertyTemplate<float, PropertyType::FLOAT> const* p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+		
+		bool* Property::GetBoolProperty() 
+		{ 
+			PropertyTemplate<bool, PropertyType::BOOL> * p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+
+		bool const* Property::GetBoolProperty() const 
+		{ 
+			PropertyTemplate<bool, PropertyType::BOOL> const* p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+		
+		std::string* Property::GetStringProperty() 
+		{ 
+			PropertyTemplate<std::string, PropertyType::STRING> * p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+
+		std::string const* Property::GetStringProperty() const 
+		{ 
+			PropertyTemplate<std::string, PropertyType::STRING> const* p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+		
+		glm::vec4* Property::GetColorProperty() 
+		{ 
+			PropertyTemplate<glm::vec4, PropertyType::COLOR> * p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+
+		glm::vec4 const* Property::GetColorProperty() const 
+		{ 
+			PropertyTemplate<glm::vec4, PropertyType::COLOR> const* p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+
+		int* Property::GetObjectProperty()
+		{
+			PropertyTemplate<int, PropertyType::OBJECT>* p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
+		}
+
+		int const* Property::GetObjectProperty() const
+		{
+			PropertyTemplate<int, PropertyType::OBJECT> const* p = auto_cast(this);
+			if (p != nullptr)
+				return &p->value;
+			return nullptr;
 		}
 
 		// ==========================================
@@ -205,6 +310,37 @@ namespace chaos
 		}
 
 
+		glm::vec4 * PropertyOwner::FindPropertyColor(char const* name)
+		{
+			Property* property = FindProperty(name, PropertyType::COLOR);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetColorProperty();
+		}
+
+		glm::vec4 const* PropertyOwner::FindPropertyColor(char const* name) const
+		{
+			Property const* property = FindProperty(name, PropertyType::COLOR);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetColorProperty();
+		}
+
+		int * PropertyOwner::FindPropertyObject(char const* name)
+		{
+			Property* property = FindProperty(name, PropertyType::OBJECT);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetObjectProperty();
+		}
+
+		int const* PropertyOwner::FindPropertyObject(char const* name) const
+		{
+			Property const* property = FindProperty(name, PropertyType::OBJECT);
+			if (property == nullptr)
+				return nullptr;
+			return property->GetObjectProperty();
+		}
 
 #define CHAOS_FIND_PROPERTY_WITH_DEFAULT(suffix, return_type, arg_type)\
 		return_type PropertyOwner::GetPropertyValue##suffix(char const * name, arg_type default_value) const\
@@ -213,11 +349,13 @@ namespace chaos
 			if (result == nullptr)\
 				return default_value;\
 			return *result;\
-		}
-		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Int, int, int)
-			CHAOS_FIND_PROPERTY_WITH_DEFAULT(Float, float, float)
-			CHAOS_FIND_PROPERTY_WITH_DEFAULT(Bool, bool, bool)
-			CHAOS_FIND_PROPERTY_WITH_DEFAULT(String, std::string, char const *)
+		}		
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Int, int, int);			
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Float, float, float);
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Bool, bool, bool);
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(String, std::string, char const*);
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Color, glm::vec4, glm::vec4 const&);
+		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Object, int, int);
 #undef CHAOS_FIND_PROPERTY_WITH_DEFAULT
 
 			bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)
@@ -261,74 +399,56 @@ namespace chaos
 				{
 					char const * value = (value_attribute != nullptr) ? value_attribute->Value() : node->GetText();
 					if (value != nullptr)
-						InsertProperty(property_name, value);
+						InsertPropertyString(property_name, value);
 				}
 				else if (value_attribute != nullptr) // now, to this point, value_attribute becomes MANDATORY
 				{
 					if (StringTools::Stricmp(property_type, "int") == 0)
 					{
-						InsertProperty(property_name, value_attribute->IntValue());
+						InsertPropertyInt(property_name, value_attribute->IntValue());
 					}
 					else if (StringTools::Stricmp(property_type, "float") == 0)
 					{
-						InsertProperty(property_name, value_attribute->FloatValue());
+						InsertPropertyFloat(property_name, value_attribute->FloatValue());
 					}
 					else if (StringTools::Stricmp(property_type, "bool") == 0)
 					{
-						InsertProperty(property_name, value_attribute->BoolValue());
+						InsertPropertyBool(property_name, value_attribute->BoolValue());
+					}
+					else if (StringTools::Stricmp(property_type, "color") == 0)
+					{
+						glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+						if (ReadXMLColor(value_attribute->Value(), color))
+							InsertPropertyColor(property_name, color);					
+					}
+					else if (StringTools::Stricmp(property_type, "object") == 0)
+					{
+						InsertPropertyObject(property_name, value_attribute->IntValue());
 					}
 				}
 			}
 			return true;
 		}
 
-		PropertyInt * PropertyOwner::InsertProperty(char const * name, int value)
-		{
-			PropertyInt * result = new PropertyInt(this);
-			if (result != nullptr)
-			{
-				result->name = name;
-				result->value = value;
-				properties.push_back(result);
-			}
-			return result;
+#define CHAOS_INSERT_PROPERTY(suffix, result_type, arg_type)\
+		result_type * PropertyOwner::InsertProperty##suffix(char const * name, arg_type value)\
+		{\
+			result_type* result = new result_type(this);\
+			if (result != nullptr)\
+			{\
+				result->name = name;\
+				result->value = value;\
+				properties.push_back(result);\
+			}\
+			return result;\
 		}
-
-		PropertyFloat * PropertyOwner::InsertProperty(char const * name, float value)
-		{
-			PropertyFloat * result = new PropertyFloat(this);
-			if (result != nullptr)
-			{
-				result->name = name;
-				result->value = value;
-				properties.push_back(result);
-			}
-			return result;
-		}
-
-		PropertyBool * PropertyOwner::InsertProperty(char const * name, bool value)
-		{
-			PropertyBool * result = new PropertyBool(this);
-			if (result != nullptr)
-			{
-				result->name = name;
-				result->value = value;
-				properties.push_back(result);
-			}
-			return result;
-		}
-
-		PropertyString * PropertyOwner::InsertProperty(char const * name, char const * value)
-		{
-			PropertyString * result = new PropertyString(this);
-			if (result != nullptr)
-			{
-				result->name = name;
-				result->value = value;
-				properties.push_back(result);
-			}
-			return result;
-		}
+		CHAOS_INSERT_PROPERTY(Int, PropertyInt, int);
+		CHAOS_INSERT_PROPERTY(Float, PropertyFloat, float);
+		CHAOS_INSERT_PROPERTY(Bool, PropertyBool, bool);
+		CHAOS_INSERT_PROPERTY(String, PropertyString, char const *);
+		CHAOS_INSERT_PROPERTY(Color, PropertyColor, glm::vec4 const &);
+		CHAOS_INSERT_PROPERTY(Object, PropertyObject, int);
+#undef CHAOS_INSERT_PROPERTY
 
 		bool PropertyOwner::IsObjectOfType(char const* in_type) const
 		{

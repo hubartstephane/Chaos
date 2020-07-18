@@ -174,7 +174,9 @@ namespace chaos
 			INT = 1,
 			FLOAT = 2,
 			BOOL = 3,
-			STRING = 4
+			STRING = 4,
+			COLOR = 5,
+			OBJECT = 6
 		};
 
 		class Property : public BaseObject
@@ -187,26 +189,36 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** returns a pointer on the int property */
-			virtual int * GetIntProperty() { return nullptr; }
-			virtual int const * GetIntProperty() const { return nullptr; }
+			int* GetIntProperty();
+			int const* GetIntProperty() const;
 			/** returns a pointer on the float property */
-			virtual float * GetFloatProperty() { return nullptr; }
-			virtual float const * GetFloatProperty() const { return nullptr; }
+			float* GetFloatProperty();
+			float const* GetFloatProperty() const;
 			/** returns a pointer on the bool property */
-			virtual bool * GetBoolProperty() { return nullptr; }
-			virtual bool const * GetBoolProperty() const { return nullptr; }
+			bool* GetBoolProperty();
+			bool const* GetBoolProperty() const;
 			/** returns a pointer on the string property */
-			virtual std::string * GetStringProperty() { return nullptr; }
-			virtual std::string const * GetStringProperty() const { return nullptr; }
+			std::string* GetStringProperty();
+			std::string const* GetStringProperty() const;
+			/** returns a pointer on the color property */
+			glm::vec4* GetColorProperty();
+			glm::vec4 const* GetColorProperty() const;
+			/** returns a pointer on the object property */
+			int* GetObjectProperty();
+			int const* GetObjectProperty() const;
 
 			/** returns whether the property is of type int */
-			bool IsIntProperty() const { return GetIntProperty() != nullptr; }
+			bool IsIntProperty() const { return (type == PropertyType::INT); }
 			/** returns whether the property is of type float */
-			bool IsFloatProperty() const { return GetFloatProperty() != nullptr; }
+			bool IsFloatProperty() const { return (type == PropertyType::FLOAT); }
 			/** returns whether the property is of type bool */
-			bool IsBoolProperty() const { return GetBoolProperty() != nullptr; }
+			bool IsBoolProperty() const { return (type == PropertyType::BOOL); }
 			/** returns whether the property is of type string */
-			bool IsStringProperty() const { return GetStringProperty() != nullptr; }
+			bool IsStringProperty() const { return (type == PropertyType::STRING); }
+			/** returns whether the property is of type color */
+			bool IsColorProperty() const { return (type == PropertyType::COLOR); }
+			/** returns whether the property is of type object */
+			bool IsObjectProperty() const { return (type == PropertyType::OBJECT); }
 
 			/** returns the name of the property */
 			char const * GetName() const { return name.c_str(); }
@@ -232,6 +244,9 @@ namespace chaos
 
 		public:
 
+			/** the type of the property */
+			using property_type = T;
+
 			/** constructor */
 			PropertyTemplate(BaseObject * in_owner) :
 				Property(in_owner)
@@ -239,43 +254,8 @@ namespace chaos
 				type = TYPE_ID;
 			}
 
-			/** the type of the property */
-			using property_type = T;
-
-			/** returns a pointer on the int property */
-			virtual int * GetIntProperty() override { return CastPropertyTo<int>(); }
-			virtual int const * GetIntProperty() const override { return CastPropertyTo<int>(); }
-			/** returns a pointer on the float property */
-			virtual float * GetFloatProperty() override { return CastPropertyTo<float>(); }
-			virtual float const * GetFloatProperty() const override { return CastPropertyTo<float>(); }
-			/** returns a pointer on the int property */
-			virtual bool * GetBoolProperty() override { return CastPropertyTo<bool>(); }
-			virtual bool const * GetBoolProperty() const override { return CastPropertyTo<bool>(); }
-			/** returns a pointer on the int property */
-			virtual std::string * GetStringProperty() override { return CastPropertyTo<std::string>(); }
-			virtual std::string const * GetStringProperty() const override { return CastPropertyTo<std::string>(); }
-
 			/** returns the value of the property */
 			property_type GetValue() { return value; }
-
-		protected:
-
-			/** cast property to wanted type */
-			template<typename U>
-			U * CastPropertyTo()
-			{
-				if constexpr (std::is_same_v<U, property_type>)
-					return &value;
-				return nullptr; 
-			}
-
-			template<typename U>
-			U const* CastPropertyTo() const
-			{
-				if constexpr (std::is_same_v<U, property_type>)
-					return &value;
-				return nullptr;
-			}
 
 		public:
 
@@ -291,6 +271,8 @@ namespace chaos
 		using PropertyFloat = PropertyTemplate<float, PropertyType::FLOAT>;
 		using PropertyBool = PropertyTemplate<bool, PropertyType::BOOL>;
 		using PropertyString = PropertyTemplate<std::string, PropertyType::STRING>;
+		using PropertyColor = PropertyTemplate<glm::vec4, PropertyType::COLOR>;
+		using PropertyObject = PropertyTemplate<int, PropertyType::OBJECT>;
 
 		// ==========================================
 		// PropertyOwner : some objects that have dynamic properties
@@ -319,21 +301,26 @@ namespace chaos
 			int * FindPropertyInt(char const * name);
 			/** find a property of type int */
 			int const * FindPropertyInt(char const * name) const;
-
 			/** find a property of type float */
 			float * FindPropertyFloat(char const * name);
 			/** find a property of type float */
 			float const * FindPropertyFloat(char const * name) const;
-
 			/** find a property of type bool */
 			bool * FindPropertyBool(char const * name);
 			/** find a property of type bool */
 			bool const * FindPropertyBool(char const * name) const;
-
 			/** find a property of type string */
 			std::string * FindPropertyString(char const * name);
 			/** find a property of type string */
 			std::string const * FindPropertyString(char const * name) const;
+			/** find a property of type color */
+			glm::vec4* FindPropertyColor(char const* name);
+			/** find a property of type color */
+			glm::vec4 const* FindPropertyColor(char const* name) const;
+			/** find a property of type object */
+			int * FindPropertyObject(char const* name);
+			/** find a property of type object */
+			int const* FindPropertyObject(char const* name) const;
 
 			/** find a typed property with default value */
 			int GetPropertyValueInt(char const * name, int default_value) const;
@@ -343,15 +330,23 @@ namespace chaos
 			bool GetPropertyValueBool(char const * name, bool default_value) const;
 			/** find a typed property with default value */
 			std::string GetPropertyValueString(char const * name, char const * default_value) const;
+			/** find a typed property with default value */
+			glm::vec4 GetPropertyValueColor(char const* name, glm::vec4 const& default_value) const;
+			/** find a typed property with default value */
+			int GetPropertyValueObject(char const* name, int default_value) const;
 
 			/** create property */
-			PropertyInt* InsertProperty(char const* name, int value);
+			PropertyInt* InsertPropertyInt(char const* name, int value);
 			/** create property */
-			PropertyFloat* InsertProperty(char const* name, float value);
+			PropertyFloat* InsertPropertyFloat(char const* name, float value);
 			/** create property */
-			PropertyBool* InsertProperty(char const* name, bool value);
+			PropertyBool* InsertPropertyBool(char const* name, bool value);
 			/** create property */
-			PropertyString* InsertProperty(char const* name, char const* value);
+			PropertyString* InsertPropertyString(char const* name, char const* value);
+			/** create property */
+			PropertyColor* InsertPropertyColor(char const* name, glm::vec4 const & value);
+			/** create property */
+			PropertyObject* InsertPropertyObject(char const* name, int value);
 
 			/** check whether an object is of given type */
 			virtual bool IsObjectOfType(char const* in_type) const;

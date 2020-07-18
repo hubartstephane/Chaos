@@ -68,7 +68,7 @@ namespace death
 		// get the real layout of the bitmap by removing animation
 		chaos::BitmapAtlas::BitmapLayout layout = *bitmap_info;
 		if (bitmap_info->HasAnimation() && bitmap_info->GetAnimationImageCount() > 0)
-			layout = bitmap_info->GetAnimationLayout(0, chaos::WrapMode::clamp); // take frame 0 by default
+			layout = bitmap_info->GetAnimationLayout(0, chaos::WrapMode::CLAMP); // take frame 0 by default
 		// compute the bounding box
 		if (IsGeometryEmpty(particle_box))
 		{

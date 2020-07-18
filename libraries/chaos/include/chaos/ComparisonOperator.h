@@ -13,14 +13,14 @@ namespace chaos
 
 	enum class ComparisonOperator : int
 	{
-		never,
-		always,
-		equal,
-		not_equal,
-		greater,
-		greater_equal,
-		less,		
-		less_equal
+		NEVER,
+		ALWAYS,
+		EQUAL,
+		NOT_EQUAL,
+		GREATER,
+		GREATER_EQUAL,
+		LESS,		
+		LESS_EQUAL
 	};
 
 	ComparisonOperator operator ! (ComparisonOperator op);
@@ -28,21 +28,21 @@ namespace chaos
 	template<typename T>
 	bool Compare(ComparisonOperator op, T const& src1, T const& src2)
 	{
-		if (op == ComparisonOperator::never)
+		if (op == ComparisonOperator::NEVER)
 			return false;
-		if (op == ComparisonOperator::always)
+		if (op == ComparisonOperator::ALWAYS)
 			return true;
-		if (op == ComparisonOperator::equal)
+		if (op == ComparisonOperator::EQUAL)
 			return (src1 == src2);
-		if (op == ComparisonOperator::not_equal)
+		if (op == ComparisonOperator::NOT_EQUAL)
 			return (src1 != src2);
-		if (op == ComparisonOperator::greater)
+		if (op == ComparisonOperator::GREATER)
 			return (src1 > src2);
-		if (op == ComparisonOperator::greater_equal)
+		if (op == ComparisonOperator::GREATER_EQUAL)
 			return (src1 >= src2);
-		if (op == ComparisonOperator::less)
+		if (op == ComparisonOperator::LESS)
 			return (src1 < src2);
-		if (op == ComparisonOperator::less_equal)
+		if (op == ComparisonOperator::LESS_EQUAL)
 			return (src1 <= src2);
 		assert(0);
 		return false;

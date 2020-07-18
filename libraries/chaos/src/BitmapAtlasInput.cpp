@@ -96,7 +96,7 @@ namespace chaos
 			/** the duration of a the whole animation in seconds */
 			float anim_duration = -1.0f;
 			/** the default wrap mode */
-			WrapMode default_wrap_mode = WrapMode::none; // let the code decide in a single location (see  BitmapInfo::GetEffectiveRequestWrapMode(...))
+			WrapMode default_wrap_mode = WrapMode::NONE; // let the code decide in a single location (see  BitmapInfo::GetEffectiveRequestWrapMode(...))
 			/** the directory path that contains the child images */
 			boost::filesystem::path images_path;
 

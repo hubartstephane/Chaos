@@ -6,34 +6,34 @@ namespace chaos
 
 	static std::vector<std::pair<ComparisonOperator, char const*>> const comparison_operator_encoding =
 	{
-		{ ComparisonOperator::never, "never" },
-		{ ComparisonOperator::always, "always" },
-		{ ComparisonOperator::equal, "equal" },
-		{ ComparisonOperator::not_equal, "not_equal" },
-		{ ComparisonOperator::greater, "greater" },
-		{ ComparisonOperator::greater_equal, "greater_equal" },
-		{ ComparisonOperator::less, "less" },
-		{ ComparisonOperator::less_equal, "less_equal" }
+		{ ComparisonOperator::NEVER, "NEVER" },
+		{ ComparisonOperator::ALWAYS, "ALWAYS" },
+		{ ComparisonOperator::EQUAL, "EQUAL" },
+		{ ComparisonOperator::NOT_EQUAL, "NOT_EQUAL" },
+		{ ComparisonOperator::GREATER, "GREATER" },
+		{ ComparisonOperator::GREATER_EQUAL, "GREATER_EQUAL" },
+		{ ComparisonOperator::LESS, "LESS" },
+		{ ComparisonOperator::LESS_EQUAL, "LESS_EQUAL" }
 	};
 
 	ComparisonOperator operator ! (ComparisonOperator op)
 	{
-		if (op == ComparisonOperator::never)
-			return ComparisonOperator::always;
-		if (op == ComparisonOperator::always)
-			return ComparisonOperator::never;
-		if (op == ComparisonOperator::equal)
-			return ComparisonOperator::not_equal;
-		if (op == ComparisonOperator::not_equal)
-			return ComparisonOperator::equal;
-		if (op == ComparisonOperator::greater)
-			return ComparisonOperator::less_equal;
-		if (op == ComparisonOperator::greater_equal)
-			return ComparisonOperator::less;
-		if (op == ComparisonOperator::less)
-			return ComparisonOperator::greater_equal;
-		if (op == ComparisonOperator::less_equal)
-			return ComparisonOperator::greater;
+		if (op == ComparisonOperator::NEVER)
+			return ComparisonOperator::ALWAYS;
+		if (op == ComparisonOperator::ALWAYS)
+			return ComparisonOperator::NEVER;
+		if (op == ComparisonOperator::EQUAL)
+			return ComparisonOperator::NOT_EQUAL;
+		if (op == ComparisonOperator::NOT_EQUAL)
+			return ComparisonOperator::EQUAL;
+		if (op == ComparisonOperator::GREATER)
+			return ComparisonOperator::LESS_EQUAL;
+		if (op == ComparisonOperator::GREATER_EQUAL)
+			return ComparisonOperator::LESS;
+		if (op == ComparisonOperator::LESS)
+			return ComparisonOperator::GREATER_EQUAL;
+		if (op == ComparisonOperator::LESS_EQUAL)
+			return ComparisonOperator::GREATER;
 		assert(0);
 		return op;
 	}

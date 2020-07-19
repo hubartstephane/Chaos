@@ -1722,7 +1722,7 @@ namespace death
 		// display particle manager
 		if (particle_manager != nullptr)
 			result += particle_manager->Display(renderer, uniform_provider, render_params);
-		// draw the layer instances0
+		// draw the layer instances
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
 			result += layer_instances[i]->Display(renderer, uniform_provider, render_params);
@@ -1765,10 +1765,8 @@ namespace death
 				layer_instances.push_back(layer_instance);
 			// for layer group iterate over child layers
 			if (chaos::TiledMap::GroupLayer const* group_layer = auto_cast(layer.get()))
-			{
 				if (!DoCreateLayerInstances(group_layer->layers))
 					return false;
-			}
 		}
 		return true;
 	}
@@ -1805,17 +1803,17 @@ namespace death
 	}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, constness)\
-		result_type constness * TiledMapLevelInstance::func_name(chaos::NamedObjectRequest request) constness\
+	result_type constness * TiledMapLevelInstance::func_name(chaos::NamedObjectRequest request) constness\
+	{\
+		size_t count = layer_instances.size();\
+		for (size_t i = 0; i < count; ++i)\
 		{\
-			size_t count = layer_instances.size();\
-			for (size_t i = 0; i < count; ++i)\
-			{\
-				result_type constness * result = layer_instances[i]->func_name(request);\
-				if (result != nullptr)\
-					return result;\
-			}\
-			return nullptr;\
-		}
+			result_type constness * result = layer_instances[i]->func_name(request);\
+			if (result != nullptr)\
+				return result;\
+		}\
+		return nullptr;\
+	}
 	DEATH_FIND_OBJECT(TiledMapObject, FindObject, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapObject, FindObject, const);
 	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, BOOST_PP_EMPTY());

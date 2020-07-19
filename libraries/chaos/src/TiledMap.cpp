@@ -114,7 +114,7 @@ namespace chaos
 		// Property methods
 		// ==========================================
 		
-		int* Property::GetIntProperty() 
+		int* Property::GetPropertyInt() 
 		{
 			PropertyTemplate<int, PropertyType::INT>* p = auto_cast(this);
 			if (p != nullptr)
@@ -122,7 +122,7 @@ namespace chaos
 			return nullptr; 
 		}
 
-		int const* Property::GetIntProperty() const 
+		int const* Property::GetPropertyInt() const 
 		{ 
 			PropertyTemplate<int, PropertyType::INT> const * p = auto_cast(this);
 			if (p != nullptr)
@@ -130,7 +130,7 @@ namespace chaos
 			return nullptr;
 		}
 		
-		float* Property::GetFloatProperty() 
+		float* Property::GetPropertyFloat() 
 		{ 
 			PropertyTemplate<float, PropertyType::FLOAT> * p = auto_cast(this);
 			if (p != nullptr)
@@ -138,7 +138,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		float const* Property::GetFloatProperty() const 
+		float const* Property::GetPropertyFloat() const 
 		{ 
 			PropertyTemplate<float, PropertyType::FLOAT> const* p = auto_cast(this);
 			if (p != nullptr)
@@ -146,7 +146,7 @@ namespace chaos
 			return nullptr;
 		}
 		
-		bool* Property::GetBoolProperty() 
+		bool* Property::GetPropertyBool() 
 		{ 
 			PropertyTemplate<bool, PropertyType::BOOL> * p = auto_cast(this);
 			if (p != nullptr)
@@ -154,7 +154,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		bool const* Property::GetBoolProperty() const 
+		bool const* Property::GetPropertyBool() const 
 		{ 
 			PropertyTemplate<bool, PropertyType::BOOL> const* p = auto_cast(this);
 			if (p != nullptr)
@@ -162,7 +162,7 @@ namespace chaos
 			return nullptr;
 		}
 		
-		std::string* Property::GetStringProperty() 
+		std::string* Property::GetPropertyString() 
 		{ 
 			PropertyTemplate<std::string, PropertyType::STRING> * p = auto_cast(this);
 			if (p != nullptr)
@@ -170,7 +170,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		std::string const* Property::GetStringProperty() const 
+		std::string const* Property::GetPropertyString() const 
 		{ 
 			PropertyTemplate<std::string, PropertyType::STRING> const* p = auto_cast(this);
 			if (p != nullptr)
@@ -178,7 +178,7 @@ namespace chaos
 			return nullptr;
 		}
 		
-		glm::vec4* Property::GetColorProperty() 
+		glm::vec4* Property::GetPropertyColor() 
 		{ 
 			PropertyTemplate<glm::vec4, PropertyType::COLOR> * p = auto_cast(this);
 			if (p != nullptr)
@@ -186,7 +186,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		glm::vec4 const* Property::GetColorProperty() const 
+		glm::vec4 const* Property::GetPropertyColor() const 
 		{ 
 			PropertyTemplate<glm::vec4, PropertyType::COLOR> const* p = auto_cast(this);
 			if (p != nullptr)
@@ -194,7 +194,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		int* Property::GetObjectProperty()
+		int* Property::GetPropertyObject()
 		{
 			PropertyTemplate<int, PropertyType::OBJECT>* p = auto_cast(this);
 			if (p != nullptr)
@@ -202,7 +202,7 @@ namespace chaos
 			return nullptr;
 		}
 
-		int const* Property::GetObjectProperty() const
+		int const* Property::GetPropertyObject() const
 		{
 			PropertyTemplate<int, PropertyType::OBJECT> const* p = auto_cast(this);
 			if (p != nullptr)
@@ -250,7 +250,7 @@ namespace chaos
 			Property * property = FindProperty(name, PropertyType::INT);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetIntProperty();
+			return property->GetPropertyInt();
 		}
 
 		int const * PropertyOwner::FindPropertyInt(char const * name) const
@@ -258,7 +258,7 @@ namespace chaos
 			Property const * property = FindProperty(name, PropertyType::INT);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetIntProperty();
+			return property->GetPropertyInt();
 		}
 
 		float * PropertyOwner::FindPropertyFloat(char const * name)
@@ -266,7 +266,7 @@ namespace chaos
 			Property * property = FindProperty(name, PropertyType::FLOAT);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetFloatProperty();
+			return property->GetPropertyFloat();
 		}
 
 		float const * PropertyOwner::FindPropertyFloat(char const * name) const
@@ -274,7 +274,7 @@ namespace chaos
 			Property const * property = FindProperty(name, PropertyType::FLOAT);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetFloatProperty();
+			return property->GetPropertyFloat();
 		}
 
 		bool * PropertyOwner::FindPropertyBool(char const * name)
@@ -282,7 +282,7 @@ namespace chaos
 			Property * property = FindProperty(name, PropertyType::BOOL);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetBoolProperty();
+			return property->GetPropertyBool();
 		}
 
 		bool const * PropertyOwner::FindPropertyBool(char const * name) const
@@ -290,7 +290,7 @@ namespace chaos
 			Property const * property = FindProperty(name, PropertyType::BOOL);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetBoolProperty();
+			return property->GetPropertyBool();
 		}
 
 		std::string * PropertyOwner::FindPropertyString(char const * name)
@@ -298,7 +298,7 @@ namespace chaos
 			Property * property = FindProperty(name, PropertyType::STRING);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetStringProperty();
+			return property->GetPropertyString();
 		}
 
 		std::string const * PropertyOwner::FindPropertyString(char const * name) const
@@ -306,7 +306,7 @@ namespace chaos
 			Property const * property = FindProperty(name, PropertyType::STRING);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetStringProperty();
+			return property->GetPropertyString();
 		}
 
 
@@ -315,7 +315,7 @@ namespace chaos
 			Property* property = FindProperty(name, PropertyType::COLOR);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetColorProperty();
+			return property->GetPropertyColor();
 		}
 
 		glm::vec4 const* PropertyOwner::FindPropertyColor(char const* name) const
@@ -323,7 +323,7 @@ namespace chaos
 			Property const* property = FindProperty(name, PropertyType::COLOR);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetColorProperty();
+			return property->GetPropertyColor();
 		}
 
 		int * PropertyOwner::FindPropertyObject(char const* name)
@@ -331,7 +331,7 @@ namespace chaos
 			Property* property = FindProperty(name, PropertyType::OBJECT);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetObjectProperty();
+			return property->GetPropertyObject();
 		}
 
 		int const* PropertyOwner::FindPropertyObject(char const* name) const
@@ -339,7 +339,7 @@ namespace chaos
 			Property const* property = FindProperty(name, PropertyType::OBJECT);
 			if (property == nullptr)
 				return nullptr;
-			return property->GetObjectProperty();
+			return property->GetPropertyObject();
 		}
 
 #define CHAOS_FIND_PROPERTY_WITH_DEFAULT(suffix, return_type, arg_type)\
@@ -455,11 +455,11 @@ namespace chaos
 			Property const* property = FindProperty(in_type);
 			if (property != nullptr)
 			{
-				bool const* property_bool = property->GetBoolProperty();
+				bool const* property_bool = property->GetPropertyBool();
 				if (property_bool != nullptr)
 					return *property_bool;
 
-				int const* property_int = property->GetIntProperty();
+				int const* property_int = property->GetPropertyInt();
 				if (property_int != nullptr)
 					return (*property_int > 0);
 			}

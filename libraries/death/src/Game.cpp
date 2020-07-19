@@ -442,25 +442,8 @@ namespace death
 				if (tiled_map_manager == nullptr)
 					return nullptr;
 			}
-
-
-
-
-
-
-
-
-
 			// load the resource
-#if 0
-
-			// ORI
-			chaos::TiledMap::Map * tiled_map = tiled_map_manager->LoadMap(path, false); // false : the map is not kept in the manager
-
-#endif
-
-			chaos::TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, true); 
-
+			chaos::TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, true); // true : the map is kept in the manager
 
 			if (tiled_map == nullptr)
 				return false;

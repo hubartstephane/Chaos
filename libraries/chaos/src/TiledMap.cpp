@@ -1246,6 +1246,25 @@ namespace chaos
 		}
 
 		// ==========================================
+		// GroupLayer methods
+		// ==========================================
+
+		bool GroupLayer::DoLoad(tinyxml2::XMLElement const* element)
+		{
+			if (!LayerBase::DoLoad(element))
+				return false;
+
+
+
+
+
+
+
+
+			return true;
+		}
+
+		// ==========================================
 		// ObjectTypeDefinition methods
 		// ==========================================
 

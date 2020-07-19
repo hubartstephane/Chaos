@@ -37,6 +37,7 @@ namespace chaos
 (ImageLayer) \
 (ObjectLayer) \
 (TileLayer) \
+(GroupLayer) \
 (ManagerObject) \
 (ObjectTypeDefinition) \
 (ObjectTypeSet) \
@@ -813,6 +814,11 @@ namespace chaos
 			/** cast method into its subtype */
 			TileLayer const * GetTileLayer() const { return auto_cast(this); }
 
+			/** cast method into its subtype */
+			GroupLayer* GetGroupLayer() { return auto_cast(this); }
+			/** cast method into its subtype */
+			GroupLayer const* GetGroupLayer() const { return auto_cast(this); }
+
 			/** get the layer ID (used for Checkpoints) */
 			int GetLayerID() const { return id; }
 
@@ -949,6 +955,23 @@ namespace chaos
 			glm::ivec2 tile_size = glm::ivec2(0, 0);
 		};
 
+		// ==========================================
+		// GroupLayer
+		// ==========================================
+
+		class GroupLayer : public LayerBase
+		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
+		protected:
+
+			/** constructor */
+			using LayerBase::LayerBase;
+			/** the loading method */
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
+
+		};
+			   
 		// ==========================================
 		// ManagerObject : objects control by the manager (Map & TileSet)
 		// ==========================================

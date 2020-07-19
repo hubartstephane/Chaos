@@ -110,103 +110,131 @@ namespace chaos
 			return boost::filesystem::path();
 		}
 
+
+		bool BaseObject::DoLoadLayersImpl(tinyxml2::XMLElement const* element, std::vector<shared_ptr<LayerBase>>& result)
+		{
+			// XXX : the very first encoutered layer, is the one that should be rendered last.
+			//       that why we proceed in reverse order
+			tinyxml2::XMLElement const* e = element->LastChildElement();
+			for (; e != nullptr; e = e->PreviousSiblingElement())
+			{
+				LayerBase* new_layer = nullptr;
+
+				char const* child_name = e->Name();
+				if (StringTools::Stricmp(child_name, "imagelayer") == 0)
+					new_layer = DoLoadObjectAndInserInList<ImageLayer>(e, result, this);
+				else if (StringTools::Stricmp(child_name, "objectgroup") == 0)
+					new_layer = DoLoadObjectAndInserInList<ObjectLayer>(e, result, this);
+				else if (StringTools::Stricmp(child_name, "layer") == 0)
+				{
+					Map const* map = GetMap();
+					if (map != nullptr)
+						new_layer = DoLoadObjectAndInserInList<TileLayer>(e, result, this, map->tile_size);
+				}
+				else if (StringTools::Stricmp(child_name, "group") == 0)
+					new_layer = DoLoadObjectAndInserInList<GroupLayer>(e, result, this);
+			}
+
+			return true;
+		}
+
 		// ==========================================
 		// Property methods
 		// ==========================================
 		
 		int* Property::GetPropertyInt() 
 		{
-			PropertyTemplate<int, PropertyType::INT>* p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyInt * prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr; 
 		}
 
 		int const* Property::GetPropertyInt() const 
 		{ 
-			PropertyTemplate<int, PropertyType::INT> const * p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyInt const * prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 		
 		float* Property::GetPropertyFloat() 
 		{ 
-			PropertyTemplate<float, PropertyType::FLOAT> * p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyFloat * prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 
 		float const* Property::GetPropertyFloat() const 
 		{ 
-			PropertyTemplate<float, PropertyType::FLOAT> const* p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyFloat const * prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 		
 		bool* Property::GetPropertyBool() 
 		{ 
-			PropertyTemplate<bool, PropertyType::BOOL> * p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyBool* prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 
 		bool const* Property::GetPropertyBool() const 
 		{ 
-			PropertyTemplate<bool, PropertyType::BOOL> const* p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyBool const* prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 		
 		std::string* Property::GetPropertyString() 
 		{ 
-			PropertyTemplate<std::string, PropertyType::STRING> * p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyString* prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 
 		std::string const* Property::GetPropertyString() const 
 		{ 
-			PropertyTemplate<std::string, PropertyType::STRING> const* p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyString const * prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 		
 		glm::vec4* Property::GetPropertyColor() 
 		{ 
-			PropertyTemplate<glm::vec4, PropertyType::COLOR> * p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyColor * prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 
 		glm::vec4 const* Property::GetPropertyColor() const 
 		{ 
-			PropertyTemplate<glm::vec4, PropertyType::COLOR> const* p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyColor const* prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 
 		int* Property::GetPropertyObject()
 		{
-			PropertyTemplate<int, PropertyType::OBJECT>* p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyObject* prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 
 		int const* Property::GetPropertyObject() const
 		{
-			PropertyTemplate<int, PropertyType::OBJECT> const* p = auto_cast(this);
-			if (p != nullptr)
-				return &p->value;
+			PropertyObject const* prop = auto_cast(this);
+			if (prop != nullptr)
+				return &prop->value;
 			return nullptr;
 		}
 
@@ -223,7 +251,6 @@ namespace chaos
 		{
 			return FindInternalProperty(name, type_id);
 		}
-
 
 		Property * PropertyOwner::FindInternalProperty(char const * name, PropertyType type_id)
 		{
@@ -309,7 +336,6 @@ namespace chaos
 			return property->GetPropertyString();
 		}
 
-
 		glm::vec4 * PropertyOwner::FindPropertyColor(char const* name)
 		{
 			Property* property = FindProperty(name, PropertyType::COLOR);
@@ -357,8 +383,8 @@ namespace chaos
 		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Color, glm::vec4, glm::vec4 const&);
 		CHAOS_FIND_PROPERTY_WITH_DEFAULT(Object, int, int);
 #undef CHAOS_FIND_PROPERTY_WITH_DEFAULT
-
-			bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)
+		
+		bool PropertyOwner::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			assert(element != nullptr);
 
@@ -975,13 +1001,6 @@ namespace chaos
 #if CHAOS_REVERSE_Y_AXIS
 			offset.y = -offset.y;
 #endif
-			// compute the order of the layer in the map
-			// XXX : the layers in the JSON are given in reversed order than in TileMap Editor
-			//       we have to fix that later in the loading code
-			Map * map = GetOwner<Map>();
-			if (map != nullptr)
-				zorder = map->GetLayerCount();
-
 			return true;
 		}
 
@@ -1253,14 +1272,8 @@ namespace chaos
 		{
 			if (!LayerBase::DoLoad(element))
 				return false;
-
-
-
-
-
-
-
-
+			if (!DoLoadLayersImpl(element, layers))
+				return false;
 			return true;
 		}
 
@@ -1354,13 +1367,13 @@ namespace chaos
 		// TileSet methods
 		// ==========================================
 
-#define CHAOS_IMPL_FIND_FILE_DATA(func_name, arg_type, member_name, constess)\
-		TileData constess * TileSet::func_name(arg_type arg_name) constess\
+#define CHAOS_IMPL_FIND_FILE_DATA(func_name, arg_type, member_name, constness)\
+		TileData constness * TileSet::func_name(arg_type arg_name) constness\
 		{\
 			size_t count = tiles.size();\
 			for (size_t i = 0; i < count; ++i)\
 			{\
-				TileData constess * tile_data = tiles[i].get();\
+				TileData constness * tile_data = tiles[i].get();\
 				if (tile_data == nullptr)\
 					continue;\
 				if (tile_data->member_name == arg_name)\
@@ -1369,12 +1382,12 @@ namespace chaos
 			return nullptr;\
 		}
 
-		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, const)
-			CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const *, type, const)
-			CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const *, atlas_key, const)
+		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, const);
+		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const*, type, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const*, type, const);
+		CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, const);
 
 #undef CHAOS_IMPL_FIND_FILE_DATA
 
@@ -1558,50 +1571,14 @@ namespace chaos
 			return true;
 		}
 
-		int Map::GetLayerCount() const
+		size_t Map::GetLayerCount() const
 		{
-			return (int)(image_layers.size() + tile_layers.size() + object_layers.size());
+			return layers.size();
 		}
 
 		bool Map::DoLoadLayers(tinyxml2::XMLElement const * element)
 		{
-			// get all layers
-			// XXX : the very first encoutered layer, is the one that should be rendered last.
-			//       that why we proceed in reverse order
-			tinyxml2::XMLElement const * e = element->LastChildElement();
-			for (; e != nullptr; e = e->PreviousSiblingElement())
-			{
-				LayerBase * new_layer = nullptr;
-
-				char const * child_name = e->Name();
-				if (StringTools::Stricmp(child_name, "imagelayer") == 0)
-					new_layer = DoLoadObjectAndInserInList(e, image_layers, this);
-				else if (StringTools::Stricmp(child_name, "objectgroup") == 0)
-					new_layer = DoLoadObjectAndInserInList(e, object_layers, this);
-				else if (StringTools::Stricmp(child_name, "layer") == 0)
-					new_layer = DoLoadObjectAndInserInList(e, tile_layers, this, tile_size);
-			}
-			// now fix the zorders
-			if (!DoFixLayersZOrder())
-				return false;
-			return true;
-		}
-
-		bool Map::DoFixLayersZOrder()
-		{
-			int layer_count = GetLayerCount();
-
-			for (auto layer : image_layers)
-				if (layer != nullptr)
-					layer->zorder = (layer_count - 1) - layer->zorder;
-			for (auto layer : tile_layers)
-				if (layer != nullptr)
-					layer->zorder = (layer_count - 1) - layer->zorder;
-			for (auto layer : object_layers)
-				if (layer != nullptr)
-					layer->zorder = (layer_count - 1) - layer->zorder;
-
-			return true;
+			return DoLoadLayersImpl(element, layers);
 		}
 
 		TileInfo Map::FindTileInfo(int gid)
@@ -1646,29 +1623,24 @@ namespace chaos
 			return TileInfo();
 		}
 
-#define CHAOS_IMPL_FIND_LAYER(func_name, member_name, arg_type, constess)\
-	LayerBase constess * Map::func_name(arg_type arg_name) constess\
-	{\
-		for (auto & it : image_layers)\
-			if (it->member_name == arg_name)\
-				return it.get();\
-		for (auto & it : tile_layers)\
-			if (it->member_name == arg_name)\
-				return it.get();\
-		for (auto & it : object_layers)\
-			if (it->member_name == arg_name)\
-				return it.get();\
-		return nullptr;\
-	}
+		LayerBase* Map::FindLayer(char const* in_name)
+		{
+			for (auto& layer : layers)
+				if (StringTools::Stricmp(layer->GetName(), in_name) == 0)
+					return layer.get();
+			return nullptr;
+		}
 
-		CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_LAYER(FindLayerByName, name, char const *, const)
-			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, size_t, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_LAYER(FindLayerByZOrder, zorder, size_t, const)
-#undef CHAOS_IMPL_FIND_LAYER
+		LayerBase const * Map::FindLayer(char const* in_name) const
+		{
+			for (auto& layer : layers)
+				if (StringTools::Stricmp(layer->GetName(), in_name) == 0)
+					return layer.get();
+			return nullptr;
+		}
 
-#define CHAOS_IMPL_FIND_FILE_INFO(func_name, sub_funcname, arg_type, constess)\
-		TileInfo constess Map::func_name(arg_type arg_name) constess\
+#define CHAOS_IMPL_FIND_FILE_INFO(func_name, sub_funcname, arg_type, constness)\
+		TileInfo constness Map::func_name(arg_type arg_name) constness\
 		{\
 			size_t count = tilesets.size();\
 			for (size_t i = 0 ; i < count; ++i)\
@@ -1684,10 +1656,10 @@ namespace chaos
 			return TileInfo();\
 		}
 
-			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const *, const)
-			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, BOOST_PP_EMPTY())
-			CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const *, const)
+		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const*, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const*, const);
+		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, const);
 #undef CHAOS_IMPL_FIND_FILE_INFO
 
 
@@ -1707,11 +1679,11 @@ return_type * Manager::function_name(func_params, bool store_object)\
 #define CHAOS_IMPL_MANAGER_LOAD_ALL(function_name, find_function_name, return_type)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path, path)\
 	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() Buffer<char> buffer, path BOOST_PP_COMMA() buffer)\
-	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)\
-
-			CHAOS_IMPL_MANAGER_LOAD_ALL(LoadMap, FindMap, Map)
-			CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet)
-			CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet)
+	CHAOS_IMPL_MANAGER_LOAD(function_name, find_function_name, return_type, FilePathParam const & path BOOST_PP_COMMA() tinyxml2::XMLDocument const * doc, path BOOST_PP_COMMA() doc)
+				
+	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadMap, FindMap, Map);
+	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadTileSet, FindTileSet, TileSet);	
+	CHAOS_IMPL_MANAGER_LOAD_ALL(LoadObjectTypeSet, FindObjectTypeSet, ObjectTypeSet);
 
 #undef CHAOS_IMPL_MANAGER_LOAD_ALL
 #undef CHAOS_IMPL_MANAGER_LOAD
@@ -1725,13 +1697,12 @@ return_type constness * Manager::funcname(FilePathParam const & path) constness\
 			return member_name[i].get();\
 	return nullptr;\
 }
-
-			CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, BOOST_PP_EMPTY())
-			CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, const)
-			CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, BOOST_PP_EMPTY())
-			CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, const)
-			CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, BOOST_PP_EMPTY())
-			CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, const)
+		CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, BOOST_PP_EMPTY());
+		CHAOS_IMPL_MANAGER_FIND(FindMap, Map, maps, const);
+		CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, BOOST_PP_EMPTY());
+		CHAOS_IMPL_MANAGER_FIND(FindTileSet, TileSet, tile_sets, const);		
+		CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, BOOST_PP_EMPTY());	
+		CHAOS_IMPL_MANAGER_FIND(FindObjectTypeSet, ObjectTypeSet, object_type_sets, const);
 #undef CHAOS_IMPL_MANAGER_FIND
 
 #define CHAOS_IMPL_MANAGER_DOLOAD(funcname, return_type, member_name)\
@@ -1775,9 +1746,9 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 	return result;\
 }
 
-			CHAOS_IMPL_MANAGER_DOLOAD(DoLoadTileSet, TileSet, tile_sets)
-			CHAOS_IMPL_MANAGER_DOLOAD(DoLoadObjectTypeSet, ObjectTypeSet, object_type_sets)
-			CHAOS_IMPL_MANAGER_DOLOAD(DoLoadMap, Map, maps)
+		CHAOS_IMPL_MANAGER_DOLOAD(DoLoadTileSet, TileSet, tile_sets);
+		CHAOS_IMPL_MANAGER_DOLOAD(DoLoadObjectTypeSet, ObjectTypeSet, object_type_sets);
+		CHAOS_IMPL_MANAGER_DOLOAD(DoLoadMap, Map, maps);
 
 #undef CHAOS_IMPL_MANAGER_DOLOAD
 

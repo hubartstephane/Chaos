@@ -1759,6 +1759,17 @@ namespace death
 
 		chaos::TiledMap::Map* tiled_map = GetTiledMap();
 
+
+
+
+
+
+
+
+
+
+#if 0
+
 		// handle layers ordered by Z-Order
 		size_t count = tiled_map->GetLayerCount();
 		for (size_t i = 0; i < count; ++i)
@@ -1772,6 +1783,10 @@ namespace death
 			if (layer_instance != nullptr)
 				layer_instances.push_back(layer_instance);
 		}
+
+
+#endif
+
 		return true;
 	}
 

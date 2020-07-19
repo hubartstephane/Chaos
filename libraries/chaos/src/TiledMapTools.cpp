@@ -17,21 +17,36 @@ namespace chaos
 		return AddIntoAtlasInput(map, input.GetRootFolder());
 	}
 
+	bool TiledMapTools::AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input)
+	{
+		assert(layer != nullptr);
+		assert(folder_input != nullptr);
+
+		if (TiledMap::ImageLayer const* image_layer = auto_cast(layer))
+		{
+			if (image_layer->image_path.size() > 0)
+				folder_input->AddBitmap(image_layer->image_path, nullptr, 0);
+		}
+		else if (TiledMap::GroupLayer const* group_layer = auto_cast(layer))
+		{
+			size_t count = group_layer->layers.size();
+			for (size_t i = 0; i < count; ++i)
+				if (!AddIntoAtlasInput(group_layer->layers[i].get(), folder_input))
+					return false;
+		}
+		return true;
+	}
+
 	bool TiledMapTools::AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input)
 	{
 		assert(map != nullptr);
 		assert(folder_input != nullptr);
 
 		// insert all image layers in the map
-		size_t image_layer = map->image_layers.size();
-		for (size_t i = 0; i < image_layer; ++i)
-		{
-			TiledMap::ImageLayer const * image_layer = map->image_layers[i].get();
-			if (image_layer != nullptr)
-				continue;
-			if (image_layer->image_path.size() > 0)
-				folder_input->AddBitmap(image_layer->image_path, nullptr, 0);
-		}
+		size_t count = map->layers.size();
+		for (size_t i = 0; i < count; ++i)
+			if (!AddIntoAtlasInput(map->layers[i].get(), folder_input))
+				return false;
 		return true;
 	}
 

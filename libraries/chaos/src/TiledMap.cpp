@@ -110,31 +110,24 @@ namespace chaos
 			return boost::filesystem::path();
 		}
 
-
 		bool BaseObject::DoLoadLayersImpl(tinyxml2::XMLElement const* element, std::vector<shared_ptr<LayerBase>>& result)
 		{
-			// XXX : the very first encoutered layer, is the one that should be rendered last.
-			//       that why we proceed in reverse order
-			tinyxml2::XMLElement const* e = element->LastChildElement();
-			for (; e != nullptr; e = e->PreviousSiblingElement())
+			for (tinyxml2::XMLElement const* e = element->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
 			{
-				LayerBase* new_layer = nullptr;
-
 				char const* child_name = e->Name();
 				if (StringTools::Stricmp(child_name, "imagelayer") == 0)
-					new_layer = DoLoadObjectAndInserInList<ImageLayer>(e, result, this);
+					DoLoadObjectAndInserInList<ImageLayer>(e, result, this);
 				else if (StringTools::Stricmp(child_name, "objectgroup") == 0)
-					new_layer = DoLoadObjectAndInserInList<ObjectLayer>(e, result, this);
+					DoLoadObjectAndInserInList<ObjectLayer>(e, result, this);
+				else if (StringTools::Stricmp(child_name, "group") == 0)
+					DoLoadObjectAndInserInList<GroupLayer>(e, result, this);
 				else if (StringTools::Stricmp(child_name, "layer") == 0)
 				{
 					Map const* map = GetMap();
 					if (map != nullptr)
-						new_layer = DoLoadObjectAndInserInList<TileLayer>(e, result, this, map->tile_size);
+						DoLoadObjectAndInserInList<TileLayer>(e, result, this, map->tile_size);
 				}
-				else if (StringTools::Stricmp(child_name, "group") == 0)
-					new_layer = DoLoadObjectAndInserInList<GroupLayer>(e, result, this);
 			}
-
 			return true;
 		}
 

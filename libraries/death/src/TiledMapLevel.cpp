@@ -1753,40 +1753,31 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLevelInstance::CreateLayerInstances(Game* in_game)
+	bool TiledMapLevelInstance::DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const & layers)
 	{
 		TiledMapLevel* level = GetLevel();
 
-		chaos::TiledMap::Map* tiled_map = GetTiledMap();
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-		// handle layers ordered by Z-Order
-		size_t count = tiled_map->GetLayerCount();
-		for (size_t i = 0; i < count; ++i)
+		for (auto& layer : layers)
 		{
-			// get the chaos::LayerBase object per Z-order
-			chaos::TiledMap::LayerBase* layer = tiled_map->FindLayerByZOrder(i);
-			if (layer == nullptr)
-				continue;
-			// create and store the layer_instance
-			TiledMapLayerInstance* layer_instance = level->CreateLayerInstance(this, layer);
+			// insert the new layer
+			TiledMapLayerInstance* layer_instance = level->CreateLayerInstance(this, layer.get());
 			if (layer_instance != nullptr)
 				layer_instances.push_back(layer_instance);
+			// for layer group iterate over child layers
+			if (chaos::TiledMap::GroupLayer const* group_layer = auto_cast(layer.get()))
+			{
+				if (!DoCreateLayerInstances(group_layer->layers))
+					return false;
+			}
 		}
+		return true;
+	}
 
-
-#endif
-
+	bool TiledMapLevelInstance::CreateLayerInstances(Game* in_game)
+	{
+		chaos::TiledMap::Map* tiled_map = GetTiledMap();
+		if (tiled_map != nullptr)
+			return DoCreateLayerInstances(tiled_map->layers);
 		return true;
 	}
 

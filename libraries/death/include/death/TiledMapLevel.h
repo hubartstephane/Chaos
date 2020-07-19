@@ -890,6 +890,8 @@ namespace death
 		virtual bool CreateParticleManager(Game* in_game);
 		/** create the layers instances */
 		virtual bool CreateLayerInstances(Game* in_game);
+		/** create the layers instances */
+		bool DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const& layers);
 
 		/** override */
 		virtual void CreateBackgroundImage() override;

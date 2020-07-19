@@ -442,8 +442,26 @@ namespace death
 				if (tiled_map_manager == nullptr)
 					return nullptr;
 			}
+
+
+
+
+
+
+
+
+
 			// load the resource
+#if 0
+
+			// ORI
 			chaos::TiledMap::Map * tiled_map = tiled_map_manager->LoadMap(path, false); // false : the map is not kept in the manager
+
+#endif
+
+			chaos::TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, true); 
+
+
 			if (tiled_map == nullptr)
 				return false;
 			// allocate a level
@@ -738,11 +756,11 @@ namespace death
 		// loading tilemapset
 		if (!GenerateTileSets(config, config_path))
 			return false;
-		// the atlas
-		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
-			return false;
 		// load exisiting levels
 		if (!LoadLevels(config, config_path))
+			return false;
+		// the atlas
+		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
 			return false;
 		// initialize the root render system
 		if (!InitializeRootRenderLayer())

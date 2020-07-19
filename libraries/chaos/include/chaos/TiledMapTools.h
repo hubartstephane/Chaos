@@ -24,6 +24,8 @@ namespace chaos
 		static bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input);
 		/** fill BitmapAtlasInput from a Map */
 		static bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
+		/** fill BitmapAtlasInput from a Layer */
+		static bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input);
 
 		/** returns true whether the object defines an explicit world bounding */
 		static bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);

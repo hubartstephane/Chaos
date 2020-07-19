@@ -126,7 +126,7 @@ namespace chaos
 			/** constructor */
 			BaseObject(BaseObject * in_owner);
 
-			/** utility function to load a layer */
+			/** utility function to load objects */
 			template<typename T, typename ...PARAMS>
 			static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<shared_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
 			{
@@ -139,12 +139,12 @@ namespace chaos
 
 				tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
 				for (; e != nullptr; e = e->NextSiblingElement(element_name))
-					DoLoadObjectAndInserInList(e, result, params...);
+					DoLoadObjectAndInserInList<T>(e, result, params...);
 				return true;
 			}
 
-			template<typename T, typename ...PARAMS>
-			static T * DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<shared_ptr<T>> & result_vector, PARAMS...params)
+			template<typename T, typename U, typename ...PARAMS>
+			static T * DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<shared_ptr<U>> & result_vector, PARAMS...params)
 			{
 				T * result = new T(params...);
 				if (result == nullptr)
@@ -157,6 +157,9 @@ namespace chaos
 				result_vector.push_back(result);
 				return result;
 			}
+
+			/** utility function to load a layer */
+			bool DoLoadLayersImpl(tinyxml2::XMLElement const* element, std::vector<shared_ptr<LayerBase>>& result);
 
 		protected:
 
@@ -821,6 +824,8 @@ namespace chaos
 
 			/** get the layer ID (used for Checkpoints) */
 			int GetLayerID() const { return id; }
+			/** get the name of the layer */
+			char const* GetName() const { return name.c_str(); }
 
 		protected:
 
@@ -842,8 +847,6 @@ namespace chaos
 			bool locked = false;
 			/** the opacity */
 			float opacity = 1.0f;
-			/** the zorder of the layer in the stack */
-			int zorder = 0;
 			/** the offset of the layer */
 			glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 		};
@@ -970,6 +973,10 @@ namespace chaos
 			/** the loading method */
 			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
+		public:
+
+			/** the map layers */
+			std::vector<shared_ptr<LayerBase>> layers;
 		};
 			   
 		// ==========================================
@@ -1262,8 +1269,6 @@ namespace chaos
 
 			/** load all the layers */
 			bool DoLoadLayers(tinyxml2::XMLElement const * element);
-			/** fix the layer order (JSON and TileMapEditor give the layers in reverse order */
-			bool DoFixLayersZOrder();
 
 		public:
 
@@ -1284,16 +1289,12 @@ namespace chaos
 
 
 			/** find a layer by its name */
-			LayerBase * FindLayerByName(char const * in_name);
+			LayerBase * FindLayer(char const * in_name);
 			/** find a layer by its name */
-			LayerBase const * FindLayerByName(char const * in_name) const;
-			/** find a layer by its zorder */
-			LayerBase * FindLayerByZOrder(size_t zorder);
-			/** find a layer by its zorder */
-			LayerBase const * FindLayerByZOrder(size_t zorder) const;
+			LayerBase const * FindLayer(char const * in_name) const;
 
 			/** returns the number of layers */
-			int GetLayerCount() const;
+			size_t GetLayerCount() const;
 
 		public:
 
@@ -1322,12 +1323,9 @@ namespace chaos
 
 			/** the tileset used */
 			std::vector<TileSetData> tilesets;
-			/** the layers composing the map */
-			std::vector<shared_ptr<ImageLayer>> image_layers;
-			/** the layers composing the map */
-			std::vector<shared_ptr<TileLayer>> tile_layers;
-			/** the layers composing the map */
-			std::vector<shared_ptr<ObjectLayer>> object_layers;
+
+			/** the map layers */
+			std::vector<shared_ptr<LayerBase>> layers;
 		};
 
 		// ==========================================

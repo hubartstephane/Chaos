@@ -399,39 +399,39 @@ namespace chaos
 				{
 					char const * value = (value_attribute != nullptr) ? value_attribute->Value() : node->GetText();
 					if (value != nullptr)
-						InsertPropertyString(property_name, value);
+						CreatePropertyString(property_name, value);
 				}
 				else if (value_attribute != nullptr) // now, to this point, value_attribute becomes MANDATORY
 				{
 					if (StringTools::Stricmp(property_type, "int") == 0)
 					{
-						InsertPropertyInt(property_name, value_attribute->IntValue());
+						CreatePropertyInt(property_name, value_attribute->IntValue());
 					}
 					else if (StringTools::Stricmp(property_type, "float") == 0)
 					{
-						InsertPropertyFloat(property_name, value_attribute->FloatValue());
+						CreatePropertyFloat(property_name, value_attribute->FloatValue());
 					}
 					else if (StringTools::Stricmp(property_type, "bool") == 0)
 					{
-						InsertPropertyBool(property_name, value_attribute->BoolValue());
+						CreatePropertyBool(property_name, value_attribute->BoolValue());
 					}
 					else if (StringTools::Stricmp(property_type, "color") == 0)
 					{
 						glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 						if (ReadXMLColor(value_attribute->Value(), color))
-							InsertPropertyColor(property_name, color);					
+							CreatePropertyColor(property_name, color);
 					}
 					else if (StringTools::Stricmp(property_type, "object") == 0)
 					{
-						InsertPropertyObject(property_name, value_attribute->IntValue());
+						CreatePropertyObject(property_name, value_attribute->IntValue());
 					}
 				}
 			}
 			return true;
 		}
 
-#define CHAOS_INSERT_PROPERTY(suffix, result_type, arg_type)\
-		result_type * PropertyOwner::InsertProperty##suffix(char const * name, arg_type value)\
+#define CHAOS_CREATE_PROPERTY(suffix, result_type, arg_type)\
+		result_type * PropertyOwner::CreateProperty##suffix(char const * name, arg_type value)\
 		{\
 			result_type* result = new result_type(this);\
 			if (result != nullptr)\
@@ -442,13 +442,13 @@ namespace chaos
 			}\
 			return result;\
 		}
-		CHAOS_INSERT_PROPERTY(Int, PropertyInt, int);
-		CHAOS_INSERT_PROPERTY(Float, PropertyFloat, float);
-		CHAOS_INSERT_PROPERTY(Bool, PropertyBool, bool);
-		CHAOS_INSERT_PROPERTY(String, PropertyString, char const *);
-		CHAOS_INSERT_PROPERTY(Color, PropertyColor, glm::vec4 const &);
-		CHAOS_INSERT_PROPERTY(Object, PropertyObject, int);
-#undef CHAOS_INSERT_PROPERTY
+		CHAOS_CREATE_PROPERTY(Int, PropertyInt, int);
+		CHAOS_CREATE_PROPERTY(Float, PropertyFloat, float);
+		CHAOS_CREATE_PROPERTY(Bool, PropertyBool, bool);
+		CHAOS_CREATE_PROPERTY(String, PropertyString, char const *);
+		CHAOS_CREATE_PROPERTY(Color, PropertyColor, glm::vec4 const &);
+		CHAOS_CREATE_PROPERTY(Object, PropertyObject, int);
+#undef CHAOS_CREATE_PROPERTY
 
 		bool PropertyOwner::IsObjectOfType(char const* in_type) const
 		{

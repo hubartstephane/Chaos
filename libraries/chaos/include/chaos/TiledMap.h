@@ -337,17 +337,17 @@ namespace chaos
 			int GetPropertyValueObject(char const* name, int default_value) const;
 
 			/** create property */
-			PropertyInt* InsertPropertyInt(char const* name, int value);
+			PropertyInt* CreatePropertyInt(char const* name, int value);
 			/** create property */
-			PropertyFloat* InsertPropertyFloat(char const* name, float value);
+			PropertyFloat* CreatePropertyFloat(char const* name, float value);
 			/** create property */
-			PropertyBool* InsertPropertyBool(char const* name, bool value);
+			PropertyBool* CreatePropertyBool(char const* name, bool value);
 			/** create property */
-			PropertyString* InsertPropertyString(char const* name, char const* value);
+			PropertyString* CreatePropertyString(char const* name, char const* value);
 			/** create property */
-			PropertyColor* InsertPropertyColor(char const* name, glm::vec4 const & value);
+			PropertyColor* CreatePropertyColor(char const* name, glm::vec4 const & value);
 			/** create property */
-			PropertyObject* InsertPropertyObject(char const* name, int value);
+			PropertyObject* CreatePropertyObject(char const* name, int value);
 
 			/** check whether an object is of given type */
 			virtual bool IsObjectOfType(char const* in_type) const;

@@ -189,36 +189,36 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** returns a pointer on the int property */
-			int* GetIntProperty();
-			int const* GetIntProperty() const;
+			int* GetPropertyInt();
+			int const* GetPropertyInt() const;
 			/** returns a pointer on the float property */
-			float* GetFloatProperty();
-			float const* GetFloatProperty() const;
+			float* GetPropertyFloat();
+			float const* GetPropertyFloat() const;
 			/** returns a pointer on the bool property */
-			bool* GetBoolProperty();
-			bool const* GetBoolProperty() const;
+			bool* GetPropertyBool();
+			bool const* GetPropertyBool() const;
 			/** returns a pointer on the string property */
-			std::string* GetStringProperty();
-			std::string const* GetStringProperty() const;
+			std::string* GetPropertyString();
+			std::string const* GetPropertyString() const;
 			/** returns a pointer on the color property */
-			glm::vec4* GetColorProperty();
-			glm::vec4 const* GetColorProperty() const;
+			glm::vec4* GetPropertyColor();
+			glm::vec4 const* GetPropertyColor() const;
 			/** returns a pointer on the object property */
-			int* GetObjectProperty();
-			int const* GetObjectProperty() const;
+			int* GetPropertyObject();
+			int const* GetPropertyObject() const;
 
 			/** returns whether the property is of type int */
-			bool IsIntProperty() const { return (type == PropertyType::INT); }
+			bool IsPropertyInt() const { return (type == PropertyType::INT); }
 			/** returns whether the property is of type float */
-			bool IsFloatProperty() const { return (type == PropertyType::FLOAT); }
+			bool IsPropertyFloat() const { return (type == PropertyType::FLOAT); }
 			/** returns whether the property is of type bool */
-			bool IsBoolProperty() const { return (type == PropertyType::BOOL); }
+			bool IsPropertyBool() const { return (type == PropertyType::BOOL); }
 			/** returns whether the property is of type string */
-			bool IsStringProperty() const { return (type == PropertyType::STRING); }
+			bool IsPropertyString() const { return (type == PropertyType::STRING); }
 			/** returns whether the property is of type color */
-			bool IsColorProperty() const { return (type == PropertyType::COLOR); }
+			bool IsPropertyColor() const { return (type == PropertyType::COLOR); }
 			/** returns whether the property is of type object */
-			bool IsObjectProperty() const { return (type == PropertyType::OBJECT); }
+			bool IsPropertyObject() const { return (type == PropertyType::OBJECT); }
 
 			/** returns the name of the property */
 			char const * GetName() const { return name.c_str(); }

@@ -5,14 +5,6 @@
 
 namespace chaos
 {
-	void NamedResource::SetName(char const * in_name)
-	{
-		if (in_name != nullptr)
-			name = in_name;
-		else
-			name.clear();
-	}
-
 	void FileResource::SetPath(boost::filesystem::path const & in_path)
 	{
 		bool filestamp_found = false;
@@ -42,7 +34,6 @@ namespace chaos
 			{				
 			}		
 		}
-
 		path = in_path;
 	}
 

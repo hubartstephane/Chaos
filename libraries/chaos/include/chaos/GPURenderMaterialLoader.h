@@ -47,13 +47,13 @@ namespace chaos
 	// GPURenderMaterialLoader
 	// ===========================================================================
 
-	class GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, ResourceFriend, GPUResourceManager>
+	class GPURenderMaterialLoader : public ResourceManagerLoader<GPURenderMaterial, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPURenderMaterialLoader(GPUResourceManager * in_resource_manager, GPURenderMaterialLoaderReferenceSolver * in_reference_solver) :
-			ResourceManagerLoader<GPURenderMaterial, ResourceFriend, GPUResourceManager>(in_resource_manager),
+			ResourceManagerLoader<GPURenderMaterial, GPUResourceManager>(in_resource_manager),
 			reference_solver(in_reference_solver)
 		{
 			assert(in_resource_manager != nullptr); // opposite to GPUTextureLoader and GPUProgramLoader, manager cannot be nullptr for RenderMaterial

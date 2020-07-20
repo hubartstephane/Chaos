@@ -20,13 +20,13 @@ namespace chaos
 	*                    It is possible to use cache system and to add some definitions so we can generate multiple programs with small macro differences.
 	*/
 
-	class GPUProgramLoader : public ResourceManagerLoader<GPUProgram, ResourceFriend, GPUResourceManager>
+	class GPUProgramLoader : public ResourceManagerLoader<GPUProgram, GPUResourceManager>
 	{
 	public:
 
 		/** constructor */
 		GPUProgramLoader(GPUResourceManager * in_resource_manager = nullptr) :
-			ResourceManagerLoader<GPUProgram, ResourceFriend, GPUResourceManager>(in_resource_manager){}
+			ResourceManagerLoader<GPUProgram, GPUResourceManager>(in_resource_manager){}
 
 		/** load an object from JSON */
 		virtual GPUProgram * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;

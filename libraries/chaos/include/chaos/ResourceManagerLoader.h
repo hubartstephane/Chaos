@@ -22,8 +22,8 @@ namespace chaos
 	* ResourceManagerLoader
 	**/
 
-	template<typename RESOURCE_TYPE, typename PARENT_CLASS, typename MANAGER_TYPE>
-	class ResourceManagerLoader : public PARENT_CLASS
+	template<typename RESOURCE_TYPE, typename MANAGER_TYPE>
+	class ResourceManagerLoader
 	{
 	public:
 
@@ -33,8 +33,7 @@ namespace chaos
 		/** constructor */
 		ResourceManagerLoader(MANAGER_TYPE * in_manager = nullptr) :
 			manager(in_manager)
-		{
-			
+		{			
 		}
 
 		/** returns the manager */
@@ -105,7 +104,7 @@ namespace chaos
 				{
 					char const * name = resource->GetName();
 					if (StringTools::IsEmpty(name))
-						SetResourceName(resource, resource_name.c_str());
+						resource->SetName(resource_name.c_str());
 				}
 			}
 			resource_name = std::string(); // reset
@@ -118,7 +117,7 @@ namespace chaos
 				if (!resolved_path.empty())
 				{
 					if (resource->GetPath().empty())
-						SetResourcePath(resource, resolved_path);
+						resource->SetPath(resolved_path);
 				}
 			}
 			resolved_path = boost::filesystem::path(); // reset

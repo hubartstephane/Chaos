@@ -34,7 +34,7 @@ namespace chaos
 	TagType MakeStaticTagType(char const * name);
 
 	/** a utility class for parameter passing */
-	enum class NameObjectRequestType
+	enum class NamedObjectRequestType
 	{
 		/** accept anything */
 		EMPTY = 0,
@@ -54,17 +54,17 @@ namespace chaos
 		NamedObjectRequest() {}
         /** constructor */
         NamedObjectRequest(char const* in_name) :
-            name(in_name), request_type(NameObjectRequestType::STRING)
+            name(in_name), request_type(NamedObjectRequestType::STRING)
         {            
         }
 		/** constructor */
 		NamedObjectRequest(std::string const & in_name) :
-			name(in_name.c_str()), request_type(NameObjectRequestType::STRING)
+			name(in_name.c_str()), request_type(NamedObjectRequestType::STRING)
 		{			
 		}
         /** constructor */
         NamedObjectRequest(TagType in_tag) :
-            tag(in_tag), request_type(NameObjectRequestType::TAG)
+            tag(in_tag), request_type(NamedObjectRequestType::TAG)
         {
         }
         /** the name for the request */
@@ -72,7 +72,7 @@ namespace chaos
         /** the tag for the request */
         TagType tag = 0;
         /** the kind of request of interrest */
-		NameObjectRequestType request_type = NameObjectRequestType::EMPTY;
+		NamedObjectRequestType request_type = NamedObjectRequestType::EMPTY;
     };
 
 	/** a class that describe an object that can be reference by tag and by name */
@@ -94,11 +94,11 @@ namespace chaos
 		template<typename T>
 		friend bool Match(T const & object, NamedObjectRequest request) // use template to use NamedObjectWrapper as well as NamedObject
 		{
-			if (request.request_type == NameObjectRequestType::EMPTY)
+			if (request.request_type == NamedObjectRequestType::EMPTY)
 				return true;
-			else if (request.request_type == NameObjectRequestType::STRING)
+			else if (request.request_type == NamedObjectRequestType::STRING)
 				return (StringTools::Stricmp(object.GetName(), request.name) == 0);
-			else if (request.request_type == NameObjectRequestType::TAG)
+			else if (request.request_type == NamedObjectRequestType::TAG)
 				return (object.GetTag() == request.tag);
 			return false; // should never happen
 		}

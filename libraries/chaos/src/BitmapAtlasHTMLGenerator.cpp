@@ -51,9 +51,9 @@ namespace chaos
 				if (child_folder_info == nullptr)
 					continue;
 
-				std::string path = StringTools::Printf("%s%s/", 
-					folder_path, 
-					(child_folder_info->name.length() == 0)? "??" : child_folder_info->name.c_str()
+				std::string path = StringTools::Printf("%s%s/",
+					folder_path,
+					(strlen(child_folder_info->GetName()) == 0) ? "??" : child_folder_info->GetName()
 				);
 				OutputElementsToHTMLDocument(path.c_str(), child_folder_info, html, TABLE, TR, bitmap_index, count);
 			}
@@ -160,7 +160,7 @@ namespace chaos
 				html.PushAttribute(TEXT, "y", y);
 				html.PushAttribute(TEXT, "fill", "white");
 
-				html.PushText(TEXT, info.name.c_str());
+				html.PushText(TEXT, info.GetName());
 			}
 		}
 

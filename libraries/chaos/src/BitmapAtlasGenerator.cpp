@@ -184,20 +184,20 @@ namespace chaos
 				// test whether all info's bitmap_index are initialized
 				if (layout->bitmap_index < 0)
 				{
-					stream << "Info encoutered with uninitialized bitmap_index : [" << named->name << " , " << named->tag << "]" << std::endl;
+					stream << "Info encoutered with uninitialized bitmap_index : [" << named->GetName() << " , " << named->GetTag() << "]" << std::endl;
 					result = false;
 				}
 				// test whether all info's bitmap_index are valid
 				else if (layout->bitmap_index >= (int)bitmap_count)
 				{
-					stream << "Info encoutered with invalid bitmap_index : [" << named->name << " , " << named->tag << "]" << std::endl;
+					stream << "Info encoutered with invalid bitmap_index : [" << named->GetName() << " , " << named->GetTag() << "]" << std::endl;
 					result = false;
 				}
 				// test whether all info fits inside the atlas
 				Rectangle r = AddPadding(GetRectangle(*layout));
 				if (!r.IsFullyInside(atlas_rectangle))
 				{
-					stream << "Info encoutered that does not fit inside the atlas : [" << named->name << " , " << named->tag << "]" << std::endl;
+					stream << "Info encoutered that does not fit inside the atlas : [" << named->GetName() << " , " << named->GetTag() << "]" << std::endl;
 					result = false;
 				}
 			}
@@ -228,8 +228,8 @@ namespace chaos
 						if (named1 != nullptr && named2 != nullptr)
 						{
 							stream << "Collision between entries : " << std::endl;
-							stream << "  [" << named1->name << " , " << named1->tag << "]" << std::endl;
-							stream << "  [" << named2->name << " , " << named2->tag << "]" << std::endl;
+							stream << "  [" << named1->GetName() << " , " << named1->GetTag() << "]" << std::endl;
+							stream << "  [" << named2->GetName() << " , " << named2->GetTag() << "]" << std::endl;
 						}
 						result = false;
 					}
@@ -347,8 +347,8 @@ namespace chaos
 				if (child_folder_info_output == nullptr)
 					continue;
 
-				child_folder_info_output->name = child_folder_info_input->name;
-				child_folder_info_output->tag = child_folder_info_input->tag;
+				child_folder_info_output->SetName(child_folder_info_input->GetName());
+				child_folder_info_output->SetTag(child_folder_info_input->GetTag());
 
 				folder_info_output->folders.push_back(std::move(std::unique_ptr<FolderInfo>(child_folder_info_output)));
 				FillAtlasEntriesFromInput(result, child_folder_info_input, child_folder_info_output);
@@ -364,8 +364,8 @@ namespace chaos
 					continue;
 
 				BitmapInfo bitmap_info_output;
-				bitmap_info_output.name = bitmap_info_input->name;
-				bitmap_info_output.tag = bitmap_info_input->tag;
+				bitmap_info_output.SetName(bitmap_info_input->GetName());
+				bitmap_info_output.SetTag(bitmap_info_input->GetTag());
 				bitmap_info_output.bitmap_index = -1;
 				bitmap_info_output.x = 0;
 				bitmap_info_output.y = 0;
@@ -420,8 +420,8 @@ namespace chaos
 					continue;
 
 				FontInfo font_info_output;
-				font_info_output.name = font_info_input->name;
-				font_info_output.tag = font_info_input->tag;
+				font_info_output.SetName(font_info_input->GetName());
+				font_info_output.SetTag(font_info_input->GetTag());
 				font_info_output.glyph_width = font_info_input->glyph_width;
 				font_info_output.glyph_height = font_info_input->glyph_height;
 				font_info_output.ascender = font_info_input->ascender;
@@ -435,8 +435,8 @@ namespace chaos
 					CharacterInfoInput const * character_info_input = font_info_input->elements[i].get();
 
 					CharacterInfo character_info_output;
-					character_info_output.name = character_info_input->name;
-					character_info_output.tag = character_info_input->tag;
+					character_info_output.SetName(character_info_input->GetName());
+					character_info_output.SetTag(character_info_input->GetTag());
 					character_info_output.bitmap_index = -1;
 					character_info_output.x = 0;
 					character_info_output.y = 0;

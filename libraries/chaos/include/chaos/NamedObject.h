@@ -103,7 +103,7 @@ namespace chaos
 			return false; // should never happen
 		}
 
-	public:
+	protected:
 
 		/** the name of the object */
 		std::string name;
@@ -142,6 +142,21 @@ namespace chaos
 		}
 	};
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */
 	template<typename T>
 	class NamedObjectWrapper
@@ -158,6 +173,14 @@ namespace chaos
 		/** the renderable to render */
 		shared_ptr<T> object;
 	};
+
+
+
+
+
+
+
+
 
 	/** NamedObjectFilter : a class to filter objects by their name */
 	class NamedObjectFilter : public Object

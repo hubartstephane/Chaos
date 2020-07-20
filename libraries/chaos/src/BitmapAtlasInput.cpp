@@ -345,7 +345,7 @@ namespace chaos
 
 			// new character set input
 			result->atlas_input = atlas_input;
-			result->name = name;
+			result->SetName(name);
 			result->glyph_width = params.glyph_width;
 			result->glyph_height = params.glyph_height;
 			result->ascender = face->size->metrics.ascender / 64;     // take the FT_Pixel_Size(...) into consideration
@@ -395,8 +395,8 @@ namespace chaos
 					if (info == nullptr)
 						continue;
 					info->atlas_input = atlas_input;
-					info->name = name;
-					info->tag = glyph.first;
+					info->SetName(name);
+					info->SetTag(glyph.first);
 					if (bitmap != nullptr)
 						info->description = ImageTools::GetImageDescription(bitmap);
 					info->advance = glyph.second.advance;         // take the FT_Pixel_Size(...) into consideration
@@ -708,8 +708,8 @@ namespace chaos
 			// finalize the result
 			result->description = ImageTools::GetImageDescription(pages[0]);
 			result->atlas_input = atlas_input;
-			result->name = name;
-			result->tag = tag;
+			result->SetName(name);
+			result->SetTag(tag);
 
 			// insert result into the folder
 			bitmaps.push_back(std::move(std::unique_ptr<BitmapInfoInput>(result))); // move for std::string copy

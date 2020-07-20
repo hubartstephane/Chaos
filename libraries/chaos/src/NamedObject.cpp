@@ -67,8 +67,8 @@ namespace chaos
 		if (!json_entry.is_object())
 			json_entry = nlohmann::json::object(); 
 
-		JSONTools::SetAttribute(json_entry, "name", src.name);
-		JSONTools::SetAttribute(json_entry, "tag", src.tag);
+		JSONTools::SetAttribute(json_entry, "name", src.GetName());
+		JSONTools::SetAttribute(json_entry, "tag", src.GetTag());
 		return true;
 	}
 
@@ -76,8 +76,14 @@ namespace chaos
 	{
 		if (!json_entry.is_object())
 			return false;
-		JSONTools::GetAttribute(json_entry, "name", dst.name, "");
-		JSONTools::GetAttribute(json_entry, "tag", dst.tag, 0);
+
+		std::string name;
+		JSONTools::GetAttribute(json_entry, "name", name, "");
+		dst.SetName(name.c_str());
+
+		TagType tag;
+		JSONTools::GetAttribute(json_entry, "tag", tag, 0);
+		dst.SetTag(tag);
 		return true;
 	}
 

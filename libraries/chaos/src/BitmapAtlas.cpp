@@ -379,8 +379,8 @@ namespace chaos
 		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent)
 		{
 			StreamTools::OStreamIndent stream_indent(indent);
-			stream << stream_indent << "  name         : " << info.name << std::endl;
-			stream << stream_indent << "  tag          : " << info.tag << std::endl;
+			stream << stream_indent << "  name         : " << info.GetName() << std::endl;
+			stream << stream_indent << "  tag          : " << info.GetTag() << std::endl;
 		}
 
 

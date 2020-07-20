@@ -90,8 +90,8 @@ namespace chaos
 			assert(src_folder_info != nullptr);
 
 			// copy name
-			dst_folder_info->name = dst_folder_info->name;
-			dst_folder_info->tag  = src_folder_info->tag;
+			dst_folder_info->SetName(dst_folder_info->GetName());
+			dst_folder_info->SetTag(src_folder_info->GetTag());
 			// copy bitmaps and characters
 			dst_folder_info->bitmaps = src_folder_info->bitmaps;
 			dst_folder_info->fonts   = src_folder_info->fonts;

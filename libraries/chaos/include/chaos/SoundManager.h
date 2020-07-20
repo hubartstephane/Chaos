@@ -8,6 +8,7 @@
 #include <chaos/Manager.h>
 #include <chaos/ResourceManagerLoader.h>
 #include <chaos/FileResource.h>
+#include <chaos/NamedObject.h>
 
 namespace chaos
 {
@@ -181,7 +182,7 @@ namespace chaos
 	// SOUND OBJECT
 	// ==============================================================
 
-	class SoundObject : public Object, public NamedResource
+	class SoundObject : public Object, public NamedObject
 	{
 		CHAOS_SOUND_ALL_FRIENDS
 
@@ -440,13 +441,13 @@ namespace chaos
 	// SoundSourceLoader
 	// ==============================================================
 
-	class SoundSourceLoader : public ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>
+	class SoundSourceLoader : public ResourceManagerLoader<SoundSource, SoundManager>
 	{
 	public:
 
 		/** constructor */
 		SoundSourceLoader(SoundManager * in_sound_manager) :
-			ResourceManagerLoader<SoundSource, ResourceFriend, SoundManager>(in_sound_manager) 
+			ResourceManagerLoader<SoundSource, SoundManager>(in_sound_manager) 
 		{
 			assert(in_sound_manager != nullptr); // source cannot be loaded outside of a manager
 		}
@@ -473,13 +474,13 @@ namespace chaos
 	// SoundCategoryLoader
 	// ==============================================================
 
-	class SoundCategoryLoader : public ResourceManagerLoader<SoundCategory, ResourceFriend, SoundManager>
+	class SoundCategoryLoader : public ResourceManagerLoader<SoundCategory, SoundManager>
 	{
 	public:
 
 		/** constructor */
 		SoundCategoryLoader(SoundManager * in_sound_manager) :
-			ResourceManagerLoader<SoundCategory, ResourceFriend, SoundManager>(in_sound_manager)
+			ResourceManagerLoader<SoundCategory, SoundManager>(in_sound_manager)
 		{
 			assert(in_sound_manager != nullptr); // source cannot be loaded outside of a manager
 		}

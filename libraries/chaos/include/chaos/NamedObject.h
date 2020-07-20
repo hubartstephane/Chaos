@@ -140,22 +140,6 @@ namespace chaos
 			}
 			return nullptr;
 		}
-
-		/** remove an element by name in a vector */
-		template<typename P>
-		static bool RemoveNamedObject(std::vector<P> & elements, NamedObjectRequest request)
-		{
-			// search in the list
-			for (auto it = elements.begin() ; it != elements.end() ; ++it)
-			{
-				if (Match(*meta::get_raw_pointer(*it), request))
-				{
-					elements.erase(it);
-					return true;
-				}
-			}
-			return false;
-		}
 	};
 
 	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */

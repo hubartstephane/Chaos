@@ -41,14 +41,14 @@ namespace chaos
 		return textures[index].get();
 	}
 
-	GPUTexture * GPUResourceManager::FindTexture(char const * name)
+	GPUTexture * GPUResourceManager::FindTexture(ObjectRequest request)
 	{
-		return FindObjectByName(name, textures);
+		return request.FindObject(textures);
 	}
 
-	GPUTexture const * GPUResourceManager::FindTexture(char const * name) const
+	GPUTexture const * GPUResourceManager::FindTexture(ObjectRequest request) const
 	{
-		return FindObjectByName(name, textures);
+		return request.FindObject(textures);
 	}
 
 	GPUTexture * GPUResourceManager::FindTextureByPath(FilePathParam const & path)
@@ -76,14 +76,14 @@ namespace chaos
 		return programs[index].get();
 	}
 
-	GPUProgram * GPUResourceManager::FindProgram(char const * name)
+	GPUProgram * GPUResourceManager::FindProgram(ObjectRequest request)
 	{
-		return FindObjectByName(name, programs);
+		return request.FindObject(programs);
 	}
 
-	GPUProgram const * GPUResourceManager::FindProgram(char const * name) const
+	GPUProgram const * GPUResourceManager::FindProgram(ObjectRequest request) const
 	{
-		return FindObjectByName(name, programs);
+		return request.FindObject(programs);
 	}
 
 	GPUProgram * GPUResourceManager::FindProgramByPath(FilePathParam const & path)
@@ -111,14 +111,14 @@ namespace chaos
 		return render_materials[index].get();
 	}
 
-	GPURenderMaterial * GPUResourceManager::FindRenderMaterial(char const * name)
+	GPURenderMaterial * GPUResourceManager::FindRenderMaterial(ObjectRequest request)
 	{
-		return FindObjectByName(name, render_materials);
+		return request.FindObject(render_materials);
 	}
 
-	GPURenderMaterial const * GPUResourceManager::FindRenderMaterial(char const * name) const
+	GPURenderMaterial const * GPUResourceManager::FindRenderMaterial(ObjectRequest request) const
 	{
-		return FindObjectByName(name, render_materials);
+		return request.FindObject(render_materials);
 	}
 
 	GPURenderMaterial * GPUResourceManager::FindRenderMaterialByPath(FilePathParam const & path)
@@ -228,8 +228,8 @@ namespace chaos
 	// We have now to patch all resources. All internal references to an object that has been stolen must be replaced
 	// (GPURenderMaterial is the only concerned while it can have reference to textures and programs)
 
-	template<typename FIND_BY_NAME, typename FIND_BY_PATH, typename RESOURCE_VECTOR, typename SWAP_OBJECTS_FUNC> 
-	void RefreshObjects(FIND_BY_NAME find_by_name, FIND_BY_PATH find_by_path, RESOURCE_VECTOR resource_vector, GPUResourceManager * gpu_manager, GPUResourceManager * other_gpu_manager, SWAP_OBJECTS_FUNC swap_objects)
+	template<typename FIND_BY_REQUEST, typename FIND_BY_PATH, typename RESOURCE_VECTOR, typename SWAP_OBJECTS_FUNC> 
+	void RefreshObjects(FIND_BY_REQUEST find_by_request, FIND_BY_PATH find_by_path, RESOURCE_VECTOR resource_vector, GPUResourceManager * gpu_manager, GPUResourceManager * other_gpu_manager, SWAP_OBJECTS_FUNC swap_objects)
 	{
 		auto & ori_objects = gpu_manager->*resource_vector;
 		auto & new_objects = other_gpu_manager->*resource_vector;
@@ -245,21 +245,12 @@ namespace chaos
 			// find corresponding resource in new manager
 			decltype(ori_object) other_object = nullptr;
 			if (ori_object->GetName() != nullptr)
-				other_object = (other_gpu_manager->*find_by_name)(ori_object->GetName());
+				other_object = (other_gpu_manager->*find_by_request)(ori_object->GetName());
 			if (other_object == nullptr)
 				other_object = (other_gpu_manager->*find_by_path)(ori_object->GetPath());
 			if (other_object == nullptr)
 				continue;
 
-			// XXX : we have to implement a real file depencie system to test for timestamp
-			//       => for example, we may modify a Shader file without the Program noticing it is out dated
-#if 0
-			// test whether the other resource is effectively newer ?
-			std::time_t t1 = ori_object->GetFileTimestamp();
-			std::time_t t2 = other_object->GetFileTimestamp();
-			if (t1 >= t2)
-				continue;
-#endif
 			// swap the resources
 			swap_objects(ori_object, other_object);
 		}
@@ -274,7 +265,7 @@ namespace chaos
 			// find whether this object is new
 			decltype(new_object) ori_object = nullptr;
 			if (new_object->GetName() != nullptr)
-				ori_object = (gpu_manager->*find_by_name)(new_object->GetName());
+				ori_object = (gpu_manager->*find_by_request)(new_object->GetName());
 			if (ori_object == nullptr)
 				ori_object = (gpu_manager->*find_by_path)(new_object->GetPath());
 			if (ori_object != nullptr)
@@ -290,12 +281,12 @@ namespace chaos
 	{
 		assert(other_gpu_manager != nullptr);
 
-		GPUTexture * (GPUResourceManager::*find_by_name)(char const *) = &GPUResourceManager::FindTexture;
+		GPUTexture * (GPUResourceManager::*find_by_request)(ObjectRequest) = &GPUResourceManager::FindTexture;
 		GPUTexture * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindTextureByPath;
 		 
 		std::vector<shared_ptr<GPUTexture>> GPUResourceManager::*resource_vector = &GPUResourceManager::textures;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUTexture * ori_object, GPUTexture * other_object)
+		RefreshObjects(find_by_request, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUTexture * ori_object, GPUTexture * other_object)
 		{
 			// each time there is a reference to other_object, replace it with ori_object 
 			// (while ori_object has capture other's data)
@@ -313,12 +304,12 @@ namespace chaos
 	{
 		assert(other_gpu_manager != nullptr);
 
-		GPUProgram * (GPUResourceManager::*find_by_name)(char const *) = &GPUResourceManager::FindProgram;
+		GPUProgram * (GPUResourceManager::*find_by_request)(ObjectRequest) = &GPUResourceManager::FindProgram;
 		GPUProgram * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindProgramByPath;
 
 		std::vector<shared_ptr<GPUProgram>> GPUResourceManager::*resource_vector = &GPUResourceManager::programs;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUProgram * ori_object, GPUProgram * other_object) 
+		RefreshObjects(find_by_request, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPUProgram * ori_object, GPUProgram * other_object)
 		{
 			// each time there is a reference to other_object, replace it with ori_object 
 			// (while ori_object has capture other's data)
@@ -374,12 +365,12 @@ namespace chaos
 	{
 		assert(other_gpu_manager != nullptr);
 
-		GPURenderMaterial * (GPUResourceManager::*find_by_name)(char const *) = &GPUResourceManager::FindRenderMaterial;
+		GPURenderMaterial * (GPUResourceManager::*find_by_request)(ObjectRequest) = &GPUResourceManager::FindRenderMaterial;
 		GPURenderMaterial * (GPUResourceManager::*find_by_path)(FilePathParam const &) = &GPUResourceManager::FindRenderMaterialByPath;
 
 		std::vector<shared_ptr<GPURenderMaterial>> GPUResourceManager::*resource_vector = &GPUResourceManager::render_materials;
 
-		RefreshObjects(find_by_name, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPURenderMaterial * ori_object, GPURenderMaterial * other_object) 
+		RefreshObjects(find_by_request, find_by_path, resource_vector, this, other_gpu_manager, [&reload_data](GPURenderMaterial * ori_object, GPURenderMaterial * other_object)
 		{
 			// each time there is a reference to other_object, replace it with ori_object 
 			// (while ori_object has capture other's data)

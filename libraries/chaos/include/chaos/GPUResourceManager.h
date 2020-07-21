@@ -87,9 +87,9 @@ namespace chaos
 		/** get a texture by its index */
 		GPUTexture const * GetTexture(size_t index) const;
 		/** find a texture by its name */
-		GPUTexture * FindTexture(char const * name);
+		GPUTexture * FindTexture(ObjectRequest request);
 		/** find a texture by its name */
-		GPUTexture const * FindTexture(char const * name) const;
+		GPUTexture const * FindTexture(ObjectRequest request) const;
 		/** find a texture by its path */
 		GPUTexture * FindTextureByPath(FilePathParam const & path);
 		/** find a texture by its path */
@@ -103,9 +103,9 @@ namespace chaos
 		/** get a program by its index */
 		GPUProgram const * GetProgram(size_t index) const;
 		/** find a program by its name */
-		GPUProgram * FindProgram(char const * name);
+		GPUProgram * FindProgram(ObjectRequest request);
 		/** find a program by its name */
-		GPUProgram const * FindProgram(char const * name) const;
+		GPUProgram const * FindProgram(ObjectRequest request) const;
 		/** find a program by its path */
 		GPUProgram * FindProgramByPath(FilePathParam const & path);
 		/** find a program by its path */
@@ -119,9 +119,9 @@ namespace chaos
 		/** get a material by its index */
 		GPURenderMaterial const * GetRenderMaterial(size_t index) const;
 		/** find a render material by its name */
-		GPURenderMaterial * FindRenderMaterial(char const * name);
+		GPURenderMaterial * FindRenderMaterial(ObjectRequest request);
 		/** find a render material by its name */
-		GPURenderMaterial const * FindRenderMaterial(char const * name) const;
+		GPURenderMaterial const * FindRenderMaterial(ObjectRequest request) const;
 		/** find a render material by its path */
 		GPURenderMaterial * FindRenderMaterialByPath(FilePathParam const & path);
 		/** find a render material by its path */

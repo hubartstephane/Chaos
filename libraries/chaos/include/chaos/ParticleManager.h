@@ -40,16 +40,16 @@ namespace chaos
 
 		/** templated method to add a layer and set some values */
 		template<typename ALLOCATION_TRAIT, typename ...PARAMS>
-		ParticleLayerBase * AddLayer(int render_order, TagType layer_id, char const * material_name, PARAMS... params)
+		ParticleLayerBase * AddLayer(int render_order, ObjectRequest layer_id, ObjectRequest material_request, PARAMS... params)
 		{
 			// find the optional GPURenderMaterial
 			GPURenderMaterial * render_material = nullptr;
-			if (material_name != nullptr)
+			if (!material_request.IsEmpty())
 			{
 				GPUResourceManager * resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
 				if (resource_manager == nullptr)
 					return nullptr;
-				render_material = resource_manager->FindRenderMaterial(material_name);
+				render_material = resource_manager->FindRenderMaterial(material_request);
 				if (render_material == nullptr)
 					return nullptr;
 			}
@@ -59,7 +59,7 @@ namespace chaos
 
 		/** templated method to add a layer and set some values */
 		template<typename ALLOCATION_TRAIT, typename ...PARAMS>
-		ParticleLayerBase * AddLayer(int render_order, TagType layer_id, GPURenderMaterial * render_material, PARAMS... params)
+		ParticleLayerBase * AddLayer(int render_order, ObjectRequest layer_id, GPURenderMaterial * render_material, PARAMS... params)
 		{
 			ParticleLayerBase * result = new ParticleLayer<ALLOCATION_TRAIT>(params...);
 			if (result == nullptr)
@@ -108,7 +108,7 @@ namespace chaos
 		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 
 		/** insert layer with some initialization */
-		void DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id);
+		void DoAddLayer(ParticleLayerBase * layer, int render_order, ObjectRequest layer_id);
 
 	protected:
 

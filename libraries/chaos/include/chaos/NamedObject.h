@@ -21,6 +21,9 @@ namespace chaos
 		/** change the tag of the object */
 		void SetTag(TagType in_tag) { tag = in_tag; }
 
+		/** change the naming of the object */
+		void SetObjectNaming(ObjectRequest request);
+
 	protected:
 
 		/** the name of the object */

@@ -44,6 +44,24 @@ namespace chaos
         {
         }
 
+		/** returns whether the request is empty */
+		bool IsEmpty() const
+		{
+			return (request_type == ObjectRequestType::EMPTY);
+		}
+
+		/** returns whether there is a request for the string */
+		bool HasStringRequest() const
+		{
+			return (request_type == ObjectRequestType::STRING);
+		}
+
+		/** returns whether there is a request for the tag */
+		bool HasTagRequest() const
+		{
+			return (request_type == ObjectRequestType::TAG);
+		}
+
 		/** test whether the object name/tag match */
 		template<typename T>
 		bool Match(T const& object) const // use template to use NamedObjectWrapper as well as NamedObject

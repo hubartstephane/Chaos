@@ -9,7 +9,7 @@ namespace chaos
 	{
 		/** decode a value with a conversion table */
 		template<typename T, typename ENCODE_TABLE>
-		static bool StringToEnum(char const * str, ENCODE_TABLE const & encode_table, T & result)
+		bool StringToEnum(char const * str, ENCODE_TABLE const & encode_table, T & result)
 		{
 			for (auto const & encode : encode_table)
 			{
@@ -24,7 +24,7 @@ namespace chaos
 
 		/** encode a value with a conversion table */
 		template<typename T, typename ENCODE_TABLE>
-		static bool EnumToString(T const & src, ENCODE_TABLE const & encode_table, std::string & result)
+		bool EnumToString(T const & src, ENCODE_TABLE const & encode_table, std::string & result)
 		{
 			for (auto const & encode : encode_table)
 			{

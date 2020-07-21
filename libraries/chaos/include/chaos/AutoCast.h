@@ -3,7 +3,7 @@
 namespace chaos
 {
 
-
+	/** AutoConstCastable : an object that provide dynamic_cast on demand */
 	template<typename T>
 	class AutoConstCastable
 	{
@@ -33,6 +33,7 @@ namespace chaos
 		T const* ptr = nullptr;
 	};
 
+	/** AutoCastable : an object that provide dynamic_cast on demand */
 	template<typename T>
 	class AutoCastable
 	{

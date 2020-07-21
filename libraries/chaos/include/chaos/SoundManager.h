@@ -490,11 +490,6 @@ namespace chaos
 
 	protected:
 
-		/** internal method to load a category */
-		//SoundCategory * GenCategoryObject(FilePathParam const & path, char const * name) const;
-
-	protected:
-
 		/** search whether the name is already in used in the manager */
 		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
 	};

@@ -2,10 +2,10 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GPUClasses.h>
-
 #include <chaos/NamedObject.h>
 #include <chaos/Object.h>
 #include <chaos/GPURenderable.h>
+#include <chaos/ObjectRequest.h>
 
 namespace chaos
 {

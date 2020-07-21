@@ -191,7 +191,7 @@ namespace death
 		bool IsPaused(bool strict_state = false, bool use_destination = false) const;
 
 		/** create the background image */
-		virtual bool CreateBackgroundImage(char const * material_name, char const * texture_name);
+		virtual bool CreateBackgroundImage(chaos::ObjectRequest material_request, chaos::ObjectRequest texture_request);
 
 		/** returns whether we are in free camera mode */
 		bool IsFreeCameraMode() const;

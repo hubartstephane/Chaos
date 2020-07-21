@@ -1325,7 +1325,7 @@ namespace death
 #define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
 		result_type constness * TiledMapLayerInstance::func_name(chaos::NamedObjectRequest request) constness\
 		{\
-			return NamedObject::FindNamedObject(member_vector, request);\
+			return request.FindNamedObject(member_vector);\
 		}
 	DEATH_FIND_OBJECT(TiledMapObject, FindObject, objects, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapObject, FindObject, objects, const);
@@ -1827,11 +1827,11 @@ namespace death
 
 	TiledMapLayerInstance* TiledMapLevelInstance::FindLayerInstance(chaos::NamedObjectRequest request)
 	{
-		return NamedObject::FindNamedObject(layer_instances, request);
+		return request.FindNamedObject(layer_instances);
 	}
 	TiledMapLayerInstance const* TiledMapLevelInstance::FindLayerInstance(chaos::NamedObjectRequest request) const
 	{
-		return NamedObject::FindNamedObject(layer_instances, request);
+		return request.FindNamedObject(layer_instances);
 	}
 
 	void TiledMapLevelInstance::CreateCameras()

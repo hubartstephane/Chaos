@@ -33,6 +33,15 @@ namespace chaos
 	/** function to generate a TagType from a name (XXX : not thread safe) */
 	TagType MakeStaticTagType(char const * name);
 
+
+
+
+
+
+
+
+
+
 	/** a utility class for parameter passing */
 	enum class NamedObjectRequestType
 	{
@@ -50,8 +59,10 @@ namespace chaos
     {
     public:
 
-		/** EMPTY request */
-		NamedObjectRequest() {}
+		/** constructor */
+		NamedObjectRequest() = default;
+		/** constructor */
+		NamedObjectRequest(NamedObjectRequest const & src) = default;
         /** constructor */
         NamedObjectRequest(char const* in_name) :
             name(in_name), request_type(NamedObjectRequestType::STRING)
@@ -67,6 +78,51 @@ namespace chaos
             tag(in_tag), request_type(NamedObjectRequestType::TAG)
         {
         }
+
+		/** test whether the object name/tag match */
+		template<typename T>
+		bool Match(T const& object) const // use template to use NamedObjectWrapper as well as NamedObject
+		{
+			if (request_type == NamedObjectRequestType::EMPTY)
+				return true;
+			else if (request_type == NamedObjectRequestType::STRING)
+				return (StringTools::Stricmp(object.GetName(), name) == 0);
+			else if (request_type == NamedObjectRequestType::TAG)
+				return (object.GetTag() == tag);
+			return false; // should never happen
+		}
+
+		/** search element in a vector */
+		template<typename P>
+		auto FindNamedObject(std::vector<P>& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
+		{
+			// search in the list
+			size_t count = elements.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				auto e = meta::get_raw_pointer(elements[i]);
+				if (Match(*e))
+					return e;
+			}
+			return nullptr;
+		}
+		/** search element in a vector */
+		template<typename P>
+		auto FindNamedObject(std::vector<P> const& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
+		{
+			// search in the list
+			size_t count = elements.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				auto e = meta::get_raw_pointer(elements[i]);
+				if (Match(*e))
+					return e;
+			}
+			return nullptr;
+		}
+
+	public:
+
         /** the name for the request */
         char const* name = nullptr;
         /** the tag for the request */
@@ -74,6 +130,22 @@ namespace chaos
         /** the kind of request of interrest */
 		NamedObjectRequestType request_type = NamedObjectRequestType::EMPTY;
     };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/** a class that describe an object that can be reference by tag and by name */
 	class NamedObject
@@ -90,57 +162,16 @@ namespace chaos
 		/** change the tag of the object */
 		void SetTag(TagType in_tag) { tag = in_tag; }
 
-		/** test whether the object name/tag match */
-		template<typename T>
-		friend bool Match(T const & object, NamedObjectRequest request) // use template to use NamedObjectWrapper as well as NamedObject
-		{
-			if (request.request_type == NamedObjectRequestType::EMPTY)
-				return true;
-			else if (request.request_type == NamedObjectRequestType::STRING)
-				return (StringTools::Stricmp(object.GetName(), request.name) == 0);
-			else if (request.request_type == NamedObjectRequestType::TAG)
-				return (object.GetTag() == request.tag);
-			return false; // should never happen
-		}
-
 	protected:
 
 		/** the name of the object */
 		std::string name;
 		/** the tag of the object */
 		TagType tag = 0;
-
-	public:
-
-		/** search element in a vector */
-		template<typename P>
-		static auto FindNamedObject(std::vector<P> & elements, NamedObjectRequest request) -> decltype(meta::get_raw_pointer(elements[0]))
-		{
-			// search in the list
-            size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e, request))
-					return e;
-			}
-			return nullptr;
-		}
-		/** search element in a vector */
-		template<typename P>
-		static auto FindNamedObject(std::vector<P> const & elements, NamedObjectRequest request) -> decltype(meta::get_raw_pointer(elements[0]))
-		{
-			// search in the list
-            size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e, request))
-					return e;
-			}
-			return nullptr;
-		}
 	};
+
+
+
 
 
 

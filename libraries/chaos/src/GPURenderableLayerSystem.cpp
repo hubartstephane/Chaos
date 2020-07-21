@@ -56,7 +56,7 @@ namespace chaos
 
 	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(NamedObjectRequest request)
 	{
-		RenderableLayerInfo * info = NamedObject::FindNamedObject(layers, request);
+		RenderableLayerInfo * info = request.FindNamedObject(layers);
 		if (info == nullptr)
 			return nullptr;
 		return info->object.get();
@@ -64,7 +64,7 @@ namespace chaos
 
 	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(NamedObjectRequest request) const
 	{
-		RenderableLayerInfo const * info = NamedObject::FindNamedObject(layers, request);
+		RenderableLayerInfo const * info = request.FindNamedObject(layers);
 		if (info == nullptr)
 			return nullptr;
 		return info->object.get();

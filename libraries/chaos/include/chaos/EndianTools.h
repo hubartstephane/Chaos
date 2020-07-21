@@ -21,12 +21,11 @@ namespace chaos
 	// MIDI File : BigEndian
 	//
 
-	class EndianTools
+	namespace EndianTools
 	{
-	public:
 
 		/** whether the host is Little Endian */
-		static bool IsHostLittleEndian()
+		bool IsHostLittleEndian()
 		{
 			uint16_t const tmp = 0x00FF;
 
@@ -36,11 +35,11 @@ namespace chaos
 		}
 
 		/** whether the host is Big Endian */
-		static bool IsHostBigEndian(){ return !IsHostLittleEndian();}
+		bool IsHostBigEndian(){ return !IsHostLittleEndian();}
 
 		/** convert endianness */
 		template<typename T>
-		static T HostToLittleEndian(T src)
+		T HostToLittleEndian(T src)
 		{
 			if (IsHostBigEndian())
 				return EndianSwap(src);
@@ -49,14 +48,14 @@ namespace chaos
 
 		/** convert endianness */
 		template<typename T>
-		static T LittleEndianToHost(T src)
+		T LittleEndianToHost(T src)
 		{
 			return HostToLittleEndian(src);
 		}
 
 		/** convert endianness */
 		template<typename T>
-		static T HostToBigEndian(T src)
+		T HostToBigEndian(T src)
 		{
 			if (IsHostLittleEndian())
 				return EndianSwap(src);
@@ -64,12 +63,12 @@ namespace chaos
 		}
 		/** convert endianness */
 		template<typename T>
-		static T BigEndianToHost(T src)
+		T BigEndianToHost(T src)
 		{
 			return HostToBigEndian(src);
 		}
 		/** conversion method */
-		static uint16_t EndianSwap(uint16_t src)
+		uint16_t EndianSwap(uint16_t src)
 		{
 			uint16_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[1];
@@ -77,7 +76,7 @@ namespace chaos
 			return result;
 		}
 		/** conversion method */
-		static int16_t EndianSwap(int16_t src)
+		int16_t EndianSwap(int16_t src)
 		{
 			int16_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[1];
@@ -85,7 +84,7 @@ namespace chaos
 			return result;
 		}
 		/** conversion method */
-		static uint32_t EndianSwap(uint32_t src)
+		uint32_t EndianSwap(uint32_t src)
 		{
 			uint32_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
@@ -95,7 +94,7 @@ namespace chaos
 			return result;
 		}
 		/** conversion method */
-		static int32_t EndianSwap(int32_t src)
+		int32_t EndianSwap(int32_t src)
 		{
 			int32_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
@@ -105,7 +104,7 @@ namespace chaos
 			return result;
 		}
 		/** conversion method */
-		static uint64_t EndianSwap(uint64_t src)
+		uint64_t EndianSwap(uint64_t src)
 		{
 			uint64_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
@@ -119,7 +118,7 @@ namespace chaos
 			return result;
 		}
 		/** conversion method */
-		static int64_t EndianSwap(int64_t src)
+		int64_t EndianSwap(int64_t src)
 		{
 			int64_t result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
@@ -133,7 +132,7 @@ namespace chaos
 			return result;
 		}
 		/** conversion method */
-		static float EndianSwap(float src)
+		float EndianSwap(float src)
 		{
 			float result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[3];
@@ -143,7 +142,7 @@ namespace chaos
 			return result;
 		}
 		/** conversion method */
-		static double EndianSwap(double src)
+		double EndianSwap(double src)
 		{
 			double result = 0;
 			((unsigned char *)&result)[0] = ((unsigned char const *)&src)[7];
@@ -156,7 +155,7 @@ namespace chaos
 			((unsigned char *)&result)[7] = ((unsigned char const *)&src)[0];
 			return result;
 		}
-	};
+	}; // namespace EndianTools
 
 }; // namespace chaos
 

@@ -4,6 +4,7 @@
 
 namespace chaos
 {
+	/** the possible axis */
 	enum class Axis : int
 	{
 		AXIS_X = 0,

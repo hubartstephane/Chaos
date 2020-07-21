@@ -43,4 +43,22 @@ namespace chaos
 		boost::filesystem::path resolved_path;
 	};
 
+	/** a generic function to find an object in a list by its path */
+	template<typename U>
+	auto FindObjectByPath(FilePathParam const& in_path, U& objects) -> decltype(objects[0].get())
+	{
+		boost::filesystem::path const& resolved_path = in_path.GetResolvedPath();
+
+		size_t count = objects.size();
+		for (size_t i = 0; i < count; ++i)
+		{
+			auto obj = objects[i].get();
+			if (obj == nullptr)
+				continue;
+			if (obj->GetPath() == resolved_path)
+				return obj;
+		}
+		return nullptr;
+	}
+
 }; // namespace chaos

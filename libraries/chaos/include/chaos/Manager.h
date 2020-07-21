@@ -30,27 +30,6 @@ namespace chaos
 		/** initialize the manager from a configuration file */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 
-	public:
-
-
-		/** a generic function to find an object in a list by its path */
-		template<typename U>
-		static auto FindObjectByPath(FilePathParam const & in_path, U & objects) -> decltype(objects[0].get())
-		{
-			boost::filesystem::path const & resolved_path = in_path.GetResolvedPath();
-
-			size_t count = objects.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto obj = objects[i].get();
-				if (obj == nullptr)
-					continue;
-				if (obj->GetPath() == resolved_path)
-					return obj;
-			}
-			return nullptr;
-		}
-
 	protected:
 
 		/** internally starts the manager */

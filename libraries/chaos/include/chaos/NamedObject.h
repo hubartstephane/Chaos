@@ -1,152 +1,12 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/MetaProgramming.h>
 #include <chaos/Object.h>
-#include <chaos/StringTools.h>
-
-// XXX : automatic TagType generation
-//
-//  at first, i test for an automatic tag generation with 
-//
-//  #define CHAOS_DECLARE_TAG(x) static chaos::TagType const x = (chaos::TagType const)&x
-//
-//  seemed find until i realized that each time header containing this definition was included, there was a copy of the TagType (with a different address)
-//  the '#pragma once' was not preventing this issue due to several file object 'building'
-//
-//   => in library chaos
-//   => in library death (using chaos)
-//   => in the executable (using both death and chaos)
-//
-//  so i used a function that was creating a TagType with its variable name (and using a cache to store result)
-//
-//  The macro deserve to be used in declaration and so is not thread safe (the function it calls is not thread safe)
-
-#define CHAOS_DECLARE_TAG(x) static chaos::TagType x = chaos::MakeStaticTagType(#x)
-
+#include <chaos/Tag.h>
+#include <chaos/ObjectRequest.h>
 
 namespace chaos
 {
-	/** a tag is an integer that can reference any address */
-	using TagType = uintptr_t;
-
-	/** function to generate a TagType from a name (XXX : not thread safe) */
-	TagType MakeStaticTagType(char const * name);
-
-
-
-
-
-
-
-
-
-
-	/** a utility class for parameter passing */
-	enum class NamedObjectRequestType
-	{
-		/** accept anything */
-		EMPTY = 0,
-		/** search by string */
-		STRING = 1,
-		/** search by tag */
-		TAG = 2
-	};
-
-
-    /** a utility class for parameter passing */
-    class NamedObjectRequest
-    {
-    public:
-
-		/** constructor */
-		NamedObjectRequest() = default;
-		/** constructor */
-		NamedObjectRequest(NamedObjectRequest const & src) = default;
-        /** constructor */
-        NamedObjectRequest(char const* in_name) :
-            name(in_name), request_type(NamedObjectRequestType::STRING)
-        {            
-        }
-		/** constructor */
-		NamedObjectRequest(std::string const & in_name) :
-			name(in_name.c_str()), request_type(NamedObjectRequestType::STRING)
-		{			
-		}
-        /** constructor */
-        NamedObjectRequest(TagType in_tag) :
-            tag(in_tag), request_type(NamedObjectRequestType::TAG)
-        {
-        }
-
-		/** test whether the object name/tag match */
-		template<typename T>
-		bool Match(T const& object) const // use template to use NamedObjectWrapper as well as NamedObject
-		{
-			if (request_type == NamedObjectRequestType::EMPTY)
-				return true;
-			else if (request_type == NamedObjectRequestType::STRING)
-				return (StringTools::Stricmp(object.GetName(), name) == 0);
-			else if (request_type == NamedObjectRequestType::TAG)
-				return (object.GetTag() == tag);
-			return false; // should never happen
-		}
-
-		/** search element in a vector */
-		template<typename P>
-		auto FindNamedObject(std::vector<P>& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
-		{
-			// search in the list
-			size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e))
-					return e;
-			}
-			return nullptr;
-		}
-		/** search element in a vector */
-		template<typename P>
-		auto FindNamedObject(std::vector<P> const& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
-		{
-			// search in the list
-			size_t count = elements.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto e = meta::get_raw_pointer(elements[i]);
-				if (Match(*e))
-					return e;
-			}
-			return nullptr;
-		}
-
-	public:
-
-        /** the name for the request */
-        char const* name = nullptr;
-        /** the tag for the request */
-        TagType tag = 0;
-        /** the kind of request of interrest */
-		NamedObjectRequestType request_type = NamedObjectRequestType::EMPTY;
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/** a class that describe an object that can be reference by tag and by name */
 	class NamedObject
 	{
@@ -170,24 +30,6 @@ namespace chaos
 		TagType tag = 0;
 	};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/** NamedObjectWrapper : this is a wrapper to ba able to use NamedObject's static methods */
 	template<typename T>
 	class NamedObjectWrapper
@@ -204,6 +46,7 @@ namespace chaos
 		/** the renderable to render */
 		shared_ptr<T> object;
 	};
+
 
 
 

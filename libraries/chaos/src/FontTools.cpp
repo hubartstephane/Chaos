@@ -48,7 +48,8 @@ namespace chaos
 		return result;
 	}
 
-	void FontTools::MakeAlphaChannelConsistent(ImageDescription & desc)
+	/** for an image representing a glyph, ensure alpha is equal to R (should be equal to G and B too) */
+	static void MakeAlphaChannelConsistent(ImageDescription & desc)
 	{
 		// correction of alpha channel
 		if (desc.pixel_format == PixelFormatType::RGBA_FLOAT)

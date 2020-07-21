@@ -66,15 +66,6 @@ namespace chaos
 		};
 
 		/**
-		* ObjectBase : base object
-		*/
-
-		class ObjectBase : public NamedObject
-		{
-
-		};
-
-		/**
 		 * BitmapAnimationInfo : represents animation data inside a bitmap/character
 		 */
 
@@ -86,7 +77,7 @@ namespace chaos
 		* BitmapInfo : represents an Bitmap info in the atlas
 		*/
 
-		class BitmapInfo : public BitmapLayout, public ObjectBase
+		class BitmapInfo : public BitmapLayout, public NamedObject
 		{
 		public:
 
@@ -119,7 +110,6 @@ namespace chaos
 			/** get the effective WrapMode to use for the request */
 			WrapMode GetEffectiveRequestWrapMode(WrapMode src) const;
 
-
 		public:
 
 			/** whether the bitmap is part of an animation */
@@ -130,10 +120,8 @@ namespace chaos
 		* CharacterInfo : represents a Character info in the atlas. Contained in a FontInfo. It is a BitmapInfo with additionnal information
 		*/
 
-		class CharacterInfo : public CharacterLayout, public ObjectBase
+		class CharacterInfo : public CharacterLayout, public NamedObject
 		{
-		public:
-
 		};
 
 		/**
@@ -178,7 +166,6 @@ namespace chaos
 
 		class FontInfo : public FontInfoTemplate<CharacterInfo, NamedObject, boost::mpl::identity<boost::mpl::_1>>
 		{
-
 		};
 
 		/**
@@ -242,7 +229,7 @@ namespace chaos
 		* FolderInfo : contains bitmpas, font and other folders
 		*/
 
-		class FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, ObjectBase, boost::mpl::identity<boost::mpl::_1>>
+		class FolderInfo : public FolderInfoTemplate<BitmapInfo, FontInfo, FolderInfo, NamedObject, boost::mpl::identity<boost::mpl::_1>>
 		{
 		public:
 

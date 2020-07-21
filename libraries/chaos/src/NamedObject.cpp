@@ -11,6 +11,14 @@ namespace chaos
 			name = in_name;
 	}
 
+	void NamedObject::SetObjectNaming(ObjectRequest request)
+	{
+		if (request.HasStringRequest())
+			SetName(request.name);
+		if (request.HasTagRequest())
+			SetTag(request.tag);	
+	}
+
 	bool SaveIntoJSON(nlohmann::json& json_entry, NamedObject const& src)
 	{
 		if (!json_entry.is_object())

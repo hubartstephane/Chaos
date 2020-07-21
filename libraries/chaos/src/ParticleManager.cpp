@@ -31,10 +31,10 @@ namespace chaos
 		return auto_cast(layer_system.FindChildRenderable(request));
 	}
 
-	void ParticleManager::DoAddLayer(ParticleLayerBase * layer, int render_order, TagType layer_id)
+	void ParticleManager::DoAddLayer(ParticleLayerBase * layer, int render_order, ObjectRequest layer_id)
 	{        		
         layer->particle_manager = this;
-        layer->SetTag(layer_id);
+		layer->SetObjectNaming(layer_id);
         layer->SetTextureAtlas(atlas.get());
 		layer_system.AddChildRenderable(layer, render_order);
 	}

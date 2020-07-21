@@ -32,24 +32,6 @@ namespace chaos
 
 	public:
 
-		/** a generic function to find an object in a list by its name */
-		template<typename U>
-		static auto FindObjectByName(char const * name, U & objects) -> decltype(objects[0].get())
-		{
-			if (name == nullptr)
-				return nullptr;
-
-			size_t count = objects.size();
-			for (size_t i = 0; i < count; ++i)
-			{
-				auto object = objects[i].get();
-				if (object == nullptr)
-					continue;
-				if (StringTools::Stricmp(object->GetName(), name) == 0)
-					return object;
-			}
-			return nullptr;
-		}
 
 		/** a generic function to find an object in a list by its path */
 		template<typename U>

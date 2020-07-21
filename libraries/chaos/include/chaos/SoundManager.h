@@ -516,9 +516,9 @@ namespace chaos
 		void Tick(float delta_time);
 
 		/** find a source by its name */
-		SoundSource * FindSource(char const * name);
+		SoundSource * FindSource(ObjectRequest request);
 		/** find a source by its name */
-		SoundSource const * FindSource(char const * name) const;
+		SoundSource const * FindSource(ObjectRequest request) const;
 
 		/** find a simple source by its path */
 		SoundSource * FindSourceByPath(FilePathParam const & path);
@@ -526,14 +526,14 @@ namespace chaos
 		SoundSource const * FindSourceByPath(FilePathParam const & path) const;
 
 		/** find a category by its name */
-		SoundCategory * FindCategory(char const * name);
+		SoundCategory * FindCategory(ObjectRequest request);
 		/** find a category by its name */
-		SoundCategory const * FindCategory(char const * name) const;
+		SoundCategory const * FindCategory(ObjectRequest request) const;
 
 		/** find a sound by its name */
-		Sound * FindSound(char const * name);
+		Sound * FindSound(ObjectRequest request);
 		/** find a sound by its name */
-		Sound const * FindSound(char const * name) const;
+		Sound const * FindSound(ObjectRequest request) const;
 
 		/** add a category inside the manager */
 		SoundCategory * AddCategory(char const * name);

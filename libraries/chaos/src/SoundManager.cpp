@@ -918,23 +918,23 @@ namespace chaos
 		DoRemoveObject(index, sources, &SoundManager::OnObjectRemovedFromManager);
 	}
 
-	SoundSource * SoundManager::FindSource(char const * name)
+	SoundSource * SoundManager::FindSource(ObjectRequest request)
 	{
-		return FindObjectByName(name, sources);
+		return request.FindObject(sources);
 	}
-	SoundSource const * SoundManager::FindSource(char const * name) const
+	SoundSource const * SoundManager::FindSource(ObjectRequest request) const
 	{
-		return FindObjectByName(name, sources);
-	}
-
-	Sound * SoundManager::FindSound(char const * name)
-	{
-		return FindObjectByName(name, sounds);
+		return request.FindObject(sources);
 	}
 
-	Sound const * SoundManager::FindSound(char const * name) const
+	Sound * SoundManager::FindSound(ObjectRequest request)
 	{
-		return FindObjectByName(name, sounds);
+		return request.FindObject(sounds);
+	}
+
+	Sound const * SoundManager::FindSound(ObjectRequest request) const
+	{
+		return request.FindObject(sounds);
 	}
 
 	SoundSource * SoundManager::FindSourceByPath(FilePathParam const & path)
@@ -947,14 +947,14 @@ namespace chaos
 		return FindObjectByPath(path, sources);
 	}
 
-	SoundCategory * SoundManager::FindCategory(char const * name)
+	SoundCategory * SoundManager::FindCategory(ObjectRequest request)
 	{
-		return FindObjectByName(name, categories);
+		return request.FindObject(categories);
 	}
 
-	SoundCategory const * SoundManager::FindCategory(char const * name) const
+	SoundCategory const * SoundManager::FindCategory(ObjectRequest request) const
 	{
-		return FindObjectByName(name, categories);
+		return request.FindObject(categories);
 	}
 
 	bool SoundManager::CanAddCategory(char const * name) const

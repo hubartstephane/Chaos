@@ -17,22 +17,22 @@ namespace death
 		return true;
 	}
 
-	chaos::BitmapAtlas::BitmapInfo const * GameParticleCreator::FindBitmapInfo(char const * bitmap_name) const
+	chaos::BitmapAtlas::BitmapInfo const * GameParticleCreator::FindBitmapInfo(chaos::ObjectRequest bitmap_request) const
 	{
 		// find bitmap set
 		chaos::BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
 		if (bitmap_set == nullptr)
 			return nullptr;
 		// find bitmap info
-		return bitmap_set->GetBitmapInfo(bitmap_name);
+		return bitmap_set->GetBitmapInfo(bitmap_request);
 	}
 
-	chaos::ParticleAllocationBase * GameParticleCreator::SpawnParticles(chaos::ObjectRequest layer_id, char const * bitmap_name, size_t count, bool new_allocation) const
+	chaos::ParticleAllocationBase * GameParticleCreator::SpawnParticles(chaos::ObjectRequest layer_id, chaos::ObjectRequest bitmap_request, size_t count, bool new_allocation) const
 	{
-        chaos::ParticleSpawner spawner = particle_manager->GetParticleSpawner(layer_id, bitmap_name);
+        chaos::ParticleSpawner spawner = particle_manager->GetParticleSpawner(layer_id, bitmap_request);
         if (!spawner.IsValid())
             return nullptr;
-        if (bitmap_name != nullptr && !spawner.HasBitmap())
+        if (!bitmap_request.IsEmpty() && !spawner.HasBitmap())
             return nullptr;
         return spawner.SpawnParticles(count, new_allocation);
 	}

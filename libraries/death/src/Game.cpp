@@ -637,10 +637,10 @@ namespace death
 		return render_order;
 	}
 
-	bool Game::CreateBackgroundImage(char const * material_name, char const * texture_name)
+	bool Game::CreateBackgroundImage(chaos::ObjectRequest material_request, chaos::ObjectRequest texture_request)
 	{
-		if (material_name == nullptr)
-			material_name = "background";
+		if (material_request.IsEmpty())
+			material_request = "background";
 
 		// create the particle allocation if necessary
 		if (background_allocations == nullptr)
@@ -659,13 +659,13 @@ namespace death
 		if (resource_manager != nullptr)
 		{
 			// search declared material
-			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_name);
+			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_request);
 			if (result != nullptr)
 			{
-				if (texture_name != nullptr)
+				if (!texture_request.IsEmpty())
 				{
 					// search the corresponding texture
-					chaos::GPUTexture * texture = resource_manager->FindTexture(texture_name);
+					chaos::GPUTexture * texture = resource_manager->FindTexture(texture_request);
 					if (texture == nullptr)
 						return false;
 					// create a child material

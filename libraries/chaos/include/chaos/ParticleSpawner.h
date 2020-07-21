@@ -21,54 +21,17 @@ namespace chaos
         }
 
         /** constructor with additionnal bitmap arguments */
-        template<typename ...PARAMS>
-        ParticleSpawner(ParticleLayerBase* in_particle_layer, PARAMS... params) :
+        ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request) :
             particle_layer(in_particle_layer)
         {
             // in case of error, make the Spawner invalid
-            if (!SetBitmapInfo(params...))
+            if (!SetBitmapInfo(bitmap_request))
                 particle_layer = nullptr;
         }
 
         /** change the bitmap info */
-        template<typename BITMAP_NAME, typename FOLDER_NAME>
-        bool SetBitmapInfo(BITMAP_NAME bitmap_name, FOLDER_NAME folder_name)
-        {
-            if (particle_layer == nullptr)
-                return false;
-            // get the atlas
-            BitmapAtlas::TextureArrayAtlas const* atlas = particle_layer->GetTextureAtlas();
-            if (atlas == nullptr)
-                return false;
-
-            // if the requested bitmap is nullptr, considere the call as successfull
-            if constexpr (std::is_same_v<BITMAP_NAME, char const*>)
-            {
-                if (bitmap_name == nullptr)
-                {
-                    bitmap_info = nullptr;
-                    return true;
-                }
-            }
-
-            // find the folder
-            BitmapAtlas::FolderInfo const* bitmap_set = atlas->GetFolderInfo(folder_name, true);
-            if (bitmap_set == nullptr)
-                return false;
-            // get the bitmap
-            bitmap_info = bitmap_set->GetBitmapInfo(bitmap_name, true);
-            if (bitmap_info == nullptr)
-                return false;
-            return true;
-        }
-
-        /** change the bitmap info with just a bitmap name */
-        template<typename BITMAP_NAME>
-        bool SetBitmapInfo(BITMAP_NAME bitmap_name)
-        {
-            return SetBitmapInfo(bitmap_name, "sprites"); // folder "sprites" by default
-        }
-
+		bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
+   
         /** simple spawn method */
         ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation);
 

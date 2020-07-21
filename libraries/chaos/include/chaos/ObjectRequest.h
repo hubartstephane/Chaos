@@ -31,12 +31,16 @@ namespace chaos
         /** constructor */
         ObjectRequest(char const* in_name) :
             name(in_name), request_type(ObjectRequestType::STRING)
-        {            
+        {
+			if (StringTools::IsEmpty(name))
+				request_type = ObjectRequestType::EMPTY;
         }
 		/** constructor */
 		ObjectRequest(std::string const & in_name) :
 			name(in_name.c_str()), request_type(ObjectRequestType::STRING)
 		{			
+			if (StringTools::IsEmpty(name))
+				request_type = ObjectRequestType::EMPTY;
 		}
         /** constructor */
         ObjectRequest(TagType in_tag) :
@@ -66,13 +70,13 @@ namespace chaos
 		template<typename T>
 		bool Match(T const& object) const // use template to use NamedObjectWrapper as well as NamedObject
 		{
-			if (request_type == ObjectRequestType::EMPTY)
-				return true;
-			else if (request_type == ObjectRequestType::STRING)
-				return (StringTools::Stricmp(object.GetName(), name) == 0);
-			else if (request_type == ObjectRequestType::TAG)
-				return (object.GetTag() == tag);
-			return false; // should never happen
+			if (HasStringRequest())
+				if (StringTools::Stricmp(object.GetName(), name) != 0)
+					return false;
+			if (HasTagRequest())
+				if (object.GetTag() != tag)
+					return false;
+			return true;
 		}
 
 		/** search element in a vector */

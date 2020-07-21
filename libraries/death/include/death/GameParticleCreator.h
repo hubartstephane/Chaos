@@ -19,13 +19,13 @@ namespace death
 		bool Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 
 		/** create some particle of the given type (Spawn + Initialization) */
-		chaos::ParticleAllocationBase * SpawnParticles(chaos::ObjectRequest layer_id, char const * bitmap_name, size_t count, bool new_allocation) const;
+		chaos::ParticleAllocationBase * SpawnParticles(chaos::ObjectRequest layer_id, chaos::ObjectRequest bitmap_request, size_t count, bool new_allocation) const;
 
         /** spawn + user initialization methods */
         template<typename INIT_PARTICLE_FUNC>
-        chaos::ParticleAllocationBase* SpawnParticles(chaos::ObjectRequest layer_id, char const* bitmap_name, size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func) const
+        chaos::ParticleAllocationBase* SpawnParticles(chaos::ObjectRequest layer_id, chaos::ObjectRequest bitmap_request, size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func) const
         {
-            chaos::ParticleAllocationBase* result = SpawnParticles(layer_id, bitmap_name, count, new_allocation);
+            chaos::ParticleAllocationBase* result = SpawnParticles(layer_id, bitmap_request, count, new_allocation);
             // call user initialization function
             if (result != nullptr)
             {
@@ -53,7 +53,7 @@ namespace death
         }
 
 		/** get the bitmap info used for given bitmap_name */
-		chaos::BitmapAtlas::BitmapInfo const * FindBitmapInfo(char const * bitmap_name) const;
+		chaos::BitmapAtlas::BitmapInfo const * FindBitmapInfo(chaos::ObjectRequest bitmap_request) const;
 
 	protected:
 

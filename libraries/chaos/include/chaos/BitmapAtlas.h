@@ -150,9 +150,9 @@ namespace chaos
 			using character_stored_type = typename boost::mpl::apply<meta_wrapper_type, character_type>::type;
 
 			/** gets an info by name/tag */
-			character_type const * GetCharacterInfo(NamedObjectRequest request) const
+			character_type const * GetCharacterInfo(ObjectRequest request) const
 			{
-				return request.FindNamedObject(elements);
+				return request.FindObject(elements);
 			}
 
 		public:
@@ -200,9 +200,9 @@ namespace chaos
 			using font_stored_type   = typename boost::mpl::apply<meta_wrapper_type, font_type>::type;
 
 #define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, constness)\
-			result_type constness * funcname(NamedObjectRequest request, bool recursive = false) constness\
+			result_type constness * funcname(ObjectRequest request, bool recursive = false) constness\
 			{\
-				result_type constness * result = request.FindNamedObject(vector_name);\
+				result_type constness * result = request.FindObject(vector_name);\
 				if (result != nullptr)\
 					return result;\
 				size_t count = folders.size();\
@@ -301,29 +301,29 @@ namespace chaos
 			}
 
 			/** gets a bitmap info by its name/tag */
-			bitmap_type * GetBitmapInfo(NamedObjectRequest request, bool recursive = false)
+			bitmap_type * GetBitmapInfo(ObjectRequest request, bool recursive = false)
 			{
 				return root_folder.GetBitmapInfo(request, recursive);
 			}
-			bitmap_type const * GetBitmapInfo(NamedObjectRequest request, bool recursive = false) const
+			bitmap_type const * GetBitmapInfo(ObjectRequest request, bool recursive = false) const
 			{
 				return root_folder.GetBitmapInfo(request, recursive);
 			}
 			/** gets a font info by its name/tag */
-			font_type * GetFontInfo(NamedObjectRequest request, bool recursive = false)
+			font_type * GetFontInfo(ObjectRequest request, bool recursive = false)
 			{
 				return root_folder.GetFontInfo(request, recursive);
 			}
-			font_type const * GetFontInfo(NamedObjectRequest request, bool recursive = false) const
+			font_type const * GetFontInfo(ObjectRequest request, bool recursive = false) const
 			{
 				return root_folder.GetFontInfo(request, recursive);
 			}
 			/** gets a folder info by its name/tag */
-			folder_type * GetFolderInfo(NamedObjectRequest request, bool recursive = false)
+			folder_type * GetFolderInfo(ObjectRequest request, bool recursive = false)
 			{
 				return root_folder.GetFolderInfo(request, recursive);
 			}
-			folder_type const * GetFolderInfo(NamedObjectRequest request, bool recursive = false) const
+			folder_type const * GetFolderInfo(ObjectRequest request, bool recursive = false) const
 			{
 				return root_folder.GetFolderInfo(request, recursive);
 			}

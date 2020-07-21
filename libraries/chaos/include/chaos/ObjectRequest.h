@@ -9,7 +9,7 @@
 namespace chaos
 {
 	/** a utility class for parameter passing */
-	enum class NamedObjectRequestType
+	enum class ObjectRequestType
 	{
 		/** accept anything */
 		EMPTY = 0,
@@ -20,27 +20,27 @@ namespace chaos
 	};
 
     /** a utility class for parameter passing */
-    class NamedObjectRequest
+    class ObjectRequest
     {
     public:
 
 		/** constructor */
-		NamedObjectRequest() = default;
+		ObjectRequest() = default;
 		/** constructor */
-		NamedObjectRequest(NamedObjectRequest const & src) = default;
+		ObjectRequest(ObjectRequest const & src) = default;
         /** constructor */
-        NamedObjectRequest(char const* in_name) :
-            name(in_name), request_type(NamedObjectRequestType::STRING)
+        ObjectRequest(char const* in_name) :
+            name(in_name), request_type(ObjectRequestType::STRING)
         {            
         }
 		/** constructor */
-		NamedObjectRequest(std::string const & in_name) :
-			name(in_name.c_str()), request_type(NamedObjectRequestType::STRING)
+		ObjectRequest(std::string const & in_name) :
+			name(in_name.c_str()), request_type(ObjectRequestType::STRING)
 		{			
 		}
         /** constructor */
-        NamedObjectRequest(TagType in_tag) :
-            tag(in_tag), request_type(NamedObjectRequestType::TAG)
+        ObjectRequest(TagType in_tag) :
+            tag(in_tag), request_type(ObjectRequestType::TAG)
         {
         }
 
@@ -48,18 +48,18 @@ namespace chaos
 		template<typename T>
 		bool Match(T const& object) const // use template to use NamedObjectWrapper as well as NamedObject
 		{
-			if (request_type == NamedObjectRequestType::EMPTY)
+			if (request_type == ObjectRequestType::EMPTY)
 				return true;
-			else if (request_type == NamedObjectRequestType::STRING)
+			else if (request_type == ObjectRequestType::STRING)
 				return (StringTools::Stricmp(object.GetName(), name) == 0);
-			else if (request_type == NamedObjectRequestType::TAG)
+			else if (request_type == ObjectRequestType::TAG)
 				return (object.GetTag() == tag);
 			return false; // should never happen
 		}
 
 		/** search element in a vector */
 		template<typename P>
-		auto FindNamedObject(std::vector<P>& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
+		auto FindObject(std::vector<P>& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// search in the list
 			size_t count = elements.size();
@@ -73,7 +73,7 @@ namespace chaos
 		}
 		/** search element in a vector */
 		template<typename P>
-		auto FindNamedObject(std::vector<P> const& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
+		auto FindObject(std::vector<P> const& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// search in the list
 			size_t count = elements.size();
@@ -93,7 +93,7 @@ namespace chaos
         /** the tag for the request */
         TagType tag = 0;
         /** the kind of request of interrest */
-		NamedObjectRequestType request_type = NamedObjectRequestType::EMPTY;
+		ObjectRequestType request_type = ObjectRequestType::EMPTY;
     };
 
 }; // namespace chaos

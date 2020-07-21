@@ -551,24 +551,24 @@ namespace death
 		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** find the player start from its name */
-		TiledMapPlayerStart* FindPlayerStart(chaos::NamedObjectRequest request);
+		TiledMapPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStart const* FindPlayerStart(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
 
 		/** find the camera from its name */
-		TiledMapCameraTemplate* FindCameraTemplate(chaos::NamedObjectRequest request);
+		TiledMapCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraTemplate const* FindCameraTemplate(chaos::NamedObjectRequest request) const;
+		TiledMapCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
 
 		/** find the trigger surface from its name */
-		TiledMapTrigger* FindTrigger(chaos::NamedObjectRequest request);
+		TiledMapTrigger* FindTrigger(chaos::ObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTrigger const* FindTrigger(chaos::NamedObjectRequest request) const;
+		TiledMapTrigger const* FindTrigger(chaos::ObjectRequest request) const;
 
 		/** find the object from its name */
-		TiledMapObject* FindObject(chaos::NamedObjectRequest request);
+		TiledMapObject* FindObject(chaos::ObjectRequest request);
 		/** find the object from its name */
-		TiledMapObject const* FindObject(chaos::NamedObjectRequest request) const;
+		TiledMapObject const* FindObject(chaos::ObjectRequest request) const;
 
 		/** get the bounding box for the level */
 		chaos::box2 GetBoundingBox(bool world_system) const;
@@ -802,29 +802,29 @@ namespace death
 		chaos::TiledMap::Map const* GetTiledMap() const;
 
 		/** find the layer instance from its name */
-		TiledMapLayerInstance* FindLayerInstance(chaos::NamedObjectRequest request);
+		TiledMapLayerInstance* FindLayerInstance(chaos::ObjectRequest request);
 		/** find the layer instance from its name */
-		TiledMapLayerInstance const* FindLayerInstance(chaos::NamedObjectRequest request) const;
+		TiledMapLayerInstance const* FindLayerInstance(chaos::ObjectRequest request) const;
 		/** find the camera from its name */
-		TiledMapCameraTemplate* FindCameraTemplate(chaos::NamedObjectRequest request);
+		TiledMapCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraTemplate const* FindCameraTemplate(chaos::NamedObjectRequest request) const;
+		TiledMapCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
 		/** find the player start from its name */
-		TiledMapPlayerStart* FindPlayerStart(chaos::NamedObjectRequest request);
+		TiledMapPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStart const* FindPlayerStart(chaos::NamedObjectRequest request) const;
+		TiledMapPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
 		/** find the trigger surface from its name */
-		TiledMapTrigger* FindTrigger(chaos::NamedObjectRequest request);
+		TiledMapTrigger* FindTrigger(chaos::ObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTrigger const* FindTrigger(chaos::NamedObjectRequest request) const;
+		TiledMapTrigger const* FindTrigger(chaos::ObjectRequest request) const;
 		/** find the typed object from its name */
-		TiledMapObject* FindObject(chaos::NamedObjectRequest request);
+		TiledMapObject* FindObject(chaos::ObjectRequest request);
 		/** find the typed object surface from its name */
-		TiledMapObject const* FindObject(chaos::NamedObjectRequest request) const;
+		TiledMapObject const* FindObject(chaos::ObjectRequest request) const;
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		chaos::ParticleSpawner* CreateParticleSpawner(chaos::NamedObjectRequest layer_instance_name, PARAMS... params)
+		chaos::ParticleSpawner* CreateParticleSpawner(chaos::ObjectRequest layer_instance_name, PARAMS... params)
 		{
 			LayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
 			if (layer_instance == nullptr)
@@ -833,7 +833,7 @@ namespace death
 		}
 
 		template<typename ...PARAMS>
-		chaos::ParticleSpawner GetParticleSpawner(chaos::NamedObjectRequest layer_instance_name, PARAMS... params)
+		chaos::ParticleSpawner GetParticleSpawner(chaos::ObjectRequest layer_instance_name, PARAMS... params)
 		{
 			TiledMapLayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
 			if (layer_instance == nullptr)

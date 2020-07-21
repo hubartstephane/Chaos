@@ -21,12 +21,12 @@ namespace chaos
 		atlas = in_atlas;
 	}
 
-	ParticleLayerBase * ParticleManager::FindLayer(NamedObjectRequest request)
+	ParticleLayerBase * ParticleManager::FindLayer(ObjectRequest request)
 	{
 		return auto_cast(layer_system.FindChildRenderable(request));
 	}
 
-	ParticleLayerBase const * ParticleManager::FindLayer(NamedObjectRequest request) const
+	ParticleLayerBase const * ParticleManager::FindLayer(ObjectRequest request) const
 	{
 		return auto_cast(layer_system.FindChildRenderable(request));
 	}

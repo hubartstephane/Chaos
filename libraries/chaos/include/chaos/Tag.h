@@ -19,7 +19,7 @@
 //
 //  The macro deserve to be used in declaration and so is not thread safe (the function it calls is not thread safe)
 
-#define CHAOS_DECLARE_TAG(x) static chaos::TagType x = chaos::MakeStaticTagType(#x)
+#define CHAOS_DECLARE_TAG(x) static chaos::TagType x = chaos::DeclareTag(#x)
 
 namespace chaos
 {
@@ -27,6 +27,6 @@ namespace chaos
 	using TagType = uintptr_t;
 
 	/** function to generate a TagType from a name (XXX : not thread safe) */
-	TagType MakeStaticTagType(char const * name);
+	TagType DeclareTag(char const * name);
 
 }; // namespace chaos

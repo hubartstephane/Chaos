@@ -27,7 +27,7 @@ namespace death
 		return bitmap_set->GetBitmapInfo(bitmap_name);
 	}
 
-	chaos::ParticleAllocationBase * GameParticleCreator::SpawnParticles(chaos::NamedObjectRequest layer_id, char const * bitmap_name, size_t count, bool new_allocation) const
+	chaos::ParticleAllocationBase * GameParticleCreator::SpawnParticles(chaos::ObjectRequest layer_id, char const * bitmap_name, size_t count, bool new_allocation) const
 	{
         chaos::ParticleSpawner spawner = particle_manager->GetParticleSpawner(layer_id, bitmap_name);
         if (!spawner.IsValid())
@@ -37,7 +37,7 @@ namespace death
         return spawner.SpawnParticles(count, new_allocation);
 	}
 
-	chaos::ParticleAllocationBase * GameParticleCreator::SpawnTextParticles(chaos::NamedObjectRequest layer_id, char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params) const
+	chaos::ParticleAllocationBase * GameParticleCreator::SpawnTextParticles(chaos::ObjectRequest layer_id, char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params) const
 	{
 		// find layer of concern
 		chaos::ParticleLayerBase * layer = particle_manager->FindLayer(layer_id);

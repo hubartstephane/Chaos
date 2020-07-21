@@ -60,10 +60,8 @@ namespace chaos
 	* FontTools : provide some static methods to manipulate tools
 	*/
 
-	class FontTools
+	namespace FontTools
 	{
-	public:
-
 		/** Metrics of a character */
 		class CharacterMetrics
 		{
@@ -105,24 +103,21 @@ namespace chaos
 		};
 
 		/** get an image description from a FT_Bitmap object */
-		static ImageDescription GetImageDescription(FT_Bitmap & bitmap);
+		ImageDescription GetImageDescription(FT_Bitmap & bitmap);
 
 		/** generate a bitmap from a glyph slot */
-		static FIBITMAP * GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
 		/** generate a bitmap from a bitmap */
-		static FIBITMAP * GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
 		/** generate a bitmap from a font an a string */
-		static FIBITMAP * GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
 		/** generate a bitmap from a font an a character */
-		static FIBITMAP * GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
 		/** generate a bitmap glyph from a character */
-		static FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph);
+		FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph);
 		/** generate a cache with all glyph required for a string */
-		static std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const * str);
+		std::map<char, CharacterBitmapGlyph> GetGlyphCacheForString(FT_Face face, char const * str);
 
-	protected:
+	}; // namespace FontTools
 
-		/** for an image representing a glyph, ensure alpha is equal to R (should be equal to G and B too) */
-		static void MakeAlphaChannelConsistent(ImageDescription & desc);
-	};
 }; // namespace chaos

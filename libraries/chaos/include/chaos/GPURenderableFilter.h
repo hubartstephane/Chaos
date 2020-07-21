@@ -5,6 +5,7 @@
 
 #include <chaos/Object.h>
 #include <chaos/NamedObject.h>
+#include <chaos/NamedObjectFilter.h>
 
 namespace chaos
 {

@@ -152,7 +152,7 @@ namespace chaos
 			/** gets an info by name/tag */
 			character_type const * GetCharacterInfo(NamedObjectRequest request) const
 			{
-				return NamedObject::FindNamedObject(elements, request);
+				return request.FindNamedObject(elements);
 			}
 
 		public:
@@ -199,25 +199,25 @@ namespace chaos
 			using bitmap_stored_type = typename boost::mpl::apply<meta_wrapper_type, bitmap_type>::type;
 			using font_stored_type   = typename boost::mpl::apply<meta_wrapper_type, font_type>::type;
 
-#define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, param_type, constness)\
-			result_type constness * funcname(param_type name, bool recursive = false) constness\
+#define CHAOS_IMPL_GETINFO(result_type, funcname, vector_name, constness)\
+			result_type constness * funcname(NamedObjectRequest request, bool recursive = false) constness\
 			{\
-				result_type constness * result = FindNamedObject(vector_name, name);\
+				result_type constness * result = request.FindNamedObject(vector_name);\
 				if (result != nullptr)\
 					return result;\
 				size_t count = folders.size();\
 				for (size_t i = 0; (i < count) && (result == nullptr); ++i)\
-					result = folders[i]->funcname(name, recursive);\
+					result = folders[i]->funcname(request, recursive);\
 				return result;\
 			}
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, NamedObjectRequest, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, NamedObjectRequest, const);
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, BOOST_PP_EMPTY());
+			CHAOS_IMPL_GETINFO(bitmap_type, GetBitmapInfo, bitmaps, const);
 
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, NamedObjectRequest, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, NamedObjectRequest, const);
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, BOOST_PP_EMPTY());
+			CHAOS_IMPL_GETINFO(font_type, GetFontInfo, fonts, const);
 
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, NamedObjectRequest, BOOST_PP_EMPTY());
-			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, NamedObjectRequest, const);
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, BOOST_PP_EMPTY());
+			CHAOS_IMPL_GETINFO(folder_type, GetFolderInfo, folders, const);
 #undef CHAOS_IMPL_GETINFO
 
 			/** clear the content of the folder */

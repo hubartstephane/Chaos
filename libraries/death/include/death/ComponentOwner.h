@@ -38,8 +38,7 @@
 	}\
 	bool Add##FUNC_COMPONENT_NAME(COMPONENT_CLASS * component);\
 	bool Remove##FUNC_COMPONENT_NAME(COMPONENT_CLASS * component);\
-	bool Remove##FUNC_COMPONENT_NAME(chaos::TagType tag);\
-	bool Remove##FUNC_COMPONENT_NAME(char const * name);
+	bool Remove##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request);
 
 /** a macro to help inserting code implementation for component owning classes */
 #define DEATH_IMPLEMENT_COMPONENT_OWNER(OWNER_CLASS, COMPONENT_CLASS, FUNC_COMPONENT_NAME, VECTOR_NAME, OWNER_POINTER_NAME)\
@@ -61,11 +60,11 @@ COMPONENT_CLASS const * OWNER_CLASS::Get##FUNC_COMPONENT_NAME(size_t index) cons
 }\
 COMPONENT_CLASS * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request)\
 {\
-	return chaos::NamedObject::FindNamedObject(VECTOR_NAME, request);\
+	return request.FindNamedObject(VECTOR_NAME);\
 }\
 COMPONENT_CLASS const * OWNER_CLASS::Find##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request) const\
 {\
-	return chaos::NamedObject::FindNamedObject(VECTOR_NAME, tag);\
+	return request.FindNamedObject(VECTOR_NAME);\
 }\
 bool OWNER_CLASS::Add##FUNC_COMPONENT_NAME(COMPONENT_CLASS * component)\
 {\
@@ -91,36 +90,21 @@ bool OWNER_CLASS::Remove##FUNC_COMPONENT_NAME(COMPONENT_CLASS * component)\
 			c->OWNER_POINTER_NAME = nullptr;\
 			c->OnRemovedFrom(this);\
 		}\
-  }\
+	}\
 	return true;\
 }\
-bool OWNER_CLASS::Remove##FUNC_COMPONENT_NAME(chaos::TagType tag)\
+bool OWNER_CLASS::Remove##FUNC_COMPONENT_NAME(chaos::NamedObjectRequest request)\
 {\
 	size_t count = VECTOR_NAME.size();\
 	for (size_t i = 0 ; i < count ; ++i)\
 	{\
-		if (Match(*VECTOR_NAME[i].get(), tag))\
+		if (request.Match(*VECTOR_NAME[i].get()))\
 		{\
 			chaos::shared_ptr<COMPONENT_CLASS> c = VECTOR_NAME[i];\
 			VECTOR_NAME.erase(VECTOR_NAME.begin() + i);\
 			c->OWNER_POINTER_NAME = nullptr;\
 			c->OnRemovedFrom(this);\
 		}\
-  }\
-	return true;\
-}\
-bool OWNER_CLASS::Remove##FUNC_COMPONENT_NAME(char const * name)\
-{\
-	size_t count = VECTOR_NAME.size();\
-	for (size_t i = 0 ; i < count ; ++i)\
-	{\
-		if (Match(*VECTOR_NAME[i].get(), name))\
-		{\
-			chaos::shared_ptr<COMPONENT_CLASS> c = VECTOR_NAME[i];\
-			VECTOR_NAME.erase(VECTOR_NAME.begin() + i);\
-			c->OWNER_POINTER_NAME = nullptr;\
-			c->OnRemovedFrom(this);\
-		}\
-  }\
+	}\
 	return true;\
 }

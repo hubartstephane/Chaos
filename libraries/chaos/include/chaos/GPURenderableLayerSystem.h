@@ -31,9 +31,9 @@ namespace chaos
 	public:
 
 		/** Find a renderable by its name/id */
-		GPURenderable * FindChildRenderable(NamedObjectRequest request);
+		GPURenderable * FindChildRenderable(ObjectRequest request);
 		/** Find a renderable by its name/id */
-		GPURenderable const * FindChildRenderable(NamedObjectRequest request) const;
+		GPURenderable const * FindChildRenderable(ObjectRequest request) const;
 		/** insert a renderable */
 		bool AddChildRenderable(GPURenderable * renderable, int render_order);
 		/** remove a renderable */

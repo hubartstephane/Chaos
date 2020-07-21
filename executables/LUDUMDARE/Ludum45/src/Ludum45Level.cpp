@@ -23,7 +23,7 @@ bool BonusSpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_inst
 	trigger_once = true;
 
 	bonus_name = in_geometric_object->GetPropertyValueString("BONUS_TYPE", "");
-	bonus_type = chaos::MakeStaticTagType(bonus_name.c_str());
+	bonus_type = chaos::DeclareTag(bonus_name.c_str());
 
 	return true;
 }

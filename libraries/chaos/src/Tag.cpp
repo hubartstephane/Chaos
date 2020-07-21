@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	TagType MakeStaticTagType(char const * name)
+	TagType DeclareTag(char const * name)
 	{
 		static std::set<std::string> tags;
 		// search if tag is already registered

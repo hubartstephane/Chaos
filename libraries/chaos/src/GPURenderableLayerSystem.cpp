@@ -54,17 +54,17 @@ namespace chaos
 		return true;
 	}
 
-	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(NamedObjectRequest request)
+	GPURenderable * GPURenderableLayerSystem::FindChildRenderable(ObjectRequest request)
 	{
-		RenderableLayerInfo * info = request.FindNamedObject(layers);
+		RenderableLayerInfo * info = request.FindObject(layers);
 		if (info == nullptr)
 			return nullptr;
 		return info->object.get();
 	}
 
-	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(NamedObjectRequest request) const
+	GPURenderable const * GPURenderableLayerSystem::FindChildRenderable(ObjectRequest request) const
 	{
-		RenderableLayerInfo const * info = request.FindNamedObject(layers);
+		RenderableLayerInfo const * info = request.FindObject(layers);
 		if (info == nullptr)
 			return nullptr;
 		return info->object.get();

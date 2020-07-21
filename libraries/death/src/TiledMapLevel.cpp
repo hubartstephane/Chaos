@@ -1063,7 +1063,7 @@ namespace death
 		// the tag
 		std::string const* renderable_tag = layer->FindPropertyString("RENDERABLE_TAG");
 		if (renderable_tag != nullptr)
-			in_particle_layer->SetTag(chaos::MakeStaticTagType(renderable_tag->c_str()));
+			in_particle_layer->SetTag(chaos::DeclareTag(renderable_tag->c_str()));
 		else
 		{
 			int const* layer_tag = layer->FindPropertyInt("RENDERABLE_TAG");
@@ -1323,9 +1323,9 @@ namespace death
 	}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, member_vector, constness)\
-		result_type constness * TiledMapLayerInstance::func_name(chaos::NamedObjectRequest request) constness\
+		result_type constness * TiledMapLayerInstance::func_name(chaos::ObjectRequest request) constness\
 		{\
-			return request.FindNamedObject(member_vector);\
+			return request.FindObject(member_vector);\
 		}
 	DEATH_FIND_OBJECT(TiledMapObject, FindObject, objects, BOOST_PP_EMPTY());
 	DEATH_FIND_OBJECT(TiledMapObject, FindObject, objects, const);
@@ -1803,7 +1803,7 @@ namespace death
 	}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, constness)\
-	result_type constness * TiledMapLevelInstance::func_name(chaos::NamedObjectRequest request) constness\
+	result_type constness * TiledMapLevelInstance::func_name(chaos::ObjectRequest request) constness\
 	{\
 		size_t count = layer_instances.size();\
 		for (size_t i = 0; i < count; ++i)\
@@ -1825,13 +1825,13 @@ namespace death
 
 #undef DEATH_FIND_OBJECT
 
-	TiledMapLayerInstance* TiledMapLevelInstance::FindLayerInstance(chaos::NamedObjectRequest request)
+	TiledMapLayerInstance* TiledMapLevelInstance::FindLayerInstance(chaos::ObjectRequest request)
 	{
-		return request.FindNamedObject(layer_instances);
+		return request.FindObject(layer_instances);
 	}
-	TiledMapLayerInstance const* TiledMapLevelInstance::FindLayerInstance(chaos::NamedObjectRequest request) const
+	TiledMapLayerInstance const* TiledMapLevelInstance::FindLayerInstance(chaos::ObjectRequest request) const
 	{
-		return request.FindNamedObject(layer_instances);
+		return request.FindObject(layer_instances);
 	}
 
 	void TiledMapLevelInstance::CreateCameras()
@@ -1847,7 +1847,7 @@ namespace death
 			camera_template = FindCameraTemplate(*camera_name); // first, if a name is given, use it
 		if (camera_template == nullptr)
 		{
-			camera_template = FindCameraTemplate(chaos::NamedObjectRequest()); // try to find the very first one otherwise
+			camera_template = FindCameraTemplate(chaos::ObjectRequest()); // try to find the very first one otherwise
 			if (camera_template == nullptr)
 				return;
 		}
@@ -1887,7 +1887,7 @@ namespace death
 		if (player_start_name != nullptr)
 			result = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
 		if (result == nullptr)
-			result = FindPlayerStart(chaos::NamedObjectRequest()); // try to find the very first one otherwise
+			result = FindPlayerStart(chaos::ObjectRequest()); // try to find the very first one otherwise
 		return result;
 	}
 

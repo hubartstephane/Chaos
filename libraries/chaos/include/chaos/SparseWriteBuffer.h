@@ -34,7 +34,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		inline SparseWriteBuffer(size_t in_default_chunk_size, allocator_type in_allocator = allocator_type()) : 
+		SparseWriteBuffer(size_t in_default_chunk_size, allocator_type in_allocator = allocator_type()) : 
 			default_chunk_size(in_default_chunk_size),
 			allocator(in_allocator)
 		{
@@ -42,14 +42,14 @@ namespace chaos
 		}
 
 		/** destructor */     
-		inline ~SparseWriteBuffer()
+		~SparseWriteBuffer()
 		{
 			Clear(true);
 		}
 
 		/** write an object into buffer */
 		template<typename T> 
-		inline SparseWriteBuffer & operator << (T const & src)
+		SparseWriteBuffer & operator << (T const & src)
 		{
 			Write(src);
 			return *this;    
@@ -57,7 +57,7 @@ namespace chaos
 
 		/** write an object into buffer */
 		template<typename T> 
-		inline void Write(T const & src)
+		void Write(T const & src)
 		{
 			Write(&src, sizeof(T));
 		}

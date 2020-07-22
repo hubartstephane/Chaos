@@ -18,6 +18,9 @@ namespace chaos
 			timer_duration(in_timer_duration)
 		{
 		}
+		/** constructor */
+		TimedAccumulator(TimedAccumulator const& src) = default;
+
 		/** insert some value into the accumulator */
 		void Accumulate(T value)
 		{

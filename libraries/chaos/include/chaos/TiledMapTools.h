@@ -7,45 +7,44 @@
 
 namespace chaos
 {
-	class TiledMapTools
+	namespace TiledMapTools
 	{
-	public:
+		/** fill BitmapAtlasInput from a TiledMap manager */
+		bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input);
+		/** fill BitmapAtlasInput from a TileSet */
+		bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input);
+		/** fill BitmapAtlasInput from a Map */
+		bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input);
 
 		/** fill BitmapAtlasInput from a TiledMap manager */
-		static bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input);
+		bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::FolderInfoInput * folder_input);
 		/** fill BitmapAtlasInput from a TileSet */
-		static bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::AtlasInput & input);
+		bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input);
 		/** fill BitmapAtlasInput from a Map */
-		static bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::AtlasInput & input);
-
-		/** fill BitmapAtlasInput from a TiledMap manager */
-		static bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::FolderInfoInput * folder_input);
-		/** fill BitmapAtlasInput from a TileSet */
-		static bool AddIntoAtlasInput(TiledMap::TileSet const * tile_set, BitmapAtlas::FolderInfoInput * folder_input);
-		/** fill BitmapAtlasInput from a Map */
-		static bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
+		bool AddIntoAtlasInput(TiledMap::Map const * map, BitmapAtlas::FolderInfoInput * folder_input);
 		/** fill BitmapAtlasInput from a Layer */
-		static bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input);
+		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input);
 
 		/** returns true whether the object defines an explicit world bounding */
-		static bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);
+		bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object defines an explicit layer bounding */
-		static bool IsLayerBoundingBox(TiledMap::TypedObject const* typed_object);
+		bool IsLayerBoundingBox(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a player start */
-		static bool IsPlayerStartObject(TiledMap::TypedObject const* typed_object);
+		bool IsPlayerStartObject(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a camera */
-		static bool IsCameraObject(TiledMap::TypedObject const* typed_object);
+		bool IsCameraObject(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a finish trigger */
-		static bool IsFinishTrigger(TiledMap::TypedObject const* typed_object);
+		bool IsFinishTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a checpoint trigger */
-		static bool IsCheckpointTrigger(TiledMap::TypedObject const* typed_object);
+		bool IsCheckpointTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a notification trigger */
-		static bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object);
+		bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a sound */
-		static bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
+		bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
 
 		/** split the tile pseudo GID into GID/H-FLIP/V-FLIP */
-		static int DecodeTileGID(int pseudo_gid, bool* horizontal_flip = nullptr, bool* vertical_flip = nullptr, bool * diagonal_flip = nullptr);
-	}; 
+		int DecodeTileGID(int pseudo_gid, bool* horizontal_flip = nullptr, bool* vertical_flip = nullptr, bool * diagonal_flip = nullptr);
+
+	}; // namespace TiledMapTools
 
 }; // namespace chaos

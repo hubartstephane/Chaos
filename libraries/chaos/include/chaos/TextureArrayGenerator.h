@@ -138,7 +138,7 @@ namespace chaos
 		/** clean all generators */
 		void Clean();
 		/** generate the texture array */
-		GPUTexture * GenTextureObject(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = GenTextureParameters());
+		GPUTexture * GenTextureObject(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = {});
 
 	protected:
 

@@ -76,7 +76,7 @@ namespace chaos
 		/** load a texture */
 		GPUTexture * LoadTexture(FilePathParam const & path, char const * name = nullptr, GenTextureParameters const & texture_parameters = GenTextureParameters());
 		/** load a program */
-		GPUProgram * LoadProgram(FilePathParam const & path, char const * name = nullptr, class GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions());
+		GPUProgram * LoadProgram(FilePathParam const & path, char const * name = nullptr);
 		/** load a material */
 		GPURenderMaterial * LoadRenderMaterial(FilePathParam const & path, char const * name = nullptr);
 

@@ -29,14 +29,14 @@ namespace chaos
 			ResourceManagerLoader<GPUProgram, GPUResourceManager>(in_resource_manager){}
 
 		/** load an object from JSON */
-		virtual GPUProgram * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		virtual GPUProgram * LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** program loading from path */
-		virtual GPUProgram * LoadObject(FilePathParam const & path, char const * name = nullptr, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		virtual GPUProgram * LoadObject(FilePathParam const & path, char const * name = nullptr) const;
 
 		/** Generate a program from a json content */
-		virtual GPUProgram * GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		virtual GPUProgram * GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const;
 		/** Generate a program from an file */
-		virtual GPUProgram * GenProgramObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options = GPUProgramLoaderCacheOptions()) const;
+		virtual GPUProgram * GenProgramObject(FilePathParam const & path) const;
 
 	protected:
 

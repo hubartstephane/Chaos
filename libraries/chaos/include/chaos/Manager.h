@@ -6,6 +6,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/FileTools.h>
 #include <chaos/StringTools.h>
+#include <chaos/ObjectRequest.h>
 
 namespace chaos
 {
@@ -158,13 +159,13 @@ namespace chaos
 
 		/** utility function to test whether an object can be inserted */
 		template<typename FUNC>
-		bool CanAddObject(char const * name, FUNC find_func) const
+		bool CanAddObject(ObjectRequest request, FUNC find_func) const
 		{
 			// manager initialized ?
 			if (!IsManagerStarted())
 				return false;
 			// name already existing ?
-			if (name != nullptr && find_func(name) != nullptr)
+			if (!request.IsEmpty() && find_func(request) != nullptr)
 				return false;
 			return true;
 		}

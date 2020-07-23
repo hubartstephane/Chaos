@@ -46,4 +46,15 @@ namespace chaos
 		return true;
 	}
 
+	bool Manager::CanAddObject(ObjectRequest request, std::function<bool(ObjectRequest)> can_add_func) const
+	{
+		// manager initialized ?
+		if (!IsManagerStarted())
+			return false;
+		// name already existing ?
+		if (!request.IsEmpty() && !can_add_func(request))
+			return false;
+		return true;
+	}
+
 }; // namespace chaos

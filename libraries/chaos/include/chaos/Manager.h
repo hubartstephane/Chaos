@@ -158,17 +158,7 @@ namespace chaos
 		}
 
 		/** utility function to test whether an object can be inserted */
-		template<typename FUNC>
-		bool CanAddObject(ObjectRequest request, FUNC find_func) const
-		{
-			// manager initialized ?
-			if (!IsManagerStarted())
-				return false;
-			// name already existing ?
-			if (!request.IsEmpty() && find_func(request) != nullptr)
-				return false;
-			return true;
-		}
+		bool CanAddObject(ObjectRequest request, std::function<bool(ObjectRequest)> can_add_func) const;
 
 	protected:
 

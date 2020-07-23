@@ -1327,9 +1327,9 @@ namespace chaos
 		return (manager->FindSourceByPath(path) != nullptr);
 	}
 
-	bool SoundSourceLoader::IsNameAlreadyUsedInManager(char const * in_name) const
+	bool SoundSourceLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{
-		return (manager->FindSource(in_name) != nullptr);
+		return (manager->FindSource(request) != nullptr);
 	}
 
 	// ==============================================================
@@ -1349,9 +1349,9 @@ namespace chaos
 		return result;
 	}
 
-	bool SoundCategoryLoader::IsNameAlreadyUsedInManager(char const * in_name) const
+	bool SoundCategoryLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{
-		return (manager->FindCategory(in_name) != nullptr);
+		return (manager->FindCategory(request) != nullptr);
 	}
 
 }; // namespace chaos

@@ -4,6 +4,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/FilePath.h>
+#include <chaos/ObjectRequest.h>
 
 namespace chaos
 {
@@ -44,7 +45,7 @@ namespace chaos
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const { return false; }
 		/** search whether the name is already in used in the manager */
-		virtual bool IsNameAlreadyUsedInManager(char const * name) const { return false; }
+		virtual bool IsNameAlreadyUsedInManager(ObjectRequest request) const { return false; }
 
 		/** set the path of currently loaded resource if not already set, and if no collision detected */
 		bool CheckResourcePath(FilePathParam const & path) const

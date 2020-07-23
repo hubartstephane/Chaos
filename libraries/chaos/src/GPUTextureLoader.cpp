@@ -52,9 +52,9 @@ namespace chaos
 		return (manager->FindTextureByPath(path) != nullptr);
 	}
 
-	bool GPUTextureLoader::IsNameAlreadyUsedInManager(char const * in_name) const
+	bool GPUTextureLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{ 
-		return (manager->FindTexture(in_name) != nullptr);
+		return (manager->FindTexture(request) != nullptr);
 	}
 	
 	GPUTexture * GPUTextureLoader::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters) const

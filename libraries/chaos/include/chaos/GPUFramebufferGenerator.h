@@ -39,14 +39,14 @@ namespace chaos
 		/** depth stencil attachment method */
 		bool AddDepthStencilAttachment(GPURenderbuffer * renderbuffer, char const * name = nullptr);
 		/** depth stencil attachment method */
-		bool AddDepthStencilAttachment(glm::ivec2 const & in_size, char const * name = nullptr, GenTextureParameters const & gen_texture_parameters = GenTextureParameters());
+		bool AddDepthStencilAttachment(glm::ivec2 const & in_size, char const * name = nullptr, GenTextureParameters const & gen_texture_parameters = {});
 
 		/** color attachment method */
 		bool AddColorAttachment(int color_index, GPUTexture * texture, int mipmap = 0, char const * name = nullptr);
 		/** color attachment method */
 		bool AddColorAttachment(int color_index, GPURenderbuffer * renderbuffer, char const * name = nullptr);
 		/** color attachment method */
-		bool AddColorAttachment(int color_index, PixelFormat const & pixel_format, glm::ivec2 const & in_size, char const * name = nullptr, GenTextureParameters const & gen_texture_parameters = GenTextureParameters());
+		bool AddColorAttachment(int color_index, PixelFormat const & pixel_format, glm::ivec2 const & in_size, char const * name = nullptr, GenTextureParameters const & gen_texture_parameters = {});
 
 		/** get the dimension of the framebuffer that will be generated */
 		glm::ivec2 GetSize() const;

@@ -626,11 +626,11 @@ namespace chaos
 		}
 
 		/** test whether a category with given name could be inserted in the manager */
-		bool CanAddCategory(char const * name) const;
+		bool CanAddCategory(ObjectRequest request) const;
 		/** test whether a source with given name could be inserted in the manager */
-		bool CanAddSource(char const * name) const;
+		bool CanAddSource(ObjectRequest request) const;
 		/** test whether a sound with given name could be inserted in the manager */
-		bool CanAddSound(char const * name) const;
+		bool CanAddSound(ObjectRequest request) const;
 
 		/** update all sounds pause per category */
 		void UpdateAllSoundPausePerCategory(SoundCategory * category);

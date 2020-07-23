@@ -93,7 +93,7 @@ namespace chaos
 		/** search whether the path is already in used in the manager */
 		virtual bool IsPathAlreadyUsedInManager(FilePathParam const & path) const override;
 		/** search whether the name is already in used in the manager */
-		virtual bool IsNameAlreadyUsedInManager(char const * in_name) const override;
+		virtual bool IsNameAlreadyUsedInManager(ObjectRequest request) const override;
 
 	protected:
 

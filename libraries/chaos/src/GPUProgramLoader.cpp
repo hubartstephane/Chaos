@@ -8,13 +8,13 @@ namespace chaos
 {
 
 
-	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options) const
+	GPUProgram * GPUProgramLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// check for name
 		if (!CheckResourceName(nullptr, name, &json))
 			return nullptr;
 		// load the texture
-		GPUProgram * result = GenProgramObject(json, config_path, cache_options);
+		GPUProgram * result = GenProgramObject(json, config_path);
 		if (result != nullptr)
 		{
 			ApplyNameToLoadedResource(result);
@@ -26,7 +26,7 @@ namespace chaos
 		return result;
 	}
 
-	GPUProgram * GPUProgramLoader::LoadObject(FilePathParam const & path, char const * name, GPUProgramLoaderCacheOptions const & cache_options) const
+	GPUProgram * GPUProgramLoader::LoadObject(FilePathParam const & path, char const * name) const
 	{
 		// check for path
 		if (!CheckResourcePath(path))
@@ -35,7 +35,7 @@ namespace chaos
 		if (!CheckResourceName(&path.GetResolvedPath(), name, nullptr))
 			return nullptr;
 		// load the texture
-		GPUProgram * result = GenProgramObject(path, cache_options);
+		GPUProgram * result = GenProgramObject(path);
 		if (result != nullptr)
 		{
 			ApplyNameToLoadedResource(result);
@@ -57,7 +57,7 @@ namespace chaos
 		return (manager->FindProgram(in_name) != nullptr);
 	}
 
-	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path, GPUProgramLoaderCacheOptions const & cache_options) const
+	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const
 	{
 		// can only work with json object
 		if (!json.is_object())
@@ -68,7 +68,7 @@ namespace chaos
 		if (JSONTools::GetAttribute(json, "path", p))
 		{
 			FilePathParam path(p, config_path);
-			return GenProgramObject(path, cache_options);
+			return GenProgramObject(path);
 		}
 
 		// the possible types of shaders
@@ -141,7 +141,7 @@ namespace chaos
 		return program_generator.GenProgramObject();
 	}
 
-	GPUProgram * GPUProgramLoader::GenProgramObject(FilePathParam const & path, GPUProgramLoaderCacheOptions const & cache_options) const
+	GPUProgram * GPUProgramLoader::GenProgramObject(FilePathParam const & path) const
 	{
 		// check for path
 		if (!CheckResourcePath(path))
@@ -149,7 +149,7 @@ namespace chaos
 		// load the file
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, true))
-			return GenProgramObject(json, path.GetResolvedPath(), cache_options);	
+			return GenProgramObject(json, path.GetResolvedPath());	
 		return nullptr;
 	}
 

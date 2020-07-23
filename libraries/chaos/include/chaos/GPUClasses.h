@@ -18,7 +18,6 @@ namespace chaos
 	class GPUFramebufferGenerator;
 	class GPUInstancingInfo;
 	class GPUMaterialProvider;
-	class GPUProgramLoaderCacheOptions;
 	class GPUProgram;
 	class GPUProgramAction;
 	class GPUProgramSetUniformAction;

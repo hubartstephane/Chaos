@@ -136,9 +136,9 @@ namespace chaos
 		return GPUTextureLoader(this).LoadObject(path, name, texture_parameters);
 	}
 
-	GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name, GPUProgramLoaderCacheOptions const & cache_options)
+	GPUProgram * GPUResourceManager::LoadProgram(FilePathParam const & path, char const * name)
 	{
-		return GPUProgramLoader(this).LoadObject(path, name, cache_options);
+		return GPUProgramLoader(this).LoadObject(path, name);
 	}
 
 	GPURenderMaterial * GPUResourceManager::LoadRenderMaterial(FilePathParam const & path, char const * name)

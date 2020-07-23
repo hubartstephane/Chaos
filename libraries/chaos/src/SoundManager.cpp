@@ -959,17 +959,17 @@ namespace chaos
 
 	bool SoundManager::CanAddCategory(ObjectRequest request) const
 	{
-		return CanAddObject(request, [this](ObjectRequest r){return FindCategory(r);} );
+		return CanAddObject(request, [this](ObjectRequest r){return (FindCategory(r) == nullptr);} );
 	}
 
 	bool SoundManager::CanAddSource(ObjectRequest request) const
 	{
-		return CanAddObject(request, [this](ObjectRequest r) {return FindSource(r); } );
+		return CanAddObject(request, [this](ObjectRequest r) {return (FindSource(r) == nullptr); } );
 	}
 
 	bool SoundManager::CanAddSound(ObjectRequest request) const
 	{
-		return CanAddObject(request, [this](ObjectRequest r) {return FindSound(r); } );
+		return CanAddObject(request, [this](ObjectRequest r) {return (FindSound(r) == nullptr); } );
 	}
 
 	void SoundManager::UpdateAllSourcesPerCategory(SoundCategory * category)

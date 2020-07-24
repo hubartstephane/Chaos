@@ -72,8 +72,6 @@ namespace chaos
 	class GPUSphereMeshGenerator;
 	class GPUSkeletonHierarchyBoneDef;
 	class GPUSkeletonHierarchyDef;
-	class GPUSkinnedMesh;
-	class GPUSkinnedMeshAnimation;
 	class GPUSurface;
 	class GPUTexture;
 	class GPUTextureLoader;

@@ -342,7 +342,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(FolderInfo const & folder_info, std::ostream & stream, int indent) const
 		{
-			StreamTools::OStreamIndent stream_indent(indent);
+			StreamTools::Indent stream_indent(indent);
 
 			stream << stream_indent << "Folder:" << std::endl;
 			NamedObject const & named_info = folder_info;
@@ -351,7 +351,7 @@ namespace chaos
 			// output the bitmaps in the folder
 			if (folder_info.bitmaps.size() > 0)
 			{
-				StreamTools::OStreamIndent bitmap_stream_indent(indent + 1);
+				StreamTools::Indent bitmap_stream_indent(indent + 1);
 				stream << bitmap_stream_indent << "Bitmaps:" << std::endl;
 				for (BitmapInfo const & bitmap_info : folder_info.bitmaps)
 					DoOutputInfo(bitmap_info, stream, indent + 1);
@@ -359,7 +359,7 @@ namespace chaos
 			// output the fonts in the folder
 			if (folder_info.fonts.size() > 0)
 			{
-				StreamTools::OStreamIndent font_stream_indent(indent + 1);
+				StreamTools::Indent font_stream_indent(indent + 1);
 				stream << font_stream_indent << "Fonts:" << std::endl;
 				for (FontInfo const & font_info : folder_info.fonts)
 					DoOutputInfo(font_info, stream, indent + 1);
@@ -367,7 +367,7 @@ namespace chaos
 			// recursive calls
 			if (folder_info.folders.size() > 0)
 			{
-				StreamTools::OStreamIndent folder_stream_indent(indent + 1);
+				StreamTools::Indent folder_stream_indent(indent + 1);
 				stream << folder_stream_indent << "Child Folders:" << std::endl;
 
 				size_t count = folder_info.folders.size();
@@ -378,7 +378,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(NamedObject const & info, std::ostream & stream, int indent)
 		{
-			StreamTools::OStreamIndent stream_indent(indent);
+			StreamTools::Indent stream_indent(indent);
 			stream << stream_indent << "  name         : " << info.GetName() << std::endl;
 			stream << stream_indent << "  tag          : " << info.GetTag() << std::endl;
 		}
@@ -386,7 +386,7 @@ namespace chaos
 
 		void AtlasBase::DoOutputInfo(BitmapLayout const & info, std::ostream & stream, int indent)
 		{
-			StreamTools::OStreamIndent stream_indent(indent);
+			StreamTools::Indent stream_indent(indent);
 			stream << stream_indent << "  bitmap_index          : " << info.bitmap_index << std::endl;
 			stream << stream_indent << "  width                 : " << info.width << std::endl;
 			stream << stream_indent << "  height                : " << info.height << std::endl;
@@ -403,7 +403,7 @@ namespace chaos
 			BitmapLayout const & bitmap_layout = info;
 			DoOutputInfo(bitmap_layout, stream, indent);
 
-			StreamTools::OStreamIndent stream_indent(indent);
+			StreamTools::Indent stream_indent(indent);
 			stream << stream_indent << "  advance.x    : " << info.advance.x << std::endl;
 			stream << stream_indent << "  advance.y    : " << info.advance.y << std::endl;
 			stream << stream_indent << "  bitmap_left  : " << info.bitmap_left << std::endl;
@@ -433,7 +433,7 @@ namespace chaos
 			NamedObject const & named_info = info;
 			DoOutputInfo(named_info, stream, indent);
 
-			StreamTools::OStreamIndent stream_indent(indent);
+			StreamTools::Indent stream_indent(indent);
 			stream << stream_indent << "  glyph_width  : " << info.glyph_width << std::endl;
 			stream << stream_indent << "  glyph_height : " << info.glyph_height << std::endl;
 			stream << stream_indent << "  ascender             : " << info.ascender << std::endl;

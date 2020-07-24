@@ -6,17 +6,12 @@
 
 namespace chaos
 {
-
-	/**
-	* DebugTools is an utility class for debugging
-	*/
-	class DebugTools
+	namespace DebugTools
 	{
-	public:
-
 		/** display the callstack of the current application */
-		static void DisplayCallStack(std::ostream & stream);
-	};
+		void DisplayCallStack(std::ostream & stream);
+
+	}; // namespace DebugTools
 
 }; // namespace chaos
 

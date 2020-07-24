@@ -4,30 +4,16 @@
 
 namespace chaos
 {
-
-	/**
-	* a default class some allocation function
-	*/
-
-	class AllocatorTools
+	namespace AllocatorTools
 	{
-	public:
-
 		/** an aligned allocator */
-		static void * Aligned16Alloc(size_t size)
-		{
-			return _aligned_malloc(size, 16); 
-		}
-
+		void* Aligned16Alloc(size_t size);
 		/** an aligned allocator */
-		static void Aligned16Free(void * p)
-		{
-			_aligned_free(p); 
-		}
+		void Aligned16Free(void* p);
 
 		/** this function is used to have multiple object constructed on a continus chunk of memory */
 		template<typename T1, typename T2>
-		static std::tuple<T1*,T2*> SingleAllocMultipleObjects(size_t count1, size_t count2)
+		std::tuple<T1*,T2*> SingleAllocMultipleObjects(size_t count1, size_t count2)
 		{
 			std::tuple<T1*,T2*> result(nullptr, nullptr);
 
@@ -63,6 +49,7 @@ namespace chaos
 			}  
 			return result;
 		}
-	};
+
+	}; // namespace AllocatorTools
 
 }; // namespace chaos

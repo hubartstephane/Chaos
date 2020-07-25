@@ -592,7 +592,7 @@ namespace chaos
 
 			// remove useless space in type
 			if (type.length() > 0)
-				type = StringTools::TrimString(type.c_str(), true, true);
+				type = StringTools::TrimSpaces(type.c_str(), true, true);
 
 			// reverse the Y axis
 #if CHAOS_REVERSE_Y_AXIS
@@ -1129,12 +1129,15 @@ namespace chaos
 			return true;
 		}
 
-		void TileLayer::DoLoadTileBufferFromBase64(Buffer<char> const & buffer)
+		std::vector<int> TileLayer::DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size)
 		{
-			size_t count = size.x * size.y;
+			size_t count = (size_t)(chunk_size.x * chunk_size.y);
 
 			if (buffer.bufsize != count * sizeof(uint32_t))  // array width * height * sizeof(uint32)
-				return;
+				return std::vector<int>();
+
+			std::vector<int> result;
+			result.reserve(count);
 
 			// transform the char buffer into tiles
 			for (size_t i = 0; i < count; ++i)
@@ -1145,8 +1148,112 @@ namespace chaos
 				unsigned int d = (unsigned int)buffer[i * 4 + 3];
 
 				int tile = (a << 0) | (b << 8) | (c << 16) | (d << 24);
-				tile_indices.push_back(tile);
+				result.push_back(tile);
 			}
+			return result;
+		}
+
+		// shuzzz
+// beware : for infinite map, there is a junk level of indirection
+#if 0
+		< data encoding = "base64" compression = "zlib" >
+			<chunk x = "0" y = "48" width = "16" height = "16">
+			eAFjYBgFoyEwGgLDIQQYyfAEAAQ0AAI =
+			< / chunk>
+			< / data>
+#endif
+
+
+		bool TileLayer::DoLoadTileChunk(tinyxml2::XMLElement const* element, char const* encoding, char const* compression)
+		{
+			if (element == nullptr)
+				return true;
+
+			char const* txt = element->GetText();
+			if (txt == nullptr)
+				return true;
+
+			// read the data		
+			std::vector<int> tiles;
+
+			glm::ivec2 chunk_size = size;
+			XMLTools::ReadAttribute(element, "width", chunk_size.x); // for non infinite layer, the size of the chunk is the size of the map
+			XMLTools::ReadAttribute(element, "height", chunk_size.y);
+
+			glm::ivec2 chunk_offset = glm::ivec2(0, 0);
+			XMLTools::ReadAttribute(element, "x", chunk_offset.x);
+			XMLTools::ReadAttribute(element, "y", chunk_offset.y);
+
+			if (StringTools::Stricmp(encoding, "base64") == 0)
+			{
+				if (StringTools::Stricmp(compression, "gzip") == 0)
+				{
+
+					// TODO
+
+				}
+				else if (StringTools::Stricmp(compression, "zlib") == 0)
+				{
+					std::string content = StringTools::TrimBase64(txt);
+
+					Buffer<char> base64 = MyBase64().Decode(content.c_str());
+					Buffer<char> decoded = MyZLib().Decode(base64);
+
+					tiles = DoLoadTileChunkFromBuffer(decoded, chunk_size);
+				}
+				else // no encoding
+				{
+					std::string content = StringTools::TrimBase64(txt);
+
+					Buffer<char> base64 = MyBase64().Decode(content.c_str());
+
+					tiles = DoLoadTileChunkFromBuffer(base64, chunk_size);
+				}
+			}
+			else if (StringTools::Stricmp(encoding, "csv") == 0)
+			{
+				size_t count = (size_t)(chunk_size.x * chunk_size.y);
+
+				int i = 0;
+				while (txt[i] != 0 && tiles.size() != count)
+				{
+					while (txt[i] != 0 && !isdigit(txt[i])) // search first figure
+						++i;
+					if (txt[i] == 0)
+						break;
+
+					int value = atoi(&txt[i]);
+					tiles.push_back(value); // get and push the tile
+
+					while (txt[i] != 0 && isdigit(txt[i])) // skip all figures
+						++i;
+				}
+			}
+			else // else XML
+			{
+				size_t count = (size_t)(chunk_size.x * chunk_size.y);
+
+				tinyxml2::XMLElement const* child = element->FirstChildElement("tile");
+				while (child != nullptr && tiles.size() != count)
+				{
+					int value = 0;
+					XMLTools::ReadAttribute(child, "gid", value);
+					tiles.push_back(value);
+
+					child = child->NextSiblingElement("tile");
+				}
+			}
+
+			// insert a chunk for theses tiles
+			if (tiles.size() != 0)
+			{
+				TileLayerChunk chunk;
+				chunk.size = chunk_size;
+				chunk.offset = chunk_offset;
+				chunk.tile_indices = std::move(tiles);
+				tile_chunks.push_back(std::move(chunk));
+			}
+			return true;
 		}
 
 		bool TileLayer::DoLoadTileBuffer(tinyxml2::XMLElement const * element)
@@ -1155,91 +1262,23 @@ namespace chaos
 			if (data == nullptr)
 				return false;
 
-
-			// shuzzz
-			// beware : for infinite map, there is a junk level of indirection
-#if 0
-			<data encoding = "base64" compression = "zlib" >
-				<chunk x = "0" y = "48" width = "16" height = "16">
-				eAFjYBgFoyEwGgLDIQQYyfAEAAQ0AAI =
-				</chunk>
-			</ data>
-#endif
-
-
-
-
-
-
-
 			std::string encoding;
 			XMLTools::ReadAttribute(data, "encoding", encoding);
 
-			// read the data
-			size_t count = size.x * size.y;
-			tile_indices.reserve(count);
+			std::string compression;
+			XMLTools::ReadAttribute(data, "compression", compression);
 
-			if (encoding == "base64")
+			// for non infinite layer
+			DoLoadTileChunk(data, encoding.c_str(), compression.c_str());
+			// for infinite layer
+			tinyxml2::XMLElement const* chunk = data->FirstChildElement("chunk");
+			while (chunk != nullptr)
 			{
-				std::string compression;
-				XMLTools::ReadAttribute(data, "compression", compression);
-
-				if (compression == "gzip")
-				{
-
-					// TODO
-
-				}
-				else if (compression == "zlib")
-				{
-					std::string content = StringTools::TrimBase64String(data->GetText());
-
-					Buffer<char> base64 = MyBase64().Decode(content.c_str());
-					Buffer<char> decoded = MyZLib().Decode(base64);
-
-					DoLoadTileBufferFromBase64(decoded);
-				}
-				else // no encoding
-				{
-					std::string content = StringTools::TrimBase64String(data->GetText());
-
-					Buffer<char> base64 = MyBase64().Decode(content.c_str());
-
-					DoLoadTileBufferFromBase64(base64);
-				}
+				DoLoadTileChunk(chunk, encoding.c_str(), compression.c_str());
+				chunk = chunk->NextSiblingElement("chunk");
 			}
-			else if (encoding == "csv")
-			{
-				char const * txt = data->GetText();
 
-				int i = 0;
-				while (txt[i] != 0 && tile_indices.size() != count)
-				{
-					while (txt[i] != 0 && !isdigit(txt[i])) // search first figure
-						++i;
-					if (txt[i] == 0)
-						break;
-
-					int value = atoi(&txt[i]);
-					tile_indices.push_back(value); // get and push the tile
-
-					while (txt[i] != 0 && isdigit(txt[i])) // skip all figures
-						++i;
-				}
-			}
-			else // else XML
-			{
-				tinyxml2::XMLElement const * child = data->FirstChildElement("tile");
-				while (child != nullptr && tile_indices.size() != count)
-				{
-					int value = 0;
-					XMLTools::ReadAttribute(child, "gid", value);
-					tile_indices.push_back(value);
-
-					child = child->NextSiblingElement("tile");
-				}
-			}
-			return (tile_indices.size() == count);
+			return true;
 		}
 
 		size_t TileLayer::GetNonEmptyTileCount() const

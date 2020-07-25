@@ -3,6 +3,44 @@
 
 #if 0
 
+	===========================================================================================
+	== A faire pour LD47
+	===========================================================================================
+
+	- Verifier les Loaders avec les NAME+TAG
+
+	- Corriger Shader/Texture Atlas pour avoir a la fois du   8Bit mode ou Mode Normal
+
+	- Filtre d image pour ajouter de l alpha sous certaine condition
+
+	- Jeu de platforme a faire
+
+	- Fixer les crashs des checkpoints
+
+	- TiledMap => Generer des vrais objets sur la map (qui auront un ParticleAllocation) => plus facile pour la serialization
+
+	- Faire des Portail => Next Level contient nom de level + nom de player start
+
+	- TiledMap infinis
+
+	- TiledMap => supporter Object Template (etudier l interet)
+
+	- TiledMap => Position/Rotation des Tile
+
+	- TiledMap => Object Alignment property
+
+	- Revoir Layer Grouping => il faudrait que le propriétés d une layer regarde les layers plus haut
+
+
+	https://www.mapeditor.org/2020/06/25/tiled-1-4-1-released.html
+https://www.mapeditor.org/2020/05/27/tiled-1-4-beta-released.html
+https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
+
+#endif
+
+
+#if 0
+
 	====================================================================
 	== TODO
 	====================================================================
@@ -56,15 +94,7 @@
 	  
 	  
 	  
-	  
-	  
-	- HUD Component
-	
-	=> recuperer le titre du niveau courant
-	
-	=> faire HUD tutorial
-	
-	=> configuration des components par JSON ???
+
 	
 	
 	
@@ -236,13 +266,6 @@
 
 	- TITRE LEVELS (voir game over / pause)
 
-	- MATERIAL COMPOSITE/RICH
-
-
-		name -----> MATERIAL CHILD
-
-
-	- FULLSCREEN TOGGLE
 
 	- TILEDMAP : revoir collision player (a la demande seulement ?)
 

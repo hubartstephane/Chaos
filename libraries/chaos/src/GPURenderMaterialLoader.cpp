@@ -358,12 +358,12 @@ namespace chaos
 
 	bool GPURenderMaterialLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
-		return (manager->FindRenderMaterialByPath(path) != nullptr);
+		return (manager != nullptr && manager->FindRenderMaterialByPath(path) != nullptr);
 	}
 
 	bool GPURenderMaterialLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{
-		return (manager->FindRenderMaterial(request) != nullptr);
+		return (manager != nullptr && manager->FindRenderMaterial(request) != nullptr);
 	}
 
 	GPURenderMaterial * GPURenderMaterialLoader::LoadObject(char const * name, nlohmann::json const & json, boost::filesystem::path const & config_path) const

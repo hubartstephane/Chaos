@@ -1125,103 +1125,85 @@ namespace death
 		if (!particle_populator->Initialize(this))
 			return false;
 
-		for (chaos::TiledMap::TileLayerChunk const& chunk : tile_layer->tile_chunks)
-		{
-
-
-
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-		// early exit for empty tile_layer
-		size_t count = tile_layer->tile_indices.size();
-		if (count == 0)
-			return false;
-
-
-
-		// populate the layer
+		// populate the layer for each chunk
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
-		for (size_t i = 0; i < count; ++i)
+		for (chaos::TiledMap::TileLayerChunk const& chunk : tile_layer->tile_chunks)
 		{
-			int pseudo_gid = tile_layer->tile_indices[i];
-
-			bool horizontal_flip = false;
-			bool vertical_flip = false;
-			bool diagonal_flip = false;
-			int gid = chaos::TiledMapTools::DecodeTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
-
-			if (gid == 0)
+			size_t count = chunk.tile_indices.size();
+			if (count == 0)
 				continue;
 
-			// search the tile information 
-			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
-			if (tile_info.tiledata == nullptr)
-				continue;
-
-			// prepare data for the tile/object
-			glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(i);
-			chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
-
-			// try to create a geometric object from the tile
-			TiledMapObjectFactory factory = GetObjectFactory(tile_info.tiledata);
-			if (factory)
+			for (size_t i = 0; i < count; ++i)
 			{
-				chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new chaos::TiledMap::PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
-				if (tile_object != nullptr)
+				int pseudo_gid = chunk.tile_indices[i];
+
+				bool horizontal_flip = false;
+				bool vertical_flip = false;
+				bool diagonal_flip = false;
+				int gid = chaos::TiledMapTools::DecodeTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
+
+				if (gid == 0)
+					continue;
+
+				// search the tile information 
+				chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
+				if (tile_info.tiledata == nullptr)
+					continue;
+
+				// prepare data for the tile/object
+				glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(chunk, i);
+				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
+
+				// try to create a geometric object from the tile
+				TiledMapObjectFactory factory = GetObjectFactory(tile_info.tiledata);
+				if (factory)
 				{
-					// compute an ID base on 'tile_coord' 
-					// TiledMap gives positive ID
-					// we want a negative ID to avoid conflicts
-					// for a 32 bits integer
-					// 15 bits for X
-					// 15 bits for Y
-					// 1  unused
-					// 1  bit for sign
-
-					int int_bit_count = 8 * sizeof(int);
-					int per_component_bit_count = (int_bit_count - 1) / 2;
-					int mask = ~(-1 << per_component_bit_count);
-					int idx = tile_coord.x & mask;
-					int idy = tile_coord.y & mask;
-					int object_id = -1 * (idx | (idy << per_component_bit_count));
-
-					tile_object->id  = object_id;
-					tile_object->gid = gid;
-					tile_object->type = tile_info.tiledata->type;
-					tile_object->size = particle_box.half_size * 2.0f;
-					tile_object->position.x = particle_box.position.x - particle_box.half_size.x;
-					tile_object->position.y = particle_box.position.y - particle_box.half_size.y;
-
-					// XXX : for player start : but this is not a great idea to process by exception
-					//       We are writing int the fake object properties, not in the 'tile_info.tiledata'
-					//       That means that if 'tile_info.tiledata' already has a BITMAP_NAME property, this does not
-					//       interfere with that (a just in case value)
-					tile_object->CreatePropertyString("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str()); 
-
-					TiledMapObject* object = factory(tile_object.get());
-					if (object != nullptr)
+					chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new chaos::TiledMap::PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
+					if (tile_object != nullptr)
 					{
-						if (!ShouldCreateParticleForObject(tile_object.get(), object))
-							continue;
+						// compute an ID base on 'tile_coord' 
+						// TiledMap gives positive ID
+						// we want a negative ID to avoid conflicts
+						// for a 32 bits integer
+						// 15 bits for X
+						// 15 bits for Y
+						// 1  unused
+						// 1  bit for sign
+
+						int int_bit_count = 8 * sizeof(int);
+						int per_component_bit_count = (int_bit_count - 1) / 2;
+						int mask = ~(-1 << per_component_bit_count);
+						int idx = tile_coord.x & mask;
+						int idy = tile_coord.y & mask;
+						int object_id = -1 * (idx | (idy << per_component_bit_count));
+
+						tile_object->id = object_id;
+						tile_object->gid = gid;
+						tile_object->type = tile_info.tiledata->type;
+						tile_object->size = particle_box.half_size * 2.0f;
+						tile_object->position.x = particle_box.position.x - particle_box.half_size.x;
+						tile_object->position.y = particle_box.position.y - particle_box.half_size.y;
+
+						// XXX : for player start : but this is not a great idea to process by exception
+						//       We are writing int the fake object properties, not in the 'tile_info.tiledata'
+						//       That means that if 'tile_info.tiledata' already has a BITMAP_NAME property, this does not
+						//       interfere with that (a just in case value)
+						tile_object->CreatePropertyString("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str());
+
+						TiledMapObject* object = factory(tile_object.get());
+						if (object != nullptr)
+						{
+							if (!ShouldCreateParticleForObject(tile_object.get(), object))
+								continue;
+						}
 					}
 				}
-			}
 
-			// create a simple particle
-			bool keep_aspect_ratio = true;
-			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip, diagonal_flip, keep_aspect_ratio);
+				// create a simple particle
+				bool keep_aspect_ratio = true;
+				particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip, diagonal_flip, keep_aspect_ratio);
+			}
 		}
 
 		// final flush

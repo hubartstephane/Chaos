@@ -943,7 +943,7 @@ namespace chaos
 			/** get the number of tiles with something inside */
 			size_t GetNonEmptyTileCount() const;
 			/** get the position of the tile */
-			glm::ivec2 GetTileCoordinate(size_t index) const;
+			glm::ivec2 GetTileCoordinate(TileLayerChunk const& chunk, size_t index) const;
 
 		protected:
 

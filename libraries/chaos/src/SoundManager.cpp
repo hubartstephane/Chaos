@@ -1324,12 +1324,12 @@ namespace chaos
 
 	bool SoundSourceLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
-		return (manager->FindSourceByPath(path) != nullptr);
+		return (manager != nullptr && manager->FindSourceByPath(path) != nullptr);
 	}
 
 	bool SoundSourceLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{
-		return (manager->FindSource(request) != nullptr);
+		return (manager != nullptr && manager->FindSource(request) != nullptr);
 	}
 
 	// ==============================================================

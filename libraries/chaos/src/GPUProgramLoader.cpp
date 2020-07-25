@@ -49,12 +49,12 @@ namespace chaos
 
 	bool GPUProgramLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
-		return (manager->FindProgramByPath(path) != nullptr);
+		return (manager != nullptr && manager->FindProgramByPath(path) != nullptr);
 	}
 
 	bool GPUProgramLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{ 
-		return (manager->FindProgram(request) != nullptr);
+		return (manager != nullptr && manager->FindProgram(request) != nullptr);
 	}
 
 	GPUProgram * GPUProgramLoader::GenProgramObject(nlohmann::json const & json, boost::filesystem::path const & config_path) const

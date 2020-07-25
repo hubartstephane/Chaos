@@ -49,12 +49,12 @@ namespace chaos
 
 	bool GPUTextureLoader::IsPathAlreadyUsedInManager(FilePathParam const & path) const
 	{
-		return (manager->FindTextureByPath(path) != nullptr);
+		return (manager != nullptr && manager->FindTextureByPath(path) != nullptr);
 	}
 
 	bool GPUTextureLoader::IsNameAlreadyUsedInManager(ObjectRequest request) const
 	{ 
-		return (manager->FindTexture(request) != nullptr);
+		return (manager != nullptr && manager->FindTexture(request) != nullptr);
 	}
 	
 	GPUTexture * GPUTextureLoader::GenTextureObject(ImageDescription const & image, GenTextureParameters const & parameters) const

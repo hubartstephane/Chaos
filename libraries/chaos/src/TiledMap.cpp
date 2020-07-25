@@ -996,6 +996,38 @@ namespace chaos
 #endif
 			return true;
 		}
+		
+		Property* LayerBase::FindProperty(char const* name, PropertyType type_id)
+		{
+			// super method
+			Property* result = PropertyOwner::FindProperty(name, type_id);
+			if (result != nullptr)
+				return result;
+			// search in containing layers
+			if (owner != nullptr)
+			{
+				LayerBase* parent_layer = owner->GetOwner<LayerBase>(true);
+				if (parent_layer != nullptr)
+					return parent_layer->FindProperty(name, type_id);
+			}
+			return nullptr;
+		}
+		
+		Property const* LayerBase::FindProperty(char const* name, PropertyType type_id) const
+		{
+			// super method
+			Property const  * result = PropertyOwner::FindProperty(name, type_id);
+			if (result != nullptr)
+				return result;
+			// search in containing layers
+			if (owner != nullptr)
+			{
+				LayerBase const* parent_layer = owner->GetOwner<LayerBase>(true);
+				if (parent_layer != nullptr)
+					return parent_layer->FindProperty(name, type_id);
+			}
+			return nullptr;
+		}
 
 		// ==========================================
 		// ImageLayer methods
@@ -1152,17 +1184,6 @@ namespace chaos
 			}
 			return result;
 		}
-
-		// shuzzz
-// beware : for infinite map, there is a junk level of indirection
-#if 0
-		< data encoding = "base64" compression = "zlib" >
-			<chunk x = "0" y = "48" width = "16" height = "16">
-			eAFjYBgFoyEwGgLDIQQYyfAEAAQ0AAI =
-			< / chunk>
-			< / data>
-#endif
-
 
 		bool TileLayer::DoLoadTileChunk(tinyxml2::XMLElement const* element, char const* encoding, char const* compression)
 		{

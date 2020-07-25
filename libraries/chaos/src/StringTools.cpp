@@ -161,9 +161,10 @@ namespace chaos
 			return result;
 		}
 
-		std::string TrimBase64String(char const * src)
+		std::string TrimBase64(char const * src)
 		{
-			assert(src != nullptr);
+			if (src == nullptr)
+				return std::string();
 
 			// escape the non 64 characters and extract the buffer to read
 			int i = 0;
@@ -176,9 +177,10 @@ namespace chaos
 			return std::string(&src[i], j - i);
 		}
 
-		std::string TrimString(char const * src, bool trim_left, bool trim_right)
+		std::string TrimSpaces(char const * src, bool trim_left, bool trim_right)
 		{
-			assert(src != nullptr);
+			if (src == nullptr)
+				return std::string();
 
 			size_t i = 0;
 			if (trim_left)

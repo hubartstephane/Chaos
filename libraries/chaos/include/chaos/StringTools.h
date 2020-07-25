@@ -45,9 +45,9 @@ namespace chaos
 		unsigned int AtoiH(char const * str);
 
 		/** trim string to the left and to the right to only keep the base64 characters */
-		std::string TrimBase64String(char const * src);
+		std::string TrimBase64(char const * src);
 		/** trim string to the left and to the right */
-		std::string TrimString(char const * src, bool trim_left, bool trim_right);
+		std::string TrimSpaces(char const * src, bool trim_left, bool trim_right);
 
 		/** split the input string in comma separated values */
 		std::vector<std::string> Split(char const * src, char delimiter);

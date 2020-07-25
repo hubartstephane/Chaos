@@ -918,6 +918,18 @@ namespace chaos
 		// TileLayer
 		// ==========================================
 
+		class TileLayerChunk
+		{
+		public:
+
+			/** the dimension of the chunk */
+			glm::ivec2 size = glm::ivec2(0, 0);
+			/** the offset of the chunk */
+			glm::ivec2 offset = glm::ivec2(0, 0);
+			/** the indices for this chunk */
+			std::vector<int> tile_indices;
+		};
+
 		class TileLayer : public LayerBase
 		{
 
@@ -945,8 +957,10 @@ namespace chaos
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 			/** the loading method */
 			bool DoLoadTileBuffer(tinyxml2::XMLElement const * element);
+			/** load all chunks of tiles */
+			bool DoLoadTileChunk(tinyxml2::XMLElement const* element, char const * encoding, char const * compression);
 			/** loading buffer method */
-			void DoLoadTileBufferFromBase64(Buffer<char> const & buffer);
+			std::vector<int> DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size);
 
 		public:
 
@@ -954,9 +968,17 @@ namespace chaos
 			glm::ivec2 size = glm::ivec2(0, 0);
 			/** the tiles */
 			std::vector<int> tile_indices;
+
+			/** the chunk of tiles */
+			std::vector<TileLayerChunk> tile_chunks;
 			/** cache the tile size for better performance (see TileMap) */
 			glm::ivec2 tile_size = glm::ivec2(0, 0);
 		};
+
+
+
+
+
 
 		// ==========================================
 		// GroupLayer

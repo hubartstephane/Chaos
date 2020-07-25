@@ -1121,14 +1121,34 @@ namespace death
 	{
 		TiledMapLevel* level = GetLevel();
 
+		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
+		if (!particle_populator->Initialize(this))
+			return false;
+
+		for (chaos::TiledMap::TileLayerChunk const& chunk : tile_layer->tile_chunks)
+		{
+
+
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
 		// early exit for empty tile_layer
 		size_t count = tile_layer->tile_indices.size();
 		if (count == 0)
 			return false;
 
-		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
-		if (!particle_populator->Initialize(this))
-			return false;
+
 
 		// populate the layer
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();

@@ -966,8 +966,10 @@ namespace chaos
 
 			/** object information */
 			glm::ivec2 size = glm::ivec2(0, 0);
+			
+			
 			/** the tiles */
-			std::vector<int> tile_indices;
+			//std::vector<int> tile_indices;
 
 			/** the chunk of tiles */
 			std::vector<TileLayerChunk> tile_chunks;

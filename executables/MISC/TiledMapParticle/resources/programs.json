@@ -1,5 +1,0 @@
-{
-  "@tile_program"  : { "path": "@programs/tile/tile_program.json" },
-  "@text_program"  : { "path": "@programs/text/text_program.json" }    
-
-}

@@ -1,4 +1,0 @@
-{
-		"@tile" : {"path":"@materials/tile_material.json"},
-		"@text" : {"path":"@materials/text_material.json"}    
-}

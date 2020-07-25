@@ -1284,9 +1284,10 @@ namespace chaos
 		size_t TileLayer::GetNonEmptyTileCount() const
 		{
 			size_t result = 0;
-			for (size_t i = 0; i < tile_indices.size(); ++i)
-				if (tile_indices[i] > 0)
-					++result;
+			for (TileLayerChunk const & chunk : tile_chunks)
+				for (size_t i = 0; i < chunk.tile_indices.size(); ++i)
+					if (chunk.tile_indices[i] > 0)
+						++result;
 			return result;
 		}
 

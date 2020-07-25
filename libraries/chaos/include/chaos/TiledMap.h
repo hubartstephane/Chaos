@@ -827,6 +827,11 @@ namespace chaos
 			/** get the name of the layer */
 			char const* GetName() const { return name.c_str(); }
 
+			/** override */
+			virtual Property* FindProperty(char const* name, PropertyType type_id) override;
+			/** override */
+			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override;
+
 		protected:
 
 			/** constructor */

@@ -78,11 +78,6 @@ namespace death
 
 	public:
 
-		/** whether the object is modified */
-		bool IsModified() const { return modified; }
-		/** raise the modified flag */
-		void SetModified(bool in_modified = true) { modified = in_modified; }
-
 		/** get the layer instance owning this object */
 		TiledMapLayerInstance* GetLayerInstance() { return layer_instance; }
 		/** get the layer instance owning this object */
@@ -104,33 +99,27 @@ namespace death
 		/** getters on the chaos::GeometricObject that this instance references to */
 		chaos::TiledMap::GeometricObject const * GetGeometricObject() const { return geometric_object.get(); }
 
-		/** whether the object is to forced be serialized */
-		bool IsForcedSerialization() const { return forced_serialization; }
-		/** raise the forced serialization flag */
-		void SetForcedSerialization(bool in_forced_serialization = true) { forced_serialization = in_forced_serialization; }
-
 	protected:
 
 		/** additionnal initialization */
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		/** some member initialization */
+		virtual void InitializeInternals();
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
 	protected:
 
+		/** id of the object (comming from chaos::TiledMap) */
+		int id = 0;
+
 		/** the bounding box of the object */
 		chaos::box2 bounding_box;
 		/** a reference to the geometric object (chaos point of view) that was used for initialization */
 		chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
-		/** whether the object is forced to be serialized */
-		bool forced_serialization = false;
 
 		/** a reference to the layer instance */
 		TiledMapLayerInstance* layer_instance = nullptr;
-		/** whether the object has been modified from the JSON base data (usefull for checkpoint serialization) */
-		bool modified = false;
-		/** id of the object (comming from chaos::TiledMap) */
-		int id = 0;
 	};
 
 	// =====================================
@@ -199,7 +188,8 @@ namespace death
 
 		/** override */
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-
+		/** override */
+		virtual void InitializeInternals() override;
 		/** override */
 		virtual TiledMapObjectCheckpoint* DoCreateCheckpoint() const override;
 		/** override */
@@ -319,6 +309,8 @@ namespace death
 
 		/** override */
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		/** override */
+		virtual void InitializeInternals() override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 

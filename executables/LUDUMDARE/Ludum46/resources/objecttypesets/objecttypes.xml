@@ -31,7 +31,6 @@
  </objecttype>
  <objecttype name="SoulTrigger" color="#a0a0a4">
   <property name="EFFECTORS" type="string"/>
-  <property name="FORCED_SERIALIZATION" type="bool" default="true"/>
   <property name="TRIGGER_LIMIT" type="int" default="1"/>
   <property name="TRIGGER_TYPE" type="string"/>
  </objecttype>
@@ -47,7 +46,6 @@
  </objecttype>
  <objecttype name="Spawner" color="#ffff00">
   <property name="EMISSION_STARTED" type="bool" default="true"/>
-  <property name="FORCED_SERIALIZATION" type="bool" default="true"/>
   <property name="MAX_SPAWNED_PARTICLES" type="int" default="100"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PARTICLE_DURATION" type="float" default="-1"/>
@@ -59,6 +57,5 @@
   <property name="TARGET_LAYER" type="string"/>
  </objecttype>
  <objecttype name="SpikeBar" color="#a0a0a4">
-  <property name="FORCED_SERIALIZATION" type="bool" default="true"/>
  </objecttype>
 </objecttypes>

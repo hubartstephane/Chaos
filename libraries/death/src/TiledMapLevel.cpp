@@ -41,14 +41,17 @@ namespace death
 		id = in_geometric_object->GetObjectID();
 		geometric_object = in_geometric_object;
 
-		forced_serialization = in_geometric_object->GetPropertyValueBool("FORCED_SERIALIZATION", forced_serialization);
-
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
 		if (surface != nullptr)
 			bounding_box = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
 
 		return true;
+	}
+
+	void TiledMapObject::InitializeInternals()
+	{
+
 	}
 
 	bool TiledMapObject::IsParticleCreationEnabled() const
@@ -74,6 +77,11 @@ namespace death
 		return true;
 	}
 
+	void TiledMapTrigger::InitializeInternals()
+	{
+
+	}
+
 	bool TiledMapTrigger::IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const
 	{
 		chaos::box2 box = GetBoundingBox(true);
@@ -93,13 +101,11 @@ namespace death
 	void TiledMapTrigger::SetEnabled(bool in_enabled)
 	{
 		enabled = in_enabled;
-		SetModified();
 	}
 
 	void TiledMapTrigger::SetTriggerOnce(bool in_trigger_once)
 	{
 		trigger_once = in_trigger_once;
-		SetModified();
 	}
 
 	TiledMapObjectCheckpoint* TiledMapTrigger::DoCreateCheckpoint() const
@@ -269,6 +275,10 @@ namespace death
 		stop_when_collision_over = in_geometric_object->GetPropertyValueBool("STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 
 		return true;
+	}
+
+	void TiledMapSoundTrigger::InitializeInternals()
+	{
 	}
 
 	chaos::Sound* TiledMapSoundTrigger::CreateSound() const
@@ -569,10 +579,17 @@ namespace death
 		TiledMapObjectFactory result = [in_layer_instance, factory](chaos::TiledMap::GeometricObject* in_geometric_object)
 		{
 			TiledMapObject * result = factory(in_geometric_object);
-			if (result != nullptr && !result->Initialize(in_layer_instance, in_geometric_object))
+			if (result != nullptr)
 			{
-				delete result;
-				result = nullptr;
+				if (!result->Initialize(in_layer_instance, in_geometric_object))
+				{
+					delete result;
+					result = nullptr;
+				}
+				else
+				{
+					result->InitializeInternals();
+				}
 			}
 			return result;
 		};
@@ -1428,13 +1445,8 @@ namespace death
 		size_t count = elements.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			// only modified object
 			auto const* obj = elements[i].get();
 			if (obj == nullptr)
-				continue;
-			// Shu46 : IsForcedSerialization sometimes commented, sometimes nod ... bad design
-			//if (!obj->IsModified() && !obj->IsForcedSerialization()) 
-			if (!obj->IsModified())
 				continue;
 			// save the checkpoint
 			TiledMapObjectCheckpoint* checkpoint = obj->SaveIntoCheckpoint();
@@ -1455,26 +1467,61 @@ namespace death
 	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
 	bool TiledMapLayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints)
 	{
-		size_t count = elements.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			// only modified object
-			auto* obj = elements[i].get();
-			if (obj == nullptr)
-				continue;	
-			// get checkpoint
-			TiledMapObjectCheckpoint* obj_checkpoint = nullptr;
-			auto it = checkpoints.find(obj->GetObjectID());
-			if (it != checkpoints.end())
-				obj_checkpoint = it->second.get();
 
-			// -checkpoint found    => use it
-			// -no checkpoint point =>
-			//    -> object is currently modified, restore initial settings
-			if (obj_checkpoint != nullptr)
-				obj->LoadFromCheckpoint(obj_checkpoint);
-			else if (obj->IsModified() || obj->IsForcedSerialization()) // Shu46 : IsForcedSerialization sometimes commented, sometimes nod ... bad design
-				obj->Initialize(this, obj->GetGeometricObject());
+
+		int i = 0;
+
+
+
+
+
+
+		// iterate over all checkpoints
+		for (auto it = checkpoints.begin() ; it != checkpoints.end() ; ++it)
+		{
+			int id = it->first;
+			auto * checkpoint = it->second.get();
+
+			// search whether there is an object of given ID in the list
+			auto obj_it = std::find_if(elements.begin(), elements.end(), [id](auto& obj) {return obj->GetObjectID() == id; });
+
+			// object with ID should be removed if no checkoint
+			if (checkpoint == nullptr)
+			{
+				if (obj_it != elements.end())
+				{
+					elements.erase(obj_it);
+				}
+			}
+			else
+			{
+				// update the object with the data in the checkpoint
+				if (obj_it != elements.end())
+				{
+					(*obj_it)->LoadFromCheckpoint(checkpoint);
+				}
+				// the object has been destroyed since the save => recreate it
+				else
+				{
+
+
+
+
+
+
+					i = i;
+				}			
+			}
+		}
+
+		// check whether some object has no checkpoint => must be destroyed
+		for (size_t i = elements.size(); i > 0 ; --i)
+		{
+			size_t index = i - 1;
+
+			auto it = checkpoints.find(elements[index]->GetObjectID());
+			if (it == checkpoints.end())
+				elements.erase(elements.begin() + index);
 		}
 		return true;
 	}
@@ -1624,7 +1671,6 @@ namespace death
 				if (trigger->IsTriggerOnce() && !trigger->enter_event_triggered)
 				{
 					trigger->enter_event_triggered = true;
-					trigger->SetModified();
 				}
 			}
 		}
@@ -1757,6 +1803,12 @@ namespace death
 
 	bool TiledMapLevelInstance::DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const & layers)
 	{
+
+
+
+
+
+
 		TiledMapLevel* level = GetLevel();
 
 		for (auto& layer : layers)
@@ -1778,6 +1830,18 @@ namespace death
 		chaos::TiledMap::Map* tiled_map = GetTiledMap();
 		if (tiled_map != nullptr)
 			return DoCreateLayerInstances(tiled_map->layers);
+
+
+
+
+		// shulayer
+
+
+
+
+
+
+
 		return true;
 	}
 

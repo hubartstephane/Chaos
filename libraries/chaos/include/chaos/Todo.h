@@ -21,16 +21,11 @@
 
 	- Faire des Portail => Next Level contient nom de level + nom de player start
 
-	- TiledMap infinis
-
 	- TiledMap => supporter Object Template (etudier l interet)
 
 	- TiledMap => Position/Rotation des Tile
 
 	- TiledMap => Object Alignment property
-
-	- Revoir Layer Grouping => il faudrait que le propriétés d une layer regarde les layers plus haut
-
 
 	https://www.mapeditor.org/2020/06/25/tiled-1-4-1-released.html
 https://www.mapeditor.org/2020/05/27/tiled-1-4-beta-released.html

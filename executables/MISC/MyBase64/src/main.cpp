@@ -3,6 +3,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/MathTools.h>
 #include <chaos/LogTools.h>
+#include <chaos/FileTools.h>
 #include <chaos/SparseWriteBuffer.h>
 #include <chaos/Buffer.h>
 #include <chaos/MyBase64.h>
@@ -74,6 +75,26 @@ void TestCompression(chaos::Buffer<char> initial_buffer, char const * title)
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
   chaos::WinTools::AllocConsoleAndRedirectStdOutput();
+
+  chaos::Buffer<char> f = chaos::FileTools::LoadFile("C:\\Users\\s.hubart\\Desktop\\totosave.txt", false);
+
+  std::string str = f.data;
+
+  str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+  str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
+
+  chaos::Buffer<char> uncompressed = chaos::MyBase64().Decode(str.c_str());
+  std::ofstream file("C:\\Users\\s.hubart\\Desktop\\save.txt");
+  file.write(uncompressed.data, uncompressed.bufsize);
+
+return 0;
+
+
+
+
+  return 0;
+
+
 
   chaos::MathTools::ResetRandSeed();
 

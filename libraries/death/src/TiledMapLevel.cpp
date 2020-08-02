@@ -50,7 +50,8 @@ namespace death
 
 	bool TiledMapObject::SerializeFromJSON(nlohmann::json const& json)
 	{
-		assert(json.is_object());		
+		if (!chaos::JSONSerializable::SerializeFromJSON(json))
+			return false;
 		chaos::JSONTools::GetAttribute(json, "NAME", name);
 		chaos::JSONTools::GetAttribute(json, "ID", id);
 		chaos::JSONTools::GetAttribute(json, "BOUNDING_BOX", bounding_box);
@@ -60,7 +61,8 @@ namespace death
 
 	bool TiledMapObject::SerializeIntoJSON(nlohmann::json & json) const
 	{
-		assert(json.is_object());
+		if (!chaos::JSONSerializable::SerializeIntoJSON(json))
+			return false;
 		chaos::JSONTools::SetAttribute(json, "NAME", name);
 		chaos::JSONTools::SetAttribute(json, "ID", id);
 		chaos::JSONTools::SetAttribute(json, "BOUNDING_BOX", bounding_box);
@@ -95,6 +97,34 @@ namespace death
 		enter_event_triggered = false;
 		return true;
 	}
+
+	bool TiledMapTrigger::SerializeFromJSON(nlohmann::json const& json)
+	{
+		if (!TiledMapObject::SerializeFromJSON(json))
+			return false;
+		chaos::JSONTools::GetAttribute(json, "ENABLED", enabled);
+		chaos::JSONTools::GetAttribute(json, "TRIGGER_ONCE", trigger_once);
+		chaos::JSONTools::GetAttribute(json, "OUTSIDE_BOX_FACTOR", outside_box_factor);
+		chaos::JSONTools::GetAttribute(json, "ENTER_EVENT_TRIGGERED", enter_event_triggered);
+		return true;
+	}
+
+	bool TiledMapTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	{
+		if (!TiledMapObject::SerializeIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetAttribute(json, "ENABLED", enabled);
+		chaos::JSONTools::SetAttribute(json, "TRIGGER_ONCE", trigger_once);
+		chaos::JSONTools::SetAttribute(json, "OUTSIDE_BOX_FACTOR", outside_box_factor);
+		chaos::JSONTools::SetAttribute(json, "ENTER_EVENT_TRIGGERED", enter_event_triggered);
+		return true;
+	}
+
+
+
+
+
+
 
 	void TiledMapTrigger::InitializeInternals()
 	{

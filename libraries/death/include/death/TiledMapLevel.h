@@ -183,6 +183,11 @@ namespace death
 		/** search whether there is a collision given box */
 		virtual bool IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const;
 
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+
 	protected:
 
 		/** override */

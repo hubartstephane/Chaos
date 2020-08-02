@@ -9,6 +9,7 @@
 #include <chaos/Class.h>
 #include <chaos/Metaprogramming.h>
 #include <chaos/ColorFilter.h>
+#include <chaos/JSONSerializable.h>
 
 namespace chaos
 {
@@ -16,7 +17,7 @@ namespace chaos
 	* ImageProcessor : take an image as an entry and returns a new image as output
 	*/
 
-	class ImageProcessor : public Object
+	class ImageProcessor : public Object, public JSONSerializable
 	{
 		CHAOS_OBJECT_DECLARE_CLASS2(ImageProcessor, Object);
 
@@ -30,9 +31,9 @@ namespace chaos
 		virtual std::vector<FIBITMAP*> ProcessImageFrames(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const;
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const;
+		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const override;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool LoadFromJSON(nlohmann::json const& json_entry);
+		virtual bool LoadFromJSON(nlohmann::json const& json_entry) override;
 
 	protected:
 

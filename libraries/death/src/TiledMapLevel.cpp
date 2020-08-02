@@ -10,6 +10,7 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/StringTools.h>
+#include <chaos/JSONTools.h>
 
 
 namespace death
@@ -32,14 +33,12 @@ namespace death
 		assert(in_layer_instance != nullptr);
 		assert(in_geometric_object != nullptr);
 		assert(layer_instance == nullptr);
-		assert(geometric_object == nullptr);
 
 		layer_instance = in_layer_instance;
 
 		// get some data from the geometric object
 		name = in_geometric_object->name;
 		id = in_geometric_object->GetObjectID();
-		geometric_object = in_geometric_object;
 
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
@@ -51,12 +50,20 @@ namespace death
 
 	bool TiledMapObject::SerializeFromJSON(nlohmann::json const& json)
 	{
+		assert(json.is_object());		
+		chaos::JSONTools::GetAttribute(json, "NAME", name);
+		chaos::JSONTools::GetAttribute(json, "ID", id);
+		chaos::JSONTools::GetAttribute(json, "BOUNDING_BOX", bounding_box);
 
 		return true;
 	}
 
 	bool TiledMapObject::SerializeIntoJSON(nlohmann::json & json) const
 	{
+		assert(json.is_object());
+		chaos::JSONTools::SetAttribute(json, "NAME", name);
+		chaos::JSONTools::SetAttribute(json, "ID", id);
+		chaos::JSONTools::SetAttribute(json, "BOUNDING_BOX", bounding_box);
 
 		return true;
 	}
@@ -292,6 +299,30 @@ namespace death
 	void TiledMapSoundTrigger::InitializeInternals()
 	{
 	}
+
+	bool TiledMapSoundTrigger::SerializeFromJSON(nlohmann::json const& json)
+	{
+		if (!TiledMapTrigger::SerializeFromJSON(json))
+			return false;
+
+
+
+
+
+		return true;
+	}
+
+	bool TiledMapSoundTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	{
+		if (!TiledMapTrigger::SerializeIntoJSON(json))
+			return false;
+
+
+
+
+		return true;
+	}
+
 
 	chaos::Sound* TiledMapSoundTrigger::CreateSound() const
 	{
@@ -893,12 +924,12 @@ namespace death
 		return true;
 	}
 
-	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
+	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject* in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
 		// create additionnal particles (TEXT)
-		chaos::TiledMap::GeometricObjectText* text = geometric_object->GetObjectText();
+		chaos::TiledMap::GeometricObjectText* text = in_geometric_object->GetObjectText();
 		if (text != nullptr)
 		{
 			// create particle layer if necessary
@@ -926,7 +957,7 @@ namespace death
 		}
 
 		// create additionnal particles (TILES)
-		chaos::TiledMap::GeometricObjectTile* tile = geometric_object->GetObjectTile();
+		chaos::TiledMap::GeometricObjectTile* tile = in_geometric_object->GetObjectTile();
 		if (tile != nullptr)
 		{
 			int gid = tile->gid;
@@ -939,7 +970,7 @@ namespace death
 			chaos::box2 particle_box = tile->GetBoundingBox(true);
 			if (object != nullptr)
 			{
-				chaos::TiledMap::GeometricObjectSurface const* surface_object = geometric_object->GetObjectSurface();
+				chaos::TiledMap::GeometricObjectSurface const* surface_object = in_geometric_object->GetObjectSurface();
 				if (surface_object != nullptr)
 					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 			}

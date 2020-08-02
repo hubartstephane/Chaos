@@ -95,11 +95,6 @@ namespace death
 		/** get the object bounding box */
 		chaos::box2 GetBoundingBox(bool world_system) const;
 
-		/** getters on the chaos::GeometricObject that this instance references to */
-		chaos::TiledMap::GeometricObject* GetGeometricObject() { return geometric_object.get(); }
-		/** getters on the chaos::GeometricObject that this instance references to */
-		chaos::TiledMap::GeometricObject const * GetGeometricObject() const { return geometric_object.get(); }
-
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
@@ -121,8 +116,6 @@ namespace death
 
 		/** the bounding box of the object */
 		chaos::box2 bounding_box;
-		/** a reference to the geometric object (chaos point of view) that was used for initialization */
-		chaos::shared_ptr<chaos::TiledMap::GeometricObject> geometric_object;
 
 		/** a reference to the layer instance */
 		TiledMapLayerInstance* layer_instance = nullptr;
@@ -310,6 +303,10 @@ namespace death
 
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
 	protected:
 
@@ -669,7 +666,7 @@ namespace death
 		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
 
 		/** create an object in an object layer */
-		void CreateObjectParticles(chaos::TiledMap::GeometricObject* geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
+		void CreateObjectParticles(chaos::TiledMap::GeometricObject* in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
 		/** returns whether a particle should be created for object instance */
 		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const;
 

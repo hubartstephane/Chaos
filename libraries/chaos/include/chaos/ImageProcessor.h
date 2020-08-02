@@ -30,11 +30,6 @@ namespace chaos
 		/** apply processing on a whole animation (grid or not) */
 		virtual std::vector<FIBITMAP*> ProcessImageFrames(std::vector<FIBITMAP*> const& src, BitmapGridAnimationInfo const & grid_anim) const;
 
-		/** the processor may save its configuration into a JSON file */
-		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
-		/** the processor may save its configuration from a JSON file */
-		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
-
 	protected:
 
 		/** an utility function to call functor on pixel accessor */

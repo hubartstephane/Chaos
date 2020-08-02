@@ -855,24 +855,63 @@ namespace chaos
 		}
 		return false;
 	}
-#if 0
-
-
-
 
 	template<typename T, int dimension>
-	bool SaveIntoJSON(nlohmann::json & json_entry, type_ray<T, dimension> const & src)
+	bool SaveIntoJSON(nlohmann::json& json_entry, type_box<T, dimension> const& src)
 	{
-
+		json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "position", src.position);
+		JSONTools::SetAttribute(json_entry, "half_size", src.half_size);
+		return true;
 	}
 
 	template<typename T, int dimension>
-	bool LoadFromJSON(nlohmann::json const & json_entry, type_ray<T, dimension> & dst)
+	bool LoadFromJSON(nlohmann::json const& json_entry, type_box<T, dimension>& dst)
 	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "position", dst.position);
+		JSONTools::GetAttribute(json_entry, "half_size", dst.half_size);
+		return true;
 	}
-	   	 
 
-#endif
+	template<typename T, int dimension>
+	bool SaveIntoJSON(nlohmann::json& json_entry, type_sphere<T, dimension> const& src)
+	{
+		json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "position", src.position);
+		JSONTools::SetAttribute(json_entry, "radius", src.radius);
+		return true;
+	}
+
+	template<typename T, int dimension>
+	bool LoadFromJSON(nlohmann::json const& json_entry, type_sphere<T, dimension>& dst)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "position", dst.position);
+		JSONTools::GetAttribute(json_entry, "radius", dst.radius);
+		return true;
+	}
+
+	template<typename T, int dimension>
+	bool SaveIntoJSON(nlohmann::json& json_entry, type_ray<T, dimension> const& src)
+	{
+		json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "position", src.position);
+		JSONTools::SetAttribute(json_entry, "direction", src.direction);
+		return true;
+	}
+
+	template<typename T, int dimension>
+	bool LoadFromJSON(nlohmann::json const& json_entry, type_ray<T, dimension>& dst)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "position", dst.position);
+		JSONTools::GetAttribute(json_entry, "direction", dst.direction);
+		return true;
+	}
 
 }; // namespace chaos
 

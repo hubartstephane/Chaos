@@ -113,18 +113,6 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool ImageProcessor::SerializeIntoJSON(nlohmann::json& json_entry) const
-	{
-
-		return true;
-	}
-
-	bool ImageProcessor::SerializeFromJSON(nlohmann::json const& json_entry)
-	{
-
-		return true;
-	}
-
 	// ================================================================
 	// ImageProcessorOutline functions
 	// ================================================================

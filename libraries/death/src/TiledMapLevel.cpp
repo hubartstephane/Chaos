@@ -49,6 +49,18 @@ namespace death
 		return true;
 	}
 
+	bool TiledMapObject::SerializeFromJSON(nlohmann::json const& json)
+	{
+
+		return true;
+	}
+
+	bool TiledMapObject::SerializeIntoJSON(nlohmann::json & json) const
+	{
+
+		return true;
+	}
+
 	void TiledMapObject::InitializeInternals()
 	{
 

@@ -12,13 +12,13 @@ namespace chaos
 		// BitmapAtlasFilterCondition methods
 		// ==========================================================================
 
-		bool BitmapAtlasFilterCondition::LoadFromJSON(nlohmann::json const& entry)
+		bool BitmapAtlasFilterCondition::SerializeFromJSON(nlohmann::json const& entry)
 		{
 
 			return true;
 		}
 
-		bool BitmapAtlasFilterCondition::SaveIntoJSON(nlohmann::json& entry) const
+		bool BitmapAtlasFilterCondition::SerializeIntoJSON(nlohmann::json& entry) const
 		{
 
 			return true;

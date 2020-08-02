@@ -113,13 +113,13 @@ namespace chaos
 		return nullptr;
 	}
 
-	bool ImageProcessor::SaveIntoJSON(nlohmann::json& json_entry) const
+	bool ImageProcessor::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
 
 		return true;
 	}
 
-	bool ImageProcessor::LoadFromJSON(nlohmann::json const& json_entry)
+	bool ImageProcessor::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
 
 		return true;
@@ -210,9 +210,9 @@ namespace chaos
 		});
 	}
 
-	bool ImageProcessorOutline::SaveIntoJSON(nlohmann::json& json_entry) const
+	bool ImageProcessorOutline::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
-		if (!ImageProcessor::SaveIntoJSON(json_entry))
+		if (!ImageProcessor::SerializeIntoJSON(json_entry))
 			return false;
 		JSONTools::SetAttribute(json_entry, "distance", distance);
 		JSONTools::SetAttribute(json_entry, "color_filter", color_filter);
@@ -221,9 +221,9 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorOutline::LoadFromJSON(nlohmann::json const& json_entry)
+	bool ImageProcessorOutline::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
-		if (!ImageProcessor::LoadFromJSON(json_entry))
+		if (!ImageProcessor::SerializeFromJSON(json_entry))
 			return false;
 		JSONTools::GetAttribute(json_entry, "distance", distance);
 		JSONTools::GetAttribute(json_entry, "color_filter", color_filter);
@@ -351,14 +351,14 @@ namespace chaos
 	}
 
 
-	bool ImageProcessorAddAlpha::SaveIntoJSON(nlohmann::json& json_entry) const
+	bool ImageProcessorAddAlpha::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
 
 
 		return true;
 	}
 
-	bool ImageProcessorAddAlpha::LoadFromJSON(nlohmann::json const& json_entry)
+	bool ImageProcessorAddAlpha::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
 
 
@@ -469,9 +469,9 @@ namespace chaos
 #endif
 	}
 
-	bool ImageProcessorShadow::SaveIntoJSON(nlohmann::json& json_entry) const
+	bool ImageProcessorShadow::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
-		if (!ImageProcessor::SaveIntoJSON(json_entry))
+		if (!ImageProcessor::SerializeIntoJSON(json_entry))
 			return false;
 		JSONTools::SetAttribute(json_entry, "offset", offset);
 		JSONTools::SetAttribute(json_entry, "color_filter", color_filter);
@@ -480,9 +480,9 @@ namespace chaos
 		return true;
 	}
 
-	bool ImageProcessorShadow::LoadFromJSON(nlohmann::json const& json_entry)
+	bool ImageProcessorShadow::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
-		if (!ImageProcessor::LoadFromJSON(json_entry))
+		if (!ImageProcessor::SerializeFromJSON(json_entry))
 			return false;
 		JSONTools::GetAttribute(json_entry, "offset", offset);
 		JSONTools::GetAttribute(json_entry, "color_filter", color_filter);

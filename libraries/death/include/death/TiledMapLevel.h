@@ -19,6 +19,7 @@
 #include <chaos/SoundManager.h>
 #include <chaos/ParticleSpawner.h>
 #include <chaos/NamedObject.h>
+#include <chaos/JSONSerializable.h>
 
 namespace death
 {
@@ -70,7 +71,7 @@ namespace death
 	// TiledMapObject 
 	// =====================================
 
-	class TiledMapObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>
+	class TiledMapObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>, public chaos::JSONSerializable
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
@@ -98,6 +99,11 @@ namespace death
 		chaos::TiledMap::GeometricObject* GetGeometricObject() { return geometric_object.get(); }
 		/** getters on the chaos::GeometricObject that this instance references to */
 		chaos::TiledMap::GeometricObject const * GetGeometricObject() const { return geometric_object.get(); }
+
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
 	protected:
 

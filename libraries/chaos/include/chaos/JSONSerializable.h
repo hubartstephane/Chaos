@@ -10,9 +10,9 @@ namespace chaos
 	public:
 
 		/** the processor may save its configuration into a JSON file */
-		virtual bool SaveIntoJSON(nlohmann::json& json_entry) const;
+		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const;
 		/** the processor may save its configuration from a JSON file */
-		virtual bool LoadFromJSON(nlohmann::json const& json_entry);
+		virtual bool SerializeFromJSON(nlohmann::json const& json_entry);
 	};
 
 }; // namespace chaos

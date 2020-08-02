@@ -27,8 +27,8 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 // EXTERNAL FUNCTION
 // =================
 
-CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(LoadFromJSON)
-CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SaveIntoJSON)
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeFromJSON)
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeIntoJSON)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(GetClass)
 
 namespace chaos
@@ -127,9 +127,9 @@ namespace chaos
 			return true;
 		} 	
 		// class has its own implementation
-		else if constexpr (check_method_LoadFromJSON_v<T, nlohmann::json const&>)
+		else if constexpr (check_method_SerializeFromJSON_v<T, nlohmann::json const&>)
 		{
-			return dst.LoadFromJSON(entry);
+			return dst.SerializeFromJSON(entry);
 		}
 		// for native types
 		else
@@ -189,7 +189,7 @@ namespace chaos
 		// class has its own implementation
 		else if constexpr (std::is_class_v<T> && !std::is_same_v<T, std::string>) // string is to be handled in the native json way
 		{
-			if constexpr (check_method_SaveIntoJSON_v<T const, nlohmann::json&>)
+			if constexpr (check_method_SerializeIntoJSON_v<T const, nlohmann::json&>)
 			{
 				// we need a json object to store a C++ object
 				if (!entry.is_object())
@@ -210,7 +210,7 @@ namespace chaos
 					JSONTools::SetAttribute(entry, "classname", src_class->GetClassName());
 
 				// save into JSON
-				return src.SaveIntoJSON(entry);
+				return src.SerializeIntoJSON(entry);
 			}
 			else
 			{

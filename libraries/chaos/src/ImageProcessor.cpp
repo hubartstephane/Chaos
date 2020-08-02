@@ -341,6 +341,8 @@ namespace chaos
 
 	bool ImageProcessorAddAlpha::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
+		if (!ImageProcessor::SerializeIntoJSON(json_entry))
+			return false;
 
 
 		return true;
@@ -348,6 +350,8 @@ namespace chaos
 
 	bool ImageProcessorAddAlpha::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
+		if (!ImageProcessor::SerializeFromJSON(json_entry))
+			return false;
 
 
 		return true;

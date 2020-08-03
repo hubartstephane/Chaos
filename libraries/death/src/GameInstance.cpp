@@ -375,13 +375,22 @@ namespace death
 				return false;
 
 
+		// save the clocks
+#if 0
+		if (main_clock != nullptr)
+			if (!SaveIntoJSON(checkpoint->main_clock_save, main_clock))
+				return false;
+		if (main_clock != nullptr)
+			if (!SaveIntoJSON(checkpoint->game_clock_save, game_clock))
+				return false;
+#endif
 
 		
 
-		auto p = checkpoint->player_save.dump(2);
+		auto p = checkpoint->level_save.dump(2);
 		chaos::WinTools::CopyStringToClipboard(p.c_str());
 
-		auto l = checkpoint->level_save.dump(2);
+		auto l = checkpoint->player_save.dump(2);
 		chaos::WinTools::CopyStringToClipboard(l.c_str());
 
 

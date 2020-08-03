@@ -5,6 +5,8 @@
 #include <death/Game.h>
 #include <death/GameGettersImpl.h>
 
+#include <chaos/JSONTools.h>
+
 namespace death
 {
 
@@ -76,6 +78,29 @@ namespace death
 		result.half_size = box.half_size;
 		result.rotator = 0.0f;
 		return result;
+	}
+
+	
+	bool Camera::SerializeIntoJSON(nlohmann::json& json_entry) const
+	{
+		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
+			return false;
+
+		chaos::JSONTools::SetAttribute(json_entry, "CAMERA_BOX", GetCameraBox(false));
+
+		return true;
+	}
+	
+	bool Camera::SerializeFromJSON(nlohmann::json const& json_entry)
+	{
+		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
+			return false;
+
+		chaos::box2 b;
+		if (chaos::JSONTools::GetAttribute(json_entry, "CAMERA_BOX", b))
+			SetCameraBox(b);
+
+		return true;
 	}
 
 	DEATH_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)

@@ -1,5 +1,6 @@
 #include <chaos/ClockManager.h>
 #include <chaos/MathTools.h>
+#include <chaos/JSONTools.h>
 
 namespace chaos
 {
@@ -426,6 +427,23 @@ namespace chaos
 			}
 		}
 		return false;
+	}
+
+	
+	bool Clock::SerializeIntoJSON(nlohmann::json& json_entry) const
+	{
+		if (!JSONSerializable::SerializeIntoJSON(json_entry))
+			return false;
+		JSONTools::SetAttribute(json_entry, "CLOCK_TIME", clock_time);
+		return true;
+	}
+	
+	bool Clock::SerializeFromJSON(nlohmann::json const& json_entry) 
+	{
+		if (!JSONSerializable::SerializeFromJSON(json_entry))
+			return false;
+		JSONTools::GetAttribute(json_entry, "CLOCK_TIME", clock_time);
+		return true;
 	}
 
 	void Clock::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)

@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Object.h>
+#include <chaos/JSONSerializable.h>
 
 namespace chaos
 {
@@ -309,9 +310,11 @@ namespace chaos
 	* This represents a clock that may paused or have a different time scale than absolute time. It can have inner clocks
 	*/
 
-	class Clock : public Object
+	class Clock : public Object, public JSONSerializable
 	{
 		friend class ClockEvent;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(Clock, Object);
 
 	public:
 
@@ -382,6 +385,11 @@ namespace chaos
 
 		/** initialization of the manager from configuration file */
 		virtual void InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
+
+		/** the processor may save its configuration into a JSON file */
+		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		/** the processor may save its configuration from a JSON file */
+		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
 
 	protected:
 

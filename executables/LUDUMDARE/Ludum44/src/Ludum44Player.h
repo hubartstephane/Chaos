@@ -35,11 +35,9 @@ public:
 protected:
 
 	/** override */
-	virtual death::PlayerCheckpoint * DoCreateCheckpoint() const override;
+	virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 	/** override */
-	virtual bool DoLoadFromCheckpoint(death::PlayerCheckpoint const * checkpoint) override;
-	/** override */
-	virtual bool DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const override;
+	virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
 	/** override */
 	virtual void TickInternal(float delta_time) override;

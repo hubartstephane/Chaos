@@ -177,45 +177,24 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 		buylocked = false;
 }
 
-death::PlayerCheckpoint * LudumPlayer::DoCreateCheckpoint() const
+bool LudumPlayer::SerializeFromJSON(nlohmann::json const& json)
 {
-	return new LudumPlayerCheckpoint();
-}
-
-bool LudumPlayer::DoLoadFromCheckpoint(death::PlayerCheckpoint const * checkpoint)
-{
-	LudumPlayerCheckpoint const * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
+	if (!death::Player::SerializeFromJSON(json))
 		return false;
-
-	if (!death::Player::DoLoadFromCheckpoint(checkpoint))
-		return false;
-
-	health               = ludum_checkpoint->health;
-	max_health           = ludum_checkpoint->max_health;
-	current_speed_index          = ludum_checkpoint->current_speed_index;
-	current_damage_index         = ludum_checkpoint->current_damage_index;
-	current_charged_damage_index = ludum_checkpoint->current_charged_damage_index;
-	current_fire_rate_index      = ludum_checkpoint->current_fire_rate_index;
-
+	chaos::JSONTools::GetAttribute(json, "SPEED_INDEX", current_speed_index);
+	chaos::JSONTools::GetAttribute(json, "DAMAGE_INDEX", current_damage_index);
+	chaos::JSONTools::GetAttribute(json, "CHARGED_DAMAGE_INDEX", current_charged_damage_index);
+	chaos::JSONTools::GetAttribute(json, "FIRE_RATE_INDEX", current_fire_rate_index);
 	return true;
 }
 
-bool LudumPlayer::DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const
+bool LudumPlayer::SerializeIntoJSON(nlohmann::json & json) const
 {
-	LudumPlayerCheckpoint * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
+	if (!death::Player::SerializeIntoJSON(json))
 		return false;
-
-	if (!death::Player::DoSaveIntoCheckpoint(checkpoint))
-		return false;
-
-    ludum_checkpoint->health = health;
-    ludum_checkpoint->max_health = max_health;
-    ludum_checkpoint->current_speed_index = current_speed_index;
-    ludum_checkpoint->current_damage_index = current_damage_index;
-    ludum_checkpoint->current_charged_damage_index = current_charged_damage_index;
-    ludum_checkpoint->current_fire_rate_index = current_fire_rate_index;
-
+	chaos::JSONTools::SetAttribute(json, "SPEED_INDEX", current_speed_index);
+	chaos::JSONTools::SetAttribute(json, "DAMAGE_INDEX", current_damage_index);
+	chaos::JSONTools::SetAttribute(json, "CHARGED_DAMAGE_INDEX", current_charged_damage_index);
+	chaos::JSONTools::SetAttribute(json, "FIRE_RATE_INDEX", current_fire_rate_index);
 	return true;
 }

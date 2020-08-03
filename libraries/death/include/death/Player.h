@@ -21,7 +21,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<PlayerCheckpoint>, public chaos::JSONSerializable
+	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public chaos::JSONSerializable
 	{
 		friend class PlayerGamepadCallbacks;
 
@@ -132,11 +132,6 @@ namespace death
 
 		/** called whenever a life is lost */
 		virtual void OnLifeLost();
-
-		/** override */
-		virtual bool DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const override;
-		/** override */
-		virtual bool DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint) override;
 
         /** called whenever health is changed */
         virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable);

@@ -8,7 +8,6 @@
 #include <chaos/JSONSerializable.h>
 
 #include <death/GameFramework.h>
-#include <death/GameCheckpoint.h>
 #include <death/GameGettersDecl.h>
 
 namespace death
@@ -18,7 +17,7 @@ namespace death
 	// PlayerPawn
 	// =============================================
 
-	class PlayerPawn : public chaos::Tickable, public CheckpointObject<PlayerPawnCheckpoint>,  public chaos::JSONSerializable
+	class PlayerPawn : public chaos::Tickable, public chaos::JSONSerializable
 	{
 
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
@@ -61,13 +60,6 @@ namespace death
 		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
 		/** the processor may save its configuration from a JSON file */
 		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
-
-	protected:
-
-		/** override */
-		virtual bool DoSaveIntoCheckpoint(PlayerPawnCheckpoint* checkpoint) const override;
-		/** override */
-		virtual bool DoLoadFromCheckpoint(PlayerPawnCheckpoint const* checkpoint) override;
 
 	protected:
 

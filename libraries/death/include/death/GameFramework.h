@@ -2,8 +2,6 @@
 
 // internal macros (do not use outside this file)
 #define DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(prefix, friend_prefix)\
-	friend_prefix class prefix##PlayerCheckpoint;\
-	friend_prefix class prefix##PlayerPawnCheckpoint;\
 	friend_prefix class prefix##LevelCheckpoint;\
 	friend_prefix class prefix##GameCheckpoint;\
 	friend_prefix class prefix##Player;\

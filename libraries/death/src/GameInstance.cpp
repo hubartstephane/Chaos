@@ -366,22 +366,22 @@ namespace death
 		// XXX : this is important that it is first so we can test LEVEL INDEX correspond to the level
 		LevelInstance const* level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			if (!SaveIntoJSON(checkpoint->level_save, level_instance))
+			if (!SaveIntoJSON(checkpoint->level_save, *level_instance))
 				return false;
 
 		// save player data
 		Player const* player = GetPlayer(0);
 		if (player != nullptr)
-			if (!SaveIntoJSON(checkpoint->player_save, player))
+			if (!SaveIntoJSON(checkpoint->player_save, *player))
 				return false;
 
 		// save the clocks
 #if 0
 		if (main_clock != nullptr)
-			if (!SaveIntoJSON(checkpoint->main_clock_save, main_clock))
+			if (!SaveIntoJSON(checkpoint->main_clock_save, *main_clock))
 				return false;
 		if (main_clock != nullptr)
-			if (!SaveIntoJSON(checkpoint->game_clock_save, game_clock))
+			if (!SaveIntoJSON(checkpoint->game_clock_save, *game_clock))
 				return false;
 #endif
 
@@ -428,17 +428,25 @@ namespace death
 		// XXX : this is important that it is first so we can test LEVEL INDEX correspond to the level
 		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-			if (!LoadFromJSON(checkpoint->level_save, *level_instance))
+			if (!LoadFromJSON(checkpoint->level_save, *level_instance)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
 
 		// load player data
 		Player * player = GetPlayer(0);
 		if (player != nullptr)
-			if (!LoadFromJSON(checkpoint->player_save, *player))
+			if (!LoadFromJSON(checkpoint->player_save, *player)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
 
 
-
+		// load the clocks
+#if 0
+		if (main_clock != nullptr)
+			if (!LoadFromJSON(checkpoint->main_clock_save, *main_clock)) // XXX : indirection is important to avoid a reallocation the object
+				return false;
+		if (main_clock != nullptr)
+			if (!LoadFromJSON(checkpoint->game_clock_save, *game_clock)) // XXX : indirection is important to avoid a reallocation the object
+				return false;
+#endif
 
 
 

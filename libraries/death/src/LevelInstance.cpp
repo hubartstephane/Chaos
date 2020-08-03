@@ -439,7 +439,7 @@ namespace death
 		// the camera 0
 		Camera const * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
-			chaos::JSONTools::SetAttribute(json_entry, "CAMERA0", camera);
+			chaos::JSONTools::SetAttribute(json_entry, "CAMERA0", *camera);
 
 		return true;
 	}
@@ -460,7 +460,7 @@ namespace death
 		// the camera 0
 		Camera * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
-			chaos::JSONTools::GetAttribute(json_entry, "CAMERA0", camera);
+			chaos::JSONTools::GetAttribute(json_entry, "CAMERA0", *camera); // XXX : indirection is important to avoid a reallocation the object
 
 		return true;
 	}

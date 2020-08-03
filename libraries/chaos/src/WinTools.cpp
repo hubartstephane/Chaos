@@ -217,23 +217,25 @@ namespace chaos
 
 		bool result = false;
 
-		HLOCAL hMem = LocalAlloc(LHND, len + 1);
-		if (hMem != NULL)
+		if (OpenClipboard(NULL))
 		{
-			char * cptr = (char*)LocalLock(hMem);
-			if (cptr != nullptr)
-			{
-				strcpy_s(cptr, len + 1, str);
+			EmptyClipboard();
 
-				HANDLE handle = NULL;
-				OpenClipboard(NULL);
-				EmptyClipboard();
-				handle = SetClipboardData(CF_TEXT, hMem);
-				LocalUnlock(hMem);				
-				CloseClipboard();
-				result = (handle != NULL);
+			HLOCAL hMem = LocalAlloc(LHND, len + 1);
+			if (hMem != NULL)
+			{
+				char* cptr = (char*)LocalLock(hMem);
+				if (cptr != nullptr)
+				{
+					strcpy_s(cptr, len + 1, str);
+
+					if (SetClipboardData(CF_TEXT, hMem))
+						result = true;				
+					LocalUnlock(hMem);
+				}
+				LocalFree(hMem);
 			}
-			LocalFree(hMem);
+			CloseClipboard();
 		}
 		return result;
 	}

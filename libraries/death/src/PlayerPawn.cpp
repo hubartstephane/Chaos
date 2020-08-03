@@ -65,6 +65,26 @@ namespace death
 		SetBox(checkpoint->pawn_box);
 		return true;
 	}
+
+	bool PlayerPawn::SerializeFromJSON(nlohmann::json const& entry)
+	{
+		if (!JSONSerializable::SerializeFromJSON(entry))
+			return false;
+
+		chaos::box2 b;
+		if (chaos::JSONTools::GetAttribute(entry, "PAWN_BOX", b))
+			SetBox(b);
+
+		return true;
+	}
+
+	bool PlayerPawn::SerializeIntoJSON(nlohmann::json& entry) const
+	{
+		if (!JSONSerializable::SerializeIntoJSON(entry))
+			return false;
+		chaos::JSONTools::SetAttribute(entry, "PAWN_BOX", GetBox());
+		return true;
+	}
 	
 }; // namespace death
 

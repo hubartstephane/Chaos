@@ -206,6 +206,21 @@ namespace death
 		return true;
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	bool TiledMapCheckpointTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Camera* camera = auto_cast(object);
@@ -243,6 +258,22 @@ namespace death
 		return true;
 	}
 
+	bool TiledMapPlayerStart::SerializeFromJSON(nlohmann::json const& json)
+	{
+		if (!TiledMapObject::SerializeFromJSON(json))
+			return false;
+		chaos::JSONTools::GetAttribute(json, "BITMAP_NAME", bitmap_name);
+		return true;
+	}
+
+	bool TiledMapPlayerStart::SerializeIntoJSON(nlohmann::json& json) const
+	{
+		if (!TiledMapObject::SerializeIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetAttribute(json, "BITMAP_NAME", bitmap_name);
+		return true;
+	}
+
 	// =================================================
 	// TiledMapNotificationTrigger
 	// =================================================
@@ -264,6 +295,29 @@ namespace death
 
 		return true;
 	}
+
+	bool TiledMapNotificationTrigger::SerializeFromJSON(nlohmann::json const& json)
+	{
+		if (!TiledMapTrigger::SerializeFromJSON(json))
+			return false;
+		chaos::JSONTools::GetAttribute(json, "NOTIFICATION", notification_string);
+		chaos::JSONTools::GetAttribute(json, "LIFETIME", notification_lifetime);
+		chaos::JSONTools::GetAttribute(json, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		chaos::JSONTools::GetAttribute(json, "PLAYER_COLLISION", player_collision);
+		return true;
+	}
+
+	bool TiledMapNotificationTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	{
+		if (!TiledMapTrigger::SerializeIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetAttribute(json, "NOTIFICATION", notification_string);
+		chaos::JSONTools::SetAttribute(json, "LIFETIME", notification_lifetime);
+		chaos::JSONTools::SetAttribute(json, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
+		chaos::JSONTools::SetAttribute(json, "PLAYER_COLLISION", player_collision);
+		return true;
+	}
+
 
 	bool TiledMapNotificationTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
@@ -326,19 +380,16 @@ namespace death
 		return true;
 	}
 
-	void TiledMapSoundTrigger::InitializeInternals()
-	{
-	}
-
 	bool TiledMapSoundTrigger::SerializeFromJSON(nlohmann::json const& json)
 	{
 		if (!TiledMapTrigger::SerializeFromJSON(json))
 			return false;
-
-
-
-
-
+		chaos::JSONTools::GetAttribute(json, "SOUND_NAME", sound_name);
+		chaos::JSONTools::GetAttribute(json, "MIN_DISTANCE_RATIO", min_distance_ratio);
+		chaos::JSONTools::GetAttribute(json, "PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
+		chaos::JSONTools::GetAttribute(json, "3D_SOUND", is_3D_sound);
+		chaos::JSONTools::GetAttribute(json, "LOOPING", looping);
+		chaos::JSONTools::GetAttribute(json, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 		return true;
 	}
 
@@ -346,13 +397,19 @@ namespace death
 	{
 		if (!TiledMapTrigger::SerializeIntoJSON(json))
 			return false;
-
-
-
-
+		chaos::JSONTools::SetAttribute(json, "SOUND_NAME", sound_name);
+		chaos::JSONTools::SetAttribute(json, "MIN_DISTANCE_RATIO", min_distance_ratio);
+		chaos::JSONTools::SetAttribute(json, "PAUSE_TIMER_WHEN_TOO_FAR", pause_timer_when_too_far);
+		chaos::JSONTools::SetAttribute(json, "3D_SOUND", is_3D_sound);
+		chaos::JSONTools::SetAttribute(json, "LOOPING", looping);
+		chaos::JSONTools::SetAttribute(json, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 		return true;
 	}
 
+
+	void TiledMapSoundTrigger::InitializeInternals()
+	{
+	}
 
 	chaos::Sound* TiledMapSoundTrigger::CreateSound() const
 	{
@@ -449,6 +506,24 @@ namespace death
 			return false;
 		level_name = in_geometric_object->GetPropertyValueString("LEVEL_NAME", "");
 		player_start_name = in_geometric_object->GetPropertyValueString("PLAYER_START_NAME", "");
+		return true;
+	}
+
+	bool TiledMapChangeLevelTrigger::SerializeFromJSON(nlohmann::json const& json)
+	{
+		if (!TiledMapTrigger::SerializeFromJSON(json))
+			return false;
+		chaos::JSONTools::GetAttribute(json, "LEVEL_NAME", level_name);
+		chaos::JSONTools::GetAttribute(json, "PLAYER_START_NAME", player_start_name);
+		return true;
+	}
+
+	bool TiledMapChangeLevelTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	{
+		if (!TiledMapTrigger::SerializeIntoJSON(json))
+			return false;
+		chaos::JSONTools::SetAttribute(json, "LEVEL_NAME", level_name);
+		chaos::JSONTools::SetAttribute(json, "PLAYER_START_NAME", player_start_name);
 		return true;
 	}
 
@@ -948,6 +1023,27 @@ namespace death
 
 		return false;
 	}
+
+	
+	bool TiledMapLayerInstance::SerializeFromJSON(nlohmann::json const& json)
+	{
+		if (!chaos::JSONSerializable::SerializeFromJSON(json))
+			return false;
+
+
+		return true;
+	}
+	
+	bool TiledMapLayerInstance::SerializeIntoJSON(nlohmann::json& json) const
+	{
+		if (!chaos::JSONSerializable::SerializeIntoJSON(json))
+			return false;
+
+		return true;
+	}
+
+
+
 
 	bool TiledMapLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer* image_layer)
 	{
@@ -2206,6 +2302,24 @@ namespace death
 	{
 		return TiledMapObjectCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
+
+	bool TiledMapLevelInstance::SerializeFromJSON(nlohmann::json const& json)
+	{
+		if (!LevelInstance::SerializeFromJSON(json))
+			return false;
+
+
+		return true;
+	}
+
+	bool TiledMapLevelInstance::SerializeIntoJSON(nlohmann::json& json) const
+	{
+		if (!LevelInstance::SerializeIntoJSON(json))
+			return false;
+
+		return true;
+	}
+
 
 	// =====================================
 	// TiledMapCollisionIteratorBase implementation

@@ -5,6 +5,7 @@
 #include <chaos/Tickable.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/JSONSerializable.h>
 
 #include <death/GameFramework.h>
 #include <death/GameCheckpoint.h>
@@ -17,7 +18,7 @@ namespace death
 	// PlayerPawn
 	// =============================================
 
-	class PlayerPawn : public chaos::Tickable, public CheckpointObject<PlayerPawnCheckpoint>
+	class PlayerPawn : public chaos::Tickable, public CheckpointObject<PlayerPawnCheckpoint>,  public chaos::JSONSerializable
 	{
 
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
@@ -55,6 +56,11 @@ namespace death
 		/** get pawn particle */
 		chaos::ParticleDefault * GetParticle();
 		chaos::ParticleDefault const* GetParticle() const;
+
+		/** the processor may save its configuration into a JSON file */
+		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		/** the processor may save its configuration from a JSON file */
+		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
 
 	protected:
 

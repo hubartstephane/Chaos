@@ -263,6 +263,42 @@ namespace death
 		return true;
 	}
 
+	
+	bool Player::SerializeIntoJSON(nlohmann::json& json_entry) const
+	{
+		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
+			return false;
+
+		chaos::JSONTools::SetAttribute(json_entry, "LIFE_COUNT", life_count);
+		chaos::JSONTools::SetAttribute(json_entry, "HEALTH", health);
+		chaos::JSONTools::SetAttribute(json_entry, "MAX_HEALTH", max_health);
+		chaos::JSONTools::SetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
+		chaos::JSONTools::SetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
+		chaos::JSONTools::SetAttribute(json_entry, "SCORE", score);
+
+		if (pawn != nullptr)
+			chaos::JSONTools::SetAttribute(json_entry, "PAWN", pawn);
+
+		return true;
+	}
+
+	bool Player::SerializeFromJSON(nlohmann::json const& json_entry)
+	{
+		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
+			return false;
+
+		chaos::JSONTools::GetAttribute(json_entry, "LIFE_COUNT", life_count);
+		chaos::JSONTools::GetAttribute(json_entry, "HEALTH", health);
+		chaos::JSONTools::GetAttribute(json_entry, "MAX_HEALTH", max_health);
+		chaos::JSONTools::GetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
+		chaos::JSONTools::GetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
+		chaos::JSONTools::GetAttribute(json_entry, "SCORE", score);
+
+		chaos::JSONTools::GetAttribute(json_entry, "PAWN", pawn);
+
+		return true;
+	}
+
 	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
 	{
 		life_count = checkpoint->life_count;

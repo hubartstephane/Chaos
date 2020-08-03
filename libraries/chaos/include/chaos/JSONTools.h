@@ -115,10 +115,10 @@ namespace chaos
 			using T2 = std::remove_pointer_t<T>;
 
 			// object instanciation
-			T2* other = LoadFromJSONCreateObject<T2>(entry);
+			T2* other = LoadFromJSONCreateObject<T2>(entry); // XXX : use classname to generate the object
 			if (other == nullptr)
 				return false;
-			if (!LoadFromJSON(entry, *other))
+			if (!LoadFromJSON(entry, *other)) // XXX: in that case, there is a useless check for classname again, not a big deal
 			{
 				delete(other);
 				return false;
@@ -129,6 +129,23 @@ namespace chaos
 		// class has its own implementation
 		else if constexpr (check_method_SerializeFromJSON_v<T, nlohmann::json const&>)
 		{
+			// check whether data is an object
+			if (!entry.is_object())
+				return false;
+			// check for strict class equality between target and JSON data
+			if constexpr (check_method_GetClass_v<T const>)
+			{
+				Class const* src_class = dst.GetClass();
+				if (src_class == nullptr || !src_class->IsDeclared())
+					return false;
+
+				std::string classname;
+				JSONTools::GetAttribute(entry, "classname", classname);
+
+				Class const* json_class = Class::FindClass(classname.c_str());
+				if (json_class == nullptr || !json_class->IsDeclared() || json_class != src_class)
+					return false;
+			}			
 			return dst.SerializeFromJSON(entry);
 		}
 		// for native types

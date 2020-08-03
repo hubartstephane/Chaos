@@ -151,6 +151,10 @@ namespace death
 
 		/** override */
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
 	protected:
 
@@ -251,6 +255,10 @@ namespace death
 
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
 	protected:
 
@@ -356,6 +364,13 @@ namespace death
 
 		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapChangeLevelTrigger, TiledMapTrigger);
 
+	public:
+
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+
 	protected:
 
 		/** override */
@@ -415,6 +430,16 @@ namespace death
 	using TiledMapObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject *)>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
 #define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
+
+
+
+
+
+
+
+
+
+
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap
@@ -522,7 +547,7 @@ namespace death
 	// TiledMapLayerInstance : instance of a Layer
 	// =====================================
 
-	class TiledMapLayerInstance : public chaos::GPURenderable, public CheckpointObject<TiledMapLayerCheckpoint>
+	class TiledMapLayerInstance : public chaos::GPURenderable, public CheckpointObject<TiledMapLayerCheckpoint>, public chaos::JSONSerializable
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
@@ -636,6 +661,11 @@ namespace death
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
+
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
 	protected:
 
@@ -855,6 +885,11 @@ namespace death
 		void PurgeCollisionInfo();
 		/** handle all collision for a given object (TriggerObject) */
 		void HandleTriggerCollisions(float delta_time, chaos::Object* object, chaos::box2 const& box, int mask);
+
+		/** override */
+		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+		/** override */
+		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
 	protected:
 

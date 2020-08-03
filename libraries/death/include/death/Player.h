@@ -6,6 +6,7 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/Tickable.h>
 #include <chaos/InputEventReceiver.h>
+#include <chaos/JSONSerializable.h>
 
 #include <death/GameGettersDecl.h>
 #include <death/GameFramework.h>
@@ -20,7 +21,7 @@ namespace death
 	// Player
 	// =============================================
 
-	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<PlayerCheckpoint>
+	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<PlayerCheckpoint>, public chaos::JSONSerializable
 	{
 		friend class PlayerGamepadCallbacks;
 
@@ -84,6 +85,11 @@ namespace death
 		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
 		/** called after player configuration has been (re)loaded */
 		virtual void OnGameValuesChanged(bool hot_reload);
+
+		/** the processor may save its configuration into a JSON file */
+		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		/** the processor may save its configuration from a JSON file */
+		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
 
 	protected:
 

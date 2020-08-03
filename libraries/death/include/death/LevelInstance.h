@@ -10,6 +10,7 @@
 #include <chaos/SoundManager.h>
 #include <chaos/AutoCast.h>
 #include <chaos/SubClassOf.h>
+#include <chaos/JSONSerializable.h>
 
 #include <death/Camera.h>
 #include <death/PlayerPawn.h>
@@ -25,7 +26,7 @@ namespace death
 	// LevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class LevelInstance : public chaos::GPURenderable, public CheckpointObject<LevelCheckpoint>
+	class LevelInstance : public chaos::GPURenderable, public CheckpointObject<LevelCheckpoint>, public chaos::JSONSerializable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 

@@ -54,18 +54,6 @@ namespace death
 		allocations = in_allocation;
 	}
 	
-	bool PlayerPawn::DoSaveIntoCheckpoint(PlayerPawnCheckpoint* checkpoint) const
-	{
-		checkpoint->pawn_box = GetBox();
-		return true;
-	}
-	
-	bool PlayerPawn::DoLoadFromCheckpoint(PlayerPawnCheckpoint const* checkpoint)
-	{
-		SetBox(checkpoint->pawn_box);
-		return true;
-	}
-
 	bool PlayerPawn::SerializeFromJSON(nlohmann::json const& entry)
 	{
 		if (!JSONSerializable::SerializeFromJSON(entry))

@@ -61,54 +61,6 @@ namespace death
 	};
 
 	// =============================================
-	// PlayerPawnCheckpoint
-	// =============================================
-
-	class PlayerPawnCheckpoint : public chaos::Object
-	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
-
-		CHAOS_OBJECT_DECLARE_CLASS2(PlayerPawnCheckpoint, chaos::Object);
-
-	public:
-
-		/** the pawn box */
-		chaos::box2 pawn_box;
-	};
-
-	// =============================================
-	// PlayerCheckpoint
-	// =============================================
-
-	class PlayerCheckpoint : public chaos::Object
-	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
-
-		CHAOS_OBJECT_DECLARE_CLASS2(PlayerCheckpoint, chaos::Object);
-
-	public:
-
-		/** the life for the player */
-		int life_count = 0;
-
-		/** the health of the player */
-		float health = 1.0f;
-		/** the maximum health of the player */
-		float max_health = 1.0f;
-
-		/** the current invulnerability for the player */
-		float invulnerability_timer = 0.0f;
-		/** the duration invulnerability for the player */
-		float invulnerability_duration = 1.0f;
-
-		/** the score for the player */
-		int score = 0;
-
-		/** the data for the pawn */
-		chaos::shared_ptr<PlayerPawnCheckpoint> pawn_checkpoint;
-	};
-
-	// =============================================
 	// LevelCheckpoint
 	// =============================================
 
@@ -162,8 +114,6 @@ namespace death
 		/** the game clock value */
 		double main_clock_time = 0.0;
 
-		/** the data for the player */
-		chaos::shared_ptr<PlayerCheckpoint> player_checkpoint;
 		/** the data for the level */
 		chaos::shared_ptr<LevelCheckpoint> level_checkpoint;
 	};

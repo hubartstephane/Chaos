@@ -248,22 +248,6 @@ namespace death
 		life_count = std::max(life_count, 0);
 	}
 
-	bool Player::DoSaveIntoCheckpoint(PlayerCheckpoint * checkpoint) const
-	{
-		checkpoint->life_count = life_count;
-		checkpoint->health = health;
-		checkpoint->max_health = max_health;
-		checkpoint->invulnerability_timer = invulnerability_timer;
-		checkpoint->invulnerability_duration = invulnerability_duration;
-		checkpoint->score = score;
-
-		if (pawn != nullptr)
-			checkpoint->pawn_checkpoint = pawn->SaveIntoCheckpoint();
-
-		return true;
-	}
-
-	
 	bool Player::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
 		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
@@ -277,7 +261,7 @@ namespace death
 		chaos::JSONTools::SetAttribute(json_entry, "SCORE", score);
 
 		if (pawn != nullptr)
-			chaos::JSONTools::SetAttribute(json_entry, "PAWN", pawn);
+			chaos::JSONTools::SetAttribute(json_entry, "PAWN", *pawn);
 
 		return true;
 	}
@@ -294,22 +278,9 @@ namespace death
 		chaos::JSONTools::GetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
 		chaos::JSONTools::GetAttribute(json_entry, "SCORE", score);
 
-		chaos::JSONTools::GetAttribute(json_entry, "PAWN", pawn);
-
-		return true;
-	}
-
-	bool Player::DoLoadFromCheckpoint(PlayerCheckpoint const * checkpoint)
-	{
-		life_count = checkpoint->life_count;
-		health = checkpoint->health;
-		max_health = checkpoint->max_health;
-		invulnerability_timer = checkpoint->invulnerability_timer;
-		invulnerability_duration = checkpoint->invulnerability_duration;
-		score = checkpoint->score;
-
+		// XXX : the indirection is important to avoid a reallocation of the pawn
 		if (pawn != nullptr)
-			pawn->LoadFromCheckpoint(checkpoint->pawn_checkpoint.get());
+			chaos::JSONTools::GetAttribute(json_entry, "PAWN", *pawn);
 
 		return true;
 	}

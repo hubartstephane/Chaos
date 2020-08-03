@@ -48,38 +48,3 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 
 	burned_souls = 0;
 }
-
-death::PlayerCheckpoint * LudumPlayer::DoCreateCheckpoint() const
-{
-	return new LudumPlayerCheckpoint();
-}
-
-bool LudumPlayer::DoLoadFromCheckpoint(death::PlayerCheckpoint const * checkpoint)
-{
-	LudumPlayerCheckpoint const * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
-		return false;
-
-	if (!death::Player::DoLoadFromCheckpoint(checkpoint))
-		return false;
-
-
-
-
-
-	return true;
-}
-
-bool LudumPlayer::DoSaveIntoCheckpoint(death::PlayerCheckpoint * checkpoint) const
-{
-	LudumPlayerCheckpoint * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
-		return false;
-
-	if (!death::Player::DoSaveIntoCheckpoint(checkpoint))
-		return false;
-
-
-
-	return true;
-}

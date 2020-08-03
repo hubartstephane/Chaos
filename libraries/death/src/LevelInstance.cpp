@@ -427,6 +427,36 @@ namespace death
 		return sound_category.get();
 	}
 
+	bool LevelInstance::SerializeIntoJSON(nlohmann::json& json_entry) const
+	{
+		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
+			return false;
+
+		chaos::JSONTools::SetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
+		
+		Camera const * camera = DoGetCamera(0, false); // do not accept free camera
+		if (camera != nullptr)
+			chaos::JSONTools::SetAttribute(json_entry, "CAMERA0", camera);
+
+
+
+		return true;
+	}
+	
+	bool LevelInstance::SerializeFromJSON(nlohmann::json const& json_entry)
+	{
+		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
+			return false;
+
+		chaos::JSONTools::GetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
+
+		Camera * camera = DoGetCamera(0, false); // do not accept free camera
+		if (camera != nullptr)
+			chaos::JSONTools::GetAttribute(json_entry, "CAMERA0", camera);
+
+		return true;
+	}
+
 	bool LevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
 	{
 		Camera const* camera = DoGetCamera(0, false); // do not accept free camera

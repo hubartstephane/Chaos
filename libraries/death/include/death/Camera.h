@@ -4,6 +4,7 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/Tickable.h>
 #include <chaos/AutoCast.h>
+#include <chaos/JSONSerializable.h>
 
 #include <death/GameGettersDecl.h>
 #include <death/CameraComponent.h>
@@ -29,7 +30,7 @@ namespace death
 	// Camera
 	// =============================================
 
-	class Camera : public chaos::Tickable
+	class Camera : public chaos::Tickable, public chaos::JSONSerializable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
@@ -60,6 +61,11 @@ namespace death
 		glm::vec2 const & GetSafeZone() const { return safe_zone; }
 		/** set the safe zone of the camera */
 		void SetSafeZone(glm::vec2 const & in_safe_zone) { safe_zone = in_safe_zone; }
+
+		/** the processor may save its configuration into a JSON file */
+		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+		/** the processor may save its configuration from a JSON file */
+		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
 
 		/** Camera is a CameraComponent owner */
 		DEATH_DECLARE_COMPONENT_OWNER(CameraComponent, Component, components)

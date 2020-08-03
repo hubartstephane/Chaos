@@ -253,12 +253,15 @@ namespace chaos
 
 	bool WinTools::CopyBitmapToClipboard(HBITMAP hBitmap)
 	{
-		HANDLE handle = NULL;
-		OpenClipboard(NULL);
-		EmptyClipboard();
-		handle = SetClipboardData(CF_BITMAP, hBitmap);
-		CloseClipboard();
-		return (handle != NULL);
+		bool result = false;
+		if (OpenClipboard(NULL))
+		{
+			EmptyClipboard();
+			if (SetClipboardData(CF_BITMAP, hBitmap))
+				result = true;
+			CloseClipboard();
+		}
+		return result;
 	}
 
 	HBITMAP WinTools::CaptureWindowToBitmap(HWND hWnd)

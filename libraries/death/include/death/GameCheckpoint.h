@@ -140,6 +140,16 @@ namespace death
 
 	public:
 
+		/** the game state encoded into a JSON */
+		nlohmann::json player_save;
+		/** the game state encoded into a JSON */
+		nlohmann::json level_save;
+
+
+
+
+
+
 		/** the current level index */
 		int level_index = 0;
 		/** the game clock value */

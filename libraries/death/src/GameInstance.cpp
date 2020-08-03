@@ -5,6 +5,12 @@
 #include <death/GameCheckpoint.h>
 #include <death/GameGettersImpl.h>
 
+
+
+
+#include <chaos/WinTools.h>
+
+
 namespace death
 {
 	DEATH_GAMEGETTERS_IMPLEMENT(GameInstance);
@@ -356,6 +362,32 @@ namespace death
 
 	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const
 	{
+		// save level instance data
+		LevelInstance const* level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+			if (!SaveIntoJSON(checkpoint->level_save, level_instance))
+				return false;
+
+		// save player data
+		Player const* player = GetPlayer(0);
+		if (player != nullptr)
+			if (!SaveIntoJSON(checkpoint->player_save, player))
+				return false;
+
+
+
+		
+
+		auto p = checkpoint->player_save.dump(2);
+		chaos::WinTools::CopyStringToClipboard(p.c_str());
+
+		auto l = checkpoint->level_save.dump(2);
+		chaos::WinTools::CopyStringToClipboard(l.c_str());
+
+
+#if 0
+
+
 		// save level data
 		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
@@ -374,6 +406,9 @@ namespace death
 			checkpoint->main_clock_time = main_clock->GetClockTime();
 		if (game_clock != nullptr)
 			checkpoint->game_clock_time = game_clock->GetClockTime();
+
+#endif
+
 
 		return true;
 	}

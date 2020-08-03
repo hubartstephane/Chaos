@@ -363,6 +363,7 @@ namespace death
 	bool GameInstance::DoSaveIntoCheckpoint(GameCheckpoint * checkpoint) const
 	{
 		// save level instance data
+		// XXX : this is important that it is first so we can test LEVEL INDEX correspond to the level
 		LevelInstance const* level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (!SaveIntoJSON(checkpoint->level_save, level_instance))
@@ -373,7 +374,6 @@ namespace death
 		if (player != nullptr)
 			if (!SaveIntoJSON(checkpoint->player_save, player))
 				return false;
-
 
 		// save the clocks
 #if 0
@@ -424,15 +424,37 @@ namespace death
 
 	bool GameInstance::DoLoadFromCheckpoint(GameCheckpoint const * checkpoint)
 	{
+		// load level instance data
+		// XXX : this is important that it is first so we can test LEVEL INDEX correspond to the level
+		LevelInstance * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+			if (!LoadFromJSON(checkpoint->level_save, *level_instance))
+				return false;
+
+		// load player data
+		Player * player = GetPlayer(0);
+		if (player != nullptr)
+			if (!LoadFromJSON(checkpoint->player_save, *player))
+				return false;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
 		// ensure the level is the good one : or load new level
 		if (game->GetLevel()->GetLevelIndex() != checkpoint->level_index)
 		{
-
-
-
-
-
-
 
 
 			return false;
@@ -454,7 +476,7 @@ namespace death
 		//	main_clock->SetClockTime(checkpoint->main_clock_time);
 		//if (game_clock != nullptr)
 		//	game_clock->SetClockTime(checkpoint->game_clock_time);
-
+#endif
 
 		return true;
 	}

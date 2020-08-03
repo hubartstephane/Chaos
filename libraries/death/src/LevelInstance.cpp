@@ -432,13 +432,14 @@ namespace death
 		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
 			return false;
 
-		chaos::JSONTools::SetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
-		
+		// level index (just to be sure this is valid to apply a checkpoint on this level)
+		chaos::JSONTools::SetAttribute(json_entry, "LEVEL_INDEX", level->GetLevelIndex());		
+		// attributes
+		chaos::JSONTools::SetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);		
+		// the camera 0
 		Camera const * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
 			chaos::JSONTools::SetAttribute(json_entry, "CAMERA0", camera);
-
-
 
 		return true;
 	}
@@ -448,8 +449,15 @@ namespace death
 		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
 			return false;
 
-		chaos::JSONTools::GetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
+		// check for level index
+		int index = 0;
+		if (chaos::JSONTools::GetAttribute(json_entry, "LEVEL_INDEX", index))
+			if (level->GetLevelIndex() != index)
+				return false;
 
+		// attributes
+		chaos::JSONTools::GetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
+		// the camera 0
 		Camera * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
 			chaos::JSONTools::GetAttribute(json_entry, "CAMERA0", camera);

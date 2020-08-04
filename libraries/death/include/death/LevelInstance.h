@@ -26,7 +26,7 @@ namespace death
 	// LevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class LevelInstance : public chaos::GPURenderable, public CheckpointObject<LevelCheckpoint>, public chaos::JSONSerializable
+	class LevelInstance : public chaos::GPURenderable, public chaos::JSONSerializable
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 
@@ -151,11 +151,6 @@ namespace death
 		virtual void CreateBackgroundImage();
 		/** change the music */
 		virtual void SetInGameMusic();
-
-		/** override */
-		virtual bool DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const override;
-		/** override */
-		virtual bool DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint) override;
 
 	protected:
 

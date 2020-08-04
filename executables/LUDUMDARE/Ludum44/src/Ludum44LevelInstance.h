@@ -42,12 +42,9 @@ protected:
 	virtual void CreateCameras() override;
 
 	/** override */
-	virtual death::LevelCheckpoint * DoCreateCheckpoint() const;
+	bool SerializeFromJSON(nlohmann::json const& json) override;
 	/** override */
-	virtual bool DoLoadFromCheckpoint(death::LevelCheckpoint const * checkpoint) override;
-	/** override */
-	virtual bool DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoint) const override;
-
+	bool SerializeIntoJSON(nlohmann::json & json) const override;
 
 protected:
 

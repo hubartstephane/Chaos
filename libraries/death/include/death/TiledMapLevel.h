@@ -53,25 +53,11 @@ namespace death
 #define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
 #define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
 
-		// =====================================
-		// TiledMapObjectCheckpoint
-		// =====================================
-
-	class TiledMapObjectCheckpoint : public chaos::Object
-	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
-
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapObjectCheckpoint, chaos::Object);
-
-	public:
-
-	};
-
 	// =====================================
 	// TiledMapObject 
 	// =====================================
 
-	class TiledMapObject : public chaos::Tickable, public CheckpointObject<TiledMapObjectCheckpoint>, public chaos::JSONSerializable
+	class TiledMapObject : public chaos::Tickable, public chaos::JSONSerializable
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
@@ -198,12 +184,6 @@ namespace death
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 		/** override */
 		virtual void InitializeInternals() override;
-		/** override */
-		virtual TiledMapObjectCheckpoint* DoCreateCheckpoint() const override;
-		/** override */
-		virtual bool DoSaveIntoCheckpoint(TiledMapObjectCheckpoint* checkpoint) const override;
-		/** override */
-		virtual bool DoLoadFromCheckpoint(TiledMapObjectCheckpoint const* checkpoint) override;
 
 		/** called whenever a collision with object is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type);
@@ -218,26 +198,6 @@ namespace death
 		float outside_box_factor = 1.0f;
 
 		/** whenever the trigger-enter event has happened */
-		bool enter_event_triggered = false;
-	};
-
-	// =====================================
-	// TiledMapTriggerCheckpoint
-	// =====================================
-
-	class TiledMapTriggerCheckpoint : public TiledMapObjectCheckpoint
-	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
-
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTriggerCheckpoint, TiledMapObjectCheckpoint);
-
-	public:
-
-		/** flag whether to object is enabled or not */
-		bool enabled = true;
-		/** flag whether to can only trigger once */
-		bool trigger_once = false;
-		/** number of time the trigger-enter event happened */
 		bool enter_event_triggered = false;
 	};
 
@@ -512,42 +472,10 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapLayerCheckpoint
-	// =====================================
-
-	class TiledMapLayerCheckpoint : public chaos::Object
-	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
-
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLayerCheckpoint, chaos::Object);
-
-	public:
-
-		// the checkpoint per Object
-		std::map<int, chaos::shared_ptr<TiledMapObjectCheckpoint>> trigger_checkpoints;
-		// the checkpoint per Object
-		std::map<int, chaos::shared_ptr<TiledMapObjectCheckpoint>> object_checkpoints;
-	};
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// =====================================
 	// TiledMapLayerInstance : instance of a Layer
 	// =====================================
 
-	class TiledMapLayerInstance : public chaos::GPURenderable, public CheckpointObject<TiledMapLayerCheckpoint>, public chaos::JSONSerializable
+	class TiledMapLayerInstance : public chaos::GPURenderable, public chaos::JSONSerializable
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
@@ -680,13 +608,6 @@ namespace death
 		/** serialization of all JSON objects into an array */
 		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TiledMapTrigger>>& result);
 
-		/** override */
-		virtual TiledMapLayerCheckpoint* DoCreateCheckpoint() const override;
-		/** override */
-		virtual bool DoSaveIntoCheckpoint(TiledMapLayerCheckpoint* checkpoint) const override;
-		/** override */
-		virtual bool DoLoadFromCheckpoint(TiledMapLayerCheckpoint const* checkpoint) override;
-
 		/** find render material according to its name (or create the default) */
 		chaos::GPURenderMaterial* FindOrCreateRenderMaterial(char const* material_name);
 
@@ -718,13 +639,6 @@ namespace death
 		/** try to search a name and a tag in the chaos::layer,  give them to the particle layer (and some other data as well) */
 		virtual bool InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer);
 
-		/** utility methods for loading objects in layer instances */
-		template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
-		bool DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints);
-		/** utility methods for saving objects in layer instances */
-		template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
-		bool DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const& elements, CHECKPOINT_VECTOR& checkpoints) const;
-
 		/** some callbacks */
 		virtual void OnLevelEnded();
 		/** some callbacks */
@@ -734,7 +648,6 @@ namespace death
 		void ComputeLayerCollisionMask(char const* mask);
 		/** search a collision flag from its name */
 		virtual uint64_t GetCollisionFlagByName(char const* name) const;
-
 
 	protected:
 
@@ -804,22 +717,6 @@ namespace death
 		chaos::weak_ptr<chaos::Object> object;
 		/** all the triggers colliding */
 		std::vector<chaos::weak_ptr<TiledMapTrigger>> triggers;
-	};
-
-	// =====================================
-	// TiledMapLevelCheckpoint
-	// =====================================
-
-	class TiledMapLevelCheckpoint : public LevelCheckpoint
-	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
-
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevelCheckpoint, LevelCheckpoint);
-
-	public:
-
-		// the checkpoint per LayerBase
-		std::map<int, chaos::shared_ptr<TiledMapLayerCheckpoint>> layer_checkpoints;
 	};
 
 	// =====================================
@@ -948,14 +845,6 @@ namespace death
 
 		/** the default material when not specified */
 		virtual chaos::GPURenderMaterial* GetDefaultRenderMaterial();
-
-		/** override */
-		virtual LevelCheckpoint* DoCreateCheckpoint() const override;
-		/** override */
-		virtual bool DoSaveIntoCheckpoint(LevelCheckpoint* checkpoint) const override;
-		/** override */
-		virtual bool DoLoadFromCheckpoint(LevelCheckpoint const* checkpoint) override;
-
 
 		/** find the collision info for an object */
 		TiledMapTriggerCollisionInfo* FindTriggerCollisionInfo(chaos::Object * object);

@@ -78,49 +78,6 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 	death::TiledMapLevelInstance::OnPlayerLeaved(player);
 }
 
-death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const
-{
-	return new LudumLevelCheckpoint();
-}
 
-bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * checkpoint)
-{
-	LudumLevelCheckpoint const * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
-		return false;
-
-
-	// destroy all bullets and all enemies
-	char const * layer_names[] = { "PlayerFire", "EnemyFire", "Enemies", "Bonus", nullptr };
-	for (int i = 0; layer_names[i] != nullptr; ++i)
-	{
-		death::TiledMapLayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
-		if (layer_instance != nullptr)
-		{
-			chaos::ParticleLayerBase * particle_layer = layer_instance->GetParticleLayer();
-			if (particle_layer != nullptr)
-				particle_layer->ClearAllAllocations();
-		}
-	}
-
-	if (!death::TiledMapLevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
-		return false;
-
-	// shuludum .... refactor the share this code ... hard copy of what is in LD44
-
-	return true;
-}
-
-bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoint) const
-{
-	LudumLevelCheckpoint * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
-		return false;
-
-	if (!death::TiledMapLevelInstance::DoSaveIntoCheckpoint(ludum_checkpoint))
-		return false;
-
-	return true;
-}
-
+//char const* layer_names[] = { "PlayerFire", "EnemyFire", "Enemies", "Bonus", nullptr };
 

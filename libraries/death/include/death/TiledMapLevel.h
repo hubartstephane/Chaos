@@ -595,6 +595,12 @@ namespace death
 		/** find the object from its name */
 		TiledMapObject const* FindObject(chaos::ObjectRequest request) const;
 
+		/** find the trigger its ID */
+		TiledMapTrigger* FindTriggerByID(int id);
+		/** find the trigger its ID */
+		TiledMapTrigger const* FindTriggerByID(int id) const;
+
+
 		/** get the bounding box for the level */
 		chaos::box2 GetBoundingBox(bool world_system) const;
 
@@ -671,6 +677,8 @@ namespace death
 
 		/** initialization */
 		virtual bool Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
+		/** serialization of all JSON objects into an array */
+		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TiledMapTrigger>>& result);
 
 		/** override */
 		virtual TiledMapLayerCheckpoint* DoCreateCheckpoint() const override;
@@ -830,6 +838,11 @@ namespace death
 		chaos::TiledMap::Map* GetTiledMap();
 		/** get the tiled map */
 		chaos::TiledMap::Map const* GetTiledMap() const;
+
+		/** find the layer instance from its ID */
+		TiledMapLayerInstance * FindLayerInstanceByID(int id);
+		/** find the layer instance from its ID */
+		TiledMapLayerInstance const * FindLayerInstanceByID(int id) const;
 
 		/** find the layer instance from its name */
 		TiledMapLayerInstance* FindLayerInstance(chaos::ObjectRequest request);

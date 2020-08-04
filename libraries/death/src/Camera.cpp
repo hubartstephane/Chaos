@@ -85,9 +85,7 @@ namespace death
 	{
 		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
 			return false;
-
 		chaos::JSONTools::SetAttribute(json_entry, "CAMERA_BOX", GetCameraBox(false));
-
 		return true;
 	}
 	
@@ -95,11 +93,9 @@ namespace death
 	{
 		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
 			return false;
-
 		chaos::box2 b;
 		if (chaos::JSONTools::GetAttribute(json_entry, "CAMERA_BOX", b))
 			SetCameraBox(b);
-
 		return true;
 	}
 

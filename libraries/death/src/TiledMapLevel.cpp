@@ -53,7 +53,7 @@ namespace death
 		if (!chaos::JSONSerializable::SerializeFromJSON(json))
 			return false;
 		chaos::JSONTools::GetAttribute(json, "NAME", name);
-		chaos::JSONTools::GetAttribute(json, "ID", id);
+		chaos::JSONTools::GetAttribute(json, "OBJECT_ID", id);
 		chaos::JSONTools::GetAttribute(json, "BOUNDING_BOX", bounding_box);
 
 		return true;
@@ -64,7 +64,7 @@ namespace death
 		if (!chaos::JSONSerializable::SerializeIntoJSON(json))
 			return false;
 		chaos::JSONTools::SetAttribute(json, "NAME", name);
-		chaos::JSONTools::SetAttribute(json, "ID", id);
+		chaos::JSONTools::SetAttribute(json, "OBJECT_ID", id);
 		chaos::JSONTools::SetAttribute(json, "BOUNDING_BOX", bounding_box);
 
 		return true;
@@ -1024,11 +1024,50 @@ namespace death
 		return false;
 	}
 
+	bool TiledMapLayerInstance::SerializeObjectListFromJSON(nlohmann::json const& json, char const * attribute_name, std::vector<chaos::shared_ptr<TiledMapTrigger>> & result)
+	{
+		// in "Objects" array, read all objects, search the ID and apply the data to dedicated object
+		nlohmann::json const* objects_json = chaos::JSONTools::GetStructure(json, attribute_name);
+		if (objects_json != nullptr && objects_json->is_array())
+		{
+			for (size_t i = 0; i < objects_json->size(); ++i)
+			{
+				nlohmann::json const* object_json = chaos::JSONTools::GetStructureByIndex(*objects_json, i);
+				if (object_json != nullptr && object_json->is_object())
+				{
+					int object_id = 0;
+					if (chaos::JSONTools::GetAttribute(*object_json, "OBJECT_ID", object_id))
+					{
+						TiledMapTrigger* trigger = FindTriggerByID(object_id);
+						if (trigger != nullptr)
+						{
+							chaos::LoadFromJSON(*object_json, *trigger); // XXX : the indirection is important to avoid the creation of a new layer_instance
+						}
+						else
+						{
+
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 	
 	bool TiledMapLayerInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
 		if (!chaos::JSONSerializable::SerializeFromJSON(json))
 			return false;
+
+		SerializeObjectListFromJSON(json, "TRIGGERS", triggers);
+		//SerializeObjectListFromJSON(json, "OBJECTS", objects);
+
+
+
+
+
+
+
 
 
 		return true;
@@ -1039,11 +1078,11 @@ namespace death
 		if (!chaos::JSONSerializable::SerializeIntoJSON(json))
 			return false;
 
+		chaos::JSONTools::SetAttribute(json, "LAYER_ID", GetLayerID());
+		chaos::JSONTools::SetAttribute(json, "TRIGGERS", triggers);
+		chaos::JSONTools::SetAttribute(json, "OBJECTS", objects);
 		return true;
 	}
-
-
-
 
 	bool TiledMapLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer* image_layer)
 	{
@@ -1525,6 +1564,24 @@ namespace death
 	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, camera_templates, const);
 
 #undef DEATH_FIND_OBJECT
+	
+	TiledMapTrigger* TiledMapLayerInstance::FindTriggerByID(int id)
+	{
+		size_t count = triggers.size();
+		for (size_t i = 0; i < triggers.size(); ++i)
+			if (triggers[i]->GetObjectID() == id)
+				return triggers[i].get();
+		return nullptr;
+	}
+	
+	TiledMapTrigger const* TiledMapLayerInstance::FindTriggerByID(int id) const
+	{
+		size_t count = triggers.size();
+		for (size_t i = 0; i < triggers.size(); ++i)
+			if (triggers[i]->GetObjectID() == id)
+				return triggers[i].get();
+		return nullptr;
+	}
 
 
 	size_t TiledMapLayerInstance::GetTriggerCount() const
@@ -2037,6 +2094,24 @@ namespace death
 		return default_material.get();
 	}
 
+	TiledMapLayerInstance* TiledMapLevelInstance::FindLayerInstanceByID(int id)
+	{
+		size_t count = layer_instances.size();
+		for (size_t i = 0; i < count; ++i)
+			if (layer_instances[i]->GetLayerID() == id)
+				return layer_instances[i].get();
+		return nullptr;
+	}
+
+	TiledMapLayerInstance const* TiledMapLevelInstance::FindLayerInstanceByID(int id) const
+	{
+		size_t count = layer_instances.size();
+		for (size_t i = 0; i < count; ++i)
+			if (layer_instances[i]->GetLayerID() == id)
+				return layer_instances[i].get();
+		return nullptr;
+	}
+
 #define DEATH_FIND_OBJECT(result_type, func_name, constness)\
 	result_type constness * TiledMapLevelInstance::func_name(chaos::ObjectRequest request) constness\
 	{\
@@ -2308,7 +2383,25 @@ namespace death
 		if (!LevelInstance::SerializeFromJSON(json))
 			return false;
 
-
+		// in "Layers" array, read all objects, search the ID and apply the data to dedicated layer instance
+		nlohmann::json const* layers_json = chaos::JSONTools::GetStructure(json, "LAYERS");
+		if (layers_json != nullptr && layers_json->is_array())
+		{			
+			for (size_t i = 0; i < layers_json->size(); ++i)
+			{
+				nlohmann::json const* layer_json = chaos::JSONTools::GetStructureByIndex(*layers_json, i);
+				if (layer_json != nullptr && layer_json->is_object())
+				{
+					int layer_id = 0;
+					if (chaos::JSONTools::GetAttribute(*layer_json, "LAYER_ID", layer_id))
+					{
+						TiledMapLayerInstance * layer_instance = FindLayerInstanceByID(layer_id);
+						if (layer_instance != nullptr)
+							LoadFromJSON(*layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
+					}
+				}
+			}
+		}
 		return true;
 	}
 
@@ -2316,10 +2409,9 @@ namespace death
 	{
 		if (!LevelInstance::SerializeIntoJSON(json))
 			return false;
-
+		chaos::JSONTools::SetAttribute(json, "LAYERS", layer_instances);
 		return true;
 	}
-
 
 	// =====================================
 	// TiledMapCollisionIteratorBase implementation

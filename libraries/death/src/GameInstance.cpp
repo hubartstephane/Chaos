@@ -385,39 +385,11 @@ namespace death
 				return false;
 #endif
 
-		
-
 		auto p = checkpoint->level_save.dump(2);
 		chaos::WinTools::CopyStringToClipboard(p.c_str());
 
-		auto l = checkpoint->player_save.dump(2);
-		chaos::WinTools::CopyStringToClipboard(l.c_str());
-
-
-#if 0
-
-
-		// save level data
-		LevelInstance const * level_instance = GetLevelInstance();
-		if (level_instance != nullptr)
-		{
-			checkpoint->level_index      = game->GetLevel()->GetLevelIndex();
-			checkpoint->level_checkpoint = level_instance->SaveIntoCheckpoint();
-		}
-
-		// save player
-		Player const * player = GetPlayer(0);
-		if (player != nullptr)
-			checkpoint->player_checkpoint = player->SaveIntoCheckpoint();
-
-		// save the clocks
-		if (main_clock != nullptr)
-			checkpoint->main_clock_time = main_clock->GetClockTime();
-		if (game_clock != nullptr)
-			checkpoint->game_clock_time = game_clock->GetClockTime();
-
-#endif
-
+		//auto l = checkpoint->player_save.dump(2);
+		//chaos::WinTools::CopyStringToClipboard(l.c_str());
 
 		return true;
 	}
@@ -437,7 +409,6 @@ namespace death
 			if (!LoadFromJSON(checkpoint->player_save, *player)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
 
-
 		// load the clocks
 #if 0
 		if (main_clock != nullptr)
@@ -446,44 +417,6 @@ namespace death
 		if (main_clock != nullptr)
 			if (!LoadFromJSON(checkpoint->game_clock_save, *game_clock)) // XXX : indirection is important to avoid a reallocation the object
 				return false;
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-		// ensure the level is the good one : or load new level
-		if (game->GetLevel()->GetLevelIndex() != checkpoint->level_index)
-		{
-
-
-			return false;
-		}
-
-
-		// load level
-		LevelInstance * level_instance = GetLevelInstance();
-		if (level_instance != nullptr)
-			 level_instance->LoadFromCheckpoint(checkpoint->level_checkpoint.get());
-
-		// load player
-		Player * player = GetPlayer(0);
-		if (player != nullptr)
-			player->LoadFromCheckpoint(checkpoint->player_checkpoint.get());
-
-		// load the clocks
-		//if (main_clock != nullptr)
-		//	main_clock->SetClockTime(checkpoint->main_clock_time);
-		//if (game_clock != nullptr)
-		//	game_clock->SetClockTime(checkpoint->game_clock_time);
 #endif
 
 		return true;

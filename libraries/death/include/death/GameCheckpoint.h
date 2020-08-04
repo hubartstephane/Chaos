@@ -61,26 +61,6 @@ namespace death
 	};
 
 	// =============================================
-	// LevelCheckpoint
-	// =============================================
-
-	class LevelCheckpoint : public chaos::Object
-	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
-
-		CHAOS_OBJECT_DECLARE_CLASS2(LevelCheckpoint, chaos::Object);
-
-	public:
-
-		/** the camera 0 box */
-		chaos::box2 camera_box;
-		/** the current time out */
-		float level_timeout = -1;
-		/** the level clock time */
-		double level_clock_time = 0.0;
-	};
-
-	// =============================================
 	// GameCheckpoint
 	// =============================================
 
@@ -101,22 +81,6 @@ namespace death
 		nlohmann::json main_clock_save;
 		/** the game state encoded into a JSON */
 		nlohmann::json game_clock_save;
-
-		
-
-
-
-
-		/** the current level index */
-		int level_index = 0;
-		/** the game clock value */
-		double game_clock_time = 0.0;
-		/** the game clock value */
-		double main_clock_time = 0.0;
-
-		/** the data for the level */
-		chaos::shared_ptr<LevelCheckpoint> level_checkpoint;
 	};
-
 
 }; // namespace death

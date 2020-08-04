@@ -82,51 +82,24 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	return true;
 }
 
-death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const
+bool LudumLevelInstance::SerializeFromJSON(nlohmann::json const& json)
 {
-	return new LudumLevelCheckpoint();
-}
-
-bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * checkpoint)
-{
-	LudumLevelCheckpoint const * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
+	if (!death::TiledMapLevelInstance::SerializeFromJSON(json))
 		return false;
-
-	if (!death::TiledMapLevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
-		return false;
-
-	scroll_factor = ludum_checkpoint->scroll_factor;
-
-	// destroy all bullets and all enemies
-	char const * layer_names[] = { "fire", "Enemies", nullptr };
-	for (int i = 0; layer_names[i] != nullptr; ++i)
-	{
-		death::TiledMapLayerInstance * layer_instance = FindLayerInstance(layer_names[i]);
-		if (layer_instance != nullptr)
-		{
-			chaos::ParticleLayerBase * particle_layer = layer_instance->GetParticleLayer();
-			if (particle_layer != nullptr)
-				particle_layer->ClearAllAllocations();
-		}
-	}
-
+	chaos::JSONTools::GetAttribute(json, "SCROLL_FACTOR", scroll_factor);
 	return true;
 }
 
-bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoint) const
+bool LudumLevelInstance::SerializeIntoJSON(nlohmann::json & json) const
 {
-	LudumLevelCheckpoint * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
+	if (!death::TiledMapLevelInstance::SerializeIntoJSON(json))
 		return false;
-
-	if (!death::TiledMapLevelInstance::DoSaveIntoCheckpoint(ludum_checkpoint))
-		return false;
-
-	ludum_checkpoint->scroll_factor = scroll_factor;
-
-
+	chaos::JSONTools::SetAttribute(json, "SCROLL_FACTOR", scroll_factor);
 	return true;
 }
+
+//char const* layer_names[] = { "fire", "Enemies", nullptr };
+
+
 
 

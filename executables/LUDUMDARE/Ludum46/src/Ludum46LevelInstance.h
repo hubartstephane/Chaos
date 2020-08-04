@@ -47,12 +47,6 @@ protected:
 	virtual void CreateCameras() override;
 
 	/** override */
-	virtual death::LevelCheckpoint * DoCreateCheckpoint() const;
-	/** override */
-	virtual bool DoLoadFromCheckpoint(death::LevelCheckpoint const * checkpoint) override;
-	/** override */
-	virtual bool DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoint) const override;
-	/** override */
 	virtual bool IsPlayerDead(death::Player* player) override;
 
 	virtual bool CheckLevelCompletion() const override;

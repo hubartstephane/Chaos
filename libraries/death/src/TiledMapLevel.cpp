@@ -157,43 +157,6 @@ namespace death
 		trigger_once = in_trigger_once;
 	}
 
-	TiledMapObjectCheckpoint* TiledMapTrigger::DoCreateCheckpoint() const
-	{
-		return new TiledMapTriggerCheckpoint();
-	}
-
-	bool TiledMapTrigger::DoSaveIntoCheckpoint(TiledMapObjectCheckpoint* checkpoint) const
-	{
-		TiledMapTriggerCheckpoint* trigger_checkpoint = auto_cast(checkpoint);
-		if (trigger_checkpoint == nullptr)
-			return false;
-
-		if (!TiledMapObject::DoSaveIntoCheckpoint(checkpoint))
-			return false;
-
-		trigger_checkpoint->enabled = enabled;
-		trigger_checkpoint->trigger_once = trigger_once;
-		trigger_checkpoint->enter_event_triggered = enter_event_triggered;
-
-		return true;
-	}
-
-	bool TiledMapTrigger::DoLoadFromCheckpoint(TiledMapObjectCheckpoint const* checkpoint)
-	{
-		TiledMapTriggerCheckpoint const* trigger_checkpoint = auto_cast(checkpoint);
-		if (trigger_checkpoint == nullptr)
-			return false;
-
-		if (!TiledMapObject::DoLoadFromCheckpoint(checkpoint))
-			return false;
-
-		enabled = trigger_checkpoint->enabled;
-		trigger_once = trigger_checkpoint->trigger_once;
-		enter_event_triggered = trigger_checkpoint->enter_event_triggered;
-
-		return true;
-	}
-
 	// =============================================================
 	// TiledMapCheckPointTriggerObject implementation
 	// =============================================================
@@ -1660,109 +1623,11 @@ namespace death
 		return objects[index].get();
 	}
 
-	TiledMapLayerCheckpoint* TiledMapLayerInstance::DoCreateCheckpoint() const
-	{
-		return new TiledMapLayerCheckpoint();
-	}
+#if 0
 
-	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
-	bool TiledMapLayerInstance::DoSaveIntoCheckpointHelper(ELEMENT_VECTOR const& elements, CHECKPOINT_VECTOR& checkpoints) const
-	{
-		size_t count = elements.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			auto const* obj = elements[i].get();
-			if (obj == nullptr)
-				continue;
-			// save the checkpoint
-			TiledMapObjectCheckpoint* checkpoint = obj->SaveIntoCheckpoint();
-			if (checkpoint == nullptr)
-				continue;
-			checkpoints[obj->GetObjectID()] = checkpoint;
-		}
-		return true;
-	}
-
-	bool TiledMapLayerInstance::DoSaveIntoCheckpoint(TiledMapLayerCheckpoint* checkpoint) const
-	{
-		DoSaveIntoCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
-		DoSaveIntoCheckpointHelper(objects, checkpoint->object_checkpoints);
-		return true;
-	}
-
-	template<typename ELEMENT_VECTOR, typename CHECKPOINT_VECTOR>
-	bool TiledMapLayerInstance::DoLoadFromCheckpointHelper(ELEMENT_VECTOR& elements, CHECKPOINT_VECTOR const& checkpoints)
-	{
-
-
-		int i = 0;
-
-
-
-
-
-
-		// iterate over all checkpoints
-		for (auto it = checkpoints.begin() ; it != checkpoints.end() ; ++it)
-		{
-			int id = it->first;
-			auto * checkpoint = it->second.get();
-
-			// search whether there is an object of given ID in the list
-			auto obj_it = std::find_if(elements.begin(), elements.end(), [id](auto& obj) {return obj->GetObjectID() == id; });
-
-			// object with ID should be removed if no checkoint
-			if (checkpoint == nullptr)
-			{
-				if (obj_it != elements.end())
-				{
-					elements.erase(obj_it);
-				}
-			}
-			else
-			{
-				// update the object with the data in the checkpoint
-				if (obj_it != elements.end())
-				{
-					(*obj_it)->LoadFromCheckpoint(checkpoint);
-				}
-				// the object has been destroyed since the save => recreate it
-				else
-				{
-
-
-
-
-
-
-					i = i;
-				}			
-			}
-		}
-
-		// check whether some object has no checkpoint => must be destroyed
-		for (size_t i = elements.size(); i > 0 ; --i)
-		{
-			size_t index = i - 1;
-
-			auto it = checkpoints.find(elements[index]->GetObjectID());
-			if (it == checkpoints.end())
-				elements.erase(elements.begin() + index);
-		}
-		return true;
-	}
-
-	bool TiledMapLayerInstance::DoLoadFromCheckpoint(TiledMapLayerCheckpoint const* checkpoint)
-	{
-		// destroy particles
-		if (autoclean_particles && particle_layer != nullptr)
-			particle_layer->ClearAllAllocations();
-
-		// serialize the objects
-		DoLoadFromCheckpointHelper(triggers, checkpoint->trigger_checkpoints);
-		DoLoadFromCheckpointHelper(objects, checkpoint->object_checkpoints);
-		return true;
-	}
+	if (autoclean_particles && particle_layer != nullptr)
+		particle_layer->ClearAllAllocations();
+#endif
 
 	void TiledMapLayerInstance::OnLevelEnded()
 	{
@@ -2283,66 +2148,6 @@ namespace death
 			}
 		}
 		death::LevelInstance::SetInGameMusic();
-	}
-
-	LevelCheckpoint* TiledMapLevelInstance::DoCreateCheckpoint() const
-	{
-		return new TiledMapLevelCheckpoint();
-	}
-
-	bool TiledMapLevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint* checkpoint) const
-	{
-		TiledMapLevelCheckpoint* tiled_level_checkpoint = auto_cast(checkpoint);
-		if (tiled_level_checkpoint == nullptr)
-			return false;
-
-		if (!death::LevelInstance::DoSaveIntoCheckpoint(checkpoint))
-			return false;
-
-		size_t count = layer_instances.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			// the layer (death::TiledMap point of view)
-			TiledMapLayerInstance const* layer = layer_instances[i].get();
-			if (layer == nullptr)
-				continue;
-			// create the checkpoint 
-			TiledMapLayerCheckpoint* layer_checkpoint = layer_instances[i]->SaveIntoCheckpoint();
-			if (layer_checkpoint == nullptr)
-				continue;
-			// insert the layer_checkpoint in level_checkpoint
-			tiled_level_checkpoint->layer_checkpoints[layer->GetLayerID()] = layer_checkpoint;
-		}
-
-		return true;
-	}
-
-	bool TiledMapLevelInstance::DoLoadFromCheckpoint(LevelCheckpoint const* checkpoint)
-	{
-		TiledMapLevelCheckpoint const* tiled_level_checkpoint = auto_cast(checkpoint);
-		if (tiled_level_checkpoint == nullptr)
-			return false;
-
-		// super method
-		if (!death::LevelInstance::DoLoadFromCheckpoint(checkpoint))
-			return false;
-
-		// iterate over layers that have serialized a checkpoint
-		size_t count = layer_instances.size();
-		for (size_t i = 0; i < count; ++i)
-		{
-			// the layer
-			TiledMapLayerInstance* layer = layer_instances[i].get();
-			if (layer == nullptr)
-				continue;
-			// find the corresponding checkpoint
-			auto it = tiled_level_checkpoint->layer_checkpoints.find(layer->GetLayerID());
-			if (it == tiled_level_checkpoint->layer_checkpoints.end())
-				continue;
-			// load layer_chackpoint
-			layer->LoadFromCheckpoint(it->second.get());
-		}
-		return true;
 	}
 
 	void TiledMapLevelInstance::OnLevelEnded()

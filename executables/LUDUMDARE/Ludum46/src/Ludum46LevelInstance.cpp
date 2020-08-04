@@ -86,40 +86,6 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 
 }
 
-death::LevelCheckpoint * LudumLevelInstance::DoCreateCheckpoint() const
-{
-	return new LudumLevelCheckpoint();
-}
-
-bool LudumLevelInstance::DoLoadFromCheckpoint(death::LevelCheckpoint const * checkpoint)
-{
-	LudumLevelCheckpoint const * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
-		return false;
-
-
-	if (!death::TiledMapLevelInstance::DoLoadFromCheckpoint(ludum_checkpoint))
-		return false;
-
-
-
-
-
-	return true;
-}
-
-bool LudumLevelInstance::DoSaveIntoCheckpoint(death::LevelCheckpoint * checkpoint) const
-{
-	LudumLevelCheckpoint * ludum_checkpoint = auto_cast(checkpoint);
-	if (ludum_checkpoint == nullptr)
-		return false;
-
-	if (!death::TiledMapLevelInstance::DoSaveIntoCheckpoint(ludum_checkpoint))
-		return false;
-
-	return true;
-}
-
 int LudumLevelInstance::GetCurrentSoulCount() const
 {
 	death::TiledMapLayerInstance const * layer_instance = FindLayerInstance("Souls");

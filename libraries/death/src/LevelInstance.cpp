@@ -465,32 +465,6 @@ namespace death
 		return true;
 	}
 
-	bool LevelInstance::DoSaveIntoCheckpoint(LevelCheckpoint * checkpoint) const
-	{
-		Camera const* camera = DoGetCamera(0, false); // do not accept free camera
-		if (camera != nullptr)
-			checkpoint->camera_box = camera->GetCameraBox(false);
-		checkpoint->level_timeout = level_timeout;
-
-		//if (level_clock != nullptr)
-		//	checkpoint->level_clock_time = level_clock->GetClockTime();
-
-		return true;
-	}
-
-	bool LevelInstance::DoLoadFromCheckpoint(LevelCheckpoint const * checkpoint)
-	{
-		Camera * camera = DoGetCamera(0, false); // do not accept free camera
-		if (camera != nullptr)
-			camera->SetCameraBox(checkpoint->camera_box);
-		level_timeout = checkpoint->level_timeout;
-
-		//if (level_clock != nullptr)
-		//	level_clock->SetClockTime(checkpoint->level_clock_time);
-
-		return true;
-	}
-
 	chaos::box2 LevelInstance::GetBoundingBox() const
 	{
 		if (game != nullptr)

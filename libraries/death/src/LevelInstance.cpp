@@ -472,5 +472,10 @@ namespace death
 		return chaos::box2();
 	}
 
+	void LevelInstance::OnRestart()
+	{
+
+	}
+
 }; // namespace death
 

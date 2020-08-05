@@ -1669,13 +1669,17 @@ namespace death
 	}
 
 	// =====================================
-	// TiledMapLevelInstance implementation
+	// TiledMapTriggerCollisionInfo implementation
 	// =====================================
 
 	bool TiledMapTriggerCollisionInfo::FindTrigger(TiledMapTrigger const* trigger) const
 	{
 		return std::find_if(triggers.begin(), triggers.end(), [trigger](chaos::weak_ptr<TiledMapTrigger> const& p) {return p.get() == trigger; }) != triggers.end();
 	}
+
+	// =====================================
+	// TiledMapLevelInstance implementation
+	// =====================================
 
 	chaos::TiledMap::Map* TiledMapLevelInstance::GetTiledMap()
 	{

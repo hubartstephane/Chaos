@@ -607,6 +607,8 @@ namespace death
 		virtual bool Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 		/** serialization of all JSON objects into an array */
 		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TiledMapTrigger>>& result);
+		/** called whenever level instance is restarted */
+		virtual void OnRestart();
 
 		/** find render material according to its name (or create the default) */
 		chaos::GPURenderMaterial* FindOrCreateRenderMaterial(char const* material_name);
@@ -693,12 +695,6 @@ namespace death
 		/** the current offset */
 		glm::vec2 offset = glm::vec2(0.0f, 0.0f);
 	};
-
-
-
-
-
-
 
 	// =====================================
 	// TiledMapTriggerCollisionInfo 
@@ -809,6 +805,8 @@ namespace death
 		virtual bool DoTick(float delta_time) override;
 		/** override */
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
+		/** override */
+		virtual void OnRestart() override;
 
 		/** handle all collisions with the player (TriggerObject) */
 		void HandlePlayerTriggerCollisions(float delta_time);

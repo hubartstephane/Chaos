@@ -118,6 +118,9 @@ namespace death
 		/** called for each player whenever a level is ended */
 		virtual void OnPlayerLeaved(Player * player);
 
+		/** called whenever the level is about to be restarted */
+		virtual void OnRestart();
+
 		/** create a player displacement component for the player */
 		virtual PlayerDisplacementComponent* CreatePlayerDisplacementComponent(Player* player);
 

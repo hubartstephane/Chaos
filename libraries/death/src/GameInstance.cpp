@@ -357,6 +357,11 @@ namespace death
 	{
 		if (respawn_checkpoint == nullptr)
 			return false;		
+		// prepare respawn
+		LevelInstance * level_instance = GetLevelInstance();
+		if (level_instance != nullptr)
+			level_instance->OnRestart();
+		// apply checkpoint to the game
 		return LoadFromCheckpoint(respawn_checkpoint.get());
 	}
 
@@ -384,12 +389,6 @@ namespace death
 			if (!SaveIntoJSON(checkpoint->game_clock_save, *game_clock))
 				return false;
 #endif
-
-		auto p = checkpoint->level_save.dump(2);
-		chaos::WinTools::CopyStringToClipboard(p.c_str());
-
-		//auto l = checkpoint->player_save.dump(2);
-		//chaos::WinTools::CopyStringToClipboard(l.c_str());
 
 		return true;
 	}

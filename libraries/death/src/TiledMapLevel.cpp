@@ -987,6 +987,12 @@ namespace death
 		return false;
 	}
 
+	void TiledMapLayerInstance::OnRestart()
+	{
+		if (autoclean_particles && particle_layer != nullptr)
+			particle_layer->ClearAllAllocations();
+	}
+
 	bool TiledMapLayerInstance::SerializeObjectListFromJSON(nlohmann::json const& json, char const * attribute_name, std::vector<chaos::shared_ptr<TiledMapTrigger>> & result)
 	{
 		// in "Objects" array, read all objects, search the ID and apply the data to dedicated object
@@ -1030,7 +1036,10 @@ namespace death
 
 
 
+#if 0
 
+
+#endif
 
 
 		return true;
@@ -1300,10 +1309,6 @@ namespace death
 		}
 		return particle_layer.get();
 	}
-
-
-
-
 
 	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
 	{
@@ -1623,12 +1628,6 @@ namespace death
 		return objects[index].get();
 	}
 
-#if 0
-
-	if (autoclean_particles && particle_layer != nullptr)
-		particle_layer->ClearAllAllocations();
-#endif
-
 	void TiledMapLayerInstance::OnLevelEnded()
 	{
 		// players
@@ -1684,6 +1683,15 @@ namespace death
 		if (level == nullptr)
 			return nullptr;
 		return level->GetTiledMap();
+	}
+
+	void TiledMapLevelInstance::OnRestart()
+	{
+		LevelInstance::OnRestart();
+		
+		size_t count = layer_instances.size();
+		for (size_t i = 0; i < count; ++i)
+			layer_instances[i]->OnRestart();
 	}
 
 	chaos::TiledMap::Map const* TiledMapLevelInstance::GetTiledMap() const
@@ -1894,12 +1902,6 @@ namespace death
 
 	bool TiledMapLevelInstance::DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const & layers)
 	{
-
-
-
-
-
-
 		TiledMapLevel* level = GetLevel();
 
 		for (auto& layer : layers)
@@ -1921,18 +1923,6 @@ namespace death
 		chaos::TiledMap::Map* tiled_map = GetTiledMap();
 		if (tiled_map != nullptr)
 			return DoCreateLayerInstances(tiled_map->layers);
-
-
-
-
-		// shulayer
-
-
-
-
-
-
-
 		return true;
 	}
 

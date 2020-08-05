@@ -97,9 +97,3 @@ bool LudumLevelInstance::SerializeIntoJSON(nlohmann::json & json) const
 	chaos::JSONTools::SetAttribute(json, "SCROLL_FACTOR", scroll_factor);
 	return true;
 }
-
-//char const* layer_names[] = { "fire", "Enemies", nullptr };
-
-
-
-

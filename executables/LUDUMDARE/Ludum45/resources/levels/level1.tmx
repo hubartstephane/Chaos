@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.3.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2113">
+<map version="1.4" tiledversion="1.4.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2113">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
@@ -39,8 +39,9 @@
  </objectgroup>
  <objectgroup id="19" name="Bonus">
   <properties>
+   <property name="AUTOCLEAN_PARTICLES" type="bool" value="true"/>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
-   <property name="COLLISION_MASK" type="string" value="Camera"/>
+   <property name="COLLISION_MASK" value="Camera"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="1926" gid="1" x="8416" y="10976" width="128" height="128" visible="0"/>
@@ -55,8 +56,9 @@
  </objectgroup>
  <objectgroup id="18" name="Enemies">
   <properties>
+   <property name="AUTOCLEAN_PARTICLES" type="bool" value="true"/>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
-   <property name="COLLISION_MASK" type="string" value="Camera"/>
+   <property name="COLLISION_MASK" value="Camera"/>
    <property name="MATERIAL" value="Enemy"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
@@ -154,21 +156,23 @@
  </objectgroup>
  <objectgroup id="16" name="PlayerFire" locked="1">
   <properties>
+   <property name="AUTOCLEAN_PARTICLES" type="bool" value="true"/>
    <property name="MATERIAL" value="Fire"/>
   </properties>
  </objectgroup>
  <objectgroup id="20" name="EnemyFire">
   <properties>
+   <property name="AUTOCLEAN_PARTICLES" type="bool" value="true"/>
    <property name="MATERIAL" value="Fire"/>
   </properties>
  </objectgroup>
  <objectgroup id="14" name="PlayerAndCamera">
   <properties>
    <property name="CAMERA_COLLISIONS_ENABLED" type="bool" value="true"/>
+   <property name="COLLISION_MASK" value="Player, Camera"/>
    <property name="INFINITE_BOUNDING_BOX" type="bool" value="false"/>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
-   <property name="COLLISION_MASK" type="string" value="Player, Camera"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="57" name="TheCamera1" type="Camera" x="2088" y="10016" width="3504" height="2472"/>

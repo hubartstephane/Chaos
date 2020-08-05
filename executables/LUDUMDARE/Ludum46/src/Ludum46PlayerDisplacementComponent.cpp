@@ -5,7 +5,6 @@
 #include "Ludum46Game.h"
 #include "Ludum46GameInstance.h"
 #include "Ludum46Particles.h"
-#include "Ludum46GameCheckpoint.h"
 
 #include "death/TiledMapParticle.h"
 #include "death/CollisionMask.h"

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Ludum44PowerUp.h"
-#include "Ludum44GameCheckpoint.h"
 
 #include <chaos/StandardHeaders.h> 
 

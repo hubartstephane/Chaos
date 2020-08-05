@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Ludum46GameCheckpoint.h"
 #include "Ludum46Particles.h"
 
 #include <chaos/StandardHeaders.h> 

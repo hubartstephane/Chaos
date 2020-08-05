@@ -4,7 +4,6 @@
 #include "Ludum45Game.h"
 #include "Ludum45GameInstance.h"
 #include "Ludum45Particles.h"
-#include "Ludum45GameCheckpoint.h"
 
 #include <chaos/MathTools.h>
 #include <chaos/ParticleLayer.h>

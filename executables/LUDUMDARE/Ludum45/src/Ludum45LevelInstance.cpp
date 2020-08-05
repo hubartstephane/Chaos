@@ -79,5 +79,3 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 }
 
 
-//char const* layer_names[] = { "PlayerFire", "EnemyFire", "Enemies", "Bonus", nullptr };
-

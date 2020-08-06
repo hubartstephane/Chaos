@@ -662,6 +662,8 @@ namespace death
 
 	TiledMapObjectFactory TiledMapLevel::DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
 	{
+		
+
 		// get the 'classname' property
 		std::string const* classname = in_typed_object->FindPropertyString("classname");
 		if (classname == nullptr)
@@ -670,17 +672,14 @@ namespace death
 		chaos::Class const* wanted_class = chaos::Class::FindClass(classname->c_str());
 		if (wanted_class == nullptr)
 			return nullptr;
-		// object class
-		chaos::Class const* base_class = chaos::Class::FindClass<TiledMapObject>();
-		if (base_class == nullptr)
-			return nullptr;
-		// ensure consistant request
-		if (wanted_class->InheritsFrom(base_class, true) != chaos::InheritanceType::YES)
+		// get the subclass
+		chaos::SubClassOf<TiledMapObject> subclass = { wanted_class };
+		if (!subclass.IsValid())
 			return nullptr;
 
-		return [this, in_layer_instance, wanted_class](chaos::TiledMap::GeometricObject* in_geometric_object)
+		return [this, in_layer_instance, subclass](chaos::TiledMap::GeometricObject* in_geometric_object)
 		{
-			return nullptr;
+			return subclass.CreateInstance();
 		};
 	}
 

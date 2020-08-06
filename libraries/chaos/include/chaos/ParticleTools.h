@@ -70,7 +70,7 @@ namespace chaos
 			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
 				return false;
 			// ensure we have not declared class as incompatible
-			if (particle_class->Class::InheritsFrom(wanted_class) == InheritanceType::NO)
+			if (particle_class->InheritsFrom(wanted_class) == InheritanceType::NO)
 				return false;
 			// success
 			return true;

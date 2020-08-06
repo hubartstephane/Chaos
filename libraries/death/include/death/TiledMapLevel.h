@@ -343,25 +343,6 @@ namespace death
 		std::string player_start_name;
 	};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// =====================================
 	// TiledMapLevel : utility
 	// =====================================
@@ -385,16 +366,6 @@ namespace death
 	using TiledMapObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject *)>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
 #define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
-
-
-
-
-
-
-
-
-
-
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap
@@ -421,6 +392,8 @@ namespace death
 
 	protected:
 
+		/** create a typed object based of a 'classname' property */
+		virtual TiledMapObjectFactory DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object);
 		/** create a typed object specializable method */
 		virtual TiledMapObjectFactory DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
 		/** create a typed object 'entry point' */

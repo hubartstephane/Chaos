@@ -15,8 +15,6 @@
 
 	- Jeu de platforme a faire
 
-	- Fixer les crashs des checkpoints
-
 	- TiledMap => Generer des vrais objets sur la map (qui auront un ParticleAllocation) => plus facile pour la serialization
 
 	- Faire des Portail => Next Level contient nom de level + nom de player start

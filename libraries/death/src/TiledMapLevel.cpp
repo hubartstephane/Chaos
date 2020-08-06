@@ -70,11 +70,6 @@ namespace death
 		return true;
 	}
 
-	void TiledMapObject::InitializeInternals()
-	{
-
-	}
-
 	bool TiledMapObject::IsParticleCreationEnabled() const
 	{
 		return true;
@@ -118,17 +113,6 @@ namespace death
 		chaos::JSONTools::SetAttribute(json, "OUTSIDE_BOX_FACTOR", outside_box_factor);
 		chaos::JSONTools::SetAttribute(json, "ENTER_EVENT_TRIGGERED", enter_event_triggered);
 		return true;
-	}
-
-
-
-
-
-
-
-	void TiledMapTrigger::InitializeInternals()
-	{
-
 	}
 
 	bool TiledMapTrigger::IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const
@@ -367,11 +351,6 @@ namespace death
 		chaos::JSONTools::SetAttribute(json, "LOOPING", looping);
 		chaos::JSONTools::SetAttribute(json, "STOP_WHEN_COLLISION_OVER", stop_when_collision_over);
 		return true;
-	}
-
-
-	void TiledMapSoundTrigger::InitializeInternals()
-	{
 	}
 
 	chaos::Sound* TiledMapSoundTrigger::CreateSound() const
@@ -687,7 +666,7 @@ namespace death
 		if (!factory)
 			return nullptr;
 		// create another factory that wraps the previous (and add Initialize(...) call)
-		TiledMapObjectFactory result = [in_layer_instance, factory](chaos::TiledMap::GeometricObject* in_geometric_object)
+		TiledMapObjectFactory result_factory = [in_layer_instance, factory](chaos::TiledMap::GeometricObject* in_geometric_object)
 		{
 			TiledMapObject * result = factory(in_geometric_object);
 			if (result != nullptr)
@@ -697,14 +676,10 @@ namespace death
 					delete result;
 					result = nullptr;
 				}
-				else
-				{
-					result->InitializeInternals();
-				}
 			}
 			return result;
 		};
-		return result;
+		return result_factory;
 	}
 	
 	TiledMapCameraTemplate* TiledMapLevel::DoCreateCamera()

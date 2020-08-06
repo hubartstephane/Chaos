@@ -92,8 +92,6 @@ namespace death
 
 		/** additionnal initialization */
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
-		/** some member initialization */
-		virtual void InitializeInternals();
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
@@ -184,9 +182,6 @@ namespace death
 
 		/** override */
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-		/** override */
-		virtual void InitializeInternals() override;
-
 		/** called whenever a collision with object is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type);
 
@@ -287,8 +282,6 @@ namespace death
 
 		/** override */
 		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
-		/** override */
-		virtual void InitializeInternals() override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 

@@ -74,6 +74,8 @@ namespace death
 		virtual void OnLevelStarted() {}
 		/** whenever the Level is being stopped */
 		virtual void OnLevelEnded() {}
+		/** whenever the Level is being restarted */
+		virtual void OnLevelRestart() {}
 
 		/** get the layer ID (used for Checkpoints) */
 		int GetObjectID() const { return id; }
@@ -507,27 +509,37 @@ namespace death
 		TiledMapPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
 		/** find the player start from its name */
 		TiledMapPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
+		/** find the player start from its ID */
+		TiledMapPlayerStart* FindPlayerStartByID(int id);
+		/** find the player start from its ID */
+		TiledMapPlayerStart const* FindPlayerStartByID(int id) const;
 
 		/** find the camera from its name */
 		TiledMapCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
 		/** find the camera from its name */
 		TiledMapCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
+		/** find the camera from its name */
+		TiledMapCameraTemplate* FindCameraTemplateByID(int id);
+		/** find the camera from its name */
+		TiledMapCameraTemplate const* FindCameraTemplateByID(int id) const;
 
 		/** find the trigger surface from its name */
 		TiledMapTrigger* FindTrigger(chaos::ObjectRequest request);
 		/** find the trigger surface from its name */
 		TiledMapTrigger const* FindTrigger(chaos::ObjectRequest request) const;
+		/** find the trigger surface from its ID */
+		TiledMapTrigger* FindTriggerByID(int id);
+		/** find the trigger surface from its ID */
+		TiledMapTrigger const* FindTriggerByID(int id) const;
 
 		/** find the object from its name */
 		TiledMapObject* FindObject(chaos::ObjectRequest request);
 		/** find the object from its name */
 		TiledMapObject const* FindObject(chaos::ObjectRequest request) const;
-
-		/** find the trigger its ID */
-		TiledMapTrigger* FindTriggerByID(int id);
-		/** find the trigger its ID */
-		TiledMapTrigger const* FindTriggerByID(int id) const;
-
+		/** find the object from its ID */
+		TiledMapObject* FindObjectByID(int id);
+		/** find the object from its ID */
+		TiledMapObject const* FindObjectByID(int id) const;
 
 		/** get the bounding box for the level */
 		chaos::box2 GetBoundingBox(bool world_system) const;
@@ -564,28 +576,6 @@ namespace death
 		/** get the particle layer */
 		chaos::ParticleLayerBase const* GetParticleLayer() const { return particle_layer.get(); }
 
-		/** returns the number of trigger surfaces */
-		size_t GetTriggerCount() const;
-		/** returns a trigger surface by its index */
-		TiledMapTrigger* GetTrigger(size_t index);
-		/** returns a trigger surface by its index */
-		TiledMapTrigger const* GetTrigger(size_t index) const;
-
-		/** returns the number of camera objects */
-		size_t GetCameraTemplateCount() const;
-		/** returns a camera object by its index */
-		TiledMapCameraTemplate* GetCameraTemplate(size_t index);
-		/** returns a camera object by its index */
-		TiledMapCameraTemplate const* GetCameraTemplate(size_t index) const;
-
-		/** returns the number of player start objects */
-		size_t GetPlayerStartCount() const;
-		/** returns a player start object by its index */
-		TiledMapPlayerStart* GetPlayerStart(size_t index);
-		/** returns a player start object by its index */
-		TiledMapPlayerStart const* GetPlayerStart(size_t index) const;
-
-
 		/** returns the number of objects */
 		size_t GetObjectCount() const;
 		/** returns an object by its index */
@@ -606,7 +596,7 @@ namespace death
 		/** initialization */
 		virtual bool Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 		/** serialization of all JSON objects into an array */
-		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TiledMapTrigger>>& result);
+		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TiledMapObject>>& result);
 		/** called whenever level instance is restarted */
 		virtual void OnRestart();
 
@@ -676,13 +666,6 @@ namespace death
 		chaos::shared_ptr<chaos::TiledMap::LayerBase> layer;
 		/** the particle layer */
 		chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
-
-		/** the player starts */
-		std::vector<chaos::shared_ptr<TiledMapPlayerStart>> player_starts;
-		/** the player cameras */
-		std::vector<chaos::shared_ptr<TiledMapCameraTemplate>> camera_templates;
-		/** the trigger surface */
-		std::vector<chaos::shared_ptr<TiledMapTrigger>> triggers;
 		/** the objects */
 		std::vector<chaos::shared_ptr<TiledMapObject>> objects;
 

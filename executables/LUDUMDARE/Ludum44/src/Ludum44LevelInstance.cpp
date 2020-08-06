@@ -29,7 +29,7 @@ void LudumLevelInstance::CreateCameras()
 		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
 		if (ludum_game != nullptr)
-			cameras[i]->AddComponent(new death::ScrollCameraComponent(ludum_game->scroll_factor * camera_speed, chaos::Axis::AXIS_Y));
+			cameras[i]->AddComponent(new death::ScrollCameraComponent(ludum_game->scroll_factor * scroll_factor * camera_speed, chaos::Axis::AXIS_Y));
 	}
 }
 
@@ -47,7 +47,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 		{
 			death::ScrollCameraComponent* scroll_component = camera->FindComponentByClass<death::ScrollCameraComponent>();
 			if (scroll_component != nullptr)
-				scroll_component->SetScrollSpeed(ludum_game->scroll_factor * camera_speed);
+				scroll_component->SetScrollSpeed(ludum_game->scroll_factor * scroll_factor * camera_speed);
 		}
 	}
 	return true;
@@ -96,4 +96,14 @@ bool LudumLevelInstance::SerializeIntoJSON(nlohmann::json & json) const
 		return false;
 	chaos::JSONTools::SetAttribute(json, "SCROLL_FACTOR", scroll_factor);
 	return true;
+}
+
+void LudumLevelInstance::SetScrollFactor(float in_scroll_factor) 
+{ 
+	scroll_factor = in_scroll_factor; 
+}
+
+float LudumLevelInstance::GetScrollFactor() const 
+{ 
+	return scroll_factor; 
 }

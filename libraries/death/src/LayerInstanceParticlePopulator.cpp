@@ -35,6 +35,13 @@ namespace death
 	void TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
 	{
 		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
+
+		if (!accessor.IsValid())
+		{
+			chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
+			return;
+		}
+
 		for (size_t i = 0; i < particle_count; ++i)
 			accessor[i] = particles[i];
 	}

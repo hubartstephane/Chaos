@@ -21,6 +21,9 @@ namespace death
 		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; // shu46 !!! 
 	};
 
+
+	CHAOS_REGISTER_CLASS2(TiledMapParticle, chaos::ParticleDefault);
+
 	// =====================================
 	// TiledMapParticleTrait
 	// =====================================

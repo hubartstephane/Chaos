@@ -67,6 +67,10 @@ protected:
 	/** override */
 	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
 
+	virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+
+	virtual bool SerializeFromJSON(nlohmann::json const& json) override;
+
 	void SpawnParticles(chaos::ParticleSpawner & spawner, int count);
 
 protected:

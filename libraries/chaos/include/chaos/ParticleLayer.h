@@ -20,6 +20,7 @@
 #include <chaos/ParticleAllocationTrait.h>
 #include <chaos/PrimitiveOutput.h>
 #include <chaos/ParticleSpawner.h>
+#include <chaos/LogTools.h>
 
 // ==============================================================
 // ParticleAllocation<...>
@@ -501,10 +502,11 @@ public:
 
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>
-		bool IsParticleClassCompatible(bool accept_bigger_particle) const
+		bool IsParticleClassCompatible() const
 		{
-			return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
+			return Class::InheritsFrom(GetParticleClass(), Class::FindClass<PARTICLE_TYPE>(), true) == InheritanceType::YES;
 		}
+
         /** get an AutoCasting particle accessor */
         AutoCastedParticleAccessor GetParticleAccessor(size_t start = 0, size_t count = 0)
         {
@@ -524,8 +526,14 @@ public:
 		template<typename PARTICLE_TYPE>
 		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor(size_t start = 0, size_t count = 0)
 		{
-			assert(IsParticleClassCompatible<PARTICLE_TYPE>(true));
-            
+			// check for compatibility => returns failure accessor
+			if (!IsParticleClassCompatible<PARTICLE_TYPE>())
+			{
+				LogTools::Error("ParticleAllocationBase::GetParticleAccessor => IsParticleClassCompatible failure");
+				return ParticleAccessor<PARTICLE_TYPE>();
+			}
+
+			// compute result
             size_t particle_size = 0;
             void* buffer = const_cast<void *>(GetAccessorEffectiveRanges(start, count, particle_size));
             if (buffer == nullptr)
@@ -537,7 +545,7 @@ public:
 		template<typename PARTICLE_TYPE>
 		ParticleConstAccessor<PARTICLE_TYPE> GetParticleConstAccessor(size_t start = 0, size_t count = 0) const
 		{
-			assert(IsParticleClassCompatible<PARTICLE_TYPE>(true));
+			assert(IsParticleClassCompatible<PARTICLE_TYPE>());
 
             size_t particle_size = 0;
             void const * buffer = GetAccessorEffectiveRanges(start, count, particle_size);
@@ -649,6 +657,7 @@ public:
             size_t old_count = particles.size();
 			if (new_count == old_count)
 				return AutoCastedParticleAccessor(this, 0, 0);
+
 			// increment the number of particles
 			particles.resize(new_count);
 			// notify the layer
@@ -907,9 +916,9 @@ public:
 
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>
-		bool IsParticleClassCompatible(bool accept_bigger_particle) const
+		bool IsParticleClassCompatible() const
 		{
-			return ParticleTools::IsParticleClassCompatible<PARTICLE_TYPE>(GetParticleClass(), GetParticleSize(), accept_bigger_particle);
+			return Class::InheritsFrom(GetParticleClass(), Class::FindClass<PARTICLE_TYPE>(), true) == InheritanceType::YES;
 		}
 
 		/** returns the number of particle count */

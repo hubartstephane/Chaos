@@ -20,27 +20,37 @@ namespace chaos
 	Class const * Class::FindClass(char const* class_name)
 	{
 		assert(class_name != nullptr && strlen(class_name) > 0);
-		for (Class const * cls : GetClassesList())
+		for (Class const* cls : GetClassesList())
+		{
 			if (StringTools::Strcmp(class_name, cls->class_name) == 0)
+			{
+				if (!cls->IsDeclared()) // useless, but keep it for sanity
+					return nullptr;
 				return cls;
+			}
+		}
 		return nullptr;
 	}
 
-	InheritanceType Class::InheritsFrom(Class const* other, bool accept_equal) const
+	// static
+	InheritanceType Class::InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal)
 	{
-		if (other == nullptr)
+		if (child_class == nullptr)
 			return InheritanceType::UNKNOWN;
+		return child_class->InheritsFrom(parent_class, accept_equal);
+	}
 
-		// fast test on the size
-		if (class_size < other->class_size)
-			return InheritanceType::NO;
-
+	InheritanceType Class::InheritsFrom(Class const* parent_class, bool accept_equal) const
+	{
 		// class not registered, cannot known result
-		if (!IsDeclared() || !other->IsDeclared())
+		if (!IsDeclared())
+			return InheritanceType::UNKNOWN;
+		// parent not registered, cannot known result
+		if (parent_class == nullptr || !parent_class->IsDeclared())
 			return InheritanceType::UNKNOWN;
 
 		// returns no if classes are same and we don't accept that as a valid result
-		if (this == other)
+		if (this == parent_class)
 		{
 			if (!accept_equal)
 				return InheritanceType::NO;
@@ -51,11 +61,8 @@ namespace chaos
 		for (Class const* p = parent; p != nullptr; p = p->parent)
 		{
 			// found the searched parent
-			if (p == other)
+			if (p == parent_class)
 				return InheritanceType::YES;
-			// fast test on the size
-			if (p->class_size < other->class_size)
-				return InheritanceType::NO;
 			// unintialized class
 			if (!p->IsDeclared())
 				return InheritanceType::UNKNOWN;

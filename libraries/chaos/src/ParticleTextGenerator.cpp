@@ -5,6 +5,7 @@
 #include <chaos/ParticleTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/Hotpoint.h>
+#include <chaos/LogTools.h>
 
 namespace chaos
 {
@@ -729,7 +730,13 @@ namespace chaos
 		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params)
 		{
 			assert(layer != nullptr);
-			assert(layer->IsParticleClassCompatible<ParticleDefault>(true));
+
+			// check for compatibility
+			if (!layer->IsParticleClassCompatible<ParticleDefault>())
+			{
+				LogTools::Error("ParticleTextGenerator::CreateTextAllocation => IsParticleClassCompatible failure");
+				return nullptr;
+			}
 
 			int extra_background = (allocation_params.create_background) ? 1 : 0;
 

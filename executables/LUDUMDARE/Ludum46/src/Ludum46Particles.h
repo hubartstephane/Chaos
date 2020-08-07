@@ -29,6 +29,9 @@ public:
 
 };
 
+
+
+
 // ===========================================================================
 // ParticleSoul
 // ===========================================================================
@@ -96,8 +99,6 @@ public:
 
 };
 
-
-
 class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
 {
 public:
@@ -153,6 +154,7 @@ public:
 
 };
 
+
 class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>
 {
 public:
@@ -181,6 +183,9 @@ public:
 	glm::vec2 acceleration = glm::vec2(0.0f, 0.0f);
 
 };
+
+
+
 
 class ParticleBloodTrait : public chaos::ParticleAllocationTrait<ParticleBlood, VertexBase>
 {
@@ -228,6 +233,7 @@ public:
 	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const;
 };
 
+CHAOS_REGISTER_CLASS2(ParticleBase, death::TiledMapParticle);
 CHAOS_REGISTER_CLASS2(ParticleAnimated, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);
 CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase);

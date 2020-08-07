@@ -82,8 +82,10 @@ namespace chaos
 			return result;
 		}
 
+		/** static inheritance method */
+		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
 		/** returns whether the class inherits from parent */
-		InheritanceType InheritsFrom(Class const* other, bool accept_equal = false) const;
+		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
 
 		/** get the list of all classes */
 		static std::vector<Class const*>& GetClassesList();

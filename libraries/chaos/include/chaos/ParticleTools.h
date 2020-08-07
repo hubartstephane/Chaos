@@ -55,27 +55,6 @@ namespace chaos
 		/** an utility method to generate the 4 vertex attributes for a Particle */
 		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags); // in order BL, BR, TR, TL
 
-		template<typename PARTICLE_TYPE>
-		bool IsParticleClassCompatible(Class const * particle_class, size_t particle_size, bool accept_bigger_particle)
-		{
-			Class const * wanted_class = Class::FindClass<PARTICLE_TYPE>();
-
-			// strict equality
-			if (particle_class == wanted_class)
-				return true;
-			// smaller size => failure
-			if (particle_size < sizeof(PARTICLE_TYPE))
-				return false;
-			// bigger size => success only if accepted
-			if (particle_size > sizeof(PARTICLE_TYPE) && !accept_bigger_particle)
-				return false;
-			// ensure we have not declared class as incompatible
-			if (particle_class->InheritsFrom(wanted_class) == InheritanceType::NO)
-				return false;
-			// success
-			return true;
-		}
-
 	}; // namespace ParticleTools
 
 }; // namespace chaos

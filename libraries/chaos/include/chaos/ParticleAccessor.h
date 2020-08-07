@@ -274,8 +274,8 @@ namespace chaos
             return (p - b) / particle_size;
         }
 
-        /** implicit conversion to bool whether the accessor has elements */
-        operator bool() const
+        /** check whether the accessor has elements */
+        bool IsValid() const
         {
             return (particle_count > 0);
         }

@@ -152,6 +152,25 @@ bool Spawner::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos:
 	return true;
 }
 
+
+bool Spawner::SerializeIntoJSON(nlohmann::json& json) const
+{
+	if (!death::TiledMapObject::SerializeIntoJSON(json))
+		return false;
+
+	return true;
+}
+
+bool Spawner::SerializeFromJSON(nlohmann::json const & json)
+{
+	if (!death::TiledMapObject::SerializeFromJSON(json))
+		return false;
+
+	return true;
+}
+
+
+
 bool Spawner::DoTick(float delta_time)
 {
 	death::TiledMapObject::DoTick(delta_time);
@@ -175,6 +194,22 @@ bool Spawner::DoTick(float delta_time)
 	}
 	else
 	{
+
+	//	requete empty sur n importe quoi comme layer bitmap/retourne le premier truc possible
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 		if (ludum_level_instance == nullptr)
 			return true;

@@ -676,7 +676,7 @@ namespace death
 		chaos::SubClassOf<TiledMapObject> subclass = { wanted_class };
 		if (!subclass.IsValid())
 			return nullptr;
-
+		// return the factory based on this subclass
 		return [this, in_layer_instance, subclass](chaos::TiledMap::GeometricObject* in_geometric_object)
 		{
 			return subclass.CreateInstance();

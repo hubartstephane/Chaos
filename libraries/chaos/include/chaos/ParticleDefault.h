@@ -62,6 +62,8 @@ namespace chaos
 		int flags = 0;
 	};
 
+	CHAOS_REGISTER_CLASS1(ParticleDefault);
+
 	/** Vertex : vertex for default particle */
 	class VertexDefault
 	{
@@ -77,9 +79,6 @@ namespace chaos
 
 	/** ParticleTrait : the default trait */
 	using ParticleDefaultTrait = ParticleAllocationTrait<ParticleDefault, VertexDefault>;
-
-
-
 
 	/** generates 1 quad from one particle */
 	void ParticleToPrimitives(ParticleDefault const& particle, QuadOutput<VertexDefault>& output);

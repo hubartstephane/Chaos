@@ -204,7 +204,10 @@ public:
 	bool UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const;
 };
 
-CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase)
-CHAOS_REGISTER_CLASS2(ParticleEnemy, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleBase, death::TiledMapParticle)
+CHAOS_REGISTER_CLASS2(ParticleAffector, ParticleBase)
+CHAOS_REGISTER_CLASS2(ParticleLife, chaos::ParticleDefault)
+CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAffector)
+CHAOS_REGISTER_CLASS2(ParticleEnemy, ParticleAffector)
 CHAOS_REGISTER_CLASS2(ParticleAtom, ParticleBase)
 

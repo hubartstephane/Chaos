@@ -529,6 +529,7 @@ public:
 			// check for compatibility => returns failure accessor
 			if (!IsParticleClassCompatible<PARTICLE_TYPE>())
 			{
+				assert(0);
 				LogTools::Error("ParticleAllocationBase::GetParticleAccessor => IsParticleClassCompatible failure");
 				return ParticleAccessor<PARTICLE_TYPE>();
 			}
@@ -619,6 +620,7 @@ public:
 		ParticleAllocation(ParticleLayerBase* in_layer) : 
             ParticleAllocationBase(in_layer)
         {
+			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared
         }
 		/** override */
 		virtual Class const * GetParticleClass() const override
@@ -1075,7 +1077,10 @@ public:
 
 		/** constructor */
 		ParticleLayer(layer_trait_type in_layer_trait = layer_trait_type()):
-			layer_trait(in_layer_trait){}
+			layer_trait(in_layer_trait)
+		{
+			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared		
+		}
 
 		/** returns the size in memory of a particle */
 		virtual size_t GetParticleSize() const override { return sizeof(particle_type); }

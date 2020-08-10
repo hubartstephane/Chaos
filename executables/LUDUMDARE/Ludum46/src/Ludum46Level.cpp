@@ -158,6 +158,15 @@ bool Spawner::SerializeIntoJSON(nlohmann::json& json) const
 	if (!death::TiledMapObject::SerializeIntoJSON(json))
 		return false;
 
+	chaos::JSONTools::SetAttribute(json, "MAX_SPAWNED_PARTICLES", max_spawned_particles);
+	chaos::JSONTools::SetAttribute(json, "PARTICLE_START_VELOCITY_X", particle_start_velocity.x);
+	chaos::JSONTools::SetAttribute(json, "PARTICLE_START_VELOCITY_Y", particle_start_velocity.y);
+	chaos::JSONTools::SetAttribute(json, "SPAWN_PER_SECOND", spawn_per_second);
+	chaos::JSONTools::SetAttribute(json, "TARGET_LAYER", target_layer);
+	chaos::JSONTools::SetAttribute(json, "SPAWNED_PARTICLE", spawned_particle);
+	chaos::JSONTools::SetAttribute(json, "PARTICLE_DURATION", particle_duration);
+	chaos::JSONTools::SetAttribute(json, "EMISSION_STARTED", emission_started);
+
 	return true;
 }
 
@@ -165,6 +174,15 @@ bool Spawner::SerializeFromJSON(nlohmann::json const & json)
 {
 	if (!death::TiledMapObject::SerializeFromJSON(json))
 		return false;
+
+	chaos::JSONTools::GetAttribute(json, "MAX_SPAWNED_PARTICLES", max_spawned_particles);
+	chaos::JSONTools::GetAttribute(json, "PARTICLE_START_VELOCITY_X", particle_start_velocity.x);
+	chaos::JSONTools::GetAttribute(json, "PARTICLE_START_VELOCITY_Y", particle_start_velocity.y);
+	chaos::JSONTools::GetAttribute(json, "SPAWN_PER_SECOND", spawn_per_second);
+	chaos::JSONTools::GetAttribute(json, "TARGET_LAYER", target_layer);
+	chaos::JSONTools::GetAttribute(json, "SPAWNED_PARTICLE", spawned_particle);
+	chaos::JSONTools::GetAttribute(json, "PARTICLE_DURATION", particle_duration);
+	chaos::JSONTools::GetAttribute(json, "EMISSION_STARTED", emission_started);
 
 	return true;
 }

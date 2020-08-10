@@ -25,7 +25,9 @@
 
 	- TiledMap => Object Alignment property
 
-	https://www.mapeditor.org/2020/06/25/tiled-1-4-1-released.html
+	
+https://www.mapeditor.org/2020/08/05/tiled-1-4-2-released.html
+https://www.mapeditor.org/2020/06/25/tiled-1-4-1-released.html
 https://www.mapeditor.org/2020/05/27/tiled-1-4-beta-released.html
 https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 

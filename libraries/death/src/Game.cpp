@@ -639,7 +639,7 @@ namespace death
 
 	bool Game::CreateBackgroundImage(chaos::ObjectRequest material_request, chaos::ObjectRequest texture_request)
 	{
-		if (material_request.IsEmpty())
+		if (material_request.IsNoneRequest())
 			material_request = "background";
 
 		// create the particle allocation if necessary
@@ -662,7 +662,7 @@ namespace death
 			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_request);
 			if (result != nullptr)
 			{
-				if (!texture_request.IsEmpty())
+				if (!texture_request.IsNoneRequest())
 				{
 					// search the corresponding texture
 					chaos::GPUTexture * texture = resource_manager->FindTexture(texture_request);

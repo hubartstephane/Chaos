@@ -1893,7 +1893,7 @@ namespace death
 			camera_template = FindCameraTemplate(*camera_name); // first, if a name is given, use it
 		if (camera_template == nullptr)
 		{
-			camera_template = FindCameraTemplate(chaos::ObjectRequest()); // try to find the very first one otherwise
+			camera_template = FindCameraTemplate(chaos::ObjectRequest::Any()); // try to find the very first one otherwise
 			if (camera_template == nullptr)
 				return;
 		}
@@ -1933,7 +1933,7 @@ namespace death
 		if (player_start_name != nullptr)
 			result = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
 		if (result == nullptr)
-			result = FindPlayerStart(chaos::ObjectRequest()); // try to find the very first one otherwise
+			result = FindPlayerStart(chaos::ObjectRequest::Any()); // try to find the very first one otherwise
 		return result;
 	}
 

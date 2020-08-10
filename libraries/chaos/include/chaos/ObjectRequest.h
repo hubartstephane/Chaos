@@ -11,12 +11,14 @@ namespace chaos
 	/** a utility class for parameter passing */
 	enum class ObjectRequestType
 	{
+		/** accept nothing */
+		NONE = 0,
 		/** accept anything */
-		EMPTY = 0,
+		ANY = 1,
 		/** search by string */
-		STRING = 1,
+		STRING = 2,
 		/** search by tag */
-		TAG = 2
+		TAG = 3
 	};
 
     /** a utility class for parameter passing */
@@ -33,14 +35,14 @@ namespace chaos
             name(in_name), request_type(ObjectRequestType::STRING)
         {
 			if (StringTools::IsEmpty(name))
-				request_type = ObjectRequestType::EMPTY;
+				request_type = ObjectRequestType::NONE;
         }
 		/** constructor */
 		ObjectRequest(std::string const & in_name) :
 			name(in_name.c_str()), request_type(ObjectRequestType::STRING)
 		{			
 			if (StringTools::IsEmpty(name))
-				request_type = ObjectRequestType::EMPTY;
+				request_type = ObjectRequestType::NONE;
 		}
         /** constructor */
         ObjectRequest(TagType in_tag) :
@@ -48,35 +50,59 @@ namespace chaos
         {
         }
 
-		/** returns whether the request is empty */
-		bool IsEmpty() const
+		/** returns whether the request is none */
+		bool IsNoneRequest() const
 		{
-			return (request_type == ObjectRequestType::EMPTY);
+			return (request_type == ObjectRequestType::NONE);
 		}
 
-		/** returns whether there is a request for the string */
-		bool HasStringRequest() const
+		/** returns whether the request is any */
+		bool IsAnyRequest() const
+		{
+			return (request_type == ObjectRequestType::ANY);
+		}
+
+		/** returns whether this is a request for the string */
+		bool IsStringRequest() const
 		{
 			return (request_type == ObjectRequestType::STRING);
 		}
 
 		/** returns whether there is a request for the tag */
-		bool HasTagRequest() const
+		bool IsTagRequest() const
 		{
 			return (request_type == ObjectRequestType::TAG);
+		}
+
+		/** returns a request that accept anything */
+		static ObjectRequest Any()
+		{
+			ObjectRequest result;
+			result.request_type = ObjectRequestType::ANY;
+			return result;
+		}
+
+		/** returns a request that accept nothing */
+		static ObjectRequest None()
+		{
+			ObjectRequest result;
+			result.request_type = ObjectRequestType::NONE;
+			return result;
 		}
 
 		/** test whether the object name/tag match */
 		template<typename T>
 		bool Match(T const& object) const // use template to use NamedObjectWrapper as well as NamedObject
 		{
-			if (HasStringRequest())
-				if (StringTools::Stricmp(object.GetName(), name) != 0)
-					return false;
-			if (HasTagRequest())
-				if (object.GetTag() != tag)
-					return false;
-			return true;
+			if (IsNoneRequest())
+				return false;
+			if (IsAnyRequest())
+				return true;
+			if (IsStringRequest())
+				return (StringTools::Stricmp(object.GetName(), name) == 0);										
+			if (IsTagRequest())
+				return (object.GetTag() == tag);
+			return false;
 		}
 
 		/** search element in a vector */
@@ -115,7 +141,7 @@ namespace chaos
         /** the tag for the request */
         TagType tag = 0;
         /** the kind of request of interrest */
-		ObjectRequestType request_type = ObjectRequestType::EMPTY;
+		ObjectRequestType request_type = ObjectRequestType::NONE;
     };
 
 }; // namespace chaos

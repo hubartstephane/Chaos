@@ -12,7 +12,7 @@ namespace chaos
 		if (atlas == nullptr)
 			return false;
 		// if the requested bitmap is nullptr, considere the call as successfull
-		if (bitmap_request.IsEmpty())
+		if (bitmap_request.IsNoneRequest())
 		{
 			bitmap_info = nullptr;
 			return true;

@@ -194,22 +194,6 @@ bool Spawner::DoTick(float delta_time)
 	}
 	else
 	{
-
-	//	requete empty sur n importe quoi comme layer bitmap/retourne le premier truc possible
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 		if (ludum_level_instance == nullptr)
 			return true;

@@ -32,7 +32,7 @@ namespace death
         chaos::ParticleSpawner spawner = particle_manager->GetParticleSpawner(layer_id, bitmap_request);
         if (!spawner.IsValid())
             return nullptr;
-        if (!bitmap_request.IsEmpty() && !spawner.HasBitmap())
+        if (!bitmap_request.IsNoneRequest() && !spawner.HasBitmap())
             return nullptr;
         return spawner.SpawnParticles(count, new_allocation);
 	}

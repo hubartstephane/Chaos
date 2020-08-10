@@ -19,14 +19,16 @@ namespace chaos
 
 	Class const * Class::FindClass(char const* class_name)
 	{
-		assert(class_name != nullptr && strlen(class_name) > 0);
-		for (Class const* cls : GetClassesList())
+		if (class_name != nullptr && strlen(class_name) > 0)
 		{
-			if (StringTools::Strcmp(class_name, cls->class_name) == 0)
+			for (Class const* cls : GetClassesList())
 			{
-				if (!cls->IsDeclared()) // useless, but keep it for sanity
-					return nullptr;
-				return cls;
+				if (StringTools::Strcmp(class_name, cls->class_name) == 0)
+				{
+					if (!cls->IsDeclared()) // useless, but keep it for sanity
+						return nullptr;
+					return cls;
+				}
 			}
 		}
 		return nullptr;

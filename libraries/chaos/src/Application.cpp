@@ -39,8 +39,34 @@ namespace chaos
 		return false;
 	}
 
+	bool Application::LoadClasses()
+	{
+		nlohmann::json const * classes_json = JSONTools::GetStructure(configuration, "classes");
+		if (classes_json != nullptr && classes_json->is_object())
+		{
+			std::string classes_directory;
+			if (JSONTools::GetAttribute(*classes_json, "classes_directory", classes_directory))
+			{
+				boost::filesystem::directory_iterator end;
+				for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(classes_directory) ; it != end; ++it)
+				{
+
+
+					auto x = it->path().string();
+
+					x = x;
+				}
+			}
+		}
+		return true;
+	}
+
 	bool Application::Initialize()
 	{
+		// load class
+		if (!LoadClasses())
+			return false;
+
 		// show console
 		bool will_show_console = show_console;
 		if (HasCommandLineFlag("-ShowConsole"))

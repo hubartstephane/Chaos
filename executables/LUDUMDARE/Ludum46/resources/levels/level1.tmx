@@ -114,18 +114,18 @@
      <property name="EFFECTORS" value="Spike1,Spike2,MyFireSpawner"/>
     </properties>
    </object>
-   <object id="2128" name="MyFireSpawner" type="Spawner" gid="10" x="3" y="1632" width="80" height="80">
+   <object id="2128" name="MyFireSpawner" type="Spawner" gid="10" x="552.333" y="1691.33" width="80" height="80">
     <properties>
      <property name="EMISSION_STARTED" type="bool" value="false"/>
     </properties>
    </object>
-   <object id="2129" name="MySoulSpawner" type="Spawner" gid="9" x="1427.33" y="1471.66" width="40" height="40">
+   <object id="2129" name="MySoulSpawner" type="Spawner" gid="9" x="219.33" y="1578.33" width="40" height="40">
     <properties>
-     <property name="SPAWN_PER_SECOND" type="float" value="0.1"/>
+     <property name="SPAWN_PER_SECOND" type="float" value="1"/>
     </properties>
    </object>
    <object id="2132" name="SoulFinished" type="SoulTrigger" gid="13" x="-28" y="1782.67" width="1910.67" height="22.6667"/>
-   <object id="2133" name="MySoulSpawner" type="Spawner" gid="9" x="844.333" y="1574.17" width="30" height="33">
+   <object id="2133" name="MySoulSpawner" type="Spawner" gid="9" x="300.333" y="1575.5" width="30" height="33">
     <properties>
      <property name="SPAWN_PER_SECOND" type="float" value="1"/>
     </properties>

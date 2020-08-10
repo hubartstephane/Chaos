@@ -2,9 +2,6 @@
 <tileset version="1.4" tiledversion="1.4.1" name="tileset" tilewidth="256" tileheight="256" tilecount="15" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="WALL">
-  <properties>
-   <property name="classname" value="Spawner"/>
-  </properties>
   <image width="32" height="32" source="../sprites/Brick.png"/>
  </tile>
  <tile id="1" type="PlayerStart">

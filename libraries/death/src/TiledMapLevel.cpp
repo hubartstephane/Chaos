@@ -661,9 +661,7 @@ namespace death
 
 
 	TiledMapObjectFactory TiledMapLevel::DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
-	{
-		
-
+	{	
 		// get the 'classname' property
 		std::string const* classname = in_typed_object->FindPropertyString("classname");
 		if (classname == nullptr)

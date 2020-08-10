@@ -111,6 +111,9 @@ namespace chaos
 		/** loading the configuration file */
 		bool LoadConfigurationFile();
 
+		/** load the extra classes */
+		virtual bool LoadClasses();
+
 	protected:
 
 		/** the single application instance */

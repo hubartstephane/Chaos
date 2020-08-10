@@ -52,7 +52,7 @@ namespace chaos
 		if (!IsManagerStarted())
 			return false;
 		// name already existing ?
-		if (!request.IsEmpty() && !can_add_func(request))
+		if (!request.IsNoneRequest() && !can_add_func(request))
 			return false;
 		return true;
 	}

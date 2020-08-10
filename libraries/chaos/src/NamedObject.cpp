@@ -13,9 +13,9 @@ namespace chaos
 
 	void NamedObject::SetObjectNaming(ObjectRequest request)
 	{
-		if (request.HasStringRequest())
+		if (request.IsStringRequest())
 			SetName(request.name);
-		if (request.HasTagRequest())
+		else if (request.IsTagRequest())
 			SetTag(request.tag);	
 	}
 

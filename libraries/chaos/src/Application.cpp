@@ -5,7 +5,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/JSONTools.h>
-#include <chaos/BoostTools.h>
+#include <chaos/ClassLoader.h>
 
 namespace chaos
 {
@@ -40,33 +40,16 @@ namespace chaos
 		return false;
 	}
 
-	bool Application::LoadClass(FilePathParam const & path)
-	{
-		nlohmann::json json;
-		if (JSONTools::LoadJSONFile(path, json, false))
-		{
-			std::string class_name;
-			if (!JSONTools::GetAttribute(json, "class_name", class_name))
-				class_name = BoostTools::PathToName(path.GetResolvedPath());
-			if (!class_name.empty())
-				if (Class::DeclareSpecialClass(class_name.c_str(), json))
-					return true;
-		}
-
-		return false;
-	}
-
 	bool Application::LoadClasses()
-	{
+	{	
 		nlohmann::json const * classes_json = JSONTools::GetStructure(configuration, "classes");
 		if (classes_json != nullptr && classes_json->is_object())
 		{
 			std::string classes_directory;
 			if (JSONTools::GetAttribute(*classes_json, "classes_directory", classes_directory))
 			{
-				boost::filesystem::directory_iterator end;
-				for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(classes_directory); it != end; ++it)
-					LoadClass(it->path());
+				ClassLoader loader;
+				loader.LoadClassesInDirectory(classes_directory);
 			}
 		}
 		return true;

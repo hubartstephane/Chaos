@@ -61,24 +61,6 @@ namespace chaos
 		if (!LoadClasses())
 			return false;
 
-
-		Class const* cls1 = Class::FindClass("classes1");
-		if (cls1 != nullptr)
-		{
-			auto xxx = cls1->CreateInstance();
-
-			xxx = xxx;
-		}
-
-		Class const* cls2 = Class::FindClass("classes2");
-		if (cls2 != nullptr)
-		{
-			auto xxx = cls2->CreateInstance();
-
-			xxx = xxx;
-		}
-
-
 		// show console
 		bool will_show_console = show_console;
 		if (HasCommandLineFlag("-ShowConsole"))

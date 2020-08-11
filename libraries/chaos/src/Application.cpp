@@ -58,8 +58,8 @@ namespace chaos
 	bool Application::Initialize()
 	{
 		// load class
-		if (!LoadClasses())
-			return false;
+	//	if (!LoadClasses())
+	//		return false;
 
 
 		Class const* cls1 = Class::FindClass("classes1");

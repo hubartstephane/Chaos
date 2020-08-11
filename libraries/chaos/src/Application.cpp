@@ -5,6 +5,7 @@
 #include <chaos/WinTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/JSONTools.h>
+#include <chaos/BoostTools.h>
 
 namespace chaos
 {
@@ -43,8 +44,15 @@ namespace chaos
 	{
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, false))
-			if (Class::DeclareSpecialClass("toto", json))
-				return true;
+		{
+			std::string class_name;
+			if (!JSONTools::GetAttribute(json, "class_name", class_name))
+				class_name = BoostTools::PathToName(path.GetResolvedPath());
+			if (!class_name.empty())
+				if (Class::DeclareSpecialClass(class_name.c_str(), json))
+					return true;
+		}
+
 		return false;
 	}
 

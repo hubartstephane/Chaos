@@ -6,13 +6,9 @@
 
 namespace chaos
 {
-
-	Class const * ClassLoader::LoadClass(FilePathParam const& path)
-	{
-		return DoLoadClass(path, false);
-	}
-
-	Class const * ClassLoader::DoLoadClass(FilePathParam const& path, bool accept_unknown_parent)
+	// an utility function to load a JSON file a find the approriate classname
+	template<typename T, typename FUNC>
+	static T DoLoadClassHelper(FilePathParam const& path, FUNC func)
 	{
 		nlohmann::json json;
 		if (JSONTools::LoadJSONFile(path, json, false))
@@ -21,30 +17,39 @@ namespace chaos
 			if (!JSONTools::GetAttribute(json, "class_name", class_name))
 				class_name = BoostTools::PathToName(path.GetResolvedPath());
 			if (!class_name.empty())
-				return Class::DoDeclareSpecialClass(class_name.c_str(), json, accept_unknown_parent);
+				return func(class_name.c_str(), json);
 		}
 		return nullptr;
 	}
 
+	Class const * ClassLoader::LoadClass(FilePathParam const& path)
+	{
+		return DoLoadClassHelper<Class const *>(path, [](char const * class_name, nlohmann::json const & json)
+		{
+			return Class::DeclareSpecialClass(class_name, json); // a single step operation
+		});
+	}
+
 	bool ClassLoader::LoadClassesInDirectory(FilePathParam const& path)
 	{
-		std::vector<Class const*> incomplete_classes;
+		std::vector<Class *> incomplete_classes;
 
 		// try to load all classes : accept incomplete classes
 		boost::filesystem::directory_iterator end;
 		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(path); it != end; ++it)
 		{
-			Class const * cls = DoLoadClass(it->path(), true);
-			if (cls != nullptr && cls->GetParentClass() == nullptr) // special class MUST have a parent
+			Class* cls = DoLoadClassHelper<Class *>(it->path(), [] (char const* class_name, nlohmann::json const& json)
+			{
+				return Class::DoDeclareSpecialClassStep1(class_name, json); // a 2 steps operation 
+			});
+			// special class MUST have a parent : Finalization to come
+			if (cls != nullptr && cls->GetParentClass() == nullptr) 
 				incomplete_classes.push_back(cls);
 		}
-
 		// complete all classes
-		for (Class const* cls : incomplete_classes)
-		{
-			cls = cls;
-
-		}
+		for (Class * cls : incomplete_classes)
+			if (!cls->DoDeclareSpecialClassStep2())
+				Class::DoInvalidateSpecialClass(cls);
 		return true;
 	}
 

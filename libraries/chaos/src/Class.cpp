@@ -10,70 +10,81 @@ namespace chaos
 {
 	Class const* Class::DeclareSpecialClass(char const* class_name, nlohmann::json const & json)
 	{
-		return DoDeclareSpecialClass(class_name, json, false);
+		Class* result = DoDeclareSpecialClassStep1(class_name, json);
+		if (result != nullptr)
+		{
+			if (!result->DoDeclareSpecialClassStep2())
+			{
+				DoInvalidateSpecialClass(result);
+				return nullptr;
+			}
+		}
+		return result;
 	}
 
-	Class const* Class::DoDeclareSpecialClass(char const* class_name, nlohmann::json const & json, bool accept_unknown_parent)
+	Class * Class::DoDeclareSpecialClassStep1(char const* class_name, nlohmann::json const & json)
 	{
 		// check parameter and not already registered
 		assert(class_name != nullptr && strlen(class_name) > 0);
 		assert(FindClass(class_name) == nullptr);
 
-		// parent class is MANDATORY for Special objects
-		std::string parent_class_name;
-		if (!JSONTools::GetAttribute(json, "parent_class", parent_class_name) && !accept_unknown_parent)
+		Class* result = new Class;
+		if (result != nullptr)
 		{
-			assert(0);
-			LogTools::Error("Class::DoDeclareSpecialClass : special class [%s] require a parent class", class_name);
-			return nullptr;
-		}
-		// parent class is MANDATORY for Special objects
-		Class const* parent = FindClass(parent_class_name.c_str());
-		if (parent == nullptr && !accept_unknown_parent)
-		{
-			assert(0);
-			LogTools::Error("Class::DoDeclareSpecialClass : special class [%s] has unknown parent class [%s]", class_name, parent_class_name.c_str());
-			return nullptr;
-		}
+			result->class_name = class_name;
+			result->json_data = json;
 
-		Class* result_cls = new Class;
-		if (result_cls != nullptr)
-		{
-			result_cls->class_name = class_name;
-			result_cls->json_data = json;
-
-			if (parent != nullptr)
-			{
-				result_cls->class_size = parent->class_size;
-				result_cls->parent = parent;
-				if (parent->create_instance_func != nullptr) // check whether is instanciable !
-				{
-					result_cls->create_instance_func = [result_cls]()
-					{
-						Object* result = result_cls->parent->CreateInstance();
-						if (result != nullptr)
-						{
-							JSONSerializable* serializable = auto_cast(result);
-							if (serializable != nullptr)
-								serializable->SerializeFromJSON(result_cls->json_data);
-						}
-						return result;
-					};
-				}				
-			}
-			GetClassesList().push_back(result_cls);
-			return result_cls;
+			GetClassesList().push_back(result);
+			return result;
 		}
 		return nullptr;
 	}
 
+	bool Class::DoDeclareSpecialClassStep2()
+	{
+		// parent class is MANDATORY for Special objects
+		std::string parent_class_name;
+		if (!JSONTools::GetAttribute(json_data, "parent_class", parent_class_name))
+		{
+			assert(0);
+			LogTools::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] require a parent class", class_name);
+			return false;
+		}
+		// parent class is MANDATORY for Special objects
+		parent = FindClass(parent_class_name.c_str());
+		if (parent == nullptr)
+		{
+			assert(0);
+			LogTools::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] has unknown parent class [%s]", class_name, parent_class_name.c_str());
+			return false;
+		}
+		// initialize missing data (size, creation_delegate)
+		class_size = parent->class_size;
 
+		if (parent->create_instance_func != nullptr) // check whether is instanciable !
+		{
+			create_instance_func = [this]()
+			{
+				Object* result = parent->CreateInstance();
+				if (result != nullptr)
+				{
+					JSONSerializable* serializable = auto_cast(result);
+					if (serializable != nullptr)
+						serializable->SerializeFromJSON(json_data);
+				}
+				return result;
+			};
+		}
+		return true;
+	}
+		
+	void Class::DoInvalidateSpecialClass(Class const* cls)
+	{
+		assert(cls != nullptr);
 
-
-
-
-
-
+		std::vector<Class*>& classes = GetClassesList();
+		classes.erase(std::remove(classes.begin(), classes.end(), cls));
+	}
 
 	Object * Class::CreateInstance() const
 	{
@@ -148,9 +159,9 @@ namespace chaos
 		return InheritanceType::NO;
 	}
 
-	std::vector<Class const *>& Class::GetClassesList()
+	std::vector<Class *>& Class::GetClassesList()
 	{
-		static std::vector<Class const*> result;
+		static std::vector<Class *> result;
 		return result;
 	}
 

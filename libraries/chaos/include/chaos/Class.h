@@ -100,15 +100,15 @@ namespace chaos
 		/** returns whether the class inherits from parent */
 		InheritanceType InheritsFrom(Class const* parent_class, bool accept_equal = false) const;
 
-		/** get the list of all classes */
-		static std::vector<Class const*>& GetClassesList();
-
 	protected:
 
 		/** internal method to declare a class without finding yet its parent (used for directory iteration) */
-		static Class const* DoDeclareSpecialClass(char const* class_name, nlohmann::json const & json, bool accept_unknown_parent);
+		static Class * DoDeclareSpecialClassStep1(char const* class_name, nlohmann::json const & json); // XXX : no const return value here !! (for Finalization of special class)
+		/** finalization of a special class (called from ClassLoader) */
+		bool DoDeclareSpecialClassStep2();
 
-	protected:
+		/** internal method called from ClassLoader to abord a failed loaded class */
+		static void DoInvalidateSpecialClass(Class const* cls);
 
 		/** return the class for a type even if not initialized */
 		template<typename CLASS_TYPE>
@@ -118,6 +118,9 @@ namespace chaos
 			return &result;
 		}
 
+		/** get the list of all classes */
+		static std::vector<Class *>& GetClassesList();
+
 	protected:
 
 		/** the parent of the class */
@@ -126,8 +129,6 @@ namespace chaos
 		size_t class_size = 0;
 		/** the optional name of the class */
 		std::string class_name;
-		/** whether instance of the class may be created (derives from Object) */
-		bool inherit_from_object = false;
 		/** create an instance of the object delegate */
 		std::function<Object * ()> create_instance_func;
 		/** additionnal initialization for JSONSerializable objects */

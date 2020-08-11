@@ -8,46 +8,72 @@
 
 namespace chaos
 {
-	Class const* Class::DeclareSpecialClass(char const* class_name, nlohmann::json json)
+	Class const* Class::DeclareSpecialClass(char const* class_name, nlohmann::json const & json)
+	{
+		return DoDeclareSpecialClass(class_name, json, false);
+	}
+
+	Class const* Class::DoDeclareSpecialClass(char const* class_name, nlohmann::json const & json, bool accept_unknown_parent)
 	{
 		// check parameter and not already registered
 		assert(class_name != nullptr && strlen(class_name) > 0);
 		assert(FindClass(class_name) == nullptr);
 
+		// parent class is MANDATORY for Special objects
 		std::string parent_class_name;
-		if (JSONTools::GetAttribute(json, "parent_class", parent_class_name)) // parent class is MANDATORY for Special objects
+		if (!JSONTools::GetAttribute(json, "parent_class", parent_class_name) && !accept_unknown_parent)
 		{
-			Class const* parent = FindClass(parent_class_name.c_str());
+			assert(0);
+			LogTools::Error("Class::DoDeclareSpecialClass : special class [%s] require a parent class", class_name);
+			return nullptr;
+		}
+		// parent class is MANDATORY for Special objects
+		Class const* parent = FindClass(parent_class_name.c_str());
+		if (parent == nullptr && !accept_unknown_parent)
+		{
+			assert(0);
+			LogTools::Error("Class::DoDeclareSpecialClass : special class [%s] has unknown parent class [%s]", class_name, parent_class_name.c_str());
+			return nullptr;
+		}
+
+		Class* result_cls = new Class;
+		if (result_cls != nullptr)
+		{
+			result_cls->class_name = class_name;
+			result_cls->json_data = json;
+
 			if (parent != nullptr)
 			{
-				Class* result_cls = new Class;
-				if (result_cls != nullptr)
+				result_cls->class_size = parent->class_size;
+				result_cls->parent = parent;
+				if (parent->create_instance_func != nullptr) // check whether is instanciable !
 				{
-					result_cls->class_name = class_name;
-					result_cls->class_size = parent->class_size;
-					result_cls->parent = parent;
-					result_cls->json_data = json;
-
-					if (parent->create_instance_func != nullptr) // check whether is instanciable !
+					result_cls->create_instance_func = [result_cls]()
 					{
-						result_cls->create_instance_func = [result_cls]()
+						Object* result = result_cls->parent->CreateInstance();
+						if (result != nullptr)
 						{
-							Object* result = result_cls->parent->CreateInstance();
-							if (result != nullptr)
-							{
-								JSONSerializable* serializable = auto_cast(result);
-								if (serializable != nullptr)
-									serializable->SerializeFromJSON(result_cls->json_data);
-							}
-							return result;
-						};
-					}
-					GetClassesList().push_back(result_cls);
-				}
+							JSONSerializable* serializable = auto_cast(result);
+							if (serializable != nullptr)
+								serializable->SerializeFromJSON(result_cls->json_data);
+						}
+						return result;
+					};
+				}				
 			}
+			GetClassesList().push_back(result_cls);
+			return result_cls;
 		}
 		return nullptr;
 	}
+
+
+
+
+
+
+
+
 
 	Object * Class::CreateInstance() const
 	{

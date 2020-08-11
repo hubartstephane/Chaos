@@ -33,6 +33,7 @@ namespace chaos
 	 */
 	class Class
 	{
+		friend class ClassLoader;
 
 	public:
 
@@ -42,6 +43,8 @@ namespace chaos
 		bool IsDeclared() const;
 		/** gets the class size */
 		size_t GetClassSize() const { return class_size; }
+		/** gets the parent class */
+		Class const* GetParentClass() const { return parent; }
 		/** gets the class name */
 		std::string const & GetClassName() const { return class_name; }
 		/** returns whether we can create instances */
@@ -90,7 +93,7 @@ namespace chaos
 		}
 
 		/** declare a pseudo class, that is a class with additionnal json initialization */
-		static Class const* DeclareSpecialClass(char const* class_name, nlohmann::json json);
+		static Class const* DeclareSpecialClass(char const* class_name, nlohmann::json const & json);
 
 		/** static inheritance method */
 		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
@@ -99,6 +102,11 @@ namespace chaos
 
 		/** get the list of all classes */
 		static std::vector<Class const*>& GetClassesList();
+
+	protected:
+
+		/** internal method to declare a class without finding yet its parent (used for directory iteration) */
+		static Class const* DoDeclareSpecialClass(char const* class_name, nlohmann::json const & json, bool accept_unknown_parent);
 
 	protected:
 

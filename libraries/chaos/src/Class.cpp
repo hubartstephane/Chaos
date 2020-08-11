@@ -2,11 +2,61 @@
 
 #include <chaos/Class.h>
 #include <chaos/StringTools.h>
+#include <chaos/JSONTools.h>
+#include <chaos/LogTools.h>
+#include <chaos/JSONSerializable.h>
 
 namespace chaos
 {
-	void* Class::CreateInstance() const
+	Class const* Class::DeclareSpecialClass(char const* class_name, nlohmann::json json)
 	{
+		// check parameter and not already registered
+		assert(class_name != nullptr && strlen(class_name) > 0);
+		assert(FindClass(class_name) == nullptr);
+
+		std::string parent_class_name;
+		if (JSONTools::GetAttribute(json, "parent_class", parent_class_name)) // parent class is MANDATORY for Special objects
+		{
+			Class const* parent = FindClass(parent_class_name.c_str());
+			if (parent != nullptr)
+			{
+				Class* result_cls = new Class;
+				if (result_cls != nullptr)
+				{
+					result_cls->class_name = class_name;
+					result_cls->class_size = parent->class_size;
+					result_cls->parent = parent;
+					result_cls->json_data = json;
+
+					if (parent->create_instance_func != nullptr) // check whether is instanciable !
+					{
+						result_cls->create_instance_func = [result_cls]()
+						{
+							Object* result = result_cls->parent->CreateInstance();
+							if (result != nullptr)
+							{
+								JSONSerializable* serializable = auto_cast(result);
+								if (serializable != nullptr)
+									serializable->SerializeFromJSON(result_cls->json_data);
+							}
+							return result;
+						};
+					}
+					GetClassesList().push_back(result_cls);
+				}
+			}
+		}
+		return nullptr;
+	}
+
+	Object * Class::CreateInstance() const
+	{
+		if (!CanCreateInstance())
+		{
+			assert(0);
+			LogTools::Error("Class::CreateInstance : the class [%s] cannot be instanciated", class_name.c_str());
+			return nullptr;
+		}
 		if (create_instance_func)
 			return create_instance_func();
 		return nullptr;

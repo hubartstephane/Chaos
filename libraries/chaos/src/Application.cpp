@@ -39,6 +39,15 @@ namespace chaos
 		return false;
 	}
 
+	bool Application::LoadClass(FilePathParam const & path)
+	{
+		nlohmann::json json;
+		if (JSONTools::LoadJSONFile(path, json, false))
+			if (Class::DeclareSpecialClass("toto", json))
+				return true;
+		return false;
+	}
+
 	bool Application::LoadClasses()
 	{
 		nlohmann::json const * classes_json = JSONTools::GetStructure(configuration, "classes");
@@ -48,14 +57,8 @@ namespace chaos
 			if (JSONTools::GetAttribute(*classes_json, "classes_directory", classes_directory))
 			{
 				boost::filesystem::directory_iterator end;
-				for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(classes_directory) ; it != end; ++it)
-				{
-
-
-					auto x = it->path().string();
-
-					x = x;
-				}
+				for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(classes_directory); it != end; ++it)
+					LoadClass(it->path());
 			}
 		}
 		return true;

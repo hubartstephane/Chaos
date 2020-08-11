@@ -6,6 +6,8 @@
 
 namespace chaos
 {
+	class Object;
+
 	/**
 	 * CHAOS_REGISTER_CLASS : a macro that helps register classes automatically
 	 */
@@ -35,13 +37,15 @@ namespace chaos
 	public:
 
 		/** method to create an instance of the object */
-		void* CreateInstance() const;
+		Object * CreateInstance() const;
 		/** returns whether the class has been registered */
 		bool IsDeclared() const;
 		/** gets the class size */
 		size_t GetClassSize() const { return class_size; }
 		/** gets the class name */
 		std::string const & GetClassName() const { return class_name; }
+		/** returns whether we can create instances */
+		bool CanCreateInstance() const { return create_instance_func != nullptr; }
 
 	public:
 
@@ -72,15 +76,21 @@ namespace chaos
 			{
 				result->class_name = class_name;
 				result->class_size = sizeof(CLASS_TYPE);
-				result->create_instance_func = []() { return new CLASS_TYPE; };
 
+				// instance constructible only if derives from Object
+				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
+					result->create_instance_func = []() { return new CLASS_TYPE; }; 
+				// the parent is accessed, but not necessaraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass>)
-					result->parent = FindClass<PARENT_CLASS_TYPE>(); // the parent is accessed, but not necessaraly initialized yet
+					result->parent = FindClassImpl<PARENT_CLASS_TYPE>(); 
 
 				GetClassesList().push_back(result);
 			}
 			return result;
 		}
+
+		/** declare a pseudo class, that is a class with additionnal json initialization */
+		static Class const* DeclareSpecialClass(char const* class_name, nlohmann::json json);
 
 		/** static inheritance method */
 		static InheritanceType InheritsFrom(Class const* child_class, Class const* parent_class, bool accept_equal = false);
@@ -108,8 +118,12 @@ namespace chaos
 		size_t class_size = 0;
 		/** the optional name of the class */
 		std::string class_name;
+		/** whether instance of the class may be created (derives from Object) */
+		bool inherit_from_object = false;
 		/** create an instance of the object delegate */
-		std::function<void* ()> create_instance_func;
+		std::function<Object * ()> create_instance_func;
+		/** additionnal initialization for JSONSerializable objects */
+		nlohmann::json json_data;
 	};
 
 }; // namespace chaos

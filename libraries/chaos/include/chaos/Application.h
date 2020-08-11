@@ -6,6 +6,7 @@
 #include <chaos/InputEventReceiver.h>
 #include <chaos/Object.h>
 #include <chaos/AutoCast.h>
+#include <chaos/FilePath.h>
 
 namespace chaos
 {
@@ -113,6 +114,8 @@ namespace chaos
 
 		/** load the extra classes */
 		virtual bool LoadClasses();
+		/** load class */
+		bool LoadClass(FilePathParam const& path);
 
 	protected:
 

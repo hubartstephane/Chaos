@@ -32,9 +32,9 @@ namespace chaos
 
 	bool ClassLoader::LoadClassesInDirectory(FilePathParam const& path)
 	{
-		std::vector<Class *> incomplete_classes;
+		std::vector<Class *> classes;
 
-		// try to load all classes : accept incomplete classes
+		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
 		boost::filesystem::directory_iterator end;
 		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(path); it != end; ++it)
 		{
@@ -42,14 +42,50 @@ namespace chaos
 			{
 				return Class::DoDeclareSpecialClassStep1(class_name, json); // a 2 steps operation 
 			});
-			// special class MUST have a parent : Finalization to come
-			if (cls != nullptr && cls->GetParentClass() == nullptr) 
-				incomplete_classes.push_back(cls);
+			// remember the class
+			if (cls != nullptr)
+				classes.push_back(cls);
 		}
-		// complete all classes
-		for (Class * cls : incomplete_classes)
+
+		// Step 2 : fix parent classes
+		std::vector<Class*> failing_parent_classes;
+
+		for (Class* cls : classes)
 			if (!cls->DoDeclareSpecialClassStep2())
+				failing_parent_classes.push_back(cls);
+		// Step 3 : remove all classes inheriting (directly or not) from a failing class (unknown parent)
+		std::vector<Class*> to_remove_classes;
+
+		for (Class* cls : failing_parent_classes)
+			for (Class* other_class : classes)
+				if (other_class->InheritsFrom(cls, true) == InheritanceType::YES)
+					to_remove_classes.push_back(other_class);
+		// Step 4 : remove classes
+		for (Class* cls : failing_parent_classes)
+		{
+			classes.erase(std::remove(classes.begin(), classes.end(), cls)); // just keep in that array the classes that are fully valid
+			Class::DoInvalidateSpecialClass(cls);
+		}
+		// Step 5 : sort the classes by depth (use a temp depth map)
+		std::map<Class*, size_t> class_depth;
+		for (Class* cls : classes)
+		{
+			size_t depth = 0;
+			for (Class const * p = cls; p != nullptr; p = p->parent)
+				++depth;
+			class_depth[cls] = depth;
+		}
+
+		std::sort(classes.begin(), classes.end(), [&class_depth](Class * c1, Class * c2)
+		{
+			return (class_depth[c1] < class_depth[c2]);
+		});
+			
+		// now that we are sorted by depth, we can compute create delegate (create delegate of one Class depends on this parent (lower depth))
+		for (Class * cls : classes)
+			if (!cls->DoDeclareSpecialClassStep3())		
 				Class::DoInvalidateSpecialClass(cls);
+		
 		return true;
 	}
 

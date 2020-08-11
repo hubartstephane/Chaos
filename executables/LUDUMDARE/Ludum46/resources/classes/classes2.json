@@ -1,4 +1,5 @@
 {
-  "parent_class": "toto"
+  "parent_class": "toto",
+  "myvalue": 333
 
 }

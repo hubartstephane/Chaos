@@ -104,8 +104,10 @@ namespace chaos
 
 		/** internal method to declare a class without finding yet its parent (used for directory iteration) */
 		static Class * DoDeclareSpecialClassStep1(char const* class_name, nlohmann::json const & json); // XXX : no const return value here !! (for Finalization of special class)
-		/** finalization of a special class (called from ClassLoader) */
+		/** finalization of a special class (called from ClassLoader) : find parent */
 		bool DoDeclareSpecialClassStep2();
+		/** finalization of a special class (called from ClassLoader) : creation delegate */
+		bool DoDeclareSpecialClassStep3();
 
 		/** internal method called from ClassLoader to abord a failed loaded class */
 		static void DoInvalidateSpecialClass(Class const* cls);
@@ -124,7 +126,7 @@ namespace chaos
 	protected:
 
 		/** the parent of the class */
-		Class const* parent = nullptr;
+		Class const * parent = nullptr;
 		/** get class size */
 		size_t class_size = 0;
 		/** the optional name of the class */

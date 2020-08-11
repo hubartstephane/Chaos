@@ -58,10 +58,10 @@ namespace chaos
 
 		for (Class* cls : failing_parent_classes)
 			for (Class* other_class : classes)
-				if (other_class->InheritsFrom(cls, true) == InheritanceType::YES)
+				if (other_class->InheritsFrom(cls, true) == InheritanceType::YES) // failing class goes directly in the to_remove vector too 
 					to_remove_classes.push_back(other_class);
 		// Step 4 : remove classes
-		for (Class* cls : failing_parent_classes)
+		for (Class* cls : to_remove_classes)
 		{
 			classes.erase(std::remove(classes.begin(), classes.end(), cls)); // just keep in that array the classes that are fully valid
 			Class::DoInvalidateSpecialClass(cls);

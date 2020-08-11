@@ -46,7 +46,6 @@ namespace chaos
 		std::string parent_class_name;
 		if (!JSONTools::GetAttribute(json_data, "parent_class", parent_class_name))
 		{
-			assert(0);
 			LogTools::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] require a parent class", class_name);
 			return false;
 		}
@@ -54,7 +53,6 @@ namespace chaos
 		parent = FindClass(parent_class_name.c_str());
 		if (parent == nullptr)
 		{
-			assert(0);
 			LogTools::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] has unknown parent class [%s]", class_name, parent_class_name.c_str());
 			return false;
 		}
@@ -95,7 +93,6 @@ namespace chaos
 	{
 		if (!CanCreateInstance())
 		{
-			assert(0);
 			LogTools::Error("Class::CreateInstance : the class [%s] cannot be instanciated", class_name.c_str());
 			return nullptr;
 		}

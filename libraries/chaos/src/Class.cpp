@@ -13,7 +13,7 @@ namespace chaos
 		Class* result = DoDeclareSpecialClassStep1(class_name, json);
 		if (result != nullptr)
 		{
-			if (!result->DoDeclareSpecialClassStep2())
+			if (!result->DoDeclareSpecialClassStep2() || !result->DoDeclareSpecialClassStep3())
 			{
 				DoInvalidateSpecialClass(result);
 				return nullptr;
@@ -61,6 +61,11 @@ namespace chaos
 		// initialize missing data (size, creation_delegate)
 		class_size = parent->class_size;
 
+		return true;
+	}
+
+	bool Class::DoDeclareSpecialClassStep3()
+	{
 		if (parent->create_instance_func != nullptr) // check whether is instanciable !
 		{
 			create_instance_func = [this]()

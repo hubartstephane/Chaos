@@ -143,7 +143,7 @@ namespace chaos
 			return typed_object->IsObjectOfType("Sound");
 		}
 
-		int DecodeTileGID(int pseudo_gid, bool* horizontal_flip, bool* vertical_flip, bool* diagonal_flip)
+		int DecodeTileGID(int pseudo_gid, int * particle_flags)
 		{
 			// see https://doc.mapeditor.org/en/stable/reference/tmx-map-format/
 			const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
@@ -154,12 +154,16 @@ namespace chaos
 
 			std::int32_t gid = tmp & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
 
-			if (horizontal_flip != nullptr)
-				*horizontal_flip = (tmp & FLIPPED_HORIZONTALLY_FLAG);
-			if (vertical_flip != nullptr)
-				*vertical_flip = (tmp & FLIPPED_VERTICALLY_FLAG);
-			if (diagonal_flip != nullptr)
-				*diagonal_flip = (tmp & FLIPPED_DIAGONALLY_FLAG);
+			if (particle_flags != nullptr)
+			{
+				*particle_flags = 0;
+				if ((tmp & FLIPPED_HORIZONTALLY_FLAG) != 0)
+					*particle_flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
+				if ((tmp & FLIPPED_VERTICALLY_FLAG) != 0)
+					*particle_flags |= chaos::ParticleDefaultFlags::TEXTURE_VERTICAL_FLIP;
+				if ((tmp & FLIPPED_DIAGONALLY_FLAG) != 0)
+					*particle_flags |= chaos::ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP;
+			}
 
 			return (int)gid;
 		}

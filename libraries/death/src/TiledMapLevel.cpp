@@ -1104,7 +1104,7 @@ namespace death
 					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 			}
 			bool keep_aspect_ratio = false;
-			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->horizontal_flip, tile->vertical_flip, tile->diagonal_flip, keep_aspect_ratio);
+			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->particle_flags, keep_aspect_ratio);
 		}
 	}
 
@@ -1310,10 +1310,8 @@ namespace death
 			{
 				int pseudo_gid = chunk.tile_indices[i];
 
-				bool horizontal_flip = false;
-				bool vertical_flip = false;
-				bool diagonal_flip = false;
-				int gid = chaos::TiledMapTools::DecodeTileGID(pseudo_gid, &horizontal_flip, &vertical_flip, &diagonal_flip);
+				int particle_flags = 0;
+				int gid = chaos::TiledMapTools::DecodeTileGID(pseudo_gid, &particle_flags);
 
 				if (gid == 0)
 					continue;
@@ -1374,7 +1372,7 @@ namespace death
 
 				// create a simple particle
 				bool keep_aspect_ratio = true;
-				particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, horizontal_flip, vertical_flip, diagonal_flip, keep_aspect_ratio);
+				particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, particle_flags, keep_aspect_ratio);
 			}
 		}
 
@@ -1944,12 +1942,10 @@ namespace death
 
 		// create the particle
 		int player_gid = 0;
-		bool horizontal_flip = false;
-		bool vertical_flip = false;
-		bool diagonal_flip = false;
+		int particle_flags = 0;
 		bool keep_aspect_ratio = true;
 
-		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), player_gid, horizontal_flip, vertical_flip, diagonal_flip, keep_aspect_ratio);
+		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), player_gid, particle_flags, keep_aspect_ratio);
 		particle_populator->FlushParticles();
 
 		// get the allocation and finalize the layer

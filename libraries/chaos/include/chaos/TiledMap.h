@@ -718,12 +718,8 @@ namespace chaos
 
 			/** object information */
 			int gid = 0;
-			/** object information */
-			bool horizontal_flip = false;
-			/** object information */
-			bool vertical_flip = false;
-			/** object information */
-			bool diagonal_flip = false;
+			/** tile flags (whether particle is flipped vertical/horizontal/diagonal flipped*/
+			int particle_flags = 0;
 		};
 
 		// ==========================================

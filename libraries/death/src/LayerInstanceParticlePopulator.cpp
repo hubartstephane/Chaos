@@ -64,7 +64,7 @@ namespace death
 		particle_count = 0;
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, int gid, bool horizontal_flip, bool vertical_flip, bool diagonal_flip, bool keep_aspect_ratio)
+	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, int gid, int particle_flags, bool keep_aspect_ratio)
 	{
 		assert(bitmap_name != nullptr);
 
@@ -89,29 +89,22 @@ namespace death
 		}
 
 		// rotate the box if diagonal flipping is on
-		if (diagonal_flip)
+#if 0
+		if (0 && diagonal_flip)
 		{
 			glm::vec2 hotpoint = particle_box.position - particle_box.half_size; // the bottom left corner position has to be unmodified (as in Tiled Map Editor)
 			std::swap(particle_box.half_size.x, particle_box.half_size.y);
 			particle_box.position = hotpoint + particle_box.half_size;
 		}
+#endif
 
 		// add the particle
 		TiledMapParticle particle;
 		particle.bounding_box = particle_box;
 		particle.texcoords = layout.GetTexcoords();
 		particle.color = color;
-		particle.flags = 0;
-
-		if (horizontal_flip)
-			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
-		if (vertical_flip)
-			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_VERTICAL_FLIP;
-		if (diagonal_flip)
-			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP;
-		
+		particle.flags = particle_flags;
 		particle.gid = gid;
-
 
 		// shuxxx
 

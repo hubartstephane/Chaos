@@ -1323,7 +1323,7 @@ namespace death
 
 				// prepare data for the tile/object
 				glm::ivec2  tile_coord = tile_layer->GetTileCoordinate(chunk, i);
-				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, false);
+				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, particle_flags, false);
 
 				// try to create a geometric object from the tile
 				TiledMapObjectFactory factory = GetObjectFactory(tile_info.tiledata);

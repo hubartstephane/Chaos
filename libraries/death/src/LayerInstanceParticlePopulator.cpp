@@ -85,18 +85,15 @@ namespace death
 		else
 		{
 			if (keep_aspect_ratio)
-				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
-		}
+			{
+				int layout_width  = layout.width;
+				int layout_height = layout.height;
+				if ((particle_flags & chaos::ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+					std::swap(layout_width, layout_height);
 
-		// rotate the box if diagonal flipping is on
-#if 0
-		if (0 && diagonal_flip)
-		{
-			glm::vec2 hotpoint = particle_box.position - particle_box.half_size; // the bottom left corner position has to be unmodified (as in Tiled Map Editor)
-			std::swap(particle_box.half_size.x, particle_box.half_size.y);
-			particle_box.position = hotpoint + particle_box.half_size;
+				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout_width, layout_height), true);
+			}
 		}
-#endif
 
 		// add the particle
 		TiledMapParticle particle;

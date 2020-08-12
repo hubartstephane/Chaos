@@ -1132,15 +1132,25 @@ namespace chaos
 		// TileLayer methods
 		// ==========================================
 
-		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, bool world_system) const
+		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, int particle_flags, bool world_system) const
 		{
 			//CHAOS_REVERSE_Y_AXIS
 			glm::vec2 p1 = glm::vec2(
 				(float)(tile_coord.x * tile_size.x),
 				(float)(-tile_coord.y * tile_size.y - tile_size.y));
 			glm::vec2 p2 = p1;
-			p2.x += image_size.x;
-			p2.y += image_size.y;
+
+			if ((particle_flags & ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP) == 0)
+			{
+				p2.x += image_size.x;
+				p2.y += image_size.y;
+			}
+			else
+			{
+				p2.x += image_size.y;
+				p2.y += image_size.x;
+			}
+
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)
 				result.position += offset;

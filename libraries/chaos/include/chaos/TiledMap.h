@@ -939,7 +939,7 @@ namespace chaos
 		public:
 
 			/** get the bounding box of a tile */
-			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, bool world_system) const;
+			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, int particle_flags, bool world_system) const;
 
 			/** get the number of tiles with something inside */
 			size_t GetNonEmptyTileCount() const;

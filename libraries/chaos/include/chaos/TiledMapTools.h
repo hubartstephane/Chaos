@@ -43,7 +43,7 @@ namespace chaos
 		bool IsSoundTrigger(TiledMap::TypedObject const* typed_object);
 
 		/** split the tile pseudo GID into GID/H-FLIP/V-FLIP */
-		int DecodeTileGID(int pseudo_gid, bool* horizontal_flip = nullptr, bool* vertical_flip = nullptr, bool * diagonal_flip = nullptr);
+		int DecodeTileGID(int pseudo_gid, int * particle_flags = nullptr);
 
 	}; // namespace TiledMapTools
 

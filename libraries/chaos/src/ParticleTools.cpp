@@ -67,6 +67,7 @@ namespace chaos
             return true;
         }
 
+
         box2 ParticleCornersToBox(ParticleCorners const& corners)
         {
             return box2(std::make_pair(corners.bottomleft, corners.topright));
@@ -81,6 +82,10 @@ namespace chaos
             result.topright = tmp.second;
             return result;
         }
+
+
+
+
 
         ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const& atlas_dimension, int skip_last, int image_id)
         {
@@ -165,15 +170,28 @@ namespace chaos
 			vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, bitmap_index);
 
 			// apply texture symetries
+
+
 			if ((flags & ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
 			{
 				std::swap(vertex_texcoords[0].x, vertex_texcoords[1].x);
 				std::swap(vertex_texcoords[2].x, vertex_texcoords[3].x);
 			}
+
+
 			if ((flags & ParticleDefaultFlags::TEXTURE_VERTICAL_FLIP) != 0)
 			{
 				std::swap(vertex_texcoords[0].y, vertex_texcoords[3].y);
 				std::swap(vertex_texcoords[1].y, vertex_texcoords[2].y);
+			}
+
+			if ((flags & ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+			{
+				glm::vec3 v0 = vertex_texcoords[0];
+				vertex_texcoords[0] = vertex_texcoords[1];
+				vertex_texcoords[1] = vertex_texcoords[2];
+				vertex_texcoords[2] = vertex_texcoords[3];
+				vertex_texcoords[3] = v0;
 			}
 
 			// shu46.. Diagonal flipping

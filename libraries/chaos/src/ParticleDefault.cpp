@@ -21,7 +21,7 @@ namespace chaos
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive)
 	{
 		// generate particle corners and texcoords
-		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, 0.0f, particle.flags);
+		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.rotation, particle.flags);
 		// copy the color in all triangles vertex
 		for (size_t i = 0; i < primitive.count; ++i)
 			primitive[i].color = particle.color;
@@ -30,7 +30,7 @@ namespace chaos
 	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive)
 	{
 		// generate particle corners and texcoords
-		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, 0.0f, particle.flags);
+		ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.rotation, particle.flags);
 		// copy the color in all triangles vertex
 		for (size_t i = 0; i < primitive.count; ++i)
 			primitive[i].color = particle.color;

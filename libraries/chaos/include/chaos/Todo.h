@@ -21,7 +21,7 @@
 
 	- TiledMap => supporter Object Template (etudier l interet)
 
-	- TiledMap => Position/Rotation des Tile
+	- TiledMap => Rotation des Tile
 
 	- TiledMap => Object Alignment property
 

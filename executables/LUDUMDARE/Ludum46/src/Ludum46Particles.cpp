@@ -256,10 +256,11 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 	box.half_size *= 1.0f + (particle.life / particle.duration);
 
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords);
+	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords, particle.rotation, particle.flags);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;
+
 }
 
 bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & particle) const
@@ -267,6 +268,7 @@ bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & partic
 	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
 	particle.velocity += delta_time * particle.acceleration;
+
 	return false;
 }
 
@@ -283,7 +285,7 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 	box.position.x += 50.0f * std::sin(particle.offset_t);
 			
 	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords);
+	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords, particle.rotation, particle.flags);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < primitive.count; ++i)
 		primitive[i].color = particle.color;

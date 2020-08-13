@@ -127,7 +127,6 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
-	float  orientation = 0.0f;
 	float  image_timer = 0.0f;
 	int current_frame = 0;
 	
@@ -187,8 +186,6 @@ public:
 	bool  player_ownership = true;
 	bool  trample = false;
 	float damage = 1.0f;
-	float rotation = 0.0f;
-
 	float lifetime = 10.0f;
 };
 

@@ -79,7 +79,6 @@ class ParticleEnemy : public ParticleBase
 public:
 
 	float life = 5.0f;
-	float rotation = 0.0f;
 	float rotation_speed = 0.0f;
 	int   touched_count_down = 0;
 	int   score = 50;
@@ -128,8 +127,6 @@ public:
 	bool player_ownership = true;
 	bool trample = false;
 	float damage = 1.0f;
-	float rotation = 0.0f;
-
 	float lifetime = 10.0f;
 
 };

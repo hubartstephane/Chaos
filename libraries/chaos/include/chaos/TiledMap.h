@@ -4,6 +4,7 @@
 #include <chaos/Object.h>
 #include <chaos/Buffer.h>
 #include <chaos/FilePath.h>
+#include <chaos/Hotpoint.h>
 #include <chaos/GeometryFramework.h>
 
 namespace chaos
@@ -1190,13 +1191,15 @@ namespace chaos
 			/** object information */
 			boost::filesystem::path image_path;
 			/** object information */
-			glm::ivec2        image_size = glm::vec2(0, 0);
+			glm::ivec2	image_size = glm::vec2(0, 0);
 			/** object information */
-			int               image_margin = 0;
+			int			image_margin = 0;
 			/** object information */
-			int               image_spacing = 0;
+			int			image_spacing = 0;
 			/** object information */
-			glm::vec4         transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			glm::vec4	transparent_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			/** object information */
+			Hotpoint	object_alignment = Hotpoint::BOTTOM_LEFT;
 
 			/** the data for the tiles */
 			std::vector<shared_ptr<TileData>> tiles;

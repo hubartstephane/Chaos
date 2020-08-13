@@ -1482,6 +1482,22 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "margin", image_margin);
 			XMLTools::ReadAttribute(element, "spacing", image_spacing);
 
+			// XXX : theses tokens are not exactly the same that for JSON serialization !!!
+			static std::vector<std::pair<Hotpoint, char const*>> const hotpoint_map =
+			{				
+				{ Hotpoint::TOP, "top" },
+				{ Hotpoint::BOTTOM, "bottom" },
+				{ Hotpoint::LEFT, "left" },
+				{ Hotpoint::RIGHT, "right" },
+				{ Hotpoint::TOP_LEFT, "topleft" },
+				{ Hotpoint::TOP_RIGHT, "topright" },
+				{ Hotpoint::BOTTOM_LEFT, "bottomleft" },
+				{ Hotpoint::BOTTOM_RIGHT, "bottomright" },
+				{ Hotpoint::CENTER, "center" },
+				{ Hotpoint::BOTTOM_LEFT, nullptr }				
+			};
+			XMLTools::ReadEnumAttribute(element, "objectalignment", hotpoint_map, object_alignment);
+
 			ReadXMLColor(element, "backgroundcolor", background_color);
 
 			tinyxml2::XMLElement const * grid_element = element->FirstChildElement("grid");

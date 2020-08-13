@@ -7,6 +7,14 @@
 	== A faire pour LD47
 	===========================================================================================
 
+	-rendu des TiledMapObjects
+
+	-Allocation provisoire : detruit a la fin du rendu
+
+	-utiliser des droites comme ligne de mouvement pour des acteurs
+
+
+
 	- Verifier les Loaders avec les NAME+TAG
 
 	- Corriger Shader/Texture Atlas pour avoir a la fois du   8Bit mode ou Mode Normal
@@ -20,8 +28,6 @@
 	- Faire des Portail => Next Level contient nom de level + nom de player start
 
 	- TiledMap => supporter Object Template (etudier l interet)
-
-	- TiledMap => Rotation des Tile
 
 	- TiledMap => Object Alignment property
 

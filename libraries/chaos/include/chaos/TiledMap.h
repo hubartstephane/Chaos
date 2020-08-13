@@ -510,7 +510,7 @@ namespace chaos
 			/** object information */
 			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : bottomleft, but due to inverted axis Y, this is the point the greatest Y
 			/** object information */
-			float rotation = 0.0f; // clockwise rotation in degree
+			float rotation = 0.0f; 
 		};
 
 		// ==========================================

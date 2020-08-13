@@ -64,7 +64,7 @@ namespace death
 		particle_count = 0;
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, int gid, int particle_flags, bool keep_aspect_ratio)
+	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
 	{
 		assert(bitmap_name != nullptr);
 
@@ -102,6 +102,7 @@ namespace death
 		particle.color = color;
 		particle.flags = particle_flags;
 		particle.gid = gid;
+		particle.rotation = rotation;
 
 		// shuxxx
 

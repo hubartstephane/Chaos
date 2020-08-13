@@ -103,10 +103,15 @@ namespace death
 		particle.flags = particle_flags;
 		particle.gid = gid;
 		particle.rotation = rotation;
+		particle.bitmap_info = bitmap_info; // shuxxx
 
-		// shuxxx
-
-		particle.bitmap_info = bitmap_info;
+		// for tiled map objects, rotation use BOTTOM-LEFT as pivot whereas in our particle system, the  pivot is center
+		if (rotation != 0.0f)
+		{
+			float c = std::cos(rotation);
+			float s = std::sin(rotation);
+			particle.bounding_box.position += - particle.bounding_box.half_size + chaos::GLMTools::Rotate(particle.bounding_box.half_size, c, s);
+		}
 
 		particles[particle_count++] = particle;
 

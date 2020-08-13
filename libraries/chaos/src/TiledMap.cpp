@@ -588,7 +588,10 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "visible", visible);
 			XMLTools::ReadAttribute(element, "x", position.x);
 			XMLTools::ReadAttribute(element, "y", position.y);
-			XMLTools::ReadAttribute(element, "rotation", rotation);
+			XMLTools::ReadAttribute(element, "rotation", rotation); // clockwise rotation in degree
+
+			// convert to trigonometric rotation in rads
+			rotation = -MathTools::DegreeToRadian(rotation);
 
 			// remove useless space in type
 			if (type.length() > 0)

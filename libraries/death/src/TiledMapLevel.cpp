@@ -1104,7 +1104,7 @@ namespace death
 					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 			}
 			bool keep_aspect_ratio = false;
-			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, tile->particle_flags, keep_aspect_ratio);
+			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->rotation, tile->particle_flags, gid, keep_aspect_ratio);
 		}
 	}
 
@@ -1372,7 +1372,7 @@ namespace death
 
 				// create a simple particle
 				bool keep_aspect_ratio = true;
-				particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), gid, particle_flags, keep_aspect_ratio);
+				particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, gid, keep_aspect_ratio);
 			}
 		}
 
@@ -1945,7 +1945,7 @@ namespace death
 		int particle_flags = 0;
 		bool keep_aspect_ratio = true;
 
-		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), player_gid, particle_flags, keep_aspect_ratio);
+		particle_populator->AddParticle(player_start->bitmap_name.c_str(), player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, player_gid, keep_aspect_ratio);
 		particle_populator->FlushParticles();
 
 		// get the allocation and finalize the layer

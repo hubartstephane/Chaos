@@ -72,9 +72,10 @@ namespace chaos
 				return EnumTools::StringToEnum(str.c_str(), encode_table, dst);
 			// find the very last entry to get the default value
 			size_t i = 0;
-			while (encode_table[i].second != nullptr)
+			while (i < encode_table.size() && encode_table[i].second != nullptr)
 				++i;
-			dst = encode_table[i].first;
+			if (i < encode_table.size())
+				dst = encode_table[i].first;
 			return false;
 		}
 

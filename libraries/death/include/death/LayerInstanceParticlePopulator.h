@@ -9,6 +9,7 @@
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/BitmapAtlas.h>
+#include <chaos/Hotpoint.h>
 
 #include <death/TiledMapLevel.h>
 #include <death/TiledMapParticle.h>
@@ -29,7 +30,7 @@ namespace death
 		/** initialize the object */
 		bool Initialize(TiledMapLayerInstance* in_layer_instance);
 		/** insert a new particle */
-		bool AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio);
+		bool AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio);
 		/** flush remaining particles */
 		void FlushParticles();
 

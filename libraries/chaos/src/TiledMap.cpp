@@ -593,6 +593,11 @@ namespace chaos
 			// convert to trigonometric rotation in rads
 			rotation = -MathTools::DegreeToRadian(rotation);
 
+			if (rotation != 0)
+				rotation = rotation;
+
+
+
 			// remove useless space in type
 			if (type.length() > 0)
 				type = StringTools::TrimSpaces(type.c_str(), true, true);

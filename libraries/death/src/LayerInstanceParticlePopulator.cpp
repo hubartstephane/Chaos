@@ -64,7 +64,7 @@ namespace death
 		particle_count = 0;
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
+	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
 	{
 		assert(bitmap_name != nullptr);
 
@@ -108,6 +108,11 @@ namespace death
 		// for tiled map objects, rotation use BOTTOM-LEFT as pivot whereas in our particle system, the  pivot is center
 		if (rotation != 0.0f)
 		{
+		//	glm::vec2 center = chaos::ConvertHotpoint(particle_box.position, particle_box.half_size * 2.0f, Hotpoint initial_hotpoint, Hotpoint final_hotpoint);
+
+//			chao
+
+
 			float c = std::cos(rotation);
 			float s = std::sin(rotation);
 			particle.bounding_box.position += - particle.bounding_box.half_size + chaos::GLMTools::Rotate(particle.bounding_box.half_size, c, s);

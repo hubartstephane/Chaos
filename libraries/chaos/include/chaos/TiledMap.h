@@ -510,6 +510,12 @@ namespace chaos
 			bool visible = true;
 			/** object information */
 			glm::vec2 position = glm::vec2(0.0f, 0.0f); // XXX : bottomleft, but due to inverted axis Y, this is the point the greatest Y
+
+			// XXX : the position is :
+			//         - Ellipse, Rectangle, Text : TOP-LEFT corner (this is the rotation pivot)
+			//         - Polyline, Polygon : Position of the very first point (this is the rotation pivot)
+			//         - Tile : it depends on the object_alignment of the tileset (BOTTOM-LEFT by default)
+
 			/** object information */
 			float rotation = 0.0f; 
 		};
@@ -654,6 +660,10 @@ namespace chaos
 			CENTER = 1,
 			BOTTOM = 2
 		};
+
+		// XXX : The GeometricObjectText is to be considered as a rectangle containing a text. 
+		//       The size of that rectangle may be greater than the size of the text
+		//       The halign/valign members indicate where to place the text inside that rectangle
 
 		class GeometricObjectText : public GeometricObjectSurface
 		{

@@ -739,14 +739,16 @@ namespace chaos
 
 		box2 GeometricObjectTile::GetBoundingBox(bool world_system) const
 		{
-			//CHAOS_REVERSE_Y_AXIS
-			glm::vec2 p1 = position;
-			glm::vec2 p2 = glm::vec2(position.x + size.x, position.y + size.y);
+			// search the alignment fot this tile
+			chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT; // default value for tileset
 
-			//glm::vec2 p1 = position;
-			//glm::vec2 p2 = position;
-			//p2.x += size.x;
-			//p2.y -= size.y; // axis Y is DOWN !!!
+			TileInfo tile_info = FindTileInfo();
+			if (tile_info.tileset != nullptr)
+				hotpoint = tile_info.tileset->object_alignment;
+
+			//CHAOS_REVERSE_Y_AXIS
+			glm::vec2 p1 = chaos::ConvertHotpointToBottomLeft(position, size, hotpoint);
+			glm::vec2 p2 = p1 + size;
 
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)

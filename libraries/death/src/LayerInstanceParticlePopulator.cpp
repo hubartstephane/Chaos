@@ -108,14 +108,12 @@ namespace death
 		// for tiled map objects, rotation use BOTTOM-LEFT as pivot whereas in our particle system, the  pivot is center
 		if (rotation != 0.0f)
 		{
-		//	glm::vec2 center = chaos::ConvertHotpoint(particle_box.position, particle_box.half_size * 2.0f, Hotpoint initial_hotpoint, Hotpoint final_hotpoint);
-
-//			chao
-
+			glm::vec2 pivot = chaos::ConvertHotpoint(particle_box.position, particle_box.half_size * 2.0f, chaos::Hotpoint::CENTER, hotpoint);
 
 			float c = std::cos(rotation);
 			float s = std::sin(rotation);
-			particle.bounding_box.position += - particle.bounding_box.half_size + chaos::GLMTools::Rotate(particle.bounding_box.half_size, c, s);
+			
+			particle.bounding_box.position = pivot + chaos::GLMTools::Rotate((particle.bounding_box.position - pivot), c, s);
 		}
 
 		particles[particle_count++] = particle;

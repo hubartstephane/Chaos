@@ -739,7 +739,7 @@ namespace chaos
 
 		box2 GeometricObjectTile::GetBoundingBox(bool world_system) const
 		{
-			// search the alignment fot this tile
+			// search the alignment for this tile
 			chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT; // default value for tileset
 
 			TileInfo tile_info = FindTileInfo();

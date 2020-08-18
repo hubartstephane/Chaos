@@ -60,6 +60,8 @@ namespace chaos
 		virtual bool PreLinkProgram(GLuint program) const;
 		/** generate a program from the sources */
 		GLuint GenProgram(DefinitionSet const & definitions = DefinitionSet()) const;
+		/** insert extra source (utility functions ...) for the given shader type */
+		void AddFrameworkSources(GLenum shader_type, std::vector<char const*>& sources, std::vector<Buffer<char>>& buffers) const;
 
 	protected:
 

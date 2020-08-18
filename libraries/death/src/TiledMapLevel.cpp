@@ -794,22 +794,25 @@ namespace death
 
 			void main()
 			{
-fff
 
+#define INTERPOLATION_TEXTURE 0 
+
+				int flags = 0;
+				vec3 texcoord = DecodeTexcoord(vs_texcoord, flags);
 
 				// Using texel interpolation :
-
-				//vec4 tmp = texture(material, vs_texcoord);
-
+#if INTERPOLATION_TEXTURE
+				vec4 tmp = texture(material, texcoord);
+#else
 				// Not using texel interpolation :
-
 				ivec3 size = textureSize(material, 0);
 				ivec3 coord;
-				coord.xy = ivec2((vs_texcoord.xy * vec2(size.xy)));
-				coord.z = int(vs_texcoord.z);	
+				coord.xy = ivec2((texcoord.xy * vec2(size.xy)));
+				coord.z = int(texcoord.z);	
 				vec4 tmp = texelFetch(material, coord, 0);
+#endif
 
-				vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
+				vec4 color = (texcoord.x < 0.0 || texcoord.y < 0.0)? 
 					vec4(1.0, 1.0, 1.0, 1.0) : tmp;					
 				output_color.xyz = color.xyz * vs_color.xyz;
 				output_color.a   = vs_color.a * color.a;

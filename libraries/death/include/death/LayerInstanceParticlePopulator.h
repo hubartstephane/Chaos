@@ -32,7 +32,7 @@ namespace death
 		/** insert a new particle */
 		bool AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio);
 		/** flush remaining particles */
-		void FlushParticles();
+		bool FlushParticles();
 
 		/** get the final bounding box */
 		chaos::box2 const& GetBoundingBox() const { return bounding_box; }
@@ -42,7 +42,7 @@ namespace death
 	protected:
 
 		/** 'copy' the cached particle into the allocation (with type conversion) */
-		virtual void FlushCachedParticlesToAllocation();
+		virtual bool FlushCachedParticlesToAllocation();
 
 	protected:
 

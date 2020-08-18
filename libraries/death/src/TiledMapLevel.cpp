@@ -794,6 +794,9 @@ namespace death
 
 			void main()
 			{
+fff
+
+
 				// Using texel interpolation :
 
 				//vec4 tmp = texture(material, vs_texcoord);

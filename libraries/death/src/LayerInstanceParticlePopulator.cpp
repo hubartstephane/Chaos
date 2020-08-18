@@ -32,36 +32,46 @@ namespace death
 		return true;
 	}
 
-	void TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
+	bool TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
 	{
 		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
 
 		if (!accessor.IsValid())
 		{
-			chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
-			return;
+			//chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
+			return false;
 		}
-
 		for (size_t i = 0; i < particle_count; ++i)
 			accessor[i] = particles[i];
+		return true;
 	}
 
-	void TiledMapLayerInstanceParticlePopulator::FlushParticles()
+	bool TiledMapLayerInstanceParticlePopulator::FlushParticles()
 	{
 		// nothing to flush
 		if (particle_count == 0)
-			return;
+			return true;
 		// create an allocation if necessary
 		if (allocation == nullptr)
 		{
 			allocation = layer_instance->SpawnParticles(0);
 			if (allocation == nullptr)
-				return;
+			{
+				//chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushParticles : fails to SpawnParticles");
+				particle_count = 0;
+				return false;
+			}
 		}
 		// reserve memory and flush
-		FlushCachedParticlesToAllocation();
+		if (!FlushCachedParticlesToAllocation())
+		{
+			particle_count = 0;
+			return false;
+		}
 		// empty the cache
 		particle_count = 0;
+		
+		return true;
 	}
 
 	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
@@ -71,7 +81,10 @@ namespace death
 		// search bitmap information for the particle
 		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 		if (bitmap_info == nullptr)
+		{
+			//chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
 			return false;
+		}
 		// get the real layout of the bitmap by removing animation
 		chaos::BitmapAtlas::BitmapLayout layout = *bitmap_info;
 		if (bitmap_info->HasAnimation() && bitmap_info->GetAnimationImageCount() > 0)
@@ -123,7 +136,8 @@ namespace death
 
 		// flush previous particles to make room for the new one
 		if (particle_count == PARTICLE_BUFFER_SIZE)
-			FlushParticles();
+			if (!FlushParticles())
+				return false;
 		return true;
 	}
 

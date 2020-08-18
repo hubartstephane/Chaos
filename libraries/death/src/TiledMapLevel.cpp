@@ -1306,6 +1306,8 @@ fff
 		// populate the layer for each chunk
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
+		bool particle_creation_success = true;
+
 		for (chaos::TiledMap::TileLayerChunk const& chunk : tile_layer->tile_chunks)
 		{
 			size_t count = chunk.tile_indices.size();
@@ -1380,12 +1382,15 @@ fff
 
 				// create a simple particle
 				bool keep_aspect_ratio = true;
-				particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, gid, keep_aspect_ratio);
+
+				if (particle_creation_success)
+					particle_creation_success = particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, gid, keep_aspect_ratio);
 			}
 		}
 
 		// final flush
-		particle_populator->FlushParticles();
+		if (particle_creation_success)
+			particle_populator->FlushParticles();
 		// update the bounding box
 		bounding_box = particle_populator->GetBoundingBox();
 

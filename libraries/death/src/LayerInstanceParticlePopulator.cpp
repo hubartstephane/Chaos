@@ -38,7 +38,7 @@ namespace death
 
 		if (!accessor.IsValid())
 		{
-			//chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
+			chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
 			return false;
 		}
 		for (size_t i = 0; i < particle_count; ++i)
@@ -57,7 +57,7 @@ namespace death
 			allocation = layer_instance->SpawnParticles(0);
 			if (allocation == nullptr)
 			{
-				//chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushParticles : fails to SpawnParticles");
+				chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushParticles : fails to SpawnParticles");
 				particle_count = 0;
 				return false;
 			}
@@ -82,7 +82,7 @@ namespace death
 		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 		if (bitmap_info == nullptr)
 		{
-			//chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
+			chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
 			return false;
 		}
 		// get the real layout of the bitmap by removing animation

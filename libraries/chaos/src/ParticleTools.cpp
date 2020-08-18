@@ -67,62 +67,6 @@ namespace chaos
             return true;
         }
 
-
-        box2 ParticleCornersToBox(ParticleCorners const& corners)
-        {
-            return box2(std::make_pair(corners.bottomleft, corners.topright));
-        }
-
-        ParticleCorners BoxToParticleCorners(box2 const& box)
-        {
-            std::pair<glm::vec2, glm::vec2> tmp = GetBoxCorners(box);
-
-            ParticleCorners result;
-            result.bottomleft = tmp.first;
-            result.topright = tmp.second;
-            return result;
-        }
-
-        ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const& atlas_dimension, int skip_last, int image_id)
-        {
-            // tweak particle texcoords to have a sub image
-            int image_count = (atlas_dimension.x * atlas_dimension.y) - skip_last;
-            if (image_count > 0)
-            {
-                image_id = image_id % image_count;
-
-                glm::vec2 atlas_coord = glm::vec2(
-                    (float)(image_id % atlas_dimension.x),
-                    (float)(image_id / atlas_dimension.x)
-                );
-
-                glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / RecastVector<glm::vec2>(atlas_dimension);
-
-                texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
-                texcoords.topright = texcoords.bottomleft + atlas_size;
-            }
-            return texcoords;
-        }
-
-        ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const& atlas_dimension, glm::ivec2 const& image_id)
-        {
-            // tweak particle texcoords to have a sub image
-            int image_count = (atlas_dimension.x * atlas_dimension.y);
-            if (image_count > 0)
-            {
-                glm::vec2 atlas_coord = glm::vec2(
-                    (float)(image_id.x % atlas_dimension.x),
-                    (float)(image_id.y % atlas_dimension.y)
-                );
-
-                glm::vec2 atlas_size = (texcoords.topright - texcoords.bottomleft) / RecastVector<glm::vec2>(atlas_dimension);
-
-                texcoords.bottomleft = texcoords.bottomleft + atlas_coord * atlas_size;
-                texcoords.topright = texcoords.bottomleft + atlas_size;
-            }
-            return texcoords;
-        }
-
 		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags) // in order BL, BR, TR, TL
 		{
 			// compute the vertices

@@ -30,16 +30,6 @@ namespace chaos
         /** set the particle box */
         bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& box);
 
-		/** conversion methods */
-		box2 ParticleCornersToBox(ParticleCorners const & corners);
-		/** conversion methods */
-		ParticleCorners BoxToParticleCorners(box2 const & box);
-
-		/** considere the incoming texcoords represent a grid atlas, returns the sub image corresponding to given image */
-		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, int skip_last, int image_id);
-		/** considere the incoming texcoords represent a grid atlas, returns the sub image corresponding to given image */
-		ParticleTexcoords MakeParticleTexcoordsAtlas(ParticleTexcoords texcoords, glm::ivec2 const & atlas_dimension, glm::ivec2 const & image_id);
-
         /** fill the vertices array with 4 vertices corresponding to 1 QUAD */
         void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation = 0.0f, int flags = 0);
 

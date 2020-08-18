@@ -89,7 +89,15 @@ namespace chaos
 
 		void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags) // in order BL, BR, TR, TL
 		{
-			float bitmap_index = (float)texcoords.bitmap_index;
+			int bi = texcoords.bitmap_index;
+			bi = (bi << 4) | 13;
+
+
+			float bitmap_index = *(float*)&bi;
+
+
+
+
 
 			// compute the vertices
 			vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, bitmap_index);

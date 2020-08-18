@@ -9,6 +9,24 @@
 
 namespace chaos
 {
+	void GPUProgramGenerator::AddFrameworkSources(GLenum shader_type, std::vector<char const*> & sources, std::vector<Buffer<char>> & buffers) const
+	{
+		// XXX : this must be the very first line of the program. 
+		//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
+		sources.push_back("#version 450\n");
+
+		sources.push_back(R"SHAREDSHADERCODE(
+		vec3 DecodeTexcoord(vec3 texcoord, inout int flags)
+		{
+			int bi = floatBitsToInt(texcoord.z);
+			flags = (bi & 15);
+			texcoord.z = bi >> 4;
+			return texcoord;
+		}
+		)SHAREDSHADERCODE");
+
+
+	}
 
 	GLuint GPUProgramGenerator::DoGenerateShader(GLenum shader_type, std::vector<char const *> const & sources) const
 	{
@@ -61,12 +79,12 @@ namespace chaos
 		std::vector<char const *> sources;
 		std::vector<Buffer<char>> buffers; // this is important !!!! the GenerateSource(...) function returns Buffer<> whose lifetime is assured because of that
 
-		// XXX : this must be the very first line of the program. 
-		//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
-		sources.push_back("#version 450\n");
+
+		// extra sources
+		AddFrameworkSources(shader_type, sources, buffers);
 
 		// add the definitions
-		if (definitions.size() > 0)
+		if (!definitions_string.empty())
 			sources.push_back(definitions_string.c_str());
 
 		// shared sources
@@ -93,6 +111,8 @@ namespace chaos
 			buffers.push_back(buffer);
 			sources.push_back(buffer.data);
 		}
+
+
 
 		// no explicit source => early exit
 		if (previous_source_size == sources.size())
@@ -180,13 +200,13 @@ namespace chaos
 		for (auto const & shader_generators : shaders)
 		{
 			GLenum shader_type = shader_generators.first;
-			if (shader_type == GL_VERTEX_SHADER)
-				has_vertex_shader = true;
-
 			// this type is a joker and does not deserve to generate a shader
 			if (shader_type == GL_NONE)
 				continue;
-
+			// keep trace whether a vertex shader is provided
+			if (shader_type == GL_VERTEX_SHADER)
+				has_vertex_shader = true;
+			// generate the shader for this TYPE
 			GLuint shader_id = GenerateShader(result, shader_type, shader_generators.second, definitions, definitions_string);
 			if (shader_id == 0)
 			{
@@ -203,7 +223,7 @@ namespace chaos
 
 
 
-			has_vertex_shader = has_vertex_shader;
+		
 
 
 		}

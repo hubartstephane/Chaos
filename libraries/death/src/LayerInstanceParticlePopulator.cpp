@@ -101,7 +101,7 @@ namespace death
 			{
 				int layout_width  = layout.width;
 				int layout_height = layout.height;
-				if ((particle_flags & chaos::ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+				if ((particle_flags & chaos::ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
 					std::swap(layout_width, layout_height);
 
 				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout_width, layout_height), true);

@@ -1150,7 +1150,7 @@ namespace chaos
 				(float)(-tile_coord.y * tile_size.y - tile_size.y));
 			glm::vec2 p2 = p1;
 
-			if ((particle_flags & ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP) == 0)
+			if ((particle_flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) == 0)
 			{
 				p2.x += image_size.x;
 				p2.y += image_size.y;

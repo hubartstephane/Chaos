@@ -14,8 +14,10 @@ void main()
 {
 	vec2 pos = position + offset;
 
+	int flags = 0;
+
 	vs_position = pos;
-	vs_texcoord = texcoord;
+	vs_texcoord = DecodeTexcoord(texcoord, flags);
 	vs_color = color;
 
 	vec4 transformed_pos = camera_transform * vec4(pos.x, pos.y, 0.0, 1.0);

@@ -57,7 +57,8 @@ namespace chaos
 
 		void main()
 	    {
-			vs_texcoord = texcoord;
+			int flags = 0;
+			vs_texcoord = DecodeTexcoord(texcoord, flags);
 			vs_color    = color;
 			gl_Position = local_to_cam * vec4(position.x, position.y, 0.0, 1.0);
 		};											

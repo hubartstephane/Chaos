@@ -323,13 +323,13 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & part
 		if (std::abs(pawn_velocity.x) < 1.0f)
 		{
 			particle.frame_index = 0;
-			particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
+			particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
 		else if (std::abs(pawn_velocity.x) < 12.0f)
 		{
 			particle.frame_index = 3;
 			if (pawn_velocity.x < 0.0f)
-				particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
+				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
 		else 
 		{
@@ -342,7 +342,7 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & part
 			particle.animation_timer += speed_factor * delta_time;
 
 			if (pawn_velocity.x < 0.0f)
-				particle.flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
+				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 
 			particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
 		}

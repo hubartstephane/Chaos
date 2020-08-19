@@ -16,11 +16,19 @@ namespace chaos
 		sources.push_back("#version 450\n");
 
 		sources.push_back(R"SHAREDSHADERCODE(
-		vec3 DecodeTexcoord(vec3 texcoord, inout int flags)
+		const int BOTTOM_LEFT  = (1 << 0);
+		const int BOTTOM_RIGHT = (1 << 1);
+		const int TOP_LEFT     = (1 << 2);
+		const int TOP_RIGHT    = (1 << 3);		
+		const int HEIGHT_BITS_MODE = (1 << 4);			
+		)SHAREDSHADERCODE");
+
+		sources.push_back(R"SHAREDSHADERCODE(
+		vec3 DecodeTexcoord(vec3 texcoord, out int flags)
 		{
-			int bi = floatBitsToInt(texcoord.z);
-			flags = (bi & 15);
-			texcoord.z = bi >> 4;
+			int value = floatBitsToInt(texcoord.z);
+			flags = (value & 255);
+			texcoord.z = float(value >> 8);
 			return texcoord;
 		}
 		)SHAREDSHADERCODE");

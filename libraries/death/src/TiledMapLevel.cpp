@@ -762,6 +762,7 @@ namespace death
 			out vec2 vs_position;
 			out vec3 vs_texcoord;
 			out vec4 vs_color;
+			out flat int  vs_flags;
 
 			uniform vec2 offset;
 			uniform mat4 camera_transform;
@@ -772,7 +773,7 @@ namespace death
 				vec2 pos = position + offset;
 
 				vs_position = pos;
-				vs_texcoord = texcoord;
+				vs_texcoord = DecodeTexcoord(texcoord, vs_flags);
 				vs_color = color;
 
 				vec4 transformed_pos = camera_transform * vec4(pos.x, pos.y, 0.0, 1.0);
@@ -789,6 +790,7 @@ namespace death
 			in vec2 vs_position;
 			in vec3 vs_texcoord;
 			in vec4 vs_color;
+			in flat int  vs_flags;
 
 			uniform sampler2DArray material;
 
@@ -797,8 +799,7 @@ namespace death
 
 #define INTERPOLATION_TEXTURE 0 
 
-				int flags = 0;
-				vec3 texcoord = DecodeTexcoord(vs_texcoord, flags);
+				vec3 texcoord = vs_texcoord;
 
 				// Using texel interpolation :
 #if INTERPOLATION_TEXTURE
@@ -814,7 +815,10 @@ namespace death
 
 				vec4 color = (texcoord.x < 0.0 || texcoord.y < 0.0)? 
 					vec4(1.0, 1.0, 1.0, 1.0) : tmp;					
-				output_color.xyz = color.xyz * vs_color.xyz;
+				if (vs_flags == 13)
+					output_color.xyz = vec3(1.0, 1.0, 0.0);
+				else
+					output_color.xyz = color.xyz * vs_color.xyz;
 				output_color.a   = vs_color.a * color.a;
 			};
 		)PIXELSHADERCODE";

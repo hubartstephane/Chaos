@@ -87,35 +87,34 @@ namespace chaos
 			}
 		}
 
+		static float EncodeTexcoordZ(int bitmap_index, int vertex_flags)
+		{
+			int result = (bitmap_index << 8) | vertex_flags;
+			return *(float*)&result;
+		}
+
 		void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags) // in order BL, BR, TR, TL
 		{
-			int bi = texcoords.bitmap_index;
-			bi = (bi << 4) | 13;
-
-
-			float bitmap_index = *(float*)&bi;
-
-
-
-
+			int bitmap_index = texcoords.bitmap_index;
+			int vertex_flags = (flags & ParticleFlags::HEIGHT_BITS_MODE); // possible because    ParticleFlags::HEIGHT_BITS_MODE == VertexFlags::HEIGHT_BITS_MODE !! 
 
 			// compute the vertices
-			vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, bitmap_index);
-			vertex_texcoords[1] = glm::vec3(texcoords.topright.x, texcoords.bottomleft.y, bitmap_index);
-			vertex_texcoords[2] = glm::vec3(texcoords.topright.x, texcoords.topright.y, bitmap_index);
-			vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, bitmap_index);
+			vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::BOTTOM_LEFT));
+			vertex_texcoords[1] = glm::vec3(texcoords.topright.x, texcoords.bottomleft.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::BOTTOM_RIGHT));
+			vertex_texcoords[2] = glm::vec3(texcoords.topright.x, texcoords.topright.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::TOP_RIGHT));
+			vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::TOP_LEFT));
 
 			// apply texture symetries
-			if ((flags & ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+			if ((flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
 			{
 				std::swap(vertex_texcoords[0], vertex_texcoords[2]);
 			}
-			if ((flags & ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
+			if ((flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
 			{
 				std::swap(vertex_texcoords[0], vertex_texcoords[1]);
 				std::swap(vertex_texcoords[2], vertex_texcoords[3]);
 			}
-			if ((flags & ParticleDefaultFlags::TEXTURE_VERTICAL_FLIP) != 0)
+			if ((flags & ParticleFlags::TEXTURE_VERTICAL_FLIP) != 0)
 			{
 				std::swap(vertex_texcoords[0], vertex_texcoords[3]);
 				std::swap(vertex_texcoords[1], vertex_texcoords[2]);

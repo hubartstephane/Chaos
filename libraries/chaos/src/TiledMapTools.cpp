@@ -158,11 +158,11 @@ namespace chaos
 			{
 				*particle_flags = 0;
 				if ((tmp & FLIPPED_HORIZONTALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleDefaultFlags::TEXTURE_HORIZONTAL_FLIP;
+					*particle_flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 				if ((tmp & FLIPPED_VERTICALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleDefaultFlags::TEXTURE_VERTICAL_FLIP;
+					*particle_flags |= chaos::ParticleFlags::TEXTURE_VERTICAL_FLIP;
 				if ((tmp & FLIPPED_DIAGONALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleDefaultFlags::TEXTURE_DIAGONAL_FLIP;
+					*particle_flags |= chaos::ParticleFlags::TEXTURE_DIAGONAL_FLIP;
 			}
 
 			return (int)gid;

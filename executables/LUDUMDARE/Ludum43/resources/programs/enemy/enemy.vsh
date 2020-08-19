@@ -16,6 +16,8 @@ uniform vec4 camera_box;
 uniform vec2 offset;
 uniform float position_blend_ratio;
 
+uniform sampler2DArray material; // texture required in VS for Half pixel correction
+
 void main() 
 {
 	
@@ -33,8 +35,10 @@ void main()
 	particle_center = position2;
 	distance_to_center = length(p - particle_center) / 1.41; // the circle has a radius 1.41 time smaller than the quad
 
+	int vs_flags = 0;
+
 	vs_position = p;
-	vs_texcoord = texcoord;
+	vs_texcoord = DecodeTexcoordHPCorrection(texcoord, vs_flags, material);
 	vs_color    = color;
 
 	vec4 transformed_pos = camera_transform * vec4(p.x, p.y, 0.0, 1.0);

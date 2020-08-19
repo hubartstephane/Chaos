@@ -28,10 +28,10 @@ namespace chaos
 
 	namespace VertexFlags
 	{
-		static constexpr int BOTTOM_LEFT  = (1 << 0);
-		static constexpr int BOTTOM_RIGHT = (1 << 1);
-		static constexpr int TOP_LEFT     = (1 << 2);
-		static constexpr int TOP_RIGHT    = (1 << 3);
+		static constexpr int BOTTOM_LEFT	= 1;
+		static constexpr int BOTTOM_RIGHT	= 2;
+		static constexpr int TOP_LEFT		= 3;
+		static constexpr int TOP_RIGHT		= 4;
 		
 		static constexpr int HEIGHT_BITS_MODE = (1 << 4);
 	};

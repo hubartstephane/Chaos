@@ -768,12 +768,14 @@ namespace death
 			uniform mat4 camera_transform;
 			uniform vec4 camera_box;
 
+			uniform sampler2DArray material; // texture required in VS for Half pixel correction
+
 			void main()
 			{
 				vec2 pos = position + offset;
 
 				vs_position = pos;
-				vs_texcoord = DecodeTexcoord(texcoord, vs_flags);
+				vs_texcoord = DecodeTexcoordHPCorrection(texcoord, vs_flags, material);
 				vs_color = color;
 
 				vec4 transformed_pos = camera_transform * vec4(pos.x, pos.y, 0.0, 1.0);

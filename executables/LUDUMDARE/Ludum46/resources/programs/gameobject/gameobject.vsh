@@ -11,12 +11,14 @@ out vec4 vs_color;
 
 uniform vec4 canvas_box;
 
+uniform sampler2DArray material; // texture required in VS for Half pixel correction
+
 void main() 
 {
 	int flags = 0;
 
 	vs_position = position;
-	vs_texcoord = DecodeTexcoord(texcoord, flags);
+	vs_texcoord = DecodeTexcoordHPCorrection(texcoord, flags, material);
 	vs_color    = color;
 
 	gl_Position.xy = position / canvas_box.zw;

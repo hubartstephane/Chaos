@@ -15,21 +15,49 @@ namespace chaos
 		//       do it here and not in files because it would be difficult to insert macro just after elsewhere    
 		sources.push_back("#version 450\n");
 
+		// some flags for each vertex of a particle. Usefull for Half pixel correction 
 		sources.push_back(R"SHAREDSHADERCODE(
-		const int BOTTOM_LEFT  = (1 << 0);
-		const int BOTTOM_RIGHT = (1 << 1);
-		const int TOP_LEFT     = (1 << 2);
-		const int TOP_RIGHT    = (1 << 3);		
+		const int BOTTOM_LEFT  = 1;
+		const int BOTTOM_RIGHT = 2;
+		const int TOP_LEFT     = 3;
+		const int TOP_RIGHT    = 4;		
 		const int HEIGHT_BITS_MODE = (1 << 4);			
 		)SHAREDSHADERCODE");
 
+		// some functions to extract flags from the Z component of texcoord and apply half pixel correction
 		sources.push_back(R"SHAREDSHADERCODE(
+		vec2 GetHPCorrection(int flags)
+		{
+			vec2 offsets[8] = 
+			{
+				vec2( 0.0,  0.0),
+				vec2(+1.0, +1.0),
+				vec2(-1.0, +1.0),
+				vec2(+1.0, -1.0),
+				vec2(-1.0, -1.0),
+				vec2( 0.0,  0.0),
+				vec2( 0.0,  0.0),
+				vec2( 0.0,  0.0)
+			};
+
+			int corner_value = (flags & 7); // only values 1, 2, 3 and 4 are valid
+
+			return offsets[corner_value];
+		}
+		// extract flags from Z component of texcoord
 		vec3 DecodeTexcoord(vec3 texcoord, out int flags)
 		{
 			int value = floatBitsToInt(texcoord.z);
 			flags = (value & 255);
 			texcoord.z = float(value >> 8);
+
 			return texcoord;
+		}		
+		vec3 DecodeTexcoordHPCorrection(vec3 texcoord, out int flags, sampler2DArray material)
+		{
+			vec3 result = DecodeTexcoord(texcoord, flags);
+			result.xy += 0.5 * GetHPCorrection(flags) / textureSize(material, 0).xy;
+			return result;
 		}
 		)SHAREDSHADERCODE");
 

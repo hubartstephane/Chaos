@@ -90,7 +90,7 @@ namespace chaos
 		static float EncodeTexcoordZ(int bitmap_index, int vertex_flags)
 		{
 
-			vertex_flags |= ParticleFlags::HEIGHT_BITS_MODE;
+			//vertex_flags |= ParticleFlags::HEIGHT_BITS_MODE;
 
 			int result = (bitmap_index << 8) | vertex_flags;
 			return *(float*)&result;

@@ -210,6 +210,23 @@ namespace chaos
 			bufsize.Y = 2000;
 			SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), bufsize);
 
+			// XXX : some tests for console color. Not working yet
+
+#if 0
+
+			// https://en.wikipedia.org/wiki/ANSI_escape_code
+			// https://stackoverflow.com/questions/2348000/colors-in-c-win32-console
+
+			const char* green = "\033[0;32m";
+			const char* white = "\033[0;37m";
+			const char* red = "\033[0;31m";
+
+			std::cout << "toto" << green << "titi" << white << "tutu" << red << "tyty" << std::endl;
+			std::cout << "toto" << green << "titi" << white << "tutu" << red << "tyty" << std::endl;
+
+#endif
+
+
 			return true;
 		}
 

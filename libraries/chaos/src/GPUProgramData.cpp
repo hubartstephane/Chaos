@@ -361,6 +361,7 @@ namespace chaos
 
 		is_array = false;
 
+		// attribute with know semantic
 		int i = 0;
 		while (names[i].first != nullptr)
 		{
@@ -388,8 +389,10 @@ namespace chaos
 			}
 			++i;
 		}
+
+		// just a named attribute without any known semantic
 		semantic_data = std::make_pair(VertexAttributeSemantic::NONE, -1);
-		return "";
+		return attrib_name;
 	}
 
 	GPUProgramData GPUProgramData::GetData(GLuint program)
@@ -530,34 +533,37 @@ namespace chaos
 	{
 		int vertex_size = declaration.GetVertexSize();
 
-		for (auto const & attrib : attributes) // for each attribute of the GPU program, try to find the correct attribute in Vertex Buffer
+		for (auto const& attrib : attributes) // for each attribute of the GPU program, try to find the correct attribute in Vertex Buffer
 		{
 			GLint location = attrib.location;
 			if (location < 0)
 				continue;          // should never happen
 
-			if (attrib.semantic == VertexAttributeSemantic::NONE) // this entry does not have a well known semantic, try to find a global default-attribute from the name
+			GPUVertexDeclarationEntry const* entry = nullptr;
+
+			// this entry does not have a well known semantic
+			if (attrib.semantic == VertexAttributeSemantic::NONE)
+			{
+				entry = declaration.GetEntry(attrib.name.c_str());
+			}
+			// try to find a known semantic
+			else
+			{
+				// first  : use semantic_index
+				// second : ignore semantic_index			
+				entry = declaration.GetEntry(attrib.semantic, attrib.semantic_index);
+				if (entry == nullptr)
+					entry = declaration.GetEntry(attrib.semantic, -1); 
+			}
+
+			// no matching entry found : try to find a global default-attribute from the name
+			if (entry == nullptr)
 			{
 				if (attribute_provider != nullptr)
 					if (!attribute_provider->BindAttribute(attrib))
 						LogTools::Log("BindAttributes [%s] failure. Semantic [%d]. SemanticIndex [%d]. Location [%d]", attrib.name.c_str(), attrib.semantic, attrib.semantic_index, attrib.location);
 				glDisableVertexArrayAttrib(vertex_array, location);
 				continue;
-			}
-
-			// search in vertex declaration a matching semantic
-			GPUVertexDeclarationEntry const * entry = declaration.GetEntry(attrib.semantic, attrib.semantic_index);
-			if (entry == nullptr)
-			{
-				entry = declaration.GetEntry(attrib.semantic, -1); // even if semantic_index must be ignored
-				if (entry == nullptr)
-				{
-					if (attribute_provider != nullptr)
-						if (!attribute_provider->BindAttribute(attrib))
-							LogTools::Log("BindAttributes [%s] failure. Semantic [%d]. SemanticIndex [%d]. Location [%d]", attrib.name.c_str(), attrib.semantic, attrib.semantic_index, attrib.location);
-					glDisableVertexArrayAttrib(vertex_array, location);
-					continue;
-				}
 			}
 
 			// bind the attribute
@@ -569,8 +575,23 @@ namespace chaos
 			GLboolean normalized = false;
 			GLuint    relative_offset = entry->offset;
 
+			// see : https://community.khronos.org/t/vertex-shader-integer-input-broken/72878
+			//
+			// XXX : attribute GLSL side and C++ side may have different types
+			//       that's why there are different functions
+			//
+			// shuxxx : have a better understanding on how it works
+
 			glVertexArrayAttribBinding(vertex_array, attrib.location, binding_index);
-			glVertexArrayAttribFormat(vertex_array, attrib.location, count, type, normalized, relative_offset);
+
+			if (type == GL_FLOAT)
+				glVertexArrayAttribFormat(vertex_array, attrib.location, count, type, normalized, relative_offset);
+			else if (type == GL_DOUBLE)
+				glVertexArrayAttribLFormat(vertex_array, attrib.location, count, type, relative_offset);
+			else if (type == GL_INT)
+				glVertexArrayAttribIFormat(vertex_array, attrib.location, count, type, relative_offset);
+			else assert(0);
+
 			glEnableVertexArrayAttrib(vertex_array, attrib.location);
 		}
 	}

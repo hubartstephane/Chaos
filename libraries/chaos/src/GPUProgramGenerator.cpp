@@ -21,17 +21,19 @@ namespace chaos
 		const int BOTTOM_RIGHT = 2;
 		const int TOP_LEFT     = 3;
 		const int TOP_RIGHT    = 4;		
+		const int CORNER_MASK  = 7;
 		const int HEIGHT_BITS_MODE = (1 << 4);			
 		)SHAREDSHADERCODE");
 
 		// some functions to extract flags from the Z component of texcoord and apply half pixel correction
 		sources.push_back(R"SHAREDSHADERCODE(
-		vec2 GetHPCorrection(int flags)
+		vec2 GetHalfPixelCorrectionOffset(int flags)
 		{
+			// only values 1, 2, 3 and 4 are valid corners
 			vec2 offsets[8] = 
 			{
 				vec2( 0.0,  0.0),
-				vec2(+1.0, +1.0),
+				vec2(+1.0, +1.0), 
 				vec2(-1.0, +1.0),
 				vec2(+1.0, -1.0),
 				vec2(-1.0, -1.0),
@@ -39,29 +41,19 @@ namespace chaos
 				vec2( 0.0,  0.0),
 				vec2( 0.0,  0.0)
 			};
-
-			int corner_value = (flags & 7); // only values 1, 2, 3 and 4 are valid
-
-			return offsets[corner_value];
+			return offsets[flags & CORNER_MASK]; 
 		}
-		// extract flags from Z component of texcoord
-		vec3 DecodeTexcoord(vec3 texcoord, out int flags)
+		vec3 HalfPixelCorrection(vec3 texcoord, int flags, sampler2DArray material)
 		{
-			int value = floatBitsToInt(texcoord.z);
-			flags = (value & 255);
-			texcoord.z = float(value >> 8);
-
-			return texcoord;
-		}		
-		vec3 DecodeTexcoordHPCorrection(vec3 texcoord, out int flags, sampler2DArray material)
-		{
-			vec3 result = DecodeTexcoord(texcoord, flags);
-			result.xy += 0.5 * GetHPCorrection(flags) / textureSize(material, 0).xy;
+			vec3 result = texcoord;
+			result.xy += 0.5 * GetHalfPixelCorrectionOffset(flags) / textureSize(material, 0).xy;
 			return result;
 		}
+		int ExtractFragmentFlags(int flags)
+		{
+			return (flags & HEIGHT_BITS_MODE); // remove all other flags (keep only 8bit)
+		}
 		)SHAREDSHADERCODE");
-
-
 	}
 
 	GLuint GPUProgramGenerator::DoGenerateShader(GLenum shader_type, std::vector<char const *> const & sources) const

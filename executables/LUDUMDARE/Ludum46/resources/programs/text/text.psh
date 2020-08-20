@@ -13,5 +13,7 @@ void main()
 		vec4(1.0, 1.0, 1.0, 1.0) :
 		texture(material, vs_texcoord);
 	output_color.xyz = color.xyz * vs_color.xyz;
+
+	output_color.x = output_color.y = 1.0;
 	output_color.a   = vs_color.a * color.a;
 };

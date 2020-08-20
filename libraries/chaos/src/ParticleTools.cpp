@@ -87,25 +87,15 @@ namespace chaos
 			}
 		}
 
-		static float EncodeTexcoordZ(int bitmap_index, int vertex_flags)
-		{
-
-			//vertex_flags |= ParticleFlags::HEIGHT_BITS_MODE;
-
-			int result = (bitmap_index << 8) | vertex_flags;
-			return *(float*)&result;
-		}
-
 		void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags) // in order BL, BR, TR, TL
 		{
 			int bitmap_index = texcoords.bitmap_index;
-			int vertex_flags = (flags & ParticleFlags::HEIGHT_BITS_MODE); // possible because    ParticleFlags::HEIGHT_BITS_MODE == VertexFlags::HEIGHT_BITS_MODE !! 
 
 			// compute the vertices
-			vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::BOTTOM_LEFT));
-			vertex_texcoords[1] = glm::vec3(texcoords.topright.x, texcoords.bottomleft.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::BOTTOM_RIGHT));
-			vertex_texcoords[2] = glm::vec3(texcoords.topright.x, texcoords.topright.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::TOP_RIGHT));
-			vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, EncodeTexcoordZ(bitmap_index, vertex_flags | VertexFlags::TOP_LEFT));
+			vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, bitmap_index);
+			vertex_texcoords[1] = glm::vec3(texcoords.topright.x, texcoords.bottomleft.y, bitmap_index);
+			vertex_texcoords[2] = glm::vec3(texcoords.topright.x, texcoords.topright.y, bitmap_index);
+			vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, bitmap_index);
 
 			// apply texture symetries
 			if ((flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
@@ -124,6 +114,17 @@ namespace chaos
 			}
 		}
 
+		void GenerateVertexFlagAttributes(int* vertex_flags, int flags) // in order BL, BR, TR, TL
+		{
+			// just keep the HEIGHT_BITS_MODE flag (VertexFlags::HEIGHT_BITS_MODE == ParticleFlags::HEIGHT_BITS_MODE)
+			int output_flags = (flags & ParticleFlags::HEIGHT_BITS_MODE);
+
+			vertex_flags[0] = VertexFlags::BOTTOM_LEFT | output_flags;
+			vertex_flags[1] = VertexFlags::BOTTOM_RIGHT | output_flags;
+			vertex_flags[2] = VertexFlags::TOP_RIGHT | output_flags;
+			vertex_flags[3] = VertexFlags::TOP_LEFT | output_flags;
+		}
+
 		void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation, int flags)
         {
 			// in order BL, BR, TR, TL
@@ -133,6 +134,9 @@ namespace chaos
 			glm::vec3 vertex_texcoords[4];
 			GenerateVertexTextureAttributes(vertex_texcoords, texcoords, flags);
 
+			int vertex_flags[4];
+			GenerateVertexFlagAttributes(vertex_flags, flags);
+
 			VertexDefault& v0 = primitive[0];
 			VertexDefault& v1 = primitive[1];
 			VertexDefault& v2 = primitive[2];
@@ -140,15 +144,19 @@ namespace chaos
 	
 			v0.position = vertex_positions[0];
 			v0.texcoord = vertex_texcoords[0];
+			v0.flags    = vertex_flags[0];
 
 			v1.position = vertex_positions[1];
 			v1.texcoord = vertex_texcoords[1];
+			v1.flags    = vertex_flags[1];
 
 			v2.position = vertex_positions[2];
 			v2.texcoord = vertex_texcoords[2];
+			v2.flags    = vertex_flags[2];
 
 			v3.position = vertex_positions[3];
 			v3.texcoord = vertex_texcoords[3];
+			v3.flags    = vertex_flags[3];
         }
 
         void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation, int flags)
@@ -170,6 +178,9 @@ namespace chaos
 			glm::vec3 vertex_texcoords[4];
 			GenerateVertexTextureAttributes(vertex_texcoords, texcoords, flags);
 
+			int vertex_flags[4];
+			GenerateVertexFlagAttributes(vertex_flags, flags);
+
             VertexDefault& v0 = primitive[0];
             VertexDefault& v1 = primitive[1];
             VertexDefault& v2 = primitive[2];
@@ -179,21 +190,27 @@ namespace chaos
 
             v0.position = vertex_positions[0];
             v0.texcoord = vertex_texcoords[0];
+			v0.flags    = vertex_flags[0];
 
             v1.position = vertex_positions[1];
             v1.texcoord = vertex_texcoords[1];
+			v1.flags    = vertex_flags[1];
 
             v2.position = vertex_positions[2];
             v2.texcoord = vertex_texcoords[2];
+			v2.flags    = vertex_flags[2];
 
             v3.position = vertex_positions[0];
             v3.texcoord = vertex_texcoords[0];
+			v3.flags    = vertex_flags[0];
 
             v4.position = vertex_positions[2];
             v4.texcoord = vertex_texcoords[2];
+			v4.flags    = vertex_flags[2];
 
             v5.position = vertex_positions[3];
             v5.texcoord = vertex_texcoords[3];
+			v5.flags    = vertex_flags[3];
         }
 
         void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation, int flags)

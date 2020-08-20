@@ -1,4 +1,5 @@
 #include <chaos/GPUVertexDeclaration.h>
+#include <chaos/StringTools.h>
 
 namespace chaos
 {
@@ -47,7 +48,7 @@ namespace chaos
 		return component_count * component_size; 
 	}
 
-	void GPUVertexDeclaration::Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type)
+	void GPUVertexDeclaration::Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type, char const * name)
 	{
 		int offset = 0;
 		if (entries.size() > 0)
@@ -61,7 +62,27 @@ namespace chaos
 		entry.semantic_index = semantic_index;
 		entry.type           = type;
 		entry.offset         = offset;
+		if (name != nullptr)
+			entry.name = name;
 		entries.push_back(entry);
+	}
+
+	GPUVertexDeclarationEntry* GPUVertexDeclaration::GetEntry(char const * name)
+	{
+		assert(name != nullptr);
+		for (auto& entry : entries)
+			if (StringTools::Stricmp(entry.name, name) == 0)
+				return &entry;
+		return nullptr;
+	}
+
+	GPUVertexDeclarationEntry const* GPUVertexDeclaration::GetEntry(char const* name) const
+	{
+		assert(name != nullptr);
+		for (auto const& entry : entries)
+			if (StringTools::Stricmp(entry.name, name) == 0)
+				return &entry;
+		return nullptr;
 	}
 
 	GPUVertexDeclarationEntry * GPUVertexDeclaration::GetEntry(VertexAttributeSemantic semantic, int semantic_index)

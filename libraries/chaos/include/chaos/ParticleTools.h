@@ -44,6 +44,8 @@ namespace chaos
 		void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags); // in order BL, BR, TR, TL
 		/** an utility method to generate the 4 vertex attributes for a Particle */
 		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags); // in order BL, BR, TR, TL
+		/** an utility method to generate the 4 vertex attributes for a Particle */
+		void GenerateVertexFlagAttributes(int* vertex_flags, int flags);  // in order BL, BR, TR, TL
 
 	}; // namespace ParticleTools
 

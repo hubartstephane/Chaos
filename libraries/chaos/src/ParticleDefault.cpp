@@ -20,29 +20,36 @@ namespace chaos
 		ParticleToPrimitive(particle, output.AddPrimitive());
 	}
 	
-	static void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags) // in order BL, BR, TR, TL
+	static void GenerateVertexPositionAttributes(ParticleDefault const& particle, glm::vec2* vertex_positions) // in order BL, BR, TR, TL
 	{
+		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(particle.bounding_box);
+
+		glm::vec2 const & bottomleft = corners.first;
+		glm::vec2 const & topright   = corners.second;
+
 		// compute the vertices
-		vertex_positions[0] = glm::vec2(corners.bottomleft.x, corners.bottomleft.y);
-		vertex_positions[1] = glm::vec2(corners.topright.x, corners.bottomleft.y);
-		vertex_positions[2] = glm::vec2(corners.topright.x, corners.topright.y);
-		vertex_positions[3] = glm::vec2(corners.bottomleft.x, corners.topright.y);
+		vertex_positions[0] = glm::vec2(bottomleft.x, bottomleft.y);
+		vertex_positions[1] = glm::vec2(topright.x, bottomleft.y);
+		vertex_positions[2] = glm::vec2(topright.x, topright.y);
+		vertex_positions[3] = glm::vec2(bottomleft.x, topright.y);
 
 		// apply the rotation
-		if (rotation != 0.0f)
+		if (particle.rotation != 0.0f)
 		{
-			glm::vec2 center_position = (corners.bottomleft + corners.topright) * 0.5f;
+			glm::vec2 center_position = (bottomleft + topright) * 0.5f;
 
-			float c = std::cos(rotation);
-			float s = std::sin(rotation);
+			float c = std::cos(particle.rotation);
+			float s = std::sin(particle.rotation);
 			for (int i = 0; i < 4; ++i)
 				vertex_positions[i] = GLMTools::Rotate(vertex_positions[i] - center_position, c, s) + center_position;
 		}
 	}
 
-	static void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags) // in order BL, BR, TR, TL
+	static void GenerateVertexTextureAttributes(ParticleDefault const& particle, glm::vec3* vertex_texcoords) // in order BL, BR, TR, TL
 	{
-		int bitmap_index = texcoords.bitmap_index;
+		int bitmap_index = particle.texcoords.bitmap_index;
+
+		ParticleTexcoords const& texcoords = particle.texcoords;
 
 		// compute the vertices
 		vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, bitmap_index);
@@ -51,26 +58,26 @@ namespace chaos
 		vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, bitmap_index);
 
 		// apply texture symetries
-		if ((flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+		if ((particle.flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
 		{
 			std::swap(vertex_texcoords[0], vertex_texcoords[2]);
 		}
-		if ((flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
+		if ((particle.flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
 		{
 			std::swap(vertex_texcoords[0], vertex_texcoords[1]);
 			std::swap(vertex_texcoords[2], vertex_texcoords[3]);
 		}
-		if ((flags & ParticleFlags::TEXTURE_VERTICAL_FLIP) != 0)
+		if ((particle.flags & ParticleFlags::TEXTURE_VERTICAL_FLIP) != 0)
 		{
 			std::swap(vertex_texcoords[0], vertex_texcoords[3]);
 			std::swap(vertex_texcoords[1], vertex_texcoords[2]);
 		}
 	}
 
-	static void GenerateVertexFlagAttributes(int* vertex_flags, int flags) // in order BL, BR, TR, TL
+	static void GenerateVertexFlagAttributes(ParticleDefault const& particle, int* vertex_flags) // in order BL, BR, TR, TL
 	{
 		// just keep the HEIGHT_BITS_MODE flag (VertexFlags::HEIGHT_BITS_MODE == ParticleFlags::HEIGHT_BITS_MODE)
-		int output_flags = (flags & ParticleFlags::HEIGHT_BITS_MODE);
+		int output_flags = (particle.flags & ParticleFlags::HEIGHT_BITS_MODE);
 
 		vertex_flags[0] = VertexFlags::BOTTOM_LEFT | output_flags;
 		vertex_flags[1] = VertexFlags::BOTTOM_RIGHT | output_flags;
@@ -80,21 +87,15 @@ namespace chaos
 
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive)
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(particle.bounding_box);
-
-		ParticleCorners particle_corners;
-		particle_corners.bottomleft = corners.first;
-		particle_corners.topright = corners.second;
-
 		// in order BL, BR, TR, TL
 		glm::vec2 vertex_positions[4];
-		GenerateVertexPositionAttributes(vertex_positions, particle_corners, particle.rotation, particle.flags);
+		GenerateVertexPositionAttributes(particle, vertex_positions);
 
 		glm::vec3 vertex_texcoords[4];
-		GenerateVertexTextureAttributes(vertex_texcoords, particle.texcoords, particle.flags);
+		GenerateVertexTextureAttributes(particle, vertex_texcoords);
 
 		int vertex_flags[4];
-		GenerateVertexFlagAttributes(vertex_flags, particle.flags);
+		GenerateVertexFlagAttributes(particle, vertex_flags);
 
 		VertexDefault& v0 = primitive[0];
 		VertexDefault& v1 = primitive[1];
@@ -124,21 +125,15 @@ namespace chaos
 
 	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive)
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(particle.bounding_box);
-
-		ParticleCorners particle_corners;
-		particle_corners.bottomleft = corners.first;
-		particle_corners.topright = corners.second;
-
 		// in order BL, BR, TR, TL
 		glm::vec2 vertex_positions[4];
-		GenerateVertexPositionAttributes(vertex_positions, particle_corners, particle.rotation, particle.flags);
+		GenerateVertexPositionAttributes(particle, vertex_positions);
 
 		glm::vec3 vertex_texcoords[4];
-		GenerateVertexTextureAttributes(vertex_texcoords, particle.texcoords, particle.flags);
+		GenerateVertexTextureAttributes(particle, vertex_texcoords);
 
 		int vertex_flags[4];
-		GenerateVertexFlagAttributes(vertex_flags, particle.flags);
+		GenerateVertexFlagAttributes(particle, vertex_flags);
 
 		VertexDefault& v0 = primitive[0];
 		VertexDefault& v1 = primitive[1];

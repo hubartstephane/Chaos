@@ -5,6 +5,7 @@
 #include <chaos/GeometryFramework.h>
 
 #include <chaos/GPURenderParams.h>
+#include <chaos/HelpText.h>
 
 namespace death
 {
@@ -117,6 +118,8 @@ namespace death
 
 		return true;
 	}
+
+	CHAOS_HELP_TEXT(CMD, "-UnlimitedFPS");
 
 	void GameWindow::TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
 	{

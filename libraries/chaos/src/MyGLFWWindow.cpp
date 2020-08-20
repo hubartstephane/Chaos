@@ -505,8 +505,8 @@ namespace chaos
 			return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
 		}
 
-		CHAOS_HELP_TEXT("F9  : ScreenCapture");
-		CHAOS_HELP_TEXT("F10 : ToggleFullscreen");
+		CHAOS_HELP_TEXT(SHORTCUTS, "F9  : ScreenCapture");
+		CHAOS_HELP_TEXT(SHORTCUTS, "F10 : ToggleFullscreen");
 
 		bool Window::OnKeyEventImpl(KeyEvent const & event)
 		{

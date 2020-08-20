@@ -5,17 +5,23 @@ namespace chaos
 {
 	namespace HelpText
 	{
-		static std::vector<std::string>& GetMessageList()
+		static std::map<std::string, std::vector<std::string>>& GetMessageMap()
 		{
-			static std::vector<std::string> result;
+			static std::map<std::string, std::vector<std::string>> result;
 			return result;
 		}
 
-		size_t PushMessage(char const* message)
+		static std::vector<std::string>& GetMessageList(char const * family)
 		{
+			return GetMessageMap()[family];
+		}
+
+		size_t PushMessage(char const* family, char const* message)
+		{
+			assert(family  != nullptr);
 			assert(message != nullptr);
 
-			std::vector<std::string> & messages = GetMessageList();
+			std::vector<std::string> & messages = GetMessageList(family);
 
 			size_t result = messages.size();
 			messages.push_back(message);
@@ -23,15 +29,25 @@ namespace chaos
 		}
 
 		size_t FlushMessages(std::function<void(char const*)> function)
-		{		
-			std::vector<std::string>& messages = GetMessageList();
+		{	
+			size_t result = 0;
 
-			size_t result = messages.size();
+			std::map<std::string, std::vector<std::string>> & message_map = GetMessageMap();
 
-			std::sort(messages.begin(), messages.end());
-			for (std::string const& str : messages)
-				function(str.c_str());
-			messages.clear();
+			for (auto it = message_map.begin(); it != message_map.end(); ++it)
+			{
+				std::string const & family = it->first;
+				std::vector<std::string> & messages = it->second;
+
+				result += messages.size();
+
+				std::sort(messages.begin(), messages.end());
+				for (std::string const& str : messages)
+					function(str.c_str());
+				messages.clear();
+			}
+
+			message_map.clear();
 			return result;
 		}
 	};

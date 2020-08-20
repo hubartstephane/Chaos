@@ -104,12 +104,12 @@ namespace death
 			hud->Tick(delta_time);
 	}
 
-	CHAOS_HELP_TEXT("F1  : SkipLevel");
-	CHAOS_HELP_TEXT("F2  : ToggleCheatMode");
-	CHAOS_HELP_TEXT("F3  : ReloadGameConfiguration");
-	CHAOS_HELP_TEXT("F4  : ReloadCurrentLevel");
-	CHAOS_HELP_TEXT("F5  : QuickSave");
-	CHAOS_HELP_TEXT("F6  : ToggleFreeCameraMode");
+	CHAOS_HELP_TEXT(SHORTCUTS, "F1  : SkipLevel");
+	CHAOS_HELP_TEXT(SHORTCUTS, "F2  : ToggleCheatMode");
+	CHAOS_HELP_TEXT(SHORTCUTS, "F3  : ReloadGameConfiguration");
+	CHAOS_HELP_TEXT(SHORTCUTS, "F4  : ReloadCurrentLevel");
+	CHAOS_HELP_TEXT(SHORTCUTS, "F5  : QuickSave");
+	CHAOS_HELP_TEXT(SHORTCUTS, "F6  : ToggleFreeCameraMode");
 
 	bool Game::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{

@@ -3,6 +3,7 @@
 #include <chaos/LogTools.h>
 #include <chaos/StringTools.h>
 #include <chaos/ImageTools.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -226,6 +227,9 @@ namespace chaos
 
 #endif
 
+			// display messages that were pending
+			if (HelpText::FlushMessages([](char const* str) { std::cout << str << std::endl; }))
+				std::cout << "-------------------------------" << std::endl;
 
 			return true;
 		}

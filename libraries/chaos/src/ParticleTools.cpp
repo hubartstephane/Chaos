@@ -125,11 +125,17 @@ namespace chaos
 			vertex_flags[3] = VertexFlags::TOP_LEFT | output_flags;
 		}
 
-		void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation, int flags)
+        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation, int flags)
         {
+            std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(box);
+
+            ParticleCorners particle_corners;
+            particle_corners.bottomleft = corners.first;
+            particle_corners.topright = corners.second;
+
 			// in order BL, BR, TR, TL
-			glm::vec2 vertex_positions[4];			
-			GenerateVertexPositionAttributes(vertex_positions, corners, rotation, flags);
+			glm::vec2 vertex_positions[4];
+			GenerateVertexPositionAttributes(vertex_positions, particle_corners, rotation, flags);
 
 			glm::vec3 vertex_texcoords[4];
 			GenerateVertexTextureAttributes(vertex_texcoords, texcoords, flags);
@@ -141,76 +147,22 @@ namespace chaos
 			VertexDefault& v1 = primitive[1];
 			VertexDefault& v2 = primitive[2];
 			VertexDefault& v3 = primitive[3];
-	
+
 			v0.position = vertex_positions[0];
 			v0.texcoord = vertex_texcoords[0];
-			v0.flags    = vertex_flags[0];
+			v0.flags = vertex_flags[0];
 
 			v1.position = vertex_positions[1];
 			v1.texcoord = vertex_texcoords[1];
-			v1.flags    = vertex_flags[1];
+			v1.flags = vertex_flags[1];
 
 			v2.position = vertex_positions[2];
 			v2.texcoord = vertex_texcoords[2];
-			v2.flags    = vertex_flags[2];
+			v2.flags = vertex_flags[2];
 
 			v3.position = vertex_positions[3];
 			v3.texcoord = vertex_texcoords[3];
-			v3.flags    = vertex_flags[3];
-        }
-
-        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation, int flags)
-        {
-            std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(box);
-
-            ParticleCorners particle_corners;
-            particle_corners.bottomleft = corners.first;
-            particle_corners.topright = corners.second;
-            GenerateBoxParticle(primitive, particle_corners, texcoords, rotation, flags);
-        }
-
-        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, ParticleCorners const& corners, ParticleTexcoords const& texcoords, float rotation, int flags)
-        {
-			// in order BL, BR, TR, TL
-			glm::vec2 vertex_positions[4];
-			GenerateVertexPositionAttributes(vertex_positions, corners, rotation, flags);
-
-			glm::vec3 vertex_texcoords[4];
-			GenerateVertexTextureAttributes(vertex_texcoords, texcoords, flags);
-
-			int vertex_flags[4];
-			GenerateVertexFlagAttributes(vertex_flags, flags);
-
-            VertexDefault& v0 = primitive[0];
-            VertexDefault& v1 = primitive[1];
-            VertexDefault& v2 = primitive[2];
-            VertexDefault& v3 = primitive[3];
-            VertexDefault& v4 = primitive[4];
-            VertexDefault& v5 = primitive[5];
-
-            v0.position = vertex_positions[0];
-            v0.texcoord = vertex_texcoords[0];
-			v0.flags    = vertex_flags[0];
-
-            v1.position = vertex_positions[1];
-            v1.texcoord = vertex_texcoords[1];
-			v1.flags    = vertex_flags[1];
-
-            v2.position = vertex_positions[2];
-            v2.texcoord = vertex_texcoords[2];
-			v2.flags    = vertex_flags[2];
-
-            v3.position = vertex_positions[0];
-            v3.texcoord = vertex_texcoords[0];
-			v3.flags    = vertex_flags[0];
-
-            v4.position = vertex_positions[2];
-            v4.texcoord = vertex_texcoords[2];
-			v4.flags    = vertex_flags[2];
-
-            v5.position = vertex_positions[3];
-            v5.texcoord = vertex_texcoords[3];
-			v5.flags    = vertex_flags[3];
+			v3.flags = vertex_flags[3];
         }
 
         void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation, int flags)
@@ -220,7 +172,47 @@ namespace chaos
             ParticleCorners particle_corners;
             particle_corners.bottomleft = corners.first;
             particle_corners.topright = corners.second;
-            GenerateBoxParticle(primitive, particle_corners, texcoords, rotation, flags);
+
+			// in order BL, BR, TR, TL
+			glm::vec2 vertex_positions[4];
+			GenerateVertexPositionAttributes(vertex_positions, particle_corners, rotation, flags);
+
+			glm::vec3 vertex_texcoords[4];
+			GenerateVertexTextureAttributes(vertex_texcoords, texcoords, flags);
+
+			int vertex_flags[4];
+			GenerateVertexFlagAttributes(vertex_flags, flags);
+
+			VertexDefault& v0 = primitive[0];
+			VertexDefault& v1 = primitive[1];
+			VertexDefault& v2 = primitive[2];
+			VertexDefault& v3 = primitive[3];
+			VertexDefault& v4 = primitive[4];
+			VertexDefault& v5 = primitive[5];
+
+			v0.position = vertex_positions[0];
+			v0.texcoord = vertex_texcoords[0];
+			v0.flags = vertex_flags[0];
+
+			v1.position = vertex_positions[1];
+			v1.texcoord = vertex_texcoords[1];
+			v1.flags = vertex_flags[1];
+
+			v2.position = vertex_positions[2];
+			v2.texcoord = vertex_texcoords[2];
+			v2.flags = vertex_flags[2];
+
+			v3.position = vertex_positions[0];
+			v3.texcoord = vertex_texcoords[0];
+			v3.flags = vertex_flags[0];
+
+			v4.position = vertex_positions[2];
+			v4.texcoord = vertex_texcoords[2];
+			v4.flags = vertex_flags[2];
+
+			v5.position = vertex_positions[3];
+			v5.texcoord = vertex_texcoords[3];
+			v5.flags = vertex_flags[3];
         }
 
     }; // namespace ParticleTools

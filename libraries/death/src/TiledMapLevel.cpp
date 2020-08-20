@@ -11,6 +11,7 @@
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/StringTools.h>
 #include <chaos/JSONTools.h>
+#include <chaos/HelpText.h>
 
 
 namespace death
@@ -1094,7 +1095,7 @@ namespace death
 
 
 
-
+	CHAOS_HELP_TEXT(CMD, "-TiledGeometricObject::ForceParticleCreation");
 
 	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const
 	{

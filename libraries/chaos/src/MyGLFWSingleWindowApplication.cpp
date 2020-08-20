@@ -465,7 +465,7 @@ namespace chaos
 			return application->GetGPUResourceManager();
 		}
 
-		CHAOS_HELP_TEXT("F6 : ReloadGPUResources");
+		CHAOS_HELP_TEXT("F6  : ReloadGPUResources");
 
 		bool SingleWindowApplication::OnKeyEventImpl(KeyEvent const& event)
 		{	

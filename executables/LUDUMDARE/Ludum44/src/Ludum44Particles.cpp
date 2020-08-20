@@ -13,14 +13,6 @@
 
 #include <death/SoundContext.h>
 
-void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>)
-{
-	result->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2);
-    result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
-    result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
-}
-
-
 // ===========================================================================
 // FindEnemiesOnMap
 // ===========================================================================
@@ -128,10 +120,9 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& parti
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexPowerUpZone>)
 {
-	result->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2);
-    result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3); // bottom-left of sprite in atlas
-    result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
-    result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 1, chaos::VertexAttributeType::FLOAT3); // top-right of sprite in atlas
+	GetTypedVertexDeclaration(result, boost::mpl::identity<VertexBase>());
+
+    result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 1, chaos::VertexAttributeType::FLOAT3); // top-right of sprite in atlas (bottom-left was in parent function)
     result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 2, chaos::VertexAttributeType::FLOAT2);
 }
 
@@ -329,15 +320,10 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle,
 
 void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.rotation, particle.flags);
+	ParticleFire other = particle;
+	other.color.a = (other.lifetime < 1.0f) ? other.lifetime : 1.0f;
 
-    // copy the color in all triangles vertex
-    glm::vec4 color = particle.color;
-    color.a = (particle.lifetime < 1.0f) ? particle.lifetime : 1.0f;
-
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = color;
+	ParticleToPrimitive(other, output.AddPrimitive());
 }
 
 // ===========================================================================
@@ -418,13 +404,8 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy& particl
 
 void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords, particle.rotation, particle.flags);
+	ParticleEnemy other = particle;
+	other.color.a = (other.touched_count_down > 0) ? 0.0f : 1.0f;
 
-    // copy the color in all triangles vertex
-    glm::vec4 color = particle.color;
-    color.a = (particle.touched_count_down > 0) ? 0.0f : 1.0f;
-
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = color;
+	ParticleToPrimitive(other, output.AddPrimitive());
 }

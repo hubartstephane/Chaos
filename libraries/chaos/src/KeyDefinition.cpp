@@ -5,8 +5,6 @@
 namespace chaos
 {
 
-
-
 #define CHAOS_KEYDEF(KEY) std::pair<int, char const *>(GLFW_KEY_##KEY, #KEY)
 
 	std::vector<std::pair<int, char const *>> const KeyDefinition::key_map =

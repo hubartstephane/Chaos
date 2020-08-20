@@ -17,8 +17,6 @@
 
 	- Verifier les Loaders avec les NAME+TAG
 
-	- Corriger Shader/Texture Atlas pour avoir a la fois du   8Bit mode ou Mode Normal
-
 	- Filtre d image pour ajouter de l alpha sous certaine condition
 
 	- Jeu de platforme a faire
@@ -28,8 +26,6 @@
 	- Faire des Portail => Next Level contient nom de level + nom de player start
 
 	- TiledMap => supporter Object Template (etudier l interet)
-
-	- TiledMap => Object Alignment property
 
 	
 https://www.mapeditor.org/2020/08/05/tiled-1-4-2-released.html

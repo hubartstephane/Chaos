@@ -18,8 +18,7 @@
 #include <chaos/TiledMapTools.h>
 #include <chaos/CollisionFramework.h>
 #include <chaos/ParticleDefault.h>
-
-
+#include <chaos/HelpText.h>
 
 namespace death
 {
@@ -105,6 +104,13 @@ namespace death
 			hud->Tick(delta_time);
 	}
 
+	CHAOS_HELP_TEXT("F1 : SkipLevel");
+	CHAOS_HELP_TEXT("F2 : ToggleCheatMode");
+	CHAOS_HELP_TEXT("F3 : ReloadGameConfiguration");
+	CHAOS_HELP_TEXT("F4 : ReloadCurrentLevel");
+	CHAOS_HELP_TEXT("F5 : QuickSave");
+	CHAOS_HELP_TEXT("F6 : ToggleFreeCameraMode");
+
 	bool Game::OnKeyEventImpl(chaos::KeyEvent const& event)
 	{
 		// try start the game
@@ -162,16 +168,16 @@ namespace death
 			ReloadCurrentLevel();
 			return true;
 		}
-		// CMD GLFW_KEY_F5  : SetFreeCameraMode(...)
+		// CMD GLFW_KEY_F5  : QuickSave = SaveToCheckpoint(...)
 		if (event.IsKeyPressed(GLFW_KEY_F5))
 		{
-			SetFreeCameraMode(!IsFreeCameraMode());
+			SaveIntoCheckpoint();
 			return true;
 		}
-		// CMD GLFW_KEY_F6  : SaveToCheckpoint(...)
+		// CMD GLFW_KEY_F6  : SetFreeCameraMode(...)
 		if (event.IsKeyPressed(GLFW_KEY_F6))
 		{
-			SaveIntoCheckpoint();
+			SetFreeCameraMode(!IsFreeCameraMode());
 			return true;
 		}
 #endif

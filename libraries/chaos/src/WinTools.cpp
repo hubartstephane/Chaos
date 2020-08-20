@@ -158,6 +158,30 @@ namespace chaos
 
 #endif
 
+	static void FlushHelpTextMessages()
+	{
+		// display messages that were pending
+		size_t flushed_message_count = HelpText::FlushMessages([](char const* family, char const* message)
+		{
+			// starting a new family
+			if (message == nullptr)
+			{
+				std::cout << std::endl;
+				std::cout << "==========================================" << std::endl;
+				std::cout << "== " << family << std::endl;
+				std::cout << "==========================================" << std::endl;
+				std::cout << std::endl;
+			}
+			// all messages of this family
+			else
+			{
+				std::cout << "  " << message << std::endl;
+			}
+		});
+		if (flushed_message_count > 0)
+			std::cout << std::endl << "-------------------------------" << std::endl << std::endl;
+	}
+
 	// XXX : WindowedApp(...) required, does not work with ConsoleApp(...)
 	bool WinTools::AllocConsoleAndRedirectStdOutput()
 	{
@@ -227,9 +251,7 @@ namespace chaos
 
 #endif
 
-			// display messages that were pending
-			if (HelpText::FlushMessages([](char const* str) { std::cout << str << std::endl; }))
-				std::cout << "-------------------------------" << std::endl;
+			FlushHelpTextMessages();
 
 			return true;
 		}

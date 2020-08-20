@@ -85,6 +85,8 @@ namespace chaos
 		VertexAttributeType type;
 		/** offset of this entry from the beginning of the vertex */
 		int offset = 0;
+		/** a name for the component */
+		std::string name;
 	};
 
 	/**
@@ -111,9 +113,14 @@ namespace chaos
 	public:
 
 		/** insert an entry into the declaration */
-		void Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type);
+		void Push(VertexAttributeSemantic semantic, int semantic_index, VertexAttributeType type, char const * name = nullptr);
 		/** reset the object */
 		void Clear(){ entries.clear(); }
+
+		/** gets an entry from its name */
+		GPUVertexDeclarationEntry const* GetEntry(char const * name) const;
+		/** gets an entry from its name */
+		GPUVertexDeclarationEntry* GetEntry(char const* name);
 
 		/** gets an entry from its semantic (ignore semantic_index if negative) */
 		GPUVertexDeclarationEntry const * GetEntry(VertexAttributeSemantic semantic, int semantic_index) const;

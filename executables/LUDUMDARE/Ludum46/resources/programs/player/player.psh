@@ -6,9 +6,9 @@ in vec4 vs_color;
 
 uniform sampler2DArray material;
 
-
 void main()
 {
 	vec4 color = texture(material, vs_texcoord);
+	color.x = color.y = 1.0;
 	output_color = color * vs_color;  
 };

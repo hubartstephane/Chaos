@@ -1,7 +1,5 @@
 {
   "@background": { "path": "@programs/background/background.pgm" },
-  "@player": { "path": "@programs/player/player.pgm" },
-  "@gameobject": { "path": "@programs/gameobject/gameobject.pgm" },
   "@text": { "path": "@programs/text/text.pgm" },
   "@BurningFlames": { "path": "@programs/BurningFlames/BurningFlames.pgm" },
   "@blackscreen": { "path": "@programs/blackscreen/blackscreen.pgm" }

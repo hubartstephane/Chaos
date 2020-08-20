@@ -11,9 +11,8 @@
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>)
 {
-	result->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2);
-    result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
-    result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
+	GetTypedVertexDeclaration(result, boost::mpl::identity<chaos::VertexDefault>());
+
     result->Push(chaos::VertexAttributeSemantic::POSITION, 1, chaos::VertexAttributeType::FLOAT2);
     result->Push(chaos::VertexAttributeSemantic::POSITION, 2, chaos::VertexAttributeType::FLOAT2); // center of the particle
 }

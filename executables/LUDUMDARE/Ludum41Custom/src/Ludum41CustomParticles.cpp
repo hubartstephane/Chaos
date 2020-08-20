@@ -50,27 +50,24 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
 
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+	ParticleBrick other = particle;
 
-    // generate particle corners and texcoords
-    chaos::box2 bounding_box = particle.bounding_box;
-    bounding_box.position.y -= ludum_game_instance->brick_offset;
-    chaos::ParticleTools::GenerateBoxParticle(primitive, bounding_box, particle.texcoords);
+	// tweak bounding box
+    other.bounding_box.position.y -= ludum_game_instance->brick_offset;
 
-    // copy the color in all triangles vertex
+    // tweak color
     float extra = 2;
-    float ratio = (extra + particle.life) / (extra + particle.starting_life);
-    glm::vec4 color = ratio * particle.color;
+    float ratio = (extra + other.life) / (extra + other.starting_life);
+    other.color = ratio * other.color;
 
-	if (particle.highlight_time > 0.0f)
+	// according to Pixel Shader, negative texcoord make the texture content to be ignored
+	if (other.highlight_time > 0.0f)
 	{
-		color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		for (size_t i = 0; i < primitive.count; ++i) // according to Pixel Shader, negative texcoord make the texture content to be ignored
-			primitive[i].texcoord.x = -1.0f;
+		other.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		other.texcoords.bottomleft.x = -1.0f;
+		other.texcoords.topright.x = -1.0f;
 	}
-		
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = color;
+	ParticleToPrimitive(other, output.AddPrimitive());
 }
 
 // ===========================================================================
@@ -81,21 +78,22 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
 {
     LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
 
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords);
-    // copy the color in all triangles vertex
+	ParticleMovableObject other = particle;
 
-    glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    if (ludum_game_instance->ball_power == 0.5f)
-        power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 2.0f)
-        power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
-    else if (ludum_game_instance->ball_power == 3.0f)
-        power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	// tweak color
+	float ball_power = ludum_game_instance->ball_power;
 
-    for (size_t i = 0; i < primitive.count; ++i)
-        primitive[i].color = particle.color * power_color;
+	glm::vec4 power_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	if (ball_power <= 0.5f)
+		power_color = glm::vec4(0.0f, 0.58f, 1.0f, 1.0f);
+	else if (ball_power == 2.0f)
+		power_color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
+	else if (ball_power >= 3.0f)
+		power_color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	other.color = other.color * power_color;
+
+	ParticleToPrimitive(other, output.AddPrimitive());
 }
 
 void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
@@ -347,33 +345,25 @@ void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& parti
 	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
     bool keyboard = chaos::IsPCMode(input_mode);
 
-    chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
+	ParticleChallenge other = particle;
 
-    // generate particle corners and texcoords
-    chaos::ParticleTools::GenerateBoxParticle(primitive, particle.bounding_box, particle.texcoords);
-
-    // copy the color in all triangles vertex
-
-    glm::vec4 color = particle.color;
-
-    if (keyboard)
-    {
-        size_t challenge_position = particle.challenge->GetChallengePosition(false);
-        if (particle.index < challenge_position)
-            color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-        else
-            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    }
-    else
-    {
-        size_t challenge_position = particle.challenge->GetChallengePosition(true);
-        if (particle.index < challenge_position)
-            color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-        else
-            color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
-    }
-
-    for (size_t i = 0; i < primitive.count ; ++i)
-        primitive[i].color = color;
+	// tweak color
+	if (keyboard)
+	{
+		size_t challenge_position = other.challenge->GetChallengePosition(false);
+		if (other.index < challenge_position)
+			other.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		else
+			other.color = glm::vec4(1.0f, 0.41f, 0.0f, 1.0f);
+	}
+	else
+	{
+		size_t challenge_position = particle.challenge->GetChallengePosition(true);
+		if (other.index < challenge_position)
+			other.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		else
+			other.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
+	}
+	ParticleToPrimitive(other, output.AddPrimitive());
 }
 

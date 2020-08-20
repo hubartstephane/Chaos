@@ -52,10 +52,10 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
 
 	ParticleBrick other = particle;
 
-    // generate particle corners and texcoords
+    // tweak bounding box
 	other.bounding_box.position.y -= ludum_game_instance->brick_offset;
 
-    // copy the color in all triangles vertex
+	// tweak color
     float extra = 2;
     float ratio = (extra + other.life) / (extra + other.starting_life);
 	other.color = ratio * other.color;

@@ -428,10 +428,8 @@ namespace death
 		/** called after all particles of a layers has been created, so we can plug additionnal data */
 		virtual bool FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) { return true; }
 
-		/** the default program when not specified */
-		virtual chaos::GPUProgram* GenDefaultRenderProgram();
 		/** the default material when not specified */
-		virtual chaos::GPURenderMaterial* GetDefaultRenderMaterial();
+		virtual chaos::GPURenderMaterial* GenDefaultRenderMaterial();
 
 	protected:
 

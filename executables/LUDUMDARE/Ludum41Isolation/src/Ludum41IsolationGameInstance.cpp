@@ -5,6 +5,7 @@
 #include "Ludum41IsolationPlayer.h"
 
 #include <death/SoundContext.h>
+#include <chaos/HelpText.h>
 
 LudumGameInstance::LudumGameInstance()
 {
@@ -34,6 +35,9 @@ size_t LudumGameInstance::CanStartChallengeBallIndex(bool going_down) const
 	return std::numeric_limits<size_t>::max();
 }
 
+#if _DEBUG
+CHAOS_HELP_TEXT(CMD, "-NoChallenge");
+#endif
 
 void LudumGameInstance::TickChallenge(float delta_time)
 {

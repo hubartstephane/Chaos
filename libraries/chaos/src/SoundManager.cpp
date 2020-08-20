@@ -5,6 +5,7 @@
 #include <chaos/JSONTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/Application.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -738,6 +739,8 @@ namespace chaos
 			return;
 		DoUpdateIrrklangPause(effective_pause);
 	}
+
+	CHAOS_HELP_TEXT(CMD, "-Mute");
 
 	void Sound::DoUpdateEffectiveVolume(float effective_volume)
 	{

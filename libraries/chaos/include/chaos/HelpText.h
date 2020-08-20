@@ -15,8 +15,8 @@ namespace chaos
 	{
 		/** post a message when STD is available */
 		size_t PushMessage(char const * family, char const* message);
-		/** flush pending messages (returns number of message flushed) */
-		size_t FlushMessages(std::function<void(char const*)> function);
+		/** flush pending messages (returns number of message flushed). The callback receives (Family, Message). for each Family, it is called first with an empty message */
+		size_t FlushMessages(std::function<void(char const*, char const*)> function);
 	};
 
 

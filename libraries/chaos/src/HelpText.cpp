@@ -28,7 +28,7 @@ namespace chaos
 			return result;
 		}
 
-		size_t FlushMessages(std::function<void(char const*)> function)
+		size_t FlushMessages(std::function<void(char const*, char const *)> function)
 		{	
 			size_t result = 0;
 
@@ -39,12 +39,20 @@ namespace chaos
 				std::string const & family = it->first;
 				std::vector<std::string> & messages = it->second;
 
-				result += messages.size();
+				size_t message_count = messages.size();
+				if (message_count > 0)
+				{
+					// starting a new family (nullptr as message)
+					function(family.c_str(), nullptr);
 
-				std::sort(messages.begin(), messages.end());
-				for (std::string const& str : messages)
-					function(str.c_str());
-				messages.clear();
+					// iterate over all messages of this family
+					std::sort(messages.begin(), messages.end());
+					for (std::string const& str : messages)
+						function(family.c_str(), str.c_str());
+					messages.clear();
+					// update result
+					result += message_count;
+				}
 			}
 
 			message_map.clear();

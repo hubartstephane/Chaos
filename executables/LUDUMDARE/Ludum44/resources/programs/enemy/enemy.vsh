@@ -1,10 +1,12 @@
 in vec2 position;
 in vec3 texcoord;
 in vec4 color;
+in int  flags;
 
 out vec2 vs_position;
 out vec3 vs_texcoord;
 out vec4 vs_color;
+out flat int vs_flags;
 
 uniform vec2 offset;
 uniform mat4 camera_transform;
@@ -15,11 +17,10 @@ uniform sampler2DArray material; // texture required in VS for Half pixel correc
 void main()
 {
 	vec2 pos = position + offset;
-
-	int vs_flags = 0;
-
+	
 	vs_position = pos;
-	vs_texcoord = DecodeTexcoordHPCorrection(texcoord, vs_flags, material);
+	vs_texcoord = HalfPixelCorrection(texcoord, flags, material);
+	vs_flags = ExtractFragmentFlags(flags);
 	vs_color = color;
 
 	vec4 transformed_pos = camera_transform * vec4(pos.x, pos.y, 0.0, 1.0);

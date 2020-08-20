@@ -17,8 +17,6 @@
 
 using VertexBase = chaos::VertexDefault;
 
-//void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
-
 class ParticleBase : public  death::TiledMapParticle
 {
 public:

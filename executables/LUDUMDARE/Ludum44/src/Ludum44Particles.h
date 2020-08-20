@@ -18,20 +18,13 @@ static constexpr float WAKEN_RADIUS_RATIO  = 1.0f;
 // VertexBase and ParticleBase
 // ===========================================================================
 
-class VertexBase : public chaos::VertexDefault
-{
-public:
-
-};
-
-void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
+using VertexBase = chaos::VertexDefault;
 
 class ParticleBase : public death::TiledMapParticle
 {
 public:
 
 	glm::vec2 velocity = glm::vec2(0.0f, 0.0f);
-
 };
 
 // =====================================

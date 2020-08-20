@@ -3,6 +3,7 @@
 #include <chaos/StringTools.h>
 #include <chaos/AllocatorTools.h>
 #include <chaos/Application.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -58,6 +59,8 @@ namespace chaos
 			return result;
 		}
 
+		CHAOS_HELP_TEXT(CMD, "-ShowLoadedFile");
+
 		static Buffer<char> DoLoadFile(boost::filesystem::path const& resolved_path, bool ascii, bool* success_open)
 		{
 			assert(success_open != nullptr && *success_open == false); // caller responsability
@@ -99,6 +102,9 @@ namespace chaos
 		}
 
 #if _DEBUG // we cannot use 'CHAOS_CAN_REDIRECT_RESOURCE_FILES' inside libraries !!!
+
+		CHAOS_HELP_TEXT(CMD, "-NoDirectResourceFiles")
+
 		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path& redirected_path)
 		{
 			Application const* application = Application::GetConstInstance();

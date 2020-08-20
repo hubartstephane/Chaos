@@ -66,6 +66,8 @@ namespace death
 		cheat_mode = value;
 	}
 
+	CHAOS_HELP_TEXT(CMD, "-CheatMode");
+
 	bool Game::GetCheatMode() const
 	{
 		if (chaos::Application::HasApplicationCommandLineFlag("-CheatMode")) // CMDLINE
@@ -373,6 +375,11 @@ namespace death
 
 		return true;
 	}
+
+	CHAOS_HELP_TEXT(CMD, "-UseCachedAtlas");
+#if !_DEBUG
+	CHAOS_HELP_TEXT(CMD, "-DumpCachedAtlas");
+#endif
 
 	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
@@ -849,6 +856,8 @@ namespace death
 			return LoadPersistentGameData(game_data);
 		}
 	}
+
+	CHAOS_HELP_TEXT(CMD, "-MuteMusic");
 
 	chaos::Sound * Game::SetInGameMusic(char const * music_name)
 	{

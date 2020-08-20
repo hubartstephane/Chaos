@@ -1,6 +1,7 @@
 #include <chaos/MyGLFWGamepadManager.h>
 #include <chaos/MathTools.h>
 #include <chaos/Application.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -549,6 +550,8 @@ namespace chaos
 			if (ShouldReduceForceFeedbackToZero()) // immediate update. because not sure, the Gamepad will ever be ticked
 				TickForceFeedbackEffects(0.0f);
         }
+
+		CHAOS_HELP_TEXT(CMD, "-NoForceFeedback");
 
         void Gamepad::DoUpdateForceFeedbackDevice(float max_left_value, float max_right_value)
         {

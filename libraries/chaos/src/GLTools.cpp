@@ -5,6 +5,7 @@
 #include <chaos/GLMTools.h>
 #include <chaos/Application.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -270,6 +271,11 @@ namespace chaos
 
 		return "Unknown";
 	}
+
+	CHAOS_HELP_TEXT(CMD, "-GLDebugNotifications");
+#if _WIN32 || _WIN64
+	CHAOS_HELP_TEXT(CMD, "-GLDebugBreak");
+#endif
 
 	void WINAPI GLTools::DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{

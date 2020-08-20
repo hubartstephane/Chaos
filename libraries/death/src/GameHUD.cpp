@@ -1,6 +1,7 @@
 #include <death/GameHUD.h>
 #include <death/Game.h>
 #include <death/GameInstance.h>
+#include <chaos/HelpText.h>
 
 namespace death
 {
@@ -126,6 +127,9 @@ namespace death
 		particle_manager->AddLayer<chaos::ParticleDefaultTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 		return render_order;
 	}
+
+	CHAOS_HELP_TEXT(CMD, "-ShowFPS");
+	CHAOS_HELP_TEXT(CMD, "-HideFPS");
 
 	bool GameHUD::FillHUDContent()
 	{		

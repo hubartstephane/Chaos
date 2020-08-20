@@ -6,6 +6,7 @@
 #include <chaos/StringTools.h>
 #include <chaos/JSONTools.h>
 #include <chaos/ClassLoader.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -54,6 +55,13 @@ namespace chaos
 		}
 		return true;
 	}
+
+	CHAOS_HELP_TEXT(CMD, "-ShowConsole");
+	CHAOS_HELP_TEXT(CMD, "-HideConsole");
+	CHAOS_HELP_TEXT(CMD, "-DumpConfigFile");
+	CHAOS_HELP_TEXT(CMD, "-ShowDirectories");
+	CHAOS_HELP_TEXT(CMD, "-ShowUserTempDirectory");
+	CHAOS_HELP_TEXT(CMD, "-ShowInstalledResourcesDirectory");
 
 	bool Application::Initialize()
 	{

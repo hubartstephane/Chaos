@@ -30,18 +30,6 @@ namespace chaos
         /** set the particle box */
         bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& box);
 
-        /** fill the vertices array with 4 vertices corresponding to 1 QUAD */
-        void GenerateBoxParticle(QuadPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation = 0.0f, int flags = 0);
-        /** fill the vertices array with 6 vertices corresponding to 1 TRIANGLE PAIR */
-        void GenerateBoxParticle(TrianglePairPrimitive<VertexDefault>& primitive, box2 const& box, ParticleTexcoords const& texcoords, float rotation = 0.0f, int flags = 0);
-
-		/** an utility method to generate the 4 vertex attributes for a Particle */
-		void GenerateVertexTextureAttributes(glm::vec3* vertex_texcoords, ParticleTexcoords const& texcoords, int flags); // in order BL, BR, TR, TL
-		/** an utility method to generate the 4 vertex attributes for a Particle */
-		void GenerateVertexPositionAttributes(glm::vec2* vertex_positions, ParticleCorners const& corners, float rotation, int flags); // in order BL, BR, TR, TL
-		/** an utility method to generate the 4 vertex attributes for a Particle */
-		void GenerateVertexFlagAttributes(int* vertex_flags, int flags);  // in order BL, BR, TR, TL
-
 	}; // namespace ParticleTools
 
 }; // namespace chaos

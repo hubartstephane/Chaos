@@ -251,16 +251,10 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 {
 	chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
-	chaos::box2 box = particle.bounding_box;
+	ParticleBlood other = particle;
+	other.bounding_box.half_size *= 1.0f + (other.life / other.duration);
 
-	box.half_size *= 1.0f + (particle.life / particle.duration);
-
-	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords, particle.rotation, particle.flags);
-	// copy the color in all triangles vertex
-	for (size_t i = 0; i < primitive.count; ++i)
-		primitive[i].color = particle.color;
-
+	ParticleToPrimitive(other, primitive);
 }
 
 bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & particle) const
@@ -281,14 +275,10 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 {
 	chaos::TrianglePairPrimitive<VertexBase> primitive = output.AddPrimitive();
 
-	chaos::box2 box = particle.bounding_box;
-	box.position.x += 50.0f * std::sin(particle.offset_t);
-			
-	// generate particle corners and texcoords
-	chaos::ParticleTools::GenerateBoxParticle(primitive, box, particle.texcoords, particle.rotation, particle.flags);
-	// copy the color in all triangles vertex
-	for (size_t i = 0; i < primitive.count; ++i)
-		primitive[i].color = particle.color;
+	ParticleBurnedSoul other = particle;
+	other.bounding_box.position.x += 50.0f * std::sin(other.offset_t);
+
+	ParticleToPrimitive(other, primitive);
 }
 
 bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const

@@ -6,6 +6,7 @@
 #include <chaos/Application.h>
 #include <chaos/JSONTools.h>
 #include <chaos/WinTools.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -464,9 +465,11 @@ namespace chaos
 			return application->GetGPUResourceManager();
 		}
 
+		CHAOS_HELP_TEXT("F6 : ReloadGPUResources");
+
 		bool SingleWindowApplication::OnKeyEventImpl(KeyEvent const& event)
 		{	
-			// reloading GPU resources
+			// reloading GPU resources			
 			if (event.IsKeyPressed(GLFW_KEY_F8))
 			{
 				// CMD GLFW_KEY_F8 : ReloadGPUResources(...)

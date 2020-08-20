@@ -469,6 +469,45 @@ namespace death
 		return true;
 	}
 
+	// =============================================================
+	// TiledMapChangeLevelTrigger implementation
+	// =============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// =====================================
 	// TiledMapCameraTemplate implementation
 	// =====================================
@@ -985,6 +1024,13 @@ namespace death
 		return true;
 	}
 
+
+
+
+	// shuyyy
+
+
+
 	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject* in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
@@ -1043,6 +1089,13 @@ namespace death
 		}
 	}
 
+
+
+
+
+
+
+
 	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const
 	{
 #if _DEBUG
@@ -1076,6 +1129,28 @@ namespace death
 	{
 		return new TiledMapLayerInstanceParticlePopulator();
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// shuyyy
+
 
 	bool TiledMapLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer* object_layer)
 	{
@@ -1138,6 +1213,10 @@ namespace death
 		return true;
 	}
 
+
+
+	// shuyyy
+
 	bool TiledMapLayerInstance::FinalizeParticles(chaos::ParticleAllocationBase* allocation)
 	{
 		// no layer, nothing to do !
@@ -1163,6 +1242,17 @@ namespace death
 		}
 		return true;
 	}
+
+
+
+
+
+
+
+
+
+
+
 	bool TiledMapLayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer)
 	{
 		// the name
@@ -1223,6 +1313,24 @@ namespace death
 		}
 		return particle_layer.get();
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// shuyyy
+
 
 	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
 	{
@@ -1325,6 +1433,20 @@ namespace death
 
 		return true;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	bool TiledMapLayerInstance::DoTick(float delta_time)
 	{

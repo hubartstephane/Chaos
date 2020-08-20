@@ -8,6 +8,7 @@
 #include <chaos/MyGLFWSingleWindowApplication.h>
 #include <chaos/GPUTextureLoader.h>
 #include <chaos/WinTools.h>
+#include <chaos/HelpText.h>
 
 namespace chaos
 {
@@ -503,6 +504,9 @@ namespace chaos
 			));
 			return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
 		}
+
+		CHAOS_HELP_TEXT("F9 : ScreenCapture");
+		CHAOS_HELP_TEXT("F10 : ToggleFullscreen");
 
 		bool Window::OnKeyEventImpl(KeyEvent const & event)
 		{

@@ -465,17 +465,21 @@ namespace chaos
 			return application->GetGPUResourceManager();
 		}
 
-		CHAOS_HELP_TEXT(SHORTCUTS, "F6  : ReloadGPUResources");
+#if _DEBUG
+		CHAOS_HELP_TEXT(SHORTCUTS, "F8  : ReloadGPUResources");
+#endif
 
 		bool SingleWindowApplication::OnKeyEventImpl(KeyEvent const& event)
 		{	
-			// reloading GPU resources			
+			// reloading GPU resources		
+#if _DEBUG
 			if (event.IsKeyPressed(GLFW_KEY_F8))
 			{
 				// CMD GLFW_KEY_F8 : ReloadGPUResources(...)
 				ReloadGPUResources();
 				return true;
 			}
+#endif
 			return Application::OnKeyEventImpl(event);
 		}
 

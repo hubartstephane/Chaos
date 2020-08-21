@@ -61,25 +61,18 @@ namespace chaos
 			return nullptr;
 
 		ParticleAllocationBase* result = nullptr;
-		if (!new_allocation)
+
+		// creation of a new allocation
+		if (new_allocation || particle_layer->GetAllocationCount() == 0)
 		{
-			// create a first allocation, while there are none
-			if (particle_layer->GetAllocationCount() == 0)
-			{
-				result = particle_layer->SpawnParticles(count);
-			}
-			// take the very first existing allocation and add particles at the end
-			else
-			{
-				result = particle_layer->GetAllocation(0);
-				if (result == nullptr || !result->AddParticles(count))
-					return nullptr;
-			}
+			result = particle_layer->SpawnParticles(count);
 		}
+		// take the very first existing allocation and add particles at the end
 		else
 		{
-			// independant allocation
-			result = particle_layer->SpawnParticles(count);
+	 		result = particle_layer->GetAllocation(0);
+			if (result == nullptr || !result->AddParticles(count))
+				return nullptr;
 		}
 		return result;
 	}

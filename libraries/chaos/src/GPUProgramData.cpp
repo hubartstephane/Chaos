@@ -290,7 +290,8 @@ namespace chaos
 
 	void GPUProgramData::BindUniforms(GPUProgramProviderBase const * provider) const
 	{
-		BindUniforms(&provider, 1);
+		if (provider != nullptr)
+			BindUniforms(&provider, 1);
 	}
 
 	void GPUProgramData::BindUniforms(GPUProgramProviderBase const * const * providers, int count) const
@@ -302,9 +303,7 @@ namespace chaos
 			for (int i = 0; i < count; ++i)
 			{
 				GPUProgramProviderBase const * provider = providers[i];
-				if (provider == nullptr)
-					continue;
-				if (provider->BindUniform(uniform))
+				if (provider != nullptr && provider->BindUniform(uniform))
 					break;
 			}
 		}
@@ -580,7 +579,7 @@ namespace chaos
 			// XXX : attribute GLSL side and C++ side may have different types
 			//       that's why there are different functions
 			//
-			// shuxxx : have a better understanding on how it works
+			// shuxxx : I need to have a better understanding on how it works
 
 			glVertexArrayAttribBinding(vertex_array, attrib.location, binding_index);
 

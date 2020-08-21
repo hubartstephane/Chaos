@@ -92,7 +92,7 @@ namespace chaos
         if (vertex_requirement_evaluation != 0)
             count = std::max(vertex_requirement_evaluation, required_size / vertex_size);
         else
-            count = std::max(30 * real_vertices_per_primitive, required_size / vertex_size); // a default buffer of 100 primitives
+            count = std::max(30 * real_vertices_per_primitive, required_size / vertex_size); // a default buffer of 30 primitives
         // compute buffer size and allocate a buffer
         size_t bufsize = count * vertex_size;         
         if (!buffer_cache->GetBuffer(bufsize, vertex_buffer))

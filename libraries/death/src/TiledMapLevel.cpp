@@ -41,6 +41,7 @@ namespace death
 		// get some data from the geometric object
 		name = in_geometric_object->name;
 		id = in_geometric_object->GetObjectID();
+		particle_ownership = in_geometric_object->GetPropertyValueBool("PARTICLE_OWNERSHIP", particle_ownership);
 
 		// extract the bounding box
 		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
@@ -57,7 +58,7 @@ namespace death
 		chaos::JSONTools::GetAttribute(json, "NAME", name);
 		chaos::JSONTools::GetAttribute(json, "OBJECT_ID", id);
 		chaos::JSONTools::GetAttribute(json, "BOUNDING_BOX", bounding_box);
-
+		chaos::JSONTools::GetAttribute(json, "PARTICLE_OWNERSHIP", particle_ownership);
 		return true;
 	}
 
@@ -68,7 +69,7 @@ namespace death
 		chaos::JSONTools::SetAttribute(json, "NAME", name);
 		chaos::JSONTools::SetAttribute(json, "OBJECT_ID", id);
 		chaos::JSONTools::SetAttribute(json, "BOUNDING_BOX", bounding_box);
-
+		chaos::JSONTools::SetAttribute(json, "PARTICLE_OWNERSHIP", particle_ownership);
 		return true;
 	}
 
@@ -991,7 +992,6 @@ namespace death
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
 			return true;
-
 #endif			
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}

@@ -99,7 +99,8 @@ namespace death
 
 		/** id of the object (comming from chaos::TiledMap) */
 		int id = 0;
-
+		/** whether the particles created for this object should be under its ownership (instead of the layers) */
+		bool particle_ownership = false;
 		/** the bounding box of the object */
 		chaos::box2 bounding_box;
 

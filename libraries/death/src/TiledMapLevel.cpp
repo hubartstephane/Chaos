@@ -12,6 +12,7 @@
 #include <chaos/StringTools.h>
 #include <chaos/JSONTools.h>
 #include <chaos/HelpText.h>
+#include <chaos/RepeatedBoxScissor.h>
 
 
 namespace death
@@ -518,118 +519,6 @@ namespace death
 		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		return true;
-	}
-
-	// =====================================
-	// BoxScissoringWithRepetitionResult : an utility object to compute instances in 2D of a box that collide a given scissor
-	// =====================================
-
-	class BoxScissoringWithRepetitionResult
-	{
-	public:
-
-		/** constructor */
-		BoxScissoringWithRepetitionResult(chaos::box2 const& in_target_box, chaos::box2 const& in_scissor_box, bool in_wrap_x, bool in_wrap_y);
-
-		/** offset of a given instance */
-		glm::vec2 GetInstanceOffset(glm::ivec2 const& index) const;
-
-	public:
-
-		/** the 'index' of the first instance to render/collide ... (included) */
-		glm::ivec2 start_instance = glm::ivec2(0, 0);
-		/** the 'index' of the last instance to render/collide ... (excluded) */
-		glm::ivec2 last_instance = glm::ivec2(0, 0);
-		/** copy of the construction parameters */
-		chaos::box2 target_box;;
-		/** copy of the construction parameters */
-		chaos::box2 scissor_box;
-		/** copy of the construction parameters */
-		bool wrap_x = false;
-		/** copy of the construction parameters */
-		bool wrap_y = false;
-	};
-
-	// =====================================
-	// BoxScissoringWithRepetitionResult implementation
-	// =====================================
-
-	BoxScissoringWithRepetitionResult::BoxScissoringWithRepetitionResult(chaos::box2 const& in_target_box, chaos::box2 const& in_scissor_box, bool in_wrap_x, bool in_wrap_y)
-	{
-		// copy the parameters
-		target_box = in_target_box;
-		scissor_box = in_scissor_box;
-		wrap_x = in_wrap_x;
-		wrap_y = in_wrap_y;
-
-		// First,
-		//   Considere that there is always wrap_x = wrap_y = true
-		//   Search along X and Y, the instance index that must collides with the scissor box
-		// Then,
-		//   whenever there are no wrap, we can skip the whole rendering if the instancee (0, 0) is not in the visible range
-
-		glm::vec2 target_bottomleft = GetBoxCorners(in_target_box).first;
-		glm::vec2 scissor_bottomleft = GetBoxCorners(in_scissor_box).first;
-
-		glm::vec2 target_size = 2.0f * in_target_box.half_size;
-		glm::vec2 scissor_size = 2.0f * in_scissor_box.half_size;
-
-		// clamp out all non intersecting box when no WRAP
-		if (!wrap_x)
-		{
-			if ((target_bottomleft.x + target_size.x < scissor_bottomleft.x) || (target_bottomleft.x > scissor_bottomleft.x + scissor_size.x))
-			{
-				start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
-				return;
-			}
-		}
-
-		if (!wrap_y)
-		{
-			if ((target_bottomleft.y + target_size.y < scissor_bottomleft.y) || (target_bottomleft.y > scissor_bottomleft.y + scissor_size.y))
-			{
-				start_instance = last_instance = glm::ivec2(0, 0); // nothing to render at all
-				return;
-			}
-		}
-
-		// number of time to decal the layer box, to be directly left of the scissor box
-		glm::ivec2 offset_count = glm::ivec2(
-			(int)std::ceil((scissor_bottomleft.x - target_bottomleft.x - target_size.x) / target_size.x),
-			(int)std::ceil((scissor_bottomleft.y - target_bottomleft.y - target_size.y) / target_size.y)
-		);
-
-		// the bottomleft corner of the decaled box
-		glm::vec2  virtual_target_bottomleft = target_bottomleft + chaos::RecastVector<glm::vec2>(offset_count) * target_size;
-		// competition of the number of repetition
-		glm::vec2  tmp = ((scissor_bottomleft - virtual_target_bottomleft + scissor_size) / target_size);
-
-		glm::ivec2 repetition_count = glm::ivec2(
-			(int)std::ceil(tmp.x),
-			(int)std::ceil(tmp.y)
-		);
-
-		// unwrap case, then only visible instance is 0 (we previsously tested for visibility)
-		if (!wrap_x)
-		{
-			offset_count.x = 0;
-			repetition_count.x = 1;
-		}
-		// unwrap case, then only visible instance is 0 (we previsously tested for visibility)
-		if (!wrap_y)
-		{
-			offset_count.y = 0;
-			repetition_count.y = 1;
-		}
-
-		// finalize the initialization
-		start_instance = offset_count;
-		last_instance = offset_count + repetition_count;
-	}
-
-	glm::vec2 BoxScissoringWithRepetitionResult::GetInstanceOffset(glm::ivec2 const& index) const
-	{
-		return 2.0f * target_box.half_size * chaos::RecastVector<glm::vec2>(index);
 	}
 
 	// =====================================
@@ -1190,6 +1079,16 @@ namespace death
 					explicit_bounding_box = object_surface->GetBoundingBox(false); // in layer coordinates	
 			}
 
+
+
+
+
+
+
+
+
+
+
 			// get factory + create the object
 			TiledMapObject* object = nullptr;
 
@@ -1201,6 +1100,15 @@ namespace death
 			// (XXX : no way yet to know whether this a normal situation because user does not want to create object or whether an error happened)
 			if (object == nullptr || ShouldCreateParticleForObject(geometric_object, object))
 				CreateObjectParticles(geometric_object, object, particle_populator.get());
+
+
+
+
+
+
+
+
+
 		}
 
 		// final flush
@@ -1410,8 +1318,19 @@ namespace death
 						TiledMapObject* object = factory(tile_object.get());
 						if (object != nullptr)
 						{
+
+
+
+
+
 							if (!ShouldCreateParticleForObject(tile_object.get(), object))
 								continue;
+
+
+
+
+
+
 						}
 					}
 				}
@@ -1434,6 +1353,16 @@ namespace death
 
 		return true;
 	}
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1509,7 +1438,7 @@ namespace death
 		final_camera_obox.half_size = initial_camera_obox.half_size + (camera_obox.half_size - initial_camera_obox.half_size) * final_ratio;
 
 		// compute repetitions
-		BoxScissoringWithRepetitionResult scissor_result = BoxScissoringWithRepetitionResult(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
+		chaos::RepeatedBoxScissor scissor = chaos::RepeatedBoxScissor(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 
 		// new provider for camera override (will be fullfill only if necessary)
 		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
@@ -1522,8 +1451,8 @@ namespace death
 
 
 		// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
-		glm::ivec2 start_instance = scissor_result.start_instance;
-		glm::ivec2 last_instance = scissor_result.last_instance;
+		glm::ivec2 start_instance = scissor.start_instance;
+		glm::ivec2 last_instance = scissor.last_instance;
 		if (this == reference_layer || IsGeometryEmpty(layer_box))
 		{
 			start_instance = glm::ivec2(0, 0);
@@ -1538,7 +1467,7 @@ namespace death
 			{
 				// new Provider to apply the offset for this 'instance'
 				chaos::GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
-				glm::vec2 instance_offset = scissor_result.GetInstanceOffset(glm::ivec2(x, y));
+				glm::vec2 instance_offset = scissor.GetInstanceOffset(glm::ivec2(x, y));
 				instance_uniform_provider.AddVariableValue("offset", instance_offset + offset);
 				// draw call
 				result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);

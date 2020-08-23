@@ -30,7 +30,11 @@ namespace chaos
 
 	ParticleAllocationBase* ParticleSpawner::SpawnParticles(size_t count, bool new_allocation)
 	{
-		ParticleAllocationBase* result = DoSpawnParticles(count, new_allocation);
+		// early exit
+		if (particle_layer == nullptr)
+			return nullptr;
+
+		ParticleAllocationBase* result = particle_layer->SpawnParticles(count, new_allocation);
 		if (result != nullptr)
 		{
 			if (bitmap_info != nullptr)
@@ -50,29 +54,6 @@ namespace chaos
 				for (ParticleDefault& particle : accessor)
 					particle.texcoords = texcoords;
 			}
-		}
-		return result;
-	}
-
-	ParticleAllocationBase* ParticleSpawner::DoSpawnParticles(size_t count, bool new_allocation)
-	{
-		// early exit
-		if (particle_layer == nullptr)
-			return nullptr;
-
-		ParticleAllocationBase* result = nullptr;
-
-		// creation of a new allocation
-		if (new_allocation || particle_layer->GetAllocationCount() == 0)
-		{
-			result = particle_layer->SpawnParticles(count);
-		}
-		// take the very first existing allocation and add particles at the end
-		else
-		{
-	 		result = particle_layer->GetAllocation(0);
-			if (result == nullptr || !result->AddParticles(count))
-				return nullptr;
 		}
 		return result;
 	}

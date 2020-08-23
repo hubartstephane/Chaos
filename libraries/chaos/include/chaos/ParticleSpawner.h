@@ -33,7 +33,7 @@ namespace chaos
 		bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
    
         /** simple spawn method */
-        ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation);
+        ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation = true);
 
         /** spawn + user initialization methods */
         template<typename INIT_PARTICLE_FUNC>
@@ -56,11 +56,6 @@ namespace chaos
         bool IsValid() const { return (particle_layer != nullptr); }
         /** returns whether the spawner has a bitmap info */
         bool HasBitmap() const { return (bitmap_info != nullptr); }
-
-    protected:
-
-        /** the spawn internal method (that just creates particles) */
-        ParticleAllocationBase* DoSpawnParticles(size_t count, bool new_allocation);
 
     protected:
 

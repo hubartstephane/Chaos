@@ -204,16 +204,26 @@ namespace chaos
 		return result;
 	}
 
-	ParticleAllocationBase * ParticleLayerBase::SpawnParticles(size_t count)
+	ParticleAllocationBase * ParticleLayerBase::SpawnParticles(size_t count, bool new_allocation)
 	{
-		// create an allocation
-		ParticleAllocationBase * result = DoSpawnParticles();
-		if (result == nullptr)
-			return nullptr;
+		ParticleAllocationBase* result = nullptr;
+
+		// create an allocation is mandatory
+		if (new_allocation || particles_allocations.size() == 0)
+		{
+			result = DoCreateParticleAllocation();
+			if (result == nullptr)
+				return nullptr;
+			particles_allocations.push_back(result); // register the allocation
+		}
+		// get the very first allocation
+		else
+		{
+			result = particles_allocations[0].get();
+		}
+
 		// increase the particle count for that allocation
-		result->Resize(count);
-		// register the allocation
-		particles_allocations.push_back(result);
+		result->AddParticles(count);
 
 		return result;
 	}

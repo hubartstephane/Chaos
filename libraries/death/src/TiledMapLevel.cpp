@@ -1191,13 +1191,13 @@ namespace death
 		return true;
 	}
 
-	chaos::ParticleAllocationBase* TiledMapLayerInstance::SpawnParticles(size_t count)
+	chaos::ParticleAllocationBase* TiledMapLayerInstance::SpawnParticles(size_t count, bool new_allocation)
 	{
 		// create particle layer if necessary
 		if (CreateParticleLayer() == nullptr)
 			return nullptr;
 		// create the allocation
-		return particle_layer->SpawnParticles(count);
+		return particle_layer->SpawnParticles(count, new_allocation);
 	}
 
 	chaos::ParticleLayerBase* TiledMapLayerInstance::CreateParticleLayer()

@@ -527,7 +527,22 @@ namespace death
 		}
 
 		/** create a particle allocation for the layer */
-		chaos::ParticleAllocationBase* SpawnParticles(size_t count);
+		chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation = true);
+
+		/** spawn + user initialization methods */
+		template<typename INIT_PARTICLE_FUNC>
+		chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
+		{
+			chaos::ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
+			// call user initialization function
+			if (result != nullptr)
+			{
+				size_t allocation_count = result->GetParticleCount();
+				init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
+			}
+			return result;
+		}
+
 		/** create the particle layer if required */
 		chaos::ParticleLayerBase* CreateParticleLayer();
 

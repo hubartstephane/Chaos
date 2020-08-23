@@ -961,7 +961,21 @@ public:
 		GPURenderMaterial const * GetRenderMaterial() const { return render_material.get(); }
 
 		/** spawn a given number of particles */
-		ParticleAllocationBase * SpawnParticles(size_t count);
+		ParticleAllocationBase * SpawnParticles(size_t count, bool new_allocation = true);
+
+		/** spawn + user initialization methods */
+		template<typename INIT_PARTICLE_FUNC>
+		ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
+		{
+			ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
+			// call user initialization function
+			if (result != nullptr)
+			{
+				size_t allocation_count = result->GetParticleCount();
+				init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
+			}
+			return result;
+		}
 
         /** create a particle spawner */
 		template<typename ...PARAMS>
@@ -993,7 +1007,7 @@ public:
 	public:
 
 		/** creation of an allocation */
-		virtual ParticleAllocationBase * DoSpawnParticles() { return nullptr; }
+		virtual ParticleAllocationBase * DoCreateParticleAllocation() { return nullptr; }
 		/** returns the layer trait */
 		virtual void * GetLayerTrait() { return nullptr; }
 		/** returns the layer trait */
@@ -1143,7 +1157,7 @@ public:
 	protected:
 
 		/** override */
-		virtual ParticleAllocationBase * DoSpawnParticles() override { return new ParticleAllocation<allocation_trait_type>(this); }
+		virtual ParticleAllocationBase * DoCreateParticleAllocation() override { return new ParticleAllocation<allocation_trait_type>(this); }
 		/** override */
 		virtual void * GetLayerTrait() { return &layer_trait; }
 		/** override */

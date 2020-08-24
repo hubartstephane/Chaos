@@ -31,6 +31,8 @@ namespace chaos
 (GeometricObjectPolyline) \
 (GeometricObjectText) \
 (GeometricObjectTile) \
+(Wangset) \
+(WangEdgeColor) \
 (GroundData) \
 (TileInfo) \
 (TileData) \
@@ -758,6 +760,42 @@ namespace chaos
 		};
 
 		// ==========================================
+		// WangEdgeColor
+		// ==========================================
+
+		class WangEdgeColor
+		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
+		public:
+
+			/** object information */
+			int tile_index = 0;
+			/** object information */
+			std::string name;
+			/** object information */
+			glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			/** object information */
+			float probability = 1.0f;
+		};
+
+		// ==========================================
+		// WangTile
+		// ==========================================
+
+		class WangTile
+		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
+		public:
+
+			/** object information */
+			int tile_id = 0;
+			/** object information */
+			int wangid_id = 0;
+		};
+
+		// ==========================================
 		// Wangset
 		// ==========================================
 
@@ -779,6 +817,10 @@ namespace chaos
 			int tile_index = 0;
 			/** object information */
 			std::string name;
+			/** object information */
+			std::vector<WangEdgeColor> wang_edge_colors;
+			/** object information */
+			std::vector<WangTile> wang_tiles;
 		};
 
 

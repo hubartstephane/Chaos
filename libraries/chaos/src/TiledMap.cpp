@@ -873,12 +873,19 @@ namespace chaos
 		{
 			if (!PropertyOwner::DoLoad(element))
 				return false;
-			//XMLTools::ReadAttribute(element, "tile", tile_index);
-			//XMLTools::ReadAttribute(element, "name", name);
+			XMLTools::ReadAttribute(element, "tile", tile_index);
+			XMLTools::ReadAttribute(element, "name", name);
+
+
+#if 0
+			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
+
+			XMLTools::ReadAttribute(element, "wangedgecolor", wang_edge_colors);
+			XMLTools::ReadAttribute(element, "wangtile", wang_tiles);
+#endif
+
 			return true;
 		}
-
-
 
 		// ==========================================
 		// GroundData methods

@@ -116,16 +116,16 @@ namespace chaos
 			{
 				char const* child_name = e->Name();
 				if (StringTools::Stricmp(child_name, "imagelayer") == 0)
-					DoLoadObjectAndInserInList<ImageLayer>(e, result, this);
+					DoLoadObjectAndInsertInList<ImageLayer>(e, result, this);
 				else if (StringTools::Stricmp(child_name, "objectgroup") == 0)
-					DoLoadObjectAndInserInList<ObjectLayer>(e, result, this);
+					DoLoadObjectAndInsertInList<ObjectLayer>(e, result, this);
 				else if (StringTools::Stricmp(child_name, "group") == 0)
-					DoLoadObjectAndInserInList<GroupLayer>(e, result, this);
+					DoLoadObjectAndInsertInList<GroupLayer>(e, result, this);
 				else if (StringTools::Stricmp(child_name, "layer") == 0)
 				{
 					Map const* map = GetMap();
 					if (map != nullptr)
-						DoLoadObjectAndInserInList<TileLayer>(e, result, this, map->tile_size);
+						DoLoadObjectAndInsertInList<TileLayer>(e, result, this, map->tile_size);
 				}
 			}
 			return true;
@@ -864,25 +864,37 @@ namespace chaos
 
 
 
-
 		// ==========================================
 		// Wangset methods
 		// ==========================================
+
+		bool WangEdgeColor::DoLoad(tinyxml2::XMLElement const* element)
+		{
+			XMLTools::ReadAttribute(element, "name", name);
+			XMLTools::ReadAttribute(element, "tile", tile_id);
+			XMLTools::ReadAttribute(element, "probability", probability);
+			ReadXMLColor(element, "color", color);
+
+			return true;
+		}
+
+		bool WangTile::DoLoad(tinyxml2::XMLElement const* element)
+		{
+			XMLTools::ReadAttribute(element, "name", tile_id);
+			XMLTools::ReadAttribute(element, "wangid", wangid_id);
+
+			return true;
+		}
 
 		bool Wangset::DoLoad(tinyxml2::XMLElement const* element)
 		{
 			if (!PropertyOwner::DoLoad(element))
 				return false;
-			XMLTools::ReadAttribute(element, "tile", tile_index);
+			XMLTools::ReadAttribute(element, "tile", tile_id);
 			XMLTools::ReadAttribute(element, "name", name);
 
-
-#if 0
-			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);
-
-			XMLTools::ReadAttribute(element, "wangedgecolor", wang_edge_colors);
-			XMLTools::ReadAttribute(element, "wangtile", wang_tiles);
-#endif
+			DoLoadObjectListHelper(element, wang_edge_colors, "wangedgecolor", nullptr, this);
+			DoLoadObjectListHelper(element, wang_tiles, "wangtile", nullptr, this);
 
 			return true;
 		}
@@ -895,7 +907,7 @@ namespace chaos
 		{
 			if (!PropertyOwner::DoLoad(element))
 				return false;
-			XMLTools::ReadAttribute(element, "tile", tile_index);
+			XMLTools::ReadAttribute(element, "tile", tile_id);
 			XMLTools::ReadAttribute(element, "name", name);
 			return true;
 		}
@@ -1505,17 +1517,20 @@ namespace chaos
 
 		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{
-			return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes", this);
+			if (!DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes", this))
+				return false;
+			return true;
 		}
 
 		bool TileSet::DoLoadWangsets(tinyxml2::XMLElement const* element)
 		{
-			return DoLoadObjectListHelper(element, wangsets, "wangset", "wangsets", this);
+			if (!DoLoadObjectListHelper(element, wangsets, "wangset", "wangsets", this))
+				return false;
+			return true;
 		}
 
 		bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
 		{
-			// load the tiles
 			if (!DoLoadObjectListHelper(element, tiles, "tile", nullptr, this))
 				return false;
 			return true;

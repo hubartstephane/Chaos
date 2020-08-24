@@ -6,6 +6,7 @@
 #include <chaos/FilePath.h>
 #include <chaos/Hotpoint.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/Metaprogramming.h>
 
 namespace chaos
 {
@@ -32,6 +33,8 @@ namespace chaos
 (GeometricObjectText) \
 (GeometricObjectTile) \
 (Wangset) \
+(WangEdgeColor) \
+(WangTile) \
 (WangEdgeColor) \
 (GroundData) \
 (TileInfo) \
@@ -131,7 +134,7 @@ namespace chaos
 
 			/** utility function to load objects */
 			template<typename T, typename ...PARAMS>
-			static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<shared_ptr<T>> & result, char const * element_name, char const * container_name, PARAMS...params)
+			static bool DoLoadObjectListHelper(tinyxml2::XMLElement const * element, std::vector<T> & result, char const * element_name, char const * container_name, PARAMS...params)
 			{
 				if (container_name != nullptr) // is there an intermediate node to contain all objects
 				{
@@ -142,12 +145,29 @@ namespace chaos
 
 				tinyxml2::XMLElement const * e = element->FirstChildElement(element_name);
 				for (; e != nullptr; e = e->NextSiblingElement(element_name))
-					DoLoadObjectAndInserInList<T>(e, result, params...);
+				{
+					if constexpr (is_shared_ptr_v<T>)
+						DoLoadObjectAndInsertInList<std::remove_reference_t<decltype(*result[0].get())>>(e, result, params...); // decltype returns a REFERENCE !! this must be removed from function template argument
+					else
+						DoLoadObjectAndInsertInList<T>(e, result, params...);
+				}
 				return true;
 			}
 
+			template<typename T, typename ...PARAMS>
+			static T * DoLoadObjectAndInsertInList(tinyxml2::XMLElement const * element, std::vector<T> & result_vector, PARAMS...params)
+			{
+				T result;
+				if (result.DoLoad(element))
+				{
+					result_vector.push_back(std::move(result));
+					return &result_vector.back();
+				}
+				return nullptr;
+			}
+
 			template<typename T, typename U, typename ...PARAMS>
-			static T * DoLoadObjectAndInserInList(tinyxml2::XMLElement const * element, std::vector<shared_ptr<U>> & result_vector, PARAMS...params)
+			static T* DoLoadObjectAndInsertInList(tinyxml2::XMLElement const* element, std::vector<shared_ptr<U>>& result_vector, PARAMS...params)
 			{
 				T * result = new T(params...);
 				if (result == nullptr)
@@ -156,7 +176,7 @@ namespace chaos
 				{
 					delete(result);
 					return nullptr;
-				}				
+				}
 				result_vector.push_back(result);
 				return result;
 			}
@@ -754,7 +774,7 @@ namespace chaos
 		public:
 
 			/** object information */
-			int tile_index = 0;
+			int tile_id = 0;
 			/** object information */
 			std::string name;
 		};
@@ -769,8 +789,13 @@ namespace chaos
 
 		public:
 
+			/** loading method from XML */
+			bool DoLoad(tinyxml2::XMLElement const* element); // XXX : not a virtual function, this is the simplest class possible
+
+		public:
+
 			/** object information */
-			int tile_index = 0;
+			int tile_id = 0;
 			/** object information */
 			std::string name;
 			/** object information */
@@ -786,6 +811,11 @@ namespace chaos
 		class WangTile
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
+
+		public:
+
+			/** loading method from XML */
+			bool DoLoad(tinyxml2::XMLElement const* element); // XXX : not a virtual function, this is the simplest class possible
 
 		public:
 
@@ -814,7 +844,7 @@ namespace chaos
 		public:
 
 			/** object information */
-			int tile_index = 0;
+			int tile_id = 0;
 			/** object information */
 			std::string name;
 			/** object information */
@@ -1058,11 +1088,6 @@ namespace chaos
 
 			/** object information */
 			glm::ivec2 size = glm::ivec2(0, 0);
-			
-			
-			/** the tiles */
-			//std::vector<int> tile_indices;
-
 			/** the chunk of tiles */
 			std::vector<TileLayerChunk> tile_chunks;
 			/** cache the tile size for better performance (see TileMap) */

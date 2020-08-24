@@ -177,20 +177,6 @@ using typeof_function_##funcname = typename details::check_function_##funcname##
 CHAOS_GENERATE_CHECK_METHOD(funcname)\
 CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// ==================================================
 	// Meta functions
 	// ==================================================
@@ -221,6 +207,7 @@ CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 		{
 			return &src;
 		}
+
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
 		 T * get_raw_pointer(shared_ptr<T> & src)
@@ -233,6 +220,7 @@ CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 		{
 			return src.get();
 		}
+
 		/** meta function to get a raw pointer from an input */
 		template<typename T>
 		T * get_raw_pointer(std::unique_ptr<T> & src)

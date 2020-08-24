@@ -880,8 +880,8 @@ namespace chaos
 
 		bool WangTile::DoLoad(tinyxml2::XMLElement const* element)
 		{
-			XMLTools::ReadAttribute(element, "name", tile_id);
-			XMLTools::ReadAttribute(element, "wangid", wangid_id);
+			XMLTools::ReadAttribute(element, "tileid", tile_id);
+			ReadAttributeHEX(element, "wangid", wangid_id);
 
 			return true;
 		}
@@ -894,6 +894,7 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "name", name);
 
 			DoLoadObjectListHelper(element, wang_edge_colors, "wangedgecolor", nullptr, this);
+			DoLoadObjectListHelper(element, wang_corner_colors, "wangcornercolor", nullptr, this);
 			DoLoadObjectListHelper(element, wang_tiles, "wangtile", nullptr, this);
 
 			return true;

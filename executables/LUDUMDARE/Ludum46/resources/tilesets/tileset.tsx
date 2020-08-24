@@ -67,49 +67,49 @@
  <tile id="16">
   <image width="128" height="128" source="../sprites/WallBackground.png"/>
  </tile>
- <tile id="17">
+ <tile id="17" type="WALL">
   <image width="32" height="32" source="../sprites/Brick9.png"/>
  </tile>
- <tile id="18">
+ <tile id="18" type="WALL">
   <image width="32" height="32" source="../sprites/Brick10.png"/>
  </tile>
- <tile id="19">
+ <tile id="19" type="WALL">
   <image width="32" height="32" source="../sprites/Brick11.png"/>
  </tile>
- <tile id="20">
+ <tile id="20" type="WALL">
   <image width="32" height="32" source="../sprites/Brick12.png"/>
  </tile>
- <tile id="21">
+ <tile id="21" type="WALL">
   <image width="32" height="32" source="../sprites/Brick13.png"/>
  </tile>
- <tile id="22">
+ <tile id="22" type="WALL">
   <image width="32" height="32" source="../sprites/Brick14.png"/>
  </tile>
- <tile id="23">
+ <tile id="23" type="WALL">
   <image width="32" height="32" source="../sprites/Brick15.png"/>
  </tile>
- <tile id="24">
+ <tile id="24" type="WALL">
   <image width="32" height="32" source="../sprites/Brick1.png"/>
  </tile>
- <tile id="25">
+ <tile id="25" type="WALL">
   <image width="32" height="32" source="../sprites/Brick2.png"/>
  </tile>
- <tile id="26">
+ <tile id="26" type="WALL">
   <image width="32" height="32" source="../sprites/Brick3.png"/>
  </tile>
- <tile id="27">
+ <tile id="27" type="WALL">
   <image width="32" height="32" source="../sprites/Brick4.png"/>
  </tile>
- <tile id="28">
+ <tile id="28" type="WALL">
   <image width="32" height="32" source="../sprites/Brick5.png"/>
  </tile>
- <tile id="29">
+ <tile id="29" type="WALL">
   <image width="32" height="32" source="../sprites/Brick6.png"/>
  </tile>
- <tile id="30">
+ <tile id="30" type="WALL">
   <image width="32" height="32" source="../sprites/Brick7.png"/>
  </tile>
- <tile id="31">
+ <tile id="31" type="WALL">
   <image width="32" height="32" source="../sprites/Brick8.png"/>
  </tile>
  <wangsets>

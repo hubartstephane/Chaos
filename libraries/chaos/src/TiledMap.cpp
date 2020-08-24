@@ -859,6 +859,27 @@ namespace chaos
 			return result;
 		}
 
+
+
+
+
+
+
+		// ==========================================
+		// Wangset methods
+		// ==========================================
+
+		bool Wangset::DoLoad(tinyxml2::XMLElement const* element)
+		{
+			if (!PropertyOwner::DoLoad(element))
+				return false;
+			//XMLTools::ReadAttribute(element, "tile", tile_index);
+			//XMLTools::ReadAttribute(element, "name", name);
+			return true;
+		}
+
+
+
 		// ==========================================
 		// GroundData methods
 		// ==========================================
@@ -871,6 +892,15 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "name", name);
 			return true;
 		}
+
+
+
+
+
+
+
+
+
 
 		// ==========================================
 		// TileData methods
@@ -1466,9 +1496,14 @@ namespace chaos
 #undef CHAOS_IMPL_FIND_FILE_DATA
 
 
-			bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
+		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{
 			return DoLoadObjectListHelper(element, grounds, "terrain", "terraintypes", this);
+		}
+
+		bool TileSet::DoLoadWangsets(tinyxml2::XMLElement const* element)
+		{
+			return DoLoadObjectListHelper(element, wangsets, "wangset", "wangsets", this);
 		}
 
 		bool TileSet::DoLoadTiles(tinyxml2::XMLElement const * element)
@@ -1542,6 +1577,8 @@ namespace chaos
 			if (!DoLoadTiles(element))
 				return false;
 			if (!DoLoadGrounds(element))
+				return false;
+			if (!DoLoadWangsets(element))
 				return false;
 			return true;
 		}

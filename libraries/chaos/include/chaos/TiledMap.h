@@ -414,7 +414,7 @@ namespace chaos
 		};
 
 		// ==========================================
-		// GeometricObject
+		// TypedObject
 		// ==========================================
 
 		class TypedObject : public PropertyOwner
@@ -756,6 +756,44 @@ namespace chaos
 			/** object information */
 			std::string name;
 		};
+
+		// ==========================================
+		// Wangset
+		// ==========================================
+
+		class Wangset : public PropertyOwner
+		{
+			CHAOS_TILEDMAP_ALL_FRIENDS
+
+		protected:
+
+			/** constructor */
+			using PropertyOwner::PropertyOwner;
+
+			/** loading method from XML */
+			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
+
+		public:
+
+			/** object information */
+			int tile_index = 0;
+			/** object information */
+			std::string name;
+		};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		// ==========================================
 		// TileData
@@ -1161,6 +1199,8 @@ namespace chaos
 			bool DoLoadTiles(tinyxml2::XMLElement const * element);
 			/** loading method from XML */
 			bool DoLoadGrounds(tinyxml2::XMLElement const * element);
+			/** loading method from XML */
+			bool DoLoadWangsets(tinyxml2::XMLElement const* element);
 
 			/** get the name of the expected markup */
 			virtual char const * GetXMLMarkupName() const override { return "tileset"; }
@@ -1215,6 +1255,8 @@ namespace chaos
 			std::vector<shared_ptr<TileData>> tiles;
 			/** the data for the tiles */
 			std::vector<shared_ptr<GroundData>> grounds;
+			/** the data for the tiles */
+			std::vector<shared_ptr<Wangset>> wangsets;
 		};
 
 		// ==========================================

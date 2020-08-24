@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="256" tileheight="256" tilecount="15" columns="0" objectalignment="bottomleft">
+<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="128" tileheight="128" tilecount="30" columns="0" objectalignment="bottomleft">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="0" type="WALL">
   <image width="32" height="32" source="../sprites/Brick.png"/>
@@ -67,14 +67,71 @@
  <tile id="16">
   <image width="128" height="128" source="../sprites/WallBackground.png"/>
  </tile>
+ <tile id="17">
+  <image width="32" height="32" source="../sprites/Brick9.png"/>
+ </tile>
+ <tile id="18">
+  <image width="32" height="32" source="../sprites/Brick10.png"/>
+ </tile>
+ <tile id="19">
+  <image width="32" height="32" source="../sprites/Brick11.png"/>
+ </tile>
+ <tile id="20">
+  <image width="32" height="32" source="../sprites/Brick12.png"/>
+ </tile>
+ <tile id="21">
+  <image width="32" height="32" source="../sprites/Brick13.png"/>
+ </tile>
+ <tile id="22">
+  <image width="32" height="32" source="../sprites/Brick14.png"/>
+ </tile>
+ <tile id="23">
+  <image width="32" height="32" source="../sprites/Brick15.png"/>
+ </tile>
+ <tile id="24">
+  <image width="32" height="32" source="../sprites/Brick1.png"/>
+ </tile>
+ <tile id="25">
+  <image width="32" height="32" source="../sprites/Brick2.png"/>
+ </tile>
+ <tile id="26">
+  <image width="32" height="32" source="../sprites/Brick3.png"/>
+ </tile>
+ <tile id="27">
+  <image width="32" height="32" source="../sprites/Brick4.png"/>
+ </tile>
+ <tile id="28">
+  <image width="32" height="32" source="../sprites/Brick5.png"/>
+ </tile>
+ <tile id="29">
+  <image width="32" height="32" source="../sprites/Brick6.png"/>
+ </tile>
+ <tile id="30">
+  <image width="32" height="32" source="../sprites/Brick7.png"/>
+ </tile>
+ <tile id="31">
+  <image width="32" height="32" source="../sprites/Brick8.png"/>
+ </tile>
  <wangsets>
   <wangset name="CollisionPlatformer" tile="-1">
-   <wangedgecolor name="" color="#ff0000" tile="-1" probability="1"/>
+   <wangedgecolor name="col1" color="#ff0000" tile="-1" probability="1"/>
    <wangedgecolor name="" color="#00ff00" tile="-1" probability="1"/>
-   <wangcornercolor name="" color="#ff0000" tile="-1" probability="1"/>
-   <wangcornercolor name="" color="#00ff00" tile="-1" probability="1"/>
-   <wangtile tileid="0" wangid="0x11111112"/>
-   <wangtile tileid="1" wangid="0x11111122"/>
+   <wangtile tileid="0" wangid="0x1010101"/>
+   <wangtile tileid="17" wangid="0x2010201"/>
+   <wangtile tileid="18" wangid="0x1020201"/>
+   <wangtile tileid="19" wangid="0x2020102"/>
+   <wangtile tileid="20" wangid="0x2010202"/>
+   <wangtile tileid="21" wangid="0x1020202"/>
+   <wangtile tileid="22" wangid="0x2020201"/>
+   <wangtile tileid="23" wangid="0x2020202"/>
+   <wangtile tileid="24" wangid="0x1010102"/>
+   <wangtile tileid="25" wangid="0x2010101"/>
+   <wangtile tileid="26" wangid="0x1020101"/>
+   <wangtile tileid="27" wangid="0x1010201"/>
+   <wangtile tileid="28" wangid="0x2010102"/>
+   <wangtile tileid="29" wangid="0x1020102"/>
+   <wangtile tileid="30" wangid="0x1010202"/>
+   <wangtile tileid="31" wangid="0x2020101"/>
   </wangset>
  </wangsets>
 </tileset>

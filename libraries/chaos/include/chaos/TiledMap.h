@@ -780,7 +780,7 @@ namespace chaos
 		};
 
 		// ==========================================
-		// WangEdgeColor
+		// WangEdgeColor/WangCornerColor
 		// ==========================================
 
 		class WangEdgeColor
@@ -804,6 +804,8 @@ namespace chaos
 			float probability = 1.0f;
 		};
 
+		using WangCornerColor = WangEdgeColor; // XXX : same data
+
 		// ==========================================
 		// WangTile
 		// ==========================================
@@ -822,7 +824,7 @@ namespace chaos
 			/** object information */
 			int tile_id = 0;
 			/** object information */
-			int wangid_id = 0;
+			unsigned int wangid_id = 0;
 		};
 
 		// ==========================================
@@ -849,6 +851,8 @@ namespace chaos
 			std::string name;
 			/** object information */
 			std::vector<WangEdgeColor> wang_edge_colors;
+			/** object information */
+			std::vector<WangCornerColor> wang_corner_colors;			
 			/** object information */
 			std::vector<WangTile> wang_tiles;
 		};

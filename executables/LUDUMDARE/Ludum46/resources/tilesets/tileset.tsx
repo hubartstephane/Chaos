@@ -67,4 +67,14 @@
  <tile id="16">
   <image width="128" height="128" source="../sprites/WallBackground.png"/>
  </tile>
+ <wangsets>
+  <wangset name="CollisionPlatformer" tile="-1">
+   <wangedgecolor name="" color="#ff0000" tile="-1" probability="1"/>
+   <wangedgecolor name="" color="#00ff00" tile="-1" probability="1"/>
+   <wangcornercolor name="" color="#ff0000" tile="-1" probability="1"/>
+   <wangcornercolor name="" color="#00ff00" tile="-1" probability="1"/>
+   <wangtile tileid="0" wangid="0x11111112"/>
+   <wangtile tileid="1" wangid="0x11111122"/>
+  </wangset>
+ </wangsets>
 </tileset>

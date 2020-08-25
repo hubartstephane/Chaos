@@ -810,6 +810,29 @@ namespace chaos
 		// WangTile
 		// ==========================================
 
+		// https://doc.mapeditor.org/en/stable/reference/tmx-map-format/#tmx-wangtile
+		//
+		// wangid: The Wang ID, which is a 32-bit unsigned integer stored in the format 0xCECECECE (where each C is a corner color and each E is an edge color, from right to left clockwise, starting with the top edge)
+		//
+
+		enum class WangCorner : int
+		{
+			TOPRIGHT = 0,
+			BOTTOMRIGHT = 1,
+			BOTTOMLEFT = 2,
+			TOPLEFT = 3
+			
+			
+		};
+
+		enum class WangEdge : int
+		{
+			TOP = 0,
+			RIGHT = 1,
+			BOTTOM = 2,
+			LEFT = 3
+		};
+
 		class WangTile
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
@@ -819,12 +842,17 @@ namespace chaos
 			/** loading method from XML */
 			bool DoLoad(tinyxml2::XMLElement const* element); // XXX : not a virtual function, this is the simplest class possible
 
+			/** gets the corner value */
+			int GetCornerValue(WangCorner corner) const;
+			/** gets the edge value */
+			int GetEdgeValue(WangEdge edge) const;
+
 		public:
 
 			/** object information */
 			int tile_id = 0;
 			/** object information */
-			unsigned int wangid_id = 0;
+			unsigned int wang_id = 0;
 		};
 
 		// ==========================================

@@ -874,16 +874,24 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "tile", tile_id);
 			XMLTools::ReadAttribute(element, "probability", probability);
 			ReadXMLColor(element, "color", color);
-
 			return true;
 		}
 
 		bool WangTile::DoLoad(tinyxml2::XMLElement const* element)
 		{
 			XMLTools::ReadAttribute(element, "tileid", tile_id);
-			ReadAttributeHEX(element, "wangid", wangid_id);
-
+			ReadAttributeHEX(element, "wangid", wang_id);
 			return true;
+		}
+
+		int WangTile::GetCornerValue(WangCorner corner) const
+		{
+			return (int)((wang_id >> ((int)corner * 8 + 4)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
+		}
+
+		int WangTile::GetEdgeValue(WangEdge edge) const
+		{
+			return (int)((wang_id >> ((int)edge * 8)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
 		}
 
 		bool Wangset::DoLoad(tinyxml2::XMLElement const* element)

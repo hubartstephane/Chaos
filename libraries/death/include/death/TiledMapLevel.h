@@ -53,6 +53,49 @@ namespace death
 #define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
 #define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
 
+
+		// ==========================================
+		// PropertyOwnerOverride : an utility class to capture the properties of a source 
+		// ==========================================
+
+	template<typename T>
+	class PropertyOwnerOverride : public T
+	{
+	public:
+
+		/** constructor */
+		PropertyOwnerOverride(chaos::TiledMap::BaseObject* in_owner, chaos::TiledMap::PropertyOwner* in_property_owner) :
+			T(in_owner),
+			property_owner(in_property_owner) {}
+
+		/** override */
+		virtual chaos::TiledMap::Property* FindProperty(char const* name, chaos::TiledMap::PropertyType type_id) override
+		{
+			chaos::TiledMap::Property* result = nullptr;
+			if (property_owner != nullptr)
+				result = property_owner->FindProperty(name, type_id);
+			if (result == nullptr)
+				result = T::FindProperty(name, type_id);
+			return result;
+		}
+		/** override */
+		virtual chaos::TiledMap::Property const* FindProperty(char const* name, chaos::TiledMap::PropertyType type_id) const override
+		{
+			chaos::TiledMap::Property const* result = nullptr;
+			if (property_owner != nullptr)
+				result = property_owner->FindProperty(name, type_id);
+			if (result == nullptr)
+				result = T::FindProperty(name, type_id);
+			return result;
+		}
+
+	protected:
+
+		/** a substitute property owner to fake the system */
+		chaos::TiledMap::PropertyOwner* property_owner = nullptr;
+	};
+
+
 	// =====================================
 	// TiledMapObject 
 	// =====================================

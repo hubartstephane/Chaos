@@ -1512,6 +1512,22 @@ namespace chaos
 		// TileSet methods
 		// ==========================================
 
+		TileData* TileSet::FindTileData(int id)
+		{
+			auto it = std::lower_bound(tiles.begin(), tiles.end(), id, [](shared_ptr<TileData> const& tile_data, int id) { return tile_data->id < id; });
+			if (it == tiles.end() || (*it)->id != id) // maybe the iterator is invalid or does not point exactly the element whose ID is the one searched (this is a lower_bound !!)
+				return nullptr;
+			return (*it).get();
+		}
+
+		TileData const * TileSet::FindTileData(int id) const
+		{
+			auto it = std::lower_bound(tiles.begin(), tiles.end(), id, [](shared_ptr<TileData> const& tile_data, int id) { return tile_data->id < id; });
+			if (it == tiles.end() || (*it)->id != id) // maybe the iterator is invalid or does not point exactly the element whose ID is the one searched (this is a lower_bound !!)
+				return nullptr;
+			return (*it).get();
+		}
+
 #define CHAOS_IMPL_FIND_TILE_DATA(func_name, arg_type, member_name, constness)\
 		TileData constness * TileSet::func_name(arg_type arg_name) constness\
 		{\
@@ -1527,8 +1543,6 @@ namespace chaos
 			return nullptr;\
 		}
 
-		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, int, id, const);
 		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, char const*, type, BOOST_PP_EMPTY());
 		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, char const*, type, const);
 		CHAOS_IMPL_FIND_TILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, BOOST_PP_EMPTY());
@@ -1573,6 +1587,16 @@ namespace chaos
 		{
 			if (!DoLoadObjectListHelper(element, tiles, "tile", nullptr, this))
 				return false;
+
+			// ensure faster access to tiles by sorted them
+			size_t tile_count = tiles.size();
+			if (tile_count > 0)
+			{
+				std::sort(tiles.begin(), tiles.end(), [](shared_ptr<TileData> const& src1, shared_ptr<TileData> const& src2) { return src1->id < src2->id; });
+
+				min_tile_id = tiles[0]->id;
+				max_tile_id = tiles[tile_count - 1]->id;
+			}
 			return true;
 		}
 
@@ -1753,7 +1777,9 @@ namespace chaos
 				}
 
 				TileSetData data;
-				data.first_gid = first_gid;
+				data.first_gid   = first_gid;
+				data.min_tile_id = first_gid + tileset->min_tile_id;
+				data.max_tile_id = first_gid + tileset->max_tile_id;
 				data.tileset = tileset;
 				tilesets.push_back(data);
 			}
@@ -1772,6 +1798,13 @@ namespace chaos
 
 		TileInfo Map::FindTileInfo(int gid)
 		{
+
+
+			// shutile
+
+
+
+
 			if (gid > 0)
 			{
 				size_t count = tilesets.size();
@@ -1828,7 +1861,7 @@ namespace chaos
 			return nullptr;
 		}
 
-#define CHAOS_IMPL_FIND_FILE_INFO(func_name, sub_funcname, arg_type, constness)\
+#define CHAOS_IMPL_FIND_TILE_INFO(func_name, sub_funcname, arg_type, constness)\
 		TileInfo constness Map::func_name(arg_type arg_name) constness\
 		{\
 			size_t count = tilesets.size();\
@@ -1845,11 +1878,11 @@ namespace chaos
 			return TileInfo();\
 		}
 
-		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const*, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfo, FindTileData, char const*, const);
-		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_FILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, const);
-#undef CHAOS_IMPL_FIND_FILE_INFO
+		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfo, FindTileData, char const*, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfo, FindTileData, char const*, const);
+		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, const);
+#undef CHAOS_IMPL_FIND_TILE_INFO
 
 
 			// ==========================================

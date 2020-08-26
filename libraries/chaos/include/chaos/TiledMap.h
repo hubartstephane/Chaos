@@ -1369,6 +1369,11 @@ namespace chaos
 			std::vector<shared_ptr<GroundData>> grounds;
 			/** the data for the tiles */
 			std::vector<shared_ptr<Wangset>> wangsets;
+
+			/** internal members to faster tile access */
+			int min_tile_id = 0;
+			/** internal members to faster tile access */
+			int max_tile_id = 0;
 		};
 
 		// ==========================================
@@ -1383,6 +1388,11 @@ namespace chaos
 
 			/** the first gid for the tileset */
 			int first_gid = 1;
+			/** member to faster tile access */
+			int min_tile_id = 0;
+			/** member to faster tile access */
+			int max_tile_id = 0;
+
 			/** the tileset */
 			shared_ptr<TileSet> tileset;
 		};

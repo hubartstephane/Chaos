@@ -53,7 +53,6 @@ namespace death
 #define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
 #define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)
 
-
 		// ==========================================
 		// PropertyOwnerOverride : an utility class to capture the properties of a source 
 		// ==========================================
@@ -94,7 +93,6 @@ namespace death
 		/** a substitute property owner to fake the system */
 		chaos::TiledMap::PropertyOwner* property_owner = nullptr;
 	};
-
 
 	// =====================================
 	// TiledMapObject 
@@ -407,9 +405,9 @@ namespace death
 	//
 
 	/** a functor for geometric object factory */
-	using TiledMapObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject *)>;
+	using TiledMapObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject const *)>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
-#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject *in_geometric_object) { x }
+#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object) { x }
 
 	// =====================================
 	// TiledMapLevel : a level described by a tiledmap
@@ -437,11 +435,11 @@ namespace death
 	protected:
 
 		/** create a typed object based of a 'classname' property */
-		virtual TiledMapObjectFactory DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object);
+		virtual TiledMapObjectFactory DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 		/** create a typed object specializable method */
-		virtual TiledMapObjectFactory DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
+		virtual TiledMapObjectFactory DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 		/** create a typed object 'entry point' */
-		TiledMapObjectFactory GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object);
+		TiledMapObjectFactory GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 
 		/** create a Camera specializable method */
 		virtual TiledMapCameraTemplate* DoCreateCamera();
@@ -640,12 +638,12 @@ namespace death
 		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer);
 	
 		/** create an object in an object layer */
-		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
+		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object);
 
 		/** create an object in an object layer */
-		void CreateObjectParticles(chaos::TiledMap::GeometricObject* in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
+		void CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
 		/** returns whether a particle should be created for object instance */
-		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const;
+		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TiledMapObject* object) const;
 
 		/** finalize the particles created */
 		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);

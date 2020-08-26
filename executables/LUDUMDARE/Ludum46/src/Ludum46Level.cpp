@@ -328,10 +328,8 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 }
 
 
-death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
+death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
-	in_typed_object->type;
-
 	if (in_typed_object->IsObjectOfType("Spawner"))
 	{
 		std::string const* spawner_type = in_typed_object->FindPropertyString("SPAWNER_TYPE");

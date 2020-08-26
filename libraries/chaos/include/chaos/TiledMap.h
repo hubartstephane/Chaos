@@ -795,7 +795,7 @@ namespace chaos
 		public:
 
 			/** object information */
-			int tile_id = 0;
+			int tile_id = -1;
 			/** object information */
 			std::string name;
 			/** object information */
@@ -820,9 +820,7 @@ namespace chaos
 			TOPRIGHT = 0,
 			BOTTOMRIGHT = 1,
 			BOTTOMLEFT = 2,
-			TOPLEFT = 3
-			
-			
+			TOPLEFT = 3					
 		};
 
 		enum class WangEdge : int
@@ -847,10 +845,13 @@ namespace chaos
 			/** gets the edge value */
 			int GetEdgeValue(WangEdge edge) const;
 
+			/** returns whether this object is correctly initialized */
+			bool IsValid() const { return (tile_id >= 0); }
+
 		public:
 
 			/** object information */
-			int tile_id = 0;
+			int tile_id = -1;
 			/** object information */
 			unsigned int wang_id = 0;
 		};
@@ -871,10 +872,13 @@ namespace chaos
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
 
+			/** search wang information for a given tile */
+			WangTile GetWangTile(int tile_id) const;
+
 		public:
 
 			/** object information */
-			int tile_id = 0;
+			int tile_id = -1;
 			/** object information */
 			std::string name;
 			/** object information */
@@ -884,20 +888,6 @@ namespace chaos
 			/** object information */
 			std::vector<WangTile> wang_tiles;
 		};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 		// ==========================================
 		// TileData
@@ -1098,6 +1088,14 @@ namespace chaos
 			size_t GetNonEmptyTileCount() const;
 			/** get the position of the tile */
 			glm::ivec2 GetTileCoordinate(TileLayerChunk const& chunk, size_t index) const;
+
+
+
+
+
+			TileInfo GetTile(glm::vec2 const& position) const;
+
+
 
 		protected:
 
@@ -1321,6 +1319,21 @@ namespace chaos
 			/** find TileData from its atlas key */
 			TileData const * FindTileDataFromAtlasKey(char const * atlas_key) const;
 
+			/** find the wangset for this name */
+			Wangset* FindWangset(char const* name);
+			/** find the wangset for this name */
+			Wangset const * FindWangset(char const* name) const;
+
+
+
+
+
+
+
+
+
+
+
 		public:
 
 			/** object information */
@@ -1385,6 +1398,11 @@ namespace chaos
 			/** other constuctor */
 			TileInfo(int in_gid, TileSet * in_tileset, TileData * in_tiledata):
 				gid(in_gid), tileset(in_tileset), tiledata(in_tiledata){}
+
+			/** returns whether the information is valid or not */
+			bool IsValid() const { return (gid > 0); }
+
+		public:
 
 			/** the final gid of the search tile */
 			int gid = 0;

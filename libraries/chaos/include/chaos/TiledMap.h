@@ -216,22 +216,16 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** returns a pointer on the int property */
-			int* GetPropertyInt();
 			int const* GetPropertyInt() const;
 			/** returns a pointer on the float property */
-			float* GetPropertyFloat();
 			float const* GetPropertyFloat() const;
 			/** returns a pointer on the bool property */
-			bool* GetPropertyBool();
 			bool const* GetPropertyBool() const;
 			/** returns a pointer on the string property */
-			std::string* GetPropertyString();
 			std::string const* GetPropertyString() const;
 			/** returns a pointer on the color property */
-			glm::vec4* GetPropertyColor();
 			glm::vec4 const* GetPropertyColor() const;
 			/** returns a pointer on the object property */
-			int* GetPropertyObject();
 			int const* GetPropertyObject() const;
 
 			/** returns whether the property is of type int */

@@ -136,14 +136,6 @@ namespace chaos
 		// Property methods
 		// ==========================================
 		
-		int* Property::GetPropertyInt() 
-		{
-			PropertyInt * prop = auto_cast(this);
-			if (prop != nullptr)
-				return &prop->value;
-			return nullptr; 
-		}
-
 		int const* Property::GetPropertyInt() const 
 		{ 
 			PropertyInt const * prop = auto_cast(this);
@@ -152,25 +144,9 @@ namespace chaos
 			return nullptr;
 		}
 		
-		float* Property::GetPropertyFloat() 
-		{ 
-			PropertyFloat * prop = auto_cast(this);
-			if (prop != nullptr)
-				return &prop->value;
-			return nullptr;
-		}
-
 		float const* Property::GetPropertyFloat() const 
 		{ 
 			PropertyFloat const * prop = auto_cast(this);
-			if (prop != nullptr)
-				return &prop->value;
-			return nullptr;
-		}
-		
-		bool* Property::GetPropertyBool() 
-		{ 
-			PropertyBool* prop = auto_cast(this);
 			if (prop != nullptr)
 				return &prop->value;
 			return nullptr;
@@ -184,14 +160,6 @@ namespace chaos
 			return nullptr;
 		}
 		
-		std::string* Property::GetPropertyString() 
-		{ 
-			PropertyString* prop = auto_cast(this);
-			if (prop != nullptr)
-				return &prop->value;
-			return nullptr;
-		}
-
 		std::string const* Property::GetPropertyString() const 
 		{ 
 			PropertyString const * prop = auto_cast(this);
@@ -200,25 +168,9 @@ namespace chaos
 			return nullptr;
 		}
 		
-		glm::vec4* Property::GetPropertyColor() 
-		{ 
-			PropertyColor * prop = auto_cast(this);
-			if (prop != nullptr)
-				return &prop->value;
-			return nullptr;
-		}
-
 		glm::vec4 const* Property::GetPropertyColor() const 
 		{ 
 			PropertyColor const* prop = auto_cast(this);
-			if (prop != nullptr)
-				return &prop->value;
-			return nullptr;
-		}
-
-		int* Property::GetPropertyObject()
-		{
-			PropertyObject* prop = auto_cast(this);
 			if (prop != nullptr)
 				return &prop->value;
 			return nullptr;

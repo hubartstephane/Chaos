@@ -7,6 +7,7 @@
 #include <chaos/MyBase64.h>
 #include <chaos/MyZLib.h>
 #include <chaos/TiledMapTools.h>
+#include <chaos/STLTools.h>
 
 #define CHAOS_REVERSE_Y_AXIS 1
 
@@ -1801,47 +1802,24 @@ namespace chaos
 			// early exit
 			if (gid <= 0)
 				return {};
-#if 0
-			// search the tileset that have this GLOBAL ID
-			auto it = std::lower_bound(tilesets.begin(), tilesets.end(), gid, [](TileSetData const & ts, int gid) 
+			// search the tileset that contains this GLOBAL ID
+			auto it = STLTools::FindSortedVector(tilesets, gid, [](TileSetData const& ts, int gid)
 			{
 				if (gid < ts.min_tile_id)
 					return -1;
 				if (gid > ts.max_tile_id)
 					return +1;
-				return 0;	
+				return 0;
 			});
-
-			// check for the iterator validity
-			if (it == tilesets.end() || gid < it->min_tile_id || gid > it->max_tile_id)
+			// no such tileset
+			if (it == tilesets.end())
 				return {};
-
-#endif			
-
-
-
-			// shutile
-
-
-
-
-			if (gid > 0)
-			{
-				size_t count = tilesets.size();
-				for (size_t i = count; i > 0; --i)
-				{
-					size_t index = i - 1;
-
-					TileSetData & data = tilesets[index];
-					if (gid >= data.first_gid)
-					{
-						TileData * tiledata = data.tileset->FindTileData(gid - data.first_gid);
-						if (tiledata != nullptr)
-							return TileInfo((gid - data.first_gid), data.tileset.get(), tiledata);
-					}
-				}
-			}
-			return TileInfo();
+			// search the tile data in the tileset
+			TileData* tiledata = it->tileset->FindTileData(gid - it->first_gid);
+			if (tiledata == nullptr)
+				return {};
+				
+			return TileInfo((gid - it->first_gid), it->tileset.get(), tiledata);
 		}
 
 		TileInfo const Map::FindTileInfo(int gid) const

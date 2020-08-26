@@ -64,7 +64,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);
 }
 
-death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
+death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("PowerUp"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new PowerUpTrigger();); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true

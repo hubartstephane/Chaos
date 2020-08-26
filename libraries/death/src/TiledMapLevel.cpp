@@ -569,7 +569,7 @@ namespace death
 		return new chaos::ParticleLayer<TiledMapParticleTrait>();
 	}
 	
-	TiledMapObjectFactory TiledMapLevel::DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
+	TiledMapObjectFactory TiledMapLevel::DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
@@ -590,7 +590,7 @@ namespace death
 	}
 
 
-	TiledMapObjectFactory TiledMapLevel::DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject* in_typed_object)
+	TiledMapObjectFactory TiledMapLevel::DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{	
 		// get the 'classname' property
 		std::string const* classname = in_typed_object->FindPropertyString("classname");
@@ -605,13 +605,13 @@ namespace death
 		if (!subclass.IsValid())
 			return nullptr;
 		// return the factory based on this subclass
-		return [this, in_layer_instance, subclass](chaos::TiledMap::GeometricObject* in_geometric_object)
+		return [this, in_layer_instance, subclass](chaos::TiledMap::GeometricObject const * in_geometric_object)
 		{
 			return subclass.CreateInstance();
 		};
 	}
 
-	TiledMapObjectFactory TiledMapLevel::GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject * in_typed_object)
+	TiledMapObjectFactory TiledMapLevel::GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{
 		TiledMapObjectFactory factory = DoGetExplicitObjectFactory(in_layer_instance, in_typed_object);
 		if (factory == nullptr)
@@ -623,7 +623,7 @@ namespace death
 		}
 
 		// create another factory that wraps the previous (and add Initialize(...) call)
-		TiledMapObjectFactory result_factory = [in_layer_instance, factory](chaos::TiledMap::GeometricObject* in_geometric_object)
+		TiledMapObjectFactory result_factory = [in_layer_instance, factory](chaos::TiledMap::GeometricObject const * in_geometric_object)
 		{
 			TiledMapObject * result = factory(in_geometric_object);
 			if (result != nullptr)
@@ -922,12 +922,12 @@ namespace death
 
 
 
-	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject* in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
+	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
 		// create additionnal particles (TEXT)
-		chaos::TiledMap::GeometricObjectText* text = in_geometric_object->GetObjectText();
+		chaos::TiledMap::GeometricObjectText const * text = in_geometric_object->GetObjectText();
 		if (text != nullptr)
 		{
 			// create particle layer if necessary
@@ -955,7 +955,7 @@ namespace death
 		}
 
 		// create additionnal particles (TILES)
-		chaos::TiledMap::GeometricObjectTile* tile = in_geometric_object->GetObjectTile();
+		chaos::TiledMap::GeometricObjectTile const * tile = in_geometric_object->GetObjectTile();
 		if (tile != nullptr)
 		{
 			int gid = tile->gid;
@@ -987,7 +987,7 @@ namespace death
 
 	CHAOS_HELP_TEXT(CMD, "-TiledGeometricObject::ForceParticleCreation");
 
-	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner * property_owner, TiledMapObject* object) const
+	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TiledMapObject* object) const
 	{
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
@@ -996,7 +996,7 @@ namespace death
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
-	TiledMapObjectFactory TiledMapLayerInstance::GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object)
+	TiledMapObjectFactory TiledMapLayerInstance::GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object)
 	{
 		TiledMapLevel* level = GetLevel();
 
@@ -1005,7 +1005,7 @@ namespace death
 		if (!factory)
 			return nullptr;
 		// create a 'final' factory that use previous one + insert the result object in correct list
-		TiledMapObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject* geometric_object)
+		TiledMapObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject const * geometric_object)
 		{
 			TiledMapObject* result = factory(geometric_object);
 			if (result != nullptr)
@@ -1057,7 +1057,7 @@ namespace death
 		size_t count = object_layer->geometric_objects.size();
 		for (size_t i = 0; i < count; ++i)
 		{
-			chaos::TiledMap::GeometricObject* geometric_object = object_layer->geometric_objects[i].get();
+			chaos::TiledMap::GeometricObject const * geometric_object = object_layer->geometric_objects[i].get();
 			if (geometric_object == nullptr)
 				continue;
 

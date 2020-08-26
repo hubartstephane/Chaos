@@ -63,7 +63,7 @@ namespace death
 	public:
 
 		/** constructor */
-		PropertyOwnerOverride(chaos::TiledMap::BaseObject* in_owner, chaos::TiledMap::PropertyOwner* in_property_owner) :
+		PropertyOwnerOverride(chaos::TiledMap::BaseObject* in_owner, chaos::TiledMap::PropertyOwner const * in_property_owner) :
 			T(in_owner),
 			property_owner(in_property_owner) {}
 
@@ -81,7 +81,7 @@ namespace death
 	protected:
 
 		/** a substitute property owner to fake the system */
-		chaos::TiledMap::PropertyOwner* property_owner = nullptr;
+		chaos::TiledMap::PropertyOwner const * property_owner = nullptr;
 	};
 
 	// =====================================

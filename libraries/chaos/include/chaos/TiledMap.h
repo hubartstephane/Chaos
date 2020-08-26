@@ -1335,7 +1335,7 @@ namespace chaos
 			/** default constructor */
 			TileInfo() = default;
 			/** other constuctor */
-			TileInfo(int in_gid, TileSet * in_tileset, TileData * in_tiledata):
+			TileInfo(int in_gid, TileSet const * in_tileset, TileData const * in_tiledata):
 				gid(in_gid), tileset(in_tileset), tiledata(in_tiledata){}
 
 			/** returns whether the information is valid or not */
@@ -1346,11 +1346,10 @@ namespace chaos
 			/** the final gid of the search tile */
 			int gid = 0;
 			/** the tileset considered */
-			TileSet * tileset = nullptr;
+			TileSet const * tileset = nullptr;
 			/** the tiledata in the tileset considered */
-			TileData * tiledata = nullptr;
+			TileData const * tiledata = nullptr;
 		};
-
 
 		// ==========================================
 		// Map
@@ -1409,20 +1408,11 @@ namespace chaos
 		public:
 
 			/** find tileset data for a given gid */
-			TileInfo FindTileInfo(int gid);
-			/** find tileset data for a given gid */
-			TileInfo const FindTileInfo(int gid) const;
-
+			TileInfo FindTileInfo(int gid) const;
 			/** find tileset data from its type */
-			TileInfo FindTileInfo(char const * type);
-			/** find tileset data from its type */
-			TileInfo const FindTileInfo(char const * type) const;
-
+			TileInfo FindTileInfo(char const * type) const;
 			/** find tileset data from its atlas key */
-			TileInfo FindTileInfoFromAtlasKey(char const * atlas_key);
-			/** find tileset data from its atlas key */
-			TileInfo const  FindTileInfoFromAtlasKey(char const * atlas_key) const;
-
+			TileInfo FindTileInfoFromAtlasKey(char const * atlas_key) const;
 
 			/** find a layer by its name */
 			LayerBase * FindLayer(char const * in_name);

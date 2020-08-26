@@ -16,7 +16,7 @@
 // BonusSpawnerTrigger implementation
 // =============================================================
 
-bool BonusSpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool BonusSpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
@@ -53,7 +53,7 @@ bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 // EnemySpawnerTrigger implementation
 // =============================================================
 
-bool EnemySpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool EnemySpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;

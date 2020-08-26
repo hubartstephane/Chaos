@@ -24,7 +24,7 @@ class MyChangeLevelTrigger : public death::TiledMapTrigger
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
 	/** override */
 	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 };

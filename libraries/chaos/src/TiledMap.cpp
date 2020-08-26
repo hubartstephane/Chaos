@@ -576,9 +576,10 @@ namespace chaos
 			if (!GeometricObjectSurface::DoLoad(element))
 				return false;
 
-			int pseudo_gid = 0;// this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
+			// this is a pseudo_gid, because the Vertical & Horizontal flipping is encoded inside this value
+			int pseudo_gid = 0;
 			XMLTools::ReadAttribute(element, "gid", pseudo_gid);
-
+			// decode the ID, extract the flags
 			gid = TiledMapTools::DecodeTileGID(pseudo_gid, &particle_flags);
 
 			return true;
@@ -1040,6 +1041,17 @@ namespace chaos
 		}
 
 		// ==========================================
+		// TileLayerChunk methods
+		// ==========================================
+
+		int TileLayerChunk::GetTile(glm::ivec2 const& pos) const // pos is expressed in local coordinate
+		{
+			assert(pos.x >= 0 && pos.x < size.x);
+			assert(pos.y >= 0 && pos.y < size.y);
+			return tile_indices[(size_t)(pos.x + pos.y * size.y)];
+		}
+
+		// ==========================================
 		// TileLayer methods
 		// ==========================================
 
@@ -1237,6 +1249,31 @@ namespace chaos
 		{
 			int tmp = (int)index;
 			return chunk.offset + glm::ivec2(tmp % chunk.size.x, tmp / chunk.size.x);
+		}
+
+		TileLayerChunk const* TileLayer::GetTileChunk(glm::ivec2 const& pos) const
+		{
+			for (TileLayerChunk const& chunk : tile_chunks)
+				if (pos.x >= chunk.offset.x && pos.x < chunk.size.x && pos.y >= chunk.offset.y && pos.y < chunk.size.y)
+					return &chunk;
+			return nullptr;
+		}
+
+
+		TileInfo TileLayer::GetTile(glm::ivec2 const& pos) const
+		{
+			// get the chunk containing the position
+			TileLayerChunk const * chunk = GetTileChunk(pos);
+			if (chunk == nullptr)
+				return {};
+			// get map 
+			Map const* m = GetMap();
+			if (m == nullptr)
+				return {};
+			// get the ID at the given position
+			int id = chunk->GetTile(pos - chunk->offset);
+			// the result
+			return  m->FindTileInfo(id);
 		}
 
 		// ==========================================

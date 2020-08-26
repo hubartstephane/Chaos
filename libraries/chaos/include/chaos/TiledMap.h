@@ -997,6 +997,11 @@ namespace chaos
 		{
 		public:
 
+			/** get the tile at given position */
+			int GetTile(glm::ivec2 const& pos) const;
+
+		public:
+
 			/** the dimension of the chunk */
 			glm::ivec2 size = glm::ivec2(0, 0);
 			/** the offset of the chunk */
@@ -1020,13 +1025,10 @@ namespace chaos
 			/** get the position of the tile */
 			glm::ivec2 GetTileCoordinate(TileLayerChunk const& chunk, size_t index) const;
 
-
-
-
-
-			TileInfo GetTile(glm::vec2 const& position) const;
-
-
+			/** get information concerning the tile at given position */
+			TileInfo GetTile(glm::ivec2 const& position) const;
+			/** get the chunk for a given tile */
+			TileLayerChunk const* GetTileChunk(glm::ivec2 const& pos) const;
 
 		protected:
 

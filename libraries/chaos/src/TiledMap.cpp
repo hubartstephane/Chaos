@@ -1332,14 +1332,6 @@ namespace chaos
 		// TileSet methods
 		// ==========================================
 
-		TileData* TileSet::FindTileData(int id)
-		{
-			auto it = std::lower_bound(tiles.begin(), tiles.end(), id, [](shared_ptr<TileData> const& tile_data, int id) { return tile_data->id < id; });
-			if (it == tiles.end() || (*it)->id != id) // maybe the iterator is invalid or does not point exactly the element whose ID is the one searched (this is a lower_bound !!)
-				return nullptr;
-			return (*it).get();
-		}
-
 		TileData const * TileSet::FindTileData(int id) const
 		{
 			auto it = std::lower_bound(tiles.begin(), tiles.end(), id, [](shared_ptr<TileData> const& tile_data, int id) { return tile_data->id < id; });
@@ -1348,13 +1340,13 @@ namespace chaos
 			return (*it).get();
 		}
 
-#define CHAOS_IMPL_FIND_TILE_DATA(func_name, arg_type, member_name, constness)\
-		TileData constness * TileSet::func_name(arg_type arg_name) constness\
+#define CHAOS_IMPL_FIND_TILE_DATA(func_name, arg_type, member_name)\
+		TileData const * TileSet::func_name(arg_type arg_name) const\
 		{\
 			size_t count = tiles.size();\
 			for (size_t i = 0; i < count; ++i)\
 			{\
-				TileData constness * tile_data = tiles[i].get();\
+				TileData const * tile_data = tiles[i].get();\
 				if (tile_data == nullptr)\
 					continue;\
 				if (tile_data->member_name == arg_name)\
@@ -1363,31 +1355,23 @@ namespace chaos
 			return nullptr;\
 		}
 
-		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, char const*, type, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, char const*, type, const);
-		CHAOS_IMPL_FIND_TILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_TILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, const);
-
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, char const*, type);
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key);
 #undef CHAOS_IMPL_FIND_TILE_DATA
 
-#define CHAOS_IMPL_FIND_WANGSET(func_name, arg_type, member_name, constness)\
-		Wangset constness * TileSet::func_name(arg_type arg_name) constness\
-		{\
-			size_t count = wangsets.size(); \
-			for (size_t i = 0; i < count; ++i)\
-			{\
-				Wangset constness* wang_set = wangsets[i].get(); \
-				if (wang_set == nullptr)\
-					continue; \
-				if (wang_set->member_name == arg_name)\
-					return wang_set; \
-			}\
-			return nullptr; \
+		Wangset const * TileSet::FindWangset(char const* name) const
+		{
+			size_t count = wangsets.size();
+			for (size_t i = 0; i < count; ++i)
+			{
+				Wangset const * wang_set = wangsets[i].get();
+				if (wang_set == nullptr)
+					continue;
+				if (wang_set->name == name)
+					return wang_set;
+			}
+			return nullptr;
 		}
-		CHAOS_IMPL_FIND_WANGSET(FindWangset, char const*, name, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_WANGSET(FindWangset, char const*, name, const);
-
-#undef CHAOS_IMPL_FIND_WANGSET
 
 		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{
@@ -1634,7 +1618,7 @@ namespace chaos
 			if (it == tilesets.end())
 				return {};
 			// search the tile data in the tileset
-			TileData* tiledata = it->tileset->FindTileData(gid - it->first_gid);
+			TileData const * tiledata = it->tileset->FindTileData(gid - it->first_gid);
 			if (tiledata == nullptr)
 				return {};
 				
@@ -1666,7 +1650,7 @@ namespace chaos
 				TileSetData const & data = tilesets[i];\
 				if (data.tileset != nullptr)\
 				{\
-					TileData * tiledata = data.tileset->sub_funcname(arg_name);\
+					TileData const * tiledata = data.tileset->sub_funcname(arg_name);\
 					if (tiledata != nullptr)\
 						return TileInfo(-1, data.tileset.get(), tiledata);\
 				}\

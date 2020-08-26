@@ -1234,33 +1234,14 @@ namespace chaos
 		public:
 
 			/** find TileData from its id */
-			TileData * FindTileData(int gid);
-			/** find TileData from its id */
 			TileData const * FindTileData(int gid) const;
-
-			/** find TileData from its type */
-			TileData * FindTileData(char const * type);
 			/** find TileData from its type */
 			TileData const * FindTileData(char const * type) const;
-
-			/** find TileData from its atlas key */
-			TileData * FindTileDataFromAtlasKey(char const * atlas_key);
 			/** find TileData from its atlas key */
 			TileData const * FindTileDataFromAtlasKey(char const * atlas_key) const;
 
 			/** find the wangset for this name */
-			Wangset* FindWangset(char const* name);
-			/** find the wangset for this name */
 			Wangset const * FindWangset(char const* name) const;
-
-
-
-
-
-
-
-
-
 
 
 		public:

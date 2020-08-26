@@ -236,24 +236,9 @@ namespace chaos
 		// PropertyOwner methods
 		// ==========================================
 
-		Property * PropertyOwner::FindProperty(char const * name, PropertyType type_id)
-		{
-			return FindInternalProperty(name, type_id);
-		}
-
 		Property const * PropertyOwner::FindProperty(char const * name, PropertyType type_id) const
 		{
 			return FindInternalProperty(name, type_id);
-		}
-
-		Property * PropertyOwner::FindInternalProperty(char const * name, PropertyType type_id)
-		{
-			assert(name != nullptr);
-			for (auto & property : properties)
-				if (type_id == PropertyType::ANY || type_id == property->GetPropertyType())
-					if (StringTools::Stricmp(property->GetName(), name) == 0)
-						return property.get();
-			return nullptr;
 		}
 
 		Property const * PropertyOwner::FindInternalProperty(char const * name, PropertyType type_id) const
@@ -266,28 +251,12 @@ namespace chaos
 			return nullptr;
 		}
 
-		int * PropertyOwner::FindPropertyInt(char const * name)
-		{
-			Property * property = FindProperty(name, PropertyType::INT);
-			if (property == nullptr)
-				return nullptr;
-			return property->GetPropertyInt();
-		}
-
 		int const * PropertyOwner::FindPropertyInt(char const * name) const
 		{
 			Property const * property = FindProperty(name, PropertyType::INT);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyInt();
-		}
-
-		float * PropertyOwner::FindPropertyFloat(char const * name)
-		{
-			Property * property = FindProperty(name, PropertyType::FLOAT);
-			if (property == nullptr)
-				return nullptr;
-			return property->GetPropertyFloat();
 		}
 
 		float const * PropertyOwner::FindPropertyFloat(char const * name) const
@@ -298,28 +267,12 @@ namespace chaos
 			return property->GetPropertyFloat();
 		}
 
-		bool * PropertyOwner::FindPropertyBool(char const * name)
-		{
-			Property * property = FindProperty(name, PropertyType::BOOL);
-			if (property == nullptr)
-				return nullptr;
-			return property->GetPropertyBool();
-		}
-
 		bool const * PropertyOwner::FindPropertyBool(char const * name) const
 		{
 			Property const * property = FindProperty(name, PropertyType::BOOL);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyBool();
-		}
-
-		std::string * PropertyOwner::FindPropertyString(char const * name)
-		{
-			Property * property = FindProperty(name, PropertyType::STRING);
-			if (property == nullptr)
-				return nullptr;
-			return property->GetPropertyString();
 		}
 
 		std::string const * PropertyOwner::FindPropertyString(char const * name) const
@@ -330,28 +283,12 @@ namespace chaos
 			return property->GetPropertyString();
 		}
 
-		glm::vec4 * PropertyOwner::FindPropertyColor(char const* name)
-		{
-			Property* property = FindProperty(name, PropertyType::COLOR);
-			if (property == nullptr)
-				return nullptr;
-			return property->GetPropertyColor();
-		}
-
 		glm::vec4 const* PropertyOwner::FindPropertyColor(char const* name) const
 		{
 			Property const* property = FindProperty(name, PropertyType::COLOR);
 			if (property == nullptr)
 				return nullptr;
 			return property->GetPropertyColor();
-		}
-
-		int * PropertyOwner::FindPropertyObject(char const* name)
-		{
-			Property* property = FindProperty(name, PropertyType::OBJECT);
-			if (property == nullptr)
-				return nullptr;
-			return property->GetPropertyObject();
 		}
 
 		int const* PropertyOwner::FindPropertyObject(char const* name) const
@@ -495,18 +432,6 @@ namespace chaos
 			if (chaos::StringTools::Stricmp(type, in_type) == 0)
 				return true;
 			return PropertyOwner::IsObjectOfType(in_type);
-		}
-
-		Property * TypedObject::FindProperty(char const * name, PropertyType type_id)
-		{
-			Property * result = PropertyOwner::FindProperty(name, type_id);
-			if (result == nullptr && !StringTools::IsEmpty(type))
-			{
-				Manager * manager = GetManager();
-				if (manager != nullptr)
-					result = manager->FindObjectProperty(type.c_str(), name, type_id);
-			}
-			return result;
 		}
 
 		Property const * TypedObject::FindProperty(char const * name, PropertyType type_id) const
@@ -794,39 +719,6 @@ namespace chaos
 		//       we can say that TILE_DATA.PROPERTY_MAP is to be searched before TILE_DATA.TYPE2 (obvious)
 		//
 
-		Property* GeometricObjectTile::FindProperty(char const* name, PropertyType type_id)
-		{
-			// 1 - Own properties
-			Property* result = PropertyOwner::FindProperty(name, type_id);
-			if (result != nullptr)
-				return result;
-
-			// 2 - See Tile properties
-			TileInfo tile_info = FindTileInfo();
-			if (tile_info.tiledata != nullptr)
-			{
-				result = tile_info.tiledata->FindProperty(name, type_id);
-				if (result != nullptr)
-					return result;
-			}
-
-			// 3 - See our own type
-			if (!StringTools::IsEmpty(type))
-			{
-				if (tile_info.tiledata == nullptr || StringTools::Stricmp(type, tile_info.tiledata->type) != 0) // if TYPE1 == TYPE2, do not search twice
-				{
-					Manager* manager = GetManager();
-					if (manager != nullptr)
-					{
-						result = manager->FindObjectProperty(type.c_str(), name, type_id);
-						if (result != nullptr)
-							return result;
-					}
-				}
-			}
-			return result;
-		}
-
 		Property const* GeometricObjectTile::FindProperty(char const* name, PropertyType type_id) const
 		{
 			// 1 - Own properties
@@ -1079,21 +971,6 @@ namespace chaos
 			return true;
 		}
 		
-		Property* LayerBase::FindProperty(char const* name, PropertyType type_id)
-		{
-			// super method
-			Property* result = PropertyOwner::FindProperty(name, type_id);
-			if (result != nullptr)
-				return result;
-			// search in containing layers
-			if (owner != nullptr)
-			{
-				LayerBase* parent_layer = owner->GetOwner<LayerBase>(true);
-				if (parent_layer != nullptr)
-					return parent_layer->FindProperty(name, type_id);
-			}
-			return nullptr;
-		}
 		
 		Property const* LayerBase::FindProperty(char const* name, PropertyType type_id) const
 		{
@@ -1487,16 +1364,6 @@ namespace chaos
 					return definition;
 			}
 			return nullptr;
-		}
-
-		Property * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, PropertyType type_id)
-		{
-			if (StringTools::IsEmpty(type))
-				return nullptr;
-			ObjectTypeDefinition * definition = FindObjectType(type);
-			if (definition == nullptr)
-				return nullptr;
-			return definition->FindProperty(name, type_id);
 		}
 
 		Property const * ObjectTypeSet::FindObjectProperty(char const * type, char const * name, PropertyType type_id) const
@@ -1972,23 +1839,6 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 
 #undef CHAOS_IMPL_MANAGER_DOLOAD
 
-		Property * Manager::FindObjectProperty(char const * type, char const * name, PropertyType type_id)
-		{	
-			if (StringTools::IsEmpty(type))
-				return nullptr;
-			size_t count = object_type_sets.size();
-			for (size_t i = 0 ; i < count ; ++i)
-			{
-				ObjectTypeSet * ots = object_type_sets[i].get();
-				if (ots == nullptr)
-					return false;
-				Property * result = ots->FindObjectProperty(type, name, type_id);
-				if (result != nullptr)
-					return result;		
-			}
-			return nullptr;
-		}
-
 		Property const * Manager::FindObjectProperty(char const * type, char const * name, PropertyType type_id) const
 		{
 			if (StringTools::IsEmpty(type))
@@ -1996,10 +1846,10 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 			size_t count = object_type_sets.size();
 			for (size_t i = 0 ; i < count ; ++i)
 			{
-				ObjectTypeSet * ots = object_type_sets[i].get();
+				ObjectTypeSet const * ots = object_type_sets[i].get();
 				if (ots == nullptr)
 					return false;
-				Property * result = ots->FindObjectProperty(type, name, type_id);
+				Property const * result = ots->FindObjectProperty(type, name, type_id);
 				if (result != nullptr)
 					return result;		
 			}

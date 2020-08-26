@@ -395,47 +395,6 @@ namespace chaos
 		};
 
 		// ==========================================
-		// PropertyOwnerOverride : an utility class to capture the properties of a source 
-		// ==========================================
-
-		template<typename T>
-		class PropertyOwnerOverride : public T
-		{
-		public:
-
-			/** constructor */
-			PropertyOwnerOverride(BaseObject* in_owner, PropertyOwner* in_property_owner) :
-				T(in_owner),
-				property_owner(in_property_owner) {}
-
-			/** override */
-			virtual Property* FindProperty(char const* name, PropertyType type_id) override
-			{
-				Property* result = nullptr;
-				if (property_owner != nullptr)
-					result = property_owner->FindProperty(name, type_id);
-				if (result == nullptr)
-					result = T::FindProperty(name, type_id);
-				return result;
-			}
-			/** override */
-			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override
-			{
-				Property const* result = nullptr;
-				if (property_owner != nullptr)
-					result = property_owner->FindProperty(name, type_id);
-				if (result == nullptr)
-					result = T::FindProperty(name, type_id);
-				return result;
-			}
-
-		protected:
-
-			/** a substitute property owner to fake the system */
-			PropertyOwner* property_owner = nullptr;
-		};
-
-		// ==========================================
 		// TypedObject
 		// ==========================================
 

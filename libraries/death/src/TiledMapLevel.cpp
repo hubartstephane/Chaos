@@ -1283,7 +1283,7 @@ namespace death
 				TiledMapObjectFactory factory = GetObjectFactory(tile_info.tiledata);
 				if (factory)
 				{
-					chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new chaos::TiledMap::PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
+					chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
 					if (tile_object != nullptr)
 					{
 						// compute an ID base on 'tile_coord' 

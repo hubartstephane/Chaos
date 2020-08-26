@@ -1616,7 +1616,7 @@ namespace chaos
 			return DoLoadLayersImpl(element, layers);
 		}
 
-		TileInfo Map::FindTileInfo(int gid)
+		TileInfo Map::FindTileInfo(int gid) const
 		{
 			// early exit
 			if (gid <= 0)
@@ -1641,27 +1641,6 @@ namespace chaos
 			return TileInfo((gid - it->first_gid), it->tileset.get(), tiledata);
 		}
 
-		TileInfo const Map::FindTileInfo(int gid) const
-		{
-			if (gid >= 0)
-			{
-				size_t count = tilesets.size();
-				for (size_t i = count; i > 0; --i)
-				{
-					size_t index = i - 1;
-
-					TileSetData const & data = tilesets[index];
-					if (gid >= data.first_gid)
-					{
-						TileData * tiledata = data.tileset->FindTileData(gid - data.first_gid);
-						if (tiledata != nullptr)
-							return TileInfo((gid - data.first_gid), data.tileset.get(), tiledata);
-					}
-				}
-			}
-			return TileInfo();
-		}
-
 		LayerBase* Map::FindLayer(char const* in_name)
 		{
 			for (auto& layer : layers)
@@ -1678,8 +1657,8 @@ namespace chaos
 			return nullptr;
 		}
 
-#define CHAOS_IMPL_FIND_TILE_INFO(func_name, sub_funcname, arg_type, constness)\
-		TileInfo constness Map::func_name(arg_type arg_name) constness\
+#define CHAOS_IMPL_FIND_TILE_INFO(func_name, sub_funcname, arg_type)\
+		TileInfo Map::func_name(arg_type arg_name) const\
 		{\
 			size_t count = tilesets.size();\
 			for (size_t i = 0 ; i < count; ++i)\
@@ -1694,11 +1673,8 @@ namespace chaos
 			}\
 			return TileInfo();\
 		}
-
-		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfo, FindTileData, char const*, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfo, FindTileData, char const*, const);
-		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*, const);
+		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfo, FindTileData, char const*);
+		CHAOS_IMPL_FIND_TILE_INFO(FindTileInfoFromAtlasKey, FindTileDataFromAtlasKey, char const*);
 #undef CHAOS_IMPL_FIND_TILE_INFO
 
 

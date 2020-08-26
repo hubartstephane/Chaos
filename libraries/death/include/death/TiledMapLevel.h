@@ -68,16 +68,6 @@ namespace death
 			property_owner(in_property_owner) {}
 
 		/** override */
-		virtual chaos::TiledMap::Property* FindProperty(char const* name, chaos::TiledMap::PropertyType type_id) override
-		{
-			chaos::TiledMap::Property* result = nullptr;
-			if (property_owner != nullptr)
-				result = property_owner->FindProperty(name, type_id);
-			if (result == nullptr)
-				result = T::FindProperty(name, type_id);
-			return result;
-		}
-		/** override */
 		virtual chaos::TiledMap::Property const* FindProperty(char const* name, chaos::TiledMap::PropertyType type_id) const override
 		{
 			chaos::TiledMap::Property const* result = nullptr;

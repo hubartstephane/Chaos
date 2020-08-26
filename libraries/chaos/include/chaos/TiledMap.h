@@ -315,37 +315,21 @@ namespace chaos
 			using BaseObject::BaseObject;
 
 			/** find property by name */
-			virtual Property * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY);
-			/** find property by name */
 			virtual Property const * FindProperty(char const * name, PropertyType type_id = PropertyType::ANY) const;
 
-			/** find property without looking elsewhere than our own table */
-			Property * FindInternalProperty(char const * name, PropertyType type_id);
 			/** find property without looking elsewhere than our own table */
 			Property const * FindInternalProperty(char const * name, PropertyType type_id) const;
 
 			/** find a property of type int */
-			int * FindPropertyInt(char const * name);
-			/** find a property of type int */
 			int const * FindPropertyInt(char const * name) const;
-			/** find a property of type float */
-			float * FindPropertyFloat(char const * name);
 			/** find a property of type float */
 			float const * FindPropertyFloat(char const * name) const;
 			/** find a property of type bool */
-			bool * FindPropertyBool(char const * name);
-			/** find a property of type bool */
 			bool const * FindPropertyBool(char const * name) const;
-			/** find a property of type string */
-			std::string * FindPropertyString(char const * name);
 			/** find a property of type string */
 			std::string const * FindPropertyString(char const * name) const;
 			/** find a property of type color */
-			glm::vec4* FindPropertyColor(char const* name);
-			/** find a property of type color */
 			glm::vec4 const* FindPropertyColor(char const* name) const;
-			/** find a property of type object */
-			int * FindPropertyObject(char const* name);
 			/** find a property of type object */
 			int const* FindPropertyObject(char const* name) const;
 
@@ -404,8 +388,6 @@ namespace chaos
 
 		public:
 
-			/** override */
-			virtual Property* FindProperty(char const* name, PropertyType type_id) override;
 			/** override */
 			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override;
 			/** override */
@@ -689,8 +671,6 @@ namespace chaos
 			/** override */
 			virtual box2 GetBoundingBox(bool world_system) const override;
 			/** override */
-			virtual Property * FindProperty(char const * name, PropertyType type_id) override;
-			/** override */
 			virtual Property const * FindProperty(char const * name, PropertyType type_id) const override;			
 			/** override */
 			virtual bool IsObjectOfType(char const* in_type) const override;
@@ -925,8 +905,6 @@ namespace chaos
 			/** get the name of the layer */
 			char const* GetName() const { return name.c_str(); }
 
-			/** override */
-			virtual Property* FindProperty(char const* name, PropertyType type_id) override;
 			/** override */
 			virtual Property const* FindProperty(char const* name, PropertyType type_id) const override;
 
@@ -1194,8 +1172,6 @@ namespace chaos
 			/** find an object type */
 			ObjectTypeDefinition const * FindObjectType(char const * name) const;
 
-			/** find the property in an ObjectType */
-			Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY);
 			/** find the property in an ObjectType */
 			Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY) const;
 
@@ -1538,8 +1514,6 @@ namespace chaos
 			ObjectTypeSet * FindObjectTypeSet(FilePathParam const & path);
 			ObjectTypeSet const * FindObjectTypeSet(FilePathParam const & path) const;
 
-			/** find the property in an ObjectTypeSet */
-			virtual Property * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY);
 			/** find the property in an ObjectTypeSet */
 			virtual Property const * FindObjectProperty(char const * type, char const * name, PropertyType type_id = PropertyType::ANY) const;
 

@@ -1798,6 +1798,26 @@ namespace chaos
 
 		TileInfo Map::FindTileInfo(int gid)
 		{
+			// early exit
+			if (gid <= 0)
+				return {};
+#if 0
+			// search the tileset that have this GLOBAL ID
+			auto it = std::lower_bound(tilesets.begin(), tilesets.end(), gid, [](TileSetData const & ts, int gid) 
+			{
+				if (gid < ts.min_tile_id)
+					return -1;
+				if (gid > ts.max_tile_id)
+					return +1;
+				return 0;	
+			});
+
+			// check for the iterator validity
+			if (it == tilesets.end() || gid < it->min_tile_id || gid > it->max_tile_id)
+				return {};
+
+#endif			
+
 
 
 			// shutile

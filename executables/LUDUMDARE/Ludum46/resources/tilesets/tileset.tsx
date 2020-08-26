@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="128" tileheight="128" tilecount="30" columns="0" objectalignment="bottomleft">
  <grid orientation="orthogonal" width="1" height="1"/>
- <tile id="0" type="WALL">
+ <terraintypes>
+  <terrain name="Terrain1" tile="0"/>
+  <terrain name="Terrain2" tile="25"/>
+  <terrain name="Nouveau Terrain" tile="25"/>
+  <terrain name="Nouveau Terrain" tile="25"/>
+ </terraintypes>
+ <tile id="0" type="WALL" terrain="0,0,0,0">
   <image width="32" height="32" source="../sprites/Brick.png"/>
  </tile>
- <tile id="1" type="PlayerStart">
+ <tile id="1" type="PlayerStart" terrain="0,0,,">
   <properties>
    <property name="BITMAP_NAME" value="PlayerAnim"/>
    <property name="PARTICLE_CREATION" type="bool" value="false"/>
@@ -14,7 +20,7 @@
  <tile id="2" type="Spike">
   <image width="32" height="32" source="../sprites/spike.png"/>
  </tile>
- <tile id="3" type="LADDER">
+ <tile id="3" type="LADDER" terrain="1,1,1,2">
   <image width="32" height="32" source="../sprites/Ladder.png"/>
  </tile>
  <tile id="4" type="WALL">
@@ -26,7 +32,7 @@
  <tile id="7" type="Fire">
   <image width="32" height="32" source="../sprites/fire.png"/>
  </tile>
- <tile id="8" type="Spawner">
+ <tile id="8" type="Spawner" terrain=",,,1">
   <properties>
    <property name="PARTICLE_START_VELOCITY_Y" type="float" value="-100"/>
    <property name="SPAWNED_PARTICLE" value="Soul"/>

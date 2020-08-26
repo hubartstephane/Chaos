@@ -494,6 +494,20 @@ namespace death
 		/** get the tiled layer */
 		chaos::TiledMap::LayerBase const* GetTiledLayer() const { return layer; }
 
+		// shuclean : lien death:: => chaos (presque pas utilisé. pourrait sauter)
+		//            juste le name
+
+
+
+
+
+
+
+
+
+
+
+
 		/** get the level (for this layer) */
 		chaos::AutoCastable<Level> GetLevel();
 		/** get the level (for this layer) */

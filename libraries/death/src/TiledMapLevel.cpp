@@ -29,7 +29,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		// ensure not already initialized
 		assert(in_layer_instance != nullptr);
@@ -44,7 +44,7 @@ namespace death
 		particle_ownership = in_geometric_object->GetPropertyValueBool("PARTICLE_OWNERSHIP", particle_ownership);
 
 		// extract the bounding box
-		chaos::TiledMap::GeometricObjectSurface* surface = in_geometric_object->GetObjectSurface();
+		chaos::TiledMap::GeometricObjectSurface const * surface = in_geometric_object->GetObjectSurface();
 		if (surface != nullptr)
 			bounding_box = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
 
@@ -82,7 +82,7 @@ namespace death
 	// TiledMapTrigger implementation
 	// =====================================
 
-	bool TiledMapTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -148,7 +148,7 @@ namespace death
 	// TiledMapCheckPointTriggerObject implementation
 	// =============================================================
 
-	bool TiledMapCheckpointTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapCheckpointTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -196,7 +196,7 @@ namespace death
 	// TiledMapPlayerStart implementation
 	// =====================================
 
-	bool TiledMapPlayerStart::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapPlayerStart::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -233,7 +233,7 @@ namespace death
 		return false;
 	}
 
-	bool TiledMapNotificationTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapNotificationTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -313,7 +313,7 @@ namespace death
 	// TiledMapSoundTrigger implementation
 	// =====================================
 
-	bool TiledMapSoundTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapSoundTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -445,7 +445,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapChangeLevelTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapChangeLevelTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -515,7 +515,7 @@ namespace death
 	// TiledMapCameraTemplate implementation
 	// =====================================
 
-	bool TiledMapCameraTemplate::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+	bool TiledMapCameraTemplate::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
@@ -531,7 +531,7 @@ namespace death
 		level_instance_class = TiledMapLevelInstance::GetStaticClass();
 	}
 
-	bool TiledMapLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
+	bool TiledMapLevel::Initialize(chaos::TiledMap::Map * in_tiled_map)
 	{
 		assert(in_tiled_map != nullptr);
 		assert(tiled_map == nullptr);
@@ -782,7 +782,7 @@ namespace death
 		return 0;
 	}
 
-	bool TiledMapLayerInstance::Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
+	bool TiledMapLayerInstance::Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer)
 	{
 		// ensure not already initialized
 		assert(in_level_instance != nullptr);
@@ -824,7 +824,7 @@ namespace death
 		// reset the bounding box
 		bounding_box = chaos::box2();
 		// special initialization
-		chaos::TiledMap::ImageLayer* image_layer = layer->GetImageLayer();
+		chaos::TiledMap::ImageLayer const* image_layer = layer->GetImageLayer();
 		if (image_layer != nullptr)
 		{
 			if (!InitializeImageLayer(image_layer))
@@ -832,7 +832,7 @@ namespace death
 			return FinalizeParticles(nullptr);
 		}
 
-		chaos::TiledMap::ObjectLayer* object_layer = layer->GetObjectLayer();
+		chaos::TiledMap::ObjectLayer const * object_layer = layer->GetObjectLayer();
 		if (object_layer != nullptr)
 		{
 			if (!InitializeObjectLayer(object_layer))
@@ -840,7 +840,7 @@ namespace death
 			return FinalizeParticles(nullptr);
 		}
 
-		chaos::TiledMap::TileLayer* tile_layer = layer->GetTileLayer();
+		chaos::TiledMap::TileLayer const* tile_layer = layer->GetTileLayer();
 		if (tile_layer != nullptr)
 		{
 			if (!InitializeTileLayer(tile_layer))
@@ -910,7 +910,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer* image_layer)
+	bool TiledMapLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer)
 	{
 		return true;
 	}
@@ -1042,7 +1042,7 @@ namespace death
 	// shuyyy
 
 
-	bool TiledMapLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer* object_layer)
+	bool TiledMapLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer)
 	{
 		// search the bounding box (explicit or not)
 		chaos::box2 box;
@@ -1241,7 +1241,7 @@ namespace death
 	// shuyyy
 
 
-	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer)
+	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer)
 	{
 		TiledMapLevel* level = GetLevel();
 

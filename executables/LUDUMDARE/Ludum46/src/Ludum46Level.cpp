@@ -17,7 +17,7 @@
 // EffectorObject implementation
 // =============================================================
 
-bool EffectorObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool EffectorObject::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 
 
@@ -28,7 +28,7 @@ bool EffectorObject::Initialize(death::TiledMapLayerInstance* in_layer_instance,
 // SpikeBar implementation
 // =============================================================
 
-bool SpikeBar::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool SpikeBar::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
@@ -49,7 +49,7 @@ void SpikeBar::OnEffectorChangeState()
 // SoulTrigger implementation
 // =============================================================
 
-bool SoulTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool SoulTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 	if (!death::TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
@@ -132,7 +132,7 @@ int Spawner::GetRemainingParticleCount() const
 	return (max_spawned_particles - spawned_count);
 }
 
-bool Spawner::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool Spawner::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 	if (!death::TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;
@@ -250,7 +250,7 @@ void Spawner::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 // =============================================================
 
 
-bool FireSpawner::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool FireSpawner::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object))
 		return false;

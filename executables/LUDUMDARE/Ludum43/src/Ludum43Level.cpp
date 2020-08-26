@@ -145,7 +145,7 @@ death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayer
 // FinishingTriggerObject implementation
 // =============================================================
 
-bool MyChangeLevelTrigger::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object)
+bool MyChangeLevelTrigger::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
 	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;

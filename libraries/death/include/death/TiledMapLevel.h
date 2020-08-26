@@ -91,7 +91,7 @@ namespace death
 	protected:
 
 		/** additionnal initialization */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object);
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object);
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
@@ -121,7 +121,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 	};
 
 	// =====================================
@@ -137,7 +137,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
@@ -182,7 +182,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** called whenever a collision with object is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type);
 
@@ -221,7 +221,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -255,7 +255,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 	};
@@ -282,7 +282,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -330,7 +330,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject* in_geometric_object) override;
+		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
@@ -384,7 +384,7 @@ namespace death
 		TiledMapLevel();
 
 		/** initialization from tiled_map */
-		virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map);
+		virtual bool Initialize(chaos::TiledMap::Map * in_tiled_map);
 
 		/** get the tiled map */
 		chaos::TiledMap::Map* GetTiledMap() { return tiled_map.get(); }
@@ -451,9 +451,7 @@ namespace death
 	public:
 
 		/** get the tiled layer */
-		chaos::TiledMap::LayerBase* GetTiledLayer() { return layer.get(); }
-		/** get the tiled layer */
-		chaos::TiledMap::LayerBase const* GetTiledLayer() const { return layer.get(); }
+		chaos::TiledMap::LayerBase const* GetTiledLayer() const { return layer; }
 
 		/** get the level (for this layer) */
 		chaos::AutoCastable<Level> GetLevel();
@@ -574,7 +572,7 @@ namespace death
 	protected:
 
 		/** initialization */
-		virtual bool Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
+		virtual bool Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer);
 		/** serialization of all JSON objects into an array */
 		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TiledMapObject>>& result);
 		/** called whenever level instance is restarted */
@@ -592,11 +590,11 @@ namespace death
 		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator();
 
 		/** specialized layer */
-		bool InitializeImageLayer(chaos::TiledMap::ImageLayer* image_layer);
+		bool InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer);
 		/** specialized layer */
-		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer* object_layer);
+		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer);
 		/** specialized layer */
-		bool InitializeTileLayer(chaos::TiledMap::TileLayer* tile_layer);
+		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer);
 	
 		/** create an object in an object layer */
 		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject * in_typed_object);
@@ -643,7 +641,7 @@ namespace death
 		TiledMapLevelInstance* level_instance = nullptr;
 
 		/** the tiled layer corresponding to this object */
-		chaos::shared_ptr<chaos::TiledMap::LayerBase> layer;
+		chaos::TiledMap::LayerBase const* layer = nullptr;
 		/** the particle layer */
 		chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
 		/** the objects */

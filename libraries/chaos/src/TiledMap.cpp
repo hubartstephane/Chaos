@@ -905,7 +905,20 @@ namespace chaos
 			DoLoadObjectListHelper(element, wang_corner_colors, "wangcornercolor", nullptr, this);
 			DoLoadObjectListHelper(element, wang_tiles, "wangtile", nullptr, this);
 
+			// ensure list are sorted for faster search
+			std::sort(wang_tiles.begin(), wang_tiles.end(), [](WangTile const& src1, WangTile const& src2) {return src1.tile_id < src2.tile_id; });
+
 			return true;
+		}
+
+		WangTile Wangset::GetWangTile(int tile_id) const
+		{
+			// suppose list sorted
+			auto it = std::lower_bound(wang_tiles.begin(), wang_tiles.end(), tile_id, [](WangTile const& wang_tile, int id) { return wang_tile.tile_id < id ; });
+			if (it != wang_tiles.end() && it->tile_id == tile_id) // maybe the iterator is invalid or does not point exactly the element whose ID is the one searched (this is a lower_bound !!)
+				return *it;
+			// returns empty element
+			return {};
 		}
 
 		// ==========================================
@@ -1499,7 +1512,7 @@ namespace chaos
 		// TileSet methods
 		// ==========================================
 
-#define CHAOS_IMPL_FIND_FILE_DATA(func_name, arg_type, member_name, constness)\
+#define CHAOS_IMPL_FIND_TILE_DATA(func_name, arg_type, member_name, constness)\
 		TileData constness * TileSet::func_name(arg_type arg_name) constness\
 		{\
 			size_t count = tiles.size();\
@@ -1514,15 +1527,33 @@ namespace chaos
 			return nullptr;\
 		}
 
-		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, int, id, const);
-		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const*, type, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_FILE_DATA(FindTileData, char const*, type, const);
-		CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, BOOST_PP_EMPTY());
-		CHAOS_IMPL_FIND_FILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, const);
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, int, id, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, int, id, const);
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, char const*, type, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileData, char const*, type, const);
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_TILE_DATA(FindTileDataFromAtlasKey, char const*, atlas_key, const);
 
-#undef CHAOS_IMPL_FIND_FILE_DATA
+#undef CHAOS_IMPL_FIND_TILE_DATA
 
+#define CHAOS_IMPL_FIND_WANGSET(func_name, arg_type, member_name, constness)\
+		Wangset constness * TileSet::func_name(arg_type arg_name) constness\
+		{\
+			size_t count = wangsets.size(); \
+			for (size_t i = 0; i < count; ++i)\
+			{\
+				Wangset constness* wang_set = wangsets[i].get(); \
+				if (wang_set == nullptr)\
+					continue; \
+				if (wang_set->member_name == arg_name)\
+					return wang_set; \
+			}\
+			return nullptr; \
+		}
+		CHAOS_IMPL_FIND_WANGSET(FindWangset, char const*, name, BOOST_PP_EMPTY());
+		CHAOS_IMPL_FIND_WANGSET(FindWangset, char const*, name, const);
+
+#undef CHAOS_IMPL_FIND_WANGSET
 
 		bool TileSet::DoLoadGrounds(tinyxml2::XMLElement const * element)
 		{

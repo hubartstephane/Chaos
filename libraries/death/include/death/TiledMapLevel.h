@@ -424,6 +424,9 @@ namespace death
 
 	protected:
 
+		/** create a particle populator so that each layer may have its own particle type */
+		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator(TiledMapLayerInstance * layer_instance);
+
 		/** create a typed object based of a 'classname' property */
 		virtual TiledMapObjectFactory DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 		/** create a typed object specializable method */
@@ -458,7 +461,7 @@ namespace death
 		virtual chaos::ParticleLayerBase* DoCreateParticleLayer(TiledMapLayerInstance* layer_instance);
 
 		/** called after all particles of a layers has been created, so we can plug additionnal data */
-		virtual bool FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) { return true; }
+		virtual bool FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation);
 
 		/** the default material when not specified */
 		virtual chaos::GPURenderMaterial* GenDefaultRenderMaterial();

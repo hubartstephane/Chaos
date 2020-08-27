@@ -687,6 +687,28 @@ namespace death
 		return chaos::GenDefaultParticleMaterial();
 	}
 
+	bool TiledMapLevel::FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) 
+	{
+		if (layer_instance != nullptr && layer_instance->layer != nullptr)
+		{
+			// whether the collision flags must be computed 
+			bool compute_collision_flags = layer_instance->layer->GetPropertyValueBool("COMPUTE_COLLISION_FLAGS", false);
+			if (compute_collision_flags)
+			{
+
+
+
+				compute_collision_flags = compute_collision_flags;
+			}
+		}
+		return true; 
+	}
+
+	TiledMapLayerInstanceParticlePopulator* TiledMapLevel::CreateParticlePopulator(TiledMapLayerInstance* layer_instance)
+	{
+		return new TiledMapLayerInstanceParticlePopulator();
+	}
+
 	// =====================================
 	// TiledMapLayerInstance implementation
 	// =====================================
@@ -1017,7 +1039,23 @@ namespace death
 
 	TiledMapLayerInstanceParticlePopulator* TiledMapLayerInstance::CreateParticlePopulator()
 	{
-		return new TiledMapLayerInstanceParticlePopulator();
+		if (level_instance != nullptr)
+		{
+			TiledMapLevel* level = level_instance->GetLevel();
+			if (level != nullptr)
+			{
+				TiledMapLayerInstanceParticlePopulator * result = level->CreateParticlePopulator(this);
+				if (result == nullptr)
+					return nullptr;
+				if (!result->Initialize(this))
+				{
+					delete(result);
+					return nullptr;
+				}
+				return result;
+			}
+		}
+		return nullptr;
 	}
 
 
@@ -1050,7 +1088,7 @@ namespace death
 
 		// the particle generator
 		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
-		if (!particle_populator->Initialize(this))
+		if (particle_populator == nullptr)
 			return false;
 
 		// iterate over all objects
@@ -1246,7 +1284,7 @@ namespace death
 		TiledMapLevel* level = GetLevel();
 
 		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
-		if (!particle_populator->Initialize(this))
+		if (particle_populator == nullptr)
 			return false;
 
 		// populate the layer for each chunk
@@ -1929,7 +1967,7 @@ namespace death
 	{
 		// create a particle populator
 		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
-		if (!particle_populator->Initialize(layer_instance))
+		if (particle_populator == nullptr)
 			return nullptr;
 
 		// create the particle

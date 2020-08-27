@@ -709,6 +709,32 @@ namespace death
 		return new TiledMapLayerInstanceParticlePopulator();
 	}
 
+	bool TiledMapLevel::FlushParticlesIntoAllocation(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase * allocation, TiledMapParticle const * particles, size_t particle_count)
+	{
+		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
+
+		if (!accessor.IsValid())
+		{
+			chaos::LogTools::Error("TiledMapLevel::FlushParticlesIntoAllocation => invalid accessor");
+			return false;
+		}
+		for (size_t i = 0; i < particle_count; ++i)
+			accessor[i] = particles[i];
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// =====================================
 	// TiledMapLayerInstance implementation
 	// =====================================

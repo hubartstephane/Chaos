@@ -16,8 +16,9 @@ namespace death
 		assert(in_layer_instance != nullptr);
 		layer_instance = in_layer_instance;
 
-		death::TiledMapLevel* level = layer_instance->GetLevel();
-		assert(level != nullptr);
+		level = layer_instance->GetLevel();
+		if (level == nullptr)
+			return false;
 
 		// get the texture atlas
 		texture_atlas = level->GetTextureAtlas(layer_instance);
@@ -34,16 +35,7 @@ namespace death
 
 	bool TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
 	{
-		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
-
-		if (!accessor.IsValid())
-		{
-			chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation => invalid accessor");
-			return false;
-		}
-		for (size_t i = 0; i < particle_count; ++i)
-			accessor[i] = particles[i];
-		return true;
+		return level->FlushParticlesIntoAllocation(layer_instance, allocation, particles, particle_count);
 	}
 
 	bool TiledMapLayerInstanceParticlePopulator::FlushParticles()
@@ -63,15 +55,9 @@ namespace death
 			}
 		}
 		// reserve memory and flush
-		if (!FlushCachedParticlesToAllocation())
-		{
-			particle_count = 0;
-			return false;
-		}
-		// empty the cache
+		bool result = FlushCachedParticlesToAllocation();
 		particle_count = 0;
-		
-		return true;
+		return result;
 	}
 
 	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)

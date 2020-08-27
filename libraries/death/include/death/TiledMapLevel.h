@@ -426,6 +426,8 @@ namespace death
 
 		/** create a particle populator so that each layer may have its own particle type */
 		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator(TiledMapLayerInstance * layer_instance);
+		/** called to flush some particles into a layer allocation */
+		virtual bool FlushParticlesIntoAllocation(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation, TiledMapParticle const* particles, size_t particle_count);
 
 		/** create a typed object based of a 'classname' property */
 		virtual TiledMapObjectFactory DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);

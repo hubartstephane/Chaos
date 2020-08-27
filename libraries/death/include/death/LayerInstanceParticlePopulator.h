@@ -23,7 +23,7 @@ namespace death
 
 	class TiledMapLayerInstanceParticlePopulator : public chaos::Object
 	{
-		static size_t const PARTICLE_BUFFER_SIZE = 100;
+		static size_t const PARTICLE_BUFFER_SIZE = 1000;
 
 	public:
 
@@ -42,12 +42,15 @@ namespace death
 	protected:
 
 		/** 'copy' the cached particle into the allocation (with type conversion) */
-		virtual bool FlushCachedParticlesToAllocation();
+		bool FlushCachedParticlesToAllocation();
 
 	protected:
 
 		/** the concerned layer instance */
 		TiledMapLayerInstance* layer_instance = nullptr;
+		/** the level owning this layer */
+		death::TiledMapLevel* level = nullptr;
+
 		/** the texture atlas required */
 		chaos::BitmapAtlas::TextureArrayAtlas const* texture_atlas = nullptr;
 		/** the folder containing the bitmaps */

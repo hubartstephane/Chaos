@@ -990,6 +990,20 @@ namespace chaos
 		};
 
 		// ==========================================
+		// Tile
+		// ==========================================
+
+		class Tile
+		{
+		public:
+
+			/** the id of the tile */
+			int id = 0;
+			/** some flags encoded inside */
+			int flags = 0;
+		};
+
+		// ==========================================
 		// TileLayer
 		// ==========================================
 
@@ -998,7 +1012,7 @@ namespace chaos
 		public:
 
 			/** get the tile at given position */
-			int GetTile(glm::ivec2 const& pos) const;
+			Tile GetTile(glm::ivec2 const& pos) const;
 
 		public:
 
@@ -1007,7 +1021,7 @@ namespace chaos
 			/** the offset of the chunk */
 			glm::ivec2 offset = glm::ivec2(0, 0);
 			/** the indices for this chunk */
-			std::vector<int> tile_indices;
+			std::vector<Tile> tile_indices;
 		};
 
 		class TileLayer : public LayerBase
@@ -1020,13 +1034,11 @@ namespace chaos
 			/** get the bounding box of a tile */
 			box2 GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, int particle_flags, bool world_system) const;
 
-			/** get the number of tiles with something inside */
-			size_t GetNonEmptyTileCount() const;
 			/** get the position of the tile */
 			glm::ivec2 GetTileCoordinate(TileLayerChunk const& chunk, size_t index) const;
 
 			/** get information concerning the tile at given position */
-			TileInfo GetTile(glm::ivec2 const& position) const;
+			Tile GetTile(glm::ivec2 const& position) const;
 			/** get the chunk for a given tile */
 			TileLayerChunk const* GetTileChunk(glm::ivec2 const& pos) const;
 
@@ -1045,7 +1057,7 @@ namespace chaos
 			/** load all chunks of tiles */
 			bool DoLoadTileChunk(tinyxml2::XMLElement const* element, char const * encoding, char const * compression);
 			/** loading buffer method */
-			std::vector<int> DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size);
+			std::vector<Tile> DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size);
 
 		public:
 

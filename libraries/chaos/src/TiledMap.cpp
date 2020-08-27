@@ -1044,7 +1044,7 @@ namespace chaos
 		// TileLayerChunk methods
 		// ==========================================
 
-		int TileLayerChunk::GetTile(glm::ivec2 const& pos) const // pos is expressed in local coordinate
+		Tile TileLayerChunk::GetTile(glm::ivec2 const& pos) const // pos is expressed in local coordinate
 		{
 			assert(pos.x >= 0 && pos.x < size.x);
 			assert(pos.y >= 0 && pos.y < size.y);
@@ -1094,14 +1094,14 @@ namespace chaos
 			return true;
 		}
 
-		std::vector<int> TileLayer::DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size)
+		std::vector<Tile> TileLayer::DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size)
 		{
 			size_t count = (size_t)(chunk_size.x * chunk_size.y);
 
 			if (buffer.bufsize != count * sizeof(uint32_t))  // array width * height * sizeof(uint32)
-				return std::vector<int>();
+				return {};
 
-			std::vector<int> result;
+			std::vector<Tile> result;
 			result.reserve(count);
 
 			// transform the char buffer into tiles
@@ -1112,8 +1112,9 @@ namespace chaos
 				unsigned int c = (unsigned int)buffer[i * 4 + 2];
 				unsigned int d = (unsigned int)buffer[i * 4 + 3];
 
-				int tile = (a << 0) | (b << 8) | (c << 16) | (d << 24);
-				result.push_back(tile);
+				// do not decode yet the ID and the flags
+				unsigned int pseudo_id = (a << 0) | (b << 8) | (c << 16) | (d << 24);
+				result.push_back({ *(int *)&pseudo_id, 0 });
 			}
 			return result;
 		}
@@ -1123,12 +1124,8 @@ namespace chaos
 			if (element == nullptr)
 				return true;
 
-			char const* txt = element->GetText();
-			if (txt == nullptr)
-				return true;
-
 			// read the data		
-			std::vector<int> tiles;
+			std::vector<Tile> tiles;
 
 			glm::ivec2 chunk_size = size;
 			XMLTools::ReadAttribute(element, "width", chunk_size.x); // for non infinite layer, the size of the chunk is the size of the map
@@ -1137,11 +1134,23 @@ namespace chaos
 			glm::ivec2 chunk_offset = glm::ivec2(0, 0);
 			XMLTools::ReadAttribute(element, "x", chunk_offset.x);
 			XMLTools::ReadAttribute(element, "y", chunk_offset.y);
-
+			
 			if (StringTools::Stricmp(encoding, "base64") == 0)
 			{
+				char const* txt = element->GetText();
+				if (txt == nullptr)
+					return true;
+
 				if (StringTools::Stricmp(compression, "gzip") == 0)
 				{
+					assert(0);
+
+					// TODO
+
+				}
+				else if (StringTools::Stricmp(compression, "zstd") == 0)
+				{
+					assert(0);
 
 					// TODO
 
@@ -1166,6 +1175,16 @@ namespace chaos
 			}
 			else if (StringTools::Stricmp(encoding, "csv") == 0)
 			{
+
+				tiles.reserve(chunk_size.x * chunk_size.y);
+
+				// XXX : for tiles that have any flags set, the PSEUDO_ID fails to be read correctly from the CSV.
+				//       Values are probably too big or too small
+
+				char const* txt = element->GetText();
+				if (txt == nullptr)
+					return true;
+
 				size_t count = (size_t)(chunk_size.x * chunk_size.y);
 
 				int i = 0;
@@ -1176,8 +1195,8 @@ namespace chaos
 					if (txt[i] == 0)
 						break;
 
-					int value = atoi(&txt[i]);
-					tiles.push_back(value); // get and push the tile
+					unsigned int pseudo_id = strtoul(&txt[i], nullptr, 10);
+					tiles.push_back({ *(int*)&pseudo_id, 0 }); // do not decode the ID and the flags
 
 					while (txt[i] != 0 && isdigit(txt[i])) // skip all figures
 						++i;
@@ -1185,22 +1204,31 @@ namespace chaos
 			}
 			else // else XML
 			{
+				tiles.reserve(chunk_size.x * chunk_size.y);
+
+				// XXX : not big int tile issue here :)
+
 				size_t count = (size_t)(chunk_size.x * chunk_size.y);
 
 				tinyxml2::XMLElement const* child = element->FirstChildElement("tile");
 				while (child != nullptr && tiles.size() != count)
 				{
-					int value = 0;
-					XMLTools::ReadAttribute(child, "gid", value);
-					tiles.push_back(value);
+					unsigned int pseudo_id = 0;
+					XMLTools::ReadAttribute(child, "gid", pseudo_id);
+
+					tiles.push_back({ *((int *)&pseudo_id), 0 }); // do not decode yet the ID and the flags
 
 					child = child->NextSiblingElement("tile");
 				}
 			}
 
-			// insert a chunk for theses tiles
+			
 			if (tiles.size() != 0)
 			{
+				// decode the ID's and the flags
+				for (Tile& tile : tiles)
+					tile.id = TiledMapTools::DecodeTileGID(tile.id, &tile.flags);
+				// insert a chunk for theses tiles
 				TileLayerChunk chunk;
 				chunk.size = chunk_size;
 				chunk.offset = chunk_offset;
@@ -1235,16 +1263,6 @@ namespace chaos
 			return true;
 		}
 
-		size_t TileLayer::GetNonEmptyTileCount() const
-		{
-			size_t result = 0;
-			for (TileLayerChunk const & chunk : tile_chunks)
-				for (size_t i = 0; i < chunk.tile_indices.size(); ++i)
-					if (chunk.tile_indices[i] > 0)
-						++result;
-			return result;
-		}
-
 		glm::ivec2 TileLayer::GetTileCoordinate(TileLayerChunk const & chunk, size_t index) const
 		{
 			int tmp = (int)index;
@@ -1260,20 +1278,14 @@ namespace chaos
 		}
 
 
-		TileInfo TileLayer::GetTile(glm::ivec2 const& pos) const
+		Tile TileLayer::GetTile(glm::ivec2 const& pos) const
 		{
 			// get the chunk containing the position
 			TileLayerChunk const * chunk = GetTileChunk(pos);
 			if (chunk == nullptr)
 				return {};
-			// get map 
-			Map const* m = GetMap();
-			if (m == nullptr)
-				return {};
 			// get the ID at the given position
-			int id = chunk->GetTile(pos - chunk->offset);
-			// the result
-			return  m->FindTileInfo(id);
+			return chunk->GetTile(pos - chunk->offset);
 		}
 
 		// ==========================================

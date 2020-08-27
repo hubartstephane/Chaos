@@ -1262,10 +1262,8 @@ namespace death
 
 			for (size_t i = 0; i < count; ++i)
 			{
-				int pseudo_gid = chunk.tile_indices[i];
-
-				int particle_flags = 0;
-				int gid = chaos::TiledMapTools::DecodeTileGID(pseudo_gid, &particle_flags);
+				int gid = chunk.tile_indices[i].id;
+				int particle_flags = chunk.tile_indices[i].flags;
 
 				if (gid == 0)
 					continue;

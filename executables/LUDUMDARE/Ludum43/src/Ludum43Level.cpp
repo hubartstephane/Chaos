@@ -65,6 +65,9 @@ static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset
 
 bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
+	if (!death::TiledMapLevel::FinalizeLayerParticles(layer_instance, allocation))
+		return false;
+
 	LudumGame * ludum_game = layer_instance->GetGame();
 
 	std::string const & layer_name = layer_instance->GetTiledLayer()->name;

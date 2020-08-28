@@ -424,8 +424,6 @@ namespace death
 
 	protected:
 
-		/** create a particle populator so that each layer may have its own particle type */
-		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator(TiledMapLayerInstance * layer_instance);
 		/** called to flush some particles into a layer allocation */
 		virtual bool FlushParticlesIntoAllocation(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation, TiledMapParticle const* particles, size_t particle_count);
 
@@ -636,9 +634,6 @@ namespace death
 		/** override */
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
-		/** create a particle populator so that each layer may have its own particle type */
-		virtual TiledMapLayerInstanceParticlePopulator* CreateParticlePopulator();
-
 		/** specialized layer */
 		bool InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer);
 		/** specialized layer */
@@ -650,7 +645,7 @@ namespace death
 		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object);
 
 		/** create an object in an object layer */
-		void CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator);
+		void CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator & particle_populator);
 		/** returns whether a particle should be created for object instance */
 		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TiledMapObject* object) const;
 

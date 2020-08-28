@@ -11,6 +11,15 @@ namespace death
 	// LayerInstanceParticlePopulator implementation
 	// =====================================
 
+	TiledMapLayerInstanceParticlePopulator::TiledMapLayerInstanceParticlePopulator(TiledMapLayerInstanceParticlePopulator const& src):
+		layer_instance(src.layer_instance),
+		level(src.level),
+		texture_atlas(src.texture_atlas),
+		folder_info(src.folder_info)
+	{
+		// XXX : do not copy nor particles, nor allocation => force a new allocation
+	}
+
 	bool TiledMapLayerInstanceParticlePopulator::Initialize(TiledMapLayerInstance* in_layer_instance)
 	{
 		assert(in_layer_instance != nullptr);

@@ -2,9 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/Object.h>
 #include <chaos/TiledMap.h>
-#include <chaos/GPURenderable.h>
 #include <chaos/Tickable.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
@@ -21,11 +19,16 @@ namespace death
 	// TiledMapLayerInstanceParticlePopulator : utility class to generate particles for a layer with a cache
 	// =====================================
 
-	class TiledMapLayerInstanceParticlePopulator : public chaos::Object
+	class TiledMapLayerInstanceParticlePopulator
 	{
-		static size_t const PARTICLE_BUFFER_SIZE = 1000;
+		static size_t const PARTICLE_BUFFER_SIZE = 100;
 
 	public:
+
+		/** default constructor */
+		TiledMapLayerInstanceParticlePopulator() = default;
+		/** copy constructor (do not copy everything) */
+		TiledMapLayerInstanceParticlePopulator(TiledMapLayerInstanceParticlePopulator const& src);
 
 		/** initialize the object */
 		bool Initialize(TiledMapLayerInstance* in_layer_instance);

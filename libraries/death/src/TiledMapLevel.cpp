@@ -704,11 +704,6 @@ namespace death
 		return true; 
 	}
 
-	TiledMapLayerInstanceParticlePopulator* TiledMapLevel::CreateParticlePopulator(TiledMapLayerInstance* layer_instance)
-	{
-		return new TiledMapLayerInstanceParticlePopulator();
-	}
-
 	bool TiledMapLevel::FlushParticlesIntoAllocation(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase * allocation, TiledMapParticle const * particles, size_t particle_count)
 	{
 		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
@@ -970,7 +965,7 @@ namespace death
 
 
 
-	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator* particle_populator)
+	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator& particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
@@ -1024,7 +1019,7 @@ namespace death
 			chaos::Hotpoint hotpoint = (tile_info.tileset != nullptr) ? tile_info.tileset->object_alignment : chaos::Hotpoint::BOTTOM_LEFT;
 
 			bool keep_aspect_ratio = false;
-			particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->rotation, tile->particle_flags, gid, keep_aspect_ratio);
+			particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->rotation, tile->particle_flags, gid, keep_aspect_ratio);
 		}
 	}
 
@@ -1063,29 +1058,6 @@ namespace death
 		return result;
 	}
 
-	TiledMapLayerInstanceParticlePopulator* TiledMapLayerInstance::CreateParticlePopulator()
-	{
-		if (level_instance != nullptr)
-		{
-			TiledMapLevel* level = level_instance->GetLevel();
-			if (level != nullptr)
-			{
-				TiledMapLayerInstanceParticlePopulator * result = level->CreateParticlePopulator(this);
-				if (result == nullptr)
-					return nullptr;
-				if (!result->Initialize(this))
-				{
-					delete(result);
-					return nullptr;
-				}
-				return result;
-			}
-		}
-		return nullptr;
-	}
-
-
-
 
 
 
@@ -1113,8 +1085,8 @@ namespace death
 		chaos::box2 explicit_bounding_box;
 
 		// the particle generator
-		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
-		if (particle_populator == nullptr)
+		TiledMapLayerInstanceParticlePopulator particle_populator;
+		if (!particle_populator.Initialize(this))
 			return false;
 
 		// iterate over all objects
@@ -1163,7 +1135,7 @@ namespace death
 			// create tile if no object created 
 			// (XXX : no way yet to know whether this a normal situation because user does not want to create object or whether an error happened)
 			if (object == nullptr || ShouldCreateParticleForObject(geometric_object, object))
-				CreateObjectParticles(geometric_object, object, particle_populator.get());
+				CreateObjectParticles(geometric_object, object, particle_populator);
 
 
 
@@ -1176,12 +1148,12 @@ namespace death
 		}
 
 		// final flush
-		particle_populator->FlushParticles();
+		particle_populator.FlushParticles();
 		// update the bounding box
 		if (!IsGeometryEmpty(explicit_bounding_box))
 			bounding_box = explicit_bounding_box;
 		else
-			bounding_box = box | particle_populator->GetBoundingBox();
+			bounding_box = box | particle_populator.GetBoundingBox();
 
 		return true;
 	}
@@ -1309,8 +1281,8 @@ namespace death
 	{
 		TiledMapLevel* level = GetLevel();
 
-		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = CreateParticlePopulator();
-		if (particle_populator == nullptr)
+		TiledMapLayerInstanceParticlePopulator particle_populator;
+		if (!particle_populator.Initialize(this))
 			return false;
 
 		// populate the layer for each chunk
@@ -1403,15 +1375,15 @@ namespace death
 				bool keep_aspect_ratio = true;
 
 				if (particle_creation_success)
-					particle_creation_success = particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, gid, keep_aspect_ratio);
+					particle_creation_success = particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, gid, keep_aspect_ratio);
 			}
 		}
 
 		// final flush
 		if (particle_creation_success)
-			particle_populator->FlushParticles();
+			particle_populator.FlushParticles();
 		// update the bounding box
-		bounding_box = particle_populator->GetBoundingBox();
+		bounding_box = particle_populator.GetBoundingBox();
 
 		return true;
 	}
@@ -1992,8 +1964,8 @@ namespace death
 	PlayerPawn* TiledMapLevelInstance::CreatePlayerPawn(Player* player, TiledMapPlayerStart* player_start, TiledMapLayerInstance* layer_instance)	
 	{
 		// create a particle populator
-		chaos::shared_ptr<TiledMapLayerInstanceParticlePopulator> particle_populator = layer_instance->CreateParticlePopulator();
-		if (particle_populator == nullptr)
+		TiledMapLayerInstanceParticlePopulator particle_populator;
+		if (!particle_populator.Initialize(layer_instance))
 			return nullptr;
 
 		// create the particle
@@ -2003,11 +1975,11 @@ namespace death
 
 		chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 
-		particle_populator->AddParticle(player_start->bitmap_name.c_str(), hotpoint, player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, player_gid, keep_aspect_ratio);
-		particle_populator->FlushParticles();
+		particle_populator.AddParticle(player_start->bitmap_name.c_str(), hotpoint, player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, player_gid, keep_aspect_ratio);
+		particle_populator.FlushParticles();
 
 		// get the allocation and finalize the layer
-		chaos::ParticleAllocationBase* player_allocation = particle_populator->GetParticleAllocation();
+		chaos::ParticleAllocationBase* player_allocation = particle_populator.GetParticleAllocation();
 		if (player_allocation == nullptr)
 			return nullptr;
 		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 

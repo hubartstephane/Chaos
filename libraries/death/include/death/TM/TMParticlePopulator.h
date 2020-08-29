@@ -1,17 +1,6 @@
 #pragma once
 
-
-#include <chaos/StandardHeaders.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/TiledMap.h>
-#include <chaos/Tickable.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/Hotpoint.h>
-
 #include <death/TM.h>
-#include <death/TiledMapParticle.h>
 
 namespace death
 {

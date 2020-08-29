@@ -2,14 +2,6 @@
 
 #include <death/TM.h>
 
-#if 0
-#include <chaos/StandardHeaders.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/EmptyClass.h>
-#include <chaos/PrimitiveOutput.h>
-#endif
-
 namespace death
 {
 

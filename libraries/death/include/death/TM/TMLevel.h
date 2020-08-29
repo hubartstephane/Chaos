@@ -379,7 +379,7 @@ namespace death
 	protected:
 
 		/** called to flush some particles into a layer allocation */
-		virtual bool FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation, TiledMapParticle const* particles, size_t particle_count);
+		virtual bool FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation, TMParticle const* particles, size_t particle_count);
 
 		/** create a typed object based of a 'classname' property */
 		virtual TMObjectFactory DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);

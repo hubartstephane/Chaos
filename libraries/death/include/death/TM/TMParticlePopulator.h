@@ -56,7 +56,7 @@ namespace death
 		chaos::ParticleAllocationBase* allocation = nullptr;
 
 		/** a cache of particles */
-		TiledMapParticle particles[PARTICLE_BUFFER_SIZE];
+		TMParticle particles[PARTICLE_BUFFER_SIZE];
 		/** the cached number of particles */
 		size_t particle_count = 0;
 		/** a bounding box */

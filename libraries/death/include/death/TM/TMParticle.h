@@ -1,19 +1,23 @@
 #pragma once
 
+#include <death/TM.h>
+
+#if 0
 #include <chaos/StandardHeaders.h>
 #include <chaos/ParticleManager.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/EmptyClass.h>
 #include <chaos/PrimitiveOutput.h>
+#endif
 
 namespace death
 {
 
 	// =====================================
-	// TiledMapParticle
+	// TMParticle
 	// =====================================
 
-	class TiledMapParticle : public chaos::ParticleDefault
+	class TMParticle : public chaos::ParticleDefault
 	{
 	public:
 
@@ -22,17 +26,14 @@ namespace death
 	};
 
 
-	CHAOS_REGISTER_CLASS2(TiledMapParticle, chaos::ParticleDefault);
+	CHAOS_REGISTER_CLASS2(TMParticle, chaos::ParticleDefault);
 
 	// =====================================
-	// TiledMapParticleTrait
+	// TMParticleTrait
 	// =====================================
 
-	class TiledMapParticleTrait : public chaos::ParticleAllocationTrait<TiledMapParticle, chaos::VertexDefault, false, false> // shuxxx set to false = optimization 1
+	class TMParticleTrait : public chaos::ParticleAllocationTrait<TMParticle, chaos::VertexDefault, false, false> // shuxxx set to false = optimization 1
 	{
-	public:
-
-
 	};
 
 }; // namespace death

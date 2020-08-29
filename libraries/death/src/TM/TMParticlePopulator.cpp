@@ -103,7 +103,7 @@ namespace death
 		}
 
 		// add the particle
-		TiledMapParticle particle;
+		TMParticle particle;
 		particle.bounding_box = particle_box;
 		particle.texcoords = layout.GetTexcoords();
 		particle.color = color;

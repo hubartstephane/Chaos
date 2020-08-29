@@ -91,7 +91,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::TiledMapLevel * LudumGame::CreateTiledMapLevel()
+death::TMLevel * LudumGame::CreateTMLevel()
 {
 	return new LudumLevel();
 }

@@ -6,7 +6,7 @@
 #include <chaos/TiledMapTools.h>
 
 #include <death/Level.h>
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/Game.h>
 #include <death/Player.h>
 #include <death/GameFramework.h>
@@ -17,13 +17,13 @@
 // LudumLevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::TiledMapLevelInstance
+class LudumLevelInstance : public death::TMLevelInstance
 {
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TiledMapLevelInstance);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TMLevelInstance);
 
 	LudumLevelInstance();
 

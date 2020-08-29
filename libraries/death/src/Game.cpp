@@ -2,7 +2,7 @@
 #include <death/GameStateMachine.h>
 #include <death/GamepadManager.h>
 #include <death/Level.h>
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/SoundContext.h>
 #include <death/GameGettersImpl.h>
 #include <death/SoundListenerCameraComponent.h>
@@ -439,7 +439,7 @@ namespace death
 		return true;
 	}
 
-	death::TiledMapLevel * Game::CreateTiledMapLevel()
+	death::TMLevel * Game::CreateTMLevel()
 	{
 		return nullptr;
 	}
@@ -463,7 +463,7 @@ namespace death
 			if (tiled_map == nullptr)
 				return false;
 			// allocate a level
-			death::TiledMapLevel * result = CreateTiledMapLevel();
+			death::TMLevel * result = CreateTMLevel();
 			if (result == nullptr)
 				return false;
 			// some additionnal computation

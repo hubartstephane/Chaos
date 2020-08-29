@@ -31,19 +31,19 @@ namespace death
 
 		// all classes in this file
 #define DEATH_TILEDLEVEL_CLASSES \
-(TiledMapLevel) \
-(TiledMapLevelInstance) \
-(TiledMapLayerInstance) \
-(TiledMapObject) \
-(TiledMapCameraTemplate) \
-(TiledMapPlayerStart) \
-(TiledMapTrigger) \
-(TiledMapCheckpointTrigger) \
-(TiledMapLayerInstanceParticlePopulator) \
-(TiledMapTriggerCollisionIterator)\
-(TiledMapObjectCollisionIterator)\
-(TiledMapTileCollisionIterator)\
-(TiledMapSoundTrigger)
+(TMLevel) \
+(TMLevelInstance) \
+(TMLayerInstance) \
+(TMObject) \
+(TMCameraTemplate) \
+(TMPlayerStart) \
+(TMTrigger) \
+(TMCheckpointTrigger) \
+(TMParticlePopulator) \
+(TMTriggerCollisionIterator)\
+(TMObjectCollisionIterator)\
+(TMTileCollisionIterator)\
+(TMSoundTrigger)
 
 		// forward declaration
 #define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
@@ -85,21 +85,21 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapObject 
+	// TMObject 
 	// =====================================
 
-	class TiledMapObject : public chaos::Tickable, public chaos::JSONSerializable
+	class TMObject : public chaos::Tickable, public chaos::JSONSerializable
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapObject, chaos::Tickable);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMObject, chaos::Tickable);
 
 	public:
 
 		/** get the layer instance owning this object */
-		TiledMapLayerInstance* GetLayerInstance() { return layer_instance; }
+		TMLayerInstance* GetLayerInstance() { return layer_instance; }
 		/** get the layer instance owning this object */
-		TiledMapLayerInstance const* GetLayerInstance() const { return layer_instance; }
+		TMLayerInstance const* GetLayerInstance() const { return layer_instance; }
 
 		/** whenever the level is being started */
 		virtual void OnLevelStarted() {}
@@ -122,7 +122,7 @@ namespace death
 	protected:
 
 		/** additionnal initialization */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object);
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object);
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
@@ -139,39 +139,39 @@ namespace death
 		chaos::shared_ptr<chaos::ParticleAllocationBase> allocation;
 
 		/** a reference to the layer instance */
-		TiledMapLayerInstance* layer_instance = nullptr;
+		TMLayerInstance* layer_instance = nullptr;
 	};
 
 	// =====================================
-	// TiledMapCameraTemplate : where the player may start
+	// TMCameraTemplate : where the player may start
 	// =====================================
 
-	class TiledMapCameraTemplate : public TiledMapObject
+	class TMCameraTemplate : public TMObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCameraTemplate, TiledMapObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMCameraTemplate, TMObject);
 
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 	};
 
 	// =====================================
-	// TiledMapPlayerStart : where the player may start
+	// TMPlayerStart : where the player may start
 	// =====================================
 
-	class TiledMapPlayerStart : public TiledMapObject
+	class TMPlayerStart : public TMObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapPlayerStart, TiledMapObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMPlayerStart, TMObject);
 
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
@@ -184,14 +184,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapTrigger : an object player can collide with (for moment, rectangle)
+	// TMTrigger : an object player can collide with (for moment, rectangle)
 	// =====================================
 
-	class TiledMapTrigger : public TiledMapObject
+	class TMTrigger : public TMObject
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapTrigger, TiledMapObject);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMTrigger, TMObject);
 
 	public:
 
@@ -216,7 +216,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** called whenever a collision with object is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type);
 
@@ -234,14 +234,14 @@ namespace death
 	};
 
 	// =================================================
-	// TiledMapNotificationTrigger
+	// TMNotificationTrigger
 	// =================================================
 
-	class TiledMapNotificationTrigger : public TiledMapTrigger
+	class TMNotificationTrigger : public TMTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapNotificationTrigger, TiledMapTrigger);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMNotificationTrigger, TMTrigger);
 
 	public:
 
@@ -255,7 +255,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -272,14 +272,14 @@ namespace death
 	};
 
 	// =================================================
-	// TiledMapCheckpointTrigger
+	// TMCheckpointTrigger
 	// =================================================
 
-	class TiledMapCheckpointTrigger : public TiledMapTrigger
+	class TMCheckpointTrigger : public TMTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapCheckpointTrigger, TiledMapTrigger);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMCheckpointTrigger, TMTrigger);
 
 	public:
 
@@ -289,20 +289,20 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 	};
 
 	// =================================================
-	// TiledMapSoundTrigger : an object that play a sound
+	// TMSoundTrigger : an object that play a sound
 	// =================================================
 
-	class TiledMapSoundTrigger : public TiledMapTrigger
+	class TMSoundTrigger : public TMTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapSoundTrigger, TiledMapTrigger);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMSoundTrigger, TMTrigger);
 
 	public:
 
@@ -316,7 +316,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -345,14 +345,14 @@ namespace death
 
 
 	// =================================================
-	// TiledMapChangeLevelTrigger
+	// TMChangeLevelTrigger
 	// =================================================
 
-	class TiledMapChangeLevelTrigger : public TiledMapTrigger
+	class TMChangeLevelTrigger : public TMTrigger
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapChangeLevelTrigger, TiledMapTrigger);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMChangeLevelTrigger, TMTrigger);
 
 	public:
 
@@ -364,7 +364,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
@@ -379,7 +379,7 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapLevel : utility
+	// TMLevel : utility
 	// =====================================
 
 	// XXX : while we want to create GeometricObject during tile creation we will need a fake 'geometric_object' (or a geometric_object on the fly)
@@ -398,24 +398,24 @@ namespace death
 	//
 
 	/** a functor for geometric object factory */
-	using TiledMapObjectFactory = std::function<TiledMapObject * (chaos::TiledMap::GeometricObject const *)>;
+	using TMObjectFactory = std::function<TMObject * (chaos::TiledMap::GeometricObject const *)>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
 #define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object) { x }
 
 	// =====================================
-	// TiledMapLevel : a level described by a tiledmap
+	// TMLevel : a level described by a tiledmap
 	// =====================================
 
-	class TiledMapLevel : public Level
+	class TMLevel : public Level
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevel, Level);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMLevel, Level);
 
 	public:
 
 		/** constructor */
-		TiledMapLevel();
+		TMLevel();
 
 		/** initialization from tiled_map */
 		virtual bool Initialize(chaos::TiledMap::Map * in_tiled_map);
@@ -428,43 +428,43 @@ namespace death
 	protected:
 
 		/** called to flush some particles into a layer allocation */
-		virtual bool FlushParticlesIntoAllocation(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation, TiledMapParticle const* particles, size_t particle_count);
+		virtual bool FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation, TiledMapParticle const* particles, size_t particle_count);
 
 		/** create a typed object based of a 'classname' property */
-		virtual TiledMapObjectFactory DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
+		virtual TMObjectFactory DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 		/** create a typed object specializable method */
-		virtual TiledMapObjectFactory DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
+		virtual TMObjectFactory DoGetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 		/** create a typed object 'entry point' */
-		TiledMapObjectFactory GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
+		TMObjectFactory GetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 
 		/** create a Camera specializable method */
-		virtual TiledMapCameraTemplate* DoCreateCamera();
+		virtual TMCameraTemplate* DoCreateCamera();
 		/** create a PlayerStartObject specializable method */
-		virtual TiledMapPlayerStart* DoCreatePlayerStart();
+		virtual TMPlayerStart* DoCreatePlayerStart();
 		/** create a FinishingTriggerObject specializable method */
-		virtual TiledMapChangeLevelTrigger* DoCreateChangeLevelTrigger();
+		virtual TMChangeLevelTrigger* DoCreateChangeLevelTrigger();
 		/** create a CheckpointTriggerObject specializable method */
-		virtual TiledMapCheckpointTrigger* DoCreateCheckpointTrigger();
+		virtual TMCheckpointTrigger* DoCreateCheckpointTrigger();
 		/** create a NotificationTriggerObject specializable method */
-		virtual TiledMapNotificationTrigger* DoCreateNotificationTrigger();
+		virtual TMNotificationTrigger* DoCreateNotificationTrigger();
 		/** create a SoundTriggerObject specializable method */
-		virtual TiledMapSoundTrigger* DoCreateSoundTrigger();
+		virtual TMSoundTrigger* DoCreateSoundTrigger();
 
 		/** create a PlayerStartObject specializable method */
-		virtual TiledMapLayerInstance* DoCreateLayerInstance();
+		virtual TMLayerInstance* DoCreateLayerInstance();
 
 		/** create a layer instance 'entry point' */
-		TiledMapLayerInstance* CreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
+		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
 
 		/** get the folder in which bitmaps are stored in Game::Atlas */
-		virtual chaos::BitmapAtlas::FolderInfo const* GetFolderInfo(TiledMapLayerInstance* layer_instance) const;
+		virtual chaos::BitmapAtlas::FolderInfo const* GetFolderInfo(TMLayerInstance* layer_instance) const;
 		/** get the atlas to use for the rendering */
-		virtual chaos::BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas(TiledMapLayerInstance* layer_instance) const;
+		virtual chaos::BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas(TMLayerInstance* layer_instance) const;
 		/** create a particle layer */
-		virtual chaos::ParticleLayerBase* DoCreateParticleLayer(TiledMapLayerInstance* layer_instance);
+		virtual chaos::ParticleLayerBase* DoCreateParticleLayer(TMLayerInstance* layer_instance);
 
 		/** called after all particles of a layers has been created, so we can plug additionnal data */
-		virtual bool FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation);
+		virtual bool FinalizeLayerParticles(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation);
 
 		/** the default material when not specified */
 		virtual chaos::GPURenderMaterial* GenDefaultRenderMaterial();
@@ -476,14 +476,14 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapLayerInstance : instance of a Layer
+	// TMLayerInstance : instance of a Layer
 	// =====================================
 
-	class TiledMapLayerInstance : public chaos::GPURenderable, public chaos::JSONSerializable
+	class TMLayerInstance : public chaos::GPURenderable, public chaos::JSONSerializable
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLayerInstance, chaos::GPURenderable);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMLayerInstance, chaos::GPURenderable);
 
 	public:
 
@@ -520,40 +520,40 @@ namespace death
 		chaos::AutoConstCastable<Game> GetGame() const;
 
 		/** find the player start from its name */
-		TiledMapPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
+		TMPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
+		TMPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
 		/** find the player start from its ID */
-		TiledMapPlayerStart* FindPlayerStartByID(int id);
+		TMPlayerStart* FindPlayerStartByID(int id);
 		/** find the player start from its ID */
-		TiledMapPlayerStart const* FindPlayerStartByID(int id) const;
+		TMPlayerStart const* FindPlayerStartByID(int id) const;
 
 		/** find the camera from its name */
-		TiledMapCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
+		TMCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
+		TMCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
 		/** find the camera from its name */
-		TiledMapCameraTemplate* FindCameraTemplateByID(int id);
+		TMCameraTemplate* FindCameraTemplateByID(int id);
 		/** find the camera from its name */
-		TiledMapCameraTemplate const* FindCameraTemplateByID(int id) const;
+		TMCameraTemplate const* FindCameraTemplateByID(int id) const;
 
 		/** find the trigger surface from its name */
-		TiledMapTrigger* FindTrigger(chaos::ObjectRequest request);
+		TMTrigger* FindTrigger(chaos::ObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTrigger const* FindTrigger(chaos::ObjectRequest request) const;
+		TMTrigger const* FindTrigger(chaos::ObjectRequest request) const;
 		/** find the trigger surface from its ID */
-		TiledMapTrigger* FindTriggerByID(int id);
+		TMTrigger* FindTriggerByID(int id);
 		/** find the trigger surface from its ID */
-		TiledMapTrigger const* FindTriggerByID(int id) const;
+		TMTrigger const* FindTriggerByID(int id) const;
 
 		/** find the object from its name */
-		TiledMapObject* FindObject(chaos::ObjectRequest request);
+		TMObject* FindObject(chaos::ObjectRequest request);
 		/** find the object from its name */
-		TiledMapObject const* FindObject(chaos::ObjectRequest request) const;
+		TMObject const* FindObject(chaos::ObjectRequest request) const;
 		/** find the object from its ID */
-		TiledMapObject* FindObjectByID(int id);
+		TMObject* FindObjectByID(int id);
 		/** find the object from its ID */
-		TiledMapObject const* FindObjectByID(int id) const;
+		TMObject const* FindObjectByID(int id) const;
 
 		/** get the bounding box for the level */
 		chaos::box2 GetBoundingBox(bool world_system) const;
@@ -608,9 +608,9 @@ namespace death
 		/** returns the number of objects */
 		size_t GetObjectCount() const;
 		/** returns an object by its index */
-		TiledMapObject* GetObject(size_t index);
+		TMObject* GetObject(size_t index);
 		/** returns an object by its index */
-		TiledMapObject const* GetObject(size_t index) const;
+		TMObject const* GetObject(size_t index) const;
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
@@ -623,9 +623,9 @@ namespace death
 	protected:
 
 		/** initialization */
-		virtual bool Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer);
+		virtual bool Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer);
 		/** serialization of all JSON objects into an array */
-		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TiledMapObject>>& result);
+		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TMObject>>& result);
 		/** called whenever level instance is restarted */
 		virtual void OnRestart();
 
@@ -645,12 +645,12 @@ namespace death
 		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer);
 	
 		/** create an object in an object layer */
-		TiledMapObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object);
+		TMObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object);
 
 		/** create an object in an object layer */
-		void CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator & particle_populator);
+		void CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TMObject* object, TMParticlePopulator& particle_populator);
 		/** returns whether a particle should be created for object instance */
-		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TiledMapObject* object) const;
+		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TMObject* object) const;
 
 		/** finalize the particles created */
 		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);
@@ -686,14 +686,14 @@ namespace death
 		bool autoclean_particles = false;
 
 		/** the level instance this object belongs to */
-		TiledMapLevelInstance* level_instance = nullptr;
+		TMLevelInstance* level_instance = nullptr;
 
 		/** the tiled layer corresponding to this object */
 		chaos::TiledMap::LayerBase const* layer = nullptr;
 		/** the particle layer */
 		chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
 		/** the objects */
-		std::vector<chaos::shared_ptr<TiledMapObject>> objects;
+		std::vector<chaos::shared_ptr<TMObject>> objects;
 
 		/** the bounding box of the layer */
 		chaos::box2 bounding_box;
@@ -706,33 +706,33 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapTriggerCollisionInfo 
+	// TMTriggerCollisionInfo 
 	// =====================================
 
-	class TiledMapTriggerCollisionInfo
+	class TMTriggerCollisionInfo
 	{
 	public:
 
 		/** search whether a trigger is in the collision list */
-		bool FindTrigger(TiledMapTrigger const * trigger) const;
+		bool FindTrigger(TMTrigger const * trigger) const;
 
 	public:
 
 		/** the target considered */
 		chaos::weak_ptr<chaos::Object> object;
 		/** all the triggers colliding */
-		std::vector<chaos::weak_ptr<TiledMapTrigger>> triggers;
+		std::vector<chaos::weak_ptr<TMTrigger>> triggers;
 	};
 
 	// =====================================
-	// TiledMapLevelInstance : instance of a Level
+	// TMLevelInstance : instance of a Level
 	// =====================================
 
-	class TiledMapLevelInstance : public LevelInstance
+	class TMLevelInstance : public LevelInstance
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TiledMapLevelInstance, LevelInstance);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMLevelInstance, LevelInstance);
 
 	public:
 
@@ -742,30 +742,30 @@ namespace death
 		chaos::TiledMap::Map const* GetTiledMap() const;
 
 		/** find the layer instance from its ID */
-		TiledMapLayerInstance * FindLayerInstanceByID(int id);
+		TMLayerInstance * FindLayerInstanceByID(int id);
 		/** find the layer instance from its ID */
-		TiledMapLayerInstance const * FindLayerInstanceByID(int id) const;
+		TMLayerInstance const * FindLayerInstanceByID(int id) const;
 
 		/** find the layer instance from its name */
-		TiledMapLayerInstance* FindLayerInstance(chaos::ObjectRequest request);
+		TMLayerInstance* FindLayerInstance(chaos::ObjectRequest request);
 		/** find the layer instance from its name */
-		TiledMapLayerInstance const* FindLayerInstance(chaos::ObjectRequest request) const;
+		TMLayerInstance const* FindLayerInstance(chaos::ObjectRequest request) const;
 		/** find the camera from its name */
-		TiledMapCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
+		TMCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
 		/** find the camera from its name */
-		TiledMapCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
+		TMCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
 		/** find the player start from its name */
-		TiledMapPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
+		TMPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
 		/** find the player start from its name */
-		TiledMapPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
+		TMPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
 		/** find the trigger surface from its name */
-		TiledMapTrigger* FindTrigger(chaos::ObjectRequest request);
+		TMTrigger* FindTrigger(chaos::ObjectRequest request);
 		/** find the trigger surface from its name */
-		TiledMapTrigger const* FindTrigger(chaos::ObjectRequest request) const;
+		TMTrigger const* FindTrigger(chaos::ObjectRequest request) const;
 		/** find the typed object from its name */
-		TiledMapObject* FindObject(chaos::ObjectRequest request);
+		TMObject* FindObject(chaos::ObjectRequest request);
 		/** find the typed object surface from its name */
-		TiledMapObject const* FindObject(chaos::ObjectRequest request) const;
+		TMObject const* FindObject(chaos::ObjectRequest request) const;
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
@@ -780,7 +780,7 @@ namespace death
 		template<typename ...PARAMS>
 		chaos::ParticleSpawner GetParticleSpawner(chaos::ObjectRequest layer_instance_name, PARAMS... params)
 		{
-			TiledMapLayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
+			TMLayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
 			if (layer_instance == nullptr)
 				return chaos::ParticleSpawner(nullptr);
 			return layer_instance->GetParticleSpawner(params...);
@@ -790,11 +790,11 @@ namespace death
 		virtual chaos::box2 GetBoundingBox() const override;
 
 		/** Get a collision iterator for tiles */
-		TiledMapTileCollisionIterator GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTileCollisionIterator GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 		/** Get a collision iterator for triggers */
-		TiledMapTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 		/** Get a collision iterator for objects */
-		TiledMapObjectCollisionIterator GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMObjectCollisionIterator GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();
@@ -825,10 +825,10 @@ namespace death
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
 		/** the sub function responsible for player pawn creation */
-		virtual PlayerPawn * CreatePlayerPawn(Player* player, TiledMapPlayerStart* player_start, TiledMapLayerInstance* layer_instance);
+		virtual PlayerPawn * CreatePlayerPawn(Player* player, TMPlayerStart* player_start, TMLayerInstance* layer_instance);
 
 		/** get the player start used for an incomming player */
-		virtual TiledMapPlayerStart* GetPlayerStartForPawn(Player* player);
+		virtual TMPlayerStart* GetPlayerStartForPawn(Player* player);
 
 		/** override */
 		virtual void OnLevelEnded() override;
@@ -854,7 +854,7 @@ namespace death
 		virtual chaos::GPURenderMaterial* GetDefaultRenderMaterial();
 
 		/** find the collision info for an object */
-		TiledMapTriggerCollisionInfo* FindTriggerCollisionInfo(chaos::Object * object);
+		TMTriggerCollisionInfo* FindTriggerCollisionInfo(chaos::Object * object);
 
 	protected:
 
@@ -864,17 +864,17 @@ namespace death
 		bool has_explicit_bounding_box = false;
 
 		/** the layer of reference for displacement */
-		chaos::shared_ptr<TiledMapLayerInstance> reference_layer;
+		chaos::shared_ptr<TMLayerInstance> reference_layer;
 
 		/** the particle manager used to render the world */
 		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
 		/** the layers */
-		std::vector<chaos::shared_ptr<TiledMapLayerInstance>> layer_instances;
+		std::vector<chaos::shared_ptr<TMLayerInstance>> layer_instances;
 		/** the default render material */
 		chaos::shared_ptr<chaos::GPURenderMaterial> default_material;
 
 		/** the previous frame trigger collision */
-		std::vector<TiledMapTriggerCollisionInfo> collision_info;
+		std::vector<TMTriggerCollisionInfo> collision_info;
 	};
 
 
@@ -897,7 +897,7 @@ namespace death
 	public:
 
 		/** the layer instance concerned by this collision */
-		TiledMapLayerInstance* layer_instance = nullptr;
+		TMLayerInstance* layer_instance = nullptr;
 		/** the allocation concerned by this collision */
 		chaos::ParticleAllocationBase* allocation = nullptr;
 		/** the particle which with the collision is detected */
@@ -907,20 +907,20 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapCollisionIteratorBase
+	// TMCollisionIteratorBase
 	// =====================================
 
-	class TiledMapCollisionIteratorBase
+	class TMCollisionIteratorBase
 	{
 
 	public:
 
 		/** the default constructor */
-		TiledMapCollisionIteratorBase() = default;
+		TMCollisionIteratorBase() = default;
 		/** the copy constructor */
-		TiledMapCollisionIteratorBase(TiledMapCollisionIteratorBase const& src) = default;
+		TMCollisionIteratorBase(TMCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TiledMapCollisionIteratorBase(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		/** returns whether the iterator is still valid */
 		operator bool() const;
@@ -933,7 +933,7 @@ namespace death
 		chaos::box2 collision_box;
 
 		/** the level instance of concern */
-		TiledMapLevelInstance* level_instance = nullptr;
+		TMLevelInstance* level_instance = nullptr;
 		/** index of the layer */
 		size_t layer_instance_index = 0;
 		/** whether the iterator finishs with the current layer */
@@ -941,19 +941,19 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapTileCollisionIterator
+	// TMTileCollisionIterator
 	// =====================================
 
-	class TiledMapTileCollisionIterator : public TiledMapCollisionIteratorBase
+	class TMTileCollisionIterator : public TMCollisionIteratorBase
 	{
 	public:
 
 		/** the default constructor */
-		TiledMapTileCollisionIterator() = default;
+		TMTileCollisionIterator() = default;
 		/** the copy constructor */
-		TiledMapTileCollisionIterator(TiledMapTileCollisionIterator const& src) = default;
+		TMTileCollisionIterator(TMTileCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTileCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		/** next layer */
 		void NextLayer();
@@ -967,9 +967,9 @@ namespace death
 		// indirection
 		TileCollisionInfo const * operator ->() const;
 		// pre increment iterator
-		TiledMapTileCollisionIterator& operator ++ ();
+		TMTileCollisionIterator& operator ++ ();
 		// post increment iterator
-		TiledMapTileCollisionIterator operator ++ (int i);
+		TMTileCollisionIterator operator ++ (int i);
 
 	protected:
 
@@ -990,21 +990,21 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapObjectCollisionIteratorBase
+	// TMObjectCollisionIteratorBase
 	// =====================================
 
 	template<typename T>
-	class TiledMapObjectCollisionIteratorBase : public TiledMapCollisionIteratorBase
+	class TMObjectCollisionIteratorBase : public TMCollisionIteratorBase
 	{
 	public:
 
 		/** the default constructor */
-		TiledMapObjectCollisionIteratorBase() = default;
+		TMObjectCollisionIteratorBase() = default;
 		/** the copy constructor */
-		TiledMapObjectCollisionIteratorBase(TiledMapObjectCollisionIteratorBase const& src) = default;
+		TMObjectCollisionIteratorBase(TMObjectCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TiledMapObjectCollisionIteratorBase(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-			TiledMapCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
+		TMObjectCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+			TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
 		{
 		}
 		// indirection
@@ -1043,24 +1043,24 @@ namespace death
 
 
 	// =====================================
-	// TiledMapTriggerCollisionIterator
+	// TMTriggerCollisionIterator
 	// =====================================
 
-	class TiledMapTriggerCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapTrigger>
+	class TMTriggerCollisionIterator : public TMObjectCollisionIteratorBase<TMTrigger>
 	{
 	public:
 
 		/** the default constructor */
-		TiledMapTriggerCollisionIterator() = default;
+		TMTriggerCollisionIterator() = default;
 		/** the copy constructor */
-		TiledMapTriggerCollisionIterator(TiledMapTriggerCollisionIterator const& src) = default;
+		TMTriggerCollisionIterator(TMTriggerCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TiledMapTriggerCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTriggerCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		// pre increment iterator
-		TiledMapTriggerCollisionIterator& operator ++ ();
+		TMTriggerCollisionIterator& operator ++ ();
 		// post increment iterator
-		TiledMapTriggerCollisionIterator operator ++ (int i);
+		TMTriggerCollisionIterator operator ++ (int i);
 
 		/** go to next layer */
 		void NextLayer();
@@ -1074,24 +1074,24 @@ namespace death
 	};
 
 	// =====================================
-	// TiledMapObjectCollisionIterator
+	// TMObjectCollisionIterator
 	// =====================================
 
-	class TiledMapObjectCollisionIterator : public TiledMapObjectCollisionIteratorBase<TiledMapObject>
+	class TMObjectCollisionIterator : public TMObjectCollisionIteratorBase<TMObject>
 	{
 	public:
 
 		/** the default constructor */
-		TiledMapObjectCollisionIterator() = default;
+		TMObjectCollisionIterator() = default;
 		/** the copy constructor */
-		TiledMapObjectCollisionIterator(TiledMapObjectCollisionIterator const& src) = default;
+		TMObjectCollisionIterator(TMObjectCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TiledMapObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMObjectCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
 
 		// pre increment iterator
-		TiledMapObjectCollisionIterator& operator ++ ();
+		TMObjectCollisionIterator& operator ++ ();
 		// post increment iterator
-		TiledMapObjectCollisionIterator operator ++ (int i);
+		TMObjectCollisionIterator operator ++ (int i);
 
 		/** go to next layer */
 		void NextLayer();

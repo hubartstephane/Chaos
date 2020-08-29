@@ -25,7 +25,7 @@
 #include <death/GameFramework.h>
 #include <death/GameHUD.h>
 #include <death/Level.h>
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/GameParticleCreator.h>
 #include <death/GameGettersDecl.h>
 #include <death/Player.h>
@@ -320,7 +320,7 @@ namespace death
 		/* load one level */
 		virtual Level * DoLoadLevel(chaos::FilePathParam const & path);
 		/** create one tiled map level */
-		virtual death::TiledMapLevel * CreateTiledMapLevel();
+		virtual death::TMLevel * CreateTMLevel();
 
 		/** the game main loop */
 		virtual bool TickGameLoop(float delta_time);

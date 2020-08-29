@@ -46,7 +46,7 @@ bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	death::TiledMapLevelInstance * ludum_level_instance = GetLevelInstance();
+	death::TMLevelInstance * ludum_level_instance = GetLevelInstance();
 
 	// -------------------------------------
 	// I/ no level rendering like main menu (the background)
@@ -266,7 +266,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::TiledMapLevel * LudumGame::CreateTiledMapLevel()
+death::TMLevel * LudumGame::CreateTMLevel()
 {
 	return new LudumLevel();
 }
@@ -277,7 +277,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	LudumLevelInstance const * level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TiledMapLayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
+		death::TMLayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
 		if (layer_instance)
 		{
 			chaos::ParticleLayerBase const * particle_layer = layer_instance->GetParticleLayer();

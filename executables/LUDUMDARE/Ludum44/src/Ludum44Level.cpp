@@ -17,7 +17,7 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -61,10 +61,10 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
 	}
 
-	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);
+	return death::TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
-death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("PowerUp"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new PowerUpTrigger();); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
@@ -73,7 +73,7 @@ death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayer
 	if (in_typed_object->IsObjectOfType("Spawner"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new SpawnerTrigger(););
 
-	return death::TiledMapLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 
@@ -100,9 +100,9 @@ death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayer
 // PowerUpTrigger implementation
 // =============================================================
 
-bool PowerUpTrigger::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool PowerUpTrigger::Initialize(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
-	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	decrease_power = in_geometric_object->GetPropertyValueBool("DECREASE_POWER_UP", false);
 	return true;
@@ -137,9 +137,9 @@ bool PowerUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 // SpeedUpTrigger implementation
 // =============================================================
 
-bool SpeedUpTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool SpeedUpTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
-	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	scroll_speed = in_geometric_object->GetPropertyValueFloat("SCROLL_SPEED", 1.0f);
 	return true;
@@ -168,9 +168,9 @@ bool SpeedUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 // =============================================================
 
 
-bool SpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool SpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
-	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	
 	scale_factor = in_geometric_object->GetPropertyValueFloat("ENEMY_SCALE_FACTOR", 1.0f);
@@ -208,7 +208,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	// search the layer for enemies
 	LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 
-	death::TiledMapLayerInstance * enemy_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
+	death::TMLayerInstance * enemy_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
 	if (enemy_layer_instance == nullptr)
 		return true;
 

@@ -1,6 +1,6 @@
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/Game.h>
-#include <death/LayerInstanceParticlePopulator.h>
+#include <death/TMParticlePopulator.h>
 #include <death/Player.h>
 #include <death/SoundContext.h>
 #include <death/CollisionMask.h>
@@ -18,10 +18,10 @@
 namespace death
 {
 	// =====================================
-	// TiledMapObject implementation
+	// TMObject implementation
 	// =====================================
 
-	chaos::box2 TiledMapObject::GetBoundingBox(bool world_system) const
+	chaos::box2 TMObject::GetBoundingBox(bool world_system) const
 	{
 		chaos::box2 result = bounding_box;
 		if (world_system)
@@ -29,7 +29,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapObject::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMObject::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
 		// ensure not already initialized
 		assert(in_layer_instance != nullptr);
@@ -51,7 +51,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapObject::SerializeFromJSON(nlohmann::json const& json)
+	bool TMObject::SerializeFromJSON(nlohmann::json const& json)
 	{
 		if (!chaos::JSONSerializable::SerializeFromJSON(json))
 			return false;
@@ -62,7 +62,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapObject::SerializeIntoJSON(nlohmann::json & json) const
+	bool TMObject::SerializeIntoJSON(nlohmann::json & json) const
 	{
 		if (!chaos::JSONSerializable::SerializeIntoJSON(json))
 			return false;
@@ -73,18 +73,18 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapObject::IsParticleCreationEnabled() const
+	bool TMObject::IsParticleCreationEnabled() const
 	{
 		return true;
 	}
 
 	// =====================================
-	// TiledMapTrigger implementation
+	// TMTrigger implementation
 	// =====================================
 
-	bool TiledMapTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
-		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		// default values are set to the one defined by default in constructor
 		enabled = in_geometric_object->GetPropertyValueBool("ENABLED", enabled);
@@ -96,9 +96,9 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMTrigger::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!TiledMapObject::SerializeFromJSON(json))
+		if (!TMObject::SerializeFromJSON(json))
 			return false;
 		chaos::JSONTools::GetAttribute(json, "ENABLED", enabled);
 		chaos::JSONTools::GetAttribute(json, "TRIGGER_ONCE", trigger_once);
@@ -107,9 +107,9 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMTrigger::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!TiledMapObject::SerializeIntoJSON(json))
+		if (!TMObject::SerializeIntoJSON(json))
 			return false;
 		chaos::JSONTools::SetAttribute(json, "ENABLED", enabled);
 		chaos::JSONTools::SetAttribute(json, "TRIGGER_ONCE", trigger_once);
@@ -118,7 +118,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapTrigger::IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const
+	bool TMTrigger::IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const
 	{
 		chaos::box2 box = GetBoundingBox(true);
 
@@ -129,17 +129,17 @@ namespace death
 		return chaos::Collide(other_box, box);
 	}
 
-	bool TiledMapTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TMTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		return false; // do not do anything with collision
 	}
 
-	void TiledMapTrigger::SetEnabled(bool in_enabled)
+	void TMTrigger::SetEnabled(bool in_enabled)
 	{
 		enabled = in_enabled;
 	}
 
-	void TiledMapTrigger::SetTriggerOnce(bool in_trigger_once)
+	void TMTrigger::SetTriggerOnce(bool in_trigger_once)
 	{
 		trigger_once = in_trigger_once;
 	}
@@ -148,30 +148,15 @@ namespace death
 	// TiledMapCheckPointTriggerObject implementation
 	// =============================================================
 
-	bool TiledMapCheckpointTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMCheckpointTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
-		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		trigger_once = true; // force a trigger once for checkpoint
 		return true;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	bool TiledMapCheckpointTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TMCheckpointTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Camera* camera = auto_cast(object);
 		if (camera == nullptr)
@@ -187,18 +172,18 @@ namespace death
 		return true; // collisions handled successfully
 	}
 
-	bool TiledMapCheckpointTrigger::IsParticleCreationEnabled() const
+	bool TMCheckpointTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
 	// =====================================
-	// TiledMapPlayerStart implementation
+	// TMPlayerStart implementation
 	// =====================================
 
-	bool TiledMapPlayerStart::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMPlayerStart::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
-		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		// search the bitmap name for the player
 		std::string const * in_bitmap_name = in_geometric_object->FindPropertyString("BITMAP_NAME");
@@ -208,34 +193,34 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapPlayerStart::SerializeFromJSON(nlohmann::json const& json)
+	bool TMPlayerStart::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!TiledMapObject::SerializeFromJSON(json))
+		if (!TMObject::SerializeFromJSON(json))
 			return false;
 		chaos::JSONTools::GetAttribute(json, "BITMAP_NAME", bitmap_name);
 		return true;
 	}
 
-	bool TiledMapPlayerStart::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMPlayerStart::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!TiledMapObject::SerializeIntoJSON(json))
+		if (!TMObject::SerializeIntoJSON(json))
 			return false;
 		chaos::JSONTools::SetAttribute(json, "BITMAP_NAME", bitmap_name);
 		return true;
 	}
 
 	// =================================================
-	// TiledMapNotificationTrigger
+	// TMNotificationTrigger
 	// =================================================
 
-	bool TiledMapNotificationTrigger::IsParticleCreationEnabled() const
+	bool TMNotificationTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
-	bool TiledMapNotificationTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMNotificationTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
-		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 
 		notification_string = in_geometric_object->GetPropertyValueString("NOTIFICATION", "");
@@ -246,9 +231,9 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapNotificationTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMNotificationTrigger::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!TiledMapTrigger::SerializeFromJSON(json))
+		if (!TMTrigger::SerializeFromJSON(json))
 			return false;
 		chaos::JSONTools::GetAttribute(json, "NOTIFICATION", notification_string);
 		chaos::JSONTools::GetAttribute(json, "LIFETIME", notification_lifetime);
@@ -257,9 +242,9 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapNotificationTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMNotificationTrigger::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!TiledMapTrigger::SerializeIntoJSON(json))
+		if (!TMTrigger::SerializeIntoJSON(json))
 			return false;
 		chaos::JSONTools::SetAttribute(json, "NOTIFICATION", notification_string);
 		chaos::JSONTools::SetAttribute(json, "LIFETIME", notification_lifetime);
@@ -269,7 +254,7 @@ namespace death
 	}
 
 
-	bool TiledMapNotificationTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TMNotificationTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		// check object type
 		if (player_collision)
@@ -310,12 +295,12 @@ namespace death
 	}
 
 	// =====================================
-	// TiledMapSoundTrigger implementation
+	// TMSoundTrigger implementation
 	// =====================================
 
-	bool TiledMapSoundTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMSoundTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
-		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 
 		sound_name = in_geometric_object->GetPropertyValueString("SOUND_NAME", "");
@@ -330,9 +315,9 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapSoundTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMSoundTrigger::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!TiledMapTrigger::SerializeFromJSON(json))
+		if (!TMTrigger::SerializeFromJSON(json))
 			return false;
 		chaos::JSONTools::GetAttribute(json, "SOUND_NAME", sound_name);
 		chaos::JSONTools::GetAttribute(json, "MIN_DISTANCE_RATIO", min_distance_ratio);
@@ -343,9 +328,9 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapSoundTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMSoundTrigger::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!TiledMapTrigger::SerializeIntoJSON(json))
+		if (!TMTrigger::SerializeIntoJSON(json))
 			return false;
 		chaos::JSONTools::SetAttribute(json, "SOUND_NAME", sound_name);
 		chaos::JSONTools::SetAttribute(json, "MIN_DISTANCE_RATIO", min_distance_ratio);
@@ -356,7 +341,7 @@ namespace death
 		return true;
 	}
 
-	chaos::Sound* TiledMapSoundTrigger::CreateSound() const
+	chaos::Sound* TMSoundTrigger::CreateSound() const
 	{
 		// early exit
 		if (sound_name.length() == 0)
@@ -387,7 +372,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapSoundTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TMSoundTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Camera* camera = auto_cast(object);
 		if (camera == nullptr)
@@ -412,21 +397,21 @@ namespace death
 		return false;
 	}
 
-	bool TiledMapSoundTrigger::IsParticleCreationEnabled() const
+	bool TMSoundTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
 	// =============================================================
-	// TiledMapChangeLevelTrigger implementation
+	// TMChangeLevelTrigger implementation
 	// =============================================================
 
-	bool TiledMapChangeLevelTrigger::IsParticleCreationEnabled() const
+	bool TMChangeLevelTrigger::IsParticleCreationEnabled() const
 	{
 		return false;
 	}
 
-	bool TiledMapChangeLevelTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
+	bool TMChangeLevelTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 	{
 		Player* player = auto_cast(object);
 		if (player == nullptr)
@@ -445,27 +430,27 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapChangeLevelTrigger::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMChangeLevelTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
-		if (!TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		level_name = in_geometric_object->GetPropertyValueString("LEVEL_NAME", "");
 		player_start_name = in_geometric_object->GetPropertyValueString("PLAYER_START_NAME", "");
 		return true;
 	}
 
-	bool TiledMapChangeLevelTrigger::SerializeFromJSON(nlohmann::json const& json)
+	bool TMChangeLevelTrigger::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!TiledMapTrigger::SerializeFromJSON(json))
+		if (!TMTrigger::SerializeFromJSON(json))
 			return false;
 		chaos::JSONTools::GetAttribute(json, "LEVEL_NAME", level_name);
 		chaos::JSONTools::GetAttribute(json, "PLAYER_START_NAME", player_start_name);
 		return true;
 	}
 
-	bool TiledMapChangeLevelTrigger::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMChangeLevelTrigger::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!TiledMapTrigger::SerializeIntoJSON(json))
+		if (!TMTrigger::SerializeIntoJSON(json))
 			return false;
 		chaos::JSONTools::SetAttribute(json, "LEVEL_NAME", level_name);
 		chaos::JSONTools::SetAttribute(json, "PLAYER_START_NAME", player_start_name);
@@ -473,7 +458,7 @@ namespace death
 	}
 
 	// =============================================================
-	// TiledMapChangeLevelTrigger implementation
+	// TMChangeLevelTrigger implementation
 	// =============================================================
 
 
@@ -512,26 +497,26 @@ namespace death
 
 
 	// =====================================
-	// TiledMapCameraTemplate implementation
+	// TMCameraTemplate implementation
 	// =====================================
 
-	bool TiledMapCameraTemplate::Initialize(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+	bool TMCameraTemplate::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 	{
-		if (!TiledMapObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMObject::Initialize(in_layer_instance, in_geometric_object))
 			return false;
 		return true;
 	}
 
 	// =====================================
-	// TiledMapLevel implementation
+	// TMLevel implementation
 	// =====================================
 
-	TiledMapLevel::TiledMapLevel()
+	TMLevel::TMLevel()
 	{
-		level_instance_class = TiledMapLevelInstance::GetStaticClass();
+		level_instance_class = TMLevelInstance::GetStaticClass();
 	}
 
-	bool TiledMapLevel::Initialize(chaos::TiledMap::Map * in_tiled_map)
+	bool TMLevel::Initialize(chaos::TiledMap::Map * in_tiled_map)
 	{
 		assert(in_tiled_map != nullptr);
 		assert(tiled_map == nullptr);
@@ -546,7 +531,7 @@ namespace death
 		return true;
 	}
 
-	chaos::BitmapAtlas::TextureArrayAtlas const* TiledMapLevel::GetTextureAtlas(TiledMapLayerInstance* layer_instance) const
+	chaos::BitmapAtlas::TextureArrayAtlas const* TMLevel::GetTextureAtlas(TMLayerInstance* layer_instance) const
 	{
 		Game const* game = layer_instance->GetGame();
 		if (game == nullptr)
@@ -554,7 +539,7 @@ namespace death
 		return game->GetTextureAtlas();
 	}
 
-	chaos::BitmapAtlas::FolderInfo const* TiledMapLevel::GetFolderInfo(TiledMapLayerInstance* layer_instance) const
+	chaos::BitmapAtlas::FolderInfo const* TMLevel::GetFolderInfo(TMLayerInstance* layer_instance) const
 	{
 		// get the atlas
 		chaos::BitmapAtlas::TextureArrayAtlas const* texture_atlas = GetTextureAtlas(layer_instance);
@@ -564,12 +549,12 @@ namespace death
 		return texture_atlas->GetFolderInfo("sprites");
 	}
 
-	chaos::ParticleLayerBase* TiledMapLevel::DoCreateParticleLayer(TiledMapLayerInstance* layer_instance)
+	chaos::ParticleLayerBase* TMLevel::DoCreateParticleLayer(TMLayerInstance* layer_instance)
 	{
 		return new chaos::ParticleLayer<TiledMapParticleTrait>();
 	}
 	
-	TiledMapObjectFactory TiledMapLevel::DoGetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+	TMObjectFactory TMLevel::DoGetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{
 		// player start 
 		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
@@ -590,7 +575,7 @@ namespace death
 	}
 
 
-	TiledMapObjectFactory TiledMapLevel::DoGetExplicitObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+	TMObjectFactory TMLevel::DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{	
 		// get the 'classname' property
 		std::string const* classname = in_typed_object->FindPropertyString("classname");
@@ -601,7 +586,7 @@ namespace death
 		if (wanted_class == nullptr)
 			return nullptr;
 		// get the subclass
-		chaos::SubClassOf<TiledMapObject> subclass = { wanted_class };
+		chaos::SubClassOf<TMObject> subclass = { wanted_class };
 		if (!subclass.IsValid())
 			return nullptr;
 		// return the factory based on this subclass
@@ -611,9 +596,9 @@ namespace death
 		};
 	}
 
-	TiledMapObjectFactory TiledMapLevel::GetObjectFactory(TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+	TMObjectFactory TMLevel::GetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{
-		TiledMapObjectFactory factory = DoGetExplicitObjectFactory(in_layer_instance, in_typed_object);
+		TMObjectFactory factory = DoGetExplicitObjectFactory(in_layer_instance, in_typed_object);
 		if (factory == nullptr)
 		{
 			// get the base factory that just create an instance of the object (based on the properties of the TypedObject of concern)
@@ -623,9 +608,9 @@ namespace death
 		}
 
 		// create another factory that wraps the previous (and add Initialize(...) call)
-		TiledMapObjectFactory result_factory = [in_layer_instance, factory](chaos::TiledMap::GeometricObject const * in_geometric_object)
+		TMObjectFactory result_factory = [in_layer_instance, factory](chaos::TiledMap::GeometricObject const * in_geometric_object)
 		{
-			TiledMapObject * result = factory(in_geometric_object);
+			TMObject * result = factory(in_geometric_object);
 			if (result != nullptr)
 			{
 				if (!result->Initialize(in_layer_instance, in_geometric_object))
@@ -639,39 +624,39 @@ namespace death
 		return result_factory;
 	}
 	
-	TiledMapCameraTemplate* TiledMapLevel::DoCreateCamera()
+	TMCameraTemplate* TMLevel::DoCreateCamera()
 	{
-		return new TiledMapCameraTemplate();
+		return new TMCameraTemplate();
 	}
-	TiledMapChangeLevelTrigger* TiledMapLevel::DoCreateChangeLevelTrigger()
+	TMChangeLevelTrigger* TMLevel::DoCreateChangeLevelTrigger()
 	{
-		return new TiledMapChangeLevelTrigger();
+		return new TMChangeLevelTrigger();
 	}
-	TiledMapCheckpointTrigger* TiledMapLevel::DoCreateCheckpointTrigger()
+	TMCheckpointTrigger* TMLevel::DoCreateCheckpointTrigger()
 	{
-		return new TiledMapCheckpointTrigger();
+		return new TMCheckpointTrigger();
 	}
-	TiledMapNotificationTrigger* TiledMapLevel::DoCreateNotificationTrigger()
+	TMNotificationTrigger* TMLevel::DoCreateNotificationTrigger()
 	{
-		return new TiledMapNotificationTrigger();
+		return new TMNotificationTrigger();
 	}
-	TiledMapSoundTrigger* TiledMapLevel::DoCreateSoundTrigger()
+	TMSoundTrigger* TMLevel::DoCreateSoundTrigger()
 	{
-		return new TiledMapSoundTrigger();
+		return new TMSoundTrigger();
 	}
-	TiledMapPlayerStart* TiledMapLevel::DoCreatePlayerStart()
+	TMPlayerStart* TMLevel::DoCreatePlayerStart()
 	{
-		return new TiledMapPlayerStart();
-	}
-
-	TiledMapLayerInstance* TiledMapLevel::DoCreateLayerInstance()
-	{
-		return new TiledMapLayerInstance();
+		return new TMPlayerStart();
 	}
 
-	TiledMapLayerInstance* TiledMapLevel::CreateLayerInstance(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
+	TMLayerInstance* TMLevel::DoCreateLayerInstance()
 	{
-		TiledMapLayerInstance* result = DoCreateLayerInstance();
+		return new TMLayerInstance();
+	}
+
+	TMLayerInstance* TMLevel::CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer)
+	{
+		TMLayerInstance* result = DoCreateLayerInstance();
 		if (result == nullptr)
 			return nullptr;
 		if (!result->Initialize(in_level_instance, in_layer))
@@ -682,12 +667,12 @@ namespace death
 		return result;
 	}
 
-	chaos::GPURenderMaterial* TiledMapLevel::GenDefaultRenderMaterial()
+	chaos::GPURenderMaterial* TMLevel::GenDefaultRenderMaterial()
 	{
 		return chaos::GenDefaultParticleMaterial();
 	}
 
-	bool TiledMapLevel::FinalizeLayerParticles(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) 
+	bool TMLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) 
 	{
 		if (layer_instance != nullptr && layer_instance->layer != nullptr)
 		{
@@ -704,13 +689,13 @@ namespace death
 		return true; 
 	}
 
-	bool TiledMapLevel::FlushParticlesIntoAllocation(TiledMapLayerInstance* layer_instance, chaos::ParticleAllocationBase * allocation, TiledMapParticle const * particles, size_t particle_count)
+	bool TMLevel::FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase * allocation, TiledMapParticle const * particles, size_t particle_count)
 	{
 		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
 
 		if (!accessor.IsValid())
 		{
-			chaos::LogTools::Error("TiledMapLevel::FlushParticlesIntoAllocation => invalid accessor");
+			chaos::LogTools::Error("TMLevel::FlushParticlesIntoAllocation => invalid accessor");
 			return false;
 		}
 		for (size_t i = 0; i < particle_count; ++i)
@@ -731,44 +716,44 @@ namespace death
 
 
 	// =====================================
-	// TiledMapLayerInstance implementation
+	// TMLayerInstance implementation
 	// =====================================
 
-	chaos::AutoCastable<Game> TiledMapLayerInstance::GetGame()
+	chaos::AutoCastable<Game> TMLayerInstance::GetGame()
 	{
 		return level_instance->GetGame();
 	}
 
-	chaos::AutoConstCastable<Game> TiledMapLayerInstance::GetGame() const
+	chaos::AutoConstCastable<Game> TMLayerInstance::GetGame() const
 	{
 		return level_instance->GetGame();
 	}
 
-	chaos::AutoCastable<Level> TiledMapLayerInstance::GetLevel()
+	chaos::AutoCastable<Level> TMLayerInstance::GetLevel()
 	{
 		if (level_instance == nullptr)
 			return nullptr;
 		return level_instance->GetLevel();
 	}
 
-	chaos::AutoConstCastable<death::Level> TiledMapLayerInstance::GetLevel() const
+	chaos::AutoConstCastable<death::Level> TMLayerInstance::GetLevel() const
 	{
 		if (level_instance == nullptr)
 			return (Level*)nullptr;
 		return level_instance->GetLevel();
 	}
 
-	chaos::AutoCastable<LevelInstance> TiledMapLayerInstance::GetLevelInstance()
+	chaos::AutoCastable<LevelInstance> TMLayerInstance::GetLevelInstance()
 	{
 		return level_instance;
 	}
 
-	chaos::AutoConstCastable<LevelInstance> TiledMapLayerInstance::GetLevelInstance() const
+	chaos::AutoConstCastable<LevelInstance> TMLayerInstance::GetLevelInstance() const
 	{
 		return level_instance;
 	}
 
-	chaos::box2 TiledMapLayerInstance::GetBoundingBox(bool world_system) const
+	chaos::box2 TMLayerInstance::GetBoundingBox(bool world_system) const
 	{
 		chaos::box2 result;
 		if (!infinite_bounding_box)
@@ -782,7 +767,7 @@ namespace death
 		return result;
 	}
 
-	chaos::GPURenderMaterial* TiledMapLayerInstance::FindOrCreateRenderMaterial(char const* material_name)
+	chaos::GPURenderMaterial* TMLayerInstance::FindOrCreateRenderMaterial(char const* material_name)
 	{
 		if (material_name != nullptr && material_name[0] != 0) // unamed material ?
 		{
@@ -800,7 +785,7 @@ namespace death
 		return level_instance->GetDefaultRenderMaterial();
 	}
 
-	void TiledMapLayerInstance::ComputeLayerCollisionMask(char const * mask)
+	void TMLayerInstance::ComputeLayerCollisionMask(char const * mask)
 	{
 		assert(mask != nullptr);
 
@@ -813,7 +798,7 @@ namespace death
 			collision_mask |= GetCollisionFlagByName(name.c_str());
 	}
 
-	uint64_t TiledMapLayerInstance::GetCollisionFlagByName(char const* name) const
+	uint64_t TMLayerInstance::GetCollisionFlagByName(char const* name) const
 	{
 		assert(name != nullptr);
 
@@ -825,7 +810,7 @@ namespace death
 		return 0;
 	}
 
-	bool TiledMapLayerInstance::Initialize(TiledMapLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer)
+	bool TMLayerInstance::Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer)
 	{
 		// ensure not already initialized
 		assert(in_level_instance != nullptr);
@@ -894,7 +879,7 @@ namespace death
 		return false;
 	}
 
-	void TiledMapLayerInstance::OnRestart()
+	void TMLayerInstance::OnRestart()
 	{
 		// clear allocation if required
 		if (autoclean_particles && particle_layer != nullptr)
@@ -905,7 +890,7 @@ namespace death
 			objects[i]->OnLevelRestart();
 	}
 
-	bool TiledMapLayerInstance::SerializeObjectListFromJSON(nlohmann::json const& json, char const * attribute_name, std::vector<chaos::shared_ptr<TiledMapObject>> & result)
+	bool TMLayerInstance::SerializeObjectListFromJSON(nlohmann::json const& json, char const * attribute_name, std::vector<chaos::shared_ptr<TMObject>> & result)
 	{
 		// in "Objects" array, read all objects, search the ID and apply the data to dedicated object
 		nlohmann::json const* objects_json = chaos::JSONTools::GetStructure(json, attribute_name);
@@ -919,7 +904,7 @@ namespace death
 					int object_id = 0;
 					if (chaos::JSONTools::GetAttribute(*object_json, "OBJECT_ID", object_id))
 					{
-						TiledMapTrigger* trigger = FindTriggerByID(object_id);
+						TMTrigger* trigger = FindTriggerByID(object_id);
 						if (trigger != nullptr)
 						{
 							chaos::LoadFromJSON(*object_json, *trigger); // XXX : the indirection is important to avoid the creation of a new layer_instance
@@ -935,7 +920,7 @@ namespace death
 		return true;
 	}
 	
-	bool TiledMapLayerInstance::SerializeFromJSON(nlohmann::json const& json)
+	bool TMLayerInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
 		if (!chaos::JSONSerializable::SerializeFromJSON(json))
 			return false;
@@ -943,7 +928,7 @@ namespace death
 		return true;
 	}
 	
-	bool TiledMapLayerInstance::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMLayerInstance::SerializeIntoJSON(nlohmann::json& json) const
 	{
 		if (!chaos::JSONSerializable::SerializeIntoJSON(json))
 			return false;
@@ -953,7 +938,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer)
+	bool TMLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer)
 	{
 		return true;
 	}
@@ -965,7 +950,7 @@ namespace death
 
 
 
-	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const* in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator& particle_populator)
+	void TMLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const* in_geometric_object, TMObject* object, TMParticlePopulator& particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
@@ -1005,9 +990,9 @@ namespace death
 		// create additionnal particles (TILES)		
 		else if (chaos::TiledMap::GeometricObjectTile const* tile = in_geometric_object->GetObjectTile())
 		{
-			TiledMapLayerInstanceParticlePopulator object_particle_populator = particle_populator;
+			TMParticlePopulator object_particle_populator = particle_populator;
 
-			TiledMapLayerInstanceParticlePopulator* effective_particle_populator = (particle_ownership) ? &object_particle_populator : &particle_populator;
+			TMParticlePopulator* effective_particle_populator = (particle_ownership) ? &object_particle_populator : &particle_populator;
 
 			int gid = tile->gid;
 
@@ -1040,7 +1025,7 @@ namespace death
 
 	CHAOS_HELP_TEXT(CMD, "-TiledGeometricObject::ForceParticleCreation");
 
-	bool TiledMapLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TiledMapObject* object) const
+	bool TMLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TMObject* object) const
 	{
 #if _DEBUG
 		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
@@ -1049,18 +1034,18 @@ namespace death
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
 	}
 
-	TiledMapObjectFactory TiledMapLayerInstance::GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object)
+	TMObjectFactory TMLayerInstance::GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object)
 	{
-		TiledMapLevel* level = GetLevel();
+		TMLevel* level = GetLevel();
 
 		// get a factory for the object (new + Initialize(...) ...)
-		TiledMapObjectFactory factory = level->GetObjectFactory(this, in_typed_object);
+		TMObjectFactory factory = level->GetObjectFactory(this, in_typed_object);
 		if (!factory)
 			return nullptr;
 		// create a 'final' factory that use previous one + insert the result object in correct list
-		TiledMapObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject const * geometric_object)
+		TMObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject const * geometric_object)
 		{
-			TiledMapObject* result = factory(geometric_object);
+			TMObject* result = factory(geometric_object);
 			if (result != nullptr)
 				objects.push_back(result);
 			return result;
@@ -1088,14 +1073,14 @@ namespace death
 	// shuyyy
 
 
-	bool TiledMapLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer)
+	bool TMLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer)
 	{
 		// search the bounding box (explicit or not)
 		chaos::box2 box;
 		chaos::box2 explicit_bounding_box;
 
 		// the particle generator
-		TiledMapLayerInstanceParticlePopulator particle_populator; // this populator is for the WHOLE LAYER
+		TMParticlePopulator particle_populator; // this populator is for the WHOLE LAYER
 		if (!particle_populator.Initialize(this))
 			return false;
 
@@ -1126,9 +1111,9 @@ namespace death
 			}
 
 			// get factory + create the object
-			TiledMapObject* object = nullptr;
+			TMObject* object = nullptr;
 
-			TiledMapObjectFactory factory = GetObjectFactory(geometric_object);
+			TMObjectFactory factory = GetObjectFactory(geometric_object);
 			if (factory)
 			{
 				object = factory(geometric_object); 
@@ -1157,13 +1142,13 @@ namespace death
 
 	// shuyyy
 
-	bool TiledMapLayerInstance::FinalizeParticles(chaos::ParticleAllocationBase* allocation)
+	bool TMLayerInstance::FinalizeParticles(chaos::ParticleAllocationBase* allocation)
 	{
 		// no layer, nothing to do !
 		if (particle_layer == nullptr)
 			return true;
 		// no level ?
-		TiledMapLevel* level = GetLevel();
+		TMLevel* level = GetLevel();
 		if (level == nullptr)
 			return true;
 		// initialize each allocations
@@ -1193,7 +1178,7 @@ namespace death
 
 
 
-	bool TiledMapLayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer)
+	bool TMLayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer)
 	{
 		// the name
 		std::string const* renderable_name = layer->FindPropertyString("RENDERABLE_NAME");
@@ -1222,7 +1207,7 @@ namespace death
 		return true;
 	}
 
-	chaos::ParticleAllocationBase* TiledMapLayerInstance::SpawnParticles(size_t count, bool new_allocation)
+	chaos::ParticleAllocationBase* TMLayerInstance::SpawnParticles(size_t count, bool new_allocation)
 	{
 		// create particle layer if necessary
 		if (CreateParticleLayer() == nullptr)
@@ -1231,7 +1216,7 @@ namespace death
 		return particle_layer->SpawnParticles(count, new_allocation);
 	}
 
-	chaos::ParticleLayerBase* TiledMapLayerInstance::CreateParticleLayer()
+	chaos::ParticleLayerBase* TMLayerInstance::CreateParticleLayer()
 	{
 		if (particle_layer == nullptr)
 		{
@@ -1240,7 +1225,7 @@ namespace death
 			if (render_material == nullptr)
 				return nullptr;
 			// create a particle layer (it is not attached to any particle manager !)
-			TiledMapLevel* level = GetLevel();
+			TMLevel* level = GetLevel();
 			particle_layer = level->DoCreateParticleLayer(this);
 			if (particle_layer == nullptr)
 				return false;
@@ -1272,11 +1257,11 @@ namespace death
 	// shuyyy
 
 
-	bool TiledMapLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer)
+	bool TMLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer)
 	{
-		TiledMapLevel* level = GetLevel();
+		TMLevel* level = GetLevel();
 
-		TiledMapLayerInstanceParticlePopulator particle_populator;
+		TMParticlePopulator particle_populator;
 		if (!particle_populator.Initialize(this))
 			return false;
 
@@ -1309,7 +1294,7 @@ namespace death
 				chaos::box2 particle_box = tile_layer->GetTileBoundingBox(tile_coord, tile_info.tiledata->image_size, particle_flags, false);
 
 				// try to create a geometric object from the tile
-				TiledMapObjectFactory factory = GetObjectFactory(tile_info.tiledata);
+				TMObjectFactory factory = GetObjectFactory(tile_info.tiledata);
 				if (factory)
 				{
 					chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
@@ -1344,7 +1329,7 @@ namespace death
 						//       interfere with that (a just in case value)
 						tile_object->CreatePropertyString("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str());
 
-						TiledMapObject* object = factory(tile_object.get());
+						TMObject* object = factory(tile_object.get());
 						if (object != nullptr)
 							if (ShouldCreateParticleForObject(tile_object.get(), object))
 								CreateObjectParticles(tile_object.get(), object, particle_populator);
@@ -1395,7 +1380,7 @@ namespace death
 
 
 
-	bool TiledMapLayerInstance::DoTick(float delta_time)
+	bool TMLayerInstance::DoTick(float delta_time)
 	{
 		// objects
 		size_t object_count = objects.size();
@@ -1407,7 +1392,7 @@ namespace death
 		return true;
 	}
 
-	int TiledMapLayerInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+	int TMLayerInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
 	{
 		// early exit
 		int result = 0;
@@ -1431,7 +1416,7 @@ namespace death
 
 		glm::vec2 final_ratio = glm::vec2(1.0f, 1.0f);
 
-		TiledMapLayerInstance const* reference_layer = level_instance->reference_layer.get();
+		TMLayerInstance const* reference_layer = level_instance->reference_layer.get();
 		if (reference_layer != nullptr)
 		{
 			if (reference_layer->displacement_ratio.x != 0.0f)
@@ -1494,11 +1479,11 @@ namespace death
 	}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, constness)\
-		result_type constness * TiledMapLayerInstance::func_name(chaos::ObjectRequest request) constness\
+		result_type constness * TMLayerInstance::func_name(chaos::ObjectRequest request) constness\
 		{\
 			return auto_cast(request.FindObject(objects));\
 		}\
-		result_type constness* TiledMapLayerInstance::func_name##ByID(int id) constness\
+		result_type constness* TMLayerInstance::func_name##ByID(int id) constness\
 		{\
 			size_t count = objects.size();\
 			for (size_t i = 0; i < objects.size(); ++i)\
@@ -1506,37 +1491,37 @@ namespace death
 					return auto_cast(objects[i].get());\
 			return nullptr;\
 		}
-	DEATH_FIND_OBJECT(TiledMapObject, FindObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapObject, FindObject, const);
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, const);
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, const);
-	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, const);
+	DEATH_FIND_OBJECT(TMObject, FindObject, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMObject, FindObject, const);
+	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, const);
+	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, const);
+	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, const);
 
 #undef DEATH_FIND_OBJECT
 	
-	size_t TiledMapLayerInstance::GetObjectCount() const
+	size_t TMLayerInstance::GetObjectCount() const
 	{
 		return objects.size();
 	}
 
-	TiledMapObject* TiledMapLayerInstance::GetObject(size_t index)
+	TMObject* TMLayerInstance::GetObject(size_t index)
 	{
 		if (index >= objects.size())
 			return nullptr;
 		return objects[index].get();
 	}
 
-	TiledMapObject const* TiledMapLayerInstance::GetObject(size_t index) const
+	TMObject const* TMLayerInstance::GetObject(size_t index) const
 	{
 		if (index >= objects.size())
 			return nullptr;
 		return objects[index].get();
 	}
 
-	void TiledMapLayerInstance::OnLevelEnded()
+	void TMLayerInstance::OnLevelEnded()
 	{
 		//  objects
 		size_t object_count = objects.size();
@@ -1544,7 +1529,7 @@ namespace death
 			objects[i]->OnLevelEnded();
 	}
 
-	void TiledMapLayerInstance::OnLevelStarted()
+	void TMLayerInstance::OnLevelStarted()
 	{
 		//  objects
 		size_t object_count = objects.size();
@@ -1553,27 +1538,27 @@ namespace death
 	}
 
 	// =====================================
-	// TiledMapTriggerCollisionInfo implementation
+	// TMTriggerCollisionInfo implementation
 	// =====================================
 
-	bool TiledMapTriggerCollisionInfo::FindTrigger(TiledMapTrigger const* trigger) const
+	bool TMTriggerCollisionInfo::FindTrigger(TMTrigger const* trigger) const
 	{
-		return std::find_if(triggers.begin(), triggers.end(), [trigger](chaos::weak_ptr<TiledMapTrigger> const& p) {return p.get() == trigger; }) != triggers.end();
+		return std::find_if(triggers.begin(), triggers.end(), [trigger](chaos::weak_ptr<TMTrigger> const& p) {return p.get() == trigger; }) != triggers.end();
 	}
 
 	// =====================================
-	// TiledMapLevelInstance implementation
+	// TMLevelInstance implementation
 	// =====================================
 
-	chaos::TiledMap::Map* TiledMapLevelInstance::GetTiledMap()
+	chaos::TiledMap::Map* TMLevelInstance::GetTiledMap()
 	{
-		TiledMapLevel* level = GetLevel();
+		TMLevel* level = GetLevel();
 		if (level == nullptr)
 			return nullptr;
 		return level->GetTiledMap();
 	}
 
-	void TiledMapLevelInstance::OnRestart()
+	void TMLevelInstance::OnRestart()
 	{
 		LevelInstance::OnRestart();
 		
@@ -1582,15 +1567,15 @@ namespace death
 			layer_instances[i]->OnRestart();
 	}
 
-	chaos::TiledMap::Map const* TiledMapLevelInstance::GetTiledMap() const
+	chaos::TiledMap::Map const* TMLevelInstance::GetTiledMap() const
 	{
-		TiledMapLevel const* level = GetLevel();
+		TMLevel const* level = GetLevel();
 		if (level == nullptr)
 			return nullptr;
 		return level->GetTiledMap();
 	}
 
-	void TiledMapLevelInstance::PurgeCollisionInfo()
+	void TMLevelInstance::PurgeCollisionInfo()
 	{
 		size_t count = collision_info.size();
 		for (size_t i = count; i > 0; --i)
@@ -1604,7 +1589,7 @@ namespace death
 		}
 	}
 
-	TiledMapTriggerCollisionInfo* TiledMapLevelInstance::FindTriggerCollisionInfo(chaos::Object* object)
+	TMTriggerCollisionInfo* TMLevelInstance::FindTriggerCollisionInfo(chaos::Object* object)
 	{
 		size_t count = collision_info.size();
 		for (size_t i = 0; i < count ; ++i)
@@ -1613,16 +1598,16 @@ namespace death
 		return nullptr;
 	}
 
-	void TiledMapLevelInstance::HandleTriggerCollisions(float delta_time, chaos::Object* object, chaos::box2 const& box, int mask)
+	void TMLevelInstance::HandleTriggerCollisions(float delta_time, chaos::Object* object, chaos::box2 const& box, int mask)
 	{
-		TiledMapTriggerCollisionInfo* previous_collisions = FindTriggerCollisionInfo(object);
+		TMTriggerCollisionInfo* previous_collisions = FindTriggerCollisionInfo(object);
 
-		TiledMapTriggerCollisionInfo new_collisions;
+		TMTriggerCollisionInfo new_collisions;
 
 		// search all new collisions
-		for (TiledMapTriggerCollisionIterator it = GetTriggerCollisionIterator(box, mask) ; it ; ++it)
+		for (TMTriggerCollisionIterator it = GetTriggerCollisionIterator(box, mask) ; it ; ++it)
 		{
-			TiledMapTrigger& trigger = *it;
+			TMTrigger& trigger = *it;
 			// trigger only enabled trigger
 			if (!trigger.IsEnabled())
 				continue;
@@ -1644,7 +1629,7 @@ namespace death
 		size_t new_collision_count = new_collisions.triggers.size();
 		for (size_t i = 0; i < new_collision_count; ++i)
 		{
-			TiledMapTrigger* trigger = new_collisions.triggers[i].get();
+			TMTrigger* trigger = new_collisions.triggers[i].get();
 
 			// search in previous frame data
 			chaos::CollisionType collision_type = chaos::CollisionType::STARTED;
@@ -1677,7 +1662,7 @@ namespace death
 		if (previous_collisions != nullptr)
 		{
 			if (new_collisions.triggers.size() == 0)
-				collision_info.erase(std::remove_if(collision_info.begin(), collision_info.end(), [object](TiledMapTriggerCollisionInfo const& info) { return info.object == object; }), collision_info.end());
+				collision_info.erase(std::remove_if(collision_info.begin(), collision_info.end(), [object](TMTriggerCollisionInfo const& info) { return info.object == object; }), collision_info.end());
 			else
 				previous_collisions->triggers = std::move(new_collisions.triggers);
 		}
@@ -1689,7 +1674,7 @@ namespace death
 	}
 
 
-	void TiledMapLevelInstance::HandlePlayerTriggerCollisions(float delta_time)
+	void TMLevelInstance::HandlePlayerTriggerCollisions(float delta_time)
 	{
 		// compute the collisions for all players
 		size_t player_count = game->GetPlayerCount();
@@ -1711,7 +1696,7 @@ namespace death
 		}
 	}
 
-	void TiledMapLevelInstance::HandleCameraTriggerCollisions(float delta_time)
+	void TMLevelInstance::HandleCameraTriggerCollisions(float delta_time)
 	{
 		// compute the collisions for all cameras
 		size_t camera_count = game->GetCameraCount();
@@ -1729,7 +1714,7 @@ namespace death
 		}
 	}
 
-	bool TiledMapLevelInstance::DoTick(float delta_time)
+	bool TMLevelInstance::DoTick(float delta_time)
 	{
 		death::LevelInstance::DoTick(delta_time);
 
@@ -1750,7 +1735,7 @@ namespace death
 		return true;
 	}
 
-	int TiledMapLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+	int TMLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
 	{
 		int result = 0;
 
@@ -1765,7 +1750,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapLevelInstance::Initialize(Game* in_game, death::Level* in_level)
+	bool TMLevelInstance::Initialize(Game* in_game, death::Level* in_level)
 	{
 		if (!death::LevelInstance::Initialize(in_game, in_level))
 			return false;
@@ -1779,7 +1764,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLevelInstance::CreateParticleManager(Game* in_game)
+	bool TMLevelInstance::CreateParticleManager(Game* in_game)
 	{
 		particle_manager = new chaos::ParticleManager;
 		if (particle_manager == nullptr)
@@ -1788,14 +1773,14 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLevelInstance::DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const & layers)
+	bool TMLevelInstance::DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const & layers)
 	{
-		TiledMapLevel* level = GetLevel();
+		TMLevel* level = GetLevel();
 
 		for (auto& layer : layers)
 		{
 			// insert the new layer
-			TiledMapLayerInstance* layer_instance = level->CreateLayerInstance(this, layer.get());
+			TMLayerInstance* layer_instance = level->CreateLayerInstance(this, layer.get());
 			if (layer_instance != nullptr)
 				layer_instances.push_back(layer_instance);
 			// for layer group iterate over child layers
@@ -1806,7 +1791,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLevelInstance::CreateLayerInstances(Game* in_game)
+	bool TMLevelInstance::CreateLayerInstances(Game* in_game)
 	{
 		chaos::TiledMap::Map* tiled_map = GetTiledMap();
 		if (tiled_map != nullptr)
@@ -1814,7 +1799,7 @@ namespace death
 		return true;
 	}
 
-	chaos::box2 TiledMapLevelInstance::GetBoundingBox() const
+	chaos::box2 TMLevelInstance::GetBoundingBox() const
 	{
 		// explicit bounding box
 		if (has_explicit_bounding_box)
@@ -1827,17 +1812,17 @@ namespace death
 		return result;
 	}
 
-	chaos::GPURenderMaterial* TiledMapLevelInstance::GetDefaultRenderMaterial()
+	chaos::GPURenderMaterial* TMLevelInstance::GetDefaultRenderMaterial()
 	{
 		if (default_material == nullptr)
 		{
-			TiledMapLevel* level = GetLevel();
+			TMLevel* level = GetLevel();
 			default_material = level->GenDefaultRenderMaterial(); // create material and cache
 		}
 		return default_material.get();
 	}
 
-	TiledMapLayerInstance* TiledMapLevelInstance::FindLayerInstanceByID(int id)
+	TMLayerInstance* TMLevelInstance::FindLayerInstanceByID(int id)
 	{
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1846,7 +1831,7 @@ namespace death
 		return nullptr;
 	}
 
-	TiledMapLayerInstance const* TiledMapLevelInstance::FindLayerInstanceByID(int id) const
+	TMLayerInstance const* TMLevelInstance::FindLayerInstanceByID(int id) const
 	{
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1856,7 +1841,7 @@ namespace death
 	}
 
 #define DEATH_FIND_OBJECT(result_type, func_name, constness)\
-	result_type constness * TiledMapLevelInstance::func_name(chaos::ObjectRequest request) constness\
+	result_type constness * TMLevelInstance::func_name(chaos::ObjectRequest request) constness\
 	{\
 		size_t count = layer_instances.size();\
 		for (size_t i = 0; i < count; ++i)\
@@ -1867,35 +1852,35 @@ namespace death
 		}\
 		return nullptr;\
 	}
-	DEATH_FIND_OBJECT(TiledMapObject, FindObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapObject, FindObject, const);
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapTrigger, FindTrigger, const);
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapPlayerStart, FindPlayerStart, const);
-	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TiledMapCameraTemplate, FindCameraTemplate, const);
+	DEATH_FIND_OBJECT(TMObject, FindObject, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMObject, FindObject, const);
+	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, const);
+	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, const);
+	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
+	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, const);
 
 #undef DEATH_FIND_OBJECT
 
-	TiledMapLayerInstance* TiledMapLevelInstance::FindLayerInstance(chaos::ObjectRequest request)
+	TMLayerInstance* TMLevelInstance::FindLayerInstance(chaos::ObjectRequest request)
 	{
 		return request.FindObject(layer_instances);
 	}
-	TiledMapLayerInstance const* TiledMapLevelInstance::FindLayerInstance(chaos::ObjectRequest request) const
+	TMLayerInstance const* TMLevelInstance::FindLayerInstance(chaos::ObjectRequest request) const
 	{
 		return request.FindObject(layer_instances);
 	}
 
-	void TiledMapLevelInstance::CreateCameras()
+	void TMLevelInstance::CreateCameras()
 	{
-		TiledMapLevel* level = GetLevel();
+		TMLevel* level = GetLevel();
 
 		// search CAMERA NAME
 		std::string const* camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
 
 		// search the CAMERA
-		TiledMapCameraTemplate* camera_template = nullptr;
+		TMCameraTemplate* camera_template = nullptr;
 		if (camera_name != nullptr)
 			camera_template = FindCameraTemplate(*camera_name); // first, if a name is given, use it
 		if (camera_template == nullptr)
@@ -1926,9 +1911,9 @@ namespace death
 	}
 
 
-	TiledMapPlayerStart* TiledMapLevelInstance::GetPlayerStartForPawn(Player* player)
+	TMPlayerStart* TMLevelInstance::GetPlayerStartForPawn(Player* player)
 	{
-		TiledMapLevel* level = GetLevel();
+		TMLevel* level = GetLevel();
 		if (level == nullptr)
 			return nullptr;
 
@@ -1936,7 +1921,7 @@ namespace death
 		std::string const* player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
 
 		// search the PLAYER START
-		TiledMapPlayerStart* result = nullptr;
+		TMPlayerStart* result = nullptr;
 		if (player_start_name != nullptr)
 			result = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
 		if (result == nullptr)
@@ -1944,10 +1929,10 @@ namespace death
 		return result;
 	}
 
-	PlayerPawn* TiledMapLevelInstance::CreatePlayerPawn(Player* player, TiledMapPlayerStart* player_start, TiledMapLayerInstance* layer_instance)	
+	PlayerPawn* TMLevelInstance::CreatePlayerPawn(Player* player, TMPlayerStart* player_start, TMLayerInstance* layer_instance)	
 	{
 		// create a particle populator
-		TiledMapLayerInstanceParticlePopulator particle_populator;
+		TMParticlePopulator particle_populator;
 		if (!particle_populator.Initialize(layer_instance))
 			return nullptr;
 
@@ -1978,15 +1963,15 @@ namespace death
 		return result;
 	}
 
-	PlayerPawn * TiledMapLevelInstance::CreatePlayerPawn(Player* player)
+	PlayerPawn * TMLevelInstance::CreatePlayerPawn(Player* player)
 	{
 		// find the player start to use for the player
-		TiledMapPlayerStart* player_start = GetPlayerStartForPawn(player);
+		TMPlayerStart* player_start = GetPlayerStartForPawn(player);
 		if (player_start == nullptr)
 			return nullptr;
 
 		// initialize some data
-		TiledMapLayerInstance* layer_instance = player_start->GetLayerInstance();
+		TMLayerInstance* layer_instance = player_start->GetLayerInstance();
 		if (layer_instance == nullptr)
 			return nullptr;
 
@@ -1996,12 +1981,12 @@ namespace death
 		return CreatePlayerPawn(player, player_start, layer_instance);
 	}
 
-	void TiledMapLevelInstance::CreateBackgroundImage()
+	void TMLevelInstance::CreateBackgroundImage()
 	{
 		std::string const* background_material = nullptr;
 		std::string const* background_texture = nullptr;
 
-		TiledMapLevel const* level = GetLevel();
+		TMLevel const* level = GetLevel();
 		if (level != nullptr)
 		{
 			background_material = level->GetTiledMap()->FindPropertyString("BACKGROUND_MATERIAL");
@@ -2013,9 +1998,9 @@ namespace death
 			(background_texture == nullptr) ? nullptr : background_texture->c_str());
 	}
 
-	void TiledMapLevelInstance::SetInGameMusic()
+	void TMLevelInstance::SetInGameMusic()
 	{
-		TiledMapLevel const* level = GetLevel();
+		TMLevel const* level = GetLevel();
 		if (level != nullptr)
 		{
 			std::string const* level_music = level->GetTiledMap()->FindPropertyString("MUSIC");
@@ -2028,7 +2013,7 @@ namespace death
 		death::LevelInstance::SetInGameMusic();
 	}
 
-	void TiledMapLevelInstance::OnLevelEnded()
+	void TMLevelInstance::OnLevelEnded()
 	{
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
@@ -2037,7 +2022,7 @@ namespace death
 		death::LevelInstance::OnLevelEnded();
 	}
 
-	void TiledMapLevelInstance::OnLevelStarted()
+	void TMLevelInstance::OnLevelStarted()
 	{
 		death::LevelInstance::OnLevelStarted();
 
@@ -2046,22 +2031,22 @@ namespace death
 			layer_instances[i]->OnLevelStarted();
 	}
 
-	TiledMapTileCollisionIterator TiledMapLevelInstance::GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	TMTileCollisionIterator TMLevelInstance::GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
 	{
-		return TiledMapTileCollisionIterator(this, in_collision_box, in_collision_mask);
+		return TMTileCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
 
-	TiledMapTriggerCollisionIterator TiledMapLevelInstance::GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	TMTriggerCollisionIterator TMLevelInstance::GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
 	{
-		return TiledMapTriggerCollisionIterator(this, in_collision_box, in_collision_mask);
+		return TMTriggerCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
 
-	TiledMapObjectCollisionIterator TiledMapLevelInstance::GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	TMObjectCollisionIterator TMLevelInstance::GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
 	{
-		return TiledMapObjectCollisionIterator(this, in_collision_box, in_collision_mask);
+		return TMObjectCollisionIterator(this, in_collision_box, in_collision_mask);
 	}
 
-	bool TiledMapLevelInstance::SerializeFromJSON(nlohmann::json const& json)
+	bool TMLevelInstance::SerializeFromJSON(nlohmann::json const& json)
 	{
 		if (!LevelInstance::SerializeFromJSON(json))
 			return false;
@@ -2078,7 +2063,7 @@ namespace death
 					int layer_id = 0;
 					if (chaos::JSONTools::GetAttribute(*layer_json, "LAYER_ID", layer_id))
 					{
-						TiledMapLayerInstance * layer_instance = FindLayerInstanceByID(layer_id);
+						TMLayerInstance * layer_instance = FindLayerInstanceByID(layer_id);
 						if (layer_instance != nullptr)
 							LoadFromJSON(*layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
 					}
@@ -2088,7 +2073,7 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLevelInstance::SerializeIntoJSON(nlohmann::json& json) const
+	bool TMLevelInstance::SerializeIntoJSON(nlohmann::json& json) const
 	{
 		if (!LevelInstance::SerializeIntoJSON(json))
 			return false;
@@ -2097,10 +2082,10 @@ namespace death
 	}
 
 	// =====================================
-	// TiledMapCollisionIteratorBase implementation
+	// TMCollisionIteratorBase implementation
 	// =====================================
 
-	TiledMapCollisionIteratorBase::TiledMapCollisionIteratorBase(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+	TMCollisionIteratorBase::TMCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
 		level_instance(in_level_instance),
 		collision_box(in_collision_box),
 		collision_mask(in_collision_mask)
@@ -2110,34 +2095,34 @@ namespace death
 		assert(!chaos::IsGeometryEmpty(in_collision_box));
 	}
 
-	TiledMapCollisionIteratorBase::operator bool() const
+	TMCollisionIteratorBase::operator bool() const
 	{
 		return (level_instance != nullptr);
 	}
 
 	// =====================================
-	// TiledMapTileCollisionIterator implementation
+	// TMTileCollisionIterator implementation
 	// =====================================
 
-	TiledMapTileCollisionIterator::TiledMapTileCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TiledMapCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
+	TMTileCollisionIterator::TMTileCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+		TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
 	{
 		FindFirstCollision();
 	}
 
-	TileCollisionInfo const& TiledMapTileCollisionIterator::operator *() const
+	TileCollisionInfo const& TMTileCollisionIterator::operator *() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
 		return cached_result;
 	}
 
-	TileCollisionInfo const* TiledMapTileCollisionIterator::operator ->() const
+	TileCollisionInfo const* TMTileCollisionIterator::operator ->() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
 		return &cached_result;
 	}
 
-	void TiledMapTileCollisionIterator::FindFirstCollision()
+	void TMTileCollisionIterator::FindFirstCollision()
 	{
 		assert(level_instance != nullptr); // end already reached. cannot go further
 
@@ -2145,7 +2130,7 @@ namespace death
 		{
 			while (layer_instance_index < level_instance->layer_instances.size())
 			{	
-				TiledMapLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
+				TMLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
 
 				if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
 				{
@@ -2195,7 +2180,7 @@ namespace death
 		}
 	}
 
-	void TiledMapTileCollisionIterator::EndIterator()
+	void TMTileCollisionIterator::EndIterator()
 	{
 		level_instance = nullptr;
 		layer_instance_index = 0;
@@ -2203,20 +2188,20 @@ namespace death
 		particle_index = 0;
 	}
 
-	TiledMapTileCollisionIterator& TiledMapTileCollisionIterator::operator ++ ()
+	TMTileCollisionIterator& TMTileCollisionIterator::operator ++ ()
 	{
 		Next();
 		return *this;
 	}
 
-	TiledMapTileCollisionIterator TiledMapTileCollisionIterator::operator ++ (int i)
+	TMTileCollisionIterator TMTileCollisionIterator::operator ++ (int i)
 	{
-		TiledMapTileCollisionIterator result = *this;
+		TMTileCollisionIterator result = *this;
 		++(*this);
 		return result;
 	}
 	
-	void TiledMapTileCollisionIterator::NextLayer()
+	void TMTileCollisionIterator::NextLayer()
 	{
 		if (ignore_other_layers)
 		{
@@ -2231,14 +2216,14 @@ namespace death
 		}
 	}
 	
-	void TiledMapTileCollisionIterator::NextAllocation()
+	void TMTileCollisionIterator::NextAllocation()
 	{
 		++allocation_index;
 		particle_index = 0;
 		FindFirstCollision();
 	}
 	
-	void TiledMapTileCollisionIterator::Next()
+	void TMTileCollisionIterator::Next()
 	{
 		++particle_index;
 		FindFirstCollision();
@@ -2246,16 +2231,16 @@ namespace death
 
 
 	// =====================================
-	// TiledMapTriggerCollisionIterator implementation
+	// TMTriggerCollisionIterator implementation
 	// =====================================
 
-	TiledMapTriggerCollisionIterator::TiledMapTriggerCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TiledMapObjectCollisionIteratorBase<TiledMapTrigger>(in_level_instance, in_collision_box, in_collision_mask)
+	TMTriggerCollisionIterator::TMTriggerCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+		TMObjectCollisionIteratorBase<TMTrigger>(in_level_instance, in_collision_box, in_collision_mask)
 	{
 		FindFirstCollision();
 	}
 
-	void TiledMapTriggerCollisionIterator::FindFirstCollision()
+	void TMTriggerCollisionIterator::FindFirstCollision()
 	{
 		assert(level_instance != nullptr); // end already reached. cannot go further
 
@@ -2263,13 +2248,13 @@ namespace death
 		{
 			while (layer_instance_index < level_instance->layer_instances.size())
 			{
-				TiledMapLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
+				TMLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
 
 				if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
 				{
 					while (object_index < layer_instance->GetObjectCount())
 					{
-						TiledMapTrigger* object = auto_cast(layer_instance->GetObject(object_index));
+						TMTrigger* object = auto_cast(layer_instance->GetObject(object_index));
 						if (object != nullptr)
 						{
 							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))
@@ -2291,20 +2276,20 @@ namespace death
 		}
 	}
 
-	TiledMapTriggerCollisionIterator& TiledMapTriggerCollisionIterator::operator ++ ()
+	TMTriggerCollisionIterator& TMTriggerCollisionIterator::operator ++ ()
 	{
 		Next();
 		return *this;
 	}
 
-	TiledMapTriggerCollisionIterator TiledMapTriggerCollisionIterator::operator ++ (int i)
+	TMTriggerCollisionIterator TMTriggerCollisionIterator::operator ++ (int i)
 	{
-		TiledMapTriggerCollisionIterator result = *this;
+		TMTriggerCollisionIterator result = *this;
 		++(*this);
 		return result;
 	}
 
-	void TiledMapTriggerCollisionIterator::NextLayer()
+	void TMTriggerCollisionIterator::NextLayer()
 	{
 		if (ignore_other_layers)
 		{
@@ -2318,7 +2303,7 @@ namespace death
 		}
 	}
 
-	void TiledMapTriggerCollisionIterator::Next()
+	void TMTriggerCollisionIterator::Next()
 	{
 		++object_index;
 		FindFirstCollision();
@@ -2326,16 +2311,16 @@ namespace death
 
 
 	// =====================================
-	// TiledMapObjectCollisionIterator implementation
+	// TMObjectCollisionIterator implementation
 	// =====================================
 
-	TiledMapObjectCollisionIterator::TiledMapObjectCollisionIterator(TiledMapLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TiledMapObjectCollisionIteratorBase<TiledMapObject>(in_level_instance, in_collision_box, in_collision_mask)
+	TMObjectCollisionIterator::TMObjectCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+		TMObjectCollisionIteratorBase<TMObject>(in_level_instance, in_collision_box, in_collision_mask)
 	{
 		FindFirstCollision();
 	}
 
-	void TiledMapObjectCollisionIterator::FindFirstCollision()
+	void TMObjectCollisionIterator::FindFirstCollision()
 	{
 		assert(level_instance != nullptr); // end already reached. cannot go further
 
@@ -2343,13 +2328,13 @@ namespace death
 		{
 			while (layer_instance_index < level_instance->layer_instances.size())
 			{
-				TiledMapLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
+				TMLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
 
 				if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
 				{
 					while (object_index < layer_instance->GetObjectCount())
 					{
-						TiledMapObject* object = layer_instance->GetObject(object_index);
+						TMObject* object = layer_instance->GetObject(object_index);
 						if (object != nullptr)
 						{
 							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))
@@ -2371,20 +2356,20 @@ namespace death
 		}
 	}
 
-	TiledMapObjectCollisionIterator& TiledMapObjectCollisionIterator::operator ++ ()
+	TMObjectCollisionIterator& TMObjectCollisionIterator::operator ++ ()
 	{
 		Next();
 		return *this;
 	}
 
-	TiledMapObjectCollisionIterator TiledMapObjectCollisionIterator::operator ++ (int i)
+	TMObjectCollisionIterator TMObjectCollisionIterator::operator ++ (int i)
 	{
-		TiledMapObjectCollisionIterator result = *this;
+		TMObjectCollisionIterator result = *this;
 		++(*this);
 		return result;
 	}
 
-	void TiledMapObjectCollisionIterator::NextLayer()
+	void TMObjectCollisionIterator::NextLayer()
 	{
 		if (ignore_other_layers)
 		{
@@ -2398,7 +2383,7 @@ namespace death
 		}
 	}
 
-	void TiledMapObjectCollisionIterator::Next()
+	void TMObjectCollisionIterator::Next()
 	{
 		++object_index;
 		FindFirstCollision();

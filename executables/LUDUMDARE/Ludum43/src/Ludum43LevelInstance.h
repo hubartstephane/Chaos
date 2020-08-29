@@ -6,7 +6,7 @@
 #include <chaos/TiledMapTools.h>
 
 #include <death/Level.h>
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/Game.h>
 #include <death/GameFramework.h>
 
@@ -16,13 +16,13 @@
 // LudumLevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::TiledMapLevelInstance
+class LudumLevelInstance : public death::TMLevelInstance
 {
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TiledMapLevelInstance);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TMLevelInstance);
 
 protected:
 
@@ -35,7 +35,7 @@ protected:
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
 	/** override */
-	virtual death::PlayerPawn* CreatePlayerPawn(death::Player* player, death::TiledMapPlayerStart* player_start, death::TiledMapLayerInstance* layer_instance) override;
+	virtual death::PlayerPawn* CreatePlayerPawn(death::Player* player, death::TMPlayerStart* player_start, death::TMLayerInstance* layer_instance) override;
 
 protected:
 

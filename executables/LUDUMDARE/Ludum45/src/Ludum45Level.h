@@ -6,7 +6,7 @@
 #include <chaos/TiledMapTools.h>
 
 #include <death/Level.h>
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/Game.h>
 #include <death/GameFramework.h>
 
@@ -17,16 +17,16 @@
 // EnemySpawnerTrigger
 // =================================================
 
-class EnemySpawnerTrigger : public death::TiledMapTrigger
+class EnemySpawnerTrigger : public death::TMTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(EnemySpawnerTrigger, death::TiledMapTrigger);
+	CHAOS_OBJECT_DECLARE_CLASS2(EnemySpawnerTrigger, death::TMTrigger);
 
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 	/** override */
 	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -43,16 +43,16 @@ protected:
 // BonusSpawnerTrigger
 // =================================================
 
-class BonusSpawnerTrigger : public death::TiledMapTrigger
+class BonusSpawnerTrigger : public death::TMTrigger
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(BonusSpawnerTrigger, death::TiledMapTrigger);
+	CHAOS_OBJECT_DECLARE_CLASS2(BonusSpawnerTrigger, death::TMTrigger);
 
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 	/** override */
 	virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -66,17 +66,17 @@ protected:
 // Levels
 // =================================================
 
-class LudumLevel : public death::TiledMapLevel
+class LudumLevel : public death::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::TiledMapLevel);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::TMLevel);
 
 	LudumLevel();
 
 protected:
 
-	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
+	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TMLayerInstance * layer_instance) override;
 
-	virtual death::TiledMapObjectFactory DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
+	virtual death::TMObjectFactory DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
 };

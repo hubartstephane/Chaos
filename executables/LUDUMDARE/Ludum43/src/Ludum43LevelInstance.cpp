@@ -20,7 +20,7 @@
 void LudumLevelInstance::CreateCameras()
 {
 	// create the cameras
-	death::TiledMapLevelInstance::CreateCameras();
+	death::TMLevelInstance::CreateCameras();
 	// tweak the cameras
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
@@ -33,7 +33,7 @@ void LudumLevelInstance::CreateCameras()
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
-	if (death::TiledMapLevelInstance::CheckLevelCompletion())
+	if (death::TMLevelInstance::CheckLevelCompletion())
 		return true;
 
 	LudumPlayer const * ludum_player = GetPlayer(0);
@@ -62,16 +62,16 @@ bool LudumLevelInstance::CanCompleteLevel() const
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
-	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
+	if (!death::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 	// change the level timeout
 	level_timeout = in_level->GetLevelTimeout();
 	return true;
 }
 
-death::PlayerPawn* LudumLevelInstance::CreatePlayerPawn(death::Player* player, death::TiledMapPlayerStart* player_start, death::TiledMapLayerInstance* layer_instance)
+death::PlayerPawn* LudumLevelInstance::CreatePlayerPawn(death::Player* player, death::TMPlayerStart* player_start, death::TMLayerInstance* layer_instance)
 {
-	death::PlayerPawn* result = death::TiledMapLevelInstance::CreatePlayerPawn(player, player_start, layer_instance);
+	death::PlayerPawn* result = death::TMLevelInstance::CreatePlayerPawn(player, player_start, layer_instance);
 	if (result != nullptr)
 	{
 		chaos::ParticleAllocationBase* allocation = result->GetAllocation();

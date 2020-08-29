@@ -6,7 +6,7 @@
 #include <chaos/TiledMapTools.h>
 
 #include <death/Level.h>
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/Game.h>
 #include <death/GameFramework.h>
 
@@ -22,7 +22,7 @@ class EffectorObject
 public:
 
 	/** no override here */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object);
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object);
 
 	virtual void SetEffectorState(bool in_active)
 	{
@@ -49,13 +49,13 @@ protected:
 };
 
 
-class Spawner : public death::TiledMapObject
+class Spawner : public death::TMObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
 public:
 
-	CHAOS_OBJECT_DECLARE_CLASS2(Spawner, death::TiledMapObject);
+	CHAOS_OBJECT_DECLARE_CLASS2(Spawner, death::TMObject);
 
 	/** override */
 	virtual bool DoTick(float delta_time);
@@ -65,7 +65,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 
 	virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
@@ -107,7 +107,7 @@ class FireSpawner : public Spawner, public EffectorObject
 public:
 
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 
 	virtual void OnEffectorChangeState() override;
 
@@ -134,11 +134,11 @@ class SoulSpawner : public Spawner
 // SpikeBar
 // =================================================
 
-class SpikeBar : public death::TiledMapObject, public EffectorObject
+class SpikeBar : public death::TMObject, public EffectorObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(SpikeBar, death::TiledMapObject);
+	CHAOS_OBJECT_DECLARE_CLASS2(SpikeBar, death::TMObject);
 
 public:
 
@@ -147,18 +147,18 @@ public:
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 };
 
 // =================================================
 // SoulTrigger
 // =================================================
 
-class SoulTrigger : public death::TiledMapObject
+class SoulTrigger : public death::TMObject
 {
 	DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(SoulTrigger, death::TiledMapObject);
+	CHAOS_OBJECT_DECLARE_CLASS2(SoulTrigger, death::TMObject);
 
 public:
 
@@ -170,7 +170,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
 
 public:
 
@@ -206,19 +206,19 @@ public:
 // Levels
 // =================================================
 
-class LudumLevel : public death::TiledMapLevel
+class LudumLevel : public death::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::TiledMapLevel);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::TMLevel);
 
 	LudumLevel();
 
 protected:
 
-	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance) override;
+	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TMLayerInstance * layer_instance) override;
 
-	virtual death::TiledMapObjectFactory DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
+	virtual death::TMObjectFactory DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
 
 	virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map) override;
 

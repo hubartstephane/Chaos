@@ -432,10 +432,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// get colliding tiles
 	std::vector<death::TileCollisionInfo> colliding_tiles;
 
-	death::TiledMapLevelInstance* level_instance = GetLevelInstance();
+	death::TMLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TiledMapTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_pawn_box, death::CollisionMask::PLAYER);
+		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_pawn_box, death::CollisionMask::PLAYER);
 
 		while (it)
 		{

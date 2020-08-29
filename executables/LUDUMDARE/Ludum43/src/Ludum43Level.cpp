@@ -17,7 +17,7 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -55,7 +55,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 		return new chaos::ParticleLayer<chaos::ParticleDefaultTrait>();
 	}
 
-	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);
+	return death::TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset)
@@ -63,9 +63,9 @@ static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset
 	return r * factor + offset;
 }
 
-bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
+bool LudumLevel::FinalizeLayerParticles(death::TMLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
-	if (!death::TiledMapLevel::FinalizeLayerParticles(layer_instance, allocation))
+	if (!death::TMLevel::FinalizeLayerParticles(layer_instance, allocation))
 		return false;
 
 	LudumGame * ludum_game = layer_instance->GetGame();
@@ -137,20 +137,20 @@ bool LudumLevel::FinalizeLayerParticles(death::TiledMapLayerInstance * layer_ins
 	return true;
 }
 
-death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
 		return DEATH_MAKE_OBJECT_FACTORY(return new MyChangeLevelTrigger(););
-	return death::TiledMapLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 // =============================================================
 // FinishingTriggerObject implementation
 // =============================================================
 
-bool MyChangeLevelTrigger::Initialize(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool MyChangeLevelTrigger::Initialize(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
-	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	trigger_once = true;
 	return true;

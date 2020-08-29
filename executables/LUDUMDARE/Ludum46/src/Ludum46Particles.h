@@ -9,7 +9,7 @@
 #include <chaos/Class.h> 
 
 #include <death/TiledMapParticle.h> 
-#include <death/TiledMapLevel.h> 
+#include <death/TM.h> 
 
 
 
@@ -44,7 +44,7 @@ public:
 
 	std::vector<class SoulTrigger*> soul_triggers;
 
-	death::TiledMapLayerInstance * fire_layer_instance = nullptr;
+	death::TMLayerInstance * fire_layer_instance = nullptr;
 
 	class LudumLevelInstance* ludum_level_instance = nullptr;
 

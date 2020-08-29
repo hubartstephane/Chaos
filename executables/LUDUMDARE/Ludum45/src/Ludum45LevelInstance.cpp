@@ -18,7 +18,7 @@
 
 void LudumLevelInstance::CreateCameras()
 {
-	death::TiledMapLevelInstance::CreateCameras();
+	death::TMLevelInstance::CreateCameras();
 
 	LudumGame* ludum_game = GetGame();
 
@@ -36,7 +36,7 @@ void LudumLevelInstance::CreateCameras()
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::TiledMapLevelInstance::DoTick(delta_time);
+	death::TMLevelInstance::DoTick(delta_time);
 
 	LudumGame* ludum_game = GetGame();
 
@@ -57,10 +57,10 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
-	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
+	if (!death::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
-	death::TiledMapLevel const * level = GetLevel();
+	death::TMLevel const * level = GetLevel();
 	if (level != nullptr)
 	{
 		camera_speed = level->GetTiledMap()->GetPropertyValueFloat("CAMERA_SPEED", camera_speed);
@@ -75,7 +75,7 @@ void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
     if (ludum_player != nullptr)
         ludum_player->DoUpdateBrightSideOfLife(false);
 
-	death::TiledMapLevelInstance::OnPlayerLeaved(player);
+	death::TMLevelInstance::OnPlayerLeaved(player);
 }
 
 

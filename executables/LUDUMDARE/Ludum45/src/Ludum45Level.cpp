@@ -9,16 +9,16 @@
 #include <chaos/GeometryFramework.h>
 #include <chaos/ParticleSpawner.h>
 
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 
 
 // =============================================================
 // BonusSpawnerTrigger implementation
 // =============================================================
 
-bool BonusSpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool BonusSpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
-	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	trigger_once = true;
 
@@ -53,9 +53,9 @@ bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 // EnemySpawnerTrigger implementation
 // =============================================================
 
-bool EnemySpawnerTrigger::Initialize(death::TiledMapLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool EnemySpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
 {
-	if (!death::TiledMapTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
 		return false;
 	trigger_once = true;
 
@@ -135,7 +135,7 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -182,15 +182,15 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TiledMapLaye
 		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
 	}
 
-	return death::TiledMapLevel::DoCreateParticleLayer(layer_instance);
+	return death::TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 
-death::TiledMapObjectFactory LudumLevel::DoGetObjectFactory(death::TiledMapLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("BONUS_SPAWNER"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new BonusSpawnerTrigger(););
 	if (in_typed_object->IsObjectOfType("ENEMY_SPAWNER"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new EnemySpawnerTrigger(););
-	return death::TiledMapLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

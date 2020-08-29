@@ -1,5 +1,5 @@
-#include <death/LayerInstanceParticlePopulator.h>
-#include <death/TiledMapLevel.h>
+#include <death/TMParticlePopulator.h>
+#include <death/TM.h>
 
 #include <chaos/TiledMapTools.h>
 #include <chaos/ParticleDefault.h>
@@ -8,10 +8,10 @@
 namespace death
 {
 	// =====================================
-	// LayerInstanceParticlePopulator implementation
+	// TMParticlePopulator implementation
 	// =====================================
 
-	TiledMapLayerInstanceParticlePopulator::TiledMapLayerInstanceParticlePopulator(TiledMapLayerInstanceParticlePopulator const& src):
+	TMParticlePopulator::TMParticlePopulator(TMParticlePopulator const& src):
 		layer_instance(src.layer_instance),
 		level(src.level),
 		texture_atlas(src.texture_atlas),
@@ -20,7 +20,7 @@ namespace death
 		// XXX : do not copy nor particles, nor allocation => force a new allocation
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::Initialize(TiledMapLayerInstance* in_layer_instance)
+	bool TMParticlePopulator::Initialize(TMLayerInstance* in_layer_instance)
 	{
 		assert(in_layer_instance != nullptr);
 		layer_instance = in_layer_instance;
@@ -42,12 +42,12 @@ namespace death
 		return true;
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::FlushCachedParticlesToAllocation()
+	bool TMParticlePopulator::FlushCachedParticlesToAllocation()
 	{
 		return level->FlushParticlesIntoAllocation(layer_instance, allocation, particles, particle_count);
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::FlushParticles()
+	bool TMParticlePopulator::FlushParticles()
 	{
 		// nothing to flush
 		if (particle_count == 0)
@@ -58,7 +58,7 @@ namespace death
 			allocation = layer_instance->SpawnParticles(0);
 			if (allocation == nullptr)
 			{
-				chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::FlushParticles : fails to SpawnParticles");
+				chaos::LogTools::Error("TMParticlePopulator::FlushParticles : fails to SpawnParticles");
 				particle_count = 0;
 				return false;
 			}
@@ -69,7 +69,7 @@ namespace death
 		return result;
 	}
 
-	bool TiledMapLayerInstanceParticlePopulator::AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
+	bool TMParticlePopulator::AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
 	{
 		assert(bitmap_name != nullptr);
 
@@ -77,7 +77,7 @@ namespace death
 		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 		if (bitmap_info == nullptr)
 		{
-			chaos::LogTools::Error("TiledMapLayerInstanceParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
+			chaos::LogTools::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
 			return false;
 		}
 		// get the real layout of the bitmap by removing animation
@@ -136,7 +136,7 @@ namespace death
 		return true;
 	}
 
-	TiledMapLayerInstanceParticlePopulator& TiledMapLayerInstanceParticlePopulator::operator = (TiledMapLayerInstanceParticlePopulator const& src)
+	TMParticlePopulator& TMParticlePopulator::operator = (TMParticlePopulator const& src)
 	{
 		layer_instance = src.layer_instance;
 		level = src.level;

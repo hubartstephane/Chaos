@@ -24,7 +24,7 @@ LudumLevelInstance::LudumLevelInstance()
 
 void LudumLevelInstance::CreateCameras()
 {
-	death::TiledMapLevelInstance::CreateCameras();
+	death::TMLevelInstance::CreateCameras();
 
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
@@ -38,7 +38,7 @@ void LudumLevelInstance::CreateCameras()
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::TiledMapLevelInstance::DoTick(delta_time);
+	death::TMLevelInstance::DoTick(delta_time);
 
 
 	// completed ?
@@ -54,12 +54,12 @@ bool LudumLevelInstance::DoTick(float delta_time)
 void LudumLevelInstance::OnLevelStarted()
 {
 	// super call
-	death::TiledMapLevelInstance::OnLevelStarted();
+	death::TMLevelInstance::OnLevelStarted();
 }
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
-	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
+	if (!death::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
 	LudumLevel* ludum_level = auto_cast(in_level);
@@ -74,21 +74,21 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 void LudumLevelInstance::OnPlayerEntered(death::Player * player)
 {
-	death::TiledMapLevelInstance::OnPlayerEntered(player);
+	death::TMLevelInstance::OnPlayerEntered(player);
 
 
 }
 
 void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
 {
-	death::TiledMapLevelInstance::OnPlayerLeaved(player);
+	death::TMLevelInstance::OnPlayerLeaved(player);
 
 
 }
 
 int LudumLevelInstance::GetCurrentSoulCount() const
 {
-	death::TiledMapLayerInstance const * layer_instance = FindLayerInstance("Souls");
+	death::TMLayerInstance const * layer_instance = FindLayerInstance("Souls");
 	if (layer_instance != nullptr && layer_instance->GetParticleLayer() != nullptr)
 		return (int)layer_instance->GetParticleLayer()->GetParticleCount();
 	return 0;
@@ -98,7 +98,7 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 {
 	int result = 0;
 
-	death::TiledMapLayerInstance const* layer_instance = FindLayerInstance("Objects");
+	death::TMLayerInstance const* layer_instance = FindLayerInstance("Objects");
 	if (layer_instance != nullptr)
 	{
 		size_t count = layer_instance->GetObjectCount();
@@ -119,7 +119,7 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 
 bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 {
-	if (death::TiledMapLevelInstance::IsPlayerDead(player))
+	if (death::TMLevelInstance::IsPlayerDead(player))
 		return true;
 
 	if (flame_health <= 0.0f)

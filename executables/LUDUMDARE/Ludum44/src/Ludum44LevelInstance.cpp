@@ -18,7 +18,7 @@
 
 void LudumLevelInstance::CreateCameras()
 {
-	death::TiledMapLevelInstance::CreateCameras();
+	death::TMLevelInstance::CreateCameras();
 
 	LudumGame* ludum_game = GetGame();
 
@@ -35,7 +35,7 @@ void LudumLevelInstance::CreateCameras()
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::TiledMapLevelInstance::DoTick(delta_time);
+	death::TMLevelInstance::DoTick(delta_time);
 
 	LudumGame* ludum_game = GetGame();
 
@@ -56,24 +56,24 @@ bool LudumLevelInstance::DoTick(float delta_time)
 void LudumLevelInstance::OnLevelStarted()
 {
 	// create the fire particle layer if necessary
-	death::TiledMapLayerInstance * layer_instance = FindLayerInstance("fire");
+	death::TMLayerInstance * layer_instance = FindLayerInstance("fire");
 	if (layer_instance != nullptr)
 		layer_instance->CreateParticleLayer();
 
 	// super call
-	death::TiledMapLevelInstance::OnLevelStarted();
+	death::TMLevelInstance::OnLevelStarted();
 }
 
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
-	if (!death::TiledMapLevelInstance::Initialize(in_game, in_level))
+	if (!death::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
 	// change the camera speed
 	static float DEFAULT_CAMERA_SPEED = 100.0f;
 	camera_speed = DEFAULT_CAMERA_SPEED;
 
-	death::TiledMapLevel const * level = GetLevel();
+	death::TMLevel const * level = GetLevel();
 	if (level != nullptr)
 	{
 		camera_speed = level->GetTiledMap()->GetPropertyValueFloat("CAMERA_SPEED", DEFAULT_CAMERA_SPEED);
@@ -84,7 +84,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 bool LudumLevelInstance::SerializeFromJSON(nlohmann::json const& json)
 {
-	if (!death::TiledMapLevelInstance::SerializeFromJSON(json))
+	if (!death::TMLevelInstance::SerializeFromJSON(json))
 		return false;
 	chaos::JSONTools::GetAttribute(json, "SCROLL_FACTOR", scroll_factor);
 	return true;
@@ -92,7 +92,7 @@ bool LudumLevelInstance::SerializeFromJSON(nlohmann::json const& json)
 
 bool LudumLevelInstance::SerializeIntoJSON(nlohmann::json & json) const
 {
-	if (!death::TiledMapLevelInstance::SerializeIntoJSON(json))
+	if (!death::TMLevelInstance::SerializeIntoJSON(json))
 		return false;
 	chaos::JSONTools::SetAttribute(json, "SCROLL_FACTOR", scroll_factor);
 	return true;

@@ -69,7 +69,7 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 	}		
 	else
 	{
-		death::TiledMapLevel * tiled_level = auto_cast(GetLevel());
+		death::TMLevel * tiled_level = auto_cast(GetLevel());
 		if (tiled_level != nullptr)
 		{
 			chaos::TiledMap::Map * tiled_map = tiled_level->GetTiledMap();

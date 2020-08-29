@@ -7,7 +7,7 @@
 	== A faire pour LD47
 	===========================================================================================
 
-	-rendu des TiledMapObjects
+	-rendu des TMObjects
 
 	-Allocation provisoire : detruit a la fin du rendu
 
@@ -119,7 +119,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 	
 	
 	- COLLISIONS
-	=>revoir box/obox pour fixer les soucis de camera dans TiledMapLevel
+	=>revoir box/obox pour fixer les soucis de camera dans TMLevel
 	
 	
 	

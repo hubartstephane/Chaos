@@ -35,7 +35,7 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 		result.ludum_level_instance = ludum_level_instance;
 
 		// store triggers
-		death::TiledMapLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
+		death::TMLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
 		if (layer_instance != nullptr)
 		{
 			size_t count = layer_instance->GetObjectCount();

@@ -9,29 +9,29 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/Hotpoint.h>
 
-#include <death/TiledMapLevel.h>
+#include <death/TM.h>
 #include <death/TiledMapParticle.h>
 
 namespace death
 {
 
 	// =====================================
-	// TiledMapLayerInstanceParticlePopulator : utility class to generate particles for a layer with a cache
+	// TMParticlePopulator : utility class to generate particles for a layer with a cache
 	// =====================================
 
-	class TiledMapLayerInstanceParticlePopulator
+	class TMParticlePopulator
 	{
 		static size_t const PARTICLE_BUFFER_SIZE = 100;
 
 	public:
 
 		/** default constructor */
-		TiledMapLayerInstanceParticlePopulator() = default;
+		TMParticlePopulator() = default;
 		/** copy constructor (do not copy everything) */
-		TiledMapLayerInstanceParticlePopulator(TiledMapLayerInstanceParticlePopulator const& src);
+		TMParticlePopulator(TMParticlePopulator const& src);
 
 		/** initialize the object */
-		bool Initialize(TiledMapLayerInstance* in_layer_instance);
+		bool Initialize(TMLayerInstance* in_layer_instance);
 		/** insert a new particle */
 		bool AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio);
 		/** flush remaining particles */
@@ -43,7 +43,7 @@ namespace death
 		chaos::ParticleAllocationBase* GetParticleAllocation() { return allocation; }
 
 		/** copy operator */
-		TiledMapLayerInstanceParticlePopulator& operator = (TiledMapLayerInstanceParticlePopulator const& src);
+		TMParticlePopulator& operator = (TMParticlePopulator const& src);
 
 	protected:
 
@@ -53,9 +53,9 @@ namespace death
 	protected:
 
 		/** the concerned layer instance */
-		TiledMapLayerInstance* layer_instance = nullptr;
+		TMLayerInstance* layer_instance = nullptr;
 		/** the level owning this layer */
-		death::TiledMapLevel* level = nullptr;
+		death::TMLevel* level = nullptr;
 
 		/** the texture atlas required */
 		chaos::BitmapAtlas::TextureArrayAtlas const* texture_atlas = nullptr;

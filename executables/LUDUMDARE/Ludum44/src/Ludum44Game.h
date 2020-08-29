@@ -81,7 +81,7 @@ protected:
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
 
 	/** override level creation */
-	death::TiledMapLevel * CreateTiledMapLevel() override;
+	death::TMLevel * CreateTMLevel() override;
 
 	/** move the player */
 	virtual death::GameHUD * DoCreatePlayingHUD() override;

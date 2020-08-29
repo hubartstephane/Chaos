@@ -8,7 +8,7 @@
 #include <chaos/BitmapAtlas.h> 
 #include <chaos/Class.h> 
 
-#include <death/TiledMapParticle.h> 
+#include <death/TM.h> 
 
 
 static constexpr float DANGER_RADIUS_RATIO = 0.3f;
@@ -20,7 +20,7 @@ static constexpr float WAKEN_RADIUS_RATIO  = 1.0f;
 
 using VertexBase = chaos::VertexDefault;
 
-class ParticleBase : public death::TiledMapParticle
+class ParticleBase : public death::TMParticle
 {
 public:
 
@@ -31,7 +31,7 @@ public:
 // PowerUpZoneParticleTrait
 // =====================================
 
-class ParticlePowerUpZone : public death::TiledMapParticle
+class ParticlePowerUpZone : public death::TMParticle
 {
 public:
 
@@ -58,7 +58,7 @@ class PowerUpZoneParticleTrait : public chaos::ParticleAllocationTrait<ParticleP
 {
 public:
 
-    void ParticleToPrimitives(death::TiledMapParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
+    void ParticleToPrimitives(death::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
 
 	bool UpdateParticle(float delta_time, ParticlePowerUpZone & particle);
 };
@@ -231,8 +231,8 @@ public:
 	bool UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TiledMapParticle)
-CHAOS_REGISTER_CLASS2(ParticlePowerUpZone, death::TiledMapParticle)
+CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle)
+CHAOS_REGISTER_CLASS2(ParticlePowerUpZone, death::TMParticle)
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleEnemy, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase)

@@ -65,11 +65,11 @@ namespace death
 
 							if (allocation != nullptr)
 							{
-								chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->GetParticleAccessor(0, 0);
+								chaos::ParticleAccessor<TMParticle> accessor = allocation->GetParticleAccessor(0, 0);
 
 								while (particle_index < accessor.GetCount())
 								{
-									death::TiledMapParticle* particle = &accessor[particle_index];
+									death::TMParticle* particle = &accessor[particle_index];
 
 									if (chaos::Collide(collision_box, particle->bounding_box))
 									{

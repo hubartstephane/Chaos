@@ -17,7 +17,7 @@ namespace death
 		/** the allocation concerned by this collision */
 		chaos::ParticleAllocationBase* allocation = nullptr;
 		/** the particle which with the collision is detected */
-		TiledMapParticle* particle = nullptr;
+		TMParticle* particle = nullptr;
 		/** some information about the tile information */
 		chaos::TiledMap::TileInfo tile_info;
 	};

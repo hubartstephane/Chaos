@@ -550,7 +550,7 @@ namespace death
 
 	chaos::ParticleLayerBase* TMLevel::DoCreateParticleLayer(TMLayerInstance* layer_instance)
 	{
-		return new chaos::ParticleLayer<TiledMapParticleTrait>();
+		return new chaos::ParticleLayer<TMParticleTrait>();
 	}
 	
 	TMObjectFactory TMLevel::DoGetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
@@ -688,9 +688,9 @@ namespace death
 		return true; 
 	}
 
-	bool TMLevel::FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase * allocation, TiledMapParticle const * particles, size_t particle_count)
+	bool TMLevel::FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase * allocation, TMParticle const * particles, size_t particle_count)
 	{
-		chaos::ParticleAccessor<TiledMapParticle> accessor = allocation->AddParticles(particle_count);
+		chaos::ParticleAccessor<TMParticle> accessor = allocation->AddParticles(particle_count);
 
 		if (!accessor.IsValid())
 		{
@@ -962,7 +962,7 @@ namespace death
 		if (chaos::TiledMap::GeometricObjectText const* text = in_geometric_object->GetObjectText())
 		{
 			// create particle layer if necessary
-			if (CreateParticleLayer() == nullptr) // the generate layer is of  TiledMapParticleTrait => this works fine for Text (except a useless GID per particle)
+			if (CreateParticleLayer() == nullptr) // the generate layer is of  TMParticleTrait => this works fine for Text too (except some useless extra data like GID)
 				return;
 
 			Game* game = GetGame();

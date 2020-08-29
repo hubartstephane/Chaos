@@ -141,7 +141,7 @@ bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZ
 }
 
 
-void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TiledMapParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
+void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
 {
     chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 

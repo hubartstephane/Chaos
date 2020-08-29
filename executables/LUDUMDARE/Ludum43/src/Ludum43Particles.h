@@ -8,7 +8,7 @@
 #include <chaos/Class.h> 
 
 
-#include <death/TiledMapParticle.h> 
+#include <death/TM.h> 
 
 
 static constexpr float DANGER_RADIUS_RATIO = 0.3f;
@@ -28,7 +28,7 @@ public:
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
 
-class ParticleBase : public death::TiledMapParticle
+class ParticleBase : public death::TMParticle
 {
 public:
 
@@ -204,7 +204,7 @@ public:
 	bool UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TiledMapParticle)
+CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle)
 CHAOS_REGISTER_CLASS2(ParticleAffector, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleLife, chaos::ParticleDefault)
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAffector)

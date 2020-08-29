@@ -8,7 +8,6 @@
 #include <chaos/BitmapAtlas.h> 
 #include <chaos/Class.h> 
 
-#include <death/TiledMapParticle.h> 
 #include <death/TM.h> 
 
 
@@ -19,7 +18,7 @@
 
 using VertexBase = chaos::VertexDefault;
 
-class ParticleBase : public  death::TiledMapParticle
+class ParticleBase : public  death::TMParticle
 {
 public:
 
@@ -233,7 +232,7 @@ public:
 	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TiledMapParticle);
+CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle);
 CHAOS_REGISTER_CLASS2(ParticleAnimated, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);
 CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase);

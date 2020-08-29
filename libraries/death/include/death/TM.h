@@ -18,7 +18,6 @@
 
 #include <death/Level.h>
 #include <death/LevelInstance.h>
-#include <death/TiledMapParticle.h>
 #include <death/GameCheckpoint.h>
 #include <death/GameFramework.h>
 
@@ -61,7 +60,9 @@
 		// Internal files
 		// ==============================================================
 
+#include <death/TM/TMParticle.h>
 #include <death/TM/TMLevel.h>
+#include <death/TM/TMObject.h>
 #include <death/TM/TMCollision.h>
 #include <death/TM/TMParticlePopulator.h>
 

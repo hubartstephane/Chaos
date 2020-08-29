@@ -965,13 +965,17 @@ namespace death
 
 
 
-	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator& particle_populator)
+	void TiledMapLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const* in_geometric_object, TiledMapObject* object, TiledMapLayerInstanceParticlePopulator& particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
+		// does the object wants the ownership of the particles		
+		bool particle_ownership = false;
+		if (object != nullptr)
+			particle_ownership = in_geometric_object->GetPropertyValueBool("PARTICLE_OWNERSHIP", true); // by default, an object wants to have its particles
+
 		// create additionnal particles (TEXT)
-		chaos::TiledMap::GeometricObjectText const * text = in_geometric_object->GetObjectText();
-		if (text != nullptr)
+		if (chaos::TiledMap::GeometricObjectText const* text = in_geometric_object->GetObjectText())
 		{
 			// create particle layer if necessary
 			if (CreateParticleLayer() == nullptr) // the generate layer is of  TiledMapParticleTrait => this works fine for Text (except a useless GID per particle)
@@ -993,14 +997,18 @@ namespace death
 
 			// create particles
 			game->GetTextGenerator()->Generate(text->text.c_str(), result, params);
-			chaos::ParticleTextGenerator::CreateTextAllocation(particle_layer.get(), result);
-			return;
+			
+			chaos::ParticleAllocationBase* allocation = chaos::ParticleTextGenerator::CreateTextAllocation(particle_layer.get(), result);
+			if (particle_ownership)
+				object->allocation = allocation;
 		}
-
-		// create additionnal particles (TILES)
-		chaos::TiledMap::GeometricObjectTile const * tile = in_geometric_object->GetObjectTile();
-		if (tile != nullptr)
+		// create additionnal particles (TILES)		
+		else if (chaos::TiledMap::GeometricObjectTile const* tile = in_geometric_object->GetObjectTile())
 		{
+			TiledMapLayerInstanceParticlePopulator object_particle_populator = particle_populator;
+
+			TiledMapLayerInstanceParticlePopulator* effective_particle_populator = (particle_ownership) ? &object_particle_populator : &particle_populator;
+
 			int gid = tile->gid;
 
 			// search the tile information 
@@ -1019,14 +1027,16 @@ namespace death
 			chaos::Hotpoint hotpoint = (tile_info.tileset != nullptr) ? tile_info.tileset->object_alignment : chaos::Hotpoint::BOTTOM_LEFT;
 
 			bool keep_aspect_ratio = false;
-			particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->rotation, tile->particle_flags, gid, keep_aspect_ratio);
+			effective_particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->rotation, tile->particle_flags, gid, keep_aspect_ratio);
+
+			// gives the particles to the object
+			if (particle_ownership)
+			{
+				effective_particle_populator->FlushParticles();
+				object->allocation = effective_particle_populator->GetParticleAllocation();
+			}
 		}
 	}
-
-
-
-
-
 
 	CHAOS_HELP_TEXT(CMD, "-TiledGeometricObject::ForceParticleCreation");
 
@@ -1085,7 +1095,7 @@ namespace death
 		chaos::box2 explicit_bounding_box;
 
 		// the particle generator
-		TiledMapLayerInstanceParticlePopulator particle_populator;
+		TiledMapLayerInstanceParticlePopulator particle_populator; // this populator is for the WHOLE LAYER
 		if (!particle_populator.Initialize(this))
 			return false;
 
@@ -1115,36 +1125,21 @@ namespace death
 					explicit_bounding_box = object_surface->GetBoundingBox(false); // in layer coordinates	
 			}
 
-
-
-
-
-
-
-
-
-
-
 			// get factory + create the object
 			TiledMapObject* object = nullptr;
 
 			TiledMapObjectFactory factory = GetObjectFactory(geometric_object);
 			if (factory)
-				object = factory(geometric_object);
+			{
+				object = factory(geometric_object); 
+				if (object == nullptr)
+					continue; // we have a factory, but fails to create the object
+			}
 
 			// create tile if no object created 
 			// (XXX : no way yet to know whether this a normal situation because user does not want to create object or whether an error happened)
 			if (object == nullptr || ShouldCreateParticleForObject(geometric_object, object))
 				CreateObjectParticles(geometric_object, object, particle_populator);
-
-
-
-
-
-
-
-
-
 		}
 
 		// final flush
@@ -1288,7 +1283,7 @@ namespace death
 		// populate the layer for each chunk
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
 
-		bool particle_creation_success = true;
+		bool particle_creation_success = true; // as soon as some particle creation fails, do not try to create other particles
 
 		for (chaos::TiledMap::TileLayerChunk const& chunk : tile_layer->tile_chunks)
 		{
@@ -1351,22 +1346,10 @@ namespace death
 
 						TiledMapObject* object = factory(tile_object.get());
 						if (object != nullptr)
-						{
-
-
-
-
-
-							if (!ShouldCreateParticleForObject(tile_object.get(), object))
-								continue;
-
-
-
-
-
-
-						}
+							if (ShouldCreateParticleForObject(tile_object.get(), object))
+								CreateObjectParticles(tile_object.get(), object, particle_populator);
 					}
+					continue; // while we have a factory, let the concerned object create its particle
 				}
 
 				chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;

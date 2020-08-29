@@ -135,6 +135,9 @@ namespace death
 		/** the bounding box of the object */
 		chaos::box2 bounding_box;
 
+		/** the allocations for this object */
+		chaos::shared_ptr<chaos::ParticleAllocationBase> allocation;
+
 		/** a reference to the layer instance */
 		TiledMapLayerInstance* layer_instance = nullptr;
 	};

@@ -1,6 +1,5 @@
 #include <death/TM.h>
 #include <death/Game.h>
-#include <death/TMParticlePopulator.h>
 #include <death/Player.h>
 #include <death/SoundContext.h>
 #include <death/CollisionMask.h>

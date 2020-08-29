@@ -1,4 +1,3 @@
-#include <death/TMParticlePopulator.h>
 #include <death/TM.h>
 
 #include <chaos/TiledMapTools.h>

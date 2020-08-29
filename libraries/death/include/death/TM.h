@@ -60,9 +60,11 @@
 		// Internal files
 		// ==============================================================
 
+			// XXX : order is important
+
 #include <death/TM/TMParticle.h>
-#include <death/TM/TMLevel.h>
 #include <death/TM/TMObject.h>
+#include <death/TM/TMLevel.h>
 #include <death/TM/TMCollision.h>
 #include <death/TM/TMParticlePopulator.h>
 

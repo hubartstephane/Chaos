@@ -42,6 +42,9 @@ namespace death
 		/** get the particle allocation */
 		chaos::ParticleAllocationBase* GetParticleAllocation() { return allocation; }
 
+		/** copy operator */
+		TiledMapLayerInstanceParticlePopulator& operator = (TiledMapLayerInstanceParticlePopulator const& src);
+
 	protected:
 
 		/** 'copy' the cached particle into the allocation (with type conversion) */

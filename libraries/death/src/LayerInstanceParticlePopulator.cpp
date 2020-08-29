@@ -136,4 +136,13 @@ namespace death
 		return true;
 	}
 
+	TiledMapLayerInstanceParticlePopulator& TiledMapLayerInstanceParticlePopulator::operator = (TiledMapLayerInstanceParticlePopulator const& src)
+	{
+		layer_instance = src.layer_instance;
+		level = src.level;
+		texture_atlas = src.texture_atlas;
+		folder_info = src.folder_info;
+		return *this;
+	}
+
 }; // namespace death

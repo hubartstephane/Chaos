@@ -16,9 +16,9 @@
 // BonusSpawnerTrigger implementation
 // =============================================================
 
-bool BonusSpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool BonusSpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 	trigger_once = true;
 
@@ -53,9 +53,9 @@ bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 // EnemySpawnerTrigger implementation
 // =============================================================
 
-bool EnemySpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool EnemySpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 	trigger_once = true;
 

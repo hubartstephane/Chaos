@@ -100,7 +100,7 @@ namespace death
 		if (!subclass.IsValid())
 			return nullptr;
 		// return the factory based on this subclass
-		return [this, in_layer_instance, subclass](chaos::TiledMap::GeometricObject const * in_geometric_object, TMObjectReferenceRegistry & in_reference_registry)
+		return [this, in_layer_instance, subclass](chaos::TiledMap::GeometricObject const * in_geometric_object, TMObjectReferenceSolver & in_reference_solver)
 		{
 			return subclass.CreateInstance();
 		};
@@ -118,12 +118,12 @@ namespace death
 		}
 
 		// create another factory that wraps the previous (and add Initialize(...) call)
-		TMObjectFactory result_factory = [in_layer_instance, factory](chaos::TiledMap::GeometricObject const * in_geometric_object, TMObjectReferenceRegistry& in_reference_registry)
+		TMObjectFactory result_factory = [in_layer_instance, factory](chaos::TiledMap::GeometricObject const * in_geometric_object, TMObjectReferenceSolver& in_reference_solver)
 		{
-			TMObject * result = factory(in_geometric_object, in_reference_registry);
+			TMObject * result = factory(in_geometric_object, in_reference_solver);
 			if (result != nullptr)
 			{
-				if (!result->Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+				if (!result->Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 				{
 					delete result;
 					result = nullptr;
@@ -164,12 +164,12 @@ namespace death
 		return new TMLayerInstance();
 	}
 
-	TMLayerInstance* TMLevel::CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer, TMObjectReferenceRegistry& reference_registry)
+	TMLayerInstance* TMLevel::CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer, TMObjectReferenceSolver& reference_solver)
 	{
 		TMLayerInstance* result = DoCreateLayerInstance();
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize(in_level_instance, in_layer, reference_registry))
+		if (!result->Initialize(in_level_instance, in_layer, reference_solver))
 		{
 			delete result;
 			return nullptr;
@@ -333,7 +333,7 @@ namespace death
 		return 0;
 	}
 
-	bool TMLayerInstance::Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer, TMObjectReferenceRegistry& reference_registry)
+	bool TMLayerInstance::Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer, TMObjectReferenceSolver& reference_solver)
 	{
 		// ensure not already initialized
 		assert(in_level_instance != nullptr);
@@ -379,21 +379,21 @@ namespace death
 		// special initialization
 		if (chaos::TiledMap::ImageLayer const* image_layer = layer->GetImageLayer())
 		{
-			if (!InitializeImageLayer(image_layer, reference_registry))
+			if (!InitializeImageLayer(image_layer, reference_solver))
 				return false;
 			return FinalizeParticles(nullptr);
 		}
 
 		if (chaos::TiledMap::ObjectLayer const* object_layer = layer->GetObjectLayer())
 		{
-			if (!InitializeObjectLayer(object_layer, reference_registry))
+			if (!InitializeObjectLayer(object_layer, reference_solver))
 				return false;
 			return FinalizeParticles(nullptr);
 		}
 
 		if (chaos::TiledMap::TileLayer const* tile_layer = layer->GetTileLayer())
 		{
-			if (!InitializeTileLayer(tile_layer, reference_registry))
+			if (!InitializeTileLayer(tile_layer, reference_solver))
 				return false;
 			return FinalizeParticles(nullptr);
 		}
@@ -460,7 +460,7 @@ namespace death
 		return true;
 	}
 
-	bool TMLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer, TMObjectReferenceRegistry& reference_registry)
+	bool TMLayerInstance::InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer, TMObjectReferenceSolver& reference_solver)
 	{
 		return true;
 	}
@@ -565,9 +565,9 @@ namespace death
 		if (!factory)
 			return nullptr;
 		// create a 'final' factory that use previous one + insert the result object in correct list
-		TMObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject const * geometric_object, TMObjectReferenceRegistry & in_reference_registry)
+		TMObjectFactory result = [this, factory](chaos::TiledMap::GeometricObject const * geometric_object, TMObjectReferenceSolver & in_reference_solver)
 		{
-			TMObject* result = factory(geometric_object, in_reference_registry);
+			TMObject* result = factory(geometric_object, in_reference_solver);
 			if (result != nullptr)
 				objects.push_back(result);
 			return result;
@@ -595,7 +595,7 @@ namespace death
 	// shuyyy
 
 
-	bool TMLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer, TMObjectReferenceRegistry & reference_registry)
+	bool TMLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer, TMObjectReferenceSolver & reference_solver)
 	{
 		// search the bounding box (explicit or not)
 		chaos::box2 box;
@@ -638,7 +638,7 @@ namespace death
 			TMObjectFactory factory = GetObjectFactory(geometric_object);
 			if (factory)
 			{
-				object = factory(geometric_object, reference_registry);
+				object = factory(geometric_object, reference_solver);
 				if (object == nullptr)
 					continue; // we have a factory, but fails to create the object
 			}
@@ -779,7 +779,7 @@ namespace death
 	// shuyyy
 
 
-	bool TMLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer, TMObjectReferenceRegistry& reference_registry)
+	bool TMLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer, TMObjectReferenceSolver& reference_solver)
 	{
 		TMLevel* level = GetLevel();
 
@@ -851,7 +851,7 @@ namespace death
 						//       interfere with that (a just in case value)
 						tile_object->CreatePropertyString("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str());
 
-						TMObject* object = factory(tile_object.get(), reference_registry);
+						TMObject* object = factory(tile_object.get(), reference_solver);
 						if (object != nullptr)
 							if (ShouldCreateParticleForObject(tile_object.get(), object))
 								CreateObjectParticles(tile_object.get(), object, particle_populator);
@@ -1254,10 +1254,10 @@ namespace death
 			return false;
 
 		// create a the layers instances
-		TMObjectReferenceRegistry reference_registry;
-		if (!CreateLayerInstances(in_game, reference_registry))
+		TMObjectReferenceSolver reference_solver;
+		if (!CreateLayerInstances(in_game, reference_solver))
 			return false;
-		reference_registry.SolveReferences(this);
+		reference_solver.SolveReferences(this);
 		// create a particle manager
 		if (!CreateParticleManager(in_game))
 			return false;
@@ -1274,29 +1274,29 @@ namespace death
 		return true;
 	}
 
-	bool TMLevelInstance::DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const & layers, TMObjectReferenceRegistry& reference_registry)
+	bool TMLevelInstance::DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const & layers, TMObjectReferenceSolver& reference_solver)
 	{
 		TMLevel* level = GetLevel();
 
 		for (auto& layer : layers)
 		{
 			// insert the new layer
-			TMLayerInstance* layer_instance = level->CreateLayerInstance(this, layer.get(), reference_registry);
+			TMLayerInstance* layer_instance = level->CreateLayerInstance(this, layer.get(), reference_solver);
 			if (layer_instance != nullptr)
 				layer_instances.push_back(layer_instance);
 			// for layer group iterate over child layers
 			if (chaos::TiledMap::GroupLayer const* group_layer = auto_cast(layer.get()))
-				if (!DoCreateLayerInstances(group_layer->layers, reference_registry))
+				if (!DoCreateLayerInstances(group_layer->layers, reference_solver))
 					return false;
 		}
 		return true;
 	}
 
-	bool TMLevelInstance::CreateLayerInstances(Game* in_game, TMObjectReferenceRegistry& reference_registry)
+	bool TMLevelInstance::CreateLayerInstances(Game* in_game, TMObjectReferenceSolver& reference_solver)
 	{
 		chaos::TiledMap::Map* tiled_map = GetTiledMap();
 		if (tiled_map != nullptr)
-			return DoCreateLayerInstances(tiled_map->layers, reference_registry);
+			return DoCreateLayerInstances(tiled_map->layers, reference_solver);
 		return true;
 	}
 

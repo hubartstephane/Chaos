@@ -148,9 +148,9 @@ death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * i
 // FinishingTriggerObject implementation
 // =============================================================
 
-bool MyChangeLevelTrigger::Initialize(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool MyChangeLevelTrigger::Initialize(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 	trigger_once = true;
 	return true;

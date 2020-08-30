@@ -5,7 +5,6 @@
 #include <death/CollisionMask.h>
 
 #include <chaos/CollisionFramework.h>
-#include <chaos/TiledMapTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/GPUProgramGenerator.h>
 #include <chaos/StringTools.h>
@@ -68,19 +67,19 @@ namespace death
 	TMObjectFactory TMLevel::DoGetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{
 		// player start 
-		if (chaos::TiledMapTools::IsPlayerStartObject(in_typed_object))
+		if (TMTools::IsPlayerStartObject(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePlayerStart(););
 		// camera 
-		if (chaos::TiledMapTools::IsCameraObject(in_typed_object))
+		if (TMTools::IsCameraObject(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCamera(););
 		// other kind of objects
-		if (chaos::TiledMapTools::IsFinishTrigger(in_typed_object))
+		if (TMTools::IsFinishTrigger(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateChangeLevelTrigger(););
-		if (chaos::TiledMapTools::IsCheckpointTrigger(in_typed_object))
+		if (TMTools::IsCheckpointTrigger(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCheckpointTrigger(););
-		if (chaos::TiledMapTools::IsNotificationTrigger(in_typed_object))
+		if (TMTools::IsNotificationTrigger(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateNotificationTrigger(););
-		if (chaos::TiledMapTools::IsSoundTrigger(in_typed_object))
+		if (TMTools::IsSoundTrigger(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateSoundTrigger(););
 		return nullptr;
 	}
@@ -604,7 +603,7 @@ namespace death
 				continue;
 
 			// explicit world bounding box
-			if (!level_instance->has_explicit_bounding_box && chaos::TiledMapTools::IsWorldBoundingBox(geometric_object))
+			if (!level_instance->has_explicit_bounding_box && TMTools::IsWorldBoundingBox(geometric_object))
 			{
 				chaos::TiledMap::GeometricObjectSurface const* object_surface = geometric_object->GetObjectSurface();
 				if (object_surface != nullptr)
@@ -614,7 +613,7 @@ namespace death
 				}
 			}
 			// explicit layer bounding box
-			if (IsGeometryEmpty(explicit_bounding_box) && chaos::TiledMapTools::IsLayerBoundingBox(geometric_object))
+			if (IsGeometryEmpty(explicit_bounding_box) && TMTools::IsLayerBoundingBox(geometric_object))
 			{
 				chaos::TiledMap::GeometricObjectSurface const* object_surface = geometric_object->GetObjectSurface();
 				if (object_surface != nullptr)

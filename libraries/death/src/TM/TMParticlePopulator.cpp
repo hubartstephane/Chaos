@@ -1,6 +1,5 @@
 #include <death/TM.h>
 
-#include <chaos/TiledMapTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/WrapMode.h>
 

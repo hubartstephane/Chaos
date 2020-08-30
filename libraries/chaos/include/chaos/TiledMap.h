@@ -59,14 +59,12 @@ namespace chaos
 #define CHAOS_TILEDMAP_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_TILEDMAP_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FRIEND_DECL, _, CHAOS_TILEDMAP_CLASSES)
 
-
 		// ==========================================
 		// Functions
 		// ==========================================
 
 		/** split the tile pseudo GID into GID/H-FLIP/V-FLIP */
 		int DecodeTileGID(int pseudo_gid, int* particle_flags = nullptr);
-
 
 		// ==========================================
 		// TiledMap coordinate system

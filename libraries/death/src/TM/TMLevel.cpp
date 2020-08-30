@@ -208,8 +208,21 @@ namespace death
 			chaos::LogTools::Error("TMLevel::FlushParticlesIntoAllocation => invalid accessor");
 			return false;
 		}
-		for (size_t i = 0; i < particle_count; ++i)
-			accessor[i] = particles[i];
+
+		if (!layer_instance->height_bits_mode)
+		{
+			for (size_t i = 0; i < particle_count; ++i)
+				accessor[i] = particles[i];
+		}
+		else
+		{
+			for (size_t i = 0; i < particle_count; ++i)
+			{
+				TMParticle& dst = accessor[i];
+				dst = particles[i];
+				dst.flags |= chaos::ParticleFlags::HEIGHT_BITS_MODE;
+			}
+		}
 		return true;
 	}
 
@@ -354,6 +367,8 @@ namespace death
 
 		std::string collision_mask = layer->GetPropertyValueString("COLLISION_MASK", "");
 		ComputeLayerCollisionMask(collision_mask.c_str());
+
+		height_bits_mode = layer->GetPropertyValueBool("HEIGHT_BITS_MODE", height_bits_mode);
 
 		// copy the offset / name
 		offset = layer->offset;

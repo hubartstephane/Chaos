@@ -17,7 +17,7 @@ namespace death
 		return result;
 	}
 
-	bool TMObject::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMObject::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
 		// ensure not already initialized
 		assert(in_layer_instance != nullptr);
@@ -70,9 +70,9 @@ namespace death
 	// TMTrigger implementation
 	// =====================================
 
-	bool TMTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
-		if (!TMObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_registry))
 			return false;
 		// default values are set to the one defined by default in constructor
 		enabled = in_geometric_object->GetPropertyValueBool("ENABLED", enabled);
@@ -136,9 +136,9 @@ namespace death
 	// TiledMapCheckPointTriggerObject implementation
 	// =============================================================
 
-	bool TMCheckpointTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMCheckpointTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
-		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object, reference_registry))
 			return false;
 		trigger_once = true; // force a trigger once for checkpoint
 		return true;
@@ -169,9 +169,9 @@ namespace death
 	// TMPlayerStart implementation
 	// =====================================
 
-	bool TMPlayerStart::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMPlayerStart::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
-		if (!TMObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_registry))
 			return false;
 		// search the bitmap name for the player
 		std::string const* in_bitmap_name = in_geometric_object->FindPropertyString("BITMAP_NAME");
@@ -206,9 +206,9 @@ namespace death
 		return false;
 	}
 
-	bool TMNotificationTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMNotificationTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
-		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object, reference_registry))
 			return false;
 
 		notification_string = in_geometric_object->GetPropertyValueString("NOTIFICATION", "");
@@ -286,9 +286,9 @@ namespace death
 	// TMSoundTrigger implementation
 	// =====================================
 
-	bool TMSoundTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMSoundTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
-		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object, reference_registry))
 			return false;
 
 		sound_name = in_geometric_object->GetPropertyValueString("SOUND_NAME", "");
@@ -418,9 +418,9 @@ namespace death
 		return true;
 	}
 
-	bool TMChangeLevelTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMChangeLevelTrigger::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
-		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMTrigger::Initialize(in_layer_instance, in_geometric_object, reference_registry))
 			return false;
 		level_name = in_geometric_object->GetPropertyValueString("LEVEL_NAME", "");
 		player_start_name = in_geometric_object->GetPropertyValueString("PLAYER_START_NAME", "");
@@ -449,9 +449,9 @@ namespace death
 	// TMCameraTemplate implementation
 	// =====================================
 
-	bool TMCameraTemplate::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object)
+	bool TMCameraTemplate::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry)
 	{
-		if (!TMObject::Initialize(in_layer_instance, in_geometric_object))
+		if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_registry))
 			return false;
 		return true;
 	}

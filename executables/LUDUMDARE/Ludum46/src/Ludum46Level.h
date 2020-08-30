@@ -21,7 +21,7 @@ class EffectorObject
 public:
 
 	/** no override here */
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object);
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry);
 
 	virtual void SetEffectorState(bool in_active)
 	{
@@ -64,7 +64,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& reference_registry) override;
 
 	virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
@@ -106,7 +106,7 @@ class FireSpawner : public Spawner, public EffectorObject
 public:
 
 	/** override */
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& reference_registry) override;
 
 	virtual void OnEffectorChangeState() override;
 
@@ -146,7 +146,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& reference_registry) override;
 };
 
 // =================================================
@@ -169,7 +169,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object) override;
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& reference_registry) override;
 
 public:
 

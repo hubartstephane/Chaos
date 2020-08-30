@@ -100,9 +100,9 @@ death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * i
 // PowerUpTrigger implementation
 // =============================================================
 
-bool PowerUpTrigger::Initialize(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool PowerUpTrigger::Initialize(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
 		return false;
 	decrease_power = in_geometric_object->GetPropertyValueBool("DECREASE_POWER_UP", false);
 	return true;
@@ -137,9 +137,9 @@ bool PowerUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 // SpeedUpTrigger implementation
 // =============================================================
 
-bool SpeedUpTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool SpeedUpTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
 		return false;
 	scroll_speed = in_geometric_object->GetPropertyValueFloat("SCROLL_SPEED", 1.0f);
 	return true;
@@ -168,9 +168,9 @@ bool SpeedUpTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 // =============================================================
 
 
-bool SpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object)
+bool SpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object))
+	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
 		return false;
 	
 	scale_factor = in_geometric_object->GetPropertyValueFloat("ENEMY_SCALE_FACTOR", 1.0f);

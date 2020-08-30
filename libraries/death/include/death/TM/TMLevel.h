@@ -55,9 +55,9 @@ namespace death
 	//
 
 	/** a functor for geometric object factory */
-	using TMObjectFactory = std::function<TMObject * (chaos::TiledMap::GeometricObject const *)>;
+	using TMObjectFactory = std::function<TMObject * (chaos::TiledMap::GeometricObject const *, TMObjectReferenceRegistry & )>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
-#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object) { x }
+#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object, death::TMObjectReferenceRegistry & in_reference_registry) { x }
 
 	// =====================================
 	// TMLevel : a level described by a tiledmap
@@ -111,7 +111,7 @@ namespace death
 		virtual TMLayerInstance* DoCreateLayerInstance();
 
 		/** create a layer instance 'entry point' */
-		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer);
+		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer, TMObjectReferenceRegistry& reference_registry);
 
 		/** get the folder in which bitmaps are stored in Game::Atlas */
 		virtual chaos::BitmapAtlas::FolderInfo const* GetFolderInfo(TMLayerInstance* layer_instance) const;
@@ -278,7 +278,7 @@ namespace death
 	protected:
 
 		/** initialization */
-		virtual bool Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer);
+		virtual bool Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer, TMObjectReferenceRegistry & reference_registry);
 		/** serialization of all JSON objects into an array */
 		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TMObject>>& result);
 		/** called whenever level instance is restarted */
@@ -293,11 +293,11 @@ namespace death
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
 		/** specialized layer */
-		bool InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer);
+		bool InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer, TMObjectReferenceRegistry& reference_registry);
 		/** specialized layer */
-		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer);
+		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer, TMObjectReferenceRegistry& reference_registry);
 		/** specialized layer */
-		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer);
+		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer, TMObjectReferenceRegistry& reference_registry);
 	
 		/** create an object in an object layer */
 		TMObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object);
@@ -496,6 +496,9 @@ namespace death
 		/** override */
 		virtual void OnRestart() override;
 
+		/** resolving object reference (transform ID's into pointers) */
+		bool ResolveObjectReferences(TMObjectReferenceRegistry & reference_registry);
+
 		/** handle all collisions with the player (TriggerObject) */
 		void HandlePlayerTriggerCollisions(float delta_time);
 		/** handle all collisions with the camera (TriggerObject) */
@@ -520,9 +523,9 @@ namespace death
 		/** create the particle manager */
 		virtual bool CreateParticleManager(Game* in_game);
 		/** create the layers instances */
-		virtual bool CreateLayerInstances(Game* in_game);
+		virtual bool CreateLayerInstances(Game* in_game, TMObjectReferenceRegistry &reference_registry);
 		/** create the layers instances */
-		bool DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const& layers);
+		bool DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const& layers, TMObjectReferenceRegistry& reference_registry);
 
 		/** override */
 		virtual void CreateBackgroundImage() override;

@@ -1404,8 +1404,6 @@ namespace chaos
 			bool DoLoadTileSet(tinyxml2::XMLElement const * element);
 			/** load all the layers */
 			bool DoLoadLayers(tinyxml2::XMLElement const * element);
-			/** transform all integers ID references into object pointer */
-			bool DoPatchObjectReferences();
 
 		public:
 

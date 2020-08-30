@@ -4,6 +4,43 @@
 
 namespace death
 {
+	// ==========================================
+	// TMObjectReferenceRegistry : store wanted reference to further resolving
+	// ==========================================
+
+	class TMObjectReferenceRegistry
+	{
+
+	};
+
+
+
+
+	class TMObjectReference
+	{
+	public:
+
+		TMObject* operator -> ()
+		{
+			if (id > 0)
+			{
+
+
+				id = -1; // do not search anymore for the object
+			}
+			return object.get();
+		}
+
+	protected:
+
+		int id = 0;
+
+		mutable chaos::weak_ptr<TMObject> object;
+	};
+
+
+
+
 	// =====================================
 	// TMObject 
 	// =====================================
@@ -42,7 +79,7 @@ namespace death
 	protected:
 
 		/** additionnal initialization */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object);
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry & reference_registry);
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
@@ -75,7 +112,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry) override;
 	};
 
 	// =====================================
@@ -91,7 +128,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry) override;
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
@@ -136,7 +173,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry) override;
 		/** called whenever a collision with object is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type);
 
@@ -175,7 +212,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -209,7 +246,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 	};
@@ -236,7 +273,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry) override;
 		/** override */
 		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
 
@@ -284,7 +321,7 @@ namespace death
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceRegistry& reference_registry) override;
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */

@@ -195,7 +195,8 @@ namespace death
 		{
 			for (auto& object : objects)
 				if (object->GetObjectID() == id)
-					return object.get();
+					if (chaos::ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
+						return object.get();
 			return nullptr;
 		}
 
@@ -204,7 +205,8 @@ namespace death
 		{
 			for (auto const & object : objects)
 				if (object->GetObjectID() == id)
-					return object.get();
+					if (chaos::ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
+						return object.get();
 			return nullptr;
 		}
 

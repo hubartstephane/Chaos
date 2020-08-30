@@ -34,11 +34,11 @@ namespace chaos
 			{
 				*particle_flags = 0;
 				if ((tmp & FLIPPED_HORIZONTALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+					*particle_flags |= ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 				if ((tmp & FLIPPED_VERTICALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleFlags::TEXTURE_VERTICAL_FLIP;
+					*particle_flags |= ParticleFlags::TEXTURE_VERTICAL_FLIP;
 				if ((tmp & FLIPPED_DIAGONALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleFlags::TEXTURE_DIAGONAL_FLIP;
+					*particle_flags |= ParticleFlags::TEXTURE_DIAGONAL_FLIP;
 			}
 
 			return (int)gid;
@@ -406,7 +406,7 @@ namespace chaos
 
 		bool TypedObject::IsObjectOfType(char const* in_type) const
 		{
-			if (chaos::StringTools::Stricmp(type, in_type) == 0)
+			if (StringTools::Stricmp(type, in_type) == 0)
 				return true;
 			return PropertyOwner::IsObjectOfType(in_type);
 		}
@@ -644,14 +644,14 @@ namespace chaos
 		box2 GeometricObjectTile::GetBoundingBox(bool world_system) const
 		{
 			// search the alignment for this tile
-			chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT; // default value for tileset
+			Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT; // default value for tileset
 
 			TileInfo tile_info = FindTileInfo();
 			if (tile_info.tileset != nullptr)
 				hotpoint = tile_info.tileset->object_alignment;
 
 			//CHAOS_REVERSE_Y_AXIS
-			glm::vec2 p1 = chaos::ConvertHotpointToBottomLeft(position, size, hotpoint);
+			glm::vec2 p1 = ConvertHotpointToBottomLeft(position, size, hotpoint);
 			glm::vec2 p2 = p1 + size;
 
 			box2 result = box2(std::make_pair(p1, p2));
@@ -844,7 +844,7 @@ namespace chaos
 					return false;
 
 				image_path = BoostTools::FindAbsolutePath(GetOwnerPath(), image_path);
-				atlas_key = chaos::BoostTools::PathToName(image_path);
+				atlas_key = BoostTools::PathToName(image_path);
 			}
 
 			DoLoadObjectListHelper(element, object_layers, "objectgroup", nullptr, this);

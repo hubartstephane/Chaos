@@ -115,12 +115,8 @@ namespace chaos
 			{
 				auto e = meta::get_raw_pointer(elements[i]);
 				if (Match(*e))
-				{
-					if constexpr (!std::is_same_v<CHECK_CLASS, EmptyClass>)
-						if (dynamic_cast<CHECK_CLASS *>(e) == nullptr)
-							return false;
-					return e;
-				}
+					if (CheckClass<CHECK_CLASS>(e))
+						return e;
 			}
 			return nullptr;
 		}
@@ -134,14 +130,20 @@ namespace chaos
 			{
 				auto e = meta::get_raw_pointer(elements[i]);
 				if (Match(*e))
-				{
-					if constexpr (!std::is_same_v<CHECK_CLASS, EmptyClass>)
-						if (dynamic_cast<CHECK_CLASS const *>(e) == nullptr)
-							return false;
-					return e;
-				}
+					if (CheckClass<CHECK_CLASS>(e))
+						return e;
 			}
 			return nullptr;
+		}
+
+		/** check whether the element match the wanted class */
+		template<typename CHECK_CLASS = chaos::EmptyClass, typename T>
+		static bool CheckClass(T const* element)
+		{
+			if constexpr (!std::is_same_v<CHECK_CLASS, EmptyClass>)
+				if (dynamic_cast<CHECK_CLASS const*>(element) == nullptr)
+					return false;
+			return true;
 		}
 
 	public:

@@ -415,7 +415,7 @@ namespace death
 					int object_id = 0;
 					if (chaos::JSONTools::GetAttribute(*object_json, "OBJECT_ID", object_id))
 					{
-						TMTrigger* trigger = FindTriggerByID(object_id);
+						TMTrigger* trigger = FindObjectByID<TMTrigger>(object_id);
 						if (trigger != nullptr)
 						{
 							chaos::LoadFromJSON(*object_json, *trigger); // XXX : the indirection is important to avoid the creation of a new layer_instance
@@ -988,30 +988,6 @@ namespace death
 		}
 		return result;
 	}
-
-#define DEATH_FIND_OBJECT(result_type, func_name, constness)\
-		result_type constness * TMLayerInstance::func_name(chaos::ObjectRequest request) constness\
-		{\
-			return auto_cast(request.FindObject(objects));\
-		}\
-		result_type constness* TMLayerInstance::func_name##ByID(int id) constness\
-		{\
-			size_t count = objects.size();\
-			for (size_t i = 0; i < objects.size(); ++i)\
-				if (objects[i]->GetObjectID() == id)\
-					return auto_cast(objects[i].get());\
-			return nullptr;\
-		}
-	DEATH_FIND_OBJECT(TMObject, FindObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMObject, FindObject, const);
-	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, const);
-	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, const);
-	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, const);
-
-#undef DEATH_FIND_OBJECT
 	
 	size_t TMLayerInstance::GetObjectCount() const
 	{
@@ -1351,29 +1327,6 @@ namespace death
 		return nullptr;
 	}
 
-#define DEATH_FIND_OBJECT(result_type, func_name, constness)\
-	result_type constness * TMLevelInstance::func_name(chaos::ObjectRequest request) constness\
-	{\
-		size_t count = layer_instances.size();\
-		for (size_t i = 0; i < count; ++i)\
-		{\
-			result_type constness * result = layer_instances[i]->func_name(request);\
-			if (result != nullptr)\
-				return result;\
-		}\
-		return nullptr;\
-	}
-	DEATH_FIND_OBJECT(TMObject, FindObject, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMObject, FindObject, const);
-	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMTrigger, FindTrigger, const);
-	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMPlayerStart, FindPlayerStart, const);
-	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, BOOST_PP_EMPTY());
-	DEATH_FIND_OBJECT(TMCameraTemplate, FindCameraTemplate, const);
-
-#undef DEATH_FIND_OBJECT
-
 	TMLayerInstance* TMLevelInstance::FindLayerInstance(chaos::ObjectRequest request)
 	{
 		return request.FindObject(layer_instances);
@@ -1393,10 +1346,10 @@ namespace death
 		// search the CAMERA
 		TMCameraTemplate* camera_template = nullptr;
 		if (camera_name != nullptr)
-			camera_template = FindCameraTemplate(*camera_name); // first, if a name is given, use it
+			camera_template = FindObject<TMCameraTemplate>(*camera_name); // first, if a name is given, use it
 		if (camera_template == nullptr)
 		{
-			camera_template = FindCameraTemplate(chaos::ObjectRequest::Any()); // try to find the very first one otherwise
+			camera_template = FindObject<TMCameraTemplate>(chaos::ObjectRequest::Any()); // try to find the very first one otherwise
 			if (camera_template == nullptr)
 				return;
 		}
@@ -1434,9 +1387,9 @@ namespace death
 		// search the PLAYER START
 		TMPlayerStart* result = nullptr;
 		if (player_start_name != nullptr)
-			result = FindPlayerStart(player_start_name->c_str()); // first, if a name is given, use it
+			result = FindObject<TMPlayerStart>(player_start_name->c_str()); // first, if a name is given, use it
 		if (result == nullptr)
-			result = FindPlayerStart(chaos::ObjectRequest::Any()); // try to find the very first one otherwise
+			result = FindObject<TMPlayerStart>(chaos::ObjectRequest::Any()); // try to find the very first one otherwise
 		return result;
 	}
 

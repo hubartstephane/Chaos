@@ -49,6 +49,9 @@
    <data encoding="base64"/>
   </layer>
   <objectgroup id="26" name="Camera" visible="0" locked="1">
+   <properties>
+    <property name="OBJECT_REFERENCE" type="object" value="0"/>
+   </properties>
    <object id="2114" type="Camera" x="99.21" y="1591.43" width="306.275" height="201.06"/>
   </objectgroup>
   <layer id="37" name="BurningFlames" width="57" height="56" visible="0">

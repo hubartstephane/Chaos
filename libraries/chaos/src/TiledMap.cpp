@@ -1582,6 +1582,13 @@ namespace chaos
 				return false;
 			if (!DoLoadLayers(element))
 				return false;
+			if (!DoPatchObjectReferences()) // once all objects are created, we can patch object references (transform integer ID into a Object pointer)
+				return false;
+			return true;
+		}
+
+		bool Map::DoPatchObjectReferences() 
+		{
 			return true;
 		}
 

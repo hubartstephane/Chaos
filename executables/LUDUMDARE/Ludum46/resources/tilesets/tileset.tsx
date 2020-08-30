@@ -86,6 +86,9 @@
   <image width="32" height="32" source="../sprites/Brick12.png"/>
  </tile>
  <tile id="21" type="WALL">
+  <properties>
+   <property name="OBJECT_REFERENCE" type="object" value="0"/>
+  </properties>
   <image width="32" height="32" source="../sprites/Brick13.png"/>
  </tile>
  <tile id="22" type="WALL">

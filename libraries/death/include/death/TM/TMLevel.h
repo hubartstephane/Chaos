@@ -176,41 +176,37 @@ namespace death
 		/** get the game */
 		chaos::AutoConstCastable<Game> GetGame() const;
 
-		/** find the player start from its name */
-		TMPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
-		/** find the player start from its name */
-		TMPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
-		/** find the player start from its ID */
-		TMPlayerStart* FindPlayerStartByID(int id);
-		/** find the player start from its ID */
-		TMPlayerStart const* FindPlayerStartByID(int id) const;
-
-		/** find the camera from its name */
-		TMCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
-		/** find the camera from its name */
-		TMCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
-		/** find the camera from its name */
-		TMCameraTemplate* FindCameraTemplateByID(int id);
-		/** find the camera from its name */
-		TMCameraTemplate const* FindCameraTemplateByID(int id) const;
-
-		/** find the trigger surface from its name */
-		TMTrigger* FindTrigger(chaos::ObjectRequest request);
-		/** find the trigger surface from its name */
-		TMTrigger const* FindTrigger(chaos::ObjectRequest request) const;
-		/** find the trigger surface from its ID */
-		TMTrigger* FindTriggerByID(int id);
-		/** find the trigger surface from its ID */
-		TMTrigger const* FindTriggerByID(int id) const;
 
 		/** find the object from its name */
-		TMObject* FindObject(chaos::ObjectRequest request);
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoCastable<TMObject> FindObject(chaos::ObjectRequest request)
+		{
+			return request.FindObject<CHECK_CLASS>(objects);
+		}
 		/** find the object from its name */
-		TMObject const* FindObject(chaos::ObjectRequest request) const;
-		/** find the object from its ID */
-		TMObject* FindObjectByID(int id);
-		/** find the object from its ID */
-		TMObject const* FindObjectByID(int id) const;
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoConstCastable<TMObject> FindObject(chaos::ObjectRequest request) const
+		{
+			return request.FindObject<CHECK_CLASS>(objects);
+		}
+
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoCastable<TMObject> FindObjectByID(int id)
+		{
+			for (auto& object : objects)
+				if (object->GetObjectID() == id)
+					return object.get();
+			return nullptr;
+		}
+
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoConstCastable<TMObject> FindObjectByID(int id) const
+		{
+			for (auto const & object : objects)
+				if (object->GetObjectID() == id)
+					return object.get();
+			return nullptr;
+		}
 
 		/** get the bounding box for the level */
 		chaos::box2 GetBoundingBox(bool world_system) const;
@@ -407,22 +403,43 @@ namespace death
 		TMLayerInstance* FindLayerInstance(chaos::ObjectRequest request);
 		/** find the layer instance from its name */
 		TMLayerInstance const* FindLayerInstance(chaos::ObjectRequest request) const;
-		/** find the camera from its name */
-		TMCameraTemplate* FindCameraTemplate(chaos::ObjectRequest request);
-		/** find the camera from its name */
-		TMCameraTemplate const* FindCameraTemplate(chaos::ObjectRequest request) const;
-		/** find the player start from its name */
-		TMPlayerStart* FindPlayerStart(chaos::ObjectRequest request);
-		/** find the player start from its name */
-		TMPlayerStart const* FindPlayerStart(chaos::ObjectRequest request) const;
-		/** find the trigger surface from its name */
-		TMTrigger* FindTrigger(chaos::ObjectRequest request);
-		/** find the trigger surface from its name */
-		TMTrigger const* FindTrigger(chaos::ObjectRequest request) const;
+
 		/** find the typed object from its name */
-		TMObject* FindObject(chaos::ObjectRequest request);
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoCastable<TMObject> FindObject(chaos::ObjectRequest request)
+		{
+			for (auto& layer : layer_instances)
+				if (chaos::AutoCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
+					return result;
+			return nullptr;
+		}
 		/** find the typed object surface from its name */
-		TMObject const* FindObject(chaos::ObjectRequest request) const;
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoConstCastable<TMObject> FindObject(chaos::ObjectRequest request) const
+		{
+			for (auto const & layer : layer_instances)
+				if (chaos::AutoConstCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
+					return result;
+			return nullptr;
+		}
+		/** find the object from its ID */
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoCastable<TMObject> FindObjectByID(int id)
+		{
+			for (auto & layer : layer_instances)
+				if (chaos::AutoCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
+					return result;
+			return nullptr;
+		}
+		/** find the object from its ID */
+		template<typename CHECK_CLASS = chaos::EmptyClass>
+		chaos::AutoConstCastable<TMObject> FindObjectByID(int id) const
+		{
+			for (auto const& layer : layer_instances)
+				if (chaos::AutoConstCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
+					return result;
+			return nullptr;
+		}
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>

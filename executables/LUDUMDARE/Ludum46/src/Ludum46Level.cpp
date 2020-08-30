@@ -66,6 +66,8 @@ bool SoulTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::T
 	for (std::string & name : name_array)
 		effector_names.push_back(std::move(name));
 
+	in_reference_registry.DeclareReference(myreference, "OBJECT_REFERENCE", in_geometric_object);
+
 	// update internals (used whenever checkpoint is reloaded)
 	trigger_count = 0;
 
@@ -84,6 +86,13 @@ bool SoulTrigger::DoTick(float delta_time)
 		effector->SetEffectorState(trigger_count >= trigger_limit);
 	}
 	trigger_count = 0;
+
+
+	if (myreference != nullptr)
+	{
+		trigger_count = 0;
+
+	}
 
 	return true;
 }

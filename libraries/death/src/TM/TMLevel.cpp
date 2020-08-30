@@ -1253,23 +1253,14 @@ namespace death
 		if (!death::LevelInstance::Initialize(in_game, in_level))
 			return false;
 
-		TMObjectReferenceRegistry reference_registry;
-
 		// create a the layers instances
+		TMObjectReferenceRegistry reference_registry;
 		if (!CreateLayerInstances(in_game, reference_registry))
 			return false;
+		reference_registry.SolveReferences(this);
 		// create a particle manager
 		if (!CreateParticleManager(in_game))
 			return false;
-		// resolve references
-		if (!ResolveObjectReferences(reference_registry))
-			return false;
-
-		return true;
-	}
-
-	bool TMLevelInstance::ResolveObjectReferences(TMObjectReferenceRegistry & reference_registry)
-	{
 
 		return true;
 	}

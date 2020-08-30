@@ -22,6 +22,9 @@
   <image source="../textures/GameBackground.png" width="800" height="600"/>
  </tileset>
  <group id="40" name="Groupe 1">
+  <properties>
+   <property name="OBJECT_REFERN" type="object" value="0"/>
+  </properties>
   <layer id="39" name="Background" width="57" height="56">
    <properties>
     <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
@@ -51,7 +54,7 @@
   </layer>
   <objectgroup id="26" name="Camera" visible="0" locked="1">
    <properties>
-    <property name="OBJECT_REFERENCE" type="object" value="0"/>
+    <property name="OBJECT_REFERENCE" type="object" value="1"/>
    </properties>
    <object id="2114" type="Camera" x="99.21" y="1591.43" width="306.275" height="201.06"/>
   </objectgroup>
@@ -117,6 +120,7 @@
    <object id="2125" name="Trigger" type="SoulTrigger" gid="11" x="382.5" y="1489.5" width="254.25" height="32">
     <properties>
      <property name="EFFECTORS" value="Spike1,Spike2,MyFireSpawner"/>
+     <property name="OBJECT_REFERENCE" type="object" value="2165"/>
     </properties>
    </object>
    <object id="2128" name="MyFireSpawner" type="Spawner" gid="10" x="552.333" y="1691.33" width="80" height="80">

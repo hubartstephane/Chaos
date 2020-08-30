@@ -17,7 +17,7 @@
 // EffectorObject implementation
 // =============================================================
 
-bool EffectorObject::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool EffectorObject::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
 
 
@@ -28,11 +28,11 @@ bool EffectorObject::Initialize(death::TMLayerInstance* in_layer_instance, chaos
 // SpikeBar implementation
 // =============================================================
 
-bool SpikeBar::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool SpikeBar::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
 
@@ -49,9 +49,9 @@ void SpikeBar::OnEffectorChangeState()
 // SoulTrigger implementation
 // =============================================================
 
-bool SoulTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool SoulTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
 	// number of element that must be triggered
@@ -66,7 +66,7 @@ bool SoulTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::T
 	for (std::string & name : name_array)
 		effector_names.push_back(std::move(name));
 
-	in_reference_registry.DeclareReference(myreference, "OBJECT_REFERENCE", in_geometric_object);
+	in_reference_solver.DeclareReference(myreference, "OBJECT_REFERENCE", in_geometric_object);
 
 	// update internals (used whenever checkpoint is reloaded)
 	trigger_count = 0;
@@ -141,9 +141,9 @@ int Spawner::GetRemainingParticleCount() const
 	return (max_spawned_particles - spawned_count);
 }
 
-bool Spawner::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool Spawner::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
 	max_spawned_particles = in_geometric_object->GetPropertyValueInt("MAX_SPAWNED_PARTICLES", max_spawned_particles);
@@ -259,11 +259,11 @@ void Spawner::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 // =============================================================
 
 
-bool FireSpawner::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceRegistry& in_reference_registry)
+bool FireSpawner::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
-	if (!Spawner::Initialize(in_layer_instance, in_geometric_object, in_reference_registry))
+	if (!Spawner::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
 	return true;

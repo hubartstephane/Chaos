@@ -55,9 +55,9 @@ namespace death
 	//
 
 	/** a functor for geometric object factory */
-	using TMObjectFactory = std::function<TMObject * (chaos::TiledMap::GeometricObject const *, TMObjectReferenceRegistry & )>;
+	using TMObjectFactory = std::function<TMObject * (chaos::TiledMap::GeometricObject const *, TMObjectReferenceSolver & )>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
-#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object, death::TMObjectReferenceRegistry & in_reference_registry) { x }
+#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object, death::TMObjectReferenceSolver & in_reference_solver) { x }
 
 	// =====================================
 	// TMLevel : a level described by a tiledmap
@@ -111,7 +111,7 @@ namespace death
 		virtual TMLayerInstance* DoCreateLayerInstance();
 
 		/** create a layer instance 'entry point' */
-		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer, TMObjectReferenceRegistry& reference_registry);
+		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer, TMObjectReferenceSolver& reference_solver);
 
 		/** get the folder in which bitmaps are stored in Game::Atlas */
 		virtual chaos::BitmapAtlas::FolderInfo const* GetFolderInfo(TMLayerInstance* layer_instance) const;
@@ -278,7 +278,7 @@ namespace death
 	protected:
 
 		/** initialization */
-		virtual bool Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer, TMObjectReferenceRegistry & reference_registry);
+		virtual bool Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer, TMObjectReferenceSolver & reference_solver);
 		/** serialization of all JSON objects into an array */
 		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TMObject>>& result);
 		/** called whenever level instance is restarted */
@@ -293,11 +293,11 @@ namespace death
 		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
 
 		/** specialized layer */
-		bool InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer, TMObjectReferenceRegistry& reference_registry);
+		bool InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer, TMObjectReferenceSolver& reference_solver);
 		/** specialized layer */
-		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer, TMObjectReferenceRegistry& reference_registry);
+		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer, TMObjectReferenceSolver& reference_solver);
 		/** specialized layer */
-		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer, TMObjectReferenceRegistry& reference_registry);
+		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer, TMObjectReferenceSolver& reference_solver);
 	
 		/** create an object in an object layer */
 		TMObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object);
@@ -520,9 +520,9 @@ namespace death
 		/** create the particle manager */
 		virtual bool CreateParticleManager(Game* in_game);
 		/** create the layers instances */
-		virtual bool CreateLayerInstances(Game* in_game, TMObjectReferenceRegistry &reference_registry);
+		virtual bool CreateLayerInstances(Game* in_game, TMObjectReferenceSolver &reference_solver);
 		/** create the layers instances */
-		bool DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const& layers, TMObjectReferenceRegistry& reference_registry);
+		bool DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const& layers, TMObjectReferenceSolver& reference_solver);
 
 		/** override */
 		virtual void CreateBackgroundImage() override;

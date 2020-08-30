@@ -15,11 +15,12 @@
 #include <chaos/BitmapAtlas.h>
 #include <chaos/BitmapAtlasGenerator.h>
 #include <chaos/TiledMap.h>
-#include <chaos/TiledMapTools.h>
 #include <chaos/GPUFramebuffer.h>
 
 #include <death/Game.h>
 #include <death/GameFramework.h>
+#include <death/TM.h>
+
 
 
 // =================================================

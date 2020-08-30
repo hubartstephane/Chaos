@@ -6,8 +6,8 @@
 #include <chaos/StringTools.h>
 #include <chaos/MyBase64.h>
 #include <chaos/MyZLib.h>
-#include <chaos/TiledMapTools.h>
 #include <chaos/STLTools.h>
+#include <chaos/ParticleDefault.h>
 
 #define CHAOS_REVERSE_Y_AXIS 1
 
@@ -18,6 +18,31 @@ namespace chaos
 		// ==========================================
 		// Utility methods
 		// ==========================================
+
+		int DecodeTileGID(int pseudo_gid, int* particle_flags)
+		{
+			// see https://doc.mapeditor.org/en/stable/reference/tmx-map-format/
+			const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+			const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
+			const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+
+			std::int32_t tmp = (std::int32_t)pseudo_gid;
+
+			std::int32_t gid = tmp & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
+
+			if (particle_flags != nullptr)
+			{
+				*particle_flags = 0;
+				if ((tmp & FLIPPED_HORIZONTALLY_FLAG) != 0)
+					*particle_flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
+				if ((tmp & FLIPPED_VERTICALLY_FLAG) != 0)
+					*particle_flags |= chaos::ParticleFlags::TEXTURE_VERTICAL_FLIP;
+				if ((tmp & FLIPPED_DIAGONALLY_FLAG) != 0)
+					*particle_flags |= chaos::ParticleFlags::TEXTURE_DIAGONAL_FLIP;
+			}
+
+			return (int)gid;
+		}
 
 		int GetHEXCharacterCount(char const * c)
 		{
@@ -580,7 +605,7 @@ namespace chaos
 			int pseudo_gid = 0;
 			XMLTools::ReadAttribute(element, "gid", pseudo_gid);
 			// decode the ID, extract the flags
-			gid = TiledMapTools::DecodeTileGID(pseudo_gid, &particle_flags);
+			gid = DecodeTileGID(pseudo_gid, &particle_flags);
 
 			return true;
 		}
@@ -1227,7 +1252,7 @@ namespace chaos
 			{
 				// decode the ID's and the flags
 				for (Tile& tile : tiles)
-					tile.id = TiledMapTools::DecodeTileGID(tile.id, &tile.flags);
+					tile.id = DecodeTileGID(tile.id, &tile.flags);
 				// insert a chunk for theses tiles
 				TileLayerChunk chunk;
 				chunk.size = chunk_size;

@@ -15,7 +15,6 @@
 #include <chaos/InputMode.h>
 #include <chaos/FileTools.h>
 #include <chaos/TiledMap.h>
-#include <chaos/TiledMapTools.h>
 #include <chaos/CollisionFramework.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/HelpText.h>
@@ -324,7 +323,7 @@ namespace death
 			if (folder_input == nullptr)
 				return false;
 			// add sprites from TiledMap
-			if (!chaos::TiledMapTools::AddIntoAtlasInput(tiled_map_manager.get(), folder_input))
+			if (!TMTools::AddIntoAtlasInput(tiled_map_manager.get(), folder_input))
 				return false;
 		}
 		return true;

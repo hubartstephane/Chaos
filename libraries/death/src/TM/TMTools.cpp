@@ -1,35 +1,35 @@
-#include <chaos/TiledMapTools.h>
+#include <death/TM.h>
 
-namespace chaos
+namespace death
 {
-	namespace TiledMapTools
+	namespace TMTools
 	{
-		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(chaos::TiledMap::Manager const* manager, chaos::BitmapAtlas::AtlasInput& input)
 		{
 			return AddIntoAtlasInput(manager, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(chaos::TiledMap::TileSet const* tile_set, chaos::BitmapAtlas::AtlasInput& input)
 		{
 			return AddIntoAtlasInput(tile_set, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(chaos::TiledMap::Map const* map, chaos::BitmapAtlas::AtlasInput& input)
 		{
 			return AddIntoAtlasInput(map, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(chaos::TiledMap::LayerBase const* layer, chaos::BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(layer != nullptr);
 			assert(folder_input != nullptr);
 
-			if (TiledMap::ImageLayer const* image_layer = auto_cast(layer))
+			if (chaos::TiledMap::ImageLayer const* image_layer = auto_cast(layer))
 			{
 				if (image_layer->image_path.size() > 0)
 					folder_input->AddBitmap(image_layer->image_path, nullptr, 0);
 			}
-			else if (TiledMap::GroupLayer const* group_layer = auto_cast(layer))
+			else if (chaos::TiledMap::GroupLayer const* group_layer = auto_cast(layer))
 			{
 				size_t count = group_layer->layers.size();
 				for (size_t i = 0; i < count; ++i)
@@ -39,7 +39,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(chaos::TiledMap::Map const* map, chaos::BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(map != nullptr);
 			assert(folder_input != nullptr);
@@ -52,7 +52,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(chaos::TiledMap::TileSet const* tile_set, chaos::BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(tile_set != nullptr);
 			assert(folder_input != nullptr);
@@ -65,7 +65,7 @@ namespace chaos
 			size_t tile_count = tile_set->tiles.size();
 			for (size_t j = 0; j < tile_count; ++j)
 			{
-				TiledMap::TileData const* tile_data = tile_set->tiles[j].get();
+				chaos::TiledMap::TileData const* tile_data = tile_set->tiles[j].get();
 				if (tile_data == nullptr)
 					continue;
 				if (tile_data->image_path.size() > 0)
@@ -74,7 +74,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(chaos::TiledMap::Manager const* manager, chaos::BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(manager != nullptr);
 			assert(folder_input != nullptr);
@@ -83,7 +83,7 @@ namespace chaos
 			size_t tile_set_count = manager->tile_sets.size();
 			for (size_t i = 0; i < tile_set_count; ++i)
 			{
-				TiledMap::TileSet const* tile_set = manager->tile_sets[i].get();
+				chaos::TiledMap::TileSet const* tile_set = manager->tile_sets[i].get();
 				if (tile_set == nullptr)
 					continue;
 				if (!AddIntoAtlasInput(tile_set, folder_input))
@@ -94,7 +94,7 @@ namespace chaos
 			size_t map_count = manager->maps.size();
 			for (size_t i = 0; i < map_count; ++i)
 			{
-				TiledMap::Map const* map = manager->maps[i].get();
+				chaos::TiledMap::Map const* map = manager->maps[i].get();
 				if (map == nullptr)
 					continue;
 				if (!AddIntoAtlasInput(map, folder_input))
@@ -103,71 +103,46 @@ namespace chaos
 			return true;
 		}
 
-		bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object)
+		bool IsWorldBoundingBox(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("WorldBoundingBox");
 		}
 
-		bool IsLayerBoundingBox(TiledMap::TypedObject const* typed_object)
+		bool IsLayerBoundingBox(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("LayerBoundingBox");
 		}
 
-		bool IsPlayerStartObject(TiledMap::TypedObject const* typed_object)
+		bool IsPlayerStartObject(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("PlayerStart");
 		}
 
-		bool IsCameraObject(TiledMap::TypedObject const* typed_object)
+		bool IsCameraObject(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Camera");
 		}
 
-		bool IsFinishTrigger(TiledMap::TypedObject const* typed_object)
+		bool IsFinishTrigger(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Finish");
 		}
 
-		bool IsCheckpointTrigger(TiledMap::TypedObject const* typed_object)
+		bool IsCheckpointTrigger(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Checkpoint");
 		}
 
-		bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object)
+		bool IsNotificationTrigger(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Notification");
 		}
 
-		bool IsSoundTrigger(TiledMap::TypedObject const* typed_object)
+		bool IsSoundTrigger(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Sound");
 		}
 
-		int DecodeTileGID(int pseudo_gid, int * particle_flags)
-		{
-			// see https://doc.mapeditor.org/en/stable/reference/tmx-map-format/
-			const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-			const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
-			const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+	}; // namespace TMTools
 
-			std::int32_t tmp = (std::int32_t)pseudo_gid;
-
-			std::int32_t gid = tmp & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
-
-			if (particle_flags != nullptr)
-			{
-				*particle_flags = 0;
-				if ((tmp & FLIPPED_HORIZONTALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
-				if ((tmp & FLIPPED_VERTICALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleFlags::TEXTURE_VERTICAL_FLIP;
-				if ((tmp & FLIPPED_DIAGONALLY_FLAG) != 0)
-					*particle_flags |= chaos::ParticleFlags::TEXTURE_DIAGONAL_FLIP;
-			}
-
-			return (int)gid;
-		}
-
-	}; // namespace TiledMapTools
-
-}; // namespace chaos
+}; // namespace death

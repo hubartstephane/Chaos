@@ -67,6 +67,7 @@
 #include <death/TM/TMLevel.h>
 #include <death/TM/TMCollision.h>
 #include <death/TM/TMParticlePopulator.h>
+#include <death/TM/TMTools.h>
 
 		// ==============================================================
 		// Undefs

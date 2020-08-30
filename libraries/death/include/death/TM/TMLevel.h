@@ -496,9 +496,6 @@ namespace death
 		/** override */
 		virtual void OnRestart() override;
 
-		/** resolving object reference (transform ID's into pointers) */
-		bool ResolveObjectReferences(TMObjectReferenceRegistry & reference_registry);
-
 		/** handle all collisions with the player (TriggerObject) */
 		void HandlePlayerTriggerCollisions(float delta_time);
 		/** handle all collisions with the camera (TriggerObject) */

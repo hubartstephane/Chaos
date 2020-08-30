@@ -181,6 +181,8 @@ protected:
 
 	int trigger_count = 0;
 
+	chaos::weak_ptr<TMObject> myreference;
+
 };
 
 // =================================================

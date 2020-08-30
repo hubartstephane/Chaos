@@ -10,36 +10,20 @@ namespace death
 
 	class TMObjectReferenceRegistry
 	{
-
-	};
-
-
-
-
-	class TMObjectReference
-	{
 	public:
 
-		TMObject* operator -> ()
-		{
-			if (id > 0)
-			{
-
-
-				id = -1; // do not search anymore for the object
-			}
-			return object.get();
-		}
+		/** add a reference to later solve */
+		void DeclareReference(chaos::weak_ptr<TMObject>& reference, int id);
+		/** add a reference to later solve */
+		void DeclareReference(chaos::weak_ptr<TMObject>& reference, char const * property_name, chaos::TiledMap::PropertyOwner const * property_owner);
+		/** solving all references */
+		void SolveReferences(TMLevelInstance* level_instance);
 
 	protected:
 
-		int id = 0;
-
-		mutable chaos::weak_ptr<TMObject> object;
+		/** the references to resolve */
+		std::vector<std::pair<chaos::weak_ptr<TMObject> *, int>> references;
 	};
-
-
-
 
 	// =====================================
 	// TMObject 

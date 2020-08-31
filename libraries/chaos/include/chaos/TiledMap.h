@@ -699,7 +699,7 @@ namespace chaos
 
 			/** object information */
 			int gid = 0;
-			/** tile flags (whether particle is flipped vertical/horizontal/diagonal flipped*/
+			/** tile flags (whether particle is flipped vertical/horizontal/diagonal flipped) */
 			int particle_flags = 0;
 		};
 
@@ -1086,11 +1086,6 @@ namespace chaos
 			glm::ivec2 tile_size = glm::ivec2(0, 0);
 		};
 
-
-
-
-
-
 		// ==========================================
 		// GroupLayer
 		// ==========================================
@@ -1273,7 +1268,6 @@ namespace chaos
 
 			/** find the wangset for this name */
 			Wangset const * FindWangset(char const* name) const;
-
 
 		public:
 

@@ -658,10 +658,6 @@ namespace death
 		return true;
 	}
 
-
-
-	// shuyyy
-
 	bool TMLayerInstance::FinalizeParticles(chaos::ParticleAllocationBase* allocation)
 	{
 		// no layer, nothing to do !
@@ -687,16 +683,6 @@ namespace death
 		}
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
 
 	bool TMLayerInstance::InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer)
 	{
@@ -758,24 +744,6 @@ namespace death
 		}
 		return particle_layer.get();
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// shuyyy
-
 
 	bool TMLayerInstance::InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer, TMObjectReferenceSolver& reference_solver)
 	{
@@ -875,30 +843,6 @@ namespace death
 
 		return true;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	bool TMLayerInstance::DoTick(float delta_time)
 	{

@@ -194,18 +194,6 @@ namespace death
 
 	bool TMLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation) 
 	{
-		if (layer_instance != nullptr && layer_instance->layer != nullptr)
-		{
-			// whether the collision flags must be computed 
-			bool compute_collision_flags = layer_instance->layer->GetPropertyValueBool("COMPUTE_COLLISION_FLAGS", false);
-			if (compute_collision_flags)
-			{
-
-
-
-				compute_collision_flags = compute_collision_flags;
-			}
-		}
 		return true; 
 	}
 

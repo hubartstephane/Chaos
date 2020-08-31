@@ -1105,6 +1105,40 @@ namespace chaos
 			return result;
 		}
 
+		void TileLayer::ComputeTileNeighbours()
+		{
+			for (TileLayerChunk& chunk : tile_chunks)
+			{
+				int count = (int)chunk.tile_indices.size();
+				for (int i = 0; i < count; ++i)
+				{
+					glm::ivec2 pos = glm::ivec2(
+						chunk.offset.x + (i % chunk.size.x),
+						chunk.offset.y + (i / chunk.size.y));
+
+					// this could be more optimized
+					Tile tile_nx = GetTile(pos + glm::ivec2(-1, 0));
+					Tile tile_px = GetTile(pos + glm::ivec2(+1, 0));
+					Tile tile_ny = GetTile(pos + glm::ivec2(0, -1));
+					Tile tile_py = GetTile(pos + glm::ivec2(0, +1));
+
+					// CHAOS_REVERSE_Y_AXIS
+
+					int extra_flags = 0;
+					if (tile_nx.id > 0)
+						extra_flags |= TileParticleFlags::NEIGHBOUR_LEFT;
+					if (tile_px.id < 0)
+						extra_flags |= TileParticleFlags::NEIGHBOUR_RIGHT;
+					if (tile_py.id < 0)
+						extra_flags |= TileParticleFlags::NEIGHBOUR_TOP;
+					if (tile_ny.id > 0)
+						extra_flags |= TileParticleFlags::NEIGHBOUR_BOTTOM;
+
+					chunk.tile_indices[i].flags |= extra_flags;
+				}
+			}
+		}
+
 		bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!LayerBase::DoLoad(element))
@@ -1116,6 +1150,11 @@ namespace chaos
 			if (!DoLoadTileBuffer(element))
 				return false;
 
+			// set additionnal flags in chunk based on their neighborhood
+			bool compute_neighbours = true;
+			XMLTools::ReadAttribute(element, "compute_neighbours", compute_neighbours);
+			if (compute_neighbours)
+				ComputeTileNeighbours();
 			return true;
 		}
 
@@ -1203,8 +1242,7 @@ namespace chaos
 
 				tiles.reserve(chunk_size.x * chunk_size.y);
 
-				// XXX : for tiles that have any flags set, the PSEUDO_ID fails to be read correctly from the CSV.
-				//       Values are probably too big or too small
+				// XXX : for tiles that have any flags set, we have to work with UNSIGNED int
 
 				char const* txt = element->GetText();
 				if (txt == nullptr)
@@ -1230,8 +1268,6 @@ namespace chaos
 			else // else XML
 			{
 				tiles.reserve(chunk_size.x * chunk_size.y);
-
-				// XXX : not big int tile issue here :)
 
 				size_t count = (size_t)(chunk_size.x * chunk_size.y);
 

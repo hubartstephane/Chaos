@@ -11,6 +11,8 @@
 
 #define CHAOS_REVERSE_Y_AXIS 1
 
+static glm::vec2 const REVERSE_Y_AXIS = glm::vec2(1.0f, -1.0f);
+
 namespace chaos
 {
 	namespace TiledMap
@@ -454,11 +456,7 @@ namespace chaos
 						p[coord++] = (float)atof(&values[i]);
 						if (coord == 2)
 						{
-#if CHAOS_REVERSE_Y_AXIS
-							result.push_back(glm::vec2(p.x, -p.y));
-#else
-							result.push_back(p);
-#endif
+							result.push_back(p * REVERSE_Y_AXIS);
 							p = glm::vec2(0.0f, 0.0f); // flush the point if both axis are found
 							coord = 0;
 						}
@@ -470,13 +468,7 @@ namespace chaos
 					}
 					// flush the point even if there is a missing axis
 					if (coord == 1)
-					{
-#if CHAOS_REVERSE_Y_AXIS
-						result.push_back(glm::vec2(p.x, -p.y));
-#else
-						result.push_back(p);
-#endif
-					}
+						result.push_back(p * REVERSE_Y_AXIS);
 				}
 			}
 			return result;
@@ -496,19 +488,13 @@ namespace chaos
 			// convert to trigonometric rotation in rads
 			rotation = -MathTools::DegreeToRadian(rotation);
 
-			if (rotation != 0)
-				rotation = rotation;
-
-
-
 			// remove useless space in type
 			if (type.length() > 0)
 				type = StringTools::TrimSpaces(type.c_str(), true, true);
 
 			// reverse the Y axis
-#if CHAOS_REVERSE_Y_AXIS
-			position.y = -position.y;
-#endif
+			position = position * REVERSE_Y_AXIS;
+
 			return true;
 		}
 
@@ -627,9 +613,8 @@ namespace chaos
 
 		box2 GeometricObjectSurface::GetBoundingBox(bool world_system) const
 		{
-			//CHAOS_REVERSE_Y_AXIS
 			glm::vec2 p1 = position;
-			glm::vec2 p2 = glm::vec2(position.x + size.x, position.y - size.y);
+			glm::vec2 p2 = position + size * REVERSE_Y_AXIS;
 
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)
@@ -943,9 +928,8 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "offsety", offset.y);
 
 			// reverse the Y axis
-#if CHAOS_REVERSE_Y_AXIS
-			offset.y = -offset.y;
-#endif
+			offset = offset * REVERSE_Y_AXIS;
+
 			return true;
 		}
 		

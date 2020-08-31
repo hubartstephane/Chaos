@@ -23,7 +23,7 @@ namespace chaos
 		static constexpr int TEXTURE_VERTICAL_FLIP   = (1 << 1);
 		static constexpr int TEXTURE_DIAGONAL_FLIP   = (1 << 2);
 
-		static constexpr int HEIGHT_BITS_MODE         = (1 << 4); // whether we want to interpolate texel or have an old 8BIT MODE
+		static constexpr int HEIGHT_BITS_MODE        = (1 << 4); // whether we want to interpolate texel or have an old 8BIT MODE
 	};
 
 	namespace VertexFlags

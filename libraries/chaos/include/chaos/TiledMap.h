@@ -59,6 +59,15 @@ namespace chaos
 #define CHAOS_TILEDMAP_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_TILEDMAP_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FRIEND_DECL, _, CHAOS_TILEDMAP_CLASSES)
 
+	namespace TileParticleFlags
+	{
+		// XXX : see ParticleFlags to avoid flag collisions
+		static constexpr int NEIGHBOUR_LEFT   = (1 << 5);
+		static constexpr int NEIGHBOUR_RIGHT  = (1 << 6);
+		static constexpr int NEIGHBOUR_TOP    = (1 << 7);
+		static constexpr int NEIGHBOUR_BOTTOM = (1 << 8);
+	};
+
 		// ==========================================
 		// Functions
 		// ==========================================
@@ -1064,6 +1073,8 @@ namespace chaos
 			bool DoLoadTileChunk(tinyxml2::XMLElement const* element, char const * encoding, char const * compression);
 			/** loading buffer method */
 			std::vector<Tile> DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size);
+			/** add some flags for tiles relative to their neighboor on the grid */
+			void ComputeTileNeighbours();
 
 		public:
 

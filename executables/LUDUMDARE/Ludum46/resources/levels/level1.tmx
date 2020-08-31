@@ -85,7 +85,7 @@
   <layer id="25" name="Walls" width="57" height="56">
    <properties>
     <property name="COLLISION_MASK" value="Player"/>
-    <property name="COMPUTE_COLLISION_FLAGS" type="bool" value="true"/>
+    <property name="COMPUTE_NEIGHBOURS" type="bool" value="true"/>
     <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    </properties>
    <data encoding="base64">

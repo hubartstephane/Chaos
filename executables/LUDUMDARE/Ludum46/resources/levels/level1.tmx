@@ -161,7 +161,7 @@
    <object id="2160" name="my_polygon" x="0" y="0" rotation="30">
     <polygon points="0,0 -26,54 6.66667,64 47.3333,56.6667"/>
    </object>
-   <object id="2163" name="my_polyline" x="0" y="0" rotation="30">
+   <object id="2163" name="my_polyline" x="0" y="0" rotation="37">
     <polyline points="0,0 11.3333,-96 107.333,-25.3333 194.667,-78"/>
    </object>
    <object id="2165" name="my_tile" gid="7" x="0" y="0" width="40" height="80" rotation="20"/>

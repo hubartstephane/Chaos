@@ -84,6 +84,23 @@ namespace death
 	};
 
 	// =====================================
+	// TMPath : a path around which objects may evolve
+	// =====================================
+
+	class TMPath : public TMObject
+	{
+		DEATH_TILEDLEVEL_ALL_FRIENDS;
+
+		CHAOS_OBJECT_DECLARE_CLASS2(TMPath, TMObject);
+
+	protected:
+
+		/** override */
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+	};
+
+
+	// =====================================
 	// TMCameraTemplate : where the player may start
 	// =====================================
 

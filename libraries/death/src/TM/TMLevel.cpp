@@ -72,6 +72,11 @@ namespace death
 		// camera 
 		if (TMTools::IsCameraObject(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCamera(););
+		// path
+		if (chaos::TiledMap::GeometricObjectPolygon const * polygon = auto_cast(in_typed_object))
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePath(););
+		if (chaos::TiledMap::GeometricObjectPolyline const* polyline = auto_cast(in_typed_object))
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePath(););
 		// other kind of objects
 		if (TMTools::IsFinishTrigger(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateChangeLevelTrigger(););
@@ -134,6 +139,11 @@ namespace death
 		return result_factory;
 	}
 	
+	TMPath* TMLevel::DoCreatePath()
+	{
+		return new TMPath();
+	}
+
 	TMCameraTemplate* TMLevel::DoCreateCamera()
 	{
 		return new TMCameraTemplate();

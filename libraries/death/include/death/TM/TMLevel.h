@@ -94,6 +94,8 @@ namespace death
 		/** create a typed object 'entry point' */
 		TMObjectFactory GetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
 
+		/** create a Path specializable method */
+		virtual TMPath * DoCreatePath();
 		/** create a Camera specializable method */
 		virtual TMCameraTemplate* DoCreateCamera();
 		/** create a PlayerStartObject specializable method */

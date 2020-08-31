@@ -36,6 +36,7 @@
 (TMLevelInstance) \
 (TMLayerInstance) \
 (TMObject) \
+(TMPath) \
 (TMCameraTemplate) \
 (TMPlayerStart) \
 (TMTrigger) \

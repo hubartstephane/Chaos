@@ -86,6 +86,20 @@ namespace death
 	}
 
 	// =====================================
+	// TMPath implementation
+	// =====================================
+
+	bool TMPath::Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver)
+	{
+		if (!TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+			return false;
+
+
+
+		return true;
+	}
+
+	// =====================================
 	// TMTrigger implementation
 	// =====================================
 

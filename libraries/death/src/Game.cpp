@@ -457,17 +457,7 @@ namespace death
 					return nullptr;
 			}
 			// load the resource
-
-
-#if 0
-			historique !!! 
-			pourquoi true ??
-			ne devrait on pas avoir false histoire de recharger
-#endif
-
-
-
-			chaos::TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, true); // true : the map is kept in the manager
+			chaos::TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, false); // XXX : false => dont keep it in manager => necessary for HOTRELOAD
 
 			if (tiled_map == nullptr)
 				return false;

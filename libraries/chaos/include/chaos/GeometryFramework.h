@@ -769,7 +769,8 @@ namespace chaos
 	template<typename T, glm::precision P>
 	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec2<T, P> const & src)
 	{
-		json_entry = nlohmann::json::array();
+		if (!json_entry.is_array())
+			json_entry = nlohmann::json::array();
 		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
 		JSONTools::SetAttributeByIndex(json_entry, 1, src.y);
 		return true;
@@ -797,7 +798,8 @@ namespace chaos
 	template<typename T, glm::precision P>
 	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec3<T, P> const & src)
 	{
-		json_entry = nlohmann::json::array();
+		if (!json_entry.is_array())
+			json_entry = nlohmann::json::array();
 		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
 		JSONTools::SetAttributeByIndex(json_entry, 1, src.y);
 		JSONTools::SetAttributeByIndex(json_entry, 2, src.z);
@@ -827,7 +829,8 @@ namespace chaos
 	template<typename T, glm::precision P>
 	bool SaveIntoJSON(nlohmann::json & json_entry, glm::tvec4<T, P> const & src)
 	{
-		json_entry = nlohmann::json::array();
+		if (!json_entry.is_array())
+			json_entry = nlohmann::json::array();
 		JSONTools::SetAttributeByIndex(json_entry, 0, src.x);
 		JSONTools::SetAttributeByIndex(json_entry, 1, src.y);
 		JSONTools::SetAttributeByIndex(json_entry, 2, src.z);
@@ -859,7 +862,8 @@ namespace chaos
 	template<typename T, int dimension>
 	bool SaveIntoJSON(nlohmann::json& json_entry, type_box<T, dimension> const& src)
 	{
-		json_entry = nlohmann::json::object();
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
 		JSONTools::SetAttribute(json_entry, "position", src.position);
 		JSONTools::SetAttribute(json_entry, "half_size", src.half_size);
 		return true;
@@ -876,9 +880,33 @@ namespace chaos
 	}
 
 	template<typename T, int dimension>
+	bool SaveIntoJSON(nlohmann::json& json_entry, type_obox<T, dimension> const& src)
+	{
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "position", src.position);
+		JSONTools::SetAttribute(json_entry, "half_size", src.half_size);
+		JSONTools::SetAttribute(json_entry, "rotation", src.rotation);
+		return true;
+	}
+
+	template<typename T, int dimension>
+	bool LoadFromJSON(nlohmann::json const& json_entry, type_obox<T, dimension>& dst)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "position", dst.position);
+		JSONTools::GetAttribute(json_entry, "half_size", dst.half_size);
+		JSONTools::GetAttribute(json_entry, "rotation", dst.rotation);
+		return true;
+	}
+
+
+	template<typename T, int dimension>
 	bool SaveIntoJSON(nlohmann::json& json_entry, type_sphere<T, dimension> const& src)
 	{
-		json_entry = nlohmann::json::object();
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
 		JSONTools::SetAttribute(json_entry, "position", src.position);
 		JSONTools::SetAttribute(json_entry, "radius", src.radius);
 		return true;
@@ -897,7 +925,8 @@ namespace chaos
 	template<typename T, int dimension>
 	bool SaveIntoJSON(nlohmann::json& json_entry, type_ray<T, dimension> const& src)
 	{
-		json_entry = nlohmann::json::object();
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
 		JSONTools::SetAttribute(json_entry, "position", src.position);
 		JSONTools::SetAttribute(json_entry, "direction", src.direction);
 		return true;

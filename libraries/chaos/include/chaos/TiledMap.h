@@ -72,6 +72,12 @@ namespace chaos
 		// Functions
 		// ==========================================
 
+		inline glm::vec2 const REVERSE_Y_AXIS = glm::vec2(1.0f, -1.0f);
+
+		// ==========================================
+		// Functions
+		// ==========================================
+
 		/** split the tile pseudo GID into GID/H-FLIP/V-FLIP */
 		int DecodeTileGID(int pseudo_gid, int* particle_flags = nullptr);
 

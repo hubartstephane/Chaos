@@ -1068,8 +1068,8 @@ namespace chaos
 
 		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, int particle_flags, bool world_system) const
 		{
-			glm::vec2 tc = chaos::RecastVector<glm::vec2>(tile_coord);
-			glm::vec2 ts = chaos::RecastVector<glm::vec2>(tile_size);
+			glm::vec2 tc = chaos::auto_cast_vector(tile_coord);
+			glm::vec2 ts = chaos::auto_cast_vector(tile_size);
 
 			glm::vec2 p1 = (tc * ts * REVERSE_Y_AXIS) + (ts * glm::vec2(0.0f, 1.0f) * REVERSE_Y_AXIS); // BOTTOM-LEFT ... x (0, 1) because we just want to keep the Y component for this offset
 

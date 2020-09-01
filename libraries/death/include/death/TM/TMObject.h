@@ -60,6 +60,11 @@ namespace death
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
 
+		
+
+	//	bool Show
+
+
 	protected:
 
 		/** additionnal initialization */

@@ -1038,11 +1038,18 @@ namespace chaos
 		// TileLayerChunk methods
 		// ==========================================
 
-		Tile TileLayerChunk::GetTile(glm::ivec2 const& pos) const // pos is expressed in local coordinate
+		Tile TileLayerChunk::GetTile(glm::ivec2 pos) const // pos is expressed in local coordinate
 		{
-			assert(pos.x >= 0 && pos.x < size.x);
-			assert(pos.y >= 0 && pos.y < size.y);
+			assert(ContainTile(pos));
+			pos = pos - offset;
 			return tile_indices[(size_t)(pos.x + pos.y * size.y)];
+		}
+
+		bool TileLayerChunk::ContainTile(glm::ivec2 const& pos) const
+		{
+			if (pos.x >= offset.x && pos.x < size.x && pos.y >= offset.y && pos.y < size.y)
+				return true;
+			return false;
 		}
 
 		// ==========================================
@@ -1080,8 +1087,21 @@ namespace chaos
 
 		void TileLayer::ComputeTileNeighbours()
 		{
+			int const extra_flags[4] = { TileParticleFlags::NEIGHBOUR_LEFT, TileParticleFlags::NEIGHBOUR_RIGHT, TileParticleFlags::NEIGHBOUR_TOP, TileParticleFlags::NEIGHBOUR_BOTTOM };
+			glm::ivec2 const offsets[4] = { glm::ivec2(-1, 0), glm::ivec2(+1, 0), glm::ivec2(0, -1), glm::ivec2(0, +1) };
+
+			// XXX : it could be a good idea to precompute neighbouring chunks.
+			//       Nevertheless, nothing seems to guarantee that chunks are well aligned on a grid
+			//
+			//        +-------+
+			//        |       |
+			//        |       |+-------+
+			//        |       ||       |
+			//        +-------+|       |
+
 			for (TileLayerChunk& chunk : tile_chunks)
 			{
+				// iterate over all tiles in current chunk
 				int count = (int)chunk.tile_indices.size();
 				for (int i = 0; i < count; ++i)
 				{
@@ -1089,23 +1109,23 @@ namespace chaos
 						chunk.offset.x + (i % chunk.size.x),
 						chunk.offset.y + (i / chunk.size.y));
 
-					// this could be more optimized
-					Tile tile_left   = GetTile(pos + glm::ivec2(-1, 0));
-					Tile tile_right  = GetTile(pos + glm::ivec2(+1, 0));
-					Tile tile_top    = GetTile(pos + glm::ivec2(0, -1));
-					Tile tile_bottom = GetTile(pos + glm::ivec2(0, +1));
+					// search all 4 possible neighbours ...
+					int neighbour_flags = 0;
+					for (int k = 0; k < 4; ++k)
+					{
+						glm::ivec2 neighbour = pos + offsets[k];
 
-					int extra_flags = 0;
-					if (tile_left.id > 0)
-						extra_flags |= TileParticleFlags::NEIGHBOUR_LEFT;
-					if (tile_right.id < 0)
-						extra_flags |= TileParticleFlags::NEIGHBOUR_RIGHT;
-					if (tile_top.id < 0)
-						extra_flags |= TileParticleFlags::NEIGHBOUR_TOP;
-					if (tile_bottom.id > 0)
-						extra_flags |= TileParticleFlags::NEIGHBOUR_BOTTOM;
+						// search first in current chunk
+						Tile t;
+						if (chunk.ContainTile(neighbour))
+							t = chunk.GetTile(neighbour);
+						else
+							t = GetTile(neighbour);
 
-					chunk.tile_indices[i].flags |= extra_flags;
+						if (t.id > 0)
+							neighbour_flags |= extra_flags[k];
+					}
+					chunk.tile_indices[i].flags |= neighbour_flags;
 				}
 			}
 		}
@@ -1304,7 +1324,7 @@ namespace chaos
 		TileLayerChunk const* TileLayer::GetTileChunk(glm::ivec2 const& pos) const
 		{
 			for (TileLayerChunk const& chunk : tile_chunks)
-				if (pos.x >= chunk.offset.x && pos.x < chunk.size.x && pos.y >= chunk.offset.y && pos.y < chunk.size.y)
+				if (chunk.ContainTile(pos))
 					return &chunk;
 			return nullptr;
 		}
@@ -1317,7 +1337,7 @@ namespace chaos
 			if (chunk == nullptr)
 				return {};
 			// get the ID at the given position
-			return chunk->GetTile(pos - chunk->offset);
+			return chunk->GetTile(pos);
 		}
 
 		// ==========================================

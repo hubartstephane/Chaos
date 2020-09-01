@@ -1033,7 +1033,9 @@ namespace chaos
 		public:
 
 			/** get the tile at given position */
-			Tile GetTile(glm::ivec2 const& pos) const;
+			Tile GetTile(glm::ivec2 pos) const;
+			/** returns true whether wanted tile is in this chunk */
+			bool ContainTile(glm::ivec2 const& pos) const;
 
 		public:
 

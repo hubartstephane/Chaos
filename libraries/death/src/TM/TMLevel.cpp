@@ -224,18 +224,6 @@ namespace death
 		return true;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
 	// =====================================
 	// TMLayerInstance implementation
 	// =====================================
@@ -283,8 +271,6 @@ namespace death
 			if (world_system)
 				result.position += offset;
 		}
-		else
-			result = result;
 		return result;
 	}
 
@@ -520,8 +506,9 @@ namespace death
 			chaos::TiledMap::TileInfo tile_info = tiled_map->FindTileInfo(gid);
 			if (tile_info.tiledata == nullptr)
 				return;
+
 			// create a simple particle
-			chaos::box2 particle_box = tile->GetBoundingBox(true);
+			chaos::box2 particle_box = tile->GetBoundingBox(true); 
 			if (object != nullptr)
 			{
 				chaos::TiledMap::GeometricObjectSurface const* surface_object = in_geometric_object->GetObjectSurface();
@@ -532,7 +519,15 @@ namespace death
 			chaos::Hotpoint hotpoint = (tile_info.tileset != nullptr) ? tile_info.tileset->object_alignment : chaos::Hotpoint::BOTTOM_LEFT;
 
 			bool keep_aspect_ratio = false;
-			effective_particle_populator->AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), tile->rotation, tile->particle_flags, gid, keep_aspect_ratio);
+			effective_particle_populator->AddParticle(
+				tile_info.tiledata->atlas_key.c_str(), 
+				hotpoint, 
+				particle_box, 
+				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
+				tile->rotation, 
+				tile->particle_flags, 
+				gid, 
+				keep_aspect_ratio);
 
 			// gives the particles to the object
 			if (particle_ownership)
@@ -543,12 +538,12 @@ namespace death
 		}
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-TiledGeometricObject::ForceParticleCreation");
+	CHAOS_HELP_TEXT(CMD, "-TM::ForceParticleCreation");
 
 	bool TMLayerInstance::ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TMObject* object) const
 	{
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-TiledGeometricObject::ForceParticleCreation")) // CMDLINE
+		if (chaos::Application::HasApplicationCommandLineFlag("-TM::ForceParticleCreation")) // CMDLINE
 			return true;
 #endif			
 		return property_owner->GetPropertyValueBool("PARTICLE_CREATION", (object != nullptr) ? object->IsParticleCreationEnabled() : true);
@@ -572,26 +567,6 @@ namespace death
 		};
 		return result;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// shuyyy
-
 
 	bool TMLayerInstance::InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer, TMObjectReferenceSolver & reference_solver)
 	{
@@ -785,53 +760,71 @@ namespace death
 				TMObjectFactory factory = GetObjectFactory(tile_info.tiledata);
 				if (factory)
 				{
-					chaos::shared_ptr<chaos::TiledMap::GeometricObjectTile> tile_object = new PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile>(nullptr, tile_info.tiledata);
-					if (tile_object != nullptr)
-					{
-						// compute an ID base on 'tile_coord' 
-						// TiledMap gives positive ID
-						// we want a negative ID to avoid conflicts
-						// for a 32 bits integer
-						// 15 bits for X
-						// 15 bits for Y
-						// 1  unused
-						// 1  bit for sign
+					// to avoid the creation of a TMObject, use a wrapper on the properties
+					PropertyOwnerOverride<chaos::TiledMap::GeometricObjectTile> tile_object = { nullptr, tile_info.tiledata };
+				
+					// compute an ID base on 'tile_coord' 
+					// TiledMap gives positive ID
+					// we want a negative ID to avoid conflicts
+					// for a 32 bits integer
+					// 15 bits for X
+					// 15 bits for Y
+					// 1  unused
+					// 1  bit for sign
 
-						int int_bit_count = 8 * sizeof(int);
-						int per_component_bit_count = (int_bit_count - 1) / 2;
-						int mask = ~(-1 << per_component_bit_count);
-						int idx = tile_coord.x & mask;
-						int idy = tile_coord.y & mask;
-						int object_id = -1 * (idx | (idy << per_component_bit_count));
+					int int_bit_count = 8 * sizeof(int);
+					int per_component_bit_count = (int_bit_count - 1) / 2;
+					int mask = ~(-1 << per_component_bit_count);
+					int idx = tile_coord.x & mask;
+					int idy = tile_coord.y & mask;
+					int object_id = -1 * (idx | (idy << per_component_bit_count));
 
-						tile_object->id = object_id;
-						tile_object->gid = gid;
-						tile_object->type = tile_info.tiledata->type;
-						tile_object->size = particle_box.half_size * 2.0f;
-						tile_object->position.x = particle_box.position.x - particle_box.half_size.x;
-						tile_object->position.y = particle_box.position.y - particle_box.half_size.y;
+					tile_object.id = object_id;
+					tile_object.gid = gid;
+					tile_object.type = tile_info.tiledata->type;
+					tile_object.size = particle_box.half_size * 2.0f;
 
-						// XXX : for player start : but this is not a great idea to process by exception
-						//       We are writing int the fake object properties, not in the 'tile_info.tiledata'
-						//       That means that if 'tile_info.tiledata' already has a BITMAP_NAME property, this does not
-						//       interfere with that (a just in case value)
-						tile_object->CreatePropertyString("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str());
 
-						TMObject* object = factory(tile_object.get(), reference_solver);
-						if (object != nullptr)
-							if (ShouldCreateParticleForObject(tile_object.get(), object))
-								CreateObjectParticles(tile_object.get(), object, particle_populator);
-					}
+					// shuyyy : should depend on the pivot ???
+
+
+
+
+
+					tile_object.position.x = particle_box.position.x - particle_box.half_size.x;
+					tile_object.position.y = particle_box.position.y - particle_box.half_size.y;
+
+					// XXX : for player start : but this is not a great idea to process by exception
+					//       We are writing int the fake object properties, not in the 'tile_info.tiledata'
+					//       That means that if 'tile_info.tiledata' already has a BITMAP_NAME property, this does not
+					//       interfere with that (a just in case value)
+					tile_object.CreatePropertyString("BITMAP_NAME", tile_info.tiledata->atlas_key.c_str());
+
+					TMObject* object = factory(&tile_object, reference_solver);
+					if (object != nullptr)
+						if (ShouldCreateParticleForObject(&tile_object, object))
+							CreateObjectParticles(&tile_object, object, particle_populator);
+
+
 					continue; // while we have a factory, let the concerned object create its particle
 				}
 
 				chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 
-				// create a simple particle
+				// create a simple particle => as soon as there is an error, stop trying producing particles
 				bool keep_aspect_ratio = true;
 
 				if (particle_creation_success)
-					particle_creation_success = particle_populator.AddParticle(tile_info.tiledata->atlas_key.c_str(), hotpoint, particle_box, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, gid, keep_aspect_ratio);
+				{
+					particle_creation_success = particle_populator.AddParticle(
+						tile_info.tiledata->atlas_key.c_str(),
+						hotpoint, particle_box,
+						glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+						0.0f,
+						particle_flags,
+						gid,
+						keep_aspect_ratio);
+				}
 			}
 		}
 
@@ -1363,7 +1356,15 @@ namespace death
 
 		chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 
-		particle_populator.AddParticle(player_start->bitmap_name.c_str(), hotpoint, player_start->GetBoundingBox(true), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 0.0f, particle_flags, player_gid, keep_aspect_ratio);
+		particle_populator.AddParticle(
+			player_start->bitmap_name.c_str(), 
+			hotpoint, 
+			player_start->GetBoundingBox(true), 
+			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
+			0.0f, 
+			particle_flags, 
+			player_gid, 
+			keep_aspect_ratio);
 		particle_populator.FlushParticles();
 
 		// get the allocation and finalize the layer

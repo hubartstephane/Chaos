@@ -9,10 +9,6 @@
 #include <chaos/STLTools.h>
 #include <chaos/ParticleDefault.h>
 
-#define CHAOS_REVERSE_Y_AXIS 1
-
-static glm::vec2 const REVERSE_Y_AXIS = glm::vec2(1.0f, -1.0f);
-
 namespace chaos
 {
 	namespace TiledMap
@@ -611,8 +607,11 @@ namespace chaos
 		//	GeometricObjectPolygon   : position = coordinates of very first point
 		//	GeometricObjectPolyline  : other points are given relative to the position
 
+		// XXX : position is already expressed in the REVERSE_Y_AXIS system.
+
 		box2 GeometricObjectSurface::GetBoundingBox(bool world_system) const
 		{
+			// TOP-LEFT
 			glm::vec2 p1 = position;
 			glm::vec2 p2 = position + size * REVERSE_Y_AXIS;
 
@@ -635,9 +634,9 @@ namespace chaos
 			if (tile_info.tileset != nullptr)
 				hotpoint = tile_info.tileset->object_alignment;
 
-			//CHAOS_REVERSE_Y_AXIS
+			// search 2 points
 			glm::vec2 p1 = ConvertHotpointToBottomLeft(position, size, hotpoint);
-			glm::vec2 p2 = p1 + size;
+			glm::vec2 p2 = p1 + glm::vec2(size.x, -size.y) * REVERSE_Y_AXIS;
 
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)
@@ -715,11 +714,6 @@ namespace chaos
 			return result;
 		}
 
-
-
-
-
-
 		// ==========================================
 		// Wangset methods
 		// ==========================================
@@ -789,15 +783,6 @@ namespace chaos
 			XMLTools::ReadAttribute(element, "name", name);
 			return true;
 		}
-
-
-
-
-
-
-
-
-
 
 		// ==========================================
 		// TileData methods
@@ -1064,24 +1049,28 @@ namespace chaos
 		// TileLayer methods
 		// ==========================================
 
+		// +------+------+------+------+------+------+
+		// |      |      |      |      |      |      |
+		// | 0, 0 |      |      |      |      |      |
+		// |      |      |      |      |      |      |
+		// x------+------+------+------+------+------+
+		// ^
+		// |
+		// +-- for tile (0, 0), by DEFAULT, the BOTTOM LEFT corner of the particle should be there (see object_alignment for some tweak)
+
+
 		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, int particle_flags, bool world_system) const
 		{
-			//CHAOS_REVERSE_Y_AXIS
-			glm::vec2 p1 = glm::vec2(
-				(float)(tile_coord.x * tile_size.x),
-				(float)(-tile_coord.y * tile_size.y - tile_size.y));
-			glm::vec2 p2 = p1;
+			glm::vec2 tc = chaos::RecastVector<glm::vec2>(tile_coord);
+			glm::vec2 ts = chaos::RecastVector<glm::vec2>(tile_size);
 
+			glm::vec2 p1 = (tc * ts * REVERSE_Y_AXIS) + (ts * glm::vec2(0.0f, 1.0f) * REVERSE_Y_AXIS); // BOTTOM-LEFT ... x (0, 1) because we just want to keep the Y component for this offset
+
+			glm::vec2 p2;
 			if ((particle_flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) == 0)
-			{
-				p2.x += image_size.x;
-				p2.y += image_size.y;
-			}
+				p2 = p1 + glm::vec2(image_size.x, -image_size.y) * REVERSE_Y_AXIS;
 			else
-			{
-				p2.x += image_size.y;
-				p2.y += image_size.x;
-			}
+				p2 = p1 + glm::vec2(image_size.y, -image_size.x) * REVERSE_Y_AXIS;
 
 			box2 result = box2(std::make_pair(p1, p2));
 			if (world_system)
@@ -1101,21 +1090,19 @@ namespace chaos
 						chunk.offset.y + (i / chunk.size.y));
 
 					// this could be more optimized
-					Tile tile_nx = GetTile(pos + glm::ivec2(-1, 0));
-					Tile tile_px = GetTile(pos + glm::ivec2(+1, 0));
-					Tile tile_ny = GetTile(pos + glm::ivec2(0, -1));
-					Tile tile_py = GetTile(pos + glm::ivec2(0, +1));
-
-					// CHAOS_REVERSE_Y_AXIS
+					Tile tile_left   = GetTile(pos + glm::ivec2(-1, 0));
+					Tile tile_right  = GetTile(pos + glm::ivec2(+1, 0));
+					Tile tile_top    = GetTile(pos + glm::ivec2(0, -1));
+					Tile tile_bottom = GetTile(pos + glm::ivec2(0, +1));
 
 					int extra_flags = 0;
-					if (tile_nx.id > 0)
+					if (tile_left.id > 0)
 						extra_flags |= TileParticleFlags::NEIGHBOUR_LEFT;
-					if (tile_px.id < 0)
+					if (tile_right.id < 0)
 						extra_flags |= TileParticleFlags::NEIGHBOUR_RIGHT;
-					if (tile_py.id < 0)
+					if (tile_top.id < 0)
 						extra_flags |= TileParticleFlags::NEIGHBOUR_TOP;
-					if (tile_ny.id > 0)
+					if (tile_bottom.id > 0)
 						extra_flags |= TileParticleFlags::NEIGHBOUR_BOTTOM;
 
 					chunk.tile_indices[i].flags |= extra_flags;
@@ -1865,5 +1852,3 @@ return_type * Manager::funcname(FilePathParam const & path, tinyxml2::XMLDocumen
 	};  // namespace TiledMap
 
 }; // namespace chaos
-
-#undef CHAOS_REVERSE_Y_AXIS

@@ -18,6 +18,9 @@ https://www.imgonline.com.ua/eng/make-seamless-texture.php
 // Voice generation
 https://www.naturalreaders.com/online/
 
+// music utility
+https://boscaceoil.net/
+
 // Basic
 BlitzMax
 

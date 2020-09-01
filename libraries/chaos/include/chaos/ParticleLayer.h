@@ -730,39 +730,8 @@ public:
             layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
 
             bool destroy_allocation = false;
-
-#if 0
-
-
-            // tick the allocation (if the trait has a Tick(...) function)
-            if constexpr (has_function_Tick_v<allocation_trait_type>)
-            {
-                if constexpr (has_LayerTrait_v<allocation_trait_type>)
-                    destroy_allocation = allocation_trait.Tick(delta_time, this, typed_layer_trait); // let the trait decide whether the allocation is to be destroyed
-                else
-                    destroy_allocation = allocation_trait.Tick(delta_time, this); // let the trait decide whether the allocation is to be destroyed
-            }
-            else
-            {
-                destroy_allocation = false; // no Tick(...), no destruction
-            }
-
-            // Tick the particles
-            if (!destroy_allocation)      
-            {
-                // has_function_UpdateParticle<allocation_trait_type>::type()); // shuxxx FIXME : this template does not detect template function ! => see ParticleDefault that require a template
-
-                if constexpr (boost::mpl::true_().value)
-                {
-                    if (particles.size() > 0)
-                        destroy_allocation = UpdateParticles(delta_time, typed_layer_trait);
-                }
-            }
-
-#endif
 			if (particles.size() > 0)
 				destroy_allocation = UpdateParticles(delta_time, typed_layer_trait);
-
             return destroy_allocation;
 		}
 

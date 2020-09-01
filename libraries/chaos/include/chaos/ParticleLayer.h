@@ -690,26 +690,26 @@ public:
 
 					if constexpr (with_begin_call != 0)
 					{
-						DoParticlesToPrimitivesLoop(
+						DoParticlesToPrimitivesLoop_TraitImplementation(
 							output,
 							allocation_trait.BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), typed_layer_trait), // do not use a temp variable, so it can be a left-value reference
 							typed_layer_trait);
 					}
 					else
 					{
-						DoParticlesToPrimitivesLoop(output, typed_layer_trait);
+						DoParticlesToPrimitivesLoop_TraitImplementation(output, typed_layer_trait);
 					}
 				}
 				else if constexpr (with_begin_call != 0)
 				{
-					DoParticlesToPrimitivesLoop(
+					DoParticlesToPrimitivesLoop_TraitImplementation(
 						output,
 						allocation_trait.BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>()) // do not use a temp variable, so it can be a left-value reference
 					);
 				}
 				else
 				{
-					DoParticlesToPrimitivesLoop(output);
+					DoParticlesToPrimitivesLoop_TraitImplementation(output);
 				}
 			}
 			else if constexpr (particle_implementation != 0)
@@ -865,7 +865,7 @@ public:
 		}
 
         template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
-        void DoParticlesToPrimitivesLoop(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
+        void DoParticlesToPrimitivesLoop_TraitImplementation(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
         {
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 

@@ -63,7 +63,7 @@ namespace chaos
 		else if (lua_isuserdata(state, index))
 			stream << "USERDATA ";
 
-		stream << std::endl;
+		stream << '\n';
 	}
 
 	void LuaState::DebugOutputStack(std::ostream & stream)

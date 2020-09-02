@@ -166,20 +166,20 @@ namespace chaos
 			// starting a new family
 			if (message == nullptr)
 			{
-				std::cout << std::endl;
-				std::cout << "==========================================" << std::endl;
-				std::cout << "== " << family << std::endl;
-				std::cout << "==========================================" << std::endl;
-				std::cout << std::endl;
+				std::cout << '\n';
+				std::cout << "==========================================" << '\n';
+				std::cout << "== " << family << '\n';
+				std::cout << "==========================================" << '\n';
+				std::cout << '\n';
 			}
 			// all messages of this family
 			else
 			{
-				std::cout << "  " << message << std::endl;
+				std::cout << "  " << message << '\n';
 			}
 		});
 		if (flushed_message_count > 0)
-			std::cout << std::endl << "-------------------------------" << std::endl << std::endl;
+			std::cout << '\n' << "-------------------------------" << '\n' << '\n';
 	}
 
 	// XXX : WindowedApp(...) required, does not work with ConsoleApp(...)
@@ -246,8 +246,8 @@ namespace chaos
 			const char* white = "\033[0;37m";
 			const char* red = "\033[0;31m";
 
-			std::cout << "toto" << green << "titi" << white << "tutu" << red << "tyty" << std::endl;
-			std::cout << "toto" << green << "titi" << white << "tutu" << red << "tyty" << std::endl;
+			std::cout << "toto" << green << "titi" << white << "tutu" << red << "tyty" << '\n';
+			std::cout << "toto" << green << "titi" << white << "tutu" << red << "tyty" << '\n';
 
 #endif
 

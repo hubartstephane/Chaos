@@ -263,7 +263,7 @@ namespace chaos
 			{
 				// write the lines
 				for (std::string const& str : lines)
-					file << str << std::endl;
+					file << str << '\n';
 				return true;
 			}
 			return false;

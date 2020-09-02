@@ -50,13 +50,6 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	return true;
 }
 
-
-void LudumLevelInstance::OnLevelStarted()
-{
-	// super call
-	death::TMLevelInstance::OnLevelStarted();
-}
-
 bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
 {
 	if (!death::TMLevelInstance::Initialize(in_game, in_level))
@@ -70,20 +63,6 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 		flame_health_lost_per_second = ludum_level->flame_health_lost_per_second;
 	}	
 	return true;
-}
-
-void LudumLevelInstance::OnPlayerEntered(death::Player * player)
-{
-	death::TMLevelInstance::OnPlayerEntered(player);
-
-
-}
-
-void LudumLevelInstance::OnPlayerLeaved(death::Player * player)
-{
-	death::TMLevelInstance::OnPlayerLeaved(player);
-
-
 }
 
 int LudumLevelInstance::GetCurrentSoulCount() const

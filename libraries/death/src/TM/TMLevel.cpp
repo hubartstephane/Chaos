@@ -940,14 +940,14 @@ namespace death
 		return objects.size();
 	}
 
-	TMObject* TMLayerInstance::GetObject(size_t index)
+	chaos::AutoCastable<TMObject> TMLayerInstance::GetObject(size_t index)
 	{
 		if (index >= objects.size())
 			return nullptr;
 		return objects[index].get();
 	}
 
-	TMObject const* TMLayerInstance::GetObject(size_t index) const
+	chaos::AutoConstCastable<TMObject> TMLayerInstance::GetObject(size_t index) const
 	{
 		if (index >= objects.size())
 			return nullptr;
@@ -1342,8 +1342,13 @@ namespace death
 		return result;
 	}
 
-	PlayerPawn* TMLevelInstance::CreatePlayerPawn(Player* player, TMPlayerStart* player_start, TMLayerInstance* layer_instance)	
+	PlayerPawn* TMLevelInstance::CreatePlayerPawn(Player* player, TMPlayerStart* player_start)	
 	{
+		// check the layer instance
+		TMLayerInstance* layer_instance = player_start->GetLayerInstance();
+		if (layer_instance == nullptr)
+			return nullptr;
+
 		// create a particle populator
 		TMParticlePopulator particle_populator;
 		if (!particle_populator.Initialize(layer_instance))
@@ -1391,15 +1396,15 @@ namespace death
 		if (player_start == nullptr)
 			return nullptr;
 
-		// initialize some data
-		TMLayerInstance* layer_instance = player_start->GetLayerInstance();
-		if (layer_instance == nullptr)
+		// create the pawn
+		PlayerPawn* result = CreatePlayerPawn(player, player_start);
+		if (result == nullptr)
 			return nullptr;
 
 		// XXX : while camera, is restricted so we can see player, we considere that the displacement_ratio of the layer containing the player start is the reference one
-		reference_layer = layer_instance;
+		reference_layer = player_start->GetLayerInstance();
 
-		return CreatePlayerPawn(player, player_start, layer_instance);
+		return result;
 	}
 
 	void TMLevelInstance::CreateBackgroundImage()

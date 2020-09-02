@@ -69,9 +69,9 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	return true;
 }
 
-death::PlayerPawn* LudumLevelInstance::CreatePlayerPawn(death::Player* player, death::TMPlayerStart* player_start, death::TMLayerInstance* layer_instance)
+death::PlayerPawn* LudumLevelInstance::CreatePlayerPawn(death::Player* player, death::TMPlayerStart* player_start)
 {
-	death::PlayerPawn* result = death::TMLevelInstance::CreatePlayerPawn(player, player_start, layer_instance);
+	death::PlayerPawn* result = death::TMLevelInstance::CreatePlayerPawn(player, player_start);
 	if (result != nullptr)
 	{
 		chaos::ParticleAllocationBase* allocation = result->GetAllocation();

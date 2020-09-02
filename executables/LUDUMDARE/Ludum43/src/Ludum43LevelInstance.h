@@ -34,7 +34,7 @@ protected:
 	/** override */
 	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
 	/** override */
-	virtual death::PlayerPawn* CreatePlayerPawn(death::Player* player, death::TMPlayerStart* player_start, death::TMLayerInstance* layer_instance) override;
+	virtual death::PlayerPawn* CreatePlayerPawn(death::Player* player, death::TMPlayerStart* player_start) override;
 
 protected:
 

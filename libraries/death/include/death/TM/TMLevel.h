@@ -265,12 +265,14 @@ namespace death
 		/** returns the number of objects */
 		size_t GetObjectCount() const;
 		/** returns an object by its index */
-		TMObject* GetObject(size_t index);
+		chaos::AutoCastable<TMObject> GetObject(size_t index);
 		/** returns an object by its index */
-		TMObject const* GetObject(size_t index) const;
+		chaos::AutoConstCastable<TMObject> GetObject(size_t index) const;
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
+		/** get the collision mask */
+		uint64_t GetCollisionMask() const { return collision_mask; }
 
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
@@ -506,7 +508,7 @@ namespace death
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
 		/** the sub function responsible for player pawn creation */
-		virtual PlayerPawn * CreatePlayerPawn(Player* player, TMPlayerStart* player_start, TMLayerInstance* layer_instance);
+		virtual PlayerPawn * CreatePlayerPawn(Player* player, TMPlayerStart* player_start);
 
 		/** get the player start used for an incomming player */
 		virtual TMPlayerStart* GetPlayerStartForPawn(Player* player);

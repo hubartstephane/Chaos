@@ -16,7 +16,7 @@ namespace chaos
 	{
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
-		std::cout << buffer << std::endl;
+		std::cout << buffer << '\n';
 	}
 
 	void LogTools::Error(char const * format, ...)
@@ -31,7 +31,7 @@ namespace chaos
 	{
 		char buffer[4096];
 		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
-		std::cerr << buffer << std::endl; 
+		std::cerr << buffer << '\n';
 	}
 
 	void LogTools::DisplayTitle(char const * title)
@@ -44,11 +44,11 @@ namespace chaos
 		for (size_t i = 0 ; i < l ; ++i)
 			s += "=";
 
-		std::cout << std::endl;
-		std::cout << s << std::endl;
-		std::cout << "===   " << title << "   ===" << std::endl;
-		std::cout << s << std::endl;
-		std::cout << std::endl;
+		std::cout << '\n';
+		std::cout << s << '\n';
+		std::cout << "===   " << title << "   ===" << '\n';
+		std::cout << s << '\n';
+		std::cout << '\n';
 	}
 
 }; // namespace chaos

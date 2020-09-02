@@ -51,10 +51,12 @@ namespace chaos
 
 					if (SymGetLineFromAddr64(process, (DWORD64)(stack[i]), &dwDisplacement, &line))
 					{
-						stream << "- " << line.FileName << "(" << line.LineNumber << ")    : " << symbol->Name << std::endl;
+						stream << "- " << line.FileName << "(" << line.LineNumber << ")    : " << symbol->Name << '\n';
 					}
 				}
 			}
+
+			stream << std::flush; // because we are in debug case and do not want to wait for the input
 		}
 
 	}; // namespace DebugTools

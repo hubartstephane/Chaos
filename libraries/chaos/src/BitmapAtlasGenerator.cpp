@@ -184,20 +184,20 @@ namespace chaos
 				// test whether all info's bitmap_index are initialized
 				if (layout->bitmap_index < 0)
 				{
-					stream << "Info encoutered with uninitialized bitmap_index : [" << named->GetName() << " , " << named->GetTag() << "]" << std::endl;
+					stream << "Info encoutered with uninitialized bitmap_index : [" << named->GetName() << " , " << named->GetTag() << "]" << '\n';
 					result = false;
 				}
 				// test whether all info's bitmap_index are valid
 				else if (layout->bitmap_index >= (int)bitmap_count)
 				{
-					stream << "Info encoutered with invalid bitmap_index : [" << named->GetName() << " , " << named->GetTag() << "]" << std::endl;
+					stream << "Info encoutered with invalid bitmap_index : [" << named->GetName() << " , " << named->GetTag() << "]" << '\n';
 					result = false;
 				}
 				// test whether all info fits inside the atlas
 				Rectangle r = AddPadding(GetRectangle(*layout));
 				if (!r.IsFullyInside(atlas_rectangle))
 				{
-					stream << "Info encoutered that does not fit inside the atlas : [" << named->GetName() << " , " << named->GetTag() << "]" << std::endl;
+					stream << "Info encoutered that does not fit inside the atlas : [" << named->GetName() << " , " << named->GetTag() << "]" << '\n';
 					result = false;
 				}
 			}
@@ -227,9 +227,9 @@ namespace chaos
 
 						if (named1 != nullptr && named2 != nullptr)
 						{
-							stream << "Collision between entries : " << std::endl;
-							stream << "  [" << named1->GetName() << " , " << named1->GetTag() << "]" << std::endl;
-							stream << "  [" << named2->GetName() << " , " << named2->GetTag() << "]" << std::endl;
+							stream << "Collision between entries : " << '\n';
+							stream << "  [" << named1->GetName() << " , " << named1->GetTag() << "]" << '\n';
+							stream << "  [" << named2->GetName() << " , " << named2->GetTag() << "]" << '\n';
 						}
 						result = false;
 					}

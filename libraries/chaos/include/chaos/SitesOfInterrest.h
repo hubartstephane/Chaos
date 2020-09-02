@@ -21,6 +21,12 @@ https://www.naturalreaders.com/online/
 // music utility
 https://boscaceoil.net/
 
+// benchmark C++ online
+https://quick-bench.com/
+
+// compiler explorer online
+https://godbolt.org/
+
 // Basic
 BlitzMax
 

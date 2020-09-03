@@ -112,6 +112,7 @@ public:
 	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const* layer_trait) const;
 
 	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data) const;
+
 };
 
 // ===========================================================================
@@ -166,6 +167,23 @@ public:
 	};
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle, LayerTrait const * layer_trait) const;
+
+	void UpdateRenderingStates(chaos::GPURenderer* renderer, bool begin) const
+	{
+		if (begin)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+		}
+		else
+		{
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+		}
+	}
 };
 
 

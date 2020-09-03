@@ -276,7 +276,7 @@ CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 				{
 					using VALUE = typename boost::mpl::deref<IT>::type;
 
-					auto result = func(boost::mpl::identity<VALUE>());
+					auto result = func(boost::mpl::identity<VALUE>()); // wrap with identity to avoid potentially costly instanciation (and maybe not possible) ... we do not need an instance anyway
 					if (result)
 						return result;
 					return for_each_internal<boost::mpl::next<IT>::type, END>(func, default_result);

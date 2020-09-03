@@ -114,8 +114,11 @@ namespace chaos
 #define CHAOS_PARTICLE_CLASSES \
 (ParticleAllocationBase) \
 (ParticleLayerBase) \
-(ParticleManager)
-
+(ParticleManager)\
+(AutoCastedParticleAccessor)\
+(AutoCastedParticleConstAccessor)\
+(ParticleSpawner)
+	
 	// forward declaration
 #define CHAOS_PARTICLE_FORWARD_DECL(r, data, elem) class elem;
 	BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FORWARD_DECL, _, CHAOS_PARTICLE_CLASSES)
@@ -456,6 +459,7 @@ public:
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
 
+
 	public:
 
 		/** constructor */
@@ -501,6 +505,14 @@ public:
 		/** returns whether the allocation is to be destroyed when empty */
 		bool GetDestroyWhenEmpty() const { return destroy_when_empty; }
 
+		/** get the layer for this allocation */
+		ParticleLayerBase* GetLayer() { return layer; }
+		/** get the layer for this allocation */
+		ParticleLayerBase const* GetLayer() const { return layer; }
+
+		/** remove the allocation from its layer */
+		void RemoveFromLayer();
+
 		/** returns true whether the class required is compatible with the one store in the buffer */
 		template<typename PARTICLE_TYPE>
 		bool IsParticleClassCompatible() const
@@ -523,23 +535,19 @@ public:
         {
             return AutoCastedParticleConstAccessor(this, start, count);
         }
+
 		/** get an accessor for the particles */
 		template<typename PARTICLE_TYPE>
 		ParticleAccessor<PARTICLE_TYPE> GetParticleAccessor(size_t start = 0, size_t count = 0)
 		{
 			// check for compatibility => returns failure accessor
 			if (!IsParticleClassCompatible<PARTICLE_TYPE>())
-			{
-				assert(0);
-				LogTools::Error("ParticleAllocationBase::GetParticleAccessor => IsParticleClassCompatible failure");
-				return ParticleAccessor<PARTICLE_TYPE>();
-			}
-
+				return {};
 			// compute result
-            size_t particle_size = 0;
-            void* buffer = const_cast<void *>(GetAccessorEffectiveRanges(start, count, particle_size));
-            if (buffer == nullptr)
-                return ParticleAccessor<PARTICLE_TYPE>();
+			size_t particle_size = 0;
+			void* buffer = const_cast<void*>(GetAccessorEffectiveRanges(start, count, particle_size));
+			if (buffer == nullptr)
+				return {};
 			return ParticleAccessor<PARTICLE_TYPE>(buffer, count, particle_size);
 		}
 
@@ -547,13 +555,15 @@ public:
 		template<typename PARTICLE_TYPE>
 		ParticleConstAccessor<PARTICLE_TYPE> GetParticleConstAccessor(size_t start = 0, size_t count = 0) const
 		{
-			assert(IsParticleClassCompatible<PARTICLE_TYPE>());
-
-            size_t particle_size = 0;
-            void const * buffer = GetAccessorEffectiveRanges(start, count, particle_size);
-            if (buffer == nullptr)
-                return ParticleConstAccessor<PARTICLE_TYPE>();
-            return ParticleConstAccessor<PARTICLE_TYPE>(buffer, count, particle_size);
+			// check for compatibility => returns failure accessor
+			if (!IsParticleClassCompatible<PARTICLE_TYPE>())
+				return {};
+			// compute result
+			size_t particle_size = 0;
+			void const* buffer = GetAccessorEffectiveRanges(start, count, particle_size);
+			if (buffer == nullptr)
+				return {};
+			return ParticleConstAccessor<PARTICLE_TYPE>(buffer, count, particle_size);
 		}
 
 		/** get an accessor for the particles */
@@ -562,14 +572,6 @@ public:
 		{
 			return GetParticleConstAccessor<PARTICLE_TYPE>();
 		}
-		
-		/** get the layer for this allocation */
-		ParticleLayerBase * GetLayer() { return layer; }
-		/** get the layer for this allocation */
-		ParticleLayerBase const * GetLayer() const { return layer; }
-
-		/** remove the allocation from its layer */
-		void RemoveFromLayer();
 
 	protected:
 
@@ -869,11 +871,19 @@ public:
 		allocation_trait_type allocation_trait;
 	};
 
+
+
+
+
+
+
+
+
+
+
 	// ==============================================================
 	// ParticleLayerBase
 	// ==============================================================
-
-	class ParticleSpawner; // required for compilation
 
 	class ParticleLayerBase : public GPURenderable
 	{
@@ -1043,6 +1053,20 @@ public:
         /** whether there was changes in particles, and a vertex array need to be recomputed */
         bool require_GPU_update = false;
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// ==============================================================
 	// ParticleLayer

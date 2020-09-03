@@ -34,13 +34,10 @@ namespace chaos
 		if (particle_layer == nullptr)
 			return nullptr;
 
-		ParticleAllocationBase* result = particle_layer->SpawnParticles(count, new_allocation);
-		if (result != nullptr)
+		return particle_layer->SpawnParticles(count, new_allocation, [this](ParticleAccessor<ParticleDefault> accessor)
 		{
-			if (bitmap_info != nullptr)
+			if (bitmap_info != nullptr && accessor.IsValid())
 			{
-				size_t allocation_count = result->GetParticleCount();
-
 				// find the corresponding Bitmap
 				ParticleTexcoords texcoords;
 
@@ -50,12 +47,10 @@ namespace chaos
 					texcoords = bitmap_info->GetTexcoords();
 
 				// apply the texcoords to all particles
-				ParticleAccessor<ParticleDefault> accessor = result->GetParticleAccessor(allocation_count - count, count); // partial accessor, take the last particles in the array
 				for (ParticleDefault& particle : accessor)
-					particle.texcoords = texcoords;
+ 					particle.texcoords = texcoords;
 			}
-		}
-		return result;
+		});		
 	}
 
 }; // namespace chaos

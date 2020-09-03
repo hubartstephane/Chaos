@@ -132,6 +132,7 @@ CHAOS_GENERATE_HAS_MEMBER(dynamic_vertices);
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(Tick)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateParticle)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginUpdateParticles)
+CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateRenderingStates)
 
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(ParticleToPrimitives)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginParticlesToPrimitives)
@@ -1131,6 +1132,15 @@ public:
 		virtual void * GetLayerTrait() { return &layer_trait; }
 		/** override */
 		virtual void const * GetLayerTrait() const { return &layer_trait; }
+
+		/** override */
+		virtual void UpdateRenderingStates(GPURenderer* renderer, bool begin) const override
+		{
+			if constexpr (check_method_UpdateRenderingStates_v<layer_trait_type const, GPURenderer *, bool>)
+				layer_trait.UpdateRenderingStates(renderer, begin);
+			else
+				ParticleLayerBase::UpdateRenderingStates(renderer, begin);
+		}
 
         /** override */
         virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t vertex_requirement_evaluation) override

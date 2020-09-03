@@ -14,20 +14,14 @@ namespace chaos
     {
     public:
 
-        /** simplest constructor */
-        ParticleSpawner(ParticleLayerBase* in_particle_layer) :
-            particle_layer(in_particle_layer)
-        {
-        }
-
+        /** constructor */
+        ParticleSpawner() = default;
+        /** constructor */
+        ParticleSpawner(ParticleSpawner const & src) = default;
+        /** constructor */
+        ParticleSpawner(ParticleLayerBase* in_particle_layer);
         /** constructor with additionnal bitmap arguments */
-        ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request) :
-            particle_layer(in_particle_layer)
-        {
-            // in case of error, make the Spawner invalid
-            if (!SetBitmapInfo(bitmap_request))
-                particle_layer = nullptr;
-        }
+        ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request);
 
         /** change the bitmap info */
 		bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default

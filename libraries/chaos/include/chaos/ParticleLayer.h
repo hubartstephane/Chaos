@@ -742,6 +742,11 @@ public:
 			}
         }
 
+		/** gets the allocation trait */
+		allocation_trait_type& GetAllocationTrait() { return allocation_trait; }
+		/** gets the allocation trait */
+		allocation_trait_type const& GetAllocationTrait() const { return allocation_trait; }
+
     protected:
 
 		bool TickAllocation(float delta_time, layer_trait_type const * layer_trait)
@@ -1134,6 +1139,11 @@ public:
 		}
         /** override */
         virtual GLenum GetGLPrimitiveType() const override { return ParticleTraitTools::GetGLPrimitiveType<layer_trait_type>(); }
+
+		/** gets the layer trait */
+		layer_trait_type & GetLayerTrait() { return layer_trait; }
+		/** gets the layer trait */
+		layer_trait_type const & GetLayerTrait() const { return layer_trait; }
 
 	protected:
 

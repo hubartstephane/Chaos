@@ -20,9 +20,9 @@ namespace chaos
 		ParticleToPrimitive(particle, output.AddPrimitive());
 	}
 	
-	static void GenerateVertexPositionAttributes(ParticleDefault const& particle, glm::vec2* vertex_positions) // in order BL, BR, TR, TL
+	void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions) // in order BL, BR, TR, TL
 	{
-		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(particle.bounding_box);
+		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(bounding_box);
 
 		glm::vec2 const & bottomleft = corners.first;
 		glm::vec2 const & topright   = corners.second;
@@ -34,22 +34,20 @@ namespace chaos
 		vertex_positions[3] = glm::vec2(bottomleft.x, topright.y);
 
 		// apply the rotation
-		if (particle.rotation != 0.0f)
+		if (rotation != 0.0f)
 		{
 			glm::vec2 center_position = (bottomleft + topright) * 0.5f;
 
-			float c = std::cos(particle.rotation);
-			float s = std::sin(particle.rotation);
+			float c = std::cos(rotation);
+			float s = std::sin(rotation);
 			for (int i = 0; i < 4; ++i)
 				vertex_positions[i] = GLMTools::Rotate(vertex_positions[i] - center_position, c, s) + center_position;
 		}
 	}
 
-	static void GenerateVertexTextureAttributes(ParticleDefault const& particle, glm::vec3* vertex_texcoords) // in order BL, BR, TR, TL
+	void GenerateVertexTextureAttributes(ParticleTexcoords const& texcoords, int flags, glm::vec3* vertex_texcoords) // in order BL, BR, TR, TL
 	{
-		int bitmap_index = particle.texcoords.bitmap_index;
-
-		ParticleTexcoords const& texcoords = particle.texcoords;
+		int bitmap_index = texcoords.bitmap_index;
 
 		// compute the vertices
 		vertex_texcoords[0] = glm::vec3(texcoords.bottomleft.x, texcoords.bottomleft.y, bitmap_index);
@@ -58,26 +56,26 @@ namespace chaos
 		vertex_texcoords[3] = glm::vec3(texcoords.bottomleft.x, texcoords.topright.y, bitmap_index);
 
 		// apply texture symetries
-		if ((particle.flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+		if ((flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
 		{
 			std::swap(vertex_texcoords[0], vertex_texcoords[2]);
 		}
-		if ((particle.flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
+		if ((flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
 		{
 			std::swap(vertex_texcoords[0], vertex_texcoords[1]);
 			std::swap(vertex_texcoords[2], vertex_texcoords[3]);
 		}
-		if ((particle.flags & ParticleFlags::TEXTURE_VERTICAL_FLIP) != 0)
+		if ((flags & ParticleFlags::TEXTURE_VERTICAL_FLIP) != 0)
 		{
 			std::swap(vertex_texcoords[0], vertex_texcoords[3]);
 			std::swap(vertex_texcoords[1], vertex_texcoords[2]);
 		}
 	}
 
-	static void GenerateVertexFlagAttributes(ParticleDefault const& particle, int* vertex_flags) // in order BL, BR, TR, TL
+	void GenerateVertexFlagAttributes(int flags, int* vertex_flags) // in order BL, BR, TR, TL
 	{
 		// just keep the HEIGHT_BITS_MODE flag (VertexFlags::HEIGHT_BITS_MODE == ParticleFlags::HEIGHT_BITS_MODE)
-		int output_flags = (particle.flags & ParticleFlags::HEIGHT_BITS_MODE);
+		int output_flags = (flags & ParticleFlags::HEIGHT_BITS_MODE);
 
 		vertex_flags[0] = VertexFlags::BOTTOM_LEFT | output_flags;
 		vertex_flags[1] = VertexFlags::BOTTOM_RIGHT | output_flags;
@@ -89,13 +87,13 @@ namespace chaos
 	{
 		// in order BL, BR, TR, TL
 		glm::vec2 vertex_positions[4];
-		GenerateVertexPositionAttributes(particle, vertex_positions);
+		GenerateVertexPositionAttributes(particle.bounding_box, particle.rotation, vertex_positions);
 
 		glm::vec3 vertex_texcoords[4];
-		GenerateVertexTextureAttributes(particle, vertex_texcoords);
+		GenerateVertexTextureAttributes(particle.texcoords, particle.flags, vertex_texcoords);
 
 		int vertex_flags[4];
-		GenerateVertexFlagAttributes(particle, vertex_flags);
+		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
 
 		VertexDefault& v0 = primitive[0];
 		VertexDefault& v1 = primitive[1];
@@ -127,13 +125,13 @@ namespace chaos
 	{
 		// in order BL, BR, TR, TL
 		glm::vec2 vertex_positions[4];
-		GenerateVertexPositionAttributes(particle, vertex_positions);
+		GenerateVertexPositionAttributes(particle.bounding_box, particle.rotation, vertex_positions);
 
 		glm::vec3 vertex_texcoords[4];
-		GenerateVertexTextureAttributes(particle, vertex_texcoords);
+		GenerateVertexTextureAttributes(particle.texcoords, particle.flags, vertex_texcoords);
 
 		int vertex_flags[4];
-		GenerateVertexFlagAttributes(particle, vertex_flags);
+		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
 
 		VertexDefault& v0 = primitive[0];
 		VertexDefault& v1 = primitive[1];
@@ -175,10 +173,10 @@ namespace chaos
 
 	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>)
 	{
-		result->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2, "position");
-		result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3, "texcoord");
-		result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4, "color");
-		result->Push(chaos::VertexAttributeSemantic::NONE, -1, chaos::VertexAttributeType::INT1, "flags");
+		result->Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT2, "position");
+		result->Push(VertexAttributeSemantic::TEXCOORD, 0, VertexAttributeType::FLOAT3, "texcoord");
+		result->Push(VertexAttributeSemantic::COLOR, 0, VertexAttributeType::FLOAT4, "color");
+		result->Push(VertexAttributeSemantic::NONE, -1, VertexAttributeType::INT1, "flags");
 	}
 
 	GPUProgram* GenDefaultParticleProgram()
@@ -253,7 +251,7 @@ namespace chaos
 			};
 		)PIXELSHADERCODE";
 
-		chaos::GPUProgramGenerator program_generator;
+		GPUProgramGenerator program_generator;
 		program_generator.AddShaderSource(GL_VERTEX_SHADER, vertex_shader_source);
 		program_generator.AddShaderSource(GL_FRAGMENT_SHADER, pixel_shader_source);
 		return program_generator.GenProgramObject();

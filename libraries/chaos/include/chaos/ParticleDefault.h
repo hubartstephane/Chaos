@@ -68,9 +68,9 @@ namespace chaos
 	public:
 
 		/** the bounding box of the particle */
-		chaos::box2 bounding_box;
+		box2 bounding_box;
 		/** the four texcoords to apply to the particle vertices */
-		chaos::ParticleTexcoords texcoords;
+		ParticleTexcoords texcoords;
 		/** the color of the particle */
 		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		/** the orientation of the particle */
@@ -108,6 +108,13 @@ namespace chaos
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive);
 	/** generates 1 triangle pair from one particle */
 	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive);
+
+	/** utility method to have position for a quad (in order BL, BR, TR, TL) */
+	void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions);
+	/** utility method to have texture coordinate for a quad (in order BL, BR, TR, TL) */
+	void GenerateVertexTextureAttributes(ParticleTexcoords const& texcoords, glm::vec3* vertex_texcoords);
+	/** utility method to have vertex flags from particle flags for a quad (in order BL, BR, TR, TL) */
+	void GenerateVertexFlagAttributes(int flags, int* vertex_flags);
 
 	/** the default vertex declaration */
 	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>);

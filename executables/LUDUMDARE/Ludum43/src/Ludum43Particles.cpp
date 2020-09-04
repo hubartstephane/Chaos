@@ -134,7 +134,7 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase& particle, bool ap
 // ParticlePlayerLayerTrait
 // ===========================================================================
 
-ParticlePlayerLayerTrait::UpdatePlayerData ParticlePlayerLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer>& particle_accessor, LayerTrait const * layer_trait) const
+ParticlePlayerLayerTrait::UpdatePlayerData ParticlePlayerLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer>& particle_accessor) const
 {
 	ParticlePlayerLayerTrait::UpdatePlayerData result;
 
@@ -144,13 +144,13 @@ ParticlePlayerLayerTrait::UpdatePlayerData ParticlePlayerLayerTrait::BeginUpdate
 }
 
 
-bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const
+bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, UpdatePlayerData const & update_data) const
 {
 	// search all nearby enemies
 	std::vector<ParticleEnemy> enemy_particles;
-	layer_trait->game->RegisterEnemiesInRange(particle.bounding_box.position, layer_trait->game->world_clamp_radius, enemy_particles, "Enemies", false);
+	game->RegisterEnemiesInRange(particle.bounding_box.position, game->world_clamp_radius, enemy_particles, "Enemies", false);
 	std::vector<ParticleEnemy> worldlimits_particles;
-	layer_trait->game->RegisterEnemiesInRange(particle.bounding_box.position, layer_trait->game->world_clamp_radius, worldlimits_particles, "WorldLimits", true);
+	game->RegisterEnemiesInRange(particle.bounding_box.position, game->world_clamp_radius, worldlimits_particles, "WorldLimits", true);
 
 	// apply all effectors
 	bool affected_by_enemies = false;
@@ -198,9 +198,9 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 	{
 
 #if _DEBUG
-		if (!layer_trait->game->GetCheatMode())
+		if (!game->GetCheatMode())
 #endif
-			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->GetPlayer(0)->GetMaxHealth(), true, layer_trait->game))
+			if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->GetPlayer(0)->GetMaxHealth(), true, game))
 				return false; // do not destroy the particle even if the life is 0 (but do not process the following code that displace it)
 	}
 
@@ -220,7 +220,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 
 	// update and clamp the velocity
 	bool apply_slowdown = (particle.acceleration == glm::vec2(0.0f, 0.0f));
-	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, layer_trait->game->player_slowing_factor, max_velocity_factor * layer_trait->game->player_max_velocity);
+	UpdateVelocityAndPosition(delta_time, particle, apply_slowdown, game->player_slowing_factor, max_velocity_factor * game->player_max_velocity);
 	particle.acceleration = glm::vec2(0.0f, 0.0f);
 	return false;
 }
@@ -229,7 +229,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 // ParticleEnemyLayerTrait
 // ===========================================================================
 
-void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const * layer_trait) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -244,7 +244,7 @@ void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle
 	}
 }
 
-ParticleEnemyLayerTrait::UpdateEnemyData ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const
+ParticleEnemyLayerTrait::UpdateEnemyData ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor) const
 {
 	ParticleEnemyLayerTrait::UpdateEnemyData result;
 
@@ -252,7 +252,7 @@ ParticleEnemyLayerTrait::UpdateEnemyData ParticleEnemyLayerTrait::BeginUpdatePar
 	return result;
 }
 
-bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyLayerTrait::UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyLayerTrait::UpdateEnemyData const & update_data) const
 {
 	particle.rotation_alpha += 2.0f * delta_time;
 	if (particle.rotation_alpha > 2.0f * (float)M_PI)
@@ -271,12 +271,12 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 
 
 // ===========================================================================
-// ParticleAtomTrait
+// ParticleAtomLayerTrait
 // ===========================================================================
 
-bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom& particle, ParticleAtomTrait::UpdateAtomData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleAtomLayerTrait::UpdateParticle(float delta_time, ParticleAtom& particle, ParticleAtomLayerTrait::UpdateAtomData const & update_data) const
 {
-	LudumGameInstance * ludum_game_instance = layer_trait->game->GetGameInstance();
+	LudumGameInstance * ludum_game_instance = game->GetGameInstance();
 
 	glm::vec2 const & player_position = update_data.player_particle.bounding_box.position;
 	glm::vec2 & particle_position = particle.bounding_box.position;
@@ -327,7 +327,7 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom& particle,
 	particle.velocity += player_sum_velocity * 1.0f + enemy_sum_velocity * 1.0f;
 
 	// update life and color
-	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, layer_trait->game->initial_particle_health, false, layer_trait->game))
+	if (UpdateParticleLifeAndColor(particle, in_danger_zone, delta_time, game->initial_particle_health, false, game))
 	{
 		if (particle.waken_up)
 			if (ludum_game_instance != nullptr)
@@ -341,13 +341,13 @@ bool ParticleAtomTrait::UpdateParticle(float delta_time, ParticleAtom& particle,
 	return false;
 }
 
-ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleAtom> & particle_accessor, LayerTrait const * layer_trait) const
+ParticleAtomLayerTrait::UpdateAtomData ParticleAtomLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleAtom> & particle_accessor) const
 {
-	ParticleAtomTrait::UpdateAtomData result;
+	ParticleAtomLayerTrait::UpdateAtomData result;
 
 	
 
-	LudumPlayer const* ludum_player = layer_trait->game->GetPlayer(0);
+	LudumPlayer const* ludum_player = game->GetPlayer(0);
 	if (ludum_player == nullptr)
 		return result;
 
@@ -357,11 +357,11 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 
 	result.player_particle = *player_particle;
 
-	result.slowing_factor = layer_trait->game->particle_slowing_factor;
-	result.max_velocity = layer_trait->game->particle_max_velocity;
-	result.world_clamp_radius = layer_trait->game->world_clamp_radius;
+	result.slowing_factor = game->particle_slowing_factor;
+	result.max_velocity = game->particle_max_velocity;
+	result.world_clamp_radius = game->world_clamp_radius;
 
-	layer_trait->game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles, "Enemies", true);
+	game->RegisterEnemiesInRange(result.player_particle.bounding_box.position, result.world_clamp_radius, result.enemy_particles, "Enemies", true);
 
 	return result;
 }
@@ -371,7 +371,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 // ===========================================================================
 
 
-bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
+bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& particle) const
 {
 	return false;
 }

@@ -19,9 +19,9 @@ namespace chaos
 		using vertex_type = VERTEX_TYPE;
 
 		/** whether the particles are dynamic */
-		static bool const dynamic_particles = DYNAMIC_PARTICLES;
+		bool dynamic_particles = DYNAMIC_PARTICLES;
 		/** whether the vertices are dynamic */
-		static bool const dynamic_vertices = DYNAMIC_VERTICES;
+		bool dynamic_vertices = DYNAMIC_VERTICES;
 	};
 
 }; // namespace chaos

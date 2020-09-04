@@ -45,9 +45,9 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_atom = (layer_name == "Atoms");
 	if (is_atom)
 	{
-		ParticleAtomTrait layer_trait;
+		ParticleAtomLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleAtomTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticleAtomLayerTrait>(layer_trait);
 	}
 	bool is_texts = (layer_name == "Texts");
 	if (is_texts)

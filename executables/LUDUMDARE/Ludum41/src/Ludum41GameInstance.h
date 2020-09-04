@@ -25,9 +25,9 @@ class LudumGameInstance : public death::GameInstance
 	friend class LudumChallengeRewardPunishment_BrickOffset;
 	
 	friend class LudumChallenge;
-	friend class ParticleMovableObjectTrait;
-	friend class ParticleLifeObjectTrait;
-	friend class ParticleBrickTrait;	
+	friend class ParticleMovableObjectLayerTrait;
+	friend class ParticleLifeLayerTrait;
+	friend class ParticleBrickLayerTrait;	
 
 protected:
 

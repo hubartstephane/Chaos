@@ -30,9 +30,9 @@ class LudumGame : public death::Game
 	friend class LudumChallenge;
 	friend class LudumWindow;
 
-	friend class ParticleMovableObjectTrait;
-	friend class ParticleLifeObjectTrait;
-	friend class ParticleBrickTrait;
+	friend class ParticleMovableObjectLayerTrait;
+	friend class ParticleLifeLayerTrait;
+	friend class ParticleBrickLayerTrait;
 
 public:
 

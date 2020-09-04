@@ -52,7 +52,15 @@ class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExamp
 {
 public:
 
-	bool UpdateParticle(float delta_time, ParticleExample & particle) const
+	class AllocationTrait
+	{
+	public:
+
+		int xyz = 666;
+
+	};
+
+	bool UpdateParticle(float delta_time, ParticleExample & particle, AllocationTrait const * trait) const
 	{
 		particle.box.position += particle.velocity * delta_time;
 		particle.remaining_time -= delta_time;
@@ -60,7 +68,7 @@ public:
 		return (particle.remaining_time <= 0.0f);
 	}
 
-    void ParticleToPrimitives(ParticleExample const & particle, chaos::QuadOutput<VertexExample> & output) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::QuadOutput<VertexExample> & output, AllocationTrait const * trait) const
     {
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return;
@@ -104,6 +112,11 @@ protected:
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
 	{
+		bool bbb1 = chaos::has_AllocationTrait_v< ParticleExampleLayerTrait>;
+		bool bbb2 = chaos::has_AllocationTrait_v< MyGLFWWindowOpenGLTest1>;
+
+
+
 		// clear the buffers
 		glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -112,7 +112,7 @@ namespace chaos
 	/** utility method to have position for a quad (in order BL, BR, TR, TL) */
 	void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions);
 	/** utility method to have texture coordinate for a quad (in order BL, BR, TR, TL) */
-	void GenerateVertexTextureAttributes(ParticleTexcoords const& texcoords, glm::vec3* vertex_texcoords);
+	void GenerateVertexTextureAttributes(ParticleTexcoords const& texcoords, int flags, glm::vec3* vertex_texcoords);
 	/** utility method to have vertex flags from particle flags for a quad (in order BL, BR, TR, TL) */
 	void GenerateVertexFlagAttributes(int flags, int* vertex_flags);
 

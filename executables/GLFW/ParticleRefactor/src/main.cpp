@@ -44,6 +44,8 @@ public:
 	float remaining_time;
 };
 
+CHAOS_REGISTER_CLASS1(ParticleExample);
+
 class VertexExample : public chaos::VertexDefault
 {
 public:
@@ -77,31 +79,27 @@ public:
 		return (particle.remaining_time <= 0.0f);
 	}
 
-    void ParticleToPrimitives(ParticleExample const & particle, chaos::TrianglePairOutput<VertexExample> & output) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::QuadOutput<VertexExample> & output) const
     {
-#if 0
+		if (rand() % 5 == 0) // flickering particles (not always rendered)
+			return;
 
-        if (rand() % 5 == 0) // flickering particles (not always rendered)
-            return;
+		chaos::QuadPrimitive<VertexExample> primitive = output.AddPrimitive();
 
-        chaos::TrianglePairPrimitive<VertexExample> primitive = output.AddPrimitive();
+		glm::vec2 vertex_positions[4];
+		chaos::GenerateVertexPositionAttributes(particle.box, 0.0f, vertex_positions);
 
+		glm::vec3 vertex_texcoords[4];
+		chaos::GenerateVertexTextureAttributes(particle.texcoords, 0, vertex_texcoords);
 
-
-
-
-
-
-
-        chaos::ParticleTools::::GenerateBoxParticle(primitive, particle.box, particle.texcoords);
-
-        float alpha = particle.remaining_time / particle.lifetime;
-        for (size_t i = 0; i < primitive.count; ++i)
-        {
-            primitive[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
-            primitive[i].position.y += 50 * std::cos(time);
-        }
-#endif
+		float alpha = particle.remaining_time / particle.lifetime;
+		for (size_t i = 0; i < primitive.count; ++i)
+		{
+			primitive[i].position = vertex_positions[i];
+			primitive[i].texcoord = vertex_texcoords[i];
+			primitive[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
+			primitive[i].position.y += 50 * std::cos(time);
+		}
     }
 
 public:

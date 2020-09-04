@@ -176,11 +176,11 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TMParticle const& par
 }
 
 // ===========================================================================
-// ParticleExplosionTrait
+// ParticleExplosionLayerTrait
 // ===========================================================================
 
 
-bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const
+bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const
 {
 	if (particle.explosion_info == nullptr) // delete the particle
 		return true;
@@ -216,11 +216,11 @@ bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion&
 }
 
 // ===========================================================================
-// ParticleLifeTrait
+// ParticleLifeLayerTrait
 // ===========================================================================
 
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
+bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
 {
 
 	return false;
@@ -327,10 +327,10 @@ void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, 
 }
 
 // ===========================================================================
-// ParticleEnemyTrait
+// ParticleEnemyLayerTrait
 // ===========================================================================
 
-ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
+ParticleEnemyUpdateData ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleEnemyUpdateData result;
 	if (particle_accessor.GetCount() > 0)
@@ -343,7 +343,7 @@ ParticleEnemyUpdateData ParticleEnemyTrait::BeginUpdateParticles(float delta_tim
 	return result;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
 	// destroy the particle if no life
 	if (particle.life <= 0.0f)
@@ -402,7 +402,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy& particl
 	return false; // do not destroy the particle
 }
 
-void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
 	ParticleEnemy other = particle;
 	other.color.a = (other.touched_count_down > 0) ? 0.0f : 1.0f;

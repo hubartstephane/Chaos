@@ -35,11 +35,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_world_limit = (layer_name == "WorldLimits");
 	if (is_enemy || is_world_limit)
 	{
-		ParticleEnemyTrait layer_trait;
+		ParticleEnemyLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		layer_trait.dynamic_particles = is_enemy; // shuxxx : optimization 
 		layer_trait.dynamic_vertices = is_enemy;
-		return new chaos::ParticleLayer<ParticleEnemyTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticleEnemyLayerTrait>(layer_trait);
 	}
 
 	bool is_atom = (layer_name == "Atoms");

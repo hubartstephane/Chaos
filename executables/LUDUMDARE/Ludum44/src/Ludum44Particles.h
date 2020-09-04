@@ -91,7 +91,7 @@ public:
 	chaos::box2 camera_box;
 };
 
-class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
+class ParticleEnemyLayerTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
 {
 public:
 
@@ -163,7 +163,7 @@ class ParticleLife : public chaos::ParticleDefault
 
 };
 
-class ParticleLifeTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
+class ParticleLifeLayerTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
 {
 public:
 
@@ -191,7 +191,7 @@ public:
 	float age = 0.0f;
 };
 
-class ParticleExplosionTrait : public chaos::ParticleLayerTrait<ParticleExplosion, VertexBase>
+class ParticleExplosionLayerTrait : public chaos::ParticleLayerTrait<ParticleExplosion, VertexBase>
 {
 public:
 

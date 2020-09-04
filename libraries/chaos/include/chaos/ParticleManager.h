@@ -40,7 +40,7 @@ namespace chaos
 
 		/** templated method to add a layer and set some values */
 		template<typename LAYER_TRAIT, typename ...PARAMS>
-		ParticleLayerBase * AddLayer(int render_order, ObjectRequest layer_id, ObjectRequest material_request, PARAMS... params)
+		ParticleLayer<LAYER_TRAIT>* AddLayer(int render_order, ObjectRequest layer_id, ObjectRequest material_request, PARAMS... params)
 		{
 			// find the optional GPURenderMaterial
 			GPURenderMaterial * render_material = nullptr;
@@ -59,9 +59,9 @@ namespace chaos
 
 		/** templated method to add a layer and set some values */
 		template<typename LAYER_TRAIT, typename ...PARAMS>
-		ParticleLayerBase * AddLayer(int render_order, ObjectRequest layer_id, GPURenderMaterial * render_material, PARAMS... params)
+		ParticleLayer<LAYER_TRAIT> * AddLayer(int render_order, ObjectRequest layer_id, GPURenderMaterial * render_material, PARAMS... params)
 		{
-			ParticleLayerBase * result = new ParticleLayer<LAYER_TRAIT>(params...);
+			ParticleLayer<LAYER_TRAIT> * result = new ParticleLayer<LAYER_TRAIT>(params...);
 			if (result == nullptr)
 				return nullptr;
 			result->SetRenderMaterial(render_material);

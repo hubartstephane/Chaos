@@ -207,17 +207,17 @@ public:
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
-	{
-        if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
-            return trait.dynamic_vertices;
+	{       
+		if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
+           return trait.dynamic_vertices;
         return true;
 	}
 	/** returns whether the particles are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamic(TRAIT_TYPE const & trait)
-	{
-        if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
-            return trait.dynamic_particles;
+	{  
+		if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)        
+			return trait.dynamic_particles;
         return true;
 	}
 
@@ -225,16 +225,23 @@ public:
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamicStatic()
 	{
-        if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
-            return TRAIT_TYPE::dynamic_vertices;
+
+
+
+      //  if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
+       //     return TRAIT_TYPE::dynamic_vertices;
         return true;
     }
 	/** returns whether the particles are dynamic (without an instance to read) */
 	template<typename TRAIT_TYPE>
 	static bool AreParticlesDynamicStatic()
 	{
-        if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
-            return TRAIT_TYPE::dynamic_particles;
+
+
+
+
+      //  if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
+       //     return TRAIT_TYPE::dynamic_particles;
         return true;
 	}
 

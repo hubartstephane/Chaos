@@ -17,7 +17,7 @@
 class LudumLevelInstance : public death::LevelInstance
 {
 
-	friend class ParticleMovableObjectTrait;
+	friend class ParticleMovableObjectLayerTrait;
 
 public:
 

@@ -22,7 +22,7 @@ using ParticleObject = chaos::ParticleDefault;
 // ===========================================================================
 
 
-class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, VertexBase>
+class ParticleObjectLayerTrait : public chaos::ParticleLayerTrait<ParticleObject, VertexBase>
 {
 public:
 
@@ -34,21 +34,18 @@ public:
 // Life particle system
 // ===========================================================================
 
-class ParticleLifeObjectTrait : public ParticleObjectTrait
+class ParticleLifeLayerTrait : public ParticleObjectLayerTrait
 {
 public:
 
-	class LayerTrait
-	{
-	public:
-
-		class LudumGame * game = nullptr;
-	};
-
 	// called once for the whole allocation
-	int BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject> & particle_accessor, LayerTrait const * layer_trait) const;
+	int BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject> & particle_accessor) const;
     // called for every particles
-    bool UpdateParticle(float delta_time, ParticleObject& particle, int extra_param, LayerTrait const* layer_trait) const;
+    bool UpdateParticle(float delta_time, ParticleObject& particle, int extra_param) const;
+
+public:
+
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -65,20 +62,17 @@ public:
 	int   special_type   = 0;
 };
 
-class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, VertexBase>
+class ParticleBrickLayerTrait : public chaos::ParticleLayerTrait<ParticleBrick, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	bool UpdateParticle(float delta_time, ParticleBrick& particle) const;
 
-		class LudumGame * game = nullptr;
-	};
+    void ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output) const;
 
-	bool UpdateParticle(float delta_time, ParticleBrick& particle, LayerTrait const * layer_trait) const;
+public:
 
-    void ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -93,24 +87,21 @@ public:
 	glm::vec2 velocity;
 };
 
-class ParticleMovableObjectTrait : public chaos::ParticleLayerTrait<ParticleMovableObject, VertexBase>
+class ParticleMovableObjectLayerTrait : public chaos::ParticleLayerTrait<ParticleMovableObject, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	bool UpdateParticle(float delta_time, ParticleMovableObject& particle) const;
 
-		class LudumGame * game = nullptr;
-	};
-
-	bool UpdateParticle(float delta_time, ParticleMovableObject& particle, LayerTrait const * layer_trait) const;
-
-    void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+    void ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output) const;
 
 	void UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const;
 
-	glm::vec2 RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const;
+	glm::vec2 RestrictParticleVelocityToAngle(glm::vec2 const & v) const;
+
+public:
+
+	class LudumGame* game = nullptr;
 };
 
 
@@ -133,7 +124,7 @@ public:
 	size_t index = 0;
 };
 
-class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexBase>
+class ParticleChallengeLayerTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexBase>
 {
 public:
 

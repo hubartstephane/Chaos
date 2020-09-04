@@ -15,7 +15,7 @@
 // Object particle system
 // ===========================================================================
 
-bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject& particle) const
+bool ParticleObjectLayerTrait::UpdateParticle(float delta_time, ParticleObject& particle) const
 { 
 	return false; 
 }
@@ -24,12 +24,12 @@ bool ParticleObjectTrait::UpdateParticle(float delta_time, ParticleObject& parti
 // Life particle system
 // ===========================================================================
 
-int ParticleLifeObjectTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject>& particle_accessor, LayerTrait const * layer_trait) const
+int ParticleLifeLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleObject>& particle_accessor) const
 {
 	return 0;
 }
 
-bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject& particle, int extra_param, LayerTrait const * layer_trait) const
+bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleObject& particle, int extra_param) const
 {
 	return false;
 }
@@ -38,7 +38,7 @@ bool ParticleLifeObjectTrait::UpdateParticle(float delta_time, ParticleObject& p
 // Brick particle system
 // ===========================================================================
 
-bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick& particle, LayerTrait const * layer_trait) const
+bool ParticleBrickLayerTrait::UpdateParticle(float delta_time, ParticleBrick& particle) const
 {
 	if (particle.life <= 0)
 		return true;
@@ -46,9 +46,9 @@ bool ParticleBrickTrait::UpdateParticle(float delta_time, ParticleBrick& particl
 	return false;
 }
 
-void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleBrickLayerTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
+    LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 
 	ParticleBrick other = particle;
 
@@ -67,9 +67,9 @@ void ParticleBrickTrait::ParticleToPrimitives(ParticleBrick const& particle, cha
 // Object Movable particle system
 // ===========================================================================
 
-void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleMovableObjectLayerTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
-    LudumGameInstance const* ludum_game_instance = layer_trait->game->GetGameInstance();
+    LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 
 	ParticleMovableObject other = particle;
 
@@ -89,7 +89,7 @@ void ParticleMovableObjectTrait::ParticleToPrimitives(ParticleMovableObject cons
 	ParticleToPrimitive(other, output.AddPrimitive());
 }
 
-void ParticleMovableObjectTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
+void ParticleMovableObjectLayerTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
 {
 	size_t dimension = velocity.length();
 
@@ -107,14 +107,14 @@ glm::vec2 MakeVelocityFromAngle(float angle)
 	return glm::vec2(std::cos(angle), std::sin(angle));
 }
 
-bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovableObject& particle, LayerTrait const * layer_trait) const
+bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleMovableObject& particle) const
 {
-	LudumGameInstance * game_instance = layer_trait->game->GetGameInstance();
+	LudumGameInstance * game_instance = game->GetGameInstance();
 	if (game_instance == nullptr)
 		return false;
 
 	// do not update particles during pause
-	if (!layer_trait->game->IsPlaying() || layer_trait->game->IsFreeCameraMode())
+	if (!game->IsPlaying() || game->IsFreeCameraMode())
 		return false;
 
 	// delay before moving the particle
@@ -135,7 +135,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 	// ball bouncing against world
 
-	chaos::box2 canvas_box = layer_trait->game->GetCanvasBox();
+	chaos::box2 canvas_box = game->GetCanvasBox();
 	chaos::box2 ball_box = particle.bounding_box;
 		
 
@@ -156,7 +156,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// bounce against player
-	death::PlayerPawn * player_pawn = layer_trait->game->GetPlayerPawn(0);
+	death::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
 	if (player_pawn == nullptr)
 		return false;
 
@@ -182,8 +182,8 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 
 				float const TO_RAD = (float)M_PI / 180.0f;
 
-				float rebound_angle_decrease = layer_trait->game->rebound_angle_decrease * TO_RAD;
-				float rebound_angle_increase = layer_trait->game->rebound_angle_increase * TO_RAD;
+				float rebound_angle_decrease = game->rebound_angle_decrease * TO_RAD;
+				float rebound_angle_increase = game->rebound_angle_increase * TO_RAD;
 
 				float const PI_2 = (float)M_PI_2;
 
@@ -224,7 +224,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 		}
 	}
 
-	LudumLevelInstance * level_instance = layer_trait->game->GetLevelInstance();
+	LudumLevelInstance * level_instance = game->GetLevelInstance();
 
 	// bounce against bricks
 	ParticleBrick * bricks = level_instance->GetBricks();
@@ -254,7 +254,7 @@ bool ParticleMovableObjectTrait::UpdateParticle(float delta_time, ParticleMovabl
 	}
 
 	// recenter the particle
-	particle.velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity), layer_trait);
+	particle.velocity = RestrictParticleVelocityToAngle(glm::normalize(velocity));
 	particle.bounding_box = ball_box;
 
 	return false; 
@@ -303,10 +303,10 @@ float ClampAngleToNearestRange(float angle, std::pair<float, float> const* range
 	return best_value;
 }
 
-glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v, LayerTrait const * layer_trait) const
+glm::vec2 ParticleMovableObjectLayerTrait::RestrictParticleVelocityToAngle(glm::vec2 const & v) const
 {
-	float ball_angle_min = layer_trait->game->ball_angle_min;
-	float ball_angle_max = layer_trait->game->ball_angle_max;
+	float ball_angle_min = game->ball_angle_min;
+	float ball_angle_max = game->ball_angle_max;
 	if (ball_angle_max <= 0.0f || ball_angle_min <= 0.0f)
 		return v;
 
@@ -327,7 +327,7 @@ glm::vec2 ParticleMovableObjectTrait::RestrictParticleVelocityToAngle(glm::vec2 
 // ===========================================================================
 // Challenge particle system
 // ===========================================================================
-void ParticleChallengeTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleChallengeLayerTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
     bool keyboard = chaos::IsPCMode(input_mode);

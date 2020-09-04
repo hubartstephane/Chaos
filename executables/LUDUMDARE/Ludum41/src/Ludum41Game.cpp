@@ -300,19 +300,19 @@ int LudumGame::AddParticleLayers()
 		return render_order;
 
 	// create layers
-	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
 
-	ParticleMovableObjectTrait movable_trait;
+	ParticleMovableObjectLayerTrait movable_trait;
 	movable_trait.game = this;
-	particle_manager->AddLayer<ParticleMovableObjectTrait>(render_order++, death::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
+	particle_manager->AddLayer<ParticleMovableObjectLayerTrait>(render_order++, death::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
 
-	ParticleBrickTrait brick_trait;
+	ParticleBrickLayerTrait brick_trait;
 	brick_trait.game = this;
-	particle_manager->AddLayer<ParticleBrickTrait>(render_order++, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
+	particle_manager->AddLayer<ParticleBrickLayerTrait>(render_order++, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
 
-	particle_manager->AddLayer<ParticleChallengeTrait>(render_order++, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
-	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+	particle_manager->AddLayer<ParticleChallengeLayerTrait>(render_order++, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
+	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	return render_order;
 }

@@ -303,11 +303,11 @@ int LudumGame::AddParticleLayers()
 	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
 	particle_manager->AddLayer<ParticleObjectTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
 
-	ParticleMovableObjectTrait::LayerTrait movable_trait;
+	ParticleMovableObjectTrait movable_trait;
 	movable_trait.game = this;
 	particle_manager->AddLayer<ParticleMovableObjectTrait>(render_order++, death::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
 
-	ParticleBrickTrait::LayerTrait brick_trait;
+	ParticleBrickTrait brick_trait;
 	brick_trait.game = this;
 	particle_manager->AddLayer<ParticleBrickTrait>(render_order++, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
 

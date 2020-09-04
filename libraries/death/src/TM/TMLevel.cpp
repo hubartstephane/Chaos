@@ -61,7 +61,7 @@ namespace death
 
 	chaos::ParticleLayerBase* TMLevel::DoCreateParticleLayer(TMLayerInstance* layer_instance)
 	{
-		return new chaos::ParticleLayer<TMParticleTrait>();
+		return new chaos::ParticleLayer<TMParticleLayerTrait>();
 	}
 	
 	TMObjectFactory TMLevel::DoGetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
@@ -469,7 +469,7 @@ namespace death
 		if (chaos::TiledMap::GeometricObjectText const* text = in_geometric_object->GetObjectText())
 		{
 			// create particle layer if necessary
-			if (CreateParticleLayer() == nullptr) // the generate layer is of  TMParticleTrait => this works fine for Text too (except some useless extra data like GID)
+			if (CreateParticleLayer() == nullptr) // the generate layer is of  TMParticleLayerTrait => this works fine for Text too (except some useless extra data like GID)
 				return;
 
 			Game* game = GetGame();

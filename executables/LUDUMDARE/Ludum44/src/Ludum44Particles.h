@@ -54,7 +54,7 @@ public:
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexPowerUpZone>);
 
 
-class PowerUpZoneParticleTrait : public chaos::ParticleAllocationTrait<ParticlePowerUpZone, VertexPowerUpZone, true, true> // shuxxx set to false = optimization 1
+class PowerUpZoneParticleTrait : public chaos::ParticleLayerTrait<ParticlePowerUpZone, VertexPowerUpZone, true, true> // shuxxx set to false = optimization 1
 {
 public:
 
@@ -91,7 +91,7 @@ public:
 	chaos::box2 camera_box;
 };
 
-class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>
+class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
 {
 public:
 
@@ -136,7 +136,7 @@ public:
 	class LudumPlayer * player = nullptr;
 };
 
-class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
+class ParticleFireLayerTrait : public chaos::ParticleLayerTrait<ParticleFire, VertexBase>
 {
 public:
 
@@ -163,7 +163,7 @@ class ParticleLife : public chaos::ParticleDefault
 
 };
 
-class ParticleLifeTrait : public chaos::ParticleAllocationTrait<ParticleLife, VertexBase>
+class ParticleLifeTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
 {
 public:
 
@@ -191,7 +191,7 @@ public:
 	float age = 0.0f;
 };
 
-class ParticleExplosionTrait : public chaos::ParticleAllocationTrait<ParticleExplosion, VertexBase>
+class ParticleExplosionTrait : public chaos::ParticleLayerTrait<ParticleExplosion, VertexBase>
 {
 public:
 
@@ -217,7 +217,7 @@ public:
 
 };
 
-class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>
+class ParticlePlayerLayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
 {
 public:
 

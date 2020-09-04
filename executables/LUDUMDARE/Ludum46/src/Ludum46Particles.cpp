@@ -20,14 +20,14 @@
 
 
 // ===========================================================================
-// ParticleSoulTrait
+// ParticleSoulLayerTrait
 // ===========================================================================
 
-ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor, LayerTrait const* layer_trait) const
+ParticleSoulUpdateData ParticleSoulLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor) const
 {
 	ParticleSoulUpdateData result;
 
-	LudumLevelInstance* ludum_level_instance = layer_trait->game->GetLevelInstance();
+	LudumLevelInstance* ludum_level_instance = game->GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 	{
 		result.level_bounding_box = ludum_level_instance->GetBoundingBox();
@@ -51,7 +51,7 @@ ParticleSoulUpdateData ParticleSoulTrait::BeginUpdateParticles(float delta_time,
 	return result;
 }
 
-bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData & update_data, LayerTrait const* layer_trait) const
+bool ParticleSoulLayerTrait::UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData & update_data) const
 {
 	particle.bounding_box.position += delta_time * particle.velocity;
 
@@ -116,14 +116,14 @@ bool ParticleSoulTrait::UpdateParticle(float delta_time, ParticleSoul & particle
 
 
 // ===========================================================================
-// ParticleFireTrait
+// ParticleFireLayerTrait
 // ===========================================================================
 
-ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const* layer_trait) const
+ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor) const
 {
 	ParticleFireUpdateData result;
 
-	LudumLevelInstance * ludum_level_instance = layer_trait->game->GetLevelInstance();
+	LudumLevelInstance * ludum_level_instance = game->GetLevelInstance();
 	if (ludum_level_instance != nullptr)
 	{
 		result.level_bounding_box = ludum_level_instance->GetBoundingBox();
@@ -132,7 +132,7 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 	return result;
 }
 
-bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData & update_data) const
+bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData & update_data) const
 {
 	particle.bounding_box.position += delta_time * particle.velocity;
 
@@ -179,7 +179,7 @@ static bool UpdateAnimatedParticleTexcoords(ParticleAnimated & particle) // retu
 }
 
 // ===========================================================================
-// ParticleAnimatedTrait
+// ParticleAnimatedLayerTrait
 // ===========================================================================
 
 
@@ -206,7 +206,7 @@ bool ParticleAnimated::UpdateParticle(float delta_time)
 }
 
 
-bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated & particle)
+bool ParticleAnimatedLayerTrait::UpdateParticle(float delta_time, ParticleAnimated & particle)
 {
 	particle.animation_timer += delta_time;
 
@@ -219,7 +219,7 @@ bool ParticleAnimatedTrait::UpdateParticle(float delta_time, ParticleAnimated & 
 #endif
 
 // ===========================================================================
-// ParticleBloodTrait
+// ParticleBloodLayerTrait
 // ===========================================================================
 
 static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated & particle)
@@ -244,10 +244,10 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated & particle)
 }
 
 // ===========================================================================
-// ParticleBloodTrait
+// ParticleBloodLayerTrait
 // ===========================================================================
 
-void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleBloodLayerTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	ParticleBlood other = particle;
 	other.bounding_box.half_size *= 1.0f + (other.life / other.duration);
@@ -255,7 +255,7 @@ void ParticleBloodTrait::ParticleToPrimitives(ParticleBlood const& particle, cha
 	ParticleToPrimitive(other, output.AddPrimitive());
 }
 
-bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & particle) const
+bool ParticleBloodLayerTrait::UpdateParticle(float delta_time, ParticleBlood & particle) const
 {
 	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
@@ -266,10 +266,10 @@ bool ParticleBloodTrait::UpdateParticle(float delta_time, ParticleBlood & partic
 
 
 // ===========================================================================
-// ParticleBurnedSoulTrait
+// ParticleBurnedSoulLayerTrait
 // ===========================================================================
 
-void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const
+void ParticleBurnedSoulLayerTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless) const
 {
 	ParticleBurnedSoul other = particle;
 	other.bounding_box.position.x += 50.0f * std::sin(other.offset_t);
@@ -277,7 +277,7 @@ void ParticleBurnedSoulTrait::ParticleToPrimitives(ParticleBurnedSoul const& par
 	ParticleToPrimitive(other, output.AddPrimitive());
 }
 
-bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const
+bool ParticleBurnedSoulLayerTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const
 {
 	if (DoUpdateBloodParticle(delta_time, particle))
 		return true;
@@ -287,19 +287,19 @@ bool ParticleBurnedSoulTrait::UpdateParticle(float delta_time, ParticleBurnedSou
 	return false;
 }
 
-int ParticleBurnedSoulTrait::BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleBurnedSoul>& accessor, LayerTrait const* layer_trait) const
+int ParticleBurnedSoulLayerTrait::BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleBurnedSoul>& accessor) const
 {
 	return 666;
 }
 
 
 // ===========================================================================
-// ParticlePlayerTrait
+// ParticlePlayerLayerTrait
 // ===========================================================================
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle, LayerTrait const* layer_trait) const
+bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
-	LudumPlayerDisplacementComponent* displacement_component = layer_trait->game->GetPlayerDisplacementComponent(0);
+	LudumPlayerDisplacementComponent* displacement_component = game->GetPlayerDisplacementComponent(0);
 	if (displacement_component != nullptr)
 	{
 		glm::vec2 pawn_velocity = displacement_component->GetPawnVelocity();

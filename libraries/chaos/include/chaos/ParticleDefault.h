@@ -5,7 +5,7 @@
 #include <chaos/GPUClasses.h>
 #include <chaos/PrimitiveOutput.h>
 #include <chaos/GeometryFramework.h>
-#include <chaos/ParticleAllocationTrait.h>
+#include <chaos/ParticleLayerTrait.h>
 
 
 namespace chaos
@@ -97,7 +97,7 @@ namespace chaos
 	};
 
 	/** ParticleTrait : the default trait */
-	using ParticleDefaultTrait = ParticleAllocationTrait<ParticleDefault, VertexDefault>;
+	using ParticleDefaultLayerTrait = ParticleLayerTrait<ParticleDefault, VertexDefault>;
 
 	/** generates 1 quad from one particle */
 	void ParticleToPrimitives(ParticleDefault const& particle, QuadOutput<VertexDefault>& output);

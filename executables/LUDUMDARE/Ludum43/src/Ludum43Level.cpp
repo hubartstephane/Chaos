@@ -26,16 +26,16 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_player_and_camera = (layer_name == "PlayerAndCamera");
 	if (is_player_and_camera)
 	{
-		ParticlePlayerTrait::LayerTrait layer_trait;
+		ParticlePlayerLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
 	}
 
 	bool is_enemy = (layer_name == "Enemies");
 	bool is_world_limit = (layer_name == "WorldLimits");
 	if (is_enemy || is_world_limit)
 	{
-		ParticleEnemyTrait::LayerTrait layer_trait;
+		ParticleEnemyTrait layer_trait;
 		layer_trait.game = ludum_game;
 		layer_trait.dynamic_particles = is_enemy; // shuxxx : optimization 
 		layer_trait.dynamic_vertices = is_enemy;
@@ -45,14 +45,14 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_atom = (layer_name == "Atoms");
 	if (is_atom)
 	{
-		ParticleAtomTrait::LayerTrait layer_trait;
+		ParticleAtomTrait layer_trait;
 		layer_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticleAtomTrait>(layer_trait);
 	}
 	bool is_texts = (layer_name == "Texts");
 	if (is_texts)
 	{
-		return new chaos::ParticleLayer<chaos::ParticleDefaultTrait>();
+		return new chaos::ParticleLayer<chaos::ParticleDefaultLayerTrait>();
 	}
 
 	return death::TMLevel::DoCreateParticleLayer(layer_instance);

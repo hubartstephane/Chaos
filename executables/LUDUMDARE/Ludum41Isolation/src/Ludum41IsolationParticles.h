@@ -22,7 +22,7 @@ using ParticleObject = chaos::ParticleDefault;
 // ===========================================================================
 
 
-class ParticleObjectTrait : public chaos::ParticleAllocationTrait<ParticleObject, VertexBase>
+class ParticleObjectTrait : public chaos::ParticleLayerTrait<ParticleObject, VertexBase>
 {
 public:
 
@@ -67,7 +67,7 @@ public:
 	float highlight_time = 0.0f;
 };
 
-class ParticleBrickTrait : public chaos::ParticleAllocationTrait<ParticleBrick, VertexBase>
+class ParticleBrickTrait : public chaos::ParticleLayerTrait<ParticleBrick, VertexBase>
 {
 public:
 
@@ -96,7 +96,7 @@ public:
 	float damage_done_since_last_bounce = 0.0f;
 };
 
-class ParticleMovableObjectTrait : public chaos::ParticleAllocationTrait<ParticleMovableObject, VertexBase>
+class ParticleMovableObjectTrait : public chaos::ParticleLayerTrait<ParticleMovableObject, VertexBase>
 {
 public:
 
@@ -136,7 +136,7 @@ public:
 	size_t index = 0;
 };
 
-class ParticleChallengeTrait : public chaos::ParticleAllocationTrait<ParticleChallenge, VertexBase>
+class ParticleChallengeTrait : public chaos::ParticleLayerTrait<ParticleChallenge, VertexBase>
 {
 public:
 

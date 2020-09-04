@@ -52,7 +52,7 @@ int LudumPlayingHUD::CreateHUDLayers()
 		// create a layer for the life bar
 		particle_manager->AddLayer<ParticleLifeTrait>(render_order++, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject");
 		// create a layer for the shroudlife bar
-		ParticleShroudLifeTrait::LayerTrait shroud_trait;
+		ParticleShroudLifeTrait shroud_trait;
 		shroud_trait.game = ludum_game;
 		particle_manager->AddLayer<ParticleShroudLifeTrait>(render_order++, death::GameHUDKeys::SHROUDLIFE_ID, "gameobject", shroud_trait);
 	}

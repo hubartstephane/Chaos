@@ -57,7 +57,7 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
 	result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
 }
 
-class ParticleExampleTrait : public chaos::ParticleAllocationTrait<ParticleExample, VertexExample>
+class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 {
 public:
 

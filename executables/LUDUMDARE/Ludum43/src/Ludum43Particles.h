@@ -68,7 +68,7 @@ public:
 	float rotation_alpha = 0.0f;
 };
 
-class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>
+class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
 {
 public:
 
@@ -113,7 +113,7 @@ public:
 	bool  dash = false;
 };
 
-class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>
+class ParticlePlayerLayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
 {
 public:
 
@@ -152,7 +152,7 @@ public:
 
 };
 
-class ParticleAtomTrait : public chaos::ParticleAllocationTrait<ParticleAtom, VertexBase>
+class ParticleAtomTrait : public chaos::ParticleLayerTrait<ParticleAtom, VertexBase>
 {
 public:
 
@@ -190,7 +190,7 @@ class ParticleLife : public chaos::ParticleDefault
 
 };
 
-class ParticleLifeTrait : public chaos::ParticleAllocationTrait<ParticleLife, VertexBase>
+class ParticleLifeTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
 {
 public:
 

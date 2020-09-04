@@ -131,12 +131,12 @@ void UpdateVelocityAndPosition(float delta_time, ParticleBase& particle, bool ap
 }
 
 // ===========================================================================
-// ParticlePlayerTrait
+// ParticlePlayerLayerTrait
 // ===========================================================================
 
-ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer>& particle_accessor, LayerTrait const * layer_trait) const
+ParticlePlayerLayerTrait::UpdatePlayerData ParticlePlayerLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticlePlayer>& particle_accessor, LayerTrait const * layer_trait) const
 {
-	ParticlePlayerTrait::UpdatePlayerData result;
+	ParticlePlayerLayerTrait::UpdatePlayerData result;
 
 
 
@@ -144,7 +144,7 @@ ParticlePlayerTrait::UpdatePlayerData ParticlePlayerTrait::BeginUpdateParticles(
 }
 
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const
+bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, UpdatePlayerData const & update_data, LayerTrait const * layer_trait) const
 {
 	// search all nearby enemies
 	std::vector<ParticleEnemy> enemy_particles;

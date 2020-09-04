@@ -58,20 +58,17 @@ public:
 
 };
 
-class ParticleSoulTrait : public chaos::ParticleAllocationTrait<ParticleSoul, VertexBase>
+class ParticleSoulLayerTrait : public chaos::ParticleLayerTrait<ParticleSoul, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	ParticleSoulUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor) const;
 
-		class LudumGame* game = nullptr;
-	};
+	bool UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData& update_data) const;
 
-	ParticleSoulUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleSoul>& particle_accessor, LayerTrait const* layer_trait) const;
+public:
 
-	bool UpdateParticle(float delta_time, ParticleSoul & particle, ParticleSoulUpdateData& update_data, LayerTrait const* layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 
@@ -98,21 +95,17 @@ public:
 
 };
 
-class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
+class ParticleFireLayerTrait : public chaos::ParticleLayerTrait<ParticleFire, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
-
-		class LudumGame* game = nullptr;
-	};
-
-	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const* layer_trait) const;
+	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor) const;
 
 	bool UpdateParticle(float delta_time, ParticleFire & particle, ParticleFireUpdateData& update_data) const;
 
+public:
+
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -133,7 +126,7 @@ public:
 
 bool UpdateParticle(float delta_time, ParticleAnimated& particle);
 
-class ParticleAnimatedTrait : public chaos::ParticleAllocationTrait<ParticleAnimated, VertexBase>
+class ParticleAnimatedLayerTrait : public chaos::ParticleLayerTrait<ParticleAnimated, VertexBase>
 {
 public:
 
@@ -155,18 +148,11 @@ public:
 };
 
 
-class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>
+class ParticlePlayerLayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
-
-		class LudumGame * game = nullptr;
-	};
-
-	bool UpdateParticle(float delta_time, ParticlePlayer & particle, LayerTrait const * layer_trait) const;
+	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
 	void UpdateRenderingStates(chaos::GPURenderer* renderer, bool begin) const
 	{
@@ -184,6 +170,10 @@ public:
 			glEnable(GL_CULL_FACE);
 		}
 	}
+
+public:
+
+	class LudumGame* game = nullptr;
 };
 
 
@@ -204,20 +194,17 @@ public:
 
 
 
-class ParticleBloodTrait : public chaos::ParticleAllocationTrait<ParticleBlood, VertexBase>
+class ParticleBloodLayerTrait : public chaos::ParticleLayerTrait<ParticleBlood, VertexBase>
 {
 public:
-
-	class LayerTrait
-	{
-	public:
-
-		class LudumGame* game = nullptr;
-	};
 
 	bool UpdateParticle(float delta_time, ParticleBlood & particle) const;
 
 	void ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output) const;
+
+public:
+
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -232,22 +219,19 @@ public:
 
 };
 
-class ParticleBurnedSoulTrait : public chaos::ParticleAllocationTrait<ParticleBurnedSoul, VertexBase>
+class ParticleBurnedSoulLayerTrait : public chaos::ParticleLayerTrait<ParticleBurnedSoul, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
-
-		class LudumGame* game = nullptr;
-	};
-
-	int BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleBurnedSoul>& accessor, LayerTrait const* layer_trait) const;
+	int BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleBurnedSoul>& accessor) const;
 
 	bool UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const;
 
-	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless, LayerTrait const* layer_trait) const;
+	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless) const;
+
+public:
+
+	class LudumGame* game = nullptr;
 };
 
 CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle);

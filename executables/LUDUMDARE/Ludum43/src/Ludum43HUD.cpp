@@ -127,7 +127,7 @@ int LudumPlayingHUD::CreateHUDLayers()
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game != nullptr)
 	{
-		ParticleLifeTrait::LayerTrait life_trait;
+		ParticleLifeTrait life_trait;
 		life_trait.game = ludum_game;
 		particle_manager->AddLayer<ParticleLifeTrait>(render_order++, death::GameHUDKeys::LIFE_LAYER_ID, "health", life_trait);
 	}

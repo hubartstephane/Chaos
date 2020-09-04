@@ -31,7 +31,7 @@ public:
 
 using ParticleLife = chaos::ParticleDefault;
 
-class ParticleLifeTrait : public chaos::ParticleAllocationTrait<chaos::ParticleDefault, chaos::VertexDefault>
+class ParticleLifeTrait : public chaos::ParticleLayerTrait<chaos::ParticleDefault, chaos::VertexDefault>
 {
 public:
 
@@ -52,7 +52,7 @@ public:
 	chaos::TagType bonus_type;
 };
 
-class ParticleBonusTrait : public chaos::ParticleAllocationTrait<ParticleBonus, VertexBase>
+class ParticleBonusTrait : public chaos::ParticleLayerTrait<ParticleBonus, VertexBase>
 {
 public:
 
@@ -99,7 +99,7 @@ public:
 	
 };
 
-class ParticleEnemyTrait : public chaos::ParticleAllocationTrait<ParticleEnemy, VertexBase>
+class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
 {
 public:
 
@@ -131,7 +131,7 @@ public:
 
 };
 
-class ParticlePlayerTrait : public chaos::ParticleAllocationTrait<ParticlePlayer, VertexBase>
+class ParticlePlayerLayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer, VertexBase>
 {
 public:
 
@@ -159,7 +159,7 @@ public:
 
 };
 
-class ParticleShroudLifeTrait : public chaos::ParticleAllocationTrait<ParticleShroudLife, VertexBase>
+class ParticleShroudLifeTrait : public chaos::ParticleLayerTrait<ParticleShroudLife, VertexBase>
 {
 public:
 
@@ -201,7 +201,7 @@ public:
 };
 
 
-class ParticleFireTrait : public chaos::ParticleAllocationTrait<ParticleFire, VertexBase>
+class ParticleFireLayerTrait : public chaos::ParticleLayerTrait<ParticleFire, VertexBase>
 {
 public:
 
@@ -233,7 +233,7 @@ public:
 	float age = 0.0f;
 };
 
-class ParticleExplosionTrait : public chaos::ParticleAllocationTrait<ParticleExplosion, VertexBase>
+class ParticleExplosionTrait : public chaos::ParticleLayerTrait<ParticleExplosion, VertexBase>
 {
 public:
 

@@ -26,23 +26,23 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_player_and_camera = (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0);
 	if (is_player_and_camera)
 	{
-		ParticlePlayerTrait::LayerTrait layer_trait;
+		ParticlePlayerLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
 	}
 
 	bool is_fire = (chaos::StringTools::Stricmp(layer_name, "fire") == 0);
 	if (is_fire)
 	{
-		ParticleFireTrait::LayerTrait fire_trait;
+		ParticleFireLayerTrait fire_trait;
 		fire_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleFireTrait>(fire_trait);
+		return new chaos::ParticleLayer<ParticleFireLayerTrait>(fire_trait);
 	}
 
 	bool is_explosion = (chaos::StringTools::Stricmp(layer_name, "Explosions") == 0);
 	if (is_explosion)
 	{
-		ParticleExplosionTrait::LayerTrait explosion_trait;
+		ParticleExplosionTrait explosion_trait;
 		explosion_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticleExplosionTrait>(explosion_trait);
 	}
@@ -56,7 +56,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_enemies = (chaos::StringTools::Stricmp(layer_name, "Enemies") == 0);
 	if (is_enemies)
 	{
-		ParticleEnemyTrait::LayerTrait enemy_trait;
+		ParticleEnemyTrait enemy_trait;
 		enemy_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
 	}

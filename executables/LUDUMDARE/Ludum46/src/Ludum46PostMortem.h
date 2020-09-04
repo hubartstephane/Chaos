@@ -33,7 +33,7 @@
 
 // Make ParticleTraits inherit one another / Particles inherit
 //
-//    class ParticleBurnedSoulTrait : public chaos::ParticleAllocationTrait<ParticleBurnedSoul, VertexBase>
+//    class ParticleBurnedSoulLayerTrait : public chaos::ParticleLayerTrait<ParticleBurnedSoul, VertexBase>
 //
 //
 // the WrapMode::Clamp is not working for GRID !!!

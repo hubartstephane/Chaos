@@ -124,7 +124,7 @@ namespace death
 	int GameHUD::CreateHUDLayers()
 	{
 		int render_order = 0;
-		particle_manager->AddLayer<chaos::ParticleDefaultTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+		particle_manager->AddLayer<chaos::ParticleDefaultLayerTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
 		return render_order;
 	}
 

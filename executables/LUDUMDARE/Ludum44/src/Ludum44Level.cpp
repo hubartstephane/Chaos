@@ -50,7 +50,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_zone = (chaos::StringTools::Stricmp(layer_name, "Zones") == 0);
 	if (is_zone)
 	{
-		return new chaos::ParticleLayer<PowerUpZoneParticleTrait>();
+		return new chaos::ParticleLayer<PowerUpZoneParticleLayerTrait>();
 	}
 
 	bool is_enemies = (chaos::StringTools::Stricmp(layer_name, "Enemies") == 0);

@@ -83,11 +83,11 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 // ParticlePlayerLayerTrait
 // ===========================================================================
 
-bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const
+bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle) const
 {
 	// find all enemies
 	std::vector<ParticleEnemy*> enemies;
-	FindEnemiesOnMap(layer_trait->game, enemies);
+	FindEnemiesOnMap(game, enemies);
 
 	// seach a collision for all enemies
 	size_t count = enemies.size();
@@ -98,9 +98,9 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 		{
 			if (chaos::Collide(particle.bounding_box, enemy->bounding_box))
 			{
-				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, layer_trait->game, true, enemy->bounding_box); // destroy the enemy always
+				float life_lost = OnCollisionWithEnemy(enemy, enemy->life, game, true, enemy->bounding_box); // destroy the enemy always
 			
-				LudumPlayer * player = layer_trait->game->GetPlayer(0);
+				LudumPlayer * player = game->GetPlayer(0);
 				player->SetHealth(-life_lost, true);
 			}
 		}
@@ -115,7 +115,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 
 
 // =====================================
-// PowerUpZoneParticleTrait
+// PowerUpZoneParticleLayerTrait
 // =====================================
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexPowerUpZone>)
@@ -126,7 +126,7 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
     result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 2, chaos::VertexAttributeType::FLOAT2);
 }
 
-bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZone& particle)
+bool PowerUpZoneParticleLayerTrait::UpdateParticle(float delta_time, ParticlePowerUpZone& particle)
 {
 	// XXX: see UpdatePlayerBuyingItem(...)	=> particle.gid = 0;
 	//          this was usefull to require a zone destruction
@@ -141,7 +141,7 @@ bool PowerUpZoneParticleTrait::UpdateParticle(float delta_time, ParticlePowerUpZ
 }
 
 
-void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
+void PowerUpZoneParticleLayerTrait::ParticleToPrimitives(death::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
 {
     chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
@@ -180,7 +180,7 @@ void PowerUpZoneParticleTrait::ParticleToPrimitives(death::TMParticle const& par
 // ===========================================================================
 
 
-bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const
+bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplosion& particle) const
 {
 	if (particle.explosion_info == nullptr) // delete the particle
 		return true;
@@ -220,7 +220,7 @@ bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplo
 // ===========================================================================
 
 
-bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
+bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& particle) const
 {
 
 	return false;
@@ -231,26 +231,26 @@ bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& part
 // ===========================================================================
 
 
-ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire> & particle_accessor, LayerTrait const * layer_trait) const
+ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire> & particle_accessor) const
 {
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
 		// get the camera box 
-		death::Camera const* camera = layer_trait->game->GetCamera(0);
+		death::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 			result.camera_box = camera->GetCameraBox(true);
 		//result.camera_box.half_size *= 3.0f;
 		// get the enemies
-		FindEnemiesOnMap(layer_trait->game, result.enemies);
+		FindEnemiesOnMap(game, result.enemies);
 		// get the players
-		result.player = layer_trait->game->GetPlayer(0);
+		result.player = game->GetPlayer(0);
 	}
 	return result;
 }
 
 
-bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data) const
 {
 
 	// all damage consummed
@@ -284,7 +284,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 			{
 				if (chaos::Collide(particle.bounding_box, enemy->bounding_box))
 				{
-					particle.damage -= OnCollisionWithEnemy(enemy, particle.damage, layer_trait->game, false, enemy->bounding_box);
+					particle.damage -= OnCollisionWithEnemy(enemy, particle.damage, game, false, enemy->bounding_box);
 
 					// kill bullet ?
 					if (particle.damage <= 0.0f)
@@ -308,7 +308,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 			update_data.player->SetHealth(-particle.damage, true);
 			particle.damage = 0.0f;
 			
-			layer_trait->game->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
+			game->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
 		}	
 	}
 
@@ -318,7 +318,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 	return false; // do not destroy the particle
 }
 
-void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	ParticleFire other = particle;
 	other.color.a = (other.lifetime < 1.0f) ? other.lifetime : 1.0f;
@@ -330,12 +330,12 @@ void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, 
 // ParticleEnemyLayerTrait
 // ===========================================================================
 
-ParticleEnemyUpdateData ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
+ParticleEnemyUpdateData ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor) const
 {
 	ParticleEnemyUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
-		death::Camera const * camera = layer_trait->game->GetCamera(0);
+		death::Camera const * camera = game->GetCamera(0);
 		if (camera != nullptr)
 			result.camera_box = camera->GetCameraBox(true);
 		//result.camera_box.half_size *= 3.0f;
@@ -343,7 +343,7 @@ ParticleEnemyUpdateData ParticleEnemyLayerTrait::BeginUpdateParticles(float delt
 	return result;
 }
 
-bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyUpdateData const & update_data) const
 {
 	// destroy the particle if no life
 	if (particle.life <= 0.0f)
@@ -363,7 +363,7 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 	
 	if (particle.rotation_following_player)
 	{
-		death::PlayerPawn * player_pawn = layer_trait->game->GetPlayerPawn(0);
+		death::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
 		if (player_pawn != nullptr)
 		{		
 			glm::vec2 delta_pos = player_pawn->GetPosition() - particle.bounding_box.position;
@@ -392,8 +392,8 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 
 			float delta_angle = 2.0f * (float)M_PI / (float)count;
 
-			LudumGameInstance* ludum_game_instance = layer_trait->game->GetGameInstance();
-			ludum_game_instance->FireProjectile("enemy_fire", particle.bounding_box, size_ratio, count, nullptr, particle.rotation, delta_angle, layer_trait->game->enemy_fire_velocity, layer_trait->game->enemy_fire_damage, false, false);
+			LudumGameInstance* ludum_game_instance = game->GetGameInstance();
+			ludum_game_instance->FireProjectile("enemy_fire", particle.bounding_box, size_ratio, count, nullptr, particle.rotation, delta_angle, game->enemy_fire_velocity, game->enemy_fire_damage, false, false);
 
 			particle.current_fire_timer = 0.0f;
 		}
@@ -402,7 +402,7 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 	return false; // do not destroy the particle
 }
 
-void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	ParticleEnemy other = particle;
 	other.color.a = (other.touched_count_down > 0) ? 0.0f : 1.0f;

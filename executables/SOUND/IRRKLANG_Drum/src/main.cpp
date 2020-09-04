@@ -46,7 +46,7 @@ protected:
 		chaos::MyGLFW::Window::Finalize();
 	}
 
-	virtual bool Tick(double delta_time) override
+	virtual bool Tick(float delta_time) override
 	{
 		for (size_t i = 0; i < playing_sounds.size(); ++i)
 		{
@@ -61,7 +61,7 @@ protected:
 		return false; // no redraw
 	}
 
-	virtual bool OnMouseButton(int button, int action, int modifier) override
+	virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
 	{
 		if (button == 0 && action == GLFW_PRESS)
 		{

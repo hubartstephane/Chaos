@@ -52,14 +52,6 @@ class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExamp
 {
 public:
 
-	bool Tick(float delta_time, chaos::ParticleAllocationBase * allocation)
-	{		
-		time += delta_time;
-
-		return destroy_all_particles;
-	
-	}
-
 	bool UpdateParticle(float delta_time, ParticleExample & particle) const
 	{
 		particle.box.position += particle.velocity * delta_time;

@@ -292,42 +292,42 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 
 	if (chaos::StringTools::Stricmp(layer_name, "PlayerAndCamera") == 0)
 	{
-		ParticlePlayerTrait::LayerTrait layer_trait;
+		ParticlePlayerLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticlePlayerTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
 	}
 
 	if (chaos::StringTools::Stricmp(layer_name, "Souls") == 0)
 	{
-		ParticleSoulTrait::LayerTrait layer_trait;
+		ParticleSoulLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleSoulTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticleSoulLayerTrait>(layer_trait);
 	}
 
 	if (chaos::StringTools::Stricmp(layer_name, "Fire") == 0)
 	{
-		ParticleFireTrait::LayerTrait layer_trait;
+		ParticleFireLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleFireTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticleFireLayerTrait>(layer_trait);
 	}
 
 	if (chaos::StringTools::Stricmp(layer_name, "Blood") == 0)
 	{
-		ParticleBloodTrait::LayerTrait layer_trait;
+		ParticleBloodLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleBloodTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticleBloodLayerTrait>(layer_trait);
 	}
 
 	if (chaos::StringTools::Stricmp(layer_name, "BurnedSouls") == 0)
 	{
-		ParticleBurnedSoulTrait::LayerTrait layer_trait;
+		ParticleBurnedSoulLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleBurnedSoulTrait>(layer_trait);
+		return new chaos::ParticleLayer<ParticleBurnedSoulLayerTrait>(layer_trait);
 	}
 
 	if ((chaos::StringTools::Stricmp(layer_name, "BurningFlames") == 0) || (chaos::StringTools::Stricmp(layer_name, "Animated") == 0))
 	{
-		return new chaos::ParticleLayer<ParticleAnimatedTrait>();
+		return new chaos::ParticleLayer<ParticleAnimatedLayerTrait>();
 	}
 
 

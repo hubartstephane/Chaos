@@ -5,11 +5,11 @@
 namespace chaos
 {
 	// ==============================================================
-	// ParticleAllocationTrait
+	// ParticleLayerTrait
 	// ==============================================================
 
 	template<typename PARTICLE_TYPE, typename VERTEX_TYPE, bool DYNAMIC_PARTICLES = true, bool DYNAMIC_VERTICES = true>
-	class ParticleAllocationTrait
+	class ParticleLayerTrait
 	{
 	public:
 

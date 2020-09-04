@@ -160,7 +160,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 		-- Mieux a  faire que d un coté
 		
-			chaos::ParticleDefaultTrait::ParticleToPrimitives
+			chaos::ParticleDefaultLayerTrait::ParticleToPrimitives
 
 		  et 
 
@@ -178,7 +178,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 
-	//return chaos::ParticleDefaultTrait::ParticleToPrimitives(particle, vertices, vertices_per_particle);
+	//return chaos::ParticleDefaultLayerTrait::ParticleToPrimitives(particle, vertices, vertices_per_particle);
 
 
 

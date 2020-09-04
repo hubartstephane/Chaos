@@ -204,10 +204,10 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus& particl
 }
 
 // ===========================================================================
-// ParticlePlayerTrait
+// ParticlePlayerLayerTrait
 // ===========================================================================
 
-void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
 	ParticlePlayer other = particle;
 
@@ -239,7 +239,7 @@ void ParticlePlayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, c
 }
 
 
-bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const
+bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const
 {
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasGridAnimation())
 	{
@@ -257,11 +257,11 @@ bool ParticlePlayerTrait::UpdateParticle(float delta_time, ParticlePlayer& parti
 }
 
 // ===========================================================================
-// ParticleFireTrait
+// ParticleFireLayerTrait
 // ===========================================================================
 
 
-ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const * layer_trait) const
+ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const * layer_trait) const
 {
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetCount() > 0)
@@ -282,7 +282,7 @@ ParticleFireUpdateData ParticleFireTrait::BeginUpdateParticles(float delta_time,
 }
 
 
-bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
 {
 	// all damage consummed
 	if (particle.damage <= 0.0f)
@@ -353,7 +353,7 @@ bool ParticleFireTrait::UpdateParticle(float delta_time, ParticleFire& particle,
 	return false; // do not destroy the particle
 }
 
-void ParticleFireTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
 {
 	ParticleFire other = particle;
 	other.color.a = (other.lifetime < 1.0f) ? other.lifetime : 1.0f;

@@ -21,10 +21,10 @@ namespace death
 	CHAOS_REGISTER_CLASS2(TMParticle, chaos::ParticleDefault);
 
 	// =====================================
-	// TMParticleTrait
+	// TMParticleLayerTrait
 	// =====================================
 
-	class TMParticleTrait : public chaos::ParticleAllocationTrait<TMParticle, chaos::VertexDefault, false, false> // shuxxx set to false = optimization 1
+	class TMParticleLayerTrait : public chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault, false, false> // shuxxx set to false = optimization 1
 	{
 	};
 

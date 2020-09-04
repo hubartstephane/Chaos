@@ -24,8 +24,8 @@ public:
 	friend class BonusSpawnerTrigger;
 
 	friend class ParticleBonusTrait;
-	friend class ParticlePlayerTrait;
-	friend class ParticleFireTrait;
+	friend class ParticlePlayerLayerTrait;
+	friend class ParticleFireLayerTrait;
 	friend class GameHUDUpgradeComponent;
 	friend class ParticleEnemyTrait;
 

@@ -29,7 +29,7 @@
 
 class LudumGame : public death::Game
 {	
-	friend class ParticlePlayerTrait;
+	friend class ParticlePlayerLayerTrait;
 
 	friend class LudumWindow;
 	friend class MainMenuState;

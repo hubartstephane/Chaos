@@ -46,18 +46,7 @@ public:
 
 CHAOS_REGISTER_CLASS1(ParticleExample);
 
-class VertexExample : public chaos::VertexDefault
-{
-public:
-
-};
-
-void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexExample>)
-{
-	result->Push(chaos::VertexAttributeSemantic::POSITION, 0, chaos::VertexAttributeType::FLOAT2);
-	result->Push(chaos::VertexAttributeSemantic::TEXCOORD, 0, chaos::VertexAttributeType::FLOAT3);
-	result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
-}
+using VertexExample = chaos::VertexDefault;
 
 class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 {

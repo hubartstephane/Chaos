@@ -82,19 +82,19 @@
 //
 //
 //
-// 3 - if we may have a nested class LayerTrait, so that the layer has an instance of that (just for 1.1 cases)
+// 3 - if we may have a nested class AllocationTrait, so that the allocation has an instance of that (just for 1.1 cases)
 //
-//    class LayerTrait { ... }
+//    class AllocationTrait { ... }
 //
 // in that case, the previous functions have an additionnal argument (just for 1.1 cases)
 //
-//    UpdateParticle(... TYPE_XXX, LayerTrait) 
+//    UpdateParticle(... TYPE_XXX, AllocationTrait) 
 //
-//    ParticleToPrimitives(... TYPE_YYY, LayerTrait)
+//    ParticleToPrimitives(... TYPE_YYY, AllocationTrait)
 //
-//	  TYPE_XXX BeginUpdateParticles(...LayerTrait)
+//	  TYPE_XXX BeginUpdateParticles(...AllocationTrait)
 //
-//	  TYPE_YYY BeginParticlesToPrimitives(...LayerTrait)
+//	  TYPE_YYY BeginParticlesToPrimitives(...AllocationTrait)
 //
 //
 // There are several rendering mode
@@ -102,7 +102,6 @@
 //  - QUAD (transformed as triangle pair)
 //  - INDEXED QUAD
 //  - TRIANGLE_PAIR
-
 
 namespace chaos
 {
@@ -589,8 +588,6 @@ public:
 
         /** compute the ranges for accessor (returns false in case of failure) */
         void const * GetAccessorEffectiveRanges(size_t& start, size_t& count, size_t& particle_size) const;
-		/** tick the allocation (returns true whether the allocation is to be destroyed) */
-		virtual bool TickAllocation(float delta_time, void const * layer_trait) { return false; }
 
 		/** called whenever the allocation is removed from the layer */
 		void OnRemovedFromLayer();
@@ -740,14 +737,11 @@ public:
 
     protected:
 
-		/** override */
-		virtual bool TickAllocation(float delta_time, void const * layer_trait) override
+		bool TickAllocation(float delta_time, layer_trait_type const * layer_trait)
 		{ 
-            layer_trait_type const* typed_layer_trait = (layer_trait_type const*)layer_trait;
-
             bool destroy_allocation = false;
 			if (particles.size() > 0)
-				destroy_allocation = UpdateParticles(delta_time, typed_layer_trait);
+				destroy_allocation = UpdateParticles(delta_time, layer_trait);
             return destroy_allocation;
 		}
 
@@ -775,38 +769,38 @@ public:
 				{
 					if constexpr (with_begin_call != 0)
 					{
-						remaining_particles = DoUpdateParticlesLoop(
-							layer_trait
+						remaining_particles = DoUpdateParticlesLoop(							
 							delta_time,
+							layer_trait,
 							particle_accessor,
 							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, &allocation_trait), // do not use a temp variable, so it can be a left-value reference
 							&allocation_trait);
 					}
 					else
 					{
-						remaining_particles = DoUpdateParticlesLoop(layer_trait, delta_time, particle_accessor, &allocation_trait);
+						remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor, &allocation_trait);
 					}
 				}
 				else if constexpr (with_begin_call != 0)
 				{
-					remaining_particles = DoUpdateParticlesLoop(
-						layer_trait,
+					remaining_particles = DoUpdateParticlesLoop(						
 						delta_time,
+						layer_trait,
 						particle_accessor,
 						layer_trait->BeginUpdateParticles(delta_time, particle_accessor)); // do not use a temp variable, so it can be a left-value reference
 				}
 				else
 				{
-					remaining_particles = DoUpdateParticlesLoop(layer_trait, delta_time, particle_accessor);
+					remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor);
 				}
 			}
 			else if constexpr (particle_implementation != 0)
 			{
-				remaining_particles = DoUpdateParticlesLoop(layer_trait, delta_time, particle_accessor);
+				remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor);
 			}
 			else if constexpr (default_implementation != 0)
 			{
-				remaining_particles = DoUpdateParticlesLoop(layer_trait, delta_time, particle_accessor);
+				remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor);
 			}
 
 			if (remaining_particles == 0 && GetDestroyWhenEmpty())
@@ -817,7 +811,7 @@ public:
 		}
 
 		template<typename ...PARAMS>
-		size_t DoUpdateParticlesLoop(layer_trait_type const* layer_trait, float delta_time, ParticleAccessor<particle_type> particle_accessor, PARAMS... params)
+		size_t DoUpdateParticlesLoop(float delta_time, layer_trait_type const* layer_trait, ParticleAccessor<particle_type> particle_accessor, PARAMS... params)
 		{
 			using Flags = UpdateParticle_ImplementationFlags;
 
@@ -995,12 +989,6 @@ public:
 
 		/** creation of an allocation */
 		virtual ParticleAllocationBase * DoCreateParticleAllocation() { return nullptr; }
-
-		/** returns the layer trait */
-		virtual void * GetLayerTrait() { return nullptr; }
-		/** returns the layer trait */
-		virtual void const * GetLayerTrait() const { return nullptr; }
-
 		/** clear all allocations */
 		void ClearAllAllocations();	
 
@@ -1025,7 +1013,9 @@ public:
 		int DoDisplayHelper(GPURenderer * renderer, GPURenderMaterial const * final_material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** internal method to update particles (returns true whether there was real changes) */
-		virtual bool TickAllocations(float delta_time);
+		bool TickAllocations(float delta_time);
+		/** internal method to only update one allocation */
+		virtual bool TickAllocation(float delta_time, ParticleAllocationBase* allocation) { return false; } // do not destroy the allocation
 
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;
@@ -1144,9 +1134,13 @@ public:
 		virtual ParticleAllocationBase * DoCreateParticleAllocation() override { return new ParticleAllocation<layer_trait_type>(this); }
 
 		/** override */
-		virtual void * GetLayerTrait() { return &layer_trait; }
-		/** override */
-		virtual void const * GetLayerTrait() const { return &layer_trait; }
+		virtual bool TickAllocation(float delta_time, ParticleAllocationBase* in_allocation) 
+		{ 
+			ParticleAllocation<layer_trait_type>* allocation = auto_cast(in_allocation);
+			if (allocation != nullptr)
+				return allocation->TickAllocation(delta_time, &layer_trait);
+			return false; // do not destroy the allocation
+		} 
 
 		/** override */
 		virtual void UpdateRenderingStates(GPURenderer* renderer, bool begin) const override

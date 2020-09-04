@@ -185,7 +185,7 @@ namespace chaos
 			if (allocation->GetParticleCount() == 0 && allocation->GetDestroyWhenEmpty()) // XXX: if the TRAIT is not particle_dynamic, this will never be called
 				destroy_allocation = true;
 			else
-				destroy_allocation = allocation->TickAllocation(delta_time, GetLayerTrait());
+				destroy_allocation = TickAllocation(delta_time, allocation); // tick this single allocation
 
 			// register as an allocation to be destroyed
 			if (destroy_allocation)

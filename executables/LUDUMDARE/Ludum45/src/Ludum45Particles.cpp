@@ -87,21 +87,21 @@ static bool ObjectBesideCamera(chaos::box2 const & camera_box, chaos::box2 const
 }
 
 // ===========================================================================
-// ParticleEnemyTrait
+// ParticleEnemyLayerTrait
 // ===========================================================================
 
-std::vector<chaos::box2> ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor, LayerTrait const * layer_trait) const
+std::vector<chaos::box2> ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor) const
 {
 	std::vector<chaos::box2> result;
 
-	size_t count = layer_trait->game->GetPlayerCount();
+	size_t count = game->GetPlayerCount();
 	for (size_t i = 0; i < count; ++i)
-		result.push_back(layer_trait->game->GetPlayerPawn(i)->GetBox());
+		result.push_back(game->GetPlayerPawn(i)->GetBox());
 	return result;
 }
 
 
-void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	ParticleEnemy other = particle;
 	other.color.a = (other.touched_count_down > 0.0f) ? 0.0f : 1.0f;
@@ -109,7 +109,7 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
 	ParticleToPrimitive(other, output.AddPrimitive());
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy & particle, std::vector<chaos::box2> const& player_boxes, LayerTrait const * layer_trait) const
+bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy & particle, std::vector<chaos::box2> const& player_boxes) const
 {
 	if (particle.enemy_health <= 0.0f)
 		return true;
@@ -129,12 +129,12 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy & partic
 		chaos::box2 player_box = player_boxes[i];
 		if (chaos::Collide(bb, player_box))
 		{
-			LudumPlayer* ludum_player = layer_trait->game->GetPlayer(i);
+			LudumPlayer* ludum_player = game->GetPlayer(i);
 			if (ludum_player != nullptr)
 			{
 				if (ludum_player->dash_timer <= 0.0f || !ludum_player->GetGhostLevel())
 				{
-					float life_lost = OnCollisionWithEnemy(&particle, particle.enemy_health, layer_trait->game, true, particle.bounding_box); // destroy the enemy always
+					float life_lost = OnCollisionWithEnemy(&particle, particle.enemy_health, game, true, particle.bounding_box); // destroy the enemy always
 
 					ludum_player->SetHealth(-life_lost, true);
 
@@ -164,7 +164,7 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy & partic
 	
 	if (particle.pattern != nullptr)
 	{
-		death::Camera const* camera = layer_trait->game->GetCamera(0);
+		death::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 			return particle.pattern->UpdateParticle(delta_time, &particle, camera->GetCameraBox(true));
 	}
@@ -173,17 +173,17 @@ bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy & partic
 }
 
 
-std::vector<chaos::box2> ParticleBonusTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const
+std::vector<chaos::box2> ParticleBonusLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor) const
 {
 	std::vector<chaos::box2> result;
 
-	size_t count = layer_trait->game->GetPlayerCount();
+	size_t count = game->GetPlayerCount();
 	for (size_t i = 0; i < count; ++i)
-		result.push_back(layer_trait->game->GetPlayerPawn(i)->GetBox());
+		result.push_back(game->GetPlayerPawn(i)->GetBox());
 	return result;
 }
 
-bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus& particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const
+bool ParticleBonusLayerTrait::UpdateParticle(float delta_time, ParticleBonus& particle, std::vector<chaos::box2> const & player_boxes) const
 {
 	chaos::box2 bb = particle.bounding_box;
 	bb.half_size *= 0.70f;
@@ -193,7 +193,7 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus& particl
 		chaos::box2 player_box = player_boxes[i];
 		if (chaos::Collide(bb, player_box))
 		{
-			LudumPlayer* ludum_player = layer_trait->game->GetPlayer(i);
+			LudumPlayer* ludum_player = game->GetPlayer(i);
 			if (ludum_player != nullptr)
 				ludum_player->OnPlayerUpgrade(particle.bonus_type);
 
@@ -207,7 +207,7 @@ bool ParticleBonusTrait::UpdateParticle(float delta_time, ParticleBonus& particl
 // ParticlePlayerLayerTrait
 // ===========================================================================
 
-void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	ParticlePlayer other = particle;
 
@@ -220,13 +220,13 @@ void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& partic
 	// boost color
 	glm::vec4 boost_color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 
-	LudumPlayer const* player = layer_trait->game->GetPlayer(0);
+	LudumPlayer const* player = game->GetPlayer(0);
 	if (player != nullptr && player->dash_timer > 0.0f && player->GetGhostLevel() > 0)
 	{
 		float alpha = 1.0f;
 
-		if (layer_trait->game->player_dash_duration > 0.0f)
-			alpha = player->dash_timer / layer_trait->game->player_dash_duration;
+		if (game->player_dash_duration > 0.0f)
+			alpha = player->dash_timer / game->player_dash_duration;
 
 		alpha = 0.8f;
 
@@ -239,7 +239,7 @@ void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& partic
 }
 
 
-bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const
+bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& particle) const
 {
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasGridAnimation())
 	{
@@ -261,28 +261,28 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 // ===========================================================================
 
 
-ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor, LayerTrait const * layer_trait) const
+ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire>& particle_accessor) const
 {
 	ParticleFireUpdateData result;
 	if (particle_accessor.GetCount() > 0)
 	{
 		// get the camera box 
-		death::Camera const* camera = layer_trait->game->GetCamera(0);
+		death::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 		{
 			result.camera_box = camera->GetCameraBox(true);
 			result.camera_box.half_size *= 1.1f;
 		}
 		// get the enemies
-		FindEnemiesOnMap(layer_trait->game, result.enemies);
+		FindEnemiesOnMap(game, result.enemies);
 		// get the players
-		result.player = layer_trait->game->GetPlayer(0);
+		result.player = game->GetPlayer(0);
 	}
 	return result;
 }
 
 
-bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data) const
 {
 	// all damage consummed
 	if (particle.damage <= 0.0f)
@@ -317,7 +317,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 				{
 
 
-					particle.damage -= OnCollisionWithEnemy(enemy, particle.damage, layer_trait->game, false, enemy->bounding_box);
+					particle.damage -= OnCollisionWithEnemy(enemy, particle.damage, game, false, enemy->bounding_box);
 
 					// kill bullet ?
 					if (particle.damage <= 0.0f)
@@ -353,7 +353,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 	return false; // do not destroy the particle
 }
 
-void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const
+void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output) const
 {
 	ParticleFire other = particle;
 	other.color.a = (other.lifetime < 1.0f) ? other.lifetime : 1.0f;
@@ -366,11 +366,11 @@ void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, 
 // ParticleShroudLife
 // ===========================================================================
 
-bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLife& particle, LayerTrait const * layer_trait) const
+bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLife& particle) const
 {
 	if (particle.bitmap_info == nullptr)
 		return false;
-	LudumPlayer * ludum_player = layer_trait->game->GetPlayer(0);
+	LudumPlayer * ludum_player = game->GetPlayer(0);
 	if (ludum_player == nullptr)
 		return false;
 
@@ -390,24 +390,24 @@ bool ParticleShroudLifeTrait::UpdateParticle(float delta_time, ParticleShroudLif
 }
 
 // ===========================================================================
-// ParticleLifeTrait
+// ParticleLifeLayerTrait
 // ===========================================================================
 
 
 // shuludum .... duplication AGAIN !!!
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife& particle) const
+bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& particle) const
 {
 
 	return false;
 }
 
 // ===========================================================================
-// ParticleExplosionTrait
+// ParticleExplosionLayerTrait
 // ===========================================================================
 
 
-bool ParticleExplosionTrait::UpdateParticle(float delta_time, ParticleExplosion& particle, LayerTrait const * layer_trait) const
+bool ParticleExplosionLayerTrait::UpdateParticle(float delta_time, ParticleExplosion& particle) const
 {
 	if (particle.explosion_info == nullptr) // delete the particle
 		return true;

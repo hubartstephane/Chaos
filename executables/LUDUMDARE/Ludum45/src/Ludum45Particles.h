@@ -26,12 +26,12 @@ public:
 };
 
 // ===========================================================================
-// ParticleLifeTrait
+// ParticleLifeLayerTrait
 // ===========================================================================
 
 using ParticleLife = chaos::ParticleDefault;
 
-class ParticleLifeTrait : public chaos::ParticleLayerTrait<chaos::ParticleDefault, chaos::VertexDefault>
+class ParticleLifeLayerTrait : public chaos::ParticleLayerTrait<chaos::ParticleDefault, chaos::VertexDefault>
 {
 public:
 
@@ -52,20 +52,17 @@ public:
 	chaos::TagType bonus_type;
 };
 
-class ParticleBonusTrait : public chaos::ParticleLayerTrait<ParticleBonus, VertexBase>
+class ParticleBonusLayerTrait : public chaos::ParticleLayerTrait<ParticleBonus, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	std::vector<chaos::box2> BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor) const;
 
-		class LudumGame * game = nullptr;
-	};
+	bool UpdateParticle(float delta_time, ParticleBonus& particle, std::vector<chaos::box2> const & player_boxes) const;
 
-	std::vector<chaos::box2> BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleBonus>& particle_accessor, LayerTrait const * layer_trait) const;
+public:
 
-	bool UpdateParticle(float delta_time, ParticleBonus& particle, std::vector<chaos::box2> const & player_boxes, LayerTrait const * layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -99,22 +96,19 @@ public:
 	
 };
 
-class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
+class ParticleEnemyLayerTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	std::vector<chaos::box2> BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor) const;
 
-		class LudumGame * game = nullptr;
-	};
+	bool UpdateParticle(float delta_time, ParticleEnemy& particle, std::vector<chaos::box2> const& player_boxes) const;
 
-	std::vector<chaos::box2> BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const;
+    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const;
 
-	bool UpdateParticle(float delta_time, ParticleEnemy& particle, std::vector<chaos::box2> const& player_boxes, LayerTrait const * layer_trait) const;
+public:
 
-    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -135,16 +129,13 @@ class ParticlePlayerLayerTrait : public chaos::ParticleLayerTrait<ParticlePlayer
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	bool UpdateParticle(float delta_time, ParticlePlayer& particle) const;
 
-		class LudumGame * game = nullptr;
-	};
+    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output) const;
 
-	bool UpdateParticle(float delta_time, ParticlePlayer& particle, LayerTrait const * layer_trait) const;
+public:
 
-    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -163,14 +154,11 @@ class ParticleShroudLifeTrait : public chaos::ParticleLayerTrait<ParticleShroudL
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	bool UpdateParticle(float delta_time, ParticleShroudLife& particle) const;
 
-		class LudumGame * game = nullptr;
-	};
+public:
 
-	bool UpdateParticle(float delta_time, ParticleShroudLife& particle, LayerTrait const * layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -205,18 +193,15 @@ class ParticleFireLayerTrait : public chaos::ParticleLayerTrait<ParticleFire, Ve
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire> & particle_accessor) const;
 
-		class LudumGame * game = nullptr;
-	};
+	bool UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data) const;
 
-	ParticleFireUpdateData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire> & particle_accessor, LayerTrait const * layer_trait) const;
+    void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output) const;
 
-	bool UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data, LayerTrait const * layer_trait) const;
+public:
 
-    void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const* layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 // ===========================================================================
@@ -233,18 +218,15 @@ public:
 	float age = 0.0f;
 };
 
-class ParticleExplosionTrait : public chaos::ParticleLayerTrait<ParticleExplosion, VertexBase>
+class ParticleExplosionLayerTrait : public chaos::ParticleLayerTrait<ParticleExplosion, VertexBase>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
+	bool UpdateParticle(float delta_time, ParticleExplosion & particle) const;
 
-		class LudumGame * game = nullptr;
-	};
+public:
 
-	bool UpdateParticle(float delta_time, ParticleExplosion & particle, LayerTrait const * layer_trait) const;
+	class LudumGame* game = nullptr;
 };
 
 CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle)

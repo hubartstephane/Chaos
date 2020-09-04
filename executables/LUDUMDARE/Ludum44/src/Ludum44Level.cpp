@@ -42,9 +42,9 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_explosion = (chaos::StringTools::Stricmp(layer_name, "Explosions") == 0);
 	if (is_explosion)
 	{
-		ParticleExplosionTrait explosion_trait;
+		ParticleExplosionLayerTrait explosion_trait;
 		explosion_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleExplosionTrait>(explosion_trait);
+		return new chaos::ParticleLayer<ParticleExplosionLayerTrait>(explosion_trait);
 	}
 
 	bool is_zone = (chaos::StringTools::Stricmp(layer_name, "Zones") == 0);
@@ -56,9 +56,9 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 	bool is_enemies = (chaos::StringTools::Stricmp(layer_name, "Enemies") == 0);
 	if (is_enemies)
 	{
-		ParticleEnemyTrait enemy_trait;
+		ParticleEnemyLayerTrait enemy_trait;
 		enemy_trait.game = ludum_game;
-		return new chaos::ParticleLayer<ParticleEnemyTrait>(enemy_trait);
+		return new chaos::ParticleLayer<ParticleEnemyLayerTrait>(enemy_trait);
 	}
 
 	return death::TMLevel::DoCreateParticleLayer(layer_instance);

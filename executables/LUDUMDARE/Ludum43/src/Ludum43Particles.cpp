@@ -226,10 +226,10 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer& 
 }
 
 // ===========================================================================
-// ParticleEnemyTrait
+// ParticleEnemyLayerTrait
 // ===========================================================================
 
-void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const * layer_trait) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output, LayerTrait const * layer_trait) const
 {
     chaos::QuadPrimitive<VertexBase> primitive = output.AddPrimitive();
 
@@ -244,15 +244,15 @@ void ParticleEnemyTrait::ParticleToPrimitives(ParticleEnemy const& particle, cha
 	}
 }
 
-ParticleEnemyTrait::UpdateEnemyData ParticleEnemyTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const
+ParticleEnemyLayerTrait::UpdateEnemyData ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor, LayerTrait const * layer_trait) const
 {
-	ParticleEnemyTrait::UpdateEnemyData result;
+	ParticleEnemyLayerTrait::UpdateEnemyData result;
 
 
 	return result;
 }
 
-bool ParticleEnemyTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyTrait::UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const
+bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& particle, ParticleEnemyLayerTrait::UpdateEnemyData const & update_data, LayerTrait const * layer_trait) const
 {
 	particle.rotation_alpha += 2.0f * delta_time;
 	if (particle.rotation_alpha > 2.0f * (float)M_PI)
@@ -371,7 +371,7 @@ ParticleAtomTrait::UpdateAtomData ParticleAtomTrait::BeginUpdateParticles(float 
 // ===========================================================================
 
 
-bool ParticleLifeTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
+bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& particle, LayerTrait const * layer_trait) const
 {
 	return false;
 }

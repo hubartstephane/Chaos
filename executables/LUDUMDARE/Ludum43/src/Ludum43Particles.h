@@ -68,7 +68,7 @@ public:
 	float rotation_alpha = 0.0f;
 };
 
-class ParticleEnemyTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
+class ParticleEnemyLayerTrait : public chaos::ParticleLayerTrait<ParticleEnemy, VertexBase>
 {
 public:
 
@@ -190,7 +190,7 @@ class ParticleLife : public chaos::ParticleDefault
 
 };
 
-class ParticleLifeTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
+class ParticleLifeLayerTrait : public chaos::ParticleLayerTrait<ParticleLife, VertexBase>
 {
 public:
 

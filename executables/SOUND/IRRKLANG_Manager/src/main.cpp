@@ -36,14 +36,14 @@ protected:
 		chaos::MyGLFW::Window::Finalize();
   }
 
-  virtual bool Tick(double delta_time) override
+  virtual bool Tick(float delta_time) override
   {
-    sound_manager->Tick((float)delta_time);
+    sound_manager->Tick(delta_time);
 
     return false; // no redraw
   }
 
-  virtual bool OnMouseButton(int button, int action, int modifier) override
+  virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
   {
     if (button == 0 && action == GLFW_PRESS)
     {
@@ -58,7 +58,7 @@ protected:
       if (sound1 != nullptr)
       {
         chaos::BlendVolumeDesc desc;
-        desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+        desc.blend_type = chaos::SoundBlendType::BLEND_OUT;
         desc.blend_time = 2.0f;
         desc.kill_at_end = true;
         sound1->StartBlend(desc, true);   
@@ -70,7 +70,7 @@ protected:
       if (category1 != nullptr)
       {
         chaos::BlendVolumeDesc desc;
-        desc.blend_type = chaos::BlendVolumeDesc::BLEND_OUT;
+        desc.blend_type = chaos::SoundBlendType::BLEND_OUT;
         desc.blend_time = 2.0f;
         desc.kill_at_end = true;
         category1->StartBlend(desc, true);

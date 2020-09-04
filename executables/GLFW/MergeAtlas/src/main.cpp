@@ -230,9 +230,9 @@ protected:
     boost::filesystem::path dst_p;
     if (chaos::FileTools::CreateTemporaryDirectory("TestMergedAtlas", dst_p))
     {
-      for (int i = chaos::PixelFormatType::GRAY; i <= chaos::PixelFormatType::RGBA_FLOAT; ++i)
+      for (int i = (int)chaos::PixelFormatType::GRAY; i <= (int)chaos::PixelFormatType::RGBA_FLOAT; ++i)
       {
-        chaos::PixelFormat pixel_format = chaos::PixelFormat(i);
+        chaos::PixelFormat pixel_format = chaos::PixelFormat((chaos::PixelFormatType)i);
 
         TestMergedAtlas(atlas_bitmaps, pixel_format, dst_p);
       }

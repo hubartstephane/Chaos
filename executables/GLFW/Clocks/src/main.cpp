@@ -283,7 +283,7 @@ protected:
 		return true; // refresh
 	}
 
-	void UpdateClockTimeScale(chaos::Clock * clock, double offset)
+	void UpdateClockTimeScale(chaos::Clock * clock, float offset)
 	{
 		if (clock != nullptr)
 			clock->SetTimeScale(clock->GetTimeScale() + offset);
@@ -294,12 +294,12 @@ protected:
 	{
 		if (event.IsKeyReleased(incr_key))
 		{
-			UpdateClockTimeScale(clock, 0.2);
+			UpdateClockTimeScale(clock, 0.2f);
 			return true;
 		}
 		else if (event.IsKeyReleased(decr_key))
 		{
-			UpdateClockTimeScale(clock, -0.2);
+			UpdateClockTimeScale(clock, -0.2f);
 			return true;
 		}
 		return false;

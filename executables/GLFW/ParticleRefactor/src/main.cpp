@@ -57,24 +57,11 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
 	result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
 }
 
-class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
+class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 {
 public:
 
-	class LayerTrait
-	{
-	public:
-
-		bool dynamic_vertices = true;
-
-		bool dynamic_particles = true;
-	};
-
-
-
-	float time = 0.0f;
-
-	bool Tick(float delta_time, chaos::ParticleAllocationBase * allocation, LayerTrait const * layer_trait)
+	bool Tick(float delta_time, chaos::ParticleAllocationBase * allocation)
 	{		
 		time += delta_time;
 
@@ -82,7 +69,7 @@ public:
 	
 	}
 
-	bool UpdateParticle(float delta_time, ParticleExample & particle, LayerTrait const * layer_trait) const
+	bool UpdateParticle(float delta_time, ParticleExample & particle) const
 	{
 		particle.box.position += particle.velocity * delta_time;
 		particle.remaining_time -= delta_time;
@@ -90,14 +77,23 @@ public:
 		return (particle.remaining_time <= 0.0f);
 	}
 
-    void ParticleToPrimitives(ParticleExample const & particle, chaos::TrianglePairOutput<VertexExample> & output, LayerTrait const* layer_trait) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::TrianglePairOutput<VertexExample> & output) const
     {
+#if 0
+
         if (rand() % 5 == 0) // flickering particles (not always rendered)
             return;
 
         chaos::TrianglePairPrimitive<VertexExample> primitive = output.AddPrimitive();
 
-        chaos::ParticleTools::GenerateBoxParticle(primitive, particle.box, particle.texcoords);
+
+
+
+
+
+
+
+        chaos::ParticleTools::::GenerateBoxParticle(primitive, particle.box, particle.texcoords);
 
         float alpha = particle.remaining_time / particle.lifetime;
         for (size_t i = 0; i < primitive.count; ++i)
@@ -105,24 +101,12 @@ public:
             primitive[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
             primitive[i].position.y += 50 * std::cos(time);
         }
+#endif
     }
 
-    void ParticleToPrimitives(ParticleExample const& particle, chaos::QuadOutput<VertexExample>& output, LayerTrait const* layer_trait) const
-    {
-        if (rand() % 5 == 0) // flickering particles (not always rendered)
-            return;
+public:
 
-        chaos::QuadPrimitive<VertexExample> primitive = output.AddPrimitive();
-
-        chaos::ParticleTools::GenerateBoxParticle(primitive, particle.box, particle.texcoords);
-
-        float alpha = particle.remaining_time / particle.lifetime;
-        for (size_t i = 0; i < primitive.count; ++i)
-        {
-            primitive[i].color = glm::vec4(1.0f, 0.5f, 0.25f, alpha);
-            primitive[i].position.y += 50 * std::cos(time);
-        }
-    }
+	float time = 0.0f;
 };
 
 // ==============================================================
@@ -274,7 +258,7 @@ protected:
 			{
 				int render_order = i;
 				int layer_id = j + i * MATERIAL_COUNT;
-				particle_manager->AddLayer<ParticleExampleTrait>(render_order, layer_id, materials[j]);
+				particle_manager->AddLayer<ParticleExampleLayerTrait>(render_order, layer_id, materials[j]);
 			}
 		}
 		return true;

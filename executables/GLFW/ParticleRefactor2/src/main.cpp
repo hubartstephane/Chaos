@@ -58,7 +58,7 @@ void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl:
     result->Push(chaos::VertexAttributeSemantic::COLOR, 0, chaos::VertexAttributeType::FLOAT4);
 }
 
-class ParticleExampleTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
+class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
 {
 public:
 
@@ -269,7 +269,7 @@ protected:
 			{
 				int render_order = i;
 				int layer_id = j + i * MATERIAL_COUNT;
-				particle_manager->AddLayer<ParticleExampleTrait>(render_order, layer_id, materials[j]);
+				particle_manager->AddLayer<ParticleExampleLayerTrait>(render_order, layer_id, materials[j]);
 			}
 		}
 		return true;

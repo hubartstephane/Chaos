@@ -1,8 +1,6 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/EnumTools.h>
-#include <chaos/JSONTools.h>
 
 namespace chaos
 {

@@ -199,11 +199,8 @@ struct UpdateParticle_ImplementationFlags
 // ParticleTraitTools
 // ==============================================================
 
-class ParticleTraitTools
+namespace ParticleTraitTools
 {
-
-public:
-
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>
 	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
@@ -220,37 +217,6 @@ public:
 			return trait.dynamic_particles;
         return true;
 	}
-
-	/** returns whether the vertices are dynamic (without an instance to read) */
-	template<typename TRAIT_TYPE>
-	static bool AreVerticesDynamicStatic()
-	{
-
-
-
-      //  if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
-       //     return TRAIT_TYPE::dynamic_vertices;
-        return true;
-    }
-	/** returns whether the particles are dynamic (without an instance to read) */
-	template<typename TRAIT_TYPE>
-	static bool AreParticlesDynamicStatic()
-	{
-
-
-
-
-      //  if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)
-       //     return TRAIT_TYPE::dynamic_particles;
-        return true;
-	}
-
-    /** returns the primitive type used for rendering (OpenGL point of view) */
-    template<typename TRAIT_TYPE>
-    static constexpr GLenum GetGLPrimitiveType()
-    {
-        return chaos::GetGLPrimitiveType(GetPrimitiveType<TRAIT_TYPE>()); // see PrimitiveOutput.h
-    }
 
 	/** returns the kind of implementation required for the particle rendering */
 	template<typename TRAIT_TYPE>
@@ -1107,25 +1073,13 @@ public:
         }
 		/** override */
 		virtual bool AreVerticesDynamic() const override 
-		{ 
-			// read the layer property 'dynamic_vertices' if any
-			if (!ParticleTraitTools::AreVerticesDynamic(layer_trait))
-				return false;
-			// read a static allocation value
-			if (!ParticleTraitTools::AreVerticesDynamicStatic<layer_trait_type>()) // AreVerticesDynamic() is used to manage all allocations of the whole layer => we cannot afford to read one instance value
-				return false;
-			return true;
+		{ 			
+			return ParticleTraitTools::AreVerticesDynamic(layer_trait); // read the layer property 'dynamic_vertices' if any
 		}
 		/** override */
 		virtual bool AreParticlesDynamic() const override 
-		{ 
-			// read the layer property 'dynamic_vertices' if any
-			if (!ParticleTraitTools::AreParticlesDynamic(layer_trait))
-				return false;
-			// read a static allocation value
-			if (!ParticleTraitTools::AreParticlesDynamicStatic<layer_trait_type>())  // AreParticlesDynamic() is used to manage all allocations of the whole layer => we cannot afford to read one instance value
-				return false;
-			return true;
+		{ 			
+			return ParticleTraitTools::AreParticlesDynamic(layer_trait); // read the layer property 'dynamic_vertices' if any
 		}
 		/** override */
 		virtual Class const * GetParticleClass() const override { return Class::FindClass<particle_type>(); }
@@ -1138,7 +1092,10 @@ public:
 			return result;
 		}
         /** override */
-        virtual GLenum GetGLPrimitiveType() const override { return ParticleTraitTools::GetGLPrimitiveType<layer_trait_type>(); }
+        virtual GLenum GetGLPrimitiveType() const override 
+		{
+			return chaos::GetGLPrimitiveType(ParticleTraitTools::GetPrimitiveType<layer_trait_type>()); // see PrimitiveOutput.h
+		}
 
 		/** gets the layer trait */
 		layer_trait_type & GetLayerTrait() { return layer_trait; }

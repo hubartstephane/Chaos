@@ -16,11 +16,11 @@
 #define CHAOS_IMPLEMENT_ENUMJSON_METHOD(enum_type, table_name)\
 bool LoadFromJSON(nlohmann::json const& json_entry, enum_type& dst)\
 {\
-	return LoadEnumFromJSON(json_entry, table_name, dst);\
+	return chaos::LoadEnumFromJSON(json_entry, table_name, dst);\
 }\
 bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 {\
-	return SaveEnumIntoJSON(json_entry, table_name, src);\
+	return chaos::SaveEnumIntoJSON(json_entry, table_name, src);\
 }\
 
 // =================

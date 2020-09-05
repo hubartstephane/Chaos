@@ -27,6 +27,9 @@ https://quick-bench.com/
 // compiler explorer online
 https://godbolt.org/
 
+// to test
+https://cppinsights.io/
+
 // tuto GIT
 https://learngitbranching.js.org/?locale=fr_FR
 

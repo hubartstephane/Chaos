@@ -5,9 +5,8 @@ namespace chaos
 
 	namespace DebugTools
 	{
-
 		// code inspired from OpenGL insights : chapter 33
-		void DebugTools::DisplayCallStack(std::ostream& stream)
+		void DisplayCallStack(std::ostream& stream)
 		{
 			// Note on CaptureStackBackTrace : https://msdn.microsoft.com/fr-fr/library/windows/desktop/bb204633(v=vs.85).aspx
 
@@ -55,8 +54,6 @@ namespace chaos
 					}
 				}
 			}
-
-			stream << std::flush; // because we are in debug case and do not want to wait for the input
 		}
 
 	}; // namespace DebugTools

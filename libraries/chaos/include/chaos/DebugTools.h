@@ -1,8 +1,6 @@
 #pragma once
 
 #include <chaos/StandardHeaders.h>
-#include <chaos/buffer.h>
-
 
 namespace chaos
 {

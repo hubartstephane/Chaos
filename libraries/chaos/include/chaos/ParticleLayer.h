@@ -203,7 +203,7 @@ namespace ParticleTraitTools
 {
 	/** returns whether the vertices are dynamic */
 	template<typename TRAIT_TYPE>
-	static bool AreVerticesDynamic(TRAIT_TYPE const & trait)
+	bool AreVerticesDynamic(TRAIT_TYPE const & trait)
 	{       
 		if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
            return trait.dynamic_vertices;
@@ -211,7 +211,7 @@ namespace ParticleTraitTools
 	}
 	/** returns whether the particles are dynamic */
 	template<typename TRAIT_TYPE>
-	static bool AreParticlesDynamic(TRAIT_TYPE const & trait)
+	bool AreParticlesDynamic(TRAIT_TYPE const & trait)
 	{  
 		if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)        
 			return trait.dynamic_particles;
@@ -220,7 +220,7 @@ namespace ParticleTraitTools
 
 	/** returns the kind of implementation required for the particle rendering */
 	template<typename TRAIT_TYPE>
-	static constexpr int GetParticleToPrimitivesImplementationType()
+	constexpr int GetParticleToPrimitivesImplementationType()
 	{
 		// the types used 
 		using trait = TRAIT_TYPE;
@@ -349,7 +349,7 @@ namespace ParticleTraitTools
 
 	/** returns the primitive type used for the rendering */
 	template<typename TRAIT_TYPE>
-	static constexpr PrimitiveType GetPrimitiveType()
+	constexpr PrimitiveType GetPrimitiveType()
 	{
 		using Flags = ParticleToPrimitive_ImplementationFlags;
 
@@ -372,7 +372,7 @@ namespace ParticleTraitTools
 
 	/** returns the kind of implementation required for the particle update */
 	template<typename TRAIT_TYPE>
-	static constexpr int GetUpdateParticleImplementationFlags()
+	constexpr int GetUpdateParticleImplementationFlags()
 	{
 		using Flags = UpdateParticle_ImplementationFlags;
 
@@ -442,7 +442,6 @@ namespace ParticleTraitTools
 	class ParticleAllocationBase : public Object
 	{
 		CHAOS_PARTICLE_ALL_FRIENDS
-
 
 	public:
 

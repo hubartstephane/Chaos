@@ -126,10 +126,6 @@ namespace chaos
 #define CHAOS_PARTICLE_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_PARTICLE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_PARTICLE_FRIEND_DECL, _, CHAOS_PARTICLE_CLASSES)
 
-// detect whether class has a member named XXX (use has_XXX<T>::value => bool => convert into boost::mpl::bool_)
-CHAOS_GENERATE_HAS_MEMBER(dynamic_particles);
-CHAOS_GENERATE_HAS_MEMBER(dynamic_vertices);
-
 // detect whether classes have some functions
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(Tick)
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateParticle)
@@ -201,23 +197,6 @@ struct UpdateParticle_ImplementationFlags
 
 namespace ParticleTraitTools
 {
-	/** returns whether the vertices are dynamic */
-	template<typename TRAIT_TYPE>
-	bool AreVerticesDynamic(TRAIT_TYPE const & trait)
-	{       
-		if constexpr (has_dynamic_vertices_v<TRAIT_TYPE>)
-           return trait.dynamic_vertices;
-        return true;
-	}
-	/** returns whether the particles are dynamic */
-	template<typename TRAIT_TYPE>
-	bool AreParticlesDynamic(TRAIT_TYPE const & trait)
-	{  
-		if constexpr (has_dynamic_particles_v<TRAIT_TYPE>)        
-			return trait.dynamic_particles;
-        return true;
-	}
-
 	/** returns the kind of implementation required for the particle rendering */
 	template<typename TRAIT_TYPE>
 	constexpr int GetParticleToPrimitivesImplementationType()
@@ -955,19 +934,19 @@ namespace ParticleTraitTools
 		ParticleAllocationBase * GetAllocation(size_t index);
 		/** get the allocation by index */
 		ParticleAllocationBase const * GetAllocation(size_t index) const;
+		/** clear all allocations */
+		void ClearAllAllocations();
 
 		/** get the vertex declaration */
 		virtual GPUVertexDeclaration * GetVertexDeclaration() const { return nullptr; }
 
+		/** get the trait */
+		AutoCastable<ParticleLayerTraitBase> GetLayerTrait() { return nullptr;  }
+		/** get the trait */
+		AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const { return nullptr; }
+
         /** returns the OpenGL primitive type */
         virtual GLenum GetGLPrimitiveType() const { return GL_NONE; }
-
-	public:
-
-		/** creation of an allocation */
-		virtual ParticleAllocationBase * DoCreateParticleAllocation() { return nullptr; }
-		/** clear all allocations */
-		void ClearAllAllocations();	
 
 	protected:
 
@@ -983,6 +962,9 @@ namespace ParticleTraitTools
 		void DetachAllParticleAllocations();
 		/** internal method to remove a range from the layer */
 		void RemoveParticleAllocation(ParticleAllocationBase * allocation);
+
+		/** creation of an allocation */
+		virtual ParticleAllocationBase* DoCreateParticleAllocation() { return nullptr; }
 
 		/** update the vertex declaration */
 		void UpdateVertexDeclaration();
@@ -1039,6 +1021,8 @@ namespace ParticleTraitTools
 
 	public:
 
+		static_assert(std::is_base_of_v<ParticleLayerTraitBase, LAYER_TRAIT>);
+
 		using layer_trait_type = LAYER_TRAIT;
 		using particle_type = typename layer_trait_type::particle_type;
 		using vertex_type = typename layer_trait_type::vertex_type;
@@ -1073,12 +1057,12 @@ namespace ParticleTraitTools
 		/** override */
 		virtual bool AreVerticesDynamic() const override 
 		{ 			
-			return ParticleTraitTools::AreVerticesDynamic(layer_trait); // read the layer property 'dynamic_vertices' if any
+			return layer_trait.dynamic_vertices;
 		}
 		/** override */
 		virtual bool AreParticlesDynamic() const override 
 		{ 			
-			return ParticleTraitTools::AreParticlesDynamic(layer_trait); // read the layer property 'dynamic_vertices' if any
+			return layer_trait.dynamic_particles;
 		}
 		/** override */
 		virtual Class const * GetParticleClass() const override { return Class::FindClass<particle_type>(); }
@@ -1096,10 +1080,10 @@ namespace ParticleTraitTools
 			return chaos::GetGLPrimitiveType(ParticleTraitTools::GetPrimitiveType<layer_trait_type>()); // see PrimitiveOutput.h
 		}
 
-		/** gets the layer trait */
-		layer_trait_type & GetLayerTrait() { return layer_trait; }
-		/** gets the layer trait */
-		layer_trait_type const & GetLayerTrait() const { return layer_trait; }
+		/** get the trait */
+		AutoCastable<ParticleLayerTraitBase> GetLayerTrait() { return &layer_trait; }
+		/** get the trait */
+		AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const { return &layer_trait; }
 
 	protected:
 
@@ -1159,6 +1143,9 @@ namespace ParticleTraitTools
                 ParticlesToPrimitivesLoop(output);
             }
         }
+
+
+
 
         // convert particles into vertices
         template<typename PRIMITIVE_OUTPUT_TYPE>

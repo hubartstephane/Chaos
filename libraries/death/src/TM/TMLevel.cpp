@@ -449,13 +449,6 @@ namespace death
 		return true;
 	}
 
-
-
-
-	// shuyyy
-
-
-
 	void TMLayerInstance::CreateObjectParticles(chaos::TiledMap::GeometricObject const* in_geometric_object, TMObject* object, TMParticlePopulator& particle_populator)
 	{
 		chaos::TiledMap::Map* tiled_map = level_instance->GetTiledMap();
@@ -778,10 +771,10 @@ namespace death
 					// 15 bits for Y
 					// 1  unused
 					// 1  bit for sign
-
+					
 					int int_bit_count = 8 * sizeof(int);
 					int per_component_bit_count = (int_bit_count - 1) / 2;
-					int mask = ~(-1 << per_component_bit_count);
+					int mask = ~((unsigned int)-1 << per_component_bit_count);
 					int idx = tile_coord.x & mask;
 					int idy = tile_coord.y & mask;
 					int object_id = -1 * (idx | (idy << per_component_bit_count));

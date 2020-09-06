@@ -29,6 +29,8 @@
    <properties>
     <property name="DISPLACEMENT_RATIO_X" type="float" value="0.5"/>
     <property name="DISPLACEMENT_RATIO_Y" type="float" value="0.5"/>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
     <property name="HEIGHT_BITS_MODE" type="bool" value="true"/>
    </properties>
    <data encoding="base64">
@@ -51,8 +53,6 @@
   </objectgroup>
   <layer id="37" name="BurningFlames" width="57" height="56">
    <properties>
-    <property name="DYNAMIC_PARTICLES" type="bool" value="true"/>
-    <property name="DYNAMIC_VERTICES" type="bool" value="true"/>
     <property name="MATERIAL" value="BurningFlames"/>
    </properties>
    <data encoding="base64">
@@ -72,6 +72,8 @@
    <properties>
     <property name="COLLISION_MASK" value="Player"/>
     <property name="COMPUTE_NEIGHBOURS" type="bool" value="true"/>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
     <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    </properties>
    <data encoding="base64">

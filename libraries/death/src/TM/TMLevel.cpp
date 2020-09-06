@@ -716,6 +716,13 @@ namespace death
 			particle_layer->SetRenderMaterial(render_material);
 			// set the atlas			
 			particle_layer->SetTextureAtlas(GetGame()->GetTextureAtlas());
+			// set some flags for the layer
+			chaos::ParticleLayerTraitBase* layer_trait = particle_layer->GetLayerTrait();
+			if (layer_trait != nullptr && layer != nullptr)
+			{
+				layer_trait->dynamic_particles = layer->GetPropertyValueBool("DYNAMIC_PARTICLES", layer_trait->dynamic_particles);
+				layer_trait->dynamic_vertices  = layer->GetPropertyValueBool("DYNAMIC_VERTICES", layer_trait->dynamic_vertices);
+			}
 		}
 		return particle_layer.get();
 	}

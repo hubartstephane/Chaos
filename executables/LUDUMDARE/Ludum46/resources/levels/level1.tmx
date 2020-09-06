@@ -62,6 +62,7 @@
   <layer id="27" name="PlayerAndCamera" width="57" height="56">
    <properties>
     <property name="COLLISION_MASK" value="Player"/>
+    <property name="HEIGHT_BITS_MODE" type="bool" value="true"/>
     <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
    </properties>
    <data encoding="base64">

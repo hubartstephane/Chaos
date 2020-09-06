@@ -39,10 +39,7 @@ namespace chaos
 
 	static_assert(ParticleFlags::HEIGHT_BITS_MODE == VertexFlags::HEIGHT_BITS_MODE);
 
-    /**
-    * ParticleCorners : represents 2 corners of a particle
-    */
-
+    /** ParticleCorners : represents 2 corners of a particle */
     class ParticleCorners
     {
     public:
@@ -51,16 +48,24 @@ namespace chaos
         glm::vec2 topright;
     };
 
-	/**
-	* ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite
-	*/
-
+	/** ParticleTexcoords : an object usefull for getting the texture coordinates of a sprite */
     class ParticleTexcoords : public ParticleCorners
     {
     public:
 
 		int bitmap_index = 0;
     };
+
+
+
+
+
+
+
+
+
+
+
 
 	/** Particle : a default particle, with simpler data */
 	class ParticleDefault

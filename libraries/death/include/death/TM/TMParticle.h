@@ -25,6 +25,20 @@ namespace death
 	// TMParticleLayerTrait
 	// =====================================
 
-	using TMParticleLayerTrait = chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault>;
+	class TMParticleLayerTrait : public chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault, TMObject *>
+	{
+	public:
+
+		glm::mat4 BeginParticlesToPrimitives(chaos::ParticleConstAccessor<TMParticle>& accessor, TMObject * const * allocation_trait) const
+		{
+			return {};
+		}
+
+		void ParticleToPrimitives(TMParticle const& particle, chaos::QuadOutput<chaos::VertexDefault>& output, glm::mat4 const &  m, TMObject * const * allocation_trait) const
+		{
+			int i = 0;
+			++i;
+		}
+	};
 
 }; // namespace death

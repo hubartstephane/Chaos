@@ -222,21 +222,21 @@ namespace ParticleTraitTools
 			using allocation_trait = typename trait::AllocationTrait;
 
 			// AllocationTrait + BeginParticlesToPrimitive
-			if constexpr (check_method_BeginParticlesToPrimitives_v<trait const, accessor &, allocation_trait const*>)
+			if constexpr (check_method_BeginParticlesToPrimitives_v<trait const, accessor &, allocation_trait const &>)
 			{
-				using begin_result = typeof_method_BeginParticlesToPrimitives<trait const, accessor&, allocation_trait const*>;
+				using begin_result = typeof_method_BeginParticlesToPrimitives<trait const, accessor&, allocation_trait const &>;
 
 				int base_flags = Flags::TRAIT_IMPLEMENTATION | Flags::WITH_BEGIN_CALL | Flags::WITH_ALLOCATION_TRAIT;
 
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, begin_result, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, begin_result, allocation_trait const &>)
 					return Flags::TRIANGLE | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, begin_result, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, begin_result, allocation_trait const &>)
 					return Flags::TRIANGLE_PAIR | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, begin_result, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, begin_result, allocation_trait const &>)
 					return Flags::QUAD | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, begin_result, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, begin_result, allocation_trait const &>)
 					return Flags::TRIANGLE_STRIP | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, begin_result, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, begin_result, allocation_trait const &>)
 					return Flags::TRIANGLE_FAN | base_flags;
 			}
 
@@ -244,15 +244,15 @@ namespace ParticleTraitTools
 			{
 				int base_flags = Flags::TRAIT_IMPLEMENTATION | Flags::WITH_ALLOCATION_TRAIT;
 
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, allocation_trait const &>)
 					return Flags::TRIANGLE | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, allocation_trait const &>)
 					return Flags::TRIANGLE_PAIR | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, allocation_trait const &>)
 					return Flags::QUAD | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, allocation_trait const &>)
 					return Flags::TRIANGLE_STRIP | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, allocation_trait const*>)
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, allocation_trait const &>)
 					return Flags::TRIANGLE_FAN | base_flags;
 			}
 		}
@@ -368,15 +368,15 @@ namespace ParticleTraitTools
 			using allocation_trait = typename trait::AllocationTrait;
 
 			// AllocationTrait + BeginUpdateParticle
-			if constexpr (check_method_BeginUpdateParticles_v<trait const, float, accessor&, allocation_trait const*>)
+			if constexpr (check_method_BeginUpdateParticles_v<trait const, float, accessor&, allocation_trait const &>)
 			{
-				using begin_result = typeof_method_BeginUpdateParticles<trait const, float, accessor&, allocation_trait const*>;
+				using begin_result = typeof_method_BeginUpdateParticles<trait const, float, accessor&, allocation_trait const &>;
 
-				if constexpr (check_method_UpdateParticle_v<trait const, float, particle &, begin_result, allocation_trait const*>)
+				if constexpr (check_method_UpdateParticle_v<trait const, float, particle &, begin_result, allocation_trait const &>)
 					return Flags::TRAIT_IMPLEMENTATION | Flags::WITH_BEGIN_CALL | Flags::WITH_ALLOCATION_TRAIT;
 			}
 			// AllocationTrait - NO BEGIN
-			if constexpr (check_method_UpdateParticle_v<trait const, float, particle&, allocation_trait const*>)
+			if constexpr (check_method_UpdateParticle_v<trait const, float, particle&, allocation_trait const &>)
 			{
 				return Flags::TRAIT_IMPLEMENTATION | Flags::WITH_ALLOCATION_TRAIT;
 			}
@@ -655,12 +655,12 @@ namespace ParticleTraitTools
 						DoParticlesToPrimitivesLoop_LayerTraitImplementation(
 							layer_trait,
 							output,
-							layer_trait->BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), &allocation_trait), // do not use a temp variable, so it can be a left-value reference
-							&allocation_trait);
+							layer_trait->BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), allocation_trait), // do not use a temp variable, so it can be a left-value reference
+							allocation_trait);
 					}
 					else
 					{
-						DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait, output, &allocation_trait);
+						DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait, output, allocation_trait);
 					}
 				}
 				else if constexpr (with_begin_call != 0)
@@ -729,12 +729,12 @@ namespace ParticleTraitTools
 							delta_time,
 							layer_trait,
 							particle_accessor,
-							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, &allocation_trait), // do not use a temp variable, so it can be a left-value reference
-							&allocation_trait);
+							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, allocation_trait), // do not use a temp variable, so it can be a left-value reference
+							allocation_trait);
 					}
 					else
 					{
-						remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor, &allocation_trait);
+						remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor, allocation_trait);
 					}
 				}
 				else if constexpr (with_begin_call != 0)
@@ -1142,9 +1142,6 @@ namespace ParticleTraitTools
                 ParticlesToPrimitivesLoop(output);
             }
         }
-
-
-
 
         // convert particles into vertices
         template<typename PRIMITIVE_OUTPUT_TYPE>

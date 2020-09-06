@@ -109,7 +109,7 @@ namespace death
 		particle.flags = particle_flags;
 		particle.gid = gid;
 		particle.rotation = rotation;
-		particle.bitmap_info = bitmap_info; // shuxxx
+		particle.bitmap_info = bitmap_info;
 
 		// for tiled map objects, rotation use BOTTOM-LEFT as pivot whereas in our particle system, the  pivot is center
 		if (rotation != 0.0f)

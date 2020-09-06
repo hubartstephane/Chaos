@@ -54,7 +54,7 @@ public:
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexPowerUpZone>);
 
 
-class PowerUpZoneParticleLayerTrait : public chaos::ParticleLayerTrait<ParticlePowerUpZone, VertexPowerUpZone, true, true> // shuxxx set to false = optimization 1
+class PowerUpZoneParticleLayerTrait : public chaos::ParticleLayerTrait<ParticlePowerUpZone, VertexPowerUpZone> 
 {
 public:
 

@@ -13,8 +13,9 @@ namespace death
 	{
 	public:
 
+		// the ID for the tile
 		int gid = 0;
-		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; // shu46 !!! 
+		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; 
 	};
 
 
@@ -24,8 +25,15 @@ namespace death
 	// TMParticleLayerTrait
 	// =====================================
 
-	class TMParticleLayerTrait : public chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault, false, false> // shuxxx set to false = optimization 1
+	class TMParticleLayerTrait : public chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault>
 	{
+	public:
+
+		TMParticleLayerTrait()
+		{
+			dynamic_particles = false;
+			dynamic_vertices = false;
+		}
 	};
 
 }; // namespace death

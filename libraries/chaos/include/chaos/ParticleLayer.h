@@ -941,9 +941,9 @@ namespace ParticleTraitTools
 		virtual GPUVertexDeclaration * GetVertexDeclaration() const { return nullptr; }
 
 		/** get the trait */
-		AutoCastable<ParticleLayerTraitBase> GetLayerTrait() { return nullptr;  }
+		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() { return nullptr;  }
 		/** get the trait */
-		AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const { return nullptr; }
+		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const { return nullptr; }
 
         /** returns the OpenGL primitive type */
         virtual GLenum GetGLPrimitiveType() const { return GL_NONE; }
@@ -1079,11 +1079,10 @@ namespace ParticleTraitTools
 		{
 			return chaos::GetGLPrimitiveType(ParticleTraitTools::GetPrimitiveType<layer_trait_type>()); // see PrimitiveOutput.h
 		}
-
-		/** get the trait */
-		AutoCastable<ParticleLayerTraitBase> GetLayerTrait() { return &layer_trait; }
-		/** get the trait */
-		AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const { return &layer_trait; }
+		/** override */
+		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &layer_trait; }
+		/** override */
+		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const override { return &layer_trait; }
 
 	protected:
 

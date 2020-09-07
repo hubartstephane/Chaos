@@ -61,12 +61,12 @@ public:
 	
 	}
 
-	bool UpdateParticle(float delta_time, ParticleExample * particle) const
+	bool UpdateParticle(float delta_time, ParticleExample & particle) const
 	{
-		particle->box.position += particle->velocity * delta_time;
-		particle->remaining_time -= delta_time;
+		particle.box.position += particle.velocity * delta_time;
+		particle.remaining_time -= delta_time;
 
-		return (particle->remaining_time <= 0.0f);
+		return (particle.remaining_time <= 0.0f);
 	}
 
 

@@ -107,7 +107,7 @@ bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 
 	chaos::box2 camera_box = camera->GetCameraBox();
 
-    spawner.SpawnParticles(pattern->enemy_count, true, [camera_box, pawn_box, spawner_box, t, p, bitmap_info](chaos::ParticleAccessorBase<ParticleEnemy> accessor) {
+    spawner.SpawnParticles(pattern->enemy_count, true, [camera_box, pawn_box, spawner_box, t, p, bitmap_info](chaos::ParticleAccessor<ParticleEnemy> accessor) {
 
         for (ParticleEnemy& particle : accessor)
         {
@@ -116,7 +116,7 @@ bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
             particle.enemy_damage = t->enemy_damage;
             particle.enemy_health = t->enemy_health;
             particle.enemy_index = (int)(&particle - &accessor[0]);
-            particle.enemy_particle_count = (int)accessor.GetCount();
+            particle.enemy_particle_count = (int)accessor.GetDataCount();
             particle.pattern = p;
             particle.spawner_box = spawner_box;
             particle.time = 0.0f;

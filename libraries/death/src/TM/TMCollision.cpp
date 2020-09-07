@@ -67,7 +67,7 @@ namespace death
 							{
 								chaos::ParticleAccessor<TMParticle> accessor = allocation->GetParticleAccessor(0, 0);
 
-								while (particle_index < accessor.GetCount())
+								while (particle_index < accessor.GetDataCount())
 								{
 									death::TMParticle* particle = &accessor[particle_index];
 

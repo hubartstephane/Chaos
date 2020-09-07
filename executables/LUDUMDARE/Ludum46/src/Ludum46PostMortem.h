@@ -4,7 +4,7 @@
 //
 // SpawnParticle(...) maybe initialize automatically color to 1.0 (=> else 0 => invisible)
 //
-// chaos::ParticleAccessorBase<ParticleBase> => maybe some upcasting ?
+// chaos::ParticleAccessor<ParticleBase> => maybe some upcasting ?
 //
 // Level BoundingBox. Does not take care of tile/spawner very vwell rework on that
 

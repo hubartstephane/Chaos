@@ -47,7 +47,7 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 				if (allocation != nullptr)
 				{
 					chaos::ParticleAccessor<ParticleEnemy> enemies = allocation->GetParticleAccessor();
-					size_t count = enemies.GetCount();
+					size_t count = enemies.GetDataCount();
 					for (size_t j = 0 ; j < count ; ++j)
 						result.push_back(&enemies[j]);
 				}				
@@ -234,7 +234,7 @@ bool ParticleLifeLayerTrait::UpdateParticle(float delta_time, ParticleLife& part
 ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleFire> & particle_accessor) const
 {
 	ParticleFireUpdateData result;
-	if (particle_accessor.GetCount() > 0)
+	if (particle_accessor.GetDataCount() > 0)
 	{
 		// get the camera box 
 		death::Camera const* camera = game->GetCamera(0);
@@ -333,7 +333,7 @@ void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, 
 ParticleEnemyUpdateData ParticleEnemyLayerTrait::BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy> & particle_accessor) const
 {
 	ParticleEnemyUpdateData result;
-	if (particle_accessor.GetCount() > 0)
+	if (particle_accessor.GetDataCount() > 0)
 	{
 		death::Camera const * camera = game->GetCamera(0);
 		if (camera != nullptr)

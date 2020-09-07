@@ -105,7 +105,13 @@ namespace details\
 template<typename T, typename ...PARAMS>\
 constexpr bool check_method_##funcname()\
 {\
-	return sizeof(details::check_method_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
+	if constexpr(sizeof(details::check_method_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1)\
+		return true;\
+	else \
+	{\
+		/*static_assert(sizeof(details::check_method_##funcname##_helper(chaos::meta::FakeInstance<std::remove_const_t<T>>(), chaos::meta::FakeInstance<std::remove_const_t<PARAMS>>()...)) == 1);*/\
+		return false;\
+	}\
 }\
 \
 template<typename T, typename ...PARAMS>\
@@ -160,7 +166,13 @@ namespace details\
 template<typename ...PARAMS>\
 constexpr bool check_function_##funcname()\
 {\
-	return sizeof(details::check_function_##funcname##_helper(666, chaos::meta::FakeInstance<PARAMS>()...)) != 1;\
+	if constexpr (sizeof(details::check_function_##funcname##_helper(666, chaos::meta::FakeInstance<PARAMS>()...)) != 1)\
+		return true;\
+	else\
+	{\
+		/*static_assert(sizeof(details::check_function_##funcname##_helper(666, chaos::meta::FakeInstance<std::remove_const_t<PARAMS>>()...)) == 1);*/\
+		return false;\
+	}\
 }\
 \
 template<typename ...PARAMS>\

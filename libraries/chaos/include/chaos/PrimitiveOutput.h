@@ -6,6 +6,8 @@
 #include <chaos/GPUBuffer.h>
 #include <chaos/GPUDrawPrimitive.h>
 #include <chaos/GPUBufferCache.h>
+#include <chaos/RawDataBufferIterator.h>
+#include <chaos/RawDataBufferAccessor.h>
 
 namespace chaos
 {
@@ -135,6 +137,27 @@ namespace chaos
         size_t GetVertexSize() const { return vertex_size; }
         /** gets the number of vertices for this primitive */
         size_t GetVerticesCount() const { return count; }
+
+        /** gets forward iterator on vertices */
+        RawDataBufferIterator<VERTEX_TYPE> begin() 
+        {
+            return RawDataBufferAccessor<VERTEX_TYPE>(buffer, count, vertex_size).begin();
+        }
+        /** gets end forward iterator on vertices */
+        RawDataBufferIterator<VERTEX_TYPE> end()
+        {
+            return RawDataBufferAccessor<VERTEX_TYPE>(buffer, count, vertex_size).end();
+        }
+        /** gets forward const iterator on vertices */
+        RawDataBufferIterator<VERTEX_TYPE const> begin() const
+        {
+            return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, count, vertex_size).begin();
+        }
+        /** gets end forward const iterator on vertices */
+        RawDataBufferIterator<VERTEX_TYPE const> end() const
+        {
+            return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, count, vertex_size).end();
+        }
 
 	public:
 

@@ -159,7 +159,7 @@ namespace chaos
             return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, count, vertex_size).end();
         }
 
-	public:
+	protected:
 
 		/** number of vertices for the primitives */
 		static size_t constexpr count = GetRealVerticesPerParticle(PRIMITIVE_TYPE);

@@ -159,9 +159,8 @@ void PowerUpZoneParticleLayerTrait::ParticleToPrimitives(death::TMParticle const
     glm::vec2 position_tr = v2.position;
 
     // override the texture coordinates
-    for (size_t i = 0; i < primitive.count; ++i)
+    for (VertexPowerUpZone & vertex : primitive)
     {
-        VertexPowerUpZone& vertex = primitive[i];
         vertex.texcoord = texture_bl;
         vertex.texcoord2 = texture_tr;
     }

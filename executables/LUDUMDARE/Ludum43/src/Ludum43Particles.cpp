@@ -235,12 +235,12 @@ void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle
 
 	chaos::ParticleToPrimitive(particle, primitive);
 
-	for (size_t i = 0; i < primitive.count; ++i)
+	for (VertexBase & vertex : primitive)
 	{
-        primitive[i].attraction_position =
+		vertex.attraction_position =
 			particle.bounding_box.position +
-			2.0f * particle.attraction_maxradius * glm::normalize(primitive[i].position - particle.bounding_box.position);
-        primitive[i].particle_center = particle.bounding_box.position;
+			2.0f * particle.attraction_maxradius * glm::normalize(vertex.position - particle.bounding_box.position);
+		vertex.particle_center = particle.bounding_box.position;
 	}
 }
 

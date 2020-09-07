@@ -25,8 +25,14 @@ namespace death
 	{
 	public:
 
-        void ParticleToPrimitives(ParticleBackground const& particle, chaos::QuadOutput<chaos::VertexDefault> & output) const;
+		/** constructor */
+		ParticleBackgroundLayerTrait(){ dynamic_particles = dynamic_vertices = false;}
+		/** copy constructor */
+		ParticleBackgroundLayerTrait(ParticleBackgroundLayerTrait const& src) = default;
 
+		/** output primitive */
+        void ParticleToPrimitives(ParticleBackground const& particle, chaos::QuadOutput<chaos::VertexDefault> & output) const;
+		/** output primitive */
         void ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const;
 	};
 

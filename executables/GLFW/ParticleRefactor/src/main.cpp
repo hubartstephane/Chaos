@@ -60,7 +60,7 @@ public:
 
 	};
 
-	bool UpdateParticle(float delta_time, ParticleExample & particle, AllocationTrait const * trait) const
+	bool UpdateParticle(float delta_time, ParticleExample & particle, AllocationTrait const & trait) const
 	{
 		particle.box.position += particle.velocity * delta_time;
 		particle.remaining_time -= delta_time;
@@ -68,7 +68,7 @@ public:
 		return (particle.remaining_time <= 0.0f);
 	}
 
-    void ParticleToPrimitives(ParticleExample const & particle, chaos::QuadOutput<VertexExample> & output, AllocationTrait const * trait) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::QuadOutput<VertexExample> & output, AllocationTrait const & trait) const
     {
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return;

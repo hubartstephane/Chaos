@@ -264,7 +264,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
     chaos::ParticleAccessor<ParticleEnemy> accessor = allocation->AddParticles(count);
     for (ParticleEnemy& particle : accessor)
     {
-        size_t i = accessor.GetParticleIndex(&particle);
+        size_t i = accessor.GetDataIndex(&particle);
 
         // fill position & velocity			
         if (spawn_curve_type == SPAWN_CURVE_RANDOM)

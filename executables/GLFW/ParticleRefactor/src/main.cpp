@@ -180,7 +180,7 @@ protected:
 				//particle_allocations.push_back(allocation);
 
                 chaos::ParticleAccessor<ParticleExample> particle_accessor = allocation->GetParticleAccessor();
-				if (particle_accessor.GetCount())
+				if (particle_accessor.GetDataCount())
 				{
 					glm::vec2 center = 
 						(2.0f * (chaos::GLMTools::RandVec2() - glm::vec2(0.5f, 0.5f))) * 0.5f * glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
@@ -189,7 +189,7 @@ protected:
 				//	center.x = (float)mouse_x;
 				//	center.y = (float)mouse_y;
 					
-                    for (int i = 0 ; i < particle_accessor.GetCount() ; ++i)
+                    for (int i = 0 ; i < particle_accessor.GetDataCount() ; ++i)
 					    InitializeParticles(particle_accessor[i], center);
 				}
 			}

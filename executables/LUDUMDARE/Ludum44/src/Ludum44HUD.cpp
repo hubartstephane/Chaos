@@ -144,7 +144,7 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	}
 	// fill the particle
 	chaos::ParticleAccessor<ParticleLife> particles = allocations->GetParticleAccessor();
-	if (particles.GetCount() == 0)
+	if (particles.GetDataCount() == 0)
 		return true;
 
 	ParticleLife * part = &particles[0];

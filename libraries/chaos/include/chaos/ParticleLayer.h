@@ -777,7 +777,7 @@ namespace ParticleTraitTools
 			constexpr int default_implementation  = (implementation_type & Flags::DEFAULT_IMPLEMENTATION);
 			constexpr int particle_implementation = (implementation_type & Flags::PARTICLE_IMPLEMENTATION);
 
-            size_t particle_count = particle_accessor.GetCount();
+            size_t particle_count = particle_accessor.GetDataCount();
 
 			// tick all particles. overide all particles that have been destroyed by next on the array
 			size_t j = 0;

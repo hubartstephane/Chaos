@@ -306,9 +306,9 @@ void LudumPlayer::FireProjectiles()
 
         for (ParticleFire & particle : accessor)
         {
-            size_t particle_index = accessor.GetParticleIndex(&particle);
+            size_t particle_index = accessor.GetDataIndex(&particle);
 
-            float rotation = delta_rotation * ((float)particle_index) - delta_rotation * (float)(accessor.GetCount() / 2);
+            float rotation = delta_rotation * ((float)particle_index) - delta_rotation * (float)(accessor.GetDataCount() / 2);
 
             particle.bounding_box = particle_box;
             particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

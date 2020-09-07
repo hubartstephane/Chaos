@@ -442,7 +442,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 
 	// set the color
 	chaos::ParticleAccessor<ParticleMovableObject> particles = result->GetParticleAccessor();
-	if (particles.GetCount() == 0)
+	if (particles.GetDataCount() == 0)
 		return nullptr;
 
 	for (size_t i = 0 ; i < count ; ++i)
@@ -465,7 +465,7 @@ ParticleMovableObject * LudumGameInstance::GetBallParticles()
 	if (balls_allocations == nullptr)
 		return nullptr;	
 	chaos::ParticleAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor();
-	if (particles.GetCount() == 0)
+	if (particles.GetDataCount() == 0)
 		return nullptr;
 	return &particles[0];
 }
@@ -475,7 +475,7 @@ ParticleMovableObject const * LudumGameInstance::GetBallParticles() const
 	if (balls_allocations == nullptr)
 		return nullptr;
     chaos::ParticleConstAccessor<ParticleMovableObject> particles = balls_allocations->GetParticleAccessor();
-	if (particles.GetCount() == 0)
+	if (particles.GetDataCount() == 0)
 		return nullptr;
 	return &particles[0];
 }
@@ -649,7 +649,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 	if (allocation != nullptr)
 	{
 		chaos::ParticleAccessor<ParticleChallenge> particles = allocation->GetParticleAccessor();
-		for (size_t i = 0; i < particles.GetCount(); ++i)
+		for (size_t i = 0; i < particles.GetDataCount(); ++i)
 		{
 			ParticleChallenge & p = particles[i];
 			p.challenge = challenge;

@@ -157,7 +157,7 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 
 	// update the particles members
 	chaos::ParticleAccessor<ParticleShroudLife> particles = allocations->GetParticleAccessor();
-	for (size_t i = 0 ; i < particles.GetCount() ; ++i)
+	for (size_t i = 0 ; i < particles.GetDataCount() ; ++i)
 	{
 		ParticleShroudLife & p = particles[i];
 

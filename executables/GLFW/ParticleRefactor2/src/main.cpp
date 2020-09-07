@@ -180,7 +180,7 @@ protected:
 
                 glm::vec2 center = (2.0f * (chaos::GLMTools::RandVec2() - glm::vec2(0.5f, 0.5f))) * 0.5f * glm::vec2(WORLD_X, WORLD_X / VIEWPORT_WANTED_ASPECT);
 
-                for (int i = 0; i < particles.GetCount(); ++i)
+                for (int i = 0; i < particles.GetDataCount(); ++i)
                     InitializeParticles(particles[i], center);
 			}
 			return true;

@@ -18,7 +18,7 @@ namespace chaos
                 return nullptr;
 
             ParticleAccessor<ParticleDefault> particles = allocation->GetParticleAccessor();
-            if (particles.GetCount() == 0)
+            if (particles.GetDataCount() == 0)
                 return nullptr;
             return &particles[index];
         }
@@ -31,7 +31,7 @@ namespace chaos
                 return nullptr;
 
             ParticleConstAccessor<ParticleDefault> particles = allocation->GetParticleAccessor();
-            if (particles.GetCount() == 0)
+            if (particles.GetDataCount() == 0)
                 return nullptr;
             return &particles[index];
         }

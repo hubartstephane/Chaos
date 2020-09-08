@@ -44,15 +44,9 @@ namespace death
 			chaos::QuadPrimitive<chaos::VertexDefault> primitive = output.AddPrimitive();
 			chaos::ParticleToPrimitive(particle, primitive);
 
-			//for (size_t i = 0 ; i < primitive.GetVerticesCount() ; ++i)
-			//	primitive[i].position.x += 50.0f;
 			for (auto& v : primitive)
 				v.color.r = 0.0f;
 
-
-			//chaos::ParticleToPrimitives(particle, output);
-			int i = 0;
-			++i;
 		}
 #endif
 	};

@@ -558,15 +558,61 @@ namespace ParticleTraitTools
 	};
 
 	// ==============================================================
+	// ParticleAllocationTrait
+	// ==============================================================
+
+	// the template
+	template<typename ALLOCATION_TRAIT>
+	class ParticleAllocationTrait
+	{
+	public:
+
+		using allocation_trait_type = ALLOCATION_TRAIT;
+
+		/** constructor */
+		ParticleAllocationTrait() = default;
+		/** constructor */
+		ParticleAllocationTrait(ParticleAllocationTrait const& src) = default;
+		/** constructor */
+		ParticleAllocationTrait(allocation_trait_type const& in_allocation_trait) :
+			allocation_trait(in_allocation_trait) {}
+
+		/** gets the allocation trait */
+		allocation_trait_type& GetAllocationTrait() { return allocation_trait; }
+		/** gets the allocation trait */
+		allocation_trait_type const& GetAllocationTrait() const { return allocation_trait; }
+
+	public:
+
+		/** the trait of the allocation (some extra data + some functions) */
+		allocation_trait_type allocation_trait;
+	};
+
+	// the empty specialization
+	template<>
+	class ParticleAllocationTrait<EmptyClass>
+	{
+	public:
+		/** constructor */
+		ParticleAllocationTrait() = default;
+		/** constructor */
+		ParticleAllocationTrait(ParticleAllocationTrait const& src) = default;
+		/** constructor */
+		ParticleAllocationTrait(EmptyClass const& in_allocation_trait) {}
+	};
+
+	// ==============================================================
 	// ParticleAllocation
 	// ==============================================================
+
+
 
     // forward declaration (required for friendship)
     template<typename LAYER_TRAIT>
     class ParticleLayer;
 
 	template<typename LAYER_TRAIT>
-	class ParticleAllocation : public ParticleAllocationBase
+	class ParticleAllocation : public ParticleAllocationBase, public ParticleAllocationTrait<typename get_AllocationTrait<LAYER_TRAIT>::type>
 	{
         friend class ParticleLayer<LAYER_TRAIT>;
 
@@ -578,9 +624,9 @@ namespace ParticleTraitTools
 		using allocation_trait_type = typename get_AllocationTrait<layer_trait_type>::type;
 
 		/** constructor */
-		ParticleAllocation(ParticleLayerBase* in_layer, allocation_trait_type in_allocation_trait = {}) :
+		ParticleAllocation(ParticleLayerBase* in_layer, allocation_trait_type const & in_allocation_trait = {}) :
             ParticleAllocationBase(in_layer),
-			allocation_trait(in_allocation_trait)
+			ParticleAllocationTrait<allocation_trait_type>(in_allocation_trait)
         {
 			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared
         }
@@ -685,11 +731,6 @@ namespace ParticleTraitTools
 				DoParticlesToPrimitivesLoop_DefaultImplementation(output); 
 			}
         }
-
-		/** gets the allocation trait */
-		allocation_trait_type& GetAllocationTrait() { return allocation_trait; }
-		/** gets the allocation trait */
-		allocation_trait_type const& GetAllocationTrait() const { return allocation_trait; }
 
     protected:
 
@@ -834,8 +875,6 @@ namespace ParticleTraitTools
 
 		/** the particles buffer */
 		std::vector<particle_type> particles;
-		/** the trait of the allocation (some extra data + some functions) */
-		allocation_trait_type allocation_trait;
 	};
 
 	// ==============================================================
@@ -1030,7 +1069,7 @@ namespace ParticleTraitTools
 		using allocation_trait_type = typename get_AllocationTrait<layer_trait_type>::type;
 
 		/** constructor */
-		ParticleLayer(layer_trait_type in_layer_trait = {}) :
+		ParticleLayer(layer_trait_type const & in_layer_trait = {}) :
 			layer_trait(in_layer_trait)
 		{
 			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared		

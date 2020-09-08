@@ -15,8 +15,6 @@
 
 namespace death
 {
-
-
 	// =====================================
 	// TMLevel implementation
 	// =====================================
@@ -527,6 +525,11 @@ namespace death
 			{
 				effective_particle_populator->FlushParticles();
 				object->allocation = effective_particle_populator->GetParticleAllocation();
+
+				// whether the allocation wants to kwow about the TMObject
+				TMObject const ** allocation_data = object->allocation->GetOwnedData<TMObject const *>();
+				if (allocation_data != nullptr)
+					*allocation_data = object;
 			}
 		}
 	}

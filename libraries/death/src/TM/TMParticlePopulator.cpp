@@ -134,6 +134,7 @@ namespace death
 		return true;
 	}
 
+	// XXX : copy all data except for the cached particles waiting to be flushed 
 	TMParticlePopulator& TMParticlePopulator::operator = (TMParticlePopulator const& src)
 	{
 		layer_instance = src.layer_instance;

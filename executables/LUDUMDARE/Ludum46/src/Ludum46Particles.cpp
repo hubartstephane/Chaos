@@ -304,7 +304,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 	{
 		glm::vec2 pawn_velocity = displacement_component->GetPawnVelocity();
 
-		particle.flags = 0;
+		particle.flags &= ~chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 
 		if (std::abs(pawn_velocity.x) < 1.0f)
 		{

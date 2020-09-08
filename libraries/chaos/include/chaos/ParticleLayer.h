@@ -20,6 +20,7 @@
 #include <chaos/ParticleLayerTrait.h>
 #include <chaos/PrimitiveOutput.h>
 #include <chaos/ParticleSpawner.h>
+#include <chaos/DataOwner.h>
 #include <chaos/LogTools.h>
 
 // ==============================================================
@@ -535,6 +536,20 @@ namespace ParticleTraitTools
 			return GetParticleConstAccessor<PARTICLE_TYPE>();
 		}
 
+		/** getter on the extra data */
+		template<typename T>
+		T* GetOwnedData()
+		{
+			return chaos::GetOwnedData<T>(this);
+		}
+
+		/** getter on the extra data */
+		template<typename T>
+		T const* GetOwnedData() const
+		{
+			return chaos::GetOwnedData<T>(this);
+		}
+
 	protected:
 
         /** compute the ranges for accessor (returns false in case of failure) */
@@ -557,62 +572,12 @@ namespace ParticleTraitTools
 		bool destroy_when_empty = false;
 	};
 
-	// ==============================================================
-	// ParticleAllocationTrait
-	// ==============================================================
-
-	// the template
-	template<typename ALLOCATION_TRAIT>
-	class ParticleAllocationTrait
-	{
-	public:
-
-		using allocation_trait_type = ALLOCATION_TRAIT;
-
-		/** constructor */
-		ParticleAllocationTrait() = default;
-		/** constructor */
-		ParticleAllocationTrait(ParticleAllocationTrait const& src) = default;
-		/** constructor */
-		ParticleAllocationTrait(allocation_trait_type const& in_allocation_trait) :
-			allocation_trait(in_allocation_trait) {}
-
-		/** gets the allocation trait */
-		allocation_trait_type& GetAllocationTrait() { return allocation_trait; }
-		/** gets the allocation trait */
-		allocation_trait_type const& GetAllocationTrait() const { return allocation_trait; }
-
-	public:
-
-		/** the trait of the allocation (some extra data + some functions) */
-		allocation_trait_type allocation_trait;
-	};
-
-	// the empty specialization
-	template<>
-	class ParticleAllocationTrait<EmptyClass>
-	{
-	public:
-		/** constructor */
-		ParticleAllocationTrait() = default;
-		/** constructor */
-		ParticleAllocationTrait(ParticleAllocationTrait const& src) = default;
-		/** constructor */
-		ParticleAllocationTrait(EmptyClass const& in_allocation_trait) {}
-	};
-
-	// ==============================================================
-	// ParticleAllocation
-	// ==============================================================
-
-
-
     // forward declaration (required for friendship)
     template<typename LAYER_TRAIT>
     class ParticleLayer;
 
 	template<typename LAYER_TRAIT>
-	class ParticleAllocation : public ParticleAllocationBase, public ParticleAllocationTrait<typename get_AllocationTrait<LAYER_TRAIT>::type>
+	class ParticleAllocation : public ParticleAllocationBase, public DataOwner<typename get_AllocationTrait<LAYER_TRAIT>::type>
 	{
         friend class ParticleLayer<LAYER_TRAIT>;
 
@@ -626,7 +591,7 @@ namespace ParticleTraitTools
 		/** constructor */
 		ParticleAllocation(ParticleLayerBase* in_layer, allocation_trait_type const & in_allocation_trait = {}) :
             ParticleAllocationBase(in_layer),
-			ParticleAllocationTrait<allocation_trait_type>(in_allocation_trait)
+			DataOwner<allocation_trait_type>(in_allocation_trait)
         {
 			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared
         }
@@ -694,19 +659,19 @@ namespace ParticleTraitTools
 
 			if constexpr (trait_implementation != 0)
 			{
-				if constexpr (with_allocation_trait != 0)
+				if constexpr (with_allocation_trait != 0) // the member 'data' owns the information per allocation
 				{
 					if constexpr (with_begin_call != 0)
 					{
 						DoParticlesToPrimitivesLoop_LayerTraitImplementation(
 							layer_trait,
 							output,
-							layer_trait->BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), allocation_trait), // do not use a temp variable, so it can be a left-value reference
-							allocation_trait);
+							layer_trait->BeginParticlesToPrimitives(GetParticleConstAccessor<particle_type>(), data), // do not use a temp variable, so it can be a left-value reference
+							data);
 					}
 					else
 					{
-						DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait, output, allocation_trait);
+						DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait, output, data);
 					}
 				}
 				else if constexpr (with_begin_call != 0)
@@ -987,6 +952,20 @@ namespace ParticleTraitTools
         /** returns the OpenGL primitive type */
         virtual GLenum GetGLPrimitiveType() const { return GL_NONE; }
 
+		/** getter on the extra data */
+		template<typename T>
+		T* GetOwnedData()
+		{
+			return chaos::GetOwnedData<T>(this);
+		}
+
+		/** getter on the extra data */
+		template<typename T>
+		T const* GetOwnedData() const
+		{
+			return chaos::GetOwnedData<T>(this);
+		}
+
 	protected:
 
 		/** ticking the particle system */
@@ -1055,12 +1034,11 @@ namespace ParticleTraitTools
 	// ==============================================================
 
 	template<typename LAYER_TRAIT>
-	class ParticleLayer : public ParticleLayerBase
+	class ParticleLayer : public ParticleLayerBase, public DataOwner<LAYER_TRAIT>
 	{
+		static_assert(std::is_base_of_v<ParticleLayerTraitBase, LAYER_TRAIT>);
 
 	public:
-
-		static_assert(std::is_base_of_v<ParticleLayerTraitBase, LAYER_TRAIT>);
 
 		using layer_trait_type = LAYER_TRAIT;
 		using particle_type = typename layer_trait_type::particle_type;
@@ -1070,7 +1048,7 @@ namespace ParticleTraitTools
 
 		/** constructor */
 		ParticleLayer(layer_trait_type const & in_layer_trait = {}) :
-			layer_trait(in_layer_trait)
+			DataOwner<layer_trait_type>(in_layer_trait)
 		{
 			assert(Class::FindClass<particle_type>() != nullptr); // ensure class is declared		
 		}
@@ -1096,12 +1074,12 @@ namespace ParticleTraitTools
 		/** override */
 		virtual bool AreVerticesDynamic() const override 
 		{ 			
-			return layer_trait.dynamic_vertices;
+			return data.dynamic_vertices;
 		}
 		/** override */
 		virtual bool AreParticlesDynamic() const override 
 		{ 			
-			return layer_trait.dynamic_particles;
+			return data.dynamic_particles;
 		}
 		/** override */
 		virtual Class const * GetParticleClass() const override { return Class::FindClass<particle_type>(); }
@@ -1119,9 +1097,9 @@ namespace ParticleTraitTools
 			return chaos::GetGLPrimitiveType(ParticleTraitTools::GetPrimitiveType<layer_trait_type>()); // see PrimitiveOutput.h
 		}
 		/** override */
-		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &layer_trait; }
+		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &data; }
 		/** override */
-		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const override { return &layer_trait; }
+		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const override { return &data; }
 
 	protected:
 
@@ -1133,7 +1111,7 @@ namespace ParticleTraitTools
 		{ 
 			ParticleAllocation<layer_trait_type>* allocation = auto_cast(in_allocation);
 			if (allocation != nullptr)
-				return allocation->TickAllocation(delta_time, &layer_trait);
+				return allocation->TickAllocation(delta_time, &data);
 			return false; // do not destroy the allocation
 		} 
 
@@ -1141,7 +1119,7 @@ namespace ParticleTraitTools
 		virtual void UpdateRenderingStates(GPURenderer* renderer, bool begin) const override
 		{
 			if constexpr (check_method_UpdateRenderingStates_v<layer_trait_type const, GPURenderer *, bool>)
-				layer_trait.UpdateRenderingStates(renderer, begin);
+				data.UpdateRenderingStates(renderer, begin);
 			else
 				ParticleLayerBase::UpdateRenderingStates(renderer, begin);
 		}
@@ -1194,15 +1172,10 @@ namespace ParticleTraitTools
                 if (!allocation->IsVisible())
                     continue;
                 // transform particles into vertices
-                allocation->ParticlesToPrimitives(output, &layer_trait);
+                allocation->ParticlesToPrimitives(output, &data);
             }
             output.Flush();
         }
-
-	protected:
-
-		/** the trait of the layer */
-		layer_trait_type layer_trait;
 	};
 
 	// undefine macros

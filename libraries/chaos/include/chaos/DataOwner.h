@@ -10,22 +10,9 @@ namespace chaos
 	// DataOwner
 	// ==============================================================
 
-	// DataOwner is a base class to be used for inheritance
-	// They can be chained
-	//
-	// class A : DataOwner<int, DataOwner<float>>
-	// {
-	// };
-	//
-	// They are used to give data member to a class
-	// 
-	// With dynamic casting* it is possible to get the data of a given type
-	//
-	// Data
-
 	// the template
-	template<typename TYPE, typename BASE_CLASS = EmptyClass>
-	class DataOwner : public BASE_CLASS
+	template<typename TYPE>
+	class DataOwner
 	{
 	public:
 
@@ -51,8 +38,8 @@ namespace chaos
 	};
 
 	// the empty specialization
-	template<typename BASE_CLASS>
-	class DataOwner<EmptyClass, BASE_CLASS> : public BASE_CLASS
+	template<>
+	class DataOwner<EmptyClass>
 	{
 	public:
 		/** constructor */
@@ -62,6 +49,28 @@ namespace chaos
 		/** constructor */
 		DataOwner(EmptyClass const& in_type) {}
 	};
+
+	// ==============================================================
+	// Functions
+	// ==============================================================
+
+	template<typename T, typename U>
+	T* GetOwnedData(U* src)
+	{
+		DataOwner<T>* owner = auto_cast(src);
+		if (owner != nullptr)
+			return &owner->data;
+		return nullptr;
+	}
+
+	template<typename T, typename U>
+	T const * GetOwnedData(U const * src)
+	{
+		DataOwner<T> const * owner = auto_cast(src);
+		if (owner != nullptr)
+			return &owner->data;
+		return nullptr;
+	}
 
 }; // namespace chaos
 

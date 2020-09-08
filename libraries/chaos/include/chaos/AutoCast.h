@@ -19,7 +19,10 @@ namespace chaos
 		{
 			if constexpr (std::is_base_of_v<U, T>)
 				return ptr;
-			return dynamic_cast<const U*>(ptr);
+			if constexpr (!std::is_polymorphic_v<T>)
+				return nullptr;
+			else 
+				return dynamic_cast<const U*>(ptr);
 		}
 
 		/** indirection operator */
@@ -60,7 +63,10 @@ namespace chaos
 		{
 			if constexpr (std::is_base_of_v<U, T>)
 				return ptr;
-			return dynamic_cast<U*>(ptr);
+			if constexpr (!std::is_polymorphic_v<T>)
+				return nullptr;
+			else
+				return dynamic_cast<U*>(ptr);
 		}
 		/** indirection operator */
 		T * operator -> () const { return ptr; }

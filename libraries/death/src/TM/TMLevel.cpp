@@ -1364,6 +1364,16 @@ namespace death
 
 		chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 
+
+
+
+
+
+		// shuyyy
+
+
+
+
 		particle_populator.AddParticle(
 			player_start->bitmap_name.c_str(), 
 			hotpoint, 

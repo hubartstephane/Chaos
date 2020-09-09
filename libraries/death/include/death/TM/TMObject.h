@@ -2,6 +2,8 @@
 
 #include <death/TM.h>
 
+#include <death/GameEntity.h>
+
 namespace death
 {
 	// ==========================================
@@ -29,17 +31,11 @@ namespace death
 	// TMObject 
 	// =====================================
 
-
-
-	// =====================================
-	// TMObject 
-	// =====================================
-
-	class TMObject : public chaos::Tickable, public chaos::JSONSerializable
+	class TMObject : public GameEntity
 	{
 		DEATH_TILEDLEVEL_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMObject, chaos::Tickable);
+		CHAOS_OBJECT_DECLARE_CLASS2(TMObject, GameEntity);
 
 	public:
 
@@ -84,11 +80,6 @@ namespace death
 		int id = 0;
 		/** whether the particles created for this object should be under its ownership (instead of the layers) */
 		bool particle_ownership = false;
-		/** the bounding box of the object */
-		chaos::box2 bounding_box;
-
-		/** the allocations for this object */
-		chaos::shared_ptr<chaos::ParticleAllocationBase> allocation;
 
 		/** a reference to the layer instance */
 		TMLayerInstance* layer_instance = nullptr;

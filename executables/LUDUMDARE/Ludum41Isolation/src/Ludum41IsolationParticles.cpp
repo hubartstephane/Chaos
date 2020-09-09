@@ -171,7 +171,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 
 	if (player_pawn != nullptr)
 	{
-		chaos::box2 pawn_box = player_pawn->GetBox();
+		chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 
 		chaos::box2 new_ball_box = ball_box;
 		if (chaos::RestrictToOutside(pawn_box, new_ball_box))

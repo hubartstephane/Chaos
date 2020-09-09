@@ -27,7 +27,7 @@ namespace death
 		PlayerPawn const* player_pawn = player->GetPawn();
 		if (player_pawn != nullptr)
 		{
-			chaos::box2 pawn_box = player_pawn->GetBox();
+			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 			if (!IsGeometryEmpty(pawn_box))
 			{
 				chaos::box2 safe_camera = camera_box;

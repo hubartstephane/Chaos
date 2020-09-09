@@ -92,7 +92,7 @@ bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
     // cast in a surface
 	chaos::box2 spawner_box = GetBoundingBox(true);
 
-    chaos::box2 pawn_box = GetLayerInstance()->GetGame()->GetPlayerPawn(0)->GetBox();
+    chaos::box2 pawn_box = GetLayerInstance()->GetGame()->GetPlayerPawn(0)->GetBoundingBox();
 
 	LudumLevelInstance* ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 

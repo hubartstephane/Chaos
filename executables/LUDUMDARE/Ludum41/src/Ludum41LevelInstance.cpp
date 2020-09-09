@@ -227,9 +227,9 @@ death::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(death::Player* player)
 
 	if (player_pawn != nullptr)
 	{
-		chaos::box2 box = player_pawn->GetBox();
+		chaos::box2 box = player_pawn->GetBoundingBox();
 		box.half_size = glm::vec2(player_length * 0.5f, LudumPlayer::PLAYER_HEIGHT * 0.5f);
-		player_pawn->SetBox(box);
+		player_pawn->SetBoundingBox(box);
 
 		RestrictPawnToWorld(player_pawn);
 	}

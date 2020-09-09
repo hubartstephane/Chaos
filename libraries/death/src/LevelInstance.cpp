@@ -272,7 +272,7 @@ namespace death
 			return;
 
 		// keep player pawn inside camera safe zone
-		chaos::box2 pawn_box = player_pawn->GetBox();
+		chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 		if (!IsGeometryEmpty(pawn_box))
 		{
 			chaos::box2 safe_camera = camera_box;
@@ -346,7 +346,7 @@ namespace death
 #if _DEBUG	
 			&& !game->GetCheatMode()
 #endif
-			){
+		){
 			level_timeout -= delta_time;
 			if (level_timeout < 0.0f)
 				level_timeout = 0.0f;

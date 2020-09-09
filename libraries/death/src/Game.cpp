@@ -1278,7 +1278,7 @@ namespace death
 	}
 
 
-	bool Game::CheckLevelCompleted()
+	bool Game::CheckLevelCompletion()
 	{
 		// cheat code
 #if _DEBUG
@@ -1313,6 +1313,8 @@ namespace death
 		return true;
 	}
 
+	
+
 	bool Game::TickGameLoop(float delta_time)
 	{
 
@@ -1320,7 +1322,7 @@ namespace death
 
 
 		// level finished
-		if (CheckLevelCompleted())
+		if (CheckLevelCompletion())
 		{
 			bool can_complete = 
 #if _DEBUG
@@ -1336,7 +1338,7 @@ namespace death
 			}
 		}
 
-		// shu46 : can have game over even if CheckLevelCompleted() !!!
+		// shu46 : can have game over even if CheckLevelCompletion() !!!
 
 
 
@@ -1472,10 +1474,6 @@ namespace death
 
 	bool Game::SetNextLevel(bool looping_levels)
 	{
-#if _DEBUG
-		SetCheatSkipLevelRequired(false);
-#endif
-
 		// existing any level
 		size_t count = levels.size();
 		if (count == 0)
@@ -1535,13 +1533,16 @@ namespace death
 	{
 		chaos::shared_ptr<Level> old_level = GetLevel();
 
+#if _DEBUG
+		SetCheatSkipLevelRequired(false);
+#endif
+
 		// destroy current level instance, so that new instance can get all resources it want
 		if (level_instance != nullptr)
 		{
 			level_instance->OnLevelEnded();
 			level_instance = nullptr;
 		}
-
 		// create the new level instance if required
 		if (new_level != nullptr)
 		{
@@ -1550,7 +1551,6 @@ namespace death
 				return false;
 			level_instance->OnLevelStarted();
 		}
-
 		// change the level
 		OnLevelChanged(new_level, old_level.get(), level_instance.get());
 

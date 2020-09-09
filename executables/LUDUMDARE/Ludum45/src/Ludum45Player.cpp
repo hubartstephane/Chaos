@@ -295,7 +295,7 @@ void LudumPlayer::FireProjectiles()
     float velocity = ludum_game->fire_velocity;
     float damage = GetCurrentDamageValue();
 
-    chaos::box2 particle_box = pawn->GetBox();
+    chaos::box2 particle_box = pawn->GetBoundingBox();
     particle_box.half_size = ratio_to_player * particle_box.half_size;
     particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 

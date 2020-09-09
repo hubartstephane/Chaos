@@ -48,14 +48,14 @@ namespace death
 			if (player_pawn == nullptr)
 				continue;
 			// get the player box
-			chaos::box2 pawn_box = player_pawn->GetBox();
+			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 			if (IsGeometryEmpty(pawn_box))
 				continue;
 			// scroll the player and keep it into world
 			pawn_box.position[axis_index] += scroll_displacement;
 			if (!IsGeometryEmpty(world))
 				chaos::RestrictToInside(world, pawn_box, false);
-			player_pawn->SetBox(pawn_box);
+			player_pawn->SetBoundingBox(pawn_box);
 
 			// the camera follows the player in X & Y direction
 			chaos::box2 safe_camera = camera_box;
@@ -99,12 +99,12 @@ namespace death
 			if (player_pawn == nullptr)
 				continue;
 			// get the pawn box
-			chaos::box2 pawn_box = player_pawn->GetBox();
+			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 			if (IsGeometryEmpty(pawn_box))
 				continue;
 			// keep player inside camera
 			if (chaos::RestrictToInside(camera_box, pawn_box, false))
-				player_pawn->SetBox(pawn_box);
+				player_pawn->SetBoundingBox(pawn_box);
 		}
 
 		return true;

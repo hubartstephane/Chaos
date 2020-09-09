@@ -60,22 +60,20 @@ namespace death
 
 	bool TMObject::SerializeFromJSON(nlohmann::json const& json)
 	{
-		if (!chaos::JSONSerializable::SerializeFromJSON(json))
+		if (!GameEntity::SerializeFromJSON(json))
 			return false;
 		chaos::JSONTools::GetAttribute(json, "NAME", name);
 		chaos::JSONTools::GetAttribute(json, "OBJECT_ID", id);
-		chaos::JSONTools::GetAttribute(json, "BOUNDING_BOX", bounding_box);
 		chaos::JSONTools::GetAttribute(json, "PARTICLE_OWNERSHIP", particle_ownership);
 		return true;
 	}
 
 	bool TMObject::SerializeIntoJSON(nlohmann::json& json) const
 	{
-		if (!chaos::JSONSerializable::SerializeIntoJSON(json))
+		if (!GameEntity::SerializeIntoJSON(json))
 			return false;
 		chaos::JSONTools::SetAttribute(json, "NAME", name);
 		chaos::JSONTools::SetAttribute(json, "OBJECT_ID", id);
-		chaos::JSONTools::SetAttribute(json, "BOUNDING_BOX", bounding_box);
 		chaos::JSONTools::SetAttribute(json, "PARTICLE_OWNERSHIP", particle_ownership);
 		return true;
 	}

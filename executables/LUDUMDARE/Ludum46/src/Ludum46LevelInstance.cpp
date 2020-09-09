@@ -134,12 +134,6 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 			{
 				completion_timer = completion_delay; // forced to be mutable !??
 			}
-
-
-
-
-
-
 			return true;
 		}
 	}

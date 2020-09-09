@@ -298,7 +298,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 
 
 
-	chaos::box2 pawn_box = player_pawn->GetBox();
+	chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 	pawn_box.half_size *= 0.7f;
 	if (!particle.player_ownership && update_data.player != nullptr)
 	{

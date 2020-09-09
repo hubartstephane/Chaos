@@ -369,7 +369,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	int const attack_key_buttons[] = { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1 };
 
 	// get player position
-	chaos::box2 pawn_box = pawn->GetBox();
+	chaos::box2 pawn_box = pawn->GetBoundingBox();
 	glm::vec2& pawn_position = pawn_box.position;
 
 	// sum the forces 

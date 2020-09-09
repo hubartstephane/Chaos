@@ -508,7 +508,7 @@ namespace death
 		/** override */
 		virtual PlayerPawn * CreatePlayerPawn(Player* player) override;
 		/** the sub function responsible for player pawn creation */
-		virtual PlayerPawn * CreatePlayerPawn(Player* player, TMPlayerStart* player_start);
+		virtual PlayerPawn * CreatePlayerPawnAtPlayerStart(Player* player, TMPlayerStart* player_start);
 
 		/** get the player start used for an incomming player */
 		virtual TMPlayerStart* GetPlayerStartForPawn(Player* player);

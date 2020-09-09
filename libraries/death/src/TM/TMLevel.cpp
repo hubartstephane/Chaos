@@ -482,7 +482,7 @@ namespace death
 			
 			chaos::ParticleAllocationBase* allocation = chaos::ParticleTextGenerator::CreateTextAllocation(particle_layer.get(), result);
 			if (particle_ownership)
-				object->allocation = allocation;
+				object->allocations = allocation;
 		}
 		// create additionnal particles (TILES)		
 		else if (chaos::TiledMap::GeometricObjectTile const* tile = in_geometric_object->GetObjectTile())
@@ -524,10 +524,10 @@ namespace death
 			if (particle_ownership)
 			{
 				effective_particle_populator->FlushParticles();
-				object->allocation = effective_particle_populator->GetParticleAllocation();
+				object->allocations = effective_particle_populator->GetParticleAllocation();
 
 				// whether the allocation wants to kwow about the TMObject
-				TMObject const ** allocation_data = object->allocation->GetOwnedData<TMObject const *>();
+				TMObject const ** allocation_data = object->allocations->GetOwnedData<TMObject const *>();
 				if (allocation_data != nullptr)
 					*allocation_data = object;
 			}
@@ -1124,7 +1124,7 @@ namespace death
 			if (player_pawn == nullptr)
 				continue;
 
-			chaos::box2 pawn_box = player_pawn->GetBox();
+			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 			if (chaos::IsGeometryEmpty(pawn_box))
 				continue;
 
@@ -1333,6 +1333,10 @@ namespace death
 		if (level == nullptr)
 			return nullptr;
 
+		// XXX : If the player start is being created in a TiledLayer through the Factory system, it has no name
+		//       It cannot be though searched by name
+		//       we will find take the very first PlayerStart
+
 		// search PLAYER START NAME
 		std::string const* player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
 
@@ -1345,7 +1349,7 @@ namespace death
 		return result;
 	}
 
-	PlayerPawn* TMLevelInstance::CreatePlayerPawn(Player* player, TMPlayerStart* player_start)	
+	PlayerPawn* TMLevelInstance::CreatePlayerPawnAtPlayerStart(Player* player, TMPlayerStart* player_start)	
 	{
 		// create a pawn 
 		PlayerPawn* result = LevelInstance::CreatePlayerPawn(player);
@@ -1399,8 +1403,25 @@ namespace death
 		layer_instance->FinalizeParticles(player_allocation);
 
 
+		
 
 		result->SetAllocation(player_allocation);
+
+
+
+
+
+
+
+
+
+
+
+		result->SynchronizeData(true);
+
+
+
+
 		return result;
 	}
 
@@ -1412,7 +1433,7 @@ namespace death
 			return nullptr;
 
 		// create the pawn
-		PlayerPawn* result = CreatePlayerPawn(player, player_start);
+		PlayerPawn* result = CreatePlayerPawnAtPlayerStart(player, player_start);
 		if (result == nullptr)
 			return nullptr;
 

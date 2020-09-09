@@ -96,7 +96,7 @@ std::vector<chaos::box2> ParticleEnemyLayerTrait::BeginUpdateParticles(float del
 
 	size_t count = game->GetPlayerCount();
 	for (size_t i = 0; i < count; ++i)
-		result.push_back(game->GetPlayerPawn(i)->GetBox());
+		result.push_back(game->GetPlayerPawn(i)->GetBoundingBox());
 	return result;
 }
 
@@ -179,7 +179,7 @@ std::vector<chaos::box2> ParticleBonusLayerTrait::BeginUpdateParticles(float del
 
 	size_t count = game->GetPlayerCount();
 	for (size_t i = 0; i < count; ++i)
-		result.push_back(game->GetPlayerPawn(i)->GetBox());
+		result.push_back(game->GetPlayerPawn(i)->GetBoundingBox());
 	return result;
 }
 
@@ -335,7 +335,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 	death::PlayerPawn const* player_pawn = update_data.player->GetPawn();
 	if (player_pawn != nullptr)
 	{
-		chaos::box2 player_box = player_pawn->GetBox();
+		chaos::box2 player_box = player_pawn->GetBoundingBox();
 		player_box.half_size *= 0.7f;
 		if (!particle.player_ownership && update_data.player != nullptr)
 		{

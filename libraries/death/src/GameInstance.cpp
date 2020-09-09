@@ -174,7 +174,7 @@ namespace death
 		PlayerPawn const * player_pawn = GetPlayerPawn(0);
 		if (player_pawn != nullptr)
 		{
-			chaos::box2 pawn_box = player_pawn->GetBox();
+			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
 			main_uniform_provider.AddVariableValue("pawn_box", chaos::EncodeBoxToVector(pawn_box));
 		}
 	}

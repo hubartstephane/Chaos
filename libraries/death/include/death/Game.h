@@ -331,7 +331,7 @@ namespace death
 		/** test whether there is a game over */
 		virtual bool CheckGameOverCondition();
 		/** check whether we must go to next level */
-		virtual bool CheckLevelCompleted();
+		virtual bool CheckLevelCompletion();
 		/** check whether we can go to next level */
 		virtual bool CanCompleteLevel();
 

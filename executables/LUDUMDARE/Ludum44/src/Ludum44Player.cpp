@@ -63,7 +63,7 @@ void LudumPlayer::FireChargedProjectile()
         return;
 
     int count = 1;
-    ludum_game_instance->FireProjectile("charged_fire", GetPawn()->GetBox(), 1.0f, count, "thrust", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_charged_damages[current_charged_damage_index], true, true);
+    ludum_game_instance->FireProjectile("charged_fire", GetPawn()->GetBoundingBox(), 1.0f, count, "thrust", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_charged_damages[current_charged_damage_index], true, true);
 }
 
 void LudumPlayer::FireNormalProjectile()
@@ -76,7 +76,7 @@ void LudumPlayer::FireNormalProjectile()
         return;
 
     int count = ludum_game->player_fire_rates[current_fire_rate_index];
-    ludum_game_instance->FireProjectile("fire", GetPawn()->GetBox(), 0.3f, count, "fire", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_damages[current_damage_index], false, true);
+    ludum_game_instance->FireProjectile("fire", GetPawn()->GetBoundingBox(), 0.3f, count, "fire", 0.0f, 0.1f, ludum_game->fire_velocity, ludum_game->player_damages[current_damage_index], false, true);
 }
 
 void LudumPlayer::UpdatePlayerFire(float delta_time)

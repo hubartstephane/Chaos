@@ -11,7 +11,7 @@ namespace death
 
 	class TMParticlePopulator
 	{
-		static size_t const PARTICLE_BUFFER_SIZE = 100;
+		static size_t const PARTICLE_BUFFER_SIZE = 256;
 
 	public:
 

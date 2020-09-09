@@ -1347,15 +1347,20 @@ namespace death
 
 	PlayerPawn* TMLevelInstance::CreatePlayerPawn(Player* player, TMPlayerStart* player_start)	
 	{
+		// create a pawn 
+		PlayerPawn* result = LevelInstance::CreatePlayerPawn(player);
+		if (result == nullptr)
+			return nullptr;
+
 		// check the layer instance
 		TMLayerInstance* layer_instance = player_start->GetLayerInstance();
 		if (layer_instance == nullptr)
-			return nullptr;
+			return result;
 
 		// create a particle populator
 		TMParticlePopulator particle_populator;
 		if (!particle_populator.Initialize(layer_instance))
-			return nullptr;
+			return result;
 
 		// create the particle
 		int player_gid = 0;
@@ -1388,15 +1393,12 @@ namespace death
 		// get the allocation and finalize the layer
 		chaos::ParticleAllocationBase* player_allocation = particle_populator.GetParticleAllocation();
 		if (player_allocation == nullptr)
-			return nullptr;
+			return result;
 		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
 		//          call it twice as a fast fix
 		layer_instance->FinalizeParticles(player_allocation);
 
-		// create a pawn 
-		PlayerPawn* result = LevelInstance::CreatePlayerPawn(player);
-		if (result == nullptr)
-			return result;
+
 
 		result->SetAllocation(player_allocation);
 		return result;

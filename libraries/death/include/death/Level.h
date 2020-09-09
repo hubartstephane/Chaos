@@ -2,6 +2,7 @@
 
 #include <chaos/StandardHeaders.h>
 #include <chaos/Object.h>
+#include <chaos/NamedObject.h>
 #include <chaos/FileResource.h>
 #include <chaos/SubClassOf.h>
 
@@ -14,7 +15,7 @@ namespace death
 	// Level : a simple game level
 	// =====================================
 
-	class Level : public chaos::Object, public chaos::FileResource
+	class Level : public chaos::Object, public chaos::FileResource, public chaos::NamedObject
 	{
 		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
 

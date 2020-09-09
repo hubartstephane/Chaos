@@ -76,9 +76,13 @@ namespace death
 		bool Initialize(GLFWwindow * in_glfw_window);
 
 		/** Get a level by its index */
-		chaos::AutoCastable<Level> GetLevel(int level_index);
+		chaos::AutoCastable<Level> FindLevelByIndex(int level_index);
 		/** Get a level by its index */
-		chaos::AutoConstCastable<Level> GetLevel(int level_index) const;
+		chaos::AutoConstCastable<Level> FindLevelByIndex(int level_index) const;
+		/** Get a level by request */
+		chaos::AutoCastable<Level> Game::FindLevel(chaos::ObjectRequest request);
+		/** Get a level by request */
+		chaos::AutoConstCastable<Level> Game::FindLevel(chaos::ObjectRequest request) const;
 
 		/** returns the game name */
 		char const * GetGameName() const { return game_name; }
@@ -383,10 +387,9 @@ namespace death
 		/** user defined method to create the gameover HUD */
 		virtual GameHUD * DoCreateGameOverHUD();
 
+
 		/** change the current level */
 		bool SetCurrentLevel(Level * new_level);
-		/** change the current level from its index */
-		bool SetCurrentLevel(int level_index);
 		/** change the current level for the next */
 		bool SetNextLevel(bool looping_levels);
 		/** reflex method whenever the level is changed */

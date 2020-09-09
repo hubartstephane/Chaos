@@ -10,6 +10,7 @@
 #include <death/GameParticles.h>
 
 #include <chaos/KeyDefinition.h>
+#include <chaos/BoostTools.h>
 #include <chaos/LogTools.h>
 
 #include <chaos/InputMode.h>
@@ -557,6 +558,7 @@ namespace death
 			if (level == nullptr)
 				continue;
 			// initialize it
+			level->SetName(chaos::BoostTools::PathToName(it->path()).c_str());
 			level->SetPath(it->path());
 			level->level_index = level_index;
 			// store it
@@ -565,7 +567,7 @@ namespace death
 
 		// sort the levels
 		std::sort(levels.begin(), levels.end(),
-			[](chaos::shared_ptr<Level> l1, chaos::shared_ptr<Level> l2)
+			[](chaos::shared_ptr<Level> & l1, chaos::shared_ptr<Level> & l2)
 		{
 			return (l1->level_index < l2->level_index);
 		});
@@ -1501,7 +1503,17 @@ namespace death
 		return SetCurrentLevel(levels[i + 1].get());
 	}
 	
-	chaos::AutoCastable<Level> Game::GetLevel(int level_index)
+	chaos::AutoCastable<Level> Game::FindLevel(chaos::ObjectRequest request)
+	{
+		return request.FindObject(levels);
+	}
+
+	chaos::AutoConstCastable<Level> Game::FindLevel(chaos::ObjectRequest request) const
+	{
+		return request.FindObject(levels);
+	}
+
+	chaos::AutoCastable<Level> Game::FindLevelByIndex(int level_index)
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1510,21 +1522,13 @@ namespace death
 		return nullptr;
 	}
 
-	chaos::AutoConstCastable<Level> Game::GetLevel(int level_index) const
+	chaos::AutoConstCastable<Level> Game::FindLevelByIndex(int level_index) const
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
 			if (levels[i]->GetLevelIndex() == level_index)
 				return levels[i].get();
 		return nullptr;
-	}
-
-	bool Game::SetCurrentLevel(int level_index)
-	{
-		Level * new_level = GetLevel(level_index); // we required a level_index, level should not be nullptr !
-		if (new_level == nullptr)
-			return false;
-		return SetCurrentLevel(new_level);
 	}
 
 	bool Game::SetCurrentLevel(Level * new_level) // new_level can be set to nullptr, just to clear every thing

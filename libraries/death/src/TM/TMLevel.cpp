@@ -527,7 +527,7 @@ namespace death
 				object->allocations = effective_particle_populator->GetParticleAllocation();
 
 				// whether the allocation wants to kwow about the TMObject
-				TMObject const ** allocation_data = object->allocations->GetOwnedData<TMObject const *>();
+				GameEntity const ** allocation_data = object->allocations->GetOwnedData<GameEntity const *>();
 				if (allocation_data != nullptr)
 					*allocation_data = object;
 			}

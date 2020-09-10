@@ -25,13 +25,13 @@ namespace death
 	// TMParticleLayerTrait
 	// =====================================
 
-	class TMParticleLayerTrait : public chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault, TMObject const *>
+	class TMParticleLayerTrait : public chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault, GameEntity const *>
 	{
-#if 1
+#if 0
 	public:
 
 		//template<typename T>
-		glm::mat4 BeginParticlesToPrimitives(chaos::ParticleConstAccessor<TMParticle>& accessor, TMObject const * allocation_data) const
+		glm::mat4 BeginParticlesToPrimitives(chaos::ParticleConstAccessor<TMParticle>& accessor, GameEntity const * allocation_data) const
 		{
 			if (allocation_data == nullptr)
 				return glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -39,7 +39,7 @@ namespace death
 		}
 
 		//template<typename T>
-		void ParticleToPrimitives(TMParticle const & particle, chaos::QuadOutput<chaos::VertexDefault>& output, glm::mat4 const& m, TMObject const * allocation_trait) const
+		void ParticleToPrimitives(TMParticle const & particle, chaos::QuadOutput<chaos::VertexDefault>& output, glm::mat4 const& m, GameEntity const * allocation_trait) const
 		{
 			chaos::QuadPrimitive<chaos::VertexDefault> primitive = output.AddPrimitive();
 			chaos::ParticleToPrimitive(particle, primitive);

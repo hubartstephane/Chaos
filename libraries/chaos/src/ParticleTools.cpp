@@ -36,16 +36,19 @@ namespace chaos
             return &particles[index];
         }
 
-        glm::vec2 GetParticlePosition(ParticleAllocationBase const* allocation, size_t index)
-        {
-            return GetParticleBox(allocation, index).position;
-        }
-
-        box2 GetParticleBox(ParticleAllocationBase const* allocation, size_t index)
+        std::optional<glm::vec2> GetParticlePosition(ParticleAllocationBase const* allocation, size_t index)
         {
             ParticleDefault const* particle = GetParticle(allocation, index);
             if (particle == nullptr)
-                return box2();
+                return {};
+            return particle->bounding_box.position;
+        }
+
+        std::optional<box2> GetParticleBox(ParticleAllocationBase const* allocation, size_t index)
+        {
+            ParticleDefault const* particle = GetParticle(allocation, index);
+            if (particle == nullptr)
+                return {};
             return particle->bounding_box;
         }
 

@@ -95,6 +95,13 @@ namespace chaos
             count = std::max(30 * real_vertices_per_primitive, required_size / vertex_size); // a default buffer of 30 primitives
         // compute buffer size and allocate a buffer
         size_t bufsize = count * vertex_size;         
+
+        // shuxxx 46
+        //
+        // maybe we could support non buffer_cache = nullptr
+
+
+
         if (!buffer_cache->GetBuffer(bufsize, vertex_buffer))
             return nullptr;
         // map the buffer

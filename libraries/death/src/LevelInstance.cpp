@@ -298,9 +298,12 @@ namespace death
 		chaos::box2 world = GetBoundingBox();
 		if (IsGeometryEmpty(world))
 			return;
-		chaos::box2 box = chaos::ParticleTools::GetParticleBox(allocation, index);		
-		chaos::RestrictToInside(world, box, false);
-		chaos::ParticleTools::SetParticleBox(allocation, index, box);
+		std::optional<chaos::box2> box_opt = chaos::ParticleTools::GetParticleBox(allocation, index);		
+		if (box_opt)
+		{
+			chaos::RestrictToInside(world, *box_opt, false);
+			chaos::ParticleTools::SetParticleBox(allocation, index, *box_opt);
+		}
 	}
 
 	void LevelInstance::RestrictPawnToWorld(PlayerPawn* player_pawn)

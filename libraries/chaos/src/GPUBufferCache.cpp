@@ -22,6 +22,9 @@ namespace chaos
             if (buffer_size < required_size)            
                 continue;
             // or too big ?
+
+            // shuxxx46 shu46 : why if 0
+
             if (0 && buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
                 continue;
             // buffer found            

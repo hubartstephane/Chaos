@@ -9,7 +9,6 @@
 
 namespace death
 {
-
 	// =============================================
 	// GameEntity
 	// =============================================
@@ -45,6 +44,11 @@ namespace death
 		/** copy the bounding box from particle to entity or the opposite */
 		void SynchronizeData(bool particle_to_entity);
 
+		/** get the entity mode */
+		bool IsParticleMaster() const { return is_particle_master; }
+		/** set the entity mode */
+		void SetParticleMaster(bool in_value) { is_particle_master = in_value; }
+
 	protected:
 
 		/** called whenever the box is changed */
@@ -52,6 +56,8 @@ namespace death
 
 	protected:
 
+		/** whether the particle 0 data is the one to be used first */
+		bool is_particle_master = true;
 		/** the box for the entity */
 		chaos::box2 bounding_box;
 		/** the allocation for the entity */

@@ -39,8 +39,7 @@ namespace death
 		void ParticleToPrimitives(TMParticle const& p, chaos::QuadOutput<chaos::VertexDefault>& output) const
 		{
 
-			int i = 0;
-			++i;
+	
 		}
 
 		void ParticleToPrimitives(TMParticle const& p, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const

@@ -113,12 +113,12 @@ namespace death
 			return typed_object->IsObjectOfType("LayerBoundingBox");
 		}
 
-		bool IsPlayerStartObject(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsPlayerStart(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("PlayerStart");
 		}
 
-		bool IsCameraObject(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsCameraTemplate(chaos::TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Camera");
 		}

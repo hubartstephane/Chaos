@@ -38,7 +38,7 @@ namespace death
 		/** the displacement speed */
 		float scroll_speed = 0.0f;
 		/** the axis of displacement */
-		chaos::Axis axis;
+		chaos::Axis axis = chaos::Axis::AXIS_X;
 	};
 
 }; // namespace death

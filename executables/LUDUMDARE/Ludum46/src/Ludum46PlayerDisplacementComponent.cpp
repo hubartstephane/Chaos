@@ -8,6 +8,7 @@
 
 
 #include "chaos/TiledMap.h"
+#include "chaos/Direction.h"
 
 #include "death/TM.h"
 #include "death/CollisionMask.h"
@@ -48,11 +49,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// get player position
 	chaos::box2 pawn_box = pawn->GetBoundingBox();
-	glm::vec2& pawn_position = pawn_box.position;
 
-
-	pawn_box.position += 100.0f * stick_position * delta_time;
-
+	chaos::box2 next_pawn_box = pawn_box;
+	next_pawn_box.position += 200.0f * stick_position * delta_time;
 
 
 	std::vector<death::TileCollisionInfo> colliding_tiles;
@@ -60,7 +59,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	death::TMLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(pawn_box, death::CollisionMask::PLAYER);
+		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(next_pawn_box | pawn_box, death::CollisionMask::PLAYER);
 
 		while (it)
 		{
@@ -69,6 +68,67 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				it.NextAllocation();
 				continue;
 			}
+
+			if (!chaos::Collide(next_pawn_box, it->particle->bounding_box))
+			{
+				++it;
+				continue;
+			}
+
+
+
+			int particle_flags = it->particle->flags;
+
+
+			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) // only test LEFT side if no side neighbour
+			{
+				if (next_pawn_box.position.x > pawn_box.position.x)
+				{
+					next_pawn_box.position.x = pawn_box.position.x;
+
+				}
+			}
+			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
+			{
+				if (next_pawn_box.position.x < pawn_box.position.x)
+				{
+					next_pawn_box.position.x = pawn_box.position.x;
+				}
+			}
+
+			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
+			{
+				if (next_pawn_box.position.y < pawn_box.position.y)
+				{
+					next_pawn_box.position.y = pawn_box.position.y;
+
+				}
+
+
+			}
+			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
+			{
+
+				if (next_pawn_box.position.y > pawn_box.position.y)
+				{
+					next_pawn_box.position.y = pawn_box.position.y;
+
+				}
+			}
+
+
+
+
+
+
+
+			if (chaos::RestrictToOutside(it->particle->bounding_box, next_pawn_box))
+			{
+				level_instance = level_instance;
+			}
+
+
+
 
 			if (it->particle->flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP)
 			{
@@ -117,7 +177,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-	pawn->SetBoundingBox(pawn_box);
+	pawn->SetBoundingBox(next_pawn_box);
 
 	return true;
 }

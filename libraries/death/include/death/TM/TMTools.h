@@ -30,9 +30,9 @@ namespace death
 		/** returns true whether the object defines an explicit layer bounding */
 		bool IsLayerBoundingBox(chaos::TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a player start */
-		bool IsPlayerStartObject(chaos::TiledMap::TypedObject const* typed_object);
-		/** returns true whether the object is a camera */
-		bool IsCameraObject(chaos::TiledMap::TypedObject const* typed_object);
+		bool IsPlayerStart(chaos::TiledMap::TypedObject const* typed_object);
+		/** returns true whether the object is a camera template */
+		bool IsCameraTemplate(chaos::TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a finish trigger */
 		bool IsFinishTrigger(chaos::TiledMap::TypedObject const* typed_object);
 		/** returns true whether the object is a checpoint trigger */

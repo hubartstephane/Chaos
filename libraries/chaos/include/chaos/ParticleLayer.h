@@ -952,6 +952,9 @@ namespace ParticleTraitTools
         /** returns the OpenGL primitive type */
         virtual GLenum GetGLPrimitiveType() const { return GL_NONE; }
 
+		/** force GPU buffer update */
+		void SetGPUBufferDirty() { require_GPU_update = true; }
+
 		/** getter on the extra data */
 		template<typename T>
 		T* GetOwnedData()

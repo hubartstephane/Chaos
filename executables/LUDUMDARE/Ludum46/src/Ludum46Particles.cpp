@@ -299,6 +299,11 @@ int ParticleBurnedSoulLayerTrait::BeginParticlesToPrimitives(chaos::ParticleCons
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
+
+
+
+#if 0
+
 	LudumPlayerDisplacementComponent* displacement_component = game->GetPlayerDisplacementComponent(0);
 	if (displacement_component != nullptr)
 	{
@@ -309,30 +314,32 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 		if (std::abs(pawn_velocity.x) < 1.0f)
 		{
 			particle.frame_index = 0;
-			particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
-		else if (std::abs(pawn_velocity.x) < 12.0f)
+		else
 		{
-			particle.frame_index = 3;
+			if (std::abs(pawn_velocity.x) < 12.0f)
+			{
+				particle.frame_index = 3;
+
+			}
+			else
+			{
+				float max_pawn_velocity = displacement_component->GetDisplacementInfo().max_pawn_velocity.x;
+
+				float speed_factor = 8.0f;
+				if (max_pawn_velocity > 0.0f)
+					speed_factor = std::max(1.0f, speed_factor * std::abs(pawn_velocity.x) / max_pawn_velocity);
+
+				particle.animation_timer += speed_factor * delta_time;
+
+				particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
+			}
+
 			if (pawn_velocity.x < 0.0f)
 				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
-		}
-		else 
-		{
-			float max_pawn_velocity = displacement_component->GetDisplacementInfo().max_pawn_velocity.x;
-
-			float speed_factor = 8.0f;
-			if (max_pawn_velocity > 0.0f)
-				speed_factor = std::max(1.0f, speed_factor * std::abs(pawn_velocity.x) / max_pawn_velocity);
-
-			particle.animation_timer += speed_factor * delta_time;
-
-			if (pawn_velocity.x < 0.0f)
-				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
-
-			particle.frame_index = 1 + (int)std::fmodf(particle.animation_timer, 2.0f);
 		}
 	}
+#endif
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{

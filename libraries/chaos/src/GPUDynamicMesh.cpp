@@ -15,6 +15,10 @@ namespace chaos
 
     void GPUDynamicMesh::Clear(GPUBufferCache* buffer_cache)
     {
+        // XXX : shu on pourrait aussi donner les IndexBuffer => ATTENTION, l index buffer GPURenderer::QUADIndexBuffer ne doit pas etre donné !
+
+
+
         if (buffer_cache != nullptr) // give buffers to cache if we want that
             for (GPUDynamicMeshElement& element : elements)
                 buffer_cache->GiveBuffer(element.vertex_buffer, last_rendered_fence.get());
@@ -46,6 +50,11 @@ namespace chaos
                 continue;
 
             glBindVertexArray(vertex_array->GetResourceID());
+
+
+
+
+
 
             // draw all primitives
             for (GPUDrawPrimitive const& primitive : element.primitives)

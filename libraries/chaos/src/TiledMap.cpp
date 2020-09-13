@@ -1042,12 +1042,12 @@ namespace chaos
 		{
 			assert(ContainTile(pos));
 			pos = pos - offset;
-			return tile_indices[(size_t)(pos.x + pos.y * size.y)];
+			return tile_indices[(size_t)(pos.x + pos.y * size.x)];
 		}
 
 		bool TileLayerChunk::ContainTile(glm::ivec2 const& pos) const
 		{
-			if (pos.x >= offset.x && pos.x < size.x && pos.y >= offset.y && pos.y < size.y)
+			if ((pos.x >= offset.x) && (pos.x < offset.x + size.x) && (pos.y >= offset.y) && (pos.y < offset.y + size.y))
 				return true;
 			return false;
 		}
@@ -1107,7 +1107,7 @@ namespace chaos
 				{
 					glm::ivec2 pos = glm::ivec2(
 						chunk.offset.x + (i % chunk.size.x),
-						chunk.offset.y + (i / chunk.size.y));
+						chunk.offset.y + (i / chunk.size.x));
 
 					// search all 4 possible neighbours ...
 					int neighbour_flags = 0;

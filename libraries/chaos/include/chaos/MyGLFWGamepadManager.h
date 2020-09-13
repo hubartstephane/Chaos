@@ -34,6 +34,15 @@ namespace chaos
 		BECOME_PRESSED = 4
 	};
 
+
+
+	// shuxxx see glfw3.h => some values seem to differ    GLFW_GAMEPAD_BUTTON_LEFT_THUMB ? etc
+
+
+
+
+
+
 	enum XBoxButton : int // XXXX: no class, so this can be implicitly converted to int
 	{
 		/** index in buttons of A for XBOX like pad */

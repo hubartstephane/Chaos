@@ -6,6 +6,9 @@
 #include "Ludum46GameInstance.h"
 #include "Ludum46Particles.h"
 
+
+#include "chaos/TiledMap.h"
+
 #include "death/TM.h"
 #include "death/CollisionMask.h"
 
@@ -22,7 +25,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// get player inputs of interrests
 	glm::vec2 stick_position = player->GetLeftStickPosition();
 
-
+	stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
+	stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
 
 #if 0
 	if (displacement_info.discrete_stick_mode)
@@ -45,6 +49,66 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// get player position
 	chaos::box2 pawn_box = pawn->GetBoundingBox();
 	glm::vec2& pawn_position = pawn_box.position;
+
+
+	pawn_box.position += 100.0f * stick_position * delta_time;
+
+
+
+	std::vector<death::TileCollisionInfo> colliding_tiles;
+
+	death::TMLevelInstance* level_instance = GetLevelInstance();
+	if (level_instance != nullptr)
+	{
+		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(pawn_box, death::CollisionMask::PLAYER);
+
+		while (it)
+		{
+			if (it->allocation == pawn->GetAllocation())
+			{
+				it.NextAllocation();
+				continue;
+			}
+
+			if (it->particle->flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP)
+			{
+
+
+
+
+				level_instance = level_instance;
+			}
+
+
+
+
+			colliding_tiles.push_back(*it);
+			++it;
+		}
+	}
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

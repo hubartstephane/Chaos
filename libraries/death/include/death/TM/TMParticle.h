@@ -13,11 +13,18 @@ namespace death
 	{
 	public:
 
+
+
 		// the ID for the "tile" (0 if the particle is not a tile)
 		int gid = 0;
 		// the bitmap for the particle
 		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; 
 	};
+
+
+
+
+
 
 	CHAOS_REGISTER_CLASS2(TMParticle, chaos::ParticleDefault);
 
@@ -27,6 +34,24 @@ namespace death
 
 	class TMParticleLayerTrait : public chaos::ParticleLayerTrait<TMParticle, chaos::VertexDefault, GameEntity const *>
 	{
+	public:
+
+		void ParticleToPrimitives(TMParticle const& p, chaos::QuadOutput<chaos::VertexDefault>& output) const
+		{
+
+			int i = 0;
+			++i;
+		}
+
+		void ParticleToPrimitives(TMParticle const& p, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const
+		{
+			auto primitive = output.AddPrimitive();
+			chaos::ParticleToPrimitive(p, primitive);
+			if (p.flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM)
+				for (auto & v : primitive)
+					v.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		}
+
 #if 0
 	public:
 

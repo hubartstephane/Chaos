@@ -97,7 +97,7 @@ namespace death
 		/** create a Path specializable method */
 		virtual TMPath * DoCreatePath();
 		/** create a Camera specializable method */
-		virtual TMCameraTemplate* DoCreateCamera();
+		virtual TMCameraTemplate* DoCreateCameraTemplate();
 		/** create a PlayerStartObject specializable method */
 		virtual TMPlayerStart* DoCreatePlayerStart();
 		/** create a FinishingTriggerObject specializable method */

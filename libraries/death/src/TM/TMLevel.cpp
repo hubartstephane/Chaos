@@ -65,11 +65,11 @@ namespace death
 	TMObjectFactory TMLevel::DoGetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 	{
 		// player start 
-		if (TMTools::IsPlayerStartObject(in_typed_object))
+		if (TMTools::IsPlayerStart(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePlayerStart(););
 		// camera 
-		if (TMTools::IsCameraObject(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCamera(););
+		if (TMTools::IsCameraTemplate(in_typed_object))
+			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCameraTemplate(););
 		// path
 		if (chaos::TiledMap::GeometricObjectPolygon const * polygon = auto_cast(in_typed_object))
 			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePath(););
@@ -142,7 +142,7 @@ namespace death
 		return new TMPath();
 	}
 
-	TMCameraTemplate* TMLevel::DoCreateCamera()
+	TMCameraTemplate* TMLevel::DoCreateCameraTemplate()
 	{
 		return new TMCameraTemplate();
 	}
@@ -1401,10 +1401,8 @@ namespace death
 		// shuxxx : first time FinalizeParticles(...) was called, there was no effect because the PlayerStartLayer has no particle. 
 		//          call it twice as a fast fix
 		layer_instance->FinalizeParticles(player_allocation);
-
-
 		
-
+		// give the allocation tp the pawn
 		result->SetAllocation(player_allocation);
 
 

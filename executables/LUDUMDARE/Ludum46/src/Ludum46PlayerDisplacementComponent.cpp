@@ -54,12 +54,18 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	next_pawn_box.position += 200.0f * stick_position * delta_time;
 
 
+	death::TMParticle* ppp = nullptr;
+
+
+
 	std::vector<death::TileCollisionInfo> colliding_tiles;
 
 	death::TMLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(next_pawn_box | pawn_box, death::CollisionMask::PLAYER);
+		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(next_pawn_box | pawn_box, death::CollisionMask::PLAYER, true); // collision over the extended bounding box
+
+
 
 		while (it)
 		{
@@ -75,71 +81,91 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				continue;
 			}
 
+			auto particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
 
 
 			int particle_flags = it->particle->flags;
 
 
+			float best_distance = std::numeric_limits<float>::max();
+			glm::vec2 best_center;
+
+
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) // only test LEFT side if no side neighbour
 			{
-				if (next_pawn_box.position.x > pawn_box.position.x)
+				float new_x = particle_corners.first.x - next_pawn_box.half_size.x;
+				
+				float d = std::abs(new_x - next_pawn_box.position.x);
+				if (d < best_distance)
 				{
-					next_pawn_box.position.x = pawn_box.position.x;
-
+					best_distance = d;
+					best_center.x = new_x;
+					best_center.y = next_pawn_box.position.y;
 				}
+				//if (next_pawn_box.position.x > pawn_box.position.x)
+				//{
+				//	next_pawn_box.position.x = pawn_box.position.x;
+				//}
 			}
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
 			{
-				if (next_pawn_box.position.x < pawn_box.position.x)
+				float new_x = particle_corners.second.x + next_pawn_box.half_size.x;
+
+				float d = std::abs(new_x - next_pawn_box.position.x);
+				if (d < best_distance)
 				{
-					next_pawn_box.position.x = pawn_box.position.x;
+					best_distance = d;
+					best_center.x = new_x;
+					best_center.y = next_pawn_box.position.y;
 				}
+				//if (next_pawn_box.position.x < pawn_box.position.x)
+				//{
+				//	next_pawn_box.position.x = pawn_box.position.x;
+				//}
 			}
 
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
 			{
-				if (next_pawn_box.position.y < pawn_box.position.y)
-				{
-					next_pawn_box.position.y = pawn_box.position.y;
+				float new_y = particle_corners.second.y + next_pawn_box.half_size.y;
 
+				float d = std::abs(new_y - next_pawn_box.position.y);
+				if (d < best_distance)
+				{
+					best_distance = d;
+					best_center.x = next_pawn_box.position.x; 
+					best_center.y = new_y;
 				}
 
-
+				//if (next_pawn_box.position.y < pawn_box.position.y)
+				//{
+				//	next_pawn_box.position.y = pawn_box.position.y;
+				//}
 			}
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
 			{
 
-				if (next_pawn_box.position.y > pawn_box.position.y)
+				float new_y = particle_corners.first.y - next_pawn_box.half_size.y;
+
+				float d = std::abs(new_y - next_pawn_box.position.y);
+				if (d < best_distance)
 				{
-					next_pawn_box.position.y = pawn_box.position.y;
-
+					best_distance = d;
+					best_center.x = next_pawn_box.position.x;
+					best_center.y = new_y;
+					
 				}
+
+				//if (next_pawn_box.position.y > pawn_box.position.y)
+				//{
+				//	next_pawn_box.position.y = pawn_box.position.y;
+				//}
 			}
 
-
-
-
-
-
-
-			if (chaos::RestrictToOutside(it->particle->bounding_box, next_pawn_box))
+			if (best_distance < std::numeric_limits<float>::max())
 			{
-				level_instance = level_instance;
+				next_pawn_box.position = best_center;
+				ppp = it->particle;
 			}
-
-
-
-
-			if (it->particle->flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP)
-			{
-
-
-
-
-				level_instance = level_instance;
-			}
-
-
 
 
 			colliding_tiles.push_back(*it);
@@ -173,7 +199,12 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-
+	if (ppp != nullptr)
+	{
+		ppp->color.x = chaos::MathTools::RandFloat();
+		ppp->color.y = chaos::MathTools::RandFloat();
+		ppp->color.z = chaos::MathTools::RandFloat();
+	}
 
 
 

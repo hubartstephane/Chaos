@@ -1041,7 +1041,7 @@ namespace death
 		TMTriggerCollisionInfo new_collisions;
 
 		// search all new collisions
-		for (TMTriggerCollisionIterator it = GetTriggerCollisionIterator(box, mask) ; it ; ++it)
+		for (TMTriggerCollisionIterator it = GetTriggerCollisionIterator(box, mask, true) ; it ; ++it)
 		{
 			TMTrigger& trigger = *it;
 			// trigger only enabled trigger
@@ -1491,19 +1491,19 @@ namespace death
 			layer_instances[i]->OnLevelStarted();
 	}
 
-	TMTileCollisionIterator TMLevelInstance::GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	TMTileCollisionIterator TMLevelInstance::GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry)
 	{
-		return TMTileCollisionIterator(this, in_collision_box, in_collision_mask);
+		return TMTileCollisionIterator(this, in_collision_box, in_collision_mask, in_open_geometry);
 	}
 
-	TMTriggerCollisionIterator TMLevelInstance::GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	TMTriggerCollisionIterator TMLevelInstance::GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry)
 	{
-		return TMTriggerCollisionIterator(this, in_collision_box, in_collision_mask);
+		return TMTriggerCollisionIterator(this, in_collision_box, in_collision_mask, in_open_geometry);
 	}
 
-	TMObjectCollisionIterator TMLevelInstance::GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask)
+	TMObjectCollisionIterator TMLevelInstance::GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry)
 	{
-		return TMObjectCollisionIterator(this, in_collision_box, in_collision_mask);
+		return TMObjectCollisionIterator(this, in_collision_box, in_collision_mask, in_open_geometry);
 	}
 
 	bool TMLevelInstance::SerializeFromJSON(nlohmann::json const& json)

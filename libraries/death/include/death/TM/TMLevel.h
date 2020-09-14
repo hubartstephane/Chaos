@@ -473,11 +473,11 @@ namespace death
 		virtual chaos::box2 GetBoundingBox() const override;
 
 		/** Get a collision iterator for tiles */
-		TMTileCollisionIterator GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTileCollisionIterator GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 		/** Get a collision iterator for triggers */
-		TMTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 		/** Get a collision iterator for objects */
-		TMObjectCollisionIterator GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMObjectCollisionIterator GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();

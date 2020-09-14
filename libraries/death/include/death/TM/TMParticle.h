@@ -36,6 +36,7 @@ namespace death
 	{
 	public:
 
+#if 0
 		void ParticleToPrimitives(TMParticle const& p, chaos::QuadOutput<chaos::VertexDefault>& output) const
 		{
 
@@ -51,7 +52,7 @@ namespace death
 					v.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		}
 
-#if 0
+
 	public:
 
 		//template<typename T>

@@ -36,17 +36,20 @@ namespace death
 		/** the copy constructor */
 		TMCollisionIteratorBase(TMCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TMCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		/** returns whether the iterator is still valid */
 		operator bool() const;
 
 	protected:
 
-		/** the collision mask for iterating over layers */
-		uint64_t collision_mask = 0;
 		/** the collision box */
 		chaos::box2 collision_box;
+		/** the collision mask for iterating over layers */
+		uint64_t collision_mask = 0;
+		/** whether we want to check open geometries */
+		bool open_geometry = false;
+
 
 		/** the level instance of concern */
 		TMLevelInstance* level_instance = nullptr;
@@ -69,7 +72,7 @@ namespace death
 		/** the copy constructor */
 		TMTileCollisionIterator(TMTileCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TMTileCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTileCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		/** next layer */
 		void NextLayer();
@@ -119,8 +122,8 @@ namespace death
 		/** the copy constructor */
 		TMObjectCollisionIteratorBase(TMObjectCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TMObjectCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-			TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
+		TMObjectCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
+			TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask, in_open_geometry)
 		{
 		}
 		// indirection
@@ -171,7 +174,7 @@ namespace death
 		/** the copy constructor */
 		TMTriggerCollisionIterator(TMTriggerCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TMTriggerCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMTriggerCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		// pre increment iterator
 		TMTriggerCollisionIterator& operator ++ ();
@@ -202,7 +205,7 @@ namespace death
 		/** the copy constructor */
 		TMObjectCollisionIterator(TMObjectCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TMObjectCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask);
+		TMObjectCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		// pre increment iterator
 		TMObjectCollisionIterator& operator ++ ();

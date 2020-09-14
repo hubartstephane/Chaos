@@ -6,10 +6,11 @@ namespace death
 	// TMCollisionIteratorBase implementation
 	// =====================================
 
-	TMCollisionIteratorBase::TMCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
+	TMCollisionIteratorBase::TMCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
 		level_instance(in_level_instance),
 		collision_box(in_collision_box),
-		collision_mask(in_collision_mask)
+		collision_mask(in_collision_mask),
+		open_geometry(in_open_geometry)
 	{
 		assert(in_level_instance != nullptr);
 		assert(collision_mask != 0);
@@ -25,8 +26,8 @@ namespace death
 	// TMTileCollisionIterator implementation
 	// =====================================
 
-	TMTileCollisionIterator::TMTileCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask)
+	TMTileCollisionIterator::TMTileCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
+		TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask, in_open_geometry)
 	{
 		FindFirstCollision();
 	}
@@ -71,7 +72,7 @@ namespace death
 								{
 									death::TMParticle* particle = &accessor[particle_index];
 
-									if (chaos::Collide(collision_box, particle->bounding_box))
+									if (chaos::Collide(collision_box, particle->bounding_box, open_geometry))
 									{
 										cached_result.layer_instance = layer_instance;
 										cached_result.allocation     = allocation;
@@ -155,8 +156,8 @@ namespace death
 	// TMTriggerCollisionIterator implementation
 	// =====================================
 
-	TMTriggerCollisionIterator::TMTriggerCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TMObjectCollisionIteratorBase<TMTrigger>(in_level_instance, in_collision_box, in_collision_mask)
+	TMTriggerCollisionIterator::TMTriggerCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
+		TMObjectCollisionIteratorBase<TMTrigger>(in_level_instance, in_collision_box, in_collision_mask, in_open_geometry)
 	{
 		FindFirstCollision();
 	}
@@ -178,7 +179,7 @@ namespace death
 						TMTrigger* object = auto_cast(layer_instance->GetObject(object_index));
 						if (object != nullptr)
 						{
-							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))
+							if (chaos::Collide(collision_box, object->GetBoundingBox(true), open_geometry))
 							{
 								cached_result = object;
 								return;
@@ -235,8 +236,8 @@ namespace death
 	// TMObjectCollisionIterator implementation
 	// =====================================
 
-	TMObjectCollisionIterator::TMObjectCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask) :
-		TMObjectCollisionIteratorBase<TMObject>(in_level_instance, in_collision_box, in_collision_mask)
+	TMObjectCollisionIterator::TMObjectCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
+		TMObjectCollisionIteratorBase<TMObject>(in_level_instance, in_collision_box, in_collision_mask, in_open_geometry)
 	{
 		FindFirstCollision();
 	}
@@ -258,7 +259,7 @@ namespace death
 						TMObject* object = layer_instance->GetObject(object_index);
 						if (object != nullptr)
 						{
-							if (chaos::Collide(collision_box, object->GetBoundingBox(true)))
+							if (chaos::Collide(collision_box, object->GetBoundingBox(true), open_geometry))
 							{
 								cached_result = object;
 								return;

@@ -791,16 +791,21 @@ namespace chaos
 
 		public:
 
-			/** loading method from XML */
-			bool DoLoad(tinyxml2::XMLElement const* element); // XXX : not a virtual function, this is the simplest class possible
-
 			/** gets the corner value */
 			int GetCornerValue(WangCorner corner) const;
 			/** gets the edge value */
 			int GetEdgeValue(WangEdge edge) const;
 
+			/** the particle flags represents some geometric transformation, that should change the meaning of the Tile */
+			void ApplyParticleFlags(int flags);
+
 			/** returns whether this object is correctly initialized */
 			bool IsValid() const { return (tile_id >= 0); }
+
+		protected:
+
+			/** loading method from XML */
+			bool DoLoad(tinyxml2::XMLElement const* element); // XXX : not a virtual function, this is the simplest class possible
 
 		public:
 

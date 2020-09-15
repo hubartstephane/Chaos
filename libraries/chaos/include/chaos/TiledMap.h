@@ -1019,7 +1019,7 @@ namespace chaos
 		public:
 
 			/** the id of the tile */
-			int id = 0;
+			int gid = 0;
 			/** some flags encoded inside */
 			int flags = 0;
 		};
@@ -1350,15 +1350,15 @@ namespace chaos
 			TileInfo() = default;
 			/** other constuctor */
 			TileInfo(int in_gid, TileSet const * in_tileset, TileData const * in_tiledata):
-				gid(in_gid), tileset(in_tileset), tiledata(in_tiledata){}
+				id(in_gid), tileset(in_tileset), tiledata(in_tiledata){}
 
 			/** returns whether the information is valid or not */
-			bool IsValid() const { return (gid > 0); }
+			bool IsValid() const { return (id > 0); }
 
 		public:
 
 			/** the final gid of the search tile */
-			int gid = 0;
+			int id = 0;
 			/** the tileset considered */
 			TileSet const * tileset = nullptr;
 			/** the tiledata in the tileset considered */

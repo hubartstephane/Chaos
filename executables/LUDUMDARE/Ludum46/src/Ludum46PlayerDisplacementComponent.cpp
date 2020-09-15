@@ -67,43 +67,73 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	std::vector<death::TileCollisionInfo> colliding_tiles;
 
+
+
+
 	death::TMLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(next_pawn_box | pawn_box, death::CollisionMask::PLAYER, true); // collision over the extended bounding box
+		// collision over the extended bounding box
+		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(next_pawn_box | pawn_box, death::CollisionMask::PLAYER, true); 
 
-
-
+		// iterate over all particles
 		while (it)
 		{
+			// ignore pawn allocation
 			if (it->allocation == pawn->GetAllocation())
 			{
 				it.NextAllocation();
 				continue;
 			}
-
+			// while pawn box may change, while the request box is extended, this collision maybe does not happen
 			if (!chaos::Collide(next_pawn_box, it->particle->bounding_box))
 			{
 				++it;
 				continue;
 			}
-
-			auto particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
-
-
-			int particle_flags = it->particle->flags;
-
-
+			// search the displacement that is the smallest so that pawn becomes outside the particle
 			float best_distance = std::numeric_limits<float>::max();
 			glm::vec2 best_center;
 
-			auto next_pawn_corner = chaos::GetBoxCorners(next_pawn_box);
+			// some data
+			int particle_flags = it->particle->flags;
 
-			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) // only test LEFT side if no side neighbour
+			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
+			std::pair<glm::vec2, glm::vec2> next_pawn_corner = chaos::GetBoxCorners(next_pawn_box);
+
+			//
+			//    +------+------+
+			//    |      |      |
+			//    |   <----->   |   if 2 tiles have a common edge, this edge does not count for collision
+			//    |      |      |
+			//    +------+------+
+			//
+			//    elsewhere this would make some strange artefacts collision with the pawn
+			//
+			//         +----+ PAWN
+			//         |    |
+			//    +----|--+-|----+    PAWN interpenetrates 2 tiles due to gravity
+			//    |    |  | |    |    EDGE A : wants to push the PAWN on the left or on the right => pawn cannot walk smoothly on the tiles
+			//         +----+                  => ignore the edge
+			//            |
+			//          EDGE A
+			//
+			//
+			//        +-----+ PAWN
+			//        |     |
+			//        |     |        PAWN only reacts to EDGE 2 for collision
+			//   +-------+  |        if PAWN was colliding with EDGE 1, this would produce PAWN teleport at the full left of the tile
+			//   |    |  |  |
+			//   |       |
+			//   |       |
+			// EDGE 1  EDGE 2
+			//
+
+
+			// only test LEFT side if no neighbour
+			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) 
 			{
 				if (IsInRange(particle_corners.first.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
-
-				//if (next_pawn_box.position.x > pawn_box.position.x)
 				{
 					float new_x = particle_corners.first.x - next_pawn_box.half_size.x;
 
@@ -117,18 +147,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				}
 			}
 
-
-
-
-
-
-
-
-
-
+			// only test RIGHT side if no neighbour
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
 			{
-				//if (next_pawn_box.position.x < pawn_box.position.x)
 				if (IsInRange(particle_corners.second.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
 				{
 					float new_x = particle_corners.second.x + next_pawn_box.half_size.x;
@@ -143,9 +164,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				}
 			}
 
+			// only test TOP side if no neighbour
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
 			{
-				//if (next_pawn_box.position.y < pawn_box.position.y)
 				if (IsInRange(particle_corners.second.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{
 					float new_y = particle_corners.second.y + next_pawn_box.half_size.y;
@@ -160,10 +181,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				}
 			}
 			
-			
+			// only test BOTTOM side if no neighbour
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
 			{
-				//if (next_pawn_box.position.y > pawn_box.position.y)
 				if (IsInRange(particle_corners.first.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{
 					float new_y = particle_corners.first.y - next_pawn_box.half_size.y;
@@ -178,6 +198,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				}
 			}
 
+			// if a displacement is found to stop the collision, apply it
 			if (best_distance < std::numeric_limits<float>::max())
 			{
 				next_pawn_box.position = best_center;

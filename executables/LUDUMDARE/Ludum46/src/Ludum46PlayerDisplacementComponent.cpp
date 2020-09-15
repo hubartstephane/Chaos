@@ -13,6 +13,13 @@
 #include "death/TM.h"
 #include "death/CollisionMask.h"
 
+template<typename T>
+static bool IsInRange(T value, T min_value, T max_value)
+{
+	if (value <= min_value || value >= max_value)
+		return false;
+	return true;
+}
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
@@ -90,75 +97,85 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			float best_distance = std::numeric_limits<float>::max();
 			glm::vec2 best_center;
 
+			auto next_pawn_corner = chaos::GetBoxCorners(next_pawn_box);
 
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) // only test LEFT side if no side neighbour
 			{
-				float new_x = particle_corners.first.x - next_pawn_box.half_size.x;
-				
-				float d = std::abs(new_x - next_pawn_box.position.x);
-				if (d < best_distance)
-				{
-					best_distance = d;
-					best_center.x = new_x;
-					best_center.y = next_pawn_box.position.y;
-				}
+				if (IsInRange(particle_corners.first.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
+
 				//if (next_pawn_box.position.x > pawn_box.position.x)
-				//{
-				//	next_pawn_box.position.x = pawn_box.position.x;
-				//}
+				{
+					float new_x = particle_corners.first.x - next_pawn_box.half_size.x;
+
+					float d = std::abs(new_x - next_pawn_box.position.x);
+					if (d < best_distance)
+					{
+						best_distance = d;
+						best_center.x = new_x;
+						best_center.y = next_pawn_box.position.y;
+					}
+				}
 			}
+
+
+
+
+
+
+
+
+
+
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
 			{
-				float new_x = particle_corners.second.x + next_pawn_box.half_size.x;
-
-				float d = std::abs(new_x - next_pawn_box.position.x);
-				if (d < best_distance)
-				{
-					best_distance = d;
-					best_center.x = new_x;
-					best_center.y = next_pawn_box.position.y;
-				}
 				//if (next_pawn_box.position.x < pawn_box.position.x)
-				//{
-				//	next_pawn_box.position.x = pawn_box.position.x;
-				//}
+				if (IsInRange(particle_corners.second.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
+				{
+					float new_x = particle_corners.second.x + next_pawn_box.half_size.x;
+
+					float d = std::abs(new_x - next_pawn_box.position.x);
+					if (d < best_distance)
+					{
+						best_distance = d;
+						best_center.x = new_x;
+						best_center.y = next_pawn_box.position.y;
+					}
+				}
 			}
 
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
 			{
-				float new_y = particle_corners.second.y + next_pawn_box.half_size.y;
-
-				float d = std::abs(new_y - next_pawn_box.position.y);
-				if (d < best_distance)
-				{
-					best_distance = d;
-					best_center.x = next_pawn_box.position.x; 
-					best_center.y = new_y;
-				}
-
 				//if (next_pawn_box.position.y < pawn_box.position.y)
-				//{
-				//	next_pawn_box.position.y = pawn_box.position.y;
-				//}
+				if (IsInRange(particle_corners.second.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
+				{
+					float new_y = particle_corners.second.y + next_pawn_box.half_size.y;
+
+					float d = std::abs(new_y - next_pawn_box.position.y);
+					if (d < best_distance)
+					{
+						best_distance = d;
+						best_center.x = next_pawn_box.position.x;
+						best_center.y = new_y;
+					}
+				}
 			}
+			
+			
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
 			{
-
-				float new_y = particle_corners.first.y - next_pawn_box.half_size.y;
-
-				float d = std::abs(new_y - next_pawn_box.position.y);
-				if (d < best_distance)
-				{
-					best_distance = d;
-					best_center.x = next_pawn_box.position.x;
-					best_center.y = new_y;
-					
-				}
-
 				//if (next_pawn_box.position.y > pawn_box.position.y)
-				//{
-				//	next_pawn_box.position.y = pawn_box.position.y;
-				//}
+				if (IsInRange(particle_corners.first.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
+				{
+					float new_y = particle_corners.first.y - next_pawn_box.half_size.y;
+
+					float d = std::abs(new_y - next_pawn_box.position.y);
+					if (d < best_distance)
+					{
+						best_distance = d;
+						best_center.x = next_pawn_box.position.x;
+						best_center.y = new_y;
+					}
+				}
 			}
 
 			if (best_distance < std::numeric_limits<float>::max())

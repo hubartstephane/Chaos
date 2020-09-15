@@ -1122,7 +1122,7 @@ namespace chaos
 						else
 							t = GetTile(neighbour);
 
-						if (t.id > 0)
+						if (t.gid > 0)
 							neighbour_flags |= extra_flags[k];
 					}
 					chunk.tile_indices[i].flags |= neighbour_flags;
@@ -1279,7 +1279,7 @@ namespace chaos
 			{
 				// decode the ID's and the flags
 				for (Tile& tile : tiles)
-					tile.id = DecodeTileGID(tile.id, &tile.flags);
+					tile.gid = DecodeTileGID(tile.gid, &tile.flags);
 				// insert a chunk for theses tiles
 				TileLayerChunk chunk;
 				chunk.size = chunk_size;

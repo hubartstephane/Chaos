@@ -744,7 +744,7 @@ namespace death
 
 			for (size_t i = 0; i < count; ++i)
 			{
-				int gid = chunk.tile_indices[i].id;
+				int gid = chunk.tile_indices[i].gid;
 				int particle_flags = chunk.tile_indices[i].flags;
 
 				if (gid == 0)

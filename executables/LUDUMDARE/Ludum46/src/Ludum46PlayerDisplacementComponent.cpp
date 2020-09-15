@@ -60,12 +60,16 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	std::vector<death::TileCollisionInfo> colliding_tiles;
 
-
+	
 
 
 	death::TMLevelInstance* level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
+
+
+
+
 		// collision over the extended bounding box
 		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(next_pawn_box | pawn_box, death::CollisionMask::PLAYER, true); 
 
@@ -121,6 +125,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			//   |       |
 			// EDGE 1  EDGE 2
 			//
+
+
+			auto xxx = it->tile_info.tileset->FindWangset("CollisionPlatformer");
+
+			auto xxxx = it->tile_info.id;
 
 
 			// only test LEFT side if no neighbour
@@ -196,6 +205,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			{
 				next_pawn_box.position = best_center;
 				ppp = it->particle;
+
+				ppp = ppp;
 			}
 
 

@@ -127,11 +127,22 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			//
 
 
-			auto xxxx = it->tile_info.id;
+			chaos::TiledMap::Wangset const* wangset = it->tile_info.tileset->FindWangset("CollisionPlatformer");
+
+			chaos::TiledMap::WangTile wangtile = wangset->GetWangTile(it->tile_info.id);
+			wangtile.ApplyParticleFlags(it->particle->flags);
+
+			int l = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::LEFT);
+			int r = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::RIGHT);
+			int t = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::TOP);
+			int b = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::BOTTOM);
+
+
 
 
 			// only test LEFT side if no neighbour
-			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) 
+			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) 
+			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::LEFT) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
 				{
@@ -148,7 +159,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			}
 
 			// only test RIGHT side if no neighbour
-			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
+			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
+			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::RIGHT) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
 				{
@@ -165,7 +177,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			}
 
 			// only test TOP side if no neighbour
-			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
+			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
+			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::TOP) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{
@@ -182,7 +195,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			}
 			
 			// only test BOTTOM side if no neighbour
-			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
+			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
+			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::BOTTOM) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{
@@ -198,14 +212,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				}
 			}
 
-			chaos::TiledMap::Wangset const* wangset = it->tile_info.tileset->FindWangset("CollisionPlatformer");
+			
 
-			chaos::TiledMap::WangTile wangtile = wangset->GetWangTile(it->tile_info.id);
 
-			int l = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::LEFT);
-			int r = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::RIGHT);
-			int t = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::TOP);
-			int b = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::BOTTOM);
 
 			// if a displacement is found to stop the collision, apply it
 			if (best_distance < std::numeric_limits<float>::max())

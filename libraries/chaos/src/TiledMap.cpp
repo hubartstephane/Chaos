@@ -744,6 +744,55 @@ namespace chaos
 			return (int)((wang_id >> ((int)edge * 8)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
 		}
 
+		void WangTile::ApplyParticleFlags(int flags)
+		{
+			// early exit
+			if ((flags & (ParticleFlags::TEXTURE_DIAGONAL_FLIP | ParticleFlags::TEXTURE_HORIZONTAL_FLIP | ParticleFlags::TEXTURE_VERTICAL_FLIP)) == 0)
+				return;
+			
+			// get values
+			int top_edge    = GetEdgeValue(WangEdge::TOP); 
+			int right_edge  = GetEdgeValue(WangEdge::RIGHT);			
+			int bottom_edge = GetEdgeValue(WangEdge::BOTTOM);
+			int left_edge   = GetEdgeValue(WangEdge::LEFT);
+
+			int topright_corner    = GetCornerValue(WangCorner::TOPRIGHT);
+			int bottomright_corner = GetCornerValue(WangCorner::BOTTOMRIGHT);
+			int bottomleft_corner  = GetCornerValue(WangCorner::BOTTOMLEFT);
+			int topleft_corner     = GetCornerValue(WangCorner::TOPLEFT);
+
+			// apply transforms
+			if ((flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+			{
+				std::swap(bottomleft_corner, topright_corner);
+				std::swap(bottom_edge, right_edge);
+				std::swap(left_edge, top_edge);
+			}
+			if ((flags & ParticleFlags::TEXTURE_HORIZONTAL_FLIP) != 0)
+			{
+				std::swap(bottomleft_corner, bottomright_corner);
+				std::swap(topleft_corner, topright_corner);
+				std::swap(left_edge, right_edge);
+			}
+			if ((flags & ParticleFlags::TEXTURE_VERTICAL_FLIP) != 0)
+			{
+				std::swap(topleft_corner, bottomleft_corner);
+				std::swap(topright_corner, bottomright_corner);
+				std::swap(top_edge, bottom_edge);
+			}
+
+			// merge values into a single flags
+			wang_id =
+				(top_edge << 0) |
+				(right_edge << 8) |
+				(bottom_edge << 16) |
+				(left_edge << 24) |
+				(topright_corner << 4) |
+				(bottomright_corner << 12) |
+				(bottomleft_corner << 20) |
+				(topleft_corner << 28);
+		}
+
 		bool Wangset::DoLoad(tinyxml2::XMLElement const* element)
 		{
 			if (!PropertyOwner::DoLoad(element))

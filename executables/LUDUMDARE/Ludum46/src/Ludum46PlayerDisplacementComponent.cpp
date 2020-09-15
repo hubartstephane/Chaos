@@ -127,8 +127,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			//
 
 
-			auto xxx = it->tile_info.tileset->FindWangset("CollisionPlatformer");
-
 			auto xxxx = it->tile_info.id;
 
 
@@ -199,6 +197,15 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 					}
 				}
 			}
+
+			chaos::TiledMap::Wangset const* wangset = it->tile_info.tileset->FindWangset("CollisionPlatformer");
+
+			chaos::TiledMap::WangTile wangtile = wangset->GetWangTile(it->tile_info.id);
+
+			int l = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::LEFT);
+			int r = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::RIGHT);
+			int t = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::TOP);
+			int b = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::BOTTOM);
 
 			// if a displacement is found to stop the collision, apply it
 			if (best_distance < std::numeric_limits<float>::max())

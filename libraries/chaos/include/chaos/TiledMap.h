@@ -818,6 +818,11 @@ namespace chaos
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
+		public:
+
+			/** search wang information for a given tile */
+			WangTile GetWangTile(int tile_id) const;
+
 		protected:
 
 			/** constructor */
@@ -825,9 +830,6 @@ namespace chaos
 
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const* element) override;
-
-			/** search wang information for a given tile */
-			WangTile GetWangTile(int tile_id) const;
 
 		public:
 

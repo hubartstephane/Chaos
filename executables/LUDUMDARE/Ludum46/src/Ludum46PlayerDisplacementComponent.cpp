@@ -8,18 +8,11 @@
 
 
 #include "chaos/TiledMap.h"
+#include "chaos/MathTools.h"
 #include "chaos/Direction.h"
 
 #include "death/TM.h"
 #include "death/CollisionMask.h"
-
-template<typename T>
-static bool IsInRange(T value, T min_value, T max_value)
-{
-	if (value <= min_value || value >= max_value)
-		return false;
-	return true;
-}
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
@@ -133,7 +126,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			// only test LEFT side if no neighbour
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) 
 			{
-				if (IsInRange(particle_corners.first.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
+				if (chaos::MathTools::IsInRange(particle_corners.first.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
 				{
 					float new_x = particle_corners.first.x - next_pawn_box.half_size.x;
 
@@ -150,7 +143,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			// only test RIGHT side if no neighbour
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
 			{
-				if (IsInRange(particle_corners.second.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
+				if (chaos::MathTools::IsInRange(particle_corners.second.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
 				{
 					float new_x = particle_corners.second.x + next_pawn_box.half_size.x;
 
@@ -167,7 +160,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			// only test TOP side if no neighbour
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
 			{
-				if (IsInRange(particle_corners.second.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
+				if (chaos::MathTools::IsInRange(particle_corners.second.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{
 					float new_y = particle_corners.second.y + next_pawn_box.half_size.y;
 
@@ -184,7 +177,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			// only test BOTTOM side if no neighbour
 			if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
 			{
-				if (IsInRange(particle_corners.first.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
+				if (chaos::MathTools::IsInRange(particle_corners.first.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{
 					float new_y = particle_corners.first.y - next_pawn_box.half_size.y;
 

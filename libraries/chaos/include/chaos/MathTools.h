@@ -282,6 +282,22 @@ namespace chaos
 				return src;
 			return 1 << (BitTools::bsr(src) + 1);
 		}
+
+		template<typename T>
+		bool IsInRange(T value, T min_value, T max_value, bool open_range = true)
+		{
+			if (open_range)
+			{
+				if (value <= min_value || value >= max_value)
+					return false;
+			}
+			else
+			{
+				if (value < min_value || value > max_value)
+					return false;
+			}
+			return true;
+		}
 	};
 
 }; // namespace chaos

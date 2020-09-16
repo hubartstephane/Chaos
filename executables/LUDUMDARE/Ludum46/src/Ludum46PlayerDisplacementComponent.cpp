@@ -10,9 +10,219 @@
 #include "chaos/TiledMap.h"
 #include "chaos/MathTools.h"
 #include "chaos/Direction.h"
+#include "chaos/Edge.h"
 
 #include "death/TM.h"
 #include "death/CollisionMask.h"
+
+
+
+
+
+//
+//    +------+------+
+//    |      |      |
+//    |   <----->   |   if 2 tiles have a common edge, this edge does not count for collision
+//    |      |      |
+//    +------+------+
+//
+//    elsewhere this would make some strange artefacts collision with the pawn
+//
+//         +----+ PAWN
+//         |    |
+//    +----|--+-|----+    PAWN interpenetrates 2 tiles due to gravity
+//    |    |  | |    |    EDGE A : wants to push the PAWN on the left or on the right => pawn cannot walk smoothly on the tiles
+//         +----+                  => ignore the edge
+//            |
+//          EDGE A
+//
+//
+//        +-----+ PAWN
+//        |     |
+//        |     |        PAWN only reacts to EDGE 2 for collision
+//   +-------+  |        if PAWN was colliding with EDGE 1, this would produce PAWN teleport at the full left of the tile
+//   |    |  |  |
+//   |       |
+//   |       |
+// EDGE 1  EDGE 2
+//
+
+
+
+
+chaos::box2 LudumPlayerDisplacementComponent::ComputeCollisions(chaos::box2 const& src_box, chaos::box2 const& dst_box, int collision_mask, chaos::ParticleAllocationBase * ignore_allocation, char const * wangset_name, std::function<void(chaos::box2 const &, death::TMParticle &, chaos::Edge)> func)
+{
+	chaos::box2 result = dst_box;
+
+	// early exit
+	death::TMLevelInstance* level_instance = GetLevelInstance();
+	if (level_instance == nullptr)
+		return result;
+
+	// collision over the extended bounding box
+	death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(src_box | dst_box, collision_mask, true);
+
+	// for faster access, cache the wangset
+	chaos::TiledMap::Wangset const* wangset = nullptr;
+	chaos::TiledMap::TileSet const* tileset = nullptr;
+
+	// iterate over all particles
+	while (it)
+	{
+		// ignore pawn allocation
+		if (it->allocation == ignore_allocation)
+		{
+			it.NextAllocation();
+			continue;
+		}
+		// while dst_box may change, while the request box is extended, this collision maybe does not even happen
+		if (!chaos::Collide(result, it->particle->bounding_box))
+		{
+			++it;
+			continue;
+		}
+
+		// some data
+		int particle_flags = it->particle->flags;
+
+		// search for wang flags (use cache for faster search
+		chaos::TiledMap::WangTile wangtile;
+
+		if (wangset_name != nullptr)
+		{
+			// cannot do anything without a known tileset : this should never happen
+			if (it->tile_info.tileset == nullptr)
+				continue;
+
+			// different tileset than the one for previous particle ?
+			if (it->tile_info.tileset != tileset) 
+			{
+				tileset = it->tile_info.tileset;
+
+				wangset = tileset->FindWangset(wangset_name);
+			}
+			// no wangset cannot continue
+			if (wangset == nullptr)
+				continue;
+
+			// get the wang tile and apply particle transforms
+			wangtile = wangset->GetWangTile(it->tile_info.id);
+			wangtile.ApplyParticleFlags(particle_flags);
+		}
+
+		// search the displacement that is the smallest so that pawn becomes outside the particle
+		float best_distance = std::numeric_limits<float>::max();
+		glm::vec2 best_center;
+		chaos::Edge best_edge;
+
+		std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
+		std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(result);
+
+		// XXX : an edge with wang value 
+		//         0 -> the tile does not use the wangset at all
+		//         1 -> this is the empty wang value
+		//        +2 -> good
+
+		// only test LEFT side if no neighbour
+		bool left_collision = (wangset != nullptr) ?
+			(wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) :
+			((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
+
+		if (left_collision)
+		{
+			if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_corners.first.x, dst_corners.second.x))
+			{
+				float new_x = particle_corners.first.x - result.half_size.x;
+
+				float d = std::abs(new_x - result.position.x);
+				if (d < best_distance)
+				{
+					best_distance = d;
+					best_center.x = new_x;
+					best_center.y = result.position.y;
+					best_edge = chaos::Edge::LEFT;
+				}
+			}
+		}
+
+		// only test RIGHT side if no neighbour
+		bool right_collision = (wangset != nullptr) ?
+			(wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) :
+			((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
+
+		if (right_collision)
+		{
+			if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x, dst_corners.second.x))
+			{
+				float new_x = particle_corners.second.x + result.half_size.x;
+
+				float d = std::abs(new_x - result.position.x);
+				if (d < best_distance)
+				{
+					best_distance = d;
+					best_center.x = new_x;
+					best_center.y = result.position.y;
+					best_edge = chaos::Edge::RIGHT;
+				}
+			}
+		}
+
+		// only test TOP side if no neighbour
+		bool top_collision = (wangset != nullptr) ?
+			(wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) :
+			((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
+
+		if (top_collision)
+		{
+			if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y, dst_corners.second.y))
+			{
+				float new_y = particle_corners.second.y + result.half_size.y;
+
+				float d = std::abs(new_y - result.position.y);
+				if (d < best_distance)
+				{
+					best_distance = d;
+					best_center.x = result.position.x;
+					best_center.y = new_y;
+					best_edge = chaos::Edge::TOP;
+				}
+			}
+		}
+
+		// only test BOTTOM side if no neighbour
+		bool bottom_collision = (wangset != nullptr) ?
+			(wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) :
+			((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
+
+		if (bottom_collision)
+		{
+			if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_corners.first.y, dst_corners.second.y))
+			{
+				float new_y = particle_corners.first.y - result.half_size.y;
+
+				float d = std::abs(new_y - result.position.y);
+				if (d < best_distance)
+				{
+					best_distance = d;
+					best_center.x = result.position.x;
+					best_center.y = new_y;
+					best_edge = chaos::Edge::BOTTOM;
+				}
+			}
+		}
+
+		// if a displacement is found to stop the collision, apply it
+		if (best_distance < std::numeric_limits<float>::max())
+		{
+			result.position = best_center;
+			if (func != nullptr)
+				func(result, *it->particle, best_edge);
+		}
+		++it;
+	}
+	return result;
+}
+
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
@@ -98,33 +308,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
 			std::pair<glm::vec2, glm::vec2> next_pawn_corner = chaos::GetBoxCorners(next_pawn_box);
 
-			//
-			//    +------+------+
-			//    |      |      |
-			//    |   <----->   |   if 2 tiles have a common edge, this edge does not count for collision
-			//    |      |      |
-			//    +------+------+
-			//
-			//    elsewhere this would make some strange artefacts collision with the pawn
-			//
-			//         +----+ PAWN
-			//         |    |
-			//    +----|--+-|----+    PAWN interpenetrates 2 tiles due to gravity
-			//    |    |  | |    |    EDGE A : wants to push the PAWN on the left or on the right => pawn cannot walk smoothly on the tiles
-			//         +----+                  => ignore the edge
-			//            |
-			//          EDGE A
-			//
-			//
-			//        +-----+ PAWN
-			//        |     |
-			//        |     |        PAWN only reacts to EDGE 2 for collision
-			//   +-------+  |        if PAWN was colliding with EDGE 1, this would produce PAWN teleport at the full left of the tile
-			//   |    |  |  |
-			//   |       |
-			//   |       |
-			// EDGE 1  EDGE 2
-			//
 
 
 			chaos::TiledMap::Wangset const* wangset = it->tile_info.tileset->FindWangset("CollisionPlatformer");
@@ -132,17 +315,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			chaos::TiledMap::WangTile wangtile = wangset->GetWangTile(it->tile_info.id);
 			wangtile.ApplyParticleFlags(it->particle->flags);
 
-			int l = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::LEFT);
-			int r = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::RIGHT);
-			int t = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::TOP);
-			int b = wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::BOTTOM);
-
-
-
-
 			// only test LEFT side if no neighbour
 			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) 
-			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::LEFT) > 1)
+			if (wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
 				{
@@ -160,7 +335,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 			// only test RIGHT side if no neighbour
 			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
-			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::RIGHT) > 1)
+			if (wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
 				{
@@ -178,7 +353,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 			// only test TOP side if no neighbour
 			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
-			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::TOP) > 1)
+			if (wangtile.GetEdgeValue(chaos::Edge::TOP) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{
@@ -196,7 +371,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			
 			// only test BOTTOM side if no neighbour
 			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
-			if (wangtile.GetEdgeValue(chaos::TiledMap::WangEdge::BOTTOM) > 1)
+			if (wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
 				{

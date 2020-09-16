@@ -5,6 +5,8 @@
 #include <chaos/Buffer.h>
 #include <chaos/FilePath.h>
 #include <chaos/Hotpoint.h>
+#include <chaos/Edge.h>
+#include <chaos/Corner.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/Metaprogramming.h>
 
@@ -769,22 +771,6 @@ namespace chaos
 		// wangid: The Wang ID, which is a 32-bit unsigned integer stored in the format 0xCECECECE (where each C is a corner color and each E is an edge color, from right to left clockwise, starting with the top edge)
 		//
 
-		enum class WangCorner : int
-		{
-			TOPRIGHT = 0,
-			BOTTOMRIGHT = 1,
-			BOTTOMLEFT = 2,
-			TOPLEFT = 3					
-		};
-
-		enum class WangEdge : int
-		{
-			TOP = 0,
-			RIGHT = 1,
-			BOTTOM = 2,
-			LEFT = 3
-		};
-
 		class WangTile
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
@@ -792,9 +778,9 @@ namespace chaos
 		public:
 
 			/** gets the corner value */
-			int GetCornerValue(WangCorner corner) const;
+			int GetCornerValue(Corner corner) const;
 			/** gets the edge value */
-			int GetEdgeValue(WangEdge edge) const;
+			int GetEdgeValue(Edge edge) const;
 
 			/** the particle flags represents some geometric transformation, that should change the meaning of the Tile */
 			void ApplyParticleFlags(int flags);

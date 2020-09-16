@@ -264,180 +264,18 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	next_pawn_box.position += 200.0f * stick_position * delta_time;
 
 
-	death::TMParticle* ppp = nullptr;
 
 
+	//next_pawn_box = ComputeCollisions(pawn_box, next_pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), "CollisionPlatformer", [](chaos::box2 const & b, death::TMParticle & p, chaos::Edge edge) 
 
-	std::vector<death::TileCollisionInfo> colliding_tiles;
-
-	
-
-
-	death::TMLevelInstance* level_instance = GetLevelInstance();
-	if (level_instance != nullptr)
+	next_pawn_box = ComputeCollisions(pawn_box, next_pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), nullptr, [](chaos::box2 const& b, death::TMParticle& p, chaos::Edge edge)
 	{
-
-
-
-
-		// collision over the extended bounding box
-		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(next_pawn_box | pawn_box, death::CollisionMask::PLAYER, true); 
-
-		// iterate over all particles
-		while (it)
-		{
-			// ignore pawn allocation
-			if (it->allocation == pawn->GetAllocation())
-			{
-				it.NextAllocation();
-				continue;
-			}
-			// while pawn box may change, while the request box is extended, this collision maybe does not happen
-			if (!chaos::Collide(next_pawn_box, it->particle->bounding_box))
-			{
-				++it;
-				continue;
-			}
-			// search the displacement that is the smallest so that pawn becomes outside the particle
-			float best_distance = std::numeric_limits<float>::max();
-			glm::vec2 best_center;
-
-			// some data
-			int particle_flags = it->particle->flags;
-
-			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
-			std::pair<glm::vec2, glm::vec2> next_pawn_corner = chaos::GetBoxCorners(next_pawn_box);
-
-
-
-			chaos::TiledMap::Wangset const* wangset = it->tile_info.tileset->FindWangset("CollisionPlatformer");
-
-			chaos::TiledMap::WangTile wangtile = wangset->GetWangTile(it->tile_info.id);
-			wangtile.ApplyParticleFlags(it->particle->flags);
-
-			// only test LEFT side if no neighbour
-			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0) 
-			if (wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1)
-			{
-				if (chaos::MathTools::IsInRange(particle_corners.first.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
-				{
-					float new_x = particle_corners.first.x - next_pawn_box.half_size.x;
-
-					float d = std::abs(new_x - next_pawn_box.position.x);
-					if (d < best_distance)
-					{
-						best_distance = d;
-						best_center.x = new_x;
-						best_center.y = next_pawn_box.position.y;
-					}
-				}
-			}
-
-			// only test RIGHT side if no neighbour
-			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0)
-			if (wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1)
-			{
-				if (chaos::MathTools::IsInRange(particle_corners.second.x, next_pawn_corner.first.x, next_pawn_corner.second.x))
-				{
-					float new_x = particle_corners.second.x + next_pawn_box.half_size.x;
-
-					float d = std::abs(new_x - next_pawn_box.position.x);
-					if (d < best_distance)
-					{
-						best_distance = d;
-						best_center.x = new_x;
-						best_center.y = next_pawn_box.position.y;
-					}
-				}
-			}
-
-			// only test TOP side if no neighbour
-			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0)
-			if (wangtile.GetEdgeValue(chaos::Edge::TOP) > 1)
-			{
-				if (chaos::MathTools::IsInRange(particle_corners.second.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
-				{
-					float new_y = particle_corners.second.y + next_pawn_box.half_size.y;
-
-					float d = std::abs(new_y - next_pawn_box.position.y);
-					if (d < best_distance)
-					{
-						best_distance = d;
-						best_center.x = next_pawn_box.position.x;
-						best_center.y = new_y;
-					}
-				}
-			}
-			
-			// only test BOTTOM side if no neighbour
-			//if ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0)
-			if (wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1)
-			{
-				if (chaos::MathTools::IsInRange(particle_corners.first.y, next_pawn_corner.first.y, next_pawn_corner.second.y))
-				{
-					float new_y = particle_corners.first.y - next_pawn_box.half_size.y;
-
-					float d = std::abs(new_y - next_pawn_box.position.y);
-					if (d < best_distance)
-					{
-						best_distance = d;
-						best_center.x = next_pawn_box.position.x;
-						best_center.y = new_y;
-					}
-				}
-			}
-
-			
-
-
-
-			// if a displacement is found to stop the collision, apply it
-			if (best_distance < std::numeric_limits<float>::max())
-			{
-				next_pawn_box.position = best_center;
-				ppp = it->particle;
-
-				ppp = ppp;
-			}
-
-
-			colliding_tiles.push_back(*it);
-			++it;
-		}
-	}
-
-
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	if (ppp != nullptr)
-	{
-		ppp->color.x = chaos::MathTools::RandFloat();
-		ppp->color.y = chaos::MathTools::RandFloat();
-		ppp->color.z = chaos::MathTools::RandFloat();
-	}
+		p.color.x = chaos::MathTools::RandFloat();
+		p.color.y = chaos::MathTools::RandFloat();
+		p.color.z = chaos::MathTools::RandFloat();
+	
+	});
 
 
 

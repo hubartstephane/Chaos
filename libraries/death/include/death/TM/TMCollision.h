@@ -2,6 +2,10 @@
 
 #include <death/TM.h>
 
+#include <chaos/GeometryFramework.h>
+#include <chaos/ParticleLayer.h>
+#include <chaos/Edge.h>
+
 namespace death
 {
 	// =====================================
@@ -21,6 +25,12 @@ namespace death
 		/** some information about the tile information */
 		chaos::TiledMap::TileInfo tile_info;
 	};
+
+	// =====================================
+	// Collision function
+	// =====================================
+
+	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 const& src_box, chaos::box2 const& dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<void(chaos::box2 const&, TMParticle&, chaos::Edge)> func);
 
 	// =====================================
 	// TMCollisionIteratorBase

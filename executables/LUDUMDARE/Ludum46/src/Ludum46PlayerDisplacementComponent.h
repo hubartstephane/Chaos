@@ -18,9 +18,4 @@ public:
 
 	/** override */
 	virtual bool DoTick(float delta_time) override;
-
-protected:
-
-	chaos::box2 ComputeCollisions(chaos::box2 const& src_box, chaos::box2 const& dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<void(chaos::box2 const&, death::TMParticle&, chaos::Edge)> func);
-
 };

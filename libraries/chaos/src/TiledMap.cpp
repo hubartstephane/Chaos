@@ -734,12 +734,12 @@ namespace chaos
 			return true;
 		}
 
-		int WangTile::GetCornerValue(WangCorner corner) const
+		int WangTile::GetCornerValue(Corner corner) const
 		{
 			return (int)((wang_id >> ((int)corner * 8 + 4)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
 		}
 
-		int WangTile::GetEdgeValue(WangEdge edge) const
+		int WangTile::GetEdgeValue(Edge edge) const
 		{
 			return (int)((wang_id >> ((int)edge * 8)) & 0xF); // each byte encode a CORNER + EDGE (so, x 8)
 		}
@@ -751,15 +751,15 @@ namespace chaos
 				return;
 			
 			// get values
-			int top_edge    = GetEdgeValue(WangEdge::TOP); 
-			int right_edge  = GetEdgeValue(WangEdge::RIGHT);			
-			int bottom_edge = GetEdgeValue(WangEdge::BOTTOM);
-			int left_edge   = GetEdgeValue(WangEdge::LEFT);
+			int top_edge    = GetEdgeValue(Edge::TOP); 
+			int right_edge  = GetEdgeValue(Edge::RIGHT);
+			int bottom_edge = GetEdgeValue(Edge::BOTTOM);
+			int left_edge   = GetEdgeValue(Edge::LEFT);
 
-			int topright_corner    = GetCornerValue(WangCorner::TOPRIGHT);
-			int bottomright_corner = GetCornerValue(WangCorner::BOTTOMRIGHT);
-			int bottomleft_corner  = GetCornerValue(WangCorner::BOTTOMLEFT);
-			int topleft_corner     = GetCornerValue(WangCorner::TOPLEFT);
+			int topright_corner    = GetCornerValue(Corner::TOP_RIGHT);
+			int bottomright_corner = GetCornerValue(Corner::BOTTOM_RIGHT);
+			int bottomleft_corner  = GetCornerValue(Corner::BOTTOM_LEFT);
+			int topleft_corner     = GetCornerValue(Corner::TOP_LEFT);
 
 			// apply transforms
 			if ((flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)

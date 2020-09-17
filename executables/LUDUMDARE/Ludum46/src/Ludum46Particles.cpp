@@ -299,11 +299,6 @@ int ParticleBurnedSoulLayerTrait::BeginParticlesToPrimitives(chaos::ParticleCons
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
-
-
-
-#if 0
-
 	LudumPlayerDisplacementComponent* displacement_component = game->GetPlayerDisplacementComponent(0);
 	if (displacement_component != nullptr)
 	{
@@ -339,7 +334,6 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
 	}
-#endif
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
 	{

@@ -11,13 +11,11 @@
 #include "death/CollisionMask.h"
 
 
-
-
 glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 velocity, bool running) const
 {
 	glm::vec2 runfactor = (running) ? glm::vec2(displacement_info.run_velocity_factor, 1.0f) : glm::vec2(1.0f, 1.0f);
 
-	for (int direction = 0; direction <= 1; ++direction)
+	for (int direction : {0, 1})
 	{
 		float max_vel = displacement_info.max_pawn_velocity[direction] * runfactor[direction];
 
@@ -27,189 +25,28 @@ glm::vec2 LudumPlayerDisplacementComponent::ClampPlayerVelocity(glm::vec2 veloci
 	return velocity;
 }
 
-float LudumPlayerDisplacementComponent::ComputeBoxUnionSideLength(chaos::box2 const& b1, chaos::box2 const& b2, int axis) const
-{
-	// compute the HEIGHT (or WIDTH) of the box UNION
-	//
-	// ------+ A
-	//       |
-	//  C +------    ^
-	//    |  |       | 
-	//    |  |       | Result
-	//    |  |       |
-	// ------+ B     v
-	//    |   
-	//  D +------
-	//
-	// XXX : this 'could be' replaced by
-	//
-	//       return (b1 & b2).half_size.y * 2.0f;
-	//
-	// XXX : in fact this can't because for SOFT TOUCHING box (along x axis for example), the half_size.y is set to -1 instead of 0
-	//
-
-	float a = b1.position[axis] + b1.half_size[axis];
-	float b = b1.position[axis] - b1.half_size[axis];
-	float c = b2.position[axis] + b2.half_size[axis];
-	float d = b2.position[axis] - b2.half_size[axis];
-
-	float mn = std::min(a, c);
-	float mx = std::max(b, d);
-	float dist = mn - mx;
-	return dist;
-}
-
-
-bool LudumPlayerDisplacementComponent::CheckWallCollision(chaos::box2& box, chaos::box2 const& pb, PlayerDisplacementCollisionFlags& collision_flag)
-{
-	// we can choose between a wall or a floor/ceil collision depending on the height of the interpenetration zone
-	float h = ComputeBoxUnionSideLength(box, pb, 1);
-	if (h > box.half_size.y)
-	{
-		float min_pawn_x = box.position.x - box.half_size.x;
-		float max_pawn_x = box.position.x + box.half_size.x;
-
-		if ((pb.position.x + pb.half_size.x >= min_pawn_x) && (pb.position.x + pb.half_size.x <= max_pawn_x)) // WALL is on the LEFT
-		{
-			box.position.x = pb.position.x + pb.half_size.x + box.half_size.x;
-			if (pawn_velocity.x < 0.0f)
-				pawn_velocity.x = 0.0f;
-		}
-		else if ((pb.position.x - pb.half_size.x >= min_pawn_x) && (pb.position.x - pb.half_size.x <= max_pawn_x)) // WALL is on the RIGHT
-		{
-			box.position.x = pb.position.x - pb.half_size.x - box.half_size.x;
-			if (pawn_velocity.x > 0.0f)
-				pawn_velocity.x = 0.0f;
-		}
-
-		collision_flag = (PlayerDisplacementCollisionFlags)(collision_flag | PlayerDisplacementCollisionFlags::TOUCHING_WALL); // pushed HORIZONTALLY	
-		return true;
-	}
-	return false;
-}
-
-PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileCollisionInfo> const& colliding_tiles)
-{
-	PlayerDisplacementCollisionFlags result = PlayerDisplacementCollisionFlags::NOTHING;
-
-	// detect collision flags
-	for (death::TileCollisionInfo const& collision : colliding_tiles)
-	{
-		// check for real collisions because the very first TiledMap request may have use a an extra padding
-		// (Collide(...) detects SOFT TOUCH (strict 0 distance) as collision)
-		chaos::box2 const& pb = collision.particle->bounding_box;
-		if (!chaos::Collide(box, pb))
-			continue;
-
-		// search the kind of object pawn is touching
-		bool is_wall = false;
-		bool is_bridge = false;
-		bool is_ladder = false;
-
-		if (collision.tile_info.tiledata->IsObjectOfType("WALL"))
-			is_wall = true;
-		else if (collision.tile_info.tiledata->IsObjectOfType("BRIDGE"))
-			is_bridge = true;
-		else if (collision.tile_info.tiledata->IsObjectOfType("LADDER"))
-			is_ladder = true;
-
-
-		// ladder ?
-		if (is_ladder)
-		{
-			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_LADDER);
-			continue;
-		}
-
-		// can continue
-		if (!is_wall && !is_bridge)
-			continue;
-
-		// is FLOOR ? (check this first to have precedence)
-		if ((pb.position.y + pb.half_size.y >= box.position.y - box.half_size.y) && (pb.position.y + pb.half_size.y <= box.position.y + box.half_size.y))
-		{
-			// to known whether to keep a FLOOR or a WALL collision we compute the HEIGHT of the interpenetration
-			if (!CheckWallCollision(box, pb, result) && ComputeBoxUnionSideLength(box, pb, 0) > 0.0f)
-			{
-				box.position.y = pb.position.y + pb.half_size.y + box.half_size.y;
-				pawn_velocity.y = 0.0f;
-
-				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_FLOOR); // pushed UP	
-			}
-		}
-		// is CEIL ? (cannot be both floor and ceil)
-		else if ((pb.position.y - pb.half_size.y >= box.position.y - box.half_size.y) && (pb.position.y - pb.half_size.y <= box.position.y + box.half_size.y))
-		{
-			// to known whether to keep a FLOOR or a WALL collision we compute the HEIGHT of the interpenetration
-			if (!CheckWallCollision(box, pb, result) && ComputeBoxUnionSideLength(box, pb, 0) > 0.0f)
-			{
-				box.position.y = pb.position.y - pb.half_size.y - box.half_size.y;
-				pawn_velocity.y = 0.0f;
-
-				result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_CEIL); // pushed UP			
-			}
-		}
-	}
-	return result;
-}
-
-
-
-
-
-
-
-
-
-#if 0
-
-PlayerDisplacementCollisionFlags LudumPlayerDisplacementComponent::ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileCollisionInfo> const& colliding_tiles)
-{
-
-
-	// keep the box outside the
-
-	// ========================= BRIDGE =========================
-		else if (is_bridge)
-		{
-		// can go through a bridge from down to up
-		if (pawn_velocity.y > 0.0f)
-			continue;
-
-		// pushed DOWN -> the bridge is not a collider as a ceil
-		if (displacement.y < 0.0f)
-			continue;
-
-		// jumping down ?
-		if (displacement_state == PlayerDisplacementState::JUMPING_DOWN)
-			if (current_jumpdown_start_y - box.position.y < displacement_info.max_jumpdown_height) // player has just started jumping down -> ignore the bridge
-				continue;
-		// pushed UP
-		if (displacement.y > 0.0f)
-			result = (PlayerDisplacementCollisionFlags)(result | PlayerDisplacementCollisionFlags::TOUCHING_BRIDGE);
-
-		}
-		chaos::RestrictToOutside(collision.particle.bounding_box, box); // displace the pawn box according to the NON EXTENDED pawn box
-}
-return result;
-}
-
-#endif
-
-PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementState(chaos::box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags)
+PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementState(chaos::box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, int collision_flags)
 {
 	glm::vec2& pawn_position = pawn_box.position;
 
+	// extract collision flags
 	bool touching_ceil = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_CEIL);
 	bool touching_floor = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_FLOOR);
 	bool touching_bridge = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_BRIDGE);
 	bool touching_wall = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_WALL);
 	bool touching_ladder = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_LADDER);
 
-	bool is_jumping = (displacement_state == PlayerDisplacementState::JUMPING);
+	// tweak velocity
+	if (touching_wall)
+		pawn_velocity.x = 0.0f;
+	if (touching_ceil || touching_floor)
+		pawn_velocity.y = 0.0f;
+
+	// current state
+	bool is_jumping      = (displacement_state == PlayerDisplacementState::JUMPING);
 	bool is_jumping_down = (displacement_state == PlayerDisplacementState::JUMPING_DOWN);
-	bool is_climbing = (displacement_state == PlayerDisplacementState::CLIMBING);
-	bool is_grounded = (displacement_state == PlayerDisplacementState::GROUNDED);
+	bool is_climbing     = (displacement_state == PlayerDisplacementState::CLIMBING);
+	bool is_grounded     = (displacement_state == PlayerDisplacementState::GROUNDED);
 
 	if (jump_pressed)
 	{
@@ -357,8 +194,6 @@ float LudumPlayerDisplacementComponent::GetJumpRelativeHeight(float jump_time) c
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
-
-
 	// early exit
 	death::PlayerPawn* pawn = player->GetPawn();
 	if (pawn == nullptr)
@@ -379,12 +214,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	int const run_key_buttons[] = { GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT, -1 };
 	bool run_pressed = player->CheckButtonPressed(run_key_buttons, chaos::XBoxButton::BUTTON_RIGHTTRIGGER);
 
-
-	int const attack_key_buttons[] = { GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1 };
-
 	// get player position
-	chaos::box2 pawn_box = pawn->GetBoundingBox();
-	glm::vec2& pawn_position = pawn_box.position;
+	chaos::box2 initial_pawn_box = pawn->GetBoundingBox();
+
+	chaos::box2 pawn_box = initial_pawn_box;
+	glm::vec2 & pawn_position = pawn_box.position;
 
 	// sum the forces 
 	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
@@ -399,7 +233,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	}
 	else
 	{
-		float run_factor = (run_pressed && displacement_state != PlayerDisplacementState::CLIMBING) ? displacement_info.run_velocity_factor : 1.0f;
+		float run_factor = (run_pressed) ? displacement_info.run_velocity_factor : 1.0f;
 
 		// pawn is breaking
 		if (stick_position.x == 0.0f)
@@ -437,39 +271,25 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	}
 
 	// update pawn position
+	pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlayerDisplacementState::CLIMBING);
 	pawn_position += pawn_velocity * delta_time;
 
-	// extend the pawn box for ground/wall collision
-	chaos::box2 extended_pawn_box = pawn_box;
-	extended_pawn_box.half_size += displacement_info.pawn_box_extend;
+	// search collisions, apply collision reaction
+	int collision_flags = PlayerDisplacementCollisionFlags::NOTHING;
 
-	// get colliding tiles
-	std::vector<death::TileCollisionInfo> colliding_tiles;
+	char const* wangset_name = nullptr; //"CollisionPlatformer"
 
-	death::TMLevelInstance* level_instance = GetLevelInstance();
-	if (level_instance != nullptr)
-	{
-		death::TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_pawn_box, death::CollisionMask::PLAYER, false);
-
-		while (it)
-		{
-			if (it->allocation == pawn->GetAllocation())
-			{
-				it.NextAllocation();
-				continue;
-			}
-			colliding_tiles.push_back(*it);
-			++it;
-		}
-	}
-
-	// compute collisions and keep trace of all collided objects
-	PlayerDisplacementCollisionFlags collision_flags = ApplyCollisionsToPlayer(pawn_box, colliding_tiles);
+	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), wangset_name, [&collision_flags](chaos::box2 const& b, death::TMParticle& p, chaos::Edge edge)	{
+		if (edge == chaos::Edge::TOP)
+			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_FLOOR;
+		else if (edge == chaos::Edge::BOTTOM)
+			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_CEIL; 
+		else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)
+			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_WALL;
+	});
 
 	// update player state
 	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
-
-	pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlayerDisplacementState::CLIMBING);
 
 	// update the player pawn
 	pawn->SetPosition(pawn_box.position);

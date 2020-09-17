@@ -18,14 +18,14 @@ enum class PlayerDisplacementState : int
 	CLIMBING      // whether the player is on a ladder a goind up or down
 };
 
-enum PlayerDisplacementCollisionFlags : int // XXXX: no class, so this can be implicitly converted to int
+namespace PlayerDisplacementCollisionFlags
 {
-	NOTHING = 0, // no collision of interrests
-	TOUCHING_FLOOR = (1 << 0),
-	TOUCHING_BRIDGE = (1 << 1), // a bridge is a kind of floor you can jump-down through
-	TOUCHING_CEIL = (1 << 2),
-	TOUCHING_WALL = (1 << 3),
-	TOUCHING_LADDER = (1 << 4)
+	static constexpr int NOTHING = 0; // no collision of interrests
+	static constexpr int TOUCHING_FLOOR  = (1 << 0);
+	static constexpr int TOUCHING_BRIDGE = (1 << 1); // a bridge is a kind of floor you can jump-down through
+	static constexpr int TOUCHING_CEIL   = (1 << 2);
+	static constexpr int TOUCHING_WALL   = (1 << 3);
+	static constexpr int TOUCHING_LADDER = (1 << 4);
 };
 
 class PlayerDisplacementComponentInfo
@@ -50,8 +50,7 @@ public:
 	float jump_released_velocity_factor = 0.3f;
 	/** the climb speed */
 	glm::vec2 climp_velocity = glm::vec2(30.0f, 75.0f);
-	/** the distance that can be jumpdown before colliding bridge again */
-	float max_jumpdown_height = 32.0f;
+
 #if 0
 	/** pawn do not advance forward anymore */
 	float pawn_break_ratio = 0.01f;
@@ -67,12 +66,6 @@ public:
 
 	/** an horizontal velocity above which climb is forbidden */
 	float climb_max_horizontal_velocity = 32.0f;
-
-	/* an extend of the pawn box so we can detect collision */
-	glm::vec2 pawn_box_extend = glm::vec2(15.0f, 15.0f);
-
-	glm::vec2 pawn_collision_adjust = glm::vec2(0.7f, 1.0f);
-
 };
 
 
@@ -99,10 +92,8 @@ public:
 
 protected:
 
-	/** compute the collision flags according to all */
-	PlayerDisplacementCollisionFlags ApplyCollisionsToPlayer(chaos::box2& box, std::vector<death::TileCollisionInfo> const& colliding_tiles);
 	/** compute the new displacement state */
-	PlayerDisplacementState ComputeDisplacementState(chaos::box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, PlayerDisplacementCollisionFlags collision_flags);
+	PlayerDisplacementState ComputeDisplacementState(chaos::box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, int collision_flags);
 	/** get the offset from the jumping point when the player is jumping */
 	float GetJumpRelativeHeight(float jump_time) const;
 	/** get the duration of a jump according to gravity/max_height */
@@ -110,10 +101,6 @@ protected:
 	/** get the velocity of jumper at given time */
 	float GetJumpVelocity(float jump_time) const;
 
-	/** check whether the detected collision is a wall collision instead of a ceil/floor collision. Update the collision_flag */
-	bool CheckWallCollision(chaos::box2& box, chaos::box2 const& pb, PlayerDisplacementCollisionFlags& collision_flag);
-	/** compute the length of a side of the union of 2 boxes */
-	float ComputeBoxUnionSideLength(chaos::box2 const& b1, chaos::box2 const& b2, int axis) const;
 	/** clamp the player velocity according to limits */
 	glm::vec2 ClampPlayerVelocity(glm::vec2 velocity, bool running) const;
 

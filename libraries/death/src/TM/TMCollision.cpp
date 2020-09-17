@@ -42,7 +42,7 @@ namespace death
 		chaos::box2 result = dst_box;
 
 		// collision over the extended bounding box
-		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(src_box | dst_box, collision_mask, true);
+		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(src_box | dst_box, collision_mask, false);
 
 		// for faster access, cache the wangset
 		chaos::TiledMap::Wangset const* wangset = nullptr;

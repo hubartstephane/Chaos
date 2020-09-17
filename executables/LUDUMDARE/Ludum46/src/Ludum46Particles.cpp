@@ -333,6 +333,19 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 			if (pawn_velocity.x < 0.0f)
 				particle.flags |= chaos::ParticleFlags::TEXTURE_HORIZONTAL_FLIP;
 		}
+
+
+
+
+
+
+		if (displacement_component->displacement_state == PlayerDisplacementState::FALLING)
+			particle.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		else
+			particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
+
 	}
 
 	if (particle.bitmap_info != nullptr && particle.bitmap_info->HasAnimation())
@@ -343,6 +356,12 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 		particle.texcoords = layout.GetTexcoords();
 	}
+
+
+
+
+
+
 	return false;
 }
 

@@ -106,6 +106,9 @@ protected:
 
 protected:
 
+
+public:
+
 	/** the rules for the displacement */
 	PlayerDisplacementComponentInfo displacement_info;
 

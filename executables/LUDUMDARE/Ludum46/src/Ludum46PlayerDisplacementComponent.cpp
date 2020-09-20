@@ -279,13 +279,14 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	char const* wangset_name = nullptr; //"CollisionPlatformer"
 
-	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), wangset_name, [&collision_flags](chaos::box2 const& b, death::TMParticle& p, chaos::Edge edge)	{
+	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), wangset_name, [&collision_flags](death::TMParticle& p, chaos::Edge edge)	{
 		if (edge == chaos::Edge::TOP)
 			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_FLOOR;
 		else if (edge == chaos::Edge::BOTTOM)
 			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_CEIL; 
 		else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)
 			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_WALL;
+		return true;
 	});
 
 	// update player state
@@ -298,62 +299,3 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	return true;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
-{
-	// early exit
-	death::PlayerPawn* pawn = player->GetPawn();
-	if (pawn == nullptr)
-		return true;
-
-	// get player inputs of interrests
-	glm::vec2 stick_position = player->GetLeftStickPosition();
-
-	stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
-	stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
-	stick_position.y = -stick_position.y; // Y stick is inverted
-
-	// get player position
-	chaos::box2 pawn_box = pawn->GetBoundingBox();
-
-	chaos::box2 next_pawn_box = pawn_box;
-	next_pawn_box.position += 200.0f * stick_position * delta_time;
-
-
-	//next_pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), pawn_box, next_pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), nullptr, [](chaos::box2 const& b, death::TMParticle& p, chaos::Edge edge)
-	next_pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), pawn_box, next_pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), "CollisionPlatformer", [](chaos::box2 const& b, death::TMParticle& p, chaos::Edge edge)
-	{
-	
-		p.color.x = chaos::MathTools::RandFloat();
-		p.color.y = chaos::MathTools::RandFloat();
-		p.color.z = chaos::MathTools::RandFloat();
-	
-	});
-
-	pawn->SetBoundingBox(next_pawn_box);
-
-	return true;
-}
-
-#endif

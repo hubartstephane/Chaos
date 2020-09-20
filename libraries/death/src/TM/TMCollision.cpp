@@ -35,11 +35,16 @@ namespace death
 	// EDGE 1  EDGE 2
 	//
 
-	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 const& src_box, chaos::box2 const& dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<void(chaos::box2 const&, TMParticle&, chaos::Edge)> func)
+	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<bool(TMParticle&, chaos::Edge)> func)
 	{
 		assert(level_instance != nullptr);
 
 		chaos::box2 result = dst_box;
+
+		// work on Extended copy of the box
+		glm::vec2 delta = glm::vec2(25.0f, 25.0f);
+		src_box.half_size += delta;
+		dst_box.half_size += delta;
 
 		// collision over the extended bounding box
 		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(src_box | dst_box, collision_mask, false);
@@ -58,7 +63,7 @@ namespace death
 				continue;
 			}
 			// while dst_box may change, while the request box is extended, this collision maybe does not even happen
-			if (!chaos::Collide(result, it->particle->bounding_box))
+			if (!chaos::Collide(dst_box, it->particle->bounding_box))
 			{
 				++it;
 				continue;
@@ -98,7 +103,7 @@ namespace death
 			chaos::Edge best_edge;
 
 			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
-			std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(result);
+			std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(dst_box);
 
 			// XXX : an edge with wang value 
 			//         0 -> the tile does not use the wangset at all
@@ -114,14 +119,14 @@ namespace death
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_corners.first.x, dst_corners.second.x))
 				{
-					float new_x = particle_corners.first.x - result.half_size.x;
+					float new_x = particle_corners.first.x - dst_box.half_size.x;
 
-					float d = std::abs(new_x - result.position.x);
+					float d = std::abs(new_x - dst_box.position.x);
 					if (d < best_distance)
 					{
 						best_distance = d;
 						best_center.x = new_x;
-						best_center.y = result.position.y;
+						best_center.y = dst_box.position.y;
 						best_edge = chaos::Edge::LEFT;
 					}
 				}
@@ -136,14 +141,14 @@ namespace death
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x, dst_corners.second.x))
 				{
-					float new_x = particle_corners.second.x + result.half_size.x;
+					float new_x = particle_corners.second.x + dst_box.half_size.x;
 
-					float d = std::abs(new_x - result.position.x);
+					float d = std::abs(new_x - dst_box.position.x);
 					if (d < best_distance)
 					{
 						best_distance = d;
 						best_center.x = new_x;
-						best_center.y = result.position.y;
+						best_center.y = dst_box.position.y;
 						best_edge = chaos::Edge::RIGHT;
 					}
 				}
@@ -158,13 +163,13 @@ namespace death
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y, dst_corners.second.y))
 				{
-					float new_y = particle_corners.second.y + result.half_size.y;
+					float new_y = particle_corners.second.y + dst_box.half_size.y;
 
-					float d = std::abs(new_y - result.position.y);
+					float d = std::abs(new_y - dst_box.position.y);
 					if (d < best_distance)
 					{
 						best_distance = d;
-						best_center.x = result.position.x;
+						best_center.x = dst_box.position.x;
 						best_center.y = new_y;
 						best_edge = chaos::Edge::TOP;
 					}
@@ -180,13 +185,13 @@ namespace death
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_corners.first.y, dst_corners.second.y))
 				{
-					float new_y = particle_corners.first.y - result.half_size.y;
+					float new_y = particle_corners.first.y - dst_box.half_size.y;
 
-					float d = std::abs(new_y - result.position.y);
+					float d = std::abs(new_y - dst_box.position.y);
 					if (d < best_distance)
 					{
 						best_distance = d;
-						best_center.x = result.position.x;
+						best_center.x = dst_box.position.x;
 						best_center.y = new_y;
 						best_edge = chaos::Edge::BOTTOM;
 					}
@@ -196,12 +201,18 @@ namespace death
 			// if a displacement is found to stop the collision, apply it
 			if (best_distance < std::numeric_limits<float>::max())
 			{
-				result.position = best_center;
-				if (func != nullptr)
-					func(result, *it->particle, best_edge);
+				if (func == nullptr || func(*it->particle, best_edge))
+				{
+					src_box = dst_box;
+					dst_box.position = best_center;
+				}
 			}
 			++it;
 		}
+
+		// get the position of the extended box
+		result.position = dst_box.position;
+
 		return result;
 	}
 

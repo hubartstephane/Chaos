@@ -38,7 +38,10 @@ namespace death
 	// Collision Artifacts
 	// -------------------
 	//
-	// For a falling PAWN, as soon as the PAWN interpenetrate the ground, it is pushed upward. This leads to situation where the pawn is falling for one frame an grounded the other
+	// 1. alternating collision/no collision state
+	// -------------------------------------------
+	//
+	// For a falling PAWN, as soon as the PAWN interpenetrate the ground, it is pushed upward. This leads to situation where the pawn is falling for one frame and grounded the other
 	//
 	//      ^ pushed upward                                        +-------+ PAWN is FALLING
 	//      |                                                      |       |
@@ -53,13 +56,38 @@ namespace death
 	//
 	//   +--------------+  The Pawn bounding box is slightly extended
 	//   |    ZONE 2    |  -Whenever a collision happens inside ZONE 2, the PAWN is not pushed at all
-	//   |  +--------+  |  -Whenever a collision happens inside ZONE 1, the PAWN is pushed (but not too far. The collision after happens in middle of ZONE 2
+	//   |  +--------+  |  -Whenever a collision happens inside ZONE 1, the PAWN is pushed (but not too far. The collision after happens in middle of ZONE 2)
 	//   |  | ZONE 1 |  |  
 	//   |  |        |  |
 	//   |  +--------+  |
 	//   |     +---------------+
 	//   +-----|--------+      |
 	//         |               |
+	//
+	//
+	// 2. Non really stopping collisions
+	// ---------------------------------
+	//
+	// +----------------+ PAWN         We are now using 2 zones collisions
+	// |     ZONE 2     |              Whenever there is a collision in ZONE 2, it is still possible for the PAWN to go near and near the wall (the two objets are going near one another, by slowly)
+	// |                |
+	// |     +----+     | move         to solve this issue, we check for collision for the previous frame position. If there already was a collision in zone 2 in previous frame,
+	// |     |    |     | ---->        we refuse the PAWN to move. We keep its position to the one in previous frame
+	// |     +----+     |
+	//               +---------  
+	//               |
+	//
+	// 3. Slickery collision
+	// ---------------------
+	//
+	// +----------------+ PAWN         The previous changes, can lead to situation where the two objets want to go further one another
+	// |     ZONE 2     |              but the collision become slickery
+	// |                |
+	// |     +----+     |  move        to solve this issue we check for relative velocity of both objects (we store PAWN previous position)
+	// |     |    |     | <----        if the 2 objects are naturally going further one another, we ignore collisions
+	// |     +----+     |
+	//               +-----------
+	//               |
 
 	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<bool(TMParticle&, chaos::Edge)> func)
 	{

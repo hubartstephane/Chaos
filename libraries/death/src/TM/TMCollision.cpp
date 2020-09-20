@@ -34,6 +34,32 @@ namespace death
 	//   |       |
 	// EDGE 1  EDGE 2
 	//
+	// -------------------
+	// Collision Artifacts
+	// -------------------
+	//
+	// For a falling PAWN, as soon as the PAWN interpenetrate the ground, it is pushed upward. This leads to situation where the pawn is falling for one frame an grounded the other
+	//
+	//      ^ pushed upward                                        +-------+ PAWN is FALLING
+	//      |                                                      |       |
+	//  +-------+ PAWN is GROUNDED                                 |       |
+	//  |       |                          <-------------->        |       |
+	//  |       |                                                  +-------+
+	//  | +----------------+                                          +----------------+
+	//  +-|-----+          |                                          |                |
+ 	//    |                |                                          |                |
+	//
+	// To solve with issue we use extended collision
+	//
+	//   +--------------+  The Pawn bounding box is slightly extended
+	//   |    ZONE 2    |  -Whenever a collision happens inside ZONE 2, the PAWN is not pushed at all
+	//   |  +--------+  |  -Whenever a collision happens inside ZONE 1, the PAWN is pushed (but not too far. The collision after happens in middle of ZONE 2
+	//   |  | ZONE 1 |  |  
+	//   |  |        |  |
+	//   |  +--------+  |
+	//   |     +---------------+
+	//   +-----|--------+      |
+	//         |               |
 
 	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<bool(TMParticle&, chaos::Edge)> func)
 	{
@@ -42,7 +68,7 @@ namespace death
 		chaos::box2 result = dst_box;
 
 		// work on Extended copy of the box
-		glm::vec2 delta = glm::vec2(25.0f, 25.0f);
+		glm::vec2 delta = glm::vec2(15.0f, 15.0f);
 		src_box.half_size += delta;
 		dst_box.half_size += delta;
 
@@ -99,8 +125,8 @@ namespace death
 
 			// search the displacement that is the smallest so that pawn becomes outside the particle
 			float best_distance = std::numeric_limits<float>::max();
-			glm::vec2 best_center;
-			chaos::Edge best_edge;
+			glm::vec2 best_center = dst_box.position;
+			chaos::Edge best_edge = chaos::Edge::TOP;
 
 			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
 			std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(dst_box);
@@ -117,7 +143,12 @@ namespace death
 
 			if (left_collision)
 			{
-				if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_corners.first.x, dst_corners.second.x))
+				if (particle_corners.first.x > dst_corners.second.x - delta.x)
+				{
+					best_distance = 0.0f;
+					best_edge = chaos::Edge::LEFT;
+				}
+				else if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_corners.first.x, dst_corners.second.x))
 				{
 					float new_x = particle_corners.first.x - dst_box.half_size.x;
 
@@ -139,7 +170,12 @@ namespace death
 
 			if (right_collision)
 			{
-				if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x, dst_corners.second.x))
+				if (particle_corners.second.x < dst_corners.first.x + delta.x)
+				{
+					best_distance = 0.0f;
+					best_edge = chaos::Edge::RIGHT;
+				}
+				else if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x, dst_corners.second.x))
 				{
 					float new_x = particle_corners.second.x + dst_box.half_size.x;
 
@@ -161,9 +197,14 @@ namespace death
 
 			if (top_collision)
 			{
-				if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y, dst_corners.second.y))
+				if (particle_corners.first.y > dst_corners.second.y - delta.y)
 				{
-					float new_y = particle_corners.second.y + dst_box.half_size.y;
+					best_distance = 0.0f;
+					best_edge = chaos::Edge::BOTTOM;
+				}
+				else if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y, dst_corners.second.y))
+				{
+					float new_y = particle_corners.second.y + dst_box.half_size.y - delta.y * 0.5f;
 
 					float d = std::abs(new_y - dst_box.position.y);
 					if (d < best_distance)
@@ -183,7 +224,13 @@ namespace death
 
 			if (bottom_collision)
 			{
-				if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_corners.first.y, dst_corners.second.y))
+
+				if (particle_corners.second.y < dst_corners.first.y + delta.y)
+				{
+					best_distance = 0.0f;
+					best_edge = chaos::Edge::TOP;
+				}
+				else if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_corners.first.y, dst_corners.second.y))
 				{
 					float new_y = particle_corners.first.y - dst_box.half_size.y;
 

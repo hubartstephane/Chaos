@@ -277,7 +277,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	// search collisions, apply collision reaction
 	int collision_flags = PlayerDisplacementCollisionFlags::NOTHING;
 
-	char const* wangset_name = nullptr; //"CollisionPlatformer"
+	char const* wangset_name = nullptr; // "CollisionPlatformer";
 
 	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), wangset_name, [&collision_flags](death::TMParticle& p, chaos::Edge edge)	{
 		if (edge == chaos::Edge::TOP)

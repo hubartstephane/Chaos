@@ -101,7 +101,11 @@ namespace death
 		dst_box.half_size += delta;
 
 		// collision over the extended bounding box
-		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(src_box | dst_box, collision_mask, false);
+
+		auto bb = src_box | dst_box;
+		bb.half_size *= 3.0f;
+
+		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(bb, collision_mask, false);
 
 		// for faster access, cache the wangset
 		chaos::TiledMap::Wangset const* wangset = nullptr;
@@ -133,7 +137,10 @@ namespace death
 			{
 				// cannot do anything without a known tileset : this should never happen
 				if (it->tile_info.tileset == nullptr)
+				{
+					++it;
 					continue;
+				}
 
 				// different tileset than the one for previous particle ?
 				if (it->tile_info.tileset != tileset)
@@ -158,120 +165,177 @@ namespace death
 
 			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
 			std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(dst_box);
+			std::pair<glm::vec2, glm::vec2> src_corners = chaos::GetBoxCorners(src_box);
 
 			// XXX : an edge with wang value 
 			//         0 -> the tile does not use the wangset at all
 			//         1 -> this is the empty wang value
 			//        +2 -> good
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			// only test LEFT side if no neighbour
-			bool left_collision = (wangset != nullptr) ?
+			bool left_collision_candidate = (wangset != nullptr) ?
 				(wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
 
-			if (left_collision)
+			if (left_collision_candidate && src_box.position.x <= dst_box.position.x)
 			{
-				if (particle_corners.first.x > dst_corners.second.x - delta.x)
+				if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_corners.first.x, dst_corners.second.x))
 				{
-					best_distance = 0.0f;
-					best_edge = chaos::Edge::LEFT;
-				}
-				else if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_corners.first.x, dst_corners.second.x))
-				{
-					float new_x = particle_corners.first.x - dst_box.half_size.x;
-
-					float d = std::abs(new_x - dst_box.position.x);
-					if (d < best_distance)
+					if (chaos::MathTools::IsInRange(particle_corners.first.x, src_corners.second.x - delta.x, src_corners.second.x))
 					{
-						best_distance = d;
-						best_center.x = new_x;
-						best_center.y = dst_box.position.y;
+						best_distance = 0.0f;
+						best_center.x = src_box.position.x;
 						best_edge = chaos::Edge::LEFT;
+					}
+					else if (particle_corners.first.x > dst_corners.second.x - delta.x)
+					{
+						best_distance = 0.0f;
+						best_edge = chaos::Edge::LEFT;
+					}
+					else
+					{
+						float new_x = particle_corners.first.x - dst_box.half_size.x + delta.x * 0.5f;
+
+						float d = std::abs(new_x - dst_box.position.x);
+						if (d < best_distance)
+						{
+							best_distance = d;
+							best_center.x = new_x;
+							best_edge = chaos::Edge::LEFT;
+						}
 					}
 				}
 			}
 
 			// only test RIGHT side if no neighbour
-			bool right_collision = (wangset != nullptr) ?
+			bool right_collision_candidate = (wangset != nullptr) ?
 				(wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
 
-			if (right_collision)
+			if (right_collision_candidate && src_box.position.x >= dst_box.position.x)
 			{
-				if (particle_corners.second.x < dst_corners.first.x + delta.x)
+				if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x, dst_corners.second.x))
 				{
-					best_distance = 0.0f;
-					best_edge = chaos::Edge::RIGHT;
-				}
-				else if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x, dst_corners.second.x))
-				{
-					float new_x = particle_corners.second.x + dst_box.half_size.x;
-
-					float d = std::abs(new_x - dst_box.position.x);
-					if (d < best_distance)
-					{
-						best_distance = d;
-						best_center.x = new_x;
-						best_center.y = dst_box.position.y;
+					if (chaos::MathTools::IsInRange(particle_corners.second.x, src_corners.first.x, src_corners.first.x + delta.x))
+					{					
+						best_distance = 0.0f;
+						best_center.x = src_box.position.x;
 						best_edge = chaos::Edge::RIGHT;
 					}
-				}
-			}
-
-			// only test TOP side if no neighbour
-			bool top_collision = (wangset != nullptr) ?
-				(wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) :
-				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
-
-			if (top_collision)
-			{
-				if (particle_corners.first.y > dst_corners.second.y - delta.y)
-				{
-					best_distance = 0.0f;
-					best_edge = chaos::Edge::BOTTOM;
-				}
-				else if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y, dst_corners.second.y))
-				{
-					float new_y = particle_corners.second.y + dst_box.half_size.y - delta.y * 0.5f;
-
-					float d = std::abs(new_y - dst_box.position.y);
-					if (d < best_distance)
+					else if (particle_corners.second.x < dst_corners.first.x + delta.x)
 					{
-						best_distance = d;
-						best_center.x = dst_box.position.x;
-						best_center.y = new_y;
-						best_edge = chaos::Edge::TOP;
+						best_distance = 0.0f;
+						best_edge = chaos::Edge::RIGHT;
+					}
+					else
+					{
+						float new_x = particle_corners.second.x + dst_box.half_size.x - delta.x * 0.5f;
+
+						float d = std::abs(new_x - dst_box.position.x);
+						if (d < best_distance)
+						{
+							best_distance = d;
+							best_center.x = new_x;
+							best_edge = chaos::Edge::RIGHT;
+						}
 					}
 				}
 			}
 
 			// only test BOTTOM side if no neighbour
-			bool bottom_collision = (wangset != nullptr) ?
+			bool bottom_collision_candidate = (wangset != nullptr) ?
 				(wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
 
-			if (bottom_collision)
+			if (bottom_collision_candidate && src_box.position.y <= dst_box.position.y)
 			{
-
-				if (particle_corners.second.y < dst_corners.first.y + delta.y)
+				if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_corners.first.y, dst_corners.second.y))
 				{
-					best_distance = 0.0f;
-					best_edge = chaos::Edge::TOP;
-				}
-				else if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_corners.first.y, dst_corners.second.y))
-				{
-					float new_y = particle_corners.first.y - dst_box.half_size.y;
-
-					float d = std::abs(new_y - dst_box.position.y);
-					if (d < best_distance)
+					if (chaos::MathTools::IsInRange(particle_corners.first.y, src_corners.second.y - delta.y, src_corners.second.y))
 					{
-						best_distance = d;
-						best_center.x = dst_box.position.x;
-						best_center.y = new_y;
+						best_distance = 0.0f;
+						best_center.y = src_box.position.y;
 						best_edge = chaos::Edge::BOTTOM;
+					}
+					else if (particle_corners.first.y > dst_corners.second.y - delta.y)
+					{
+						best_distance = 0.0f;
+						best_edge = chaos::Edge::BOTTOM;
+					}
+					else
+					{
+						float new_y = particle_corners.first.y - dst_box.half_size.y + delta.y * 0.5f;
+
+						float d = std::abs(new_y - dst_box.position.y);
+						if (d < best_distance)
+						{
+							best_distance = d;
+							best_center.y = new_y;
+							best_edge = chaos::Edge::BOTTOM;
+						}
 					}
 				}
 			}
+
+
+
+
+
+
+			// only test TOP side if no neighbour
+			bool top_collision_candidate = (wangset != nullptr) ?
+				(wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) :
+				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
+
+			if (top_collision_candidate && src_box.position.y >= dst_box.position.y)
+			{
+				if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y, dst_corners.second.y))
+				{
+					if (chaos::MathTools::IsInRange(particle_corners.second.y, src_corners.first.y, src_corners.first.y + delta.y))
+					{
+						best_distance = 0.0f; 
+						best_center.y = src_box.position.y;
+						best_edge = chaos::Edge::TOP;
+					}
+					else if (particle_corners.second.y < dst_corners.first.y + delta.y)
+					{
+						best_distance = 0.0f;
+						best_edge = chaos::Edge::TOP;
+					}
+					else
+					{
+						float new_y = particle_corners.second.y + dst_box.half_size.y - delta.y * 0.5f;
+
+						float d = std::abs(new_y - dst_box.position.y);
+						if (d < best_distance)
+						{
+							best_distance = d;
+							best_center.y = new_y;
+							best_edge = chaos::Edge::TOP;
+						}
+					}
+				}
+			}
+
+
+
 
 			// if a displacement is found to stop the collision, apply it
 			if (best_distance < std::numeric_limits<float>::max())

@@ -220,6 +220,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	chaos::box2 pawn_box = initial_pawn_box;
 	glm::vec2 & pawn_position = pawn_box.position;
 
+
+#if 0
+
 	// sum the forces 
 	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
 
@@ -270,9 +273,20 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		pawn_velocity += (sum_forces * delta_time);
 	}
 
+
+
+
+#endif
+
+
+
+
 	// update pawn position
-	pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlayerDisplacementState::CLIMBING);
-	pawn_position += pawn_velocity * delta_time;
+	//pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlayerDisplacementState::CLIMBING);
+	//pawn_position += pawn_velocity * delta_time;
+
+
+	pawn_position += stick_position * delta_time * 100.0f;
 
 	// search collisions, apply collision reaction
 	int collision_flags = PlayerDisplacementCollisionFlags::NOTHING;
@@ -290,7 +304,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	});
 
 	// update player state
-	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
+	//displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
 
 	// update the player pawn
 	pawn->SetPosition(pawn_box.position);

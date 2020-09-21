@@ -173,28 +173,12 @@ namespace death
 			//        +2 -> good
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			// only test LEFT side if no neighbour
 			bool left_collision_candidate = (wangset != nullptr) ?
 				(wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
 
-			if (left_collision_candidate && src_box.position.x <= dst_box.position.x)
+			if (left_collision_candidate && src_box.position.x < dst_box.position.x)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_corners.first.x, dst_corners.second.x))
 				{
@@ -229,7 +213,7 @@ namespace death
 				(wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
 
-			if (right_collision_candidate && src_box.position.x >= dst_box.position.x)
+			if (right_collision_candidate && src_box.position.x > dst_box.position.x)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x, dst_corners.second.x))
 				{
@@ -264,7 +248,7 @@ namespace death
 				(wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
 
-			if (bottom_collision_candidate && src_box.position.y <= dst_box.position.y)
+			if (bottom_collision_candidate && src_box.position.y < dst_box.position.y)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_corners.first.y, dst_corners.second.y))
 				{
@@ -304,7 +288,7 @@ namespace death
 				(wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
 
-			if (top_collision_candidate && src_box.position.y >= dst_box.position.y)
+			if (top_collision_candidate && src_box.position.y > dst_box.position.y)
 			{
 				if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y, dst_corners.second.y))
 				{

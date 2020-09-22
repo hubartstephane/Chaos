@@ -483,6 +483,11 @@ namespace chaos
 			return Application::OnKeyEventImpl(event);
 		}
 
+		GLFWwindow* SingleWindowApplication::GetGLFWWindow() const
+		{
+			return (window == nullptr) ? nullptr : window->GetGLFWWindow();
+		}
+
 	}; // namespace MyGLFW
 
 }; // namespace chaos

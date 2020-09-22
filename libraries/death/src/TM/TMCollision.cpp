@@ -123,15 +123,13 @@ namespace death
 					wnd = wnd;
 		}
 
-		
-
-
+	
 		// collision over the extended bounding box
 
-		auto bb = src_box | dst_box;
-	//bb.half_size *= 3.0f;
+		chaos::box2 sweep_box = src_box | dst_box;
+		std::pair<glm::vec2, glm::vec2> sweep_corners = chaos::GetBoxCorners(sweep_box);
 
-		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(bb, collision_mask, false);
+		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(sweep_box, collision_mask, false);
 
 		// for faster access, cache the wangset
 		chaos::TiledMap::Wangset const* wangset = nullptr;
@@ -151,22 +149,6 @@ namespace death
 				it.NextAllocation();
 				continue;
 			}
-
-
-
-
-
-
-
-#if 0
-
-			// while dst_box may change, while the request box is extended, this collision maybe does not even happen
-			if (!chaos::Collide(dst_box, it->particle->bounding_box))
-			{
-				++it;
-				continue;
-			}
-#endif
 
 			// some data
 			int particle_flags = it->particle->flags;
@@ -210,7 +192,7 @@ namespace death
 				(wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
 
-			if (left_collision_candidate && delta_position.x > 0.0f)
+			if (left_collision_candidate && delta_position.x > 0.0f && chaos::MathTools::IsInRange(particle_corners.first.x, sweep_corners.first.x, sweep_corners.second.x))
 			{
 				// the max value along SRC -> DST we can go until collision is founded
 				float ratio = (particle_corners.first.x - src_box.half_size.x + 0.5f * delta.x - src_box.position.x) / delta_position.x;
@@ -230,7 +212,7 @@ namespace death
 				(wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
 
-			if (right_collision_candidate && delta_position.x < 0.0f)
+			if (right_collision_candidate && delta_position.x < 0.0f && chaos::MathTools::IsInRange(particle_corners.second.x, sweep_corners.first.x, sweep_corners.second.x))
 			{
 				// the max value along SRC -> DST we can go until collision is founded
 				float ratio = (particle_corners.second.x + src_box.half_size.x - 0.5f * delta.x - src_box.position.x) / delta_position.x;
@@ -250,7 +232,7 @@ namespace death
 				(wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
 
-			if (bottom_collision_candidate && delta_position.y > 0.0f)
+			if (bottom_collision_candidate && delta_position.y > 0.0f && chaos::MathTools::IsInRange(particle_corners.first.y, sweep_corners.first.y, sweep_corners.second.y))
 			{
 				// the max value along SRC -> DST we can go until collision is founded
 				float ratio = (particle_corners.first.y - src_box.half_size.y + 0.5f * delta.y - src_box.position.y) / delta_position.y;
@@ -270,7 +252,7 @@ namespace death
 				(wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) :
 				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
 
-			if (top_collision_candidate && delta_position.y < 0.0f)
+			if (top_collision_candidate && delta_position.y < 0.0f && chaos::MathTools::IsInRange(particle_corners.second.y, sweep_corners.first.y, sweep_corners.second.y))
 			{
 				// the max value along SRC -> DST we can go until collision is founded
 				float ratio = (particle_corners.second.y + src_box.half_size.y - 0.5f * delta.y - src_box.position.y) / delta_position.y;

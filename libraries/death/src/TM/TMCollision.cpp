@@ -85,6 +85,21 @@ namespace death
 	//         |                     |
 	//
 	//
+	//      +----+
+	//      |    |
+	//      +----+
+	//      |    |           Whenever checking for collision between an EDGE and ZONE 1/ZONE 2,
+	//      +----+           we do not use extended box among all direction
+	//      |XXXX|
+	//      |XXXX|
+	//      +----+
+	//      |    |
+	//      +----+         EDGE
+	//      |    |  +----------------+
+	//      +----+  |                |
+	//              |                |
+	//
+	//
 	// 3. Slickery collision
 	// ---------------------
 	//

@@ -101,44 +101,35 @@ namespace death
 	//               +-----------
 	//               |
 
+	static bool RangeOverlaps(float Min1, float Max1, float Min2, float Max2)
+	{
+		if (Min1 > Max2 || Max1 < Min2)
+			return false;
+		return true;
+	}
+
+	static bool RangeOverlaps(std::pair<glm::vec2, glm::vec2> const & range1, std::pair<glm::vec2, glm::vec2> const& range2, int component)
+	{
+		return RangeOverlaps(range1.first[component], range1.second[component], range2.first[component], range2.second[component]);
+	}
+
 	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<bool(TMParticle&, chaos::Edge)> func)
 	{
 		assert(level_instance != nullptr);
 
-		// work on Extended copy of the box
+		// work on extended copy of the box
+		chaos::box2 extended_box = src_box | dst_box;
+
 		glm::vec2 delta = glm::vec2(15.0f, 15.0f);
-		src_box.half_size += delta;
-		dst_box.half_size += delta;
+		extended_box.half_size += delta;
 
-
-
-
-
-		chaos::MyGLFW::SingleWindowApplication* application = chaos::Application::GetInstance();
-		if (application != nullptr)
-		{
-			GLFWwindow * wnd = application->GetGLFWWindow();
-			if (wnd)
-				if (glfwGetKey(wnd, GLFW_KEY_LEFT))
-					wnd = wnd;
-		}
-
-	
-		// collision over the extended bounding box
-
-		chaos::box2 sweep_box = src_box | dst_box;
-		std::pair<glm::vec2, glm::vec2> sweep_corners = chaos::GetBoxCorners(sweep_box);
-
-		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(sweep_box, collision_mask, false);
+		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_box, collision_mask, false);
 
 		// for faster access, cache the wangset
 		chaos::TiledMap::Wangset const* wangset = nullptr;
 		chaos::TiledMap::TileSet const* tileset = nullptr;
 
-
 		glm::vec2 delta_position = dst_box.position - src_box.position;
-
-		float max_displacement_ratio = std::numeric_limits<float>::max();
 
 		// iterate over all particles
 		while (it)
@@ -182,105 +173,131 @@ namespace death
 			}
 
 			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
+			std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(dst_box);
+			std::pair<glm::vec2, glm::vec2> src_corners = chaos::GetBoxCorners(src_box);
 
 			// XXX : an edge with wang value 
 			//         0 -> the tile does not use the wangset at all
 			//         1 -> this is the empty wang value
 			//        +2 -> good
 		
-			bool left_collision_candidate = (wangset != nullptr) ?
-				(wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) :
-				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
 
-			if (left_collision_candidate && delta_position.x > 0.0f && chaos::MathTools::IsInRange(particle_corners.first.x, sweep_corners.first.x, sweep_corners.second.x))
+			chaos::Edge best_edge = chaos::Edge::LEFT;
+			glm::vec2 best_position = dst_box.position;
+			float best_distance = std::numeric_limits<float>::max();
+
+			// LEFT EDGE
+			bool left_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
+
+			if (left_collision_candidate && delta_position.x >= 0.0f)
 			{
-				// the max value along SRC -> DST we can go until collision is founded
-				float ratio = (particle_corners.first.x - src_box.half_size.x + 0.5f * delta.x - src_box.position.x) / delta_position.x;
+				if ((particle_corners.first.x < dst_corners.second.x + delta.x * 0.5f) && (src_corners.second.x < particle_corners.first.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+				{
+					float new_x = particle_corners.first.x - dst_box.half_size.x - delta.x * 0.5f;
 
-				// ignore if collision is already existing (ratio < 0) or if a collision already happened before (smaller ratio)
-				if (ratio <= 0)
-				{
-					max_displacement_ratio = 0.0f;
-				}
-				else if (ratio < max_displacement_ratio)
-				{
-					max_displacement_ratio = ratio;
+					float distance = std::abs(dst_box.position.x - new_x);
+					if (distance < best_distance)
+					{
+						best_position.x = new_x;
+						best_position.y = dst_box.position.y;
+						best_distance = distance;
+					}
 				}
 			}
 
-			bool right_collision_candidate = (wangset != nullptr) ?
-				(wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) :
-				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
+			// RIGHT EDGE
+			bool right_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
 
-			if (right_collision_candidate && delta_position.x < 0.0f && chaos::MathTools::IsInRange(particle_corners.second.x, sweep_corners.first.x, sweep_corners.second.x))
+			if (right_collision_candidate && delta_position.x <= 0.0f)
 			{
-				// the max value along SRC -> DST we can go until collision is founded
-				float ratio = (particle_corners.second.x + src_box.half_size.x - 0.5f * delta.x - src_box.position.x) / delta_position.x;
 
-				// ignore if collision is already existing (ratio < 0) or if a collision already happened before (smaller ratio)
-				if (ratio <= 0)
+
+				if ((particle_corners.second.x > dst_corners.first.x - delta.x * 0.5f) && (src_corners.first.x > particle_corners.second.x) && RangeOverlaps(dst_corners, particle_corners, 1))
 				{
-					max_displacement_ratio = 0.0f;
+					float new_x = particle_corners.second.x + dst_box.half_size.x + delta.x * 0.5f;
+
+					float distance = std::abs(dst_box.position.x - new_x);
+					if (distance < best_distance)
+					{
+						best_position.x = new_x;
+						best_position.y = dst_box.position.y;
+						best_distance = distance;
+					}
 				}
-				else if (ratio < max_displacement_ratio)
-				{
-					max_displacement_ratio = ratio;
-				}
+
+
+
+
 			}
 
-			bool bottom_collision_candidate = (wangset != nullptr) ?
-				(wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) :
-				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
+			// BOTTOM EDGE
+			bool bottom_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
 
-			if (bottom_collision_candidate && delta_position.y > 0.0f && chaos::MathTools::IsInRange(particle_corners.first.y, sweep_corners.first.y, sweep_corners.second.y))
+			if (bottom_collision_candidate && delta_position.y >= 0.0f)
 			{
-				// the max value along SRC -> DST we can go until collision is founded
-				float ratio = (particle_corners.first.y - src_box.half_size.y + 0.5f * delta.y - src_box.position.y) / delta_position.y;
 
-				// ignore if collision is already existing (ratio < 0) or if a collision already happened before (smaller ratio)
-				if (ratio <= 0)
+
+
+				if ((particle_corners.first.y < dst_corners.second.y + delta.y * 0.5f) && (src_corners.second.y < particle_corners.first.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 				{
-					max_displacement_ratio = 0.0f;
+					float new_y = particle_corners.first.y - dst_box.half_size.y - delta.y * 0.5f;
+
+					float distance = std::abs(dst_box.position.y - new_y);
+					if (distance < best_distance)
+					{
+						best_position.x = dst_box.position.x;
+						best_position.y = new_y;
+						best_distance = distance;
+					}
 				}
-				else if (ratio < max_displacement_ratio)
-				{
-					max_displacement_ratio = ratio;
-				}
+
+
+
+
 			}
 
-			bool top_collision_candidate = (wangset != nullptr) ?
-				(wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) :
-				((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
+			// TOP EDGE
+			bool top_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
 
-			if (top_collision_candidate && delta_position.y < 0.0f && chaos::MathTools::IsInRange(particle_corners.second.y, sweep_corners.first.y, sweep_corners.second.y))
+			if (top_collision_candidate && delta_position.y <= 0.0f)
 			{
-				// the max value along SRC -> DST we can go until collision is founded
-				float ratio = (particle_corners.second.y + src_box.half_size.y - 0.5f * delta.y - src_box.position.y) / delta_position.y;
 
-				// ignore if collision is already existing (ratio < 0) or if a collision already happened before (smaller ratio)
-				if (ratio <= 0)
+
+
+
+
+				if ((particle_corners.second.y > dst_corners.first.y - delta.y * 0.5f) && (src_corners.first.y > particle_corners.second.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 				{
-					max_displacement_ratio = 0.0f;
+					float new_y = particle_corners.second.y + dst_box.half_size.y + delta.y * 0.5f;
+
+					float distance = std::abs(dst_box.position.y - new_y);
+					if (distance < best_distance)
+					{
+						best_position.x = dst_box.position.x;
+						best_position.y = new_y;
+						best_distance = distance;
+					}
 				}
-				else if (ratio < max_displacement_ratio)
-				{
-					max_displacement_ratio = ratio;
-				}
+
+
+
+
+
+
+
+			}
+
+			// displace the box
+			if (best_distance != std::numeric_limits<float>::max())
+			{
+				dst_box.position = best_position;
+
+
 			}
 			++it;
 		}
 
-		// no sweep collision found : go to destination directly
-		if (max_displacement_ratio == std::numeric_limits<float>::max())
-		{
-			return dst_box;
-		}
-		// some collision found
-		else
-		{
-			dst_box.position = src_box.position + delta_position * std::min(max_displacement_ratio, 1.0f); // use min because we use soft edges
-			return dst_box;
-		}
+		return dst_box;
 	}
 
 	// =====================================

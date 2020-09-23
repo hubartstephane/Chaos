@@ -211,7 +211,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	glm::vec2 & pawn_position = pawn_box.position;
 
 
-#if 1
+#define PLATFORMER 1
+
+#if PLATFORMER
 
 	// sum the forces 
 	glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
@@ -270,7 +272,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-#if 1
+#if PLATFORMER
 	// update pawn position
 	pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlayerDisplacementState::CLIMBING);
 	pawn_position += pawn_velocity * delta_time;
@@ -283,7 +285,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	char const* wangset_name = nullptr; // "CollisionPlatformer";
 
-	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), 0.00001f, wangset_name, [&collision_flags](death::TMParticle& p, chaos::Edge edge)	{
+	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name, [&collision_flags](death::TMParticle& p, chaos::Edge edge)	{
 		if (edge == chaos::Edge::TOP)
 			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_FLOOR;
 		else if (edge == chaos::Edge::BOTTOM)
@@ -293,7 +295,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	});
 
 	// update player state
-#if 1
+#if PLATFORMER
 	displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
 #endif
 

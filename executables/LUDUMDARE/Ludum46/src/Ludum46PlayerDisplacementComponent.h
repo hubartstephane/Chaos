@@ -34,6 +34,8 @@ public:
 
 	/** whether the player left stick value is exactly -1, 0, +1 or whether this may have intermediate values */
 	bool discrete_stick_mode = true;
+	/** the box extend for collision */
+	glm::vec2 pawn_extend = glm::vec2(1.0f, 1.0f);
 	/** clamping the velocity in both direction */
 	glm::vec2 max_pawn_velocity = glm::vec2(250.0f, 500.0f);
 	/** a factor to apply to max_velocity.x whenever pawn is running */
@@ -50,7 +52,6 @@ public:
 	float jump_released_velocity_factor = 0.3f;
 	/** the climb speed */
 	glm::vec2 climp_velocity = glm::vec2(30.0f, 75.0f);
-
 #if 0
 	/** pawn do not advance forward anymore */
 	float pawn_break_ratio = 0.01f;

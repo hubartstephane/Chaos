@@ -124,14 +124,14 @@ namespace death
 		return true;
 	}
 
-	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, float extend_length,char const* wangset_name, std::function<void(TMParticle&, chaos::Edge)> func)
+	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, glm::vec2 const & box_extend,char const* wangset_name, std::function<void(TMParticle&, chaos::Edge)> func)
 	{
 		assert(level_instance != nullptr);
 
 		// work on extended copy of the box
 		chaos::box2 extended_box = src_box | dst_box;
 
-		glm::vec2 delta = glm::vec2(extend_length, extend_length);
+		glm::vec2 delta = box_extend;
 		extended_box.half_size += delta;
 
 		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_box, collision_mask, false);
@@ -203,8 +203,8 @@ namespace death
 			// check whether the EDGE is valid and whether the distance between the objects does no increase
 			if (left_collision_candidate && delta_position.x >= 0.0f) 
 			{
-				// check whether before collision the object was opposite side. check for collision possibility
-				if ((src_corners.second.x < particle_corners.first.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+				// check whether EDGE/BOX collision may happen
+				if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_box.position.x, dst_corners.second.x + delta.x) && RangeOverlaps(dst_corners, particle_corners, 1))
 				{
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.first.x < dst_corners.second.x + delta.x)
@@ -236,8 +236,8 @@ namespace death
 			// check whether the EDGE is valid and whether the distance between the objects does no increase
 			if (right_collision_candidate && delta_position.x <= 0.0f) 
 			{
-				// check whether before collision the object was opposite side. check for collision possibility
-				if ((src_corners.first.x > particle_corners.second.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+				// check whether EDGE/BOX collision may happen
+				if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x - delta.x, dst_box.position.x) && RangeOverlaps(dst_corners, particle_corners, 1))
 				{
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.second.x > dst_corners.first.x - delta.x)
@@ -268,8 +268,8 @@ namespace death
 			// check whether the EDGE is valid and whether the distance between the objects does no increase
 			if (bottom_collision_candidate && delta_position.y >= 0.0f) 
 			{
-				// check whether before collision the object was opposite side. check for collision possibility
-				if ((src_corners.second.y < particle_corners.first.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+				// check whether EDGE/BOX collision may happen
+				if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_box.position.y, dst_corners.second.y + delta.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 				{
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.first.y < dst_corners.second.y + delta.y)
@@ -300,8 +300,8 @@ namespace death
 			// check whether the EDGE is valid and whether the distance between the objects does no increase
 			if (top_collision_candidate && delta_position.y <= 0.0f) 
 			{
-				// check whether before collision the object was opposite side. check for collision possibility
-				if ((src_corners.first.y > particle_corners.second.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+				// check whether EDGE/BOX collision may happen
+				if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y - delta.y, dst_box.position.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 				{
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.second.y > dst_corners.first.y - delta.y)

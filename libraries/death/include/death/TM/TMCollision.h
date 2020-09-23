@@ -30,7 +30,7 @@ namespace death
 	// Collision function
 	// =====================================
 
-	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<void(TMParticle&, chaos::Edge)> func);
+	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, float extend_length, char const* wangset_name, std::function<void(TMParticle&, chaos::Edge)> func);
 
 	// =====================================
 	// TMCollisionIteratorBase

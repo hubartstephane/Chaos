@@ -99,9 +99,14 @@ namespace death
 	//      +----+  |                |
 	//              |                |
 	//
+	// Slow collision
+	// --------------
 	//
-	// 3. Slickery collision
-	// ---------------------
+	//   Whenever PAWN is approching a wall, it can slowly approach from ZONE 1 to ZONE 2. This should pratically be invisible if the extends for ZONE 1/ZONE 2 is small
+	//
+	//
+	// Slickery collision
+	// ------------------
 	//
 	// +----------------+ PAWN         The previous changes, can lead to situation where the two objets want to go further one another
 	// |     ZONE 2     |              but the collision become slickery
@@ -119,14 +124,14 @@ namespace death
 		return true;
 	}
 
-	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, char const* wangset_name, std::function<void(TMParticle&, chaos::Edge)> func)
+	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, float extend_length,char const* wangset_name, std::function<void(TMParticle&, chaos::Edge)> func)
 	{
 		assert(level_instance != nullptr);
 
 		// work on extended copy of the box
 		chaos::box2 extended_box = src_box | dst_box;
 
-		glm::vec2 delta = glm::vec2(15.0f, 15.0f);
+		glm::vec2 delta = glm::vec2(extend_length, extend_length);
 		extended_box.half_size += delta;
 
 		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_box, collision_mask, false);

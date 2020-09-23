@@ -36,11 +36,7 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 	bool touching_wall = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_WALL);
 	bool touching_ladder = (collision_flags & PlayerDisplacementCollisionFlags::TOUCHING_LADDER);
 
-	// tweak velocity
-	if (touching_wall)
-		pawn_velocity.x = 0.0f;
-	if (touching_ceil || touching_floor)
-		pawn_velocity.y = 0.0f;
+
 
 	// current state
 	bool is_jumping      = (displacement_state == PlayerDisplacementState::JUMPING);
@@ -99,6 +95,11 @@ PlayerDisplacementState LudumPlayerDisplacementComponent::ComputeDisplacementSta
 			displacement_state = PlayerDisplacementState::FALLING;
 			pawn_velocity.y = std::max(0.0f, displacement_info.jump_released_velocity_factor * GetJumpVelocity(current_jump_timer)); // do not clamp the velocity to 0 => smooth it instead
 		}
+	}
+
+	if (touching_wall)
+	{
+		pawn_velocity.x = 0.0f;
 	}
 
 	if (touching_ladder && is_grounded && stick_position.y != 0.0f)
@@ -180,17 +181,6 @@ float LudumPlayerDisplacementComponent::GetJumpRelativeHeight(float jump_time) c
 
 	return (-0.5f * displacement_info.gravity * jump_time * jump_time) + v0 * jump_time;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
@@ -293,7 +283,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	char const* wangset_name = nullptr; // "CollisionPlatformer";
 
-	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), wangset_name, [&collision_flags](death::TMParticle& p, chaos::Edge edge)	{
+	pawn_box = death::ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, death::CollisionMask::PLAYER, pawn->GetAllocation(), 0.00001f, wangset_name, [&collision_flags](death::TMParticle& p, chaos::Edge edge)	{
 		if (edge == chaos::Edge::TOP)
 			collision_flags |= PlayerDisplacementCollisionFlags::TOUCHING_FLOOR;
 		else if (edge == chaos::Edge::BOTTOM)

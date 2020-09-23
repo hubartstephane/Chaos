@@ -191,16 +191,24 @@ namespace death
 
 			if (left_collision_candidate && delta_position.x >= 0.0f)
 			{
-				if ((particle_corners.first.x < dst_corners.second.x + delta.x * 0.5f) && (src_corners.second.x < particle_corners.first.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+				if ((src_corners.second.x < particle_corners.first.x) && RangeOverlaps(dst_corners, particle_corners, 1))
 				{
-					float new_x = particle_corners.first.x - dst_box.half_size.x - delta.x * 0.5f;
-
-					float distance = std::abs(dst_box.position.x - new_x);
-					if (distance < best_distance)
+					if (particle_corners.first.x < dst_corners.second.x + delta.x * 0.5f)
 					{
-						best_position.x = new_x;
-						best_position.y = dst_box.position.y;
-						best_distance = distance;
+						float new_x = particle_corners.first.x - dst_box.half_size.x - delta.x * 0.5f;
+
+						float distance = std::abs(dst_box.position.x - new_x);
+						if (distance < best_distance)
+						{
+							best_position.x = new_x;
+							best_position.y = dst_box.position.y;
+							best_distance = distance;
+							func(*it->particle, chaos::Edge::LEFT);
+						}
+					}
+					else if (particle_corners.first.x < dst_corners.second.x + delta.x)
+					{
+						func(*it->particle, chaos::Edge::LEFT);
 					}
 				}
 			}
@@ -210,24 +218,26 @@ namespace death
 
 			if (right_collision_candidate && delta_position.x <= 0.0f)
 			{
-
-
-				if ((particle_corners.second.x > dst_corners.first.x - delta.x * 0.5f) && (src_corners.first.x > particle_corners.second.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+				if ((src_corners.first.x > particle_corners.second.x) && RangeOverlaps(dst_corners, particle_corners, 1))
 				{
-					float new_x = particle_corners.second.x + dst_box.half_size.x + delta.x * 0.5f;
-
-					float distance = std::abs(dst_box.position.x - new_x);
-					if (distance < best_distance)
+					if (particle_corners.second.x > dst_corners.first.x - delta.x * 0.5f)
 					{
-						best_position.x = new_x;
-						best_position.y = dst_box.position.y;
-						best_distance = distance;
+						float new_x = particle_corners.second.x + dst_box.half_size.x + delta.x * 0.5f;
+
+						float distance = std::abs(dst_box.position.x - new_x);
+						if (distance < best_distance)
+						{
+							best_position.x = new_x;
+							best_position.y = dst_box.position.y;
+							best_distance = distance;
+							func(*it->particle, chaos::Edge::RIGHT);
+						}
+					}
+					else if (particle_corners.second.x > dst_corners.first.x - delta.x)
+					{
+						func(*it->particle, chaos::Edge::RIGHT);
 					}
 				}
-
-
-
-
 			}
 
 			// BOTTOM EDGE
@@ -235,22 +245,26 @@ namespace death
 
 			if (bottom_collision_candidate && delta_position.y >= 0.0f)
 			{
-
-
-
-				if ((particle_corners.first.y < dst_corners.second.y + delta.y * 0.5f) && (src_corners.second.y < particle_corners.first.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+				if ((src_corners.second.y < particle_corners.first.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 				{
-					float new_y = particle_corners.first.y - dst_box.half_size.y - delta.y * 0.5f;
-
-					float distance = std::abs(dst_box.position.y - new_y);
-					if (distance < best_distance)
+					if (particle_corners.first.y < dst_corners.second.y + delta.y * 0.5f)
 					{
-						best_position.x = dst_box.position.x;
-						best_position.y = new_y;
-						best_distance = distance;
+						float new_y = particle_corners.first.y - dst_box.half_size.y - delta.y * 0.5f;
+
+						float distance = std::abs(dst_box.position.y - new_y);
+						if (distance < best_distance)
+						{
+							best_position.x = dst_box.position.x;
+							best_position.y = new_y;
+							best_distance = distance;
+							func(*it->particle, chaos::Edge::BOTTOM);
+						}
+					}
+					else if (particle_corners.first.y < dst_corners.second.y + delta.y)
+					{
+						func(*it->particle, chaos::Edge::BOTTOM);
 					}
 				}
-
 
 
 
@@ -261,38 +275,32 @@ namespace death
 
 			if (top_collision_candidate && delta_position.y <= 0.0f)
 			{
-
-
-
-
-
-				if ((particle_corners.second.y > dst_corners.first.y - delta.y * 0.5f) && (src_corners.first.y > particle_corners.second.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+				if ((src_corners.first.y > particle_corners.second.y) && RangeOverlaps(dst_corners, particle_corners, 0))
 				{
-					float new_y = particle_corners.second.y + dst_box.half_size.y + delta.y * 0.5f;
-
-					float distance = std::abs(dst_box.position.y - new_y);
-					if (distance < best_distance)
+					if (particle_corners.second.y > dst_corners.first.y - delta.y * 0.5f)
 					{
-						best_position.x = dst_box.position.x;
-						best_position.y = new_y;
-						best_distance = distance;
+						float new_y = particle_corners.second.y + dst_box.half_size.y + delta.y * 0.5f;
+
+						float distance = std::abs(dst_box.position.y - new_y);
+						if (distance < best_distance)
+						{
+							best_position.x = dst_box.position.x;
+							best_position.y = new_y;
+							best_distance = distance;
+							func(*it->particle, chaos::Edge::TOP);
+						}
+					}
+					else if (particle_corners.second.y > dst_corners.first.y - delta.y)
+					{
+						func(*it->particle, chaos::Edge::TOP);
 					}
 				}
-
-
-
-
-
-
-
 			}
 
 			// displace the box
 			if (best_distance != std::numeric_limits<float>::max())
 			{
 				dst_box.position = best_position;
-
-
 			}
 			++it;
 		}

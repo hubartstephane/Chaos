@@ -9,6 +9,7 @@
 #include <chaos/Corner.h>
 #include <chaos/GeometryFramework.h>
 #include <chaos/Metaprogramming.h>
+#include <chaos/JSONSerializable.h>
 
 namespace chaos
 {
@@ -1047,7 +1048,7 @@ namespace chaos
 		// TileFlagProcessor
 		// ==========================================
 
-		class TileFlagProcessor : public Object
+		class TileFlagProcessor : public Object, public JSONSerializable
 		{
 			CHAOS_OBJECT_DECLARE_CLASS2(TileFlagProcessor, Object);
 

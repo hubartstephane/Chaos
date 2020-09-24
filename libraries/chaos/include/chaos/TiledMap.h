@@ -41,6 +41,8 @@ namespace chaos
 (GroundData) \
 (TileInfo) \
 (TileData) \
+(TileFlagProcessor) \
+(ComputeNeighbourFlagProcessor) \
 (LayerBase) \
 (ImageLayer) \
 (ObjectLayer) \
@@ -1018,7 +1020,7 @@ namespace chaos
 		};
 
 		// ==========================================
-		// TileLayer
+		// TileLayerChunk
 		// ==========================================
 
 		class TileLayerChunk
@@ -1039,6 +1041,37 @@ namespace chaos
 			/** the indices for this chunk */
 			std::vector<Tile> tile_indices;
 		};
+
+
+		// ==========================================
+		// TileFlagProcessor
+		// ==========================================
+
+		class TileFlagProcessor : public Object
+		{
+			CHAOS_OBJECT_DECLARE_CLASS2(TileFlagProcessor, Object);
+
+		public:
+
+			virtual void Process(TileLayer* in_layer) {}
+		};
+
+		// ==========================================
+		// ComputeNeighbourFlagProcessor
+		// ==========================================
+
+		class ComputeNeighbourFlagProcessor : public TileFlagProcessor
+		{
+			CHAOS_OBJECT_DECLARE_CLASS2(ComputeNeighbourFlagProcessor, TileFlagProcessor);
+
+		public:
+
+			virtual void Process(TileLayer* in_layer) override;
+		};
+
+		// ==========================================
+		// TileLayer
+		// ==========================================
 
 		class TileLayer : public LayerBase
 		{
@@ -1074,8 +1107,8 @@ namespace chaos
 			bool DoLoadTileChunk(tinyxml2::XMLElement const* element, char const * encoding, char const * compression);
 			/** loading buffer method */
 			std::vector<Tile> DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size);
-			/** add some flags for tiles relative to their neighboor on the grid */
-			void ComputeTileNeighbours();
+			/** add some flags to tiles */
+			void ComputeTileFlags();
 
 		public:
 

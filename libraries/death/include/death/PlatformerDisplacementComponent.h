@@ -51,7 +51,7 @@ public:
 	/** the gravity to apply to the pawn */
 	float gravity = 1000.0f;
 	/** the maximum height jump */
-	float max_jump_height = 64.0f;
+	float max_jump_height = 80.0f;
 	/** the maximum extra jump count */
 	int max_extra_jump_count = 1;
 	/** whenever the jump button is released during a jump, some ratio of the jump velocity is transmitted to smooth the animation */

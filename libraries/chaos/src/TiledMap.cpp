@@ -8,6 +8,9 @@
 #include <chaos/MyZLib.h>
 #include <chaos/STLTools.h>
 #include <chaos/ParticleDefault.h>
+#include <chaos/NameFilter.h>
+#include <chaos/Class.h>
+#include <chaos/SubClassOf.h>
 
 namespace chaos
 {
@@ -1102,6 +1105,57 @@ namespace chaos
 		}
 
 		// ==========================================
+		// ComputeNeighbourFlagProcessor
+		// ==========================================
+
+		void ComputeNeighbourFlagProcessor::Process(TileLayer* in_layer)
+		{
+			int const extra_flags[4] = { TileParticleFlags::NEIGHBOUR_LEFT, TileParticleFlags::NEIGHBOUR_RIGHT, TileParticleFlags::NEIGHBOUR_TOP, TileParticleFlags::NEIGHBOUR_BOTTOM };
+			glm::ivec2 const offsets[4] = { glm::ivec2(-1, 0), glm::ivec2(+1, 0), glm::ivec2(0, -1), glm::ivec2(0, +1) };
+
+			// XXX : it could be a good idea to precompute neighbouring chunks.
+			//       Nevertheless, nothing seems to guarantee that chunks are well aligned on a grid
+			//
+			//        +-------+
+			//        |       |
+			//        |       |+-------+
+			//        |       ||       |
+			//        +-------+|       |
+
+			for (TileLayerChunk& chunk : in_layer->tile_chunks)
+			{
+				// iterate over all tiles in current chunk
+				int count = (int)chunk.tile_indices.size();
+				for (int i = 0; i < count; ++i)
+				{
+					glm::ivec2 pos = glm::ivec2(
+						chunk.offset.x + (i % chunk.size.x),
+						chunk.offset.y + (i / chunk.size.x));
+
+					// search all 4 possible neighbours ...
+					int neighbour_flags = 0;
+					for (int k = 0; k < 4; ++k)
+					{
+						glm::ivec2 neighbour = pos + offsets[k];
+
+						// search first in current chunk 
+						Tile t;
+						if (chunk.ContainTile(neighbour))
+							t = chunk.GetTile(neighbour);
+						// ... then make a global search if not found
+						else
+							t = in_layer->GetTile(neighbour);
+
+						// search 
+						if (t.gid > 0)
+							neighbour_flags |= extra_flags[k];
+					}
+					chunk.tile_indices[i].flags |= neighbour_flags;
+				}
+			}
+		}
+
+		// ==========================================
 		// TileLayer methods
 		// ==========================================
 
@@ -1134,68 +1188,46 @@ namespace chaos
 			return result;
 		}
 
-		void TileLayer::ComputeTileNeighbours()
-		{
-			int const extra_flags[4] = { TileParticleFlags::NEIGHBOUR_LEFT, TileParticleFlags::NEIGHBOUR_RIGHT, TileParticleFlags::NEIGHBOUR_TOP, TileParticleFlags::NEIGHBOUR_BOTTOM };
-			glm::ivec2 const offsets[4] = { glm::ivec2(-1, 0), glm::ivec2(+1, 0), glm::ivec2(0, -1), glm::ivec2(0, +1) };
-
-			// XXX : it could be a good idea to precompute neighbouring chunks.
-			//       Nevertheless, nothing seems to guarantee that chunks are well aligned on a grid
-			//
-			//        +-------+
-			//        |       |
-			//        |       |+-------+
-			//        |       ||       |
-			//        +-------+|       |
-
-			for (TileLayerChunk& chunk : tile_chunks)
-			{
-				// iterate over all tiles in current chunk
-				int count = (int)chunk.tile_indices.size();
-				for (int i = 0; i < count; ++i)
-				{
-					glm::ivec2 pos = glm::ivec2(
-						chunk.offset.x + (i % chunk.size.x),
-						chunk.offset.y + (i / chunk.size.x));
-
-					// search all 4 possible neighbours ...
-					int neighbour_flags = 0;
-					for (int k = 0; k < 4; ++k)
-					{
-						glm::ivec2 neighbour = pos + offsets[k];
-
-						// search first in current chunk
-						Tile t;
-						if (chunk.ContainTile(neighbour))
-							t = chunk.GetTile(neighbour);
-						else
-							t = GetTile(neighbour);
-
-						if (t.gid > 0)
-							neighbour_flags |= extra_flags[k];
-					}
-					chunk.tile_indices[i].flags |= neighbour_flags;
-				}
-			}
-		}
-
 		bool TileLayer::DoLoad(tinyxml2::XMLElement const * element)
 		{
 			if (!LayerBase::DoLoad(element))
 				return false;
-
+			// some attributes
 			XMLTools::ReadAttribute(element, "width", size.x);
 			XMLTools::ReadAttribute(element, "height", size.y);
-
+			// load tiles
 			if (!DoLoadTileBuffer(element))
 				return false;
-
-			// set additionnal flags in chunk based on their neighborhood
-			bool compute_neighbours = true;
-			XMLTools::ReadAttribute(element, "compute_neighbours", compute_neighbours);
-			if (compute_neighbours)
-				ComputeTileNeighbours();
+			// compute additionnal tile flags
+			ComputeTileFlags();
 			return true;
+		}
+
+		void TileLayer::ComputeTileFlags()
+		{
+			// get all TileProcessor
+			std::string processors = GetPropertyValueString("TILE_FLAG_PROCESSORS", "");
+			if (processors.length() > 0)
+			{
+				// split into array, remove space characters
+				std::vector<std::string> processor_names;
+				chaos::NameFilter::AddNames(processors.c_str(), processor_names);
+				// run all processors
+				for (std::string const& name : processor_names)
+				{
+					// get the processor class
+					SubClassOf<TileFlagProcessor> processor_class = Class::FindClass(name.c_str());
+					if (processor_class)
+					{
+						// create the processor and run it
+						shared_ptr<TileFlagProcessor> processor = processor_class.CreateInstance();
+						if (processor != nullptr)
+						{
+							processor->Process(this);
+						}
+					}
+				}
+			}
 		}
 
 		std::vector<Tile> TileLayer::DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size)

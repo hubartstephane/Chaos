@@ -33,8 +33,6 @@ namespace death
 		bool touching_wall = (collision_flags & PlatformerDisplacementCollisionFlags::TOUCHING_WALL);
 		bool touching_ladder = (collision_flags & PlatformerDisplacementCollisionFlags::TOUCHING_LADDER);
 
-
-
 		// current state
 		bool is_jumping = (displacement_state == PlatformerDisplacementState::JUMPING);
 		bool is_jumping_down = (displacement_state == PlatformerDisplacementState::JUMPING_DOWN);
@@ -207,11 +205,6 @@ namespace death
 		chaos::box2 pawn_box = initial_pawn_box;
 		glm::vec2& pawn_position = pawn_box.position;
 
-
-#define PLATFORMER 1
-
-#if PLATFORMER
-
 		// sum the forces 
 		glm::vec2 sum_forces = glm::vec2(0.0f, 0.0f);
 
@@ -262,39 +255,33 @@ namespace death
 			pawn_velocity += (sum_forces * delta_time);
 		}
 
-
-
-
-#endif
-
-
-
-#if PLATFORMER
 		// update pawn position
 		pawn_velocity = ClampPlayerVelocity(pawn_velocity, run_pressed && displacement_state != PlatformerDisplacementState::CLIMBING);
 		pawn_position += pawn_velocity * delta_time;
 
-#else
-		pawn_position += stick_position * delta_time * 100.0f;
-#endif
 		// search collisions, apply collision reaction
 		int collision_flags = PlatformerDisplacementCollisionFlags::NOTHING;
 
-		char const* wangset_name = nullptr; // "CollisionPlatformer";
+		char const* wangset_name = nullptr;  "CollisionPlatformer";
 
-		pawn_box = ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name, [&collision_flags](TMParticle& p, chaos::Edge edge) {
+		pawn_box = ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name, [&collision_flags](TMParticle& p, chaos::Edge edge) 
+		{
+			
+
+
 			if (edge == chaos::Edge::TOP)
 				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
 			else if (edge == chaos::Edge::BOTTOM)
 				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
 			else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)
 				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;
+
+
+			return true;
 		});
 
 		// update player state
-#if PLATFORMER
 		displacement_state = ComputeDisplacementState(pawn_box, jump_pressed, stick_position, collision_flags);
-#endif
 
 		// update the player pawn
 		pawn->SetPosition(pawn_box.position);

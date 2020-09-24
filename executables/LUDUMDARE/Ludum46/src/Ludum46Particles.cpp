@@ -339,7 +339,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 
 
-		if (displacement_component->displacement_state == PlayerDisplacementState::FALLING)
+		if (displacement_component->displacement_state == death::PlatformerDisplacementState::FALLING)
 			particle.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		else
 			particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

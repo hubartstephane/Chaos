@@ -124,7 +124,7 @@ namespace death
 		return true;
 	}
 
-	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, glm::vec2 const & box_extend,char const* wangset_name, std::function<void(TMParticle&, chaos::Edge)> func)
+	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, glm::vec2 const & box_extend,char const* wangset_name, std::function<bool(TMParticle&, chaos::Edge)> func)
 	{
 		assert(level_instance != nullptr);
 
@@ -209,8 +209,10 @@ namespace death
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.first.x < dst_corners.second.x + delta.x)
 					{
+						bool displacement_enabled = func(*it->particle, chaos::Edge::LEFT); // ZONE 1 or 2 : indicates to caller that there is a touch
+
 						// in ZONE 1 ?
-						if (particle_corners.first.x < dst_corners.second.x + delta.x * 0.5f)
+						if (displacement_enabled && (particle_corners.first.x < dst_corners.second.x + delta.x * 0.5f))
 						{
 							float new_x = particle_corners.first.x - dst_box.half_size.x - delta.x * 0.5f;
 
@@ -224,8 +226,6 @@ namespace death
 								best_distance = distance;
 							}
 						}
-						// ZONE 1 or 2 : indicates to caller that there is a touch
-						func(*it->particle, chaos::Edge::LEFT);
 					}
 				}
 			}

@@ -230,8 +230,10 @@ namespace death
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.second.x > dst_corners.first.x - delta.x)
 					{
+						bool displacement_enabled = func(*it->particle, chaos::Edge::RIGHT); // ZONE 1 or 2 : indicates to caller that there is a touch
+
 						// in ZONE 1 ?
-						if (particle_corners.second.x > dst_corners.first.x - delta.x * 0.5f)
+						if (displacement_enabled && particle_corners.second.x > dst_corners.first.x - delta.x * 0.5f)
 						{
 							float new_x = particle_corners.second.x + dst_box.half_size.x + delta.x * 0.5f;
 
@@ -245,7 +247,6 @@ namespace death
 								best_distance = distance;
 							}
 						}
-						func(*it->particle, chaos::Edge::RIGHT);
 					}
 				}
 			}
@@ -262,8 +263,10 @@ namespace death
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.first.y < dst_corners.second.y + delta.y)
 					{
+						bool displacement_enabled = func(*it->particle, chaos::Edge::BOTTOM); // ZONE 1 or 2 : indicates to caller that there is a touch
+
 						// in ZONE 1 ?
-						if (particle_corners.first.y < dst_corners.second.y + delta.y * 0.5f)
+						if (displacement_enabled && particle_corners.first.y < dst_corners.second.y + delta.y * 0.5f)
 						{
 							float new_y = particle_corners.first.y - dst_box.half_size.y - delta.y * 0.5f;
 
@@ -277,7 +280,6 @@ namespace death
 								best_distance = distance;								
 							}
 						}
-						func(*it->particle, chaos::Edge::BOTTOM);
 					}
 				}
 			}
@@ -294,8 +296,10 @@ namespace death
 					// check whether the collision is at least in ZONE 2
 					if (particle_corners.second.y > dst_corners.first.y - delta.y)
 					{
+						bool displacement_enabled = func(*it->particle, chaos::Edge::TOP); // ZONE 1 or 2 : indicates to caller that there is a touch
+
 						// in ZONE 1 ?
-						if (particle_corners.second.y > dst_corners.first.y - delta.y * 0.5f)
+						if (displacement_enabled && particle_corners.second.y > dst_corners.first.y - delta.y * 0.5f)
 						{
 							float new_y = particle_corners.second.y + dst_box.half_size.y + delta.y * 0.5f;
 
@@ -309,7 +313,6 @@ namespace death
 								best_distance = distance;								
 							}
 						}
-						func(*it->particle, chaos::Edge::TOP);
 					}
 				}
 			}

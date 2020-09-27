@@ -64,6 +64,10 @@ namespace chaos
 #define CHAOS_TILEDMAP_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_TILEDMAP_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FRIEND_DECL, _, CHAOS_TILEDMAP_CLASSES)
 
+		// ==========================================
+		// TileParticleFlags
+		// ==========================================
+
 	// XXX : see ParticleFlags to avoid flag collisions
 	namespace TileParticleFlags
 	{		
@@ -74,7 +78,7 @@ namespace chaos
 	};
 
 		// ==========================================
-		// Functions
+		// Global
 		// ==========================================
 
 		inline glm::vec2 const REVERSE_Y_AXIS = glm::vec2(1.0f, -1.0f);

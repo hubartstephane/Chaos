@@ -2,24 +2,27 @@
 
 #include <chaos/StandardHeaders.h> 
 #include <chaos/GeometryFramework.h> 
+#include <chaos/TiledMap.h> 
 #include <death/PlayerDisplacementComponent.h>
-
-
-// =========================================================
-// PlatformerDisplacementComponent
-// =========================================================
 
 namespace death
 {
 
+	// =========================================================
+	// PlatformerParticleFlags
+	// =========================================================
+
 	// XXX : see TileParticleFlags to avoid flag collisions
-	namespace PlatformerParticleFlags
-	{
-		static int constexpr LADDER = (1 << 9);
-	};
+namespace PlatformerParticleFlags
+{
+	static int constexpr LADDER = (1 << 9);
+};
 
+	// =========================================================
+	// PlatformerDisplacementState
+	// =========================================================
 
-/** the states for the displacement */
+	/** the states for the displacement */
 enum class PlatformerDisplacementState : int
 {
 	GROUNDED,     // player is on the ground
@@ -29,7 +32,11 @@ enum class PlatformerDisplacementState : int
 	CLIMBING      // whether the player is on a ladder a goind up or down
 };
 
-/** the possible collisions */
+	// =========================================================
+	// PlatformerDisplacementCollisionFlags
+	// =========================================================
+
+	/** the possible collisions */
 namespace PlatformerDisplacementCollisionFlags
 {
 	static constexpr int NOTHING = 0; // no collision of interrests
@@ -40,7 +47,12 @@ namespace PlatformerDisplacementCollisionFlags
 	static constexpr int TOUCHING_LADDER = (1 << 4);
 };
 
-/** the settings for the component */
+	// =========================================================
+	// PlatformerDisplacementComponentInfo
+	// =========================================================
+
+
+	/** the settings for the component */
 class PlatformerDisplacementComponentInfo
 {
 public:
@@ -82,8 +94,27 @@ public:
 	float climb_max_horizontal_velocity = 32.0f;
 };
 
+	// ==========================================
+	// ComputePlatformerFlagProcessor
+	// ==========================================
 
-/** component for platformer */
+class ComputePlatformerFlagProcessor : public chaos::TiledMap::ComputeCustomFlagProcessor
+{
+	CHAOS_OBJECT_DECLARE_CLASS2(ComputePlatformerFlagProcessor, chaos::TiledMap::ComputeCustomFlagProcessor);
+
+public:
+
+	/** constructor */
+	ComputePlatformerFlagProcessor();
+	/** constructor */
+	ComputePlatformerFlagProcessor(ComputePlatformerFlagProcessor const& src) = default;
+};
+
+	// =========================================================
+	// PlatformerDisplacementComponent
+	// =========================================================
+
+	/** component for platformer */
 class PlatformerDisplacementComponent : public PlayerDisplacementComponent
 {
 

@@ -8,6 +8,19 @@
 namespace death
 {
 
+	// =========================================================
+	// ComputePlatformerFlagProcessor
+	// =========================================================
+
+	ComputePlatformerFlagProcessor::ComputePlatformerFlagProcessor()
+	{
+		custom_flags = { { "LADDER", PlatformerParticleFlags::LADDER } };
+	}
+
+	// =========================================================
+	// PlatformerDisplacementComponent
+	// =========================================================
+
 	glm::vec2 PlatformerDisplacementComponent::ClampPlayerVelocity(glm::vec2 velocity, bool running) const
 	{
 		glm::vec2 runfactor = (running) ? glm::vec2(displacement_info.run_velocity_factor, 1.0f) : glm::vec2(1.0f, 1.0f);
@@ -265,18 +278,19 @@ namespace death
 		char const* wangset_name = nullptr;  "CollisionPlatformer";
 
 		pawn_box = ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name, [&collision_flags](TMParticle& p, chaos::Edge edge) 
-		{
-			
-
-
+		{		
 			if (edge == chaos::Edge::TOP)
 				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
 			else if (edge == chaos::Edge::BOTTOM)
 				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
 			else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)
 				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;
-
-
+			// no collision when touching ladder
+			if ((p.flags & PlatformerParticleFlags::LADDER) != 0)
+			{
+				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_LADDER;
+				return false;
+			}
 			return true;
 		});
 

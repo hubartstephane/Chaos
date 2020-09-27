@@ -1,0 +1,6 @@
+{
+  "parent_class": "ComputeCustomFlagProcessor",
+  "CustomFlags": {
+    "LADDER": 512
+  }
+}

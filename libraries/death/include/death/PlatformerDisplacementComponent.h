@@ -12,6 +12,13 @@
 namespace death
 {
 
+	// XXX : see TileParticleFlags to avoid flag collisions
+	namespace PlatformerParticleFlags
+	{
+		static int constexpr LADDER = (1 << 9);
+	};
+
+
 /** the states for the displacement */
 enum class PlatformerDisplacementState : int
 {

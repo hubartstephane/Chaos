@@ -1,6 +1,7 @@
 #include <chaos/TiledMap.h>
 #include <chaos/FileTools.h>
 #include <chaos/XMLTools.h>
+#include <chaos/JSONTools.h>
 #include <chaos/BoostTools.h>
 #include <chaos/PixelTypes.h>
 #include <chaos/StringTools.h>
@@ -1154,6 +1155,67 @@ namespace chaos
 				}
 			}
 		}
+
+		// ==========================================
+		// ComputeCustomFlagProcessor
+		// ==========================================
+
+		void ComputeCustomFlagProcessor::Process(TileLayer* in_layer)
+		{
+			Map const* map = in_layer->GetMap();
+			if (map == nullptr)
+				return;
+
+			for (TileLayerChunk& chunk : in_layer->tile_chunks)
+			{
+				// iterate over all tiles in current chunk
+				for (Tile & tile : chunk.tile_indices)
+				{
+					TileInfo info = map->FindTileInfo(tile.gid);
+					if (!info.IsValid())
+						continue;
+					// for all declared types, search whether the given tile is of that
+					for (auto & f : custom_flags)
+						if (info.tiledata->IsObjectOfType(f.first.c_str()))
+							tile.flags |= f.second;
+				}
+			}
+		}
+
+		bool ComputeCustomFlagProcessor::SerializeIntoJSON(nlohmann::json& json_entry) const
+		{
+			if (!TileFlagProcessor::SerializeIntoJSON(json_entry))
+				return false;
+			// insert all key-flag
+			if (custom_flags.size())
+			{
+				json_entry["CustomFlags"] = nlohmann::json::object();
+
+				nlohmann::json& custom_flags_json = json_entry["CustomFlags"];
+				for (auto& f : custom_flags)
+					JSONTools::SetAttribute(custom_flags_json, f.first.c_str(), f.second);
+			}
+			return true;
+		}
+		
+		bool ComputeCustomFlagProcessor::SerializeFromJSON(nlohmann::json const& json_entry)
+		{
+			if (!TileFlagProcessor::SerializeFromJSON(json_entry))
+				return false;
+			// extract all flag key-flag
+			nlohmann::json const* custom_flags_json = JSONTools::GetStructure(json_entry, "CustomFlags");
+			if (custom_flags_json != nullptr && custom_flags_json->is_object())
+			{
+				for (auto it = custom_flags_json->begin(); it != custom_flags_json->end(); ++it)
+				{				
+					nlohmann::json const & v = it.value();
+					if (v.is_number())
+						custom_flags[it.key()] = v.get<int>();
+				}
+			}
+			return true;
+		}
+
 
 		// ==========================================
 		// TileLayer methods

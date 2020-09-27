@@ -64,9 +64,9 @@ namespace chaos
 #define CHAOS_TILEDMAP_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_TILEDMAP_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FRIEND_DECL, _, CHAOS_TILEDMAP_CLASSES)
 
+	// XXX : see ParticleFlags to avoid flag collisions
 	namespace TileParticleFlags
-	{
-		// XXX : see ParticleFlags to avoid flag collisions
+	{		
 		static constexpr int NEIGHBOUR_LEFT   = (1 << 5);
 		static constexpr int NEIGHBOUR_RIGHT  = (1 << 6);
 		static constexpr int NEIGHBOUR_TOP    = (1 << 7);
@@ -1054,6 +1054,7 @@ namespace chaos
 
 		public:
 
+			/** the method to be apply on the layer */
 			virtual void Process(TileLayer* in_layer) {}
 		};
 
@@ -1067,8 +1068,34 @@ namespace chaos
 
 		public:
 
+			/** override */
 			virtual void Process(TileLayer* in_layer) override;
 		};
+
+		// ==========================================
+		// ComputeNeighbourFlagProcessor
+		// ==========================================
+
+		class ComputeCustomFlagProcessor : public TileFlagProcessor
+		{
+			CHAOS_OBJECT_DECLARE_CLASS2(ComputeCustomFlagProcessor, TileFlagProcessor);
+
+		public:
+
+			/** override */
+			virtual void Process(TileLayer* in_layer) override;
+			/** override */
+			virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+			/** override */
+			virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
+
+		protected:
+
+			/** additionnal flags per type */
+			std::map<std::string, int> custom_flags;
+		};
+
+
 
 		// ==========================================
 		// TileLayer

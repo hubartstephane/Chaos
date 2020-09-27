@@ -1,17 +1,5 @@
 #include <death/TM.h>
 
-
-
-
-#include <chaos/Application.h>
-
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-
-
-
-
-
-
 namespace death
 {
 

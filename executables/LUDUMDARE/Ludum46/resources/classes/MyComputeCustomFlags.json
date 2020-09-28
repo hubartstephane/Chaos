@@ -1,6 +1,7 @@
 {
   "parent_class": "ComputeCustomFlagProcessor",
-  "CustomFlags": {
-    "LADDER": 512
-  }
+  "CustomFlags": [
+    { "LADDER, TRUC, BIDULE": 256 },
+    { "LADDER": 512 }
+  ]
 }

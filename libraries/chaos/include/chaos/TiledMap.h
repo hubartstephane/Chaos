@@ -1074,11 +1074,29 @@ namespace chaos
 
 			/** override */
 			virtual void Process(TileLayer* in_layer) override;
+
+	
 		};
 
 		// ==========================================
 		// ComputeNeighbourFlagProcessor
 		// ==========================================
+
+		class ComputeCustomFlagProcessorEntry
+		{
+		public:
+
+			/** the type of the tile */
+			std::string type;
+			/** the flag applyed */
+			int flag = 0;
+		};
+
+		/** JSON serialization */
+		bool SaveIntoJSON(nlohmann::json& json_entry, ComputeCustomFlagProcessorEntry const& src);
+		/** JSON serialization */
+		bool LoadFromJSON(nlohmann::json const& json_entry, ComputeCustomFlagProcessorEntry& dst);
+
 
 		class ComputeCustomFlagProcessor : public TileFlagProcessor
 		{
@@ -1096,10 +1114,8 @@ namespace chaos
 		protected:
 
 			/** additionnal flags per type */
-			std::map<std::string, int> custom_flags;
+			std::vector<ComputeCustomFlagProcessorEntry> custom_flags;
 		};
-
-
 
 		// ==========================================
 		// TileLayer
@@ -1140,7 +1156,7 @@ namespace chaos
 			/** loading buffer method */
 			std::vector<Tile> DoLoadTileChunkFromBuffer(Buffer<char> const & buffer, glm::ivec2 const & chunk_size);
 			/** add some flags to tiles */
-			void ComputeTileFlags();
+			virtual void ComputeTileFlags();
 
 		public:
 

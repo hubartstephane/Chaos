@@ -275,7 +275,7 @@ namespace death
 		// search collisions, apply collision reaction
 		int collision_flags = PlatformerDisplacementCollisionFlags::NOTHING;
 
-		char const* wangset_name = nullptr;  "CollisionPlatformer";
+		char const* wangset_name = nullptr;  //"CollisionPlatformer"; 
 
 		pawn_box = ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name, [&collision_flags](TMParticle& p, chaos::Edge edge) 
 		{	

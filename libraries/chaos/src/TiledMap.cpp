@@ -1149,7 +1149,9 @@ namespace chaos
 
 						// search 
 						if (t.gid > 0)
+						{
 							neighbour_flags |= extra_flags[k];
+						}
 					}
 					chunk.tile_indices[i].flags |= neighbour_flags;
 				}
@@ -1159,6 +1161,43 @@ namespace chaos
 		// ==========================================
 		// ComputeCustomFlagProcessor
 		// ==========================================
+
+		// while we may want to apply several flags for a same type, and while we can't have identical keys in a JSON object, we use the following syntax
+		//
+		//	"CustomFlags": [
+		//		{ "TYPE1, TYPE2, TYPE3": 256 },
+		//		{ "TYPE1": 512 }
+		//	]
+		//
+		//  => an array of simple objects (a single KEY-VALUE pair in each object)
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, ComputeCustomFlagProcessorEntry const& src)
+		{
+			if (!json_entry.is_object())
+				json_entry = nlohmann::json::object();
+			JSONTools::SetAttribute(json_entry, src.type.c_str(), src.flag);
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, ComputeCustomFlagProcessorEntry& dst)
+		{
+			if (!json_entry.is_object())
+				return false;
+
+			auto it = json_entry.begin();
+			if (it != json_entry.end())
+			{
+				try
+				{
+					dst.flag = it.value().get<int>();
+					dst.type = it.key();
+				}
+				catch (...)
+				{
+				}
+			}
+			return true;
+		}
 
 		void ComputeCustomFlagProcessor::Process(TileLayer* in_layer)
 		{
@@ -1175,9 +1214,9 @@ namespace chaos
 					if (!info.IsValid())
 						continue;
 					// for all declared types, search whether the given tile is of that
-					for (auto & f : custom_flags)
-						if (info.tiledata->IsObjectOfType(f.first.c_str()))
-							tile.flags |= f.second;
+					for (ComputeCustomFlagProcessorEntry const & entry : custom_flags)
+						if (info.tiledata->IsObjectOfType(entry.type.c_str()))
+							tile.flags |= entry.flag;
 				}
 			}
 		}
@@ -1188,13 +1227,7 @@ namespace chaos
 				return false;
 			// insert all key-flag
 			if (custom_flags.size())
-			{
-				json_entry["CustomFlags"] = nlohmann::json::object();
-
-				nlohmann::json& custom_flags_json = json_entry["CustomFlags"];
-				for (auto& f : custom_flags)
-					JSONTools::SetAttribute(custom_flags_json, f.first.c_str(), f.second);
-			}
+				JSONTools::SetAttribute(json_entry, "CustomFlags", custom_flags);
 			return true;
 		}
 		
@@ -1203,16 +1236,22 @@ namespace chaos
 			if (!TileFlagProcessor::SerializeFromJSON(json_entry))
 				return false;
 			// extract all flag key-flag
-			nlohmann::json const* custom_flags_json = JSONTools::GetStructure(json_entry, "CustomFlags");
-			if (custom_flags_json != nullptr && custom_flags_json->is_object())
+			JSONTools::GetAttribute(json_entry, "CustomFlags", custom_flags);
+			// decrypt all data (a key may be a comma separated value)
+			std::vector<ComputeCustomFlagProcessorEntry> final_custom_flags;
+			for (ComputeCustomFlagProcessorEntry& old_entry : custom_flags)
 			{
-				for (auto it = custom_flags_json->begin(); it != custom_flags_json->end(); ++it)
-				{				
-					nlohmann::json const & v = it.value();
-					if (v.is_number())
-						custom_flags[it.key()] = v.get<int>();
+				std::vector<std::string> types;
+				NameFilter::AddNames(old_entry.type.c_str(), types);
+				for (std::string& t : types)
+				{
+					ComputeCustomFlagProcessorEntry e;
+					e.flag = old_entry.flag;
+					e.type = std::move(t);
+					final_custom_flags.push_back(std::move(e));
 				}
 			}
+			custom_flags = std::move(final_custom_flags);
 			return true;
 		}
 

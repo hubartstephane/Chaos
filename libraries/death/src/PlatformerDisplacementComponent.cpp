@@ -277,24 +277,30 @@ namespace death
 
 		char const* wangset_name = nullptr;  //"CollisionPlatformer"; 
 
-		pawn_box = ComputeTileCollisionAndReaction(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name, [&collision_flags](TMParticle& p, chaos::Edge edge) 
-		{	
+		TileCollisionComputer computer = TileCollisionComputer(GetLevelInstance(), initial_pawn_box, pawn_box, CollisionMask::PLAYER, pawn->GetAllocation(), displacement_info.pawn_extend, wangset_name);
 
-			// no collision when touching ladder
-			if ((p.flags & PlatformerParticleFlags::LADDER) != 0)
+		pawn_box = computer.Run([&computer, &collision_flags](TileCollisionInfo const& collision_info)
+		{
+			if ((collision_info.particle->flags & PlatformerParticleFlags::LADDER) != 0)
 			{
-				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_LADDER;
-				return false;
+				if (chaos::Collide(computer.dst_box, collision_info.particle->bounding_box))
+				{
+					collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_LADDER;
+				}
 			}
-
-			if (edge == chaos::Edge::TOP)
-				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
-			else if (edge == chaos::Edge::BOTTOM)
-				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
-			else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)
-				collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;
-
-			return true;
+			else
+			{
+				computer.ComputeReaction(collision_info, [&collision_flags](TileCollisionInfo const& collision_info, chaos::Edge edge)
+				{
+					if (edge == chaos::Edge::TOP)
+						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
+					else if (edge == chaos::Edge::BOTTOM)
+						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
+					else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)
+ 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;		
+					return true;
+				});
+			}		
 		});
 
 		// update player state

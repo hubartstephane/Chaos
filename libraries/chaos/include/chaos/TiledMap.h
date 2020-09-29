@@ -1074,8 +1074,20 @@ namespace chaos
 
 			/** override */
 			virtual void Process(TileLayer* in_layer) override;
+			/** override */
+			virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
+			/** override */
+			virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
 
-	
+		protected:
+
+			/** internal method to detect whether the tile is of interrest for the processing */
+			bool ShouldProcessedTiled(Map const* map, Tile tile) const;
+
+		protected:
+
+			/** the types that are searched for neighbours */
+			std::vector<std::string> types;
 		};
 
 		// ==========================================

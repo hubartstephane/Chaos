@@ -14,7 +14,7 @@ namespace death
 
 	ComputePlatformerFlagProcessor::ComputePlatformerFlagProcessor()
 	{
-		custom_flags = { { "LADDER", PlatformerParticleFlags::LADDER } };
+		custom_flags = { { "LADDER", PlatformerParticleFlags::LADDER }, { "BRIDGE", PlatformerParticleFlags::BRIDGE } };
 	}
 
 	// =========================================================
@@ -292,6 +292,9 @@ namespace death
 			{
 				computer.ComputeReaction(collision_info, [&collision_flags](TileCollisionInfo const& collision_info, chaos::Edge edge)
 				{
+					if ((collision_info.particle->flags & PlatformerParticleFlags::BRIDGE) != 0)
+						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_BRIDGE;
+
 					if (edge == chaos::Edge::TOP)
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
 					else if (edge == chaos::Edge::BOTTOM)

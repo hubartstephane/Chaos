@@ -1435,11 +1435,11 @@ namespace chaos
 			/** default constructor */
 			TileInfo() = default;
 			/** other constuctor */
-			TileInfo(int in_gid, TileSet const * in_tileset, TileData const * in_tiledata):
-				id(in_gid), tileset(in_tileset), tiledata(in_tiledata){}
+			TileInfo(int in_id, TileSet const * in_tileset, TileData const * in_tiledata):
+				id(in_id), tileset(in_tileset), tiledata(in_tiledata){}
 
 			/** returns whether the information is valid or not */
-			bool IsValid() const { return (id > 0); }
+			bool IsValid() const { return (tileset != nullptr && tiledata != nullptr); }
 
 		public:
 

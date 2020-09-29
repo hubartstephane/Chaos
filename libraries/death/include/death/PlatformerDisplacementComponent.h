@@ -16,6 +16,7 @@ namespace death
 namespace PlatformerParticleFlags
 {
 	static int constexpr LADDER = (1 << 9);
+	static int constexpr BRIDGE = (1 << 10);
 };
 
 	// =========================================================

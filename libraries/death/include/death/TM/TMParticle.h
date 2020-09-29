@@ -37,6 +37,7 @@ namespace death
 	public:
 
 #if 0
+
 		void ParticleToPrimitives(TMParticle const& p, chaos::QuadOutput<chaos::VertexDefault>& output) const
 		{
 
@@ -47,11 +48,10 @@ namespace death
 		{
 			auto primitive = output.AddPrimitive();
 			chaos::ParticleToPrimitive(p, primitive);
-			if (p.flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM)
+			if ((p.flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) != 0)
 				for (auto & v : primitive)
 					v.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		}
-
 
 	public:
 

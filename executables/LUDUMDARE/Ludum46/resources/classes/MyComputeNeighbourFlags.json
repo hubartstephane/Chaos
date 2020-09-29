@@ -1,4 +1,4 @@
 {
   "parent_class": "ComputeNeighbourFlagProcessor",
-  "types": [ "WALL, MACHIN, BIDULE" ]
+  "types": "WALL, BRIDGE"
 }

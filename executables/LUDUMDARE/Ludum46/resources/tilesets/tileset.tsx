@@ -23,7 +23,7 @@
  <tile id="3" type="LADDER" terrain="1,1,1,2">
   <image width="32" height="32" source="../sprites/Ladder.png"/>
  </tile>
- <tile id="4" type="WALL">
+ <tile id="4" type="BRIDGE">
   <image width="32" height="32" source="../sprites/Bridge.png"/>
  </tile>
  <tile id="6">

@@ -112,7 +112,7 @@ namespace death
 		return true;
 	}
 
-	chaos::box2 ComputeTileCollisionAndReaction(TMLevelInstance* level_instance, chaos::box2 src_box, chaos::box2 dst_box, int collision_mask, chaos::ParticleAllocationBase* ignore_allocation, glm::vec2 const & box_extend,char const* wangset_name, std::function<bool(TMParticle&, chaos::Edge)> func)
+	chaos::box2 TileCollisionComputer::Run(std::function<void(TileCollisionInfo const& collision_info)> func)
 	{
 		assert(level_instance != nullptr);
 
@@ -122,15 +122,10 @@ namespace death
 		glm::vec2 delta = box_extend;
 		extended_box.half_size += delta;
 
-		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_box, collision_mask, false);
-
-		// for faster access, cache the wangset
-		chaos::TiledMap::Wangset const* wangset = nullptr;
-		chaos::TiledMap::TileSet const* tileset = nullptr;
-
 		glm::vec2 delta_position = dst_box.position - src_box.position;
 
 		// iterate over all particles
+		TMTileCollisionIterator it = level_instance->GetTileCollisionIterator(extended_box, collision_mask, false);
 		while (it)
 		{
 			// ignore pawn allocation
@@ -139,199 +134,188 @@ namespace death
 				it.NextAllocation();
 				continue;
 			}
-
-			// some data
-			int particle_flags = it->particle->flags;
-
-			// search for wang flags (use cache for faster search
-			chaos::TiledMap::WangTile wangtile;
-
-			if (wangset_name != nullptr)
-			{
-				// cannot do anything without a known tileset : this should never happen
-				if (it->tile_info.tileset == nullptr)
-				{
-					++it;
-					continue;
-				}
-
-				// different tileset than the one for previous particle ?
-				if (it->tile_info.tileset != tileset)
-				{
-					tileset = it->tile_info.tileset;
-
-					wangset = tileset->FindWangset(wangset_name);
-				}
-				// no wangset cannot continue
-				if (wangset == nullptr)
-					continue;
-
-				// get the wang tile and apply particle transforms
-				wangtile = wangset->GetWangTile(it->tile_info.id);
-				wangtile.ApplyParticleFlags(particle_flags);
-			}
-
-			std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(it->particle->bounding_box);
-			std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(dst_box);
-			std::pair<glm::vec2, glm::vec2> src_corners = chaos::GetBoxCorners(src_box);
-
-			// XXX : an edge with wang value 
-			//         0 -> the tile does not use the wangset at all
-			//         1 -> this is the empty wang value
-			//        +2 -> good
-		
-
-			chaos::Edge best_edge = chaos::Edge::LEFT;
-			glm::vec2 best_position = dst_box.position;
-			float best_distance = std::numeric_limits<float>::max();
-
-
-
-
-
-
-
-			// LEFT EDGE
-			bool left_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
-			
-			// check whether the EDGE is valid and whether the distance between the objects does no increase
-			if (left_collision_candidate && delta_position.x >= 0.0f) 
-			{
-				// check whether EDGE/BOX collision may happen
-				if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_box.position.x, dst_corners.second.x + delta.x) && RangeOverlaps(dst_corners, particle_corners, 1))
-				{
-					// check whether the collision is at least in ZONE 2
-					if (particle_corners.first.x < dst_corners.second.x + delta.x)
-					{
-						bool displacement_enabled = func(*it->particle, chaos::Edge::LEFT); // ZONE 1 or 2 : indicates to caller that there is a touch
-
-						// in ZONE 1 ?
-						if (displacement_enabled && (particle_corners.first.x < dst_corners.second.x + delta.x * 0.5f))
-						{
-							float new_x = particle_corners.first.x - dst_box.half_size.x - delta.x * 0.5f;
-
-							float distance = std::abs(dst_box.position.x - new_x);
-
-							// check for best distance among other edges
-							if (distance < best_distance)
-							{
-								best_position.x = new_x;
-								best_position.y = dst_box.position.y;
-								best_distance = distance;
-							}
-						}
-					}
-				}
-			}
-
-			// RIGHT EDGE
-			bool right_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
-
-			// check whether the EDGE is valid and whether the distance between the objects does no increase
-			if (right_collision_candidate && delta_position.x <= 0.0f) 
-			{
-				// check whether EDGE/BOX collision may happen
-				if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x - delta.x, dst_box.position.x) && RangeOverlaps(dst_corners, particle_corners, 1))
-				{
-					// check whether the collision is at least in ZONE 2
-					if (particle_corners.second.x > dst_corners.first.x - delta.x)
-					{
-						bool displacement_enabled = func(*it->particle, chaos::Edge::RIGHT); // ZONE 1 or 2 : indicates to caller that there is a touch
-
-						// in ZONE 1 ?
-						if (displacement_enabled && (particle_corners.second.x > dst_corners.first.x - delta.x * 0.5f))
-						{
-							float new_x = particle_corners.second.x + dst_box.half_size.x + delta.x * 0.5f;
-
-							float distance = std::abs(dst_box.position.x - new_x);
-
-							// check for best distance among other edges
-							if (distance < best_distance)
-							{
-								best_position.x = new_x;
-								best_position.y = dst_box.position.y;
-								best_distance = distance;
-							}
-						}
-					}
-				}
-			}
-
-			// BOTTOM EDGE
-			bool bottom_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
-
-			// check whether the EDGE is valid and whether the distance between the objects does no increase
-			if (bottom_collision_candidate && delta_position.y >= 0.0f) 
-			{
-				// check whether EDGE/BOX collision may happen
-				if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_box.position.y, dst_corners.second.y + delta.y) && RangeOverlaps(dst_corners, particle_corners, 0))
-				{
-					// check whether the collision is at least in ZONE 2
-					if (particle_corners.first.y < dst_corners.second.y + delta.y)
-					{
-						bool displacement_enabled = func(*it->particle, chaos::Edge::BOTTOM); // ZONE 1 or 2 : indicates to caller that there is a touch
-
-						// in ZONE 1 ?
-						if (displacement_enabled && (particle_corners.first.y < dst_corners.second.y + delta.y * 0.5f))
-						{
-							float new_y = particle_corners.first.y - dst_box.half_size.y - delta.y * 0.5f;
-
-							float distance = std::abs(dst_box.position.y - new_y);
-
-							// check for best distance among other edges
-							if (distance < best_distance)
-							{
-								best_position.x = dst_box.position.x;
-								best_position.y = new_y;
-								best_distance = distance;								
-							}
-						}
-					}
-				}
-			}
-
-			// TOP EDGE
-			bool top_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
-
-			// check whether the EDGE is valid and whether the distance between the objects does no increase
-			if (top_collision_candidate && delta_position.y <= 0.0f) 
-			{
-				// check whether EDGE/BOX collision may happen
-				if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y - delta.y, dst_box.position.y) && RangeOverlaps(dst_corners, particle_corners, 0))
-				{
-					// check whether the collision is at least in ZONE 2
-					if (particle_corners.second.y > dst_corners.first.y - delta.y)
-					{
-						bool displacement_enabled = func(*it->particle, chaos::Edge::TOP); // ZONE 1 or 2 : indicates to caller that there is a touch
-
-						// in ZONE 1 ?
-						if (displacement_enabled && (particle_corners.second.y > dst_corners.first.y - delta.y * 0.5f))
-						{
-							float new_y = particle_corners.second.y + dst_box.half_size.y + delta.y * 0.5f;
-
-							float distance = std::abs(dst_box.position.y - new_y);
-
-							// check for best distance among other edges
-							if (distance < best_distance)
-							{
-								best_position.x = dst_box.position.x;
-								best_position.y = new_y;
-								best_distance = distance;								
-							}
-						}
-					}
-				}
-			}
-
-			// displace the box among the best edge
-			if (best_distance != std::numeric_limits<float>::max())
-			{
-				dst_box.position = best_position;
-			}
+			// give caller opportunity to do what he wants
+			func(*it);
+			// next
 			++it;
 		}
-
 		return dst_box;
+	}
+
+	void TileCollisionComputer::ComputeReaction(TileCollisionInfo const& collision_info, std::function<bool(TileCollisionInfo const &, chaos::Edge)> func)
+	{
+		int particle_flags = collision_info.particle->flags;
+
+		// search for wang flags (use cache for faster search)
+		chaos::TiledMap::WangTile wangtile;
+
+		if (wangset_name != nullptr)
+		{
+			// cannot do anything without a known tileset : this should never happen
+			if (collision_info.tile_info.tileset == nullptr)
+				return;
+			// different tileset than the one for previous particle ?
+			if (collision_info.tile_info.tileset != tileset)
+			{
+				tileset = collision_info.tile_info.tileset;
+				wangset = tileset->FindWangset(wangset_name);
+			}
+			// no wangset cannot continue
+			if (wangset == nullptr)
+				return;
+			// get the wang tile and apply particle transforms
+			wangtile = wangset->GetWangTile(collision_info.tile_info.id);
+			wangtile.ApplyParticleFlags(particle_flags);
+		}
+
+		std::pair<glm::vec2, glm::vec2> particle_corners = chaos::GetBoxCorners(collision_info.particle->bounding_box);
+		std::pair<glm::vec2, glm::vec2> dst_corners = chaos::GetBoxCorners(dst_box);
+
+		// XXX : an edge with wang value 
+		//         0 -> the tile does not use the wangset at all
+		//         1 -> this is the empty wang value
+		//        +2 -> good
+
+		glm::vec2 best_position = dst_box.position;
+		float best_distance = std::numeric_limits<float>::max();
+
+		// LEFT EDGE
+		bool left_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::LEFT) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_LEFT) == 0);
+
+		// check whether the EDGE is valid and whether the distance between the objects does no increase
+		if (left_collision_candidate && delta_position.x >= 0.0f)
+		{
+			// check whether EDGE/BOX collision may happen
+			if (chaos::MathTools::IsInRange(particle_corners.first.x, dst_box.position.x, dst_corners.second.x + box_extend.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+			{
+				// check whether the collision is at least in ZONE 2
+				if (particle_corners.first.x < dst_corners.second.x + box_extend.x)
+				{
+					bool displacement_enabled = func(collision_info, chaos::Edge::LEFT); // ZONE 1 or 2 : indicates to caller that there is a touch
+
+					// in ZONE 1 ?
+					if (displacement_enabled && (particle_corners.first.x < dst_corners.second.x + box_extend.x * 0.5f))
+					{
+						float new_x = particle_corners.first.x - dst_box.half_size.x - box_extend.x * 0.5f;
+
+						float distance = std::abs(dst_box.position.x - new_x);
+
+						// check for best distance among other edges
+						if (distance < best_distance)
+						{
+							best_position.x = new_x;
+							best_position.y = dst_box.position.y;
+							best_distance = distance;
+						}
+					}
+				}
+			}
+		}
+
+		// RIGHT EDGE
+		bool right_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::RIGHT) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_RIGHT) == 0);
+
+		// check whether the EDGE is valid and whether the distance between the objects does no increase
+		if (right_collision_candidate && delta_position.x <= 0.0f)
+		{
+			// check whether EDGE/BOX collision may happen
+			if (chaos::MathTools::IsInRange(particle_corners.second.x, dst_corners.first.x - box_extend.x, dst_box.position.x) && RangeOverlaps(dst_corners, particle_corners, 1))
+			{
+				// check whether the collision is at least in ZONE 2
+				if (particle_corners.second.x > dst_corners.first.x - box_extend.x)
+				{
+					bool displacement_enabled = func(collision_info, chaos::Edge::RIGHT); // ZONE 1 or 2 : indicates to caller that there is a touch
+
+					// in ZONE 1 ?
+					if (displacement_enabled && (particle_corners.second.x > dst_corners.first.x - box_extend.x * 0.5f))
+					{
+						float new_x = particle_corners.second.x + dst_box.half_size.x + box_extend.x * 0.5f;
+
+						float distance = std::abs(dst_box.position.x - new_x);
+
+						// check for best distance among other edges
+						if (distance < best_distance)
+						{
+							best_position.x = new_x;
+							best_position.y = dst_box.position.y;
+							best_distance = distance;
+						}
+					}
+				}
+			}
+		}
+
+		// BOTTOM EDGE
+		bool bottom_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::BOTTOM) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_BOTTOM) == 0);
+
+		// check whether the EDGE is valid and whether the distance between the objects does no increase
+		if (bottom_collision_candidate && delta_position.y >= 0.0f)
+		{
+			// check whether EDGE/BOX collision may happen
+			if (chaos::MathTools::IsInRange(particle_corners.first.y, dst_box.position.y, dst_corners.second.y + box_extend.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+			{
+				// check whether the collision is at least in ZONE 2
+				if (particle_corners.first.y < dst_corners.second.y + box_extend.y)
+				{
+					bool displacement_enabled = func(collision_info, chaos::Edge::BOTTOM); // ZONE 1 or 2 : indicates to caller that there is a touch
+
+					// in ZONE 1 ?
+					if (displacement_enabled && (particle_corners.first.y < dst_corners.second.y + box_extend.y * 0.5f))
+					{
+						float new_y = particle_corners.first.y - dst_box.half_size.y - box_extend.y * 0.5f;
+
+						float distance = std::abs(dst_box.position.y - new_y);
+
+						// check for best distance among other edges
+						if (distance < best_distance)
+						{
+							best_position.x = dst_box.position.x;
+							best_position.y = new_y;
+							best_distance = distance;
+						}
+					}
+				}
+			}
+		}
+
+		// TOP EDGE
+		bool top_collision_candidate = (wangset != nullptr) ? (wangtile.GetEdgeValue(chaos::Edge::TOP) > 1) : ((particle_flags & chaos::TiledMap::TileParticleFlags::NEIGHBOUR_TOP) == 0);
+
+		// check whether the EDGE is valid and whether the distance between the objects does no increase
+		if (top_collision_candidate && delta_position.y <= 0.0f)
+		{
+			// check whether EDGE/BOX collision may happen
+			if (chaos::MathTools::IsInRange(particle_corners.second.y, dst_corners.first.y - box_extend.y, dst_box.position.y) && RangeOverlaps(dst_corners, particle_corners, 0))
+			{
+				// check whether the collision is at least in ZONE 2
+				if (particle_corners.second.y > dst_corners.first.y - box_extend.y)
+				{
+					bool displacement_enabled = func(collision_info, chaos::Edge::TOP); // ZONE 1 or 2 : indicates to caller that there is a touch
+
+					// in ZONE 1 ?
+					if (displacement_enabled && (particle_corners.second.y > dst_corners.first.y - box_extend.y * 0.5f))
+					{
+						float new_y = particle_corners.second.y + dst_box.half_size.y + box_extend.y * 0.5f;
+
+						float distance = std::abs(dst_box.position.y - new_y);
+
+						// check for best distance among other edges
+						if (distance < best_distance)
+						{
+							best_position.x = dst_box.position.x;
+							best_position.y = new_y;
+							best_distance = distance;
+						}
+					}
+				}
+			}
+		}
+
+		// displace the box among the best edge
+		if (best_distance != std::numeric_limits<float>::max())
+		{
+			dst_box.position = best_position;
+		}
 	}
 
 	// =====================================

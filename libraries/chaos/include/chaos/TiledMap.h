@@ -477,7 +477,7 @@ namespace chaos
 			int GetObjectID() const { return id; }
 
 			/** get the bounding box */
-			virtual box2 GetBoundingBox(bool world_system) const;
+			box2 GetBoundingBox(bool world_system) const;
 
 		protected:
 
@@ -486,6 +486,9 @@ namespace chaos
 
 			/** override */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
+
+			/** get the local bouding box */
+			virtual box2 DoGetBoundingBox() const;
 
 			/** loading method from XML */
 			std::vector<glm::vec2> GetPointArray(tinyxml2::XMLElement const * element, char const * attribute_name);
@@ -535,16 +538,13 @@ namespace chaos
 		{
 			CHAOS_TILEDMAP_ALL_FRIENDS
 
-		public:
-
-			/** get the bounding box */
-			virtual box2 GetBoundingBox(bool world_system) const override;
-
 		protected:
 
 			/** constructor */
 			using GeometricObject::GeometricObject;
 
+			/** override */
+			virtual box2 DoGetBoundingBox() const override;
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 
@@ -696,8 +696,6 @@ namespace chaos
 		public:
 
 			/** override */
-			virtual box2 GetBoundingBox(bool world_system) const override;
-			/** override */
 			virtual Property const * FindProperty(char const * name, PropertyType type_id) const override;			
 			/** override */
 			virtual bool IsObjectOfType(char const* in_type) const override;
@@ -710,6 +708,8 @@ namespace chaos
 			/** constructor */
 			using GeometricObjectSurface::GeometricObjectSurface;
 
+			/** override */
+			virtual box2 DoGetBoundingBox() const override;
 			/** loading method from XML */
 			virtual bool DoLoad(tinyxml2::XMLElement const * element) override;
 

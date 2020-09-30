@@ -598,10 +598,7 @@ namespace chaos
 
 		box2 GeometricObject::GetBoundingBox(bool world_system) const
 		{
-			chaos::box2 result;
-			result.position = position;
-			result.half_size = glm::vec2(50.0f, 50.0f);
-
+			box2 result = DoGetBoundingBox();
 			if (world_system)
 			{
 				LayerBase const* parent_layer = auto_cast(owner);
@@ -611,23 +608,23 @@ namespace chaos
 			return result;
 		}
 
-		box2 GeometricObjectSurface::GetBoundingBox(bool world_system) const
+		box2 GeometricObject::DoGetBoundingBox() const
+		{
+			chaos::box2 result;
+			result.position = position;
+			result.half_size = glm::vec2(0.0f, 0.0f);
+			return result;
+		}
+
+		box2 GeometricObjectSurface::DoGetBoundingBox() const
 		{
 			// TOP-LEFT
 			glm::vec2 p1 = position;
 			glm::vec2 p2 = position + size * REVERSE_Y_AXIS;
-
-			box2 result = box2(std::make_pair(p1, p2));
-			if (world_system)
-			{
-				LayerBase const * parent_layer = auto_cast(owner);
-				if (parent_layer != nullptr)
-					result.position += parent_layer->offset;
-			}
-			return result;
+			return box2(std::make_pair(p1, p2));
 		}
 
-		box2 GeometricObjectTile::GetBoundingBox(bool world_system) const
+		box2 GeometricObjectTile::DoGetBoundingBox() const
 		{
 			// search the alignment for this tile
 			Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT; // default value for tileset
@@ -640,14 +637,7 @@ namespace chaos
 			glm::vec2 p1 = ConvertHotpointToBottomLeft(position, size, hotpoint);
 			glm::vec2 p2 = p1 + glm::vec2(size.x, -size.y) * REVERSE_Y_AXIS;
 
-			box2 result = box2(std::make_pair(p1, p2));
-			if (world_system)
-			{
-				LayerBase const * parent_layer = auto_cast(owner);
-				if (parent_layer != nullptr)
-					result.position += parent_layer->offset;
-			}
-			return result;
+			return box2(std::make_pair(p1, p2));
 		}
 
 		TileInfo GeometricObjectTile::FindTileInfo() const

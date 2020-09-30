@@ -35,9 +35,40 @@ bool SpikeBar::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Tile
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
+	in_reference_solver.DeclareReference(my_path, "MY_PATH", in_geometric_object);
+
+
+	//SetParticleMaster(false);
 
 	return true;
 }
+
+bool SpikeBar::DoTick(float delta_time)
+{
+	death::TMObject::DoTick(delta_time);
+
+	// data from entity to particle
+	SynchronizeData(false);
+
+	path_value += delta_time;
+
+	death::TMPath * p = auto_cast(my_path.get());
+	if (p != nullptr)
+	{
+		auto y = GetPosition();
+
+		auto x = p->GetPosition();
+
+		//SetPosition(p->GetPosition());
+
+
+
+		p = p;
+	}
+
+	return true;
+}
+
 
 void SpikeBar::OnEffectorChangeState()
 {

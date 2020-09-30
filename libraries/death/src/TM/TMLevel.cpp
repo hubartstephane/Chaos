@@ -1414,7 +1414,7 @@ namespace death
 
 
 
-
+		// get data from particle to entity
 		result->SynchronizeData(true);
 
 

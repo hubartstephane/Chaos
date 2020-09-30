@@ -11,6 +11,11 @@ namespace death
 	// PlayerPawn
 	// =============================================
 
+	PlayerPawn::PlayerPawn()
+	{
+		SetParticleMaster(true);
+	}
+
 	bool PlayerPawn::Initialize(Player* in_player)
 	{
 		// ensure valid arguments and not already initialized

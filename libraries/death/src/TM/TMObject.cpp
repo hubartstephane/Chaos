@@ -51,9 +51,7 @@ namespace death
 		particle_ownership = in_geometric_object->GetPropertyValueBool("PARTICLE_OWNERSHIP", particle_ownership);
 
 		// extract the bounding box
-		chaos::TiledMap::GeometricObjectSurface const* surface = in_geometric_object->GetObjectSurface();
-		if (surface != nullptr)
-			bounding_box = surface->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
+		bounding_box = in_geometric_object->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
 
 		return true;
 	}

@@ -596,22 +596,20 @@ namespace chaos
 			return true;
 		}
 
-		// XXX : SIZE's signification may be different according to each object
-		//
-		//	GeometricObjectSurface : abstract
-		//
-		//	GeometricObjectPoint : position = OBVIOUS
-		//
-		//	GeometricObjectRectangle : SIZE.Y is going DOWN for positive Y (according to the system)
-		//	GeometricObjectEllipse
-		//	GeometricObjectText
-		//
-		//	GeometricObjectTile : SIZE.Y is going UP for positive Y !!!! (the opposite of other objects)
-		//
-		//	GeometricObjectPolygon   : position = coordinates of very first point
-		//	GeometricObjectPolyline  : other points are given relative to the position
+		box2 GeometricObject::GetBoundingBox(bool world_system) const
+		{
+			chaos::box2 result;
+			result.position = position;
+			result.half_size = glm::vec2(50.0f, 50.0f);
 
-		// XXX : position is already expressed in the REVERSE_Y_AXIS system.
+			if (world_system)
+			{
+				LayerBase const* parent_layer = auto_cast(owner);
+				if (parent_layer != nullptr)
+					result.position += parent_layer->offset;
+			}
+			return result;
+		}
 
 		box2 GeometricObjectSurface::GetBoundingBox(bool world_system) const
 		{

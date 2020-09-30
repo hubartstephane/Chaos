@@ -51,13 +51,8 @@ namespace death
 
 	protected:
 
-		/** called whenever the box is changed */
-		virtual void OnBoundingBoxChanged(chaos::box2 const& new_bounding_box, chaos::box2 const& old_bounding_box);
-
-	protected:
-
 		/** whether the particle 0 data is the one to be used first */
-		bool is_particle_master = true;
+		bool is_particle_master = false;
 		/** the box for the entity */
 		chaos::box2 bounding_box;
 		/** the allocation for the entity */

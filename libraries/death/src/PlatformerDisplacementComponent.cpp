@@ -292,11 +292,12 @@ namespace death
 			{
 				computer.ComputeReaction(collision_info, [&collision_flags](TileCollisionInfo const& collision_info, chaos::Edge edge)
 				{
-					if ((collision_info.particle->flags & PlatformerParticleFlags::BRIDGE) != 0)
-						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_BRIDGE;
-
 					if (edge == chaos::Edge::TOP)
+					{
+						if ((collision_info.particle->flags & PlatformerParticleFlags::BRIDGE) != 0)
+							collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_BRIDGE;
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
+					}
 					else if (edge == chaos::Edge::BOTTOM)
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
 					else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)

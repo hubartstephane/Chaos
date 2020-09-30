@@ -146,7 +146,16 @@ public:
 protected:
 
 	/** override */
+	virtual bool DoTick(float delta_time);
+
+	/** override */
 	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& reference_solver) override;
+
+
+	float path_value = 0.0f;
+
+	chaos::weak_ptr<TMObject> my_path;
+
 };
 
 // =================================================

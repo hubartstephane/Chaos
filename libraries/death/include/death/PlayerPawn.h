@@ -29,6 +29,9 @@ namespace death
 
 		DEATH_GAMEGETTERS_DECLARE();
 
+		/** constructor */
+		PlayerPawn();
+
 		/** initialization method */
 		bool Initialize(Player* in_player);
 

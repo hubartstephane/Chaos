@@ -476,6 +476,9 @@ namespace chaos
 			/** get the object ID (used for Checkpoints) */
 			int GetObjectID() const { return id; }
 
+			/** get the bounding box */
+			virtual box2 GetBoundingBox(bool world_system) const;
+
 		protected:
 
 			/** constructor */
@@ -535,7 +538,7 @@ namespace chaos
 		public:
 
 			/** get the bounding box */
-			virtual box2 GetBoundingBox(bool world_system) const;
+			virtual box2 GetBoundingBox(bool world_system) const override;
 
 		protected:
 

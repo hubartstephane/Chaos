@@ -43,11 +43,6 @@ namespace death
 		bounding_box = in_bounding_box;
 	}
 
-	void GameEntity::OnBoundingBoxChanged(chaos::box2 const& new_bounding_box, chaos::box2 const& old_bounding_box)
-	{
-		SynchronizeData(false);
-	}
-
 	void GameEntity::SynchronizeData(bool particle_to_entity)
 	{
 		if (particle_to_entity)

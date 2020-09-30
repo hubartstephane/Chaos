@@ -602,8 +602,11 @@ namespace chaos
 			if (world_system)
 			{
 				LayerBase const* parent_layer = auto_cast(owner);
-				if (parent_layer != nullptr)
+				while (parent_layer != nullptr)
+				{
 					result.position += parent_layer->offset;
+					parent_layer = auto_cast(parent_layer->owner);
+				}
 			}
 			return result;
 		}
@@ -966,7 +969,7 @@ namespace chaos
 			Property const  * result = PropertyOwner::FindProperty(name, type_id);
 			if (result != nullptr)
 				return result;
-			// search in containing layers
+			// search recursively in containing layers
 			if (owner != nullptr)
 			{
 				LayerBase const* parent_layer = owner->GetOwner<LayerBase>(true);

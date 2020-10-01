@@ -188,6 +188,7 @@ namespace death
 		TMObjectCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
 			TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask, in_open_geometry)
 		{
+			FindFirstCollision();
 		}
 		// indirection
 		T& operator *() const
@@ -202,7 +203,81 @@ namespace death
 			return cached_result;
 		}
 
+		/** go to next layer */
+		void NextLayer()
+		{
+			if (ignore_other_layers)
+			{
+				EndIterator();
+			}
+			else
+			{
+				++layer_instance_index;
+				object_index = 0;
+				FindFirstCollision();
+			}
+		}
+
+		/** go to next element */
+		void Next()
+		{
+			++object_index;
+			FindFirstCollision();
+		}
+	
+		// pre increment iterator
+		TMObjectCollisionIteratorBase<T>& operator ++ ()
+		{
+			Next();
+			return *this;
+		}
+
+		// post increment iterator
+		TMObjectCollisionIteratorBase<T> operator ++ (int i)
+		{
+			TMObjectCollisionIteratorBase<T> result = *this;
+			++(*this);
+			return result;
+		}
+
 	protected:
+		
+		/** find the very first collision from given conditions */
+		void FindFirstCollision()
+		{
+			assert(level_instance != nullptr); // end already reached. cannot go further
+
+			if (level_instance != nullptr)
+			{
+				while (layer_instance_index < level_instance->layer_instances.size())
+				{
+					TMLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
+
+					if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
+					{
+						while (object_index < layer_instance->GetObjectCount())
+						{
+							T * object = auto_cast(layer_instance->GetObject(object_index));
+							if (object != nullptr)
+							{
+								if (chaos::Collide(collision_box, object->GetBoundingBox(true), open_geometry))
+								{
+									cached_result = object;
+									return;
+								}
+							}
+							++object_index;
+						}
+					}
+					if (ignore_other_layers)
+						break;
+					++layer_instance_index;
+					object_index = 0;
+				}
+				// no collision found, end of the iterator
+				EndIterator();
+			}
+		}
 
 		/** called to set the iterator at its end */
 		void EndIterator()
@@ -222,69 +297,5 @@ namespace death
 		/** the current result of the research */
 		T* cached_result = nullptr;
 	};
-
-
-	// =====================================
-	// TMTriggerCollisionIterator
-	// =====================================
-
-	class TMTriggerCollisionIterator : public TMObjectCollisionIteratorBase<TMTrigger>
-	{
-	public:
-
-		/** the default constructor */
-		TMTriggerCollisionIterator() = default;
-		/** the copy constructor */
-		TMTriggerCollisionIterator(TMTriggerCollisionIterator const& src) = default;
-		/** the constructor with initialization */
-		TMTriggerCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
-
-		// pre increment iterator
-		TMTriggerCollisionIterator& operator ++ ();
-		// post increment iterator
-		TMTriggerCollisionIterator operator ++ (int i);
-
-		/** go to next layer */
-		void NextLayer();
-		/** go to next element */
-		void Next();
-
-	protected:
-
-		/** find the very first collision from given conditions */
-		void FindFirstCollision();
-	};
-
-	// =====================================
-	// TMObjectCollisionIterator
-	// =====================================
-
-	class TMObjectCollisionIterator : public TMObjectCollisionIteratorBase<TMObject>
-	{
-	public:
-
-		/** the default constructor */
-		TMObjectCollisionIterator() = default;
-		/** the copy constructor */
-		TMObjectCollisionIterator(TMObjectCollisionIterator const& src) = default;
-		/** the constructor with initialization */
-		TMObjectCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
-
-		// pre increment iterator
-		TMObjectCollisionIterator& operator ++ ();
-		// post increment iterator
-		TMObjectCollisionIterator operator ++ (int i);
-
-		/** go to next layer */
-		void NextLayer();
-		/** go to next element */
-		void Next();
-
-	protected:
-
-		/** find the very first collision from given conditions */
-		void FindFirstCollision();
-	};
-
 
 }; // namespace death

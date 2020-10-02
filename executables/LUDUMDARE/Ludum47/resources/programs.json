@@ -1,6 +1,5 @@
 {
   "@background": { "path": "@programs/background/background.pgm" },
   "@text": { "path": "@programs/text/text.pgm" },
-  "@BurningFlames": { "path": "@programs/BurningFlames/BurningFlames.pgm" },
   "@blackscreen": { "path": "@programs/blackscreen/blackscreen.pgm" }
 }

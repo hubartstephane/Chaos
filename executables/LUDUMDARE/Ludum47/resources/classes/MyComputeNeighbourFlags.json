@@ -1,4 +1,0 @@
-{
-  "parent_class": "ComputeNeighbourFlagProcessor",
-  "types": "WALL, BRIDGE"
-}

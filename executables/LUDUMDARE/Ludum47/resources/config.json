@@ -4,7 +4,7 @@
     "height": 600
   },
 
-  "max_tick_duration": 1.0,
+  "max_tick_duration": 0.1,
   "forced_tick_duratiocn": 0.0001,
 
   "gpu":{"@filename":"@gpu.json"},

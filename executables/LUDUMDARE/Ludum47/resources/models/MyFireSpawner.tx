@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<template>
- <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
- <object name="MyFireSpawner" type="Spawner" gid="10" width="80" height="80">
-  <properties>
-   <property name="EMISSION_STARTED" type="bool" value="false"/>
-  </properties>
- </object>
-</template>

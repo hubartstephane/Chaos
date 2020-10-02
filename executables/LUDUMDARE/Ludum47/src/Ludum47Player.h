@@ -23,7 +23,7 @@ public:
 
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
 
-	void AddBurnedSouls(int count) { burned_souls += count; }
+
 
 protected:
 
@@ -41,8 +41,6 @@ protected:
 
 
 
-protected:
 
-	int burned_souls = 0;
 };
 

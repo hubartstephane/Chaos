@@ -5,12 +5,7 @@
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
  <objecttype name="Checkpoint" color="#a4970a">
-  <property name="PARTICLE_CREATION" type="bool" default="false"/>
- </objecttype>
- <objecttype name="EnemySpawner" color="#5500ff">
-  <property name="ENEMY_PATTERN" type="string"/>
-  <property name="ENEMY_SPAWNER" type="bool" default="true"/>
-  <property name="ENEMY_TYPE" type="string"/>
+  <property name="OBJECT_REFERENCE" type="object" default="0"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
  <objecttype name="Finish" color="#a0a0a4">
@@ -28,34 +23,5 @@
   <property name="BITMAP_NAME" type="string"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PLAYER_START" type="bool" default="true"/>
- </objecttype>
- <objecttype name="SoulTrigger" color="#a0a0a4">
-  <property name="EFFECTORS" type="string"/>
-  <property name="TRIGGER_LIMIT" type="int" default="1"/>
-  <property name="TRIGGER_TYPE" type="string"/>
- </objecttype>
- <objecttype name="Sound" color="#a40002">
-  <property name="3D_SOUND" type="bool" default="true"/>
-  <property name="LOOPING" type="bool" default="false"/>
-  <property name="MIN_DISTANCE_RATIO" type="float" default="0.3"/>
-  <property name="PARTICLE_CREATION" type="bool" default="false"/>
-  <property name="PAUSE_TIMER_WHEN_TOO_FAR" type="float" default="-1"/>
-  <property name="SOUND_NAME" type="string"/>
-  <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
-  <property name="TRIGGER_ONCE" type="bool" default="false"/>
- </objecttype>
- <objecttype name="Spawner" color="#ffff00">
-  <property name="EMISSION_STARTED" type="bool" default="true"/>
-  <property name="MAX_SPAWNED_PARTICLES" type="int" default="100"/>
-  <property name="PARTICLE_CREATION" type="bool" default="false"/>
-  <property name="PARTICLE_DURATION" type="float" default="-1"/>
-  <property name="PARTICLE_START_VELOCITY_X" type="float" default="0"/>
-  <property name="PARTICLE_START_VELOCITY_Y" type="float" default="0"/>
-  <property name="SPAWNED_PARTICLE" type="string"/>
-  <property name="SPAWNER_TYPE" type="string"/>
-  <property name="SPAWN_PER_SECOND" type="float" default="20.5"/>
-  <property name="TARGET_LAYER" type="string"/>
- </objecttype>
- <objecttype name="SpikeBar" color="#a0a0a4">
  </objecttype>
 </objecttypes>

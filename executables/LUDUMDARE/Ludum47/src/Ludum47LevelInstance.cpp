@@ -181,7 +181,7 @@ glm::ivec2 LudumLevelInstance::GetPlayerRacePosition(LudumPlayer const* player) 
 		{
 			glm::vec2 target = road->points[(opponent->race_position.current_road_point + 1) % point_count].position;
 
-			if (glm::length2(target - particle_player->bounding_box.position) > glm::length2(target - particle_player->bounding_box.position))
+			if (glm::length2(target - particle_player->bounding_box.position) > glm::length2(target - particle_opponent->bounding_box.position))
 				++result.x;
 		}
 	}

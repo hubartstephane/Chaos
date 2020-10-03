@@ -58,23 +58,30 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	glm::vec2 & position = pawn_box.position;
 
-	//if (glm::length2(particle.velocity) > 0.0f)
+	if (particle.velocity > 0.0f)
 	{
 		particle.rotation += player->angular_velocity * delta_time * -stick_position.x;
-
-
 	}
 
 	if (accelerate_pressed)
 	{
-		particle.velocity += glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation)) * delta_time * player->acceleration;
+		particle.velocity += delta_time * player->acceleration;
 
 
 	}
+	else
+	{
+		if (break_pressed)
+			particle.velocity -= delta_time * player->break_deceleration;
+		else
+			particle.velocity -= delta_time * player->normal_deceleration;
 
-	float velocity_length = glm::length(particle.velocity);
-	if (velocity_length > player->max_velocity)
-		particle.velocity = glm::normalize(particle.velocity) * player->max_velocity;
+
+
+		particle.velocity = std::max(particle.velocity, 0.0f);
+	}
+
+	particle.velocity = std::min(particle.velocity, player->max_velocity);
 
 	//pawn->SetBoundingBox(pawn_box);
 

@@ -24,6 +24,9 @@ public:
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
 
 
+    class ParticlePlayer* GetPlayerParticle();
+
+    class ParticlePlayer const* GetPlayerParticle() const;
 
 protected:
 
@@ -47,5 +50,7 @@ protected:
     float acceleration = 50.0f;
     float angular_velocity = 3.14f;
 
+    float normal_deceleration = 30.0f;
+    float break_deceleration  = 100.0f;
 };
 

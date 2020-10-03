@@ -20,6 +20,12 @@
   <property name="TRIGGER_ONCE" type="bool" default="true"/>
  </objecttype>
  <objecttype name="Opponent" color="#a0a0a4">
+  <property name="ACCELERATION" type="float" default="800"/>
+  <property name="ANGULAR_VELOCITY" type="float" default="3.2"/>
+  <property name="BREAK_DECELERATION" type="float" default="800"/>
+  <property name="MAX_HEALTH" type="float" default="4"/>
+  <property name="MAX_VELOCITY" type="float" default="800"/>
+  <property name="NORMAL_DECELERATION" type="float" default="800"/>
   <property name="classname" type="string" default="LudumOpponent"/>
  </objecttype>
  <objecttype name="PlayerStart" color="#a0a0a4">

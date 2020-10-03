@@ -46,4 +46,16 @@ mais PlayerPawn n'est pas referencé dans TMLevelInstance ni aucun de ces layer
 
 
 
+// Uniformiser la gestion des parametres JSON
+
+->json dans TMObject::Initialize()
+->json dans Player::Initialize()
+->json dans SpecialClass
+
+
+->Update en runtime les special classes ??
+
+
+
+
 #endif

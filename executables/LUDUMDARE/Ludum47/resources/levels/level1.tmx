@@ -49,9 +49,6 @@
   </objectgroup>
   <objectgroup id="34" name="Objects" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
-    <properties>
-     <property name="CHECKPOINT_VALIDATION_DISTANCE" type="float" value="128"/>
-    </properties>
     <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
    </object>
   </objectgroup>

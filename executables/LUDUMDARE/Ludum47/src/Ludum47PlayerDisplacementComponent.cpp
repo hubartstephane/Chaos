@@ -54,34 +54,36 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 #endif
 
+	CarData const& car_data = player->car_data;
+
 	chaos::box2 & pawn_box = particle.bounding_box;
 
 	glm::vec2 & position = pawn_box.position;
 
 	if (particle.velocity > 0.0f)
 	{
-		particle.rotation += player->angular_velocity * delta_time * -stick_position.x;
+		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x;
 	}
 
 	if (accelerate_pressed)
 	{
-		particle.velocity += delta_time * player->acceleration;
+		particle.velocity += delta_time * car_data.acceleration;
 
 
 	}
 	else
 	{
 		if (break_pressed)
-			particle.velocity -= delta_time * player->break_deceleration;
+			particle.velocity -= delta_time * car_data.break_deceleration;
 		else
-			particle.velocity -= delta_time * player->normal_deceleration;
+			particle.velocity -= delta_time * car_data.normal_deceleration;
 
 
 
 		particle.velocity = std::max(particle.velocity, 0.0f);
 	}
 
-	particle.velocity = std::min(particle.velocity, player->max_velocity);
+	particle.velocity = std::min(particle.velocity, car_data.max_velocity);
 
 	//pawn->SetBoundingBox(pawn_box);
 

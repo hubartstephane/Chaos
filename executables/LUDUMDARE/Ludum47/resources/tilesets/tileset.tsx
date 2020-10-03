@@ -12,6 +12,6 @@
   <image width="32" height="32" source="../sprites/RedSquare.png"/>
  </tile>
  <tile id="33">
-  <image width="32" height="32" source="../sprites/Concrete.png"/>
+  <image width="128" height="128" source="../sprites/Concrete.png"/>
  </tile>
  </tileset>

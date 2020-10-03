@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="51" nextobjectid="2200">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="53" nextobjectid="2201">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -24,7 +24,12 @@
    eAHt0jERAAAMhDC8vH+PldElAwa4rJo8YIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQbeDBz6KLR4
   </data>
   </layer>
-  <layer id="45" name="Road" width="57" height="56">
+  <layer id="52" name="background2" width="57" height="56">
+   <data encoding="base64" compression="zlib">
+   eAHt0KEBACAQAkCXcf8VTYyAlLPQ5LlzPAIECBAgQIAAAQIECPwTuP+qpk3ZmZweUyrPtmSpZvpttiWnx5TKsy1Zqpl+m23J6TGl8mxLlmp8S4AAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBQFHvGUAeI=
+  </data>
+  </layer>
+  <layer id="45" name="Road" width="57" height="56" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -46,7 +51,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera">
+  <objectgroup id="26" name="PlayerAndCamera" locked="1">
    <object id="2114" name="Camera1" type="Camera" x="258.149" y="1965.01" width="900" height="600"/>
    <object id="2186" name="PlayerStart" gid="2" x="697.636" y="2377.03" width="32" height="16" rotation="-90">
     <properties>
@@ -64,7 +69,12 @@
     <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
    </object>
   </objectgroup>
-  <objectgroup id="48" name="SpeedIndications">
+  <objectgroup id="51" name="Collisions">
+   <object id="2200" x="564" y="1840">
+    <polyline points="0,0 400,8"/>
+   </object>
+  </objectgroup>
+  <objectgroup id="48" name="SpeedIndications" locked="1">
    <object id="2191" name="Indication1" type="SpeedIndication" x="-424" y="736" width="924" height="584">
     <properties>
      <property name="SPEED_FACTOR" type="float" value="0.3"/>

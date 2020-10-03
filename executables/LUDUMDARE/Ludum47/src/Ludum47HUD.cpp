@@ -7,13 +7,49 @@
 
 #include <death/GameHUDComponent.h>
 
-namespace death
-{
-	namespace GameHUDKeys
-	{
+// ====================================================================
+// GameHUDWakenParticleComponent
+// ====================================================================
 
-	};
-};
+GameHUDRacePositionComponent::GameHUDRacePositionComponent(chaos::TagType in_layer_id) :
+	death::GameHUDCacheValueComponent<glm::ivec2>("Position: %d/%d", glm::ivec2(-1, -1) , in_layer_id)
+{
+	generator_params.line_height = 60.0f;
+	generator_params.font_info_name = "normal";
+	generator_params.position = glm::vec2(20.0f, -20.0f);
+	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
+}
+
+std::string GameHUDRacePositionComponent::FormatText() const
+{
+	return chaos::StringTools::Printf(format.c_str(), 1 + cached_value.x, 1 + cached_value.y);
+}
+
+bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
+{
+	LudumPlayingHUD const* playing_hud = auto_cast(hud);
+	if (playing_hud != nullptr)
+	{
+		LudumLevelInstance const* li = playing_hud->GetLevelInstance();
+		if (li != nullptr && li->road != nullptr)
+		{
+			LudumPlayer* player = GetPlayer(0);
+			if (player != nullptr)
+			{
+				glm::ivec2 p = li->GetPlayerRacePosition(player);
+				if (p != cached_value)
+				{
+					cached_value = p;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+
+
 
 // ====================================================================
 // LudumPlayingHUD
@@ -23,6 +59,9 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
+
+	RegisterComponent(death::GameHUDKeys::RACE_POSITION_ID, new GameHUDRacePositionComponent());
+
    // RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
 
 	return true;

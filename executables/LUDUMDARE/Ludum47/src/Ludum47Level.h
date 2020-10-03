@@ -62,7 +62,6 @@ public:
 
 	RoadUpdateValue UpdateRacePosition(RacePosition& race_position, glm::vec2 const& p, bool player) const;
 
-	glm::vec2 GetTargetPosition(RacePosition const& race_position) const;
 
 protected:
 

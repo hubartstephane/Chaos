@@ -24,6 +24,10 @@ protected:
 
 	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
 
+public:
+
+	float speed_factor = 1.0f;
+
 };
 
 // =================================================
@@ -35,6 +39,7 @@ class RoadPoint
 public:
 
 	glm::vec2 position;
+	float speed_factor = 1.0f;
 
 };
 

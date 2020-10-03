@@ -26,10 +26,9 @@
  </objecttype>
  <objecttype name="Road" color="#a0a0a4">
   <property name="classname" type="string" default="LudumRoad"/>
-  <property name="fake" type="float" default="0"/>
  </objecttype>
  <objecttype name="SpeedIndication" color="#a0a0a4">
+  <property name="SPEED_FACTOR" type="float" default="1"/>
   <property name="classname" type="string" default="LudumSpeedIndication"/>
-  <property name="speed_factor" type="float" default="1"/>
  </objecttype>
 </objecttypes>

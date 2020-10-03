@@ -7,22 +7,31 @@
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
+#include <chaos/CollisionFramework.h>
 #include <chaos/ParticleSpawner.h>
 #include <chaos/StringTools.h>
 
 
 #include <death/TM.h>
 
-
+// =============================================================
+// LudumSpeedIndication implementation
+// =============================================================
 
 bool LudumSpeedIndication::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
 {
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
+	speed_factor = in_geometric_object->GetPropertyValueFloat("SPEED_FACTOR", speed_factor);
 
 	return true;
 }
+
+// =============================================================
+// LudumRoad implementation
+// =============================================================
+
 
 bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
 {
@@ -39,10 +48,12 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	if (src_points == nullptr)
 		return false;
 
+	glm::vec2 offset = layer_instance->GetLayerOffset();
+
 	for (glm::vec2 const& p : *src_points)
 	{
 		RoadPoint rp;
-		rp.position = p;
+		rp.position = p + offset + this->GetPosition(); // expressed in world system !
 		points.push_back(rp);
 	}
 	return true;
@@ -66,12 +77,15 @@ void LudumRoad::OnLevelStarted()
 					LudumSpeedIndication* indication = auto_cast(li->GetObject(i));
 					if (indication != nullptr)
 					{
-						auto b = indication->GetBoundingBox(true);
+						chaos::box2 indication_box = indication->GetBoundingBox(true);
 
-						indication = indication;
-
-
-
+						for (RoadPoint& p : points)
+						{
+							if (chaos::Collide(p.position, indication_box))
+							{
+								p.speed_factor = indication->speed_factor;
+							}
+						}
 					}
 				}
 			}

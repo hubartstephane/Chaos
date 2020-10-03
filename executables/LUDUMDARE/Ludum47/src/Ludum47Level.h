@@ -10,6 +10,7 @@
 #include <death/GameFramework.h>
 
 #include "Ludum47Game.h"
+#include "Ludum47Particles.h"
 
 
 // =================================================
@@ -57,6 +58,30 @@ public:
 
 	std::vector<RoadPoint> points;
 };
+
+// =================================================
+// LudumOpponent
+// =================================================
+
+class LudumOpponent : public death::TMObject
+{
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumOpponent, death::TMObject);
+
+protected:
+
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
+
+	virtual void OnLevelStarted() override;
+
+public:
+
+	RacePosition race_position;
+
+	chaos::weak_ptr<LudumRoad> road;
+
+};
+
+
 
 // =================================================
 // Levels

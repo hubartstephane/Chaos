@@ -19,6 +19,9 @@
   <property name="STOP_WHEN_COLLISION_OVER" type="bool" default="false"/>
   <property name="TRIGGER_ONCE" type="bool" default="true"/>
  </objecttype>
+ <objecttype name="Opponent" color="#a0a0a4">
+  <property name="classname" type="string" default="LudumOpponent"/>
+ </objecttype>
  <objecttype name="PlayerStart" color="#a0a0a4">
   <property name="BITMAP_NAME" type="string"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>

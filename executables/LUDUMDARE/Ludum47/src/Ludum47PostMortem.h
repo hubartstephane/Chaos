@@ -18,5 +18,8 @@ et ca filtre par class
 }
 //
 
+// ca serait bien que TMLevelInstance::Initialize puisse beneficier d un ReferenceSolver
+
+
 
 #endif

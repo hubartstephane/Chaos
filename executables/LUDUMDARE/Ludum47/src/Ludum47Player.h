@@ -8,6 +8,7 @@
 #include <death/Player.h>
 #include <death/GameFramework.h>
 #include "Ludum47Particles.h"
+#include "Ludum47Level.h"
 
 // =========================================================
 // LudumPlayer
@@ -46,6 +47,10 @@ protected:
     virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
 
 protected:
+
+    chaos::weak_ptr<LudumRoad> road;
+
+    RacePosition race_position;
 
     float max_velocity = 200.0f;
     float acceleration = 50.0f;

@@ -15,6 +15,32 @@
 #include <death/TM.h>
 
 // =============================================================
+// LudumOpponent implementation
+// =============================================================
+
+bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+{
+	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+		return false;
+
+
+	
+	return true;
+}
+
+void LudumOpponent::OnLevelStarted()
+{
+	death::TMObject::OnLevelStarted();
+
+
+	LudumLevelInstance* li = layer_instance->GetLevelInstance();
+	if (li != nullptr)
+	{
+		road = li->road;
+	}
+}
+
+// =============================================================
 // LudumSpeedIndication implementation
 // =============================================================
 

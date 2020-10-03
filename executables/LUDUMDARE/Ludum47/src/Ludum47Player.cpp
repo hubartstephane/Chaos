@@ -81,4 +81,14 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 {
 	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
+	if (new_level_instance != nullptr)
+	{
+		LudumLevelInstance* li = auto_cast(new_level_instance);
+		if (li != nullptr)
+		{
+			road = li->road;
+		}
+	}
+	// reset the race
+	race_position = {};
 }

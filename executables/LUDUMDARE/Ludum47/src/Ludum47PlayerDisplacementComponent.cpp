@@ -100,12 +100,11 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				LudumCollision* col = layer->GetObject(i);
 				if (col != nullptr)
 				{
-					col = col;
+					if (chaos::Collide(col->internal_bounding_box, particle.bounding_box))
+					{
 
-
-
-
-
+						col = col;
+					}
 				}
 			}
 		}

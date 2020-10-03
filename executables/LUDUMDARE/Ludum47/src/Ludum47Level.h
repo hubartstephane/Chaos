@@ -105,6 +105,12 @@ protected:
 	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
 
 	virtual void OnLevelStarted() override;
+
+public:
+
+	chaos::box2 internal_bounding_box;
+
+	std::vector<glm::vec2> points;
 };
 
 

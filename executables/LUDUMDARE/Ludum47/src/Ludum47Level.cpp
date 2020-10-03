@@ -281,8 +281,28 @@ bool LudumCollision::Initialize(death::TMLayerInstance* in_layer_instance, chaos
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
+	// capture the points
+	if (chaos::TiledMap::GeometricObjectPolygon const* pn = in_geometric_object->GetObjectPolygon())
+	{
+		points = pn->points;
+		if (points.size() > 0)
+			points.push_back(points[0]);
+	}
+	else if (chaos::TiledMap::GeometricObjectPolyline const* pl = in_geometric_object->GetObjectPolyline())
+	{
+		points = pl->points;
+	}
+	// compute the bounding box
+	if (points.size() > 0)
+	{
+		internal_bounding_box.position = points[0];
+		internal_bounding_box.half_size = { 0, 0 };
+		for (auto const& p : points)
+			chaos::ExtendBox(internal_bounding_box, p);
 
-	auto b = GetBoundingBox(true);
+		internal_bounding_box.position += GetPosition();
+	}
+
 
 	return true;
 }

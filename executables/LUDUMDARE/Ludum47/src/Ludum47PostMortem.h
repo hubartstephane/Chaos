@@ -7,6 +7,11 @@
 // CameraComponent : Conditionnal ApplyModifier => certains modifier devraient etre cosmetique da autre systematique
 //
 // Polygone -> PolyLine : creer une classe de base
+
+// Polygone / Poyline . cela pourrait etre une surface, 
+=> pas si evident car les points sont exprimées relativement a la position de lobjet
+
+
 //
 // TMObject : un post Load ?
 //

@@ -440,6 +440,11 @@ namespace chaos
 
 		public:
 
+
+
+			// shu47 ... ne pourrait t on pas virer toutes ces fonctions et utiliser auto_cast
+
+
 			/** cast method into its subtype */
 			GeometricObjectPoint * GetObjectPoint() { return auto_cast(this); }
 			/** cast method into its subtype */

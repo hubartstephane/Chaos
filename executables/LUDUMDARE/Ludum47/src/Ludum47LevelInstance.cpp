@@ -87,6 +87,17 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 	if (!death::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
+	road = FindObject("TheRoad");
+
+	
+
+
+
+
+
+
+
+
 	LudumLevel* ludum_level = auto_cast(in_level);
 	if (ludum_level != nullptr)
 	{

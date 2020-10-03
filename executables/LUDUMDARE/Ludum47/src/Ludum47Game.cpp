@@ -26,12 +26,10 @@
 LudumGame::LudumGame()
 {		
 	// 	Don't let the Flames of Hell die
-
-	game_name = "Burnaouf Paradise\nVII";
+	game_name = "Aouf Run\nVIII";
 	game_instructions = R"INSTRUCTIONS(
-	[ButtonA] or [KEYBOARD SPACE] : Jump
-	[ButtonB] or [KEYBOARD CTRL]  : Attack
-	[RightTrigger] or [KEYBOARD SHIFT] : Run)INSTRUCTIONS";
+	[ButtonA] or [KEYBOARD SPACE] : Accelerate
+	[ButtonB] or [KEYBOARD CTRL]  : Break)INSTRUCTIONS";
 
 	looping_levels = false;
 

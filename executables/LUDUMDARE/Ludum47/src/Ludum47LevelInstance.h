@@ -12,6 +12,7 @@
 #include <death/CameraComponent.h>
 
 #include "Ludum47Game.h"
+#include "Ludum47Level.h"
 
 // =================================================
 // LudumCameraComponent
@@ -74,7 +75,9 @@ protected:
 
 
 
-protected:
+public:
+
+	chaos::weak_ptr<LudumRoad> road;
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;

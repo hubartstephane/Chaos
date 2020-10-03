@@ -63,6 +63,10 @@ namespace chaos
 		template<typename T>
 		T Modulo(T a, T b)
 		{
+
+			// shu47
+
+
 			assert(b > 0);
 
 			// property :    

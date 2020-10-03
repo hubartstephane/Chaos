@@ -10,6 +10,7 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/ParticleSpawner.h>
 #include <chaos/StringTools.h>
+#include <chaos/WrapMode.h>
 
 
 #include <death/TM.h>
@@ -64,22 +65,25 @@ bool LudumOpponent::DoTick(float delta_time)
 	{
 		RoadPoint const& target = road->points[(race_position.current_road_point + 1) % road_point_count];
 
-		float wanted_rotation = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
+		float wr = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
+		float cr = rotation;
 
+		float dir = 0.0f;
 
-		//if (rotation < wanted_rotation)
-			//rotation += 
+		float a = wr - cr;
+		if (std::abs(a) <= M_PI)
+		{
+			dir = (wr < cr) ? -1.0f : +1.0f;
+		}
+		else
+		{
+			dir = (wr < cr) ? +1.0f : -1.0f;
+		}
 
-
-
-		rotation = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
-
+		rotation += dir * delta_time * car_data.angular_velocity;
+		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
 
 		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * 500.0f;
-
-
-
-
 
 		if (road->UpdateRacePosition(race_position, bounding_box.position, false) == RoadUpdateValue::END_OF_RACE)
 			allocations = nullptr;

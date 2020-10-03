@@ -24,4 +24,10 @@
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
   <property name="PLAYER_START" type="bool" default="true"/>
  </objecttype>
+ <objecttype name="Road" color="#a0a0a4">
+  <property name="fake" type="float" default="0"/>
+ </objecttype>
+ <objecttype name="SpeedIndication" color="#a0a0a4">
+  <property name="speed_factor" type="float" default="1"/>
+ </objecttype>
 </objecttypes>

@@ -13,7 +13,21 @@
 
 
 // =================================================
-// Object
+// LudumSpeedIndication
+// =================================================
+
+class LudumSpeedIndication : public death::TMObject
+{
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumSpeedIndication, death::TMObject);
+
+protected:
+
+	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
+
+};
+
+// =================================================
+// LudumRoad
 // =================================================
 
 class RoadPoint
@@ -28,7 +42,11 @@ class LudumRoad : public death::TMObject
 {
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumRoad, death::TMObject);
 
+protected:
+
 	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
+
+	virtual void OnLevelStarted() override;
 
 public:
 

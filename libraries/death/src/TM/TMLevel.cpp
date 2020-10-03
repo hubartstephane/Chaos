@@ -1380,9 +1380,6 @@ namespace death
 
 		// shuyyy
 
-
-
-
 		particle_populator.AddParticle(
 			player_start->bitmap_name.c_str(), 
 			hotpoint, 

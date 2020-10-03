@@ -21,5 +21,10 @@ et ca filtre par class
 // ca serait bien que TMLevelInstance::Initialize puisse beneficier d un ReferenceSolver
 
 
+// GameEntity : faire quelquechose de rotation . Notamment au niveau de PlayerStart
+
+
+// TMObject/Particles => faire quelquechose de mieux
+
 
 #endif

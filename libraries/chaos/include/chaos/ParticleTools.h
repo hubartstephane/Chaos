@@ -25,10 +25,22 @@ namespace chaos
         /** get particle box */
         std::optional<box2> GetParticleBox(ParticleAllocationBase const* allocation, size_t index);
 
+
+        // shu47
+
+        /** get particle rotation */
+        std::optional<float> GetParticleRotation(ParticleAllocationBase const* allocation, size_t index);
+
         /** set the particle position */
         bool SetParticlePosition(ParticleAllocationBase* allocation, size_t index, glm::vec2 const& position);
         /** set the particle box */
         bool SetParticleBox(ParticleAllocationBase* allocation, size_t index, box2 const& box);
+
+
+        // shu47
+
+        /** set the particle rotation */
+        bool SetParticleRotation(ParticleAllocationBase* allocation, size_t index, float rotation);
 
 	}; // namespace ParticleTools
 

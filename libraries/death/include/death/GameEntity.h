@@ -29,6 +29,22 @@ namespace death
 		/** Set the bounding box of the entity */
 		virtual void SetBoundingBox(chaos::box2 const& in_bounding_box);
 
+
+		// shu47 
+
+		/** Get the rotation of the entity */
+		virtual float GetRotation() const;
+		/** Set the rotation of the entity */
+		virtual void SetRotation(float in_rotation);
+
+
+
+
+
+
+
+
+
 		/** get the entity allocation */
 		chaos::ParticleAllocationBase* GetAllocation() { return allocations.get(); }
 		/** get the entity allocation */
@@ -50,6 +66,17 @@ namespace death
 		void SetParticleMaster(bool in_value) { is_particle_master = in_value; }
 
 	protected:
+
+
+		// shu47
+
+
+		/** the rotation of the object */
+		float rotation = 0.0f;
+
+
+
+
 
 		/** whether the particle 0 data is the one to be used first */
 		bool is_particle_master = false;

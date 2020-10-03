@@ -30,9 +30,9 @@ protected:
 
 	virtual chaos::box2 ApplyModifier(chaos::box2 const& src) const override;
 
-	float max_zoom = 1.5f;
-	float min_zoom = 1.0f;
-	float zoom = 1.0f;
+	float max_zoom = 3.0f;
+	float min_zoom = 2.0f;
+	float zoom = 2.0f;
 	float zoom_increase = 0.4f;
 	float zoom_decrease = 0.4f;
 };
@@ -79,7 +79,7 @@ protected:
 
 public:
 
-	chaos::weak_ptr<LudumRoad> road;
+	chaos::shared_ptr<LudumRoad> road;
 
 	/** pointer on game */
 	class LudumGame * game = nullptr;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="51" nextobjectid="2199">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="51" nextobjectid="2200">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -52,15 +52,20 @@
     <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
    </object>
   </objectgroup>
-  <objectgroup id="48" name="SpeedIndications" locked="1">
-   <object id="2191" name="Indication1" type="SpeedIndication" x="248" y="1256" width="924" height="584">
+  <objectgroup id="48" name="SpeedIndications">
+   <object id="2191" name="Indication1" type="SpeedIndication" x="-424" y="736" width="924" height="584">
     <properties>
-     <property name="SPEED_FACTOR" type="float" value="2.2"/>
+     <property name="SPEED_FACTOR" type="float" value="0.3"/>
     </properties>
    </object>
-   <object id="2192" name="Indication2" type="SpeedIndication" x="1556" y="492" width="908" height="628">
+   <object id="2192" name="Indication2" type="SpeedIndication" x="780" y="220" width="908" height="628">
     <properties>
-     <property name="SPEED_FACTOR" type="float" value="3.3"/>
+     <property name="SPEED_FACTOR" type="float" value="0.3"/>
+    </properties>
+   </object>
+   <object id="2199" name="Indication3" type="SpeedIndication" x="-366" y="2828" width="924" height="584">
+    <properties>
+     <property name="SPEED_FACTOR" type="float" value="0.1"/>
     </properties>
    </object>
   </objectgroup>

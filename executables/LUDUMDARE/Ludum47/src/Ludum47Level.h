@@ -82,7 +82,11 @@ public:
 
 	float point_speed_factor = 0.5f;
 
-	float opponent_speed_factor = 1.0f;
+	float player_angular_tweak = 1.0f;
+	float opponent_angular_tweak = 1.0f;
+
+	float player_velocity_tweak = 1.0f;
+	float opponent_velocity_tweak = 1.0f;
 
 	float checkpoint_short_distance = 50.0f; // distance for validation
 

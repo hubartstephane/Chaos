@@ -108,6 +108,11 @@ public:
 
 	RacePosition race_position;
 
+	CarData car_data;
+
+	float max_health = 4.0f;
+	float health = 4.0f;
+
 };
 
 

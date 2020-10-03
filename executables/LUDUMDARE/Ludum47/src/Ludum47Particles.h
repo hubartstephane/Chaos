@@ -10,6 +10,24 @@
 
 #include <death/TM.h> 
 
+// ===========================================================================
+// the car values
+// ===========================================================================
+
+class CarData
+{
+public: 
+
+	float max_velocity = 200.0f;
+	float acceleration = 50.0f;
+	float angular_velocity = 3.14f;
+	float normal_deceleration = 30.0f;
+	float break_deceleration = 100.0f;
+};
+
+
+
+
 
 // ===========================================================================
 // the position of the player/opponent inside the road

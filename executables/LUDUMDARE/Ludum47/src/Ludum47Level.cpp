@@ -26,8 +26,15 @@ bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos:
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
-
+	car_data.max_velocity = in_geometric_object->GetPropertyValueFloat("MAX_VELOCITY", car_data.max_velocity);
+	car_data.acceleration = in_geometric_object->GetPropertyValueFloat("ACCELERATION", car_data.acceleration);
+	car_data.angular_velocity = in_geometric_object->GetPropertyValueFloat("ANGULAR_VELOCITY", car_data.angular_velocity);
+	car_data.normal_deceleration = in_geometric_object->GetPropertyValueFloat("NORMAL_DECELERATION", car_data.normal_deceleration);
+	car_data.break_deceleration = in_geometric_object->GetPropertyValueFloat("BREAK_DECELERATION", car_data.break_deceleration);
+	max_health = in_geometric_object->GetPropertyValueFloat("MAX_HEALTH", max_health);
 	
+	health = max_health;
+
 	return true;
 }
 
@@ -57,15 +64,15 @@ bool LudumOpponent::DoTick(float delta_time)
 	{
 		RoadPoint const& target = road->points[(race_position.current_road_point + 1) % road_point_count];
 
+		float wanted_rotation = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
+
+
+		//if (rotation < wanted_rotation)
+			//rotation += 
+
+
 
 		rotation = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
-
-
-
-
-		//rotation += 0.5f * delta_time;
-		
-
 
 
 		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * 500.0f;

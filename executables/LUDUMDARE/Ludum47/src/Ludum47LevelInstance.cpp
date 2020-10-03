@@ -28,7 +28,7 @@ bool LudumCameraComponent::DoTick(float delta_time)
 		ParticlePlayer const* particle = player->GetPlayerParticle();
 		if (particle)
 		{
-			float target_zoom = chaos::MathTools::RemapRanges(0.0f, player->max_velocity, min_zoom, max_zoom, particle->velocity);
+			float target_zoom = chaos::MathTools::RemapRanges(0.0f, player->car_data.max_velocity, min_zoom, max_zoom, particle->velocity);
 
 			if (target_zoom > zoom)
 				zoom += zoom_increase * delta_time;

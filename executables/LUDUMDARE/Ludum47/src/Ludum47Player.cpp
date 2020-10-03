@@ -39,11 +39,23 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 {
 	if (!Player::InitializeGameValues(config, config_path, hot_reload))
 		return false;
-	DEATHGAME_JSON_ATTRIBUTE(max_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(acceleration);
-	DEATHGAME_JSON_ATTRIBUTE(angular_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(normal_deceleration);
-	DEATHGAME_JSON_ATTRIBUTE(break_deceleration);
+
+	
+
+	chaos::JSONTools::GetAttribute(config, "max_velocity", car_data.max_velocity);
+	chaos::JSONTools::GetAttribute(config, "acceleration", car_data.acceleration);
+	chaos::JSONTools::GetAttribute(config, "angular_velocity", car_data.angular_velocity);
+	chaos::JSONTools::GetAttribute(config, "normal_deceleration", car_data.normal_deceleration);
+	chaos::JSONTools::GetAttribute(config, "break_deceleration", car_data.break_deceleration);
+
+#if 0
+	// cannot expand chaos::JSONTools::GetAttribute(config, #x, x)
+	DEATHGAME_JSON_ATTRIBUTE(car_data.max_velocity);
+	DEATHGAME_JSON_ATTRIBUTE(car_data.acceleration);
+	DEATHGAME_JSON_ATTRIBUTE(car_data.angular_velocity);
+	DEATHGAME_JSON_ATTRIBUTE(car_data.normal_deceleration);
+	DEATHGAME_JSON_ATTRIBUTE(car_data.break_deceleration);
+#endif
 	return true;
 }
 

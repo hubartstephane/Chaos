@@ -24,7 +24,7 @@
    eAHt0jERAAAMhDC8vH+PldElAwa4rJo8YIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQbeDBz6KLR4
   </data>
   </layer>
-  <layer id="52" name="background2" width="57" height="56">
+  <layer id="52" name="background2" width="57" height="56" locked="1">
    <data encoding="base64" compression="zlib">
    eAHt0KEBACAQAkCXcf8VTYyAlLPQ5LlzPAIECBAgQIAAAQIECPwTuP+qpk3ZmZweUyrPtmSpZvpttiWnx5TKsy1Zqpl+m23J6TGl8mxLlmp8S4AAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBQFHvGUAeI=
   </data>
@@ -51,8 +51,8 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera" locked="1">
-   <object id="2114" name="Camera1" type="Camera" x="258.149" y="1965.01" width="900" height="600"/>
+  <objectgroup id="26" name="PlayerAndCamera">
+   <object id="2114" name="Camera1" type="Camera" x="384.149" y="2047.01" width="574" height="368"/>
    <object id="2186" name="PlayerStart" gid="2" x="697.636" y="2377.03" width="32" height="16" rotation="-90">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
@@ -69,7 +69,7 @@
     <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions">
+  <objectgroup id="51" name="Collisions" locked="1">
    <object id="2200" x="564" y="1840">
     <polyline points="0,0 400,8"/>
    </object>

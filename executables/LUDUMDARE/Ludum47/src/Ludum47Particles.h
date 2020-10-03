@@ -25,11 +25,6 @@ public:
 	size_t current_road_point = 0;
 };
 
-
-
-
-
-
 // ===========================================================================
 // VertexBase and ParticleBase
 // ===========================================================================
@@ -86,7 +81,49 @@ public:
 };
 
 
+
+
+
+
+// ===========================================================================
+// ParticlePlayer
+// ===========================================================================
+
+class ParticleOpponent : public ParticleBase
+{
+public:
+
+
+};
+
+
+class ParticleOpponentLayerTrait : public chaos::ParticleLayerTrait<ParticleOpponent, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleOpponent& particle) const;
+
+	
+
+public:
+
+	class LudumGame* game = nullptr;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase);
+CHAOS_REGISTER_CLASS2(ParticleOpponent, ParticleBase);
 
 

@@ -96,9 +96,12 @@ protected:
 
 	virtual void OnLevelStarted() override;
 
+	virtual bool DoTick(float delta_time) override;
+
 public:
 
-	RacePosition race_position;
+	
+
 
 	chaos::weak_ptr<LudumRoad> road;
 

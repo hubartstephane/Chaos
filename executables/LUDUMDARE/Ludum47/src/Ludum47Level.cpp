@@ -113,11 +113,13 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 
 death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
+#if 0
 	if (in_typed_object->IsObjectOfType("Road"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new LudumRoad(););
 
 	if (in_typed_object->IsObjectOfType("SpeedIndication"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new LudumSpeedIndication(););
+#endif
 
 	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

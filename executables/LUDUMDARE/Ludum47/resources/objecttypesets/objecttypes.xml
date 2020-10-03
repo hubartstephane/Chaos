@@ -21,7 +21,7 @@
  </objecttype>
  <objecttype name="Opponent" color="#a0a0a4">
   <property name="ACCELERATION" type="float" default="800"/>
-  <property name="ANGULAR_VELOCITY" type="float" default="5"/>
+  <property name="ANGULAR_VELOCITY" type="float" default="3.5"/>
   <property name="BREAK_DECELERATION" type="float" default="800"/>
   <property name="MAX_HEALTH" type="float" default="4"/>
   <property name="MAX_VELOCITY" type="float" default="800"/>
@@ -37,8 +37,11 @@
   <property name="CHECKPOINT_LONG_DISTANCE" type="float" default="128"/>
   <property name="CHECKPOINT_SHORT_DISTANCE" type="float" default="40"/>
   <property name="LAP_COUNT" type="int" default="3"/>
-  <property name="OPPONENT_SPEED_FACTOR" type="float" default="1"/>
-  <property name="POINT_SPEED_FACTOR" type="float" default="0.5"/>
+  <property name="OPPONENT_ANGULAR_TWEAK" type="float" default="1"/>
+  <property name="OPPONENT_VELOCITY_TWEAK" type="float" default="1"/>
+  <property name="PLAYER_ANGULAR_TWEAK" type="float" default="1"/>
+  <property name="PLAYER_VELOCITY_TWEAK" type="float" default="1"/>
+  <property name="POINT_SPEED_FACTOR" type="float" default="0.7"/>
   <property name="classname" type="string" default="LudumRoad"/>
  </objecttype>
  <objecttype name="SpeedIndication" color="#a0a0a4">

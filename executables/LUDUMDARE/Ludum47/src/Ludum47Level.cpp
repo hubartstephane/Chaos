@@ -80,21 +80,23 @@ bool LudumOpponent::DoTick(float delta_time)
 			dir = (wr < cr) ? +1.0f : -1.0f;
 		}
 
-		rotation += dir * delta_time * car_data.angular_velocity;
+		float angular_tweak = road->opponent_angular_tweak;
+
+		rotation += dir * delta_time * car_data.angular_velocity * angular_tweak;
 		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
 
 
+		float velocity_tweak = road->opponent_velocity_tweak;
+
 		float sf = road->GetSpeedFactor(bounding_box.position);
 
-		float target_velocity = car_data.max_velocity * sf;
+		float target_velocity = car_data.max_velocity * sf * velocity_tweak;
 
 
 		if (target_velocity > velocity)
-			velocity = std::min(target_velocity, velocity + car_data.acceleration * delta_time);
+			velocity = std::min(target_velocity, velocity + car_data.acceleration * delta_time * velocity_tweak);
 		else
-			//velocity = std::max(target_velocity, velocity - car_data.normal_deceleration * delta_time);
-
-		velocity = target_velocity;
+			velocity = target_velocity; // immediate break
 
 		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * velocity;
 
@@ -145,9 +147,6 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	lap_count = in_geometric_object->GetPropertyValueInt("LAP_COUNT", lap_count);
 	lap_count = std::max(lap_count, 1);
 
-	opponent_speed_factor = in_geometric_object->GetPropertyValueFloat("OPPONENT_SPEED_FACTOR", opponent_speed_factor);
-	opponent_speed_factor = std::max(opponent_speed_factor, 0.1f);
-
 	checkpoint_short_distance = in_geometric_object->GetPropertyValueFloat("CHECKPOINT_SHORT_DISTANCE", checkpoint_short_distance);
 	checkpoint_short_distance = std::max(checkpoint_short_distance, 50.0f);
 
@@ -155,6 +154,12 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	checkpoint_long_distance = std::max(checkpoint_long_distance, 50.0f);
 
 	point_speed_factor = in_geometric_object->GetPropertyValueFloat("POINT_SPEED_FACTOR", point_speed_factor);
+
+	player_angular_tweak = in_geometric_object->GetPropertyValueFloat("PLAYER_ANGULAR_TWEAK", player_angular_tweak);
+	opponent_angular_tweak = in_geometric_object->GetPropertyValueFloat("OPPONENT_ANGULAR_TWEAK", opponent_angular_tweak);
+
+	player_velocity_tweak = in_geometric_object->GetPropertyValueFloat("PLAYER_VELOCITY_TWEAK", player_velocity_tweak);
+	opponent_velocity_tweak = in_geometric_object->GetPropertyValueFloat("OPPONENT_VELOCITY_TWEAK", opponent_velocity_tweak);
 
 	std::vector<glm::vec2> const* src_points = nullptr;
 

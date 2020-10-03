@@ -21,21 +21,31 @@ bool LudumCameraComponent::DoTick(float delta_time)
 		return false;
 
 
-	return true;
-}
 
-chaos::box2 LudumCameraComponent::ApplyModifier(chaos::box2 const& src) const
-{
-	LudumPlayer const * player = GetPlayer(0);
+	LudumPlayer const* player = GetPlayer(0);
 	if (player != nullptr)
 	{
 		ParticlePlayer const* particle = player->GetPlayerParticle();
 		if (particle)
 		{
+			float target_zoom = chaos::MathTools::RemapRanges(0.0f, player->max_velocity, min_zoom, max_zoom, particle->velocity);
 
+			if (target_zoom > zoom)
+				zoom += zoom_increase * delta_time;
+			else
+				zoom -= zoom_decrease * delta_time;
 		}
 	}
-	return src;
+
+	zoom = std::clamp(zoom, min_zoom, max_zoom);
+	return true;
+}
+
+chaos::box2 LudumCameraComponent::ApplyModifier(chaos::box2 const& src) const
+{
+	chaos::box2 result = src;
+	result.half_size *= zoom;
+	return result;
 }
 
 // =============================================================
@@ -54,7 +64,7 @@ void LudumLevelInstance::CreateCameras()
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
 	{
-		cameras[i]->SetSafeZone(glm::vec2(0.3f, 0.3f));
+		cameras[i]->SetSafeZone(glm::vec2(0.0f, 0.0f));
 		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
 		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());

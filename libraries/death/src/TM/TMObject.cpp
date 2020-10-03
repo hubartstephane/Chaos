@@ -53,6 +53,11 @@ namespace death
 		// extract the bounding box
 		bounding_box = in_geometric_object->GetBoundingBox(false);  // make our own correction for world system because the LayerInstance can change its offset
 
+
+
+		// shu47
+		rotation = in_geometric_object->rotation;
+
 		return true;
 	}
 

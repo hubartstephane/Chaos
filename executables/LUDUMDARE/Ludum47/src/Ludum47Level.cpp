@@ -48,22 +48,38 @@ bool LudumOpponent::DoTick(float delta_time)
 	if (!TMObject::DoTick(delta_time))
 		return false;
 
+	size_t road_point_count = road->points.size();
+	if (road == nullptr || road->points.size() == 0)
+		return true;
+
 	ParticleOpponent* particle = GetParticle<ParticleOpponent>(0);
 	if (particle != nullptr)
 	{
-		rotation += 0.5f * delta_time;
+		RoadPoint const& target = road->points[(race_position.current_road_point + 1) % road_point_count];
+
+
+		rotation = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
+
+
+
+
+		//rotation += 0.5f * delta_time;
 		
 
-		glm::vec2 & position = bounding_box.position;
 
-		position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * 100.0f;
+
+		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * 500.0f;
+
+
+
+
+
+		if (road->UpdateRacePosition(race_position, bounding_box.position) == RoadUpdateValue::END_OF_RACE)
+			allocations = nullptr;
 
 
 		SynchronizeData(false);
 	}
-
-
-
 	return true;
 }
 

@@ -100,10 +100,9 @@ protected:
 
 public:
 
-	
-
-
 	chaos::weak_ptr<LudumRoad> road;
+
+	RacePosition race_position;
 
 };
 

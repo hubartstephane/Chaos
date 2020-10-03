@@ -8,4 +8,8 @@ class LudumPlayerDisplacementComponent : public death::PlayerDisplacementCompone
 {
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayerDisplacementComponent, death::PlayerDisplacementComponent);
 
+protected:
+
+	/** override */
+	virtual bool DoTick(float delta_time) override;
 };

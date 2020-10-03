@@ -6,7 +6,7 @@
    <property name="BITMAP_NAME" value="player"/>
    <property name="PARTICLE_CREATION" type="bool" value="false"/>
   </properties>
-  <image width="32" height="32" source="../sprites/player.png"/>
+  <image width="32" height="16" source="../sprites/player.png"/>
  </tile>
  <tile id="32">
   <image width="32" height="32" source="../sprites/RedSquare.png"/>

@@ -126,15 +126,14 @@ public:
 	/** constructor */
 	using PlayerDisplacementComponent::PlayerDisplacementComponent;
 
-	/** override */
-	virtual bool DoTick(float delta_time) override;
-
 	glm::vec2 GetPawnVelocity() const { return pawn_velocity; }
 
 	PlatformerDisplacementComponentInfo const& GetDisplacementInfo() const { return displacement_info; }
 
 protected:
 
+	/** override */
+	virtual bool DoTick(float delta_time) override;
 	/** compute the new displacement state */
 	PlatformerDisplacementState ComputeDisplacementState(chaos::box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, int collision_flags);
 	/** get the offset from the jumping point when the player is jumping */

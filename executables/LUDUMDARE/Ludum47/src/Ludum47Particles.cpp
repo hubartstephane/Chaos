@@ -25,6 +25,7 @@
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
+	particle.bounding_box.position += particle.velocity;
 
 
 	return false;

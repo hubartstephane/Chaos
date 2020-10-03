@@ -28,6 +28,9 @@
   <property name="PLAYER_START" type="bool" default="true"/>
  </objecttype>
  <objecttype name="Road" color="#a0a0a4">
+  <property name="CHECKPOINT_VALIDATION_DISTANCE" type="float" default="500"/>
+  <property name="LAP_COUNT" type="int" default="3"/>
+  <property name="OPPONENT_SPEED_FACTOR" type="float" default="1"/>
   <property name="classname" type="string" default="LudumRoad"/>
  </objecttype>
  <objecttype name="SpeedIndication" color="#a0a0a4">

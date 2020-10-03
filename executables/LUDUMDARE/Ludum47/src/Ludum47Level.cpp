@@ -14,6 +14,9 @@
 
 #include <death/TM.h>
 
+
+
+
 // =============================================================
 // LudumOpponent implementation
 // =============================================================
@@ -63,6 +66,16 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 {
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
+
+
+	lap_count = in_geometric_object->GetPropertyValueInt("LAP_COUNT", lap_count);
+	lap_count = std::max(lap_count, 1);
+
+	opponent_speed_factor = in_geometric_object->GetPropertyValueFloat("OPPONENT_SPEED_FACTOR", opponent_speed_factor);
+	opponent_speed_factor = std::max(opponent_speed_factor, 0.1f);
+
+	checkpoint_validation_distance = in_geometric_object->GetPropertyValueFloat("CHECKPOINT_VALIDATION_DISTANCE", checkpoint_validation_distance);
+	checkpoint_validation_distance = std::max(checkpoint_validation_distance, 50.0f);
 
 	std::vector<glm::vec2> const* src_points = nullptr;
 
@@ -120,7 +133,41 @@ void LudumRoad::OnLevelStarted()
 }
 
 
+RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::vec2 const & p) const
+{
+	size_t count = points.size();
+	for (size_t i = 0 ; i < count ; ++i)
+	{
+		if (i == race_position.current_road_point) // ignore current point
+			continue;
 
+		RoadPoint const& road_pt = points[i];
+
+		if (glm::length2(p - road_pt.position) < checkpoint_validation_distance * checkpoint_validation_distance)
+		{
+			// good point, good direction
+			if (i == (size_t)((race_position.current_road_point + 1) % count))
+			{
+				race_position.current_road_point = ((race_position.current_road_point + 1) % count);
+
+				if (race_position.current_road_point == 0)
+				{
+					++race_position.current_lap;
+					if (race_position.current_lap >= lap_count)
+						return RoadUpdateValue::END_OF_RACE;
+					return RoadUpdateValue::NEW_LAP;
+				}
+				return RoadUpdateValue::NEW_CHECKPOINT;
+			}
+			// wrong direction
+			else
+			{
+				return RoadUpdateValue::WRONG_WAY;
+			}
+		}
+	}
+	return RoadUpdateValue::NOP;
+}
 
 // =============================================================
 // LudumLevel implementation

@@ -32,6 +32,8 @@ public:
 
 protected:
 
+    virtual bool DoTick(float delta_time) override;
+
     /** override */
     virtual bool Initialize(death::GameInstance* in_game_instance);
 

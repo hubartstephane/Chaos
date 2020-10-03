@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="46" nextobjectid="2189">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="47" nextobjectid="2190">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -7,7 +7,7 @@
   <property name="BACKGROUND_TEXTURE" value="background1"/>
   <property name="CAMERA_NAME" value="TheCamera1"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
-  <property name="HIGHWAY" type="object" value="0"/>
+  <property name="HIGHWAY" type="object" value="2189"/>
   <property name="LEVEL_TITLE">Level 1
 [LEVELTITLE Welcome Home]</property>
   <property name="MUSIC" value="game_music1"/>
@@ -20,10 +20,10 @@
  <group id="40" name="Groupe 1">
   <layer id="45" name="Road" width="57" height="56">
    <data encoding="base64" compression="zlib">
-   eAHt0kEOgzAMBEDewv8f2UaIc7OWXeUwSBEX26wnXJeHAAECBE4SuL9hKuekHX5lWfulT6Un/UZnfSVvpaczczqrkrfSk+bqrK/krfR0Zl6zkgxJ7Zuz0vP2dr1XhuSk3z1lxzR3Um/HRKteO+08PX9n8+kM0/Pt+AhMO0/Pd4/ucecf2Kk55V9dOSbPjoUaAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIEPi/wAdFuArD
+   eAHtkEEKwCAQA/uW/v+RracFIciGDXiYgmBZjZN5Hj4MYAADGLjJwPvDOOumDieW1a/7OXe6b0yed3idO5PM3SyH17nT5Zo87/A6dyaZu1kOr3Ony3U6vxg665S3z2/puHNN/tNx0qbOSntO5+tmNUkzpPOrid6lGdL5ullN0gzp/Gqid2mGdL5uVpM0Qzq/muhdmiGdr5vVZDGkV73GDgMYwAAGMIABDGAAAxjAAAYwgAEMYAADGMAABjCAAQxgAAMYwAAGbjLwAfVeCqE=
   </data>
   </layer>
-  <objectgroup id="26" name="Camera">
+  <objectgroup id="26" name="CameraAndPlayerStart">
    <object id="2114" type="Camera" x="258.149" y="1965.01" width="900" height="600"/>
    <object id="2186" gid="2" x="697.636" y="2377.03" width="32" height="32">
     <properties>
@@ -32,6 +32,10 @@
    </object>
    <object id="2188" type="WorldBoundingBox" x="-312" y="72" width="4536" height="3552"/>
   </objectgroup>
-  <objectgroup id="34" name="Objects"/>
+  <objectgroup id="34" name="Objects">
+   <object id="2189" type="RoadBounds" x="712" y="2896">
+    <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
+   </object>
+  </objectgroup>
  </group>
 </map>

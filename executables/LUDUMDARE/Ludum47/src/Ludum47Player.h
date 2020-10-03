@@ -20,6 +20,7 @@ public:
 
 
     DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
+    friend class LudumCameraComponent;
 
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
 

@@ -17,7 +17,6 @@
 
 
 
-
 // =============================================================
 // LudumOpponent implementation
 // =============================================================
@@ -273,10 +272,27 @@ float LudumRoad::GetSpeedFactor(glm::vec2 const& p) const
 	return 1.0f;
 }
 
+// =================================================
+// LudumCollision
+//=================================================
+
+bool LudumCollision::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+{
+	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+		return false;
 
 
+	auto b = GetBoundingBox(true);
+
+	return true;
+}
+
+void LudumCollision::OnLevelStarted()
+{
+	death::TMObject::OnLevelStarted();
 
 
+}
 
 
 

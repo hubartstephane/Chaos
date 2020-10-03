@@ -1,6 +1,8 @@
 #include "Ludum47PlayerDisplacementComponent.h"
 #include "Ludum47Particles.h"
 #include "Ludum47Player.h"
+#include "Ludum47LevelInstance.h"
+
 
 #include <chaos/WrapMode.h>
 #include <death/PlayerPawn.h>
@@ -44,16 +46,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	int const break_keys[] = { GLFW_KEY_SPACE, -1 };
 	bool break_pressed = player->CheckButtonPressed(break_keys, chaos::XBoxButton::BUTTON_B);
 
-#if 0
-
-
-
-
-
-	int const run_key_buttons[] = { GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT, -1 };
-	bool run_pressed = player->CheckButtonPressed(run_key_buttons, chaos::XBoxButton::BUTTON_RIGHTTRIGGER);
-
-#endif
 
 	CarData const& car_data = player->car_data;
 
@@ -93,6 +85,46 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 	particle.velocity = std::min(particle.velocity, car_data.max_velocity * velocity_tweak);
+
+
+	// search collision
+	LudumLevelInstance* li = GetLevelInstance();
+	if (li != nullptr)
+	{
+		death::TMLayerInstance* layer = li->FindLayerInstance("Collisions");
+		if (layer != nullptr)
+		{
+			size_t count = layer->GetObjectCount();
+			for (size_t i = 0; i < count; ++i)
+			{
+				LudumCollision* col = layer->GetObject(i);
+				if (col != nullptr)
+				{
+					col = col;
+
+
+
+
+
+				}
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	//pawn->SetBoundingBox(pawn_box);
 

@@ -4,6 +4,7 @@
 #include "Ludum47Player.h"
 #include "Ludum47GameInstance.h"
 #include "Ludum47PlayerDisplacementComponent.h"
+#include "Ludum47Particles.h"
 
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
@@ -12,6 +13,30 @@
 #include <death/FollowPlayerCameraComponent.h>
 #include <death/ShakeCameraComponent.h>
 #include <death/SoundListenerCameraComponent.h>
+
+
+bool LudumCameraComponent::DoTick(float delta_time)
+{
+	if (!death::CameraComponent::DoTick(delta_time))
+		return false;
+
+
+	return true;
+}
+
+chaos::box2 LudumCameraComponent::ApplyModifier(chaos::box2 const& src) const
+{
+	LudumPlayer const * player = GetPlayer(0);
+	if (player != nullptr)
+	{
+		ParticlePlayer const* particle = player->GetPlayerParticle();
+		if (particle)
+		{
+
+		}
+	}
+	return src;
+}
 
 // =============================================================
 // LudumLevelInstance implementation
@@ -29,10 +54,12 @@ void LudumLevelInstance::CreateCameras()
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
 	{
-		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.6f));
+		cameras[i]->SetSafeZone(glm::vec2(0.3f, 0.3f));
 		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
 		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
 		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
+
+		cameras[i]->AddComponent(new LudumCameraComponent());		
 	}
 }
 

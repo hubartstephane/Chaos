@@ -1,7 +1,9 @@
 {
   "life_count": 0,
   "max_health": 4.0,
-  "max_velocity": 300,
-  "acceleration": 60,
-  "angular_velocity": 3.2
+  "max_velocity": 800,
+  "acceleration": 800,
+  "angular_velocity": 3.2,
+  "break_deceleration": 800.0,
+  "normal_deceleration": 800.0
 }

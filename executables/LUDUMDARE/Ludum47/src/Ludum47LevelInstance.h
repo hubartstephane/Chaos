@@ -9,8 +9,27 @@
 #include <death/Game.h>
 #include <death/Player.h>
 #include <death/GameFramework.h>
+#include <death/CameraComponent.h>
 
 #include "Ludum47Game.h"
+
+// =================================================
+// LudumCameraComponent
+// =================================================
+
+class LudumCameraComponent : public death::CameraComponent
+{
+	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
+
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumCameraComponent, death::CameraComponent);
+
+protected:
+
+	virtual bool DoTick(float delta_time) override;
+
+	virtual chaos::box2 ApplyModifier(chaos::box2 const& src) const override;
+};
+
 
 // =================================================
 // LudumLevelInstance

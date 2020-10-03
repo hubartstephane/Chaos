@@ -74,7 +74,7 @@ bool LudumOpponent::DoTick(float delta_time)
 
 
 
-		if (road->UpdateRacePosition(race_position, bounding_box.position) == RoadUpdateValue::END_OF_RACE)
+		if (road->UpdateRacePosition(race_position, bounding_box.position, false) == RoadUpdateValue::END_OF_RACE)
 			allocations = nullptr;
 
 
@@ -115,8 +115,11 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	opponent_speed_factor = in_geometric_object->GetPropertyValueFloat("OPPONENT_SPEED_FACTOR", opponent_speed_factor);
 	opponent_speed_factor = std::max(opponent_speed_factor, 0.1f);
 
-	checkpoint_validation_distance = in_geometric_object->GetPropertyValueFloat("CHECKPOINT_VALIDATION_DISTANCE", checkpoint_validation_distance);
-	checkpoint_validation_distance = std::max(checkpoint_validation_distance, 50.0f);
+	checkpoint_short_distance = in_geometric_object->GetPropertyValueFloat("CHECKPOINT_SHORT_DISTANCE", checkpoint_short_distance);
+	checkpoint_short_distance = std::max(checkpoint_short_distance, 50.0f);
+
+	checkpoint_long_distance = in_geometric_object->GetPropertyValueFloat("CHECKPOINT_LONG_DISTANCE", checkpoint_long_distance);
+	checkpoint_long_distance = std::max(checkpoint_long_distance, 50.0f);
 
 	std::vector<glm::vec2> const* src_points = nullptr;
 
@@ -173,8 +176,7 @@ void LudumRoad::OnLevelStarted()
 	}
 }
 
-
-RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::vec2 const & p) const
+RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::vec2 const & p, bool player) const
 {
 	size_t count = points.size();
 	for (size_t i = 0 ; i < count ; ++i)
@@ -184,7 +186,9 @@ RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::
 
 		RoadPoint const& road_pt = points[i];
 
-		if (glm::length2(p - road_pt.position) < checkpoint_validation_distance * checkpoint_validation_distance)
+		float d = (player)? checkpoint_long_distance : checkpoint_short_distance;
+
+		if (glm::length2(p - road_pt.position) < d * d)
 		{
 			// good point, good direction
 			if (i == (size_t)((race_position.current_road_point + 1) % count))

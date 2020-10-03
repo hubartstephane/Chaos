@@ -60,13 +60,16 @@ class LudumRoad : public death::TMObject
 public:
 
 
-	RoadUpdateValue UpdateRacePosition(RacePosition& race_position, glm::vec2 const& p) const;
+	RoadUpdateValue UpdateRacePosition(RacePosition& race_position, glm::vec2 const& p, bool player) const;
+
+	glm::vec2 GetTargetPosition(RacePosition const& race_position) const;
 
 protected:
 
 	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
 
 	virtual void OnLevelStarted() override;
+
 
 	
 
@@ -78,7 +81,9 @@ public:
 
 	float opponent_speed_factor = 1.0f;
 
-	float checkpoint_validation_distance = 200.0f; // distance for validation
+	float checkpoint_short_distance = 50.0f; // distance for validation
+
+	float checkpoint_long_distance = 200.0f; // distance for validation
 
 };
 

@@ -19,11 +19,30 @@ class RacePosition
 {
 public:
 
+	bool operator < (RacePosition const& src) const
+	{
+		return (current_lap < src.current_lap) ||
+			(current_lap == src.current_lap && current_road_point < src.current_road_point);
+	}
+
+	bool operator > (RacePosition const& src) const
+	{
+		return (current_lap > src.current_lap) ||
+			(current_lap == src.current_lap && current_road_point > src.current_road_point);
+	}
+
+	bool operator == (RacePosition const& src) const
+	{
+		return (current_lap == src.current_lap && current_road_point == src.current_road_point);
+	}
+
 	// current lap count
 	size_t current_lap = 0;
 	// last validated index
 	size_t current_road_point = 0;
 };
+
+
 
 // ===========================================================================
 // VertexBase and ParticleBase

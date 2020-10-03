@@ -52,6 +52,27 @@ namespace chaos
             return particle->bounding_box;
         }
 
+
+            // shu47
+
+        std::optional<float> GetParticleRotation(ParticleAllocationBase const* allocation, size_t index)
+        {
+            ParticleDefault const* particle = GetParticle(allocation, index);
+            if (particle == nullptr)
+                return 0.0f;
+            return particle->rotation;
+        }
+
+
+
+
+
+
+
+
+
+
+
         bool SetParticlePosition(ParticleAllocationBase* allocation, size_t index, glm::vec2 const& position)
         {
             ParticleDefault* particle = GetParticle(allocation, index);
@@ -69,6 +90,19 @@ namespace chaos
             particle->bounding_box = box;
             return true;
         }
+
+
+            // shu47
+
+        bool SetParticleRotation(ParticleAllocationBase* allocation, size_t index, float rotation)
+        {
+            ParticleDefault* particle = GetParticle(allocation, index);
+            if (particle == nullptr)
+                return false;
+            particle->rotation = rotation;
+            return true;
+        }
+
 
     }; // namespace ParticleTools
 

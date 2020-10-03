@@ -28,6 +28,33 @@ namespace death
 		return bounding_box;
 	}
 
+
+
+	// shu47
+
+	float GameEntity::GetRotation() const
+	{
+		if (is_particle_master)
+		{
+			std::optional<float> rotation_opt = chaos::ParticleTools::GetParticleRotation(allocations.get(), 0);
+			if (rotation_opt)
+				return *rotation_opt;
+		}
+		return rotation;
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	void GameEntity::SetPosition(glm::vec2 const& in_position)
 	{
 		if (is_particle_master)
@@ -43,6 +70,36 @@ namespace death
 		bounding_box = in_bounding_box;
 	}
 
+
+	// shu47 
+
+	void GameEntity::SetRotation(float in_rotation)
+	{
+		if (is_particle_master)
+			if (chaos::ParticleTools::SetParticleRotation(allocations.get(), 0, in_rotation))
+				return;
+		rotation = in_rotation;
+	}
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// shu47
+
 	void GameEntity::SynchronizeData(bool particle_to_entity)
 	{
 		if (particle_to_entity)
@@ -50,10 +107,15 @@ namespace death
 			std::optional<chaos::box2> box_opt = chaos::ParticleTools::GetParticleBox(allocations.get(), 0);
 			if (box_opt)
 				bounding_box = *box_opt;
+
+			std::optional<float> rotation_opt = chaos::ParticleTools::GetParticleRotation(allocations.get(), 0);
+			if (rotation_opt)
+				rotation = *rotation_opt;
 		}
 		else
 		{
 			chaos::ParticleTools::SetParticleBox(allocations.get(), 0, bounding_box);
+			chaos::ParticleTools::SetParticleRotation(allocations.get(), 0, rotation);
 		}
 	}
 

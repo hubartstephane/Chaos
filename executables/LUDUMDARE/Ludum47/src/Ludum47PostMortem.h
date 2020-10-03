@@ -34,5 +34,16 @@ et ca filtre par class
 // la camera avec le zoom modifier ne semble pas rester dans le WORLD BOUNDING BOX
 
 
+// faire en sorte que les particules puissent connaitre facilement (grace a l'allocation ??) le TMObjec a qui elles appartiennent
+// LudumOpponent a montre ses limites
+
+
+// PlayerPawn est un GameEntity.
+// TMObject aussi.
+//
+
+mais PlayerPawn n'est pas referencé dans TMLevelInstance ni aucun de ces layer
+
+
 
 #endif

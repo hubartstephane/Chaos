@@ -38,7 +38,29 @@ namespace death
 		virtual void SetRotation(float in_rotation);
 
 
+		// shu47
 
+		template<typename T>
+		T* GetParticle(size_t index)
+		{
+			if (allocations == nullptr)
+				return nullptr;
+			chaos::ParticleAccessor<T> accessor = allocations->GetParticleAccessor<T>();
+			if (accessor.GetDataCount() <= index)
+				return nullptr;
+			return &accessor[index];
+		}
+
+		template<typename T>
+		T const * GetParticle(size_t index) const
+		{
+			if (allocations == nullptr)
+				return nullptr;
+			chaos::ParticleConstAccessor<T> accessor = allocations->GetParticleAccessor<T>();
+			if (accessor.GetDataCount() <= index)
+				return nullptr;
+			return &accessor[index];
+		}
 
 
 

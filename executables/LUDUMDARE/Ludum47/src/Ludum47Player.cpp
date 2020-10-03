@@ -15,24 +15,14 @@ ParticlePlayer* LudumPlayer::GetPlayerParticle()
 {
 	if (pawn == nullptr)
 		return nullptr;
-	if (pawn->GetAllocation() == nullptr)
-		return nullptr;
-	chaos::ParticleAccessor<ParticlePlayer> accessor = pawn->GetAllocation()->GetParticleAccessor<ParticlePlayer>();
-	if (accessor.GetDataCount() == 0)
-		return nullptr;
-	return &accessor[0];
+	return pawn->GetParticle<ParticlePlayer>(0);
 }
 
 ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 {
 	if (pawn == nullptr)
 		return nullptr;
-	if (pawn->GetAllocation() == nullptr)
-		return nullptr;
-	chaos::ParticleConstAccessor<ParticlePlayer> accessor = pawn->GetAllocation()->GetParticleAccessor<ParticlePlayer>();
-	if (accessor.GetDataCount() == 0)
-		return nullptr;
-	return &accessor[0];
+	return pawn->GetParticle<ParticlePlayer>(0);
 }
 
 bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)

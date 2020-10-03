@@ -43,6 +43,31 @@ void LudumOpponent::OnLevelStarted()
 	}
 }
 
+bool LudumOpponent::DoTick(float delta_time)
+{
+	if (!TMObject::DoTick(delta_time))
+		return false;
+
+	ParticleOpponent* particle = GetParticle<ParticleOpponent>(0);
+	if (particle != nullptr)
+	{
+		rotation += 0.5f * delta_time;
+		
+
+		glm::vec2 & position = bounding_box.position;
+
+		position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * 100.0f;
+
+
+		SynchronizeData(false);
+	}
+
+
+
+	return true;
+}
+
+
 // =============================================================
 // LudumSpeedIndication implementation
 // =============================================================
@@ -189,6 +214,13 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 		ParticlePlayerLayerTrait layer_trait;
 		layer_trait.game = ludum_game;
 		return new chaos::ParticleLayer<ParticlePlayerLayerTrait>(layer_trait);
+	}
+
+	if (chaos::StringTools::Stricmp(layer_name, "Opponents") == 0)
+	{
+		ParticleOpponentLayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleOpponentLayerTrait>(layer_trait);
 	}
 
 

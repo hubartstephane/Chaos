@@ -32,3 +32,15 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 
 
+// ===========================================================================
+// ParticleOpponentLayerTrait
+// ===========================================================================
+
+bool ParticleOpponentLayerTrait::UpdateParticle(float delta_time, ParticleOpponent& particle) const
+{
+
+	
+
+	return false;
+}
+

@@ -14,6 +14,16 @@
 #include <death/TM.h>
 
 
+
+bool LudumSpeedIndication::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+{
+	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+		return false;
+
+
+	return true;
+}
+
 bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
 {
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
@@ -37,6 +47,39 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	}
 	return true;
 }
+
+void LudumRoad::OnLevelStarted()
+{
+	death::TMObject::OnLevelStarted();
+
+	if (layer_instance != nullptr && layer_instance->GetLevelInstance() != nullptr)
+	{
+		LudumLevelInstance* level_instance = layer_instance->GetLevelInstance();
+		if (level_instance != nullptr)
+		{
+			death::TMLayerInstance* li = level_instance->FindLayerInstance("SpeedIndications");
+			if (li != nullptr)
+			{
+				size_t count = li->GetObjectCount();
+				for (size_t i = 0 ; i < count ; ++i)					
+				{
+					LudumSpeedIndication* indication = auto_cast(li->GetObject(i));
+					if (indication != nullptr)
+					{
+						auto b = indication->GetBoundingBox(true);
+
+						indication = indication;
+
+
+
+					}
+				}
+			}
+		}
+	}
+}
+
+
 
 
 // =============================================================
@@ -70,8 +113,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 
 death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
-	if (in_typed_object->IsObjectOfType("ROAD"))
+	if (in_typed_object->IsObjectOfType("Road"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new LudumRoad(););
+
+	if (in_typed_object->IsObjectOfType("SpeedIndication"))
+		return DEATH_MAKE_OBJECT_FACTORY(return new LudumSpeedIndication(););
 
 	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

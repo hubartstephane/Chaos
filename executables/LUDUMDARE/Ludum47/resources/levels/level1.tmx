@@ -43,8 +43,16 @@
    </object>
   </objectgroup>
   <objectgroup id="48" name="SpeedIndications">
-   <object id="2191" name="Indication1" type="SpeedIndication" x="248" y="1256" width="924" height="584"/>
-   <object id="2192" name="Indication2" type="SpeedIndication" x="1556" y="492" width="908" height="628"/>
+   <object id="2191" name="Indication1" type="SpeedIndication" x="248" y="1256" width="924" height="584">
+    <properties>
+     <property name="SPEED_FACTOR" type="float" value="2.2"/>
+    </properties>
+   </object>
+   <object id="2192" name="Indication2" type="SpeedIndication" x="1556" y="492" width="908" height="628">
+    <properties>
+     <property name="SPEED_FACTOR" type="float" value="3.3"/>
+    </properties>
+   </object>
   </objectgroup>
  </group>
 </map>

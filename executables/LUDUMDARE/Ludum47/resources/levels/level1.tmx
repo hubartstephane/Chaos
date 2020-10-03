@@ -38,7 +38,7 @@
    <object id="2188" type="WorldBoundingBox" x="-312" y="72" width="4536" height="3552"/>
   </objectgroup>
   <objectgroup id="34" name="Objects" locked="1">
-   <object id="2189" type="RoadBounds" x="712" y="2896">
+   <object id="2189" type="Road" x="712" y="2896">
     <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
    </object>
   </objectgroup>

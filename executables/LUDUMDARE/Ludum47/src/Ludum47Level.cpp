@@ -14,7 +14,29 @@
 #include <death/TM.h>
 
 
+bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+{
+	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+		return false;
 
+	std::vector<glm::vec2> const* src_points = nullptr;
+
+	if (chaos::TiledMap::GeometricObjectPolygon const* pn = in_geometric_object->GetObjectPolygon())
+		src_points = &pn->points;
+	else if (chaos::TiledMap::GeometricObjectPolyline const * pl = in_geometric_object->GetObjectPolyline())
+		src_points = &pl->points;
+
+	if (src_points == nullptr)
+		return false;
+
+	for (glm::vec2 const& p : *src_points)
+	{
+		RoadPoint rp;
+		rp.position = p;
+		points.push_back(rp);
+	}
+	return true;
+}
 
 
 // =============================================================
@@ -48,6 +70,8 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 
 death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
+	if (in_typed_object->IsObjectOfType("ROAD"))
+		return DEATH_MAKE_OBJECT_FACTORY(return new LudumRoad(););
 
 	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

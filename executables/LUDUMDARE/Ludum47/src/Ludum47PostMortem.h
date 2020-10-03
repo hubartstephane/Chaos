@@ -6,5 +6,6 @@
 //
 // CameraComponent : Conditionnal ApplyModifier => certains modifier devraient etre cosmetique da autre systematique
 //
+// Polygone -> PolyLine : creer une classe de base
 
 #endif

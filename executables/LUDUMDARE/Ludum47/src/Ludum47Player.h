@@ -48,7 +48,7 @@ protected:
     /** override */
     virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
 
-protected:
+public:
 
     chaos::weak_ptr<LudumRoad> road;
 

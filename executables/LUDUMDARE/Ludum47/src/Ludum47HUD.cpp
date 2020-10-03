@@ -8,11 +8,11 @@
 #include <death/GameHUDComponent.h>
 
 // ====================================================================
-// GameHUDWakenParticleComponent
+// GameHUDRacePositionComponent
 // ====================================================================
 
 GameHUDRacePositionComponent::GameHUDRacePositionComponent(chaos::TagType in_layer_id) :
-	death::GameHUDCacheValueComponent<glm::ivec2>("Position: %d/%d", glm::ivec2(-1, -1) , in_layer_id)
+	death::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1) , in_layer_id)
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -48,7 +48,46 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
 	return false;
 }
 
+// ====================================================================
+// GameHUDRaceLapsComponent
+// ====================================================================
 
+GameHUDRaceLapsComponent::GameHUDRaceLapsComponent(chaos::TagType in_layer_id) :
+	death::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d", glm::ivec2(-1, -1), in_layer_id)
+{
+	generator_params.line_height = 60.0f;
+	generator_params.font_info_name = "normal";
+	generator_params.position = glm::vec2(20.0f, -80.0f);
+	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
+}
+
+std::string GameHUDRaceLapsComponent::FormatText() const
+{
+	return chaos::StringTools::Printf(format.c_str(), 1 + cached_value.x, cached_value.y);
+}
+
+bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_allocation)
+{
+	LudumPlayingHUD const* playing_hud = auto_cast(hud);
+	if (playing_hud != nullptr)
+	{
+		LudumLevelInstance const* li = playing_hud->GetLevelInstance();
+		if (li != nullptr && li->road != nullptr)
+		{
+			LudumPlayer* player = GetPlayer(0);
+			if (player != nullptr)
+			{
+				glm::ivec2 v = { player->race_position.current_lap, li->road->lap_count };
+				if (v != cached_value)
+				{
+					cached_value = v;
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
 
 
 // ====================================================================
@@ -61,8 +100,7 @@ bool LudumPlayingHUD::FillHUDContent()
 		return false;	
 
 	RegisterComponent(death::GameHUDKeys::RACE_POSITION_ID, new GameHUDRacePositionComponent());
-
-   // RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
+	RegisterComponent(death::GameHUDKeys::RACE_LAPS_ID, new GameHUDRaceLapsComponent());
 
 	return true;
 }

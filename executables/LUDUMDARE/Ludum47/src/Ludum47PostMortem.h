@@ -58,4 +58,7 @@ mais PlayerPawn n'est pas referencé dans TMLevelInstance ni aucun de ces layer
 
 
 
+Fix WrapMode::Wrap avec float
+
+
 #endif

@@ -26,7 +26,19 @@ namespace chaos
 		}
 		else if (mode == WrapMode::WRAP)
 		{
-			result = min_value + MathTools::Modulo(src - min_value, max_value - min_value + 1); // +1 because 'max_value' is inside accepted range
+			//result = min_value + MathTools::Modulo(src - min_value, max_value - min_value + 1); // +1 because 'max_value' is inside accepted range
+
+
+
+
+
+
+			// shu47
+
+
+			result = min_value + MathTools::Modulo(src - min_value, max_value - min_value); // +1 because 'max_value' is inside accepted range
+
+
 		}
 		else if (mode == WrapMode::CHECK_RANGES)
 		{

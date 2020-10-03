@@ -2,6 +2,7 @@
 #include "Ludum47Particles.h"
 #include "Ludum47Player.h"
 
+#include <chaos/WrapMode.h>
 #include <death/PlayerPawn.h>
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
@@ -63,7 +64,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	if (particle.velocity > 0.0f)
 	{
 		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x;
+		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, particle.rotation);
 	}
+
+
 
 	if (accelerate_pressed)
 	{

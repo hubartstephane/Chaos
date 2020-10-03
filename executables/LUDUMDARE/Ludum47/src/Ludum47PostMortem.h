@@ -27,4 +27,8 @@ et ca filtre par class
 // TMObject/Particles => faire quelquechose de mieux
 
 
+
+// on trouve "forced_tick_duratiocn" dans JSON, mais ce n'est pas utilisé
+
+
 #endif

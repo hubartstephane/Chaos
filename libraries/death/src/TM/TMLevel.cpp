@@ -1380,12 +1380,15 @@ namespace death
 
 		// shuyyy
 
+
+		// shu47 => j utilise nouvellement player_start->GetRotation().  Comme l'allocation n'existe pas encore, cela va prendre la donnée en provenance de GameEntity
+
 		particle_populator.AddParticle(
 			player_start->bitmap_name.c_str(), 
 			hotpoint, 
 			player_start->GetBoundingBox(true), 
 			glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), 
-			0.0f, 
+			player_start->GetRotation(),
 			particle_flags, 
 			player_gid, 
 			keep_aspect_ratio);

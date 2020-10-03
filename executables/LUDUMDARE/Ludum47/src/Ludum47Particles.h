@@ -20,9 +20,9 @@ class RacePosition
 public:
 
 	// current lap count
-	int lap_count = 0;
+	size_t current_lap = 0;
 	// last validated index
-	int road_point = 0;
+	size_t current_road_point = 0;
 };
 
 

@@ -92,3 +92,22 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 	// reset the race
 	race_position = {};
 }
+
+bool LudumPlayer::DoTick(float delta_time)
+{
+	if (!death::Player::DoTick(delta_time))
+		return false;
+
+	if (road != nullptr)
+	{
+		ParticlePlayer const * particle = GetPlayerParticle();
+		if (particle != nullptr)
+		{
+			road->UpdateRacePosition(race_position, particle->bounding_box.position);
+
+
+
+		}
+	}
+	return true;
+}

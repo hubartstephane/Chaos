@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="51" nextobjectid="2198">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="51" nextobjectid="2199">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -25,22 +25,25 @@
    eAHtkEEKwCAQA/uW/v+RracFIciGDXiYgmBZjZN5Hj4MYAADGLjJwPvDOOumDieW1a/7OXe6b0yed3idO5PM3SyH17nT5Zo87/A6dyaZu1kOr3Ony3U6vxg665S3z2/puHNN/tNx0qbOSntO5+tmNUkzpPOrid6lGdL5ullN0gzp/Gqid2mGdL5uVpM0Qzq/muhdmiGdr5vVZDGkV73GDgMYwAAGMIABDGAAAxjAAAYwgAEMYAADGMAABjCAAQxgAAMYwAAGbjLwAfVeCqE=
   </data>
   </layer>
-  <objectgroup id="50" name="Opponents">
-   <object id="2195" gid="36" x="646.667" y="2348" width="32" height="16"/>
-   <object id="2196" gid="36" x="645.333" y="2264" width="32" height="16"/>
-   <object id="2197" gid="36" x="642.667" y="2164" width="32" height="16" rotation="30"/>
+  <objectgroup id="50" name="Opponents" locked="1">
+   <object id="2195" name="Opponent3" gid="36" x="646.667" y="2348" width="32" height="16"/>
+   <object id="2196" name="Opponent2" gid="36" x="645.333" y="2264" width="32" height="16"/>
+   <object id="2197" name="Opponent1" gid="36" x="642.667" y="2164" width="32" height="16" rotation="30"/>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera" locked="1">
-   <object id="2114" type="Camera" x="258.149" y="1965.01" width="900" height="600"/>
-   <object id="2186" gid="2" x="697.636" y="2377.03" width="32" height="16" rotation="-90">
+  <objectgroup id="26" name="PlayerAndCamera">
+   <object id="2114" name="Camera1" type="Camera" x="258.149" y="1965.01" width="900" height="600"/>
+   <object id="2186" name="PlayerStart" gid="2" x="697.636" y="2377.03" width="32" height="16" rotation="-90">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
    </object>
-   <object id="2188" type="WorldBoundingBox" x="-312" y="72" width="4536" height="3552"/>
+   <object id="2188" name="WBB" type="WorldBoundingBox" x="136" y="168" width="4536" height="3552"/>
   </objectgroup>
   <objectgroup id="34" name="Objects" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
+    <properties>
+     <property name="CHECKPOINT_VALIDATION_DISTANCE" type="float" value="128"/>
+    </properties>
     <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
    </object>
   </objectgroup>

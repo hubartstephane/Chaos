@@ -33,7 +33,16 @@ public:
 
 // =================================================
 // LudumRoad
-// =================================================
+//=================================================
+
+enum class RoadUpdateValue
+{
+	NOP,
+	NEW_CHECKPOINT,
+	WRONG_WAY,
+	NEW_LAP,
+	END_OF_RACE
+};
 
 class RoadPoint
 {
@@ -48,15 +57,29 @@ class LudumRoad : public death::TMObject
 {
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumRoad, death::TMObject);
 
+public:
+
+
+	RoadUpdateValue UpdateRacePosition(RacePosition& race_position, glm::vec2 const& p) const;
+
 protected:
 
 	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
 
 	virtual void OnLevelStarted() override;
 
+	
+
 public:
 
 	std::vector<RoadPoint> points;
+
+	int lap_count = 3;
+
+	float opponent_speed_factor = 1.0f;
+
+	float checkpoint_validation_distance = 200.0f; // distance for validation
+
 };
 
 // =================================================

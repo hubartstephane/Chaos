@@ -31,4 +31,8 @@ et ca filtre par class
 // on trouve "forced_tick_duratiocn" dans JSON, mais ce n'est pas utilisé
 
 
+// la camera avec le zoom modifier ne semble pas rester dans le WORLD BOUNDING BOX
+
+
+
 #endif

@@ -93,7 +93,7 @@ bool LudumPlayer::DoTick(float delta_time)
 		ParticlePlayer const * particle = GetPlayerParticle();
 		if (particle != nullptr)
 		{
-			road->UpdateRacePosition(race_position, particle->bounding_box.position);
+			road->UpdateRacePosition(race_position, particle->bounding_box.position, true);
 
 
 

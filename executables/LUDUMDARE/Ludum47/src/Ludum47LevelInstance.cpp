@@ -89,15 +89,6 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 	road = FindObject("TheRoad");
 
-	
-
-
-
-
-
-
-
-
 	LudumLevel* ludum_level = auto_cast(in_level);
 	if (ludum_level != nullptr)
 	{
@@ -151,3 +142,48 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
+glm::ivec2 LudumLevelInstance::GetPlayerRacePosition(LudumPlayer const* player) const
+{
+	glm::ivec2 result = { 0, 0 }; 
+
+	size_t point_count = road->points.size();
+	if (point_count == 0)
+		return result;
+
+	death::TMLayerInstance const* li = FindLayerInstance("Opponents");
+	if (li == nullptr)
+		return result;
+
+	if (player->GetPawn() == nullptr)
+		return result;
+
+	death::TMParticle const* particle_player = player->GetPawn()->GetParticle<death::TMParticle>(0);
+	if (particle_player == nullptr)
+		return result;
+
+	size_t count = li->GetObjectCount();
+	for (size_t i = 0; i < count; ++i)
+	{
+		LudumOpponent const* opponent = auto_cast(li->GetObject(i));
+		if (opponent == nullptr)
+			continue;
+
+		death::TMParticle const* particle_opponent = opponent->GetParticle<death::TMParticle>(0);
+		if (particle_opponent == nullptr)
+			continue;
+		
+		// alive opponent
+		++result.y;
+
+		if (player->race_position < opponent->race_position)
+			++result.x;
+		else if (player->race_position == opponent->race_position)
+		{
+			glm::vec2 target = road->points[(opponent->race_position.current_road_point + 1) % point_count].position;
+
+			if (glm::length2(target - particle_player->bounding_box.position) > glm::length2(target - particle_player->bounding_box.position))
+				++result.x;
+		}
+	}
+	return result;
+}

@@ -52,6 +52,8 @@ public:
 
 	LudumLevelInstance();
 
+	glm::ivec2 GetPlayerRacePosition(LudumPlayer const* player) const;
+
 protected:
 
 	/** override */
@@ -69,7 +71,7 @@ protected:
 	virtual bool CanCompleteLevel() const override;
 
 
-
+	
 
 
 

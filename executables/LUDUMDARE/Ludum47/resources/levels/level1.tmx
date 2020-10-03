@@ -70,7 +70,7 @@
    </object>
   </objectgroup>
   <objectgroup id="51" name="Collisions" locked="1">
-   <object id="2200" x="564" y="1840">
+   <object id="2200" name="Collision1" type="CollisionBound" x="564" y="1840">
     <polyline points="0,0 400,8"/>
    </object>
   </objectgroup>

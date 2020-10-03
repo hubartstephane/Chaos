@@ -10,6 +10,17 @@
 
 #include <death/TM.h> 
 
+
+
+namespace death
+{
+	namespace CollisionMask
+	{
+		static constexpr int LUDUM_COLLISION = (1 << 2);
+	};
+
+}; // namespace death
+
 // ===========================================================================
 // the car values
 // ===========================================================================

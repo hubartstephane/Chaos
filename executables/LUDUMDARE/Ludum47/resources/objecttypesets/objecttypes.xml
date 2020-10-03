@@ -8,6 +8,9 @@
   <property name="OBJECT_REFERENCE" type="object" default="0"/>
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>
+ <objecttype name="CollisionBound" color="#a0a0a4">
+  <property name="classname" type="string" default="LudumCollision"/>
+ </objecttype>
  <objecttype name="Finish" color="#a0a0a4">
   <property name="PARTICLE_CREATION" type="bool" default="false"/>
  </objecttype>

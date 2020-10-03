@@ -23,9 +23,9 @@
    eAHtkEEKwCAQA/uW/v+RracFIciGDXiYgmBZjZN5Hj4MYAADGLjJwPvDOOumDieW1a/7OXe6b0yed3idO5PM3SyH17nT5Zo87/A6dyaZu1kOr3Ony3U6vxg665S3z2/puHNN/tNx0qbOSntO5+tmNUkzpPOrid6lGdL5ullN0gzp/Gqid2mGdL5uVpM0Qzq/muhdmiGdr5vVZDGkV73GDgMYwAAGMIABDGAAAxjAAAYwgAEMYAADGMAABjCAAQxgAAMYwAAGbjLwAfVeCqE=
   </data>
   </layer>
-  <objectgroup id="26" name="CameraAndPlayerStart">
+  <objectgroup id="26" name="PlayerAndCamera">
    <object id="2114" type="Camera" x="258.149" y="1965.01" width="900" height="600"/>
-   <object id="2186" gid="2" x="697.636" y="2377.03" width="32" height="32">
+   <object id="2186" gid="2" x="697.636" y="2377.03" width="32" height="16" rotation="-90">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>

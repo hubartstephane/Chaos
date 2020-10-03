@@ -21,6 +21,16 @@ bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
 	return true;
 }
 
+bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
+{
+	if (!Player::InitializeGameValues(config, config_path, hot_reload))
+		return false;
+	DEATHGAME_JSON_ATTRIBUTE(max_velocity);
+	DEATHGAME_JSON_ATTRIBUTE(acceleration);
+	DEATHGAME_JSON_ATTRIBUTE(angular_velocity);
+	return true;
+}
+
 void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);

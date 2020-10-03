@@ -83,7 +83,29 @@ bool LudumOpponent::DoTick(float delta_time)
 		rotation += dir * delta_time * car_data.angular_velocity;
 		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
 
-		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * 500.0f;
+
+		float sf = road->GetSpeedFactor(bounding_box.position);
+
+		float target_velocity = car_data.max_velocity * sf;
+
+
+		if (target_velocity > velocity)
+			velocity = std::min(target_velocity, velocity + car_data.acceleration * delta_time);
+		else
+			//velocity = std::max(target_velocity, velocity - car_data.normal_deceleration * delta_time);
+
+		velocity = target_velocity;
+
+		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * velocity;
+
+
+
+
+
+
+
+
+
 
 		if (road->UpdateRacePosition(race_position, bounding_box.position, false) == RoadUpdateValue::END_OF_RACE)
 			allocations = nullptr;
@@ -132,6 +154,8 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	checkpoint_long_distance = in_geometric_object->GetPropertyValueFloat("CHECKPOINT_LONG_DISTANCE", checkpoint_long_distance);
 	checkpoint_long_distance = std::max(checkpoint_long_distance, 50.0f);
 
+	point_speed_factor = in_geometric_object->GetPropertyValueFloat("POINT_SPEED_FACTOR", point_speed_factor);
+
 	std::vector<glm::vec2> const* src_points = nullptr;
 
 	if (chaos::TiledMap::GeometricObjectPolygon const* pn = in_geometric_object->GetObjectPolygon())
@@ -148,6 +172,7 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	{
 		RoadPoint rp;
 		rp.position = p + offset + this->GetPosition(); // expressed in world system !
+		rp.speed_factor = point_speed_factor;
 		points.push_back(rp);
 	}
 	return true;
@@ -224,6 +249,31 @@ RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::
 	}
 	return RoadUpdateValue::NOP;
 }
+
+float LudumRoad::GetSpeedFactor(glm::vec2 const& p) const
+{
+	size_t count = points.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		RoadPoint const& road_pt = points[i];
+
+		float d = checkpoint_long_distance;
+
+		if (glm::length2(p - road_pt.position) < d * d)
+		{
+			return road_pt.speed_factor;
+		}
+	}
+
+	return 1.0f;
+}
+
+
+
+
+
+
+
 
 // =============================================================
 // LudumLevel implementation

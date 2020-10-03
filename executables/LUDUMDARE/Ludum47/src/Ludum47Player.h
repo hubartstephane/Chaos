@@ -50,7 +50,7 @@ protected:
 
 public:
 
-    chaos::weak_ptr<LudumRoad> road;
+    chaos::shared_ptr<LudumRoad> road;
 
     RacePosition race_position;
 

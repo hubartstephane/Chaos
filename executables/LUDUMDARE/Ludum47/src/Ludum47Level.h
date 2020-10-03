@@ -63,6 +63,8 @@ public:
 	RoadUpdateValue UpdateRacePosition(RacePosition& race_position, glm::vec2 const& p, bool player) const;
 
 
+	float GetSpeedFactor(glm::vec2 const& p) const;
+
 protected:
 
 	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
@@ -77,6 +79,8 @@ public:
 	std::vector<RoadPoint> points;
 
 	int lap_count = 3;
+
+	float point_speed_factor = 0.5f;
 
 	float opponent_speed_factor = 1.0f;
 
@@ -104,11 +108,13 @@ protected:
 
 public:
 
-	chaos::weak_ptr<LudumRoad> road;
+	chaos::shared_ptr<LudumRoad> road;
 
 	RacePosition race_position;
 
 	CarData car_data;
+
+	float velocity = 0.0f;
 
 	float max_health = 4.0f;
 	float health = 4.0f;

@@ -93,6 +93,7 @@ void LudumPlayer::HandleKeyboardInputs()
 Demande de touches generique manette/clavier
 
 
+utiliser : int a = int(3); au lieu de ((int)a)
 
 
 

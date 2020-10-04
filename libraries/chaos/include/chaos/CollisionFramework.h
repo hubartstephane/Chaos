@@ -585,20 +585,41 @@ namespace chaos
 
 
 
-
+	// shu47
 
 	template<typename T, int dimension>
 	bool Collide(type_obox<T, dimension> const & src1, type_obox<T, dimension> const & src2, bool open_geometry = false)
 	{
 		
+		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
+			return false;
 
+		// separate src1 from src2 => transform src1 into a simple box (with no rotation)
+		chaos::box2 b1;
+		b1.position  = { 0.0f, 0.0f };
+		b1.half_size = src1.half_size;
 
+		glm::mat4x4 transform1 = chaos::GetRotatorMatrix(-src1.rotator) * glm::translate(glm::vec3(-src1.position, 0.0f)); // world => local BOX 1 
 
+		glm::vec2 v2[4];
+		GetBoxVertices(src2, v2, true);
+		if (HasSeparatingPlane(b1, v2, 4, open_geometry, transform1))
+			return false;
 
+		// separate src2 from src1 => transform src2 into a simple box (with no rotation)
+		chaos::box2 b2;
+		b2.position = { 0.0f, 0.0f };
+		b2.half_size = src2.half_size;
 
+		glm::mat4x4 transform2 = chaos::GetRotatorMatrix(-src2.rotator) * glm::translate(glm::vec3(-src2.position, 0.0f)); // world => local BOX 2
 
+		glm::vec2 v1[4];
+		GetBoxVertices(src1, v1, true);
+		if (HasSeparatingPlane(b2, v1, 4, open_geometry, transform2))
+			return false;
 
-		return false; // TODO COLLISION
+		// no separating plane
+		return true; 
 	}
 
 

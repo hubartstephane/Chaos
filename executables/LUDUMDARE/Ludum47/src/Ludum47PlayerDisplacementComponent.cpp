@@ -197,7 +197,6 @@ skip_player_input:
 							if (chaos::GLMTools::Get2DCrossProductZ(velocity_vector, b - a) < 0.0f) // CLOCKWISE
 								continue;
 
-
 							if (chaos::HasSeparatingPlane(transformed_box, &a, 2, false, transform))
 								continue;
 							if (chaos::IsSeparatingPlane(a, b, player_box_vertices, 4))
@@ -209,12 +208,7 @@ skip_player_input:
 							float s = std::sin((float)M_PI * 0.5f);
 
 							collision_direction = glm::normalize(chaos::GLMTools::Rotate(b - a, c, s));
-							//collision_reaction_intensity = car_data.reaction_value * glm::dot(collision_direction, -velocity_vector);
-
-							collision_reaction_intensity = car_data.reaction_value * 
-								
-								
-								std::max(0.5f, glm::dot(collision_direction, -glm::normalize(velocity_vector)));
+							collision_reaction_intensity = car_data.reaction_value * std::max(0.5f, glm::dot(collision_direction, -glm::normalize(velocity_vector)));
 						}
 					}
 				}

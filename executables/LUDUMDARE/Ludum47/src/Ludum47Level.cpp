@@ -66,6 +66,17 @@ bool LudumOpponent::DoTick(float delta_time)
 	if (!TMObject::DoTick(delta_time))
 		return false;
 
+	// do not start before the beginning
+	LudumLevelInstance* li = layer_instance->GetLevelInstance();
+	if (li != nullptr && li->effective_start_timer > 0.0f)
+		return true;
+
+
+
+
+
+
+
 	size_t road_point_count = road->points.size();
 	if (road == nullptr || road->points.size() == 0)
 		return true;
@@ -188,6 +199,14 @@ bool LudumRoad::DoTick(float delta_time)
 	if (level_instance == nullptr)
 		return true;
 
+	
+	if (level_instance->effective_start_timer > 0.0f)
+		return true;
+
+
+
+
+	// do not start before the beginning
 
 	death::TMLayerInstance * li = level_instance->FindLayerInstance("Opponents");
 	if (li == nullptr)

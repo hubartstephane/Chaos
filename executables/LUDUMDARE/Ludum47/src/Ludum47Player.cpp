@@ -65,14 +65,54 @@ void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::G
 	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
 
+	// shu47 on aurait pu utiliser IsButtonPressed(...false) pour avoir la previous frame 
+
+	bool honk_pressed = gpd->IsButtonPressed(chaos::XBoxButton::BUTTON_X, false);
+	if (honk_pressed && !was_honk_pressed_gamepad)
+		Honk();
+	was_honk_pressed_gamepad = honk_pressed;
+
 }
 
 void LudumPlayer::HandleKeyboardInputs(float delta_time)
 {
 	death::Player::HandleKeyboardInputs(delta_time);
 
+	// shu47 CheckKeyPressed on a rien pour connaitre la frame d'avant
 
+	bool honk_pressed = CheckKeyPressed(GLFW_KEY_LEFT_SHIFT);
+	if (honk_pressed && !was_honk_pressed_keyboard)
+		Honk();
+	was_honk_pressed_keyboard = honk_pressed;
 }
+
+void LudumPlayer::Honk()
+{
+	if (honk_sound != nullptr)
+		return;
+	death::Game* game = GetGame();
+	if (game != nullptr)
+		honk_sound = game->PlaySound("Honk", false, false, 0.0f, death::SoundContext::GAME);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void LudumPlayer::OnLifeLost()
 {
@@ -100,6 +140,12 @@ bool LudumPlayer::DoTick(float delta_time)
 {
 	if (!death::Player::DoTick(delta_time))
 		return false;
+
+	if (honk_sound != nullptr)
+		if (honk_sound->IsFinished())
+			honk_sound = nullptr;
+
+
 
 	if (road != nullptr)
 	{

@@ -32,7 +32,7 @@
     "generator_params": {
       "hotpoint": "center",
       "alignment": "center",
-      "line_height": 100,
+      "line_height": 200,
       "position": [ 0.0, 0.0 ]
     }
   },

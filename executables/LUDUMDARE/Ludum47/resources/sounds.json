@@ -22,6 +22,7 @@
 
   "sources": [
 
+    { "path": "sounds/honk.ogg" , "categories" :  "FX"},
     { "path": "sounds/game_music1.ogg" , "categories" :  "music"},
     { "path": "sounds/pause_music.ogg" , "categories" :  "music"},
     { "path": "sounds/menu_music.ogg" , "categories" :  "music"},

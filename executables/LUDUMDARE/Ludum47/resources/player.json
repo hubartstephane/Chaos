@@ -6,5 +6,7 @@
   "acceleration": 800,
   "angular_velocity": 3.2,
   "break_deceleration": 1200.0,
-  "normal_deceleration": 800.0
+  "normal_deceleration": 800.0,
+  "reaction_value": 300.0,
+  "reaction_decrease": 2000.0
 }

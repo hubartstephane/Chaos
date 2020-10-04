@@ -57,19 +57,47 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
+
+
+
+
+
+
+
+
+
+	float velocity_tweak = player->road->player_velocity_tweak;
+
+
 	// update position BEFORE velocity so that we are sure that we cannot force ourt way through a collider
 
 	glm::vec2 velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
+
+
+
+	if (collision_reaction_intensity > 0.0f)
+	{
+		collision_reaction_intensity = std::max(0.0f, collision_reaction_intensity - car_data.reaction_decrease * delta_time);
+		if (collision_reaction_intensity > 0.0f)
+		{
+			velocity_vector = collision_direction * collision_reaction_intensity;
+			particle.bounding_box.position += velocity_vector * delta_time;
+			goto skip_player_input; // :)
+
+		}
+	}
+
+
+
 
 	if (particle.velocity != 0.0f)
 	{
 		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x * angular_tweak;
 		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, particle.rotation);
-
 		particle.bounding_box.position += velocity_vector * delta_time;
 	}
-
-	float velocity_tweak = player->road->player_velocity_tweak;
+	
+	
 	
 
 	// compute wanted velocity 
@@ -101,6 +129,14 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// update velocity to indicates our intention to collision code
 	velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
+
+
+
+
+
+
+skip_player_input:
+
 
 
 
@@ -169,44 +205,12 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 							particle.velocity = 0.0f;
 
-							k = k;
+							float c = std::cos((float)M_PI * 0.5f);
+							float s = std::sin((float)M_PI * 0.5f);
 
-
+							collision_direction = glm::normalize(chaos::GLMTools::Rotate(b - a, c, s));
+							collision_reaction_intensity = car_data.reaction_value;
 						}
-
-
-
-
-
-#if 0
-
-						if (chaos::HasSeparatingPlane(transformed_box, &col->points[0], col->points.size(), false, transform))
-							continue;
-
-						size_t pcount = col->points.size();
-						size_t k = 0;
-						for (; k < pcount - 1; ++k)
-						{
-							glm::vec2 const& a = col->points[k];
-							glm::vec2 const& b = col->points[k + 1];
-							if (a == b)
-								continue;
-
-							if (chaos::IsSeparatingPlane(a, b, player_box_vertices, 4))
-								break;
-						}
-
-						// collision happened
-						if (k == pcount - 1)
-						{
-							k = k;
-						}
-
-						col = col;
-
-#endif
-
-
 					}
 				}
 			}

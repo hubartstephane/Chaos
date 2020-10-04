@@ -27,6 +27,9 @@ public:
 	float angular_velocity = 3.14f;
 	float normal_deceleration = 30.0f;
 	float break_deceleration = 100.0f;
+
+	float reaction_value = 30.0f;
+	float reaction_decrease = 100.0f;
 };
 
 

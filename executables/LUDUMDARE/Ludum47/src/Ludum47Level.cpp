@@ -32,7 +32,16 @@ bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos:
 	car_data.angular_velocity = in_geometric_object->GetPropertyValueFloat("ANGULAR_VELOCITY", car_data.angular_velocity);
 	car_data.normal_deceleration = in_geometric_object->GetPropertyValueFloat("NORMAL_DECELERATION", car_data.normal_deceleration);
 	car_data.break_deceleration = in_geometric_object->GetPropertyValueFloat("BREAK_DECELERATION", car_data.break_deceleration);
+	
+
+
+	car_data.reaction_value = in_geometric_object->GetPropertyValueFloat("REACTION_VALUE", car_data.reaction_value);
+	car_data.reaction_decrease = in_geometric_object->GetPropertyValueFloat("REACTION_DECREASE", car_data.reaction_decrease);
+	
 	max_health = in_geometric_object->GetPropertyValueFloat("MAX_HEALTH", max_health);
+
+
+
 	
 	health = max_health;
 

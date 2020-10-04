@@ -144,30 +144,13 @@ void LudumPlayer::SpawnSmokeParticles(size_t count)
 
 void LudumPlayer::SoundCollision()
 {
-
-	SetHealth(-collision_health_lost, true);
+	PlayHealthChangedEffects(true); // play the fx
 
 	if (sound_collision_timer > 0.0f)
 		return;
-
 	death::Game* game = GetGame();
 	if (game != nullptr)
 		game->PlaySound("Explosion", false, false, 0.0f, death::SoundContext::GAME);
-
-#if 0
-
-	// force feedback effect
-	if (gamepad != nullptr)
-		gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
-
-	death::Camera* camera = GetLevelInstance()->GetCamera(0);
-	if (camera != nullptr)
-	{
-		death::ShakeCameraComponent* shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
-		if (shake_component != nullptr)
-			shake_component->RestartModifier();
-	}
-#endif
 
 	sound_collision_timer = 0.2f;
 

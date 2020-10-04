@@ -11,6 +11,8 @@
 #include <death/Level.h>
 #include <death/SoundContext.h>
 
+#include <death/ShakeCameraComponent.h>
+
 ParticlePlayer* LudumPlayer::GetPlayerParticle()
 {
 	if (pawn == nullptr)
@@ -107,6 +109,33 @@ void LudumPlayer::Honk()
 }
 
 
+void LudumPlayer::SoundCollision()
+{
+
+	if (sound_collision_timer > 0.0f)
+		return;
+
+
+
+	death::Game* game = GetGame();
+	if (game != nullptr)
+		honk_sound = game->PlaySound("Explosion", false, false, 0.0f, death::SoundContext::GAME);
+
+	// force feedback effect
+	if (gamepad != nullptr)
+		gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
+
+	death::Camera* camera = GetLevelInstance()->GetCamera(0);
+	if (camera != nullptr)
+	{
+		death::ShakeCameraComponent* shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
+		if (shake_component != nullptr)
+			shake_component->RestartModifier();
+	}
+
+	sound_collision_timer = 0.2f;
+}
+
 
 
 
@@ -167,7 +196,7 @@ bool LudumPlayer::DoTick(float delta_time)
 	}
 
 
-
+	sound_collision_timer = std::max(0.0f, sound_collision_timer - delta_time);
 
 	if (honk_sound != nullptr)
 		if (honk_sound->IsFinished())

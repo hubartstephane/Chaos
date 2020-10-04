@@ -234,8 +234,13 @@ bool LudumRoad::DoTick(float delta_time)
 
 			glm::vec2 vel_dir1 = p1->velocity * glm::vec2(std::cos(p1->rotation), std::sin(p1->rotation));
 			glm::vec2 vel_dir2 = p2->velocity * glm::vec2(std::cos(p2->rotation), std::sin(p2->rotation));
-			if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
-				continue;
+
+
+
+			// TRUC
+
+			//if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
+		//		continue;
 
 			auto b1 = opp1->GetBoundingBox(true);
 			auto b2 = opp2->GetBoundingBox(true);
@@ -321,8 +326,12 @@ bool LudumRoad::DoTick(float delta_time)
 		{
 			glm::vec2 vel_dir1 = p1->velocity * glm::vec2(std::cos(p1->rotation), std::sin(p1->rotation));
 			glm::vec2 vel_dir2 = player_particle->velocity * glm::vec2(std::cos(player_particle->rotation), std::sin(player_particle->rotation));
-			if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
-				continue;
+			
+			
+			// TRUC
+			
+			//if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
+		//		continue;
 
 			auto b1 = opp1->GetBoundingBox(true);
 			auto b2 = player_particle->bounding_box;

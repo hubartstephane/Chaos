@@ -86,8 +86,6 @@ bool LudumOpponent::DoTick(float delta_time)
 				bounding_box.position += velocity_vector * delta_time;
 				
 				
-				//goto skip_opponent_input; // :)
-
 			}
 		}
 
@@ -136,7 +134,10 @@ bool LudumOpponent::DoTick(float delta_time)
 
 		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * particle->velocity;
 
-skip_opponent_input:
+
+
+
+
 
 		if (road->UpdateRacePosition(race_position, bounding_box.position, false) == RoadUpdateValue::END_OF_RACE)
 			allocations = nullptr;
@@ -246,25 +247,15 @@ bool LudumRoad::DoTick(float delta_time)
 			if (!Collide(ob1, ob2))
 				continue;
 
-
 			glm::vec2 dp = p2->bounding_box.position - p1->bounding_box.position;
-
-
 
 			p1->collision_direction = glm::normalize(-dp);
 			p2->collision_direction = glm::normalize(dp);
 
-			p1->collision_reaction_intensity = opp1->car_data.reaction_value;
-			p2->collision_reaction_intensity = opp2->car_data.reaction_value;
+			float col_factor = std::max(0.7f, 1.0f - glm::dot(glm::normalize(vel_dir1), glm::normalize(vel_dir2)));
 
-		//	p1->velocity = p2->velocity = 0.0f;
-
-
-
-
-
-
-		
+			p1->collision_reaction_intensity = opp1->car_data.reaction_value * col_factor;
+			p2->collision_reaction_intensity = opp2->car_data.reaction_value * col_factor;
 
 			opp1->SynchronizeData(false);
 			opp2->SynchronizeData(false);

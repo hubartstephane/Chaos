@@ -82,9 +82,7 @@ public:
 	// velocity length in direction of the oriented particle
 	float velocity = 0.0f;
 
-	bool accelerate_pressed = false;
 
-	bool break_pressed = false;
 };
 
 
@@ -96,7 +94,9 @@ class ParticlePlayer : public ParticleBase
 {
 public:
 
+	bool accelerate_pressed = false;
 
+	bool break_pressed = false;
 };
 
 

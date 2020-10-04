@@ -140,8 +140,6 @@ public:
 
 	CarData car_data;
 
-	float velocity = 0.0f;
-
 	float max_health = 4.0f;
 	float health = 4.0f;
 

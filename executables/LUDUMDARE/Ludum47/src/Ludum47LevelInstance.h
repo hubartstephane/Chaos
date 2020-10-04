@@ -85,7 +85,7 @@ public:
 	class LudumGame * game = nullptr;
 
 
-	float effective_start_timer = 3.0f;
+	float effective_start_timer = 6.0f;
 
 
 

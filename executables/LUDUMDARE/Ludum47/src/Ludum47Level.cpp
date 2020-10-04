@@ -395,6 +395,8 @@ bool LudumRoad::DoTick(float delta_time)
 
 			opp1->SynchronizeData(false);
 
+			player->SoundCollision();
+
 		}
 
 

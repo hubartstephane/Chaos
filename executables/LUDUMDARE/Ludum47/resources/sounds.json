@@ -30,6 +30,9 @@
     { "path": "sounds/menu_music.ogg" , "categories" :  "music"},
     { "path": "sounds/gameover.ogg" , "categories" :  "Voices"},
     { "path": "sounds/start.ogg" , "categories" :  "FX"},
+    { "path": "sounds/start1.ogg" , "categories" :  "FX"},
+	{ "path": "sounds/start2.ogg" , "categories" :  "FX"},
+	{ "path": "sounds/Explosion.ogg" , "categories" :  "FX"},	
     { "path": "sounds/next_levelx.ogg" , "categories" :  "FX"},     
     { "path": "sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
   ]

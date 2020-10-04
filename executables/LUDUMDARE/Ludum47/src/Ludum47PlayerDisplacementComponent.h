@@ -11,7 +11,7 @@ class LudumPlayerDisplacementComponent : public death::PlayerDisplacementCompone
 
 public:
 
-	static void ComputeBorderCollision(class ParticleBase& particle, class LudumLevelInstance* li, class CarData const& car_data);
+	static bool ComputeBorderCollision(class ParticleBase& particle, class LudumLevelInstance* li, class CarData const& car_data);
 
 
 protected:

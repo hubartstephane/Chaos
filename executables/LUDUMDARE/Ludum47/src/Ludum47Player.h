@@ -30,6 +30,11 @@ public:
 
     class ParticlePlayer const* GetPlayerParticle() const;
 
+
+    void Honk();
+
+    void SoundCollision();
+
 protected:
 
     virtual bool DoTick(float delta_time) override;
@@ -50,7 +55,7 @@ protected:
 
 
 
-    void Honk();
+
 
 public:
 
@@ -61,6 +66,8 @@ public:
     bool was_honk_pressed_gamepad = false;
 
     RacePosition race_position;
+
+    float sound_collision_timer = 0.0f;
 
     CarData car_data;
 };

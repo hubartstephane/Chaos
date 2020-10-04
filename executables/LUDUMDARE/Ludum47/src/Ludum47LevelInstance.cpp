@@ -86,12 +86,15 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	{
 		float new_value = std::max(0.0f, effective_start_timer - delta_time);
 
+		bool sound_played = false;
+
 		if (effective_start_timer <= 3.0f)
 		{
 			if (int(effective_start_timer) != int(new_value))
 			{
 
-				GetGame()->PlaySound("honk", false, false, 0, death::SoundContext::GAME);
+				GetGame()->PlaySound("Start1", false, false, 0, death::SoundContext::GAME);
+				sound_played = true;
 			}
 
 		}
@@ -101,6 +104,8 @@ bool LudumLevelInstance::DoTick(float delta_time)
 
 
 		effective_start_timer = new_value;
+		if (effective_start_timer == 0.0f && !sound_played)
+			GetGame()->PlaySound("Start2", false, false, 0, death::SoundContext::GAME);
 	}
 
 

@@ -11,8 +11,9 @@
 
 
 
-void LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & particle, LudumLevelInstance* li, CarData const& car_data)
+bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & particle, LudumLevelInstance* li, CarData const& car_data)
 {
+	bool result = false;
 
 	// update velocity to indicates our intention to collision code
 	glm::vec2 velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
@@ -95,12 +96,15 @@ void LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 							float intensity = std::max(glm::abs(particle.velocity), car_data.max_velocity * 0.5f);
 
 							particle.collision_reaction_intensity = intensity * car_data.reaction_value * std::max(0.5f, glm::dot(particle.collision_direction, -glm::normalize(velocity_vector)));
+
+							result = true;
 						}
 					}
 				}
 			}
 		}
 	}
+	return result;
 }
 
 
@@ -270,7 +274,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	LudumLevelInstance* li = GetLevelInstance();
 
-	ComputeBorderCollision(particle, li, car_data);
+	if (ComputeBorderCollision(particle, li, car_data))
+		player->SoundCollision();
 	
 	return true;
 }

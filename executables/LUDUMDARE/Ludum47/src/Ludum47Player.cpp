@@ -112,6 +112,8 @@ void LudumPlayer::Honk()
 void LudumPlayer::SoundCollision()
 {
 
+	SetHealth(0.1f, true);
+
 	if (sound_collision_timer > 0.0f)
 		return;
 
@@ -134,6 +136,46 @@ void LudumPlayer::SoundCollision()
 	}
 
 	sound_collision_timer = 0.2f;
+
+
+
+
+	LudumLevelInstance* li = GetLevelInstance();
+	if (li != nullptr)
+	{
+		chaos::ParticleSpawner spawner = li->GetParticleSpawner("Smoke", "Smoke"); // va chercher layer + sprite
+		if (spawner.IsValid())
+		{
+			spawner.SpawnParticles(10, false, [this](chaos::ParticleAccessor<ParticleSmoke> accessor) 
+			{
+				glm::vec2 pos = pawn->GetPosition();
+
+				for (ParticleSmoke& p : accessor)
+				{
+					p.bounding_box.position  = pos;
+					p.bounding_box.half_size = { 16.0f, 16.0f };
+
+					float angle = chaos::MathTools::RandFloat() * 2.0f * float(M_PI);
+
+					p.velocity = chaos::MathTools::RandFloat(1.0f, 2.0f) * glm::vec2(std::cos(angle), std::sin(angle)) * 20.0f;
+					p.lifetime = p.duration = chaos::MathTools::RandFloat(0.75f, 1.5f);
+					p.angular_velocity = chaos::MathTools::RandFloat(1.3f, 2.6f);
+
+					float c = 0.0f;
+					p.color = glm::vec4(c, c, c, c); // invisible particle for the very first frame
+				}
+			
+			
+			});
+		}
+	}
+
+
+
+
+
+
+
 }
 
 

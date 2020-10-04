@@ -639,6 +639,13 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 		return new chaos::ParticleLayer<ParticleOpponentLayerTrait>(layer_trait);
 	}
 
+	if (chaos::StringTools::Stricmp(layer_name, "Smoke") == 0)
+	{
+		ParticleSmokeLayerTrait layer_trait;
+		layer_trait.game = ludum_game;
+		return new chaos::ParticleLayer<ParticleSmokeLayerTrait>(layer_trait);
+	}
+
 
 
 

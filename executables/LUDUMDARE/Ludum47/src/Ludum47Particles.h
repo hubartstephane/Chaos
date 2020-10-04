@@ -96,6 +96,35 @@ public:
 };
 
 
+
+// ===========================================================================
+// ParticleSmoke
+// ===========================================================================
+
+class ParticleSmoke : public  death::TMParticle
+{
+public:
+
+	float lifetime = 1.0f;
+	float duration = 1.0f; // value not update
+	glm::vec2 velocity = { 0.0f, 0.0f };
+	float angular_velocity = 1.0f;
+
+};
+
+
+class ParticleSmokeLayerTrait : public chaos::ParticleLayerTrait<ParticleSmoke, VertexBase>
+{
+public:
+
+	bool UpdateParticle(float delta_time, ParticleSmoke& particle) const;
+
+public:
+
+	class LudumGame* game = nullptr;
+};
+
+
 // ===========================================================================
 // ParticlePlayer
 // ===========================================================================
@@ -177,9 +206,7 @@ public:
 
 
 
-
-
-
+CHAOS_REGISTER_CLASS2(ParticleSmoke, death::TMParticle);
 CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticleOpponent, ParticleBase);

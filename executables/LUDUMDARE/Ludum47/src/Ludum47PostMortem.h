@@ -97,5 +97,34 @@ utiliser : int a = int(3); au lieu de ((int)a)
 
 
 
+Creer un vrai particle spawner
+qui s'attache a un layer
+qui s'alloue un ParticleAllocation pour son propre usage
+avec eventuellement des debit
+
+genre
+
+Pawn::Tick(dt)
+{
+	spawner->Tick(dt, [](SmokeParticleAccessor & accessor) 
+	{
+		le spawner decide combien de particule il va creer (avec un spawn rate),
+
+			et on peut les initialiser ici
+
+	})
+}
+
+
+
+
+
+
+On a un BeginParticleUpdate. On pourrait avoir un EndParticleUpdate()
+
+
+
+
+
 #endif
 

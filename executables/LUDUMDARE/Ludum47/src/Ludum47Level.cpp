@@ -58,6 +58,7 @@ void LudumOpponent::OnLevelStarted()
 	if (li != nullptr)
 	{
 		road = li->road;
+		++li->opponent_count;
 	}
 }
 
@@ -128,11 +129,8 @@ bool LudumOpponent::DoTick(float delta_time)
 
 		float angular_tweak = road->opponent_angular_tweak;
 
-		//if (!race_position.IsCompleted())
-		{
-			rotation += dir * delta_time * car_data.angular_velocity * angular_tweak;
-			chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
-		}
+		rotation += dir * delta_time * car_data.angular_velocity * angular_tweak;
+		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
 
 
 
@@ -142,14 +140,6 @@ bool LudumOpponent::DoTick(float delta_time)
 		float sf = road->GetSpeedFactor(bounding_box.position);
 
 		float target_velocity = car_data.max_velocity * sf * velocity_tweak;
-
-
-		//if (race_position.IsCompleted())
-			//target_velocity = 0.0f;
-
-
-
-
 
 		if (target_velocity > particle->velocity)
 			particle->velocity = std::min(target_velocity, particle->velocity + car_data.acceleration * delta_time * velocity_tweak);
@@ -528,6 +518,26 @@ RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::
 					if (race_position.current_lap >= lap_count)
 					{
 						race_position.completed = true;
+
+						// notify the level that there is one opponent that finished
+						if (!player && race_position.completed)
+						{
+							LudumLevelInstance* li = layer_instance->GetLevelInstance();
+							if (li != nullptr)
+							{
+								li->OnOpponentArrived();
+							}
+
+
+
+
+
+
+						}
+
+
+
+
 						return RoadUpdateValue::END_OF_RACE;
 					}
 					return RoadUpdateValue::NEW_LAP;

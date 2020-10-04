@@ -54,6 +54,8 @@ public:
 
 	glm::ivec2 GetPlayerRacePosition(LudumPlayer const* player) const;
 
+	void OnOpponentArrived();
+
 protected:
 
 	/** override */
@@ -87,6 +89,10 @@ public:
 
 	float effective_start_timer = 6.0f;
 
+	size_t opponent_arrived_count = 0;
+	size_t opponent_count = 0;
+
+	float lost_timer = -1.0f;
 
 
 

@@ -53,8 +53,9 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 
 	chaos::JSONTools::GetAttribute(config, "reaction_value", car_data.reaction_value);
 	chaos::JSONTools::GetAttribute(config, "reaction_decrease", car_data.reaction_decrease);
+	chaos::JSONTools::GetAttribute(config, "reaction_decrease", car_data.reaction_decrease);
 
-
+	DEATHGAME_JSON_ATTRIBUTE(collision_health_lost);
 
 #if 0
 	// cannot expand chaos::JSONTools::GetAttribute(config, #x, x)
@@ -108,20 +109,52 @@ void LudumPlayer::Honk()
 		honk_sound = game->PlaySound("Honk", false, false, 0.0f, death::SoundContext::GAME);
 }
 
+void LudumPlayer::SpawnSmokeParticles(size_t count)
+{
+	LudumLevelInstance* li = GetLevelInstance();
+	if (li != nullptr)
+	{
+		chaos::ParticleSpawner spawner = li->GetParticleSpawner("Smoke", "Smoke"); // va chercher layer + sprite
+		if (spawner.IsValid())
+		{
+			spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessor<ParticleSmoke> accessor)
+			{
+				glm::vec2 pos = pawn->GetPosition();
+
+				for (ParticleSmoke& p : accessor)
+				{
+					p.bounding_box.position = pos;
+					p.bounding_box.half_size = { 16.0f, 16.0f };
+
+					float angle = chaos::MathTools::RandFloat() * 2.0f * float(M_PI);
+
+					p.velocity = chaos::MathTools::RandFloat(1.0f, 2.0f) * glm::vec2(std::cos(angle), std::sin(angle)) * 20.0f;
+					p.lifetime = p.duration = chaos::MathTools::RandFloat(0.75f, 1.5f);
+					p.angular_velocity = chaos::MathTools::RandFloat(1.3f, 2.6f);
+
+					float c = 0.0f;
+					p.color = glm::vec4(c, c, c, c); // invisible particle for the very first frame
+				}
+
+
+			});
+		}
+	}
+}
 
 void LudumPlayer::SoundCollision()
 {
 
-	SetHealth(0.1f, true);
+	SetHealth(-collision_health_lost, true);
 
 	if (sound_collision_timer > 0.0f)
 		return;
 
-
-
 	death::Game* game = GetGame();
 	if (game != nullptr)
-		honk_sound = game->PlaySound("Explosion", false, false, 0.0f, death::SoundContext::GAME);
+		game->PlaySound("Explosion", false, false, 0.0f, death::SoundContext::GAME);
+
+#if 0
 
 	// force feedback effect
 	if (gamepad != nullptr)
@@ -134,72 +167,20 @@ void LudumPlayer::SoundCollision()
 		if (shake_component != nullptr)
 			shake_component->RestartModifier();
 	}
+#endif
 
 	sound_collision_timer = 0.2f;
 
-
-
-
-	LudumLevelInstance* li = GetLevelInstance();
-	if (li != nullptr)
-	{
-		chaos::ParticleSpawner spawner = li->GetParticleSpawner("Smoke", "Smoke"); // va chercher layer + sprite
-		if (spawner.IsValid())
-		{
-			spawner.SpawnParticles(10, false, [this](chaos::ParticleAccessor<ParticleSmoke> accessor) 
-			{
-				glm::vec2 pos = pawn->GetPosition();
-
-				for (ParticleSmoke& p : accessor)
-				{
-					p.bounding_box.position  = pos;
-					p.bounding_box.half_size = { 16.0f, 16.0f };
-
-					float angle = chaos::MathTools::RandFloat() * 2.0f * float(M_PI);
-
-					p.velocity = chaos::MathTools::RandFloat(1.0f, 2.0f) * glm::vec2(std::cos(angle), std::sin(angle)) * 20.0f;
-					p.lifetime = p.duration = chaos::MathTools::RandFloat(0.75f, 1.5f);
-					p.angular_velocity = chaos::MathTools::RandFloat(1.3f, 2.6f);
-
-					float c = 0.0f;
-					p.color = glm::vec4(c, c, c, c); // invisible particle for the very first frame
-				}
-			
-			
-			});
-		}
-	}
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void LudumPlayer::OnLifeLost()
 {
 	death::Player::OnLifeLost();
 	
+
+
+
 }
 
 void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
@@ -223,18 +204,15 @@ bool LudumPlayer::DoTick(float delta_time)
 	if (!death::Player::DoTick(delta_time))
 		return false;
 
+	size_t smoke_particle = 1;
 
+	SpawnSmokeParticles(smoke_particle);
 
 	if (road != nullptr)
 	{
 		ParticlePlayer const * particle = GetPlayerParticle();
 		if (particle != nullptr)
-		{
 			road->UpdateRacePosition(race_position, particle->bounding_box.position, true);
-
-
-
-		}
 	}
 
 
@@ -243,8 +221,6 @@ bool LudumPlayer::DoTick(float delta_time)
 	if (honk_sound != nullptr)
 		if (honk_sound->IsFinished())
 			honk_sound = nullptr;
-
-
 
 	return true;
 }

@@ -8,13 +8,14 @@
     "glyph_width": 64,
     "glyph_height": 64,
 
-    "image_processors": {
+    "image_processorsxxx": {
       "classname": "ImageProcessorOutline",
       "color": [ 1.0, 0.0, 0.0, 1.0 ],
       "distance": 4
     }
   },
   "colors": {
-    "LEVELTITLE": [ 1.0, 0.0, 0.0 ]
+    "LEVELTITLE": [ 1.0, 0.0, 0.0 ],
+    "WARNING": [ 1.0, 0.0, 0.0 ]
   }
 }

@@ -96,13 +96,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 				GetGame()->PlaySound("Start1", false, false, 0, death::SoundContext::GAME);
 				sound_played = true;
 			}
-
 		}
-
-
-
-
-
 		effective_start_timer = new_value;
 		if (effective_start_timer == 0.0f && !sound_played)
 			GetGame()->PlaySound("Start2", false, false, 0, death::SoundContext::GAME);
@@ -112,6 +106,10 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	if (completion_timer > 0.0f)
 		completion_timer = std::max(0.0f, completion_timer - delta_time);
 
+	if (lost_timer > 0.0f)
+		lost_timer = std::max(0.0f, lost_timer - delta_time);
+
+	
 
 	return true;
 }
@@ -142,6 +140,11 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 	if (death::TMLevelInstance::IsPlayerDead(player))
 		return true;
 
+	if (lost_timer == 0.0f)
+		return true;
+
+
+
 	LudumPlayer* ludum_player = auto_cast(player);
 
 	LudumLevel * ludum_level = GetLevel();
@@ -155,6 +158,22 @@ bool LudumLevelInstance::IsPlayerDead(death::Player* player)
 	return false;
 }
 
+void LudumLevelInstance::OnOpponentArrived()
+{
+
+	// stop counting if player is arrived
+	LudumPlayer const* ludum_player = GetPlayer(0);
+	if (ludum_player != nullptr)
+		if (!ludum_player->race_position.IsCompleted())
+			++opponent_arrived_count;
+
+
+	if (opponent_arrived_count > opponent_count / 2)
+		lost_timer = 5.0f;
+
+
+}
+
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
 	LudumLevel const * ludum_level = GetLevel();
@@ -162,7 +181,7 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 	LudumPlayer const * ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr && ludum_level != nullptr)
 	{
-		if (ludum_player->race_position.IsCompleted())
+		if (lost_timer < 0.0f && ludum_player->race_position.IsCompleted())
 		{
 			if (completion_timer < 0.0f)
 			{

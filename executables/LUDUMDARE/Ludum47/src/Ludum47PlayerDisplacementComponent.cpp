@@ -170,7 +170,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-	if (player->race_position.IsCompleted())
+	if (level_instance->lost_timer >= 0 || player->race_position.IsCompleted())
 	{
 		stick_position = { 0.0f , 0.0f };
 		particle.accelerate_pressed = particle.break_pressed = false;

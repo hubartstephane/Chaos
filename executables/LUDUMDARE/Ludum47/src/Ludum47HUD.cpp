@@ -22,7 +22,12 @@ GameHUDRacePositionComponent::GameHUDRacePositionComponent(chaos::TagType in_lay
 
 std::string GameHUDRacePositionComponent::FormatText() const
 {
-	return chaos::StringTools::Printf(format.c_str(), 1 + cached_value.x, 1 + cached_value.y);
+	char const* f = (cached_value.x > cached_value.y / 2) ? "[WARNING Pos %d/%d]" : "Pos %d/%d";
+
+
+
+
+	return chaos::StringTools::Printf(f, 1 + cached_value.x, 1 + cached_value.y);
 }
 
 bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)

@@ -35,6 +35,8 @@ public:
 
     void SoundCollision();
 
+    void SpawnSmokeParticles(size_t count);
+
 protected:
 
     virtual bool DoTick(float delta_time) override;
@@ -68,6 +70,8 @@ public:
     RacePosition race_position;
 
     float sound_collision_timer = 0.0f;
+
+    float collision_health_lost = 1.0f;
 
     CarData car_data;
 };

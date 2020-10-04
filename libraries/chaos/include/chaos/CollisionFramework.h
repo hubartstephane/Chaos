@@ -473,8 +473,11 @@ namespace chaos
 #endif
 
 
+
+	// shu47 : utiliser open_geometry
+
 	template<typename T, int dimension, typename TRANSFORM=EmptyClass>
-	bool HasSeparatingPlane(type_box<T, dimension> const& b, typename type_box<T, dimension>::vec_type const* vertices, size_t count, TRANSFORM transform = {})
+	bool HasSeparatingPlane(type_box<T, dimension> const& b, typename type_box<T, dimension>::vec_type const* vertices, size_t count, bool open_geometry = false, TRANSFORM transform = {})
 	{
 		if (count == 0 || vertices == nullptr)
 			return false;
@@ -491,7 +494,6 @@ namespace chaos
 		for (size_t i = 0; i < count ; ++i)
 		{
 			auto vert = vertices[i];
-
 			if constexpr (std::is_same_v<TRANSFORM, glm::mat4x4>)          // shu47 : HARD coded matrixx type !!
 				vert = GLMTools::MultWithTranslation(transform, vert);
 
@@ -526,6 +528,60 @@ namespace chaos
 		}
 		return true; // there are still at least one separator edge
 	}
+
+
+	// shu47 : should be generalized for different kind of vector (float/double)
+
+	template<typename TRANSFORM = EmptyClass>
+	bool IsSeparatingPlane(glm::vec2 const &a, glm::vec2 const& b, glm::vec2 * vertices, size_t count, TRANSFORM transform = {})
+	{
+		bool has_positive = false;
+		bool has_negative = false;
+
+		auto ab = b - a;
+
+		for (size_t i = 0; i < count; ++i)
+		{
+			auto vert = vertices[i];
+			if constexpr (std::is_same_v<TRANSFORM, glm::mat4x4>)          // shu47 : HARD coded matrixx type !!
+				vert = GLMTools::MultWithTranslation(transform, vert);
+
+			// on which side of BA is the considered point ?
+			auto z = GLMTools::Get2DCrossProductZ(ab, vert - a);
+			if (z == 0)
+				continue;
+			if (z < 0)
+			{
+				if (has_positive)
+					return false;
+				has_negative = true;
+			}
+			else
+			{
+				if (has_negative)
+					return false;
+				has_positive = true;
+			}
+		}
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

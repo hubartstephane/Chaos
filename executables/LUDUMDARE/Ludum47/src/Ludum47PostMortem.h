@@ -72,5 +72,8 @@ Revoir geometry de collision :
 conversion automatic de box2 => obox ??
 
 
+introduce     typename type_vec<T, dimension>      it does not exists !!!
+
+
 #endif
 

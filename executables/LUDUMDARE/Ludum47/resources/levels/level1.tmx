@@ -39,17 +39,17 @@
   </data>
   </layer>
   <objectgroup id="50" name="Opponents">
-   <object id="2195" name="Opponent3" gid="36" x="429.334" y="2474.67" width="32" height="16">
+   <object id="2195" name="Opponent3" gid="36" x="747.334" y="2324.67" width="32" height="16" rotation="-110">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
-   <object id="2196" name="Opponent2" gid="36" x="436" y="2129.33" width="32" height="16">
+   <object id="2196" name="Opponent2" gid="36" x="681" y="2219.33" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="800"/>
     </properties>
    </object>
-   <object id="2197" name="Opponent1" gid="36" x="456" y="2313.33" width="32" height="16" rotation="30">
+   <object id="2197" name="Opponent1" gid="36" x="667" y="2136.33" width="32" height="16" rotation="-80">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="700"/>
     </properties>

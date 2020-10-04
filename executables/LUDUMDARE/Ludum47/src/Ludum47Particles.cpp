@@ -25,7 +25,7 @@
 
 bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer & particle) const
 {
-	particle.bounding_box.position += particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation)) * delta_time;
+	//particle.bounding_box.position += particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation)) * delta_time;
 
 	return false;
 }

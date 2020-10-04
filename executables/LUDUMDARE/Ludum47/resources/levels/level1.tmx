@@ -71,7 +71,7 @@
   </objectgroup>
   <objectgroup id="51" name="Collisions">
    <object id="2200" name="Collision1" type="CollisionBound" x="591" y="1984">
-    <polyline points="0,0 239,2"/>
+    <polyline points="0,0 241.5,125.5"/>
    </object>
   </objectgroup>
   <objectgroup id="48" name="SpeedIndications" locked="1">

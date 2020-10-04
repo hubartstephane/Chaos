@@ -89,14 +89,15 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// search collision
 
-	// shu47 : conversion automatic
-
-	chaos::obox2 player_obox;
-	player_obox.position = particle.bounding_box.position;
-	player_obox.half_size = particle.bounding_box.half_size;
-	player_obox.rotator = particle.rotation;
+	// shu47 : conversion automatic     obox2 <=> box2 ???
 
 
+
+	// while there may be a rotation, we have to extend the ALIGNED box for raw test
+	chaos::box2 extended_box = GetBoundingBox(GetBoundingSphere(particle.bounding_box));
+
+
+	// points in LudumCollision will be transformed into a referencial where the PLAYER BOX is at center
 	chaos::box2 transformed_box;
 	transformed_box.position = { 0.0f, 0.0f };
 	transformed_box.half_size = particle.bounding_box.half_size;
@@ -104,6 +105,16 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	glm::mat4x4 transform = 
 		chaos::GetRotatorMatrix(-particle.rotation) * 
 		glm::translate(glm::vec3(-particle.bounding_box.position, 0.0f));
+
+
+	chaos::obox2 player_obox;
+	player_obox.position  = particle.bounding_box.position;
+	player_obox.half_size = particle.bounding_box.half_size;
+	player_obox.rotator   = particle.rotation;
+
+
+	glm::vec2 player_box_vertices[4];
+	GetBoxVertices(player_obox, player_box_vertices, true);
 
 	LudumLevelInstance* li = GetLevelInstance();
 	if (li != nullptr)
@@ -117,63 +128,32 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				LudumCollision* col = layer->GetObject(i);
 				if (col != nullptr && col->points.size() >= 2)
 				{
-
-
-
-
-
-//					if (chaos::Collide(col->internal_bounding_box, particle.bounding_box))
+					if (chaos::Collide(col->internal_bounding_box, extended_box)) // raw collision check
 					{
 
+
+
+						if (chaos::HasSeparatingPlane(transformed_box, &col->points[0], col->points.size(), false, transform))
+							continue;
+
 						size_t pcount = col->points.size();
-						for (size_t i = 0; i < pcount - 1; ++i)
+						size_t k = 0;
+						for (; k < pcount - 1; ++k)
 						{
-							glm::vec2 const& a = col->points[i];
-							glm::vec2 const& b = col->points[i + 1];
+							glm::vec2 const& a = col->points[k];
+							glm::vec2 const& b = col->points[k + 1];
 							if (a == b)
 								continue;
 
-							if (!chaos::HasSeparatingPlane(transformed_box, &col->points[0], col->points.size(), transform))
-							{
-
-
-
-								i = i;
-							}
-
-
-
-
-
-
-
-
-
-
-
-
+							if (chaos::IsSeparatingPlane(a, b, player_box_vertices, 4))
+								break;
 						}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+						// collision happened
+						if (k == pcount - 1)
+						{
+							k = k;
+						}
 
 						col = col;
 					}

@@ -82,6 +82,9 @@ public:
 	// velocity length in direction of the oriented particle
 	float velocity = 0.0f;
 
+	glm::vec2 collision_direction = { 0.0f, 0.0f };
+
+	float     collision_reaction_intensity = 0.0f;
 
 };
 

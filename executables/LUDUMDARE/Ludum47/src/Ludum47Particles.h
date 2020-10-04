@@ -44,6 +44,11 @@ class RacePosition
 {
 public:
 
+	bool IsCompleted() const
+	{
+		return completed;
+	}
+
 	bool operator < (RacePosition const& src) const
 	{
 		return (current_lap < src.current_lap) ||
@@ -61,6 +66,8 @@ public:
 		return (current_lap == src.current_lap && current_road_point == src.current_road_point);
 	}
 
+	// completed
+	bool completed = false;
 	// current lap count
 	size_t current_lap = 0;
 	// last validated index

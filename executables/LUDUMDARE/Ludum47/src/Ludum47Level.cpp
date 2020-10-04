@@ -117,8 +117,13 @@ bool LudumOpponent::DoTick(float delta_time)
 
 		float angular_tweak = road->opponent_angular_tweak;
 
-		rotation += dir * delta_time * car_data.angular_velocity * angular_tweak;
-		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
+		//if (!race_position.IsCompleted())
+		{
+			rotation += dir * delta_time * car_data.angular_velocity * angular_tweak;
+			chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
+		}
+
+
 
 
 		float velocity_tweak = road->opponent_velocity_tweak;
@@ -126,6 +131,13 @@ bool LudumOpponent::DoTick(float delta_time)
 		float sf = road->GetSpeedFactor(bounding_box.position);
 
 		float target_velocity = car_data.max_velocity * sf * velocity_tweak;
+
+
+		//if (race_position.IsCompleted())
+			//target_velocity = 0.0f;
+
+
+
 
 
 		if (target_velocity > particle->velocity)
@@ -139,10 +151,7 @@ bool LudumOpponent::DoTick(float delta_time)
 
 
 
-
-		if (road->UpdateRacePosition(race_position, bounding_box.position, false) == RoadUpdateValue::END_OF_RACE)
-			allocations = nullptr;
-
+		road->UpdateRacePosition(race_position, bounding_box.position, false);
 
 		SynchronizeData(false);
 	}
@@ -487,7 +496,10 @@ RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::
 				{
 					++race_position.current_lap;
 					if (race_position.current_lap >= lap_count)
+					{
+						race_position.completed = true;
 						return RoadUpdateValue::END_OF_RACE;
+					}
 					return RoadUpdateValue::NEW_LAP;
 				}
 				return RoadUpdateValue::NEW_CHECKPOINT;

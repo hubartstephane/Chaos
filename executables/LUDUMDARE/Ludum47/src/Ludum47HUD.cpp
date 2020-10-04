@@ -34,7 +34,7 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
 		if (li != nullptr && li->road != nullptr)
 		{
 			LudumPlayer* player = GetPlayer(0);
-			if (player != nullptr)
+			if (player != nullptr && !player->race_position.IsCompleted())
 			{
 				glm::ivec2 p = li->GetPlayerRacePosition(player);
 				if (p != cached_value)
@@ -75,7 +75,7 @@ bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_allocation)
 		if (li != nullptr && li->road != nullptr)
 		{
 			LudumPlayer* player = GetPlayer(0);
-			if (player != nullptr)
+			if (player != nullptr && !player->race_position.IsCompleted())
 			{
 				glm::ivec2 v = { player->race_position.current_lap, li->road->lap_count };
 				if (v != cached_value)

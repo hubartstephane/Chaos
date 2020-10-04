@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="53" nextobjectid="2213">
+ <editorsettings>
+  <chunksize width="37" height="37"/>
+ </editorsettings>
+ <properties>
+  <property name="BACKGROUND_TEXTURE" value="background1"/>
+  <property name="CAMERA_NAME" value="TheCamera1"/>
+  <property name="CAMERA_SPEED" type="float" value="400"/>
+  <property name="HIGHWAY" type="object" value="2189"/>
+  <property name="LEVEL_TITLE">Level 1
+[LEVELTITLE Welcome Home]</property>
+  <property name="MUSIC" value="game_music2"/>
+  <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
+ </properties>
+ <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
+ <group id="40" name="Groupe 1">
+  <layer id="47" name="background" width="57" height="56" visible="0" locked="1">
+   <properties>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
+   </properties>
+   <data encoding="base64" compression="zlib">
+   eAHt0jERAAAMhDC8vH+PldElAwa4rJo8YIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQbeDBz6KLR4
+  </data>
+  </layer>
+  <layer id="52" name="background2" width="57" height="56" visible="0" locked="1">
+   <data encoding="base64" compression="zlib">
+   eAHt0bEBACAIBDGWYf8VbfjSAdDYfMvFKo8AAQIECBAgQIAAAQIECBD4VaAnPPuiQ9qyGncK5P+yOytcTYAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIE7gIHszsBKQ==
+  </data>
+  </layer>
+  <layer id="45" name="Road" width="57" height="56" locked="1">
+   <properties>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
+   </properties>
+   <data encoding="base64" compression="zlib">
+   eAHtkUEKxDAQw/qW/f8jd3OXwQst9UGBXMQwsZXr8mhAAxrQwBsGPr9H030jzxNvnn50EqfZdZa6JL7eh/KlLonTjnWWuiS+3ofypS6J044ldnL/c5eyt1nob4i1+xbnqA+xxextJupDrN23OEd9iC1mbzNRH2LtvsU56kNsMXubifoQa/ctzlEfYovZ20zUh1i7b3Hu9KG7mNVMGtCABjSgAQ1oQAMa0IAGNKABDWhAAxrQgAY0oAENaEADGtCABjRwr4Evx18HCw==
+  </data>
+  </layer>
+  <objectgroup id="50" name="Opponents">
+   <object id="2195" name="Opponent3" gid="36" x="664.001" y="2745.34" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="750"/>
+    </properties>
+   </object>
+   <object id="2205" name="Opponent3" gid="36" x="732" y="2700" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="750"/>
+    </properties>
+   </object>
+   <object id="2206" name="Opponent3" gid="36" x="662" y="2628" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="800"/>
+    </properties>
+   </object>
+   <object id="2207" name="Opponent3" gid="36" x="732" y="2586" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="850"/>
+    </properties>
+   </object>
+   <object id="2208" name="Opponent3" gid="36" x="664" y="2518" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+   <object id="2209" name="Opponent3" gid="36" x="730" y="2466" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+   <object id="2210" name="Opponent3" gid="36" x="666" y="2404" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+  </objectgroup>
+  <objectgroup id="26" name="PlayerAndCamera" visible="0" locked="1">
+   <object id="2114" name="Camera1" type="Camera" x="392.149" y="2455.01" width="574" height="368"/>
+   <object id="2186" name="PlayerStart" gid="2" x="701.636" y="2811.03" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="BITMAP_NAME" value="Player"/>
+    </properties>
+   </object>
+   <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="311" width="4536" height="3552"/>
+  </objectgroup>
+  <objectgroup id="34" name="Objects" visible="0" locked="1">
+   <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
+    <properties>
+     <property name="CHECKPOINT_SHORT_DISTANCE" type="float" value="64"/>
+     <property name="OPPONENT_ANGULAR_TWEAK" type="float" value="1"/>
+     <property name="OPPONENT_VELOCITY_TWEAK" type="float" value="0.4"/>
+     <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.5"/>
+    </properties>
+    <polygon points="0,0 0,-1296 632,-1296 1392,-1296 1412,-2068 648,-2076 636,-1282 628,-4"/>
+   </object>
+  </objectgroup>
+  <objectgroup id="51" name="Collisions" visible="0" locked="1">
+   <object id="2201" name="Collision2" type="CollisionBound" x="1409.09" y="896.97">
+    <polygon points="0,0 630.303,-3.0303 636.364,633.333 -3.0303,636.364"/>
+   </object>
+   <object id="2202" name="Collision3" type="CollisionBound" x="772.727" y="1666.67">
+    <polygon points="0,0 506.061,-3.0303 503.03,1148.48 -3.0303,1151.52"/>
+   </object>
+   <object id="2212" name="Collision1" type="CollisionBound" x="642.424" y="2948.48">
+    <polygon points="0,0 760.606,0 763.636,-1284.85 1533.33,-1284.85 1539.39,-2178.79 630.303,-2181.82 633.333,-1412.12 -3.0303,-1418.18"/>
+   </object>
+  </objectgroup>
+  <objectgroup id="48" name="SpeedIndications" visible="0" locked="1"/>
+ </group>
+</map>

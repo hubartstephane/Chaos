@@ -10,6 +10,8 @@
 #include <chaos/ParticleDefault.h>
 #include <chaos/GeometryFramework.h>
 
+#include <death/SoundContext.h>
+
 #include <death/FollowPlayerCameraComponent.h>
 #include <death/ShakeCameraComponent.h>
 #include <death/SoundListenerCameraComponent.h>
@@ -81,7 +83,25 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	death::TMLevelInstance::DoTick(delta_time);
 
 	if (effective_start_timer > 0.0f)
-		effective_start_timer = std::max(0.0f, effective_start_timer - delta_time);
+	{
+		float new_value = std::max(0.0f, effective_start_timer - delta_time);
+
+		if (effective_start_timer <= 3.0f)
+		{
+			if (int(effective_start_timer) != int(new_value))
+			{
+
+				GetGame()->PlaySound("honk", false, false, 0, death::SoundContext::GAME);
+			}
+
+		}
+
+
+
+
+
+		effective_start_timer = new_value;
+	}
 
 
 	if (completion_timer > 0.0f)

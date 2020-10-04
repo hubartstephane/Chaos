@@ -93,6 +93,12 @@ void LudumPlayer::HandleKeyboardInputs(float delta_time)
 
 void LudumPlayer::Honk()
 {
+	// do not start before the beginning
+	LudumLevelInstance* li = GetLevelInstance();
+	if (li != nullptr && li->effective_start_timer > 0.0f)
+		return;
+
+
 	if (honk_sound != nullptr)
 		return;
 	death::Game* game = GetGame();
@@ -160,10 +166,7 @@ bool LudumPlayer::DoTick(float delta_time)
 		}
 	}
 
-	// do not start before the beginning
-	LudumLevelInstance* li = GetLevelInstance();
-	if (li != nullptr && li->effective_start_timer > 0.0f)
-		return true;
+
 
 
 	if (honk_sound != nullptr)

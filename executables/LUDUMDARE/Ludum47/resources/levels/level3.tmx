@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="53" nextobjectid="2217">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="54" nextobjectid="2217">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -124,5 +124,6 @@
     </properties>
    </object>
   </objectgroup>
+  <objectgroup id="53" name="Smoke"/>
  </group>
 </map>

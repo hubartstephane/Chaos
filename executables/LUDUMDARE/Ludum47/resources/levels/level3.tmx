@@ -29,13 +29,13 @@
    eAHt0bEBACAIBDGWYf8VbfjSAdDYfMvFKo8AAQIECBAgQIAAAQIECBD4VaAnPPuiQ9qyGncK5P+yOytcTYAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIE7gIHszsBKQ==
   </data>
   </layer>
-  <layer id="45" name="Road" width="57" height="56" locked="1">
+  <layer id="45" name="Road" width="57" height="56">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtkVEKhTAQAz2L9z+k9kPYj2yhkBIqI5Qn8bHZmV4XDwYwgAEMJAzcb2k9iR12dw6+76nvX/aH38pV77Pmp3N2LF1+Im/HMvLunMbZMXYcq//v5uzKu3tZzXft55ir7kBljq7UDMWjstR+jl7FozJHV2qG4lFZaj9Hr+JRmaMrNUPxqCy1n6NX8ajM0ZWaoXhUltrP0at4VOboSs0YPKsntauzd3aPs2/OHXbPmnHMvu3eyzl/cMyOs4tZGMAABjCAAQxgAAMYwAAGMIABDGAAAxjAAAYwgAEMYAADGPijgQfQSAsp
+   eAHtl1sKwyAURF1LP9ptdWlZSpbW64epcEehUEkmHEEi4yN3zuTDlEKDAAQgAIEzCLzipY9SttpjvJ1Rw+p3hrej9eNDvMGg9xU5vmuetd8p095jH9lI79e4jEde+kxrrq075jvyOMro1/Wjc1bpkUFpebTnU2htTj3jjH1Vff84N2pOTWlpkZGg/CjNyFIqVflRWtpoJCg/SjOylEpVfpSWNhoJyo/SjCylUpUfpaWNRoLyozQjS6lU5UdpaaORoO6gs3uO491UxTHLcTanzrqqNvMxm7uqH1WX+n7DW/tP3tUeNAhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhA4EvgA21ZKe0=
   </data>
   </layer>
   <objectgroup id="50" name="Opponents" visible="0" locked="1">
@@ -84,7 +84,7 @@
    </object>
    <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="311" width="4536" height="3552"/>
   </objectgroup>
-  <objectgroup id="34" name="Objects" locked="1">
+  <objectgroup id="34" name="Objects" visible="0" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
     <properties>
      <property name="CHECKPOINT_SHORT_DISTANCE" type="float" value="64"/>
@@ -95,7 +95,7 @@
     <polygon points="0,0 0,-1296 632,-1296 2176,-1296 2176,-1548 1404,-1551 1408,-1806 1024,-1805 1018,-2068.5 638,-2066 636,-1282 628,5 630,378.5 1529,383.25 1524.5,-6.375 636,8"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions">
+  <objectgroup id="51" name="Collisions" visible="0">
    <object id="2201" name="Collision2" type="CollisionBound" x="1409.09" y="896.97">
     <polygon points="0,0 254.947,-1.22571 254.303,260.97 640.184,261.827 637.375,510.973 1417.08,503.048 1404.36,649.333 -3.0303,636.364"/>
    </object>

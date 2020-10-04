@@ -42,6 +42,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 
 	
 
+	chaos::JSONTools::GetAttribute(config, "min_velocity", car_data.min_velocity);
 	chaos::JSONTools::GetAttribute(config, "max_velocity", car_data.max_velocity);
 	chaos::JSONTools::GetAttribute(config, "acceleration", car_data.acceleration);
 	chaos::JSONTools::GetAttribute(config, "angular_velocity", car_data.angular_velocity);

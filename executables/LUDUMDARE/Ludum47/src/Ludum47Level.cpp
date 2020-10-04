@@ -26,6 +26,7 @@ bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos:
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
+	car_data.max_velocity = in_geometric_object->GetPropertyValueFloat("MIN_VELOCITY", car_data.max_velocity);
 	car_data.max_velocity = in_geometric_object->GetPropertyValueFloat("MAX_VELOCITY", car_data.max_velocity);
 	car_data.acceleration = in_geometric_object->GetPropertyValueFloat("ACCELERATION", car_data.acceleration);
 	car_data.angular_velocity = in_geometric_object->GetPropertyValueFloat("ANGULAR_VELOCITY", car_data.angular_velocity);

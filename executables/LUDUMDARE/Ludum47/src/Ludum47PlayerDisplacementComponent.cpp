@@ -158,7 +158,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 							if (!Collide(chaos::box2(std::make_pair(a, b)), extended_box))
 								continue;
 
-							if (chaos::GLMTools::Get2DCrossProductZ(velocity_vector, b - a) > 0.0f)
+							if (chaos::GLMTools::Get2DCrossProductZ(velocity_vector, b - a) < 0.0f) // CLOCKWISE
 								continue;
 
 

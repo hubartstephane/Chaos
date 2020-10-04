@@ -26,7 +26,7 @@
 LudumGame::LudumGame()
 {		
 	// 	Don't let the Flames of Hell die
-	game_name = "Aouf Run\nVIII";
+	game_name = "Aouf Run";
 	game_instructions = R"INSTRUCTIONS(
 [ButtonA] or [KEYBOARD SPACE]      : Accelerate
 [ButtonB] or [KEYBOARD CTRL]       : Break

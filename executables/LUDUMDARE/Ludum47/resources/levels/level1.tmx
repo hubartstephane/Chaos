@@ -51,14 +51,14 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera">
+  <objectgroup id="26" name="PlayerAndCamera" locked="1">
    <object id="2114" name="Camera1" type="Camera" x="384.149" y="2047.01" width="574" height="368"/>
    <object id="2186" name="PlayerStart" gid="2" x="697.636" y="2377.03" width="32" height="16" rotation="-90">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
    </object>
-   <object id="2188" name="WBB" type="WorldBoundingBox" x="136" y="168" width="4536" height="3552"/>
+   <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="311" width="4536" height="3552"/>
   </objectgroup>
   <objectgroup id="34" name="Objects" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
@@ -69,9 +69,9 @@
     <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions" locked="1">
-   <object id="2200" name="Collision1" type="CollisionBound" x="564" y="1840">
-    <polyline points="0,0 400,8"/>
+  <objectgroup id="51" name="Collisions">
+   <object id="2200" name="Collision1" type="CollisionBound" x="591" y="1984">
+    <polyline points="0,0 239,2"/>
    </object>
   </objectgroup>
   <objectgroup id="48" name="SpeedIndications" locked="1">

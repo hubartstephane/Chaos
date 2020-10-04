@@ -415,18 +415,15 @@ namespace chaos
 	{
 		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
-
-
-		glm::vec2 v1[4];
+		
 		glm::vec2 v2[4];
 
-		GetBoxVertices(src1, v1, true);
-		GetBoxVertices(src2, v2, true);
-
+		GetBoxVertices(src1, v1, true);	
 		if (HasSeparatingPlane(src1, v2, 4))
 			return false;
 
-		
+		glm::vec2 v1[4];
+		GetBoxVertices(src2, v2, true);
 		if (HasSeparatingPlane(src2, v1, 4))
 			return false;
 
@@ -476,8 +473,8 @@ namespace chaos
 #endif
 
 
-	template<typename T, int dimension>
-	bool HasSeparatingPlane(type_box<T, dimension> const & b, typename type_box<T, dimension>::vec_type const * vertices, size_t count)
+	template<typename T, int dimension, typename TRANSFORM=EmptyClass>
+	bool HasSeparatingPlane(type_box<T, dimension> const& b, typename type_box<T, dimension>::vec_type const* vertices, size_t count, TRANSFORM transform = {})
 	{
 		if (count == 0 || vertices == nullptr)
 			return false;
@@ -493,6 +490,11 @@ namespace chaos
 		// iterate over all vertices and eliminate some edges
 		for (size_t i = 0; i < count ; ++i)
 		{
+			auto vert = vertices[i];
+
+			if constexpr (std::is_same_v<TRANSFORM, glm::mat4x4>)          // shu47 : HARD coded matrixx type !!
+				vert = GLMTools::MultWithTranslation(transform, vert);
+
 			// iterate over all remaining edges (work on a copy so we can iterate)
 			int edges = edge_candidates;
 			while (edges != 0)
@@ -504,9 +506,9 @@ namespace chaos
 				int   c = edge_component[edge_index];
 				float m = edge_multiplier[edge_index];
 				float v = edge_value[edge_index];
-
-				// is edge still candidate => remove opposite edge
-				if (m * vertices[i][c] > m * v) 
+					
+				// is edge still candidate => remove opposite edge (for both global flags and current iteration, just in case it has not been checked yet)
+				if (m * vert[c] > m * v)
 				{
 					edge_candidates &= ~(1 << (edge_index ^ 1));
 					edges &= ~(1 << (edge_index ^ 1));
@@ -515,7 +517,6 @@ namespace chaos
 				else 
 				{
 					edge_candidates &= ~(1 << edge_index);
-					edges &= ~(1 << edge_index);
 				}
 				// no possible edge separator ?
 				if (edge_candidates == 0)

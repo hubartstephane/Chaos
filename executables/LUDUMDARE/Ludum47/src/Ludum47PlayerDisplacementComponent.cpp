@@ -75,12 +75,12 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-	if (collision_reaction_intensity > 0.0f)
+	if (particle.collision_reaction_intensity > 0.0f)
 	{
-		collision_reaction_intensity = std::max(0.0f, collision_reaction_intensity - car_data.reaction_decrease * delta_time);
-		if (collision_reaction_intensity > 0.0f)
+		particle.collision_reaction_intensity = std::max(0.0f, particle.collision_reaction_intensity - car_data.reaction_decrease * delta_time);
+		if (particle.collision_reaction_intensity > 0.0f)
 		{
-			velocity_vector = collision_direction * collision_reaction_intensity;
+			velocity_vector = particle.collision_direction * particle.collision_reaction_intensity;
 			particle.bounding_box.position += velocity_vector * delta_time;
 			goto skip_player_input; // :)
 
@@ -207,8 +207,8 @@ skip_player_input:
 							float c = std::cos((float)M_PI * 0.5f);
 							float s = std::sin((float)M_PI * 0.5f);
 
-							collision_direction = glm::normalize(chaos::GLMTools::Rotate(b - a, c, s));
-							collision_reaction_intensity = car_data.reaction_value * std::max(0.5f, glm::dot(collision_direction, -glm::normalize(velocity_vector)));
+							particle.collision_direction = glm::normalize(chaos::GLMTools::Rotate(b - a, c, s));
+							particle.collision_reaction_intensity = car_data.reaction_value * std::max(0.5f, glm::dot(particle.collision_direction, -glm::normalize(velocity_vector)));
 						}
 					}
 				}

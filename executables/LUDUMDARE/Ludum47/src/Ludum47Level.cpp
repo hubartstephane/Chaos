@@ -170,7 +170,9 @@ bool LudumRoad::DoTick(float delta_time)
 	{
 		LudumOpponent* opp = li->GetObject(i);
 		if (opp != nullptr)
+		{
 			opponents.push_back(opp);
+		}
 	}
 
 	if (opponents.size() == 0)
@@ -194,6 +196,12 @@ bool LudumRoad::DoTick(float delta_time)
 		{
 			LudumOpponent* opp1 = opponents[i];
 			LudumOpponent* opp2 = opponents[j];
+
+			ParticleOpponent * p1 = opp1->GetParticle<ParticleOpponent>(0);
+			ParticleOpponent * p2 = opp2->GetParticle<ParticleOpponent>(0);
+			if (p1 == nullptr || p2 == nullptr)
+				continue;
+
 
 			auto b1 = opp1->GetBoundingBox(true);
 			auto b2 = opp2->GetBoundingBox(true);

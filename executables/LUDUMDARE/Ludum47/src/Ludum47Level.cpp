@@ -72,6 +72,16 @@ bool LudumOpponent::DoTick(float delta_time)
 	ParticleOpponent* particle = GetParticle<ParticleOpponent>(0);
 	if (particle != nullptr)
 	{
+
+
+
+
+
+
+
+
+		//
+
 		RoadPoint const& target = road->points[(race_position.current_road_point + 1) % road_point_count];
 
 		float wr = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
@@ -102,21 +112,12 @@ bool LudumOpponent::DoTick(float delta_time)
 		float target_velocity = car_data.max_velocity * sf * velocity_tweak;
 
 
-		if (target_velocity > velocity)
-			velocity = std::min(target_velocity, velocity + car_data.acceleration * delta_time * velocity_tweak);
+		if (target_velocity > particle->velocity)
+			particle->velocity = std::min(target_velocity, particle->velocity + car_data.acceleration * delta_time * velocity_tweak);
 		else
-			velocity = target_velocity; // immediate break
+			particle->velocity = target_velocity; // immediate break
 
-		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * velocity;
-
-
-
-
-
-
-
-
-
+		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * particle->velocity;
 
 		if (road->UpdateRacePosition(race_position, bounding_box.position, false) == RoadUpdateValue::END_OF_RACE)
 			allocations = nullptr;
@@ -209,12 +210,16 @@ bool LudumRoad::DoTick(float delta_time)
 
 			// raw evaluation 
 			if (!Collide(GetBoundingSphere(ob1), GetBoundingSphere(ob2)))   // shu47 : peut etre faire une fonction dediée pour eviter les [2 x sqrtf] pour les creations de bounding sphere
-				continue;
-
-
-		
+				continue;		
 			if (!Collide(ob1, ob2))
 				continue;
+
+
+
+
+
+
+
 
 
 		

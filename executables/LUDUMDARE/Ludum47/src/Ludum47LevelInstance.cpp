@@ -22,6 +22,9 @@ bool LudumCameraComponent::DoTick(float delta_time)
 
 
 
+
+
+
 	LudumPlayer const* player = GetPlayer(0);
 	if (player != nullptr)
 	{
@@ -78,6 +81,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	death::TMLevelInstance::DoTick(delta_time);
 
 
+	if (completion_timer > 0.0f)
+		completion_timer = std::max(0.0f, completion_timer - delta_time);
+
 
 	return true;
 }
@@ -128,9 +134,14 @@ bool LudumLevelInstance::CheckLevelCompletion() const
 	LudumPlayer const * ludum_player = GetPlayer(0);
 	if (ludum_player != nullptr && ludum_level != nullptr)
 	{
-
-
-
+		if (ludum_player->race_position.IsCompleted())
+		{
+			if (completion_timer < 0.0f)
+			{
+				completion_timer = completion_delay; // forced to be mutable !??
+			}
+			return true;
+		}
 	}
 	return false;
 }

@@ -7,6 +7,117 @@
 #include <chaos/WrapMode.h>
 #include <death/PlayerPawn.h>
 
+
+
+
+
+void LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & particle, LudumLevelInstance* li, CarData const& car_data)
+{
+
+	// update velocity to indicates our intention to collision code
+	glm::vec2 velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
+
+
+
+
+	// search collision
+
+	// shu47 : conversion automatic     obox2 <=> box2 ???
+
+
+
+	// while there may be a rotation, we have to extend the ALIGNED box for raw test
+	chaos::box2 extended_box = GetBoundingBox(GetBoundingSphere(particle.bounding_box));
+
+
+	// points in LudumCollision will be transformed into a referencial where the PLAYER BOX is at center
+	chaos::box2 transformed_box;
+	transformed_box.position = { 0.0f, 0.0f };
+	transformed_box.half_size = particle.bounding_box.half_size;
+
+	glm::mat4x4 transform =
+		chaos::GetRotatorMatrix(-particle.rotation) *
+		glm::translate(glm::vec3(-particle.bounding_box.position, 0.0f));
+
+
+	chaos::obox2 player_obox;
+	player_obox.position = particle.bounding_box.position;
+	player_obox.half_size = particle.bounding_box.half_size;
+	player_obox.rotator = particle.rotation;
+
+
+	glm::vec2 player_box_vertices[4];
+	GetBoxVertices(player_obox, player_box_vertices, true);
+
+
+	if (li != nullptr)
+	{
+		death::TMLayerInstance* layer = li->FindLayerInstance("Collisions");
+		if (layer != nullptr)
+		{
+			size_t count = layer->GetObjectCount();
+			for (size_t i = 0; i < count; ++i)
+			{
+				LudumCollision* col = layer->GetObject(i);
+				if (col != nullptr && col->points.size() >= 2)
+				{
+					if (chaos::Collide(col->internal_bounding_box, extended_box)) // raw collision check
+					{
+						size_t pcount = col->points.size();
+						for (size_t k = 0; k < pcount - 1; ++k)
+						{
+							glm::vec2 const& a = col->points[k];
+							glm::vec2 const& b = col->points[k + 1];
+							if (a == b)
+								continue;
+
+							if (!Collide(chaos::box2(std::make_pair(a, b)), extended_box))
+								continue;
+
+							if (chaos::GLMTools::Get2DCrossProductZ(velocity_vector, b - a) < 0.0f) // CLOCKWISE
+								continue;
+
+							if (chaos::HasSeparatingPlane(transformed_box, &a, 2, false, transform))
+								continue;
+							if (chaos::IsSeparatingPlane(a, b, player_box_vertices, 4))
+								continue;
+
+							particle.velocity = 0;
+
+							float c = std::cos((float)M_PI * 0.5f);
+							float s = std::sin((float)M_PI * 0.5f);
+
+							particle.collision_direction = glm::normalize(chaos::GLMTools::Rotate(b - a, c, s));
+
+
+							// the intensity of the collision depends on the VELOCITY, but in case the VELOCITY is too small, use a minimal value (0.5 x MAX)
+
+							float intensity = std::max(glm::abs(particle.velocity), car_data.max_velocity * 0.5f);
+
+							particle.collision_reaction_intensity = intensity * car_data.reaction_value * std::max(0.5f, glm::dot(particle.collision_direction, -glm::normalize(velocity_vector)));
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
 	death::PlayerDisplacementComponent::DoTick(delta_time);
@@ -125,95 +236,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	particle.velocity = std::clamp(particle.velocity, car_data.min_velocity * velocity_tweak, car_data.max_velocity * velocity_tweak);
 
 
-	// update velocity to indicates our intention to collision code
-	velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
-
-
-
-
-	// search collision
-
-	// shu47 : conversion automatic     obox2 <=> box2 ???
-
-
-
-	// while there may be a rotation, we have to extend the ALIGNED box for raw test
-	chaos::box2 extended_box = GetBoundingBox(GetBoundingSphere(particle.bounding_box));
-
-
-	// points in LudumCollision will be transformed into a referencial where the PLAYER BOX is at center
-	chaos::box2 transformed_box;
-	transformed_box.position = { 0.0f, 0.0f };
-	transformed_box.half_size = particle.bounding_box.half_size;
-
-	glm::mat4x4 transform = 
-		chaos::GetRotatorMatrix(-particle.rotation) * 
-		glm::translate(glm::vec3(-particle.bounding_box.position, 0.0f));
-
-
-	chaos::obox2 player_obox;
-	player_obox.position  = particle.bounding_box.position;
-	player_obox.half_size = particle.bounding_box.half_size;
-	player_obox.rotator   = particle.rotation;
-
-
-	glm::vec2 player_box_vertices[4];
-	GetBoxVertices(player_obox, player_box_vertices, true);
-
 	LudumLevelInstance* li = GetLevelInstance();
-	if (li != nullptr)
-	{
-		death::TMLayerInstance* layer = li->FindLayerInstance("Collisions");
-		if (layer != nullptr)
-		{
-			size_t count = layer->GetObjectCount();
-			for (size_t i = 0; i < count; ++i)
-			{
-				LudumCollision* col = layer->GetObject(i);
-				if (col != nullptr && col->points.size() >= 2)
-				{
-					if (chaos::Collide(col->internal_bounding_box, extended_box)) // raw collision check
-					{
-						size_t pcount = col->points.size();
-						for (size_t k = 0; k < pcount - 1; ++k)
-						{
-							glm::vec2 const& a = col->points[k];
-							glm::vec2 const& b = col->points[k + 1];
-							if (a == b)
-								continue;
 
-							if (!Collide(chaos::box2(std::make_pair(a, b)), extended_box))
-								continue;
-
-							if (chaos::GLMTools::Get2DCrossProductZ(velocity_vector, b - a) < 0.0f) // CLOCKWISE
-								continue;
-
-							if (chaos::HasSeparatingPlane(transformed_box, &a, 2, false, transform))
-								continue;
-							if (chaos::IsSeparatingPlane(a, b, player_box_vertices, 4))
-								continue;
-
-							particle.velocity = 0;
-
-							float c = std::cos((float)M_PI * 0.5f);
-							float s = std::sin((float)M_PI * 0.5f);
-
-							particle.collision_direction = glm::normalize(chaos::GLMTools::Rotate(b - a, c, s));
-
-
-							// the intensity of the collision depends on the VELOCITY, but in case the VELOCITY is too small, use a minimal value (0.5 x MAX)
-
-							float intensity = std::max(glm::abs(particle.velocity), car_data.max_velocity * 0.5f);
-					
-							particle.collision_reaction_intensity = intensity * car_data.reaction_value * std::max(0.5f, glm::dot(particle.collision_direction, -glm::normalize(velocity_vector)));
-						}
-					}
-				}
-			}
-		}
-	}
-
-
-
+	ComputeBorderCollision(particle, li, car_data);
+	
 	return true;
 }

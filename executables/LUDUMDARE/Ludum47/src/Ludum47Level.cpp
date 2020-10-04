@@ -3,6 +3,7 @@
 #include "Ludum47Game.h"
 #include "Ludum47Player.h"
 #include "Ludum47GameInstance.h"
+#include "Ludum47PlayerDisplacementComponent.h"
 
 #include <chaos/GLMTools.h>
 #include <chaos/ParticleDefault.h>
@@ -285,6 +286,28 @@ bool LudumRoad::DoTick(float delta_time)
 		if (p1 == nullptr)
 			continue;
 
+		// -----------------------------------------------------------------------
+
+		LudumLevelInstance* lli = li->GetLevelInstance();
+
+		LudumPlayerDisplacementComponent::ComputeBorderCollision(*p1, lli, opp1->car_data);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// -----------------------------------------------------------------------
 		if (player_particle != nullptr)
 		{
 			glm::vec2 vel_dir1 = p1->velocity * glm::vec2(std::cos(p1->rotation), std::sin(p1->rotation));

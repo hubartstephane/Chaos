@@ -86,6 +86,6 @@ public:
 
 
 	mutable float completion_timer = -1.0f; // shu47 : due to Checkcomplete constness !!
-	float completion_delay = 3.0f;
+	float completion_delay = 5.0f;
 
 };

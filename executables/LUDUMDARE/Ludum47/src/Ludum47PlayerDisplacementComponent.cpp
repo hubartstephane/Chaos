@@ -158,6 +158,32 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	particle.break_pressed = player->CheckButtonPressed(break_keys, chaos::XBoxButton::BUTTON_B);
 
 
+
+
+	if (player->race_position.IsCompleted())
+	{
+		stick_position = { 0.0f , 0.0f };
+		particle.accelerate_pressed = particle.break_pressed = false;
+
+
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	CarData const& car_data = player->car_data;
 
 	chaos::box2 & pawn_box = particle.bounding_box;

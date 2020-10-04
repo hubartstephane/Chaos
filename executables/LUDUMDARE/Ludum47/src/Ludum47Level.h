@@ -70,6 +70,8 @@ protected:
 
 	virtual void OnLevelStarted() override;
 
+	virtual bool DoTick(float delta_time) override;
+
 public:
 
 	std::vector<RoadPoint> points;

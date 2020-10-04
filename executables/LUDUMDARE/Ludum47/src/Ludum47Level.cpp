@@ -147,6 +147,102 @@ bool LudumSpeedIndication::Initialize(death::TMLayerInstance* in_layer_instance,
 // =============================================================
 
 
+bool LudumRoad::DoTick(float delta_time)
+{
+	if (!death::TMObject::DoTick(delta_time))
+		return false;
+
+	// seach all opponents
+	LudumLevelInstance * level_instance = layer_instance->GetLevelInstance();
+	if (level_instance == nullptr)
+		return true;
+
+
+	death::TMLayerInstance * li = level_instance->FindLayerInstance("Opponents");
+	if (li == nullptr)
+		return true;
+
+	std::vector<LudumOpponent*> opponents;
+	
+	size_t object_count = li->GetObjectCount();
+	for (size_t i = 0; i < object_count; ++i)
+	{
+		LudumOpponent* opp = li->GetObject(i);
+		if (opp != nullptr)
+			opponents.push_back(opp);
+	}
+
+	if (opponents.size() == 0)
+		return true;
+
+	// search player
+	LudumPlayer* player = level_instance->GetPlayer(0);
+
+	ParticlePlayer* player_particle = (player != nullptr) ? player->GetPlayerParticle() : nullptr;
+
+
+
+
+	
+
+	// for each pair of opponents
+	size_t opponent_count = opponents.size();
+	for (size_t i = 0; i < opponent_count - 1; ++i)
+	{
+		for (size_t j = i + 1 ; j < opponent_count ; ++j)
+		{
+			LudumOpponent* opp1 = opponents[i];
+			LudumOpponent* opp2 = opponents[j];
+
+			auto b1 = opp1->GetBoundingBox(true);
+			auto b2 = opp2->GetBoundingBox(true);
+
+			chaos::obox2 ob1;
+			ob1.position = b1.position;
+			ob1.half_size = b1.half_size;
+			ob1.rotator = opp1->GetRotation();
+
+			chaos::obox2 ob2;
+			ob2.position = b2.position;
+			ob2.half_size = b2.half_size;
+			ob2.rotator = opp2->GetRotation();
+
+			// raw evaluation 
+			if (!Collide(GetBoundingSphere(ob1), GetBoundingSphere(ob2)))   // shu47 : peut etre faire une fonction dediée pour eviter les [2 x sqrtf] pour les creations de bounding sphere
+				continue;
+
+
+		
+			if (!Collide(ob1, ob2))
+				continue;
+
+
+		
+
+			opp1->SynchronizeData(false);
+			opp2->SynchronizeData(false);
+		}
+	}
+
+
+
+
+
+	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
 {
 	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))

@@ -12,4 +12,10 @@ protected:
 
 	/** override */
 	virtual bool DoTick(float delta_time) override;
+
+
+protected:
+
+	glm::vec2 collision_direction = { 0.0f, 0.0f };
+	float     collision_reaction_intensity = 0.0f;
 };

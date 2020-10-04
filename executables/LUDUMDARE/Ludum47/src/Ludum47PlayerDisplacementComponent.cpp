@@ -55,10 +55,14 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	float angular_tweak = player->road->player_angular_tweak;
 
+	glm::vec2 direction = glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
+
 	if (particle.velocity > 0.0f)
 	{
 		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x * angular_tweak;
 		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, particle.rotation);
+
+		particle.bounding_box.position += particle.velocity * direction * delta_time;
 	}
 
 	float velocity_tweak = player->road->player_velocity_tweak;
@@ -77,12 +81,8 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		else
 			particle.velocity -= delta_time * car_data.normal_deceleration * velocity_tweak;
 
-
-
 		particle.velocity = std::max(particle.velocity, 0.0f);
 	}
-
-
 
 	particle.velocity = std::min(particle.velocity, car_data.max_velocity * velocity_tweak);
 
@@ -130,8 +130,38 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 				{
 					if (chaos::Collide(col->internal_bounding_box, extended_box)) // raw collision check
 					{
+						size_t pcount = col->points.size();
+						for (size_t k = 0; k < pcount - 1; ++k)
+						{
+							glm::vec2 const& a = col->points[k];
+							glm::vec2 const& b = col->points[k + 1];
+							if (a == b)
+								continue;
+
+							if (!Collide(chaos::box2(std::make_pair(a, b)), extended_box))
+								continue;
+
+							if (chaos::GLMTools::Get2DCrossProductZ(direction, b - a) > 0.0f)
+								continue;
 
 
+							if (chaos::HasSeparatingPlane(transformed_box, &a, 2, false, transform))
+								continue;
+							if (chaos::IsSeparatingPlane(a, b, player_box_vertices, 4))
+								continue;
+
+							particle.velocity = 0.0f;
+
+							k = k;
+
+
+						}
+
+
+
+
+
+#if 0
 
 						if (chaos::HasSeparatingPlane(transformed_box, &col->points[0], col->points.size(), false, transform))
 							continue;
@@ -156,6 +186,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 						}
 
 						col = col;
+
+#endif
+
+
 					}
 				}
 			}

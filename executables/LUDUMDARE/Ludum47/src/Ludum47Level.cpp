@@ -73,6 +73,23 @@ bool LudumOpponent::DoTick(float delta_time)
 	if (particle != nullptr)
 	{
 
+		if (particle->collision_reaction_intensity > 0.0f)
+		{
+			particle->collision_reaction_intensity = std::max(0.0f, particle->collision_reaction_intensity - car_data.reaction_decrease * delta_time);
+			if (particle->collision_reaction_intensity > 0.0f)
+			{
+				glm::vec2 velocity_vector = particle->collision_direction * particle->collision_reaction_intensity;
+				
+				
+				//particle->bounding_box.position += velocity_vector * delta_time;
+
+				bounding_box.position += velocity_vector * delta_time;
+				
+				
+				//goto skip_opponent_input; // :)
+
+			}
+		}
 
 
 
@@ -118,6 +135,8 @@ bool LudumOpponent::DoTick(float delta_time)
 			particle->velocity = target_velocity; // immediate break
 
 		bounding_box.position += glm::vec2(std::cos(rotation), std::sin(rotation)) * delta_time * particle->velocity;
+
+skip_opponent_input:
 
 		if (road->UpdateRacePosition(race_position, bounding_box.position, false) == RoadUpdateValue::END_OF_RACE)
 			allocations = nullptr;
@@ -202,6 +221,11 @@ bool LudumRoad::DoTick(float delta_time)
 			if (p1 == nullptr || p2 == nullptr)
 				continue;
 
+			glm::vec2 vel_dir1 = p1->velocity * glm::vec2(std::cos(p1->rotation), std::sin(p1->rotation));
+			glm::vec2 vel_dir2 = p2->velocity * glm::vec2(std::cos(p2->rotation), std::sin(p2->rotation));
+			if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
+				continue;
+
 
 			auto b1 = opp1->GetBoundingBox(true);
 			auto b2 = opp2->GetBoundingBox(true);
@@ -223,7 +247,17 @@ bool LudumRoad::DoTick(float delta_time)
 				continue;
 
 
+			glm::vec2 dp = p2->bounding_box.position - p1->bounding_box.position;
 
+
+
+			p1->collision_direction = glm::normalize(-dp);
+			p2->collision_direction = glm::normalize(dp);
+
+			p1->collision_reaction_intensity = opp1->car_data.reaction_value;
+			p2->collision_reaction_intensity = opp2->car_data.reaction_value;
+
+		//	p1->velocity = p2->velocity = 0.0f;
 
 
 

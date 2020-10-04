@@ -35,7 +35,7 @@ public:
 
     void SoundCollision();
 
-    void SpawnSmokeParticles(size_t count);
+    void SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chaos::obox2 const& ob);
 
 protected:
 
@@ -74,5 +74,8 @@ public:
     float collision_health_lost = 1.0f;
 
     CarData car_data;
+
+    ParticleSpawnerDelay spawner_delay;
+
 };
 

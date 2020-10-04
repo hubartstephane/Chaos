@@ -27,7 +27,7 @@ bool ParticleSmokeLayerTrait::UpdateParticle(float delta_time, ParticleSmoke& pa
 		return true;
 
 
-	particle.bounding_box.half_size = (0.5f + 0.5f * (1.0f - (particle.lifetime / particle.duration))) * glm::vec2(16.0f , 16.0f);
+	particle.bounding_box.half_size = (0.2f + 0.8f * (1.0f - (particle.lifetime / particle.duration))) * glm::vec2(16.0f , 16.0f);
 	particle.bounding_box.position += particle.velocity * delta_time;
 
 	float c = 0.7f * (particle.lifetime / particle.duration);

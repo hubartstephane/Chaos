@@ -32,6 +32,11 @@ namespace death
 
 		// shu47 
 
+
+		chaos::obox2 GetOBox() const;
+
+
+
 		/** Get the rotation of the entity */
 		virtual float GetRotation() const;
 		/** Set the rotation of the entity */

@@ -17,6 +17,29 @@
 // LudumSpeedIndication
 // =================================================
 
+class ParticleSpawnerDelay
+{
+public:
+
+	int GetSpawnCount(float delta_time);
+
+	int max_spawned_particles = -1;
+
+	float spawn_per_second = 10.0f;
+
+	int spawned_count = 0;
+	float nospawn_time_cumulated = 0.0f; // accumulated time from previous frames with no spawn
+
+	bool emission_started = true;
+
+	
+};
+
+
+// =================================================
+// LudumSpeedIndication
+// =================================================
+
 class LudumSpeedIndication : public death::TMObject
 {
 	CHAOS_OBJECT_DECLARE_CLASS2(LudumSpeedIndication, death::TMObject);

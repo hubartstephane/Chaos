@@ -175,7 +175,7 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 	for (glm::vec2 const& p : *src_points)
 	{
 		RoadPoint rp;
-		rp.position = p + offset + this->GetPosition(); // expressed in world system !
+		rp.position = p + offset + GetPosition(); // expressed in world system !
 		rp.speed_factor = point_speed_factor;
 		points.push_back(rp);
 	}
@@ -292,6 +292,12 @@ bool LudumCollision::Initialize(death::TMLayerInstance* in_layer_instance, chaos
 	{
 		points = pl->points;
 	}
+
+	// express points in world coordinates
+	for (auto & p : points)
+		p = p + in_layer_instance->GetLayerOffset() + GetPosition();
+
+
 	// compute the bounding box
 	if (points.size() > 0)
 	{
@@ -299,8 +305,6 @@ bool LudumCollision::Initialize(death::TMLayerInstance* in_layer_instance, chaos
 		internal_bounding_box.half_size = { 0, 0 };
 		for (auto const& p : points)
 			chaos::ExtendBox(internal_bounding_box, p);
-
-		internal_bounding_box.position += GetPosition();
 	}
 
 

@@ -67,6 +67,10 @@ Fix WrapMode::Wrap avec float
 
 Calcul du Mask de Collision ComputeLayerCollisionMask devrait etre dans TMLevel et pas TMLayerInstance => on ne derrive jamais TMLayerInstance (on devrait ??)
 
+Revoir geometry de collision :
+
+conversion automatic de box2 => obox ??
 
 
 #endif
+

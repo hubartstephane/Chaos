@@ -88,6 +88,23 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 	// search collision
+
+	// shu47 : conversion automatic
+
+	chaos::obox2 player_obox;
+	player_obox.position = particle.bounding_box.position;
+	player_obox.half_size = particle.bounding_box.half_size;
+	player_obox.rotator = particle.rotation;
+
+
+	chaos::box2 transformed_box;
+	transformed_box.position = { 0.0f, 0.0f };
+	transformed_box.half_size = particle.bounding_box.half_size;
+
+	glm::mat4x4 transform = 
+		chaos::GetRotatorMatrix(-particle.rotation) * 
+		glm::translate(glm::vec3(-particle.bounding_box.position, 0.0f));
+
 	LudumLevelInstance* li = GetLevelInstance();
 	if (li != nullptr)
 	{
@@ -98,10 +115,65 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 			for (size_t i = 0; i < count; ++i)
 			{
 				LudumCollision* col = layer->GetObject(i);
-				if (col != nullptr)
+				if (col != nullptr && col->points.size() >= 2)
 				{
-					if (chaos::Collide(col->internal_bounding_box, particle.bounding_box))
+
+
+
+
+
+//					if (chaos::Collide(col->internal_bounding_box, particle.bounding_box))
 					{
+
+						size_t pcount = col->points.size();
+						for (size_t i = 0; i < pcount - 1; ++i)
+						{
+							glm::vec2 const& a = col->points[i];
+							glm::vec2 const& b = col->points[i + 1];
+							if (a == b)
+								continue;
+
+							if (!chaos::HasSeparatingPlane(transformed_box, &col->points[0], col->points.size(), transform))
+							{
+
+
+
+								i = i;
+							}
+
+
+
+
+
+
+
+
+
+
+
+
+						}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 						col = col;
 					}
@@ -110,22 +182,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//pawn->SetBoundingBox(pawn_box);
 
 
 	return true;

@@ -44,6 +44,15 @@ protected:
 
 	/** override */
 	virtual bool UpdateCachedValue(bool& destroy_allocation) override;
+	/** override */
+	virtual bool DoTick(float delta_time) override;
+
+
+	float current_dt = 0.0f;
+
+	float blink_timer = 0.0f;
+
+	bool blink_value = false;
 };
 
 
@@ -68,6 +77,9 @@ protected:
 
 	/** override */
 	virtual bool UpdateCachedValue(bool& destroy_allocation) override;
+
+
+
 };
 
 

@@ -42,9 +42,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	stick_position.y = -stick_position.y; // Y stick is inverted
 
 	int const accelerate_keys[] = { GLFW_KEY_SPACE, -1 };
-	bool accelerate_pressed = player->CheckButtonPressed(accelerate_keys, chaos::XBoxButton::BUTTON_A);
-	int const break_keys[] = { GLFW_KEY_SPACE, -1 };
-	bool break_pressed = player->CheckButtonPressed(break_keys, chaos::XBoxButton::BUTTON_B);
+	particle.accelerate_pressed = player->CheckButtonPressed(accelerate_keys, chaos::XBoxButton::BUTTON_A);
+	int const break_keys[] = { GLFW_KEY_LEFT_CONTROL, -1 };
+	particle.break_pressed = player->CheckButtonPressed(break_keys, chaos::XBoxButton::BUTTON_B);
 
 
 	CarData const& car_data = player->car_data;
@@ -55,36 +55,53 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	float angular_tweak = player->road->player_angular_tweak;
 
-	glm::vec2 direction = glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
 
-	if (particle.velocity > 0.0f)
+
+	// update position BEFORE velocity so that we are sure that we cannot force ourt way through a collider
+
+	glm::vec2 velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
+
+	if (particle.velocity != 0.0f)
 	{
 		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x * angular_tweak;
 		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, particle.rotation);
 
-		particle.bounding_box.position += particle.velocity * direction * delta_time;
+		particle.bounding_box.position += velocity_vector * delta_time;
 	}
 
 	float velocity_tweak = player->road->player_velocity_tweak;
 	
 
-	if (accelerate_pressed)
+	// compute wanted velocity 
+
+	if (particle.accelerate_pressed)
 	{
 		particle.velocity += delta_time * car_data.acceleration * velocity_tweak;
-
-
 	}
 	else
 	{
-		if (break_pressed)
-			particle.velocity -= delta_time * car_data.break_deceleration * velocity_tweak;
+		if (particle.break_pressed)
+		{
+			if (particle.velocity > 0.0f)
+				particle.velocity -= delta_time * car_data.break_deceleration * velocity_tweak;
+			else
+				particle.velocity -= delta_time * car_data.acceleration * velocity_tweak;
+		}
 		else
-			particle.velocity -= delta_time * car_data.normal_deceleration * velocity_tweak;
-
-		particle.velocity = std::max(particle.velocity, 0.0f);
+		{
+			if (particle.velocity > 0.0f)
+				particle.velocity = std::max(0.0f, particle.velocity - delta_time * car_data.normal_deceleration * velocity_tweak);
+			else if (particle.velocity < 0.0f)
+				particle.velocity = std::min(0.0f, particle.velocity + delta_time * car_data.normal_deceleration * velocity_tweak);			
+		}
 	}
 
-	particle.velocity = std::min(particle.velocity, car_data.max_velocity * velocity_tweak);
+	particle.velocity = std::clamp(particle.velocity, car_data.min_velocity * velocity_tweak, car_data.max_velocity * velocity_tweak);
+
+
+	// update velocity to indicates our intention to collision code
+	velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
+
 
 
 	// search collision
@@ -141,7 +158,7 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 							if (!Collide(chaos::box2(std::make_pair(a, b)), extended_box))
 								continue;
 
-							if (chaos::GLMTools::Get2DCrossProductZ(direction, b - a) > 0.0f)
+							if (chaos::GLMTools::Get2DCrossProductZ(velocity_vector, b - a) > 0.0f)
 								continue;
 
 

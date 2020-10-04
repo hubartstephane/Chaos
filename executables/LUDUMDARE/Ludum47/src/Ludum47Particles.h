@@ -12,14 +12,6 @@
 
 
 
-namespace death
-{
-	namespace CollisionMask
-	{
-		static constexpr int LUDUM_COLLISION = (1 << 2);
-	};
-
-}; // namespace death
 
 // ===========================================================================
 // the car values
@@ -29,6 +21,7 @@ class CarData
 {
 public: 
 
+	float min_velocity = -50.0f;
 	float max_velocity = 200.0f;
 	float acceleration = 50.0f;
 	float angular_velocity = 3.14f;
@@ -85,6 +78,10 @@ public:
 
 	// velocity length in direction of the oriented particle
 	float velocity = 0.0f;
+
+	bool accelerate_pressed = false;
+
+	bool break_pressed = false;
 };
 
 

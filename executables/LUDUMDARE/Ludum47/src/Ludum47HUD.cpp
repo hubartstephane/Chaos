@@ -96,8 +96,18 @@ bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_allocation)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
+
+	// directely call GameHUD super instead of PlayingHUD to avoid the score
+
+#if 0
 	if (!death::PlayingHUD::FillHUDContent())
 		return false;	
+#else
+	// call super method
+	if (!death::GameHUD::FillHUDContent())
+		return false;
+	//RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
+#endif
 
 	RegisterComponent(death::GameHUDKeys::RACE_POSITION_ID, new GameHUDRacePositionComponent());
 	RegisterComponent(death::GameHUDKeys::RACE_LAPS_ID, new GameHUDRaceLapsComponent());

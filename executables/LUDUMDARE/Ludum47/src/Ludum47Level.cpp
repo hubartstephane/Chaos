@@ -227,7 +227,6 @@ bool LudumRoad::DoTick(float delta_time)
 			if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
 				continue;
 
-
 			auto b1 = opp1->GetBoundingBox(true);
 			auto b2 = opp2->GetBoundingBox(true);
 
@@ -260,6 +259,73 @@ bool LudumRoad::DoTick(float delta_time)
 			opp1->SynchronizeData(false);
 			opp2->SynchronizeData(false);
 		}
+	}
+
+	// each opponent -> LudumCollision or player
+
+
+
+	for (size_t i = 0; i < opponent_count; ++i)
+	{
+		LudumOpponent* opp1 = opponents[i];
+
+		ParticleOpponent* p1 = opp1->GetParticle<ParticleOpponent>(0);
+		if (p1 == nullptr)
+			continue;
+
+
+
+
+
+
+
+
+
+
+		if (player_particle != nullptr)
+		{
+			glm::vec2 vel_dir1 = p1->velocity * glm::vec2(std::cos(p1->rotation), std::sin(p1->rotation));
+			glm::vec2 vel_dir2 = player_particle->velocity * glm::vec2(std::cos(player_particle->rotation), std::sin(player_particle->rotation));
+			if (glm::dot(vel_dir1, vel_dir2) < 0.0f) // already getting away from one another
+				continue;
+
+			auto b1 = opp1->GetBoundingBox(true);
+			auto b2 = player_particle->bounding_box;
+
+			chaos::obox2 ob1;
+			ob1.position = b1.position;
+			ob1.half_size = b1.half_size;
+			ob1.rotator = opp1->GetRotation();
+
+			chaos::obox2 ob2;
+			ob2.position = b2.position;
+			ob2.half_size = b2.half_size;
+			ob2.rotator = player_particle->rotation;
+
+			// raw evaluation 
+			if (!Collide(GetBoundingSphere(ob1), GetBoundingSphere(ob2)))   // shu47 : peut etre faire une fonction dediée pour eviter les [2 x sqrtf] pour les creations de bounding sphere
+				continue;
+			if (!Collide(ob1, ob2))
+				continue;
+
+			glm::vec2 dp = player_particle->bounding_box.position - p1->bounding_box.position;
+
+			p1->collision_direction = glm::normalize(-dp);
+			player_particle->collision_direction = glm::normalize(dp);
+
+			float col_factor = std::max(0.7f, 1.0f - glm::dot(glm::normalize(vel_dir1), glm::normalize(vel_dir2)));
+
+			p1->collision_reaction_intensity = opp1->car_data.reaction_value * col_factor;
+			player_particle->collision_reaction_intensity = player->car_data.reaction_value * col_factor;
+
+			opp1->SynchronizeData(false);
+
+		}
+
+
+
+
+
 	}
 
 

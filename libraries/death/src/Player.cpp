@@ -332,19 +332,24 @@ namespace death
         // special FX
         if (old_health > new_health && !invulnerable)
         {
-			// force feedback effect
-			if (gamepad != nullptr)
-				gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
-			// camera effect
-            death::Camera* camera = GetLevelInstance()->GetCamera(0);
-            if (camera != nullptr)
-            {
-                death::ShakeCameraComponent* shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
-                if (shake_component != nullptr)
-                    shake_component->RestartModifier();
-            }
+			PlayHealthChangedEffects(old_health > new_health);
         }
     }
+
+	void Player::PlayHealthChangedEffects(bool health_lost)
+	{
+		// force feedback effect
+		if (gamepad != nullptr)
+			gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
+		// camera effect
+		death::Camera* camera = GetLevelInstance()->GetCamera(0);
+		if (camera != nullptr)
+		{
+			death::ShakeCameraComponent* shake_component = camera->FindComponentByClass<death::ShakeCameraComponent>();
+			if (shake_component != nullptr)
+				shake_component->RestartModifier();
+		}
+	}
 
 	bool Player::IsDead() const
 	{

@@ -136,6 +136,9 @@ namespace death
         /** called whenever health is changed */
         virtual void OnHealthChanged(float old_health, float new_health, bool invulnerable);
 
+		/** the effects for life changes */
+		virtual void PlayHealthChangedEffects(bool health_lost);
+
 	protected:
 
 		/** the game instance owning the player */

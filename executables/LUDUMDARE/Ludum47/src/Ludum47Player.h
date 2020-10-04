@@ -48,9 +48,17 @@ protected:
     /** override */
     virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
 
+
+
+    void Honk();
+
 public:
 
     chaos::shared_ptr<LudumRoad> road;
+
+    chaos::shared_ptr<chaos::Sound> honk_sound;
+    bool was_honk_pressed_keyboard = false;
+    bool was_honk_pressed_gamepad = false;
 
     RacePosition race_position;
 

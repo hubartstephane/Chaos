@@ -75,5 +75,26 @@ conversion automatic de box2 => obox ??
 introduce     typename type_vec<T, dimension>      it does not exists !!!
 
 
+
+
+gpd->IsButtonPressed(...) => gamepad peut connaitre la frame d avant
+CheckKeyPressed(...) => le clavier ne peut pas connaire la frame d avant
+
+
+
+
+
+
+deux fonctions => repetitions de code => on pourrait essayer d'unifier ca non ? 
+
+void LudumPlayer::InternalHandleGamepadInputs(...)
+void LudumPlayer::HandleKeyboardInputs()
+
+Demande de touches generique manette/clavier
+
+
+
+
+
 #endif
 

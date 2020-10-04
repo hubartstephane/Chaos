@@ -18,6 +18,42 @@
 
 
 
+
+int ParticleSpawnerDelay::GetSpawnCount(float delta_time)
+{
+
+	if (!emission_started)
+		return 0;
+	// nothing to spawn
+	if (spawn_per_second <= 0.0f)
+		return 0;
+	// already all particles have been spawned
+	if (max_spawned_particles > 0 && spawned_count >= max_spawned_particles)
+		return 0;
+
+	// compute the number of particles to spawn
+	int count = int(spawn_per_second * (delta_time + nospawn_time_cumulated));
+
+	if (count == 0)
+	{
+		nospawn_time_cumulated += delta_time;
+	}
+	else
+	{
+		spawned_count += count;
+		nospawn_time_cumulated = 0.0f;
+	}
+	return count;
+}
+	
+
+
+
+
+
+
+
+
 // =============================================================
 // LudumOpponent implementation
 // =============================================================

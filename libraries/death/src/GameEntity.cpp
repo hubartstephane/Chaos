@@ -32,6 +32,18 @@ namespace death
 
 	// shu47
 
+	chaos::obox2 GameEntity::GetOBox() const
+	{
+		chaos::box2 ob = GetBoundingBox();
+
+		chaos::obox2 result;
+		result.position = ob.position;
+		result.half_size = ob.half_size;
+		result.rotator = GetRotation();
+
+		return result;
+	}
+
 	float GameEntity::GetRotation() const
 	{
 		if (is_particle_master)

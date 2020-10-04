@@ -32,6 +32,9 @@ bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
 	if (!death::Player::Initialize(in_game_instance))
 		return false;
 
+	spawner_delay.spawn_per_second = 40.0f;
+
+	
 
 
 	return true;
@@ -109,17 +112,25 @@ void LudumPlayer::Honk()
 		honk_sound = game->PlaySound("Honk", false, false, 0.0f, death::SoundContext::GAME);
 }
 
-void LudumPlayer::SpawnSmokeParticles(size_t count)
+void LudumPlayer::SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chaos::obox2 const & ob)
 {
-	LudumLevelInstance* li = GetLevelInstance();
-	if (li != nullptr)
+	if (li != nullptr && count > 0)
 	{
 		chaos::ParticleSpawner spawner = li->GetParticleSpawner("Smoke", "Smoke"); // va chercher layer + sprite
 		if (spawner.IsValid())
 		{
-			spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessor<ParticleSmoke> accessor)
+			glm::vec2 vertices[4];
+			chaos::GetBoxVertices(ob, vertices);
+
+			glm::vec2 spawn_pos = (vertices[0] + vertices[3]) * 0.5f - 0.5f * (vertices[3] - vertices[2]);
+
+
+
+
+
+			spawner.SpawnParticles(count, false, [this, spawn_pos](chaos::ParticleAccessor<ParticleSmoke> accessor)
 			{
-				glm::vec2 pos = pawn->GetPosition();
+				glm::vec2 pos = spawn_pos;
 
 				for (ParticleSmoke& p : accessor)
 				{
@@ -187,9 +198,10 @@ bool LudumPlayer::DoTick(float delta_time)
 	if (!death::Player::DoTick(delta_time))
 		return false;
 
-	size_t smoke_particle = 1;
+	size_t smoke_particle = (size_t)spawner_delay.GetSpawnCount(delta_time);
 
-	SpawnSmokeParticles(smoke_particle);
+	if (pawn != nullptr)
+		SpawnSmokeParticles(smoke_particle, GetLevelInstance(), pawn->GetOBox());
 
 	if (road != nullptr)
 	{

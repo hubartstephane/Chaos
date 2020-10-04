@@ -5,6 +5,7 @@
 #include "Ludum47LevelInstance.h"
 #include "Ludum47GameInstance.h"
 
+#include <death/SoundContext.h>
 #include <death/GameHUDComponent.h>
 
 // ====================================================================
@@ -22,12 +23,21 @@ GameHUDRacePositionComponent::GameHUDRacePositionComponent(chaos::TagType in_lay
 
 std::string GameHUDRacePositionComponent::FormatText() const
 {
-	char const* f = (cached_value.x > cached_value.y / 2) ? "[WARNING Pos %d/%d]" : "Pos %d/%d";
+	char const* f = ((cached_value.x > cached_value.y / 2) && blink_value) ? "[WARNING Pos %d/%d]" : "Pos %d/%d";
 
 
 
 
 	return chaos::StringTools::Printf(f, 1 + cached_value.x, 1 + cached_value.y);
+}
+
+
+bool GameHUDRacePositionComponent::DoTick(float delta_time)
+{
+	if (!death::GameHUDCacheValueComponent<glm::ivec2>::DoTick(delta_time))
+		return false;
+	current_dt = delta_time;
+	return true;
 }
 
 bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
@@ -41,8 +51,30 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
 			LudumPlayer* player = GetPlayer(0);
 			if (player != nullptr && !player->race_position.IsCompleted())
 			{
+
+
 				glm::ivec2 p = li->GetPlayerRacePosition(player);
-				if (p != cached_value)
+
+				
+				bool force_update = false;
+				if (p.x > p.y / 2)
+				{
+					blink_timer = std::max(blink_timer - current_dt, 0.0f);
+					if (blink_timer == 0.0f)
+					{
+						blink_timer = 0.5f;
+						blink_value = !blink_value;
+
+						if (blink_value)
+							player->GetGame()->PlaySound("bip", false, false, 0.0f, death::SoundContext::GAME);
+
+
+					}
+					force_update = true;
+				}
+
+
+				if (force_update || p != cached_value)
 				{
 					cached_value = p;
 					return true;
@@ -83,6 +115,7 @@ bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_allocation)
 			if (player != nullptr && !player->race_position.IsCompleted())
 			{
 				glm::ivec2 v = { player->race_position.current_lap, li->road->lap_count };
+
 				if (v != cached_value)
 				{
 					cached_value = v;

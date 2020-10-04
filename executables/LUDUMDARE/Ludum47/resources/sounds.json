@@ -33,6 +33,7 @@
     { "path": "sounds/start1.ogg" , "categories" :  "FX"},
 	{ "path": "sounds/start2.ogg" , "categories" :  "FX"},
 	{ "path": "sounds/Explosion.ogg" , "categories" :  "FX"},	
+	{ "path": "sounds/Bip.ogg" , "categories" :  "FX" , "volume":0.3},		
     { "path": "sounds/next_levelx.ogg" , "categories" :  "FX"},     
     { "path": "sounds/heartbeat.ogg" , "categories" :  "HeartBeat"}
   ]

@@ -82,8 +82,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		{
 			velocity_vector = particle.collision_direction * particle.collision_reaction_intensity;
 			particle.bounding_box.position += velocity_vector * delta_time;
-			goto skip_player_input; // :)
-
 		}
 	}
 
@@ -129,13 +127,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	// update velocity to indicates our intention to collision code
 	velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
-
-
-
-
-
-
-skip_player_input:
 
 
 
@@ -202,13 +193,19 @@ skip_player_input:
 							if (chaos::IsSeparatingPlane(a, b, player_box_vertices, 4))
 								continue;
 
-							particle.velocity = 0.0f;
+							particle.velocity = 0;
 
 							float c = std::cos((float)M_PI * 0.5f);
 							float s = std::sin((float)M_PI * 0.5f);
 
 							particle.collision_direction = glm::normalize(chaos::GLMTools::Rotate(b - a, c, s));
-							particle.collision_reaction_intensity = car_data.reaction_value * std::max(0.5f, glm::dot(particle.collision_direction, -glm::normalize(velocity_vector)));
+
+
+							// the intensity of the collision depends on the VELOCITY, but in case the VELOCITY is too small, use a minimal value (0.5 x MAX)
+
+							float intensity = std::max(glm::abs(particle.velocity), car_data.max_velocity * 0.5f);
+					
+							particle.collision_reaction_intensity = intensity * car_data.reaction_value * std::max(0.5f, glm::dot(particle.collision_direction, -glm::normalize(velocity_vector)));
 						}
 					}
 				}

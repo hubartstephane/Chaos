@@ -251,10 +251,22 @@ bool LudumRoad::DoTick(float delta_time)
 			p1->collision_direction = glm::normalize(-dp);
 			p2->collision_direction = glm::normalize(dp);
 
-			float col_factor = std::max(0.7f, 1.0f - glm::dot(glm::normalize(vel_dir1), glm::normalize(vel_dir2)));
+			float delta_velocity = glm::length(p2->velocity - p1->velocity);
 
-			p1->collision_reaction_intensity = opp1->car_data.reaction_value * col_factor;
-			p2->collision_reaction_intensity = opp2->car_data.reaction_value * col_factor;
+			float intensity1 = std::max(delta_velocity, opp1->car_data.max_velocity * 0.5f);
+			float intensity2 = std::max(delta_velocity, opp1->car_data.max_velocity * 0.5f);
+
+
+
+#if 0
+
+			float col_factor = std::max(0.7f, 1.0f - glm::dot(glm::normalize(vel_dir1), glm::normalize(vel_dir2)));
+#endif
+			float col_factor = 1.0f;
+
+			p1->collision_reaction_intensity = intensity1 * opp1->car_data.reaction_value * col_factor;
+			p2->collision_reaction_intensity = intensity1 * opp2->car_data.reaction_value * col_factor;
+
 
 			opp1->SynchronizeData(false);
 			opp2->SynchronizeData(false);
@@ -272,15 +284,6 @@ bool LudumRoad::DoTick(float delta_time)
 		ParticleOpponent* p1 = opp1->GetParticle<ParticleOpponent>(0);
 		if (p1 == nullptr)
 			continue;
-
-
-
-
-
-
-
-
-
 
 		if (player_particle != nullptr)
 		{
@@ -313,10 +316,22 @@ bool LudumRoad::DoTick(float delta_time)
 			p1->collision_direction = glm::normalize(-dp);
 			player_particle->collision_direction = glm::normalize(dp);
 
-			float col_factor = std::max(0.7f, 1.0f - glm::dot(glm::normalize(vel_dir1), glm::normalize(vel_dir2)));
 
-			p1->collision_reaction_intensity = opp1->car_data.reaction_value * col_factor;
-			player_particle->collision_reaction_intensity = player->car_data.reaction_value * col_factor;
+
+			float delta_velocity = glm::length(player_particle->velocity - p1->velocity);
+
+			float intensity1 = std::max(delta_velocity, opp1->car_data.max_velocity * 0.5f);
+			float intensity2 = std::max(delta_velocity, player->car_data.max_velocity * 0.5f);
+
+
+			float col_factor = 1.0f;
+
+			p1->collision_reaction_intensity = intensity1 * opp1->car_data.reaction_value * col_factor;
+			player_particle->collision_reaction_intensity = intensity2 * player->car_data.reaction_value * col_factor;
+
+
+			player_particle->velocity = 0.0f;
+
 
 			opp1->SynchronizeData(false);
 

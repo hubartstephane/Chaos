@@ -85,6 +85,12 @@ public:
 	class LudumGame * game = nullptr;
 
 
+	float effective_start_timer = 3.0f;
+
+
+
+
+
 	mutable float completion_timer = -1.0f; // shu47 : due to Checkcomplete constness !!
 	float completion_delay = 5.0f;
 

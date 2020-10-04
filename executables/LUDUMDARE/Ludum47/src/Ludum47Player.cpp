@@ -146,10 +146,6 @@ bool LudumPlayer::DoTick(float delta_time)
 	if (!death::Player::DoTick(delta_time))
 		return false;
 
-	if (honk_sound != nullptr)
-		if (honk_sound->IsFinished())
-			honk_sound = nullptr;
-
 
 
 	if (road != nullptr)
@@ -163,5 +159,18 @@ bool LudumPlayer::DoTick(float delta_time)
 
 		}
 	}
+
+	// do not start before the beginning
+	LudumLevelInstance* li = GetLevelInstance();
+	if (li != nullptr && li->effective_start_timer > 0.0f)
+		return true;
+
+
+	if (honk_sound != nullptr)
+		if (honk_sound->IsFinished())
+			honk_sound = nullptr;
+
+
+
 	return true;
 }

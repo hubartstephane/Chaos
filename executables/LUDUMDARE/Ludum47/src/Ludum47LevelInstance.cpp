@@ -80,6 +80,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 {
 	death::TMLevelInstance::DoTick(delta_time);
 
+	if (effective_start_timer > 0.0f)
+		effective_start_timer = std::max(0.0f, effective_start_timer - delta_time);
+
 
 	if (completion_timer > 0.0f)
 		completion_timer = std::max(0.0f, completion_timer - delta_time);

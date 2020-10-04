@@ -134,6 +134,12 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	if (pawn->GetAllocation() == nullptr)
 		return true;
 
+
+	LudumLevelInstance* level_instance = player->GetLevelInstance();
+	if (level_instance == nullptr || level_instance->effective_start_timer > 0.0f)
+		return true;
+
+
 	chaos::ParticleAccessor<ParticlePlayer> accessor = pawn->GetAllocation()->GetParticleAccessor<ParticlePlayer>();
 	if (accessor.GetDataCount() == 0)
 		return true;

@@ -15,6 +15,9 @@
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <group id="40" name="Groupe 1">
+  <properties>
+   <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
+  </properties>
   <layer id="47" name="background" width="57" height="56" visible="0" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>

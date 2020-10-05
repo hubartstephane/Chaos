@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="55" nextobjectid="2226">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="55" nextobjectid="2227">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -42,74 +42,74 @@
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtlmEOgyAMRjnLfmzJTuXRPIpHW2FCaqJQNpaS5ZkQq3yWr6+yGQIHBCAAAQhAAAIQgAAEIAABCEBgPgIPsXQLYY1D4nU+h987ktrKoeNy8w8CXZf0cYn9jOOfeqpr1C27uq81XnHv/rqqRfc09jWPGfqrPev4irlFo5/t1etnR8U7/7ivlrskjeeTkfuSNfm6nJ/vZ8u15Eix5N9GeR2RR3w1D4ummcRRYPFv0TiW0Fza4t+iaS7kKLD4t2i8SpC9H8TfUhuW34eZaxzlbVSeX/R6lLdReajxMwL6v156cbovRbO2ss/cx5b3ON/gkL5b9m+hFEu9h7OFkcWHt6bWx9qct++e9Wt11OZ61vDW7u/z4R2V2tK1zG3e/lgfAhCAAAQgAAEIQAACEIAABCAAAQhAwJ/AC9AnOt0=
+   eAHtlm0OwiAMhjmLPzTxVDsaR/FotjqWmgh0ipYszxIyPt6Vt0/HNCUuCEAAAhCAAAQgAAEIQAACEIDAfAQuYumUUtYm/Tyfw+8dSW7bZfvb5AE6Ni+p46L11Hakmtocbclq81YT1d97vmq52JpqXVvt3zW3nm2/xtyjqT1b5kfEKLE895W/nqvlLA/o/U0rdSmaMrZ3fc6O8/UZ72VONbLnzePtFxrZv3t5NN0ggQKPf48mMIXu1h7/Hk13o0CBx79HE5WCnPMk/vS7UG2eb8HMOY7yNirOL2o9ytuoOOT4GQH7Wy+1eHsmRZN70WeuY8+7rnc4ZMkvr/+FHn0d2+Zh5PERrWnVsbUW7XvP/q08Wmt79ojWru/zyzsquT3GsnaL9sf+EIAABCAAAQhAAAIQgAAEIAABCEAAAvEE7oM3QjE=
   </data>
   </layer>
-  <objectgroup id="50" name="Opponents">
-   <object id="2195" name="Opponent3" gid="36" x="4308.61" y="2850.01" width="32" height="16" rotation="180">
+  <objectgroup id="50" name="Opponents" locked="1">
+   <object id="2195" name="Opponent3" gid="36" x="4865.55" y="2843.95" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="650"/>
     </properties>
    </object>
-   <object id="2205" name="Opponent3" gid="36" x="4194.61" y="2922.67" width="32" height="16" rotation="180">
+   <object id="2205" name="Opponent3" gid="36" x="4793.97" y="2916.61" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="700"/>
     </properties>
    </object>
-   <object id="2206" name="Opponent3" gid="36" x="4057.27" y="2842.67" width="32" height="16" rotation="180">
+   <object id="2206" name="Opponent3" gid="36" x="4684.63" y="2837.94" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="750"/>
     </properties>
    </object>
-   <object id="2207" name="Opponent3" gid="36" x="3920.61" y="2922" width="32" height="16" rotation="180">
+   <object id="2207" name="Opponent3" gid="36" x="4568.22" y="2918.61" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="800"/>
     </properties>
    </object>
-   <object id="2208" name="Opponent3" gid="36" x="3809.94" y="2846" width="32" height="16" rotation="180">
+   <object id="2208" name="Opponent3" gid="36" x="4461.55" y="2835.94" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="850"/>
     </properties>
    </object>
-   <object id="2209" name="Opponent3" gid="36" x="3688.61" y="2915.33" width="32" height="16" rotation="180">
+   <object id="2209" name="Opponent3" gid="36" x="4401.55" y="2910.6" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="850"/>
     </properties>
    </object>
-   <object id="2210" name="Opponent3" gid="36" x="3551.94" y="2840" width="32" height="16" rotation="180">
+   <object id="2210" name="Opponent3" gid="36" x="4274.21" y="2841.94" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="875"/>
     </properties>
    </object>
-   <object id="2222" name="Opponent3" gid="36" x="3405" y="2915" width="32" height="16" rotation="180">
+   <object id="2222" name="Opponent3" gid="36" x="4175.27" y="2915.61" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="875"/>
     </properties>
    </object>
-   <object id="2223" name="Opponent3" gid="36" x="3268.33" y="2839.67" width="32" height="16" rotation="180">
+   <object id="2223" name="Opponent3" gid="36" x="4022.6" y="2837.61" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
-   <object id="2224" name="Opponent3" gid="36" x="3139" y="2915" width="32" height="16" rotation="180">
+   <object id="2224" name="Opponent3" gid="36" x="3939.94" y="2914.27" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
-   <object id="2225" name="Opponent3" gid="36" x="3002.33" y="2839.67" width="32" height="16" rotation="180">
+   <object id="2225" name="Opponent3" gid="36" x="3787.27" y="2844.28" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
   </objectgroup>
   <objectgroup id="26" name="PlayerAndCamera" locked="1">
-   <object id="2114" name="Camera1" type="Camera" x="4101.72" y="2709.68" width="574" height="368"/>
-   <object id="2186" name="PlayerStart" gid="2" x="4410.12" y="2884.36" width="32" height="16" rotation="180">
+   <object id="2114" name="Camera1" type="Camera" x="4547.17" y="2703.62" width="574" height="368"/>
+   <object id="2186" name="PlayerStart" gid="2" x="4936.12" y="2880.36" width="32" height="16" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
    </object>
-   <object id="2188" name="WBB" type="WorldBoundingBox" x="1048" y="1775" width="4480" height="3144"/>
+   <object id="2188" name="WBB" type="WorldBoundingBox" x="1048" y="1775" width="5560" height="3144"/>
   </objectgroup>
   <objectgroup id="34" name="Road" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
@@ -119,38 +119,43 @@
      <property name="OPPONENT_VELOCITY_TWEAK" type="float" value="0.5"/>
      <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.5"/>
     </properties>
-    <polygon points="3696,-16 2938,-18.8057 1786.9,-7.75918 1394.69,-20.0828 1398.94,-270.839 1780.13,-270.354 1780.33,-15.831 1781.7,626.377 630.303,622.182 633.459,1138.16 1775.18,1143.88 1783.52,1264.61 2933.58,1264.61 3833.58,1270.18 3837.33,1645.97 2935.27,1645.52 2933.09,1267.73 2936.18,-16.9848 2930,-782 3320,-790 3328,-531 3698,-525.5 3709,-276.75 4468.5,-278.375 4468,-16"/>
+    <polygon points="4299.03,-16 2938,-15.7754 1786.9,-7.75918 1394.69,-20.0828 1398.94,-270.839 1780.13,-270.354 1780.33,-15.831 1781.7,626.377 630.303,622.182 633.459,1138.16 1775.18,1143.88 1783.52,1264.61 2933.58,1264.61 3833.58,1270.18 3837.33,1645.97 2935.27,1645.52 2933.09,1267.73 2936.18,-20.0151 2930,-782 3320,-790 3328,-531 3698,-525.5 3709,-276.75 5113.83,-274.375 5112,-14.6667"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions" locked="1">
+  <objectgroup id="51" name="Collisions">
    <object id="2201" name="Collision2" type="CollisionBound" x="3721.09" y="2168.97">
-    <polygon points="0,0 254.947,-1.22571 254.303,260.97 640.184,261.827 637.375,510.973 1404.96,515.169 1404.36,649.333 -3.0303,636.364"/>
+    <polygon points="-1,14 239.947,14.7743 240.303,267.97 623.184,268.827 622.375,523.973 2032.29,525.502 2028.36,637.666 -3.0303,636.364"/>
    </object>
-   <object id="2218" name="collision5" type="CollisionBound" x="1278.79" y="4090.91">
-    <polygon points="0,0 1145.45,6.06061 1154.55,121.212 2300,136.364 2303.03,512.121 3324.24,515.152 3333.33,-3.0303 2433.33,0 2433.33,-1145.45 3957.58,-1151.52 3966.67,-1530.3 3200,-1536.36 3200,-1787.88 2815.15,-1790.91 2815.15,-2048.48 2300,-2048.48 2303.03,-1281.82 1278.79,-1278.79 1278.79,-1533.33 769.697,-1533.33 763.636,-1151.52 1151.52,-1145.45 1151.52,-642.424 -3.0303,-636.364"/>
+   <object id="2218" name="collision5" type="CollisionBound" x="1278.79" y="4090.91" visible="0">
+    <polygon points="-7,16 1141.45,12.0606 1143.55,138.212 2296,139.364 2298.03,523.121 3334.24,523.152 3333.33,-3.0303 2442.33,-4 2441.33,-1138.45 4619.58,-1134.52 4621,-1541.97 3206,-1539.36 3208,-1794.88 2822.15,-1794.91 2823.15,-2056.48 2296,-2052.48 2296.03,-1284.82 1287.79,-1286.79 1287.79,-1539.33 760.697,-1541.33 759.636,-1136.52 1147.52,-1140.45 1142.52,-642.424 -8.0303,-643.364"/>
    </object>
    <object id="2219" name="Collision4" type="CollisionBound" x="1416" y="3976">
-    <polygon points="0,0 0,-384 1140,-390 1152,-1024 2168,-1032 2160,96 1140,120 1136,-12"/>
+    <polygon points="4,-18.6667 0,-384 1150.67,-379.333 1152,-1024 2160,-1025.33 2152,108 1157.33,110.667 1152,-20"/>
    </object>
    <object id="2220" name="collision3" type="CollisionBound" x="3720" y="4232">
-    <polygon points="758,244 0,240 -4,-6 752,-6"/>
+    <polygon points="746,232 6,234 4,4 746,4"/>
    </object>
    <object id="2221" name="collision1" type="CollisionBound" x="2200" y="2816">
-    <polygon points="228.667,-129.333 229.333,0 -22.6667,-4.54747e-13 -22,-128"/>
+    <polygon points="222.667,-121.333 224.333,-5 -18.6667,-8 -17,-124"/>
    </object>
   </objectgroup>
-  <objectgroup id="48" name="SpeedIndications" visible="0" locked="1">
-   <object id="2214" name="Indication2" type="SpeedIndication" x="3410" y="3740" width="524" height="584">
+  <objectgroup id="48" name="SpeedIndications">
+   <object id="2214" name="Indication2" type="SpeedIndication" x="3546.36" y="4040" width="211.879" height="238.545">
     <properties>
      <property name="SPEED_FACTOR" type="float" value="1"/>
     </properties>
    </object>
-   <object id="2215" name="Indication1" type="SpeedIndication" x="3370" y="2664" width="524" height="584">
+   <object id="2215" name="Indication1" type="SpeedIndication" x="3545.76" y="2745.82" width="245.212" height="250.667">
     <properties>
      <property name="SPEED_FACTOR" type="float" value="1"/>
     </properties>
    </object>
-   <object id="2217" name="Indication1" type="SpeedIndication" x="2425.88" y="2817.82" width="520.97" height="200">
+   <object id="2217" name="Indication1" type="SpeedIndication" x="2377.4" y="2781.46" width="248.243" height="236.364">
+    <properties>
+     <property name="SPEED_FACTOR" type="float" value="1"/>
+    </properties>
+   </object>
+   <object id="2226" name="Indication1" type="SpeedIndication" x="4807.7" y="2765.58" width="348.242" height="280.97">
     <properties>
      <property name="SPEED_FACTOR" type="float" value="1"/>
     </properties>

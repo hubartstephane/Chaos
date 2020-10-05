@@ -34,7 +34,7 @@
   </layer>
   <layer id="52" name="objects" width="57" height="56">
    <data encoding="base64" compression="zlib">
-   eAHtlFsKwzAMBHOf9j/3v1ki0gF92KUYikQyBmcdY8u7k8e22SQgAQlIQAISkIAEnkDgdYZc7fu5l/4EVh0zBv9o6HV3ryvZ0Hulu9KQDV3JGN8xLY+Zq1ayodV+up6fn10ed/GLJ7SLr24+Mp887uITT2gXX918jPj8OhdZvq2NfyF9NTf10dU67qslwPNDa93893TeeZTMI31/rGSNdbM+cz6qHWtn87M6zktAAhKQgAQkIAEJSEACEpCABCQgAQlIQAISkIAEJCABCUigmsAB6NMM9A==
+   eAHtlEEKhDAQBP3P7t3//0x7Q0GQeFBZHLQCk9YQY3fFOE02CUhAAhKQgAQkIIE3EPisIY/UvM7f1hs4Vc2YvUhD292zerKhz0rX0pANPZsxZzkNbXc1erKhNVzVdMH+oZVc4gmt5K2aFxihlfzhCa3krbqXMPtu6shY/oF9XcnL/qFX1vLZ+wiwf+h9Tv7/5v7bzzWZR5pzltZr5u3Vb/KgG62daXvjgyUckoAEJCABCUhAAhKQgAQkIAEJSEACEpCABCQgAQlIQAISkEAJAgtrtQ79
   </data>
   </layer>
   <layer id="45" name="Highway" width="57" height="56">
@@ -118,7 +118,7 @@
   <objectgroup id="53" name="Smoke" locked="1"/>
   <layer id="55" name="special trees" width="57" height="56">
    <data encoding="base64" compression="zlib">
-   eAHt10kKwCAMAMD8R///vjbYQ8EFvNUyAQnEIHFuiRAECBAgQIAAAQIECJwkUO5hd89J/zMrAQIECBAgQIAAAQLfEsj9I2OUa7uKd17tK097l0ZvZ9Os3j2gQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBD4gcAFq8AFjw==
+   eAHt1kEKgCAQBdDuU/vuf7P8rUJGKHfGGxiFYRR9ILhtggABAgQIECBAgACBlQT2dti3ebbePle6q7MSIECAAAECBGYF8l86uvxS84ealbfujwJ5O4lqzjtLPOf0jfJuLoZq77SN6sUWSgQIECBAgAABAgQIECBAgAABAgQIECBAgACB5QUuAVAJ5A==
   </data>
   </layer>
  </group>

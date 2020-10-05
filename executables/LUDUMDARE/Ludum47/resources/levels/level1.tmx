@@ -19,6 +19,10 @@
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
   <layer id="54" name="sea" width="57" height="56" locked="1">
+   <properties>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
+   </properties>
    <data encoding="base64" compression="zlib">
    eAHt08ENgCAQRFHasf8GwcO0QAZ4JmaPLp/nGB4FFFBgb4Fvfe7WNyVvPd9/rjzOeLZj93j2/eX/c4/uMRbaJ6usthvNfqyyGgvtk1VW241mP1ZZjYX2ySqr7UazH6usxkL7ZJXVdqPZj1VWY6F9vmQ1ZzUVUEABBRRQQAEFFFBAAQUUeLnABJvrK44=
   </data>
@@ -33,6 +37,10 @@
   </data>
   </layer>
   <layer id="52" name="objects" width="57" height="56">
+   <properties>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
+   </properties>
    <data encoding="base64" compression="zlib">
    eAHtlEEKhDAQBP3P7t3//0x7Q0GQeFBZHLQCk9YQY3fFOE02CUhAAhKQgAQkIIE3EPisIY/UvM7f1hs4Vc2YvUhD292zerKhz0rX0pANPZsxZzkNbXc1erKhNVzVdMH+oZVc4gmt5K2aFxihlfzhCa3krbqXMPtu6shY/oF9XcnL/qFX1vLZ+wiwf+h9Tv7/5v7bzzWZR5pzltZr5u3Vb/KgG62daXvjgyUckoAEJCABCUhAAhKQgAQkIAEJSEACEpCABCQgAQlIQAISkEAJAgtrtQ79
   </data>
@@ -117,6 +125,10 @@
   </objectgroup>
   <objectgroup id="53" name="Smoke" locked="1"/>
   <layer id="55" name="special trees" width="57" height="56">
+   <properties>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
+   </properties>
    <data encoding="base64" compression="zlib">
    eAHt1kEKgCAQBdDuU/vuf7P8rUJGKHfGGxiFYRR9ILhtggABAgQIECBAgACBlQT2dti3ebbePle6q7MSIECAAAECBGYF8l86uvxS84ealbfujwJ5O4lqzjtLPOf0jfJuLoZq77SN6sUWSgQIECBAgAABAgQIECBAgAABAgQIECBAgACB5QUuAVAJ5A==
   </data>

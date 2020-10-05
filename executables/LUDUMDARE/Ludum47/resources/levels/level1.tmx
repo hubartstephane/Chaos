@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="56" nextobjectid="2210">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="56" nextobjectid="2214">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -27,7 +27,7 @@
    eAHt08ENgCAQRFHasf8GwcO0QAZ4JmaPLp/nGB4FFFBgb4Fvfe7WNyVvPd9/rjzOeLZj93j2/eX/c4/uMRbaJ6usthvNfqyyGgvtk1VW241mP1ZZjYX2ySqr7UazH6usxkL7ZJXVdqPZj1VWY6F9vmQ1ZzUVUEABBRRQQAEFFFBAAQUUeLnABJvrK44=
   </data>
   </layer>
-  <layer id="47" name="ground" width="57" height="56">
+  <layer id="47" name="ground" width="57" height="56" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -36,7 +36,7 @@
    eAHt1rkNgDAMAMCMQ8MP+69G6ChCAbJ4D8kNSAk+O09KHgIECFwrUF07ndkIECDwe4EhC3SBMT5QtM3/tJ4vUdHL8RYBdTzew3r1llZNelWvls4b6/Eb63HOaUTem7Zjnb1DRe85pf6Nend2Hcjx+L4aVbPSOOq4v5/9oVennH79kmj2S+ULAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQOC1Agsei1RZ
   </data>
   </layer>
-  <layer id="52" name="objects" width="57" height="56">
+  <layer id="52" name="objects" width="57" height="56" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -45,7 +45,7 @@
    eAHtlEEKhDAQBP3P7t3//0x7Q0GQeFBZHLQCk9YQY3fFOE02CUhAAhKQgAQkIIE3EPisIY/UvM7f1hs4Vc2YvUhD292zerKhz0rX0pANPZsxZzkNbXc1erKhNVzVdMH+oZVc4gmt5K2aFxihlfzhCa3krbqXMPtu6shY/oF9XcnL/qFX1vLZ+wiwf+h9Tv7/5v7bzzWZR5pzltZr5u3Vb/KgG62daXvjgyUckoAEJCABCUhAAhKQgAQkIAEJSEACEpCABCQgAQlIQAISkEAJAgtrtQ79
   </data>
   </layer>
-  <layer id="45" name="Highway" width="57" height="56">
+  <layer id="45" name="Highway" width="57" height="56" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -54,15 +54,15 @@
    eAHtlsEJg1AQBX8tuQipytJSiqW5uT7i6Y0hgRFEVnCYHRD+Wl4WsIAFLGABC1jAAhb4/wLbrPBYa2/v4bx+tcbshlwUB5EJCOVGcUIPGSk3ioMsFRDKjeKEHjJSbhQHWSoglBvFCT1kpNwoDrJUQCg3ihN6yEi5URxkqYBQbnPOqc9K4/KR0Z6hqB0jHTq2ju336DIXsNax/f5CC33dOt75H43b/pxt38/mHscDjSbMAhawgAUsYAELWMACFrCABSxgAQtYwAIWsIAFLGABC1jgawVOG2wuww==
   </data>
   </layer>
-  <objectgroup id="50" name="Opponents" locked="1">
+  <objectgroup id="50" name="Opponents">
    <object id="2197" name="Opponent1" gid="36" x="4166.97" y="3350.18" width="32" height="16" rotation="180">
     <properties>
-     <property name="MAX_VELOCITY" type="float" value="700"/>
+     <property name="MAX_VELOCITY" type="float" value="650"/>
     </properties>
    </object>
    <object id="2201" name="Opponent1" gid="36" x="4092" y="3435" width="32" height="16" rotation="180">
     <properties>
-     <property name="MAX_VELOCITY" type="float" value="700"/>
+     <property name="MAX_VELOCITY" type="float" value="650"/>
     </properties>
    </object>
    <object id="2202" name="Opponent1" gid="36" x="4020" y="3352" width="32" height="16" rotation="180">
@@ -80,18 +80,38 @@
      <property name="MAX_VELOCITY" type="float" value="850"/>
     </properties>
    </object>
-   <object id="2205" name="Opponent1" gid="36" x="3839" y="3430" width="32" height="16" rotation="180">
+   <object id="2205" name="Opponent1" gid="36" x="3687" y="3430" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
-   <object id="2206" name="Opponent1" gid="36" x="3786" y="3351" width="32" height="16" rotation="180">
+   <object id="2206" name="Opponent1" gid="36" x="3634" y="3351" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+   <object id="2210" name="Opponent1" gid="36" x="3304" y="3432" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+   <object id="2211" name="Opponent1" gid="36" x="3228" y="3358" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+   <object id="2212" name="Opponent1" gid="36" x="3366" y="3355" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+   <object id="2213" name="Opponent1" gid="36" x="3429" y="3435" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera">
+  <objectgroup id="26" name="PlayerAndCamera" locked="1">
    <object id="2114" name="Camera1" type="Camera" x="3978.15" y="3221.01" width="574" height="368"/>
    <object id="2186" name="PlayerStart" gid="2" x="4257.97" y="3391.03" width="32" height="16" rotation="180">
     <properties>
@@ -105,6 +125,7 @@
     <properties>
      <property name="CHECKPOINT_LONG_DISTANCE" type="float" value="256"/>
      <property name="CHECKPOINT_SHORT_DISTANCE" type="float" value="64"/>
+     <property name="LAP_COUNT" type="int" value="2"/>
      <property name="OPPONENT_ANGULAR_TWEAK" type="float" value="1"/>
      <property name="OPPONENT_VELOCITY_TWEAK" type="float" value="0.4"/>
      <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.45"/>
@@ -124,7 +145,7 @@
    <object id="2209" name="indication1" type="SpeedIndication" x="3906.06" y="3124.24" width="796.97" height="560.606"/>
   </objectgroup>
   <objectgroup id="53" name="Smoke" locked="1"/>
-  <layer id="55" name="special trees" width="57" height="56">
+  <layer id="55" name="special trees" width="57" height="56" visible="0">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>

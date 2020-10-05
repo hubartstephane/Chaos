@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="384" tileheight="200" tilecount="45" columns="0" objectalignment="center">
+<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="384" tileheight="200" tilecount="48" columns="0" objectalignment="center">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1" type="PlayerStart" terrain="0,0,,">
   <properties>
@@ -139,5 +139,14 @@
  </tile>
  <tile id="75">
   <image width="128" height="128" source="../sprites/Finish_vertical.png"/>
+ </tile>
+ <tile id="76">
+  <image width="128" height="122" source="../sprites/tree8.png"/>
+ </tile>
+ <tile id="77">
+  <image width="128" height="200" source="../sprites/tree7.png"/>
+ </tile>
+ <tile id="78">
+  <image width="160" height="200" source="../sprites/tree9.png"/>
  </tile>
 </tileset>

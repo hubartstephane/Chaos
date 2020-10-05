@@ -3,5 +3,7 @@
     "classname": "ImageProcessorOutline",
     "color": [ 1.0, 0.0, 0.0, 1.0 ],
     "distance": 4
-  }
- }
+  },
+  "glyph_width": 128,
+  "glyph_height": 128
+}

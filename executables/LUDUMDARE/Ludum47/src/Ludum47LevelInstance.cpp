@@ -169,7 +169,7 @@ void LudumLevelInstance::OnOpponentArrived()
 
 
 	if (opponent_arrived_count > opponent_count / 2)
-		lost_timer = 5.0f;
+		lost_timer = 2.0f;
 
 
 }

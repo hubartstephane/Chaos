@@ -18,7 +18,7 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <layer id="47" name="grass" width="57" height="56" locked="1">
+  <layer id="47" name="grass" width="57" height="56" visible="0" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -27,7 +27,7 @@
    eAHt0sENwkAUA9H0Qv89EhqwtPKDcDASpy8PY7PXdf553ZEnv+fG54kn+31++xefdfz+O97/aBbYW91bFW/AvMZMEZ4NI9uZa+MnsqZFpgjPhpHtzLXxE1nTIlOEZ8PIduba+ImsaZEpwrNhZDtzbfxE1rTIFOHZMLKduTZ+ImtaZIrwbBjZzlwbP5E1LTJFeDaMbGeujZ/ImhaZIjwbRrYz18ZPZE2LTBGeDSPbmWvjJ7KmRaYIz4aR7cy18RNZ0yJThGfDyHbm2viJrGmRKcKzYWQ7c238RNa0yBTh2TCynbk2fiJrWmSK8GwY2W7XLbAFtsAW2AJbYAtsgS2wBbbAFtgCW2ALbIEt8P8LvAHozZkh
   </data>
   </layer>
-  <layer id="52" name="objects" width="57" height="56">
+  <layer id="52" name="objects" width="57" height="56" visible="0" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -42,10 +42,10 @@
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtlkEKg0AQBPctOSSQV+VpPsWnZQziQQbZpneHCCV4cO3ZqamIsTUODGAAAxi4s4FXwD9a+/SekV/uNm/MJh1qXtp8UlhlVvOTsKVtVWY1L8FMCqvMan4S9m/b3nfJM9LBrbxz1pncyt69vntzSu+qbC97b66KW+mTse/P7xL3jnN/Vo/r7d5d/gOzGZ01xW9V1pknq63iVvpknM6a0rsq68yT1VZxK30yTmdN6V2VdebJaqu4lT4Zp7Om9K7KOvNktVXcSp+M01lTeldl30mj+H7Zvr3P3zTrOZq5OGf+4drhdGorZ3c4nVpmHGvA+S2c2rFTXO/mcDq111Rj7+7v0O09Kp9Ru46lYTcMYAADGMAABjCAAQxgAAMYwAAGMIABDGAAAxjAQJ+BL99dLic=
+   eAHtlssOwjAMBPtxUB7i/7+nOXCqliqrTYwiDRIHwtoeDyiwbTwwgAEMYGBlA/cGvxvP54LLPkxmN2+2nxJ3md38FGizqcvs5k2cKXGX2c1Pgf427b1Lbi3v3DmvmdBm717fvTlzfEm8l703VwJtDlHs6vurvqur/AaqHZMzU3FJPNlH1ZZAm0MUZ3Jmji+JJ/uo2hJoc4jiTM7M8SXxZB9VWwJtDlGcyZk5viSe7KNqS6DNIYozOTPHl8Q/Ysq7nZ3/f6v/2MqFaPf3o4Qzqa1cPOFMatlxrIHks0hqx25x3S3hTGqvqca+q+7Q853667W6a8fS0Q0DGMAABjCAAQxgAAMYwAAGMIABDGAAAxjAAAYwoA0coUMj3Q==
   </data>
   </layer>
-  <objectgroup id="50" name="Opponents" locked="1">
+  <objectgroup id="50" name="Opponents" visible="0" locked="1">
    <object id="2195" name="Opponent3" gid="36" x="2332" y="2900.01" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="650"/>
@@ -123,7 +123,7 @@
     <polygon points="1268.97,209.333 1280,-1358.54 2546.33,-1366.54 4079.16,-1364.06 4083,-1991.93 2549.5,-1998.54 2549.2,-1364 2546.06,-980.055 2548,307.769 1909.94,304 1913.24,-964.948 2549.92,-979.151 3181.34,-984.471 3184.8,1086.22 1283.43,1080.12"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions">
+  <objectgroup id="51" name="Collisions" visible="0">
    <object id="2201" name="Collision2" type="CollisionBound" x="1409.09" y="896.97">
     <polygon points="1675.28,1032.85 2164.48,1033.82 2162.18,2164.61 1676,2163.4"/>
    </object>
@@ -150,7 +150,7 @@
    </object>
   </objectgroup>
   <objectgroup id="53" name="Smoke" visible="0" locked="1"/>
-  <layer id="54" name="special tree" width="57" height="56">
+  <layer id="54" name="special tree" width="57" height="56" visible="0">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>

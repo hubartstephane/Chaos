@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="384" tileheight="200" tilecount="36" columns="0" objectalignment="center">
+<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="384" tileheight="200" tilecount="45" columns="0" objectalignment="center">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1" type="PlayerStart" terrain="0,0,,">
   <properties>
@@ -112,5 +112,32 @@
  </tile>
  <tile id="66">
   <image width="128" height="128" source="../sprites/desert.png"/>
+ </tile>
+ <tile id="67">
+  <image width="128" height="128" source="../sprites/road1.png"/>
+ </tile>
+ <tile id="68">
+  <image width="128" height="128" source="../sprites/road2.png"/>
+ </tile>
+ <tile id="69">
+  <image width="128" height="128" source="../sprites/road3.png"/>
+ </tile>
+ <tile id="70">
+  <image width="128" height="128" source="../sprites/road4.png"/>
+ </tile>
+ <tile id="71">
+  <image width="128" height="128" source="../sprites/road5.png"/>
+ </tile>
+ <tile id="72">
+  <image width="128" height="128" source="../sprites/road6.png"/>
+ </tile>
+ <tile id="73">
+  <image width="128" height="128" source="../sprites/road7.png"/>
+ </tile>
+ <tile id="74">
+  <image width="128" height="128" source="../sprites/Finish_horizontal.png"/>
+ </tile>
+ <tile id="75">
+  <image width="128" height="128" source="../sprites/Finish_vertical.png"/>
  </tile>
 </tileset>

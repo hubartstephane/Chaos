@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="128" tileheight="128" tilecount="8" columns="0" objectalignment="center">
+<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="128" tileheight="128" tilecount="10" columns="0" objectalignment="center">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1" type="PlayerStart" terrain="0,0,,">
   <properties>
@@ -28,5 +28,11 @@
  </tile>
  <tile id="38">
   <image width="128" height="128" source="../sprites/Concrete1.png"/>
+ </tile>
+ <tile id="39">
+  <image width="128" height="128" source="../sprites/sand.png"/>
+ </tile>
+ <tile id="40">
+  <image width="128" height="128" source="../sprites/sea.png"/>
  </tile>
 </tileset>

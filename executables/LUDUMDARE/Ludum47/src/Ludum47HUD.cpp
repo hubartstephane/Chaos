@@ -65,10 +65,12 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
 						blink_timer = 0.5f;
 						blink_value = !blink_value;
 
-						if (blink_value)
-							player->GetGame()->PlaySound("bip", false, false, 0.0f, death::SoundContext::GAME);
-
-
+						LudumLevelInstance* li = GetLevelInstance();
+						if (li != nullptr && li->effective_start_timer == 0.0)
+						{
+							if (blink_value)
+								player->GetGame()->PlaySound("bip", false, false, 0.0f, death::SoundContext::GAME);
+						}
 					}
 					force_update = true;
 				}

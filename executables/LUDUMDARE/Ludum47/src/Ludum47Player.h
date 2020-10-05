@@ -35,7 +35,7 @@ public:
 
     void SoundCollision();
 
-    void SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chaos::obox2 const& ob);
+    static void SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chaos::obox2 const& ob);
 
 protected:
 

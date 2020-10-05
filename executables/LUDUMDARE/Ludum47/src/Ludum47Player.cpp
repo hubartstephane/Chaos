@@ -128,7 +128,7 @@ void LudumPlayer::SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chao
 
 
 
-			spawner.SpawnParticles(count, false, [this, spawn_pos](chaos::ParticleAccessor<ParticleSmoke> accessor)
+			spawner.SpawnParticles(count, false, [spawn_pos](chaos::ParticleAccessor<ParticleSmoke> accessor)
 			{
 				glm::vec2 pos = spawn_pos;
 
@@ -198,10 +198,17 @@ bool LudumPlayer::DoTick(float delta_time)
 	if (!death::Player::DoTick(delta_time))
 		return false;
 
-	size_t smoke_particle = (size_t)spawner_delay.GetSpawnCount(delta_time);
+	LudumLevelInstance* li = GetLevelInstance();
+	if (li != nullptr && li->effective_start_timer == 0.0)
+	{
+		if (pawn != nullptr)
+		{
+			size_t smoke_particle = (size_t)spawner_delay.GetSpawnCount(delta_time);
+			SpawnSmokeParticles(smoke_particle, GetLevelInstance(), pawn->GetOBox());
+		}
 
-	if (pawn != nullptr)
-		SpawnSmokeParticles(smoke_particle, GetLevelInstance(), pawn->GetOBox());
+	}
+
 
 	if (road != nullptr)
 	{

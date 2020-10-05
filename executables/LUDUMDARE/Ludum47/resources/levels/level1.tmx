@@ -18,7 +18,7 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <layer id="54" name="sea" width="57" height="56">
+  <layer id="54" name="sea" width="57" height="56" locked="1">
    <data encoding="base64" compression="zlib">
    eAHt08ENgCAQRFHasf8GwcO0QAZ4JmaPLp/nGB4FFFBgb4Fvfe7WNyVvPd9/rjzOeLZj93j2/eX/c4/uMRbaJ6usthvNfqyyGgvtk1VW241mP1ZZjYX2ySqr7UazH6usxkL7ZJXVdqPZj1VWY6F9vmQ1ZzUVUEABBRRQQAEFFFBAAQUUeLnABJvrK44=
   </data>
@@ -37,13 +37,13 @@
    eAHt0DEBAAAAwqD1T20MH4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgw8BwYMeAAAQ==
   </data>
   </layer>
-  <layer id="45" name="Road" width="57" height="56" locked="1">
+  <layer id="45" name="Road" width="57" height="56">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtlsEJgEAQxK4WP7ZlaZZiae57OB+yURQi+NgDQzYg3Bg+FrCABSxgAQtYwAIW+H+BtVZYxti6b3H2r9ao3ZCH4iAyAaHcKE7oISPlRnGQpQJCuVGc0ENGyo3iIEsFhHKjOKGHjJQbxUGWCgjlRnFCDxkpN4qDLBUQyq3uOe27UrlMGd07FLVjpEPHrmP3e3SZC1jXsfv9hRZ63HV88j8qt+n/dfe8HA80mjALWMACFrCABSxgAQtYwAIWsIAFLGABC1jAAhawgAUsYIHXCpwbUy8b
+   eAHtlsEJg1AQBX8tuQipytJSiqW5uT7i6Y0hgRFEVnCYHRD+Wl4WsIAFLGABC1jAAhb4/wLbrPBYa2/v4bx+tcbshlwUB5EJCOVGcUIPGSk3ioMsFRDKjeKEHjJSbhQHWSoglBvFCT1kpNwoDrJUQCg3ihN6yEi5URxkqYBQbnPOqc9K4/KR0Z6hqB0jHTq2ju336DIXsNax/f5CC33dOt75H43b/pxt38/mHscDjSbMAhawgAUsYAELWMACFrCABSxgAQtYwAIWsIAFLGABC1jgawVOG2wuww==
   </data>
   </layer>
   <objectgroup id="50" name="Opponents" locked="1">
@@ -98,7 +98,7 @@
      <property name="CHECKPOINT_SHORT_DISTANCE" type="float" value="64"/>
      <property name="OPPONENT_ANGULAR_TWEAK" type="float" value="1"/>
      <property name="OPPONENT_VELOCITY_TWEAK" type="float" value="0.4"/>
-     <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.4"/>
+     <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.45"/>
     </properties>
     <polygon points="3684,508 640,488 640,-1300 2936,-1300 2932,-12 5876,-16 5868,510"/>
    </object>

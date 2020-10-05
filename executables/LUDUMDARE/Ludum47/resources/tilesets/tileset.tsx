@@ -87,7 +87,7 @@
   <image width="98" height="180" source="../sprites/tree3.png"/>
  </tile>
  <tile id="58">
-  <image width="64" height="160" source="../sprites/tower1.png"/>
+  <image width="64" height="180" source="../sprites/tower1.png"/>
  </tile>
  <tile id="59">
   <image width="128" height="128" source="../sprites/trunc.png"/>

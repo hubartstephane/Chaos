@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="55" nextobjectid="2216">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="55" nextobjectid="2223">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -27,13 +27,13 @@
    eAHt0sENwkAUA9H0Qv89EhqwtPKDcDASpy8PY7PXdf553ZEnv+fG54kn+31++xefdfz+O97/aBbYW91bFW/AvMZMEZ4NI9uZa+MnsqZFpgjPhpHtzLXxE1nTIlOEZ8PIduba+ImsaZEpwrNhZDtzbfxE1rTIFOHZMLKduTZ+ImtaZIrwbBjZzlwbP5E1LTJFeDaMbGeujZ/ImhaZIjwbRrYz18ZPZE2LTBGeDSPbmWvjJ7KmRaYIz4aR7cy18RNZ0yJThGfDyHbm2viJrGmRKcKzYWQ7c238RNa0yBTh2TCynbk2fiJrWmSK8GwY2W7XLbAFtsAW2AJbYAtsgS2wBbbAFtgCW2ALbIEt8P8LvAHozZkh
   </data>
   </layer>
-  <layer id="52" name="objects" width="57" height="56">
+  <layer id="52" name="objects" width="57" height="56" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtle1KxDAURPd1BH8r+PH+r2VGe2AIqdEi6a07gThpuNnMmbt1b7eMJJAEksD/TeCloT1tU+vv5hVTEM+9DPo441WdBvr1VPvvb/sIG1qb7pg7MkGPfcrfn3ptH+nzrT1rvm+zyefAN/uu6htzK48sSOB5uwP1K+mj783W9LDSewgb6gz+HdRaQ6papvaqD9jQ6n6P+PP+cB5elH1U+0z2KuuM8aGZ13ysDDHxNmL0IyNGneGcavkt8XOV1nhF3Zv+r8Lo+1p7va/7ugrP+EN7/z2j90wZXG3gGV69gzD276Oz+roiM96lP2EUT89EJtX4nE3enNG90kf2nLFnpaaa9qzyh/e930D1TTX0j3qdrTj4fsqb1jDveYUHpU68MLNXRWHEH8/yN+rjiIWe8hlV2PDhTOx5L/GNUiP1Xo7YvfbMNYwjhpEvr4Pxin0csY32YPQeegajM2fu8e7hF68zPdPzyrvJZeWdq++i16vvzX1JIAkkgSSQBJJAEkgCSSAJJIEkkASSQBJIAkkgCSSBJLCfwAdS8Sbz
+   eAHtleFqwzAMhPs6g/3uYGvf/7WaW/2BME6yheJK7RnUsx3b0t3FzenkZgWsgBV4XQW+F2rnFupvRUUVxOddGj7u8dU6NfA+yv37Xx/hBuZmd6w6NAGPnfL4XT/LkTEuy1hxbbHAb9uqW74RbblhggJfLQcYU+JjnNvr42Gmewg3MHLgHQX1TH2tJTSXvcENzF7vo+qDL9ifq3mif1ZlDDfhR4vPKsUfqHPEMd5PHbn1LTmQcuoW/a/CsU8snrTYZy47xpp7jpU9k+7yTQ2OuoNw7O9jVa5/4ShuVfj1vsg/OKpPw0fGlThS8wjxae0bqHeZNaP9mefk48jfWDPcQJ6JN/eYuawY39eRjyMu4juaz8pRdUUv8QaMdUcvq3GMPPp+5ArHij72vNbGcIweRg3W9j1rnrtHvdS6h8+qd3ZedJmdd2Y+vJ6Z07msgBWwAlbAClgBK2AFrIAVsAJWwApYAStgBayAFbACVmBbgRs+qB9O
   </data>
   </layer>
   <layer id="45" name="HighWay" width="57" height="56" locked="1">
@@ -42,56 +42,76 @@
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtllEKgzAQRHOWfrTQU/VoHsWjdS3ihwwywyabCiP4YZxN3r5KmtZ82YAN2IAN3NnAK+AfrX3YO/LL3fqN3qRLzUuTDwqrzGp+ELY0rcqs5iWYQWGVWc0Pwv5Ny+4lz0gHt7LnrCO5lblZ32xOWbsqy7KzuSpuZR3Evn+/S7w77v1bPZ63d3f5D0Q9ZsYUv1XZTD+otopbWQdxZsaUtauymX5QbRW3ss4bhBE7Owammz7EsrO56Q0BAJadzYElpg+x7GxuekMAgGVnc2CJ6UOIPc4v29n7fKZZz7Co9pz5h+cMZ6a2svcMZ6bWPfY1kPktMrV9u7ieLcOZqb2m6vt230O3fVS+o3btS+PZbMAGbMAGbMAGbMAGbMAGbMAGbMAGbMAGbMAGbMAGbIAz8AUDDC4n
+   eAHtllEKg0AMRPcs/Wihp+rRPMoezVjEDxkkw+ymFUbww3WyeXkVa2s+bMAGbMAG7mzgFfCP1j7ZM/LL3eaN2aiDzVObTwqzzGx+Eja1LcvM5imYSWGWmc1Pwv5um32XPCMd3Mw7p8/kZvbO+s7mmN5V2Sx7NlfFzfRB7Pvzu8S949yf1eN6u3eX/0A0o7LG+K3KKvOg2ipupg/iVNaY3lVZZR5UW8XN9EGcyhrTuyqrzINqq7iZPohTWWN6V2WVeVBtFTfT5w3CiD27Brb7+RJij++X7dv7/E3Tz7Co9pz5h2uFU6mtnF3hVGo941gDym+h1I6d4no3hVOpvaYae3d/h27vUfqM2j6WxrvZgA3YgA3YgA3YgA3YgA3YgA3YgA3YgA3YgA3YgA3YQM7ACuZ9Lic=
   </data>
   </layer>
-  <objectgroup id="50" name="Opponents" visible="0" locked="1">
-   <object id="2195" name="Opponent3" gid="36" x="2336" y="2648.01" width="32" height="16" rotation="-90">
+  <objectgroup id="50" name="Opponents">
+   <object id="2195" name="Opponent3" gid="36" x="2332" y="2900.01" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="650"/>
+    </properties>
+   </object>
+   <object id="2205" name="Opponent3" gid="36" x="2400" y="2854.67" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="650"/>
+    </properties>
+   </object>
+   <object id="2206" name="Opponent3" gid="36" x="2330" y="2782.67" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="700"/>
+    </properties>
+   </object>
+   <object id="2207" name="Opponent3" gid="36" x="2400" y="2740.67" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="750"/>
     </properties>
    </object>
-   <object id="2205" name="Opponent3" gid="36" x="2404" y="2602.67" width="32" height="16" rotation="-90">
+   <object id="2208" name="Opponent3" gid="36" x="2332" y="2672.67" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="750"/>
     </properties>
    </object>
-   <object id="2206" name="Opponent3" gid="36" x="2334" y="2530.67" width="32" height="16" rotation="-90">
+   <object id="2209" name="Opponent3" gid="36" x="2398" y="2620.67" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="800"/>
     </properties>
    </object>
-   <object id="2207" name="Opponent3" gid="36" x="2404" y="2488.67" width="32" height="16" rotation="-90">
+   <object id="2210" name="Opponent3" gid="36" x="2334" y="2558.67" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="800"/>
+    </properties>
+   </object>
+   <object id="2219" name="Opponent3" gid="36" x="2398" y="2509.67" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="850"/>
     </properties>
    </object>
-   <object id="2208" name="Opponent3" gid="36" x="2336" y="2420.67" width="32" height="16" rotation="-90">
+   <object id="2220" name="Opponent3" gid="36" x="2330" y="2441.67" width="32" height="16" rotation="-90">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="850"/>
+    </properties>
+   </object>
+   <object id="2221" name="Opponent3" gid="36" x="2396" y="2389.67" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
-   <object id="2209" name="Opponent3" gid="36" x="2402" y="2368.67" width="32" height="16" rotation="-90">
-    <properties>
-     <property name="MAX_VELOCITY" type="float" value="900"/>
-    </properties>
-   </object>
-   <object id="2210" name="Opponent3" gid="36" x="2338" y="2306.67" width="32" height="16" rotation="-90">
+   <object id="2222" name="Opponent3" gid="36" x="2332" y="2327.67" width="32" height="16" rotation="-90">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="900"/>
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera" visible="0" locked="1">
-   <object id="2114" name="Camera1" type="Camera" x="2092.15" y="2439.01" width="574" height="368"/>
-   <object id="2186" name="PlayerStart" gid="2" x="2365.64" y="2724.36" width="32" height="16" rotation="-90">
+  <objectgroup id="26" name="PlayerAndCamera" locked="1">
+   <object id="2114" name="Camera1" type="Camera" x="2082.82" y="2849.68" width="574" height="368"/>
+   <object id="2186" name="PlayerStart" gid="2" x="2368.31" y="3019.03" width="32" height="16" rotation="-90">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
    </object>
    <object id="2188" name="WBB" type="WorldBoundingBox" x="1728" y="55" width="3960" height="4360"/>
   </objectgroup>
-  <objectgroup id="34" name="TheRoad" visible="0">
+  <objectgroup id="34" name="TheRoad" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="1100" y="2836">
     <properties>
      <property name="CHECKPOINT_LONG_DISTANCE" type="float" value="256"/>
@@ -100,10 +120,10 @@
      <property name="OPPONENT_VELOCITY_TWEAK" type="float" value="0.5"/>
      <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.5"/>
     </properties>
-    <polygon points="1272,-324 1280,-1358.54 2546.33,-1366.54 4079.16,-1364.06 4083,-1991.93 2549.5,-1998.54 2549.2,-1364 2546.06,-980.055 2548,307.769 1909.94,304 1913.24,-964.948 2549.92,-979.151 3181.34,-984.471 3184.8,1086.22 1283.43,1080.12"/>
+    <polygon points="1268.97,209.333 1280,-1358.54 2546.33,-1366.54 4079.16,-1364.06 4083,-1991.93 2549.5,-1998.54 2549.2,-1364 2546.06,-980.055 2548,307.769 1909.94,304 1913.24,-964.948 2549.92,-979.151 3181.34,-984.471 3184.8,1086.22 1283.43,1080.12"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions">
+  <objectgroup id="51" name="Collisions" visible="0" locked="1">
    <object id="2201" name="Collision2" type="CollisionBound" x="1409.09" y="896.97">
     <polygon points="1660.61,1018.18 2184.48,1021.82 2178.18,2180.61 1666.67,2172.73"/>
    </object>
@@ -136,7 +156,7 @@
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtmGtqAzEMhHOrQkrvf62sKB8RQnZDrV3byRhcyXrOzJb+6O2mIwXGFPg52rljk9bpNj4cfDhiyXtLrY+t6Pc49PDStwPPEYzw7GkxOzfCD+wVM5h1ls0w3o9lvXsWloq5no/3mW0xrsXws1p6VrAeZ/QjPrhgLU9PrF3l7bGugqkax9kcZ3/jyO/7ENBf9Iw47W+NHeLe/maeP8k9I9d6tj+e/2KiL7Nxx1VvsFTss1n+xLfPXelnHF+JtfC34ldyynZFXBnHrC+LxVlZzYxYxMUbOwNT9c5KLjarcl4F12pM1fNGOYJnNd1HeWX9lRzRLdszM1bNcSaX1u5Kjq0ds+L8XnmO3p+Fq3Jvi2OLZ1ZfieesWeD28yNHamLc96zs/4WbPDxX5tLDBo9eze653b/Rq/p/0rf8OkSxy7fl/xneWs6/TUfqd9DKY+3hjXW8je9OB45YsMMnWvKyUkAKSAEpIAWkgBSQAlJACkgBKSAFpIAUkAJSQAq8hwIPRXsogg==
+   eAHtmGtOxDAMhPdWSCC4/7Gotfoky6TZEqd5wEQKduLYnhlX+4PHQ0sK5BT4PNLZuUrrZBsfFj4cscS95a2/W9GvcajhJW8HnhmM8KxpMTuW4Qf2HjWodZctYXw/mtX2XVh61PV8vE9tu2PbHX7pLTkrWI8z+hEfXLAxvuI5g/XjIMQ2buavuDIcr/Cx+nf3qOGIvZkJltyI035rbPGO+WGf0effmOtjI/zI0Xq2YqIW+d6O4FLqAYZS7Ld38CMvnrkfbeH45Rpz565+zPUM/9m9rzXDN1yvOF7FtRNH47Qq3qt6+3c9uVitnvU8zla/B6Ze33krh1oe/LK6e461fjNjPTmi20w+pd5Zjr5mz1q+btbP4lr5W+W7MrsyzswMzziezdW/z/QdnQtuP8fIkTfxfjTW1n6vcBOHZ2uf2XnwmI3jzv67z+iqNv9plm+HKLaZLf/P8NZi/mw68n4HrTzWGt74jrPx3WnBEQt2+ERLXFYKSAEpIAWkgBSQAlJACkgBKSAFpIAUkAJSQApIgb+hwDe6Gypk
   </data>
   </layer>
  </group>

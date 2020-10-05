@@ -111,7 +111,7 @@
    </object>
    <object id="2188" name="WBB" type="WorldBoundingBox" x="1728" y="55" width="3960" height="4360"/>
   </objectgroup>
-  <objectgroup id="34" name="TheRoad" locked="1">
+  <objectgroup id="34" name="TheRoad">
    <object id="2189" name="TheRoad" type="Road" x="1100" y="2836">
     <properties>
      <property name="CHECKPOINT_LONG_DISTANCE" type="float" value="256"/>

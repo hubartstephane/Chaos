@@ -37,7 +37,7 @@
    eAHtlFsKwzAMBHOf9j/3v1ki0gF92KUYikQyBmcdY8u7k8e22SQgAQlIQAISkIAEnkDgdYZc7fu5l/4EVh0zBv9o6HV3ryvZ0Hulu9KQDV3JGN8xLY+Zq1ayodV+up6fn10ed/GLJ7SLr24+Mp887uITT2gXX918jPj8OhdZvq2NfyF9NTf10dU67qslwPNDa93893TeeZTMI31/rGSNdbM+cz6qHWtn87M6zktAAhKQgAQkIAEJSEACEpCABCQgAQlIQAISkIAEJCABCUigmsAB6NMM9A==
   </data>
   </layer>
-  <layer id="45" name="Road" width="57" height="56">
+  <layer id="45" name="Highway" width="57" height="56">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -83,18 +83,19 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera" locked="1">
+  <objectgroup id="26" name="PlayerAndCamera">
    <object id="2114" name="Camera1" type="Camera" x="3978.15" y="3221.01" width="574" height="368"/>
    <object id="2186" name="PlayerStart" gid="2" x="4257.97" y="3391.03" width="32" height="16" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
    </object>
-   <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="695" width="7768" height="3960"/>
+   <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="695" width="7000" height="4232"/>
   </objectgroup>
   <objectgroup id="34" name="Road" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
     <properties>
+     <property name="CHECKPOINT_LONG_DISTANCE" type="float" value="256"/>
      <property name="CHECKPOINT_SHORT_DISTANCE" type="float" value="64"/>
      <property name="OPPONENT_ANGULAR_TWEAK" type="float" value="1"/>
      <property name="OPPONENT_VELOCITY_TWEAK" type="float" value="0.4"/>

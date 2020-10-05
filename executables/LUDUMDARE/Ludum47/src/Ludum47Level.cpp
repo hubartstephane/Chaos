@@ -544,6 +544,9 @@ void LudumRoad::OnLevelStarted()
 
 RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::vec2 const & p, bool player) const
 {
+
+	RoadUpdateValue result = RoadUpdateValue::NOP;
+
 	size_t count = points.size();
 	for (size_t i = 0 ; i < count ; ++i)
 	{
@@ -573,20 +576,8 @@ RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::
 						{
 							LudumLevelInstance* li = layer_instance->GetLevelInstance();
 							if (li != nullptr)
-							{
 								li->OnOpponentArrived();
-							}
-
-
-
-
-
-
 						}
-
-
-
-
 						return RoadUpdateValue::END_OF_RACE;
 					}
 					return RoadUpdateValue::NEW_LAP;
@@ -596,11 +587,11 @@ RoadUpdateValue LudumRoad::UpdateRacePosition(RacePosition& race_position, glm::
 			// wrong direction
 			else
 			{
-				return RoadUpdateValue::WRONG_WAY;
+				result = RoadUpdateValue::WRONG_WAY;
 			}
 		}
 	}
-	return RoadUpdateValue::NOP;
+	return result;
 }
 
 float LudumRoad::GetSpeedFactor(glm::vec2 const& p) const

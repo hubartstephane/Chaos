@@ -18,7 +18,7 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <layer id="47" name="background" width="57" height="56">
+  <layer id="47" name="background" width="57" height="56" visible="0">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -27,7 +27,7 @@
    eAHt07ENwCAQBEF6o/+esEVEduEhxpKzD55lGMOngAIKKKCAAgq8UWB+x7z5T27p5vP9uyefM/Y7do+7AKusNhjwHr3HBofJDqyymjhpmGGV1QaHyQ6sspo4aZhhldUGh8kOrLKaOGmYYZXVBofJDqy+YzW5azMKKKCAAgoooIACCiiggAJngQVoVYWA
   </data>
   </layer>
-  <layer id="52" name="background2" width="57" height="56" visible="0" locked="1">
+  <layer id="52" name="background2" width="57" height="56" visible="0">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
@@ -36,16 +36,16 @@
    eAHt0bEBACAIBDGWYf8VbfjSAdDYfMvFKo8AAQIECBAgQIAAAQIECBD4VaAnPPuiQ9qyGncK5P+yOytcTYAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIE7gIHszsBKQ==
   </data>
   </layer>
-  <layer id="45" name="HighWay" width="57" height="56" locked="1">
+  <layer id="45" name="HighWay" width="57" height="56">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtlm0OwiAMhjmLPzTxVDsaR/FotjqWmgh0ipYszxIyPt6Vt0/HNCUuCEAAAhCAAAQgAAEIQAACEIDAfAQuYumUUtYm/Tyfw+8dSW7bZfvb5AE6Ni+p46L11Hakmtocbclq81YT1d97vmq52JpqXVvt3zW3nm2/xtyjqT1b5kfEKLE895W/nqvlLA/o/U0rdSmaMrZ3fc6O8/UZ72VONbLnzePtFxrZv3t5NN0ggQKPf48mMIXu1h7/Hk13o0CBx79HE5WCnPMk/vS7UG2eb8HMOY7yNirOL2o9ytuoOOT4GQH7Wy+1eHsmRZN70WeuY8+7rnc4ZMkvr/+FHn0d2+Zh5PERrWnVsbUW7XvP/q08Wmt79ojWru/zyzsquT3GsnaL9sf+EIAABCAAAQhAAAIQgAAEIAABCEAAAvEE7oM3QjE=
+   eAHtllsOwyAMBHO4PtP736d81JIVybBBptBqIkVQspj1uIRsGxcEIAABCEAAAhCAAAQgAAEIQGA9Atdi6fa5H+vZS3F0d1F83w3/fNfntZds/rGmPkdfsGjca2b1z+6vKBdfU6tt1H57H3vPvh8xVzTRXBvPiGGxlNbzv5QJEXsbVzSmfQXxnoqxQRqFr6IZZC8lrOJf0aSYGRRE8a9oBtlLCav4VzQpZjqC+DPC3gnHVnkXrJxjlresOB1lak7J8pYVp2m4Q5DlLStORwrNKf6sP+5D+618Y62cYxNCESgcat85CiPFx2xNrY61Z7N9n1m/lkft2Zk1Zmtr/2flfJ3tn/UhAAEIQAACEIAABCAAAQhAAAIQgAAExhN4A28OI44=
   </data>
   </layer>
-  <objectgroup id="50" name="Opponents" locked="1">
+  <objectgroup id="50" name="Opponents" visible="0" locked="1">
    <object id="2195" name="Opponent3" gid="36" x="4865.55" y="2843.95" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="650"/>
@@ -102,7 +102,7 @@
     </properties>
    </object>
   </objectgroup>
-  <objectgroup id="26" name="PlayerAndCamera" locked="1">
+  <objectgroup id="26" name="PlayerAndCamera" visible="0" locked="1">
    <object id="2114" name="Camera1" type="Camera" x="4547.17" y="2703.62" width="574" height="368"/>
    <object id="2186" name="PlayerStart" gid="2" x="4936.12" y="2880.36" width="32" height="16" rotation="180">
     <properties>
@@ -111,7 +111,7 @@
    </object>
    <object id="2188" name="WBB" type="WorldBoundingBox" x="1048" y="1775" width="5560" height="3144"/>
   </objectgroup>
-  <objectgroup id="34" name="Road" locked="1">
+  <objectgroup id="34" name="Road" visible="0" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
     <properties>
      <property name="CHECKPOINT_SHORT_DISTANCE" type="float" value="64"/>
@@ -122,7 +122,7 @@
     <polygon points="4299.03,-16 2938,-15.7754 1786.9,-7.75918 1394.69,-20.0828 1398.94,-270.839 1780.13,-270.354 1780.33,-15.831 1781.7,626.377 630.303,622.182 633.459,1138.16 1775.18,1143.88 1783.52,1264.61 2933.58,1264.61 3833.58,1270.18 3837.33,1645.97 2935.27,1645.52 2933.09,1267.73 2936.18,-20.0151 2930,-782 3320,-790 3328,-531 3698,-525.5 3709,-276.75 5113.83,-274.375 5112,-14.6667"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions">
+  <objectgroup id="51" name="Collisions" visible="0">
    <object id="2201" name="Collision2" type="CollisionBound" x="3721.09" y="2168.97">
     <polygon points="-1,14 239.947,14.7743 240.303,267.97 623.184,268.827 622.375,523.973 2032.29,525.502 2028.36,637.666 -3.0303,636.364"/>
    </object>
@@ -139,7 +139,7 @@
     <polygon points="222.667,-121.333 224.333,-5 -18.6667,-8 -17,-124"/>
    </object>
   </objectgroup>
-  <objectgroup id="48" name="SpeedIndications">
+  <objectgroup id="48" name="SpeedIndications" visible="0">
    <object id="2214" name="Indication2" type="SpeedIndication" x="3546.36" y="4040" width="211.879" height="238.545">
     <properties>
      <property name="SPEED_FACTOR" type="float" value="1"/>
@@ -162,7 +162,7 @@
    </object>
   </objectgroup>
   <objectgroup id="53" name="Smoke" visible="0" locked="1"/>
-  <layer id="54" name="Special Trees" width="57" height="56">
+  <layer id="54" name="Special Trees" width="57" height="56" visible="0">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>

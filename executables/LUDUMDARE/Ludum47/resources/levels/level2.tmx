@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="54" nextobjectid="2216">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="55" nextobjectid="2216">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -27,9 +27,9 @@
    eAHt0sENwkAUA9H0Qv89EhqwtPKDcDASpy8PY7PXdf553ZEnv+fG54kn+31++xefdfz+O97/aBbYW91bFW/AvMZMEZ4NI9uZa+MnsqZFpgjPhpHtzLXxE1nTIlOEZ8PIduba+ImsaZEpwrNhZDtzbfxE1rTIFOHZMLKduTZ+ImtaZIrwbBjZzlwbP5E1LTJFeDaMbGeujZ/ImhaZIjwbRrYz18ZPZE2LTBGeDSPbmWvjJ7KmRaYIz4aR7cy18RNZ0yJThGfDyHbm2viJrGmRKcKzYWQ7c238RNa0yBTh2TCynbk2fiJrWmSK8GwY2W7XLbAFtsAW2AJbYAtsgS2wBbbAFtgCW2ALbIEt8P8LvAHozZkh
   </data>
   </layer>
-  <layer id="52" name="objects" width="57" height="56" locked="1">
+  <layer id="52" name="objects" width="57" height="56">
    <data encoding="base64" compression="zlib">
-   eAHt0sERADAEBEDtpP8GIxX4BmvG/+yJMAQIECBAgAABAgQIECBA4A+BkzHeTh43zmhXj3rsIrDhV7t0IScBAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQqgQs0iwI/
+   eAHtlWtuwjAQhHMdpP4uUkvvfy08bT5pFAUMhlQbGEvLbIztzCOBacqIA3EgDryuA19N2udc6q/VHl2QnncZ5NjTq3Ua4N9V7c97c0QbWFvdGDs8AcdOef6u73ak16ldq37mavA74M28o3Kj5uWBf3DgON8D9FuSo8/1ejKs9B6iDXQN/gyq1xBqLaW56gNtYHW+I/w8H/ajF2Qe1DzFXGXsaTw08qqPyiI63NY0+pY1jdrDPq3lv8T3VerhCjo3/a6i0efV+3rvl+sqXMMPXPJfavTM5MHeBpzRq3cQjdfeR9ddUTPchbdoXNODJ9X0uTZxc43OlRyZc43e831FRKtzg3vvP5D8WO9nVOp5PsXJ+0ocH+WCLjLhWuf2cuTee8oRzq+G5EaOI/qS44hr2+zh3VOelO5EvpdwGzY5NQ7EgTgQB+JAHIgDcSAOxIE4EAfiQByIA3EgDsSBOBAH4kAckANnC1MfoQ==
   </data>
   </layer>
   <layer id="45" name="HighWay" width="57" height="56" locked="1">
@@ -126,5 +126,10 @@
    </object>
   </objectgroup>
   <objectgroup id="53" name="Smoke" visible="0" locked="1"/>
+  <layer id="54" name="special tree" width="57" height="56">
+   <data encoding="base64" compression="zlib">
+   eAHt2DEKgDAMAEB/JSj+/1smSKA4qFMlcIWYUoekRynishgECBAgQKCPwBatPkWfneiUAIG/BPYoPEb1ccQko0beNTlqfczXG08C8wXqHFbl8czWmkyAAAECBAgQ6Cpw/9bpug99EyBAYKbAGsUy6g6t/xlveWaPahEgQIAAAQIECBAgQIAAAQIECBAgQIDAd4ET5b4H3Q==
+  </data>
+  </layer>
  </group>
 </map>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="54" nextobjectid="2201">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="55" nextobjectid="2210">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -18,88 +18,102 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <layer id="47" name="background" width="57" height="56" locked="1">
+  <layer id="54" name="sea" width="57" height="56">
+   <data encoding="base64" compression="zlib">
+   eAHt08ENgCAQRFHasf8GwcO0QAZ4JmaPLp/nGB4FFFBgb4Fvfe7WNyVvPd9/rjzOeLZj93j2/eX/c4/uMRbaJ6usthvNfqyyGgvtk1VW241mP1ZZjYX2ySqr7UazH6usxkL7ZJXVdqPZj1VWY6F9vmQ1ZzUVUEABBRRQQAEFFFBAAQUUeLnABJvrK44=
+  </data>
+  </layer>
+  <layer id="47" name="ground" width="57" height="56" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHt0jERAAAMhDC8vH+PldElAwa4rJo8YIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQbeDBz6KLR4
+   eAHt1UEKhEAMBECf4/9fKHtP+rBKiFgLXhKcSRfBPQ4/AgQIzAqcs9e5jQABAp8X+H13n362oT6db+N/lYz/7bFdnRewq3a124H5bcw3dnPeqecb57t3snTvzqfIN3Zzbq3nNHV3a5ZurjpFrnZnba3nNHV3a5ZurjpFrnZnba3nNHV3a5ZurjpFrnZnba3nNLoECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAgfcJXE/+URk=
   </data>
   </layer>
-  <layer id="52" name="background2" width="57" height="56" locked="1">
+  <layer id="52" name="objects" width="57" height="56" locked="1">
    <data encoding="base64" compression="zlib">
-   eAHt0KEBACAQAkCXcf8VTYyAlLPQ5LlzPAIECBAgQIAAAQIECPwTuP+qpk3ZmZweUyrPtmSpZvpttiWnx5TKsy1Zqpl+m23J6TGl8mxLlmp8S4AAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBQFHvGUAeI=
+   eAHt0DEBAAAAwqD1T20MH4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgw8BwYMeAAAQ==
   </data>
   </layer>
-  <layer id="45" name="Road" width="57" height="56">
+  <layer id="45" name="Road" width="57" height="56" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHtl7ENw0AMA3+WNFkro3mUjBalFoGHiCfwxRlwI1v08QrDXosDAxjAAAZuMvAumNdan8lZO89NHXYs1W18ODvjhxxccHidnYPI4yiH19kZgx1ccHidnYPI4yiH19kZg20WJu/Kuve7iWuXb+iYZkjnN6likGZI54tKbZRmSOe3QmKQZkjni0ptlGZI57dCYpBmSOeLSm2UZkjnt0JikGZI54tKbZRmSOe3QmJQ3y7//8EndTrfRgKTEQYwgAEMYAADGMAABjCAAQxgAAMYwAAGMIABDGAAAxjAAAYwgAEMBAz8AFtGI98=
+   eAHtlsEJgEAQxK4WP7ZlaZZiae57OB+yURQi+NgDQzYg3Bg+FrCABSxgAQtYwAIW+H+BtVZYxti6b3H2r9ao3ZCH4iAyAaHcKE7oISPlRnGQpQJCuVGc0ENGyo3iIEsFhHKjOKGHjJQbxUGWCgjlRnFCDxkpN4qDLBUQyq3uOe27UrlMGd07FLVjpEPHrmP3e3SZC1jXsfv9hRZ63HV88j8qt+n/dfe8HA80mjALWMACFrCABSxgAQtYwAIWsIAFLGABC1jAAhawgAUsYIHXCpwbUy8b
   </data>
   </layer>
   <objectgroup id="50" name="Opponents" locked="1">
-   <object id="2195" name="Opponent3" gid="36" x="747.334" y="2324.67" width="32" height="16" rotation="-110">
-    <properties>
-     <property name="MAX_VELOCITY" type="float" value="900"/>
-    </properties>
-   </object>
-   <object id="2196" name="Opponent2" gid="36" x="681" y="2219.33" width="32" height="16" rotation="-90">
-    <properties>
-     <property name="MAX_VELOCITY" type="float" value="800"/>
-    </properties>
-   </object>
-   <object id="2197" name="Opponent1" gid="36" x="667" y="2136.33" width="32" height="16" rotation="-80">
+   <object id="2197" name="Opponent1" gid="36" x="4166.97" y="3350.18" width="32" height="16" rotation="180">
     <properties>
      <property name="MAX_VELOCITY" type="float" value="700"/>
     </properties>
    </object>
+   <object id="2201" name="Opponent1" gid="36" x="4092" y="3435" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="700"/>
+    </properties>
+   </object>
+   <object id="2202" name="Opponent1" gid="36" x="4020" y="3352" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="700"/>
+    </properties>
+   </object>
+   <object id="2203" name="Opponent1" gid="36" x="3959" y="3432" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="850"/>
+    </properties>
+   </object>
+   <object id="2204" name="Opponent1" gid="36" x="3897" y="3351" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="850"/>
+    </properties>
+   </object>
+   <object id="2205" name="Opponent1" gid="36" x="3839" y="3430" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
+   <object id="2206" name="Opponent1" gid="36" x="3786" y="3351" width="32" height="16" rotation="180">
+    <properties>
+     <property name="MAX_VELOCITY" type="float" value="900"/>
+    </properties>
+   </object>
   </objectgroup>
   <objectgroup id="26" name="PlayerAndCamera" locked="1">
-   <object id="2114" name="Camera1" type="Camera" x="384.149" y="2047.01" width="574" height="368"/>
-   <object id="2186" name="PlayerStart" gid="2" x="697.636" y="2377.03" width="32" height="16" rotation="-90">
+   <object id="2114" name="Camera1" type="Camera" x="3978.15" y="3221.01" width="574" height="368"/>
+   <object id="2186" name="PlayerStart" gid="2" x="4257.97" y="3391.03" width="32" height="16" rotation="180">
     <properties>
      <property name="BITMAP_NAME" value="Player"/>
     </properties>
    </object>
-   <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="311" width="4536" height="3552"/>
+   <object id="2188" name="WBB" type="WorldBoundingBox" x="152" y="695" width="7768" height="3960"/>
   </objectgroup>
-  <objectgroup id="34" name="Objects" locked="1">
+  <objectgroup id="34" name="Road" locked="1">
    <object id="2189" name="TheRoad" type="Road" x="712" y="2896">
     <properties>
      <property name="CHECKPOINT_SHORT_DISTANCE" type="float" value="64"/>
      <property name="OPPONENT_ANGULAR_TWEAK" type="float" value="1"/>
      <property name="OPPONENT_VELOCITY_TWEAK" type="float" value="0.4"/>
-     <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.5"/>
+     <property name="PLAYER_VELOCITY_TWEAK" type="float" value="0.4"/>
     </properties>
-    <polygon points="0,0 0,-1296 1392,-1300 1396,-2068 3068,-2052 3060,-12"/>
+    <polygon points="3684,508 640,488 640,-1300 2936,-1300 2932,-12 5876,-16 5868,510"/>
    </object>
   </objectgroup>
-  <objectgroup id="51" name="Collisions" visible="0" locked="1">
-   <object id="2200" name="Collision1" type="CollisionBound" x="591" y="1984">
-    <polyline points="49.2727,960.152 3249.12,960.435 3249.88,-1216.89 1457.34,-1215.59 1457.11,-446.341 50.822,-449.814 48.9545,960.106"/>
+  <objectgroup id="51" name="Collisions" locked="1">
+   <object id="2207" name="collision2" type="CollisionBound" x="1282" y="3452">
+    <polygon points="0,0 5374,4 5376,-636 2428,-640 2430,-1918 -2,-1918"/>
+   </object>
+   <object id="2208" name="collision1" type="CollisionBound" x="1408" y="3328">
+    <polygon points="0,0 0,-1666 2172,-1666 2174,-386 5116,-386 5120,-2"/>
    </object>
   </objectgroup>
   <objectgroup id="48" name="SpeedIndications" locked="1">
-   <object id="2191" name="Indication1" type="SpeedIndication" x="-424" y="736" width="924" height="584">
-    <properties>
-     <property name="SPEED_FACTOR" type="float" value="0.3"/>
-    </properties>
-   </object>
-   <object id="2192" name="Indication2" type="SpeedIndication" x="780" y="220" width="908" height="628">
-    <properties>
-     <property name="SPEED_FACTOR" type="float" value="0.3"/>
-    </properties>
-   </object>
-   <object id="2199" name="Indication3" type="SpeedIndication" x="-366" y="2828" width="924" height="584">
-    <properties>
-     <property name="SPEED_FACTOR" type="float" value="0.1"/>
-    </properties>
-   </object>
+   <object id="2209" name="indication1" type="SpeedIndication" x="3906.06" y="3124.24" width="796.97" height="560.606"/>
   </objectgroup>
-  <objectgroup id="53" name="Smoke"/>
+  <objectgroup id="53" name="Smoke" locked="1"/>
  </group>
 </map>

@@ -18,13 +18,13 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
-  <layer id="47" name="background" width="57" height="56" visible="0" locked="1">
+  <layer id="47" name="background" width="57" height="56">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHt0jERAAAMhDC8vH+PldElAwa4rJo8YIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQYYYIABBhhggAEGGGCAAQbeDBz6KLR4
+   eAHt07ENwCAQBEF6o/+esEVEduEhxpKzD55lGMOngAIKKKCAAgq8UWB+x7z5T27p5vP9uyefM/Y7do+7AKusNhjwHr3HBofJDqyymjhpmGGV1QaHyQ6sspo4aZhhldUGh8kOrLKaOGmYYZXVBofJDqy+YzW5azMKKKCAAgoooIACCiiggAJngQVoVYWA
   </data>
   </layer>
   <layer id="52" name="background2" width="57" height="56" visible="0" locked="1">

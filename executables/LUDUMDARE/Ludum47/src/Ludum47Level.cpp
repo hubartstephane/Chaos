@@ -82,6 +82,8 @@ bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos:
 	
 	health = max_health;
 
+	spawner_delay.spawn_per_second = 40.0f;
+
 	return true;
 }
 
@@ -108,15 +110,26 @@ bool LudumOpponent::DoTick(float delta_time)
 	if (li != nullptr && li->effective_start_timer > 0.0f)
 		return true;
 
-
-
-
-
-
-
 	size_t road_point_count = road->points.size();
 	if (road == nullptr || road->points.size() == 0)
 		return true;
+
+
+	size_t smoke_particle = (size_t)spawner_delay.GetSpawnCount(delta_time);
+
+	LudumPlayer::SpawnSmokeParticles(smoke_particle, li, GetOBox());
+
+
+
+
+
+
+
+
+
+
+
+
 
 	ParticleOpponent* particle = GetParticle<ParticleOpponent>(0);
 	if (particle != nullptr)

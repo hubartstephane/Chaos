@@ -87,7 +87,7 @@ public:
 	class LudumGame * game = nullptr;
 
 
-	float effective_start_timer = 6.0f;
+	float effective_start_timer = 5.0f;
 
 	size_t opponent_arrived_count = 0;
 	size_t opponent_count = 0;

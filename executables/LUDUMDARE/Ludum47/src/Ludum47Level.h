@@ -166,6 +166,8 @@ public:
 	float max_health = 4.0f;
 	float health = 4.0f;
 
+	ParticleSpawnerDelay spawner_delay;
+
 };
 
 

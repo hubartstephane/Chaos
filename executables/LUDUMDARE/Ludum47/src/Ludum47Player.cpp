@@ -32,7 +32,7 @@ bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
 	if (!death::Player::Initialize(in_game_instance))
 		return false;
 
-	spawner_delay.spawn_per_second = 40.0f;
+	spawner_delay.spawn_per_second = 20.0f;
 
 	
 

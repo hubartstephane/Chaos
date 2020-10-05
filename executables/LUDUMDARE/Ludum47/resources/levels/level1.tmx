@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="55" nextobjectid="2210">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="128" tileheight="128" infinite="0" nextlayerid="56" nextobjectid="2210">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -23,18 +23,18 @@
    eAHt08ENgCAQRFHasf8GwcO0QAZ4JmaPLp/nGB4FFFBgb4Fvfe7WNyVvPd9/rjzOeLZj93j2/eX/c4/uMRbaJ6usthvNfqyyGgvtk1VW241mP1ZZjYX2ySqr7UazH6usxkL7ZJXVdqPZj1VWY6F9vmQ1ZzUVUEABBRRQQAEFFFBAAQUUeLnABJvrK44=
   </data>
   </layer>
-  <layer id="47" name="ground" width="57" height="56" locked="1">
+  <layer id="47" name="ground" width="57" height="56">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
     <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
    </properties>
    <data encoding="base64" compression="zlib">
-   eAHt1UEKhEAMBECf4/9fKHtP+rBKiFgLXhKcSRfBPQ4/AgQIzAqcs9e5jQABAp8X+H13n362oT6db+N/lYz/7bFdnRewq3a124H5bcw3dnPeqecb57t3snTvzqfIN3Zzbq3nNHV3a5ZurjpFrnZnba3nNHV3a5ZurjpFrnZnba3nNHV3a5ZurjpFrnZnba3nNLoECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAgfcJXE/+URk=
+   eAHt1rkNgDAMAMCMQ8MP+69G6ChCAbJ4D8kNSAk+O09KHgIECFwrUF07ndkIECDwe4EhC3SBMT5QtM3/tJ4vUdHL8RYBdTzew3r1llZNelWvls4b6/Eb63HOaUTem7Zjnb1DRe85pf6Nend2Hcjx+L4aVbPSOOq4v5/9oVennH79kmj2S+ULAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQOC1Agsei1RZ
   </data>
   </layer>
-  <layer id="52" name="objects" width="57" height="56" locked="1">
+  <layer id="52" name="objects" width="57" height="56">
    <data encoding="base64" compression="zlib">
-   eAHt0DEBAAAAwqD1T20MH4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgw8BwYMeAAAQ==
+   eAHt1UEKgzAQBVDv0+57/5vVIf3QRbIJlNT4AvFj0DjzlPY4DAIECBAgQIAAgTsIPM4mZ+frvDfzDlb/2GP510i2s72O6S25V3etm/SW1OOOAnv0VP8XNZLtzPFqAnl/yavVv7LenllvrWrsrWetfu8zZ/vJXsnZfdy3ViDvL7m2mt8+Pd98Mj338vkp5TvrutEcVd7bu64drY/2sU6AAAECBAgQIECAAAECBAgQIECAAAECBAgQIEBgtcAbKQILxw==
   </data>
   </layer>
   <layer id="45" name="Road" width="57" height="56">
@@ -115,5 +115,10 @@
    <object id="2209" name="indication1" type="SpeedIndication" x="3906.06" y="3124.24" width="796.97" height="560.606"/>
   </objectgroup>
   <objectgroup id="53" name="Smoke" locked="1"/>
+  <layer id="55" name="special trees" width="57" height="56">
+   <data encoding="base64" compression="zlib">
+   eAHt10kKwCAMAMD8R///vjbYQ8EFvNUyAQnEIHFuiRAECBAgQIAAAQIECJwkUO5hd89J/zMrAQIECBAgQIAAAQLfEsj9I2OUa7uKd17tK097l0ZvZ9Os3j2gQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBD4gcAFq8AFjw==
+  </data>
+  </layer>
  </group>
 </map>

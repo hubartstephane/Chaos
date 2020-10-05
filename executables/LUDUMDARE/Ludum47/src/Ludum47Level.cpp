@@ -82,7 +82,7 @@ bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos:
 	
 	health = max_health;
 
-	spawner_delay.spawn_per_second = 40.0f;
+	spawner_delay.spawn_per_second = 20.0f;
 
 	return true;
 }

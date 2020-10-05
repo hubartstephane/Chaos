@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="128" tileheight="128" tilecount="11" columns="0" objectalignment="center">
+<tileset version="1.4" tiledversion="1.4.2" name="tileset" tilewidth="128" tileheight="200" tilecount="24" columns="0" objectalignment="center">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1" type="PlayerStart" terrain="0,0,,">
   <properties>
@@ -37,5 +37,44 @@
  </tile>
  <tile id="41">
   <image width="128" height="128" source="../sprites/Concrete3.png"/>
+ </tile>
+ <tile id="42">
+  <image width="128" height="200" source="../sprites/tree2.png"/>
+ </tile>
+ <tile id="43">
+  <image width="128" height="128" source="../sprites/bush1.png"/>
+ </tile>
+ <tile id="44">
+  <image width="128" height="128" source="../sprites/sand2.png"/>
+ </tile>
+ <tile id="45">
+  <image width="128" height="128" source="../sprites/sand3.png"/>
+ </tile>
+ <tile id="46">
+  <image width="128" height="128" source="../sprites/sand6.png"/>
+ </tile>
+ <tile id="47">
+  <image width="128" height="128" source="../sprites/sand7.png"/>
+ </tile>
+ <tile id="48">
+  <image width="128" height="128" source="../sprites/sand8.png"/>
+ </tile>
+ <tile id="49">
+  <image width="128" height="128" source="../sprites/sand4.png"/>
+ </tile>
+ <tile id="50">
+  <image width="128" height="128" source="../sprites/sand5.png"/>
+ </tile>
+ <tile id="51">
+  <image width="128" height="128" source="../sprites/sand9.png"/>
+ </tile>
+ <tile id="52">
+  <image width="128" height="128" source="../sprites/sand10.png"/>
+ </tile>
+ <tile id="53">
+  <image width="128" height="128" source="../sprites/TurnLeft.png"/>
+ </tile>
+ <tile id="54">
+  <image width="128" height="128" source="../sprites/TurnRight.png"/>
  </tile>
 </tileset>

@@ -429,7 +429,7 @@ bool LudumRoad::DoTick(float delta_time)
 			player_particle->collision_reaction_intensity = 0.5f * intensity2 * player->car_data.reaction_value * col_factor;
 
 
-			player_particle->velocity = 0.7f * player_particle->velocity;
+			player_particle->velocity = player->velocity_collision_factor * player_particle->velocity;
 
 
 			opp1->SynchronizeData(false);

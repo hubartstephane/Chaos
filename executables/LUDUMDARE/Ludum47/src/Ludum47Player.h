@@ -67,6 +67,10 @@ public:
     bool was_honk_pressed_keyboard = false;
     bool was_honk_pressed_gamepad = false;
 
+
+
+    float velocity_collision_factor = 0.7f;
+
     RacePosition race_position;
 
     float sound_collision_timer = 0.0f;

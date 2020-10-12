@@ -26,7 +26,16 @@ namespace chaos
 		}
 		else if (mode == WrapMode::WRAP)
 		{
-			//result = min_value + MathTools::Modulo(src - min_value, max_value - min_value + 1); // +1 because 'max_value' is inside accepted range
+			if (std::is_integral_v<T>)
+			{
+				result = min_value + MathTools::Modulo(src - min_value, max_value - min_value + 1); // +1 because 'max_value' is inside accepted range
+			}
+			else
+			{
+				result = min_value + MathTools::Modulo(src - min_value, max_value - min_value);
+			}
+
+			
 
 
 
@@ -36,7 +45,7 @@ namespace chaos
 			// shu47
 
 
-			result = min_value + MathTools::Modulo(src - min_value, max_value - min_value); // +1 because 'max_value' is inside accepted range
+			 // SPECIAL LD47 result = min_value + MathTools::Modulo(src - min_value, max_value - min_value); // +1 because 'max_value' is inside accepted range
 
 
 		}

@@ -10,5 +10,5 @@
   "reaction_value": 0.5,
   "reaction_decrease": 2000.0,
   "collision_health_lost": 0.1,
-  "velocity_collision_factor": 0.7
+  "velocity_collision_factor": 0.3
 }

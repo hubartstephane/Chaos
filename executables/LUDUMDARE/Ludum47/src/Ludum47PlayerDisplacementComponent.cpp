@@ -121,7 +121,6 @@ bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 
 
 
-
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
 	death::PlayerDisplacementComponent::DoTick(delta_time);
@@ -169,30 +168,12 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 
 
-
+	// no input before race really starts
 	if (level_instance->lost_timer >= 0 || player->race_position.IsCompleted())
 	{
 		stick_position = { 0.0f , 0.0f };
 		particle.accelerate_pressed = particle.break_pressed = false;
-
-
-
-
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	CarData const& car_data = player->car_data;
 
@@ -202,17 +183,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	float angular_tweak = player->road->player_angular_tweak;
 
-
-
-
-
-
-
-
-
-
-
-
 	float velocity_tweak = player->road->player_velocity_tweak;
 
 
@@ -220,7 +190,10 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 
 	glm::vec2 velocity_vector = particle.velocity * glm::vec2(std::cos(particle.rotation), std::sin(particle.rotation));
 
-
+	float clamped_rotation = chaos::MathTools::DegreeToRadian(
+		
+		6.0f * std::floor(chaos::MathTools::RadianToDegree(particle.rotation) / 6.0f)
+	);
 
 	if (particle.collision_reaction_intensity > 0.0f)
 	{
@@ -232,19 +205,18 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 		}
 	}
 
-
-
-
 	if (particle.velocity != 0.0f)
 	{
 		particle.rotation += car_data.angular_velocity * delta_time * -stick_position.x * angular_tweak;
+
+		velocity_vector = particle.velocity * glm::vec2(std::cos(clamped_rotation), std::sin(clamped_rotation));
+	
 		chaos::ApplyWrapMode(particle.rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, particle.rotation);
+		
 		particle.bounding_box.position += velocity_vector * delta_time;
 	}
 	
 	
-	
-
 	// compute wanted velocity 
 
 	if (particle.accelerate_pressed)

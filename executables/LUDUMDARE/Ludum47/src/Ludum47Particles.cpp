@@ -12,6 +12,7 @@
 #include <chaos/CollisionFramework.h>
 #include <chaos/Class.h>
 #include <chaos/ParticleTools.h>
+#include <chaos/ParticleDefault.h>
 
 #include <death/SoundContext.h>
 
@@ -51,6 +52,18 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 	return false;
 }
 
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const
+{
+	ParticlePlayer clamped_particle = particle;
+
+	clamped_particle.rotation = chaos::MathTools::DegreeToRadian(
+
+		6.0f * std::floor(chaos::MathTools::RadianToDegree(particle.rotation) / 6.0f)
+	);
+
+
+	chaos::ParticleToPrimitives(clamped_particle, output);
+}
 
 
 // ===========================================================================

@@ -413,7 +413,7 @@ namespace chaos
 			{
 				if (tmp->pending_events[i].get() == this)
 				{
-					AddReference(SharedPointerPolicy()); // because, we want to pop back the event, then call OnEventRemovedFromClock(...)
+					AddReference(); // because, we want to pop back the event, then call OnEventRemovedFromClock(...)
 
 					if (i != count - 1)
 						std::swap(tmp->pending_events[i], tmp->pending_events.back());
@@ -421,7 +421,7 @@ namespace chaos
 					tmp->pending_events.pop_back();
 
 					OnEventRemovedFromClock();
-					SubReference(SharedPointerPolicy());
+					SubReference();
 					return true;
 				}
 			}
@@ -469,11 +469,11 @@ namespace chaos
 	}
 
 	// XXX : See ParticleAllocationBase::SubReference(...) implementation and comments
-	void Clock::SubReference(SharedPointerPolicy policy)
+	void Clock::SubReference()
 	{
 		if (parent_clock == nullptr)
 		{			
-			Object::SubReference(policy); // the Clock is handled as usual
+			Object::SubReference(); // the Clock is handled as usual
 		}
 		else
 		{

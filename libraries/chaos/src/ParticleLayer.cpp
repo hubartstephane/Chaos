@@ -92,11 +92,11 @@ namespace chaos
 	//              -> as soon as this intrusive_ptr<...> is destroyed, we want to destroy the ParticleAllocation even if there still is 1 reference
 	//                 from the layer
 	//
-	void ParticleAllocationBase::SubReference(SharedPointerPolicy policy)
+	void ParticleAllocationBase::SubReference()
 	{
         // the ParticleAllocation is handled as usual
 		if (layer == nullptr)
-			Object::SubReference(policy); 
+			Object::SubReference(); 
         // the last reference is the one from the layer. Destroy it
 		else if (--shared_count == 1) 
             RemoveFromLayer();
@@ -147,6 +147,7 @@ namespace chaos
 		for (size_t i = particles_allocations.size(); i > 0; --i) // from end to beginning because DetachAllParticleAllocations(...) is from end to the beginning => make the code much faster
 		{
 			size_t index = i - 1;
+
 			if (particles_allocations[index] == allocation)
 			{
 				allocation->OnRemovedFromLayer();
@@ -170,7 +171,7 @@ namespace chaos
 
 		// store allocations that want to be notified of their emptyness here,
 		// to be handled after the main loop
-		std::vector<ParticleAllocationBase *> to_destroy_allocations;
+		std::vector<ParticleAllocationBase*> to_destroy_allocations;
 
 		// main loop
 		size_t count = particles_allocations.size();
@@ -179,7 +180,6 @@ namespace chaos
 			ParticleAllocationBase * allocation = particles_allocations[i].get();
 			if (allocation == nullptr)
 				continue;
-
 			// tick or destroy the allocation
 			bool destroy_allocation = false;
 			if (allocation->GetParticleCount() == 0 && allocation->GetDestroyWhenEmpty()) // XXX: if the TRAIT is not particle_dynamic, this will never be called

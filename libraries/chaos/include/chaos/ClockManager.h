@@ -324,7 +324,7 @@ namespace chaos
 		virtual ~Clock();
 
 		/** Reference count updated : 2 use cases (external reference or not) */
-		virtual void SubReference(SharedPointerPolicy policy) override;
+		virtual void SubReference() override;
 
 		/** returns the internal time */
 		double GetClockTime() const { return clock_time; }

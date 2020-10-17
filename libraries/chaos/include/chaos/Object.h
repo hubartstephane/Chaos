@@ -29,7 +29,7 @@ virtual chaos::Class const * GetClass() const { return classname##_class; }
 	* Object is a base class that have a reference count (shared and weak)
 	*/
 
-	// XXX : due to memory allocation management (destruction is manually called with ->~destructor())
+	// XXX : due to memory allocation management
 	//       it is important that Object is the very first object in hierarchy chain
 	//
 	//       the destructor operator calls   free(p) : p must point to the beginning of the allocated buffer
@@ -73,18 +73,14 @@ virtual chaos::Class const * GetClass() const { return classname##_class; }
 		/** constructor */
 		Object();
 		/** destructor */
-		virtual ~Object() = default;
+		virtual ~Object();
 
 	public:
 
 		/** adding a shared reference */
-		virtual void AddReference(SharedPointerPolicy policy);
-		/** adding a weak reference */
-		virtual void AddReference(WeakPointerPolicy policy);
+		virtual void AddReference();
 		/** removing a shared reference */
-		virtual void SubReference(SharedPointerPolicy policy);
-		/** removing a weak reference */
-		virtual void SubReference(WeakPointerPolicy policy);
+		virtual void SubReference();
 
 	protected:
 
@@ -95,10 +91,8 @@ virtual chaos::Class const * GetClass() const { return classname##_class; }
 
 		/** count shared reference */
 		boost::atomic<int> shared_count;
-		/** count weak reference */
-		boost::atomic<int> weak_count;
-		/** whenever the content has been destroyed */
-		bool shared_destroyed = false;
+		/** a reference to the weak structure */
+		mutable WeakPointerData* weak_ptr_data = nullptr;
 	};
 
 	/**
@@ -116,10 +110,8 @@ virtual chaos::Class const * GetClass() const { return classname##_class; }
 	protected:
 
 		/** disable all reference count functions */
-		virtual void AddReference(WeakPointerPolicy policy) override { }
-		virtual void AddReference(SharedPointerPolicy policy) override { }
-		virtual void SubReference(WeakPointerPolicy policy) override { }
-		virtual void SubReference(SharedPointerPolicy policy) override { }		
+		virtual void AddReference() override { }
+		virtual void SubReference() override { }		
 		virtual void OnLastReferenceLost() override { }
 	};
 
@@ -152,7 +144,6 @@ virtual chaos::Class const * GetClass() const { return classname##_class; }
 	{
 		return ReferencedObjectDataWrapper<T>(params...);
 	}
-
 }; // namespace chaos
 
 	 /**
@@ -163,16 +154,8 @@ virtual chaos::Class const * GetClass() const { return classname##_class; }
 	 */
 
 	 /** utility method for shared_ptr */
-template<typename POLICY = chaos::SharedPointerPolicy>
-void intrusive_ptr_add_ref(chaos::Object * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
-{
-	obj->AddReference(policy);
-}
+void intrusive_ptr_add_ref(chaos::Object* obj); // should work with boost::intrusive_ptr<>
 
-/** utility method for shared_ptr */
-template<typename POLICY = chaos::SharedPointerPolicy>
-void intrusive_ptr_release(chaos::Object * obj, POLICY policy = POLICY()) // to work with boost::intrusive_ptr<>
-{
-	obj->SubReference(policy);
-}
+	/** utility method for shared_ptr */
+void intrusive_ptr_release(chaos::Object* obj); // should work with boost::intrusive_ptr<>
 

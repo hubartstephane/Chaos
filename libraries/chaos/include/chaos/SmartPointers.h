@@ -4,35 +4,132 @@
 
 namespace chaos
 {
+	// XXX : -shared_ptr<> is more or less a clone of boost::intrusive_ptr<>. It can be used on any class as soon as there are the 2 following functions
+	//        	 
+	//           intrusive_ptr_add_ref(...) and intrusive_ptr_release(...)
+	//
+	//       -weak_ptr<> use an intermediate structure that points on the target object
+	//
+	//        weak_ptr 
+	//            |
+	//            +-----> WeakPointerData <-----+
+	//                          |               |
+	//                          +----> target --+
+	//
+	//         to work the target must have a pointer on the WeakPointerData so it can reset it when it is destroyed
+	//
+	//         As a side effect, accessing target from a weak_ptr requires an additionnal indirection (slower)
+	//                           using weak_ptr cause an allocation (for the very first only)
+	//
+	// XXX : -shared_ptr<T const> make no sense !!! (while the shared_ptr is responsible for th death of the object)
+	//
+	//       -weak_ptr<T const>   can be used
 
-	/** 
-	 * some tags for pointer's policies 
+	/**
+	 * WeakPointerData : an utility structure used to handle weak pointers
 	 */
 
-	class SharedPointerPolicy	
+	class WeakPointerData
 	{
 	public:
 
-		template<typename T>
-		static auto Get(T const * smart_ptr)
+		/** constructor */
+		WeakPointerData(void const* ptr) : // XXX : const here because a weak_ptr<T const> make sense
+			object_ptr(ptr)
 		{
-			assert(smart_ptr != nullptr);
-			return smart_ptr->target;
+			assert(ptr != nullptr);
+		}
+
+		/** pointer on the object */
+		void const * object_ptr = nullptr;
+		/** count weak reference */
+		boost::atomic<int> weak_count;
+	};
+
+	/**
+	 * SharedPointerPolicy : policy used for shared_ptr
+	 */
+
+	class SharedPointerPolicy
+	{
+	public:
+
+		/** the internal data in the smart pointer */
+		template<typename T>
+		using pointer_type = T;
+
+		/** adding a reference */
+		template<typename T>
+		static pointer_type<T> * AddReference(T* in_target)
+		{
+			assert(in_target != nullptr);
+			intrusive_ptr_add_ref(in_target);
+			return in_target;
+		}
+
+		/** removing a reference */
+		template<typename T>
+		static pointer_type<T> * SubReference(pointer_type<T> * in_target)
+		{
+			assert(in_target != nullptr);
+			intrusive_ptr_release(in_target);
+			return nullptr;
+		}
+
+		/** get the resource pointed */
+		template<typename T>
+		static T * Get(T * in_target)
+		{
+			return in_target;
 		}
 	};
 
-	class WeakPointerPolicy 
+
+	/**
+	 * SharedPointerPolicy : policy used for weak_ptr
+	 */
+
+	class WeakPointerPolicy
 	{
 	public:
 
+		/** the internal data in the smart pointer */
 		template<typename T>
-		static auto Get(T const * smart_ptr)
+		using pointer_type = WeakPointerData;
+
+
+		/** adding a reference */
+		template<typename T>
+		static WeakPointerData * AddReference(T* in_target)
 		{
-			assert(smart_ptr != nullptr);
-			if (smart_ptr->target != nullptr && smart_ptr->target->shared_destroyed)
-				smart_ptr->DoSetTarget((T::type*)nullptr);
-			return smart_ptr->target;
-		}	
+			assert(in_target != nullptr);
+
+			if (in_target->weak_ptr_data == nullptr) // reserve a weak structure if needed
+			{
+				in_target->weak_ptr_data = new WeakPointerData(in_target);
+				if (in_target->weak_ptr_data == nullptr)
+					return nullptr;
+			}
+			++in_target->weak_ptr_data->weak_count;
+			return in_target->weak_ptr_data;
+		}
+
+		/** removing a reference */
+		static WeakPointerData * SubReference(WeakPointerData* in_target)
+		{
+			--in_target->weak_count;
+			return nullptr;
+		}
+
+		/** get the resource pointed */
+		template<typename T>
+		static T * Get(WeakPointerData* in_target)
+		{
+			if (in_target != nullptr)
+				return (T*)in_target->object_ptr; // remove constness here
+			return nullptr;
+		}
+
 	};
 
 	/**
@@ -53,11 +150,10 @@ namespace chaos
 		/** default constructor */
 		SmartPointerBase() {}
 		/** constructor with capturing the object */
-		SmartPointerBase(type * in_target) :
-			target(in_target)
+		SmartPointerBase(type * in_target)
 		{
-			if (target != nullptr)
-				intrusive_ptr_add_ref(const_cast<boost::remove_const<type>::type * >(target), POLICY());
+			if (in_target != nullptr)
+				target = POLICY::AddReference(in_target);
 		}
 		/** copy constructor */
 		SmartPointerBase(SmartPointerBase<T, POLICY> const & src) :
@@ -66,55 +162,56 @@ namespace chaos
 		}
 
 		/** move constructor */
-		SmartPointerBase(SmartPointerBase<T, POLICY> && src) noexcept: // XXX : the noexcept is required to have move semantic used during resized
-			target(src.get())
+		SmartPointerBase(SmartPointerBase<T, POLICY>&& src) noexcept: // XXX : the noexcept is required to have move semantic used during vector resized
+			target(src.target)
 		{
-			src.target = nullptr; // necessary to capture the reference, else the move semantic would
+			src.target = nullptr; // capture the reference
 		}
 
 		/** destructor */
 		~SmartPointerBase()
 		{
 			if (target != nullptr)
-				intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(target), POLICY());
+				target = POLICY::SubReference(target);
 		}
 
 		/** copy */
 		SmartPointerBase & operator = (type * src)
 		{
-			DoSetTarget(src);
+			if (src != get())
+				DoSetTarget(src);
 			return *this;
 		}
 		/** copy */
 		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> const & src)
 		{
-			DoSetTarget(src.get());
+			if (src.target != target) // no need to fully get() => small optimization for weak_ptr
+				DoSetTarget(src.get());
 			return *this;
 		}
 
 		/** move */
-		SmartPointerBase & operator = (SmartPointerBase<T, POLICY> && src) noexcept // shuxxx to test
+		SmartPointerBase & operator = (SmartPointerBase<T, POLICY>&& src) noexcept // shuxxx to test
 		{
-			assert(this != &src);
-			if (target != src.target)
+			if (src.target != target)
 			{
-				if (target != nullptr)
-					intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(target), POLICY());
+				// XXX : add reference before destroying to be sure that by chain reaction we do not destroy the object we want to point first
+				auto old_target = target;
+
+				// 1 - capture new the reference
 				target = src.target;
+				src.target = nullptr;
+				// 2 - remove old reference
+				if (old_target != nullptr)
+					POLICY::SubReference(old_target);
 			}
-			else
-			{
-				if (src.target != nullptr)
-					intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(src.target), POLICY()); // no new reference added due to this, src' reference is lost
-			}
-			src.target = nullptr;
 			return *this;
 		}
 
 		/** getters */
 		type * get() const
 		{
-			return POLICY::Get(this);
+			return POLICY::Get<type>(target);
 		}
 
 		/** getters */
@@ -134,38 +231,34 @@ namespace chaos
 		}
 
 		/** swap pointers */
-		void swap(SmartPointerBase<T, POLICY> & src)
+		friend void swap(SmartPointerBase& src1, SmartPointerBase& src2)
 		{
-			if (&src != this)
-			{
-				type * tmp = get();
-				target = src.get();
-				src.target = tmp;
-			}
+			std::swap(src1.target, src2.target); // this works for shared_ptr AND weak_ptr
 		}
 
 	protected:
 
 		/** internal method to change the content of the pointer */
-		template<typename U>
-		void DoSetTarget(U * src) const // const because, we are using mutable (because we want weak_ptr.get() method to be able to reset itself and free memory)
+		void DoSetTarget(type * src)
 		{
-			if (target != src)
-			{
-				if (target != nullptr)
-					intrusive_ptr_release(const_cast<boost::remove_const<type>::type * >(target), POLICY());
-				target = src;
-				if (target != nullptr)
-					intrusive_ptr_add_ref(const_cast<boost::remove_const<type>::type * >(target), POLICY());
-			}
+			// XXX : add reference before destroying to be sure that by chain reaction we do not destroy the object we want to point first
+			auto old_target = target;
+
+			// 1 - add reference 
+			if (src != nullptr)
+				target = POLICY::AddReference(src);
+			else
+				target = nullptr;
+			// 2 - remove reference
+			if (old_target != nullptr)
+				POLICY::SubReference(old_target);
 		}
 
 	protected:
 
-		/** the object pointed */
-		mutable type * target = nullptr;
+		/** the object pointed (or a WeakPointerData structure) */
+		typename POLICY::template pointer_type<type> * target = nullptr;
 	};
-
 
 	/**
 	* SmartPointerBase / raw pointer comparaisons

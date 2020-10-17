@@ -357,11 +357,11 @@ namespace chaos
 		// ForceFeedbackEffect functions
 		//
 
-        void ForceFeedbackEffect::SubReference(SharedPointerPolicy policy)
+        void ForceFeedbackEffect::SubReference()
         {
             // the ParticleAllocation is handled as usual
             if (gamepad == nullptr)
-                Object::SubReference(policy);
+                Object::SubReference();
             // the last reference is the one from the layer. Destroy it
             else if (--shared_count == 1)
                 RemoveFromGamepad();

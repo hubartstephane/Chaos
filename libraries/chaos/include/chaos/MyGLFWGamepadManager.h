@@ -320,7 +320,7 @@ namespace chaos
 			/** remove the forcefeedback from its gamepad */
 			void RemoveFromGamepad();
 			/** the force feedbaack effect may deleted itself as soon as a reference is removed and the last one is from the gamepad */
-			virtual void SubReference(SharedPointerPolicy policy) override;
+			virtual void SubReference() override;
 
 		protected:
 

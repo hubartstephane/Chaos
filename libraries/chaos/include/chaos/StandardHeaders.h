@@ -82,6 +82,7 @@
 
 #include <fcntl.h>
 #include <thread>
+#include <future>
 #include <chrono>
 #include <forward_list>
 #include <type_traits>

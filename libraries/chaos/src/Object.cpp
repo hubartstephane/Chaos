@@ -7,50 +7,50 @@
 namespace chaos
 {
 	Object::Object() :
-		shared_count(0),
-		weak_count(0),
-		shared_destroyed(false)
+		shared_count(0)
 	{
 	}
 
-	void Object::AddReference(SharedPointerPolicy policy)
+	Object::~Object()
 	{
-		assert(!shared_destroyed);
-		++shared_count;
-	}
-
-	void Object::AddReference(WeakPointerPolicy policy)
-	{
-		++weak_count; // can add a weak reference even if the object is destroyed
-	}
-
-	void Object::SubReference(SharedPointerPolicy policy)
-	{
-		assert(!shared_destroyed);
-		assert(shared_count > 0);
-		if (--shared_count <= 0)
+		// reset or destroy weak structure
+		if (weak_ptr_data != nullptr)
 		{
-			shared_destroyed = true;
-			this->~Object(); // destroy the object content, but only release memory if weak_count is 0 too
-
-			if (weak_count <= 0)
-				OnLastReferenceLost();
+			if (weak_ptr_data->weak_count == 0)
+				delete weak_ptr_data;
+			else
+				weak_ptr_data->object_ptr = nullptr;
 		}
 	}
 
-	void Object::SubReference(WeakPointerPolicy policy)
+	void Object::AddReference()
 	{
-		if (--weak_count <= 0)
-			if (shared_count == 0) // no more weak reference nor shared reference, release memory
-				OnLastReferenceLost();
+		++shared_count;
+	}
+
+	void Object::SubReference()
+	{
+		assert(shared_count > 0);
+		if (--shared_count <= 0)
+			OnLastReferenceLost();
 	}
 
 	void Object::OnLastReferenceLost()
 	{
-		// XXX : this is different from : delete(this)
-		//       delete(this)          : destruction + deallocation
-		//       operator delete(this) : deallocation
-		operator delete(this); 		
+		delete(this); 		
 	}
 
 }; // namespace chaos
+
+
+void intrusive_ptr_add_ref(chaos::Object* obj) // to work with boost::intrusive_ptr<>
+{
+	obj->AddReference();
+}
+
+/** utility method for shared_ptr */
+void intrusive_ptr_release(chaos::Object* obj) // to work with boost::intrusive_ptr<>
+{
+	obj->SubReference();
+}
+

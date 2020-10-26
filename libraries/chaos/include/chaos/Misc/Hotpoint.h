@@ -1,0 +1,43 @@
+#ifdef CHAOS_FORWARD_DECLARATION
+
+namespace chaos
+{
+	enum class Hotpoint;
+
+}; // namespace chaos
+
+#else 
+
+namespace chaos
+{
+	enum class Hotpoint : int
+	{
+		LEFT = 1,
+		RIGHT = 2,
+		HMIDDLE = 0,
+
+		BOTTOM = 4,
+		TOP = 8,
+		VMIDDLE = 0,
+
+		BOTTOM_LEFT = BOTTOM | LEFT,
+		TOP_LEFT = TOP | LEFT,
+		BOTTOM_RIGHT = BOTTOM | RIGHT,
+		TOP_RIGHT = TOP | RIGHT,
+		CENTER = VMIDDLE | HMIDDLE
+	};
+
+	/** given a hotpoint and a hotpoint, returns the BottomLeft hotpoint position */
+	glm::vec2 ConvertHotpointToBottomLeft(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint hotpoint);
+	/** given a hotpoint and a hotpoint, returns any other hotpoint position */
+	glm::vec2 ConvertHotpoint(glm::vec2 const& pt, glm::vec2 const& size, Hotpoint initial_hotpoint, Hotpoint final_hotpoint);
+
+	/** JSON loading method */
+	bool LoadFromJSON(nlohmann::json const& json_entry, Hotpoint& dst);
+	/** JSON saving method */
+	bool SaveIntoJSON(nlohmann::json& json_entry, Hotpoint const& src);
+
+}; // namespace chaos
+
+#endif // CHAOS_FORWARD_DECLARATION
+

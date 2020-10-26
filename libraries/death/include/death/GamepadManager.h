@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/MyGLFWGamepadManager.h>
+#include <Chaos/Chaos.h>
 
 #include <death/Game.h>
 

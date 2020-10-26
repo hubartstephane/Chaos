@@ -1,9 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-
-#include <chaos/GeometryFramework.h>
-#include <chaos/Tickable.h>
+#include <Chaos/Chaos.h>
 #include <death/GameFramework.h>
 
 #include <death/GameGettersDecl.h>

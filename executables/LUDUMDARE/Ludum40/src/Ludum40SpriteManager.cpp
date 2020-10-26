@@ -1,9 +1,6 @@
 #include "Ludum40SpriteManager.h"
 
-#include <chaos/MathTools.h>
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/GLTools.h>
-#include <chaos/ParticleTools.h>
+#include <chaos/Chaos.h>
 
 namespace chaos
 {

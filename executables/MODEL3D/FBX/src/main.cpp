@@ -1,17 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/Application.h>
-#include <chaos/FPSViewInputController.h>
-#include <chaos/MyFbxImporter.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUSimpleMesh.h>
-
+#include <chaos/Chaos.h> 
 
 static constexpr int MAX_BONE_COUNT = 10;
 static constexpr int SKELETAL_BONE_COUNT = 250;

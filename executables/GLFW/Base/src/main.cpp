@@ -1,14 +1,5 @@
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/MyGLFWTools.h> 
-#include <chaos/GPUFence.h> 
-#include <chaos/Application.h>
-
+#include <chaos/Chaos.h> 
 
 uint64_t render_stamp = 0;
 

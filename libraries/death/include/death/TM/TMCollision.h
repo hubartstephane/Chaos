@@ -1,10 +1,7 @@
 #pragma once
 
+#include <Chaos/Chaos.h>
 #include <death/TM.h>
-
-#include <chaos/GeometryFramework.h>
-#include <chaos/ParticleLayer.h>
-#include <chaos/Edge.h>
 
 namespace death
 {

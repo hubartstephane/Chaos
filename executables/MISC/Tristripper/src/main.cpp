@@ -1,6 +1,4 @@
-#include <chaos/StandardHeaders.h>
-#include <chaos/StringTools.h>
-#include <chaos/Application.h>
+#include <chaos/Chaos.h>
 
 class MyApplication : public chaos::Application
 {

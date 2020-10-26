@@ -1,27 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/StringTools.h> 
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/Application.h>
-#include <chaos/GPUSimpleMeshGenerator.h>
-#include <chaos/SkyBoxTools.h>
-#include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/FPSViewInputController.h>
-#include <chaos/GPUSimpleMesh.h>
-#include <chaos/GPUMultiMeshGenerator.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GLTextureTools.h>
-#include <chaos/TextureArrayGenerator.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/GPURenderParams.h>
+#include <chaos/Chaos.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -161,7 +138,7 @@ protected:
 		return true; // refresh
 	}
 
-	chaos::shared_ptr<chaos::GPUTexture> GenerateTextureArray(int current_pixel_format)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateTextureArray(chaos::PixelFormatType current_pixel_format)
 	{
 		chaos::PixelFormat pixel_format = chaos::PixelFormat(current_pixel_format);
 		if (!pixel_format.IsValid())
@@ -183,11 +160,13 @@ protected:
 
 	void ChangePixelFormat(int delta)
 	{
-		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(current_pixel_format + delta);
+		chaos::PixelFormatType next_format = chaos::PixelFormatType((int)current_pixel_format + delta);
+
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(next_format);
 		if (new_texture != nullptr)
 		{
 			texture = new_texture;
-			current_pixel_format = current_pixel_format + delta;		
+			current_pixel_format = next_format;
 		}		
 	}
 

@@ -1,17 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/Buffer.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/Application.h>
-#include <chaos/MathTools.h>
-#include <chaos/JSONTools.h>
-#include <chaos/FileTools.h>
-#include <chaos/FilePath.h>
-
-
+#include <chaos/Chaos.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -32,7 +19,7 @@ protected:
     return false; // no redraw
   }
 
-  virtual bool OnMouseButton(int button, int action, int modifier) override
+  virtual bool OnMouseButtonImpl(int button, int action, int modifier) override
   {
 		return false;
   }

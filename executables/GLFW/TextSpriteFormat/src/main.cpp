@@ -1,32 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/StringTools.h> 
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/Application.h>
-#include <chaos/GPUSimpleMeshGenerator.h>
-#include <chaos/SkyBoxTools.h>
-#include <chaos/FPSViewInputController.h>
-#include <chaos/GPUSimpleMesh.h>
-#include <chaos/GPUMultiMeshGenerator.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GLTextureTools.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/MathTools.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/GPURenderMaterial.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/ParticleTextGenerator.h>
-#include <chaos/Class.h>
-#include <chaos/StringTools.h>
-#include <chaos/GPURenderParams.h>
+#include <chaos/Chaos.h> 
 
 // --------------------------------------------------------------------
 
@@ -146,7 +118,7 @@ protected:
 	bool InitializeParticleManager(boost::filesystem::path const & resources_path)
 	{
 		// create the material
-		material = chaos::ParticleDefault::GenDefaultParticleMaterial();
+		material = chaos::GenDefaultParticleMaterial();
 		if (material == nullptr)
 			return false;
 		// create the particle manager

@@ -1,7 +1,7 @@
 #pragma once
 
+#include <chaos/Chaos.h>
 
-#include <chaos/StandardHeaders.h> 
 #include <death/PlayerDisplacementComponent.h>
 
 class LudumPlayerDisplacementComponent : public death::PlayerDisplacementComponent

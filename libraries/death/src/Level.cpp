@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include <death/Level.h>
 #include <death/Game.h>
 #include <death/LevelInstance.h>

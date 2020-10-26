@@ -1,6 +1,4 @@
-#include <chaos/StandardHeaders.h>
-#include <chaos/Application.h>
-
+#include <chaos/Chaos.h>
 
 #if 0
 		{ "position", VertexAttributeSemantic::POSITION },

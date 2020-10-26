@@ -5,8 +5,7 @@
 #include "Ludum45GameInstance.h"
 #include "Ludum45Particles.h"
 
-#include <chaos/MathTools.h>
-#include <chaos/ParticleLayer.h>
+#include <chaos/Chaos.h>
 
 #include <death/Level.h>
 #include <death/SoundContext.h>

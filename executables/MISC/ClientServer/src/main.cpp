@@ -1,6 +1,4 @@
-#include <chaos/StandardHeaders.h>
-#include <chaos/Application.h>
-
+#include <chaos/Chaos.h>
 
 #define WIN32_LEAN_AND_MEAN
 

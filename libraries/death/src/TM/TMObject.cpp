@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include <death/TM.h>
 
 #include <death/Game.h>

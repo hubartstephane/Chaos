@@ -1,9 +1,10 @@
+#include <chaos/Chaos.h>
+
 #include <death/Player.h>
 #include <death/GameCheckpoint.h>
 #include <death/ShakeCameraComponent.h>
 #include <death/GameGettersImpl.h>
 
-#include <chaos/ParticleDefault.h>
 
 namespace death
 {

@@ -1,11 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/ParticleTools.h> 
-#include <chaos/ParticleManager.h> 
-#include <chaos/ParticleDefault.h> 
-#include <chaos/GPUVertexDeclaration.h> 
-#include <chaos/Class.h> 
+#include <chaos/Chaos.h>
 
 
 #include <death/TM.h> 

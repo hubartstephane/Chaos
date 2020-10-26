@@ -4,9 +4,7 @@
 #include "Ludum44Player.h"
 #include "Ludum44GameInstance.h"
 
-#include <chaos/GLMTools.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/GeometryFramework.h>
+#include <chaos/Chaos.h>
 
 // =============================================================
 // LudumLevel implementation

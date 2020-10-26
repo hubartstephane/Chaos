@@ -1,9 +1,5 @@
 
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/FileTools.h>
-#include <chaos/Application.h>
-#include <chaos/LogTools.h>
+#include <chaos/Chaos.h>
 
 // extract tests from : https://github.com/nlohmann/json
 

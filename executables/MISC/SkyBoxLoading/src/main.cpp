@@ -1,6 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/SkyBoxTools.h>
-#include <chaos/Application.h>
+#include <chaos/Chaos.h>
 
 void DisplaySkyboxInfo(chaos::SkyBoxImages const & skybox, char const * title)
 {

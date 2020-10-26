@@ -1,3 +1,4 @@
+#include <chaos/Chaos.h>
 #include <death/GameParticles.h>
 
 namespace death

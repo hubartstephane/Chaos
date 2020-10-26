@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include <death/GameStateMachine.h>
 #include <death/SoundContext.h>
 

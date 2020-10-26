@@ -4,13 +4,13 @@
 #include "Ludum44Player.h"
 #include "Ludum44GameInstance.h"
 
+#include <chaos/Chaos.h>
+
 #include <death/ShakeCameraComponent.h>
 #include <death/SoundListenerCameraComponent.h>
 #include <death/ScrollCameraComponent.h>
 
-#include <chaos/GLMTools.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/GeometryFramework.h>
+
 
 // =============================================================
 // LudumLevelInstance implementation

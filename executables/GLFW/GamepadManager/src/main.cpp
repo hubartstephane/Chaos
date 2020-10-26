@@ -1,13 +1,5 @@
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/Application.h>
-#include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/StringTools.h>
+#include <chaos/Chaos.h> 
 
 class TestGamepadCallbacks : public chaos::MyGLFW::GamepadCallbacks
 {

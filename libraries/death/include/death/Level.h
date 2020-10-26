@@ -1,10 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/NamedObject.h>
-#include <chaos/FileResource.h>
-#include <chaos/SubClassOf.h>
+#include <chaos/Chaos.h>
 
 #include <death/GameFramework.h>
 #include <death/GameGettersDecl.h>

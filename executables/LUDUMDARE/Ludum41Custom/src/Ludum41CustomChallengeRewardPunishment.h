@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/Object.h>
+#include <chaos/Chaos.h>
 
 class LudumChallengeRewardPunishment : public chaos::Object
 {

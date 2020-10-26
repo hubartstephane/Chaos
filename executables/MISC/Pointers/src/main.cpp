@@ -1,18 +1,4 @@
-#include <chaos/StandardHeaders.h>
-#include <chaos/SmartPointers.h>
-#include <chaos/Object.h>
-
-
-
-
-
-
-
-
-
-
-
-
+#include <chaos/Chaos.h>
 
 class A : public chaos::Object
 {

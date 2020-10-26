@@ -7,9 +7,7 @@
 #include "Ludum41CustomLevelInstance.h"
 #include "Ludum41CustomChallenge.h"
 
-#include <chaos/CollisionFramework.h>
-#include <chaos/Class.h>
-#include <chaos/PrimitiveOutput.h>
+#include <chaos/Chaos.h>
 
 // ===========================================================================
 // Object particle system

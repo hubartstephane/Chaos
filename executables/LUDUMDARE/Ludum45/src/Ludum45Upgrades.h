@@ -1,9 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/BitmapAtlas.h>
-#include <chaos/Object.h>
-#include <chaos/NamedObject.h>
+#include <chaos/Chaos.h>
 
 #include <death/Game.h>
 #include <death/GameInstance.h>

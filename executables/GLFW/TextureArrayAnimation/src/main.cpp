@@ -1,30 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/StringTools.h> 
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/Application.h>
-#include <chaos/GPUSimpleMeshGenerator.h>
-#include <chaos/SkyBoxTools.h>
-#include <chaos/BitmapAtlasInput.h>
-#include <chaos/BitmapAtlasGenerator.h>
-#include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/FPSViewInputController.h>
-#include <chaos/GPUSimpleMesh.h>
-#include <chaos/GPUMultiMeshGenerator.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GLTextureTools.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/GPURenderParams.h>
-#include <chaos/WrapMode.h>
+#include <chaos/Chaos.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
@@ -52,7 +26,7 @@ protected:
 
 		int image = (int)(time / frame_duration);
 		
-		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, chaos::WrapMode::wrap);
+		chaos::BitmapAtlas::BitmapLayout layout = info->GetAnimationLayout(image, chaos::WrapMode::WRAP);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);   // when viewer is inside the cube

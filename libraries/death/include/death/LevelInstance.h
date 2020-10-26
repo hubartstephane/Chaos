@@ -1,16 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/GPURenderable.h>
-#include <chaos/Tickable.h>
-#include <chaos/ClockManager.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/SoundManager.h>
-#include <chaos/AutoCast.h>
-#include <chaos/SubClassOf.h>
-#include <chaos/JSONSerializable.h>
+#include <chaos/Chaos.h>
 
 #include <death/Camera.h>
 #include <death/PlayerPawn.h>

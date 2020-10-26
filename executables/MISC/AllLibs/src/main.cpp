@@ -45,9 +45,7 @@
 #include "FreeImage.h"
 
 
-#include <chaos/GeometryFramework.h>
-#include <chaos/WinTools.h>
-#include <chaos/LuaTools.h>
+#include <chaos/Chaos.h>
 
 
 #include "tinyxml2.h"

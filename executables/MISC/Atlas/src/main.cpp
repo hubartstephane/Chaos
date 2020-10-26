@@ -1,16 +1,4 @@
-#include <chaos/SimpleWin32Class.h>
-#include <chaos/SimpleWin32Window.h>
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/BitmapAtlasGenerator.h>
-#include <chaos/BitmapAtlasHTMLGenerator.h>
-#include <chaos/MathTools.h>
-#include <chaos/Application.h>
-#include <chaos/FileTools.h>
-#include <chaos/FontTools.h>
-#include <chaos/ImageTools.h>
-#include <chaos/FilePath.h>
+#include <chaos/Chaos.h>
 
 static int ATLAS_BPP = 0;
 static int ATLAS_PADDING = 10;
@@ -168,33 +156,33 @@ protected:
 		b3 = b3;
 #endif
 
-		chaos::BitmapAtlas::BitmapGridAnimationInfo info1;
+		chaos::BitmapGridAnimationInfo info1;
 		std::string s1;
-		bool i1 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("truc", info1, &s1);
+		bool i1 = chaos::BitmapGridAnimationInfo::ParseFromName("truc", info1, &s1);
 
-		chaos::BitmapAtlas::BitmapGridAnimationInfo info2;
+		chaos::BitmapGridAnimationInfo info2;
 		std::string s2;
-		bool i2 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("truc.png", info2, &s2);
+		bool i2 = chaos::BitmapGridAnimationInfo::ParseFromName("truc.png", info2, &s2);
 
-		chaos::BitmapAtlas::BitmapGridAnimationInfo info3;
+		chaos::BitmapGridAnimationInfo info3;
 		std::string s3;
-		bool i3 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("truc.", info3, &s3);
+		bool i3 = chaos::BitmapGridAnimationInfo::ParseFromName("truc.", info3, &s3);
 
-		chaos::BitmapAtlas::BitmapGridAnimationInfo info4;
+		chaos::BitmapGridAnimationInfo info4;
 		std::string s4;
-		bool i4 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("_15x12.png", info4, &s4);
+		bool i4 = chaos::BitmapGridAnimationInfo::ParseFromName("_15x12.png", info4, &s4);
 
-		chaos::BitmapAtlas::BitmapGridAnimationInfo info5;
+		chaos::BitmapGridAnimationInfo info5;
 		std::string s5;
-		bool i5 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("_15x12s17.png", info5, &s5);
+		bool i5 = chaos::BitmapGridAnimationInfo::ParseFromName("_15x12s17.png", info5, &s5);
 
-		chaos::BitmapAtlas::BitmapGridAnimationInfo info6;
+		chaos::BitmapGridAnimationInfo info6;
 		std::string s6;
-		bool i6 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("o_15x12.png", info6, &s6);
+		bool i6 = chaos::BitmapGridAnimationInfo::ParseFromName("o_15x12.png", info6, &s6);
 
-		chaos::BitmapAtlas::BitmapGridAnimationInfo info7;
+		chaos::BitmapGridAnimationInfo info7;
 		std::string s7;
-		bool i7 = chaos::BitmapAtlas::BitmapGridAnimationInfo::ParseFromName("o_15x12s17.png", info7, &s7);
+		bool i7 = chaos::BitmapGridAnimationInfo::ParseFromName("o_15x12s17.png", info7, &s7);
 
 		i1 = i1;
 		i2 = i2;

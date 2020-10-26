@@ -1,9 +1,5 @@
 
-#include <chaos/LuaTools.h>
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/FileTools.h>
-#include <chaos/Application.h>
+#include <chaos/Chaos.h>
 
 class MyApplication : public chaos::Application
 {

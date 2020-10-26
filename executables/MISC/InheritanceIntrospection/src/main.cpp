@@ -1,10 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/Class.h>
-#include <chaos/Object.h>
-#include <chaos/LogTools.h>
-#include <chaos/JSONTools.h>
-#include <chaos/SubClassOf.h>
+#include <chaos/Chaos.h>
 
 class A : public chaos::Object 
 {

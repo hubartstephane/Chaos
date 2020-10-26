@@ -1,5 +1,5 @@
 
-#include <chaos/WinTools.h>
+#include <chaos/Chaos.h>
 
 // if a ConsoleApp is NOT run from a Console, it is given one !! 
 // 

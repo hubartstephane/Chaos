@@ -3,19 +3,7 @@
 #include "Ludum43Particles.h"
 #include "Ludum43Level.h"
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/Object.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/MyGLFWGamepadManager.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/SoundManager.h>
-#include <chaos/MyGLFWSingleWindowApplication.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleTextGenerator.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/BitmapAtlasGenerator.h>
-#include <chaos/TiledMap.h>
-#include <chaos/GPUFramebuffer.h>
+#include <chaos/Chaos.h>
 
 #include <death/Game.h>
 #include <death/GameFramework.h>

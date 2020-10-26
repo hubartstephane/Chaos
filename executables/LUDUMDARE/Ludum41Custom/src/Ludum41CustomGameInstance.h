@@ -3,7 +3,8 @@
 #include "Ludum41CustomChallenge.h"
 #include "Ludum41CustomParticles.h"
 
-#include <chaos/StandardHeaders.h> 
+#include <chaos/Chaos.h>
+
 #include <death/Game.h>
 #include <death/GameInstance.h>
 #include <death/GameFramework.h>

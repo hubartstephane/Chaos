@@ -5,13 +5,7 @@
 #include "Ludum47GameInstance.h"
 #include "Ludum47PlayerDisplacementComponent.h"
 
-#include <chaos/GLMTools.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/CollisionFramework.h>
-#include <chaos/ParticleSpawner.h>
-#include <chaos/StringTools.h>
-#include <chaos/WrapMode.h>
+#include <chaos/Chaos.h>
 
 
 #include <death/TM.h>

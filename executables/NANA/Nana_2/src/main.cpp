@@ -1,8 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/WinTools.h>
-
-
+#include <chaos/Chaos.h>
 
 using namespace nana;
 

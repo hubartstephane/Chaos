@@ -1,7 +1,6 @@
+#include <chaos/Chaos.h>
 #include <death/TM.h>
 
-#include <chaos/ParticleDefault.h>
-#include <chaos/WrapMode.h>
 
 namespace death
 {

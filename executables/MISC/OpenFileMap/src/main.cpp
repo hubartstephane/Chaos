@@ -1,6 +1,4 @@
-#include <chaos/StandardHeaders.h>
-#include <chaos/Application.h>
-
+#include <chaos/Chaos.h>
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {

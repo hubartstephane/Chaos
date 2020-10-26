@@ -4,11 +4,7 @@
 #include "Ludum46Player.h"
 #include "Ludum46GameInstance.h"
 
-#include <chaos/GLMTools.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/ParticleSpawner.h>
-#include <chaos/StringTools.h>
+#include <chaos/Chaos.h>
 
 
 #include <death/TM.h>

@@ -1,31 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/GLTextureTools.h>
-#include <chaos/MyGLFWGamepadManager.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/Application.h>
-#include <chaos/GPUSimpleMeshGenerator.h>
-#include <chaos/GLDebugOnScreenDisplay.h>
-#include <chaos/GPUSimpleMesh.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUTexture.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/SoundManager.h>
-#include <json.hpp>
-#include <chaos/BoostTools.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/BitmapAtlasGenerator.h>
-#include <chaos/TextureArrayAtlas.h>
+#include <chaos/Chaos.h>
 
 #include "Ludum40SpriteManager.h"
 #include "Ludum40SpriteLayer.h"

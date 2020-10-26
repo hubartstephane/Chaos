@@ -1,8 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/SkyBoxTools.h>
-#include <chaos/Application.h>
-#include <chaos/FileTools.h>
-#include <chaos/StringTools.h>
+#include <chaos/Chaos.h>
 
 // ====================================================================================
 // Take 6 images and convert them into a single image. Then save into Temp. Show the file
@@ -56,23 +52,25 @@ void TestConvertToMultiple(boost::filesystem::path const & dst_p, boost::filesys
 			char const * top_image    = "posy.png";
 			char const * bottom_image = "negy.png"; 
 
-			for (int i = chaos::SkyBoxImageType::IMAGE_LEFT ; i <= chaos::SkyBoxImageType::IMAGE_BACK ; ++i)
+			for (int i = (int)chaos::SkyBoxImageType::IMAGE_LEFT ; i <= (int)chaos::SkyBoxImageType::IMAGE_BACK ; ++i)
 			{
-				FIBITMAP * image = multiple_sky_box.GetImage(i);
+				chaos::SkyBoxImageType Type = chaos::SkyBoxImageType(i);
+
+				FIBITMAP * image = multiple_sky_box.GetImage(Type);
 				if (image != nullptr)
 				{
 					char const * suffix = nullptr;
-					if (i == chaos::SkyBoxImageType::IMAGE_LEFT)
+					if (Type == chaos::SkyBoxImageType::IMAGE_LEFT)
 						suffix = left_image;
-					else if (i == chaos::SkyBoxImageType::IMAGE_RIGHT)
+					else if (Type == chaos::SkyBoxImageType::IMAGE_RIGHT)
 						suffix = right_image;
-					else if (i == chaos::SkyBoxImageType::IMAGE_TOP)
+					else if (Type == chaos::SkyBoxImageType::IMAGE_TOP)
 						suffix = top_image;
-					else if (i == chaos::SkyBoxImageType::IMAGE_BOTTOM)
+					else if (Type == chaos::SkyBoxImageType::IMAGE_BOTTOM)
 						suffix = bottom_image;
-					else if (i == chaos::SkyBoxImageType::IMAGE_FRONT)
+					else if (Type == chaos::SkyBoxImageType::IMAGE_FRONT)
 						suffix = front_image;
-					else if (i == chaos::SkyBoxImageType::IMAGE_BACK)
+					else if (Type == chaos::SkyBoxImageType::IMAGE_BACK)
 						suffix = back_image;
 
 					std::string filename = chaos::StringTools::Printf("%s_%s", dst_filename, suffix);         

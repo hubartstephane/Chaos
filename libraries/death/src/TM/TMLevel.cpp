@@ -1,16 +1,10 @@
-#include <death/TM.h>
+#include <chaos/Chaos.h>
 
+#include <death/TM.h>
 #include <death/Game.h>
 #include <death/Player.h>
 #include <death/CollisionMask.h>
 
-#include <chaos/CollisionFramework.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/StringTools.h>
-#include <chaos/JSONTools.h>
-#include <chaos/HelpText.h>
-#include <chaos/RepeatedBoxScissor.h>
 
 
 namespace death

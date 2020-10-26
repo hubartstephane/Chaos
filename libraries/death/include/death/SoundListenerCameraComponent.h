@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
+#include <chaos/Chaos.h>
 #include <death/CameraComponent.h>
 
 namespace death

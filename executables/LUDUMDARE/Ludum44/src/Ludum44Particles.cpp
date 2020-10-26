@@ -6,10 +6,7 @@
 #include "Ludum44GameInstance.h"
 #include "Ludum44LevelInstance.h"
 
-#include <chaos/CollisionFramework.h>
-#include <chaos/Class.h>
-#include <chaos/ParticleTools.h>
-#include <chaos/WrapMode.h>
+#include <chaos/Chaos.h>
 
 #include <death/SoundContext.h>
 

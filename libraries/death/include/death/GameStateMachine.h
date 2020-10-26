@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/StateMachine.h>
+#include <chaos/Chaos.h>
 
 #include <death/Game.h>
 

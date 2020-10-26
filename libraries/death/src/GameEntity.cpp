@@ -1,7 +1,5 @@
+#include <chaos/Chaos.h>
 #include <death/GameEntity.h>
-
-#include <chaos/JSONTools.h>
-#include <chaos/ParticleTools.h>
 
 namespace death
 {

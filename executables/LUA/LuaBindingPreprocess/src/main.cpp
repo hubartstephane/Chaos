@@ -1,12 +1,5 @@
 
-#include <chaos/LuaTools.h>
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/FileTools.h>
-#include <chaos/Application.h>
-#include <chaos/LuaState.h>
-
-
+#include <chaos/Chaos.h>
 
 
 #define CHAOS_LUABIND_MAXFUNC_PARAMETERS 10

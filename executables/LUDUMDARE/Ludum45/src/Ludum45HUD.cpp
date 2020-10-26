@@ -5,7 +5,7 @@
 #include "Ludum45LevelInstance.h"
 #include "Ludum45GameInstance.h"
 
-#include <chaos/WrapMode.h>
+#include <chaos/Chaos.h>
 
 #include <death/GameHUDComponent.h>
 

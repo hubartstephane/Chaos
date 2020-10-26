@@ -1,14 +1,4 @@
-#include <chaos/SimpleWin32Class.h>
-#include <chaos/SimpleWin32Window.h>
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/MathTools.h>
-#include <chaos/Application.h>
-
-#include <chaos/Metaprogramming.h>
-#include <chaos/EmptyClass.h>
-#include <chaos/NamedObject.h>
-#include <chaos/Class.h>
+#include <chaos/Chaos.h>
 
 CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(toto)
 

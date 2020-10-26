@@ -1,22 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/Application.h>
-#include <chaos/FPSViewInputController.h>
-#include <chaos/MyFbxImporter.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUSimpleMesh.h>
-#include <chaos/GPUSimpleMeshGenerator.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/GPUDrawPrimitive.h>
-#include <chaos/GPURenderParams.h>
-
+#include <chaos/Chaos.h> 
 
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {

@@ -1,10 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/WinTools.h>
-#include <chaos/Application.h>
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/FileTools.h> 
+#include <chaos/Chaos.h>
 
 #if 0
 #include <opencv2/opencv.hpp>

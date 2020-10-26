@@ -1,9 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/TiledMap.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/BitmapAtlasGenerator.h>
+#include <Chaos/Chaos.h>
 
 namespace death
 {

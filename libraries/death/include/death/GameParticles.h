@@ -1,10 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/Class.h>
+#include <Chaos/Chaos.h>
 
 
 namespace death

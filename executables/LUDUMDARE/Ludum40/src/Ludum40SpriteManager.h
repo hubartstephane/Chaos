@@ -1,17 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUTexture.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/GPUVertexArray.h>
-#include <chaos/GPUBuffer.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/Hotpoint.h>
-#include <chaos/ParticleTools.h>
+#include <chaos/Chaos.h>
 
 
 namespace chaos

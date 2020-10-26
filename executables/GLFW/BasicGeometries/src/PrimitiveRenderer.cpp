@@ -1,19 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/GLMTools.h> 
-#include <chaos/GPUProgramGenerator.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/CollisionFramework.h>
-#include <chaos/GPUSimpleMeshGenerator.h>
-#include <chaos/SkyBoxTools.h>
-#include <chaos/GPUSimpleMesh.h>
-#include <chaos/GPUMultiMeshGenerator.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/MyGLFWSingleWindowApplication.h>
-#include <chaos/GPURenderParams.h>
-
+#include <chaos/Chaos.h> 
 #include "PrimitiveRenderer.h"
 
 static glm::vec4 const solid = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

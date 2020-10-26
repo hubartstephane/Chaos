@@ -1,11 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/GPURenderable.h>
-#include <chaos/NamedObject.h>
-#include <chaos/AutoCast.h>
+#include <Chaos/Chaos.h>
 
 #include <death/GameHUDKeys.h>
 #include <death/GameHUDComponent.h>

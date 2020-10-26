@@ -1,5 +1,4 @@
-#include <chaos/ParticleTextGenerator.h>
-#include <chaos/Hotpoint.h>
+#include <chaos/Chaos.h>
 
 #include <death/GameHUDComponent.h>
 #include <death/GameHUD.h>

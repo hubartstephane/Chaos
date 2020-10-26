@@ -1,11 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include <death/Camera.h>
 #include <death/CameraComponent.h>
 #include <death/ComponentOwner.h>
 #include <death/LevelInstance.h>
 #include <death/Game.h>
 #include <death/GameGettersImpl.h>
-
-#include <chaos/JSONTools.h>
 
 namespace death
 {

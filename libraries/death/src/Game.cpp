@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include <death/Game.h>
 #include <death/GameStateMachine.h>
 #include <death/GamepadManager.h>
@@ -8,17 +10,6 @@
 #include <death/SoundListenerCameraComponent.h>
 #include <death/FreeCameraComponent.h>
 #include <death/GameParticles.h>
-
-#include <chaos/KeyDefinition.h>
-#include <chaos/BoostTools.h>
-#include <chaos/LogTools.h>
-
-#include <chaos/InputMode.h>
-#include <chaos/FileTools.h>
-#include <chaos/TiledMap.h>
-#include <chaos/CollisionFramework.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/HelpText.h>
 
 namespace death
 {

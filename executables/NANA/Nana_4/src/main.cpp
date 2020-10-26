@@ -1,6 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/WinTools.h>
+#include <chaos/Chaos.h>
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 { 

@@ -3,9 +3,7 @@
 // XXX : Due to class declaration order and dependencies, this must only be included from .cpp !!
 //       usefull for classes using DEATH_GAMEGETTERS_IMPLEMENT(...)
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/AutoCast.h>
-#include <chaos/MetaProgramming.h>
+#include <Chaos/Chaos.h>
 
 #include <death/GameFramework.h>
 #include <death/Player.h>

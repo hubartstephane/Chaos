@@ -1,17 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/GLTools.h> 
-#include <chaos/GLMTools.h> 
-#include <chaos/GeometryFramework.h>
-#include <chaos/CollisionFramework.h>
-#include <chaos/GPUSimpleMeshGenerator.h>
-#include <chaos/GPUSimpleMesh.h>
-#include <chaos/GPUMultiMeshGenerator.h>
-#include <chaos/GPUProgramData.h>
-#include <chaos/GPUProgram.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/GPUProgramProvider.h>
-#include <chaos/ConvexPolygonSplitter.h>
-
+#include <chaos/Chaos.h> 
 
 class PrimitiveRenderingContext
 {

@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include <death/ShakeCameraComponent.h>
 #include <death/Camera.h>
 #include <death/Player.h>

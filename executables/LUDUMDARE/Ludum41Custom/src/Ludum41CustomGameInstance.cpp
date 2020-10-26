@@ -4,8 +4,10 @@
 #include "Ludum41CustomLevelInstance.h"
 #include "Ludum41CustomPlayer.h"
 
+#include <chaos/Chaos.h>
+
 #include <death/SoundContext.h>
-#include <chaos/HelpText.h>
+
 
 
 LudumGameInstance::LudumGameInstance()

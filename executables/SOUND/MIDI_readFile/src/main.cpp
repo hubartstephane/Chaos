@@ -1,14 +1,4 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/Buffer.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/Application.h>
-#include <chaos/IrrklangTools.h>
-#include <chaos/MIDICommand.h>
-#include <chaos/MidiFile.h>
+#include <chaos/Chaos.h> 
 
 // ================================================================
 

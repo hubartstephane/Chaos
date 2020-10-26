@@ -8,11 +8,7 @@
 #include "Ludum45LevelInstance.h"
 #include "Ludum45Enemies.h"
 
-#include <chaos/CollisionFramework.h>
-#include <chaos/Class.h>
-#include <chaos/ParticleTools.h>
-
-#include <chaos/WrapMode.h>
+#include <chaos/Chaos.h>
 
 #include <death/SoundContext.h>
 

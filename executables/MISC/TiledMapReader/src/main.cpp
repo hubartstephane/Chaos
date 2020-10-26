@@ -1,16 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/Application.h>
-#include <chaos/StringTools.h>
-#include <chaos/WinTools.h>
-#include <chaos/MathTools.h>
-#include <chaos/LogTools.h>
-#include <chaos/SparseWriteBuffer.h>
-#include <chaos/Buffer.h>
-#include <chaos/FileTools.h>
-#include <chaos/Object.h>
-#include <chaos/XMLTools.h>
-#include <chaos/TiledMap.h>
-#include <chaos/BoostTools.h>
+#include <chaos/Chaos.h>
 
 // tiled_map : it use tile set that are ordered
 //             each tile as a number that correspond to 

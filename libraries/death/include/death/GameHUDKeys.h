@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/NamedObject.h>
+#include <Chaos/Chaos.h>
 
 namespace death
 {

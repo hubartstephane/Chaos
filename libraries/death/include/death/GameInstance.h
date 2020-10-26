@@ -1,12 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/Tickable.h>
-#include <chaos/InputEventReceiver.h>
-#include <chaos/SoundManager.h>
-#include <chaos/AutoCast.h>
-#include <chaos/SubClassOf.h>
+#include <Chaos/Chaos.h>
 
 #include <death/GameFramework.h>
 #include <death/Player.h>

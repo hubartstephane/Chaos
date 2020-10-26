@@ -6,9 +6,7 @@
 #include "Ludum47PlayerDisplacementComponent.h"
 #include "Ludum47Particles.h"
 
-#include <chaos/GLMTools.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/GeometryFramework.h>
+#include <chaos/Chaos.h>
 
 #include <death/SoundContext.h>
 

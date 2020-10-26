@@ -2,10 +2,7 @@
 
 #include "Ludum46Particles.h"
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/ParticleManager.h> 
-#include <chaos/BitmapAtlas.h> 
-#include <chaos/GeometryFramework.h> 
+#include <chaos/Chaos.h>
 
 #include <death/Game.h>
 #include <death/GameInstance.h>

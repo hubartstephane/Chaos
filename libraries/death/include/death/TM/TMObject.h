@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Chaos/Chaos.h>
 #include <death/TM.h>
 
 #include <death/GameEntity.h>

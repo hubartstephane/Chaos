@@ -2,8 +2,7 @@
 
 #include "Ludum44Player.h"
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/Object.h>
+#include <chaos/Chaos.h>
 
 #include <death/Game.h>
 #include <death/GameFramework.h>

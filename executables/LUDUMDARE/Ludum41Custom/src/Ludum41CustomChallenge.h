@@ -1,9 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/Object.h>
-#include <chaos/MyGLFWGamepadManager.h>
-#include <chaos/ParticleManager.h>
+#include <chaos/Chaos.h>
 
 class LudumChallenge : public chaos::Object
 {

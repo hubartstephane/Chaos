@@ -1,8 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/Application.h>
-#include <chaos/AllocatorTools.h>
-#include <chaos/Buffer.h>
+#include <chaos/Chaos.h>
 
 // ---------------------------------------------------------------------
 

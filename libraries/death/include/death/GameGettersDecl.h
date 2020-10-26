@@ -1,7 +1,7 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/AutoCast.h>
+#include <Chaos/Chaos.h>
+
 #include <death/GameFramework.h>
 
 namespace death

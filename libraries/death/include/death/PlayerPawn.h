@@ -1,11 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/Tickable.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/JSONSerializable.h>
+#include <chaos/Chaos.h>
 
 #include <death/GameFramework.h>
 #include <death/GameGettersDecl.h>

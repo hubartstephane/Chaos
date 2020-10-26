@@ -1,6 +1,5 @@
+#include <chaos/Chaos.h>
 #include <death/GameParticleCreator.h>
-
-#include <chaos/ParticleDefault.h>
 
 namespace death
 {

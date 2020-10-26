@@ -1,17 +1,6 @@
 
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/StringTools.h>
-#include <chaos/Application.h>
-
-#include <chaos/ImageTools.h>
-#include <chaos/FileTools.h>
-#include <chaos/WinTools.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/MathTools.h>
-#include <chaos/ImagePixelAccessor.h>
-
-
+#include <chaos/Chaos.h>
 
 template<typename VECTOR_TYPE>
 class RecastVectorData

@@ -1,7 +1,8 @@
+#include <chaos/Chaos.h>
+
 #include <death/GameHUD.h>
 #include <death/Game.h>
 #include <death/GameInstance.h>
-#include <chaos/HelpText.h>
 
 namespace death
 {

@@ -1,31 +1,7 @@
-#include <chaos/StandardHeaders.h> 
-#include <chaos/FileTools.h> 
-#include <chaos/Buffer.h> 
-#include <chaos/LogTools.h> 
-#include <chaos/MyGLFWSingleWindowApplication.h> 
-#include <chaos/MyGLFWWindow.h> 
-#include <chaos/WinTools.h> 
-#include <chaos/Application.h>
-#include <chaos/IrrklangTools.h>
-#include <chaos/MathTools.h>
-#include <chaos/SoundManager.h>
-#include <chaos/JSONTools.h>
-#include <chaos/FileTools.h>
-#include <chaos/GLTextureTools.h>
-#include <chaos/GPUTextureLoader.h>
-#include <chaos/GPUProgramLoader.h>
-#include <chaos/GPUVertexDeclaration.h>
-#include <chaos/ParticleTools.h>
-#include <chaos/Hotpoint.h>
-#include <chaos/GLMTools.h>
-#include <chaos/Class.h>
+#include <chaos/Chaos.h> 
+
 #include <typeinfo> 
 #include <boost/convert/detail/has_member.hpp>
-
-
-#include <chaos/ParticleManager.h>
-#include <chaos/GPURenderParams.h>
-
 
 static bool destroy_all_particles = false;
 
@@ -48,17 +24,19 @@ CHAOS_REGISTER_CLASS1(ParticleExample);
 
 using VertexExample = chaos::VertexDefault;
 
-class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample>
+class AllocationTrait
 {
 public:
 
-	class AllocationTrait
-	{
-	public:
+	int xyz = 666;
 
-		int xyz = 666;
+};
 
-	};
+class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample, AllocationTrait>
+{
+public:
+
+
 
 	bool UpdateParticle(float delta_time, ParticleExample & particle, AllocationTrait const & trait) const
 	{
@@ -82,7 +60,7 @@ public:
 		chaos::GenerateVertexTextureAttributes(particle.texcoords, 0, vertex_texcoords);
 
 		float alpha = particle.remaining_time / particle.lifetime;
-		for (size_t i = 0; i < primitive.count; ++i)
+		for (size_t i = 0; i < primitive.GetVerticesCount(); ++i)
 		{
 			primitive[i].position = vertex_positions[i];
 			primitive[i].texcoord = vertex_texcoords[i];

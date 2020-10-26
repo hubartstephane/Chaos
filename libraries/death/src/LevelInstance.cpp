@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include <death/Level.h>
 #include <death/LevelInstance.h>
 #include <death/Game.h>
@@ -6,9 +8,6 @@
 #include <death/GameCheckpoint.h>
 #include <death/PlayerPawn.h>
 #include <death/GameGettersImpl.h>
-
-#include <chaos/CollisionFramework.h>
-
 
 namespace death
 {

@@ -1,12 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/MyGLFWGamepadManager.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/Tickable.h>
-#include <chaos/InputEventReceiver.h>
-#include <chaos/JSONSerializable.h>
+#include <chaos/Chaos.h>
 
 #include <death/GameGettersDecl.h>
 #include <death/GameFramework.h>

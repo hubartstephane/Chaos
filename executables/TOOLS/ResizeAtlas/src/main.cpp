@@ -1,9 +1,4 @@
-#include <chaos/SimpleWin32Class.h>
-#include <chaos/SimpleWin32Window.h>
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/Application.h>
-#include <chaos/ImageTools.h>
+#include <chaos/Chaos.h>
 
 class MyWindow : public chaos::SimpleWin32Window
 {

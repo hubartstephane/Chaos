@@ -1,26 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/InputEventReceiver.h>
-#include <chaos/MyGLFWwindow.h>
-#include <chaos/MyGLFWGamepadManager.h>
-#include <chaos/Application.h>
-#include <chaos/MyGLFWSingleWindowApplication.h>
-#include <chaos/SoundManager.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleTextGenerator.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/BitmapAtlasGenerator.h>
-#include <chaos/StateMachine.h>
-#include <chaos/TiledMap.h>
-#include <chaos/GPURenderableLayerSystem.h>
-#include <chaos/TimedAccumulator.h>
-#include <chaos/FileResource.h>
-#include <chaos/AutoCast.h>
-#include <chaos/SubClassOf.h>
+#include <Chaos/Chaos.h>
 
 #include <death/GameFramework.h>
 #include <death/GameHUD.h>

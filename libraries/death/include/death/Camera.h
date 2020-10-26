@@ -1,10 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/Tickable.h>
-#include <chaos/AutoCast.h>
-#include <chaos/JSONSerializable.h>
+#include <Chaos/Chaos.h>
 
 #include <death/GameGettersDecl.h>
 #include <death/CameraComponent.h>

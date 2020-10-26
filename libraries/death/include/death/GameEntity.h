@@ -1,11 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/Object.h>
-#include <chaos/Tickable.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/JSONSerializable.h>
-#include <chaos/GeometryFramework.h>
+#include <Chaos/Chaos.h>
 
 namespace death
 {

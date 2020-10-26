@@ -1,5 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
+#include <chaos/Chaos.h>
 
 #include <OVR_CAPI.h>
 

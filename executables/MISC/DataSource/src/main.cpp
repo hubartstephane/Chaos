@@ -1,13 +1,4 @@
-#include <chaos/SimpleWin32Class.h>
-#include <chaos/SimpleWin32Window.h>
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/Application.h>
-#include <chaos/FileTools.h>
-#include <chaos/Object.h>
-#include <chaos/FileManager.h>
-
-
+#include <chaos/Chaos.h>
 
 class DataSource : public chaos::Object
 {
@@ -120,7 +111,7 @@ protected:
 
 
 
-    file_manager->AddDirectory(GetResourcesPath(), true);
+    //file_manager->AddDirectory(GetResourcesPath(), true);
 
 
 

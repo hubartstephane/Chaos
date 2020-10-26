@@ -1,9 +1,7 @@
 #pragma once
 
+#include <Chaos/Chaos.h>
 #include <death/GameWindow.h>
-
-#include <chaos/StandardHeaders.h>
-#include <chaos/MyGLFWSingleWindowApplication.h>
 
 namespace death
 {

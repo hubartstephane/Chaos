@@ -1,9 +1,4 @@
-#include <chaos/SimpleWin32Window.h>
-#include <chaos/WinTools.h>
-#include <chaos/StringTools.h>
-#include <chaos/Application.h>
-#include <chaos/FileTools.h>
-#include <chaos/Stringtools.h>
+#include <chaos/Chaos.h>
 
 #if 0
 

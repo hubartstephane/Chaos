@@ -1,14 +1,4 @@
-#include <chaos/WinTools.h>
-#include <chaos/Application.h>
-#include <chaos/StringTools.h>
-#include <chaos/WinTools.h>
-#include <chaos/MathTools.h>
-#include <chaos/LogTools.h>
-#include <chaos/SparseWriteBuffer.h>
-#include <chaos/Buffer.h>
-#include <chaos/MyZLib.h>
-#include <chaos/FileTools.h>
-
+#include <chaos/Chaos.h>
 
 bool AreBuffersEquals(chaos::Buffer<char> const & b1, chaos::Buffer<char> const & b2)
 {

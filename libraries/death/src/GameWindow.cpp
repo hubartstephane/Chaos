@@ -1,11 +1,7 @@
-#include <death/GameWindow.h>
-#include <chaos/WinTools.h>
-#include <chaos/Application.h>
-#include <chaos/InputMode.h>
-#include <chaos/GeometryFramework.h>
+#include <chaos/Chaos.h>
 
-#include <chaos/GPURenderParams.h>
-#include <chaos/HelpText.h>
+#include <death/GameWindow.h>
+
 
 namespace death
 {

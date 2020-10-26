@@ -1,8 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h> 
-#include <chaos/Object.h>
-#include <chaos/TiledMap.h>
+#include <chaos/Chaos.h>
 
 #include <death/Level.h>
 #include <death/TM.h>

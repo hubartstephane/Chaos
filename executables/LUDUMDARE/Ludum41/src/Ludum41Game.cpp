@@ -7,16 +7,7 @@
 #include "Ludum41Player.h"
 
 
-#include <chaos/JSONTools.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/BitmapAtlasGenerator.h>
-#include <chaos/TextureArrayAtlas.h>
-#include <chaos/FileTools.h>
-#include <chaos/WinTools.h>
-#include <chaos/Application.h>
-#include <chaos/InputMode.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/CollisionFramework.h>
+#include <chaos/Chaos.h>
 
 #include <death/GameParticles.h>
 

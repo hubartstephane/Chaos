@@ -4,7 +4,8 @@
 #include "Ludum47LevelInstance.h"
 
 
-#include <chaos/WrapMode.h>
+#include <chaos/Chaos.h>
+
 #include <death/PlayerPawn.h>
 
 

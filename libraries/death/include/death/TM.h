@@ -1,20 +1,6 @@
 #pragma once
 
-#include <chaos/StandardHeaders.h>
-#include <chaos/GeometryFramework.h>
-#include <chaos/Object.h>
-#include <chaos/TiledMap.h>
-#include <chaos/GPURenderable.h>
-#include <chaos/Tickable.h>
-#include <chaos/ParticleManager.h>
-#include <chaos/ParticleDefault.h>
-#include <chaos/BitmapAtlas.h>
-#include <chaos/CollisionFramework.h>
-#include <chaos/SoundManager.h>
-#include <chaos/ParticleSpawner.h>
-#include <chaos/NamedObject.h>
-#include <chaos/JSONSerializable.h>
-#include <chaos/Hotpoint.h>
+#include <chaos/Chaos.h>
 
 #include <death/Level.h>
 #include <death/LevelInstance.h>

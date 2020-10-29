@@ -2,18 +2,14 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/Level.h>
-#include <death/GameFramework.h>
-
 // =================================================
 // Levels
 // =================================================
 
-class LudumLevel : public death::Level
+class LudumLevel : public chaos::Level
 {
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::Level);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, chaos::Level);
 
 public:
 

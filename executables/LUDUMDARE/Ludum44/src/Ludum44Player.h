@@ -2,20 +2,13 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameInstance.h>
-#include <death/Player.h>
-#include <death/GameFramework.h>
-
-
-
 #include "Ludum44Particles.h"
 
 // =========================================================
 // LudumPlayer
 // =========================================================
 
-class LudumPlayer : public death::Player
+class LudumPlayer : public chaos::Player
 {
 
 public:
@@ -27,7 +20,7 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, chaos::Player);
 
 	float GetBuyTimer() const { return buy_timer; }
 

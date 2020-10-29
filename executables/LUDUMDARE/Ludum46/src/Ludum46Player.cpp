@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum46Player.h"
 #include "Ludum46Level.h"
 #include "Ludum46LevelInstance.h"
@@ -5,14 +7,9 @@
 #include "Ludum46GameInstance.h"
 #include "Ludum46Particles.h"
 
-#include <chaos/Chaos.h>
-
-#include <death/Level.h>
-#include <death/SoundContext.h>
-
-bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
+bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 {
-	if (!death::Player::Initialize(in_game_instance))
+	if (!chaos::Player::Initialize(in_game_instance))
 		return false;
 
 
@@ -22,27 +19,27 @@ bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
 
 void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
-	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
+	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
 
 }
 
 void LudumPlayer::HandleKeyboardInputs(float delta_time)
 {
-	death::Player::HandleKeyboardInputs(delta_time);
+	chaos::Player::HandleKeyboardInputs(delta_time);
 
 
 }
 
 void LudumPlayer::OnLifeLost()
 {
-	death::Player::OnLifeLost();
+	chaos::Player::OnLifeLost();
 	burned_souls = 0;
 }
 
-void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {
-	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
+	chaos::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	burned_souls = 0;
 }

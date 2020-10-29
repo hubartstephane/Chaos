@@ -1,13 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum44Player.h"
 #include "Ludum44Level.h"
 #include "Ludum44LevelInstance.h"
 #include "Ludum44Game.h"
 #include "Ludum44GameInstance.h"
 #include "Ludum44Particles.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/Level.h>
 
 void LudumPlayer::TickPlayerDisplacement(float delta_time)
 {
@@ -17,7 +15,7 @@ void LudumPlayer::TickPlayerDisplacement(float delta_time)
 
 void LudumPlayer::TickInternal(float delta_time)
 {
-	death::Player::TickInternal(delta_time);
+	chaos::Player::TickInternal(delta_time);
 
 	// fire 
 	UpdatePlayerFire(delta_time);
@@ -177,7 +175,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 
 bool LudumPlayer::SerializeFromJSON(nlohmann::json const& json)
 {
-	if (!death::Player::SerializeFromJSON(json))
+	if (!chaos::Player::SerializeFromJSON(json))
 		return false;
 	chaos::JSONTools::GetAttribute(json, "SPEED_INDEX", current_speed_index);
 	chaos::JSONTools::GetAttribute(json, "DAMAGE_INDEX", current_damage_index);
@@ -188,7 +186,7 @@ bool LudumPlayer::SerializeFromJSON(nlohmann::json const& json)
 
 bool LudumPlayer::SerializeIntoJSON(nlohmann::json & json) const
 {
-	if (!death::Player::SerializeIntoJSON(json))
+	if (!chaos::Player::SerializeIntoJSON(json))
 		return false;
 	chaos::JSONTools::SetAttribute(json, "SPEED_INDEX", current_speed_index);
 	chaos::JSONTools::SetAttribute(json, "DAMAGE_INDEX", current_damage_index);

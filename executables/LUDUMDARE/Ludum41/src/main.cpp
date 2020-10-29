@@ -1,6 +1,5 @@
 #include <chaos/Chaos.h>
 
-#include <death/Death.h> 
 #include "Ludum41Game.h"
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
@@ -10,7 +9,7 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	params.width = 500;
 	params.height = 500;
 	params.monitor_index = 0;
-	death::RunGame<LudumGame>(argc, argv, env, params);
+	chaos::RunGame<LudumGame>(argc, argv, env, params);
 	return 0;
 }
 

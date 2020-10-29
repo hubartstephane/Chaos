@@ -1,15 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum46Level.h"
 #include "Ludum46LevelInstance.h"
 #include "Ludum46Game.h"
 #include "Ludum46Player.h"
 #include "Ludum46GameInstance.h"
 #include "Ludum46PlayerDisplacementComponent.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/FollowPlayerCameraComponent.h>
-#include <death/ShakeCameraComponent.h>
-#include <death/SoundListenerCameraComponent.h>
 
 // =============================================================
 // LudumLevelInstance implementation
@@ -22,21 +18,21 @@ LudumLevelInstance::LudumLevelInstance()
 
 void LudumLevelInstance::CreateCameras()
 {
-	death::TMLevelInstance::CreateCameras();
+	chaos::TMLevelInstance::CreateCameras();
 
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
 	{
 		cameras[i]->SetSafeZone(glm::vec2(0.6f, 0.6f));
-		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
-		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
-		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
+		cameras[i]->AddComponent(new chaos::FollowPlayerCameraComponent(0));
+		cameras[i]->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
+		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
 	}
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::TMLevelInstance::DoTick(delta_time);
+	chaos::TMLevelInstance::DoTick(delta_time);
 
 
 	// completed ?
@@ -48,9 +44,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	return true;
 }
 
-bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
+bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_level)
 {
-	if (!death::TMLevelInstance::Initialize(in_game, in_level))
+	if (!chaos::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
 	LudumLevel* ludum_level = auto_cast(in_level);
@@ -65,7 +61,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 int LudumLevelInstance::GetCurrentSoulCount() const
 {
-	death::TMLayerInstance const * layer_instance = FindLayerInstance("Souls");
+	chaos::TMLayerInstance const * layer_instance = FindLayerInstance("Souls");
 	if (layer_instance != nullptr && layer_instance->GetParticleLayer() != nullptr)
 		return (int)layer_instance->GetParticleLayer()->GetParticleCount();
 	return 0;
@@ -75,7 +71,7 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 {
 	int result = 0;
 
-	death::TMLayerInstance const* layer_instance = FindLayerInstance("Objects");
+	chaos::TMLayerInstance const* layer_instance = FindLayerInstance("Objects");
 	if (layer_instance != nullptr)
 	{
 		size_t count = layer_instance->GetObjectCount();
@@ -94,9 +90,9 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 	return result;
 }
 
-bool LudumLevelInstance::IsPlayerDead(death::Player* player)
+bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
 {
-	if (death::TMLevelInstance::IsPlayerDead(player))
+	if (chaos::TMLevelInstance::IsPlayerDead(player))
 		return true;
 
 	if (flame_health <= 0.0f)

@@ -1,13 +1,10 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum41IsolationGameInstance.h"
 #include "Ludum41IsolationGame.h"
 #include "Ludum41IsolationLevel.h"
 #include "Ludum41IsolationLevelInstance.h"
 #include "Ludum41IsolationPlayer.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/SoundContext.h>
-
 
 LudumGameInstance::LudumGameInstance()
 {
@@ -107,7 +104,7 @@ void LudumGameInstance::TickBackgroundFillRatio(float delta_time)
 
 void LudumGameInstance::FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider)
 {
-	death::GameInstance::FillUniformProvider(main_uniform_provider);
+	chaos::GameInstance::FillUniformProvider(main_uniform_provider);
 
     LudumGame const* ludum_game = GetGame();
     if (ludum_game == nullptr)
@@ -241,21 +238,21 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 
 void LudumGameInstance::OnEnterPause()
 {
-	death::GameInstance::OnEnterPause();
+	chaos::GameInstance::OnEnterPause();
 	if (sequence_challenge != nullptr)
 		sequence_challenge->Show(false);
 }
 
 void LudumGameInstance::OnLeavePause()
 {
-	death::GameInstance::OnLeavePause();
+	chaos::GameInstance::OnLeavePause();
 	if (sequence_challenge != nullptr)
 		sequence_challenge->Show(true);
 }
 
-void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
+void LudumGameInstance::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {
-	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
+	chaos::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
 	target_brick_offset = 0.0f;
 	brick_offset = 0.0f;
 	current_background_fillratio = 1.0f;
@@ -289,7 +286,7 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 
 bool LudumGameInstance::CanCompleteLevel() const
 {
-	if (!death::GameInstance::CanCompleteLevel())
+	if (!chaos::GameInstance::CanCompleteLevel())
 		return false;
 	if (current_background_fillratio > 0.0f)
 		return false;
@@ -303,7 +300,7 @@ bool LudumGameInstance::CanCompleteLevel() const
 
 bool LudumGameInstance::DoTick(float delta_time)
 {
-	if (!death::GameInstance::DoTick(delta_time)) // ticking GameInstance, tick Players ... this is usefull to work with inputs
+	if (!chaos::GameInstance::DoTick(delta_time)) // ticking GameInstance, tick Players ... this is usefull to work with inputs
 		return false;
 
 	// some other calls
@@ -321,7 +318,7 @@ void LudumGameInstance::IncrementScore(int delta)
 {
 	if (delta <= 0)
 		return;
-	death::Player * player = GetPlayer(0);
+	chaos::Player * player = GetPlayer(0);
 	if (player == nullptr)
 		return;
 	player->SetScore(delta, true);
@@ -475,7 +472,7 @@ bool LudumGameInstance::IsExtraBallChallengeValid(bool success)
 
 void LudumGameInstance::OnExtraBallChallenge(bool success)
 {
-	death::Player * player = GetPlayer(0);
+	chaos::Player * player = GetPlayer(0);
 	if (player == nullptr)
 		return;
 	player->SetLifeCount((success ? +1 : -1), true);
@@ -532,7 +529,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 	LudumGame const * ludum_game = GetGame();
 
 	// create the object
-	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BALL_LAYER_ID, "ball", count, true);
+	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::BALL_LAYER_ID, "ball", count, true);
 	if (result == nullptr)
 		return nullptr;
 
@@ -725,7 +722,7 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 	chaos::InputMode input_mode = GetPlayer(0)->GetInputMode();
 	bool keyboard = chaos::IsPCMode(input_mode);
 
-	chaos::ParticleLayerBase * layer = game->GetParticleManager()->FindLayer(death::GameHUDKeys::CHALLENGE_LAYER_ID);
+	chaos::ParticleLayerBase * layer = game->GetParticleManager()->FindLayer(chaos::GameHUDKeys::CHALLENGE_LAYER_ID);
 	if (layer == nullptr)
 		return nullptr;
 
@@ -770,7 +767,7 @@ void LudumGameInstance::OnBallCollide(bool collide_brick)
 	LudumGame const * ludum_game = GetGame();
 
 
-	game->PlaySound("ball", false, false, 0.0f, death::SoundContext::GAME);
+	game->PlaySound("ball", false, false, 0.0f, chaos::SoundContext::GAME);
 
 	ball_collision_speed = std::min(ludum_game->ball_collision_max_speed, ball_collision_speed + ludum_game->ball_collision_speed_increment);
 
@@ -784,9 +781,9 @@ void LudumGameInstance::DestroyGameObjects()
 	sequence_challenge = nullptr;
 }
 
-bool LudumGameInstance::Initialize(death::Game * in_game)
+bool LudumGameInstance::Initialize(chaos::Game * in_game)
 {
-	if (!death::GameInstance::Initialize(in_game))
+	if (!chaos::GameInstance::Initialize(in_game))
 		return false;
 
 	if (balls_allocations == nullptr)

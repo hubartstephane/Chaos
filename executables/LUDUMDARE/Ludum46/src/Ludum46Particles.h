@@ -2,17 +2,13 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/TM.h> 
-
-
-
 // ===========================================================================
 // VertexBase and ParticleBase
 // ===========================================================================
 
 using VertexBase = chaos::VertexDefault;
 
-class ParticleBase : public  death::TMParticle
+class ParticleBase : public  chaos::TMParticle
 {
 public:
 
@@ -37,7 +33,7 @@ public:
 
 	std::vector<class SoulTrigger*> soul_triggers;
 
-	death::TMLayerInstance * fire_layer_instance = nullptr;
+	chaos::TMLayerInstance * fire_layer_instance = nullptr;
 
 	class LudumLevelInstance* ludum_level_instance = nullptr;
 
@@ -228,7 +224,7 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle);
+CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
 CHAOS_REGISTER_CLASS2(ParticleAnimated, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAnimated);
 CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase);

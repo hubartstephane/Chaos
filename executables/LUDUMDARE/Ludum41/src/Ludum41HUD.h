@@ -1,11 +1,8 @@
 #pragma once
 
-#include <death/Game.h>
-#include <death/GameHUD.h>
-#include <death/GameHUDComponent.h>
-#include <death/GameFramework.h>
+#include <chaos/Chaos.h>
 
-namespace death
+namespace chaos
 {
 	namespace GameHUDKeys
 	{
@@ -23,15 +20,15 @@ namespace death
 // GameHUDComboComponent
 // ====================================================================
 
-class GameHUDComboComponent : public death::GameHUDCacheValueComponent<int>
+class GameHUDComboComponent : public chaos::GameHUDCacheValueComponent<int>
 {
 public:
 
 	/** constructor */
-	GameHUDComboComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDComboComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
 	/** constructor */
-	GameHUDComboComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-		death::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_params, in_layer_id) {}
+	GameHUDComboComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		chaos::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_params, in_layer_id) {}
 
 protected:
 
@@ -44,14 +41,14 @@ protected:
 // ====================================================================
 
 
-class LudumPlayingHUD : public death::PlayingHUD
+class LudumPlayingHUD : public chaos::PlayingHUD
 {
 
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, death::PlayingHUD);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, chaos::PlayingHUD);
 
 protected:
 

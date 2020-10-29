@@ -2,11 +2,6 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameInstance.h>
-#include <death/Player.h>
-#include <death/GameFramework.h>
-
 namespace UpgradeKeys
 {
 	CHAOS_DECLARE_TAG(SPEED);
@@ -29,7 +24,7 @@ public:
 		sound_name(in_sound_name)
 	{}
 
-	void Upgrade(class death::Game * game);
+	void Upgrade(class chaos::Game * game);
 
 public:
 

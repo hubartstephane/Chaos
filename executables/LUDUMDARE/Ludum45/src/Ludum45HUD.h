@@ -1,20 +1,18 @@
 #pragma once
 
-#include <death/Game.h>
-#include <death/GameHUD.h>
-#include <death/GameFramework.h>
+#include <chaos/Chaos.h>
 
 // ====================================================================
 // LudumPlayingHUD
 // ====================================================================
 
-class LudumPlayingHUD : public death::PlayingHUD
+class LudumPlayingHUD : public chaos::PlayingHUD
 {
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, death::PlayingHUD);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, chaos::PlayingHUD);
 
 protected:
 
@@ -28,17 +26,17 @@ protected:
 // LudumPlayingHUD
 // ====================================================================
 
-class GameHUDUpgradeComponent : public death::GameHUDCacheValueComponent<std::string>
+class GameHUDUpgradeComponent : public chaos::GameHUDCacheValueComponent<std::string>
 {
 	friend class GameHUD;
 
 public:
 
 	/** constructor */
-	GameHUDUpgradeComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDUpgradeComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
 	/** constructor */
-	GameHUDUpgradeComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-		death::GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params, in_layer_id) {}
+	GameHUDUpgradeComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		chaos::GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params, in_layer_id) {}
 
 protected:
 
@@ -61,7 +59,7 @@ protected:
 // ====================================================================
 
 
-class GameHUDShroudLifeComponent : public death::GameHUDSingleAllocationComponent
+class GameHUDShroudLifeComponent : public chaos::GameHUDSingleAllocationComponent
 {
 	friend class GameHUD;
 

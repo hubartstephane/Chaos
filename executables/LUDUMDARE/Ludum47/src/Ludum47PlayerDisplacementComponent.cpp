@@ -1,16 +1,9 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum47PlayerDisplacementComponent.h"
 #include "Ludum47Particles.h"
 #include "Ludum47Player.h"
 #include "Ludum47LevelInstance.h"
-
-
-#include <chaos/Chaos.h>
-
-#include <death/PlayerPawn.h>
-
-
-
-
 
 bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & particle, LudumLevelInstance* li, CarData const& car_data)
 {
@@ -54,7 +47,7 @@ bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 
 	if (li != nullptr)
 	{
-		death::TMLayerInstance* layer = li->FindLayerInstance("Collisions");
+		chaos::TMLayerInstance* layer = li->FindLayerInstance("Collisions");
 		if (layer != nullptr)
 		{
 			size_t count = layer->GetObjectCount();
@@ -124,10 +117,10 @@ bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 
 bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 {
-	death::PlayerDisplacementComponent::DoTick(delta_time);
+	chaos::PlayerDisplacementComponent::DoTick(delta_time);
 
 	// early exit
-	death::PlayerPawn* pawn = player->GetPawn();
+	chaos::PlayerPawn* pawn = player->GetPawn();
 	if (pawn == nullptr)
 		return true;
 

@@ -1,31 +1,31 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum44GameInstance.h"
 #include "Ludum44Game.h"
 #include "Ludum44Level.h"
 #include "Ludum44LevelInstance.h"
 #include "Ludum44Player.h"
 
-#include <death/SoundContext.h>
-
 LudumGameInstance::LudumGameInstance()
 {
 	player_class = LudumPlayer::GetStaticClass();
 }
 
-void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
+void LudumGameInstance::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {
 	// super method
-	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
+	chaos::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
 	// play a sound
 	if (new_level != nullptr && old_level != nullptr)
-		game->PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
+		game->PlaySound("next_level", false, false, 0.0f, chaos::SoundContext::GAME);
 	// internals
 	current_power_up = nullptr;
 	current_powerup_trigger = nullptr;
 }
 
-void LudumGameInstance::OnPlayerEntered(death::Player * player)
+void LudumGameInstance::OnPlayerEntered(chaos::Player * player)
 {
-	death::GameInstance::OnPlayerEntered(player);
+	chaos::GameInstance::OnPlayerEntered(player);
 
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
@@ -41,7 +41,7 @@ void LudumGameInstance::OnPlayerEntered(death::Player * player)
 	ludum_player->current_fire_rate_index = 0;
 }
 
-void LudumGameInstance::OnPowerUpZone(death::Player * player, bool enter, PowerUpTrigger* powerup_trigger)
+void LudumGameInstance::OnPowerUpZone(chaos::Player * player, bool enter, PowerUpTrigger* powerup_trigger)
 {
 	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
@@ -153,7 +153,7 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
 
     // play some sound
     if (sound_name != nullptr)
-        ludum_game->PlaySound(sound_name, false, false, 0.0f, death::SoundContext::LEVEL);
+        ludum_game->PlaySound(sound_name, false, false, 0.0f, chaos::SoundContext::LEVEL);
 
     return result;
 }

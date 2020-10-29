@@ -1,10 +1,10 @@
 #pragma once
 
+#include <chaos/Chaos.h>
+
 #include "Ludum41IsolationChallenge.h"
 #include "Ludum41IsolationGame.h"
 #include "Ludum41IsolationGameInstance.h"
-
-#include <death/SoundContext.h>
 
 void LudumChallenge::OnKeyboardButtonReceived(char c)
 {
@@ -66,7 +66,7 @@ void LudumChallenge::AdvanceChallenge()
 	++gamepad_challenge_position;
 	if (gamepad_challenge_position == gamepad_challenge.size())
 	{			
-		game->PlaySound("challenge_success", false, false, 0.0f, death::SoundContext::GAME);
+		game->PlaySound("challenge_success", false, false, 0.0f, chaos::SoundContext::GAME);
 
 		game_instance->OnChallengeCompleted(this, true,  gamepad_challenge.size()); // remove the challenge from pending list
 	}
@@ -77,9 +77,9 @@ void LudumChallenge::OnChallengeError(bool out_of_time)
 	LudumGame * game = game_instance->GetGame();
 
 	if (out_of_time)
-		game->PlaySound("challenge_timeout", false, false, 0.0f, death::SoundContext::GAME);
+		game->PlaySound("challenge_timeout", false, false, 0.0f, chaos::SoundContext::GAME);
 	else
-		game->PlaySound("challenge_error", false, false, 0.0f, death::SoundContext::GAME);
+		game->PlaySound("challenge_error", false, false, 0.0f, chaos::SoundContext::GAME);
 
 	game_instance->OnChallengeCompleted(this, false, gamepad_challenge.size()); // remove the challenge from pending list
 }
@@ -125,7 +125,7 @@ void LudumChallenge::Tick(float delta_time)
 		{
 			int time_sound_index2 = GetTimeSoundIndex(timeout);
 			if (time_sound_index1 != time_sound_index2)
-				game->PlaySound("challenge_bip", false, false, 0.0f, death::SoundContext::GAME);
+				game->PlaySound("challenge_bip", false, false, 0.0f, chaos::SoundContext::GAME);
 		}			
 	}
 }

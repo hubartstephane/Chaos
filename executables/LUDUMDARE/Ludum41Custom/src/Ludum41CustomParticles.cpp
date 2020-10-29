@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chaos/Chaos.h>
 
 #include "Ludum41CustomParticles.h"
 #include "Ludum41CustomGame.h"
@@ -7,7 +8,7 @@
 #include "Ludum41CustomLevelInstance.h"
 #include "Ludum41CustomChallenge.h"
 
-#include <chaos/Chaos.h>
+
 
 // ===========================================================================
 // Object particle system
@@ -162,7 +163,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 	}
 
 	// bounce against player
-	death::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
+	chaos::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
 	if (player_pawn == nullptr)
 		return false;
 

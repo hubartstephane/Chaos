@@ -2,11 +2,6 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/TM.h> 
-
-
-
-
 // ===========================================================================
 // the car values
 // ===========================================================================
@@ -76,7 +71,7 @@ public:
 
 using VertexBase = chaos::VertexDefault;
 
-class ParticleBase : public  death::TMParticle
+class ParticleBase : public  chaos::TMParticle
 {
 public:
 
@@ -95,7 +90,7 @@ public:
 // ParticleSmoke
 // ===========================================================================
 
-class ParticleSmoke : public  death::TMParticle
+class ParticleSmoke : public  chaos::TMParticle
 {
 public:
 
@@ -202,8 +197,8 @@ public:
 
 
 
-CHAOS_REGISTER_CLASS2(ParticleSmoke, death::TMParticle);
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle);
+CHAOS_REGISTER_CLASS2(ParticleSmoke, chaos::TMParticle);
+CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle);
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase);
 CHAOS_REGISTER_CLASS2(ParticleOpponent, ParticleBase);
 

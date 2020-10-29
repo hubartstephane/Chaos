@@ -15,3 +15,4 @@
 #include <chaos/Lua/Lua.h>
 #include <chaos/TiledMap/TiledMap.h>
 #include <chaos/3D/3D.h>
+#include <chaos/Gameplay/Gameplay.h>

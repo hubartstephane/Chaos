@@ -1,14 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum43Player.h"
 #include "Ludum43Level.h"
 #include "Ludum43LevelInstance.h"
 #include "Ludum43Game.h"
 #include "Ludum43GameInstance.h"
 #include "Ludum43Particles.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/Level.h>
-#include <death/SoundContext.h>
 
 ParticlePlayer * LudumPlayer::GetPlayerParticle()
 {
@@ -34,7 +31,7 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 
 void LudumPlayer::TickInternal(float delta_time)
 {
-	death::Player::TickInternal(delta_time);
+	chaos::Player::TickInternal(delta_time);
 
 	// dash values update
 	TickDashValues(delta_time);
@@ -106,7 +103,7 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 	assert(game_instance != nullptr);
 	assert(game_instance != nullptr);
 
-	death::LevelInstance * level_instance = ludum_game->GetLevelInstance();
+	chaos::LevelInstance * level_instance = ludum_game->GetLevelInstance();
 	if (level_instance == nullptr)
 		return;
 
@@ -124,7 +121,7 @@ void LudumPlayer::SetReverseMode(bool reversed_mode)
 			if (current_cooldown > 0.0f)
 				return;
 			current_cooldown = ludum_game->cooldown;
-			ludum_game->PlaySound("collision", false, false, 0.0f, death::SoundContext::LEVEL);
+			ludum_game->PlaySound("collision", false, false, 0.0f, chaos::SoundContext::LEVEL);
 		}
 		player_particle->reversed = reversed_mode;
 	}
@@ -136,7 +133,7 @@ void LudumPlayer::SetDashMode(bool dash)
 	assert(ludum_game != nullptr);
 	assert(game_instance != nullptr);
 
-	death::LevelInstance * level_instance = ludum_game->GetLevelInstance();
+	chaos::LevelInstance * level_instance = ludum_game->GetLevelInstance();
 	if (level_instance == nullptr)
 		return;
 
@@ -155,7 +152,7 @@ void LudumPlayer::SetDashMode(bool dash)
 				return;
 			current_dash_cooldown = ludum_game->dash_cooldown;
 			current_dash_duration = ludum_game->dash_duration;
-			ludum_game->PlaySound("thrust", false, false, 0.0f, death::SoundContext::LEVEL);
+			ludum_game->PlaySound("thrust", false, false, 0.0f, chaos::SoundContext::LEVEL);
 		}
 		player_particle->dash = dash;
 	}
@@ -163,7 +160,7 @@ void LudumPlayer::SetDashMode(bool dash)
 
 void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
-	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
+	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
 	bool dash = gpd->IsButtonPressed(chaos::XBoxButton::BUTTON_A, false);
 	SetDashMode(dash);
@@ -173,7 +170,7 @@ void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::G
 
 void LudumPlayer::HandleKeyboardInputs(float delta_time)
 {
-	death::Player::HandleKeyboardInputs(delta_time);
+	chaos::Player::HandleKeyboardInputs(delta_time);
 
 	bool dash_mode = CheckKeyPressed(GLFW_KEY_SPACE);
 	SetDashMode(dash_mode);
@@ -181,9 +178,9 @@ void LudumPlayer::HandleKeyboardInputs(float delta_time)
 	SetReverseMode(reversed_mode);
 }
 
-void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {
-	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
+	chaos::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	current_cooldown = 0.0f;
 	current_dash_cooldown = 0.0f;

@@ -1,11 +1,8 @@
 #pragma once
 
-#include "Ludum44Player.h"
-
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameFramework.h>
+#include "Ludum44Player.h"
 
 // =================================================
 // LudumPowerUp

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chaos/Chaos.h>
 
 #include "Ludum47Particles.h"
 #include "Ludum47Game.h"
@@ -8,10 +9,6 @@
 #include "Ludum47LevelInstance.h"
 #include "Ludum47Level.h"
 #include "Ludum47PlayerDisplacementComponent.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/SoundContext.h>
 
 
 // ===========================================================================

@@ -1,22 +1,18 @@
 #pragma once
 
+#include <chaos/Chaos.h>
+
 #include "Ludum41Challenge.h"
 #include "Ludum41Particles.h"
 #include "Ludum41ChallengeRewardPunishment.h"
 #include "Ludum41Level.h"
 #include "Ludum41HUD.h"
 
-#include <chaos/Chaos.h>
-
-#include <death/Game.h>
-#include <death/GameHUD.h>
-#include <death/GameFramework.h>
-
 // =================================================
 // LudumGame
 // =================================================
 
-class LudumGame : public death::Game
+class LudumGame : public chaos::Game
 {
 	friend class LudumChallenge;
 	friend class LudumWindow;
@@ -29,7 +25,7 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumGame, death::Game);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumGame, chaos::Game);
 
 	/** constructor */
 	LudumGame();
@@ -40,7 +36,7 @@ public:
 protected:
 
 	/** override */
-	death::GameHUD * DoCreatePlayingHUD() override;
+	chaos::GameHUD * DoCreatePlayingHUD() override;
 
 	/** override */
 	virtual void OnEnterMainMenu(bool very_first) override;
@@ -62,7 +58,7 @@ protected:
 	bool InitializeRewardsAndPunishments();
 	
 	/** load one level */
-	virtual death::Level * DoLoadLevel(chaos::FilePathParam const & path) override;
+	virtual chaos::Level * DoLoadLevel(chaos::FilePathParam const & path) override;
 
 	/** override */
 	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;

@@ -1,17 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum47Level.h"
 #include "Ludum47LevelInstance.h"
 #include "Ludum47Game.h"
 #include "Ludum47Player.h"
 #include "Ludum47GameInstance.h"
 #include "Ludum47PlayerDisplacementComponent.h"
-
-#include <chaos/Chaos.h>
-
-
-#include <death/TM.h>
-
-
-
 
 int ParticleSpawnerDelay::GetSpawnCount(float delta_time)
 {
@@ -52,9 +46,9 @@ int ParticleSpawnerDelay::GetSpawnCount(float delta_time)
 // LudumOpponent implementation
 // =============================================================
 
-bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+bool LudumOpponent::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
 	car_data.max_velocity = in_geometric_object->GetPropertyValueFloat("MIN_VELOCITY", car_data.max_velocity);
@@ -83,7 +77,7 @@ bool LudumOpponent::Initialize(death::TMLayerInstance* in_layer_instance, chaos:
 
 void LudumOpponent::OnLevelStarted()
 {
-	death::TMObject::OnLevelStarted();
+	chaos::TMObject::OnLevelStarted();
 
 
 	LudumLevelInstance* li = layer_instance->GetLevelInstance();
@@ -207,9 +201,9 @@ bool LudumOpponent::DoTick(float delta_time)
 // LudumSpeedIndication implementation
 // =============================================================
 
-bool LudumSpeedIndication::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+bool LudumSpeedIndication::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
 	speed_factor = in_geometric_object->GetPropertyValueFloat("SPEED_FACTOR", speed_factor);
@@ -224,7 +218,7 @@ bool LudumSpeedIndication::Initialize(death::TMLayerInstance* in_layer_instance,
 
 bool LudumRoad::DoTick(float delta_time)
 {
-	if (!death::TMObject::DoTick(delta_time))
+	if (!chaos::TMObject::DoTick(delta_time))
 		return false;
 
 	// seach all opponents
@@ -241,7 +235,7 @@ bool LudumRoad::DoTick(float delta_time)
 
 	// do not start before the beginning
 
-	death::TMLayerInstance * li = level_instance->FindLayerInstance("Opponents");
+	chaos::TMLayerInstance * li = level_instance->FindLayerInstance("Opponents");
 	if (li == nullptr)
 		return true;
 
@@ -457,9 +451,9 @@ bool LudumRoad::DoTick(float delta_time)
 
 
 
-bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+bool LudumRoad::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
 
@@ -504,14 +498,14 @@ bool LudumRoad::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Til
 
 void LudumRoad::OnLevelStarted()
 {
-	death::TMObject::OnLevelStarted();
+	chaos::TMObject::OnLevelStarted();
 
 	if (layer_instance != nullptr && layer_instance->GetLevelInstance() != nullptr)
 	{
 		LudumLevelInstance* level_instance = layer_instance->GetLevelInstance();
 		if (level_instance != nullptr)
 		{
-			death::TMLayerInstance* li = level_instance->FindLayerInstance("SpeedIndications");
+			chaos::TMLayerInstance* li = level_instance->FindLayerInstance("SpeedIndications");
 			if (li != nullptr)
 			{
 				size_t count = li->GetObjectCount();
@@ -610,9 +604,9 @@ float LudumRoad::GetSpeedFactor(glm::vec2 const& p) const
 // LudumCollision
 //=================================================
 
-bool LudumCollision::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver)
+bool LudumCollision::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
+	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, reference_solver))
 		return false;
 
 	// capture the points
@@ -647,7 +641,7 @@ bool LudumCollision::Initialize(death::TMLayerInstance* in_layer_instance, chaos
 
 void LudumCollision::OnLevelStarted()
 {
-	death::TMObject::OnLevelStarted();
+	chaos::TMObject::OnLevelStarted();
 
 
 }
@@ -663,7 +657,7 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
@@ -693,11 +687,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 
 
 
-	return death::TMLevel::DoCreateParticleLayer(layer_instance);
+	return chaos::TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 
-death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 #if 0
 	if (in_typed_object->IsObjectOfType("Road"))
@@ -707,13 +701,13 @@ death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * i
 		return DEATH_MAKE_OBJECT_FACTORY(return new LudumSpeedIndication(););
 #endif
 
-	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 
 bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 {
-	if (!death::TMLevel::Initialize(in_tiled_map))
+	if (!chaos::TMLevel::Initialize(in_tiled_map))
 		return false;
 
 

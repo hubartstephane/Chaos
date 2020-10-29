@@ -3,4 +3,3 @@
 -- =============================================================================
 
 ProcessSubPremake("chaos")
-ProcessSubPremake("death")

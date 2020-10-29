@@ -1,10 +1,10 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum43Level.h"
 #include "Ludum43LevelInstance.h"
 #include "Ludum43Game.h"
 #include "Ludum43Player.h"
 #include "Ludum43GameInstance.h"
-
-#include <chaos/Chaos.h>
 
 // =============================================================
 // LudumLevel implementation
@@ -15,7 +15,7 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -53,7 +53,7 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 		return new chaos::ParticleLayer<chaos::ParticleDefaultLayerTrait>();
 	}
 
-	return death::TMLevel::DoCreateParticleLayer(layer_instance);
+	return chaos::TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset)
@@ -61,9 +61,9 @@ static float GetWorldAndEnemyEffectiveRadius(float r, float factor, float offset
 	return r * factor + offset;
 }
 
-bool LudumLevel::FinalizeLayerParticles(death::TMLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
+bool LudumLevel::FinalizeLayerParticles(chaos::TMLayerInstance * layer_instance, chaos::ParticleAllocationBase * allocation)
 {
-	if (!death::TMLevel::FinalizeLayerParticles(layer_instance, allocation))
+	if (!chaos::TMLevel::FinalizeLayerParticles(layer_instance, allocation))
 		return false;
 
 	LudumGame * ludum_game = layer_instance->GetGame();
@@ -135,20 +135,20 @@ bool LudumLevel::FinalizeLayerParticles(death::TMLayerInstance * layer_instance,
 	return true;
 }
 
-death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
-	if (death::TMTools::IsFinishTrigger(in_typed_object))
+	if (chaos::TMTools::IsFinishTrigger(in_typed_object))
 		return DEATH_MAKE_OBJECT_FACTORY(return new MyChangeLevelTrigger(););
-	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 // =============================================================
 // FinishingTriggerObject implementation
 // =============================================================
 
-bool MyChangeLevelTrigger::Initialize(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool MyChangeLevelTrigger::Initialize(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
+	if (!chaos::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 	trigger_once = true;
 	return true;
@@ -156,7 +156,7 @@ bool MyChangeLevelTrigger::Initialize(death::TMLayerInstance * in_layer_instance
 
 bool MyChangeLevelTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
-	death::Player* player = auto_cast(object);
+	chaos::Player* player = auto_cast(object);
 	if (player == nullptr)
 		return false;
 

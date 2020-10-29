@@ -2,11 +2,6 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Level.h>
-#include <death/TM.h>
-#include <death/Game.h>
-#include <death/GameFramework.h>
-
 #include "Ludum47Game.h"
 #include "Ludum47Particles.h"
 
@@ -38,13 +33,13 @@ public:
 // LudumSpeedIndication
 // =================================================
 
-class LudumSpeedIndication : public death::TMObject
+class LudumSpeedIndication : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumSpeedIndication, death::TMObject);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumSpeedIndication, chaos::TMObject);
 
 protected:
 
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
+	virtual bool Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver);
 
 public:
 
@@ -74,9 +69,9 @@ public:
 
 };
 
-class LudumRoad : public death::TMObject
+class LudumRoad : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumRoad, death::TMObject);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumRoad, chaos::TMObject);
 
 public:
 
@@ -87,7 +82,7 @@ public:
 
 protected:
 
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
+	virtual bool Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver);
 
 	virtual void OnLevelStarted() override;
 
@@ -117,15 +112,15 @@ public:
 // LudumCollision
 //=================================================
 
-class LudumCollision : public death::TMObject
+class LudumCollision : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumCollision, death::TMObject);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumCollision, chaos::TMObject);
 
 public:
 
 protected:
 
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
+	virtual bool Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver);
 
 	virtual void OnLevelStarted() override;
 
@@ -141,13 +136,13 @@ public:
 // LudumOpponent
 // =================================================
 
-class LudumOpponent : public death::TMObject
+class LudumOpponent : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumOpponent, death::TMObject);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumOpponent, chaos::TMObject);
 
 protected:
 
-	virtual bool Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, death::TMObjectReferenceSolver& reference_solver);
+	virtual bool Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, chaos::TMObjectReferenceSolver& reference_solver);
 
 	virtual void OnLevelStarted() override;
 
@@ -174,19 +169,19 @@ public:
 // Levels
 // =================================================
 
-class LudumLevel : public death::TMLevel
+class LudumLevel : public chaos::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, death::TMLevel);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, chaos::TMLevel);
 
 	LudumLevel();
 
 protected:
 
-	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(death::TMLayerInstance * layer_instance) override;
+	virtual chaos::ParticleLayerBase * DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance) override;
 
-	virtual death::TMObjectFactory DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
+	virtual chaos::TMObjectFactory DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object) override;
 
 	virtual bool Initialize(chaos::TiledMap::Map* in_tiled_map) override;
 

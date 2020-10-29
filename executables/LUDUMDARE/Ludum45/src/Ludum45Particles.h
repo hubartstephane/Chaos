@@ -2,16 +2,13 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/TM.h> 
-
-
 // ===========================================================================
 // VertexBase and ParticleBase
 // ===========================================================================
 
 using VertexBase = chaos::VertexDefault;
 
-class ParticleBase : public  death::TMParticle
+class ParticleBase : public  chaos::TMParticle
 {
 public:
 
@@ -223,7 +220,7 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle)
+CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle)
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleBonus, ParticleBase)

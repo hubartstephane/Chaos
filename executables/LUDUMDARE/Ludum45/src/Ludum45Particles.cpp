@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chaos/Chaos.h>
 
 #include "Ludum45Particles.h"
 #include "Ludum45Game.h"
@@ -7,11 +8,6 @@
 #include "Ludum45Player.h"
 #include "Ludum45LevelInstance.h"
 #include "Ludum45Enemies.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/SoundContext.h>
-
 
 static float COLLISION_PLAYER_TWEAK = 0.50f;
 static float COLLISION_FIRE_TWEAK = 0.75f;
@@ -26,12 +22,12 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// play sound
 	if (enemy->enemy_health > 0.0f)
-		game->PlaySound("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("metallic", false, false, 0.0f, chaos::SoundContext::LEVEL);
 	else 
 	{
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(10, true);
-		game->PlaySound("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("explosion", false, false, 0.0f, chaos::SoundContext::LEVEL);
 
 		chaos::box2 b = ref_box;
 		b.half_size *= 2.0f;
@@ -47,7 +43,7 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 	// get the enemies
 	LudumLevelInstance* ludum_level_instance = game->GetLevelInstance();
 
-	death::TMLayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
+	chaos::TMLayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
 	if (enemies_layer_instance != nullptr)
 	{
 		chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
@@ -160,7 +156,7 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy & p
 	
 	if (particle.pattern != nullptr)
 	{
-		death::Camera const* camera = game->GetCamera(0);
+		chaos::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 			return particle.pattern->UpdateParticle(delta_time, &particle, camera->GetCameraBox(true));
 	}
@@ -263,7 +259,7 @@ ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_
 	if (particle_accessor.GetDataCount() > 0)
 	{
 		// get the camera box 
-		death::Camera const* camera = game->GetCamera(0);
+		chaos::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 		{
 			result.camera_box = camera->GetCameraBox(true);
@@ -328,7 +324,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 
 	// enemy bullet
 
-	death::PlayerPawn const* player_pawn = update_data.player->GetPawn();
+	chaos::PlayerPawn const* player_pawn = update_data.player->GetPawn();
 	if (player_pawn != nullptr)
 	{
 		chaos::box2 player_box = player_pawn->GetBoundingBox();

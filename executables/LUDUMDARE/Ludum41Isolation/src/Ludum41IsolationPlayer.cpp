@@ -1,14 +1,14 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum41IsolationPlayer.h"
 #include "Ludum41IsolationGame.h"
 #include "Ludum41IsolationGameInstance.h"
 #include "Ludum41IsolationLevel.h"
 #include "Ludum41IsolationLevelInstance.h"
 
-#include <death/SoundContext.h>
-
-bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
+bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 {
-	if (!death::Player::Initialize(in_game_instance))
+	if (!chaos::Player::Initialize(in_game_instance))
 		return false;
 
 	LudumGame const * ludum_game = GetGame();
@@ -48,7 +48,7 @@ void LudumPlayer::DisplacePlayerRacket(float delta_x)
 
 bool LudumPlayer::OnMouseMoveImpl(double x, double y)
 {
-	death::Game const * game = GetGame();
+	chaos::Game const * game = GetGame();
 	if (game == nullptr)
 		return true;
 	if (game->IsPaused() || game->IsFreeCameraMode())
@@ -67,12 +67,12 @@ bool LudumPlayer::OnCharEventImpl(unsigned int c)
 		ludum_game_instance->SendKeyboardButtonToChallenge((char)c);
 		return true;
 	}
-	return death::Player::OnCharEventImpl(c);
+	return chaos::Player::OnCharEventImpl(c);
 }
 
 void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
-	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
+	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
 	LudumGameInstance * ludum_game_instance = GetGameInstance();
 	ludum_game_instance->SendGamepadButtonToChallenge(gpd);
@@ -103,7 +103,7 @@ void LudumPlayer::SetPlayerLength(float in_length, bool increment)
 
 bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
 {
-	if (!death::Player::InitializeGameValues(config, config_path, hot_reload))
+	if (!chaos::Player::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 	DEATHGAME_JSON_ATTRIBUTE(max_life_count);
 	return true;
@@ -111,7 +111,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 
 void LudumPlayer::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
 {
-	death::Player::OnInputModeChanged(new_mode, old_mode);
+	chaos::Player::OnInputModeChanged(new_mode, old_mode);
 
 	LudumGameInstance* game_instance = GetGameInstance();
 	if (game_instance == nullptr)
@@ -129,7 +129,7 @@ void LudumPlayer::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode
 
 bool LudumPlayer::IsDead() const
 {
-	if (death::Player::IsDead())
+	if (chaos::Player::IsDead())
 		return true;
 
 	LudumGameInstance const* ludum_game_instance = GetGameInstance();
@@ -143,12 +143,12 @@ bool LudumPlayer::IsDead() const
 
 void LudumPlayer::OnLifeLost()
 {
-	death::Player::OnLifeLost();
+	chaos::Player::OnLifeLost();
 
 	LudumGame* ludum_game = GetGame();
 	LudumGameInstance* ludum_game_instance = GetGameInstance();
 
-	ludum_game->PlaySound("balllost", false, false, 0.0f, death::SoundContext::GAME);
+	ludum_game->PlaySound("balllost", false, false, 0.0f, chaos::SoundContext::GAME);
 	ludum_game_instance->combo_multiplier = 1;
 	ludum_game_instance->ball_collision_speed = 0.0f;
 	ludum_game_instance->ball_power = 1.0f;

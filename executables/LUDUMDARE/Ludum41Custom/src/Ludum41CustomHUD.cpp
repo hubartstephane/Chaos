@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum41CustomHUD.h"
 #include "Ludum41CustomGame.h"
 #include "Ludum41CustomGameInstance.h"
@@ -5,15 +7,12 @@
 #include "Ludum41CustomLevelInstance.h"
 #include "Ludum41CustomPlayer.h"
 
-#include <death/GameHUD.h>
-#include <death/GameHUDComponent.h>
-
 // ====================================================================
 // GameHUDComboComponent
 // ====================================================================
 
 GameHUDComboComponent::GameHUDComboComponent(chaos::TagType in_layer_id) :
-	death::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_layer_id) 
+	chaos::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_layer_id) 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -48,17 +47,17 @@ bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-	if (!death::PlayingHUD::FillHUDContent())
+	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(death::GameHUDKeys::COMBO_ID, new GameHUDComboComponent());
-	RegisterComponent(death::GameHUDKeys::LIFE_ID, new death::GameHUDLifeComponent());
+	RegisterComponent(chaos::GameHUDKeys::COMBO_ID, new GameHUDComboComponent());
+	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new chaos::GameHUDLifeComponent());
 	return true;
 }
 
 int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	int render_order = death::PlayingHUD::CreateHUDLayers();
+	int render_order = chaos::PlayingHUD::CreateHUDLayers();
 	if (render_order < 0)
 		return render_order;
 	// create a layer for the life bar
@@ -67,7 +66,7 @@ int LudumPlayingHUD::CreateHUDLayers()
 	{
 		ParticleLifeLayerTrait life_trait;
 		life_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
+		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, chaos::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
 	}
 	return render_order;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chaos/Chaos.h>
 
 #include "Ludum46Particles.h"
 #include "Ludum46Game.h"
@@ -9,9 +10,6 @@
 #include "Ludum46Level.h"
 #include "Ludum46PlayerDisplacementComponent.h"
 
-#include <chaos/Chaos.h>
-
-#include <death/SoundContext.h>
 
 
 
@@ -33,7 +31,7 @@ ParticleSoulUpdateData ParticleSoulLayerTrait::BeginUpdateParticles(float delta_
 		result.ludum_level_instance = ludum_level_instance;
 
 		// store triggers
-		death::TMLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
+		chaos::TMLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
 		if (layer_instance != nullptr)
 		{
 			size_t count = layer_instance->GetObjectCount();
@@ -337,7 +335,7 @@ bool ParticlePlayerLayerTrait::UpdateParticle(float delta_time, ParticlePlayer &
 
 
 
-		if (displacement_component->displacement_state == death::PlatformerDisplacementState::GROUNDED)
+		if (displacement_component->displacement_state == chaos::PlatformerDisplacementState::GROUNDED)
 			particle.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		else
 			particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

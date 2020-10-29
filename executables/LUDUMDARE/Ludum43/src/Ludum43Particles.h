@@ -2,10 +2,6 @@
 
 #include <chaos/Chaos.h>
 
-
-#include <death/TM.h> 
-
-
 static constexpr float DANGER_RADIUS_RATIO = 0.3f;
 static constexpr float WAKEN_RADIUS_RATIO = 1.0f;
 
@@ -23,7 +19,7 @@ public:
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>);
 
-class ParticleBase : public death::TMParticle
+class ParticleBase : public chaos::TMParticle
 {
 public:
 
@@ -183,7 +179,7 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle)
+CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle)
 CHAOS_REGISTER_CLASS2(ParticleAffector, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleLife, chaos::ParticleDefault)
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleAffector)

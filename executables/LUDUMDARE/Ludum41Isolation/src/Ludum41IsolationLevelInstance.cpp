@@ -4,9 +4,9 @@
 #include "Ludum41IsolationGameInstance.h"
 #include "Ludum41IsolationPlayer.h"
 
-bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
+bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_level)
 {
-	if (!death::LevelInstance::Initialize(in_game, in_level))
+	if (!chaos::LevelInstance::Initialize(in_game, in_level))
 		return false;
 
 	bricks_allocations = CreateBricks();
@@ -16,7 +16,7 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
-	if (death::LevelInstance::CheckLevelCompletion())
+	if (chaos::LevelInstance::CheckLevelCompletion())
 		return true;
 
 	LudumLevel const * ludum_level = GetLevel();
@@ -42,7 +42,7 @@ bool LudumLevelInstance::CanCompleteLevel() const
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::LevelInstance::DoTick(delta_time);
+	chaos::LevelInstance::DoTick(delta_time);
 	RestrictPawnToWorld(GetPlayer(0));
 	return true;
 }
@@ -107,7 +107,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	// create the bricks resource
 	size_t brick_count = ludum_level->GetBrickCount();
-	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
+	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
 	if (result == nullptr)
 		return nullptr;
 
@@ -239,7 +239,7 @@ void LudumLevelInstance::CreateBackgroundImage()
 			return;
 		}
 	}
-	death::LevelInstance::CreateBackgroundImage(); // fallback
+	chaos::LevelInstance::CreateBackgroundImage(); // fallback
 }
 
 void LudumLevelInstance::SetInGameMusic()
@@ -253,19 +253,19 @@ void LudumLevelInstance::SetInGameMusic()
 			return;
 		}
 	}
-	death::LevelInstance::SetInGameMusic(); // fallback
+	chaos::LevelInstance::SetInGameMusic(); // fallback
 }
 
-death::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(death::Player* player)
+chaos::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(chaos::Player* player)
 {
 	assert(player != nullptr);
 
 	// create the pawn
-	death::PlayerPawn* player_pawn = LevelInstance::CreatePlayerPawn(player);
+	chaos::PlayerPawn* player_pawn = LevelInstance::CreatePlayerPawn(player);
 	if (player_pawn == nullptr)
 		return nullptr;
 	// create the player pawn
-	chaos::ParticleAllocationBase* player_allocation = game->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
+	chaos::ParticleAllocationBase* player_allocation = game->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
 	if (player_allocation == nullptr)
 		return player_pawn;
 	player_pawn->SetAllocation(player_allocation);

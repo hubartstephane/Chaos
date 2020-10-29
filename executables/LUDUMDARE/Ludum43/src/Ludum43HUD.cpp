@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum43HUD.h"
 #include "Ludum43Game.h"
 #include "Ludum43Level.h"
@@ -5,14 +7,12 @@
 #include "Ludum43LevelInstance.h"
 #include "Ludum43GameInstance.h"
 
-#include <death/GameHUDComponent.h>
-
 // ====================================================================
 // GameHUDWakenParticleComponent
 // ====================================================================
 
 GameHUDWakenParticleComponent::GameHUDWakenParticleComponent(chaos::TagType in_layer_id) :
-	death::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_layer_id) 
+	chaos::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_layer_id) 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -63,7 +63,7 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 		// create the allocation
 		if (allocations == nullptr)
 		{
-			chaos::ParticleLayerBase * layer = hud->GetParticleManager()->FindLayer(death::GameHUDKeys::LIFE_LAYER_ID);
+			chaos::ParticleLayerBase * layer = hud->GetParticleManager()->FindLayer(chaos::GameHUDKeys::LIFE_LAYER_ID);
 			if (layer == nullptr)
 				return true;
 			allocations = layer->SpawnParticles(1);
@@ -106,13 +106,13 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-	if (!death::PlayingHUD::FillHUDContent())
+	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;
-	RegisterComponent(death::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent());
-	RegisterComponent(death::GameHUDKeys::LEVEL_TIMEOUT_ID, new death::GameHUDTimeoutComponent());
-	RegisterComponent(death::GameHUDKeys::LIFE_HEALTH_ID, new GameHUDHealthBarComponent());
+	RegisterComponent(chaos::GameHUDKeys::WAKENUP_PARTICLE_COUNT_ID, new GameHUDWakenParticleComponent());
+	RegisterComponent(chaos::GameHUDKeys::LEVEL_TIMEOUT_ID, new chaos::GameHUDTimeoutComponent());
+	RegisterComponent(chaos::GameHUDKeys::LIFE_HEALTH_ID, new GameHUDHealthBarComponent());
 
-	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
+	RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
 
 	return true;
 }
@@ -120,7 +120,7 @@ bool LudumPlayingHUD::FillHUDContent()
 int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	int render_order = death::PlayingHUD::CreateHUDLayers();
+	int render_order = chaos::PlayingHUD::CreateHUDLayers();
 	if (render_order < 0)
 		return render_order;
 	// create a layer for the life bar
@@ -129,7 +129,7 @@ int LudumPlayingHUD::CreateHUDLayers()
 	{
 		ParticleLifeLayerTrait life_trait;
 		life_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, death::GameHUDKeys::LIFE_LAYER_ID, "health", life_trait);
+		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, chaos::GameHUDKeys::LIFE_LAYER_ID, "health", life_trait);
 	}
 	return render_order;
 }

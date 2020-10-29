@@ -2,25 +2,20 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameInstance.h>
-#include <death/Player.h>
-#include <death/GameFramework.h>
-
 #include "Ludum43Particles.h"
 
 // =========================================================
 // LudumPlayer
 // =========================================================
 
-class LudumPlayer : public death::Player
+class LudumPlayer : public chaos::Player
 {
 
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, chaos::Player);
 
 	/** get the player particle */
 	ParticlePlayer * GetPlayerParticle();
@@ -29,7 +24,7 @@ public:
 protected:
 
 	/** override */
-	virtual void OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance) override;
+	virtual void OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance) override;
 	/** override */
 	virtual void TickInternal(float delta_time) override;
 	/** override */

@@ -1,15 +1,10 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum43Level.h"
 #include "Ludum43LevelInstance.h"
 #include "Ludum43Game.h"
 #include "Ludum43Player.h"
 #include "Ludum43GameInstance.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/FollowPlayerCameraComponent.h>
-#include <death/SoundListenerCameraComponent.h>
-
-#include <death/CameraComponent.h>
 
 // =============================================================
 // LudumLevelInstance implementation
@@ -18,20 +13,20 @@
 void LudumLevelInstance::CreateCameras()
 {
 	// create the cameras
-	death::TMLevelInstance::CreateCameras();
+	chaos::TMLevelInstance::CreateCameras();
 	// tweak the cameras
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
 	{
 		cameras[i]->SetSafeZone(glm::vec2(0.2f, 0.2f));
-		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
-		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
+		cameras[i]->AddComponent(new chaos::FollowPlayerCameraComponent(0));
+		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
 	}
 }
 
 bool LudumLevelInstance::CheckLevelCompletion() const
 {
-	if (death::TMLevelInstance::CheckLevelCompletion())
+	if (chaos::TMLevelInstance::CheckLevelCompletion())
 		return true;
 
 	LudumPlayer const * ludum_player = GetPlayer(0);
@@ -58,18 +53,18 @@ bool LudumLevelInstance::CanCompleteLevel() const
 	return false;
 }
 
-bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
+bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_level)
 {
-	if (!death::TMLevelInstance::Initialize(in_game, in_level))
+	if (!chaos::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 	// change the level timeout
 	level_timeout = in_level->GetLevelTimeout();
 	return true;
 }
 
-death::PlayerPawn* LudumLevelInstance::CreatePlayerPawnAtPlayerStart(death::Player* player, death::TMPlayerStart* player_start)
+chaos::PlayerPawn* LudumLevelInstance::CreatePlayerPawnAtPlayerStart(chaos::Player* player, chaos::TMPlayerStart* player_start)
 {
-	death::PlayerPawn* result = death::TMLevelInstance::CreatePlayerPawnAtPlayerStart(player, player_start);
+	chaos::PlayerPawn* result = chaos::TMLevelInstance::CreatePlayerPawnAtPlayerStart(player, player_start);
 	if (result != nullptr)
 	{
 		chaos::ParticleAllocationBase* allocation = result->GetAllocation();

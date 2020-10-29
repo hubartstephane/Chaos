@@ -1,7 +1,6 @@
-#include "Ludum40Game.h"
-
 #include <chaos/Chaos.h>
 
+#include "Ludum40Game.h"
 #include "Ludum40SpriteManager.h"
 
 

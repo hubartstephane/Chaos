@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum43Game.h"
 #include "Ludum43Particles.h"
 #include "Ludum43Level.h"
@@ -5,11 +7,6 @@
 #include "Ludum43HUD.h"
 #include "Ludum43Player.h"
 #include "Ludum43GameInstance.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/GameParticles.h>
-#include <death/SoundContext.h>
 
 LudumGame::LudumGame()
 {
@@ -25,15 +22,15 @@ Black holes and Shadows are dangerous.
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
-	if (!death::Game::OnEnterGame(in_physical_gamepad))
+	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
 		return false;
-    PlaySound("start", false, false, 0.0f, death::SoundContext::GAME);
+    PlaySound("start", false, false, 0.0f, chaos::SoundContext::GAME);
 	return true;
 }
 
 void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
 {
-	death::TMLevelInstance * ludum_level_instance = GetLevelInstance();
+	chaos::TMLevelInstance * ludum_level_instance = GetLevelInstance();
 
 	// -------------------------------------
 	// I/ no level rendering like main menu (the background)
@@ -202,14 +199,14 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	}
 }
 
-death::GameHUD * LudumGame::DoCreatePlayingHUD()
+chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
-	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
 	DEATHGAME_JSON_ATTRIBUTE(initial_particle_health);
@@ -253,7 +250,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::TMLevel * LudumGame::CreateTMLevel()
+chaos::TMLevel * LudumGame::CreateTMLevel()
 {
 	return new LudumLevel();
 }
@@ -264,7 +261,7 @@ void LudumGame::RegisterEnemiesInRange(glm::vec2 const & center, float radius, s
 	LudumLevelInstance const * level_instance = GetLevelInstance();
 	if (level_instance != nullptr)
 	{
-		death::TMLayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
+		chaos::TMLayerInstance const * layer_instance = level_instance->FindLayerInstance(layer_name);
 		if (layer_instance)
 		{
 			chaos::ParticleLayerBase const * particle_layer = layer_instance->GetParticleLayer();

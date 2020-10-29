@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum45HUD.h"
 #include "Ludum45Game.h"
 #include "Ludum45Level.h"
@@ -5,12 +7,7 @@
 #include "Ludum45LevelInstance.h"
 #include "Ludum45GameInstance.h"
 
-#include <chaos/Chaos.h>
-
-#include <death/GameHUDComponent.h>
-
-
-namespace death
+namespace chaos
 {
 	namespace GameHUDKeys
 	{
@@ -25,15 +22,15 @@ namespace death
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-	if (!death::PlayingHUD::FillHUDContent())
+	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;	
 
-	RegisterComponent(death::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent(), "LifeGrid");
-	RegisterComponent(death::GameHUDKeys::LIFE_ID, new death::GameHUDLifeComponent());
-	RegisterComponent(death::GameHUDKeys::UPGRADE_ID, new GameHUDUpgradeComponent());
-	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
+	RegisterComponent(chaos::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent(), "LifeGrid");
+	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new chaos::GameHUDLifeComponent());
+	RegisterComponent(chaos::GameHUDKeys::UPGRADE_ID, new GameHUDUpgradeComponent());
+	RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
 	
-	//RegisterComponent(death::GameHUDKeys::NOTIFICATION_ID, new death::GameHUDNotificationComponent());
+	//RegisterComponent(chaos::GameHUDKeys::NOTIFICATION_ID, new chaos::GameHUDNotificationComponent());
 
 	return true;
 }
@@ -42,7 +39,7 @@ bool LudumPlayingHUD::FillHUDContent()
 int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	int render_order = death::PlayingHUD::CreateHUDLayers();
+	int render_order = chaos::PlayingHUD::CreateHUDLayers();
 	if (render_order < 0)
 		return render_order;
 	// special call
@@ -50,11 +47,11 @@ int LudumPlayingHUD::CreateHUDLayers()
 	if (ludum_game != nullptr)
 	{
 		// create a layer for the life bar
-		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, death::GameHUDKeys::LIFE_LAYER_ID, "gameobject");
+		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, chaos::GameHUDKeys::LIFE_LAYER_ID, "gameobject");
 		// create a layer for the shroudlife bar
 		ParticleShroudLifeTrait shroud_trait;
 		shroud_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleShroudLifeTrait>(render_order++, death::GameHUDKeys::SHROUDLIFE_ID, "gameobject", shroud_trait);
+		particle_manager->AddLayer<ParticleShroudLifeTrait>(render_order++, chaos::GameHUDKeys::SHROUDLIFE_ID, "gameobject", shroud_trait);
 	}
 
 	return render_order;
@@ -65,7 +62,7 @@ int LudumPlayingHUD::CreateHUDLayers()
 // ====================================================================
 
 GameHUDUpgradeComponent::GameHUDUpgradeComponent(chaos::TagType in_layer_id) :
-	death::GameHUDCacheValueComponent<std::string>("%s", std::string(), in_layer_id) 
+	chaos::GameHUDCacheValueComponent<std::string>("%s", std::string(), in_layer_id) 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -118,7 +115,7 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 
 	if (allocations == nullptr)
 	{
-		allocations = hud->GetGameParticleCreator().SpawnParticles(death::GameHUDKeys::SHROUDLIFE_ID, bitmap_name, 1, true);
+		allocations = hud->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::SHROUDLIFE_ID, bitmap_name, 1, true);
 		if (allocations == nullptr)
 			return;
 	}

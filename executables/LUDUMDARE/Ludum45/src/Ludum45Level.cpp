@@ -1,21 +1,18 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum45Level.h"
 #include "Ludum45LevelInstance.h"
 #include "Ludum45Game.h"
 #include "Ludum45Player.h"
 #include "Ludum45GameInstance.h"
 
-#include <chaos/Chaos.h>
-
-#include <death/TM.h>
-
-
 // =============================================================
 // BonusSpawnerTrigger implementation
 // =============================================================
 
-bool BonusSpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool BonusSpawnerTrigger::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
+	if (!chaos::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 	trigger_once = true;
 
@@ -29,7 +26,7 @@ bool BonusSpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, 
 
 bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
-	death::Camera* camera = auto_cast(object);
+	chaos::Camera* camera = auto_cast(object);
 	if (camera == nullptr)
 		return false;
 
@@ -50,9 +47,9 @@ bool BonusSpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * obj
 // EnemySpawnerTrigger implementation
 // =============================================================
 
-bool EnemySpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool EnemySpawnerTrigger::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
+	if (!chaos::TMTrigger::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 	trigger_once = true;
 
@@ -76,7 +73,7 @@ bool EnemySpawnerTrigger::Initialize(death::TMLayerInstance* in_layer_instance, 
 
 bool EnemySpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, chaos::CollisionType event_type)
 {
-	death::Camera* camera = auto_cast(object);
+	chaos::Camera* camera = auto_cast(object);
 	if (camera == nullptr)
 		return false;
 
@@ -132,7 +129,7 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = layer_instance->GetGame();
 
@@ -179,15 +176,15 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 		return new chaos::ParticleLayer<ParticleEnemyLayerTrait>(enemy_trait);
 	}
 
-	return death::TMLevel::DoCreateParticleLayer(layer_instance);
+	return chaos::TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 
-death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("BONUS_SPAWNER"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new BonusSpawnerTrigger(););
 	if (in_typed_object->IsObjectOfType("ENEMY_SPAWNER"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new EnemySpawnerTrigger(););
-	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

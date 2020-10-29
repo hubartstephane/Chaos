@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum41CustomGame.h"
 #include "Ludum41CustomLevel.h"
 #include "Ludum41CustomLevelInstance.h"
@@ -5,12 +7,6 @@
 #include "Ludum41CustomHUD.h"
 #include "Ludum41CustomGameInstance.h"
 #include "Ludum41CustomPlayer.h"
-
-
-#include <chaos/Chaos.h>
-
-#include <death/GameParticles.h>
-
 
 LudumGame::LudumGame()
 {
@@ -23,14 +19,14 @@ LudumGame::LudumGame()
 	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
-death::GameHUD * LudumGame::DoCreatePlayingHUD()
+chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
 }
 
 void LudumGame::OnEnterMainMenu(bool very_first)
 {
-	death::Game::OnEnterMainMenu(very_first);
+	chaos::Game::OnEnterMainMenu(very_first);
 
 	chaos::MathTools::ResetRandSeed();
 	if (very_first)
@@ -46,7 +42,7 @@ void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode o
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
-	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
 	DEATHGAME_JSON_ATTRIBUTE(max_ball_count);
@@ -86,7 +82,7 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
+chaos::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 {
 	nlohmann::json level_content;
 	if (!chaos::JSONTools::LoadJSONFile(path, level_content, false))
@@ -172,7 +168,7 @@ death::Level * LudumGame::DoLoadLevel(chaos::FilePathParam const & path)
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	if (!death::Game::InitializeFromConfiguration(config, config_path))
+	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 	// the dictionnary
 	if (!InitializeDictionnary(config, config_path))
@@ -282,7 +278,7 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 
 bool LudumGame::InitializeGamepadButtonInfo()
 {
-	if (!death::Game::InitializeGamepadButtonInfo())
+	if (!chaos::Game::InitializeGamepadButtonInfo())
 		return false;
 
 	gamepad_buttons.push_back(chaos::XBoxButton::BUTTON_A);
@@ -320,24 +316,24 @@ bool LudumGame::InitializeRewardsAndPunishments()
 
 int LudumGame::AddParticleLayers()
 {
-	int render_order = death::Game::AddParticleLayers();
+	int render_order = chaos::Game::AddParticleLayers();
 	if (render_order < 0)
 		return render_order;
 
 	// create layers
-	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, death::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
-	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, death::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, chaos::GameHUDKeys::BACKGROUND_GAMEOBJECT_LAYER_ID, "gameobject");
+	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "gameobject");
 
 	ParticleMovableObjectLayerTrait movable_trait;
 	movable_trait.game = this;
-	particle_manager->AddLayer<ParticleMovableObjectLayerTrait>(render_order++, death::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
+	particle_manager->AddLayer<ParticleMovableObjectLayerTrait>(render_order++, chaos::GameHUDKeys::BALL_LAYER_ID, "gameobject", movable_trait);
 
 	ParticleBrickLayerTrait brick_trait;
 	brick_trait.game = this;
-	particle_manager->AddLayer<ParticleBrickLayerTrait>(render_order++, death::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
+	particle_manager->AddLayer<ParticleBrickLayerTrait>(render_order++, chaos::GameHUDKeys::BRICK_LAYER_ID, "gameobject", brick_trait);
 
-	particle_manager->AddLayer<ParticleChallengeLayerTrait>(render_order++, death::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
-	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, death::GameHUDKeys::TEXT_LAYER_ID, "text");
+	particle_manager->AddLayer<ParticleChallengeLayerTrait>(render_order++, chaos::GameHUDKeys::CHALLENGE_LAYER_ID, "challenge");
+	particle_manager->AddLayer<ParticleObjectLayerTrait>(render_order++, chaos::GameHUDKeys::TEXT_LAYER_ID, "text");
 
 	return render_order;
 }

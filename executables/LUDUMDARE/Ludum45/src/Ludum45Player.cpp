@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum45Player.h"
 #include "Ludum45Level.h"
 #include "Ludum45LevelInstance.h"
@@ -5,14 +7,9 @@
 #include "Ludum45GameInstance.h"
 #include "Ludum45Particles.h"
 
-#include <chaos/Chaos.h>
-
-#include <death/Level.h>
-#include <death/SoundContext.h>
-
-bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
+bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 {
-	if (!death::Player::Initialize(in_game_instance))
+	if (!chaos::Player::Initialize(in_game_instance))
 		return false;
 	RegisterUpgrades();
 	return true;
@@ -68,7 +65,7 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 	}		
 	else
 	{
-		death::TMLevel * tiled_level = auto_cast(GetLevel());
+		chaos::TMLevel * tiled_level = auto_cast(GetLevel());
 		if (tiled_level != nullptr)
 		{
 			chaos::TiledMap::Map * tiled_map = tiled_level->GetTiledMap();
@@ -90,7 +87,7 @@ void LudumPlayer::DoUpdateBrightSideOfLife(bool value)
 
 void LudumPlayer::TickInternal(float delta_time)
 {
-	death::Player::TickInternal(delta_time);
+	chaos::Player::TickInternal(delta_time);
 
 	// player fire particles
 	UpdatePlayerFire(delta_time);
@@ -149,7 +146,7 @@ void LudumPlayer::UpdatePlayerAcceleration(float delta_time)
 				{
 					dash_timer = ludum_game->player_dash_duration;
 					dash_cooldown = GetCurrentDashValue();			
-					GetGame()->PlaySound("dash", false, false, 0.0f, death::SoundContext::LEVEL);
+					GetGame()->PlaySound("dash", false, false, 0.0f, chaos::SoundContext::LEVEL);
 				}		
 			}
 			dash_locked = true; // dash is locked until the key is released
@@ -331,20 +328,20 @@ void LudumPlayer::FireProjectiles()
     });
 
     // play the sound
-    ludum_game->PlaySound("fire", false, false, 0.0f, death::SoundContext::LEVEL);
+    ludum_game->PlaySound("fire", false, false, 0.0f, chaos::SoundContext::LEVEL);
 }
 
-void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {
-	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
+	chaos::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 	DoUpdateBrightSideOfLife(false);
 }
 
 void LudumPlayer::OnHealthChanged(float old_health, float new_health, bool invulnerable)
 {
-	death::Player::OnHealthChanged(old_health, new_health, invulnerable);
+	chaos::Player::OnHealthChanged(old_health, new_health, invulnerable);
 	if (old_health < new_health)
-		GetGame()->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
+		GetGame()->PlaySound("player_touched", false, false, 0.0f, chaos::SoundContext::LEVEL);
 }
 
 void LudumPlayer::OnPlayerUpgrade(chaos::TagType upgrade_type)

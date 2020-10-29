@@ -1,22 +1,16 @@
 #pragma once
 
+#include <chaos/Chaos.h>
+
 #include "Ludum45Particles.h"
 #include "Ludum45Level.h"
 #include "Ludum45Enemies.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/Game.h>
-#include <death/GameFramework.h>
-#include <death/TM.h>
-
-
 
 // =================================================
 // LudumGame
 // =================================================
 
-class LudumGame : public death::Game
+class LudumGame : public chaos::Game
 {
 
 	
@@ -40,7 +34,7 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumGame, death::Game);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumGame, chaos::Game);
 
 	/** constructor */
 	LudumGame();
@@ -62,10 +56,10 @@ protected:
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
 
 	/** override level creation */
-	death::TMLevel * CreateTMLevel() override;
+	chaos::TMLevel * CreateTMLevel() override;
 
 	/** move the player */
-	virtual death::GameHUD * DoCreatePlayingHUD() override;
+	virtual chaos::GameHUD * DoCreatePlayingHUD() override;
 
 	virtual void DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params) override;
 

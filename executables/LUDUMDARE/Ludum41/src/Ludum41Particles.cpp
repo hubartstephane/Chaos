@@ -154,7 +154,7 @@ bool ParticleMovableObjectLayerTrait::UpdateParticle(float delta_time, ParticleM
 	}
 
 	// bounce against player
-	death::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
+	chaos::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
 	if (player_pawn == nullptr)
 		return false;
 

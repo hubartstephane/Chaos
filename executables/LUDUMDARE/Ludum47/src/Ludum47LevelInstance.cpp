@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum47Level.h"
 #include "Ludum47LevelInstance.h"
 #include "Ludum47Game.h"
@@ -6,18 +8,9 @@
 #include "Ludum47PlayerDisplacementComponent.h"
 #include "Ludum47Particles.h"
 
-#include <chaos/Chaos.h>
-
-#include <death/SoundContext.h>
-
-#include <death/FollowPlayerCameraComponent.h>
-#include <death/ShakeCameraComponent.h>
-#include <death/SoundListenerCameraComponent.h>
-
-
 bool LudumCameraComponent::DoTick(float delta_time)
 {
-	if (!death::CameraComponent::DoTick(delta_time))
+	if (!chaos::CameraComponent::DoTick(delta_time))
 		return false;
 
 
@@ -62,15 +55,15 @@ LudumLevelInstance::LudumLevelInstance()
 
 void LudumLevelInstance::CreateCameras()
 {
-	death::TMLevelInstance::CreateCameras();
+	chaos::TMLevelInstance::CreateCameras();
 
 	size_t camera_count = cameras.size();
 	for (size_t i = 0; i < camera_count; ++i)
 	{
 		cameras[i]->SetSafeZone(glm::vec2(0.0f, 0.0f));
-		cameras[i]->AddComponent(new death::FollowPlayerCameraComponent(0));
-		cameras[i]->AddComponent(new death::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
-		cameras[i]->AddComponent(new death::SoundListenerCameraComponent());
+		cameras[i]->AddComponent(new chaos::FollowPlayerCameraComponent(0));
+		cameras[i]->AddComponent(new chaos::ShakeCameraComponent(0.15f, 0.05f, 0.15f, true, true));
+		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
 
 		cameras[i]->AddComponent(new LudumCameraComponent());		
 	}
@@ -78,7 +71,7 @@ void LudumLevelInstance::CreateCameras()
 
 bool LudumLevelInstance::DoTick(float delta_time)
 {
-	death::TMLevelInstance::DoTick(delta_time);
+	chaos::TMLevelInstance::DoTick(delta_time);
 
 	if (effective_start_timer > 0.0f)
 	{
@@ -91,13 +84,13 @@ bool LudumLevelInstance::DoTick(float delta_time)
 			if (int(effective_start_timer) != int(new_value))
 			{
 
-				GetGame()->PlaySound("Start1", false, false, 0, death::SoundContext::GAME);
+				GetGame()->PlaySound("Start1", false, false, 0, chaos::SoundContext::GAME);
 				sound_played = true;
 			}
 		}
 		effective_start_timer = new_value;
 		if (effective_start_timer == 0.0f && !sound_played)
-			GetGame()->PlaySound("Start2", false, false, 0, death::SoundContext::GAME);
+			GetGame()->PlaySound("Start2", false, false, 0, chaos::SoundContext::GAME);
 	}
 
 
@@ -112,9 +105,9 @@ bool LudumLevelInstance::DoTick(float delta_time)
 	return true;
 }
 
-bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_level)
+bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_level)
 {
-	if (!death::TMLevelInstance::Initialize(in_game, in_level))
+	if (!chaos::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
 	road = FindObject("TheRoad");
@@ -133,9 +126,9 @@ bool LudumLevelInstance::Initialize(death::Game * in_game, death::Level * in_lev
 }
 
 
-bool LudumLevelInstance::IsPlayerDead(death::Player* player)
+bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
 {
-	if (death::TMLevelInstance::IsPlayerDead(player))
+	if (chaos::TMLevelInstance::IsPlayerDead(player))
 		return true;
 
 	if (lost_timer == 0.0f)
@@ -206,14 +199,14 @@ glm::ivec2 LudumLevelInstance::GetPlayerRacePosition(LudumPlayer const* player) 
 	if (point_count == 0)
 		return result;
 
-	death::TMLayerInstance const* li = FindLayerInstance("Opponents");
+	chaos::TMLayerInstance const* li = FindLayerInstance("Opponents");
 	if (li == nullptr)
 		return result;
 
 	if (player->GetPawn() == nullptr)
 		return result;
 
-	death::TMParticle const* particle_player = player->GetPawn()->GetParticle<death::TMParticle>(0);
+	chaos::TMParticle const* particle_player = player->GetPawn()->GetParticle<chaos::TMParticle>(0);
 	if (particle_player == nullptr)
 		return result;
 
@@ -224,7 +217,7 @@ glm::ivec2 LudumLevelInstance::GetPlayerRacePosition(LudumPlayer const* player) 
 		if (opponent == nullptr)
 			continue;
 
-		death::TMParticle const* particle_opponent = opponent->GetParticle<death::TMParticle>(0);
+		chaos::TMParticle const* particle_opponent = opponent->GetParticle<chaos::TMParticle>(0);
 		if (particle_opponent == nullptr)
 			continue;
 		

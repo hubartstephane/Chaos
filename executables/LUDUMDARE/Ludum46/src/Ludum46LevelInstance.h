@@ -2,25 +2,19 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Level.h>
-#include <death/TM.h>
-#include <death/Game.h>
-#include <death/Player.h>
-#include <death/GameFramework.h>
-
 #include "Ludum46Game.h"
 
 // =================================================
 // LudumLevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::TMLevelInstance
+class LudumLevelInstance : public chaos::TMLevelInstance
 {
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::TMLevelInstance);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, chaos::TMLevelInstance);
 
 	LudumLevelInstance();
 
@@ -33,12 +27,12 @@ protected:
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 	/** override */
-	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
+	virtual bool Initialize(chaos::Game * in_game, chaos::Level * in_level) override;
 	/** override */
 	virtual void CreateCameras() override;
 
 	/** override */
-	virtual bool IsPlayerDead(death::Player* player) override;
+	virtual bool IsPlayerDead(chaos::Player* player) override;
 
 	virtual bool CheckLevelCompletion() const override;
 

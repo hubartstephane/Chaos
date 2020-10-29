@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum46HUD.h"
 #include "Ludum46Game.h"
 #include "Ludum46Level.h"
@@ -5,9 +7,7 @@
 #include "Ludum46LevelInstance.h"
 #include "Ludum46GameInstance.h"
 
-#include <death/GameHUDComponent.h>
-
-namespace death
+namespace chaos
 {
 	namespace GameHUDKeys
 	{
@@ -21,9 +21,9 @@ namespace death
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-	if (!death::PlayingHUD::FillHUDContent())
+	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;	
-   // RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
+   // RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
 
 	return true;
 }
@@ -32,7 +32,7 @@ bool LudumPlayingHUD::FillHUDContent()
 int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	int render_order = death::PlayingHUD::CreateHUDLayers();
+	int render_order = chaos::PlayingHUD::CreateHUDLayers();
 	if (render_order < 0)
 		return render_order;
 

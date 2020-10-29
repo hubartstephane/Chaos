@@ -1,6 +1,6 @@
-#include "Ludum45Enemies.h"
-
 #include <chaos/Chaos.h>
+
+#include "Ludum45Enemies.h"
 
 bool EnemyPattern::Initialize(chaos::TiledMap::PropertyOwner const * def)
 {

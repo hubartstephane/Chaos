@@ -1,10 +1,8 @@
 #pragma once
 
-#include <death/Game.h>
-#include <death/GameHUD.h>
-#include <death/GameFramework.h>
+#include <chaos/Chaos.h>
 
-namespace death
+namespace chaos
 {
 	namespace GameHUDKeys
 	{
@@ -17,16 +15,16 @@ namespace death
 // GameHUDWakenParticleComponent
 // ====================================================================
 
-class GameHUDWakenParticleComponent : public death::GameHUDCacheValueComponent<int>
+class GameHUDWakenParticleComponent : public chaos::GameHUDCacheValueComponent<int>
 {
 public:
 
 
 	/** constructor */
-	GameHUDWakenParticleComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDWakenParticleComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
 	/** constructor */
-	GameHUDWakenParticleComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-		death::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_params, in_layer_id) {}
+	GameHUDWakenParticleComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		chaos::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_params, in_layer_id) {}
 
 protected:
 
@@ -38,7 +36,7 @@ protected:
 // GameHUDHealthBarComponent
 // ====================================================================
 
-class GameHUDHealthBarComponent : public death::GameHUDSingleAllocationComponent
+class GameHUDHealthBarComponent : public chaos::GameHUDSingleAllocationComponent
 {
 protected:
 
@@ -55,13 +53,13 @@ protected:
 // LudumPlayingHUD
 // ====================================================================
 
-class LudumPlayingHUD : public death::PlayingHUD
+class LudumPlayingHUD : public chaos::PlayingHUD
 {
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, death::PlayingHUD);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, chaos::PlayingHUD);
 
 protected:
 

@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum47HUD.h"
 #include "Ludum47Game.h"
 #include "Ludum47Level.h"
@@ -5,15 +7,12 @@
 #include "Ludum47LevelInstance.h"
 #include "Ludum47GameInstance.h"
 
-#include <death/SoundContext.h>
-#include <death/GameHUDComponent.h>
-
 // ====================================================================
 // GameHUDRacePositionComponent
 // ====================================================================
 
 GameHUDRacePositionComponent::GameHUDRacePositionComponent(chaos::TagType in_layer_id) :
-	death::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1) , in_layer_id)
+	chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1) , in_layer_id)
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -34,7 +33,7 @@ std::string GameHUDRacePositionComponent::FormatText() const
 
 bool GameHUDRacePositionComponent::DoTick(float delta_time)
 {
-	if (!death::GameHUDCacheValueComponent<glm::ivec2>::DoTick(delta_time))
+	if (!chaos::GameHUDCacheValueComponent<glm::ivec2>::DoTick(delta_time))
 		return false;
 	current_dt = delta_time;
 	return true;
@@ -69,7 +68,7 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
 						if (li != nullptr && li->effective_start_timer == 0.0)
 						{
 							if (blink_value)
-								player->GetGame()->PlaySound("bip", false, false, 0.0f, death::SoundContext::GAME);
+								player->GetGame()->PlaySound("bip", false, false, 0.0f, chaos::SoundContext::GAME);
 						}
 					}
 					force_update = true;
@@ -92,7 +91,7 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
 // ====================================================================
 
 GameHUDRaceLapsComponent::GameHUDRaceLapsComponent(chaos::TagType in_layer_id) :
-	death::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d", glm::ivec2(-1, -1), in_layer_id)
+	chaos::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d", glm::ivec2(-1, -1), in_layer_id)
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -140,17 +139,17 @@ bool LudumPlayingHUD::FillHUDContent()
 	// directely call GameHUD super instead of PlayingHUD to avoid the score
 
 #if 0
-	if (!death::PlayingHUD::FillHUDContent())
+	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;	
 #else
 	// call super method
-	if (!death::GameHUD::FillHUDContent())
+	if (!chaos::GameHUD::FillHUDContent())
 		return false;
 	//RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
 #endif
 
-	RegisterComponent(death::GameHUDKeys::RACE_POSITION_ID, new GameHUDRacePositionComponent());
-	RegisterComponent(death::GameHUDKeys::RACE_LAPS_ID, new GameHUDRaceLapsComponent());
+	RegisterComponent(chaos::GameHUDKeys::RACE_POSITION_ID, new GameHUDRacePositionComponent());
+	RegisterComponent(chaos::GameHUDKeys::RACE_LAPS_ID, new GameHUDRaceLapsComponent());
 
 	return true;
 }
@@ -159,7 +158,7 @@ bool LudumPlayingHUD::FillHUDContent()
 int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	int render_order = death::PlayingHUD::CreateHUDLayers();
+	int render_order = chaos::PlayingHUD::CreateHUDLayers();
 	if (render_order < 0)
 		return render_order;
 

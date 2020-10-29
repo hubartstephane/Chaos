@@ -1,14 +1,11 @@
 #pragma once
 
+#include <chaos/Chaos.h>
 
 #include "Ludum44Particles.h"
 #include "Ludum44Game.h"
 #include "Ludum44GameInstance.h"
 #include "Ludum44LevelInstance.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/SoundContext.h>
 
 // ===========================================================================
 // FindEnemiesOnMap
@@ -31,7 +28,7 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 	// get the enemies
 	LudumLevelInstance* ludum_level_instance = game->GetLevelInstance();
 
-	death::TMLayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
+	chaos::TMLayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
 	if (enemies_layer_instance != nullptr)
 	{
 		chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();
@@ -63,12 +60,12 @@ static float OnCollisionWithEnemy(ParticleEnemy * enemy, float damage, LudumGame
 
 	// play sound
 	if (enemy->life > 0.0f)
-		game->PlaySound("metallic", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("metallic", false, false, 0.0f, chaos::SoundContext::LEVEL);
 	else 
 	{
 		if (!collision_with_player)
 			game->GetPlayer(0)->SetScore(enemy->score, true);
-		game->PlaySound("explosion", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("explosion", false, false, 0.0f, chaos::SoundContext::LEVEL);
 
 		LudumGameInstance* ludum_game_instance = game->GetGameInstance();
 		ludum_game_instance->FireExplosion(ref_box);
@@ -138,7 +135,7 @@ bool PowerUpZoneParticleLayerTrait::UpdateParticle(float delta_time, ParticlePow
 }
 
 
-void PowerUpZoneParticleLayerTrait::ParticleToPrimitives(death::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
+void PowerUpZoneParticleLayerTrait::ParticleToPrimitives(chaos::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
 {
     chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
 
@@ -233,7 +230,7 @@ ParticleFireUpdateData ParticleFireLayerTrait::BeginUpdateParticles(float delta_
 	if (particle_accessor.GetDataCount() > 0)
 	{
 		// get the camera box 
-		death::Camera const* camera = game->GetCamera(0);
+		chaos::Camera const* camera = game->GetCamera(0);
 		if (camera != nullptr)
 			result.camera_box = camera->GetCameraBox(true);
 		//result.camera_box.half_size *= 3.0f;
@@ -264,7 +261,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 	if (!particle.player_ownership && ObjectBesideCamera(update_data.camera_box, particle.bounding_box))
 		return true;
 
-	death::PlayerPawn* player_pawn = update_data.player->GetPawn();
+	chaos::PlayerPawn* player_pawn = update_data.player->GetPawn();
 	if (player_pawn == nullptr)
 		return false;
 
@@ -304,7 +301,7 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 			update_data.player->SetHealth(-particle.damage, true);
 			particle.damage = 0.0f;
 			
-			game->PlaySound("player_touched", false, false, 0.0f, death::SoundContext::LEVEL);
+			game->PlaySound("player_touched", false, false, 0.0f, chaos::SoundContext::LEVEL);
 		}	
 	}
 
@@ -331,7 +328,7 @@ ParticleEnemyUpdateData ParticleEnemyLayerTrait::BeginUpdateParticles(float delt
 	ParticleEnemyUpdateData result;
 	if (particle_accessor.GetDataCount() > 0)
 	{
-		death::Camera const * camera = game->GetCamera(0);
+		chaos::Camera const * camera = game->GetCamera(0);
 		if (camera != nullptr)
 			result.camera_box = camera->GetCameraBox(true);
 		//result.camera_box.half_size *= 3.0f;
@@ -359,7 +356,7 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 	
 	if (particle.rotation_following_player)
 	{
-		death::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
+		chaos::PlayerPawn * player_pawn = game->GetPlayerPawn(0);
 		if (player_pawn != nullptr)
 		{		
 			glm::vec2 delta_pos = player_pawn->GetPosition() - particle.bounding_box.position;

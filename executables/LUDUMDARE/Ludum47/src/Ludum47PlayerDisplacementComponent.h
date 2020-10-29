@@ -2,11 +2,9 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/PlayerDisplacementComponent.h>
-
-class LudumPlayerDisplacementComponent : public death::PlayerDisplacementComponent
+class LudumPlayerDisplacementComponent : public chaos::PlayerDisplacementComponent
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayerDisplacementComponent, death::PlayerDisplacementComponent);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayerDisplacementComponent, chaos::PlayerDisplacementComponent);
 
 
 public:

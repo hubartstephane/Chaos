@@ -1,20 +1,15 @@
 #pragma once
 
-#include "Ludum41Challenge.h"
-#include "Ludum41Particles.h"
-
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameInstance.h>
-#include <death/GameFramework.h>
-
+#include "Ludum41Challenge.h"
+#include "Ludum41Particles.h"
 
 // =========================================================
 // LudumGameInstance
 // =========================================================
 
-class LudumGameInstance : public death::GameInstance
+class LudumGameInstance : public chaos::GameInstance
 {
 
 	friend class LudumChallengeRewardPunishment_ExtraLife;
@@ -40,7 +35,7 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, death::GameInstance);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, chaos::GameInstance);
 
 	LudumGameInstance();
 
@@ -97,7 +92,7 @@ protected:
 
 	virtual bool DoTick(float delta_time) override;
 
-	virtual void OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance) override;
+	virtual void OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance) override;
 
 	virtual void OnLeavePause() override;
 
@@ -124,7 +119,7 @@ protected:
 	/** create a string for a gamepad challenge */
 	std::string GenerateGamepadChallengeString(std::vector<int> const & gamepad_challenge);	
 	
-	virtual bool Initialize(death::Game * in_game) override;
+	virtual bool Initialize(chaos::Game * in_game) override;
 
 	/** called whenever a ball collide */
 	void OnBallCollide(bool collide_brick);	

@@ -1,19 +1,15 @@
 #pragma once
 
-#include "Ludum43Particles.h"
-#include "Ludum43Level.h"
-
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameFramework.h>
-#include <death/TM.h>
+#include "Ludum43Particles.h"
+#include "Ludum43Level.h"
 
 // =================================================
 // LudumGame
 // =================================================
 
-namespace death
+namespace chaos
 {
 	namespace GameHUDKeys
 	{
@@ -22,7 +18,7 @@ namespace death
 	};
 };
 
-class LudumGame : public death::Game
+class LudumGame : public chaos::Game
 {
 	friend class LudumWindow;
 	friend class MainMenuState;
@@ -39,7 +35,7 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumGame, death::Game);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumGame, chaos::Game);
 
 	/** constructor */
 	LudumGame();
@@ -59,10 +55,10 @@ protected:
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;
 	
 	/** override level creation */
-	death::TMLevel * CreateTMLevel() override;
+	chaos::TMLevel * CreateTMLevel() override;
 
 	/** move the player */
-	virtual death::GameHUD * DoCreatePlayingHUD() override;
+	virtual chaos::GameHUD * DoCreatePlayingHUD() override;
 
 	bool GenerateFramebuffer(glm::ivec2 const & size, chaos::shared_ptr<chaos::GPUFramebuffer> & in_framebuffer);
 

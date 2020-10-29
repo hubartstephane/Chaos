@@ -1,12 +1,11 @@
 #pragma once
 
+#include <chaos/Chaos.h>
 
 #include "Ludum43Particles.h"
 #include "Ludum43Game.h"
 #include "Ludum43GameInstance.h"
 #include "Ludum43Player.h"
-
-#include <chaos/Chaos.h>
 
 void GetTypedVertexDeclaration(chaos::GPUVertexDeclaration * result, boost::mpl::identity<VertexBase>)
 {

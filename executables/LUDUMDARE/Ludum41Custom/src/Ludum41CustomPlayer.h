@@ -2,16 +2,11 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameInstance.h>
-#include <death/Player.h>
-#include <death/GameFramework.h>
-
 // =========================================================
 // LudumPlayer
 // =========================================================
 
-class LudumPlayer : public death::Player
+class LudumPlayer : public chaos::Player
 {
 	/** the Y coordinate of the player on screen */
 	static constexpr float PLAYER_Y = 100.0f;
@@ -22,7 +17,7 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, chaos::Player);
 
 	/** change the length of the player */
 	void SetPlayerLength(float in_length, bool increment);
@@ -51,7 +46,7 @@ protected:
 	/** override */
 	virtual void OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode) override;
 	/** override */
-	virtual bool Initialize(death::GameInstance* in_game_instance) override;
+	virtual bool Initialize(chaos::GameInstance* in_game_instance) override;
 
 	/** displace the racket from given quantity */
 	void DisplacePlayerRacket(float delta_x);

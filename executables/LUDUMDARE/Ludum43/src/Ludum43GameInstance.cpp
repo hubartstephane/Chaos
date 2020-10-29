@@ -1,10 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum43GameInstance.h"
 #include "Ludum43Game.h"
 #include "Ludum43Level.h"
 #include "Ludum43LevelInstance.h"
 #include "Ludum43Player.h"
 
-#include <death/SoundContext.h>
 
 LudumGameInstance::LudumGameInstance()
 {
@@ -13,7 +14,7 @@ LudumGameInstance::LudumGameInstance()
 
 bool LudumGameInstance::DoTick(float delta_time)
 {
-	death::GameInstance::DoTick(delta_time);
+	chaos::GameInstance::DoTick(delta_time);
 	if (game->IsPlaying())
 		TickHeartBeat(delta_time);
 	return true;
@@ -39,18 +40,18 @@ void LudumGameInstance::TickHeartBeat(float delta_time)
 	if (heart_beat_time >= limit_value)
 	{
 		heart_beat_time = 0.0f;
-		game->PlaySound("heartbeat", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("heartbeat", false, false, 0.0f, chaos::SoundContext::LEVEL);
 	}
 }
 
 
-void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
+void LudumGameInstance::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {
 	// super method
-	death::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
+	chaos::GameInstance::OnLevelChanged(new_level, old_level, new_level_instance);
 	// play a sound
 	if (new_level != nullptr && old_level != nullptr)
-		game->PlaySound("next_level", false, false, 0.0f, death::SoundContext::GAME);
+		game->PlaySound("next_level", false, false, 0.0f, chaos::SoundContext::GAME);
 	// internal
 	LudumPlayer * player = GetPlayer(0);
 	if (player != nullptr)
@@ -65,8 +66,8 @@ void LudumGameInstance::OnLevelChanged(death::Level * new_level, death::Level * 
 void LudumGameInstance::NotifyAtomCountChange(int delta)
 {
 	if (delta > 0)
-		game->PlaySound("particle_add", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("particle_add", false, false, 0.0f, chaos::SoundContext::LEVEL);
 	else if (delta < 0)
-		game->PlaySound("particle_removed", false, false, 0.0f, death::SoundContext::LEVEL);
+		game->PlaySound("particle_removed", false, false, 0.0f, chaos::SoundContext::LEVEL);
 	waken_up_particle_count += delta;
 }

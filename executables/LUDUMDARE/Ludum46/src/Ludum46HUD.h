@@ -1,20 +1,18 @@
 #pragma once
 
-#include <death/Game.h>
-#include <death/GameHUD.h>
-#include <death/GameFramework.h>
+#include <chaos/Chaos.h>
 
 // ====================================================================
 // LudumPlayingHUD
 // ====================================================================
 
-class LudumPlayingHUD : public death::PlayingHUD
+class LudumPlayingHUD : public chaos::PlayingHUD
 {
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, death::PlayingHUD);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, chaos::PlayingHUD);
 
 protected:
 

@@ -2,9 +2,6 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/TM.h> 
-
-
 static constexpr float DANGER_RADIUS_RATIO = 0.3f;
 static constexpr float WAKEN_RADIUS_RATIO  = 1.0f;
 
@@ -14,7 +11,7 @@ static constexpr float WAKEN_RADIUS_RATIO  = 1.0f;
 
 using VertexBase = chaos::VertexDefault;
 
-class ParticleBase : public death::TMParticle
+class ParticleBase : public chaos::TMParticle
 {
 public:
 
@@ -25,7 +22,7 @@ public:
 // PowerUpZoneParticleLayerTrait
 // =====================================
 
-class ParticlePowerUpZone : public death::TMParticle
+class ParticlePowerUpZone : public chaos::TMParticle
 {
 public:
 
@@ -52,7 +49,7 @@ class PowerUpZoneParticleLayerTrait : public chaos::ParticleLayerTrait<ParticleP
 {
 public:
 
-    void ParticleToPrimitives(death::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
+    void ParticleToPrimitives(chaos::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const;
 
 	bool UpdateParticle(float delta_time, ParticlePowerUpZone & particle);
 };
@@ -210,8 +207,8 @@ public:
 	class LudumGame* game = nullptr;
 };
 
-CHAOS_REGISTER_CLASS2(ParticleBase, death::TMParticle)
-CHAOS_REGISTER_CLASS2(ParticlePowerUpZone, death::TMParticle)
+CHAOS_REGISTER_CLASS2(ParticleBase, chaos::TMParticle)
+CHAOS_REGISTER_CLASS2(ParticlePowerUpZone, chaos::TMParticle)
 CHAOS_REGISTER_CLASS2(ParticlePlayer, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleEnemy, ParticleBase)
 CHAOS_REGISTER_CLASS2(ParticleFire, ParticleBase)

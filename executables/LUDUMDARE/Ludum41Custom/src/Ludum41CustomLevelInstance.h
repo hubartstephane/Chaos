@@ -2,18 +2,13 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/Level.h>
-#include <death/LevelInstance.h>
-#include <death/GameFramework.h>
-
 #include "Ludum41CustomParticles.h"
 
 // =================================================
 // LevelInstance
 // =================================================
 
-class LudumLevelInstance : public death::LevelInstance
+class LudumLevelInstance : public chaos::LevelInstance
 {
 
 	friend class ParticleMovableObjectLayerTrait;
@@ -22,18 +17,18 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, death::LevelInstance);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, chaos::LevelInstance);
 
 	/** override */
 	virtual bool CheckLevelCompletion() const override;
 	/** override */
 	virtual bool CanCompleteLevel() const override;
 	/** override */
-	virtual bool Initialize(death::Game * in_game, death::Level * in_level) override;
+	virtual bool Initialize(chaos::Game * in_game, chaos::Level * in_level) override;
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 	/** override */
-	virtual death::PlayerPawn * CreatePlayerPawn(death::Player* player) override;
+	virtual chaos::PlayerPawn * CreatePlayerPawn(chaos::Player* player) override;
 
 protected:
 

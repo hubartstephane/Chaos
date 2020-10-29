@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum44Game.h"
 #include "Ludum44Particles.h"
 #include "Ludum44Level.h"
@@ -5,11 +7,6 @@
 #include "Ludum44HUD.h"
 #include "Ludum44Player.h"
 #include "Ludum44GameInstance.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/GameParticles.h>
-#include <death/SoundContext.h>
 
 LudumGame::LudumGame()
 {		
@@ -26,13 +23,13 @@ LudumGame::LudumGame()
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
-	if (!death::Game::OnEnterGame(in_physical_gamepad))
+	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
 		return false;
-    PlaySound("start", false, false, 0.0f, death::SoundContext::GAME);
+    PlaySound("start", false, false, 0.0f, chaos::SoundContext::GAME);
 	return true;
 }
 
-death::GameHUD * LudumGame::DoCreatePlayingHUD()
+chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
 }
@@ -46,7 +43,7 @@ static bool InitializeGameValueVector(char const * json_name, nlohmann::json con
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
-	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 	if (!InitializeGameValueVector("player_speeds", config, config_path, player_speeds))
 		return false;
@@ -79,14 +76,14 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	return true;
 }
 
-death::TMLevel * LudumGame::CreateTMLevel()
+chaos::TMLevel * LudumGame::CreateTMLevel()
 {
 	return new LudumLevel();
 }
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	if (!death::Game::InitializeFromConfiguration(config, config_path))
+	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 	if (!PopulatePowerUps(config, config_path))
 		return false;

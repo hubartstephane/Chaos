@@ -1,19 +1,16 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum46Level.h"
 #include "Ludum46LevelInstance.h"
 #include "Ludum46Game.h"
 #include "Ludum46Player.h"
 #include "Ludum46GameInstance.h"
 
-#include <chaos/Chaos.h>
-
-
-#include <death/TM.h>
-
 // =============================================================
 // EffectorObject implementation
 // =============================================================
 
-bool EffectorObject::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool EffectorObject::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
 
 
@@ -24,11 +21,11 @@ bool EffectorObject::Initialize(death::TMLayerInstance* in_layer_instance, chaos
 // SpikeBar implementation
 // =============================================================
 
-bool SpikeBar::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool SpikeBar::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
 	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
+	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
 	in_reference_solver.DeclareReference(my_path, "MY_PATH", in_geometric_object);
@@ -41,14 +38,14 @@ bool SpikeBar::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Tile
 
 bool SpikeBar::DoTick(float delta_time)
 {
-	death::TMObject::DoTick(delta_time);
+	chaos::TMObject::DoTick(delta_time);
 
 	// data from entity to particle
 	SynchronizeData(false);
 
 	path_value += delta_time;
 
-	death::TMPath * p = auto_cast(my_path.get());
+	chaos::TMPath * p = auto_cast(my_path.get());
 	if (p != nullptr)
 	{
 		auto y = GetPosition();
@@ -76,9 +73,9 @@ void SpikeBar::OnEffectorChangeState()
 // SoulTrigger implementation
 // =============================================================
 
-bool SoulTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool SoulTrigger::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
+	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
 	// number of element that must be triggered
@@ -103,7 +100,7 @@ bool SoulTrigger::Initialize(death::TMLayerInstance* in_layer_instance, chaos::T
 
 bool SoulTrigger::DoTick(float delta_time)
 {
-	death::TMObject::DoTick(delta_time);
+	chaos::TMObject::DoTick(delta_time);
 
 	for (std::string const& effector_name : effector_names)
 	{
@@ -168,9 +165,9 @@ int Spawner::GetRemainingParticleCount() const
 	return (max_spawned_particles - spawned_count);
 }
 
-bool Spawner::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool Spawner::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
-	if (!death::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
+	if (!chaos::TMObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
 
 	max_spawned_particles = in_geometric_object->GetPropertyValueInt("MAX_SPAWNED_PARTICLES", max_spawned_particles);
@@ -191,7 +188,7 @@ bool Spawner::Initialize(death::TMLayerInstance* in_layer_instance, chaos::Tiled
 
 bool Spawner::SerializeIntoJSON(nlohmann::json& json) const
 {
-	if (!death::TMObject::SerializeIntoJSON(json))
+	if (!chaos::TMObject::SerializeIntoJSON(json))
 		return false;
 
 	chaos::JSONTools::SetAttribute(json, "MAX_SPAWNED_PARTICLES", max_spawned_particles);
@@ -208,7 +205,7 @@ bool Spawner::SerializeIntoJSON(nlohmann::json& json) const
 
 bool Spawner::SerializeFromJSON(nlohmann::json const & json)
 {
-	if (!death::TMObject::SerializeFromJSON(json))
+	if (!chaos::TMObject::SerializeFromJSON(json))
 		return false;
 
 	chaos::JSONTools::GetAttribute(json, "MAX_SPAWNED_PARTICLES", max_spawned_particles);
@@ -227,7 +224,7 @@ bool Spawner::SerializeFromJSON(nlohmann::json const & json)
 
 bool Spawner::DoTick(float delta_time)
 {
-	death::TMObject::DoTick(delta_time);
+	chaos::TMObject::DoTick(delta_time);
 
 	// whether the emission is enabled 
 	if (!emission_started)
@@ -286,7 +283,7 @@ void Spawner::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 // =============================================================
 
 
-bool FireSpawner::Initialize(death::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, death::TMObjectReferenceSolver& in_reference_solver)
+bool FireSpawner::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const * in_geometric_object, chaos::TMObjectReferenceSolver& in_reference_solver)
 {
 	if (!EffectorObject::Initialize(in_layer_instance, in_geometric_object, in_reference_solver))
 		return false;
@@ -311,7 +308,7 @@ LudumLevel::LudumLevel()
 	level_instance_class = LudumLevelInstance::GetStaticClass();
 }
 
-chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInstance * layer_instance)
+chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInstance * layer_instance)
 {
 	LudumGame * ludum_game = auto_cast(layer_instance->GetGame());
 
@@ -360,11 +357,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(death::TMLayerInsta
 
 
 
-	return death::TMLevel::DoCreateParticleLayer(layer_instance);
+	return chaos::TMLevel::DoCreateParticleLayer(layer_instance);
 }
 
 
-death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
+chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("Spawner"))
 	{
@@ -390,13 +387,13 @@ death::TMObjectFactory LudumLevel::DoGetObjectFactory(death::TMLayerInstance * i
 	if (in_typed_object->IsObjectOfType("SpikeBar"))
 		return DEATH_MAKE_OBJECT_FACTORY(return new SpikeBar(););
 
-	return death::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
+	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 
 
 bool LudumLevel::Initialize(chaos::TiledMap::Map* in_tiled_map)
 {
-	if (!death::TMLevel::Initialize(in_tiled_map))
+	if (!chaos::TMLevel::Initialize(in_tiled_map))
 		return false;
 
 	required_souls = in_tiled_map->GetPropertyValueInt("REQUIRED_SOULS", required_souls);

@@ -1,6 +1,6 @@
-#include "Ludum40SpriteManager.h"
-
 #include <chaos/Chaos.h>
+
+#include "Ludum40SpriteManager.h"
 
 namespace chaos
 {

@@ -1,14 +1,8 @@
 #pragma once
 
-#include <death/Game.h>
-#include <death/GameHUD.h>
-#include <death/GameFramework.h>
+#include <chaos/Chaos.h>
 
-
-
-
-
-namespace death
+namespace chaos
 {
 	namespace GameHUDKeys
 	{
@@ -27,16 +21,16 @@ namespace death
 // GameHUDRacePositionComponent
 // ====================================================================
 
-class GameHUDRacePositionComponent : public death::GameHUDCacheValueComponent<glm::ivec2>
+class GameHUDRacePositionComponent : public chaos::GameHUDCacheValueComponent<glm::ivec2>
 {
 public:
 
 
 	/** constructor */
-	GameHUDRacePositionComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDRacePositionComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
 	/** constructor */
-	GameHUDRacePositionComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-		death::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params, in_layer_id) {}
+	GameHUDRacePositionComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params, in_layer_id) {}
 
 	virtual std::string FormatText() const override;
 
@@ -60,16 +54,16 @@ protected:
 // GameHUDRaceLapsComponent
 // ====================================================================
 
-class GameHUDRaceLapsComponent : public death::GameHUDCacheValueComponent<glm::ivec2>
+class GameHUDRaceLapsComponent : public chaos::GameHUDCacheValueComponent<glm::ivec2>
 {
 public:
 
 
 	/** constructor */
-	GameHUDRaceLapsComponent(chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDRaceLapsComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
 	/** constructor */
-	GameHUDRaceLapsComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params, chaos::TagType in_layer_id = death::GameHUDKeys::TEXT_LAYER_ID) :
-		death::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params, in_layer_id) {}
+	GameHUDRaceLapsComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params, in_layer_id) {}
 
 	virtual std::string FormatText() const override;
 
@@ -87,13 +81,13 @@ protected:
 // LudumPlayingHUD
 // ====================================================================
 
-class LudumPlayingHUD : public death::PlayingHUD
+class LudumPlayingHUD : public chaos::PlayingHUD
 {
 public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, death::PlayingHUD);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayingHUD, chaos::PlayingHUD);
 
 protected:
 

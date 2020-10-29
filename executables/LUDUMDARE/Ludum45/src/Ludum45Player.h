@@ -2,12 +2,6 @@
 
 #include <chaos/Chaos.h>
 
-#include <death/Game.h>
-#include <death/GameInstance.h>
-#include <death/Player.h>
-#include <death/GameFramework.h>
-
-
 #include "Ludum45Particles.h"
 #include "Ludum45Upgrades.h"
 
@@ -15,7 +9,7 @@
 // LudumPlayer
 // =========================================================
 
-class LudumPlayer : public death::Player
+class LudumPlayer : public chaos::Player
 {
 
 public:
@@ -30,7 +24,7 @@ public:
 
 	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, death::Player);
+	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayer, chaos::Player);
 
 	size_t GetUpgradeLevel(chaos::TagType upgrade_type) const;
 
@@ -56,10 +50,10 @@ public:
 protected:
 
 	/** override */
-	virtual bool Initialize(death::GameInstance * in_game_instance);
+	virtual bool Initialize(chaos::GameInstance * in_game_instance);
 
 	/** override */
-	virtual void OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance) override;
+	virtual void OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance) override;
 
 	/** override */
 	virtual void TickInternal(float delta_time) override;

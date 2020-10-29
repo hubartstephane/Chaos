@@ -1,16 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum47Player.h"
 #include "Ludum47Level.h"
 #include "Ludum47LevelInstance.h"
 #include "Ludum47Game.h"
 #include "Ludum47GameInstance.h"
 #include "Ludum47Particles.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/Level.h>
-#include <death/SoundContext.h>
-
-#include <death/ShakeCameraComponent.h>
 
 ParticlePlayer* LudumPlayer::GetPlayerParticle()
 {
@@ -26,9 +21,9 @@ ParticlePlayer const * LudumPlayer::GetPlayerParticle() const
 	return pawn->GetParticle<ParticlePlayer>(0);
 }
 
-bool LudumPlayer::Initialize(death::GameInstance * in_game_instance)
+bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 {
-	if (!death::Player::Initialize(in_game_instance))
+	if (!chaos::Player::Initialize(in_game_instance))
 		return false;
 
 	spawner_delay.spawn_per_second = 20.0f;
@@ -75,7 +70,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 
 void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
 {
-	death::Player::InternalHandleGamepadInputs(delta_time, gpd);
+	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
 
 	// shu47 on aurait pu utiliser IsButtonPressed(...false) pour avoir la previous frame 
@@ -89,7 +84,7 @@ void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::G
 
 void LudumPlayer::HandleKeyboardInputs(float delta_time)
 {
-	death::Player::HandleKeyboardInputs(delta_time);
+	chaos::Player::HandleKeyboardInputs(delta_time);
 
 	// shu47 CheckKeyPressed on a rien pour connaitre la frame d'avant
 
@@ -109,9 +104,9 @@ void LudumPlayer::Honk()
 
 	if (honk_sound != nullptr)
 		return;
-	death::Game* game = GetGame();
+	chaos::Game* game = GetGame();
 	if (game != nullptr)
-		honk_sound = game->PlaySound("Honk", false, false, 0.0f, death::SoundContext::GAME);
+		honk_sound = game->PlaySound("Honk", false, false, 0.0f, chaos::SoundContext::GAME);
 }
 
 void LudumPlayer::SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chaos::obox2 const & ob)
@@ -161,9 +156,9 @@ void LudumPlayer::SoundCollision()
 
 	if (sound_collision_timer > 0.0f)
 		return;
-	death::Game* game = GetGame();
+	chaos::Game* game = GetGame();
 	if (game != nullptr)
-		game->PlaySound("Explosion", false, false, 0.0f, death::SoundContext::GAME);
+		game->PlaySound("Explosion", false, false, 0.0f, chaos::SoundContext::GAME);
 
 	sound_collision_timer = 0.2f;
 
@@ -172,16 +167,16 @@ void LudumPlayer::SoundCollision()
 
 void LudumPlayer::OnLifeLost()
 {
-	death::Player::OnLifeLost();
+	chaos::Player::OnLifeLost();
 	
 
 
 
 }
 
-void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_level, death::LevelInstance * new_level_instance)
+void LudumPlayer::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
 {
-	death::Player::OnLevelChanged(new_level, old_level, new_level_instance);
+	chaos::Player::OnLevelChanged(new_level, old_level, new_level_instance);
 
 	if (new_level_instance != nullptr)
 	{
@@ -197,7 +192,7 @@ void LudumPlayer::OnLevelChanged(death::Level * new_level, death::Level * old_le
 
 bool LudumPlayer::DoTick(float delta_time)
 {
-	if (!death::Player::DoTick(delta_time))
+	if (!chaos::Player::DoTick(delta_time))
 		return false;
 
 	LudumLevelInstance* li = GetLevelInstance();

@@ -1,11 +1,11 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum44HUD.h"
 #include "Ludum44Game.h"
 #include "Ludum44Level.h"
 #include "Ludum44Player.h"
 #include "Ludum44LevelInstance.h"
 #include "Ludum44GameInstance.h"
-
-#include <death/GameHUDComponent.h>
 
 // ====================================================================
 // GameHUDLifeCountComponent
@@ -49,7 +49,7 @@ bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
 
 bool GameHUDPowerUpComponent::DoTick(float delta_time)
 {
-	death::GameHUDSingleAllocationComponent::DoTick(delta_time);
+	chaos::GameHUDSingleAllocationComponent::DoTick(delta_time);
 
 	LudumGameInstance * ludum_game_instance = auto_cast(GetGameInstance());
 	if (ludum_game_instance == nullptr)
@@ -100,7 +100,7 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());
 		
 
-	allocations = hud->GetGameParticleCreator().SpawnTextParticles(death::GameHUDKeys::TEXT_LAYER_ID, title.c_str(), params);
+	allocations = hud->GetGameParticleCreator().SpawnTextParticles(chaos::GameHUDKeys::TEXT_LAYER_ID, title.c_str(), params);
 
 
 	return true;
@@ -131,7 +131,7 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	// create the allocation
 	if (allocations == nullptr)
 	{
-		chaos::ParticleLayerBase * layer = hud->GetParticleManager()->FindLayer(death::GameHUDKeys::LIFE_LAYER_ID);
+		chaos::ParticleLayerBase * layer = hud->GetParticleManager()->FindLayer(chaos::GameHUDKeys::LIFE_LAYER_ID);
 		if (layer == nullptr)
 			return true;
 		allocations = layer->SpawnParticles(1);
@@ -199,13 +199,13 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-	if (!death::PlayingHUD::FillHUDContent())
+	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;	
-	RegisterComponent(death::GameHUDKeys::LIFE_HEALTH_ID, new GameHUDHealthBarComponent());
-	RegisterComponent(death::GameHUDKeys::LEVEL_TITLE_ID, new death::GameHUDLevelTitleComponent());
-	RegisterComponent(death::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
-	RegisterComponent(death::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
-	RegisterComponent(death::GameHUDKeys::NOTIFICATION_ID, new death::GameHUDNotificationComponent());
+	RegisterComponent(chaos::GameHUDKeys::LIFE_HEALTH_ID, new GameHUDHealthBarComponent());
+	RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
+	RegisterComponent(chaos::GameHUDKeys::POWER_UP_ID, new GameHUDPowerUpComponent());
+	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new GameHUDLifeCountComponent());
+	RegisterComponent(chaos::GameHUDKeys::NOTIFICATION_ID, new chaos::GameHUDNotificationComponent());
 	return true;
 }
 
@@ -213,7 +213,7 @@ bool LudumPlayingHUD::FillHUDContent()
 int LudumPlayingHUD::CreateHUDLayers()
 {
 	// call super method
-	int render_order = death::PlayingHUD::CreateHUDLayers();
+	int render_order = chaos::PlayingHUD::CreateHUDLayers();
 	if (render_order < 0)
 		return render_order;
 	// create a layer for the life bar
@@ -222,7 +222,7 @@ int LudumPlayingHUD::CreateHUDLayers()
 	{
 		ParticleLifeLayerTrait life_trait;
 		life_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, death::GameHUDKeys::LIFE_LAYER_ID, "health", life_trait);
+		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, chaos::GameHUDKeys::LIFE_LAYER_ID, "health", life_trait);
 	}
 	return render_order;
 }

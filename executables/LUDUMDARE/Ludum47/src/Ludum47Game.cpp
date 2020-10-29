@@ -1,3 +1,5 @@
+#include <chaos/Chaos.h>
+
 #include "Ludum47Game.h"
 #include "Ludum47Particles.h"
 #include "Ludum47Level.h"
@@ -5,11 +7,6 @@
 #include "Ludum47HUD.h"
 #include "Ludum47Player.h"
 #include "Ludum47GameInstance.h"
-
-#include <chaos/Chaos.h>
-
-#include <death/GameParticles.h>
-#include <death/SoundContext.h>
 
 LudumGame::LudumGame()
 {		
@@ -27,34 +24,34 @@ LudumGame::LudumGame()
 
 bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
 {
-	if (!death::Game::OnEnterGame(in_physical_gamepad))
+	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
 		return false;
-    PlaySound("start", false, false, 0.0f, death::SoundContext::GAME);
+    PlaySound("start", false, false, 0.0f, chaos::SoundContext::GAME);
 	return true;
 }
 
 
-death::GameHUD * LudumGame::DoCreatePlayingHUD()
+chaos::GameHUD * LudumGame::DoCreatePlayingHUD()
 {
 	return new LudumPlayingHUD();
 }
 
 bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 {
-	if (!death::Game::InitializeGameValues(config, config_path, hot_reload))
+	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 						
 	return true;
 }
 
-death::TMLevel * LudumGame::CreateTMLevel()
+chaos::TMLevel * LudumGame::CreateTMLevel()
 {
 	return new LudumLevel();
 }
 
 bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 {
-	if (!death::Game::InitializeFromConfiguration(config, config_path))
+	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 
 
@@ -77,7 +74,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	}
 	
 
-	death::Game::DoDisplayGame(renderer, &update_provider, render_params);
+	chaos::Game::DoDisplayGame(renderer, &update_provider, render_params);
 }
 
 

@@ -1,31 +1,10 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace SM
-	{
-		class StateBase;
-		class State;
-		class Transition;
-		class StateMachine;
-		class StateMachineInstance;
+	// ==================================================
+	// Forward declaration / friendship macros
+	// ==================================================
 
-	}; // namespace SM
-	
-}; // namespace chaos
-
-#else 
-
-namespace chaos
-{
-	namespace SM // for StateMachine
-	{
-
-		// ==================================================
-		// Forward declaration / friendship macros
-		// ==================================================
-
-		// all classes in this file
+	// all classes in this file
 #define CHAOS_STATEMACHINE_CLASSES \
 (StateBase) \
 (State) \
@@ -35,11 +14,27 @@ namespace chaos
 
 		// forward declaration
 #define CHAOS_STATEMACHINE_FORWARD_DECL(r, data, elem) class elem;		
-		BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLASSES)
 
-			// friendship macro
+		// friendship macro
 #define CHAOS_STATEMACHINE_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_STATEMACHINE_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FRIEND_DECL, _, CHAOS_STATEMACHINE_CLASSES)
+
+namespace chaos
+{
+	namespace SM
+	{
+		BOOST_PP_SEQ_FOR_EACH(CHAOS_STATEMACHINE_FORWARD_DECL, _, CHAOS_STATEMACHINE_CLASSES);
+
+	}; // namespace SM
+
+}; // namespace chaos
+
+#else 
+
+namespace chaos
+{
+	namespace SM // for StateMachine
+	{
 
 			// ==================================================
 			// State
@@ -236,13 +231,6 @@ namespace chaos
 			/** the initial state of the state_machine */
 			StateBase * initial_state = nullptr;
 		};
-
-		// undefine macros
-#undef CHAOS_STATEMACHINE_CLASSES
-#undef CHAOS_STATEMACHINE_FORWARD_DECL
-#undef CHAOS_STATEMACHINE_FRIEND_DECL
-#undef CHAOS_STATEMACHINE_ALL_FRIENDS
-
 
 	}; // namespace StateMachine
 

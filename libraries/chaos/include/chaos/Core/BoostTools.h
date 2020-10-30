@@ -1,13 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace BoostTools
-	{
-
-	}; // namespace BoostTools
-
-}; // namespace chaos
 
 #else 
 

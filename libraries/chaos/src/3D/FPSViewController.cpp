@@ -18,31 +18,31 @@
 
 namespace chaos
 {
-	void FPSViewController::GoBackward(float speed)
+	void FPSViewController::GoBackward(float value)
 	{
 		float angle = MathTools::DegreeToRadian(yaw);
-		position += speed * glm::vec3(std::sin(angle), 0.0f, std::cos(angle));
+		position += value * glm::vec3(std::sin(angle), 0.0f, std::cos(angle));
 	}
 
-	void FPSViewController::GoForward(float speed)
+	void FPSViewController::GoForward(float value)
 	{ 
-		GoBackward(-speed); 
+		GoBackward(-value);
 	}
 
 	// use :
 	//   float angle = MathTools::DegreeToRadian(yaw + 90.0f);
-	//   position += speed * glm::vec3(std::sin(angle), 0.0f, std::cos(angle));
+	//   position += value * glm::vec3(std::sin(angle), 0.0f, std::cos(angle));
 	// apply :
 	//   cos(PI/2 + x) = -sin(x)     sin(PI/2 + x) = cos(x)
-	void FPSViewController::StrafeRight(float speed)
+	void FPSViewController::StrafeRight(float value)
 	{
 		float angle = MathTools::DegreeToRadian(yaw);
-		position += speed * glm::vec3(std::cos(angle), 0.0f, -std::sin(angle));
+		position += value * glm::vec3(std::cos(angle), 0.0f, -std::sin(angle));
 	}
 
-	void FPSViewController::StrafeLeft(float speed)
+	void FPSViewController::StrafeLeft(float value)
 	{ 
-		StrafeRight(-speed); 
+		StrafeRight(-value);
 	}
 
 	void FPSViewController::SetPitch(float value)

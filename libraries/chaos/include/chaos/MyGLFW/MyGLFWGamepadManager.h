@@ -1,5 +1,27 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
+// ==============================================================
+// FORWARD DECLARATION / FRIENDSHIP MACROS
+// ==============================================================
+
+// all classes in this file
+#define CHAOS_GAMEPAD_CLASSES \
+(GamepadData) \
+(AxisData) \
+(PhysicalGamepad) \
+(Gamepad) \
+(GamepadCallbacks) \
+(GamepadManager) \
+(ForceFeedbackEffect) \
+(DefaultForceFeedbackEffect)
+
+	// forward declaration
+#define CHAOS_GAMEPAD_FORWARD_DECL(r, data, elem) class elem;
+
+// friendship macro
+#define CHAOS_GAMEPAD_FRIEND_DECL(r, data, elem) friend class elem;
+#define CHAOS_GAMEPAD_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FRIEND_DECL, _, CHAOS_GAMEPAD_CLASSES)
+
 namespace chaos
 {
 	enum class ButtonStateChange;
@@ -9,14 +31,7 @@ namespace chaos
 
 	namespace MyGLFW
 	{
-		class GamepadData;
-		class AxisData;
-		class PhysicalGamepad;
-		class Gamepad;
-		class GamepadCallbacks;
-		class GamepadManager;
-		class ForceFeedbackEffect;
-		class DefaultForceFeedbackEffect;
+		BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 	}; // namespace MyGLFW
 
@@ -120,29 +135,6 @@ namespace chaos
 
 	namespace MyGLFW
 	{
-
-		// ==============================================================
-		// FORWARD DECLARATION / FRIENDSHIP MACROS
-		// ==============================================================
-
-		// all classes in this file
-#define CHAOS_GAMEPAD_CLASSES \
-(GamepadData) \
-(PhysicalGamepad) \
-(Gamepad) \
-(GamepadCallbacks) \
-(GamepadManager) \
-(ForceFeedbackEffect) \
-(DefaultForceFeedbackEffect)
-
-	// forward declaration
-#define CHAOS_GAMEPAD_FORWARD_DECL(r, data, elem) class elem;
-		BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES)
-
-			// friendship macro
-#define CHAOS_GAMEPAD_FRIEND_DECL(r, data, elem) friend class elem;
-#define CHAOS_GAMEPAD_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FRIEND_DECL, _, CHAOS_GAMEPAD_CLASSES)
-
 		/**
 		* Some constants
 		*/
@@ -484,10 +476,12 @@ namespace chaos
 
 		class GamepadManager : public Object
 		{
-			CHAOS_GAMEPAD_ALL_FRIENDS
+			CHAOS_GAMEPAD_ALL_FRIENDS;
 
-				// the type of the function pointer used for forcefeedback
-				typedef DWORD(*XINPUT_SET_STATE_FUNC)(DWORD, XINPUT_VIBRATION*);
+#if _WIN64
+			// the type of the function pointer used for forcefeedback
+			typedef DWORD(*XINPUT_SET_STATE_FUNC)(DWORD, XINPUT_VIBRATION*);
+#endif
 
 		public:
 
@@ -555,13 +549,6 @@ namespace chaos
 		};
 
 	}; // namespace MyGLFW
-
-	// undefine macros
-	//#undef CHAOS_GAMEPAD_CLASSES
-	//#undef CHAOS_GAMEPAD_FORWARD_DECL
-	//#undef CHAOS_GAMEPAD_FRIEND_DECL
-	//#undef CHAOS_GAMEPAD_ALL_FRIENDS
-
 
 }; // namespace chaos
 

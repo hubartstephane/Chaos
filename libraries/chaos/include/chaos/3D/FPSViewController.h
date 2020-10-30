@@ -20,13 +20,13 @@ namespace chaos
 	public:
 
 		/** advance the camera */
-		void GoBackward(float speed);
+		void GoBackward(float value);
 		/** advance the camera */
-		void GoForward(float speed);
+		void GoForward(float value);
 		/** strafe the camera */
-		void StrafeRight(float speed);
+		void StrafeRight(float value);
 		/** strafe the camera (X axis, positive values on the right) */
-		void StrafeLeft(float speed);
+		void StrafeLeft(float value);
 
 		/** change the angles of the camera */
 		void SetPitch(float value);

@@ -1,10 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	
-
-}; // namespace chaos
 
 #else 
 

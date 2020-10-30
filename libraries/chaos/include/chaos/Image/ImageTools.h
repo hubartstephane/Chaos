@@ -89,6 +89,8 @@ namespace chaos
 
 #if 0
 
+		// shu47
+
 		/** generate a free image from a texture */
 		static FIBITMAP * GenFreeImage(GLuint texture_id, GLint level);
 #endif

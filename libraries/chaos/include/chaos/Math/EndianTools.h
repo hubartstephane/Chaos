@@ -1,13 +1,6 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace EndianTools
-	{
-	
-	}; // namespace EndianTools	
-	
-}; // namespace chaos
+
 
 #else
 

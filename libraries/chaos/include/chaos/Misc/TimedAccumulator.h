@@ -19,8 +19,6 @@ namespace chaos
 
 		/** constructor */
 		TimedAccumulator(float in_timer_duration = 1.0f) :
-			current_value(T()),
-			accumulated_values(T()),
 			timer_duration(in_timer_duration)
 		{
 		}
@@ -39,8 +37,8 @@ namespace chaos
 			if (timer_value >= timer_duration)
 			{
 				current_value = accumulated_values / timer_value;
-				timer_value = 0.0f;				
-				accumulated_values = T();
+				timer_value = 0.0f;
+				accumulated_values = {};
 			}
 		}
 		/** get the previously accumulated value */
@@ -52,9 +50,9 @@ namespace chaos
 	protected:
 
 		/** current value */
-		T current_value;
+		T current_value = {};
 		/** accumulated values */
-		T accumulated_values;	
+		T accumulated_values = {};
 		/** duration to reset the timer */
 		float timer_duration = 1.0f;
 		/** the current time */

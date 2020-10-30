@@ -369,7 +369,7 @@ namespace chaos
 				{
 					glm::ivec2 window_center = GetWindowPosition() + GetWindowSize() / 2;
 
-					GLFWmonitor * nearest_monitor = MyGLFW::Tools::GetNearestMonitor(window_center);
+					GLFWmonitor * nearest_monitor = MyGLFW::GetNearestMonitor(window_center);
 					if (nearest_monitor != nullptr)
 					{
 						GLFWvidmode const * mode = glfwGetVideoMode(nearest_monitor);
@@ -403,7 +403,7 @@ namespace chaos
 				// search the monitor that contains the center of the window
 				glm::ivec2 window_center = GetWindowPosition() + GetWindowSize() / 2;
 
-				GLFWmonitor * nearest_monitor = MyGLFW::Tools::GetNearestMonitor(window_center);
+				GLFWmonitor * nearest_monitor = MyGLFW::GetNearestMonitor(window_center);
 				if (nearest_monitor  != nullptr)
 				{
 					GLFWvidmode const * mode = glfwGetVideoMode(nearest_monitor);

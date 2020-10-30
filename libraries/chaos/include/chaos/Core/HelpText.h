@@ -7,15 +7,6 @@
 #define CHAOS_HELP_TEXT(FAMILY, x)
 #endif
 
-namespace chaos
-{
-	namespace HelpText
-	{
-
-	}; // namespace HelpText
-
-}; // namespace chaos
-
 #else 
 
 namespace chaos

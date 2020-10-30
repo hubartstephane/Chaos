@@ -1,20 +1,11 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-	namespace chaos
-	{
-		namespace AllocatorTools
-		{
 
-
-		}; // namespace AllocatorTools
-
-	}; // namespace chaos
 
 #else 
 
 namespace chaos
 {
-
 	namespace AllocatorTools
 	{
 		/** an aligned allocator */

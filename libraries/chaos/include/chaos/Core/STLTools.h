@@ -1,12 +1,4 @@
 #ifdef CHAOS_FORWARD_DECLARATION
-
-namespace chaos
-{
-	namespace STLTools
-	{
-	}; // namespace STLTools
-	
-}; // namespace chaos
 	
 #else	
 	

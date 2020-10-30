@@ -65,11 +65,11 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInsta
 chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("PowerUp"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new PowerUpTrigger();); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new PowerUpTrigger();); // XXX : the power up, is the only object that has IsParticleCreationEnabled() => true
 	if (in_typed_object->IsObjectOfType("SpeedUp"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new SpeedUpTrigger(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SpeedUpTrigger(););
 	if (in_typed_object->IsObjectOfType("Spawner"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new SpawnerTrigger(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SpawnerTrigger(););
 
 	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

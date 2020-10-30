@@ -16,9 +16,9 @@ namespace chaos
 
 	class Level : public chaos::Object, public chaos::FileResource, public chaos::NamedObject
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(Level, chaos::Object);
+		CHAOS_DECLARE_OBJECT_CLASS2(Level, chaos::Object);
 
 	public:
 

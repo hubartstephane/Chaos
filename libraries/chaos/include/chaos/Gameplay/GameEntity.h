@@ -17,7 +17,7 @@ namespace chaos
 	class GameEntity : public chaos::Tickable, public chaos::JSONSerializable
 	{
 
-		CHAOS_OBJECT_DECLARE_CLASS2(GameEntity, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameEntity, chaos::Tickable);
 
 	public:
 

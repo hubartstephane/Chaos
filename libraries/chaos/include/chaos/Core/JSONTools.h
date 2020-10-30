@@ -14,7 +14,7 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 	return chaos::SaveEnumIntoJSON(json_entry, table_name, src);\
 }\
 
-
+#define CHAOS_JSON_ATTRIBUTE(config, x) chaos::JSONTools::GetAttribute(config, #x, x)
 
 namespace chaos
 {

@@ -20,7 +20,7 @@
 *
 *   You can only use this features if 'CHAOS_PROJECT_SRC_PATH' and 'CHAOS_PROJECT_BUILD_PATH' are defined (and in _DEBUG)
 *
-*   Beware do not use this macro in CHAOS or DEATH libraries because they would be related to the library path.
+*   Beware do not use this macro in CHAOS library because it would be related to the library path.
 *   Use it in EXE code instead
 */
 

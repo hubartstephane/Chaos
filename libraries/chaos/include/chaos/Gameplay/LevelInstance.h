@@ -17,13 +17,13 @@ namespace chaos
 
 	class LevelInstance : public chaos::GPURenderable, public chaos::JSONSerializable
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(LevelInstance, chaos::GPURenderable);
+		CHAOS_DECLARE_OBJECT_CLASS2(LevelInstance, chaos::GPURenderable);
 
 	public:
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** destroy cameras when the level is finished */
 		virtual void DestroyCameras();

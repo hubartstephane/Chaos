@@ -183,8 +183,8 @@ chaos::ParticleLayerBase * LudumLevel::DoCreateParticleLayer(chaos::TMLayerInsta
 chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (in_typed_object->IsObjectOfType("BONUS_SPAWNER"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new BonusSpawnerTrigger(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new BonusSpawnerTrigger(););
 	if (in_typed_object->IsObjectOfType("ENEMY_SPAWNER"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new EnemySpawnerTrigger(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new EnemySpawnerTrigger(););
 	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

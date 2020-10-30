@@ -3,7 +3,7 @@
 namespace chaos
 {
 
-	DEATH_GAMEGETTERS_IMPLEMENT(Player);
+	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(Player);
 
 	// =================================================
 	// Player
@@ -379,9 +379,9 @@ namespace chaos
 
 	bool Player::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
 	{
-		DEATHGAME_JSON_ATTRIBUTE(life_count);
-		DEATHGAME_JSON_ATTRIBUTE(max_health);
-		DEATHGAME_JSON_ATTRIBUTE(invulnerability_duration);		
+		CHAOS_JSON_ATTRIBUTE(config, life_count);
+		CHAOS_JSON_ATTRIBUTE(config, max_health);
+		CHAOS_JSON_ATTRIBUTE(config, invulnerability_duration);		
 		return true;
 	}
 

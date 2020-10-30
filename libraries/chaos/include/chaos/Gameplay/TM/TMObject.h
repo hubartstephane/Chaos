@@ -46,9 +46,9 @@ namespace chaos
 
 	class TMObject : public GameEntity
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMObject, GameEntity);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMObject, GameEntity);
 
 	public:
 
@@ -108,9 +108,9 @@ namespace chaos
 
 	class TMPath : public TMObject
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMPath, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMPath, TMObject);
 
 	protected:
 
@@ -125,9 +125,9 @@ namespace chaos
 
 	class TMCameraTemplate : public TMObject
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMCameraTemplate, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMCameraTemplate, TMObject);
 
 	protected:
 
@@ -141,9 +141,9 @@ namespace chaos
 
 	class TMPlayerStart : public TMObject
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMPlayerStart, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMPlayerStart, TMObject);
 
 	protected:
 
@@ -166,9 +166,9 @@ namespace chaos
 
 	class TMTrigger : public TMObject
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMTrigger, TMObject);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMTrigger, TMObject);
 
 	public:
 
@@ -216,9 +216,9 @@ namespace chaos
 
 	class TMNotificationTrigger : public TMTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMNotificationTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMNotificationTrigger, TMTrigger);
 
 	public:
 
@@ -254,9 +254,9 @@ namespace chaos
 
 	class TMCheckpointTrigger : public TMTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMCheckpointTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMCheckpointTrigger, TMTrigger);
 
 	public:
 
@@ -277,9 +277,9 @@ namespace chaos
 
 	class TMSoundTrigger : public TMTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMSoundTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMSoundTrigger, TMTrigger);
 
 	public:
 
@@ -327,9 +327,9 @@ namespace chaos
 
 	class TMChangeLevelTrigger : public TMTrigger
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMChangeLevelTrigger, TMTrigger);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMChangeLevelTrigger, TMTrigger);
 
 	public:
 

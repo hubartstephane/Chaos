@@ -162,7 +162,7 @@ namespace chaos
 	{
 		friend class Game;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(GameStateMachine, chaos::SM::StateMachine);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameStateMachine, chaos::SM::StateMachine);
 
 	public:
 

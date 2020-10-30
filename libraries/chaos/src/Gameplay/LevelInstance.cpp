@@ -7,7 +7,7 @@ namespace chaos
 	// LevelInstance implementation
 	// =====================================
 
-	DEATH_GAMEGETTERS_IMPLEMENT(LevelInstance);
+	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(LevelInstance);
 
 	double LevelInstance::GetLevelClockTime() const
 	{

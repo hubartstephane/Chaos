@@ -105,7 +105,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 {
 	if (!chaos::Player::InitializeGameValues(config, config_path, hot_reload))
 		return false;
-	DEATHGAME_JSON_ATTRIBUTE(max_life_count);
+	CHAOS_JSON_ATTRIBUTE(config, max_life_count);
 	return true;
 }
 

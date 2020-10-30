@@ -116,7 +116,7 @@ public:
 
 class ComputePlatformerFlagProcessor : public chaos::TiledMap::ComputeCustomFlagProcessor
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(ComputePlatformerFlagProcessor, chaos::TiledMap::ComputeCustomFlagProcessor);
+	CHAOS_DECLARE_OBJECT_CLASS2(ComputePlatformerFlagProcessor, chaos::TiledMap::ComputeCustomFlagProcessor);
 
 public:
 
@@ -136,7 +136,7 @@ class PlatformerDisplacementComponent : public PlayerDisplacementComponent
 
 public:
 
-	CHAOS_OBJECT_DECLARE_CLASS2(PlatformerDisplacementComponent, PlayerDisplacementComponent);
+	CHAOS_DECLARE_OBJECT_CLASS2(PlatformerDisplacementComponent, PlayerDisplacementComponent);
 
 	/** constructor */
 	using PlayerDisplacementComponent::PlayerDisplacementComponent;

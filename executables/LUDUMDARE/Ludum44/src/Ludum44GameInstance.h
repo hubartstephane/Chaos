@@ -17,9 +17,9 @@ public:
 	friend class GameHUDPowerUpComponent;	
 	friend class PowerUpTrigger;	
 
-	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
+	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumGameInstance, chaos::GameInstance);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumGameInstance, chaos::GameInstance);
 
 	LudumGameInstance();
 

@@ -12,13 +12,13 @@ namespace chaos
 {
 	class PlayerDisplacementComponent : public chaos::Tickable
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(PlayerDisplacementComponent, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(PlayerDisplacementComponent, chaos::Tickable);
 
 	public:
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** Initialization method */
 		bool Initialize(Player* in_player);

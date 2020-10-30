@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	DEATH_GAMEGETTERS_IMPLEMENT(Game);
+	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(Game);
 
 	Game::Game()
 	{
@@ -554,7 +554,7 @@ namespace chaos
 		return true;
 	}
 
-#define DEATH_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
+#define CHAOS_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
 	result constness * Game::funcname(param_type param, chaos::GPURenderableLayerSystem constness * root) constness\
 	{\
 		if (root == nullptr)\
@@ -565,17 +565,17 @@ namespace chaos
 		}\
 		return auto_cast(root->FindChildRenderable(param));\
 	}
-#define DEATH_FIND_RENDERABLE_CHILD_ALL(result, funcname)\
-	DEATH_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), char const *);\
-	DEATH_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), chaos::TagType);\
-	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
-	DEATH_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
+#define CHAOS_FIND_RENDERABLE_CHILD_ALL(result, funcname)\
+	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), char const *);\
+	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), chaos::TagType);\
+	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
+	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
 
-	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::GPURenderableLayerSystem, FindRenderableLayer);
-	DEATH_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayerBase, FindParticleLayer);
+	CHAOS_FIND_RENDERABLE_CHILD_ALL(chaos::GPURenderableLayerSystem, FindRenderableLayer);
+	CHAOS_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayerBase, FindParticleLayer);
 
-#undef DEATH_FIND_RENDERABLE_CHILD_ALL
-#undef DEATH_FIND_RENDERABLE_CHILD
+#undef CHAOS_FIND_RENDERABLE_CHILD_ALL
+#undef CHAOS_FIND_RENDERABLE_CHILD
 
 	chaos::GPURenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
 	{
@@ -981,16 +981,16 @@ namespace chaos
 	bool Game::InitializeGamepadButtonInfo()
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
-#define DEATHGAME_ADD_BUTTONMAP(x, y) gamepad_button_map[chaos::XBoxButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_A, ButtonA);
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_B, ButtonB);
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_X, ButtonX);
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_Y, ButtonY);
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_LEFTBUT, LeftShoulder);
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_RIGHTBUT, RightShoulder);
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_LEFTTRIGGER, LeftTrigger);
-		DEATHGAME_ADD_BUTTONMAP(BUTTON_RIGHTTRIGGER, RightTrigger);
-#undef LUDUMGAME_ADDTO_BUTTONMAP
+#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[chaos::XBoxButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
+		CHAOS_ADD_BUTTONMAP(BUTTON_A, ButtonA);
+		CHAOS_ADD_BUTTONMAP(BUTTON_B, ButtonB);
+		CHAOS_ADD_BUTTONMAP(BUTTON_X, ButtonX);
+		CHAOS_ADD_BUTTONMAP(BUTTON_Y, ButtonY);
+		CHAOS_ADD_BUTTONMAP(BUTTON_LEFTBUT, LeftShoulder);
+		CHAOS_ADD_BUTTONMAP(BUTTON_RIGHTBUT, RightShoulder);
+		CHAOS_ADD_BUTTONMAP(BUTTON_LEFTTRIGGER, LeftTrigger);
+		CHAOS_ADD_BUTTONMAP(BUTTON_RIGHTTRIGGER, RightTrigger);
+#undef CHAOS_ADD_BUTTONMAP
 
 		return true;
 	}
@@ -1082,9 +1082,9 @@ namespace chaos
 			game_instance_configuration = nlohmann::json();
 
 		// read dedicated game values
-		DEATHGAME_JSON_ATTRIBUTE(mouse_sensitivity);
-		DEATHGAME_JSON_ATTRIBUTE(gamepad_sensitivity);
-		DEATHGAME_JSON_ATTRIBUTE(viewport_wanted_aspect);
+		CHAOS_JSON_ATTRIBUTE(config, mouse_sensitivity);
+		CHAOS_JSON_ATTRIBUTE(config, gamepad_sensitivity);
+		CHAOS_JSON_ATTRIBUTE(config, viewport_wanted_aspect);
 		return true;
 	}
 
@@ -1397,7 +1397,7 @@ namespace chaos
 		return false;
 	}
 
-#define DEATH_IMPLEMENTHUD_FUNC(classname)\
+#define CHAOS_IMPLEMENT_HUD_FUNCTIONS(classname)\
 	bool Game::Create##classname()\
 	{\
 		hud = DoCreate##classname();\
@@ -1414,12 +1414,12 @@ namespace chaos
 	{\
 		return new classname();\
 	}
-	DEATH_IMPLEMENTHUD_FUNC(PauseMenuHUD);
-	DEATH_IMPLEMENTHUD_FUNC(MainMenuHUD);
-	DEATH_IMPLEMENTHUD_FUNC(PlayingHUD);
-	DEATH_IMPLEMENTHUD_FUNC(GameOverHUD);
+	CHAOS_IMPLEMENT_HUD_FUNCTIONS(PauseMenuHUD);
+	CHAOS_IMPLEMENT_HUD_FUNCTIONS(MainMenuHUD);
+	CHAOS_IMPLEMENT_HUD_FUNCTIONS(PlayingHUD);
+	CHAOS_IMPLEMENT_HUD_FUNCTIONS(GameOverHUD);
 
-#undef DEATH_IMPLEMENTHUD_FUNC
+#undef CHAOS_IMPLEMENT_HUD_FUNCTIONS
 
 	void Game::DestroyHUD()
 	{

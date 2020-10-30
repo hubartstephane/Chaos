@@ -314,7 +314,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 
-	Game::DEATH_FIND_RENDERABLE_CHILD
+	Game::CHAOS_FIND_RENDERABLE_CHILD
 
 		- FindRenderableLayer, FindParticleLayer unsued
 		- Music management : CreateAllMusic ?? bad idea if we want to change music per level ...

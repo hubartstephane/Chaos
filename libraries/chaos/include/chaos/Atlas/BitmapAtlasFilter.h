@@ -24,7 +24,7 @@ namespace chaos
 
 		class BitmapAtlasFilterCondition : public Object, public JSONSerializable
 		{
-			CHAOS_OBJECT_DECLARE_CLASS2(BitmapAtlasFilterCondition, Object)
+			CHAOS_DECLARE_OBJECT_CLASS2(BitmapAtlasFilterCondition, Object)
 
 		public:
 

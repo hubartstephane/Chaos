@@ -2,19 +2,19 @@
 
 class A : public chaos::Object 
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(A, chaos::Object);
+	CHAOS_DECLARE_OBJECT_CLASS2(A, chaos::Object);
 
 };
 
 class B : public A 
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(B, A);
+	CHAOS_DECLARE_OBJECT_CLASS2(B, A);
 
 };
 
 class C : public B 
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(C, B);
+	CHAOS_DECLARE_OBJECT_CLASS2(C, B);
 
 };
 

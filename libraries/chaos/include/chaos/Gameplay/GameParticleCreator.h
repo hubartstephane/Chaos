@@ -15,16 +15,16 @@ namespace chaos
 	public:
 
 		/** initialization of the particle creator */
-		bool Initialize(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
+		bool Initialize(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 
 		/** create some particle of the given type (Spawn + Initialization) */
-		chaos::ParticleAllocationBase * SpawnParticles(chaos::ObjectRequest layer_id, chaos::ObjectRequest bitmap_request, size_t count, bool new_allocation) const;
+		ParticleAllocationBase * SpawnParticles(ObjectRequest layer_id, ObjectRequest bitmap_request, size_t count, bool new_allocation) const;
 
         /** spawn + user initialization methods */
         template<typename INIT_PARTICLE_FUNC>
-        chaos::ParticleAllocationBase* SpawnParticles(chaos::ObjectRequest layer_id, chaos::ObjectRequest bitmap_request, size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func) const
+        ParticleAllocationBase* SpawnParticles(ObjectRequest layer_id, ObjectRequest bitmap_request, size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func) const
         {
-            chaos::ParticleAllocationBase* result = SpawnParticles(layer_id, bitmap_request, count, new_allocation);
+            ParticleAllocationBase* result = SpawnParticles(layer_id, bitmap_request, count, new_allocation);
             // call user initialization function
             if (result != nullptr)
             {
@@ -35,13 +35,13 @@ namespace chaos
         }
 
 		/** create a text particle system */
-		chaos::ParticleAllocationBase * SpawnTextParticles(chaos::ObjectRequest layer_id, char const * text, chaos::ParticleTextGenerator::GeneratorParams const & params) const;
+		ParticleAllocationBase * SpawnTextParticles(ObjectRequest layer_id, char const * text, ParticleTextGenerator::GeneratorParams const & params) const;
 
         /** spawn + user initialization methods */
         template<typename INIT_PARTICLE_FUNC>
-        chaos::ParticleAllocationBase* SpawnTextParticles(chaos::ObjectRequest layer_id, char const* text, chaos::ParticleTextGenerator::GeneratorParams const& params, INIT_PARTICLE_FUNC init_func) const
+        ParticleAllocationBase* SpawnTextParticles(ObjectRequest layer_id, char const* text, ParticleTextGenerator::GeneratorParams const& params, INIT_PARTICLE_FUNC init_func) const
         {
-            chaos::ParticleAllocationBase* result = SpawnTextParticles(layer_id, text, params);
+            ParticleAllocationBase* result = SpawnTextParticles(layer_id, text, params);
             // call user initialization function
             if (result != nullptr)
             {
@@ -52,16 +52,16 @@ namespace chaos
         }
 
 		/** get the bitmap info used for given bitmap_name */
-		chaos::BitmapAtlas::BitmapInfo const * FindBitmapInfo(chaos::ObjectRequest bitmap_request) const;
+		BitmapAtlas::BitmapInfo const * FindBitmapInfo(ObjectRequest bitmap_request) const;
 
 	protected:
 
 		/** the particle manager */
-		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
+		shared_ptr<ParticleManager> particle_manager;
 		/** the text generator */
-		chaos::shared_ptr<chaos::ParticleTextGenerator::Generator> particle_text_generator;
+		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
 		/** the texture atlas */
-		chaos::shared_ptr<chaos::BitmapAtlas::TextureArrayAtlas> texture_atlas;
+		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
 	};
 
 }; //namespace chaos

@@ -14,23 +14,23 @@ namespace chaos
 	// CameraComponent
 	// =============================================
 
-	class CameraComponent : public chaos::Tickable
+	class CameraComponent : public Tickable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(CameraComponent, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(CameraComponent, Tickable);
 
 	public:
 
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** gets the camera the component belongs to */
-		chaos::AutoCastable<Camera> GetCamera() { return camera; }
+		AutoCastable<Camera> GetCamera() { return camera; }
 		/** gets the camera the component belongs to */
-		chaos::AutoConstCastable<Camera> GetCamera() const { return camera; }
+		AutoConstCastable<Camera> GetCamera() const { return camera; }
 
 		/** modifier */
-		virtual chaos::box2 ApplyModifier(chaos::box2 const & src) const;
+		virtual box2 ApplyModifier(box2 const & src) const;
 
 	protected:
 

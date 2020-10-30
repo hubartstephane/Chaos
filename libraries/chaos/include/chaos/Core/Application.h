@@ -155,7 +155,7 @@ namespace chaos
 	template<typename APPLICATION_TYPE>
 	bool RunApplication(int argc, char ** argv, char ** env)
 	{
-		chaos::shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE();
+		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE();
 		if (application != nullptr)
 			return application->Run(argc, argv, env);
 		return false;

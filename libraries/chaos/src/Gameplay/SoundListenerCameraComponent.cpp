@@ -15,7 +15,7 @@ namespace chaos
 			Game * game = camera->GetGame();
 			if (game != nullptr)
 			{
-				chaos::SoundManager * sound_manager = game->GetSoundManager();
+				SoundManager * sound_manager = game->GetSoundManager();
 				if (sound_manager != nullptr)					
 				{
 					glm::vec3 position = glm::vec3(camera->GetCameraBox(false).position, 0.0f);

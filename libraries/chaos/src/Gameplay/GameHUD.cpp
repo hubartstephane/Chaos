@@ -6,42 +6,42 @@ namespace chaos
 	// GameHUD
 	// =============================================
 
-	chaos::AutoCastable<GameInstance> GameHUD::GetGameInstance()
+	AutoCastable<GameInstance> GameHUD::GetGameInstance()
 	{ 
 		return game->GetGameInstance(); 
 	}
 
-	chaos::AutoConstCastable<GameInstance> GameHUD::GetGameInstance() const
+	AutoConstCastable<GameInstance> GameHUD::GetGameInstance() const
 	{ 
 		return game->GetGameInstance(); 
 	}
 
-	chaos::AutoCastable<Level> GameHUD::GetLevel()
+	AutoCastable<Level> GameHUD::GetLevel()
 	{
 		return game->GetLevel();
 	}
 
-	chaos::AutoConstCastable<Level> GameHUD::GetLevel() const
+	AutoConstCastable<Level> GameHUD::GetLevel() const
 	{
 		return game->GetLevel();
 	}
 
-	chaos::AutoCastable<LevelInstance> GameHUD::GetLevelInstance()
+	AutoCastable<LevelInstance> GameHUD::GetLevelInstance()
 	{
 		return game->GetLevelInstance();
 	}
 
-	chaos::AutoConstCastable<LevelInstance> GameHUD::GetLevelInstance() const
+	AutoConstCastable<LevelInstance> GameHUD::GetLevelInstance() const
 	{
 		return game->GetLevelInstance();
 	}
 
-	chaos::AutoCastable<Player> GameHUD::GetPlayer(size_t player_index)
+	AutoCastable<Player> GameHUD::GetPlayer(size_t player_index)
 	{
 		return game->GetPlayer(player_index);
 	}
 
-	chaos::AutoConstCastable<Player> GameHUD::GetPlayer(size_t player_index) const
+	AutoConstCastable<Player> GameHUD::GetPlayer(size_t player_index) const
 	{
 		return game->GetPlayer(player_index);
 	}
@@ -51,21 +51,21 @@ namespace chaos
 		return game->GetPlayerCount();
 	}
 
-	void GameHUD::InitializeComponentFromConfiguration(chaos::TagType key, GameHUDComponent * component)
+	void GameHUD::InitializeComponentFromConfiguration(TagType key, GameHUDComponent * component)
 	{
 		assert(component != nullptr);
 
-		chaos::Application * application = chaos::Application::GetInstance();
+		Application * application = Application::GetInstance();
 		if (application == nullptr)
 			return;
 
 		nlohmann::json const & config = application->GetConfiguration();
 		// get the hud config
-		nlohmann::json const * hud_config = chaos::JSONTools::GetStructure(config, "hud");
+		nlohmann::json const * hud_config = JSONTools::GetStructure(config, "hud");
 		if (hud_config == nullptr)
 			return;
 		// get the component config (if existing)
-		nlohmann::json const * component_config = chaos::JSONTools::GetStructure(*hud_config, (char const *)key);
+		nlohmann::json const * component_config = JSONTools::GetStructure(*hud_config, (char const *)key);
 		if (component_config == nullptr)
 			return;
 		// initialize the component from JSON
@@ -92,7 +92,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GameHUD::CreateInternalData(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
+	bool GameHUD::CreateInternalData(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
 	{
 		// create the particle manager
 		if (in_particle_manager != nullptr)
@@ -106,7 +106,7 @@ namespace chaos
 		{
 			assert(in_particle_manager == nullptr); // cannot have both parameters
 
-			particle_manager = in_particle_manager = new chaos::ParticleManager;
+			particle_manager = in_particle_manager = new ParticleManager;
 			if (particle_manager == nullptr)
 				return false;
 			particle_manager->SetTextureAtlas(in_texture_atlas);
@@ -121,7 +121,7 @@ namespace chaos
 	int GameHUD::CreateHUDLayers()
 	{
 		int render_order = 0;
-		particle_manager->AddLayer<chaos::ParticleDefaultLayerTrait>(render_order++, chaos::GameHUDKeys::TEXT_LAYER_ID, "text");
+		particle_manager->AddLayer<ParticleDefaultLayerTrait>(render_order++, GameHUDKeys::TEXT_LAYER_ID, "text");
 		return render_order;
 	}
 
@@ -131,9 +131,9 @@ namespace chaos
 	bool GameHUD::FillHUDContent()
 	{		
 #if !_DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-ShowFPS")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-ShowFPS")) // CMDLINE
 #endif
-			if (!chaos::Application::HasApplicationCommandLineFlag("-HideFPS")) // CMDLINE
+			if (!Application::HasApplicationCommandLineFlag("-HideFPS")) // CMDLINE
 				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 #if _DEBUG
 		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent(), "Free Camera Mode");
@@ -141,7 +141,7 @@ namespace chaos
 		return true;
 	}
 
-	void GameHUD::UnregisterComponent(chaos::TagType key)
+	void GameHUD::UnregisterComponent(TagType key)
 	{
 		auto it = components.find(key);
 		if (it == components.end())
@@ -171,7 +171,7 @@ namespace chaos
 	}
 
 
-	GameHUDComponent * GameHUD::FindComponent(chaos::TagType key)
+	GameHUDComponent * GameHUD::FindComponent(TagType key)
 	{
 		auto it = components.find(key);
 		if (it == components.end())
@@ -179,7 +179,7 @@ namespace chaos
 		return it->second.get();
 	}
 
-	GameHUDComponent const * GameHUD::FindComponent(chaos::TagType key) const
+	GameHUDComponent const * GameHUD::FindComponent(TagType key) const
 	{
 		auto it = components.find(key);
 		if (it == components.end())
@@ -187,14 +187,14 @@ namespace chaos
 		return it->second.get();
 	}
 
-	void GameHUD::RegisterParticles(chaos::TagType key, chaos::ParticleAllocationBase * allocation, bool remove_previous)
+	void GameHUD::RegisterParticles(TagType key, ParticleAllocationBase * allocation, bool remove_previous)
 	{
 		if (remove_previous)
 			UnregisterParticles(key);
 		particle_allocations.insert(std::make_pair(key, allocation));
 	}
 	
-	void GameHUD::UnregisterParticles(chaos::TagType key)
+	void GameHUD::UnregisterParticles(TagType key)
 	{
 		particle_allocations.erase(key);
 	}
@@ -205,14 +205,14 @@ namespace chaos
 		particle_allocations.clear();
 	}
 
-	chaos::ParticleAllocationBase * GameHUD::FindParticleAllocation(chaos::TagType key)
+	ParticleAllocationBase * GameHUD::FindParticleAllocation(TagType key)
 	{
 		auto it = particle_allocations.find(key);
 		if (it == particle_allocations.end())
 			return nullptr;
 		return it->second.get();
 	}
-	chaos::ParticleAllocationBase const * GameHUD::FindParticleAllocation(chaos::TagType key) const
+	ParticleAllocationBase const * GameHUD::FindParticleAllocation(TagType key) const
 	{
 		auto it = particle_allocations.find(key);
 		if (it == particle_allocations.end())
@@ -236,7 +236,7 @@ namespace chaos
 		return true;
 	}
 
-	int GameHUD::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
+	int GameHUD::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		int result = 0; 
 		// display components (most of them should do nothing while they re using the particle_manager
@@ -265,19 +265,19 @@ namespace chaos
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
 			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-				chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), game_name);
+				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), game_name);
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
-			std::string best_score = chaos::StringTools::Printf("Best score: %d", game->GetBestScore());
+			std::string best_score = StringTools::Printf("Best score: %d", game->GetBestScore());
 			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent(
-				chaos::ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), best_score.c_str());
+				ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), best_score.c_str());
 		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();
 		if (game_instructions != nullptr)
 			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent(
-				chaos::ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), chaos::Hotpoint::BOTTOM), GameHUDKeys::TEXT_LAYER_ID), game_instructions);
+				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::BOTTOM), GameHUDKeys::TEXT_LAYER_ID), game_instructions);
 
 		return true;
 	}
@@ -293,7 +293,7 @@ namespace chaos
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Pause");
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Pause");
 		return true;
 	}
 
@@ -308,7 +308,7 @@ namespace chaos
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			chaos::ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), chaos::Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Game Over");
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Game Over");
 		return true;
 	}
 

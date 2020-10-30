@@ -114,9 +114,9 @@ public:
 	// ComputePlatformerFlagProcessor
 	// ==========================================
 
-class ComputePlatformerFlagProcessor : public chaos::TiledMap::ComputeCustomFlagProcessor
+class ComputePlatformerFlagProcessor : public TiledMap::ComputeCustomFlagProcessor
 {
-	CHAOS_DECLARE_OBJECT_CLASS2(ComputePlatformerFlagProcessor, chaos::TiledMap::ComputeCustomFlagProcessor);
+	CHAOS_DECLARE_OBJECT_CLASS2(ComputePlatformerFlagProcessor, TiledMap::ComputeCustomFlagProcessor);
 
 public:
 
@@ -150,7 +150,7 @@ protected:
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 	/** compute the new displacement state */
-	PlatformerDisplacementState ComputeDisplacementState(chaos::box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, int collision_flags);
+	PlatformerDisplacementState ComputeDisplacementState(box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, int collision_flags);
 	/** get the offset from the jumping point when the player is jumping */
 	float GetJumpRelativeHeight(float jump_time) const;
 	/** get the duration of a jump according to gravity/max_height */

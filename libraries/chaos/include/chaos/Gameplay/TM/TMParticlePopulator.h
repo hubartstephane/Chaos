@@ -29,14 +29,14 @@ namespace chaos
 		/** initialize the object */
 		bool Initialize(TMLayerInstance* in_layer_instance);
 		/** insert a new particle */
-		bool AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio);
+		bool AddParticle(char const* bitmap_name, Hotpoint hotpoint, box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio);
 		/** flush remaining particles */
 		bool FlushParticles();
 
 		/** get the final bounding box */
-		chaos::box2 const& GetBoundingBox() const { return bounding_box; }
+		box2 const& GetBoundingBox() const { return bounding_box; }
 		/** get the particle allocation */
-		chaos::ParticleAllocationBase* GetParticleAllocation() { return allocation; }
+		ParticleAllocationBase* GetParticleAllocation() { return allocation; }
 
 		/** copy operator (do not copy cached particles) */
 		TMParticlePopulator& operator = (TMParticlePopulator const& src);
@@ -51,22 +51,22 @@ namespace chaos
 		/** the concerned layer instance */
 		TMLayerInstance* layer_instance = nullptr;
 		/** the level owning this layer */
-		chaos::TMLevel* level = nullptr;
+		TMLevel* level = nullptr;
 
 		/** the texture atlas required */
-		chaos::BitmapAtlas::TextureArrayAtlas const* texture_atlas = nullptr;
+		BitmapAtlas::TextureArrayAtlas const* texture_atlas = nullptr;
 		/** the folder containing the bitmaps */
-		chaos::BitmapAtlas::FolderInfo const* folder_info = nullptr;
+		BitmapAtlas::FolderInfo const* folder_info = nullptr;
 
 		/** the allocation for all those particles */
-		chaos::ParticleAllocationBase* allocation = nullptr;
+		ParticleAllocationBase* allocation = nullptr;
 
 		/** a cache of particles */
 		TMParticle particles[PARTICLE_BUFFER_SIZE];
 		/** the cached number of particles */
 		size_t particle_count = 0;
 		/** a bounding box */
-		chaos::box2 bounding_box;
+		box2 bounding_box;
 	};
 
 }; // namespace chaos

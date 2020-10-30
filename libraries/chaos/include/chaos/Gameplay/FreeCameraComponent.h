@@ -33,7 +33,7 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual chaos::box2 ApplyModifier(chaos::box2 const & src) const override;
+		virtual box2 ApplyModifier(box2 const & src) const override;
 
 	protected:
 

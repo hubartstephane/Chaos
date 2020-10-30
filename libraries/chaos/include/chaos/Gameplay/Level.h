@@ -14,11 +14,11 @@ namespace chaos
 	// Level : a simple game level
 	// =====================================
 
-	class Level : public chaos::Object, public chaos::FileResource, public chaos::NamedObject
+	class Level : public Object, public FileResource, public NamedObject
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(Level, chaos::Object);
+		CHAOS_DECLARE_OBJECT_CLASS2(Level, Object);
 
 	public:
 
@@ -47,7 +47,7 @@ namespace chaos
 		int level_index = 0;
 
 		/** the level instance class */
-		chaos::SubClassOf<LevelInstance> level_instance_class;
+		SubClassOf<LevelInstance> level_instance_class;
 	};
 
 }; // namespace chaos

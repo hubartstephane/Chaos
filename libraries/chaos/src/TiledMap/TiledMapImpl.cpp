@@ -600,7 +600,7 @@ namespace chaos
 
 		box2 GeometricObject::DoGetBoundingBox() const
 		{
-			chaos::box2 result;
+			box2 result;
 			result.position = position;
 			result.half_size = glm::vec2(0.0f, 0.0f);
 			return result;
@@ -1307,8 +1307,8 @@ namespace chaos
 
 		box2 TileLayer::GetTileBoundingBox(glm::ivec2 const tile_coord, glm::vec2 const & image_size, int particle_flags, bool world_system) const
 		{
-			glm::vec2 tc = chaos::auto_cast_vector(tile_coord);
-			glm::vec2 ts = chaos::auto_cast_vector(tile_size);
+			glm::vec2 tc = auto_cast_vector(tile_coord);
+			glm::vec2 ts = auto_cast_vector(tile_size);
 
 			glm::vec2 p1 = (tc * ts * REVERSE_Y_AXIS) + (ts * glm::vec2(0.0f, 1.0f) * REVERSE_Y_AXIS); // BOTTOM-LEFT ... x (0, 1) because we just want to keep the Y component for this offset
 
@@ -1347,7 +1347,7 @@ namespace chaos
 			{
 				// split into array, remove space characters
 				std::vector<std::string> processor_names;
-				chaos::NameFilter::AddNames(processors.c_str(), processor_names);
+				NameFilter::AddNames(processors.c_str(), processor_names);
 				// run all processors
 				for (std::string const& name : processor_names)
 				{

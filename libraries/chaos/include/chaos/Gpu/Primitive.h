@@ -124,13 +124,13 @@ namespace chaos
         /** accessor */
         inline vertex_type & operator [](size_t index)
         {
-            assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
+            assert(index < GetVerticesPerParticle(PRIMITIVE_TYPE));
             return *((vertex_type*)(buffer + vertex_size * index));
         }
         /** const accessor */
         inline vertex_type const & operator [](size_t index) const
         {
-            assert(index < chaos::GetVerticesPerParticle(PRIMITIVE_TYPE));
+            assert(index < GetVerticesPerParticle(PRIMITIVE_TYPE));
             return *((vertex_type const*)(buffer + vertex_size * index));
         }
 

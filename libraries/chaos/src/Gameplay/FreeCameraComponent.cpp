@@ -16,7 +16,7 @@ namespace chaos
 			return true;
 
 		// get camera, cannot continue if it is empty
-		chaos::box2 camera_box = camera->GetCameraBox(false); // no modifier
+		box2 camera_box = camera->GetCameraBox(false); // no modifier
 		if (IsGeometryEmpty(camera_box))
 			return true;
 
@@ -43,9 +43,9 @@ namespace chaos
 		camera_box.position += glm::vec2(1.0f, -1.0f) * left_stick_position * delta_time * camera_box.half_size * 3.0f;
 
 		// try to keep the camera in the world
-		chaos::box2 world = camera->GetLevelInstance()->GetBoundingBox();
+		box2 world = camera->GetLevelInstance()->GetBoundingBox();
 		if (!IsGeometryEmpty(world))
-			chaos::RestrictToInside(world, camera_box, false);
+			RestrictToInside(world, camera_box, false);
 
 		// apply camera changes
 		camera->SetCameraBox(camera_box);
@@ -53,9 +53,9 @@ namespace chaos
 		return true;
 	}
 
-	chaos::box2 FreeCameraComponent::ApplyModifier(chaos::box2 const & src) const
+	box2 FreeCameraComponent::ApplyModifier(box2 const & src) const
 	{
-		chaos::box2 result = CameraComponent::ApplyModifier(src);
+		box2 result = CameraComponent::ApplyModifier(src);
 		result.half_size *= zoom_value;
 		return result;
 	}

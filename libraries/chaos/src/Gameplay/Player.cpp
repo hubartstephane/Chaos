@@ -9,13 +9,13 @@ namespace chaos
 	// Player
 	// =================================================
 
-	void Player::OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance)
+	void Player::OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance)
 	{
         health = max_health;
 		invulnerability_timer = std::max(invulnerability_duration, 0.0f);
 	}
 
-	bool Player::Initialize(chaos::GameInstance * in_game_instance)
+	bool Player::Initialize(GameInstance * in_game_instance)
 	{
 		// ensure valid arguments and not already initialized
 		assert(in_game_instance != nullptr);
@@ -33,7 +33,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Player::CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	bool Player::CapturePhysicalGamepad(MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		// if we already have a device, ignore
 		if (gamepad != nullptr)
@@ -42,7 +42,7 @@ namespace chaos
 		if (in_physical_gamepad == nullptr || in_physical_gamepad->IsAllocated())
 			return false;
 		// try capture the device
-		chaos::shared_ptr<PlayerGamepadCallbacks> gamepad_callback = new PlayerGamepadCallbacks(this);
+		shared_ptr<PlayerGamepadCallbacks> gamepad_callback = new PlayerGamepadCallbacks(this);
 		gamepad = in_physical_gamepad->CaptureDevice(gamepad_callback.get());
 		if (gamepad == nullptr)
 			return false;
@@ -61,12 +61,12 @@ namespace chaos
 		if (gamepad == nullptr)
 			return;
 		// get the gamepad data
-		chaos::MyGLFW::GamepadData const* gamepad_data = gamepad->GetGamepadData();
+		MyGLFW::GamepadData const* gamepad_data = gamepad->GetGamepadData();
 		if (gamepad_data == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_data->GetButtonStateChange(chaos::XBoxButton::BUTTON_SELECT) == chaos::ButtonStateChange::BECOME_PRESSED) ||
-			(gamepad_data->GetButtonStateChange(chaos::XBoxButton::BUTTON_START) == chaos::ButtonStateChange::BECOME_PRESSED))
+		if ((gamepad_data->GetButtonStateChange(XBoxButton::BUTTON_SELECT) == ButtonStateChange::BECOME_PRESSED) ||
+			(gamepad_data->GetButtonStateChange(XBoxButton::BUTTON_START) == ButtonStateChange::BECOME_PRESSED))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -106,7 +106,7 @@ namespace chaos
 		// update the forcefeedback mute state
 		if (gamepad != nullptr)
 		{
-			gamepad->SetForceFeedbackMuted(mute_force_feedback || (GetInputMode() != chaos::InputMode::GAMEPAD));
+			gamepad->SetForceFeedbackMuted(mute_force_feedback || (GetInputMode() != InputMode::GAMEPAD));
 			gamepad->SetForceFeedbackPaused(paused_force_feedback);
 		}
 
@@ -159,38 +159,38 @@ namespace chaos
 		if (gamepad == nullptr)
 			return;
 		// get the gamepad data
-		chaos::MyGLFW::GamepadData const * gamepad_data = gamepad->GetGamepadData();
+		MyGLFW::GamepadData const * gamepad_data = gamepad->GetGamepadData();
 		if (gamepad_data == nullptr)
 			return;
 		// change the application mode
 		if (gamepad_data->IsAnyAction())			
-			SetInputMode(chaos::InputMode::GAMEPAD);
+			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_data->GetXBOXStickDirection(chaos::XBoxAxis::LEFT_AXIS);
+		glm::vec2 lsp = gamepad_data->GetXBOXStickDirection(XBoxAxis::LEFT_AXIS);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_data->IsButtonPressed(chaos::XBoxButton::BUTTON_LEFT, false))
+			if (gamepad_data->IsButtonPressed(XBoxButton::BUTTON_LEFT, false))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_data->IsButtonPressed(chaos::XBoxButton::BUTTON_RIGHT, false))
+			else if (gamepad_data->IsButtonPressed(XBoxButton::BUTTON_RIGHT, false))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_data->IsButtonPressed(chaos::XBoxButton::BUTTON_UP, false))
+			if (gamepad_data->IsButtonPressed(XBoxButton::BUTTON_UP, false))
 				left_stick_position.y = -1.0f;
-			else if (gamepad_data->IsButtonPressed(chaos::XBoxButton::BUTTON_DOWN, false))
+			else if (gamepad_data->IsButtonPressed(XBoxButton::BUTTON_DOWN, false))
 				left_stick_position.y = 1.0f;
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_data->GetXBOXStickDirection(chaos::XBoxAxis::RIGHT_AXIS);
+		glm::vec2 rsp = gamepad_data->GetXBOXStickDirection(XBoxAxis::RIGHT_AXIS);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
 		// cache the TRIGGERS
-		left_trigger  = gamepad_data->GetAxisValue(chaos::XBoxAxis::LEFT_TRIGGER);
-		right_trigger = gamepad_data->GetAxisValue(chaos::XBoxAxis::RIGHT_TRIGGER);
+		left_trigger  = gamepad_data->GetAxisValue(XBoxAxis::LEFT_TRIGGER);
+		right_trigger = gamepad_data->GetAxisValue(XBoxAxis::RIGHT_TRIGGER);
 	}
 
 	void Player::HandleKeyboardInputs(float delta_time)
@@ -212,14 +212,14 @@ namespace chaos
 		if (gamepad == nullptr)
 			return;
 		// get the gamepad data
-		chaos::MyGLFW::GamepadData const * gamepad_data = gamepad->GetGamepadData();
+		MyGLFW::GamepadData const * gamepad_data = gamepad->GetGamepadData();
 		if (gamepad_data == nullptr)
 			return;
 		// Handle the inputs as we want
 		InternalHandleGamepadInputs(delta_time, gamepad_data);
 	}
 
-	void Player::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gamepad_data)
+	void Player::InternalHandleGamepadInputs(float delta_time, MyGLFW::GamepadData const * gamepad_data)
 	{
 
 	}
@@ -245,37 +245,37 @@ namespace chaos
 
 	bool Player::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
-		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
+		if (!JSONSerializable::SerializeIntoJSON(json_entry))
 			return false;
 
-		chaos::JSONTools::SetAttribute(json_entry, "LIFE_COUNT", life_count);
-		chaos::JSONTools::SetAttribute(json_entry, "HEALTH", health);
-		chaos::JSONTools::SetAttribute(json_entry, "MAX_HEALTH", max_health);
-		chaos::JSONTools::SetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
-		chaos::JSONTools::SetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
-		chaos::JSONTools::SetAttribute(json_entry, "SCORE", score);
+		JSONTools::SetAttribute(json_entry, "LIFE_COUNT", life_count);
+		JSONTools::SetAttribute(json_entry, "HEALTH", health);
+		JSONTools::SetAttribute(json_entry, "MAX_HEALTH", max_health);
+		JSONTools::SetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
+		JSONTools::SetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
+		JSONTools::SetAttribute(json_entry, "SCORE", score);
 
 		if (pawn != nullptr)
-			chaos::JSONTools::SetAttribute(json_entry, "PAWN", *pawn);
+			JSONTools::SetAttribute(json_entry, "PAWN", *pawn);
 
 		return true;
 	}
 
 	bool Player::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
-		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
+		if (!JSONSerializable::SerializeFromJSON(json_entry))
 			return false;
 
-		chaos::JSONTools::GetAttribute(json_entry, "LIFE_COUNT", life_count);
-		chaos::JSONTools::GetAttribute(json_entry, "HEALTH", health);
-		chaos::JSONTools::GetAttribute(json_entry, "MAX_HEALTH", max_health);
-		chaos::JSONTools::GetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
-		chaos::JSONTools::GetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
-		chaos::JSONTools::GetAttribute(json_entry, "SCORE", score);
+		JSONTools::GetAttribute(json_entry, "LIFE_COUNT", life_count);
+		JSONTools::GetAttribute(json_entry, "HEALTH", health);
+		JSONTools::GetAttribute(json_entry, "MAX_HEALTH", max_health);
+		JSONTools::GetAttribute(json_entry, "INVULNERABILITY_TIMER", invulnerability_timer);
+		JSONTools::GetAttribute(json_entry, "INVULNERABILITY_DURATION", invulnerability_duration);
+		JSONTools::GetAttribute(json_entry, "SCORE", score);
 
 		// XXX : the indirection is important to avoid a reallocation of the pawn
 		if (pawn != nullptr)
-			chaos::JSONTools::GetAttribute(json_entry, "PAWN", *pawn);
+			JSONTools::GetAttribute(json_entry, "PAWN", *pawn);
 
 		return true;
 	}
@@ -335,12 +335,12 @@ namespace chaos
 	{
 		// force feedback effect
 		if (gamepad != nullptr)
-			gamepad->AddForceFeedbackEffect(new chaos::MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
+			gamepad->AddForceFeedbackEffect(new MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
 		// camera effect
-		chaos::Camera* camera = GetLevelInstance()->GetCamera(0);
+		Camera* camera = GetLevelInstance()->GetCamera(0);
 		if (camera != nullptr)
 		{
-			chaos::ShakeCameraComponent* shake_component = camera->FindComponentByClass<chaos::ShakeCameraComponent>();
+			ShakeCameraComponent* shake_component = camera->FindComponentByClass<ShakeCameraComponent>();
 			if (shake_component != nullptr)
 				shake_component->RestartModifier();
 		}
@@ -359,7 +359,7 @@ namespace chaos
         // keyboard input
         if (keyboard_buttons != nullptr)
         {
-            chaos::Game * game = GetGame();
+            Game * game = GetGame();
             if (game != nullptr)
             {
                 GLFWwindow * glfw_window = game->GetGLFWWindow();
@@ -408,7 +408,7 @@ namespace chaos
 		assert(in_player != nullptr);
 	}
 
-	bool PlayerGamepadCallbacks::OnGamepadDisconnected(chaos::MyGLFW::Gamepad * in_gamepad)
+	bool PlayerGamepadCallbacks::OnGamepadDisconnected(MyGLFW::Gamepad * in_gamepad)
 	{
 		player->OnGamepadDisconnected();
 		return true;

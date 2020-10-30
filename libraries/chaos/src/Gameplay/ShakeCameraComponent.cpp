@@ -16,9 +16,9 @@ namespace chaos
 		current_time = -1.0f;
 	}
 
-	chaos::box2 ShakeCameraComponent::ApplyModifier(chaos::box2 const & src) const
+	box2 ShakeCameraComponent::ApplyModifier(box2 const & src) const
 	{
-		chaos::box2 result = src;
+		box2 result = src;
 		if (current_time >= 0 && current_time < modifier_duration)
 		{
 			float damping = (use_damping)? std::cos((float)(0.5 * M_PI) * (current_time / modifier_duration)) : 1.0f;

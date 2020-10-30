@@ -58,7 +58,7 @@ namespace chaos
 		if (names == nullptr)
 			names = "";
 		// split by separator
-		std::vector<std::string> name_array = chaos::StringTools::Split(names, separator);
+		std::vector<std::string> name_array = StringTools::Split(names, separator);
 		for (std::string & name : name_array)
 		{
 			// remove space 
@@ -78,7 +78,7 @@ namespace chaos
 		if (names == nullptr)
 			names = "";
 		// split by separator
-		std::vector<std::string> name_array = chaos::StringTools::Split(names, separator);
+		std::vector<std::string> name_array = StringTools::Split(names, separator);
 		for (std::string & name : name_array)
 		{
 			// remove space 

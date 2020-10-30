@@ -233,7 +233,7 @@ namespace chaos
 		// prepare rendering state
 		UpdateRenderingStates(renderer, true);
 		// update uniform provider with atlas, and do the rendering
-		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		if (atlas != nullptr)
 			main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
 		int result = DoDisplayHelper(renderer, final_material, (atlas == nullptr) ? uniform_provider : &main_uniform_provider, render_params);

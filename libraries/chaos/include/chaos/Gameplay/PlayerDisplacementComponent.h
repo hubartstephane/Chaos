@@ -10,11 +10,11 @@ namespace chaos
 
 namespace chaos
 {
-	class PlayerDisplacementComponent : public chaos::Tickable
+	class PlayerDisplacementComponent : public Tickable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(PlayerDisplacementComponent, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(PlayerDisplacementComponent, Tickable);
 
 	public:
 
@@ -24,9 +24,9 @@ namespace chaos
 		bool Initialize(Player* in_player);
 
 		/** returns the player the component belongs to */
-		chaos::AutoCastable<Player> GetPlayer() { return player; }
+		AutoCastable<Player> GetPlayer() { return player; }
 		/** returns the player the component belongs to */
-		chaos::AutoConstCastable<Player> GetPlayer() const { return player; }
+		AutoConstCastable<Player> GetPlayer() const { return player; }
 
 	protected:
 

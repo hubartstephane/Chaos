@@ -27,7 +27,7 @@ namespace chaos
 			zoom_effect(in_zoom_effect){}
 
 		/** override */
-		virtual chaos::box2 ApplyModifier(chaos::box2 const & src) const override;
+		virtual box2 ApplyModifier(box2 const & src) const override;
 
 		/** the modifier is restarted */
 		void RestartModifier();

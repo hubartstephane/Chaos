@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	void GameWindow::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
+	void GameWindow::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 		if (game != nullptr)
 			game->OnInputModeChanged(new_mode, old_mode);
@@ -14,12 +14,12 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnCharEvent(c))
 				return true;
-		return chaos::MyGLFW::Window::OnCharEventImpl(c);
+		return MyGLFW::Window::OnCharEventImpl(c);
 	}
 
-	bool GameWindow::OnKeyEventImpl(chaos::KeyEvent const& event)
+	bool GameWindow::OnKeyEventImpl(KeyEvent const& event)
 	{
-		if (chaos::MyGLFW::Window::OnKeyEventImpl(event))
+		if (MyGLFW::Window::OnKeyEventImpl(event))
 			return true;
 
 
@@ -34,7 +34,7 @@ namespace chaos
 		return false;
 		 
 
-		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
+		return MyGLFW::Window::OnKeyEventImpl(event);
 	}
 
 	bool GameWindow::OnMouseButtonImpl(int button, int action, int modifier)
@@ -42,7 +42,7 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnMouseButton(button, action, modifier))
 				return true;
-		return chaos::MyGLFW::Window::OnMouseButtonImpl(button, action, modifier);
+		return MyGLFW::Window::OnMouseButtonImpl(button, action, modifier);
 	}
 
 	bool GameWindow::OnMouseMoveImpl(double x, double y)
@@ -50,21 +50,21 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnMouseMove(x, y))
 				return true;
-		return chaos::MyGLFW::Window::OnMouseMoveImpl(x, y);
+		return MyGLFW::Window::OnMouseMoveImpl(x, y);
 	}
 
-	chaos::box2 GameWindow::GetRequiredViewport(glm::ivec2 const & size) const
+	box2 GameWindow::GetRequiredViewport(glm::ivec2 const & size) const
 	{
 		if (game != nullptr)
 			return game->GetRequiredViewport(size);
-		return chaos::MyGLFW::Window::GetRequiredViewport(size);
+		return MyGLFW::Window::GetRequiredViewport(size);
 	}
 
-	bool GameWindow::OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size)
+	bool GameWindow::OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size)
 	{
 		if (game != nullptr)
 		{
-			chaos::GPURenderParams render_params;
+			GPURenderParams render_params;
 			render_params.viewport = viewport;
 			render_params.screen_size = window_size;
 			game->Display(renderer, nullptr, render_params);
@@ -97,14 +97,14 @@ namespace chaos
 
 	bool GameWindow::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
-		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+		if (!MyGLFW::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 		// create the game
 		game = CreateGame();
 		if (game == nullptr)
 			return false;
 		// initialize the game
-		nlohmann::json const * game_config = chaos::JSONTools::GetStructure(config, "game");
+		nlohmann::json const * game_config = JSONTools::GetStructure(config, "game");
 		if (game_config != nullptr)
 			if (!game->InitializeFromConfiguration(*game_config, config_path))
 				return false;
@@ -114,11 +114,11 @@ namespace chaos
 
 	CHAOS_HELP_TEXT(CMD, "-UnlimitedFPS");
 
-	void GameWindow::TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
+	void GameWindow::TweakHints(MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 #if !_DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
 			hints.unlimited_fps = true;
 #else 
 		hints.unlimited_fps = true;

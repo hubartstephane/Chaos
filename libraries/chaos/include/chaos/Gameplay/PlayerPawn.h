@@ -33,9 +33,9 @@ namespace chaos
 		bool Initialize(Player* in_player);
 
 		/** returns the player the pawn belongs to */
-		chaos::AutoCastable<Player> GetPlayer() { return player; }
+		AutoCastable<Player> GetPlayer() { return player; }
 		/** returns the player the pawn belongs to */
-		chaos::AutoConstCastable<Player> GetPlayer() const { return player; }
+		AutoConstCastable<Player> GetPlayer() const { return player; }
 
 	protected:
 

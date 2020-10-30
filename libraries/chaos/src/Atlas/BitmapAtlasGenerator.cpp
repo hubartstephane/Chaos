@@ -716,8 +716,8 @@ namespace chaos
 		TextureArrayAtlas * TextureArrayAtlasGenerator::ComputeResult(AtlasInput const & in_input, AtlasGeneratorParams const & in_params, char const * dump_atlas_dirname)
 		{
 			// generate a standard atlas to be converted
-			chaos::BitmapAtlas::Atlas          atlas;
-			chaos::BitmapAtlas::AtlasGenerator generator;
+			BitmapAtlas::Atlas          atlas;
+			BitmapAtlas::AtlasGenerator generator;
 			if (!generator.ComputeResult(in_input, atlas, in_params))
 				return nullptr;
 
@@ -730,7 +730,7 @@ namespace chaos
 			}
 
 			// generate texture Atlas
-			chaos::BitmapAtlas::TextureArrayAtlas * result = new BitmapAtlas::TextureArrayAtlas;
+			BitmapAtlas::TextureArrayAtlas * result = new BitmapAtlas::TextureArrayAtlas;
 			if (result == nullptr)
 				return nullptr;
 			if (!result->LoadFromBitmapAtlas(std::move(atlas)))

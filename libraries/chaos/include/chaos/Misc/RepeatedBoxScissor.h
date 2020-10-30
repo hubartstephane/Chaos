@@ -20,7 +20,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		RepeatedBoxScissor(chaos::box2 const& in_target_box, chaos::box2 const& in_scissor_box, bool in_wrap_x, bool in_wrap_y);
+		RepeatedBoxScissor(box2 const& in_target_box, box2 const& in_scissor_box, bool in_wrap_x, bool in_wrap_y);
 
 		/** offset of a given instance */
 		glm::vec2 GetInstanceOffset(glm::ivec2 const& index) const;

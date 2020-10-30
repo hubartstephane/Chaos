@@ -27,11 +27,11 @@ namespace chaos
 		/** the layer instance concerned by this collision */
 		TMLayerInstance* layer_instance = nullptr;
 		/** the allocation concerned by this collision */
-		chaos::ParticleAllocationBase* allocation = nullptr;
+		ParticleAllocationBase* allocation = nullptr;
 		/** the particle which with the collision is detected */
 		TMParticle* particle = nullptr;
 		/** some information about the tile information */
-		chaos::TiledMap::TileInfo tile_info;
+		TiledMap::TileInfo tile_info;
 	};
 
 	// =====================================
@@ -47,7 +47,7 @@ namespace chaos
 		/** constructor */
 		TileCollisionComputer(TileCollisionComputer const& src) = default;
 		/** constructor */
-		TileCollisionComputer(TMLevelInstance* in_level_instance, chaos::box2 in_src_box, chaos::box2 in_dst_box, int in_collision_mask, chaos::ParticleAllocationBase* in_ignore_allocation, glm::vec2 const& in_box_extend, char const* in_wangset_name) :
+		TileCollisionComputer(TMLevelInstance* in_level_instance, box2 in_src_box, box2 in_dst_box, int in_collision_mask, ParticleAllocationBase* in_ignore_allocation, glm::vec2 const& in_box_extend, char const* in_wangset_name) :
 			level_instance(in_level_instance),
 			src_box(in_src_box),
 			dst_box(in_dst_box),
@@ -60,23 +60,23 @@ namespace chaos
 	public:
 
 		/** the entry point for the whole computation */
-		chaos::box2 Run(std::function<void(TileCollisionInfo const& collision_info)> func);
+		box2 Run(std::function<void(TileCollisionInfo const& collision_info)> func);
 	
 		/** compute reaction for a a particle */
-		void ComputeReaction(TileCollisionInfo const& collision_info, std::function<bool(TileCollisionInfo const&, chaos::Edge)> func);
+		void ComputeReaction(TileCollisionInfo const& collision_info, std::function<bool(TileCollisionInfo const&, Edge)> func);
 
 	public:
 
 		/** the level instance used */
 		TMLevelInstance* level_instance = nullptr;
 		/** the initial position of the moving object */
-		chaos::box2 src_box;
+		box2 src_box;
 		/** the final position of the moving object (if there were no collision) */
-		chaos::box2 dst_box;
+		box2 dst_box;
 		/** the mask for all searched objects */
 		int collision_mask = 0;
 		/** allocation to be ignored */
-		chaos::ParticleAllocationBase* ignore_allocation = nullptr;
+		ParticleAllocationBase* ignore_allocation = nullptr;
 		/** some extension for the collision surface*/
 		glm::vec2 const& box_extend;
 		/** the name of the collision wangset (use NEIGHBOUR FLAGS if unspecified) */
@@ -88,9 +88,9 @@ namespace chaos
 	protected:
 
 		/** cache for wangset */
-		chaos::TiledMap::Wangset const* wangset = nullptr;
+		TiledMap::Wangset const* wangset = nullptr;
 		/** cache for wangset */
-		chaos::TiledMap::TileSet const* tileset = nullptr;
+		TiledMap::TileSet const* tileset = nullptr;
 	};
 
 	// =====================================
@@ -107,7 +107,7 @@ namespace chaos
 		/** the copy constructor */
 		TMCollisionIteratorBase(TMCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TMCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMCollisionIteratorBase(TMLevelInstance* in_level_instance, box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		/** returns whether the iterator is still valid */
 		operator bool() const;
@@ -115,7 +115,7 @@ namespace chaos
 	protected:
 
 		/** the collision box */
-		chaos::box2 collision_box;
+		box2 collision_box;
 		/** the collision mask for iterating over layers */
 		uint64_t collision_mask = 0;
 		/** whether we want to check open geometries */
@@ -143,7 +143,7 @@ namespace chaos
 		/** the copy constructor */
 		TMTileCollisionIterator(TMTileCollisionIterator const& src) = default;
 		/** the constructor with initialization */
-		TMTileCollisionIterator(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMTileCollisionIterator(TMLevelInstance* in_level_instance, box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		/** next layer */
 		void NextLayer();
@@ -193,7 +193,7 @@ namespace chaos
 		/** the copy constructor */
 		TMObjectCollisionIteratorBase(TMObjectCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TMObjectCollisionIteratorBase(TMLevelInstance* in_level_instance, chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
+		TMObjectCollisionIteratorBase(TMLevelInstance* in_level_instance, box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
 			TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask, in_open_geometry)
 		{
 			FindFirstCollision();
@@ -268,7 +268,7 @@ namespace chaos
 							T * object = auto_cast(layer_instance->GetObject(object_index));
 							if (object != nullptr)
 							{
-								if (chaos::Collide(collision_box, object->GetBoundingBox(true), open_geometry))
+								if (Collide(collision_box, object->GetBoundingBox(true), open_geometry))
 								{
 									cached_result = object;
 									return;

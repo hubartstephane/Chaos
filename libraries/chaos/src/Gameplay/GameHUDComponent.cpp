@@ -6,70 +6,70 @@ namespace chaos
 	// GameHUDComponent
 	// ====================================================================
 
-	chaos::AutoCastable<Game> GameHUDComponent::GetGame()
+	AutoCastable<Game> GameHUDComponent::GetGame()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGame();
 	}
 
-	chaos::AutoConstCastable<Game> GameHUDComponent::GetGame() const
+	AutoConstCastable<Game> GameHUDComponent::GetGame() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGame();
 	}
 
-	chaos::AutoCastable<GameInstance> GameHUDComponent::GetGameInstance()
+	AutoCastable<GameInstance> GameHUDComponent::GetGameInstance()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGameInstance();
 	}
 
-	chaos::AutoConstCastable<GameInstance> GameHUDComponent::GetGameInstance() const
+	AutoConstCastable<GameInstance> GameHUDComponent::GetGameInstance() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetGameInstance();
 	}
 
-	chaos::AutoCastable<Level> GameHUDComponent::GetLevel()
+	AutoCastable<Level> GameHUDComponent::GetLevel()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevel();
 	}
 
-	chaos::AutoConstCastable<Level> GameHUDComponent::GetLevel() const
+	AutoConstCastable<Level> GameHUDComponent::GetLevel() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevel();
 	}
 
-	chaos::AutoCastable<LevelInstance> GameHUDComponent::GetLevelInstance()
+	AutoCastable<LevelInstance> GameHUDComponent::GetLevelInstance()
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevelInstance();
 	}
 
-	chaos::AutoConstCastable<LevelInstance> GameHUDComponent::GetLevelInstance() const
+	AutoConstCastable<LevelInstance> GameHUDComponent::GetLevelInstance() const
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetLevelInstance();
 	}
 
-	chaos::AutoCastable<Player> GameHUDComponent::GetPlayer(size_t player_index)
+	AutoCastable<Player> GameHUDComponent::GetPlayer(size_t player_index)
 	{
 		if (hud == nullptr)
 			return nullptr;
 		return hud->GetPlayer(player_index);
 	}
 
-	chaos::AutoConstCastable<Player> GameHUDComponent::GetPlayer(size_t player_index) const
+	AutoConstCastable<Player> GameHUDComponent::GetPlayer(size_t player_index) const
 	{
 		if (hud == nullptr)
 			return nullptr;
@@ -91,22 +91,22 @@ namespace chaos
 	{
 	}
 
-	glm::vec2 GameHUDComponent::GetCanvasBoxCorner(chaos::box2 const & canvas_box, chaos::Hotpoint hotpoint)
+	glm::vec2 GameHUDComponent::GetCanvasBoxCorner(box2 const & canvas_box, Hotpoint hotpoint)
 	{
 		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(canvas_box);
 
 		glm::vec2 result;
 		// search the X position
-		if ((int)hotpoint & (int)chaos::Hotpoint::LEFT)
+		if ((int)hotpoint & (int)Hotpoint::LEFT)
 			result.x = corners.first.x;
-		else if ((int)hotpoint & (int)chaos::Hotpoint::RIGHT)
+		else if ((int)hotpoint & (int)Hotpoint::RIGHT)
 			result.x = corners.second.x;
 		else
 			result.x = canvas_box.position.x;
 		// search the Y position
-		if ((int)hotpoint & (int)chaos::Hotpoint::BOTTOM)
+		if ((int)hotpoint & (int)Hotpoint::BOTTOM)
 			result.y = corners.first.y;
-		else if ((int)hotpoint & (int)chaos::Hotpoint::TOP)
+		else if ((int)hotpoint & (int)Hotpoint::TOP)
 			result.y = corners.second.y;
 		else
 			result.y = canvas_box.position.y;
@@ -145,12 +145,12 @@ namespace chaos
 	// GameHUDTextAllocationComponent
 	// ====================================================================
 
-	GameHUDTextComponent::GameHUDTextComponent(chaos::TagType in_layer_id):
+	GameHUDTextComponent::GameHUDTextComponent(TagType in_layer_id):
 		layer_id(in_layer_id)
 	{
 	}
 
-	GameHUDTextComponent::GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_generator_params, chaos::TagType in_layer_id):
+	GameHUDTextComponent::GameHUDTextComponent(ParticleTextGenerator::GeneratorParams const & in_generator_params, TagType in_layer_id):
 		layer_id(in_layer_id),
 		generator_params(in_generator_params)
 	{
@@ -162,9 +162,9 @@ namespace chaos
 		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
 			return true;
 
-		chaos::JSONTools::GetAttribute(json, "generator_params", generator_params);
+		JSONTools::GetAttribute(json, "generator_params", generator_params);
 
-	//	chaos::JSONTools::GetAttribute(json, "layer_id", layer_id);
+	//	JSONTools::GetAttribute(json, "layer_id", layer_id);
 		//LoadFromJSON(json, generator_params);
 
 		return true;
@@ -175,7 +175,7 @@ namespace chaos
 		UpdateTextAllocation(in_text);
 	}
 
-	void GameHUDTextComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const
+	void GameHUDTextComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
 	{
 		// XXX : for text generation, we use a HOTPOINT that describe where is the origin of the set of particles (LEFT, RIGHT, TOP, BOTTOM, CENTER)
 		//       It makes sence to use the same HOTPOINT to give the position on SCREEN as a reference
@@ -190,7 +190,7 @@ namespace chaos
 		//      As a side effect the params.position is just a relative offset
 		//
 
-		chaos::box2 canvas_box = GetGame()->GetCanvasBox();
+		box2 canvas_box = GetGame()->GetCanvasBox();
 		glm::vec2 corner = GetCanvasBoxCorner(canvas_box, final_params.hotpoint);
 		final_params.position += corner;
 	}
@@ -201,7 +201,7 @@ namespace chaos
 			allocations = nullptr;
 		else
 		{
-			chaos::ParticleTextGenerator::GeneratorParams other_params = generator_params;
+			ParticleTextGenerator::GeneratorParams other_params = generator_params;
 			TweakTextGeneratorParams(other_params);
 			allocations = hud->GetGameParticleCreator().SpawnTextParticles(layer_id, in_text, other_params);
 		}
@@ -211,23 +211,23 @@ namespace chaos
 	// GameHUDNotificationComponent
 	// ====================================================================
 
-	GameHUDNotificationComponent::GameHUDNotificationComponent(chaos::TagType in_layer_id) :
+	GameHUDNotificationComponent::GameHUDNotificationComponent(TagType in_layer_id) :
 		GameHUDTextComponent(in_layer_id)
 	{
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-40.0f, 100.0f);
-		generator_params.hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
+		generator_params.hotpoint = Hotpoint::BOTTOM_RIGHT;
 	}
 
-	GameHUDNotificationComponent::GameHUDNotificationComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id) :
+	GameHUDNotificationComponent::GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id) :
 		GameHUDTextComponent(in_params, in_layer_id)
 	{
 	}
 
 	void GameHUDNotificationComponent::ShowNotification(char const * in_message, float in_lifetime)
 	{
-		if (chaos::StringTools::IsEmpty(in_message))
+		if (StringTools::IsEmpty(in_message))
 			HideNotification();
 		else
 		{
@@ -260,13 +260,13 @@ namespace chaos
 	// GameHUDScoreComponent
 	// ====================================================================
 
-	GameHUDScoreComponent::GameHUDScoreComponent(chaos::TagType in_layer_id) :
+	GameHUDScoreComponent::GameHUDScoreComponent(TagType in_layer_id) :
 		GameHUDCacheValueComponent<int>("Score: %d", -1, in_layer_id) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(20.0f, -20.0f);
-		generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
+		generator_params.hotpoint = Hotpoint::TOP_LEFT;
 	}
 
 	bool GameHUDScoreComponent::UpdateCachedValue(bool & destroy_allocation)
@@ -290,16 +290,16 @@ namespace chaos
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	GameHUDFramerateComponent::GameHUDFramerateComponent(chaos::TagType in_layer_id):
+	GameHUDFramerateComponent::GameHUDFramerateComponent(TagType in_layer_id):
 		GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_layer_id) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-20.0f, -20.0f);
-		generator_params.hotpoint = chaos::Hotpoint::TOP_RIGHT;
+		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
-	int GameHUDFramerateComponent::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
+	int GameHUDFramerateComponent::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		framerate = renderer->GetFrameRate();
 		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
@@ -319,13 +319,13 @@ namespace chaos
 	// GameHUDTimeoutComponent
 	// ====================================================================
 
-	GameHUDTimeoutComponent::GameHUDTimeoutComponent(chaos::TagType in_layer_id) :
+	GameHUDTimeoutComponent::GameHUDTimeoutComponent(TagType in_layer_id) :
 		GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_layer_id) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(0.0f, -20.0f);
-		generator_params.hotpoint = chaos::Hotpoint::TOP;
+		generator_params.hotpoint = Hotpoint::TOP;
 	}
 
 	bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
@@ -348,7 +348,7 @@ namespace chaos
 		return false;
 	}
 
-	void GameHUDTimeoutComponent::TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const
+	void GameHUDTimeoutComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
 	{
 		GameHUDCacheValueComponent<float>::TweakTextGeneratorParams(final_params);
 		final_params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	
@@ -358,7 +358,7 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	GameHUDLifeComponent::GameHUDLifeComponent(chaos::TagType in_layer_id):
+	GameHUDLifeComponent::GameHUDLifeComponent(TagType in_layer_id):
 		layer_id(in_layer_id)
 	{
 
@@ -369,16 +369,16 @@ namespace chaos
 		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
 			return true;
 		
-		chaos::JSONTools::GetAttribute(json, "hotpoint", hotpoint);
-		chaos::JSONTools::GetAttribute(json, "position", position);
-		chaos::JSONTools::GetAttribute(json, "particle_size", particle_size);
-		chaos::JSONTools::GetAttribute(json, "particle_offset", particle_offset);
+		JSONTools::GetAttribute(json, "hotpoint", hotpoint);
+		JSONTools::GetAttribute(json, "position", position);
+		JSONTools::GetAttribute(json, "particle_size", particle_size);
+		JSONTools::GetAttribute(json, "particle_offset", particle_offset);
 
-		chaos::JSONTools::GetAttribute(json, "particle_name", particle_name);
-		chaos::JSONTools::GetAttribute(json, "heart_beat_sound", heart_beat_sound);
-		chaos::JSONTools::GetAttribute(json, "heart_beat_frequency", heart_beat_frequency);
+		JSONTools::GetAttribute(json, "particle_name", particle_name);
+		JSONTools::GetAttribute(json, "heart_beat_sound", heart_beat_sound);
+		JSONTools::GetAttribute(json, "heart_beat_frequency", heart_beat_frequency);
 
-		chaos::JSONTools::GetAttribute(json, "fadeout_warning_base", fadeout_warning_base);
+		JSONTools::GetAttribute(json, "fadeout_warning_base", fadeout_warning_base);
 		
 		return true;
 	}
@@ -479,7 +479,7 @@ namespace chaos
 		glm::vec2 particle_final_size = particle_size;
 		if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
 		{
-			chaos::BitmapAtlas::BitmapInfo const * bitmap_info = hud->GetGameParticleCreator().FindBitmapInfo(particle_name.c_str());
+			BitmapAtlas::BitmapInfo const * bitmap_info = hud->GetGameParticleCreator().FindBitmapInfo(particle_name.c_str());
 			if (bitmap_info != nullptr)
 			{
 				if (particle_final_size.x <= 0.0f && particle_final_size.y <= 0.0f) // both are invalid
@@ -500,15 +500,15 @@ namespace chaos
 		glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint);
 
 		// compute the bottom-left corner of the whole sprite rectangle
-		glm::vec2 whole_particle_ref = chaos::ConvertHotpoint(screen_ref + position, whole_particle_size, hotpoint, chaos::Hotpoint::BOTTOM_LEFT);
+		glm::vec2 whole_particle_ref = ConvertHotpoint(screen_ref + position, whole_particle_size, hotpoint, Hotpoint::BOTTOM_LEFT);
 
 		// update the particles members
 		glm::vec2 particle_position = whole_particle_ref;
 
-        chaos::ParticleAccessor<chaos::ParticleDefault> accessor = allocations->GetParticleAccessor();
-        for (chaos::ParticleDefault & p : accessor)
+        ParticleAccessor<ParticleDefault> accessor = allocations->GetParticleAccessor();
+        for (ParticleDefault & p : accessor)
         {
-			p.bounding_box.position = chaos::ConvertHotpoint(particle_position, particle_final_size, chaos::Hotpoint::BOTTOM_LEFT, chaos::Hotpoint::CENTER);
+			p.bounding_box.position = ConvertHotpoint(particle_position, particle_final_size, Hotpoint::BOTTOM_LEFT, Hotpoint::CENTER);
 			p.bounding_box.half_size = 0.5f * particle_final_size;
 
 			float fadeout = 1.0f;
@@ -526,13 +526,13 @@ namespace chaos
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
-	GameHUDLevelTitleComponent::GameHUDLevelTitleComponent(chaos::TagType in_layer_id) :
+	GameHUDLevelTitleComponent::GameHUDLevelTitleComponent(TagType in_layer_id) :
 		GameHUDCacheValueComponent<std::string>("%s", std::string(), in_layer_id) 
 	{
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-40.0f, 100.0f);
-		generator_params.hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
+		generator_params.hotpoint = Hotpoint::BOTTOM_RIGHT;
 	}
 
 	bool GameHUDLevelTitleComponent::UpdateCachedValue(bool & destroy_allocation) 
@@ -564,7 +564,7 @@ namespace chaos
 		std::string const & level_title = level->GetLevelTitle();
 		if (level_title.empty())
 		{
-			placeholder_level_title = chaos::StringTools::Printf("Level %d", level_instance->GetLevel()->GetLevelIndex());
+			placeholder_level_title = StringTools::Printf("Level %d", level_instance->GetLevel()->GetLevelIndex());
 			lt = &placeholder_level_title;	
 		}
 		else
@@ -586,17 +586,17 @@ namespace chaos
 	// GameHUDFreeCameraComponent
 	// ====================================================================
 
-	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(chaos::TagType in_layer_id) :
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(TagType in_layer_id) :
 		GameHUDTextComponent(in_layer_id)
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
 		generator_params.position = glm::vec2(-20.0f, -80.0f);
-		generator_params.hotpoint = chaos::Hotpoint::TOP_RIGHT;
+		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 		generator_params.default_color = glm::vec4(0.0f, 0.45f, 1.0f, 1.0f); // light blue
 	}
 
-	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id) :
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id) :
 		GameHUDTextComponent(in_params, in_layer_id)
 	{
 	}

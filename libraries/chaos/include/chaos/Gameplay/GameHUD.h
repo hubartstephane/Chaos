@@ -19,38 +19,38 @@ namespace chaos
 	// GameHUD
 	// =============================================
 
-	class GameHUD : public chaos::GPURenderable
+	class GameHUD : public GPURenderable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameHUD, chaos::GPURenderable);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameHUD, GPURenderable);
 
 	public:
 
 		/** getters on game */
-		chaos::AutoCastable<Game> GetGame() { return game; }
+		AutoCastable<Game> GetGame() { return game; }
 		/** getters on game */
-		chaos::AutoConstCastable<Game> GetGame() const { return game; }
+		AutoConstCastable<Game> GetGame() const { return game; }
 
 		/** getters on game instance */
-		chaos::AutoCastable<GameInstance> GetGameInstance();
+		AutoCastable<GameInstance> GetGameInstance();
 		/** getters on game instance */
-		chaos::AutoConstCastable<GameInstance> GetGameInstance() const;
+		AutoConstCastable<GameInstance> GetGameInstance() const;
 
 		/** get currently played level */
-		chaos::AutoCastable<Level> GetLevel();
+		AutoCastable<Level> GetLevel();
 		/** get currently played level */
-		chaos::AutoConstCastable<Level> GetLevel() const;
+		AutoConstCastable<Level> GetLevel() const;
 
 		/** get currently played level */
-		chaos::AutoCastable<LevelInstance> GetLevelInstance();
+		AutoCastable<LevelInstance> GetLevelInstance();
 		/** get currently played level */
-		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
+		AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 		/** get the player */
-		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
+		AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player */
-		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
+		AutoConstCastable<Player> GetPlayer(size_t player_index) const;
 		/** get the number of player */
 		size_t GetPlayerCount() const;
 
@@ -84,7 +84,7 @@ namespace chaos
 
 		/** insert a component inside the HUD */
 		template<typename COMPONENT_TYPE, typename ...PARAMS>
-		void RegisterComponent(chaos::TagType key, COMPONENT_TYPE * component, PARAMS... params)
+		void RegisterComponent(TagType key, COMPONENT_TYPE * component, PARAMS... params)
 		{
 			// XXX : why is this method a template ??
 			//       a COMPONENT initialization requires the HUD for some resources
@@ -103,31 +103,31 @@ namespace chaos
 			component->OnInsertedInHUD(params...);			
 		}
 		/** remove a component from the HUD */
-		void UnregisterComponent(chaos::TagType key);
+		void UnregisterComponent(TagType key);
 		/** remove a component from the HUD */
 		void UnregisterComponent(GameHUDComponent * in_component);
 
 		/** get the component from its ID */
-		GameHUDComponent * FindComponent(chaos::TagType key);
+		GameHUDComponent * FindComponent(TagType key);
 		/** get the component from its ID */
-		GameHUDComponent const * FindComponent(chaos::TagType key) const;
+		GameHUDComponent const * FindComponent(TagType key) const;
 
 		/** insert some particles inside the HUD */
-		void RegisterParticles(chaos::TagType key, chaos::ParticleAllocationBase * allocation, bool remove_previous = true);
+		void RegisterParticles(TagType key, ParticleAllocationBase * allocation, bool remove_previous = true);
 		/** remove some particles from the HUD */
-		void UnregisterParticles(chaos::TagType key);
+		void UnregisterParticles(TagType key);
 		/** clear all particles from the HUD */
 		void Clear();
 
 		/** get the particle allocation from its ID */
-		chaos::ParticleAllocationBase * FindParticleAllocation(chaos::TagType key);
+		ParticleAllocationBase * FindParticleAllocation(TagType key);
 		/** get the particle allocation from its ID */
-		chaos::ParticleAllocationBase const * FindParticleAllocation(chaos::TagType key) const;
+		ParticleAllocationBase const * FindParticleAllocation(TagType key) const;
 
 		/** get the particle manager */
-		chaos::ParticleManager * GetParticleManager() { return particle_manager.get(); }
+		ParticleManager * GetParticleManager() { return particle_manager.get(); }
 		/** get the particle manager */
-		chaos::ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
+		ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
 
 		/** get particle tools */
 		GameParticleCreator & GetGameParticleCreator(){ return particle_creator; }
@@ -137,34 +137,34 @@ namespace chaos
 	protected:
 
 		/** initialization method */
-		virtual bool CreateInternalData(chaos::ParticleManager * in_particle_manager, chaos::ParticleTextGenerator::Generator * in_particle_text_generator, chaos::BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
+		virtual bool CreateInternalData(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 		/** create the layers */
 		virtual int CreateHUDLayers();
 		/** create the particles */
 		virtual bool FillHUDContent();
 		/** try to find some information in JSON for configuring the component */
-		void InitializeComponentFromConfiguration(chaos::TagType key, GameHUDComponent * component);
+		void InitializeComponentFromConfiguration(TagType key, GameHUDComponent * component);
 
 	protected:
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
+		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 
 	protected:
 
 		/** the allocations */
-		std::map<chaos::TagType, chaos::shared_ptr<GameHUDComponent>> components;
+		std::map<TagType, shared_ptr<GameHUDComponent>> components;
 
 		/** the allocations */
-		std::multimap<chaos::TagType, chaos::shared_ptr<chaos::ParticleAllocationBase>> particle_allocations;
+		std::multimap<TagType, shared_ptr<ParticleAllocationBase>> particle_allocations;
 
 		/** the particle tools */
 		GameParticleCreator particle_creator;
 
 		/** the particle manager */
-		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
+		shared_ptr<ParticleManager> particle_manager;
 		/** indicates whether THIS is responsible or not of rendering/ticking the particle manager */
 		bool external_manager = false;
 

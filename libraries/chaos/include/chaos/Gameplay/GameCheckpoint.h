@@ -68,11 +68,11 @@ namespace chaos
 	// GameCheckpoint
 	// =============================================
 
-	class GameCheckpoint : public chaos::Object
+	class GameCheckpoint : public Object
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameCheckpoint, chaos::Object);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameCheckpoint, Object);
 
 	public:
 

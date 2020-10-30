@@ -22,7 +22,7 @@ namespace chaos
 	//
 
 	/** a functor for geometric object factory */
-	using TMObjectFactory = std::function<TMObject* (chaos::TiledMap::GeometricObject const*, TMObjectReferenceSolver&)>;
+	using TMObjectFactory = std::function<TMObject* (TiledMap::GeometricObject const*, TMObjectReferenceSolver&)>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
 #define CHAOS_TM_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object, chaos::TMObjectReferenceSolver & in_reference_solver) { x }
 
@@ -51,14 +51,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		PropertyOwnerOverride(chaos::TiledMap::BaseObject* in_owner, chaos::TiledMap::PropertyOwner const * in_property_owner) :
+		PropertyOwnerOverride(TiledMap::BaseObject* in_owner, TiledMap::PropertyOwner const * in_property_owner) :
 			T(in_owner),
 			property_owner(in_property_owner) {}
 
 		/** override */
-		virtual chaos::TiledMap::Property const* FindProperty(char const* name, chaos::TiledMap::PropertyType type_id) const override
+		virtual TiledMap::Property const* FindProperty(char const* name, TiledMap::PropertyType type_id) const override
 		{
-			chaos::TiledMap::Property const* result = nullptr;
+			TiledMap::Property const* result = nullptr;
 			if (property_owner != nullptr)
 				result = property_owner->FindProperty(name, type_id);
 			if (result == nullptr)
@@ -69,7 +69,7 @@ namespace chaos
 	protected:
 
 		/** a substitute property owner to fake the system */
-		chaos::TiledMap::PropertyOwner const * property_owner = nullptr;
+		TiledMap::PropertyOwner const * property_owner = nullptr;
 	};
 
 
@@ -89,24 +89,24 @@ namespace chaos
 		TMLevel();
 
 		/** initialization from tiled_map */
-		virtual bool Initialize(chaos::TiledMap::Map * in_tiled_map);
+		virtual bool Initialize(TiledMap::Map * in_tiled_map);
 
 		/** get the tiled map */
-		chaos::TiledMap::Map* GetTiledMap() { return tiled_map.get(); }
+		TiledMap::Map* GetTiledMap() { return tiled_map.get(); }
 		/** get the tiled map */
-		chaos::TiledMap::Map const* GetTiledMap() const { return tiled_map.get(); }
+		TiledMap::Map const* GetTiledMap() const { return tiled_map.get(); }
 
 	protected:
 
 		/** called to flush some particles into a layer allocation */
-		virtual bool FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation, TMParticle const* particles, size_t particle_count);
+		virtual bool FlushParticlesIntoAllocation(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation, TMParticle const* particles, size_t particle_count);
 
 		/** create a typed object based of a 'classname' property */
-		virtual TMObjectFactory DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
+		virtual TMObjectFactory DoGetExplicitObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object);
 		/** create a typed object specializable method */
-		virtual TMObjectFactory DoGetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
+		virtual TMObjectFactory DoGetObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object);
 		/** create a typed object 'entry point' */
-		TMObjectFactory GetObjectFactory(TMLayerInstance* in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object);
+		TMObjectFactory GetObjectFactory(TMLayerInstance* in_layer_instance, TiledMap::TypedObject const * in_typed_object);
 
 		/** create a Path specializable method */
 		virtual TMPath * DoCreatePath();
@@ -127,43 +127,43 @@ namespace chaos
 		virtual TMLayerInstance* DoCreateLayerInstance();
 
 		/** create a layer instance 'entry point' */
-		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase* in_layer, TMObjectReferenceSolver& reference_solver);
+		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, TiledMap::LayerBase* in_layer, TMObjectReferenceSolver& reference_solver);
 
 		/** get the folder in which bitmaps are stored in Game::Atlas */
-		virtual chaos::BitmapAtlas::FolderInfo const* GetFolderInfo(TMLayerInstance* layer_instance) const;
+		virtual BitmapAtlas::FolderInfo const* GetFolderInfo(TMLayerInstance* layer_instance) const;
 		/** get the atlas to use for the rendering */
-		virtual chaos::BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas(TMLayerInstance* layer_instance) const;
+		virtual BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas(TMLayerInstance* layer_instance) const;
 		/** create a particle layer */
-		virtual chaos::ParticleLayerBase* DoCreateParticleLayer(TMLayerInstance* layer_instance);
+		virtual ParticleLayerBase* DoCreateParticleLayer(TMLayerInstance* layer_instance);
 
 		/** called after all particles of a layers has been created, so we can plug additionnal data */
-		virtual bool FinalizeLayerParticles(TMLayerInstance* layer_instance, chaos::ParticleAllocationBase* allocation);
+		virtual bool FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation);
 
 		/** the default material when not specified */
-		virtual chaos::GPURenderMaterial* GenDefaultRenderMaterial();
+		virtual GPURenderMaterial* GenDefaultRenderMaterial();
 
 	protected:
 
 		/** the tiled map corresponding to this level */
-		chaos::shared_ptr<chaos::TiledMap::Map> tiled_map;
+		shared_ptr<TiledMap::Map> tiled_map;
 	};
 
 	// =====================================
 	// TMLayerInstance : instance of a Layer
 	// =====================================
 
-	class TMLayerInstance : public chaos::GPURenderable, public chaos::JSONSerializable
+	class TMLayerInstance : public GPURenderable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(TMLayerInstance, chaos::GPURenderable);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMLayerInstance, GPURenderable);
 
 	public:
 
 		/** get the tiled layer */
-		chaos::TiledMap::LayerBase const* GetTiledLayer() const { return layer; }
+		TiledMap::LayerBase const* GetTiledLayer() const { return layer; }
 
-		// shuclean : lien chaos:: => chaos (presque pas utilisé. pourrait sauter)
+		// shuclean : lien  => chaos (presque pas utilisé. pourrait sauter)
 		//            juste le name
 
 
@@ -178,60 +178,60 @@ namespace chaos
 
 
 		/** get the level (for this layer) */
-		chaos::AutoCastable<Level> GetLevel();
+		AutoCastable<Level> GetLevel();
 		/** get the level (for this layer) */
-		chaos::AutoConstCastable<Level> GetLevel() const;
+		AutoConstCastable<Level> GetLevel() const;
 
 		/** get the level instance for this layer */
-		chaos::AutoCastable<LevelInstance> GetLevelInstance();
+		AutoCastable<LevelInstance> GetLevelInstance();
 		/** get the level instance for this layer */
-		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
+		AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 		/** get the game */
-		chaos::AutoCastable<Game> GetGame();
+		AutoCastable<Game> GetGame();
 		/** get the game */
-		chaos::AutoConstCastable<Game> GetGame() const;
+		AutoConstCastable<Game> GetGame() const;
 
 
 		/** find the object from its name */
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoCastable<TMObject> FindObject(chaos::ObjectRequest request)
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoCastable<TMObject> FindObject(ObjectRequest request)
 		{
 			return request.FindObject<CHECK_CLASS>(objects);
 		}
 		/** find the object from its name */
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoConstCastable<TMObject> FindObject(chaos::ObjectRequest request) const
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoConstCastable<TMObject> FindObject(ObjectRequest request) const
 		{
 			return request.FindObject<CHECK_CLASS>(objects);
 		}
 
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoCastable<TMObject> FindObjectByID(int id)
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoCastable<TMObject> FindObjectByID(int id)
 		{
 			for (auto& object : objects)
 				if (object->GetObjectID() == id)
-					if (chaos::ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
+					if (ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
 						return object.get();
 			return nullptr;
 		}
 
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoConstCastable<TMObject> FindObjectByID(int id) const
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoConstCastable<TMObject> FindObjectByID(int id) const
 		{
 			for (auto const & object : objects)
 				if (object->GetObjectID() == id)
-					if (chaos::ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
+					if (ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
 						return object.get();
 			return nullptr;
 		}
 
 		/** get the bounding box for the level */
-		chaos::box2 GetBoundingBox(bool world_system) const;
+		box2 GetBoundingBox(bool world_system) const;
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		chaos::ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+		ParticleSpawner* CreateParticleSpawner(PARAMS... params)
 		{
 			if (!CreateParticleLayer())
 				return nullptr;
@@ -239,21 +239,21 @@ namespace chaos
 		}
 
 		template<typename ...PARAMS>
-		chaos::ParticleSpawner GetParticleSpawner(PARAMS... params)
+		ParticleSpawner GetParticleSpawner(PARAMS... params)
 		{
 			if (!CreateParticleLayer())
-				return chaos::ParticleSpawner(nullptr);
+				return ParticleSpawner(nullptr);
 			return particle_layer->GetParticleSpawner(params...);
 		}
 
 		/** create a particle allocation for the layer */
-		chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation = true);
+		ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation = true);
 
 		/** spawn + user initialization methods */
 		template<typename INIT_PARTICLE_FUNC>
-		chaos::ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
+		ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
 		{
-			chaos::ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
+			ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
 			// call user initialization function
 			if (result != nullptr)
 			{
@@ -264,7 +264,7 @@ namespace chaos
 		}
 
 		/** create the particle layer if required */
-		chaos::ParticleLayerBase* CreateParticleLayer();
+		ParticleLayerBase* CreateParticleLayer();
 
 		/** get the layer offset */
 		glm::vec2 GetLayerOffset() const { return offset; }
@@ -272,16 +272,16 @@ namespace chaos
 		void SetLayerOffset(glm::vec2 const& in_offset) { offset = in_offset; }
 
 		/** get the particle layer */
-		chaos::ParticleLayerBase* GetParticleLayer() { return particle_layer.get(); }
+		ParticleLayerBase* GetParticleLayer() { return particle_layer.get(); }
 		/** get the particle layer */
-		chaos::ParticleLayerBase const* GetParticleLayer() const { return particle_layer.get(); }
+		ParticleLayerBase const* GetParticleLayer() const { return particle_layer.get(); }
 
 		/** returns the number of objects */
 		size_t GetObjectCount() const;
 		/** returns an object by its index */
-		chaos::AutoCastable<TMObject> GetObject(size_t index);
+		AutoCastable<TMObject> GetObject(size_t index);
 		/** returns an object by its index */
-		chaos::AutoConstCastable<TMObject> GetObject(size_t index) const;
+		AutoConstCastable<TMObject> GetObject(size_t index) const;
 
 		/** get the layer ID */
 		int GetLayerID() const { return id; }
@@ -296,39 +296,39 @@ namespace chaos
 	protected:
 
 		/** initialization */
-		virtual bool Initialize(TMLevelInstance* in_level_instance, chaos::TiledMap::LayerBase const * in_layer, TMObjectReferenceSolver & reference_solver);
+		virtual bool Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMObjectReferenceSolver & reference_solver);
 		/** serialization of all JSON objects into an array */
-		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<chaos::shared_ptr<TMObject>>& result);
+		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<shared_ptr<TMObject>>& result);
 		/** called whenever level instance is restarted */
 		virtual void OnRestart();
 
 		/** find render material according to its name (or create the default) */
-		chaos::GPURenderMaterial* FindOrCreateRenderMaterial(char const* material_name);
+		GPURenderMaterial* FindOrCreateRenderMaterial(char const* material_name);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 
 		/** specialized layer */
-		bool InitializeImageLayer(chaos::TiledMap::ImageLayer const * image_layer, TMObjectReferenceSolver& reference_solver);
+		bool InitializeImageLayer(TiledMap::ImageLayer const * image_layer, TMObjectReferenceSolver& reference_solver);
 		/** specialized layer */
-		bool InitializeObjectLayer(chaos::TiledMap::ObjectLayer const * object_layer, TMObjectReferenceSolver& reference_solver);
+		bool InitializeObjectLayer(TiledMap::ObjectLayer const * object_layer, TMObjectReferenceSolver& reference_solver);
 		/** specialized layer */
-		bool InitializeTileLayer(chaos::TiledMap::TileLayer const * tile_layer, TMObjectReferenceSolver& reference_solver);
+		bool InitializeTileLayer(TiledMap::TileLayer const * tile_layer, TMObjectReferenceSolver& reference_solver);
 	
 		/** create an object in an object layer */
-		TMObjectFactory GetObjectFactory(chaos::TiledMap::TypedObject const * in_typed_object);
+		TMObjectFactory GetObjectFactory(TiledMap::TypedObject const * in_typed_object);
 
 		/** create an object in an object layer */
-		void CreateObjectParticles(chaos::TiledMap::GeometricObject const * in_geometric_object, TMObject* object, TMParticlePopulator& particle_populator);
+		void CreateObjectParticles(TiledMap::GeometricObject const * in_geometric_object, TMObject* object, TMParticlePopulator& particle_populator);
 		/** returns whether a particle should be created for object instance */
-		bool ShouldCreateParticleForObject(chaos::TiledMap::PropertyOwner const * property_owner, TMObject* object) const;
+		bool ShouldCreateParticleForObject(TiledMap::PropertyOwner const * property_owner, TMObject* object) const;
 
 		/** finalize the particles created */
-		virtual bool FinalizeParticles(chaos::ParticleAllocationBase * allocation);
-		/** try to search a name and a tag in the chaos::layer,  give them to the particle layer (and some other data as well) */
-		virtual bool InitializeParticleLayer(chaos::ParticleLayerBase* in_particle_layer);
+		virtual bool FinalizeParticles(ParticleAllocationBase * allocation);
+		/** try to search a name and a tag in the layer,  give them to the particle layer (and some other data as well) */
+		virtual bool InitializeParticleLayer(ParticleLayerBase* in_particle_layer);
 
 		/** some callbacks */
 		virtual void OnLevelEnded();
@@ -342,7 +342,7 @@ namespace chaos
 
 	protected:
 
-		/** id of the object (comming from chaos::TiledMap) */
+		/** id of the object (comming from TiledMap) */
 		int id = 0;
 		/** displacement ratio relatively to the main layer */
 		glm::vec2 displacement_ratio = glm::vec2(1.0f, 1.0f);
@@ -362,14 +362,14 @@ namespace chaos
 		TMLevelInstance* level_instance = nullptr;
 
 		/** the tiled layer corresponding to this object */
-		chaos::TiledMap::LayerBase const* layer = nullptr;
+		TiledMap::LayerBase const* layer = nullptr;
 		/** the particle layer */
-		chaos::shared_ptr<chaos::ParticleLayerBase> particle_layer;
+		shared_ptr<ParticleLayerBase> particle_layer;
 		/** the objects */
-		std::vector<chaos::shared_ptr<TMObject>> objects;
+		std::vector<shared_ptr<TMObject>> objects;
 
 		/** the bounding box of the layer */
-		chaos::box2 bounding_box;
+		box2 bounding_box;
 
 		/** the collision mask for that layer */
 		uint64_t collision_mask = 0;
@@ -395,9 +395,9 @@ namespace chaos
 	public:
 
 		/** the target considered */
-		chaos::weak_ptr<chaos::Object> object;
+		weak_ptr<Object> object;
 		/** all the triggers colliding */
-		std::vector<chaos::weak_ptr<TMTrigger>> triggers;
+		std::vector<weak_ptr<TMTrigger>> triggers;
 	};
 
 	// =====================================
@@ -413,9 +413,9 @@ namespace chaos
 	public:
 
 		/** get the tiled map */
-		chaos::TiledMap::Map* GetTiledMap();
+		TiledMap::Map* GetTiledMap();
 		/** get the tiled map */
-		chaos::TiledMap::Map const* GetTiledMap() const;
+		TiledMap::Map const* GetTiledMap() const;
 
 		/** find the layer instance from its ID */
 		TMLayerInstance * FindLayerInstanceByID(int id);
@@ -423,50 +423,50 @@ namespace chaos
 		TMLayerInstance const * FindLayerInstanceByID(int id) const;
 
 		/** find the layer instance from its name */
-		TMLayerInstance* FindLayerInstance(chaos::ObjectRequest request);
+		TMLayerInstance* FindLayerInstance(ObjectRequest request);
 		/** find the layer instance from its name */
-		TMLayerInstance const* FindLayerInstance(chaos::ObjectRequest request) const;
+		TMLayerInstance const* FindLayerInstance(ObjectRequest request) const;
 
 		/** find the typed object from its name */
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoCastable<TMObject> FindObject(chaos::ObjectRequest request)
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoCastable<TMObject> FindObject(ObjectRequest request)
 		{
 			for (auto& layer : layer_instances)
-				if (chaos::AutoCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
+				if (AutoCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
 					return result;
 			return nullptr;
 		}
 		/** find the typed object surface from its name */
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoConstCastable<TMObject> FindObject(chaos::ObjectRequest request) const
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoConstCastable<TMObject> FindObject(ObjectRequest request) const
 		{
 			for (auto const & layer : layer_instances)
-				if (chaos::AutoConstCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
+				if (AutoConstCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
 					return result;
 			return nullptr;
 		}
 		/** find the object from its ID */
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoCastable<TMObject> FindObjectByID(int id)
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoCastable<TMObject> FindObjectByID(int id)
 		{
 			for (auto & layer : layer_instances)
-				if (chaos::AutoCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
+				if (AutoCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
 					return result;
 			return nullptr;
 		}
 		/** find the object from its ID */
-		template<typename CHECK_CLASS = chaos::EmptyClass>
-		chaos::AutoConstCastable<TMObject> FindObjectByID(int id) const
+		template<typename CHECK_CLASS = EmptyClass>
+		AutoConstCastable<TMObject> FindObjectByID(int id) const
 		{
 			for (auto const& layer : layer_instances)
-				if (chaos::AutoConstCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
+				if (AutoConstCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
 					return result;
 			return nullptr;
 		}
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
-		chaos::ParticleSpawner* CreateParticleSpawner(chaos::ObjectRequest layer_instance_name, PARAMS... params)
+		ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_instance_name, PARAMS... params)
 		{
 			LayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
 			if (layer_instance == nullptr)
@@ -475,28 +475,28 @@ namespace chaos
 		}
 
 		template<typename ...PARAMS>
-		chaos::ParticleSpawner GetParticleSpawner(chaos::ObjectRequest layer_instance_name, PARAMS... params)
+		ParticleSpawner GetParticleSpawner(ObjectRequest layer_instance_name, PARAMS... params)
 		{
 			TMLayerInstance* layer_instance = FindLayerInstance(layer_instance_name);
 			if (layer_instance == nullptr)
-				return chaos::ParticleSpawner(nullptr);
+				return ParticleSpawner(nullptr);
 			return layer_instance->GetParticleSpawner(params...);
 		}
 
 		/** get the bounding box for the level (in worls system obviously) */
-		virtual chaos::box2 GetBoundingBox() const override;
+		virtual box2 GetBoundingBox() const override;
 
 		/** Get a collision iterator for tiles */
-		TMTileCollisionIterator GetTileCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMTileCollisionIterator GetTileCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 		/** Get a collision iterator for triggers */
-		TMTriggerCollisionIterator GetTriggerCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMTriggerCollisionIterator GetTriggerCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 		/** Get a collision iterator for objects */
-		TMObjectCollisionIterator GetObjectCollisionIterator(chaos::box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMObjectCollisionIterator GetObjectCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
 
 		/** purge all collisions with object deleted */
 		void PurgeCollisionInfo();
 		/** handle all collision for a given object (TriggerObject) */
-		void HandleTriggerCollisions(float delta_time, chaos::Object* object, chaos::box2 const& box, int mask);
+		void HandleTriggerCollisions(float delta_time, Object* object, box2 const& box, int mask);
 
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
@@ -506,11 +506,11 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(Game* in_game, chaos::Level* in_level) override;
+		virtual bool Initialize(Game* in_game, Level* in_level) override;
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** override */
-		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 		/** override */
 		virtual void OnRestart() override;
 
@@ -540,7 +540,7 @@ namespace chaos
 		/** create the layers instances */
 		virtual bool CreateLayerInstances(Game* in_game, TMObjectReferenceSolver &reference_solver);
 		/** create the layers instances */
-		bool DoCreateLayerInstances(std::vector<chaos::shared_ptr<chaos::TiledMap::LayerBase>> const& layers, TMObjectReferenceSolver& reference_solver);
+		bool DoCreateLayerInstances(std::vector<shared_ptr<TiledMap::LayerBase>> const& layers, TMObjectReferenceSolver& reference_solver);
 
 		/** override */
 		virtual void CreateBackgroundImage() override;
@@ -548,27 +548,27 @@ namespace chaos
 		virtual void SetInGameMusic() override;
 
 		/** the default material when not specified */
-		virtual chaos::GPURenderMaterial* GetDefaultRenderMaterial();
+		virtual GPURenderMaterial* GetDefaultRenderMaterial();
 
 		/** find the collision info for an object */
-		TMTriggerCollisionInfo* FindTriggerCollisionInfo(chaos::Object * object);
+		TMTriggerCollisionInfo* FindTriggerCollisionInfo(Object * object);
 
 	protected:
 
 		/** explicit bounding box (else it is dynamic with LayerInstance evaluation) */
-		chaos::box2 explicit_bounding_box;
+		box2 explicit_bounding_box;
 		/** whether the explicit_bounding_box is valid (empty is not a good answer) */
 		bool has_explicit_bounding_box = false;
 
 		/** the layer of reference for displacement */
-		chaos::shared_ptr<TMLayerInstance> reference_layer;
+		shared_ptr<TMLayerInstance> reference_layer;
 
 		/** the particle manager used to render the world */
-		chaos::shared_ptr<chaos::ParticleManager> particle_manager;
+		shared_ptr<ParticleManager> particle_manager;
 		/** the layers */
-		std::vector<chaos::shared_ptr<TMLayerInstance>> layer_instances;
+		std::vector<shared_ptr<TMLayerInstance>> layer_instances;
 		/** the default render material */
-		chaos::shared_ptr<chaos::GPURenderMaterial> default_material;
+		shared_ptr<GPURenderMaterial> default_material;
 
 		/** the previous frame trigger collision */
 		std::vector<TMTriggerCollisionInfo> collision_info;

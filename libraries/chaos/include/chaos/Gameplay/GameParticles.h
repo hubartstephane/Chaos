@@ -23,7 +23,7 @@ namespace chaos
 		glm::vec4 color;
 	};
 
-	class ParticleBackgroundLayerTrait : public chaos::ParticleLayerTrait<ParticleBackground, chaos::VertexDefault>
+	class ParticleBackgroundLayerTrait : public ParticleLayerTrait<ParticleBackground, VertexDefault>
 	{
 	public:
 
@@ -33,9 +33,9 @@ namespace chaos
 		ParticleBackgroundLayerTrait(ParticleBackgroundLayerTrait const& src) = default;
 
 		/** output primitive */
-        void ParticleToPrimitives(ParticleBackground const& particle, chaos::QuadOutput<chaos::VertexDefault> & output) const;
+        void ParticleToPrimitives(ParticleBackground const& particle, QuadOutput<VertexDefault> & output) const;
 		/** output primitive */
-        void ParticleToPrimitives(ParticleBackground const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const;
+        void ParticleToPrimitives(ParticleBackground const& particle, TrianglePairOutput<VertexDefault>& output) const;
 	};
 
 	CHAOS_REGISTER_CLASS1(ParticleBackground);

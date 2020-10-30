@@ -16,20 +16,20 @@ namespace chaos
 		return level_clock->GetClockTime();
 	}
 
-	void LevelInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
+	void LevelInstance::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
 	{
 		// the timers
 		double level_time = GetLevelClockTime();
 		main_uniform_provider.AddVariableValue("level_time", level_time);
 
 		// the main camera
-		chaos::obox2 camera_obox = GetCameraOBox(0);
+		obox2 camera_obox = GetCameraOBox(0);
 		main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(camera_obox));
 		// convert OBOX into BOX
-		chaos::box2 camera_box;
+		box2 camera_box;
 		camera_box.position  = camera_obox.position;
 		camera_box.half_size = camera_obox.half_size;
-		main_uniform_provider.AddVariableValue("camera_box", chaos::EncodeBoxToVector(camera_box)); 
+		main_uniform_provider.AddVariableValue("camera_box", EncodeBoxToVector(camera_box)); 
 	}
 
 	void LevelInstance::OnPlayerEntered(Player * player)
@@ -192,7 +192,7 @@ namespace chaos
 		game  = in_game;
 		level = in_level;		
 		// create the level clock
-		chaos::Clock * root_clock = in_game->GetRootClock();
+		Clock * root_clock = in_game->GetRootClock();
 		if (root_clock == nullptr)
 			return false;
 		// note : this can fails if the named clock already exists
@@ -200,7 +200,7 @@ namespace chaos
 		if (level_clock == nullptr)
 			return false;
 		// create a sound category
-		chaos::SoundManager * sound_manager = GetGame()->GetSoundManager();
+		SoundManager * sound_manager = GetGame()->GetSoundManager();
 		if (sound_manager != nullptr)
 			sound_category = sound_manager->AddCategory("level_instance");
 
@@ -257,42 +257,42 @@ namespace chaos
 			return;
 
 		// get camera, cannot continue if it is empty
-		chaos::box2 camera_box = camera->GetCameraBox(false);
+		box2 camera_box = camera->GetCameraBox(false);
 		if (IsGeometryEmpty(camera_box))
 			return;
 
 		// keep player pawn inside camera safe zone
-		chaos::box2 pawn_box = player_pawn->GetBoundingBox();
+		box2 pawn_box = player_pawn->GetBoundingBox();
 		if (!IsGeometryEmpty(pawn_box))
 		{
-			chaos::box2 safe_camera = camera_box;
+			box2 safe_camera = camera_box;
 			safe_camera.half_size *= camera->GetSafeZone();
 
-			if (chaos::RestrictToInside(safe_camera, pawn_box, true)) // apply the safe_zone displacement to the real camera
+			if (RestrictToInside(safe_camera, pawn_box, true)) // apply the safe_zone displacement to the real camera
 				camera_box.position = safe_camera.position;
 		}
 
 		// try to keep the camera in the world
-		chaos::box2 world = GetBoundingBox();
+		box2 world = GetBoundingBox();
 		if (!IsGeometryEmpty(world))
-			chaos::RestrictToInside(world, camera_box, false);
+			RestrictToInside(world, camera_box, false);
 
 		// apply camera changes
 		camera->SetCameraBox(camera_box);
 	}
 
-	void LevelInstance::RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index)
+	void LevelInstance::RestrictObjectToWorld(ParticleAllocationBase * allocation, size_t index)
 	{
 		if (allocation == nullptr)
 			return;
-		chaos::box2 world = GetBoundingBox();
+		box2 world = GetBoundingBox();
 		if (IsGeometryEmpty(world))
 			return;
-		std::optional<chaos::box2> box_opt = chaos::ParticleTools::GetParticleBox(allocation, index);		
+		std::optional<box2> box_opt = ParticleTools::GetParticleBox(allocation, index);		
 		if (box_opt)
 		{
-			chaos::RestrictToInside(world, *box_opt, false);
-			chaos::ParticleTools::SetParticleBox(allocation, index, *box_opt);
+			RestrictToInside(world, *box_opt, false);
+			ParticleTools::SetParticleBox(allocation, index, *box_opt);
 		}
 	}
 
@@ -377,15 +377,15 @@ namespace chaos
 		return cameras[index].get();
 	}
 
-	chaos::obox2 LevelInstance::GetInitialCameraOBox(size_t index) const
+	obox2 LevelInstance::GetInitialCameraOBox(size_t index) const
 	{ 
 		Camera const * camera = GetCamera(index);
 		if (camera == nullptr)
-			return chaos::obox2();
+			return obox2();
 		return camera->GetInitialCameraOBox();
 	}
 
-	chaos::obox2 LevelInstance::GetCameraOBox(size_t index, bool apply_modifiers) const
+	obox2 LevelInstance::GetCameraOBox(size_t index, bool apply_modifiers) const
 	{
 		// find a camera
 		Camera const * camera = GetCamera(index);
@@ -395,74 +395,74 @@ namespace chaos
 		return GetDefaultCameraOBox();
 	}
 
-	chaos::obox2 LevelInstance::GetDefaultCameraOBox() const
+	obox2 LevelInstance::GetDefaultCameraOBox() const
 	{
 		// by default, the camera box has same size than the canvas
-		chaos::obox2 result;
+		obox2 result;
 		result.position = glm::vec3(0.0f, 0.0f, 0.0f);
 		result.half_size = GetGame()->GetCanvasBox().half_size;
 		result.rotator = 0.0f;
 
 		// apply the aspect ratio
 		if (game != nullptr)
-			chaos::AlterBoxToAspect(result, game->GetViewportWantedAspect(), true);
+			AlterBoxToAspect(result, game->GetViewportWantedAspect(), true);
 
 		return result;
 	}
 
-	chaos::SoundCategory * LevelInstance::GetSoundCategory()
+	SoundCategory * LevelInstance::GetSoundCategory()
 	{
 		return sound_category.get();
 	}
 
-	chaos::SoundCategory const * LevelInstance::GetSoundCategory() const
+	SoundCategory const * LevelInstance::GetSoundCategory() const
 	{
 		return sound_category.get();
 	}
 
 	bool LevelInstance::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
-		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
+		if (!JSONSerializable::SerializeIntoJSON(json_entry))
 			return false;
 
 		// level index (just to be sure this is valid to apply a checkpoint on this level)
-		chaos::JSONTools::SetAttribute(json_entry, "LEVEL_INDEX", level->GetLevelIndex());		
+		JSONTools::SetAttribute(json_entry, "LEVEL_INDEX", level->GetLevelIndex());		
 		// attributes
-		chaos::JSONTools::SetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);		
+		JSONTools::SetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);		
 		// the camera 0
 		Camera const * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
-			chaos::JSONTools::SetAttribute(json_entry, "CAMERA0", *camera);
+			JSONTools::SetAttribute(json_entry, "CAMERA0", *camera);
 
 		return true;
 	}
 	
 	bool LevelInstance::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
-		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
+		if (!JSONSerializable::SerializeFromJSON(json_entry))
 			return false;
 
 		// check for level index
 		int index = 0;
-		if (chaos::JSONTools::GetAttribute(json_entry, "LEVEL_INDEX", index))
+		if (JSONTools::GetAttribute(json_entry, "LEVEL_INDEX", index))
 			if (level->GetLevelIndex() != index)
 				return false;
 
 		// attributes
-		chaos::JSONTools::GetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
+		JSONTools::GetAttribute(json_entry, "LEVEL_TIMEOUT", level_timeout);
 		// the camera 0
 		Camera * camera = DoGetCamera(0, false); // do not accept free camera
 		if (camera != nullptr)
-			chaos::JSONTools::GetAttribute(json_entry, "CAMERA0", *camera); // XXX : indirection is important to avoid a reallocation the object
+			JSONTools::GetAttribute(json_entry, "CAMERA0", *camera); // XXX : indirection is important to avoid a reallocation the object
 
 		return true;
 	}
 
-	chaos::box2 LevelInstance::GetBoundingBox() const
+	box2 LevelInstance::GetBoundingBox() const
 	{
 		if (game != nullptr)
 			return game->GetCanvasBox();
-		return chaos::box2();
+		return box2();
 	}
 
 	void LevelInstance::OnRestart()

@@ -15,11 +15,11 @@ namespace chaos
 	// LevelInstance : this is the runtime part of a level
 	// =====================================
 
-	class LevelInstance : public chaos::GPURenderable, public chaos::JSONSerializable
+	class LevelInstance : public GPURenderable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(LevelInstance, chaos::GPURenderable);
+		CHAOS_DECLARE_OBJECT_CLASS2(LevelInstance, GPURenderable);
 
 	public:
 
@@ -31,21 +31,21 @@ namespace chaos
 		virtual void CreateCameras();
 
 		/** get the transformation world to camera */
-		chaos::obox2 GetCameraOBox(size_t index, bool apply_modifiers = true) const;
+		obox2 GetCameraOBox(size_t index, bool apply_modifiers = true) const;
 		/** the camera transform whenever no camera exists */
-		chaos::obox2 GetDefaultCameraOBox() const;
+		obox2 GetDefaultCameraOBox() const;
 		/** the initial camera box getter */		
-		chaos::obox2 GetInitialCameraOBox(size_t index) const;
+		obox2 GetInitialCameraOBox(size_t index) const;
 
 		/** returns level clock */
-		chaos::Clock * GetLevelClock() { return level_clock.get();}
+		Clock * GetLevelClock() { return level_clock.get();}
 		/** returns level clock */
-		chaos::Clock const * GetLevelClock() const { return level_clock.get(); }
+		Clock const * GetLevelClock() const { return level_clock.get(); }
 		/** returns the level time */
 		double GetLevelClockTime() const;
 
 		/** get the world box */
-		virtual chaos::box2 GetBoundingBox() const;
+		virtual box2 GetBoundingBox() const;
 
 		/** some callbacks */
 		virtual void OnLevelEnded();
@@ -60,7 +60,7 @@ namespace chaos
 		/** update the player and the camera position so that they remains inside the world */
 		void RestrictCameraToPlayerAndWorld(size_t player_index, size_t camera_index);
 		/** restrict an object to the world */
-		void RestrictObjectToWorld(chaos::ParticleAllocationBase * allocation, size_t index);
+		void RestrictObjectToWorld(ParticleAllocationBase * allocation, size_t index);
 		/** restrict an pawn to the world */
 		void RestrictPawnToWorld(PlayerPawn * player_pawn);
 
@@ -73,9 +73,9 @@ namespace chaos
 		bool GetLevelCompletionFlag() const;
 
 		/** returns the sound category */
-		chaos::SoundCategory * GetSoundCategory();
+		SoundCategory * GetSoundCategory();
 		/** returns the sound category */
-		chaos::SoundCategory const * GetSoundCategory() const;
+		SoundCategory const * GetSoundCategory() const;
 
 		/** the processor may save its configuration into a JSON file */
 		virtual bool SerializeIntoJSON(nlohmann::json& json_entry) const override;
@@ -127,7 +127,7 @@ namespace chaos
 		virtual void DestroyPlayerDisplacementComponent(Player* player);
 
 		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
+		virtual void FillUniformProvider(GPUProgramProvider & main_uniform_provider);
 
 		/** state changes */
 		virtual void OnEnterPause();
@@ -156,21 +156,21 @@ namespace chaos
 		bool level_completion_flag = false;
 
 		/** a category for all sound started during that level */
-		chaos::shared_ptr<chaos::SoundCategory> sound_category;
+		shared_ptr<SoundCategory> sound_category;
 
 		/** the level clock */
-		chaos::shared_ptr<chaos::Clock> level_clock;
+		shared_ptr<Clock> level_clock;
 		/** the camera */
-		std::vector<chaos::shared_ptr<Camera>> cameras;
+		std::vector<shared_ptr<Camera>> cameras;
 
 		/** class for the player pawn */
-		chaos::SubClassOf<PlayerPawn> player_pawn_class;
+		SubClassOf<PlayerPawn> player_pawn_class;
 
 		/** class for the player displacement component */
-		chaos::SubClassOf<PlayerDisplacementComponent> player_displacement_component_class;
+		SubClassOf<PlayerDisplacementComponent> player_displacement_component_class;
 
 		/** class for the camera */
-		chaos::SubClassOf<Camera> camera_class;
+		SubClassOf<Camera> camera_class;
 	};
 
 }; // namespace chaos

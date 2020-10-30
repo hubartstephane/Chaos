@@ -25,7 +25,7 @@ namespace chaos
 		return 0;
 	}
 
-	void Game::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)
+	void Game::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
 
 	}
@@ -50,7 +50,7 @@ namespace chaos
 
 	bool Game::GetCheatMode() const
 	{
-		if (chaos::Application::HasApplicationCommandLineFlag("-CheatMode")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-CheatMode")) // CMDLINE
 			return true;
 		if (IsFreeCameraMode())
 			return true;
@@ -95,7 +95,7 @@ namespace chaos
 	CHAOS_HELP_TEXT(SHORTCUTS, "F6  : ToggleFreeCameraMode");
 #endif
 
-	bool Game::OnKeyEventImpl(chaos::KeyEvent const& event)
+	bool Game::OnKeyEventImpl(KeyEvent const& event)
 	{
 		// try start the game
 		if (game_instance == nullptr)
@@ -202,26 +202,26 @@ namespace chaos
 		return false;
 	}
 
-	chaos::box2 Game::GetRequiredViewport(glm::ivec2 const & size) const
+	box2 Game::GetRequiredViewport(glm::ivec2 const & size) const
 	{
-		chaos::box2 viewport = chaos::box2(std::make_pair(
+		box2 viewport = box2(std::make_pair(
 			glm::vec2(0.0f, 0.0f),
-			chaos::RecastVector<glm::vec2>(size)
+			RecastVector<glm::vec2>(size)
 		));
 		return ShrinkBoxToAspect(viewport, viewport_wanted_aspect);
 	}
 
-	void Game::Display(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
+	void Game::Display(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
 	{
 		// a variable provider
-		chaos::GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		
 		// the view box
-		chaos::box2 view = GetCanvasBox();
-		main_uniform_provider.AddVariableValue("canvas_box", chaos::EncodeBoxToVector(view));
+		box2 view = GetCanvasBox();
+		main_uniform_provider.AddVariableValue("canvas_box", EncodeBoxToVector(view));
 		// the world
-		chaos::box2 world = GetWorldBox();
-		main_uniform_provider.AddVariableValue("world_box", chaos::EncodeBoxToVector(world));
+		box2 world = GetWorldBox();
+		main_uniform_provider.AddVariableValue("world_box", EncodeBoxToVector(world));
 		// the time
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);
@@ -233,7 +233,7 @@ namespace chaos
 		DoDisplay(renderer, &main_uniform_provider, render_params);
 	}
 
-	void Game::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
+	void Game::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
 	{
 		if (game_instance != nullptr)
 			game_instance->FillUniformProvider(main_uniform_provider);
@@ -241,7 +241,7 @@ namespace chaos
 			level_instance->FillUniformProvider(main_uniform_provider);
 	}
 
-	void Game::DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
+	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
 	{
 		// clear the main render target
 		DoPreDisplay(renderer, uniform_provider, render_params);
@@ -252,7 +252,7 @@ namespace chaos
 	}
 
 
-	void Game::DoPreDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
+	void Game::DoPreDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -268,7 +268,7 @@ namespace chaos
 		glDisable(GL_CULL_FACE);
 	}
 
-	void Game::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
+	void Game::DoDisplayGame(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
 	{		
 
 		// shuwww   root_render_layer ??
@@ -278,13 +278,13 @@ namespace chaos
 			level_instance->Display(renderer, uniform_provider, render_params);
 	}
 
-	void Game::DoDisplayHUD(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
+	void Game::DoDisplayHUD(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
 	{	
 		if (hud != nullptr)
 			hud->Display(renderer, uniform_provider, render_params);
 	}
 
-	bool Game::FillAtlasGeneratorInput(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		if (!FillAtlasGeneratorInputSprites(input, config, config_path))
 			return false;
@@ -295,12 +295,12 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::FillAtlasGeneratorInputTiledMapManager(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInputTiledMapManager(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		if (tiled_map_manager != nullptr)
 		{
 			// find or create folder
-			chaos::BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
+			BitmapAtlas::FolderInfoInput * folder_input = input.AddFolder("sprites", 0);
 			if (folder_input == nullptr)
 				return false;
 			// add sprites from TiledMap
@@ -310,14 +310,14 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::FillAtlasGeneratorInputSprites(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		// get the directory where the sprites are
 		std::string sprite_directory;
-		if (!chaos::JSONTools::GetAttribute(config, "sprite_directory", sprite_directory))
+		if (!JSONTools::GetAttribute(config, "sprite_directory", sprite_directory))
 			return true;
 		// find or create folder
-		chaos::BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites", 0);
+		BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites", 0);
 		if (folder_info == nullptr)
 			return false;
 		// Add sprites
@@ -326,20 +326,20 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::FillAtlasGeneratorInputFonts(chaos::BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
-		nlohmann::json const * fonts_config = chaos::JSONTools::GetStructure(config, "fonts");
+		nlohmann::json const * fonts_config = JSONTools::GetStructure(config, "fonts");
 		if (fonts_config != nullptr)
 		{
 			// read the default font parameters
-			chaos::BitmapAtlas::FontInfoInputParams font_params;
+			BitmapAtlas::FontInfoInputParams font_params;
 
-			nlohmann::json const* default_font_param_json = chaos::JSONTools::GetStructure(*fonts_config, "default_font_param");
+			nlohmann::json const* default_font_param_json = JSONTools::GetStructure(*fonts_config, "default_font_param");
 			if (default_font_param_json != nullptr)
 				LoadFromJSON(*default_font_param_json, font_params);
 
 			// Add the fonts
-			nlohmann::json const * fonts_json = chaos::JSONTools::GetStructure(*fonts_config, "fonts");
+			nlohmann::json const * fonts_json = JSONTools::GetStructure(*fonts_config, "fonts");
 			if (fonts_json != nullptr && fonts_json->is_object())
 			{
 				for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
@@ -368,12 +368,12 @@ namespace chaos
 		char const* CachedAtlasFilename = "CachedAtlas";
 
 		// Try to load already computed data 
-		if (chaos::Application::HasApplicationCommandLineFlag("-UseCachedAtlas")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-UseCachedAtlas")) // CMDLINE
 		{
-			chaos::BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new chaos::BitmapAtlas::TextureArrayAtlas;
+			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
 			if (tmp_texture_atlas != nullptr)
 			{
-				chaos::Application* application = chaos::Application::GetInstance();
+				Application* application = Application::GetInstance();
 				if (application != nullptr)
 				{
 					if (tmp_texture_atlas->LoadAtlas(application->GetUserLocalTempPath() / CachedAtlasFilename))
@@ -387,7 +387,7 @@ namespace chaos
 		}
 
 		// fill sub images for atlas generation
-		chaos::BitmapAtlas::AtlasInput input;
+		BitmapAtlas::AtlasInput input;
 		if (!FillAtlasGeneratorInput(input, config, config_path))
 			return false;
 
@@ -395,9 +395,9 @@ namespace chaos
 		int const DEFAULT_ATLAS_SIZE    = 1024;
 		int const DEFAULT_ATLAS_PADDING = 10;
 
-		chaos::BitmapAtlas::AtlasGeneratorParams params = chaos::BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, chaos::PixelFormatMergeParams());
+		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
 		
-		nlohmann::json const * atlas_json = chaos::JSONTools::GetStructure(config, "atlas");
+		nlohmann::json const * atlas_json = JSONTools::GetStructure(config, "atlas");
 		if (atlas_json != nullptr)
 			LoadFromJSON(*atlas_json, params);
 
@@ -406,12 +406,12 @@ namespace chaos
 #if _DEBUG
 		dump_atlas_dirname = CachedAtlasFilename;
 #else
-		if (chaos::Application::HasApplicationCommandLineFlag("-DumpCachedAtlas")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-DumpCachedAtlas")) // CMDLINE
 			dump_atlas_dirname = CachedAtlasFilename;
 #endif
 
 		// generate the atlas
-		chaos::BitmapAtlas::TextureArrayAtlasGenerator generator;
+		BitmapAtlas::TextureArrayAtlasGenerator generator;
 		texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
 		if (texture_atlas == nullptr)
 			return false;
@@ -419,31 +419,31 @@ namespace chaos
 		return true;
 	}
 
-	chaos::TMLevel * Game::CreateTMLevel()
+	TMLevel * Game::CreateTMLevel()
 	{
 		return nullptr;
 	}
 
-	chaos::Level * Game::DoLoadLevel(chaos::FilePathParam const & path)
+	Level * Game::DoLoadLevel(FilePathParam const & path)
 	{
 		boost::filesystem::path const & resolved_path = path.GetResolvedPath();
 
-		if (chaos::FileTools::IsTypedFile(resolved_path, "tmx"))
+		if (FileTools::IsTypedFile(resolved_path, "tmx"))
 		{
 			// create the tiledmap manager if necessary
 			if (tiled_map_manager == nullptr)
 			{
-				tiled_map_manager = new chaos::TiledMap::Manager;
+				tiled_map_manager = new TiledMap::Manager;
 				if (tiled_map_manager == nullptr)
 					return nullptr;
 			}
 			// load the resource
-			chaos::TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, false); // XXX : false => dont keep it in manager => necessary for HOTRELOAD
+			TiledMap::Map* tiled_map = tiled_map_manager->LoadMap(path, false); // XXX : false => dont keep it in manager => necessary for HOTRELOAD
 
 			if (tiled_map == nullptr)
 				return false;
 			// allocate a level
-			chaos::TMLevel * result = CreateTMLevel();
+			TMLevel * result = CreateTMLevel();
 			if (result == nullptr)
 				return false;
 			// some additionnal computation
@@ -462,20 +462,20 @@ namespace chaos
 	{
 		// read in the config file the whole path
 		std::string directory;
-		if (chaos::JSONTools::GetAttribute(config, config_name, directory))
-			return chaos::FileTools::GetDirectoryIterator(directory);
+		if (JSONTools::GetAttribute(config, config_name, directory))
+			return FileTools::GetDirectoryIterator(directory);
 		// concat the argument path with 'resources'
 		if (default_path != nullptr)
 		{
 			// get the application
-			chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
+			MyGLFW::SingleWindowApplication * application = Application::GetInstance();
 			if (application != nullptr)
 			{
 				// compute resource path
 				boost::filesystem::path resources_path = application->GetResourcesPath();
 				boost::filesystem::path result_path = resources_path / default_path;
 
-				return chaos::FileTools::GetDirectoryIterator(result_path);
+				return FileTools::GetDirectoryIterator(result_path);
 			}
 		}
 		return boost::filesystem::directory_iterator();
@@ -491,12 +491,12 @@ namespace chaos
 		{
 			boost::filesystem::path p = it->path();
 
-			if (chaos::FileTools::IsTypedFile(p, extension))
+			if (FileTools::IsTypedFile(p, extension))
 			{
 				// create the tiledmap manager if necessary
 				if (tiled_map_manager == nullptr)
 				{
-					tiled_map_manager = new chaos::TiledMap::Manager;
+					tiled_map_manager = new TiledMap::Manager;
 					if (tiled_map_manager == nullptr)
 						return false;
 				}
@@ -509,7 +509,7 @@ namespace chaos
 
 	bool Game::GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path)
 	{
-		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](chaos::TiledMap::Manager * manager, boost::filesystem::path const & path) {
+		return DoGenerateTiledMapEntity(config, "objecttypesets_directory", "objecttypesets", "xml", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
 			if (!manager->LoadObjectTypeSet(path))
 				return false; 
 			return true;
@@ -518,7 +518,7 @@ namespace chaos
 
 	bool Game::GenerateTileSets(nlohmann::json const & config, boost::filesystem::path const& config_path)
 	{
-		return DoGenerateTiledMapEntity(config, "tilesets_directory", "tilesets", "tsx", [](chaos::TiledMap::Manager * manager, boost::filesystem::path const & path) {
+		return DoGenerateTiledMapEntity(config, "tilesets_directory", "tilesets", "tsx", [](TiledMap::Manager * manager, boost::filesystem::path const & path) {
 			if (!manager->LoadTileSet(path))
 				return false;
 			return true;
@@ -531,14 +531,14 @@ namespace chaos
 		boost::filesystem::directory_iterator end;
 		for (boost::filesystem::directory_iterator it = GetResourceDirectoryIteratorFromConfig(config, "levels_directory", "levels"); it != end; ++it)
 		{
-			int level_index = chaos::StringTools::SkipAndAtoi(it->path().filename().string().c_str());
+			int level_index = StringTools::SkipAndAtoi(it->path().filename().string().c_str());
 
 			// create the level
-			chaos::Level * level = DoLoadLevel(it->path());
+			Level * level = DoLoadLevel(it->path());
 			if (level == nullptr)
 				continue;
 			// initialize it
-			level->SetName(chaos::BoostTools::PathToName(it->path()).c_str());
+			level->SetName(BoostTools::PathToName(it->path()).c_str());
 			level->SetPath(it->path());
 			level->level_index = level_index;
 			// store it
@@ -547,7 +547,7 @@ namespace chaos
 
 		// sort the levels
 		std::sort(levels.begin(), levels.end(),
-			[](chaos::shared_ptr<Level> & l1, chaos::shared_ptr<Level> & l2)
+			[](shared_ptr<Level> & l1, shared_ptr<Level> & l2)
 		{
 			return (l1->level_index < l2->level_index);
 		});
@@ -555,7 +555,7 @@ namespace chaos
 	}
 
 #define CHAOS_FIND_RENDERABLE_CHILD(result, funcname, constness, param_type)\
-	result constness * Game::funcname(param_type param, chaos::GPURenderableLayerSystem constness * root) constness\
+	result constness * Game::funcname(param_type param, GPURenderableLayerSystem constness * root) constness\
 	{\
 		if (root == nullptr)\
 		{\
@@ -567,19 +567,19 @@ namespace chaos
 	}
 #define CHAOS_FIND_RENDERABLE_CHILD_ALL(result, funcname)\
 	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), char const *);\
-	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), chaos::TagType);\
+	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, BOOST_PP_EMPTY(), TagType);\
 	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, const, char const *);\
-	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, const, chaos::TagType);\
+	CHAOS_FIND_RENDERABLE_CHILD(result, funcname, const, TagType);\
 
-	CHAOS_FIND_RENDERABLE_CHILD_ALL(chaos::GPURenderableLayerSystem, FindRenderableLayer);
-	CHAOS_FIND_RENDERABLE_CHILD_ALL(chaos::ParticleLayerBase, FindParticleLayer);
+	CHAOS_FIND_RENDERABLE_CHILD_ALL(GPURenderableLayerSystem, FindRenderableLayer);
+	CHAOS_FIND_RENDERABLE_CHILD_ALL(ParticleLayerBase, FindParticleLayer);
 
 #undef CHAOS_FIND_RENDERABLE_CHILD_ALL
 #undef CHAOS_FIND_RENDERABLE_CHILD
 
-	chaos::GPURenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, chaos::TagType layer_tag, int render_order)
+	GPURenderableLayerSystem * Game::AddChildRenderLayer(char const * layer_name, TagType layer_tag, int render_order)
 	{
-		chaos::GPURenderableLayerSystem * result = new chaos::GPURenderableLayerSystem();
+		GPURenderableLayerSystem * result = new GPURenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return result;
 		result->SetName(layer_name);
@@ -590,7 +590,7 @@ namespace chaos
 
 	bool Game::InitializeRootRenderLayer()
 	{
-		root_render_layer = new chaos::GPURenderableLayerSystem();
+		root_render_layer = new GPURenderableLayerSystem();
 		if (root_render_layer == nullptr)
 			return false;
 
@@ -600,11 +600,11 @@ namespace chaos
 
 
 
-		if (AddChildRenderLayer("GAME", chaos::GameHUDKeys::GAME_LAYER_ID, 1) == nullptr)
+		if (AddChildRenderLayer("GAME", GameHUDKeys::GAME_LAYER_ID, 1) == nullptr)
 			return false;
-		if (AddChildRenderLayer("PLAYER", chaos::GameHUDKeys::PLAYER_LAYER_ID, 2) == nullptr) // maybe the player will go in another layer
+		if (AddChildRenderLayer("PLAYER", GameHUDKeys::PLAYER_LAYER_ID, 2) == nullptr) // maybe the player will go in another layer
 			return false;
-		if (AddChildRenderLayer("HUD", chaos::GameHUDKeys::HUD_LAYER_ID, 3) == nullptr)
+		if (AddChildRenderLayer("HUD", GameHUDKeys::HUD_LAYER_ID, 3) == nullptr)
 			return false;
 
 		return true;
@@ -617,7 +617,7 @@ namespace chaos
 
 
 		// create the manager
-		particle_manager = new chaos::ParticleManager();
+		particle_manager = new ParticleManager();
 		if (particle_manager == nullptr)
 			return false;
 		particle_manager->SetTextureAtlas(texture_atlas.get());
@@ -629,11 +629,11 @@ namespace chaos
 	int Game::AddParticleLayers()
 	{
 		int render_order = 0;
-		particle_manager->AddLayer<chaos::ParticleBackgroundLayerTrait>(render_order++, chaos::GameHUDKeys::BACKGROUND_LAYER_ID, "background"); // shuwww est ce que ca doit etre dans le particle_manager
+		particle_manager->AddLayer<ParticleBackgroundLayerTrait>(render_order++, GameHUDKeys::BACKGROUND_LAYER_ID, "background"); // shuwww est ce que ca doit etre dans le particle_manager
 		return render_order;
 	}
 
-	bool Game::CreateBackgroundImage(chaos::ObjectRequest material_request, chaos::ObjectRequest texture_request)
+	bool Game::CreateBackgroundImage(ObjectRequest material_request, ObjectRequest texture_request)
 	{
 		if (material_request.IsNoneRequest())
 			material_request = "background";
@@ -641,9 +641,9 @@ namespace chaos
 		// create the particle allocation if necessary
 		if (background_allocations == nullptr)
 		{
-            background_allocations = GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::BACKGROUND_LAYER_ID, nullptr, 1, true, [](chaos::ParticleAccessor<chaos::ParticleBackground> accessor)
+            background_allocations = GetGameParticleCreator().SpawnParticles(GameHUDKeys::BACKGROUND_LAYER_ID, nullptr, 1, true, [](ParticleAccessor<ParticleBackground> accessor)
             {
-                for (chaos::ParticleBackground & particle : accessor)
+                for (ParticleBackground & particle : accessor)
                     particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
             });
 			if (background_allocations == nullptr)
@@ -651,21 +651,21 @@ namespace chaos
 		}
 
 		// create a material
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		GPUResourceManager * resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager != nullptr)
 		{
 			// search declared material
-			chaos::GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_request);
+			GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_request);
 			if (result != nullptr)
 			{
 				if (!texture_request.IsNoneRequest())
 				{
 					// search the corresponding texture
-					chaos::GPUTexture * texture = resource_manager->FindTexture(texture_request);
+					GPUTexture * texture = resource_manager->FindTexture(texture_request);
 					if (texture == nullptr)
 						return false;
 					// create a child material
-					chaos::GPURenderMaterial * child_material = new chaos::GPURenderMaterial();
+					GPURenderMaterial * child_material = new GPURenderMaterial();
 					if (child_material == nullptr)
 						return false;
 					// initialize the material with parent ande texture
@@ -674,7 +674,7 @@ namespace chaos
 					result = child_material;
 				}
 				// assign the material to the background
-				chaos::ParticleLayerBase * layer = particle_manager->FindLayer(chaos::GameHUDKeys::BACKGROUND_LAYER_ID);
+				ParticleLayerBase * layer = particle_manager->FindLayer(GameHUDKeys::BACKGROUND_LAYER_ID);
 				if (layer != nullptr)
 					layer->SetRenderMaterial(result);
 			}
@@ -685,7 +685,7 @@ namespace chaos
 
 	bool Game::InitializeClocks(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
-		chaos::Clock* application_clock = GetApplicationClock();
+		Clock* application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
 			return false;
 
@@ -698,7 +698,7 @@ namespace chaos
 	bool Game::CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 		bool gamepad_enabled = true;
-		chaos::JSONTools::GetAttribute(config, "gamepad_enabled", gamepad_enabled, true);
+		JSONTools::GetAttribute(config, "gamepad_enabled", gamepad_enabled, true);
 		if (gamepad_enabled)
 		{
 			gamepad_manager = new GameGamepadManager(this);
@@ -762,25 +762,25 @@ namespace chaos
 		return true;
 	}
 
-	chaos::SoundManager * Game::GetSoundManager()
+	SoundManager * Game::GetSoundManager()
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
+		MyGLFW::SingleWindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetSoundManager();
 	}
 
-	chaos::Clock * Game::GetApplicationClock()
+	Clock * Game::GetApplicationClock()
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
+		MyGLFW::SingleWindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();
 	}
 
-	chaos::Clock const * Game::GetApplicationClock() const
+	Clock const * Game::GetApplicationClock() const
 	{
-		chaos::MyGLFW::SingleWindowApplication const * application = chaos::Application::GetInstance();
+		MyGLFW::SingleWindowApplication const * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();
@@ -800,20 +800,20 @@ namespace chaos
 
 	bool Game::LoadPersistentGameData(nlohmann::json const& game_data)
 	{
-		chaos::JSONTools::GetAttribute(game_data, "best_score", best_score);
+		JSONTools::GetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
 	bool Game::SavePersistentGameData(nlohmann::json & game_data) const
 	{
-		chaos::JSONTools::SetAttribute(game_data, "best_score", best_score);
+		JSONTools::SetAttribute(game_data, "best_score", best_score);
 		return true;
 	}
 
 	bool Game::SerializePersistentGameData(bool save)
 	{
 		// get application
-		chaos::Application * application = chaos::Application::GetInstance();
+		Application * application = Application::GetInstance();
 		if (application == nullptr)
 			return false;
 		// get user temp directory
@@ -834,7 +834,7 @@ namespace chaos
 		// load the game data
 		else
 		{	
-			if (!chaos::JSONTools::LoadJSONFile(filepath, game_data, false))
+			if (!JSONTools::LoadJSONFile(filepath, game_data, false))
 				return false;
 			return LoadPersistentGameData(game_data);
 		}
@@ -842,23 +842,23 @@ namespace chaos
 
 	CHAOS_HELP_TEXT(CMD, "-MuteMusic");
 
-	chaos::Sound * Game::SetInGameMusic(char const * music_name)
+	Sound * Game::SetInGameMusic(char const * music_name)
 	{
 		assert(music_name != nullptr);
 
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
 			return nullptr;
 #endif
 		
 		// ensure there is a real music change
 		if (game_music != nullptr && !game_music->IsPendingKill())
 		{
-			chaos::SoundManager * sound_manager = GetSoundManager();
+			SoundManager * sound_manager = GetSoundManager();
 			if (sound_manager == nullptr)
 				return nullptr;
 
-			chaos::SoundSource * new_source = sound_manager->FindSource(music_name);
+			SoundSource * new_source = sound_manager->FindSource(music_name);
 
 			if (new_source == game_music->GetSource())
 				return game_music.get();
@@ -880,14 +880,14 @@ namespace chaos
 		return game_music.get();
 	}
 
-	chaos::Sound * Game::PlaySound(char const * name, chaos::PlaySoundDesc play_desc, chaos::TagType category_tag)
+	Sound * Game::PlaySound(char const * name, PlaySoundDesc play_desc, TagType category_tag)
 	{
 		// search manager
-		chaos::SoundManager * sound_manager = GetSoundManager();
+		SoundManager * sound_manager = GetSoundManager();
 		if (sound_manager == nullptr)
 			return nullptr;
 		// search source
-		chaos::SoundSource * source = sound_manager->FindSource(name);
+		SoundSource * source = sound_manager->FindSource(name);
 		if (source == nullptr)
 			return nullptr;
 
@@ -909,9 +909,9 @@ namespace chaos
 		return source->Play(play_desc);
 	}
 
-	chaos::Sound * Game::PlaySound(char const * name, bool paused, bool looping, float blend_in_time, chaos::TagType category_tag)
+	Sound * Game::PlaySound(char const * name, bool paused, bool looping, float blend_in_time, TagType category_tag)
 	{
-		chaos::PlaySoundDesc play_desc;
+		PlaySoundDesc play_desc;
 		play_desc.paused = paused;
 		play_desc.looping = looping;
 		play_desc.blend_in_time = blend_in_time;
@@ -938,17 +938,17 @@ namespace chaos
 		return true;
 	}
 
-	chaos::SM::StateMachine * Game::DoCreateGameStateMachine()
+	SM::StateMachine * Game::DoCreateGameStateMachine()
 	{
 		return game_sm_class.CreateInstance();
 	}
 
-	chaos::SM::StateMachineInstance * Game::DoCreateGameStateMachineInstance(chaos::SM::StateMachine * state_machine)
+	SM::StateMachineInstance * Game::DoCreateGameStateMachineInstance(SM::StateMachine * state_machine)
 	{
 		return new GameStateMachineInstance(this, state_machine);
 	}
 
-	bool Game::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming
+	bool Game::OnGamepadInput(MyGLFW::PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming
 	{
 		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());
 
@@ -965,13 +965,13 @@ namespace chaos
 		return false;
 	}
 
-	bool Game::OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+	bool Game::OnPhysicalGamepadInput(MyGLFW::PhysicalGamepad * physical_gamepad)
 	{
 		// ignore invalid gamepad : should never happen
 		if (!physical_gamepad->IsAnyAction())
 			return true;
 		// change the application mode
-		SetInputMode(chaos::InputMode::GAMEPAD);
+		SetInputMode(InputMode::GAMEPAD);
 		// special action on gamepad input
 		OnGamepadInput(physical_gamepad);
 
@@ -981,7 +981,7 @@ namespace chaos
 	bool Game::InitializeGamepadButtonInfo()
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
-#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[chaos::XBoxButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
+#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[XBoxButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
 		CHAOS_ADD_BUTTONMAP(BUTTON_A, ButtonA);
 		CHAOS_ADD_BUTTONMAP(BUTTON_B, ButtonB);
 		CHAOS_ADD_BUTTONMAP(BUTTON_X, ButtonX);
@@ -998,22 +998,22 @@ namespace chaos
 	bool Game::InitializeParticleTextGenerator(nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		// get the font sub objects
-		nlohmann::json const * fonts_config = chaos::JSONTools::GetStructure(config, "fonts");
+		nlohmann::json const * fonts_config = JSONTools::GetStructure(config, "fonts");
 
 		// create the generator
-		particle_text_generator = new chaos::ParticleTextGenerator::Generator(*texture_atlas);
+		particle_text_generator = new ParticleTextGenerator::Generator(*texture_atlas);
 		if (particle_text_generator == nullptr)
 			return false;
 
 		// bitmaps in generator
-		chaos::BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
+		BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
 		if (folder_info != nullptr)
 		{
 			// for each bitmap, that correspond to a button, register a [NAME] in the generator	
 			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
 			{
 				std::string const & bitmap_name = it->second.first;
-				chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_name.c_str());
+				BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_name.c_str());
 				if (info == nullptr)
 					continue;
 				std::string const & generator_alias = it->second.second;
@@ -1022,7 +1022,7 @@ namespace chaos
 			// embedded sprites
 			if (fonts_config != nullptr)
 			{
-				nlohmann::json const * font_bitmaps_json = chaos::JSONTools::GetStructure(*fonts_config, "bitmaps");
+				nlohmann::json const * font_bitmaps_json = JSONTools::GetStructure(*fonts_config, "bitmaps");
 				if (font_bitmaps_json != nullptr && font_bitmaps_json->is_object())
 				{
 					for (nlohmann::json::const_iterator it = font_bitmaps_json->begin(); it != font_bitmaps_json->end(); ++it)
@@ -1031,7 +1031,7 @@ namespace chaos
 							continue;
 						std::string bitmap_name = it.key();
 						std::string bitmap_path = it->get<std::string>();
-						chaos::BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_path.c_str());
+						BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_path.c_str());
 						if (info == nullptr)
 							continue;
 						particle_text_generator->AddBitmap(bitmap_name.c_str(), info);
@@ -1043,13 +1043,13 @@ namespace chaos
 		// the colors
 		if (fonts_config != nullptr)
 		{
-			nlohmann::json const * font_colors_json = chaos::JSONTools::GetStructure(*fonts_config, "colors");
+			nlohmann::json const * font_colors_json = JSONTools::GetStructure(*fonts_config, "colors");
 			if (font_colors_json != nullptr && font_colors_json->is_object())
 			{
 				for (nlohmann::json::const_iterator it = font_colors_json->begin(); it != font_colors_json->end(); ++it)
 				{
 					glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
-					if (!chaos::LoadFromJSON(*it, color))
+					if (!LoadFromJSON(*it, color))
 						continue;
 					std::string color_name = it.key();
 					particle_text_generator->AddColor(color_name.c_str(), color);
@@ -1075,7 +1075,7 @@ namespace chaos
 		configuration_path = config_path;
 
 		// capture the game instance configuration
-		nlohmann::json const* gi_config = chaos::JSONTools::GetStructure(config, "game_instance");
+		nlohmann::json const* gi_config = JSONTools::GetStructure(config, "game_instance");
 		if (gi_config != nullptr && gi_config->is_object())
 			game_instance_configuration = *gi_config;
 		else
@@ -1099,7 +1099,7 @@ namespace chaos
 	{
 		// start the music
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
 			menu_music = nullptr;
 		else
 #endif
@@ -1137,7 +1137,7 @@ namespace chaos
 	{
 		// start sound
 #if _DEBUG
-		if (chaos::Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
+		if (Application::HasApplicationCommandLineFlag("-MuteMusic")) // CMDLINE
 			pause_music = nullptr;
 		else
 #endif
@@ -1177,7 +1177,7 @@ namespace chaos
 
 	void Game::SetInGameSoundPause(bool in_paused)
 	{
-		chaos::SoundCategory * categories[2] = { nullptr, nullptr };
+		SoundCategory * categories[2] = { nullptr, nullptr };
 
 		if (game_instance != nullptr)
 			categories[0] = game_instance->GetSoundCategory();
@@ -1186,14 +1186,14 @@ namespace chaos
 
 		for (int i = 0; i < 2; ++i)
 		{
-			chaos::SoundCategory * category = categories[i];
+			SoundCategory * category = categories[i];
 			if (category == nullptr)
 				continue;
 			if (in_paused)
-				category->StartBlend(chaos::BlendVolumeDesc::BlendOut(0.5f, true, false), true);
+				category->StartBlend(BlendVolumeDesc::BlendOut(0.5f, true, false), true);
 			else
 			{
-				category->StartBlend(chaos::BlendVolumeDesc::BlendIn(0.5f), true);
+				category->StartBlend(BlendVolumeDesc::BlendIn(0.5f), true);
 				category->Pause(false);
 			}
 		}
@@ -1214,7 +1214,7 @@ namespace chaos
 		return result;
 	}
 
-	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	bool Game::OnEnterGame(MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		assert(game_instance == nullptr);
 		// create the game instance
@@ -1266,7 +1266,7 @@ namespace chaos
 			return true;
 #endif
 		// level knows about that
-		chaos::LevelInstance const * level_instance = GetLevelInstance();
+		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (level_instance->CheckLevelCompletion())
 				return true;
@@ -1281,12 +1281,12 @@ namespace chaos
 
 
 		// game instance knows about that
-		chaos::GameInstance const* game_instance = GetGameInstance();
+		GameInstance const* game_instance = GetGameInstance();
 		if (game_instance != nullptr)
 			if (!game_instance->CanCompleteLevel())
 				return false;
 		// level knows about that
-		chaos::LevelInstance const * level_instance = GetLevelInstance();
+		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 			if (!level_instance->CanCompleteLevel())
 				return false;
@@ -1334,11 +1334,11 @@ namespace chaos
 		return true;
 	}
 
-	chaos::TagType Game::GetCurrentStateTag(bool strict_state, bool use_destination) const
+	TagType Game::GetCurrentStateTag(bool strict_state, bool use_destination) const
 	{
 		if (game_sm_instance == nullptr)
 			return -1;
-		chaos::SM::StateBase const * current_state = (strict_state)?
+		SM::StateBase const * current_state = (strict_state)?
 			game_sm_instance->GetCurrentStrictState(use_destination) :
 			game_sm_instance->GetCurrentState();
 		if (current_state == nullptr)
@@ -1388,7 +1388,7 @@ namespace chaos
 		return false;
 	}
 
-	bool Game::RequireStartGame(chaos::MyGLFW::PhysicalGamepad * physical_gamepad)
+	bool Game::RequireStartGame(MyGLFW::PhysicalGamepad * physical_gamepad)
 	{
 		PhysicalGamepadWrapper game_pad_wrapper = PhysicalGamepadWrapper(physical_gamepad);
 
@@ -1426,24 +1426,24 @@ namespace chaos
 		hud = nullptr;
 	}
 
-	chaos::box2 Game::GetCanvasBox() const
+	box2 Game::GetCanvasBox() const
 	{
 		glm::vec2 canvas_size;
 		canvas_size.x = 1600.0f;
 		canvas_size.y = canvas_size.x / viewport_wanted_aspect;
 
-		chaos::box2 result;
+		box2 result;
 		result.position = glm::vec2(0.0f, 0.0f);
 		result.half_size = canvas_size * 0.5f;
 		return result;
 	}
 
-	chaos::box2 Game::GetWorldBox() const
+	box2 Game::GetWorldBox() const
 	{
 		// look at the level instance
 		if (level_instance != nullptr)
 		{
-			chaos::box2 result = level_instance->GetBoundingBox();
+			box2 result = level_instance->GetBoundingBox();
 			if (!IsGeometryEmpty(result))
 				return result;
 		}
@@ -1481,17 +1481,17 @@ namespace chaos
 		return SetCurrentLevel(levels[i + 1].get());
 	}
 	
-	chaos::AutoCastable<Level> Game::FindLevel(chaos::ObjectRequest request)
+	AutoCastable<Level> Game::FindLevel(ObjectRequest request)
 	{
 		return request.FindObject(levels);
 	}
 
-	chaos::AutoConstCastable<Level> Game::FindLevel(chaos::ObjectRequest request) const
+	AutoConstCastable<Level> Game::FindLevel(ObjectRequest request) const
 	{
 		return request.FindObject(levels);
 	}
 
-	chaos::AutoCastable<Level> Game::FindLevelByIndex(int level_index)
+	AutoCastable<Level> Game::FindLevelByIndex(int level_index)
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1500,7 +1500,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	chaos::AutoConstCastable<Level> Game::FindLevelByIndex(int level_index) const
+	AutoConstCastable<Level> Game::FindLevelByIndex(int level_index) const
 	{
 		size_t count = levels.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1511,7 +1511,7 @@ namespace chaos
 
 	bool Game::SetCurrentLevel(Level * new_level) // new_level can be set to nullptr, just to clear every thing
 	{
-		chaos::shared_ptr<Level> old_level = GetLevel();
+		shared_ptr<Level> old_level = GetLevel();
 
 #if _DEBUG
 		SetCheatSkipLevelRequired(false);
@@ -1554,7 +1554,7 @@ namespace chaos
 
 	bool Game::ReloadGameConfiguration()
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
+		MyGLFW::SingleWindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return false;
 
@@ -1565,7 +1565,7 @@ namespace chaos
 		if (!application->ReloadConfigurationFile(config))
 			return false;
 
-		nlohmann::json const * game_config = chaos::JSONTools::GetStructure(config, "game");
+		nlohmann::json const * game_config = JSONTools::GetStructure(config, "game");
 		if (game_config == nullptr)
 			return false;
 
@@ -1580,11 +1580,11 @@ namespace chaos
 		if (level_instance == nullptr)
 			return false;
 
-		chaos::shared_ptr<Level> old_level = level_instance->GetLevel(); // keep a reference to prevent the destruction when it will be removed from the levels array
+		shared_ptr<Level> old_level = level_instance->GetLevel(); // keep a reference to prevent the destruction when it will be removed from the levels array
 		assert(old_level != nullptr);
 
 		// reload the level
-		chaos::shared_ptr<Level> level = DoLoadLevel(old_level->GetPath()); 
+		shared_ptr<Level> level = DoLoadLevel(old_level->GetPath()); 
 		if (level == nullptr)
 			return false;
 		// initialize it

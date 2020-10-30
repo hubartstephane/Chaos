@@ -29,7 +29,7 @@ namespace chaos
 	// GameHUDComponent
 	// ====================================================================
 
-	class GameHUDComponent : public chaos::GPURenderable
+	class GameHUDComponent : public GPURenderable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
@@ -39,36 +39,36 @@ namespace chaos
 	public:
 
 		/** getters on game */
-		chaos::AutoCastable<Game> GetGame();
+		AutoCastable<Game> GetGame();
 		/** getters on game */
-		chaos::AutoConstCastable<Game> GetGame() const;
+		AutoConstCastable<Game> GetGame() const;
 
 		/** getters on game instance */
-		chaos::AutoCastable<GameInstance> GetGameInstance();
+		AutoCastable<GameInstance> GetGameInstance();
 		/** getters on game instance */
-		chaos::AutoConstCastable<GameInstance> GetGameInstance() const;
+		AutoConstCastable<GameInstance> GetGameInstance() const;
 
 		/** get currently played level */
-		chaos::AutoCastable<Level> GetLevel();
+		AutoCastable<Level> GetLevel();
 		/** get currently played level */
-		chaos::AutoConstCastable<Level> GetLevel() const;
+		AutoConstCastable<Level> GetLevel() const;
 
 		/** get currently played level */
-		chaos::AutoCastable<LevelInstance> GetLevelInstance();
+		AutoCastable<LevelInstance> GetLevelInstance();
 		/** get currently played level */
-		chaos::AutoConstCastable<LevelInstance> GetLevelInstance() const;
+		AutoConstCastable<LevelInstance> GetLevelInstance() const;
 
 		/** get the player */
-		chaos::AutoCastable<Player> GetPlayer(size_t player_index);
+		AutoCastable<Player> GetPlayer(size_t player_index);
 		/** get the player */
-		chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;
+		AutoConstCastable<Player> GetPlayer(size_t player_index) const;
 		/** get the number of player */
 		size_t GetPlayerCount() const;
 
 	protected:
 
 		/** returns the coordinate of the view corner corresponding to the given hotpoint */
-		static glm::vec2 GetCanvasBoxCorner(chaos::box2 const & canvas_box, chaos::Hotpoint hotpoint);
+		static glm::vec2 GetCanvasBoxCorner(box2 const & canvas_box, Hotpoint hotpoint);
 		/** MAYBE (!!!) called whenever the hud is beeing inserted into the hud (the HUD::RegisterComponent is template function. the function below is not necessaraly been called) */
 		virtual void OnInsertedInHUD();
 		/** called whenever the hud is beeing removed into the hud */
@@ -101,7 +101,7 @@ namespace chaos
 	protected:
 
 		/** allocations for the title */
-		chaos::shared_ptr<chaos::ParticleAllocationBase> allocations;
+		shared_ptr<ParticleAllocationBase> allocations;
 	};
 
 
@@ -116,14 +116,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDTextComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDTextComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
-		GameHUDTextComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDTextComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 
 	protected:
 
 		/** tweak the text generation parameters */
-		virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const;
+		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const;
 		/** create the text */
 		virtual void UpdateTextAllocation(char const * in_text);
 		/** override */
@@ -134,9 +134,9 @@ namespace chaos
 	protected:
 
 		/** the layer owning the allocation */
-		chaos::TagType layer_id = 0;
+		TagType layer_id = 0;
 		/** the placement and aspect of the text */
-		chaos::ParticleTextGenerator::GeneratorParams generator_params;
+		ParticleTextGenerator::GeneratorParams generator_params;
 	};
 
 	// ====================================================================
@@ -151,12 +151,12 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDTextComponent(in_layer_id),
 			cached_value(in_initial_value),
 			format(in_format) {}
 		/** constructor */
-		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDTextComponent(in_params, in_layer_id) ,
 			cached_value(in_initial_value),
 			format(in_format){}
@@ -174,14 +174,14 @@ namespace chaos
 			if (!GameHUDTextComponent::InitializeFromConfiguration(json, config_path))
 				return false;
 		
-			chaos::JSONTools::GetAttribute(json, "format", format);		
+			JSONTools::GetAttribute(json, "format", format);		
 			return true;
 		}
 
 		/** format the text according to cached value */
 		virtual std::string FormatText() const
 		{
-			return chaos::StringTools::Printf(format.c_str(), cached_value);
+			return StringTools::Printf(format.c_str(), cached_value);
 		}
 
 		/** override */
@@ -241,9 +241,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDNotificationComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDNotificationComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
-		GameHUDNotificationComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 
 		/** show/initialize the notification */
 		void ShowNotification(char const * in_message, float in_lifetime);
@@ -272,9 +272,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDScoreComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDScoreComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
-		GameHUDScoreComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDScoreComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<int>("Score: %d", -1, in_params, in_layer_id) {}
 
 	protected:
@@ -292,15 +292,15 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDFramerateComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDFramerateComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
-		GameHUDFramerateComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDFramerateComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_params, in_layer_id) {}
 
 	protected:
 
 		/** override */
-		virtual int DoDisplay(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params) override;
+		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 		/** override */
 		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 
@@ -319,9 +319,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDTimeoutComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDTimeoutComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
-		GameHUDTimeoutComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDTimeoutComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_params, in_layer_id) {}
 
 	protected:
@@ -329,7 +329,7 @@ namespace chaos
 		/** override */
 		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
 		/** override */
-		virtual void TweakTextGeneratorParams(chaos::ParticleTextGenerator::GeneratorParams & final_params) const override;
+		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const override;
 	};
 
 
@@ -342,7 +342,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDLifeComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::LIFE_LAYER_ID);
+		GameHUDLifeComponent(TagType in_layer_id = GameHUDKeys::LIFE_LAYER_ID);
 
 	protected:
 
@@ -366,12 +366,12 @@ namespace chaos
 	protected:
 
 		/** the layer owning the allocation */
-		chaos::TagType layer_id = 0;
+		TagType layer_id = 0;
 		/** caching the current life count */
 		int cached_value = -1;
 
 		/** the hotpoint of the first particle */
-		chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+		Hotpoint hotpoint = Hotpoint::BOTTOM_LEFT;
 		/** the position of the very first particle */
 		glm::vec2 position = glm::vec2(0.0f, 0.0f);
 		/** the particle size of the particle (special meaning, see .cpp) */
@@ -405,9 +405,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDLevelTitleComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDLevelTitleComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
-		GameHUDLevelTitleComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
+		GameHUDLevelTitleComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
 			GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params, in_layer_id) {}
 
 	protected:
@@ -428,9 +428,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDFreeCameraComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDFreeCameraComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 		/** constructor */
-		GameHUDFreeCameraComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDFreeCameraComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
 
 	protected:
 
@@ -473,7 +473,7 @@ namespace chaos
 		/** the current time */
 		float current_time = 0.0f;
 		/** the inner component */
-		chaos::shared_ptr<GameHUDComponent> child_component;
+		shared_ptr<GameHUDComponent> child_component;
 	};
 
 #endif

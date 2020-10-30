@@ -271,11 +271,11 @@ namespace chaos
 			if (!ReloadConfigurationFile(config))
 				return false;
 			// get the structure of interrest
-			nlohmann::json const * gpu_config = chaos::JSONTools::GetStructure(config, "gpu");
+			nlohmann::json const * gpu_config = JSONTools::GetStructure(config, "gpu");
 			if (gpu_config == nullptr)
 				return false;
 			// create a temporary manager
-			chaos::shared_ptr<GPUResourceManager> other_gpu_manager = new GPUResourceManager; // destroyed at the end of the function
+			shared_ptr<GPUResourceManager> other_gpu_manager = new GPUResourceManager; // destroyed at the end of the function
 			if (other_gpu_manager == nullptr)
 				return false;
 			if (!other_gpu_manager->StartManager())

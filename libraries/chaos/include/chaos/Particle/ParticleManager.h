@@ -64,7 +64,7 @@ namespace chaos
 
         /** create a particle spawner */
         template<typename ...PARAMS>
-        chaos::ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_name, PARAMS... params)
+        ParticleSpawner* CreateParticleSpawner(ObjectRequest layer_name, PARAMS... params)
         {
             ParticleLayerBase* layer = FindLayer(layer_name);
             if (layer == nullptr)
@@ -73,11 +73,11 @@ namespace chaos
         }
 
         template<typename ...PARAMS>
-        chaos::ParticleSpawner GetParticleSpawner(ObjectRequest layer_name, PARAMS... params)
+        ParticleSpawner GetParticleSpawner(ObjectRequest layer_name, PARAMS... params)
         {
             ParticleLayerBase* layer = FindLayer(layer_name);
             if (layer == nullptr)
-                return chaos::ParticleSpawner(nullptr);
+                return ParticleSpawner(nullptr);
             return layer->GetParticleSpawner(params...);
         }
 

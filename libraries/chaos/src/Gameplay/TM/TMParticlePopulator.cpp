@@ -53,7 +53,7 @@ namespace chaos
 			allocation = layer_instance->SpawnParticles(0);
 			if (allocation == nullptr)
 			{
-				chaos::LogTools::Error("TMParticlePopulator::FlushParticles : fails to SpawnParticles");
+				LogTools::Error("TMParticlePopulator::FlushParticles : fails to SpawnParticles");
 				particle_count = 0;
 				return false;
 			}
@@ -64,21 +64,21 @@ namespace chaos
 		return result;
 	}
 
-	bool TMParticlePopulator::AddParticle(char const* bitmap_name, chaos::Hotpoint hotpoint, chaos::box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
+	bool TMParticlePopulator::AddParticle(char const* bitmap_name, Hotpoint hotpoint, box2 particle_box, glm::vec4 const& color, float rotation, int particle_flags, int gid, bool keep_aspect_ratio)
 	{
 		assert(bitmap_name != nullptr);
 
 		// search bitmap information for the particle
-		chaos::BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
+		BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 		if (bitmap_info == nullptr)
 		{
-			chaos::LogTools::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
+			LogTools::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
 			return false;
 		}
 		// get the real layout of the bitmap by removing animation
-		chaos::BitmapAtlas::BitmapLayout layout = *bitmap_info;
+		BitmapAtlas::BitmapLayout layout = *bitmap_info;
 		if (bitmap_info->HasAnimation() && bitmap_info->GetAnimationImageCount() > 0)
-			layout = bitmap_info->GetAnimationLayout(0, chaos::WrapMode::CLAMP); // take frame 0 by default
+			layout = bitmap_info->GetAnimationLayout(0, WrapMode::CLAMP); // take frame 0 by default
 		// compute the bounding box
 		if (IsGeometryEmpty(particle_box))
 		{
@@ -91,10 +91,10 @@ namespace chaos
 			{
 				int layout_width  = layout.width;
 				int layout_height = layout.height;
-				if ((particle_flags & chaos::ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
+				if ((particle_flags & ParticleFlags::TEXTURE_DIAGONAL_FLIP) != 0)
 					std::swap(layout_width, layout_height);
 
-				particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout_width, layout_height), true);
+				particle_box = AlterBoxToAspect(particle_box, MathTools::CastAndDiv<float>(layout_width, layout_height), true);
 			}
 		}
 
@@ -111,12 +111,12 @@ namespace chaos
 		// for tiled map objects, rotation use BOTTOM-LEFT as pivot whereas in our particle system, the  pivot is center
 		if (rotation != 0.0f)
 		{
-			glm::vec2 pivot = chaos::ConvertHotpoint(particle_box.position, particle_box.half_size * 2.0f, chaos::Hotpoint::CENTER, hotpoint);
+			glm::vec2 pivot = ConvertHotpoint(particle_box.position, particle_box.half_size * 2.0f, Hotpoint::CENTER, hotpoint);
 
 			float c = std::cos(rotation);
 			float s = std::sin(rotation);
 			
-			particle.bounding_box.position = pivot + chaos::GLMTools::Rotate((particle.bounding_box.position - pivot), c, s);
+			particle.bounding_box.position = pivot + GLMTools::Rotate((particle.bounding_box.position - pivot), c, s);
 		}
 
 		particles[particle_count++] = particle;

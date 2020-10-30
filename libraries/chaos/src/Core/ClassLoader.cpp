@@ -32,7 +32,7 @@ namespace chaos
 
 		// Step 1 : load all classes (no full initialization, ignore parent). Register them (without inheritance data in classes list)
 		boost::filesystem::directory_iterator end;
-		for (boost::filesystem::directory_iterator it = chaos::FileTools::GetDirectoryIterator(path); it != end; ++it)
+		for (boost::filesystem::directory_iterator it = FileTools::GetDirectoryIterator(path); it != end; ++it)
 		{
 			Class* cls = DoLoadClassHelper<Class *>(it->path(), [] (char const* class_name, nlohmann::json const& json)
 			{

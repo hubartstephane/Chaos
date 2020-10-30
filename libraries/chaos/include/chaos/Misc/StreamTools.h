@@ -4,6 +4,7 @@ namespace chaos
 {
 	namespace StreamTools
 	{
+		class Indent;
 
 	}; // namespace StreamTools
 

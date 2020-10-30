@@ -10,7 +10,7 @@ namespace chaos
 namespace chaos
 {
 	/** the possible direction */
-	enum Direction : int // XXXX: no class, so this can be implicitly converted to int
+	enum Direction : int // XXX: no class, so this can be implicitly converted to int
 	{
 		POSITIVE_X = (1 << 0),
 		NEGATIVE_X = (1 << 1),

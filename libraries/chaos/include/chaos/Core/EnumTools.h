@@ -1,13 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace EnumTools
-	{
-
-	}; // namespace EnumTools
-
-}; // namespace chaos
 
 #else 
 

@@ -16,15 +16,6 @@ bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 
 #define CHAOS_JSON_ATTRIBUTE(config, x) chaos::JSONTools::GetAttribute(config, #x, x)
 
-namespace chaos
-{
-	namespace JSONTools
-	{
-
-	}; // namespace JSONTools
-
-}; // namespace chaos
-
 #else 
 
 namespace chaos
@@ -33,9 +24,9 @@ namespace chaos
 	// EXTERNAL FUNCTION
 	// =================
 
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeFromJSON)
-		CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeIntoJSON)
-		CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(GetClass)
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeFromJSON);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(SerializeIntoJSON);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(GetClass);
 
 	/** an utility function to create an object from a json object */
 	template<typename T>

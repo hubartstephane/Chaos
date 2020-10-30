@@ -22,7 +22,6 @@ namespace chaos
 
 namespace chaos
 {
-
 	namespace BitmapAtlas
 	{
 		/**

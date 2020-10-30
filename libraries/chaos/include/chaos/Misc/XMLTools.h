@@ -93,7 +93,7 @@ namespace chaos
 	public:
 
 		/** the tinyxml2 document */
-		tinyxml2::XMLDocument * doc;
+		tinyxml2::XMLDocument * doc = nullptr;
 	};
 
 }; // namespace chaos

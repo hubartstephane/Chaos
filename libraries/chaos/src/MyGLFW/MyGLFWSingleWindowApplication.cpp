@@ -105,7 +105,7 @@ namespace chaos
 
 			// compute the monitor upon which the window will be : use it for pixel format
 			if (params.monitor == nullptr)
-				params.monitor = Tools::GetMonitorByIndex(params.monitor_index);
+				params.monitor = GetMonitorByIndex(params.monitor_index);
 
 			// retrieve the position of the monitor
 			int monitor_x = 0;

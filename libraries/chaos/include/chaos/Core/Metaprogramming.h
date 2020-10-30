@@ -1,7 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
 	// creates 2 metaclasses
 	//
 	//   - has_TRAITNAME<...> => boost::mpl::bool_
@@ -185,21 +183,10 @@ CHAOS_GENERATE_CHECK_METHOD(funcname)\
 CHAOS_GENERATE_CHECK_FUNCTION(funcname)
 
 
-	namespace meta
-	{
-
-
-	}; // namespace meta
-
-}; // namespace chaos
-
 #else 
 
 namespace chaos
 {
-
-
-
 	// ==================================================
 	// Meta functions
 	// ==================================================

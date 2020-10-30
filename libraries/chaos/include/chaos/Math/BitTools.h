@@ -1,13 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace BitTools
-	{
-
-	}; // namespace BitTools
-
-}; // namespace chaos
 
 #else 
 
@@ -20,8 +12,6 @@ namespace chaos
 
 	namespace BitTools
 	{
-
-
 
 #if _WIN32
 

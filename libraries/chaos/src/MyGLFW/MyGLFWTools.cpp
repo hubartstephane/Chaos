@@ -4,11 +4,7 @@ namespace chaos
 {
 	namespace MyGLFW
 	{
-		/**
-		* Tools
-		*/
-
-		std::vector<GLFWmonitor *> Tools::GetSortedMonitors()
+		std::vector<GLFWmonitor *> GetSortedMonitors()
 		{
 			std::vector<GLFWmonitor *> result;
 
@@ -40,7 +36,7 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * Tools::GetMonitorByIndex(int monitor_index) // monitor_index relative to primary monitor
+		GLFWmonitor * GetMonitorByIndex(int monitor_index) // monitor_index relative to primary monitor
 		{
 			GLFWmonitor * result = glfwGetPrimaryMonitor();
 			if (monitor_index != 0)
@@ -67,7 +63,7 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * Tools::GetNearestMonitor(glm::ivec2 const & position)
+		GLFWmonitor * GetNearestMonitor(glm::ivec2 const & position)
 		{		
 			// get all monitors
 			int monitor_count = 0;

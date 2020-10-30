@@ -1,31 +1,6 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	enum class SoundBlendType;
-
-	class PlaySoundDesc;
-	class Sound;
-	class SoundManager;
-	class SoundCallbacks;
-	class SoundAutoCallbacks;
-	class SoundObject;
-	class SoundSource;
-	class SoundCategory;
-	class SoundSourceLoader;
-	class SoundCategoryLoader;
-
-}; // namespace chaos
-
-#else
-
-namespace chaos
-{
-	// ==============================================================
-	// FORWARD DECLARATION / FRIENDSHIP MACROS
-	// ==============================================================
-
-	// all classes in this file
+// all classes in this file
 #define CHAOS_SOUND_CLASSES \
 (PlaySoundDesc) \
 (Sound) \
@@ -38,13 +13,26 @@ namespace chaos
 (SoundSourceLoader) \
 (SoundCategoryLoader)
 
-	// forward declaration
+// forward declaration
 #define CHAOS_SOUND_FORWARD_DECL(r, data, elem) class elem;
-	BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES)
 
-		// friendship macro
+// friendship macro
 #define CHAOS_SOUND_FRIEND_DECL(r, data, elem) friend class elem;
 #define CHAOS_SOUND_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FRIEND_DECL, _, CHAOS_SOUND_CLASSES)
+
+namespace chaos
+{
+	enum class SoundBlendType;
+
+	BOOST_PP_SEQ_FOR_EACH(CHAOS_SOUND_FORWARD_DECL, _, CHAOS_SOUND_CLASSES);
+
+}; // namespace chaos
+
+#else
+
+namespace chaos
+{
+
 
 		// ==============================================================
 		// SoundBlendType
@@ -677,12 +665,6 @@ namespace chaos
 		/** the listener velocity */
 		glm::vec3 listener_velocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	};
-
-	// undefine macros
-#undef CHAOS_SOUND_CLASSES
-#undef CHAOS_SOUND_FORWARD_DECL
-#undef CHAOS_SOUND_FRIEND_DECL
-#undef CHAOS_SOUND_ALL_FRIENDS
 
 }; // namespace chaos
 

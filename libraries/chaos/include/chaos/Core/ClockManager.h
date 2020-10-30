@@ -71,7 +71,7 @@ namespace chaos
 	public:
 
 		/** the event */
-		shared_ptr<class ClockEvent> clock_event;
+		shared_ptr<ClockEvent> clock_event;
 		/** the absolute (top level clock reference) time lapse before starting the event */
 		double abs_time_to_start = 0.0;
 	};

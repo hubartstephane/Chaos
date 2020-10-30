@@ -552,7 +552,7 @@ namespace chaos
 		if (is_3D_sound)
 		{
 			if (irrklang_sound != nullptr)
-				irrklang_sound->setPosition(IrrklangTools::ToIrrklangVector(in_position));
+				irrklang_sound->setPosition(ToIrrklangVector(in_position));
 			DoUpdateEffectiveVolume(GetEffectiveVolume());
 		}
 	}
@@ -562,7 +562,7 @@ namespace chaos
 		velocity = in_velocity;
 		if (is_3D_sound)
 			if (irrklang_sound != nullptr)
-				irrklang_sound->setVelocity(IrrklangTools::ToIrrklangVector(in_velocity));
+				irrklang_sound->setVelocity(ToIrrklangVector(in_velocity));
 	}
 
 	float Sound::Get3DVolumeModifier() const
@@ -695,7 +695,7 @@ namespace chaos
 		{
 			irrklang_sound = irrklang_engine->play3D(
 				source->irrklang_source.get(),
-				IrrklangTools::ToIrrklangVector(position),
+				ToIrrklangVector(position),
 				looping,
 				start_paused,
 				track,
@@ -1046,10 +1046,10 @@ namespace chaos
 			glm::vec3 up      = listener_transform[1];
 
 			irrklang_engine->setListenerPosition(
-				IrrklangTools::ToIrrklangVector(pos),
-				IrrklangTools::ToIrrklangVector(lookdir),
-				IrrklangTools::ToIrrklangVector(velocity),
-				IrrklangTools::ToIrrklangVector(up));
+				ToIrrklangVector(pos),
+				ToIrrklangVector(lookdir),
+				ToIrrklangVector(velocity),
+				ToIrrklangVector(up));
 
 			// update all 3D sounds volume
 			size_t count = sounds.size();

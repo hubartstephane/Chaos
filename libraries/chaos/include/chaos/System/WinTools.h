@@ -1,10 +1,10 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
+namespace WinTools
 {
-	class WinTools;
+	class WindowPixelCaptureResult;
 
-}; // namespace chaos
+}; // namespace WinTools
 
 #else 
 
@@ -14,59 +14,8 @@ namespace chaos
 	/**
 	* WinTools is an utility class with a number of tool function
 	*/
-	class WinTools
+	namespace WinTools
 	{
-	public:
-
-		/** returns true whether the application has focus */
-		static bool IsApplicationForeground();
-
-		/** returns true whether the keyboard is AZERTY */
-		static bool IsAzertyKeyboard();
-
-		/** create a "Press to continue ..." pause console */
-		static void PressToContinue();
-
-		/** create input/output console */
-		static bool AllocConsoleAndRedirectStdOutput();
-
-		/** test whether there is an error, display the message into the logs */
-		static void DisplayErrorMessage(char const * title = nullptr);
-
-		/** get the string from an error code */
-		static std::string GetErrorString(DWORD errCode);
-
-		/** use the windows register to "open" a file */
-		static void ShowFile(FilePathParam const & path);
-
-		/** returns the current user Document path */
-		static boost::filesystem::path GetUserDocumentPath();
-
-		/** returns the current use local path */
-		static boost::filesystem::path GetUserLocalPath();
-
-		/** returns the current user Desktop path */
-		static boost::filesystem::path GetUserDesktopPath();
-
-		/** copies a string into the clipboard */
-		static bool CopyStringToClipboard(char const * str);
-
-		/** copies a HBITMAP into clipboard */
-		static bool CopyBitmapToClipboard(HBITMAP hbitmap);
-		/** copies a FIBITMAP into clipboard */
-		static bool CopyBitmapToClipboard(FIBITMAP* bitmap);
-
-		/** capture a windows inside a HBITMAP */
-		static HBITMAP CaptureWindowToBitmap(HWND hWnd);
-		/** capture a windows inside a HBITMAP */
-		static HBITMAP CaptureWindowToBitmap(HDC hDC);
-
-		/** capture a windows inside the clipboard */
-		static bool CaptureWindowToClipboard(HWND hWnd);
-		/** capture a windows inside the clipboard */
-		static bool CaptureWindowToClipboard(HDC hDC);
-
-
 		/** a structure that contains the result of a capture of a window */
 		class WindowPixelCaptureResult
 		{
@@ -75,29 +24,74 @@ namespace chaos
 			/** the buffer that contains pixels RGB or RGBA */
 			Buffer<char> pixels;
 			/** the size of the image */
-			int width;
+			int width = 0;
 			/** the size of the image */
-			int height;
+			int height = 0;
 		};
 
+		/** returns true whether the application has focus */
+		bool IsApplicationForeground();
+
+		/** returns true whether the keyboard is AZERTY */
+		bool IsAzertyKeyboard();
+
+		/** create a "Press to continue ..." pause console */
+		void PressToContinue();
+
+		/** create input/output console */
+		bool AllocConsoleAndRedirectStdOutput();
+
+		/** test whether there is an error, display the message into the logs */
+		void DisplayErrorMessage(char const * title = nullptr);
+
+		/** get the string from an error code */
+		std::string GetErrorString(DWORD errCode);
+
+		/** use the windows register to "open" a file */
+		void ShowFile(FilePathParam const & path);
+
+		/** returns the current user Document path */
+		boost::filesystem::path GetUserDocumentPath();
+
+		/** returns the current use local path */
+		boost::filesystem::path GetUserLocalPath();
+
+		/** returns the current user Desktop path */
+		boost::filesystem::path GetUserDesktopPath();
+
+		/** copies a string into the clipboard */
+		bool CopyStringToClipboard(char const * str);
+
+		/** copies a HBITMAP into clipboard */
+		bool CopyBitmapToClipboard(HBITMAP hbitmap);
+		/** copies a FIBITMAP into clipboard */
+		bool CopyBitmapToClipboard(FIBITMAP* bitmap);
+
+		/** capture a windows inside a HBITMAP */
+		HBITMAP CaptureWindowToBitmap(HWND hWnd);
+		/** capture a windows inside a HBITMAP */
+		HBITMAP CaptureWindowToBitmap(HDC hDC);
+
+		/** capture a windows inside the clipboard */
+		bool CaptureWindowToClipboard(HWND hWnd);
+		/** capture a windows inside the clipboard */
+		bool CaptureWindowToClipboard(HDC hDC);
+
 		/** capture a windows inside a buffer */
-		static WindowPixelCaptureResult CaptureBitmapToPixelBuffer(HBITMAP hBitmap, HDC hDC);
+		WindowPixelCaptureResult CaptureBitmapToPixelBuffer(HBITMAP hBitmap, HDC hDC);
 		/** capture a windows inside a buffer */
-		static WindowPixelCaptureResult CaptureWindowToPixelBuffer(HWND hWnd);
+		WindowPixelCaptureResult CaptureWindowToPixelBuffer(HWND hWnd);
 		/** capture a windows inside a buffer */
-		static WindowPixelCaptureResult CaptureWindowToPixelBuffer(HDC hDC);
+		WindowPixelCaptureResult CaptureWindowToPixelBuffer(HDC hDC);
 		/** capture a windows inside an image */
-		static FIBITMAP * CaptureWindowToImage(HWND hWnd);
+		FIBITMAP * CaptureWindowToImage(HWND hWnd);
 		/** capture a windows inside an image */
-		static FIBITMAP * CaptureWindowToImage(HDC hDC);
+		FIBITMAP * CaptureWindowToImage(HDC hDC);
 
 		/** enumerate the monitors (ordered left to right) */
-		static std::vector<MONITORINFOEX> EnumerateMonitors();
-
-	private:
-
-		static boost::filesystem::path GetKnownFolderPath(REFKNOWNFOLDERID folder_id);
-	};
+		std::vector<MONITORINFOEX> EnumerateMonitors();
+	
+	}; // WinTools
 
 }; // namespace chaos
 

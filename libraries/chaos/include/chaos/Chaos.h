@@ -264,7 +264,7 @@
 // first step, just forward declarations
 #define CHAOS_FORWARD_DECLARATION
 #include <chaos/ChaosInternals.h>
+#undef CHAOS_FORWARD_DECLARATION
 
 // second step, full declarations
-#undef CHAOS_FORWARD_DECLARATION
 #include <chaos/ChaosInternals.h>

@@ -8,13 +8,30 @@ namespace chaos
 
 	}
 
-	void SimpleWin32Window::SimpleMessageLoop()
+	void SimpleWin32Window::SimpleMessageLoop(std::function<void()> func)
 	{
 		MSG msg = { };
-		while (GetMessage(&msg, NULL, 0, 0))
+		while (msg.message != WM_QUIT)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);    
+			// with callback => PEEK
+			if (func)
+			{
+				while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+				func();
+			}
+			// without callback => GET (blocking)
+			else
+			{
+				while (GetMessage(&msg, NULL, 0, 0))
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+			}
 		}
 	}
 
@@ -135,19 +152,17 @@ namespace chaos
 		case WM_ERASEBKGND:
 			return OnEraseBackground((HDC)wParam);
 
-#ifndef CATCH_WND_MSG
-#define CATCH_WND_MSG(MSG, FUNC)\
+#define CHAOS_CATCH_WND_MSG(MSG, FUNC)\
     case MSG:\
       return FUNC((int)GET_X_LPARAM(lParam), (int)GET_Y_LPARAM(lParam), (int)GET_KEYSTATE_WPARAM(wParam));
-			CATCH_WND_MSG(WM_MOUSEMOVE,   OnMouseMove);
-			CATCH_WND_MSG(WM_LBUTTONDOWN, OnLButtonDown);
-			CATCH_WND_MSG(WM_LBUTTONUP,   OnLButtonUp);
-			CATCH_WND_MSG(WM_RBUTTONDOWN, OnRButtonDown);
-			CATCH_WND_MSG(WM_RBUTTONUP,   OnRButtonUp);
-			CATCH_WND_MSG(WM_MBUTTONDOWN, OnMButtonDown);
-			CATCH_WND_MSG(WM_MBUTTONUP,   OnMButtonUp);    
-#undef CATCH_WND_MSG
-#endif
+			CHAOS_CATCH_WND_MSG(WM_MOUSEMOVE,   OnMouseMove);
+			CHAOS_CATCH_WND_MSG(WM_LBUTTONDOWN, OnLButtonDown);
+			CHAOS_CATCH_WND_MSG(WM_LBUTTONUP,   OnLButtonUp);
+			CHAOS_CATCH_WND_MSG(WM_RBUTTONDOWN, OnRButtonDown);
+			CHAOS_CATCH_WND_MSG(WM_RBUTTONUP,   OnRButtonUp);
+			CHAOS_CATCH_WND_MSG(WM_MBUTTONDOWN, OnMButtonDown);
+			CHAOS_CATCH_WND_MSG(WM_MBUTTONUP,   OnMButtonUp);
+#undef CHAOS_CATCH_WND_MSG
 
 		case WM_MOUSEWHEEL:
 			return OnMouseWheel((int)GET_X_LPARAM(lParam), (int)GET_Y_LPARAM(lParam), (int)GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA, (int)GET_KEYSTATE_WPARAM(wParam)); 

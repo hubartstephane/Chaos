@@ -1,13 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace StringTools
-	{
-
-	}; // namespace StringTools
-
-}; // namespace chaos
 
 #else 
 

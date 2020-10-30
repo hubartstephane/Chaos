@@ -29,24 +29,8 @@ namespace chaos
 		/** Show hide the window */
 		void ShowWindow(int nCmdShow);
 
-		/** an utility function to handle all window : live loop with a special action */
-		template<typename T>
-		static void SimpleMessageLoop(T special_operation) // example => T = boost::log::BOOST_LOG_VERSION_NAMESPACE::nop()
-		{
-			MSG msg = { };
-			while (msg.message != WM_QUIT)
-			{
-				while (PeekMessage (&msg, NULL, 0, 0, PM_REMOVE) > 0) 
-				{
-					TranslateMessage (&msg);
-					DispatchMessage (&msg);
-				}
-				special_operation();
-			}
-		}
-
-		/** an utility function to handle all window */
-		static void SimpleMessageLoop();
+		/** an utility function to handle all window (if callback is given use PEEK, use blocking GET elsewhere) */
+		static void SimpleMessageLoop(std::function<void()> func = {});
 
 	protected:
 
@@ -96,7 +80,7 @@ namespace chaos
 	protected:
 
 		/** the handler of the window */
-		HWND hWnd;
+		HWND hWnd = NULL;
 	};
 
 

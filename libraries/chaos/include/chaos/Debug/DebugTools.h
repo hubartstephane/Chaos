@@ -1,13 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace DebugTools
-	{
-
-	}; // namespace DebugTools
-
-}; // namespace chaos
 
 #else 
 

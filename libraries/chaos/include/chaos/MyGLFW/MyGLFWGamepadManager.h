@@ -15,7 +15,7 @@
 (ForceFeedbackEffect) \
 (DefaultForceFeedbackEffect)
 
-	// forward declaration
+// forward declaration
 #define CHAOS_GAMEPAD_FORWARD_DECL(r, data, elem) class elem;
 
 // friendship macro

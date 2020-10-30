@@ -7,12 +7,12 @@ namespace chaos
 	// GameTransition
 	// =========================================================
 
-	GameTransition::GameTransition(GameState * in_from_state, GameState * in_to_state, chaos::TagType in_triggering_event) :
-		chaos::SM::Transition(in_from_state, in_to_state, in_triggering_event)
+	GameTransition::GameTransition(GameState * in_from_state, GameState * in_to_state, TagType in_triggering_event) :
+		SM::Transition(in_from_state, in_to_state, in_triggering_event)
 	{
 	}
 
-	Game * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance)
+	Game * GameTransition::GetGame(SM::StateMachineInstance * sm_instance)
 	{
 		GameStateMachineInstance * game_sm_instance = auto_cast(sm_instance);
 		if (game_sm_instance != nullptr)
@@ -20,7 +20,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	Game const * GameTransition::GetGame(chaos::SM::StateMachineInstance * sm_instance) const
+	Game const * GameTransition::GetGame(SM::StateMachineInstance * sm_instance) const
 	{
 		GameStateMachineInstance const * game_sm_instance = auto_cast(sm_instance);
 		if (game_sm_instance != nullptr)
@@ -33,11 +33,11 @@ namespace chaos
 	// =========================================================
 
 	GameState::GameState(GameStateMachine * in_state_machine) :
-		chaos::SM::State(in_state_machine)
+		SM::State(in_state_machine)
 	{
 	}
 
-	Game * GameState::GetGame(chaos::SM::StateMachineInstance * sm_instance)
+	Game * GameState::GetGame(SM::StateMachineInstance * sm_instance)
 	{
 		GameStateMachineInstance * game_sm_instance = auto_cast(sm_instance);
 		if (game_sm_instance != nullptr)
@@ -45,7 +45,7 @@ namespace chaos
 		return nullptr;
 	}
 
-	Game const * GameState::GetGame(chaos::SM::StateMachineInstance const * sm_instance) const
+	Game const * GameState::GetGame(SM::StateMachineInstance const * sm_instance) const
 	{
 		GameStateMachineInstance const * game_sm_instance = auto_cast(sm_instance);
 		if (game_sm_instance != nullptr)
@@ -64,7 +64,7 @@ namespace chaos
 		SetName("MainMenu");
 	}
 
-	bool MainMenuState::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::Object * extra_data)
+	bool MainMenuState::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -72,7 +72,7 @@ namespace chaos
 		return false;
 	}
 
-	bool MainMenuState::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::Object * extra_data)
+	bool MainMenuState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -87,7 +87,7 @@ namespace chaos
 		SetName("Playing");
 	}
 
-	bool PlayingState::TickImpl(chaos::SM::StateMachineInstance * sm_instance, float delta_time, chaos::Object * extra_data)
+	bool PlayingState::TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -102,7 +102,7 @@ namespace chaos
 		SetName("Pause");
 	}
 
-	bool PauseState::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::Object * extra_data)
+	bool PauseState::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -110,7 +110,7 @@ namespace chaos
 		return false;
 	}
 
-	bool PauseState::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::Object * extra_data)
+	bool PauseState::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -123,7 +123,7 @@ namespace chaos
 	// All transitions
 	// =========================================================
 
-	bool MainMenuToPlayingTransition::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::Object * extra_data)
+	bool MainMenuToPlayingTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
@@ -137,7 +137,7 @@ namespace chaos
 
 	// ======
 
-	bool PlayingToMainMenuTransition::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::Object * extra_data)
+	bool PlayingToMainMenuTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game == nullptr)
@@ -148,7 +148,7 @@ namespace chaos
 
 	// ======
 
-	bool PlayingToGameOverTransition::OnEnterImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * from, chaos::Object * extra_data)
+	bool PlayingToGameOverTransition::OnEnterImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * from, Object * extra_data)
 	{
 		Game * game = GetGame(sm_instance);
 		if (game != nullptr)
@@ -159,17 +159,17 @@ namespace chaos
 		return false;
 	}
 
-	bool PlayingToGameOverTransition::TickImpl(chaos::SM::StateMachineInstance * sm_instance, float delta_time, chaos::Object * extra_data)
+	bool PlayingToGameOverTransition::TickImpl(SM::StateMachineInstance * sm_instance, float delta_time, Object * extra_data)
 	{
 		// wait until game over sound is finished
-		chaos::Sound * gameover_sound = auto_cast(sm_instance->GetContextData());
+		Sound * gameover_sound = auto_cast(sm_instance->GetContextData());
 		if (gameover_sound != nullptr)
 			if (!gameover_sound->IsFinished())
 				return false;
 		return true;
 	}
 
-	bool PlayingToGameOverTransition::OnLeaveImpl(chaos::SM::StateMachineInstance * sm_instance, chaos::SM::StateBase * to, chaos::Object * extra_data)
+	bool PlayingToGameOverTransition::OnLeaveImpl(SM::StateMachineInstance * sm_instance, SM::StateBase * to, Object * extra_data)
 	{
 		// destroy the sound object
 		sm_instance->SetContextData(nullptr);
@@ -205,8 +205,8 @@ namespace chaos
 	// GameStateMachineInstance
 	// =========================================================
 
-	GameStateMachineInstance::GameStateMachineInstance(Game * in_game, chaos::SM::StateMachine * in_state_machine) : 
-		chaos::SM::StateMachineInstance(in_state_machine),
+	GameStateMachineInstance::GameStateMachineInstance(Game * in_game, SM::StateMachine * in_state_machine) : 
+		SM::StateMachineInstance(in_state_machine),
 		game(in_game)
 	{
 		assert(in_game != nullptr);

@@ -4,32 +4,32 @@ namespace chaos
 {
 	namespace TMTools
 	{
-		bool AddIntoAtlasInput(chaos::TiledMap::Manager const* manager, chaos::BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::AtlasInput& input)
 		{
 			return AddIntoAtlasInput(manager, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(chaos::TiledMap::TileSet const* tile_set, chaos::BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::AtlasInput& input)
 		{
 			return AddIntoAtlasInput(tile_set, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(chaos::TiledMap::Map const* map, chaos::BitmapAtlas::AtlasInput& input)
+		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::AtlasInput& input)
 		{
 			return AddIntoAtlasInput(map, input.GetRootFolder());
 		}
 
-		bool AddIntoAtlasInput(chaos::TiledMap::LayerBase const* layer, chaos::BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::LayerBase const* layer, BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(layer != nullptr);
 			assert(folder_input != nullptr);
 
-			if (chaos::TiledMap::ImageLayer const* image_layer = auto_cast(layer))
+			if (TiledMap::ImageLayer const* image_layer = auto_cast(layer))
 			{
 				if (image_layer->image_path.size() > 0)
 					folder_input->AddBitmap(image_layer->image_path, nullptr, 0);
 			}
-			else if (chaos::TiledMap::GroupLayer const* group_layer = auto_cast(layer))
+			else if (TiledMap::GroupLayer const* group_layer = auto_cast(layer))
 			{
 				size_t count = group_layer->layers.size();
 				for (size_t i = 0; i < count; ++i)
@@ -39,7 +39,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(chaos::TiledMap::Map const* map, chaos::BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::Map const* map, BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(map != nullptr);
 			assert(folder_input != nullptr);
@@ -52,7 +52,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(chaos::TiledMap::TileSet const* tile_set, chaos::BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::TileSet const* tile_set, BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(tile_set != nullptr);
 			assert(folder_input != nullptr);
@@ -65,7 +65,7 @@ namespace chaos
 			size_t tile_count = tile_set->tiles.size();
 			for (size_t j = 0; j < tile_count; ++j)
 			{
-				chaos::TiledMap::TileData const* tile_data = tile_set->tiles[j].get();
+				TiledMap::TileData const* tile_data = tile_set->tiles[j].get();
 				if (tile_data == nullptr)
 					continue;
 				if (tile_data->image_path.size() > 0)
@@ -74,7 +74,7 @@ namespace chaos
 			return true;
 		}
 
-		bool AddIntoAtlasInput(chaos::TiledMap::Manager const* manager, chaos::BitmapAtlas::FolderInfoInput* folder_input)
+		bool AddIntoAtlasInput(TiledMap::Manager const* manager, BitmapAtlas::FolderInfoInput* folder_input)
 		{
 			assert(manager != nullptr);
 			assert(folder_input != nullptr);
@@ -83,7 +83,7 @@ namespace chaos
 			size_t tile_set_count = manager->tile_sets.size();
 			for (size_t i = 0; i < tile_set_count; ++i)
 			{
-				chaos::TiledMap::TileSet const* tile_set = manager->tile_sets[i].get();
+				TiledMap::TileSet const* tile_set = manager->tile_sets[i].get();
 				if (tile_set == nullptr)
 					continue;
 				if (!AddIntoAtlasInput(tile_set, folder_input))
@@ -94,7 +94,7 @@ namespace chaos
 			size_t map_count = manager->maps.size();
 			for (size_t i = 0; i < map_count; ++i)
 			{
-				chaos::TiledMap::Map const* map = manager->maps[i].get();
+				TiledMap::Map const* map = manager->maps[i].get();
 				if (map == nullptr)
 					continue;
 				if (!AddIntoAtlasInput(map, folder_input))
@@ -103,42 +103,42 @@ namespace chaos
 			return true;
 		}
 
-		bool IsWorldBoundingBox(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsWorldBoundingBox(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("WorldBoundingBox");
 		}
 
-		bool IsLayerBoundingBox(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsLayerBoundingBox(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("LayerBoundingBox");
 		}
 
-		bool IsPlayerStart(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsPlayerStart(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("PlayerStart");
 		}
 
-		bool IsCameraTemplate(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsCameraTemplate(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Camera");
 		}
 
-		bool IsFinishTrigger(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsFinishTrigger(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Finish");
 		}
 
-		bool IsCheckpointTrigger(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsCheckpointTrigger(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Checkpoint");
 		}
 
-		bool IsNotificationTrigger(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsNotificationTrigger(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Notification");
 		}
 
-		bool IsSoundTrigger(chaos::TiledMap::TypedObject const* typed_object)
+		bool IsSoundTrigger(TiledMap::TypedObject const* typed_object)
 		{
 			return typed_object->IsObjectOfType("Sound");
 		}

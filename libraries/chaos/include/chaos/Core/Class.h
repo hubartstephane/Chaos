@@ -71,13 +71,13 @@ namespace chaos
 		}
 
 		/** declare a class */
-		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = chaos::EmptyClass>
+		template<typename CLASS_TYPE, typename PARENT_CLASS_TYPE = EmptyClass>
 		static Class const* DeclareClass(char const* class_name)
 		{
 			// check parameter and not already registered
 			assert(class_name != nullptr && strlen(class_name) > 0);
 			assert(FindClass(class_name) == nullptr);
-			assert((std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
+			assert((std::is_same_v<PARENT_CLASS_TYPE, EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
 
 			Class* result = GetClassInstance<CLASS_TYPE>();
 			if (result != nullptr)
@@ -89,7 +89,7 @@ namespace chaos
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 					result->create_instance_func = []() { return new CLASS_TYPE; }; 
 				// the parent is accessed, but not necessaraly initialized yet
-				if (!std::is_same_v<PARENT_CLASS_TYPE, chaos::EmptyClass>)
+				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)
 					result->parent = GetClassInstance<PARENT_CLASS_TYPE>();
 
 				GetClassesList().push_back(result);

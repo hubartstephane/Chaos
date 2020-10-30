@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	glm::vec4 EncodeBoxToVector(chaos::box2 const & src)
+	glm::vec4 EncodeBoxToVector(box2 const & src)
 	{
 		glm::vec4 result;
 		result.x = src.position.x;

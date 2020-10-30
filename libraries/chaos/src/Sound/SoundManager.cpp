@@ -274,7 +274,7 @@ namespace chaos
 
 	bool SoundObject::FadeOut(float blend_time, bool kill_at_end, bool kill_when_paused)
 	{
-		chaos::BlendVolumeDesc desc = chaos::BlendVolumeDesc::BlendOut(blend_time, !kill_at_end, kill_at_end, kill_when_paused);
+		BlendVolumeDesc desc = BlendVolumeDesc::BlendOut(blend_time, !kill_at_end, kill_at_end, kill_when_paused);
 
 		return StartBlend(desc, true); // always replace previous : maybe there is a FADE-IN, we want to FADE-OUT
 	}

@@ -15,21 +15,21 @@ namespace chaos
 	// GameInstance
 	// =============================================
 
-	class GameInstance : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<GameCheckpoint>
+	class GameInstance : public Tickable, public InputEventReceiver, public CheckpointObject<GameCheckpoint>
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameInstance, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameInstance, Tickable);
 
 	public:
 
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** create one player and give it the gamepad provided if any */
-		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		Player * CreatePlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
 		/** try to give a physical to any player (returns the player) */
-		Player * GivePhysicalGamepadToPlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		Player * GivePhysicalGamepadToPlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
 		/** get the best score among players */
 		int GetBestPlayerScore() const;
@@ -42,19 +42,19 @@ namespace chaos
 		//   - pause clock : reseted whenever we enter/leave pause. only running during pause
 
 		/** returns main clock */
-		chaos::Clock * GetMainClock() { return main_clock.get(); }
+		Clock * GetMainClock() { return main_clock.get(); }
 		/** returns main clock */
-		chaos::Clock const * GetMainClock() const { return main_clock.get(); }
+		Clock const * GetMainClock() const { return main_clock.get(); }
 
 		/** returns game clock */
-		chaos::Clock * GetGameClock() { return game_clock.get(); }
+		Clock * GetGameClock() { return game_clock.get(); }
 		/** returns game clock */
-		chaos::Clock const * GetGameClock() const { return game_clock.get(); }
+		Clock const * GetGameClock() const { return game_clock.get(); }
 
 		/** returns pause clock */
-		chaos::Clock * GetPauseClock() { return pause_clock.get(); }
+		Clock * GetPauseClock() { return pause_clock.get(); }
 		/** returns pause clock */
-		chaos::Clock const * GetPauseClock() const { return pause_clock.get(); }
+		Clock const * GetPauseClock() const { return pause_clock.get(); }
 
 		/** returns the main time */
 		double GetMainClockTime() const;
@@ -69,9 +69,9 @@ namespace chaos
 		bool RestartFromRespawnCheckpoint();
 
 		/** returns the sound category */
-		chaos::SoundCategory * GetSoundCategory();
+		SoundCategory * GetSoundCategory();
 		/** returns the sound category */
-		chaos::SoundCategory const * GetSoundCategory() const;
+		SoundCategory const * GetSoundCategory() const;
 
 		/** initialization of the game instance */
 		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
@@ -81,15 +81,15 @@ namespace chaos
 	protected:
 
 		/** initialize the game instance */
-		virtual bool Initialize(chaos::Game * in_game);
+		virtual bool Initialize(Game * in_game);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 
 		/** handle an uncatched gamepad input incomming */
-		virtual bool OnGamepadInput(chaos::MyGLFW::PhysicalGamepad* in_physical_gamepad); 
+		virtual bool OnGamepadInput(MyGLFW::PhysicalGamepad* in_physical_gamepad); 
 		/** handle keyboard input */
-		virtual bool OnKeyEventImpl(chaos::KeyEvent const & event) override;
+		virtual bool OnKeyEventImpl(KeyEvent const & event) override;
 		/** handle keyboard input */
 		virtual bool OnCharEventImpl(unsigned int c) override;
 		/** handle mouse input */
@@ -104,7 +104,7 @@ namespace chaos
 		virtual Player * DoCreatePlayer();
 
 		/** fill the rendering params before rendering */
-		virtual void FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider);
+		virtual void FillUniformProvider(GPUProgramProvider & main_uniform_provider);
 
 		/** state changes */
 		virtual void OnEnterPause();
@@ -155,21 +155,21 @@ namespace chaos
 		nlohmann::json player_configuration;
 
 		/** the player class */
-		chaos::SubClassOf<Player> player_class;
+		SubClassOf<Player> player_class;
 
 		/** all the players present in the game */
-		std::vector<chaos::shared_ptr<Player>> players;
+		std::vector<shared_ptr<Player>> players;
 
 		/** the clocks */
-		chaos::shared_ptr<chaos::Clock> main_clock;
-		chaos::shared_ptr<chaos::Clock> game_clock;
-		chaos::shared_ptr<chaos::Clock> pause_clock;
+		shared_ptr<Clock> main_clock;
+		shared_ptr<Clock> game_clock;
+		shared_ptr<Clock> pause_clock;
 
 		/** a sound category for the game instance */
-		chaos::shared_ptr<chaos::SoundCategory> sound_category;
+		shared_ptr<SoundCategory> sound_category;
 
 		/** respawn checkpoint */
-		chaos::shared_ptr<GameCheckpoint> respawn_checkpoint;
+		shared_ptr<GameCheckpoint> respawn_checkpoint;
 	};
 
 }; // namespace chaos

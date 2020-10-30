@@ -10,7 +10,7 @@ namespace chaos
 
 namespace chaos
 {
-	class GameGamepadManager : public chaos::MyGLFW::GamepadManager
+	class GameGamepadManager : public MyGLFW::GamepadManager
 	{
 	public:
 
@@ -23,7 +23,7 @@ namespace chaos
 	protected:
 
 		/** the gamepad manager */
-		virtual bool DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
+		virtual bool DoPoolGamepad(MyGLFW::PhysicalGamepad * physical_gamepad) override;
 
 	protected:
 

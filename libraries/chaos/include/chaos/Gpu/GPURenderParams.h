@@ -26,7 +26,7 @@ namespace chaos
 	public:
 
 		/** the viewport */
-		chaos::box2 viewport;
+		box2 viewport;
 		/** the screen size */
 		glm::ivec2 screen_size = glm::ivec2(0, 0);
 		/** material provider */

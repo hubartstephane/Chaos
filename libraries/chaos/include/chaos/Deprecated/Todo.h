@@ -160,16 +160,16 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 		-- Mieux a  faire que d un coté
 		
-			chaos::ParticleDefaultLayerTrait::ParticleToPrimitives
+			ParticleDefaultLayerTrait::ParticleToPrimitives
 
 		  et 
 
-			chaos::ParticleTools::GenerateBoxParticle(...) + copy couleur 
+			ParticleTools::GenerateBoxParticle(...) + copy couleur 
 
 		 de l autre
 
 
-		chaos::ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
+		ParticleTools::GenerateBoxParticle(particle->bounding_box, particle->texcoords, vertices, particle->rotation);
 	// copy the color in all triangles vertex
 	for (size_t i = 0; i < 6; ++i)
 		vertices[i].color = particle->color;
@@ -178,7 +178,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 
-	//return chaos::ParticleDefaultLayerTrait::ParticleToPrimitives(particle, vertices, vertices_per_particle);
+	//return ParticleDefaultLayerTrait::ParticleToPrimitives(particle, vertices, vertices_per_particle);
 
 
 
@@ -321,7 +321,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 
-	bool Game::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	bool Game::OnEnterGame(MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		ResetGameVariables(); <=== now there is a GameInstance for that, see if this can be removed
 

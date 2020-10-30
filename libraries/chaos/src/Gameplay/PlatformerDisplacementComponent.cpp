@@ -30,7 +30,7 @@ namespace chaos
 		return velocity;
 	}
 
-	PlatformerDisplacementState PlatformerDisplacementComponent::ComputeDisplacementState(chaos::box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, int collision_flags)
+	PlatformerDisplacementState PlatformerDisplacementComponent::ComputeDisplacementState(box2& pawn_box, bool jump_pressed, glm::vec2 const& stick_position, int collision_flags)
 	{
 		glm::vec2& pawn_position = pawn_box.position;
 
@@ -196,21 +196,21 @@ namespace chaos
 		glm::vec2 stick_position = player->GetLeftStickPosition();
 		if (displacement_info.discrete_stick_mode)
 		{
-			stick_position.x = chaos::MathTools::AnalogicToDiscret(stick_position.x);
-			stick_position.y = chaos::MathTools::AnalogicToDiscret(stick_position.y);
+			stick_position.x = MathTools::AnalogicToDiscret(stick_position.x);
+			stick_position.y = MathTools::AnalogicToDiscret(stick_position.y);
 		}
 		stick_position.y = -stick_position.y; // Y stick is inverted
 
 		int const jump_key_buttons[] = { GLFW_KEY_SPACE, -1 };
-		bool jump_pressed = player->CheckButtonPressed(jump_key_buttons, chaos::XBoxButton::BUTTON_A);
+		bool jump_pressed = player->CheckButtonPressed(jump_key_buttons, XBoxButton::BUTTON_A);
 
 		int const run_key_buttons[] = { GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT, -1 };
-		bool run_pressed = player->CheckButtonPressed(run_key_buttons, chaos::XBoxButton::BUTTON_RIGHTTRIGGER);
+		bool run_pressed = player->CheckButtonPressed(run_key_buttons, XBoxButton::BUTTON_RIGHTTRIGGER);
 
 		// get player position
-		chaos::box2 initial_pawn_box = pawn->GetBoundingBox();
+		box2 initial_pawn_box = pawn->GetBoundingBox();
 
-		chaos::box2 pawn_box = initial_pawn_box;
+		box2 pawn_box = initial_pawn_box;
 		glm::vec2& pawn_position = pawn_box.position;
 
 		// sum the forces 
@@ -278,24 +278,24 @@ namespace chaos
 		{
 			if ((collision_info.particle->flags & PlatformerParticleFlags::LADDER) != 0)
 			{
-				if (chaos::Collide(computer.dst_box, collision_info.particle->bounding_box))
+				if (Collide(computer.dst_box, collision_info.particle->bounding_box))
 				{
 					collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_LADDER;
 				}
 			}
 			else
 			{
-				computer.ComputeReaction(collision_info, [&collision_flags](TileCollisionInfo const& collision_info, chaos::Edge edge)
+				computer.ComputeReaction(collision_info, [&collision_flags](TileCollisionInfo const& collision_info, Edge edge)
 				{
-					if (edge == chaos::Edge::TOP)
+					if (edge == Edge::TOP)
 					{
 						if ((collision_info.particle->flags & PlatformerParticleFlags::BRIDGE) != 0)
 							collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_BRIDGE;
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_FLOOR;
 					}
-					else if (edge == chaos::Edge::BOTTOM)
+					else if (edge == Edge::BOTTOM)
 						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_CEIL;
-					else if (edge == chaos::Edge::LEFT || edge == chaos::Edge::RIGHT)
+					else if (edge == Edge::LEFT || edge == Edge::RIGHT)
  						collision_flags |= PlatformerDisplacementCollisionFlags::TOUCHING_WALL;		
 					return true;
 				});

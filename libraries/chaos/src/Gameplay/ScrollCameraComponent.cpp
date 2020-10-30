@@ -17,7 +17,7 @@ namespace chaos
 			return true;
 
 		// get the camera box without effects
-		chaos::box2 camera_box = camera->GetCameraBox(false);
+		box2 camera_box = camera->GetCameraBox(false);
 		if (IsGeometryEmpty(camera_box))
 			return true;
 
@@ -33,10 +33,10 @@ namespace chaos
 		float camera_position_scroll_other_axis = camera_box.position[1 - axis_index];
 
 		// get the world
-		chaos::box2 world = level_instance->GetBoundingBox();
+		box2 world = level_instance->GetBoundingBox();
 
 		// step 1 : scroll all pawns. Compute all players bounding box. Move the camera according the players
-		chaos::box2 all_pawns_box;
+		box2 all_pawns_box;
 
 		size_t player_count = camera->GetPlayerCount();
 		for (size_t i = 0; i < player_count; ++i)
@@ -46,19 +46,19 @@ namespace chaos
 			if (player_pawn == nullptr)
 				continue;
 			// get the player box
-			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
+			box2 pawn_box = player_pawn->GetBoundingBox();
 			if (IsGeometryEmpty(pawn_box))
 				continue;
 			// scroll the player and keep it into world
 			pawn_box.position[axis_index] += scroll_displacement;
 			if (!IsGeometryEmpty(world))
-				chaos::RestrictToInside(world, pawn_box, false);
+				RestrictToInside(world, pawn_box, false);
 			player_pawn->SetBoundingBox(pawn_box);
 
 			// the camera follows the player in X & Y direction
-			chaos::box2 safe_camera = camera_box;
+			box2 safe_camera = camera_box;
 			safe_camera.half_size *= camera->GetSafeZone();
-			chaos::RestrictToInside(safe_camera, pawn_box, true);
+			RestrictToInside(safe_camera, pawn_box, true);
 			camera_box.position = safe_camera.position;
 			// ensure the camera has not been modified along the scroll direction
 			camera_box.position[axis_index] = camera_position_scroll_axis;
@@ -84,7 +84,7 @@ namespace chaos
 
 		// restrict camera to world		
 		if (!IsGeometryEmpty(world))
-			chaos::RestrictToInside(world, camera_box, false);
+			RestrictToInside(world, camera_box, false);
 
 		// apply the compute result
 		camera->SetCameraBox(camera_box);
@@ -97,11 +97,11 @@ namespace chaos
 			if (player_pawn == nullptr)
 				continue;
 			// get the pawn box
-			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
+			box2 pawn_box = player_pawn->GetBoundingBox();
 			if (IsGeometryEmpty(pawn_box))
 				continue;
 			// keep player inside camera
-			if (chaos::RestrictToInside(camera_box, pawn_box, false))
+			if (RestrictToInside(camera_box, pawn_box, false))
 				player_pawn->SetBoundingBox(pawn_box);
 		}
 

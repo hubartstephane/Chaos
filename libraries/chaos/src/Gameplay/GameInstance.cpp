@@ -15,7 +15,7 @@ namespace chaos
 		return result;
 	}
 
-	bool GameInstance::OnGamepadInput(chaos::MyGLFW::PhysicalGamepad* in_physical_gamepad)
+	bool GameInstance::OnGamepadInput(MyGLFW::PhysicalGamepad* in_physical_gamepad)
 	{
 		assert(in_physical_gamepad != nullptr);
 		// try to give the gamepad to a player
@@ -29,7 +29,7 @@ namespace chaos
 		return false;
 	}
 
-	bool GameInstance::OnKeyEventImpl(chaos::KeyEvent const& event)
+	bool GameInstance::OnKeyEventImpl(KeyEvent const& event)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
@@ -65,7 +65,7 @@ namespace chaos
 		return false;
 	}
 
-	Player * GameInstance::CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	Player * GameInstance::CreatePlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		// ensure we can create a new player
 		size_t count = players.size();
@@ -101,7 +101,7 @@ namespace chaos
 		return result;
 	}
 
-	Player * GameInstance::GivePhysicalGamepadToPlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	Player * GameInstance::GivePhysicalGamepadToPlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)
@@ -150,7 +150,7 @@ namespace chaos
 		return pause_clock->GetClockTime();
 	}
 
-	void GameInstance::FillUniformProvider(chaos::GPUProgramProvider & main_uniform_provider)
+	void GameInstance::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
 	{
 		// the clocks
 		double main_time = GetMainClockTime();
@@ -163,12 +163,12 @@ namespace chaos
 		PlayerPawn const * player_pawn = GetPlayerPawn(0);
 		if (player_pawn != nullptr)
 		{
-			chaos::box2 pawn_box = player_pawn->GetBoundingBox();
-			main_uniform_provider.AddVariableValue("pawn_box", chaos::EncodeBoxToVector(pawn_box));
+			box2 pawn_box = player_pawn->GetBoundingBox();
+			main_uniform_provider.AddVariableValue("pawn_box", EncodeBoxToVector(pawn_box));
 		}
 	}
 
-	bool GameInstance::Initialize(chaos::Game * in_game)
+	bool GameInstance::Initialize(Game * in_game)
 	{
 		// ensure valid arguments and not already initialized
 		assert(in_game != nullptr);
@@ -182,7 +182,7 @@ namespace chaos
 		OnGameValuesChanged(false);
 
 		// create the game instance clocks
-		chaos::Clock * root_clock = in_game->GetRootClock();
+		Clock * root_clock = in_game->GetRootClock();
 		if (root_clock == nullptr)
 			return false;
 
@@ -203,14 +203,14 @@ namespace chaos
 		// pause clock : reseted whenever we enter/leave pause. only running during pause
 		if (pause_clock == nullptr)
 		{
-			chaos::ClockCreateParams pause_clock_params;
+			ClockCreateParams pause_clock_params;
 			pause_clock_params.paused = true;
 			pause_clock = root_clock->CreateChildClock("pause_clock", pause_clock_params); // start paused ...
 			if (pause_clock == nullptr)
 				return false;
 		}
 		// create a sound category 
-		chaos::SoundManager * sound_manager = game->GetSoundManager();
+		SoundManager * sound_manager = game->GetSoundManager();
 		if (sound_manager != nullptr)
 			sound_category = sound_manager->AddCategory("game_instance");
 
@@ -248,7 +248,7 @@ namespace chaos
 		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
 		{
-			chaos::Clock * level_clock = level_instance->GetLevelClock();
+			Clock * level_clock = level_instance->GetLevelClock();
 			if (level_clock != nullptr)
 				level_clock->SetPause(enter_pause);		
 		}
@@ -280,13 +280,13 @@ namespace chaos
 	{
 		bool any_player_alive = false;
 
-		chaos::LevelInstance* level_instance = GetLevelInstance();
+		LevelInstance* level_instance = GetLevelInstance();
 
 		// compute whether all player are dead
 		size_t player_count = GetPlayerCount();
 		for (size_t i = 0; i < player_count; ++i)
 		{
-			chaos::Player* player = GetPlayer(i);
+			Player* player = GetPlayer(i);
 			if (player == nullptr)
 				continue;
 
@@ -435,12 +435,12 @@ namespace chaos
 		}
 	}
 
-	chaos::SoundCategory * GameInstance::GetSoundCategory()
+	SoundCategory * GameInstance::GetSoundCategory()
 	{
 		return sound_category.get();
 	}
 
-	chaos::SoundCategory const * GameInstance::GetSoundCategory() const
+	SoundCategory const * GameInstance::GetSoundCategory() const
 	{
 		return sound_category.get();
 	}
@@ -448,7 +448,7 @@ namespace chaos
 	bool GameInstance::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)
 	{
 		// capture the player configuration
-		nlohmann::json const* p_config = chaos::JSONTools::GetStructure(config, "player");
+		nlohmann::json const* p_config = JSONTools::GetStructure(config, "player");
 		if (p_config != nullptr && p_config->is_object())
 			player_configuration = *p_config;
 		else

@@ -100,9 +100,9 @@ namespace chaos
 			}
 
 #if _DEBUG && 0
-			if (chaos::Application::HasApplicationCommandLineFlag("-ShowLoadedFile")) // CMDLINE
+			if (Application::HasApplicationCommandLineFlag("-ShowLoadedFile")) // CMDLINE
 			{
-				chaos::LogTools::Log("LoadFile [%s]    size = [%d]", resolved_path.string().c_str(), result.bufsize);
+				LogTools::Log("LoadFile [%s]    size = [%d]", resolved_path.string().c_str(), result.bufsize);
 			}
 #endif
 			return result;

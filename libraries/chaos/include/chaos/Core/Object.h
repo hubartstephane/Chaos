@@ -156,14 +156,14 @@ namespace chaos
 
 }; // namespace chaos
 
-	 /**
-	 * Object : reference count external methods
-	 *
-	 * XXX : theses functions are out of chaos scope, else while shared_ptr is in chaos, it searches for chaos::intrusive_ptr_add function in prioriy
-	 *       and if it was finding Object reference functions inside chaos scope, it will fail with IrrklangTools functions
-	 */
+	/**
+	* Object : reference count external methods
+	*
+	* XXX : theses functions are out of chaos scope, else while shared_ptr is in chaos, it searches for intrusive_ptr_add function in prioriy
+	*       and if it was finding Object reference functions inside chaos scope, it will fail with IrrklangTools functions
+	*/
 
-	 /** utility method for shared_ptr */
+	/** utility method for shared_ptr */
 void intrusive_ptr_add_ref(chaos::Object* obj); // should work with boost::intrusive_ptr<>
 
 	/** utility method for shared_ptr */

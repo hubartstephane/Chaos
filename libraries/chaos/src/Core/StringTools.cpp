@@ -32,7 +32,7 @@ namespace chaos
 			struct tm tm;
 			localtime_s(&tm, &t);
 			// format string
-			return chaos::StringTools::Printf(
+			return StringTools::Printf(
 				(full_string)? "%04d%02d%02d_%02dh%02dm%02ds" : "%04d%02d%02d",
 				tm.tm_year + 1900, 
 				tm.tm_mon + 1, 

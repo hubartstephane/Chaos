@@ -28,16 +28,16 @@ namespace chaos
 	public:
 
 		/** add a reference to later solve */
-		void DeclareReference(chaos::weak_ptr<TMObject>& reference, int id);
+		void DeclareReference(weak_ptr<TMObject>& reference, int id);
 		/** add a reference to later solve */
-		void DeclareReference(chaos::weak_ptr<TMObject>& reference, char const * property_name, chaos::TiledMap::PropertyOwner const * property_owner);
+		void DeclareReference(weak_ptr<TMObject>& reference, char const * property_name, TiledMap::PropertyOwner const * property_owner);
 		/** solving all references */
 		void SolveReferences(TMLevelInstance* level_instance);
 
 	protected:
 
 		/** the references to resolve */
-		std::vector<std::pair<chaos::weak_ptr<TMObject> *, int>> references;
+		std::vector<std::pair<weak_ptr<TMObject> *, int>> references;
 	};
 
 	// =====================================
@@ -68,7 +68,7 @@ namespace chaos
 		int GetObjectID() const { return id; }
 
 		/** get the object bounding box */
-		chaos::box2 GetBoundingBox(bool world_system) const;
+		box2 GetBoundingBox(bool world_system) const;
 
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
@@ -87,13 +87,13 @@ namespace chaos
 	protected:
 
 		/** additionnal initialization */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver & reference_solver);
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver & reference_solver);
 		/** enable the creation of additionnal particles */
 		virtual bool IsParticleCreationEnabled() const;
 
 	protected:
 
-		/** id of the object (comming from chaos::TiledMap) */
+		/** id of the object (comming from TiledMap) */
 		int id = 0;
 		/** whether the particles created for this object should be under its ownership (instead of the layers) */
 		bool particle_ownership = false;
@@ -115,7 +115,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 	};
 
 
@@ -132,7 +132,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 	};
 
 	// =====================================
@@ -148,7 +148,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
@@ -183,7 +183,7 @@ namespace chaos
 		void SetTriggerOnce(bool in_trigger_once = true);
 
 		/** search whether there is a collision given box */
-		virtual bool IsCollisionWith(chaos::box2 const& other_box, chaos::CollisionType collision_type) const;
+		virtual bool IsCollisionWith(box2 const& other_box, CollisionType collision_type) const;
 
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
@@ -193,9 +193,9 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 		/** called whenever a collision with object is detected (returns true, if collision is handled successfully (=> important for TriggerOnce) */
-		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type);
+		virtual bool OnCollisionEvent(float delta_time, Object* object, CollisionType event_type);
 
 	protected:
 
@@ -232,9 +232,9 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, Object* object, CollisionType event_type) override;
 
 	protected:
 
@@ -266,9 +266,9 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, Object* object, CollisionType event_type) override;
 	};
 
 	// =================================================
@@ -293,12 +293,12 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, Object* object, CollisionType event_type) override;
 
 		/** the sound creation method */
-		chaos::Sound* CreateSound() const;
+		Sound* CreateSound() const;
 
 	protected:
 
@@ -317,7 +317,7 @@ namespace chaos
 		bool stop_when_collision_over = false;
 
 		/** the sound being played */
-		chaos::shared_ptr<chaos::Sound> sound;
+		shared_ptr<Sound> sound;
 	};
 
 
@@ -341,11 +341,11 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool Initialize(TMLayerInstance* in_layer_instance, chaos::TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
+		virtual bool Initialize(TMLayerInstance* in_layer_instance, TiledMap::GeometricObject const* in_geometric_object, TMObjectReferenceSolver& reference_solver) override;
 		/** override */
 		virtual bool IsParticleCreationEnabled() const override;
 		/** override */
-		virtual bool OnCollisionEvent(float delta_time, chaos::Object* object, chaos::CollisionType event_type) override;
+		virtual bool OnCollisionEvent(float delta_time, Object* object, CollisionType event_type) override;
 
 	protected:
 

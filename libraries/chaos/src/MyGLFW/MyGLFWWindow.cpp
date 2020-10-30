@@ -436,16 +436,16 @@ namespace chaos
 			// compute rendering size
 			// in normal case, we work with the window_size then apply a viewport cropping
 			// here we want exactly to work with no cropping
-			chaos::box2 viewport = GetRequiredViewport(GetWindowSize());
+			box2 viewport = GetRequiredViewport(GetWindowSize());
 			viewport.position = viewport.half_size;
 			glm::ivec2 framebuffer_size = auto_cast_vector(viewport.half_size * 2.0f);
 			
 			// generate a framebuffer
-			chaos::GPUFramebufferGenerator framebuffer_generator;
-			framebuffer_generator.AddColorAttachment(0, chaos::PixelFormat::BGRA, framebuffer_size, "scene");
+			GPUFramebufferGenerator framebuffer_generator;
+			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, framebuffer_size, "scene");
 			framebuffer_generator.AddDepthStencilAttachment(framebuffer_size, "depth");
 
-			chaos::shared_ptr<chaos::GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);
+			shared_ptr<GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);
 			if (framebuffer == nullptr)
 				return false;
 			if (!framebuffer->CheckCompletionStatus())
@@ -454,17 +454,17 @@ namespace chaos
 			// render in the frame buffer
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
-			chaos::GLTools::SetViewport(viewport);
+			GLTools::SetViewport(viewport);
 			OnDraw(renderer, viewport, framebuffer_size);
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
 
 			// extract the texture
-			chaos::GPUFramebufferAttachmentInfo const * attachment = framebuffer->GetColorAttachment(0);
+			GPUFramebufferAttachmentInfo const * attachment = framebuffer->GetColorAttachment(0);
 			if (attachment == nullptr || attachment->texture == nullptr)
 				return false;
 
-			//bitmap_ptr img = bitmap_ptr(chaos::ImageTools::GenFreeImage(attachment->texture->GetResourceID(), 0));
+			//bitmap_ptr img = bitmap_ptr(ImageTools::GenFreeImage(attachment->texture->GetResourceID(), 0));
 
 			// shu47
 
@@ -488,22 +488,22 @@ namespace chaos
 					return false;
 
 			// save the image
-			std::string format = chaos::StringTools::Printf(
+			std::string format = StringTools::Printf(
 				"capture_%s_%%d.png",
-				chaos::StringTools::TimeToString(true).c_str());
+				StringTools::TimeToString(true).c_str());
 
-			boost::filesystem::path file_path = chaos::FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
+			boost::filesystem::path file_path = FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
 			if (file_path.empty())
 				return false;
 
 			return (FreeImage_Save(FIF_PNG, img.get(), file_path.string().c_str(), 0) != 0);
 		}
 
-		chaos::box2 Window::GetRequiredViewport(glm::ivec2 const & size) const
+		box2 Window::GetRequiredViewport(glm::ivec2 const & size) const
 		{
-			chaos::box2 viewport = chaos::box2(std::make_pair(
+			box2 viewport = box2(std::make_pair(
 				glm::vec2(0.0f, 0.0f),
-				chaos::RecastVector<glm::vec2>(size)
+				RecastVector<glm::vec2>(size)
 			));
 			return ShrinkBoxToAspect(viewport, 16.0f / 9.0f);
 		}

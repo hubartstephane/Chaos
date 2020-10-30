@@ -100,10 +100,10 @@ namespace chaos
             PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_renderer, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
-            vertices_per_primitive = chaos::GetVerticesPerParticle(PRIMITIVE_TYPE);
-            real_vertices_per_primitive = chaos::GetRealVerticesPerParticle(PRIMITIVE_TYPE);
+            vertices_per_primitive = GetVerticesPerParticle(PRIMITIVE_TYPE);
+            real_vertices_per_primitive = GetRealVerticesPerParticle(PRIMITIVE_TYPE);
             type = PRIMITIVE_TYPE;
-            primitive_gl_type = chaos::GetGLPrimitiveType(PRIMITIVE_TYPE);
+            primitive_gl_type = GetGLPrimitiveType(PRIMITIVE_TYPE);
         }
 
         /** cast operator to child vertex type */
@@ -126,7 +126,7 @@ namespace chaos
         {
             assert((vertices_per_primitive == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
             // implementation for STRIPS or FANS
-            if constexpr (chaos::GetVerticesPerParticle(PRIMITIVE_TYPE) == 0)
+            if constexpr (GetVerticesPerParticle(PRIMITIVE_TYPE) == 0)
             {
                 // TODO : implement fans and strips 
                 primitive_type result;                

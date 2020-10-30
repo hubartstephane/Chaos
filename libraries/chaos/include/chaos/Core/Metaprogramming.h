@@ -21,7 +21,7 @@ template<typename T>\
 class get_##name<T, boost::mpl::true_> : public boost::mpl::identity<typename T::name>\
 {};\
 template<typename T>\
-class get_##name<T, boost::mpl::false_> : public boost::mpl::identity<chaos::EmptyClass>\
+class get_##name<T, boost::mpl::false_> : public boost::mpl::identity<EmptyClass>\
 {};
 
 	// creates 1 metaclass
@@ -55,7 +55,7 @@ auto has_function_helper_##function_name(T const & t) -> decltype(&T::function_n
 };\
 template<typename T>\
 using has_function_##function_name = boost::mpl::bool_<\
-	sizeof(details::has_function_helper_##function_name(chaos::meta::FakeInstance<T>())) != 1\
+	sizeof(details::has_function_helper_##function_name(meta::FakeInstance<T>())) != 1\
 >;\
 template<typename T>\
 auto constexpr has_function_##function_name##_v = has_function_##function_name<T>::value;
@@ -100,11 +100,11 @@ namespace details\
 template<typename T, typename ...PARAMS>\
 constexpr bool check_method_##funcname()\
 {\
-	if constexpr(sizeof(details::check_method_##funcname##_helper(chaos::meta::FakeInstance<T>(), chaos::meta::FakeInstance<PARAMS>()...)) != 1)\
+	if constexpr(sizeof(details::check_method_##funcname##_helper(meta::FakeInstance<T>(), meta::FakeInstance<PARAMS>()...)) != 1)\
 		return true;\
 	else \
 	{\
-		/*static_assert(sizeof(details::check_method_##funcname##_helper(chaos::meta::FakeInstance<std::remove_const_t<T>>(), chaos::meta::FakeInstance<std::remove_const_t<PARAMS>>()...)) == 1);*/\
+		/*static_assert(sizeof(details::check_method_##funcname##_helper(meta::FakeInstance<std::remove_const_t<T>>(), meta::FakeInstance<std::remove_const_t<PARAMS>>()...)) == 1);*/\
 		return false;\
 	}\
 }\
@@ -113,7 +113,7 @@ template<typename T, typename ...PARAMS>\
 constexpr bool check_method_##funcname##_v = check_method_##funcname<T, PARAMS...>();\
 \
 template<typename T, typename ...PARAMS>\
-using typeof_method_##funcname = decltype(chaos::meta::FakeInstance<T>().funcname(chaos::meta::FakeInstance<PARAMS>()...));\
+using typeof_method_##funcname = decltype(meta::FakeInstance<T>().funcname(meta::FakeInstance<PARAMS>()...));\
 
 
 	// ====================================================================================================
@@ -156,16 +156,16 @@ namespace details\
 	auto constexpr check_function_##funcname##_helper(T t, PARAMS... params) -> decltype(funcname(params...)) *;\
 	char constexpr check_function_##funcname##_helper(...);\
 	template<typename ...PARAMS>\
-	struct check_function_##funcname##_type {using type = decltype(funcname(chaos::meta::FakeInstance<PARAMS>()...));};\
+	struct check_function_##funcname##_type {using type = decltype(funcname(meta::FakeInstance<PARAMS>()...));};\
 }\
 template<typename ...PARAMS>\
 constexpr bool check_function_##funcname()\
 {\
-	if constexpr (sizeof(details::check_function_##funcname##_helper(666, chaos::meta::FakeInstance<PARAMS>()...)) != 1)\
+	if constexpr (sizeof(details::check_function_##funcname##_helper(666, meta::FakeInstance<PARAMS>()...)) != 1)\
 		return true;\
 	else\
 	{\
-		/*static_assert(sizeof(details::check_function_##funcname##_helper(666, chaos::meta::FakeInstance<std::remove_const_t<PARAMS>>()...)) == 1);*/\
+		/*static_assert(sizeof(details::check_function_##funcname##_helper(666, meta::FakeInstance<std::remove_const_t<PARAMS>>()...)) == 1);*/\
 		return false;\
 	}\
 }\

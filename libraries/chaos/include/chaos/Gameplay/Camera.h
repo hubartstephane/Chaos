@@ -21,18 +21,18 @@ namespace chaos
 	public:
 
 		/** returns the transformation matrix from a camera obox */	
-		static glm::mat4x4 GetCameraTransform(chaos::obox2 const & obox);
+		static glm::mat4x4 GetCameraTransform(obox2 const & obox);
 	};
 
 	// =============================================
 	// Camera
 	// =============================================
 
-	class Camera : public chaos::Tickable, public chaos::JSONSerializable
+	class Camera : public Tickable, public JSONSerializable
 	{
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(Camera, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(Camera, Tickable);
 
 	public:
 
@@ -42,18 +42,18 @@ namespace chaos
 		bool Initialize(LevelInstance * in_level_instance);
 
 		/** set the camera box */
-		void SetCameraBox(chaos::box2 const & in_box) { camera_box = in_box;}
+		void SetCameraBox(box2 const & in_box) { camera_box = in_box;}
 
 		/** get the camera box */
-		chaos::box2  GetCameraBox(bool apply_modifiers = true) const;
+		box2  GetCameraBox(bool apply_modifiers = true) const;
 		/** get the camera OBox */
-		chaos::obox2 GetCameraOBox(bool apply_modifiers = true) const;
+		obox2 GetCameraOBox(bool apply_modifiers = true) const;
 
 
 		/** get the camera OBox when level instance is started */
-		chaos::obox2 const & GetInitialCameraOBox() const { return initial_camera_obox;}
+		obox2 const & GetInitialCameraOBox() const { return initial_camera_obox;}
 		/** set the camera initial OBox */
-		void SetInitialCameraOBox(chaos::obox2 const & in_obox) { initial_camera_obox = in_obox; }
+		void SetInitialCameraOBox(obox2 const & in_obox) { initial_camera_obox = in_obox; }
 
 		/** get the safe zone of the camera */
 		glm::vec2 const & GetSafeZone() const { return safe_zone; }
@@ -76,9 +76,9 @@ namespace chaos
 	protected:
 
 		/** the camera bounding box */
-		chaos::box2 camera_box;
+		box2 camera_box;
 		/** the initial camera obox (at level startup) */
-		chaos::obox2 initial_camera_obox;
+		obox2 initial_camera_obox;
 		/** the safe zone of the camera */
 		glm::vec2 safe_zone = glm::vec2(0.8f, 0.8f);
 
@@ -86,7 +86,7 @@ namespace chaos
 		LevelInstance * level_instance = nullptr;
 
 		/** the components */
-		std::vector<chaos::shared_ptr<CameraComponent>> components;
+		std::vector<shared_ptr<CameraComponent>> components;
 
 	};
 

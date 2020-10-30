@@ -9,10 +9,10 @@ namespace chaos
 	// CameraTransform
 	// =================================================
 
-	glm::mat4x4 CameraTransform::GetCameraTransform(chaos::obox2 const & obox)
+	glm::mat4x4 CameraTransform::GetCameraTransform(obox2 const & obox)
 	{
 		glm::mat4x4 result;	
-		result = chaos::GetRotatorMatrix(-obox.rotator) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
+		result = GetRotatorMatrix(-obox.rotator) * glm::translate(glm::vec3(-obox.position.x, -obox.position.y, 0.0f));
 		return result;
 	}
 
@@ -38,14 +38,14 @@ namespace chaos
 		return true;
 	}
 
-	chaos::box2 Camera::GetCameraBox(bool apply_modifiers) const 
+	box2 Camera::GetCameraBox(bool apply_modifiers) const 
 	{
-		chaos::box2 result = camera_box;
+		box2 result = camera_box;
 
 		// apply the aspect ratio
 		Game const * game = GetGame();
 		if (game != nullptr)
-			chaos::AlterBoxToAspect(result, game->GetViewportWantedAspect(), true);
+			AlterBoxToAspect(result, game->GetViewportWantedAspect(), true);
 
 		// apply the modifiers
 		if (apply_modifiers)
@@ -62,11 +62,11 @@ namespace chaos
 		return result; 
 	}
 
-	chaos::obox2 Camera::GetCameraOBox(bool apply_modifiers) const
+	obox2 Camera::GetCameraOBox(bool apply_modifiers) const
 	{
-		chaos::box2 box = GetCameraBox(apply_modifiers);
+		box2 box = GetCameraBox(apply_modifiers);
 
-		chaos::obox2 result;
+		obox2 result;
 		result.position = box.position;
 		result.half_size = box.half_size;
 		result.rotator = 0.0f;
@@ -76,18 +76,18 @@ namespace chaos
 	
 	bool Camera::SerializeIntoJSON(nlohmann::json& json_entry) const
 	{
-		if (!chaos::JSONSerializable::SerializeIntoJSON(json_entry))
+		if (!JSONSerializable::SerializeIntoJSON(json_entry))
 			return false;
-		chaos::JSONTools::SetAttribute(json_entry, "CAMERA_BOX", GetCameraBox(false));
+		JSONTools::SetAttribute(json_entry, "CAMERA_BOX", GetCameraBox(false));
 		return true;
 	}
 	
 	bool Camera::SerializeFromJSON(nlohmann::json const& json_entry)
 	{
-		if (!chaos::JSONSerializable::SerializeFromJSON(json_entry))
+		if (!JSONSerializable::SerializeFromJSON(json_entry))
 			return false;
-		chaos::box2 b;
-		if (chaos::JSONTools::GetAttribute(json_entry, "CAMERA_BOX", b))
+		box2 b;
+		if (JSONTools::GetAttribute(json_entry, "CAMERA_BOX", b))
 			SetCameraBox(b);
 		return true;
 	}

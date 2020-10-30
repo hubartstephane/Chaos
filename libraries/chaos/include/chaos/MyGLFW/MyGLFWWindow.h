@@ -116,7 +116,7 @@ namespace chaos
 			bool ScreenCapture();
 
 			/** getting the required viewport for given window */
-			virtual chaos::box2 GetRequiredViewport(glm::ivec2 const & size) const;
+			virtual box2 GetRequiredViewport(glm::ivec2 const & size) const;
 
 			/** override */
 			virtual bool OnKeyEventImpl(KeyEvent const & event) override;
@@ -141,7 +141,7 @@ namespace chaos
 			/** called whenever the window is resized */
 			virtual void OnWindowResize(glm::ivec2 size) {}
 			/** called whenever the window is redrawn */
-			virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) { return true; }
+			virtual bool OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size) { return true; }
 
 			/** called whenever a file is dropped */
 			virtual void OnDropFile(int count, char const ** paths) {}

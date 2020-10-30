@@ -20,7 +20,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		ScrollCameraComponent(float in_scroll_speed, chaos::Axis in_axis):
+		ScrollCameraComponent(float in_scroll_speed, Axis in_axis):
 			scroll_speed(in_scroll_speed),
 			axis(in_axis){}
 
@@ -30,7 +30,7 @@ namespace chaos
 		void SetScrollSpeed(float in_scroll_speed) { scroll_speed = in_scroll_speed; }
 
 		/** get the axis */
-		chaos::Axis GetAxis() const { return axis; }
+		Axis GetAxis() const { return axis; }
 
 	protected:
 
@@ -42,7 +42,7 @@ namespace chaos
 		/** the displacement speed */
 		float scroll_speed = 0.0f;
 		/** the axis of displacement */
-		chaos::Axis axis = chaos::Axis::AXIS_X;
+		Axis axis = Axis::AXIS_X;
 	};
 
 }; // namespace chaos

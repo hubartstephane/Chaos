@@ -110,7 +110,7 @@ namespace chaos
 		}
 
 		/** search element in a vector */
-		template<typename CHECK_CLASS = chaos::EmptyClass, typename P>
+		template<typename CHECK_CLASS = EmptyClass, typename P>
 		auto FindObject(std::vector<P>& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// search in the list
@@ -125,7 +125,7 @@ namespace chaos
 			return nullptr;
 		}
 		/** search element in a vector */
-		template<typename CHECK_CLASS = chaos::EmptyClass, typename P>
+		template<typename CHECK_CLASS = EmptyClass, typename P>
 		auto FindObject(std::vector<P> const& elements) const -> decltype(meta::get_raw_pointer(elements[0]))
 		{
 			// search in the list
@@ -141,7 +141,7 @@ namespace chaos
 		}
 
 		/** check whether the element match the wanted class */
-		template<typename CHECK_CLASS = chaos::EmptyClass, typename T>
+		template<typename CHECK_CLASS = EmptyClass, typename T>
 		static bool CheckClass(T const* element)
 		{
 			if constexpr (!std::is_same_v<CHECK_CLASS, EmptyClass>)

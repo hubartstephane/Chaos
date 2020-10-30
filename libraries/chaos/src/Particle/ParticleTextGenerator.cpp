@@ -755,7 +755,7 @@ namespace chaos
 
 				glm::vec2 padding = glm::vec2(allocation_params.background_padding, allocation_params.background_padding);
 
-				p.bounding_box = chaos::box2(std::make_pair(
+				p.bounding_box = box2(std::make_pair(
 					generator_result.bounding_box.bottomleft - padding,
 					generator_result.bounding_box.topright   + padding));
 				p.texcoords.bitmap_index = -1;

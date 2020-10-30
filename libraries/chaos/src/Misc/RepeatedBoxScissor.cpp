@@ -4,7 +4,7 @@
 namespace chaos
 {
 
-	RepeatedBoxScissor::RepeatedBoxScissor(chaos::box2 const& in_target_box, chaos::box2 const& in_scissor_box, bool in_wrap_x, bool in_wrap_y)
+	RepeatedBoxScissor::RepeatedBoxScissor(box2 const& in_target_box, box2 const& in_scissor_box, bool in_wrap_x, bool in_wrap_y)
 	{
 		// copy the parameters
 		target_box = in_target_box;
@@ -50,7 +50,7 @@ namespace chaos
 		);
 
 		// the bottomleft corner of the decaled box
-		glm::vec2  virtual_target_bottomleft = target_bottomleft + chaos::RecastVector<glm::vec2>(offset_count) * target_size;
+		glm::vec2  virtual_target_bottomleft = target_bottomleft + RecastVector<glm::vec2>(offset_count) * target_size;
 		// competition of the number of repetition
 		glm::vec2  tmp = ((scissor_bottomleft - virtual_target_bottomleft + scissor_size) / target_size);
 
@@ -79,7 +79,7 @@ namespace chaos
 
 	glm::vec2 RepeatedBoxScissor::GetInstanceOffset(glm::ivec2 const& index) const
 	{
-		return 2.0f * target_box.half_size * chaos::RecastVector<glm::vec2>(index);
+		return 2.0f * target_box.half_size * RecastVector<glm::vec2>(index);
 	}
 
 }; // namespace chaos

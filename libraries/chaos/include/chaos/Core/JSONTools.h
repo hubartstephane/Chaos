@@ -7,11 +7,11 @@
 #define CHAOS_IMPLEMENT_ENUMJSON_METHOD(enum_type, table_name)\
 bool LoadFromJSON(nlohmann::json const& json_entry, enum_type& dst)\
 {\
-	return chaos::LoadEnumFromJSON(json_entry, table_name, dst);\
+	return LoadEnumFromJSON(json_entry, table_name, dst);\
 }\
 bool SaveIntoJSON(nlohmann::json& json_entry, enum_type const& src)\
 {\
-	return chaos::SaveEnumIntoJSON(json_entry, table_name, src);\
+	return SaveEnumIntoJSON(json_entry, table_name, src);\
 }\
 
 #define CHAOS_JSON_ATTRIBUTE(config, x) chaos::JSONTools::GetAttribute(config, #x, x)
@@ -46,10 +46,10 @@ namespace chaos
 			std::string classname;
 			if (JSONTools::GetAttribute(entry, "classname", classname))
 			{
-				chaos::Class const* json_class = chaos::Class::FindClass(classname.c_str());
+				Class const* json_class = Class::FindClass(classname.c_str());
 				if (json_class != nullptr)
 				{
-					chaos::Class const* dst_class = chaos::Class::FindClass<T>();
+					Class const* dst_class = Class::FindClass<T>();
 					if (dst_class != nullptr)
 						if (json_class->InheritsFrom(dst_class, true) == InheritanceType::YES) // accept equal
 							return (T*)json_class->CreateInstance();
@@ -76,9 +76,9 @@ namespace chaos
 	}
 	/** template for shared_ptr */
 	template<typename T>
-	bool LoadFromJSON(nlohmann::json const & entry, chaos::shared_ptr<T> & dst)
+	bool LoadFromJSON(nlohmann::json const & entry, shared_ptr<T> & dst)
 	{
-		chaos::shared_ptr<T> other = LoadFromJSONCreateObject<T>(entry);
+		shared_ptr<T> other = LoadFromJSONCreateObject<T>(entry);
 		if (other == nullptr)
 			return false;
 		if (!LoadFromJSON(entry, *other))
@@ -177,7 +177,7 @@ namespace chaos
 	}
 	/** template for shared_ptr */
 	template<typename T>
-	bool SaveIntoJSON(nlohmann::json & entry, chaos::shared_ptr<T> const & src)
+	bool SaveIntoJSON(nlohmann::json & entry, shared_ptr<T> const & src)
 	{
 		if (src == nullptr)
 			return true;

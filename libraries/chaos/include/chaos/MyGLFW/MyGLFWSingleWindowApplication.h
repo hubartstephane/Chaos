@@ -179,7 +179,7 @@ namespace chaos
 				Window * GenerateWindow() override { return new WINDOW_TYPE; }
 			};
 
-			chaos::shared_ptr<MyApplication> application = new MyApplication(in_window_params);
+			shared_ptr<MyApplication> application = new MyApplication(in_window_params);
 			if (application != nullptr)
 			{
 				// XXX : under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries

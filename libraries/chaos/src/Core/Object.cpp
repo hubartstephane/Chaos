@@ -40,15 +40,16 @@ namespace chaos
 
 }; // namespace chaos
 
-
-void intrusive_ptr_add_ref(chaos::Object* obj) // to work with boost::intrusive_ptr<>
+void intrusive_ptr_add_ref(chaos::Object* obj)
 {
 	obj->AddReference();
 }
 
-/** utility method for shared_ptr */
-void intrusive_ptr_release(chaos::Object* obj) // to work with boost::intrusive_ptr<>
+void intrusive_ptr_release(chaos::Object* obj)
 {
 	obj->SubReference();
 }
+
+
+
 

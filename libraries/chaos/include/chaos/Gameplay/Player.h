@@ -16,13 +16,13 @@ namespace chaos
 	// Player
 	// =============================================
 
-	class Player : public chaos::Tickable, public chaos::InputEventReceiver, public chaos::JSONSerializable
+	class Player : public Tickable, public InputEventReceiver, public JSONSerializable
 	{
 		friend class PlayerGamepadCallbacks;
 
 		CHAOS_GAMEPLAY_ALLFRIENDS;
 		
-		CHAOS_DECLARE_OBJECT_CLASS2(Player, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(Player, Tickable);
 
 	public:
 
@@ -51,17 +51,17 @@ namespace chaos
 		virtual bool IsDead() const;
 
 		/** try to give physical device to the player */
-		bool CapturePhysicalGamepad(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		bool CapturePhysicalGamepad(MyGLFW::PhysicalGamepad * in_physical_gamepad);
 
 		/** gets the pawn */
-		chaos::AutoCastable<PlayerPawn> GetPawn() { return pawn.get(); }
+		AutoCastable<PlayerPawn> GetPawn() { return pawn.get(); }
 		/** gets the pawn */
-		chaos::AutoConstCastable<PlayerPawn> GetPawn() const { return pawn.get(); }
+		AutoConstCastable<PlayerPawn> GetPawn() const { return pawn.get(); }
 
 		/** gets the displacement component */
-		chaos::AutoCastable<PlayerDisplacementComponent> GetDisplacementComponent() { return displacement_component.get(); }
+		AutoCastable<PlayerDisplacementComponent> GetDisplacementComponent() { return displacement_component.get(); }
 		/** gets the pawn */
-		chaos::AutoConstCastable<PlayerDisplacementComponent> GetDisplacementComponent() const { return displacement_component.get(); }
+		AutoConstCastable<PlayerDisplacementComponent> GetDisplacementComponent() const { return displacement_component.get(); }
 
 		/** gets the left stick position */
 		glm::vec2 GetLeftStickPosition() const { return left_stick_position; }
@@ -89,10 +89,10 @@ namespace chaos
 	protected:
 
 		/** initialize the game instance */
-		virtual bool Initialize(chaos::GameInstance * in_game_instance);
+		virtual bool Initialize(GameInstance * in_game_instance);
 
 		/** called whenever the level is being changed */
-		virtual void OnLevelChanged(chaos::Level * new_level, chaos::Level * old_level, chaos::LevelInstance * new_level_instance);
+		virtual void OnLevelChanged(Level * new_level, Level * old_level, LevelInstance * new_level_instance);
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
@@ -111,7 +111,7 @@ namespace chaos
 		virtual void HandleSpecialGamepadCommands(float delta_time);
 
 		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gamepad_data);		
+		virtual void InternalHandleGamepadInputs(float delta_time, MyGLFW::GamepadData const * gamepad_data);		
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 
@@ -140,12 +140,12 @@ namespace chaos
 		GameInstance* game_instance = nullptr;
 
 		/** a gamepad that can be given to the player */
-		chaos::shared_ptr<chaos::MyGLFW::Gamepad> gamepad;
+		shared_ptr<MyGLFW::Gamepad> gamepad;
 
 		/** the player pawn */
-		chaos::shared_ptr<PlayerPawn> pawn;
+		shared_ptr<PlayerPawn> pawn;
 		/** the player displacement component */
-		chaos::shared_ptr<PlayerDisplacementComponent> displacement_component;
+		shared_ptr<PlayerDisplacementComponent> displacement_component;
 
 		/** the index of the player */
 		size_t player_index = 0;
@@ -174,7 +174,7 @@ namespace chaos
 	// A callback object for gamepad disconnection
 	// =============================================
 
-	class PlayerGamepadCallbacks : public chaos::MyGLFW::GamepadCallbacks
+	class PlayerGamepadCallbacks : public MyGLFW::GamepadCallbacks
 	{
 
 	public:
@@ -182,7 +182,7 @@ namespace chaos
 		/** constructor */
 		PlayerGamepadCallbacks(Player * in_player);
 		/** override */
-		virtual bool OnGamepadDisconnected(chaos::MyGLFW::Gamepad * in_gamepad) override;
+		virtual bool OnGamepadDisconnected(MyGLFW::Gamepad * in_gamepad) override;
 
 	protected:
 

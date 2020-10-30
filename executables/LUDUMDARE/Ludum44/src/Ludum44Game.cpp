@@ -54,24 +54,24 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!InitializeGameValueVector("player_fire_rates", config, config_path, player_fire_rates))
 		return false;
 	
-	DEATHGAME_JSON_ATTRIBUTE(min_player_max_health);
-	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
-	DEATHGAME_JSON_ATTRIBUTE(buy_upgrade_time);
-	DEATHGAME_JSON_ATTRIBUTE(charged_fire_time);
-	DEATHGAME_JSON_ATTRIBUTE(normal_fire_time);	
-	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
-	DEATHGAME_JSON_ATTRIBUTE(fire_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_damage);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_fire_rate);
+	CHAOS_JSON_ATTRIBUTE(config, min_player_max_health);
+	CHAOS_JSON_ATTRIBUTE(config, player_speed_factor);
+	CHAOS_JSON_ATTRIBUTE(config, buy_upgrade_time);
+	CHAOS_JSON_ATTRIBUTE(config, charged_fire_time);
+	CHAOS_JSON_ATTRIBUTE(config, normal_fire_time);	
+	CHAOS_JSON_ATTRIBUTE(config, scroll_factor);
+	CHAOS_JSON_ATTRIBUTE(config, fire_velocity);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_fire_velocity);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_fire_damage);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_fire_rate);
 
-	DEATHGAME_JSON_ATTRIBUTE(meteor_health);
-	DEATHGAME_JSON_ATTRIBUTE(alien_health);
-	DEATHGAME_JSON_ATTRIBUTE(turret_health);
+	CHAOS_JSON_ATTRIBUTE(config, meteor_health);
+	CHAOS_JSON_ATTRIBUTE(config, alien_health);
+	CHAOS_JSON_ATTRIBUTE(config, turret_health);
 
-	DEATHGAME_JSON_ATTRIBUTE(meteor_damage_for_player);
-	DEATHGAME_JSON_ATTRIBUTE(alien_damage_for_player);
-	DEATHGAME_JSON_ATTRIBUTE(turret_damage_for_player);
+	CHAOS_JSON_ATTRIBUTE(config, meteor_damage_for_player);
+	CHAOS_JSON_ATTRIBUTE(config, alien_damage_for_player);
+	CHAOS_JSON_ATTRIBUTE(config, turret_damage_for_player);
 			
 	return true;
 }

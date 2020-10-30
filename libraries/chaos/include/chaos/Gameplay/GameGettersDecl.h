@@ -1,6 +1,6 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-#define DEATH_GAMEGETTERS_DECLARE()\
+#define CHAOS_DECLARE_GAMEPLAY_GETTERS()\
 	size_t GetPlayerCount() const;\
 	chaos::AutoCastable<Player> GetPlayer(size_t player_index);\
 	chaos::AutoConstCastable<Player> GetPlayer(size_t player_index) const;\
@@ -20,7 +20,7 @@
 	chaos::AutoCastable<Camera> GetCamera(size_t camera_index);\
 	chaos::AutoConstCastable<Camera> GetCamera(size_t camera_index) const;
 
-#define DEATH_GAMEGETTERS_IMPLEMENT(CLASSNAME)\
+#define CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(CLASSNAME)\
 	size_t CLASSNAME::GetPlayerCount() const { return GameGettersTools::GetPlayerCount(this);}\
 	chaos::AutoCastable<Player> CLASSNAME::GetPlayer(size_t player_index) { return GameGettersTools::GetPlayer(this, player_index);}\
 	chaos::AutoConstCastable<Player> CLASSNAME::GetPlayer(size_t player_index) const { return GameGettersTools::GetPlayer(this, player_index); }\

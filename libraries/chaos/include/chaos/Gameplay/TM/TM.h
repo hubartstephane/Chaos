@@ -10,7 +10,7 @@
 namespace chaos
 {
 	// all classes in this file
-#define DEATH_TILEDLEVEL_CLASSES \
+#define CHAOS_GAMEPLAY_TM_CLASSES \
 (TMLevel) \
 (TMLevelInstance) \
 (TMLayerInstance) \
@@ -25,8 +25,8 @@ namespace chaos
 (TMSoundTrigger)
 
 		// forward declaration
-#define DEATH_TILEDLEVEL_FORWARD_DECL(r, data, elem) class elem;
-	BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FORWARD_DECL, _, DEATH_TILEDLEVEL_CLASSES)
+//#define CHAOS_GAMEPLAY_TM_FORWARD_DECL(r, data, elem) class elem;
+//	BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPLAY_TM_FORWARD_DECL, _, CHAOS_GAMEPLAY_TM_CLASSES)
 
 		// declare templates/using
 		template<typename T>
@@ -36,8 +36,8 @@ namespace chaos
 	using TMTriggerCollisionIterator = TMObjectCollisionIteratorBase<TMTrigger>;
 
 	// friendship macro
-#define DEATH_TILEDLEVEL_FRIEND_DECL(r, data, elem) friend class elem;
-#define DEATH_TILEDLEVEL_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(DEATH_TILEDLEVEL_FRIEND_DECL, _, DEATH_TILEDLEVEL_CLASSES)\
+#define CHAOS_GAPMEPLAY_TM_FRIEND_DECL(r, data, elem) friend class elem;
+#define CHAOS_GAMEPLAY_TM_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_GAPMEPLAY_TM_FRIEND_DECL, _, CHAOS_GAMEPLAY_TM_CLASSES)\
 	template<typename T> friend class TMObjectCollisionIteratorBase;
 
 

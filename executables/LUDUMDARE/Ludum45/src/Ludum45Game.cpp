@@ -40,23 +40,23 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
-	DEATHGAME_JSON_ATTRIBUTE(player_speed_factor);
-	DEATHGAME_JSON_ATTRIBUTE(player_speed_damping);
-	DEATHGAME_JSON_ATTRIBUTE(player_tan_speed_damping);
-	DEATHGAME_JSON_ATTRIBUTE(player_dash_velocity_boost);	
-	DEATHGAME_JSON_ATTRIBUTE(player_dash_duration);
+	CHAOS_JSON_ATTRIBUTE(config, player_speed_factor);
+	CHAOS_JSON_ATTRIBUTE(config, player_speed_damping);
+	CHAOS_JSON_ATTRIBUTE(config, player_tan_speed_damping);
+	CHAOS_JSON_ATTRIBUTE(config, player_dash_velocity_boost);	
+	CHAOS_JSON_ATTRIBUTE(config, player_dash_duration);
 
-	DEATHGAME_JSON_ATTRIBUTE(fire_size_ratio);	
-	DEATHGAME_JSON_ATTRIBUTE(fire_velocity);	
+	CHAOS_JSON_ATTRIBUTE(config, fire_size_ratio);	
+	CHAOS_JSON_ATTRIBUTE(config, fire_velocity);	
 	
-	DEATHGAME_JSON_ATTRIBUTE(scroll_factor);
+	CHAOS_JSON_ATTRIBUTE(config, scroll_factor);
 	
-	DEATHGAME_JSON_ATTRIBUTE(player_speeds);
-	DEATHGAME_JSON_ATTRIBUTE(player_damages);
-	DEATHGAME_JSON_ATTRIBUTE(player_dash_cooldowns);
-	DEATHGAME_JSON_ATTRIBUTE(player_power_rates);
-	DEATHGAME_JSON_ATTRIBUTE(player_power_spreads);
-	DEATHGAME_JSON_ATTRIBUTE(player_specialpowers);
+	CHAOS_JSON_ATTRIBUTE(config, player_speeds);
+	CHAOS_JSON_ATTRIBUTE(config, player_damages);
+	CHAOS_JSON_ATTRIBUTE(config, player_dash_cooldowns);
+	CHAOS_JSON_ATTRIBUTE(config, player_power_rates);
+	CHAOS_JSON_ATTRIBUTE(config, player_power_spreads);
+	CHAOS_JSON_ATTRIBUTE(config, player_specialpowers);
 						
 	return true;
 }

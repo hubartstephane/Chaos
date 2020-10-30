@@ -369,9 +369,9 @@ chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * i
 		if (spawner_type != nullptr)
 		{
 			if (chaos::StringTools::Strcmp(*spawner_type, "SoulSpawner") == 0)
-				return DEATH_MAKE_OBJECT_FACTORY(return new SoulSpawner(););
+				return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SoulSpawner(););
 			if (chaos::StringTools::Strcmp(*spawner_type, "FireSpawner") == 0)
-				return DEATH_MAKE_OBJECT_FACTORY(return new FireSpawner(););
+				return CHAOS_TM_MAKE_OBJECT_FACTORY(return new FireSpawner(););
 		}
 	}
 
@@ -379,13 +379,13 @@ chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * i
 	{
 		std::string const* trigger_type = in_typed_object->FindPropertyString("TRIGGER_TYPE");
 		if (trigger_type != nullptr && chaos::StringTools::Strcmp(*trigger_type, "BurnTrigger") == 0)
-			return DEATH_MAKE_OBJECT_FACTORY(return new SoulBurnTrigger(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SoulBurnTrigger(););
 		else
-			return DEATH_MAKE_OBJECT_FACTORY(return new SoulTrigger(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SoulTrigger(););
 	}
 		
 	if (in_typed_object->IsObjectOfType("SpikeBar"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new SpikeBar(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new SpikeBar(););
 
 	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }

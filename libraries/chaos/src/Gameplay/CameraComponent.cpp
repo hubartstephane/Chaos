@@ -7,7 +7,7 @@ namespace chaos
 	// CameraComponent
 	// =================================================
 
-	DEATH_GAMEGETTERS_IMPLEMENT(CameraComponent);
+	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(CameraComponent);
 
 	chaos::box2 CameraComponent::ApplyModifier(chaos::box2 const & src) const
 	{

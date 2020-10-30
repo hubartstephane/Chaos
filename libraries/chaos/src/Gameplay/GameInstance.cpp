@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	DEATH_GAMEGETTERS_IMPLEMENT(GameInstance);
+	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(GameInstance);
 
 	int GameInstance::GetBestPlayerScore() const
 	{

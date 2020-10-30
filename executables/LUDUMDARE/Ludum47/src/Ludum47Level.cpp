@@ -695,10 +695,10 @@ chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * i
 {
 #if 0
 	if (in_typed_object->IsObjectOfType("Road"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new LudumRoad(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new LudumRoad(););
 
 	if (in_typed_object->IsObjectOfType("SpeedIndication"))
-		return DEATH_MAKE_OBJECT_FACTORY(return new LudumSpeedIndication(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new LudumSpeedIndication(););
 #endif
 
 	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);

@@ -17,13 +17,13 @@ namespace chaos
 
 	class GameInstance : public chaos::Tickable, public chaos::InputEventReceiver, public CheckpointObject<GameCheckpoint>
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(GameInstance, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameInstance, chaos::Tickable);
 
 	public:
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** create one player and give it the gamepad provided if any */
 		Player * CreatePlayer(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad);

@@ -209,43 +209,43 @@ bool LudumGame::InitializeGameValues(nlohmann::json const & config, boost::files
 	if (!chaos::Game::InitializeGameValues(config, config_path, hot_reload))
 		return false;
 
-	DEATHGAME_JSON_ATTRIBUTE(initial_particle_health);
+	CHAOS_JSON_ATTRIBUTE(config, initial_particle_health);
 
-	DEATHGAME_JSON_ATTRIBUTE(dash_duration);
-	DEATHGAME_JSON_ATTRIBUTE(dash_cooldown);
-	DEATHGAME_JSON_ATTRIBUTE(dash_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(cooldown);
+	CHAOS_JSON_ATTRIBUTE(config, dash_duration);
+	CHAOS_JSON_ATTRIBUTE(config, dash_cooldown);
+	CHAOS_JSON_ATTRIBUTE(config, dash_velocity);
+	CHAOS_JSON_ATTRIBUTE(config, cooldown);
 
-	DEATHGAME_JSON_ATTRIBUTE(player_attraction_minradius);
-	DEATHGAME_JSON_ATTRIBUTE(player_attraction_maxradius);
-	DEATHGAME_JSON_ATTRIBUTE(player_tangent_force);
-	DEATHGAME_JSON_ATTRIBUTE(player_attraction_force);
-	DEATHGAME_JSON_ATTRIBUTE(player_repulsion_force);
-	DEATHGAME_JSON_ATTRIBUTE(player_slowing_factor);
-	DEATHGAME_JSON_ATTRIBUTE(player_max_velocity);
-	DEATHGAME_JSON_ATTRIBUTE(player_acceleration);
+	CHAOS_JSON_ATTRIBUTE(config, player_attraction_minradius);
+	CHAOS_JSON_ATTRIBUTE(config, player_attraction_maxradius);
+	CHAOS_JSON_ATTRIBUTE(config, player_tangent_force);
+	CHAOS_JSON_ATTRIBUTE(config, player_attraction_force);
+	CHAOS_JSON_ATTRIBUTE(config, player_repulsion_force);
+	CHAOS_JSON_ATTRIBUTE(config, player_slowing_factor);
+	CHAOS_JSON_ATTRIBUTE(config, player_max_velocity);
+	CHAOS_JSON_ATTRIBUTE(config, player_acceleration);
 
-	DEATHGAME_JSON_ATTRIBUTE(worldlimits_attraction_maxradius_offset);
-	DEATHGAME_JSON_ATTRIBUTE(worldlimits_attraction_minradius_offset);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_minradius_offset);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_maxradius_offset);
+	CHAOS_JSON_ATTRIBUTE(config, worldlimits_attraction_maxradius_offset);
+	CHAOS_JSON_ATTRIBUTE(config, worldlimits_attraction_minradius_offset);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_attraction_minradius_offset);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_attraction_maxradius_offset);
 
-	DEATHGAME_JSON_ATTRIBUTE(worldlimits_attraction_maxradius_factor);
-	DEATHGAME_JSON_ATTRIBUTE(worldlimits_attraction_minradius_factor);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_minradius_factor);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_maxradius_factor);
+	CHAOS_JSON_ATTRIBUTE(config, worldlimits_attraction_maxradius_factor);
+	CHAOS_JSON_ATTRIBUTE(config, worldlimits_attraction_minradius_factor);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_attraction_minradius_factor);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_attraction_maxradius_factor);
 
-	DEATHGAME_JSON_ATTRIBUTE(enemy_tangent_force);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_attraction_force);
-	DEATHGAME_JSON_ATTRIBUTE(enemy_repulsion_force);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_tangent_force);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_attraction_force);
+	CHAOS_JSON_ATTRIBUTE(config, enemy_repulsion_force);
 
-	DEATHGAME_JSON_ATTRIBUTE(particle_slowing_factor);
-	DEATHGAME_JSON_ATTRIBUTE(particle_min_radius_factor);
-	DEATHGAME_JSON_ATTRIBUTE(particle_max_radius_factor);
+	CHAOS_JSON_ATTRIBUTE(config, particle_slowing_factor);
+	CHAOS_JSON_ATTRIBUTE(config, particle_min_radius_factor);
+	CHAOS_JSON_ATTRIBUTE(config, particle_max_radius_factor);
 
-	DEATHGAME_JSON_ATTRIBUTE(particle_max_velocity);
+	CHAOS_JSON_ATTRIBUTE(config, particle_max_velocity);
 
-	DEATHGAME_JSON_ATTRIBUTE(world_clamp_radius);
+	CHAOS_JSON_ATTRIBUTE(config, world_clamp_radius);
 
 	return true;
 }

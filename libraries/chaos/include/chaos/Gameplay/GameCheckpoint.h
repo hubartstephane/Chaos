@@ -70,9 +70,9 @@ namespace chaos
 
 	class GameCheckpoint : public chaos::Object
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(GameCheckpoint, chaos::Object);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameCheckpoint, chaos::Object);
 
 	public:
 

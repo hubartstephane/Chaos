@@ -53,24 +53,24 @@ namespace chaos
 	{
 		// player start 
 		if (TMTools::IsPlayerStart(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePlayerStart(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreatePlayerStart(););
 		// camera 
 		if (TMTools::IsCameraTemplate(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCameraTemplate(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreateCameraTemplate(););
 		// path
 		if (chaos::TiledMap::GeometricObjectPolygon const * polygon = auto_cast(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePath(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreatePath(););
 		if (chaos::TiledMap::GeometricObjectPolyline const* polyline = auto_cast(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreatePath(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreatePath(););
 		// other kind of objects
 		if (TMTools::IsFinishTrigger(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateChangeLevelTrigger(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreateChangeLevelTrigger(););
 		if (TMTools::IsCheckpointTrigger(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateCheckpointTrigger(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreateCheckpointTrigger(););
 		if (TMTools::IsNotificationTrigger(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateNotificationTrigger(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreateNotificationTrigger(););
 		if (TMTools::IsSoundTrigger(in_typed_object))
-			return DEATH_MAKE_OBJECT_FACTORY(return DoCreateSoundTrigger(););
+			return CHAOS_TM_MAKE_OBJECT_FACTORY(return DoCreateSoundTrigger(););
 		return nullptr;
 	}
 

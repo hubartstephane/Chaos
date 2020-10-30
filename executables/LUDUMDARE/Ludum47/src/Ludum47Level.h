@@ -35,7 +35,7 @@ public:
 
 class LudumSpeedIndication : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumSpeedIndication, chaos::TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumSpeedIndication, chaos::TMObject);
 
 protected:
 
@@ -71,7 +71,7 @@ public:
 
 class LudumRoad : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumRoad, chaos::TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumRoad, chaos::TMObject);
 
 public:
 
@@ -114,7 +114,7 @@ public:
 
 class LudumCollision : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumCollision, chaos::TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumCollision, chaos::TMObject);
 
 public:
 
@@ -138,7 +138,7 @@ public:
 
 class LudumOpponent : public chaos::TMObject
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumOpponent, chaos::TMObject);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumOpponent, chaos::TMObject);
 
 protected:
 
@@ -173,7 +173,7 @@ class LudumLevel : public chaos::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, chaos::TMLevel);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, chaos::TMLevel);
 
 	LudumLevel();
 

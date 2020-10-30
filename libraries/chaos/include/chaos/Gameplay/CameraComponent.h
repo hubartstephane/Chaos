@@ -16,13 +16,13 @@ namespace chaos
 
 	class CameraComponent : public chaos::Tickable
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(CameraComponent, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(CameraComponent, chaos::Tickable);
 
 	public:
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** gets the camera the component belongs to */
 		chaos::AutoCastable<Camera> GetCamera() { return camera; }

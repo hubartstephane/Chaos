@@ -3,7 +3,7 @@
 namespace chaos
 {
 
-	DEATH_GAMEGETTERS_IMPLEMENT(Camera);
+	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(Camera);
 
 	// =================================================
 	// CameraTransform
@@ -92,6 +92,6 @@ namespace chaos
 		return true;
 	}
 
-	DEATH_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)
+	CHAOS_IMPLEMENT_COMPONENT_OWNER(Camera, CameraComponent, Component, components, camera)
 
 }; // namespace chaos

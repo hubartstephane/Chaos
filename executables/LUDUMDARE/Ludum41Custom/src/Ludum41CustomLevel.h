@@ -9,7 +9,7 @@
 class LudumLevel : public chaos::Level
 {
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, chaos::Level);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, chaos::Level);
 
 public:
 

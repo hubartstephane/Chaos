@@ -2,7 +2,7 @@
 
 
 // internal macros (do not use outside this file)
-#define DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(prefix, friend_prefix)\
+#define CHAOS_DECLARE_GAMEPLAY_UTILITY(prefix, friend_prefix)\
 	friend_prefix class prefix##LevelCheckpoint;\
 	friend_prefix class prefix##GameCheckpoint;\
 	friend_prefix class prefix##Player;\
@@ -18,15 +18,15 @@
 	friend_prefix class GameGettersTools;
 
 // internal macros (do not use outside this file)
-#define DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(prefix) DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(prefix, friend)
+#define CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(prefix) CHAOS_DECLARE_GAMEPLAY_UTILITY(prefix, friend)
 
 // declare all friendship for main game classes
-#define DEATH_GAMEFRAMEWORK_ALLFRIENDS DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(BOOST_PP_EMPTY())
+#define CHAOS_GAMEPLAY_ALLFRIENDS CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(BOOST_PP_EMPTY())
 
 // declare main classes for death
 namespace chaos
 {
-	DEATH_GAMEFRAMEWORK_DECLARE_UTILITY(BOOST_PP_EMPTY(), BOOST_PP_EMPTY())
+	CHAOS_DECLARE_GAMEPLAY_UTILITY(BOOST_PP_EMPTY(), BOOST_PP_EMPTY())
 
 }; // namespace chaos
 

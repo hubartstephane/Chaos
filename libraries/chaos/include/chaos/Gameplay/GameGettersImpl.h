@@ -9,7 +9,7 @@ namespace chaos
 #else
 
 // XXX : Due to class declaration order and dependencies, this must only be included from .cpp !!
-//       usefull for classes using DEATH_GAMEGETTERS_IMPLEMENT(...)
+//       usefull for classes using CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(...)
 
 //  PlayerDisplacementComponent
 //      ^

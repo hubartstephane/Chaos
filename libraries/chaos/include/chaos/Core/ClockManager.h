@@ -323,7 +323,7 @@ namespace chaos
 	{
 		friend class ClockEvent;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(Clock, Object);
+		CHAOS_DECLARE_OBJECT_CLASS2(Clock, Object);
 
 	public:
 

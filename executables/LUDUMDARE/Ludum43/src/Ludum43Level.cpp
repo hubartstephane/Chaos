@@ -138,7 +138,7 @@ bool LudumLevel::FinalizeLayerParticles(chaos::TMLayerInstance * layer_instance,
 chaos::TMObjectFactory LudumLevel::DoGetObjectFactory(chaos::TMLayerInstance * in_layer_instance, chaos::TiledMap::TypedObject const * in_typed_object)
 {
 	if (chaos::TMTools::IsFinishTrigger(in_typed_object))
-		return DEATH_MAKE_OBJECT_FACTORY(return new MyChangeLevelTrigger(););
+		return CHAOS_TM_MAKE_OBJECT_FACTORY(return new MyChangeLevelTrigger(););
 	return chaos::TMLevel::DoGetObjectFactory(in_layer_instance, in_typed_object);
 }
 

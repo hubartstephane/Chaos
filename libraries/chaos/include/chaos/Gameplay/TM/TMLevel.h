@@ -18,13 +18,13 @@ namespace chaos
 	// XXX : the functions to get factories receive a : TypedObject         (because we just need some properties and a type to know which object we would like to create (and that's what we get in Tile generation method))
 	//       the factories receive a                  : GeometricObjectType (because for the real object creation we need more than a TypedObject)
 	//
-	// XXX : beware, the DEATH_MAKE_OBJECT_FACTORY(...) macro hide the complexity of lambda parameters capture. Use with caution 
+	// XXX : beware, the CHAOS_TM_MAKE_OBJECT_FACTORY(...) macro hide the complexity of lambda parameters capture. Use with caution 
 	//
 
 	/** a functor for geometric object factory */
 	using TMObjectFactory = std::function<TMObject* (chaos::TiledMap::GeometricObject const*, TMObjectReferenceSolver&)>;
 	/** an helper to make a lambda inside DoGetObjectFactory */
-#define DEATH_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object, chaos::TMObjectReferenceSolver & in_reference_solver) { x }
+#define CHAOS_TM_MAKE_OBJECT_FACTORY(x) [this, in_layer_instance](chaos::TiledMap::GeometricObject const *in_geometric_object, chaos::TMObjectReferenceSolver & in_reference_solver) { x }
 
 
 	template<typename T>
@@ -79,9 +79,9 @@ namespace chaos
 
 	class TMLevel : public Level
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMLevel, Level);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMLevel, Level);
 
 	public:
 
@@ -154,9 +154,9 @@ namespace chaos
 
 	class TMLayerInstance : public chaos::GPURenderable, public chaos::JSONSerializable
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMLayerInstance, chaos::GPURenderable);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMLayerInstance, chaos::GPURenderable);
 
 	public:
 
@@ -406,9 +406,9 @@ namespace chaos
 
 	class TMLevelInstance : public LevelInstance
 	{
-		DEATH_TILEDLEVEL_ALL_FRIENDS;
+		CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(TMLevelInstance, LevelInstance);
+		CHAOS_DECLARE_OBJECT_CLASS2(TMLevelInstance, LevelInstance);
 
 	public:
 

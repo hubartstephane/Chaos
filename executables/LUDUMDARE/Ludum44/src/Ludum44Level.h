@@ -10,7 +10,7 @@
 
 class PowerUpTrigger : public chaos::TMTrigger
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(PowerUpTrigger, chaos::TMTrigger);
+	CHAOS_DECLARE_OBJECT_CLASS2(PowerUpTrigger, chaos::TMTrigger);
 
 public:
 
@@ -36,7 +36,7 @@ public:
 class SpeedUpTrigger : public chaos::TMTrigger
 {
 
-	CHAOS_OBJECT_DECLARE_CLASS2(SpeedUpTrigger, chaos::TMTrigger);
+	CHAOS_DECLARE_OBJECT_CLASS2(SpeedUpTrigger, chaos::TMTrigger);
 
 protected:
 
@@ -58,7 +58,7 @@ protected:
 class SpawnerTrigger : public chaos::TMTrigger
 {
 
-	CHAOS_OBJECT_DECLARE_CLASS2(SpawnerTrigger, chaos::TMTrigger);
+	CHAOS_DECLARE_OBJECT_CLASS2(SpawnerTrigger, chaos::TMTrigger);
 
 protected:
 
@@ -87,7 +87,7 @@ class LudumLevel : public chaos::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, chaos::TMLevel);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, chaos::TMLevel);
 
 	LudumLevel();
 

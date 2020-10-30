@@ -4,14 +4,14 @@
  * Macros for declaring classes in object derivated classes
  */
 
-#define CHAOS_OBJECT_DECLARE_CLASS1(classname)\
+#define CHAOS_DECLARE_OBJECT_CLASS1(classname)\
 private:\
 static inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname>(#classname);\
 public:\
 static chaos::Class const * GetStaticClass(){ return classname##_class;}\
 virtual chaos::Class const * GetClass() const { return classname##_class; }
 
-#define CHAOS_OBJECT_DECLARE_CLASS2(classname, parent_classname)\
+#define CHAOS_DECLARE_OBJECT_CLASS2(classname, parent_classname)\
 private:\
 static inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname, parent_classname>(#classname);\
 public:\
@@ -75,7 +75,7 @@ namespace chaos
 		friend class SharedPointerPolicy;
 		friend class WeakPointerPolicy;
 
-		CHAOS_OBJECT_DECLARE_CLASS1(Object);
+		CHAOS_DECLARE_OBJECT_CLASS1(Object);
 
 	public:
 

@@ -18,13 +18,13 @@ namespace chaos
 	class PlayerPawn : public GameEntity
 	{
 
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(PlayerPawn, GameEntity);
+		CHAOS_DECLARE_OBJECT_CLASS2(PlayerPawn, GameEntity);
 
 	public:
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** constructor */
 		PlayerPawn();

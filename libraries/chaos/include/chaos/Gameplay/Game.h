@@ -1,6 +1,6 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-#define DEATHGAME_JSON_ATTRIBUTE(x) chaos::JSONTools::GetAttribute(config, #x, x)
+
 
 namespace chaos
 {
@@ -39,13 +39,13 @@ namespace chaos
 
 		friend class PlayingHUD;
 
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
 	public:
 
-		CHAOS_OBJECT_DECLARE_CLASS2(Game, chaos::Object);
+		CHAOS_DECLARE_OBJECT_CLASS2(Game, chaos::Object);
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** constructor */
 		Game();
@@ -99,14 +99,14 @@ namespace chaos
 		chaos::Clock const * GetRootClock() const { return root_clock.get(); }
 
 		// GPURenderable layers
-#define DEATH_FIND_RENDERABLE_CHILD(result, funcname)\
+#define CHAOS_FIND_RENDERABLE_CHILD(result, funcname)\
 		result * funcname(char const * name, chaos::GPURenderableLayerSystem * root = nullptr);\
 		result const * funcname(char const * name, chaos::GPURenderableLayerSystem const * root = nullptr) const;\
 		result * funcname(chaos::TagType tag, chaos::GPURenderableLayerSystem * root = nullptr);\
 		result const * funcname(chaos::TagType tag, chaos::GPURenderableLayerSystem const * root = nullptr) const;
-		DEATH_FIND_RENDERABLE_CHILD(chaos::GPURenderableLayerSystem, FindRenderableLayer);
-		DEATH_FIND_RENDERABLE_CHILD(chaos::ParticleLayerBase, FindParticleLayer);
-#undef DEATH_FIND_RENDERABLE_CHILD
+		CHAOS_FIND_RENDERABLE_CHILD(chaos::GPURenderableLayerSystem, FindRenderableLayer);
+		CHAOS_FIND_RENDERABLE_CHILD(chaos::ParticleLayerBase, FindParticleLayer);
+#undef CHAOS_FIND_RENDERABLE_CHILD
 
 		/** utility function to get the sound manager */
 		chaos::SoundManager * GetSoundManager();

@@ -4,7 +4,7 @@
 
 class LudumPlayerDisplacementComponent : public chaos::PlayerDisplacementComponent
 {
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumPlayerDisplacementComponent, chaos::PlayerDisplacementComponent);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumPlayerDisplacementComponent, chaos::PlayerDisplacementComponent);
 
 
 public:

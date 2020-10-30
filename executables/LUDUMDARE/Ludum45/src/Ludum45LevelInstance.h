@@ -12,9 +12,9 @@ class LudumLevelInstance : public chaos::TMLevelInstance
 {
 public:
 
-	DEATH_GAMEFRAMEWORK_DECLARE_FRIENDSHIPS(Ludum);
+	CHAOS_DECLARE_GAMEPLAY_FRIENDSHIPS(Ludum);
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevelInstance, chaos::TMLevelInstance);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevelInstance, chaos::TMLevelInstance);
 
 protected:
 

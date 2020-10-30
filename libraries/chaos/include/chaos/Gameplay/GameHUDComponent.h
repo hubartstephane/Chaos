@@ -31,7 +31,7 @@ namespace chaos
 
 	class GameHUDComponent : public chaos::GPURenderable
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
 		friend class GameHUD;
 		friend class GameHUDTimedComponent;

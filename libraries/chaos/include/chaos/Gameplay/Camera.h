@@ -30,13 +30,13 @@ namespace chaos
 
 	class Camera : public chaos::Tickable, public chaos::JSONSerializable
 	{
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 
-		CHAOS_OBJECT_DECLARE_CLASS2(Camera, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(Camera, chaos::Tickable);
 
 	public:
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** initialization method */
 		bool Initialize(LevelInstance * in_level_instance);
@@ -66,7 +66,7 @@ namespace chaos
 		virtual bool SerializeFromJSON(nlohmann::json const& json_entry) override;
 
 		/** Camera is a CameraComponent owner */
-		DEATH_DECLARE_COMPONENT_OWNER(CameraComponent, Component, components)
+		CHAOS_DECLARE_COMPONENT_OWNER(CameraComponent, Component, components)
 
 	protected:
 

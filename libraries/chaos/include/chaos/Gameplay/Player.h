@@ -20,13 +20,13 @@ namespace chaos
 	{
 		friend class PlayerGamepadCallbacks;
 
-		DEATH_GAMEFRAMEWORK_ALLFRIENDS;
+		CHAOS_GAMEPLAY_ALLFRIENDS;
 		
-		CHAOS_OBJECT_DECLARE_CLASS2(Player, chaos::Tickable);
+		CHAOS_DECLARE_OBJECT_CLASS2(Player, chaos::Tickable);
 
 	public:
 
-		DEATH_GAMEGETTERS_DECLARE();
+		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** get the index of the player */
 		size_t GetPlayerIndex() const { return player_index; }

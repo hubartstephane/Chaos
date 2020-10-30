@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	DEATH_GAMEGETTERS_IMPLEMENT(PlayerPawn);
+	CHAOS_IMPLEMENT_GAMEPLAY_GETTERS(PlayerPawn);
 
 	// =============================================
 	// PlayerPawn

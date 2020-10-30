@@ -11,9 +11,9 @@
 
 class EnemySpawnerTrigger : public chaos::TMTrigger
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS;
+	CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(EnemySpawnerTrigger, chaos::TMTrigger);
+	CHAOS_DECLARE_OBJECT_CLASS2(EnemySpawnerTrigger, chaos::TMTrigger);
 
 protected:
 
@@ -37,9 +37,9 @@ protected:
 
 class BonusSpawnerTrigger : public chaos::TMTrigger
 {
-	DEATH_TILEDLEVEL_ALL_FRIENDS;
+	CHAOS_GAMEPLAY_TM_ALL_FRIENDS;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(BonusSpawnerTrigger, chaos::TMTrigger);
+	CHAOS_DECLARE_OBJECT_CLASS2(BonusSpawnerTrigger, chaos::TMTrigger);
 
 protected:
 
@@ -62,7 +62,7 @@ class LudumLevel : public chaos::TMLevel
 {
 	friend class LudumLevelInstance;
 
-	CHAOS_OBJECT_DECLARE_CLASS2(LudumLevel, chaos::TMLevel);
+	CHAOS_DECLARE_OBJECT_CLASS2(LudumLevel, chaos::TMLevel);
 
 	LudumLevel();
 

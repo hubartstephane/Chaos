@@ -1,3 +1,8 @@
+#ifdef CHAOS_FORWARD_DECLARATION
+
+namespace chaos
+{
+	// all classes in this file
 #define CHAOS_TILEDMAP_CLASSES \
 (BaseObject) \
 (Property) \
@@ -33,16 +38,16 @@
 (Map) \
 (Manager)
 
-#ifdef CHAOS_FORWARD_DECLARATION
+// forward declaration
+#define CHAOS_TILEDMAP_FORWARD_DECL(r, data, elem) class elem;
 
-namespace chaos
-{
+// friendship macro
+#define CHAOS_TILEDMAP_FRIEND_DECL(r, data, elem) friend class elem;
+#define CHAOS_TILEDMAP_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FRIEND_DECL, _, CHAOS_TILEDMAP_CLASSES)	
+
 	namespace TiledMap
 	{
-		// forward declaration
-#define CHAOS_TILEDMAP_FORWARD_DECL(r, data, elem) class elem;
-BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FORWARD_DECL, _, CHAOS_TILEDMAP_CLASSES)
-#undef CHAOS_TILEDMAP_FORWARD_DECL		
+		BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FORWARD_DECL, _, CHAOS_TILEDMAP_CLASSES);
 
 	}; // namespace TiledMap
 		
@@ -51,12 +56,7 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FORWARD_DECL, _, CHAOS_TILEDMAP_CLASSES)
 #else
 
 namespace chaos
-{
-		
-	// friendship macro
-#define CHAOS_TILEDMAP_FRIEND_DECL(r, data, elem) friend class elem;
-#define CHAOS_TILEDMAP_ALL_FRIENDS BOOST_PP_SEQ_FOR_EACH(CHAOS_TILEDMAP_FRIEND_DECL, _, CHAOS_TILEDMAP_CLASSES)	
-	
+{	
 	namespace TiledMap
 	{
 		// ==========================================
@@ -1661,14 +1661,6 @@ namespace chaos
 
 	}; // namespace TiledMap
 
-
-	   // undefine macros
-#undef CHAOS_TILEDMAP_FRIEND_DECL
-#undef CHAOS_TILEDMAP_ALL_FRIENDS
-
 }; // namespace chaos
 
 #endif // CHAOS_FORWARD_DECLARATION
-
-// undefine macros
-#undef CHAOS_TILEDMAP_CLASSES

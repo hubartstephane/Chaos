@@ -1,18 +1,10 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace GLShaderTools
-	{
-	}; // namespace GLShaderTools
-
-}; // namespace chaos
 
 #else 
 
 namespace chaos
 {
-
 	namespace GLShaderTools
 	{
 		/** transform a program into a binary chunk (the binary_format is encoded in the buffer) */

@@ -2,7 +2,6 @@
 
 namespace chaos
 {
-
 	class GLPixelFormat;
 
 }; // namespace chaos

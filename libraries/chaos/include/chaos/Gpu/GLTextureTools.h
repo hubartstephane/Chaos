@@ -4,11 +4,6 @@ namespace chaos
 {
 	class GenTextureParameters;
 
-	namespace GLTextureTools
-	{
-
-	}; // namespace GLTextureTools
-
 }; // namespace chaos
 
 #else 

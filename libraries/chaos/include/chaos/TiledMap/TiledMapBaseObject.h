@@ -32,6 +32,14 @@ namespace chaos
 
 		/** split the tile pseudo GID into GID/H-FLIP/V-FLIP */
 		int DecodeTileGID(int pseudo_gid, int* particle_flags = nullptr);
+		/** returns the number of hexadecimal character from position */
+		int GetHEXCharacterCount(char const* c);
+		/** read an attribute as color */
+		bool ReadAttributeHEX(tinyxml2::XMLElement const* element, char const* attribute_name, unsigned int& result);
+		/** read a string as color */
+		bool ReadXMLColor(std::string const& str, glm::vec4& result);
+		/** read an attribute as color */
+		bool ReadXMLColor(tinyxml2::XMLElement const* element, char const* attribute_name, glm::vec4& result);
 
 		// ==========================================
 		// TiledMap coordinate system

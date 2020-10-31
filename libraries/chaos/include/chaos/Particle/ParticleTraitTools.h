@@ -11,6 +11,15 @@ namespace chaos
 
 namespace chaos
 {
+	// function detection 
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(Tick);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateParticle);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginUpdateParticles);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateRenderingStates);
+
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(ParticleToPrimitives);
+	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginParticlesToPrimitives);
+
 	// ==============================================================
 	// The kind of ParticleToPrimitive to do
 	// ==============================================================
@@ -70,15 +79,6 @@ struct UpdateParticle_ImplementationFlags
 
 namespace ParticleTraitTools
 {
-	/** some meta functions */
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(Tick);
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateParticle);
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginUpdateParticles);
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(UpdateRenderingStates);
-
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(ParticleToPrimitives);
-	CHAOS_GENERATE_CHECK_METHOD_AND_FUNCTION(BeginParticlesToPrimitives);
-
 	/** returns the kind of implementation required for the particle rendering */
 	template<typename TRAIT_TYPE>
 	constexpr int GetParticleToPrimitivesImplementationType()

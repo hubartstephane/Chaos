@@ -38,8 +38,6 @@ namespace chaos
 	// Collision function
 	// =====================================
 
-
-
 	class TileCollisionComputer
 	{
 	public:

@@ -108,6 +108,20 @@ namespace chaos
 		bool release_image = false;  
 	};
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	* TextureArrayGenerator : an helper class that is used to generate texture array    GL_TEXTURE_1D_ARRAY,    GL_TEXTURE_2D_ARRAY or    GL_TEXTURE_CUBE_ARRAY
 	*/
@@ -145,7 +159,7 @@ namespace chaos
 		/** clean all generators */
 		void Clean();
 		/** generate the texture array */
-		GPUTexture * GenTextureObject(PixelFormatMergeParams const & merge_params = PixelFormatMergeParams(), GenTextureParameters const & parameters = {});
+		GPUTexture* GenTextureObject(PixelFormatMergeParams const& merge_params = {}, GenTextureParameters const& parameters = {});
 
 	protected:
 

@@ -139,7 +139,7 @@ namespace chaos
 		/** if valid, the resulting pixel format should be set to this */
 		PixelFormat pixel_format;
 		/** if false the pixel_format cannot be 'upgraded' with incomming format */
-		bool upgrade_pixel_format = false;
+		bool upgrade_pixel_format = true;
 		/** if set to false, all luminances formats will become RGB */
 		bool accept_luminance = true;
 		/** if set to false, all float formats will become unsigned char */
@@ -160,14 +160,16 @@ namespace chaos
 	public:
 
 		/** constructor */
-		PixelFormatMerger(PixelFormatMergeParams const & in_params = PixelFormatMergeParams());
+		PixelFormatMerger(PixelFormatMergeParams const& in_params = {});
 
 		/** reset the merger */
-		void Reset(PixelFormatMergeParams const & in_params = PixelFormatMergeParams());
+		void Reset(PixelFormatMergeParams const& in_params = {});
 		/** the merge method */
 		void Merge(PixelFormat src);
 		/** get the result if available */
 		PixelFormat GetResult() const;
+		/** returns whether all incomming format match the result */
+		bool AreIncommingFormatIdentical() const { return identical_incomming_format; }
 
 	protected:
 
@@ -177,6 +179,8 @@ namespace chaos
 		bool result_is_available = false;
 		/** the parameter for the merge */
 		PixelFormatMergeParams params;
+		/** true whether all incomming format are identical (no conversion required) */
+		bool identical_incomming_format = true;
 	};
 
 }; // namespace chaos

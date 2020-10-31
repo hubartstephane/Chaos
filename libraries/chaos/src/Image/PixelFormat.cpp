@@ -210,15 +210,13 @@ namespace chaos
 		assert(src.IsValid());
 		assert(!src.IsDepthStencilPixel());
 
+		PixelFormat input_format = src;
+
 		if (!params.accept_luminance && src.component_count == 1) // transform luminance into RGB
 			src.component_count = 3;
 
 		if (!params.accept_float && src.component_type == PixelComponentType::FLOAT) // transform float into unsigned char
-		{
-			assert(0);
-			//ORI src.component_count = PixelComponentType::UNSIGNED_CHAR; 
 			src.component_type = PixelComponentType::UNSIGNED_CHAR;
-		}
 
 		if (!result_is_available)
 		{
@@ -230,6 +228,8 @@ namespace chaos
 			result.component_type = std::max(result.component_type, src.component_type);
 			result.component_count = std::max(result.component_count, src.component_count);
 		}
+
+		identical_incomming_format &= (input_format == result);
 	}
 
 	PixelFormat PixelFormatMerger::GetResult() const

@@ -16,7 +16,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPURenderbuffer(GLuint in_id = 0, SurfaceDescription const & in_surface_description = SurfaceDescription());
+		GPURenderbuffer(GLuint in_id = 0, SurfaceDescription const& in_surface_description = {});
 		/** destructor */
 		virtual ~GPURenderbuffer();
 

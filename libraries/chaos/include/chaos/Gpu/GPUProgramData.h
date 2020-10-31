@@ -25,11 +25,11 @@ namespace chaos
 		/** self descriptive */
 		std::string name;
 		/** self descriptive */
-		GLint  array_size;
+		GLint  array_size = 0;
 		/** self descriptive */
-		GLint  location;
+		GLint  location = 0;
 		/** self descriptive */
-		GLenum type;
+		GLenum type = GL_NONE;
 	};
 
 	/**

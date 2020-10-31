@@ -1,5 +1,15 @@
 #include <chaos/Chaos.h> 
 
+std::vector<chaos::PixelFormat> pixel_formats =
+{
+	chaos::PixelFormat::Gray,
+	chaos::PixelFormat::GrayFloat,
+	chaos::PixelFormat::BGR,
+	chaos::PixelFormat::BGRA,
+	chaos::PixelFormat::RGBFloat,
+	chaos::PixelFormat::RGBAFloat
+};
+
 class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
 {
 
@@ -22,6 +32,13 @@ protected:
 
 	void ChangeSkyBox(int index)
 	{
+
+
+
+
+
+
+
 		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateSkyBox(index);
 		if (new_texture != nullptr)
 		{
@@ -29,7 +46,7 @@ protected:
 			texture = new_texture;
 			debug_display.Clear();
 
-			chaos::PixelFormat pf(chaos::PixelFormatType(index + 1));
+			chaos::PixelFormat pf = pixel_formats[index];
 		
 			char const * component_type = (pf.component_type == chaos::PixelComponentType::UNSIGNED_CHAR) ? "unsigned char" : "float";
 
@@ -39,7 +56,10 @@ protected:
 
 	chaos::shared_ptr<chaos::GPUTexture> GenerateSkyBox(int index)
 	{
-		chaos::PixelFormat pixel_format = chaos::PixelFormat((chaos::PixelFormatType)(index + 1)); // 0 = UNKNOWN FORMAT
+		if (index < 0 || index >= pixel_formats.size())
+			return nullptr;
+
+		chaos::PixelFormat pixel_format = pixel_formats[index];
 		if (!pixel_format.IsValid())
 			return nullptr;
 

@@ -3,7 +3,6 @@
 namespace chaos
 {
 	enum class PixelComponentType;
-	enum class PixelFormatType;
 
 	class PixelFormat;
 	class PixelFormatMergeParams;
@@ -35,22 +34,6 @@ namespace chaos
 	/** JSON saving method */
 	bool SaveIntoJSON(nlohmann::json& json_entry, PixelComponentType const& src);
 
-
-	/** 
-	 * the well known formats 
-	 */
-	enum class PixelFormatType : int
-	{
-		UNKNOWN = 0,
-		GRAY = 1,
-		RGB = 2,
-		RGBA = 3,
-		GRAY_FLOAT = 4,
-		RGB_FLOAT = 5,
-		RGBA_FLOAT = 6,
-		DEPTH_STENCIL = 7
-	};
-
 	/** 
 	* PixelFormat : the accepted pixel formats
 	*/
@@ -69,12 +52,8 @@ namespace chaos
 			component_type(in_component_type), 
 			component_count(in_component_count){};
 
-		PixelFormat(PixelFormatType in_format);
-
 		/** get the size of one pixel */
 		int GetPixelSize() const;
-		/** get the known type of one pixel */
-		PixelFormatType GetFormat() const;
 		/** returns true whether the pixel format is handled */
 		bool IsValid() const;
 		/** returns true whether the pixel is a standard 'color' pixel */

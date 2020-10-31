@@ -87,7 +87,7 @@ namespace chaos
 				}
 			}
 
-#if _DEBUG && 0
+#if _DEBUG
 			if (Application::HasApplicationCommandLineFlag("-ShowLoadedFile")) // CMDLINE
 			{
 				LogTools::Log("LoadFile [%s]    size = [%d]", resolved_path.string().c_str(), result.bufsize);
@@ -102,9 +102,6 @@ namespace chaos
 
 		bool GetRedirectedPath(boost::filesystem::path const& p, boost::filesystem::path& redirected_path)
 		{
-#if 0
-
-
 			Application const* application = Application::GetConstInstance();
 			if (application == nullptr)
 				return false;
@@ -136,9 +133,6 @@ namespace chaos
 			// make substitution, build_path prefix to src_path prefix
 			redirected_path = (src_path / p.lexically_relative(build_path));
 			redirected_path.normalize();
-			return true;
-
-#endif
 			return true;
 		}
 #endif // _DEBUG
@@ -182,9 +176,6 @@ namespace chaos
 			boost::filesystem::path const& resolved_path = path.GetResolvedPath();
 			return DoIsTypedFile(resolved_path.string().c_str(), expected_ext); // use an utility function because path to string give a volatile object
 		}
-
-
-
 
 		Buffer<char> LoadFile(FilePathParam const& path, bool ascii, bool* success_open)
 		{

@@ -119,13 +119,13 @@ namespace chaos
 		ImageDescription GetImageDescription(FT_Bitmap & bitmap);
 
 		/** generate a bitmap from a glyph slot */
-		FIBITMAP * GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_GlyphSlot glyph, PixelFormat const & pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a bitmap */
-		FIBITMAP * GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_Bitmap & bitmap, PixelFormat const & pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a string */
-		FIBITMAP * GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_Face face, char const * str, PixelFormat const & pixel_format = PixelFormat::Gray);
 		/** generate a bitmap from a font an a character */
-		FIBITMAP * GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format = PixelFormat(PixelFormatType::GRAY));
+		FIBITMAP * GenerateImage(FT_Face face, char c, PixelFormat const & pixel_format = PixelFormat::Gray);
 		/** generate a bitmap glyph from a character */
 		FT_BitmapGlyph GetBitmapGlyph(FT_Face face, char c, bool accept_notfound_glyph);
 		/** generate a cache with all glyph required for a string */

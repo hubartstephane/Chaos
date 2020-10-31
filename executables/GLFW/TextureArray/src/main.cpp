@@ -91,7 +91,7 @@ protected:
 			return false;
 
 		// generate the texture
-		texture = GenerateTextureArray(current_pixel_format);
+		ChangePixelFormat(0);
 		if (texture == nullptr)
 			return false;
 
@@ -138,9 +138,8 @@ protected:
 		return true; // refresh
 	}
 
-	chaos::shared_ptr<chaos::GPUTexture> GenerateTextureArray(chaos::PixelFormatType current_pixel_format)
+	chaos::shared_ptr<chaos::GPUTexture> GenerateTextureArray(chaos::PixelFormat pixel_format)
 	{
-		chaos::PixelFormat pixel_format = chaos::PixelFormat(current_pixel_format);
 		if (!pixel_format.IsValid())
 			return nullptr;
 
@@ -160,9 +159,19 @@ protected:
 
 	void ChangePixelFormat(int delta)
 	{
-		chaos::PixelFormatType next_format = chaos::PixelFormatType((int)current_pixel_format + delta);
+		std::vector<chaos::PixelFormat> pixel_formats =
+		{
+			chaos::PixelFormat::Gray,
+			chaos::PixelFormat::GrayFloat,
+			chaos::PixelFormat::BGR,
+			chaos::PixelFormat::BGRA,
+			chaos::PixelFormat::RGBFloat,
+			chaos::PixelFormat::RGBAFloat
+		};
 
-		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(next_format);
+		int next_format = (current_pixel_format + delta + int(pixel_formats.size())) % int(pixel_formats.size());
+
+		chaos::shared_ptr<chaos::GPUTexture> new_texture = GenerateTextureArray(pixel_formats[next_format]);
 		if (new_texture != nullptr)
 		{
 			texture = new_texture;
@@ -228,7 +237,7 @@ protected:
 	// the bitmap used to generate the slices
 	std::vector<FIBITMAP *> bitmaps;
 
-	chaos::PixelFormatType current_pixel_format = chaos::PixelFormatType::GRAY;
+	int current_pixel_format = 0;
 
 
 	// rendering for the box  

@@ -36,7 +36,7 @@ namespace chaos
 
 		result.width = w;
 		result.height = h;
-		result.pixel_format = PixelFormat(PixelFormatType::GRAY);
+		result.pixel_format = PixelFormat(PixelFormat::Gray);
 		result.line_size = w * sizeof(PixelGray);
 		result.pitch_size = bitmap.pitch;
 		result.padding_size = result.pitch_size - result.line_size;
@@ -49,7 +49,7 @@ namespace chaos
 	static void MakeAlphaChannelConsistent(ImageDescription & desc)
 	{
 		// correction of alpha channel
-		if (desc.pixel_format == PixelFormatType::RGBA_FLOAT)
+		if (desc.pixel_format == PixelFormat::RGBAFloat)
 		{
 			int w = desc.width;
 			int h = desc.height;
@@ -63,7 +63,7 @@ namespace chaos
 					line[i].A = line[i].R;
 			}
 		}
-		else if (desc.pixel_format == PixelFormatType::RGBA)
+		else if (desc.pixel_format == PixelFormat::BGRA)
 		{
 			int w = desc.width;
 			int h = desc.height;

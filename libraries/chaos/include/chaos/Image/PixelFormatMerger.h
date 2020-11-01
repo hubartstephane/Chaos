@@ -51,8 +51,10 @@ namespace chaos
 		void Reset(PixelFormatMergeParams const& in_params = {});
 		/** the merge method */
 		void Merge(PixelFormat src);
-		/** get the result if available */
-		PixelFormat GetResult() const;
+		/** get the result */
+		PixelFormat GetResult() const { return result; }
+		/** check whether the result is available */
+		bool IsResultAvailable() const { return result_is_available; }
 		/** returns whether all incomming format match the result */
 		bool AreIncommingFormatIdentical() const { return identical_incomming_format; }
 

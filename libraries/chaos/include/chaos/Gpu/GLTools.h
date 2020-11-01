@@ -24,7 +24,7 @@ namespace chaos
 
 		/** set the viewport */
 		template<typename T>
-		static void SetViewport(type_box2<T> const & viewport)
+		static void SetViewport(type_box<T, 2> const & viewport)
 		{
 			auto corners = GetBoxCorners(viewport);
 			glViewport(

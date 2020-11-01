@@ -77,9 +77,4 @@ namespace chaos
 		identical_incomming_format &= (input_format == result);
 	}
 
-	PixelFormat PixelFormatMerger::GetResult() const
-	{
-		return result;
-	}
-
 }; // namespace chaos

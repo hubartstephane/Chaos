@@ -505,7 +505,6 @@ namespace chaos
 			if (memory != nullptr)
 			{
 				FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeFromMemory(memory, 0);
-				
 				FIBITMAP * bmp = FreeImage_LoadFromMemory(format, memory, 0);
 				result = ConvertToSupportedType(bmp, true);
 				FreeImage_CloseMemory(memory);

@@ -173,9 +173,6 @@ namespace chaos
 		return result;
 	}
 
-
-#if 0
-
 	FIBITMAP * ImageTools::GenFreeImage(GLuint texture_id, GLint level)
 	{
 		FIBITMAP * result = nullptr;
@@ -189,8 +186,6 @@ namespace chaos
 		}
 		return result;
 	}
-#endif
-
 
 	FREE_IMAGE_FORMAT ImageTools::GetFreeImageFormat(PixelFormat const & pixel_format)
 	{

@@ -464,20 +464,7 @@ namespace chaos
 			if (attachment == nullptr || attachment->texture == nullptr)
 				return false;
 
-			//bitmap_ptr img = bitmap_ptr(ImageTools::GenFreeImage(attachment->texture->GetResourceID(), 0));
-
-			// shu47
-
-
-
-
-			bitmap_ptr img; 
-
-
-
-
-
-
+			bitmap_ptr img = bitmap_ptr(ImageTools::GenFreeImage(attachment->texture->GetResourceID(), 0));
 			if (img == nullptr)
 				return false;
 

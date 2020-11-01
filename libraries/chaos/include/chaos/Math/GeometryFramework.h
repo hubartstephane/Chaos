@@ -65,7 +65,7 @@ namespace chaos
 
 
 	// ==============================================================================================
-	// box_base functions
+	// type_box_base functions
 	// ==============================================================================================
 
 	// shu46 : half_size.x == 0  -> pas vide
@@ -73,75 +73,75 @@ namespace chaos
 
 	/** returns true whether the box is empty */
 	template<typename T, int dimension>
-	bool IsGeometryEmpty(box_base<T, dimension> const & b)
+	bool IsGeometryEmpty(type_box_base<T, dimension> const & b)
 	{
-		return glm::any(glm::lessThan(b.half_size, box_base<T, dimension>::vec_type(0)));
+		return glm::any(glm::lessThan(b.half_size, type_box_base<T, dimension>::vec_type(0)));
 	}
 
 	/** returns the perimeter of the box */
 	template<typename T>
-	T GetPerimeter(box_base<T, 2> const & b)
+	T GetPerimeter(type_box_base<T, 2> const & b)
 	{
 		return static_cast<T>(4) * (b.half_size.x + b.half_size.y);
 	}
 
 	/** returns the surface of the box */
 	template<typename T>
-	T GetSurface(box_base<T, 2> const & b)
+	T GetSurface(type_box_base<T, 2> const & b)
 	{
 		return static_cast<T>(4) * (b.half_size.x * b.half_size.y);
 	}
 
 	/** return the volume of the box */
 	template<typename T>
-	T GetVolume(box_base<T, 3> const & b)
+	T GetVolume(type_box_base<T, 3> const & b)
 	{
 		return static_cast<T>(8) * b.half_size.x * b.half_size.y * b.half_size.z;
 	}
 
 	/** return the surface of the box */
 	template<typename T>
-	T GetSurface(box_base<T, 3> const & b)
+	T GetSurface(type_box_base<T, 3> const & b)
 	{
 		return static_cast<T>(8) *((b.half_size.x * b.half_size.y) + (b.half_size.y * b.half_size.z) + (b.half_size.z * b.half_size.x));
 	};
 
 	/** returns the bounding circle for the box */
 	template<typename T>
-	type_sphere2<T> GetBoundingSphere(box_base<T, 2> const & b)
+	type_sphere<T, 2> GetBoundingSphere(type_box_base<T, 2> const & b)
 	{
-		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, glm::length(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere<T, 2>() : type_sphere<T, 2>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner circle for the box */
 	template<typename T>
-	type_sphere2<T> GetInnerSphere(box_base<T, 2> const & b)
+	type_sphere<T, 2> GetInnerSphere(type_box_base<T, 2> const & b)
 	{
-		return IsGeometryEmpty(b) ? type_sphere2<T>() : type_sphere2<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere<T, 2>() : type_sphere<T, 2>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the bounding sphere for the box */
 	template<typename T>
-	type_sphere3<T> GetBoundingSphere(box_base<T, 3> const & b)
+	type_sphere<T, 3> GetBoundingSphere(type_box_base<T, 3> const & b)
 	{
-		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, glm::length(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere<T, 3>() : type_sphere<T, 3>(b.position, glm::length(b.half_size));
 	}
 
 	/** returns the inner sphere for the box */
 	template<typename T>
-	type_sphere3<T> GetInnerSphere(box_base<T, 3> const & b)
+	type_sphere<T, 3> GetInnerSphere(type_box_base<T, 3> const & b)
 	{
-		return IsGeometryEmpty(b) ? type_sphere3<T>() : type_sphere3<T>(b.position, GLMTools::GetMinComponent(b.half_size));
+		return IsGeometryEmpty(b) ? type_sphere<T, 3>() : type_sphere<T, 3>(b.position, GLMTools::GetMinComponent(b.half_size));
 	}
 
 	/** returns the "aspect" of the box (width/height) */
 	template<typename T>
-	T GetBoxAspect(box_base<T, 2> const & b)
+	T GetBoxAspect(type_box_base<T, 2> const & b)
 	{
 		return (b.half_size.y) ? (b.half_size.x / b.half_size.y) : static_cast<T>(1);
 	}
 
-	/** reduce a rectangle with an aspect (we do not use box_base<> because we want the result to be the exact type of the entry) */
+	/** reduce a rectangle with an aspect (we do not use type_box_base<> because we want the result to be the exact type of the entry) */
 	template<typename BOX_TYPE>
 	BOX_TYPE ShrinkBoxToAspect(BOX_TYPE const & src, typename BOX_TYPE::type aspect)
 	{
@@ -302,26 +302,26 @@ namespace chaos
 
 	/** returns one of the sub-boxes obtained by splitting the src */
 	template<typename T>
-	type_box2<T> GetSplitBox(type_box2<T> const & b, int i, int j)
+	type_box<T, 2> GetSplitBox(type_box<T, 2> const & b, int i, int j)
 	{
-		using vec2_type = type_box2<T>::vec2_type;
+		using vec_type = type_box<T, 2>::vec_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));
 		i = (i << 1) - 1;
 		j = (j << 1) - 1;
-		type_box2<T> new_half_size = b.half_size / static_cast<T>(2);
+		vec_type new_half_size = b.half_size / static_cast<T>(2);
 
-		return type_box2<T>(
-			b.position + new_half_size * vec2_type(static_cast<T>(i), static_cast<T>(j)),
+		return type_box<T, 2>(
+			b.position + new_half_size * vec_type(static_cast<T>(i), static_cast<T>(j)),
 			new_half_size);
 	}
 
 	/** returns one of the sub-boxes obtained by splitting the src */
 	template<typename T>
-	type_box3<T> GetSplitBox(type_box3<T> const & b, int i, int j, int k)
+	type_box<T, 3> GetSplitBox(type_box<T, 3> const & b, int i, int j, int k)
 	{
-		using vec3_type = type_box3<T>::vec3_type;
+		using vec_type = type_box<T, 3>::vec_type;
 
 		assert((i == 0) || (i == 1));
 		assert((j == 0) || (j == 1));
@@ -329,10 +329,10 @@ namespace chaos
 		i = (i << 1) - 1;
 		j = (j << 1) - 1;
 		k = (k << 1) - 1;
-		vec3_type new_half_size = b.half_size / static_cast<T>(2);
+		vec_type new_half_size = b.half_size / static_cast<T>(2);
 
-		return type_box3<T>(
-			b.position + new_half_size * vec3_type(static_cast<T>(i), static_cast<T>(j), static_cast<T>(k)),
+		return type_box<T, 3>(
+			b.position + new_half_size * vec_type(static_cast<T>(i), static_cast<T>(j), static_cast<T>(k)),
 			new_half_size);
 	}
 
@@ -366,11 +366,11 @@ namespace chaos
 	}
 
 	template<typename T>
-	auto GetBoxVertices(box_base<T, 2> const & b, typename box_base<T, 2>::vec_type * result, bool global = true) // expect an array of 4 elements
+	auto GetBoxVertices(type_box_base<T, 2> const & b, typename type_box_base<T, 2>::vec_type * result, bool global = true) // expect an array of 4 elements
 	{
 		assert(result != nullptr);
 
-		using vec_type = typename box_base<T, 2>::vec_type;
+		using vec_type = typename type_box_base<T, 2>::vec_type;
 
 		T NX = - b.half_size.x;
 		T PX = + b.half_size.x;
@@ -391,11 +391,11 @@ namespace chaos
 	}
 
 	template<typename T>
-	auto GetBoxVertices(box_base<T, 3> const & b, typename box_base<T, 3>::vec_type * result, bool global = true) // expect an array of 8 elements
+	auto GetBoxVertices(type_box_base<T, 3> const & b, typename type_box_base<T, 3>::vec_type * result, bool global = true) // expect an array of 8 elements
 	{
 		assert(result != nullptr);
 
-		using vec_type = typename box_base<T, 3>::vec_type;
+		using vec_type = typename type_box_base<T, 3>::vec_type;
 
 		T NX = - b.half_size.x;
 		T PX = + b.half_size.x;
@@ -444,9 +444,9 @@ namespace chaos
 	}
 
 	template<typename T>
-	auto GetBoxVertices(type_obox<T, 2> const & b, typename box_base<T, 2>::vec_type * result, bool global = true) // expect an array of 4 elements
+	auto GetBoxVertices(type_obox<T, 2> const & b, typename type_box_base<T, 2>::vec_type * result, bool global = true) // expect an array of 4 elements
 	{
-		GetBoxVertices((box_base<T, 2> const &)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
+		GetBoxVertices((type_box_base<T, 2> const &)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
 
 		if (global)
 		{
@@ -461,9 +461,9 @@ namespace chaos
 	}
 
 	template<typename T>
-	auto GetBoxVertices(type_obox<T, 3> const & b, typename box_base<T, 3>::vec_type * result, bool global = true) // expect an array of 8 elements
+	auto GetBoxVertices(type_obox<T, 3> const & b, typename type_box_base<T, 3>::vec_type * result, bool global = true) // expect an array of 8 elements
 	{
-		GetBoxVertices((box_base<T, 3> const &)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
+		GetBoxVertices((type_box_base<T, 3> const &)b, result, false); // do not integrate translation because this would produce a wrong rotation/translation combinaison
 
 		if (global)
 		{
@@ -477,17 +477,17 @@ namespace chaos
 	}
 	
 	template<typename T>
-	type_box2<T> GetBoundingBox(type_obox2<T> const & b)
+	type_box<T, 2> GetBoundingBox(type_obox<T, 2> const & b)
 	{
-		type_box2<T> result;
+		type_box<T, 2> result;
 
 		// copy position
 		result.position = b.position;
 		// get all vertices and compute max values
-		type_box2<T>::vec_type vertices[4];
+		type_box<T, 2>::vec_type vertices[4];
 		GetBoxVertices(b, vertices, false);
 
-		type_box2<T>::vec_type max_vec = glm::tvec2<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
+		type_box<T, 2>::vec_type max_vec = glm::tvec2<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
 
 		auto transform = GetRotatorMatrix(b.rotator);
 		for (int i = 0; i < 4; ++i)
@@ -498,18 +498,18 @@ namespace chaos
 	}
 
 	template<typename T>
-	type_box3<T> GetBoundingBox(type_obox3<T> const & b)
+	type_box<T, 3> GetBoundingBox(type_obox<T, 3> const & b)
 	{
-		type_box3<T> result;
+		type_box<T, 3> result;
 
 		// copy position
 		result.position = b.position;
 
 		// get all vertices and compute max values
-		type_box3<T>::vec_type vertices[8];
+		type_box<T, 3>::vec_type vertices[8];
 		GetBoxVertices(b, vertices, false);
 
-		type_box3<T>::vec_type max_vec = glm::tvec3<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
+		type_box<T, 3>::vec_type max_vec = glm::tvec3<T>(-std::numeric_limits<T>::max(), -std::numeric_limits<T>::max(), -std::numeric_limits<T>::max());
 
 		auto transform = GetRotatorMatrix(b.rotator);
 		for (int i = 0; i < 8; ++i)
@@ -619,68 +619,68 @@ namespace chaos
 
 	/** returns the perimeter of the circle */
 	template<typename T>
-	T GetPerimeter(type_sphere2<T> const & c)
+	T GetPerimeter(type_sphere<T, 2> const & c)
 	{
 		return static_cast<T>(2.0 * M_PI) * c.radius;
 	}
 
 	/** returns the surface of the circle */
 	template<typename T>
-	T GetSurface(type_sphere2<T> const & c)
+	T GetSurface(type_sphere<T, 2> const & c)
 	{
 		return static_cast<T>(M_PI) * c.radius * c.radius;
 	}
 
 	/** returns the volume of the sphere */
 	template<typename T>
-	T GetVolume(type_sphere3<T> const & s)
+	T GetVolume(type_sphere<T, 3> const & s)
 	{
 		return static_cast<T>((4.0 / 3.0) * M_PI) * s.radius * s.radius * s.radius;
 	}
 
 	/** returns the surface of the sphere */
 	template<typename T>
-	T GetSurface(type_sphere3<T> const & s)
+	T GetSurface(type_sphere<T, 3> const & s)
 	{
 		return static_cast<T>(4.0 * M_PI) * s.radius * s.radius;
 	}
 
 	/** returns the bounding box of the circle */
 	template<typename T>
-	type_box2<T> GetBoundingBox(type_sphere2<T> const & c)
+	type_box<T, 2> GetBoundingBox(type_sphere<T, 2> const & c)
 	{
-		using vec_type = typename type_sphere2<T>::vec_type;
+		using vec_type = typename type_sphere<T, 2>::vec_type;
 
-		return IsGeometryEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius, c.radius));
+		return IsGeometryEmpty(c) ? type_box<T, 2>() : type_box<T, 2>(c.position, vec_type(c.radius, c.radius));
 	}
 
 	/** returns the bounding box of the circle (square) */
 	template<typename T>
-	type_box2<T> GetInnerBox(type_sphere2<T> const & c)
+	type_box<T, 2> GetInnerBox(type_sphere<T, 2> const & c)
 	{
-		using vec_type = typename type_sphere2<T>::vec_type;
+		using vec_type = typename type_sphere<T, 2>::vec_type;
 
 		static double const INV_SQRT2 = 0.707106781186547; /* 1.0 / sqrtf(2.0) */
 
-		return IsGeometryEmpty(c) ? type_box2<T>() : type_box2<T>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
+		return IsGeometryEmpty(c) ? type_box<T, 2>() : type_box<T, 2>(c.position, vec_type(c.radius * static_cast<T>(INV_SQRT2)));
 	}
 
 	template<typename T>
-	type_box3<T> GetBoundingBox(type_sphere3<T> const & s)
+	type_box<T, 3> GetBoundingBox(type_sphere<T, 3> const & s)
 	{
-		using vec_type = typename type_sphere3<T>::vec_type;
+		using vec_type = typename type_sphere<T, 3>::vec_type;
 
-		return IsGeometryEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius));
+		return IsGeometryEmpty(s) ? type_box<T, 3>() : type_box<T, 3>(s.position, vec_type(s.radius));
 	}
 
 	template<typename T>
-	type_box3<T> GetInnerBox(type_sphere3<T> const & s)
+	type_box<T, 3> GetInnerBox(type_sphere<T, 3> const & s)
 	{
 		using vec_type = typename type_sphere3<T>::vec_type;
 
 		static double const INV_SQRT3 = 0.577350269189625; /* 1.0 / sqrtf(3.0) */
 
-		return IsGeometryEmpty(s) ? type_box3<T>() : type_box3<T>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
+		return IsGeometryEmpty(s) ? type_box<T, 3>() : type_box<T, 3>(s.position, vec_type(s.radius * static_cast<T>(INV_SQRT3)));
 	}
 
 	/** returns intersection of 2 spheres */

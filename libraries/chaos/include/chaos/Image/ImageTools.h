@@ -86,14 +86,8 @@ namespace chaos
 		static FIBITMAP * GenFreeImage(PixelFormat const & pixel_format, int width, int height);
 		/** generate a free image from a description */
 		static FIBITMAP * GenFreeImage(ImageDescription const & src_desc);
-
-#if 0
-
-		// shu47
-
 		/** generate a free image from a texture */
 		static FIBITMAP * GenFreeImage(GLuint texture_id, GLint level);
-#endif
 		
 		/** get the free image description frm a type */
 		static FREE_IMAGE_TYPE GetFreeImageType(PixelFormat const & pixel_format, int * bpp = nullptr);

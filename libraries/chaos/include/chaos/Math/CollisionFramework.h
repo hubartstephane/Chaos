@@ -380,9 +380,6 @@ namespace chaos
 	// Symetric Collisions
 	// ==============================================================================================
 
-
-
-
 	template<typename T, int dimension>
 	bool Collide(type_box<T, dimension> const & src1, type_box<T, dimension> const & src2, bool open_geometry = false)
 	{
@@ -409,35 +406,6 @@ namespace chaos
 		return true;
 	}
 
-
-#if 0 // shuludum????!!!
-
-	template<typename T>
-	bool Collide(type_box<T, 2> const & src1, type_box<T, 2> const & src2, bool open_geometry = false)
-	{
-		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
-			return false;
-		
-		glm::vec2 v2[4];
-
-		GetBoxVertices(src1, v1, true);	
-		if (HasSeparatingPlane(src1, v2, 4))
-			return false;
-
-		glm::vec2 v1[4];
-		GetBoxVertices(src2, v2, true);
-		if (HasSeparatingPlane(src2, v1, 4))
-			return false;
-
-		return true;
-	}
-#endif
-
-
-
-
-
-
 	template<typename T, int dimension>
 	bool Collide(type_sphere<T, dimension> const & src1, type_sphere<T, dimension> const & src2, bool open_geometry = false)
 	{
@@ -450,8 +418,39 @@ namespace chaos
 			return glm::distance2(src1.position, src2.position) <= MathTools::Square(src1.radius + src2.radius);
 	}
 
+	template<typename T, typename TRANSFORM = EmptyClass>
+	bool IsSeparatingPlane(glm::tvec2<T> const& a, glm::tvec2<T> const& b, glm::tvec2<T>* vertices, size_t count, TRANSFORM transform = {})
+	{
+		bool has_positive = false;
+		bool has_negative = false;
 
-#if 0
+		auto ab = b - a;
+
+		for (size_t i = 0; i < count; ++i)
+		{
+			auto vert = vertices[i];
+			if constexpr (!std::is_same_v<TRANSFORM, EmptyClass>)
+				vert = GLMTools::MultWithTranslation(transform, vert);
+
+			// on which side of BA is the considered point ?
+			auto z = GLMTools::Get2DCrossProductZ(ab, vert - a);
+			if (z == 0)
+				continue;
+			if (z < 0)
+			{
+				if (has_positive)
+					return false;
+				has_negative = true;
+			}
+			else
+			{
+				if (has_negative)
+					return false;
+				has_positive = true;
+			}
+		}
+		return true;
+	}
 
 	// SEARCH SEPARATING PLANE
 	//
@@ -470,16 +469,10 @@ namespace chaos
 	//
 	//
 
-
-
-#endif
-
-
-
 	// shu47 : utiliser open_geometry
 
-	template<typename T, int dimension, typename TRANSFORM=EmptyClass>
-	bool HasSeparatingPlane(type_box<T, dimension> const& b, typename type_box<T, dimension>::vec_type const* vertices, size_t count, bool open_geometry = false, TRANSFORM transform = {})
+	template<typename T, typename TRANSFORM=EmptyClass>
+	bool HasSeparatingPlane(type_box<T, 2> const& b, typename type_box<T, 2>::vec_type const* vertices, size_t count, bool open_geometry = false, TRANSFORM transform = {})
 	{
 		if (count == 0 || vertices == nullptr)
 			return false;
@@ -496,7 +489,7 @@ namespace chaos
 		for (size_t i = 0; i < count ; ++i)
 		{
 			auto vert = vertices[i];
-			if constexpr (std::is_same_v<TRANSFORM, glm::mat4x4>)          // shu47 : HARD coded matrixx type !!
+			if constexpr (!std::is_same_v<TRANSFORM, EmptyClass>)
 				vert = GLMTools::MultWithTranslation(transform, vert);
 
 			// iterate over all remaining edges (work on a copy so we can iterate)
@@ -531,68 +524,9 @@ namespace chaos
 		return true; // there are still at least one separator edge
 	}
 
-
-	// shu47 : should be generalized for different kind of vector (float/double)
-
-	template<typename TRANSFORM = EmptyClass>
-	bool IsSeparatingPlane(glm::vec2 const &a, glm::vec2 const& b, glm::vec2 * vertices, size_t count, TRANSFORM transform = {})
-	{
-		bool has_positive = false;
-		bool has_negative = false;
-
-		auto ab = b - a;
-
-		for (size_t i = 0; i < count; ++i)
-		{
-			auto vert = vertices[i];
-			if constexpr (std::is_same_v<TRANSFORM, glm::mat4x4>)          // shu47 : HARD coded matrixx type !!
-				vert = GLMTools::MultWithTranslation(transform, vert);
-
-			// on which side of BA is the considered point ?
-			auto z = GLMTools::Get2DCrossProductZ(ab, vert - a);
-			if (z == 0)
-				continue;
-			if (z < 0)
-			{
-				if (has_positive)
-					return false;
-				has_negative = true;
-			}
-			else
-			{
-				if (has_negative)
-					return false;
-				has_positive = true;
-			}
-		}
-		return true;
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	// shu47
-
-	template<typename T, int dimension>
-	bool Collide(type_obox<T, dimension> const & src1, type_obox<T, dimension> const & src2, bool open_geometry = false)
-	{
-		
+	template<typename T>
+	bool Collide(type_obox<T, 2> const & src1, type_obox<T, 2> const & src2, bool open_geometry = false)
+	{		
 		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
 
@@ -607,7 +541,6 @@ namespace chaos
 		GetBoxVertices(src2, v2, true);
 		if (HasSeparatingPlane(b1, v2, 4, open_geometry, transform1))
 			return false;
-
 		// separate src2 from src1 => transform src2 into a simple box (with no rotation)
 		box2 b2;
 		b2.position = { 0.0f, 0.0f };
@@ -619,9 +552,22 @@ namespace chaos
 		GetBoxVertices(src1, v1, true);
 		if (HasSeparatingPlane(b2, v1, 4, open_geometry, transform2))
 			return false;
-
 		// no separating plane
 		return true; 
+	}
+
+
+	template<typename T>
+	bool Collide(type_obox<T, 3> const& src1, type_obox<T, 3> const& src2, bool open_geometry = false)
+	{
+		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
+			return false;
+
+
+
+
+
+		return false;
 	}
 
 

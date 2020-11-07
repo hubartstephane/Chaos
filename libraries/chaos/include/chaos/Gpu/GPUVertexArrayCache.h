@@ -61,6 +61,8 @@ namespace chaos
 
 	protected:
 
+		/** a counter to know whether to purge the elements */
+		mutable double last_purge_time = 0;
 		/** the cache content */
 		mutable std::vector<GPUVertexArrayCacheEntry> entries;
 

@@ -36,6 +36,16 @@ namespace chaos
 		if (program == nullptr)
 			return nullptr;
 
+		// whether to purge during this pas or not
+		bool purge = false;
+
+		double t = glfwGetTime();		
+		if (t - last_purge_time > 10.0)
+		{
+			last_purge_time = t;
+			purge = true;
+		}
+
 		// search matching entry
 		GPUVertexArray const * result = nullptr;
 
@@ -51,13 +61,17 @@ namespace chaos
 				if (i != count - 1)
 					std::swap(entry, entries[count - 1]);
 				entries.pop_back();
-				--count;	
-			}
-			// check whether this is expected entry
+				--count;
+			}			
 			else
 			{				
+				// check whether this is expected entry
 				if (result == nullptr && entry.program == program && entry.vertex_buffer == vertex_buffer && entry.index_buffer == index_buffer)
+				{
 					result = entry.vertex_array.get();
+					if (!purge && result != nullptr)
+						return result;
+				}
 				// next element
 				++i;
 			}

@@ -3,11 +3,9 @@
 namespace chaos
 {
 
-    bool GPUBufferCacheEntries::GetBuffer(size_t required_size, shared_ptr<GPUBuffer>& result) // use shared pointer to avoid the buffer destruction when removed from vector<>
+    bool GPUBufferCacheEntries::GetBuffer(size_t required_size, size_t max_accepted_size, shared_ptr<GPUBuffer>& result) // use shared pointer to avoid the buffer destruction when removed from vector<>
     {
         assert(required_size > 0);
-
-        size_t max_accepted_size = (size_t)((1.0f + (float)BUFFER_ACCEPT_RATIO) * (float)required_size);
 
         size_t count = buffers.size();
         for (size_t i = 0; i < count; ++i)
@@ -19,10 +17,7 @@ namespace chaos
             if (buffer_size < required_size)            
                 continue;
             // or too big ?
-
-            // shuxxx46 shu46 : why if 0
-
-            if (0 && buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
+            if (max_accepted_size > 0 && buffer_size > max_accepted_size) // we do not want to waste to much memory => that why we use a max_accepted_size
                 continue;
             // buffer found            
             result = buffer;
@@ -45,6 +40,10 @@ namespace chaos
     {
         assert(required_size > 0);
 
+        size_t max_accepted_size = 0;  
+        if (rejected_size_percentage > 0)
+            max_accepted_size = ((100 + rejected_size_percentage) * required_size) / 100;
+
         // the buffer is ordered from older FENCE to youngest FENCE
         for (size_t i = 0; i < entries.size(); ++i)
         {
@@ -59,7 +58,7 @@ namespace chaos
                     break; 
             }
             // search a buffer valid for given fence
-            entry.GetBuffer(required_size, result);
+            entry.GetBuffer(required_size, max_accepted_size, result);
             // remove empty entries
             if (entry.buffers.size() == 0)
             {

@@ -20,12 +20,10 @@ namespace chaos
     {
         friend class GPUBufferCache;
 
-        static size_t const BUFFER_ACCEPT_RATIO = 25; // if the buffer considered is greater less than 25% of required size, we can keep it
-
     protected:
 
         /** returns the best cached buffer for the given size (returns true whether their is no need to search for another buffer) */
-         bool GetBuffer(size_t required_size, shared_ptr<GPUBuffer> & result);
+         bool GetBuffer(size_t required_size, size_t max_accepted_size, shared_ptr<GPUBuffer> & result);
 
     protected:
 
@@ -54,6 +52,11 @@ namespace chaos
         GPUBufferCacheEntries* GetCacheEntryForFence(GPUFence* fence);
         /** create a buffer and register it for a given fence */
         bool CreateBuffer(size_t required_size, shared_ptr<GPUBuffer>& result);
+
+    public:
+
+        /** percentage of requested size above which a candidate buffer is rejected (to avoid waste) (0 if ignored) */
+        size_t rejected_size_percentage = 50;
 
     protected:
 

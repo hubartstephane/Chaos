@@ -253,7 +253,10 @@ namespace chaos
 		{
 			GPUVertexDeclaration* result = new GPUVertexDeclaration;
 			if (result != nullptr)
-				GetTypedVertexDeclaration(result, boost::mpl::identity<vertex_type>()); 
+			{
+				GetTypedVertexDeclaration(result, boost::mpl::identity<vertex_type>());
+				result->SetEffectiveVertexSize(sizeof(vertex_type));
+			}
 			return result;
 		}
         /** override */

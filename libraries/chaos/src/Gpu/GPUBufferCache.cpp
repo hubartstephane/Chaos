@@ -40,6 +40,7 @@ namespace chaos
     {
         assert(required_size > 0);
 
+        // compute the maximum size we want
         size_t max_accepted_size = 0;  
         if (rejected_size_percentage > 0)
             max_accepted_size = ((100 + rejected_size_percentage) * required_size) / 100;

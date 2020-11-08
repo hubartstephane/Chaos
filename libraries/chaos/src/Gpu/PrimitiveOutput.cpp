@@ -2,6 +2,17 @@
 
 namespace chaos
 {
+    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation) :
+        dynamic_mesh(in_dynamic_mesh),
+        buffer_cache(in_buffer_cache),
+        vertex_declaration(in_vertex_declaration),
+        renderer(in_renderer),
+        vertex_requirement_evaluation(in_vertex_requirement_evaluation)
+    {
+        assert(in_dynamic_mesh != nullptr);
+        assert(in_renderer != nullptr);
+    }
+
     void PrimitiveOutputBase::Flush()
     {
         // skip empty primitive
@@ -92,17 +103,20 @@ namespace chaos
         // compute buffer size and allocate a buffer
         size_t bufsize = count * vertex_size;         
 
-        // shuxxx 46
-        //
-        // maybe we could support non buffer_cache = nullptr
-
-
-
-        if (!buffer_cache->GetBuffer(bufsize, vertex_buffer))
-            return nullptr;
+        if (buffer_cache == nullptr)
+        {
+            if (!GPUBufferCache::CreateBuffer(bufsize, vertex_buffer))
+                return nullptr;
+        } 
+        else
+        {
+            if (!buffer_cache->GetBuffer(bufsize, vertex_buffer))
+                return nullptr;
+        }
+        
         // map the buffer
 
-#if 1 // only map required memory
+#if 0 // only map required memory
         buffer_start = vertex_buffer->MapBuffer(0, bufsize, false, true);
         buffer_end = buffer_start + bufsize;
 #else // map whole buffer

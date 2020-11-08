@@ -45,13 +45,13 @@ namespace chaos
         bool GetBuffer(size_t required_size, shared_ptr<GPUBuffer>& result);
         /** give back a buffer to this cache to be used later */
         bool GiveBuffer(shared_ptr<GPUBuffer>& buffer, GPUFence* fence);
+        /** create a buffer */
+        static bool CreateBuffer(size_t required_size, shared_ptr<GPUBuffer>& result);
 
     protected:
 
         /** get the cache entry for given fence */
         GPUBufferCacheEntries* GetCacheEntryForFence(GPUFence* fence);
-        /** create a buffer and register it for a given fence */
-        bool CreateBuffer(size_t required_size, shared_ptr<GPUBuffer>& result);
 
     public:
 

@@ -23,17 +23,7 @@ namespace chaos
     public:
 
         /** constructor */
-        PrimitiveOutputBase(GPUDynamicMesh * in_dynamic_mesh, GPUBufferCache * in_buffer_cache, GPUVertexDeclaration * in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation) :
-            dynamic_mesh(in_dynamic_mesh),
-            buffer_cache(in_buffer_cache),
-            vertex_declaration(in_vertex_declaration),
-            renderer(in_renderer),
-            vertex_requirement_evaluation(in_vertex_requirement_evaluation)
-        {
-            assert(in_buffer_cache != nullptr);
-            assert(in_dynamic_mesh != nullptr);
-            assert(in_renderer != nullptr);
-        }
+        PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation);
 
         /** gets the size of one vertice of the generated primitive */
         size_t GetVertexSize() const { return vertex_size; }

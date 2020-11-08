@@ -1,20 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	class TMObjectReferenceSolver;
-	class TMObject;
-	class TMPath;
-	class TMCameraTemplate;
-	class TMPlayerStart;
-	class TMTrigger;
-	class TMNotificationTrigger;
-	class TMCheckpointTrigger;
-	class TMSoundTrigger;
-	class TMChangeLevelTrigger;
-
-}; // namespace chaos
-
 #else
 
 namespace chaos

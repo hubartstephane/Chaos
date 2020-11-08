@@ -1,17 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	class TileCollisionInfo;
-	class TileCollisionComputer;
-	class TMCollisionIteratorBase;
-	class TMTileCollisionIterator;
-
-	template<typename T>
-	class TMObjectCollisionIteratorBase;
-
-}; // namespace chaos
-
 #else
 
 namespace chaos

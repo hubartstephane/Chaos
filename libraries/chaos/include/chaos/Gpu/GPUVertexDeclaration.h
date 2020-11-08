@@ -107,6 +107,8 @@ namespace chaos
 
 		/** compute the size in memory required for this vertex */
 		int GetVertexSize() const;
+		/** set the effective vertex size (for data that would not be declared) */
+		void SetEffectiveVertexSize(int in_effective_size);
 
 		/** returns the number of elements for a given semantic */
 		int GetSemanticCount(VertexAttributeSemantic semantic) const;
@@ -140,6 +142,8 @@ namespace chaos
 
 		/** all the entries of the declaration */
 		std::vector<GPUVertexDeclarationEntry> entries;
+		/** the effective size of the vertex */
+		int effective_size = 0;
 	};
 
 }; // namespace chaos

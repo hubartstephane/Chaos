@@ -102,10 +102,19 @@ namespace chaos
 
 	int GPUVertexDeclaration::GetVertexSize() const
 	{
+		// return the effective size
+		if (effective_size > 0)
+			return effective_size;
+		// fallback
 		int result = 0;
 		for (auto const & entry : entries)
 			result += entry.GetEntrySize();
 		return result;
+	}
+
+	void GPUVertexDeclaration::SetEffectiveVertexSize(int in_effective_size)
+	{
+		effective_size = in_effective_size;
 	}
 
 	int GPUVertexDeclaration::GetSemanticCount(VertexAttributeSemantic semantic) const

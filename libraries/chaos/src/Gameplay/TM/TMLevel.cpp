@@ -444,7 +444,7 @@ namespace chaos
 			particle_ownership = in_geometric_object->GetPropertyValueBool("PARTICLE_OWNERSHIP", true); // by default, an object wants to have its particles
 
 		// create additionnal particles (TEXT)
-		if (TiledMap::GeometricObjectText const* text = in_geometric_object->GetObjectText())
+		if (TiledMap::GeometricObjectText const* text = auto_cast(in_geometric_object))
 		{
 			// create particle layer if necessary
 			if (CreateParticleLayer() == nullptr) // the generate layer is of  TMParticleLayerTrait => this works fine for Text too (except some useless extra data like GID)
@@ -472,7 +472,7 @@ namespace chaos
 				object->allocations = allocation;
 		}
 		// create additionnal particles (TILES)		
-		else if (TiledMap::GeometricObjectTile const* tile = in_geometric_object->GetObjectTile())
+		else if (TiledMap::GeometricObjectTile const* tile = auto_cast(in_geometric_object))
 		{
 			TMParticlePopulator object_particle_populator = particle_populator;
 
@@ -489,7 +489,7 @@ namespace chaos
 			box2 particle_box = tile->GetBoundingBox(true); 
 			if (object != nullptr)
 			{
-				TiledMap::GeometricObjectSurface const* surface_object = in_geometric_object->GetObjectSurface();
+				TiledMap::GeometricObjectSurface const* surface_object = auto_cast(in_geometric_object);
 				if (surface_object != nullptr)
 					particle_box = surface_object->GetBoundingBox(false); // shuxxx : the TILE is generated on the same layer then the surface. does it get the layer_offset ????
 			}
@@ -573,7 +573,7 @@ namespace chaos
 			// explicit world bounding box
 			if (!level_instance->has_explicit_bounding_box && TMTools::IsWorldBoundingBox(geometric_object))
 			{
-				TiledMap::GeometricObjectSurface const* object_surface = geometric_object->GetObjectSurface();
+				TiledMap::GeometricObjectSurface const* object_surface = auto_cast(geometric_object);
 				if (object_surface != nullptr)
 				{
 					level_instance->explicit_bounding_box = object_surface->GetBoundingBox(true); // in world coordinate	
@@ -583,7 +583,7 @@ namespace chaos
 			// explicit layer bounding box
 			if (IsGeometryEmpty(explicit_bounding_box) && TMTools::IsLayerBoundingBox(geometric_object))
 			{
-				TiledMap::GeometricObjectSurface const* object_surface = geometric_object->GetObjectSurface();
+				TiledMap::GeometricObjectSurface const* object_surface = auto_cast(geometric_object);
 				if (object_surface != nullptr)
 					explicit_bounding_box = object_surface->GetBoundingBox(false); // in layer coordinates	
 			}

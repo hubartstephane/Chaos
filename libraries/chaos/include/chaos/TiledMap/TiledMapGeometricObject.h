@@ -27,44 +27,6 @@ namespace chaos
 
 		public:
 
-
-
-			// shu47 ... ne pourrait t on pas virer toutes ces fonctions et utiliser auto_cast
-
-
-			/** cast method into its subtype */
-			GeometricObjectPoint * GetObjectPoint() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectPoint const * GetObjectPoint() const { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectSurface * GetObjectSurface() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectSurface const * GetObjectSurface() const { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectRectangle * GetObjectRectangle() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectRectangle const * GetObjectRectangle() const { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectEllipse * GetObjectEllipse() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectEllipse const * GetObjectEllipse() const { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectPolygon * GetObjectPolygon() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectPolygon const * GetObjectPolygon() const { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectPolyline * GetObjectPolyline() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectPolyline const * GetObjectPolyline() const { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectText * GetObjectText() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectText const * GetObjectText() const { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectTile * GetObjectTile() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GeometricObjectTile const * GetObjectTile() const { return auto_cast(this); }
-
 			/** get the object ID (used for Checkpoints) */
 			int GetObjectID() const { return id; }
 

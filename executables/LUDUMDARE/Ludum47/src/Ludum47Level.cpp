@@ -476,9 +476,9 @@ bool LudumRoad::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos::Til
 
 	std::vector<glm::vec2> const* src_points = nullptr;
 
-	if (chaos::TiledMap::GeometricObjectPolygon const* pn = in_geometric_object->GetObjectPolygon())
+	if (chaos::TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
 		src_points = &pn->points;
-	else if (chaos::TiledMap::GeometricObjectPolyline const * pl = in_geometric_object->GetObjectPolyline())
+	else if (chaos::TiledMap::GeometricObjectPolyline const * pl = auto_cast(in_geometric_object))
 		src_points = &pl->points;
 
 	if (src_points == nullptr)
@@ -610,13 +610,13 @@ bool LudumCollision::Initialize(chaos::TMLayerInstance* in_layer_instance, chaos
 		return false;
 
 	// capture the points
-	if (chaos::TiledMap::GeometricObjectPolygon const* pn = in_geometric_object->GetObjectPolygon())
+	if (chaos::TiledMap::GeometricObjectPolygon const* pn = auto_cast(in_geometric_object))
 	{
 		points = pn->points;
 		if (points.size() > 0)
 			points.push_back(points[0]);
 	}
-	else if (chaos::TiledMap::GeometricObjectPolyline const* pl = in_geometric_object->GetObjectPolyline())
+	else if (chaos::TiledMap::GeometricObjectPolyline const* pl = auto_cast(in_geometric_object))
 	{
 		points = pl->points;
 	}

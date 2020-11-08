@@ -1,12 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	namespace TMTools
-	{
-	};
-
-}; // namespace chaos
 
 #else
 

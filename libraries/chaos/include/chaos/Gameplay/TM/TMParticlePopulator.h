@@ -1,10 +1,5 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	class TMParticlePopulator;
-
-}; // namespace chaos
 
 #else
 

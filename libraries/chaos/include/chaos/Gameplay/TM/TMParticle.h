@@ -1,17 +1,9 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
-namespace chaos
-{
-	class TMParticle;
-	class TMParticleLayerTrait;
-
-}; // namespace chaos
-
 #else
 
 namespace chaos
 {
-
 	// =====================================
 	// TMParticle
 	// =====================================
@@ -25,11 +17,6 @@ namespace chaos
 		// the bitmap for the particle
 		BitmapAtlas::BitmapInfo const* bitmap_info = nullptr; 
 	};
-
-
-
-
-
 
 	CHAOS_REGISTER_CLASS2(TMParticle, ParticleDefault);
 

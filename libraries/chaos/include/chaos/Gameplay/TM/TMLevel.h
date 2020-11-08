@@ -30,11 +30,6 @@ namespace chaos
 	template<typename T>
 	class PropertyOwnerOverride;
 
-	class TMLevel;
-	class TMLayerInstance;
-	class TMTriggerCollisionInfo;
-	class TMLevelInstance;
-
 }; // namespace chaos
 
 #else

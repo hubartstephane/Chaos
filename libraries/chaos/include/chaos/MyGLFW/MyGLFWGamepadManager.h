@@ -8,6 +8,7 @@
 #define CHAOS_GAMEPAD_CLASSES \
 (GamepadData) \
 (AxisData) \
+(ButtonData) \
 (PhysicalGamepad) \
 (Gamepad) \
 (GamepadCallbacks) \
@@ -168,6 +169,33 @@ namespace chaos
 		};
 
 		/**
+		* ButtonData
+		*/
+
+		class ButtonData
+		{
+			CHAOS_GAMEPAD_ALL_FRIENDS
+
+		public:
+
+			/** update the value */
+			void UpdateValue(bool in_value);
+			/** get the value */
+			bool GetValue() const { return value; }
+			/** get the timer for the same value */
+			float GetSameValueTimer() const { return same_value_timer; }
+			/** clear the input */
+			void Clear();
+
+		protected:
+
+			/** value of the button (pressed or not) */
+			bool value = false;
+			/** the duration for which the value is the same */
+			float same_value_timer = 0.0f;
+		};
+
+		/**
 		* AxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
 		*            we have to store the upper and lower values to renormalize the output
 		*/
@@ -180,9 +208,11 @@ namespace chaos
 			/** update the value */
 			void UpdateValue(float in_raw_value, float dead_zone);
 			/** get the value */
-			inline float GetValue() const { return final_value; }
+			float GetValue() const { return final_value; }
+			/** get the timer for the same value */
+			float GetSameValueTimer() const { return same_value_timer; }
 			/** clear the input */
-			inline void Clear() { raw_value = final_value = 0.0f; }
+			void Clear();
 
 		protected:
 
@@ -194,6 +224,8 @@ namespace chaos
 			float max_value = +0.8f;
 			/** the final value of the stick after computation */
 			float final_value = 0.0f;
+			/** the duration for which the value is the same (necessary in discret mode < 0, == 0 or > 0) */
+			float same_value_timer = 0.0f;
 		};
 
 		/**
@@ -239,7 +271,7 @@ namespace chaos
 			/** the value for axis */
 			std::vector<AxisData> axis;
 			/** the value for buttons */
-			std::vector<int> buttons;
+			std::vector<ButtonData> buttons;
 		};
 
 		/**
@@ -277,11 +309,11 @@ namespace chaos
 			size_t GetAxisCount() const;
 
 			/** returns the stick index */
-			inline int GetGamepadIndex() const { return stick_index; }
+			int GetGamepadIndex() const { return stick_index; }
 			/** returns whether the gamepad is allocated for a user */
-			inline bool IsAllocated() const { return (user_gamepad != nullptr); }
+			bool IsAllocated() const { return (user_gamepad != nullptr); }
 			/** returns true whether the gamepad is connected */
-			inline bool IsPresent() const { return is_present; }
+			bool IsPresent() const { return is_present; }
 
 			/** take a physical device, and create a logical device if possible */
 			class Gamepad* CaptureDevice(GamepadCallbacks* in_callbacks);
@@ -413,7 +445,7 @@ namespace chaos
 			/** returns true whether the gamepad is connected */
 			bool IsPresent() const;
 			/** returns whether the gamepad has already been connected once */
-			inline bool IsEverConnected() const { return ever_connected; }
+			bool IsEverConnected() const { return ever_connected; }
 
 			/** give a callback object to the gamepad */
 			void SetCallbacks(GamepadCallbacks* in_callbacks);

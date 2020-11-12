@@ -4,6 +4,24 @@ namespace chaos
 {
 	namespace MyGLFW
 	{
+		//
+		// ButtonData functions
+		//
+
+		void ButtonData::UpdateValue(bool in_value)
+		{
+			value = in_value;
+		}
+
+		void ButtonData::Clear()
+		{
+			value = 0.0f;
+			same_value_timer = 0.0f;
+		}
+
+		//
+		// AxisData functions
+		//
 
 		// XXX : some sticks are not abled to physicaly returns 1.0 when they are fully triggered (depend on the device)
 		//       that's why i use some min/max values (initialized with a coherent value)
@@ -35,12 +53,22 @@ namespace chaos
 			}
 		}
 
+		void AxisData::Clear() 
+		{ 
+			raw_value = final_value = 0.0f; 
+			same_value_timer = 0.0f;
+		}
+
+		//
+		// GamepadData functions
+		//
+
 		void GamepadData::Clear(bool only_set_to_zero)
 		{
 			if (only_set_to_zero)
 			{
-				for (int & b : buttons)
-					b = 0;
+				for (ButtonData& b : buttons)
+					b.Clear();
 				for (AxisData & a : axis)
 					a.Clear();
 			}
@@ -60,7 +88,6 @@ namespace chaos
 		{
 			return axis.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
 		}
-
 
 		ButtonStateChange GamepadData::GetButtonStateChange(size_t button_index) const
 		{
@@ -100,7 +127,7 @@ namespace chaos
 			if (previous_frame)
 				button_index += count; // upper part of the array for previous_frame
 
-			return (buttons[button_index] != 0);
+			return buttons[button_index].value;
 		}
 
 		float GamepadData::GetAxisValue(size_t axis_index, bool previous_frame) const
@@ -122,7 +149,7 @@ namespace chaos
 			size_t end = start + count;
 
 			for (size_t i = start; i < end; ++i)
-				if (buttons[i] && !buttons[count + i]) // state change
+				if (buttons[i].value && !buttons[count + i].value) // state change
 					return true;
 			return false;
 		}
@@ -134,7 +161,7 @@ namespace chaos
 			size_t end = start + count;
 
 			for (size_t i = start; i < end; ++i)
-				if (buttons[i])
+				if (buttons[i].value)
 					return true;
 			return false;
 		}
@@ -197,7 +224,7 @@ namespace chaos
 			if (axis_reallocated)
 			{
 				axis.clear();
-				axis.insert(axis.begin(), ac * 2, AxisData()); // 2 * because we want to insert row for previous frame
+				axis.insert(axis.begin(), ac * 2, {}); // 2 * because we want to insert row for previous frame
 
 				for (size_t i = 0; i < ac; ++i)
 				{
@@ -233,11 +260,11 @@ namespace chaos
 			if (buttons_reallocated)
 			{
 				buttons.clear();
-				buttons.insert(buttons.begin(), bc * 2, 0);
+				buttons.insert(buttons.begin(), bc * 2, {});
 
 				for (size_t i = 0; i < ac; ++i)
 				{
-					buttons[i] = buttons_buffer[i];
+					buttons[i].UpdateValue(buttons_buffer[i] != 0);
 					buttons[i + bc] = buttons[i];
 				}
 			}
@@ -246,7 +273,7 @@ namespace chaos
 				for (size_t i = 0; i < bc; ++i)
 				{
 					buttons[i + bc] = buttons[i]; // copy current frame to previous
-					buttons[i] = buttons_buffer[i];
+					buttons[i].UpdateValue(buttons_buffer[i] != 0);
 				}
 			}
 		}
@@ -379,7 +406,7 @@ namespace chaos
 		}
 
 		//
-		// ForceFeedbackEffect functions
+		// DefaultForceFeedbackEffect functions
 		//
 
 		bool DefaultForceFeedbackEffect::GetForceFeedbackValues(float delta_time, float& result_left_value, float& result_right_value)

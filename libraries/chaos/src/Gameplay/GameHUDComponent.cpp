@@ -197,7 +197,7 @@ namespace chaos
 
 	void GameHUDTextComponent::UpdateTextAllocation(char const * in_text)
 	{
-		if (in_text == nullptr)
+		if (StringTools::IsEmpty(in_text))
 			allocations = nullptr;
 		else
 		{

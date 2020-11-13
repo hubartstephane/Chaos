@@ -179,9 +179,9 @@ namespace chaos
 		public:
 
 			/** update the value */
-			void UpdateValue(bool in_value);
+			void UpdateValue(bool in_value, float delta_time);
 			/** get the value */
-			bool GetValue() const { return value; }
+			bool GetValue(bool previous_frame = false) const;
 			/** get the timer for the same value */
 			float GetSameValueTimer() const { return same_value_timer; }
 			/** clear the input */
@@ -191,6 +191,8 @@ namespace chaos
 
 			/** value of the button (pressed or not) */
 			bool value = false;
+			/** the previous value of the stick */
+			bool previous_value = false;
 			/** the duration for which the value is the same */
 			float same_value_timer = 0.0f;
 		};
@@ -206,9 +208,9 @@ namespace chaos
 		public:
 
 			/** update the value */
-			void UpdateValue(float in_raw_value, float dead_zone);
+			void UpdateValue(float in_raw_value, float dead_zone, float delta_time);
 			/** get the value */
-			float GetValue() const { return final_value; }
+			float GetValue(bool previous_frame = false) const;
 			/** get the timer for the same value */
 			float GetSameValueTimer() const { return same_value_timer; }
 			/** clear the input */
@@ -216,14 +218,16 @@ namespace chaos
 
 		protected:
 
-			/** value of the stick (with no filter) */
-			float raw_value = 0.0f;
+			/** the value of the stick after computation */
+			float value = 0.0f;
+			/** the previous value of the stick */
+			float previous_value = 0.0f;
+
 			/** min value always encountered */
 			float min_value = -0.8f;
 			/** max value always encountered */
 			float max_value = +0.8f;
-			/** the final value of the stick after computation */
-			float final_value = 0.0f;
+
 			/** the duration for which the value is the same (necessary in discret mode < 0, == 0 or > 0) */
 			float same_value_timer = 0.0f;
 		};

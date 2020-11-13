@@ -8,14 +8,25 @@ namespace chaos
 		// ButtonData functions
 		//
 
-		void ButtonData::UpdateValue(bool in_value)
+		void ButtonData::UpdateValue(bool in_value, float delta_time)
 		{
+			previous_value = value;
 			value = in_value;
+
+			if (value != previous_value)
+				same_value_timer = 0.0f; 
+			else
+				same_value_timer += delta_time;
+		}
+
+		bool ButtonData::GetValue(bool previous_frame) const
+		{
+			return (previous_frame) ? previous_value : value;
 		}
 
 		void ButtonData::Clear()
 		{
-			value = 0.0f;
+			value = previous_value = false;
 			same_value_timer = 0.0f;
 		}
 
@@ -28,8 +39,10 @@ namespace chaos
 		//       if the stick goes further than theses values, we update them.
 		//       that help us to have a good evaluation of the stick range over time.
 
-		void AxisData::UpdateValue(float in_raw_value, float dead_zone)
+		void AxisData::UpdateValue(float in_raw_value, float dead_zone, float delta_time)
 		{
+			previous_value = value;
+
 			// apply the dead zone
 			if (in_raw_value < dead_zone && in_raw_value > -dead_zone)
 				in_raw_value = 0.0f;
@@ -38,24 +51,38 @@ namespace chaos
 			in_raw_value = std::clamp(in_raw_value, -1.0f, +1.0f);
 
 			// store raw value
-			raw_value = in_raw_value;
 			max_value = std::max(max_value, in_raw_value);
 			min_value = std::min(min_value, in_raw_value);
 
 			// apply dead zone and normalization
-			final_value = 0.0f;
+			value = 0.0f;
 			if (in_raw_value > dead_zone || in_raw_value < -dead_zone)
 			{
 				if (in_raw_value > 0.0f)
-					final_value = (in_raw_value - dead_zone) / (max_value - dead_zone);
+					value = (in_raw_value - dead_zone) / (max_value - dead_zone);
 				else
-					final_value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
+					value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
 			}
+
+			// update timer
+			bool reset_timer =
+				(value == 0.0f && previous_value != 0.0f) ||
+				(value != 0.0f && previous_value == 0.0f) ||
+				(value * previous_value < 0.0f);
+			if (reset_timer)
+				same_value_timer = 0.0f; 
+			else
+				same_value_timer += delta_time;		
+		}
+
+		float AxisData::GetValue(bool previous_frame) const
+		{
+			return (previous_frame) ? previous_value : value;
 		}
 
 		void AxisData::Clear() 
 		{ 
-			raw_value = final_value = 0.0f; 
+			value = previous_value = 0.0f; 
 			same_value_timer = 0.0f;
 		}
 
@@ -81,12 +108,12 @@ namespace chaos
 
 		size_t GamepadData::GetButtonCount() const
 		{
-			return buttons.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
+			return buttons.size();
 		}
 
 		size_t GamepadData::GetAxisCount() const
 		{
-			return axis.size() / 2; // divide by 2 because there is the previous frame in the upper part of the array
+			return axis.size();
 		}
 
 		ButtonStateChange GamepadData::GetButtonStateChange(size_t button_index) const
@@ -123,11 +150,7 @@ namespace chaos
 			size_t count = GetButtonCount();
 			if (button_index >= count)
 				return false;
-
-			if (previous_frame)
-				button_index += count; // upper part of the array for previous_frame
-
-			return buttons[button_index].value;
+			return buttons[button_index].GetValue(previous_frame);
 		}
 
 		float GamepadData::GetAxisValue(size_t axis_index, bool previous_frame) const
@@ -135,45 +158,29 @@ namespace chaos
 			size_t count = GetAxisCount();
 			if (axis_index >= count)
 				return 0.0f;
-
-			if (previous_frame)
-				axis_index += count; // upper part of the array for previous_frame
-
-			return axis[axis_index].GetValue();
+			return axis[axis_index].GetValue(previous_frame);
 		}
 
 		bool GamepadData::IsAnyButtonJustPressed() const
 		{
-			size_t count = GetButtonCount();
-			size_t start = 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
-			size_t end = start + count;
-
-			for (size_t i = start; i < end; ++i)
-				if (buttons[i].value && !buttons[count + i].value) // state change
+			for (ButtonData const& b : buttons)
+				if (b.GetValue(false) && !b.GetValue(true)) // compare current frame and previous frame
 					return true;
 			return false;
 		}
 
 		bool GamepadData::IsAnyButtonPressed(bool previous_frame) const
 		{
-			size_t count = GetButtonCount();
-			size_t start = (previous_frame) ? count : 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
-			size_t end = start + count;
-
-			for (size_t i = start; i < end; ++i)
-				if (buttons[i].value)
+			for (ButtonData const& b : buttons)
+				if (b.GetValue(previous_frame))
 					return true;
 			return false;
 		}
 
 		bool GamepadData::IsAnyAxisAction(bool previous_frame) const
 		{
-			size_t count = GetAxisCount();
-			size_t start = (previous_frame) ? count : 0; // the array is split in 2 parts (first elements for current values, then previous frame history)
-			size_t end = start + count;
-
-			for (size_t i = start; i < end; ++i)
-				if (axis[i].GetValue() != 0.0f)
+			for (AxisData const& a : axis)
+				if (a.GetValue(previous_frame) != 0.0f)
 					return true;
 			return false;
 		}
@@ -220,34 +227,31 @@ namespace chaos
 
 			size_t ac = (size_t)axis_count;
 
-			bool axis_reallocated = (axis.size() != ac * 2);
-			if (axis_reallocated)
+			if (axis.size() != ac) // reallocate axis
 			{
 				axis.clear();
-				axis.insert(axis.begin(), ac * 2, {}); // 2 * because we want to insert row for previous frame
+				axis.insert(axis.begin(), ac, {});
 
 				for (size_t i = 0; i < ac; ++i)
 				{
 					// update this frame value
 					float value = axis_buffer[i];
-					if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+					if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize i,comming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
-					axis[i].UpdateValue(value, dead_zone);
+					axis[i].UpdateValue(value, dead_zone, 0.0f);
 					// initilize previous frame value 
-					axis[i + ac] = axis[i];
+					axis[i].previous_value = axis[i].value;
 				}
 			}
 			else
 			{
 				for (size_t i = 0; i < ac; ++i)
 				{
-					// copy current frame to previous
-					axis[i + ac] = axis[i];
 					// update this frame value
 					float value = axis_buffer[i];
 					if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
-					axis[i].UpdateValue(value, dead_zone);
+					axis[i].UpdateValue(value, dead_zone, delta_time);
 				}
 			}
 
@@ -255,26 +259,22 @@ namespace chaos
 			unsigned char const * buttons_buffer = glfwGetJoystickButtons(stick_index, &buttons_count);
 
 			size_t bc = (size_t)buttons_count;
-
-			bool buttons_reallocated = (buttons.size() != bc * 2);
-			if (buttons_reallocated)
+			
+			if (buttons.size() != bc) // reallocate buttons
 			{
 				buttons.clear();
-				buttons.insert(buttons.begin(), bc * 2, {});
+				buttons.insert(buttons.begin(), bc, {});
 
 				for (size_t i = 0; i < ac; ++i)
 				{
-					buttons[i].UpdateValue(buttons_buffer[i] != 0);
-					buttons[i + bc] = buttons[i];
+					buttons[i].UpdateValue(buttons_buffer[i] != 0, 0.0f);
+					buttons[i].previous_value = buttons[i].value;
 				}
 			}
 			else
 			{
 				for (size_t i = 0; i < bc; ++i)
-				{
-					buttons[i + bc] = buttons[i]; // copy current frame to previous
-					buttons[i].UpdateValue(buttons_buffer[i] != 0);
-				}
+					buttons[i].UpdateValue(buttons_buffer[i] != 0, delta_time);
 			}
 		}
 
@@ -869,7 +869,6 @@ namespace chaos
 		{
 			return true;
 		}
-
 
 		void GamepadManager::UpdateAndUnconnectPhysicalGamepads(float delta_time, int & unallocated_present_physical_device_count)
 		{

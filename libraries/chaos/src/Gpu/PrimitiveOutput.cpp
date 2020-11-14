@@ -19,6 +19,16 @@ namespace chaos
         if (buffer_start == nullptr || buffer_position == buffer_start)
             return;
 
+        // get the manager for resources
+        GPUResourceManager* gpu_resource_manager = nullptr;
+        
+        if (type == PrimitiveType::QUAD)
+        {
+            gpu_resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+            if (gpu_resource_manager == nullptr)
+                return;
+        }
+
         // one new GPU buffer each time so primitives need to be flushed => one GPUDynamicMeshElement each time
         GPUDynamicMeshElement& new_element = dynamic_mesh->AddMeshElement();
 
@@ -29,7 +39,7 @@ namespace chaos
         if (type == PrimitiveType::QUAD)
         {
             size_t quad_rendering_count = 0;
-            new_element.index_buffer = (type == PrimitiveType::QUAD) ? renderer->GetQuadIndexBuffer(&quad_rendering_count) : nullptr;
+            new_element.index_buffer = (type == PrimitiveType::QUAD) ? gpu_resource_manager->GetQuadIndexBuffer(&quad_rendering_count) : nullptr;
 
             size_t quad_count = ((buffer_position - buffer_start) / vertex_size) / 4;
 

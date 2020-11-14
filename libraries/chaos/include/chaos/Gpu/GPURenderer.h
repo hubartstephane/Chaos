@@ -54,9 +54,6 @@ namespace chaos
 		/** get  a fence for the end of this frame */
 		GPUFence * GetCurrentFrameFence();
 
-        /** get an index buffer for quad rendering (returns the number of quad that can be renderer with this buffer) */
-        GPUBuffer* GetQuadIndexBuffer(size_t* result_quad_count);
-
 	protected:
 
 		/** override */
@@ -77,13 +74,6 @@ namespace chaos
 
 		/** the stack of framebuffer */
 		std::vector<GPUFramebufferRenderData> framebuffer_stack;
-
-		/** the fullscreen quad mesh */
-		shared_ptr<GPUSimpleMesh> quad_mesh;
-
-        /** the quad to triangle_pair index rendering */
-        shared_ptr<GPUBuffer> quad_index_buffer;
-
 
 		/** whether a rendering is in progress */
 #if _DEBUG

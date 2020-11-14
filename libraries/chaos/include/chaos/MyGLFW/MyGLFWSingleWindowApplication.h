@@ -79,9 +79,9 @@ namespace chaos
 			SoundManager const * GetSoundManager() const { return sound_manager.get(); }
 
 			/** gets the graphic resource manager */
-			GPUResourceManager * GetGPUResourceManager() { return gpu_manager.get(); }
+			GPUResourceManager * GetGPUResourceManager() { return gpu_resource_manager.get(); }
 			/** gets the graphic resource manager */
-			GPUResourceManager const * GetGPUResourceManager() const { return gpu_manager.get(); }
+			GPUResourceManager const * GetGPUResourceManager() const { return gpu_resource_manager.get(); }
 
 			/** getting the renderer */
 			GPURenderer * GetRenderer() { return renderer.get(); }
@@ -122,9 +122,9 @@ namespace chaos
 			/** finalize the managers */
 			virtual bool FinalizeManagers() override;
 			/** the GPU manager must be initialized after the OpenGL context is OK. */
-			virtual bool InitializeGPUManager();
+			virtual bool InitializeGPUResourceManager();
 			/** finalize the GPU manager */
-			virtual bool FinalizeGPUManager();
+			virtual bool FinalizeGPUResourceManager();
 
 			/** the method to override for window generation */
 			virtual Window * GenerateWindow();
@@ -139,12 +139,16 @@ namespace chaos
 
 		protected:
 
+
+			BYTE KeyboardState[256] = { 0 };
+
+
 			/** the main clock of the manager */
 			shared_ptr<Clock> main_clock;
 			/** the sound manager */
 			shared_ptr<SoundManager> sound_manager;
 			/** the graphic resource manager */
-			shared_ptr<GPUResourceManager> gpu_manager;
+			shared_ptr<GPUResourceManager> gpu_resource_manager;
 
 			/** the initial_window param */
 			SingleWindowApplicationParams window_params;

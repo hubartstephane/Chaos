@@ -101,7 +101,7 @@ namespace chaos
 		bool CheckKeyInput(GLFWwindow * glfw_window, int key) const;
 
 
-		static double const INVALID_MOUSE_VALUE;
+		static double constexpr INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
 
 		/** whether the mouse is enabled or not */
 		bool mouse_enabled = true;

@@ -179,61 +179,20 @@ namespace chaos
 
 	bool GPURenderer::Initialize()
 	{
-		GPUMultiMeshGenerator generators;
-
-		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
-		generators.AddGenerator(new GPUQuadMeshGenerator(box), quad_mesh);
-
-		if (!generators.GenerateMeshes())
-			return false;
-
 		return true;
 	}
 
 	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(material != nullptr);
-		if (quad_mesh != nullptr)
-			quad_mesh->Render(this, material, uniform_provider, render_params);
+	
+		GPUResourceManager* gpu_resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		if (gpu_resource_manager != nullptr)
+		{
+			GPUSimpleMesh* quad_mesh = gpu_resource_manager->GetQuadMesh();
+			if (quad_mesh != nullptr)
+				quad_mesh->Render(this, material, uniform_provider, render_params);
+		}		
 	}
-
-    GPUBuffer * GPURenderer::GetQuadIndexBuffer(size_t * result_quad_count)
-    {
-        size_t const QUAD_COUNT = 10000;
-
-        if (quad_index_buffer == nullptr)
-        {
-            quad_index_buffer = new GPUBuffer(true);
-            if (quad_index_buffer != nullptr)
-            {                
-                size_t buffer_size = 6 * QUAD_COUNT * sizeof(GLuint); // quad becomes a triangle pair
-                // reserve a buffer
-                quad_index_buffer->SetBufferData(nullptr, buffer_size);
-                // fill the buffer
-                GLuint * buffer = (GLuint *)quad_index_buffer->MapBuffer(0, 0, false, true);
-                if (buffer != nullptr)
-                {
-                    for (size_t i = 0; i < QUAD_COUNT; ++i)
-                    {
-                        size_t start = i * 4;
-
-                        buffer[0] = (GLuint)(start + 0);
-                        buffer[1] = (GLuint)(start + 1);
-                        buffer[2] = (GLuint)(start + 2);
-                        buffer[3] = (GLuint)(start + 3);
-                        buffer[4] = (GLuint)(start + 0);
-                        buffer[5] = (GLuint)(start + 2);
-                        buffer += 6;
-                    }
-                }
-                quad_index_buffer->UnMapBuffer();
-            }
-        }
-
-        if (result_quad_count != nullptr)
-            *result_quad_count = QUAD_COUNT;
-
-        return quad_index_buffer.get();
-    }
 
 }; // namespace chaos

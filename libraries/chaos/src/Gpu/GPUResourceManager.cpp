@@ -2,6 +2,10 @@
 
 namespace chaos
 {
+	namespace
+	{
+		constexpr size_t QUAD_INDEX_BUFFER_COUNT = 10000;
+	};
 
 	/**
 	* GPUResourceManager
@@ -391,5 +395,58 @@ namespace chaos
 		return true;
 	}
 
+	bool GPUResourceManager::InitializeInternalResources()
+	{
+		// generate the quad mesh
+		GPUMultiMeshGenerator generators;
+
+		box2 box = box2(glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+		generators.AddGenerator(new GPUQuadMeshGenerator(box), quad_mesh);
+
+		if (!generators.GenerateMeshes())
+			return false;
+
+		// generate the quad list index buffer (used in primitive rendering)
+		quad_index_buffer = new GPUBuffer(true);
+		if (quad_index_buffer == nullptr)
+			return false;
+
+		size_t buffer_size = 6 * QUAD_INDEX_BUFFER_COUNT * sizeof(GLuint); // quad becomes a triangle pair
+		// reserve a buffer
+		quad_index_buffer->SetBufferData(nullptr, buffer_size);
+		// fill the buffer
+		GLuint* buffer = (GLuint*)quad_index_buffer->MapBuffer(0, 0, false, true);
+		if (buffer == nullptr)
+			return false;
+
+		for (size_t i = 0; i < QUAD_INDEX_BUFFER_COUNT; ++i)
+		{
+			size_t start = i * 4;
+
+			buffer[0] = (GLuint)(start + 0);
+			buffer[1] = (GLuint)(start + 1);
+			buffer[2] = (GLuint)(start + 2);
+			buffer[3] = (GLuint)(start + 3);
+			buffer[4] = (GLuint)(start + 0);
+			buffer[5] = (GLuint)(start + 2);
+			buffer += 6;
+		}
+		quad_index_buffer->UnMapBuffer();
+
+		return true;
+
+	}
+
+	GPUBuffer* GPUResourceManager::GetQuadIndexBuffer(size_t* result_quad_count)
+	{
+		if (result_quad_count != nullptr)
+			*result_quad_count = QUAD_INDEX_BUFFER_COUNT;
+		return quad_index_buffer.get();
+	}
+
+	GPUSimpleMesh* GPUResourceManager::GetQuadMesh()
+	{
+		return quad_mesh.get();
+	}
 
 }; // namespace chaos

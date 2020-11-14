@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	double const FPSViewInputController::INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
+	//double const FPSViewInputController::INVALID_MOUSE_VALUE = std::numeric_limits<double>::max();
 
 
 

@@ -219,6 +219,12 @@ namespace chaos
 
 		void GamepadData::UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone)
 		{
+
+			//GLFWgamepadstate state;
+			//glfwGetGamepadState(stick_index, &state);
+
+
+
 			int buttons_count = 0;
 			int axis_count = 0;
 

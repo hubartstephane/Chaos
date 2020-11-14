@@ -57,6 +57,28 @@ namespace chaos
 
 			while (!window->ShouldClose())
 			{
+
+
+
+
+				BYTE NewKeyboardState[256] = { 0 };
+				if (::GetKeyboardState(NewKeyboardState))
+				{
+					for (int i = 0; i < 256; ++i)
+						if ((KeyboardState[i] & 128) != (NewKeyboardState[i] & 128))
+							i = i;
+					memcpy(KeyboardState, NewKeyboardState, sizeof(NewKeyboardState));
+				}
+
+
+
+
+
+
+
+
+
+
 				glfwPollEvents();
 
 				double t2 = glfwGetTime();
@@ -156,11 +178,27 @@ namespace chaos
 			// create window
 			if (params.title == nullptr) // title cannot be null
 				params.title = "";
-
+			
 			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
 			GLFWwindow * glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
 			if (glfw_window == nullptr)
 				return false;
+
+
+
+
+
+
+
+			
+				
+
+
+
+
+
+
+
 			glfwMakeContextCurrent(glfw_window);
 
 			// vsync ?
@@ -178,6 +216,22 @@ namespace chaos
 				return false;
 			}
 
+
+
+
+
+
+
+
+
+			
+
+
+
+
+
+
+
 			// create the renderer
 			renderer = new GPURenderer;
 			if (renderer == nullptr)
@@ -191,8 +245,28 @@ namespace chaos
 			GLTools::DisplayGenericInformation();
 
 			// initialize the GPU resource Manager
-			if (!InitializeGPUManager())
+			if (!InitializeGPUResourceManager())
 				return false;
+
+
+			// shu47
+#if 0
+			GLFWwindow* other_glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, glfw_window /* share list */);
+
+			glfwMakeContextCurrent(other_glfw_window);
+			if (params.hints.unlimited_fps)
+				glfwSwapInterval(0);
+
+			glfwDestroyWindow(glfw_window);
+			glfw_window = other_glfw_window;
+#endif
+
+
+
+
+
+
+
 
 			// bind the window
 			window->BindGLFWWindow(glfw_window, params.hints.double_buffer ? true : false);
@@ -246,17 +320,20 @@ namespace chaos
 			LogTools::Log("Window(...) [%d] failure : %s", code, msg);
 		}
 
-		bool SingleWindowApplication::InitializeGPUManager()
+		bool SingleWindowApplication::InitializeGPUResourceManager()
 		{
-			// initialize the GPU manager
-			gpu_manager = new GPUResourceManager;
-			if (gpu_manager == nullptr)
+			// create and start the GPU manager
+			gpu_resource_manager = new GPUResourceManager;
+			if (gpu_resource_manager == nullptr)
 				return false;
-			gpu_manager->StartManager();
-			// get the structure of interrest
+			gpu_resource_manager->StartManager();
+			// create internal resource
+			if (!gpu_resource_manager->InitializeInternalResources())
+				return false;
+			// get JSON section and load all requested resources
 			nlohmann::json const * gpu_config = JSONTools::GetStructure(configuration, "gpu");
 			if (gpu_config != nullptr)
-				if (!gpu_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+				if (!gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
 					return false;
 			return true;
 		}
@@ -275,25 +352,25 @@ namespace chaos
 			if (gpu_config == nullptr)
 				return false;
 			// create a temporary manager
-			shared_ptr<GPUResourceManager> other_gpu_manager = new GPUResourceManager; // destroyed at the end of the function
-			if (other_gpu_manager == nullptr)
+			shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager; // destroyed at the end of the function
+			if (other_gpu_resource_manager == nullptr)
 				return false;
-			if (!other_gpu_manager->StartManager())
+			if (!other_gpu_resource_manager->StartManager())
 				return false;
 			// reload all resources ... (even unchanged)
-			if (other_gpu_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
-				gpu_manager->RefreshGPUResources(other_gpu_manager.get());
-			other_gpu_manager->StopManager();					
+			if (other_gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+				gpu_resource_manager->RefreshGPUResources(other_gpu_resource_manager.get());
+			other_gpu_resource_manager->StopManager();
 			return true;
 		}
 
-		bool SingleWindowApplication::FinalizeGPUManager()
+		bool SingleWindowApplication::FinalizeGPUResourceManager()
 		{
 			// stop the resource manager
-			if (gpu_manager != nullptr)
+			if (gpu_resource_manager != nullptr)
 			{
-				gpu_manager->StopManager();
-				gpu_manager = nullptr;
+				gpu_resource_manager->StopManager();
+				gpu_resource_manager = nullptr;
 			}
 			return true;
 		}
@@ -338,10 +415,10 @@ namespace chaos
 				sound_manager = nullptr;
 			}
 			// stop the resource manager
-			if (gpu_manager != nullptr)
+			if (gpu_resource_manager != nullptr)
 			{
-				gpu_manager->StopManager();
-				gpu_manager = nullptr;
+				gpu_resource_manager->StopManager();
+				gpu_resource_manager = nullptr;
 			}
 			// super method
 			Application::FinalizeManagers();
@@ -353,7 +430,13 @@ namespace chaos
 			if (!Application::Initialize())
 				return false;
 			// create the window
+
+			// shu47
+
 			window = GenerateWindow();
+
+
+
 			if (window == nullptr)
 				return false;
 			// success
@@ -362,7 +445,7 @@ namespace chaos
 
 		bool SingleWindowApplication::Finalize()
 		{
-			FinalizeGPUManager();
+			FinalizeGPUResourceManager();
 
 			// stop the window
 			if (window != nullptr)

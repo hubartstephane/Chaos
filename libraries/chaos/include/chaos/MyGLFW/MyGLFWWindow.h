@@ -85,7 +85,7 @@ namespace chaos
 			Window();
 
 			/** entry point from Application */
-			void MainTick(float delta_time);
+			void MainTick(float delta_time, float real_delta_time);
 			/** called to require the window to close */
 			void RequireWindowClosure();
 			/** called to require the window to refresh */
@@ -123,6 +123,9 @@ namespace chaos
 			/** override */
 			virtual GLFWwindow* GetGLFWWindow() const override { return glfw_window; }
 
+			/** getting the renderer */
+			GPURenderer* GetRenderer() { return renderer.get(); }
+
 		protected:
 
 			/** get the hints for new GLFW window */
@@ -140,8 +143,8 @@ namespace chaos
 			virtual bool OnWindowClosed() { return true; }
 			/** called whenever the window is resized */
 			virtual void OnWindowResize(glm::ivec2 size) {}
-			/** called whenever the window is redrawn */
-			virtual bool OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size) { return true; }
+			/** called whenever the window is redrawn (entry point) */
+			virtual void OnWindowDraw();
 
 			/** called whenever a file is dropped */
 			virtual void OnDropFile(int count, char const ** paths) {}
@@ -154,6 +157,9 @@ namespace chaos
 			glm::vec2 GetMousePosition() const;
 			/** returns true if the mouse position is valid (very first frame) */
 			bool IsMousePositionValid() const;
+
+			/** the drawing specialization method */
+			virtual bool OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size);
 
 		private:
 
@@ -191,6 +197,9 @@ namespace chaos
 
 			/** previous mouse position */
 			glm::vec2 mouse_position;
+
+			/** the renderer */
+			shared_ptr<GPURenderer> renderer;
 
 			/** store window position for fullscreen */
 			glm::ivec2 non_fullscreen_window_position = glm::ivec2(0, 0);

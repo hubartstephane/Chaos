@@ -83,9 +83,6 @@ namespace chaos
 			/** gets the graphic resource manager */
 			GPUResourceManager const * GetGPUResourceManager() const { return gpu_resource_manager.get(); }
 
-			/** getting the renderer */
-			GPURenderer * GetRenderer() { return renderer.get(); }
-
 			/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
 			void FreezeNextFrameTickDuration();
 
@@ -154,17 +151,13 @@ namespace chaos
 			SingleWindowApplicationParams window_params;
 			/** the window created */
 			Window * window = nullptr;
-
-			/** the renderer */
-			shared_ptr<GPURenderer> renderer;
-
 			
 			/** forced time slice for tick */
 			float forced_tick_duration = 0.0f;
 			/** maximum time slice for tick */
 			float max_tick_duration = 0.0f;
 			/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
-			bool   forced_zero_tick_duration = false;
+			bool forced_zero_tick_duration = false;
 		};
 
 		/**

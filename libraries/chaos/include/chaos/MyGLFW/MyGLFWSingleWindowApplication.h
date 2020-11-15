@@ -165,7 +165,7 @@ namespace chaos
 		*/
 
 		template<typename WINDOW_TYPE>
-		bool RunWindowApplication(int argc, char ** argv, char ** env, SingleWindowApplicationParams const & in_window_params)
+		bool RunWindowApplication(int argc, char** argv, char** env, SingleWindowApplicationParams const& in_window_params = {})
 		{
 			class MyApplication : public SingleWindowApplication
 			{
@@ -176,19 +176,7 @@ namespace chaos
 				Window * GenerateWindow() override { return new WINDOW_TYPE; }
 			};
 
-			shared_ptr<MyApplication> application = new MyApplication(in_window_params);
-			if (application != nullptr)
-			{
-				// XXX : under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries
-				//       here, this is an exception because this function is a template and so is not compiled in libraries by caller code instead
-#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
-				static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
-				static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;
-				application->SetFileRedirectionDirectories(build_path, src_path);
-#endif
-				return application->Run(argc, argv, env);
-			}
-			return false;
+			return RunApplication<MyApplication>(argc, argv, env, in_window_params);
 		}
 
 	}; // namespace MyGLFW

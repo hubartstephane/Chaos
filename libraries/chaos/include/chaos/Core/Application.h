@@ -152,12 +152,21 @@ namespace chaos
 #endif
 	};
 
-	template<typename APPLICATION_TYPE>
-	bool RunApplication(int argc, char ** argv, char ** env)
+	template<typename APPLICATION_TYPE, typename ...PARAMS>
+	bool RunApplication(int argc, char** argv, char** env, PARAMS... params)
 	{
-		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE();
+		shared_ptr<APPLICATION_TYPE> application = new APPLICATION_TYPE(params...);
 		if (application != nullptr)
+		{
+			// XXX : under normal circonstances, you should not use CHAOS_PROJECT_SRC_PATH, CHAOS_PROJECT_BUILD_PATH in libraries
+			//       here, this is an exception because this function is a template and so is not compiled in libraries by caller code instead
+#if CHAOS_CAN_REDIRECT_RESOURCE_FILES
+			static boost::filesystem::path src_path = CHAOS_PROJECT_SRC_PATH;
+			static boost::filesystem::path build_path = CHAOS_PROJECT_BUILD_PATH;
+			application->SetFileRedirectionDirectories(build_path, src_path);
+#endif
 			return application->Run(argc, argv, env);
+		}
 		return false;
 	}
 

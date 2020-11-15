@@ -2,6 +2,7 @@
 
 namespace chaos
 {
+	class GameApplication;
 
 }; // namespace chaos
 
@@ -9,6 +10,12 @@ namespace chaos
 
 namespace chaos
 {
+	class GameApplication : public MyGLFW::SingleWindowApplication
+	{
+
+	};
+
+
 	template<typename GAME_TYPE>
 	bool RunGame(int argc, char** argv, char** env, MyGLFW::SingleWindowApplicationParams params = {})
 	{

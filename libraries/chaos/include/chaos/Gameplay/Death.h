@@ -10,7 +10,7 @@ namespace chaos
 namespace chaos
 {
 	template<typename GAME_TYPE>
-	bool RunGame(int argc, char ** argv, char ** env, MyGLFW::SingleWindowApplicationParams params = MyGLFW::SingleWindowApplicationParams())
+	bool RunGame(int argc, char** argv, char** env, MyGLFW::SingleWindowApplicationParams params = {})
 	{
 		return MyGLFW::RunWindowApplication<TypedGameWindow<GAME_TYPE>>(argc, argv, env, params);
 	}

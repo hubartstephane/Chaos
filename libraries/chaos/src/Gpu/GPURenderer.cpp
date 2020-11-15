@@ -177,11 +177,6 @@ namespace chaos
 		drawcall_counter.Accumulate(1.0f);		
 	}
 
-	bool GPURenderer::Initialize()
-	{
-		return true;
-	}
-
 	void GPURenderer::DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(material != nullptr);

@@ -28,14 +28,10 @@ namespace chaos
 	{
 	public:
 
-		/** initialization of the internal resources */
-		virtual bool Initialize();
-
-		/** render a full screen quad */
-		void DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
-
 		/** draw a primitive */
 		void Draw(GPUDrawPrimitive const& primitive, GPUInstancingInfo const& instancing = {});
+		/** render a full screen quad */
+		void DrawFullscreenQuad(GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** called at the start of a new frame */
 		void BeginRenderingFrame();

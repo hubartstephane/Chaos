@@ -37,7 +37,10 @@ namespace chaos
 
 		Window::Window()
 		{
+			// mouse position
 			mouse_position.x = mouse_position.y = std::numeric_limits<float>::max();		
+			// create the renderer
+			renderer = new GPURenderer;
 		}
 
 		glm::ivec2 Window::GetWindowPosition() const
@@ -81,14 +84,18 @@ namespace chaos
 			return (glfwWindowShouldClose(glfw_window) != 0);
 		}
 
-		void Window::MainTick(float delta_time)
+		void Window::MainTick(float delta_time, float real_delta_time)
 		{
+			// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
+			if (renderer != nullptr)
+				renderer->Tick(real_delta_time); 
+			// special tick method
 			if (Tick(delta_time))
 				RequireWindowRefresh();
-
+			// refresh the window
 			if (refresh_required)
 			{
-				DoOnDraw(glfw_window);
+				OnWindowDraw();
 				refresh_required = false;
 			}
 		}
@@ -164,46 +171,11 @@ namespace chaos
 				my_window->OnWindowResize(glm::ivec2(width, height));
 		}
 
-		void Window::DoOnDraw(GLFWwindow * in_glfw_window)
+		void Window::DoOnDraw(GLFWwindow* in_glfw_window)
 		{
-			Window * my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
+			Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 			if (my_window != nullptr)
-			{
-				glfwMakeContextCurrent(in_glfw_window);
-
-				// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
-				int width = 0;
-				int height = 0;
-				glfwGetWindowSize(in_glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
-
-				if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
-					return;
-
-				MyGLFW::SingleWindowApplication * application = Application::GetInstance();
-				if (application != nullptr)
-				{
-					GPURenderer * renderer = application->GetRenderer();
-					if (renderer != nullptr)
-					{
-						renderer->BeginRenderingFrame();
-						// compute viewport
-						glm::vec2 window_size = glm::ivec2(width, height);
-
-						box2 viewport = my_window->GetRequiredViewport(window_size);
-						GLTools::SetViewport(viewport);
-						// render
-						if (my_window->OnDraw(renderer, viewport, window_size))
-						{					
-							if (my_window->double_buffer)
-								glfwSwapBuffers(in_glfw_window);
-							// XXX : seems useless
-							//else
-							//	glFlush(); 
-						}
-						renderer->EndRenderingFrame();
-					}
-				}
-			}
+				my_window->OnWindowDraw();
 		}
 
 		void Window::DoOnMouseMove(GLFWwindow * in_glfw_window, double x, double y)
@@ -271,6 +243,45 @@ namespace chaos
 			if (my_window != nullptr)
 				my_window->OnDropFile(count, paths);
 		}
+
+		void Window::OnWindowDraw()
+		{
+			if (renderer != nullptr)
+			{
+				glfwMakeContextCurrent(glfw_window);
+
+				// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
+				int width = 0;
+				int height = 0;
+				glfwGetWindowSize(glfw_window, &width, &height); // framebuffer size is in pixel ! (not glfwGetWindowSize)
+
+				if (width <= 0 || height <= 0) // some crash to expect in drawing elsewhere
+					return;
+
+				renderer->BeginRenderingFrame();
+				// compute viewport
+				glm::vec2 window_size = glm::ivec2(width, height);
+
+				box2 viewport = GetRequiredViewport(window_size);
+				GLTools::SetViewport(viewport);
+				// render
+				if (OnDraw(renderer.get(), viewport, window_size))
+				{
+					if (double_buffer)
+						glfwSwapBuffers(glfw_window);
+					// XXX : seems useless
+					//else
+					//	glFlush(); 
+				}
+				renderer->EndRenderingFrame();
+			}
+		}
+
+		bool Window::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size)
+		{
+			return true;
+		}
+
 
 		void Window::RequireWindowClosure()
 		{
@@ -422,15 +433,13 @@ namespace chaos
 		bool Window::ScreenCapture()
 		{
 			// get renderer
-			MyGLFW::SingleWindowApplication * application = Application::GetInstance();
-			if (application == nullptr)
-				return false;
-
-			GPURenderer * renderer = application->GetRenderer();
 			if (renderer == nullptr)
 				return false;
 
 			// this call may take a while causing a jump in 'delta_time'
+			MyGLFW::SingleWindowApplication* application = Application::GetInstance();
+			if (application == nullptr)
+				return false;
 			application->FreezeNextFrameTickDuration();
 
 			// compute rendering size
@@ -455,7 +464,7 @@ namespace chaos
 			renderer->BeginRenderingFrame();
 			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
 			GLTools::SetViewport(viewport);
-			OnDraw(renderer, viewport, framebuffer_size);
+			OnDraw(renderer.get(), viewport, framebuffer_size);
 			renderer->PopFramebufferRenderContext();
 			renderer->EndRenderingFrame();
 

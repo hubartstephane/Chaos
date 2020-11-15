@@ -70,15 +70,6 @@ namespace chaos
 					memcpy(KeyboardState, NewKeyboardState, sizeof(NewKeyboardState));
 				}
 
-
-
-
-
-
-
-
-
-
 				glfwPollEvents();
 
 				double t2 = glfwGetTime();
@@ -97,14 +88,10 @@ namespace chaos
 					else if (max_tick_duration > 0.0f)
 						delta_time = std::min(delta_time, max_tick_duration);
 				}
-
-				// tick the renderer
-				if (renderer != nullptr)
-					renderer->Tick(real_delta_time); // renderer has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
 				// tick the manager
 				TickManagers(delta_time);
 				// tick the window
-				window->MainTick(delta_time);
+				window->MainTick(delta_time, real_delta_time);
 				// update time
 				t1 = t2;
 			}
@@ -121,9 +108,6 @@ namespace chaos
 			bool result = false;
 
 			SingleWindowApplicationParams params = window_params; // work on a copy of the params
-
-			// set an error callback
-			glfwSetErrorCallback(OnGLFWError);
 
 			// compute the monitor upon which the window will be : use it for pixel format
 			if (params.monitor == nullptr)
@@ -144,6 +128,10 @@ namespace chaos
 			// compute the position and size of the window
 			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
 
+			// create the window class
+			window = GenerateWindow();
+			if (window == nullptr)
+				return false;
 			// prepare window creation
 			window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
 			params.hints.ApplyHints();
@@ -179,25 +167,12 @@ namespace chaos
 			if (params.title == nullptr) // title cannot be null
 				params.title = "";
 			
+
+
 			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
 			GLFWwindow * glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
 			if (glfw_window == nullptr)
 				return false;
-
-
-
-
-
-
-
-			
-				
-
-
-
-
-
-
 
 			glfwMakeContextCurrent(glfw_window);
 
@@ -219,32 +194,12 @@ namespace chaos
 
 
 
-
-
-
-
-
-			
-
-
-
-
-
-
-
-			// create the renderer
-			renderer = new GPURenderer;
-			if (renderer == nullptr)
-				return false;
-			if (!renderer->Initialize())
-				return false;
-
 			// set the debug log hander
 			GLTools::SetDebugMessageHandler();
 			// some generic information
 			GLTools::DisplayGenericInformation();
 
-			// initialize the GPU resource Manager
+			// initialize the GPU resource Manager (first window/OpenGL context must have been created)
 			if (!InitializeGPUResourceManager())
 				return false;
 
@@ -427,19 +382,11 @@ namespace chaos
 
 		bool SingleWindowApplication::Initialize()
 		{
+			// super method
 			if (!Application::Initialize())
 				return false;
-			// create the window
-
-			// shu47
-
-			window = GenerateWindow();
-
-
-
-			if (window == nullptr)
-				return false;
-			// success
+			// set error callback
+			glfwSetErrorCallback(OnGLFWError);
 			return true;
 		}
 

@@ -99,7 +99,7 @@ namespace chaos
 
 	bool Class::IsDeclared() const
 	{
-		return (class_name.length() > 0);
+		return declared;
 	}
 
 	Class const * Class::FindClass(char const* class_name)

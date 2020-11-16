@@ -107,10 +107,8 @@ namespace chaos
 		{
 			// store a copy of the parameters
 			StoreParameters(argc, argv, env);
-
 			// load the configuration file (ignore return value because there is no obligation to use a configuration file)
 			LoadConfigurationFile();
-
 			// initialize, run, and finalize the application
 			if (Initialize())
 				result = Main();

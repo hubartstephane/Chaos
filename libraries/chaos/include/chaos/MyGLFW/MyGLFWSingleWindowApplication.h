@@ -52,7 +52,7 @@ namespace chaos
 		public:
 
 			/** constructor */
-			SingleWindowApplication(WindowParams const & in_window_params, WindowHints const in_window_hints);
+			SingleWindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const & in_window_params, WindowHints const in_window_hints);
 
 			/** getter of the main clock */
 			static Clock * GetMainClockInstance();
@@ -125,8 +125,6 @@ namespace chaos
 			/** finalize the GPU manager */
 			virtual bool FinalizeGPUResourceManager();
 
-			/** the method to override for window generation */
-			virtual Window * GenerateWindow();
 			/** tick all the managers */
 			virtual void TickManagers(float delta_time);
 
@@ -134,9 +132,7 @@ namespace chaos
 			virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 			/** create a window */
-			Window * CreateTypedWindow(SubClassOf<Window> window_class);
-			/** create the main window */
-			Window * CreateMainWindow(WindowParams params, WindowHints hints);
+			Window * CreateTypedWindow(SubClassOf<Window> window_class, WindowParams params, WindowHints hints);
 
 		protected:
 
@@ -165,6 +161,9 @@ namespace chaos
 			float max_tick_duration = 0.0f;
 			/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
 			bool forced_zero_tick_duration = false;
+
+			/** the class of the main window */
+			SubClassOf<Window> main_window_class;
 		};
 
 		/**
@@ -174,17 +173,7 @@ namespace chaos
 		template<typename WINDOW_TYPE, typename ...PARAMS>
 		bool RunWindowApplication(int argc, char** argv, char** env, PARAMS... params)
 		{
-			class MyApplication : public SingleWindowApplication
-			{
-			public:
-
-				using SingleWindowApplication::SingleWindowApplication;
-
-			protected:
-				Window * GenerateWindow() override { return new WINDOW_TYPE; }
-			};
-
-			return RunApplication<MyApplication>(argc, argv, env, params...);
+			return RunApplication<SingleWindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), params...);
 		}
 
 	}; // namespace MyGLFW

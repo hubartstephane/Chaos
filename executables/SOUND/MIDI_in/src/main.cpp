@@ -152,19 +152,20 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	int b = 0;
 
 	int c = ((a & 127) << 7) + b;
-	
 
 
-	return 0;
-
-  chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor = nullptr;
-  params.width = 500;
-  params.height = 500;
-  params.monitor_index = 0;
-  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
 
 	return 0;
+
+	chaos::MyGLFW::WindowParams params;
+	params.monitor = nullptr;
+	params.width = 500;
+	params.height = 500;
+	params.monitor_index = 0;
+
+	chaos::MyGLFW::WindowHints hints;
+
+	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params, hints);
 }
 
 

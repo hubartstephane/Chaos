@@ -36,23 +36,25 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * GetMonitorByIndex(int monitor_index) // monitor_index relative to primary monitor
+		GLFWmonitor * GetMonitorByIndex(int monitor_index, bool relative_to_primary) // monitor_index relative to primary monitor
 		{
 			GLFWmonitor * result = glfwGetPrimaryMonitor();
 			if (monitor_index != 0)
 			{
 				std::vector<GLFWmonitor *> monitors = GetSortedMonitors();
 
-				// search the primary monitor inside
-				auto b = monitors.begin();
-				auto e = monitors.end();
-				auto it = std::find(b, e, result);
+				// get the base monitor index (relative to the primary or to the most to the left)
+				int base_monitor_index = 0;
+				if (relative_to_primary)
+				{
+					auto b = monitors.begin();
+					auto e = monitors.end();
+					auto it = std::find(b, e, result);
 
-				// primary index
-				int primary_index = (int)(it - b); // we want to offset it with positive or negative values (cast it into signed)
-
-				 // compute the index of the monitor we are interested in (and clamp)
-				int result_index = primary_index + monitor_index;
+					base_monitor_index = (int)(it - b); // we want to offset it with positive or negative values (cast it into signed)
+				}
+				// compute the index of the monitor we are interested in (and clamp)
+				int result_index = base_monitor_index + monitor_index;
 				if (result_index < 0)
 					result_index = 0;
 				else if (result_index >= (int)monitors.size())

@@ -211,13 +211,14 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-  chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor = nullptr;
-  params.width = 700;
-  params.height = 700;
-  params.monitor_index = 0;
-  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowGamepadTest>(argc, argv, env, params);
+	chaos::MyGLFW::WindowParams params;
+	params.monitor = nullptr;
+	params.width = 700;
+	params.height = 700;
+	params.monitor_index = 0;
 
-	return 0;
+	chaos::MyGLFW::WindowHints hints;
+
+	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowGamepadTest>(argc, argv, env, params, hints);
 }
 

@@ -6,18 +6,50 @@ namespace chaos
 	{
 
 		/**
-		* WindowHints
+		* GLFWHints
 		*/
 
-		void WindowHints::ApplyHints()
+		void GLFWHints::ApplyHints()
 		{
 			glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, debug_context);
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major_version);
 			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor_version);
 			glfwWindowHint(GLFW_REFRESH_RATE, refresh_rate); // only usefull in fullscreen mode
 			glfwWindowHint(GLFW_OPENGL_PROFILE, opengl_profile);
+		}
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, GLFWHints const& src)
+		{
+			if (!json_entry.is_object())
+				json_entry = nlohmann::json::object();
+			JSONTools::SetAttribute(json_entry, "debug_context", src.debug_context);
+			JSONTools::SetAttribute(json_entry, "major_version", src.major_version);
+			JSONTools::SetAttribute(json_entry, "minor_version", src.minor_version);
+			JSONTools::SetAttribute(json_entry, "refresh_rate", src.refresh_rate);
+			JSONTools::SetAttribute(json_entry, "opengl_profile", src.opengl_profile);
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, GLFWHints& dst)
+		{
+			if (!json_entry.is_object())
+				return false;
+			JSONTools::GetAttribute(json_entry, "debug_context", dst.debug_context);
+			JSONTools::GetAttribute(json_entry, "major_version", dst.major_version);
+			JSONTools::GetAttribute(json_entry, "minor_version", dst.minor_version);
+			JSONTools::GetAttribute(json_entry, "refresh_rate", dst.refresh_rate);
+			JSONTools::GetAttribute(json_entry, "opengl_profile", dst.opengl_profile);
+			return true;
+		}
+
+		/**
+		* WindowHints
+		*/
+
+		void WindowHints::ApplyHints()
+		{
 			glfwWindowHint(GLFW_RESIZABLE, resizable);
-			glfwWindowHint(GLFW_VISIBLE, false);          // XXX : we don't use start_visible yet because we may do some small window displacement (probably never visible but ...)
+			glfwWindowHint(GLFW_VISIBLE, start_visible);
 			glfwWindowHint(GLFW_DECORATED, decorated);
 			glfwWindowHint(GLFW_FLOATING, toplevel);
 			glfwWindowHint(GLFW_SAMPLES, samples);
@@ -29,6 +61,47 @@ namespace chaos
 			glfwWindowHint(GLFW_BLUE_BITS, blue_bits);
 			glfwWindowHint(GLFW_ALPHA_BITS, alpha_bits);
 			glfwWindowHint(GLFW_FOCUSED, focused);
+		}
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, WindowHints const& src)
+		{
+			if (!json_entry.is_object())
+				json_entry = nlohmann::json::object();
+			JSONTools::SetAttribute(json_entry, "resizable", src.resizable);
+			JSONTools::SetAttribute(json_entry, "start_visible", src.start_visible);
+			JSONTools::SetAttribute(json_entry, "decorated", src.decorated);
+			JSONTools::SetAttribute(json_entry, "toplevel", src.toplevel);
+			JSONTools::SetAttribute(json_entry, "focused", src.focused);
+			JSONTools::SetAttribute(json_entry, "samples", src.samples);
+			JSONTools::SetAttribute(json_entry, "double_buffer", src.double_buffer);
+			JSONTools::SetAttribute(json_entry, "depth_bits", src.depth_bits);
+			JSONTools::SetAttribute(json_entry, "stencil_bits", src.stencil_bits);
+			JSONTools::SetAttribute(json_entry, "red_bits", src.red_bits);
+			JSONTools::SetAttribute(json_entry, "green_bits", src.green_bits);
+			JSONTools::SetAttribute(json_entry, "blue_bits", src.blue_bits);
+			JSONTools::SetAttribute(json_entry, "alpha_bits", src.alpha_bits);
+			
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, WindowHints& dst)
+		{
+			if (!json_entry.is_object())
+				return false;
+			JSONTools::GetAttribute(json_entry, "resizable", dst.resizable);
+			JSONTools::GetAttribute(json_entry, "start_visible", dst.start_visible);
+			JSONTools::GetAttribute(json_entry, "decorated", dst.decorated);
+			JSONTools::GetAttribute(json_entry, "toplevel", dst.toplevel);
+			JSONTools::GetAttribute(json_entry, "focused", dst.focused);
+			JSONTools::GetAttribute(json_entry, "samples", dst.samples);
+			JSONTools::GetAttribute(json_entry, "double_buffer", dst.double_buffer);
+			JSONTools::GetAttribute(json_entry, "depth_bits", dst.depth_bits);
+			JSONTools::GetAttribute(json_entry, "stencil_bits", dst.stencil_bits);
+			JSONTools::GetAttribute(json_entry, "red_bits", dst.red_bits);
+			JSONTools::GetAttribute(json_entry, "green_bits", dst.green_bits);
+			JSONTools::GetAttribute(json_entry, "blue_bits", dst.blue_bits);
+			JSONTools::GetAttribute(json_entry, "alpha_bits", dst.alpha_bits);
+			return true;
 		}
 
 		/**
@@ -301,13 +374,15 @@ namespace chaos
 			// retrieve the mode of the monitor to deduce pixel format
 			GLFWvidmode const * mode = glfwGetVideoMode(monitor);
 
+
+
 			// the pixel format
 			hints.red_bits = mode->redBits;
 			hints.green_bits = mode->greenBits;
 			hints.blue_bits = mode->blueBits;
 			hints.alpha_bits = (hints.red_bits == 8 && hints.green_bits == 8 && hints.blue_bits == 8) ? 8 : 0; // alpha only if RGBA 32bits
 
-			hints.refresh_rate = mode->refreshRate;
+			//hints.refresh_rate = mode->refreshRate;
 		}
 
 		GLFWmonitor * Window::GetFullscreenMonitor() const

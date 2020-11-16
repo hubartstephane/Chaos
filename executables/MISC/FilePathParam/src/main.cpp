@@ -53,35 +53,36 @@ protected:
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
 
-  boost::filesystem::path ref = "mareference/bidule/../fichier.txt";
+    boost::filesystem::path ref = "mareference/bidule/../fichier.txt";
 
-  chaos::FilePathParam P1("truc1.xxx.yyy");
-  chaos::FilePathParam P2(std::string("truc2.yyy"));
-  chaos::FilePathParam P3(boost::filesystem::path("truc3.zzz"));
+    chaos::FilePathParam P1("truc1.xxx.yyy");
+    chaos::FilePathParam P2(std::string("truc2.yyy"));
+    chaos::FilePathParam P3(boost::filesystem::path("truc3.zzz"));
 
-  chaos::FilePathParam P4("truc1.xxx.yyy", ref);
-  chaos::FilePathParam P5(std::string("truc2.yyy"), ref);
-  chaos::FilePathParam P6(boost::filesystem::path("truc3.zzz"), ref);
+    chaos::FilePathParam P4("truc1.xxx.yyy", ref);
+    chaos::FilePathParam P5(std::string("truc2.yyy"), ref);
+    chaos::FilePathParam P6(boost::filesystem::path("truc3.zzz"), ref);
 
 
-  auto b1 = chaos::FileTools::IsTypedFile(P1, ".xxx");
-  auto b2 = chaos::FileTools::IsTypedFile(P1, ".yyy");
+    auto b1 = chaos::FileTools::IsTypedFile(P1, ".xxx");
+    auto b2 = chaos::FileTools::IsTypedFile(P1, ".yyy");
 
-  auto R1 = P1.GetResolvedPath();
-  auto R2 = P2.GetResolvedPath();
-  auto R3 = P3.GetResolvedPath();
-  auto R4 = P4.GetResolvedPath();
-  auto R5 = P5.GetResolvedPath();
-  auto R6 = P6.GetResolvedPath();
+    auto R1 = P1.GetResolvedPath();
+    auto R2 = P2.GetResolvedPath();
+    auto R3 = P3.GetResolvedPath();
+    auto R4 = P4.GetResolvedPath();
+    auto R5 = P5.GetResolvedPath();
+    auto R6 = P6.GetResolvedPath();
 
-  chaos::MyGLFW::SingleWindowApplicationParams params;
-  params.monitor = nullptr;
-  params.width = 500;
-  params.height = 500;
-  params.monitor_index = 0;
-  chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params);
+    chaos::MyGLFW::WindowParams params;
+    params.monitor = nullptr;
+    params.width = 500;
+    params.height = 500;
+    params.monitor_index = 0;
 
-  return 0;
+    chaos::MyGLFW::WindowHints hints;
+
+    return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params, hints);
 }
 
 

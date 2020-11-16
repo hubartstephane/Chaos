@@ -19,10 +19,10 @@ namespace chaos
 	{
 
 		/**
-		* WindowHints : this represents hint for GLFWwindow creation
+		* GLFWHints : this represents hints for th application
 		*/
 
-		class WindowHints
+		class GLFWHints
 		{
 		public:
 
@@ -41,6 +41,25 @@ namespace chaos
 			int refresh_rate = 60;
 			/** the opengl profile */
 			int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
+		};
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, GLFWHints const& src);
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, GLFWHints& dst);
+
+		/**
+		* WindowHints : this represents hints for GLFWwindow creation
+		*/
+
+		class WindowHints
+		{
+		public:
+
+			/** gives set hints to GLFW */
+			void ApplyHints();
+
+		public:
+
 			/** true if the window can be resized */
 			int resizable = 1;
 			/** true if the window starts visible */
@@ -49,6 +68,10 @@ namespace chaos
 			int decorated = 1;
 			/** true if the window is toplevel */
 			int toplevel = 0;
+			/** self description */
+			int focused = 0;
+			/** whether we want the fps to be unlimited */
+			bool unlimited_fps = false;
 			/** number of samples in multisamples (0 for none) */
 			int samples = 0;
 			/** self description */
@@ -65,11 +88,19 @@ namespace chaos
 			int blue_bits = 8;
 			/** self description */
 			int alpha_bits = 8;
-			/** self description */
-			int focused = 0;
-			/** whether we want the fps to be unlimited */
-			bool unlimited_fps = false;
 		};
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, WindowHints const& src);
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, WindowHints& dst);
+
+
+
+
+
+
+
+
 
 		/**
 		* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")

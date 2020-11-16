@@ -4,7 +4,7 @@ namespace chaos
 {
 	namespace MyGLFW
 	{
-		class SingleWindowApplicationParams;
+		class WindowParams;
 		class SingleWindowApplication;
 
 	}; // namespace MyGLFW
@@ -19,10 +19,10 @@ namespace chaos
 	{
 
 		/**
-		* SingleWindowApplicationParams : parameters for playing single window application
+		* WindowParams : parameters for playing single window application
 		*/
 
-		class SingleWindowApplicationParams
+		class WindowParams
 		{
 		public:
 
@@ -36,9 +36,11 @@ namespace chaos
 			int width = 0;
 			/** window height */
 			int height = 0;
-			/** the hints */
-			WindowHints hints;
 		};
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, WindowParams const& src);
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst);
 
 		/**
 		* SingleWindowApplication
@@ -50,7 +52,7 @@ namespace chaos
 		public:
 
 			/** constructor */
-			SingleWindowApplication(SingleWindowApplicationParams const & in_window_params);
+			SingleWindowApplication(WindowParams const & in_window_params, WindowHints const in_window_hints);
 
 			/** getter of the main clock */
 			static Clock * GetMainClockInstance();
@@ -128,11 +130,13 @@ namespace chaos
 			/** tick all the managers */
 			virtual void TickManagers(float delta_time);
 
-			/** Tweak window hints from configuration */
-			void TweakHintsFromConfiguration(SingleWindowApplicationParams & params, nlohmann::json const & in_config);
-
 			/** the user callback called when current input mode changes */
 			virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
+
+			/** create a window */
+			Window * CreateTypedWindow(SubClassOf<Window> window_class);
+			/** create the main window */
+			Window * CreateMainWindow(WindowParams params, WindowHints hints);
 
 		protected:
 
@@ -148,7 +152,10 @@ namespace chaos
 			shared_ptr<GPUResourceManager> gpu_resource_manager;
 
 			/** the initial_window param */
-			SingleWindowApplicationParams window_params;
+			WindowParams window_params;
+			/** the initial_window hints */
+			WindowHints window_hints;
+
 			/** the window created */
 			Window * window = nullptr;
 			
@@ -164,19 +171,20 @@ namespace chaos
 		* RunWindowApplication : utility template function to run an application only from a class
 		*/
 
-		template<typename WINDOW_TYPE>
-		bool RunWindowApplication(int argc, char** argv, char** env, SingleWindowApplicationParams const& in_window_params = {})
+		template<typename WINDOW_TYPE, typename ...PARAMS>
+		bool RunWindowApplication(int argc, char** argv, char** env, PARAMS... params)
 		{
 			class MyApplication : public SingleWindowApplication
 			{
 			public:
-				MyApplication(SingleWindowApplicationParams const & in_window_params) :
-					SingleWindowApplication(in_window_params) {}
+
+				using SingleWindowApplication::SingleWindowApplication;
+
 			protected:
 				Window * GenerateWindow() override { return new WINDOW_TYPE; }
 			};
 
-			return RunApplication<MyApplication>(argc, argv, env, in_window_params);
+			return RunApplication<MyApplication>(argc, argv, env, params...);
 		}
 
 	}; // namespace MyGLFW

@@ -5,45 +5,39 @@ namespace chaos
 	namespace MyGLFW
 	{
 		// 
+		// WindowParams
+		//
+
+		bool SaveIntoJSON(nlohmann::json& json_entry, WindowParams const& src)
+		{
+			if (!json_entry.is_object())
+				json_entry = nlohmann::json::object();
+			JSONTools::SetAttribute(json_entry, "monitor_index", src.monitor_index);
+			JSONTools::SetAttribute(json_entry, "width", src.width);
+			JSONTools::SetAttribute(json_entry, "height", src.height);
+			return true;
+		}
+
+		bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst)
+		{
+			if (!json_entry.is_object())
+				return false;
+			JSONTools::GetAttribute(json_entry, "monitor_index", dst.monitor_index);
+			JSONTools::GetAttribute(json_entry, "width", dst.width);
+			JSONTools::GetAttribute(json_entry, "height", dst.height);
+			return true;
+		}
+
+		// 
 		// SingleWindowApplication
 		//
 
-		SingleWindowApplication::SingleWindowApplication(SingleWindowApplicationParams const & in_window_params) :
-			window_params(in_window_params)
+		SingleWindowApplication::SingleWindowApplication(WindowParams const & in_window_params, WindowHints const in_window_hints) :
+			window_params(in_window_params),
+			window_hints(in_window_hints)
 		{
 		}
-
-		void SingleWindowApplication::TweakHintsFromConfiguration(SingleWindowApplicationParams & params, nlohmann::json const & in_config)
-		{
-			JSONTools::GetAttribute(in_config, "monitor_index", params.monitor_index);
-			JSONTools::GetAttribute(in_config, "width", params.width);
-			JSONTools::GetAttribute(in_config, "height", params.height);
-
-			WindowHints & hints = params.hints;
-
-			JSONTools::GetAttribute(in_config, "debug_context", hints.debug_context);
-			JSONTools::GetAttribute(in_config, "major_version", hints.major_version);
-			JSONTools::GetAttribute(in_config, "minor_version", hints.minor_version);
-			JSONTools::GetAttribute(in_config, "refresh_rate", hints.refresh_rate);
-			JSONTools::GetAttribute(in_config, "opengl_profile", hints.opengl_profile);
-			JSONTools::GetAttribute(in_config, "unlimited_fps", hints.unlimited_fps);
-#if 0 // probably no reason why this should be in config file
-			JSONTools::GetAttribute(in_config, "resizable", hints.resizable);
-			JSONTools::GetAttribute(in_config, "start_visible", hints.start_visible);
-			JSONTools::GetAttribute(in_config, "decorated", hints.decorated);
-			JSONTools::GetAttribute(in_config, "toplevel", hints.toplevel);
-			JSONTools::GetAttribute(in_config, "samples", hints.samples);
-			JSONTools::GetAttribute(in_config, "double_buffer", hints.double_buffer);
-			JSONTools::GetAttribute(in_config, "depth_bits", hints.depth_bits);
-			JSONTools::GetAttribute(in_config, "stencil_bits", hints.stencil_bits);
-			JSONTools::GetAttribute(in_config, "red_bits", hints.red_bits);
-			JSONTools::GetAttribute(in_config, "green_bits", hints.green_bits);
-			JSONTools::GetAttribute(in_config, "blue_bits", hints.blue_bits);
-			JSONTools::GetAttribute(in_config, "alpha_bits", hints.alpha_bits);
-			JSONTools::GetAttribute(in_config, "focused", hints.focused);
-#endif
-		}
-		
+	
 		void SingleWindowApplication::FreezeNextFrameTickDuration()
 		{
 			forced_zero_tick_duration = true;
@@ -103,11 +97,19 @@ namespace chaos
 			return new Window;
 		}
 
-		bool SingleWindowApplication::Main()
+		Window* SingleWindowApplication::CreateTypedWindow(SubClassOf<Window> window_class)
 		{
-			bool result = false;
 
-			SingleWindowApplicationParams params = window_params; // work on a copy of the params
+
+			return nullptr;
+		}
+
+		Window * SingleWindowApplication::CreateMainWindow(WindowParams params, WindowHints hints)
+		{
+			// create the window class
+			Window * result = GenerateWindow();
+			if (result == nullptr)
+				return false;
 
 			// compute the monitor upon which the window will be : use it for pixel format
 			if (params.monitor == nullptr)
@@ -118,25 +120,17 @@ namespace chaos
 			int monitor_y = 0;
 			glfwGetMonitorPos(params.monitor, &monitor_x, &monitor_y);
 
-			// retrieve the mode of the monitor to deduce pixel format
-			GLFWvidmode const * mode = glfwGetVideoMode(params.monitor);
-
-			nlohmann::json const * window_configuration = JSONTools::GetStructure(configuration, "window");
-			if (window_configuration != nullptr)
-				TweakHintsFromConfiguration(params, *window_configuration);
-
 			// compute the position and size of the window
 			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
 
-			// create the window class
-			window = GenerateWindow();
-			if (window == nullptr)
-				return false;
 			// prepare window creation
-			window->TweakHints(params.hints, params.monitor, pseudo_fullscreen);
-			params.hints.ApplyHints();
-			
+			result->TweakHints(hints, params.monitor, pseudo_fullscreen);
+			hints.ApplyHints();
+			glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
+
 			// compute window size and position
+			GLFWvidmode const* mode = glfwGetVideoMode(params.monitor);
+
 			int x = 0;
 			int y = 0;
 			if (pseudo_fullscreen) // full-screen, the window use the full-size
@@ -163,22 +157,77 @@ namespace chaos
 				y = monitor_y + (mode->height - params.height) / 2;
 			}
 
-			// create window
-			if (params.title == nullptr) // title cannot be null
+			// title cannot be null
+			if (params.title == nullptr) 
 				params.title = "";
-			
-
 
 			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-			GLFWwindow * glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
+			GLFWwindow* glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
 			if (glfw_window == nullptr)
-				return false;
+			{
+				delete(result);
+				return nullptr;
+			}
 
 			glfwMakeContextCurrent(glfw_window);
 
 			// vsync ?
-			if (params.hints.unlimited_fps)
-				glfwSwapInterval(0); 
+			if (hints.unlimited_fps)
+				glfwSwapInterval(0);
+
+			// bind the window
+			result->BindGLFWWindow(glfw_window, hints.double_buffer ? true : false);
+
+			// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
+			int left, top, right, bottom;
+			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
+			if (left != 0 || top != 0 || right != 0 || bottom != 0)
+			{
+				x += left;
+				y += top;
+				params.width = params.width - left - right;
+				params.height = params.height - top - bottom;
+				glfwSetWindowSize(glfw_window, params.width, params.height);
+			}
+
+			glfwSetWindowPos(glfw_window, x, y);
+			glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+			glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
+
+			// now that the window is fully placed ... we can show it
+			if (hints.start_visible)
+				glfwShowWindow(glfw_window);
+
+			return result;
+		}
+
+		bool SingleWindowApplication::Main()
+		{
+			// the glfw configuration
+			GLFWHints glfw_hints;
+			nlohmann::json const* glfw_configuration = JSONTools::GetStructure(configuration, "glfw");
+			if (glfw_configuration != nullptr)
+				LoadFromJSON(glfw_configuration, glfw_hints);
+			glfw_hints.ApplyHints();
+
+			// the main window params & hints (work on copy)
+			WindowParams params = window_params; 
+			WindowHints  hints = window_hints;
+
+			nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
+			if (window_configuration != nullptr)
+			{
+				LoadFromJSON(*window_configuration, params);
+				LoadFromJSON(*window_configuration, hints);
+			}
+
+			// create the main window
+			window = CreateMainWindow(params, hints);
+			if (window == nullptr)
+				return false;
 
 			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
 			//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
@@ -191,9 +240,6 @@ namespace chaos
 				return false;
 			}
 
-
-
-
 			// set the debug log hander
 			GLTools::SetDebugMessageHandler();
 			// some generic information
@@ -203,60 +249,12 @@ namespace chaos
 			if (!InitializeGPUResourceManager())
 				return false;
 
+			// XXX : initialize the window (once GPUResourceManager is fully initialized)
+			window->InitializeFromConfiguration(configuration, configuration_path);
 
-			// shu47
-#if 0
-			GLFWwindow* other_glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, glfw_window /* share list */);
+			// the main loop
+			MessageLoop();
 
-			glfwMakeContextCurrent(other_glfw_window);
-			if (params.hints.unlimited_fps)
-				glfwSwapInterval(0);
-
-			glfwDestroyWindow(glfw_window);
-			glfw_window = other_glfw_window;
-#endif
-
-
-
-
-
-
-
-
-			// bind the window
-			window->BindGLFWWindow(glfw_window, params.hints.double_buffer ? true : false);
-
-			// prepare the window
-			result = window->InitializeFromConfiguration(configuration, configuration_path);
-			if (result)
-			{		
-				// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
-				int left, top, right, bottom;
-				glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-				if (left != 0 || top != 0 || right != 0 || bottom != 0)
-				{
-					x += left;
-					y += top;
-					params.width = params.width - left - right;
-					params.height = params.height - top - bottom;
-					glfwSetWindowSize(glfw_window, params.width, params.height);
-				}
-
-				glfwSetWindowPos(glfw_window, x, y);
-				glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-				// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-				//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-				glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
-
-
-				// now that the window is fully placed ... we can show it
-				if (params.hints.start_visible)
-					glfwShowWindow(glfw_window);
-
-				// the main loop
-				MessageLoop();
-			}
 			return true;
 		}
 

@@ -60,13 +60,14 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::SingleWindowApplicationParams params;
+	chaos::MyGLFW::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 300;
 	params.height = 300;
 	params.monitor_index = 0;
-	chaos::MyGLFW::RunWindowApplication<MyGLFWWindowTest>(argc, argv, env, params);
 
-	return 0;
+	chaos::MyGLFW::WindowHints hints;
+
+	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowTest>(argc, argv, env, params, hints);
 }
 

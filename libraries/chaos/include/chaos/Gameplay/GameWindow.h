@@ -15,6 +15,7 @@ namespace chaos
 {
 	class GameWindow : public MyGLFW::Window
 	{
+		CHAOS_DECLARE_OBJECT_CLASS2(GameWindow, MyGLFW::Window);
 
 	protected:
 
@@ -61,6 +62,8 @@ namespace chaos
 	template<typename GAME_TYPE>
 	class TypedGameWindow : public GameWindow
 	{
+		CHAOS_DECLARE_TEMPLATE_OBJECT_CLASS2(TypedGameWindow, GameWindow);
+
 	protected:
 
 		/** override */

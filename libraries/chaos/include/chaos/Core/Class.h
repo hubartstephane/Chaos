@@ -75,24 +75,28 @@ namespace chaos
 		static Class const* DeclareClass(char const* class_name)
 		{
 			// check parameter and not already registered
-			assert(class_name != nullptr && strlen(class_name) > 0);
-			assert(FindClass(class_name) == nullptr);
+			bool empty_name = StringTools::IsEmpty(class_name);
+
+			assert(empty_name || FindClass(class_name) == nullptr);
 			assert((std::is_same_v<PARENT_CLASS_TYPE, EmptyClass> || std::is_base_of_v<PARENT_CLASS_TYPE, CLASS_TYPE>));
 
 			Class* result = GetClassInstance<CLASS_TYPE>();
 			if (result != nullptr)
 			{
-				result->class_name = class_name;
+				// do not register class whose name is empty
+				if (!empty_name)
+				{
+					GetClassesList().push_back(result); 
+					result->class_name = class_name;
+				}					
 				result->class_size = sizeof(CLASS_TYPE);
-
+				result->declared = true;
 				// instance constructible only if derives from Object
 				if constexpr (std::is_base_of_v<Object, CLASS_TYPE>)
 					result->create_instance_func = []() { return new CLASS_TYPE; }; 
 				// the parent is accessed, but not necessaraly initialized yet
 				if (!std::is_same_v<PARENT_CLASS_TYPE, EmptyClass>)
 					result->parent = GetClassInstance<PARENT_CLASS_TYPE>();
-
-				GetClassesList().push_back(result);
 			}
 			return result;
 		}
@@ -136,6 +140,8 @@ namespace chaos
 		size_t class_size = 0;
 		/** the optional name of the class */
 		std::string class_name;
+		/** whether the class has been fully declared */
+		bool declared = false;
 		/** create an instance of the object delegate */
 		std::function<Object * ()> create_instance_func;
 		/** additionnal initialization for JSONSerializable objects */

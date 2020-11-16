@@ -110,6 +110,8 @@ namespace chaos
 		{
 			friend class SingleWindowApplication;
 
+			CHAOS_DECLARE_OBJECT_CLASS2(Window, Object);
+
 		public:
 
 			/** constructor */

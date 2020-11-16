@@ -18,6 +18,13 @@ public:\
 static chaos::Class const * GetStaticClass(){ return classname##_class;}\
 virtual chaos::Class const * GetClass() const { return classname##_class; }
 
+#define CHAOS_DECLARE_TEMPLATE_OBJECT_CLASS2(classname, parent_classname)\
+private:\
+static inline chaos::Class const * classname##_class = chaos::Class::DeclareClass<classname, parent_classname>(nullptr);\
+public:\
+static chaos::Class const * GetStaticClass(){ return classname##_class;}\
+virtual chaos::Class const * GetClass() const { return classname##_class; }
+
 namespace chaos
 {
 	class Object;

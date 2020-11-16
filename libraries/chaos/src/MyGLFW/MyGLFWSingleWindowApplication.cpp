@@ -32,10 +32,12 @@ namespace chaos
 		// SingleWindowApplication
 		//
 
-		SingleWindowApplication::SingleWindowApplication(WindowParams const & in_window_params, WindowHints const in_window_hints) :
+		SingleWindowApplication::SingleWindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const & in_window_params, WindowHints const in_window_hints) :
+			main_window_class(in_main_window_class),
 			window_params(in_window_params),
 			window_hints(in_window_hints)
 		{
+			assert(in_main_window_class.IsValid());
 		}
 	
 		void SingleWindowApplication::FreezeNextFrameTickDuration()
@@ -92,22 +94,10 @@ namespace chaos
 			return true;
 		}
 
-		Window * SingleWindowApplication::GenerateWindow()
-		{
-			return new Window;
-		}
-
-		Window* SingleWindowApplication::CreateTypedWindow(SubClassOf<Window> window_class)
-		{
-
-
-			return nullptr;
-		}
-
-		Window * SingleWindowApplication::CreateMainWindow(WindowParams params, WindowHints hints)
+		Window* SingleWindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams params, WindowHints hints)
 		{
 			// create the window class
-			Window * result = GenerateWindow();
+			Window * result = window_class.CreateInstance();
 			if (result == nullptr)
 				return false;
 
@@ -225,7 +215,7 @@ namespace chaos
 			}
 
 			// create the main window
-			window = CreateMainWindow(params, hints);
+			window = CreateTypedWindow(main_window_class, params, hints);
 			if (window == nullptr)
 				return false;
 

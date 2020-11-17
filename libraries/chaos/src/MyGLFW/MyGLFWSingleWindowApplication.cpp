@@ -47,11 +47,11 @@ namespace chaos
 
 		bool SingleWindowApplication::MessageLoop()
 		{
-			GLFWwindow * glfw_window = window->GetGLFWHandler();
+			GLFWwindow * glfw_window = main_window->GetGLFWHandler();
 
 			double t1 = glfwGetTime();
 
-			while (!window->ShouldClose())
+			while (!main_window->ShouldClose())
 			{
 
 
@@ -87,110 +87,27 @@ namespace chaos
 				// tick the manager
 				TickManagers(delta_time);
 				// tick the window
-				window->MainTick(delta_time, real_delta_time);
+				main_window->MainTick(delta_time, real_delta_time);
 				// update time
 				t1 = t2;
 			}
 			return true;
 		}
 
-		Window* SingleWindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams params, WindowHints hints)
+		Window* SingleWindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const & params, WindowHints const & hints)
 		{
 			// create the window class
 			Window * result = window_class.CreateInstance();
 			if (result == nullptr)
 				return false;
-
-			// compute the monitor upon which the window will be : use it for pixel format
-			if (params.monitor == nullptr)
-				params.monitor = GetMonitorByIndex(params.monitor_index);
-
-			// retrieve the position of the monitor
-			int monitor_x = 0;
-			int monitor_y = 0;
-			glfwGetMonitorPos(params.monitor, &monitor_x, &monitor_y);
-
-			// compute the position and size of the window
-			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
-
-			// prepare window creation
-			result->TweakHints(hints, params.monitor, pseudo_fullscreen);
-			hints.ApplyHints();
-			glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
-
-			// compute window size and position
-			GLFWvidmode const* mode = glfwGetVideoMode(params.monitor);
-
-			int x = 0;
-			int y = 0;
-			if (pseudo_fullscreen) // full-screen, the window use the full-size
-			{
-				params.width = mode->width;
-				params.height = mode->height;
-
-				x = monitor_x;
-				y = monitor_y;
-			}
-			else
-			{
-				if (params.width <= 0)
-					params.width = mode->width;
-				else
-					params.width = std::min(mode->width, params.width);
-
-				if (params.height <= 0)
-					params.height = mode->height;
-				else
-					params.height = std::min(mode->height, params.height);
-
-				x = monitor_x + (mode->width - params.width) / 2;
-				y = monitor_y + (mode->height - params.height) / 2;
-			}
-
-			// title cannot be null
-			if (params.title == nullptr) 
-				params.title = "";
-
-			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-			GLFWwindow* glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr /* monitor */, nullptr /* share list */);
-			if (glfw_window == nullptr)
+			// create the GLFW resource
+			if (!result->CreateGLFWWindow(params, hints, main_window.get())) // this should work even for the main window creation itself
 			{
 				delete(result);
 				return nullptr;
 			}
-
-			glfwMakeContextCurrent(glfw_window);
-
-			// vsync ?
-			if (hints.unlimited_fps)
-				glfwSwapInterval(0);
-
-			// bind the window
-			result->BindGLFWWindow(glfw_window, hints.double_buffer ? true : false);
-
-			// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
-			int left, top, right, bottom;
-			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
-			if (left != 0 || top != 0 || right != 0 || bottom != 0)
-			{
-				x += left;
-				y += top;
-				params.width = params.width - left - right;
-				params.height = params.height - top - bottom;
-				glfwSetWindowSize(glfw_window, params.width, params.height);
-			}
-
-			glfwSetWindowPos(glfw_window, x, y);
-			glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-			glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
-
-			// now that the window is fully placed ... we can show it
-			if (hints.start_visible)
-				glfwShowWindow(glfw_window);
-
+			// store the result
+			windows.push_back(result);
 			return result;
 		}
 
@@ -215,8 +132,8 @@ namespace chaos
 			}
 
 			// create the main window
-			window = CreateTypedWindow(main_window_class, params, hints);
-			if (window == nullptr)
+			main_window = CreateTypedWindow(main_window_class, params, hints);
+			if (main_window == nullptr)
 				return false;
 
 			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
@@ -240,7 +157,7 @@ namespace chaos
 				return false;
 
 			// XXX : initialize the window (once GPUResourceManager is fully initialized)
-			window->InitializeFromConfiguration(configuration, configuration_path);
+			main_window->InitializeFromConfiguration(configuration, configuration_path);
 
 			// the main loop
 			MessageLoop();
@@ -383,16 +300,15 @@ namespace chaos
 			FinalizeGPUResourceManager();
 
 			// stop the window
-			if (window != nullptr)
+			if (main_window != nullptr)
 			{
-				window->Finalize();
+				main_window->Finalize();
 
-				GLFWwindow * glfw_window = window->GetGLFWHandler();
+				GLFWwindow * glfw_window = main_window->GetGLFWHandler();
 				if (glfw_window != nullptr)
 					glfwDestroyWindow(glfw_window);
 
-				delete(window);
-				window = nullptr;
+				main_window = nullptr;
 			}
 			Application::Finalize();
 			return true;
@@ -423,8 +339,8 @@ namespace chaos
 
 		void SingleWindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 		{
-			if (window != nullptr)
-				window->OnInputModeChanged(new_mode, old_mode);			
+			if (main_window != nullptr)
+				main_window->OnInputModeChanged(new_mode, old_mode);
 		}
 
 		Clock * SingleWindowApplication::GetMainClockInstance()
@@ -495,7 +411,7 @@ namespace chaos
 
 		GLFWwindow* SingleWindowApplication::GetGLFWWindow() const
 		{
-			return (window == nullptr) ? nullptr : window->GetGLFWWindow();
+			return (main_window == nullptr) ? nullptr : main_window->GetGLFWWindow();
 		}
 
 	}; // namespace MyGLFW

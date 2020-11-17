@@ -116,6 +116,117 @@ namespace chaos
 			renderer = new GPURenderer;
 		}
 
+		Window::~Window()
+		{
+			DestroyGLFWWindow();
+		}
+
+		void Window::DestroyGLFWWindow()
+		{
+			if (glfw_window != nullptr)
+			{
+				glfwDestroyWindow(glfw_window);
+				glfw_window = nullptr;
+			}
+		}
+
+		bool Window::CreateGLFWWindow(WindowParams params, WindowHints hints, Window* share_context)
+		{
+			// resource already existing
+			if (glfw_window != nullptr)
+				return false;
+
+			// compute the monitor upon which the window will be : use it for pixel format
+			if (params.monitor == nullptr)
+				params.monitor = GetMonitorByIndex(params.monitor_index);
+
+			// retrieve the position of the monitor
+			int monitor_x = 0;
+			int monitor_y = 0;
+			glfwGetMonitorPos(params.monitor, &monitor_x, &monitor_y);
+
+			// compute the position and size of the window
+			bool pseudo_fullscreen = (params.width <= 0 && params.height <= 0);
+
+			// prepare window creation
+			TweakHints(hints, params.monitor, pseudo_fullscreen);
+			hints.ApplyHints();
+			glfwWindowHint(GLFW_VISIBLE, 0); // override the initial visibility
+
+			// compute window size and position
+			GLFWvidmode const* mode = glfwGetVideoMode(params.monitor);
+
+			int x = 0;
+			int y = 0;
+			if (pseudo_fullscreen) // full-screen, the window use the full-size
+			{
+				params.width = mode->width;
+				params.height = mode->height;
+
+				x = monitor_x;
+				y = monitor_y;
+			}
+			else
+			{
+				if (params.width <= 0)
+					params.width = mode->width;
+				else
+					params.width = std::min(mode->width, params.width);
+
+				if (params.height <= 0)
+					params.height = mode->height;
+				else
+					params.height = std::min(mode->height, params.height);
+
+				x = monitor_x + (mode->width - params.width) / 2;
+				y = monitor_y + (mode->height - params.height) / 2;
+			}
+
+			// title cannot be null
+			if (params.title == nullptr)
+				params.title = "";
+
+			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
+			GLFWwindow* glfw_share_context = (share_context != nullptr) ? share_context->GetGLFWWindow() : nullptr;
+
+			glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr, glfw_share_context);
+			if (glfw_window == nullptr)
+				return false;
+			glfwMakeContextCurrent(glfw_window);
+
+			// vsync ?
+			if (hints.unlimited_fps)
+				glfwSwapInterval(0);
+
+			// set the callbacks
+			SetGLFWCallbacks(hints.double_buffer ? true : false);
+
+			// x and y are the coordinates of the client area : when there is a decoration, we want to tweak the window size / position with that
+			int left, top, right, bottom;
+			glfwGetWindowFrameSize(glfw_window, &left, &top, &right, &bottom);
+			if (left != 0 || top != 0 || right != 0 || bottom != 0)
+			{
+				x += left;
+				y += top;
+				params.width = params.width - left - right;
+				params.height = params.height - top - bottom;
+				glfwSetWindowSize(glfw_window, params.width, params.height);
+			}
+
+			glfwSetWindowPos(glfw_window, x, y);
+			glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			// glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			//  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+			glfwSetInputMode(glfw_window, GLFW_STICKY_KEYS, 1);
+
+			// now that the window is fully placed ... we can show it
+			if (hints.start_visible)
+				glfwShowWindow(glfw_window);
+
+			return true;
+		}
+
 		glm::ivec2 Window::GetWindowPosition() const
 		{
 			glm::ivec2 result = glm::vec2(0, 0);
@@ -154,11 +265,14 @@ namespace chaos
 
 		bool Window::ShouldClose()
 		{
-			return (glfwWindowShouldClose(glfw_window) != 0);
+			return (glfw_window != nullptr && glfwWindowShouldClose(glfw_window) != 0);
 		}
 
 		void Window::MainTick(float delta_time, float real_delta_time)
 		{
+			// cannot tick a non existing window
+			if (glfw_window == nullptr)
+				return;
 			// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
 			if (renderer != nullptr)
 				renderer->Tick(real_delta_time); 
@@ -189,28 +303,23 @@ namespace chaos
 			return mouse_position;		
 		}
 
-		void Window::BindGLFWWindow(GLFWwindow * in_glfw_window, bool in_double_buffer)
+		void Window::SetGLFWCallbacks(bool in_double_buffer)
 		{
-			assert(glfw_window == nullptr); // ensure not already bound
-			assert(in_glfw_window != nullptr);
+			glfwSetWindowUserPointer(glfw_window, this);
 
-			glfw_window = in_glfw_window;
+			glfwSetCursorPosCallback(glfw_window, DoOnMouseMove);
+			glfwSetMouseButtonCallback(glfw_window, DoOnMouseButton);
+			glfwSetScrollCallback(glfw_window, DoOnMouseWheel);
+			glfwSetWindowSizeCallback(glfw_window, DoOnWindowResize);
+			glfwSetKeyCallback(glfw_window, DoOnKeyEvent);
 
-			glfwSetWindowUserPointer(in_glfw_window, this);
+			glfwSetCharCallback(glfw_window, DoOnCharEvent);
 
-			glfwSetCursorPosCallback(in_glfw_window, DoOnMouseMove);
-			glfwSetMouseButtonCallback(in_glfw_window, DoOnMouseButton);
-			glfwSetScrollCallback(in_glfw_window, DoOnMouseWheel);
-			glfwSetWindowSizeCallback(in_glfw_window, DoOnWindowResize);
-			glfwSetKeyCallback(in_glfw_window, DoOnKeyEvent);
-
-			glfwSetCharCallback(in_glfw_window, DoOnCharEvent);
-
-			glfwSetWindowCloseCallback(in_glfw_window, DoOnWindowClosed);
-			glfwSetWindowRefreshCallback(in_glfw_window, DoOnDraw);
-			glfwSetDropCallback(in_glfw_window, DoOnDropFile);
-			glfwSetWindowFocusCallback(in_glfw_window, DoOnFocusStateChange);
-			glfwSetWindowIconifyCallback(in_glfw_window, DoOnIconifiedStateChange);
+			glfwSetWindowCloseCallback(glfw_window, DoOnWindowClosed);
+			glfwSetWindowRefreshCallback(glfw_window, DoOnDraw);
+			glfwSetDropCallback(glfw_window, DoOnDropFile);
+			glfwSetWindowFocusCallback(glfw_window, DoOnFocusStateChange);
+			glfwSetWindowIconifyCallback(glfw_window, DoOnIconifiedStateChange);
 
 			double_buffer = in_double_buffer;
 		}
@@ -319,7 +428,7 @@ namespace chaos
 
 		void Window::OnWindowDraw()
 		{
-			if (renderer != nullptr)
+			if (glfw_window != nullptr && renderer != nullptr)
 			{
 				glfwMakeContextCurrent(glfw_window);
 

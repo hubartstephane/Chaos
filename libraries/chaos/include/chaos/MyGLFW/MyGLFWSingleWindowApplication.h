@@ -132,7 +132,7 @@ namespace chaos
 			virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 			/** create a window */
-			Window * CreateTypedWindow(SubClassOf<Window> window_class, WindowParams params, WindowHints hints);
+			Window * CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const & params, WindowHints const & hints);
 
 		protected:
 
@@ -151,9 +151,13 @@ namespace chaos
 			WindowParams window_params;
 			/** the initial_window hints */
 			WindowHints window_hints;
+			/** the class of the main window */
+			SubClassOf<Window> main_window_class;
 
-			/** the window created */
-			Window * window = nullptr;
+			/** the main window */
+			shared_ptr<Window> main_window;
+			/** the window list */
+			std::vector<shared_ptr<Window>> windows;
 			
 			/** forced time slice for tick */
 			float forced_tick_duration = 0.0f;
@@ -161,9 +165,6 @@ namespace chaos
 			float max_tick_duration = 0.0f;
 			/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
 			bool forced_zero_tick_duration = false;
-
-			/** the class of the main window */
-			SubClassOf<Window> main_window_class;
 		};
 
 		/**

@@ -94,14 +94,6 @@ namespace chaos
 
 		bool LoadFromJSON(nlohmann::json const& json_entry, WindowHints& dst);
 
-
-
-
-
-
-
-
-
 		/**
 		* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")
 		*/
@@ -116,6 +108,8 @@ namespace chaos
 
 			/** constructor */
 			Window();
+			/** destructor */
+			virtual ~Window();
 
 			/** entry point from Application */
 			void MainTick(float delta_time, float real_delta_time);
@@ -127,6 +121,11 @@ namespace chaos
 			GLFWwindow * GetGLFWHandler();
 			/** returns whether the window has a pending GLFW close message */
 			bool ShouldClose();
+
+			/** destroying the window */
+			void DestroyGLFWWindow();
+			/** create the internal window */
+			bool CreateGLFWWindow(WindowParams params, WindowHints hints, Window * share_context);
 
 			/** toggle to fullscreen mode */
 			void ToggleFullscreen();
@@ -164,7 +163,7 @@ namespace chaos
 			/** get the hints for new GLFW window */
 			virtual void TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const;
 			/** bind Window with GLFW */
-			virtual void BindGLFWWindow(GLFWwindow * in_glfw_window, bool in_double_buffer);
+			virtual void SetGLFWCallbacks(bool in_double_buffer);
 			/** called every Tick (returns true whenever we want to redraw the window) */
 			virtual bool Tick(float delta_time) { return true; }
 			/** called at window creation (returns false if the window must be killed) */

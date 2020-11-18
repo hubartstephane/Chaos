@@ -33,7 +33,9 @@ namespace chaos
 		static AutoConstCastable<Application> GetConstInstance() { return singleton_instance; }
 
 		/** get the name of the application */
-		char const * GetApplicationName() const { return application_name.c_str(); }
+		char const * GetName() const { return application_name.c_str(); }
+		/** get the name of the application */
+		static char const* GetApplicationName();
 
 		/** get an environment value */
 		char const * GetEnvironment(char const * key) const;
@@ -41,17 +43,17 @@ namespace chaos
 		static char const * GetApplicationEnvironment(char const * key);
 
 		/** get the application arguments */
-		inline std::vector<std::string> const & GetArguments() const { return arguments; }
+		std::vector<std::string> const & GetArguments() const { return arguments; }
 		/** get the application path */
-		inline boost::filesystem::path const & GetApplicationPath() const { return application_path; }
+		boost::filesystem::path const & GetApplicationPath() const { return application_path; }
 		/** get the resources path */
-		inline boost::filesystem::path const & GetResourcesPath() const { return resources_path; }
+		boost::filesystem::path const & GetResourcesPath() const { return resources_path; }
 		/** get the application name */
-		inline boost::filesystem::path const & GetApplicationFilename() const { return application_filename; }
+		boost::filesystem::path const & GetApplicationFilename() const { return application_filename; }
 		/** get the application local path for execution data */
-		inline boost::filesystem::path const & GetUserLocalPath() const { return userlocal_path; }
+		boost::filesystem::path const & GetUserLocalPath() const { return userlocal_path; }
 		/** get the application local temp path for execution data */
-		inline boost::filesystem::path const & GetUserLocalTempPath() const { return userlocal_temp_path; }
+		boost::filesystem::path const & GetUserLocalTempPath() const { return userlocal_temp_path; }
 
 		/** get the configuration */
 		nlohmann::json const & GetConfiguration() const { return configuration;}
@@ -63,7 +65,7 @@ namespace chaos
 		/** create the use local temp directory */
 		boost::filesystem::path const & CreateUserLocalTempDirectory() const;
 
-		/* get the current input mode (search the application) */
+		/** get the current input mode (search the application) */
 		static InputMode GetApplicationInputMode();
 		/** change the current input mode (search the application) */
 		static void SetApplicationInputMode(InputMode new_mode);

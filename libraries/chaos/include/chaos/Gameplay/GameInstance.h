@@ -143,9 +143,6 @@ namespace chaos
 		/** override */
 		virtual bool DoLoadFromCheckpoint(GameCheckpoint const * checkpoint) override;
 
-		/** override */
-		virtual GLFWwindow* GetGLFWWindow() const override;
-
 	protected:
 
 		/** the game */

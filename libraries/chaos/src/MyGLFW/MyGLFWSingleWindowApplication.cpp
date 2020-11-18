@@ -53,19 +53,6 @@ namespace chaos
 
 			while (!main_window->ShouldClose())
 			{
-
-
-
-
-				BYTE NewKeyboardState[256] = { 0 };
-				if (::GetKeyboardState(NewKeyboardState))
-				{
-					for (int i = 0; i < 256; ++i)
-						if ((KeyboardState[i] & 128) != (NewKeyboardState[i] & 128))
-							i = i;
-					memcpy(KeyboardState, NewKeyboardState, sizeof(NewKeyboardState));
-				}
-
 				glfwPollEvents();
 
 				double t2 = glfwGetTime();
@@ -416,10 +403,25 @@ namespace chaos
 			return Application::OnKeyEventImpl(event);
 		}
 
-		GLFWwindow* SingleWindowApplication::GetGLFWWindow() const
+		bool SingleWindowApplication::GetApplicationKeyState(int key, bool previous_frame)
 		{
-			return (main_window == nullptr) ? nullptr : main_window->GetGLFWWindow();
+			SingleWindowApplication * application = Application::GetInstance();
+			if (application != nullptr)
+				return application->GetKeyState(key, previous_frame);
+			return false;
 		}
+
+		void SingleWindowApplication::SetKeyState(int key, int action)
+		{
+
+		}
+		
+		bool SingleWindowApplication::GetKeyState(int key, bool previous_frame) const
+		{
+
+			return false;
+		}
+
 
 	}; // namespace MyGLFW
 

@@ -51,7 +51,7 @@ namespace chaos
 		Game();
 
 		/** initialization method */
-		bool Initialize(GLFWwindow * in_glfw_window);
+		virtual bool Initialize();
 
 		/** Get a level by its index */
 		AutoCastable<Level> FindLevelByIndex(int level_index);
@@ -149,9 +149,6 @@ namespace chaos
 		/** test whether we can to loose life */
 		bool GetCheatMode() const;
 #endif
-
-        /** get glfw window */
-        virtual GLFWwindow* GetGLFWWindow() const override { return glfw_window; }
 
 		/** reloading the configuration file */
 		bool ReloadGameConfiguration();
@@ -387,9 +384,6 @@ namespace chaos
 		Camera * DoCreateFreeCamera(Camera const * camera_to_copy, LevelInstance * level_instance) const;
 
 	protected:
-
-		/** the window in GLFW library */
-		GLFWwindow * glfw_window = nullptr;
 
 		/** the current gamepad manager */
 		shared_ptr<MyGLFW::GamepadManager> gamepad_manager;

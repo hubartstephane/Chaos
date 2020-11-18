@@ -127,6 +127,8 @@ namespace chaos
 
 			/** tick all the managers */
 			virtual void TickManagers(float delta_time);
+			/** custom tick */
+			virtual void Tick(float delta_time);
 
 			/** the user callback called when current input mode changes */
 			virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;

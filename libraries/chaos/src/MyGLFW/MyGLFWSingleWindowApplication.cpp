@@ -86,8 +86,11 @@ namespace chaos
 				}
 				// tick the manager
 				TickManagers(delta_time);
-				// tick the window
-				main_window->MainTick(delta_time, real_delta_time);
+				// internal tick 
+				Tick(delta_time);
+				// tick the windows
+				for (auto & window : windows)
+					window->MainTick(delta_time, real_delta_time);
 				// update time
 				t1 = t2;
 			}
@@ -168,11 +171,15 @@ namespace chaos
 		
 		void SingleWindowApplication::TickManagers(float delta_time)
 		{
-
 			if (main_clock != nullptr)
 				main_clock->TickClock(delta_time);
 			if (sound_manager != nullptr)
 				sound_manager->Tick(delta_time);
+		}
+
+		void SingleWindowApplication::Tick(float delta_time)
+		{
+
 		}
 
 		void SingleWindowApplication::OnGLFWError(int code, const char* msg)

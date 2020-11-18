@@ -2,6 +2,8 @@
 
 namespace chaos
 {
+	using KeyState = InputState<bool>;
+
 	namespace MyGLFW
 	{
 		class WindowParams;
@@ -48,6 +50,7 @@ namespace chaos
 
 		class SingleWindowApplication : public Application
 		{
+			friend class Window;
 
 		public:
 
@@ -93,8 +96,10 @@ namespace chaos
 			/** override */
 			virtual bool OnKeyEventImpl(KeyEvent const & event) override;
 
-			/** override */
-			virtual GLFWwindow* GetGLFWWindow() const override;
+			/** get the state of a keyboard key */
+			static bool GetApplicationKeyState(int key, bool previous_frame = false);
+			/** change the state of a keyboard key */
+			bool GetKeyState(int key, bool previous_frame = false) const;
 
 		protected:
 
@@ -125,6 +130,9 @@ namespace chaos
 			/** finalize the GPU manager */
 			virtual bool FinalizeGPUResourceManager();
 
+			/** change the state of a keyboard key */
+			void SetKeyState(int key, int action);
+
 			/** tick all the managers */
 			virtual void TickManagers(float delta_time);
 			/** custom tick */
@@ -137,11 +145,7 @@ namespace chaos
 			Window * CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const & params, WindowHints const & hints);
 
 		protected:
-
-
-			BYTE KeyboardState[256] = { 0 };
-
-
+		
 			/** the main clock of the manager */
 			shared_ptr<Clock> main_clock;
 			/** the sound manager */
@@ -160,6 +164,9 @@ namespace chaos
 			shared_ptr<Window> main_window;
 			/** the window list */
 			std::vector<shared_ptr<Window>> windows;
+
+			/** the state of all buttons */
+			KeyState KeyboardState[GLFW_KEY_LAST];
 			
 			/** forced time slice for tick */
 			float forced_tick_duration = 0.0f;

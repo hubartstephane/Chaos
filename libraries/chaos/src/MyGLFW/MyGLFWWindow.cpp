@@ -130,7 +130,7 @@ namespace chaos
 			}
 		}
 
-		bool Window::CreateGLFWWindow(WindowParams params, WindowHints hints, Window* share_context)
+		bool Window::CreateGLFWWindow(WindowParams params, WindowHints hints, Window* share_context_window)
 		{
 			// resource already existing
 			if (glfw_window != nullptr)
@@ -187,9 +187,9 @@ namespace chaos
 				params.title = "";
 
 			// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-			GLFWwindow* glfw_share_context = (share_context != nullptr) ? share_context->GetGLFWWindow() : nullptr;
+			GLFWwindow* glfw_share_context_window = (share_context_window != nullptr) ? share_context_window->GetGLFWHandler() : nullptr;
 
-			glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr, glfw_share_context);
+			glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr, glfw_share_context_window);
 			if (glfw_window == nullptr)
 				return false;
 			glfwMakeContextCurrent(glfw_window);
@@ -397,8 +397,14 @@ namespace chaos
 
 		void Window::DoOnKeyEvent(GLFWwindow * in_glfw_window, int key, int scan_code, int action, int modifier)
 		{
-			Application::SetApplicationInputMode(InputMode::KEYBOARD);
-
+			// notify the application of the key state
+			MyGLFW::SingleWindowApplication* application = Application::GetInstance();
+			if (application != nullptr)
+			{
+				application->SetInputMode(InputMode::KEYBOARD);
+				application->SetKeyState(key, action);
+			}
+			// handle the message
 			KeyEvent event;
 			event.key       = key;
 			event.scan_code = scan_code;

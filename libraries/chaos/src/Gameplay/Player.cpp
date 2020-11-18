@@ -359,6 +359,9 @@ namespace chaos
         // keyboard input
         if (keyboard_buttons != nullptr)
         {
+
+#if 0
+
             Game * game = GetGame();
             if (game != nullptr)
             {
@@ -368,6 +371,9 @@ namespace chaos
                         if (CheckKeyPressed(keyboard_buttons[i]))
                             return true;
             }
+#endif
+
+
         }
 
         // gamepad input
@@ -388,14 +394,6 @@ namespace chaos
 	void Player::OnGameValuesChanged(bool hot_reload)
 	{
 		health = max_health;
-	}
-
-	GLFWwindow* Player::GetGLFWWindow() const
-	{
-		Game const* game = GetGame();
-		if (game == nullptr)
-			return nullptr;
-		return game->GetGLFWWindow();
 	}
 
 	// =================================================

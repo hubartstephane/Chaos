@@ -87,7 +87,7 @@ namespace chaos
 		Game* result = DoCreateGame();
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize(glfw_window))
+		if (!result->Initialize())
 		{
 			delete(result);
 			return nullptr;

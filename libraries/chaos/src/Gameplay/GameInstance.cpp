@@ -470,12 +470,4 @@ namespace chaos
 		}
 	}
 	
-	GLFWwindow* GameInstance::GetGLFWWindow() const
-	{
-		Game const * game = GetGame();
-		if (game == nullptr)
-			return nullptr;
-		return game->GetGLFWWindow();
-	}
-
 }; // namespace chaos

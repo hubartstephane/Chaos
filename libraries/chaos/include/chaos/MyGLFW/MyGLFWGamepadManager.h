@@ -143,36 +143,25 @@ namespace chaos
 		/** maximum number of supported physical gamepads */
 		static constexpr int MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
 
-		/**
-		* GamepadCallbacks : some callbacks that may be plugged into a gamepad
-		*/
 
-		class GamepadCallbacks : public Object
-		{
-			CHAOS_GAMEPAD_ALL_FRIENDS
 
-		public:
 
-			/** destructor */
-			virtual ~GamepadCallbacks() = default;
 
-			/** called to determin if a physical gamepad is a good candidate for binding */
-			virtual bool AcceptPhysicalDevice(class PhysicalGamepad*) { return true; }
-			/** called whenever a gamepad is disconnected */
-			virtual bool OnGamepadDisconnected(class Gamepad*) { return true; }
-			/** called whenever a gamepad is "connected" (a new ID is given to it) */
-			virtual bool OnGamepadConnected(class Gamepad*) { return true; }
-			/** called whenever the manager is destroyed before the gamepad */
-			virtual bool OnManagerDestroyed(class Gamepad*) { return true; }
-			/** called to add some filters on inputs */
-			virtual void OnGamepadDataUpdated(class GamepadData&) {}
-		};
+
+
+
+
+
+
+
+
+
 
 		/**
 		* ButtonData
 		*/
 
-		class ButtonData
+		class ButtonData : public InputState<bool>
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -180,28 +169,13 @@ namespace chaos
 
 			/** update the value */
 			void UpdateValue(bool in_value, float delta_time);
-			/** get the value */
-			bool GetValue(bool previous_frame = false) const;
-			/** get the timer for the same value */
-			float GetSameValueTimer() const { return same_value_timer; }
-			/** clear the input */
-			void Clear();
-
-		protected:
-
-			/** value of the button (pressed or not) */
-			bool value = false;
-			/** the previous value of the stick */
-			bool previous_value = false;
-			/** the duration for which the value is the same */
-			float same_value_timer = 0.0f;
 		};
 
 		/**
 		* AxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
 		*            we have to store the upper and lower values to renormalize the output
 		*/
-		class AxisData
+		class AxisData : public InputState<float>
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -209,27 +183,13 @@ namespace chaos
 
 			/** update the value */
 			void UpdateValue(float in_raw_value, float dead_zone, float delta_time);
-			/** get the value */
-			float GetValue(bool previous_frame = false) const;
-			/** get the timer for the same value */
-			float GetSameValueTimer() const { return same_value_timer; }
-			/** clear the input */
-			void Clear();
 
 		protected:
-
-			/** the value of the stick after computation */
-			float value = 0.0f;
-			/** the previous value of the stick */
-			float previous_value = 0.0f;
 
 			/** min value always encountered */
 			float min_value = -0.8f;
 			/** max value always encountered */
 			float max_value = +0.8f;
-
-			/** the duration for which the value is the same (necessary in discret mode < 0, == 0 or > 0) */
-			float same_value_timer = 0.0f;
 		};
 
 		/**
@@ -276,6 +236,31 @@ namespace chaos
 			std::vector<AxisData> axis;
 			/** the value for buttons */
 			std::vector<ButtonData> buttons;
+		};
+
+		/**
+		* GamepadCallbacks : some callbacks that may be plugged into a gamepad
+		*/
+
+		class GamepadCallbacks : public Object
+		{
+			CHAOS_GAMEPAD_ALL_FRIENDS
+
+		public:
+
+			/** destructor */
+			virtual ~GamepadCallbacks() = default;
+
+			/** called to determin if a physical gamepad is a good candidate for binding */
+			virtual bool AcceptPhysicalDevice(class PhysicalGamepad*) { return true; }
+			/** called whenever a gamepad is disconnected */
+			virtual bool OnGamepadDisconnected(class Gamepad*) { return true; }
+			/** called whenever a gamepad is "connected" (a new ID is given to it) */
+			virtual bool OnGamepadConnected(class Gamepad*) { return true; }
+			/** called whenever the manager is destroyed before the gamepad */
+			virtual bool OnManagerDestroyed(class Gamepad*) { return true; }
+			/** called to add some filters on inputs */
+			virtual void OnGamepadDataUpdated(class GamepadData&) {}
 		};
 
 		/**

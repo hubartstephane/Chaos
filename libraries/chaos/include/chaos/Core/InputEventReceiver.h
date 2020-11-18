@@ -2,6 +2,9 @@
 
 namespace chaos
 {
+	template<typename T>
+	class InputState;
+
 	class KeyEvent;
 	class InputEventReceiver;
 
@@ -11,6 +14,44 @@ namespace chaos
 
 namespace chaos
 {
+
+	/**
+	* InputState
+	*/
+
+	template<typename T>
+	class InputState
+	{
+	public:
+
+		/** get the timer for the same value */
+		float GetSameValueTimer() const { return same_value_timer; }
+		/** get the value */
+		T GetValue(bool previous_frame = false) const
+		{
+			return (previous_frame) ? previous_value : value;
+		}
+		/** clear the input */
+		void Clear()
+		{
+			value = previous_value = T();
+			same_value_timer = 0.0f;
+		}
+
+	protected:
+
+		/** value of the button (pressed or not) */
+		T value = T();
+		/** the previous value of the stick */
+		T previous_value = T();
+		/** the duration for which the value is the same */
+		float same_value_timer = 0.0f;
+	};
+
+	/**
+	* KeyEvent
+	*/
+
 	class KeyEvent
 	{
 	public:
@@ -40,6 +81,10 @@ namespace chaos
 		int modifier = 0;
 	};
 
+	/**
+	* InputEventReceiver
+	*/
+
 	class InputEventReceiver
 	{
 
@@ -57,9 +102,6 @@ namespace chaos
 		bool CheckKeyPressed(KeyEvent const& event, int check_key, int check_modifier = 0);
 		/** check whether a key is pressed given request. Change input mode to keyboard if true */
 		bool CheckKeyPressed(int check_key);
-
-		/** Get the window (usefull for Key function) */
-		virtual GLFWwindow* GetGLFWWindow() const { return nullptr; }
 
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(double x, double y);

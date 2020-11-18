@@ -9,12 +9,8 @@ namespace chaos
 		game_sm_class = GameStateMachine::GetStaticClass();
 	}
 
-	bool Game::Initialize(GLFWwindow* in_glfw_window)	
+	bool Game::Initialize()	
 	{
-		// ensure valid arguments and not already initialized
-		assert(in_glfw_window != nullptr);
-		assert(glfw_window == nullptr);
-		glfw_window = in_glfw_window;
 		return true;
 	}
 

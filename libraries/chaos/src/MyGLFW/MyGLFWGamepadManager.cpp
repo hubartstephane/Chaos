@@ -19,17 +19,6 @@ namespace chaos
 				same_value_timer += delta_time;
 		}
 
-		bool ButtonData::GetValue(bool previous_frame) const
-		{
-			return (previous_frame) ? previous_value : value;
-		}
-
-		void ButtonData::Clear()
-		{
-			value = previous_value = false;
-			same_value_timer = 0.0f;
-		}
-
 		//
 		// AxisData functions
 		//
@@ -73,17 +62,6 @@ namespace chaos
 				same_value_timer = 0.0f; 
 			else
 				same_value_timer += delta_time;		
-		}
-
-		float AxisData::GetValue(bool previous_frame) const
-		{
-			return (previous_frame) ? previous_value : value;
-		}
-
-		void AxisData::Clear() 
-		{ 
-			value = previous_value = 0.0f; 
-			same_value_timer = 0.0f;
 		}
 
 		//

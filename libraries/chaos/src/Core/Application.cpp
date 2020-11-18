@@ -175,6 +175,14 @@ namespace chaos
 		userlocal_temp_path = userlocal_path / "temp";
 	}
 
+	char const* Application::GetApplicationName()
+	{
+		Application const* application = Application::GetInstance();
+		if (application == nullptr)
+			return nullptr;
+		return application->GetName();
+	}
+
 	char const * Application::GetApplicationEnvironment(char const * key)
 	{
 		Application const * application = Application::GetInstance();

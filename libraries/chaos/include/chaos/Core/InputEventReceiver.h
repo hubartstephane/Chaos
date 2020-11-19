@@ -2,8 +2,13 @@
 
 namespace chaos
 {
+	enum class ButtonStateChange;
+
 	template<typename T>
 	class InputState;
+
+	class ButtonState;
+	class AxisState;
 
 	class KeyEvent;
 	class InputEventReceiver;
@@ -14,6 +19,24 @@ namespace chaos
 
 namespace chaos
 {
+
+	/**
+	* ButtonStateChange
+	*/
+
+	enum class ButtonStateChange : int
+	{
+		/** unknown value */
+		NONE = 0,
+		/** button status change */
+		STAY_RELEASED = 1,
+		/** button status change */
+		STAY_PRESSED = 2,
+		/** button status change */
+		BECOME_RELEASED = 3,
+		/** button status change */
+		BECOME_PRESSED = 4
+	};
 
 	/**
 	* InputState
@@ -46,6 +69,51 @@ namespace chaos
 		T previous_value = T();
 		/** the duration for which the value is the same */
 		float same_value_timer = 0.0f;
+	};
+
+	/**
+	* ButtonState
+	*/
+
+	class ButtonState : public InputState<bool>
+	{
+	public:
+
+		/** update the value */
+		void SetValue(bool in_value);
+		/** update the timer accumulator */
+		void UpdateSameValueTimer(float delta_time);
+
+		/** whether the button is pressed */
+		bool IsPressed(bool previous_frame = false) const;
+		/** whether the button has just been pressed */
+		bool IsJustPressed() const;
+		/** whether the button has just been released */
+		bool IsJustReleased() const;
+
+		/** get the button state change */
+		ButtonStateChange GetStateChange() const;
+	};
+
+	/**
+	* AxisState : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
+	*            we have to store the upper and lower values to renormalize the output
+	*/
+	class AxisState : public InputState<float>
+	{
+	public:
+
+		/** update the value */
+		void SetValue(float in_raw_value, float dead_zone);
+		/** update the timer accumulator */
+		void UpdateSameValueTimer(float delta_time);
+
+	protected:
+
+		/** min value always encountered */
+		float min_value = -0.8f;
+		/** max value always encountered */
+		float max_value = +0.8f;
 	};
 
 	/**

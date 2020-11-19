@@ -71,8 +71,6 @@ namespace chaos
 					else if (max_tick_duration > 0.0f)
 						delta_time = std::min(delta_time, max_tick_duration);
 				}
-				// tick the manager
-				TickManagers(delta_time);
 				// internal tick 
 				Tick(delta_time);
 				// tick the windows
@@ -155,18 +153,15 @@ namespace chaos
 			return true;
 		}
 
-		
-		void SingleWindowApplication::TickManagers(float delta_time)
+		void SingleWindowApplication::Tick(float delta_time)
 		{
+			// tick the managers
 			if (main_clock != nullptr)
 				main_clock->TickClock(delta_time);
 			if (sound_manager != nullptr)
 				sound_manager->Tick(delta_time);
-		}
-
-		void SingleWindowApplication::Tick(float delta_time)
-		{
-
+			// update keyboard state
+			UpdateKeyStates(delta_time);
 		}
 
 		void SingleWindowApplication::OnGLFWError(int code, const char* msg)
@@ -413,13 +408,25 @@ namespace chaos
 
 		void SingleWindowApplication::SetKeyState(int key, int action)
 		{
-
+			if (key >= 0 && key < keyboard_state.size())
+			{
+				keyboard_state[key].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+			}
 		}
 		
 		bool SingleWindowApplication::GetKeyState(int key, bool previous_frame) const
 		{
-
+			if (key >= 0 && key < keyboard_state.size())
+			{
+				return keyboard_state[key].GetValue(previous_frame);
+			}
 			return false;
+		}
+
+		void SingleWindowApplication::UpdateKeyStates(float delta_time)
+		{
+			for (ButtonState& button : keyboard_state)
+				button.UpdateSameValueTimer(delta_time);
 		}
 
 

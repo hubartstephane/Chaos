@@ -359,21 +359,13 @@ namespace chaos
         // keyboard input
         if (keyboard_buttons != nullptr)
         {
-
-#if 0
-
-            Game * game = GetGame();
-            if (game != nullptr)
-            {
-                GLFWwindow * glfw_window = game->GetGLFWWindow();
-                if (glfw_window != nullptr)
-                    for (int i = 0; keyboard_buttons[i] >= 0 ; ++i)
-                        if (CheckKeyPressed(keyboard_buttons[i]))
-                            return true;
-            }
-#endif
-
-
+			MyGLFW::SingleWindowApplication const* application = Application::GetInstance();
+			if (application != nullptr)
+			{
+				for (int i = 0; keyboard_buttons[i] >= 0; ++i)
+					if (application->GetKeyState(keyboard_buttons[i]))
+						return true;
+			}
         }
 
         // gamepad input

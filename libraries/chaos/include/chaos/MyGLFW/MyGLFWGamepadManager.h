@@ -6,9 +6,9 @@
 
 // all classes in this file
 #define CHAOS_GAMEPAD_CLASSES \
-(GamepadData) \
-(AxisData) \
-(ButtonData) \
+(GamepadState) \
+(AxisState) \
+(ButtonState) \
 (PhysicalGamepad) \
 (Gamepad) \
 (GamepadCallbacks) \
@@ -143,25 +143,11 @@ namespace chaos
 		/** maximum number of supported physical gamepads */
 		static constexpr int MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		/**
-		* ButtonData
+		* ButtonState
 		*/
 
-		class ButtonData : public InputState<bool>
+		class ButtonState : public InputState<bool>
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -172,10 +158,10 @@ namespace chaos
 		};
 
 		/**
-		* AxisData : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
+		* AxisState : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
 		*            we have to store the upper and lower values to renormalize the output
 		*/
-		class AxisData : public InputState<float>
+		class AxisState : public InputState<float>
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -193,10 +179,10 @@ namespace chaos
 		};
 
 		/**
-		* GamepadData : the data contained in the device
+		* GamepadState : the states contained in the device
 		*/
 
-		class GamepadData
+		class GamepadState
 		{
 			CHAOS_GAMEPAD_ALL_FRIENDS
 
@@ -233,9 +219,9 @@ namespace chaos
 		protected:
 
 			/** the value for axis */
-			std::vector<AxisData> axis;
+			std::vector<AxisState> axis;
 			/** the value for buttons */
-			std::vector<ButtonData> buttons;
+			std::vector<ButtonState> buttons;
 		};
 
 		/**
@@ -260,7 +246,7 @@ namespace chaos
 			/** called whenever the manager is destroyed before the gamepad */
 			virtual bool OnManagerDestroyed(class Gamepad*) { return true; }
 			/** called to add some filters on inputs */
-			virtual void OnGamepadDataUpdated(class GamepadData&) {}
+			virtual void OnGamepadStateUpdated(class GamepadState&) {}
 		};
 
 		/**
@@ -272,8 +258,8 @@ namespace chaos
 
 		public:
 
-			/** get a reference on the data */
-			GamepadData const* GetGamepadData() const { return &gamepad_data; }
+			/** get a reference on the state */
+			GamepadState const* GetGamepadState() const { return &gamepad_state; }
 
 			/* returns a status giving the change of button relative to previous frame */
 			ButtonStateChange GetButtonStateChange(size_t button_index) const;
@@ -329,8 +315,8 @@ namespace chaos
 			bool is_present = false;
 			/** indicates whether the stick is allocated to a client */
 			class Gamepad* user_gamepad = nullptr;
-			/** the device data */
-			GamepadData gamepad_data;
+			/** the device state */
+			GamepadState gamepad_state;
 		};
 
 		/**
@@ -405,8 +391,8 @@ namespace chaos
 			/** destructor */
 			virtual ~Gamepad();
 
-			/** get a reference on the data (if connected) */
-			GamepadData const* GetGamepadData() const;
+			/** get a reference on the state (if connected) */
+			GamepadState const* GetGamepadState() const;
 
 			/* returns a status giving the change of button relative to previous frame */
 			ButtonStateChange GetButtonStateChange(size_t button_index) const;

@@ -131,12 +131,12 @@ void LudumGameInstance::SendKeyboardButtonToChallenge(unsigned int c)
 		sequence_challenge->OnKeyboardButtonReceived((char)c);
 }
 
-void LudumGameInstance::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data)
+void LudumGameInstance::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadState const * in_gamepad_state)
 {
 	if (!game->IsPlaying())
 		return;
 	if (sequence_challenge != nullptr)
-		sequence_challenge->OnGamepadButtonReceived(in_gamepad_data);
+		sequence_challenge->OnGamepadButtonReceived(in_gamepad_state);
 }
 
 void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool success, size_t challenge_size)

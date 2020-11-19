@@ -109,7 +109,7 @@ namespace chaos
 		virtual void HandleSpecialGamepadCommands(float delta_time);
 
 		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(float delta_time, MyGLFW::GamepadData const * gamepad_data);		
+		virtual void InternalHandleGamepadInputs(float delta_time, MyGLFW::GamepadState const * gamepad_state);		
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 

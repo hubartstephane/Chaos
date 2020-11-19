@@ -81,7 +81,7 @@ public:
 	virtual void FillUniformProvider(chaos::GPUProgramProvider& main_uniform_provider) override;
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
-	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadData const * in_gamepad_data);
+	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadState const * in_gamepad_state);
 	/** test whether a key is being pressed and whether it correspond to the current challenge */
 	void SendKeyboardButtonToChallenge(unsigned int C);
 	/** called whenever a challenge is completed */

@@ -40,7 +40,7 @@ protected:
 	/** override */
 	virtual bool OnCharEventImpl(unsigned int c) override;
 	/** override */
-	virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
+	virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadState const * gpd) override;
 	/** override */
 	virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
 	/** override */

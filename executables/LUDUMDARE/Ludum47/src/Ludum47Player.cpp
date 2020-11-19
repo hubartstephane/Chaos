@@ -68,7 +68,7 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 	return true;
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd)
+void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadState const * gpd)
 {
 	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
 

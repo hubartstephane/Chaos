@@ -30,7 +30,7 @@ protected:
 	/** override */
 	virtual void TickPlayerDisplacement(float delta_time) override;
 	/** override */
-	virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadData const * gpd) override;
+	virtual void InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadState const * gpd) override;
 	/** override */
 	virtual void HandleKeyboardInputs(float delta_time) override;
 

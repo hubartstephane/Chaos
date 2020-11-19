@@ -12,7 +12,6 @@ namespace chaos
 {
 	class KeyDefinition
 	{
-
 	public:
 
 		/** get a key from its name */

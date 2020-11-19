@@ -147,18 +147,15 @@ namespace chaos
 
 	bool InputEventReceiver::CheckKeyPressed(int check_key)
 	{
-
-
-#if 0
-		GLFWwindow* glfw_window = GetGLFWWindow();
-		if (glfw_window == nullptr)
-			return false;
-		if (glfwGetKey(glfw_window, check_key))
+		MyGLFW::SingleWindowApplication const* application = Application::GetInstance();
+		if (application != nullptr)
 		{
-			SetInputMode(InputMode::KEYBOARD);
-			return true;
+			if (application->GetKeyState(check_key))
+			{
+				SetInputMode(InputMode::KEYBOARD);
+				return true;
+			}
 		}
-#endif
 		return false;
 	}
 

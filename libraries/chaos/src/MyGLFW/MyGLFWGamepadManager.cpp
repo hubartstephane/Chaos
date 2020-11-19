@@ -5,66 +5,6 @@ namespace chaos
 	namespace MyGLFW
 	{
 		//
-		// ButtonState functions
-		//
-
-		void ButtonState::UpdateValue(bool in_value, float delta_time)
-		{
-			previous_value = value;
-			value = in_value;
-
-			if (value != previous_value)
-				same_value_timer = 0.0f; 
-			else
-				same_value_timer += delta_time;
-		}
-
-		//
-		// AxisState functions
-		//
-
-		// XXX : some sticks are not abled to physicaly returns 1.0 when they are fully triggered (depend on the device)
-		//       that's why i use some min/max values (initialized with a coherent value)
-		//       if the stick goes further than theses values, we update them.
-		//       that help us to have a good evaluation of the stick range over time.
-
-		void AxisState::UpdateValue(float in_raw_value, float dead_zone, float delta_time)
-		{
-			previous_value = value;
-
-			// apply the dead zone
-			if (in_raw_value < dead_zone && in_raw_value > -dead_zone)
-				in_raw_value = 0.0f;
-
-			// clamp the raw value to -1 .. +1
-			in_raw_value = std::clamp(in_raw_value, -1.0f, +1.0f);
-
-			// store raw value
-			max_value = std::max(max_value, in_raw_value);
-			min_value = std::min(min_value, in_raw_value);
-
-			// apply dead zone and normalization
-			value = 0.0f;
-			if (in_raw_value > dead_zone || in_raw_value < -dead_zone)
-			{
-				if (in_raw_value > 0.0f)
-					value = (in_raw_value - dead_zone) / (max_value - dead_zone);
-				else
-					value = -(in_raw_value + dead_zone) / (min_value + dead_zone);
-			}
-
-			// update timer
-			bool reset_timer =
-				(value == 0.0f && previous_value != 0.0f) ||
-				(value != 0.0f && previous_value == 0.0f) ||
-				(value * previous_value < 0.0f);
-			if (reset_timer)
-				same_value_timer = 0.0f; 
-			else
-				same_value_timer += delta_time;		
-		}
-
-		//
 		// GamepadState functions
 		//
 
@@ -96,13 +36,9 @@ namespace chaos
 
 		ButtonStateChange GamepadState::GetButtonStateChange(size_t button_index) const
 		{
-			bool current_state = IsButtonPressed(button_index, false);
-			bool previous_state = IsButtonPressed(button_index, true);
-
-			if (current_state == previous_state)
-				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
-			else
-				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+			if (button_index >= buttons.size())
+				return ButtonStateChange::NONE;
+			return buttons[button_index].GetStateChange();
 		}
 
 		bool GamepadState::IsButtonPressed(size_t button_index, bool previous_frame) const
@@ -142,7 +78,7 @@ namespace chaos
 		bool GamepadState::IsAnyButtonJustPressed() const
 		{
 			for (ButtonState const& b : buttons)
-				if (b.GetValue(false) && !b.GetValue(true)) // compare current frame and previous frame
+				if (b.IsJustPressed())
 					return true;
 			return false;
 		}
@@ -202,7 +138,6 @@ namespace chaos
 			//glfwGetGamepadState(stick_index, &state);
 
 
-
 			int buttons_count = 0;
 			int axis_count = 0;
 
@@ -222,9 +157,8 @@ namespace chaos
 					float value = axis_buffer[i];
 					if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize i,comming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
-					axis[i].UpdateValue(value, dead_zone, 0.0f);
-					// initilize previous frame value 
-					axis[i].previous_value = axis[i].value;
+					axis[i].SetValue(value, dead_zone);
+					axis[i].UpdateSameValueTimer(0.0f);
 				}
 			}
 			else
@@ -235,7 +169,8 @@ namespace chaos
 					float value = axis_buffer[i];
 					if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 						value = (value * 0.5f + 0.5f);
-					axis[i].UpdateValue(value, dead_zone, delta_time);
+					axis[i].SetValue(value, dead_zone);
+					axis[i].UpdateSameValueTimer(delta_time);
 				}
 			}
 
@@ -251,14 +186,17 @@ namespace chaos
 
 				for (size_t i = 0; i < ac; ++i)
 				{
-					buttons[i].UpdateValue(buttons_buffer[i] != 0, 0.0f);
-					buttons[i].previous_value = buttons[i].value;
+					buttons[i].SetValue(buttons_buffer[i] != 0);
+					buttons[i].UpdateSameValueTimer(0.0f);
 				}
 			}
 			else
 			{
 				for (size_t i = 0; i < bc; ++i)
-					buttons[i].UpdateValue(buttons_buffer[i] != 0, delta_time);
+				{
+					buttons[i].SetValue(buttons_buffer[i] != 0);
+					buttons[i].UpdateSameValueTimer(delta_time);
+				}
 			}
 		}
 
@@ -296,7 +234,7 @@ namespace chaos
 		ButtonStateChange PhysicalGamepad::GetButtonStateChange(size_t button_index) const
 		{
 			if (!IsPresent())
-				return ButtonStateChange::NO_CHANGE;
+				return ButtonStateChange::NONE;
 			return gamepad_state.GetButtonStateChange(button_index);
 		}
 
@@ -446,7 +384,7 @@ namespace chaos
 		{
 			if (physical_device != nullptr)
 				return physical_device->GetButtonStateChange(button_index);
-			return ButtonStateChange::NO_CHANGE;
+			return ButtonStateChange::NONE;
 		}
 
 		bool Gamepad::IsButtonPressed(size_t button_index, bool previous_frame) const

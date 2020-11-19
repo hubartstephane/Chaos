@@ -2,8 +2,6 @@
 
 namespace chaos
 {
-	using KeyState = InputState<bool>;
-
 	namespace MyGLFW
 	{
 		class WindowParams;
@@ -132,9 +130,9 @@ namespace chaos
 
 			/** change the state of a keyboard key */
 			void SetKeyState(int key, int action);
+			/** update the internal timers of keyboard states */
+			void UpdateKeyStates(float delta_time);
 
-			/** tick all the managers */
-			virtual void TickManagers(float delta_time);
 			/** custom tick */
 			virtual void Tick(float delta_time);
 
@@ -166,7 +164,7 @@ namespace chaos
 			std::vector<shared_ptr<Window>> windows;
 
 			/** the state of all buttons */
-			KeyState KeyboardState[GLFW_KEY_LAST];
+			std::array<ButtonState, GLFW_KEY_LAST> keyboard_state;
 			
 			/** forced time slice for tick */
 			float forced_tick_duration = 0.0f;

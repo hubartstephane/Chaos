@@ -7,8 +7,6 @@
 // all classes in this file
 #define CHAOS_GAMEPAD_CLASSES \
 (GamepadState) \
-(AxisState) \
-(ButtonState) \
 (PhysicalGamepad) \
 (Gamepad) \
 (GamepadCallbacks) \
@@ -25,8 +23,6 @@
 
 namespace chaos
 {
-	enum class ButtonStateChange;
-
 	enum XBoxButton;
 	enum XBoxAxis;
 
@@ -56,21 +52,6 @@ namespace chaos
 
 namespace chaos
 {
-
-	enum class ButtonStateChange : int
-	{
-		/** button status change */
-		NO_CHANGE = 0,
-		/** button status change */
-		STAY_RELEASED = 1,
-		/** button status change */
-		STAY_PRESSED = 2,
-		/** button status change */
-		BECOME_RELEASED = 3,
-		/** button status change */
-		BECOME_PRESSED = 4
-	};
-
 	// shuxxx see glfw3.h => some values seem to differ    GLFW_GAMEPAD_BUTTON_LEFT_THUMB ? etc
 
 
@@ -142,41 +123,6 @@ namespace chaos
 
 		/** maximum number of supported physical gamepads */
 		static constexpr int MAX_SUPPORTED_GAMEPAD_COUNT = GLFW_JOYSTICK_LAST + 1;
-
-		/**
-		* ButtonState
-		*/
-
-		class ButtonState : public InputState<bool>
-		{
-			CHAOS_GAMEPAD_ALL_FRIENDS
-
-		public:
-
-			/** update the value */
-			void UpdateValue(bool in_value, float delta_time);
-		};
-
-		/**
-		* AxisState : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
-		*            we have to store the upper and lower values to renormalize the output
-		*/
-		class AxisState : public InputState<float>
-		{
-			CHAOS_GAMEPAD_ALL_FRIENDS
-
-		public:
-
-			/** update the value */
-			void UpdateValue(float in_raw_value, float dead_zone, float delta_time);
-
-		protected:
-
-			/** min value always encountered */
-			float min_value = -0.8f;
-			/** max value always encountered */
-			float max_value = +0.8f;
-		};
 
 		/**
 		* GamepadState : the states contained in the device

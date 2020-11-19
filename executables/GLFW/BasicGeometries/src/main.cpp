@@ -990,7 +990,7 @@ protected:
 		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
+		chaos::MyGLFW::WindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
 
@@ -1105,7 +1105,7 @@ protected:
 	{
 		if (event.IsKeyReleased(GLFW_KEY_T))
 		{
-			chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+			chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->Toggle();
 			return true;

@@ -12,7 +12,7 @@ public:
 
 	void TestFile(char const * filename)
 	{
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
+		chaos::MyGLFW::WindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return;
 

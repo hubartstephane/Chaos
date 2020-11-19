@@ -29,10 +29,10 @@ namespace chaos
 		}
 
 		// 
-		// SingleWindowApplication
+		// WindowApplication
 		//
 
-		SingleWindowApplication::SingleWindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const & in_window_params, WindowHints const in_window_hints) :
+		WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const & in_window_params, WindowHints const in_window_hints) :
 			main_window_class(in_main_window_class),
 			window_params(in_window_params),
 			window_hints(in_window_hints)
@@ -40,12 +40,12 @@ namespace chaos
 			assert(in_main_window_class.IsValid());
 		}
 	
-		void SingleWindowApplication::FreezeNextFrameTickDuration()
+		void WindowApplication::FreezeNextFrameTickDuration()
 		{
 			forced_zero_tick_duration = true;
 		}
 
-		bool SingleWindowApplication::MessageLoop()
+		bool WindowApplication::MessageLoop()
 		{
 			GLFWwindow * glfw_window = main_window->GetGLFWHandler();
 
@@ -82,7 +82,7 @@ namespace chaos
 			return true;
 		}
 
-		Window* SingleWindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const & params, WindowHints const & hints)
+		Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const & params, WindowHints const & hints)
 		{
 			// create the window class
 			Window * result = window_class.CreateInstance();
@@ -99,7 +99,7 @@ namespace chaos
 			return result;
 		}
 
-		bool SingleWindowApplication::Main()
+		bool WindowApplication::Main()
 		{
 			// the glfw configuration
 			GLFWHints glfw_hints;
@@ -153,7 +153,7 @@ namespace chaos
 			return true;
 		}
 
-		void SingleWindowApplication::Tick(float delta_time)
+		void WindowApplication::Tick(float delta_time)
 		{
 			// tick the managers
 			if (main_clock != nullptr)
@@ -164,12 +164,12 @@ namespace chaos
 			UpdateKeyStates(delta_time);
 		}
 
-		void SingleWindowApplication::OnGLFWError(int code, const char* msg)
+		void WindowApplication::OnGLFWError(int code, const char* msg)
 		{
 			LogTools::Log("Window(...) [%d] failure : %s", code, msg);
 		}
 
-		bool SingleWindowApplication::InitializeGPUResourceManager()
+		bool WindowApplication::InitializeGPUResourceManager()
 		{
 			// create and start the GPU manager
 			gpu_resource_manager = new GPUResourceManager;
@@ -187,7 +187,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SingleWindowApplication::ReloadGPUResources()
+		bool WindowApplication::ReloadGPUResources()
 		{
 			// this call may block for too much time
 			FreezeNextFrameTickDuration();
@@ -213,7 +213,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SingleWindowApplication::FinalizeGPUResourceManager()
+		bool WindowApplication::FinalizeGPUResourceManager()
 		{
 			// stop the resource manager
 			if (gpu_resource_manager != nullptr)
@@ -224,7 +224,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SingleWindowApplication::InitializeManagers()
+		bool WindowApplication::InitializeManagers()
 		{
 			if (!Application::InitializeManagers())
 				return false;
@@ -253,7 +253,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SingleWindowApplication::FinalizeManagers()
+		bool WindowApplication::FinalizeManagers()
 		{
 			// stop the clock
 			main_clock = nullptr;
@@ -274,7 +274,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SingleWindowApplication::Initialize()
+		bool WindowApplication::Initialize()
 		{
 			// super method
 			if (!Application::Initialize())
@@ -284,7 +284,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SingleWindowApplication::Finalize()
+		bool WindowApplication::Finalize()
 		{
 			FinalizeGPUResourceManager();
 
@@ -303,12 +303,12 @@ namespace chaos
 			return true;
 		}
 
-		void SingleWindowApplication::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg)
+		void WindowApplication::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char *msg)
 		{
 			LogTools::Log("FreeImage warning message [%d][%s]", fif, msg);
 		}
 
-		bool SingleWindowApplication::InitializeStandardLibraries()
+		bool WindowApplication::InitializeStandardLibraries()
 		{
 			if (!Application::InitializeStandardLibraries())
 				return false;
@@ -318,7 +318,7 @@ namespace chaos
 			return true;
 		}
 
-		bool SingleWindowApplication::FinalizeStandardLibraries()
+		bool WindowApplication::FinalizeStandardLibraries()
 		{
 			glfwTerminate();
 			FreeImage_DeInitialise();
@@ -326,55 +326,55 @@ namespace chaos
 			return true;
 		}
 
-		void SingleWindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
+		void WindowApplication::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 		{
 			if (main_window != nullptr)
 				main_window->OnInputModeChanged(new_mode, old_mode);
 		}
 
-		Clock * SingleWindowApplication::GetMainClockInstance()
+		Clock * WindowApplication::GetMainClockInstance()
 		{
-			SingleWindowApplication * application = GetInstance();
+			WindowApplication * application = GetInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetMainClock();
 		}
 
-		Clock const * SingleWindowApplication::GetMainClockConstInstance()
+		Clock const * WindowApplication::GetMainClockConstInstance()
 		{
-			SingleWindowApplication const * application = GetConstInstance();
+			WindowApplication const * application = GetConstInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetMainClock();
 		}
 
-		SoundManager * SingleWindowApplication::GetSoundManagerInstance()
+		SoundManager * WindowApplication::GetSoundManagerInstance()
 		{
-			SingleWindowApplication * application = GetInstance();
+			WindowApplication * application = GetInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetSoundManager();
 		}
 
-		SoundManager const * SingleWindowApplication::GetSoundManagerConstInstance()
+		SoundManager const * WindowApplication::GetSoundManagerConstInstance()
 		{
-			SingleWindowApplication const * application = GetConstInstance();
+			WindowApplication const * application = GetConstInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetSoundManager();
 		}
 
-		GPUResourceManager * SingleWindowApplication::GetGPUResourceManagerInstance()
+		GPUResourceManager * WindowApplication::GetGPUResourceManagerInstance()
 		{
-			SingleWindowApplication * application = GetInstance();
+			WindowApplication * application = GetInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetGPUResourceManager();
 		}
 
-		GPUResourceManager const * SingleWindowApplication::GetGPUResourceManagerConstInstance()
+		GPUResourceManager const * WindowApplication::GetGPUResourceManagerConstInstance()
 		{
-			SingleWindowApplication const * application = GetConstInstance();
+			WindowApplication const * application = GetConstInstance();
 			if (application == nullptr)
 				return nullptr;
 			return application->GetGPUResourceManager();
@@ -384,7 +384,7 @@ namespace chaos
 		CHAOS_HELP_TEXT(SHORTCUTS, "F8  : ReloadGPUResources");
 #endif
 
-		bool SingleWindowApplication::OnKeyEventImpl(KeyEvent const& event)
+		bool WindowApplication::OnKeyEventImpl(KeyEvent const& event)
 		{	
 			// reloading GPU resources		
 #if _DEBUG
@@ -398,15 +398,15 @@ namespace chaos
 			return Application::OnKeyEventImpl(event);
 		}
 
-		bool SingleWindowApplication::GetApplicationKeyState(int key, bool previous_frame)
+		bool WindowApplication::GetApplicationKeyState(int key, bool previous_frame)
 		{
-			SingleWindowApplication * application = Application::GetInstance();
+			WindowApplication * application = Application::GetInstance();
 			if (application != nullptr)
 				return application->GetKeyState(key, previous_frame);
 			return false;
 		}
 
-		void SingleWindowApplication::SetKeyState(int key, int action)
+		void WindowApplication::SetKeyState(int key, int action)
 		{
 			if (key >= 0 && key < keyboard_state.size())
 			{
@@ -414,7 +414,7 @@ namespace chaos
 			}
 		}
 		
-		bool SingleWindowApplication::GetKeyState(int key, bool previous_frame) const
+		bool WindowApplication::GetKeyState(int key, bool previous_frame) const
 		{
 			if (key >= 0 && key < keyboard_state.size())
 			{
@@ -423,7 +423,7 @@ namespace chaos
 			return false;
 		}
 
-		void SingleWindowApplication::UpdateKeyStates(float delta_time)
+		void WindowApplication::UpdateKeyStates(float delta_time)
 		{
 			for (ButtonState& button : keyboard_state)
 				button.UpdateSameValueTimer(delta_time);

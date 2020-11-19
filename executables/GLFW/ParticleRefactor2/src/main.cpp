@@ -195,7 +195,7 @@ protected:
 		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
-		chaos::GPUResourceManager * gpu_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * gpu_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 		if (gpu_manager == nullptr)
 			return nullptr;
 

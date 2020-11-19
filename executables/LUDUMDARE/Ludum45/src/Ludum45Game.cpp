@@ -150,7 +150,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 	if (ludum_player != nullptr && ludum_player->brightsideoflife)
 	{
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
 			return;
 		chaos::GPURenderMaterial * postprocess_material = resource_manager->FindRenderMaterial("brightsideoflife");

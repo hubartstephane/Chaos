@@ -100,7 +100,7 @@ namespace chaos
 
 		class Window : public Object, public InputEventReceiver
 		{
-			friend class SingleWindowApplication;
+			friend class WindowApplication;
 
 			CHAOS_DECLARE_OBJECT_CLASS2(Window, Object);
 

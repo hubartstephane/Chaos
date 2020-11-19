@@ -12,7 +12,7 @@ protected:
 		if (renderpass_names.size() > 0)
 			debug_display.AddLine(chaos::StringTools::Printf("Renderpass [%s]", renderpass_names[current_renderpass].c_str()).c_str(), -1.0f);
 
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager != nullptr)
 		{
 			size_t count = resource_manager->GetRenderMaterialCount();
@@ -39,7 +39,7 @@ protected:
 
 	void ChangeMaterial(int direction)
 	{
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
 			return;
 
@@ -94,7 +94,7 @@ protected:
 
 		if (current_renderpass >= renderpass_names.size())
 			return true;
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
 			return true;
 		size_t count = resource_manager->GetRenderMaterialCount();
@@ -114,7 +114,7 @@ protected:
 
 		double realtime = 0.0;
 
-		chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+		chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
 		if (clock != nullptr)
 			clock->GetClockTime();
 

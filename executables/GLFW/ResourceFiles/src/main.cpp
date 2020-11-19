@@ -27,7 +27,7 @@ protected:
 		using TexturePtr = chaos::shared_ptr<chaos::GPUTexture>;
 		using ProgramPtr = chaos::shared_ptr<chaos::GPUProgram>;
 
-		chaos::MyGLFW::SingleWindowApplication * application = chaos::Application::GetInstance();
+		chaos::MyGLFW::WindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
 

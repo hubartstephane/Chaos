@@ -86,7 +86,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	{
 		if (ludum_level_instance->completion_timer > 0.0f && ludum_level_instance->completion_delay > 0.0f)
 		{
-			chaos::GPUResourceManager* resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+			chaos::GPUResourceManager* resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 			if (resource_manager == nullptr)
 				return;
 

@@ -359,7 +359,7 @@ namespace chaos
         // keyboard input
         if (keyboard_buttons != nullptr)
         {
-			MyGLFW::SingleWindowApplication const* application = Application::GetInstance();
+			MyGLFW::WindowApplication const* application = Application::GetInstance();
 			if (application != nullptr)
 			{
 				for (int i = 0; keyboard_buttons[i] >= 0; ++i)

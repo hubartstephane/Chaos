@@ -39,7 +39,7 @@ namespace chaos
 			GPURenderMaterial * render_material = nullptr;
 			if (!material_request.IsNoneRequest())
 			{
-				GPUResourceManager * resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+				GPUResourceManager * resource_manager = MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 				if (resource_manager == nullptr)
 					return nullptr;
 				render_material = resource_manager->FindRenderMaterial(material_request);

@@ -10,7 +10,7 @@ namespace chaos
 
 namespace chaos
 {
-	class GameApplication : public MyGLFW::SingleWindowApplication
+	class GameApplication : public MyGLFW::WindowApplication
 	{
 
 	};

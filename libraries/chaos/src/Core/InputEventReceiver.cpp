@@ -147,7 +147,7 @@ namespace chaos
 
 	bool InputEventReceiver::CheckKeyPressed(int check_key)
 	{
-		MyGLFW::SingleWindowApplication const* application = Application::GetInstance();
+		MyGLFW::WindowApplication const* application = Application::GetInstance();
 		if (application != nullptr)
 		{
 			if (application->GetKeyState(check_key))

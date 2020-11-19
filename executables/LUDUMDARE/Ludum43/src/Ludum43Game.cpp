@@ -47,7 +47,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	// II/ offscreen rendering + composition
 	// -------------------------------------
 
-	chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+	chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 	if (resource_manager == nullptr)
 		return;
 

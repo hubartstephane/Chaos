@@ -24,7 +24,7 @@ namespace chaos
         
         if (type == PrimitiveType::QUAD)
         {
-            gpu_resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+            gpu_resource_manager = MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
             if (gpu_resource_manager == nullptr)
                 return;
         }

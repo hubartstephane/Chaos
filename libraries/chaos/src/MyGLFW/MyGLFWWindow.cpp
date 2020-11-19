@@ -398,7 +398,7 @@ namespace chaos
 		void Window::DoOnKeyEvent(GLFWwindow * in_glfw_window, int key, int scan_code, int action, int modifier)
 		{
 			// notify the application of the key state
-			MyGLFW::SingleWindowApplication* application = Application::GetInstance();
+			MyGLFW::WindowApplication* application = Application::GetInstance();
 			if (application != nullptr)
 			{
 				application->SetInputMode(InputMode::KEYBOARD);
@@ -627,7 +627,7 @@ namespace chaos
 				return false;
 
 			// this call may take a while causing a jump in 'delta_time'
-			MyGLFW::SingleWindowApplication* application = Application::GetInstance();
+			MyGLFW::WindowApplication* application = Application::GetInstance();
 			if (application == nullptr)
 				return false;
 			application->FreezeNextFrameTickDuration();

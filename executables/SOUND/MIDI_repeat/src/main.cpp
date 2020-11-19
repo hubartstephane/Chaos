@@ -220,7 +220,7 @@ protected:
 		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
-		chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+		chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
 		if (clock == nullptr)
       return false;
 

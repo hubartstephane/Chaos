@@ -464,7 +464,7 @@ namespace chaos
 		if (default_path != nullptr)
 		{
 			// get the application
-			MyGLFW::SingleWindowApplication * application = Application::GetInstance();
+			MyGLFW::WindowApplication * application = Application::GetInstance();
 			if (application != nullptr)
 			{
 				// compute resource path
@@ -647,7 +647,7 @@ namespace chaos
 		}
 
 		// create a material
-		GPUResourceManager * resource_manager = MyGLFW::SingleWindowApplication::GetGPUResourceManagerInstance();
+		GPUResourceManager * resource_manager = MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager != nullptr)
 		{
 			// search declared material
@@ -760,7 +760,7 @@ namespace chaos
 
 	SoundManager * Game::GetSoundManager()
 	{
-		MyGLFW::SingleWindowApplication * application = Application::GetInstance();
+		MyGLFW::WindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetSoundManager();
@@ -768,7 +768,7 @@ namespace chaos
 
 	Clock * Game::GetApplicationClock()
 	{
-		MyGLFW::SingleWindowApplication * application = Application::GetInstance();
+		MyGLFW::WindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();
@@ -776,7 +776,7 @@ namespace chaos
 
 	Clock const * Game::GetApplicationClock() const
 	{
-		MyGLFW::SingleWindowApplication const * application = Application::GetInstance();
+		MyGLFW::WindowApplication const * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();
@@ -1550,7 +1550,7 @@ namespace chaos
 
 	bool Game::ReloadGameConfiguration()
 	{
-		MyGLFW::SingleWindowApplication * application = Application::GetInstance();
+		MyGLFW::WindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return false;
 

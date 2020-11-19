@@ -40,7 +40,7 @@ protected:
 
 			double realtime = 0.0;
 
-			chaos::Clock * clock = chaos::MyGLFW::SingleWindowApplication::GetMainClockInstance();
+			chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->GetClockTime();
 

@@ -5,7 +5,7 @@ namespace chaos
 	namespace MyGLFW
 	{
 		class WindowParams;
-		class SingleWindowApplication;
+		class WindowApplication;
 
 	}; // namespace MyGLFW
 
@@ -43,17 +43,17 @@ namespace chaos
 		bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst);
 
 		/**
-		* SingleWindowApplication
+		* WindowApplication
 		*/
 
-		class SingleWindowApplication : public Application
+		class WindowApplication : public Application
 		{
 			friend class Window;
 
 		public:
 
 			/** constructor */
-			SingleWindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const & in_window_params, WindowHints const in_window_hints);
+			WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const & in_window_params, WindowHints const in_window_hints);
 
 			/** getter of the main clock */
 			static Clock * GetMainClockInstance();
@@ -181,7 +181,7 @@ namespace chaos
 		template<typename WINDOW_TYPE, typename ...PARAMS>
 		bool RunWindowApplication(int argc, char** argv, char** env, PARAMS... params)
 		{
-			return RunApplication<SingleWindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), params...);
+			return RunApplication<WindowApplication>(argc, argv, env, WINDOW_TYPE::GetStaticClass(), params...);
 		}
 
 	}; // namespace MyGLFW

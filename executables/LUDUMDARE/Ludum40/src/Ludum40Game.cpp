@@ -323,7 +323,7 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config
 
 bool Game::InitializeSounds(boost::filesystem::path const & resource_path)
 {
-	sound_manager = chaos::MyGLFW::SingleWindowApplication::GetSoundManagerInstance(); // copy shared reference to the manager
+	sound_manager = chaos::MyGLFW::WindowApplication::GetSoundManagerInstance(); // copy shared reference to the manager
 	if (sound_manager == nullptr)
 		return false;
   

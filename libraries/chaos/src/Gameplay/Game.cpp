@@ -9,11 +9,6 @@ namespace chaos
 		game_sm_class = GameStateMachine::GetStaticClass();
 	}
 
-	bool Game::Initialize()	
-	{
-		return true;
-	}
-
 	int Game::GetBestPlayerScore() const
 	{
 		if (game_instance != nullptr)

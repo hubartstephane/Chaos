@@ -14,6 +14,7 @@
 	friend_prefix class prefix##Camera;\
 	friend_prefix class prefix##CameraComponent;\
 	friend_prefix class prefix##GameInstance;\
+	friend_prefix class prefix##GameApplication;\
 	friend_prefix class prefix##GameHUD;\
 	friend_prefix class GameGettersTools;
 

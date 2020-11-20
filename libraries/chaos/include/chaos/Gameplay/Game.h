@@ -50,9 +50,6 @@ namespace chaos
 		/** constructor */
 		Game();
 
-		/** initialization method */
-		virtual bool Initialize();
-
 		/** Get a level by its index */
 		AutoCastable<Level> FindLevelByIndex(int level_index);
 		/** Get a level by its index */

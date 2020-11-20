@@ -103,9 +103,10 @@ namespace chaos
 
 			/** Main method */
 			virtual bool Main() override;
-
+			/** the possibility to have final initialization before the main loop is run */
+			virtual bool PreMainLoop();
 			/** Window Loop */
-			bool MessageLoop();
+			virtual bool MessageLoop();
 
 			/** an error callback */
 			static void OnGLFWError(int code, const char* msg);

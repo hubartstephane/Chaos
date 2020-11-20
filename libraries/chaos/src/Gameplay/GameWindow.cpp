@@ -72,44 +72,14 @@ namespace chaos
 		return true;
 	}
 
+	void GameWindow::SetGame(Game* in_game)
+	{
+		game = in_game;
+	}
+
 	void GameWindow::Finalize()
 	{
 		game = nullptr;
-	}
-
-	Game * GameWindow::DoCreateGame()
-	{
-		return new Game;
-	}
-
-	Game* GameWindow::CreateGame()
-	{
-		Game* result = DoCreateGame();
-		if (result == nullptr)
-			return nullptr;
-		if (!result->Initialize())
-		{
-			delete(result);
-			return nullptr;
-		}
-		return result;
-	}
-
-	bool GameWindow::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
-	{
-		if (!MyGLFW::Window::InitializeFromConfiguration(config, config_path))
-			return false;
-		// create the game
-		game = CreateGame();
-		if (game == nullptr)
-			return false;
-		// initialize the game
-		nlohmann::json const * game_config = JSONTools::GetStructure(config, "game");
-		if (game_config != nullptr)
-			if (!game->InitializeFromConfiguration(*game_config, config_path))
-				return false;
-
-		return true;
 	}
 
 	CHAOS_HELP_TEXT(CMD, "-UnlimitedFPS");
@@ -124,13 +94,6 @@ namespace chaos
 		hints.unlimited_fps = true;
 #endif
 
-	}
-
-	bool GameWindow::Tick(float delta_time)
-	{
-		if (game != nullptr)
-			game->Tick(delta_time);
-		return true; // refresh
 	}
 
 	void GameWindow::OnIconifiedStateChange(bool iconified)

@@ -147,9 +147,17 @@ namespace chaos
 			// XXX : initialize the window (once GPUResourceManager is fully initialized)
 			main_window->InitializeFromConfiguration(configuration, configuration_path);
 
+			// a final initialization (after main window is constructed ... and OpenGL context)
+			if (!PreMainLoop())
+				return false;
 			// the main loop
 			MessageLoop();
 
+			return true;
+		}
+
+		bool WindowApplication::PreMainLoop()
+		{
 			return true;
 		}
 

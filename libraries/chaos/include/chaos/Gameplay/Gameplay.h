@@ -24,7 +24,7 @@
 #include <chaos/Gameplay/Game.h>
 #include <chaos/Gameplay/GameInstance.h>
 #include <chaos/Gameplay/GameWindow.h>
-#include <chaos/Gameplay/GamepadManager.h>
+#include <chaos/Gameplay/GameGamepadManager.h>
 #include <chaos/Gameplay/GameApplication.h>
 #include <chaos/Gameplay/CollisionMask.h>
 #include <chaos/Gameplay/SoundContext.h>

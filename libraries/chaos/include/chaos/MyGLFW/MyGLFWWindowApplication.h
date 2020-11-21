@@ -143,6 +143,9 @@ namespace chaos
 			/** create a window */
 			Window * CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const & params, WindowHints const & hints);
 
+			/** called after window creation */
+			virtual void OnWindowCreated(Window* window);
+
 		protected:
 		
 			/** the main clock of the manager */

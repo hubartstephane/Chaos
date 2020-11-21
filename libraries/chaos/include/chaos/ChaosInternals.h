@@ -10,7 +10,7 @@
 #include <chaos/Atlas/Atlas.h>
 #include <chaos/Gpu/Gpu.h>
 #include <chaos/Particle/Particle.h>
-#include <chaos/MyGLFW/MyGLFW.h>
+#include <chaos/Windowing/Windowing.h>
 #include <chaos/Deprecated/Deprecated.h>
 #include <chaos/Lua/Lua.h>
 #include <chaos/TiledMap/TiledMap.h>

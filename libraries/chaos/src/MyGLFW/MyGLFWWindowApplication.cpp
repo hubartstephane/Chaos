@@ -94,9 +94,16 @@ namespace chaos
 				delete(result);
 				return nullptr;
 			}
+			// post initialization method
+			OnWindowCreated(result);
 			// store the result
 			windows.push_back(result);
 			return result;
+		}
+
+		void WindowApplication::OnWindowCreated(Window* window)
+		{
+
 		}
 
 		bool WindowApplication::Main()

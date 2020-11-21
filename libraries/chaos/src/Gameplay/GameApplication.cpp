@@ -9,6 +9,16 @@ namespace chaos
 		assert(game_class.IsValid());
 	}
 
+	void GameApplication::OnWindowCreated(MyGLFW::Window* window)
+	{
+		// super
+		MyGLFW::WindowApplication::OnWindowCreated(window);
+		// set the game
+		GameWindow* game_window = auto_cast(window);
+		if (game_window != nullptr)
+			game_window->SetGame(game.get());
+	}
+
 	bool GameApplication::PreMainLoop()
 	{
 		if (!MyGLFW::WindowApplication::PreMainLoop())

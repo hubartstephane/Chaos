@@ -23,6 +23,8 @@ namespace chaos
 		virtual bool PreMainLoop() override;
 		/** override */
 		virtual void Tick(float delta_time) override;
+		/** override */
+		virtual void OnWindowCreated(MyGLFW::Window* window) override;
 
 	protected:
 

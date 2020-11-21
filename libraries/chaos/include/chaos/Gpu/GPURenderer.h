@@ -28,6 +28,9 @@ namespace chaos
 	{
 	public:
 
+		/** constructor */
+		GPURenderer(Window* in_window);
+
 		/** draw a primitive */
 		void Draw(GPUDrawPrimitive const& primitive, GPUInstancingInfo const& instancing = {});
 		/** render a full screen quad */
@@ -50,6 +53,9 @@ namespace chaos
 		/** get  a fence for the end of this frame */
 		GPUFence * GetCurrentFrameFence();
 
+		/** get the owning window */
+		Window* GetWindow() const { return window.get(); }
+
 	protected:
 
 		/** override */
@@ -67,6 +73,9 @@ namespace chaos
 		TimedAccumulator<float> drawcall_counter;
 		/** for counting drawcall per seconds */
 		TimedAccumulator<float> vertices_counter;
+
+		/** the owning window */
+		weak_ptr<Window> window;
 
 		/** the stack of framebuffer */
 		std::vector<GPUFramebufferRenderData> framebuffer_stack;

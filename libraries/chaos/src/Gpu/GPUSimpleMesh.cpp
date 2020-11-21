@@ -59,7 +59,7 @@ namespace chaos
         if (vertex_array_cache == nullptr)
             vertex_array_cache = new GPUVertexArrayCache;
 		// find the vertex array to use
-		GPUVertexArray const * vertex_array = vertex_array_cache->FindOrCreateVertexArray(program, vertex_buffer.get(), index_buffer.get(), vertex_declaration.get(), vertex_buffer_offset);
+		GPUVertexArray const * vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program, vertex_buffer.get(), index_buffer.get(), vertex_declaration.get(), vertex_buffer_offset);
 		if (vertex_array == nullptr)
 			return;
 		// bind the vertex array

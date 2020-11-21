@@ -15,6 +15,9 @@ namespace chaos
 	// GPUVertexArrayCacheEntry : an entry in the cache vertex array
 	// ==================================================================
 
+	// XXX : OpenGL contexts do not share 'CONTAINER OBJECTS' has VertexArrays or FrameBuffers
+	//       That's why we use a Window entry in the cache system
+
 	class GPUVertexArrayCacheEntry
 	{
 		friend class GPUVertexArrayCache;
@@ -32,6 +35,10 @@ namespace chaos
 		weak_ptr<GPUBuffer const> vertex_buffer;
 		/** the index buffer concerned */
 		weak_ptr<GPUBuffer const> index_buffer;
+		/** context window */
+		weak_ptr<Window> context_window; // VertexArrays are not shared between different contexts
+
+
 		/** the index of the program */
 		GLuint program_id = 0;
 		/** the vertex buffer */
@@ -53,9 +60,9 @@ namespace chaos
 	public:
 
 		/** find vertex array for the program */
-		GPUVertexArray const * FindVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const;
+		GPUVertexArray const * FindVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const;
 		/** create or return exisiting vertex array for a given program */
-		GPUVertexArray const * FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset = 0);
+		GPUVertexArray const * FindOrCreateVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset = 0);
 		/** reset the whole object */
 		void Clear();
 

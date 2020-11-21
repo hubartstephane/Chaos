@@ -10,11 +10,11 @@ namespace chaos
 
 namespace chaos
 {
-	class GameWindow : public MyGLFW::Window
+	class GameWindow : public Window
 	{
 		friend class GameApplication;
 
-		CHAOS_DECLARE_OBJECT_CLASS2(GameWindow, MyGLFW::Window);
+		CHAOS_DECLARE_OBJECT_CLASS2(GameWindow, Window);
 
 	protected:
 
@@ -35,7 +35,7 @@ namespace chaos
 		/** override */
 		virtual void Finalize() override;
 		/** override */
-		virtual void TweakHints(MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override;
+		virtual void TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override;
 		/** override */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 		/** override */

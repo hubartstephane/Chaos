@@ -459,7 +459,7 @@ namespace chaos
 		if (default_path != nullptr)
 		{
 			// get the application
-			MyGLFW::WindowApplication * application = Application::GetInstance();
+			WindowApplication * application = Application::GetInstance();
 			if (application != nullptr)
 			{
 				// compute resource path
@@ -642,7 +642,7 @@ namespace chaos
 		}
 
 		// create a material
-		GPUResourceManager * resource_manager = MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+		GPUResourceManager * resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager != nullptr)
 		{
 			// search declared material
@@ -755,7 +755,7 @@ namespace chaos
 
 	SoundManager * Game::GetSoundManager()
 	{
-		MyGLFW::WindowApplication * application = Application::GetInstance();
+		WindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetSoundManager();
@@ -763,7 +763,7 @@ namespace chaos
 
 	Clock * Game::GetApplicationClock()
 	{
-		MyGLFW::WindowApplication * application = Application::GetInstance();
+		WindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();
@@ -771,7 +771,7 @@ namespace chaos
 
 	Clock const * Game::GetApplicationClock() const
 	{
-		MyGLFW::WindowApplication const * application = Application::GetInstance();
+		WindowApplication const * application = Application::GetInstance();
 		if (application == nullptr)
 			return nullptr;
 		return application->GetMainClock();
@@ -939,7 +939,7 @@ namespace chaos
 		return new GameStateMachineInstance(this, state_machine);
 	}
 
-	bool Game::OnGamepadInput(MyGLFW::PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming
+	bool Game::OnGamepadInput(PhysicalGamepad * in_physical_gamepad) // an uncatched gamepad input incomming
 	{
 		assert(in_physical_gamepad != nullptr && !in_physical_gamepad->IsAllocated());
 
@@ -956,7 +956,7 @@ namespace chaos
 		return false;
 	}
 
-	bool Game::OnPhysicalGamepadInput(MyGLFW::PhysicalGamepad * physical_gamepad)
+	bool Game::OnPhysicalGamepadInput(PhysicalGamepad * physical_gamepad)
 	{
 		// ignore invalid gamepad : should never happen
 		if (!physical_gamepad->IsAnyAction())
@@ -1205,7 +1205,7 @@ namespace chaos
 		return result;
 	}
 
-	bool Game::OnEnterGame(MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	bool Game::OnEnterGame(PhysicalGamepad * in_physical_gamepad)
 	{
 		assert(game_instance == nullptr);
 		// create the game instance
@@ -1379,7 +1379,7 @@ namespace chaos
 		return false;
 	}
 
-	bool Game::RequireStartGame(MyGLFW::PhysicalGamepad * physical_gamepad)
+	bool Game::RequireStartGame(PhysicalGamepad * physical_gamepad)
 	{
 		PhysicalGamepadWrapper game_pad_wrapper = PhysicalGamepadWrapper(physical_gamepad);
 
@@ -1545,7 +1545,7 @@ namespace chaos
 
 	bool Game::ReloadGameConfiguration()
 	{
-		MyGLFW::WindowApplication * application = Application::GetInstance();
+		WindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return false;
 

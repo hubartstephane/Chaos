@@ -158,7 +158,7 @@ void LudumPlayer::SetDashMode(bool dash)
 	}
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::MyGLFW::GamepadState const * gpd)
+void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::GamepadState const * gpd)
 {
 	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
 

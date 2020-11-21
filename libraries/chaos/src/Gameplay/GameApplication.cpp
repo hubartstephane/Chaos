@@ -2,17 +2,17 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<MyGLFW::Window> in_main_window_class, MyGLFW::WindowParams const& in_window_params, MyGLFW::WindowHints const in_window_hints) :
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const in_window_hints) :
 		game_class(in_game_class),
 		WindowApplication(in_main_window_class, in_window_params, in_window_hints)
 	{
 		assert(game_class.IsValid());
 	}
 
-	void GameApplication::OnWindowCreated(MyGLFW::Window* window)
+	void GameApplication::OnWindowCreated(Window* window)
 	{
 		// super
-		MyGLFW::WindowApplication::OnWindowCreated(window);
+		WindowApplication::OnWindowCreated(window);
 		// set the game
 		GameWindow* game_window = auto_cast(window);
 		if (game_window != nullptr)
@@ -21,7 +21,7 @@ namespace chaos
 
 	bool GameApplication::PreMainLoop()
 	{
-		if (!MyGLFW::WindowApplication::PreMainLoop())
+		if (!WindowApplication::PreMainLoop())
 			return false;
 		// create the game
 		game = game_class.CreateInstance();
@@ -45,7 +45,7 @@ namespace chaos
 	void GameApplication::Tick(float delta_time)
 	{
 		// super
-		MyGLFW::WindowApplication::Tick(delta_time);
+		WindowApplication::Tick(delta_time);
 		// update the game
 		if (game != nullptr)
 			game->Tick(delta_time);

@@ -23,7 +23,7 @@ LudumGame::LudumGame()
 	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
-bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
 {
 	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
 		return false;
@@ -86,7 +86,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 	{
 		if (ludum_level_instance->completion_timer > 0.0f && ludum_level_instance->completion_delay > 0.0f)
 		{
-			chaos::GPUResourceManager* resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+			chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 			if (resource_manager == nullptr)
 				return;
 

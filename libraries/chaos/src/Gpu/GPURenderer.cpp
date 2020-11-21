@@ -181,7 +181,7 @@ namespace chaos
 	{
 		assert(material != nullptr);
 	
-		GPUResourceManager* gpu_resource_manager = MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+		GPUResourceManager* gpu_resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 		if (gpu_resource_manager != nullptr)
 		{
 			GPUSimpleMesh* quad_mesh = gpu_resource_manager->GetQuadMesh();

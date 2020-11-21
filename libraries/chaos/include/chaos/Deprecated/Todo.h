@@ -321,7 +321,7 @@ https://www.mapeditor.org/2020/06/20/tiled-1-4-0-released.html
 
 
 
-	bool Game::OnEnterGame(MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	bool Game::OnEnterGame(PhysicalGamepad * in_physical_gamepad)
 	{
 		ResetGameVariables(); <=== now there is a GameInstance for that, see if this can be removed
 

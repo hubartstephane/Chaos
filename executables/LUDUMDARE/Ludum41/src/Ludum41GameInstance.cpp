@@ -131,7 +131,7 @@ void LudumGameInstance::SendKeyboardButtonToChallenge(unsigned int c)
 		sequence_challenge->OnKeyboardButtonReceived((char)c);
 }
 
-void LudumGameInstance::SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadState const * in_gamepad_state)
+void LudumGameInstance::SendGamepadButtonToChallenge(chaos::GamepadState const * in_gamepad_state)
 {
 	if (!game->IsPlaying())
 		return;

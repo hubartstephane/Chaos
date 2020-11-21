@@ -10,12 +10,12 @@ namespace chaos
 
 namespace chaos
 {
-	class GameApplication : public MyGLFW::WindowApplication
+	class GameApplication : public WindowApplication
 	{
 	public:
 
 		/** constructor */
-		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<MyGLFW::Window> in_main_window_class, MyGLFW::WindowParams const& in_window_params, MyGLFW::WindowHints const in_window_hints);
+		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const in_window_hints);
 
 	protected:
 
@@ -24,7 +24,7 @@ namespace chaos
 		/** override */
 		virtual void Tick(float delta_time) override;
 		/** override */
-		virtual void OnWindowCreated(MyGLFW::Window* window) override;
+		virtual void OnWindowCreated(Window* window) override;
 
 	protected:
 

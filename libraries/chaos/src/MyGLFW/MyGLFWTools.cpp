@@ -2,14 +2,14 @@
 
 namespace chaos
 {
-	namespace MyGLFW
+	namespace GLFWTools
 	{
-		std::vector<GLFWmonitor *> GetSortedMonitors()
+		std::vector<GLFWmonitor*> GetSortedMonitors()
 		{
-			std::vector<GLFWmonitor *> result;
+			std::vector<GLFWmonitor*> result;
 
 			int monitor_count = 0;
-			GLFWmonitor ** monitors = glfwGetMonitors(&monitor_count);
+			GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
 
 			if (monitor_count > 0 && monitors != nullptr)
 			{
@@ -23,7 +23,7 @@ namespace chaos
 				auto b = result.begin();
 				auto e = result.end();
 
-				std::sort(b, e, [](GLFWmonitor * src1, GLFWmonitor * src2) {
+				std::sort(b, e, [](GLFWmonitor* src1, GLFWmonitor* src2) {
 					int x1 = 0;
 					int y1 = 0;
 					int x2 = 0;
@@ -36,12 +36,12 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * GetMonitorByIndex(int monitor_index, bool relative_to_primary) // monitor_index relative to primary monitor
+		GLFWmonitor* GetMonitorByIndex(int monitor_index, bool relative_to_primary) // monitor_index relative to primary monitor
 		{
-			GLFWmonitor * result = glfwGetPrimaryMonitor();
+			GLFWmonitor* result = glfwGetPrimaryMonitor();
 			if (monitor_index != 0)
 			{
-				std::vector<GLFWmonitor *> monitors = GetSortedMonitors();
+				std::vector<GLFWmonitor*> monitors = GetSortedMonitors();
 
 				// get the base monitor index (relative to the primary or to the most to the left)
 				int base_monitor_index = 0;
@@ -65,27 +65,27 @@ namespace chaos
 			return result;
 		}
 
-		GLFWmonitor * GetNearestMonitor(glm::ivec2 const & position)
-		{		
+		GLFWmonitor* GetNearestMonitor(glm::ivec2 const& position)
+		{
 			// get all monitors
 			int monitor_count = 0;
-			GLFWmonitor ** monitors = glfwGetMonitors(&monitor_count);
+			GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
 			if (monitors == nullptr || monitor_count == 0)
 				return nullptr;
 
-			GLFWmonitor * best_monitor   = nullptr;
+			GLFWmonitor* best_monitor = nullptr;
 			int           best_distance2 = std::numeric_limits<int>::max();
 			// 1 - search the monitor for which position is fully inside
 			// 2 - search the monitor for which position.x is inside the range
 			// 3 - search the monitor for which position.y is inside the range
 			// 4 - search the nearest position center
-			for (int step = 0 ; step < 4 ; ++step)
+			for (int step = 0; step < 4; ++step)
 			{
-				for (int i = 0 ; i < monitor_count ; ++i)
+				for (int i = 0; i < monitor_count; ++i)
 				{
-					GLFWmonitor * monitor = monitors[i];
+					GLFWmonitor* monitor = monitors[i];
 
-					GLFWvidmode const * mode = glfwGetVideoMode(monitor);
+					GLFWvidmode const* mode = glfwGetVideoMode(monitor);
 					if (mode == nullptr)
 						continue;
 
@@ -119,14 +119,14 @@ namespace chaos
 						if (best_monitor == nullptr || distance2 < best_distance2)
 						{
 							best_distance2 = distance2;
-							best_monitor   = monitor;
+							best_monitor = monitor;
 						}
 					}
-				}		
+				}
 			}
 			return best_monitor;
 		}
 
-	}; // namespace MyGLFW
+	}; // namespace GLFWTools
 
 }; // namespace chaos

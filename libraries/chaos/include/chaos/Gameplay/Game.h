@@ -4,7 +4,7 @@
 
 namespace chaos
 {
-	using PhysicalGamepadWrapper = ReferencedObjectDataWrapper<MyGLFW::PhysicalGamepad*>;
+	using PhysicalGamepadWrapper = ReferencedObjectDataWrapper<PhysicalGamepad*>;
 
 	class Game;
 
@@ -241,9 +241,9 @@ namespace chaos
 		virtual SM::StateMachineInstance * DoCreateGameStateMachineInstance(SM::StateMachine * state_machine);
 
 		/** special action on gamepad input reception */
-		virtual bool OnGamepadInput(MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		virtual bool OnGamepadInput(PhysicalGamepad * in_physical_gamepad);
 		/** called whenever a gamepad input is comming */
-		virtual bool OnPhysicalGamepadInput(MyGLFW::PhysicalGamepad * physical_gamepad);
+		virtual bool OnPhysicalGamepadInput(PhysicalGamepad * physical_gamepad);
 
 		/** called whenever the input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
@@ -323,7 +323,7 @@ namespace chaos
 		virtual bool OnLeavePause();
 
 		/** called whenever we enter in game mode */
-		virtual bool OnEnterGame(MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		virtual bool OnEnterGame(PhysicalGamepad * in_physical_gamepad);
 		/** called whenever we leave game mode */
 		virtual bool OnLeaveGame();
 
@@ -332,7 +332,7 @@ namespace chaos
 		/** require a pause or resume */
 		virtual bool RequireTogglePause();
 		/** require a game Start */
-		virtual bool RequireStartGame(MyGLFW::PhysicalGamepad * physical_gamepad);
+		virtual bool RequireStartGame(PhysicalGamepad * physical_gamepad);
 		/** require a game exit */
 		virtual bool RequireExitGame();
 		/** require a game over */
@@ -383,7 +383,7 @@ namespace chaos
 	protected:
 
 		/** the current gamepad manager */
-		shared_ptr<MyGLFW::GamepadManager> gamepad_manager;
+		shared_ptr<GamepadManager> gamepad_manager;
 
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;

@@ -1,7 +1,7 @@
 #include <chaos/Chaos.h> 
 
 
-class MyGLFWWindowOpenGLTest1;
+class WindowOpenGLTest;
 
 // ====================================================================
 
@@ -13,7 +13,7 @@ class MyEvent : public chaos::ClockEvent
 {
 public:
 
-	MyEvent(char const * in_message, int in_type, MyGLFWWindowOpenGLTest1 * in_application) : 
+	MyEvent(char const * in_message, int in_type, WindowOpenGLTest * in_application) : 
 		message(in_message), 
 		type(in_type),
 		application(in_application) {}
@@ -28,7 +28,7 @@ protected:
 
 	std::string message;
 	int type;
-	MyGLFWWindowOpenGLTest1 * application;
+	WindowOpenGLTest * application;
 };
 
 // ====================================================================
@@ -58,7 +58,7 @@ public:
 
 // ====================================================================
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
+class WindowOpenGLTest : public chaos::Window
 {
 	friend class MyEvent;
 
@@ -177,7 +177,7 @@ protected:
 		clock1 = nullptr;
 		clock2 = nullptr;
 		clock3 = nullptr;
-		chaos::MyGLFW::Window::Finalize();
+		chaos::Window::Finalize();
 	}
 
 	chaos::shared_ptr<chaos::GPUProgram> LoadProgram(boost::filesystem::path const & resources_path, char const * ps_filename, char const * vs_filename)
@@ -191,10 +191,10 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
-		chaos::MyGLFW::WindowApplication * application = chaos::Application::GetInstance();
+		chaos::WindowApplication * application = chaos::Application::GetInstance();
 		if (application == nullptr)
 			return false;
 
@@ -245,9 +245,9 @@ protected:
 		return true;
 	}
 
-	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
 		hints.toplevel = 0;
 		hints.decorated = 1;
@@ -325,7 +325,7 @@ protected:
 	{
 		if (event.IsKeyReleased(GLFW_KEY_T))
 		{
-			chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
+			chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 			if (clock != nullptr)
 				clock->Toggle();
 			return true;
@@ -346,7 +346,7 @@ protected:
 			if (GenerateEvent(clock3.get(), event, GLFW_KEY_E, "EVENT 3", EVENT_FOREVER_TEST))
 				return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(event);
 	}
 
 protected:
@@ -419,15 +419,15 @@ chaos::ClockEventTickResult MyEvent::Tick(chaos::ClockEventTickData const & tick
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::WindowParams params;
+	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 1200;
 	params.height = 500;
 	params.monitor_index = 0;
 
-	chaos::MyGLFW::WindowHints hints;
+	chaos::WindowHints hints;
 
-	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }
 
 

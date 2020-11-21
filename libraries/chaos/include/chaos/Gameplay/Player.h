@@ -51,7 +51,7 @@ namespace chaos
 		virtual bool IsDead() const;
 
 		/** try to give physical device to the player */
-		bool CapturePhysicalGamepad(MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		bool CapturePhysicalGamepad(PhysicalGamepad * in_physical_gamepad);
 
 		/** gets the pawn */
 		AutoCastable<PlayerPawn> GetPawn() { return pawn.get(); }
@@ -109,7 +109,7 @@ namespace chaos
 		virtual void HandleSpecialGamepadCommands(float delta_time);
 
 		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(float delta_time, MyGLFW::GamepadState const * gamepad_state);		
+		virtual void InternalHandleGamepadInputs(float delta_time, GamepadState const * gamepad_state);		
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 
@@ -138,7 +138,7 @@ namespace chaos
 		GameInstance* game_instance = nullptr;
 
 		/** a gamepad that can be given to the player */
-		shared_ptr<MyGLFW::Gamepad> gamepad;
+		shared_ptr<Gamepad> gamepad;
 
 		/** the player pawn */
 		shared_ptr<PlayerPawn> pawn;
@@ -172,7 +172,7 @@ namespace chaos
 	// A callback object for gamepad disconnection
 	// =============================================
 
-	class PlayerGamepadCallbacks : public MyGLFW::GamepadCallbacks
+	class PlayerGamepadCallbacks : public GamepadCallbacks
 	{
 
 	public:
@@ -180,7 +180,7 @@ namespace chaos
 		/** constructor */
 		PlayerGamepadCallbacks(Player * in_player);
 		/** override */
-		virtual bool OnGamepadDisconnected(MyGLFW::Gamepad * in_gamepad) override;
+		virtual bool OnGamepadDisconnected(Gamepad * in_gamepad) override;
 
 	protected:
 

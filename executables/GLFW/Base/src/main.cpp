@@ -5,7 +5,7 @@ uint64_t render_stamp = 0;
 
 chaos::shared_ptr<chaos::GPUFence> render_fence;
 
-class MyGLFWWindowTest : public chaos::MyGLFW::Window
+class WindowOpenGLTest : public chaos::Window
 {
 
 protected:
@@ -38,9 +38,9 @@ protected:
 		return true;
 	}
 
-	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
 	//	hints.toplevel = 1;
 		hints.decorated = 1;
@@ -60,14 +60,14 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::WindowParams params;
+	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 300;
 	params.height = 300;
 	params.monitor_index = 0;
 
-	chaos::MyGLFW::WindowHints hints;
+	chaos::WindowHints hints;
 
-	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowTest>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }
 

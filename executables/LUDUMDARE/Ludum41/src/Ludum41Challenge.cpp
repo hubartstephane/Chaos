@@ -25,7 +25,7 @@ void LudumChallenge::Show(bool visible)
 		particle_range->Show(visible);
 }
 
-void LudumChallenge::OnGamepadButtonReceived(chaos::MyGLFW::GamepadState const * in_gamepad_state)
+void LudumChallenge::OnGamepadButtonReceived(chaos::GamepadState const * in_gamepad_state)
 {
 	LudumGame * game = game_instance->GetGame();
 	if (game->IsFreeCameraMode())

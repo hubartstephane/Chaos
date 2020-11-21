@@ -1,6 +1,6 @@
 #include <chaos/Chaos.h> 
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
+class WindowOpenGLTest : public chaos::Window
 {
 
 protected:
@@ -12,7 +12,7 @@ protected:
 		if (renderpass_names.size() > 0)
 			debug_display.AddLine(chaos::StringTools::Printf("Renderpass [%s]", renderpass_names[current_renderpass].c_str()).c_str(), -1.0f);
 
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager != nullptr)
 		{
 			size_t count = resource_manager->GetRenderMaterialCount();
@@ -39,7 +39,7 @@ protected:
 
 	void ChangeMaterial(int direction)
 	{
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
 			return;
 
@@ -79,7 +79,7 @@ protected:
 			ChangeMaterial(-1);
 			return true;
 		}
-		return chaos::MyGLFW::Window::OnKeyEventImpl(event);
+		return chaos::Window::OnKeyEventImpl(event);
 	}
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override
@@ -94,7 +94,7 @@ protected:
 
 		if (current_renderpass >= renderpass_names.size())
 			return true;
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
 			return true;
 		size_t count = resource_manager->GetRenderMaterialCount();
@@ -114,7 +114,7 @@ protected:
 
 		double realtime = 0.0;
 
-		chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
+		chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 		if (clock != nullptr)
 			clock->GetClockTime();
 
@@ -146,7 +146,7 @@ protected:
 	{
 		debug_display.Finalize();
 		mesh = nullptr;
-		chaos::MyGLFW::Window::Finalize();
+		chaos::Window::Finalize();
 	}
 
 	bool InitializeDebugLogger()
@@ -174,7 +174,7 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
 		InitializeDebugLogger();
@@ -193,9 +193,9 @@ protected:
 		return true;
 	}
 
-	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
 		hints.toplevel = 0;
 		hints.decorated = 1;
@@ -226,15 +226,15 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::WindowParams params;
+	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 800;
 	params.height = 800;
 	params.monitor_index = 0;
 
-	chaos::MyGLFW::WindowHints hints;
+	chaos::WindowHints hints;
 
-	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }
 
 

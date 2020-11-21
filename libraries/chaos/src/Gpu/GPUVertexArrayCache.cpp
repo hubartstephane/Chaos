@@ -5,6 +5,9 @@ namespace chaos
 {
 	bool GPUVertexArrayCacheEntry::IsValid() const
 	{
+		// context window has been destroyed ?
+		if (context_window == nullptr)
+			return false;
 		// should always have a program 
 		if (program == nullptr)
 			return false;
@@ -30,7 +33,7 @@ namespace chaos
 		return true;
 	}
 
-	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const
+	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const
 	{
 		// early exit
 		if (program == nullptr)
@@ -66,7 +69,7 @@ namespace chaos
 			else
 			{				
 				// check whether this is expected entry
-				if (result == nullptr && entry.program == program && entry.vertex_buffer == vertex_buffer && entry.index_buffer == index_buffer)
+				if (result == nullptr && entry.program == program && entry.vertex_buffer == vertex_buffer && entry.index_buffer == index_buffer && entry.context_window == renderer->GetWindow())
 				{
 					result = entry.vertex_array.get();
 					if (!purge && result != nullptr)
@@ -79,8 +82,9 @@ namespace chaos
 		return result;
 	}
 
-	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset)
+	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPURenderer * renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset)
 	{
+		assert(renderer != nullptr);
         assert(declaration != nullptr);
 
 		// early exit
@@ -92,7 +96,7 @@ namespace chaos
 			return nullptr;
 
 		// find exisiting data
-		GPUVertexArray const * result = FindVertexArray(program, vertex_buffer, index_buffer);
+		GPUVertexArray const * result = FindVertexArray(renderer, program, vertex_buffer, index_buffer);
 		if (result != nullptr)
 			return result;
 
@@ -127,6 +131,7 @@ namespace chaos
 		new_entry.program_id        = program->GetResourceID();
 		new_entry.vertex_buffer_id  = (vertex_buffer != nullptr)? vertex_buffer->GetResourceID() : 0;
 		new_entry.index_buffer_id   = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
+		new_entry.context_window    = renderer->GetWindow();
 
 		entries.push_back(std::move(new_entry));
 

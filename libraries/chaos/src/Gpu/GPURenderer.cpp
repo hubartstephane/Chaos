@@ -3,6 +3,12 @@
 namespace chaos
 {
 
+	GPURenderer::GPURenderer(Window* in_window) :
+		window(in_window)
+	{
+		assert(in_window != nullptr);
+	}
+
 	bool GPURenderer::PushFramebufferRenderContext(GPUFramebuffer * framebuffer, bool generate_mipmaps)
 	{
 #if _DEBUG 

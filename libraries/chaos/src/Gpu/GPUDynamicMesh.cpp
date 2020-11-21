@@ -39,7 +39,7 @@ namespace chaos
             GPUProgram const * program = final_material->UseMaterial(uniform_provider, render_params);
             if (program == nullptr)
                 continue;
-            GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), 0);
+            GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), 0);
             if (vertex_array == nullptr)
                 continue;
 

@@ -39,6 +39,16 @@ namespace chaos
 			if (game_window != nullptr)
 				game_window->SetGame(game.get());
 		}
+
+
+
+
+		CreateTypedWindow(main_window_class, window_params, window_hints);
+
+
+
+
+
 		return true;
 	}
 

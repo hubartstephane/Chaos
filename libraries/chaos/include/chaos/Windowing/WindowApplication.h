@@ -135,7 +135,7 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 		/** create a window */
-		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params, WindowHints const& hints);
+		Window* CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params = {}, WindowHints const& hints = {});
 
 		/** called after window creation */
 		virtual void OnWindowCreated(Window* window);

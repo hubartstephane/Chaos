@@ -110,7 +110,7 @@ namespace chaos
 		// mouse position
 		mouse_position.x = mouse_position.y = std::numeric_limits<float>::max();
 		// create the renderer
-		renderer = new GPURenderer;
+		renderer = new GPURenderer(this);
 	}
 
 	Window::~Window()

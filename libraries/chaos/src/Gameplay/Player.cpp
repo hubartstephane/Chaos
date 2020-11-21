@@ -33,7 +33,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Player::CapturePhysicalGamepad(MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	bool Player::CapturePhysicalGamepad(PhysicalGamepad * in_physical_gamepad)
 	{
 		// if we already have a device, ignore
 		if (gamepad != nullptr)
@@ -61,7 +61,7 @@ namespace chaos
 		if (gamepad == nullptr)
 			return;
 		// get the gamepad data
-		MyGLFW::GamepadState const* gamepad_state = gamepad->GetGamepadState();
+		GamepadState const* gamepad_state = gamepad->GetGamepadState();
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
@@ -159,7 +159,7 @@ namespace chaos
 		if (gamepad == nullptr)
 			return;
 		// get the gamepad data
-		MyGLFW::GamepadState const * gamepad_state = gamepad->GetGamepadState();
+		GamepadState const * gamepad_state = gamepad->GetGamepadState();
 		if (gamepad_state == nullptr)
 			return;
 		// change the application mode
@@ -212,14 +212,14 @@ namespace chaos
 		if (gamepad == nullptr)
 			return;
 		// get the gamepad data
-		MyGLFW::GamepadState const * gamepad_state = gamepad->GetGamepadState();
+		GamepadState const * gamepad_state = gamepad->GetGamepadState();
 		if (gamepad_state == nullptr)
 			return;
 		// Handle the inputs as we want
 		InternalHandleGamepadInputs(delta_time, gamepad_state);
 	}
 
-	void Player::InternalHandleGamepadInputs(float delta_time, MyGLFW::GamepadState const * gamepad_state)
+	void Player::InternalHandleGamepadInputs(float delta_time, GamepadState const * gamepad_state)
 	{
 
 	}
@@ -335,7 +335,7 @@ namespace chaos
 	{
 		// force feedback effect
 		if (gamepad != nullptr)
-			gamepad->AddForceFeedbackEffect(new MyGLFW::DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
+			gamepad->AddForceFeedbackEffect(new DefaultForceFeedbackEffect(0.09f, 1.0f, 1.0f));
 		// camera effect
 		Camera* camera = GetLevelInstance()->GetCamera(0);
 		if (camera != nullptr)
@@ -359,7 +359,7 @@ namespace chaos
         // keyboard input
         if (keyboard_buttons != nullptr)
         {
-			MyGLFW::WindowApplication const* application = Application::GetInstance();
+			WindowApplication const* application = Application::GetInstance();
 			if (application != nullptr)
 			{
 				for (int i = 0; keyboard_buttons[i] >= 0; ++i)
@@ -398,7 +398,7 @@ namespace chaos
 		assert(in_player != nullptr);
 	}
 
-	bool PlayerGamepadCallbacks::OnGamepadDisconnected(MyGLFW::Gamepad * in_gamepad)
+	bool PlayerGamepadCallbacks::OnGamepadDisconnected(Gamepad * in_gamepad)
 	{
 		player->OnGamepadDisconnected();
 		return true;

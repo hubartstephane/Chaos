@@ -264,7 +264,7 @@ namespace chaos
 		if (material_name != nullptr && material_name[0] != 0) // unamed material ?
 		{
 			// get the resource manager
-			GPUResourceManager* resource_manager = MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+			GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 			if (resource_manager != nullptr)
 			{
 				// search declared material

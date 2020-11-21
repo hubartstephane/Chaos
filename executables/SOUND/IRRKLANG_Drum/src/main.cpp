@@ -1,6 +1,6 @@
 #include <chaos/Chaos.h> 
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
+class WindowOpenGLTest : public chaos::Window
 {
 
 protected:
@@ -36,7 +36,7 @@ protected:
 		engine = nullptr;
 		sound_source1 = nullptr;
 		sound_source2 = nullptr;
-		chaos::MyGLFW::Window::Finalize();
+		chaos::Window::Finalize();
 	}
 
 	virtual bool Tick(float delta_time) override
@@ -80,7 +80,7 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
 		chaos::Application * application = chaos::Application::GetInstance();
@@ -125,9 +125,9 @@ protected:
 		return true;
 	}
 
-	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 		hints.toplevel = 0;
 		hints.decorated = 1;
 	}
@@ -143,15 +143,15 @@ protected:
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::WindowParams params;
+	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;
 	params.height = 500;
 	params.monitor_index = 0;
 
-	chaos::MyGLFW::WindowHints hints;
+	chaos::WindowHints hints;
 
-	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }
 
 

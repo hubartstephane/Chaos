@@ -14,12 +14,12 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnCharEvent(c))
 				return true;
-		return MyGLFW::Window::OnCharEventImpl(c);
+		return Window::OnCharEventImpl(c);
 	}
 
 	bool GameWindow::OnKeyEventImpl(KeyEvent const& event)
 	{
-		if (MyGLFW::Window::OnKeyEventImpl(event))
+		if (Window::OnKeyEventImpl(event))
 			return true;
 
 
@@ -34,7 +34,7 @@ namespace chaos
 		return false;
 		 
 
-		return MyGLFW::Window::OnKeyEventImpl(event);
+		return Window::OnKeyEventImpl(event);
 	}
 
 	bool GameWindow::OnMouseButtonImpl(int button, int action, int modifier)
@@ -42,7 +42,7 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnMouseButton(button, action, modifier))
 				return true;
-		return MyGLFW::Window::OnMouseButtonImpl(button, action, modifier);
+		return Window::OnMouseButtonImpl(button, action, modifier);
 	}
 
 	bool GameWindow::OnMouseMoveImpl(double x, double y)
@@ -50,14 +50,14 @@ namespace chaos
 		if (game != nullptr)
 			if (game->OnMouseMove(x, y))
 				return true;
-		return MyGLFW::Window::OnMouseMoveImpl(x, y);
+		return Window::OnMouseMoveImpl(x, y);
 	}
 
 	box2 GameWindow::GetRequiredViewport(glm::ivec2 const & size) const
 	{
 		if (game != nullptr)
 			return game->GetRequiredViewport(size);
-		return MyGLFW::Window::GetRequiredViewport(size);
+		return Window::GetRequiredViewport(size);
 	}
 
 	bool GameWindow::OnDraw(GPURenderer * renderer, box2 const & viewport, glm::ivec2 window_size)
@@ -84,9 +84,9 @@ namespace chaos
 
 	CHAOS_HELP_TEXT(CMD, "-UnlimitedFPS");
 
-	void GameWindow::TweakHints(MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
+	void GameWindow::TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
 	{
-		MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		Window::TweakHints(hints, monitor, pseudo_fullscreen);
 #if !_DEBUG
 		if (Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
 			hints.unlimited_fps = true;

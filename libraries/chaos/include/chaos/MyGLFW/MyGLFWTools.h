@@ -5,7 +5,7 @@
 
 namespace chaos
 {
-	namespace MyGLFW
+	namespace GLFWTools
 	{
 		/** Get a list of all monitors sorted left to right */
 		std::vector<GLFWmonitor*> GetSortedMonitors();
@@ -14,7 +14,7 @@ namespace chaos
 		/** Get monitor nearest the given position (for example center of a window) */
 		GLFWmonitor* GetNearestMonitor(glm::ivec2 const& position);
 
-	}; // namespace MyGLFW
+	}; // namespace GLFWTools
 
 }; // namespace chaos
 

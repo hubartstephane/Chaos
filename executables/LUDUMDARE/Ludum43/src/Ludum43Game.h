@@ -49,7 +49,7 @@ public:
 protected:
 
 	/** override */
-	virtual bool OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad) override;
+	virtual bool OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad) override;
 
 	/** initialize the game variables */
 	virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload) override;

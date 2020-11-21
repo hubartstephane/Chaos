@@ -1,34 +1,34 @@
 
 #include <chaos/Chaos.h> 
 
-class TestGamepadCallbacks : public chaos::MyGLFW::GamepadCallbacks
+class TestGamepadCallbacks : public chaos::GamepadCallbacks
 {
 public:
 
   TestGamepadCallbacks(chaos::GLDebugOnScreenDisplay * in_debug_display) : debug_display(in_debug_display) {}
 
-  virtual bool AcceptPhysicalDevice(chaos::MyGLFW::PhysicalGamepad * physical_device) override
+  virtual bool AcceptPhysicalDevice(chaos::PhysicalGamepad * physical_device) override
   {
 	  if (!physical_device->IsButtonPressed(chaos::XBoxButton::BUTTON_A))
 		  return false;
 	  return true;
   }
 
-  virtual bool OnGamepadConnected(chaos::MyGLFW::Gamepad * gamepad) override
+  virtual bool OnGamepadConnected(chaos::Gamepad * gamepad) override
   {
     if (debug_display != nullptr)
       debug_display->AddLine("TestGamepadCallbacks::OnGamepadConnected");
     return true;
   }
 
-  virtual bool OnGamepadDisconnected(chaos::MyGLFW::Gamepad * gamepad) override
+  virtual bool OnGamepadDisconnected(chaos::Gamepad * gamepad) override
   {
     if (debug_display != nullptr)
       debug_display->AddLine("TestGamepadCallbacks::OnGamepadDisconnected");
     return true;
   }
 
-  virtual void OnGamepadStateUpdated(class chaos::MyGLFW::GamepadState & gamepad_state) override
+  virtual void OnGamepadStateUpdated(class chaos::GamepadState & gamepad_state) override
   {
   //  if (gamepad_state.IsButtonPressed(chaos::XBoxButton::BUTTON_Y))
     {
@@ -46,7 +46,7 @@ protected:
 
 
 
-class MyGamepadManager : public chaos::MyGLFW::GamepadManager
+class MyGamepadManager : public chaos::GamepadManager
 {
 public:
 
@@ -54,7 +54,7 @@ public:
 
 protected:
 
-	virtual bool DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override
+	virtual bool DoPoolGamepad(chaos::PhysicalGamepad * physical_gamepad) override
 	{
 		return true;
 	}
@@ -64,7 +64,7 @@ protected:
 	chaos::GLDebugOnScreenDisplay * debug_display = nullptr;
 };
 
-class MyGLFWWindowGamepadTest : public chaos::MyGLFW::Window
+class WindowOpenGLTest : public chaos::Window
 {
 
 protected:
@@ -87,12 +87,12 @@ protected:
 		main_gamepad = nullptr;
     gamepad_manager = nullptr;
 		debug_display.Finalize();
-		chaos::MyGLFW::Window::Finalize();
+		chaos::Window::Finalize();
 	}
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
 		chaos::Application * application = chaos::Application::GetInstance();
@@ -120,9 +120,9 @@ protected:
 		return true;
 	}
 
-	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 
 		hints.toplevel  = 1;
 		hints.decorated = 1;
@@ -206,19 +206,19 @@ protected:
 
 	chaos::GLDebugOnScreenDisplay debug_display;
 
-	chaos::shared_ptr<chaos::MyGLFW::Gamepad> main_gamepad;
+	chaos::shared_ptr<chaos::Gamepad> main_gamepad;
 };
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::WindowParams params;
+	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 700;
 	params.height = 700;
 	params.monitor_index = 0;
 
-	chaos::MyGLFW::WindowHints hints;
+	chaos::WindowHints hints;
 
-	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowGamepadTest>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }
 

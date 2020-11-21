@@ -15,7 +15,7 @@ namespace chaos
 		return result;
 	}
 
-	bool GameInstance::OnGamepadInput(MyGLFW::PhysicalGamepad* in_physical_gamepad)
+	bool GameInstance::OnGamepadInput(PhysicalGamepad* in_physical_gamepad)
 	{
 		assert(in_physical_gamepad != nullptr);
 		// try to give the gamepad to a player
@@ -65,7 +65,7 @@ namespace chaos
 		return false;
 	}
 
-	Player * GameInstance::CreatePlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	Player * GameInstance::CreatePlayer(PhysicalGamepad * in_physical_gamepad)
 	{
 		// ensure we can create a new player
 		size_t count = players.size();
@@ -101,7 +101,7 @@ namespace chaos
 		return result;
 	}
 
-	Player * GameInstance::GivePhysicalGamepadToPlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad)
+	Player * GameInstance::GivePhysicalGamepadToPlayer(PhysicalGamepad * in_physical_gamepad)
 	{
 		size_t count = players.size();
 		for (size_t i = 0; i < count; ++i)

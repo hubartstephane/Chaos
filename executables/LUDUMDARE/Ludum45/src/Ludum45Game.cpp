@@ -21,7 +21,7 @@ LudumGame::LudumGame()
 	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
-bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
 {
 	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
 		return false;
@@ -150,7 +150,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 	if (ludum_player != nullptr && ludum_player->brightsideoflife)
 	{
-		chaos::GPUResourceManager * resource_manager = chaos::MyGLFW::WindowApplication::GetGPUResourceManagerInstance();
+		chaos::GPUResourceManager * resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager == nullptr)
 			return;
 		chaos::GPURenderMaterial * postprocess_material = resource_manager->FindRenderMaterial("brightsideoflife");

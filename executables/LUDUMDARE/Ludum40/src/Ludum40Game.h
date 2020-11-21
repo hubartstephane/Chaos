@@ -7,7 +7,7 @@
 
 // ======================================================================================
 
-class MyGamepadManager : public chaos::MyGLFW::GamepadManager
+class MyGamepadManager : public chaos::GamepadManager
 {
 public:
 
@@ -15,7 +15,7 @@ public:
 
 protected:
 
-	virtual bool DoPoolGamepad(chaos::MyGLFW::PhysicalGamepad * physical_gamepad) override;
+	virtual bool DoPoolGamepad(chaos::PhysicalGamepad * physical_gamepad) override;
 
 protected:
 
@@ -89,7 +89,7 @@ protected:
 
 	void OnGameStarted();
 
-	bool OnPhysicalGamepadInput(chaos::MyGLFW::PhysicalGamepad * physical_gamepad);
+	bool OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad);
 
 	class SpriteLayer * FindSpriteLayer(int layer);
 

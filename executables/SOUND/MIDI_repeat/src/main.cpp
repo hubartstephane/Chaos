@@ -6,7 +6,7 @@ class MIDITimeoutEvent : public chaos::ClockEvent
 {
 public:
 
-	MIDITimeoutEvent(class MyGLFWWindowOpenGLTest1 * in_application, int in_value) : application(in_application), value(in_value){}
+	MIDITimeoutEvent(class WindowOpenGLTest * in_application, int in_value) : application(in_application), value(in_value){}
 
 	virtual ~MIDITimeoutEvent();
 
@@ -16,7 +16,7 @@ public:
 
 protected:
 
-	class MyGLFWWindowOpenGLTest1 * application;
+	class WindowOpenGLTest * application;
 
 	int value;
 };
@@ -27,7 +27,7 @@ class MIDICommandEvent : public chaos::ClockEvent
 {
 public:
 
-	MIDICommandEvent(class MyGLFWWindowOpenGLTest1 * in_application, chaos::MIDICommand const & in_command) : application(in_application) , command(in_command){}
+	MIDICommandEvent(class WindowOpenGLTest * in_application, chaos::MIDICommand const & in_command) : application(in_application) , command(in_command){}
 
 	virtual ~MIDICommandEvent();
 
@@ -37,7 +37,7 @@ public:
 
 protected:
 
-	class MyGLFWWindowOpenGLTest1 * application;
+	class WindowOpenGLTest * application;
 
 	chaos::MIDICommand command;
 };
@@ -46,7 +46,7 @@ protected:
 // ================================================================
 
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
+class WindowOpenGLTest : public chaos::Window
 {
 	friend class MIDICommandEvent;
 	friend class MIDITimeoutEvent;
@@ -71,7 +71,7 @@ protected:
 	
 	static void CALLBACK OnMidiInEvent(HMIDIIN hMidiIn, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
 	{
-		MyGLFWWindowOpenGLTest1 * self = (MyGLFWWindowOpenGLTest1 *)dwInstance;
+		WindowOpenGLTest * self = (WindowOpenGLTest *)dwInstance;
 		self->OnMidiInEventImpl(hMidiIn, wMsg, dwParam1, dwParam2);
 	}
 
@@ -217,10 +217,10 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{	
-		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
-		chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
+		chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 		if (clock == nullptr)
       return false;
 
@@ -260,13 +260,13 @@ protected:
 
 		track_clock = nullptr;
 		management_clock = nullptr;
-		chaos::MyGLFW::Window::Finalize();
+		chaos::Window::Finalize();
 	}
 
 
-	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 		hints.toplevel = 0;
 		hints.decorated = 1;
 	}
@@ -333,15 +333,15 @@ chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData con
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::WindowParams params;
+	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;
 	params.height = 500;
 	params.monitor_index = 0;
 
-	chaos::MyGLFW::WindowHints hints;
+	chaos::WindowHints hints;
 
-	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }
 
 

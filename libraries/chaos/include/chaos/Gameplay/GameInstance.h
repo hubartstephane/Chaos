@@ -26,10 +26,10 @@ namespace chaos
 		CHAOS_DECLARE_GAMEPLAY_GETTERS();
 
 		/** create one player and give it the gamepad provided if any */
-		Player * CreatePlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		Player * CreatePlayer(PhysicalGamepad * in_physical_gamepad);
 
 		/** try to give a physical to any player (returns the player) */
-		Player * GivePhysicalGamepadToPlayer(MyGLFW::PhysicalGamepad * in_physical_gamepad);
+		Player * GivePhysicalGamepadToPlayer(PhysicalGamepad * in_physical_gamepad);
 
 		/** get the best score among players */
 		int GetBestPlayerScore() const;
@@ -87,7 +87,7 @@ namespace chaos
 		virtual bool DoTick(float delta_time) override;
 
 		/** handle an uncatched gamepad input incomming */
-		virtual bool OnGamepadInput(MyGLFW::PhysicalGamepad* in_physical_gamepad); 
+		virtual bool OnGamepadInput(PhysicalGamepad* in_physical_gamepad); 
 		/** handle keyboard input */
 		virtual bool OnKeyEventImpl(KeyEvent const & event) override;
 		/** handle keyboard input */

@@ -13,7 +13,7 @@ public:
 	virtual ~LudumChallenge();
 
 	/** try to catch button input */
-	void OnGamepadButtonReceived(chaos::MyGLFW::GamepadState const * in_gamepad_state);
+	void OnGamepadButtonReceived(chaos::GamepadState const * in_gamepad_state);
 	/** try to catch keyboard input */
 	void OnKeyboardButtonReceived(char c);
 

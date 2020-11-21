@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	bool GameGamepadManager::DoPoolGamepad(MyGLFW::PhysicalGamepad * physical_gamepad)
+	bool GameGamepadManager::DoPoolGamepad(PhysicalGamepad * physical_gamepad)
 	{
 		if (game != nullptr)
 			return game->OnPhysicalGamepadInput(physical_gamepad);

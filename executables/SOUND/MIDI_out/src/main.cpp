@@ -6,18 +6,18 @@ class MIDIPlaySoundEvent : public chaos::ClockEvent
 {
 public:
 
-	MIDIPlaySoundEvent(class MyGLFWWindowOpenGLTest1 * in_application) : application(in_application) {}
+	MIDIPlaySoundEvent(class WindowOpenGLTest * in_application) : application(in_application) {}
 
 	virtual chaos::ClockEventTickResult Tick(chaos::ClockEventTickData const & tick_data) override;
 
 protected:
 
-	class MyGLFWWindowOpenGLTest1 * application;
+	class WindowOpenGLTest * application;
 };
 
 // ================================================================
 
-class MyGLFWWindowOpenGLTest1 : public chaos::MyGLFW::Window
+class WindowOpenGLTest : public chaos::Window
 {
 	friend class MIDIPlaySoundEvent;
 
@@ -63,7 +63,7 @@ protected:
 
 		chaos::ClockEventInfo event_info = chaos::ClockEventInfo(0.0, 0.0, chaos::ClockEventRepetitionInfo::InfiniteRepetition(0.5));
 
-		chaos::Clock * clock = chaos::MyGLFW::WindowApplication::GetMainClockInstance();
+		chaos::Clock * clock = chaos::WindowApplication::GetMainClockInstance();
 		if (clock != nullptr)
 			clock->AddPendingEvent(new MIDIPlaySoundEvent(this), event_info, false);
 
@@ -72,7 +72,7 @@ protected:
 
 	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override
 	{
-		if (!chaos::MyGLFW::Window::InitializeFromConfiguration(config, config_path))
+		if (!chaos::Window::InitializeFromConfiguration(config, config_path))
 			return false;
 
 		if (!InitializeMIDIOut())
@@ -90,12 +90,12 @@ protected:
 	virtual void Finalize() override
 	{
 		FinalizeMIDIOut();
-		chaos::MyGLFW::Window::Finalize();
+		chaos::Window::Finalize();
 	}
 
-	virtual void TweakHints(chaos::MyGLFW::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
+	virtual void TweakHints(chaos::WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override
 	{
-		chaos::MyGLFW::Window::TweakHints(hints, monitor, pseudo_fullscreen);
+		chaos::Window::TweakHints(hints, monitor, pseudo_fullscreen);
 		hints.toplevel = 0;
 		hints.decorated = 1;
 	}
@@ -135,15 +135,15 @@ chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData c
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-	chaos::MyGLFW::WindowParams params;
+	chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;
 	params.height = 500;
 	params.monitor_index = 0;
 
-	chaos::MyGLFW::WindowHints hints;
+	chaos::WindowHints hints;
 
-	return chaos::MyGLFW::RunWindowApplication<MyGLFWWindowOpenGLTest1>(argc, argv, env, params, hints);
+	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }
 
 

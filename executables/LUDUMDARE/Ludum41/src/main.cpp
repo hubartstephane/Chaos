@@ -4,7 +4,7 @@
 
 int CHAOS_MAIN(int argc, char ** argv, char ** env)
 {
-    chaos::MyGLFW::WindowParams params;
+    chaos::WindowParams params;
 	params.monitor = nullptr;
 	params.width = 500;
 	params.height = 500;

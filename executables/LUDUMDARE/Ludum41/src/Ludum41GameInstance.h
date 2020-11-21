@@ -77,7 +77,7 @@ public:
 	void TickBallSplit(float delta_time);
 
 	/** test whether a button is being pressed and whether it correspond to the current challenge */
-	void SendGamepadButtonToChallenge(chaos::MyGLFW::GamepadState const * in_gamepad_state);
+	void SendGamepadButtonToChallenge(chaos::GamepadState const * in_gamepad_state);
 	/** test whether a key is being pressed and whether it correspond to the current challenge */
 	void SendKeyboardButtonToChallenge(unsigned int C);
 	/** called whenever a challenge is completed */

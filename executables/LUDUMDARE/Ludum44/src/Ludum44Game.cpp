@@ -21,7 +21,7 @@ LudumGame::LudumGame()
 	game_instance_class = LudumGameInstance::GetStaticClass();
 }
 
-bool LudumGame::OnEnterGame(chaos::MyGLFW::PhysicalGamepad * in_physical_gamepad)
+bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
 {
 	if (!chaos::Game::OnEnterGame(in_physical_gamepad))
 		return false;

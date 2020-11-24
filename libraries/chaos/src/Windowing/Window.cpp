@@ -122,12 +122,14 @@ namespace chaos
 	{
 		if (glfw_window != nullptr)
 		{
+			if (glfwGetCurrentContext() == glfw_window)
+				glfwMakeContextCurrent(nullptr);			
 			glfwDestroyWindow(glfw_window);
 			glfw_window = nullptr;
 		}
 	}
 
-	bool Window::CreateGLFWWindow(WindowParams params, WindowHints hints, Window* share_context_window)
+	bool Window::CreateGLFWWindow(WindowParams params, WindowHints hints, GLFWwindow* share_context_window)
 	{
 		// resource already existing
 		if (glfw_window != nullptr)
@@ -184,7 +186,7 @@ namespace chaos
 			params.title = "";
 
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-		GLFWwindow* glfw_share_context_window = (share_context_window != nullptr) ? share_context_window->GetGLFWHandler() : nullptr;
+		GLFWwindow* glfw_share_context_window = WindowApplication::GetSharedGLContext();
 
 		glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr, glfw_share_context_window);
 		if (glfw_window == nullptr)
@@ -270,6 +272,7 @@ namespace chaos
 		// cannot tick a non existing window
 		if (glfw_window == nullptr)
 			return;
+		glfwMakeContextCurrent(glfw_window);
 		// tick the renderer: it has metrics that rely on the real frame_rate (not modified one due to some of our tweaks)
 		if (renderer != nullptr)
 			renderer->Tick(real_delta_time);
@@ -325,36 +328,51 @@ namespace chaos
 	{
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnIconifiedStateChange(value == GL_TRUE);
+		}
 	}
 
 	void Window::DoOnFocusStateChange(GLFWwindow* in_glfw_window, int value)
 	{
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnFocusStateChange(value == GL_TRUE);
+		}
 	}
 
 	void Window::DoOnWindowClosed(GLFWwindow* in_glfw_window)
 	{
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			if (my_window->OnWindowClosed())
 				my_window->RequireWindowClosure();
+		}
 	}
 
 	void Window::DoOnWindowResize(GLFWwindow* in_glfw_window, int width, int height)
 	{
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnWindowResize(glm::ivec2(width, height));
+		}
 	}
 
 	void Window::DoOnDraw(GLFWwindow* in_glfw_window)
 	{
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnWindowDraw();
+		}
 	}
 
 	void Window::DoOnMouseMove(GLFWwindow* in_glfw_window, double x, double y)
@@ -364,6 +382,8 @@ namespace chaos
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
 		{
+			glfwMakeContextCurrent(in_glfw_window);
+
 			if (!my_window->IsMousePositionValid())
 				my_window->OnMouseMove(0.0, 0.0);
 			else
@@ -380,7 +400,10 @@ namespace chaos
 
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnMouseButton(button, action, modifier);
+		}
 	}
 
 	void Window::DoOnMouseWheel(GLFWwindow* in_glfw_window, double scroll_x, double scroll_y)
@@ -389,7 +412,10 @@ namespace chaos
 
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnMouseWheel(scroll_x, scroll_y);
+		}
 	}
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int key, int scan_code, int action, int modifier)
@@ -410,7 +436,10 @@ namespace chaos
 
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnKeyEvent(event);
+		}
 	}
 
 	void Window::DoOnCharEvent(GLFWwindow* in_glfw_window, unsigned int c)
@@ -419,22 +448,26 @@ namespace chaos
 
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnCharEvent(c);
+		}
 	}
 
 	void Window::DoOnDropFile(GLFWwindow* in_glfw_window, int count, char const** paths)
 	{
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
+		{
+			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnDropFile(count, paths);
+		}
 	}
 
 	void Window::OnWindowDraw()
 	{
 		if (glfw_window != nullptr && renderer != nullptr)
 		{
-			glfwMakeContextCurrent(glfw_window);
-
 			// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
 			int width = 0;
 			int height = 0;

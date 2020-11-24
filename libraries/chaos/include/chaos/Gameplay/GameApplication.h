@@ -20,7 +20,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool PreMainLoop() override;
+		virtual bool PreMessageLoop() override;
 		/** override */
 		virtual void Tick(float delta_time) override;
 		/** override */

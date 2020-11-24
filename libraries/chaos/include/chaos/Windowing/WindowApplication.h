@@ -64,7 +64,6 @@ namespace chaos
 		/** getter of the GPU resource manager */
 		static GPUResourceManager const* GetGPUResourceManagerConstInstance();
 
-
 		/** gets the main clock */
 		Clock* GetMainClock() { return main_clock.get(); }
 		/** gets the main clock */
@@ -93,12 +92,18 @@ namespace chaos
 		/** change the state of a keyboard key */
 		bool GetKeyState(int key, bool previous_frame = false) const;
 
+		/** get the OpenGL context, call the function, restore previous context after */
+		static void WithSharedGLContext(std::function<void()> func);
+
+		/** get the OpenGL main context */
+		static GLFWwindow* GetSharedGLContext();
+
 	protected:
 
 		/** Main method */
 		virtual bool Main() override;
 		/** the possibility to have final initialization before the main loop is run */
-		virtual bool PreMainLoop();
+		virtual bool PreMessageLoop();
 		/** Window Loop */
 		virtual bool MessageLoop();
 
@@ -170,6 +175,9 @@ namespace chaos
 		float max_tick_duration = 0.0f;
 		/** whether the delta time is forced to 0 for one frame (usefull for long operations like screen capture or GPU resource reloading) */
 		bool forced_zero_tick_duration = false;
+
+		/** an invisible window that is used as a OpenGL context for all others */
+		GLFWwindow* shared_context = nullptr;
 	};
 
 	/**

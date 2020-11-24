@@ -19,9 +19,9 @@ namespace chaos
 			game_window->SetGame(game.get());
 	}
 
-	bool GameApplication::PreMainLoop()
+	bool GameApplication::PreMessageLoop()
 	{
-		if (!WindowApplication::PreMainLoop())
+		if (!WindowApplication::PreMessageLoop())
 			return false;
 		// create the game
 		game = game_class.CreateInstance();
@@ -39,16 +39,6 @@ namespace chaos
 			if (game_window != nullptr)
 				game_window->SetGame(game.get());
 		}
-
-
-
-
-		CreateTypedWindow(main_window_class, window_params, window_hints);
-
-
-
-
-
 		return true;
 	}
 

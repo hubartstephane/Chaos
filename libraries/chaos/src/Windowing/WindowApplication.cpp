@@ -45,11 +45,9 @@ namespace chaos
 
 	bool WindowApplication::MessageLoop()
 	{
-		GLFWwindow* glfw_window = main_window->GetGLFWHandler();
-
 		double t1 = glfwGetTime();
 
-		while (!main_window->ShouldClose())
+		while(windows.size() > 0)
 		{
 			glfwPollEvents();
 
@@ -71,6 +69,23 @@ namespace chaos
 			}
 			// internal tick 
 			Tick(delta_time);
+
+			// destroy windows that mean to be
+			for (size_t i = windows.size(); i > 0; --i)
+			{
+				Window* window = windows[i - 1].get();
+				if (window != nullptr && window->ShouldClose())
+				{
+					// destroy the internal GLFW window
+					window->DestroyGLFWWindow();
+					// remove the window for the list
+					windows[i - 1] = windows[windows.size() - 1];
+					windows.pop_back();
+					// check whether it was the main window
+					if (window == main_window)
+						main_window = nullptr;
+				}
+			}
 			// tick the windows
 			for (auto& window : windows)
 				window->MainTick(delta_time, real_delta_time);
@@ -87,7 +102,7 @@ namespace chaos
 		if (result == nullptr)
 			return false;
 		// create the GLFW resource
-		if (!result->CreateGLFWWindow(params, hints, main_window.get())) // this should work even for the main window creation itself
+		if (!result->CreateGLFWWindow(params, hints, shared_context))
 		{
 			delete(result);
 			return nullptr;
@@ -113,21 +128,12 @@ namespace chaos
 			LoadFromJSON(glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
-		// the main window params & hints (work on copy)
-		WindowParams params = window_params;
-		WindowHints  hints = window_hints;
-
-		nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
-		if (window_configuration != nullptr)
-		{
-			LoadFromJSON(*window_configuration, params);
-			LoadFromJSON(*window_configuration, hints);
-		}
-
-		// create the main window
-		main_window = CreateTypedWindow(main_window_class, params, hints);
-		if (main_window == nullptr)
+		// create a hidden window whose purpose is to provide a sharable context for all others
+		glfwWindowHint(GLFW_VISIBLE, 0);
+		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
+		if (shared_context == nullptr)
 			return false;
+		glfwMakeContextCurrent(shared_context); // necessary for glewInit()
 
 		// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
 		//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
@@ -149,11 +155,26 @@ namespace chaos
 		if (!InitializeGPUResourceManager())
 			return false;
 
-		// XXX : initialize the window (once GPUResourceManager is fully initialized)
+		// the main window params & hints (work on copy)
+		WindowParams params = window_params;
+		WindowHints  hints = window_hints;
+
+		nlohmann::json const* window_configuration = JSONTools::GetStructure(configuration, "window");
+		if (window_configuration != nullptr)
+		{
+			LoadFromJSON(*window_configuration, params);
+			LoadFromJSON(*window_configuration, hints);
+		}
+
+		// create the main window
+		main_window = CreateTypedWindow(main_window_class, params, hints);
+		if (main_window == nullptr)
+			return false;
+		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
 		main_window->InitializeFromConfiguration(configuration, configuration_path);
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
-		if (!PreMainLoop())
+		if (!PreMessageLoop())
 			return false;
 		// the main loop
 		MessageLoop();
@@ -161,7 +182,7 @@ namespace chaos
 		return true;
 	}
 
-	bool WindowApplication::PreMainLoop()
+	bool WindowApplication::PreMessageLoop()
 	{
 		return true;
 	}
@@ -440,6 +461,32 @@ namespace chaos
 	{
 		for (ButtonState& button : keyboard_state)
 			button.UpdateSameValueTimer(delta_time);
+	}
+
+	GLFWwindow* WindowApplication::GetSharedGLContext()
+	{
+		WindowApplication* application = Application::GetInstance();
+		if (application != nullptr)
+		{
+			return application->shared_context;
+		}		
+		return nullptr;
+	}
+
+	void WindowApplication::WithSharedGLContext(std::function<void()> func)
+	{
+		GLFWwindow* shared_context = GetSharedGLContext();
+		if (shared_context == nullptr)
+		{
+			func();
+		}
+		else
+		{
+			GLFWwindow* previous_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(shared_context);
+			func();
+			glfwMakeContextCurrent(previous_context);
+		}
 	}
 
 }; // namespace chaos

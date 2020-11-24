@@ -78,6 +78,7 @@ namespace chaos
 			LogTools::Error("Shader compilation failure : %s", log_buffer);
 		}
 		glDeleteShader(result);
+		
 		return 0;
 	}
 

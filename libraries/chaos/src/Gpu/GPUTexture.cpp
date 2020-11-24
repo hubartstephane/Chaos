@@ -19,6 +19,7 @@ namespace chaos
 			return false;
 		texture_description = TextureDescription();
 		glDeleteTextures(1, &texture_id);
+		
 		texture_id = 0;
 		return true;
 	}

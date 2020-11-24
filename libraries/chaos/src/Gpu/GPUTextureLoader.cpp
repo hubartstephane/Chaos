@@ -64,6 +64,7 @@ namespace chaos
 
 		GLuint texture_id = 0;
 		glCreateTextures(target, 1, &texture_id);
+		
 		if (texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)
@@ -327,6 +328,7 @@ namespace chaos
 		// GPU-allocate the texture
 		GLuint texture_id = 0;
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &texture_id);
+
 		if (texture_id > 0)
 		{
 			GLPixelFormat gl_final_pixel_format = GLTextureTools::GetGLPixelFormat(final_pixel_format);

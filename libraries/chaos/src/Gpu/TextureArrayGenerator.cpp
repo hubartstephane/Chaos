@@ -205,7 +205,7 @@ namespace chaos
 		}
 
 		// generate the texture
-		GLuint texture_id = 0;
+		GLuint texture_id = 0;	
 		glCreateTextures(array_target, 1, &texture_id);
 		if (texture_id > 0)
 		{

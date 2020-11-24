@@ -118,7 +118,7 @@ namespace chaos
 		/** destroying the window */
 		void DestroyGLFWWindow();
 		/** create the internal window */
-		bool CreateGLFWWindow(WindowParams params, WindowHints hints, Window* share_context);
+		bool CreateGLFWWindow(WindowParams params, WindowHints hints, GLFWwindow* share_context);
 
 		/** toggle to fullscreen mode */
 		void ToggleFullscreen();

@@ -19,18 +19,13 @@ namespace chaos
 
 	bool GameWindow::OnKeyEventImpl(KeyEvent const& event)
 	{
+		// super method
 		if (Window::OnKeyEventImpl(event))
 			return true;
-
-
-
-
 		// give inputs to the game
 		if (game != nullptr)
 			if (game->OnKeyEvent(event))
 				return true;
-		// super method
-
 		return false;
 		 
 

@@ -77,6 +77,7 @@ namespace chaos
 				if (window != nullptr && window->ShouldClose())
 				{
 					// destroy the internal GLFW window
+					window->Finalize();
 					window->DestroyGLFWWindow();
 					// remove the window for the list
 					windows[i - 1] = windows[windows.size() - 1];
@@ -319,20 +320,21 @@ namespace chaos
 	}
 
 	bool WindowApplication::Finalize()
-	{
+	{	
+		// destroy the resources
 		FinalizeGPUResourceManager();
-
-		// stop the window
-		if (main_window != nullptr)
+		// destroy all windows
+		for (auto& window : windows)
 		{
-			main_window->Finalize();
-
-			GLFWwindow* glfw_window = main_window->GetGLFWHandler();
-			if (glfw_window != nullptr)
-				glfwDestroyWindow(glfw_window);
-
-			main_window = nullptr;
+			if (window != nullptr)
+			{
+				window->Finalize();
+				window->DestroyGLFWWindow();
+			}
 		}
+		windows.clear();
+		main_window = nullptr;
+		// super
 		Application::Finalize();
 		return true;
 	}

@@ -49,13 +49,14 @@ namespace chaos
 		for (Class* cls : classes)
 			if (!cls->DoDeclareSpecialClassStep2())
 				failing_parent_classes.push_back(cls);
-		// Step 3 : remove all classes inheriting (directly or not) from a failing class (unknown parent)
+
+		// Step 3 : find invalid classes
 		std::vector<Class*> to_remove_classes;
 
-		for (Class* cls : failing_parent_classes)
-			for (Class* other_class : classes)
-				if (other_class->InheritsFrom(cls, true) == InheritanceType::YES) // failing class goes directly in the to_remove vector too 
-					to_remove_classes.push_back(other_class);
+		for (Class* cls : classes)
+			for (Class* failing_cls : failing_parent_classes)
+				if (cls->InheritsFrom(failing_cls, true) == InheritanceType::YES) // failing class goes directly in the to_remove vector too 
+					to_remove_classes.push_back(cls);
 		// Step 4 : remove classes
 		for (Class* cls : to_remove_classes)
 		{
@@ -65,12 +66,7 @@ namespace chaos
 		// Step 5 : sort the classes by depth (use a temp depth map)
 		std::map<Class*, size_t> class_depth;
 		for (Class* cls : classes)
-		{
-			size_t depth = 0;
-			for (Class const * p = cls; p != nullptr; p = p->parent)
-				++depth;
-			class_depth[cls] = depth;
-		}
+			class_depth[cls] = cls->GetDepth();
 
 		std::sort(classes.begin(), classes.end(), [&class_depth](Class * c1, Class * c2)
 		{

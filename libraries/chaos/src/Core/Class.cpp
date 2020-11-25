@@ -5,6 +5,14 @@
 namespace chaos
 {
 
+	size_t Class::GetDepth() const
+	{
+		size_t result = 0;
+		for (Class const* p = this; p->parent != nullptr; p = p->parent)
+			++result;
+		return result;
+	}
+
 	Class const* Class::DeclareSpecialClass(char const* class_name, nlohmann::json const & json)
 	{
 		Class* result = DoDeclareSpecialClassStep1(class_name, json);
@@ -30,7 +38,7 @@ namespace chaos
 		{
 			result->class_name = class_name;
 			result->json_data = json;
-
+			result->declared = true;
 			GetClassesList().push_back(result);
 			return result;
 		}
@@ -80,9 +88,11 @@ namespace chaos
 	void Class::DoInvalidateSpecialClass(Class const* cls)
 	{
 		assert(cls != nullptr);
-
+		// remove class from the list
 		std::vector<Class*>& classes = GetClassesList();
 		classes.erase(std::remove(classes.begin(), classes.end(), cls));
+		// delete the special class 
+		delete(cls);
 	}
 
 	Object * Class::CreateInstance() const
@@ -129,13 +139,6 @@ namespace chaos
 
 	InheritanceType Class::InheritsFrom(Class const* parent_class, bool accept_equal) const
 	{
-		// class not registered, cannot known result
-		if (!IsDeclared())
-			return InheritanceType::UNKNOWN;
-		// parent not registered, cannot known result
-		if (parent_class == nullptr || !parent_class->IsDeclared())
-			return InheritanceType::UNKNOWN;
-
 		// returns no if classes are same and we don't accept that as a valid result
 		if (this == parent_class)
 		{
@@ -144,6 +147,12 @@ namespace chaos
 			else
 				return InheritanceType::YES;
 		}
+		// class not registered, cannot known result
+		if (!IsDeclared())
+			return InheritanceType::UNKNOWN;
+		// parent not registered, cannot known result
+		if (parent_class == nullptr || !parent_class->IsDeclared())
+			return InheritanceType::UNKNOWN;
 		// from top to root in the hierarchy
 		for (Class const* p = parent; p != nullptr; p = p->parent)
 		{

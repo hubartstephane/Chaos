@@ -3,43 +3,6 @@
 namespace chaos
 {
 	/**
-	* GLFWHints
-	*/
-
-	void GLFWHints::ApplyHints()
-	{
-		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, debug_context);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major_version);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor_version);
-		glfwWindowHint(GLFW_REFRESH_RATE, refresh_rate); // only usefull in fullscreen mode
-		glfwWindowHint(GLFW_OPENGL_PROFILE, opengl_profile);
-	}
-
-	bool SaveIntoJSON(nlohmann::json& json_entry, GLFWHints const& src)
-	{
-		if (!json_entry.is_object())
-			json_entry = nlohmann::json::object();
-		JSONTools::SetAttribute(json_entry, "debug_context", src.debug_context);
-		JSONTools::SetAttribute(json_entry, "major_version", src.major_version);
-		JSONTools::SetAttribute(json_entry, "minor_version", src.minor_version);
-		JSONTools::SetAttribute(json_entry, "refresh_rate", src.refresh_rate);
-		JSONTools::SetAttribute(json_entry, "opengl_profile", src.opengl_profile);
-		return true;
-	}
-
-	bool LoadFromJSON(nlohmann::json const& json_entry, GLFWHints& dst)
-	{
-		if (!json_entry.is_object())
-			return false;
-		JSONTools::GetAttribute(json_entry, "debug_context", dst.debug_context);
-		JSONTools::GetAttribute(json_entry, "major_version", dst.major_version);
-		JSONTools::GetAttribute(json_entry, "minor_version", dst.minor_version);
-		JSONTools::GetAttribute(json_entry, "refresh_rate", dst.refresh_rate);
-		JSONTools::GetAttribute(json_entry, "opengl_profile", dst.opengl_profile);
-		return true;
-	}
-
-	/**
 	* WindowHints
 	*/
 
@@ -98,6 +61,30 @@ namespace chaos
 		JSONTools::GetAttribute(json_entry, "green_bits", dst.green_bits);
 		JSONTools::GetAttribute(json_entry, "blue_bits", dst.blue_bits);
 		JSONTools::GetAttribute(json_entry, "alpha_bits", dst.alpha_bits);
+		return true;
+	}
+
+	/**
+	* WindowParams
+	*/
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, WindowParams const& src)
+	{
+		if (!json_entry.is_object())
+			json_entry = nlohmann::json::object();
+		JSONTools::SetAttribute(json_entry, "monitor_index", src.monitor_index);
+		JSONTools::SetAttribute(json_entry, "width", src.width);
+		JSONTools::SetAttribute(json_entry, "height", src.height);
+		return true;
+	}
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst)
+	{
+		if (!json_entry.is_object())
+			return false;
+		JSONTools::GetAttribute(json_entry, "monitor_index", dst.monitor_index);
+		JSONTools::GetAttribute(json_entry, "width", dst.width);
+		JSONTools::GetAttribute(json_entry, "height", dst.height);
 		return true;
 	}
 
@@ -186,9 +173,7 @@ namespace chaos
 			params.title = "";
 
 		// we are doing a pseudo fullscreen => monitor parameters of glfwCreateWindow must be null or it will "capture" the screen
-		GLFWwindow* glfw_share_context_window = WindowApplication::GetSharedGLContext();
-
-		glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr, glfw_share_context_window);
+		glfw_window = glfwCreateWindow(params.width, params.height, params.title, nullptr, share_context_window);
 		if (glfw_window == nullptr)
 			return false;
 		glfwMakeContextCurrent(glfw_window);

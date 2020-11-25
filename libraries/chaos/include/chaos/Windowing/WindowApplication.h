@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	class WindowParams;
+	class GLFWHints;
 	class WindowApplication;
 
 }; // namespace chaos
@@ -13,28 +13,33 @@ namespace chaos
 {
 
 	/**
-	* WindowParams : parameters for playing single window application
+	* GLFWHints : this represents hints for the application
 	*/
 
-	class WindowParams
+	class GLFWHints
 	{
 	public:
 
-		/** the title */
-		char const* title = nullptr;
-		/** the wanted monitor */
-		GLFWmonitor* monitor = nullptr;
-		/** the monitor index */
-		int monitor_index = 0;
-		/** window width */
-		int width = 0;
-		/** window height */
-		int height = 0;
+		/** gives set hints to GLFW */
+		void ApplyHints();
+
+	public:
+
+		/** true if we use an opengl debug context */
+		int debug_context = 1;
+		/** the major version of opengl */
+		int major_version = 4;
+		/** the major version of opengl */
+		int minor_version = 4;
+		/** the refresh rate (only usefull in fullscreen mode) */
+		int refresh_rate = 60;
+		/** the opengl profile */
+		int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
 	};
 
-	bool SaveIntoJSON(nlohmann::json& json_entry, WindowParams const& src);
+	bool SaveIntoJSON(nlohmann::json& json_entry, GLFWHints const& src);
 
-	bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst);
+	bool LoadFromJSON(nlohmann::json const& json_entry, GLFWHints& dst);
 
 	/**
 	* WindowApplication

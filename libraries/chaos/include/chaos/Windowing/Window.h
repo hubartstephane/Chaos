@@ -3,6 +3,7 @@
 namespace chaos
 {
 	class WindowHints;
+	class WindowParams;
 	class Window;
 
 }; // namespace chaos
@@ -11,35 +12,6 @@ namespace chaos
 
 namespace chaos
 {
-	/**
-	* GLFWHints : this represents hints for th application
-	*/
-
-	class GLFWHints
-	{
-	public:
-
-		/** gives set hints to GLFW */
-		void ApplyHints();
-
-	public:
-
-		/** true if we use an opengl debug context */
-		int debug_context = 1;
-		/** the major version of opengl */
-		int major_version = 4;
-		/** the major version of opengl */
-		int minor_version = 4;
-		/** the refresh rate (only usefull in fullscreen mode) */
-		int refresh_rate = 60;
-		/** the opengl profile */
-		int opengl_profile = GLFW_OPENGL_CORE_PROFILE;
-	};
-
-	bool SaveIntoJSON(nlohmann::json& json_entry, GLFWHints const& src);
-
-	bool LoadFromJSON(nlohmann::json const& json_entry, GLFWHints& dst);
-
 	/**
 	* WindowHints : this represents hints for GLFWwindow creation
 	*/
@@ -86,6 +58,30 @@ namespace chaos
 	bool SaveIntoJSON(nlohmann::json& json_entry, WindowHints const& src);
 
 	bool LoadFromJSON(nlohmann::json const& json_entry, WindowHints& dst);
+
+	/**
+	* WindowParams : parameters for playing single window application
+	*/
+
+	class WindowParams
+	{
+	public:
+
+		/** the title */
+		char const* title = nullptr;
+		/** the wanted monitor */
+		GLFWmonitor* monitor = nullptr;
+		/** the monitor index */
+		int monitor_index = 0;
+		/** window width */
+		int width = 0;
+		/** window height */
+		int height = 0;
+	};
+
+	bool SaveIntoJSON(nlohmann::json& json_entry, WindowParams const& src);
+
+	bool LoadFromJSON(nlohmann::json const& json_entry, WindowParams& dst);
 
 	/**
 	* Window : a binding class between chaos and GLFW to handle window (beware the prefix "My")

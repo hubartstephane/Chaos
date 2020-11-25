@@ -54,6 +54,8 @@ namespace chaos
 		std::string const & GetClassName() const { return class_name; }
 		/** returns whether we can create instances */
 		bool CanCreateInstance() const { return create_instance_func != nullptr; }
+		/** gets the depth of the class in the inheritance hierarchy */
+		size_t GetDepth() const;
 
 	public:
 

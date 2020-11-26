@@ -301,7 +301,7 @@ namespace chaos
 		glDebugMessageCallback(DebugMessageHandler, nullptr);
 
 #if _DEBUG
-		//glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB); // this make debug events called immediately (Can BREAK in visual studio)
 #endif
 	}

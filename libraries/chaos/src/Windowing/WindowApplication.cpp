@@ -111,20 +111,30 @@ namespace chaos
 
 	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params, WindowHints const& hints)
 	{
+		// XXX : the shared context must not be current at the moment of window creation
+		GLFWwindow* previous_context = glfwGetCurrentContext();
+		glfwMakeContextCurrent(nullptr);
+		
 		// create the window class
 		Window* result = window_class.CreateInstance();
 		if (result == nullptr)
-			return false;
+		{
+			glfwMakeContextCurrent(previous_context);
+			return nullptr;
+		}
 		// create the GLFW resource
 		if (!result->CreateGLFWWindow(params, hints, shared_context))
-		{
+		{			
 			delete(result);
+			glfwMakeContextCurrent(previous_context);
 			return nullptr;
 		}
 		// post initialization method
 		OnWindowCreated(result);
 		// store the result
 		windows.push_back(result);
+		// restore the context
+		glfwMakeContextCurrent(previous_context);
 		return result;
 	}
 
@@ -143,6 +153,9 @@ namespace chaos
 		glfw_hints.ApplyHints();
 
 		// create a hidden window whose purpose is to provide a sharable context for all others
+
+		
+		window_hints.ApplyHints();
 		glfwWindowHint(GLFW_VISIBLE, 0);
 		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
 		if (shared_context == nullptr)

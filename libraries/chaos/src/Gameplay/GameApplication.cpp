@@ -43,7 +43,7 @@ namespace chaos
 
 
 
-		//CreateTypedWindow(main_window_class, window_params, window_hints);
+		CreateTypedWindow(main_window_class, window_params, window_hints);
 
 
 		return true;

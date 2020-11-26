@@ -26,6 +26,7 @@ namespace chaos
         if (vertex_array_cache == nullptr)
             vertex_array_cache = new GPUVertexArrayCache;
         // display the elements
+        GLuint vertex_array_id = 0;
         int result = 0;       
         for (GPUDynamicMeshElement & element : elements)
         {
@@ -36,19 +37,15 @@ namespace chaos
             GPURenderMaterial const * final_material = render_params.GetMaterial(this, element.render_material.get());
             if (final_material == nullptr)
                 continue;
-            GPUProgram const * program = final_material->UseMaterial(uniform_provider, render_params);
+            GPUProgram const* program = final_material->UseMaterial(uniform_provider, render_params);
             if (program == nullptr)
                 continue;
             GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program, element.vertex_buffer.get(), element.index_buffer.get(), element.vertex_declaration.get(), 0);
             if (vertex_array == nullptr)
                 continue;
 
-            glBindVertexArray(vertex_array->GetResourceID());
-
-
-
-
-
+            vertex_array_id = vertex_array->GetResourceID();
+            glBindVertexArray(vertex_array_id);
 
             // draw all primitives
             for (GPUDrawPrimitive const& primitive : element.primitives)
@@ -60,10 +57,17 @@ namespace chaos
             }
         }
         // store fence for this last rendering time (only if some draw call has been made)
-        if (result > 0)
+        // XXX : make code slower
+
+        //if (result > 0)
+        //  last_rendered_fence = renderer->GetCurrentFrameFence(); 
+
+        // restore an 'empty' state
+        if (vertex_array_id != 0)
         {
-            // XXX : make code slower : 
-            //last_rendered_fence = renderer->GetCurrentFrameFence();
+            
+            for (int i = 0 ; i < 10 ; ++i) glBindTextureUnit(i, 0);
+            glUseProgram(0);
             glBindVertexArray(0);
         }
         return result;

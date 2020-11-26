@@ -26,7 +26,11 @@ namespace chaos
 	public:
 
 		/** true if we use an opengl debug context */
+#if _DEBUG
 		int debug_context = 1;
+#else
+		int debug_context = 0;
+#endif
 		/** the major version of opengl */
 		int major_version = 4;
 		/** the major version of opengl */

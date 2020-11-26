@@ -14,7 +14,7 @@ namespace chaos
 		{
 			if (prop.IsAnimated())
 			{
-				LogTools::Log("PROPERTY [%s]", prop.GetName());
+				Log::Message("PROPERTY [%s]", prop.GetName());
 
 
 
@@ -36,7 +36,7 @@ namespace chaos
 			//FbxAnimStack* lAnimStack = pScene->GetSrcObject<FbxAnimStack>(i);
 
 
-			//LogTools::Log("anim  stack [%s]", lAnimStack->GetName());
+			//Log::Message("anim  stack [%s]", lAnimStack->GetName());
 		}
 
 	}
@@ -120,7 +120,7 @@ namespace chaos
 					{
 						char const * error = lImporter->GetStatus().GetErrorString();
 						if (error != nullptr)
-							LogTools::Log("FBX Importer initialize failure [%s]", error);
+							Log::Message("FBX Importer initialize failure [%s]", error);
 					}
 					else
 					{
@@ -343,11 +343,11 @@ namespace chaos
 		else
 			type = "UNKNOWN  : ";
 
-		LogTools::Log("[%08x] %s%s : %s (%s)", node, type, StringTools::IndentString(level * 2).c_str(), name, node->GetTypeName());
+		Log::Message("[%08x] %s%s : %s (%s)", node, type, StringTools::IndentString(level * 2).c_str(), name, node->GetTypeName());
 
-		LogTools::Log(" NODE PROPERTIES :");
+		Log::Message(" NODE PROPERTIES :");
 		DisplayCurves(node);
-		LogTools::Log(" ATTRIBUTE PROPERTIES :");
+		Log::Message(" ATTRIBUTE PROPERTIES :");
 		DisplayCurves(node->GetNodeAttribute());
 
 

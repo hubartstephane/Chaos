@@ -3,52 +3,73 @@
 
 namespace chaos
 {
+	Log::Log()
+	{
 
-	void LogTools::Log(char const * format, ...)
+	}
+
+	Log* Log::GetInstance()
+	{
+		static Log* result = nullptr;
+		if (result == nullptr)
+			result = new Log();
+		return result;
+	}
+
+	void Log::DoFormatAndOuput(LogType type, bool add_line_jump, char const* format, ...)
 	{
 		va_list va;
 		va_start(va, format);
-		VLog(format, va);
+
+		// format the message
+		char buffer[4096];
+		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
+		// output the message
+		DoOutput(type, add_line_jump, buffer);
+
 		va_end(va);
 	}
 
-	void LogTools::VLog(char const * format, va_list va)
+	void Log::DoOutput(LogType type, bool add_line_jump, char const* buffer)
 	{
-		char buffer[4096];
-		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
-		std::cout << buffer << '\n';
+		assert(buffer != nullptr);
+
+		std::ostream& output = (type == LogType::Error) ? std::cerr : std::cout;
+
+
+		output << buffer;
+		if (add_line_jump)
+			output << "\n";
 	}
 
-	void LogTools::Error(char const * format, ...)
-	{
-		va_list va;
-		va_start(va, format);
-		VError(format, va);
-		va_end(va);
-	}
-
-	void LogTools::VError(char const * format,va_list va)
-	{
-		char buffer[4096];
-		vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, va); // doesn't count for the zero  
-		std::cerr << buffer << '\n';
-	}
-
-	void LogTools::DisplayTitle(char const * title)
+	void Log::Title(char const* title)
 	{
 		assert(title != nullptr);
 
+		// get the logger
+		Log* log = GetInstance();
+		if (log == nullptr)
+			return;
+
+		// fill separator buffer
+		char line[4096] = { 0 };
+
 		size_t l = 12 + strlen(title);
+		if (l < sizeof(line) - 1)
+			for (size_t i = 0; i < l; ++i)
+				line[i] = '=';
 
-		std::string s;
-		for (size_t i = 0 ; i < l ; ++i)
-			s += "=";
+		// output
+		log->DoOutput(LogType::Message, true, "");
+		if (l < sizeof(line) - 1)
+			log->DoOutput(LogType::Message, true, line);
 
-		std::cout << '\n';
-		std::cout << s << '\n';
-		std::cout << "===   " << title << "   ===" << '\n';
-		std::cout << s << '\n';
-		std::cout << '\n';
+		log->DoOutput(LogType::Message, false, "===   ");
+		log->DoOutput(LogType::Message, false, title);
+		log->DoOutput(LogType::Message, true, "   ===");
+
+		if (l < sizeof(line) - 1)
+			log->DoOutput(LogType::Message, true, line);
+		log->DoOutput(LogType::Message, true, "");
 	}
-
 }; // namespace chaos

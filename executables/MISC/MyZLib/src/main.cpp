@@ -53,14 +53,14 @@ void TestCompression(chaos::Buffer<char> initial_buffer, char const * title)
 
 	bool success = AreBuffersEquals(initial_buffer, uncompressed);
 
-	chaos::LogTools::Log("Compression %s : %d", title, success);
+	chaos::Log::Message("Compression %s : %d", title, success);
 	if (success)
 	{
 		float compression_ratio = 100.0f * ((float)(compressed.bufsize) / (float)(initial_buffer.bufsize));
 
-		chaos::LogTools::Log("  Source length      : %d", initial_buffer.bufsize);
-		chaos::LogTools::Log("  Destination length : %d", compressed.bufsize);
-		chaos::LogTools::Log("  Compression ratio  : %f %%", compression_ratio);
+		chaos::Log::Message("  Source length      : %d", initial_buffer.bufsize);
+		chaos::Log::Message("  Destination length : %d", compressed.bufsize);
+		chaos::Log::Message("  Compression ratio  : %f %%", compression_ratio);
 	}
 }
 
@@ -77,7 +77,7 @@ void TestFromFile()
 	{
 		chaos::Buffer<char> uncompressed = chaos::MyZLib().Decode(buffer);
 
-		chaos::LogTools::Log("Uncompress Zip file      : %d", uncompressed.bufsize > 0);
+		chaos::Log::Message("Uncompress Zip file      : %d", uncompressed.bufsize > 0);
 	}
 }
 

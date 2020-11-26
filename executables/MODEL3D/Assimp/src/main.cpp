@@ -56,7 +56,7 @@ protected:
     {
       char const * error = importer.GetErrorString();
       if (error != nullptr)
-        chaos::LogTools::Log("Assimp::Importer::ReadFileFromMemory failure [%s]", error);
+        chaos::Log::Message("Assimp::Importer::ReadFileFromMemory failure [%s]", error);
       return false;
     }
 

@@ -24,19 +24,19 @@ protected:
 		{
 			case MIM_OPEN: // reserved, reserved
 			{
-				chaos::LogTools::Log("wMsg = MIM_OPEN\n");
+				chaos::Log::Message("wMsg = MIM_OPEN\n");
 				break;
 			}
 			case MIM_CLOSE: // reserved, reserved
 			{
-				chaos::LogTools::Log("wMsg = MIM_CLOSE\n");
+				chaos::Log::Message("wMsg = MIM_CLOSE\n");
 				break;
 			}
 			case MIM_ERROR:
 			{
 				DWORD dwMidiMessage = dwParam1;
 				DWORD dwTimestamp = dwParam2;
-				chaos::LogTools::Log("wMsg = MIM_ERROR\n");
+				chaos::Log::Message("wMsg = MIM_ERROR\n");
 				break;
 			}
 			case MIM_DATA:
@@ -52,7 +52,7 @@ protected:
 					break;
 
 
-				chaos::LogTools::Log("status [%02x] command [%02x] channel [%02x] param1 [%02x] param2 [%02x] param3 [%02x]\n", command.status, command.GetCommand(), command.GetChannel(), command.params[0], command.params[1], command.params[2]);
+				chaos::Log::Message("status [%02x] command [%02x] channel [%02x] param1 [%02x] param2 [%02x] param3 [%02x]\n", command.status, command.GetCommand(), command.GetChannel(), command.params[0], command.params[1], command.params[2]);
 				break;
 			}
 			case MIM_LONGDATA:
@@ -60,22 +60,22 @@ protected:
 				MIDIHDR * hdr = (MIDIHDR*)dwParam1;
 				DWORD dwTimestamp = dwParam2;
 
-				chaos::LogTools::Log("wMsg = MIM_LONGDATA\n");
+				chaos::Log::Message("wMsg = MIM_LONGDATA\n");
 				break;
 			}
 			case MIM_LONGERROR:
 			{
-				chaos::LogTools::Log("wMsg = MIM_LONGERROR\n");
+				chaos::Log::Message("wMsg = MIM_LONGERROR\n");
 				break;
 			}
 			case MIM_MOREDATA:
 			{
-				chaos::LogTools::Log("wMsg = MIM_MOREDATA\n");
+				chaos::Log::Message("wMsg = MIM_MOREDATA\n");
 				break;
 			}
 			default:
 			{
-				chaos::LogTools::Log("wMsg = unknown\n");
+				chaos::Log::Message("wMsg = unknown\n");
 				break;
 			}
 		}
@@ -91,11 +91,11 @@ protected:
 			MIDIINCAPS caps;
 			midiInGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
 
-			chaos::LogTools::Log("Midi IN Device [%d] : name    = %s", i, caps.szPname);
-			chaos::LogTools::Log("                    : support = %d", caps.dwSupport);
-			chaos::LogTools::Log("                    : driver  = %d", caps.vDriverVersion);
-			chaos::LogTools::Log("                    : mid     = %d", caps.wMid);
-			chaos::LogTools::Log("                    : pid     = %d", caps.wPid);
+			chaos::Log::Message("Midi IN Device [%d] : name    = %s", i, caps.szPname);
+			chaos::Log::Message("                    : support = %d", caps.dwSupport);
+			chaos::Log::Message("                    : driver  = %d", caps.vDriverVersion);
+			chaos::Log::Message("                    : mid     = %d", caps.wMid);
+			chaos::Log::Message("                    : pid     = %d", caps.wPid);
 		}
 
 		MMRESULT rv;

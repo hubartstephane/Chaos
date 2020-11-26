@@ -18,7 +18,7 @@ protected:
 			if (buffer == nullptr)
 				break;
 
-			chaos::LogTools::DisplayTitle(filename.c_str());
+			chaos::Log::Title(filename.c_str());
 
 			lua_State * l = chaos::LuaTools::CreateStandardLuaState();
 			if (l != nullptr)

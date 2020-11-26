@@ -51,14 +51,14 @@ namespace chaos
 		std::string parent_class_name;
 		if (!JSONTools::GetAttribute(json_data, "parent_class", parent_class_name))
 		{
-			LogTools::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] require a parent class", class_name.c_str());
+			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] require a parent class", class_name.c_str());
 			return false;
 		}
 		// parent class is MANDATORY for Special objects
 		parent = FindClass(parent_class_name.c_str());
 		if (parent == nullptr)
 		{
-			LogTools::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] has unknown parent class [%s]", class_name.c_str(), parent_class_name.c_str());
+			Log::Error("Class::DoDeclareSpecialClassStep2 : special class [%s] has unknown parent class [%s]", class_name.c_str(), parent_class_name.c_str());
 			return false;
 		}
 		// initialize missing data (size, creation_delegate)
@@ -99,7 +99,7 @@ namespace chaos
 	{
 		if (!CanCreateInstance())
 		{
-			LogTools::Error("Class::CreateInstance : the class [%s] cannot be instanciated", class_name.c_str());
+			Log::Error("Class::CreateInstance : the class [%s] cannot be instanciated", class_name.c_str());
 			return nullptr;
 		}
 		if (create_instance_func)

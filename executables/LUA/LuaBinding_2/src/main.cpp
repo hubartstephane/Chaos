@@ -84,7 +84,7 @@ protected:
 	{
 		boost::filesystem::path const & rp = GetResourcesPath();
 
-		chaos::LogTools::DisplayTitle("Test1.lua : work with C++ classes");
+		chaos::Log::Title("Test1.lua : work with C++ classes");
 
 		StartLuaFile(rp / "test1.lua", WorkWithLua1, EnrichLuaState1);
 

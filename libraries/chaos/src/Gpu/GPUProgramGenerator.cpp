@@ -55,7 +55,7 @@ namespace chaos
 		GLuint result = glCreateShader(shader_type);
 		if (result == 0)
 		{
-			LogTools::Error("glCreateShader failed");
+			Log::Error("glCreateShader failed");
 			return 0;
 		}
 		// fill with sources
@@ -75,7 +75,7 @@ namespace chaos
 			GLchar log_buffer[4096];
 			glGetShaderInfoLog(result, sizeof(log_buffer) - 1, nullptr, log_buffer);
 
-			LogTools::Error("Shader compilation failure : %s", log_buffer);
+			Log::Error("Shader compilation failure : %s", log_buffer);
 		}
 		glDeleteShader(result);
 		
@@ -208,7 +208,7 @@ namespace chaos
 		GLuint result = glCreateProgram();
 		if (result == 0)
 		{
-			LogTools::Error("glCreateProgram failed");
+			Log::Error("glCreateProgram failed");
 			return 0;
 		}
 

@@ -53,7 +53,7 @@ namespace chaos
 			allocation = layer_instance->SpawnParticles(0);
 			if (allocation == nullptr)
 			{
-				LogTools::Error("TMParticlePopulator::FlushParticles : fails to SpawnParticles");
+				Log::Error("TMParticlePopulator::FlushParticles : fails to SpawnParticles");
 				particle_count = 0;
 				return false;
 			}
@@ -72,7 +72,7 @@ namespace chaos
 		BitmapAtlas::BitmapInfo const* bitmap_info = folder_info->GetBitmapInfo(bitmap_name);
 		if (bitmap_info == nullptr)
 		{
-			LogTools::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
+			Log::Error("TMParticlePopulator::AddParticle : unknown bitmap [%s]", (bitmap_name != nullptr)? bitmap_name : "");
 			return false;
 		}
 		// get the real layout of the bitmap by removing animation

@@ -12,7 +12,7 @@ namespace chaos
 	{
 		assert(state != nullptr);
 		if (lua_isstring(state, -1))
-			LogTools::Log("Lua RUNTIME Error : %s", lua_tostring(state, -1));
+			Log::Message("Lua RUNTIME Error : %s", lua_tostring(state, -1));
 		return 0;
 	}
 
@@ -69,7 +69,7 @@ namespace chaos
 			if (lua_isstring(state, -1))
 			{
 				std::string err = lua_tolstring(state, -1, NULL); 
-				LogTools::Log("LuaTools::ExecBuffer error due to %s : %s", error_condition, err.c_str());
+				Log::Message("LuaTools::ExecBuffer error due to %s : %s", error_condition, err.c_str());
 			}
 			lua_pop(state, 1); // whatever the ErrorHandler do, there will always be one data on the stack (probably a string)
 		}

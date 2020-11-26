@@ -67,7 +67,7 @@ namespace chaos
 					GLchar log_buffer[2048];
 					log_buffer[0] = 0;
 					glGetProgramInfoLog(program, sizeof(log_buffer) - 1, nullptr, log_buffer);
-					LogTools::Error(format, log_buffer);
+					Log::Error(format, log_buffer);
 				}
 			}
 			return result;

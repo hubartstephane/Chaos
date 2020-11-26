@@ -99,7 +99,7 @@ protected:
 				track_clock->Reset();
 				track_clock->EnableTickEvents(true);
 				current_state = STATE_PLAYING;
-				chaos::LogTools::Log("[STATE_PLAYING] : %lf", track_clock->GetClockTime());
+				chaos::Log::Message("[STATE_PLAYING] : %lf", track_clock->GetClockTime());
 			}
 		}
 		else if (current_state == STATE_PLAYING)
@@ -111,7 +111,7 @@ protected:
 				management_clock->Reset();
 				management_clock->RemoveAllPendingEvents();
 				current_state = STATE_NONE;
-				chaos::LogTools::Log("[STATE_NONE] : %ld" , track_clock->GetClockTime());
+				chaos::Log::Message("[STATE_NONE] : %ld" , track_clock->GetClockTime());
 			}
 		}
 	}
@@ -139,7 +139,7 @@ protected:
 		track_clock->EnableTickEvents(false);
 		current_state = STATE_RECORDING; 
 
-		chaos::LogTools::Log("[STATE_RECORDING] : %lf", track_clock->GetClockTime());
+		chaos::Log::Message("[STATE_RECORDING] : %lf", track_clock->GetClockTime());
 	}
 
 	void OnMidiInEventImpl(HMIDIIN hMidiIn, UINT wMsg, DWORD dwParam1, DWORD dwParam2)
@@ -162,15 +162,15 @@ protected:
 			MIDIOUTCAPS caps;
 			midiOutGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
 
-			chaos::LogTools::Log("Midi OUT Device [%d] : name         = %s", i, caps.szPname);
-			chaos::LogTools::Log("                     : support      = %d", caps.dwSupport);
-			chaos::LogTools::Log("                     : driver       = %d", caps.vDriverVersion);
-			chaos::LogTools::Log("                     : mid          = %d", caps.wMid);
-			chaos::LogTools::Log("                     : pid          = %d", caps.wPid);
-			chaos::LogTools::Log("                     : notes        = %d", caps.wNotes);
-			chaos::LogTools::Log("                     : channel mask = %d", caps.wChannelMask);
-			chaos::LogTools::Log("                     : technology   = %d", caps.wTechnology);
-			chaos::LogTools::Log("                     : voices       = %d", caps.wVoices);
+			chaos::Log::Message("Midi OUT Device [%d] : name         = %s", i, caps.szPname);
+			chaos::Log::Message("                     : support      = %d", caps.dwSupport);
+			chaos::Log::Message("                     : driver       = %d", caps.vDriverVersion);
+			chaos::Log::Message("                     : mid          = %d", caps.wMid);
+			chaos::Log::Message("                     : pid          = %d", caps.wPid);
+			chaos::Log::Message("                     : notes        = %d", caps.wNotes);
+			chaos::Log::Message("                     : channel mask = %d", caps.wChannelMask);
+			chaos::Log::Message("                     : technology   = %d", caps.wTechnology);
+			chaos::Log::Message("                     : voices       = %d", caps.wVoices);
 		}
 
 		//nMidiOutPort = 0;
@@ -196,11 +196,11 @@ protected:
 			MIDIINCAPS caps;
 			midiInGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
 
-			chaos::LogTools::Log("Midi IN Device [%d] : name    = %s", i, caps.szPname);
-			chaos::LogTools::Log("                    : support = %d", caps.dwSupport);
-			chaos::LogTools::Log("                    : driver  = %d", caps.vDriverVersion);
-			chaos::LogTools::Log("                    : mid     = %d", caps.wMid);
-			chaos::LogTools::Log("                    : pid     = %d", caps.wPid);
+			chaos::Log::Message("Midi IN Device [%d] : name    = %s", i, caps.szPname);
+			chaos::Log::Message("                    : support = %d", caps.dwSupport);
+			chaos::Log::Message("                    : driver  = %d", caps.vDriverVersion);
+			chaos::Log::Message("                    : mid     = %d", caps.wMid);
+			chaos::Log::Message("                    : pid     = %d", caps.wPid);
 		}
 
 		MMRESULT rv;
@@ -288,12 +288,12 @@ protected:
 
 MIDITimeoutEvent::~MIDITimeoutEvent()
 {
-//	chaos::LogTools::Log("~MIDICommandEvent() [%08x]\n", this);
+//	chaos::Log::Message("~MIDICommandEvent() [%08x]\n", this);
 }
 
 void MIDITimeoutEvent::OnEventRemovedFromClock()
 {
-//	chaos::LogTools::Log("MIDITimeoutEvent() [%08x]\n", this);
+//	chaos::Log::Message("MIDITimeoutEvent() [%08x]\n", this);
 }
 
 chaos::ClockEventTickResult MIDITimeoutEvent::Tick(chaos::ClockEventTickData const & tick_data)
@@ -306,12 +306,12 @@ chaos::ClockEventTickResult MIDITimeoutEvent::Tick(chaos::ClockEventTickData con
 
 MIDICommandEvent::~MIDICommandEvent()
 {
-//	chaos::LogTools::Log("~MIDICommandEvent() [%08x]\n", this);
+//	chaos::Log::Message("~MIDICommandEvent() [%08x]\n", this);
 }
 
 void MIDICommandEvent::OnEventRemovedFromClock()
 {
-//	chaos::LogTools::Log("OnEventRemovedFromClock() [%08x]\n", this);
+//	chaos::Log::Message("OnEventRemovedFromClock() [%08x]\n", this);
 }
 
 chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData const & tick_data)
@@ -319,7 +319,7 @@ chaos::ClockEventTickResult MIDICommandEvent::Tick(chaos::ClockEventTickData con
 //	if (command.IsNoteOnMessage())
 	{
 
-		//chaos::LogTools::Log("MIDIPlaySoundEvent::Tick command = [%02x] channel = [%02x] param1 = [%02x] param2 = [%02x] param3 = [%02x]\n", command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
+		//chaos::Log::Message("MIDIPlaySoundEvent::Tick command = [%02x] channel = [%02x] param1 = [%02x] param2 = [%02x] param3 = [%02x]\n", command.GetCommand(), command.GetChannel(), command.param1, command.param2, command.param3);
 
 		MMRESULT result = midiOutShortMsg(application->hMidiOutDevice, command.GetValue());
 		if (result != MMSYSERR_NOERROR)

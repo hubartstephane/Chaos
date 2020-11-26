@@ -188,7 +188,7 @@ namespace chaos
 
 		if (!accessor.IsValid())
 		{
-			LogTools::Error("TMLevel::FlushParticlesIntoAllocation => invalid accessor");
+			Log::Error("TMLevel::FlushParticlesIntoAllocation => invalid accessor");
 			return false;
 		}
 

@@ -39,15 +39,15 @@ protected:
 			MIDIOUTCAPS caps;
 			midiOutGetDevCaps(i, &caps, sizeof(MIDIINCAPS));
 
-			chaos::LogTools::Log("Midi OUT Device [%d] : name         = %s", i, caps.szPname);
-			chaos::LogTools::Log("                     : support      = %d", caps.dwSupport);
-			chaos::LogTools::Log("                     : driver       = %d", caps.vDriverVersion);
-			chaos::LogTools::Log("                     : mid          = %d", caps.wMid);
-			chaos::LogTools::Log("                     : pid          = %d", caps.wPid);
-			chaos::LogTools::Log("                     : notes        = %d", caps.wNotes);
-			chaos::LogTools::Log("                     : channel mask = %d", caps.wChannelMask);
-			chaos::LogTools::Log("                     : technology   = %d", caps.wTechnology);
-			chaos::LogTools::Log("                     : voices       = %d", caps.wVoices);
+			chaos::Log::Message("Midi OUT Device [%d] : name         = %s", i, caps.szPname);
+			chaos::Log::Message("                     : support      = %d", caps.dwSupport);
+			chaos::Log::Message("                     : driver       = %d", caps.vDriverVersion);
+			chaos::Log::Message("                     : mid          = %d", caps.wMid);
+			chaos::Log::Message("                     : pid          = %d", caps.wPid);
+			chaos::Log::Message("                     : notes        = %d", caps.wNotes);
+			chaos::Log::Message("                     : channel mask = %d", caps.wChannelMask);
+			chaos::Log::Message("                     : technology   = %d", caps.wTechnology);
+			chaos::Log::Message("                     : voices       = %d", caps.wVoices);
 		}
 
 		//nMidiOutPort = 0;
@@ -123,7 +123,7 @@ chaos::ClockEventTickResult MIDIPlaySoundEvent::Tick(chaos::ClockEventTickData c
 
 	unsigned char note   = 60 + (count % 16);
 	unsigned char volume = 60 + (count % 10) * 10;
-	chaos::LogTools::Log("MIDIPlaySoundEvent::Tick note = [%d] volume = [%d]\n", note, volume);
+	chaos::Log::Message("MIDIPlaySoundEvent::Tick note = [%d] volume = [%d]\n", note, volume);
 
 	PlayNote(application->hMidiOutDevice, note, volume, 0);
 	PlayNote(application->hMidiOutDevice, note + 1, volume, 1);

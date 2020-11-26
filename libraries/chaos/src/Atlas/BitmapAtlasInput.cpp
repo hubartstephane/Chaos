@@ -225,7 +225,7 @@ namespace chaos
 				nlohmann::json json_manifest;
 				if (!JSONTools::LoadJSONFile(path, json_manifest, false))
 				{
-					LogTools::Error("FolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					Log::Error("FolderInfoInput::AddFontFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
 				}
 
@@ -512,7 +512,7 @@ namespace chaos
                 nlohmann::json json_manifest;
 				if (!JSONTools::LoadJSONFile(path, json_manifest, false))
 				{
-					LogTools::Error("FolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
+					Log::Error("FolderInfoInput::AddBitmapFileImpl => failed to load json file [%s]", resolved_path.string().c_str());
 					return nullptr;
 				}
 
@@ -629,7 +629,7 @@ namespace chaos
 			// not clear what to do (we have both a grid and a per frame animation). Abord
 			if (count > 1 && input_manifest.grid_data.GetFrameCount() > 1)
 			{
-				LogTools::Error("AddBitmapFileWithManifestImpl[%s] : cannot have multiple images and GRID structure in the same time", resolved_path.string().c_str());
+				Log::Error("AddBitmapFileWithManifestImpl[%s] : cannot have multiple images and GRID structure in the same time", resolved_path.string().c_str());
 				ReleaseAllImages(images);
 				return nullptr;
 			}

@@ -304,7 +304,7 @@ void TestCutWord(char const* str)
 
 	std::string debug_string = TextSplitter::GetDebugCutString(str, tokens);
 
-	chaos::LogTools::Log("TestCutWord[%s] = [%s]", str, debug_string.c_str());
+	chaos::Log::Message("TestCutWord[%s] = [%s]", str, debug_string.c_str());
 }
 
 void CutDirectionnaryWords(char const* filename)

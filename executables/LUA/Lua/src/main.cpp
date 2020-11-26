@@ -299,25 +299,25 @@ protected:
 	{
 		boost::filesystem::path const & rp = GetResourcesPath();
 
-		chaos::LogTools::DisplayTitle("Test0.lua : miscellaneous");
+		chaos::Log::Title("Test0.lua : miscellaneous");
 		StartLuaFile(rp / "test0.lua", WorkWithLua0, EnrichLuaState0);
 
-		chaos::LogTools::DisplayTitle("Test1.lua : miscellaneous");
+		chaos::Log::Title("Test1.lua : miscellaneous");
 		StartLuaFile(rp / "test1.lua", WorkWithLua1, EnrichLuaState1);
 
-		chaos::LogTools::DisplayTitle("Test2.lua : calling C++ function from LUA");
+		chaos::Log::Title("Test2.lua : calling C++ function from LUA");
 		StartLuaFile(rp / "test2.lua", WorkWithLua2, EnrichLuaState2);
 
-		chaos::LogTools::DisplayTitle("Test3.lua : a syntax error");
+		chaos::Log::Title("Test3.lua : a syntax error");
 		StartLuaFile(rp / "test3.lua", WorkWithLua3, EnrichLuaState3);
 
-		chaos::LogTools::DisplayTitle("Test4.lua : a runtime error");
+		chaos::Log::Title("Test4.lua : a runtime error");
 		StartLuaFile(rp / "test4.lua", WorkWithLua4, EnrichLuaState4);
 
-		chaos::LogTools::DisplayTitle("Test5.lua : calling LUA function from C++");
+		chaos::Log::Title("Test5.lua : calling LUA function from C++");
 		StartLuaFile(rp / "test5.lua", WorkWithLua5, EnrichLuaState5);
 
-		chaos::LogTools::DisplayTitle("Test6.lua : OpenLibs");
+		chaos::Log::Title("Test6.lua : OpenLibs");
 		StartLuaFile(rp / "test6.lua", WorkWithLua6, EnrichLuaState6);
 
 		chaos::WinTools::PressToContinue();

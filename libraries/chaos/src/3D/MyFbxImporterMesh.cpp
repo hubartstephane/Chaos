@@ -74,7 +74,7 @@ namespace chaos
 
 					FbxSkeleton * Skel = node->GetSkeleton();
 
-					LogTools::Log("CLUSTER node = [%08x] node = %s [%s], cluster = %s", node, node->GetName(), node->GetTypeName(), cluster->GetName());
+					Log::Message("CLUSTER node = [%08x] node = %s [%s], cluster = %s", node, node->GetName(), node->GetTypeName(), cluster->GetName());
 
 					int      ctrl_point_count = cluster->GetControlPointIndicesCount();
 					int *    ctrl_point_indices = cluster->GetControlPointIndices();

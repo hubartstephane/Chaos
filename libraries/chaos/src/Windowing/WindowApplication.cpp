@@ -169,7 +169,7 @@ namespace chaos
 		GLenum err = glewInit();
 		if (err != GLEW_OK)
 		{
-			LogTools::Log("glewInit(...) failure : %s", glewGetErrorString(err));
+			Log::Message("glewInit(...) failure : %s", glewGetErrorString(err));
 			return false;
 		}
 
@@ -227,7 +227,7 @@ namespace chaos
 
 	void WindowApplication::OnGLFWError(int code, const char* msg)
 	{
-		LogTools::Log("Window(...) [%d] failure : %s", code, msg);
+		Log::Message("Window(...) [%d] failure : %s", code, msg);
 	}
 
 	bool WindowApplication::InitializeGPUResourceManager()
@@ -367,7 +367,7 @@ namespace chaos
 
 	void WindowApplication::FreeImageOutputMessageFunc(FREE_IMAGE_FORMAT fif, const char* msg)
 	{
-		LogTools::Log("FreeImage warning message [%d][%s]", fif, msg);
+		Log::Message("FreeImage warning message [%d][%s]", fif, msg);
 	}
 
 	bool WindowApplication::InitializeStandardLibraries()

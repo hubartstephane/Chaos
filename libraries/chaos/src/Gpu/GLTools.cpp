@@ -169,19 +169,19 @@ namespace chaos
 	{
 		GLubyte const * renderer = glGetString(GL_RENDERER);
 		if (renderer != nullptr)
-			LogTools::Log("OpenGL RENDERER        : %s", renderer);
+			Log::Message("OpenGL RENDERER        : %s", renderer);
 
 		GLubyte const * vendor = glGetString(GL_VENDOR);
 		if (vendor != nullptr)
-			LogTools::Log("OpenGL VENDOR          : %s", vendor);
+			Log::Message("OpenGL VENDOR          : %s", vendor);
 
 		GLubyte const * version = glGetString(GL_VERSION);
 		if (version != nullptr)
-			LogTools::Log("OpenGL VERSION         : %s", version);
+			Log::Message("OpenGL VERSION         : %s", version);
 
 		GLubyte const * shading_version = glGetString(GL_SHADING_LANGUAGE_VERSION);
 		if (shading_version != nullptr)
-			LogTools::Log("OpenGL SHADING LANGAGE : %s", shading_version);
+			Log::Message("OpenGL SHADING LANGAGE : %s", shading_version);
 	}
 
 	char const * GLTools::GLenumToString(GLenum type)
@@ -278,11 +278,11 @@ namespace chaos
 			char const * type_str = GLenumToString(type);
 			char const * severity_str = GLenumToString(severity);
 
-			LogTools::Log("OpenGL warning message   [%s]", msg);
-			LogTools::Log("               severity  [%s]", severity_str);
-			LogTools::Log("               source    [%s]", source_str);
-			LogTools::Log("               type      [%s]", type_str);
-			LogTools::Log("               id        [%08x]", id);
+			Log::Message("OpenGL warning message   [%s]", msg);
+			Log::Message("               severity  [%s]", severity_str);
+			Log::Message("               source    [%s]", source_str);
+			Log::Message("               type      [%s]", type_str);
+			Log::Message("               id        [%08x]", id);
 
 			//DebugTools::DisplayCallStack(std::cout);
 

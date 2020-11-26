@@ -34,9 +34,9 @@ namespace chaos
 			{
 				Class const* base_class = Class::FindClass<T>();
 				if (base_class == nullptr)
-					LogTools::Error("SubClassOf constructor : FindClass<T> failure");
+					Log::Error("SubClassOf constructor : FindClass<T> failure");
 				else if (src->InheritsFrom(base_class, true) != InheritanceType::YES)
-					LogTools::Error("SubClassOf constructor : src class does not inherit from base_class");
+					Log::Error("SubClassOf constructor : src class does not inherit from base_class");
 				else
 					internal_class = src;
 			}

@@ -15,7 +15,7 @@
 #include <chaos/Core/BoostTools.h>
 #include <chaos/Core/JSONRecursiveLoader.h>
 #include <chaos/Core/JSONSerializable.h>
-#include <chaos/Core/LogTools.h>
+#include <chaos/Core/Log.h>
 #include <chaos/Core/AutoCast.h>
 #include <chaos/Core/SmartPointers.h>
 #include <chaos/Core/Class.h>

@@ -35,6 +35,10 @@ namespace chaos
 		program->UseProgram(uniform_provider);
 		// do the rendering
 		DoRender(renderer, program, render_params);
+		// reset the program
+		
+		for (int i = 0; i < 10; ++i) glBindTextureUnit(i, 0);
+		glUseProgram(0);
 	}
 
 	void GPUSimpleMesh::Render(GPURenderer * renderer, GPURenderMaterial const * material, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
@@ -50,6 +54,10 @@ namespace chaos
 			return;
 		// do the rendering
 		DoRender(renderer, program, render_params);
+		// reset the program
+		
+		for (int i = 0; i < 10; ++i) glBindTextureUnit(i, 0);
+		glUseProgram(0);
 	}
 
 	void GPUSimpleMesh::DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params)

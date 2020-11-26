@@ -109,9 +109,17 @@ namespace chaos
 	{
 		if (glfw_window != nullptr)
 		{
+			auto eerr1 = glGetError();
+
 			if (glfwGetCurrentContext() == glfw_window)
 				glfwMakeContextCurrent(nullptr);			
 			glfwDestroyWindow(glfw_window);
+
+			auto eerr2 = glGetError();
+
+
+			auto pp = GL_NONE;
+
 			glfw_window = nullptr;
 		}
 	}
@@ -207,6 +215,8 @@ namespace chaos
 		// now that the window is fully placed ... we can show it
 		if (hints.start_visible)
 			glfwShowWindow(glfw_window);
+
+		glfwMakeContextCurrent(nullptr);
 
 		return true;
 	}
@@ -316,6 +326,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnIconifiedStateChange(value == GL_TRUE);
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -326,6 +337,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnFocusStateChange(value == GL_TRUE);
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -337,6 +349,7 @@ namespace chaos
 			glfwMakeContextCurrent(in_glfw_window);
 			if (my_window->OnWindowClosed())
 				my_window->RequireWindowClosure();
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -347,6 +360,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnWindowResize(glm::ivec2(width, height));
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -357,6 +371,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnWindowDraw();
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -376,6 +391,8 @@ namespace chaos
 
 			my_window->mouse_position.x = (float)x;
 			my_window->mouse_position.y = (float)y;
+
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -388,6 +405,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnMouseButton(button, action, modifier);
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -400,6 +418,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnMouseWheel(scroll_x, scroll_y);
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -424,6 +443,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnKeyEvent(event);
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -436,6 +456,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnCharEvent(c);
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 
@@ -446,6 +467,7 @@ namespace chaos
 		{
 			glfwMakeContextCurrent(in_glfw_window);
 			my_window->OnDropFile(count, paths);
+			glfwMakeContextCurrent(nullptr);
 		}
 	}
 

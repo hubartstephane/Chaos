@@ -52,7 +52,7 @@ namespace chaos
 			return;
 
 		// fill separator buffer
-		char line[4096] = { 0 };
+		char line[512] = { 0 };
 
 		size_t l = 12 + strlen(title);
 		if (l < sizeof(line) - 1)

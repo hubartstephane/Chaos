@@ -113,6 +113,9 @@ namespace chaos
 		/** load the extra classes */
 		virtual bool LoadClasses();
 
+		/** log some application information */
+		virtual void LogExecutionInformation();
+
 	protected:
 
 		/** the single application instance */

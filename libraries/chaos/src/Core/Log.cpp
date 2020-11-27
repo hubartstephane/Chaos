@@ -3,17 +3,13 @@
 
 namespace chaos
 {
-	Log::Log()
-	{
-
-	}
-
 	Log* Log::GetInstance()
 	{
-		static Log* result = nullptr;
+		// XXX : use a share pointer so that we are sure it is being destroyed at the end of the application (and so the output_file is being flushed)
+		static shared_ptr<Log> result; 
 		if (result == nullptr)
 			result = new Log();
-		return result;
+		return result.get();
 	}
 
 	void Log::DoFormatAndOuput(LogType type, bool add_line_jump, char const* format, ...)
@@ -34,12 +30,32 @@ namespace chaos
 	{
 		assert(buffer != nullptr);
 
+		// output in standard output
 		std::ostream& output = (type == LogType::Error) ? std::cerr : std::cout;
-
-
 		output << buffer;
 		if (add_line_jump)
 			output << "\n";
+		// generate output in file
+		if (open_output_file && !output_file)
+		{
+			// even in case of failure do not ever try to open the file
+			open_output_file = false; 
+			// open the file
+			Application* application = Application::GetInstance();
+			if (application != nullptr)
+			{
+				boost::filesystem::path log_path = application->GetUserLocalTempPath() / "logs.txt";
+
+				output_file.open(log_path.c_str(), std::ofstream::binary | std::ofstream::trunc);
+			}
+		}
+		// output in file
+		if (output_file)
+		{
+			output_file << buffer;
+			if (add_line_jump)
+				output_file << "\n";
+		}
 	}
 
 	void Log::Title(char const* title)

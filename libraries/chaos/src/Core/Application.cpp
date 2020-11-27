@@ -57,10 +57,6 @@ namespace chaos
 
 	bool Application::Initialize()
 	{
-		// load class
-		if (!LoadClasses())
-			return false;
-
 		// show console
 		bool will_show_console = show_console;
 		if (HasCommandLineFlag("-ShowConsole"))
@@ -70,6 +66,10 @@ namespace chaos
 
 		if (will_show_console)
 			WinTools::AllocConsoleAndRedirectStdOutput();
+
+		// load class
+		if (!LoadClasses())
+			return false;
 
 		// initialize the managers
 		if (!InitializeManagers())

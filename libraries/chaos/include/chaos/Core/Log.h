@@ -27,7 +27,7 @@ namespace chaos
 	* Log : deserve to output some logs
 	*/
 
-	class Log
+	class Log : public Object
 	{
 	public:
 
@@ -61,15 +61,17 @@ namespace chaos
 
 	protected:
 
-		/** constructor */
-		Log();
-
-	protected:
-
 		/** internal method to format then display a log */
 		void DoFormatAndOuput(LogType type, bool add_line_jump, char const* format, ...);
 		/** internal method to display a log */
 		void DoOutput(LogType type, bool add_line_jump, char const* buffer);
+
+	protected:
+
+		/** an additionnal output */
+		std::ofstream output_file;
+		/** indicates whether we tryed once to open output_file (when opening fails, do not retry) */
+		bool open_output_file = true;
 	};
 
 }; // namespace chaos

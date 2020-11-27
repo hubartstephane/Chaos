@@ -15,13 +15,13 @@
 #include <chaos/Core/BoostTools.h>
 #include <chaos/Core/JSONRecursiveLoader.h>
 #include <chaos/Core/JSONSerializable.h>
-#include <chaos/Core/Log.h>
 #include <chaos/Core/AutoCast.h>
 #include <chaos/Core/SmartPointers.h>
 #include <chaos/Core/Class.h>
 #include <chaos/Core/SubClassOf.h>
 #include <chaos/Core/ClassLoader.h>
 #include <chaos/Core/Object.h>
+#include <chaos/Core/Log.h>
 #include <chaos/Core/FileResource.h>
 #include <chaos/Core/Tag.h>
 #include <chaos/Core/ObjectRequest.h>

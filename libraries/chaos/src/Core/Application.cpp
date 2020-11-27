@@ -16,6 +16,30 @@ namespace chaos
 		singleton_instance = nullptr;
 	}
 
+	void Application::LogExecutionInformation()
+	{
+		// display the arguments
+		Log::Output(LogType::Message, false, "Command line: ");
+		for (std::string const& arg : GetArguments())
+			Log::Output(LogType::Message, false, "%s ", arg.c_str());
+		Log::Output(LogType::Message, false, "\n");
+		// the current directory
+		Log::Message("Working directory: %s", boost::filesystem::current_path().string().c_str());
+		// the date
+		std::time_t t = std::time(0);
+		struct tm tm;
+		localtime_s(&tm, &t);
+
+		Log::Message(
+			"Time: %04d-%02d-%02d %02dh%02dm%02ds",
+			tm.tm_year + 1900,
+			tm.tm_mon + 1,
+			tm.tm_mday,
+			tm.tm_hour,
+			tm.tm_min,
+			tm.tm_sec);
+	}
+
 	bool Application::ReloadConfigurationFile(nlohmann::json & result) const
 	{
 		return JSONTools::LoadJSONFile(configuration_path, result, true);	
@@ -66,6 +90,9 @@ namespace chaos
 
 		if (will_show_console)
 			WinTools::AllocConsoleAndRedirectStdOutput();
+
+		// some log
+		LogExecutionInformation();
 
 		// load class
 		if (!LoadClasses())

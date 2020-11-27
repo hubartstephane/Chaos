@@ -31,33 +31,29 @@ namespace chaos
 	{
 	public:
 
+		/** get the Log instance */
+		static Log* GetInstance();
+
 		/** output a message */
 		template<typename ...PARAMS>
-		static void Message(PARAMS... params) 
-		{
-			if (Log* log = GetInstance())
-				log->DoFormatAndOuput(LogType::Message, true, params...); 
-		}
+		static void Message(PARAMS... params) { Output(LogType::Message, true, params...); }
 		/** output a warning */
 		template<typename ...PARAMS>
-		static void Warning(PARAMS... params) 
-		{ 
-			if (Log* log = GetInstance())
-				log->DoFormatAndOuput(LogType::Warning, true, params...); 
-		}
+		static void Warning(PARAMS... params) { Output(LogType::Warning, true, params...); }
 		/** output an error */
 		template<typename ...PARAMS>
-		static void Error(PARAMS... params) 
+		static void Error(PARAMS... params) { Output(LogType::Error, true, params...); }
+
+		/** generic log function */
+		template<typename ...PARAMS>
+		static void Output(LogType type, bool add_line_jump, PARAMS... params)
 		{ 
 			if (Log* log = GetInstance())
-				log->DoFormatAndOuput(LogType::Error, true, params...); 
+				log->DoFormatAndOuput(type, add_line_jump, params...);
 		}
 
 		/** display a box with a text */
 		static void Title(char const * title);
-
-		/** get the Log instance */
-		static Log* GetInstance();
 
 	protected:
 

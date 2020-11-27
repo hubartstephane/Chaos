@@ -36,7 +36,7 @@ namespace chaos
 		if (add_line_jump)
 			output << "\n";
 		// generate output in file
-		if (open_output_file && !output_file)
+		if (open_output_file && !output_file.is_open())
 		{
 			// even in case of failure do not ever try to open the file
 			open_output_file = false; 
@@ -50,7 +50,7 @@ namespace chaos
 			}
 		}
 		// output in file
-		if (output_file)
+		if (output_file.is_open())
 		{
 			output_file << buffer;
 			if (add_line_jump)

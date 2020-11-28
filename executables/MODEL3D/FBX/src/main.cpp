@@ -6,6 +6,8 @@ static constexpr int SKELETAL_BONE_COUNT = 250;
 
 class WindowOpenGLTest : public chaos::Window
 {
+    CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+
 public:
 
   WindowOpenGLTest()

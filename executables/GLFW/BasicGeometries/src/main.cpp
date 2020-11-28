@@ -108,6 +108,8 @@ char const * GetPrimitiveName(PrimitiveType type)
 
 class WindowOpenGLTest : public chaos::Window
 {
+	CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+
 protected:
 
 	char const * GetExampleTitle(TestID example)

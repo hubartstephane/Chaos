@@ -106,7 +106,7 @@ namespace chaos
 
 		if (vertex_buffer != 0)
 		{
-			glNamedBufferData(vertex_buffer, vb_size, nullptr, GL_STATIC_DRAW); // shuxxx !!!
+			glNamedBufferData(vertex_buffer, vb_size, nullptr, GL_STATIC_DRAW); // shuxxx !!! GL_STATIC_DRAW
 			result.first = (char *)glMapNamedBuffer(vertex_buffer, GL_WRITE_ONLY);
 			if (result.first == nullptr)
 				return false;
@@ -114,7 +114,7 @@ namespace chaos
 
 		if (index_buffer != 0)
 		{
-			glNamedBufferData(index_buffer, ib_size, nullptr, GL_STATIC_DRAW);
+			glNamedBufferData(index_buffer, ib_size, nullptr, GL_STATIC_DRAW); // GL_STATIC_DRAW
 			result.second = (GLuint *)glMapNamedBuffer(index_buffer, GL_WRITE_ONLY);
 			if (result.second == nullptr && vertex_buffer != 0)
 			{

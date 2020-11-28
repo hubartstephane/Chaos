@@ -198,8 +198,10 @@ namespace chaos
 		if (main_window == nullptr)
 			return false;
 		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
-		main_window->InitializeFromConfiguration(configuration, configuration_path);
-
+		glfwMakeContextCurrent(main_window->GetGLFWHandler());
+		if (!main_window->InitializeFromConfiguration(configuration, configuration_path))
+			return false;
+		glfwMakeContextCurrent(nullptr);
 		// a final initialization (after main window is constructed ... and OpenGL context)
 		if (!PreMessageLoop())
 			return false;

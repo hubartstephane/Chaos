@@ -100,32 +100,6 @@ namespace chaos
 		return GetEnumVectorArityImpl(type, GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4);
 	}
 
-	bool GLTools::MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result) // shuxxx
-	{
-		result = std::make_pair(nullptr, nullptr);
-
-		if (vertex_buffer != 0)
-		{
-			glNamedBufferData(vertex_buffer, vb_size, nullptr, GL_STATIC_DRAW); // shuxxx !!! GL_STATIC_DRAW
-			result.first = (char *)glMapNamedBuffer(vertex_buffer, GL_WRITE_ONLY);
-			if (result.first == nullptr)
-				return false;
-		}
-
-		if (index_buffer != 0)
-		{
-			glNamedBufferData(index_buffer, ib_size, nullptr, GL_STATIC_DRAW); // GL_STATIC_DRAW
-			result.second = (GLuint *)glMapNamedBuffer(index_buffer, GL_WRITE_ONLY);
-			if (result.second == nullptr && vertex_buffer != 0)
-			{
-				glUnmapNamedBuffer(vertex_buffer);
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 	bool GLTools::GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUBuffer> * vertex_buffer, shared_ptr<GPUBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer)
 	{
 		// release resource at destruction in case of failure 

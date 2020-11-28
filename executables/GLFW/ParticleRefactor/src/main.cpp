@@ -86,6 +86,8 @@ class WindowOpenGLTest : public chaos::Window
 	float VIEWPORT_WANTED_ASPECT = (16.0f / 9.0f);
 	float WORLD_X = 1000.0f;
 
+	CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+
 protected:
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override

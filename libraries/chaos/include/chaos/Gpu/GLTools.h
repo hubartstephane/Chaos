@@ -41,9 +41,6 @@ namespace chaos
 		/** Initialize the Debug message handler */
 		static void SetDebugMessageHandler();
 
-		/** map an index and vertex buffer at the same time, all mapped or none mapped */
-		static bool MapBuffers(GLuint vertex_buffer, GLuint index_buffer, size_t vb_size, size_t ib_size, std::pair<char*, GLuint*> & result);
-
 		/** generate multiple arrays/buffer with a single call */
 		static bool GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUBuffer> * vertex_buffer, shared_ptr<GPUBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer);
 

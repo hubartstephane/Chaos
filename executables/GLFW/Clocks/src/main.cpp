@@ -62,6 +62,8 @@ class WindowOpenGLTest : public chaos::Window
 {
 	friend class MyEvent;
 
+	CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+
 protected:
 
 	void DebugDisplayTips()

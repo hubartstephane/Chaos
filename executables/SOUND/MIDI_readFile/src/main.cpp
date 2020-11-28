@@ -7,6 +7,8 @@ class WindowOpenGLTest : public chaos::Window
 {
 	friend class MIDICommandEvent;
 
+	CHAOS_DECLARE_OBJECT_CLASS2(WindowOpenGLTest, chaos::Window);
+
 protected:
 
 	virtual bool OnDraw(chaos::GPURenderer * renderer, chaos::box2 const & viewport, glm::ivec2 window_size) override

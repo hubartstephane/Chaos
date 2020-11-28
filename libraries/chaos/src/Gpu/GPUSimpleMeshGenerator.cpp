@@ -100,61 +100,73 @@ namespace chaos
 	// GPUSimpleMeshGenerator
 	// =====================================================================
 
-	bool GPUSimpleMeshGenerator::FillMeshData(GPUSimpleMesh * mesh) const
+	bool GPUSimpleMeshGenerator::FillMeshData(GPUSimpleMesh* mesh) const
 	{
 		assert(mesh != nullptr);
 
 		GPUMeshGenerationRequirement requirement = GetRequirement();
-		if (requirement.IsValid())
+		if (!requirement.IsValid())
+			return false;
+
+		// create a vertex buffer
+		int vb_size = 0;
+
+		shared_ptr<GPUBuffer> vertex_buffer;
+		if (requirement.vertices_count > 0)
 		{
-			shared_ptr<GPUBuffer> vb_object;
-			shared_ptr<GPUBuffer>  ib_object;
+			vertex_buffer = new GPUBuffer(false);
+			if (vertex_buffer == nullptr || !vertex_buffer->IsValid())
+				return false;
 
-			shared_ptr<GPUBuffer> * vb_ptr = (requirement.vertices_count > 0) ? &vb_object : nullptr;
-			shared_ptr<GPUBuffer>  * ib_ptr = (requirement.indices_count  > 0) ? &ib_object : nullptr;
-
-			if (GLTools::GenerateVertexAndIndexBuffers(nullptr, vb_ptr, ib_ptr, false, false))  // vertex_buffer and index_buffer are static
-			{
-				GLuint vb = (requirement.vertices_count > 0) ? vb_object->GetResourceID() : 0;
-				GLuint ib = (requirement.indices_count  > 0) ? ib_object->GetResourceID() : 0;
-
-				int vb_size = requirement.vertices_count * requirement.vertex_size;
-				int ib_size = requirement.indices_count * sizeof(GLuint);
-
-				// allocate buffer for vertices and indices
-				std::pair<char *, GLuint *> mapping;
-				if (GLTools::MapBuffers(vb, ib, vb_size, ib_size, mapping))
-				{
-					// prepare the mesh
-					mesh->Release();
-					mesh->vertex_buffer = vb_object;
-					mesh->index_buffer = ib_object;
-
-					// generate the indices and the vertices
-					MemoryBufferWriter vertices_writer(mapping.first, vb_size);
-					MemoryBufferWriter indices_writer(mapping.second, ib_size);
-					GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
-
-					assert(vertices_writer.GetRemainingBufferSize() == 0);
-					assert(indices_writer.GetRemainingBufferSize() == 0);
-
-					// get the vertex declaration
-                    mesh->vertex_declaration = GenerateVertexDeclaration();
-					assert(mesh->vertex_declaration->GetVertexSize() == requirement.vertex_size);
-
-					// initialize the vertex array and validate
-					mesh->SetVertexBufferOffset(0);
-					// transfert data to GPU and free memory
-					if (vb != 0)
-						glUnmapNamedBuffer(vb);
-					if (ib != 0)
-						glUnmapNamedBuffer(ib);
-
-					return true;
-				}
-			}
+			vb_size = requirement.vertices_count * requirement.vertex_size;
+			vertex_buffer->SetBufferData(nullptr, vb_size);
 		}
-		return false;
+
+		// create a index buffer
+		int ib_size = 0;
+
+		shared_ptr<GPUBuffer> index_buffer;
+		if (requirement.indices_count > 0)
+		{
+			index_buffer = new GPUBuffer(false);
+			if (index_buffer == nullptr || !index_buffer->IsValid())
+				return false;
+
+			ib_size = requirement.indices_count * sizeof(GLuint);
+			index_buffer->SetBufferData(nullptr, ib_size);
+		}
+
+		// map the buffers		
+		char* vb_ptr = (vertex_buffer != nullptr) ? vertex_buffer->MapBuffer(0, 0, false, true) : nullptr;
+		char* ib_ptr = (index_buffer != nullptr) ? index_buffer->MapBuffer(0, 0, false, true) : nullptr;
+
+		// prepare the mesh
+		mesh->Release();
+		mesh->vertex_buffer = vertex_buffer;
+		mesh->index_buffer = index_buffer;
+
+		// generate the indices and the vertices
+		MemoryBufferWriter vertices_writer(vb_ptr, vb_size);
+		MemoryBufferWriter indices_writer(ib_ptr, ib_size);
+		GenerateMeshData(mesh->primitives, vertices_writer, indices_writer);
+
+		assert(vertices_writer.GetRemainingBufferSize() == 0);
+		assert(indices_writer.GetRemainingBufferSize() == 0);
+
+		// get the vertex declaration
+		mesh->vertex_declaration = GenerateVertexDeclaration();
+		assert(mesh->vertex_declaration->GetVertexSize() == requirement.vertex_size);
+
+		// initialize the vertex array and validate
+		mesh->SetVertexBufferOffset(0);
+
+		// unmap buffers
+		if (vertex_buffer != nullptr)
+			vertex_buffer->UnMapBuffer();
+		if (index_buffer != nullptr)
+			index_buffer->UnMapBuffer();
+
+		return true;
 	}
 
 	shared_ptr<GPUSimpleMesh> GPUSimpleMeshGenerator::GenerateMesh() const

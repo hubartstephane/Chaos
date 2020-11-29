@@ -100,45 +100,6 @@ namespace chaos
 		return GetEnumVectorArityImpl(type, GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4);
 	}
 
-	bool GLTools::GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUBuffer> * vertex_buffer, shared_ptr<GPUBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer)
-	{
-		// release resource at destruction in case of failure 
-		shared_ptr<GPUVertexArray> va;
-		shared_ptr<GPUBuffer> vb;
-		shared_ptr<GPUBuffer> ib;
-
-		if (vertex_array != nullptr)
-		{
-			va = new GPUVertexArray(); // create a GL resource
-			if (va == nullptr || !va->IsValid())
-				return false;		
-		}
-
-		if (vertex_buffer != nullptr)
-		{
-			vb = new GPUBuffer(in_dynamic_vertex_buffer); // create a GL resource
-			if (vb == nullptr || !vb->IsValid())
-				return false;		
-		}
-
-		if (index_buffer != nullptr)
-		{
-			ib = new GPUBuffer(in_dynamic_index_buffer); // create a GL resource
-			if (ib == nullptr || !ib->IsValid())
-				return false;		
-		}
-
-		// success : validate pointers
-		if (vertex_array != nullptr)
-			*vertex_array = va;
-		if (vertex_buffer != nullptr)
-			*vertex_buffer = vb;
-		if (index_buffer != nullptr)
-			*index_buffer = ib;
-
-		return true;
-	}
-
 	void GLTools::DisplayGenericInformation()
 	{
 		GLubyte const * renderer = glGetString(GL_RENDERER);

@@ -512,7 +512,7 @@ namespace chaos
 				// shuxxx
 				assert(0);
 #if 0
-				if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib, false, false)) // vertex_buffer and index_buffer are static
+				//if (GLTools::GenerateVertexAndIndexBuffers(&va, &vb, &ib, false, false)) // vertex_buffer and index_buffer are static
 				{
 					result->vertex_declaration = vertex_declaration;
 

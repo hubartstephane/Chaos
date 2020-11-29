@@ -147,9 +147,7 @@ namespace chaos
 			LoadFromJSON(glfw_configuration, glfw_hints);
 		glfw_hints.ApplyHints();
 
-		// create a hidden window whose purpose is to provide a sharable context for all others
-
-		
+		// create a hidden window whose purpose is to provide a sharable context for all others		
 		window_hints.ApplyHints();
 		glfwWindowHint(GLFW_VISIBLE, 0);
 		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
@@ -477,17 +475,13 @@ namespace chaos
 	void WindowApplication::SetKeyState(int key, int action)
 	{
 		if (key >= 0 && key < keyboard_state.size())
-		{
 			keyboard_state[key].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
-		}
 	}
 
 	bool WindowApplication::GetKeyState(int key, bool previous_frame) const
 	{
 		if (key >= 0 && key < keyboard_state.size())
-		{
 			return keyboard_state[key].GetValue(previous_frame);
-		}
 		return false;
 	}
 
@@ -501,9 +495,7 @@ namespace chaos
 	{
 		WindowApplication* application = Application::GetInstance();
 		if (application != nullptr)
-		{
 			return application->shared_context;
-		}		
 		return nullptr;
 	}
 

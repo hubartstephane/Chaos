@@ -28,10 +28,17 @@ namespace chaos
 		if (game == nullptr)
 			return false;
 		// initialize the game from configuration
-		nlohmann::json const* game_config = JSONTools::GetStructure(configuration, "game");
-		if (game_config != nullptr)
-			if (!game->InitializeFromConfiguration(*game_config, configuration_path))
-				return false;
+		if (!WithGLContext<bool>(shared_context, [this]() 
+		{
+			nlohmann::json const* game_config = JSONTools::GetStructure(configuration, "game");
+			if (game_config != nullptr)
+				if (!game->InitializeFromConfiguration(*game_config, configuration_path))
+					return false;
+			return true;
+		}))
+		{
+			return false;
+		}
 		// update all windows and give them the game
 		for (auto& window : windows)
 		{
@@ -43,7 +50,7 @@ namespace chaos
 
 
 
-		//CreateTypedWindow(main_window_class, window_params, window_hints);
+		CreateTypedWindow(main_window_class, window_params, window_hints);
 
 
 		return true;

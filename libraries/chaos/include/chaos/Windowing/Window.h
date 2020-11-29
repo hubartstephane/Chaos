@@ -145,6 +145,26 @@ namespace chaos
 		/** getting the renderer */
 		GPURenderer* GetRenderer() { return renderer.get(); }
 
+		/** using window context, call functor, then restore previous */
+		template<typename T>
+		T WithGLContext(std::function<T()> func)
+		{
+			GLFWwindow* previous_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(glfw_window);			
+			T result = func();			
+			glfwMakeContextCurrent(previous_context);
+			return result;
+		}
+
+		template<>
+		void WithGLContext(std::function<void()> func)
+		{
+			GLFWwindow* previous_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(glfw_window);
+			func();
+			glfwMakeContextCurrent(previous_context);
+		}
+
 	protected:
 
 		/** get the hints for new GLFW window */

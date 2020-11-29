@@ -138,7 +138,7 @@ protected:
 		if (mesh != nullptr)
 			mesh->Render(renderer, rm, &uniform_provider, render_params);
 
-		debug_display.Display((int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
+		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 
 		return true;
 	}

@@ -50,7 +50,7 @@ namespace chaos
 		return rebuild_required;
 	}
 
-	void GLDebugOnScreenDisplay::Display(int width, int height) const
+	void GLDebugOnScreenDisplay::Display(GPURenderer * renderer, int width, int height) const
 	{
 		if (lines.size() == 0) // do not draw nor rebuild buffer if there are no lines (maybe GPU buffer could be cleaned)
 			return;
@@ -62,6 +62,12 @@ namespace chaos
 			screen_width = width;
 		}
 
+		// vertex array
+		GPUVertexArray const* vertex_array = vertex_array_cache->FindOrCreateVertexArray(renderer, program.get(), vertex_buffer.get(), nullptr, &declaration, 0);
+		if (vertex_array == nullptr)
+			return;
+		glBindVertexArray(vertex_array->GetResourceID());
+
 		// context states
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -71,8 +77,7 @@ namespace chaos
 		glUseProgram(program->GetResourceID());
 
 		// Initialize the vertex array
-		glBindVertexArray(vertex_array->GetResourceID());
-
+		
 		float character_width = (float)mesh_builder_params.character_width;
 		float character_height = (float)mesh_builder_params.character_width;
 
@@ -139,9 +144,6 @@ namespace chaos
 		glNamedBufferData(vertex_buffer->GetResourceID(), count * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 		draw_count = count / 4; // 4 float per vertex
 
-		GLuint binding_index = 0;
-		glVertexArrayVertexBuffer(vertex_array->GetResourceID(), binding_index, vertex_buffer->GetResourceID(), 0, declaration.GetVertexSize());
-
 		return true;
 	}
 
@@ -162,6 +164,11 @@ namespace chaos
 
 	bool GLDebugOnScreenDisplay::DoInitialize(GLDebugOnScreenDisplay::Params const & params)
 	{
+		// the cache
+		vertex_array_cache = new GPUVertexArrayCache;
+		if (vertex_array_cache == nullptr)
+			return false;
+
 		// load image
 		FIBITMAP * image = ImageTools::LoadImageFromFile(params.texture_path);
 		if (image == nullptr)
@@ -186,12 +193,10 @@ namespace chaos
 		declaration.Push(VertexAttributeSemantic::POSITION, 0, VertexAttributeType::FLOAT2);
 		declaration.Push(VertexAttributeSemantic::TEXCOORD, 0, VertexAttributeType::FLOAT2);
 
-		// Generate Vertex Array and Buffer
-		if (!GLTools::GenerateVertexAndIndexBuffers(&vertex_array, &vertex_buffer, nullptr, true, false)) // vertex_buffer is dynamic
+		// Generate Vertex Buffer
+		vertex_buffer = new GPUBuffer(true); // dynamic
+		if (vertex_buffer == nullptr)
 			return false;
-
-		GPUProgramData const & program_data = program->GetProgramData();
-		program_data.BindAttributes(vertex_array->GetResourceID(), declaration, nullptr);
 
 		// keep a copy of initialization params
 		mesh_builder_params = params;
@@ -203,9 +208,8 @@ namespace chaos
 	{
 		program = nullptr;
 		texture = nullptr;
-		vertex_array = nullptr;
+		vertex_array_cache = nullptr;
 		vertex_buffer = nullptr;
-
 		declaration.Clear();
 	}
 

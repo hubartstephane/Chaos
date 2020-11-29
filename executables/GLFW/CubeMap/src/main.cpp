@@ -144,7 +144,7 @@ protected:
 		// XXX : the stencil is here to ensure that the debug strings is not erased by the sky box
 		//       (debug string needs to be rendered first so it can use the conditional rendering from previous frame)
 		query->BeginConditionalRendering(true, false);
-		debug_display.Display((int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
+		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 		query->EndConditionalRendering();
 
 		// XXX : render the skybox. Use previous frame query for conditinal rendering

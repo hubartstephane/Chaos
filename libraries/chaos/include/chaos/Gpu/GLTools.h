@@ -41,9 +41,6 @@ namespace chaos
 		/** Initialize the Debug message handler */
 		static void SetDebugMessageHandler();
 
-		/** generate multiple arrays/buffer with a single call */
-		static bool GenerateVertexAndIndexBuffers(shared_ptr<GPUVertexArray> * vertex_array, shared_ptr<GPUBuffer> * vertex_buffer, shared_ptr<GPUBuffer> * index_buffer, bool in_dynamic_vertex_buffer, bool in_dynamic_index_buffer);
-
 		/** an utility function to 'compute' offset in vertex buffer (simple cast in facts) */
 		static inline void * GetOffset(size_t s)
 		{

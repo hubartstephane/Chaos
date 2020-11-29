@@ -101,8 +101,25 @@ namespace chaos
 		/** change the state of a keyboard key */
 		bool GetKeyState(int key, bool previous_frame = false) const;
 
-		/** get the OpenGL context, call the function, restore previous context after */
-		static void WithSharedGLContext(std::function<void()> func);
+		/** get the OpenGL context, call the function, restore previous context after */		 
+		template<typename T>
+		static T WithGLContext(GLFWwindow* context, std::function<T()> func)
+		{
+			GLFWwindow* previous_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(context);
+			T result = func();
+			glfwMakeContextCurrent(previous_context);
+			return result;
+		}
+
+		template<>
+		static void WithGLContext(GLFWwindow* context, std::function<void()> func)
+		{
+			GLFWwindow* previous_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(context);
+			func();
+			glfwMakeContextCurrent(previous_context);
+		}
 
 		/** get the OpenGL main context */
 		static GLFWwindow* GetSharedGLContext();

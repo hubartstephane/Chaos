@@ -203,8 +203,6 @@ namespace chaos
 					return nullptr;
 			}
 		}
-
-
 		// generate the texture
 		GLuint texture_id = 0;	
 		glCreateTextures(array_target, 1, &texture_id);

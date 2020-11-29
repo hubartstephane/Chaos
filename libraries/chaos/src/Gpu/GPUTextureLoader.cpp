@@ -64,7 +64,6 @@ namespace chaos
 
 		GLuint texture_id = 0;
 		glCreateTextures(target, 1, &texture_id);
-		
 		if (texture_id > 0)
 		{  
 			// choose format and internal format (beware FreeImage is BGR/BGRA)

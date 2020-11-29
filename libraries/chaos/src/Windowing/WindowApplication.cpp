@@ -111,31 +111,26 @@ namespace chaos
 
 	Window* WindowApplication::CreateTypedWindow(SubClassOf<Window> window_class, WindowParams const& params, WindowHints const& hints)
 	{
-		// XXX : the shared context must not be current at the moment of window creation
-		GLFWwindow* previous_context = glfwGetCurrentContext();
-		glfwMakeContextCurrent(nullptr);
-		
-		// create the window class
-		Window* result = window_class.CreateInstance();
-		if (result == nullptr)
+		return WithGLContext<Window*>(nullptr, [this, window_class, params, hints]() -> Window *
 		{
-			glfwMakeContextCurrent(previous_context);
-			return nullptr;
-		}
-		// create the GLFW resource
-		if (!result->CreateGLFWWindow(params, hints, shared_context))
-		{			
-			delete(result);
-			glfwMakeContextCurrent(previous_context);
-			return nullptr;
-		}
-		// post initialization method
-		OnWindowCreated(result);
-		// store the result
-		windows.push_back(result);
-		// restore the context
-		glfwMakeContextCurrent(previous_context);
-		return result;
+			// create the window class
+			Window* result = window_class.CreateInstance();
+			if (result == nullptr)
+			{
+				return nullptr;
+			}
+			// create the GLFW resource
+			if (!result->CreateGLFWWindow(params, hints, shared_context))
+			{
+				delete(result);
+				return nullptr;
+			}
+			// post initialization method
+			OnWindowCreated(result);
+			// store the result
+			windows.push_back(result);
+			return result;
+		});
 	}
 
 	void WindowApplication::OnWindowCreated(Window* window)
@@ -160,27 +155,32 @@ namespace chaos
 		shared_context = glfwCreateWindow(100, 100, "", nullptr, nullptr);
 		if (shared_context == nullptr)
 			return false;
-		glfwMakeContextCurrent(shared_context); // necessary for glewInit()
 
-		// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
-		//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
-		glewExperimental = GL_TRUE;
-		// create the context
-		GLenum err = glewInit();
-		if (err != GLEW_OK)
+		if (!WithGLContext<bool>(shared_context, [this]()
 		{
-			Log::Message("glewInit(...) failure : %s", glewGetErrorString(err));
+			// XXX : seems to be mandatory for some functions like : glGenVertexArrays(...)
+				//       see https://www.opengl.org/wiki/OpenGL_Loading_Library
+			glewExperimental = GL_TRUE;
+			// create the context
+			GLenum err = glewInit();
+			if (err != GLEW_OK)
+			{
+				Log::Message("glewInit(...) failure : %s", glewGetErrorString(err));
+				return false;
+			}
+			// set the debug log hander
+			GLTools::SetDebugMessageHandler();
+			// some generic information
+			GLTools::DisplayGenericInformation();
+
+			// initialize the GPU resource Manager (first window/OpenGL context must have been created)
+			if (!InitializeGPUResourceManager())
+				return false;
+			return true;
+		}))
+		{
 			return false;
 		}
-
-		// set the debug log hander
-		GLTools::SetDebugMessageHandler();
-		// some generic information
-		GLTools::DisplayGenericInformation();
-
-		// initialize the GPU resource Manager (first window/OpenGL context must have been created)
-		if (!InitializeGPUResourceManager())
-			return false;
 
 		// the main window params & hints (work on copy)
 		WindowParams params = window_params;
@@ -198,10 +198,14 @@ namespace chaos
 		if (main_window == nullptr)
 			return false;
 		// initialize the main with any configuration data window (once GPUResourceManager is fully initialized)
-		glfwMakeContextCurrent(main_window->GetGLFWHandler());
-		if (!main_window->InitializeFromConfiguration(configuration, configuration_path))
+		if (!WithGLContext<bool>(main_window->GetGLFWHandler(), [this]()
+		{
+			return main_window->InitializeFromConfiguration(configuration, configuration_path);
+		}))
+		{
 			return false;
-		glfwMakeContextCurrent(nullptr);
+		}
+
 		// a final initialization (after main window is constructed ... and OpenGL context)
 		if (!PreMessageLoop())
 			return false;
@@ -503,20 +507,6 @@ namespace chaos
 		return nullptr;
 	}
 
-	void WindowApplication::WithSharedGLContext(std::function<void()> func)
-	{
-		GLFWwindow* shared_context = GetSharedGLContext();
-		if (shared_context == nullptr)
-		{
-			func();
-		}
-		else
-		{
-			GLFWwindow* previous_context = glfwGetCurrentContext();
-			glfwMakeContextCurrent(shared_context);
-			func();
-			glfwMakeContextCurrent(previous_context);
-		}
-	}
+
 
 }; // namespace chaos

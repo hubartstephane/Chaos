@@ -94,8 +94,6 @@ namespace chaos
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 
-		
-		for (int i = 0 ; i < 10 ; ++i) glBindTextureUnit(i, 0);
 		glUseProgram(0);
 		glBindVertexArray(0);
 	}

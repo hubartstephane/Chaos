@@ -35,9 +35,7 @@ namespace chaos
 		program->UseProgram(uniform_provider);
 		// do the rendering
 		DoRender(renderer, program, render_params);
-		// reset the program
-		
-		for (int i = 0; i < 10; ++i) glBindTextureUnit(i, 0);
+		// reset the program		
 		glUseProgram(0);
 	}
 
@@ -55,8 +53,6 @@ namespace chaos
 		// do the rendering
 		DoRender(renderer, program, render_params);
 		// reset the program
-		
-		for (int i = 0; i < 10; ++i) glBindTextureUnit(i, 0);
 		glUseProgram(0);
 	}
 

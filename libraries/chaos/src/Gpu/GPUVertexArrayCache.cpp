@@ -37,6 +37,14 @@ namespace chaos
 
 	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const
 	{
+#if _DEBUG
+		GLFWwindow* c1 = glfwGetCurrentContext();
+		GLFWwindow* c2 = renderer->GetWindow()->GetGLFWHandler();
+		assert(c1 != nullptr);
+		assert(c2 != nullptr);
+		assert(c1 == c2);
+#endif
+
 		// early exit
 		if (program == nullptr)
 			return nullptr;

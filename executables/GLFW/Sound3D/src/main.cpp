@@ -31,7 +31,7 @@ protected:
 		chaos::GPURenderParams render_params;
     mesh->Render(renderer, program.get(), &uniform_provider, render_params);
 
-		debug_display.Display((int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
+		debug_display.Display(renderer, (int)(2.0f * viewport.half_size.x), (int)(2.0f * viewport.half_size.y));
 
     return true;
   }

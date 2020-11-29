@@ -41,7 +41,7 @@ namespace chaos
 		};
 
 		/** display the debug text */
-		void Display(int width, int height) const;
+		void Display(GPURenderer* renderer, int width, int height) const;
 		/** tick all lines (returns true whether there is a change) */
 		bool Tick(float delta_time);
 		/** Add a line in the log (character size and position are in pixels) */
@@ -78,7 +78,7 @@ namespace chaos
 		/** the texture */
 		shared_ptr<GPUTexture> texture;
 		/** the vertex array */
-		shared_ptr<GPUVertexArray> vertex_array;
+		shared_ptr<GPUVertexArrayCache> vertex_array_cache;
 		/** the vertex buffer */
 		shared_ptr<GPUBuffer> vertex_buffer;
 		/** the declaration of the vertex buffer */

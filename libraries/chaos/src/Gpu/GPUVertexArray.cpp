@@ -24,6 +24,11 @@ namespace chaos
 		return (vertex_array_id != 0);
 	}
 
+	void GPUVertexArray::Invalidate()
+	{
+		vertex_array_id = 0;
+	}
+
 	bool GPUVertexArray::DoRelease()
 	{
 		if (vertex_array_id == 0)

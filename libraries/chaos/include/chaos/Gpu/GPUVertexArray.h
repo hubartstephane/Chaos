@@ -33,6 +33,9 @@ namespace chaos
 		/** Initialize from GL Resource */
 		bool SetResource(GLuint in_id, bool in_ownership);
 
+		/** this reset the ID of the resource (context has been destoyed) without trying to destroy it */
+		void Invalidate();
+
 	protected:
 
 		/** cleaning the object */

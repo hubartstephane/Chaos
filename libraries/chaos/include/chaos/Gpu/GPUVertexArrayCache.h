@@ -45,6 +45,8 @@ namespace chaos
 		GLuint vertex_buffer_id = 0;
 		/** the index buffer */
 		GLuint index_buffer_id = 0;
+		/** the context */
+		GLFWwindow* context = nullptr;
 
 		/** the vertex array */
 		shared_ptr<GPUVertexArray> vertex_array;

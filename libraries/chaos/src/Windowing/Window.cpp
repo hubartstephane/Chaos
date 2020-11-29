@@ -109,9 +109,11 @@ namespace chaos
 	{
 		if (glfw_window != nullptr)
 		{
-			if (glfwGetCurrentContext() == glfw_window)
-				glfwMakeContextCurrent(nullptr);			
+			GLFWwindow * previous_context = glfwGetCurrentContext();
+			glfwMakeContextCurrent(nullptr);
 			glfwDestroyWindow(glfw_window);
+			if (previous_context != nullptr && previous_context != glfw_window)
+				glfwMakeContextCurrent(previous_context);
 			glfw_window = nullptr;
 		}
 	}

@@ -8,6 +8,8 @@ namespace chaos
 		// context window has been destroyed ?
 		if (context_window == nullptr)
 			return false;
+		else if (context_window->GetGLFWHandler() != context)
+			return false;
 		// should always have a program 
 		if (program == nullptr)
 			return false;
@@ -61,6 +63,12 @@ namespace chaos
 			GPUVertexArrayCacheEntry & entry = entries[i];
 			if (!entry.IsValid())				
 			{
+				// special case: context owning the vertex array has been destroyed. 
+				// Invalidate the resource (there is no way to call glfMakeCurrentContext(???) in order to destroy it with glDeleteVertexArrays(...)				
+				if (entry.context_window == nullptr || entry.context != entry.context_window->GetGLFWHandler())
+					if (entry.vertex_array != nullptr)
+						entry.vertex_array->Invalidate();					
+				// remove the entry
 				if (i != count - 1)
 					std::swap(entry, entries[count - 1]);
 				entries.pop_back();
@@ -132,6 +140,7 @@ namespace chaos
 		new_entry.vertex_buffer_id  = (vertex_buffer != nullptr)? vertex_buffer->GetResourceID() : 0;
 		new_entry.index_buffer_id   = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
 		new_entry.context_window    = renderer->GetWindow();
+		new_entry.context           = renderer->GetWindow()->GetGLFWHandler();
 
 		entries.push_back(std::move(new_entry));
 

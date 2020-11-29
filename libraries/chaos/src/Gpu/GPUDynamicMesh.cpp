@@ -26,7 +26,6 @@ namespace chaos
         if (vertex_array_cache == nullptr)
             vertex_array_cache = new GPUVertexArrayCache;
         // display the elements
-        GLuint vertex_array_id = 0;
         int result = 0;       
         for (GPUDynamicMeshElement & element : elements)
         {
@@ -44,7 +43,7 @@ namespace chaos
             if (vertex_array == nullptr)
                 continue;
 
-            vertex_array_id = vertex_array->GetResourceID();
+            GLuint vertex_array_id = vertex_array->GetResourceID();
             glBindVertexArray(vertex_array_id);
 
             // draw all primitives
@@ -63,13 +62,8 @@ namespace chaos
         //  last_rendered_fence = renderer->GetCurrentFrameFence(); 
 
         // restore an 'empty' state
-        if (vertex_array_id != 0)
-        {
-            
-            for (int i = 0 ; i < 10 ; ++i) glBindTextureUnit(i, 0);
-            glUseProgram(0);
-            glBindVertexArray(0);
-        }
+        glUseProgram(0);
+        glBindVertexArray(0);
         return result;
     }
 

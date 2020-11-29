@@ -91,22 +91,27 @@ namespace chaos
 
 	}
 
+	CHAOS_HELP_TEXT(CMD, "-NoAutoPause");
+
 	void GameWindow::OnIconifiedStateChange(bool iconified)
 	{
 		// do not execute following code in debug because it does not fit well with debugger
-#if !_DEBUG
+#if _DEBUG
+		if (!Application::HasApplicationCommandLineFlag("-NoAutoPause"))
+#endif
 		if (iconified)
 			game->RequirePauseGame();
-#endif
 	}
 
 	void GameWindow::OnFocusStateChange(bool gain_focus)
 	{
 		// do not execute following code in debug because it does not fit well with debugger
-#if !_DEBUG
+#if _DEBUG
+		if (!Application::HasApplicationCommandLineFlag("-NoAutoPause"))
+#endif
 		if (!gain_focus)
 			game->RequirePauseGame();
-#endif
+
 	}
 
 }; // namespace chaos

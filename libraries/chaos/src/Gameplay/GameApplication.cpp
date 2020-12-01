@@ -21,6 +21,8 @@ namespace chaos
 
 	bool GameApplication::PreMessageLoop()
 	{
+		assert(glfwGetCurrentContext() == shared_context);
+
 		if (!WindowApplication::PreMessageLoop())
 			return false;
 		// create the game
@@ -28,17 +30,10 @@ namespace chaos
 		if (game == nullptr)
 			return false;
 		// initialize the game from configuration
-		if (!WithGLContext<bool>(shared_context, [this]() 
-		{
-			nlohmann::json const* game_config = JSONTools::GetStructure(configuration, "game");
-			if (game_config != nullptr)
-				if (!game->InitializeFromConfiguration(*game_config, configuration_path))
-					return false;
-			return true;
-		}))
-		{
-			return false;
-		}
+		nlohmann::json const* game_config = JSONTools::GetStructure(configuration, "game");
+		if (game_config != nullptr)
+			if (!game->InitializeFromConfiguration(*game_config, configuration_path))
+				return false;
 		// update all windows and give them the game
 		for (auto& window : windows)
 		{
@@ -58,6 +53,7 @@ namespace chaos
 
 	void GameApplication::Tick(float delta_time)
 	{
+		assert(glfwGetCurrentContext() == shared_context);
 		// super
 		WindowApplication::Tick(delta_time);
 		// update the game

@@ -101,6 +101,9 @@ namespace chaos
 	GPUVertexArray const * GPUVertexArrayCache::FindOrCreateVertexArray(GPURenderer * renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer, GPUVertexDeclaration const * declaration, GLintptr offset)
 	{
 		assert(renderer != nullptr);
+		assert(renderer->GetWindow() != nullptr);
+		assert(renderer->GetWindow()->GetGLFWHandler() != nullptr);
+		assert(renderer->GetWindow()->GetGLFWHandler() == glfwGetCurrentContext());
         assert(declaration != nullptr);
 
 		// early exit

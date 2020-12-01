@@ -482,6 +482,8 @@ namespace chaos
 	{
 		if (glfw_window != nullptr && renderer != nullptr)
 		{
+			assert(glfw_window == glfwGetCurrentContext());
+
 			// XXX : not sure whether i should call glfwGetWindowSize(..) or glfwGetFramebufferSize(..)
 			int width = 0;
 			int height = 0;
@@ -511,6 +513,7 @@ namespace chaos
 
 	bool Window::OnDraw(GPURenderer* renderer, box2 const& viewport, glm::ivec2 window_size)
 	{
+		assert(glfw_window == glfwGetCurrentContext());
 		return true;
 	}
 
@@ -665,66 +668,69 @@ namespace chaos
 	bool Window::ScreenCapture()
 	{
 		// get renderer
-		if (renderer == nullptr)
+		if (glfw_window == nullptr || renderer == nullptr)
 			return false;
 
-		// this call may take a while causing a jump in 'delta_time'
-		WindowApplication* application = Application::GetInstance();
-		if (application == nullptr)
-			return false;
-		application->FreezeNextFrameTickDuration();
+		return WithGLContext<bool>([this]() 
+		{
+			// this call may take a while causing a jump in 'delta_time'
+			WindowApplication* application = Application::GetInstance();
+			if (application == nullptr)
+				return false;
+			application->FreezeNextFrameTickDuration();
 
-		// compute rendering size
-		// in normal case, we work with the window_size then apply a viewport cropping
-		// here we want exactly to work with no cropping
-		box2 viewport = GetRequiredViewport(GetWindowSize());
-		viewport.position = viewport.half_size;
-		glm::ivec2 framebuffer_size = auto_cast_vector(viewport.half_size * 2.0f);
+			// compute rendering size
+			// in normal case, we work with the window_size then apply a viewport cropping
+			// here we want exactly to work with no cropping
+			box2 viewport = GetRequiredViewport(GetWindowSize());
+			viewport.position = viewport.half_size;
+			glm::ivec2 framebuffer_size = auto_cast_vector(viewport.half_size * 2.0f);
 
-		// generate a framebuffer
-		GPUFramebufferGenerator framebuffer_generator;
-		framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, framebuffer_size, "scene");
-		framebuffer_generator.AddDepthStencilAttachment(framebuffer_size, "depth");
+			// generate a framebuffer
+			GPUFramebufferGenerator framebuffer_generator;
+			framebuffer_generator.AddColorAttachment(0, PixelFormat::BGRA, framebuffer_size, "scene");
+			framebuffer_generator.AddDepthStencilAttachment(framebuffer_size, "depth");
 
-		shared_ptr<GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);
-		if (framebuffer == nullptr)
-			return false;
-		if (!framebuffer->CheckCompletionStatus())
-			return false;
-
-		// render in the frame buffer
-		renderer->BeginRenderingFrame();
-		renderer->PushFramebufferRenderContext(framebuffer.get(), false);
-		GLTools::SetViewport(viewport);
-		OnDraw(renderer.get(), viewport, framebuffer_size);
-		renderer->PopFramebufferRenderContext();
-		renderer->EndRenderingFrame();
-
-		// extract the texture
-		GPUFramebufferAttachmentInfo const* attachment = framebuffer->GetColorAttachment(0);
-		if (attachment == nullptr || attachment->texture == nullptr)
-			return false;
-
-		bitmap_ptr img = bitmap_ptr(ImageTools::GenFreeImage(attachment->texture->GetResourceID(), 0));
-		if (img == nullptr)
-			return false;
-
-		// create the directory
-		boost::filesystem::path capture_directory_path = application->GetUserLocalTempPath() / "Captures";
-		if (!boost::filesystem::is_directory(capture_directory_path))
-			if (!boost::filesystem::create_directories(capture_directory_path))
+			shared_ptr<GPUFramebuffer> framebuffer = framebuffer_generator.GenerateFramebuffer(framebuffer_size);
+			if (framebuffer == nullptr)
+				return false;
+			if (!framebuffer->CheckCompletionStatus())
 				return false;
 
-		// save the image
-		std::string format = StringTools::Printf(
-			"capture_%s_%%d.png",
-			StringTools::TimeToString(true).c_str());
+			// render in the frame buffer
+			renderer->BeginRenderingFrame();
+			renderer->PushFramebufferRenderContext(framebuffer.get(), false);
+			GLTools::SetViewport(viewport);
+			OnDraw(renderer.get(), viewport, framebuffer_size);
+			renderer->PopFramebufferRenderContext();
+			renderer->EndRenderingFrame();
 
-		boost::filesystem::path file_path = FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
-		if (file_path.empty())
-			return false;
+			// extract the texture
+			GPUFramebufferAttachmentInfo const* attachment = framebuffer->GetColorAttachment(0);
+			if (attachment == nullptr || attachment->texture == nullptr)
+				return false;
 
-		return (FreeImage_Save(FIF_PNG, img.get(), file_path.string().c_str(), 0) != 0);
+			bitmap_ptr img = bitmap_ptr(ImageTools::GenFreeImage(attachment->texture->GetResourceID(), 0));
+			if (img == nullptr)
+				return false;
+
+			// create the directory
+			boost::filesystem::path capture_directory_path = application->GetUserLocalTempPath() / "Captures";
+			if (!boost::filesystem::is_directory(capture_directory_path))
+				if (!boost::filesystem::create_directories(capture_directory_path))
+					return false;
+
+			// save the image
+			std::string format = StringTools::Printf(
+				"capture_%s_%%d.png",
+				StringTools::TimeToString(true).c_str());
+
+			boost::filesystem::path file_path = FileTools::GetUniquePath(capture_directory_path, format.c_str(), true);
+			if (file_path.empty())
+				return false;
+
+			return (FreeImage_Save(FIF_PNG, img.get(), file_path.string().c_str(), 0) != 0);
+		});
 	}
 
 	box2 Window::GetRequiredViewport(glm::ivec2 const& size) const

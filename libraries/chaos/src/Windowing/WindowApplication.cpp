@@ -81,7 +81,10 @@ namespace chaos
 					delta_time = std::min(delta_time, max_tick_duration);
 			}
 			// internal tick 
-			Tick(delta_time);
+			WithGLContext<void>(shared_context, [this, delta_time]()
+			{
+				Tick(delta_time);
+			});
 
 			// destroy windows that mean to be
 			for (size_t i = windows.size(); i > 0; --i)
@@ -90,8 +93,11 @@ namespace chaos
 				if (window != nullptr && window->ShouldClose())
 				{
 					// destroy the internal GLFW window
-					window->Finalize();
-					window->DestroyGLFWWindow();
+					WithGLContext<void>(window->GetGLFWHandler(), [window]() 
+					{
+						window->Finalize();
+						window->DestroyGLFWWindow();
+					});	
 					// remove the window for the list
 					windows[i - 1] = windows[windows.size() - 1];
 					windows.pop_back();
@@ -102,7 +108,12 @@ namespace chaos
 			}
 			// tick the windows
 			for (auto& window : windows)
-				window->MainTick(delta_time, real_delta_time);
+			{
+				WithGLContext<void>(window->GetGLFWHandler(), [window, delta_time, real_delta_time]()
+				{
+					window->MainTick(delta_time, real_delta_time);
+				});
+			}
 			// update time
 			t1 = t2;
 		}
@@ -205,8 +216,13 @@ namespace chaos
 		}
 
 		// a final initialization (after main window is constructed ... and OpenGL context)
-		if (!PreMessageLoop())
+		if (!WithGLContext<bool>(shared_context, [this]()
+		{
+			return PreMessageLoop();
+		}))
+		{
 			return false;
+		}		
 		// the main loop
 		MessageLoop();
 
@@ -215,11 +231,14 @@ namespace chaos
 
 	bool WindowApplication::PreMessageLoop()
 	{
+		assert(glfwGetCurrentContext() == shared_context);
 		return true;
 	}
 
 	void WindowApplication::Tick(float delta_time)
 	{
+		assert(glfwGetCurrentContext() == shared_context);
+
 		// tick the managers
 		if (main_clock != nullptr)
 			main_clock->TickClock(delta_time);
@@ -236,6 +255,8 @@ namespace chaos
 
 	bool WindowApplication::InitializeGPUResourceManager()
 	{
+		assert(glfwGetCurrentContext() == shared_context);
+
 		// create and start the GPU manager
 		gpu_resource_manager = new GPUResourceManager;
 		if (gpu_resource_manager == nullptr)
@@ -254,28 +275,31 @@ namespace chaos
 
 	bool WindowApplication::ReloadGPUResources()
 	{
-		// this call may block for too much time
-		FreezeNextFrameTickDuration();
+		return WithGLContext<bool>(shared_context, [this]() 
+		{
+			// this call may block for too much time
+			FreezeNextFrameTickDuration();
 
-		// reload the configuration file
-		nlohmann::json config;
-		if (!ReloadConfigurationFile(config))
-			return false;
-		// get the structure of interrest
-		nlohmann::json const* gpu_config = JSONTools::GetStructure(config, "gpu");
-		if (gpu_config == nullptr)
-			return false;
-		// create a temporary manager
-		shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager; // destroyed at the end of the function
-		if (other_gpu_resource_manager == nullptr)
-			return false;
-		if (!other_gpu_resource_manager->StartManager())
-			return false;
-		// reload all resources ... (even unchanged)
-		if (other_gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
-			gpu_resource_manager->RefreshGPUResources(other_gpu_resource_manager.get());
-		other_gpu_resource_manager->StopManager();
-		return true;
+			// reload the configuration file
+			nlohmann::json config;
+			if (!ReloadConfigurationFile(config))
+				return false;
+			// get the structure of interrest
+			nlohmann::json const* gpu_config = JSONTools::GetStructure(config, "gpu");
+			if (gpu_config == nullptr)
+				return false;
+			// create a temporary manager
+			shared_ptr<GPUResourceManager> other_gpu_resource_manager = new GPUResourceManager; // destroyed at the end of the function
+			if (other_gpu_resource_manager == nullptr)
+				return false;
+			if (!other_gpu_resource_manager->StartManager())
+				return false;
+			// reload all resources ... (even unchanged)
+			if (other_gpu_resource_manager->InitializeFromConfiguration(*gpu_config, configuration_path))
+				gpu_resource_manager->RefreshGPUResources(other_gpu_resource_manager.get());
+			other_gpu_resource_manager->StopManager();
+			return true;
+		});
 	}
 
 	bool WindowApplication::FinalizeGPUResourceManager()

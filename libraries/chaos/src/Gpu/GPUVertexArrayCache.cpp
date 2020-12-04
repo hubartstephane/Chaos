@@ -3,9 +3,10 @@
 
 namespace chaos
 {
+
 	bool GPUVertexArrayCacheEntry::IsValid() const
 	{
-		// context window has been destroyed ?
+		// context window has been destroyed (even if recreated) ?
 		if (context_window == nullptr)
 			return false;
 		else if (context_window->GetGLFWHandler() != context)
@@ -34,17 +35,14 @@ namespace chaos
 		// OK
 		return true;
 	}
-
 	GPUVertexArray const * GPUVertexArrayCache::FindVertexArray(GPURenderer* renderer, GPUProgram const * program, GPUBuffer const * vertex_buffer, GPUBuffer const * index_buffer) const
 	{
-#if _DEBUG
-		GLFWwindow* c1 = glfwGetCurrentContext();
-		GLFWwindow* c2 = renderer->GetWindow()->GetGLFWHandler();
-		assert(c1 != nullptr);
-		assert(c2 != nullptr);
-		assert(c1 == c2);
-#endif
+		GLFWwindow* current_context = glfwGetCurrentContext();
 
+#if _DEBUG
+		assert(current_context != nullptr);
+		assert(current_context == renderer->GetWindow()->GetGLFWHandler());
+#endif
 		// early exit
 		if (program == nullptr)
 			return nullptr;
@@ -61,40 +59,30 @@ namespace chaos
 
 		// search matching entry
 		GPUVertexArray const * result = nullptr;
-
-		size_t count = entries.size();
-
-		size_t i = 0;
-		while (i < count)
+		for (size_t i = entries.size() ; i > 0 ; --i)
 		{
+			size_t index = i - 1;
+
 			// check whether entry is still valid (else swap/pop with last)
-			GPUVertexArrayCacheEntry & entry = entries[i];
-			if (!entry.IsValid())				
-			{
-				// special case: context owning the vertex array has been destroyed. 
-				// Invalidate the resource (there is no way to call glfMakeCurrentContext(???) in order to destroy it with glDeleteVertexArrays(...)				
-				if (entry.context_window == nullptr || entry.context != entry.context_window->GetGLFWHandler())
-					if (entry.vertex_array != nullptr)
-						entry.vertex_array->Invalidate();					
+			GPUVertexArrayCacheEntry & entry = entries[index];
+			if (!entry.IsValid())
+			{				
 				// remove the entry
-				if (i != count - 1)
-					std::swap(entry, entries[count - 1]);
+				if (index != entries.size() - 1)
+					std::swap(entry, entries[entries.size() - 1]);
 				entries.pop_back();
-				--count;
 			}			
-			else
+			else if (result == nullptr)
 			{				
 				// check whether this is expected entry
-				if (result == nullptr && entry.program == program && entry.vertex_buffer == vertex_buffer && entry.index_buffer == index_buffer && entry.context_window == renderer->GetWindow())
+				if (entry.program == program && entry.vertex_buffer == vertex_buffer && entry.index_buffer == index_buffer && entry.context_window == renderer->GetWindow())
 				{
-					result = entry.vertex_array.get();
+					result = entry.vertex_array.get();					
 					if (!purge && result != nullptr)
 						return result;
 				}
-				// next element
-				++i;
 			}
-		}	
+		}
 		return result;
 	}
 
@@ -120,42 +108,43 @@ namespace chaos
 			return result;
 
 		// create the vertex array
-		shared_ptr<GPUVertexArray> new_vertex_array = new GPUVertexArray();
+		shared_ptr<GPUVertexArray> new_vertex_array = new GPUVertexArray(renderer->GetWindow());
 		if (new_vertex_array == nullptr || !new_vertex_array->IsValid())
 			return nullptr;
 
-		GLuint va = new_vertex_array->GetResourceID();
-
-		// set the vertex buffer
-		if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
+		WindowApplication::WithGLContext<void>(renderer->GetWindow()->GetGLFWHandler(), [this, new_vertex_array, renderer, program, vertex_buffer, index_buffer, declaration, offset]()
 		{
-			GLuint binding_index = 0;
-			glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), offset, declaration->GetVertexSize());
-		}
+			GLuint va = new_vertex_array->GetResourceID();
 
-		// set the index buffer
-		if (index_buffer != nullptr)
-			glVertexArrayElementBuffer(va, index_buffer->GetResourceID());
+			// set the vertex buffer
+			if (vertex_buffer != nullptr)  // simple mesh only use one vertex_buffer : binding_index is always 0
+			{
+				GLuint binding_index = 0;
+				glVertexArrayVertexBuffer(va, binding_index, vertex_buffer->GetResourceID(), offset, declaration->GetVertexSize());
+			}
 
-		// bind attributes
-		GPUProgramData const & data = program->GetProgramData();
-		data.BindAttributes(va, *declaration, nullptr);
+			// set the index buffer
+			if (index_buffer != nullptr)
+				glVertexArrayElementBuffer(va, index_buffer->GetResourceID());
 
-		// create the entry in the cache
-		GPUVertexArrayCacheEntry new_entry;
-		new_entry.program           = program;
-		new_entry.vertex_buffer     = vertex_buffer;
-		new_entry.index_buffer      = index_buffer;
-		new_entry.vertex_array      = new_vertex_array;
-		new_entry.program_id        = program->GetResourceID();
-		new_entry.vertex_buffer_id  = (vertex_buffer != nullptr)? vertex_buffer->GetResourceID() : 0;
-		new_entry.index_buffer_id   = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
-		new_entry.context_window    = renderer->GetWindow();
-		new_entry.context           = renderer->GetWindow()->GetGLFWHandler();
+			// bind attributes
+			GPUProgramData const& data = program->GetProgramData();
+			data.BindAttributes(va, *declaration, nullptr);
 
-		entries.push_back(std::move(new_entry));
+			// create the entry in the cache
+			GPUVertexArrayCacheEntry new_entry;
+			new_entry.program = program;
+			new_entry.vertex_buffer = vertex_buffer;
+			new_entry.index_buffer = index_buffer;
+			new_entry.vertex_array = new_vertex_array;
+			new_entry.program_id = program->GetResourceID();
+			new_entry.vertex_buffer_id = (vertex_buffer != nullptr) ? vertex_buffer->GetResourceID() : 0;
+			new_entry.index_buffer_id = (index_buffer != nullptr) ? index_buffer->GetResourceID() : 0;
+			new_entry.context_window = renderer->GetWindow();
+			new_entry.context = renderer->GetWindow()->GetGLFWHandler();
 
-		// result
+			entries.push_back(std::move(new_entry));
+		});
 		return new_vertex_array.get();
 	}
 

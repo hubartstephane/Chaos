@@ -12,17 +12,17 @@ namespace chaos
 
 	GPUProgram::~GPUProgram()
 	{
-		DoRelease();
+		Release();
 	}
 
-	bool GPUProgram::DoRelease()
+	void GPUProgram::Release()
 	{
-		if (program_id == 0)
-			return false;
-		glDeleteProgram(program_id);
-		program_id = 0;
-		program_data.Clear();
-		return true;
+		if (program_id != 0)
+		{
+			glDeleteProgram(program_id);
+			program_id = 0;
+			program_data.Clear();
+		}
 	}
 
 	bool GPUProgram::UseProgram(class GPUProgramProviderBase const * uniform_provider) const

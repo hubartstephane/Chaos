@@ -127,10 +127,8 @@ namespace chaos
 		/** a getter on size */
 		glm::ivec2 const & GetSize() const { return size; }
 
-	protected:
-
-		/** cleaning the object */
-		virtual bool DoRelease() override;
+		/** override */
+		virtual void Release() override;
 
 	protected:
 

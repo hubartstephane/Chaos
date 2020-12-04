@@ -48,7 +48,7 @@ namespace chaos
 	protected:
 
 		/** cleaning the object */
-		virtual bool DoRelease() override;
+		virtual void Release() override;
 
 	protected:
 

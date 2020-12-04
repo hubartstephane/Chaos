@@ -10,17 +10,15 @@ namespace chaos
 
 	GPUFramebuffer::~GPUFramebuffer()
 	{
-		DoRelease();
+		Release();
 	}
 
-	bool GPUFramebuffer::DoRelease()
+	void GPUFramebuffer::Release()
 	{
-		if (framebuffer_id == 0)
-			return false;
-		glDeleteFramebuffers(1, &framebuffer_id);
+		if (framebuffer_id != 0)
+			glDeleteFramebuffers(1, &framebuffer_id);
 		attachment_info.clear();
 		framebuffer_id = 0;
-		return true;	
 	}
 
 	bool GPUFramebuffer::CheckCompletionStatus() const

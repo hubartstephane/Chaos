@@ -15,7 +15,7 @@ namespace chaos
 
 	GPUBuffer::~GPUBuffer()
 	{
-		DoRelease();
+		Release();
 	}
 
 	bool GPUBuffer::CreateResource(bool in_dynamic)
@@ -73,15 +73,12 @@ namespace chaos
 		return (buffer_id != 0);
 	}
 
-	bool GPUBuffer::DoRelease()
+	void GPUBuffer::Release()
 	{
-		if (buffer_id == 0)
-			return false;
-		if (ownership)
+		if (buffer_id != 0 && ownership)
 			glDeleteBuffers(1, &buffer_id);
 		buffer_id = 0;
 		buffer_size = 0;
-		return true;
 	}
 
 	bool GPUBuffer::SetBufferData(char const * in_data, size_t in_size)

@@ -49,16 +49,15 @@ namespace chaos
 
 	GPURenderMaterial::~GPURenderMaterial()
 	{
-		DoRelease();
+		Release();
 	}
 
-	bool GPURenderMaterial::DoRelease()
+	void GPURenderMaterial::Release()
 	{
 		material_info->program = nullptr;
 		material_info->parent_material = nullptr;
 		material_info->uniform_provider.Clear();
 		material_info->renderpasses.clear();
-		return true;
 	}
 
 	bool GPURenderMaterial::SetProgram(GPUProgram * in_program)

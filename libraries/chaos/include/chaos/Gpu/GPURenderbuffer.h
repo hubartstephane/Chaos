@@ -27,10 +27,8 @@ namespace chaos
 		/** get the description of the surface */
 		SurfaceDescription const & GetSurfaceDescription() const override { return surface_description; }
 
-	protected:
-
-		/** cleaning the object */
-		virtual bool DoRelease() override;
+		/** override */
+		virtual void Release() override;
 
 	protected:
 

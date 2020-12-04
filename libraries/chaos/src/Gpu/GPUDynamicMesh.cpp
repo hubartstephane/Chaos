@@ -11,8 +11,6 @@ namespace chaos
     {
         // XXX : shu on pourrait aussi donner les IndexBuffer => ATTENTION, l index buffer GPURenderer::QUADIndexBuffer ne doit pas etre donné !
 
-
-
         if (buffer_cache != nullptr) // give buffers to cache if we want that
             for (GPUDynamicMeshElement& element : elements)
                 buffer_cache->GiveBuffer(element.vertex_buffer, last_rendered_fence.get());

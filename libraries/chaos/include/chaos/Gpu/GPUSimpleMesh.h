@@ -34,10 +34,11 @@ namespace chaos
 		/** offset the index or vertex position */
 		void ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset);
 
+		/** cleaning the object */
+		virtual void Release() override;
+
 	protected:
 
-		/** cleaning the object */
-		virtual bool DoRelease() override;
 		/** rendering internal method */
 		void DoRender(GPURenderer * renderer, GPUProgram const * program, GPURenderParams const & render_params);
 

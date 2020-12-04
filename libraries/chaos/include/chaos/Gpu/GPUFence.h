@@ -38,10 +38,8 @@ namespace chaos
 		/** returns openGL resource itself */
 		GLsync GetGLFence() const { return fence; }
 
-	protected:
-
-		/** cleaning the object */
-		virtual bool DoRelease() override;
+		/** override */
+		virtual void Release() override;
 
 	protected:
 

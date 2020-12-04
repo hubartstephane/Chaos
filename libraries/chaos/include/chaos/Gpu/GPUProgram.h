@@ -32,10 +32,8 @@ namespace chaos
 		/** get the program data */
 		GPUProgramData const & GetProgramData() const { return program_data; }
 
-	protected:
-
-		/** cleaning the object */
-		virtual bool DoRelease() override;
+		/** override */
+		virtual void Release() override;
 
 	protected:
 

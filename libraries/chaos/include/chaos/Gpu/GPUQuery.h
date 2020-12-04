@@ -68,10 +68,8 @@ namespace chaos
 		/** end conditional rendering */
 		bool EndConditionalRendering();
 
-	protected:
-
-		/** cleaning the object */
-		virtual bool DoRelease() override;
+		/** override */
+		virtual void Release() override;
 
 	protected:
 

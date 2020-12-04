@@ -10,16 +10,14 @@ namespace chaos
 
 	GPURenderbuffer::~GPURenderbuffer()
 	{
-		DoRelease();
+		Release();
 	}
 
-	bool GPURenderbuffer::DoRelease()
+	void GPURenderbuffer::Release()
 	{
-		if (renderbuffer_id == 0)
-			return false;
-		glDeleteRenderbuffers(1, &renderbuffer_id);
+		if (renderbuffer_id != 0)
+			glDeleteRenderbuffers(1, &renderbuffer_id);
 		renderbuffer_id = 0;
-		return true;	
 	}
 
 }; // namespace chaos

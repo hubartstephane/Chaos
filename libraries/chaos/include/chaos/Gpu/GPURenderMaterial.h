@@ -139,13 +139,13 @@ namespace chaos
 		/** create a RenderMaterial from a simple program */
 		static GPURenderMaterial * GenRenderMaterialObject(GPUProgram * program);
 
+		/** override */
+		virtual void Release() override;
+
 	protected:
 
 		/** traversal method implementation */
 		static bool TraverseImpl(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, GPURenderMaterialInfoTraverseFunc & traverse_func, char const * renderpass_name);
-
-		/** cleaning the resource */
-		virtual bool DoRelease() override;
 		/** search some cycles throught parent_material (returning true is an error) */
 		static bool SearchRenderMaterialCycle(GPURenderMaterialInfo const * material_info, GPURenderMaterial const * searched_material);
 

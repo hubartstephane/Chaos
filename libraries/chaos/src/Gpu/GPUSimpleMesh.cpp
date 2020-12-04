@@ -4,7 +4,7 @@ namespace chaos
 {
 	GPUSimpleMesh::~GPUSimpleMesh()
 	{
-		DoRelease();
+		Release();
 	}
 
 	void GPUSimpleMesh::ShiftPrimitivesIndexAndVertexPosition(int vb_offset, int ib_offset)
@@ -14,7 +14,7 @@ namespace chaos
 				primitive.ShiftIndexAndVertexPosition(vb_offset, ib_offset);
 	}
 
-	bool GPUSimpleMesh::DoRelease()
+	void GPUSimpleMesh::Release()
 	{
 		vertex_buffer = nullptr;
 		index_buffer = nullptr;
@@ -22,8 +22,6 @@ namespace chaos
 		vertex_declaration = nullptr;
 
 		primitives.clear();
-        
-		return true;
 	}
 
 	void GPUSimpleMesh::Render(GPURenderer * renderer, GPUProgram const * program, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)

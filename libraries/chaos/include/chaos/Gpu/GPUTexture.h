@@ -31,10 +31,8 @@ namespace chaos
 		/** returns the GL name of the resource */
 		GLuint GetResourceID() const { return texture_id; }
 
-	protected:
-
-		/** cleaning the object */
-		virtual bool DoRelease() override;
+		/** override */
+		virtual void Release() override;
 
 	protected:
 

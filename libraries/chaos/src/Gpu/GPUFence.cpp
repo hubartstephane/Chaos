@@ -15,7 +15,7 @@ namespace chaos
 
 	GPUFence::~GPUFence()
 	{
-		DoRelease();
+		Release();
 	}
 
 	bool GPUFence::CreateGPUFence()
@@ -42,13 +42,13 @@ namespace chaos
 	}
 
 
-	bool GPUFence::DoRelease()
+	void GPUFence::Release()
 	{
-		if (fence == nullptr)
-			return false;
-		glDeleteSync(fence);
-		fence = nullptr;
-		return true;	
+		if (fence != nullptr)
+		{
+			glDeleteSync(fence);
+			fence = nullptr;
+		}
 	}
 
 }; // namespace chaos

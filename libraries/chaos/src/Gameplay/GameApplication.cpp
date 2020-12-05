@@ -19,6 +19,17 @@ namespace chaos
 			game_window->SetGame(game.get());
 	}
 
+
+
+
+
+
+
+
+
+
+
+
 	bool GameApplication::PreMessageLoop()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
@@ -45,7 +56,35 @@ namespace chaos
 
 
 
-		CreateTypedWindow(main_window_class, window_params, window_hints);
+
+
+		GLuint vertex_array = 0;
+		GLuint query = 0;
+		GLuint renderbuffer = 0;
+		GLuint framebuffer = 0;
+		
+		WithGLContext<void>(shared_context, [&vertex_array , &query, &renderbuffer, &framebuffer]()
+		{
+			glCreateVertexArrays(1, &vertex_array);
+			glCreateQueries(GL_SAMPLES_PASSED, 1, &query);
+			glCreateRenderbuffers(1, &renderbuffer);
+			glCreateFramebuffers(1, &framebuffer);
+		});
+
+		Window * w = CreateTypedWindow(main_window_class, window_params, window_hints);
+		
+		WithGLContext<void>(w->GetGLFWHandler(), [vertex_array , &query, &renderbuffer, &framebuffer]()
+		{
+			bool b0 = glIsVertexArray(vertex_array);  // false
+			bool b1 = glIsQuery(query);               // false
+			bool b2 = glIsRenderbuffer(renderbuffer); // true
+			bool b3 = glIsFramebuffer(framebuffer);   // true
+		
+			query = query;
+		});
+
+
+
 
 
 		return true;

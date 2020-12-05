@@ -223,7 +223,7 @@ protected:
 		if (mesh == nullptr)
 			return false;
 
-		query = new chaos::GLSamplesPassedQuery();
+		query = new chaos::GLSamplesPassedQuery(this);
 		if (query == nullptr)
 			return false;
 

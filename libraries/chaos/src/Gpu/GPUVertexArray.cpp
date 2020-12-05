@@ -26,13 +26,15 @@ namespace chaos
 
 	void GPUVertexArray::Release()
 	{
-		if (window != nullptr && context != nullptr && window->GetGLFWHandler() == context) // ensure window has not be destroyd/recreated
+		if (window != nullptr && context != nullptr && window->GetGLFWHandler() == context) // ensure window has not be destroyed/recreated
 		{
-			WindowApplication::WithGLContext<void>(context, [this]()
+			if (vertex_array_id == 0 && ownership)
 			{
-				if (vertex_array_id == 0 && ownership)
+				WindowApplication::WithGLContext<void>(context, [this]()
+				{
 					glDeleteVertexArrays(1, &vertex_array_id);
-			});
+				});
+			}
 		}
 		// reset the members
 		vertex_array_id = 0;

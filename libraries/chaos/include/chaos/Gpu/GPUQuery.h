@@ -27,9 +27,9 @@ namespace chaos
 	public:
 
 		/** constructor (create its own resource) */
-		GPUQuery(GLenum in_target);
+		GPUQuery(Window* in_window = nullptr, GLenum in_target = GL_NONE);
 		/** constructor (reference a given resource). Call this function with 0 if you do not want to create resource at all */
-		GPUQuery(GLuint in_id, bool in_ownership);
+		GPUQuery(Window* in_window, GLuint in_id, bool in_ownership);
 
 		/** destructor */
 		virtual ~GPUQuery();
@@ -40,9 +40,9 @@ namespace chaos
 		bool IsValid() const;
 
 		/** create an OpenGL resource */
-		bool CreateResource(GLenum in_target);
+		bool CreateResource(Window* in_window, GLenum in_target);
 		/** Initialize from GL Resource */
-		bool SetResource(GLuint in_id, bool in_ownership);
+		bool SetResource(Window* in_window, GLuint in_id, bool in_ownership);
 
 		/** start the query */
 		bool BeginQuery();
@@ -77,6 +77,10 @@ namespace chaos
 		GLuint query_id = 0;
 		/** whether the object has ownership of the GL resource */
 		bool ownership = true;
+		/** the window owning the query (queries are not shared between context) */
+		weak_ptr<Window> window;
+		/** the corresponding context at moment of creation (used to know whether the window has been destroyed the recreated) */
+		GLFWwindow* context = nullptr;
 
 		/** indicates whether the query has been already started */
 		bool query_started = false;
@@ -94,7 +98,7 @@ namespace chaos
 	{
 	public:
 
-		GLTypedQuery() : GPUQuery(QUERY_TARGET) {}
+		GLTypedQuery(Window * in_window = nullptr) : GPUQuery(in_window, QUERY_TARGET) {}
 	};
 
 }; // namespace chaos

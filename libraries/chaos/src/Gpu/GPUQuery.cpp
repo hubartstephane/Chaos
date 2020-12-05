@@ -3,14 +3,14 @@
 namespace chaos
 {
 
-	GPUQuery::GPUQuery(GLenum in_target)
+	GPUQuery::GPUQuery(Window * in_window, GLenum in_target)
 	{
-		CreateResource(in_target);	
+		CreateResource(in_window, in_target);	
 	}
 
-	GPUQuery::GPUQuery(GLuint in_id, bool in_ownership)
+	GPUQuery::GPUQuery(Window* in_window, GLuint in_id, bool in_ownership)
 	{
-		SetResource(in_id, in_ownership);
+		SetResource(in_window, in_id, in_ownership);
 	}
 
 	GPUQuery::~GPUQuery()
@@ -23,8 +23,7 @@ namespace chaos
 		return (query_id != 0);
 	}
 
-	
-	bool GPUQuery::CreateResource(GLenum in_target)
+	bool GPUQuery::CreateResource(Window* in_window, GLenum in_target)
 	{
 		assert(
 			(in_target == GL_SAMPLES_PASSED) ||
@@ -38,39 +37,52 @@ namespace chaos
 		// release previous resource
 		Release();
 		// create new resource
-		glCreateQueries(in_target, 1, &query_id);
-		if (query_id == 0)
-			return false;
-		// initialize internals
-		query_target = in_target;
-		ownership = true;		
+		if (in_window != nullptr && in_window->GetGLFWHandler() != nullptr)
+		{
+			return WindowApplication::WithGLContext<bool>(in_window->GetGLFWHandler(), [this, in_window, in_target]()
+			{
+				glCreateQueries(in_target, 1, &query_id);
+				if (query_id == 0)
+					return false;
+				// initialize internals
+				window = in_window;
+				context = in_window->GetGLFWHandler();
+				ownership = true;
+				query_target = in_target;
+				return true;
+			});
+		}
 		return false;
 	}
-
 	
-	bool GPUQuery::SetResource(GLuint in_id, bool in_ownership)
+	bool GPUQuery::SetResource(Window* in_window, GLuint in_id, bool in_ownership)
 	{
 		// early exit
-		if (query_id == in_id)
+		if (query_id == in_id && window != nullptr && context != nullptr && window == in_window && context == in_window->GetGLFWHandler())
 		{
 			ownership = in_ownership;
 			return true;
 		}
-
 		// release previous resource
 		Release();
-
 		// reference new resource (if exisiting)
-		if (in_id != 0)
+		if (in_id != 0 && in_window != nullptr && in_window->GetGLFWHandler() != nullptr)
 		{
 			// bad incomming resource
-			if (!glIsQuery(in_id)) 
-				return false;
-			// get the resource type
-			glGetQueryObjectuiv(in_id, GL_QUERY_TARGET, &query_target);
-			// initialize internals
-			query_id = in_id;
-			ownership = in_ownership;
+			return WindowApplication::WithGLContext<bool>(in_window->GetGLFWHandler(), [this, in_window, in_id, in_ownership]()
+			{
+				// bad incomming resource
+				if (!glIsQuery(in_id))
+					return false;
+				// get the resource type
+				glGetQueryObjectuiv(in_id, GL_QUERY_TARGET, &query_target);
+				// initialize internals
+				query_id = in_id;
+				window = in_window;
+				context = in_window->GetGLFWHandler();
+				ownership = in_ownership;
+				return true;
+			});
 		}
 		return true;
 	}
@@ -80,9 +92,21 @@ namespace chaos
 		assert(!query_started);
 		assert(!conditional_rendering_started);  // do not release resource, if something has been started (and would never been stopped)  
 
-		if (query_id != 0 && ownership)
-			glDeleteQueries(1, &query_id);
+		if (window != nullptr && context != nullptr && window->GetGLFWHandler() == context) // ensure window has not be destroyed/recreated
+		{
+			if (query_id != 0 && ownership)
+			{
+				WindowApplication::WithGLContext<void>(context, [this]()
+				{
+					glDeleteQueries(1, &query_id);
+				});
+			}
+		}
+		// reset the members
 		query_id = 0;
+		window = nullptr;
+		context = nullptr;
+		ownership = false;
 		query_started = false;
 		query_ended = false;
 		conditional_rendering_started = false;

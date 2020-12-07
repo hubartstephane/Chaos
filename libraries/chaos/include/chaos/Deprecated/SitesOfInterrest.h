@@ -50,4 +50,7 @@ FontLab
 
 // Wool : have a look on it. Narrative tools ?
 
+// OBS : Open BroadCaster Studio
+https://obsproject.com/fr
+
 #endif

@@ -29,8 +29,6 @@ void LudumGame::OnEnterMainMenu(bool very_first)
 	chaos::Game::OnEnterMainMenu(very_first);
 
 	chaos::MathTools::ResetRandSeed();
-	if (very_first)
-		glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void LudumGame::OnInputModeChanged(chaos::InputMode new_mode, chaos::InputMode old_mode)

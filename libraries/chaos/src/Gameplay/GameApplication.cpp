@@ -19,17 +19,6 @@ namespace chaos
 			game_window->SetGame(game.get());
 	}
 
-
-
-
-
-
-
-
-
-
-
-
 	bool GameApplication::PreMessageLoop()
 	{
 		assert(glfwGetCurrentContext() == shared_context);

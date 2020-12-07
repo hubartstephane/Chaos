@@ -20,7 +20,7 @@ namespace chaos
 
 	bool GPUQuery::IsValid() const 
 	{ 
-		return (query_id != 0);
+		return (query_id != 0 && window != nullptr && window->GetGLFWHandler() == context);
 	}
 
 	bool GPUQuery::CreateResource(Window* in_window, GLenum in_target)

@@ -2,7 +2,22 @@
 
 #include "Ludum41IsolationGame.h"
 
-int CHAOS_MAIN(int argc, char ** argv, char ** env)
+class LudumGameApplication : public chaos::GameApplication
+{
+public:
+
+	using chaos::GameApplication::GameApplication;
+
+	virtual void OnWindowCreated(chaos::Window* window) override
+	{
+		// super
+		chaos::GameApplication::OnWindowCreated(window);
+		// hidden cursor
+		glfwSetInputMode(window->GetGLFWHandler(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+};
+
+int CHAOS_MAIN(int argc, char** argv, char** env)
 {
 	chaos::WindowParams params;
 	params.monitor = nullptr;
@@ -12,7 +27,6 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 
 	chaos::WindowHints hints;
 
-	return chaos::RunGame<LudumGame>(argc, argv, env, params, hints);
+	chaos::RunApplication<LudumGameApplication>(argc, argv, env, LudumGame::GetStaticClass(), chaos::GameWindow::GetStaticClass(), params, hints);
+	return 0;
 }
-
-

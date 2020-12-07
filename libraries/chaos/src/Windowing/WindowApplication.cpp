@@ -43,7 +43,7 @@ namespace chaos
 	// WindowApplication
 	//
 
-	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const in_window_hints) :
+	WindowApplication::WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const & in_window_hints) :
 		main_window_class(in_main_window_class),
 		window_params(in_window_params),
 		window_hints(in_window_hints)

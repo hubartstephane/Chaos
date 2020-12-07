@@ -56,7 +56,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const in_window_hints);
+		WindowApplication(SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params = {}, WindowHints const& in_window_hints = {});
 
 		/** getter of the main clock */
 		static Clock* GetMainClockInstance();

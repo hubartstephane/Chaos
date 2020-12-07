@@ -173,6 +173,9 @@
 #  include <Shlobj.h>
 #  include <Dbghelp.h>
 #  include <WinUser.h>
+
+#undef DELETE // thanks to winnt.h we have this define !
+
 #endif
 
 #include <lua.hpp>

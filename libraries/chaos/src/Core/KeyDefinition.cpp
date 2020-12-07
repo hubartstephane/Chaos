@@ -6,9 +6,9 @@ namespace chaos
 
 
 
-#define CHAOS_KEYDEF(KEY) std::pair<int, char const *>(GLFW_KEY_##KEY, #KEY)
+#define CHAOS_KEYDEF(KEY) std::make_pair((Key)GLFW_KEY_##KEY, #KEY)
 
-	std::vector<std::pair<int, char const *>> const KeyDefinition::key_map =
+	std::vector<std::pair<Key, char const *>> const KeyDefinition::key_map =
 	{
 CHAOS_KEYDEF(SPACE),
 CHAOS_KEYDEF(APOSTROPHE),
@@ -131,21 +131,49 @@ CHAOS_KEYDEF(RIGHT_ALT),
 CHAOS_KEYDEF(RIGHT_SUPER),
 CHAOS_KEYDEF(MENU)
 	};
-
 #undef CHAOS_KEYDEF
+
+	std::vector<std::pair<MouseButton, char const*>> const KeyDefinition::mousebutton_map =
+	{
+		std::make_pair(MouseButton::BUTTON_1, "MOUSE_BUTTON_1"),
+		std::make_pair(MouseButton::BUTTON_2, "MOUSE_BUTTON_2"),
+		std::make_pair(MouseButton::BUTTON_3, "MOUSE_BUTTON_3"),
+		std::make_pair(MouseButton::BUTTON_4, "MOUSE_BUTTON_4"),
+		std::make_pair(MouseButton::BUTTON_5, "MOUSE_BUTTON_5"),
+		std::make_pair(MouseButton::BUTTON_6, "MOUSE_BUTTON_6"),
+		std::make_pair(MouseButton::BUTTON_7, "MOUSE_BUTTON_7"),
+		std::make_pair(MouseButton::BUTTON_8, "MOUSE_BUTTON_8"),
+	};
+
 	
-	int KeyDefinition::GetKey(char const* key_name)
+	Key KeyDefinition::GetKey(char const* name)
 	{
 		for (auto const& entry : key_map)
-			if (StringTools::Stricmp(key_name, entry.second) == 0)
+			if (StringTools::Stricmp(name, entry.second) == 0)
 				return entry.first;
-		return GLFW_KEY_UNKNOWN;
+		return Key::UNKNOWN;
 	}
 	
-	char const* KeyDefinition::GetKeyName(int key)
+	char const* KeyDefinition::GetKeyName(Key value)
 	{
 		for (auto const& entry : key_map)
-			if (key == entry.first)
+			if (value == entry.first)
+				return entry.second;
+		return nullptr;
+	}
+
+	MouseButton KeyDefinition::GetMouseButton(char const* name)
+	{
+		for (auto const& entry : mousebutton_map)
+			if (StringTools::Stricmp(name, entry.second) == 0)
+				return entry.first;
+		return MouseButton::UNKNOWN;
+	}
+
+	char const* KeyDefinition::GetMouseButtonName(MouseButton value)
+	{
+		for (auto const& entry : mousebutton_map)
+			if (value == entry.first)
 				return entry.second;
 		return nullptr;
 	}

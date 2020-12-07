@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const in_window_hints) :
+	GameApplication::GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params, WindowHints const & in_window_hints) :
 		game_class(in_game_class),
 		WindowApplication(in_main_window_class, in_window_params, in_window_hints)
 	{

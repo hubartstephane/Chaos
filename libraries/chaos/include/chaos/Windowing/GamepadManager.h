@@ -23,94 +23,14 @@
 
 namespace chaos
 {
-	enum XBoxButton;
-	enum XBoxAxis;
-
 	BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPAD_FORWARD_DECL, _, CHAOS_GAMEPAD_CLASSES);
 
 }; // namespace chaos
 
 #else
 
-// XXX: there are important changes in GLFW 3.3 relative to 3.1
-//
-//  -XBOX_RIGHT_AXIS_X and XBOX_RIGHT_AXIS_Y : are bound to other indices.
-//
-//  -in GLFW 3.1, LEFT and RIGHT triggers were bound to the same index
-//                LEFT  giving a value in [-1 .. 0] 
-//                RIGHT giving a value in [0 .. +1] 
-//
-//  -in GLFW 3.3, LEFT are RIGHT TRIGGERS are now bound to different indices 
-//                LEFT  giving a value in [-1 .. +1] 
-//                RIGHT giving a value in [-1 .. +1] 
-//
-//                while they are not bound to the same index, you can check both values
-
 namespace chaos
 {
-
-	// shuxxx see glfw3.h => some values seem to differ    GLFW_GAMEPAD_BUTTON_LEFT_THUMB ? etc
-
-
-	enum XBoxButton : int // XXXX: no class, so this can be implicitly converted to int
-	{
-		/** index in buttons of A for XBOX like pad */
-		BUTTON_A = 0,
-		/** index in buttons of B for XBOX like pad */
-		BUTTON_B = 1,
-		/** index in buttons of X for XBOX like pad */
-		BUTTON_X = 2,
-		/** index in buttons of Y for XBOX like pad */
-		BUTTON_Y = 3,
-		/** index in buttons of LEFT for XBOX like pad (the one behind the LEFT TRIGGER) */
-		BUTTON_LEFTBUT = 4,
-		/** index in buttons of RIGHT for XBOX like pad (the one behind the RIGHT TRIGGER) */
-		BUTTON_RIGHTBUT = 5,
-		/** index in buttons of SELECT for XBOX like pad */
-		BUTTON_SELECT = 6,
-		/** index in buttons of START for XBOX like pad */
-		BUTTON_START = 7,
-		/** index in buttons of LEFT-STICK-CLICKED for XBOX like pad */
-		BUTTON_LEFTSTICK = 8,
-		/** index in buttons of RIGHT-STICK-CLICKED for XBOX like pad */
-		BUTTON_RIGHTSTICK = 9,
-		/** index in buttons of UP for XBOX like pad */
-		BUTTON_UP = 10,
-		/** index in buttons of DOWN for XBOX like pad */
-		BUTTON_DOWN = 12,
-		/** index in buttons of LEFT for XBOX like pad */
-		BUTTON_LEFT = 13,
-		/** index in buttons of RIGHT for XBOX like pad */
-		BUTTON_RIGHT = 11,
-
-		/** index in buttons of LEFT TRIGGER for XBOX like pad (this is a simulate button, while the physical left trigger is an axis) */
-		BUTTON_LEFTTRIGGER = 101,
-		/** index in buttons of RIGHT TRIGGER for XBOX like pad (this is a simulate button, while the physical right trigger is an axis) */
-		BUTTON_RIGHTTRIGGER = 102
-	};
-
-	enum XBoxAxis : int // XXXX: no class, so this can be implicitly converted to int
-	{
-		/** index in axis of LEFT X for XBOX like pad */
-		LEFT_AXIS_X = 0,
-		/** index in axis of LEFT Y for XBOX like pad */
-		LEFT_AXIS_Y = 1, // STICK DOWN = positive values
-
-		/** index in axis of RIGHT X for XBOX like pad */
-		RIGHT_AXIS_X = 2,
-		/** index in axis of RIGHT Y for XBOX like pad */
-		RIGHT_AXIS_Y = 3,  // STICK DOWN = positive values
-
-		/** index in axis for the LEFT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
-		LEFT_TRIGGER = 4,
-		/** index in axis for the RIGHT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
-		RIGHT_TRIGGER = 5,
-
-		/** returns the direction of left stick (beware the low level interface only knows for axis) */
-		LEFT_AXIS = 0,
-		/** returns the direction of right stick (beware the low level interface only knows for axis) */
-		RIGHT_AXIS = 1
-	};
 
 	/**
 	* Some constants

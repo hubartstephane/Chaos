@@ -21,7 +21,7 @@ namespace chaos
 
 	bool GPUVertexArray::IsValid() const 
 	{ 
-		return (vertex_array_id != 0);
+		return (vertex_array_id != 0 && window != nullptr && window->GetGLFWHandler() == context);
 	}
 
 	void GPUVertexArray::Release()

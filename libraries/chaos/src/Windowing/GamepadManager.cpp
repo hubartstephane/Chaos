@@ -6,20 +6,12 @@ namespace chaos
 	// GamepadState functions
 	//
 
-	void GamepadState::Clear(bool only_set_to_zero)
+	void GamepadState::Clear()
 	{
-		if (only_set_to_zero)
-		{
-			for (ButtonState& b : buttons)
-				b.Clear();
-			for (AxisState& a : axis)
-				a.Clear();
-		}
-		else
-		{
-			axis.clear();
-			buttons.clear();
-		}
+		for (ButtonState& b : buttons)
+			b.Clear();
+		for (AxisState& a : axis)
+			a.Clear();
 	}
 
 	size_t GamepadState::GetButtonCount() const
@@ -131,70 +123,22 @@ namespace chaos
 
 	void GamepadState::UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone)
 	{
+		GLFWgamepadstate state;
+		glfwGetGamepadState(stick_index, &state);
 
-		//GLFWgamepadstate state;
-		//glfwGetGamepadState(stick_index, &state);
-
-
-		int buttons_count = 0;
-		int axis_count = 0;
-
-		// update the axis
-		float const* axis_buffer = glfwGetJoystickAxes(stick_index, &axis_count);
-
-		size_t ac = (size_t)axis_count;
-
-		if (axis.size() != ac) // reallocate axis
+		for (size_t i = 0; i < AXIS_COUNT; ++i)
 		{
-			axis.clear();
-			axis.insert(axis.begin(), ac, {});
-
-			for (size_t i = 0; i < ac; ++i)
-			{
-				// update this frame value
-				float value = axis_buffer[i];
-				if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize i,comming value [-1 .. +1] => [0 .. 1]
-					value = (value * 0.5f + 0.5f);
-				axis[i].SetValue(value, dead_zone);
-				axis[i].UpdateSameValueTimer(0.0f);
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i < ac; ++i)
-			{
-				// update this frame value
-				float value = axis_buffer[i];
-				if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
-					value = (value * 0.5f + 0.5f);
-				axis[i].SetValue(value, dead_zone);
-				axis[i].UpdateSameValueTimer(delta_time);
-			}
+			float value = state.axes[i];
+			if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+				value = (value * 0.5f + 0.5f);
+			axis[i].SetValue(value, dead_zone);
+			axis[i].UpdateSameValueTimer(delta_time);
 		}
 
-		// update the buttons
-		unsigned char const* buttons_buffer = glfwGetJoystickButtons(stick_index, &buttons_count);
-
-		size_t bc = (size_t)buttons_count;
-
-		if (buttons.size() != bc) // reallocate buttons
+		for (size_t i = 0 ; i < BUTTON_COUNT ; ++i)
 		{
-			buttons.clear();
-			buttons.insert(buttons.begin(), bc, {});
-
-			for (size_t i = 0; i < ac; ++i)
-			{
-				buttons[i].SetValue(buttons_buffer[i] != 0);
-				buttons[i].UpdateSameValueTimer(0.0f);
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i < bc; ++i)
-			{
-				buttons[i].SetValue(buttons_buffer[i] != 0);
-				buttons[i].UpdateSameValueTimer(delta_time);
-			}
+			buttons[i].SetValue(state.buttons[i] != 0);
+			buttons[i].UpdateSameValueTimer(delta_time);
 		}
 	}
 

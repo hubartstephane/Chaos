@@ -47,6 +47,11 @@ namespace chaos
 	{
 		CHAOS_GAMEPAD_ALL_FRIENDS
 
+		/** number of axis in a gamepad */
+		static constexpr size_t AXIS_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().axes) / sizeof(meta::FakeInstance<GLFWgamepadstate>().axes[0]);
+		/** number of button in a gamepad */
+		static constexpr size_t BUTTON_COUNT = sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons) / sizeof(meta::FakeInstance<GLFWgamepadstate>().buttons[0]);
+
 	public:
 
 		/* returns a status giving the change of button relative to previous frame */
@@ -75,14 +80,14 @@ namespace chaos
 		/** update all the values for the axis and buttons */
 		void UpdateAxisAndButtons(int stick_index, float delta_time, float dead_zone);
 		/** reset the content of the object */
-		void Clear(bool only_set_to_zero = false);
+		void Clear();
 
 	protected:
 
 		/** the value for axis */
-		std::vector<AxisState> axis;
+		std::array<AxisState, AXIS_COUNT> axis;
 		/** the value for buttons */
-		std::vector<ButtonState> buttons;
+		std::array<ButtonState, BUTTON_COUNT> buttons;
 	};
 
 	/**

@@ -160,8 +160,6 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	int const break_keys[] = { GLFW_KEY_LEFT_CONTROL, -1 };
 	particle.break_pressed = player->CheckButtonPressed(break_keys, chaos::XBoxButton::BUTTON_B);
 
-
-
 	// no input before race really starts
 	if (level_instance->lost_timer >= 0 || player->race_position.IsCompleted())
 	{

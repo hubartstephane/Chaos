@@ -26,8 +26,30 @@ namespace chaos
 
 	ButtonStateChange GamepadState::GetButtonStateChange(XBoxButton button) const
 	{
+		// early exit
 		if (button == XBoxButton::UNKNOWN)
 			return ButtonStateChange::NONE;
+		// pseudo buttons
+		if (button == XBoxButton::BUTTON_LEFTTRIGGER)
+		{
+			bool previous_state = (GetAxisValue(XBoxAxis::LEFT_TRIGGER, true) > 0);
+			bool current_state = (GetAxisValue(XBoxAxis::LEFT_TRIGGER, false) > 0);
+			if (current_state == previous_state)
+				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
+			else
+				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+		}
+
+		if (button == XBoxButton::BUTTON_RIGHTTRIGGER)
+		{
+			bool previous_state = (GetAxisValue(XBoxAxis::RIGHT_TRIGGER, true) > 0);
+			bool current_state = (GetAxisValue(XBoxAxis::RIGHT_TRIGGER, false) > 0);
+			if (current_state == previous_state)
+				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
+			else
+				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
+		}
+		// standard input
 		return buttons[(size_t)button].GetStateChange();
 	}
 
@@ -36,7 +58,7 @@ namespace chaos
 		// early exit
 		if (button == XBoxButton::UNKNOWN)
 			return false;
-		// pseudo button
+		// pseudo buttons
 		if (button == XBoxButton::BUTTON_LEFTTRIGGER)
 		{
 			float trigger_value = GetAxisValue(XBoxAxis::LEFT_TRIGGER, previous_frame);
@@ -52,7 +74,6 @@ namespace chaos
 				return true;
 			return false;
 		}
-
 		// standard input
 		return buttons[(size_t)button].GetValue(previous_frame);
 	}

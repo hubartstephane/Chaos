@@ -39,7 +39,7 @@ public:
 
 	void Tick(float delta_time);
 
-	bool Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size);
+	bool Initialize(chaos::Window * in_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size);
 
 	void Finalize();
 
@@ -52,6 +52,9 @@ public:
 	void ResetWorld();
 
 	bool OnKeyEvent(int key, int action);
+
+
+	chaos::Window* GetWindow() { return window; }
 
 protected:
 
@@ -125,6 +128,7 @@ protected:
 
 	chaos::box2 GetWorldBox(bool use_padding) const; 
 
+
 protected:
 
 	std::vector<SpriteLayer> sprite_layers;
@@ -169,7 +173,7 @@ protected:
 	bool pending_restart_game = false; // we don't want to restart the game during a complicated call stack => wait for next tick
 
 	/** the window in GLFW library */
-	GLFWwindow * glfw_window = nullptr;
+	chaos::Window * window = nullptr;
 
 	// stick position
 	glm::vec2 stick_position = glm::vec2(0.0f, 0.0f);

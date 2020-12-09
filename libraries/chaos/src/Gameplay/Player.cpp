@@ -354,7 +354,7 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::CheckButtonPressed(int const* keyboard_buttons, int gamepad_button)
+    bool Player::CheckButtonPressed(int const* keyboard_buttons, XBoxButton gamepad_button)
     {
         // keyboard input
         if (keyboard_buttons != nullptr)

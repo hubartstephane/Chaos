@@ -213,11 +213,11 @@ namespace chaos
 			char const * type_str = GLenumToString(type);
 			char const * severity_str = GLenumToString(severity);
 
-			Log::Message("OpenGL warning message   [%s]", msg);
-			Log::Message("               severity  [%s]", severity_str);
-			Log::Message("               source    [%s]", source_str);
-			Log::Message("               type      [%s]", type_str);
-			Log::Message("               id        [%08x]", id);
+			Log::Message("OpenGL message  [%s]", msg);
+			Log::Message("       severity [%s]", severity_str);
+			Log::Message("       source   [%s]", source_str);
+			Log::Message("       type     [%s]", type_str);
+			Log::Message("       id       [%08x]", id);
 
 			//DebugTools::DisplayCallStack(std::cout);
 

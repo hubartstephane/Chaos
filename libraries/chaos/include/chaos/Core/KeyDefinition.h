@@ -4,8 +4,9 @@ namespace chaos
 {
 	class KeyDefinition;
 
-	enum XBoxButton;
-	enum XBoxAxis;
+	enum class XBoxButton;
+	enum class XBoxAxis;
+	enum class XBoxStick;
 	enum class Key;
 	enum class MouseButton;
 
@@ -179,8 +180,10 @@ namespace chaos
 
 	// shuxxx see glfw3.h => some values seem to differ    GLFW_GAMEPAD_BUTTON_LEFT_THUMB ? etc
 
-	enum XBoxButton : int // XXXX: no class, so this can be implicitly converted to int
+	enum class XBoxButton : int
 	{
+		/** undefined value */
+		UNKNOWN = -1,
 		/** index in buttons of A for XBOX like pad */
 		BUTTON_A = GLFW_GAMEPAD_BUTTON_A,
 		/** index in buttons of B for XBOX like pad */
@@ -212,15 +215,16 @@ namespace chaos
 		/** index in buttons of LEFT for XBOX like pad */
 		BUTTON_LEFT = GLFW_GAMEPAD_BUTTON_DPAD_LEFT,
 
-
 		/** index in buttons of LEFT TRIGGER for XBOX like pad (this is a simulate button, while the physical left trigger is an axis) */
 		BUTTON_LEFTTRIGGER = 101,
 		/** index in buttons of RIGHT TRIGGER for XBOX like pad (this is a simulate button, while the physical right trigger is an axis) */
 		BUTTON_RIGHTTRIGGER = 102
 	};
 
-	enum XBoxAxis : int // XXXX: no class, so this can be implicitly converted to int
+	enum class XBoxAxis : int
 	{
+		/** undefined value */
+		UNKNOWN = -1,
 		/** index in axis of LEFT X for XBOX like pad */
 		LEFT_AXIS_X = GLFW_GAMEPAD_AXIS_LEFT_X,
 		/** index in axis of LEFT Y for XBOX like pad */
@@ -235,27 +239,17 @@ namespace chaos
 		LEFT_TRIGGER = GLFW_GAMEPAD_AXIS_LEFT_TRIGGER,
 		/** index in axis for the RIGHT trigger for XBOX like pad (beware its value is between [-1 .. +1]) */
 		RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
-
-		/** returns the direction of left stick (beware the low level interface only knows for axis) */
-		LEFT_AXIS = 0,
-		/** returns the direction of right stick (beware the low level interface only knows for axis) */
-		RIGHT_AXIS = 1
 	};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	enum class XBoxStick : int
+	{
+		/** undefined value */
+		UNKNOWN = -1,
+		/** returns the direction of left stick */
+		LEFT_STICK = 0,
+		/** returns the direction of right stick */
+		RIGHT_STICK = 1
+	};
 
 	class KeyDefinition
 	{

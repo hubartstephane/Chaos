@@ -167,7 +167,7 @@ namespace chaos
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_state->GetXBOXStickDirection(XBoxAxis::LEFT_AXIS);
+		glm::vec2 lsp = gamepad_state->GetStickValue(XBoxStick::LEFT_STICK);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
@@ -184,7 +184,7 @@ namespace chaos
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_state->GetXBOXStickDirection(XBoxAxis::RIGHT_AXIS);
+		glm::vec2 rsp = gamepad_state->GetStickValue(XBoxStick::RIGHT_STICK);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
@@ -369,7 +369,7 @@ namespace chaos
         }
 
         // gamepad input
-        if (gamepad_button >= 0)
+        if (gamepad_button != XBoxButton::UNKNOWN)
             if (gamepad != nullptr && gamepad->IsButtonPressed(gamepad_button))
                 return true;
         return false;

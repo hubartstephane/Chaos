@@ -24,14 +24,14 @@ namespace chaos
 		return axis.size();
 	}
 
-	ButtonStateChange GamepadState::GetButtonStateChange(size_t button_index) const
+	ButtonStateChange GamepadState::GetButtonStateChange(XBoxButton button_index) const
 	{
 		if (button_index >= buttons.size())
 			return ButtonStateChange::NONE;
-		return buttons[button_index].GetStateChange();
+		return buttons[(size_t)button_index].GetStateChange();
 	}
 
-	bool GamepadState::IsButtonPressed(size_t button_index, bool previous_frame) const
+	bool GamepadState::IsButtonPressed(XBoxButton button_index, bool previous_frame) const
 	{
 		// pseudo button
 		if (button_index == XBoxButton::BUTTON_LEFTTRIGGER)
@@ -57,7 +57,7 @@ namespace chaos
 		return buttons[button_index].GetValue(previous_frame);
 	}
 
-	float GamepadState::GetAxisValue(size_t axis_index, bool previous_frame) const
+	float GamepadState::GetAxisValue(XBoxAxis axis_index, bool previous_frame) const
 	{
 		size_t count = GetAxisCount();
 		if (axis_index >= count)
@@ -173,21 +173,21 @@ namespace chaos
 		return gamepad_state.GetAxisCount();
 	}
 
-	ButtonStateChange PhysicalGamepad::GetButtonStateChange(size_t button_index) const
+	ButtonStateChange PhysicalGamepad::GetButtonStateChange(XBoxButton button_index) const
 	{
 		if (!IsPresent())
 			return ButtonStateChange::NONE;
 		return gamepad_state.GetButtonStateChange(button_index);
 	}
 
-	bool PhysicalGamepad::IsButtonPressed(size_t button_index, bool previous_frame) const
+	bool PhysicalGamepad::IsButtonPressed(XBoxButton button_index, bool previous_frame) const
 	{
 		if (!IsPresent())
 			return false;
 		return gamepad_state.IsButtonPressed(button_index, previous_frame);
 	}
 
-	float PhysicalGamepad::GetAxisValue(size_t axis_index, bool previous_frame) const
+	float PhysicalGamepad::GetAxisValue(XBoxAxis axis_index, bool previous_frame) const
 	{
 		if (!IsPresent())
 			return 0.0f;
@@ -322,21 +322,21 @@ namespace chaos
 		return 0;
 	}
 
-	ButtonStateChange Gamepad::GetButtonStateChange(size_t button_index) const
+	ButtonStateChange Gamepad::GetButtonStateChange(XBoxButton button_index) const
 	{
 		if (physical_device != nullptr)
 			return physical_device->GetButtonStateChange(button_index);
 		return ButtonStateChange::NONE;
 	}
 
-	bool Gamepad::IsButtonPressed(size_t button_index, bool previous_frame) const
+	bool Gamepad::IsButtonPressed(XBoxButton button_index, bool previous_frame) const
 	{
 		if (physical_device != nullptr)
 			return physical_device->IsButtonPressed(button_index, previous_frame);
 		return 0;
 	}
 
-	float Gamepad::GetAxisValue(size_t axis_index, bool previous_frame) const
+	float Gamepad::GetAxisValue(XBoxAxis axis_index, bool previous_frame) const
 	{
 		if (physical_device != nullptr)
 			return physical_device->GetAxisValue(axis_index, previous_frame);

@@ -55,11 +55,11 @@ namespace chaos
 	public:
 
 		/* returns a status giving the change of button relative to previous frame */
-		ButtonStateChange GetButtonStateChange(size_t button_index) const;
+		ButtonStateChange GetButtonStateChange(XBoxButton button_index) const;
 		/** returns the button state */
-		bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
+		bool IsButtonPressed(XBoxButton button_index, bool previous_frame = false) const;
 		/** returns the button state */
-		float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+		float GetAxisValue(XBoxAxis axis_index, bool previous_frame = false) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
@@ -128,11 +128,11 @@ namespace chaos
 		GamepadState const* GetGamepadState() const { return &gamepad_state; }
 
 		/* returns a status giving the change of button relative to previous frame */
-		ButtonStateChange GetButtonStateChange(size_t button_index) const;
+		ButtonStateChange GetButtonStateChange(XBoxButton button_index) const;
 		/** returns the button state */
-		bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
+		bool IsButtonPressed(XBoxButton button_index, bool previous_frame = false) const;
 		/** returns the button state */
-		float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+		float GetAxisValue(XBoxAxis axis_index, bool previous_frame = false) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
@@ -261,11 +261,11 @@ namespace chaos
 		GamepadState const* GetGamepadState() const;
 
 		/* returns a status giving the change of button relative to previous frame */
-		ButtonStateChange GetButtonStateChange(size_t button_index) const;
+		ButtonStateChange GetButtonStateChange(XBoxButton button_index) const;
 		/** returns the button state */
-		bool IsButtonPressed(size_t button_index, bool previous_frame = false) const;
+		bool IsButtonPressed(XBoxButton button_index, bool previous_frame = false) const;
 		/** returns the button state */
-		float GetAxisValue(size_t axis_index, bool previous_frame = false) const;
+		float GetAxisValue(XBoxAxis axis_index, bool previous_frame = false) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */

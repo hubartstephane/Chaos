@@ -129,6 +129,8 @@ void Game::UpdatePlayerDisplacement(float delta_time)
 	{
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
+		GLFWwindow * glfw_window = window->GetGLFWHandler();
+
 		if (glfwGetKey(glfw_window, GLFW_KEY_LEFT))
 			simulated_stick.x -= 1.0f;
 		if (glfwGetKey(glfw_window, GLFW_KEY_RIGHT))
@@ -290,7 +292,7 @@ bool Game::OnCollision(Particle & p, SpriteLayer & layer)
 
 
 
-bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size)
+bool Game::Initialize(chaos::Window * in_window, nlohmann::json const * config, boost::filesystem::path const & config_path, glm::vec2 const & in_world_size)
 {
   chaos::Application * application = chaos::Application::GetInstance();
   if (application == nullptr)
@@ -303,7 +305,7 @@ bool Game::Initialize(GLFWwindow * in_glfw_window, nlohmann::json const * config
   if (config != nullptr)
 	  InitializeFromConfiguration(*config, config_path);
 
-	glfw_window = in_glfw_window;
+  window = in_window;
 
 	world_size = in_world_size;
 
@@ -436,17 +438,17 @@ bool Game::LoadSpriteLayerInfo(nlohmann::json const & json_entry)
 
 bool Game::InitializeSpriteManagers()
 {
-	chaos::SpriteManagerInitParams sprite_params;
+	SpriteManagerInitParams sprite_params;
 	sprite_params.atlas = texture_atlas.get();
 
 	for (size_t i = 0 ; i < sprite_layers.size() ; ++i)
 	{
 		SpriteLayer & layer = sprite_layers[i];
 	
-		chaos::shared_ptr<chaos::SpriteManager> sprite_manager = new chaos::SpriteManager();
+		chaos::shared_ptr<SpriteManager> sprite_manager = new SpriteManager();
 		if (sprite_manager == nullptr)
 			return false;			
-		if (!sprite_manager->Initialize(sprite_params))
+		if (!sprite_manager->Initialize(this, sprite_params))
 			return false;	
 
 		sprite_params.program = sprite_manager->GetProgram(); // reuse the program of the first manager into the other managers

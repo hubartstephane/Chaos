@@ -179,11 +179,11 @@ debug_display.AddLine("Pressed : " #x, 1.0f);
 			TEST_BUTTON(BUTTON_LEFT);
 			TEST_BUTTON(BUTTON_RIGHT);
 
-			glm::vec2 l = main_gamepad->GetXBOXStickDirection(chaos::XBoxAxis::LEFT_AXIS);
+			glm::vec2 l = main_gamepad->GetStickValue(chaos::XBoxStick::LEFT_STICK);
 			if (l.x != 0.0f || l.y != 0.0f)
 				debug_display.AddLine(chaos::StringTools::Printf("LEFT AXIS x : %0.3f   y : %0.3f", l.x, l.y).c_str(), 1.0f);
 
-			glm::vec2 r = main_gamepad->GetXBOXStickDirection(chaos::XBoxAxis::RIGHT_AXIS);
+			glm::vec2 r = main_gamepad->GetStickValue(chaos::XBoxStick::RIGHT_STICK);
 			if (r.x != 0.0f || r.y != 0.0f)
 				debug_display.AddLine(chaos::StringTools::Printf("RIGHT AXIS x : %0.3f  y : %0.3f", r.x, r.y).c_str(), 1.0f);
 

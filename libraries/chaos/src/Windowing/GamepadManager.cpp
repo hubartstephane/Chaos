@@ -10,7 +10,7 @@ namespace chaos
 	{
 		for (ButtonState& b : buttons)
 			b.Clear();
-		for (AxisState& a : axis)
+		for (AxisState& a : axes)
 			a.Clear();
 	}
 
@@ -21,18 +21,21 @@ namespace chaos
 
 	size_t GamepadState::GetAxisCount() const
 	{
-		return axis.size();
+		return axes.size();
 	}
 
 	ButtonStateChange GamepadState::GetButtonStateChange(XBoxButton button_index) const
 	{
-		if (button_index >= buttons.size())
+		if (button_index == XBoxButton::UNKNOWN)
 			return ButtonStateChange::NONE;
 		return buttons[(size_t)button_index].GetStateChange();
 	}
 
 	bool GamepadState::IsButtonPressed(XBoxButton button_index, bool previous_frame) const
 	{
+		// early exit
+		if (button_index == XBoxButton::UNKNOWN)
+			return false;
 		// pseudo button
 		if (button_index == XBoxButton::BUTTON_LEFTTRIGGER)
 		{
@@ -51,18 +54,14 @@ namespace chaos
 		}
 
 		// standard input
-		size_t count = GetButtonCount();
-		if (button_index >= count)
-			return false;
-		return buttons[button_index].GetValue(previous_frame);
+		return buttons[(size_t)button_index].GetValue(previous_frame);
 	}
 
 	float GamepadState::GetAxisValue(XBoxAxis axis_index, bool previous_frame) const
 	{
-		size_t count = GetAxisCount();
-		if (axis_index >= count)
+		if (axis_index == XBoxAxis::UNKNOWN)
 			return 0.0f;
-		return axis[axis_index].GetValue(previous_frame);
+		return axes[(size_t)axis_index].GetValue(previous_frame);
 	}
 
 	bool GamepadState::IsAnyButtonJustPressed() const
@@ -83,7 +82,7 @@ namespace chaos
 
 	bool GamepadState::IsAnyAxisAction(bool previous_frame) const
 	{
-		for (AxisState const& a : axis)
+		for (AxisState const& a : axes)
 			if (a.GetValue(previous_frame) != 0.0f)
 				return true;
 		return false;
@@ -94,15 +93,19 @@ namespace chaos
 		return IsAnyButtonPressed(previous_frame) || IsAnyAxisAction(previous_frame);
 	}
 
-	glm::vec2 GamepadState::GetXBOXStickDirection(int stick_number, bool previous_frame) const
+	glm::vec2 GamepadState::GetStickValue(XBoxStick stick_number, bool previous_frame) const
 	{
 		glm::vec2 result(0.0f, 0.0f);
-		if (stick_number == XBoxAxis::LEFT_AXIS)
+
+		// early exit
+		if (stick_number == XBoxStick::UNKNOWN)
+			return result;		
+		if (stick_number == XBoxStick::LEFT_STICK)
 		{
 			result.x = GetAxisValue(XBoxAxis::LEFT_AXIS_X, previous_frame);
 			result.y = GetAxisValue(XBoxAxis::LEFT_AXIS_Y, previous_frame);
 		}
-		else if (stick_number == XBoxAxis::RIGHT_AXIS)
+		else if (stick_number == XBoxStick::RIGHT_STICK)
 		{
 			result.x = GetAxisValue(XBoxAxis::RIGHT_AXIS_X, previous_frame);
 			result.y = GetAxisValue(XBoxAxis::RIGHT_AXIS_Y, previous_frame);
@@ -129,10 +132,10 @@ namespace chaos
 		for (size_t i = 0; i < AXIS_COUNT; ++i)
 		{
 			float value = state.axes[i];
-			if (i == XBoxAxis::LEFT_TRIGGER || i == XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+			if (i == (size_t)XBoxAxis::LEFT_TRIGGER || i == (size_t)XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 				value = (value * 0.5f + 0.5f);
-			axis[i].SetValue(value, dead_zone);
-			axis[i].UpdateSameValueTimer(delta_time);
+			axes[i].SetValue(value, dead_zone);
+			axes[i].UpdateSameValueTimer(delta_time);
 		}
 
 		for (size_t i = 0 ; i < BUTTON_COUNT ; ++i)
@@ -222,11 +225,11 @@ namespace chaos
 		return gamepad_state.IsAnyAction(previous_frame);
 	}
 
-	glm::vec2 PhysicalGamepad::GetXBOXStickDirection(int stick_number, bool previous_frame) const
+	glm::vec2 PhysicalGamepad::GetStickValue(XBoxStick stick_number, bool previous_frame) const
 	{
 		if (!IsPresent())
 			return glm::vec2(0.0f, 0.0f);
-		return gamepad_state.GetXBOXStickDirection(stick_number, previous_frame);
+		return gamepad_state.GetStickValue(stick_number, previous_frame);
 	}
 
 	void PhysicalGamepad::UpdateAxisAndButtons(float delta_time, float dead_zone)
@@ -371,10 +374,10 @@ namespace chaos
 		return false;
 	}
 
-	glm::vec2 Gamepad::GetXBOXStickDirection(int stick_index, bool previous_frame) const
+	glm::vec2 Gamepad::GetStickValue(XBoxStick stick_index, bool previous_frame) const
 	{
 		if (physical_device != nullptr)
-			return physical_device->GetXBOXStickDirection(stick_index, previous_frame);
+			return physical_device->GetStickValue(stick_index, previous_frame);
 		return glm::vec2(0.0f, 0.0f);
 	}
 

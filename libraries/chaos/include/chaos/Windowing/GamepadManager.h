@@ -69,7 +69,7 @@ namespace chaos
 		/** returns true whenever a buttons is pressed or an axis is in action */
 		bool IsAnyAction(bool previous_frame = false) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(XBoxStick stick_number, bool previous_frame = false) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
@@ -85,7 +85,7 @@ namespace chaos
 	protected:
 
 		/** the value for axis */
-		std::array<AxisState, AXIS_COUNT> axis;
+		std::array<AxisState, AXIS_COUNT> axes;
 		/** the value for buttons */
 		std::array<ButtonState, BUTTON_COUNT> buttons;
 	};
@@ -142,8 +142,7 @@ namespace chaos
 		/** returns true whenever a buttons is pressed or an axis is in action */
 		bool IsAnyAction(bool previous_frame = false) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
-
+		glm::vec2 GetStickValue(XBoxStick stick_number, bool previous_frame = false) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
@@ -275,7 +274,7 @@ namespace chaos
 		/** returns true whenever a buttons is pressed or an axis is in action */
 		bool IsAnyAction(bool previous_frame = false) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetXBOXStickDirection(int stick_number, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(XBoxStick stick_number, bool previous_frame = false) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */

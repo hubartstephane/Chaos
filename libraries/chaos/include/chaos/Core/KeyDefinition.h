@@ -2,12 +2,13 @@
 
 namespace chaos
 {
-	class KeyDefinition;
+	class Key;
 
-	enum class XBoxButton;
+	enum class KeyType;
 	enum class XBoxAxis;
 	enum class XBoxStick;
-	enum class Key;
+	enum class XBoxButton;
+	enum class KeyboardButton;
 	enum class MouseButton;
 
 }; // namespace chaos
@@ -19,9 +20,9 @@ namespace chaos
 #define CHAOS_KEYDEF(KEY) KEY = GLFW_KEY_##KEY
 
 	/**
-	 * Key : A keyboard key
+	 * KeyboardButton : A keyboard key
 	 */
-	enum class Key : int
+	enum class KeyboardButton : int
 	{
 		CHAOS_KEYDEF(UNKNOWN),
 		CHAOS_KEYDEF(SPACE),
@@ -251,26 +252,58 @@ namespace chaos
 		RIGHT_STICK = 1
 	};
 
-	class KeyDefinition
+	enum class KeyType : int
+	{
+		/** undefined value */
+		UNKNOWN  = -1,
+		/** undefined value */
+		KEYBOARD = 0,
+		/** undefined value */
+		MOUSE    = 1,
+		/** undefined value */
+		GAMEPAD  = 2
+	};
+
+	class Key
 	{
 	public:
 
-		/** get a key from its name */
-		static Key GetKey(char const* name);
-		/** get a key name  */
-		static char const * GetKeyName(Key value);
+		/** default constructor */
+		Key();
+		/** copy constructor */
+		Key(Key const& src) = default;
+		/** key from its name */
+		Key(char const* name);
+		/** gamepad key constructor */
+		Key(XBoxButton button);
+		/** keyboard key constructor */
+		Key(KeyboardButton button);
+		/** mouse key constructor */
+		Key(MouseButton button);
 
-		/** get a mouse button from its name */
-		static MouseButton GetMouseButton(char const* name);
-		/** get a mouse button name  */
-		static char const* GetMouseButtonName(MouseButton value);
+		/** get a key name  */
+		char const* GetName() const;
+		/** check whether the key is valid or not */
+		bool IsValid() const;
+		/** gets the type */
+		KeyType GetType() const;
+
+		/** comparaison operator */
+		bool operator == (Key const& src) const;
+		/** comparaison operator */
+		bool operator != (Key const& src) const;
 
 	protected:
 
-		/** the map between key and their name */
-		static std::vector<std::pair<Key, char const *>> const key_map;
-		/** the map between mouse button and their name */
-		static std::vector<std::pair<MouseButton, char const*>> const mousebutton_map;
+		/** the type of key */
+		KeyType type = KeyType::UNKNOWN;
+		/** the value of the key */
+		union
+		{
+			KeyboardButton keyboard_button;
+			MouseButton mouse_button;
+			XBoxButton gamepad_button;
+		};
 	};
 
 }; // namespace chaos

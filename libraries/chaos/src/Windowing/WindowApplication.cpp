@@ -496,20 +496,25 @@ namespace chaos
 		return false;
 	}
 
-	void WindowApplication::SetKeyState(int key, int action)
+	void WindowApplication::SetKeyboardButtonState(KeyboardButton key, int action)
 	{
-		if (key >= 0 && key < keyboard_state.size())
-			keyboard_state[key].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+		int raw_value = (int)key;
+		if (raw_value >= 0 && raw_value < keyboard_state.size())
+			keyboard_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
 	}
 
-
-
+	void WindowApplication::SetMouseButtonState(MouseButton key, int action)
+	{
+		int raw_value = (int)key;
+		if (raw_value >= 0 && raw_value < mouse_button_state.size())
+			mouse_button_state[raw_value].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
+	}
 
 	bool WindowApplication::GetKeyState(Key key, bool previous_frame) const
 	{
 		int raw_value = key.GetRawValue();
 
-		if (key.GetType() == KeyType::GAMEPAD)
+		if (key.GetType() == KeyType::KEYBOARD)
 		{
 			if (raw_value >= 0 && raw_value < keyboard_state.size())
 				return keyboard_state[raw_value].GetValue(previous_frame);

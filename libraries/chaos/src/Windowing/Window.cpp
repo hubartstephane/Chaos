@@ -400,7 +400,15 @@ namespace chaos
 
 	void Window::DoOnMouseButton(GLFWwindow* in_glfw_window, int button, int action, int modifier)
 	{
-		Application::SetApplicationInputMode(InputMode::MOUSE);
+		MouseButton mouse_button = (MouseButton)button;
+
+		// notify the application of the keyboard button state
+		WindowApplication* application = Application::GetInstance();
+		if (application != nullptr)
+		{
+			application->SetInputMode(InputMode::MOUSE);
+			application->SetMouseButtonState(mouse_button, action);
+		}
 
 		Window* my_window = (Window*)glfwGetWindowUserPointer(in_glfw_window);
 		if (my_window != nullptr)
@@ -428,12 +436,14 @@ namespace chaos
 
 	void Window::DoOnKeyEvent(GLFWwindow* in_glfw_window, int key, int scan_code, int action, int modifier)
 	{
-		// notify the application of the key state
+		KeyboardButton keyboard_button = (KeyboardButton)key;
+
+		// notify the application of the keyboard button state
 		WindowApplication* application = Application::GetInstance();
 		if (application != nullptr)
 		{
 			application->SetInputMode(InputMode::KEYBOARD);
-			application->SetKeyState(key, action);
+			application->SetKeyboardButtonState(keyboard_button, action);
 		}
 		// handle the message
 		KeyEvent event;

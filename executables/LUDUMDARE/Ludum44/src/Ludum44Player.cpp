@@ -87,7 +87,7 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	if (ludum_game == nullptr)
 		return;
 
-	chaos::Key const fire_key_buttons[] = {chaos::KeyboardButton::SPACE, chaos::KeyboardButton::UNKNOWN};
+	chaos::Key const fire_key_buttons[] = { chaos::KeyboardButton::SPACE, chaos::KeyboardButton::UNKNOWN};
 	chaos::Key const charged_key_buttons[] = {chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::KeyboardButton::UNKNOWN};
 
 	bool charged_pressed = CheckButtonPressed(charged_key_buttons, chaos::GamepadButton::B);

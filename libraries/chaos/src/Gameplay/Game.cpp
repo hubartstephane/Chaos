@@ -973,14 +973,14 @@ namespace chaos
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
 #define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[XBoxButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
-		CHAOS_ADD_BUTTONMAP(BUTTON_A, ButtonA);
-		CHAOS_ADD_BUTTONMAP(BUTTON_B, ButtonB);
-		CHAOS_ADD_BUTTONMAP(BUTTON_X, ButtonX);
-		CHAOS_ADD_BUTTONMAP(BUTTON_Y, ButtonY);
-		CHAOS_ADD_BUTTONMAP(BUTTON_LEFTBUT, LeftShoulder);
-		CHAOS_ADD_BUTTONMAP(BUTTON_RIGHTBUT, RightShoulder);
-		CHAOS_ADD_BUTTONMAP(BUTTON_LEFTTRIGGER, LeftTrigger);
-		CHAOS_ADD_BUTTONMAP(BUTTON_RIGHTTRIGGER, RightTrigger);
+		CHAOS_ADD_BUTTONMAP(A, ButtonA);
+		CHAOS_ADD_BUTTONMAP(B, ButtonB);
+		CHAOS_ADD_BUTTONMAP(X, ButtonX);
+		CHAOS_ADD_BUTTONMAP(Y, ButtonY);
+		CHAOS_ADD_BUTTONMAP(LEFT_BUMPER, LeftShoulder);
+		CHAOS_ADD_BUTTONMAP(RIGHT_BUMPER, RightShoulder);
+		CHAOS_ADD_BUTTONMAP(LEFT_TRIGGER, LeftTrigger);
+		CHAOS_ADD_BUTTONMAP(RIGHT_TRIGGER, RightTrigger);
 #undef CHAOS_ADD_BUTTONMAP
 
 		return true;

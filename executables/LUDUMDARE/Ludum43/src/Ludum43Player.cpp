@@ -162,9 +162,9 @@ void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::GamepadSt
 {
 	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
 
-	bool dash = gpd->IsButtonPressed(chaos::XBoxButton::BUTTON_A, false);
+	bool dash = gpd->IsButtonPressed(chaos::XBoxButton::A, false);
 	SetDashMode(dash);
-	bool reversed_mode = gpd->IsButtonPressed(chaos::XBoxButton::BUTTON_B, false);
+	bool reversed_mode = gpd->IsButtonPressed(chaos::XBoxButton::B, false);
 	SetReverseMode(reversed_mode);
 }
 

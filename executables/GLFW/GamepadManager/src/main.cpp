@@ -9,7 +9,7 @@ public:
 
   virtual bool AcceptPhysicalDevice(chaos::PhysicalGamepad * physical_device) override
   {
-	  if (!physical_device->IsButtonPressed(chaos::XBoxButton::BUTTON_A))
+	  if (!physical_device->IsButtonPressed(chaos::XBoxButton::A))
 		  return false;
 	  return true;
   }
@@ -30,7 +30,7 @@ public:
 
   virtual void OnGamepadStateUpdated(class chaos::GamepadState & gamepad_state) override
   {
-  //  if (gamepad_state.IsButtonPressed(chaos::XBoxButton::BUTTON_Y))
+  //  if (gamepad_state.IsButtonPressed(chaos::XBoxButton::Y))
     {
    //   if (debug_display != nullptr)
     //    debug_display->AddLine("Y");

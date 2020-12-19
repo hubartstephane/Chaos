@@ -411,7 +411,7 @@ namespace chaos
 		shared_ptr<SM::StateMachineInstance> game_sm_instance;
 
 		/** a mapping between the button index and its resource name + text generator alias */
-		std::map<XBoxButton, std::pair<std::string, std::string>> gamepad_button_map;
+		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
 
 		/** score values */
 		int best_score = 0;

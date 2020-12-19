@@ -75,7 +75,7 @@ void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::GamepadSt
 
 	// shu47 on aurait pu utiliser IsButtonPressed(...false) pour avoir la previous frame 
 
-	bool honk_pressed = gpd->IsButtonPressed(chaos::XBoxButton::X, false);
+	bool honk_pressed = gpd->IsButtonPressed(chaos::GamepadButton::X, false);
 	if (honk_pressed && !was_honk_pressed_gamepad)
 		Honk();
 	was_honk_pressed_gamepad = honk_pressed;

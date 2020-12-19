@@ -5,9 +5,9 @@ namespace chaos
 	class Key;
 
 	enum class KeyType;
-	enum class XBoxAxis;
-	enum class XBoxStick;
-	enum class XBoxButton;
+	enum class GamepadAxis;
+	enum class GamepadStick;
+	enum class GamepadButton;
 	enum class KeyboardButton;
 	enum class MouseButton;
 
@@ -181,7 +181,7 @@ namespace chaos
 
 	// shuxxx see glfw3.h => some values seem to differ    GLFW_GAMEPAD_BUTTON_LEFT_THUMB ? etc
 
-	enum class XBoxButton : int
+	enum class GamepadButton : int
 	{
 		/** undefined value */
 		UNKNOWN = -1,
@@ -222,7 +222,7 @@ namespace chaos
 		RIGHT_TRIGGER = 102
 	};
 
-	enum class XBoxAxis : int
+	enum class GamepadAxis : int
 	{
 		/** undefined value */
 		UNKNOWN = -1,
@@ -242,7 +242,7 @@ namespace chaos
 		RIGHT_TRIGGER = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
 	};
 
-	enum class XBoxStick : int
+	enum class GamepadStick : int
 	{
 		/** undefined value */
 		UNKNOWN = -1,
@@ -275,7 +275,7 @@ namespace chaos
 		/** key from its name */
 		Key(char const* name);
 		/** gamepad key constructor */
-		Key(XBoxButton button);
+		Key(GamepadButton button);
 		/** keyboard key constructor */
 		Key(KeyboardButton button);
 		/** mouse key constructor */
@@ -302,7 +302,7 @@ namespace chaos
 		{
 			KeyboardButton keyboard_button;
 			MouseButton mouse_button;
-			XBoxButton gamepad_button;
+			GamepadButton gamepad_button;
 		};
 	};
 

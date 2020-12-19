@@ -55,11 +55,11 @@ namespace chaos
 	public:
 
 		/* returns a status giving the change of button relative to previous frame */
-		ButtonStateChange GetButtonStateChange(XBoxButton button) const;
+		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
 		/** returns the button state */
-		bool IsButtonPressed(XBoxButton button, bool previous_frame = false) const;
+		bool IsButtonPressed(GamepadButton button, bool previous_frame = false) const;
 		/** returns the button state */
-		float GetAxisValue(XBoxAxis axis, bool previous_frame = false) const;
+		float GetAxisValue(GamepadAxis axis, bool previous_frame = false) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
@@ -69,7 +69,7 @@ namespace chaos
 		/** returns true whenever a buttons is pressed or an axis is in action */
 		bool IsAnyAction(bool previous_frame = false) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(XBoxStick stick, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(GamepadStick stick, bool previous_frame = false) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
@@ -128,11 +128,11 @@ namespace chaos
 		GamepadState const* GetGamepadState() const { return &gamepad_state; }
 
 		/* returns a status giving the change of button relative to previous frame */
-		ButtonStateChange GetButtonStateChange(XBoxButton button) const;
+		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
 		/** returns the button state */
-		bool IsButtonPressed(XBoxButton button, bool previous_frame = false) const;
+		bool IsButtonPressed(GamepadButton button, bool previous_frame = false) const;
 		/** returns the button state */
-		float GetAxisValue(XBoxAxis axis, bool previous_frame = false) const;
+		float GetAxisValue(GamepadAxis axis, bool previous_frame = false) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
@@ -142,7 +142,7 @@ namespace chaos
 		/** returns true whenever a buttons is pressed or an axis is in action */
 		bool IsAnyAction(bool previous_frame = false) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(XBoxStick stick, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(GamepadStick stick, bool previous_frame = false) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */
@@ -260,11 +260,11 @@ namespace chaos
 		GamepadState const* GetGamepadState() const;
 
 		/* returns a status giving the change of button relative to previous frame */
-		ButtonStateChange GetButtonStateChange(XBoxButton button) const;
+		ButtonStateChange GetButtonStateChange(GamepadButton button) const;
 		/** returns the button state */
-		bool IsButtonPressed(XBoxButton button, bool previous_frame = false) const;
+		bool IsButtonPressed(GamepadButton button, bool previous_frame = false) const;
 		/** returns the button state */
-		float GetAxisValue(XBoxAxis axis, bool previous_frame = false) const;
+		float GetAxisValue(GamepadAxis axis, bool previous_frame = false) const;
 		/** returns true whether there is a button that just has become pressed */
 		bool IsAnyButtonJustPressed() const;
 		/** returns true whether there is any pressed button */
@@ -274,7 +274,7 @@ namespace chaos
 		/** returns true whenever a buttons is pressed or an axis is in action */
 		bool IsAnyAction(bool previous_frame = false) const;
 		/** returns the direction of one stick (a combinaison of 2 axis) */
-		glm::vec2 GetStickValue(XBoxStick stick, bool previous_frame = false) const;
+		glm::vec2 GetStickValue(GamepadStick stick, bool previous_frame = false) const;
 		/** returns the number of buttons */
 		size_t GetButtonCount() const;
 		/** returns the number of axis */

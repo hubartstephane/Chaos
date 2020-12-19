@@ -5,7 +5,6 @@ namespace chaos
 {
 
 #define CHAOS_KEYBOARD_DEF(KEY) std::make_pair(KeyboardButton::KEY, #KEY)
-#define CHAOS_MOUSE_DEF(KEY) std::make_pair(MouseButton::KEY, #KEY)
 
 	static std::vector<std::pair<Key, char const *>> const key_map =
 	{
@@ -131,18 +130,35 @@ CHAOS_KEYBOARD_DEF(RIGHT_ALT),
 CHAOS_KEYBOARD_DEF(RIGHT_SUPER),
 CHAOS_KEYBOARD_DEF(MENU),
 // mouse entries
-CHAOS_MOUSE_DEF(BUTTON_1),
-CHAOS_MOUSE_DEF(BUTTON_2),
-CHAOS_MOUSE_DEF(BUTTON_3),
-CHAOS_MOUSE_DEF(BUTTON_4),
-CHAOS_MOUSE_DEF(BUTTON_5),
-CHAOS_MOUSE_DEF(BUTTON_6),
-CHAOS_MOUSE_DEF(BUTTON_7),
-CHAOS_MOUSE_DEF(BUTTON_8)
+std::make_pair(MouseButton::BUTTON_1, "MOUSE_BUTTON_1"),
+std::make_pair(MouseButton::BUTTON_2, "MOUSE_BUTTON_2"),
+std::make_pair(MouseButton::BUTTON_3, "MOUSE_BUTTON_3"),
+std::make_pair(MouseButton::BUTTON_4, "MOUSE_BUTTON_4"),
+std::make_pair(MouseButton::BUTTON_5, "MOUSE_BUTTON_5"),
+std::make_pair(MouseButton::BUTTON_6, "MOUSE_BUTTON_6"),
+std::make_pair(MouseButton::BUTTON_7, "MOUSE_BUTTON_7"),
+std::make_pair(MouseButton::BUTTON_8, "MOUSE_BUTTON_8"),
 // gamepad button
+std::make_pair(GamepadButton::A, "GAMEPAD_A"),
+std::make_pair(GamepadButton::B, "GAMEPAD_B"),
+std::make_pair(GamepadButton::X, "GAMEPAD_X"),
+std::make_pair(GamepadButton::Y, "GAMEPAD_Y"),
+std::make_pair(GamepadButton::LEFT_BUMPER, "GAMEPAD_LEFT_BUMPER"),
+std::make_pair(GamepadButton::RIGHT_BUMPER, "GAMEPAD_RIGHT_BUMPER"),
+std::make_pair(GamepadButton::SELECT, "GAMEPAD_SELECT"),
+std::make_pair(GamepadButton::START, "GAMEPAD_START"),
+std::make_pair(GamepadButton::SELECT, "GAMEPAD_SELECT"),
+std::make_pair(GamepadButton::GUIDE, "GAMEPAD_GUIDE"),
+std::make_pair(GamepadButton::LEFT_THUMB, "GAMEPAD_LEFT_THUMB"),
+std::make_pair(GamepadButton::RIGHT_THUMB, "GAMEPAD_RIGHT_THUMB"),
+std::make_pair(GamepadButton::DPAD_UP, "GAMEPAD_DPAD_UP"),
+std::make_pair(GamepadButton::DPAD_RIGHT, "GAMEPAD_DPAD_RIGHT"),
+std::make_pair(GamepadButton::DPAD_DOWN, "GAMEPAD_DPAD_DOWN"),
+std::make_pair(GamepadButton::DPAD_LEFT, "GAMEPAD_DPAD_LEFT"),
+std::make_pair(GamepadButton::LEFT_TRIGGER, "GAMEPAD_LEFT_TRIGGER"),
+std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 	};
 #undef CHAOS_KEYBOARD_DEF
-#undef CHAOS_MOUSE_DEF
 	
 	Key::Key(char const* name) :
 		type(KeyType::UNKNOWN),

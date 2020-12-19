@@ -264,6 +264,9 @@ namespace chaos
 		GAMEPAD  = 2
 	};
 
+	/**
+	 * Key : a generic key (gamepad, keyboard or mouse)
+	 */
 	class Key
 	{
 	public:

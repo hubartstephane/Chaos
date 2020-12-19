@@ -169,7 +169,7 @@ namespace chaos
 		/** check whether a key event correspond to given request. Change input mode to keyboard if true */
 		bool CheckKeyPressed(KeyEvent const& event, int check_key, int check_modifier = 0);
 		/** check whether a key is pressed given request. Change input mode to keyboard if true */
-		bool CheckKeyPressed(int check_key);
+		bool CheckKeyPressed(Key check_key);
 
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(double x, double y);

@@ -296,6 +296,16 @@ namespace chaos
 		/** comparaison operator */
 		bool operator != (Key const& src) const;
 
+		/** get the keyboard value for the key (UNKNOWN if it is not a keyboard key) */
+		KeyboardButton GetKeyboardButton() const;
+		/** get the gamepad value for the key (UNKNOWN if it is not a gamepad key) */
+		GamepadButton GetGamepadButton() const;
+		/** get the mouse value for the key (UNKNOWN if it is not a mouse key) */
+		MouseButton GetMouseButton() const;
+
+		/** get the raw value of the concerned union member */
+		int GetRawValue() const;
+
 	protected:
 
 		/** the type of key */

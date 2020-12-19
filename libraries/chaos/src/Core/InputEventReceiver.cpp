@@ -145,7 +145,7 @@ namespace chaos
 		OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool InputEventReceiver::CheckKeyPressed(int check_key)
+	bool InputEventReceiver::CheckKeyPressed(Key check_key)
 	{
 		WindowApplication const* application = Application::GetInstance();
 		if (application != nullptr)

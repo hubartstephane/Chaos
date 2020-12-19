@@ -139,14 +139,14 @@ namespace chaos
 		// test whether the stick position can be overriden
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (CheckKeyPressed(GLFW_KEY_LEFT))
+		if (CheckKeyPressed(KeyboardButton::LEFT))
 			simulated_stick.x -= 1.0f;
-		if (CheckKeyPressed(GLFW_KEY_RIGHT))
+		if (CheckKeyPressed(KeyboardButton::RIGHT))
 			simulated_stick.x += 1.0f;
 
-		if (CheckKeyPressed(GLFW_KEY_DOWN))
+		if (CheckKeyPressed(KeyboardButton::DOWN))
 			simulated_stick.y += 1.0f;
-		if (CheckKeyPressed(GLFW_KEY_UP))
+		if (CheckKeyPressed(KeyboardButton::UP))
 			simulated_stick.y -= 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
@@ -354,7 +354,7 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::CheckButtonPressed(int const* keyboard_buttons, GamepadButton gamepad_button)
+    bool Player::CheckButtonPressed(Key const* keyboard_buttons, GamepadButton gamepad_button)
     {
         // keyboard input
         if (keyboard_buttons != nullptr)
@@ -362,7 +362,7 @@ namespace chaos
 			WindowApplication const* application = Application::GetInstance();
 			if (application != nullptr)
 			{
-				for (int i = 0; keyboard_buttons[i] >= 0; ++i)
+				for (int i = 0; keyboard_buttons[i].IsValid(); ++i)
 					if (application->GetKeyState(keyboard_buttons[i]))
 						return true;
 			}

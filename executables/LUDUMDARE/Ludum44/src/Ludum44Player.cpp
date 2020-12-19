@@ -87,8 +87,8 @@ void LudumPlayer::UpdatePlayerFire(float delta_time)
 	if (ludum_game == nullptr)
 		return;
 
-	int const fire_key_buttons[] = {GLFW_KEY_SPACE, -1};
-	int const charged_key_buttons[] = {GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL, -1};
+	chaos::Key const fire_key_buttons[] = {chaos::KeyboardButton::SPACE, chaos::KeyboardButton::UNKNOWN};
+	chaos::Key const charged_key_buttons[] = {chaos::KeyboardButton::LEFT_CONTROL, chaos::KeyboardButton::RIGHT_CONTROL, chaos::KeyboardButton::UNKNOWN};
 
 	bool charged_pressed = CheckButtonPressed(charged_key_buttons, chaos::GamepadButton::B);
 	if (charged_pressed)
@@ -135,7 +135,7 @@ void LudumPlayer::UpdatePlayerBuyingItem(float delta_time)
 	if (!ludum_game_instance->current_power_up->CanPowerUp(GetGame(), this, decreasing_power_up))
 		return;
 
-	int const buy_key_buttons[] = { GLFW_KEY_LEFT_ALT, GLFW_KEY_RIGHT_ALT, -1 };
+	chaos::Key const buy_key_buttons[] = { chaos::KeyboardButton::LEFT_ALT, chaos::KeyboardButton::RIGHT_ALT, chaos::KeyboardButton::UNKNOWN };
 
 	bool buy_pressed = CheckButtonPressed(buy_key_buttons, chaos::GamepadButton::Y);
 	if (buy_pressed && !buylocked)

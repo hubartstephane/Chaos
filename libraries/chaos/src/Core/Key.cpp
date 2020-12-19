@@ -248,4 +248,32 @@ std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 		return type;
 	}
 
+	KeyboardButton Key::GetKeyboardButton() const
+	{
+		if (type != KeyType::KEYBOARD)
+			return KeyboardButton::UNKNOWN;
+		return keyboard_button;
+	}
+
+	GamepadButton Key::GetGamepadButton() const
+	{
+		if (type != KeyType::GAMEPAD)
+			return GamepadButton::UNKNOWN;
+		return gamepad_button;
+	}
+
+	MouseButton Key::GetMouseButton() const
+	{
+		if (type != KeyType::MOUSE)
+			return MouseButton::UNKNOWN;
+		return mouse_button;
+	}
+
+	int Key::GetRawValue() const
+	{
+		if (type == KeyType::UNKNOWN)
+			return -1;
+		return (int)keyboard_button; // this works for all types due to union aliasing  
+	}
+
 }; // namespace chaos

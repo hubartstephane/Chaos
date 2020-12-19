@@ -238,7 +238,7 @@ std::make_pair(GamepadButton::RIGHT_TRIGGER, "GAMEPAD_RIGHT_TRIGGER")
 			return false;
 		if (keyboard_button == KeyboardButton::UNKNOWN) // this works for all types due to union aliasing 
 			return false;
-		return false;
+		return true;
 	}
 
 	KeyType Key::GetType() const

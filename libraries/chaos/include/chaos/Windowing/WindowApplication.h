@@ -154,8 +154,11 @@ namespace chaos
 		/** finalize the GPU manager */
 		virtual bool FinalizeGPUResourceManager();
 
-		/** change the state of a keyboard key */
-		void SetKeyState(int key, int action);
+		/** change the state of a keyboard key (notification from a window)*/
+		void SetKeyboardButtonState(KeyboardButton key, int action);
+		/** change the state of a mouse key (notification from a window)*/
+		void SetMouseButtonState(MouseButton key, int action);
+
 		/** update the internal timers of keyboard states */
 		void UpdateKeyStates(float delta_time);
 

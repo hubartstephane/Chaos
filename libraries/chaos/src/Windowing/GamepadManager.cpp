@@ -30,7 +30,7 @@ namespace chaos
 		if (button == XBoxButton::UNKNOWN)
 			return ButtonStateChange::NONE;
 		// pseudo buttons
-		if (button == XBoxButton::BUTTON_LEFTTRIGGER)
+		if (button == XBoxButton::LEFT_TRIGGER)
 		{
 			bool previous_state = (GetAxisValue(XBoxAxis::LEFT_TRIGGER, true) > 0);
 			bool current_state = (GetAxisValue(XBoxAxis::LEFT_TRIGGER, false) > 0);
@@ -40,7 +40,7 @@ namespace chaos
 				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
 		}
 
-		if (button == XBoxButton::BUTTON_RIGHTTRIGGER)
+		if (button == XBoxButton::RIGHT_TRIGGER)
 		{
 			bool previous_state = (GetAxisValue(XBoxAxis::RIGHT_TRIGGER, true) > 0);
 			bool current_state = (GetAxisValue(XBoxAxis::RIGHT_TRIGGER, false) > 0);
@@ -59,7 +59,7 @@ namespace chaos
 		if (button == XBoxButton::UNKNOWN)
 			return false;
 		// pseudo buttons
-		if (button == XBoxButton::BUTTON_LEFTTRIGGER)
+		if (button == XBoxButton::LEFT_TRIGGER)
 		{
 			float trigger_value = GetAxisValue(XBoxAxis::LEFT_TRIGGER, previous_frame);
 			if (trigger_value > 0)
@@ -67,7 +67,7 @@ namespace chaos
 			return false;
 		}
 
-		if (button == XBoxButton::BUTTON_RIGHTTRIGGER)
+		if (button == XBoxButton::RIGHT_TRIGGER)
 		{
 			float trigger_value = GetAxisValue(XBoxAxis::RIGHT_TRIGGER, previous_frame);
 			if (trigger_value > 0)

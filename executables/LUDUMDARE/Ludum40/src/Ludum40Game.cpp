@@ -703,8 +703,8 @@ bool Game::OnPhysicalGamepadInput(chaos::PhysicalGamepad * physical_gamepad)
 	}
 	else
 	{
-		if ((physical_gamepad->GetButtonStateChange(chaos::XBoxButton::BUTTON_SELECT) == chaos::ButtonStateChange::BECOME_PRESSED) ||
-			(physical_gamepad->GetButtonStateChange(chaos::XBoxButton::BUTTON_START) == chaos::ButtonStateChange::BECOME_PRESSED))
+		if ((physical_gamepad->GetButtonStateChange(chaos::XBoxButton::SELECT) == chaos::ButtonStateChange::BECOME_PRESSED) ||
+			(physical_gamepad->GetButtonStateChange(chaos::XBoxButton::START) == chaos::ButtonStateChange::BECOME_PRESSED))
 			SetPause(!game_paused);		
 	}		
 

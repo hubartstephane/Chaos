@@ -65,8 +65,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->GetButtonStateChange(XBoxButton::BUTTON_SELECT) == ButtonStateChange::BECOME_PRESSED) ||
-			(gamepad_state->GetButtonStateChange(XBoxButton::BUTTON_START) == ButtonStateChange::BECOME_PRESSED))
+		if ((gamepad_state->GetButtonStateChange(XBoxButton::SELECT) == ButtonStateChange::BECOME_PRESSED) ||
+			(gamepad_state->GetButtonStateChange(XBoxButton::START) == ButtonStateChange::BECOME_PRESSED))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -172,14 +172,14 @@ namespace chaos
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->IsButtonPressed(XBoxButton::BUTTON_LEFT, false))
+			if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_LEFT, false))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->IsButtonPressed(XBoxButton::BUTTON_RIGHT, false))
+			else if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_RIGHT, false))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->IsButtonPressed(XBoxButton::BUTTON_UP, false))
+			if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_UP, false))
 				left_stick_position.y = -1.0f;
-			else if (gamepad_state->IsButtonPressed(XBoxButton::BUTTON_DOWN, false))
+			else if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_DOWN, false))
 				left_stick_position.y = 1.0f;
 		}
 

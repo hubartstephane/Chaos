@@ -97,9 +97,9 @@ namespace chaos
 		virtual bool OnKeyEventImpl(KeyEvent const& event) override;
 
 		/** get the state of a keyboard key */
-		static bool GetApplicationKeyState(int key, bool previous_frame = false);
+		static bool GetApplicationKeyState(Key key, bool previous_frame = false);
 		/** change the state of a keyboard key */
-		bool GetKeyState(int key, bool previous_frame = false) const;
+		bool GetKeyState(Key key, bool previous_frame = false) const;
 
 		/** get the OpenGL context, call the function, restore previous context after */		 
 		template<typename T>
@@ -194,6 +194,8 @@ namespace chaos
 
 		/** the state of all buttons */
 		std::array<ButtonState, GLFW_KEY_LAST> keyboard_state;
+		/** the state of all buttons */
+		std::array<ButtonState, GLFW_MOUSE_BUTTON_LAST + 1> mouse_button_state;
 
 		/** forced time slice for tick */
 		float forced_tick_duration = 0.0f;

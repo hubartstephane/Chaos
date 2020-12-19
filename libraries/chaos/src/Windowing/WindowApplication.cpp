@@ -488,7 +488,7 @@ namespace chaos
 		return Application::OnKeyEventImpl(event);
 	}
 
-	bool WindowApplication::GetApplicationKeyState(int key, bool previous_frame)
+	bool WindowApplication::GetApplicationKeyState(Key key, bool previous_frame)
 	{
 		WindowApplication* application = Application::GetInstance();
 		if (application != nullptr)
@@ -502,10 +502,23 @@ namespace chaos
 			keyboard_state[key].SetValue(action == GLFW_PRESS || action == GLFW_REPEAT);
 	}
 
-	bool WindowApplication::GetKeyState(int key, bool previous_frame) const
+
+
+
+	bool WindowApplication::GetKeyState(Key key, bool previous_frame) const
 	{
-		if (key >= 0 && key < keyboard_state.size())
-			return keyboard_state[key].GetValue(previous_frame);
+		int raw_value = key.GetRawValue();
+
+		if (key.GetType() == KeyType::GAMEPAD)
+		{
+			if (raw_value >= 0 && raw_value < keyboard_state.size())
+				return keyboard_state[raw_value].GetValue(previous_frame);
+		}
+		else if (key.GetType() == KeyType::MOUSE)
+		{
+			if (raw_value >= 0 && raw_value < mouse_button_state.size())
+				return mouse_button_state[raw_value].GetValue(previous_frame);
+		}
 		return false;
 	}
 

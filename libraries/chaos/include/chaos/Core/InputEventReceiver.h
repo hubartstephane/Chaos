@@ -96,7 +96,7 @@ namespace chaos
 	};
 
 	/**
-	* AxisState : while max and min values for sticks are not always 1 (some XBOX has value lesser that 1.0),
+	* AxisState : while max and min values for sticks are not always 1 (some controllers has value lesser that 1.0),
 	*            we have to store the upper and lower values to renormalize the output
 	*/
 	class AxisState : public InputState<float>

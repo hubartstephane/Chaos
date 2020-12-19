@@ -156,9 +156,9 @@ bool LudumPlayerDisplacementComponent::DoTick(float delta_time)
 	stick_position.y = -stick_position.y; // Y stick is inverted
 
 	int const accelerate_keys[] = { GLFW_KEY_SPACE, -1 };
-	particle.accelerate_pressed = player->CheckButtonPressed(accelerate_keys, chaos::XBoxButton::A);
+	particle.accelerate_pressed = player->CheckButtonPressed(accelerate_keys, chaos::GamepadButton::A);
 	int const break_keys[] = { GLFW_KEY_LEFT_CONTROL, -1 };
-	particle.break_pressed = player->CheckButtonPressed(break_keys, chaos::XBoxButton::B);
+	particle.break_pressed = player->CheckButtonPressed(break_keys, chaos::GamepadButton::B);
 
 	// no input before race really starts
 	if (level_instance->lost_timer >= 0 || player->race_position.IsCompleted())

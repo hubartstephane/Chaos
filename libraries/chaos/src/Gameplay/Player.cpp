@@ -65,8 +65,8 @@ namespace chaos
 		if (gamepad_state == nullptr)
 			return;
 		// maybe a game/pause resume
-		if ((gamepad_state->GetButtonStateChange(XBoxButton::SELECT) == ButtonStateChange::BECOME_PRESSED) ||
-			(gamepad_state->GetButtonStateChange(XBoxButton::START) == ButtonStateChange::BECOME_PRESSED))
+		if ((gamepad_state->GetButtonStateChange(GamepadButton::SELECT) == ButtonStateChange::BECOME_PRESSED) ||
+			(gamepad_state->GetButtonStateChange(GamepadButton::START) == ButtonStateChange::BECOME_PRESSED))
 		{
 			Game* game = GetGame();
 			if (game != nullptr)
@@ -167,30 +167,30 @@ namespace chaos
 			SetInputMode(InputMode::GAMEPAD);
 
 		// cache the LEFT stick position (it is aliases with the DPAD)
-		glm::vec2 lsp = gamepad_state->GetStickValue(XBoxStick::LEFT_STICK);
+		glm::vec2 lsp = gamepad_state->GetStickValue(GamepadStick::LEFT_STICK);
 		if (glm::length2(lsp) > 0.0f)
 			left_stick_position = lsp;
 		else
 		{
-			if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_LEFT, false))
+			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_LEFT, false))
 				left_stick_position.x = -1.0f;
-			else if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_RIGHT, false))
+			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_RIGHT, false))
 				left_stick_position.x = 1.0f;
 
-			if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_UP, false))
+			if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_UP, false))
 				left_stick_position.y = -1.0f;
-			else if (gamepad_state->IsButtonPressed(XBoxButton::DPAD_DOWN, false))
+			else if (gamepad_state->IsButtonPressed(GamepadButton::DPAD_DOWN, false))
 				left_stick_position.y = 1.0f;
 		}
 
 		// cache the RIGHT stick position
-		glm::vec2 rsp = gamepad_state->GetStickValue(XBoxStick::RIGHT_STICK);
+		glm::vec2 rsp = gamepad_state->GetStickValue(GamepadStick::RIGHT_STICK);
 		if (glm::length2(rsp) > 0.0f)
 			right_stick_position = rsp;
 
 		// cache the TRIGGERS
-		left_trigger  = gamepad_state->GetAxisValue(XBoxAxis::LEFT_TRIGGER);
-		right_trigger = gamepad_state->GetAxisValue(XBoxAxis::RIGHT_TRIGGER);
+		left_trigger  = gamepad_state->GetAxisValue(GamepadAxis::LEFT_TRIGGER);
+		right_trigger = gamepad_state->GetAxisValue(GamepadAxis::RIGHT_TRIGGER);
 	}
 
 	void Player::HandleKeyboardInputs(float delta_time)
@@ -354,7 +354,7 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::CheckButtonPressed(int const* keyboard_buttons, XBoxButton gamepad_button)
+    bool Player::CheckButtonPressed(int const* keyboard_buttons, GamepadButton gamepad_button)
     {
         // keyboard input
         if (keyboard_buttons != nullptr)
@@ -369,7 +369,7 @@ namespace chaos
         }
 
         // gamepad input
-        if (gamepad_button != XBoxButton::UNKNOWN)
+        if (gamepad_button != GamepadButton::UNKNOWN)
             if (gamepad != nullptr && gamepad->IsButtonPressed(gamepad_button))
                 return true;
         return false;

@@ -202,10 +202,10 @@ namespace chaos
 		stick_position.y = -stick_position.y; // Y stick is inverted
 
 		int const jump_key_buttons[] = { GLFW_KEY_SPACE, -1 };
-		bool jump_pressed = player->CheckButtonPressed(jump_key_buttons, XBoxButton::A);
+		bool jump_pressed = player->CheckButtonPressed(jump_key_buttons, GamepadButton::A);
 
 		int const run_key_buttons[] = { GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT, -1 };
-		bool run_pressed = player->CheckButtonPressed(run_key_buttons, XBoxButton::RIGHT_TRIGGER);
+		bool run_pressed = player->CheckButtonPressed(run_key_buttons, GamepadButton::RIGHT_TRIGGER);
 
 		// get player position
 		box2 initial_pawn_box = pawn->GetBoundingBox();

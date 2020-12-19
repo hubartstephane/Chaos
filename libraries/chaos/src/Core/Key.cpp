@@ -146,7 +146,7 @@ CHAOS_MOUSE_DEF(BUTTON_8)
 	
 	Key::Key(char const* name) :
 		type(KeyType::UNKNOWN),
-		gamepad_button(XBoxButton::UNKNOWN) // due to union aliasing, this works fine
+		gamepad_button(GamepadButton::UNKNOWN) // due to union aliasing, this works fine
 	{
 		// early exit
 		if (StringTools::IsEmpty(name))
@@ -164,15 +164,15 @@ CHAOS_MOUSE_DEF(BUTTON_8)
 
 	Key::Key() :
 		type(KeyType::UNKNOWN),
-		gamepad_button(XBoxButton::UNKNOWN) // due to union aliasing, this works fine
+		gamepad_button(GamepadButton::UNKNOWN) // due to union aliasing, this works fine
 	{
 	}
 
-	Key::Key(XBoxButton button) :
+	Key::Key(GamepadButton button) :
 		type(KeyType::GAMEPAD),
 		gamepad_button(button)
 	{
-		if (gamepad_button == XBoxButton::UNKNOWN)
+		if (gamepad_button == GamepadButton::UNKNOWN)
 			type = KeyType::UNKNOWN;
 	}
 

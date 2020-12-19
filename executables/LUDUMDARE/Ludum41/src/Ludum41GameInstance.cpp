@@ -606,7 +606,7 @@ std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> c
 	{
 		int button_index = gamepad_challenge[i];
 
-		auto const it = ludum_game->gamepad_button_map.find((chaos::XBoxButton)button_index);
+		auto const it = ludum_game->gamepad_button_map.find((chaos::GamepadButton)button_index);
 		if (it == ludum_game->gamepad_button_map.end())
 			continue;
 		result = result + "[" + it->second.second + "]";

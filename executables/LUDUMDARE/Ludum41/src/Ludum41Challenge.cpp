@@ -33,7 +33,7 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::GamepadState const * in_game
 
 	int expected_key = gamepad_challenge[gamepad_challenge_position];
 
-	if (in_gamepad_state->GetButtonStateChange((chaos::XBoxButton)expected_key) == chaos::ButtonStateChange::BECOME_PRESSED)
+	if (in_gamepad_state->GetButtonStateChange((chaos::GamepadButton)expected_key) == chaos::ButtonStateChange::BECOME_PRESSED)
 	{
 		AdvanceChallenge();
 	}
@@ -42,7 +42,7 @@ void LudumChallenge::OnGamepadButtonReceived(chaos::GamepadState const * in_game
 		// search if a bad button is pressed
 		for (auto it = game->gamepad_button_map.begin() ; it != game->gamepad_button_map.end() ; ++it)
 		{
-			if (it->first == (chaos::XBoxButton)expected_key)
+			if (it->first == (chaos::GamepadButton)expected_key)
 				continue;
 		
 			if (in_gamepad_state->GetButtonStateChange(it->first) == chaos::ButtonStateChange::BECOME_PRESSED)

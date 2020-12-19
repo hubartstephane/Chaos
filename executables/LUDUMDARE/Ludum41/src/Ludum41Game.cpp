@@ -254,10 +254,10 @@ bool LudumGame::InitializeGamepadButtonInfo()
 	if (!chaos::Game::InitializeGamepadButtonInfo())
 		return false;
 
-	gamepad_buttons.push_back((int)chaos::XBoxButton::A);
-	gamepad_buttons.push_back((int)chaos::XBoxButton::B);
-	gamepad_buttons.push_back((int)chaos::XBoxButton::X);
-	gamepad_buttons.push_back((int)chaos::XBoxButton::Y);
+	gamepad_buttons.push_back((int)chaos::GamepadButton::A);
+	gamepad_buttons.push_back((int)chaos::GamepadButton::B);
+	gamepad_buttons.push_back((int)chaos::GamepadButton::X);
+	gamepad_buttons.push_back((int)chaos::GamepadButton::Y);
 
 	return true;
 }

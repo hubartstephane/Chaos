@@ -24,26 +24,26 @@ namespace chaos
 		return axes.size();
 	}
 
-	ButtonStateChange GamepadState::GetButtonStateChange(XBoxButton button) const
+	ButtonStateChange GamepadState::GetButtonStateChange(GamepadButton button) const
 	{
 		// early exit
-		if (button == XBoxButton::UNKNOWN)
+		if (button == GamepadButton::UNKNOWN)
 			return ButtonStateChange::NONE;
 		// pseudo buttons
-		if (button == XBoxButton::LEFT_TRIGGER)
+		if (button == GamepadButton::LEFT_TRIGGER)
 		{
-			bool previous_state = (GetAxisValue(XBoxAxis::LEFT_TRIGGER, true) > 0);
-			bool current_state = (GetAxisValue(XBoxAxis::LEFT_TRIGGER, false) > 0);
+			bool previous_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER, true) > 0);
+			bool current_state = (GetAxisValue(GamepadAxis::LEFT_TRIGGER, false) > 0);
 			if (current_state == previous_state)
 				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
 			else
 				return (current_state) ? ButtonStateChange::BECOME_PRESSED : ButtonStateChange::BECOME_RELEASED;
 		}
 
-		if (button == XBoxButton::RIGHT_TRIGGER)
+		if (button == GamepadButton::RIGHT_TRIGGER)
 		{
-			bool previous_state = (GetAxisValue(XBoxAxis::RIGHT_TRIGGER, true) > 0);
-			bool current_state = (GetAxisValue(XBoxAxis::RIGHT_TRIGGER, false) > 0);
+			bool previous_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER, true) > 0);
+			bool current_state = (GetAxisValue(GamepadAxis::RIGHT_TRIGGER, false) > 0);
 			if (current_state == previous_state)
 				return (current_state) ? ButtonStateChange::STAY_PRESSED : ButtonStateChange::STAY_RELEASED;
 			else
@@ -53,23 +53,23 @@ namespace chaos
 		return buttons[(size_t)button].GetStateChange();
 	}
 
-	bool GamepadState::IsButtonPressed(XBoxButton button, bool previous_frame) const
+	bool GamepadState::IsButtonPressed(GamepadButton button, bool previous_frame) const
 	{
 		// early exit
-		if (button == XBoxButton::UNKNOWN)
+		if (button == GamepadButton::UNKNOWN)
 			return false;
 		// pseudo buttons
-		if (button == XBoxButton::LEFT_TRIGGER)
+		if (button == GamepadButton::LEFT_TRIGGER)
 		{
-			float trigger_value = GetAxisValue(XBoxAxis::LEFT_TRIGGER, previous_frame);
+			float trigger_value = GetAxisValue(GamepadAxis::LEFT_TRIGGER, previous_frame);
 			if (trigger_value > 0)
 				return true;
 			return false;
 		}
 
-		if (button == XBoxButton::RIGHT_TRIGGER)
+		if (button == GamepadButton::RIGHT_TRIGGER)
 		{
-			float trigger_value = GetAxisValue(XBoxAxis::RIGHT_TRIGGER, previous_frame);
+			float trigger_value = GetAxisValue(GamepadAxis::RIGHT_TRIGGER, previous_frame);
 			if (trigger_value > 0)
 				return true;
 			return false;
@@ -78,9 +78,9 @@ namespace chaos
 		return buttons[(size_t)button].GetValue(previous_frame);
 	}
 
-	float GamepadState::GetAxisValue(XBoxAxis axis, bool previous_frame) const
+	float GamepadState::GetAxisValue(GamepadAxis axis, bool previous_frame) const
 	{
-		if (axis == XBoxAxis::UNKNOWN)
+		if (axis == GamepadAxis::UNKNOWN)
 			return 0.0f;
 		return axes[(size_t)axis].GetValue(previous_frame);
 	}
@@ -114,22 +114,22 @@ namespace chaos
 		return IsAnyButtonPressed(previous_frame) || IsAnyAxisAction(previous_frame);
 	}
 
-	glm::vec2 GamepadState::GetStickValue(XBoxStick stick, bool previous_frame) const
+	glm::vec2 GamepadState::GetStickValue(GamepadStick stick, bool previous_frame) const
 	{
 		glm::vec2 result(0.0f, 0.0f);
 
 		// early exit
-		if (stick == XBoxStick::UNKNOWN)
+		if (stick == GamepadStick::UNKNOWN)
 			return result;		
-		if (stick == XBoxStick::LEFT_STICK)
+		if (stick == GamepadStick::LEFT_STICK)
 		{
-			result.x = GetAxisValue(XBoxAxis::LEFT_AXIS_X, previous_frame);
-			result.y = GetAxisValue(XBoxAxis::LEFT_AXIS_Y, previous_frame);
+			result.x = GetAxisValue(GamepadAxis::LEFT_AXIS_X, previous_frame);
+			result.y = GetAxisValue(GamepadAxis::LEFT_AXIS_Y, previous_frame);
 		}
-		else if (stick == XBoxStick::RIGHT_STICK)
+		else if (stick == GamepadStick::RIGHT_STICK)
 		{
-			result.x = GetAxisValue(XBoxAxis::RIGHT_AXIS_X, previous_frame);
-			result.y = GetAxisValue(XBoxAxis::RIGHT_AXIS_Y, previous_frame);
+			result.x = GetAxisValue(GamepadAxis::RIGHT_AXIS_X, previous_frame);
+			result.y = GetAxisValue(GamepadAxis::RIGHT_AXIS_Y, previous_frame);
 		}
 		else
 			return result;
@@ -153,7 +153,7 @@ namespace chaos
 		for (size_t i = 0; i < AXIS_COUNT; ++i)
 		{
 			float value = state.axes[i];
-			if (i == (size_t)XBoxAxis::LEFT_TRIGGER || i == (size_t)XBoxAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
+			if (i == (size_t)GamepadAxis::LEFT_TRIGGER || i == (size_t)GamepadAxis::RIGHT_TRIGGER)  // renormalize icomming value [-1 .. +1] => [0 .. 1]
 				value = (value * 0.5f + 0.5f);
 			axes[i].SetValue(value, dead_zone);
 			axes[i].UpdateSameValueTimer(delta_time);
@@ -197,21 +197,21 @@ namespace chaos
 		return gamepad_state.GetAxisCount();
 	}
 
-	ButtonStateChange PhysicalGamepad::GetButtonStateChange(XBoxButton button) const
+	ButtonStateChange PhysicalGamepad::GetButtonStateChange(GamepadButton button) const
 	{
 		if (!IsPresent())
 			return ButtonStateChange::NONE;
 		return gamepad_state.GetButtonStateChange(button);
 	}
 
-	bool PhysicalGamepad::IsButtonPressed(XBoxButton button, bool previous_frame) const
+	bool PhysicalGamepad::IsButtonPressed(GamepadButton button, bool previous_frame) const
 	{
 		if (!IsPresent())
 			return false;
 		return gamepad_state.IsButtonPressed(button, previous_frame);
 	}
 
-	float PhysicalGamepad::GetAxisValue(XBoxAxis axis, bool previous_frame) const
+	float PhysicalGamepad::GetAxisValue(GamepadAxis axis, bool previous_frame) const
 	{
 		if (!IsPresent())
 			return 0.0f;
@@ -246,7 +246,7 @@ namespace chaos
 		return gamepad_state.IsAnyAction(previous_frame);
 	}
 
-	glm::vec2 PhysicalGamepad::GetStickValue(XBoxStick stick, bool previous_frame) const
+	glm::vec2 PhysicalGamepad::GetStickValue(GamepadStick stick, bool previous_frame) const
 	{
 		if (!IsPresent())
 			return glm::vec2(0.0f, 0.0f);
@@ -346,21 +346,21 @@ namespace chaos
 		return 0;
 	}
 
-	ButtonStateChange Gamepad::GetButtonStateChange(XBoxButton button) const
+	ButtonStateChange Gamepad::GetButtonStateChange(GamepadButton button) const
 	{
 		if (physical_device != nullptr)
 			return physical_device->GetButtonStateChange(button);
 		return ButtonStateChange::NONE;
 	}
 
-	bool Gamepad::IsButtonPressed(XBoxButton button, bool previous_frame) const
+	bool Gamepad::IsButtonPressed(GamepadButton button, bool previous_frame) const
 	{
 		if (physical_device != nullptr)
 			return physical_device->IsButtonPressed(button, previous_frame);
 		return 0;
 	}
 
-	float Gamepad::GetAxisValue(XBoxAxis axis, bool previous_frame) const
+	float Gamepad::GetAxisValue(GamepadAxis axis, bool previous_frame) const
 	{
 		if (physical_device != nullptr)
 			return physical_device->GetAxisValue(axis, previous_frame);
@@ -395,7 +395,7 @@ namespace chaos
 		return false;
 	}
 
-	glm::vec2 Gamepad::GetStickValue(XBoxStick stick_index, bool previous_frame) const
+	glm::vec2 Gamepad::GetStickValue(GamepadStick stick_index, bool previous_frame) const
 	{
 		if (physical_device != nullptr)
 			return physical_device->GetStickValue(stick_index, previous_frame);

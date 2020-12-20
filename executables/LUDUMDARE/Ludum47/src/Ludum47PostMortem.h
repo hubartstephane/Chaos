@@ -77,10 +77,6 @@ introduce     typename type_vec<T, dimension>      it does not exists !!!
 
 
 
-gpd->IsButtonPressed(...) => gamepad peut connaitre la frame d avant
-CheckKeyPressed(...) => le clavier ne peut pas connaire la frame d avant
-
-
 
 
 

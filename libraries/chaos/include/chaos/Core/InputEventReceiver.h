@@ -166,10 +166,10 @@ namespace chaos
 		/* get the current input mode */
 		InputMode GetInputMode() const { return input_mode; }
 		
-		/** check whether a key event correspond to given request. Change input mode to keyboard if true */
-		bool CheckKeyPressed(KeyEvent const& event, int check_key, int check_modifier = 0);
-		/** check whether a key is pressed given request. Change input mode to keyboard if true */
-		bool CheckKeyPressed(Key check_key);
+		/** check whether a key is pressed. Change input mode according to success */
+		bool CheckButtonPressed(Key button, bool previous_frame = false);
+		/** check whether a key in a set is pressed */
+		bool CheckButtonPressed(Key const* buttons, bool previous_frame = false);
 
 		/** called whenever the mouse is moved */
 		bool OnMouseMove(double x, double y);
@@ -197,6 +197,9 @@ namespace chaos
 
 		/** the user callback called when current input mode changes */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode);
+
+		/** internal method to check whether a button is pressed */
+		virtual bool DoCheckButtonPressed(Key button, bool previous_frame);
 
 	protected:
 

@@ -172,9 +172,9 @@ void LudumPlayer::HandleKeyboardInputs(float delta_time)
 {
 	chaos::Player::HandleKeyboardInputs(delta_time);
 
-	bool dash_mode = CheckKeyPressed(chaos::KeyboardButton::SPACE);
+	bool dash_mode = CheckButtonPressed(chaos::KeyboardButton::SPACE);
 	SetDashMode(dash_mode);
-	bool reversed_mode = CheckKeyPressed(chaos::KeyboardButton::RIGHT_CONTROL);
+	bool reversed_mode = CheckButtonPressed(chaos::KeyboardButton::RIGHT_CONTROL);
 	SetReverseMode(reversed_mode);
 }
 

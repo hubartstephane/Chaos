@@ -73,9 +73,6 @@ namespace chaos
 		/** gets the right trigger */
 		float GetRightTrigger() const { return right_trigger; }
 
-        /** utility function to check whether a keyboard key or gamepad button is down */
-        bool CheckButtonPressed(Key const* buttons);
-
 		/** player initialization from config */
 		virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload);
 		/** called after player configuration has been (re)loaded */
@@ -131,6 +128,9 @@ namespace chaos
 
 		/** the effects for life changes */
 		virtual void PlayHealthChangedEffects(bool health_lost);
+
+		/** utility function to check whether a keyboard key or gamepad button is down */
+		virtual bool DoCheckButtonPressed(Key button, bool previous_frame) override;
 
 	protected:
 

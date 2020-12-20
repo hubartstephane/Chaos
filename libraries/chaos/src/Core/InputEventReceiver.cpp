@@ -145,28 +145,36 @@ namespace chaos
 		OnInputModeChanged(new_mode, old_mode);
 	}
 
-	bool InputEventReceiver::CheckKeyPressed(Key check_key)
+	bool InputEventReceiver::CheckButtonPressed(Key const* buttons, bool previous_frame)
 	{
-		WindowApplication const* application = Application::GetInstance();
-		if (application != nullptr)
-		{
-			if (application->GetKeyState(check_key))
-			{
-				SetInputMode(InputMode::KEYBOARD);
+		// early exit
+		if (buttons == nullptr)
+			return false;
+		// iteration
+		for (size_t i = 0; buttons[i].IsValid(); ++i)
+			if (CheckButtonPressed(buttons[i], previous_frame))
 				return true;
-			}
+		return false;
+	}
+
+	bool InputEventReceiver::CheckButtonPressed(Key button, bool previous_frame)
+	{
+		if (DoCheckButtonPressed(button, previous_frame))
+		{
+			if (button.GetType() == KeyType::KEYBOARD)
+				SetInputMode(InputMode::KEYBOARD);
+			else if (button.GetType() == KeyType::MOUSE)
+				SetInputMode(InputMode::MOUSE);
+			else if (button.GetType() == KeyType::GAMEPAD)
+				SetInputMode(InputMode::GAMEPAD);
+			return true;
 		}
 		return false;
 	}
 
-	bool InputEventReceiver::CheckKeyPressed(KeyEvent const& event, int check_key, int check_modifier)
+	bool InputEventReceiver::DoCheckButtonPressed(Key button, bool previous_frame)
 	{
-		if (event.IsKeyPressed(check_key, check_modifier))
-		{
-			SetInputMode(InputMode::KEYBOARD);
-			return true;
-		}
-		return false;
+		return WindowApplication::GetApplicationKeyState(button, previous_frame);
 	}
 
 	void InputEventReceiver::OnInputModeChanged(InputMode new_mode, InputMode old_mode) 

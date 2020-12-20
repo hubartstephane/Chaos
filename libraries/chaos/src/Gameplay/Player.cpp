@@ -90,10 +90,9 @@ namespace chaos
 		Game* game = GetGame();
 		if (game != nullptr && !game->IsFreeCameraMode() && game->IsPlaying())
 		{
-			// transform keyboard inputs as stick input
-			HandleKeyboardInputs(delta_time);
-			// handle gamepad inputs
-			HandleGamepadInputs(delta_time);
+			// tick the inputs
+			GamepadState const* gamepad_state = (gamepad != nullptr)? gamepad->GetGamepadState() : nullptr;
+			HandleInputs(delta_time, gamepad_state);
 			// tick other player objects
 			TickInternal(delta_time);
 
@@ -193,7 +192,7 @@ namespace chaos
 		right_trigger = gamepad_state->GetAxisValue(GamepadAxis::RIGHT_TRIGGER);
 	}
 
-	void Player::HandleKeyboardInputs(float delta_time)
+	void Player::HandleInputs(float delta_time, GamepadState const* gamepad_state)
 	{
 
 	}
@@ -204,24 +203,6 @@ namespace chaos
 		right_stick_position = glm::vec2(0.0f, 0.0f);
 		left_trigger  = 0.0f;
 		right_trigger = 0.0f;
-	}
-
-	void Player::HandleGamepadInputs(float delta_time)
-	{
-		// early exit
-		if (gamepad == nullptr)
-			return;
-		// get the gamepad data
-		GamepadState const * gamepad_state = gamepad->GetGamepadState();
-		if (gamepad_state == nullptr)
-			return;
-		// Handle the inputs as we want
-		InternalHandleGamepadInputs(delta_time, gamepad_state);
-	}
-
-	void Player::InternalHandleGamepadInputs(float delta_time, GamepadState const * gamepad_state)
-	{
-
 	}
 
 	void Player::SetScore(int in_score, bool increment)

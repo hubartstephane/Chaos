@@ -17,20 +17,6 @@ bool LudumPlayer::Initialize(chaos::GameInstance * in_game_instance)
 	return true;
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::GamepadState const * gpd)
-{
-	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
-
-
-}
-
-void LudumPlayer::HandleKeyboardInputs(float delta_time)
-{
-	chaos::Player::HandleKeyboardInputs(delta_time);
-
-
-}
-
 void LudumPlayer::OnLifeLost()
 {
 	chaos::Player::OnLifeLost();

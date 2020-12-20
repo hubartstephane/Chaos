@@ -77,18 +77,6 @@ introduce     typename type_vec<T, dimension>      it does not exists !!!
 
 
 
-
-
-
-
-deux fonctions => repetitions de code => on pourrait essayer d'unifier ca non ? 
-
-void LudumPlayer::InternalHandleGamepadInputs(...)
-void LudumPlayer::HandleKeyboardInputs()
-
-Demande de touches generique manette/clavier
-
-
 utiliser : int a = int(3); au lieu de ((int)a)
 
 

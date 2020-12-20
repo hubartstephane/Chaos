@@ -29,12 +29,6 @@ protected:
 	virtual void OnLifeLost() override;
     /** override */
     virtual void OnLevelChanged(chaos::Level* new_level, chaos::Level* old_level, chaos::LevelInstance* new_level_instance) override;
-    /** override */
-    virtual void InternalHandleGamepadInputs(float delta_time, chaos::GamepadState const* gpd) override;
-    /** override */
-    virtual void HandleKeyboardInputs(float delta_time) override;
-
-
 
 protected:
 

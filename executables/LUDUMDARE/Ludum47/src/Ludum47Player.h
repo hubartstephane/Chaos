@@ -44,15 +44,9 @@ protected:
     /** override */
     virtual void OnLevelChanged(chaos::Level* new_level, chaos::Level* old_level, chaos::LevelInstance* new_level_instance) override;
     /** override */
-    virtual void InternalHandleGamepadInputs(float delta_time, chaos::GamepadState const* gpd) override;
-    /** override */
-    virtual void HandleKeyboardInputs(float delta_time) override;
+    virtual void HandleInputs(float delta_time, chaos::GamepadState const* gpd) override;
     /** override */
     virtual bool InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload) override;
-
-
-
-
 
 public:
 

@@ -68,30 +68,17 @@ bool LudumPlayer::InitializeGameValues(nlohmann::json const& config, boost::file
 	return true;
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::GamepadState const * gpd)
+void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const* gpd)
 {
-	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
+	chaos::Player::HandleInputs(delta_time, gpd);
 
+	chaos::Key const honk_keys[] = { chaos::GamepadButton::X, chaos::KeyboardButton::LEFT_SHIFT, chaos::Key() };
 
-	// shu47 on aurait pu utiliser IsButtonPressed(...false) pour avoir la previous frame 
-
-	bool honk_pressed = gpd->IsButtonPressed(chaos::GamepadButton::X, false);
+	bool honk_pressed = CheckButtonPressed(honk_keys, false);
 	if (honk_pressed && !was_honk_pressed_gamepad)
 		Honk();
 	was_honk_pressed_gamepad = honk_pressed;
 
-}
-
-void LudumPlayer::HandleKeyboardInputs(float delta_time)
-{
-	chaos::Player::HandleKeyboardInputs(delta_time);
-
-	// shu47 CheckButtonPressed on a rien pour connaitre la frame d'avant
-
-	bool honk_pressed = CheckButtonPressed(chaos::KeyboardButton::LEFT_SHIFT);
-	if (honk_pressed && !was_honk_pressed_keyboard)
-		Honk();
-	was_honk_pressed_keyboard = honk_pressed;
 }
 
 void LudumPlayer::Honk()

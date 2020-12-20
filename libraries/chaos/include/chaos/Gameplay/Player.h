@@ -99,14 +99,10 @@ namespace chaos
 		/** extract stick values from gamepad state */
 		virtual void CacheGamepadPlayerDisplacementInputs();
 		/** handle the player input */
-		virtual void HandleKeyboardInputs(float delta_time);
-		/** handle the player input (top level function) */
-		virtual void HandleGamepadInputs(float delta_time);
+		virtual void HandleInputs(float delta_time, GamepadState const* gamepad_state);
 		/** handle the special commands for gamepad (like pause ...) */
 		virtual void HandleSpecialGamepadCommands(float delta_time);
 
-		/** handle the input for our own purpose (consuming any data) */
-		virtual void InternalHandleGamepadInputs(float delta_time, GamepadState const * gamepad_state);		
 		/** reset the cached inputs (exists because we emulate keyboard arrow combinaison as un stick) */
 		virtual void ResetCachedInputs();
 

@@ -70,12 +70,14 @@ bool LudumPlayer::OnCharEventImpl(unsigned int c)
 	return chaos::Player::OnCharEventImpl(c);
 }
 
-void LudumPlayer::InternalHandleGamepadInputs(float delta_time, chaos::GamepadState const * gpd)
+void LudumPlayer::HandleInputs(float delta_time, chaos::GamepadState const * gpd)
 {
-	chaos::Player::InternalHandleGamepadInputs(delta_time, gpd);
-
-	LudumGameInstance * ludum_game_instance = GetGameInstance();
-	ludum_game_instance->SendGamepadButtonToChallenge(gpd);
+	chaos::Player::HandleInputs(delta_time, gpd);
+	if (gpd != nullptr)
+	{
+		LudumGameInstance* ludum_game_instance = GetGameInstance();
+		ludum_game_instance->SendGamepadButtonToChallenge(gpd);
+	}
 }
 
 void LudumPlayer::SetPlayerLength(float in_length, bool increment)

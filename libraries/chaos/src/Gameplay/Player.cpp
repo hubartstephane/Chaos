@@ -139,14 +139,14 @@ namespace chaos
 		// test whether the stick position can be overriden
 		glm::vec2 simulated_stick = glm::vec2(0.0f, 0.0f);
 
-		if (CheckKeyPressed(KeyboardButton::LEFT))
+		if (CheckButtonPressed(KeyboardButton::LEFT))
 			simulated_stick.x -= 1.0f;
-		if (CheckKeyPressed(KeyboardButton::RIGHT))
+		if (CheckButtonPressed(KeyboardButton::RIGHT))
 			simulated_stick.x += 1.0f;
 
-		if (CheckKeyPressed(KeyboardButton::DOWN))
+		if (CheckButtonPressed(KeyboardButton::DOWN))
 			simulated_stick.y += 1.0f;
-		if (CheckKeyPressed(KeyboardButton::UP))
+		if (CheckButtonPressed(KeyboardButton::UP))
 			simulated_stick.y -= 1.0f;
 
 		if (glm::length2(simulated_stick) > 0)
@@ -354,30 +354,17 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::CheckButtonPressed(Key const* buttons)
+    bool Player::DoCheckButtonPressed(Key button, bool previous_frame)
     {
-		// early exit
-		if (buttons == nullptr)
-			return false;
 		// gamepad input
-		if (gamepad != nullptr)
+		if (button.GetType() == KeyType::GAMEPAD)
 		{
-			for (size_t i = 0; buttons[i].IsValid(); ++i)
-			{
-				if (buttons[i].GetType() == KeyType::GAMEPAD)
-					if (gamepad->IsButtonPressed(buttons[i].GetGamepadButton()))
-						return true;
-			}
+			if (gamepad != nullptr)
+				return gamepad->IsButtonPressed(button.GetGamepadButton(), previous_frame);
+			return false;
 		}
-        // keyboard/mouse inputs
-		WindowApplication const* application = Application::GetInstance();
-		if (application != nullptr)
-		{
-			for (size_t i = 0; buttons[i].IsValid(); ++i)
-				if (application->GetKeyState(buttons[i]))
-					return true;
-		}
-        return false;
+		// super call
+		return InputEventReceiver::DoCheckButtonPressed(button, previous_frame);
     }
 
 	bool Player::InitializeGameValues(nlohmann::json const& config, boost::filesystem::path const& config_path, bool hot_reload)

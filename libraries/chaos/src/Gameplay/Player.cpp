@@ -354,24 +354,29 @@ namespace chaos
 		return false;
 	}
 
-    bool Player::CheckButtonPressed(Key const* keyboard_buttons, GamepadButton gamepad_button)
+    bool Player::CheckButtonPressed(Key const* buttons)
     {
-        // keyboard input
-        if (keyboard_buttons != nullptr)
-        {
-			WindowApplication const* application = Application::GetInstance();
-			if (application != nullptr)
+		// early exit
+		if (buttons == nullptr)
+			return false;
+		// gamepad input
+		if (gamepad != nullptr)
+		{
+			for (size_t i = 0; buttons[i].IsValid(); ++i)
 			{
-				for (int i = 0; keyboard_buttons[i].IsValid(); ++i)
-					if (application->GetKeyState(keyboard_buttons[i]))
+				if (buttons[i].GetType() == KeyType::GAMEPAD)
+					if (gamepad->IsButtonPressed(buttons[i].GetGamepadButton()))
 						return true;
 			}
-        }
-
-        // gamepad input
-        if (gamepad_button != GamepadButton::UNKNOWN)
-            if (gamepad != nullptr && gamepad->IsButtonPressed(gamepad_button))
-                return true;
+		}
+        // keyboard/mouse inputs
+		WindowApplication const* application = Application::GetInstance();
+		if (application != nullptr)
+		{
+			for (size_t i = 0; buttons[i].IsValid(); ++i)
+				if (application->GetKeyState(buttons[i]))
+					return true;
+		}
         return false;
     }
 

@@ -88,7 +88,7 @@ void LudumPlayer::HandleKeyboardInputs(float delta_time)
 
 	// shu47 CheckKeyPressed on a rien pour connaitre la frame d'avant
 
-	bool honk_pressed = CheckKeyPressed(KeyboardButton::LEFT_SHIFT);
+	bool honk_pressed = CheckKeyPressed(chaos::KeyboardButton::LEFT_SHIFT);
 	if (honk_pressed && !was_honk_pressed_keyboard)
 		Honk();
 	was_honk_pressed_keyboard = honk_pressed;

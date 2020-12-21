@@ -1,14 +1,11 @@
 #if 0
 
 
-// Object : fixer weak_ptr/shared_ptr references circulaires
-//
-//
 // CameraComponent : Conditionnal ApplyModifier => certains modifier devraient etre cosmetique da autre systematique
 //
 // Polygone -> PolyLine : creer une classe de base
 
-// Polygone / Poyline . cela pourrait etre une surface, 
+// Polygone / Poyline . cela pourrait etre une surface, q
 => pas si evident car les points sont exprimées relativement a la position de lobjet
 
 
@@ -64,8 +61,6 @@ mais PlayerPawn n'est pas referencé dans TMLevelInstance ni aucun de ces layer
 
 
 Fix WrapMode::Wrap avec float
-
-Calcul du Mask de Collision ComputeLayerCollisionMask devrait etre dans TMLevel et pas TMLayerInstance => on ne derrive jamais TMLayerInstance (on devrait ??)
 
 Revoir geometry de collision :
 

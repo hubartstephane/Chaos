@@ -287,19 +287,7 @@ namespace chaos
 		NameFilter::AddNames(mask, collision_names);
 
 		for (std::string const& name : collision_names)
-			collision_mask |= GetCollisionFlagByName(name.c_str());
-	}
-
-	uint64_t TMLayerInstance::GetCollisionFlagByName(char const* name) const
-	{
-		assert(name != nullptr);
-
-		if (StringTools::Stricmp(name, "PLAYER") == 0)
-			return CollisionMask::PLAYER;
-		if (StringTools::Stricmp(name, "CAMERA") == 0)
-			return CollisionMask::CAMERA;
-
-		return 0;
+			collision_mask |= level_instance->GetCollisionFlagByName(name.c_str());
 	}
 
 	bool TMLayerInstance::Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMObjectReferenceSolver& reference_solver)
@@ -996,6 +984,18 @@ namespace chaos
 		if (level == nullptr)
 			return nullptr;
 		return level->GetTiledMap();
+	}
+
+	uint64_t TMLevelInstance::GetCollisionFlagByName(char const* name) const
+	{
+		assert(name != nullptr);
+
+		if (StringTools::Stricmp(name, "PLAYER") == 0)
+			return CollisionMask::PLAYER;
+		if (StringTools::Stricmp(name, "CAMERA") == 0)
+			return CollisionMask::CAMERA;
+
+		return 0;
 	}
 
 	void TMLevelInstance::PurgeCollisionInfo()

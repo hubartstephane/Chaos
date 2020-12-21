@@ -332,8 +332,6 @@ namespace chaos
 
 		/** compute the collision mask from the formated string */
 		void ComputeLayerCollisionMask(char const* mask);
-		/** search a collision flag from its name */
-		virtual uint64_t GetCollisionFlagByName(char const* name) const;
 
 	protected:
 
@@ -547,6 +545,9 @@ namespace chaos
 
 		/** find the collision info for an object */
 		TMTriggerCollisionInfo* FindTriggerCollisionInfo(Object * object);
+
+		/** search a collision flag from its name */
+		virtual uint64_t GetCollisionFlagByName(char const* name) const;
 
 	protected:
 

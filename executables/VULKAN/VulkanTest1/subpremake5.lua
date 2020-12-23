@@ -1,5 +1,8 @@
 -- =============================================================================
--- ROOT_PATH/executables/BIGRefactor
+-- ROOT_PATH/executables/VULKAN/VulkanTest1
 -- =============================================================================
 
-ProcessSubPremake("refacto")
+  WindowedApp()
+  DependOnLib("CHAOS")  
+  DependOnLib("VULKAN")  
+                       

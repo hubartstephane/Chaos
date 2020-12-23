@@ -28,5 +28,6 @@ ProcessSubPremake("NANA")
 CURRENT_GROUP = BASE_GROUP .. "/MODEL3D"
 ProcessSubPremake("MODEL3D")
 
-CURRENT_GROUP = BASE_GROUP .. "/BIGRefactor"
-ProcessSubPremake("BIGRefactor")
+CURRENT_GROUP = BASE_GROUP .. "/VULKAN"
+ProcessSubPremake("VULKAN")
+

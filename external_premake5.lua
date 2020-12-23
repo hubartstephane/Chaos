@@ -372,8 +372,23 @@ local JSON_INC_PATH = path.join(JSON_PATH, "src")
 DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)
 
 
+  -- VULKAN   
+local VULKAN_PATH = path.join("VulkanSDK", "1.2.162.0")
+local VULKAN_INC_PATH = path.join(VULKAN_PATH, "Include")
+local VULKAN_LIB_PATH = path.join(VULKAN_PATH, "Lib")
 
+DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, nil)
 
+--[[
+ 
+local VULKAN_LIBNAME = "vulkan-1.lib"
+local VULKAN_TOCOPY  = {   -- @ because this copies the file directly in
+  x32 = "@" .. path.join(VULKAN_X32_PATH, "bin", "win32-visualStudio", "irrKlang.dll"), 
+  x64 = "@" .. path.join(VULKAN_X64_PATH, "bin", "winx64-visualStudio" , "irrKlang.dll")  
+} 
+DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, VULKAN_TOCOPY)
+
+--]]
 
 
   -- FFMPEG

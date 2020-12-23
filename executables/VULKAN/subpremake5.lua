@@ -1,7 +1,5 @@
 -- =============================================================================
--- ROOT_PATH/executables/TOOLS/refacto
+-- ROOT_PATH/executables/VULKAN
 -- =============================================================================
 
-  WindowedApp()
-  DependOnLib("CHAOS")  
-                       
+ProcessSubPremake("VulkanTest1")

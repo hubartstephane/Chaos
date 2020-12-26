@@ -376,6 +376,7 @@ DeclareExternalLib("JSON", JSON_INC_PATH, nil, nil)
 local VULKAN_PATH = path.join("VulkanSDK", "1.2.162.0")
 local VULKAN_INC_PATH = path.join(VULKAN_PATH, "Include")
 local VULKAN_LIB_PATH = path.join(VULKAN_PATH, "Lib")
+local VULKAN_LIBNAME = "vulkan-1.lib"
 
 DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, nil)
 

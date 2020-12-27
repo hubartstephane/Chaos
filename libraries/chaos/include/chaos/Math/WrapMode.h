@@ -39,22 +39,8 @@ namespace chaos
 			}
 			else
 			{
-				result = min_value + MathTools::Modulo(src - min_value, max_value - min_value);
+				result = min_value + MathTools::Modulo(src - min_value, max_value - min_value); // XXX : beware wrap mode for floating values does not work identicaly than for integers
 			}
-
-			
-
-
-
-
-
-
-			// shu47
-
-
-			 // SPECIAL LD47 result = min_value + MathTools::Modulo(src - min_value, max_value - min_value); // +1 because 'max_value' is inside accepted range
-
-
 		}
 		else if (mode == WrapMode::CHECK_RANGES)
 		{

@@ -73,10 +73,6 @@ namespace chaos
 		template<typename T>
 		T Modulo(T a, T b)
 		{
-
-			// shu47
-
-
 			assert(b > 0);
 
 			// property :    
@@ -104,6 +100,41 @@ namespace chaos
 				}
 				return std::fmod(a, b);
 			}
+		}
+
+		/** gets the value to add to src in order to have dst angle (with the lowest possible rotation) */
+		template<typename T>
+		T GetShortestRotation(T src, T dst)
+		{
+			T const pi = T(M_PI);
+			// set the two parameters into [0 .. 2PI] (the choosen range is not important while this is for difference computation)
+			src = chaos::MathTools::Modulo(src, pi + pi);
+			dst = chaos::MathTools::Modulo(dst, pi + pi);
+			// compute the best path
+			T diff = dst - src;
+			if (std::abs(diff) <= pi)
+			{
+				return diff;
+			}
+			else
+			{
+				if (src > dst)
+					return (pi + pi - src) + dst;
+				else
+					return  -(pi + pi - dst) - src;
+			}
+		}
+
+
+		/** Try to make src be equal to dst. Use shortest path and clamp possible rotation */
+		template<typename T>
+		T UpdateRotationForTargetAngle(T src, T dst, T max_rotation)
+		{
+			assert(max_rotation >= 0);
+
+			T diff = GetShortestRotation(src, dst);
+
+			return src + std::clamp(diff, -max_rotation, max_rotation);
 		}
 
 		/** remap a range to another */

@@ -150,26 +150,12 @@ bool LudumOpponent::DoTick(float delta_time)
 		RoadPoint const& target = road->points[(race_position.current_road_point + 1) % road_point_count];
 
 		float wr = std::atan2(target.position.y - bounding_box.position.y, target.position.x - bounding_box.position.x);
-		float cr = rotation;
-
-		float dir = 0.0f;
-
-		float a = wr - cr;
-		if (std::abs(a) <= M_PI)
-		{
-			dir = (wr < cr) ? -1.0f : +1.0f;
-		}
-		else
-		{
-			dir = (wr < cr) ? +1.0f : -1.0f;
-		}
 
 		float angular_tweak = road->opponent_angular_tweak;
 
-		rotation += dir * delta_time * car_data.angular_velocity * angular_tweak;
+		rotation = chaos::MathTools::UpdateRotationForTargetAngle(rotation, wr, delta_time * car_data.angular_velocity * angular_tweak);
+				
 		chaos::ApplyWrapMode(rotation, -(float)M_PI, (float)M_PI, chaos::WrapMode::WRAP, rotation);
-
-
 
 
 		float velocity_tweak = road->opponent_velocity_tweak;

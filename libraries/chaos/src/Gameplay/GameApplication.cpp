@@ -45,7 +45,7 @@ namespace chaos
 
 
 
-
+#if 0
 
 		GLuint vertex_array = 0;
 		GLuint query = 0;
@@ -72,7 +72,7 @@ namespace chaos
 			query = query;
 		});
 
-
+#endif
 
 
 

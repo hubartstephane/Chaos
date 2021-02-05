@@ -25,8 +25,7 @@ namespace chaos
 
 			return true;
 		}
-		
-		
+
 		Property const* LayerBase::FindProperty(char const* name, PropertyType type_id) const
 		{
 			// super method

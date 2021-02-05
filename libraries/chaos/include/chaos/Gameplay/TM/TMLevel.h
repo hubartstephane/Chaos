@@ -122,7 +122,7 @@ namespace chaos
 		virtual TMLayerInstance* DoCreateLayerInstance();
 
 		/** create a layer instance 'entry point' */
-		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, TiledMap::LayerBase* in_layer, TMObjectReferenceSolver& reference_solver);
+		TMLayerInstance* CreateLayerInstance(TMLevelInstance* in_level_instance, TiledMap::LayerBase* in_layer, TMLayerInstance* in_parent_layer, TMObjectReferenceSolver& reference_solver);
 
 		/** get the folder in which bitmaps are stored in Game::Atlas */
 		virtual BitmapAtlas::FolderInfo const* GetFolderInfo(TMLayerInstance* layer_instance) const;
@@ -187,37 +187,70 @@ namespace chaos
 		/** get the game */
 		AutoConstCastable<Game> GetGame() const;
 
+		/** find the child layer instance from its ID */
+		TMLayerInstance* FindLayerInstanceByID(int in_id, bool recursive = false);
+		/** find the child layer instance from its ID */
+		TMLayerInstance const* FindLayerInstanceByID(int in_id, bool recursive = false) const;
+
+		/** find the child layer instance from its name */
+		TMLayerInstance* FindLayerInstance(ObjectRequest request, bool recursive = false);
+		/** find the child layer instance from its name */
+		TMLayerInstance const* FindLayerInstance(ObjectRequest request, bool recursive = false) const;
 
 		/** find the object from its name */
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoCastable<TMObject> FindObject(ObjectRequest request)
+		AutoCastable<TMObject> FindObject(ObjectRequest request, bool recursive = false)
 		{
-			return request.FindObject<CHECK_CLASS>(objects);
+			if (AutoCastable<TMObject> result = request.FindObject<CHECK_CLASS>(objects))
+				return result;
+			if (recursive)
+				for (auto& layer : layer_instances)
+					if (layer != nullptr)
+						if (AutoCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request, recursive))
+							return result;
+			return nullptr;
 		}
 		/** find the object from its name */
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoConstCastable<TMObject> FindObject(ObjectRequest request) const
-		{
-			return request.FindObject<CHECK_CLASS>(objects);
+		AutoConstCastable<TMObject> FindObject(ObjectRequest request, bool recursive = false) const
+		{			
+			if (AutoConstCastable<TMObject> result = request.FindObject<CHECK_CLASS>(objects))
+				return result;
+			if (recursive)
+				for (auto& layer : layer_instances)
+					if (layer != nullptr)
+						if (AutoConstCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request, recursive))
+							return result;
+			return nullptr;
 		}
 
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoCastable<TMObject> FindObjectByID(int id)
+		AutoCastable<TMObject> FindObjectByID(int id, bool recursive = false)
 		{
 			for (auto& object : objects)
 				if (object->GetObjectID() == id)
 					if (ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
 						return object.get();
+			if (recursive)
+				for (auto& layer : layer_instances)
+					if (layer != nullptr)
+						if (AutoCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id, recursive))
+							return result;
 			return nullptr;
 		}
 
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoConstCastable<TMObject> FindObjectByID(int id) const
+		AutoConstCastable<TMObject> FindObjectByID(int id, bool recursive = false) const
 		{
 			for (auto const & object : objects)
 				if (object->GetObjectID() == id)
 					if (ObjectRequest::CheckClass<CHECK_CLASS>(object.get()))
 						return object.get();
+			if (recursive)
+				for (auto& layer : layer_instances)
+					if (layer != nullptr)
+						if (AutoConstCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id, recursive))
+							return result;
 			return nullptr;
 		}
 
@@ -291,7 +324,7 @@ namespace chaos
 	protected:
 
 		/** initialization */
-		virtual bool Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMObjectReferenceSolver & reference_solver);
+		virtual bool Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMLayerInstance* in_parent_layer, TMObjectReferenceSolver & reference_solver);
 		/** serialization of all JSON objects into an array */
 		virtual bool SerializeObjectListFromJSON(nlohmann::json const& json, char const* attribute_name, std::vector<shared_ptr<TMObject>>& result);
 		/** called whenever level instance is restarted */
@@ -311,6 +344,8 @@ namespace chaos
 		bool InitializeObjectLayer(TiledMap::ObjectLayer const * object_layer, TMObjectReferenceSolver& reference_solver);
 		/** specialized layer */
 		bool InitializeTileLayer(TiledMap::TileLayer const * tile_layer, TMObjectReferenceSolver& reference_solver);
+		/** specialized layer */
+		bool InitializeGroupLayer(TiledMap::GroupLayer const* group_layer, TMObjectReferenceSolver& reference_solver);
 	
 		/** create an object in an object layer */
 		TMObjectFactory GetObjectFactory(TiledMap::TypedObject const * in_typed_object);
@@ -372,6 +407,11 @@ namespace chaos
 
 		/** whether the layer is to be rendered as 8 bit mode (XXX: this only affects particles the initial particles created) */
 		bool height_bits_mode = false;
+
+		/** the parent layer */
+		weak_ptr<TMLayerInstance> parent_layer;
+		/** the child layers */
+		std::vector<shared_ptr<TMLayerInstance>> layer_instances;
 	};
 
 	// =====================================
@@ -411,14 +451,14 @@ namespace chaos
 		TiledMap::Map const* GetTiledMap() const;
 
 		/** find the layer instance from its ID */
-		TMLayerInstance * FindLayerInstanceByID(int id);
+		TMLayerInstance * FindLayerInstanceByID(int in_id, bool recursive = false);
 		/** find the layer instance from its ID */
-		TMLayerInstance const * FindLayerInstanceByID(int id) const;
+		TMLayerInstance const * FindLayerInstanceByID(int in_id, bool recursive = false) const;
 
 		/** find the layer instance from its name */
-		TMLayerInstance* FindLayerInstance(ObjectRequest request);
+		TMLayerInstance* FindLayerInstance(ObjectRequest request, bool recursive = false);
 		/** find the layer instance from its name */
-		TMLayerInstance const* FindLayerInstance(ObjectRequest request) const;
+		TMLayerInstance const* FindLayerInstance(ObjectRequest request, bool recursive = false) const;
 
 		/** find the typed object from its name */
 		template<typename CHECK_CLASS = EmptyClass>

@@ -26,26 +26,6 @@ namespace chaos
 
 		public:
 
-			/** cast method into its subtype */
-			ImageLayer * GetImageLayer() { return auto_cast(this); }
-			/** cast method into its subtype */
-			ImageLayer const * GetImageLayer() const { return auto_cast(this); }
-
-			/** cast method into its subtype */
-			ObjectLayer * GetObjectLayer() { return auto_cast(this); }
-			/** cast method into its subtype */
-			ObjectLayer const * GetObjectLayer() const { return auto_cast(this); }
-
-			/** cast method into its subtype */
-			TileLayer * GetTileLayer() { return auto_cast(this); }
-			/** cast method into its subtype */
-			TileLayer const * GetTileLayer() const { return auto_cast(this); }
-
-			/** cast method into its subtype */
-			GroupLayer* GetGroupLayer() { return auto_cast(this); }
-			/** cast method into its subtype */
-			GroupLayer const* GetGroupLayer() const { return auto_cast(this); }
-
 			/** get the layer ID (used for Checkpoints) */
 			int GetLayerID() const { return id; }
 			/** get the name of the layer */

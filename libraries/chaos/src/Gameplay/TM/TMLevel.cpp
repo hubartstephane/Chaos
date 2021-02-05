@@ -311,12 +311,20 @@ namespace chaos
 		return level_instance;
 	}
 
-	box2 TMLayerInstance::GetBoundingBox(bool world_system) const
+	box2 TMLayerInstance::GetBoundingBox(bool world_system, bool recursive) const
 	{
 		box2 result;
 		if (!infinite_bounding_box)
 		{
-			result = bounding_box; // apply our own offset that can have changed during game lifetime
+			// get the layer own content bounding box
+			result = content_bounding_box; 
+
+			// get child layers bounding box
+			if (recursive)
+				for (auto& layer : layer_instances)
+					result = result | layer->GetBoundingBox(world_system, recursive);
+
+			// apply our own offset that can have changed during game lifetime
 			if (world_system)
 				result.position += offset;
 		}
@@ -419,7 +427,7 @@ namespace chaos
 		name = layer->name;
 
 		// reset the bounding box
-		bounding_box = box2();
+		content_bounding_box = box2();
 		// special initialization
 		if (TiledMap::ImageLayer const* image_layer = auto_cast(layer))
 		{
@@ -633,7 +641,6 @@ namespace chaos
 	bool TMLayerInstance::InitializeObjectLayer(TiledMap::ObjectLayer const * object_layer, TMObjectReferenceSolver & reference_solver)
 	{
 		// search the bounding box (explicit or not)
-		box2 box;
 		box2 explicit_bounding_box;
 
 		// the particle generator
@@ -688,9 +695,9 @@ namespace chaos
 		particle_populator.FlushParticles();
 		// update the bounding box
 		if (!IsGeometryEmpty(explicit_bounding_box))
-			bounding_box = explicit_bounding_box;
+			content_bounding_box = explicit_bounding_box;
 		else
-			bounding_box = box | particle_populator.GetBoundingBox();
+			content_bounding_box = particle_populator.GetBoundingBox();
 
 		return true;
 	}
@@ -901,7 +908,7 @@ namespace chaos
 		if (particle_creation_success)
 			particle_populator.FlushParticles();
 		// update the bounding box
-		bounding_box = particle_populator.GetBoundingBox();
+		content_bounding_box = particle_populator.GetBoundingBox();
 
 		return true;
 	}
@@ -969,7 +976,10 @@ namespace chaos
 			}
 
 			// shulayer
-			box2 layer_box = GetBoundingBox(true);
+
+			bool recursive = true;
+
+			box2 layer_box = GetBoundingBox(true, recursive);
 
 #if 0
 			box2 reference_box = reference_layer->GetBoundingBox(true);
@@ -1348,7 +1358,7 @@ namespace chaos
 		box2 result;
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
-			result = result | layer_instances[i]->GetBoundingBox(true); // expressed in world system the bounding boxes
+			result = result | layer_instances[i]->GetBoundingBox(true, true); // expressed in world system the bounding boxes
 		return result;
 	}
 

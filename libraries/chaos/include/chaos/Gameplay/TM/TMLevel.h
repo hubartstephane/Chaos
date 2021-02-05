@@ -255,7 +255,7 @@ namespace chaos
 		}
 
 		/** get the bounding box for the level */
-		box2 GetBoundingBox(bool world_system) const;
+		box2 GetBoundingBox(bool world_system, bool recursive) const;
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
@@ -396,8 +396,8 @@ namespace chaos
 		/** the objects */
 		std::vector<shared_ptr<TMObject>> objects;
 
-		/** the bounding box of the layer */
-		box2 bounding_box;
+		/** the bounding box of the layer (only its own content, not sub layers) */
+		box2 content_bounding_box;
 
 		/** the collision mask for that layer */
 		uint64_t collision_mask = 0;

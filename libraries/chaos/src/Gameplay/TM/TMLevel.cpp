@@ -159,12 +159,15 @@ namespace chaos
 		return new TMLayerInstance();
 	}
 
-	TMLayerInstance* TMLevel::CreateLayerInstance(TMLevelInstance* in_level_instance, TiledMap::LayerBase* in_layer, TMObjectReferenceSolver& reference_solver)
+
+	// shulayer
+
+	TMLayerInstance* TMLevel::CreateLayerInstance(TMLevelInstance* in_level_instance, TiledMap::LayerBase* in_layer, TMLayerInstance * in_parent_layer, TMObjectReferenceSolver& reference_solver)
 	{
 		TMLayerInstance* result = DoCreateLayerInstance();
 		if (result == nullptr)
 			return nullptr;
-		if (!result->Initialize(in_level_instance, in_layer, reference_solver))
+		if (!result->Initialize(in_level_instance, in_layer, in_parent_layer, reference_solver))
 		{
 			delete result;
 			return nullptr;
@@ -207,6 +210,67 @@ namespace chaos
 			}
 		}
 		return true;
+	}
+
+	// =====================================
+	// Utility functions
+	// =====================================
+
+	template<typename T>
+	void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
+	{
+		nlohmann::json const* layers_json = JSONTools::GetStructure(json, "LAYERS");
+		if (layers_json != nullptr && layers_json->is_array())
+		{
+			for (size_t i = 0; i < layers_json->size(); ++i)
+			{
+				nlohmann::json const* layer_json = JSONTools::GetStructureByIndex(*layers_json, i);
+				if (layer_json != nullptr && layer_json->is_object())
+				{
+					int layer_id = 0;
+					if (JSONTools::GetAttribute(*layer_json, "LAYER_ID", layer_id))
+					{
+						TMLayerInstance* layer_instance = object->FindLayerInstanceByID(layer_id);
+						if (layer_instance != nullptr)
+							LoadFromJSON(*layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
+					}
+				}
+			}
+		}
+	}
+
+	template<typename T, typename U>
+	auto FindLayerInstanceByIDHelper(T* object, U & layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
+	{
+		for (auto& layer : layer_instances)
+		{
+			if (layer != nullptr)
+			{
+				if (layer->GetLayerID() == in_id)
+					return layer.get();
+				if (recursive)
+					if (auto result = layer->FindLayerInstanceByID(in_id, recursive))
+						return result;
+			}
+		}
+		return nullptr;
+	}
+
+	template<typename T, typename U>
+	auto FindLayerInstanceHelper(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
+	{
+		for (auto& layer : layer_instances)
+		{
+			if (layer != nullptr)
+			{
+				if (request.Match(*layer.get()))
+					return layer.get();
+				if (recursive)
+					if (TMLayerInstance* result = layer->FindLayerInstance(request, recursive))
+						return result;
+			}
+		}
+		return nullptr;
 	}
 
 	// =====================================
@@ -259,6 +323,26 @@ namespace chaos
 		return result;
 	}
 
+	// shulayer
+	TMLayerInstance* TMLayerInstance::FindLayerInstanceByID(int in_id, bool recursive)
+	{
+		return FindLayerInstanceByIDHelper(this, layer_instances, in_id, recursive);
+	}
+
+	TMLayerInstance const* TMLayerInstance::FindLayerInstanceByID(int in_id, bool recursive) const
+	{
+		return FindLayerInstanceByIDHelper(this, layer_instances, in_id, recursive);
+	}
+
+	TMLayerInstance* TMLayerInstance::FindLayerInstance(ObjectRequest request, bool recursive)
+	{
+		return FindLayerInstanceHelper(this, layer_instances, request, recursive);
+	}
+	TMLayerInstance const* TMLayerInstance::FindLayerInstance(ObjectRequest request, bool recursive) const
+	{
+		return FindLayerInstanceHelper(this, layer_instances, request, recursive);
+	}
+
 	GPURenderMaterial* TMLayerInstance::FindOrCreateRenderMaterial(char const* material_name)
 	{
 		if (material_name != nullptr && material_name[0] != 0) // unamed material ?
@@ -290,7 +374,9 @@ namespace chaos
 			collision_mask |= level_instance->GetCollisionFlagByName(name.c_str());
 	}
 
-	bool TMLayerInstance::Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMObjectReferenceSolver& reference_solver)
+
+	// shulayer
+	bool TMLayerInstance::Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMLayerInstance* in_parent_layer, TMObjectReferenceSolver& reference_solver)
 	{
 		// ensure not already initialized
 		assert(in_level_instance != nullptr);
@@ -300,6 +386,7 @@ namespace chaos
 
 		level_instance = in_level_instance;
 		layer = in_layer;
+		parent_layer = in_parent_layer;
 
 		// get the properties of interrest
 		id = layer->id;
@@ -334,28 +421,31 @@ namespace chaos
 		// reset the bounding box
 		bounding_box = box2();
 		// special initialization
-		if (TiledMap::ImageLayer const* image_layer = layer->GetImageLayer())
+		if (TiledMap::ImageLayer const* image_layer = auto_cast(layer))
 		{
 			if (!InitializeImageLayer(image_layer, reference_solver))
 				return false;
-			return FinalizeParticles(nullptr);
 		}
-
-		if (TiledMap::ObjectLayer const* object_layer = layer->GetObjectLayer())
+		else if (TiledMap::ObjectLayer const* object_layer = auto_cast(layer))
 		{
 			if (!InitializeObjectLayer(object_layer, reference_solver))
 				return false;
-			return FinalizeParticles(nullptr);
 		}
-
-		if (TiledMap::TileLayer const* tile_layer = layer->GetTileLayer())
+		else if (TiledMap::TileLayer const* tile_layer = auto_cast(layer))
 		{
 			if (!InitializeTileLayer(tile_layer, reference_solver))
 				return false;
-			return FinalizeParticles(nullptr);
 		}
-
-		return false;
+		else if (TiledMap::GroupLayer const* group_layer = auto_cast(layer))
+		{
+			if (!InitializeGroupLayer(group_layer, reference_solver))
+				return false;
+		}
+		else
+		{
+			return false;
+		}
+		return FinalizeParticles(nullptr);		
 	}
 
 	void TMLayerInstance::OnRestart()
@@ -404,6 +494,7 @@ namespace chaos
 		if (!JSONSerializable::SerializeFromJSON(json))
 			return false;
 		SerializeObjectListFromJSON(json, "OBJECTS", objects);
+		SerializeLayersFromJSON(this, json);
 		return true;
 	}
 	
@@ -411,9 +502,9 @@ namespace chaos
 	{
 		if (!JSONSerializable::SerializeIntoJSON(json))
 			return false;
-
 		JSONTools::SetAttribute(json, "LAYER_ID", GetLayerID());
 		JSONTools::SetAttribute(json, "OBJECTS", objects);
+		JSONTools::SetAttribute(json, "LAYERS", layer_instances);
 		return true;
 	}
 
@@ -815,6 +906,20 @@ namespace chaos
 		return true;
 	}
 
+	// shulayer
+	bool TMLayerInstance::InitializeGroupLayer(TiledMap::GroupLayer const* group_layer, TMObjectReferenceSolver& reference_solver)
+	{
+		TMLevel* level = GetLevel();
+		// iterate over child layers
+		for (auto& layer : group_layer->layers)
+		{
+			TMLayerInstance* layer_instance = level->CreateLayerInstance(level_instance, layer.get(), this, reference_solver);
+			if (layer_instance != nullptr)
+				layer_instances.push_back(layer_instance);
+		}
+		return true;
+	}
+
 	bool TMLayerInstance::DoTick(float delta_time)
 	{
 		// objects
@@ -824,92 +929,100 @@ namespace chaos
 		// tick the particles
 		if (particle_layer != nullptr)
 			particle_layer->Tick(delta_time);
+		// tick the child layers
+		for (auto& layer : layer_instances)
+			if (layer != nullptr)
+				layer->Tick(delta_time);
 		return true;
 	}
 
 	int TMLayerInstance::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 	{
-		// early exit
+		// display this layer particles
 		int result = 0;
-		if (particle_layer == nullptr)
-			return result;
-
-		// camera is expressed in world, so is for layer
-		obox2 camera_obox = GetLevelInstance()->GetCameraOBox(0);
-		obox2 initial_camera_obox = GetLevelInstance()->GetInitialCameraOBox(0);
-
-
-		// XXX : we want some layers to appear further or more near the camera
-		//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
-		//       The reference layer is the layer where the 'effective' camera (and so the PlayerStart is)
-		//         => when player goes outside the screen, the camera is updated so that it is still watching the player
-		//         => that why we consider the PlayerStart's layer as the reference
-		//       to simulate other layer's speed, we just create at rendering time 'virtual cameras' (here this is 'final_camera_box')
-		//       We only multiply 'true camera' distance from its initial position by a ratio value
-
-		// apply the displacement to the camera
-
-		glm::vec2 final_ratio = glm::vec2(1.0f, 1.0f);
-
-		TMLayerInstance const* reference_layer = level_instance->reference_layer.get();
-		if (reference_layer != nullptr)
+		if (particle_layer != nullptr)
 		{
-			if (reference_layer->displacement_ratio.x != 0.0f)
-				final_ratio.x = displacement_ratio.x / reference_layer->displacement_ratio.x;
-			if (reference_layer->displacement_ratio.y != 0.0f)
-				final_ratio.y = displacement_ratio.y / reference_layer->displacement_ratio.y;
+			// camera is expressed in world, so is for layer
+			obox2 camera_obox = GetLevelInstance()->GetCameraOBox(0);
+			obox2 initial_camera_obox = GetLevelInstance()->GetInitialCameraOBox(0);
 
-		}
+			// XXX : we want some layers to appear further or more near the camera
+			//       the displacement_ratio represent how fast this layer is moving relatively to other layers.
+			//       The reference layer is the layer where the 'effective' camera (and so the PlayerStart is)
+			//         => when player goes outside the screen, the camera is updated so that it is still watching the player
+			//         => that why we consider the PlayerStart's layer as the reference
+			//       to simulate other layer's speed, we just create at rendering time 'virtual cameras' (here this is 'final_camera_box')
+			//       We only multiply 'true camera' distance from its initial position by a ratio value
 
-		// shulayer
-		box2 layer_box = GetBoundingBox(true);
+			// apply the displacement to the camera
+
+			glm::vec2 final_ratio = glm::vec2(1.0f, 1.0f);
+
+			TMLayerInstance const* reference_layer = level_instance->reference_layer.get();
+			if (reference_layer != nullptr)
+			{
+				if (reference_layer->displacement_ratio.x != 0.0f)
+					final_ratio.x = displacement_ratio.x / reference_layer->displacement_ratio.x;
+				if (reference_layer->displacement_ratio.y != 0.0f)
+					final_ratio.y = displacement_ratio.y / reference_layer->displacement_ratio.y;
+
+			}
+
+			// shulayer
+			box2 layer_box = GetBoundingBox(true);
 
 #if 0
-		box2 reference_box = reference_layer->GetBoundingBox(true);
-		if (!IsGeometryEmpty(layer_box) && !IsGeometryEmpty(reference_box))
-			final_ratio = layer_box.half_size / reference_box.half_size;
+			box2 reference_box = reference_layer->GetBoundingBox(true);
+			if (!IsGeometryEmpty(layer_box) && !IsGeometryEmpty(reference_box))
+				final_ratio = layer_box.half_size / reference_box.half_size;
 #endif
 
-		obox2 final_camera_obox;
-		final_camera_obox.position = initial_camera_obox.position + (camera_obox.position - initial_camera_obox.position) * final_ratio;
-		final_camera_obox.half_size = initial_camera_obox.half_size + (camera_obox.half_size - initial_camera_obox.half_size) * final_ratio;
+			obox2 final_camera_obox;
+			final_camera_obox.position = initial_camera_obox.position + (camera_obox.position - initial_camera_obox.position) * final_ratio;
+			final_camera_obox.half_size = initial_camera_obox.half_size + (camera_obox.half_size - initial_camera_obox.half_size) * final_ratio;
 
-		// compute repetitions
-		RepeatedBoxScissor scissor = RepeatedBoxScissor(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
+			// compute repetitions
+			RepeatedBoxScissor scissor = RepeatedBoxScissor(layer_box, chaos::GetBoundingBox(final_camera_obox), wrap_x, wrap_y);
 
-		// new provider for camera override (will be fullfill only if necessary)
-		GPUProgramProviderChain main_uniform_provider(uniform_provider);
-		main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(final_camera_obox));
+			// new provider for camera override (will be fullfill only if necessary)
+			GPUProgramProviderChain main_uniform_provider(uniform_provider);
+			main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(final_camera_obox));
 
-		box2 final_camera_box;
-		final_camera_box.position = final_camera_obox.position;
-		final_camera_box.half_size = final_camera_obox.half_size;
-		main_uniform_provider.AddVariableValue("camera_box", EncodeBoxToVector(final_camera_box));
+			box2 final_camera_box;
+			final_camera_box.position = final_camera_obox.position;
+			final_camera_box.half_size = final_camera_obox.half_size;
+			main_uniform_provider.AddVariableValue("camera_box", EncodeBoxToVector(final_camera_box));
 
 
-		// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
-		glm::ivec2 start_instance = scissor.start_instance;
-		glm::ivec2 last_instance = scissor.last_instance;
-		if (this == reference_layer || IsGeometryEmpty(layer_box))
-		{
-			start_instance = glm::ivec2(0, 0);
-			last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
-		}
-
-		// draw instances 
-		int draw_instance_count = 0;
-		for (int x = start_instance.x; x < last_instance.x; ++x)
-		{
-			for (int y = start_instance.y; y < last_instance.y; ++y)
+			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
+			glm::ivec2 start_instance = scissor.start_instance;
+			glm::ivec2 last_instance = scissor.last_instance;
+			if (this == reference_layer || IsGeometryEmpty(layer_box))
 			{
-				// new Provider to apply the offset for this 'instance'
-				GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
-				glm::vec2 instance_offset = scissor.GetInstanceOffset(glm::ivec2(x, y));
-				instance_uniform_provider.AddVariableValue("offset", instance_offset + offset);
-				// draw call
-				result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
+				start_instance = glm::ivec2(0, 0);
+				last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
+			}
+
+			// draw instances 
+			for (int x = start_instance.x; x < last_instance.x; ++x)
+			{
+				for (int y = start_instance.y; y < last_instance.y; ++y)
+				{
+					// new Provider to apply the offset for this 'instance'
+					GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
+					glm::vec2 instance_offset = scissor.GetInstanceOffset(glm::ivec2(x, y));
+					instance_uniform_provider.AddVariableValue("offset", instance_offset + offset);
+					// draw call
+					result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
+				}
 			}
 		}
+
+		// draw child layers
+		for (auto& layer : layer_instances)
+			if (layer != nullptr)
+				result += layer->Display(renderer, uniform_provider, render_params);
+
 		return result;
 	}
 	
@@ -1199,6 +1312,11 @@ namespace chaos
 		return true;
 	}
 
+
+
+
+	// shulayer
+
 	bool TMLevelInstance::DoCreateLayerInstances(std::vector<shared_ptr<TiledMap::LayerBase>> const & layers, TMObjectReferenceSolver& reference_solver)
 	{
 		TMLevel* level = GetLevel();
@@ -1206,13 +1324,9 @@ namespace chaos
 		for (auto& layer : layers)
 		{
 			// insert the new layer
-			TMLayerInstance* layer_instance = level->CreateLayerInstance(this, layer.get(), reference_solver);
+			TMLayerInstance* layer_instance = level->CreateLayerInstance(this, layer.get(), nullptr, reference_solver);
 			if (layer_instance != nullptr)
 				layer_instances.push_back(layer_instance);
-			// for layer group iterate over child layers
-			if (TiledMap::GroupLayer const* group_layer = auto_cast(layer.get()))
-				if (!DoCreateLayerInstances(group_layer->layers, reference_solver))
-					return false;
 		}
 		return true;
 	}
@@ -1248,31 +1362,49 @@ namespace chaos
 		return default_material.get();
 	}
 
-	TMLayerInstance* TMLevelInstance::FindLayerInstanceByID(int id)
+
+
+
+
+	TMLayerInstance* TMLevelInstance::FindLayerInstanceByID(int in_id, bool recursive)
 	{
-		size_t count = layer_instances.size();
-		for (size_t i = 0; i < count; ++i)
-			if (layer_instances[i]->GetLayerID() == id)
-				return layer_instances[i].get();
-		return nullptr;
+		return FindLayerInstanceByIDHelper(this, layer_instances, in_id, recursive);
 	}
 
-	TMLayerInstance const* TMLevelInstance::FindLayerInstanceByID(int id) const
+	TMLayerInstance const* TMLevelInstance::FindLayerInstanceByID(int in_id, bool recursive) const
 	{
-		size_t count = layer_instances.size();
-		for (size_t i = 0; i < count; ++i)
-			if (layer_instances[i]->GetLayerID() == id)
-				return layer_instances[i].get();
-		return nullptr;
+		return FindLayerInstanceByIDHelper(this, layer_instances, in_id, recursive);
 	}
 
-	TMLayerInstance* TMLevelInstance::FindLayerInstance(ObjectRequest request)
+	TMLayerInstance* TMLevelInstance::FindLayerInstance(ObjectRequest request, bool recursive)
 	{
-		return request.FindObject(layer_instances);
+		for (auto& layer : layer_instances)
+		{
+			if (layer != nullptr)
+			{
+				if (request.Match(*layer.get()))
+					return layer.get();
+				if (recursive)
+					if (TMLayerInstance * result = layer->FindLayerInstance(request, recursive))
+						return result;
+			}
+		}
+		return nullptr;
 	}
-	TMLayerInstance const* TMLevelInstance::FindLayerInstance(ObjectRequest request) const
+	TMLayerInstance const* TMLevelInstance::FindLayerInstance(ObjectRequest request, bool recursive) const
 	{
-		return request.FindObject(layer_instances);
+		for (auto& layer : layer_instances)
+		{
+			if (layer != nullptr)
+			{
+				if (request.Match(*layer.get()))
+					return layer.get();
+				if (recursive)
+					if (TMLayerInstance const * result = layer->FindLayerInstance(request, recursive))
+						return result;
+			}
+		}
+		return nullptr;
 	}
 
 	void TMLevelInstance::CreateCameras()
@@ -1497,26 +1629,7 @@ namespace chaos
 	{
 		if (!LevelInstance::SerializeFromJSON(json))
 			return false;
-
-		// in "Layers" array, read all objects, search the ID and apply the data to dedicated layer instance
-		nlohmann::json const* layers_json = JSONTools::GetStructure(json, "LAYERS");
-		if (layers_json != nullptr && layers_json->is_array())
-		{			
-			for (size_t i = 0; i < layers_json->size(); ++i)
-			{
-				nlohmann::json const* layer_json = JSONTools::GetStructureByIndex(*layers_json, i);
-				if (layer_json != nullptr && layer_json->is_object())
-				{
-					int layer_id = 0;
-					if (JSONTools::GetAttribute(*layer_json, "LAYER_ID", layer_id))
-					{
-						TMLayerInstance * layer_instance = FindLayerInstanceByID(layer_id);
-						if (layer_instance != nullptr)
-							LoadFromJSON(*layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
-					}
-				}
-			}
-		}
+		SerializeLayersFromJSON(this, json);
 		return true;
 	}
 

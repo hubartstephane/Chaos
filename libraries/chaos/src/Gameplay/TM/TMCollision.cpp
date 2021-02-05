@@ -316,7 +316,7 @@ namespace chaos
 		{
 			dst_box.position = best_position;
 		}
-	}
+	} 
 
 	// =====================================
 	// TMCollisionIteratorBase implementation

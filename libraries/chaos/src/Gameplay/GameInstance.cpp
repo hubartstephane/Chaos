@@ -363,6 +363,10 @@ namespace chaos
 			if (!SaveIntoJSON(checkpoint->level_save, *level_instance))
 				return false;
 
+		WinTools::CopyStringToClipboard(checkpoint->level_save.dump(2).c_str());
+
+
+
 		// save player data
 		Player const* player = GetPlayer(0);
 		if (player != nullptr)

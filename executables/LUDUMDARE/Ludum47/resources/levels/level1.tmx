@@ -18,6 +18,15 @@
   <properties>
    <property name="HEIGHT_BITS_MODE" type="bool" value="false"/>
   </properties>
+  <layer id="55" name="special trees" width="57" height="56" visible="0">
+   <properties>
+    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
+    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
+   </properties>
+   <data encoding="base64" compression="zlib">
+   eAHt1lEKgCAQBcDuU//d/2b1wAUREfpMZmFZ2UxsSPA4BAECBAgQIECAAAECfxG4342ebbOzml6fmT9me10hQIAAAQIECGwtkDvRNeSXnjvU1r+Hj1sI5JxU5AwlqjerNaevmTdmv07GiTqjGc/WXvXzTBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIEdhN4ACfWCh4=
+  </data>
+  </layer>
   <layer id="54" name="sea" width="57" height="56" visible="0" locked="1">
    <properties>
     <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
@@ -145,14 +154,5 @@
    <object id="2209" name="indication1" type="SpeedIndication" x="3906.06" y="3124.24" width="796.97" height="560.606"/>
   </objectgroup>
   <objectgroup id="53" name="Smoke" visible="0" locked="1"/>
-  <layer id="55" name="special trees" width="57" height="56" visible="0">
-   <properties>
-    <property name="DYNAMIC_PARTICLES" type="bool" value="false"/>
-    <property name="DYNAMIC_VERTICES" type="bool" value="false"/>
-   </properties>
-   <data encoding="base64" compression="zlib">
-   eAHt1lEKgCAQBcDuU//d/2b1wAUREfpMZmFZ2UxsSPA4BAECBAgQIECAAAECfxG4342ebbOzml6fmT9me10hQIAAAQIECGwtkDvRNeSXnjvU1r+Hj1sI5JxU5AwlqjerNaevmTdmv07GiTqjGc/WXvXzTBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIEdhN4ACfWCh4=
-  </data>
-  </layer>
  </group>
 </map>

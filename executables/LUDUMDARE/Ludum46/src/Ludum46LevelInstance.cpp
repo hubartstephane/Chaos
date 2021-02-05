@@ -98,6 +98,7 @@ bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
 	if (flame_health <= 0.0f)
 		return true;
 
+#if 0 // now maps are no more coherent
 	LudumPlayer* ludum_player = auto_cast(player);
 
 	LudumLevel * ludum_level = GetLevel();
@@ -108,10 +109,12 @@ bool LudumLevelInstance::IsPlayerDead(chaos::Player* player)
 		if (potential_soul_count < 0) // No END
 			return false;
 
+
 		int current_soul_count = GetCurrentSoulCount();
 		if (current_soul_count + potential_soul_count + ludum_player->burned_souls < ludum_level->required_souls)
 			return true;
 	}
+#endif
 	return false;
 }
 

@@ -147,16 +147,8 @@ namespace chaos
         {
             if (position == nullptr) // already at the end
                 return;
-            if constexpr (DIRECTION > 0)
-            {
-                if (position > buffer_end)
-                    position = buffer_start = buffer_end = nullptr;
-            }
-            else if constexpr (DIRECTION < 0)
-            {
-                if (position < buffer_start)
-                    position = buffer_start = buffer_end = nullptr;
-            }
+            if (position > buffer_end || position < buffer_start) // position is no more valid
+                position = buffer_start = buffer_end = nullptr;
         }
 
     protected:

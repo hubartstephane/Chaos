@@ -4,26 +4,10 @@
 
 namespace chaos
 {
-	// =====================================
-	// TileCollisionInfo
-	// =====================================
 
-	class TileCollisionInfo
-	{
-	public:
-
-		/** the layer instance concerned by this collision */
-		TMLayerInstance* layer_instance = nullptr;
-		/** the allocation concerned by this collision */
-		ParticleAllocationBase* allocation = nullptr;
-		/** the particle which with the collision is detected */
-		TMParticle* particle = nullptr;
-		/** some information about the tile information */
-		TiledMap::TileInfo tile_info;
-	};
 
 	// =====================================
-	// Collision function
+	// TileCollisionComputer
 	// =====================================
 
 	class TileCollisionComputer
@@ -47,7 +31,7 @@ namespace chaos
 
 		/** the entry point for the whole computation */
 		box2 Run(std::function<void(TileCollisionInfo const& collision_info)> func);
-	
+
 		/** compute reaction for a a particle */
 		void ComputeReaction(TileCollisionInfo const& collision_info, std::function<bool(TileCollisionInfo const&, Edge)> func);
 
@@ -78,6 +62,50 @@ namespace chaos
 		/** cache for wangset */
 		TiledMap::TileSet const* tileset = nullptr;
 	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// =====================================
+	// TileCollisionInfo
+	// =====================================
+
+	class TileCollisionInfo
+	{
+	public:
+
+		/** the layer instance concerned by this collision */
+		TMLayerInstance* layer_instance = nullptr;
+		/** the allocation concerned by this collision */
+		ParticleAllocationBase* allocation = nullptr;
+		/** the particle which with the collision is detected */
+		TMParticle* particle = nullptr;
+		/** some information about the tile information */
+		TiledMap::TileInfo tile_info;
+	};
+
+
+
+
+
+
+
+
+
 
 	// =====================================
 	// TMCollisionIteratorBase

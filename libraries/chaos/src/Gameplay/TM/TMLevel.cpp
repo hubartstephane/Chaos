@@ -1309,7 +1309,6 @@ namespace chaos
 		// create a particle manager
 		if (!CreateParticleManager(in_game))
 			return false;
-
 		return true;
 	}
 

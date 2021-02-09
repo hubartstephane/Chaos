@@ -4,7 +4,7 @@ namespace chaos
 {
 
 	// =====================================
-	// TMCollisionIteratorBase implementation
+	// TileCollisionComputer implementation
 	// =====================================
 
 	//
@@ -22,7 +22,7 @@ namespace chaos
 	//    |    |  | |    |    EDGE A : wants to push the PAWN on the left or on the right => pawn cannot walk smoothly on the tiles
 	//         +----+                  => ignore edges that are shared by 2 tiles
 	//            |
-	//          EDGE A        => on that purpose we can use auomatic computation with NEIGHBOURING
+	//          EDGE A        => on that purpose we can use automatic computation with NEIGHBOURING
 	//                        => or we can use manual made wangsets
 	//
 	//
@@ -318,6 +318,28 @@ namespace chaos
 		}
 	} 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// =====================================
 	// TMCollisionIteratorBase implementation
 	// =====================================
@@ -348,17 +370,36 @@ namespace chaos
 		FindFirstCollision();
 	}
 
+
+
+
+
+
+
+
 	TileCollisionInfo const& TMTileCollisionIterator::operator *() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
 		return cached_result;
 	}
 
+
 	TileCollisionInfo const* TMTileCollisionIterator::operator ->() const
 	{
 		assert(level_instance != nullptr); // end already reached. cannot indirect
 		return &cached_result;
 	}
+
+
+
+
+
+
+
+
+
+
+
 
 	void TMTileCollisionIterator::FindFirstCollision()
 	{
@@ -441,6 +482,7 @@ namespace chaos
 	
 	void TMTileCollisionIterator::NextLayer()
 	{
+		assert(level_instance != nullptr); // end already reached
 		if (ignore_other_layers)
 		{
 			EndIterator();
@@ -448,6 +490,12 @@ namespace chaos
 		else
 		{
 			++layer_instance_index;
+
+
+
+
+
+
 			allocation_index = 0;
 			particle_index = 0;
 			FindFirstCollision();
@@ -456,6 +504,7 @@ namespace chaos
 	
 	void TMTileCollisionIterator::NextAllocation()
 	{
+		assert(level_instance != nullptr); // end already reached
 		++allocation_index;
 		particle_index = 0;
 		FindFirstCollision();
@@ -463,6 +512,7 @@ namespace chaos
 	
 	void TMTileCollisionIterator::Next()
 	{
+		assert(level_instance != nullptr); // end already reached
 		++particle_index;
 		FindFirstCollision();
 	}

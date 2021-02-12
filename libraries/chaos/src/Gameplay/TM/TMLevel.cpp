@@ -1311,11 +1311,12 @@ namespace chaos
 			return false;
 
 
-		TMLayerInstanceIterator it(this);
+		TMLayerInstanceConstIterator it(this);
+		TMLayerInstanceConstIterator end;
 
-		while (it)
+		while (it != end)
 		{
-		//	auto p = *it;
+			auto & p = *it;
 
 			std::string s = it->GetName();
 

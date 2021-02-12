@@ -54,5 +54,6 @@ BOOST_PP_SEQ_FOR_EACH(CHAOS_GAMEPLAY_TM_FORWARD_DECL, _, CHAOS_GAMEPLAY_TM_CLASS
 #include <chaos/Gameplay/TM/TMLevel.h>
 #include <chaos/Gameplay/TM/TMLayerInstanceIterator.h>
 #include <chaos/Gameplay/TM/TMCollision.h>
+#include <chaos/Gameplay/TM/TMCollisionComputer.h>
 #include <chaos/Gameplay/TM/TMParticlePopulator.h>
 #include <chaos/Gameplay/TM/TMTools.h>

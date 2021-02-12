@@ -42,3 +42,4 @@
 #include <chaos/Core/StateMachine.h>
 #include <chaos/Core/InheritanceIntrospection.h>
 #include <chaos/Core/PriorityQueue.h>
+#include <chaos/Core/NestedIterator.h>

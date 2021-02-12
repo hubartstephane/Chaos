@@ -40,7 +40,7 @@ namespace chaos
 		/** indirection operator */
 		T const* operator -> () const { return ptr; }
 		/** deferencing operator */
-		T const * operator * () const { return *ptr; }
+		T const & operator * () const { return *ptr; }
 		/** checking whether this is valid */
 		bool operator == (nullptr_t) const { return (ptr == nullptr); }
 		/** checking whether this is valid */
@@ -83,7 +83,7 @@ namespace chaos
 		/** indirection operator */
 		T * operator -> () const { return ptr; }
 		/** deferencing operator */
-		T* operator * () const { return *ptr; }
+		T & operator * () const { return *ptr; }
 		/** checking whether this is valid */
 		bool operator == (nullptr_t) const { return (ptr == nullptr); }
 		/** checking whether this is valid */

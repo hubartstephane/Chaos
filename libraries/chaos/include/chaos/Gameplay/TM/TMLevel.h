@@ -155,22 +155,12 @@ namespace chaos
 
 	public:
 
+
 		/** get the tiled layer */
 		TiledMap::LayerBase const* GetTiledLayer() const { return layer; }
 
 		// shuclean : lien  => chaos (presque pas utilisé. pourrait sauter)
 		//            juste le name
-
-
-
-
-
-
-
-
-
-
-
 
 		/** get the level (for this layer) */
 		AutoCastable<Level> GetLevel();
@@ -178,9 +168,9 @@ namespace chaos
 		AutoConstCastable<Level> GetLevel() const;
 
 		/** get the level instance for this layer */
-		AutoCastable<LevelInstance> GetLevelInstance();
+		AutoCastable<TMLevelInstance> GetLevelInstance();
 		/** get the level instance for this layer */
-		AutoConstCastable<LevelInstance> GetLevelInstance() const;
+		AutoConstCastable<TMLevelInstance> GetLevelInstance() const;
 
 		/** get the game */
 		AutoCastable<Game> GetGame();
@@ -315,6 +305,15 @@ namespace chaos
 		int GetLayerID() const { return id; }
 		/** get the collision mask */
 		uint64_t GetCollisionMask() const { return collision_mask; }
+		/** get the child layer instances */
+		std::vector<shared_ptr<TMLayerInstance>>& GetLayerInstances() { return layer_instances; }
+		/** get the child layer instances */
+		std::vector<shared_ptr<TMLayerInstance>> const& GetLayerInstances() const { return layer_instances; }
+
+		/** get the parent layer */
+		TMLayerInstance* GetParentLayerInstance() { return parent_layer.get(); }
+		/** get the parent layer */
+		TMLayerInstance const * GetParentLayerInstance() const { return parent_layer.get(); }
 
 		/** override */
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
@@ -535,6 +534,11 @@ namespace chaos
 		virtual bool SerializeFromJSON(nlohmann::json const& json) override;
 		/** override */
 		virtual bool SerializeIntoJSON(nlohmann::json& json) const override;
+
+		/** get the child layer instances */
+		std::vector<shared_ptr<TMLayerInstance>>& GetLayerInstances() { return layer_instances; }
+		/** get the child layer instances */
+		std::vector<shared_ptr<TMLayerInstance>> const& GetLayerInstances() const { return layer_instances; }
 
 	protected:
 

@@ -26,7 +26,6 @@ namespace chaos
 (TileCollisionInfo)\
 (TileCollisionComputer)\
 (TMCollisionIteratorBase)\
-(TMLayerInstanceIterator)\
 (TMTileCollisionIterator)
 
 		// forward declaration

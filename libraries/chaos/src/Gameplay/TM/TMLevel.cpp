@@ -301,12 +301,12 @@ namespace chaos
 		return level_instance->GetLevel();
 	}
 
-	AutoCastable<LevelInstance> TMLayerInstance::GetLevelInstance()
+	AutoCastable<TMLevelInstance> TMLayerInstance::GetLevelInstance()
 	{
 		return level_instance;
 	}
 
-	AutoConstCastable<LevelInstance> TMLayerInstance::GetLevelInstance() const
+	AutoConstCastable<TMLevelInstance> TMLayerInstance::GetLevelInstance() const
 	{
 		return level_instance;
 	}
@@ -1309,6 +1309,21 @@ namespace chaos
 		// create a particle manager
 		if (!CreateParticleManager(in_game))
 			return false;
+
+
+		TMLayerInstanceIterator it(this);
+
+		while (it)
+		{
+		//	auto p = *it;
+
+			std::string s = it->GetName();
+
+			++it;
+		}
+
+
+
 		return true;
 	}
 

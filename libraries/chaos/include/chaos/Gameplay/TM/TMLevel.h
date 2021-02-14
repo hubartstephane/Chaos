@@ -461,37 +461,37 @@ namespace chaos
 
 		/** find the typed object from its name */
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoCastable<TMObject> FindObject(ObjectRequest request)
+		AutoCastable<TMObject> FindObject(ObjectRequest request, bool recursive = false)
 		{
 			for (auto& layer : layer_instances)
-				if (AutoCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
+				if (AutoCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request, recursive))
 					return result;
 			return nullptr;
 		}
 		/** find the typed object surface from its name */
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoConstCastable<TMObject> FindObject(ObjectRequest request) const
+		AutoConstCastable<TMObject> FindObject(ObjectRequest request, bool recursive = false) const
 		{
 			for (auto const & layer : layer_instances)
-				if (AutoConstCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request))
+				if (AutoConstCastable<TMObject> result = layer->FindObject<CHECK_CLASS>(request, recursive))
 					return result;
 			return nullptr;
 		}
 		/** find the object from its ID */
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoCastable<TMObject> FindObjectByID(int id)
+		AutoCastable<TMObject> FindObjectByID(int id, bool recursive = false)
 		{
 			for (auto & layer : layer_instances)
-				if (AutoCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
+				if (AutoCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id, recursive))
 					return result;
 			return nullptr;
 		}
 		/** find the object from its ID */
 		template<typename CHECK_CLASS = EmptyClass>
-		AutoConstCastable<TMObject> FindObjectByID(int id) const
+		AutoConstCastable<TMObject> FindObjectByID(int id, bool recursive = false) const
 		{
 			for (auto const& layer : layer_instances)
-				if (AutoConstCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id))
+				if (AutoConstCastable<TMObject> result = layer->FindObjectByID<CHECK_CLASS>(id, recursive))
 					return result;
 			return nullptr;
 		}

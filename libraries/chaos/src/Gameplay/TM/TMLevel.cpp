@@ -1309,22 +1309,6 @@ namespace chaos
 		// create a particle manager
 		if (!CreateParticleManager(in_game))
 			return false;
-
-
-		TMLayerInstanceConstIterator it(this);
-		TMLayerInstanceConstIterator end;
-
-		while (it != end)
-		{
-			auto & p = *it;
-
-			std::string s = it->GetName();
-
-			++it;
-		}
-
-
-
 		return true;
 	}
 
@@ -1442,10 +1426,10 @@ namespace chaos
 		// search the CAMERA
 		TMCameraTemplate* camera_template = nullptr;
 		if (camera_name != nullptr)
-			camera_template = FindObject<TMCameraTemplate>(*camera_name); // first, if a name is given, use it
+			camera_template = FindObject<TMCameraTemplate>(*camera_name, true); // first, if a name is given, use it
 		if (camera_template == nullptr)
 		{
-			camera_template = FindObject<TMCameraTemplate>(ObjectRequest::Any()); // try to find the very first one otherwise
+			camera_template = FindObject<TMCameraTemplate>(ObjectRequest::Any(), true); // try to find the very first one otherwise
 			if (camera_template == nullptr)
 				return;
 		}

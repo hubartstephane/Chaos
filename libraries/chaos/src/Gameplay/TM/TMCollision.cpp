@@ -86,7 +86,6 @@ namespace chaos
 							if (allocation != nullptr)
 							{
 								ParticleAccessor<TMParticle> accessor = allocation->GetParticleAccessor(0, 0);
-
 								while (particle_index < accessor.GetDataCount())
 								{
 									TMParticle* particle = &accessor[particle_index];

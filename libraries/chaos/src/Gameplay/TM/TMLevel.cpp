@@ -1471,9 +1471,9 @@ namespace chaos
 		// search the PLAYER START
 		TMPlayerStart* result = nullptr;
 		if (player_start_name != nullptr)
-			result = FindObject<TMPlayerStart>(player_start_name->c_str()); // first, if a name is given, use it
+			result = FindObject<TMPlayerStart>(player_start_name->c_str(), true); // first, if a name is given, use it
 		if (result == nullptr)
-			result = FindObject<TMPlayerStart>(ObjectRequest::Any()); // try to find the very first one otherwise
+			result = FindObject<TMPlayerStart>(ObjectRequest::Any(), true); // try to find the very first one otherwise
 		return result;
 	}
 

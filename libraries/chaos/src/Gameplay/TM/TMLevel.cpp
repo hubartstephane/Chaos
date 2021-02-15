@@ -1621,17 +1621,17 @@ namespace chaos
 
 	TMTileCollisionIterator TMLevelInstance::GetTileCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry)
 	{
-		return TMTileCollisionIterator(this, in_collision_box, in_collision_mask, in_open_geometry);
+		return TMTileCollisionIterator(this, in_collision_mask, in_collision_box, in_open_geometry);
 	}
 
 	TMTriggerCollisionIterator TMLevelInstance::GetTriggerCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry)
 	{
-		return TMTriggerCollisionIterator(this, in_collision_box, in_collision_mask, in_open_geometry);
+		return TMTriggerCollisionIterator(this, in_collision_mask, in_collision_box, in_open_geometry);
 	}
 
 	TMObjectCollisionIterator TMLevelInstance::GetObjectCollisionIterator(box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry)
 	{
-		return TMObjectCollisionIterator(this, in_collision_box, in_collision_mask, in_open_geometry);
+		return TMObjectCollisionIterator(this, in_collision_mask, in_collision_box, in_open_geometry);
 	}
 
 	bool TMLevelInstance::SerializeFromJSON(nlohmann::json const& json)

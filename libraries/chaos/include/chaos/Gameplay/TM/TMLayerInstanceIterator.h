@@ -4,14 +4,14 @@
 
 namespace chaos
 {
-	template<typename OPERATOR> // should be add_const<_1> or identity<_1>
+	template<typename CONSTNESS_OPERATOR> // should be add_const<_1> or identity<_1>
 	class TMLayerInstanceIteratorBase
 	{
 	public:
 
-		using layer_type  = typename boost::mpl::apply<OPERATOR, TMLayerInstance>::type;
-		using level_type  = typename boost::mpl::apply<OPERATOR, TMLevelInstance>::type;
-		using object_type = typename boost::mpl::apply<OPERATOR, Object>::type;
+		using layer_type  = typename boost::mpl::apply<CONSTNESS_OPERATOR, TMLayerInstance>::type;
+		using level_type  = typename boost::mpl::apply<CONSTNESS_OPERATOR, TMLevelInstance>::type;
+		using object_type = typename boost::mpl::apply<CONSTNESS_OPERATOR, Object>::type;
 
 		/** default constructor */
 		TMLayerInstanceIteratorBase() = default;

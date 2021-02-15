@@ -8,103 +8,236 @@ namespace chaos
 	// TileCollisionInfo
 	// =====================================
 
-	class TileCollisionInfo
+	template<typename CONSTNESS_OPERATOR>
+	class TileCollisionInfoBase
 	{
 	public:
 
+		using layer_type = typename boost::mpl::apply<CONSTNESS_OPERATOR, TMLayerInstance>::type;
+		using allocation_type = typename boost::mpl::apply<CONSTNESS_OPERATOR, ParticleAllocationBase>::type;
+		using particle_type = typename boost::mpl::apply<CONSTNESS_OPERATOR, TMParticle>::type;
+
 		/** the layer instance concerned by this collision */
-		TMLayerInstance* layer_instance = nullptr;
+		layer_type* layer_instance = nullptr;
 		/** the allocation concerned by this collision */
-		ParticleAllocationBase* allocation = nullptr;
+		allocation_type* allocation = nullptr;
 		/** the particle which with the collision is detected */
-		TMParticle* particle = nullptr;
+		particle_type* particle = nullptr;
 		/** some information about the tile information */
 		TiledMap::TileInfo tile_info;
 	};
-
-
-
-
-
-
-
-
-
 
 	// =====================================
 	// TMCollisionIteratorBase
 	// =====================================
 
+	template<typename CONSTNESS_OPERATOR>
 	class TMCollisionIteratorBase
 	{
-
 	public:
 
-		/** the default constructor */
+		using layer_type = typename boost::mpl::apply<CONSTNESS_OPERATOR, TMLayerInstance>::type;
+		using level_type = typename boost::mpl::apply<CONSTNESS_OPERATOR, TMLevelInstance>::type;
+
+		/** default constructor */
 		TMCollisionIteratorBase() = default;
-		/** the copy constructor */
+		/** copy constructor */
 		TMCollisionIteratorBase(TMCollisionIteratorBase const& src) = default;
-		/** the constructor with initialization */
-		TMCollisionIteratorBase(TMLevelInstance* in_level_instance, box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		/** constructor from a level instance */
+		TMCollisionIteratorBase(level_type* in_level_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
+			li_iterator(in_level_instance, in_collision_mask),
+			collision_box(in_collision_box),
+			open_geometry(in_open_geometry)
+		{
+			level_instance = in_level_instance;
+		}
+
+		/** constructor from a level instance */
+		TMCollisionIteratorBase(layer_type* in_layer_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
+			li_iterator(in_layer_instance, in_collision_mask),
+			collision_box(in_collision_box),
+			open_geometry(in_open_geometry)
+		{
+			level_instance = in_layer_instance->GetLevelInstance();
+		}
 
 		/** returns whether the iterator is still valid */
-		operator bool() const;
+		operator bool() const
+		{
+			return li_iterator;
+		}
 
 	protected:
 
+		/** the level instance */
+		level_type* level_instance = nullptr;
 		/** the collision box */
 		box2 collision_box;
-		/** the collision mask for iterating over layers */
-		uint64_t collision_mask = 0;
 		/** whether we want to check open geometries */
 		bool open_geometry = false;
-
-
-		/** the level instance of concern */
-		TMLevelInstance* level_instance = nullptr;
-		/** index of the layer */
-		size_t layer_instance_index = 0;
-		/** whether the iterator finishs with the current layer */
-		bool ignore_other_layers = false;
+		/** the iterator over layer instances */
+		TMLayerInstanceIteratorBase<CONSTNESS_OPERATOR> li_iterator;
 	};
 
+
 	// =====================================
-	// TMTileCollisionIterator
+	// TMTileCollisionIteratorBase
 	// =====================================
 
-	class TMTileCollisionIterator : public TMCollisionIteratorBase
+	template<typename CONSTNESS_OPERATOR>
+	class TMTileCollisionIteratorBase : public TMCollisionIteratorBase<CONSTNESS_OPERATOR>
 	{
 	public:
 
+		using layer_type = typename TMCollisionIteratorBase<CONSTNESS_OPERATOR>::layer_type;
+		using level_type = typename TMCollisionIteratorBase<CONSTNESS_OPERATOR>::level_type;
+
+		using collision_info = TileCollisionInfoBase<CONSTNESS_OPERATOR>;
+
+
 		/** the default constructor */
-		TMTileCollisionIterator() = default;
+		TMTileCollisionIteratorBase() = default;
 		/** the copy constructor */
-		TMTileCollisionIterator(TMTileCollisionIterator const& src) = default;
+		TMTileCollisionIteratorBase(TMTileCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TMTileCollisionIterator(TMLevelInstance* in_level_instance, box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry);
+		TMTileCollisionIteratorBase(layer_type* in_layer_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
+			TMCollisionIteratorBase(in_layer_instance, in_collision_mask, in_collision_box, in_open_geometry)
+		{
+			FindElement(false);
+		}
+		/** the constructor with initialization */
+		TMTileCollisionIteratorBase(level_type* in_level_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
+			TMCollisionIteratorBase(in_level_instance, in_collision_mask, in_collision_box, in_open_geometry)
+		{
+			FindElement(false);
+		}
 
-		/** next layer */
-		void NextLayer();
-		/** next allocation */
-		void NextAllocation();
-		/** next particle (i.e operator ++) */
-		void Next();
+		/** comparaison operator */
+		friend bool operator == (TMTileCollisionIteratorBase const& src1, TMTileCollisionIteratorBase const& src2)
+		{
+			if (src1.li_iterator != src2.li_iterator)
+				return false;
+			if (src1.allocation_index != src2.allocation_index)
+				return false;
+			if (src1.particle_index != src2.particle_index)
+				return false;
+			return false;
+		}
 
-		// indirection
-		TileCollisionInfo const& operator *() const;
-		// indirection
-		TileCollisionInfo const* operator ->() const;
-		// pre increment iterator
-		TMTileCollisionIterator& operator ++ ();
-		// post increment iterator
-		TMTileCollisionIterator operator ++ (int i);
+		/** comparaison operator */
+		friend bool operator != (TMTileCollisionIteratorBase const& src1, TMTileCollisionIteratorBase const& src2)
+		{
+			return !(src1 == src2);
+		}
+
+		/** indirection method */
+		collision_info const& operator *() const
+		{
+			assert(li_iterator); // end not reached
+			return cached_result;
+		}
+
+		/** indirection method */
+		collision_info const* operator ->() const
+		{
+			assert(li_iterator); // end not reached
+			return &cached_result;
+		}
+
+		/** pre increment iterator */
+		TMTileCollisionIteratorBase& operator ++ ()
+		{
+			assert(li_iterator); // end not reached
+			FindElement(true);
+			return *this;
+		}
+
+		/** post increment iterator */
+		TMTileCollisionIteratorBase operator ++ (int i)
+		{
+			TMTileCollisionIteratorBase result = *this;
+			++(*this);
+			return result;
+		}
+
+		/** skip to next layer */
+		void NextLayer()
+		{
+			assert(li_iterator); // end not reached
+			++li_iterator;
+			allocation_index = 0;
+			particle_index = 0;
+			FindElement(false);
+		}
+
+		/** skip to next allocation */
+		void NextAllocation()
+		{
+			assert(li_iterator); // end not reached
+			++allocation_index;
+			particle_index = 0;
+			FindElement(false);
+		}
+
+		/** skip to next particle */
+		void NextParticle()
+		{
+			assert(li_iterator); // end not reached
+			++particle_index;
+			FindElement(false);
+		}
 
 	protected:
 
 		/** find the very first collision from given conditions */
-		void FindFirstCollision();
-		/** called to set the iterator at its end */
-		void EndIterator();
+		void FindElement(bool ignore_first)
+		{
+			while (li_iterator)
+			{
+				auto* particle_layer = li_iterator->particle_layer.get();
+
+				if (particle_layer != nullptr)
+				{
+					while (allocation_index < particle_layer->GetAllocationCount())
+					{
+						auto* allocation = particle_layer->GetAllocation(allocation_index);
+
+						if (allocation != nullptr)
+						{
+							while (particle_index < allocation->GetParticleCount())
+							{
+								// same for both ParticleAccessor<...> and ParticleConstAccessor<...>
+								RawDataBufferAccessorBase<boost::mpl::apply<CONSTNESS_OPERATOR, TMParticle>::type> accessor = allocation->GetParticleAccessor(0, 0);
+
+								auto * particle = &accessor[particle_index];
+
+								if (Collide(collision_box, particle->bounding_box, open_geometry))
+								{
+									if (!ignore_first)
+									{
+										cached_result.layer_instance = &(*li_iterator);
+										cached_result.allocation = allocation;
+										cached_result.particle = particle;
+										cached_result.tile_info = level_instance->GetTiledMap()->FindTileInfo(particle->gid);
+										return;
+									}
+									ignore_first = false;
+								}
+								// next particle
+								++particle_index;
+							}
+						}
+						// next allocation
+						++allocation_index;
+						particle_index = 0;
+					}
+				}
+				// next layer instance
+				++li_iterator;
+				allocation_index = 0;
+				particle_index = 0;
+			}
+		}
 
 	protected:
 
@@ -112,137 +245,140 @@ namespace chaos
 		size_t allocation_index = 0;
 		/** index of the particle in that layer */
 		size_t particle_index = 0;
-
 		/** the collision data */
-		TileCollisionInfo cached_result;
+		collision_info cached_result;
 	};
 
 	// =====================================
 	// TMObjectCollisionIteratorBase
 	// =====================================
 
-	template<typename T>
-	class TMObjectCollisionIteratorBase : public TMCollisionIteratorBase
+	template<typename T, typename CONSTNESS_OPERATOR>
+	class TMObjectCollisionIteratorBase : public TMCollisionIteratorBase<CONSTNESS_OPERATOR>
 	{
 	public:
+
+		using layer_type  = typename TMCollisionIteratorBase<CONSTNESS_OPERATOR>::layer_type;
+		using level_type  = typename TMCollisionIteratorBase<CONSTNESS_OPERATOR>::level_type;
+		using object_type = typename boost::mpl::apply<CONSTNESS_OPERATOR, T>::type;
 
 		/** the default constructor */
 		TMObjectCollisionIteratorBase() = default;
 		/** the copy constructor */
 		TMObjectCollisionIteratorBase(TMObjectCollisionIteratorBase const& src) = default;
 		/** the constructor with initialization */
-		TMObjectCollisionIteratorBase(TMLevelInstance* in_level_instance, box2 const& in_collision_box, uint64_t in_collision_mask, bool in_open_geometry) :
-			TMCollisionIteratorBase(in_level_instance, in_collision_box, in_collision_mask, in_open_geometry)
+		TMObjectCollisionIteratorBase(layer_type * in_layer_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
+			TMCollisionIteratorBase(in_layer_instance, in_collision_mask, in_collision_box, in_open_geometry)
 		{
-			FindFirstCollision();
+			FindElement(false);
 		}
-		// indirection
-		T& operator *() const
+		/** the constructor with initialization */
+		TMObjectCollisionIteratorBase(level_type * in_level_instance, uint64_t in_collision_mask, box2 const& in_collision_box, bool in_open_geometry) :
+			TMCollisionIteratorBase(in_level_instance, in_collision_mask, in_collision_box, in_open_geometry)
 		{
-			assert(level_instance != nullptr); // end already reached. cannot indirect
+			FindElement(false);
+		}
+
+
+		/** comparaison operator */
+		friend bool operator == (TMObjectCollisionIteratorBase const& src1, TMObjectCollisionIteratorBase const& src2)
+		{
+			if (src1.li_iterator != src2.li_iterator)
+				return false;
+			if (src1.object_index != src2.object_index)
+				return false;
+			return false;
+		}
+
+		/** comparaison operator */
+		friend bool operator != (TMObjectCollisionIteratorBase const& src1, TMObjectCollisionIteratorBase const& src2)
+		{
+			return !(src1 == src2);
+		}
+
+		/** indirection method */
+		object_type & operator *() const
+		{
+			assert(li_iterator); // end already reached. cannot indirect
 			return *cached_result;
 		}
-		// indirection
-		T* operator ->() const
+
+		/** indirection method */
+		object_type* operator ->() const
 		{
-			assert(level_instance != nullptr); // end already reached. cannot indirect
+			assert(li_iterator); // end already reached. cannot indirect
 			return cached_result;
 		}
 
-		/** go to next layer */
-		void NextLayer()
+		/** pre increment iterator */
+		TMObjectCollisionIteratorBase& operator ++ ()
 		{
-			if (ignore_other_layers)
-			{
-				EndIterator();
-			}
-			else
-			{
-				++layer_instance_index;
-				object_index = 0;
-				FindFirstCollision();
-			}
-		}
-
-		/** go to next element */
-		void Next()
-		{
-			++object_index;
-			FindFirstCollision();
-		}
-	
-		// pre increment iterator
-		TMObjectCollisionIteratorBase<T>& operator ++ ()
-		{
-			Next();
+			FindElement(true);
 			return *this;
 		}
 
-		// post increment iterator
-		TMObjectCollisionIteratorBase<T> operator ++ (int i)
+		/** post increment iterator */
+		TMObjectCollisionIteratorBase operator ++ (int i)
 		{
-			TMObjectCollisionIteratorBase<T> result = *this;
+			TMObjectCollisionIteratorBase result = *this;
 			++(*this);
 			return result;
 		}
 
-	protected:
-		
-		/** find the very first collision from given conditions */
-		void FindFirstCollision()
+		/** skip to next layer */
+		void NextLayer()
 		{
-			assert(level_instance != nullptr); // end already reached. cannot go further
+			assert(li_iterator); // end not reached
+			++li_iterator;
+			object_index = 0;
+			FindElement(false);
+		}
 
-			if (level_instance != nullptr)
+
+		/** skip to next object */
+		void NextObject()
+		{
+			assert(li_iterator); // end not reached
+			++object_index;
+			FindElement(false);
+		}
+
+	protected:
+
+		/** find the very first collision from given conditions */
+		void FindElement(bool ignore_first)
+		{
+			while (li_iterator)
 			{
-				while (layer_instance_index < level_instance->layer_instances.size())
+				while (object_index < li_iterator->GetObjectCount())
 				{
-					TMLayerInstance* layer_instance = level_instance->layer_instances[layer_instance_index].get();
-
-					if (layer_instance != nullptr && (layer_instance->collision_mask & collision_mask) != 0)
+					object_type * object = auto_cast(li_iterator->GetObject(object_index));
+					if (object != nullptr)
 					{
-						while (object_index < layer_instance->GetObjectCount())
+						if (Collide(collision_box, object->GetBoundingBox(true), open_geometry))
 						{
-							T * object = auto_cast(layer_instance->GetObject(object_index));
-							if (object != nullptr)
-							{
-								if (Collide(collision_box, object->GetBoundingBox(true), open_geometry))
-								{
-									cached_result = object;
-									return;
-								}
-							}
-							++object_index;
+							cached_result = object;
+							return;
 						}
 					}
-					if (ignore_other_layers)
-						break;
-					++layer_instance_index;
-					object_index = 0;
+					// next object
+					++object_index;
 				}
-				// no collision found, end of the iterator
-				EndIterator();
+				// next layer
+				++li_iterator;
+				object_index = 0;
 			}
 		}
 
-		/** called to set the iterator at its end */
-		void EndIterator()
-		{
-			level_instance = nullptr;
-			layer_instance_index = 0;
-			object_index = 0;
-		}
-
 	protected:
 
-		/** index of the layer */
-		size_t layer_instance_index = 0;
-		/** trigger index in that layer */
+		/** object index in current layer */
 		size_t object_index = 0;
-
 		/** the current result of the research */
-		T* cached_result = nullptr;
+		object_type * cached_result = nullptr;
 	};
+
+
 
 }; // namespace chaos
 

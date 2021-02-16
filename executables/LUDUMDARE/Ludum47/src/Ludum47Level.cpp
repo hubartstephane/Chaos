@@ -221,7 +221,7 @@ bool LudumRoad::DoTick(float delta_time)
 
 	// do not start before the beginning
 
-	chaos::TMLayerInstance * li = level_instance->FindLayerInstance("Opponents");
+	chaos::TMLayerInstance * li = level_instance->FindLayerInstance("Opponents", true);
 	if (li == nullptr)
 		return true;
 
@@ -491,7 +491,7 @@ void LudumRoad::OnLevelStarted()
 		LudumLevelInstance* level_instance = layer_instance->GetLevelInstance();
 		if (level_instance != nullptr)
 		{
-			chaos::TMLayerInstance* li = level_instance->FindLayerInstance("SpeedIndications");
+			chaos::TMLayerInstance* li = level_instance->FindLayerInstance("SpeedIndications", true);
 			if (li != nullptr)
 			{
 				size_t count = li->GetObjectCount();

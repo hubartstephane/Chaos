@@ -1061,6 +1061,10 @@ namespace chaos
 		size_t object_count = objects.size();
 		for (size_t i = 0; i < object_count; ++i)
 			objects[i]->OnLevelEnded();
+		// child layers
+		size_t count = layer_instances.size();
+		for (size_t i = 0; i < count; ++i)
+			layer_instances[i]->OnLevelEnded();
 	}
 
 	void TMLayerInstance::OnLevelStarted()
@@ -1069,6 +1073,10 @@ namespace chaos
 		size_t object_count = objects.size();
 		for (size_t i = 0; i < object_count; ++i)
 			objects[i]->OnLevelStarted();
+		// child layers
+		size_t count = layer_instances.size();
+		for (size_t i = 0; i < count; ++i)
+			layer_instances[i]->OnLevelStarted();
 	}
 
 	// =====================================

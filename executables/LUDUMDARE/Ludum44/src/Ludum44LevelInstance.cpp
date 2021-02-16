@@ -50,7 +50,7 @@ bool LudumLevelInstance::DoTick(float delta_time)
 void LudumLevelInstance::OnLevelStarted()
 {
 	// create the fire particle layer if necessary
-	chaos::TMLayerInstance * layer_instance = FindLayerInstance("fire");
+	chaos::TMLayerInstance * layer_instance = FindLayerInstance("fire", true);
 	if (layer_instance != nullptr)
 		layer_instance->CreateParticleLayer();
 

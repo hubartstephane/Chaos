@@ -206,7 +206,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 	// search the layer for enemies
 	LudumLevelInstance * ludum_level_instance = GetLayerInstance()->GetLevelInstance();
 
-	chaos::TMLayerInstance * enemy_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
+	chaos::TMLayerInstance * enemy_layer_instance = ludum_level_instance->FindLayerInstance("Enemies", true);
 	if (enemy_layer_instance == nullptr)
 		return true;
 

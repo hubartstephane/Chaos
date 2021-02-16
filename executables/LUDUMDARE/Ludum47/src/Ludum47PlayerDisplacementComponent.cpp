@@ -47,7 +47,7 @@ bool LudumPlayerDisplacementComponent::ComputeBorderCollision(ParticleBase & par
 
 	if (li != nullptr)
 	{
-		chaos::TMLayerInstance* layer = li->FindLayerInstance("Collisions");
+		chaos::TMLayerInstance* layer = li->FindLayerInstance("Collisions", true);
 		if (layer != nullptr)
 		{
 			size_t count = layer->GetObjectCount();

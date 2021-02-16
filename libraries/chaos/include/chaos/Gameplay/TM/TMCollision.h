@@ -313,6 +313,7 @@ namespace chaos
 		/** pre increment iterator */
 		TMObjectCollisionIteratorBase& operator ++ ()
 		{
+			assert(li_iterator); // end already reached. cannot indirect
 			FindElement(true);
 			return *this;
 		}
@@ -357,8 +358,12 @@ namespace chaos
 					{
 						if (Collide(collision_box, object->GetBoundingBox(true), open_geometry))
 						{
-							cached_result = object;
-							return;
+							if (!ignore_first)
+							{
+								cached_result = object;
+								return;
+							}
+							ignore_first = false;
 						}
 					}
 					// next object

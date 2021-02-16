@@ -61,7 +61,7 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 
 int LudumLevelInstance::GetCurrentSoulCount() const
 {
-	chaos::TMLayerInstance const * layer_instance = FindLayerInstance("Souls");
+	chaos::TMLayerInstance const * layer_instance = FindLayerInstance("Souls", true);
 	if (layer_instance != nullptr && layer_instance->GetParticleLayer() != nullptr)
 		return (int)layer_instance->GetParticleLayer()->GetParticleCount();
 	return 0;
@@ -71,7 +71,7 @@ int LudumLevelInstance::GetPotentialSoulCount() const
 {
 	int result = 0;
 
-	chaos::TMLayerInstance const* layer_instance = FindLayerInstance("Objects");
+	chaos::TMLayerInstance const* layer_instance = FindLayerInstance("Objects", true);
 	if (layer_instance != nullptr)
 	{
 		size_t count = layer_instance->GetObjectCount();

@@ -43,7 +43,7 @@ static void FindEnemiesOnMap(LudumGame * game, std::vector<ParticleEnemy*> & res
 	// get the enemies
 	LudumLevelInstance* ludum_level_instance = game->GetLevelInstance();
 
-	chaos::TMLayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies");
+	chaos::TMLayerInstance * enemies_layer_instance = ludum_level_instance->FindLayerInstance("Enemies", true);
 	if (enemies_layer_instance != nullptr)
 	{
 		chaos::ParticleLayerBase * layer = enemies_layer_instance->GetParticleLayer();

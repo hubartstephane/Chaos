@@ -27,11 +27,11 @@ ParticleSoulUpdateData ParticleSoulLayerTrait::BeginUpdateParticles(float delta_
 	if (ludum_level_instance != nullptr)
 	{
 		result.level_bounding_box = ludum_level_instance->GetBoundingBox();
-		result.fire_layer_instance = ludum_level_instance->FindLayerInstance("Fire");
+		result.fire_layer_instance = ludum_level_instance->FindLayerInstance("Fire", true);
 		result.ludum_level_instance = ludum_level_instance;
 
 		// store triggers
-		chaos::TMLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects");
+		chaos::TMLayerInstance* layer_instance = ludum_level_instance->FindLayerInstance("Objects", true);
 		if (layer_instance != nullptr)
 		{
 			size_t count = layer_instance->GetObjectCount();

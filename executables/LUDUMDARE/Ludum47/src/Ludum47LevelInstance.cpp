@@ -110,7 +110,7 @@ bool LudumLevelInstance::Initialize(chaos::Game * in_game, chaos::Level * in_lev
 	if (!chaos::TMLevelInstance::Initialize(in_game, in_level))
 		return false;
 
-	road = FindObject("TheRoad");
+	road = FindObject("TheRoad", true);
 
 	LudumLevel* ludum_level = auto_cast(in_level);
 	if (ludum_level != nullptr)
@@ -199,7 +199,7 @@ glm::ivec2 LudumLevelInstance::GetPlayerRacePosition(LudumPlayer const* player) 
 	if (point_count == 0)
 		return result;
 
-	chaos::TMLayerInstance const* li = FindLayerInstance("Opponents");
+	chaos::TMLayerInstance const* li = FindLayerInstance("Opponents", true);
 	if (li == nullptr)
 		return result;
 

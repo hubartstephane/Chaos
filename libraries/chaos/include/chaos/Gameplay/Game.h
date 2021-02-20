@@ -55,9 +55,9 @@ namespace chaos
 		/** Get a level by its index */
 		AutoConstCastable<Level> FindLevelByIndex(int level_index) const;
 		/** Get a level by request */
-		AutoCastable<Level> Game::FindLevel(ObjectRequest request);
+		AutoCastable<Level> FindLevel(ObjectRequest request);
 		/** Get a level by request */
-		AutoConstCastable<Level> Game::FindLevel(ObjectRequest request) const;
+		AutoConstCastable<Level> FindLevel(ObjectRequest request) const;
 
 		/** returns the game name */
 		char const * GetGameName() const { return game_name; }

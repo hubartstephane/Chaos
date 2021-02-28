@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="1" nextlayerid="16" nextobjectid="1911">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="1" nextlayerid="16" nextobjectid="1911">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
-  <property name="CAMERA_NAME" value="TheCamera1"/>
+  <property name="CAMERA" type="object" value="57"/>
   <property name="CAMERA_SPEED" type="float" value="800"/>
   <property name="LEVEL_TITLE" value="Level 2 - [LEVELTITLE Be carreful]"/>
-  <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
+  <property name="PLAYER_START" type="object" value="1735"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <objectgroup id="1" name="Texts" visible="0" locked="1"/>

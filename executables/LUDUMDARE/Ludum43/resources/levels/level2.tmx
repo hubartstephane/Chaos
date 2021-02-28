@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
-<map version="1.2" tiledversion="1.2.3" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="17" nextobjectid="1905">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="17" nextobjectid="1905">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
-  <property name="CAMERA_NAME" value="TheCamera1"/>
+  <property name="CAMERA" type="object" value="57"/>
   <property name="LEVEL_TIMEOUT" type="float" value="50"/>
-  <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
+  <property name="PLAYER_START" type="object" value="56"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <objectgroup id="1" name="WorldLimits">
@@ -469,22 +468,16 @@
  </objectgroup>
  <objectgroup id="13" name="Finishing" visible="0">
   <properties>
+   <property name="COLLISION_MASK" value="Player"/>
    <property name="ENABLED_RENDERPASSES" value="UNDEFORMED_OBJECT"/>
    <property name="MATERIAL" value="player"/>
    <property name="PLAYER_COLLISIONS_ENABLED" type="bool" value="true"/>
-   <property name="COLLISION_MASK" type="string" value="Player"/>
    <property name="TRIGGERS_ENABLED" type="bool" value="true"/>
   </properties>
   <object id="1877" name="finish point" gid="10" x="-13736" y="-3386.5" width="2000" height="2000"/>
-  <object id="1878" name="Finish" type="Finish" x="-13235" y="-4885.5" width="1120" height="1088">
-   <properties>
-   </properties>
-  </object>
+  <object id="1878" name="Finish" type="Finish" x="-13235" y="-4885.5" width="1120" height="1088"/>
   <object id="1879" name="finish point" gid="10" x="7064" y="18053.5" width="2000" height="2000"/>
-  <object id="1880" name="Finish" type="Finish" x="7565" y="16554.5" width="1120" height="1088">
-   <properties>
-   </properties>
-  </object>
+  <object id="1880" name="Finish" type="Finish" x="7565" y="16554.5" width="1120" height="1088"/>
  </objectgroup>
  <objectgroup id="14" name="Atoms" visible="0">
   <properties>
@@ -624,8 +617,7 @@
     <property name="BITMAP_NAME" value="player"/>
    </properties>
   </object>
-  <object id="57" name="TheCamera1" type="Camera" x="-8456" y="-2112" width="7168" height="3448">
-  </object>
+  <object id="57" name="TheCamera1" type="Camera" x="-8456" y="-2112" width="7168" height="3448"/>
   <object id="75" name="WorldBoundingBox" type="WorldBoundingBox" x="-28752" y="-22784" width="65152" height="53760"/>
  </objectgroup>
 </map>

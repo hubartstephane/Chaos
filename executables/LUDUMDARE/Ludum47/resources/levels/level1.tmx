@@ -5,7 +5,7 @@
  </editorsettings>
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
-  <property name="CAMERA" type="object" value="2114"/>
+  <property name="MAIN_CAMERA" type="object" value="2114"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
   <property name="HIGHWAY" type="object" value="2189"/>
   <property name="LEVEL_TITLE">Level 1

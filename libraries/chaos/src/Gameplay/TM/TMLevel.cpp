@@ -1329,7 +1329,7 @@ namespace chaos
 	bool TMLevelInstance::InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const * property_owner)
 	{
 		reference_solver.DeclareReference(player_start, "PLAYER_START", property_owner);
-		reference_solver.DeclareReference(main_camera, "CAMERA", property_owner);
+		reference_solver.DeclareReference(main_camera, "MAIN_CAMERA", property_owner);
 		return true;
 	}
 

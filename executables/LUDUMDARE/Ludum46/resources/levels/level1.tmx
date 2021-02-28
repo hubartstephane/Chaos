@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="32" tileheight="32" infinite="0" nextlayerid="46" nextobjectid="2184">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="57" height="56" tilewidth="32" tileheight="32" infinite="0" nextlayerid="46" nextobjectid="2185">
  <editorsettings>
   <chunksize width="37" height="37"/>
  </editorsettings>
@@ -12,6 +12,7 @@
   <property name="LEVEL_TITLE">Level 1
 [LEVELTITLE Welcome Home]</property>
   <property name="MUSIC" value="game_music1"/>
+  <property name="PLAYER_START" type="object" value="2184"/>
   <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
   <property name="REQUIRED_SOULS" type="int" value="50"/>
   <property name="titicolor" type="color" value="#ffffff00"/>
@@ -159,6 +160,7 @@
       <property name="PARTICLE_OWNERSHIP" type="bool" value="false"/>
      </properties>
     </object>
+    <object id="2184" name="MyPlayerStart" gid="2" x="704" y="1497.33" width="32" height="32"/>
    </objectgroup>
    <layer id="35" name="Blood" width="57" height="56" visible="0">
     <data encoding="base64">

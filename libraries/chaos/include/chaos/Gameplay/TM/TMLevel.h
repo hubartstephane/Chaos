@@ -551,6 +551,9 @@ namespace chaos
 		/** override */
 		virtual void OnRestart() override;
 
+		/** initialize some internals */
+		virtual bool InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const* property_owner);
+
 		/** handle all collisions with the player (TriggerObject) */
 		void HandlePlayerTriggerCollisions(float delta_time);
 		/** handle all collisions with the camera (TriggerObject) */
@@ -594,6 +597,9 @@ namespace chaos
 		virtual uint64_t GetCollisionFlagByName(char const* name) const;
 
 	protected:
+
+		/** the player start */
+		weak_ptr<TMPlayerStart> player_start;
 
 		/** explicit bounding box (else it is dynamic with LayerInstance evaluation) */
 		box2 explicit_bounding_box;

@@ -1329,12 +1329,7 @@ namespace chaos
 	bool TMLevelInstance::InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const * property_owner)
 	{
 		reference_solver.DeclareReference(player_start, "PLAYER_START", property_owner);
-
-
-
-
-
-
+		reference_solver.DeclareReference(main_camera, "CAMERA", property_owner);
 		return true;
 	}
 
@@ -1446,13 +1441,8 @@ namespace chaos
 	{
 		TMLevel* level = GetLevel();
 
-		// search CAMERA NAME
-		std::string const* camera_name = level->GetTiledMap()->FindPropertyString("CAMERA_NAME");
-
-		// search the CAMERA
-		TMCameraTemplate* camera_template = nullptr;
-		if (camera_name != nullptr)
-			camera_template = FindObject<TMCameraTemplate>(*camera_name, true); // first, if a name is given, use it
+		// search the MAIN CAMERA TEMPLATE
+		TMCameraTemplate* camera_template = main_camera.get();
 		if (camera_template == nullptr)
 		{
 			camera_template = FindObject<TMCameraTemplate>(ObjectRequest::Any(), true); // try to find the very first one otherwise
@@ -1491,13 +1481,7 @@ namespace chaos
 		//       It cannot be though searched by name
 		//       we will find take the very first PlayerStart
 
-		// search PLAYER START NAME
-		std::string const* player_start_name = level->GetTiledMap()->FindPropertyString("PLAYER_START_NAME");
-
-		// search the PLAYER START
-		TMPlayerStart* result = nullptr;
-		if (player_start_name != nullptr)
-			result = FindObject<TMPlayerStart>(player_start_name->c_str(), true); // first, if a name is given, use it
+		TMPlayerStart* result = player_start.get();
 		if (result == nullptr)
 			result = FindObject<TMPlayerStart>(ObjectRequest::Any(), true); // try to find the very first one otherwise
 		return result;

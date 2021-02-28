@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.1" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2128">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" compressionlevel="0" width="100" height="100" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="2128">
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background2"/>
-  <property name="CAMERA_NAME" value="TheCamera1"/>
+  <property name="CAMERA" type="object" value="57"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
   <property name="LEVEL_TITLE">Level 2
 [LEVELTITLE Fuck you Judas]</property>
   <property name="MUSIC" value="game_music2"/>
-  <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
+  <property name="PLAYER_START" type="object" value="1735"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <objectgroup id="22" name="Background2" locked="1">

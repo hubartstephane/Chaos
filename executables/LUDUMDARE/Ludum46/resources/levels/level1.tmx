@@ -5,18 +5,15 @@
  </editorsettings>
  <properties>
   <property name="BACKGROUND_TEXTURE" value="background1"/>
-  <property name="CAMERA_NAME" value="TheCamera1"/>
+  <property name="CAMERA" type="object" value="2114"/>
   <property name="CAMERA_SPEED" type="float" value="400"/>
   <property name="FLAME_HEALTH" type="float" value="100"/>
   <property name="FLAME_HEALTH_LOST_PER_SECOND" type="float" value="0.1"/>
   <property name="LEVEL_TITLE">Level 1
 [LEVELTITLE Welcome Home]</property>
   <property name="MUSIC" value="game_music1"/>
-  <property name="PLAYER_START" type="object" value="2184"/>
-  <property name="PLAYER_START_NAME" value="ThePlayerStart1"/>
+  <property name="PLAYER_START" type="object" value="0"/>
   <property name="REQUIRED_SOULS" type="int" value="50"/>
-  <property name="titicolor" type="color" value="#ffffff00"/>
-  <property name="titiobject" type="object" value="2132"/>
  </properties>
  <tileset firstgid="1" source="../tilesets/tileset.tsx"/>
  <tileset firstgid="33" name="background" tilewidth="800" tileheight="600" tilecount="1" columns="1">

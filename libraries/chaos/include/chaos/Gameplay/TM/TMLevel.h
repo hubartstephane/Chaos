@@ -600,6 +600,8 @@ namespace chaos
 
 		/** the player start */
 		weak_ptr<TMPlayerStart> player_start;
+		/** the main camera */
+		weak_ptr<TMCameraTemplate> main_camera;
 
 		/** explicit bounding box (else it is dynamic with LayerInstance evaluation) */
 		box2 explicit_bounding_box;

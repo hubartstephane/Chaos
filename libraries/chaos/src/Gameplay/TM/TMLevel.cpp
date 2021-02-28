@@ -1309,14 +1309,32 @@ namespace chaos
 		if (!LevelInstance::Initialize(in_game, in_level))
 			return false;
 
-		// create a the layers instances
 		TMObjectReferenceSolver reference_solver;
+		// create a the layers instances		
 		if (!CreateLayerInstances(in_game, reference_solver))
 			return false;
+		// initialize the level instance
+		TMLevel* lvl = auto_cast(in_level);
+		assert(lvl != nullptr);
+		if (!InitializeLevelInstance(reference_solver, lvl->tiled_map.get()))
+			return false;
+		// solve the references
 		reference_solver.SolveReferences(this);
 		// create a particle manager
 		if (!CreateParticleManager(in_game))
 			return false;
+		return true;
+	}
+
+	bool TMLevelInstance::InitializeLevelInstance(TMObjectReferenceSolver& reference_solver, TiledMap::PropertyOwner const * property_owner)
+	{
+		reference_solver.DeclareReference(player_start, "PLAYER_START", property_owner);
+
+
+
+
+
+
 		return true;
 	}
 

@@ -2,23 +2,15 @@
 
 namespace chaos
 {
-	void TMObjectReferenceSolver::DeclareReference(weak_ptr<TMObject>& reference, int id)
-	{
-		if (id > 0)
-			references.push_back(std::make_pair(&reference, id));
-	}
-
-	void TMObjectReferenceSolver::DeclareReference(weak_ptr<TMObject>& reference, char const* property_name, TiledMap::PropertyOwner const* property_owner)
-	{
-		int id = property_owner->GetPropertyValueObject(property_name, -1);				
-		DeclareReference(reference, id);
-	}
+	// =====================================
+	// TMObjectReferenceSolver implementation
+	// =====================================
 
 	void TMObjectReferenceSolver::SolveReferences(TMLevelInstance* level_instance)
 	{
 		assert(level_instance != nullptr);
-		for (auto& ref : references)
-			(*ref.first) = level_instance->FindObjectByID(ref.second);
+		for (auto& entry : entries)
+			entry.class_solver->Solve(level_instance, entry.weak_ptr_result, entry.id);
 	}
 
 	// =====================================

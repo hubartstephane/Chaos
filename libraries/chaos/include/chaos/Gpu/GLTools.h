@@ -124,13 +124,13 @@ namespace chaos
 		static int GetEnumVectorArity(GLenum type);
 		/** returns the arity of the vector whether the enum is a (bool) vector type */
 		static int GetEnumVectorArityBool(GLenum type);
-		/** returns the arity of the vector whether the enum is a (bool) vector type */
+		/** returns the arity of the vector whether the enum is a (float) vector type */
 		static int GetEnumVectorArityFloat(GLenum type);
-		/** returns the arity of the vector whether the enum is a (bool) vector type */
+		/** returns the arity of the vector whether the enum is a (double) vector type */
 		static int GetEnumVectorArityDouble(GLenum type);
 		/** returns the arity of the vector whether the enum is a (int) vector type */
 		static int GetEnumVectorArityInt(GLenum type);
-		/** returns the arity of the vector whether the enum is a (int) vector type */
+		/** returns the arity of the vector whether the enum is a (unsigned int) vector type */
 		static int GetEnumVectorArityUnsignedInt(GLenum type);
 
 		/** default template for enum vector arity */
@@ -156,10 +156,10 @@ namespace chaos
 	protected:
 
 		/** compare value to 4 other enum value, returns the 'index' of the result */
-		static int GetEnumVectorArityImpl(GLenum value, GLenum v1, GLenum v2, GLenum v3, GLenum v4);
+		static int GetEnumVectorArityImpl(GLenum type, GLenum const * values);
 
 		/** an handler for debug messages */
-		static void WINAPI DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data);
+		static void DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data);
 	};
 
 }; // namespace chaos

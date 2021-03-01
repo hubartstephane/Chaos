@@ -105,6 +105,24 @@ namespace chaos
 
 	bool GPUProgramProviderDeducedTransformations::DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderBase const* top_provider) const
 	{
+		static glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+#if 0
+		// defaults
+		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("local_to_world", local_to_world);
+
+		glm::mat4 world_to_local = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("world_to_local", world_to_local);
+
+		glm::mat4 world_to_camera = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
+
+		glm::mat4 camera_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("camera_to_world", camera_to_world);
+#endif
+
+
 		// local_to_world = inverse(world_to_local)
 		if (auto lock = DependantSearch(name, "local_to_world"))
 		{

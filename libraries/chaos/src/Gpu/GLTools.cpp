@@ -50,54 +50,57 @@ namespace chaos
 		return false;
 	}
 
-	int GLTools::GetEnumVectorArityImpl(GLenum type, GLenum v1, GLenum v2, GLenum v3, GLenum v4)
+	int GLTools::GetEnumVectorArityImpl(GLenum type, GLenum const* values)
 	{
-		if (type == v1) return 1;
-		if (type == v2) return 2;
-		if (type == v3) return 3;
-		if (type == v4) return 4;
+		for (int i = 0; i < 4; ++i)
+			if (type == values[i])
+				return (i + 1);
 		return 0;
 	}
 
 	int GLTools::GetEnumVectorArity(GLenum type)
 	{
-		int result = 0;
-		if ((result = GetEnumVectorArityBool(type)) != 0)
+		if (int result = GetEnumVectorArityBool(type))
 			return result;
-		if ((result = GetEnumVectorArityFloat(type)) != 0)
+		if (int result = GetEnumVectorArityFloat(type))
 			return result;
-		if ((result = GetEnumVectorArityDouble(type)) != 0)
+		if (int result = GetEnumVectorArityDouble(type))
 			return result;
-		if ((result = GetEnumVectorArityInt(type)) != 0)
+		if (int result = GetEnumVectorArityInt(type))
 			return result;
-		if ((result = GetEnumVectorArityUnsignedInt(type)) != 0)
+		if (int result = GetEnumVectorArityUnsignedInt(type))
 			return result;
-		return result;
+		return 0;
 	}
 
 	int GLTools::GetEnumVectorArityBool(GLenum type)
 	{
-		return GetEnumVectorArityImpl(type, GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4);
+		GLenum const values[] = { GL_BOOL, GL_BOOL_VEC2, GL_BOOL_VEC3, GL_BOOL_VEC4 };
+		return GetEnumVectorArityImpl(type, values);
 	}
 
 	int GLTools::GetEnumVectorArityFloat(GLenum type)
 	{
-		return GetEnumVectorArityImpl(type, GL_FLOAT, GL_FLOAT_VEC2, GL_FLOAT_VEC3, GL_FLOAT_VEC4);
+		GLenum const values[] = { GL_FLOAT, GL_FLOAT_VEC2, GL_FLOAT_VEC3, GL_FLOAT_VEC4 };
+		return GetEnumVectorArityImpl(type, values);
 	}
 
 	int GLTools::GetEnumVectorArityDouble(GLenum type)
 	{
-		return GetEnumVectorArityImpl(type, GL_DOUBLE, GL_DOUBLE_VEC2, GL_DOUBLE_VEC3, GL_DOUBLE_VEC4);
+		GLenum const values[] = { GL_DOUBLE, GL_DOUBLE_VEC2, GL_DOUBLE_VEC3, GL_DOUBLE_VEC4 };
+		return GetEnumVectorArityImpl(type, values);
 	}
 
 	int GLTools::GetEnumVectorArityInt(GLenum type)
 	{
-		return GetEnumVectorArityImpl(type, GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4);
+		GLenum const values[] = { GL_INT, GL_INT_VEC2, GL_INT_VEC3, GL_INT_VEC4 };
+		return GetEnumVectorArityImpl(type, values);
 	}
 
 	int GLTools::GetEnumVectorArityUnsignedInt(GLenum type)
 	{
-		return GetEnumVectorArityImpl(type, GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4);
+		GLenum const values[] = { GL_UNSIGNED_INT, GL_UNSIGNED_INT_VEC2, GL_UNSIGNED_INT_VEC3, GL_UNSIGNED_INT_VEC4 };
+		return GetEnumVectorArityImpl(type, values);
 	}
 
 	void GLTools::DisplayGenericInformation()
@@ -205,7 +208,7 @@ namespace chaos
 	CHAOS_HELP_TEXT(CMD, "-GLDebugBreak");
 #endif
 
-	void WINAPI GLTools::DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
+	void GLTools::DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{
 		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Application::HasApplicationCommandLineFlag("-GLDebugNotifications")) // CMDLINE
 		{

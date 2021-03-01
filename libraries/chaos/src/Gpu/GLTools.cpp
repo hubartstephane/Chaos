@@ -50,7 +50,7 @@ namespace chaos
 		return false;
 	}
 
-	int GLTools::GetEnumVectorArityImpl(GLenum type, GLenum const* values)
+	static int GetEnumVectorArityImpl(GLenum type, GLenum const* values)
 	{
 		for (int i = 0; i < 4; ++i)
 			if (type == values[i])
@@ -208,13 +208,13 @@ namespace chaos
 	CHAOS_HELP_TEXT(CMD, "-GLDebugBreak");
 #endif
 
-	void GLTools::DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
+	static void DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{
 		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Application::HasApplicationCommandLineFlag("-GLDebugNotifications")) // CMDLINE
 		{
-			char const * source_str = GLenumToString(source);
-			char const * type_str = GLenumToString(type);
-			char const * severity_str = GLenumToString(severity);
+			char const* source_str = GLTools::GLenumToString(source);
+			char const * type_str = GLTools::GLenumToString(type);
+			char const * severity_str = GLTools::GLenumToString(severity);
 
 			Log::Message("OpenGL message  [%s]", msg);
 			Log::Message("       severity [%s]", severity_str);

@@ -135,31 +135,18 @@ namespace chaos
 
 		/** default template for enum vector arity */
 		template<typename T>
-		static int GetTypedEnumVectorArity(GLenum type){ return 0; }
-
-		/** returns the arity of the vector enum if it is float, 0 elsewhere */
-		template<>
-		static int GetTypedEnumVectorArity<GLfloat>(GLenum type) { return GetEnumVectorArityFloat(type); }
-
-		/** returns the arity of the vector enum if it is double, 0 elsewhere */
-		template<>
-		static int GetTypedEnumVectorArity<GLdouble>(GLenum type) { return GetEnumVectorArityDouble(type); }
-
-		/** returns the arity of the vector enum if it is int, 0 elsewhere */
-		template<>
-		static int GetTypedEnumVectorArity<GLint>(GLenum type) { return GetEnumVectorArityInt(type); }
-
-		/** returns the arity of the vector enum if it is unsigned int, 0 elsewhere */
-		template<>
-		static int GetTypedEnumVectorArity<GLuint>(GLenum type) { return GetEnumVectorArityUnsignedInt(type); }
-
-	protected:
-
-		/** compare value to 4 other enum value, returns the 'index' of the result */
-		static int GetEnumVectorArityImpl(GLenum type, GLenum const * values);
-
-		/** an handler for debug messages */
-		static void DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data);
+		static int GetTypedEnumVectorArity(GLenum type)
+		{
+			if constexpr (std::is_same_v<T, GLfloat>)
+				return GetEnumVectorArityFloat(type);
+			if constexpr (std::is_same_v<T, GLdouble>)
+				return GetEnumVectorArityDouble(type);
+			if constexpr (std::is_same_v<T, GLint>)
+				return GetEnumVectorArityInt(type);
+			if constexpr (std::is_same_v<T, GLuint>)
+				return GetEnumVectorArityUnsignedInt(type);
+			return 0;
+		}
 	};
 
 }; // namespace chaos

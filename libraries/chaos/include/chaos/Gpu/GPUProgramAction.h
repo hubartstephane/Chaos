@@ -172,37 +172,23 @@ namespace chaos
 
 		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) override { return false; } // texture not implemented
 
-		/** the generic conversions methods */
+		/** recasting vector into vector (type and arity) or  matrix into matrix (type and size) */
 		template<typename U>
 		bool ConvertAndGet(U const & value)
 		{
-			if (DoConvertAndGetVector(value, GLMTools::IsVectorType<T>::type(), GLMTools::IsVectorType<U>::type()))
+			// both vector
+			if constexpr (GLMTools::IsVectorType<T>::type() && GLMTools::IsVectorType<U>::type())
+			{
+				result = RecastVector<T>(value);
 				return true;
-			if (DoConvertAndGetMatrix(value, GLMTools::IsMatrixType<T>::type(), GLMTools::IsMatrixType<U>::type()))
+			}
+			// both matrix
+			else if constexpr (GLMTools::IsMatrixType<T>::type() && GLMTools::IsMatrixType<U>::type())
+			{
+				result = T(value);
 				return true;
+			}
 			return false;
-		}
-
-		/** recasting vector into vector (type and arity) */
-		template<typename U, typename B1, typename B2>
-		bool DoConvertAndGetVector(U const & value, B1 b1, B2 b2) { return false; }
-
-		template<typename U>
-		bool DoConvertAndGetVector(U const & value, boost::mpl::true_, boost::mpl::true_) // the type expected, and the type of the incomming value are both vector !!
-		{
-			result = RecastVector<T>(value);
-			return true;
-		}
-
-		/** recasting matrix into matrix (type and size) */
-		template<typename U, typename B1, typename B2>
-		bool DoConvertAndGetMatrix(U const & value, B1 b1, B2 b2) { return false; }
-
-		template<typename U>
-		bool DoConvertAndGetMatrix(U const & value, boost::mpl::true_, boost::mpl::true_) // the type expected, and the type of the incomming value are both matrix !!
-		{
-			result = T(value);
-			return true;
 		}
 
 	protected:

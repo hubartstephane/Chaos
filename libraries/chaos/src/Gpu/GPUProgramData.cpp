@@ -3,12 +3,9 @@
 namespace chaos
 {
 	template<typename T1, typename T2>
-	static bool SetUniformVectorImplHelper(GLUniformInfo const & uniform, T2 const & value)
+	static bool SetUniformVectorImpl(GLUniformInfo const & uniform, T2 const & value)
 	{
 		int arity = GLTools::GetTypedEnumVectorArity<T1>(uniform.type);
-		if (arity < 1 || arity > 4)
-			return false;
-
 		if (arity == 1)
 			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec1<T1>>(GLMTools::ConvertIntoVector(value))); // when the arity is 1, we force the usage of vec1 because it is simpler than a scalar value
 		else if (arity == 2)
@@ -17,23 +14,10 @@ namespace chaos
 			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec3<T1>>(GLMTools::ConvertIntoVector(value)));
 		else if (arity == 4)
 			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec4<T1>>(GLMTools::ConvertIntoVector(value)));
+		else
+			return false;
 
 		return true;
-	}
-
-	template<typename T>
-	static bool SetUniformVectorImpl(GLUniformInfo const & uniform, T const & value)
-	{
-		// try a conversion/set uniform for each basic types
-		if (SetUniformVectorImplHelper<GLfloat>(uniform, value))
-			return true;
-		if (SetUniformVectorImplHelper<GLdouble>(uniform, value))
-			return true;
-		if (SetUniformVectorImplHelper<GLint>(uniform, value))
-			return true;
-		if (SetUniformVectorImplHelper<GLuint>(uniform, value))
-			return true;
-		return false;
 	}
 
 	template<typename MATRIX_TYPE, typename T>
@@ -166,105 +150,129 @@ namespace chaos
 		return SetUniformMatrixImpl(*this, value);
 	}
 
+
+
+
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLfloat>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLfloat>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLfloat>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLfloat>(*this, value);
 	}
+
+
+
+
 
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLdouble>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLdouble>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLdouble>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLdouble>(*this, value);
 	}
+
+
+
 
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLint>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLint>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLint>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLint>(*this, value);
 	}
+
+
+
+
+
+
 
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLuint>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLuint>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLuint>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLuint>(*this, value);
 	}
+
+
+
+
 
 	bool GLUniformInfo::SetUniform(GLfloat value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLfloat>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(GLdouble value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLdouble>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(GLint value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLint>(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(GLuint value) const
 	{
-		return SetUniformVectorImpl(*this, value);
+		return SetUniformVectorImpl<GLuint>(*this, value);
 	}
+
+
+
+
 
 	bool GLUniformInfo::SetUniform(GPUTexture const * texture) const
 	{

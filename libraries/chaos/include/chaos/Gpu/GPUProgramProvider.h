@@ -10,6 +10,7 @@ namespace chaos
 	class GPUProgramProviderTexture;
 	class GPUProgramProvider;
 	class GPUProgramProviderChain;
+	class GPUProgramProviderDeducedTransformations;
 
 	class GPUProgramProviderSearchLock;
 
@@ -175,13 +176,12 @@ namespace chaos
 		/** remove all uniforms for binding */
 		virtual void Clear();
 
-		/** check for name and return a lock */
-		GPUProgramProviderSearchLock DependantSearch(char const* name, char const* searched_name) const;
-
 	protected:
 
 		/** the main method */
 		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
+		/** check for name and return a lock */
+		GPUProgramProviderSearchLock DependantSearch(char const* name, char const* searched_name) const;
 
 	protected:
 

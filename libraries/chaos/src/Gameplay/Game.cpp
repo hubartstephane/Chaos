@@ -215,70 +215,6 @@ namespace chaos
 		DoDisplay(renderer, &main_uniform_provider, render_params);
 	}
 
-
-
-
-
-
-
-	class MyGPUProgramProvider : public GPUProgramProvider
-	{
-	public:
-		
-		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderBase const* top_provider) const override
-		{ 
-			// local_to_world = inverse(world_to_local)
-			if (auto lock = DependantSearch(name, "local_to_world"))
-			{
-				glm::mat4 world_to_local;
-				if (top_provider->GetValue("world_to_local", world_to_local))
-					return action.Process(name, glm::inverse(world_to_local), this);
-			}
-			// world_to_local = inverse(local_to_world)
-			if (auto lock = DependantSearch(name, "world_to_local"))
-			{
-				glm::mat4 local_to_world;
-				if (top_provider->GetValue("local_to_world", local_to_world))
-					return action.Process(name, glm::inverse(local_to_world), this);
-			}
-			// camera_to_world = inverse(world_to_camera)
-			if (auto lock = DependantSearch(name, "camera_to_world"))
-			{
-				glm::mat4 world_to_camera;
-				if (top_provider->GetValue("world_to_camera", world_to_camera))
-					return action.Process(name, glm::inverse(world_to_camera), this);
-			}
-			// world_to_camera = inverse(camera_to_world)
-			if (auto lock = DependantSearch(name, "world_to_camera"))
-			{
-				glm::mat4 camera_to_world;
-				if (top_provider->GetValue("camera_to_world", camera_to_world))
-					return action.Process(name, glm::inverse(camera_to_world), this);
-			}
-
-			// local_to_camera = world_to_camera * local_to_world
-			if (auto lock = DependantSearch(name, "local_to_camera"))
-			{
-				glm::mat4 local_to_world;
-				glm::mat4 world_to_camera;
-				if (top_provider->GetValue("local_to_world", local_to_world) && top_provider->GetValue("world_to_camera", world_to_camera))
-				{
-					return action.Process(name, world_to_camera * local_to_world, this);
-				}
-			}
-			// camera_to_local = inverse(local_to_camera)
-			if (auto lock = DependantSearch(name, "camera_to_local"))
-			{
-				glm::mat4 local_to_camera;
-				if (top_provider->GetValue("local_to_camera", local_to_camera))
-					return action.Process(name, glm::inverse(local_to_camera), this);
-
-			}
-
-			return false; 
-		}
-	};
-
 	void Game::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
 	{
 		// defaults
@@ -304,9 +240,8 @@ namespace chaos
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);
 
-		// some 'smart' fallback
-		static DisableReferenceCount<MyGPUProgramProvider> extra_provider;
-		main_uniform_provider.AddVariableProvider(&extra_provider);
+		// some deduced transformations
+		main_uniform_provider.AddVariableProvider(new GPUProgramProviderDeducedTransformations);
 	}
 
 	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)

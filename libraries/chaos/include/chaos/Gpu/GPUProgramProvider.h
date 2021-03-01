@@ -216,6 +216,18 @@ namespace chaos
 		GPUProgramProviderBase const * fallback_provider = nullptr;
 	};
 
+	/**
+	* GPUProgramProviderDeducedTransformations : a provider that help finding world_to_local, local_to_world ... transformations
+	*/
+
+
+	class GPUProgramProviderDeducedTransformations : public GPUProgramProvider
+	{
+	public:
+
+		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderBase const* top_provider) const override;
+	};
+
 }; // namespace chaos
 
 #endif // CHAOS_FORWARD_DECLARATION

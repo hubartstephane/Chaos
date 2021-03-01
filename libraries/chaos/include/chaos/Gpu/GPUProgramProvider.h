@@ -11,6 +11,8 @@ namespace chaos
 	class GPUProgramProvider;
 	class GPUProgramProviderChain;
 
+	class GPUProgramProviderSearchLock;
+
 }; // namespace chaos
 
 #else 
@@ -122,10 +124,38 @@ namespace chaos
 	* GPUProgramProvider : used to fill GPUProgram binding for multiple uniforms / uniforms
 	*/
 
+	class GPUProgramProviderSearchLock
+	{
+		friend class GPUProgramProvider;
+
+	public:
+
+		/** default constructor */
+		GPUProgramProviderSearchLock() = default;
+		/** default move constructor */
+		GPUProgramProviderSearchLock(GPUProgramProviderSearchLock&& src);
+		/** no copy constructor */
+		GPUProgramProviderSearchLock(GPUProgramProviderSearchLock const& src) = delete;
+		/** destructor */
+		~GPUProgramProviderSearchLock();
+		/** the lock is 'true' if there is a match (and there is no infinite loop) */
+		operator bool() const;
+		/** no copy */
+		GPUProgramProviderSearchLock const& operator = (GPUProgramProviderSearchLock const& src) = delete;
+
+	protected:
+
+		/** the name that is searched */
+		char const* searched_name = nullptr;
+		/** the provider that requested for the lock */
+		GPUProgramProvider const* provider = nullptr;
+	};
+
 	class GPUProgramProvider : public GPUProgramProviderBase
 	{
 		friend class GPUResourceManager;
 		friend class GPUProgramRenderMaterialProvider;
+		friend class GPUProgramProviderSearchLock;
 
 	public:
 
@@ -145,6 +175,9 @@ namespace chaos
 		/** remove all uniforms for binding */
 		virtual void Clear();
 
+		/** check for name and return a lock */
+		GPUProgramProviderSearchLock DependantSearch(char const* name, char const* searched_name) const;
+
 	protected:
 
 		/** the main method */
@@ -154,6 +187,8 @@ namespace chaos
 
 		/** the uniforms to be set */
 		std::vector<shared_ptr<GPUProgramProviderBase>> children_providers;
+		/** the pending searches. No need to make a deep copy of the string */
+		mutable std::vector<char const*> pending_searches;
 	};
 
 	/**

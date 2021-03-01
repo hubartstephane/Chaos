@@ -71,7 +71,7 @@ namespace chaos
 		// not what we are searching ?
 		if (StringTools::Strcmp(name, searched_name) != 0)
 			return {};
-		// already searching this name (avoid infinite recursion)
+		// already searching this name (avoid infinite recursion, may search in lower priority providers)
 		if (std::find(pending_searches.begin(), pending_searches.end(), searched_name) != pending_searches.end())
 			return {};
 		// start a pending request
@@ -98,5 +98,64 @@ namespace chaos
 				return true;
 		return false;
 	}
+
+	//
+	// GPUProgramProvideDeducedTransformations implementation
+	//
+
+	bool GPUProgramProviderDeducedTransformations::DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderBase const* top_provider) const
+	{
+		// local_to_world = inverse(world_to_local)
+		if (auto lock = DependantSearch(name, "local_to_world"))
+		{
+			glm::mat4 world_to_local;
+			if (top_provider->GetValue("world_to_local", world_to_local))
+				return action.Process(name, glm::inverse(world_to_local), this);
+		}
+		// world_to_local = inverse(local_to_world)
+		if (auto lock = DependantSearch(name, "world_to_local"))
+		{
+			glm::mat4 local_to_world;
+			if (top_provider->GetValue("local_to_world", local_to_world))
+				return action.Process(name, glm::inverse(local_to_world), this);
+		}
+		// camera_to_world = inverse(world_to_camera)
+		if (auto lock = DependantSearch(name, "camera_to_world"))
+		{
+			glm::mat4 world_to_camera;
+			if (top_provider->GetValue("world_to_camera", world_to_camera))
+				return action.Process(name, glm::inverse(world_to_camera), this);
+		}
+		// world_to_camera = inverse(camera_to_world)
+		if (auto lock = DependantSearch(name, "world_to_camera"))
+		{
+			glm::mat4 camera_to_world;
+			if (top_provider->GetValue("camera_to_world", camera_to_world))
+				return action.Process(name, glm::inverse(camera_to_world), this);
+		}
+
+		// local_to_camera = world_to_camera * local_to_world
+		if (auto lock = DependantSearch(name, "local_to_camera"))
+		{
+			glm::mat4 local_to_world;
+			glm::mat4 world_to_camera;
+			if (top_provider->GetValue("local_to_world", local_to_world) && top_provider->GetValue("world_to_camera", world_to_camera))
+			{
+				return action.Process(name, world_to_camera * local_to_world, this);
+			}
+		}
+		// camera_to_local = inverse(local_to_camera)
+		if (auto lock = DependantSearch(name, "camera_to_local"))
+		{
+			glm::mat4 local_to_camera;
+			if (top_provider->GetValue("local_to_camera", local_to_camera))
+				return action.Process(name, glm::inverse(local_to_camera), this);
+
+		}
+
+		return false;
+	}
+
+
 
 }; // namespace chaos

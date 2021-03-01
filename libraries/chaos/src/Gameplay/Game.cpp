@@ -204,9 +204,96 @@ namespace chaos
 
 	void Game::Display(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
 	{
-		// a variable provider
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
+		// fill the provider(last inserted have greater precedence)
+		FillUniformProvider(main_uniform_provider);
+		if (game_instance != nullptr)
+			game_instance->FillUniformProvider(main_uniform_provider);
+		if (level_instance != nullptr)
+			level_instance->FillUniformProvider(main_uniform_provider);
+		// rendering
+		DoDisplay(renderer, &main_uniform_provider, render_params);
+	}
+
+
+
+
+
+
+
+	class MyGPUProgramProvider : public GPUProgramProvider
+	{
+	public:
 		
+		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderBase const* top_provider) const override
+		{ 
+			// local_to_world = inverse(world_to_local)
+			if (auto lock = DependantSearch(name, "local_to_world"))
+			{
+				glm::mat4 world_to_local;
+				if (top_provider->GetValue("world_to_local", world_to_local))
+					return action.Process(name, glm::inverse(world_to_local), this);
+			}
+			// world_to_local = inverse(local_to_world)
+			if (auto lock = DependantSearch(name, "world_to_local"))
+			{
+				glm::mat4 local_to_world;
+				if (top_provider->GetValue("local_to_world", local_to_world))
+					return action.Process(name, glm::inverse(local_to_world), this);
+			}
+			// camera_to_world = inverse(world_to_camera)
+			if (auto lock = DependantSearch(name, "camera_to_world"))
+			{
+				glm::mat4 world_to_camera;
+				if (top_provider->GetValue("world_to_camera", world_to_camera))
+					return action.Process(name, glm::inverse(world_to_camera), this);
+			}
+			// world_to_camera = inverse(camera_to_world)
+			if (auto lock = DependantSearch(name, "world_to_camera"))
+			{
+				glm::mat4 camera_to_world;
+				if (top_provider->GetValue("camera_to_world", camera_to_world))
+					return action.Process(name, glm::inverse(camera_to_world), this);
+			}
+
+			// local_to_camera = world_to_camera * local_to_world
+			if (auto lock = DependantSearch(name, "local_to_camera"))
+			{
+				glm::mat4 local_to_world;
+				glm::mat4 world_to_camera;
+				if (top_provider->GetValue("local_to_world", local_to_world) && top_provider->GetValue("world_to_camera", world_to_camera))
+				{
+					return action.Process(name, world_to_camera * local_to_world, this);
+				}
+			}
+			// camera_to_local = inverse(local_to_camera)
+			if (auto lock = DependantSearch(name, "camera_to_local"))
+			{
+				glm::mat4 local_to_camera;
+				if (top_provider->GetValue("local_to_camera", local_to_camera))
+					return action.Process(name, glm::inverse(local_to_camera), this);
+
+			}
+
+			return false; 
+		}
+	};
+
+	void Game::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
+	{
+		// defaults
+		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("local_to_world", local_to_world);
+
+		glm::mat4 world_to_local = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("world_to_local", world_to_local);
+
+		glm::mat4 world_to_camera = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
+
+		glm::mat4 camera_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+		main_uniform_provider.AddVariableValue("camera_to_world", camera_to_world);
+
 		// the view box
 		box2 view = GetCanvasBox();
 		main_uniform_provider.AddVariableValue("canvas_box", EncodeBoxToVector(view));
@@ -217,19 +304,9 @@ namespace chaos
 		double root_time = GetRootClockTime();
 		main_uniform_provider.AddVariableValue("root_time", root_time);
 
-		// user values
-		FillUniformProvider(main_uniform_provider);
-
-		// rendering
-		DoDisplay(renderer, &main_uniform_provider, render_params);
-	}
-
-	void Game::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
-	{
-		if (game_instance != nullptr)
-			game_instance->FillUniformProvider(main_uniform_provider);
-		if (level_instance != nullptr)
-			level_instance->FillUniformProvider(main_uniform_provider);
+		// some 'smart' fallback
+		static DisableReferenceCount<MyGPUProgramProvider> extra_provider;
+		main_uniform_provider.AddVariableProvider(&extra_provider);
 	}
 
 	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
@@ -247,7 +324,6 @@ namespace chaos
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
 		glClearBufferfv(GL_COLOR, 0, (GLfloat*)&clear_color);
 
 		// clear the depth buffers

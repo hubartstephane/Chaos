@@ -27,36 +27,35 @@ namespace chaos
 	{
 	public:
 
-		/** template meta programming functions to detect whether a type is a GLM vector */
-		template<typename T> class IsVectorType : public boost::mpl::false_ {};
+		/** detect whether a type is a GLM vector */
+		template<typename T> static constexpr bool IsVectorType = false;
+		template<typename T> static constexpr bool IsVectorType<glm::tvec1<T>> = true;
+		template<typename T> static constexpr bool IsVectorType<glm::tvec2<T>> = true;
+		template<typename T> static constexpr bool IsVectorType<glm::tvec3<T>> = true;
+		template<typename T> static constexpr bool IsVectorType<glm::tvec4<T>> = true;
 
-		template<typename T> class IsVectorType<glm::tvec1<T>> : public boost::mpl::true_ {};
-		template<typename T> class IsVectorType<glm::tvec2<T>> : public boost::mpl::true_ {};
-		template<typename T> class IsVectorType<glm::tvec3<T>> : public boost::mpl::true_ {};
-		template<typename T> class IsVectorType<glm::tvec4<T>> : public boost::mpl::true_ {};
+		/** functions to detect whether a type is a GLM matrix */
+		template<typename T> static constexpr bool IsMatrixType = false;
 
-		/** template meta programming functions to detect whether a type is a GLM matrix */
-		template<typename T> class IsMatrixType : public boost::mpl::false_ {};
+		template<> static constexpr bool IsMatrixType<glm::mat2> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat3> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat4> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat2x3> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat2x4> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat3x2> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat3x4> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat4x2> = true;
+		template<> static constexpr bool IsMatrixType<glm::mat4x3> = true;
 
-		template<> class IsMatrixType<glm::mat2> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat3> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat4> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat2x3> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat2x4> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat3x2> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat3x4> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat4x2> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::mat4x3> : public boost::mpl::true_ {};
-
-		template<> class IsMatrixType<glm::dmat2> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat3> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat4> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat2x3> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat2x4> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat3x2> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat3x4> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat4x2> : public boost::mpl::true_ {};
-		template<> class IsMatrixType<glm::dmat4x3> : public boost::mpl::true_ {};
+		template<> static constexpr bool IsMatrixType<glm::dmat2> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat3> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat4> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat2x3> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat2x4> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat3x2> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat3x4> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat4x2> = true;
+		template<> static constexpr bool IsMatrixType<glm::dmat4x3> = true;
 
 	public:
 

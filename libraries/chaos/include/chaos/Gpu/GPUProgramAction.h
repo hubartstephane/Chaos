@@ -191,6 +191,7 @@ namespace chaos
 			return false;
 		}
 
+
 	protected:
 
 		/** the value we get */

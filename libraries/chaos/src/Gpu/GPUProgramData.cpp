@@ -2,22 +2,42 @@
 
 namespace chaos
 {
-	template<typename T1, typename T2>
-	static bool SetUniformVectorImpl(GLUniformInfo const & uniform, T2 const & value)
-	{
-		int arity = GLTools::GetTypedEnumVectorArity<T1>(uniform.type);
-		if (arity == 1)
-			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec1<T1>>(GLMTools::ConvertIntoVector(value))); // when the arity is 1, we force the usage of vec1 because it is simpler than a scalar value
-		else if (arity == 2)
-			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec2<T1>>(GLMTools::ConvertIntoVector(value)));
-		else if (arity == 3)
-			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec3<T1>>(GLMTools::ConvertIntoVector(value)));
-		else if (arity == 4)
-			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec4<T1>>(GLMTools::ConvertIntoVector(value)));
-		else
-			return false;
+	// utility
 
+	template<typename UNIFORM_COMPONENT_TYPE, typename T>
+	static bool SetUniformVectorImplHelper(GLUniformInfo const& uniform, T const& value, int arity)
+	{
+		if (arity == 1)
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec1<UNIFORM_COMPONENT_TYPE>>(GLMTools::ConvertIntoVector(value))); // when the arity is 1, we force the usage of vec1 because it is simpler than a scalar value
+		else if (arity == 2)
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec2<UNIFORM_COMPONENT_TYPE>>(GLMTools::ConvertIntoVector(value)));
+		else if (arity == 3)
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec3<UNIFORM_COMPONENT_TYPE>>(GLMTools::ConvertIntoVector(value)));
+		else if (arity == 4)
+			GLTools::SetUniform(uniform.location, RecastVector<glm::tvec4<UNIFORM_COMPONENT_TYPE>>(GLMTools::ConvertIntoVector(value)));
 		return true;
+	}
+
+	template<typename T>
+	static bool SetUniformVectorImpl(GLUniformInfo const& uniform, T const& value)
+	{
+		if (int arity = GLTools::GetEnumVectorArityFloat(uniform.type))
+		{
+			return SetUniformVectorImplHelper<GLfloat>(uniform, value, arity);
+		}
+		else if (int arity = GLTools::GetEnumVectorArityDouble(uniform.type))
+		{
+			return SetUniformVectorImplHelper<GLdouble>(uniform, value, arity);
+		}
+		else if (int arity = GLTools::GetEnumVectorArityInt(uniform.type))
+		{
+			return SetUniformVectorImplHelper<GLint>(uniform, value, arity);
+		}
+		else if (int arity = GLTools::GetEnumVectorArityUnsignedInt(uniform.type))
+		{
+			return SetUniformVectorImplHelper<GLuint>(uniform, value, arity);
+		}
+		return false;
 	}
 
 	template<typename MATRIX_TYPE, typename T>
@@ -45,13 +65,13 @@ namespace chaos
 			return true;
 		if (SetUniformMatrixImplHelper<glm::mat2x4>(uniform, GL_FLOAT_MAT2x4, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::mat2x3>(uniform, GL_FLOAT_MAT3x2, value))
+		if (SetUniformMatrixImplHelper<glm::mat3x2>(uniform, GL_FLOAT_MAT3x2, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::mat2x4>(uniform, GL_FLOAT_MAT3x4, value))
+		if (SetUniformMatrixImplHelper<glm::mat3x4>(uniform, GL_FLOAT_MAT3x4, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::mat2x3>(uniform, GL_FLOAT_MAT4x2, value))
+		if (SetUniformMatrixImplHelper<glm::mat4x2>(uniform, GL_FLOAT_MAT4x2, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::mat2x4>(uniform, GL_FLOAT_MAT4x3, value))
+		if (SetUniformMatrixImplHelper<glm::mat4x3>(uniform, GL_FLOAT_MAT4x3, value))
 			return true;
 
 		if (SetUniformMatrixImplHelper<glm::dmat2>(uniform, GL_DOUBLE_MAT2, value))
@@ -64,17 +84,19 @@ namespace chaos
 			return true;
 		if (SetUniformMatrixImplHelper<glm::dmat2x4>(uniform, GL_DOUBLE_MAT2x4, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::dmat2x3>(uniform, GL_DOUBLE_MAT3x2, value))
+		if (SetUniformMatrixImplHelper<glm::dmat3x2>(uniform, GL_DOUBLE_MAT3x2, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::dmat2x4>(uniform, GL_DOUBLE_MAT3x4, value))
+		if (SetUniformMatrixImplHelper<glm::dmat3x4>(uniform, GL_DOUBLE_MAT3x4, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::dmat2x3>(uniform, GL_DOUBLE_MAT4x2, value))
+		if (SetUniformMatrixImplHelper<glm::dmat4x2>(uniform, GL_DOUBLE_MAT4x2, value))
 			return true;
-		if (SetUniformMatrixImplHelper<glm::dmat2x4>(uniform, GL_DOUBLE_MAT4x3, value))
+		if (SetUniformMatrixImplHelper<glm::dmat4x3>(uniform, GL_DOUBLE_MAT4x3, value))
 			return true;
 
 		return false;
 	}
+
+	// matrix
 
 	bool GLUniformInfo::SetUniform(glm::mat2x3 const & value) const
 	{
@@ -150,129 +172,109 @@ namespace chaos
 		return SetUniformMatrixImpl(*this, value);
 	}
 
-
-
+	// vector
 
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl<GLfloat>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl<GLfloat>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl<GLfloat>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLfloat> const & value) const
 	{
-		return SetUniformVectorImpl<GLfloat>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
-
-
-
-
 
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl<GLdouble>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl<GLdouble>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl<GLdouble>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLdouble> const & value) const
 	{
-		return SetUniformVectorImpl<GLdouble>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
-
-
-
 
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLint> const & value) const
 	{
-		return SetUniformVectorImpl<GLint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLint> const & value) const
 	{
-		return SetUniformVectorImpl<GLint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLint> const & value) const
 	{
-		return SetUniformVectorImpl<GLint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLint> const & value) const
 	{
-		return SetUniformVectorImpl<GLint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
-
-
-
-
-
-
 
 	bool GLUniformInfo::SetUniform(glm::tvec1<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl<GLuint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec2<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl<GLuint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec3<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl<GLuint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(glm::tvec4<GLuint> const & value) const
 	{
-		return SetUniformVectorImpl<GLuint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
-
-
-
-
 
 	bool GLUniformInfo::SetUniform(GLfloat value) const
 	{
-		return SetUniformVectorImpl<GLfloat>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(GLdouble value) const
 	{
-		return SetUniformVectorImpl<GLdouble>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(GLint value) const
 	{
-		return SetUniformVectorImpl<GLint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
 	bool GLUniformInfo::SetUniform(GLuint value) const
 	{
-		return SetUniformVectorImpl<GLuint>(*this, value);
+		return SetUniformVectorImpl(*this, value);
 	}
 
-
-
-
+	// texture
 
 	bool GLUniformInfo::SetUniform(GPUTexture const * texture) const
 	{

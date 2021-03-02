@@ -177,13 +177,13 @@ namespace chaos
 		bool ConvertAndGet(U const & value)
 		{
 			// both vector
-			if constexpr (GLMTools::IsVectorType<T>::type() && GLMTools::IsVectorType<U>::type())
+			if constexpr (GLMTools::IsVectorType<T> && GLMTools::IsVectorType<U>)
 			{
 				result = RecastVector<T>(value);
 				return true;
 			}
 			// both matrix
-			else if constexpr (GLMTools::IsMatrixType<T>::type() && GLMTools::IsMatrixType<U>::type())
+			else if constexpr (GLMTools::IsMatrixType<T> && GLMTools::IsMatrixType<U>)
 			{
 				result = T(value);
 				return true;

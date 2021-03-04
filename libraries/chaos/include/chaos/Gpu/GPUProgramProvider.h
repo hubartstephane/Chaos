@@ -15,7 +15,7 @@ namespace chaos
 	class GPUProgramProviderTexture;
 	class GPUProgramProvider;
 	class GPUProgramProviderChain;
-	class GPUProgramProviderDeducedTransformations;
+	class GPUProgramProviderCommonTransforms;
 
 }; // namespace chaos
 
@@ -282,10 +282,10 @@ namespace chaos
 	};
 
 	/**
-	* GPUProgramProviderDeducedTransformations : a provider that help finding world_to_local, local_to_world ... transformations
+	* GPUProgramProviderCommonTransforms : a provider that help finding world_to_local, local_to_world ... transformations
 	*/
 
-	class GPUProgramProviderDeducedTransformations : public GPUProgramProvider
+	class GPUProgramProviderCommonTransforms : public GPUProgramProvider
 	{
 	public:
 

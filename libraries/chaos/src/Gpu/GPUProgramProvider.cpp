@@ -163,13 +163,12 @@ namespace chaos
 	// GPUProgramProvideDeducedTransformations implementation
 	//
 
-	bool GPUProgramProviderDeducedTransformations::DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const & execution_data) const
+	bool GPUProgramProviderCommonTransforms::DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const & execution_data) const
 	{
-		static glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-
+		// some fallbacks
 		if (execution_data.GetPassType() == GPUProgramProviderPassType::FALLBACK)
 		{
-			static glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+			static const glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 			if (StringTools::Strcmp(name, "local_to_world") == 0)
 			{
@@ -193,38 +192,28 @@ namespace chaos
 			}
 		}
 
-		if (StringTools::Strcmp(name, "local_to_world") == 0 || StringTools::Strcmp(name, "world_to_local") == 0)
+		// deduced: local_to_world = inverse(world_to_local)
+		if (auto lock1 = execution_data.CanDeduce(name, "local_to_world"))
 		{
-
-
-
-
-			// local_to_world = inverse(world_to_local)
-			if (auto lock1 = execution_data.CanDeduce(name, "local_to_world"))
-			{
-				glm::mat4 world_to_local;
-				if (execution_data.GetValue("world_to_local", world_to_local))
-					return action.Process(name, glm::inverse(world_to_local), this);
-			}
-			// world_to_local = inverse(local_to_world)
-			if (auto lock2 = execution_data.CanDeduce(name, "world_to_local"))
-			{
-				glm::mat4 local_to_world;
-				if (execution_data.GetValue("local_to_world", local_to_world))
-					return action.Process(name, glm::inverse(local_to_world), this);
-			}
-
+			glm::mat4 world_to_local;
+			if (execution_data.GetValue("world_to_local", world_to_local))
+				return action.Process(name, glm::inverse(world_to_local), this);
 		}
-#if 0
-
-		// camera_to_world = inverse(world_to_camera)
+		// deduced: world_to_local = inverse(local_to_world)
+		if (auto lock2 = execution_data.CanDeduce(name, "world_to_local"))
+		{
+			glm::mat4 local_to_world;
+			if (execution_data.GetValue("local_to_world", local_to_world))
+				return action.Process(name, glm::inverse(local_to_world), this);
+		}
+		// deduced: camera_to_world = inverse(world_to_camera)
 		if (auto lock = execution_data.CanDeduce(name, "camera_to_world"))
 		{
 			glm::mat4 world_to_camera;
 			if (execution_data.GetValue("world_to_camera", world_to_camera))
 				return action.Process(name, glm::inverse(world_to_camera), this);
 		}
-		// world_to_camera = inverse(camera_to_world)
+		// deduced: world_to_camera = inverse(camera_to_world)
 		if (auto lock = execution_data.CanDeduce(name, "world_to_camera"))
 		{
 			glm::mat4 camera_to_world;
@@ -232,7 +221,7 @@ namespace chaos
 				return action.Process(name, glm::inverse(camera_to_world), this);
 		}
 
-		// local_to_camera = world_to_camera * local_to_world
+		// deduced: local_to_camera = world_to_camera * local_to_world
 		if (auto lock = execution_data.CanDeduce(name, "local_to_camera"))
 		{
 			glm::mat4 local_to_world;
@@ -242,7 +231,7 @@ namespace chaos
 				return action.Process(name, world_to_camera * local_to_world, this);
 			}
 		}
-		// camera_to_local = inverse(local_to_camera)
+		// deduced: camera_to_local = inverse(local_to_camera)
 		if (auto lock = execution_data.CanDeduce(name, "camera_to_local"))
 		{
 			glm::mat4 local_to_camera;
@@ -250,8 +239,6 @@ namespace chaos
 				return action.Process(name, glm::inverse(local_to_camera), this);
 
 		}
-#endif
-
 		return false;
 	}
 

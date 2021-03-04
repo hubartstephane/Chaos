@@ -46,12 +46,12 @@ protected:
 				clock->GetClockTime();
 
 			chaos::GPUProgramProvider uniform_provider;
-			uniform_provider.AddVariableValue("projection", projection_matrix);
-			uniform_provider.AddVariableValue("local_to_world", local_to_world_matrix);
-			uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
-			uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
-			uniform_provider.AddVariableValue("realtime", realtime);
-			uniform_provider.AddVariableValue("pass_value", (float)pass);
+			uniform_provider.AddVariable("projection", projection_matrix);
+			uniform_provider.AddVariable("local_to_world", local_to_world_matrix);
+			uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
+			uniform_provider.AddVariable("instance_cube_size", instance_cube_size);
+			uniform_provider.AddVariable("realtime", realtime);
+			uniform_provider.AddVariable("pass_value", (float)pass);
 
 			if (pass == 1)
 			{
@@ -61,7 +61,7 @@ protected:
 					chaos::GPUTexture * texture = attachment->texture.get();
 					if (texture != nullptr)
 					{
-						uniform_provider.AddVariableValue("scene_texture", texture);
+						uniform_provider.AddVariable("scene_texture", texture);
 					}
 				}
 			}

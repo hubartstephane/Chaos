@@ -114,7 +114,7 @@ namespace chaos
 		GPUTexture * texture = manager->FindTexture(texture_name);
 		if (texture == nullptr)
 			return false;
-		material_info->uniform_provider.AddVariableTexture(uniform_name, texture);
+		material_info->uniform_provider.AddTexture(uniform_name, texture);
 		return true;
 	}
 
@@ -127,7 +127,7 @@ namespace chaos
 		// set the texture
 		if (texture == nullptr)
 			return false;
-		material_info->uniform_provider.AddVariableTexture(uniform_name, texture);
+		material_info->uniform_provider.AddTexture(uniform_name, texture);
 		return true;
 	}
 
@@ -181,7 +181,7 @@ namespace chaos
 			GPUTexture * texture = texture_loader.LoadObject(nullptr, *it, config_path);
 			if (texture == nullptr)
 				continue;
-			material_info->uniform_provider.AddVariableTexture(texture_uniform_name.c_str(), texture);
+			material_info->uniform_provider.AddTexture(texture_uniform_name.c_str(), texture);
 		}
 		return true;
 	}
@@ -192,7 +192,7 @@ namespace chaos
 		size_t count = json.size();
 		for (size_t i = 0; i < count; ++i)
 			value[i] = json[i].get<VECTOR_TYPE::value_type>();
-		material_info->uniform_provider.AddVariableValue(uniform_name, value);
+		material_info->uniform_provider.AddVariable(uniform_name, value);
 		return true;
 	}
 
@@ -202,7 +202,7 @@ namespace chaos
 		size_t count = json.size();
 		if (count == 1)
 		{
-			material_info->uniform_provider.AddVariableValue(uniform_name, json[0].get<SCALAR_TYPE>());
+			material_info->uniform_provider.AddVariable(uniform_name, json[0].get<SCALAR_TYPE>());
 			return true;
 		}
 		if (count == 2)
@@ -228,13 +228,13 @@ namespace chaos
 		// is the uniform a integer ?
 		if (json.is_number_integer())
 		{
-			material_info->uniform_provider.AddVariableValue(uniform_name, json.get<int>());
+			material_info->uniform_provider.AddVariable(uniform_name, json.get<int>());
 			return true;
 		}
 		// is the uniform a number ?
 		if (json.is_number())
 		{
-			material_info->uniform_provider.AddVariableValue(uniform_name, json.get<float>());
+			material_info->uniform_provider.AddVariable(uniform_name, json.get<float>());
 			return true;
 		}
 		// is the uniform an array of numbers

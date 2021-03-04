@@ -154,17 +154,17 @@ namespace chaos
 	{
 		// the clocks
 		double main_time = GetMainClockTime();
-		main_uniform_provider.AddVariableValue("main_time", main_time);
+		main_uniform_provider.AddVariable("main_time", main_time);
 		double game_time = GetGameClockTime();
-		main_uniform_provider.AddVariableValue("game_time", game_time);
+		main_uniform_provider.AddVariable("game_time", game_time);
 		double pause_time = GetPauseClockTime();
-		main_uniform_provider.AddVariableValue("pause_time", pause_time);
+		main_uniform_provider.AddVariable("pause_time", pause_time);
 		// the main player pawn box
 		PlayerPawn const * player_pawn = GetPlayerPawn(0);
 		if (player_pawn != nullptr)
 		{
 			box2 pawn_box = player_pawn->GetBoundingBox();
-			main_uniform_provider.AddVariableValue("pawn_box", EncodeBoxToVector(pawn_box));
+			main_uniform_provider.AddVariable("pawn_box", EncodeBoxToVector(pawn_box));
 		}
 	}
 

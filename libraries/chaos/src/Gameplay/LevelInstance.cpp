@@ -20,16 +20,16 @@ namespace chaos
 	{
 		// the timers
 		double level_time = GetLevelClockTime();
-		main_uniform_provider.AddVariableValue("level_time", level_time);
+		main_uniform_provider.AddVariable("level_time", level_time);
 
 		// the main camera
 		obox2 camera_obox = GetCameraOBox(0);
-		main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(camera_obox));
+		main_uniform_provider.AddVariable("camera_transform", CameraTransform::GetCameraTransform(camera_obox));
 		// convert OBOX into BOX
 		box2 camera_box;
 		camera_box.position  = camera_obox.position;
 		camera_box.half_size = camera_obox.half_size;
-		main_uniform_provider.AddVariableValue("camera_box", EncodeBoxToVector(camera_box)); 
+		main_uniform_provider.AddVariable("camera_box", EncodeBoxToVector(camera_box)); 
 	}
 
 	void LevelInstance::OnPlayerEntered(Player * player)

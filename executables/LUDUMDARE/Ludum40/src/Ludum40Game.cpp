@@ -635,11 +635,11 @@ void Game::DisplayFullscreen(chaos::GPURenderer * renderer, glm::ivec2 viewport_
 		level_ratio = 1.0f;
 
 	chaos::GPUProgramProvider uniform_provider;
-	uniform_provider.AddVariableTexture("material", texture);
-	uniform_provider.AddVariableValue("min_texture_coord", min_texture_coord);
-	uniform_provider.AddVariableValue("max_texture_coord", max_texture_coord);
-	uniform_provider.AddVariableValue("life_ratio", life_ratio);
-	uniform_provider.AddVariableValue("level_ratio", level_ratio);
+	uniform_provider.AddTexture("material", texture);
+	uniform_provider.AddVariable("min_texture_coord", min_texture_coord);
+	uniform_provider.AddVariable("max_texture_coord", max_texture_coord);
+	uniform_provider.AddVariable("life_ratio", life_ratio);
+	uniform_provider.AddVariable("level_ratio", level_ratio);
 
 	chaos::GPURenderParams render_params;
 	fullscreen_mesh->Render(renderer, program.get(), &uniform_provider, render_params);
@@ -670,7 +670,7 @@ void Game::DisplaySprites(chaos::GPURenderer * renderer, glm::ivec2 viewport_siz
 
 	glm::mat4 local_to_cam =  glm::scale(scale) /* * glm::translate(tr)*/; // SCREEN SPACE particles, no TRANSATION
 
-	uniform_provider->AddVariableValue("local_to_cam", local_to_cam);
+	uniform_provider->AddVariable("local_to_cam", local_to_cam);
 
 
   for (size_t i = sprite_layers.size(); i > 0; --i)

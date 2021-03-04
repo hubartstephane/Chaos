@@ -103,10 +103,10 @@ protected:
 		glm::mat4 world_to_camera_matrix = fps_view_controller.GlobalToLocal();
 
 		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariableValue("projection",      projection_matrix);
-		uniform_provider.AddVariableValue("local_to_world",  local_to_world_matrix);
-		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
-		uniform_provider.AddVariableTexture("material", texture);
+		uniform_provider.AddVariable("projection",      projection_matrix);
+		uniform_provider.AddVariable("local_to_world",  local_to_world_matrix);
+		uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
+		uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
 		mesh->Render(renderer, program.get(), &uniform_provider, render_params);

@@ -276,8 +276,8 @@ protected:
 		glEnable(GL_CULL_FACE);
 
 		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariableTexture("material", texture);
-		uniform_provider.AddVariableValue("screen_size", glm::vec2((float)window_size.x, (float)window_size.y));
+		uniform_provider.AddTexture("material", texture);
+		uniform_provider.AddVariable("screen_size", glm::vec2((float)window_size.x, (float)window_size.y));
 		
 		chaos::GPURenderParams render_params;
 		mesh->Render(renderer, program.get(), &uniform_provider, render_params);

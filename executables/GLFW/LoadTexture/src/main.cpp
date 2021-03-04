@@ -77,7 +77,7 @@ protected:
 		glEnable(GL_CULL_FACE);
 
 		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariableTexture("material", texture);
+		uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
 		mesh->Render(renderer, program.get(), &uniform_provider, render_params);

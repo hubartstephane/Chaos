@@ -108,7 +108,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 #endif
 			
 			chaos::GPUProgramProviderChain enlarged_provider(uniform_provider);
-			enlarged_provider.AddVariableValue("position_blend_ratio", 0.0f);
+			enlarged_provider.AddVariable("position_blend_ratio", 0.0f);
 
 			glColorMask(false, true, false, true);
 			ludum_level_instance->Display(renderer, &enlarged_provider, other_render_params);
@@ -164,7 +164,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		{
 			chaos::GPUTexture * texture = attachment_worldlimits->texture.get();
 			if (texture != nullptr)
-				main_provider.AddVariableValue("worldlimits", texture);
+				main_provider.AddVariable("worldlimits", texture);
 		}
 
 		chaos::GPUFramebufferAttachmentInfo const * attachment_deformed = framebuffer_deformed->GetColorAttachment(0);
@@ -172,7 +172,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		{
 			chaos::GPUTexture * texture = attachment_deformed->texture.get();
 			if (texture != nullptr)
-				main_provider.AddVariableValue("deformed", texture);
+				main_provider.AddVariable("deformed", texture);
 		}
 
 		renderer->DrawFullscreenQuad(postprocess_material, &main_provider, other_rendering_params);

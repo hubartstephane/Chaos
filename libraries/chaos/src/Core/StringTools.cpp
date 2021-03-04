@@ -218,8 +218,22 @@ namespace chaos
 			return result;
 		}
 
+		static char const* EMPTY_STRING = "";
+
+		//
+		// Strcmp
+		//
 		int Strcmp(char const * src1, char const * src2)
 		{
+			// early exit
+			if (src1 == src2)
+				return 0;
+			// special cases
+			if (src1 == nullptr)
+				src1 = EMPTY_STRING;
+			if (src2 == nullptr)
+				src2 = EMPTY_STRING;
+			// standard
 			return strcmp(src1, src2);
 		}
 		int Strcmp(char const * src1, std::string const & src2)
@@ -234,14 +248,19 @@ namespace chaos
 		{
 			return Strcmp(src1.c_str(), src2.c_str());
 		}
-
+		//
+		// Stricmp
+		//
 		int Stricmp(char const * src1, char const * src2)
 		{
+			// early exit
+			if (src1 == src2)
+				return 0;
 			// special cases
 			if (src1 == nullptr)
-				src1 = "";
+				src1 = EMPTY_STRING;
 			if (src2 == nullptr)
-				src2 = "";
+				src2 = EMPTY_STRING;
 			// standard
 			return _strcmpi(src1, src2);
 		}
@@ -257,9 +276,20 @@ namespace chaos
 		{
 			return Stricmp(src1.c_str(), src2.c_str());
 		}
-
+		//
+		// Strncmp
+		//
 		int Strncmp(char const * src1, char const * src2, size_t count)
 		{
+			// early exit
+			if (src1 == src2)
+				return 0;
+			// special cases
+			if (src1 == nullptr)
+				src1 = EMPTY_STRING;
+			if (src2 == nullptr)
+				src2 = EMPTY_STRING;
+			// standard
 			return strncmp(src1, src2, count);
 		}
 		int Strncmp(char const * src1, std::string const & src2, size_t count)
@@ -274,9 +304,20 @@ namespace chaos
 		{
 			return Strncmp(src1.c_str(), src2.c_str(), count);
 		}
-
+		//
+		// Strnicmp
+		//
 		int Strnicmp(char const * src1, char const * src2, size_t count)
 		{
+			// early exit
+			if (src1 == src2)
+				return 0;
+			// special cases
+			if (src1 == nullptr)
+				src1 = EMPTY_STRING;
+			if (src2 == nullptr)
+				src2 = EMPTY_STRING;
+			// standard
 			return _strnicmp(src1, src2, count);
 		}
 		int Strnicmp(char const * src1, std::string const & src2, size_t count)
@@ -291,7 +332,9 @@ namespace chaos
 		{
 			return Strnicmp(src1.c_str(), src2.c_str(), count);
 		}
-
+		//
+		// IsEmpty
+		//
 		bool IsEmpty(char const * src)
 		{
 			return (src == nullptr) || (src[0] == 0);

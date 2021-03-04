@@ -33,11 +33,11 @@ protected:
 			clock->GetClockTime();
 
 		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariableValue("projection", projection_matrix);
-		uniform_provider.AddVariableValue("local_to_world", local_to_world_matrix);
-		uniform_provider.AddVariableValue("world_to_camera", world_to_camera_matrix);
-		uniform_provider.AddVariableValue("instance_cube_size", instance_cube_size);
-		uniform_provider.AddVariableValue("realtime", realtime);
+		uniform_provider.AddVariable("projection", projection_matrix);
+		uniform_provider.AddVariable("local_to_world", local_to_world_matrix);
+		uniform_provider.AddVariable("world_to_camera", world_to_camera_matrix);
+		uniform_provider.AddVariable("instance_cube_size", instance_cube_size);
+		uniform_provider.AddVariable("realtime", realtime);
 
 		chaos::GPURenderParams render_params;
 		render_params.instancing.instance_count = instance_cube_size * instance_cube_size * instance_cube_size;

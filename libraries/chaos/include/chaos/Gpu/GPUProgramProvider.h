@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	enum class GPUProgramProviderType;
+	enum class GPUProgramProviderPassType;
 
 	class GPUProgramProviderBase;
 
@@ -24,10 +24,10 @@ namespace chaos
 namespace chaos
 {
 	/**
-	* GPUProgramProviderType : the type of search we are currently on
+	* GPUProgramProviderPassType : the type of search we are currently on
 	*/
 
-	enum class GPUProgramProviderType
+	enum class GPUProgramProviderPassType
 	{
 		FALLBACK = 1,
 		DEDUCED = 2,
@@ -67,29 +67,29 @@ namespace chaos
 
 			GPUProgramProviderExecutionData other_execution_data(*this); // another data that shares the same vector than us !
 			// search for explicit first ...
-			other_execution_data.type = GPUProgramProviderType::EXPLICIT;
-			if (top_provider->ConditionalProcessAction(name, action, other_execution_data))
+			other_execution_data.pass_type = GPUProgramProviderPassType::EXPLICIT;
+			if (top_provider->DoProcessAction(name, action, other_execution_data))
 				return true;
 			// ... then use deduced rules
-			other_execution_data.type = GPUProgramProviderType::DEDUCED;
-			if (top_provider->ConditionalProcessAction(name, action, other_execution_data))
+			other_execution_data.pass_type = GPUProgramProviderPassType::DEDUCED;
+			if (top_provider->DoProcessAction(name, action, other_execution_data))
 				return true;
 			// ... finally accept any fallback values
-			other_execution_data.type = GPUProgramProviderType::FALLBACK;
-			if (top_provider->ConditionalProcessAction(name, action, other_execution_data))
+			other_execution_data.pass_type = GPUProgramProviderPassType::FALLBACK;
+			if (top_provider->DoProcessAction(name, action, other_execution_data))
 				return true;
 			return false;
 		}
 
-		/** gets the type */
-		GPUProgramProviderType GetType() const { return type; }
+		/** gets the pass type */
+		GPUProgramProviderPassType GetPassType() const { return pass_type; }
 
 	protected:
 
 		/** the top level provider, used for deduction */
 		GPUProgramProviderBase const* top_provider = nullptr;
 		/** the type of provider we want to work on */
-		GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT;
+		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
 		/** the vector on which the search is effectively done (it may comes from another execution_data) */
 		std::vector<char const*> * deduced_searches = nullptr;
 		/** the pending searches. No need to make a deep copy of the string */
@@ -137,10 +137,6 @@ namespace chaos
 
 	public:
 
-		/** constructor */
-		GPUProgramProviderBase(GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
-			type(in_type) {}
-
 		/** the main method : returns try whether tha action has been handled (even if failed) */
 		bool ProcessAction(char const* name, GPUProgramAction& action) const;
 
@@ -157,15 +153,8 @@ namespace chaos
 
 	protected:
 
-		/** check whether the type correspond to execution then DoProcessAction */
-		bool ConditionalProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data) const;
 		/** the main method : returns true whether that action has been successfully handled */
 		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data) const;
-
-	protected:
-
-		/** the type of this provider */
-		GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT;
 	};
 
 	/**
@@ -178,15 +167,15 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderValue(char const * in_name, T const & in_value, GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
-			GPUProgramProviderBase(in_type), handled_name(in_name), value(in_value){}
+		GPUProgramProviderValue(char const * in_name, T const & in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) :
+			handled_name(in_name), value(in_value), pass_type(in_pass_type){}
 
 	protected:
 
 		/** the main method */
 		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override
 		{
-			if (name != nullptr && handled_name != name)
+			if (execution_data.GetPassType() != pass_type || name == nullptr || StringTools::Strcmp(handled_name, name) != 0)
 				return false;
 			return action.Process(name, value, this);
 		}
@@ -197,6 +186,8 @@ namespace chaos
 		std::string handled_name;
 		/** the value of the uniform */
 		T value;
+		/** the type of this provider */
+		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
 	};
 
 	/**
@@ -210,8 +201,8 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderTexture(char const * in_name, shared_ptr<GPUTexture> in_value, GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
-			GPUProgramProviderBase(in_type), handled_name(in_name), value(in_value){}
+		GPUProgramProviderTexture(char const * in_name, shared_ptr<GPUTexture> in_value, GPUProgramProviderPassType in_pass_type = GPUProgramProviderPassType::EXPLICIT) :
+			handled_name(in_name), value(in_value), pass_type(in_pass_type){}
 
 	protected:
 
@@ -224,6 +215,8 @@ namespace chaos
 		std::string handled_name;
 		/** the value of the uniform */
 		shared_ptr<GPUTexture> value;
+		/** the type of this provider */
+		GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT;
 	};
 
 	/**
@@ -237,19 +230,16 @@ namespace chaos
 
 	public:
 
-		/** constructor */
-		using GPUProgramProviderBase::GPUProgramProviderBase;
-
 		/** register a uniform value */
 		template<typename T>
-		void AddVariable(char const * name, T const & value, GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT)
+		void AddVariable(char const * name, T const & value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
 		{
-			AddProvider(new GPUProgramProviderValue<T>(name, value, type));
+			AddProvider(new GPUProgramProviderValue<T>(name, value, pass_type));
 		}
 		/** register a uniform texture */
-		void AddTexture(char const * name, shared_ptr<class GPUTexture> texture, GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT)
+		void AddTexture(char const * name, shared_ptr<class GPUTexture> texture, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
 		{
-			AddProvider(new GPUProgramProviderTexture(name, texture, type));
+			AddProvider(new GPUProgramProviderTexture(name, texture, pass_type));
 		}
 		/** register a generic uniform */
 		virtual void AddProvider(GPUProgramProviderBase * provider);
@@ -277,8 +267,8 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider, GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
-			DisableReferenceCount<GPUProgramProvider>(in_type), fallback_provider(in_fallback_provider) {}
+		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider) :
+			fallback_provider(in_fallback_provider) {}
 
 	protected:
 
@@ -299,9 +289,6 @@ namespace chaos
 	{
 	public:
 
-		/** constructor */
-		GPUProgramProviderDeducedTransformations(GPUProgramProviderType in_type = GPUProgramProviderType::DEDUCED) : // XXX : but default, here this is DEDUCED, not EXPLICIT !
-			GPUProgramProvider(in_type) {}
 		/** apply the actions */
 		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const & execution_data) const override;
 	};

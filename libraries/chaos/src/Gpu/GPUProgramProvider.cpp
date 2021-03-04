@@ -36,8 +36,15 @@ namespace chaos
 		return (searched_name != nullptr) && (execution_data != nullptr);
 	}
 
+	//
+	// GPUProgramProviderExecutionData implementation
+	//
+
 	GPUProgramProviderDeduceLock GPUProgramProviderExecutionData::CanDeduce(char const* name, char const* searched_name) const
 	{
+		// can only deduce for this pass
+		if (pass_type != GPUProgramProviderPassType::DEDUCED)
+			return {};
 		// is that what we are searching ?
 		if (StringTools::Strcmp(name, searched_name) != 0)
 			return {};
@@ -67,16 +74,16 @@ namespace chaos
 		execution_data.top_provider = this;
 
 		// search for explict first ...
-		execution_data.type = GPUProgramProviderType::EXPLICIT;
-		if (ConditionalProcessAction(name, action, execution_data))
+		execution_data.pass_type = GPUProgramProviderPassType::EXPLICIT;
+		if (DoProcessAction(name, action, execution_data))
 			return true;
 		// ... then use deduced rules
-		execution_data.type = GPUProgramProviderType::DEDUCED;
-		if (ConditionalProcessAction(name, action, execution_data))
+		execution_data.pass_type = GPUProgramProviderPassType::DEDUCED;
+		if (DoProcessAction(name, action, execution_data))
 			return true;
 		// ... finally accept any fallback values
-		execution_data.type = GPUProgramProviderType::FALLBACK;
-		if (ConditionalProcessAction(name, action, execution_data))
+		execution_data.pass_type = GPUProgramProviderPassType::FALLBACK;
+		if (DoProcessAction(name, action, execution_data))
 			return true;
 		return false;
 	}
@@ -90,15 +97,6 @@ namespace chaos
 	{
 		return ProcessAction(attribute.name.c_str(), GPUProgramSetAttributeAction(attribute));
 	}
-
-	bool GPUProgramProviderBase::ConditionalProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data) const
-	{
-		// check for type
-//		if (type != execution_data.type)
-//			return false;
-		// process
-		return DoProcessAction(name, action, execution_data);
-	}
 	
 	bool GPUProgramProviderBase::DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data) const 
 	{ 
@@ -111,7 +109,7 @@ namespace chaos
 
 	bool GPUProgramProviderTexture::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const
 	{
-		if (name != nullptr && handled_name != name)
+		if (execution_data.GetPassType() != pass_type || name == nullptr || StringTools::Strcmp(handled_name, name) != 0)
 			return false;
 		return action.Process(name, value.get(), this);
 	}
@@ -138,7 +136,7 @@ namespace chaos
 		for (size_t i = count; i > 0; --i)
 		{
 			size_t index = i - 1;
-			if (children_providers[index]->ConditionalProcessAction(name, action, execution_data))
+			if (children_providers[index]->DoProcessAction(name, action, execution_data))
 				return true;
 		}
 		// failure
@@ -156,7 +154,7 @@ namespace chaos
 			return true;
 		// use fallback provider
 		if (fallback_provider != nullptr)
-			if (fallback_provider->ConditionalProcessAction(name, action, execution_data))
+			if (fallback_provider->DoProcessAction(name, action, execution_data))
 				return true;
 		return false;
 	}
@@ -169,35 +167,53 @@ namespace chaos
 	{
 		static glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
-#if 0
-		// defaults
-		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("local_to_world", local_to_world);
-
-		glm::mat4 world_to_local = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("world_to_local", world_to_local);
-
-		glm::mat4 world_to_camera = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
-
-		glm::mat4 camera_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("camera_to_world", camera_to_world);
-#endif
-
-
-		// local_to_world = inverse(world_to_local)
-		if (auto lock1 = execution_data.CanDeduce(name, "local_to_world"))
+		if (execution_data.GetPassType() == GPUProgramProviderPassType::FALLBACK)
 		{
-			glm::mat4 world_to_local;
-			if (execution_data.GetValue("world_to_local", world_to_local))
-				return action.Process(name, glm::inverse(world_to_local), this);
+			static glm::mat4 identity = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+			if (StringTools::Strcmp(name, "local_to_world") == 0)
+			{
+				action.Process(name, identity, this);
+				return true;
+			}
+			if (StringTools::Strcmp(name, "world_to_local") == 0)
+			{
+				action.Process(name, identity, this);
+				return true;
+			}
+			if (StringTools::Strcmp(name, "world_to_camera") == 0)
+			{
+				action.Process(name, identity, this);
+				return true;
+			}
+			if (StringTools::Strcmp(name, "camera_to_world") == 0)
+			{
+				action.Process(name, identity, this);
+				return true;
+			}
 		}
-		// world_to_local = inverse(local_to_world)
-		if (auto lock2 = execution_data.CanDeduce(name, "world_to_local"))
+
+		if (StringTools::Strcmp(name, "local_to_world") == 0 || StringTools::Strcmp(name, "world_to_local") == 0)
 		{
-			glm::mat4 local_to_world;
-			if (execution_data.GetValue("local_to_world", local_to_world))
-				return action.Process(name, glm::inverse(local_to_world), this);
+
+
+
+
+			// local_to_world = inverse(world_to_local)
+			if (auto lock1 = execution_data.CanDeduce(name, "local_to_world"))
+			{
+				glm::mat4 world_to_local;
+				if (execution_data.GetValue("world_to_local", world_to_local))
+					return action.Process(name, glm::inverse(world_to_local), this);
+			}
+			// world_to_local = inverse(local_to_world)
+			if (auto lock2 = execution_data.CanDeduce(name, "world_to_local"))
+			{
+				glm::mat4 local_to_world;
+				if (execution_data.GetValue("local_to_world", local_to_world))
+					return action.Process(name, glm::inverse(local_to_world), this);
+			}
+
 		}
 #if 0
 

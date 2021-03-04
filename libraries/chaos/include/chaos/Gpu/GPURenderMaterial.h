@@ -24,7 +24,6 @@ namespace chaos
 
 		/** constructor */
 		GPUProgramRenderMaterialProvider(class GPURenderMaterial const * in_render_material, GPUProgramProviderBase const * in_other_provider, GPURenderParams const * in_render_params) :
-			GPUProgramProvider(GPUProgramProviderType::EXPLICIT),
 			render_material(in_render_material),
 			other_provider(in_other_provider),
 			render_params(in_render_params)

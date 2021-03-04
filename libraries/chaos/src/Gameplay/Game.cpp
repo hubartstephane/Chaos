@@ -217,22 +217,6 @@ namespace chaos
 
 	void Game::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
 	{
-		// defaults
-#if 0
-		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("local_to_world", local_to_world);
-
-		glm::mat4 world_to_local = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("world_to_local", world_to_local);
-
-		glm::mat4 world_to_camera = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
-
-		glm::mat4 camera_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariable("camera_to_world", camera_to_world);
-
-#endif
-
 		// the view box
 		box2 view = GetCanvasBox();
 		main_uniform_provider.AddVariable("canvas_box", EncodeBoxToVector(view));
@@ -244,7 +228,7 @@ namespace chaos
 		main_uniform_provider.AddVariable("root_time", root_time);
 
 		// some deduced transformations
-		main_uniform_provider.AddProvider(new GPUProgramProviderDeducedTransformations);
+		main_uniform_provider.AddProvider(new GPUProgramProviderCommonTransforms);
 	}
 
 	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)

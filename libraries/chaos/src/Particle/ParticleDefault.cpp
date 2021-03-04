@@ -187,14 +187,8 @@ namespace chaos
 
 			uniform vec2 offset;
 			uniform mat4 camera_transform;
-			uniform vec4 camera_box;
-
-
-
 			uniform mat4 local_to_world;
-
-
-
+			uniform vec4 camera_box;
 
 			uniform sampler2DArray material; // texture required in VS for Half pixel correction
 

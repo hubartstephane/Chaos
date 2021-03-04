@@ -11,6 +11,7 @@ out flat int vs_flags;
 
 uniform vec2 offset;
 uniform mat4 camera_transform;
+uniform mat4 local_to_world;
 uniform vec4 camera_box;
 
 
@@ -25,7 +26,7 @@ void main()
 	vs_flags = ExtractFragmentFlags(flags);
 	vs_color = color;
 
-	vec4 transformed_pos = camera_transform * vec4(pos.x, pos.y, 0.0, 1.0);
+	vec4 transformed_pos = local_to_world * camera_transform * vec4(pos.x, pos.y, 0.0, 1.0);
 
 	gl_Position.xy = transformed_pos.xy / camera_box.zw;
 	gl_Position.z = 0.0;

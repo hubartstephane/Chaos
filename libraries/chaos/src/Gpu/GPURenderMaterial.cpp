@@ -26,7 +26,7 @@ namespace chaos
 
 		// use extra provider
 		if (other_provider != nullptr)
-			if (other_provider->ConditionalProcessAction(name, action, execution_data))
+			if (other_provider->DoProcessAction(name, action, execution_data))
 				return true;
 		// traverse the material for finding uniform
 		GPURenderMaterialProviderTraverseFunc traversal_func;

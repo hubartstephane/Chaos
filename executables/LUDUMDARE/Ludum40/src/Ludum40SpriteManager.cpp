@@ -208,9 +208,9 @@ void SpriteManager::Display(chaos::GPUProgramProviderBase* uniform_provider)
 	glBindVertexArray(vertex_array->GetResourceID());
 
 	chaos::GPUProgramProvider main_uniform_provider;
-	main_uniform_provider.AddVariableTexture("material", atlas->GetTexture());
+	main_uniform_provider.AddTexture("material", atlas->GetTexture());
 	if (uniform_provider != nullptr)
-		main_uniform_provider.AddVariableProvider(uniform_provider);
+		main_uniform_provider.AddProvider(uniform_provider);
 
 	program->UseProgram(&main_uniform_provider);
 

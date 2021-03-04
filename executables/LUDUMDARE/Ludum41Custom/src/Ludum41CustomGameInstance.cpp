@@ -115,7 +115,7 @@ void LudumGameInstance::FillUniformProvider(chaos::GPUProgramProvider& main_unif
     float fill_ratio =
         current_background_fillratio * 0.5f +
         0.5f * std::max((delay - complete_level_timer) / delay, 0.0f);
-	main_uniform_provider.AddVariableValue("fill_ratio", fill_ratio);
+	main_uniform_provider.AddVariable("fill_ratio", fill_ratio);
 }
 
 

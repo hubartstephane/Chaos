@@ -2,7 +2,7 @@
 
 namespace chaos
 {
-	bool GPUProgramRenderMaterialProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const
+	bool GPUProgramRenderMaterialProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const
 	{
 		class GPURenderMaterialProviderTraverseFunc : public GPURenderMaterialInfoTraverseFunc
 		{
@@ -10,7 +10,7 @@ namespace chaos
 
 			virtual bool OnRenderMaterial(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, char const * renderpass_name) override
 			{
-				if (material_info->uniform_provider.DoProcessAction(name, *action, top_provider)) // search in the materials uniforms
+				if (material_info->uniform_provider.DoProcessAction(name, *action, *execution_data)) // search in the materials uniforms
 					return true;
 				return false;
 			}
@@ -21,22 +21,22 @@ namespace chaos
 			
 			GPUProgramAction * action = nullptr;
 			
-			GPUProgramProviderBase const * top_provider = nullptr;
+			GPUProgramProviderExecutionData const * execution_data = nullptr;
 		};
 
 		// use extra provider
 		if (other_provider != nullptr)
-			if (other_provider->DoProcessAction(name, action, top_provider))
+			if (other_provider->ConditionalProcessAction(name, action, execution_data))
 				return true;
 		// traverse the material for finding uniform
 		GPURenderMaterialProviderTraverseFunc traversal_func;
 		traversal_func.name = name;
 		traversal_func.action = &action;
-		traversal_func.top_provider = top_provider;
+		traversal_func.execution_data = &execution_data;
 		if (render_material->Traverse(traversal_func, render_params->renderpass_name.c_str()))
 			return true;
 		// use variables inside this provider (should be empty)
-		if (GPUProgramProvider::DoProcessAction(name, action, top_provider))
+		if (GPUProgramProvider::DoProcessAction(name, action, execution_data))
 			return true;
 
 		return false;

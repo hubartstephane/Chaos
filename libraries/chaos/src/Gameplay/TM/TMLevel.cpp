@@ -996,12 +996,12 @@ namespace chaos
 
 			// new provider for camera override (will be fullfill only if necessary)
 			GPUProgramProviderChain main_uniform_provider(uniform_provider);
-			main_uniform_provider.AddVariableValue("camera_transform", CameraTransform::GetCameraTransform(final_camera_obox));
+			main_uniform_provider.AddVariable("camera_transform", CameraTransform::GetCameraTransform(final_camera_obox));
 
 			box2 final_camera_box;
 			final_camera_box.position = final_camera_obox.position;
 			final_camera_box.half_size = final_camera_obox.half_size;
-			main_uniform_provider.AddVariableValue("camera_box", EncodeBoxToVector(final_camera_box));
+			main_uniform_provider.AddVariable("camera_box", EncodeBoxToVector(final_camera_box));
 
 
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden
@@ -1021,7 +1021,7 @@ namespace chaos
 					// new Provider to apply the offset for this 'instance'
 					GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
 					glm::vec2 instance_offset = scissor.GetInstanceOffset(glm::ivec2(x, y));
-					instance_uniform_provider.AddVariableValue("offset", instance_offset + offset);
+					instance_uniform_provider.AddVariable("offset", instance_offset + offset);
 					// draw call
 					result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
 				}

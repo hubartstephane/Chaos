@@ -66,15 +66,15 @@ void PrimitiveRenderer::EndTranslucency() const
 
 void PrimitiveRenderer::PrepareObjectProgram(chaos::GPUProgramProvider & uniform_provider, PrimitiveRenderingContext const & prim_ctx, chaos::GPUProgramProvider * next_provider) const
 {
-	uniform_provider.AddVariableValue("projection", projection);
-	uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
-	uniform_provider.AddVariableValue("local_to_world", prim_ctx.local_to_world);
-	uniform_provider.AddVariableValue("color", prim_ctx.color);
+	uniform_provider.AddVariable("projection", projection);
+	uniform_provider.AddVariable("world_to_camera", world_to_camera);
+	uniform_provider.AddVariable("local_to_world", prim_ctx.local_to_world);
+	uniform_provider.AddVariable("color", prim_ctx.color);
 
-	uniform_provider.AddVariableValue("light_dir", glm::vec3(0.0f, 0.0f, 1.0f));
+	uniform_provider.AddVariable("light_dir", glm::vec3(0.0f, 0.0f, 1.0f));
 
 	if (next_provider != nullptr)
-		uniform_provider.AddVariableProvider(next_provider);
+		uniform_provider.AddProvider(next_provider);
 }
 
 void PrimitiveRenderer::DrawPrimitiveImpl(
@@ -115,9 +115,9 @@ void PrimitiveRenderer::GPUDrawPrimitive(chaos::triangle3 const & t, glm::vec4 c
 
 	// cannot be on the stack. due to reference count
 	chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
-	uniform_provider->AddVariableValue("p1", t.a);
-	uniform_provider->AddVariableValue("p2", t.b);
-	uniform_provider->AddVariableValue("p3", t.c);
+	uniform_provider->AddVariable("p1", t.a);
+	uniform_provider->AddVariable("p2", t.b);
+	uniform_provider->AddVariable("p3", t.c);
 
 	DrawPrimitiveImpl(
 		mesh_triangle.get(),

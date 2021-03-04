@@ -26,11 +26,11 @@ protected:
 		glm::mat4 local_to_world  = glm::translate(b.position) * glm::scale(b.half_size);
 
 		chaos::GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariableValue("projection",      projection);
-		uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
-		uniform_provider.AddVariableValue("local_to_world",  local_to_world);
-		uniform_provider.AddVariableValue("texture_slice",   (float)texture_slice);
-		uniform_provider.AddVariableTexture("material", texture);
+		uniform_provider.AddVariable("projection",      projection);
+		uniform_provider.AddVariable("world_to_camera", world_to_camera);
+		uniform_provider.AddVariable("local_to_world",  local_to_world);
+		uniform_provider.AddVariable("texture_slice",   (float)texture_slice);
+		uniform_provider.AddTexture("material", texture);
 
 		chaos::GPURenderParams render_params;
 		mesh_box->Render(renderer, program_box.get(), &uniform_provider, render_params);

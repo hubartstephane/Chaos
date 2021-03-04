@@ -74,7 +74,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 		int burning_decrease_step = (int)(12.0 * (max_health - health) / max_health);
 
-		update_provider.AddVariableValue("burning_decrease_step", burning_decrease_step);
+		update_provider.AddVariable("burning_decrease_step", burning_decrease_step);
 	}
 	
 
@@ -97,7 +97,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 				chaos::GPUProgramProviderChain blackscreen_provider(uniform_provider);
-				blackscreen_provider.AddVariableValue("fade_ratio", 1.0f - (ludum_level_instance->completion_timer / ludum_level_instance->completion_delay));
+				blackscreen_provider.AddVariable("fade_ratio", 1.0f - (ludum_level_instance->completion_timer / ludum_level_instance->completion_delay));
 
 				renderer->DrawFullscreenQuad(blackscreen_material, &blackscreen_provider, render_params);
 

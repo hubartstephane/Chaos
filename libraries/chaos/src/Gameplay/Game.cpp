@@ -218,30 +218,33 @@ namespace chaos
 	void Game::FillUniformProvider(GPUProgramProvider & main_uniform_provider)
 	{
 		// defaults
+#if 0
 		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariableValue("local_to_world", local_to_world);
+		main_uniform_provider.AddVariable("local_to_world", local_to_world);
 
 		glm::mat4 world_to_local = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariableValue("world_to_local", world_to_local);
+		main_uniform_provider.AddVariable("world_to_local", world_to_local);
 
 		glm::mat4 world_to_camera = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
+		main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
 
 		glm::mat4 camera_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-		main_uniform_provider.AddVariableValue("camera_to_world", camera_to_world);
+		main_uniform_provider.AddVariable("camera_to_world", camera_to_world);
+
+#endif
 
 		// the view box
 		box2 view = GetCanvasBox();
-		main_uniform_provider.AddVariableValue("canvas_box", EncodeBoxToVector(view));
+		main_uniform_provider.AddVariable("canvas_box", EncodeBoxToVector(view));
 		// the world
 		box2 world = GetWorldBox();
-		main_uniform_provider.AddVariableValue("world_box", EncodeBoxToVector(world));
+		main_uniform_provider.AddVariable("world_box", EncodeBoxToVector(world));
 		// the time
 		double root_time = GetRootClockTime();
-		main_uniform_provider.AddVariableValue("root_time", root_time);
+		main_uniform_provider.AddVariable("root_time", root_time);
 
 		// some deduced transformations
-		main_uniform_provider.AddVariableProvider(new GPUProgramProviderDeducedTransformations);
+		main_uniform_provider.AddProvider(new GPUProgramProviderDeducedTransformations);
 	}
 
 	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
@@ -672,7 +675,7 @@ namespace chaos
 						return false;
 					// initialize the material with parent ande texture
 					child_material->SetParentMaterial(result);
-					child_material->GetUniformProvider().AddVariableTexture("background", texture);
+					child_material->GetUniformProvider().AddTexture("background", texture);
 					result = child_material;
 				}
 				// assign the material to the background

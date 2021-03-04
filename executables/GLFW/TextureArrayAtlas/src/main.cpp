@@ -32,12 +32,12 @@ protected:
 
 		chaos::GPUProgramProvider uniform_provider;
 
-		uniform_provider.AddVariableValue("projection",      projection);
-		uniform_provider.AddVariableValue("world_to_camera", world_to_camera);
-		uniform_provider.AddVariableValue("local_to_world",  local_to_world);
-		uniform_provider.AddVariableValue("texture_slice", (float)layout.bitmap_index);
+		uniform_provider.AddVariable("projection",      projection);
+		uniform_provider.AddVariable("world_to_camera", world_to_camera);
+		uniform_provider.AddVariable("local_to_world",  local_to_world);
+		uniform_provider.AddVariable("texture_slice", (float)layout.bitmap_index);
 
-		uniform_provider.AddVariableTexture("material", atlas.GetTexture());
+		uniform_provider.AddTexture("material", atlas.GetTexture());
 
 		glm::vec2 atlas_dimension = atlas.GetAtlasDimension();
 
@@ -54,8 +54,8 @@ protected:
 		topright.y = 1.0f - (entry_start.y / atlas_dimension.y);
 		bottomleft.y = 1.0f - (entry_end.y / atlas_dimension.y);  // BITMAP coordinates and OpenGL textures coordinates are inverted
 
-		uniform_provider.AddVariableValue("bottomleft", bottomleft);
-		uniform_provider.AddVariableValue("topright", topright);
+		uniform_provider.AddVariable("bottomleft", bottomleft);
+		uniform_provider.AddVariable("topright", topright);
 
 		chaos::GPURenderParams render_params;
 		mesh_box->Render(renderer, program_box.get(), &uniform_provider, render_params);

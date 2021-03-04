@@ -108,7 +108,7 @@ protected:
 
 		glm::mat4 local_to_cam =  glm::scale(scale) * glm::translate(tr);
 
-		uniform_provider.AddVariableValue("local_to_cam", local_to_cam);
+		uniform_provider.AddVariable("local_to_cam", local_to_cam);
 
 		// draw
 		chaos::GPURenderParams render_params;

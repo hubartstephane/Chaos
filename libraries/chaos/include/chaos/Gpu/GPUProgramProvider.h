@@ -2,7 +2,12 @@
 
 namespace chaos
 {
+	enum class GPUProgramProviderType;
+
 	class GPUProgramProviderBase;
+
+	class GPUProgramProviderExecutionData;
+	class GPUProgramProviderDeduceLock;
 
 	template<typename T>
 	class GPUProgramProviderValue;
@@ -12,14 +17,113 @@ namespace chaos
 	class GPUProgramProviderChain;
 	class GPUProgramProviderDeducedTransformations;
 
-	class GPUProgramProviderSearchLock;
-
 }; // namespace chaos
 
 #else 
 
 namespace chaos
 {
+	/**
+	* GPUProgramProviderType : the type of search we are currently on
+	*/
+
+	enum class GPUProgramProviderType
+	{
+		FALLBACK = 1,
+		DEDUCED = 2,
+		EXPLICIT = 4
+	};
+
+	/**
+	* GPUProgramProviderExecutionData : some data used for deduction
+	*/
+
+	class GPUProgramProviderExecutionData
+	{
+		friend class GPUProgramProviderBase;
+		friend class GPUProgramProviderDeduceLock;
+
+	public:
+
+		/** constructor */
+		GPUProgramProviderExecutionData()
+		{
+			deduced_searches = &internal_deduced_searches; // use our own vector
+		}
+		/** constructor */
+		GPUProgramProviderExecutionData(GPUProgramProviderExecutionData const & src):
+			top_provider(src.top_provider),
+			deduced_searches(src.deduced_searches) // do not point to our internal vector, but on another one's !
+		{
+		}
+
+		/** check for name and return a lock */
+		GPUProgramProviderDeduceLock CanDeduce(char const* name, char const* searched_name) const;
+		/** get a value for the uniform / attribute */
+		template<typename T>
+		bool GetValue(char const* name, T& result) const
+		{
+			auto action = GPUProgramGetValueAction<T>(result);
+
+			GPUProgramProviderExecutionData other_execution_data(*this); // another data that shares the same vector than us !
+			// search for explicit first ...
+			other_execution_data.type = GPUProgramProviderType::EXPLICIT;
+			if (top_provider->ConditionalProcessAction(name, action, other_execution_data))
+				return true;
+			// ... then use deduced rules
+			other_execution_data.type = GPUProgramProviderType::DEDUCED;
+			if (top_provider->ConditionalProcessAction(name, action, other_execution_data))
+				return true;
+			// ... finally accept any fallback values
+			other_execution_data.type = GPUProgramProviderType::FALLBACK;
+			if (top_provider->ConditionalProcessAction(name, action, other_execution_data))
+				return true;
+			return false;
+		}
+
+		/** gets the type */
+		GPUProgramProviderType GetType() const { return type; }
+
+	protected:
+
+		/** the top level provider, used for deduction */
+		GPUProgramProviderBase const* top_provider = nullptr;
+		/** the type of provider we want to work on */
+		GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT;
+		/** the vector on which the search is effectively done (it may comes from another execution_data) */
+		std::vector<char const*> * deduced_searches = nullptr;
+		/** the pending searches. No need to make a deep copy of the string */
+		mutable std::vector<char const*> internal_deduced_searches;
+	};
+
+
+	class GPUProgramProviderDeduceLock
+	{
+		friend class GPUProgramProviderExecutionData;
+
+	public:
+
+		/** default constructor */
+		GPUProgramProviderDeduceLock() = default;
+		/** default move constructor */
+		GPUProgramProviderDeduceLock(GPUProgramProviderDeduceLock&& src);
+		/** no copy constructor */
+		GPUProgramProviderDeduceLock(GPUProgramProviderDeduceLock const& src) = delete;
+		/** destructor */
+		~GPUProgramProviderDeduceLock();
+		/** the lock is 'true' if there is a match (and there is no infinite loop) */
+		operator bool() const;
+		/** no copy */
+		GPUProgramProviderDeduceLock const& operator = (GPUProgramProviderDeduceLock const& src) = delete;
+
+	protected:
+
+		/** the name that is searched */
+		char const* searched_name = nullptr;
+		/** the execution data that requested for the lock */
+		GPUProgramProviderExecutionData const* execution_data = nullptr;
+	};
+
 	/**
 	* GPUProgramProviderBase : a base class for filling uniforms or attributes in a program. The purpose is to take responsability to start an ACTION
 	*/
@@ -28,28 +132,22 @@ namespace chaos
 	{
 		friend class GPUProgramProvider; // WTF : GPUProgramProvider could not call DoProcessAction(...) an another instance without that !!
 		friend class GPUProgramProviderChain;
+		friend class GPUProgramProviderExecutionData;
 		friend class GPUProgramRenderMaterialProvider;
 
 	public:
 
+		/** constructor */
+		GPUProgramProviderBase(GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
+			type(in_type) {}
+
 		/** the main method : returns try whether tha action has been handled (even if failed) */
-		bool ProcessAction(char const * name, GPUProgramAction & action) const
-		{
-			return DoProcessAction(name, action, this);
-		}
+		bool ProcessAction(char const* name, GPUProgramAction& action) const;
 
 		/** utility function that deserve to set uniform */
-		bool BindUniform(GLUniformInfo const & uniform) const
-		{
-			return ProcessAction(uniform.name.c_str(), GPUProgramSetUniformAction(uniform));
-		}
-
+		bool BindUniform(GLUniformInfo const& uniform) const;
 		/** utility function that deserve to set attribute */
-		bool BindAttribute(GLAttributeInfo const & attribute) const
-		{
-			return ProcessAction(attribute.name.c_str(), GPUProgramSetAttributeAction(attribute));
-		}
-
+		bool BindAttribute(GLAttributeInfo const& attribute) const;
 		/** get a value for the uniform / attribute */
 		template<typename T>
 		bool GetValue(char const * name, T & result) const
@@ -59,8 +157,15 @@ namespace chaos
 
 	protected:
 
+		/** check whether the type correspond to execution then DoProcessAction */
+		bool ConditionalProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data) const;
 		/** the main method : returns true whether that action has been successfully handled */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const { return false; }
+		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data) const;
+
+	protected:
+
+		/** the type of this provider */
+		GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT;
 	};
 
 	/**
@@ -73,13 +178,13 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderValue(char const * in_name, T const & in_value) :
-			handled_name(in_name), value(in_value) {}
+		GPUProgramProviderValue(char const * in_name, T const & in_value, GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
+			GPUProgramProviderBase(in_type), handled_name(in_name), value(in_value){}
 
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override
 		{
 			if (name != nullptr && handled_name != name)
 				return false;
@@ -105,13 +210,13 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderTexture(char const * in_name, shared_ptr<GPUTexture> in_value) :
-			handled_name(in_name), value(in_value) {}
+		GPUProgramProviderTexture(char const * in_name, shared_ptr<GPUTexture> in_value, GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
+			GPUProgramProviderBase(in_type), handled_name(in_name), value(in_value){}
 
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override;
 
 	protected:
 
@@ -125,70 +230,41 @@ namespace chaos
 	* GPUProgramProvider : used to fill GPUProgram binding for multiple uniforms / uniforms
 	*/
 
-	class GPUProgramProviderSearchLock
-	{
-		friend class GPUProgramProvider;
-
-	public:
-
-		/** default constructor */
-		GPUProgramProviderSearchLock() = default;
-		/** default move constructor */
-		GPUProgramProviderSearchLock(GPUProgramProviderSearchLock&& src);
-		/** no copy constructor */
-		GPUProgramProviderSearchLock(GPUProgramProviderSearchLock const& src) = delete;
-		/** destructor */
-		~GPUProgramProviderSearchLock();
-		/** the lock is 'true' if there is a match (and there is no infinite loop) */
-		operator bool() const;
-		/** no copy */
-		GPUProgramProviderSearchLock const& operator = (GPUProgramProviderSearchLock const& src) = delete;
-
-	protected:
-
-		/** the name that is searched */
-		char const* searched_name = nullptr;
-		/** the provider that requested for the lock */
-		GPUProgramProvider const* provider = nullptr;
-	};
-
 	class GPUProgramProvider : public GPUProgramProviderBase
 	{
 		friend class GPUResourceManager;
 		friend class GPUProgramRenderMaterialProvider;
-		friend class GPUProgramProviderSearchLock;
 
 	public:
 
+		/** constructor */
+		using GPUProgramProviderBase::GPUProgramProviderBase;
+
 		/** register a uniform value */
 		template<typename T>
-		void AddVariableValue(char const * name, T const & value)
+		void AddVariable(char const * name, T const & value, GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT)
 		{
-			AddVariableProvider(new GPUProgramProviderValue<T>(name, value));
+			AddProvider(new GPUProgramProviderValue<T>(name, value, type));
 		}
 		/** register a uniform texture */
-		void AddVariableTexture(char const * name, shared_ptr<class GPUTexture> texture)
+		void AddTexture(char const * name, shared_ptr<class GPUTexture> texture, GPUProgramProviderType type = GPUProgramProviderType::EXPLICIT)
 		{
-			AddVariableProvider(new GPUProgramProviderTexture(name, texture));
+			AddProvider(new GPUProgramProviderTexture(name, texture, type));
 		}
 		/** register a generic uniform */
-		virtual void AddVariableProvider(GPUProgramProviderBase * provider);
+		virtual void AddProvider(GPUProgramProviderBase * provider);
 		/** remove all uniforms for binding */
 		virtual void Clear();
 
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
-		/** check for name and return a lock */
-		GPUProgramProviderSearchLock DependantSearch(char const* name, char const* searched_name) const;
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override;
 
 	protected:
 
 		/** the uniforms to be set */
 		std::vector<shared_ptr<GPUProgramProviderBase>> children_providers;
-		/** the pending searches. No need to make a deep copy of the string */
-		mutable std::vector<char const*> pending_searches;
 	};
 
 	/**
@@ -201,14 +277,13 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider) :
-			fallback_provider(in_fallback_provider)
-		{}
+		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider, GPUProgramProviderType in_type = GPUProgramProviderType::EXPLICIT) :
+			DisableReferenceCount<GPUProgramProvider>(in_type), fallback_provider(in_fallback_provider) {}
 
 	protected:
 
 		/** apply the actions */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderBase const * top_provider) const override;
+		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override;
 
 	protected:
 
@@ -220,12 +295,15 @@ namespace chaos
 	* GPUProgramProviderDeducedTransformations : a provider that help finding world_to_local, local_to_world ... transformations
 	*/
 
-
 	class GPUProgramProviderDeducedTransformations : public GPUProgramProvider
 	{
 	public:
 
-		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderBase const* top_provider) const override;
+		/** constructor */
+		GPUProgramProviderDeducedTransformations(GPUProgramProviderType in_type = GPUProgramProviderType::DEDUCED) : // XXX : but default, here this is DEDUCED, not EXPLICIT !
+			GPUProgramProvider(in_type) {}
+		/** apply the actions */
+		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const & execution_data) const override;
 	};
 
 }; // namespace chaos

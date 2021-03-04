@@ -53,10 +53,10 @@ protected:
 
     chaos::shared_ptr<MyProvider> dynamic_provider = new MyProvider;
     chaos::shared_ptr<chaos::GPUProgramProvider> uniform_provider = new chaos::GPUProgramProvider;
-		uniform_provider->AddVariableValue("translate_mat", glm::translate(tr));
-		uniform_provider->AddVariableValue("scale_mat", glm::scale(scale));
-		uniform_provider->AddVariableValue("toto", glm::vec2(5.0f, 6.0f));
-    uniform_provider->AddVariableProvider(dynamic_provider.get());
+		uniform_provider->AddVariable("translate_mat", glm::translate(tr));
+		uniform_provider->AddVariable("scale_mat", glm::scale(scale));
+		uniform_provider->AddVariable("toto", glm::vec2(5.0f, 6.0f));
+    uniform_provider->AddProvider(dynamic_provider.get());
 
 #if 0
 		glm::mat4 m1;

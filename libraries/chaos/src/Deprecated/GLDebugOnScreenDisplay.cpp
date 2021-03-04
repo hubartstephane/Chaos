@@ -86,8 +86,8 @@ namespace chaos
 																	   // each characters is 1.0f unit large (+0.1f for padding)                                                                                                                                                                                                         
 																	   // see BitmapFontTextMeshBuilder
 		GPUProgramProvider uniform_provider;
-		uniform_provider.AddVariableValue("position_factor", glm::vec2(factor_x, factor_y));
-		uniform_provider.AddVariableTexture("material", texture);
+		uniform_provider.AddVariable("position_factor", glm::vec2(factor_x, factor_y));
+		uniform_provider.AddTexture("material", texture);
 
 		GPUProgramData const & program_data = program->GetProgramData();
 		program_data.BindUniforms(&uniform_provider);

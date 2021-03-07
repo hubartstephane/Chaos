@@ -41,7 +41,7 @@ protected:
 
 		std::cout << "-- CREATE SHARED BUFFER 1 --" << std::endl;
 
-		auto a = chaos::SharedNonOptimzedBufferPolicy<A>::NewBuffer(10);
+		auto a = chaos::SharedNonOptimizedBufferPolicy<A>::NewBuffer(10);
 
 		std::cout << "-- CREATE SHARED BUFFER 2--" << std::endl;
 

@@ -98,11 +98,11 @@ namespace chaos
 	};
 
 	/**
-	* SharedNonOptimzedBufferPolicy : same than SharedNonOptimzedBufferPolicy, but policy is in an independent memory than the data
+	* SharedNonOptimizedBufferPolicy : same than SharedNonOptimizedBufferPolicy, but policy is in an independent memory than the data
 	*/
 
 	template<typename T> 
-	class SharedNonOptimzedBufferPolicy : public SharedBufferPolicy<T>
+	class SharedNonOptimizedBufferPolicy : public SharedBufferPolicy<T>
 	{
 
 	public:
@@ -111,7 +111,7 @@ namespace chaos
 		static Buffer<T> NewBuffer(size_t count)
 		{
 			Buffer<T> result(new T[count], count);
-			result.SetPolicy(new SharedNonOptimzedBufferPolicy<T>);
+			result.SetPolicy(new SharedNonOptimizedBufferPolicy<T>);
 			return result;
 		}
 

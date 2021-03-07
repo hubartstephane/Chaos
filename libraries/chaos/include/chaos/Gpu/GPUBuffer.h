@@ -43,8 +43,6 @@ namespace chaos
 		/** unmap the buffer */
 		void UnMapBuffer();
 
-		/** unmap the buffer */
-
 	protected:
 
 		/** cleaning the object */

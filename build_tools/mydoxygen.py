@@ -1,5 +1,3 @@
-#! /usr/bin/python3.5
-
 # A mydoxygen.conf file can be created with the command :
 #
 #  doxygen -g mydoxygen.conf
@@ -26,7 +24,7 @@ else:
   try:
     gen_fp       = open(general_script_path)
     content      = gen_fp.read()
-    
+   
     if (os.path.isfile(special_script_path)): # test special conf file in "doxygen" directory
       spe_fp  = open(special_script_path)
       content = content + spe_fp.read()

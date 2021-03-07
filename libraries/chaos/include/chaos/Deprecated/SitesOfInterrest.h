@@ -53,4 +53,17 @@ FontLab
 // OBS : Open BroadCaster Studio
 https://obsproject.com/fr
 
+// a library to use web cam
+Escapi
+
+// youtube programmer's of interrest
+javidx9
+The Cherno
+Sebastian Lague
+C++ Weekly With Jason Turner
+
+// youtube 8bit artist of interrest
+Pixel Pete
+Brandon James Greer
+
 #endif

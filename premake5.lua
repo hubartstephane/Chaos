@@ -15,9 +15,9 @@ TYPE_RESOURCES        = 3
 
 BUILD_TARGET       = _ACTION
 ROOT_PATH          = path.getdirectory(_SCRIPT)
-SOLUTION_PATH      = path.join(ROOT_PATH, "..", "premaked_solutions", BUILD_TARGET)
+SOLUTION_PATH      = path.join(ROOT_PATH, "solutions", BUILD_TARGET)
 EXTERNAL_PATH      = path.join(ROOT_PATH, "..", "external")
-BUILD_PATH         = path.join(ROOT_PATH, ".." , "build", BUILD_TARGET)
+BUILD_PATH         = path.join(ROOT_PATH, "build", BUILD_TARGET)
 BUILD_TOOLS_PATH   = path.join(ROOT_PATH, "build_tools") 
 COPY_SCRIPT        = path.join(BUILD_TOOLS_PATH, "mycopy.py")
 ZIP_SCRIPT         = path.join(BUILD_TOOLS_PATH, "myzip.py")

@@ -208,7 +208,7 @@ namespace chaos
 	CHAOS_HELP_TEXT(CMD, "-GLDebugBreak");
 #endif
 
-	static void DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
+	static void GLAPIENTRY DebugMessageHandler(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar * msg, const void * user_data)
 	{
 		if (severity != GL_DEBUG_SEVERITY_NOTIFICATION || Application::HasApplicationCommandLineFlag("-GLDebugNotifications")) // CMDLINE
 		{

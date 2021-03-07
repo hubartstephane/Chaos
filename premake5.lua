@@ -741,7 +741,7 @@ end
 --  {TOUCH}
 -- =============================================================================
 
-solution "DeathAndChaos"
+solution "Chaos"
   platforms { x32, x64 }
   configurations { DEBUG , RELEASE }
 

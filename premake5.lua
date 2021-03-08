@@ -22,6 +22,7 @@ BUILD_TOOLS_PATH   = path.join(ROOT_PATH, "build_tools")
 COPY_SCRIPT        = path.join(BUILD_TOOLS_PATH, "mycopy.py")
 ZIP_SCRIPT         = path.join(BUILD_TOOLS_PATH, "myzip.py")
 DOXYGEN_SCRIPT     = path.join(BUILD_TOOLS_PATH, "mydoxygen.py")
+CLEAN_SCRIPT       = path.join(BUILD_TOOLS_PATH, "myclean.py")
 PROJ_NAME          = ""
 PROJECT_PATH       = ""
 PROJECT_SRC_PATH   = ""
@@ -396,23 +397,19 @@ function onConfig(in_kind, plat, conf, proj)
    includedirs(inc)
    
    proj.includedirs[plat][conf] = inc     
-   
-   --defines("CHAOS_PROJECT_PATH='".. PROJECT_PATH.."'")
-   --defines("CHAOS_PROJECT_SRC_PATH='".. PROJECT_SRC_PATH.."'")     
-   --defines("CHAOS_PROJECT_BUILD_PATH='".. targ .. "'")
-   
-           
-   defines("CHAOS_PROJECT_PATH=\"".. PROJECT_PATH.."\"")          
-   defines("CHAOS_PROJECT_SRC_PATH=\"".. PROJECT_SRC_PATH.."\"")     
-   defines("CHAOS_PROJECT_BUILD_PATH=\"".. targ .. "\"")        
+
+   defines('CHAOS_PROJECT_PATH=\"'.. PROJECT_PATH..'\"')          
+   defines('CHAOS_PROJECT_SRC_PATH=\"'.. PROJECT_SRC_PATH..'\"')     
+   defines('CHAOS_PROJECT_BUILD_PATH=\"'.. targ .. '\"')        
       
-    
     characterset("ASCII")  
 end
 
 -- =============================================================================
 -- ResourceProject : generate a non-visual project (just a data project or system)
 -- =============================================================================
+
+--[[
 
 function ResourceProject()
                              
@@ -440,6 +437,8 @@ function ResourceProject()
     
 end
 
+]]--
+
 -- =============================================================================
 -- CppProject : entry point for all C++ Applications
 -- =============================================================================
@@ -457,7 +456,6 @@ function CppProject(in_kind, proj_type)
   project (resource_proj_name)
     kind("Makefile")  
     
-  
   -- create the project it self
   project(PROJ_NAME)
    
@@ -485,7 +483,8 @@ function CppProject(in_kind, proj_type)
     kind(in_kind)
     
     language "C++"
-    cppdialect "C++17"
+	cppdialect "C++latest"
+    --cppdialect "C++17"
     --staticruntime "on"
     
     -- change entry point for windows (avoid WinMain to main)
@@ -538,18 +537,6 @@ function WindowedApp()
   DisplayEnvironment()
   return result    
 end
-
--- =============================================================================
--- WindowedApp : entry point WindowsApp
--- =============================================================================
-
-function WindowedApp()
-  local result = CppProject("WindowedApp", TYPE_EXECUTABLE)
-  DeclareResource("config.lua")  
-  --DependOnLib("COMMON RESOURCES")     
-  DisplayEnvironment()
-  return result    
-end       
 
 -- =============================================================================
 -- StaticLib : entry point for libraries
@@ -755,11 +742,10 @@ solution "Chaos"
     defines { "LINUX" }
   end
    
-  CURRENT_GROUP = nil
-  ProcessSubPremake("common resources")
+ -- CURRENT_GROUP = nil
+ -- ProcessSubPremake("common resources")
   
   CURRENT_GROUP = nil  
-  --ProcessSubPremake("external", EXTERNAL_PATH, "external_premake5.lua")
   ProcessSubPremake("external", ".", "external_premake5.lua")
   
   CURRENT_GROUP = "libraries"         
@@ -951,20 +937,33 @@ for i in pairs(MYPROJECTS) do
     project(resources_proj_name)
     kind("Makefile")  
     
-    local build_command_str = "\"" .. DOXYGEN_SCRIPT .. "\" \"" .. proj.root_path .. "\" \"" .. proj.build_path .. "\" \"" .. proj.name .. "\""    
-             
+    local build_command_str = '\"' .. DOXYGEN_SCRIPT .. '\" \"' .. proj.root_path .. '\" \"' .. proj.build_path .. '\" \"' .. proj.name .. '\"'
+	
+	local doc_path = path.join(proj.build_path, "html")
+	local clean_command_str = '\"' .. CLEAN_SCRIPT .. '\" \"' .. doc_path .. '\"'
+	
+	Output(build_command_str)
+	Output(clean_command_str)
+	
     configuration {DEBUG, x32}
     buildcommands (build_command_str)
-    rebuildcommands (build_command_str)
+	rebuildcommands (build_command_str)
+	cleancommands (clean_command_str)
+	    
     configuration {DEBUG, x64}
     buildcommands (build_command_str)
     rebuildcommands (build_command_str)
+	cleancommands (clean_command_str)
+	
     configuration {RELEASE, x32}
     buildcommands (build_command_str)
     rebuildcommands (build_command_str)
+	cleancommands (clean_command_str)
+	
     configuration {RELEASE, x64}
     buildcommands (build_command_str)
     rebuildcommands (build_command_str)
+	cleancommands (clean_command_str)
                  
     if (AUTO_DOCUMENTATION) then
       project(proj.name)      

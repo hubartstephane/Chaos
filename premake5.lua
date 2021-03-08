@@ -532,7 +532,7 @@ end
 function WindowedApp()
 
   local result = CppProject("WindowedApp", TYPE_EXECUTABLE)
-  DeclareResource("config.lua")
+  --DeclareResource("config.lua")
   --DependOnLib("COMMON RESOURCES")       
   DisplayEnvironment()
   return result    
@@ -826,8 +826,12 @@ function CopyResourceFiles(dst_proj, src_proj, plat, conf, proj_visible) -- dst_
           end
         end                             
                              
-        local build_command_str = ("\"" .. COPY_SCRIPT .. "\" \"" .. full_filename .. "\" \"" .. dst_name .. "\"")
+        local build_command_str = ('\"' .. COPY_SCRIPT .. '\" \"' .. full_filename .. '\" \"' .. dst_name .. '\"')
         buildcommands (build_command_str)
+		
+		local clean_command_str = '\"' .. CLEAN_SCRIPT .. '\" \"' .. dst_name .. '\"'		
+		cleancommands (clean_command_str)
+		
       end                     
     end
   end
@@ -949,7 +953,7 @@ for i in pairs(MYPROJECTS) do
     buildcommands (build_command_str)
 	rebuildcommands (build_command_str)
 	cleancommands (clean_command_str)
-	    
+
     configuration {DEBUG, x64}
     buildcommands (build_command_str)
     rebuildcommands (build_command_str)

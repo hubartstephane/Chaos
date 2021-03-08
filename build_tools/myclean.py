@@ -5,7 +5,10 @@ import os, sys, shutil
 def MyClean(src):
   print ("MYCLEAN [%s]" % src)
   try:
-    shutil.rmtree(src)
+    if (os.path.isfile(src)):
+      os.remove(src)    
+    else:    
+      shutil.rmtree(src)
   except Exception as e:
     print ("Failure : %s" % (e))    
 

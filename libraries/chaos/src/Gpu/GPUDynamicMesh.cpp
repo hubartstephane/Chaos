@@ -2,6 +2,11 @@
 
 namespace chaos
 {
+    GPUDynamicMesh::GPUDynamicMesh()
+    {
+        vertex_array_cache = new GPUVertexArrayCache;
+    }
+
     GPUDynamicMeshElement & GPUDynamicMesh::AddMeshElement()
     {
         return elements.emplace_back();
@@ -22,7 +27,7 @@ namespace chaos
     {
         // create a vertex array cache if necessary
         if (vertex_array_cache == nullptr)
-            vertex_array_cache = new GPUVertexArrayCache;
+            return 0;
         // display the elements
         int result = 0;       
         for (GPUDynamicMeshElement & element : elements)

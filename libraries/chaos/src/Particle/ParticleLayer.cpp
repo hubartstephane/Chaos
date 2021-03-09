@@ -106,7 +106,7 @@ namespace chaos
 	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
         // early exit
-        if (dynamic_mesh.IsEmpty())
+        if (dynamic_mesh == nullptr || dynamic_mesh->IsEmpty())
             return 0;
 		// search the material
 		GPURenderMaterial const * final_material = render_params.GetMaterial(this, render_material.get());
@@ -132,7 +132,7 @@ namespace chaos
         GPURenderParams other_render_params = render_params;
         other_render_params.material_provider = &material_provider;
         // let the dynamic mesh render itself
-        return dynamic_mesh.Display(renderer, uniform_provider, other_render_params);
+        return dynamic_mesh->Display(renderer, uniform_provider, other_render_params);
     }
 
     void ParticleLayerBase::UpdateVertexDeclaration()
@@ -146,7 +146,7 @@ namespace chaos
 
     size_t ParticleLayerBase::EvaluateGPUVertexMemoryRequirement() const
     {
-        size_t result = GetDynamicMeshVertexCount(dynamic_mesh); 
+        size_t result = GetDynamicMeshVertexCount(dynamic_mesh.get()); 
         if (result == 0) // happens whenever the mesh is empty (first call for example)
         {
             // XXX : for strip and fans, we take 6 as an empiric value
@@ -160,28 +160,27 @@ namespace chaos
 
     bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer* renderer)
     {
-        // update the vertex declaration
-        UpdateVertexDeclaration();
         // ensure their is some reason to update the rendering data
-        if (!require_GPU_update && !AreVerticesDynamic())
-            return true;
+		if (!require_GPU_update && !AreVerticesDynamic())
+			return true;
+		// update the vertex declaration
+		UpdateVertexDeclaration();
+		// create the mesh if necessary
+		if (dynamic_mesh == nullptr)
+		{
+			dynamic_mesh = new GPUDynamicMesh();
+			if (dynamic_mesh == nullptr)
+				return false;
+		}
         // evaluate how much memory should be allocated for buffers (count in vertices)
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement();
         // clear previous dynamic mesh (and give buffers back for further usage)       
         if (particle_manager != nullptr)
-        {
-            dynamic_mesh.Clear(&particle_manager->GetBufferCache());
-            dynamic_mesh.SetVertexArrayCache(particle_manager->GetVertexArrayCache());
-        }
+			dynamic_mesh->Clear(&particle_manager->GetBufferCache());
         else
-        {
-            if (vertex_array_cache == nullptr)
-                vertex_array_cache = new GPUVertexArrayCache;
-            dynamic_mesh.Clear(&buffer_cache);
-            dynamic_mesh.SetVertexArrayCache(vertex_array_cache.get());
-        }
+			dynamic_mesh->Clear(&buffer_cache);
         // select PrimitiveOutput and collect vertices        
-        DoUpdateGPUBuffers(renderer, vertex_requirement_evaluation);
+		DoGenerateMeshData(dynamic_mesh.get(), renderer, vertex_requirement_evaluation);
         // mark as up to date
         require_GPU_update = false;
 
@@ -246,14 +245,16 @@ namespace chaos
 			particles_allocations[i - 1]->Resize(0);
 	}
 
-    size_t ParticleLayerBase::GetDynamicMeshVertexCount(GPUDynamicMesh const& mesh) const
+    size_t ParticleLayerBase::GetDynamicMeshVertexCount(GPUDynamicMesh const * mesh) const
     {
+		assert(mesh != nullptr);
+
         size_t result = 0;
 
-        size_t count = mesh.GetMeshElementCount();
+        size_t count = mesh->GetMeshElementCount();
         for (size_t i = 0 ; i < count; ++i)
         {
-            GPUDynamicMeshElement const& element = mesh.GetMeshElement(i);
+            GPUDynamicMeshElement const& element = mesh->GetMeshElement(i);
             for (GPUDrawPrimitive const& primitive : element.primitives)
                 result += primitive.count;
         }

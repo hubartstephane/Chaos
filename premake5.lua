@@ -19,6 +19,7 @@ SOLUTION_PATH      = path.join(ROOT_PATH, "solutions", BUILD_TARGET)
 EXTERNAL_PATH      = path.join(ROOT_PATH, "..", "external")
 BUILD_PATH         = path.join(ROOT_PATH, "build", BUILD_TARGET)
 BUILD_TOOLS_PATH   = path.join(ROOT_PATH, "build_tools") 
+ZIP_PATH           = path.join(ROOT_PATH, "zip") 
 COPY_SCRIPT        = path.join(BUILD_TOOLS_PATH, "mycopy.py")
 ZIP_SCRIPT         = path.join(BUILD_TOOLS_PATH, "myzip.py")
 DOXYGEN_SCRIPT     = path.join(BUILD_TOOLS_PATH, "mydoxygen.py")
@@ -32,9 +33,9 @@ CURRENT_GROUP      = nil
 
 MYPROJECTS = {}
 
-DISPLAY_ROOT_ENVIRONMENT = false
-DISPLAY_ENVIRONMENT      = true
-DISPLAY_DEPENDENCIES     = true
+DISPLAY_ROOT_ENVIRONMENT = true
+DISPLAY_ENVIRONMENT      = false
+DISPLAY_DEPENDENCIES     = false
 
 DEBUG   = "DEBUG"
 RELEASE = "RELEASE"
@@ -153,12 +154,15 @@ function DisplayRootEnvironment()
   if (DISPLAY_ROOT_ENVIRONMENT) then
     Output("=======================================================================")
     Output("PREMAKE5 VERSION   : " .. _PREMAKE_VERSION)
+	Output("BUILD_TARGET       : " .. BUILD_TARGET)    	
     Output("ROOT_PATH          : " .. ROOT_PATH)
+	Output("ZIP_PATH           : " .. ZIP_PATH)
     Output("EXTERNAL_PATH      : " .. EXTERNAL_PATH)    
     Output("BUILD_TOOLS_PATH   : " .. BUILD_TOOLS_PATH)
     Output("COPY_SCRIPT        : " .. COPY_SCRIPT)
     Output("ZIP_SCRIPT         : " .. ZIP_SCRIPT)   
     Output("DOXYGEN_SCRIPT     : " .. DOXYGEN_SCRIPT)    
+    Output("CLEAN_SCRIPT       : " .. CLEAN_SCRIPT)    	
     Output("=======================================================================")
     Output("")
   end 
@@ -507,7 +511,6 @@ function CppProject(in_kind, proj_type)
   if (CURRENT_GROUP ~= nil) then
     group(group_name)   
   end
-  
   -- create a project for the resources
   local resource_proj_name = GetDependantResourceProjName(PROJ_NAME)
   project (resource_proj_name)
@@ -708,7 +711,7 @@ function ProcessSubPremake(proj_name, sub_path, filename)
 
   INDENT = INDENT + 1
 
-  local env = StoreEnvironment({"PROJECT_PATH", "PROJ_NAME", "PROJECT_SRC_PATH", "BUILD_PATH"})
+  local env = StoreEnvironment({"CURRENT_GROUP", "PROJECT_PATH", "PROJ_NAME", "PROJECT_SRC_PATH", "BUILD_PATH", "PROJECT_BUILD_PATH"})
   
   PROJ_NAME = string.upper(path.getbasename(proj_name))
     
@@ -784,8 +787,8 @@ end
 -- =============================================================================
 
 solution "Chaos"
-  platforms (table.unpack(PLATFORMS))
-  configurations (table.unpack(CONFIGS))
+  platforms {table.unpack(PLATFORMS)}
+  configurations {table.unpack(CONFIGS)}
 
   location (SOLUTION_PATH) -- where the visual studio project file is been created  
 
@@ -980,6 +983,23 @@ for i in pairs(MYPROJECTS) do
   end)
 end  
 
+-- =============================================================================
+-- String concatenation
+-- =============================================================================
+
+function QuotationMarks(...)
+  local arg={...}
+
+  local result = ""
+  for i,v in ipairs(arg) do
+    if (result ~= "") then
+	  result = result .. " "
+	end
+    result = result .. '"' .. tostring(arg[i]) .. '"'
+  end 
+  return result
+end
+
 
 -- =============================================================================
 -- Generate documentation
@@ -995,10 +1015,10 @@ for i in pairs(MYPROJECTS) do
     project(resources_proj_name)
     kind("Makefile")  
 	    
-    local build_command_str = '\"' .. DOXYGEN_SCRIPT .. '\" \"' .. proj.root_path .. '\" \"' .. proj.build_path .. '\" \"' .. proj.name .. '\"'
+	local build_command_str = QuotationMarks(DOXYGEN_SCRIPT, proj.root_path, proj.build_path, proj.name)
 	
 	local doc_path = path.join(proj.build_path, "html")
-	local clean_command_str = '\"' .. CLEAN_SCRIPT .. '\" \"' .. doc_path .. '\"'
+	local clean_command_str = QuotationMarks(CLEAN_SCRIPT, doc_path)
 		
     AllTargets(function(plat, conf)
       configuration {conf, plat}
@@ -1006,11 +1026,14 @@ for i in pairs(MYPROJECTS) do
 	  rebuildcommands (build_command_str)
 	  cleancommands (clean_command_str)
     end)	
-	                 
+	
+	links(proj.name)
+--[[	
     if (AUTO_DOCUMENTATION) then
       project(proj.name)      
       links(resources_proj_name)
     end  
+]]--
   end
 end
 
@@ -1022,34 +1045,31 @@ for i in pairs(MYPROJECTS) do
 
   local proj = MYPROJECTS[i]
   
-  if (proj.genzip) then
-  
---  Output("xxxxxxxxxxxxxxxxxxxxxxxxxxx" .. proj.targetdir[x64][DEBUG])
-  
-  --Output(GetDebugRepresentationString(proj.targetdir))
+  if (proj.genzip and proj.proj_type == TYPE_EXECUTABLE) then
   
 	local zip_proj_name = GetDependantZipProjName(proj.name)
-	Output(zip_proj_name)
 	
 	group(proj.group_name) -- same group than the library      
 	project (zip_proj_name)
 	kind("Makefile")   
 	
 	AllTargets(function(plat, conf)
---	  Output("xx " .. proj.name .. " " .. proj.targetdir[plat][conf])
+	
+	  configuration {conf, plat}
+	
+	  local zip_path = path.join(ZIP_PATH, proj.name) .. "_" .. conf .. "_" .. plat .. ".zip"
+	
+	  local zip_command_str = QuotationMarks(ZIP_SCRIPT, proj.targetdir[plat][conf], zip_path)
+      buildcommands (zip_command_str)
+	  rebuildcommands (zip_command_str)	  
+	
+	  local clean_command_str = QuotationMarks(CLEAN_SCRIPT, zip_path)
+      cleancommands (clean_command_str)	
+	
+	  links(proj.name)
+	  links(GetDependantResourceProjName(proj.name))
+	
 	end)
-  
-	--local zip_command_str = '\"' .. ZIP_SCRIPT .. '\" \"' .. proj.build_path .. '\" \"' .. proj.build_path .. '\" \"' .. proj.name .. '\"'
-	
-	--local zip_command_str = '\"' .. ZIP_SCRIPT .. '\" \"' .. proj.build_path .. '\"'
-	
-	--Output("xx" ..proj.build_path)
-  
-  
-    project(proj.name)      
-    links(zip_proj_name)  
-  
-  end
-  
+  end  
 end
 

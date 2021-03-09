@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 # XXX : why such a useless executable that make   xcopy only ?
 #       because path in commands send from premake replace \ by / (or the inverse)
 #       that makes trouble on windows

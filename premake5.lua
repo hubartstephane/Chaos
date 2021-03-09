@@ -43,11 +43,33 @@ x64     = "x64"
 win32   = "win32"
 win64   = "win64"
 
+--PLATFORMS = {x32, x64}
+PLATFORMS = {x64}
+CONFIGS   = {DEBUG, RELEASE}
+
+
 INDENT = 1
+
+
+-- ============================================================================= 
+-- AllTargets functions
+-- =============================================================================
+
+function AllTargets(fun)
+  for pi in pairs(PLATFORMS) do
+    for pc in pairs(CONFIGS) do
+      fun(PLATFORMS[pi], CONFIGS[pc]) 
+    end  
+  end
+end
 
 -- ============================================================================= 
 -- Type functions
 -- =============================================================================
+
+function IsBool(value)
+  return (type(value) == "boolean")
+end
 
 function IsTable(value)
   return (type(value) == "table")
@@ -90,6 +112,13 @@ end
 -- =============================================================================
 
 function GetDebugRepresentationString(obj)
+  if (IsBool(obj)) then
+    if (obj) then
+      return "true"
+	else
+	  return "false"
+	end
+  end  
   if (IsNil(obj)) then
     return "nil"    
   end            
@@ -112,7 +141,8 @@ function GetDebugRepresentationString(obj)
     end        
     result = result .. "}"    
     return result  
-  end                    
+  end  
+  return "???"  
 end
 
 -- ============================================================================= 
@@ -177,6 +207,10 @@ function GetDependantDocumentationProjName(proj_name)
   return "Documentation of " .. proj_name
 end
 
+function GetDependantZipProjName(proj_name)
+  return "ZIP of " .. proj_name
+end
+
 function GetDependantResourceProjName(proj_name)
   return "Resources of " .. proj_name
 end
@@ -225,10 +259,9 @@ function DeclareResourceHelper(proj, filename)
 
   local tmp = GetPlatConfArray(filename)
   
-  TransformResourcePath(proj, proj.tocopy, tmp, x32, DEBUG) 
-  TransformResourcePath(proj, proj.tocopy, tmp, x32, RELEASE)    
-  TransformResourcePath(proj, proj.tocopy, tmp, x64, DEBUG)        
-  TransformResourcePath(proj, proj.tocopy, tmp, x64, RELEASE)  
+  AllTargets(function(plat, conf)
+    TransformResourcePath(proj, proj.tocopy, tmp, plat, conf) 
+  end)
 end
 
 function DeclareResource(filename)
@@ -284,18 +317,11 @@ end
 
 function PrefixPathArray(src, prefix)
   prefix = prefix or EXTERNAL_PATH
-  if (src[x32][DEBUG]) then   
-    src[x32][DEBUG]   = path.join(prefix, src[x32][DEBUG])
-  end  
-  if (src[x64][DEBUG]) then  
-    src[x64][DEBUG]   = path.join(prefix, src[x64][DEBUG])
-  end  
-  if (src[x32][RELEASE]) then  
-    src[x32][RELEASE] = path.join(prefix, src[x32][RELEASE])
-  end  
-  if (src[x64][RELEASE]) then  
-    src[x64][RELEASE] = path.join(prefix, src[x64][RELEASE])
-  end  
+  AllTargets(function(plat, conf)
+    if (src[plat][conf]) then   
+      src[plat][conf]   = path.join(prefix, src[plat][conf])
+    end   
+  end)
   return src        
 end
 
@@ -331,11 +357,29 @@ end
 -- =============================================================================
 
 function HasPlatformKey(value)
-  return (IsTable(value) and (not IsNil(value[x32]) or not IsNil(value[x64])))
+  if (not IsTable(value)) then
+    return false
+  end
+  
+  for pi in pairs(PLATFORMS) do
+    if (not IsNil(value[PLATFORMS[pi]])) then
+      return true
+    end  
+  end
+  return false
 end
 
 function HasConfigKey(value)
-  return (IsTable(value) and (not IsNil(value[DEBUG]) or not IsNil(value[RELEASE])))
+  if (not IsTable(value)) then
+    return false
+  end
+  
+  for pc in pairs(CONFIGS) do
+    if (not IsNil(value[CONFIGS[pc]])) then
+      return true
+    end  
+  end
+  return false
 end
 
 function DeepCopy(value)
@@ -361,20 +405,33 @@ function GetPlatConfArrayHelper(value, plat, conf)
 end
 
 function GetPlatConfArray(value)
-
-   local result = { 
-      x32 = { DEBUG = DeepCopy(GetPlatConfArrayHelper(value, x32, DEBUG)) , RELEASE = DeepCopy(GetPlatConfArrayHelper(value, x32, RELEASE)) }, 
-      x64 = { DEBUG = DeepCopy(GetPlatConfArrayHelper(value, x64, DEBUG)) , RELEASE = DeepCopy(GetPlatConfArrayHelper(value, x64, RELEASE)) } 
-   }      
-   return result;    
+  local result = {}
+  
+  for pi in pairs(PLATFORMS) do
+    local plat = PLATFORMS[pi]
+    result[plat] = {}
+    for pc in pairs(CONFIGS) do
+	  local conf = CONFIGS[pc]
+	  result[plat][conf] = DeepCopy(GetPlatConfArrayHelper(value, plat, conf))
+    end
+  end
+  return result;    
 end
 
 -- =============================================================================
--- WindowedApp : entry point WindowsApp
+-- GenDoxygen : doxygen generation
 -- =============================================================================
 
 function GenDoxygen()
   FindProject().gendoxygen = true
+end
+
+-- =============================================================================
+-- GenZIP : Zip generation
+-- =============================================================================
+
+function GenZIP()
+  FindProject().genzip = true
 end
 
 -- =============================================================================
@@ -476,6 +533,7 @@ function CppProject(in_kind, proj_type)
     result.includedirs      = GetPlatConfArray(nil); 
     result.tocopy           = GetPlatConfArray({});
     result.gendoxygen       = false
+    result.genzip           = false
     result.group_name       = group_name
     result.proj_location    = proj_location
     result.additionnal_libs = GetPlatConfArray({});           
@@ -503,25 +561,22 @@ function CppProject(in_kind, proj_type)
     local src_hpp = path.join(PROJECT_SRC_PATH, "**.hpp")
     local src_c   = path.join(PROJECT_SRC_PATH, "**.c")
     local src_cpp = path.join(PROJECT_SRC_PATH, "**.cpp")              
-    files {src_h, src_hpp, src_c, src_cpp}                      
-                        
-    DebugConf(x32)
-      onConfig(in_kind, x32, DEBUG, result)
-        
-    ReleaseConf(x32)
-      onConfig(in_kind, x32, RELEASE, result)        
-        
-    DebugConf(x64)
-      onConfig(in_kind, x64, DEBUG, result)        
-        
-    ReleaseConf(x64)
-      onConfig(in_kind, x64, RELEASE, result)
+    files {src_h, src_hpp, src_c, src_cpp}          
+
+	AllTargets(function(plat, conf)
+	  if (conf == DEBUG) then
+	    DebugConf(plat)
+	  else
+	    ReleaseConf(plat)
+	  end
+	  onConfig(in_kind, plat, conf, result)
+	end)
       
     result.inc_path     = GetPlatConfArray(inc_path)      
     result.src_path     = GetPlatConfArray(src_path)
     result.res_path     = GetPlatConfArray(res_path)
     result.dependencies = {}
-  
+    
   return result        
 end
 
@@ -535,6 +590,7 @@ function WindowedApp()
   --DeclareResource("config.lua")
   --DependOnLib("COMMON RESOURCES")       
   DisplayEnvironment()
+  GenZIP()
   return result    
 end
 
@@ -578,11 +634,10 @@ function DependOnStandardLib(libname)
     for i in pairs(libname) do
       DependOnStandardLib(libname[i])
     end
-  else  
-    table.insert(proj.additionnal_libs[x32][DEBUG],   libname)   
-    table.insert(proj.additionnal_libs[x32][RELEASE], libname) 
-    table.insert(proj.additionnal_libs[x64][DEBUG],   libname)    
-    table.insert(proj.additionnal_libs[x64][RELEASE], libname)
+  else
+    AllTargets(function(plat, conf)
+	  table.insert(proj.additionnal_libs[plat][conf], libname)  
+	end)
   end
 end
 
@@ -729,8 +784,8 @@ end
 -- =============================================================================
 
 solution "Chaos"
-  platforms { x32, x64 }
-  configurations { DEBUG , RELEASE }
+  platforms (table.unpack(PLATFORMS))
+  configurations (table.unpack(CONFIGS))
 
   location (SOLUTION_PATH) -- where the visual studio project file is been created  
 
@@ -851,11 +906,11 @@ function ResolveDependency(proj, other_proj, plat, conf)
       end          
     end
     
-    local target_dir = other_proj.targetdir[plat][conf] 
-    if (target_dir) then                
-      libdirs(target_dir)
+    local targetdir = other_proj.targetdir[plat][conf] 
+    if (targetdir) then                
+      libdirs(targetdir)
       if (DISPLAY_DEPENDENCIES) then        
-        Output("ResolveDependency [" .. proj.name .. "] libdirs     [" .. target_dir .. "] for " .. plat .. " " .. conf)
+        Output("ResolveDependency [" .. proj.name .. "] libdirs     [" .. targetdir .. "] for " .. plat .. " " .. conf)
       end                  
     end
     
@@ -920,10 +975,9 @@ end
 
 for i in pairs(MYPROJECTS) do   
   local proj = MYPROJECTS[i]
-  ResolveDependencyAndCopy(proj, x32, DEBUG)      
-  ResolveDependencyAndCopy(proj, x64, DEBUG)
-  ResolveDependencyAndCopy(proj, x32, RELEASE)
-  ResolveDependencyAndCopy(proj, x64, RELEASE)
+  AllTargets(function(plat, conf)
+    ResolveDependencyAndCopy(proj, plat, conf)      
+  end)
 end  
 
 
@@ -940,35 +994,19 @@ for i in pairs(MYPROJECTS) do
     group(proj.group_name) -- same group than the library      
     project(resources_proj_name)
     kind("Makefile")  
-    
+	    
     local build_command_str = '\"' .. DOXYGEN_SCRIPT .. '\" \"' .. proj.root_path .. '\" \"' .. proj.build_path .. '\" \"' .. proj.name .. '\"'
 	
 	local doc_path = path.join(proj.build_path, "html")
 	local clean_command_str = '\"' .. CLEAN_SCRIPT .. '\" \"' .. doc_path .. '\"'
-	
-	Output(build_command_str)
-	Output(clean_command_str)
-	
-    configuration {DEBUG, x32}
-    buildcommands (build_command_str)
-	rebuildcommands (build_command_str)
-	cleancommands (clean_command_str)
-
-    configuration {DEBUG, x64}
-    buildcommands (build_command_str)
-    rebuildcommands (build_command_str)
-	cleancommands (clean_command_str)
-	
-    configuration {RELEASE, x32}
-    buildcommands (build_command_str)
-    rebuildcommands (build_command_str)
-	cleancommands (clean_command_str)
-	
-    configuration {RELEASE, x64}
-    buildcommands (build_command_str)
-    rebuildcommands (build_command_str)
-	cleancommands (clean_command_str)
-                 
+		
+    AllTargets(function(plat, conf)
+      configuration {conf, plat}
+      buildcommands (build_command_str)
+	  rebuildcommands (build_command_str)
+	  cleancommands (clean_command_str)
+    end)	
+	                 
     if (AUTO_DOCUMENTATION) then
       project(proj.name)      
       links(resources_proj_name)
@@ -976,6 +1014,42 @@ for i in pairs(MYPROJECTS) do
   end
 end
 
-  
+-- =============================================================================
+-- Generate ZIP
+-- =============================================================================
 
+for i in pairs(MYPROJECTS) do   
+
+  local proj = MYPROJECTS[i]
+  
+  if (proj.genzip) then
+  
+--  Output("xxxxxxxxxxxxxxxxxxxxxxxxxxx" .. proj.targetdir[x64][DEBUG])
+  
+  --Output(GetDebugRepresentationString(proj.targetdir))
+  
+	local zip_proj_name = GetDependantZipProjName(proj.name)
+	Output(zip_proj_name)
+	
+	group(proj.group_name) -- same group than the library      
+	project (zip_proj_name)
+	kind("Makefile")   
+	
+	AllTargets(function(plat, conf)
+--	  Output("xx " .. proj.name .. " " .. proj.targetdir[plat][conf])
+	end)
+  
+	--local zip_command_str = '\"' .. ZIP_SCRIPT .. '\" \"' .. proj.build_path .. '\" \"' .. proj.build_path .. '\" \"' .. proj.name .. '\"'
+	
+	--local zip_command_str = '\"' .. ZIP_SCRIPT .. '\" \"' .. proj.build_path .. '\"'
+	
+	--Output("xx" ..proj.build_path)
+  
+  
+    project(proj.name)      
+    links(zip_proj_name)  
+  
+  end
+  
+end
 

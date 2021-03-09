@@ -151,15 +151,23 @@ namespace chaos
 
     bool ParticleLayerBase::DoUpdateGPUResources(GPURenderer* renderer)
     {
-		if (dynamic_mesh == nullptr)
-			dynamic_mesh = new GPUDynamicMesh();
-
-        // update the vertex declaration
+		// ensure their is some reason to update the rendering data
+		if (!require_GPU_update && !AreVerticesDynamic())
+			return true;
+		// update the vertex declaration
 		if (vertex_declaration == nullptr)
+		{
 			vertex_declaration = GetVertexDeclaration();
-        // ensure their is some reason to update the rendering data
-        if (!require_GPU_update && !AreVerticesDynamic())
-            return true;
+			if (vertex_declaration == nullptr)
+				return true;
+		}
+		// create the mesh
+		if (dynamic_mesh == nullptr)
+		{
+			dynamic_mesh = new GPUDynamicMesh();
+			if (dynamic_mesh == nullptr)
+				return true;
+		}
         // evaluate how much memory should be allocated for buffers (count in vertices)
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(dynamic_mesh.get());
         // clear previous dynamic mesh (and give buffers back for further usage)       
@@ -174,6 +182,24 @@ namespace chaos
 
         return true;
     }
+
+	GPUDynamicMesh* ParticleLayerBase::GenerateMesh(GPURenderer* renderer)
+	{
+		// get the vertex declaration for the mesh
+		shared_ptr<GPUVertexDeclaration> declaration = GetVertexDeclaration();
+		if (declaration == nullptr)
+			return nullptr;
+		// generate the resulting mesh
+		GPUDynamicMesh* result = new GPUDynamicMesh();
+		if (result == nullptr)
+			return result;
+		// evaluate how much memory should be allocated for buffers (count in vertices)
+		size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(result);
+		// generate the data
+		GenerateMeshData(result, declaration.get(), renderer, vertex_requirement_evaluation);
+
+		return result;
+	}
 
 	size_t ParticleLayerBase::ComputeMaxParticleCount() const
 	{

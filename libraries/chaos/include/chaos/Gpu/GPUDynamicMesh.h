@@ -53,9 +53,6 @@ namespace chaos
 
     public:
 
-        /** constructor */
-        GPUDynamicMesh();
-
         /** returns whether there is nothing to render */
         bool IsEmpty() const { return (elements.size() == 0); }
         /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferCache) */
@@ -68,6 +65,8 @@ namespace chaos
         GPUDynamicMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
         GPUDynamicMeshElement & AddMeshElement();
+        /** set the vertex array manager */
+        void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache) {vertex_array_cache = in_vertex_array_cache;}
 
     protected:
 

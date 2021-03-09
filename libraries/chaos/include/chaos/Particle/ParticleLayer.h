@@ -131,6 +131,9 @@ namespace chaos
 			return GetOwnedData<T>(this);
 		}
 
+		/** generate the mesh corresponding to this layer. not related to the cached mesh */
+		GPUDynamicMesh* GenerateMesh(GPURenderer* renderer);
+
 	protected:
 
 		/** ticking the particle system */

@@ -9,7 +9,6 @@ namespace chaos
 
     ParticleManager::ParticleManager()
     {
-        vertex_array_cache = new GPUVertexArrayCache();
     }
 
 	void ParticleManager::SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas)

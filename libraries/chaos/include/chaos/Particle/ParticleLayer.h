@@ -163,10 +163,10 @@ namespace chaos
 		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;
 
         /** select the PrimitiveOutput and update the rendering GPU resources */
-        virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t previous_frame_vertices_count) {}
+        virtual void DoGenerateMeshData(GPUDynamicMesh * mesh, GPURenderer* renderer, size_t previous_frame_vertices_count) {}
 
         /** returns the number of vertices used in a dynamic mesh */
-        size_t GetDynamicMeshVertexCount(GPUDynamicMesh const& mesh) const;
+        size_t GetDynamicMeshVertexCount(GPUDynamicMesh const* mesh) const;
         /** evaluate how much memory will be required for GPUDynamicMesh (returns number of vertices) */
         size_t EvaluateGPUVertexMemoryRequirement() const;
 
@@ -185,11 +185,9 @@ namespace chaos
         shared_ptr<GPUVertexDeclaration> vertex_declaration;
 
         /** the vertex cache (used when the layer is NOT in a manager) */
-        shared_ptr<GPUVertexArrayCache> vertex_array_cache;
-        /** the vertex cache (used when the layer is NOT in a manager) */
         GPUBufferCache buffer_cache;
         /** the corresponding dynamic mesh */
-        GPUDynamicMesh dynamic_mesh;
+        shared_ptr<GPUDynamicMesh> dynamic_mesh;
         /** whether there was changes in particles, and a vertex array need to be recomputed */
         bool require_GPU_update = false;
 	};
@@ -293,7 +291,7 @@ namespace chaos
 		}
 
         /** override */
-        virtual void DoUpdateGPUBuffers(GPURenderer* renderer, size_t vertex_requirement_evaluation) override
+        virtual void DoGenerateMeshData(GPUDynamicMesh* mesh, GPURenderer* renderer, size_t vertex_requirement_evaluation) override
         {
             // some layers are in a manager, some not (see TiledMap)
             GPUBufferCache* cache = (particle_manager == nullptr) ? &buffer_cache : &particle_manager->GetBufferCache();
@@ -303,27 +301,27 @@ namespace chaos
             // select PrimitiveOutput and collect vertices
             if constexpr (primitive_type == PrimitiveType::TRIANGLE)
             {
-                TriangleOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TriangleOutput<vertex_type> output(mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::TRIANGLE_PAIR)
             {
-                TrianglePairOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TrianglePairOutput<vertex_type> output(mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::QUAD)
             {
-                QuadOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                QuadOutput<vertex_type> output(mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::TRIANGLE_STRIP)
             {
-                TriangleStripOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TriangleStripOutput<vertex_type> output(mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::TRIANGLE_FAN)
             {
-                TriangleFanOutput<vertex_type> output(&dynamic_mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+                TriangleFanOutput<vertex_type> output(mesh, cache, vertex_declaration.get(), renderer, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
         }

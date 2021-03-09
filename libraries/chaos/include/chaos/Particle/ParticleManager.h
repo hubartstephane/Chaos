@@ -88,10 +88,6 @@ namespace chaos
         GPUBufferCache& GetBufferCache() { return buffer_cache; }
         /** gets the buffer cache */
         GPUBufferCache const& GetBufferCache() const { return buffer_cache; }
-        /** gets the vertex array cache */
-        GPUVertexArrayCache* GetVertexArrayCache() { return vertex_array_cache.get();}
-        /** gets the vertex array cache */
-        GPUVertexArrayCache const * GetVertexArrayCache() const { return vertex_array_cache.get(); }
 
 	protected:
 		
@@ -109,8 +105,6 @@ namespace chaos
 		GPURenderableLayerSystem layer_system;
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
-        /** the vertex array cache */
-        shared_ptr<GPUVertexArrayCache> vertex_array_cache;
         /** a cache for GPUBuffer */
         GPUBufferCache buffer_cache;
 	};

@@ -50,7 +50,6 @@ namespace chaos
 
     class GPUDynamicMesh : public GPURenderable
     {
-
     public:
 
         /** returns whether there is nothing to render */
@@ -65,8 +64,6 @@ namespace chaos
         GPUDynamicMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
         GPUDynamicMeshElement & AddMeshElement();
-        /** set the vertex array manager */
-        void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache) {vertex_array_cache = in_vertex_array_cache;}
 
     protected:
 

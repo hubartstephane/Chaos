@@ -169,17 +169,9 @@ namespace chaos
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement();
         // clear previous dynamic mesh (and give buffers back for further usage)       
         if (particle_manager != nullptr)
-        {
             dynamic_mesh.Clear(&particle_manager->GetBufferCache());
-            dynamic_mesh.SetVertexArrayCache(particle_manager->GetVertexArrayCache());
-        }
         else
-        {
-            if (vertex_array_cache == nullptr)
-                vertex_array_cache = new GPUVertexArrayCache;
             dynamic_mesh.Clear(&buffer_cache);
-            dynamic_mesh.SetVertexArrayCache(vertex_array_cache.get());
-        }
         // select PrimitiveOutput and collect vertices        
         DoUpdateGPUBuffers(renderer, vertex_requirement_evaluation);
         // mark as up to date

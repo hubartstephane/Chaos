@@ -185,8 +185,6 @@ namespace chaos
         shared_ptr<GPUVertexDeclaration> vertex_declaration;
 
         /** the vertex cache (used when the layer is NOT in a manager) */
-        shared_ptr<GPUVertexArrayCache> vertex_array_cache;
-        /** the vertex cache (used when the layer is NOT in a manager) */
         GPUBufferCache buffer_cache;
         /** the corresponding dynamic mesh */
         GPUDynamicMesh dynamic_mesh;

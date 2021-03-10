@@ -23,7 +23,7 @@ namespace chaos
     public:
 
         /** constructor */
-        PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation);
+        PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation);
 
         /** gets the size of one vertice of the generated primitive */
         size_t GetVertexSize() const { return vertex_size; }
@@ -45,8 +45,9 @@ namespace chaos
         GPUBufferCache* buffer_cache = nullptr;
         /** the vertex declaration for all buffers */
         GPUVertexDeclaration * vertex_declaration = nullptr;
-        /** the renderer used fence requests */
-        GPURenderer* renderer = nullptr;
+        /** the material to use */
+        GPURenderMaterial* render_material = nullptr;
+
         /** the buffer where we are writting vertices */
         shared_ptr<GPUBuffer> vertex_buffer = nullptr;
 
@@ -86,8 +87,8 @@ namespace chaos
         using primitive_type = PrimitiveBase<vertex_type, PRIMITIVE_TYPE>;
 
         /** constructor */
-        PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration * in_vertex_declaration, GPURenderer* in_renderer, size_t in_vertex_requirement_evaluation) :
-            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_renderer, in_vertex_requirement_evaluation)
+        PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration * in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
+            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
             vertices_per_primitive = GetVerticesPerParticle(PRIMITIVE_TYPE);

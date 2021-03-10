@@ -7,6 +7,66 @@ namespace chaos
 {
 	namespace TMTools
 	{
+		/** serialize layers into JSON */
+		template<typename T>
+		void SerializeLayersFromJSON(T* object, nlohmann::json const& json)
+		{
+			nlohmann::json const* layers_json = JSONTools::GetStructure(json, "LAYERS");
+			if (layers_json != nullptr && layers_json->is_array())
+			{
+				for (size_t i = 0; i < layers_json->size(); ++i)
+				{
+					nlohmann::json const* layer_json = JSONTools::GetStructureByIndex(*layers_json, i);
+					if (layer_json != nullptr && layer_json->is_object())
+					{
+						int layer_id = 0;
+						if (JSONTools::GetAttribute(*layer_json, "LAYER_ID", layer_id))
+						{
+							TMLayerInstance* layer_instance = object->FindLayerInstanceByID(layer_id);
+							if (layer_instance != nullptr)
+								LoadFromJSON(*layer_json, *layer_instance); // XXX : the indirection is important to avoid the creation of a new layer_instance
+						}
+					}
+				}
+			}
+		}
+
+		/** search a layer inside an object by ID */
+		template<typename T, typename U>
+		auto FindLayerInstanceByID(T* object, U& layer_instances, int in_id, bool recursive) -> decltype(layer_instances[0].get())
+		{
+			for (auto& layer : layer_instances)
+			{
+				if (layer != nullptr)
+				{
+					if (layer->GetLayerID() == in_id)
+						return layer.get();
+					if (recursive)
+						if (auto result = layer->FindLayerInstanceByID(in_id, recursive))
+							return result;
+				}
+			}
+			return nullptr;
+		}
+
+		/** search a layer inside an object by request */
+		template<typename T, typename U>
+		auto FindLayerInstance(T* object, U& layer_instances, ObjectRequest request, bool recursive) -> decltype(layer_instances[0].get())
+		{
+			for (auto& layer : layer_instances)
+			{
+				if (layer != nullptr)
+				{
+					if (request.Match(*layer.get()))
+						return layer.get();
+					if (recursive)
+						if (TMLayerInstance* result = layer->FindLayerInstance(request, recursive))
+							return result;
+				}
+			}
+			return nullptr;
+		}
+
 		/** fill BitmapAtlasInput from a TiledMap manager */
 		bool AddIntoAtlasInput(TiledMap::Manager const * manager, BitmapAtlas::AtlasInput & input);
 		/** fill BitmapAtlasInput from a TileSet */

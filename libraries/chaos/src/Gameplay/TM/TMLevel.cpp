@@ -1273,10 +1273,8 @@ namespace chaos
 		LevelInstance::DoTick(delta_time);
 
 		// tick the particle manager
-#if 0
 		if (particle_manager != nullptr)
 			particle_manager->Tick(delta_time);
-#endif
 		// tick all layer instances
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1296,10 +1294,8 @@ namespace chaos
 		int result = 0;
 
 		// display particle manager
-#if 0
 		if (particle_manager != nullptr)
 			result += particle_manager->Display(renderer, uniform_provider, render_params);
-#endif
 		// draw the layer instances
 		size_t count = layer_instances.size();
 		for (size_t i = 0; i < count; ++i)
@@ -1339,12 +1335,10 @@ namespace chaos
 
 	bool TMLevelInstance::CreateParticleManager(Game* in_game)
 	{
-#if 0
 		particle_manager = new ParticleManager;
 		if (particle_manager == nullptr)
 			return false;
 		particle_manager->SetTextureAtlas(in_game->GetTextureAtlas()); // take the atlas
-#endif
 		return true;
 	}
 

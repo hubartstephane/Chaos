@@ -132,7 +132,7 @@ namespace chaos
 		}
 
 		/** generate the mesh corresponding to this layer. not related to the cached mesh */
-		GPUDynamicMesh* GenerateMesh(GPURenderer* renderer);
+		GPUDynamicMesh* GenerateMesh();
 
 	protected:
 
@@ -164,7 +164,7 @@ namespace chaos
 		virtual bool DoUpdateGPUResources(GPURenderer * renderer) override;
 
         /** select the PrimitiveOutput and update the rendering GPU resources */
-        virtual void GenerateMeshData(GPUDynamicMesh* in_dynamic_mesh, GPUVertexDeclaration * in_vertex_declaration, GPURenderer* renderer, size_t previous_frame_vertices_count) {}
+        virtual void GenerateMeshData(GPUDynamicMesh* in_dynamic_mesh, GPUVertexDeclaration * in_vertex_declaration, GPURenderMaterial * in_render_material, size_t previous_frame_vertices_count) {}
 
         /** returns the number of vertices used in a dynamic mesh */
         size_t GetDynamicMeshVertexCount(GPUDynamicMesh const* in_dynamic_mesh) const;
@@ -292,7 +292,7 @@ namespace chaos
 		}
 
         /** override */
-        virtual void GenerateMeshData(GPUDynamicMesh * in_dynamic_mesh, GPUVertexDeclaration * in_vertex_declaration, GPURenderer* renderer, size_t vertex_requirement_evaluation) override
+        virtual void GenerateMeshData(GPUDynamicMesh * in_dynamic_mesh, GPUVertexDeclaration * in_vertex_declaration, GPURenderMaterial* in_render_material, size_t vertex_requirement_evaluation) override
         {
             // some layers are in a manager, some not (see TiledMap)
             GPUBufferCache* cache = (particle_manager == nullptr) ? &buffer_cache : &particle_manager->GetBufferCache();
@@ -302,27 +302,27 @@ namespace chaos
             // select PrimitiveOutput and collect vertices
             if constexpr (primitive_type == PrimitiveType::TRIANGLE)
             {
-                TriangleOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, renderer, vertex_requirement_evaluation);
+                TriangleOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::TRIANGLE_PAIR)
             {
-                TrianglePairOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, renderer, vertex_requirement_evaluation);
+                TrianglePairOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::QUAD)
             {
-                QuadOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, renderer, vertex_requirement_evaluation);
+                QuadOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::TRIANGLE_STRIP)
             {
-                TriangleStripOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, renderer, vertex_requirement_evaluation);
+                TriangleStripOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
             else if constexpr (primitive_type == PrimitiveType::TRIANGLE_FAN)
             {
-                TriangleFanOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, renderer, vertex_requirement_evaluation);
+                TriangleFanOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
                 ParticlesToPrimitivesLoop(output);
             }
         }

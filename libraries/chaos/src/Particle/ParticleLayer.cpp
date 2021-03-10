@@ -176,14 +176,14 @@ namespace chaos
         else
 			dynamic_mesh->Clear(&buffer_cache);
         // select PrimitiveOutput and collect vertices        
-		GenerateMeshData(dynamic_mesh.get(), vertex_declaration.get(), renderer, vertex_requirement_evaluation);
+		GenerateMeshData(dynamic_mesh.get(), vertex_declaration.get(), render_material.get(), vertex_requirement_evaluation);
         // mark as up to date
         require_GPU_update = false;
 
         return true;
     }
 
-	GPUDynamicMesh* ParticleLayerBase::GenerateMesh(GPURenderer* renderer)
+	GPUDynamicMesh* ParticleLayerBase::GenerateMesh()
 	{
 		// get the vertex declaration for the mesh
 		shared_ptr<GPUVertexDeclaration> declaration = GetVertexDeclaration();
@@ -196,7 +196,7 @@ namespace chaos
 		// evaluate how much memory should be allocated for buffers (count in vertices)
 		size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(result);
 		// generate the data
-		GenerateMeshData(result, declaration.get(), renderer, vertex_requirement_evaluation);
+		GenerateMeshData(result, declaration.get(), render_material.get(), vertex_requirement_evaluation);
 
 		return result;
 	}

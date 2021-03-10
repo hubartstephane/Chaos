@@ -3,47 +3,12 @@
 namespace chaos
 {
 
-	template<typename T>
-	class PropertyOwnerOverride;
-
 }; // namespace chaos
 
 #else
 
 namespace chaos
 {
-
-	// ==========================================
-	// PropertyOwnerOverride : an utility class to capture the properties of a source 
-	// ==========================================
-
-	template<typename T>
-	class PropertyOwnerOverride : public T
-	{
-	public:
-
-		/** constructor */
-		PropertyOwnerOverride(TiledMap::BaseObject* in_owner, TiledMap::PropertyOwner const* in_property_owner) :
-			T(in_owner),
-			property_owner(in_property_owner) {}
-
-		/** override */
-		virtual TiledMap::Property const* FindProperty(char const* name, TiledMap::PropertyType type_id) const override
-		{
-			TiledMap::Property const* result = nullptr;
-			if (property_owner != nullptr)
-				result = property_owner->FindProperty(name, type_id);
-			if (result == nullptr)
-				result = T::FindProperty(name, type_id);
-			return result;
-		}
-
-	protected:
-
-		/** a substitute property owner to fake the system */
-		TiledMap::PropertyOwner const* property_owner = nullptr;
-	};
-	
 	// =====================================
 	// TMLayerInstance : instance of a Layer
 	// =====================================

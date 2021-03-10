@@ -612,7 +612,7 @@ namespace chaos
 		shared_ptr<TMLayerInstance> reference_layer;
 
 		/** the particle manager used to render the world */
-		//shared_ptr<ParticleManager> particle_manager;
+		shared_ptr<ParticleManager> particle_manager;
 
 
 

@@ -19,6 +19,7 @@
 #include <chaos/Gpu/GPUVertexArray.h>
 #include <chaos/Gpu/GPUVertexArrayCache.h>
 #include <chaos/Gpu/GPUVertexDeclaration.h>
+#include <chaos/Gpu/GPUFramebufferAttachmentOwner.h>
 #include <chaos/Gpu/GPUFramebuffer.h>
 #include <chaos/Gpu/GPUFramebufferGenerator.h>
 #include <chaos/Gpu/GPUProgramData.h>

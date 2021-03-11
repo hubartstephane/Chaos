@@ -1,0 +1,11 @@
+#! /usr/bin/bash 
+
+# build the arguments for awks
+COMMAND=
+while [ $# -gt 0 ] ; do
+COMMAND="${COMMAND} \$$1\" \""
+shift
+done
+
+# start awk
+awk "{print $COMMAND}"

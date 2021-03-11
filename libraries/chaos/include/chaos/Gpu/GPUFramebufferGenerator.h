@@ -24,7 +24,7 @@ namespace chaos
 		GenTextureParameters gen_texture_parameters;
 	};
 
-	class GPUFramebufferGenerator : public GPUAttachmentOwner<GPUFramebufferGeneratorAttachmentInfo>
+	class GPUFramebufferGenerator : public GPUFramebufferAttachmentOwner<GPUFramebufferGeneratorAttachmentInfo>
 	{
 
 	public:

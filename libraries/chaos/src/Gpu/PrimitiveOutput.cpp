@@ -12,14 +12,99 @@ namespace chaos
         assert(in_dynamic_mesh != nullptr);
     }
 
-    void PrimitiveOutputBase::SetRenderMaterial(GPURenderMaterial* in_render_material)
+    PrimitiveOutputBase::~PrimitiveOutputBase()
     {
-        assert(0);
-
-        // TODO
-
-
+        UnmapAllInternalBuffer();
     }
+
+    GPUPrimitiveBufferCacheEntry * PrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
+    {
+        for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_cache)
+            if (cache_entry.remaining_size >= required_size)
+                return &cache_entry;
+        return nullptr;
+    }
+   
+    void PrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, size_t in_remaining_size, char * in_buffer_start)
+    {
+        assert(in_buffer != nullptr);
+        for (GPUPrimitiveBufferCacheEntry& entry : internal_buffer_cache)
+        {
+            if (entry.buffer == in_buffer)
+            {
+                entry.remaining_size = in_remaining_size;
+                return;
+            }
+        }
+        internal_buffer_cache.push_back({ in_buffer, in_remaining_size, in_buffer_start });
+    }
+
+    void PrimitiveOutputBase::UnmapAllInternalBuffer()
+    {
+        for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_cache)
+        {
+            cache_entry.buffer->UnMapBuffer();
+            cache_entry.buffer->SetBufferData(nullptr, cache_entry.buffer->GetBufferSize()); // orphan the buffer
+        }
+        internal_buffer_cache.clear();
+    }
+
+    char* PrimitiveOutputBase::AllocateBufferMemory(size_t in_size)
+    {
+        if (buffer_start == nullptr || buffer_position + in_size >= buffer_end) // not enough memory in current buffer ?
+        {
+            // give previous buffer (if any) to internal cache
+            if (vertex_buffer != nullptr)
+            {
+                GiveBufferToInternalCache(vertex_buffer.get(), buffer_end - buffer_position, buffer_start);
+                buffer_start = buffer_position = buffer_end = nullptr;
+                vertex_buffer = nullptr;
+            }
+            // the current GPUBuffer is not big enough -> get a new buffer
+            if (GPUPrimitiveBufferCacheEntry* cache_entry = GetInternalCachedBuffer(in_size)) // try in buffers that has been started and never fully filled
+            {
+                vertex_buffer = cache_entry->buffer;
+                buffer_start = cache_entry->buffer_start;
+                buffer_position = buffer_start + cache_entry->remaining_size;
+                buffer_end = buffer_start + cache_entry->buffer->GetBufferSize();
+            }
+            else // new GPUBuffer is required
+            {
+                static size_t MIN_VERTEX_COUNT = 500;
+
+                size_t reserve_size = std::max(in_size, MIN_VERTEX_COUNT * vertex_size); // ask for a minimum size
+
+                if (buffer_cache != nullptr)
+                    buffer_cache->GetBuffer(reserve_size, vertex_buffer);
+                else
+                    GPUBufferCache::CreateBuffer(reserve_size, vertex_buffer);
+
+                if (vertex_buffer == nullptr)
+                    return nullptr;
+
+                // map the buffer
+                buffer_start = vertex_buffer->MapBuffer(0, 0, false, true);
+                if (buffer_start == nullptr)
+                    return nullptr;
+
+                buffer_position = buffer_start;
+                buffer_end = buffer_start + vertex_buffer->GetBufferSize();
+            }
+        }
+        // return the result and displace the position
+        char* result = buffer_position;
+        buffer_position += in_size;
+        return result;
+    }
+
+
+
+
+
+
+
+
+
 
     void PrimitiveOutputBase::Flush()
     {
@@ -93,6 +178,71 @@ namespace chaos
         buffer_end = nullptr;
         vertex_buffer = nullptr;
     }
+
+
+#if 0
+    char* PrimitiveOutputBase::GeneratePrimitive(size_t required_size, PrimitiveType PrimitiveType)
+    {
+        if (current_mesh.
+
+
+
+    }
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    void PrimitiveOutputBase::FlushMeshElement()
+    {
+        //if (current_mesh_element.type != GL_NONE)
+        {
+
+        }
+    }
+
+    void PrimitiveOutputBase::SetRenderMaterial(GPURenderMaterial* in_render_material)
+    {
+        assert(in_render_material != nullptr);
+        if (render_material != in_render_material)
+        {
+            FlushMeshElement();
+            render_material = in_render_material;
+        }
+    }
+
+
+    char* PrimitiveOutputBase::GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type)
+    {
+        // we have to start a new mesh element
+        if (primitive_type != current_primitive_type)
+        {
+
+
+        }
+        // we can continue on current mesh element
+        else
+        {
+
+        }
+
+        return nullptr;
+    }
+
+
+
 
     char* PrimitiveOutputBase::GeneratePrimitive(size_t required_size)
     {

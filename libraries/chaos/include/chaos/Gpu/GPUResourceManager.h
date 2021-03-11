@@ -44,7 +44,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) override;
+		virtual bool DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) const override;
 
 	protected:
 

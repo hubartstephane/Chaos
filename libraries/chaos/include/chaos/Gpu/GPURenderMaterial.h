@@ -32,7 +32,7 @@ namespace chaos
 	protected:
 
 		/** apply the actions */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
 
 	protected:
 

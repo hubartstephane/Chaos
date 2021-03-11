@@ -321,7 +321,7 @@ namespace chaos
 		return true;
 	}
 
-	bool GPUProgramReplaceTextureAction::DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider)
+	bool GPUProgramReplaceTextureAction::DoProcess(char const * name, GPUTexture const * value, GPUProgramProviderBase const * provider) const
 	{
 		// XXX : remove constness ! Maybe a better way to do so
 		GPUProgramProviderTexture * provider_texture = const_cast<GPUProgramProviderTexture *>(dynamic_cast<GPUProgramProviderTexture const *>(provider));

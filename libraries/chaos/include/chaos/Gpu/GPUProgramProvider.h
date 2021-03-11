@@ -46,43 +46,56 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderExecutionData()
-		{
-			deduced_searches = &internal_deduced_searches; // use our own vector
-		}
-		/** constructor */
-		GPUProgramProviderExecutionData(GPUProgramProviderExecutionData const & src):
-			top_provider(src.top_provider),
-			deduced_searches(src.deduced_searches) // do not point to our internal vector, but on another one's !
-		{
-		}
+		GPUProgramProviderExecutionData(char const* in_searched_name, GPUProgramAction& in_action, GPUProgramProviderExecutionData const* base_execution = nullptr);
 
 		/** check for name and return a lock */
-		GPUProgramProviderDeduceLock CanDeduce(char const* name, char const* searched_name) const;
+		GPUProgramProviderDeduceLock CanDeduce(char const* searched_name) const;
 		/** get a value for the uniform / attribute */
 		template<typename T>
 		bool GetValue(char const* name, T& result) const
 		{
 			auto action = GPUProgramGetValueAction<T>(result);
 
-			GPUProgramProviderExecutionData other_execution_data(*this); // another data that shares the same vector than us !
+			GPUProgramProviderExecutionData other_execution_data(name, action, this); // another data that shares the same vector than us !
 			// search for explicit first ...
 			other_execution_data.pass_type = GPUProgramProviderPassType::EXPLICIT;
-			if (top_provider->DoProcessAction(name, action, other_execution_data))
+			if (top_provider->DoProcessAction(other_execution_data))
 				return true;
 			// ... then use deduced rules
 			other_execution_data.pass_type = GPUProgramProviderPassType::DEDUCED;
-			if (top_provider->DoProcessAction(name, action, other_execution_data))
+			if (top_provider->DoProcessAction(other_execution_data))
 				return true;
 			// ... finally accept any fallback values
 			other_execution_data.pass_type = GPUProgramProviderPassType::FALLBACK;
-			if (top_provider->DoProcessAction(name, action, other_execution_data))
+			if (top_provider->DoProcessAction(other_execution_data))
 				return true;
 			return false;
 		}
 
+		/** get the name searched */
+		char const* GetSearchedName() const { return searched_name; }
+		/** get the wanted action */
+		GPUProgramAction const& GetAction() const { return action; }
+		/** get the wanted action */
+		GPUProgramAction & GetAction(){ return action; }
+
+		/** returns whether the proposed name match the initial request */
+		bool Match(char const* other_name) const;
+		/** returns whether the proposed name match the initial request */
+		bool Match(std::string const& other_name) const;
+
 		/** gets the pass type */
 		GPUProgramProviderPassType GetPassType() const { return pass_type; }
+
+		/** process the action with any data */
+		template<typename T>
+		bool Process(T const & value, GPUProgramProviderBase const* provider) const
+		{
+			return action.Process(searched_name, value, provider);
+		}
+
+		/** process the action with texture */
+		bool Process(GPUTexture const* value, GPUProgramProviderBase const* provider) const;
 
 	protected:
 
@@ -94,6 +107,10 @@ namespace chaos
 		std::vector<char const*> * deduced_searches = nullptr;
 		/** the pending searches. No need to make a deep copy of the string */
 		mutable std::vector<char const*> internal_deduced_searches;
+		/** the name searched */
+		char const* searched_name = nullptr;
+		/** the action to trigger */
+		GPUProgramAction & action;
 	};
 
 
@@ -154,7 +171,7 @@ namespace chaos
 	protected:
 
 		/** the main method : returns true whether that action has been successfully handled */
-		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data) const;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const& execution_data) const;
 	};
 
 	/**
@@ -173,11 +190,11 @@ namespace chaos
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override
 		{
-			if (execution_data.GetPassType() != pass_type || name == nullptr || StringTools::Strcmp(handled_name, name) != 0)
-				return false;
-			return action.Process(name, value, this);
+			if (execution_data.GetPassType() == pass_type && execution_data.Match(handled_name))
+				return execution_data.Process(value, this);
+			return false;
 		}
 
 	protected:
@@ -207,7 +224,7 @@ namespace chaos
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
 
 	protected:
 
@@ -231,7 +248,7 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProvider(std::function<bool(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data)> const & in_process_func = nullptr):
+		GPUProgramProvider(std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const & in_process_func = nullptr):
 			process_func(in_process_func)
 		{
 		}
@@ -255,14 +272,14 @@ namespace chaos
 	protected:
 
 		/** the main method */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
 
 	protected:
 
 		/** the uniforms to be set */
 		std::vector<shared_ptr<GPUProgramProviderBase>> children_providers;
 		/** some in place code */
-		std::function<bool(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data)> process_func;
+		std::function<bool(GPUProgramProviderExecutionData const& execution_data)> process_func;
 	};
 
 	/**
@@ -275,14 +292,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider, std::function<bool(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
+		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider, std::function<bool(GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
 			DisableReferenceCount<GPUProgramProvider>(in_process_func),
 			fallback_provider(in_fallback_provider) {}
 
 	protected:
 
 		/** apply the actions */
-		virtual bool DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
 
 	protected:
 
@@ -302,7 +319,7 @@ namespace chaos
 		using GPUProgramProvider::GPUProgramProvider;
 
 		/** apply the actions */
-		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const & execution_data) const override;
+		virtual bool DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const override;
 	};
 
 }; // namespace chaos

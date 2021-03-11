@@ -2,41 +2,40 @@
 
 namespace chaos
 {
-	bool GPUProgramRenderMaterialProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const
+	bool GPUProgramRenderMaterialProvider::DoProcessAction(GPUProgramProviderExecutionData const & execution_data) const
 	{
 		class GPURenderMaterialProviderTraverseFunc : public GPURenderMaterialInfoTraverseFunc
 		{
 		public:
 
+			/** constructor */
+			GPURenderMaterialProviderTraverseFunc(GPUProgramProviderExecutionData const& in_execution_data) :
+				execution_data(in_execution_data)
+			{
+			}
+			/** override */
 			virtual bool OnRenderMaterial(GPURenderMaterial const * render_material, GPURenderMaterialInfo const * material_info, char const * renderpass_name) override
 			{
-				if (material_info->uniform_provider.DoProcessAction(name, *action, *execution_data)) // search in the materials uniforms
+				if (material_info->uniform_provider.DoProcessAction(execution_data)) // search in the materials uniforms
 					return true;
 				return false;
 			}
 
 		public:
 
-			char const * name = nullptr;
-			
-			GPUProgramAction * action = nullptr;
-			
-			GPUProgramProviderExecutionData const * execution_data = nullptr;
+			/** the current execution */
+			GPUProgramProviderExecutionData const & execution_data;
 		};
-
 		// use extra provider
 		if (other_provider != nullptr)
-			if (other_provider->DoProcessAction(name, action, execution_data))
+			if (other_provider->DoProcessAction(execution_data))
 				return true;
 		// traverse the material for finding uniform
-		GPURenderMaterialProviderTraverseFunc traversal_func;
-		traversal_func.name = name;
-		traversal_func.action = &action;
-		traversal_func.execution_data = &execution_data;
+		GPURenderMaterialProviderTraverseFunc traversal_func(execution_data);
 		if (render_material->Traverse(traversal_func, render_params->renderpass_name.c_str()))
 			return true;
 		// use variables inside this provider (should be empty)
-		if (GPUProgramProvider::DoProcessAction(name, action, execution_data))
+		if (GPUProgramProvider::DoProcessAction(execution_data))
 			return true;
 
 		return false;

@@ -230,6 +230,12 @@ namespace chaos
 
 	public:
 
+		/** constructor */
+		GPUProgramProvider(std::function<bool(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data)> const & in_process_func = nullptr):
+			process_func(in_process_func)
+		{
+		}
+
 		/** register a uniform value */
 		template<typename T>
 		void AddVariable(char const * name, T const & value, GPUProgramProviderPassType pass_type = GPUProgramProviderPassType::EXPLICIT)
@@ -255,6 +261,8 @@ namespace chaos
 
 		/** the uniforms to be set */
 		std::vector<shared_ptr<GPUProgramProviderBase>> children_providers;
+		/** some in place code */
+		std::function<bool(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data)> process_func;
 	};
 
 	/**
@@ -267,7 +275,8 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider) :
+		GPUProgramProviderChain(GPUProgramProviderBase const * in_fallback_provider, std::function<bool(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const& execution_data)> const& in_process_func = nullptr) :
+			DisableReferenceCount<GPUProgramProvider>(in_process_func),
 			fallback_provider(in_fallback_provider) {}
 
 	protected:
@@ -288,6 +297,9 @@ namespace chaos
 	class GPUProgramProviderCommonTransforms : public GPUProgramProvider
 	{
 	public:
+
+		/** constructor */
+		using GPUProgramProvider::GPUProgramProvider;
 
 		/** apply the actions */
 		virtual bool DoProcessAction(char const* name, GPUProgramAction& action, GPUProgramProviderExecutionData const & execution_data) const override;

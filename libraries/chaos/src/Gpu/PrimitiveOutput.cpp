@@ -12,6 +12,15 @@ namespace chaos
         assert(in_dynamic_mesh != nullptr);
     }
 
+    void PrimitiveOutputBase::SetRenderMaterial(GPURenderMaterial* in_render_material)
+    {
+        assert(0);
+
+        // TODO
+
+
+    }
+
     void PrimitiveOutputBase::Flush()
     {
         // skip empty primitive

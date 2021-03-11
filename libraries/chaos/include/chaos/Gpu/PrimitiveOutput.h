@@ -29,6 +29,8 @@ namespace chaos
         size_t GetVertexSize() const { return vertex_size; }
         /** flush all pending Draws into the GPUDynamicMesh */
         void Flush();
+        /** change the material for the next primitives */
+        void SetRenderMaterial(GPURenderMaterial* in_render_material);
 
     protected:
 

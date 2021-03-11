@@ -131,6 +131,10 @@ namespace chaos
 
 	bool GPUProgramProvider::DoProcessAction(char const * name, GPUProgramAction & action, GPUProgramProviderExecutionData const & execution_data) const
 	{
+		// use the functor
+		if (process_func)
+			if (process_func(name, action, execution_data))
+				return true;
 		// handle children providers
 		size_t count = children_providers.size();
 		for (size_t i = count; i > 0; --i)
@@ -239,7 +243,7 @@ namespace chaos
 				return action.Process(name, glm::inverse(local_to_camera), this);
 
 		}
-		return false;
+		return GPUProgramProvider::DoProcessAction(name, action, execution_data);
 	}
 
 

@@ -20,23 +20,25 @@ namespace chaos
     GPUPrimitiveBufferCacheEntry * PrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
     {
         for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_cache)
-            if (cache_entry.remaining_size >= required_size)
+            if (cache_entry.buffer_end - cache_entry.buffer_position >= (int)required_size)
                 return &cache_entry;
         return nullptr;
     }
    
-    void PrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, size_t in_remaining_size, char * in_buffer_start)
+    void PrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char* in_buffer_position, char* in_buffer_end)
     {
         assert(in_buffer != nullptr);
         for (GPUPrimitiveBufferCacheEntry& entry : internal_buffer_cache)
         {
             if (entry.buffer == in_buffer)
             {
-                entry.remaining_size = in_remaining_size;
+                entry.buffer_start = in_buffer_start;
+                entry.buffer_position = in_buffer_position;
+                entry.buffer_end = in_buffer_end;
                 return;
             }
         }
-        internal_buffer_cache.push_back({ in_buffer, in_remaining_size, in_buffer_start });
+        internal_buffer_cache.push_back({ in_buffer, in_buffer_start, in_buffer_position, in_buffer_end });
     }
 
     void PrimitiveOutputBase::UnmapAllInternalBuffer()
@@ -49,15 +51,21 @@ namespace chaos
         internal_buffer_cache.clear();
     }
 
-    char* PrimitiveOutputBase::AllocateBufferMemory(size_t in_size)
+    char* PrimitiveOutputBase::AllocateBufferMemory(size_t in_size, bool & buffer_changed)
     {
         if (buffer_start == nullptr || buffer_position + in_size >= buffer_end) // not enough memory in current buffer ?
         {
+            buffer_changed = true;
+
             // give previous buffer (if any) to internal cache
             if (vertex_buffer != nullptr)
             {
-                GiveBufferToInternalCache(vertex_buffer.get(), buffer_end - buffer_position, buffer_start);
-                buffer_start = buffer_position = buffer_end = nullptr;
+
+                // Flush();
+
+
+                GiveBufferToInternalCache(vertex_buffer.get(), buffer_start, buffer_position, buffer_end);
+                buffer_start = buffer_unflushed = buffer_position = buffer_end = nullptr;
                 vertex_buffer = nullptr;
             }
             // the current GPUBuffer is not big enough -> get a new buffer
@@ -65,8 +73,8 @@ namespace chaos
             {
                 vertex_buffer = cache_entry->buffer;
                 buffer_start = cache_entry->buffer_start;
-                buffer_position = buffer_start + cache_entry->remaining_size;
-                buffer_end = buffer_start + cache_entry->buffer->GetBufferSize();
+                buffer_unflushed = buffer_position = cache_entry->buffer_position;
+                buffer_end = cache_entry->buffer_end;
             }
             else // new GPUBuffer is required
             {
@@ -86,16 +94,212 @@ namespace chaos
                 buffer_start = vertex_buffer->MapBuffer(0, 0, false, true);
                 if (buffer_start == nullptr)
                     return nullptr;
-
-                buffer_position = buffer_start;
+                buffer_unflushed = buffer_position = buffer_start;
                 buffer_end = buffer_start + vertex_buffer->GetBufferSize();
             }
+        }
+        else
+        {
+            buffer_changed = false;
         }
         // return the result and displace the position
         char* result = buffer_position;
         buffer_position += in_size;
         return result;
     }
+
+    void PrimitiveOutputBase::SetRenderMaterial(GPURenderMaterial* in_render_material)
+    {
+        assert(in_render_material != nullptr);
+        if (render_material != in_render_material)
+        {
+            FlushMeshElement();
+            render_material = in_render_material;
+        }
+    }
+
+    void PrimitiveOutputBase::FlushMeshElement()
+    {
+        FlushDrawPrimitive();
+        if (current_mesh_element.primitives.size() > 0)
+        {
+            GPUDynamicMeshElement& element = dynamic_mesh->AddMeshElement();
+            std::swap(element, current_mesh_element);
+
+            assert(current_mesh_element.primitives.size() == 0);
+        }
+    }
+
+    void PrimitiveOutputBase::FlushDrawPrimitive()
+    {
+        if (buffer_unflushed != buffer_position) // something to flush
+        {
+            // get the index buffer for quads
+            GPUBuffer* quad_index_buffer = nullptr;
+
+            size_t max_quad_count = 0;
+
+            if (current_primitive_type == PrimitiveType::QUAD)
+            {
+                GPUResourceManager* gpu_resource_manager = WindowApplication::GetGPUResourceManagerInstance();
+                if (gpu_resource_manager == nullptr)
+                {
+                    buffer_unflushed = buffer_position;
+                    return;
+                }
+                quad_index_buffer = gpu_resource_manager->GetQuadIndexBuffer(&max_quad_count);
+                if (quad_index_buffer == nullptr || max_quad_count == 0)
+                {
+                    buffer_unflushed = buffer_position;
+                    return;
+                }
+            }
+
+            // prepare the current mesh element if necessary
+            if (current_mesh_element.vertex_buffer == nullptr)
+            {
+                current_mesh_element.vertex_buffer = vertex_buffer;
+                current_mesh_element.vertex_declaration = vertex_declaration;
+                current_mesh_element.render_material = render_material;
+                current_mesh_element.index_buffer = quad_index_buffer;
+            }
+
+            // flush 
+            GPUDrawPrimitive primitive;
+            primitive.primitive_type = GetGLPrimitiveType(current_primitive_type);
+
+            // quads are indexed and uses a shared index_buffer. The flush may so produce multiple primitive (if there are not enougth indices in this buffer)
+            if (current_primitive_type == PrimitiveType::QUAD)
+            {
+                primitive.indexed = true;
+                primitive.start = 0; // the start is relative to the index buffer here : always 0
+
+                while (buffer_unflushed != buffer_position)
+                {
+                    size_t quad_count = ((buffer_position - buffer_unflushed) / vertex_size) / 4; // remainding quads to flush
+                    size_t count = std::min(quad_count, max_quad_count);
+
+                    primitive.count = int(6 * count); // 6 indices per quad
+                    primitive.base_vertex_index = int((buffer_unflushed - buffer_start) / vertex_size);
+
+                    current_mesh_element.primitives.push_back(primitive);
+                    buffer_unflushed += 4 * count;
+                }
+            }
+            // other primitives than QUAD produces a single draw call
+            else
+            {
+                primitive.count = int((buffer_position - buffer_unflushed) / vertex_size);
+                primitive.indexed = false;
+                primitive.start = int((buffer_unflushed - buffer_start) / vertex_size); // start relative to the vertex buffer
+                primitive.base_vertex_index = 0;
+                current_mesh_element.primitives.push_back(primitive);
+
+                buffer_unflushed = buffer_position;
+            }
+            current_primitive_type = PrimitiveType::NONE;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    char* PrimitiveOutputBase::GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type)
+    {
+        return nullptr;
+#if 0
+        assert(requested_size != 0);
+        assert(primitive_type != PrimitiveType::NONE);
+
+        // cannot concat the new primitive in the same draw call
+        if (primitive_type == PrimitiveType::TRIANGLE_FAN || primitive_type == PrimitiveType::TRIANGLE_PAIR)
+        {
+            FlushDrawPrimitive(); // flush pending primitives
+        }
+        else if (primitive_type != current_primitive_type)
+        {
+            // indexation mode changes 
+            if (primitive_type == PrimitiveType::QUAD || current_primitive_type == PrimitiveType::QUAD)
+            {
+                FlushMeshElement();
+            }
+            else
+            {
+                FlushDrawPrimitive();
+            }
+
+        }
+        else
+        {
+
+        }
+
+        current_primitive_type = primitive_type;
+
+        // allocate data for the same
+
+      //  buffer_changed
+
+        return AllocateBufferMemory(requested_size, buffer_changed);
+    }
+
+
+
+
+        // allocate buffer memory
+        bool buffer_changed = false;
+        char* result = AllocateBufferMemory(requested_size, buffer_changed);
+        if (result == nullptr)
+            return nullptr;
+
+        // we have to start a new mesh element
+        if (primitive_type != current_primitive_type)
+        {
+            // indexation mode changes 
+            if (primitive_type == PrimitiveType::QUAD || current_primitive_type == PrimitiveType::QUAD)
+            {
+                FlushMeshElement();
+            }
+            else
+            {
+                FlushDrawPrimitive();
+            }
+        }
+        // we can continue on current mesh element
+        else
+        {
+
+        }
+
+        if (primitive_type == PrimitiveType::TRIANGLE_FAN || primitive_type == PrimitiveType::TRIANGLE_PAIR)
+            FlushDrawPrimitive();
+
+        return result;
+#endif
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -180,15 +384,6 @@ namespace chaos
     }
 
 
-#if 0
-    char* PrimitiveOutputBase::GeneratePrimitive(size_t required_size, PrimitiveType PrimitiveType)
-    {
-        if (current_mesh.
-
-
-
-    }
-#endif
 
 
 
@@ -200,46 +395,6 @@ namespace chaos
 
 
 
-
-
-
-
-
-    void PrimitiveOutputBase::FlushMeshElement()
-    {
-        //if (current_mesh_element.type != GL_NONE)
-        {
-
-        }
-    }
-
-    void PrimitiveOutputBase::SetRenderMaterial(GPURenderMaterial* in_render_material)
-    {
-        assert(in_render_material != nullptr);
-        if (render_material != in_render_material)
-        {
-            FlushMeshElement();
-            render_material = in_render_material;
-        }
-    }
-
-
-    char* PrimitiveOutputBase::GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type)
-    {
-        // we have to start a new mesh element
-        if (primitive_type != current_primitive_type)
-        {
-
-
-        }
-        // we can continue on current mesh element
-        else
-        {
-
-        }
-
-        return nullptr;
-    }
 
 
 

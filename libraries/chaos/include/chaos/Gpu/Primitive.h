@@ -166,6 +166,10 @@ namespace chaos
 
 		/** number of vertices for the primitives */
 		static size_t constexpr count = GetRealVerticesPerParticle(PRIMITIVE_TYPE);
+
+
+
+
         /** the buffer where we write buffer */
         char* buffer = nullptr;
         /** the size of a vertex for this primitive */

@@ -24,10 +24,12 @@ namespace chaos
 
         /** the buffer (no need to use shared_ptr<> while they are already in use */
         GPUBuffer * buffer = nullptr;
-        /** get the size that remains inside the buffer */
-        size_t remaining_size = 0;
-        /** the starting position of the mapped buffer */
-        char * buffer_start = nullptr;
+        /** the starting position of the buffer */
+        char* buffer_start = nullptr;
+        /** the writing position of the mapped buffer */
+        char* buffer_position = nullptr;
+        /** the end position of the mapped buffer */
+        char* buffer_end = nullptr;
     };
 
 
@@ -73,7 +75,7 @@ namespace chaos
         /** get a buffer we already have used partially */
         GPUPrimitiveBufferCacheEntry * GetInternalCachedBuffer(size_t required_size);
         /** put a buffer partially used to be restore later */
-        void GiveBufferToInternalCache(GPUBuffer* in_buffer, size_t in_remaining_size, char* in_buffer_start);
+        void GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char * in_buffer_position, char* in_buffer_end);
 
 
 
@@ -83,10 +85,12 @@ namespace chaos
         /** flush the currently been constructed mesh element */
         void FlushMeshElement();
 
+        void FlushDrawPrimitive();
+
         void UnmapAllInternalBuffer();
 
 
-        char* AllocateBufferMemory(size_t in_size);
+        char* AllocateBufferMemory(size_t in_size, bool& buffer_changed);
 
 
         /** register a new primitive */
@@ -111,12 +115,19 @@ namespace chaos
         /** an evaluation of how many vertices could be used */
         size_t vertex_requirement_evaluation = 0;
        
-        /** the current position for writing */
+
+
+        /** the start position of the buffer */
+        char* buffer_start = nullptr; 
+        /** the position in buffer from which data has not been flushed yet */
+        char* buffer_unflushed = nullptr;
+        /** the position in buffer from which to write */
         char* buffer_position = nullptr;
-        /** start of currently allocated buffer */
-        char* buffer_start = nullptr;
         /** end of currently allocated buffer */
         char* buffer_end = nullptr;
+
+
+
 
         /** size of a vertex */
         size_t vertex_size = 0;
@@ -154,37 +165,41 @@ namespace chaos
     {
     public:
 
+        using vertex_type = VERTEX_TYPE;
 
-        TrianglePrimitive<VERTEX_TYPE> AddTriangle()
+        /** constructor */
+        PrimitiveOutputXXX(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
+            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
-
-            return AddPrimitive()
+            vertex_size = sizeof(vertex_type);
         }
 
-        QuadPrimitive<VERTEX_TYPE> AddQuad()
+        QuadPrimitive<VERTEX_TYPE> AddQuad(int primitive_count = 1)
         {
-
-
+            return { GeneratePrimitive(4 * vertex_size, PrimitiveType::QUAD), vertex_size };
         }
 
-        TrianglePairPrimitive<VERTEX_TYPE> AddTrianglePair()
+        TrianglePrimitive<VERTEX_TYPE> AddTriangle(int primitive_count = 1)
         {
-            return TrianglePairPrimitive<VERTEX_TYPE>(GeneratePrimitive(6 * sizeof(VERTEX_TYPE), GL_TRIANGLES), sizeof(VERTEX_TYPE));
+            return { GeneratePrimitive(3 * vertex_size, PrimitiveType::TRIANGLE), vertex_size };
+        }
+
+        TrianglePairPrimitive<VERTEX_TYPE> AddTrianglePair(int primitive_count = 1)
+        {
+            return { GeneratePrimitive(6 * vertex_size, PrimitiveType::TRIANGLE), vertex_size }; // not TRIANGLE_PAIR ! considered as simple triangle too
         }
 
         TriangleStripPrimitive<VERTEX_TYPE> AddTriangleStrip(int count)
         {
-
+            assert(count >= 3);
+            return { GeneratePrimitive(count * vertex_size, PrimitiveType::TRIANGLE_STRIP), vertex_size };
         }
 
-        TriangleFanPrimitive<VERTEX_TYPE> AddTriangleStrip(int count)
+        TriangleFanPrimitive<VERTEX_TYPE> AddTriangleFan(int count)
         {
-            
+            assert(count >= 3);
+            return { GeneratePrimitive(count * vertex_size, PrimitiveType::TRIANGLE_FAN), vertex_size };
         }
-
-
-
-
     };
 
 

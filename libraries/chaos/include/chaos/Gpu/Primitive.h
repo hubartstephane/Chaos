@@ -4,8 +4,11 @@ namespace chaos
 {
     enum class PrimitiveType;
 
-    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
+    template<typename VERTEX_TYPE>
     class PrimitiveBase;
+
+    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
+    class TypedPrimitive;
 
 }; // namespace chaos
 
@@ -48,24 +51,6 @@ namespace chaos
 		TRIANGLE_FAN = 5
 	};
 
-    /** returns the number of element per primitive (user accessible) */
-    constexpr size_t GetVerticesPerParticle(PrimitiveType primitive_type)
-    {
-        if (primitive_type == PrimitiveType::TRIANGLE)
-            return 3;
-        if (primitive_type == PrimitiveType::TRIANGLE_PAIR)
-            return 6;
-        if (primitive_type == PrimitiveType::QUAD)
-            return 4;
-        return 0; // strip and fans have no defined values for this
-    }
-
-    /** returns the real number of element per primitive (the count in GPU buffer) */
-    constexpr size_t GetRealVerticesPerParticle(PrimitiveType primitive_type)
-    {
-        return GetVerticesPerParticle(primitive_type);
-    }
-
     /** returns the OpenGL primitive type corresponding to the primitive */
     constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
     {
@@ -83,54 +68,56 @@ namespace chaos
     }
 
     /**
-     * PrimitiveBase : base object for writing GPU primitives into memory (GPU mapped memory for the usage) 
+     * Primitive : base object for writing GPU primitives into memory (GPU mapped memory for the usage) 
      */
 
-    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
-    class PrimitiveBase
+    template<typename VERTEX_TYPE>
+    class Primitive
     {
     public:
 
         using vertex_type = VERTEX_TYPE;
 
         /** base constructor */
-        inline PrimitiveBase() = default;
+        inline Primitive() = default;
         /** copy constructor */
-        inline PrimitiveBase(PrimitiveBase const & src) = default;
+        inline Primitive(Primitive const & src) = default;
         /** constructor */
-        inline PrimitiveBase(char* in_buffer, size_t in_vertex_size) :
+        inline Primitive(char* in_buffer, size_t in_vertex_size, size_t in_vertex_count) :
             buffer(in_buffer), 
-            vertex_size(in_vertex_size) 
+            vertex_size(in_vertex_size),
+            vertex_count(in_vertex_count)
         {
             assert(in_buffer != nullptr);
             assert(in_vertex_size > 0);
+            assert(in_vertex_count > 0);
         }
 
         /** cast operator to child vertex type */
         template<typename OTHER_VERTEX_TYPE> 
-        operator PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>& () 
+        operator Primitive<OTHER_VERTEX_TYPE>& ()
         {
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
-            return *(PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+            return *(Primitive<OTHER_VERTEX_TYPE>*)this;
         }
         /** cast operator to child vertex type */
         template<typename OTHER_VERTEX_TYPE>
-        operator PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const & () const
+        operator Primitive<OTHER_VERTEX_TYPE> const & () const
         {
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
-            return *(PrimitiveBase<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+            return *(Primitive<OTHER_VERTEX_TYPE>*)this;
         }
 
         /** accessor */
         inline vertex_type & operator [](size_t index)
         {
-            assert(index < GetVerticesPerParticle(PRIMITIVE_TYPE));
+            assert(index < vertex_count);
             return *((vertex_type*)(buffer + vertex_size * index));
         }
         /** const accessor */
         inline vertex_type const & operator [](size_t index) const
         {
-            assert(index < GetVerticesPerParticle(PRIMITIVE_TYPE));
+            assert(index < vertex_count);
             return *((vertex_type const*)(buffer + vertex_size * index));
         }
 
@@ -144,38 +131,52 @@ namespace chaos
         /** gets forward iterator on vertices */
         RawDataBufferIterator<VERTEX_TYPE> begin() 
         {
-            return RawDataBufferAccessor<VERTEX_TYPE>(buffer, count, vertex_size).begin();
+            return RawDataBufferAccessor<VERTEX_TYPE>(buffer, vertex_count, vertex_size).begin();
         }
         /** gets end forward iterator on vertices */
         RawDataBufferIterator<VERTEX_TYPE> end()
         {
-            return RawDataBufferAccessor<VERTEX_TYPE>(buffer, count, vertex_size).end();
+            return RawDataBufferAccessor<VERTEX_TYPE>(buffer, vertex_count, vertex_size).end();
         }
         /** gets forward const iterator on vertices */
         RawDataBufferIterator<VERTEX_TYPE const> begin() const
         {
-            return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, count, vertex_size).begin();
+            return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, vertex_count, vertex_size).begin();
         }
         /** gets end forward const iterator on vertices */
         RawDataBufferIterator<VERTEX_TYPE const> end() const
         {
-            return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, count, vertex_size).end();
+            return RawDataBufferConstAccessor<VERTEX_TYPE>(buffer, vertex_count, vertex_size).end();
         }
 
 	protected:
-
-		/** number of vertices for the primitives */
-		static size_t constexpr count = GetRealVerticesPerParticle(PRIMITIVE_TYPE);
-
-
-
 
         /** the buffer where we write buffer */
         char* buffer = nullptr;
         /** the size of a vertex for this primitive */
         size_t vertex_size = 0;
+        /** the number of vertices in this primitive */
+        size_t vertex_count = 0;
     };
 
+
+    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
+    class TypedPrimitive : public Primitive<VERTEX_TYPE>
+    {
+    public:
+        using Primitive::Primitive;
+    };
+
+    // fixed length primitives
+    template<typename VERTEX_TYPE> using TrianglePrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
+    template<typename VERTEX_TYPE> using TrianglePairPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
+    template<typename VERTEX_TYPE> using QuadPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::QUAD>;
+    // non-fixed length vertices count
+    template<typename VERTEX_TYPE> using TriangleStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
+    template<typename VERTEX_TYPE> using TriangleFanPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
+
+
+#if 0
     // fixed length primitives
     template<typename VERTEX_TYPE> using TrianglePrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
     template<typename VERTEX_TYPE> using TrianglePairPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
@@ -183,6 +184,7 @@ namespace chaos
     // non-fixed length vertices count
     template<typename VERTEX_TYPE> using TriangleStripPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
     template<typename VERTEX_TYPE> using TriangleFanPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
+#endif
 
 }; // namespace chaos
 

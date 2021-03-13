@@ -236,8 +236,7 @@ namespace chaos
 		}
 
         /** transforms the particles into vertices in the buffer */
-        template<typename PRIMITIVE_OUTPUT_TYPE>
-        void ParticlesToPrimitives(PRIMITIVE_OUTPUT_TYPE& output, layer_trait_type const* layer_trait) const
+        void ParticlesToPrimitives(PrimitiveOutput<vertex_type>& output, layer_trait_type const* layer_trait) const
         {		
 			using Flags = ParticleToPrimitive_ImplementationFlags;
 
@@ -401,8 +400,8 @@ namespace chaos
 			return j; // final number of particles
 		}
 
-        template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait_type const * layer_trait, PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
+        template<typename ...PARAMS>
+		void DoParticlesToPrimitivesLoop_LayerTraitImplementation(layer_trait_type const * layer_trait, PrimitiveOutput<vertex_type>& output, PARAMS... params) const
         {
             ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
@@ -410,8 +409,8 @@ namespace chaos
 				layer_trait->ParticleToPrimitives(particle, output, params...);
         }
 
-		template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_ParticleImplementation(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
+		template<typename ...PARAMS>
+		void DoParticlesToPrimitivesLoop_ParticleImplementation(PrimitiveOutput<vertex_type>& output, PARAMS... params) const
 		{
 			ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 
@@ -419,8 +418,8 @@ namespace chaos
 				particle.ParticleToPrimitives(output, params...);
 		}
 
-		template<typename PRIMITIVE_OUTPUT_TYPE, typename ...PARAMS>
-		void DoParticlesToPrimitivesLoop_DefaultImplementation(PRIMITIVE_OUTPUT_TYPE& output, PARAMS... params) const
+		template<typename ...PARAMS>
+		void DoParticlesToPrimitivesLoop_DefaultImplementation(PrimitiveOutput<vertex_type>& output, PARAMS... params) const
 		{
 			ParticleConstAccessor<particle_type> particle_accessor = GetParticleAccessor();
 

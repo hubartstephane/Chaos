@@ -2,17 +2,6 @@
 
 namespace chaos
 {
-	
-	void ParticleToPrimitives(ParticleDefault const& particle, QuadOutput<VertexDefault>& output)
-	{
-		ParticleToPrimitive(particle, output.AddPrimitive());
-	}
-
-	void ParticleToPrimitives(ParticleDefault const& particle, TrianglePairOutput<VertexDefault>& output)
-	{
-		ParticleToPrimitive(particle, output.AddPrimitive());
-	}
-	
 	void GenerateVertexPositionAttributes(box2 const& bounding_box, float rotation, glm::vec2* vertex_positions) // in order BL, BR, TR, TL
 	{
 		std::pair<glm::vec2, glm::vec2> corners = GetBoxCorners(bounding_box);
@@ -74,6 +63,11 @@ namespace chaos
 		vertex_flags[1] = VertexFlags::BOTTOM_RIGHT | output_flags;
 		vertex_flags[2] = VertexFlags::TOP_RIGHT | output_flags;
 		vertex_flags[3] = VertexFlags::TOP_LEFT | output_flags;
+	}
+
+	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VertexDefault>& output)
+	{
+		ParticleToPrimitive(particle, output.AddQuads());
 	}
 
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive)

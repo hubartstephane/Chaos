@@ -28,27 +28,17 @@ namespace chaos
 // XXX: no namespace so we can use 'using' to have more concise code
 struct ParticleToPrimitive_ImplementationFlags
 {
-	// the kind of primitive emitted
-	static constexpr int NONE = 0;
-	static constexpr int TRIANGLE = 1;
-	static constexpr int TRIANGLE_PAIR = 2;
-	static constexpr int QUAD = 3;
-	static constexpr int TRIANGLE_STRIP = 4;
-	static constexpr int TRIANGLE_FAN = 5;
-	// a mask for the primitive type
-	static constexpr int PRIMITIVE_MASK = 7;
-
 	// whether the trait has the implementation to use
-	static constexpr int TRAIT_IMPLEMENTATION = 8;
+	static constexpr int TRAIT_IMPLEMENTATION = 1;
 	// whether the particle class itself has the implementation to use
-	static constexpr int PARTICLE_IMPLEMENTATION = 16;
+	static constexpr int PARTICLE_IMPLEMENTATION = 2;
 	// whether nor the particle class nor the trait class has an implementation. So whether to use the default implementation method
-	static constexpr int DEFAULT_IMPLEMENTATION = 32;
+	static constexpr int DEFAULT_IMPLEMENTATION = 4;
 
 	// for trait implementation, whether there is a ALLOCATION TRAIT to use in the call
-	static constexpr int WITH_ALLOCATION_TRAIT = 64;
+	static constexpr int WITH_ALLOCATION_TRAIT = 8;
 	// for trait implementation, whether there is a BEGIN to call before
-	static constexpr int WITH_BEGIN_CALL = 128;
+	static constexpr int WITH_BEGIN_CALL = 16;
 };
 
 	// ==============================================================
@@ -90,11 +80,7 @@ namespace ParticleTraitTools
 		using vertex = typename trait::vertex_type;
 		using accessor = typename ParticleConstAccessor<particle>;
 
-		using triangle_output = TriangleOutput<vertex>;
-		using trianglepair_output = TrianglePairOutput<vertex>;
-		using quad_output = QuadOutput<vertex>;
-		using trianglestrip_output = TriangleStripOutput<vertex>;
-		using trianglefan_output = TriangleFanOutput<vertex>;
+		using primitive_output = PrimitiveOutput<vertex>;
 
 		using Flags = ParticleToPrimitive_ImplementationFlags;
 
@@ -108,35 +94,13 @@ namespace ParticleTraitTools
 			{
 				using begin_result = typeof_method_BeginParticlesToPrimitives<trait const, accessor&, allocation_trait const &>;
 
-				int base_flags = Flags::TRAIT_IMPLEMENTATION | Flags::WITH_BEGIN_CALL | Flags::WITH_ALLOCATION_TRAIT;
-
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, begin_result, allocation_trait const &>)
-					return Flags::TRIANGLE | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, begin_result, allocation_trait const &>)
-					return Flags::TRIANGLE_PAIR | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, begin_result, allocation_trait const &>)
-					return Flags::QUAD | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, begin_result, allocation_trait const &>)
-					return Flags::TRIANGLE_STRIP | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, begin_result, allocation_trait const &>)
-					return Flags::TRIANGLE_FAN | base_flags;
+				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, primitive_output&, begin_result, allocation_trait const &>)
+					return Flags::TRAIT_IMPLEMENTATION | Flags::WITH_BEGIN_CALL | Flags::WITH_ALLOCATION_TRAIT;
 			}
 
 			// AllocationTrait - NO BEGIN
-			{
-				int base_flags = Flags::TRAIT_IMPLEMENTATION | Flags::WITH_ALLOCATION_TRAIT;
-
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, allocation_trait const &>)
-					return Flags::TRIANGLE | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, allocation_trait const &>)
-					return Flags::TRIANGLE_PAIR | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, allocation_trait const &>)
-					return Flags::QUAD | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, allocation_trait const &>)
-					return Flags::TRIANGLE_STRIP | base_flags;
-				if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, allocation_trait const &>)
-					return Flags::TRIANGLE_FAN | base_flags;
-			}
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, primitive_output&, allocation_trait const&>)
+				return Flags::TRAIT_IMPLEMENTATION | Flags::WITH_ALLOCATION_TRAIT;
 		}
 
 		// NO ALLOCATION TRAIT + BeginParticlesToPrimitive
@@ -144,91 +108,26 @@ namespace ParticleTraitTools
 		{
 			using begin_result = typeof_method_BeginParticlesToPrimitives<trait const, accessor&>;
 
-			int base_flags = Flags::TRAIT_IMPLEMENTATION | Flags::WITH_BEGIN_CALL;
-
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&, begin_result>)
-				return Flags::TRIANGLE | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&, begin_result>)
-				return Flags::TRIANGLE_PAIR | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&, begin_result>)
-				return Flags::QUAD | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&, begin_result>)
-				return Flags::TRIANGLE_STRIP | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&, begin_result>)
-				return Flags::TRIANGLE_FAN | base_flags;
+			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, primitive_output&, begin_result>)
+				return Flags::TRAIT_IMPLEMENTATION | Flags::WITH_BEGIN_CALL;
 		}
 
 		// NO ALLOCATION TRAIT - NO BEGIN
-		{
-			int base_flags = Flags::TRAIT_IMPLEMENTATION;
-
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, triangle_output&>)
-				return Flags::TRIANGLE | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglepair_output&>)
-				return Flags::TRIANGLE_PAIR | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, quad_output&>)
-				return Flags::QUAD | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglestrip_output&>)
-				return Flags::TRIANGLE_STRIP | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, trianglefan_output&>)
-				return Flags::TRIANGLE_FAN | base_flags;
-		}
+		if constexpr (check_method_ParticleToPrimitives_v<trait const, particle const&, primitive_output&>)
+			return Flags::TRAIT_IMPLEMENTATION;
 
 		// ============================== use implementation from PARTICLE ITSELF ==============================
-		{
-			int base_flags = Flags::PARTICLE_IMPLEMENTATION;
 
-			if constexpr (check_method_ParticleToPrimitives_v<particle const&, triangle_output&>)
-				return Flags::TRIANGLE | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<particle const&, trianglepair_output&>)
-				return Flags::TRIANGLE_PAIR | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<particle const&, quad_output&>)
-				return Flags::QUAD | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<particle const&, trianglestrip_output&>)
-				return Flags::TRIANGLE_STRIP | base_flags;
-			if constexpr (check_method_ParticleToPrimitives_v<particle const&, trianglefan_output&>)
-				return Flags::TRIANGLE_FAN | base_flags;
-		}
+		if constexpr (check_method_ParticleToPrimitives_v<particle const&, primitive_output&>)
+			return Flags::PARTICLE_IMPLEMENTATION;
 
 		// ============================== use implementation DEFAULT ==============================
-		{
-			int base_flags = Flags::DEFAULT_IMPLEMENTATION;
 
-			if constexpr (check_function_ParticleToPrimitives_v<particle const&, triangle_output&>)
-				return Flags::TRIANGLE | base_flags;
-			if constexpr (check_function_ParticleToPrimitives_v<particle const&, trianglepair_output&>)
-				return Flags::TRIANGLE_PAIR | base_flags;
-			if constexpr (check_function_ParticleToPrimitives_v<particle const&, quad_output&>)
-				return Flags::QUAD | base_flags;
-			if constexpr (check_function_ParticleToPrimitives_v<particle const&, trianglestrip_output&>)
-				return Flags::TRIANGLE_STRIP | base_flags;
-			if constexpr (check_function_ParticleToPrimitives_v<particle const&, trianglefan_output&>)
-				return Flags::TRIANGLE_FAN | base_flags;
-		}
-		return Flags::NONE;
-	}
+		if constexpr (check_function_ParticleToPrimitives_v<particle const&, primitive_output&>)
+			return Flags::DEFAULT_IMPLEMENTATION;
 
-	/** returns the primitive type used for the rendering */
-	template<typename TRAIT_TYPE>
-	constexpr PrimitiveType GetPrimitiveType()
-	{
-		using Flags = ParticleToPrimitive_ImplementationFlags;
-
-		constexpr int implementation_type = GetParticleToPrimitivesImplementationType<TRAIT_TYPE>();
-		constexpr int primitive_type = (implementation_type & Flags::PRIMITIVE_MASK);
-
-		if constexpr (primitive_type == Flags::TRIANGLE_PAIR)
-			return PrimitiveType::TRIANGLE_PAIR;
-		if constexpr (primitive_type == Flags::QUAD)
-			return PrimitiveType::QUAD;
-		if constexpr (primitive_type == Flags::TRIANGLE)
-			return PrimitiveType::TRIANGLE;
-		if ((implementation_type & Flags::PRIMITIVE_MASK) == Flags::TRIANGLE_STRIP)
-			return PrimitiveType::TRIANGLE_STRIP;
-		if ((implementation_type & Flags::PRIMITIVE_MASK) == Flags::TRIANGLE_FAN)
-			return PrimitiveType::TRIANGLE_FAN;	
-
-		return PrimitiveType::NONE;
+		//static_assert(0);
+		return 0;
 	}
 
 	/** returns the kind of implementation required for the particle update */

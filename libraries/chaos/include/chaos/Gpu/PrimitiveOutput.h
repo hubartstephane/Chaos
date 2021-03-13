@@ -4,7 +4,7 @@ namespace chaos
 {
     class PrimitiveOutputBase;
 
-    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
+    template<typename VERTEX_TYPE>
     class PrimitiveOutput;
 
 }; // namespace chaos
@@ -107,108 +107,51 @@ namespace chaos
         std::vector<GPUDrawPrimitive> pending_primitives;
     };
 
-    // ==========================================================================================
-
     template<typename VERTEX_TYPE>
-    class PrimitiveOutputXXX : public PrimitiveOutputBase
+    class PrimitiveOutput : public PrimitiveOutputBase
     {
     public:
 
         using vertex_type = VERTEX_TYPE;
 
         /** constructor */
-        PrimitiveOutputXXX(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
+        PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
             PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
         }
 
         /** insert some quads */
-        QuadPrimitive<VERTEX_TYPE> AddQuads(size_t primitive_count = 1)
+        QuadPrimitive<vertex_type> AddQuads(size_t primitive_count = 1)
         {
-            return { GeneratePrimitive(4 * vertex_size * primitive_count, PrimitiveType::QUAD), vertex_size };
+            size_t vertex_count = primitive_count * 4;
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::QUAD), vertex_size, vertex_count };
         }
         /** insert some triangles */
-        TrianglePrimitive<VERTEX_TYPE> AddTriangles(size_t primitive_count = 1)
+        TrianglePrimitive<vertex_type> AddTriangles(size_t primitive_count = 1)
         {
-            return { GeneratePrimitive(3 * vertex_size * primitive_count, PrimitiveType::TRIANGLE), vertex_size };
+            size_t vertex_count = primitive_count * 3;
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE), vertex_size, vertex_count };
         }
         /** insert some triangles pairs*/
-        TrianglePairPrimitive<VERTEX_TYPE> AddTrianglePairs(size_t primitive_count = 1)
+        TrianglePairPrimitive<vertex_type> AddTrianglePairs(size_t primitive_count = 1)
         {
-            return { GeneratePrimitive(6 * vertex_size * primitive_count, PrimitiveType::TRIANGLE_PAIR), vertex_size };
+            size_t vertex_count = primitive_count * 6;
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_PAIR), vertex_size, vertex_count };
         }
         /** insert a triangle strip */
-        TriangleStripPrimitive<VERTEX_TYPE> AddTriangleStrip(size_t vertex_count)
+        TriangleStripPrimitive<vertex_type> AddTriangleStrip(size_t vertex_count)
         {
             assert(vertex_count >= 3);
-            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_STRIP), vertex_size };
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_STRIP), vertex_size, vertex_count };
         }
         /** insert a triangle fan */
-        TriangleFanPrimitive<VERTEX_TYPE> AddTriangleFan(size_t vertex_count)
+        TriangleFanPrimitive<vertex_type> AddTriangleFan(size_t vertex_count)
         {
             assert(vertex_count >= 3);
-            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_FAN), vertex_size };
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_FAN), vertex_size, vertex_count };
         }
     };
-
-    /**
-     * PrimitiveOutput : generic primitive generator
-     */
-
-    template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE> 
-    class PrimitiveOutput : public PrimitiveOutputXXX<VERTEX_TYPE>
-    {
-    public:
-
-        using vertex_type = VERTEX_TYPE;
-
-        using primitive_type = PrimitiveBase<vertex_type, PRIMITIVE_TYPE>;
-
-        /** constructor */
-        PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration * in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
-            PrimitiveOutputXXX(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
-        {
-            vertex_size = sizeof(vertex_type);
-        }
-
-        /** cast operator to child vertex type */
-        template<typename OTHER_VERTEX_TYPE>
-        operator PrimitiveOutput<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>& ()
-        {
-            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
-            return *(PrimitiveOutput<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
-        }
-        /** cast operator to child vertex type */
-        template<typename OTHER_VERTEX_TYPE>
-        operator PrimitiveOutput<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const& () const
-        {
-            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
-            return *(PrimitiveOutput<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
-        }
-
-        auto AddPrimitive(size_t count = 1)
-        {
-            if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
-                return AddQuads(count);
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE)
-                return AddTriangles(count);
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_PAIR)
-                return AddTrianglePairs(count);
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_STRIP)
-                return AddTriangleStrip(count);
-            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_FAN)
-                return AddTriangleFan(count);
-        }
-    };
-
-    // fixed length primitive
-    template<typename VERTEX_TYPE> using TriangleOutput = PrimitiveOutput<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
-    template<typename VERTEX_TYPE> using TrianglePairOutput = PrimitiveOutput<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
-    template<typename VERTEX_TYPE> using QuadOutput = PrimitiveOutput<VERTEX_TYPE, PrimitiveType::QUAD>;
-    // non-fixed length vertices count
-    template<typename VERTEX_TYPE> using TriangleStripOutput = PrimitiveOutput<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
-    template<typename VERTEX_TYPE> using TriangleFanOutput = PrimitiveOutput<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
 
 }; // namespace chaos
 

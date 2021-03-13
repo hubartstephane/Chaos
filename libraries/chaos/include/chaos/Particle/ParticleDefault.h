@@ -97,11 +97,8 @@ namespace chaos
 		int flags = 0;
 	};
 
-	/** generates 1 quad from one particle */
-	void ParticleToPrimitives(ParticleDefault const& particle, QuadOutput<VertexDefault>& output);
-	/** generates 1 triangle pair from one particle */
-	void ParticleToPrimitives(ParticleDefault const& particle, TrianglePairOutput<VertexDefault>& output);
-
+	/** output primitive */
+	void ParticleToPrimitives(ParticleDefault const& particle, PrimitiveOutput<VertexDefault>& output);
 	/** generates 1 quad from one particle */
 	void ParticleToPrimitive(ParticleDefault const& particle, QuadPrimitive<VertexDefault>& primitive);
 	/** generates 1 triangle pair from one particle */

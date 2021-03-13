@@ -7,34 +7,6 @@ namespace chaos
 	Game::Game()
 	{
 		game_sm_class = GameStateMachine::GetStaticClass();
-
-
-
-#if 0
-		GPUDynamicMesh* mesh = new GPUDynamicMesh();
-
-		PrimitiveOutputXXX<VertexDefault> output(mesh, nullptr, nullptr, nullptr, 100);
-
-
-		auto quad = output.AddQuad();
-		auto tri = output.AddTriangle();
-		auto tripair = output.AddTrianglePair();
-		auto fan = output.AddTriangleFan(100);
-		auto strip = output.AddTriangleStrip(100);
-
-
-
-		mesh = mesh;
-
-
-#endif
-
-
-
-
-
-
-
 	}
 
 	int Game::GetBestPlayerScore() const

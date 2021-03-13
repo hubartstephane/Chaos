@@ -70,6 +70,9 @@ namespace chaos
 
         char* GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type);
 
+
+        void FlushAll();
+
     protected:
 
         /** get a buffer we already have used partially */
@@ -87,10 +90,9 @@ namespace chaos
 
         void FlushDrawPrimitive();
 
-        void UnmapAllInternalBuffer();
 
 
-        char* AllocateBufferMemory(size_t in_size, bool& buffer_changed);
+        char* AllocateBufferMemory(size_t in_size);
 
 
         /** register a new primitive */
@@ -109,12 +111,16 @@ namespace chaos
         /** the material to use */
         GPURenderMaterial* render_material = nullptr;
 
-        /** the buffer where we are writting vertices */
-        shared_ptr<GPUBuffer> vertex_buffer = nullptr;
+        /** the shared index buffer for quad creation */
+        GPUBuffer* quad_index_buffer = nullptr;
+        /** the max number of quad that can be rendered in a single draw call */
+        size_t max_quad_count = 0;
 
+        /** the buffer where we are writting vertices */
+        shared_ptr<GPUBuffer> vertex_buffer;
         /** an evaluation of how many vertices could be used */
         size_t vertex_requirement_evaluation = 0;
-       
+
 
 
         /** the start position of the buffer */
@@ -149,13 +155,8 @@ namespace chaos
 
         /** the current type of primitive we are working on */
         PrimitiveType current_primitive_type = PrimitiveType::NONE;
-        /** the mesh element we are currently working on */
-        GPUDynamicMeshElement current_mesh_element;
-
-
-   
-        /** the currently been filled primitive */
-        GPUDrawPrimitive current_draw_primitive;
+        /** the pending primitives */
+        std::vector<GPUDrawPrimitive> pending_primitives;
     };
 
     // ==========================================================================================
@@ -174,31 +175,31 @@ namespace chaos
             vertex_size = sizeof(vertex_type);
         }
 
-        QuadPrimitive<VERTEX_TYPE> AddQuad(int primitive_count = 1)
+        QuadPrimitive<VERTEX_TYPE> AddQuad(size_t primitive_count = 1)
         {
-            return { GeneratePrimitive(4 * vertex_size, PrimitiveType::QUAD), vertex_size };
+            return { GeneratePrimitive(4 * vertex_size * primitive_count, PrimitiveType::QUAD), vertex_size };
         }
 
-        TrianglePrimitive<VERTEX_TYPE> AddTriangle(int primitive_count = 1)
+        TrianglePrimitive<VERTEX_TYPE> AddTriangle(size_t primitive_count = 1)
         {
-            return { GeneratePrimitive(3 * vertex_size, PrimitiveType::TRIANGLE), vertex_size };
+            return { GeneratePrimitive(3 * vertex_size * primitive_count, PrimitiveType::TRIANGLE), vertex_size };
         }
 
-        TrianglePairPrimitive<VERTEX_TYPE> AddTrianglePair(int primitive_count = 1)
+        TrianglePairPrimitive<VERTEX_TYPE> AddTrianglePair(size_t primitive_count = 1)
         {
-            return { GeneratePrimitive(6 * vertex_size, PrimitiveType::TRIANGLE), vertex_size }; // not TRIANGLE_PAIR ! considered as simple triangle too
+            return { GeneratePrimitive(6 * vertex_size * primitive_count, PrimitiveType::TRIANGLE_PAIR), vertex_size };
         }
 
-        TriangleStripPrimitive<VERTEX_TYPE> AddTriangleStrip(int count)
+        TriangleStripPrimitive<VERTEX_TYPE> AddTriangleStrip(size_t vertex_count)
         {
-            assert(count >= 3);
-            return { GeneratePrimitive(count * vertex_size, PrimitiveType::TRIANGLE_STRIP), vertex_size };
+            assert(vertex_count >= 3);
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_STRIP), vertex_size };
         }
 
-        TriangleFanPrimitive<VERTEX_TYPE> AddTriangleFan(int count)
+        TriangleFanPrimitive<VERTEX_TYPE> AddTriangleFan(size_t vertex_count)
         {
-            assert(count >= 3);
-            return { GeneratePrimitive(count * vertex_size, PrimitiveType::TRIANGLE_FAN), vertex_size };
+            assert(vertex_count >= 3);
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_FAN), vertex_size };
         }
     };
 
@@ -226,7 +227,7 @@ namespace chaos
      */
 
     template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE> 
-    class PrimitiveOutput : public PrimitiveOutputBase
+    class PrimitiveOutput : public PrimitiveOutputXXX<VERTEX_TYPE>
     {
     public:
 
@@ -236,7 +237,7 @@ namespace chaos
 
         /** constructor */
         PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration * in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
-            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
+            PrimitiveOutputXXX(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
             vertices_per_primitive = GetVerticesPerParticle(PRIMITIVE_TYPE);
@@ -259,6 +260,22 @@ namespace chaos
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
             return *(PrimitiveOutput<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
         }
+#if 0
+        auto AddPrimitive(size_t count = 1)
+        {
+            if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
+                return AddQuad(count);
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE)
+                return AddTriangle(count);
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_PAIR)
+                return AddTrianglePair(count);
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_STRIP)
+                return AddTriangleStrip(count);
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_FAN)
+                return AddTriangleFan(count);
+        }
+
+#else
 
         /** add a primitive */
         inline primitive_type AddPrimitive(size_t custom_vertices_count = 0)
@@ -278,6 +295,7 @@ namespace chaos
                 return primitive_type(GeneratePrimitive(vertex_size * real_vertices_per_primitive), vertex_size);
             }
         }
+#endif
     };
 
     // fixed length primitive

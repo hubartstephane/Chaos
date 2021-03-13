@@ -11,6 +11,8 @@ namespace chaos
 
 #else 
 
+#define OLDOUTPUT 1
+
 namespace chaos
 {
 
@@ -32,8 +34,6 @@ namespace chaos
         char* buffer_end = nullptr;
     };
 
-
- 
     /**
      * PrimitiveOutputBase : a primitive generator (the base class)
      */
@@ -42,18 +42,10 @@ namespace chaos
     {
     public:
 
-        PrimitiveOutputBase() = default;
-
-
-
-
         /** constructor */
         PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation);
-
         /** destructor */
         ~PrimitiveOutputBase();
-
-
 
         /** gets the size of one vertice of the generated primitive */
         size_t GetVertexSize() const { return vertex_size; }
@@ -61,17 +53,8 @@ namespace chaos
         void Flush();
         /** change the material for the next primitives */
         void SetRenderMaterial(GPURenderMaterial* in_render_material);
-
-
-
-
-
-
-
+        /** generate some memory for a bunch of data for a given primitive type */
         char* GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type);
-
-
-        void FlushAll();
 
     protected:
 
@@ -79,26 +62,21 @@ namespace chaos
         GPUPrimitiveBufferCacheEntry * GetInternalCachedBuffer(size_t required_size);
         /** put a buffer partially used to be restore later */
         void GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char * in_buffer_position, char* in_buffer_end);
-
-
-
-
-
-
         /** flush the currently been constructed mesh element */
         void FlushMeshElement();
-
+        /** flush currently being constructed primitive */
         void FlushDrawPrimitive();
-
-
-
+        /** get some memory */
         char* AllocateBufferMemory(size_t in_size);
 
+
+#if OLDOUTPUT
 
         /** register a new primitive */
         char* GeneratePrimitive(size_t required_size);
         /** allocate a buffer for the primitive and register a new primitive */
         char* ReserveBuffer(size_t required_size);
+#endif
 
     protected:
 
@@ -121,8 +99,6 @@ namespace chaos
         /** an evaluation of how many vertices could be used */
         size_t vertex_requirement_evaluation = 0;
 
-
-
         /** the start position of the buffer */
         char* buffer_start = nullptr; 
         /** the position in buffer from which data has not been flushed yet */
@@ -137,6 +113,8 @@ namespace chaos
 
         /** size of a vertex */
         size_t vertex_size = 0;
+
+#if OLDOUTPUT
         /** the number of vertices per primitive (accessible for user from Primitive with [] operator) */
         size_t vertices_per_primitive = 0;
         /** the real number of vertices per primitives (in GPU memory quads are transformed into a triangle pair) */
@@ -145,14 +123,12 @@ namespace chaos
         PrimitiveType type;
         /** the GL primitive type */
         GLenum primitive_gl_type = GL_NONE;
-
+#endif
 
 
 
         /** our internal cache for the buffer we have started to use */
         std::vector<GPUPrimitiveBufferCacheEntry> internal_buffer_cache;
-
-
         /** the current type of primitive we are working on */
         PrimitiveType current_primitive_type = PrimitiveType::NONE;
         /** the pending primitives */
@@ -175,52 +151,34 @@ namespace chaos
             vertex_size = sizeof(vertex_type);
         }
 
-        QuadPrimitive<VERTEX_TYPE> AddQuad(size_t primitive_count = 1)
+        /** insert some quads */
+        QuadPrimitive<VERTEX_TYPE> AddQuads(size_t primitive_count = 1)
         {
             return { GeneratePrimitive(4 * vertex_size * primitive_count, PrimitiveType::QUAD), vertex_size };
         }
-
-        TrianglePrimitive<VERTEX_TYPE> AddTriangle(size_t primitive_count = 1)
+        /** insert some triangles */
+        TrianglePrimitive<VERTEX_TYPE> AddTriangles(size_t primitive_count = 1)
         {
             return { GeneratePrimitive(3 * vertex_size * primitive_count, PrimitiveType::TRIANGLE), vertex_size };
         }
-
-        TrianglePairPrimitive<VERTEX_TYPE> AddTrianglePair(size_t primitive_count = 1)
+        /** insert some triangles pairs*/
+        TrianglePairPrimitive<VERTEX_TYPE> AddTrianglePairs(size_t primitive_count = 1)
         {
             return { GeneratePrimitive(6 * vertex_size * primitive_count, PrimitiveType::TRIANGLE_PAIR), vertex_size };
         }
-
+        /** insert a triangle strip */
         TriangleStripPrimitive<VERTEX_TYPE> AddTriangleStrip(size_t vertex_count)
         {
             assert(vertex_count >= 3);
             return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_STRIP), vertex_size };
         }
-
+        /** insert a triangle fan */
         TriangleFanPrimitive<VERTEX_TYPE> AddTriangleFan(size_t vertex_count)
         {
             assert(vertex_count >= 3);
             return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_FAN), vertex_size };
         }
     };
-
-
-
-
-
-
-
-
-
-
-        // ==========================================================================================
-
-
-
-
-
-
-
-
 
     /**
      * PrimitiveOutput : generic primitive generator
@@ -240,10 +198,13 @@ namespace chaos
             PrimitiveOutputXXX(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
+
+#if OLDOUTPUT
             vertices_per_primitive = GetVerticesPerParticle(PRIMITIVE_TYPE);
             real_vertices_per_primitive = GetRealVerticesPerParticle(PRIMITIVE_TYPE);
             type = PRIMITIVE_TYPE;
             primitive_gl_type = GetGLPrimitiveType(PRIMITIVE_TYPE);
+#endif
         }
 
         /** cast operator to child vertex type */
@@ -260,15 +221,15 @@ namespace chaos
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
             return *(PrimitiveOutput<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
         }
-#if 0
+#if !OLDOUTPUT
         auto AddPrimitive(size_t count = 1)
         {
             if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
-                return AddQuad(count);
+                return AddQuads(count);
             else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE)
-                return AddTriangle(count);
+                return AddTriangles(count);
             else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_PAIR)
-                return AddTrianglePair(count);
+                return AddTrianglePairs(count);
             else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_STRIP)
                 return AddTriangleStrip(count);
             else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_FAN)

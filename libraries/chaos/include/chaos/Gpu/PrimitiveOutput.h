@@ -11,8 +11,6 @@ namespace chaos
 
 #else 
 
-#define OLDOUTPUT 1
-
 namespace chaos
 {
 
@@ -69,15 +67,6 @@ namespace chaos
         /** get some memory */
         char* AllocateBufferMemory(size_t in_size);
 
-
-#if OLDOUTPUT
-
-        /** register a new primitive */
-        char* GeneratePrimitive(size_t required_size);
-        /** allocate a buffer for the primitive and register a new primitive */
-        char* ReserveBuffer(size_t required_size);
-#endif
-
     protected:
 
         /** the dynamic mesh we are working on (to store primitives to render) */
@@ -108,25 +97,8 @@ namespace chaos
         /** end of currently allocated buffer */
         char* buffer_end = nullptr;
 
-
-
-
         /** size of a vertex */
         size_t vertex_size = 0;
-
-#if OLDOUTPUT
-        /** the number of vertices per primitive (accessible for user from Primitive with [] operator) */
-        size_t vertices_per_primitive = 0;
-        /** the real number of vertices per primitives (in GPU memory quads are transformed into a triangle pair) */
-        size_t real_vertices_per_primitive = 0;
-        /** the primitive type */
-        PrimitiveType type;
-        /** the GL primitive type */
-        GLenum primitive_gl_type = GL_NONE;
-#endif
-
-
-
         /** our internal cache for the buffer we have started to use */
         std::vector<GPUPrimitiveBufferCacheEntry> internal_buffer_cache;
         /** the current type of primitive we are working on */
@@ -198,13 +170,6 @@ namespace chaos
             PrimitiveOutputXXX(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
-
-#if OLDOUTPUT
-            vertices_per_primitive = GetVerticesPerParticle(PRIMITIVE_TYPE);
-            real_vertices_per_primitive = GetRealVerticesPerParticle(PRIMITIVE_TYPE);
-            type = PRIMITIVE_TYPE;
-            primitive_gl_type = GetGLPrimitiveType(PRIMITIVE_TYPE);
-#endif
         }
 
         /** cast operator to child vertex type */
@@ -221,7 +186,7 @@ namespace chaos
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
             return *(PrimitiveOutput<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
         }
-#if !OLDOUTPUT
+
         auto AddPrimitive(size_t count = 1)
         {
             if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
@@ -235,28 +200,6 @@ namespace chaos
             else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_FAN)
                 return AddTriangleFan(count);
         }
-
-#else
-
-        /** add a primitive */
-        inline primitive_type AddPrimitive(size_t custom_vertices_count = 0)
-        {
-            assert((vertices_per_primitive == 0) ^ (custom_vertices_count == 0)); // STRIPS & FANS require a CUSTOM number of vertices, other requires a NON CUSTOM number of vertices
-            // implementation for STRIPS or FANS
-            if constexpr (GetVerticesPerParticle(PRIMITIVE_TYPE) == 0)
-            {
-                // TODO : implement fans and strips 
-                primitive_type result;                
-                assert(0);
-                return result;
-            }
-            // implementation for fixed length primitives
-            else
-            {
-                return primitive_type(GeneratePrimitive(vertex_size * real_vertices_per_primitive), vertex_size);
-            }
-        }
-#endif
     };
 
     // fixed length primitive

@@ -29,6 +29,7 @@ namespace chaos
 
     bool GPUBufferCache::GiveBuffer(shared_ptr<GPUBuffer> & buffer, GPUFence* fence)
     {
+        assert(buffer != nullptr);
         GPUBufferCacheEntries* cache_entry = GetCacheEntryForFence(fence);
         if (cache_entry == nullptr)
             return false;

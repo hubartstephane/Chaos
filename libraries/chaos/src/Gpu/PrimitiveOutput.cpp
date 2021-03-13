@@ -20,7 +20,7 @@ namespace chaos
 
     PrimitiveOutputBase::~PrimitiveOutputBase()
     {
-        FlushAll();
+        Flush();
     }
 
     GPUPrimitiveBufferCacheEntry * PrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
@@ -47,7 +47,9 @@ namespace chaos
         internal_buffer_cache.push_back({ in_buffer, in_buffer_start, in_buffer_position, in_buffer_end });
     }
 
-    void PrimitiveOutputBase::FlushAll()
+#if ! OLDOUTPUT
+
+    void PrimitiveOutputBase::Flush()
     {
         // finalize the mesh
         FlushMeshElement();
@@ -68,7 +70,11 @@ namespace chaos
         }
         vertex_buffer = nullptr;
         internal_buffer_cache.clear();
+
+        buffer_start = buffer_unflushed = buffer_position = buffer_end = nullptr;
     }
+
+#endif
 
     char* PrimitiveOutputBase::AllocateBufferMemory(size_t in_size)
     {
@@ -174,6 +180,9 @@ namespace chaos
 
                     pending_primitives.push_back(primitive);
                     buffer_unflushed += 4 * count * vertex_size;
+
+                    if (primitive.count > 5000 || primitive.start < 0)
+                        buffer_unflushed = buffer_unflushed;
                 }
             }
             // other primitives than QUAD produces a single draw call
@@ -184,6 +193,11 @@ namespace chaos
                 primitive.start = int((buffer_unflushed - buffer_start) / vertex_size); // start relative to the vertex buffer
                 primitive.base_vertex_index = 0;
                 pending_primitives.push_back(primitive);
+
+
+                if (primitive.count > 5000 || primitive.start < 0)
+                    buffer_unflushed = buffer_unflushed;
+
 
                 buffer_unflushed = buffer_position;
             }
@@ -213,9 +227,9 @@ namespace chaos
             FlushDrawPrimitive(); // flush pending primitives
         }
 
+        char * result = AllocateBufferMemory(requested_size); // this may set current_primitive_type to NONE
         current_primitive_type = primitive_type;
-
-        return AllocateBufferMemory(requested_size);
+        return result;
     }
 
 
@@ -237,11 +251,12 @@ namespace chaos
 
 
 
-
+#if OLDOUTPUT
 
 
     void PrimitiveOutputBase::Flush()
     {
+
         // skip empty primitive
         if (buffer_start == nullptr || buffer_position == buffer_start)
             return;
@@ -314,21 +329,6 @@ namespace chaos
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     char* PrimitiveOutputBase::GeneratePrimitive(size_t required_size)
     {
         // flush primitive and allocate memory if necessary
@@ -380,5 +380,8 @@ namespace chaos
 
         return buffer_position;
     }
+
+#endif
+
 
 }; // namespace chaos

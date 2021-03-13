@@ -140,11 +140,7 @@ namespace chaos
         size_t result = GetDynamicMeshVertexCount(in_dynamic_mesh);
         if (result == 0) // happens whenever the mesh is empty (first call for example)
         {
-            // XXX : for strip and fans, we take 6 as an empiric value
-            size_t real_vertices_per_particle = GetRealVerticesPerParticle();
-            if (real_vertices_per_particle == 0)
-                real_vertices_per_particle = 6;
-            result = GetParticleCount() * real_vertices_per_particle; // suppose 1 particle => 1 primitive (this is not mandatory)
+            result = GetParticleCount() * 4; // XXX : by default, suppose the particles will be rendered has quads
         }
         return result;
     }

@@ -35,8 +35,6 @@ namespace chaos
         virtual size_t GetParticleCount() const { return 0; }
 		/** returns the size in memory of a vertex */
 		virtual size_t GetVertexSize() const { return 0; }
-		/** returns the number of vertices required for each particles */
-        virtual size_t GetRealVerticesPerParticle() const { return 0; }
 
 		/** returns true whether vertices need to be updated */
 		virtual bool AreVerticesDynamic() const { return true; }
@@ -110,9 +108,6 @@ namespace chaos
 		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() { return nullptr;  }
 		/** get the trait */
 		virtual AutoConstCastable<ParticleLayerTraitBase> GetLayerTrait() const { return nullptr; }
-
-        /** returns the OpenGL primitive type */
-        virtual GLenum GetGLPrimitiveType() const { return GL_NONE; }
 
 		/** force GPU buffer update */
 		void SetGPUBufferDirty() { require_GPU_update = true; }
@@ -231,19 +226,9 @@ namespace chaos
         /** override */
 		virtual size_t GetVertexSize() const override { return sizeof(vertex_type); }
 		/** override */
-        virtual size_t GetRealVerticesPerParticle() const override
-        {
-            return chaos::GetRealVerticesPerParticle(ParticleTraitTools::GetPrimitiveType<layer_trait_type>()); // see PrimitiveOutput.h
-        }
-		/** override */
 		virtual bool AreVerticesDynamic() const override 
 		{ 			
 			return data.dynamic_vertices;
-		}
-		/** override */
-		virtual bool AreParticlesDynamic() const override 
-		{ 			
-			return data.dynamic_particles;
 		}
 		/** override */
 		virtual Class const * GetParticleClass() const override { return Class::FindClass<particle_type>(); }
@@ -257,11 +242,6 @@ namespace chaos
 				result->SetEffectiveVertexSize(sizeof(vertex_type));
 			}
 			return result;
-		}
-        /** override */
-        virtual GLenum GetGLPrimitiveType() const override 
-		{
-			return chaos::GetGLPrimitiveType(ParticleTraitTools::GetPrimitiveType<layer_trait_type>()); // see PrimitiveOutput.h
 		}
 		/** override */
 		virtual AutoCastable<ParticleLayerTraitBase> GetLayerTrait() override { return &data; }
@@ -297,39 +277,12 @@ namespace chaos
             // some layers are in a manager, some not (see TiledMap)
             GPUBufferCache* cache = (particle_manager == nullptr) ? &buffer_cache : &particle_manager->GetBufferCache();
 
-			constexpr PrimitiveType primitive_type = ParticleTraitTools::GetPrimitiveType<LAYER_TRAIT>();
-
-            // select PrimitiveOutput and collect vertices
-            if constexpr (primitive_type == PrimitiveType::TRIANGLE)
-            {
-                TriangleOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
-                ParticlesToPrimitivesLoop(output);
-            }
-            else if constexpr (primitive_type == PrimitiveType::TRIANGLE_PAIR)
-            {
-                TrianglePairOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
-                ParticlesToPrimitivesLoop(output);
-            }
-            else if constexpr (primitive_type == PrimitiveType::QUAD)
-            {
-                QuadOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
-                ParticlesToPrimitivesLoop(output);
-            }
-            else if constexpr (primitive_type == PrimitiveType::TRIANGLE_STRIP)
-            {
-                TriangleStripOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
-                ParticlesToPrimitivesLoop(output);
-            }
-            else if constexpr (primitive_type == PrimitiveType::TRIANGLE_FAN)
-            {
-                TriangleFanOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
-                ParticlesToPrimitivesLoop(output);
-            }
+			PrimitiveOutput<vertex_type> output(in_dynamic_mesh, cache, in_vertex_declaration, in_render_material, vertex_requirement_evaluation);
+			ParticlesToPrimitivesLoop(output);
         }
 
         // convert particles into vertices
-        template<typename PRIMITIVE_OUTPUT_TYPE>
-        void ParticlesToPrimitivesLoop(PRIMITIVE_OUTPUT_TYPE& output)
+        void ParticlesToPrimitivesLoop(PrimitiveOutput<vertex_type>& output)
         {
             size_t count = particles_allocations.size();
             for (size_t i = 0; i < count; ++i)

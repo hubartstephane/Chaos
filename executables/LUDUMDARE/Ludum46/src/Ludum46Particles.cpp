@@ -243,12 +243,12 @@ static bool DoUpdateBloodParticle(float delta_time, ParticleAnimated & particle)
 // ParticleBloodLayerTrait
 // ===========================================================================
 
-void ParticleBloodLayerTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleBloodLayerTrait::ParticleToPrimitives(ParticleBlood const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
 	ParticleBlood other = particle;
 	other.bounding_box.half_size *= 1.0f + (other.life / other.duration);
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	ParticleToPrimitive(other, output.AddQuads());
 }
 
 bool ParticleBloodLayerTrait::UpdateParticle(float delta_time, ParticleBlood & particle) const
@@ -265,12 +265,12 @@ bool ParticleBloodLayerTrait::UpdateParticle(float delta_time, ParticleBlood & p
 // ParticleBurnedSoulLayerTrait
 // ===========================================================================
 
-void ParticleBurnedSoulLayerTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless) const
+void ParticleBurnedSoulLayerTrait::ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::PrimitiveOutput<VertexBase>& output, int useless) const
 {
 	ParticleBurnedSoul other = particle;
 	other.bounding_box.position.x += 50.0f * std::sin(other.offset_t);
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	ParticleToPrimitive(other, output.AddTrianglePairs());
 }
 
 bool ParticleBurnedSoulLayerTrait::UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const

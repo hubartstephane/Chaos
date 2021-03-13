@@ -31,12 +31,14 @@ namespace chaos
 		ParticleBackgroundLayerTrait(){ dynamic_particles = dynamic_vertices = false;}
 		/** copy constructor */
 		ParticleBackgroundLayerTrait(ParticleBackgroundLayerTrait const& src) = default;
-
-		/** output primitive */
-        void ParticleToPrimitives(ParticleBackground const& particle, QuadOutput<VertexDefault> & output) const;
-		/** output primitive */
-        void ParticleToPrimitives(ParticleBackground const& particle, TrianglePairOutput<VertexDefault>& output) const;
 	};
+
+	/** output primitive */
+	void ParticleToPrimitives(ParticleBackground const& particle, PrimitiveOutput<VertexDefault>& output);
+	/** generates 1 quad from one particle */
+	void ParticleToPrimitive(ParticleBackground const& particle, QuadPrimitive<VertexDefault>& primitive);
+	/** generates 1 triangle pair from one particle */
+	void ParticleToPrimitive(ParticleBackground const& particle, TrianglePairPrimitive<VertexDefault>& primitive);
 
 	CHAOS_REGISTER_CLASS1(ParticleBackground);
 

@@ -2,6 +2,7 @@
 #include <chaos/Gpu/GLPixelFormat.h>
 #include <chaos/Gpu/GLTextureTools.h>
 
+#include <chaos/Gpu/Primitive.h>
 #include <chaos/Gpu/GPUDrawPrimitive.h>
 
 
@@ -51,5 +52,5 @@
 #include <chaos/Gpu/TextureArrayAtlas.h>
 #include <chaos/Gpu/GPUResourceManager.h>
 
-#include <chaos/Gpu/Primitive.h>
+
 #include <chaos/Gpu/PrimitiveOutput.h>

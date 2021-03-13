@@ -190,7 +190,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleBlood & particle) const;
 
-	void ParticleToPrimitives(ParticleBlood const& particle, chaos::QuadOutput<VertexBase>& output) const;
+	void ParticleToPrimitives(ParticleBlood const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
 
 public:
 
@@ -217,7 +217,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleBurnedSoul & particle) const;
 
-	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::TrianglePairOutput<VertexBase>& output, int useless) const;
+	void ParticleToPrimitives(ParticleBurnedSoul const& particle, chaos::PrimitiveOutput<VertexBase>& output, int useless) const;
 
 public:
 

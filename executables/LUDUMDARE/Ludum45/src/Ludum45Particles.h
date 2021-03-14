@@ -95,7 +95,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleEnemy& particle, std::vector<chaos::box2> const& player_boxes) const;
 
-    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
 
 public:
 
@@ -122,7 +122,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer& particle) const;
 
-    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
 
 public:
 
@@ -188,7 +188,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleFire& particle, ParticleFireUpdateData const & update_data) const;
 
-    void ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleFire const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
 
 public:
 

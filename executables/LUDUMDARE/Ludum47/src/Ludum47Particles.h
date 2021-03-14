@@ -134,7 +134,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticlePlayer & particle) const;
 
-	void ParticleToPrimitives(ParticlePlayer const& particle, chaos::TrianglePairOutput<chaos::VertexDefault>& output) const;
+	void ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<chaos::VertexDefault>& output) const;
 
 	void UpdateRenderingStates(chaos::GPURenderer* renderer, bool begin) const
 	{

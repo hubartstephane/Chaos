@@ -93,12 +93,12 @@ std::vector<chaos::box2> ParticleEnemyLayerTrait::BeginUpdateParticles(float del
 }
 
 
-void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
 	ParticleEnemy other = particle;
 	other.color.a = (other.touched_count_down > 0.0f) ? 0.0f : 1.0f;
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }
 
 bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy & particle, std::vector<chaos::box2> const& player_boxes) const
@@ -199,7 +199,7 @@ bool ParticleBonusLayerTrait::UpdateParticle(float delta_time, ParticleBonus& pa
 // ParticlePlayerLayerTrait
 // ===========================================================================
 
-void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
 	ParticlePlayer other = particle;
 
@@ -227,7 +227,7 @@ void ParticlePlayerLayerTrait::ParticleToPrimitives(ParticlePlayer const& partic
 	other.color = boost_color * other.color;
 
     // generate particle corners and texcoords
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }
 
 
@@ -345,12 +345,12 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 	return false; // do not destroy the particle
 }
 
-void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
 	ParticleFire other = particle;
 	other.color.a = (other.lifetime < 1.0f) ? other.lifetime : 1.0f;
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }
 
 

@@ -44,7 +44,7 @@ bool ParticleBrickLayerTrait::UpdateParticle(float delta_time, ParticleBrick& pa
 	return false;
 }
 
-void ParticleBrickLayerTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleBrickLayerTrait::ParticleToPrimitives(ParticleBrick const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
     LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 
@@ -58,14 +58,14 @@ void ParticleBrickLayerTrait::ParticleToPrimitives(ParticleBrick const& particle
 	float ratio = (extra + other.life) / (extra + other.starting_life);
 	other.color = ratio * other.color;
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }
 
 // ===========================================================================
 // Object Movable particle system
 // ===========================================================================
 
-void ParticleMovableObjectLayerTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleMovableObjectLayerTrait::ParticleToPrimitives(ParticleMovableObject const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
     LudumGameInstance const* ludum_game_instance = game->GetGameInstance();
 
@@ -84,7 +84,7 @@ void ParticleMovableObjectLayerTrait::ParticleToPrimitives(ParticleMovableObject
 
 	other.color = other.color * power_color;
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }
 
 void ParticleMovableObjectLayerTrait::UpdateParticleVelocityFromCollision(glm::vec2 const & old_position, glm::vec2 const & new_position, glm::vec2 & velocity) const
@@ -325,7 +325,7 @@ glm::vec2 ParticleMovableObjectLayerTrait::RestrictParticleVelocityToAngle(glm::
 // ===========================================================================
 // Challenge particle system
 // ===========================================================================
-void ParticleChallengeLayerTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleChallengeLayerTrait::ParticleToPrimitives(ParticleChallenge const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
 	chaos::InputMode input_mode = particle.challenge->GetGameInstance()->GetPlayer(0)->GetInputMode();
     bool keyboard = chaos::IsPCMode(input_mode);
@@ -349,5 +349,5 @@ void ParticleChallengeLayerTrait::ParticleToPrimitives(ParticleChallenge const& 
 		else
 			other.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
 	}
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }

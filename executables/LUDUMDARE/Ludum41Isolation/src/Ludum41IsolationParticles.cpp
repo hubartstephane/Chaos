@@ -64,7 +64,7 @@ void ParticleBrickLayerTrait::ParticleToPrimitives(ParticleBrick const& particle
 		other.texcoords.bottomleft.x = -1.0f;
 		other.texcoords.topright.x = -1.0f;
 	}
-	chaos::ParticleToPrimitive(other, output);
+	chaos::ParticleToPrimitives(other, output);
 }
 
 // ===========================================================================
@@ -90,7 +90,7 @@ void ParticleMovableObjectLayerTrait::ParticleToPrimitives(ParticleMovableObject
 
 	other.color = other.color * power_color;
 
-	chaos::ParticleToPrimitive(other, output);
+	chaos::ParticleToPrimitives(other, output);
 }
 
 
@@ -371,5 +371,5 @@ void ParticleChallengeLayerTrait::ParticleToPrimitives(ParticleChallenge const& 
         else
 			other.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.50f);
     }
-	chaos::ParticleToPrimitive(other, output);
+	chaos::ParticleToPrimitives(other, output);
 }

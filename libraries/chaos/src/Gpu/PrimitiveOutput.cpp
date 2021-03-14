@@ -74,7 +74,7 @@ namespace chaos
 
     char* PrimitiveOutputBase::AllocateBufferMemory(size_t in_size)
     {
-        if (buffer_start == nullptr || buffer_position + in_size >= buffer_end) // not enough memory in current buffer ?
+        if (buffer_start == nullptr || (buffer_end - buffer_position) < (int)in_size) // not enough memory in current buffer ?
         {
             // give previous buffer (if any) to internal cache
             if (vertex_buffer != nullptr)
@@ -115,6 +115,7 @@ namespace chaos
             }
         }
         // return the result and displace the position
+        assert(buffer_position != nullptr);
         char* result = buffer_position;
         buffer_position += in_size;
         return result;
@@ -176,9 +177,6 @@ namespace chaos
 
                     pending_primitives.push_back(primitive);
                     buffer_unflushed += 4 * count * vertex_size;
-
-                    if (primitive.count > 5000 || primitive.start < 0)
-                        buffer_unflushed = buffer_unflushed;
                 }
             }
             // other primitives than QUAD produces a single draw call
@@ -189,11 +187,6 @@ namespace chaos
                 primitive.start = int((buffer_unflushed - buffer_start) / vertex_size); // start relative to the vertex buffer
                 primitive.base_vertex_index = 0;
                 pending_primitives.push_back(primitive);
-
-
-                if (primitive.count > 5000 || primitive.start < 0)
-                    buffer_unflushed = buffer_unflushed;
-
 
                 buffer_unflushed = buffer_position;
             }
@@ -225,6 +218,7 @@ namespace chaos
 
         char * result = AllocateBufferMemory(requested_size); // this may set current_primitive_type to NONE
         current_primitive_type = primitive_type;
+
         return result;
     }
 

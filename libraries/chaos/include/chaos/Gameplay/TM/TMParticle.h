@@ -1,5 +1,7 @@
 #ifdef CHAOS_FORWARD_DECLARATION
 
+class TMParticle;
+
 #else
 
 namespace chaos

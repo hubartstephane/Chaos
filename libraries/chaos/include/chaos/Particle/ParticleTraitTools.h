@@ -126,7 +126,6 @@ namespace ParticleTraitTools
 		if constexpr (check_function_ParticleToPrimitives_v<particle const&, primitive_output&>)
 			return Flags::DEFAULT_IMPLEMENTATION;
 
-		//static_assert(0);
 		return 0;
 	}
 

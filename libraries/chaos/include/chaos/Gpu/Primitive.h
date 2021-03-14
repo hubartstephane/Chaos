@@ -159,12 +159,28 @@ namespace chaos
         size_t vertex_count = 0;
     };
 
-
+    // TypedPrimitive : this class helps making difference with functions that works with QUADs and thoses that works with TRIANGLE_PAIR ... (and so one).
+    //                  despite of that, it has no real additionnal value uppon its class base 
     template<typename VERTEX_TYPE, PrimitiveType PRIMITIVE_TYPE>
     class TypedPrimitive : public Primitive<VERTEX_TYPE>
     {
     public:
         using Primitive::Primitive;
+
+        /** cast operator to child vertex type */
+        template<typename OTHER_VERTEX_TYPE>
+        operator TypedPrimitive<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>& ()
+        {
+            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
+            return *(TypedPrimitive<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+        }
+        /** cast operator to child vertex type */
+        template<typename OTHER_VERTEX_TYPE>
+        operator TypedPrimitive<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE> const& () const
+        {
+            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
+            return *(TypedPrimitive<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
+        }
     };
 
     // fixed length primitives
@@ -174,17 +190,6 @@ namespace chaos
     // non-fixed length vertices count
     template<typename VERTEX_TYPE> using TriangleStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
     template<typename VERTEX_TYPE> using TriangleFanPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
-
-
-#if 0
-    // fixed length primitives
-    template<typename VERTEX_TYPE> using TrianglePrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
-    template<typename VERTEX_TYPE> using TrianglePairPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
-    template<typename VERTEX_TYPE> using QuadPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::QUAD>;
-    // non-fixed length vertices count
-    template<typename VERTEX_TYPE> using TriangleStripPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
-    template<typename VERTEX_TYPE> using TriangleFanPrimitive = PrimitiveBase<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
-#endif
 
 }; // namespace chaos
 

@@ -71,7 +71,7 @@ public:
 
 	bool UpdateParticle(float delta_time, ParticleEnemy & particle, UpdateEnemyData const & update_data) const;
 
-    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const;
+    void ParticleToPrimitives(ParticleEnemy const& particle, chaos::PrimitiveOutput<VertexBase>& output) const;
 
 	UpdateEnemyData BeginUpdateParticles(float delta_time, chaos::ParticleAccessor<ParticleEnemy>& particle_accessor) const;
 

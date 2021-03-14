@@ -135,9 +135,9 @@ bool PowerUpZoneParticleLayerTrait::UpdateParticle(float delta_time, ParticlePow
 }
 
 
-void PowerUpZoneParticleLayerTrait::ParticleToPrimitives(chaos::TMParticle const& particle, chaos::QuadOutput<VertexPowerUpZone>& output) const
+void PowerUpZoneParticleLayerTrait::ParticleToPrimitives(chaos::TMParticle const& particle, chaos::PrimitiveOutput<VertexPowerUpZone>& output) const
 {
-    chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddPrimitive();
+    chaos::QuadPrimitive<VertexPowerUpZone> primitive = output.AddQuads();
 
     chaos::ParticleToPrimitive(particle, primitive);
 
@@ -311,12 +311,12 @@ bool ParticleFireLayerTrait::UpdateParticle(float delta_time, ParticleFire& part
 	return false; // do not destroy the particle
 }
 
-void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleFireLayerTrait::ParticleToPrimitives(ParticleFire const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
 	ParticleFire other = particle;
 	other.color.a = (other.lifetime < 1.0f) ? other.lifetime : 1.0f;
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }
 
 // ===========================================================================
@@ -395,10 +395,10 @@ bool ParticleEnemyLayerTrait::UpdateParticle(float delta_time, ParticleEnemy& pa
 	return false; // do not destroy the particle
 }
 
-void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::QuadOutput<VertexBase>& output) const
+void ParticleEnemyLayerTrait::ParticleToPrimitives(ParticleEnemy const& particle, chaos::PrimitiveOutput<VertexBase>& output) const
 {
 	ParticleEnemy other = particle;
 	other.color.a = (other.touched_count_down > 0) ? 0.0f : 1.0f;
 
-	ParticleToPrimitive(other, output.AddPrimitive());
+	chaos::ParticleToPrimitives(other, output);
 }

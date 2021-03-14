@@ -121,6 +121,21 @@ namespace chaos
             vertex_size = sizeof(vertex_type);
         }
 
+        /** cast operator to child vertex type */
+        template<typename OTHER_VERTEX_TYPE>
+        operator PrimitiveOutput<OTHER_VERTEX_TYPE>& ()
+        {
+            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
+            return *(PrimitiveOutput<OTHER_VERTEX_TYPE>*)this;
+        }
+        /** cast operator to child vertex type */
+        template<typename OTHER_VERTEX_TYPE>
+        operator PrimitiveOutput<OTHER_VERTEX_TYPE> const& () const
+        {
+            static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
+            return *(PrimitiveOutput<OTHER_VERTEX_TYPE>*)this;
+        }
+
         /** insert some quads */
         QuadPrimitive<vertex_type> AddQuads(size_t primitive_count = 1)
         {

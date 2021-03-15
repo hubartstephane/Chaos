@@ -24,7 +24,7 @@ namespace chaos
 
 		// the main camera
 		obox2 camera_obox = GetCameraOBox(0);
-		main_uniform_provider.AddVariable("camera_transform", CameraTransform::GetCameraTransform(camera_obox));
+		main_uniform_provider.AddVariable("world_to_camera", CameraTransform::GetCameraTransform(camera_obox));
 		// convert OBOX into BOX
 		box2 camera_box;
 		camera_box.position  = camera_obox.position;

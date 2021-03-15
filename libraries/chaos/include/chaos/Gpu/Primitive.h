@@ -43,27 +43,43 @@ namespace chaos
 
 	enum class PrimitiveType : int
 	{
-		NONE = 0,
-		TRIANGLE = 1,
-		TRIANGLE_PAIR = 2,
-		QUAD = 3,
-		TRIANGLE_STRIP = 4,
-		TRIANGLE_FAN = 5
+		NONE,
+        POINT,
+		TRIANGLE,
+		TRIANGLE_PAIR,
+		QUAD,
+		TRIANGLE_STRIP,
+		TRIANGLE_FAN,
+        LINE,
+        LINE_STRIP,
+        LINE_LOOP
 	};
 
     /** returns the OpenGL primitive type corresponding to the primitive */
     constexpr GLenum GetGLPrimitiveType(PrimitiveType primitive_type)
     {
+        if (primitive_type == PrimitiveType::POINT)
+            return GL_POINTS;
+
         if (primitive_type == PrimitiveType::TRIANGLE)
             return GL_TRIANGLES;
         if (primitive_type == PrimitiveType::TRIANGLE_PAIR)
             return GL_TRIANGLES;
         if (primitive_type == PrimitiveType::QUAD)
             return GL_TRIANGLES;
+
         if (primitive_type == PrimitiveType::TRIANGLE_STRIP)
             return GL_TRIANGLE_STRIP;
         if (primitive_type == PrimitiveType::TRIANGLE_FAN)
             return GL_TRIANGLE_FAN;
+
+        if (primitive_type == PrimitiveType::LINE)
+            return GL_LINES;
+        if (primitive_type == PrimitiveType::LINE_STRIP)
+            return GL_LINE_STRIP;
+        if (primitive_type == PrimitiveType::LINE_LOOP)
+            return GL_LINE_LOOP;
+
         return GL_NONE;
     }
 
@@ -183,13 +199,20 @@ namespace chaos
         }
     };
 
-    // fixed length primitives
+
+    template<typename VERTEX_TYPE> using PointPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::POINT>;
+
     template<typename VERTEX_TYPE> using TrianglePrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE>;
     template<typename VERTEX_TYPE> using TrianglePairPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_PAIR>;
     template<typename VERTEX_TYPE> using QuadPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::QUAD>;
-    // non-fixed length vertices count
+
     template<typename VERTEX_TYPE> using TriangleStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_STRIP>;
     template<typename VERTEX_TYPE> using TriangleFanPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::TRIANGLE_FAN>;
+
+    template<typename VERTEX_TYPE> using LinePrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE>;
+    template<typename VERTEX_TYPE> using LineStripPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE_STRIP>;
+    template<typename VERTEX_TYPE> using LineLoopPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::LINE_LOOP>;
+
 
 }; // namespace chaos
 

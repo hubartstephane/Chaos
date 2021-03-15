@@ -136,6 +136,12 @@ namespace chaos
             return *(PrimitiveOutput<OTHER_VERTEX_TYPE>*)this;
         }
 
+        /** insert some points */
+        PointPrimitive<vertex_type> AddPoints(size_t primitive_count = 1)
+        {
+            size_t vertex_count = primitive_count * 1;
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::POINT), vertex_size, vertex_count };
+        }
         /** insert some quads */
         QuadPrimitive<vertex_type> AddQuads(size_t primitive_count = 1)
         {
@@ -148,7 +154,7 @@ namespace chaos
             size_t vertex_count = primitive_count * 3;
             return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE), vertex_size, vertex_count };
         }
-        /** insert some triangles pairs*/
+        /** insert some triangles pairs */
         TrianglePairPrimitive<vertex_type> AddTrianglePairs(size_t primitive_count = 1)
         {
             size_t vertex_count = primitive_count * 6;
@@ -165,6 +171,24 @@ namespace chaos
         {
             assert(vertex_count >= 3);
             return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::TRIANGLE_FAN), vertex_size, vertex_count };
+        }
+        /** insert a line */
+        LinePrimitive<vertex_type> AddLines(size_t primitive_count = 1)
+        {
+            size_t vertex_count = primitive_count * 2;
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::LINE), vertex_size, vertex_count };
+        }
+        /** insert a line strip */
+        LineStripPrimitive<vertex_type> AddLineStrip(size_t vertex_count)
+        {
+            assert(vertex_count >= 2);
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::LINE_STRIP), vertex_size, vertex_count };
+        }
+        /** insert a line loop */
+        LineLoopPrimitive<vertex_type> AddLineLoop(size_t vertex_count)
+        {
+            assert(vertex_count >= 2);
+            return { GeneratePrimitive(vertex_size * vertex_count, PrimitiveType::LINE_LOOP), vertex_size, vertex_count };
         }
     };
 

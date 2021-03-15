@@ -40,8 +40,9 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 	chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 	if (resource_manager != nullptr)
 	{
-		chaos::GPURenderMaterial* material = resource_manager->FindRenderMaterial("text");
-		if (material != nullptr)
+		chaos::GPURenderMaterial* material1 = resource_manager->FindRenderMaterial("screenspace1");
+		chaos::GPURenderMaterial* material2 = resource_manager->FindRenderMaterial("screenspace2");
+		if (material1 != nullptr && material2 != nullptr)
 		{
 			chaos::shared_ptr<chaos::GPUDynamicMesh> dynamic_mesh = new chaos::GPUDynamicMesh();
 			if (dynamic_mesh != nullptr)
@@ -51,21 +52,65 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 				{
 					chaos::GetTypedVertexDeclaration(vertex_declaration.get(), boost::mpl::identity<chaos::VertexDefault>());
 
-					chaos::PrimitiveOutput<chaos::VertexDefault> output(dynamic_mesh.get(), nullptr, vertex_declaration.get(), material, 0);
+					chaos::PrimitiveOutput<chaos::VertexDefault> output(dynamic_mesh.get(), nullptr, vertex_declaration.get(), material2, 0);
 
 					int i = 0;
 
+
+					auto Lines = output.AddLines(1);
+
+					Lines[0].color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+					Lines[0].flags = 0;
+					Lines[0].texcoord = { -1.0f, -1.0f , -1 };
+					Lines[0].position.x = 0.0f;
+					Lines[0].position.y = 0.0f;
+
+					Lines[1].color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+					Lines[1].flags = 0;
+					Lines[1].texcoord = { -1.0f, -1.0f , -1 };
+					Lines[1].position.x = 700.0f;
+					Lines[1].position.y = 400.0f;
+
+
+					output.SetRenderMaterial(material1);
+
+					i = 0;
+					
+					auto quad = output.AddQuads(1);
+					for (auto& p : quad)
+					{
+						static float pos[] = {-50.0f, -50.0f, 50.0f, -50.0f, 50.0f, 50.0f, -50.0f, 50.0f};
+
+						p.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+						p.flags = 0;
+						p.texcoord = { -1.0f, -1.0f , -1 };
+						p.position.x = pos[i * 2];
+						p.position.y = pos[i * 2 + 1];
+						++i;
+					}
+
+
+					output.SetRenderMaterial(material2);
+
 					auto Points = output.AddPoints(100);
-					for (auto & p : Points)
+					for (auto& p : Points)
 					{
 						p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 						p.flags = 0;
-						p.texcoord = { -1.0f, -1.0f , -1};
-						p.position.x = -1000.0f + float(i) * 100.0f;
+						p.texcoord = { -1.0f, -1.0f , -1 };
+						p.position.x = -500.0f + float(i) * 50.0f;
 						p.position.y = 0.0f;
-
-							++i;
+						++i;
 					}
+
+
+
+
+
+
+
+					output.Flush();
+
 
 
 

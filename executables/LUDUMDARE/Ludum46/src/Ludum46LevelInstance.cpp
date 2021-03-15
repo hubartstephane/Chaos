@@ -30,6 +30,57 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
+
+int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+{
+	int result = chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
+
+	glPointSize(10.0f);
+
+	chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
+	if (resource_manager != nullptr)
+	{
+		chaos::GPURenderMaterial* material = resource_manager->FindRenderMaterial("text");
+		if (material != nullptr)
+		{
+			chaos::shared_ptr<chaos::GPUDynamicMesh> dynamic_mesh = new chaos::GPUDynamicMesh();
+			if (dynamic_mesh != nullptr)
+			{
+				chaos::shared_ptr<chaos::GPUVertexDeclaration> vertex_declaration = new chaos::GPUVertexDeclaration;
+				if (vertex_declaration != nullptr)
+				{
+					chaos::GetTypedVertexDeclaration(vertex_declaration.get(), boost::mpl::identity<chaos::VertexDefault>());
+
+					chaos::PrimitiveOutput<chaos::VertexDefault> output(dynamic_mesh.get(), nullptr, vertex_declaration.get(), material, 0);
+
+					int i = 0;
+
+					auto Points = output.AddPoints(100);
+					for (auto & p : Points)
+					{
+						p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+						p.flags = 0;
+						p.texcoord = { -1.0f, -1.0f , -1};
+						p.position.x = -1000.0f + float(i) * 100.0f;
+						p.position.y = 0.0f;
+
+							++i;
+					}
+
+
+
+					dynamic_mesh->Display(renderer, uniform_provider, render_params);
+				}
+			}
+		}
+	}
+
+
+
+
+	return result;
+}
+
 bool LudumLevelInstance::DoTick(float delta_time)
 {
 	chaos::TMLevelInstance::DoTick(delta_time);

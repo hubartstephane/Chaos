@@ -202,7 +202,7 @@ namespace chaos
 		return ShrinkBoxToAspect(viewport, viewport_wanted_aspect);
 	}
 
-	void Game::Display(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
+	void Game::Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		GPUProgramProviderChain main_uniform_provider(uniform_provider);
 		// fill the provider(last inserted have greater precedence)
@@ -231,7 +231,7 @@ namespace chaos
 		main_uniform_provider.AddProvider(new GPUProgramProviderCommonTransforms);
 	}
 
-	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// clear the main render target
 		DoPreDisplay(renderer, uniform_provider, render_params);
@@ -242,7 +242,7 @@ namespace chaos
 	}
 
 
-	void Game::DoPreDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoPreDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		// clear the color buffers
 		glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -257,7 +257,7 @@ namespace chaos
 		glDisable(GL_CULL_FACE);
 	}
 
-	void Game::DoDisplayGame(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{		
 
 		// shuwww   root_render_layer ??
@@ -267,7 +267,7 @@ namespace chaos
 			level_instance->Display(renderer, uniform_provider, render_params);
 	}
 
-	void Game::DoDisplayHUD(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params)
+	void Game::DoDisplayHUD(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{	
 		if (hud != nullptr)
 			hud->Display(renderer, uniform_provider, render_params);

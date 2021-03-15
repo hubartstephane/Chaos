@@ -202,15 +202,15 @@ namespace chaos
 		virtual box2 GetRequiredViewport(glm::ivec2 const & size) const;
 
 		/** the rendering method */
-		virtual void Display(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params);
+		virtual void Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** the user defined rendering function */
-		virtual void DoDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params);
+		virtual void DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** internal method to prepare rendering */
-		virtual void DoPreDisplay(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params);		
+		virtual void DoPreDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** internal  method to display the game content */
-		virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params);
+		virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** internal  method to display the HUD */
-		virtual void DoDisplayHUD(GPURenderer * renderer, GPUProgramProvider * uniform_provider, GPURenderParams const & render_params);
+		virtual void DoDisplayHUD(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 
 		/** fill the rendering params before rendering */
 		virtual void FillUniformProvider(GPUProgramProvider & main_uniform_provider);

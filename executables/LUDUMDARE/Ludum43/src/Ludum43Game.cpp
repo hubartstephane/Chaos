@@ -28,7 +28,7 @@ bool LudumGame::OnEnterGame(chaos::PhysicalGamepad * in_physical_gamepad)
 	return true;
 }
 
-void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProvider * uniform_provider, chaos::GPURenderParams const & render_params)
+void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramProviderBase const * uniform_provider, chaos::GPURenderParams const & render_params)
 {
 	chaos::TMLevelInstance * ludum_level_instance = GetLevelInstance();
 

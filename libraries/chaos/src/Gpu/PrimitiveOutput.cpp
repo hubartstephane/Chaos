@@ -207,7 +207,7 @@ namespace chaos
             FlushMeshElement(); 
         }
         // cannot concat the new primitive in the same draw call
-        else if (primitive_type == PrimitiveType::TRIANGLE_FAN || primitive_type == PrimitiveType::TRIANGLE_STRIP)
+        else if (primitive_type == PrimitiveType::TRIANGLE_FAN || primitive_type == PrimitiveType::TRIANGLE_STRIP || primitive_type == PrimitiveType::LINE_STRIP || primitive_type == PrimitiveType::LINE_LOOP)
         {
             FlushDrawPrimitive(); // flush pending primitives
         } 

@@ -80,13 +80,6 @@ protected:
 		ProgramPtr program3 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program3.json");
 		ProgramPtr program4 = chaos::GPUProgramLoader().GenProgramObject(resource_path / "programs" / "program4.json");
 
-		program1->AddReleaseCallback(new chaos::GPUResourceAutoCallbacks(
-			[](chaos::GPUResource const * resource, bool destruction) {
-
-
-			return true;
-
-		}));
 
 		program1->Release();
 		program1->Release();

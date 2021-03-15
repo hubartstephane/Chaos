@@ -126,7 +126,7 @@ namespace chaos
         /** gets the size of one vertice of this primitive */
         size_t GetVertexSize() const { return vertex_size; }
         /** gets the number of vertices for this primitive */
-        size_t GetVerticesCount() const { return count; }
+        size_t GetVerticesCount() const { return vertex_count; }
 
         /** gets forward iterator on vertices */
         RawDataBufferIterator<VERTEX_TYPE> begin() 

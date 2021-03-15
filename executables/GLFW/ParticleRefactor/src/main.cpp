@@ -46,12 +46,12 @@ public:
 		return (particle.remaining_time <= 0.0f);
 	}
 
-    void ParticleToPrimitives(ParticleExample const & particle, chaos::QuadOutput<VertexExample> & output, AllocationTrait const & trait) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::PrimitiveOutput<VertexExample> & output, AllocationTrait const & trait) const
     {
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return;
 
-		chaos::QuadPrimitive<VertexExample> primitive = output.AddPrimitive();
+		chaos::QuadPrimitive<VertexExample> primitive = output.AddQuads();
 
 		glm::vec2 vertex_positions[4];
 		chaos::GenerateVertexPositionAttributes(particle.box, 0.0f, vertex_positions);

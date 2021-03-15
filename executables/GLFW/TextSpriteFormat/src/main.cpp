@@ -31,16 +31,16 @@ protected:
 		{
 		protected: 
 
-			virtual bool DoProcessAction(char const * name, chaos::GPUProgramAction & action, chaos::GPUProgramProviderBase const * top_level) const override
+			virtual bool DoProcessAction(chaos::GPUProgramProviderExecutionData const& execution_data) const override
 			{
-				if (name != nullptr && chaos::StringTools::Stricmp("local_to_cam", name) == 0)
+				if (auto lock = execution_data.CanDeduce("local_to_cam"))
 				{
 					glm::mat4 translate_mat;
 					glm::mat4 scale_mat;
 
-					if (top_level->GetValue<glm::mat4>("translate_mat", translate_mat))
-						if (top_level->GetValue<glm::mat4>("scale_mat", scale_mat))
-							return action.Process("local_to_cam", translate_mat * scale_mat, this);
+					if (execution_data.GetValue<glm::mat4>("translate_mat", translate_mat))
+						if (execution_data.GetValue<glm::mat4>("scale_mat", scale_mat))
+							return execution_data.Process(translate_mat * scale_mat, this);
 				}         
 				return false;
 			}

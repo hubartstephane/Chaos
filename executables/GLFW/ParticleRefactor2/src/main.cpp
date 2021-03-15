@@ -44,12 +44,12 @@ public:
 	}
 
 
-	void ParticleToPrimitives(ParticleExample const& particle, chaos::QuadOutput<VertexExample>& output) const
+	void ParticleToPrimitives(ParticleExample const& particle, chaos::PrimitiveOutput<VertexExample>& output) const
 	{
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return;
 
-		chaos::QuadPrimitive<VertexExample> primitive = output.AddPrimitive();
+		chaos::QuadPrimitive<VertexExample> primitive = output.AddQuads();
 
 		glm::vec2 vertex_positions[4];
 		chaos::GenerateVertexPositionAttributes(particle.box, 0.0f, vertex_positions);
@@ -267,6 +267,8 @@ int CHAOS_MAIN(int argc, char ** argv, char ** env)
 	params.width = 500;
 	params.height = 500;
 	params.monitor_index = 0;
+
+	chaos::WindowHints hints;
 
 	return chaos::RunWindowApplication<WindowOpenGLTest>(argc, argv, env, params, hints);
 }

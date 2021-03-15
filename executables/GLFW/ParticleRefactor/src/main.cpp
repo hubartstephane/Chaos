@@ -24,7 +24,7 @@ CHAOS_REGISTER_CLASS1(ParticleExample);
 
 using VertexExample = chaos::VertexDefault;
 
-class AllocationTrait
+class AllocationData
 {
 public:
 
@@ -32,13 +32,17 @@ public:
 
 };
 
-class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample, AllocationTrait>
+class ParticleExampleLayerTrait : public chaos::ParticleLayerTrait<ParticleExample, VertexExample, AllocationData>
 {
 public:
 
 
+	int BeginParticlesToPrimitives(chaos::ParticleConstAccessor<ParticleExample> & accessor, AllocationData const & data) const
+	{
+		return 123;
+	}
 
-	bool UpdateParticle(float delta_time, ParticleExample & particle, AllocationTrait const & trait) const
+	bool UpdateParticle(float delta_time, ParticleExample & particle, AllocationData const & data) const
 	{
 		particle.box.position += particle.velocity * delta_time;
 		particle.remaining_time -= delta_time;
@@ -46,7 +50,7 @@ public:
 		return (particle.remaining_time <= 0.0f);
 	}
 
-    void ParticleToPrimitives(ParticleExample const & particle, chaos::PrimitiveOutput<VertexExample> & output, AllocationTrait const & trait) const
+    void ParticleToPrimitives(ParticleExample const & particle, chaos::PrimitiveOutput<VertexExample> & output, int b, AllocationData const & trait) const
     {
 		if (rand() % 5 == 0) // flickering particles (not always rendered)
 			return;

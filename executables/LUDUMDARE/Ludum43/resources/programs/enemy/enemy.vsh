@@ -13,8 +13,7 @@ out flat int vs_flags;
 out float distance_to_center;
 out vec2  particle_center;
 
-uniform mat4 camera_transform;
-uniform mat4 local_to_world;
+uniform mat4 local_to_camera;
 uniform vec4 camera_box;
 uniform vec2 offset;
 uniform float position_blend_ratio;
@@ -43,7 +42,7 @@ void main()
 	vs_flags = ExtractFragmentFlags(flags);
 	vs_color    = color;
 
-	vec4 transformed_pos = local_to_world * camera_transform * vec4(p.x, p.y, 0.0, 1.0);
+	vec4 transformed_pos = local_to_camera * vec4(p.x, p.y, 0.0, 1.0);
 
 	gl_Position.xy = transformed_pos.xy / camera_box.zw;
 	gl_Position.z  = 0.0;

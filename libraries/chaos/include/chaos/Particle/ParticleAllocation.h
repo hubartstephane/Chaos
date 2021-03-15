@@ -326,12 +326,12 @@ namespace chaos
 							delta_time,
 							layer_trait,
 							particle_accessor,
-							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, allocation_trait), // do not use a temp variable, so it can be a left-value reference
+							layer_trait->BeginUpdateParticles(delta_time, particle_accessor, data), // do not use a temp variable, so it can be a left-value reference
 							allocation_trait);
 					}
 					else
 					{
-						remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor, allocation_trait);
+						remaining_particles = DoUpdateParticlesLoop(delta_time, layer_trait, particle_accessor, data);
 					}
 				}
 				else if constexpr (with_begin_call != 0)

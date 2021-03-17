@@ -541,6 +541,8 @@ namespace chaos
 			InvalidateRect(hWnd, NULL, false); // this cause flickering
 	}
 
+	CHAOS_HELP_TEXT(CMD, "-UnlimitedFPS");
+
 	void Window::TweakHints(WindowHints& hints, GLFWmonitor* monitor, bool pseudo_fullscreen) const
 	{
 		// retrieve the mode of the monitor to deduce pixel format
@@ -553,6 +555,13 @@ namespace chaos
 		hints.alpha_bits = (hints.red_bits == 8 && hints.green_bits == 8 && hints.blue_bits == 8) ? 8 : 0; // alpha only if RGBA 32bits
 
 		//hints.refresh_rate = mode->refreshRate;
+
+#if !_DEBUG
+		if (Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
+			hints.unlimited_fps = true;
+#else 
+		hints.unlimited_fps = true;
+#endif
 	}
 
 	GLFWmonitor* Window::GetFullscreenMonitor() const

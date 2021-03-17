@@ -22,6 +22,8 @@ namespace chaos
 
 		/** returns the transformation matrix from a camera obox */	
 		static glm::mat4x4 GetCameraTransform(obox2 const & obox);
+		/** returns the projection matrix from a camera obox */
+		static glm::mat4x4 GetProjectionMatrix(obox2 const& obox);
 	};
 
 	// =============================================

@@ -16,7 +16,7 @@ out vec2 vs_texcoord2;
 
 uniform vec2 offset;
 uniform mat4 local_to_camera;
-uniform vec4 camera_box;
+uniform mat4 projection_matrix;
 
 void main()
 {
@@ -29,9 +29,5 @@ void main()
 	vs_texcoord1 = texcoord1;
 	vs_texcoord2 = texcoord2;
 
-	vec4 transformed_pos = local_to_camera * vec4(pos.x, pos.y, 0.0, 1.0);
-
-	gl_Position.xy = transformed_pos.xy / camera_box.zw;
-	gl_Position.z = 0.0;
-	gl_Position.w = 1.0;
+	gl_Position = projection_matrix * local_to_camera * vec4(pos.x, pos.y, 0.0, 1.0);
 }

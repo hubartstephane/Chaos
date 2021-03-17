@@ -56,6 +56,7 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 					int i = 0;
 
+					glDisable(GL_DEPTH_TEST);
 
 					auto Lines = output.AddLines(1);
 

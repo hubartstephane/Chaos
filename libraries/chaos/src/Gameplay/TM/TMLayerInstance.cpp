@@ -761,7 +761,9 @@ namespace chaos
 			box2 final_camera_box;
 			final_camera_box.position = final_camera_obox.position;
 			final_camera_box.half_size = final_camera_obox.half_size;
-			main_uniform_provider.AddVariable("camera_box", EncodeBoxToVector(final_camera_box));
+			main_uniform_provider.AddVariable("projection_matrix", CameraTransform::GetProjectionMatrix(final_camera_obox));
+
+
 
 
 			// HACK : due to bad LAYER_BOUNDING_BOX computation, the layer containing PLAYER_START may be clamped and layer hidden

@@ -29,7 +29,7 @@ namespace chaos
 		box2 camera_box;
 		camera_box.position  = camera_obox.position;
 		camera_box.half_size = camera_obox.half_size;
-		main_uniform_provider.AddVariable("camera_box", EncodeBoxToVector(camera_box)); 
+		main_uniform_provider.AddVariable("projection_matrix", CameraTransform::GetProjectionMatrix(camera_obox));
 	}
 
 	void LevelInstance::OnPlayerEntered(Player * player)

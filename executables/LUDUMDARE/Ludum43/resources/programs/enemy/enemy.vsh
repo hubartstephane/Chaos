@@ -14,7 +14,7 @@ out float distance_to_center;
 out vec2  particle_center;
 
 uniform mat4 local_to_camera;
-uniform vec4 camera_box;
+uniform mat4 projection_matrix;
 uniform vec2 offset;
 uniform float position_blend_ratio;
 
@@ -42,9 +42,5 @@ void main()
 	vs_flags = ExtractFragmentFlags(flags);
 	vs_color    = color;
 
-	vec4 transformed_pos = local_to_camera * vec4(p.x, p.y, 0.0, 1.0);
-
-	gl_Position.xy = transformed_pos.xy / camera_box.zw;
-	gl_Position.z  = 0.0;
-	gl_Position.w  = 1.0;
+	gl_Position = projection_matrix * local_to_camera * vec4(p.x, p.y, 0.0, 1.0);
 }			

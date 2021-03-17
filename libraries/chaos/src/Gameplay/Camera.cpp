@@ -16,6 +16,13 @@ namespace chaos
 		return result;
 	}
 
+	glm::mat4x4 CameraTransform::GetProjectionMatrix(obox2 const& obox)
+	{
+		glm::mat4x4 result;
+		result = glm::scale(glm::vec3(1.0f / obox.half_size.x, 1.0f / obox.half_size.y, 1.0f));
+		return result;
+	}
+
 	// =================================================
 	// Camera
 	// =================================================

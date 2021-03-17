@@ -775,6 +775,8 @@ namespace chaos
 				last_instance = glm::ivec2(1, 1); // always see fully the layer without clamp => repetition not working
 			}
 
+			glm::mat4 local_to_world = glm::translate(glm::vec3(offset.x, offset.y, 0.0f));
+
 			// draw instances 
 			for (int x = start_instance.x; x < last_instance.x; ++x)
 			{
@@ -783,7 +785,11 @@ namespace chaos
 					// new Provider to apply the offset for this 'instance'
 					GPUProgramProviderChain instance_uniform_provider(&main_uniform_provider);
 					glm::vec2 instance_offset = scissor.GetInstanceOffset(glm::ivec2(x, y));
-					instance_uniform_provider.AddVariable("offset", instance_offset + offset);
+
+					local_to_world[3][0] = instance_offset.x + offset.x;
+					local_to_world[3][1] = instance_offset.y + offset.y;
+					instance_uniform_provider.AddVariable("local_to_world", local_to_world);
+					
 					// draw call
 					result += particle_layer->Display(renderer, &instance_uniform_provider, render_params);
 				}

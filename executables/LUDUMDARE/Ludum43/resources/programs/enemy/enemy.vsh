@@ -15,7 +15,6 @@ out vec2  particle_center;
 
 uniform mat4 local_to_camera;
 uniform mat4 projection_matrix;
-uniform vec2 offset;
 uniform float position_blend_ratio;
 
 uniform sampler2DArray material; // texture required in VS for Half pixel correction
@@ -24,7 +23,7 @@ void main()
 {
 	
 
-  vec2 p = (position_blend_ratio * position0) + (1.0 - position_blend_ratio) * position1 + offset;
+  vec2 p = (position_blend_ratio * position0) + (1.0 - position_blend_ratio) * position1;
 
 
 	// For enlarged enemies, we want to compute the circle inside the particle box (instead of reading a texture)

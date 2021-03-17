@@ -77,20 +77,6 @@ namespace chaos
 		game = nullptr;
 	}
 
-	CHAOS_HELP_TEXT(CMD, "-UnlimitedFPS");
-
-	void GameWindow::TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const
-	{
-		Window::TweakHints(hints, monitor, pseudo_fullscreen);
-#if !_DEBUG
-		if (Application::HasApplicationCommandLineFlag("-UnlimitedFPS")) // CMDLINE
-			hints.unlimited_fps = true;
-#else 
-		hints.unlimited_fps = true;
-#endif
-
-	}
-
 	CHAOS_HELP_TEXT(CMD, "-NoAutoPause");
 
 	void GameWindow::OnIconifiedStateChange(bool iconified)

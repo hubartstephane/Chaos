@@ -35,8 +35,6 @@ namespace chaos
 		/** override */
 		virtual void Finalize() override;
 		/** override */
-		virtual void TweakHints(WindowHints & hints, GLFWmonitor * monitor, bool pseudo_fullscreen) const override;
-		/** override */
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 		/** override */
 		virtual void OnIconifiedStateChange(bool iconified) override;

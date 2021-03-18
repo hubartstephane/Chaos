@@ -21,6 +21,7 @@
   DependOnLib("JSON")
   DependOnLib("ZLIB")
   DependOnLib("MSVC")
+  --DependOnLib("ESCAPI")
   
   --DependOnLib("OVR")  
   --DependOnLib("OPENCV")

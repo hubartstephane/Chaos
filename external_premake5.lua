@@ -98,7 +98,6 @@ local MSVC_TOCOPY  = { -- @ because this copies the file directly in
   
 DeclareExternalLib("MSVC", nil, nil, nil, MSVC_TOCOPY)  
 
-
   -- GLI          
 local GLI_PATH = "gli-0.5.1.0"
 DeclareExternalLib("GLI", GLI_PATH, nil, nil)
@@ -121,7 +120,6 @@ local GLEW_LIBNAME = {
   RELEASE = "glew32s.lib"  
 }  
 DeclareExternalLib("GLEW", GLEW_INC_PATH, GLEW_LIB_PATH, GLEW_LIBNAME)
-
 
   -- FREETYPE2 
 
@@ -235,10 +233,6 @@ local ZLIB_LIBNAME = {
 }
 
 DeclareExternalLib("ZLIB", ZLIB_PATH, ZLIB_LIB_PATH, ZLIB_LIBNAME, nil)     
-
-
-
-
     
   -- ASSIMP
 local ASSIMP_PATH      = "assimp-3.1.1"
@@ -270,7 +264,6 @@ local ASSIMP_TOCOPY  = { -- @ because this copies the file directly in
 } 
 
 DeclareExternalLib("ASSIMP", ASSIMP_INC_PATH, ASSIMP_LIB_PATH, ASSIMP_LIBNAME, ASSIMP_TOCOPY)
-
 
   -- FREEIMAGE
 local FREEIMAGE_PATH       = path.join("FreeImage", "Dist")
@@ -379,6 +372,38 @@ local VULKAN_LIB_PATH = path.join(VULKAN_PATH, "Lib")
 local VULKAN_LIBNAME = "vulkan-1.lib"
 
 DeclareExternalLib("VULKAN", VULKAN_INC_PATH, VULKAN_LIB_PATH, VULKAN_LIBNAME, nil)
+
+-- ESCAPI
+local ESCAPI_PATH = "escapi"
+local ESCAPI_INC_PATH = path.join(ESCAPI_PATH, "common")
+
+local ESCAPI_LIB_PATH = {
+  x32 = {
+    DEBUG   = path.join(ESCAPI_PATH, "bin", win32, DEBUG),   
+    RELEASE = path.join(ESCAPI_PATH, "bin", win32, RELEASE)
+  },
+  x64 = {
+    DEBUG   = path.join(ESCAPI_PATH, "bin", x64, DEBUG),   
+    RELEASE = path.join(ESCAPI_PATH, "bin", x64, RELEASE)  
+  }
+} 
+
+local ESCAPI_LIBNAME = "escapi.lib"
+
+local ESCAPI_TOCOPY  = { -- @ because this copies the file directly in
+  x32 = {
+    DEBUG = "@" .. path.join(ESCAPI_LIB_PATH[x32][DEBUG], "escapi.dll"),
+    RELEASE = "@" .. path.join(ESCAPI_LIB_PATH[x32][RELEASE], "escapi.dll")   
+  },
+  x64 = {
+    DEBUG = "@" .. path.join(ESCAPI_LIB_PATH[x64][DEBUG], "escapi.dll"),
+    RELEASE = "@" .. path.join(ESCAPI_LIB_PATH[x64][RELEASE], "escapi.dll")   
+  }              
+} 
+
+DeclareExternalLib("ESCAPI", ESCAPI_INC_PATH, ESCAPI_LIB_PATH, ESCAPI_LIBNAME, ESCAPI_TOCOPY )
+
+
 
 --[[
  

@@ -94,9 +94,9 @@ namespace chaos
             }
             else // new GPUBuffer is required
             {
-                static size_t MIN_VERTEX_COUNT = 500;
+                size_t min_vertex_count = std::max(size_t(100), vertex_requirement_evaluation); // the minimum number of vertex to allocate
 
-                size_t reserve_size = std::max(in_size, MIN_VERTEX_COUNT * vertex_size); // ask for a minimum size
+                size_t reserve_size = std::max(in_size, min_vertex_count * vertex_size); // ask for a minimum size
 
                 if (buffer_cache != nullptr)
                     buffer_cache->GetBuffer(reserve_size, vertex_buffer);

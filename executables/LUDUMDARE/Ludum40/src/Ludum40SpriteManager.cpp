@@ -32,7 +32,7 @@ char const* SpriteManager::pixel_shader_source = R"PIXELSHADERCODE(
 
     void main()
     {
-	vec4 color = (vs_texcoord.x < 0.0 || vs_texcoord.y < 0.0)? 
+	vec4 color = (vs_texcoord.z < 0.0)? 
 		vec4(1.0, 1.0, 1.0, 1.0) : 
 		texture(material, vs_texcoord);
       output_color.xyz = color.xyz * vs_color;

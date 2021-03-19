@@ -209,7 +209,7 @@ namespace chaos
 			void main()
 			{
 				vec4 color = vec4(1.0, 1.0, 1.0, 1.0);
-				if (vs_texcoord.x >= 0.0 && vs_texcoord.y >= 0.0)
+				if (vs_texcoord.z >= 0.0)
 				{
 					// Using texel interpolation
 					if ((vs_flags & HEIGHT_BITS_MODE) == 0)

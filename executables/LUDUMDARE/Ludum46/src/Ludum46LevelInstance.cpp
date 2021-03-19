@@ -29,13 +29,68 @@ void LudumLevelInstance::CreateCameras()
 		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
 	}
 }
+#if 0
 
+template<typename VERTEX_TYPE = chaos::VertexDefault>
+class DrawInterface
+{
+public:
+
+	using vertex_type = VERTEX_TYPE;
+
+	DrawInterface() :output(&internal_mesh, nullptr, nullptr, nullptr, 500) {}
+
+	DrawInterface(DrawInterface&& src) = default;
+
+	DrawInterface(DrawInterface const & src) = default;
+
+	~DrawInterface() 
+	{
+		EndDraw();
+	}
+
+	void EndDraw()
+	{
+
+	}
+
+protected:
+
+	chaos::PrimitiveOutput<vertex_type> output;
+
+	chaos::GPUDynamicMesh internal_mesh;
+
+	//GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation
+};
+
+template<typename VERTEX_TYPE = chaos::VertexDefault>
+DrawInterface<VERTEX_TYPE> BeginDraw(chaos::GPURenderer* renderer, char const * material_name)
+{
+	DrawInterface<VERTEX_TYPE> result;
+
+
+	return std::move(result);
+}
+
+#endif
 
 int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
 {
 	int result = chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 
 	glPointSize(10.0f);
+
+
+#if 0
+
+	auto draw = BeginDraw(renderer, nullptr);
+
+
+	draw.EndDraw();
+
+#endif
+
+
 
 	chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
 	if (resource_manager != nullptr)

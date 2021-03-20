@@ -244,43 +244,6 @@ namespace chaos
 
 	}
 
-	void LevelInstance::RestrictCameraToPlayerAndWorld(size_t player_index, size_t camera_index)
-	{
-		// get the wanted player pawn
-		PlayerPawn * player_pawn = GetPlayerPawn(player_index);
-		if (player_pawn == nullptr)
-			return;
-
-		// get the camera
-		Camera * camera = GetCamera(camera_index);
-		if (camera == nullptr)
-			return;
-
-		// get camera, cannot continue if it is empty
-		box2 camera_box = camera->GetCameraBox(false);
-		if (IsGeometryEmpty(camera_box))
-			return;
-
-		// keep player pawn inside camera safe zone
-		box2 pawn_box = player_pawn->GetBoundingBox();
-		if (!IsGeometryEmpty(pawn_box))
-		{
-			box2 safe_camera = camera_box;
-			safe_camera.half_size *= camera->GetSafeZone();
-
-			if (RestrictToInside(safe_camera, pawn_box, true)) // apply the safe_zone displacement to the real camera
-				camera_box.position = safe_camera.position;
-		}
-
-		// try to keep the camera in the world
-		box2 world = GetBoundingBox();
-		if (!IsGeometryEmpty(world))
-			RestrictToInside(world, camera_box, false);
-
-		// apply camera changes
-		camera->SetCameraBox(camera_box);
-	}
-
 	void LevelInstance::RestrictObjectToWorld(ParticleAllocationBase * allocation, size_t index)
 	{
 		if (allocation == nullptr)

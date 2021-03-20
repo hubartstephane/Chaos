@@ -3,6 +3,7 @@
 namespace chaos
 {
 	class SceneNode;
+	class SceneRenderer;
 
 }; // namespace chaos
 
@@ -10,6 +11,16 @@ namespace chaos
 
 namespace chaos
 {
+
+
+
+
+
+
+
+
+
+
 	class SceneNode : public GPURenderable
 	{
 
@@ -25,6 +36,11 @@ namespace chaos
 		glm::mat4 const& GetLocalToParent() const;
 		/** gets the parent to local */
 		glm::mat4 const& GetParentToLocal() const;
+
+		/** get the transformation from root node */
+		glm::mat4 GetWorldToLocal() const;
+		/** get the transformation to root node */
+		glm::mat4 GetLocalToWorld() const;
 
 		/** get the position of the node */
 		glm::vec2 const & GetPosition() const { return position; }
@@ -44,6 +60,11 @@ namespace chaos
 		void AddChildNode(SceneNode* in_child);
 		/** remove a children node */
 		void RemoveChildNode(SceneNode* in_child);
+
+		/** gets the children nodes */
+		std::vector<shared_ptr<SceneNode>> & ChildrenNodes() { return child_nodes; }
+		/** gets the children nodes */
+		std::vector<shared_ptr<SceneNode>> const & ChildrenNodes() const { return child_nodes; }
 
 	protected:
 
@@ -70,6 +91,48 @@ namespace chaos
 		std::vector<shared_ptr<SceneNode>> child_nodes;
 		/** the parent node */
 		weak_ptr<SceneNode> parent_node;
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+	class SceneRenderer
+	{
+	public:
+
+
+
+
+		void Display(SceneNode* node, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+		{
+			glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+
+			if (node == nullptr)
+				return;
+
+
+			for (auto& child : node->ChildrenNodes())
+			{
+
+
+			}
+		}
+
+	protected:
+
+		/** the local to world matrix */
+		glm::mat4 local_to_world;
+
 	};
 
 

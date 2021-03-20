@@ -36,6 +36,32 @@ namespace chaos
 		return parent_to_local;
 	}
 
+	glm::mat4 SceneNode::GetWorldToLocal() const
+	{
+		glm::mat4 result = GetParentToLocal();
+		
+		SceneNode const * node = parent_node.get();
+		while (node != nullptr)
+		{
+			result = result * node->GetParentToLocal();
+			node = node->parent_node.get();
+		}
+		return result;
+	}
+
+	glm::mat4 SceneNode::GetLocalToWorld() const
+	{
+		glm::mat4 result = GetLocalToParent();
+
+		SceneNode const* node = parent_node.get();
+		while (node != nullptr)
+		{
+			result = node->GetLocalToParent() * result;
+			node = node->parent_node.get();
+		}
+		return result;
+	}
+
 
 	void SceneNode::SetPosition(glm::vec2 const& in_position)
 	{

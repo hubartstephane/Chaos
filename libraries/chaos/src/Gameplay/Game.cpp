@@ -220,6 +220,11 @@ namespace chaos
 		// the view box
 		box2 view = GetCanvasBox();
 		main_uniform_provider.AddVariable("canvas_box", EncodeBoxToVector(view));
+
+
+
+
+
 		// the world
 		box2 world = GetWorldBox();
 		main_uniform_provider.AddVariable("world_box", EncodeBoxToVector(world));

@@ -33,6 +33,8 @@ namespace chaos
 		shared_ptr<GPUMaterialProvider> material_provider;
 		/** some filters */
 		shared_ptr<GPURenderableFilter> object_filter;
+		/** pointer on the current camera */
+		Camera* camera = nullptr;
 		/** material specialization */
 		std::string renderpass_name;
 		/** the instancing information */

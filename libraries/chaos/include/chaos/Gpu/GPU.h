@@ -32,6 +32,7 @@
 #include <chaos/Gpu/GPUProgramGenerator.h>
 #include <chaos/Gpu/GPUProgramLoader.h>
 #include <chaos/Gpu/GPUProgramAction.h>
+#include <chaos/Gpu/GPUProgramProviderExecutionData.h>
 #include <chaos/Gpu/GPUProgramProvider.h>
 #include <chaos/Gpu/GPUMaterialProvider.h>
 #include <chaos/Gpu/GPURenderMaterial.h>

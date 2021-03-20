@@ -22,6 +22,23 @@ namespace chaos
 		double level_time = GetLevelClockTime();
 		main_uniform_provider.AddVariable("level_time", level_time);
 
+
+
+		Camera* camera = GetCamera(0);
+		if (camera != nullptr)
+		{
+
+		//	glm::mat4 world_to_camera = camera->GetWorldToLocal();
+		//	main_uniform_provider.AddVariable("world_to_camera", world_to_camera);
+
+		}
+
+
+
+
+
+
+
 		// the main camera
 		obox2 camera_obox = GetCameraOBox(0);
 		main_uniform_provider.AddVariable("world_to_camera", CameraTransform::GetCameraTransform(camera_obox));

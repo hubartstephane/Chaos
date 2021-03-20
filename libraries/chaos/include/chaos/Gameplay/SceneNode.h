@@ -18,6 +18,9 @@ namespace chaos
 
 	public:
 
+		/** destructor */
+		virtual ~SceneNode();
+
 		/** gets the local to parent transform */
 		glm::mat4 const& GetLocalToParent() const;
 		/** gets the parent to local */

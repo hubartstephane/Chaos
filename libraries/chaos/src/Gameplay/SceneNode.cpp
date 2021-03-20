@@ -50,5 +50,35 @@ namespace chaos
 	}
 
 	
+	void SceneNode::AddChildNode(SceneNode* in_child)
+	{
+		assert(in_child != nullptr);
+		assert(in_child->parent_node == nullptr);
+
+		child_nodes.push_back(in_child);
+	}
+	
+	void SceneNode::RemoveChildNode(SceneNode* in_child)
+	{
+		assert(in_child != nullptr);
+		assert(in_child->parent_node == this);
+
+		size_t count = child_nodes.size();
+		for (size_t i = 0 ; i < count ; ++i)
+		{
+			if (child_nodes[i] == in_child)
+			{
+				child_nodes.erase(child_nodes.begin() + i);
+				return;
+			}
+		}
+	}
+
+	int SceneNode::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	{
+
+		return 0;
+	}
+	
 }; // namespace chaos
 

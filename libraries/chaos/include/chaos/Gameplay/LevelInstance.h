@@ -57,8 +57,6 @@ namespace chaos
 		/** returns whether we can go to next level */
 		virtual bool CanCompleteLevel() const;
 
-		/** update the player and the camera position so that they remains inside the world */
-		void RestrictCameraToPlayerAndWorld(size_t player_index, size_t camera_index);
 		/** restrict an object to the world */
 		void RestrictObjectToWorld(ParticleAllocationBase * allocation, size_t index);
 		/** restrict an pawn to the world */

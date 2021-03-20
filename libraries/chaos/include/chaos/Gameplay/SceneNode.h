@@ -37,7 +37,15 @@ namespace chaos
 		/** set the rotation of the node */
 		void SetRotator(float in_rotator);
 
+		/** insert a children node */
+		void AddChildNode(SceneNode* in_child);
+		/** remove a children node */
+		void RemoveChildNode(SceneNode* in_child);
 
+	protected:
+
+		/** override */
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
 
 	protected:
 
@@ -46,7 +54,7 @@ namespace chaos
 		/** the scale of the node */
 		glm::vec2 scale = glm::vec2(1.0f, 1.0f);
 		/** the rotator of the node */
-		type_rotator<float, 2>::type rotator = 0.0f;
+		float rotator = 0.0f;
 
 		/** the cached local to parent matrix */
 		mutable glm::mat4 local_to_parent;

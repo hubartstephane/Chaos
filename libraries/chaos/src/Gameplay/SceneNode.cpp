@@ -2,6 +2,12 @@
 
 namespace chaos
 {
+	SceneNode::~SceneNode()
+	{
+		if (parent_node != nullptr)
+			parent_node->RemoveChildNode(this);
+	}
+
 	glm::mat4 const & SceneNode::GetLocalToParent() const
 	{
 		if (cache_state & INVALID_LOCAL_TO_PARENT)
@@ -68,7 +74,8 @@ namespace chaos
 		{
 			if (child_nodes[i] == in_child)
 			{
-				child_nodes.erase(child_nodes.begin() + i);
+				child_nodes[i]->parent_node = nullptr;
+				child_nodes.erase(child_nodes.begin() + i); // may call destructor
 				return;
 			}
 		}

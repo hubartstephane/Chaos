@@ -480,7 +480,7 @@ namespace chaos
 		// the edge we are interresting in
 		int edge_candidates = 1 | 2 | 4 | 8;
 
-		// for each edge, we describe thhe tests to do 
+		// for each edge, we describe the tests to do 
 		int   edge_component[]  = { 0, 0, 1 , 1 };
 		float edge_multiplier[] = { -1.0f, 1.0f, -1.0f , 1.0f };
 		float edge_value[]      = { b.position.x - b.half_size.x, b.position.x + b.half_size.x, b.position.y - b.half_size.y, b.position.y + b.half_size.y };
@@ -510,16 +510,15 @@ namespace chaos
 					edge_candidates &= ~(1 << (edge_index ^ 1));
 					edges &= ~(1 << (edge_index ^ 1));
 				}
-				// edge is not a good candidate : remove it
+				// edge is not a good candidate : remove it (because opposite edges are parallel)
 				else 
 				{
 					edge_candidates &= ~(1 << edge_index);
 				}
-				// no possible edge separator ?
-				if (edge_candidates == 0)
-					return false;
 			}
-					
+			// no possible edge separator ?
+			if (edge_candidates == 0)
+				return false;
 		}
 		return true; // there are still at least one separator edge
 	}
@@ -530,28 +529,23 @@ namespace chaos
 		if (IsGeometryEmpty(src1) || IsGeometryEmpty(src2))
 			return false;
 
-		// separate src1 from src2 => transform src1 into a simple box (with no rotation)
-		type_box<T, 2> b1;
-		b1.position  = { 0, 0 };
-		b1.half_size = src1.half_size;
+		// search separate box for one to the other (and the inverse)
+		type_obox<T, 2> const * sources[] = { &src1, &src2 };
+		for (int i = 0; i < 2; ++i)
+		{
+			// get transformation matrix to go the one source axis aligned system
+			type_box<T, 2> b;
+			b.position = { 0, 0 };
+			b.half_size = sources[i]->half_size;
 
-		auto transform1 = GetRotatorMatrix(-src1.rotator) * glm::translate(glm::tvec3<T>(-src1.position, 0)); // world => local BOX 1 
+			auto transform = GetRotatorMatrix(-sources[i]->rotator) * glm::translate(glm::tvec3<T>(-sources[i]->position, 0)); // world => local BOX 
 
-		glm::tvec2<T> v2[4];
-		GetBoxVertices(src2, v2, true);
-		if (HasSeparatingPlane(b1, v2, 4, open_geometry, transform1))
-			return false;
-		// separate src2 from src1 => transform src2 into a simple box (with no rotation)
-		type_box<T, 2> b2;
-		b2.position = { 0, 0 };
-		b2.half_size = src2.half_size;
-
-		auto transform2 = GetRotatorMatrix(-src2.rotator) * glm::translate(glm::tvec3<T>(-src2.position, 0)); // world => local BOX 2
-
-		glm::tvec2<T> v1[4];
-		GetBoxVertices(src1, v1, true);
-		if (HasSeparatingPlane(b2, v1, 4, open_geometry, transform2))
-			return false;
+			// get vertices of the other source and search a separating plane
+			glm::tvec2<T> vertices[4];
+			GetBoxVertices(*sources[1 - i], vertices, true);
+			if (HasSeparatingPlane(b, vertices, 4, open_geometry, transform))
+				return false;
+		}
 		// no separating plane
 		return true; 
 	}

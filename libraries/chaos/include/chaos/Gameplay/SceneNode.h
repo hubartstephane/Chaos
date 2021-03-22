@@ -108,30 +108,44 @@ namespace chaos
 	{
 	public:
 
-
-
-
-		void Display(SceneNode* node, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+		void Display(SceneNode * root_node, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 		{
-			glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
-
-
-
-			if (node == nullptr)
-				return;
-
-
-			for (auto& child : node->ChildrenNodes())
+			if (root_node != nullptr)
 			{
-
-
+				// set a reference on the local_to_world transform
+				GPUProgramProviderChain main_uniform_provider(uniform_provider);
+				main_uniform_provider.AddVariableReference("local_to_world", local_to_world);
+				// start the rendering recursion
+				DisplayNode(root_node, renderer, uniform_provider, render_params);
 			}
+		}
+
+
+	protected:
+
+		void DisplayNode(SceneNode * node, GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+		{
+			assert(node != nullptr);
+
+			// node is invisible and so are its children
+			if (!node->PrepareDisplay(renderer, uniform_provider, render_params))
+				return;
+			// store transformation matrix (this is usefull while we use a VariableReference in ProviderChain)
+			glm::mat4 previous_local_to_world = local_to_world;
+			// update transformation matrix
+			local_to_world = local_to_world * node->GetLocalToParent();
+			// display node and its children
+			node->Display(renderer, uniform_provider, render_params);
+			for (auto& child : node->ChildrenNodes())
+				DisplayNode(child.get(), renderer, uniform_provider, render_params);
+			// restore transformation matrix
+			local_to_world = previous_local_to_world;
 		}
 
 	protected:
 
 		/** the local to world matrix */
-		glm::mat4 local_to_world;
+		glm::mat4 local_to_world = glm::scale(glm::vec3(1.0f, 1.0f, 1.0f));
 
 	};
 

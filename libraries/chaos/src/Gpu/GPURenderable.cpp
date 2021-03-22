@@ -10,24 +10,31 @@ namespace chaos
 	int GPURenderable::Display(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{
 		assert(renderer != nullptr);
-		if (!IsVisible())
+		if (!PrepareDisplay(renderer, uniform_provider, render_params))
 			return 0;
+		return DoDisplay(renderer, uniform_provider, render_params);
+	}
+
+	bool GPURenderable::PrepareDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	{
+		if (!IsVisible())
+			return false;
 		// internal filters
 		if (!IsRenderPassEnabled(render_params.renderpass_name.c_str()))
-			return 0;
+			return false;
 		// filter object
 		if (render_params.object_filter != nullptr)
 			if (!render_params.object_filter->CanRender(this))
-				return 0;
+				return false;
 		// update it (only if necessary
 		uint64_t renderer_timestamp = renderer->GetTimestamp();
 		if (renderer_timestamp == 0 || update_timestamp != renderer_timestamp) // test for 0 to ensure resource is updated even if caller does not care about updating a timestamp
 		{
 			if (!DoUpdateGPUResources(renderer))
-				return 0;
+				return false;
 			update_timestamp = renderer_timestamp;
 		}
-		return DoDisplay(renderer, uniform_provider, render_params);
+		return true;
 	}
 
 	int GPURenderable::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)

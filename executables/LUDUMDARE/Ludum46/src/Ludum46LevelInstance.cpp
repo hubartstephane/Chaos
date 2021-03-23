@@ -66,10 +66,75 @@ public:
 		return result;
 	}
 
+	chaos::QuadPrimitive<VERTEX_TYPE> DrawText(char const* text, chaos::ParticleTextGenerator::GeneratorParams const& params = {})
+	{
+		//GeneratorResult& result,
+
+
+		return {};
+	}
+
 protected:
 
 	chaos::GPUDynamicMesh dynamic_mesh;
 };
+
+
+template<typename VERTEX_TYPE>
+void color(chaos::Primitive<VERTEX_TYPE>& primitive, glm::vec4 const& c)
+{
+	for (VERTEX_TYPE& v : primitive)
+		v.color = c;
+}
+
+template<typename VERTEX_TYPE>
+void position(chaos::Primitive<VERTEX_TYPE>& primitive, glm::vec2 const& p)
+{
+	for (VERTEX_TYPE& v : primitive)
+		v.position = c;
+}
+
+template<typename VERTEX_TYPE>
+void flags(chaos::Primitive<VERTEX_TYPE>& primitive,int f)
+{
+	for (VERTEX_TYPE& v : primitive)
+		v.flags = f;
+}
+
+template<typename VERTEX_TYPE>
+void texcoord(chaos::QuadPrimitive<VERTEX_TYPE>& primitive, int f)
+{
+	for (VERTEX_TYPE& v : primitive)
+		v.flags = f;
+}
+
+template<typename VERTEX_TYPE>
+void texcoord(chaos::TrianglePairPrimitive<VERTEX_TYPE>& primitive, int f)
+{
+	//for (VERTEX_TYPE& v : primitive)
+	//	v.flags = f;
+}
+
+
+
+
+
+template<typename VERTEX_TYPE>
+void bounding_box(chaos::QuadPrimitive<VERTEX_TYPE>& primitive, int f)
+{
+	for (VERTEX_TYPE& v : primitive)
+		v.flags = f;
+}
+
+template<typename VERTEX_TYPE>
+void bounding_box(chaos::TrianglePairPrimitive<VERTEX_TYPE>& primitive, int f)
+{
+	//for (VERTEX_TYPE& v : primitive)
+	//	v.flags = f;
+}
+
+
+
 
 
 int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
@@ -97,7 +162,10 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 	Lines[1].position.y = 400.0f;
 
 
-	chaos::shared_ptr<chaos::GPUDynamicMesh> m = DI.ExtractMesh();
+
+	color(Lines, { 1.0f, 0.0f, 1.0f, 1.0f });
+
+	//chaos::shared_ptr<chaos::GPUDynamicMesh> m = DI.ExtractMesh();
 	//m->Display(renderer, uniform_provider, render_params);
 
 

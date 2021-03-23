@@ -73,7 +73,7 @@ namespace chaos
 		/** the four texcoords to apply to the particle vertices */
 		ParticleTexcoords texcoords;
 		/** the color of the particle */
-		glm::vec4 color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		/** the orientation of the particle */
 		float rotation = 0.0f;
 		/** some flags (more or less custom) */
@@ -92,7 +92,7 @@ namespace chaos
 		/** the texcoord of the vertex */
 		glm::vec3 texcoord;
 		/** the color of the vertex */
-		glm::vec4 color;
+		glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		/** some flags */
 		int flags = 0;
 	};

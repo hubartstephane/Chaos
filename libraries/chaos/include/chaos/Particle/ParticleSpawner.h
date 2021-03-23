@@ -21,7 +21,7 @@ namespace chaos
         /** constructor */
         ParticleSpawner(ParticleLayerBase* in_particle_layer);
         /** constructor with additionnal bitmap arguments */
-        ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request);
+        ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites");
 
         /** change the bitmap info */
 		bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default

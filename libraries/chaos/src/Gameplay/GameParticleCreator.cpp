@@ -15,10 +15,10 @@ namespace chaos
 		return true;
 	}
 
-	BitmapAtlas::BitmapInfo const * GameParticleCreator::FindBitmapInfo(ObjectRequest bitmap_request) const
+	BitmapAtlas::BitmapInfo const * GameParticleCreator::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
 	{
 		// find bitmap set
-		BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo("sprites");
+		BitmapAtlas::FolderInfo const * bitmap_set = texture_atlas->GetFolderInfo(folder_request);
 		if (bitmap_set == nullptr)
 			return nullptr;
 		// find bitmap info

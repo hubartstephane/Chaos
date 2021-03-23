@@ -262,8 +262,17 @@ namespace chaos
 		glDisable(GL_CULL_FACE);
 	}
 
+	
+	void Game::DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	{
+		if (background_mesh != nullptr)
+			background_mesh->Display(renderer, uniform_provider, render_params);
+	}
+
 	void Game::DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
 	{		
+		// display the background
+		DoDisplayBackground(renderer, uniform_provider, render_params);
 
 		// shuwww   root_render_layer ??
 		if (particle_manager != nullptr)
@@ -622,9 +631,7 @@ namespace chaos
 
 	int Game::AddParticleLayers()
 	{
-		int render_order = 0;
-		particle_manager->AddLayer<ParticleBackgroundLayerTrait>(render_order++, GameHUDKeys::BACKGROUND_LAYER_ID, "background"); // shuwww est ce que ca doit etre dans le particle_manager
-		return render_order;
+		return 0;
 	}
 
 	bool Game::CreateBackgroundImage(ObjectRequest material_request, ObjectRequest texture_request)
@@ -632,48 +639,55 @@ namespace chaos
 		if (material_request.IsNoneRequest())
 			material_request = "background";
 
-		// create the particle allocation if necessary
-		if (background_allocations == nullptr)
-		{
-            background_allocations = GetGameParticleCreator().SpawnParticles(GameHUDKeys::BACKGROUND_LAYER_ID, nullptr, 1, true, [](ParticleAccessor<ParticleBackground> accessor)
-            {
-                for (ParticleBackground & particle : accessor)
-                    particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-            });
-			if (background_allocations == nullptr)
-				return false;
-		}
-
-		// create a material
-		GPUResourceManager * resource_manager = WindowApplication::GetGPUResourceManagerInstance();
+		GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
 		if (resource_manager != nullptr)
 		{
 			// search declared material
-			GPURenderMaterial * result = resource_manager->FindRenderMaterial(material_request);
-			if (result != nullptr)
+			shared_ptr<GPURenderMaterial> background_material = resource_manager->FindRenderMaterial(material_request); // use shared_ptr because we may create a child material
+			if (background_material != nullptr)
 			{
 				if (!texture_request.IsNoneRequest())
 				{
 					// search the corresponding texture
-					GPUTexture * texture = resource_manager->FindTexture(texture_request);
+					GPUTexture* texture = resource_manager->FindTexture(texture_request);
 					if (texture == nullptr)
 						return false;
 					// create a child material
-					GPURenderMaterial * child_material = new GPURenderMaterial();
+					GPURenderMaterial* child_material = new GPURenderMaterial();
 					if (child_material == nullptr)
 						return false;
 					// initialize the material with parent ande texture
-					child_material->SetParentMaterial(result);
+					child_material->SetParentMaterial(background_material.get());
 					child_material->GetUniformProvider().AddTexture("background", texture);
-					result = child_material;
+					background_material = child_material;
 				}
-				// assign the material to the background
-				ParticleLayerBase * layer = particle_manager->FindLayer(GameHUDKeys::BACKGROUND_LAYER_ID);
-				if (layer != nullptr)
-					layer->SetRenderMaterial(result);
+
+				shared_ptr<GPUVertexDeclaration> vertex_declaration = new GPUVertexDeclaration;
+				if (vertex_declaration != nullptr)
+				{
+					background_mesh = new GPUDynamicMesh;
+					if (background_mesh != nullptr)
+					{
+						GetTypedVertexDeclaration(vertex_declaration.get(), boost::mpl::identity<VertexDefault>());
+						PrimitiveOutput<VertexDefault> output(background_mesh.get(), nullptr, vertex_declaration.get(), background_material.get(), 4);
+
+						auto quad = output.AddQuads(1);
+
+						quad[0].position = { -1.0f , -1.0f };
+						quad[1].position = {  1.0f , -1.0f };
+						quad[2].position = {  1.0f ,  1.0f };
+						quad[3].position = { -1.0f ,  1.0f };
+
+						for (auto& v : quad)
+						{
+							v.texcoord.x = v.position.x * 0.5f + 0.5f;
+							v.texcoord.y = v.position.y * 0.5f + 0.5f;
+							v.texcoord.z = 0.0f;
+						}
+					}
+				}
 			}
 		}
-
 		return true;
 	}
 

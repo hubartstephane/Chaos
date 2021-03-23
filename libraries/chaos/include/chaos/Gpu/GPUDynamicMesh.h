@@ -65,6 +65,13 @@ namespace chaos
         /** add an rendering element */
         GPUDynamicMeshElement & AddMeshElement();
 
+        friend void swap(GPUDynamicMesh& src1, GPUDynamicMesh& src2)
+        {
+            std::swap(src1.elements, src2.elements);
+            std::swap(src1.last_rendered_fence, src2.last_rendered_fence);
+            std::swap(src1.vertex_array_cache, src2.vertex_array_cache);
+        }
+
     protected:
 
         /** override */

@@ -38,12 +38,15 @@ namespace chaos
 
     class PrimitiveOutputBase
     {
-        static constexpr size_t MIN_VERTEX_ALLOCATION = 100;
-
     public:
+
+        /** default/minimum number of vertices allocation */
+        static constexpr size_t MIN_VERTEX_ALLOCATION = 100;
 
         /** constructor */
         PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
+        /** constructor */
+        PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION);
         /** destructor */
         ~PrimitiveOutputBase();
 
@@ -53,6 +56,8 @@ namespace chaos
         void Flush();
         /** change the material for the next primitives */
         void SetRenderMaterial(GPURenderMaterial* in_render_material);
+        /** change the material for the next primitives */
+        void SetRenderMaterial(ObjectRequest render_material_request);
         /** generate some memory for a bunch of data for a given primitive type */
         char* GeneratePrimitive(size_t requested_size, PrimitiveType primitive_type);
 
@@ -121,6 +126,24 @@ namespace chaos
             PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material, in_vertex_requirement_evaluation)
         {
             vertex_size = sizeof(vertex_type);
+            if (vertex_declaration == nullptr)
+            {
+                vertex_declaration = new GPUVertexDeclaration;
+                if (vertex_declaration != nullptr)
+                    GetTypedVertexDeclaration(vertex_declaration, boost::mpl::identity<vertex_type>());
+            }
+        }
+        /** constructor */
+        PrimitiveOutput(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = MIN_VERTEX_ALLOCATION) :
+            PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, in_render_material_request, in_vertex_requirement_evaluation)
+        {
+            vertex_size = sizeof(vertex_type);
+            if (vertex_declaration == nullptr)
+            {
+                vertex_declaration = new GPUVertexDeclaration;
+                if (vertex_declaration != nullptr)
+                    GetTypedVertexDeclaration(vertex_declaration, boost::mpl::identity<vertex_type>());
+            }
         }
 
         /** cast operator to child vertex type */

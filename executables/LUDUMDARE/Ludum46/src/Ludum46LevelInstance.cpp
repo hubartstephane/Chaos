@@ -29,50 +29,48 @@ void LudumLevelInstance::CreateCameras()
 		cameras[i]->AddComponent(new chaos::SoundListenerCameraComponent());
 	}
 }
-#if 0
 
-template<typename VERTEX_TYPE = chaos::VertexDefault>
-class DrawInterface
+
+template<typename VERTEX_TYPE>
+class DrawInterface : public chaos::PrimitiveOutput<VERTEX_TYPE>
 {
 public:
 
-	using vertex_type = VERTEX_TYPE;
-
-	DrawInterface() :output(&internal_mesh, nullptr, nullptr, nullptr, 500) {}
-
-	DrawInterface(DrawInterface&& src) = default;
-
-	DrawInterface(DrawInterface const & src) = default;
-
-	~DrawInterface() 
+	DrawInterface(chaos::GPUVertexDeclaration* in_vertex_declaration = nullptr, size_t in_vertex_requirement_evaluation = chaos::PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
+		PrimitiveOutput(&dynamic_mesh, nullptr, nullptr, in_vertex_declaration, in_vertex_requirement_evaluation)
 	{
-		EndDraw();
 	}
 
-	void EndDraw()
+	DrawInterface(chaos::ObjectRequest render_material_request, size_t in_vertex_requirement_evaluation = chaos::PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
+		PrimitiveOutput(&dynamic_mesh, nullptr, nullptr, render_material_request, in_vertex_requirement_evaluation)
 	{
+	}
 
+	void Display(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params, bool clear_mesh = true)
+	{
+		if (clear_mesh)
+			Flush();
+		else
+			FlushMeshElement();
+		dynamic_mesh.Display(renderer, uniform_provider, render_params);
+	}
+
+	chaos::GPUDynamicMesh* ExtractMesh()
+	{
+		chaos::GPUDynamicMesh* result = new chaos::GPUDynamicMesh();
+		if (result != nullptr)
+		{
+			Flush();
+			swap(*result, dynamic_mesh);
+		}
+		return result;
 	}
 
 protected:
 
-	chaos::PrimitiveOutput<vertex_type> output;
-
-	chaos::GPUDynamicMesh internal_mesh;
-
-	//GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation
+	chaos::GPUDynamicMesh dynamic_mesh;
 };
 
-template<typename VERTEX_TYPE = chaos::VertexDefault>
-DrawInterface<VERTEX_TYPE> BeginDraw(chaos::GPURenderer* renderer, char const * material_name)
-{
-	DrawInterface<VERTEX_TYPE> result;
-
-
-	return std::move(result);
-}
-
-#endif
 
 int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
 {
@@ -80,16 +78,37 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 	glPointSize(10.0f);
 
+	DrawInterface<chaos::VertexDefault> DI("screenspace1");
+
+	glDisable(GL_DEPTH_TEST);
+
+	auto Lines = DI.AddLines(1);
+
+	Lines[0].color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	Lines[0].flags = 0;
+	Lines[0].texcoord = { -1.0f, -1.0f , -1 };
+	Lines[0].position.x = 0.0f;
+	Lines[0].position.y = 0.0f;
+
+	Lines[1].color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	Lines[1].flags = 0;
+	Lines[1].texcoord = { -1.0f, -1.0f , -1 };
+	Lines[1].position.x = 700.0f;
+	Lines[1].position.y = 400.0f;
+
+
+	chaos::shared_ptr<chaos::GPUDynamicMesh> m = DI.ExtractMesh();
+	//m->Display(renderer, uniform_provider, render_params);
+
+
+
+	DI.Display(renderer, uniform_provider, render_params);
+
+
+
+
 
 #if 0
-
-	auto draw = BeginDraw(renderer, nullptr);
-
-
-	draw.EndDraw();
-
-#endif
-
 
 
 	chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
@@ -177,7 +196,7 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 	}
 
 
-
+#endif
 
 	return result;
 }

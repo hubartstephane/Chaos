@@ -18,6 +18,14 @@ namespace chaos
         assert((quad_index_buffer != nullptr) && (max_quad_count != 0));
     }
 
+    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
+        PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
+    {
+        GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
+        if (resource_manager != nullptr)
+            render_material = resource_manager->FindRenderMaterial(in_render_material_request);
+    }
+
     PrimitiveOutputBase::~PrimitiveOutputBase()
     {
         Flush();
@@ -129,6 +137,13 @@ namespace chaos
             FlushMeshElement();
             render_material = in_render_material;
         }
+    }
+
+    void PrimitiveOutputBase::SetRenderMaterial(ObjectRequest render_material_request)
+    {
+        GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
+        if (resource_manager != nullptr)
+            SetRenderMaterial(resource_manager->FindRenderMaterial(render_material_request));
     }
 
     void PrimitiveOutputBase::FlushMeshElement()

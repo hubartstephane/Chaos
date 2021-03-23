@@ -38,6 +38,7 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 
 	if (ludum_level_instance == nullptr)
 	{
+		DoDisplayBackground(renderer, uniform_provider, render_params);
 		if (particle_manager != nullptr)
 			particle_manager->Display(renderer, uniform_provider, render_params);
 		return;
@@ -141,9 +142,12 @@ void LudumGame::DoDisplayGame(chaos::GPURenderer * renderer, chaos::GPUProgramPr
 		other_render_params.object_filter = &filter;
 #endif
 
-		// draw particle system (the background)
-		if (particle_manager != nullptr)
-			particle_manager->Display(renderer, uniform_provider, other_render_params);
+
+		// display the background
+		DoDisplayBackground(renderer, uniform_provider, render_params);
+		// draw particle system 
+		//if (particle_manager != nullptr)
+		//	particle_manager->Display(renderer, uniform_provider, other_render_params);
 		level_instance->Display(renderer, uniform_provider, other_render_params);
 
 		renderer->PopFramebufferRenderContext();

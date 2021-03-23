@@ -14,9 +14,6 @@ namespace chaos
 
 namespace chaos
 {
-
-	
-
 	class Game : public Object, public InputEventReceiver
 	{
 		friend class GameGamepadManager;
@@ -207,6 +204,8 @@ namespace chaos
 		virtual void DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** internal method to prepare rendering */
 		virtual void DoPreDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
+		/** internal method to display the background */
+		virtual void DoDisplayBackground(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params);
 		/** internal  method to display the game content */
 		virtual void DoDisplayGame(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params);
 		/** internal  method to display the HUD */
@@ -384,17 +383,16 @@ namespace chaos
 
 		/** the current gamepad manager */
 		shared_ptr<GamepadManager> gamepad_manager;
-
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
 		/** the particle manager */
 		shared_ptr<ParticleManager> particle_manager;
-
 		/** the rendering layer system */
 		shared_ptr<GPURenderableLayerSystem> root_render_layer;
-
 		/** the text generator */
 		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
+		/** the background mesh */
+		shared_ptr<GPUDynamicMesh> background_mesh;
 
 		/** the sounds being played */
 		shared_ptr<Sound> menu_music;

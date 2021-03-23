@@ -52,7 +52,7 @@ namespace chaos
         }
 
 		/** get the bitmap info used for given bitmap_name */
-		BitmapAtlas::BitmapInfo const * FindBitmapInfo(ObjectRequest bitmap_request) const;
+		BitmapAtlas::BitmapInfo const * FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites") const;
 
 	protected:
 

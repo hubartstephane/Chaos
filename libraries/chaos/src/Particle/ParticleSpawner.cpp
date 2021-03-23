@@ -9,11 +9,11 @@ namespace chaos
 	}
 
 	/** constructor with additionnal bitmap arguments */
-	ParticleSpawner::ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request) :
+	ParticleSpawner::ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request, ObjectRequest folder_request) :
 		particle_layer(in_particle_layer)
 	{
 		// in case of error, make the Spawner invalid
-		if (!SetBitmapInfo(bitmap_request))
+		if (!SetBitmapInfo(bitmap_request, folder_request))
 			particle_layer = nullptr;
 	}
 

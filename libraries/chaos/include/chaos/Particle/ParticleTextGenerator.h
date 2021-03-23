@@ -260,7 +260,7 @@ namespace chaos
 			bool AddFontInfo(char const * name, BitmapAtlas::FontInfo const * font_info);
 
 			/** the main method to generator a text */
-			bool Generate(char const * text, GeneratorResult & result, GeneratorParams const & params = GeneratorParams());
+			bool Generate(char const* text, GeneratorResult& result, GeneratorParams const& params = {});
 
 		protected:
 
@@ -329,7 +329,7 @@ namespace chaos
 
 
 		/** generate an allocation for a generated text */
-		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params = CreateTextAllocationParams());
+		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
 
 	}; // namespace ParticleTextGenerator
 

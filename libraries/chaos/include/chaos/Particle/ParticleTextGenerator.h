@@ -327,9 +327,39 @@ namespace chaos
 			BitmapAtlas::AtlasBase const & atlas;
 		};
 
+		/** transform a token into a particle */
+		ParticleDefault TokenToParticle(ParticleTextGenerator::Token const& token);
+		/** get particles corresponding to the background */
+		ParticleDefault GetBackgroundParticle(GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params);
 
 		/** generate an allocation for a generated text */
 		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
+
+		/** output primitives corresponding to generated text */
+		template<typename VERTEX_TYPE>
+		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params)
+		{
+			int extra_background = (allocation_params.create_background) ? 1 : 0;
+
+			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(generator_result.GetTokenCount() + extra_background);
+			// create the background
+			if (allocation_params.create_background)
+			{
+				ParticleDefault particle = GetBackgroundParticle(generator_result, allocation_params);
+				ParticleToPrimitive(particle, output.AddQuads());
+			}
+			// convert the text			
+			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
+			{
+				ParticleTextGenerator::TokenLine const& line = generator_result.token_lines[i];
+				for (size_t j = 0; j < line.size(); ++j)
+				{
+					ParticleDefault particle = TokenToParticle(line[j]);
+					ParticleToPrimitive(particle, output.AddQuads());
+				}
+			}
+			return result;
+		}
 
 	}; // namespace ParticleTextGenerator
 

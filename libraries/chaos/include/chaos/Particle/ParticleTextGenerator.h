@@ -342,11 +342,13 @@ namespace chaos
 			int extra_background = (allocation_params.create_background) ? 1 : 0;
 
 			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(generator_result.GetTokenCount() + extra_background);
+
+			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
 			// create the background
 			if (allocation_params.create_background)
 			{
 				ParticleDefault particle = GetBackgroundParticle(generator_result, allocation_params);
-				ParticleToPrimitive(particle, output.AddQuads());
+				ParticleToPrimitive(particle, current_primitive);
 			}
 			// convert the text			
 			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
@@ -355,7 +357,7 @@ namespace chaos
 				for (size_t j = 0; j < line.size(); ++j)
 				{
 					ParticleDefault particle = TokenToParticle(line[j]);
-					ParticleToPrimitive(particle, output.AddQuads());
+					ParticleToPrimitive(particle, current_primitive);
 				}
 			}
 			return result;

@@ -88,6 +88,14 @@ namespace chaos
 		/** gets the graphic resource manager */
 		GPUResourceManager const* GetGPUResourceManager() const { return gpu_resource_manager.get(); }
 
+		/** getter on the texture atlas */
+		BitmapAtlas::TextureArrayAtlas* GetTextureAtlas() { return texture_atlas.get(); }
+		BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return texture_atlas.get(); }
+
+		/** getter on the text generator */
+		ParticleTextGenerator::Generator* GetTextGenerator() { return particle_text_generator.get(); }
+		ParticleTextGenerator::Generator const* GetTextGenerator() const { return particle_text_generator.get(); }
+
 		/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
 		void FreezeNextFrameTickDuration();
 
@@ -154,6 +162,14 @@ namespace chaos
 		/** finalize the GPU manager */
 		virtual bool FinalizeGPUResourceManager();
 
+		/** initialize a mapping with button names / text generator joker */
+		virtual bool InitializeGamepadButtonMap();
+		/** create the texture atlas */
+		virtual bool CreateTextureAtlas();
+		/** create the text generator */
+		virtual bool CreateTextGenerator();
+
+
 		/** change the state of a keyboard key (notification from a window)*/
 		void SetKeyboardButtonState(KeyboardButton key, int action);
 		/** change the state of a mouse key (notification from a window)*/
@@ -182,6 +198,14 @@ namespace chaos
 		shared_ptr<SoundManager> sound_manager;
 		/** the graphic resource manager */
 		shared_ptr<GPUResourceManager> gpu_resource_manager;
+
+		/** the texture atlas */
+		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
+		/** the text generator */
+		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
+
+		/** a mapping between the button index and its resource name + text generator alias */
+		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
 
 		/** the initial_window param */
 		WindowParams window_params;

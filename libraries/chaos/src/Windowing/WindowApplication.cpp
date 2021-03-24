@@ -229,9 +229,45 @@ namespace chaos
 		return true;
 	}
 
+	bool WindowApplication::InitializeGamepadButtonMap()
+	{
+		// the map [button ID] => [bitmap name + text generator alias]
+#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[GamepadButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
+		CHAOS_ADD_BUTTONMAP(A, ButtonA);
+		CHAOS_ADD_BUTTONMAP(B, ButtonB);
+		CHAOS_ADD_BUTTONMAP(X, ButtonX);
+		CHAOS_ADD_BUTTONMAP(Y, ButtonY);
+		CHAOS_ADD_BUTTONMAP(LEFT_BUMPER, LeftShoulder);
+		CHAOS_ADD_BUTTONMAP(RIGHT_BUMPER, RightShoulder);
+		CHAOS_ADD_BUTTONMAP(LEFT_TRIGGER, LeftTrigger);
+		CHAOS_ADD_BUTTONMAP(RIGHT_TRIGGER, RightTrigger);
+#undef CHAOS_ADD_BUTTONMAP
+
+		return true;
+	}
+
+	bool WindowApplication::CreateTextureAtlas()
+	{
+
+		return true;
+	}
+
+	bool WindowApplication::CreateTextGenerator()
+	{
+
+		return true;
+	}
+
 	bool WindowApplication::PreMessageLoop()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
+
+		if (!InitializeGamepadButtonMap())
+			return false;
+		if (!CreateTextureAtlas())
+			return false;
+		if (!CreateTextGenerator())
+			return false;
 		return true;
 	}
 

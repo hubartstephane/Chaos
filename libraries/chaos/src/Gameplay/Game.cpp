@@ -287,6 +287,18 @@ namespace chaos
 			hud->Display(renderer, uniform_provider, render_params);
 	}
 
+
+
+
+
+
+	// ========================================================================
+
+
+
+
+
+
 	bool Game::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
 	{
 		if (!FillAtlasGeneratorInputSprites(input, config, config_path))
@@ -421,6 +433,33 @@ namespace chaos
 
 		return true;
 	}
+
+
+
+
+
+
+
+
+
+	// ========================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	TMLevel * Game::CreateTMLevel()
 	{

@@ -17,6 +17,11 @@ namespace chaos
 		/** constructor */
 		GameApplication(SubClassOf<Game> in_game_class, SubClassOf<Window> in_main_window_class, WindowParams const& in_window_params = {}, WindowHints const& in_window_hints = {});
 
+		/** gets the game */
+		Game* GetGame() { return game.get(); }
+		/** gets the game */
+		Game const* GetGame() const { return game.get(); }
+
 	protected:
 
 		/** override */

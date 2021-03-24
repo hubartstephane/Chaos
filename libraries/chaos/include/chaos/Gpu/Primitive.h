@@ -85,6 +85,9 @@ namespace chaos
 
     /**
      * Primitive : base object for writing GPU primitives into memory (GPU mapped memory for the usage) 
+     *             a primitive is a sequence of vertices.
+     *             Despite of its name, it may represents several primitives
+     *             For example you may have a QuadPrimitive that represents 3 quads, each with 4 vertices (so 12 vertices)
      */
 
     template<typename VERTEX_TYPE>
@@ -197,8 +200,45 @@ namespace chaos
             static_assert(std::is_base_of_v<OTHER_VERTEX_TYPE, VERTEX_TYPE>);
             return *(TypedPrimitive<OTHER_VERTEX_TYPE, PRIMITIVE_TYPE>*)this;
         }
-    };
 
+        /** skip the next primitives (not vertices) */
+        TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE>& operator += (size_t count)
+        {
+            int vertices_per_primitive = 0;
+            if constexpr (PRIMITIVE_TYPE == PrimitiveType::POINT)
+                vertices_per_primitive = 1;
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE)
+                vertices_per_primitive = 3;
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE_PAIR)
+                vertices_per_primitive = 6;
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::QUAD)
+                vertices_per_primitive = 4;
+            else if constexpr (PRIMITIVE_TYPE == PrimitiveType::LINE)
+                vertices_per_primitive = 2;
+            else
+                assert(0); // no meaning for strips, lines ...
+
+            vertices_per_primitive *= count;
+
+            assert(vertex_count >= vertices_per_primitive);
+            buffer += vertex_size * vertices_per_primitive;
+            vertex_count -= vertices_per_primitive;
+            return *this;
+        }
+
+        /** pre-decrement (next primitive for the row : not the next vertex !) */
+        TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE> & operator ++()
+        {
+            return operator += (1);
+        }
+        /** post-increment (next primitive for the row : not the next vertex !) */
+        TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE> operator ++(int)
+        {
+            TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE> result = *this;
+            operator ++();
+            return result;
+        }
+    };
 
     template<typename VERTEX_TYPE> using PointPrimitive = TypedPrimitive<VERTEX_TYPE, PrimitiveType::POINT>;
 

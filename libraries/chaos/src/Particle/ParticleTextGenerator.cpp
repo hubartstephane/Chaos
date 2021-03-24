@@ -720,6 +720,30 @@ namespace chaos
 			return true;
 		}
 
+		ParticleDefault TokenToParticle(ParticleTextGenerator::Token const& token)
+		{
+			ParticleDefault result;
+			result.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
+			result.texcoords = token.texcoords;
+			result.color = token.color;
+			return result;
+		}
+
+		ParticleDefault GetBackgroundParticle(GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params)
+		{
+			glm::vec2 padding = glm::vec2(allocation_params.background_padding, allocation_params.background_padding);
+
+			ParticleDefault result;
+			result.bounding_box = box2(std::make_pair(
+				generator_result.bounding_box.bottomleft - padding,
+				generator_result.bounding_box.topright + padding));
+			result.texcoords.bitmap_index = -1;
+			result.texcoords.bottomleft = glm::vec2(-1.0f, -1.0f);
+			result.texcoords.topright = glm::vec2(-1.0f, -1.0f);
+			result.color = allocation_params.background_color;
+			return result;
+		}
+
 		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params)
 		{
 			assert(layer != nullptr);
@@ -750,41 +774,17 @@ namespace chaos
 			size_t token_index = 0;
 			// create the background
 			if (allocation_params.create_background)
-			{
-				ParticleDefault & p = particles[token_index];
-
-				glm::vec2 padding = glm::vec2(allocation_params.background_padding, allocation_params.background_padding);
-
-				p.bounding_box = box2(std::make_pair(
-					generator_result.bounding_box.bottomleft - padding,
-					generator_result.bounding_box.topright   + padding));
-				p.texcoords.bitmap_index = -1;
-				p.texcoords.bottomleft   = glm::vec2(-1.0f, -1.0f);
-				p.texcoords.topright     = glm::vec2(-1.0f, -1.0f);
-				p.color = allocation_params.background_color;
-				++token_index;
-			}
+				particles[token_index++] = GetBackgroundParticle(generator_result, allocation_params);
 
 			// convert the text			
 			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
 			{
 				ParticleTextGenerator::TokenLine const & line = generator_result.token_lines[i];
 				for (size_t j = 0; j < line.size(); ++j)
-				{
-					ParticleTextGenerator::Token const & token = line[j];
-
-					ParticleDefault & p = particles[token_index];
-
-					p.bounding_box = box2(std::make_pair(token.corners.bottomleft, token.corners.topright));
-					p.texcoords = token.texcoords;
-					p.color = token.color;
-					++token_index;
-				}
+					particles[token_index++] = TokenToParticle(line[j]);
 			}
 			return result;
 		}
-
-
 
 
 

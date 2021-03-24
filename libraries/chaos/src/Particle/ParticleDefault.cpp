@@ -82,30 +82,14 @@ namespace chaos
 		int vertex_flags[4];
 		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
 
-		VertexDefault& v0 = primitive[0];
-		VertexDefault& v1 = primitive[1];
-		VertexDefault& v2 = primitive[2];
-		VertexDefault& v3 = primitive[3];
-
-		v0.position = vertex_positions[0];
-		v0.texcoord = vertex_texcoords[0];
-		v0.flags = vertex_flags[0];
-		v0.color = particle.color;
-
-		v1.position = vertex_positions[1];
-		v1.texcoord = vertex_texcoords[1];
-		v1.flags = vertex_flags[1];
-		v1.color = particle.color;
-
-		v2.position = vertex_positions[2];
-		v2.texcoord = vertex_texcoords[2];
-		v2.flags = vertex_flags[2];
-		v2.color = particle.color;
-
-		v3.position = vertex_positions[3];
-		v3.texcoord = vertex_texcoords[3];
-		v3.flags = vertex_flags[3];
-		v3.color = particle.color;
+		for (int i = 0; i < 4; ++i)
+		{
+			VertexDefault& v = primitive[i];
+			v.position = vertex_positions[i];
+			v.texcoord = vertex_texcoords[i];
+			v.flags = vertex_flags[i];
+			v.color = particle.color;
+		}
 	}
 
 	void ParticleToPrimitive(ParticleDefault const& particle, TrianglePairPrimitive<VertexDefault>& primitive)
@@ -120,42 +104,18 @@ namespace chaos
 		int vertex_flags[4];
 		GenerateVertexFlagAttributes(particle.flags, vertex_flags);
 
-		VertexDefault& v0 = primitive[0];
-		VertexDefault& v1 = primitive[1];
-		VertexDefault& v2 = primitive[2];
-		VertexDefault& v3 = primitive[3];
-		VertexDefault& v4 = primitive[4];
-		VertexDefault& v5 = primitive[5];
+		int const indices[] = { 0, 1, 2, 0, 2, 3 };
 
-		v0.position = vertex_positions[0];
-		v0.texcoord = vertex_texcoords[0];
-		v0.flags = vertex_flags[0];
-		v0.color = particle.color;
+		for (int i = 0; i < 6; ++i)
+		{
+			int indice = indices[i];
 
-		v1.position = vertex_positions[1];
-		v1.texcoord = vertex_texcoords[1];
-		v1.flags = vertex_flags[1];
-		v1.color = particle.color;
-
-		v2.position = vertex_positions[2];
-		v2.texcoord = vertex_texcoords[2];
-		v2.flags = vertex_flags[2];
-		v2.color = particle.color;
-
-		v3.position = vertex_positions[0];
-		v3.texcoord = vertex_texcoords[0];
-		v3.flags = vertex_flags[0];
-		v3.color = particle.color;
-
-		v4.position = vertex_positions[2];
-		v4.texcoord = vertex_texcoords[2];
-		v4.flags = vertex_flags[2];
-		v4.color = particle.color;
-
-		v5.position = vertex_positions[3];
-		v5.texcoord = vertex_texcoords[3];
-		v5.flags = vertex_flags[3];
-		v5.color = particle.color;
+			VertexDefault& v = primitive[i];
+			v.position = vertex_positions[indice];
+			v.texcoord = vertex_texcoords[indice];
+			v.flags = vertex_flags[indice];
+			v.color = particle.color;
+		}
 	}
 
 	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>)

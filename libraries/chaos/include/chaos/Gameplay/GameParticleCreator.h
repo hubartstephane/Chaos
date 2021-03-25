@@ -10,7 +10,7 @@ namespace chaos
 
 namespace chaos
 {
-	class GameParticleCreator
+	class GameParticleCreator : public Object
 	{
 	public:
 

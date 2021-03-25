@@ -96,6 +96,17 @@ namespace chaos
 		ParticleTextGenerator::Generator* GetTextGenerator() { return particle_text_generator.get(); }
 		ParticleTextGenerator::Generator const* GetTextGenerator() const { return particle_text_generator.get(); }
 
+		/** get the button map */
+		std::map<GamepadButton, std::pair<std::string, std::string>> & GetGamepadButtonMap() { return gamepad_button_map; }
+		std::map<GamepadButton, std::pair<std::string, std::string>> const & GetGamepadButtonMap() const { return gamepad_button_map; }
+
+
+
+		/** get particle creator */
+		GameParticleCreator* GetGameParticleCreator() { return particle_creator.get(); }
+		/** get particle creator */
+		GameParticleCreator const* GetGameParticleCreator() const { return particle_creator.get(); }
+
 		/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
 		void FreezeNextFrameTickDuration();
 
@@ -158,7 +169,7 @@ namespace chaos
 		/** finalize the managers */
 		virtual bool FinalizeManagers() override;
 		/** the GPU manager must be initialized after the OpenGL context is OK. */
-		virtual bool InitializeGPUResourceManager();
+		virtual bool CreateGPUResourceManager();
 		/** finalize the GPU manager */
 		virtual bool FinalizeGPUResourceManager();
 
@@ -168,7 +179,15 @@ namespace chaos
 		virtual bool CreateTextureAtlas();
 		/** create the text generator */
 		virtual bool CreateTextGenerator();
+		/** initialize the GameParticleCreator */
+		virtual bool CreateGameParticleCreator();
 
+		/** main method to generate atlas entries */
+		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
+		/** generate atlas entries relative to sprite directory */
+		virtual bool FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput& input);
+		/** generate atlas entries relative to fonts */
+		virtual bool FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input);
 
 		/** change the state of a keyboard key (notification from a window)*/
 		void SetKeyboardButtonState(KeyboardButton key, int action);
@@ -203,6 +222,9 @@ namespace chaos
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
 		/** the text generator */
 		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
+		/** the particle creator */
+		shared_ptr<GameParticleCreator> particle_creator;
+
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;

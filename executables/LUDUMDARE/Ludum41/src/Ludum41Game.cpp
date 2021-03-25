@@ -249,9 +249,9 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 	return true;
 }
 
-bool LudumGame::InitializeGamepadButtonInfo()
+bool LudumGame::InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path)
 {
-	if (!chaos::Game::InitializeGamepadButtonInfo())
+	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
 		return false;
 
 	gamepad_buttons.push_back((int)chaos::GamepadButton::A);

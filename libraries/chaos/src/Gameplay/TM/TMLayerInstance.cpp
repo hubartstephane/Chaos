@@ -312,7 +312,9 @@ namespace chaos
 				params.font_info_name = *font_name;
 
 			// create particles
-			game->GetTextGenerator()->Generate(text->text.c_str(), result, params);
+			WindowApplication* window_application = Application::GetInstance();
+			if (window_application != nullptr)
+				window_application->GetTextGenerator()->Generate(text->text.c_str(), result, params);
 			
 			ParticleAllocationBase* allocation = ParticleTextGenerator::CreateTextAllocation(particle_layer.get(), result);
 			if (particle_ownership)
@@ -530,6 +532,10 @@ namespace chaos
 	{
 		if (particle_layer == nullptr)
 		{
+			// get the application for atlas
+			WindowApplication* window_application = Application::GetInstance();
+			if (window_application == nullptr)
+				return false;
 			// find render material
 			GPURenderMaterial* render_material = FindOrCreateRenderMaterial(material_name.c_str());
 			if (render_material == nullptr)
@@ -544,7 +550,7 @@ namespace chaos
 			// set the material
 			particle_layer->SetRenderMaterial(render_material);
 			// set the atlas			
-			particle_layer->SetTextureAtlas(GetGame()->GetTextureAtlas());
+			particle_layer->SetTextureAtlas(window_application->GetTextureAtlas());
 			// set some flags for the layer
 			ParticleLayerTraitBase* layer_trait = particle_layer->GetLayerTrait();
 			if (layer_trait != nullptr && layer != nullptr)

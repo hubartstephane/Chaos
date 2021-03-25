@@ -183,7 +183,7 @@ namespace chaos
 			GLTools::DisplayGenericInformation();
 
 			// initialize the GPU resource Manager (first window/OpenGL context must have been created)
-			if (!InitializeGPUResourceManager())
+			if (!CreateGPUResourceManager())
 				return false;
 			return true;
 		}))
@@ -246,16 +246,193 @@ namespace chaos
 		return true;
 	}
 
+	bool WindowApplication::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input)
+	{
+		if (!FillAtlasGeneratorInputSprites(input))
+			return false;
+		if (!FillAtlasGeneratorInputFonts(input))
+			return false;
+		return true;
+	}
+
+	bool WindowApplication::FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput& input)
+	{
+		// get the directory where the sprites are
+		std::string sprite_directory;
+		if (!JSONTools::GetAttribute(configuration, "sprite_directory", sprite_directory))
+			return true;
+		// find or create folder
+		BitmapAtlas::FolderInfoInput* folder_info = input.AddFolder("sprites", 0);
+		if (folder_info == nullptr)
+			return false;
+		// Add sprites
+		folder_info->AddBitmapFilesFromDirectory(sprite_directory, true);
+
+		return true;
+	}
+
+	bool WindowApplication::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput& input)
+	{
+		nlohmann::json const* fonts_config = JSONTools::GetStructure(configuration, "fonts");
+		if (fonts_config != nullptr)
+		{
+			// read the default font parameters
+			BitmapAtlas::FontInfoInputParams font_params;
+
+			nlohmann::json const* default_font_param_json = JSONTools::GetStructure(*fonts_config, "default_font_param");
+			if (default_font_param_json != nullptr)
+				LoadFromJSON(*default_font_param_json, font_params);
+
+			// Add the fonts
+			nlohmann::json const* fonts_json = JSONTools::GetStructure(*fonts_config, "fonts");
+			if (fonts_json != nullptr && fonts_json->is_object())
+			{
+				for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
+				{
+					if (!it->is_string())
+						continue;
+					// read information
+					std::string font_name = it.key();
+					std::string font_path = it->get<std::string>();
+					if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
+						return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	CHAOS_HELP_TEXT(CMD, "-UseCachedAtlas");
+#if !_DEBUG
+	CHAOS_HELP_TEXT(CMD, "-DumpCachedAtlas");
+#endif
+
 	bool WindowApplication::CreateTextureAtlas()
 	{
+		char const* CachedAtlasFilename = "CachedAtlas";
+
+		// Try to load already computed data 
+		if (Application::HasApplicationCommandLineFlag("-UseCachedAtlas")) // CMDLINE
+		{
+			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
+			if (tmp_texture_atlas != nullptr)
+			{
+				if (tmp_texture_atlas->LoadAtlas(GetUserLocalTempPath() / CachedAtlasFilename))
+				{
+					texture_atlas = tmp_texture_atlas;
+					return true;
+				}
+				delete(tmp_texture_atlas);
+			}
+		}
+
+		// fill sub images for atlas generation
+		BitmapAtlas::AtlasInput input;
+		if (!FillAtlasGeneratorInput(input))
+			return false;
+
+		// atlas generation params
+		int const DEFAULT_ATLAS_SIZE = 1024;
+		int const DEFAULT_ATLAS_PADDING = 10;
+
+		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
+
+		nlohmann::json const* atlas_json = JSONTools::GetStructure(configuration, "atlas");
+		if (atlas_json != nullptr)
+			LoadFromJSON(*atlas_json, params);
+
+		// atlas generation params : maybe a dump
+		char const* dump_atlas_dirname = nullptr;
+#if _DEBUG
+		dump_atlas_dirname = CachedAtlasFilename;
+#else
+		if (Application::HasApplicationCommandLineFlag("-DumpCachedAtlas")) // CMDLINE
+			dump_atlas_dirname = CachedAtlasFilename;
+#endif
+
+		// generate the atlas
+		BitmapAtlas::TextureArrayAtlasGenerator generator;
+		texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
+		if (texture_atlas == nullptr)
+			return false;
 
 		return true;
 	}
 
 	bool WindowApplication::CreateTextGenerator()
 	{
+		// get the font sub objects
+		nlohmann::json const* fonts_config = JSONTools::GetStructure(configuration, "fonts");
 
+		// create the generator
+		particle_text_generator = new ParticleTextGenerator::Generator(*texture_atlas);
+		if (particle_text_generator == nullptr)
+			return false;
+
+		// bitmaps in generator
+		BitmapAtlas::FolderInfo const* folder_info = texture_atlas->GetFolderInfo("sprites");
+		if (folder_info != nullptr)
+		{
+			// for each bitmap, that correspond to a button, register a [NAME] in the generator	
+			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
+			{
+				std::string const& bitmap_name = it->second.first;
+				BitmapAtlas::BitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_name.c_str());
+				if (info == nullptr)
+					continue;
+				std::string const& generator_alias = it->second.second;
+				particle_text_generator->AddBitmap(generator_alias.c_str(), info);
+			}
+			// embedded sprites
+			if (fonts_config != nullptr)
+			{
+				nlohmann::json const* font_bitmaps_json = JSONTools::GetStructure(*fonts_config, "bitmaps");
+				if (font_bitmaps_json != nullptr && font_bitmaps_json->is_object())
+				{
+					for (nlohmann::json::const_iterator it = font_bitmaps_json->begin(); it != font_bitmaps_json->end(); ++it)
+					{
+						if (!it->is_string())
+							continue;
+						std::string bitmap_name = it.key();
+						std::string bitmap_path = it->get<std::string>();
+						BitmapAtlas::BitmapInfo const* info = folder_info->GetBitmapInfo(bitmap_path.c_str());
+						if (info == nullptr)
+							continue;
+						particle_text_generator->AddBitmap(bitmap_name.c_str(), info);
+					}
+				}
+			}
+		}
+
+		// the colors
+		if (fonts_config != nullptr)
+		{
+			nlohmann::json const* font_colors_json = JSONTools::GetStructure(*fonts_config, "colors");
+			if (font_colors_json != nullptr && font_colors_json->is_object())
+			{
+				for (nlohmann::json::const_iterator it = font_colors_json->begin(); it != font_colors_json->end(); ++it)
+				{
+					glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
+					if (!LoadFromJSON(*it, color))
+						continue;
+					std::string color_name = it.key();
+					particle_text_generator->AddColor(color_name.c_str(), color);
+				}
+			}
+		}
 		return true;
+	}
+
+
+
+	bool WindowApplication::CreateGameParticleCreator()
+	{
+		particle_creator = new GameParticleCreator();
+		if (particle_creator == nullptr)
+			return false;
+		return particle_creator->Initialize(nullptr, particle_text_generator.get(), texture_atlas.get());
+		//return particle_creator.Initialize(particle_manager.get(), particle_text_generator.get(), texture_atlas.get());
 	}
 
 	bool WindowApplication::PreMessageLoop()
@@ -267,6 +444,8 @@ namespace chaos
 		if (!CreateTextureAtlas())
 			return false;
 		if (!CreateTextGenerator())
+			return false;
+		if (!CreateGameParticleCreator())
 			return false;
 		return true;
 	}
@@ -289,7 +468,7 @@ namespace chaos
 		Log::Message("Window(...) [%d] failure : %s", code, msg);
 	}
 
-	bool WindowApplication::InitializeGPUResourceManager()
+	bool WindowApplication::CreateGPUResourceManager()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 

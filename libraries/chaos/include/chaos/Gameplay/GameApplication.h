@@ -30,6 +30,8 @@ namespace chaos
 		virtual void Tick(float delta_time) override;
 		/** override */
 		virtual void OnWindowCreated(Window* window) override;
+		/** override */
+		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input) override;
 
 	protected:
 

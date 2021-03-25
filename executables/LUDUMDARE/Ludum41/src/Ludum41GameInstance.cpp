@@ -434,8 +434,12 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 {
 	LudumGame const * ludum_game = GetGame();
 
+	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
+		return nullptr;
+
 	// create the object
-	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
+	chaos::ParticleAllocationBase * result = window_application->GetGameParticleCreator()->SpawnParticles(chaos::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
 	if (result == nullptr)
 		return nullptr;
 
@@ -602,12 +606,16 @@ std::string LudumGameInstance::GenerateGamepadChallengeString(std::vector<int> c
 
 	std::string result;
 
+	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
+		return {};
+
 	for (size_t i = 0; i < gamepad_challenge.size(); ++i)
 	{
 		int button_index = gamepad_challenge[i];
 
-		auto const it = ludum_game->gamepad_button_map.find((chaos::GamepadButton)button_index);
-		if (it == ludum_game->gamepad_button_map.end())
+		auto const it = window_application->GetGamepadButtonMap().find((chaos::GamepadButton)button_index);
+		if (it == window_application->GetGamepadButtonMap().end())
 			continue;
 		result = result + "[" + it->second.second + "]";
 	}
@@ -623,6 +631,10 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 	if (layer == nullptr)
 		return nullptr;
 
+	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
+		return nullptr;
+
 	chaos::ParticleTextGenerator::GeneratorResult result;
 	chaos::ParticleTextGenerator::GeneratorParams params;
 
@@ -634,12 +646,12 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateChallengeParticles(Ludu
 
 	if (keyboard)
 	{
-		game->GetTextGenerator()->Generate(challenge->keyboard_challenge.c_str(), result, params);
+		window_application->GetTextGenerator()->Generate(challenge->keyboard_challenge.c_str(), result, params);
 	}
 	else
 	{
 		std::string gamepad_string = GenerateGamepadChallengeString(challenge->gamepad_challenge);
-		game->GetTextGenerator()->Generate(gamepad_string.c_str(), result, params);
+		window_application->GetTextGenerator()->Generate(gamepad_string.c_str(), result, params);
 	}
 
 	// create the text

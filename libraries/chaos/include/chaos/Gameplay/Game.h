@@ -74,14 +74,6 @@ namespace chaos
 		ParticleManager * GetParticleManager() { return particle_manager.get(); }
 		ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
 
-		/** getter on the texture atlas */
-		BitmapAtlas::TextureArrayAtlas * GetTextureAtlas() { return texture_atlas.get(); }
-		BitmapAtlas::TextureArrayAtlas const * GetTextureAtlas() const { return texture_atlas.get(); }
-
-		/** getter on the text generator */
-		ParticleTextGenerator::Generator * GetTextGenerator() { return particle_text_generator.get(); }
-		ParticleTextGenerator::Generator const * GetTextGenerator() const { return particle_text_generator.get(); }
-
 		// The clocks: 
 		//   - root  clock : the top level clock. never reseted, never paused
 
@@ -114,11 +106,6 @@ namespace chaos
 		GameHUD * GetCurrentHUD() { return hud.get(); }
 		/** returns the HUD */
 		GameHUD const * GetCurrentHUD() const { return hud.get(); }
-
-		/** get particle tools */
-		GameParticleCreator & GetGameParticleCreator() { return particle_creator; }
-		/** get particle tools */
-		GameParticleCreator const & GetGameParticleCreator() const { return particle_creator; }
 
 		/** get the view */
 		box2 GetCanvasBox() const;
@@ -218,6 +205,9 @@ namespace chaos
 		virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** called whenever the game values as been changed */
 		virtual void OnGameValuesChanged(bool hot_reload);
+		/** initialize some resources */
+		virtual bool CreateGPUResources();
+
 
 		/** save the best score */
 		bool SerializePersistentGameData(bool save);
@@ -230,8 +220,6 @@ namespace chaos
 
 		/** create the gamepad manager */
 		virtual bool CreateGamepadManager(nlohmann::json const& config, boost::filesystem::path const& config_path);
-		/** initialization of the manager */
-		virtual bool InitializeSoundManager(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** create the game state_machine */
 		virtual bool CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** allocate the state machine */
@@ -248,35 +236,22 @@ namespace chaos
 		virtual void OnInputModeChanged(InputMode new_mode, InputMode old_mode) override;
 
 		/** create some clocks */
-		virtual bool InitializeClocks(nlohmann::json const& config, boost::filesystem::path const& config_path);
+		virtual bool CreateClocks(nlohmann::json const& config, boost::filesystem::path const& config_path);
 		/** initialize the game data from configuration file */
 		virtual bool InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload);
-		/** initialize a mapping with button names / text generator joker */
-		virtual bool InitializeGamepadButtonInfo();
-		/** initialize the particle text generator */
-		virtual bool InitializeParticleTextGenerator(nlohmann::json const & config, boost::filesystem::path const & config_path);
+
 		/** initialize the particle manager */
-		virtual bool InitializeParticleManager();
-		/** initialize the GameParticleCreator */
-		virtual bool InitializeGameParticleCreator();
+		virtual bool CreateParticleManager();
 		/** initialize the render layer */
-		virtual bool InitializeRootRenderLayer();
+		virtual bool CreateRootRenderLayer();
 
 		/** create the layers in the particle manager (returns the number of layer inserted => -1 for error) */
 		virtual int AddParticleLayers();
 		/** insert a rendering layering */
 		GPURenderableLayerSystem * AddChildRenderLayer(char const * layer_name, TagType layer_tag, int render_order);
 
-		/** generate the atlas for the whole game */
-		virtual bool GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path);
-		/** fill atlas generation input */
-		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
-		/** fill atlas generation input (sprite directory) */
-		virtual bool FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
-		/** fill atlas generation input (fonts) */
-		virtual bool FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
 		/** fill atlas generation input from the tiled map manager */
-		virtual bool FillAtlasGeneratorInputTiledMapManager(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path);
+		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input);
 
 		/** load object type sets concerned by the game (if required) */
 		virtual bool GenerateObjectTypeSets(nlohmann::json const & config, boost::filesystem::path const& config_path);
@@ -383,14 +358,11 @@ namespace chaos
 
 		/** the current gamepad manager */
 		shared_ptr<GamepadManager> gamepad_manager;
-		/** the texture atlas */
-		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
 		/** the particle manager */
 		shared_ptr<ParticleManager> particle_manager;
 		/** the rendering layer system */
 		shared_ptr<GPURenderableLayerSystem> root_render_layer;
-		/** the text generator */
-		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
+
 		/** the background mesh */
 		shared_ptr<GPUDynamicMesh> background_mesh;
 
@@ -408,8 +380,7 @@ namespace chaos
 		/** pointer on the state_machine instance */
 		shared_ptr<SM::StateMachineInstance> game_sm_instance;
 
-		/** a mapping between the button index and its resource name + text generator alias */
-		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
+
 
 		/** score values */
 		int best_score = 0;
@@ -442,8 +413,27 @@ namespace chaos
 		/** the clocks */
 		shared_ptr<Clock> root_clock;
 
+
+
+
+
+
+
+#if 0
+		/** a mapping between the button index and its resource name + text generator alias */
+		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
 		/** the particle tools */
 		GameParticleCreator particle_creator;
+		/** the text generator */
+		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
+		/** the texture atlas */
+		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
+#endif
+
+
+
+
+
 
 		/** a tiled map manager */
 		shared_ptr<TiledMap::Manager> tiled_map_manager;
@@ -453,8 +443,6 @@ namespace chaos
 		/** the current level instance */
 		shared_ptr<LevelInstance> level_instance;
 
-		/** some allocations */
-		shared_ptr<ParticleAllocationBase> background_allocations;
 
 		/** the game instance */
 		shared_ptr<GameInstance> game_instance;

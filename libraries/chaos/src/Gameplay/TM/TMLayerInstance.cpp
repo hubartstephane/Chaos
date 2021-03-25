@@ -535,7 +535,7 @@ namespace chaos
 			// get the application for atlas
 			WindowApplication* window_application = Application::GetInstance();
 			if (window_application == nullptr)
-				return false;
+				return nullptr;
 			// find render material
 			GPURenderMaterial* render_material = FindOrCreateRenderMaterial(material_name.c_str());
 			if (render_material == nullptr)
@@ -544,7 +544,7 @@ namespace chaos
 			TMLevel* level = GetLevel();
 			particle_layer = level->DoCreateParticleLayer(this);
 			if (particle_layer == nullptr)
-				return false;
+				return nullptr;
 			// add name and tag to the particle_layer
 			InitializeParticleLayer(particle_layer.get());
 			// set the material

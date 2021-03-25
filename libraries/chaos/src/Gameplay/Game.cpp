@@ -495,9 +495,6 @@ namespace chaos
 
 	bool Game::CreateParticleManager()
 	{
-
-		// shuwww on pourrait faire CreateParticleManager(...) appelable depuis l exterieur
-
 		// get the application for atlas
 		WindowApplication* window_application = Application::GetInstance();
 		if (window_application == nullptr)

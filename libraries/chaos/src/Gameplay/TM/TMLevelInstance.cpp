@@ -258,10 +258,13 @@ namespace chaos
 
 	bool TMLevelInstance::CreateParticleManager(Game* in_game)
 	{
+		WindowApplication* window_application = Application::GetInstance();
+		if (window_application == nullptr)
+			return false;
 		particle_manager = new ParticleManager;
 		if (particle_manager == nullptr)
 			return false;
-		particle_manager->SetTextureAtlas(in_game->GetTextureAtlas()); // take the atlas
+		particle_manager->SetTextureAtlas(window_application->GetTextureAtlas()); // take the atlas
 		return true;
 	}
 

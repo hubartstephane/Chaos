@@ -28,10 +28,10 @@ namespace chaos
 
 	BitmapAtlas::TextureArrayAtlas const* TMLevel::GetTextureAtlas(TMLayerInstance* layer_instance) const
 	{
-		Game const* game = layer_instance->GetGame();
-		if (game == nullptr)
+		WindowApplication* window_application = Application::GetInstance();
+		if (window_application == nullptr)
 			return nullptr;
-		return game->GetTextureAtlas();
+		return window_application->GetTextureAtlas();
 	}
 
 	BitmapAtlas::FolderInfo const* TMLevel::GetFolderInfo(TMLayerInstance* layer_instance) const

@@ -80,7 +80,11 @@ namespace chaos
 		game = in_game;
 
 		// create the particle manager from the game texture atlas
-		if (!CreateInternalData(nullptr, game->GetTextGenerator(), game->GetTextureAtlas()))
+		WindowApplication* window_application = Application::GetInstance();
+		if (window_application == nullptr)
+			return false;
+
+		if (!CreateInternalData(nullptr, window_application->GetTextGenerator(), window_application->GetTextureAtlas()))
 			return false;
 		// Create the layers
 		if (!CreateHUDLayers())

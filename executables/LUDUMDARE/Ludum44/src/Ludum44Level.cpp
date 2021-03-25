@@ -211,7 +211,10 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 		return true;
 
 	// search the atlas
-	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = enemy_layer_instance->GetGame()->GetTextureAtlas();
+	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
+		return false;
+	chaos::BitmapAtlas::TextureArrayAtlas const * atlas = window_application->GetTextureAtlas();
 	if (atlas == nullptr)
 		return true;
 

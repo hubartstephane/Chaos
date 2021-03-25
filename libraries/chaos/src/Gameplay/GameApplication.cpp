@@ -32,6 +32,12 @@ namespace chaos
 		if (game_config != nullptr)
 			if (!game->InitializeFromConfiguration(*game_config, configuration_path))
 				return false;
+		// super method : need to be done game initialization ! (because atlas creation requires the game to have loaded its levels)
+		if (!WindowApplication::PreMessageLoop())
+			return false;
+		// create now some game resources that need application resources to be initialized
+		if (game->CreateGPUResources())
+			return false;
 		// update all windows and give them the game
 		for (auto& window : windows)
 		{
@@ -39,9 +45,6 @@ namespace chaos
 			if (game_window != nullptr)
 				game_window->SetGame(game.get());
 		}
-		// super method : need to be done AFTER !
-		if (!WindowApplication::PreMessageLoop())
-			return false;
 		return true;
 	}
 
@@ -53,6 +56,16 @@ namespace chaos
 		// update the game
 		if (game != nullptr)
 			game->Tick(delta_time);
+	}
+
+	bool GameApplication::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input)
+	{
+		if (!WindowApplication::FillAtlasGeneratorInput(input))
+			return false;
+		if (game != nullptr)
+			if (!game->FillAtlasGeneratorInput(input))
+				return false;
+		return true;
 	}
 
 }; // namespace chaos

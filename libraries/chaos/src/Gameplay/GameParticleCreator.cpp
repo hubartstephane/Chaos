@@ -5,6 +5,10 @@ namespace chaos
 
 	bool GameParticleCreator::Initialize(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
 	{
+
+
+
+
 		// particle text generator can be null if we dont want to create text
 		assert(in_particle_manager != nullptr);
 		assert(in_texture_atlas != nullptr);

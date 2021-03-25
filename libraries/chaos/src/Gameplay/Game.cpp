@@ -287,30 +287,7 @@ namespace chaos
 			hud->Display(renderer, uniform_provider, render_params);
 	}
 
-
-
-
-
-
-	// ========================================================================
-
-
-
-
-
-
-	bool Game::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
-	{
-		if (!FillAtlasGeneratorInputSprites(input, config, config_path))
-			return false;
-		if (!FillAtlasGeneratorInputFonts(input, config, config_path))
-			return false;
-		if (!FillAtlasGeneratorInputTiledMapManager(input, config, config_path))
-			return false;
-		return true;
-	}
-
-	bool Game::FillAtlasGeneratorInputTiledMapManager(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::FillAtlasGeneratorInput(BitmapAtlas::AtlasInput & input)
 	{
 		if (tiled_map_manager != nullptr)
 		{
@@ -324,142 +301,6 @@ namespace chaos
 		}
 		return true;
 	}
-
-	bool Game::FillAtlasGeneratorInputSprites(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
-	{
-		// get the directory where the sprites are
-		std::string sprite_directory;
-		if (!JSONTools::GetAttribute(config, "sprite_directory", sprite_directory))
-			return true;
-		// find or create folder
-		BitmapAtlas::FolderInfoInput * folder_info = input.AddFolder("sprites", 0);
-		if (folder_info == nullptr)
-			return false;
-		// Add sprites
-		folder_info->AddBitmapFilesFromDirectory(sprite_directory, true);
-
-		return true;
-	}
-
-	bool Game::FillAtlasGeneratorInputFonts(BitmapAtlas::AtlasInput & input, nlohmann::json const & config, boost::filesystem::path const & config_path)
-	{
-		nlohmann::json const * fonts_config = JSONTools::GetStructure(config, "fonts");
-		if (fonts_config != nullptr)
-		{
-			// read the default font parameters
-			BitmapAtlas::FontInfoInputParams font_params;
-
-			nlohmann::json const* default_font_param_json = JSONTools::GetStructure(*fonts_config, "default_font_param");
-			if (default_font_param_json != nullptr)
-				LoadFromJSON(*default_font_param_json, font_params);
-
-			// Add the fonts
-			nlohmann::json const * fonts_json = JSONTools::GetStructure(*fonts_config, "fonts");
-			if (fonts_json != nullptr && fonts_json->is_object())
-			{
-				for (nlohmann::json::const_iterator it = fonts_json->begin(); it != fonts_json->end(); ++it)
-				{
-					if (!it->is_string())
-						continue;
-					// read information
-					std::string font_name = it.key();
-					std::string font_path = it->get<std::string>();
-					if (input.AddFont(font_path.c_str(), nullptr, true, font_name.c_str(), 0, font_params) == nullptr)
-						return false;
-				}			
-			}		
-		}
-
-		return true;
-	}
-
-	CHAOS_HELP_TEXT(CMD, "-UseCachedAtlas");
-#if !_DEBUG
-	CHAOS_HELP_TEXT(CMD, "-DumpCachedAtlas");
-#endif
-
-	bool Game::GenerateAtlas(nlohmann::json const & config, boost::filesystem::path const & config_path)
-	{
-		char const* CachedAtlasFilename = "CachedAtlas";
-
-		// Try to load already computed data 
-		if (Application::HasApplicationCommandLineFlag("-UseCachedAtlas")) // CMDLINE
-		{
-			BitmapAtlas::TextureArrayAtlas* tmp_texture_atlas = new BitmapAtlas::TextureArrayAtlas;
-			if (tmp_texture_atlas != nullptr)
-			{
-				Application* application = Application::GetInstance();
-				if (application != nullptr)
-				{
-					if (tmp_texture_atlas->LoadAtlas(application->GetUserLocalTempPath() / CachedAtlasFilename))
-					{
-						texture_atlas = tmp_texture_atlas;
-						return true;
-					}
-					delete(tmp_texture_atlas);
-				}
-			}
-		}
-
-		// fill sub images for atlas generation
-		BitmapAtlas::AtlasInput input;
-		if (!FillAtlasGeneratorInput(input, config, config_path))
-			return false;
-
-		// atlas generation params
-		int const DEFAULT_ATLAS_SIZE    = 1024;
-		int const DEFAULT_ATLAS_PADDING = 10;
-
-		BitmapAtlas::AtlasGeneratorParams params = BitmapAtlas::AtlasGeneratorParams(DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_SIZE, DEFAULT_ATLAS_PADDING, PixelFormatMergeParams());
-		
-		nlohmann::json const * atlas_json = JSONTools::GetStructure(config, "atlas");
-		if (atlas_json != nullptr)
-			LoadFromJSON(*atlas_json, params);
-
-		// atlas generation params : maybe a dump
-		char const * dump_atlas_dirname = nullptr;
-#if _DEBUG
-		dump_atlas_dirname = CachedAtlasFilename;
-#else
-		if (Application::HasApplicationCommandLineFlag("-DumpCachedAtlas")) // CMDLINE
-			dump_atlas_dirname = CachedAtlasFilename;
-#endif
-
-		// generate the atlas
-		BitmapAtlas::TextureArrayAtlasGenerator generator;
-		texture_atlas = generator.ComputeResult(input, params, dump_atlas_dirname);
-		if (texture_atlas == nullptr)
-			return false;
-
-		return true;
-	}
-
-
-
-
-
-
-
-
-
-	// ========================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	TMLevel * Game::CreateTMLevel()
 	{
@@ -630,7 +471,7 @@ namespace chaos
 		return result;
 	}
 
-	bool Game::InitializeRootRenderLayer()
+	bool Game::CreateRootRenderLayer()
 	{
 		root_render_layer = new GPURenderableLayerSystem();
 		if (root_render_layer == nullptr)
@@ -652,17 +493,20 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeParticleManager()
+	bool Game::CreateParticleManager()
 	{
 
 		// shuwww on pourrait faire CreateParticleManager(...) appelable depuis l exterieur
 
-
+		// get the application for atlas
+		WindowApplication* window_application = Application::GetInstance();
+		if (window_application == nullptr)
+			return false;
 		// create the manager
 		particle_manager = new ParticleManager();
 		if (particle_manager == nullptr)
 			return false;
-		particle_manager->SetTextureAtlas(texture_atlas.get());
+		particle_manager->SetTextureAtlas(window_application->GetTextureAtlas());
 		if (AddParticleLayers() < 0)
 			return false;
 		return true;
@@ -730,7 +574,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeClocks(nlohmann::json const& config, boost::filesystem::path const& config_path)
+	bool Game::CreateClocks(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 		Clock* application_clock = GetApplicationClock();
 		if (application_clock == nullptr)
@@ -755,7 +599,7 @@ namespace chaos
 		return true;
 	}
 
-	bool Game::InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path)
+	bool Game::InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 		// initialize the gamepad manager
 		if (!CreateGamepadManager(config, config_path))
@@ -763,14 +607,8 @@ namespace chaos
 		// create game state_machine
 		if (!CreateGameStateMachine(config, config_path))
 			return false;
-		// create the sound manager
-		if (!InitializeSoundManager(config, config_path))
-			return false;
 		// initialize clocks
-		if (!InitializeClocks(config, config_path))
-			return false;
-		// initialize the button map
-		if (!InitializeGamepadButtonInfo())
+		if (!CreateClocks(config, config_path))
 			return false;
 		// initialize game values
 		if (!InitializeGameValues(config, config_path, false)) // false => not hot_reload
@@ -785,27 +623,23 @@ namespace chaos
 		// load exisiting levels
 		if (!LoadLevels(config, config_path))
 			return false;
-		// the atlas
-		if (!GenerateAtlas(config, config_path))  // require to have loaded level first
-			return false;
+
+		// load the best score if any
+		SerializePersistentGameData(false);
+		return true;
+	}
+
+	bool Game::CreateGPUResources()
+	{
 		// initialize the root render system
-		if (!InitializeRootRenderLayer())
+		if (!CreateRootRenderLayer())
 			return false;
 		// initialize the particle manager
-		if (!InitializeParticleManager())
-			return false;
-		// initialize the particle text generator manager
-		if (!InitializeParticleTextGenerator(config, config_path))
-			return false;
-		// initialize game particles creator
-		if (!InitializeGameParticleCreator())
+		if (!CreateParticleManager())
 			return false;
 		// create the game background
 		if (!CreateBackgroundImage(nullptr, nullptr))
 			return false;
-
-		// load the best score if any
-		SerializePersistentGameData(false);
 		return true;
 	}
 
@@ -966,12 +800,6 @@ namespace chaos
 		return PlaySound(name, play_desc, category_tag);
 	}
 
-	bool Game::InitializeSoundManager(nlohmann::json const& config, boost::filesystem::path const& config_path)
-	{
-
-		return true;
-	}
-
 	bool Game::CreateGameStateMachine(nlohmann::json const& config, boost::filesystem::path const& config_path)
 	{
 		game_sm = DoCreateGameStateMachine();
@@ -1024,97 +852,6 @@ namespace chaos
 
 		return true;
 	}
-
-	bool Game::InitializeGamepadButtonInfo()
-	{
-		// the map [button ID] => [bitmap name + text generator alias]
-#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[GamepadButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
-		CHAOS_ADD_BUTTONMAP(A, ButtonA);
-		CHAOS_ADD_BUTTONMAP(B, ButtonB);
-		CHAOS_ADD_BUTTONMAP(X, ButtonX);
-		CHAOS_ADD_BUTTONMAP(Y, ButtonY);
-		CHAOS_ADD_BUTTONMAP(LEFT_BUMPER, LeftShoulder);
-		CHAOS_ADD_BUTTONMAP(RIGHT_BUMPER, RightShoulder);
-		CHAOS_ADD_BUTTONMAP(LEFT_TRIGGER, LeftTrigger);
-		CHAOS_ADD_BUTTONMAP(RIGHT_TRIGGER, RightTrigger);
-#undef CHAOS_ADD_BUTTONMAP
-
-		return true;
-	}
-
-	bool Game::InitializeParticleTextGenerator(nlohmann::json const & config, boost::filesystem::path const & config_path)
-	{
-		// get the font sub objects
-		nlohmann::json const * fonts_config = JSONTools::GetStructure(config, "fonts");
-
-		// create the generator
-		particle_text_generator = new ParticleTextGenerator::Generator(*texture_atlas);
-		if (particle_text_generator == nullptr)
-			return false;
-
-		// bitmaps in generator
-		BitmapAtlas::FolderInfo const * folder_info = texture_atlas->GetFolderInfo("sprites");
-		if (folder_info != nullptr)
-		{
-			// for each bitmap, that correspond to a button, register a [NAME] in the generator	
-			for (auto it = gamepad_button_map.begin(); it != gamepad_button_map.end(); ++it)
-			{
-				std::string const & bitmap_name = it->second.first;
-				BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_name.c_str());
-				if (info == nullptr)
-					continue;
-				std::string const & generator_alias = it->second.second;
-				particle_text_generator->AddBitmap(generator_alias.c_str(), info);
-			}
-			// embedded sprites
-			if (fonts_config != nullptr)
-			{
-				nlohmann::json const * font_bitmaps_json = JSONTools::GetStructure(*fonts_config, "bitmaps");
-				if (font_bitmaps_json != nullptr && font_bitmaps_json->is_object())
-				{
-					for (nlohmann::json::const_iterator it = font_bitmaps_json->begin(); it != font_bitmaps_json->end(); ++it)
-					{
-						if (!it->is_string())
-							continue;
-						std::string bitmap_name = it.key();
-						std::string bitmap_path = it->get<std::string>();
-						BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_path.c_str());
-						if (info == nullptr)
-							continue;
-						particle_text_generator->AddBitmap(bitmap_name.c_str(), info);
-					}
-				}
-			}
-		}
-
-		// the colors
-		if (fonts_config != nullptr)
-		{
-			nlohmann::json const * font_colors_json = JSONTools::GetStructure(*fonts_config, "colors");
-			if (font_colors_json != nullptr && font_colors_json->is_object())
-			{
-				for (nlohmann::json::const_iterator it = font_colors_json->begin(); it != font_colors_json->end(); ++it)
-				{
-					glm::vec4 color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);  // initialization for if input is smaller than 4
-					if (!LoadFromJSON(*it, color))
-						continue;
-					std::string color_name = it.key();
-					particle_text_generator->AddColor(color_name.c_str(), color);
-				}
-			}		
-		}
-
-		return true;
-	}
-
-	bool Game::InitializeGameParticleCreator()
-	{
-
-		// shuwww
-
-		return particle_creator.Initialize(particle_manager.get(), particle_text_generator.get(), texture_atlas.get());
-	}
-
 
 	bool Game::InitializeGameValues(nlohmann::json const & config, boost::filesystem::path const & config_path, bool hot_reload)
 	{

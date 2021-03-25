@@ -65,6 +65,10 @@ glm::vec4 GetHexColor(char const* str)
 
 chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 {
+	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
+		return nullptr;
+
 	LudumLevel const * ludum_level = GetLevel();
 	if (ludum_level == nullptr)
 		return nullptr;
@@ -100,14 +104,14 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	size_t color_count = sizeof(colors) / sizeof(colors[0]);
 
-	chaos::BitmapAtlas::BitmapInfo const* brick_info = game->GetGameParticleCreator().FindBitmapInfo("brick");
-	chaos::BitmapAtlas::BitmapInfo const* indestructible_brick_info = game->GetGameParticleCreator().FindBitmapInfo("IndestructibleBrick");
-	chaos::BitmapAtlas::BitmapInfo const* two_brick_info = game->GetGameParticleCreator().FindBitmapInfo("TwoBrick");
-	chaos::BitmapAtlas::BitmapInfo const* four_brick_info = game->GetGameParticleCreator().FindBitmapInfo("FourBrick");
+	chaos::BitmapAtlas::BitmapInfo const* brick_info = window_application->GetGameParticleCreator()->FindBitmapInfo("brick");
+	chaos::BitmapAtlas::BitmapInfo const* indestructible_brick_info = window_application->GetGameParticleCreator()->FindBitmapInfo("IndestructibleBrick");
+	chaos::BitmapAtlas::BitmapInfo const* two_brick_info = window_application->GetGameParticleCreator()->FindBitmapInfo("TwoBrick");
+	chaos::BitmapAtlas::BitmapInfo const* four_brick_info = window_application->GetGameParticleCreator()->FindBitmapInfo("FourBrick");
 
 	// create the bricks resource
 	size_t brick_count = ludum_level->GetBrickCount();
-	chaos::ParticleAllocationBase * result = game->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
+	chaos::ParticleAllocationBase * result = window_application->GetGameParticleCreator()->SpawnParticles(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
 	if (result == nullptr)
 		return nullptr;
 
@@ -260,12 +264,16 @@ chaos::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(chaos::Player* player)
 {
 	assert(player != nullptr);
 
+	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
+	if (window_application == nullptr)
+		return nullptr;
+
 	// create the pawn
 	chaos::PlayerPawn* player_pawn = LevelInstance::CreatePlayerPawn(player);
 	if (player_pawn == nullptr)
 		return nullptr;
 	// create the player pawn
-	chaos::ParticleAllocationBase* player_allocation = game->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
+	chaos::ParticleAllocationBase* player_allocation = window_application->GetGameParticleCreator()->SpawnParticles(chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
 	if (player_allocation == nullptr)
 		return player_pawn;
 	player_pawn->SetAllocation(player_allocation);

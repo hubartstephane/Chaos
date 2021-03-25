@@ -48,8 +48,8 @@ protected:
 	/** test whether a word only has the common letters (no accent) */
 	bool IsWordValid(std::string const & word) const;
 
-	/** initialize the mapping between button index and resource name */
-	virtual bool InitializeGamepadButtonInfo() override;
+	/** override */
+	virtual InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path) override;
 	/** initialize the particle manager */
 	virtual int AddParticleLayers() override;
 	/** initialize the game variables */

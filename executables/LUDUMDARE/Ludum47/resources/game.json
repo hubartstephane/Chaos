@@ -1,13 +1,7 @@
 {
-
-  "fonts": { "@filename": "fonts.json" },
-
-  "sprite_directory": "@sprites",
   "levels_directory": "@levels",
   "tilesets_directory": "@tilesets",
   "objecttypesets_directory": "@objecttypesets",
 
-  "game_instance": { "@filename": "game_instance.json" },
-
-  "atlas": { "@filename": "@atlas.json" }
+  "game_instance": { "@filename": "game_instance.json" }
 }

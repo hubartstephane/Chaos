@@ -2,14 +2,9 @@
 
 namespace chaos
 {
-	/** simplest constructor */
-	ParticleSpawner::ParticleSpawner(ParticleLayerBase* in_particle_layer) :
-		particle_layer(in_particle_layer)
-	{
-	}
-
-	/** constructor with additionnal bitmap arguments */
-	ParticleSpawner::ParticleSpawner(ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request, ObjectRequest folder_request) :
+	/** constructor */
+	ParticleSpawner::ParticleSpawner(BitmapAtlas::TextureArrayAtlas const* in_atlas, ParticleLayerBase* in_particle_layer, ObjectRequest bitmap_request, ObjectRequest folder_request) :
+		atlas(in_atlas),
 		particle_layer(in_particle_layer)
 	{
 		// in case of error, make the Spawner invalid
@@ -19,11 +14,8 @@ namespace chaos
 
 	bool ParticleSpawner::SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request)
 	{
-		if (particle_layer == nullptr)
-			return false;
-		// get the atlas
-		BitmapAtlas::TextureArrayAtlas const* atlas = particle_layer->GetTextureAtlas();
-		if (atlas == nullptr)
+		// early exit
+		if (particle_layer == nullptr || atlas == nullptr)
 			return false;
 		// if the requested bitmap is nullptr, considere the call as successfull
 		if (bitmap_request.IsNoneRequest())

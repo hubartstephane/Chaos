@@ -108,7 +108,7 @@ namespace chaos
 		{
 			TMLayerInstance* layer_instance = FindLayerInstance(layer_instance_name, true);
 			if (layer_instance == nullptr)
-				return ParticleSpawner(nullptr);
+				return {};
 			return layer_instance->GetParticleSpawner(params...);
 		}
 

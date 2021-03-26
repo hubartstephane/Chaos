@@ -26,22 +26,9 @@ namespace chaos
 		return true;
 	}
 
-	BitmapAtlas::TextureArrayAtlas const* TMLevel::GetTextureAtlas(TMLayerInstance* layer_instance) const
+	ObjectRequest TMLevel::GetFolderInfoRequest() const
 	{
-		WindowApplication* window_application = Application::GetInstance();
-		if (window_application == nullptr)
-			return nullptr;
-		return window_application->GetTextureAtlas();
-	}
-
-	BitmapAtlas::FolderInfo const* TMLevel::GetFolderInfo(TMLayerInstance* layer_instance) const
-	{
-		// get the atlas
-		BitmapAtlas::TextureArrayAtlas const* texture_atlas = GetTextureAtlas(layer_instance);
-		if (texture_atlas == nullptr)
-			return nullptr;
-		// get the folder containing the sprites
-		return texture_atlas->GetFolderInfo("sprites");
+		return "sprites";
 	}
 
 	ParticleLayerBase* TMLevel::DoCreateParticleLayer(TMLayerInstance* layer_instance)

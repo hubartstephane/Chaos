@@ -380,11 +380,6 @@ namespace chaos
 		/** pointer on the state_machine instance */
 		shared_ptr<SM::StateMachineInstance> game_sm_instance;
 
-
-
-		/** score values */
-		int best_score = 0;
-
 		/** the configuration object to use for game instance */
 		nlohmann::json game_instance_configuration;
 		/** the configuration path */
@@ -401,39 +396,17 @@ namespace chaos
 		float gamepad_sensitivity = 1.0f;
 		/** the wanted viewport aspect */
 		float viewport_wanted_aspect = (16.0f / 9.0f);
-
 		/** name of the game */
 		char const * game_name = nullptr;
 		/** instructions displayed on may screen */
-		char const * game_instructions = nullptr;
-		
+		char const * game_instructions = nullptr;		
 		/** whether levels are looping */
 		bool looping_levels = true;
+		/** score values */
+		int best_score = 0;
 
 		/** the clocks */
 		shared_ptr<Clock> root_clock;
-
-
-
-
-
-
-
-#if 0
-		/** a mapping between the button index and its resource name + text generator alias */
-		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;
-		/** the particle tools */
-		GameParticleCreator particle_creator;
-		/** the text generator */
-		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
-		/** the texture atlas */
-		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
-#endif
-
-
-
-
-
 
 		/** a tiled map manager */
 		shared_ptr<TiledMap::Manager> tiled_map_manager;
@@ -442,7 +415,6 @@ namespace chaos
 		std::vector<shared_ptr<Level>> levels;
 		/** the current level instance */
 		shared_ptr<LevelInstance> level_instance;
-
 
 		/** the game instance */
 		shared_ptr<GameInstance> game_instance;

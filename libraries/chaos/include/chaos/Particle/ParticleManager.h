@@ -25,6 +25,8 @@ namespace chaos
 
 		/** change the bitmap atlas */
 		void SetTextureAtlas(BitmapAtlas::TextureArrayAtlas * in_atlas);
+		/** gets the texture atlas */
+		BitmapAtlas::TextureArrayAtlas const* GetTextureAtlas() const { return atlas.get(); }
 
 		/** Search a layer by its name */
 		ParticleLayerBase * FindLayer(ObjectRequest request);
@@ -77,7 +79,7 @@ namespace chaos
         {
             ParticleLayerBase* layer = FindLayer(layer_name);
             if (layer == nullptr)
-                return ParticleSpawner(nullptr);
+				return {};
             return layer->GetParticleSpawner(params...);
         }
 

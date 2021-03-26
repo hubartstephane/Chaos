@@ -82,14 +82,14 @@ namespace chaos
 		template<typename ...PARAMS>
 		ParticleSpawner* CreateParticleSpawner(PARAMS... params)
 		{
-			return new ParticleSpawner(this, params...);
+			return new ParticleSpawner(GetTextureAtlas(), this, params...);
 		}
 
 		/** create a particle spawner */
 		template<typename ...PARAMS>
 		ParticleSpawner GetParticleSpawner(PARAMS... params)
 		{
-			return ParticleSpawner(this, params...);
+			return ParticleSpawner(GetTextureAtlas(), this, params...);
 		}
 
 		/** get the number of allocations */

@@ -14,6 +14,8 @@ namespace chaos
 	{
 	public:
 
+
+
 		/** initialization of the particle creator */
 		bool Initialize(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
 

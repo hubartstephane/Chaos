@@ -18,7 +18,6 @@ namespace chaos
 
 	void Game::OnInputModeChanged(InputMode new_mode, InputMode old_mode)
 	{
-
 	}
 
 #if _DEBUG

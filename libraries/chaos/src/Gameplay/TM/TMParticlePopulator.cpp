@@ -18,22 +18,21 @@ namespace chaos
 	bool TMParticlePopulator::Initialize(TMLayerInstance* in_layer_instance)
 	{
 		assert(in_layer_instance != nullptr);
+		assert(in_layer_instance->particle_layer != nullptr);
 		layer_instance = in_layer_instance;
 
+		// get the level
 		level = layer_instance->GetLevel();
 		if (level == nullptr)
 			return false;
-
 		// get the texture atlas
-		texture_atlas = level->GetTextureAtlas(layer_instance);
+		texture_atlas = in_layer_instance->particle_layer->GetTextureAtlas();
 		if (texture_atlas == nullptr)
 			return false;
-
 		// get the folder in which the bitmap information are stored
-		folder_info = level->GetFolderInfo(layer_instance);
+		folder_info = texture_atlas->GetFolderInfo(level->GetFolderInfoRequest());
 		if (folder_info == nullptr)
 			return false;
-
 		return true;
 	}
 

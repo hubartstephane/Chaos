@@ -1,12 +1,9 @@
 {
-  "fonts": { "@filename": "fonts.json" },
-
   "small_french_dictionnary": "@dictionnary/small_french.txt",
   "small_english_dictionnary": "@dictionnary/small_english.txt",
   "french_dictionnary": "@dictionnary/french.txt",
   "english_dictionnary": "@dictionnary/english.txt",
 
-  "sprite_directory": "@sprites",
   "levels_directory": "@levels",
 
   "game_instance": { "@filename": "game_instance.json" },

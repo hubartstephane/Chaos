@@ -84,6 +84,9 @@ namespace chaos
 		/** returns root clock */
 		Clock const * GetRootClock() const { return root_clock.get(); }
 
+		/** get particle creator */
+		GameParticleCreator GetGameParticleCreator();
+
 		// GPURenderable layers
 #define CHAOS_FIND_RENDERABLE_CHILD(result, funcname)\
 		result * funcname(char const * name, GPURenderableLayerSystem * root = nullptr);\

@@ -116,10 +116,12 @@ namespace chaos
 			particle_manager->SetTextureAtlas(in_texture_atlas);
 			external_manager = false;
 		}
-		// initialize the particle creator
-		particle_creator.Initialize(in_particle_manager, in_particle_text_generator, in_texture_atlas);
-
 		return true;
+	}
+
+	GameParticleCreator GameHUD::GetGameParticleCreator()
+	{
+		return { particle_manager.get() };
 	}
 		
 	int GameHUD::CreateHUDLayers()

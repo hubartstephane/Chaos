@@ -101,12 +101,6 @@ namespace chaos
 		std::map<GamepadButton, std::pair<std::string, std::string>> const & GetGamepadButtonMap() const { return gamepad_button_map; }
 
 
-
-		/** get particle creator */
-		GameParticleCreator* GetGameParticleCreator() { return particle_creator.get(); }
-		/** get particle creator */
-		GameParticleCreator const* GetGameParticleCreator() const { return particle_creator.get(); }
-
 		/** used to force for one frame the duration of tick function to 0 : usefull for function that are long and would block the game for some time */
 		void FreezeNextFrameTickDuration();
 
@@ -179,9 +173,7 @@ namespace chaos
 		virtual bool CreateTextureAtlas();
 		/** create the text generator */
 		virtual bool CreateTextGenerator();
-		/** initialize the GameParticleCreator */
-		virtual bool CreateGameParticleCreator();
-
+		
 		/** main method to generate atlas entries */
 		virtual bool FillAtlasGeneratorInput(BitmapAtlas::AtlasInput& input);
 		/** generate atlas entries relative to sprite directory */
@@ -222,9 +214,6 @@ namespace chaos
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
 		/** the text generator */
 		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
-		/** the particle creator */
-		shared_ptr<GameParticleCreator> particle_creator;
-
 
 		/** a mapping between the button index and its resource name + text generator alias */
 		std::map<GamepadButton, std::pair<std::string, std::string>> gamepad_button_map;

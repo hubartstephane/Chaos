@@ -10,14 +10,12 @@ namespace chaos
 
 namespace chaos
 {
-	class GameParticleCreator : public Object
+	class GameParticleCreator
 	{
 	public:
 
-
-
-		/** initialization of the particle creator */
-		bool Initialize(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
+        /** constructor */
+        GameParticleCreator(ParticleManager* in_particle_manager = nullptr, ParticleTextGenerator::Generator const * in_particle_text_generator = nullptr);
 
 		/** create some particle of the given type (Spawn + Initialization) */
 		ParticleAllocationBase * SpawnParticles(ObjectRequest layer_id, ObjectRequest bitmap_request, size_t count, bool new_allocation) const;
@@ -59,11 +57,11 @@ namespace chaos
 	protected:
 
 		/** the particle manager */
-		shared_ptr<ParticleManager> particle_manager;
+		ParticleManager * particle_manager = nullptr;
 		/** the text generator */
-		shared_ptr<ParticleTextGenerator::Generator> particle_text_generator;
+		ParticleTextGenerator::Generator const * particle_text_generator = nullptr;
 		/** the texture atlas */
-		shared_ptr<BitmapAtlas::TextureArrayAtlas> texture_atlas;
+		BitmapAtlas::TextureArrayAtlas const * texture_atlas = nullptr;
 	};
 
 }; //namespace chaos

@@ -424,17 +424,6 @@ namespace chaos
 		return true;
 	}
 
-
-
-	bool WindowApplication::CreateGameParticleCreator()
-	{
-		particle_creator = new GameParticleCreator();
-		if (particle_creator == nullptr)
-			return false;
-		return particle_creator->Initialize(nullptr, particle_text_generator.get(), texture_atlas.get());
-		//return particle_creator.Initialize(particle_manager.get(), particle_text_generator.get(), texture_atlas.get());
-	}
-
 	bool WindowApplication::PreMessageLoop()
 	{
 		assert(glfwGetCurrentContext() == shared_context);
@@ -444,8 +433,6 @@ namespace chaos
 		if (!CreateTextureAtlas())
 			return false;
 		if (!CreateTextGenerator())
-			return false;
-		if (!CreateGameParticleCreator())
 			return false;
 		return true;
 	}

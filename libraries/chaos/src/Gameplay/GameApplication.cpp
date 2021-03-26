@@ -36,7 +36,7 @@ namespace chaos
 		if (!WindowApplication::PreMessageLoop())
 			return false;
 		// create now some game resources that need application resources to be initialized
-		if (game->CreateGPUResources())
+		if (!game->CreateGPUResources())
 			return false;
 		// update all windows and give them the game
 		for (auto& window : windows)

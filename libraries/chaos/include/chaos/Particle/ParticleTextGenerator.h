@@ -182,10 +182,10 @@ namespace chaos
 
 		public:
 			/** constructor */
-			GeneratorData(GeneratorResult & in_result, GeneratorParams const & in_params, BitmapAtlas::AtlasBase const & in_atlas):				
+			GeneratorData(Generator const & in_generator, GeneratorResult & in_result, GeneratorParams const & in_params):
+				generator(in_generator),
 				result(in_result),
-				params(in_params),
-				atlas(in_atlas)
+				params(in_params)
 			{
 			}
 
@@ -203,7 +203,7 @@ namespace chaos
 			BitmapAtlas::FontInfo const * GetFirstFont(BitmapAtlas::FolderInfo const * folder_info) const;
 
 			/** start the markup */
-			bool StartMarkup(char const * text, int & i, class Generator & generator);
+			bool StartMarkup(char const * text, int & i);
 			/** utility method to emit characters */
 			void EmitCharacters(char c, int count);
 			/** utility method to emit character */
@@ -217,12 +217,12 @@ namespace chaos
 
 		public:
 
+			/** the generator in use */
+			Generator const & generator;
 			/** the result */
 			GeneratorResult & result;
 			/** the parameters from user */
 			GeneratorParams const & params;
-			/** the atlas in use */
-			BitmapAtlas::AtlasBase const & atlas;
 
 			/** the stack used for parsing */
 			std::vector<Style> style_stack;
@@ -247,6 +247,9 @@ namespace chaos
 			Generator(BitmapAtlas::AtlasBase const & in_atlas) : 
 				atlas(in_atlas) {}
 
+			/** get the texture atlas */
+			BitmapAtlas::AtlasBase const* GetTextureAtlas() const { return &atlas; }
+
 			/** add a named color in the generator */
 			bool AddColor(char const * name, glm::vec4 const & color);
 			/** add a named bitmap in the generator */
@@ -260,14 +263,14 @@ namespace chaos
 			bool AddFontInfo(char const * name, BitmapAtlas::FontInfo const * font_info);
 
 			/** the main method to generator a text */
-			bool Generate(char const* text, GeneratorResult& result, GeneratorParams const& params = {});
+			bool Generate(char const* text, GeneratorResult& result, GeneratorParams const& params = {}) const;
 
 		protected:
 
 			/** the generation internal method */
-			bool DoGenerate(char const * text, GeneratorData & generator_data);
+			bool DoGenerate(char const * text, GeneratorData & generator_data) const;
 			/** generate the lines, without cutting them */
-			bool DoGenerateLines(char const * text, GeneratorData & generator_data);
+			bool DoGenerateLines(char const * text, GeneratorData & generator_data) const;
 
 			/** get a color by its name */
 			glm::vec4 const * GetColor(char const * name) const;
@@ -285,33 +288,23 @@ namespace chaos
 
 
 			/** move all sprites in a line */
-			void MoveParticles(TokenLine & line, glm::vec2 const & offset);
+			void MoveParticles(TokenLine & line, glm::vec2 const & offset) const;
 			/** move all sprites */
-			void MoveParticles(GeneratorResult & result, glm::vec2 const & offset);
+			void MoveParticles(GeneratorResult & result, glm::vec2 const & offset) const;
 			/** apply offset for hotpoint */
-			bool MoveParticlesToHotpoint(GeneratorData & generator_data);
+			bool MoveParticlesToHotpoint(GeneratorData & generator_data) const;
 
 			/** update lines according to justification */
-			bool JustifyLines(GeneratorParams const & params, GeneratorData & generator_data);
+			bool JustifyLines(GeneratorParams const & params, GeneratorData & generator_data) const;
 
 #if 0
-
-
 			/** cut the line when necessary */
 			bool BreakLines(GeneratorParams const & params, GeneratorData & generator_data);
 			/** utility method to cut one line an insert it into a new result */
 			void BreakOneLine(float & y, TokenLine const & line, GeneratorResult & result_lines, GeneratorParams const & params, GeneratorData & generator_data);
-
-
-
 			/** generate the sprites */
 			bool GenerateSprites(SpriteManager * sprite_manager, GeneratorParams const & params, GeneratorData & generator_data);
-
-
-
-
 			//void BreakLineIntoWords(TokenLine const & line, std::vector<LexicalTokenGroup> & result);
-
 #endif
 
 		public:

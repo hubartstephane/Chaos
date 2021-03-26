@@ -2,21 +2,22 @@
 
 namespace chaos
 {
-
-	bool GameParticleCreator::Initialize(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas)
+	GameParticleCreator::GameParticleCreator(ParticleManager* in_particle_manager, ParticleTextGenerator::Generator const * in_particle_text_generator):
+		particle_manager(in_particle_manager),
+		particle_text_generator(in_particle_text_generator)
 	{
-
-
-
-
-		// particle text generator can be null if we dont want to create text
 		assert(in_particle_manager != nullptr);
-		assert(in_texture_atlas != nullptr);
+		assert(particle_manager->GetTextureAtlas() != nullptr);
 
-		particle_manager = in_particle_manager;
-		particle_text_generator = in_particle_text_generator;
-		texture_atlas = in_texture_atlas;
-		return true;
+		texture_atlas = particle_manager->GetTextureAtlas();
+
+		if (particle_text_generator == nullptr)
+		{
+			WindowApplication* window_application = Application::GetInstance();
+			if (window_application != nullptr)
+				particle_text_generator = window_application->GetTextGenerator();
+		}
+		assert(particle_text_generator == nullptr || particle_text_generator->GetTextureAtlas() == texture_atlas);
 	}
 
 	BitmapAtlas::BitmapInfo const * GameParticleCreator::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const

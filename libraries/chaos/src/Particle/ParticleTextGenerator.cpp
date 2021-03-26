@@ -126,7 +126,7 @@ namespace chaos
 
 		BitmapAtlas::FontInfo const * GeneratorData::GetFontInfoFromName(char const * font_info_name) const
 		{
-			BitmapAtlas::FontInfo const * result = atlas.GetFontInfo(font_info_name, true);
+			BitmapAtlas::FontInfo const * result = generator.atlas.GetFontInfo(font_info_name, true);
 			if (result == nullptr)
 			{
 				// for convenience, if we cannot find the character set, try to use the one on the top of the stack
@@ -134,7 +134,7 @@ namespace chaos
 					result = style_stack.back().font_info;
 				// if we still have no character set, take the very first available
 				if (result == nullptr)
-					result = GetFirstFont(&atlas.root_folder);
+					result = GetFirstFont(&generator.atlas.root_folder);
 			}
 			return result;
 		}
@@ -283,7 +283,7 @@ namespace chaos
 			result.token_lines.push_back(TokenLine());	
 		}
 
-		bool GeneratorData::StartMarkup(char const * text, int & i, class Generator & generator)
+		bool GeneratorData::StartMarkup(char const * text, int & i)
 		{
 			int j = i;
 			while (text[i] != 0)
@@ -443,7 +443,7 @@ namespace chaos
 			return true;
 		}
 
-		bool Generator::Generate(char const * text, GeneratorResult & result, GeneratorParams const & params)
+		bool Generator::Generate(char const * text, GeneratorResult & result, GeneratorParams const & params) const
 		{
 			assert(text != nullptr);
 
@@ -451,7 +451,7 @@ namespace chaos
 			result.Clear();
 
 			// initialize parse params stack with a default style that defines current color and fonts
-			GeneratorData generator_data(result, params, atlas);
+			GeneratorData generator_data(*this, result, params);
 
 			Style style;
 			style.color = params.default_color;
@@ -462,7 +462,7 @@ namespace chaos
 			return DoGenerate(text, generator_data);
 		}
 
-		bool Generator::DoGenerate(char const * text, GeneratorData & generator_data)
+		bool Generator::DoGenerate(char const * text, GeneratorData & generator_data) const
 		{
 			// all steps to properly generate the result
 			if (!DoGenerateLines(text, generator_data))
@@ -477,7 +477,7 @@ namespace chaos
 			return true;
 		}
 
-		bool Generator::DoGenerateLines(char const * text, GeneratorData & generator_data)
+		bool Generator::DoGenerateLines(char const * text, GeneratorData & generator_data) const
 		{
 			// iterate over all characters
 			bool escape_character = false;
@@ -523,7 +523,7 @@ namespace chaos
 				// start a new markup
 				else if (c == '[')
 				{
-					if (!generator_data.StartMarkup(text, ++i, *this)) // ill-formed markup
+					if (!generator_data.StartMarkup(text, ++i)) // ill-formed markup
 						return false;
 				}
 				// finally, this is not a special character  		
@@ -582,7 +582,7 @@ namespace chaos
 			return result;
 		}
 
-		void Generator::MoveParticles(TokenLine & line, glm::vec2 const & offset)
+		void Generator::MoveParticles(TokenLine & line, glm::vec2 const & offset) const
 		{
 			if (offset.x != 0.0f || offset.y != 0.0f)
 			{
@@ -594,7 +594,7 @@ namespace chaos
 			}
 		}
 
-		void Generator::MoveParticles(GeneratorResult & result, glm::vec2 const & offset)
+		void Generator::MoveParticles(GeneratorResult & result, glm::vec2 const & offset) const
 		{
 			if (offset.x != 0.0f || offset.y != 0.0f)
 			{
@@ -609,7 +609,7 @@ namespace chaos
 			}				
 		}
 
-		bool Generator::MoveParticlesToHotpoint(GeneratorData & generator_data)
+		bool Generator::MoveParticlesToHotpoint(GeneratorData & generator_data) const
 		{
 			// compute the min/max bounding box
 			glm::vec2 min_position;
@@ -634,7 +634,7 @@ namespace chaos
 		// XXX : JustifyLines(...) does not change the biggest line
 		//                         it does not modify any Y coordinate of any character/bitmap
 		//                         => the bounding_box of the whole text remains unchanged through this function
-		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data)
+		bool Generator::JustifyLines(GeneratorParams const & params, GeneratorData & generator_data) const
 		{
 			// left align : nothing to do
 			if (params.alignment == TextAlignment::LEFT)
@@ -786,18 +786,7 @@ namespace chaos
 			return result;
 		}
 
-
-
-
-
-
-
 #if 0
-
-
-
-
-
 
 		bool Generator::GenerateSprites(char const * text, SpriteManager * sprite_manager, GeneratorResult * generator_result, GeneratorParams const & params)
 		{

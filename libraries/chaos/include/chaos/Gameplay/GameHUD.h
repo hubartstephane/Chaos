@@ -130,9 +130,7 @@ namespace chaos
 		ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
 
 		/** get particle tools */
-		GameParticleCreator & GetGameParticleCreator(){ return particle_creator; }
-		/** get particle tools */
-		GameParticleCreator const & GetGameParticleCreator() const { return particle_creator; }
+		GameParticleCreator GetGameParticleCreator();
 
 	protected:
 
@@ -156,13 +154,8 @@ namespace chaos
 
 		/** the allocations */
 		std::map<TagType, shared_ptr<GameHUDComponent>> components;
-
 		/** the allocations */
 		std::multimap<TagType, shared_ptr<ParticleAllocationBase>> particle_allocations;
-
-		/** the particle tools */
-		GameParticleCreator particle_creator;
-
 		/** the particle manager */
 		shared_ptr<ParticleManager> particle_manager;
 		/** indicates whether THIS is responsible or not of rendering/ticking the particle manager */

@@ -1334,25 +1334,25 @@ namespace chaos
 
 	bool Game::ReloadGameConfiguration()
 	{
+		// gets application
 		WindowApplication * application = Application::GetInstance();
 		if (application == nullptr)
 			return false;
-
 		// this call may take a while. Avoid Frame rate jump
 		application->FreezeNextFrameTickDuration();
-
+		// reload the whole configuration file
 		nlohmann::json config;
 		if (!application->ReloadConfigurationFile(config))
 			return false;
-
+		// extract the part of interest for us
 		nlohmann::json const * game_config = JSONTools::GetStructure(config, "game");
 		if (game_config == nullptr)
 			return false;
-
-		bool result = InitializeGameValues(*game_config, application->GetConfigurationPath(), true); // true => hot_reload
-		if (result)
-			OnGameValuesChanged(true);
-		return result;
+		// update game values
+		if (!InitializeGameValues(*game_config, application->GetConfigurationPath(), true)) // true => hot_reload
+			return false;
+		OnGameValuesChanged(true);
+		return true;
 	}
 
 	bool Game::ReloadCurrentLevel()
@@ -1461,6 +1461,13 @@ namespace chaos
 		if (game_instance == nullptr)
 			return nullptr;
 		return game_instance->SaveIntoCheckpoint();
+	}
+
+	GameParticleCreator Game::GetGameParticleCreator()
+	{
+		if (particle_manager != nullptr)
+			return particle_manager->GetGameParticleCreator();
+		return {};
 	}
 
 }; // namespace chaos

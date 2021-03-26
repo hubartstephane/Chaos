@@ -432,14 +432,12 @@ glm::vec2 LudumGameInstance::GenerateBallRandomDirection() const
 
 chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, bool full_init)
 {
-	LudumGame const * ludum_game = GetGame();
-
-	chaos::WindowApplication* window_application = chaos::Application::GetInstance();
-	if (window_application == nullptr)
-		return nullptr;
+	LudumGame * ludum_game = GetGame();
 
 	// create the object
-	chaos::ParticleAllocationBase * result = window_application->GetGameParticleCreator()->SpawnParticles(chaos::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
+	chaos::GameParticleCreator particle_creator = ludum_game->GetGameParticleCreator();
+
+	chaos::ParticleAllocationBase * result = particle_creator.SpawnParticles(chaos::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
 	if (result == nullptr)
 		return nullptr;
 

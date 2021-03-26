@@ -1,6 +1,4 @@
 {
-  "fonts": { "@filename": "fonts.json" },
-
   "gamepad_enabled": false,
 
   "small_french_dictionnary": "@dictionnary/small_french.txt",
@@ -8,7 +6,6 @@
   "french_dictionnary": "@dictionnary/french.txt",
   "english_dictionnary": "@dictionnary/english.txt",
 
-  "sprite_directory": "@sprites",
   "levels_directory": "@levels",
 
   "game_instance": { "@filename": "game_instance.json" },

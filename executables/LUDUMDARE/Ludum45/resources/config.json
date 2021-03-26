@@ -10,5 +10,8 @@
   "gpu": { "@filename": "@gpu.json" },
   "game": { "@filename": "@game.json" },
   "sounds": { "@filename": "@sounds.json" },
-  "hud": { "@filename": "@hud.json" }
+  "hud": { "@filename": "@hud.json" },
+
+  "fonts": { "@filename": "fonts.json" },
+  "sprite_directory": "@sprites"
 }

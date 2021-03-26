@@ -91,7 +91,6 @@ namespace chaos
 		return result;
 	}
 
-	// shulayer
 	TMLayerInstance* TMLayerInstance::FindLayerInstanceByID(int in_id, bool recursive)
 	{
 		return TMTools::FindLayerInstanceByID(this, layer_instances, in_id, recursive);
@@ -142,8 +141,6 @@ namespace chaos
 			collision_mask |= level_instance->GetCollisionFlagByName(name.c_str());
 	}
 
-
-	// shulayer
 	bool TMLayerInstance::Initialize(TMLevelInstance* in_level_instance, TiledMap::LayerBase const * in_layer, TMLayerInstance* in_parent_layer, TMObjectReferenceSolver& reference_solver)
 	{
 		// ensure not already initialized
@@ -405,6 +402,9 @@ namespace chaos
 		// search the bounding box (explicit or not)
 		box2 explicit_bounding_box;
 
+		// create the layer
+		if (CreateParticleLayer() == nullptr)
+			return false;
 		// the particle generator
 		TMParticlePopulator particle_populator; // this populator is for the WHOLE LAYER
 		if (!particle_populator.Initialize(this))
@@ -530,6 +530,13 @@ namespace chaos
 
 	ParticleLayerBase* TMLayerInstance::CreateParticleLayer()
 	{
+
+		// shu
+
+
+
+
+
 		if (particle_layer == nullptr)
 		{
 			// get the application for atlas
@@ -566,6 +573,10 @@ namespace chaos
 	{
 		TMLevel* level = GetLevel();
 
+		// create particle layer 
+		if (CreateParticleLayer() == nullptr)
+			return false;
+		// prepare the populator
 		TMParticlePopulator particle_populator;
 		if (!particle_populator.Initialize(this))
 			return false;
@@ -628,9 +639,6 @@ namespace chaos
 
 
 					// shuyyy : should depend on the pivot ???
-
-
-
 
 
 					tile_object.position.x = particle_box.position.x - particle_box.half_size.x;

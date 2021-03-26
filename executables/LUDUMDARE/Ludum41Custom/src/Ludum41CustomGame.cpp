@@ -174,6 +174,12 @@ bool LudumGame::InitializeFromConfiguration(nlohmann::json const & config, boost
 	// build the rewards/punishment values
 	if (!InitializeRewardsAndPunishments())
 		return false;
+
+	gamepad_buttons.push_back((int)chaos::GamepadButton::A);
+	gamepad_buttons.push_back((int)chaos::GamepadButton::B);
+	gamepad_buttons.push_back((int)chaos::GamepadButton::X);
+	gamepad_buttons.push_back((int)chaos::GamepadButton::Y);
+
 	return true;
 }
 
@@ -270,19 +276,6 @@ bool LudumGame::InitializeDictionnary(nlohmann::json const & config, boost::file
 
 	if (dictionnary.size() == 0)
 		return false;
-
-	return true;
-}
-
-bool LudumGame::InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path)
-{
-	if (!chaos::Game::InitializeFromConfiguration(config, config_path))
-		return false;
-
-	gamepad_buttons.push_back((int)chaos::GamepadButton::A);
-	gamepad_buttons.push_back((int)chaos::GamepadButton::B);
-	gamepad_buttons.push_back((int)chaos::GamepadButton::X);
-	gamepad_buttons.push_back((int)chaos::GamepadButton::Y);
 
 	return true;
 }

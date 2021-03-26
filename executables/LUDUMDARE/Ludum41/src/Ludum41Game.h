@@ -30,9 +30,6 @@ public:
 	/** constructor */
 	LudumGame();
 
-	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-
 protected:
 
 	/** override */
@@ -49,7 +46,7 @@ protected:
 	bool IsWordValid(std::string const & word) const;
 
 	/** override */
-	virtual InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path) override;
+	virtual bool InitializeFromConfiguration(nlohmann::json const& config, boost::filesystem::path const& config_path) override;
 	/** initialize the particle manager */
 	virtual int AddParticleLayers() override;
 	/** initialize the game variables */

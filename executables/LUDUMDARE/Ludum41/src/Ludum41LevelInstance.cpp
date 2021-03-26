@@ -57,7 +57,7 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 	if (window_application == nullptr)
 		return nullptr;
 
-	LudumGame const * ludum_game = GetGame();
+	LudumGame * ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return nullptr;
 
@@ -73,7 +73,10 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	// create the bricks resource
 	size_t brick_count = ludum_level->GetBrickCount();
-	chaos::ParticleAllocationBase * result = window_application->GetGameParticleCreator()->SpawnParticles(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
+
+	chaos::GameParticleCreator particle_creator = ludum_game->GetGameParticleCreator();
+
+	chaos::ParticleAllocationBase * result = particle_creator.SpawnParticles(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
 	if (result == nullptr)
 		return nullptr;
 
@@ -213,8 +216,10 @@ chaos::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(chaos::Player* player)
 	if (window_application == nullptr)
 		return nullptr;
 
+	chaos::GameParticleCreator particle_creator = GetGame()->GetGameParticleCreator();
+
 	// spawn particles for the pawn
-	chaos::ParticleAllocationBase* player_allocation = window_application->GetGameParticleCreator()->SpawnParticles(chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
+	chaos::ParticleAllocationBase* player_allocation = particle_creator.SpawnParticles(chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
 	if (player_allocation == nullptr)
 		return player_pawn;
 	player_pawn->SetAllocation(player_allocation);

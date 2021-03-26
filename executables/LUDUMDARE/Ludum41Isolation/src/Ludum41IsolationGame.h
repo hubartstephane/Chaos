@@ -31,9 +31,6 @@ public:
 	/** constructor */
 	LudumGame();
 
-	/** override */
-	virtual bool InitializeFromConfiguration(nlohmann::json const & config, boost::filesystem::path const & config_path) override;
-
 protected:
 
 	/** override */

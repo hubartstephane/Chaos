@@ -253,7 +253,7 @@ namespace chaos
 			/** add a named color in the generator */
 			bool AddColor(char const * name, glm::vec4 const & color);
 			/** add a named bitmap in the generator */
-			bool AddBitmap(char const * name, char const * folder_name, char const * bitmap_name);
+			bool AddBitmap(char const * name, ObjectRequest bitmap_name, ObjectRequest folder_name = "sprites");
 			/** add a named bitmap in the generator */
 			bool AddBitmap(char const * name, BitmapAtlas::BitmapInfo const * info);
 
@@ -286,26 +286,14 @@ namespace chaos
 			/** compute the bounding box for a single line */
 			bool GetBoundingBox(TokenLine const & line, glm::vec2 & min_line_position, glm::vec2 & max_line_position) const;
 
-
 			/** move all sprites in a line */
 			void MoveParticles(TokenLine & line, glm::vec2 const & offset) const;
 			/** move all sprites */
 			void MoveParticles(GeneratorResult & result, glm::vec2 const & offset) const;
 			/** apply offset for hotpoint */
 			bool MoveParticlesToHotpoint(GeneratorData & generator_data) const;
-
 			/** update lines according to justification */
 			bool JustifyLines(GeneratorParams const & params, GeneratorData & generator_data) const;
-
-#if 0
-			/** cut the line when necessary */
-			bool BreakLines(GeneratorParams const & params, GeneratorData & generator_data);
-			/** utility method to cut one line an insert it into a new result */
-			void BreakOneLine(float & y, TokenLine const & line, GeneratorResult & result_lines, GeneratorParams const & params, GeneratorData & generator_data);
-			/** generate the sprites */
-			bool GenerateSprites(SpriteManager * sprite_manager, GeneratorParams const & params, GeneratorData & generator_data);
-			//void BreakLineIntoWords(TokenLine const & line, std::vector<LexicalTokenGroup> & result);
-#endif
 
 		public:
 

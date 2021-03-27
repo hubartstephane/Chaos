@@ -232,7 +232,7 @@ namespace chaos
 	bool WindowApplication::InitializeGamepadButtonMap()
 	{
 		// the map [button ID] => [bitmap name + text generator alias]
-#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[GamepadButton::x] = std::pair<std::string, std::string>("xboxController" #y, #y)
+#define CHAOS_ADD_BUTTONMAP(x, y) gamepad_button_map[GamepadButton::x] = {"xboxController" #y, #y}
 		CHAOS_ADD_BUTTONMAP(A, ButtonA);
 		CHAOS_ADD_BUTTONMAP(B, ButtonB);
 		CHAOS_ADD_BUTTONMAP(X, ButtonX);

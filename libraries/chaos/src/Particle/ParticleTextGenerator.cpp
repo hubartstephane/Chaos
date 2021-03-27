@@ -418,11 +418,9 @@ namespace chaos
 			return true;
 		}
 
-		bool Generator::AddBitmap(char const * name, char const * folder_name, char const * bitmap_name)
+		bool Generator::AddBitmap(char const * name, ObjectRequest bitmap_name, ObjectRequest folder_name)
 		{
 			assert(name != nullptr);
-			assert(folder_name != nullptr);
-			assert(bitmap_name != nullptr);
 
 			BitmapAtlas::FolderInfo const * folder_info = atlas.GetFolderInfo(folder_name);
 			if (folder_info == nullptr)
@@ -786,111 +784,6 @@ namespace chaos
 			return result;
 		}
 
-#if 0
-
-		bool Generator::GenerateSprites(char const * text, SpriteManager * sprite_manager, GeneratorResult * generator_result, GeneratorParams const & params)
-		{
-			assert(text != nullptr);
-
-			// initialize parse params stack with a default style that defines current color and fonts
-			GeneratorData generator_data(atlas);
-
-			StyleDefinition style;
-			style.color = params.default_color;
-			style.font_info = generator_data.GetFontInfoFromName(params.font_info_name.c_str());
-			generator_data.style_stack.push_back(style);
-
-			// all steps to properly generate the result
-			if (!GenerateLines(text, params, generator_data))
-				return false;
-
-			// break the lines
-			if (!BreakLines(params, generator_data))
-				return false;
-			// justification
-			if (!JustifyLines(params, generator_data))
-				return false;
-			// finally, recenter the whole sprites
-			if (!MoveSpritesToHotpoint(params, generator_data))
-				return false;
-
-
-			// output the sprites if wanted
-			if (sprite_manager != nullptr)
-				if (!GenerateSprites(sprite_manager, params, generator_data))
-					return false;
-
-			// output the result if wanted
-			if (generator_result != nullptr)
-				std::swap(*generator_result, generator_data.generator_result);
-
-			return true;
-		}
-
-		bool Generator::BreakLines(GeneratorParams const & params, GeneratorData & generator_data)
-		{
-			if (params.max_text_width <= 0.0f || !params.word_wrap)
-				return true;
-
-			GeneratorResult generator_result;
-
-			float y = 0.0f;
-			for (auto & line : generator_data.generator_result)
-			{
-				if (line.size() != 0)
-					BreakOneLine(y, line, generator_result, params, generator_data);
-				y -= params.line_height + params.line_spacing;
-			}
-
-			std::swap(generator_data.generator_result, generator_result);
-
-			return true;
-		}
-
-		void Generator::BreakOneLine(float & y, TokenLine const & line, GeneratorResult & result_lines, GeneratorParams const & params, GeneratorData & generator_data)
-		{
-			bool leave_entry_unchanged = true;
-
-			glm::vec2 min_line_position;
-			glm::vec2 max_line_position;
-			if (GetBoundingBox(line, min_line_position, max_line_position))
-			{
-				float W = max_line_position.x - min_line_position.x; // if the line is too small
-				if (W > params.max_text_width)
-				{
-					//	std::vector<TokenGroup> token_group;
-					//	BreakLineIntoWords(line, token_group);
-					W = W;
-
-
-				}
-			}
-
-			// copy the info, if nothing has been done
-			if (leave_entry_unchanged)
-				result_lines.push_back(line);
-		}
-
-
-
-		bool Generator::GenerateSprites(SpriteManager * sprite_manager, GeneratorParams const & params, GeneratorData & generator_data)
-		{
-			for (TokenLine const & line : generator_data.generator_result)
-			{
-				for (SpriteToken const & token : line)
-				{
-					if (token.IsBitmap())
-						sprite_manager->AddSpriteBitmap(token.bitmap_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT);
-					else if (token.IsVisibleCharacter())
-						sprite_manager->AddSpriteCharacter(token.character_layout, token.position, token.size, Hotpoint::BOTTOM_LEFT, token.color);
-				}
-			}
-			return true;
-		}
-
-#endif
-
-
-
 	}; // namespace ParticleTextGenerator
+
 }; // namespace chaos

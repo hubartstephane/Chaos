@@ -141,12 +141,48 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 {
 	int result = chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 
+	static chaos::GPUDynamicMesh* mesh = nullptr;
+
+
 	glPointSize(10.0f);
 
-	DrawInterface<chaos::VertexDefault> DI("screenspace1");
+	if (mesh == nullptr)
+	{
+		DrawInterface<chaos::VertexDefault> DI("screenspace1");
 
+		chaos::ParticleTextGenerator::GeneratorParams params;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			params.line_height = 100;
+			params.position = { -500.0f , -200.0f + float(i) * 100.0f };
+			params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+			
+			auto vertices = DI.AddText("tototototo", params);
+			for (auto& v : vertices)
+				v.position.y += 30.0f * std::cos(((char*)&v - vertices.GetBuffer()) / (float)sizeof(vertices.GetVertexSize()));
+		}
+
+		//DI.Display(renderer, uniform_provider, render_params);
+
+		mesh = DI.ExtractMesh();
+	}
+
+	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
+	if (mesh != nullptr)
+		mesh->Display(renderer, uniform_provider, render_params);
 
+
+
+
+	
+	
+	
+
+
+
+#if 0
 	auto Lines = DI.AddLines(1);
 
 	Lines[0].color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -164,107 +200,18 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 
 	color(Lines, { 1.0f, 0.0f, 1.0f, 1.0f });
-
+#endif
 	//chaos::shared_ptr<chaos::GPUDynamicMesh> m = DI.ExtractMesh();
 	//m->Display(renderer, uniform_provider, render_params);
 
 
 
-	DI.Display(renderer, uniform_provider, render_params);
+	
 
 
 
 
 
-#if 0
-
-
-	chaos::GPUResourceManager* resource_manager = chaos::WindowApplication::GetGPUResourceManagerInstance();
-	if (resource_manager != nullptr)
-	{
-		chaos::GPURenderMaterial* material1 = resource_manager->FindRenderMaterial("screenspace1");
-		chaos::GPURenderMaterial* material2 = resource_manager->FindRenderMaterial("screenspace2");
-		if (material1 != nullptr && material2 != nullptr)
-		{
-			chaos::shared_ptr<chaos::GPUDynamicMesh> dynamic_mesh = new chaos::GPUDynamicMesh();
-			if (dynamic_mesh != nullptr)
-			{
-				chaos::shared_ptr<chaos::GPUVertexDeclaration> vertex_declaration = new chaos::GPUVertexDeclaration;
-				if (vertex_declaration != nullptr)
-				{
-					chaos::GetTypedVertexDeclaration(vertex_declaration.get(), boost::mpl::identity<chaos::VertexDefault>());
-
-					chaos::PrimitiveOutput<chaos::VertexDefault> output(dynamic_mesh.get(), nullptr, vertex_declaration.get(), material2, 0);
-
-					int i = 0;
-
-					glDisable(GL_DEPTH_TEST);
-
-					auto Lines = output.AddLines(1);
-
-					Lines[0].color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-					Lines[0].flags = 0;
-					Lines[0].texcoord = { -1.0f, -1.0f , -1 };
-					Lines[0].position.x = 0.0f;
-					Lines[0].position.y = 0.0f;
-
-					Lines[1].color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-					Lines[1].flags = 0;
-					Lines[1].texcoord = { -1.0f, -1.0f , -1 };
-					Lines[1].position.x = 700.0f;
-					Lines[1].position.y = 400.0f;
-
-
-					output.SetRenderMaterial(material1);
-
-					i = 0;
-					
-					auto quad = output.AddQuads(1);
-					for (auto& p : quad)
-					{
-						static float pos[] = {-50.0f, -50.0f, 50.0f, -50.0f, 50.0f, 50.0f, -50.0f, 50.0f};
-
-						p.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-						p.flags = 0;
-						p.texcoord = { -1.0f, -1.0f , -1 };
-						p.position.x = pos[i * 2];
-						p.position.y = pos[i * 2 + 1];
-						++i;
-					}
-
-
-					output.SetRenderMaterial(material2);
-
-					auto Points = output.AddPoints(100);
-					for (auto& p : Points)
-					{
-						p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-						p.flags = 0;
-						p.texcoord = { -1.0f, -1.0f , -1 };
-						p.position.x = -500.0f + float(i) * 50.0f;
-						p.position.y = 0.0f;
-						++i;
-					}
-
-
-
-
-
-
-
-					output.Flush();
-
-
-
-
-					dynamic_mesh->Display(renderer, uniform_provider, render_params);
-				}
-			}
-		}
-	}
-
-
-#endif
 
 	return result;
 }

@@ -13,7 +13,7 @@ namespace chaos
 
 		if (particle_text_generator == nullptr)
 		{
-			WindowApplication* window_application = Application::GetInstance();
+			WindowApplication const* window_application = Application::GetInstance();
 			if (window_application != nullptr)
 				particle_text_generator = window_application->GetTextGenerator();
 		}

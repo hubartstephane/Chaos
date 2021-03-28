@@ -253,7 +253,7 @@ namespace chaos
 			/** add a named color in the generator */
 			bool AddColor(char const * name, glm::vec4 const & color);
 			/** add a named bitmap in the generator */
-			bool AddBitmap(char const * name, ObjectRequest bitmap_name, ObjectRequest folder_name = "sprites");
+			bool AddBitmap(char const * name, ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites");
 			/** add a named bitmap in the generator */
 			bool AddBitmap(char const * name, BitmapAtlas::BitmapInfo const * info);
 
@@ -329,7 +329,7 @@ namespace chaos
 			if (allocation_params.create_background)
 			{
 				ParticleDefault particle = GetBackgroundParticle(generator_result, allocation_params);
-				ParticleToPrimitive(particle, current_primitive);
+				ParticleToPrimitive(particle, current_primitive++);
 			}
 			// convert the text			
 			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
@@ -338,7 +338,7 @@ namespace chaos
 				for (size_t j = 0; j < line.size(); ++j)
 				{
 					ParticleDefault particle = TokenToParticle(line[j]);
-					ParticleToPrimitive(particle, current_primitive);
+					ParticleToPrimitive(particle, current_primitive++);
 				}
 			}
 			return result;

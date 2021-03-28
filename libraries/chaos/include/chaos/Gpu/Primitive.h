@@ -204,7 +204,7 @@ namespace chaos
         /** skip the next primitives (not vertices) */
         TypedPrimitive<VERTEX_TYPE, PRIMITIVE_TYPE>& operator += (size_t count)
         {
-            int vertices_per_primitive = 0;
+            size_t vertices_per_primitive = 0;
             if constexpr (PRIMITIVE_TYPE == PrimitiveType::POINT)
                 vertices_per_primitive = 1;
             else if constexpr (PRIMITIVE_TYPE == PrimitiveType::TRIANGLE)

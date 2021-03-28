@@ -216,6 +216,25 @@ namespace chaos
             return { GeneratePrimitiveAndConstruct(vertex_size, vertex_count, PrimitiveType::LINE_LOOP), vertex_size, vertex_count };
         }
 
+        /** text creation */
+        QuadPrimitive<vertex_type> AddText(char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {})
+        {
+            // get the application
+            WindowApplication const * window_application = Application::GetInstance();
+            if (window_application == nullptr)
+                return {};
+            // get the generator
+            ParticleTextGenerator::Generator const* generator = window_application->GetTextGenerator();
+            if (generator == nullptr)
+                return {};
+            // generate the data
+            ParticleTextGenerator::GeneratorResult generator_result;
+            if (!generator->Generate(in_text, generator_result, params))
+                return {};
+            // create the primitives
+            return TextToPrimitives(*this, generator_result, allocation_params);
+        }
+
     protected:
 
         /** generate a buffer and call constructor for each primitives */

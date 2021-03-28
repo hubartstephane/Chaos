@@ -55,7 +55,7 @@ namespace chaos
 	{
 		assert(component != nullptr);
 
-		Application * application = Application::GetInstance();
+		Application const * application = Application::GetInstance();
 		if (application == nullptr)
 			return;
 
@@ -80,7 +80,7 @@ namespace chaos
 		game = in_game;
 
 		// create the particle manager from the game texture atlas
-		WindowApplication* window_application = Application::GetInstance();
+		WindowApplication * window_application = Application::GetInstance();
 		if (window_application == nullptr)
 			return false;
 

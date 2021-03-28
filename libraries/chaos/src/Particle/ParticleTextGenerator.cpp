@@ -418,14 +418,14 @@ namespace chaos
 			return true;
 		}
 
-		bool Generator::AddBitmap(char const * name, ObjectRequest bitmap_name, ObjectRequest folder_name)
+		bool Generator::AddBitmap(char const * name, ObjectRequest bitmap_request, ObjectRequest folder_request)
 		{
 			assert(name != nullptr);
 
-			BitmapAtlas::FolderInfo const * folder_info = atlas.GetFolderInfo(folder_name);
+			BitmapAtlas::FolderInfo const * folder_info = atlas.GetFolderInfo(folder_request);
 			if (folder_info == nullptr)
 				return false;
-			BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_name);
+			BitmapAtlas::BitmapInfo const * info = folder_info->GetBitmapInfo(bitmap_request);
 			if (info == nullptr)
 				return false;
 			return AddBitmap(name, info);

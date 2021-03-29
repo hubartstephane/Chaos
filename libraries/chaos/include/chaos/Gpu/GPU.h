@@ -1,16 +1,11 @@
 #include <chaos/Gpu/TextureDescription.h>
 #include <chaos/Gpu/GLPixelFormat.h>
 #include <chaos/Gpu/GLTextureTools.h>
-
 #include <chaos/Gpu/Primitive.h>
 #include <chaos/Gpu/GPUDrawPrimitive.h>
-
-
 #include <chaos/Gpu/GPUResource.h>
 #include <chaos/Gpu/GPUFileResource.h>
 #include <chaos/Gpu/GPUInstancingInfo.h>
-
-
 #include <chaos/Gpu/GPUSurface.h>
 #include <chaos/Gpu/GPUTexture.h>
 #include <chaos/Gpu/GPUTextureLoader.h>
@@ -52,6 +47,5 @@
 #include <chaos/Gpu/TextureArrayGenerator.h>
 #include <chaos/Gpu/TextureArrayAtlas.h>
 #include <chaos/Gpu/GPUResourceManager.h>
-
-
 #include <chaos/Gpu/PrimitiveOutput.h>
+#include <chaos/Gpu/GPUDrawInterface.h>

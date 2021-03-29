@@ -2,9 +2,9 @@
 
 namespace chaos
 {
-    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
+    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, GPURenderMaterial* in_render_material, size_t in_vertex_requirement_evaluation) :
         dynamic_mesh(in_dynamic_mesh),
-        buffer_cache(in_buffer_cache),
+        buffer_pool(in_buffer_pool),
         vertex_declaration(in_vertex_declaration),
         render_material(in_render_material),
         vertex_requirement_evaluation(in_vertex_requirement_evaluation)
@@ -18,8 +18,8 @@ namespace chaos
         assert((quad_index_buffer != nullptr) && (max_quad_count != 0));
     }
 
-    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferCache* in_buffer_cache, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
-        PrimitiveOutputBase(in_dynamic_mesh, in_buffer_cache, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
+    PrimitiveOutputBase::PrimitiveOutputBase(GPUDynamicMesh* in_dynamic_mesh, GPUBufferPool* in_buffer_pool, GPUVertexDeclaration* in_vertex_declaration, ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation):
+        PrimitiveOutputBase(in_dynamic_mesh, in_buffer_pool, in_vertex_declaration, nullptr, in_vertex_requirement_evaluation)
     {
         GPUResourceManager* resource_manager = WindowApplication::GetGPUResourceManagerInstance();
         if (resource_manager != nullptr)
@@ -33,7 +33,7 @@ namespace chaos
 
     GPUPrimitiveBufferCacheEntry * PrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
     {
-        for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_cache)
+        for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_pool)
             if (cache_entry.buffer_end - cache_entry.buffer_position >= (int)required_size)
                 return &cache_entry;
         return nullptr;
@@ -42,7 +42,7 @@ namespace chaos
     void PrimitiveOutputBase::GiveBufferToInternalCache(GPUBuffer* in_buffer, char* in_buffer_start, char* in_buffer_position, char* in_buffer_end)
     {
         assert(in_buffer != nullptr);
-        for (GPUPrimitiveBufferCacheEntry& entry : internal_buffer_cache)
+        for (GPUPrimitiveBufferCacheEntry& entry : internal_buffer_pool)
         {
             if (entry.buffer == in_buffer)
             {
@@ -52,7 +52,7 @@ namespace chaos
                 return;
             }
         }
-        internal_buffer_cache.push_back({ in_buffer, in_buffer_start, in_buffer_position, in_buffer_end });
+        internal_buffer_pool.push_back({ in_buffer, in_buffer_start, in_buffer_position, in_buffer_end });
     }
 
     void PrimitiveOutputBase::Flush()
@@ -61,7 +61,7 @@ namespace chaos
         FlushMeshElement();
         // unmap all buffers in internal cache
         bool vertex_buffer_in_cache = false;
-        for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_cache)
+        for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_pool)
         {
             if (cache_entry.buffer == vertex_buffer)
                 vertex_buffer_in_cache = true;
@@ -75,7 +75,7 @@ namespace chaos
             vertex_buffer->SetBufferData(nullptr, vertex_buffer->GetBufferSize()); // orphan the buffer
         }
         vertex_buffer = nullptr;
-        internal_buffer_cache.clear();
+        internal_buffer_pool.clear();
 
         buffer_start = buffer_unflushed = buffer_position = buffer_end = nullptr;
     }
@@ -106,10 +106,10 @@ namespace chaos
 
                 size_t reserve_size = std::max(in_size, min_vertex_count * vertex_size); // ask for a minimum size
 
-                if (buffer_cache != nullptr)
-                    buffer_cache->GetBuffer(reserve_size, vertex_buffer);
+                if (buffer_pool != nullptr)
+                    buffer_pool->GetBuffer(reserve_size, vertex_buffer);
                 else
-                    GPUBufferCache::CreateBuffer(reserve_size, vertex_buffer);
+                    GPUBufferPool::CreateBuffer(reserve_size, vertex_buffer);
 
                 if (vertex_buffer == nullptr)
                     return nullptr;

@@ -323,8 +323,17 @@ namespace chaos
 			int extra_background = (allocation_params.create_background) ? 1 : 0;
 
 			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(generator_result.GetTokenCount() + extra_background);
+			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
+#if 0
+			char buffer[1000 * sizeof(VERTEX_TYPE)];
+			QuadPrimitive<VERTEX_TYPE> result = { buffer,  sizeof(VERTEX_TYPE) , 1000 };
+			//result.buffer = buffer;
+			//result.vertex_count = 1000;
+			//result.vertex_size = sizeof(VERTEX_BUFFER);
 
 			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
+#endif
+
 			// create the background
 			if (allocation_params.create_background)
 			{

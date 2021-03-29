@@ -57,7 +57,7 @@ namespace chaos
         // XXX : make code slower
 
         //if (result > 0)
-        //  last_rendered_fence = renderer->GetCurrentFrameFence(); 
+        // last_rendered_fence = renderer->GetCurrentFrameFence(); 
 
         // restore an 'empty' state
         glUseProgram(0);

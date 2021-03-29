@@ -428,9 +428,9 @@ namespace chaos
 	{
 		assert(glfwGetCurrentContext() == shared_context);
 
-		if (!InitializeGamepadButtonMap())
-			return false;
 		if (!CreateTextureAtlas())
+			return false;
+		if (!InitializeGamepadButtonMap())
 			return false;
 		if (!CreateTextGenerator())
 			return false;

@@ -107,9 +107,9 @@ namespace chaos
             vertex_size(in_vertex_size),
             vertex_count(in_vertex_count)
         {
-            assert(in_buffer != nullptr);
-            assert(in_vertex_size > 0);
-            assert(in_vertex_count > 0);
+            assert((in_vertex_count > 0) ^ (in_buffer == nullptr));
+            if (vertex_size == 0)
+                vertex_size = sizeof(vertex_type);
         }
 
         /** cast operator to child vertex type */
@@ -146,6 +146,12 @@ namespace chaos
         size_t GetVertexSize() const { return vertex_size; }
         /** gets the number of vertices for this primitive */
         size_t GetVerticesCount() const { return vertex_count; }
+
+        /** get the index of vertex in the primitive */
+        size_t GetVertexIndex(VERTEX_TYPE const* data) const
+        {
+            return RawDataBufferAccessor<VERTEX_TYPE>(buffer, vertex_count, vertex_size).GetDataIndex(data);
+        }
 
         /** gets forward iterator on vertices */
         RawDataBufferIterator<VERTEX_TYPE> begin() 

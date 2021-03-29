@@ -49,7 +49,8 @@ namespace chaos
             buffer(in_buffer), data_count(in_data_count), data_size(in_data_size)
         {
             assert((data_count > 0) ^ (buffer == nullptr));
-            assert(data_size > 0);
+            if (data_size == 0)
+                data_size = sizeof(TYPE);
         }
 
         /** array accessor */

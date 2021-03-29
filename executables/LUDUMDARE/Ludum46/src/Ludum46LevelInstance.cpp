@@ -30,6 +30,9 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
+static chaos::GPUBufferCache* cache = nullptr; // new chaos::GPUBufferCache;
+
+
 
 template<typename VERTEX_TYPE>
 class DrawInterface : public chaos::PrimitiveOutput<VERTEX_TYPE>
@@ -37,12 +40,12 @@ class DrawInterface : public chaos::PrimitiveOutput<VERTEX_TYPE>
 public:
 
 	DrawInterface(chaos::GPUVertexDeclaration* in_vertex_declaration = nullptr, size_t in_vertex_requirement_evaluation = chaos::PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
-		PrimitiveOutput(&dynamic_mesh, nullptr, nullptr, in_vertex_declaration, in_vertex_requirement_evaluation)
+		PrimitiveOutput(&dynamic_mesh, cache, nullptr, in_vertex_declaration, in_vertex_requirement_evaluation)
 	{
 	}
 
 	DrawInterface(chaos::ObjectRequest render_material_request, size_t in_vertex_requirement_evaluation = chaos::PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
-		PrimitiveOutput(&dynamic_mesh, nullptr, nullptr, render_material_request, in_vertex_requirement_evaluation)
+		PrimitiveOutput(&dynamic_mesh, cache, nullptr, render_material_request, in_vertex_requirement_evaluation)
 	{
 	}
 
@@ -64,14 +67,6 @@ public:
 			swap(*result, dynamic_mesh);
 		}
 		return result;
-	}
-
-	chaos::QuadPrimitive<VERTEX_TYPE> DrawText(char const* text, chaos::ParticleTextGenerator::GeneratorParams const& params = {})
-	{
-		//GeneratorResult& result,
-
-
-		return {};
 	}
 
 protected:
@@ -133,7 +128,15 @@ void bounding_box(chaos::TrianglePairPrimitive<VERTEX_TYPE>& primitive, int f)
 	//	v.flags = f;
 }
 
+// Mesh creation is not free
+//   - create a VertexArrayCache empty each time, generate a vertex array object each time
+//
+// GPUBuffer creation is not free
+//   - use cache as much as possible
 
+
+// DrawInterface create a mesh each time : BAD
+// DrawInterface does not use cache      : BAD
 
 
 
@@ -141,37 +144,93 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 {
 	int result = chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 
-	static chaos::GPUDynamicMesh* mesh = nullptr;
 
+#if 0
+
+	static chaos::shared_ptr<chaos::GPUDynamicMesh> mesh = new chaos::GPUDynamicMesh;
+
+	static chaos::shared_ptr<chaos::GPUVertexDeclaration> declaration = nullptr;
+	if (declaration == nullptr)
+	{
+		declaration = new chaos::GPUVertexDeclaration;
+		GetTypedVertexDeclaration(declaration.get(), boost::mpl::identity<chaos::VertexDefault>());
+
+
+	}
+
+	chaos::PrimitiveOutput<chaos::VertexDefault> output(mesh.get(), cache, declaration.get(), "screenspace1", 500);
+
+
+	chaos::ParticleTextGenerator::GeneratorParams params;
+
+	if (1)for (int i = 0; i < 10; ++i)
+	{
+		params.line_height = 100;
+		params.position = { -500.0f , -200.0f + float(i) * 100.0f };
+		params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+
+		output.AddText("tototototo", params);
+
+	}
+	output.Flush();
+
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	//DI.Display(renderer, uniform_provider, render_params);
+
+	//mesh = DI.ExtractMesh();
+	mesh->Display(renderer, uniform_provider, render_params);
+	mesh->Clear(cache);
+
+#else
+
+
+	DrawInterface<chaos::VertexDefault> DI("screenspace1");
+
+
+	chaos::ParticleTextGenerator::GeneratorParams params;
+
+	for (int i = 0; i < 10; ++i)
+	{
+		params.line_height = 100;
+		params.position = { -500.0f , -200.0f + float(i) * 100.0f };
+		params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
+
+		DI.AddText("tototototo", params);
+	}
+
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	DI.Display(renderer, uniform_provider, render_params);
+
+#endif
+
+
+#if 0
 
 	glPointSize(10.0f);
 
+	DrawInterface<chaos::VertexDefault> DI("screenspace1");
 	if (mesh == nullptr)
 	{
-		DrawInterface<chaos::VertexDefault> DI("screenspace1");
+
 
 		chaos::ParticleTextGenerator::GeneratorParams params;
 
-		for (int i = 0; i < 10; ++i)
+		if (1)for (int i = 0; i < 10; ++i)
 		{
 			params.line_height = 100;
 			params.position = { -500.0f , -200.0f + float(i) * 100.0f };
 			params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 			
-			auto vertices = DI.AddText("tototototo", params);
-			for (auto& v : vertices)
-				v.position.y += 30.0f * std::cos(((char*)&v - vertices.GetBuffer()) / (float)sizeof(vertices.GetVertexSize()));
-		}
-
-		//DI.Display(renderer, uniform_provider, render_params);
-
-		mesh = DI.ExtractMesh();
+			DI.AddText("tototototo", params);
+		}	
 	}
 
-	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	if (mesh != nullptr)
-		mesh->Display(renderer, uniform_provider, render_params);
+#endif
+
+
+
 
 
 

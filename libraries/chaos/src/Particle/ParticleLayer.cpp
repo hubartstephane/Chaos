@@ -168,9 +168,9 @@ namespace chaos
         size_t vertex_requirement_evaluation = EvaluateGPUVertexMemoryRequirement(dynamic_mesh.get());
         // clear previous dynamic mesh (and give buffers back for further usage)       
         if (particle_manager != nullptr)
-			dynamic_mesh->Clear(&particle_manager->GetBufferCache());
+			dynamic_mesh->Clear(&particle_manager->GetBufferPool());
         else
-			dynamic_mesh->Clear(&buffer_cache);
+			dynamic_mesh->Clear(&buffer_pool);
         // select PrimitiveOutput and collect vertices        
 		GenerateMeshData(dynamic_mesh.get(), vertex_declaration.get(), render_material.get(), vertex_requirement_evaluation);
         // mark as up to date

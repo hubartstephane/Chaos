@@ -2,8 +2,8 @@
 
 namespace chaos
 {
-    class GPUBufferCacheEntries;
-    class GPUBufferCache;
+    class GPUBufferPoolEntries;
+    class GPUBufferPool;
 
 }; // namespace chaos
 
@@ -13,12 +13,12 @@ namespace chaos
 {
 
     /**
-     * GPUBufferCacheEntries : an entry that match several GPUBuffers to a GPUFence
+     * GPUBufferPoolEntries : an entry that match several GPUBuffers to a GPUFence
      */
 
-    class GPUBufferCacheEntries
+    class GPUBufferPoolEntries
     {
-        friend class GPUBufferCache;
+        friend class GPUBufferPool;
 
     protected:
 
@@ -34,10 +34,10 @@ namespace chaos
     };
 
     /**
-     * GPUBufferCache : a cache that contains several GPU buffers with a pending fence (the resource is not valid until the fence is over)
+     * GPUBufferPool : a cache that contains several GPU buffers with a pending fence (the resource is not valid until the fence is over)
      */
 
-    class GPUBufferCache
+    class GPUBufferPool : public Object
     {
     public:
 
@@ -51,7 +51,7 @@ namespace chaos
     protected:
 
         /** get the cache entry for given fence */
-        GPUBufferCacheEntries* GetCacheEntryForFence(GPUFence* fence);
+        GPUBufferPoolEntries* GetCacheEntryForFence(GPUFence* fence);
 
     public:
 
@@ -61,7 +61,7 @@ namespace chaos
     protected:
 
         /** some GPUBuffers per GPUFence */
-        std::vector<GPUBufferCacheEntries> entries;
+        std::vector<GPUBufferPoolEntries> entries;
     };
 
 }; // namespace chaos

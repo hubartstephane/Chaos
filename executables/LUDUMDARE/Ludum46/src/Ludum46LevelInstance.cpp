@@ -30,7 +30,7 @@ void LudumLevelInstance::CreateCameras()
 	}
 }
 
-static chaos::GPUBufferCache* cache = nullptr; // new chaos::GPUBufferCache;
+static chaos::GPUBufferPool* pool = new chaos::GPUBufferPool;
 
 
 
@@ -39,23 +39,22 @@ class DrawInterface : public chaos::PrimitiveOutput<VERTEX_TYPE>
 {
 public:
 
-	DrawInterface(chaos::GPUVertexDeclaration* in_vertex_declaration = nullptr, size_t in_vertex_requirement_evaluation = chaos::PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
-		PrimitiveOutput(&dynamic_mesh, cache, nullptr, in_vertex_declaration, in_vertex_requirement_evaluation)
-	{
-	}
-
 	DrawInterface(chaos::ObjectRequest render_material_request, size_t in_vertex_requirement_evaluation = chaos::PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
-		PrimitiveOutput(&dynamic_mesh, cache, nullptr, render_material_request, in_vertex_requirement_evaluation)
+		PrimitiveOutput(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), render_material_request, in_vertex_requirement_evaluation)
 	{
+		dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
 	}
 
-	void Display(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params, bool clear_mesh = true)
+	virtual ~DrawInterface()
 	{
-		if (clear_mesh)
-			Flush();
-		else
-			FlushMeshElement();
+		dynamic_mesh.Clear(GetBufferPool());
+	}
+
+	void Display(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+	{
+		Flush();
 		dynamic_mesh.Display(renderer, uniform_provider, render_params);
+		dynamic_mesh.Clear(GetBufferPool());
 	}
 
 	chaos::GPUDynamicMesh* ExtractMesh()
@@ -65,8 +64,34 @@ public:
 		{
 			Flush();
 			swap(*result, dynamic_mesh);
+			dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
 		}
 		return result;
+	}
+
+protected:
+
+	static chaos::GPUBufferPool* GetBufferPool()
+	{
+		static chaos::shared_ptr<chaos::GPUBufferPool> result = new chaos::GPUBufferPool();
+		return result.get();
+	}
+
+	static chaos::GPUVertexDeclaration* GetVertexDeclaration()
+	{
+		static chaos::shared_ptr<chaos::GPUVertexDeclaration> result;
+		if (result == nullptr)
+		{
+			result = new chaos::GPUVertexDeclaration;
+			GetTypedVertexDeclaration(result.get(), boost::mpl::identity<chaos::VertexDefault>());
+		}
+		return result.get();
+	}
+
+	static chaos::GPUVertexArrayCache * GetVertexArrayCache()
+	{
+		static chaos::shared_ptr<chaos::GPUVertexArrayCache> result = new chaos::GPUVertexArrayCache();
+		return result.get();
 	}
 
 protected:
@@ -132,11 +157,11 @@ void bounding_box(chaos::TrianglePairPrimitive<VERTEX_TYPE>& primitive, int f)
 //   - create a VertexArrayCache empty each time, generate a vertex array object each time
 //
 // GPUBuffer creation is not free
-//   - use cache as much as possible
+//   - use pool as much as possible
 
 
 // DrawInterface create a mesh each time : BAD
-// DrawInterface does not use cache      : BAD
+// DrawInterface does not use pool      : BAD
 
 
 
@@ -158,7 +183,7 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 	}
 
-	chaos::PrimitiveOutput<chaos::VertexDefault> output(mesh.get(), cache, declaration.get(), "screenspace1", 500);
+	chaos::PrimitiveOutput<chaos::VertexDefault> output(mesh.get(), pool, declaration.get(), "screenspace1", 500);
 
 
 	chaos::ParticleTextGenerator::GeneratorParams params;
@@ -180,7 +205,7 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 
 	//mesh = DI.ExtractMesh();
 	mesh->Display(renderer, uniform_provider, render_params);
-	mesh->Clear(cache);
+	mesh->Clear(pool);
 
 #else
 

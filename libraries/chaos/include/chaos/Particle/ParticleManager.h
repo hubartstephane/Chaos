@@ -89,10 +89,10 @@ namespace chaos
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayerBase * layer);
 
-        /** gets the buffer cache */
-        GPUBufferCache& GetBufferCache() { return buffer_cache; }
-        /** gets the buffer cache */
-        GPUBufferCache const& GetBufferCache() const { return buffer_cache; }
+        /** gets the buffer pool */
+        GPUBufferPool& GetBufferPool() { return buffer_pool; }
+        /** gets the buffer pool */
+        GPUBufferPool const& GetBufferPool() const { return buffer_pool; }
 
 	protected:
 		
@@ -111,7 +111,7 @@ namespace chaos
 		/** the texture atlas */
 		shared_ptr<BitmapAtlas::TextureArrayAtlas> atlas;
         /** a cache for GPUBuffer */
-        GPUBufferCache buffer_cache;
+        GPUBufferPool buffer_pool;
 	};
 
 }; // namespace chaos

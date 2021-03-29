@@ -2,18 +2,23 @@
 
 namespace chaos
 {
+    void GPUDynamicMesh::SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache)
+    {
+        vertex_array_cache = in_vertex_array_cache;
+    }
+
     GPUDynamicMeshElement & GPUDynamicMesh::AddMeshElement()
     {
         return elements.emplace_back();
     }
 
-    void GPUDynamicMesh::Clear(GPUBufferCache* buffer_cache)
+    void GPUDynamicMesh::Clear(GPUBufferPool* buffer_pool)
     {
         // XXX : shu on pourrait aussi donner les IndexBuffer => ATTENTION, l index buffer GPURenderer::QUADIndexBuffer ne doit pas etre donné !
 
-        if (buffer_cache != nullptr) // give buffers to cache if we want that
+        if (buffer_pool != nullptr) // give buffers to pool if we want that
             for (GPUDynamicMeshElement& element : elements)
-                buffer_cache->GiveBuffer(element.vertex_buffer, last_rendered_fence.get());
+                buffer_pool->GiveBuffer(element.vertex_buffer, last_rendered_fence.get());
         elements.clear();
         last_rendered_fence = nullptr;
     }

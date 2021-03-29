@@ -17,7 +17,7 @@
 #include <chaos/Gpu/GPUQuery.h>
 #include <chaos/Gpu/GPUBuffer.h>
 #include <chaos/Gpu/GPUFence.h>
-#include <chaos/Gpu/GPUBufferCache.h>
+#include <chaos/Gpu/GPUBufferPool.h>
 #include <chaos/Gpu/GPURenderbuffer.h>
 #include <chaos/Gpu/GPURenderbufferLoader.h>
 #include <chaos/Gpu/GPUVertexArray.h>

@@ -52,10 +52,13 @@ namespace chaos
     {
     public:
 
+        template<typename VERTEX_TYPE>
+        friend class DrawInterface;
+
         /** returns whether there is nothing to render */
         bool IsEmpty() const { return (elements.size() == 0); }
-        /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferCache) */
-        void Clear(GPUBufferCache* buffer_cache);
+        /** remove all elements of the rendering (may give GPUBuffers back to a GPUBufferPool) */
+        void Clear(GPUBufferPool* buffer_pool);
         /** gets the number of mesh element */
         size_t GetMeshElementCount() const { return elements.size();}
         /** access any mesh element */
@@ -64,6 +67,9 @@ namespace chaos
         GPUDynamicMeshElement const& GetMeshElement(size_t index) const { return elements[index]; }
         /** add an rendering element */
         GPUDynamicMeshElement & AddMeshElement();
+
+        /** change the vertex array cache */
+        void SetVertexArrayCache(GPUVertexArrayCache* in_vertex_array_cache);
 
         friend void swap(GPUDynamicMesh& src1, GPUDynamicMesh& src2)
         {

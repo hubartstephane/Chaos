@@ -109,92 +109,86 @@ chaos::ParticleAllocationBase * LudumLevelInstance::CreateBricks()
 
 	// create the bricks resource
 	size_t brick_count = ludum_level->GetBrickCount();
-	chaos::ParticleAllocationBase * result = particle_creator.SpawnParticles(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick", brick_count, true);
-	if (result == nullptr)
-		return nullptr;
-
-	chaos::ParticleAccessor<ParticleBrick> particles = result->GetParticleAccessor();
-	if (particles.GetDataCount() == 0)
-		return nullptr;
-
-	// compute the brick size
-	float BRICK_ASPECT = 16.0f / 9.0f;
-
-
-	chaos::box2 level_box = GetBoundingBox();
-
-	chaos::box2 canvas_box = ludum_game->GetCanvasBox();
-
-	glm::vec2 canvas_size = 2.0f * canvas_box.half_size;
-
-	glm::vec2 particle_size;
-	particle_size.x = 2.0f * level_box.half_size.x / (float)ludum_game->brick_per_line;
-	particle_size.y = particle_size.x / BRICK_ASPECT;
-
-	// fill the brick
-	size_t k = 0;
-	for (size_t i = 0; i < ludum_level->bricks.size(); ++i)
+	chaos::ParticleAllocationBase* result = ludum_game->GetParticleManager()->GetParticleSpawner(chaos::GameHUDKeys::BRICK_LAYER_ID, "brick").SpawnParticles(brick_count, true).Process([=](chaos::ParticleAccessor<ParticleBrick> accessor)
 	{
-		std::vector<int> const & line = ludum_level->bricks[i];
-		for (size_t j = 0; j < line.size(); ++j)
+		// compute the brick size
+		float BRICK_ASPECT = 16.0f / 9.0f;
+
+
+		chaos::box2 level_box = GetBoundingBox();
+
+		chaos::box2 canvas_box = ludum_game->GetCanvasBox();
+
+		glm::vec2 canvas_size = 2.0f * canvas_box.half_size;
+
+		glm::vec2 particle_size;
+		particle_size.x = 2.0f * level_box.half_size.x / (float)ludum_game->brick_per_line;
+		particle_size.y = particle_size.x / BRICK_ASPECT;
+
+		// fill the brick
+		size_t k = 0;
+		for (size_t i = 0; i < ludum_level->bricks.size(); ++i)
 		{
-			if (j >= brick_per_line)
-				break;
-
-			int b = line[j];
-			if (b == LudumLevel::NONE)
-				continue;
-
-			// compute color / indestructible / life
-			size_t life = 1;
-
-			if (b == LudumLevel::INDESTRUCTIBLE)
+			std::vector<int> const& line = ludum_level->bricks[i];
+			for (size_t j = 0; j < line.size(); ++j)
 			{
-				particles[k].color = indestructible_color;				
-				particles[k].life = 1.0f;
-				particles[k].indestructible = true;
-				particles[k].texcoords = indestructible_brick_info->GetTexcoords();
-			}
-			else if (b == LudumLevel::TWO_LIFE)
-			{
-				particles[k].color = two_life_color;
-				particles[k].life = 2.0f;
-				particles[k].indestructible = false;
-				particles[k].texcoords = two_brick_info->GetTexcoords();
-			}
-			else if (b == LudumLevel::FOUR_LIFE)
-			{
-				particles[k].color = four_life_color;
-				particles[k].life = 4.0f;
-				particles[k].indestructible = false;
-				particles[k].texcoords = four_brick_info->GetTexcoords();
-			}
-			else 
-			{
-				particles[k].indestructible = false;
+				if (j >= brick_per_line)
+					break;
 
-				size_t color_index = std::clamp(b, 0, (int)(color_count - 1));
-				particles[k].color = colors[color_index];
-				particles[k].life = 1.0f;
+				int b = line[j];
+				if (b == LudumLevel::NONE)
+					continue;
+
+				// compute color / indestructible / life
+				size_t life = 1;
+
+				if (b == LudumLevel::INDESTRUCTIBLE)
+				{
+					accessor[k].color = indestructible_color;
+					accessor[k].life = 1.0f;
+					accessor[k].indestructible = true;
+					accessor[k].texcoords = indestructible_brick_info->GetTexcoords();
+				}
+				else if (b == LudumLevel::TWO_LIFE)
+				{
+					accessor[k].color = two_life_color;
+					accessor[k].life = 2.0f;
+					accessor[k].indestructible = false;
+					accessor[k].texcoords = two_brick_info->GetTexcoords();
+				}
+				else if (b == LudumLevel::FOUR_LIFE)
+				{
+					accessor[k].color = four_life_color;
+					accessor[k].life = 4.0f;
+					accessor[k].indestructible = false;
+					accessor[k].texcoords = four_brick_info->GetTexcoords();
+				}
+				else
+				{
+					accessor[k].indestructible = false;
+
+					size_t color_index = std::clamp(b, 0, (int)(color_count - 1));
+					accessor[k].color = colors[color_index];
+					accessor[k].life = 1.0f;
+				}
+
+				accessor[k].starting_life = accessor[k].life;
+
+				// position
+				glm::vec2 position;
+				position.x = level_box.position.x - level_box.half_size.x;
+				position.y = level_box.position.y + level_box.half_size.y;
+
+				position.x += particle_size.x * (float)j;
+				position.y -= particle_size.y * (float)i;
+
+				accessor[k].bounding_box.position = chaos::ConvertHotpoint(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
+				accessor[k].bounding_box.half_size = 0.5f * particle_size;
+
+				++k;
 			}
-
-			particles[k].starting_life = particles[k].life;
-
-			// position
-			glm::vec2 position;
-			position.x = level_box.position.x - level_box.half_size.x;
-			position.y = level_box.position.y + level_box.half_size.y;
-			
-			position.x += particle_size.x * (float)j;
-			position.y -= particle_size.y * (float)i;
-			
-			particles[k].bounding_box.position = chaos::ConvertHotpoint(position, particle_size, chaos::Hotpoint::TOP_LEFT, chaos::Hotpoint::CENTER);
-			particles[k].bounding_box.half_size = 0.5f * particle_size;
-
-			++k;
 		}
-	}
-
+	});
 	return result;
 }
 

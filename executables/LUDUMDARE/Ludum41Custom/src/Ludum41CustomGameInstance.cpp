@@ -528,36 +528,32 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 {
 	LudumGame * ludum_game = GetGame();
 
+	chaos::ParticleSpawner spawner = ludum_game->GetParticleSpawner(chaos::GameHUDKeys::BALL_LAYER_ID, "ball");
+
 	// create the object
-	chaos::ParticleAllocationBase * result = ludum_game->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::BALL_LAYER_ID, "ball", count, true);
-	if (result == nullptr)
-		return nullptr;
+	chaos::ParticleAllocationBase* result = spawner.SpawnParticles(count, true).Process([=](chaos::ParticleAccessor<ParticleMovableObject> accessor)
+	{
+		chaos::box2 canvas_box = ludum_game->GetCanvasBox();
 
-	// set the color
-	chaos::ParticleAccessor<ParticleMovableObject> particles = result->GetParticleAccessor();
-	if (particles.GetDataCount() == 0)
-		return nullptr;
+		float const BALL_Y = 300.0f;
+		float const BALL_SPACING = 60.0f;
 
-	chaos::box2 canvas_box = ludum_game->GetCanvasBox();
+		float ball_x = -BALL_SPACING * 0.5f * (float)(count - 1);
 
-	float const BALL_Y = 300.0f;
-	float const BALL_SPACING = 60.0f;
-
-	float ball_x = -BALL_SPACING * 0.5f * (float)(count - 1);
-
-	for (size_t i = 0 ; i < count ; ++i)
-	{	
-		particles[i].color         = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		particles[i].bounding_box.position  = glm::vec2(ball_x, -canvas_box.half_size.y + BALL_Y);
-		particles[i].bounding_box.half_size = 0.5f * glm::vec2(ludum_game->ball_size, ludum_game->ball_size);
-		
-		if (full_init)
+		for (size_t i = 0; i < count; ++i)
 		{
-			particles[i].delay_before_move = ludum_game->delay_before_ball_move;
-			particles[i].velocity = ball_speed * GenerateBallRandomDirection();
+			accessor[i].color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			accessor[i].bounding_box.position = glm::vec2(ball_x, -canvas_box.half_size.y + BALL_Y);
+			accessor[i].bounding_box.half_size = 0.5f * glm::vec2(ludum_game->ball_size, ludum_game->ball_size);
+
+			if (full_init)
+			{
+				accessor[i].delay_before_move = ludum_game->delay_before_ball_move;
+				accessor[i].velocity = ball_speed * GenerateBallRandomDirection();
+			}
+			ball_x += BALL_SPACING;
 		}
-		ball_x += BALL_SPACING;
-	}
+	});
 	return result;
 }
 

@@ -435,9 +435,9 @@ chaos::ParticleAllocationBase * LudumGameInstance::CreateBalls(size_t count, boo
 	LudumGame * ludum_game = GetGame();
 
 	// create the object
-	chaos::GameParticleCreator particle_creator = ludum_game->GetGameParticleCreator();
+	chaos::ParticleSpawner spawner = GetGame()->GetParticleSpawner(chaos::GameHUDKeys::BALL_LAYER_ID, "ball");
 
-	chaos::ParticleAllocationBase * result = particle_creator.SpawnParticles(chaos::GameHUDKeys::BALL_LAYER_ID, "ball", 1, true);
+	chaos::ParticleAllocationBase * result = spawner.SpawnParticles(1, true);
 	if (result == nullptr)
 		return nullptr;
 

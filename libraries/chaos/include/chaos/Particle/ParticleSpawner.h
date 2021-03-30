@@ -24,6 +24,8 @@ namespace chaos
 
         /** change the bitmap info */
 		bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
+        /** find the bitmap info */
+        BitmapAtlas::BitmapInfo const* FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites") const;
    
         /** spawn particles */
         SpawnParticleResult SpawnParticles(size_t count, bool new_allocation = true);

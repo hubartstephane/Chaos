@@ -169,6 +169,24 @@ namespace chaos
 		/** save the game into a checkpoint */
 		GameCheckpoint * SaveIntoCheckpoint();
 
+		/** create a particle spawner */
+		template<typename ...PARAMS>
+		ParticleSpawner* CreateParticleSpawner(PARAMS... params)
+		{
+			if (particle_manager == nullptr)
+				return nullptr;
+			return particle_manager->CreateParticleSpawner(params...);
+		}
+
+		/** get particle spawner */
+		template<typename ...PARAMS>
+		ParticleSpawner GetParticleSpawner(PARAMS... params)
+		{
+			if (particle_manager == nullptr)
+				return {};
+			return particle_manager->GetParticleSpawner(params...);
+		}
+
 	protected:
 
 		/** the tick method */

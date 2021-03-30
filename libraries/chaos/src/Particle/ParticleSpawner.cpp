@@ -12,6 +12,23 @@ namespace chaos
 			particle_layer = nullptr;
 	}
 
+	BitmapAtlas::BitmapInfo const* ParticleSpawner::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
+	{
+		// early exit
+		if (atlas == nullptr)
+			return nullptr;
+		// if the requested bitmap is nullptr, considere the call as successfull
+		if (bitmap_request.IsNoneRequest())
+			return nullptr;
+		// find the folder
+		BitmapAtlas::FolderInfo const* bitmap_set = atlas->GetFolderInfo(folder_request, true);
+		if (bitmap_set == nullptr)
+			return nullptr;
+		// get the bitmap
+		return bitmap_set->GetBitmapInfo(bitmap_request, true);
+	}
+
+
 	bool ParticleSpawner::SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request)
 	{
 		// early exit

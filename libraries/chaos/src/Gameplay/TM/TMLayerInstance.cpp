@@ -519,7 +519,7 @@ namespace chaos
 		return true;
 	}
 
-	ParticleAllocationBase* TMLayerInstance::SpawnParticles(size_t count, bool new_allocation)
+	SpawnParticleResult TMLayerInstance::SpawnParticles(size_t count, bool new_allocation)
 	{
 		// create particle layer if necessary
 		if (CreateParticleLayer() == nullptr)

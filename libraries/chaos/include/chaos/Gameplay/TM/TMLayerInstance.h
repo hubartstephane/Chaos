@@ -131,21 +131,7 @@ namespace chaos
 		}
 
 		/** create a particle allocation for the layer */
-		ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation = true);
-
-		/** spawn + user initialization methods */
-		template<typename INIT_PARTICLE_FUNC>
-		ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
-		{
-			ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
-			// call user initialization function
-			if (result != nullptr)
-			{
-				size_t allocation_count = result->GetParticleCount();
-				init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
-			}
-			return result;
-		}
+		SpawnParticleResult SpawnParticles(size_t count, bool new_allocation = true);
 
 		/** create the particle layer if required */
 		ParticleLayerBase* CreateParticleLayer();

@@ -48,7 +48,7 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 {
 	int result = chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 
-	return result;
+	//return result;
 
 #if 0
 
@@ -92,7 +92,7 @@ int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgra
 #else
 
 
-	chaos::GPUDrawInterface<chaos::VertexDefault> DI("screenspace1");
+	chaos::GPUDrawInterface<chaos::VertexDefault> DI("screenspace1", 1000);
 
 
 	chaos::ParticleTextGenerator::GeneratorParams params;
@@ -236,7 +236,7 @@ void LudumLevelInstance::SpawnBloodParticles(chaos::box2 const& box, int particl
 	chaos::ParticleSpawner spawner = GetParticleSpawner("Blood", "Blood");
 	if (spawner.IsValid())
 	{
-		spawner.SpawnParticles(particles_count, false, [this, box, &spawner](chaos::ParticleAccessor<ParticleBlood> accessor)
+		spawner.SpawnParticles(particles_count, false).Process([this, box, &spawner](chaos::ParticleAccessor<ParticleBlood> accessor)
 		{
 			for (ParticleBlood& p : accessor)
 			{
@@ -265,7 +265,7 @@ void LudumLevelInstance::SpawnBurnedSoulParticles(chaos::box2 const& box, int pa
 	chaos::ParticleSpawner spawner = GetParticleSpawner("BurnedSouls", "BurnedSoulAnim");
 	if (spawner.IsValid())
 	{
-		spawner.SpawnParticles(particles_count, false, [this, box, &spawner](chaos::ParticleAccessor<ParticleBurnedSoul> accessor)
+		spawner.SpawnParticles(particles_count, false).Process([this, box, &spawner](chaos::ParticleAccessor<ParticleBurnedSoul> accessor)
 		{
 			for (ParticleBurnedSoul& p : accessor)
 			{

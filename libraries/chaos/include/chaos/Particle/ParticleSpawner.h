@@ -25,22 +25,11 @@ namespace chaos
         /** change the bitmap info */
 		bool SetBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites"); // folder "sprites" by default
    
-        /** simple spawn method */
-        ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation = true);
+        /** spawn particles */
+        SpawnParticleResult SpawnParticles(size_t count, bool new_allocation = true);
 
-        /** spawn + user initialization methods */
-        template<typename INIT_PARTICLE_FUNC>
-        ParticleAllocationBase* SpawnParticles(size_t count, bool new_allocation, INIT_PARTICLE_FUNC init_func)
-        {
-            ParticleAllocationBase* result = SpawnParticles(count, new_allocation);
-            // call user initialization function
-            if (result != nullptr)
-            {
-                size_t allocation_count = result->GetParticleCount();
-                init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
-            }
-            return result;
-        }
+        /** spawn a new text */
+        SpawnParticleResult SpawnText(char const* in_text, bool new_allocation, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params);
 
         /** gets the bitmap info used for spawned particles */
         BitmapAtlas::BitmapInfo const * GetBitmapInfo() const { return bitmap_info; }

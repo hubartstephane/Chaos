@@ -112,7 +112,7 @@ void LudumPlayer::SpawnSmokeParticles(size_t count, LudumLevelInstance* li, chao
 
 
 
-			spawner.SpawnParticles(count, false, [spawn_pos](chaos::ParticleAccessor<ParticleSmoke> accessor)
+			spawner.SpawnParticles(count, false).Process([spawn_pos](chaos::ParticleAccessor<ParticleSmoke> accessor)
 			{
 				glm::vec2 pos = spawn_pos;
 

@@ -263,7 +263,7 @@ bool Spawner::DoTick(float delta_time)
 
 void Spawner::SpawnParticles(chaos::ParticleSpawner & spawner, int count)
 {	
-	spawner.SpawnParticles(count, false, [this](chaos::ParticleAccessor<ParticleBase> accessor) 
+	spawner.SpawnParticles(count, false).Process([this](chaos::ParticleAccessor<ParticleBase> accessor) 
 	{
 		chaos::box2 bx = GetBoundingBox(false);
 

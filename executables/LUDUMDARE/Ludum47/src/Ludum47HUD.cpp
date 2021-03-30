@@ -153,17 +153,3 @@ bool LudumPlayingHUD::FillHUDContent()
 
 	return true;
 }
-
-
-int LudumPlayingHUD::CreateHUDLayers()
-{
-	// call super method
-	int render_order = chaos::PlayingHUD::CreateHUDLayers();
-	if (render_order < 0)
-		return render_order;
-
-
-
-
-	return render_order;
-}

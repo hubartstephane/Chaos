@@ -77,6 +77,4 @@ protected:
 
 	/** override */
 	virtual bool FillHUDContent() override;
-	/** override */
-	virtual int CreateHUDLayers() override;
 };

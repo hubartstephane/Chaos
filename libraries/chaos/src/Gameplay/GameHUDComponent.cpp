@@ -148,7 +148,25 @@ namespace chaos
 	{
 		int result = GameHUDComponent::DoDisplay(renderer, uniform_provider, render_params);
 		if (mesh != nullptr)
+		{
+#if 1
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+#endif
+
+
 			result += mesh->Display(renderer, uniform_provider, render_params);
+
+#if 1
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+#endif
+
+
+		}
 		return result;
 	}
 
@@ -233,18 +251,10 @@ namespace chaos
 			ParticleTextGenerator::GeneratorParams other_params = generator_params;
 			TweakTextGeneratorParams(other_params);
 
-			GPUDrawInterface<VertexDefault> DI(DefaultParticleProgram::GetMaterial());
-
-			allocations = hud->GetGameParticleCreator().SpawnTextParticles(layer_id, in_text, other_params);
+			GPUDrawInterface<VertexDefault> DI(nullptr);
+			DI.AddText(in_text, other_params);
+			mesh = DI.ExtractMesh();
 		}
-
-
-
-
-
-
-
-
 	}
 
 	// ====================================================================

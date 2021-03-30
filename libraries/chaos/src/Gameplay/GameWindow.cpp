@@ -59,10 +59,17 @@ namespace chaos
 	{
 		if (game != nullptr)
 		{
+			GPUProgramProvider provider;
+
+			WindowApplication* application = Application::GetInstance();
+			if (application != nullptr)
+				if (application->GetTextureAtlas() != nullptr)
+					provider.AddTexture("material", application->GetTextureAtlas()->GetTexture());
+
 			GPURenderParams render_params;
 			render_params.viewport = viewport;
 			render_params.screen_size = window_size;
-			game->Display(renderer, nullptr, render_params);
+			game->Display(renderer, &provider, render_params);
 		}
 		return true;
 	}

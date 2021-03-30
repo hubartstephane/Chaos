@@ -742,7 +742,7 @@ namespace chaos
 			return result;
 		}
 
-		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, CreateTextAllocationParams const & allocation_params)
+		ParticleAllocationBase * CreateTextAllocation(ParticleLayerBase * layer, GeneratorResult const & generator_result, bool new_allocation, CreateTextAllocationParams const & allocation_params)
 		{
 			assert(layer != nullptr);
 
@@ -756,32 +756,17 @@ namespace chaos
 
 			int extra_background = (allocation_params.create_background) ? 1 : 0;
 
-			// create the allocation
-			ParticleAllocationBase * result = layer->SpawnParticles(generator_result.GetTokenCount() + extra_background);
-			if (result == nullptr)
-				return nullptr;
-
-			// spawn the particles
-			ParticleAccessor<ParticleDefault> particles = result->GetParticleAccessor();
-			if (particles.GetDataCount() == 0)
+			return layer->SpawnParticles(generator_result.GetTokenCount() + extra_background, new_allocation).Process([generator_result, allocation_params](ParticleAccessor<ParticleDefault> accessor)
 			{
-				result->SubReference(); // error => destroy the allocation
-				return nullptr;
-			}
-
-			size_t token_index = 0;
-			// create the background
-			if (allocation_params.create_background)
-				particles[token_index++] = GetBackgroundParticle(generator_result, allocation_params);
-
-			// convert the text			
-			for (size_t i = 0; i < generator_result.token_lines.size(); ++i)
-			{
-				ParticleTextGenerator::TokenLine const & line = generator_result.token_lines[i];
-				for (size_t j = 0; j < line.size(); ++j)
-					particles[token_index++] = TokenToParticle(line[j]);
-			}
-			return result;
+				size_t token_index = 0;
+				// create the background
+				if (allocation_params.create_background)
+					accessor[token_index++] = GetBackgroundParticle(generator_result, allocation_params);
+				// convert the text	
+				for (ParticleTextGenerator::TokenLine const& line : generator_result.token_lines)
+					for (Token const & token : line)
+						accessor[token_index++] = TokenToParticle(token);
+			});
 		}
 
 	}; // namespace ParticleTextGenerator

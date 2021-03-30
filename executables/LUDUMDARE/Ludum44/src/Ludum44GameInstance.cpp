@@ -87,7 +87,7 @@ void LudumGameInstance::FireExplosion(chaos::box2 const & ref_box)
 
     chaos::BitmapAtlas::BitmapInfo const* explosion_info = spawner.GetBitmapInfo();
 
-    spawner.SpawnParticles(1, false, [ref_box, explosion_info](chaos::ParticleAccessor<ParticleExplosion> accessor)
+    spawner.SpawnParticles(1, false).Process([ref_box, explosion_info](chaos::ParticleAccessor<ParticleExplosion> accessor)
     {
         for (ParticleExplosion& particle : accessor)
         {
@@ -124,7 +124,7 @@ chaos::ParticleAccessor<ParticleFire> LudumGameInstance::FireProjectile(char con
     particle_box = chaos::AlterBoxToAspect(particle_box, chaos::MathTools::CastAndDiv<float>(layout.width, layout.height), true);
 
     // spawn the particles and updates
-    spawner.SpawnParticles(count, false, [offset_rotation, delta_rotation, particle_box, player_ownership, velocity, damage, trample, &result](chaos::ParticleAccessor<ParticleFire> accessor)
+    spawner.SpawnParticles(count, false).Process([offset_rotation, delta_rotation, particle_box, player_ownership, velocity, damage, trample, &result](chaos::ParticleAccessor<ParticleFire> accessor)
     {
         result = accessor;
         for (ParticleFire& particle : accessor)

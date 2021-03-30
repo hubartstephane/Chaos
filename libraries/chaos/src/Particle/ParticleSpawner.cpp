@@ -34,13 +34,13 @@ namespace chaos
 		return true;
 	}
 
-	ParticleAllocationBase* ParticleSpawner::SpawnParticles(size_t count, bool new_allocation)
+	SpawnParticleResult ParticleSpawner::SpawnParticles(size_t count, bool new_allocation)
 	{
 		// early exit
 		if (particle_layer == nullptr)
 			return nullptr;
 
-		return particle_layer->SpawnParticles(count, new_allocation, [this](ParticleAccessor<ParticleDefault> accessor)
+		return particle_layer->SpawnParticles(count, new_allocation).Process([this](ParticleAccessor<ParticleDefault> accessor)
 		{
 			if (bitmap_info != nullptr && accessor.IsValid())
 			{
@@ -54,10 +54,60 @@ namespace chaos
 
 				// apply the texcoords to all particles
 				for (ParticleDefault& particle : accessor)
- 					particle.texcoords = texcoords;
+					particle.texcoords = texcoords;
 			}
-		});		
+		});
 	}
+
+
+	SpawnParticleResult ParticleSpawner::SpawnText(char const* in_text, bool new_allocation, ParticleTextGenerator::GeneratorParams const& params, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params)
+	{
+		// early exit
+		if (particle_layer == nullptr)
+			return nullptr;
+		// get the application
+		WindowApplication const* window_application = Application::GetInstance();
+		if (window_application == nullptr)
+			return {};
+		// get the generator
+		ParticleTextGenerator::Generator const* generator = window_application->GetTextGenerator();
+		if (generator == nullptr)
+			return {};
+		// generate the data
+		ParticleTextGenerator::GeneratorResult generator_result;
+		if (!generator->Generate(in_text, generator_result, params))
+			return {};
+
+		//return SpawnParticles()
+
+
+
+		return nullptr;
+	}
+
+#if 0
+	QuadPrimitive<vertex_type> AddText(char const* in_text, ParticleTextGenerator::GeneratorParams const& params = {}, ParticleTextGenerator::CreateTextAllocationParams const& allocation_params = {})
+	{
+		// get the application
+		WindowApplication const* window_application = Application::GetInstance();
+		if (window_application == nullptr)
+			return {};
+		// get the generator
+		ParticleTextGenerator::Generator const* generator = window_application->GetTextGenerator();
+		if (generator == nullptr)
+			return {};
+		// generate the data
+		ParticleTextGenerator::GeneratorResult generator_result;
+		if (!generator->Generate(in_text, generator_result, params))
+			return {};
+		// create the primitives
+		return TextToPrimitives(*this, generator_result, allocation_params);
+	}
+#endif
+
+
+
+
 
 }; // namespace chaos
 

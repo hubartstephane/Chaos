@@ -79,28 +79,27 @@ namespace chaos
 		return result;
 	}
 
-	ParticleAllocationBase * ParticleLayerBase::SpawnParticles(size_t count, bool new_allocation)
+	SpawnParticleResult ParticleLayerBase::SpawnParticles(size_t count, bool new_allocation)
 	{
-		ParticleAllocationBase* result = nullptr;
+		ParticleAllocationBase* allocation = nullptr;
 
 		// create an allocation is mandatory
 		if (new_allocation || particles_allocations.size() == 0)
 		{
-			result = DoCreateParticleAllocation();
-			if (result == nullptr)
+			allocation = DoCreateParticleAllocation();
+			if (allocation == nullptr)
 				return nullptr;
-			particles_allocations.push_back(result); // register the allocation
+			particles_allocations.push_back(allocation); // register the allocation
 		}
 		// get the very first allocation
 		else
 		{
-			result = particles_allocations[0].get();
+			allocation = particles_allocations[0].get();
 		}
-
 		// increase the particle count for that allocation
-		result->AddParticles(count);
+		allocation->AddParticles(count);
 
-		return result;
+		return { allocation, allocation->GetParticleCount() - count, count };
 	}
 
 	int ParticleLayerBase::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)

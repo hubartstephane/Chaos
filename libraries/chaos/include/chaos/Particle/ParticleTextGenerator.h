@@ -314,7 +314,21 @@ namespace chaos
 		ParticleDefault GetBackgroundParticle(GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params);
 
 		/** generate an allocation for a generated text */
-		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params = {});
+		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation = true, CreateTextAllocationParams const& allocation_params = {});
+
+		/** spawn + user initialization methods */
+		template<typename INIT_PARTICLE_FUNC>
+		ParticleAllocationBase* CreateTextAllocation(ParticleLayerBase* layer, GeneratorResult const& generator_result, bool new_allocation, CreateTextAllocationParams const& allocation_params, INIT_PARTICLE_FUNC init_func)
+		{
+			ParticleAllocationBase* result = CreateTextAllocation(layer, generator_result, new_allocation, allocation_params);
+			// call user initialization function
+			if (result != nullptr)
+			{
+				size_t allocation_count = result->GetParticleCount();
+				init_func(result->GetParticleAccessor(allocation_count - count, count));  // partial accessor, take the last particles in the array
+			}
+			return result;
+		}
 
 		/** output primitives corresponding to generated text */
 		template<typename VERTEX_TYPE>
@@ -324,15 +338,6 @@ namespace chaos
 
 			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(generator_result.GetTokenCount() + extra_background);
 			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
-#if 0
-			char buffer[1000 * sizeof(VERTEX_TYPE)];
-			QuadPrimitive<VERTEX_TYPE> result = { buffer,  sizeof(VERTEX_TYPE) , 1000 };
-			//result.buffer = buffer;
-			//result.vertex_count = 1000;
-			//result.vertex_size = sizeof(VERTEX_BUFFER);
-
-			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
-#endif
 
 			// create the background
 			if (allocation_params.create_background)

@@ -6,8 +6,10 @@ namespace chaos
 	class DefaultMaterialBase;
 
 	class DefaultParticleProgramSource;
+	class DefaultScreenSpaceProgramGenerator;
 
 	using DefaultParticleProgram = DefaultMaterialBase<DefaultParticleProgramSource>;
+	using DefaultScreenSpaceProgram = DefaultMaterialBase<DefaultScreenSpaceProgramGenerator>;
 
 
 }; // namespace chaos
@@ -78,6 +80,25 @@ namespace chaos
 
 		/** get the sources */
 		void GetSources(GPUProgramGenerator & program_generator);
+
+	public:
+
+		/** the vertex shader source */
+		static char const* vertex_shader_source;
+		/** the pixel shader source */
+		static char const* pixel_shader_source;
+	};
+
+	/**
+	 * DefaultScreenSpaceProgramGenerator : generator for particle in screen space
+	 */
+
+	class DefaultScreenSpaceProgramGenerator
+	{
+	public:
+
+		/** get the sources */
+		void GetSources(GPUProgramGenerator& program_generator);
 
 	public:
 

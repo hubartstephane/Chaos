@@ -149,33 +149,17 @@ namespace chaos
 		int result = GameHUDComponent::DoDisplay(renderer, uniform_provider, render_params);
 		if (mesh != nullptr)
 		{
-#if 1
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
-#endif
-
-
 			result += mesh->Display(renderer, uniform_provider, render_params);
-
-#if 1
 			glDisable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
-#endif
-
-
 		}
 		return result;
 	}
-
-
-
-
-
-
-
 
 	// ====================================================================
 	// GameHUDTextAllocationComponent
@@ -292,6 +276,7 @@ namespace chaos
 		current_time = 0.0f;
 		lifetime = 0.0f;
 		allocations = nullptr;
+		mesh = nullptr;
 	}
 
 	bool GameHUDNotificationComponent::DoTick(float delta_time)

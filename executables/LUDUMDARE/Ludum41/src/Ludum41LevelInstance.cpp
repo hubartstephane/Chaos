@@ -210,10 +210,10 @@ chaos::PlayerPawn * LudumLevelInstance::CreatePlayerPawn(chaos::Player* player)
 	if (window_application == nullptr)
 		return nullptr;
 
-	chaos::GameParticleCreator particle_creator = GetGame()->GetGameParticleCreator();
+	chaos::ParticleSpawner spawner = GetGame()->GetParticleSpawner(chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player");
 
 	// spawn particles for the pawn
-	chaos::ParticleAllocationBase* player_allocation = particle_creator.SpawnParticles(chaos::GameHUDKeys::GAMEOBJECT_LAYER_ID, "player", 1, true);
+	chaos::ParticleAllocationBase* player_allocation = spawner.SpawnParticles(1, true);
 	if (player_allocation == nullptr)
 		return player_pawn;
 	player_pawn->SetAllocation(player_allocation);

@@ -162,11 +162,6 @@ namespace chaos
 		return result;
 	}
 
-	GPURenderMaterial* TMLevel::GenDefaultRenderMaterial()
-	{
-		return GenDefaultParticleMaterial();
-	}
-
 	bool TMLevel::FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation) 
 	{
 		return true; 

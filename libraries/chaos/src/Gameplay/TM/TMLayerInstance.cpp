@@ -125,7 +125,7 @@ namespace chaos
 			}
 		}
 		// default material else where
-		return level_instance->GetDefaultRenderMaterial();
+		return DefaultParticleProgram::GetMaterial();
 	}
 
 	void TMLayerInstance::ComputeLayerCollisionMask(char const * mask)

@@ -114,15 +114,6 @@ namespace chaos
 	/** the default vertex declaration */
 	void GetTypedVertexDeclaration(GPUVertexDeclaration* result, boost::mpl::identity<VertexDefault>);
 
-
-
-
-
-	/** generate a default shader */
-	GPUProgram* GenDefaultParticleProgram();
-	/** generate a default material */
-	GPURenderMaterial* GenDefaultParticleMaterial();
-
 }; // namespace chaos
 
 #endif // CHAOS_FORWARD_DECLARATION

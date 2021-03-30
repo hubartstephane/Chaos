@@ -308,20 +308,6 @@ namespace chaos
 		return result;
 	}
 
-	GPURenderMaterial* TMLevelInstance::GetDefaultRenderMaterial()
-	{
-		if (default_material == nullptr)
-		{
-			TMLevel* level = GetLevel();
-			default_material = level->GenDefaultRenderMaterial(); // create material and cache
-		}
-		return default_material.get();
-	}
-
-
-
-
-
 	TMLayerInstance* TMLevelInstance::FindLayerInstanceByID(int in_id, bool recursive)
 	{
 		return TMTools::FindLayerInstanceByID(this, layer_instances, in_id, recursive);

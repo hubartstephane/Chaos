@@ -133,12 +133,30 @@ namespace chaos
 	{
 		if (allocations != nullptr)
 			allocations->Show(in_show);	
+
+		if (mesh != nullptr)
+			mesh->Show(in_show);
 	}
 
 	void GameHUDSingleAllocationComponent::OnRemovedFromHUD()
 	{
 		allocations = nullptr;
+		mesh = nullptr;
 	}
+
+	int GameHUDSingleAllocationComponent::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+	{
+		int result = GameHUDComponent::DoDisplay(renderer, uniform_provider, render_params);
+		if (mesh != nullptr)
+			result += mesh->Display(renderer, uniform_provider, render_params);
+		return result;
+	}
+
+
+
+
+
+
 
 
 	// ====================================================================
@@ -197,6 +215,7 @@ namespace chaos
 
 	void GameHUDTextComponent::UpdateTextAllocation(char const * in_text)
 	{
+#if 0
 		if (StringTools::IsEmpty(in_text))
 			allocations = nullptr;
 		else
@@ -205,6 +224,27 @@ namespace chaos
 			TweakTextGeneratorParams(other_params);
 			allocations = hud->GetGameParticleCreator().SpawnTextParticles(layer_id, in_text, other_params);
 		}
+#endif
+
+		if (StringTools::IsEmpty(in_text))
+			mesh = nullptr;
+		else
+		{
+			ParticleTextGenerator::GeneratorParams other_params = generator_params;
+			TweakTextGeneratorParams(other_params);
+
+			GPUDrawInterface<VertexDefault> DI(DefaultParticleProgram::GetMaterial());
+
+			allocations = hud->GetGameParticleCreator().SpawnTextParticles(layer_id, in_text, other_params);
+		}
+
+
+
+
+
+
+
+
 	}
 
 	// ====================================================================

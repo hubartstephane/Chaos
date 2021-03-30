@@ -97,11 +97,17 @@ namespace chaos
 		virtual void ShowComponent(bool in_show);
 		/** override */
 		virtual void OnRemovedFromHUD() override;
+		/** override */
+		virtual int DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params) override;
+
 
 	protected:
 
 		/** allocations for the title */
 		shared_ptr<ParticleAllocationBase> allocations;
+
+
+		shared_ptr<GPUDynamicMesh> mesh;
 	};
 
 

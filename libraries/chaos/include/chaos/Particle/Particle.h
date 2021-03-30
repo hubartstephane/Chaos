@@ -125,3 +125,4 @@ namespace chaos
 #include <chaos/Particle/ParticleTextGenerator.h>
 #include <chaos/Particle/ParticleTools.h>
 #include <chaos/Particle/SpawnParticleResult.h>
+#include <chaos/Particle/DefaultMaterials.h>

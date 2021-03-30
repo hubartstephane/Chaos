@@ -119,7 +119,7 @@ protected:
 	bool InitializeParticleManager(boost::filesystem::path const & resources_path)
 	{
 		// create the material
-		material = chaos::GenDefaultParticleMaterial();
+		material = chaos::DefaultParticleProgram::GetMaterial();
 		if (material == nullptr)
 			return false;
 		// create the particle manager

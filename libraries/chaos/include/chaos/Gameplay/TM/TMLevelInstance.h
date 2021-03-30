@@ -184,9 +184,6 @@ namespace chaos
 		/** override */
 		virtual void SetInGameMusic() override;
 
-		/** the default material when not specified */
-		virtual GPURenderMaterial* GetDefaultRenderMaterial();
-
 		/** find the collision info for an object */
 		TMTriggerCollisionInfo* FindTriggerCollisionInfo(Object * object);
 
@@ -211,14 +208,8 @@ namespace chaos
 		/** the particle manager used to render the world */
 		shared_ptr<ParticleManager> particle_manager;
 
-
-
-
 		/** the layers */
 		std::vector<shared_ptr<TMLayerInstance>> layer_instances;
-		/** the default render material */
-		shared_ptr<GPURenderMaterial> default_material;
-
 		/** the previous frame trigger collision */
 		std::vector<TMTriggerCollisionInfo> collision_info;
 	};

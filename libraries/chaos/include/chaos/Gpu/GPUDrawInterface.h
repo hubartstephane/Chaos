@@ -21,8 +21,14 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GPUDrawInterface(ObjectRequest render_material_request, size_t in_vertex_requirement_evaluation = PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
-			PrimitiveOutput(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), render_material_request, in_vertex_requirement_evaluation)
+		GPUDrawInterface(ObjectRequest in_render_material_request, size_t in_vertex_requirement_evaluation = PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
+			PrimitiveOutput(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), in_render_material_request, in_vertex_requirement_evaluation)
+		{
+			dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
+		}
+		/** constructor */
+		GPUDrawInterface(GPURenderMaterial * in_render_material, size_t in_vertex_requirement_evaluation = PrimitiveOutputBase::MIN_VERTEX_ALLOCATION) :
+			PrimitiveOutput(&dynamic_mesh, GetBufferPool(), GetVertexDeclaration(), (in_render_material != nullptr)? in_render_material : DefaultParticleProgram::GetMaterial(), in_vertex_requirement_evaluation)
 		{
 			dynamic_mesh.SetVertexArrayCache(GetVertexArrayCache());
 		}

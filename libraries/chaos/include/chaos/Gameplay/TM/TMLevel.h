@@ -97,9 +97,6 @@ namespace chaos
 		/** called after all particles of a layers has been created, so we can plug additionnal data */
 		virtual bool FinalizeLayerParticles(TMLayerInstance* layer_instance, ParticleAllocationBase* allocation);
 
-		/** the default material when not specified */
-		virtual GPURenderMaterial* GenDefaultRenderMaterial();
-
 	protected:
 
 		/** the tiled map corresponding to this level */

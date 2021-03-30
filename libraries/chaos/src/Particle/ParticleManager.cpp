@@ -57,10 +57,5 @@ namespace chaos
 		return layer_system.Display(renderer, uniform_provider, render_params);
 	}
 
-	GameParticleCreator ParticleManager::GetGameParticleCreator()
-	{
-		return { this }; // GameParticleCreator constructor searchs itself for other resources
-	}
-
 }; // namespace chaos
 

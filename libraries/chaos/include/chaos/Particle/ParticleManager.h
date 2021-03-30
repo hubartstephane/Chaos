@@ -83,9 +83,6 @@ namespace chaos
             return layer->GetParticleSpawner(params...);
         }
 
-		/** get a game particle creator */
-		GameParticleCreator GetGameParticleCreator();
-
 		/** remove a layer from the manager */
 		void RemoveLayer(ParticleLayerBase * layer);
 

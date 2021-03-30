@@ -1463,12 +1463,5 @@ namespace chaos
 		return game_instance->SaveIntoCheckpoint();
 	}
 
-	GameParticleCreator Game::GetGameParticleCreator()
-	{
-		if (particle_manager != nullptr)
-			return particle_manager->GetGameParticleCreator();
-		return {};
-	}
-
 }; // namespace chaos
 

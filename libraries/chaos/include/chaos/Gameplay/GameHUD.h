@@ -112,32 +112,11 @@ namespace chaos
 		/** get the component from its ID */
 		GameHUDComponent const * FindComponent(TagType key) const;
 
-		/** insert some particles inside the HUD */
-		void RegisterParticles(TagType key, ParticleAllocationBase * allocation, bool remove_previous = true);
-		/** remove some particles from the HUD */
-		void UnregisterParticles(TagType key);
-		/** clear all particles from the HUD */
+		/** clear all components from the HUD */
 		void Clear();
-
-		/** get the particle allocation from its ID */
-		ParticleAllocationBase * FindParticleAllocation(TagType key);
-		/** get the particle allocation from its ID */
-		ParticleAllocationBase const * FindParticleAllocation(TagType key) const;
-
-		/** get the particle manager */
-		ParticleManager * GetParticleManager() { return particle_manager.get(); }
-		/** get the particle manager */
-		ParticleManager const * GetParticleManager() const { return particle_manager.get(); }
-
-		/** get particle tools */
-		GameParticleCreator GetGameParticleCreator();
 
 	protected:
 
-		/** initialization method */
-		virtual bool CreateInternalData(ParticleManager * in_particle_manager, ParticleTextGenerator::Generator * in_particle_text_generator, BitmapAtlas::TextureArrayAtlas * in_texture_atlas);
-		/** create the layers */
-		virtual int CreateHUDLayers();
 		/** create the particles */
 		virtual bool FillHUDContent();
 		/** try to find some information in JSON for configuring the component */
@@ -154,13 +133,6 @@ namespace chaos
 
 		/** the allocations */
 		std::map<TagType, shared_ptr<GameHUDComponent>> components;
-		/** the allocations */
-		std::multimap<TagType, shared_ptr<ParticleAllocationBase>> particle_allocations;
-		/** the particle manager */
-		shared_ptr<ParticleManager> particle_manager;
-		/** indicates whether THIS is responsible or not of rendering/ticking the particle manager */
-		bool external_manager = false;
-
 		/** the game owning the HUD */
 		class Game * game = nullptr;
 	};

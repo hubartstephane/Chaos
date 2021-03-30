@@ -53,23 +53,3 @@ bool LudumPlayingHUD::FillHUDContent()
 	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new chaos::GameHUDLifeComponent());
 	return true;
 }
-
-int LudumPlayingHUD::CreateHUDLayers()
-{
-	// call super method
-	int render_order = chaos::PlayingHUD::CreateHUDLayers();
-	if (render_order < 0)
-		return render_order;
-	// create a layer for the life bar
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game != nullptr)
-	{
-		ParticleLifeLayerTrait life_trait;
-		life_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, chaos::GameHUDKeys::LIFE_LAYER_ID, "gameobject", life_trait);
-	}
-	return render_order;
-}
-
-
-

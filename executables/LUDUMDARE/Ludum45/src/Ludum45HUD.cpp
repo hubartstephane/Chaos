@@ -35,28 +35,6 @@ bool LudumPlayingHUD::FillHUDContent()
 	return true;
 }
 
-
-int LudumPlayingHUD::CreateHUDLayers()
-{
-	// call super method
-	int render_order = chaos::PlayingHUD::CreateHUDLayers();
-	if (render_order < 0)
-		return render_order;
-	// special call
-	LudumGame * ludum_game = GetGame();
-	if (ludum_game != nullptr)
-	{
-		// create a layer for the life bar
-		particle_manager->AddLayer<ParticleLifeLayerTrait>(render_order++, chaos::GameHUDKeys::LIFE_LAYER_ID, "gameobject");
-		// create a layer for the shroudlife bar
-		ParticleShroudLifeTrait shroud_trait;
-		shroud_trait.game = ludum_game;
-		particle_manager->AddLayer<ParticleShroudLifeTrait>(render_order++, chaos::GameHUDKeys::SHROUDLIFE_ID, "gameobject", shroud_trait);
-	}
-
-	return render_order;
-}
-
 // ====================================================================
 // GameHUDLevelTitleComponent
 // ====================================================================

@@ -131,20 +131,16 @@ namespace chaos
 
 	void GameHUDSingleAllocationComponent::ShowComponent(bool in_show)
 	{
-		if (allocations != nullptr)
-			allocations->Show(in_show);	
-
 		if (mesh != nullptr)
 			mesh->Show(in_show);
 	}
 
 	void GameHUDSingleAllocationComponent::OnRemovedFromHUD()
 	{
-		allocations = nullptr;
 		mesh = nullptr;
 	}
 
-	int GameHUDSingleAllocationComponent::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
+	int GameHUDSingleAllocationComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 	{
 		int result = GameHUDComponent::DoDisplay(renderer, uniform_provider, render_params);
 		if (mesh != nullptr)
@@ -217,17 +213,6 @@ namespace chaos
 
 	void GameHUDTextComponent::UpdateTextAllocation(char const * in_text)
 	{
-#if 0
-		if (StringTools::IsEmpty(in_text))
-			allocations = nullptr;
-		else
-		{
-			ParticleTextGenerator::GeneratorParams other_params = generator_params;
-			TweakTextGeneratorParams(other_params);
-			allocations = hud->GetGameParticleCreator().SpawnTextParticles(layer_id, in_text, other_params);
-		}
-#endif
-
 		if (StringTools::IsEmpty(in_text))
 			mesh = nullptr;
 		else
@@ -275,7 +260,6 @@ namespace chaos
 	{
 		current_time = 0.0f;
 		lifetime = 0.0f;
-		allocations = nullptr;
 		mesh = nullptr;
 	}
 
@@ -471,6 +455,8 @@ namespace chaos
 
 	void GameHUDLifeComponent::UpdateLifeParticles(float delta_time)
 	{
+#if 0
+
 		// early exit
 		if (particle_name.empty())
 			return;
@@ -554,7 +540,12 @@ namespace chaos
 			particle_position += glm::abs(particle_offset);
 		}
 
+
+
+
+
 		cached_value = count;
+#endif
 	}
 
 	// ====================================================================

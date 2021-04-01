@@ -31,6 +31,23 @@ namespace chaos
         Flush();
     }
 
+    BitmapAtlas::BitmapInfo const* PrimitiveOutputBase::FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request) const
+    {
+        // get the application
+        WindowApplication const* window_application = Application::GetInstance();
+        if (window_application == nullptr)
+            return nullptr;
+        // get the atlas
+        BitmapAtlas::TextureArrayAtlas const * atlas = window_application->GetTextureAtlas();
+        if (atlas == nullptr)
+            return nullptr;
+        // search the folder
+        BitmapAtlas::FolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
+        if (folder_info == nullptr)
+            return nullptr;
+        return folder_info->GetBitmapInfo(bitmap_request);
+    }
+
     GPUPrimitiveBufferCacheEntry * PrimitiveOutputBase::GetInternalCachedBuffer(size_t required_size)
     {
         for (GPUPrimitiveBufferCacheEntry& cache_entry : internal_buffer_pool)

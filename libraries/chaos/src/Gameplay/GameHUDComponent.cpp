@@ -455,97 +455,77 @@ namespace chaos
 
 	void GameHUDLifeComponent::UpdateLifeParticles(float delta_time)
 	{
-#if 0
-
-		// early exit
-		if (particle_name.empty())
-			return;
-
 		// get the number of life
-		int count = (get_life_count_func)? 
-			get_life_count_func() : 
+		int count = (get_life_count_func) ?
+			get_life_count_func() :
 			GetLifeCount();
-
-		if (count < 0)
+		if (count < 0) 
 			return;
-
-		// destroy the allocation if no more life
+		// destroy the mesh if no more life
 		if (count <= 0)
 		{
-			allocations = nullptr;
+			mesh = nullptr;
 			return;
 		}
-		// create/ resize the allocation
-		if (allocations == nullptr || count != cached_value)
+		// update the mesh if necessary
+		if (count != cached_value || count == 1) // count == 1 for blinking  
 		{
-			allocations = hud->GetGameParticleCreator().SpawnParticles(layer_id, particle_name.c_str(), count, true);
-			if (allocations == nullptr)
-				return;
-		}
+			GPUDrawInterface<VertexDefault> DI(nullptr);
 
-		// compute the final size of the particle
-		//
-		// XXX: explanation of 'particle_size' member usage
-		//      -if .x AND .y are 0     => use the particle size in the atlas
-		//      -if .x AND .y are not 0 => override particle size in the atlas
-		//      -if .x OR  .y is  0     => use the particle effective ratio to compute the 0 member value
-
-
-
-
-		// shuludum
-
-
-
-		glm::vec2 particle_final_size = particle_size;
-		if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
-		{
-			BitmapAtlas::BitmapInfo const * bitmap_info = hud->GetGameParticleCreator().FindBitmapInfo(particle_name.c_str());
+			BitmapAtlas::BitmapInfo const* bitmap_info  = DI.FindBitmapInfo(particle_name.c_str());
 			if (bitmap_info != nullptr)
 			{
-				if (particle_final_size.x <= 0.0f && particle_final_size.y <= 0.0f) // both are invalid
-					particle_final_size = glm::vec2(bitmap_info->width, bitmap_info->height);
-				else if (particle_final_size.x <= 0.0f)
-					particle_final_size.x = particle_final_size.y * bitmap_info->width / bitmap_info->height;
-				else
-					particle_final_size.y = particle_final_size.x * bitmap_info->height / bitmap_info->width;
+				// compute the final size of the particle
+				//
+				// XXX: explanation of 'particle_size' member usage
+				//      -if .x AND .y are 0     => use the particle size in the atlas
+				//      -if .x AND .y are not 0 => override particle size in the atlas
+				//      -if .x OR  .y is  0     => use the particle effective ratio to compute the 0 member value
+				glm::vec2 particle_final_size = particle_size;
+				if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
+				{
+					if (particle_final_size.x <= 0.0f && particle_final_size.y <= 0.0f) // both are invalid
+						particle_final_size = glm::vec2(bitmap_info->width, bitmap_info->height);
+					else if (particle_final_size.x <= 0.0f)
+						particle_final_size.x = particle_final_size.y * bitmap_info->width / bitmap_info->height;
+					else
+						particle_final_size.y = particle_final_size.x * bitmap_info->height / bitmap_info->width;
+				}
+
+				// compute the size of the whole sprites with their offset
+				glm::vec2 whole_particle_size =
+					particle_final_size +
+					glm::abs(particle_offset) * (float)(count - 1);
+				// compute the reference point relative to the screen
+				glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint);
+				// compute the bottom-left corner of the whole sprite rectangle
+				glm::vec2 whole_particle_ref = ConvertHotpoint(screen_ref + position, whole_particle_size, hotpoint, Hotpoint::BOTTOM_LEFT);
+				// update the particles members
+				glm::vec2 particle_position = whole_particle_ref;
+				// get the color
+				float fadeout = 1.0f;
+				if (warning_value < 0.5f)
+					fadeout = fadeout_warning_base + (1.0f - fadeout_warning_base) * warning_value / 0.5f;
+
+				QuadPrimitive<VertexDefault> quads = DI.AddQuads(count);
+				while (quads.GetVerticesCount() > 0)
+				{
+					ParticleDefault particle;
+					particle.bounding_box.position = ConvertHotpoint(particle_position, particle_final_size, Hotpoint::BOTTOM_LEFT, Hotpoint::CENTER);
+					particle.bounding_box.half_size = 0.5f * particle_final_size;
+					particle.texcoords = bitmap_info->GetTexcoords();
+					particle.color = { 1.0f, 1.0f, 1.0f, fadeout };
+
+					ParticleToPrimitive(particle, quads);
+
+					particle_position += glm::abs(particle_offset);
+					++quads; // next quad
+				}
+
+				mesh = DI.ExtractMesh();
 			}
+			cached_value = count;
 		}
-
-		// compute the size of the whole sprites with their offset
-		glm::vec2 whole_particle_size =
-			particle_final_size +
-			glm::abs(particle_offset) * (float)(count - 1);
-
-		// compute the reference point relative to the screen
-		glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint);
-
-		// compute the bottom-left corner of the whole sprite rectangle
-		glm::vec2 whole_particle_ref = ConvertHotpoint(screen_ref + position, whole_particle_size, hotpoint, Hotpoint::BOTTOM_LEFT);
-
-		// update the particles members
-		glm::vec2 particle_position = whole_particle_ref;
-
-        ParticleAccessor<ParticleDefault> accessor = allocations->GetParticleAccessor();
-        for (ParticleDefault & p : accessor)
-        {
-			p.bounding_box.position = ConvertHotpoint(particle_position, particle_final_size, Hotpoint::BOTTOM_LEFT, Hotpoint::CENTER);
-			p.bounding_box.half_size = 0.5f * particle_final_size;
-
-			float fadeout = 1.0f;
-			if (warning_value < 0.5f)
-				fadeout = fadeout_warning_base + (1.0f - fadeout_warning_base) * warning_value / 0.5f;
-			p.color = glm::vec4(1.0f, 1.0f, 1.0f, fadeout);			
-
-			particle_position += glm::abs(particle_offset);
-		}
-
-
-
-
-
-		cached_value = count;
-#endif
 	}
 
 	// ====================================================================

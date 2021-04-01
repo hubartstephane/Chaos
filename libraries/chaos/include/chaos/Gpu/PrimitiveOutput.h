@@ -50,6 +50,9 @@ namespace chaos
         /** destructor */
         ~PrimitiveOutputBase();
 
+        /** find the bitmap info */
+        BitmapAtlas::BitmapInfo const* FindBitmapInfo(ObjectRequest bitmap_request, ObjectRequest folder_request = "sprites") const;
+
         /** gets the size of one vertice of the generated primitive */
         size_t GetVertexSize() const { return vertex_size; }
         /** flush all pending Draws into the GPUDynamicMesh */

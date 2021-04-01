@@ -219,8 +219,8 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
 		return true;
 
 	// search BitmapLayout for Enemy
-	chaos::BitmapAtlas::FolderInfo const * bitmap_set = atlas->GetFolderInfo("sprites");
-	if (bitmap_set == nullptr)
+	chaos::BitmapAtlas::FolderInfo const * folder_info = atlas->GetFolderInfo("sprites");
+	if (folder_info == nullptr)
 		return true;
 	
 	// create an allocation for all enemies we are about to create
@@ -316,7 +316,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
             char const* enemy_names[] = { "meteor1", "meteor2", "meteor3", "meteor4" }; // one RANDOM for each enemy
             int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);
             int rand_name = rand() % name_count;
-            enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
+            enemy_info = folder_info->GetBitmapInfo(enemy_names[rand_name]);
 
             particle.rotation_speed = chaos::MathTools::RandFloat(0.0f, -1.0f);
 
@@ -333,7 +333,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
                 int name_count = sizeof(enemy_names) / sizeof(enemy_names[0]);
                 int rand_name = rand() % name_count;
 
-                enemy_info = bitmap_set->GetBitmapInfo(enemy_names[rand_name]);
+                enemy_info = folder_info->GetBitmapInfo(enemy_names[rand_name]);
             }
 
             particle.life = ludum_game->alien_health;
@@ -341,7 +341,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
         }
         else if (spawn_enemy_type == SPAWN_ENEMY_FOUR_TURRETS)
         {
-            enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
+            enemy_info = folder_info->GetBitmapInfo("Enemy1");
             particle.fire_frequency = fire_frequency * 2.0f;         // x2 because 4 bullets in a row !!!
             particle.rotation_following_player = false;
             particle.rotation_speed = 1.0f;
@@ -352,7 +352,7 @@ bool SpawnerTrigger::OnCollisionEvent(float delta_time, chaos::Object * object, 
         }
         else if (spawn_enemy_type == SPAWN_ENEMY_FOLLOWING_TURRET)
         {
-            enemy_info = bitmap_set->GetBitmapInfo("Enemy1");
+            enemy_info = folder_info->GetBitmapInfo("Enemy1");
             particle.fire_frequency = fire_frequency;
             particle.rotation_following_player = true;
 

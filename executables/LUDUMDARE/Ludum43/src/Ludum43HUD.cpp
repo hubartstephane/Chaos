@@ -57,32 +57,18 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	if (ludum_player == nullptr)
 		return true;
 
-	float life = ludum_player->GetHealth();
-	if (life != cached_value)
+	float health = ludum_player->GetHealth();
+	if (health != cached_value)
 	{
-		// create the allocation
-		if (allocations == nullptr)
-		{
-			chaos::ParticleLayerBase * layer = hud->GetParticleManager()->FindLayer(chaos::GameHUDKeys::LIFE_LAYER_ID);
-			if (layer == nullptr)
-				return true;
-			allocations = layer->SpawnParticles(1);
-			if (allocations == nullptr)
-				return true;
-		}
-		else
-		{
-			allocations->Resize(1);
-		}
-		// fill the particle
-		chaos::ParticleAccessor<ParticleLife> particles = allocations->GetParticleAccessor();
-		if (particles.GetDataCount() == 0)
-			return true;
+		float max_health = ludum_player->GetMaxHealth();
+
+		chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
 
 		chaos::box2 canvas_box = ludum_game->GetCanvasBox();
-
 		glm::vec2 canvas_size = 2.0f * canvas_box.half_size;
 
+		chaos::QuadPrimitive<chaos::VertexDefault> quads = DI.AddQuads(3);
+		
 		glm::vec2 position1, position2;
 		position1.x = -canvas_size.x * 0.5f + 40.0f;
 		position1.y = -canvas_size.y * 0.5f + 40.0f;
@@ -90,12 +76,31 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 		position2.x = canvas_size.x * 0.5f - 40.0f;
 		position2.y = -canvas_size.y * 0.5f + 70.0f;
 
-		particles[0].bounding_box = chaos::box2(std::make_pair(position1, position2));
-		particles[0].texcoords.bottomleft = glm::vec2(0.0f, 0.0f);
-		particles[0].texcoords.topright = glm::vec2(ludum_player->GetMaxHealth(), 1.0f);
-		particles[0].color = glm::vec4(life, life, life, life);
+		chaos::ParticleDefault particle;
+		particle.texcoords.bitmap_index = -1;
+		// the border
+		particle.bounding_box = chaos::box2(std::make_pair(position1, position2));
+		particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		ParticleToPrimitive(particle, quads);
+		++quads;
 
-		cached_value = life;
+		// the background
+		particle.bounding_box.half_size -= glm::vec2(3.0f, 3.0f);
+		particle.color = glm::vec4(0.0, 0.0, 0.0, 1.0);
+		ParticleToPrimitive(particle, quads);
+		++quads;
+
+		// the life bar
+		std::pair<glm::vec2, glm::vec2> corners = chaos::GetBoxCorners(particle.bounding_box);
+		corners.second.x = corners.first.x + (health / max_health) * (corners.second.x - corners.first.x);
+		particle.bounding_box = chaos::box2(corners);
+		particle.color = glm::vec4(1.0, 0.0, 0.0, 1.0);
+		ParticleToPrimitive(particle, quads);
+		++quads;
+
+		mesh = DI.ExtractMesh();
+
+		cached_value = health;
 	}
 	return true;
 }

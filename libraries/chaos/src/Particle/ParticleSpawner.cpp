@@ -21,11 +21,11 @@ namespace chaos
 		if (bitmap_request.IsNoneRequest())
 			return nullptr;
 		// find the folder
-		BitmapAtlas::FolderInfo const* bitmap_set = atlas->GetFolderInfo(folder_request, true);
-		if (bitmap_set == nullptr)
+		BitmapAtlas::FolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
+		if (folder_info == nullptr)
 			return nullptr;
 		// get the bitmap
-		return bitmap_set->GetBitmapInfo(bitmap_request, true);
+		return folder_info->GetBitmapInfo(bitmap_request, true);
 	}
 
 
@@ -41,11 +41,11 @@ namespace chaos
 			return true;
 		}
 		// find the folder
-		BitmapAtlas::FolderInfo const* bitmap_set = atlas->GetFolderInfo(folder_request, true);
-		if (bitmap_set == nullptr)
+		BitmapAtlas::FolderInfo const* folder_info = atlas->GetFolderInfo(folder_request, true);
+		if (folder_info == nullptr)
 			return false;
 		// get the bitmap
-		bitmap_info = bitmap_set->GetBitmapInfo(bitmap_request, true);
+		bitmap_info = folder_info->GetBitmapInfo(bitmap_request, true);
 		if (bitmap_info == nullptr)
 			return false;
 		return true;

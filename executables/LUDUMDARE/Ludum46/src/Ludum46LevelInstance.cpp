@@ -46,74 +46,7 @@ void LudumLevelInstance::CreateCameras()
 
 int LudumLevelInstance::DoDisplay(chaos::GPURenderer* renderer, chaos::GPUProgramProviderBase const* uniform_provider, chaos::GPURenderParams const& render_params)
 {
-	int result = chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
-
-	//return result;
-
-#if 0
-
-	static chaos::shared_ptr<chaos::GPUBufferPool> pool = new chaos::GPUBufferPool;
-
-	static chaos::shared_ptr<chaos::GPUDynamicMesh> mesh = new chaos::GPUDynamicMesh;
-
-	static chaos::shared_ptr<chaos::GPUVertexDeclaration> declaration = nullptr;
-	if (declaration == nullptr)
-	{
-		declaration = new chaos::GPUVertexDeclaration;
-		GetTypedVertexDeclaration(declaration.get(), boost::mpl::identity<chaos::VertexDefault>());
-
-
-	}
-
-	chaos::PrimitiveOutput<chaos::VertexDefault> output(mesh.get(), pool.get(), declaration.get(), "screenspace1", 500);
-
-
-	chaos::ParticleTextGenerator::GeneratorParams params;
-
-	if (1)for (int i = 0; i < 10; ++i)
-	{
-		params.line_height = 100;
-		params.position = { -500.0f , -200.0f + float(i) * 100.0f };
-		params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
-
-		output.AddText("tototototo", params);
-
-	}
-	output.Flush();
-
-	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	//DI.Display(renderer, uniform_provider, render_params);
-
-	//mesh = DI.ExtractMesh();
-	mesh->Display(renderer, uniform_provider, render_params);
-	mesh->Clear(pool.get());
-
-#else
-
-
-	chaos::GPUDrawInterface<chaos::VertexDefault> DI("screenspace1", 1000);
-
-
-	chaos::ParticleTextGenerator::GeneratorParams params;
-
-	for (int i = 0; i < 10; ++i)
-	{
-		params.line_height = 100;
-		params.position = { -500.0f , -200.0f + float(i) * 100.0f };
-		params.hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
-
-		DI.AddText("tototototo", params);
-	}
-
-	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	DI.Display(renderer, uniform_provider, render_params);
-
-#endif
-
-
-	return result;
+	return chaos::TMLevelInstance::DoDisplay(renderer, uniform_provider, render_params);
 }
 
 bool LudumLevelInstance::DoTick(float delta_time)

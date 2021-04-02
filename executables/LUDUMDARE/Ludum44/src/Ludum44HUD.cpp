@@ -104,9 +104,6 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 	DI.AddText(title.c_str(), params);
 	mesh = DI.ExtractMesh();
 
-	//allocations = hud->GetGameParticleCreator().SpawnTextParticles(chaos::GameHUDKeys::TEXT_LAYER_ID, title.c_str(), params);
-
-
 	return true;
 }
 

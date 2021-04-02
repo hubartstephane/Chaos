@@ -86,6 +86,7 @@ std::string GameHUDUpgradeComponent::FormatText() const
 
 void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 {
+#if 0
 
 	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = hud->GetGameParticleCreator().FindBitmapInfo(bitmap_name);
 	if (bitmap_info == nullptr)
@@ -142,6 +143,7 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 		p.bounding_box.half_size = 0.5f * particle_final_size;
 	
 	}
+#endif
 	
 }
 

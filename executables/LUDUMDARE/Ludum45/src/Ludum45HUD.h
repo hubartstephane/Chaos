@@ -41,7 +41,7 @@ protected:
 	/** override */
 	virtual std::string FormatText() const override;
 	/** override */
-	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+	virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 };	
 
 

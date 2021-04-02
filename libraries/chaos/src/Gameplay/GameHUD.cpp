@@ -189,19 +189,19 @@ namespace chaos
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
 			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), game_name);
+				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)), game_name);
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
 			std::string best_score = StringTools::Printf("Best score: %d", game->GetBestScore());
 			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent(
-				ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), best_score.c_str());
+				ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), Hotpoint::CENTER)), best_score.c_str());
 		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();
 		if (game_instructions != nullptr)
 			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent(
-				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::BOTTOM), GameHUDKeys::TEXT_LAYER_ID), game_instructions);
+				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::BOTTOM)), game_instructions);
 
 		return true;
 	}
@@ -217,7 +217,7 @@ namespace chaos
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Pause");
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)), "Pause");
 		return true;
 	}
 
@@ -232,7 +232,7 @@ namespace chaos
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER), GameHUDKeys::TEXT_LAYER_ID), "Game Over");
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)), "Game Over");
 		return true;
 	}
 

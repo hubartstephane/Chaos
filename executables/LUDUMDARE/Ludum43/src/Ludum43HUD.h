@@ -21,22 +21,22 @@ public:
 
 
 	/** constructor */
-	GameHUDWakenParticleComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDWakenParticleComponent();
 	/** constructor */
-	GameHUDWakenParticleComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
-		chaos::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_params, in_layer_id) {}
+	GameHUDWakenParticleComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params) :
+		chaos::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_params) {}
 
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+	virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 };
 
 // ====================================================================
 // GameHUDHealthBarComponent
 // ====================================================================
 
-class GameHUDHealthBarComponent : public chaos::GameHUDSingleAllocationComponent
+class GameHUDHealthBarComponent : public chaos::GameHUDMeshComponent
 {
 protected:
 

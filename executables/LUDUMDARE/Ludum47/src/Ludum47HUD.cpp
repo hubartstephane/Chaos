@@ -11,8 +11,8 @@
 // GameHUDRacePositionComponent
 // ====================================================================
 
-GameHUDRacePositionComponent::GameHUDRacePositionComponent(chaos::TagType in_layer_id) :
-	chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1) , in_layer_id)
+GameHUDRacePositionComponent::GameHUDRacePositionComponent() :
+	chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1))
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -39,7 +39,7 @@ bool GameHUDRacePositionComponent::DoTick(float delta_time)
 	return true;
 }
 
-bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
+bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_mesh)
 {
 	LudumPlayingHUD const* playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
@@ -90,8 +90,8 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_allocation)
 // GameHUDRaceLapsComponent
 // ====================================================================
 
-GameHUDRaceLapsComponent::GameHUDRaceLapsComponent(chaos::TagType in_layer_id) :
-	chaos::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d", glm::ivec2(-1, -1), in_layer_id)
+GameHUDRaceLapsComponent::GameHUDRaceLapsComponent() :
+	chaos::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d", glm::ivec2(-1, -1))
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -104,7 +104,7 @@ std::string GameHUDRaceLapsComponent::FormatText() const
 	return chaos::StringTools::Printf(format.c_str(), 1 + cached_value.x, cached_value.y);
 }
 
-bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_allocation)
+bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_mesh)
 {
 	LudumPlayingHUD const* playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)

@@ -25,15 +25,15 @@ class GameHUDComboComponent : public chaos::GameHUDCacheValueComponent<int>
 public:
 
 	/** constructor */
-	GameHUDComboComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDComboComponent();
 	/** constructor */
-	GameHUDComboComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
-		chaos::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_params, in_layer_id) {}
+	GameHUDComboComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params) :
+		chaos::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_params) {}
 
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+	virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 };
 
 // ====================================================================

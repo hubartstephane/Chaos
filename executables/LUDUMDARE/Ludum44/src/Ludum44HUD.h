@@ -21,22 +21,22 @@ class GameHUDLifeCountComponent : public chaos::GameHUDCacheValueComponent<int>
 public:
 
 	/** constructor */
-	GameHUDLifeCountComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDLifeCountComponent();
 	/** constructor */
-	GameHUDLifeCountComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
-		GameHUDCacheValueComponent<int>("Life: %d", -1, in_params, in_layer_id) {}
+	GameHUDLifeCountComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params) :
+		GameHUDCacheValueComponent<int>("Life: %d", -1, in_params) {}
 
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+	virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 };
 
 // ====================================================================
 // GameHUDHealthBarComponent
 // ====================================================================
 
-class GameHUDHealthBarComponent : public chaos::GameHUDSingleAllocationComponent
+class GameHUDHealthBarComponent : public chaos::GameHUDMeshComponent
 {
 protected:
 
@@ -48,7 +48,7 @@ protected:
 // GameHUDPowerUpComponent
 // ====================================================================
 
-class GameHUDPowerUpComponent : public chaos::GameHUDSingleAllocationComponent
+class GameHUDPowerUpComponent : public chaos::GameHUDMeshComponent
 {
 	friend class chaos::GameHUD;
 

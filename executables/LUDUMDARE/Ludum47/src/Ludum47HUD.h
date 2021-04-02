@@ -27,17 +27,17 @@ public:
 
 
 	/** constructor */
-	GameHUDRacePositionComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDRacePositionComponent();
 	/** constructor */
-	GameHUDRacePositionComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
-		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params, in_layer_id) {}
+	GameHUDRacePositionComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
+		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params) {}
 
 	virtual std::string FormatText() const override;
 
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool& destroy_allocation) override;
+	virtual bool UpdateCachedValue(bool& destroy_mesh) override;
 	/** override */
 	virtual bool DoTick(float delta_time) override;
 
@@ -60,17 +60,17 @@ public:
 
 
 	/** constructor */
-	GameHUDRaceLapsComponent(chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID);
+	GameHUDRaceLapsComponent();
 	/** constructor */
-	GameHUDRaceLapsComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params, chaos::TagType in_layer_id = chaos::GameHUDKeys::TEXT_LAYER_ID) :
-		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params, in_layer_id) {}
+	GameHUDRaceLapsComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
+		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params) {}
 
 	virtual std::string FormatText() const override;
 
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool& destroy_allocation) override;
+	virtual bool UpdateCachedValue(bool& destroy_mesh) override;
 
 
 

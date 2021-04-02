@@ -11,8 +11,8 @@
 // GameHUDLifeCountComponent
 // ====================================================================
 
-GameHUDLifeCountComponent::GameHUDLifeCountComponent(chaos::TagType in_layer_id) :
-	GameHUDCacheValueComponent<int>("Life: %d", -1, in_layer_id) 
+GameHUDLifeCountComponent::GameHUDLifeCountComponent() :
+	GameHUDCacheValueComponent<int>("Life: %d", -1) 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -20,14 +20,14 @@ GameHUDLifeCountComponent::GameHUDLifeCountComponent(chaos::TagType in_layer_id)
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
+bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_mesh)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
 	{
 		LudumPlayer const * ludum_player = playing_hud->GetPlayer(0);
 		if (ludum_player == nullptr) 
-			destroy_allocation = true;
+			destroy_mesh = true;
 		else
 		{
 			int current_life_count = ludum_player->GetLifeCount();
@@ -49,7 +49,7 @@ bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_allocation)
 
 bool GameHUDPowerUpComponent::DoTick(float delta_time)
 {
-	chaos::GameHUDSingleAllocationComponent::DoTick(delta_time);
+	chaos::GameHUDMeshComponent::DoTick(delta_time);
 
 	LudumGameInstance * ludum_game_instance = auto_cast(GetGameInstance());
 	if (ludum_game_instance == nullptr)

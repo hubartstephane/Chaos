@@ -11,8 +11,8 @@
 // GameHUDWakenParticleComponent
 // ====================================================================
 
-GameHUDWakenParticleComponent::GameHUDWakenParticleComponent(chaos::TagType in_layer_id) :
-	chaos::GameHUDCacheValueComponent<int>("Particles: %d", -1, in_layer_id) 
+GameHUDWakenParticleComponent::GameHUDWakenParticleComponent() :
+	chaos::GameHUDCacheValueComponent<int>("Particles: %d", -1) 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -20,7 +20,7 @@ GameHUDWakenParticleComponent::GameHUDWakenParticleComponent(chaos::TagType in_l
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
+bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_mesh)
 {
 	LudumGameInstance const* ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance != nullptr)

@@ -3,7 +3,7 @@
 namespace chaos
 {
 	class GameHUDComponent;
-	class GameHUDSingleAllocationComponent;
+	class GameHUDMeshComponent;
 	class GameHUDTextComponent;
 
 	template<typename T>
@@ -85,11 +85,11 @@ namespace chaos
 	};
 
 	// ====================================================================
-	// GameHUDSingleAllocationComponent
+	// GameHUDMeshComponent
 	// ====================================================================
 
-	/** a HUD component with a single allocation */
-	class GameHUDSingleAllocationComponent : public GameHUDComponent
+	/** a HUD component with a mesh */
+	class GameHUDMeshComponent : public GameHUDComponent
 	{
 	protected:
 
@@ -99,7 +99,6 @@ namespace chaos
 		virtual void OnRemovedFromHUD() override;
 		/** override */
 		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
-
 
 	protected:
 
@@ -112,23 +111,23 @@ namespace chaos
 	// GameHUDTextComponent
 	// ====================================================================
 
-	class GameHUDTextComponent : public GameHUDSingleAllocationComponent
+	class GameHUDTextComponent : public GameHUDMeshComponent
 	{
 		friend class GameHUD;
 
 	public:
 
 		/** constructor */
-		GameHUDTextComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDTextComponent() = default;
 		/** constructor */
-		GameHUDTextComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDTextComponent(ParticleTextGenerator::GeneratorParams const & in_params);
 
 	protected:
 
 		/** tweak the text generation parameters */
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const;
 		/** create the text */
-		virtual void UpdateTextAllocation(char const * in_text);
+		virtual void UpdateTextMesh(char const * in_text);
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 		/** called whenever it is inserted in HUD */
@@ -136,8 +135,6 @@ namespace chaos
 
 	protected:
 
-		/** the layer owning the allocation */
-		TagType layer_id = 0;
 		/** the placement and aspect of the text */
 		ParticleTextGenerator::GeneratorParams generator_params;
 	};
@@ -154,33 +151,29 @@ namespace chaos
 	protected:
 
 		/** constructor */
-		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDTextComponent(in_layer_id),
+		GameHUDCacheValueComponent(char const * in_format, type in_initial_value) :
 			cached_value(in_initial_value),
 			format(in_format) {}
 		/** constructor */
-		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDTextComponent(in_params, in_layer_id) ,
+		GameHUDCacheValueComponent(char const * in_format, type in_initial_value, ParticleTextGenerator::GeneratorParams const & in_params):
+			GameHUDTextComponent(in_params) ,
 			cached_value(in_initial_value),
 			format(in_format){}
 
 		/** override */
 		virtual bool DoTick(float delta_time) override
 		{
-			UpdateTextAllocation(nullptr);
+			UpdateTextMesh(nullptr);
 			return true;
 		}
-
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override
 		{
 			if (!GameHUDTextComponent::InitializeFromConfiguration(json, config_path))
 				return false;
-		
 			JSONTools::GetAttribute(json, "format", format);		
 			return true;
 		}
-
 		/** format the text according to cached value */
 		virtual std::string FormatText() const
 		{
@@ -188,40 +181,40 @@ namespace chaos
 		}
 
 		/** override */
-		virtual void UpdateTextAllocation(char const * in_text) override
+		virtual void UpdateTextMesh(char const * in_text) override
 		{
 			// search value if necessary
 			if (in_text == nullptr)
 			{
 				// update the cache value if necessary
-				bool destroy_allocation = false;
+				bool destroy_mesh = false;
 				bool update_required = (update_cache_value_func)?
-					update_cache_value_func(cached_value, destroy_allocation):									
-					UpdateCachedValue(destroy_allocation);
-				// destroy allocation
-				if (destroy_allocation)
-					GameHUDTextComponent::UpdateTextAllocation(nullptr);
+					update_cache_value_func(cached_value, destroy_mesh):
+					UpdateCachedValue(destroy_mesh);
+				// destroy mesh
+				if (destroy_mesh)
+					GameHUDTextComponent::UpdateTextMesh(nullptr);
 				else if (update_required)
 				{
 					if (format_func)
-						GameHUDTextComponent::UpdateTextAllocation(format_func(cached_value).c_str());
+						GameHUDTextComponent::UpdateTextMesh(format_func(cached_value).c_str());
 					else
-						GameHUDTextComponent::UpdateTextAllocation(FormatText().c_str());
+						GameHUDTextComponent::UpdateTextMesh(FormatText().c_str());
 				}
 					
 			}
 			else
-				GameHUDTextComponent::UpdateTextAllocation(in_text);
+				GameHUDTextComponent::UpdateTextMesh(in_text);
 
 		}
 
 		/** update the cached value and returns true whether the particle system has to be regenerated */
-		virtual bool UpdateCachedValue(bool & destroy_allocation) { return false; }
+		virtual bool UpdateCachedValue(bool & destroy_mesh) { return false; }
 
 	public:
 
 		/** an alternate 'UpdateCachedValue' member */
-		std::function<bool(T & cached_value, bool & destroy_allocation)> update_cache_value_func;
+		std::function<bool(T & cached_value, bool & destroy_mesh)> update_cache_value_func;
 		/** an alternate 'FormatText' member */
 		std::function<std::string(T const & cached_value)> format_func;
 
@@ -244,9 +237,9 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDNotificationComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDNotificationComponent();
 		/** constructor */
-		GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params);
 
 		/** show/initialize the notification */
 		void ShowNotification(char const * in_message, float in_lifetime);
@@ -275,15 +268,15 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDScoreComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDScoreComponent();
 		/** constructor */
-		GameHUDScoreComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<int>("Score: %d", -1, in_params, in_layer_id) {}
+		GameHUDScoreComponent(ParticleTextGenerator::GeneratorParams const & in_params):
+			GameHUDCacheValueComponent<int>("Score: %d", -1, in_params) {}
 
 	protected:
 
 		/** override */
-		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+		virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 	};
 
 	// ====================================================================
@@ -295,17 +288,17 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDFramerateComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDFramerateComponent();
 		/** constructor */
-		GameHUDFramerateComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_params, in_layer_id) {}
+		GameHUDFramerateComponent(ParticleTextGenerator::GeneratorParams const & in_params):
+			GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_params) {}
 
 	protected:
 
 		/** override */
 		virtual int DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params) override;
 		/** override */
-		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+		virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 
 	protected:
 
@@ -322,15 +315,15 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDTimeoutComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDTimeoutComponent();
 		/** constructor */
-		GameHUDTimeoutComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_params, in_layer_id) {}
+		GameHUDTimeoutComponent(ParticleTextGenerator::GeneratorParams const & in_params) :
+			GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_params) {}
 
 	protected:
 
 		/** override */
-		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+		virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 		/** override */
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const override;
 	};
@@ -340,12 +333,12 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	class GameHUDLifeComponent : public GameHUDSingleAllocationComponent
+	class GameHUDLifeComponent : public GameHUDMeshComponent
 	{
 	public:
 
 		/** constructor */
-		GameHUDLifeComponent(TagType in_layer_id = GameHUDKeys::LIFE_LAYER_ID);
+		GameHUDLifeComponent() = default;
 
 	protected:
 
@@ -368,8 +361,6 @@ namespace chaos
 
 	protected:
 
-		/** the layer owning the allocation */
-		TagType layer_id = 0;
 		/** caching the current life count */
 		int cached_value = -1;
 
@@ -408,17 +399,17 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDLevelTitleComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDLevelTitleComponent();
 		/** constructor */
-		GameHUDLevelTitleComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID) :
-			GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params, in_layer_id) {}
+		GameHUDLevelTitleComponent(ParticleTextGenerator::GeneratorParams const & in_params) :
+			GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params) {}
 
 	protected:
 
 		/** override */
 		virtual std::string FormatText() const override;
 		/** override */
-		virtual bool UpdateCachedValue(bool & destroy_allocation) override;
+		virtual bool UpdateCachedValue(bool & destroy_mesh) override;
 	};	
 
 	// ====================================================================
@@ -431,55 +422,15 @@ namespace chaos
 	public:
 
 		/** constructor */
-		GameHUDFreeCameraComponent(TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDFreeCameraComponent();
 		/** constructor */
-		GameHUDFreeCameraComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id = GameHUDKeys::TEXT_LAYER_ID);
+		GameHUDFreeCameraComponent(ParticleTextGenerator::GeneratorParams const & in_params);
 
 	protected:
 
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 	};
-
-	// ====================================================================
-	// GameHUDTimedComponent
-	// ====================================================================
-
-#if 0
-
-	// SHU fixme : Tick -> RemoveFromHUD -> iterator KO
-
-	class GameHUDTimedComponent : public GameHUDComponent
-	{
-		friend class GameHUD;
-
-	public:
-
-		/** constructor */
-		GameHUDTimedComponent(GameHUDComponent * in_child_component, float in_lifetime);
-
-	protected:
-
-		/** override */
-		virtual bool DoTick(float delta_time) override;
-		/** override */
-		virtual void OnRemovedFromHUD() override;
-		/** override */
-		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
-		/** override */
-		virtual void SetHUD(GameHUD * in_hud) override;
-
-	public:
-
-		/** the life of the component */
-		float lifetime = -1.0f;
-		/** the current time */
-		float current_time = 0.0f;
-		/** the inner component */
-		shared_ptr<GameHUDComponent> child_component;
-	};
-
-#endif
 
 }; // namespace chaos
 

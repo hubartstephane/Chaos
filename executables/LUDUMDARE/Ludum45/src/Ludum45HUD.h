@@ -57,7 +57,7 @@ protected:
 // ====================================================================
 
 
-class GameHUDShroudLifeComponent : public chaos::GameHUDSingleAllocationComponent
+class GameHUDShroudLifeComponent : public chaos::GameHUDCacheValueComponent<float>
 {
 	friend class GameHUD;
 

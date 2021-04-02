@@ -84,34 +84,34 @@ std::string GameHUDUpgradeComponent::FormatText() const
 // GameHUDShroudLifeComponent
 // ====================================================================
 
-void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
+bool GameHUDShroudLifeComponent::UpdateCachedValue(bool& destroy_allocation)
 {
-#if 0
+	LudumPlayer* ludum_player = GetPlayer(0);
+	if (ludum_player == nullptr)
+		return;
 
-	chaos::BitmapAtlas::BitmapInfo const * bitmap_info = hud->GetGameParticleCreator().FindBitmapInfo(bitmap_name);
+	float health = ludum_player->GetHealth();
+	if (health == cached_value)
+		return;
+
+
+
+	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
+
+	chaos::BitmapAtlas::BitmapInfo const* bitmap_info = DI.FindBitmapInfo(bitmap_name);
 	if (bitmap_info == nullptr)
 		return;
 
-	if (allocations == nullptr)
-	{
-		allocations = hud->GetGameParticleCreator().SpawnParticles(chaos::GameHUDKeys::SHROUDLIFE_ID, bitmap_name, 1, true);
-		if (allocations == nullptr)
-			return;
-	}
+	float health = ludum_player->GetHealth();
+	float max_health = ludum_player->GetMaxHealth();
 
+	float image_count = (float)bitmap_info->GetAnimationImageCount();
+	int index = (int)(image_count * (1.0 - (health / max_health)));
 
+	chaos::BitmapAtlas::BitmapLayout layout = bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
 
-
-// shuludum : raw copy from GameHUDLifeComponent. Something better has to be found
-
-	// shuludum    XXX : bitmap_info->   devrait avoir une fonction qui retourne la VRAIE taille d'une animation et pas la taille de la grille complete => GetAnimationLayout(0, ...)
-
-	chaos::BitmapAtlas::BitmapLayout layout = bitmap_info->GetAnimationLayout(0, chaos::WrapMode::CLAMP);
-
-	
 	float bw = (float)layout.width;
 	float bh = (float)layout.height;
-
 
 	glm::vec2 particle_final_size = particle_size;
 	if (particle_final_size.x <= 0.0f || particle_final_size.y <= 0.0f)
@@ -124,27 +124,21 @@ void GameHUDShroudLifeComponent::OnInsertedInHUD(char const * bitmap_name)
 			particle_final_size.y = particle_final_size.x * bh / bw;
 	}
 
-
 	glm::vec2 screen_ref = GetCanvasBoxCorner(GetGame()->GetCanvasBox(), hotpoint);
 	glm::vec2 particle_position = chaos::ConvertHotpoint(screen_ref + position, particle_final_size, hotpoint, chaos::Hotpoint::CENTER);
 
+	chaos::ParticleDefault particle;
 
-	//glm::vec2 particle_position = whole_particle_ref;
+	particle.texcoords = layout.GetTexcoords();
+	particle.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	particle.bounding_box.position = particle_position;
+	particle.bounding_box.half_size = 0.5f * particle_final_size;
 
-	// update the particles members
-	chaos::ParticleAccessor<ParticleShroudLife> particles = allocations->GetParticleAccessor();
-	for (size_t i = 0 ; i < particles.GetDataCount() ; ++i)
-	{
-		ParticleShroudLife & p = particles[i];
+	ParticleToPrimitives(particle, DI);
 
-		p.bitmap_info = bitmap_info;
-		p.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-		p.bounding_box.position = particle_position;
-		p.bounding_box.half_size = 0.5f * particle_final_size;
-	
-	}
-#endif
-	
+	mesh = DI.ExtractMesh();
+
+	cached_value = health;
 }
 
 bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)

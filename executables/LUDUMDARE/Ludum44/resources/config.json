@@ -11,5 +11,6 @@
   "sounds": { "@filename": "@sounds.json" },
   "hud": { "@filename": "@hud.json" },
 
-  "fonts": { "@filename": "fonts.json" }
+  "fonts": { "@filename": "fonts.json" },
+  "sprite_directory": "@sprites"
 }

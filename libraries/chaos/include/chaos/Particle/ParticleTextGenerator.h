@@ -334,9 +334,14 @@ namespace chaos
 		template<typename VERTEX_TYPE>
 		QuadPrimitive<VERTEX_TYPE> TextToPrimitives(PrimitiveOutput<VERTEX_TYPE>& output, GeneratorResult const& generator_result, CreateTextAllocationParams const& allocation_params)
 		{
+			// early exit
+			size_t token_count = generator_result.GetTokenCount();
+			if (token_count == 0)
+				return {};
+
 			int extra_background = (allocation_params.create_background) ? 1 : 0;
 
-			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(generator_result.GetTokenCount() + extra_background);
+			QuadPrimitive<VERTEX_TYPE> result = output.AddQuads(token_count + extra_background);
 			QuadPrimitive<VERTEX_TYPE> current_primitive = result;
 
 			// create the background

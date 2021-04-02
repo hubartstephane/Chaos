@@ -55,14 +55,14 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 	if (ludum_game_instance == nullptr)
 	{
 		cached_power_up = nullptr;
-		allocations = nullptr;
+		mesh = nullptr;
 		return true;	
 	}
 
 	if (ludum_game_instance->current_power_up == nullptr)
 	{
 		cached_power_up = nullptr;
-		allocations = nullptr;
+		mesh = nullptr;
 		return true;		
 	}
 
@@ -100,7 +100,11 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());
 		
 
-	allocations = hud->GetGameParticleCreator().SpawnTextParticles(chaos::GameHUDKeys::TEXT_LAYER_ID, title.c_str(), params);
+	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
+	DI.AddText(title.c_str(), params);
+	mesh = DI.ExtractMesh();
+
+	//allocations = hud->GetGameParticleCreator().SpawnTextParticles(chaos::GameHUDKeys::TEXT_LAYER_ID, title.c_str(), params);
 
 
 	return true;
@@ -112,6 +116,30 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 
 bool GameHUDHealthBarComponent::DoTick(float delta_time)
 {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud == nullptr)
 		return true;
@@ -189,7 +217,7 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 		if (part->color.x > part->color.y)
 			part->color.x = part->color.y;
 	}
-	
+#endif	
 	return true;
 }
 

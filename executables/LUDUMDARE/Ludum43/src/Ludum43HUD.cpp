@@ -22,18 +22,14 @@ GameHUDWakenParticleComponent::GameHUDWakenParticleComponent(chaos::TagType in_l
 
 bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
 {
-	LudumPlayingHUD const * playing_hud = auto_cast(hud);
-	if (playing_hud != nullptr)
+	LudumGameInstance const* ludum_game_instance = GetGameInstance();
+	if (ludum_game_instance != nullptr)
 	{
-		LudumGameInstance const * ludum_game_instance = playing_hud->GetGameInstance();
-		if (ludum_game_instance != nullptr)
+		int waken_up_particle_count = ludum_game_instance->GetWakenUpParticleCount();
+		if (waken_up_particle_count != cached_value)
 		{
-			int waken_up_particle_count = ludum_game_instance->GetWakenUpParticleCount();
-			if (waken_up_particle_count != cached_value)
-			{
-				cached_value = waken_up_particle_count;
-				return true;
-			}
+			cached_value = waken_up_particle_count;
+			return true;
 		}
 	}
 	return false;
@@ -45,15 +41,11 @@ bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_allocation)
 
 bool GameHUDHealthBarComponent::DoTick(float delta_time)
 {
-	LudumPlayingHUD const * playing_hud = auto_cast(hud);
-	if (playing_hud == nullptr)
-		return true;
-
-	LudumGame const * ludum_game = playing_hud->GetGame();
+	LudumGame const* ludum_game = GetGame();
 	if (ludum_game == nullptr)
 		return true;
 
-	LudumPlayer const* ludum_player = playing_hud->GetPlayer(0);
+	LudumPlayer const* ludum_player = GetPlayer(0);
 	if (ludum_player == nullptr)
 		return true;
 

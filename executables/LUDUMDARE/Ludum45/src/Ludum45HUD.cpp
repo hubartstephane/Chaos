@@ -48,7 +48,7 @@ GameHUDUpgradeComponent::GameHUDUpgradeComponent(chaos::TagType in_layer_id) :
 	generator_params.hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
 }
 
-bool GameHUDUpgradeComponent::UpdateCachedValue(bool & destroy_allocation) 
+bool GameHUDUpgradeComponent::UpdateCachedValue(bool & destroy_mesh)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
@@ -68,7 +68,7 @@ bool GameHUDUpgradeComponent::UpdateCachedValue(bool & destroy_allocation)
 		}
 	}
 
-	destroy_allocation = true;
+	destroy_mesh = true;
 	cached_value = std::string();
 	return true;
 }
@@ -84,7 +84,7 @@ std::string GameHUDUpgradeComponent::FormatText() const
 // GameHUDShroudLifeComponent
 // ====================================================================
 
-bool GameHUDShroudLifeComponent::UpdateCachedValue(bool& destroy_allocation)
+bool GameHUDShroudLifeComponent::UpdateCachedValue(bool& destroy_mesh)
 {
 	LudumPlayer* ludum_player = GetPlayer(0);
 	if (ludum_player == nullptr)
@@ -143,7 +143,7 @@ bool GameHUDShroudLifeComponent::UpdateCachedValue(bool& destroy_allocation)
 
 bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 {
-	if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
+	if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
 		return true;
 
 	chaos::JSONTools::GetAttribute(json, "hotpoint", hotpoint);

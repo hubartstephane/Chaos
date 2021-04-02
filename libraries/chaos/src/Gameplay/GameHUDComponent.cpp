@@ -126,21 +126,21 @@ namespace chaos
 	}
 
 	// ====================================================================
-	// GameHUDSingleAllocationComponent
+	// GameHUDMeshComponent
 	// ====================================================================
 
-	void GameHUDSingleAllocationComponent::ShowComponent(bool in_show)
+	void GameHUDMeshComponent::ShowComponent(bool in_show)
 	{
 		if (mesh != nullptr)
 			mesh->Show(in_show);
 	}
 
-	void GameHUDSingleAllocationComponent::OnRemovedFromHUD()
+	void GameHUDMeshComponent::OnRemovedFromHUD()
 	{
 		mesh = nullptr;
 	}
 
-	int GameHUDSingleAllocationComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	int GameHUDMeshComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 	{
 		int result = GameHUDComponent::DoDisplay(renderer, uniform_provider, render_params);
 		if (mesh != nullptr)
@@ -158,37 +158,25 @@ namespace chaos
 	}
 
 	// ====================================================================
-	// GameHUDTextAllocationComponent
+	// GameHUDTextComponent
 	// ====================================================================
 
-	GameHUDTextComponent::GameHUDTextComponent(TagType in_layer_id):
-		layer_id(in_layer_id)
-	{
-	}
-
-	GameHUDTextComponent::GameHUDTextComponent(ParticleTextGenerator::GeneratorParams const & in_generator_params, TagType in_layer_id):
-		layer_id(in_layer_id),
+	GameHUDTextComponent::GameHUDTextComponent(ParticleTextGenerator::GeneratorParams const & in_generator_params):
 		generator_params(in_generator_params)
 	{
-		
 	}
 
 	bool GameHUDTextComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
 			return true;
-
 		JSONTools::GetAttribute(json, "generator_params", generator_params);
-
-	//	JSONTools::GetAttribute(json, "layer_id", layer_id);
-		//LoadFromJSON(json, generator_params);
-
 		return true;
 	}
 
 	void GameHUDTextComponent::OnInsertedInHUD(char const * in_text)
 	{
-		UpdateTextAllocation(in_text);
+		UpdateTextMesh(in_text);
 	}
 
 	void GameHUDTextComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
@@ -211,7 +199,7 @@ namespace chaos
 		final_params.position += corner;
 	}
 
-	void GameHUDTextComponent::UpdateTextAllocation(char const * in_text)
+	void GameHUDTextComponent::UpdateTextMesh(char const * in_text)
 	{
 		if (StringTools::IsEmpty(in_text))
 			mesh = nullptr;
@@ -230,8 +218,7 @@ namespace chaos
 	// GameHUDNotificationComponent
 	// ====================================================================
 
-	GameHUDNotificationComponent::GameHUDNotificationComponent(TagType in_layer_id) :
-		GameHUDTextComponent(in_layer_id)
+	GameHUDNotificationComponent::GameHUDNotificationComponent()
 	{
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
@@ -239,8 +226,8 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::BOTTOM_RIGHT;
 	}
 
-	GameHUDNotificationComponent::GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id) :
-		GameHUDTextComponent(in_params, in_layer_id)
+	GameHUDNotificationComponent::GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params):
+		GameHUDTextComponent(in_params)
 	{
 	}
 
@@ -252,7 +239,7 @@ namespace chaos
 		{
 			current_time = 0.0f;
 			lifetime = in_lifetime;
-			UpdateTextAllocation(in_message);
+			UpdateTextMesh(in_message);
 		}
 	}
 
@@ -279,8 +266,8 @@ namespace chaos
 	// GameHUDScoreComponent
 	// ====================================================================
 
-	GameHUDScoreComponent::GameHUDScoreComponent(TagType in_layer_id) :
-		GameHUDCacheValueComponent<int>("Score: %d", -1, in_layer_id) 
+	GameHUDScoreComponent::GameHUDScoreComponent() :
+		GameHUDCacheValueComponent<int>("Score: %d", -1) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -288,14 +275,14 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_LEFT;
 	}
 
-	bool GameHUDScoreComponent::UpdateCachedValue(bool & destroy_allocation)
+	bool GameHUDScoreComponent::UpdateCachedValue(bool & destroy_mesh)
 	{
 		Player * player = GetPlayer(0);
 		if (player != nullptr)
 		{
 			int current_score = player->GetScore();
 			if (current_score < 0)
-				destroy_allocation = true;
+				destroy_mesh = true;
 			if (current_score != cached_value)
 			{
 				cached_value = current_score;
@@ -309,8 +296,8 @@ namespace chaos
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	GameHUDFramerateComponent::GameHUDFramerateComponent(TagType in_layer_id):
-		GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f, in_layer_id) 
+	GameHUDFramerateComponent::GameHUDFramerateComponent():
+		GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -324,7 +311,7 @@ namespace chaos
 		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
 	}
 
-	bool GameHUDFramerateComponent::UpdateCachedValue(bool & destroy_allocation)
+	bool GameHUDFramerateComponent::UpdateCachedValue(bool & destroy_mesh)
 	{
 		if (fabsf(framerate - cached_value) > 0.01f)
 		{
@@ -338,8 +325,8 @@ namespace chaos
 	// GameHUDTimeoutComponent
 	// ====================================================================
 
-	GameHUDTimeoutComponent::GameHUDTimeoutComponent(TagType in_layer_id) :
-		GameHUDCacheValueComponent<float>("%02.01f", -1.0f, in_layer_id) 
+	GameHUDTimeoutComponent::GameHUDTimeoutComponent() :
+		GameHUDCacheValueComponent<float>("%02.01f", -1.0f) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -347,7 +334,7 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP;
 	}
 
-	bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_allocation)
+	bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_mesh)
 	{
 		LevelInstance * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
@@ -356,7 +343,7 @@ namespace chaos
 			// level without timer, hide it
 			if (level_timeout < 0.0f)
 			{
-				destroy_allocation = true;
+				destroy_mesh = true;
 			}
 			else if (fabsf(level_timeout - cached_value) > 0.1f)
 			{
@@ -377,15 +364,9 @@ namespace chaos
 	// GameHUDLifeComponent
 	// ====================================================================
 
-	GameHUDLifeComponent::GameHUDLifeComponent(TagType in_layer_id):
-		layer_id(in_layer_id)
-	{
-
-	}
-
 	bool GameHUDLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
 	{
-		if (!GameHUDSingleAllocationComponent::InitializeFromConfiguration(json, config_path))
+		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
 			return true;
 		
 		JSONTools::GetAttribute(json, "hotpoint", hotpoint);
@@ -404,7 +385,7 @@ namespace chaos
 
 	bool GameHUDLifeComponent::DoTick(float delta_time)
 	{
-		GameHUDSingleAllocationComponent::DoTick(delta_time);
+		GameHUDMeshComponent::DoTick(delta_time);
 		TickHeartBeat(delta_time);
 		UpdateLifeParticles(delta_time);
 		return true;
@@ -449,7 +430,7 @@ namespace chaos
 		Player const * player = GetGame()->GetPlayer(0);
 		if (player == nullptr)
 			return -1;
-		// get player life, destroy the allocation if no more life
+		// get player life
 		return player->GetLifeCount();
 	}
 
@@ -532,8 +513,8 @@ namespace chaos
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
-	GameHUDLevelTitleComponent::GameHUDLevelTitleComponent(TagType in_layer_id) :
-		GameHUDCacheValueComponent<std::string>("%s", std::string(), in_layer_id) 
+	GameHUDLevelTitleComponent::GameHUDLevelTitleComponent() :
+		GameHUDCacheValueComponent<std::string>("%s", std::string()) 
 	{
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
@@ -541,7 +522,7 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::BOTTOM_RIGHT;
 	}
 
-	bool GameHUDLevelTitleComponent::UpdateCachedValue(bool & destroy_allocation) 
+	bool GameHUDLevelTitleComponent::UpdateCachedValue(bool & destroy_mesh)
 	{ 
 		// ensure we got a level/level instance
 		Level * level = GetLevel();
@@ -549,16 +530,16 @@ namespace chaos
 
 		if (level == nullptr || level_instance == nullptr)
 		{
-			destroy_allocation = true;
+			destroy_mesh = true;
 			cached_value = std::string();
 			return true;
 		}
 
-		// dont let the allocation more the 4 seconds visible
+		// dont let the mesh more the 4 seconds visible
 		double clock_time = level_instance->GetLevelClockTime();
 		if (clock_time > 4.0)
 		{
-			destroy_allocation = true;
+			destroy_mesh = true;
 			cached_value = std::string();
 			return true;
 		}
@@ -592,8 +573,7 @@ namespace chaos
 	// GameHUDFreeCameraComponent
 	// ====================================================================
 
-	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(TagType in_layer_id) :
-		GameHUDTextComponent(in_layer_id)
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent()
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -602,8 +582,8 @@ namespace chaos
 		generator_params.default_color = glm::vec4(0.0f, 0.45f, 1.0f, 1.0f); // light blue
 	}
 
-	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(ParticleTextGenerator::GeneratorParams const & in_params, TagType in_layer_id) :
-		GameHUDTextComponent(in_params, in_layer_id)
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(ParticleTextGenerator::GeneratorParams const & in_params):
+		GameHUDTextComponent(in_params)
 	{
 	}
 
@@ -614,58 +594,5 @@ namespace chaos
 			ShowComponent(game->IsFreeCameraMode());
 		return true;
 	}
-
-	// ====================================================================
-	// GameHUDTimedComponent
-	// ====================================================================
-
-#if 0
-
-	GameHUDTimedComponent::GameHUDTimedComponent(GameHUDComponent * in_child_component, float in_lifetime) :
-		child_component(in_child_component),
-		lifetime(in_lifetime)
-	{
-		assert(child_component != nullptr);
-		child_component->hud = hud;
-	}
-
-	bool GameHUDTimedComponent::DoTick(float delta_time)
-	{
-		// decrease hud lifetime
-		if (lifetime >= 0.0f) // well, child_components do not known their hud yet
-		{
-			current_time += delta_time;
-			if (current_time >= lifetime)
-			{
-				hud->UnregisterComponent(this);
-				return true;
-			}
-		}
-		// tick the child component
-		if (child_component != nullptr)
-			child_component->Tick(delta_time);
-		return true;
-	}
-
-	void GameHUDTimedComponent::SetHUD(GameHUD * in_hud)
-	{
-		GameHUDComponent::SetHUD(in_hud);
-		if (child_component != nullptr)
-			child_component->SetHUD(in_hud);
-	}
-
-	void GameHUDTimedComponent::OnRemovedFromHUD()
-	{
-		if (child_component != nullptr)
-			child_component->OnRemovedFromHUD();
-	}
-
-	bool GameHUDTimedComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)
-	{
-		if (child_component != nullptr)
-			return child_component->InitializeFromConfiguration(json, config_path);
-		return true;
-	}
-#endif
 
 }; // namespace chaos

@@ -13,8 +13,8 @@
 // GameHUDComboComponent
 // ====================================================================
 
-GameHUDComboComponent::GameHUDComboComponent(chaos::TagType in_layer_id) :
-	chaos::GameHUDCacheValueComponent<int>("Combo: %d x", -1, in_layer_id) 
+GameHUDComboComponent::GameHUDComboComponent() :
+	chaos::GameHUDCacheValueComponent<int>("Combo: %d x", -1) 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -22,7 +22,7 @@ GameHUDComboComponent::GameHUDComboComponent(chaos::TagType in_layer_id) :
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
+bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_mesh)
 {
 	LudumPlayingHUD const * playing_hud = auto_cast(hud);
 	if (playing_hud != nullptr)
@@ -32,7 +32,7 @@ bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_allocation)
 		{
 			int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
 			if (current_combo < 2)
-				destroy_allocation = true;
+				destroy_mesh = true;
 			if (current_combo != cached_value)
 			{
 				cached_value = current_combo;

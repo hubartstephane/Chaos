@@ -1,7 +1,6 @@
 #include <chaos/Gameplay/GameFramework.h>
 #include <chaos/Gameplay/ComponentOwner.h>
 #include <chaos/Gameplay/GameParticles.h>
-#include <chaos/Gameplay/GameParticleCreator.h>
 #include <chaos/Gameplay/SceneNode.h>
 #include <chaos/Gameplay/GameEntity.h>
 #include <chaos/Gameplay/Camera.h>

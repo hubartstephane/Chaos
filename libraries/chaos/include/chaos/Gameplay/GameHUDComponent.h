@@ -201,7 +201,6 @@ namespace chaos
 					else
 						GameHUDTextComponent::UpdateTextMesh(FormatText().c_str());
 				}
-					
 			}
 			else
 				GameHUDTextComponent::UpdateTextMesh(in_text);

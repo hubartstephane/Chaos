@@ -11,12 +11,6 @@ namespace chaos
 	};
 };
 
-
-
-
-
-
-
 // ====================================================================
 // GameHUDRacePositionComponent
 // ====================================================================
@@ -30,7 +24,9 @@ public:
 	GameHUDRacePositionComponent();
 	/** constructor */
 	GameHUDRacePositionComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
-		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params) {}
+		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", in_params) {}
+
+	virtual glm::ivec2 QueryValue() const override;
 
 	virtual std::string FormatText() const override;
 
@@ -63,9 +59,10 @@ public:
 	GameHUDRaceLapsComponent();
 	/** constructor */
 	GameHUDRaceLapsComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
-		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1), in_params) {}
+		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", in_params) {}
 
-	virtual std::string FormatText() const override;
+	/** override */
+	virtual glm::ivec2 QueryValue() const override;
 
 protected:
 

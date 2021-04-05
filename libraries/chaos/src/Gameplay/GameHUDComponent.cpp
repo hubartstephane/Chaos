@@ -221,18 +221,6 @@ namespace chaos
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
 	// ====================================================================
 	// GameHUDNotificationComponent
 	// ====================================================================
@@ -281,14 +269,6 @@ namespace chaos
 		return true;
 	}
 
-
-
-
-
-
-
-
-
 	// ====================================================================
 	// GameHUDScoreComponent
 	// ====================================================================
@@ -302,12 +282,13 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_LEFT;
 	}
 
-	int GameHUDScoreComponent::QueryValue() const
+	bool GameHUDScoreComponent::QueryValue(int & result) const
 	{
 		Player const* player = GetPlayer(0);
 		if (player == nullptr)
-			return 0;
-		return player->GetScore();
+			return false;
+		result = player->GetScore();
+		return true;
 	}
 
 	// ====================================================================
@@ -323,13 +304,14 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
-	float GameHUDFramerateComponent::QueryValue() const
+	bool GameHUDFramerateComponent::QueryValue(float & result) const
 	{
 		float framerate = 66.66666f;
 
 		// framerate = renderer->GetFrameRate();
 
-		return std::ceil(framerate * 100.0f) / 100.0f;
+		result = std::ceil(framerate * 100.0f) / 100.0f;
+		return true;
 	}
 
 	// ====================================================================
@@ -345,27 +327,19 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP;
 	}
 
-	float GameHUDTimeoutComponent::QueryValue() const
+	bool GameHUDTimeoutComponent::QueryValue(float & result) const
 	{
 		// early exit
 		LevelInstance const * level_instance = GetLevelInstance();
-		if (level_instance != nullptr)
-			return -1.0f;
+		if (level_instance == nullptr)
+			return false;
 		// level without timer, hide it
 		float level_timeout = level_instance->GetLevelTimeout();
 		if (level_timeout < 0.0f)
-			return -1.0f;
+			return false;
 		// compute the timer
-		return std::ceil(level_timeout * 100.0f) / 100.0f;
-	}
-
-	void GameHUDTimeoutComponent::UpdateTextMesh()
-	{
-		if (cached_value < 0.0f) // hide mesh for invalid timer
-			mesh = nullptr;
-		else
-			GameHUDCacheValueComponent<float>::UpdateTextMesh();
-
+		result = std::ceil(level_timeout * 100.0f) / 100.0f;
+		return true;
 	}
 
 	void GameHUDTimeoutComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
@@ -373,11 +347,6 @@ namespace chaos
 		GameHUDCacheValueComponent<float>::TweakTextGeneratorParams(final_params);
 		final_params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	
 	}
-
-
-
-
-
 
 	// ====================================================================
 	// GameHUDLifeComponent
@@ -558,16 +527,18 @@ namespace chaos
 	}
 
 
-	Level const* GameHUDLevelTitleComponent::QueryValue() const
+	bool GameHUDLevelTitleComponent::QueryValue(Level const* & result) const
 	{
+		// get the level
 		Level const* level = GetLevel();
-		if (level != nullptr)
-		{
-			LevelInstance const * level_instance = GetLevelInstance();
-			if (level_instance != nullptr && level_instance->GetLevelClockTime() > 4.0) // hide title after 4.0 seconds (considere level is now null)
-				level = nullptr;
-		}
-		return level;
+		if (level == nullptr)
+			return false;
+		// hide title after 4.0 seconds (considere level is now null)
+		LevelInstance const* level_instance = GetLevelInstance();
+		if (level_instance != nullptr && level_instance->GetLevelClockTime() > 4.0) 
+			return false;
+		result = level;
+		return true;
 	}
 
 	void GameHUDLevelTitleComponent::UpdateTextMesh()

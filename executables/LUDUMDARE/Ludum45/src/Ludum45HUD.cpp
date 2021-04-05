@@ -24,14 +24,10 @@ bool LudumPlayingHUD::FillHUDContent()
 {
 	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;	
-
 	RegisterComponent(chaos::GameHUDKeys::SHROUDLIFE_ID, new GameHUDShroudLifeComponent("LifeGrid"));
 	RegisterComponent(chaos::GameHUDKeys::LIFE_ID, new chaos::GameHUDLifeComponent());
 	RegisterComponent(chaos::GameHUDKeys::UPGRADE_ID, new GameHUDUpgradeComponent());
 	RegisterComponent(chaos::GameHUDKeys::LEVEL_TITLE_ID, new chaos::GameHUDLevelTitleComponent());
-	
-	//RegisterComponent(chaos::GameHUDKeys::NOTIFICATION_ID, new chaos::GameHUDNotificationComponent());
-
 	return true;
 }
 
@@ -40,7 +36,7 @@ bool LudumPlayingHUD::FillHUDContent()
 // ====================================================================
 
 GameHUDUpgradeComponent::GameHUDUpgradeComponent() :
-	chaos::GameHUDCacheValueComponent<std::string>("%s", std::string()) 
+	chaos::GameHUDCacheValueComponent<std::string>("%s") 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -48,37 +44,14 @@ GameHUDUpgradeComponent::GameHUDUpgradeComponent() :
 	generator_params.hotpoint = chaos::Hotpoint::BOTTOM_RIGHT;
 }
 
-bool GameHUDUpgradeComponent::UpdateCachedValue(bool & destroy_mesh)
+bool GameHUDUpgradeComponent::QueryValue(std::string & result) const
 {
-	LudumPlayingHUD const * playing_hud = auto_cast(hud);
-	if (playing_hud != nullptr)
-	{
-		LudumPlayer const * ludum_player = playing_hud->GetPlayer(0);
-		if (ludum_player != nullptr)
-		{
-			std::string upgrade_string = ludum_player->GetPlayerUpgradeString();
-			if (upgrade_string.length() > 0)
-			{
-				if (cached_value == upgrade_string)
-					return false;
-				cached_value = upgrade_string;
-				return true;
-			}
-
-		}
-	}
-
-	destroy_mesh = true;
-	cached_value = std::string();
+	LudumPlayer const* ludum_player = GetPlayer(0);
+	if (ludum_player == nullptr)
+		return false;
+	result = ludum_player->GetPlayerUpgradeString();
 	return true;
 }
-
-std::string GameHUDUpgradeComponent::FormatText() const 
-{
-	return cached_value;	
-}
-
-
 
 // ====================================================================
 // GameHUDShroudLifeComponent

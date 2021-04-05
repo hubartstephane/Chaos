@@ -206,14 +206,14 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	}
 	else
 	{
-		combo_multiplier = 1;
+		combo_multiplier = 0;
 	}
 
 	// the reward or the punishment
 	// check whether there are not enough combo to increase
 	if (success && ludum_game->combo_for_reward > 0)
 	{
-		if ((combo_multiplier - 1) % ludum_game->combo_for_reward != 0)
+		if (combo_multiplier % ludum_game->combo_for_reward != 0)
 			return;
 	}
 

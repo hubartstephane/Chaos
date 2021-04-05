@@ -12,7 +12,7 @@
 // ====================================================================
 
 GameHUDComboComponent::GameHUDComboComponent() :
-	chaos::GameHUDCacheValueComponent<int>("Combo: %d x", -1) 
+	chaos::GameHUDCacheValueComponent<int>("Combo: %d x")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -20,25 +20,20 @@ GameHUDComboComponent::GameHUDComboComponent() :
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-bool GameHUDComboComponent::UpdateCachedValue(bool & destroy_mesh)
+int GameHUDComboComponent::QueryValue() const
 {
-	LudumPlayingHUD const * playing_hud = auto_cast(hud);
-	if (playing_hud != nullptr)
-	{
-		LudumGameInstance const * ludum_game_instance = playing_hud->GetGameInstance();
-		if (ludum_game_instance != nullptr)
-		{
-			int current_combo = ludum_game_instance->GetCurrentComboMultiplier();
-			if (current_combo < 2)
-				destroy_mesh = true;
-			if (current_combo != cached_value)
-			{
-				cached_value = current_combo;
-				return true;
-			}
-		}
-	}
-	return false;
+	LudumGameInstance const* ludum_game_instance = GetGameInstance();
+	if (ludum_game_instance == nullptr)
+		return -1;
+	return ludum_game_instance->GetCurrentComboMultiplier();
+}
+
+void GameHUDComboComponent::UpdateTextMesh()
+{
+	if (cached_value <= 0)
+		mesh = nullptr;
+	else
+		chaos::GameHUDCacheValueComponent<int>::UpdateTextMesh();
 }
 
 // ====================================================================

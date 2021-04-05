@@ -95,9 +95,22 @@ namespace chaos
 			if (!Application::HasApplicationCommandLineFlag("-HideFPS")) // CMDLINE
 				RegisterComponent(GameHUDKeys::FPS_ID, new GameHUDFramerateComponent());
 #if _DEBUG
-		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent(), "Free Camera Mode");
+		RegisterComponent(GameHUDKeys::FREECAMERA_ID, new GameHUDFreeCameraComponent());
 #endif
 		return true;
+	}
+
+	void GameHUD::RegisterComponent(TagType key, GameHUDComponent* in_component)
+	{
+		assert(in_component != nullptr);
+		assert(in_component->hud == nullptr);
+		// remove previous component with the key
+		UnregisterComponent(key);
+		// register new component for that key
+		components.insert(std::make_pair(key, in_component));
+		in_component->SetHUD(this);
+		InitializeComponentFromConfiguration(key, in_component); // this will override the component position from JSON file
+		in_component->OnInsertedInHUD();
 	}
 
 	void GameHUD::UnregisterComponent(TagType key)
@@ -189,19 +202,22 @@ namespace chaos
 		char const * game_name = game->GetGameName();
 		if (game_name != nullptr)
 			RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)), game_name);
+				game_name,
+				ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
 		// the best score
 		if (game->GetBestScore() > 0)
 		{
 			std::string best_score = StringTools::Printf("Best score: %d", game->GetBestScore());
 			RegisterComponent(GameHUDKeys::BEST_SCORE_ID, new GameHUDTextComponent(
-				ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), Hotpoint::CENTER)), best_score.c_str());
+				best_score.c_str(),
+				ParticleTextGenerator::GeneratorParams("normal", 60.0f, glm::vec2(0.0f, -110.0f), Hotpoint::CENTER)));
 		}
 		// the instructions
 		char const * game_instructions = game->GetGameInstructions();
 		if (game_instructions != nullptr)
 			RegisterComponent(GameHUDKeys::INSTRUCTIONS_ID, new GameHUDTextComponent(
-				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::BOTTOM)), game_instructions);
+				game_instructions,
+				ParticleTextGenerator::GeneratorParams("normal", 40.0f, glm::vec2(0.0f, 40.0f), Hotpoint::BOTTOM)));
 
 		return true;
 	}
@@ -217,7 +233,8 @@ namespace chaos
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)), "Pause");
+			"Pause",
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
 		return true;
 	}
 
@@ -232,7 +249,8 @@ namespace chaos
 			return false;
 		// the title
 		RegisterComponent(GameHUDKeys::TITLE_ID, new GameHUDTextComponent(
-			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)), "Game Over");
+			"Game Over",
+			ParticleTextGenerator::GeneratorParams("title", 150.0f, glm::vec2(0.0f, 0.0f), Hotpoint::CENTER)));
 		return true;
 	}
 

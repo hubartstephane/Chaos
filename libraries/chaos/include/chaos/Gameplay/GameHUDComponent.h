@@ -263,7 +263,7 @@ namespace chaos
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	class GameHUDFramerateComponent : public  GameHUDCacheValueComponent<float>
+	class GameHUDFramerateComponent : public GameHUDCacheValueComponent<float>
 	{
 	public:
 
@@ -275,8 +275,15 @@ namespace chaos
 
 	protected:
 
-		/** query value */
+		/** override */
 		virtual bool QueryValue(float& result) const override;
+		/** override */
+		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+
+	protected:
+
+		/** the current framerate */
+		float framerate = 0.0f;
 	};
 
 	// ====================================================================
@@ -318,19 +325,13 @@ namespace chaos
 		/** override */
 		virtual bool DoTick(float delta_time) override;
 		/** update all particles (count, alpha) */
-		void UpdateLifeParticles(float delta_time);
+		void UpdateLifeMesh(float delta_time);
 		/** returns the number of life */
 		virtual int GetLifeCount() const;
 		/** tick heart */
 		void TickHeartBeat(float delta_time);
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
-
-
-	public:
-
-		/** an alternate way to have life count */
-		std::function<int()> get_life_count_func;
 
 	protected:
 

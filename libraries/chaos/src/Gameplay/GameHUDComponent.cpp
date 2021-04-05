@@ -304,12 +304,16 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
+	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
+	{
+		framerate = renderer->GetFrameRate();
+		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
+	}
+
 	bool GameHUDFramerateComponent::QueryValue(float & result) const
 	{
-		float framerate = 66.66666f;
-
-		// framerate = renderer->GetFrameRate();
-
+		if (framerate <= 0.0f)
+			return false;
 		result = std::ceil(framerate * 100.0f) / 100.0f;
 		return true;
 	}
@@ -375,7 +379,7 @@ namespace chaos
 	{
 		GameHUDMeshComponent::DoTick(delta_time);
 		TickHeartBeat(delta_time);
-		UpdateLifeParticles(delta_time);
+		UpdateLifeMesh(delta_time);
 		return true;
 	}
 
@@ -391,10 +395,7 @@ namespace chaos
 			return;
 
 		// update sound
-		int count = (get_life_count_func)? 
-			get_life_count_func() : 
-			GetLifeCount();
-
+		int count = GetLifeCount();
 		if (count == 1)
 		{
 			warning_value -= delta_time / heart_beat_frequency;
@@ -422,12 +423,10 @@ namespace chaos
 		return player->GetLifeCount();
 	}
 
-	void GameHUDLifeComponent::UpdateLifeParticles(float delta_time)
+	void GameHUDLifeComponent::UpdateLifeMesh(float delta_time)
 	{
 		// get the number of life
-		int count = (get_life_count_func) ?
-			get_life_count_func() :
-			GetLifeCount();
+		int count = GetLifeCount();
 		if (count < 0) 
 			return;
 		// destroy the mesh if no more life

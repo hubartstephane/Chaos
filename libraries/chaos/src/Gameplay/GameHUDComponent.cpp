@@ -161,7 +161,8 @@ namespace chaos
 	// GameHUDTextComponent
 	// ====================================================================
 
-	GameHUDTextComponent::GameHUDTextComponent(ParticleTextGenerator::GeneratorParams const & in_generator_params):
+	GameHUDTextComponent::GameHUDTextComponent(char const * in_text, ParticleTextGenerator::GeneratorParams const & in_generator_params):
+		text(in_text),
 		generator_params(in_generator_params)
 	{
 	}
@@ -170,13 +171,19 @@ namespace chaos
 	{
 		if (!GameHUDMeshComponent::InitializeFromConfiguration(json, config_path))
 			return true;
+		JSONTools::GetAttribute(json, "text", text);
 		JSONTools::GetAttribute(json, "generator_params", generator_params);
 		return true;
 	}
 
-	void GameHUDTextComponent::OnInsertedInHUD(char const * in_text)
+	void GameHUDTextComponent::OnInsertedInHUD()
 	{
-		UpdateTextMesh(in_text);
+		UpdateTextMesh();
+	}
+
+	void GameHUDTextComponent::UpdateTextMesh()
+	{
+		SetText(text.c_str());
 	}
 
 	void GameHUDTextComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
@@ -199,7 +206,7 @@ namespace chaos
 		final_params.position += corner;
 	}
 
-	void GameHUDTextComponent::UpdateTextMesh(char const * in_text)
+	void GameHUDTextComponent::SetText(char const * in_text)
 	{
 		if (StringTools::IsEmpty(in_text))
 			mesh = nullptr;
@@ -214,6 +221,18 @@ namespace chaos
 		}
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
 	// ====================================================================
 	// GameHUDNotificationComponent
 	// ====================================================================
@@ -227,7 +246,7 @@ namespace chaos
 	}
 
 	GameHUDNotificationComponent::GameHUDNotificationComponent(ParticleTextGenerator::GeneratorParams const & in_params):
-		GameHUDTextComponent(in_params)
+		GameHUDTextComponent("", in_params)
 	{
 	}
 
@@ -239,7 +258,7 @@ namespace chaos
 		{
 			current_time = 0.0f;
 			lifetime = in_lifetime;
-			UpdateTextMesh(in_message);
+			SetText(in_message);
 		}
 	}
 
@@ -262,12 +281,20 @@ namespace chaos
 		return true;
 	}
 
+
+
+
+
+
+
+
+
 	// ====================================================================
 	// GameHUDScoreComponent
 	// ====================================================================
 
-	GameHUDScoreComponent::GameHUDScoreComponent() :
-		GameHUDCacheValueComponent<int>("Score: %d", -1) 
+	GameHUDScoreComponent::GameHUDScoreComponent(char const* in_text) :
+		GameHUDCacheValueComponent<int>(in_text)
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -275,29 +302,20 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_LEFT;
 	}
 
-	bool GameHUDScoreComponent::UpdateCachedValue(bool & destroy_mesh)
+	int GameHUDScoreComponent::QueryValue() const
 	{
-		Player * player = GetPlayer(0);
-		if (player != nullptr)
-		{
-			int current_score = player->GetScore();
-			if (current_score < 0)
-				destroy_mesh = true;
-			if (current_score != cached_value)
-			{
-				cached_value = current_score;
-				return true;
-			}
-		}
-		return false;
+		Player const* player = GetPlayer(0);
+		if (player == nullptr)
+			return 0;
+		return player->GetScore();
 	}
 
 	// ====================================================================
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	GameHUDFramerateComponent::GameHUDFramerateComponent():
-		GameHUDCacheValueComponent<float>("%02.01f FPS", -1.0f) 
+	GameHUDFramerateComponent::GameHUDFramerateComponent(char const * in_text):
+		GameHUDCacheValueComponent<float>(in_text)
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -305,28 +323,21 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP_RIGHT;
 	}
 
-	int GameHUDFramerateComponent::DoDisplay(GPURenderer * renderer, GPUProgramProviderBase const * uniform_provider, GPURenderParams const & render_params)
+	float GameHUDFramerateComponent::QueryValue() const
 	{
-		framerate = renderer->GetFrameRate();
-		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
-	}
+		float framerate = 66.66666f;
 
-	bool GameHUDFramerateComponent::UpdateCachedValue(bool & destroy_mesh)
-	{
-		if (fabsf(framerate - cached_value) > 0.01f)
-		{
-			cached_value = framerate;
-			return true;
-		}
-		return false;
+		// framerate = renderer->GetFrameRate();
+
+		return std::ceil(framerate * 100.0f) / 100.0f;
 	}
 
 	// ====================================================================
 	// GameHUDTimeoutComponent
 	// ====================================================================
 
-	GameHUDTimeoutComponent::GameHUDTimeoutComponent() :
-		GameHUDCacheValueComponent<float>("%02.01f", -1.0f) 
+	GameHUDTimeoutComponent::GameHUDTimeoutComponent(char const * in_text) :
+		GameHUDCacheValueComponent<float>(in_text) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -334,24 +345,27 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::TOP;
 	}
 
-	bool GameHUDTimeoutComponent::UpdateCachedValue(bool & destroy_mesh)
+	float GameHUDTimeoutComponent::QueryValue() const
 	{
-		LevelInstance * level_instance = GetLevelInstance();
+		// early exit
+		LevelInstance const * level_instance = GetLevelInstance();
 		if (level_instance != nullptr)
-		{
-			float level_timeout = level_instance->GetLevelTimeout();
-			// level without timer, hide it
-			if (level_timeout < 0.0f)
-			{
-				destroy_mesh = true;
-			}
-			else if (fabsf(level_timeout - cached_value) > 0.1f)
-			{
-				cached_value = level_timeout;
-				return true;
-			}
-		}
-		return false;
+			return -1.0f;
+		// level without timer, hide it
+		float level_timeout = level_instance->GetLevelTimeout();
+		if (level_timeout < 0.0f)
+			return -1.0f;
+		// compute the timer
+		return std::ceil(level_timeout * 100.0f) / 100.0f;
+	}
+
+	void GameHUDTimeoutComponent::UpdateTextMesh()
+	{
+		if (cached_value < 0.0f) // hide mesh for invalid timer
+			mesh = nullptr;
+		else
+			GameHUDCacheValueComponent<float>::UpdateTextMesh();
+
 	}
 
 	void GameHUDTimeoutComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
@@ -359,6 +373,11 @@ namespace chaos
 		GameHUDCacheValueComponent<float>::TweakTextGeneratorParams(final_params);
 		final_params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	
 	}
+
+
+
+
+
 
 	// ====================================================================
 	// GameHUDLifeComponent
@@ -509,12 +528,28 @@ namespace chaos
 		}
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	// ====================================================================
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
 	GameHUDLevelTitleComponent::GameHUDLevelTitleComponent() :
-		GameHUDCacheValueComponent<std::string>("%s", std::string()) 
+		GameHUDCacheValueComponent<Level const*>("%s")
 	{
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
@@ -522,58 +557,46 @@ namespace chaos
 		generator_params.hotpoint = Hotpoint::BOTTOM_RIGHT;
 	}
 
-	bool GameHUDLevelTitleComponent::UpdateCachedValue(bool & destroy_mesh)
-	{ 
-		// ensure we got a level/level instance
-		Level * level = GetLevel();
-		LevelInstance * level_instance = GetLevelInstance();
 
-		if (level == nullptr || level_instance == nullptr)
+	Level const* GameHUDLevelTitleComponent::QueryValue() const
+	{
+		Level const* level = GetLevel();
+		if (level != nullptr)
 		{
-			destroy_mesh = true;
-			cached_value = std::string();
-			return true;
+			LevelInstance const * level_instance = GetLevelInstance();
+			if (level_instance != nullptr && level_instance->GetLevelClockTime() > 4.0) // hide title after 4.0 seconds (considere level is now null)
+				level = nullptr;
 		}
-
-		// dont let the mesh more the 4 seconds visible
-		double clock_time = level_instance->GetLevelClockTime();
-		if (clock_time > 4.0)
-		{
-			destroy_mesh = true;
-			cached_value = std::string();
-			return true;
-		}
-
-		// try to find a title
-		std::string const * lt = nullptr;
-		std::string placeholder_level_title;
-
-		std::string const & level_title = level->GetLevelTitle();
-		if (level_title.empty())
-		{
-			placeholder_level_title = StringTools::Printf("Level %d", level_instance->GetLevel()->GetLevelIndex());
-			lt = &placeholder_level_title;	
-		}
-		else
-			lt = &level_title;
-
-		// ensure we do not have already cached this title
-		if (cached_value == *lt)
-			return false;
-		cached_value = *lt;
-		return true; 
+		return level;
 	}
 
-	std::string GameHUDLevelTitleComponent::FormatText() const 
+	void GameHUDLevelTitleComponent::UpdateTextMesh()
 	{
-		return cached_value;	
+		// no level or 4.0 time ellapsed
+		if (cached_value == nullptr)
+		{
+			mesh = nullptr;
+			return;
+		}
+		// display title
+		std::string const& level_title = cached_value->GetLevelTitle();
+		if (!level_title.empty())
+		{
+			SetText(level_title.c_str());
+		}
+		else
+		{
+			std::string title = StringTools::Printf("Level %d", cached_value->GetLevelIndex());
+			SetText(title.c_str());
+		}
 	}
 
 	// ====================================================================
 	// GameHUDFreeCameraComponent
 	// ====================================================================
 
-	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent()
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(char const * in_text):
+		GameHUDTextComponent(in_text)
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -582,8 +605,8 @@ namespace chaos
 		generator_params.default_color = glm::vec4(0.0f, 0.45f, 1.0f, 1.0f); // light blue
 	}
 
-	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(ParticleTextGenerator::GeneratorParams const & in_params):
-		GameHUDTextComponent(in_params)
+	GameHUDFreeCameraComponent::GameHUDFreeCameraComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params):
+		GameHUDTextComponent(in_text, in_params)
 	{
 	}
 

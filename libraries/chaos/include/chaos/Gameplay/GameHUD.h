@@ -83,25 +83,7 @@ namespace chaos
 		virtual bool Initialize(Game* in_game);
 
 		/** insert a component inside the HUD */
-		template<typename COMPONENT_TYPE, typename ...PARAMS>
-		void RegisterComponent(TagType key, COMPONENT_TYPE * component, PARAMS... params)
-		{
-			// XXX : why is this method a template ??
-			//       a COMPONENT initialization requires the HUD for some resources
-			//       so you cannot build the COMPONENT before the insertion
-			//       you need to do both at the same time, and you require various kind of parameters
-			//       COMPONENT initialization (OnInsertedInHUD(...)) cannot be virtual because we don't know the parameters for the construction
-			//       that's why we use a template function
-			assert(component != nullptr);
-			assert(component->hud == nullptr);
-			// remove previous component with the key
-			UnregisterComponent(key);
-			// register new component for that key
-			components.insert(std:: make_pair(key, component));
-			component->SetHUD(this);
-			InitializeComponentFromConfiguration(key, component); // this will override the component position from JSON file
-			component->OnInsertedInHUD(params...);			
-		}
+		void RegisterComponent(TagType key, GameHUDComponent* in_component);
 		/** remove a component from the HUD */
 		void UnregisterComponent(TagType key);
 		/** remove a component from the HUD */

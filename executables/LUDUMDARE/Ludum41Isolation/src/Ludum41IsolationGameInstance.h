@@ -139,7 +139,7 @@ protected:
 	/** current game values */
 	float brick_offset = 0.0f;
 	float target_brick_offset = 0.0f;
-	int   combo_multiplier = 1;	
+	int   combo_multiplier = 0;	
 	float ball_time_dilation = 1.0f;
 	float challenge_timer = 0.0f;
 	float ball_collision_speed    = 0.5f;

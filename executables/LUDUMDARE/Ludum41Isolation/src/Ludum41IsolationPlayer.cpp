@@ -151,7 +151,7 @@ void LudumPlayer::OnLifeLost()
 	LudumGameInstance* ludum_game_instance = GetGameInstance();
 
 	ludum_game->PlaySound("balllost", false, false, 0.0f, chaos::SoundContext::GAME);
-	ludum_game_instance->combo_multiplier = 1;
+	ludum_game_instance->combo_multiplier = 0;
 	ludum_game_instance->ball_collision_speed = 0.0f;
 	ludum_game_instance->ball_power = 1.0f;
 	ludum_game_instance->ball_speed = ludum_game->ball_initial_speed;

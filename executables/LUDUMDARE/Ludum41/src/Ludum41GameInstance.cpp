@@ -179,7 +179,7 @@ void LudumGameInstance::OnChallengeCompleted(LudumChallenge * challenge, bool su
 	}
 	else
 	{
-		combo_multiplier = 1;
+		combo_multiplier = 0;
 	}
 }
 

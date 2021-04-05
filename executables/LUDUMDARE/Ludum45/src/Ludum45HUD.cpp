@@ -53,31 +53,34 @@ bool GameHUDUpgradeComponent::QueryValue(std::string & result) const
 	return true;
 }
 
+void GameHUDUpgradeComponent::UpdateMesh()
+{
+	SetText(chaos::StringTools::Printf(text.c_str(), cached_value.c_str()).c_str());
+}
+
 // ====================================================================
 // GameHUDShroudLifeComponent
 // ====================================================================
 
-bool GameHUDShroudLifeComponent::DoUpdateGPUResources(chaos::GPURenderer* renderer)
+bool GameHUDShroudLifeComponent::QueryValue(GameHUDHealthInfo & result) const
 {
-	LudumPlayer* ludum_player = GetPlayer(0);
+	LudumPlayer const* ludum_player = GetPlayer(0);
 	if (ludum_player == nullptr)
 		return false;
+	result = { ludum_player->GetHealth(), ludum_player->GetMaxHealth() };
+	return true;
+}
 
-
-	float health = ludum_player->GetHealth();
-	float max_health = ludum_player->GetMaxHealth();
-
+void GameHUDShroudLifeComponent::UpdateMesh()
+{
 	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
 
 	chaos::BitmapAtlas::BitmapInfo const* bitmap_info = DI.FindBitmapInfo(bitmap_name);
 	if (bitmap_info == nullptr)
-		return false;
+		return;
 
 	float image_count = (float)bitmap_info->GetAnimationImageCount();
-	int index = (int)(image_count * (1.0 - (health / max_health)));
-
-	if (index == cached_value)
-		return true;
+	int index = (int)(image_count * (1.0 - (cached_value.health / cached_value.max_health)));
 
 	chaos::BitmapAtlas::BitmapLayout layout = bitmap_info->GetAnimationLayout(index, chaos::WrapMode::CLAMP);
 
@@ -108,10 +111,6 @@ bool GameHUDShroudLifeComponent::DoUpdateGPUResources(chaos::GPURenderer* render
 	ParticleToPrimitives(particle, DI);
 
 	mesh = DI.ExtractMesh();
-
-	cached_value = index;
-
-	return true;
 }
 
 bool GameHUDShroudLifeComponent::InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path)

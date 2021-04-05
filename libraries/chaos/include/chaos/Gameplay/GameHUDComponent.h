@@ -6,8 +6,13 @@ namespace chaos
 	class GameHUDMeshComponent;
 	class GameHUDTextComponent;
 
-	template<typename T>
+	template<typename T, typename BASE>
 	class GameHUDCacheValueComponent;
+	template<typename T>
+	class GameHUDCacheValueTextComponent;
+
+	template<typename T>
+	using GameHUDCacheValueMeshComponent = GameHUDCacheValueComponent<T, GameHUDMeshComponent>;
 
 	class GameHUDNotificationComponent;
 	class GameHUDScoreComponent;
@@ -98,13 +103,14 @@ namespace chaos
 		virtual void OnRemovedFromHUD() override;
 		/** override */
 		virtual int DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params) override;
+		/** update the mesh according to internal data */
+		virtual void UpdateMesh() {}
 
 	protected:
 
 		/** the mesh for this component */
 		shared_ptr<GPUDynamicMesh> mesh;
 	};
-
 
 	// ====================================================================
 	// GameHUDTextComponent
@@ -125,8 +131,8 @@ namespace chaos
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const;
 		/** create the text */
 		virtual void SetText(char const * in_text);
-		/** update the mesh according to internal data */
-		virtual void UpdateTextMesh();
+		/** override */
+		virtual void UpdateMesh() override;
 		/** override */
 		virtual bool InitializeFromConfiguration(nlohmann::json const & json, boost::filesystem::path const & config_path) override;
 		/** override */
@@ -144,15 +150,15 @@ namespace chaos
 	// GameHUDCacheValueComponent
 	// ====================================================================
 
-	template<typename T>
-	class GameHUDCacheValueComponent : public GameHUDTextComponent
+	template<typename T, typename BASE>
+	class GameHUDCacheValueComponent : public BASE
 	{
 		using type = T;
 
 	protected:
 
 		/** constructor */
-		using GameHUDTextComponent::GameHUDTextComponent;
+		using BASE::BASE;
 
 		/** gets the value (returns true whether the object is valid) */
 		virtual bool QueryValue(type& result) const 
@@ -166,7 +172,7 @@ namespace chaos
 			if (!QueryValue(cached_value))
 				mesh = nullptr;
 			else
-				GameHUDTextComponent::OnInsertedInHUD();
+				UpdateMesh();
 		}
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override
@@ -174,23 +180,37 @@ namespace chaos
 			type new_value;
 			if (!QueryValue(new_value))
 				mesh = nullptr;
-			else if(cached_value != new_value)
-			{
+			else if (mesh == nullptr || cached_value != new_value) // maybe the Query may returns from false to true, but with a same cache value
+			{                                                      // check if mesh was nullptr to avoid this case
 				cached_value = new_value;
-				UpdateTextMesh();
+				UpdateMesh();
 			}
 			return true;
-		}
-		/** updates the text according to the cached_value and the format */
-		virtual void UpdateTextMesh() override
-		{
-			SetText(StringTools::Printf(text.c_str(), cached_value).c_str());
 		}
 
 	protected:
 
 		/** the cached value */
 		type cached_value;
+	};
+
+	// ====================================================================
+	// GameHUDCacheValueTextComponent
+	// ====================================================================
+
+	template<typename T>
+	class GameHUDCacheValueTextComponent : public GameHUDCacheValueComponent<T, GameHUDTextComponent>
+	{
+	protected:
+
+		/** constructor */
+		using GameHUDCacheValueComponent::GameHUDCacheValueComponent;
+
+		/** override */
+		virtual void UpdateMesh() override
+		{
+			SetText(StringTools::Printf(text.c_str(), cached_value).c_str());
+		}
 	};
 
 	// ====================================================================
@@ -226,24 +246,11 @@ namespace chaos
 		float current_time = 0.0f;
 	};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// ====================================================================
 	// GameHUDScoreComponent
 	// ====================================================================
 
-	class GameHUDScoreComponent : public GameHUDCacheValueComponent<int>
+	class GameHUDScoreComponent : public GameHUDCacheValueTextComponent<int>
 	{
 	public:
 
@@ -251,7 +258,7 @@ namespace chaos
 		GameHUDScoreComponent(char const * in_text = "Score: %d");
 		/** constructor */
 		GameHUDScoreComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params):
-			GameHUDCacheValueComponent<int>(in_text, in_params) {}
+			GameHUDCacheValueTextComponent<int>(in_text, in_params) {}
 
 	protected:
 
@@ -263,7 +270,7 @@ namespace chaos
 	// GameHUDFramerateComponent
 	// ====================================================================
 
-	class GameHUDFramerateComponent : public GameHUDCacheValueComponent<float>
+	class GameHUDFramerateComponent : public GameHUDCacheValueTextComponent<float>
 	{
 	public:
 
@@ -271,7 +278,7 @@ namespace chaos
 		GameHUDFramerateComponent(char const* in_text = "%02.01f FPS");
 		/** constructor */
 		GameHUDFramerateComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params):
-			GameHUDCacheValueComponent<float>(in_text, in_params) {}
+			GameHUDCacheValueTextComponent<float>(in_text, in_params) {}
 
 	protected:
 
@@ -290,7 +297,7 @@ namespace chaos
 	// GameHUDTimeoutComponent
 	// ====================================================================
 
-	class GameHUDTimeoutComponent : public GameHUDCacheValueComponent<float>
+	class GameHUDTimeoutComponent : public GameHUDCacheValueTextComponent<float>
 	{
 	public:
 
@@ -298,7 +305,7 @@ namespace chaos
 		GameHUDTimeoutComponent(char const * in_text = "%02.01f");
 		/** constructor */
 		GameHUDTimeoutComponent(char const* in_text, ParticleTextGenerator::GeneratorParams const & in_params) :
-			GameHUDCacheValueComponent<float>(in_text, in_params) {}
+			GameHUDCacheValueTextComponent<float>(in_text, in_params) {}
 
 	protected:
 
@@ -361,29 +368,11 @@ namespace chaos
 		float warning_value = 0.0f;
 	};
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	// ====================================================================
 	// GameHUDLevelTitleComponent
 	// ====================================================================
 
-	class GameHUDLevelTitleComponent : public GameHUDCacheValueComponent<Level const *>
+	class GameHUDLevelTitleComponent : public GameHUDCacheValueTextComponent<Level const *>
 	{
 		friend class GameHUD;
 
@@ -393,14 +382,14 @@ namespace chaos
 		GameHUDLevelTitleComponent();
 		/** constructor */
 		GameHUDLevelTitleComponent(ParticleTextGenerator::GeneratorParams const & in_params) :
-			GameHUDCacheValueComponent<Level const*>("%s", in_params) {}
+			GameHUDCacheValueTextComponent<Level const*>("%s", in_params) {}
 
 	protected:
 
 		/** override */
 		virtual bool QueryValue(Level const * & result) const override;
 		/** override */
-		virtual void UpdateTextMesh() override;
+		virtual void UpdateMesh() override;
 	};	
 
 	// ====================================================================

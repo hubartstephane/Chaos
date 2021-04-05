@@ -178,10 +178,10 @@ namespace chaos
 
 	void GameHUDTextComponent::OnInsertedInHUD()
 	{
-		UpdateTextMesh();
+		UpdateMesh();
 	}
 
-	void GameHUDTextComponent::UpdateTextMesh()
+	void GameHUDTextComponent::UpdateMesh()
 	{
 		SetText(text.c_str());
 	}
@@ -274,7 +274,7 @@ namespace chaos
 	// ====================================================================
 
 	GameHUDScoreComponent::GameHUDScoreComponent(char const* in_text) :
-		GameHUDCacheValueComponent<int>(in_text)
+		GameHUDCacheValueTextComponent<int>(in_text)
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -296,7 +296,7 @@ namespace chaos
 	// ====================================================================
 
 	GameHUDFramerateComponent::GameHUDFramerateComponent(char const * in_text):
-		GameHUDCacheValueComponent<float>(in_text)
+		GameHUDCacheValueTextComponent<float>(in_text)
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -307,7 +307,7 @@ namespace chaos
 	int GameHUDFramerateComponent::DoDisplay(GPURenderer* renderer, GPUProgramProviderBase const* uniform_provider, GPURenderParams const& render_params)
 	{
 		framerate = renderer->GetFrameRate();
-		return GameHUDCacheValueComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
+		return GameHUDCacheValueTextComponent<float>::DoDisplay(renderer, uniform_provider, render_params);
 	}
 
 	bool GameHUDFramerateComponent::QueryValue(float & result) const
@@ -323,7 +323,7 @@ namespace chaos
 	// ====================================================================
 
 	GameHUDTimeoutComponent::GameHUDTimeoutComponent(char const * in_text) :
-		GameHUDCacheValueComponent<float>(in_text) 
+		GameHUDCacheValueTextComponent<float>(in_text) 
 	{
 		generator_params.line_height = 60.0f;
 		generator_params.font_info_name = "normal";
@@ -348,7 +348,7 @@ namespace chaos
 
 	void GameHUDTimeoutComponent::TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const
 	{
-		GameHUDCacheValueComponent<float>::TweakTextGeneratorParams(final_params);
+		GameHUDCacheValueTextComponent<float>::TweakTextGeneratorParams(final_params);
 		final_params.default_color = (cached_value >= 10.0f) ? glm::vec4(1.0f, 1.0f, 1.0f, 1.0f) : glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	
 	}
 
@@ -517,7 +517,7 @@ namespace chaos
 	// ====================================================================
 
 	GameHUDLevelTitleComponent::GameHUDLevelTitleComponent() :
-		GameHUDCacheValueComponent<Level const*>("%s")
+		GameHUDCacheValueTextComponent<Level const*>("%s")
 	{
 		generator_params.line_height = 80.0f;
 		generator_params.font_info_name = "normal";
@@ -540,14 +540,8 @@ namespace chaos
 		return true;
 	}
 
-	void GameHUDLevelTitleComponent::UpdateTextMesh()
+	void GameHUDLevelTitleComponent::UpdateMesh()
 	{
-		// no level or 4.0 time ellapsed
-		if (cached_value == nullptr)
-		{
-			mesh = nullptr;
-			return;
-		}
 		// display title
 		std::string const& level_title = cached_value->GetLevelTitle();
 		if (!level_title.empty())

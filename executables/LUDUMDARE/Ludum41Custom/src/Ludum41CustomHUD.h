@@ -20,7 +20,7 @@ namespace chaos
 // GameHUDComboComponent
 // ====================================================================
 
-class GameHUDComboComponent : public chaos::GameHUDCacheValueComponent<int>
+class GameHUDComboComponent : public chaos::GameHUDCacheValueTextComponent<int>
 {
 public:
 
@@ -28,7 +28,7 @@ public:
 	GameHUDComboComponent();
 	/** constructor */
 	GameHUDComboComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
-		chaos::GameHUDCacheValueComponent<int>("Combo: %d x", in_params) {}
+		chaos::GameHUDCacheValueTextComponent<int>("Combo: %d x", in_params) {}
 
 protected:
 

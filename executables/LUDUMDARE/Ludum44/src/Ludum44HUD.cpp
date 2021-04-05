@@ -12,7 +12,7 @@
 // ====================================================================
 
 GameHUDLifeCountComponent::GameHUDLifeCountComponent() :
-	GameHUDCacheValueComponent<int>("Life: %d", -1) 
+	GameHUDCacheValueComponent<int>("Life: %d") 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -20,26 +20,13 @@ GameHUDLifeCountComponent::GameHUDLifeCountComponent() :
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-bool GameHUDLifeCountComponent::UpdateCachedValue(bool & destroy_mesh)
+bool GameHUDLifeCountComponent::QueryValue(int & result) const
 {
-	LudumPlayingHUD const * playing_hud = auto_cast(hud);
-	if (playing_hud != nullptr)
-	{
-		LudumPlayer const * ludum_player = playing_hud->GetPlayer(0);
-		if (ludum_player == nullptr) 
-			destroy_mesh = true;
-		else
-		{
-			int current_life_count = ludum_player->GetLifeCount();
-			if (current_life_count != cached_value)
-			{
-				cached_value = current_life_count;
-				return true;
-			}
-		
-		}
-	}
-	return false;
+	LudumPlayer const* ludum_player = GetPlayer(0);
+	if (ludum_player == nullptr)
+		return false;
+	result = ludum_player->GetLifeCount();
+	return true;
 }
 
 // ====================================================================

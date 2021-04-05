@@ -33,9 +33,7 @@ public:
 protected:
 
 	/** override */
-	virtual int QueryValue() const override;
-	/** override */
-	virtual void UpdateTextMesh() override;
+	virtual bool QueryValue(int & result) const override;
 };
 
 // ====================================================================

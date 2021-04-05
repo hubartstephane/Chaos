@@ -34,23 +34,13 @@ public:
 	GameHUDUpgradeComponent();
 	/** constructor */
 	GameHUDUpgradeComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params) :
-		chaos::GameHUDCacheValueComponent<std::string>("%s", std::string(), in_params) {}
+		chaos::GameHUDCacheValueComponent<std::string>("%s", in_params) {}
 
 protected:
 
 	/** override */
-	virtual std::string FormatText() const override;
-	/** override */
-	virtual bool UpdateCachedValue(bool & destroy_mesh) override;
+	virtual bool QueryValue(std::string & result) const override;
 };	
-
-
-
-
-
-
-
-
 
 // ====================================================================
 // GameHUDShroudLifeComponent

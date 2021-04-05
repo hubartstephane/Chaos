@@ -20,6 +20,12 @@ GameHUDRacePositionComponent::GameHUDRacePositionComponent() :
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
+glm::ivec2 GameHUDRacePositionComponent::QueryValue() const
+{
+
+}
+
+
 std::string GameHUDRacePositionComponent::FormatText() const
 {
 	char const* f = ((cached_value.x > cached_value.y / 2) && blink_value) ? "[WARNING Pos %d/%d]" : "Pos %d/%d";
@@ -91,12 +97,22 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_mesh)
 // ====================================================================
 
 GameHUDRaceLapsComponent::GameHUDRaceLapsComponent() :
-	chaos::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d", glm::ivec2(-1, -1))
+	chaos::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
 	generator_params.position = glm::vec2(20.0f, -80.0f);
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
+}
+
+glm::ivec2 GameHUDRaceLapsComponent::QueryValue() const
+{
+	LudumLevelInstance const* li = GetLevelInstance();
+	if (li == nullptr || li->road == nullptr)
+		return nullptr;
+	{
+		LudumPlayer* player = GetPlayer(0);
+		if (player != nullptr && !player->race_position.IsCompleted())
 }
 
 std::string GameHUDRaceLapsComponent::FormatText() const
@@ -135,9 +151,7 @@ bool GameHUDRaceLapsComponent::UpdateCachedValue(bool& destroy_mesh)
 
 bool LudumPlayingHUD::FillHUDContent()
 {
-
 	// directely call GameHUD super instead of PlayingHUD to avoid the score
-
 #if 0
 	if (!chaos::PlayingHUD::FillHUDContent())
 		return false;	
@@ -145,7 +159,6 @@ bool LudumPlayingHUD::FillHUDContent()
 	// call super method
 	if (!chaos::GameHUD::FillHUDContent())
 		return false;
-	//RegisterComponent(GameHUDKeys::SCORE_ID, new GameHUDScoreComponent());
 #endif
 
 	RegisterComponent(chaos::GameHUDKeys::RACE_POSITION_ID, new GameHUDRacePositionComponent());

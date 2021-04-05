@@ -20,20 +20,13 @@ GameHUDComboComponent::GameHUDComboComponent() :
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-int GameHUDComboComponent::QueryValue() const
+bool GameHUDComboComponent::QueryValue(int & result) const
 {
 	LudumGameInstance const* ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance == nullptr)
-		return -1;
-	return ludum_game_instance->GetCurrentComboMultiplier();
-}
-
-void GameHUDComboComponent::UpdateTextMesh()
-{
-	if (cached_value <= 0)
-		mesh = nullptr;
-	else
-		chaos::GameHUDCacheValueComponent<int>::UpdateTextMesh();
+		return false;
+	result = ludum_game_instance->GetCurrentComboMultiplier();
+	return (result > 0);
 }
 
 // ====================================================================

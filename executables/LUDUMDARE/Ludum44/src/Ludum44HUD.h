@@ -24,12 +24,12 @@ public:
 	GameHUDLifeCountComponent();
 	/** constructor */
 	GameHUDLifeCountComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params) :
-		GameHUDCacheValueComponent<int>("Life: %d", -1, in_params) {}
+		GameHUDCacheValueComponent<int>("Life: %d", in_params) {}
 
 protected:
 
 	/** override */
-	virtual bool UpdateCachedValue(bool & destroy_mesh) override;
+	virtual bool QueryValue(int & result) const override;
 };
 
 // ====================================================================

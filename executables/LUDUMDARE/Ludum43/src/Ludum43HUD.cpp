@@ -12,7 +12,7 @@
 // ====================================================================
 
 GameHUDWakenParticleComponent::GameHUDWakenParticleComponent() :
-	chaos::GameHUDCacheValueComponent<int>("Particles: %d", -1) 
+	chaos::GameHUDCacheValueComponent<int>("Particles: %d") 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -20,19 +20,13 @@ GameHUDWakenParticleComponent::GameHUDWakenParticleComponent() :
 	generator_params.hotpoint = chaos::Hotpoint::TOP_LEFT;
 }
 
-bool GameHUDWakenParticleComponent::UpdateCachedValue(bool & destroy_mesh)
+bool GameHUDWakenParticleComponent::QueryValue(int & result) const
 {
 	LudumGameInstance const* ludum_game_instance = GetGameInstance();
-	if (ludum_game_instance != nullptr)
-	{
-		int waken_up_particle_count = ludum_game_instance->GetWakenUpParticleCount();
-		if (waken_up_particle_count != cached_value)
-		{
-			cached_value = waken_up_particle_count;
-			return true;
-		}
-	}
-	return false;
+	if (ludum_game_instance == nullptr)
+		return false;
+	result = ludum_game_instance->GetWakenUpParticleCount();
+	return true;
 }
 
 // ====================================================================

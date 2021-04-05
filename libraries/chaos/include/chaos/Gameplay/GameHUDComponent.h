@@ -13,7 +13,6 @@ namespace chaos
 	class GameHUDScoreComponent;
 	class GameHUDFramerateComponent;
 	class GameHUDTimeoutComponent;
-	class GameHUDTimeoutComponent;
 	class GameHUDLifeComponent;
 	class GameHUDLevelTitleComponent;
 	class GameHUDFreeCameraComponent;
@@ -155,19 +154,27 @@ namespace chaos
 		/** constructor */
 		using GameHUDTextComponent::GameHUDTextComponent;
 
-		/** gets the value */
-		virtual type QueryValue() const { return type(); }
+		/** gets the value (returns true whether the object is valid) */
+		virtual bool QueryValue(type& result) const 
+		{ 
+			result = type(); 
+			return true; 
+		}
 		/** override */
 		virtual void OnInsertedInHUD()
 		{
-			cached_value = QueryValue();
-			GameHUDTextComponent::OnInsertedInHUD();
+			if (!QueryValue(cached_value))
+				mesh = nullptr;
+			else
+				GameHUDTextComponent::OnInsertedInHUD();
 		}
 		/** override */
 		virtual bool DoUpdateGPUResources(GPURenderer* renderer) override
 		{
-			type new_value = QueryValue();
-			if (cached_value != new_value)
+			type new_value;
+			if (!QueryValue(new_value))
+				mesh = nullptr;
+			else if(cached_value != new_value)
 			{
 				cached_value = new_value;
 				UpdateTextMesh();
@@ -249,7 +256,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual int QueryValue() const override;
+		virtual bool QueryValue(int & result) const override;
 	};
 
 	// ====================================================================
@@ -269,7 +276,7 @@ namespace chaos
 	protected:
 
 		/** query value */
-		virtual float QueryValue() const override;
+		virtual bool QueryValue(float& result) const override;
 	};
 
 	// ====================================================================
@@ -289,9 +296,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual float QueryValue() const override;
-		/** override */
-		virtual void UpdateTextMesh() override;
+		virtual bool QueryValue(float & result) const override;
 		/** override */
 		virtual void TweakTextGeneratorParams(ParticleTextGenerator::GeneratorParams & final_params) const override;
 	};
@@ -392,7 +397,7 @@ namespace chaos
 	protected:
 
 		/** override */
-		virtual Level const * QueryValue() const override;
+		virtual bool QueryValue(Level const * & result) const override;
 		/** override */
 		virtual void UpdateTextMesh() override;
 	};	

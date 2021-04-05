@@ -12,7 +12,7 @@
 // ====================================================================
 
 GameHUDRacePositionComponent::GameHUDRacePositionComponent() :
-	chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1))
+	chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Pos %d/%d", glm::ivec2(-1, -1))
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -39,7 +39,7 @@ std::string GameHUDRacePositionComponent::FormatText() const
 
 bool GameHUDRacePositionComponent::DoTick(float delta_time)
 {
-	if (!chaos::GameHUDCacheValueComponent<glm::ivec2>::DoTick(delta_time))
+	if (!chaos::GameHUDCacheValueTextComponent<glm::ivec2>::DoTick(delta_time))
 		return false;
 	current_dt = delta_time;
 	return true;
@@ -97,7 +97,7 @@ bool GameHUDRacePositionComponent::UpdateCachedValue(bool& destroy_mesh)
 // ====================================================================
 
 GameHUDRaceLapsComponent::GameHUDRaceLapsComponent() :
-	chaos::GameHUDCacheValueComponent<glm::ivec2>("Lap %d/%d")
+	chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Lap %d/%d")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";

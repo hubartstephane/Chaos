@@ -24,7 +24,7 @@ protected:
 // LudumPlayingHUD
 // ====================================================================
 
-class GameHUDUpgradeComponent : public chaos::GameHUDCacheValueComponent<std::string>
+class GameHUDUpgradeComponent : public chaos::GameHUDCacheValueTextComponent<std::string>
 {
 	friend class GameHUD;
 
@@ -34,7 +34,7 @@ public:
 	GameHUDUpgradeComponent();
 	/** constructor */
 	GameHUDUpgradeComponent(chaos::ParticleTextGenerator::GeneratorParams const & in_params) :
-		chaos::GameHUDCacheValueComponent<std::string>("%s", in_params) {}
+		chaos::GameHUDCacheValueTextComponent<std::string>("%s", in_params) {}
 
 protected:
 

@@ -15,7 +15,7 @@ namespace chaos
 // GameHUDRacePositionComponent
 // ====================================================================
 
-class GameHUDRacePositionComponent : public chaos::GameHUDCacheValueComponent<glm::ivec2>
+class GameHUDRacePositionComponent : public chaos::GameHUDCacheValueTextComponent<glm::ivec2>
 {
 public:
 
@@ -24,7 +24,7 @@ public:
 	GameHUDRacePositionComponent();
 	/** constructor */
 	GameHUDRacePositionComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
-		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", in_params) {}
+		chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Pos %d/%d", in_params) {}
 
 	virtual glm::ivec2 QueryValue() const override;
 
@@ -50,7 +50,7 @@ protected:
 // GameHUDRaceLapsComponent
 // ====================================================================
 
-class GameHUDRaceLapsComponent : public chaos::GameHUDCacheValueComponent<glm::ivec2>
+class GameHUDRaceLapsComponent : public chaos::GameHUDCacheValueTextComponent<glm::ivec2>
 {
 public:
 
@@ -59,7 +59,7 @@ public:
 	GameHUDRaceLapsComponent();
 	/** constructor */
 	GameHUDRaceLapsComponent(chaos::ParticleTextGenerator::GeneratorParams const& in_params) :
-		chaos::GameHUDCacheValueComponent<glm::ivec2>("Pos %d/%d", in_params) {}
+		chaos::GameHUDCacheValueTextComponent<glm::ivec2>("Pos %d/%d", in_params) {}
 
 	/** override */
 	virtual glm::ivec2 QueryValue() const override;

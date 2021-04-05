@@ -36,7 +36,7 @@ bool LudumPlayingHUD::FillHUDContent()
 // ====================================================================
 
 GameHUDUpgradeComponent::GameHUDUpgradeComponent() :
-	chaos::GameHUDCacheValueComponent<std::string>("%s") 
+	chaos::GameHUDCacheValueTextComponent<std::string>("%s") 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";

@@ -12,7 +12,7 @@
 // ====================================================================
 
 GameHUDComboComponent::GameHUDComboComponent() :
-	chaos::GameHUDCacheValueComponent<int>("Combo: %d x")
+	chaos::GameHUDCacheValueTextComponent<int>("Combo: %d x")
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";

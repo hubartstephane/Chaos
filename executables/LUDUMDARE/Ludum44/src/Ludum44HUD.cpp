@@ -12,7 +12,7 @@
 // ====================================================================
 
 GameHUDLifeCountComponent::GameHUDLifeCountComponent() :
-	GameHUDCacheValueComponent<int>("Life: %d") 
+	GameHUDCacheValueTextComponent<int>("Life: %d") 
 {
 	generator_params.line_height = 60.0f;
 	generator_params.font_info_name = "normal";
@@ -33,36 +33,25 @@ bool GameHUDLifeCountComponent::QueryValue(int & result) const
 // GameHUDPowerUpComponent
 // ====================================================================
 
-
-bool GameHUDPowerUpComponent::DoTick(float delta_time)
+bool GameHUDPowerUpComponent::QueryValue(chaos::weak_ptr<LudumPowerUp> & result) const
 {
-	chaos::GameHUDMeshComponent::DoTick(delta_time);
-
-	LudumGameInstance * ludum_game_instance = auto_cast(GetGameInstance());
+	LudumGameInstance const* ludum_game_instance = GetGameInstance();
 	if (ludum_game_instance == nullptr)
-	{
-		cached_power_up = nullptr;
-		mesh = nullptr;
-		return true;	
-	}
+		return false;
+	result = ludum_game_instance->current_power_up.get();
+	return (result != nullptr);
+}
 
-	if (ludum_game_instance->current_power_up == nullptr)
-	{
-		cached_power_up = nullptr;
-		mesh = nullptr;
-		return true;		
-	}
-
-	if (cached_power_up.get() == ludum_game_instance->current_power_up.get())
-		return true;
+void GameHUDPowerUpComponent::UpdateMesh()
+{
+	LudumGameInstance const* ludum_game_instance = GetGameInstance();
+	if (ludum_game_instance == nullptr)
+		return;
 
 	bool decreasing_power_up = ludum_game_instance->current_powerup_trigger->decrease_power;
 
-	// ensure we do not have already cached this power_up
-	cached_power_up = ludum_game_instance->current_power_up.get();
-
 	// get box
-	chaos::box2 canvas_box = GetGame()->GetCanvasBox();		
+	chaos::box2 canvas_box = GetGame()->GetCanvasBox();
 
 	chaos::Hotpoint hotpoint = chaos::Hotpoint::BOTTOM_LEFT;
 	glm::vec2 corner = GetCanvasBoxCorner(canvas_box, hotpoint);
@@ -80,43 +69,36 @@ bool GameHUDPowerUpComponent::DoTick(float delta_time)
 	params.alignment = chaos::TextAlignment::CENTER;
 
 	std::string title;
-	
+
 	if (decreasing_power_up)
-		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to sell\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());		
+		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to sell\n[POWERUP %s]", cached_value->GetPowerUpTitle());
 	else
-		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_power_up->GetPowerUpTitle());
-		
+		title = chaos::StringTools::Printf("Keep [ButtonY] or [KEYBOARD ALT] Pressed to buy\n[POWERUP %s]", cached_value->GetPowerUpTitle());
 
 	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
 	DI.AddText(title.c_str(), params);
 	mesh = DI.ExtractMesh();
-
-	return true;
 }
 
 // ====================================================================
 // GameHUDHealthBarComponent
 // ====================================================================
 
-bool GameHUDHealthBarComponent::DoTick(float delta_time)
+bool GameHUDHealthBarComponent::QueryValue(GameHUDHealthInfo& result) const
 {
-
-	LudumGame const* ludum_game = GetGame();
-	if (ludum_game == nullptr)
-		return true;
-
-	LudumGameInstance const* ludum_game_instance = GetGameInstance();
-	if (ludum_game_instance == nullptr)
-		return true;
-
 	LudumPlayer const* ludum_player = GetPlayer(0);
 	if (ludum_player == nullptr)
-		return true;
+		return false;
+	LudumGameInstance const* ludum_game_instance = GetGameInstance();
+	if (ludum_game_instance == nullptr)
+		return false;
+	LudumGame const* ludum_game = GetGame();
+	if (ludum_game == nullptr)
+		return false;
 
 	float health = ludum_player->GetHealth();
 	float max_health = ludum_player->GetMaxHealth();
 
-	// change virtually the life displayed
 	if (ludum_game_instance->current_power_up != nullptr && ludum_game_instance->current_powerup_trigger != nullptr)
 	{
 		bool decreasing_power_up = ludum_game_instance->current_powerup_trigger->decrease_power;
@@ -124,13 +106,23 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 		float cost = ludum_game_instance->current_power_up->GetLifeCost();
 		float paid_cost_ratio = ludum_player->GetBuyTimer() / ludum_game->GetBuyUpgradeTime();
 
-		float sign1 = (decreasing_power_up) ? +1.0f :  0.0f;
+		float sign1 = (decreasing_power_up) ? +1.0f : 0.0f;
 		float sign2 = (decreasing_power_up) ? +1.0f : -1.0f;
 
 		health = health + sign1 * cost * paid_cost_ratio;
 		max_health = max_health + sign2 * cost * paid_cost_ratio;
 		health = std::min(health, max_health);
 	}
+
+	result = { health,  max_health };
+	return true;
+}
+
+void GameHUDHealthBarComponent::UpdateMesh()
+{
+	LudumGame const* ludum_game = GetGame();
+	if (ludum_game == nullptr)
+		return;
 
 	chaos::GPUDrawInterface<chaos::VertexDefault> DI(nullptr);
 
@@ -147,7 +139,7 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 	position2.y = -canvas_size.y * 0.5f + 70.0f;
 
 	// compute the border size
-	position2.x = position1.x + (position2.x - position1.x) * max_health;
+	position2.x = position1.x + (position2.x - position1.x) * cached_value.max_health;
 
 	chaos::ParticleDefault particle;
 	particle.texcoords.bitmap_index = -1;
@@ -165,15 +157,13 @@ bool GameHUDHealthBarComponent::DoTick(float delta_time)
 
 	// the life bar
 	std::pair<glm::vec2, glm::vec2> corners = chaos::GetBoxCorners(particle.bounding_box);
-	corners.second.x = corners.first.x + (health / max_health) * (corners.second.x - corners.first.x);
+	corners.second.x = corners.first.x + (cached_value.health / cached_value.max_health) * (corners.second.x - corners.first.x);
 	particle.bounding_box = chaos::box2(corners);
 	particle.color = glm::vec4(1.0, 0.0, 0.0, 1.0);
 	ParticleToPrimitive(particle, quads);
 	++quads;
 
 	mesh = DI.ExtractMesh();
-
-	return true;
 }
 
 // ====================================================================
